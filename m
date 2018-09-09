@@ -4,148 +4,84 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7510DC433F5
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 12:04:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39594C4321E
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 12:28:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E426A20865
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 12:04:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88A2D20866
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 12:28:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="TjlgNHiz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E426A20865
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="FfUqm52d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88A2D20866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726838AbeIIQxf (ORCPT
+        id S1726862AbeIIRRp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Sep 2018 12:53:35 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:33175 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726705AbeIIQxe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Sep 2018 12:53:34 -0400
-Received: by mail-ed1-f65.google.com with SMTP id d8-v6so14528084edv.0
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Sep 2018 05:04:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PSaPteZOwUWCyaJnmW0KjszXblroNbQ036MRoBRas8w=;
-        b=TjlgNHizsD/4dwrStI5A3qjFrQnfuzkdHaC7bGn/UPtePgOJKWhVpPA4f5LHaLgI+e
-         w+wn3OGaYybRzdgXh52DvS6uHtw0rYPWbA16gOOHcF1TOdVJT5bukIxGA/inTak+dlwB
-         clqlf0xAVF9hrddyXGWVt2BcBIM257xRIh0DI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=PSaPteZOwUWCyaJnmW0KjszXblroNbQ036MRoBRas8w=;
-        b=L8/R6Jec1LuAZVrQ0P7f5uTaCdsO9x5KIBpgJXRkJfHfKpVMgolWC+2aHNy0mMxy3A
-         HQmRTPi+g9c3HlPb2XQ+Dbyh7QwTuKsJHsxuRe1cs/OWlZUfivC7Zw1UNF4v/tZYol+j
-         YDVKzE9sYIEIuh0KEQwjKU/Bh2nU43pajBVHnpAbtey25nrzyU+xJMIFRuafACp4O2XF
-         E/z43BUVjbuJ77sg6how2U8wZQyG8KsAG0TaubqWhjRPneuDElAd9shaAV8RPFoCVXjs
-         5SDNANpxQ4m/rdhlPggjddIDEs20jeDwmSECvzSXQoSoCPu7WI98gUkU2AZFWLkuFrQN
-         LZ2A==
-X-Gm-Message-State: APzg51CN2GPoPP+XTkGohA5DTw58NfNyya4+exI+fiV69tDy9YdD/QK3
-        iBbneNaqK0P6WvEML83Sfj+G6w==
-X-Google-Smtp-Source: ANB0VdYyWt7zpRhplljUmuu3nfJo9wADUFIRLh+Bar1almy3NXl3P2Ms1PEGOr3fz9/NwTeajgTZbw==
-X-Received: by 2002:aa7:d707:: with SMTP id t7-v6mr18327156edq.250.1536494645060;
-        Sun, 09 Sep 2018 05:04:05 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id p28-v6sm9351976eda.85.2018.09.09.05.04.03
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 09 Sep 2018 05:04:03 -0700 (PDT)
-Date:   Sun, 9 Sep 2018 14:03:57 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Ayan Kumar Halder <ayan.halder@arm.com>, liviu.dudau@arm.com,
-        brian.starkey@arm.com, malidp@foss.arm.com, airlied@linux.ie,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        nd@arm.com
-Subject: Re: [PATCH v2 0/4] Add support for Arm Framebuffer Compression(AFBC)
-Message-ID: <20180909120357.GA19774@phenom.ffwll.local>
-Mail-Followup-To: Neil Armstrong <narmstrong@baylibre.com>,
-        Ayan Kumar Halder <ayan.halder@arm.com>, liviu.dudau@arm.com,
-        brian.starkey@arm.com, malidp@foss.arm.com, airlied@linux.ie,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        nd@arm.com
-References: <1531228737-5450-1-git-send-email-ayan.halder@arm.com>
- <0e22e63c-6981-9e5d-ed2d-2ad1dfbccd4f@baylibre.com>
+        Sun, 9 Sep 2018 13:17:45 -0400
+Received: from imap.thunk.org ([74.207.234.97]:40450 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726717AbeIIRRp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Sep 2018 13:17:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:
+        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=31yAyMRZvvzhJ6NIv0dAPVQcWfaf51sfaVWNklgSxKo=; b=FfUqm52dDykvBnbFAA8cG/kkZ1
+        6XkWIUtMCVs5h0vXuE4wkvgV0v2g1FJ74CKcQcu0aUFAr14l2WXhBVhywS6DQReQjbSHDvEAFPe9r
+        0JQjLMd73mk9cDrsekT6vQo2WFv+KrSqeHKIM8RHF8yHWA0kTATJFBVIBMURwxsu+K88=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1fyyp3-000878-2r; Sun, 09 Sep 2018 12:28:13 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 0C6607A56AD; Sun,  9 Sep 2018 08:28:12 -0400 (EDT)
+Date:   Sun, 9 Sep 2018 08:28:12 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     torvalds@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, linux-crypt@vger.kernel.org
+Subject: [GIT PULL] random fixes for 4.19-rc3
+Message-ID: <20180909122811.GA5355@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-crypt@vger.kernel.org
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0e22e63c-6981-9e5d-ed2d-2ad1dfbccd4f@baylibre.com>
-X-Operating-System: Linux phenom 4.14.0-3-amd64 
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 08, 2018 at 03:58:53PM +0200, Neil Armstrong wrote:
-> Hi Ayan,
-> 
-> On 10/07/2018 15:18, Ayan Kumar Halder wrote:
-> > In the current series of patches, we are trying to add support for AFBC
-> > modifiers in malidp. AFBC modifiers adds some constraints to framebuffer
-> > size, alignment, pitch, formats, etc. Here we are trying to add support
-> > for one combination of AFBC modifier ie AFBC_FORMAT_MOD_BLOCK_SIZE_16x16 |
-> > AFBC_FORMAT_MOD_SPARSE | AFBC_FORMAT_MOD_YTR.
-> > In future, we intend to add support for more combination of AFBC modifiers.
-> > Currently, we are trying to enable a basic support of AFBC in malidp.
-> 
-> Thanks for pushing AFBC support, this will help supporting it on other SoCs implementing support
-> like Amlogic, Rockchip or Samsung.
-> 
-> I have one question, is there a way to generate such AFBC buffers without the Mali GPU ?
-> I mean, is there a way to generate some sample buffers with some of the modifier features
-> to validate it without having the complete Mali GPU -> DRM chain ?
+The following changes since commit 9a47249d444d344051c7c0e909fad0e88515a5c2:
 
-An igt would be perfect. We've done that for i915 compressed buffers. Note
-that it just needs to be an afbc buffer, not actually compressed. Setting
-all the bits to indicate "uncompressed" for each block is what we did for
-the i915 test. As long as the igt uses DRIVER_GENERIC and kms driver could
-then use it to validate the basics of afbc support.
--Daniel
+  random: Make crng state queryable (2018-08-02 17:33:06 -0400)
 
-> 
-> Thanks in advance,
-> Neil
-> 
-> > 
-> > Changes from v2:
-> > - Added ack by Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> > for patch 1. However, this has been kept in this series in order to help
-> > reviewers review the other patches (which are related to patch 1)
-> > - For patches 2 and 4, replaced DRM_ERROR() with DRM_DEBUG_KMS()
-> > - For patch 3, reworked malidp_de_set_plane_afbc() so as to consolidate
-> > all afbc specific register configuration in this.
-> > 
-> > Ayan Kumar Halder (4):
-> >   drm/arm/malidp: Add modifier definitions for describing Arm
-> >     Framebuffer Compression (AFBC).
-> >   drm/arm/malidp: Implemented the size validation for AFBC framebuffers
-> >   drm/arm/malidp: Set the AFBC register bits if the framebuffer has AFBC
-> >     modifier
-> >   drm/arm/malidp: Added support for AFBC modifiers for all layers except
-> >     DE_SMART
-> > 
-> >  drivers/gpu/drm/arm/malidp_drv.c    | 129 +++++++++++++++++++++++++++++++++++-
-> >  drivers/gpu/drm/arm/malidp_hw.c     |  27 +++++---
-> >  drivers/gpu/drm/arm/malidp_hw.h     |   7 ++
-> >  drivers/gpu/drm/arm/malidp_planes.c | 129 +++++++++++++++++++++++++++++++++---
-> >  drivers/gpu/drm/arm/malidp_regs.h   |  20 ++++++
-> >  include/uapi/drm/drm_fourcc.h       |  83 +++++++++++++++++++++++
-> >  6 files changed, 373 insertions(+), 22 deletions(-)
-> > 
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+are available in the Git repository at:
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+  git://git.kernel.org/pub/scm/linux/kernel/git/tytso/random.git tags/for_linus
+
+for you to fetch changes up to 9b25436662d5fb4c66eb527ead53cab15f596ee0:
+
+  random: make CPU trust a boot parameter (2018-09-01 12:51:54 -0400)
+
+----------------------------------------------------------------
+Fix things so the choice of whether or not to trust RDRAND to
+initialize the CRNG is configurable via the boot option
+random.trust_cpu={on,off}
+
+----------------------------------------------------------------
+Kees Cook (1):
+      random: make CPU trust a boot parameter
+
+ Documentation/admin-guide/kernel-parameters.txt |  6 ++++++
+ drivers/char/Kconfig                            |  4 ++--
+ drivers/char/random.c                           | 11 ++++++++---
+ 3 files changed, 16 insertions(+), 5 deletions(-)
