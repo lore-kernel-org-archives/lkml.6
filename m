@@ -2,131 +2,120 @@ Return-Path: <SRS0=M2MR=LX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0C18C433F5
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 14:03:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E9A8C4321E
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 14:08:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62CF020854
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 14:03:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62CF020854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D035320854
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 14:08:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=akkea.ca header.i=@akkea.ca header.b="B+SZ4whu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D035320854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=akkea.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727287AbeIISxT (ORCPT
+        id S1727578AbeIIS6f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Sep 2018 14:53:19 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:37868 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726948AbeIISxS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Sep 2018 14:53:18 -0400
-Received: by mail-oi0-f67.google.com with SMTP id p84-v6so35437942oic.4
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Sep 2018 07:03:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=9v0oWjiA/0vEv6M5PTbwag6kWsZl6tMBluejWQsS99c=;
-        b=FwBdlSVqU3SxFPAKwg9XzchkhHQdiHLNbF6EGoWnJIU6DCurjBrxN8y3Xde/aYjMZB
-         VsZI+S3h4ThMvCI4Dt7k6pq1JxREid+V6CIRH/29emyZshNvsmOGufMtA+q95lM2c1Aj
-         vcffoDA/jD1PmrUA1jhYblGEdci9j3asA5go8wJsE5ZXjqSoBzE8VhcAtpBTW549X1U3
-         j3qd6FJV4RIhjU1LbjzZ/ilgaDeVIpjAE15fyVI/S5mFtx7IWAADKYa9O4JsbSYYRnJi
-         Jgo/VZZuW6vm08BSbzxZyteMBroObG3MiVkZqchpHwtgIrbxpqHzDd83yUdkBBfh2zif
-         lmVQ==
-X-Gm-Message-State: APzg51Cgt/k6uo5ppl673+EjGHlzQGmtpGwj7mllpQZjHr9rS6a3MIIE
-        O1+61gbFXjb9n/T6hLEfK03XjnBhXTqhaZKGbu5VQw==
-X-Google-Smtp-Source: ANB0VdYMm91opNv9ui/4iYK/NAQVix8PMXv+1Dh0qggCpb/DXl5x8TZfqQHc/HziWqwpdE8NCFxTRs/+BYiQCHTvLeU=
-X-Received: by 2002:aca:cf44:: with SMTP id f65-v6mr18352566oig.356.1536501810853;
- Sun, 09 Sep 2018 07:03:30 -0700 (PDT)
+        Sun, 9 Sep 2018 14:58:35 -0400
+Received: from node.akkea.ca ([192.155.83.177]:48226 "EHLO node.akkea.ca"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727076AbeIIS6f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Sep 2018 14:58:35 -0400
+Received: by node.akkea.ca (Postfix, from userid 33)
+        id 947CB5420DB; Sun,  9 Sep 2018 14:08:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
+        t=1536502126; bh=9GXyO9+nTX5jyWXGAWK5AbmxhVL5P60JylDrRPh9wTA=;
+        h=To:Subject:Date:From:Cc:In-Reply-To:References;
+        b=B+SZ4whuivrRf00uDa78XE5NFK0Ug3UfGHtfnDS0Tjth2Fk7PmArcrGr3bfVg/1t7
+         oOSmX/WruHDZW/0HJb+SxSreaYI9r66It6E368OaGprhsmekoIf2Xxthvt02izm5OI
+         IRCPGk2baparMujeiaVIcYOjmUFWg8BeACxEQ8GE=
+To:     Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH] usb: typec: don't disable sink or source on  initialization
+X-PHP-Originating-Script: 1000:rcube.php
 MIME-Version: 1.0
-Received: by 2002:a4a:554b:0:0:0:0:0 with HTTP; Sun, 9 Sep 2018 07:03:30 -0700 (PDT)
-In-Reply-To: <20180907135235.GE24106@hirez.programming.kicks-ass.net>
-References: <CAE4VaGC+FcE4cTUwzTLuCRd8rnd-=MhSZHfjKstiRTKcYq-39g@mail.gmail.com>
- <20180907125649.GA3995@linux.vnet.ibm.com> <20180907131923.GB24106@hirez.programming.kicks-ass.net>
- <20180907134420.GD3995@linux.vnet.ibm.com> <20180907135235.GE24106@hirez.programming.kicks-ass.net>
-From:   Jirka Hladky <jhladky@redhat.com>
-Date:   Sun, 9 Sep 2018 16:03:30 +0200
-Message-ID: <CAE4VaGBeTy-du_tThkr3w-r2KbYW8m+sRcpDPn9sYeENUy_x4g@mail.gmail.com>
-Subject: Re: [SCHEDULER] Performance drop in 4.19 compared to 4.18 kernel
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        "Jakub Ra??ek" <jracek@redhat.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "kkolakow@redhat.com" <kkolakow@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Sun, 09 Sep 2018 08:08:46 -0600
+From:   Angus Ainslie <angus@akkea.ca>
+Cc:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Guenter Roeck <groeck7@gmail.com>
+In-Reply-To: <0adff11c-4836-4035-39a7-1cd2ea3ff74d@roeck-us.net>
+References: <20180906192644.24587-1-angus@akkea.ca>
+ <20180907103438.GI25121@kuha.fi.intel.com>
+ <0adff11c-4836-4035-39a7-1cd2ea3ff74d@roeck-us.net>
+Message-ID: <00ed8e5a4ae0dd40181b8de534684960@www.akkea.ca>
+X-Sender: angus@akkea.ca
+User-Agent: Roundcube Webmail/1.1.3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter and Srikar,
+Hi Guenter
 
-thanks a lot for the information and for the patches to test!
+On 2018-09-07 06:55, Guenter Roeck wrote:
+> On 09/07/2018 03:34 AM, Heikki Krogerus wrote:
+>> +Guenter
+>> 
+>> On Thu, Sep 06, 2018 at 01:26:44PM -0600, Angus Ainslie (Purism) 
+>> wrote:
+>>> If the board is being powered by USB disabling the source and sink
+>>> can remove power from the board. Default to source and sink enabled.
+>>> 
+> 
+> Seems to me that might violate the specification, and cause trouble for 
+> systems
+> where vbus has to be off initially. It may be better to provide this 
+> kind of
+> information as configuration parameter instead of imposing it on 
+> everyone.
+> 
 
-> I have bounced the 5 patches to you, (one of the 6 has not been applied by
-> Peter) so I have skipped that.
-> They can also be fetched from
-> http://lore.kernel.org/lkml/1533276841-16341-1-git-send-email-srikar@linux.vnet.ibm.com
+It felt like it would not be the correct thing to do either. I've tried 
+re-arranging the code in tcpci.c to enable the sink before disabling the 
+source but the only way I found to not disable the power was by setting 
+both of those to true.
 
-We have started the benchmarks, I will report the results on Monday.
+What about adding some device tree entries for the initial vbus state 
+and default to false if they are not present ?
 
-> I generally run specjbb2005 (single and multi instance).
-We also run a single and multi-instance specjbb2005 test.
+init-vbus-source and init-vbus-charge ?
 
-> I have tried running NAS but I couldn't set it up properly.
-We run the OMP variant and we control the number of threads with the
-OMP_NUM_THREADS env variable. The setup is quite simple:
+Angus
 
-cd NPB_sources/config/
-mv suite_x86_64.def suite.def
-cd ..
-make suite
+> Guenter
+> 
+>>> Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
+>>> ---
+>>>   drivers/usb/typec/tcpm.c | 8 +++++---
+>>>   1 file changed, 5 insertions(+), 3 deletions(-)
+>>> 
+>>> diff --git a/drivers/usb/typec/tcpm.c b/drivers/usb/typec/tcpm.c
+>>> index ca7bedb46f7f..a1b819cf31da 100644
+>>> --- a/drivers/usb/typec/tcpm.c
+>>> +++ b/drivers/usb/typec/tcpm.c
+>>> @@ -2462,9 +2462,11 @@ static int tcpm_init_vbus(struct tcpm_port 
+>>> *port)
+>>>   {
+>>>   	int ret;
+>>>   -	ret = port->tcpc->set_vbus(port->tcpc, false, false);
+>>> -	port->vbus_source = false;
+>>> -	port->vbus_charge = false;
+>>> +	/* default to source and sink enabled in case USB is our only power
+>>> +	 * source */
+> 
+> I am personally in favor of standard multi-line comments.
+> 
+>>> +	ret = port->tcpc->set_vbus(port->tcpc, true, true);
+>>> +	port->vbus_source = true;
+>>> +	port->vbus_charge = true;
+>>>   	return ret;
+>>>   }
+>> 
 
-FYI - starting from 4.17 kernel there is a significant performance
-drop compared to 4.16 kernel. Mel has come up with a
-sched-numa-fast-crossnode-v1r12 patch series
-git.kernel.org/pub/scm/linux/kernel/git/mel/linux.git which we have
-tested extensively and with it, the benchmarks results are back at
-4.16 level. As I understand it, Mel's patch series depends on your
-patch series and can be only merged when your patches are completed.
-
-Thanks!
-Jirka
-
-
-On Fri, Sep 7, 2018 at 3:52 PM, Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Fri, Sep 07, 2018 at 07:14:20PM +0530, Srikar Dronamraju wrote:
-> > * Peter Zijlstra <peterz@infradead.org> [2018-09-07 15:19:23]:
-> >
-> > > On Fri, Sep 07, 2018 at 06:26:49PM +0530, Srikar Dronamraju wrote:
-> > >
-> > > > Can you please pick
-> > > >
-> > > >
-> > > > 1. 69bb3230297e881c797bbc4b3dbf73514078bc9d sched/numa: Stop multiple tasks
-> > > > from moving to the cpu at the same time
-> > > > 2. dc62cfdac5e5b7a61cd8a2bd4190e80b9bb408fc sched/numa: Avoid task migration
-> > > > for small numa improvement
-> > > > 3. 76e18a67cdd9e3609716c8a074c03168734736f9 sched/numa: Pass destination cpu as
-> > > > a parameter to migrate_task_rq
-> > > > 4.  489c19b440ebdbabffe530b9a41389d0a8b315d9 sched/numa: Reset scan rate
-> > > > whenever task moves across nodes
-> > > > 5.  b7e9ae1ae3825f35cd0f38f1f0c8e91ea145bc30 sched/numa: Limit the
-> > > > conditions where scan period is reset
-> > > >
-> > > > from https://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git/commit/kernel/sched
-> > >
-> > > That is not a stable tree; the whole thing is re-generated from my quilt
-> > > set every time I feel like it.
-> > >
-> > > It is likely those commit ids will no longer exist in a few hours.
-> > >
-> >
-> > Okay, I will forward the relevant mails to Jirka.
->
-> Or he can click on that link and find new IDs :-)
