@@ -3,50 +3,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 304B3C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:11:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4930C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:12:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2FE020865
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:11:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2FE020865
+	by mail.kernel.org (Postfix) with ESMTP id 5213A20865
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:12:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5213A20865
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728169AbeIJPEr (ORCPT
+        id S1728230AbeIJPFV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 11:04:47 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:50185 "EHLO
+        Mon, 10 Sep 2018 11:05:21 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:55481 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727614AbeIJPEr (ORCPT
+        with ESMTP id S1727614AbeIJPFV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 11:04:47 -0400
+        Mon, 10 Sep 2018 11:05:21 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8AAB7aF1807463
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8AABe6r1807509
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 10 Sep 2018 03:11:07 -0700
+        Mon, 10 Sep 2018 03:11:40 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8AAB7jO1807460;
-        Mon, 10 Sep 2018 03:11:07 -0700
-Date:   Mon, 10 Sep 2018 03:11:07 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8AABeT71807506;
+        Mon, 10 Sep 2018 03:11:40 -0700
+Date:   Mon, 10 Sep 2018 03:11:40 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Morten Rasmussen <tipbot@zytor.com>
-Message-ID: <tip-05484e0984487d42e97c417cbb0697fa9d16e7e9@git.kernel.org>
-Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        morten.rasmussen@arm.com, hpa@zytor.com,
-        torvalds@linux-foundation.org, peterz@infradead.org,
-        mingo@kernel.org
-Reply-To: mingo@kernel.org, hpa@zytor.com, peterz@infradead.org,
-          torvalds@linux-foundation.org, tglx@linutronix.de,
-          morten.rasmussen@arm.com, linux-kernel@vger.kernel.org
-In-Reply-To: <1532093554-30504-2-git-send-email-morten.rasmussen@arm.com>
-References: <1532093554-30504-2-git-send-email-morten.rasmussen@arm.com>
+Message-ID: <tip-bb1fbdd3c3fd12b612c7d8cdf13bd6bfeebdefa3@git.kernel.org>
+Cc:     hpa@zytor.com, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, mingo@kernel.org,
+        morten.rasmussen@arm.com, tglx@linutronix.de,
+        gregkh@linuxfoundation.org, peterz@infradead.org
+Reply-To: torvalds@linux-foundation.org, hpa@zytor.com, mingo@kernel.org,
+          linux-kernel@vger.kernel.org, morten.rasmussen@arm.com,
+          peterz@infradead.org, tglx@linutronix.de,
+          gregkh@linuxfoundation.org
+In-Reply-To: <1532093554-30504-3-git-send-email-morten.rasmussen@arm.com>
+References: <1532093554-30504-3-git-send-email-morten.rasmussen@arm.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/topology: Add SD_ASYM_CPUCAPACITY flag
- detection
-Git-Commit-ID: 05484e0984487d42e97c417cbb0697fa9d16e7e9
+Subject: [tip:sched/core] sched/topology, drivers/base/arch_topology:
+ Rebuild the sched_domain hierarchy when capacities change
+Git-Commit-ID: bb1fbdd3c3fd12b612c7d8cdf13bd6bfeebdefa3
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -60,219 +60,115 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  05484e0984487d42e97c417cbb0697fa9d16e7e9
-Gitweb:     https://git.kernel.org/tip/05484e0984487d42e97c417cbb0697fa9d16e7e9
+Commit-ID:  bb1fbdd3c3fd12b612c7d8cdf13bd6bfeebdefa3
+Gitweb:     https://git.kernel.org/tip/bb1fbdd3c3fd12b612c7d8cdf13bd6bfeebdefa3
 Author:     Morten Rasmussen <morten.rasmussen@arm.com>
-AuthorDate: Fri, 20 Jul 2018 14:32:31 +0100
+AuthorDate: Fri, 20 Jul 2018 14:32:32 +0100
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 10 Sep 2018 11:05:45 +0200
+CommitDate: Mon, 10 Sep 2018 11:05:47 +0200
 
-sched/topology: Add SD_ASYM_CPUCAPACITY flag detection
+sched/topology, drivers/base/arch_topology: Rebuild the sched_domain hierarchy when capacities change
 
-The SD_ASYM_CPUCAPACITY sched_domain flag is supposed to mark the
-sched_domain in the hierarchy where all CPU capacities are visible for
-any CPU's point of view on asymmetric CPU capacity systems. The
-scheduler can then take to take capacity asymmetry into account when
-balancing at this level. It also serves as an indicator for how wide
-task placement heuristics have to search to consider all available CPU
-capacities as asymmetric systems might often appear symmetric at
-smallest level(s) of the sched_domain hierarchy.
+The setting of SD_ASYM_CPUCAPACITY depends on the per-CPU capacities.
+These might not have their final values when the hierarchy is initially
+built as the values depend on cpufreq to be initialized or the values
+being set through sysfs. To ensure that the flags are set correctly we
+need to rebuild the sched_domain hierarchy whenever the reported per-CPU
+capacity (arch_scale_cpu_capacity()) changes.
 
-The flag has been around for while but so far only been set by
-out-of-tree code in Android kernels. One solution is to let each
-architecture provide the flag through a custom sched_domain topology
-array and associated mask and flag functions. However,
-SD_ASYM_CPUCAPACITY is special in the sense that it depends on the
-capacity and presence of all CPUs in the system, i.e. when hotplugging
-all CPUs out except those with one particular CPU capacity the flag
-should disappear even if the sched_domains don't collapse. Similarly,
-the flag is affected by cpusets where load-balancing is turned off.
-Detecting when the flags should be set therefore depends not only on
-topology information but also the cpuset configuration and hotplug
-state. The arch code doesn't have easy access to the cpuset
-configuration.
-
-Instead, this patch implements the flag detection in generic code where
-cpusets and hotplug state is already taken care of. All the arch is
-responsible for is to implement arch_scale_cpu_capacity() and force a
-full rebuild of the sched_domain hierarchy if capacities are updated,
-e.g. later in the boot process when cpufreq has initialized.
+This patch ensure that a full sched_domain rebuild happens when CPU
+capacity changes occur.
 
 Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: dietmar.eggemann@arm.com
 Cc: valentin.schneider@arm.com
 Cc: vincent.guittot@linaro.org
-Link: http://lkml.kernel.org/r/1532093554-30504-2-git-send-email-morten.rasmussen@arm.com
-[ Fixed 'CPU' capitalization. ]
+Link: http://lkml.kernel.org/r/1532093554-30504-3-git-send-email-morten.rasmussen@arm.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- include/linux/sched/topology.h |  6 ++--
- kernel/sched/topology.c        | 81 ++++++++++++++++++++++++++++++++++++++----
- 2 files changed, 78 insertions(+), 9 deletions(-)
+ drivers/base/arch_topology.c  | 26 ++++++++++++++++++++++++++
+ include/linux/arch_topology.h |  1 +
+ 2 files changed, 27 insertions(+)
 
-diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
-index 26347741ba50..6b9976180c1e 100644
---- a/include/linux/sched/topology.h
-+++ b/include/linux/sched/topology.h
-@@ -23,10 +23,10 @@
- #define SD_BALANCE_FORK		0x0008	/* Balance on fork, clone */
- #define SD_BALANCE_WAKE		0x0010  /* Balance on wakeup */
- #define SD_WAKE_AFFINE		0x0020	/* Wake task to waking CPU */
--#define SD_ASYM_CPUCAPACITY	0x0040  /* Groups have different max cpu capacities */
--#define SD_SHARE_CPUCAPACITY	0x0080	/* Domain members share cpu capacity */
-+#define SD_ASYM_CPUCAPACITY	0x0040  /* Domain members have different CPU capacities */
-+#define SD_SHARE_CPUCAPACITY	0x0080	/* Domain members share CPU capacity */
- #define SD_SHARE_POWERDOMAIN	0x0100	/* Domain members share power domain */
--#define SD_SHARE_PKG_RESOURCES	0x0200	/* Domain members share cpu pkg resources */
-+#define SD_SHARE_PKG_RESOURCES	0x0200	/* Domain members share CPU pkg resources */
- #define SD_SERIALIZE		0x0400	/* Only a single load balancing instance */
- #define SD_ASYM_PACKING		0x0800  /* Place busy groups earlier in the domain */
- #define SD_PREFER_SIBLING	0x1000	/* Prefer to place tasks in a sibling domain */
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 505a41c42b96..5c4d583d53ee 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -1061,7 +1061,6 @@ static struct cpumask		***sched_domains_numa_masks;
-  *   SD_SHARE_PKG_RESOURCES - describes shared caches
-  *   SD_NUMA                - describes NUMA topologies
-  *   SD_SHARE_POWERDOMAIN   - describes shared power domain
-- *   SD_ASYM_CPUCAPACITY    - describes mixed capacity topologies
-  *
-  * Odd one out, which beside describing the topology has a quirk also
-  * prescribes the desired behaviour that goes along with it:
-@@ -1073,13 +1072,12 @@ static struct cpumask		***sched_domains_numa_masks;
- 	 SD_SHARE_PKG_RESOURCES |	\
- 	 SD_NUMA		|	\
- 	 SD_ASYM_PACKING	|	\
--	 SD_ASYM_CPUCAPACITY	|	\
- 	 SD_SHARE_POWERDOMAIN)
+diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
+index e7cb0c6ade81..edfcf8d982e4 100644
+--- a/drivers/base/arch_topology.c
++++ b/drivers/base/arch_topology.c
+@@ -15,6 +15,7 @@
+ #include <linux/slab.h>
+ #include <linux/string.h>
+ #include <linux/sched/topology.h>
++#include <linux/cpuset.h>
  
- static struct sched_domain *
- sd_init(struct sched_domain_topology_level *tl,
- 	const struct cpumask *cpu_map,
--	struct sched_domain *child, int cpu)
-+	struct sched_domain *child, int dflags, int cpu)
- {
- 	struct sd_data *sdd = &tl->data;
- 	struct sched_domain *sd = *per_cpu_ptr(sdd->sd, cpu);
-@@ -1100,6 +1098,9 @@ sd_init(struct sched_domain_topology_level *tl,
- 			"wrong sd_flags in topology description\n"))
- 		sd_flags &= ~TOPOLOGY_SD_FLAGS;
+ DEFINE_PER_CPU(unsigned long, freq_scale) = SCHED_CAPACITY_SCALE;
  
-+	/* Apply detected topology flags */
-+	sd_flags |= dflags;
-+
- 	*sd = (struct sched_domain){
- 		.min_interval		= sd_weight,
- 		.max_interval		= 2*sd_weight,
-@@ -1604,9 +1605,9 @@ static void __sdt_free(const struct cpumask *cpu_map)
- 
- static struct sched_domain *build_sched_domain(struct sched_domain_topology_level *tl,
- 		const struct cpumask *cpu_map, struct sched_domain_attr *attr,
--		struct sched_domain *child, int cpu)
-+		struct sched_domain *child, int dflags, int cpu)
- {
--	struct sched_domain *sd = sd_init(tl, cpu_map, child, cpu);
-+	struct sched_domain *sd = sd_init(tl, cpu_map, child, dflags, cpu);
- 
- 	if (child) {
- 		sd->level = child->level + 1;
-@@ -1632,6 +1633,65 @@ static struct sched_domain *build_sched_domain(struct sched_domain_topology_leve
- 	return sd;
+@@ -47,6 +48,9 @@ static ssize_t cpu_capacity_show(struct device *dev,
+ 	return sprintf(buf, "%lu\n", topology_get_cpu_scale(NULL, cpu->dev.id));
  }
  
-+/*
-+ * Find the sched_domain_topology_level where all CPU capacities are visible
-+ * for all CPUs.
-+ */
-+static struct sched_domain_topology_level
-+*asym_cpu_capacity_level(const struct cpumask *cpu_map)
++static void update_topology_flags_workfn(struct work_struct *work);
++static DECLARE_WORK(update_topology_flags_work, update_topology_flags_workfn);
++
+ static ssize_t cpu_capacity_store(struct device *dev,
+ 				  struct device_attribute *attr,
+ 				  const char *buf,
+@@ -72,6 +76,8 @@ static ssize_t cpu_capacity_store(struct device *dev,
+ 		topology_set_cpu_scale(i, new_capacity);
+ 	mutex_unlock(&cpu_scale_mutex);
+ 
++	schedule_work(&update_topology_flags_work);
++
+ 	return count;
+ }
+ 
+@@ -96,6 +102,25 @@ static int register_cpu_capacity_sysctl(void)
+ }
+ subsys_initcall(register_cpu_capacity_sysctl);
+ 
++static int update_topology;
++
++int topology_update_cpu_topology(void)
 +{
-+	int i, j, asym_level = 0;
-+	bool asym = false;
-+	struct sched_domain_topology_level *tl, *asym_tl = NULL;
-+	unsigned long cap;
-+
-+	/* Is there any asymmetry? */
-+	cap = arch_scale_cpu_capacity(NULL, cpumask_first(cpu_map));
-+
-+	for_each_cpu(i, cpu_map) {
-+		if (arch_scale_cpu_capacity(NULL, i) != cap) {
-+			asym = true;
-+			break;
-+		}
-+	}
-+
-+	if (!asym)
-+		return NULL;
-+
-+	/*
-+	 * Examine topology from all CPU's point of views to detect the lowest
-+	 * sched_domain_topology_level where a highest capacity CPU is visible
-+	 * to everyone.
-+	 */
-+	for_each_cpu(i, cpu_map) {
-+		unsigned long max_capacity = arch_scale_cpu_capacity(NULL, i);
-+		int tl_id = 0;
-+
-+		for_each_sd_topology(tl) {
-+			if (tl_id < asym_level)
-+				goto next_level;
-+
-+			for_each_cpu_and(j, tl->mask(i), cpu_map) {
-+				unsigned long capacity;
-+
-+				capacity = arch_scale_cpu_capacity(NULL, j);
-+
-+				if (capacity <= max_capacity)
-+					continue;
-+
-+				max_capacity = capacity;
-+				asym_level = tl_id;
-+				asym_tl = tl;
-+			}
-+next_level:
-+			tl_id++;
-+		}
-+	}
-+
-+	return asym_tl;
++	return update_topology;
 +}
 +
++/*
++ * Updating the sched_domains can't be done directly from cpufreq callbacks
++ * due to locking, so queue the work for later.
++ */
++static void update_topology_flags_workfn(struct work_struct *work)
++{
++	update_topology = 1;
++	rebuild_sched_domains();
++	pr_debug("sched_domain hierarchy rebuilt, flags updated\n");
++	update_topology = 0;
++}
 +
- /*
-  * Build sched domains for a given set of CPUs and attach the sched domains
-  * to the individual CPUs
-@@ -1644,18 +1704,27 @@ build_sched_domains(const struct cpumask *cpu_map, struct sched_domain_attr *att
- 	struct s_data d;
- 	struct rq *rq = NULL;
- 	int i, ret = -ENOMEM;
-+	struct sched_domain_topology_level *tl_asym;
+ static u32 capacity_scale;
+ static u32 *raw_capacity;
  
- 	alloc_state = __visit_domain_allocation_hell(&d, cpu_map);
- 	if (alloc_state != sa_rootdomain)
- 		goto error;
+@@ -201,6 +226,7 @@ init_cpu_capacity_callback(struct notifier_block *nb,
  
-+	tl_asym = asym_cpu_capacity_level(cpu_map);
-+
- 	/* Set up domains for CPUs specified by the cpu_map: */
- 	for_each_cpu(i, cpu_map) {
- 		struct sched_domain_topology_level *tl;
+ 	if (cpumask_empty(cpus_to_visit)) {
+ 		topology_normalize_cpu_scale();
++		schedule_work(&update_topology_flags_work);
+ 		free_raw_capacity();
+ 		pr_debug("cpu_capacity: parsing done\n");
+ 		schedule_work(&parsing_done_work);
+diff --git a/include/linux/arch_topology.h b/include/linux/arch_topology.h
+index 2b709416de05..d9bdc1a7f4e7 100644
+--- a/include/linux/arch_topology.h
++++ b/include/linux/arch_topology.h
+@@ -9,6 +9,7 @@
+ #include <linux/percpu.h>
  
- 		sd = NULL;
- 		for_each_sd_topology(tl) {
--			sd = build_sched_domain(tl, cpu_map, attr, sd, i);
-+			int dflags = 0;
-+
-+			if (tl == tl_asym)
-+				dflags |= SD_ASYM_CPUCAPACITY;
-+
-+			sd = build_sched_domain(tl, cpu_map, attr, sd, dflags, i);
-+
- 			if (tl == sched_domain_topology)
- 				*per_cpu_ptr(d.sd, i) = sd;
- 			if (tl->flags & SDTL_OVERLAP)
+ void topology_normalize_cpu_scale(void);
++int topology_update_cpu_topology(void);
+ 
+ struct device_node;
+ bool topology_parse_cpu_capacity(struct device_node *cpu_node, int cpu);
