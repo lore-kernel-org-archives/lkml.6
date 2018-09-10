@@ -3,83 +3,125 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45B3DC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 08:13:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E070EC4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 08:13:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAE7720833
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 08:13:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAE7720833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id A24D820833
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 08:13:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A24D820833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727753AbeIJNF4 (ORCPT
+        id S1727775AbeIJNG2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 09:05:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42534 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726165AbeIJNF4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 09:05:56 -0400
-Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E6A92CD4;
-        Mon, 10 Sep 2018 08:13:06 +0000 (UTC)
-Date:   Mon, 10 Sep 2018 10:13:04 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Gao Xiang <gaoxiang25@huawei.com>
-Cc:     devel@driverdev.osuosl.org,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Miao Xie <miaoxie@huawei.com>, Chao Yu <yuchao0@huawei.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>, weidu.du@huawei.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-erofs@lists.ozlabs.org
-Subject: Re: [PATCH 1/2 dhowells/mount-api] staging: erofs: rename superblock
- flags (MS_xyz -> SB_xyz)
-Message-ID: <20180910081304.GA19096@kroah.com>
-References: <1536224508-66168-1-git-send-email-gaoxiang25@huawei.com>
- <17402.1536228489@warthog.procyon.org.uk>
- <1643231b-7538-0f43-1670-7fddadd7ca87@huawei.com>
+        Mon, 10 Sep 2018 09:06:28 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44680 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726165AbeIJNG1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 09:06:27 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B8C8640201BC;
+        Mon, 10 Sep 2018 08:13:38 +0000 (UTC)
+Received: from krava (unknown [10.43.17.10])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 553D02166BA3;
+        Mon, 10 Sep 2018 08:13:37 +0000 (UTC)
+Date:   Mon, 10 Sep 2018 10:13:36 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        kbuild test robot <lkp@intel.com>,
+        Kernel Team <Kernel-team@fb.com>, Tejun Heo <tj@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>
+Subject: Re: [PATCH v2 1/1] perf: Sharing PMU counters across compatible
+ events
+Message-ID: <20180910081336.GB31644@krava>
+References: <20180815170313.455943-1-songliubraving@fb.com>
+ <20180815170313.455943-2-songliubraving@fb.com>
+ <20180830151355.GA23723@krava>
+ <34EEDB74-35C5-49C4-9947-6C0248F194B3@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1643231b-7538-0f43-1670-7fddadd7ca87@huawei.com>
+In-Reply-To: <34EEDB74-35C5-49C4-9947-6C0248F194B3@fb.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 10 Sep 2018 08:13:38 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 10 Sep 2018 08:13:38 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 06, 2018 at 06:37:37PM +0800, Gao Xiang wrote:
+On Thu, Aug 30, 2018 at 06:35:37PM +0000, Song Liu wrote:
 > 
 > 
-> On 2018/9/6 18:08, David Howells wrote:
-> > Gao Xiang <gaoxiang25@huawei.com> wrote:
+> > On Aug 30, 2018, at 8:13 AM, Jiri Olsa <jolsa@redhat.com> wrote:
 > > 
-> >> This patch follows commit 1751e8a6cb93 ("Rename superblock
-> >> flags (MS_xyz -> SB_xyz)") and after commit ("vfs: Suppress
-> >> MS_* flag defs within the kernel unless explicitly enabled"),
-> >> there is no MS_RDONLY and MS_NOATIME at all.
-> >>
-> >> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> >> Reviewed-by: Chao Yu <yuchao0@huawei.com>
-> >> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
-> > I recommend pushing this one to Linus now.  It's trivial enough.
-> 
-> Hi David,
-> I personally think that is fine, but I'd like to get Greg's idea and agreement, too...
-> 
+> > On Wed, Aug 15, 2018 at 10:03:13AM -0700, Song Liu wrote:
 > > 
-> > Reviewed-by: David Howells <dhowells@redhat.com>
+> > SNIP
+> > 
+> >> 
+> >> +	perf_event_remove_dup(event, ctx);
+> >> 	/*
+> >> 	 * We can have double detach due to exit/hot-unplug + close.
+> >> 	 */
+> >> @@ -1982,6 +2123,92 @@ event_filter_match(struct perf_event *event)
+> >> 	       perf_cgroup_match(event) && pmu_filter_match(event);
+> >> }
+> >> 
+> >> +/* PMU sharing aware version of event->pmu->add() */
+> >> +static int event_pmu_add(struct perf_event *event,
+> >> +			 struct perf_event_context *ctx)
+> >> +{
+> >> +	struct perf_event_dup *dup;
+> >> +	int ret;
+> >> +
+> >> +	/* no sharing, just do event->pmu->add() */
+> >> +	if (event->dup_id == -1)
+> >> +		return event->pmu->add(event, PERF_EF_START);
+> >> +
+> >> +	dup = &ctx->dup_events[event->dup_id];
+> >> +
+> >> +	if (dup->active_event_count) {
+> >> +		/* already enabled */
+> >> +		dup->active_event_count++;
+> >> +		dup->master->pmu->read(dup->master);
+> >> +		event->dup_base_count = dup_read_count(dup);
+> >> +		event->dup_base_child_count = dup_read_child_count(dup);
+> >> +		return 0;
+> >> +	}
+> >> +
+> >> +	/* try add master */
+> >> +	ret = event->pmu->add(dup->master, PERF_EF_START);
+> >> +
+> >> +	if (!ret) {
+> >> +		dup->active_event_count = 1;
+> >> +		event->pmu->read(dup->master);
+> >> +		event->dup_base_count = dup_read_count(dup);
+> >> +		event->dup_base_child_count = dup_read_child_count(dup);
+> > 
+> > should you read the base before calling pmu->add ?
+> > should be same for any dup event not just master
+> > 
+> > jirka
 > 
-> Hi Greg,
+> I am not sure I am following. The pmu is disabled when we call
+> event_pmu_add(). Why do we need to read before calling pmu->add()? 
+> And this is the first added dup event for this master, so we don't
+> need to worry about others. 
 > 
-> As David suggested above, could you please help merge this patch to Linus?
-> It's trivial enough (since the commit 1751e8a6cb93) and MS_xyz will be removed
-> in the new mount apis patchset...
+> Does this make sense? 
 
-Now applied to my local tree, thanks.
+I was just thinking since the pmu is disable we could
+we don't need to read the event on 2 places.. it's almost
+identic code
 
-greg k-h
+jirka
