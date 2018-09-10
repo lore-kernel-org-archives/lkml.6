@@ -2,151 +2,158 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E181C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:06:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A09CC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:08:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B377520854
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:06:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FukTYo6e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B377520854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id F14B220854
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:08:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F14B220854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727740AbeIJK63 (ORCPT
+        id S1727122AbeIJLAl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 06:58:29 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49780 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727679AbeIJK6W (ORCPT
+        Mon, 10 Sep 2018 07:00:41 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:20724 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726405AbeIJLAl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 06:58:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=mBKIY7ltGFEPcnkQoxokdxXsUUzg3Mh9YZOdV8lUC6U=; b=FukTYo6erxNDFFXnAVmy4EH9e
-        5Lp3Otd/heudEiVviuVikhDN7kLYMEU4UfIJDKCBX3MzIOTeyNdPhEkkErenvYY8s1LgshsqgY9rl
-        MANAhmcJTPberY8oDmVI303V5k1tQ/8dpmlNeisDGvlbHepCps4IPEFTZ5G8R5bAYbJUq+cqYJfaY
-        Jstom8TVa6owRsfM80V/aYHjMNP1ncBX3DADyUsTaFo2dmB25iD07jUAOrDw22f9veJWybUXCl8Mj
-        JDW8F1QxDlTmfNnw/6rG9c9e3df/OdreVRTc9GSUdiLTxIPSiVUytUzJMUmm+qWvGrGa7c7c9xt4e
-        uHDVt0GVQ==;
-Received: from 213-225-3-213.nat.highway.a1.net ([213.225.3.213] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fzFKb-00086B-BB; Mon, 10 Sep 2018 06:05:53 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     iommu@lists.linux-foundation.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-mips@linux-mips.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] dma-mapping: support non-coherent devices in dma_common_get_sgtable
-Date:   Mon, 10 Sep 2018 08:05:33 +0200
-Message-Id: <20180910060533.27172-6-hch@lst.de>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180910060533.27172-1-hch@lst.de>
-References: <20180910060533.27172-1-hch@lst.de>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Mon, 10 Sep 2018 07:00:41 -0400
+Received: from fsav401.sakura.ne.jp (fsav401.sakura.ne.jp [133.242.250.100])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w8A67Wj5082768;
+        Mon, 10 Sep 2018 15:07:32 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav401.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav401.sakura.ne.jp);
+ Mon, 10 Sep 2018 15:07:32 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav401.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w8A67ReP082736
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Mon, 10 Sep 2018 15:07:32 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] kernel/{lockdep,hung_task}: Show locks and backtrace of
+ running tasks.
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>
+References: <1535975097-19080-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <cf1c8ccb-9a66-3c44-01d3-b11f15a83802@i-love.sakura.ne.jp>
+Date:   Mon, 10 Sep 2018 15:07:26 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <1535975097-19080-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We can use the arch_dma_coherent_to_pfn hook to provide a ->get_sgtable
-implementation.  Note that this isn't an endorsement of this interface
-(which is a horrible bad idea), but it is required to move arm64 over
-to the generic code without a loss of functionality.
+On 2018/09/03 20:44, Tetsuo Handa wrote:
+> We are getting reports from syzbot where running task seems to be
+> relevant to a hung task problem but NMI backtrace does not print useful
+> information [1].
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- drivers/xen/swiotlb-xen.c   |  2 +-
- include/linux/dma-mapping.h |  7 ++++---
- kernel/dma/mapping.c        | 23 ++++++++++++++++-------
- 3 files changed, 21 insertions(+), 11 deletions(-)
+According to my local cache, 69% of hung task reports from syzbot say that
+one CPU was running check_hung_uninterruptible_tasks() and the other CPU
+was idle. I think that this patch would in many cases give more useful
+information than trigger_all_cpu_backtrace() reports. Can we try this patch?
 
-diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
-index 470757ddddea..28819a0e61d0 100644
---- a/drivers/xen/swiotlb-xen.c
-+++ b/drivers/xen/swiotlb-xen.c
-@@ -689,7 +689,7 @@ xen_swiotlb_get_sgtable(struct device *dev, struct sg_table *sgt,
- 							   handle, size, attrs);
- 	}
- #endif
--	return dma_common_get_sgtable(dev, sgt, cpu_addr, handle, size);
-+	return dma_common_get_sgtable(dev, sgt, cpu_addr, handle, size, attrs);
- }
- 
- static int xen_swiotlb_mapping_error(struct device *dev, dma_addr_t dma_addr)
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index c3378d4e0d57..bd81e74cca7b 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -483,8 +483,8 @@ dma_mmap_attrs(struct device *dev, struct vm_area_struct *vma, void *cpu_addr,
- #define dma_mmap_coherent(d, v, c, h, s) dma_mmap_attrs(d, v, c, h, s, 0)
- 
- int
--dma_common_get_sgtable(struct device *dev, struct sg_table *sgt,
--		       void *cpu_addr, dma_addr_t dma_addr, size_t size);
-+dma_common_get_sgtable(struct device *dev, struct sg_table *sgt, void *cpu_addr,
-+		dma_addr_t dma_addr, size_t size, unsigned long attrs);
- 
- static inline int
- dma_get_sgtable_attrs(struct device *dev, struct sg_table *sgt, void *cpu_addr,
-@@ -496,7 +496,8 @@ dma_get_sgtable_attrs(struct device *dev, struct sg_table *sgt, void *cpu_addr,
- 	if (ops->get_sgtable)
- 		return ops->get_sgtable(dev, sgt, cpu_addr, dma_addr, size,
- 					attrs);
--	return dma_common_get_sgtable(dev, sgt, cpu_addr, dma_addr, size);
-+	return dma_common_get_sgtable(dev, sgt, cpu_addr, dma_addr, size,
-+			attrs);
- }
- 
- #define dma_get_sgtable(d, t, v, h, s) dma_get_sgtable_attrs(d, t, v, h, s, 0)
-diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
-index 42fd73aca305..58dec7a92b7b 100644
---- a/kernel/dma/mapping.c
-+++ b/kernel/dma/mapping.c
-@@ -202,17 +202,26 @@ EXPORT_SYMBOL(dmam_release_declared_memory);
-  * Create scatter-list for the already allocated DMA buffer.
-  */
- int dma_common_get_sgtable(struct device *dev, struct sg_table *sgt,
--		 void *cpu_addr, dma_addr_t handle, size_t size)
-+		 void *cpu_addr, dma_addr_t dma_addr, size_t size,
-+		 unsigned long attrs)
- {
--	struct page *page = virt_to_page(cpu_addr);
-+	struct page *page;
- 	int ret;
- 
--	ret = sg_alloc_table(sgt, 1, GFP_KERNEL);
--	if (unlikely(ret))
--		return ret;
-+	if (!dev_is_dma_coherent(dev)) {
-+		if (!IS_ENABLED(CONFIG_ARCH_HAS_DMA_COHERENT_TO_PFN))
-+			return -ENXIO;
- 
--	sg_set_page(sgt->sgl, page, PAGE_ALIGN(size), 0);
--	return 0;
-+		page = pfn_to_page(arch_dma_coherent_to_pfn(dev, cpu_addr,
-+				dma_addr));
-+	} else {
-+		page = virt_to_page(cpu_addr);
-+	}
-+
-+	ret = sg_alloc_table(sgt, 1, GFP_KERNEL);
-+	if (!ret)
-+		sg_set_page(sgt->sgl, page, PAGE_ALIGN(size), 0);
-+	return ret;
- }
- EXPORT_SYMBOL(dma_common_get_sgtable);
- 
--- 
-2.18.0
+$ ls -l */CrashLog.*[0-9a-f] | wc -l
+1666
+$ for i in */CrashLog.*; do awk ' BEGIN { flag = 0; } { if (index($0, "NMI backtrace") > 0) { flag = 1; } else if (index($0, "panic") > 0) { exit; } if (flag == 1) { print $0; } }' $i > $i.tmp; done
+$ ls -l */*.tmp | wc -l
+1666
+$ grep -i watchdog+ */*.tmp | wc -l
+1662
+$ grep -i "idling at" */*.tmp | wc -l
+1151
+$ grep -F '<IRQ>' */*.tmp | wc -l
+220
+
+> 
+> Although commit 8cc05c71ba5f7936 ("locking/lockdep: Move sanity check to
+> inside lockdep_print_held_locks()") says that calling
+> lockdep_print_held_locks() on a running thread is considered unsafe,
+> it is useful for syzbot to show locks and backtrace of running tasks.
+> Thus, let's allow it if CONFIG_DEBUG_AID_FOR_SYZBOT is defined.
+> 
+> [1] https://syzkaller.appspot.com/bug?id=8bab7a6a5597bb10f90e8227a7d8a483748d93be
+> 
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Cc: Dmitry Vyukov <dvyukov@google.com>
+> ---
+>  kernel/hung_task.c       | 20 ++++++++++++++++++++
+>  kernel/locking/lockdep.c |  9 +++++++++
+>  2 files changed, 29 insertions(+)
+> 
+> diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+> index b9132d1..1ac49a5 100644
+> --- a/kernel/hung_task.c
+> +++ b/kernel/hung_task.c
+> @@ -201,6 +201,26 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
+>  	if (hung_task_show_lock)
+>  		debug_show_all_locks();
+>  	if (hung_task_call_panic) {
+> +#ifdef CONFIG_DEBUG_AID_FOR_SYZBOT
+> +		/*
+> +		 * debug_show_all_locks() above forcibly dumped locks held by
+> +		 * running tasks with locks held. Now, let's dump backtrace of
+> +		 * running tasks as well, for NMI backtrace below tends to show
+> +		 * current thread (i.e. khungtaskd thread itself) and idle CPU
+> +		 * which are useless for debugging hung task problems.
+> +		 */
+> +		rcu_read_lock();
+> +		for_each_process_thread(g, t) {
+> +			if (t->state != TASK_RUNNING || t == current)
+> +				continue;
+> +			pr_err("INFO: task %s:%d was running.\n", t->comm,
+> +			       t->pid);
+> +			sched_show_task(t);
+> +			touch_nmi_watchdog();
+> +			touch_all_softlockup_watchdogs();
+> +		}
+> +		rcu_read_unlock();
+> +#endif
+>  		trigger_all_cpu_backtrace();
+>  		panic("hung_task: blocked tasks");
+>  	}
+> diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+> index e406c5f..efeebf6 100644
+> --- a/kernel/locking/lockdep.c
+> +++ b/kernel/locking/lockdep.c
+> @@ -565,12 +565,21 @@ static void lockdep_print_held_locks(struct task_struct *p)
+>  	else
+>  		printk("%d lock%s held by %s/%d:\n", depth,
+>  		       depth > 1 ? "s" : "", p->comm, task_pid_nr(p));
+> +#ifndef CONFIG_DEBUG_AID_FOR_SYZBOT
+>  	/*
+>  	 * It's not reliable to print a task's held locks if it's not sleeping
+>  	 * and it's not the current task.
+>  	 */
+>  	if (p->state == TASK_RUNNING && p != current)
+>  		return;
+> +#else
+> +	/*
+> +	 * But showing locks and backtrace of running tasks seems to be helpful
+> +	 * for debugging hung task problems. Since syzbot will call panic()
+> +	 * shortly, risking problems caused by accessing stale information is
+> +	 * acceptable here.
+> +	 */
+> +#endif
+>  	for (i = 0; i < depth; i++) {
+>  		printk(" #%d: ", i);
+>  		print_lock(p->held_locks + i);
+> 
 
