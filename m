@@ -2,98 +2,137 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9F28C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 19:49:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C9CDC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 19:51:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 848A920855
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 19:49:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 848A920855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C0DA720658
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 19:51:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rgmZOMiG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0DA720658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728963AbeIKApN convert rfc822-to-8bit (ORCPT
+        id S1728866AbeIKAq7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 20:45:13 -0400
-Received: from mga11.intel.com ([192.55.52.93]:7061 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728177AbeIKApN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 20:45:13 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2018 12:49:33 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,356,1531810800"; 
-   d="scan'208";a="88819023"
-Received: from orsmsx101.amr.corp.intel.com ([10.22.225.128])
-  by fmsmga001.fm.intel.com with ESMTP; 10 Sep 2018 12:47:30 -0700
-Received: from orsmsx159.amr.corp.intel.com (10.22.240.24) by
- ORSMSX101.amr.corp.intel.com (10.22.225.128) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Mon, 10 Sep 2018 12:47:16 -0700
-Received: from orsmsx114.amr.corp.intel.com ([169.254.8.8]) by
- ORSMSX159.amr.corp.intel.com ([169.254.11.207]) with mapi id 14.03.0319.002;
- Mon, 10 Sep 2018 12:47:16 -0700
-From:   "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
-To:     "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>
-CC:     Al Stone <astone@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: RE: [PATCH V5 0/2] Add efi page fault handler to recover from page
-Thread-Topic: [PATCH V5 0/2] Add efi page fault handler to recover from page
-Thread-Index: AQHUST0lXunNze/V9ke4Hf0+e55fjKTp6SFQ
-Date:   Mon, 10 Sep 2018 19:47:15 +0000
-Message-ID: <FFF73D592F13FD46B8700F0A279B802F485BAE95@ORSMSX114.amr.corp.intel.com>
-References: <1536607945-22018-1-git-send-email-sai.praneeth.prakhya@intel.com>
-In-Reply-To: <1536607945-22018-1-git-send-email-sai.praneeth.prakhya@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNGFiMDBjNDktNzAwZi00OTA2LWIyMGItNGY3YmM5NTk5M2JiIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiMitOaktkWlZLNWUrM0ZcL1czUXdWbFkwbjBZZTVncE9RQk9cL3dVR2JURjl3TTdZQTZyQmlSSUE1S2FudUNmXC9yYiJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.138]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Mon, 10 Sep 2018 20:46:59 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:33824 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728153AbeIKAq7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 20:46:59 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w8AJpDc7117312;
+        Mon, 10 Sep 2018 14:51:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1536609074;
+        bh=KnFPWpFu8mlYNaSjAGzGw7Z+mcO3fhclAvSsKBitB+k=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=rgmZOMiGDujHTvvY3n25K4iqymPK18hjHRIxAJmktm7vvN/OFCqd0bD09Fghy84dP
+         JqtWx1f8gEUxa0G2Q64CZQYLlZ7rnns3b2/FtPr7888cq5K18k/jb2XJiBIYayi+Bu
+         4yTb/GrbTPMkwP8SRbgXNkQlvgHXkEPMGmoz0blo=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8AJpDjd024956;
+        Mon, 10 Sep 2018 14:51:13 -0500
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 10
+ Sep 2018 14:51:14 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Mon, 10 Sep 2018 14:51:14 -0500
+Received: from [172.22.175.150] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8AJpD9l024359;
+        Mon, 10 Sep 2018 14:51:13 -0500
+Subject: Re: [PATCH v6 1/2] dt-bindings: leds: Add bindings for lm3697 driver
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>
+CC:     <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-leds@vger.kernel.org>
+References: <20180906135005.6718-1-dmurphy@ti.com>
+ <20180906211617.GB16899@amd> <b8ac9d52-f16d-5fc4-0e9a-9246b9f984c5@ti.com>
+ <20180907133228.GA16297@amd> <70f7506c-6a3d-3830-59a4-a246dc6163f7@ti.com>
+ <226b8770-7041-39a4-5a06-6002a7c1225f@gmail.com>
+ <20a814ce-a4c5-0649-6677-6b85a5fd2321@ti.com>
+ <59561e0f-e3b9-7898-a300-90b198ad14e6@gmail.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <20d9ea9e-bbb8-2240-97cc-615e3fbcef8c@ti.com>
+Date:   Mon, 10 Sep 2018 14:51:06 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <59561e0f-e3b9-7898-a300-90b198ad14e6@gmail.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi All,
+Jacek
 
-> Changes from V4 to V5:
-> ----------------------
-> 1. Drop config option that enables efi page fault handler, instead make
->    it default.
-> 2. Call schedule() in an infinite loop to account for spurious wake ups.
-> 3. Introduce "NONE" as an efi runtime service function identifier so that
->    it could be used in efi_recover_from_page_fault() to check if the page
->    fault was indeed triggered by an efi runtime service.
+On 09/10/2018 02:07 PM, Jacek Anaszewski wrote:
+> Dan, Pavel,
+> 
+> On 09/10/2018 04:37 PM, Dan Murphy wrote:
+>> Jacek
+>>
+>> On 09/08/2018 02:53 PM, Jacek Anaszewski wrote:
+>>> Dan,
+>>>
+>>> On 09/07/2018 03:52 PM, Dan Murphy wrote:
+>>> [...]
+>>>>>
+>>>>>> And I think Jacek pointed out that the bindings references in this bindings
+>>>>>> don't even exist.
+>>>>>>
+>>>>>> I am thinking we need to deprecate this MFD driver and consolidate these drivers
+>>>>>> in the LED directory as we indicated before.  I did not find any ti-lmu support
+>>>>>> code.
+>>>>>>
+>>>>>> ti-lmu common core code and then the LED children appending the feature differentiation.
+>>>>>
+>>>>>> Need some maintainer weigh in here.
+>>>>>
+>>>>> Hehe. I'm maintnainer. Fun.
+>>>>
+>>>> I know.  I want to see if there was any other opinion.  Especially for the LED driver.
+>>>>
+>>> [...]
+>>>
+>>> I have a question - is this lm3697 LED controller a cell of some MFD
+>>> device? Or is it a self-contained chip?
+>>>
+>>
+>> This is a self contained chip.  And the LM3697 only function is a LED driver.
+>> It does not have any other special functions like the LM363X drivers for GPIO and Regulator support.
+> 
+> This is an argument for merging it as a standalone LED class driver
+> then. It is even more justifiable, taking into account uncertainties
+> related to the proper way of adding the support for it to the existing
+> MFD driver, whereas the code reuse would be the only advantage of having
+> thus support in MFD subsystem.
+> 
 
-Please note that apart from dropping the config knob and accounting for 
-spurious wake ups, I have added a third change.
+Does the argument carry over to the other devices?
 
-I realized that when kernel command line option efi=old_map is passed, the efi 
-page fault handler in V4 wouldn't work because, it checks for efi_mm.
+Like the LM3632 (part of the ti-lmu) has flash and torch and no other special functions
+so it would look like the lm3601x family with different register mappings.
 
-In the efi page fault handler, I have also added an explicit check for x86_64 because 
-AFAIK, x86_32 bit machines do not suffer from this problem (Boris, please correct me if I am wrong).
-Also, I was unable to trigger page faults with buggy OVMF for x86_32.
+The LM3631 seems to also be just a LED driver with no extra functionality
 
-Just wanted to state the third change explicitly here so that it doesn't escape reviewers eyes.
+I could go buy an EVM and put together a driver for that device as well using the lm3601x as
+reference.
 
-Regards,
-Sai
+Dan
+
+-- 
+------------------
+Dan Murphy
