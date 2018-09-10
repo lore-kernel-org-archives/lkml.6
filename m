@@ -2,298 +2,161 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2CD9C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 19:33:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDEF9C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 19:33:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF61E20866
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 19:33:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF61E20866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 8FA3820866
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 19:33:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y2BZtdfg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FA3820866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728911AbeIKA3C (ORCPT
+        id S1728953AbeIKA3e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 20:29:02 -0400
-Received: from mga04.intel.com ([192.55.52.120]:65105 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728366AbeIKA3A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 20:29:00 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2018 12:33:24 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,356,1531810800"; 
-   d="scan'208";a="73137894"
-Received: from sai-dev-mach.sc.intel.com ([143.183.140.52])
-  by orsmga006.jf.intel.com with ESMTP; 10 Sep 2018 12:33:22 -0700
-From:   Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-To:     linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org
-Cc:     Sai Praneeth <sai.praneeth.prakhya@intel.com>,
-        Al Stone <astone@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH V5 2/2] x86/efi: Add efi page fault handler to recover from page faults caused by the firmware
-Date:   Mon, 10 Sep 2018 12:32:25 -0700
-Message-Id: <1536607945-22018-3-git-send-email-sai.praneeth.prakhya@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1536607945-22018-1-git-send-email-sai.praneeth.prakhya@intel.com>
-References: <1536607945-22018-1-git-send-email-sai.praneeth.prakhya@intel.com>
+        Mon, 10 Sep 2018 20:29:34 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:38077 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727742AbeIKA3e (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 20:29:34 -0400
+Received: by mail-wm0-f68.google.com with SMTP id t25-v6so22588988wmi.3;
+        Mon, 10 Sep 2018 12:33:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=rEyHzTrIrqiNIiEBN196L1DaBJEai2aMxkS4E+rpYMc=;
+        b=Y2BZtdfgLR3cSW09dkr8zcjLlU4X3pNZnOt6tFWWgFJ1DZuCt9dnriKo78rokIPzem
+         xp/yOJlxhHu/af0o/t5dSY6DNvXI1hVVtb5ScnMpBsgREemdBVZ+XY8+OjOU3mI8MiQE
+         oM6u4vZq9gdWrCqztEin18tPz8mWeRip8ZozBfaT/kAe9m7oBhCMm3LM6xnyXzBlhi8R
+         /WRiBSfcrQg48C9iXqRJBRC8gnRdv9YRb7y4vm2I1vLruov4EBFFfJ+CguROoBYQJfbu
+         hzW5OP46rrYmMAjUJnumX5iFWEbze6GW/5pee9H8XmIlkjd0bgOeD2Zbj7ETEXJWiraM
+         QJtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=rEyHzTrIrqiNIiEBN196L1DaBJEai2aMxkS4E+rpYMc=;
+        b=m/NCr63/GkG3Gb3DdXIQ2rX72fQZn2gP5+d42Qcl5lRJfqJo3RATY6bxeD/4xLqohh
+         GerysH/mYAJZ88btaCxOOKG0TgQPNhO6Wr9drZhAvEBykNRC+dqhmuPGMNDddk8E7YMD
+         Em8BXqKatdp6p3Z5hlFi/6I3Kp5V8XqeQScEu2r3Z8tkrN4bXu8LD9ryzUyVL+cbaOq4
+         YgSh9RDJlnsHl67k1JAdDEwRxRz+O6e+06xL5O5abj3sHxDexhbo4edWpFcEqGBrRIkK
+         b4pORZosjld7tcx9LTPhIc57/Yf31rCOi165kGJsULSEDCcAKn8iVP4LmfCeOCPbH2fz
+         D6JQ==
+X-Gm-Message-State: APzg51CiA7uDlwSFqaWQRBNgqE2yJS/E0BJ22vQ22P+qa0Ln0GJdJ8XC
+        /0M4ArEeVHKlcTILQqQTKO0k1XNN
+X-Google-Smtp-Source: ANB0Vdatt2efKsVxVOgW24PbBqurgMYi1hO94qResIeMLxqNZgODCZGzRs5sUrrMi7kaG9C6NKq4sw==
+X-Received: by 2002:a1c:d98a:: with SMTP id q132-v6mr1779531wmg.78.1536608035897;
+        Mon, 10 Sep 2018 12:33:55 -0700 (PDT)
+Received: from [192.168.1.18] (dlx100.neoplus.adsl.tpnet.pl. [83.24.53.100])
+        by smtp.gmail.com with ESMTPSA id v5-v6sm14563671wru.60.2018.09.10.12.33.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Sep 2018 12:33:55 -0700 (PDT)
+Subject: Re: [PATCH v5 0/2] Panasonic AN30259A support
+To:     Simon Shields <simon@lineageos.org>, linux-leds@vger.kernel.org
+Cc:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20180909103826.17793-1-simon@lineageos.org>
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <3bafc642-db6c-e872-cca5-8f654f38224a@gmail.com>
+Date:   Mon, 10 Sep 2018 21:33:53 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180909103826.17793-1-simon@lineageos.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
+Hi Simon,
 
-As per the UEFI specification, after the call to ExitBootServices(),
-accesses by the firmware to any memory regions except
-EFI_RUNTIME_SERVICES_<CODE/DATA> regions is considered illegal. A buggy
-firmware could trigger these illegal accesses when an efi runtime
-service is invoked and if this happens when the kernel is up and
-running, the kernel hangs.
+Thank you for the updated set.
 
-Kernel hangs because the memory region requested by the firmware isn't
-mapped in efi_pgd, which causes a page fault in ring 0 and the kernel
-fails to handle it, leading to die(). To save kernel from hanging, add
-an efi specific page fault handler which recovers from such faults by
-1. If the efi runtime service is efi_reset_system(), reboot the machine
-   through BIOS.
-2. If the efi runtime service is _not_ efi_reset_system(), then, freeze
-   efi_rts_wq and schedule a new process.
+On 09/09/2018 12:38 PM, Simon Shields wrote:
+> Hi,
+> 
+> This patch series adds DT bindings (patch #1) and the corresponding driver
+> (patch #2) for the Panasonic AN30259A 3-channel LED driver. AN30259A
+> uses an internal clock for controlling brightness/on-off cycles, but
+> also supports using an external PWM/clock input. This patch series only
+> implements support for the former.
+> 
+> The AN30259A is connected using I2C, and the datasheet is freely
+> available[0].
+> 
+> Changes since v4 (mistakenly sent as v3):
+> * Rebased on v4.19-rc2
+> * Namespace all macros with AN30259A_ prefix
+> * Fix trivial compiler/checkpatch --strict warnings
+> 
+> Changes since v3:
+> * Rebased on v4.18-rc3.
+> * Drop unnecessary DUTYMAX/MID calculations when blinking:
+>  previously I'd thought that the PWM duty values were expressed
+>  as a percentage of the maximum current output, but in reality
+>  they're a percentage of the current set in the LEDxCC registers.
+> This simplifies the code quite a bit.
+> * Corrected MODULE_LICENSE declaration.
+> * Return -EINVAL from set_blink if the blink rate is unsupported in
+>  hardware.
+> * Fix more checkpatch --strict issues.
+> 
+> Changes since v2:
+> * Drop "an30259a:" prefix from bindings and add it in the device driver
+>  instead.
+> * Use led-controller instead of leds for sample DT binding.
+> * Use ":indicator" instead of ":notification" in sample DT binding.
+> * Merge an30259a_led_set and an30259a_brightness to
+>  an30259a_brightness_set (and same for blink functions).
+> * Explain the range limitations of the AN30259A's sloping mode
+>  in the code - the AN30259A only has a 7-bit PWM range in slope mode,
+>  and the bottom 3 bits are always set.
+> 
+> Changes since v1:
+> * Documentation formatting/grammar fixes.
+> * Use reg property instead of led-sources for leds.
+> * Add default-state support.
+> * Fix auto-probing when built as a module.
+> * Simplified DT parsing code.
+> * Use devm version of led_class_register().
+> * Fix LED naming scheme.
+> * Fixed checkpatch --strict issues.
+> 
+> Cheers,
+> Simon
+> 
+> [0]: https://www.alliedelec.com/m/d/a9d2b3ee87c2d1a535a41dd747b1c247.pdf
+> 
+> Simon Shields (2):
+>   dt-bindings: leds: document Panasonic AN30259A bindings
+>   leds: add Panasonic AN30259A support
+> 
+>  .../bindings/leds/leds-an30259a.txt           |  43 ++
+>  drivers/leds/Kconfig                          |  10 +
+>  drivers/leds/Makefile                         |   1 +
+>  drivers/leds/leds-an30259a.c                  | 368 ++++++++++++++++++
+>  4 files changed, 422 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/leds-an30259a.txt
+>  create mode 100644 drivers/leds/leds-an30259a.c
+> 
 
-The efi page fault handler offers us two advantages:
-1. Recovers from potential hangs that could be caused by buggy firmware.
-2. Shout loud that the firmware is buggy and hence is not a kernel bug.
+Applied to the for-next branch of linux-leds.git.
 
-Tested-by: Bhupesh Sharma <bhsharma@redhat.com>
-Suggested-by: Matt Fleming <matt@codeblueprint.co.uk>
-Based-on-code-from: Ricardo Neri <ricardo.neri@intel.com>
-Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Cc: Al Stone <astone@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Bhupesh Sharma <bhsharma@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
----
- arch/x86/include/asm/efi.h              |  1 +
- arch/x86/mm/fault.c                     |  9 ++++
- arch/x86/platform/efi/quirks.c          | 78 +++++++++++++++++++++++++++++++++
- drivers/firmware/efi/runtime-wrappers.c |  8 ++++
- include/linux/efi.h                     |  8 +++-
- 5 files changed, 103 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/asm/efi.h b/arch/x86/include/asm/efi.h
-index cec5fae23eb3..c1a655f099ef 100644
---- a/arch/x86/include/asm/efi.h
-+++ b/arch/x86/include/asm/efi.h
-@@ -140,6 +140,7 @@ extern void __init efi_apply_memmap_quirks(void);
- extern int __init efi_reuse_config(u64 tables, int nr_tables);
- extern void efi_delete_dummy_variable(void);
- extern void efi_switch_mm(struct mm_struct *mm);
-+extern int efi_recover_from_page_fault(unsigned long phys_addr);
- 
- struct efi_setup_data {
- 	u64 fw_vendor;
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 2aafa6ab6103..cc2a2e3a4095 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -16,6 +16,7 @@
- #include <linux/prefetch.h>		/* prefetchw			*/
- #include <linux/context_tracking.h>	/* exception_enter(), ...	*/
- #include <linux/uaccess.h>		/* faulthandler_disabled()	*/
-+#include <linux/efi.h>			/* efi_recover_from_page_fault()*/
- 
- #include <asm/cpufeature.h>		/* boot_cpu_has, ...		*/
- #include <asm/traps.h>			/* dotraplinkage, ...		*/
-@@ -24,6 +25,7 @@
- #include <asm/vsyscall.h>		/* emulate_vsyscall		*/
- #include <asm/vm86.h>			/* struct vm86			*/
- #include <asm/mmu_context.h>		/* vma_pkey()			*/
-+#include <asm/efi.h>			/* efi_recover_from_page_fault()*/
- 
- #define CREATE_TRACE_POINTS
- #include <asm/trace/exceptions.h>
-@@ -790,6 +792,13 @@ no_context(struct pt_regs *regs, unsigned long error_code,
- 		return;
- 
- 	/*
-+	 * Buggy firmware could access regions which might page fault, try to
-+	 * recover from such faults.
-+	 */
-+	if (efi_recover_from_page_fault(address))
-+		return;
-+
-+	/*
- 	 * Oops. The kernel tried to access some bad page. We'll have to
- 	 * terminate things with extreme prejudice:
- 	 */
-diff --git a/arch/x86/platform/efi/quirks.c b/arch/x86/platform/efi/quirks.c
-index 844d31cb8a0c..3920ae8cab2a 100644
---- a/arch/x86/platform/efi/quirks.c
-+++ b/arch/x86/platform/efi/quirks.c
-@@ -16,6 +16,7 @@
- #include <asm/efi.h>
- #include <asm/uv/uv.h>
- #include <asm/cpu_device_id.h>
-+#include <asm/reboot.h>
- 
- #define EFI_MIN_RESERVE 5120
- 
-@@ -654,3 +655,80 @@ int efi_capsule_setup_info(struct capsule_info *cap_info, void *kbuff,
- }
- 
- #endif
-+
-+/*
-+ * If any access by any efi runtime service causes a page fault, then,
-+ * 1. If it's efi_reset_system(), reboot through BIOS.
-+ * 2. If any other efi runtime service, then
-+ *    a. Return error status to the efi caller process.
-+ *    b. Disable EFI Runtime Services forever and
-+ *    c. Freeze efi_rts_wq and schedule new process.
-+ *
-+ * @return: Returns 0, if the page fault is not handled. This function
-+ * will never return if the page fault is handled successfully.
-+ */
-+int efi_recover_from_page_fault(unsigned long phys_addr)
-+{
-+	if (!IS_ENABLED(CONFIG_X86_64))
-+		return 0;
-+
-+	/*
-+	 * Make sure that an efi runtime service caused the page fault.
-+	 * "efi_mm" cannot be used to check if the page fault had occurred
-+	 * in the firmware context because efi=old_map doesn't use efi_pgd.
-+	 */
-+	if (efi_rts_work.efi_rts_id == NONE)
-+		return 0;
-+
-+	/*
-+	 * Address range 0x0000 - 0x0fff is always mapped in the efi_pgd, so
-+	 * page faulting on these addresses isn't expected.
-+	 */
-+	if (phys_addr >= 0x0000 && phys_addr <= 0x0fff)
-+		return 0;
-+
-+	/*
-+	 * Print stack trace as it might be useful to know which EFI Runtime
-+	 * Service is buggy.
-+	 */
-+	WARN(1, FW_BUG "Page fault caused by firmware at PA: 0x%lx\n",
-+	     phys_addr);
-+
-+	/*
-+	 * Buggy efi_reset_system() is handled differently from other EFI
-+	 * Runtime Services as it doesn't use efi_rts_wq. Although,
-+	 * native_machine_emergency_restart() says that machine_real_restart()
-+	 * could fail, it's better not to compilcate this fault handler
-+	 * because this case occurs *very* rarely and hence could be improved
-+	 * on a need by basis.
-+	 */
-+	if (efi_rts_work.efi_rts_id == RESET_SYSTEM) {
-+		pr_info("efi_reset_system() buggy! Reboot through BIOS\n");
-+		machine_real_restart(MRR_BIOS);
-+		return 0;
-+	}
-+
-+	/*
-+	 * Before calling EFI Runtime Service, the kernel has switched the
-+	 * calling process to efi_mm. Hence, switch back to task_mm.
-+	 */
-+	arch_efi_call_virt_teardown();
-+
-+	/* Signal error status to the efi caller process */
-+	efi_rts_work.status = EFI_ABORTED;
-+	complete(&efi_rts_work.efi_rts_comp);
-+
-+	clear_bit(EFI_RUNTIME_SERVICES, &efi.flags);
-+	pr_info("Froze efi_rts_wq and disabled EFI Runtime Services\n");
-+
-+	/*
-+	 * Call schedule() in an infinite loop, so that any spurious wake ups
-+	 * will never run efi_rts_wq again.
-+	 */
-+	for (;;) {
-+		set_current_state(TASK_IDLE);
-+		schedule();
-+	}
-+
-+	return 0;
-+}
-diff --git a/drivers/firmware/efi/runtime-wrappers.c b/drivers/firmware/efi/runtime-wrappers.c
-index b18b2d864c2c..7455277a3b65 100644
---- a/drivers/firmware/efi/runtime-wrappers.c
-+++ b/drivers/firmware/efi/runtime-wrappers.c
-@@ -61,6 +61,11 @@ struct efi_runtime_work efi_rts_work;
- ({									\
- 	efi_rts_work.status = EFI_ABORTED;				\
- 									\
-+	if (!efi_enabled(EFI_RUNTIME_SERVICES)) {			\
-+		pr_info("Aborting! EFI Runtime Services disabled\n");	\
-+		goto exit;						\
-+	}								\
-+									\
- 	init_completion(&efi_rts_work.efi_rts_comp);			\
- 	INIT_WORK_ONSTACK(&efi_rts_work.work, efi_call_rts);		\
- 	efi_rts_work.arg1 = _arg1;					\
-@@ -79,6 +84,8 @@ struct efi_runtime_work efi_rts_work;
- 	else								\
- 		pr_err("Failed to queue work to efi_rts_wq.\n");	\
- 									\
-+exit:									\
-+	efi_rts_work.efi_rts_id = NONE;					\
- 	efi_rts_work.status;						\
- })
- 
-@@ -393,6 +400,7 @@ static void virt_efi_reset_system(int reset_type,
- 			"could not get exclusive access to the firmware\n");
- 		return;
- 	}
-+	efi_rts_work.efi_rts_id = RESET_SYSTEM;
- 	__efi_call_virt(reset_system, reset_type, status, data_size, data);
- 	up(&efi_runtime_lock);
- }
-diff --git a/include/linux/efi.h b/include/linux/efi.h
-index 855992b15269..dea9e7bb5208 100644
---- a/include/linux/efi.h
-+++ b/include/linux/efi.h
-@@ -1659,8 +1659,13 @@ struct linux_efi_tpm_eventlog {
- 
- extern int efi_tpm_eventlog_init(void);
- 
--/* efi_runtime_service() function identifiers */
-+/*
-+ * efi_runtime_service() function identifiers.
-+ * "NONE" is used by efi_recover_from_page_fault() to check if the page
-+ * fault happened while executing an efi runtime service.
-+ */
- enum efi_rts_ids {
-+	NONE,
- 	GET_TIME,
- 	SET_TIME,
- 	GET_WAKEUP_TIME,
-@@ -1670,6 +1675,7 @@ enum efi_rts_ids {
- 	SET_VARIABLE,
- 	QUERY_VARIABLE_INFO,
- 	GET_NEXT_HIGH_MONO_COUNT,
-+	RESET_SYSTEM,
- 	UPDATE_CAPSULE,
- 	QUERY_CAPSULE_CAPS,
- };
 -- 
-2.7.4
-
+Best regards,
+Jacek Anaszewski
