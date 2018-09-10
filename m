@@ -2,126 +2,137 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A380C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:43:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6117AC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:45:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EE162087E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:43:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EE162087E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
+	by mail.kernel.org (Postfix) with ESMTP id 2695520870
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:45:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2695520870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728183AbeIJPhC (ORCPT
+        id S1728135AbeIJPih (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 11:37:02 -0400
-Received: from relmlor4.renesas.com ([210.160.252.174]:37544 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727674AbeIJPhB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 11:37:01 -0400
-Received: from unknown (HELO relmlir4.idc.renesas.com) ([10.200.68.154])
-  by relmlie3.idc.renesas.com with ESMTP; 10 Sep 2018 19:43:33 +0900
-Received: from relmlii2.idc.renesas.com (relmlii2.idc.renesas.com [10.200.68.66])
-        by relmlir4.idc.renesas.com (Postfix) with ESMTP id 27CF881552;
-        Mon, 10 Sep 2018 19:43:33 +0900 (JST)
-X-IronPort-AV: E=Sophos;i="5.53,355,1531753200"; 
-   d="scan'208";a="292075066"
-Received: from unknown (HELO fabrizio-dev.ree.adwin.renesas.com) ([10.226.36.250])
-  by relmlii2.idc.renesas.com with ESMTP; 10 Sep 2018 19:43:28 +0900
-From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To:     Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-can@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 2/3] dt-bindings: can: rcar_can: Add r8a774a1 support
-Date:   Mon, 10 Sep 2018 11:43:14 +0100
-Message-Id: <1536576195-11520-3-git-send-email-fabrizio.castro@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1536576195-11520-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1536576195-11520-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Mon, 10 Sep 2018 11:38:37 -0400
+Received: from mga02.intel.com ([134.134.136.20]:32774 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727639AbeIJPih (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 11:38:37 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2018 03:45:10 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,355,1531810800"; 
+   d="scan'208";a="90399219"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga002.jf.intel.com with ESMTP; 10 Sep 2018 03:45:10 -0700
+Received: from [10.125.252.9] (abudanko-mobl.ccr.corp.intel.com [10.125.252.9])
+        by linux.intel.com (Postfix) with ESMTP id 6BD1A5803C2;
+        Mon, 10 Sep 2018 03:45:08 -0700 (PDT)
+Subject: Re: [PATCH v8 0/3]: perf: reduce data loss when profiling highly
+ parallel CPU bound workloads
+To:     Jiri Olsa <jolsa@redhat.com>, Ingo Molnar <mingo@kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <e1144f9d-b231-e42c-d698-4db0e62b71ff@linux.intel.com>
+ <20180910091841.GA4664@gmail.com> <20180910095909.GA15548@krava>
+ <20180910100303.GA101776@gmail.com> <20180910100841.GB15548@krava>
+ <20180910101325.GA5544@gmail.com> <20180910102328.GC15548@krava>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <de3896ff-8cd0-e811-7e6a-64ddd0401897@linux.intel.com>
+Date:   Mon, 10 Sep 2018 13:45:07 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180910102328.GC15548@krava>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document RZ/G2M (r8a774a1) SoC specific bindings.
+Hi,
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Chris Paterson <Chris.Paterson2@renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
----
-v1->v2:
-* dropped "renesas,rzg-gen2-can" and fixed "clocks" property description
-  as per Geert's comments.
+On 10.09.2018 13:23, Jiri Olsa wrote:
+> On Mon, Sep 10, 2018 at 12:13:25PM +0200, Ingo Molnar wrote:
+>>
+>> * Jiri Olsa <jolsa@redhat.com> wrote:
+>>
+>>> On Mon, Sep 10, 2018 at 12:03:03PM +0200, Ingo Molnar wrote:
+>>>>
+>>>> * Jiri Olsa <jolsa@redhat.com> wrote:
+>>>>
+>>>>>> Per-CPU threading the record session would have so many other advantages as well (scalability, 
+>>>>>> etc.).
+>>>>>>
+>>>>>> Jiri did per-CPU recording patches a couple of months ago, not sure how usable they are at the 
+>>>>>> moment?
+>>>>>
+>>>>> it's still usable, I can rebase it and post a branch pointer,
+>>>>> the problem is I haven't been able to find a case with a real
+>>>>> performance benefit yet.. ;-)
+>>>>>
+>>>>> perhaps because I haven't tried on server with really big cpu
+>>>>> numbers
+>>>>
+>>>> Maybe Alexey could pick up from there? Your concept looked fairly mature to me
+>>>> and I tried it on a big-CPU box back then and there were real improvements.
+>>>
+>>> too bad u did not share your results, it could have been already in ;-)
+>>
+>> Yeah :-/ Had a proper round of testing on my TODO, then the big box I'd have tested it on
+>> broke ...
+>>
+>>> let me rebase/repost once more and let's see
+>>
+>> Thanks!
+>>
+>>> I think we could benefit from both multiple threads event reading
+>>> and AIO writing for perf.data.. it could be merged together
+>>
+>> So instead of AIO writing perf.data, why not just turn perf.data into a directory structure 
+>> with per CPU files? That would allow all sorts of neat future performance features such as 
+> 
+> that's basically what the multiple-thread record patchset does
 
-This patch applies on top of next-20180910.
+Re-posting part of my answer here...
 
- Documentation/devicetree/bindings/net/can/rcar_can.txt | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+Please note that tool threads may contend, and actually do, with 
+application threads, under heavy load when all CPU cores are utilized,
+and this may alter performance profile.
 
-diff --git a/Documentation/devicetree/bindings/net/can/rcar_can.txt b/Documentation/devicetree/bindings/net/can/rcar_can.txt
-index 94a7f33..f3b160c 100644
---- a/Documentation/devicetree/bindings/net/can/rcar_can.txt
-+++ b/Documentation/devicetree/bindings/net/can/rcar_can.txt
-@@ -4,6 +4,7 @@ Renesas R-Car CAN controller Device Tree Bindings
- Required properties:
- - compatible: "renesas,can-r8a7743" if CAN controller is a part of R8A7743 SoC.
- 	      "renesas,can-r8a7745" if CAN controller is a part of R8A7745 SoC.
-+	      "renesas,can-r8a774a1" if CAN controller is a part of R8A774A1 SoC.
- 	      "renesas,can-r8a7778" if CAN controller is a part of R8A7778 SoC.
- 	      "renesas,can-r8a7779" if CAN controller is a part of R8A7779 SoC.
- 	      "renesas,can-r8a7790" if CAN controller is a part of R8A7790 SoC.
-@@ -16,15 +17,21 @@ Required properties:
- 	      "renesas,rcar-gen1-can" for a generic R-Car Gen1 compatible device.
- 	      "renesas,rcar-gen2-can" for a generic R-Car Gen2 or RZ/G1
- 	      compatible device.
--	      "renesas,rcar-gen3-can" for a generic R-Car Gen3 compatible device.
-+	      "renesas,rcar-gen3-can" for a generic R-Car Gen3 or RZ/G2
-+	      compatible device.
- 	      When compatible with the generic version, nodes must list the
- 	      SoC-specific version corresponding to the platform first
- 	      followed by the generic version.
- 
- - reg: physical base address and size of the R-Car CAN register map.
- - interrupts: interrupt specifier for the sole interrupt.
--- clocks: phandles and clock specifiers for 3 CAN clock inputs.
--- clock-names: 3 clock input name strings: "clkp1", "clkp2", "can_clk".
-+- clocks: phandles and clock specifiers for 2 CAN clock inputs for RZ/G2
-+	  devices.
-+	  phandles and clock specifiers for 3 CAN clock inputs for every other
-+	  SoC.
-+- clock-names: 2 clock input name strings for RZ/G2: "clkp1", "can_clk".
-+	       3 clock input name strings for every other SoC: "clkp1", "clkp2",
-+	       "can_clk".
- - pinctrl-0: pin control group to be used for this controller.
- - pinctrl-names: must be "default".
- 
-@@ -41,8 +48,9 @@ using the below properties:
- Optional properties:
- - renesas,can-clock-select: R-Car CAN Clock Source Select. Valid values are:
- 			    <0x0> (default) : Peripheral clock (clkp1)
--			    <0x1> : Peripheral clock (clkp2)
--			    <0x3> : Externally input clock
-+			    <0x1> : Peripheral clock (clkp2) (not supported by
-+				    RZ/G2 devices)
-+			    <0x3> : External input clock
- 
- Example
- -------
--- 
-2.7.4
+So this or that tool design is also a matter of proper system balancing
+when profiling so that the gathered performance data would be actual.
 
+Thanks,
+Alexey
+
+> 
+> jirka
+> 
+>> mmap() or splice() based zero-copy.
+>>
+>> User-space post-processing can then read the files and put them into global order - or use the 
+>> per CPU nature of them, which would be pretty useful too.
+>>
+>> Also note how well this works on NUMA as well, as the backing pages would be allocated in a 
+>> NUMA-local fashion.
+>>
+>> I.e. the whole per-CPU threading would enable such a separation of the tracing/event streams 
+>> and would allow true scalability.
+>>
+>> Thanks,
+>>
+>> 	Ingo
+> 
