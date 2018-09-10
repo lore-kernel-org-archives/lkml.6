@@ -2,206 +2,141 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03AB4C43143
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:50:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14029C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:50:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8BE5204FD
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:50:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8BE5204FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id B3D532086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:50:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="PHe2ve0J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3D532086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728180AbeIJOnx (ORCPT
+        id S1728199AbeIJOn5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 10:43:53 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:24439 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727261AbeIJOnw (ORCPT
+        Mon, 10 Sep 2018 10:43:57 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:32948 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727261AbeIJOn5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 10:43:52 -0400
-X-UUID: 99f2d3b374f34a66b41577f983e96248-20180910
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
-        (envelope-from <honghui.zhang@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1222931434; Mon, 10 Sep 2018 17:50:35 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Mon, 10 Sep 2018 17:50:31 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Mon, 10 Sep 2018 17:50:29 +0800
-From:   <honghui.zhang@mediatek.com>
-To:     <lorenzo.pieralisi@arm.com>, <marc.zyngier@arm.com>,
-        <bhelgaas@google.com>, <matthias.bgg@gmail.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
-        <ryder.lee@mediatek.com>
-CC:     <ulf.hansson@linaro.org>, <honghui.zhang@mediatek.com>,
-        <hongkun.cao@mediatek.com>, <youlin.pei@mediatek.com>,
-        <yong.wu@mediatek.com>, <yt.shen@mediatek.com>,
-        <sean.wang@mediatek.com>, <xinping.qian@mediatek.com>
-Subject: [PATCH v4 4/4] PCI: mediatek: Add loadable kernel module support
-Date:   Mon, 10 Sep 2018 17:50:23 +0800
-Message-ID: <1536573023-6720-5-git-send-email-honghui.zhang@mediatek.com>
-X-Mailer: git-send-email 2.6.4
-In-Reply-To: <1536573023-6720-1-git-send-email-honghui.zhang@mediatek.com>
-References: <1536573023-6720-1-git-send-email-honghui.zhang@mediatek.com>
+        Mon, 10 Sep 2018 10:43:57 -0400
+Received: by mail-oi0-f65.google.com with SMTP id 8-v6so38969346oip.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 02:50:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=okCZjwxpi5Smv3VWgJl/+SHcHoAleOu5aO+k645KKm4=;
+        b=PHe2ve0JuKk65iMxmkvAweaa9jH+oKwDtXuUaY6JtmQ6E++WZ3O6ntDQJ3Xf0kAvy/
+         l+GaTjtmxcl16Nfu1APaU3VbOhv+tzIBertKziq51TDbojsOtvNEAW1epxiW9GOczin/
+         EsRC+AWcgp6lwerTQElCKaB0BrkpEdLhgTsKo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=okCZjwxpi5Smv3VWgJl/+SHcHoAleOu5aO+k645KKm4=;
+        b=aqkSagzDJJlTvGAY1Q66TyPhPpFozuCu+jysW4BkY5XEsGWvPGCqzbPhWbjTbgoNPK
+         ZlRwCq78KaELeonTlNYme7edieWlwNiksx/FHJAhwmFzq5ia2c71dD+6kDhzlYT3dVji
+         OzqGxYS9RP6Copnl88ci2Oe/qmFOWG1p63UhWqZ0KmRfRto+MfctERpEpqbjomP0bJET
+         WANOyaF0M8VJODWh5Tyd+uBE8jMP7Hl4o9JppJFnFtZEHdCm+QY1X1axupB0OJLYU83V
+         hVNb4dQMiAepzQLCUUs+mqBwRccbwGcyPrawTEIRTwikSSFZu7CWoJw4Efxo8UxUwtiQ
+         SWCg==
+X-Gm-Message-State: APzg51D/8aLdkb4Bt90pcg6oruFNfa3jM5oUzofYA2Oqvhl/k/xNx9xZ
+        mBtP0roc3FwH4ow68kO3Xtar/CSfuHthmPL1yMsD6w==
+X-Google-Smtp-Source: ANB0VdaSBifKiK7JS8X/BT+uX8e1aR5R/YcJzEcQOb9fpjWiIJG7DIijbyHLaQaEHI0INa724Q4EsScBT3SwJMdafeQ=
+X-Received: by 2002:a54:4017:: with SMTP id x23-v6mr8462856oie.25.1536573044440;
+ Mon, 10 Sep 2018 02:50:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Received: by 2002:a9d:24a3:0:0:0:0:0 with HTTP; Mon, 10 Sep 2018 02:50:43
+ -0700 (PDT)
+X-Originating-IP: [94.21.245.65]
+In-Reply-To: <CACT4Y+bhGKrHk_BB4g9nDtRYD9VaaPyBTRxTo98r1BufAh6Z8A@mail.gmail.com>
+References: <00000000000024df4605757495a8@google.com> <CAJfpegsqsESUft-azOkirq9363nUXM=Sx4YMX6XVQxquEbjS7Q@mail.gmail.com>
+ <CACT4Y+bhGKrHk_BB4g9nDtRYD9VaaPyBTRxTo98r1BufAh6Z8A@mail.gmail.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 10 Sep 2018 11:50:43 +0200
+Message-ID: <CAJfpegs72smmBfLdAwaOgQsLGsfdvWATv9BaNVvb0o4KdY3shA@mail.gmail.com>
+Subject: Re: possible deadlock in free_ioctx_users
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     syzbot <syzbot+d86c4426a01f60feddc7@syzkaller.appspotmail.com>,
+        bcrl <bcrl@kvack.org>, linux-aio <linux-aio@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Honghui Zhang <honghui.zhang@mediatek.com>
+On Mon, Sep 10, 2018 at 11:43 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
+> On Mon, Sep 10, 2018 at 11:28 AM, Miklos Szeredi <miklos@szeredi.hu> wrote:
+>> On Sun, Sep 9, 2018 at 8:41 PM, syzbot
+>> <syzbot+d86c4426a01f60feddc7@syzkaller.appspotmail.com> wrote:
+>>> Hello,
+>>>
+>>> syzbot found the following crash on:
+>>>
+>>> HEAD commit:    f8f65382c98a Merge tag 'for-linus' of git://git.kernel.org..
+>>> git tree:       upstream
+>>> console output: https://syzkaller.appspot.com/x/log.txt?x=113260ae400000
+>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=8f59875069d721b6
+>>> dashboard link: https://syzkaller.appspot.com/bug?extid=d86c4426a01f60feddc7
+>>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+>>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=120baa9e400000
+>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13979cbe400000
+>>>
+>>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>>> Reported-by: syzbot+d86c4426a01f60feddc7@syzkaller.appspotmail.com
+>>>
+>>> random: sshd: uninitialized urandom read (32 bytes read)
+>>> random: sshd: uninitialized urandom read (32 bytes read)
+>>> random: sshd: uninitialized urandom read (32 bytes read)
+>>>
+>>> ========================================================
+>>> WARNING: possible irq lock inversion dependency detected
+>>> 4.19.0-rc2+ #229 Not tainted
+>>> --------------------------------------------------------
+>>> swapper/0/0 just changed the state of lock:
+>>> 00000000c02bddef (&(&ctx->ctx_lock)->rlock){..-.}, at: spin_lock_irq
+>>> include/linux/spinlock.h:354 [inline]
+>>> 00000000c02bddef (&(&ctx->ctx_lock)->rlock){..-.}, at:
+>>> free_ioctx_users+0xbc/0x710 fs/aio.c:603
+>>> but this lock took another, SOFTIRQ-unsafe lock in the past:
+>>>  (&fiq->waitq){+.+.}
+>>>
+>>>
+>>> and interrupts could create inverse lock ordering between them.
+>>>
+>>>
+>>> other info that might help us debug this:
+>>>  Possible interrupt unsafe locking scenario:
+>>>
+>>>        CPU0                    CPU1
+>>>        ----                    ----
+>>>   lock(&fiq->waitq);
+>>>                                local_irq_disable();
+>>>                                lock(&(&ctx->ctx_lock)->rlock);
+>>>                                lock(&fiq->waitq);
+>>>   <Interrupt>
+>>>     lock(&(&ctx->ctx_lock)->rlock);
+>>
+>> Fuse device doesn't support AIO ops.  So false positive, AFAICS.
+>
+> Hi Miklos,
+>
+> We still need to annotate this. How?
 
-Implement remove callback function for Mediatek PCIe driver to add
-loadable kernel module support.
+Good question.
 
-Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
-Reviewed-by: Ryder Lee <ryder.lee@mediatek.com>
----
- drivers/pci/controller/Kconfig         |  2 +-
- drivers/pci/controller/pcie-mediatek.c | 60 +++++++++++++++++++++++++++++++---
- 2 files changed, 57 insertions(+), 5 deletions(-)
+Isn't lockdep assuming too much here?  It hasn't shown that that
+ctx_lock instance was actually called from interrupt context, has it?
 
-diff --git a/drivers/pci/controller/Kconfig b/drivers/pci/controller/Kconfig
-index 028b287..465790f 100644
---- a/drivers/pci/controller/Kconfig
-+++ b/drivers/pci/controller/Kconfig
-@@ -231,7 +231,7 @@ config PCIE_ROCKCHIP_EP
- 	  available to support GEN2 with 4 slots.
- 
- config PCIE_MEDIATEK
--	bool "MediaTek PCIe controller"
-+	tristate "MediaTek PCIe controller"
- 	depends on ARCH_MEDIATEK || COMPILE_TEST
- 	depends on OF
- 	depends on PCI_MSI_IRQ_DOMAIN
-diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
-index bcc77bc..9d54fc9 100644
---- a/drivers/pci/controller/pcie-mediatek.c
-+++ b/drivers/pci/controller/pcie-mediatek.c
-@@ -15,6 +15,7 @@
- #include <linux/irqdomain.h>
- #include <linux/kernel.h>
- #include <linux/msi.h>
-+#include <linux/module.h>
- #include <linux/of_address.h>
- #include <linux/of_pci.h>
- #include <linux/of_platform.h>
-@@ -184,6 +185,7 @@ struct mtk_pcie_port {
- 	struct phy *phy;
- 	u32 lane;
- 	u32 slot;
-+	int irq;
- 	struct irq_domain *irq_domain;
- 	struct irq_domain *inner_domain;
- 	struct irq_domain *msi_domain;
-@@ -538,6 +540,27 @@ static void mtk_pcie_enable_msi(struct mtk_pcie_port *port)
- 	writel(val, port->base + PCIE_INT_MASK);
- }
- 
-+static void mtk_pcie_irq_teardown(struct mtk_pcie *pcie)
-+{
-+	struct mtk_pcie_port *port, *tmp;
-+
-+	list_for_each_entry_safe(port, tmp, &pcie->ports, list) {
-+		irq_set_chained_handler_and_data(port->irq, NULL, NULL);
-+
-+		if (port->irq_domain)
-+			irq_domain_remove(port->irq_domain);
-+
-+		if (IS_ENABLED(CONFIG_PCI_MSI)) {
-+			if (port->msi_domain)
-+				irq_domain_remove(port->msi_domain);
-+			if (port->inner_domain)
-+				irq_domain_remove(port->inner_domain);
-+		}
-+
-+		irq_dispose_mapping(port->irq);
-+	}
-+}
-+
- static int mtk_pcie_intx_map(struct irq_domain *domain, unsigned int irq,
- 			     irq_hw_number_t hwirq)
- {
-@@ -628,7 +651,7 @@ static int mtk_pcie_setup_irq(struct mtk_pcie_port *port,
- 	struct mtk_pcie *pcie = port->pcie;
- 	struct device *dev = pcie->dev;
- 	struct platform_device *pdev = to_platform_device(dev);
--	int err, irq;
-+	int err;
- 
- 	err = mtk_pcie_init_irq_domain(port, node);
- 	if (err) {
-@@ -636,8 +659,9 @@ static int mtk_pcie_setup_irq(struct mtk_pcie_port *port,
- 		return err;
- 	}
- 
--	irq = platform_get_irq(pdev, port->slot);
--	irq_set_chained_handler_and_data(irq, mtk_pcie_intr_handler, port);
-+	port->irq = platform_get_irq(pdev, port->slot);
-+	irq_set_chained_handler_and_data(port->irq,
-+					 mtk_pcie_intr_handler, port);
- 
- 	return 0;
- }
-@@ -1199,6 +1223,32 @@ static int mtk_pcie_probe(struct platform_device *pdev)
- 	return err;
- }
- 
-+
-+static void mtk_pcie_free_resources(struct mtk_pcie *pcie)
-+{
-+	struct pci_host_bridge *host = pci_host_bridge_from_priv(pcie);
-+	struct list_head *windows = &host->windows;
-+
-+	pci_unmap_iospace(&pcie->pio);
-+	pci_free_resource_list(windows);
-+}
-+
-+static int mtk_pcie_remove(struct platform_device *pdev)
-+{
-+	struct mtk_pcie *pcie = platform_get_drvdata(pdev);
-+	struct pci_host_bridge *host = pci_host_bridge_from_priv(pcie);
-+
-+	pci_stop_root_bus(host->bus);
-+	pci_remove_root_bus(host->bus);
-+	mtk_pcie_free_resources(pcie);
-+
-+	mtk_pcie_irq_teardown(pcie);
-+
-+	mtk_pcie_put_resources(pcie);
-+
-+	return 0;
-+}
-+
- static int __maybe_unused mtk_pcie_suspend_noirq(struct device *dev)
- {
- 	struct mtk_pcie *pcie = dev_get_drvdata(dev);
-@@ -1286,6 +1336,7 @@ static const struct of_device_id mtk_pcie_ids[] = {
- 
- static struct platform_driver mtk_pcie_driver = {
- 	.probe = mtk_pcie_probe,
-+	.remove = mtk_pcie_remove,
- 	.driver = {
- 		.name = "mtk-pcie",
- 		.of_match_table = mtk_pcie_ids,
-@@ -1293,4 +1344,5 @@ static struct platform_driver mtk_pcie_driver = {
- 		.pm = &mtk_pcie_pm_ops,
- 	},
- };
--builtin_platform_driver(mtk_pcie_driver);
-+module_platform_driver(mtk_pcie_driver);
-+MODULE_LICENSE("GPL v2");
--- 
-2.6.4
-
+Thanks,
+Miklos
