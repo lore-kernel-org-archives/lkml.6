@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 571B4C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:04:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85DBDC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:05:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B22020870
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:04:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B22020870
+	by mail.kernel.org (Postfix) with ESMTP id 3E74420833
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:05:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E74420833
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728182AbeIJO5j (ORCPT
+        id S1728186AbeIJO6n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 10:57:39 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:45423 "EHLO
+        Mon, 10 Sep 2018 10:58:43 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:57467 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727311AbeIJO5j (ORCPT
+        with ESMTP id S1726907AbeIJO6n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 10:57:39 -0400
+        Mon, 10 Sep 2018 10:58:43 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8AA3vuA1804990
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8AA52RF1806609
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 10 Sep 2018 03:03:57 -0700
+        Mon, 10 Sep 2018 03:05:02 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8AA3uqr1804987;
-        Mon, 10 Sep 2018 03:03:56 -0700
-Date:   Mon, 10 Sep 2018 03:03:56 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8AA52rh1806606;
+        Mon, 10 Sep 2018 03:05:02 -0700
+Date:   Mon, 10 Sep 2018 03:05:02 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jacek Tomaka <tipbot@zytor.com>
-Message-ID: <tip-16160c1946b702dcfa95ef63389a56deb2f1c7cb@git.kernel.org>
-Cc:     jacek.tomaka@poczta.fm, mingo@kernel.org, peterz@infradead.org,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        torvalds@linux-foundation.org, hpa@zytor.com
-Reply-To: linux-kernel@vger.kernel.org, peterz@infradead.org,
-          mingo@kernel.org, hpa@zytor.com, torvalds@linux-foundation.org,
-          tglx@linutronix.de, jacek.tomaka@poczta.fm
-In-Reply-To: <20180802013830.10600-1-jacekt@dugeo.com>
-References: <20180802013830.10600-1-jacekt@dugeo.com>
+From:   tip-bot for Thomas Hellstrom <tipbot@zytor.com>
+Message-ID: <tip-e13e2366d8415e029fe96a62502955083e272cef@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org, hpa@zytor.com,
+        tglx@linutronix.de, thellstrom@vmware.com, peterz@infradead.org,
+        torvalds@linux-foundation.org
+Reply-To: hpa@zytor.com, tglx@linutronix.de, mingo@kernel.org,
+          linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+          peterz@infradead.org, thellstrom@vmware.com
+In-Reply-To: <20180903140708.2401-1-thellstrom@vmware.com>
+References: <20180903140708.2401-1-thellstrom@vmware.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf/x86/intel: Add support/quirk for the
- MISPREDICT bit on Knights Landing CPUs
-Git-Commit-ID: 16160c1946b702dcfa95ef63389a56deb2f1c7cb
+Subject: [tip:locking/core] locking/mutex: Fix mutex debug call and ww_mutex
+ documentation
+Git-Commit-ID: e13e2366d8415e029fe96a62502955083e272cef
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -59,75 +59,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  16160c1946b702dcfa95ef63389a56deb2f1c7cb
-Gitweb:     https://git.kernel.org/tip/16160c1946b702dcfa95ef63389a56deb2f1c7cb
-Author:     Jacek Tomaka <jacek.tomaka@poczta.fm>
-AuthorDate: Thu, 2 Aug 2018 09:38:30 +0800
+Commit-ID:  e13e2366d8415e029fe96a62502955083e272cef
+Gitweb:     https://git.kernel.org/tip/e13e2366d8415e029fe96a62502955083e272cef
+Author:     Thomas Hellstrom <thellstrom@vmware.com>
+AuthorDate: Mon, 3 Sep 2018 16:07:08 +0200
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 10 Sep 2018 10:03:01 +0200
+CommitDate: Mon, 10 Sep 2018 10:05:10 +0200
 
-perf/x86/intel: Add support/quirk for the MISPREDICT bit on Knights Landing CPUs
+locking/mutex: Fix mutex debug call and ww_mutex documentation
 
-Problem: perf did not show branch predicted/mispredicted bit in brstack.
+The following commit:
 
-Output of perf -F brstack for profile collected
+  08295b3b5bee ("Implement an algorithm choice for Wound-Wait mutexes")
 
-Before:
+introduced a reference in the documentation to a function that was
+removed in an earlier commit.
 
- 0x4fdbcd/0x4fdc03/-/-/-/0
- 0x45f4c1/0x4fdba0/-/-/-/0
- 0x45f544/0x45f4bb/-/-/-/0
- 0x45f555/0x45f53c/-/-/-/0
- 0x7f66901cc24b/0x45f555/-/-/-/0
- 0x7f66901cc22e/0x7f66901cc23d/-/-/-/0
- 0x7f66901cc1ff/0x7f66901cc20f/-/-/-/0
- 0x7f66901cc1e8/0x7f66901cc1fc/-/-/-/0
+It also forgot to remove a call to debug_mutex_add_waiter() which is now
+unconditionally called by __mutex_add_waiter().
 
-After:
+Fix those bugs.
 
- 0x4fdbcd/0x4fdc03/P/-/-/0
- 0x45f4c1/0x4fdba0/P/-/-/0
- 0x45f544/0x45f4bb/P/-/-/0
- 0x45f555/0x45f53c/P/-/-/0
- 0x7f66901cc24b/0x45f555/P/-/-/0
- 0x7f66901cc22e/0x7f66901cc23d/P/-/-/0
- 0x7f66901cc1ff/0x7f66901cc20f/P/-/-/0
- 0x7f66901cc1e8/0x7f66901cc1fc/P/-/-/0
-
-Cause:
-
-As mentioned in Software Development Manual vol 3, 17.4.8.1,
-IA32_PERF_CAPABILITIES[5:0] indicates the format of the address that is
-stored in the LBR stack. Knights Landing reports 1 (LBR_FORMAT_LIP) as
-its format. Despite that, registers containing FROM address of the branch,
-do have MISPREDICT bit but because of the format indicated in
-IA32_PERF_CAPABILITIES[5:0], LBR did not read MISPREDICT bit.
-
-Solution:
-
-Teach LBR about above Knights Landing quirk and make it read MISPREDICT bit.
-
-Signed-off-by: Jacek Tomaka <jacek.tomaka@poczta.fm>
+Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20180802013830.10600-1-jacekt@dugeo.com
+Cc: dri-devel@lists.freedesktop.org
+Fixes: 08295b3b5bee ("Implement an algorithm choice for Wound-Wait mutexes")
+Link: http://lkml.kernel.org/r/20180903140708.2401-1-thellstrom@vmware.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/events/intel/lbr.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ kernel/locking/mutex.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/arch/x86/events/intel/lbr.c b/arch/x86/events/intel/lbr.c
-index f3e006bed9a7..c88ed39582a1 100644
---- a/arch/x86/events/intel/lbr.c
-+++ b/arch/x86/events/intel/lbr.c
-@@ -1272,4 +1272,8 @@ void intel_pmu_lbr_init_knl(void)
+diff --git a/kernel/locking/mutex.c b/kernel/locking/mutex.c
+index 1a81a1257b3f..3f8a35104285 100644
+--- a/kernel/locking/mutex.c
++++ b/kernel/locking/mutex.c
+@@ -389,7 +389,7 @@ static bool __ww_mutex_wound(struct mutex *lock,
+ 		/*
+ 		 * wake_up_process() paired with set_current_state()
+ 		 * inserts sufficient barriers to make sure @owner either sees
+-		 * it's wounded in __ww_mutex_lock_check_stamp() or has a
++		 * it's wounded in __ww_mutex_check_kill() or has a
+ 		 * wakeup pending to re-read the wounded state.
+ 		 */
+ 		if (owner != current)
+@@ -946,7 +946,6 @@ __mutex_lock_common(struct mutex *lock, long state, unsigned int subclass,
+ 	}
  
- 	x86_pmu.lbr_sel_mask = LBR_SEL_MASK;
- 	x86_pmu.lbr_sel_map  = snb_lbr_sel_map;
-+
-+	/* Knights Landing does have MISPREDICT bit */
-+	if (x86_pmu.intel_cap.lbr_format == LBR_FORMAT_LIP)
-+		x86_pmu.intel_cap.lbr_format = LBR_FORMAT_EIP_FLAGS;
- }
+ 	debug_mutex_lock_common(lock, &waiter);
+-	debug_mutex_add_waiter(lock, &waiter, current);
+ 
+ 	lock_contended(&lock->dep_map, ip);
+ 
