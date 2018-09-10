@@ -1,118 +1,104 @@
 Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.0 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=no
+X-Spam-Level: 
+X-Spam-Status: No, score=0.2 required=3.0 tests=FROM_WORDY,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4717C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 12:24:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1495C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 12:24:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6033120866
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 12:24:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SOHx8U+n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6033120866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6085620866
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 12:24:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6085620866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=diasemi.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728440AbeIJRRu (ORCPT
+        id S1728548AbeIJRSS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 13:17:50 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:38234 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727727AbeIJRRu (ORCPT
+        Mon, 10 Sep 2018 13:18:18 -0400
+Received: from mail1.bemta25.messagelabs.com ([195.245.230.67]:12765 "EHLO
+        mail1.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727727AbeIJRSS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 13:17:50 -0400
-Received: by mail-wr1-f66.google.com with SMTP id w11-v6so21717452wrc.5
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 05:24:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=xGEQtVUL5KUj7KumBs5QrkZmdZt0IcLI30ieZY3U8co=;
-        b=SOHx8U+ncgs3/maNgGDqvBT9fb8ATo4OYkPGCP4op/pUP1hOlX9Sf/QCi3I3q96VSc
-         0O6mJU1f7wpN1Xy5fuPFtIwhbnEW6kAvmQmGzdPqtQKPNxLYXAqwZUvbvsI/+jwSXIcO
-         nU5hF5iFIGQ0EH4VtP0oTVvM6s+QDIgxJl1AUEZ6txlxRNbCmXgGcNLFKw1K68xwajef
-         V23oM0eWLFA0n9/wB/MKua/yoS4Dh2loFklKQYnw2jnu6DUV+bHyXTno9+KsYyF3j2R5
-         fBihylw6ntuDaXKptI3dUDFjKXQ0Flz/HLXH99UgVS1oprXKr7VMazCRXVaeclJEsk7n
-         46dA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xGEQtVUL5KUj7KumBs5QrkZmdZt0IcLI30ieZY3U8co=;
-        b=Wdwqsv6QzSBX+H6T+VVZ3rfEQCirneEqdVuFpexAHAa0eJfYmNsfeNHtOk4/Kqvuay
-         NDfZxJeOvvCjcXMKfjPfKkH1Tldv/wHybGmfVMkT/7uvnXNun5XVAtP21nCDAsPd5fb2
-         SEqdzq49Y3+lSGJEDSKUytm6/3F0Cwro7XvwPIDsrymmbVOQ/BbA6o2LGUZRG7y++Rgb
-         i5ZPaROw99tLVCHI9X/AX0oc7sJjkHfxGFjKehpJMb1kP2d6woHB9wAmMj1Bk79Yl1Oc
-         UgST6/tOhfxJt+VfAoENXML8BkUa9OrFYROWhqYlhdjz9ardSJDw5TuFlR5k4n5doim+
-         Egbw==
-X-Gm-Message-State: APzg51CXZwabRs+EgIx6rlUn3Z2TFmx+t3piUfnaHQQ/8bXi3xxTi3UL
-        ip1qIjd/FJo/WZkB8cYD1nY=
-X-Google-Smtp-Source: ANB0VdbXgS8PF5zTlJLms+/7Ffyw7OnWABx8S2YCZi9M6RvKsBOv0nIxMvb3ssrqQCiQXsQGZN/jCg==
-X-Received: by 2002:adf:eb87:: with SMTP id t7-v6mr15353595wrn.123.1536582239534;
-        Mon, 10 Sep 2018 05:23:59 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id x125-v6sm14734048wmg.27.2018.09.10.05.23.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 10 Sep 2018 05:23:58 -0700 (PDT)
-Date:   Mon, 10 Sep 2018 14:23:56 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -tip 5/5] kprobes: Don't call BUG_ON if there is a kprobe
- in use on free list
-Message-ID: <20180910122356.GA70908@gmail.com>
-References: <153484425558.5385.1484910606397784412.stgit@devbox>
- <153484439807.5385.8446592533176849097.stgit@devbox>
+        Mon, 10 Sep 2018 13:18:18 -0400
+Received: from [46.226.52.200] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
+        by server-3.bemta.az-b.eu-west-1.aws.symcld.net id 7B/F0-28243-A72669B5; Mon, 10 Sep 2018 12:24:26 +0000
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuplleJIrShJLcpLzFFi42KJ27nUWLcyaVq
+  0QctUc4v5R86xWjQvXs9m8eb4dCaLrtU7WSyuHetlsri8aw6bxaJlrcwWTxaeYbJYev0ik0Xr
+  3iPsDlwea+atYfTYtKqTzWPeyUCP/XPXsHtsfLeDyeP9vqtsHju/N7B7fN4kF8ARxZqZl5Rfk
+  cCacfnZTuaC++wVO7+8Z2pgnMHWxcjFISSwnlFi9bNW1i5GDiCnQmLLMoEuRk4OXgE3iWPLHr
+  CD2GwCFhKTTzxgA7FZBFQlzmx8ywRiCwt4S1w4fpkRZI6IwCQmiRv3nrKCJJgFGhgllu5wgxg
+  kKHFy5hMWiLiExMEXL5hBbCEBA4nTCxrB4hIC9hLT319lBrlBQkBfovFYLETYUOL7rG9QJeYS
+  M1fPY5nAyD8LydRZSKYuYGRaxWiRVJSZnlGSm5iZo2toYKBraGika2hprmtkaqiXWKWbpJdaq
+  lueWlyiC+SWF+sVV+Ym56To5aWWbGIERkpKwdHfOxgnLEo/xCjJwaQkyiuhOC1aiC8pP6UyI7
+  E4I76oNCe1+BCjDAeHkgSvXCJQTrAoNT21Ii0zBxizMGkJDh4lEV4lkDRvcUFibnFmOkTqFKM
+  xx5/3Uycxc+zrnjaJWYglLz8vVUqc924CUKkASGlGaR7cIFgqucQoKyXMy8jAwCDEU5BalJtZ
+  gir/ilGcg1FJmFcVZCFPZl4J3L5XQKcwAZ2y7vwUkFNKEhFSUg2MVTrxsjYh/7wbpNdNmHHIn
+  uHJP+lHl+80H42a7RdnmNSev+6G/dbYvPOuwj7Lz124yKyy9k3dv6l3t7Acb5hbbsHIrK251/
+  Ydc/8WzQATp74Zb5Umch9zChGZM1/qlP/OGdZKr+6eKm+RkU7iMWQ+OStN3f16/8TpJxQepXA
+  tyak9pXspRipMiaU4I9FQi7moOBEAXbJYwiADAAA=
+X-Env-Sender: Adam.Thomson.Opensource@diasemi.com
+X-Msg-Ref: server-12.tower-288.messagelabs.com!1536582265!7720496!1
+X-Originating-IP: [94.185.165.51]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.9.15; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 31042 invoked from network); 10 Sep 2018 12:24:25 -0000
+Received: from mailrelay2.diasemi.com (HELO sw-ex-cashub01.diasemi.com) (94.185.165.51)
+  by server-12.tower-288.messagelabs.com with AES128-SHA encrypted SMTP; 10 Sep 2018 12:24:25 -0000
+Received: from swsrvapps-01.diasemi.com (10.20.28.141) by
+ SW-EX-CASHUB01.diasemi.com (10.20.16.140) with Microsoft SMTP Server id
+ 14.3.382.0; Mon, 10 Sep 2018 13:24:24 +0100
+Received: by swsrvapps-01.diasemi.com (Postfix, from userid 22379)      id
+ 051023FA99; Mon, 10 Sep 2018 13:24:25 +0100 (BST)
+Message-ID: <cover.1536580772.git.Adam.Thomson.Opensource@diasemi.com>
+From:   Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Date:   Mon, 10 Sep 2018 13:24:25 +0100
+Subject: [PATCH v2 0/3] dt-bindings: connector: Add USB-PD PPS APDO support
+To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Hans de Goede <hdegoede@redhat.com>, Li Jun <jun.li@nxp.com>
+CC:     <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <support.opensource@diasemi.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <153484439807.5385.8446592533176849097.stgit@devbox>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-KSE-AttachmentFiltering-Interceptor-Info: protection disabled
+X-KSE-ServerInfo: sw-ex-cashub01.diasemi.com, 9
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 10/09/2018 11:14:00
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Message-ID: <20180910122425.RDEZbsypI3lxdhmkX1UtU7HUKi9qs6wZ4cA_6PXSOOY@z>
 
+This patch set adds DT bindings support for PPS APDOs, and updates the FUSB302
+to use the generic connector bindings allowing for PPS support in this Type-C
+port controller. Existing FUSB302 device specific bindings still work, but
+are now deprecated in favour of the generic connector approach.
 
-* Masami Hiramatsu <mhiramat@kernel.org> wrote:
+Changes in v2:
+	- Added Reviewed-by tags to patches
+	- Rebase code against latest usb-next branch (v4.19-rc2)
 
-> Instead of calling BUG_ON, if we find a kprobe in use on free kprobe
-> list, just remove it from the list and keep it on kprobe hash list
-> as same as other in-use kprobes.
-> 
-> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> ---
->  kernel/kprobes.c |    8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-> index 63c342e5e6c3..e3420364b415 100644
-> --- a/kernel/kprobes.c
-> +++ b/kernel/kprobes.c
-> @@ -546,8 +546,14 @@ static void do_free_cleaned_kprobes(void)
->  	struct optimized_kprobe *op, *tmp;
->  
->  	list_for_each_entry_safe(op, tmp, &freeing_list, list) {
-> -		BUG_ON(!kprobe_unused(&op->kp));
->  		list_del_init(&op->list);
-> +		if (!kprobe_unused(&op->kp)) {
-> +			/*
-> +			 * This must not happen, but if there is a kprobe
-> +			 * still in use, keep it on kprobes hash list.
-> +			 */
-> +			continue;
+Adam Thomson (3):
+  dt-bindings: connector: Add support for USB-PD PPS APDOs to bindings
+  dt-bindings: usb: fusb302: Use usb-connector bindings for
+    configuration
+  usb: typec: fusb302: Populate tcpc fwnode for TCPM property handling
 
-If this is an 'impossible' code path then I think it would make sense to add a WARN_ON_ONCE() 
-here.
+ .../bindings/connector/usb-connector.txt           |  8 +++---
+ .../devicetree/bindings/usb/fcs,fusb302.txt        | 32 +++++++++++++++++-----
+ drivers/usb/typec/fusb302/fusb302.c                |  3 ++
+ include/dt-bindings/usb/pd.h                       | 26 ++++++++++++++++++
+ 4 files changed, 58 insertions(+), 11 deletions(-)
 
-Thanks,
+-- 
+1.9.1
 
-	Ingo
