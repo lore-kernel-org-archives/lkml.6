@@ -2,110 +2,102 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 704E2C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:45:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1253DC4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:45:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 174C72087F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:45:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OjK/lWa5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 174C72087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id C794620870
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:45:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C794620870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728438AbeIJUkO (ORCPT
+        id S1728523AbeIJUkT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 16:40:14 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:46740 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727411AbeIJUkO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 16:40:14 -0400
-Received: by mail-wr1-f66.google.com with SMTP id a108-v6so22442454wrc.13
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 08:45:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=e5aoVLMQDvRZDoIZ3wZdjRwe3tZxPt0/pw8UN3pLQRc=;
-        b=OjK/lWa51MLlBr8khrJIRqWOH3+/fjM+x5x08QkEz5cGHFhJjAa6W2eARKuDD2gsNI
-         A73CCKI/doNW+kdaESbIqyB45FrERgKuqWT+ECDL4m3xmP+CN8n30hW2ZJjbNE5mhY++
-         /wuKAV8sWUWuLlOmwFWeOBECtACzfvY6itEdw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=e5aoVLMQDvRZDoIZ3wZdjRwe3tZxPt0/pw8UN3pLQRc=;
-        b=FKkqffjHTHw+Szi7RMrq5S/wun7nBKwb5byJtpIHPrBuY1OvtyylFuywniBssbGv9I
-         h2mP+hVPYWYJkFuACX1c4KiSVcPMonNFx0du/UScbpYcVGHLikCoxIgrsWC/iKQk2pOQ
-         YnBs/WkIM54iBRyv4+Jzp2UXogwVGyZYFVGUnM7/Tlp996g3bZRq/9VZ8EKudsd0Yojy
-         F1BoSAAxZ76d6x1NjkcfiDSskKa0xlq7tV8Ecu8Ofo9xBOMAgxAURz0B0/LSFgvs7oFj
-         VjCi4kIimNu52c8+qSRlS56z1xQWi08CNPChZg/CU8k4kHIRnCeEEicoDN+yqrnP8nXR
-         aDYQ==
-X-Gm-Message-State: APzg51AgAuT5zu9ZYmAKRcWHYQX3t1Vg93PujUbCfpDjIghRZ1Vkkop4
-        jjO1L2Fe1Gt6G6YsT5MdssMNFw==
-X-Google-Smtp-Source: ANB0VdZKL6N8jNFSlA1eod/TektolDPzqMizrW45AueKEpM0xcfjZEXnVxZue2xP76vtcwxO8eWsWg==
-X-Received: by 2002:a5d:434c:: with SMTP id u12-v6mr15269461wrr.189.1536594332188;
-        Mon, 10 Sep 2018 08:45:32 -0700 (PDT)
-Received: from dell ([2.27.167.7])
-        by smtp.gmail.com with ESMTPSA id x16-v6sm11426216wro.84.2018.09.10.08.45.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 10 Sep 2018 08:45:31 -0700 (PDT)
-Date:   Mon, 10 Sep 2018 16:45:29 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc:     tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
-        patches@opensource.cirrus.com, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Immutable branch between MFD and IRQChip due for the
- v4.20 merge window
-Message-ID: <20180910154529.GF28860@dell>
-References: <20180830132005.19500-1-rf@opensource.cirrus.com>
- <20180910154424.GE28860@dell>
+        Mon, 10 Sep 2018 16:40:19 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59776 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728369AbeIJUkS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 16:40:18 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D8D5B18A;
+        Mon, 10 Sep 2018 08:45:37 -0700 (PDT)
+Received: from armageddon.cambridge.arm.com (armageddon.emea.arm.com [10.4.13.16])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6100D3F557;
+        Mon, 10 Sep 2018 08:45:36 -0700 (PDT)
+Date:   Mon, 10 Sep 2018 16:45:33 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Suzuki K. Poulose" <suzuki.poulose@arm.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 2/4] arm64: cpufeature: add feature for CRC32 instructions
+Message-ID: <20180910154533.3yxh7iooqbbsp7nc@armageddon.cambridge.arm.com>
+References: <20180827110245.14812-1-ard.biesheuvel@linaro.org>
+ <20180827110245.14812-3-ard.biesheuvel@linaro.org>
+ <20180828170135.GC19825@arm.com>
+ <CAKv+Gu-tM9aKZJ3ppt9yLVP_V5YA_yN8D1j_-NtM+qQCdnc6JA@mail.gmail.com>
+ <20180904031855.mjpdndeh57lqziuk@gondor.apana.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180910154424.GE28860@dell>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180904031855.mjpdndeh57lqziuk@gondor.apana.org.au>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Resending with correct subject line this time]
+On Tue, Sep 04, 2018 at 11:18:55AM +0800, Herbert Xu wrote:
+> On Tue, Aug 28, 2018 at 08:43:35PM +0200, Ard Biesheuvel wrote:
+> > On 28 August 2018 at 19:01, Will Deacon <will.deacon@arm.com> wrote:
+> > > On Mon, Aug 27, 2018 at 01:02:43PM +0200, Ard Biesheuvel wrote:
+> > >> Add a CRC32 feature bit and wire it up to the CPU id register so we
+> > >> will be able to use alternatives patching for CRC32 operations.
+> > >>
+> > >> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> > >> ---
+> > >>  arch/arm64/include/asm/cpucaps.h | 3 ++-
+> > >>  arch/arm64/kernel/cpufeature.c   | 9 +++++++++
+> > >>  2 files changed, 11 insertions(+), 1 deletion(-)
+> > >
+> > > Acked-by: Will Deacon <will.deacon@arm.com>
+> > >
+> > > With the minor caveat below...
+> > >
+> > >> diff --git a/arch/arm64/include/asm/cpucaps.h b/arch/arm64/include/asm/cpucaps.h
+> > >> index ae1f70450fb2..9932aca9704b 100644
+> > >> --- a/arch/arm64/include/asm/cpucaps.h
+> > >> +++ b/arch/arm64/include/asm/cpucaps.h
+> > >> @@ -51,7 +51,8 @@
+> > >>  #define ARM64_SSBD                           30
+> > >>  #define ARM64_MISMATCHED_CACHE_TYPE          31
+> > >>  #define ARM64_HAS_STAGE2_FWB                 32
+> > >> +#define ARM64_HAS_CRC32                              33
+> > >>
+> > >> -#define ARM64_NCAPS                          33
+> > >> +#define ARM64_NCAPS                          34
+> > >
+> > >
+> > > ... if this goes via crypto, you'll almost certainly get a (trivial)
+> > > conflict with arm64, since these numbers get bumped all the time.
+> > >
+> > 
+> > I think the first three patches should go through the arm64 tree. The
+> > last one just removes the now redundant crc32 SIMD driver, and Herbert
+> > could pick that up separately, i.e., it should be totally independent.
+> 
+> Yes let's do that.
 
-Enjoy!
-
-The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
-
-  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-irqchip-v4.20
-
-for you to fetch changes up to d31ca7e5d0fa066d59540859af32ab6f95adb519:
-
-  mfd: madera: Add irqchip data pointer into struct madera (2018-09-10 16:43:27 +0100)
-
-----------------------------------------------------------------
-Immutable branch between MFD and IRQChip due for the v4.20 merge window
-
-----------------------------------------------------------------
-Richard Fitzgerald (1):
-      mfd: madera: Add irqchip data pointer into struct madera
-
- include/linux/mfd/madera/core.h | 2 ++
- 1 file changed, 2 insertions(+)
+I queued the first 3 patches for 4.19. Thanks.
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Catalin
