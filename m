@@ -2,110 +2,120 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7D25C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 07:25:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51141C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 07:28:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 499C120833
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 07:25:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JajU7+6E"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 499C120833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id F1BC720833
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 07:28:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1BC720833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727798AbeIJMSB (ORCPT
+        id S1727803AbeIJMVI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 08:18:01 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:39515 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726165AbeIJMSB (ORCPT
+        Mon, 10 Sep 2018 08:21:08 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:34153 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726165AbeIJMVI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 08:18:01 -0400
-Received: by mail-it0-f65.google.com with SMTP id h1-v6so27397667itj.4
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 00:25:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Bsxd32JTgHx/KvEoaZZ+VC3rS/J+CxzKB1YuanK1sjE=;
-        b=JajU7+6EIFAac4zo+/eS+l0vJnkbvu8W2nMGPIGZuZjBZcrYgmv3tj/oAJbBt4sJ4w
-         SXoKKoiGyRlSKa6wIuUbcbEvaHwM7ZwU456ZTsqMeEhQbZrvPyPYaJebDuyS+DUhw4DY
-         XZzfNEoeMN1faiCUhpdP3JuTF9quuHO7FEIMU=
+        Mon, 10 Sep 2018 08:21:08 -0400
+Received: by mail-lf1-f68.google.com with SMTP id c29-v6so16624474lfj.1;
+        Mon, 10 Sep 2018 00:28:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Bsxd32JTgHx/KvEoaZZ+VC3rS/J+CxzKB1YuanK1sjE=;
-        b=YvODN1/jHf/qkpfjVv0tR/M071DVbEbO23ceNSR6NTmZ6cskQRiDfKu0qgli2cVaNm
-         pIy4oFBxjv1iuY9mjIW9DWH3qH2iKMXLmnSvipZfrw5Lcs1GTO0LOJwebg09CWuUdA+j
-         LQ7Wd+kcyd2cUzdunjdNDAl+ox7TTdync52YhWKM8ObxJB5TFeKpq6YgApadCQlrqSv8
-         APhjjdK5bJW5UWVuLcHpYJlyvoPJsZp4H1hmhnOXDZJb0gKw/9oDrzxhyL46sbReCiCb
-         NG+EtvbChu+bMUtpANcARdajQzPcab++5o5Zxp+ZnoBwqE8L0/jjBvBP9Z/3YxNCbb1a
-         Gnqg==
-X-Gm-Message-State: APzg51Ct6b2ZiV/I7rkNJNoMSpDnwLwJuHEe8628nX3nmxyTuVsUFWwq
-        /qCz44WGe4NByviGzaQmeflFfr7Sc+pt58bQLwuuNA==
-X-Google-Smtp-Source: ANB0VdZox3S5IutTQbYQK/oijG8nAhurJxB4W779BS3iryGOopG08/X8ZQI1WaZWUNAzZP1VfqXgROpoDKPD9RxqaJ4=
-X-Received: by 2002:a24:144:: with SMTP id 65-v6mr15393573itk.62.1536564322637;
- Mon, 10 Sep 2018 00:25:22 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=fByjZsMMuenoWVp1AstnTqieplj7+pgo2C4G7EG8Ra0=;
+        b=HTCJVsoCn5MJI5L8rNUmb9iDtmslJ6InxhU0f377+Pn0WqRFpO+hTtzUelcugQTHKf
+         tsu+eQlOxAjF9YanpSegXDH7f2k+CLympk4TM578o+3zBa9pV/2JQbEAuY+zNIpaO+m4
+         5Z8g5RYUTSHkH6vvxVTmjemlNDq0AaQsx4WA2MIdEJwISLDjnlStzHrLz/FuoZlovEcd
+         vQBVNByS9ZAFswxSw+PGzNnTLdxgNn/i02Gp40Regtp0XaP/LoY03rEMGjN2gfyNyOSV
+         bxlFHxMQL24dXPoMrHrlLJO5xv8ehWXYupIUsVlNFZ9sY4Z9FBYqgAn4THcdQsYF7qxt
+         1Qig==
+X-Gm-Message-State: APzg51BePmR24V3UL0jwtALpVF/RTabk+ifBGKBxECEcVbJ1Gec+tToN
+        Ra3iU+wVJnzfM7rakRoTu3s=
+X-Google-Smtp-Source: ANB0VdYsanvRy4v4OD04ocWnqmDL3XGKRLlKJTn6z5cSn/0U5C5YJFoe/MlxCexVSthPbVgNvAoYmA==
+X-Received: by 2002:a19:6f0a:: with SMTP id k10-v6mr9248347lfc.143.1536564507913;
+        Mon, 10 Sep 2018 00:28:27 -0700 (PDT)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id w18-v6sm2575735ljd.73.2018.09.10.00.28.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 10 Sep 2018 00:28:27 -0700 (PDT)
+Date:   Mon, 10 Sep 2018 10:28:18 +0300
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     zyw@rock-chips.com, mturquette@baylibre.com, sboyd@kernel.org,
+        w.egorov@phytec.de
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Does Rockchip RK808 driver unload work as intended?
+Message-ID: <20180910072818.GA2454@localhost.localdomain>
+References: <20180907101940.GE2472@localhost.localdomain>
 MIME-Version: 1.0
-References: <20180831191326.25106-1-afd@ti.com> <20180831191326.25106-2-afd@ti.com>
- <2a02c241-ac91-1bac-380d-122858bb03c3@ti.com> <CACRpkdYvNeKyfRf5Et5zC4=hcu9cfDubftRFRHtrKLN-5Snd1Q@mail.gmail.com>
- <040ce524-f6e2-81a2-68db-57a645de22ea@ti.com> <0e199aa3-2d9d-4e7d-af23-8523722f017a@ti.com>
-In-Reply-To: <0e199aa3-2d9d-4e7d-af23-8523722f017a@ti.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 10 Sep 2018 09:25:10 +0200
-Message-ID: <CACRpkdYcuSpfZ0=UFUOx_-5kaAtCA4=AyXmSMbfrcqjf0r_xmQ@mail.gmail.com>
-Subject: Re: [PATCH 2/5] gpio: davinci: Use dev name for label and automatic
- base selection
-To:     Grygorii Strashko <grygorii.strashko@ti.com>
-Cc:     Keerthy <j-keerthy@ti.com>, "Andrew F. Davis" <afd@ti.com>,
-        "Nori, Sekhar" <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180907101940.GE2472@localhost.localdomain>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 8, 2018 at 9:41 PM Grygorii Strashko
-<grygorii.strashko@ti.com> wrote:
-> On 09/06/2018 09:16 AM, Keerthy wrote:
+Hello,
 
-> > Okay now its numbered differently:
-> >
-> > cat /sys/class/gpio/gpiochip340/ngpio
-> > 144
-> >
-> > cat /sys/class/gpio/gpiochip272/ngpio
-> > 68
-(...)
+On Fri, Sep 07, 2018 at 01:19:40PM +0300, Matti Vaittinen wrote:
+> While doing this I hit to Rockchip RK808 driver which seems to utilize
+> oarent device (MFD dev) for pretty much all devm releasing. I wonder if
+> this is safe? What happens if one tries to remove the RK808 clk module?
+> 
+> I guess the clk deregistration and cleanups are not ran as parent device
+> stays there, right? But is the clk module and clk module code still
+> unload? So won't clk operation pointers registered to clk core become
+> invalid?
+ 
+Maybe it is a good idea to paste some code and add my thoughts as
+comments here.
 
-So:
+static int rk808_clkout_probe(struct platform_device *pdev)
+{
+	/* Get the i2c device "driven by" the parent MFD driver */
+        struct rk808 *rk808 = dev_get_drvdata(pdev->dev.parent);
+        struct i2c_client *client = rk808->i2c;
 
-> >> Are there applications that rely on the sysfs ABI on DaVinci?
-> >>
-> >> In that case base needs to be prerseved.
->
-> Not only base, but label also - /sys/class/gpio/gpiochip0/label, as this is
-> the way to find proper GPIO chip in sysfs using legacy GPIO ABI.
->
-> Linus, this platform is old and most of the users do not use new ABI (chardev),
-> so we could try change this, but need to be prepared for regressions reports.
+	[snip]
 
-So what I'm trying to ask you guys is if there are applications that you
-are aware of that use the old ABI, and who will upgrade their
-kernels and be upset.
+	/* Allocate driver provate data using devm - but bind it to MFD
+	   device */
+	rk808_clkout = devm_kzalloc(&client->dev,
+                                    sizeof(*rk808_clkout), GFP_KERNEL);
 
-We must not break userspace, but as you know if a tree falls in the
-forest and nobody is there to hear it, it doesn't make a sound.
+	[snip]
 
-If you're not aware of any such applications I guess we should try
-changing this.
+	/* init clk ops to point operations brought in kernel in this
+	   module */
+	init.ops = &rk808_clkout1_ops;
+        rk808_clkout->clkout1_hw.init = &init;
 
-Yours,
-Linus Walleij
+	[snip]
+
+	/* register clock using devm - bound to parent device again */
+        ret = devm_clk_hw_register(&client->dev, &rk808_clkout->clkout1_hw);
+
+	[snip]
+
+/* Omit remove callback => no clk deregistration at module removal */
+static struct platform_driver rk808_clkout_driver = {
+        .probe = rk808_clkout_probe,
+        .driver         = {
+                .name   = "rk808-clkout",
+        },
+};
+
+module_platform_driver(rk808_clkout_driver);
+
+
+> So can someone please shed some light on this? Is this a bug or am I
+> just plain wrong?
+> 
