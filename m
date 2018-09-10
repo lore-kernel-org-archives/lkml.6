@@ -2,129 +2,187 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A062AC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 21:08:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51F0BC4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 21:17:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 280A020866
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 21:08:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D78EB20855
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 21:17:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="Y2cCG+gM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 280A020866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="b0AquN5Z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D78EB20855
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726950AbeIKCEj (ORCPT
+        id S1726612AbeIKCNX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 22:04:39 -0400
-Received: from mail-eopbgr700127.outbound.protection.outlook.com ([40.107.70.127]:11871
-        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726150AbeIKCEj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 22:04:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Nb+O9QSotuQdYw/1Wb+8SprAHC9jgxiXfDt+gcAYmTk=;
- b=Y2cCG+gMuDcEMIkRNQ/Sz53lhLvbvy2EIUQlnC6le8/Qw7dxYtWsd5HpkiLivV5NbyJLl8H5qhG94VFA9GQKkAyNXN5BlxxDwgzW7ZaqdxpqRGOflKB6prW6TaWj6hUZPDE1npe0CtW1iX2N9suxdMIJaiinihMSkBQnV0xpdw0=
-Received: from MW2PR2101MB1113.namprd21.prod.outlook.com (52.132.149.30) by
- MW2PR2101MB0908.namprd21.prod.outlook.com (52.132.152.28) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1143.6; Mon, 10 Sep 2018 21:08:39 +0000
-Received: from MW2PR2101MB1113.namprd21.prod.outlook.com
- ([fe80::8dea:f5e5:67f7:c879]) by MW2PR2101MB1113.namprd21.prod.outlook.com
- ([fe80::8dea:f5e5:67f7:c879%5]) with mapi id 15.20.1164.006; Mon, 10 Sep 2018
- 21:08:39 +0000
-From:   KY Srinivasan <kys@microsoft.com>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>
-CC:     "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Bernhard Landauer <oberon@manjaro.org>,
-        Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>
-Subject: RE: [PATCH] Drivers: hv: vmbus: include header for get_irq_regs()
-Thread-Topic: [PATCH] Drivers: hv: vmbus: include header for get_irq_regs()
-Thread-Index: AQHUQDbGwxz6ALD2+Uq6EERgr8fIEqTpnqUAgAB1qeA=
-Date:   Mon, 10 Sep 2018 21:08:38 +0000
-Message-ID: <MW2PR2101MB11133F952B2EFE7D501FF055A0050@MW2PR2101MB1113.namprd21.prod.outlook.com>
-References: <20180830075503.vh3qcdcnxcjobj55@linutronix.de>
- <20180910140658.4umofqptuxhevtit@linutronix.de>
-In-Reply-To: <20180910140658.4umofqptuxhevtit@linutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [2001:4898:80e8:3:6a3d:63ce:5e50:3adf]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MW2PR2101MB0908;6:eK7GLiaq1YEKF+/KMW1neNHH4r/IsqHvU3I+X7VzCqxEgwYcatQ7l7OoxWS3qZPdtZPGJnDeOHoUXf8/TNAo2SyYSgmbpPCXbUBlCClNcYwm3aK0DHJLwPtzpHHkRHMtq00867pKPCW2qG4UD02MhWoTo0Ut0aOUE9xQdb5YJP/M+WAstP2rc2NcT6RbLqPJK2viAOkBmT1cXlNXWuAdOzp46j4Jeut30CZy6zvEBcxKquZuPPz/UGHKVAvDn8sdtRaLScHGyI+DY77A8oeNc61YqBQlKKwglttCxpd3IrecJq8gSWd8DgIcoRZXHwgY8SC2cVDy7lGkASLgAKK18MLDDo37rd0dkrJVEW5+sVR1YIf4E3K3DHxutqAZU4Q4mxrzSDO7q3u2xUUWgb3dKXiOPiVzqvkNpE+kZ4nE7naGxzNvQZxhpRN6bs61zRTHW+mhIwrDAO9fUOWLtltLHQ==;5:io7FQWwkXmEI/A9LkQ2mx7DtliXfKAsGS+KZ9rGr720uMtM1UsAeB0w4SLRmgeQbspiQcnImV+1P+C/ezdmfoSQYlvC/3H7ZH5sZ+ebz/ylTbkNUgwdAk9Sve+3L68UBr/Yagz/XzG9/p7uhzL5EKyl1MTDkcvtu3krT4GCPh/U=;7:YRepDVUuqCoiWbGWqvLMCNqZtuTnD6jxuhIsC1ZBwboFVOXHz4JSi0ck6QGI/a8HwU4AyygSM+DJLJ8Zzyt7MgoQ9YGW0o5v4orFS06bCLYro/XcURuE9q3Ed8KYo6at8ZPGGw5EB4qoVYtXKVNAN2rViVnzZa5qoWFwzGGDEfBYamU2bSKRLx145naNhMfGm2D8b8rthoJIcneM5w38qlQmYbTHYsgQeL2QIMGo2d6OBq35Ja1wmmQbpK16lyPu
-x-ms-office365-filtering-correlation-id: 403f3108-3895-42a5-566b-08d617619487
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:MW2PR2101MB0908;
-x-ms-traffictypediagnostic: MW2PR2101MB0908:
-x-microsoft-antispam-prvs: <MW2PR2101MB090802B323F1A0CFD0E4CFC3A0050@MW2PR2101MB0908.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(9452136761055);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(3231344)(944501410)(52105095)(2018427008)(93006095)(93001095)(10201501046)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699050)(76991033);SRVR:MW2PR2101MB0908;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB0908;
-x-forefront-prvs: 07915F544A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(396003)(136003)(366004)(376002)(346002)(13464003)(189003)(199004)(446003)(7696005)(6506007)(476003)(11346002)(10090500001)(99286004)(53936002)(86612001)(53546011)(86362001)(110136005)(54906003)(186003)(6116002)(6436002)(22452003)(33656002)(8990500004)(229853002)(316002)(2906002)(102836004)(46003)(9686003)(8676002)(106356001)(105586002)(6346003)(55016002)(4326008)(25786009)(97736004)(6636002)(74316002)(2900100001)(1511001)(5250100002)(6246003)(68736007)(8936002)(305945005)(5660300001)(7736002)(76176011)(486006)(478600001)(14454004)(256004)(10290500003)(81166006)(81156014);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB0908;H:MW2PR2101MB1113.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=kys@microsoft.com; 
-x-microsoft-antispam-message-info: Ja9e2dGPMOO1IS9fGr//ZTOBQr2eLzITf6Qkbg+xpM2GgzAaldvGWkp0CC7gG6nac90R2TJXMmP+0K+Y4ztjA6R4OXnjleJHX1h9xz+PQCMdRFuu3bDjrFltcwyZIuhFe38TEb/+JlgAfhbnBTyNyvfUg+uEmkWd2dnHxahxZRnya712iJYJfCicdTwJRxAsqzyZ3+gB1AFbVNhhEkTrciizCk/7Gq77i53gqAt9jWfO1h1uFW8qn8jcTBl4KaSMmCikNsFwFbGrvV7Y1t+1yL2Xqid7nqqb0/OfYweeYRmO7bfM7GN4U9cDTpkPUEEgy7os4+FEsOi3uu69o7V4xb+TRvhwDPdSuGPPFShc5wg=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 10 Sep 2018 22:13:23 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:50622 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726141AbeIKCNX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 22:13:23 -0400
+Received: by mail-it0-f68.google.com with SMTP id j81-v6so31555051ite.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 14:17:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ACeui2OlhHqYNJ9ldHYOq44pvSJtntw8ZsoU8FJw8yQ=;
+        b=b0AquN5ZMqf5JquNkLQY/nwfpB36qBIzCmsyhNg5DsJ3PlroJUwRtxIdPy0pMtOWxs
+         EAboTcNLOXRwhYEeP1x11hXsl1Uw1x/T33Y6TvuaTFNQk9qH/MPl5IPLb0Y0jiZB44qa
+         /YRh9rufvvQgy1yQRV2V+W2sYX/4roY0lDVT4AMYErrNBBGtY9hzH/zOrj/Ti0q6cuyC
+         7K/KRJYDd1+Q9sujEmUPWGqFK2qeA99J7dXMtLWqDm5RRKUx24R53d4ZZp50LMiKOXQ+
+         hHsrUE0/e3xyHFoln+8G2BC5U7l8ULUiPanTfHHmpo414JhFvy8M7pqaYNPGbiOTmx5a
+         8JoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ACeui2OlhHqYNJ9ldHYOq44pvSJtntw8ZsoU8FJw8yQ=;
+        b=VOk/oUI2FblQgdsSTQxnwngmedl91boTlrheOmQBgTcb1tXycz5r+Ea2eVvvEr6IKL
+         y0004EEMF4fGv2WZI1xqjA1z1QDTzekvIMyV6nTK8Pj+JBhDlKHKuCDFRjQ5AJN6cSXa
+         SRsJnCd9bRsKTp2ap4CIHTfNSTzR/SeEARUsenoApjjARxzm4iTnOdkSHXPpf2OcWUjR
+         XPt2UWCMMbNZLGwgi4kPXA6hgyb7hualrZGwIzfeOq6y1nWqYxQto/LcpUwspdVahZve
+         t1j/VOH6kGWRZGVJ6ZK0ly7KPTjYDdtGzNcdhWCPjaQbakztiJ7UHb227HGYhNAIqcTN
+         9DvQ==
+X-Gm-Message-State: APzg51D/fHqCx34qLmpiPQ74jY5brFP5bFtiFZ+J/BybAsy4Jm4O7sfj
+        jnAfrokCWU48FKWpuzlZr3cgyA==
+X-Google-Smtp-Source: ANB0VdZ7CBQv83uCEnuVRlZ1JJY+o+1KsNAFOm8jIL92bLJZgZgdjXya95bqNkUMy+IaMb188iSlgQ==
+X-Received: by 2002:a24:24c2:: with SMTP id f185-v6mr19418497ita.18.1536614245225;
+        Mon, 10 Sep 2018 14:17:25 -0700 (PDT)
+Received: from yuzhao.bld.corp.google.com ([2620:15c:183:0:a0c3:519e:9276:fc96])
+        by smtp.gmail.com with ESMTPSA id r126-v6sm7919979iod.7.2018.09.10.14.17.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Sep 2018 14:17:24 -0700 (PDT)
+From:   Yu Zhao <yuzhao@google.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Rakesh Ughreja <rakesh.a.ughreja@intel.com>,
+        Guneshwor Singh <guneshwor.o.singh@intel.com>,
+        Naveen Manohar <naveen.m@intel.com>,
+        Yu Zhao <yuzhao@google.com>,
+        Sriram Periyasamy <sriramx.periyasamy@intel.com>,
+        Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>,
+        Sanyog Kale <sanyog.r.kale@intel.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] Revert "ASoC: Intel: Skylake: Acquire irq after RIRB allocation"
+Date:   Mon, 10 Sep 2018 15:17:18 -0600
+Message-Id: <20180910211718.200802-1-yuzhao@google.com>
+X-Mailer: git-send-email 2.19.0.rc2.392.g5ba43deb5a-goog
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 403f3108-3895-42a5-566b-08d617619487
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Sep 2018 21:08:38.8846
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB0908
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU2ViYXN0aWFuIEFuZHJ6
-ZWogU2lld2lvciA8YmlnZWFzeUBsaW51dHJvbml4LmRlPg0KPiBTZW50OiBNb25kYXksIFNlcHRl
-bWJlciAxMCwgMjAxOCA3OjA3IEFNDQo+IFRvOiBLWSBTcmluaXZhc2FuIDxreXNAbWljcm9zb2Z0
-LmNvbT47IEhhaXlhbmcgWmhhbmcNCj4gPGhhaXlhbmd6QG1pY3Jvc29mdC5jb20+OyBTdGVwaGVu
-IEhlbW1pbmdlcg0KPiA8c3RoZW1taW5AbWljcm9zb2Z0LmNvbT4NCj4gQ2M6IGRldmVsQGxpbnV4
-ZHJpdmVycHJvamVjdC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IFN0ZXZlbg0K
-PiBSb3N0ZWR0IDxyb3N0ZWR0QGdvb2RtaXMub3JnPjsgQmVybmhhcmQgTGFuZGF1ZXINCj4gPG9i
-ZXJvbkBtYW5qYXJvLm9yZz47IFJhbGYgUmFtc2F1ZXIgPHJhbGYucmFtc2F1ZXJAb3RoLQ0KPiBy
-ZWdlbnNidXJnLmRlPg0KPiBTdWJqZWN0OiBSZTogW1BBVENIXSBEcml2ZXJzOiBodjogdm1idXM6
-IGluY2x1ZGUgaGVhZGVyIGZvciBnZXRfaXJxX3JlZ3MoKQ0KPiANCj4gT24gMjAxOC0wOC0zMCAw
-OTo1NTowMyBbKzAyMDBdLCBUbyBLLiBZLiBTcmluaXZhc2FuIHdyb3RlOg0KPiA+IE9uICFSVCB0
-aGUgaGVhZGVyIGZpbGUgZ2V0X2lycV9yZWdzKCkgZ2V0cyBwdWxsZWQgaW4gdmlhIG90aGVyIGhl
-YWRlciBmaWxlcy4NCj4gT24NCj4gPiBSVCBpdCBkb2VzIG5vdCBhbmQgdGhlIGJ1aWxkIGZhaWxz
-Og0KPiA+DQo+ID4gICAgIGRyaXZlcnMvaHYvdm1idXNfZHJ2LmM6OTc1IGltcGxpY2l0IGRlY2xh
-cmF0aW9uIG9mIGZ1bmN0aW9uDQo+IOKAmGdldF9pcnFfcmVnc+KAmSBbLVdlcnJvcj1pbXBsaWNp
-dC1mdW5jdGlvbi1kZWNsYXJhdGlvbl0NCj4gPiAgICAgZHJpdmVycy9odi9odi5jOjExNSBpbXBs
-aWNpdCBkZWNsYXJhdGlvbiBvZiBmdW5jdGlvbiDigJhnZXRfaXJxX3JlZ3PigJkgWy0NCj4gV2Vy
-cm9yPWltcGxpY2l0LWZ1bmN0aW9uLWRlY2xhcmF0aW9uXQ0KPiA+DQo+ID4gQWRkIHRoZSBoZWFk
-ZXIgZmlsZSBmb3IgZ2V0X2lycV9yZWdzKCkgaW4gYSBjb21tb24gaGVhZGVyIHNvIGl0IHVzZWQg
-YnkNCj4gPiB2bWJ1c19kcnYuYyBieSBodi5jIGZvciB0aGVpciBnZXRfaXJxX3JlZ3MoKSB1c2Fn
-ZS4NCj4gPg0KPiA+IFJlcG9ydGVkLWJ5OiBCZXJuaGFyZCBMYW5kYXVlciA8b2Jlcm9uQG1hbmph
-cm8ub3JnPg0KPiA+IFJlcG9ydGVkLWJ5OiBSYWxmIFJhbXNhdWVyIDxyYWxmLnJhbXNhdWVyQG90
-aC1yZWdlbnNidXJnLmRlPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFNlYmFzdGlhbiBBbmRyemVqIFNp
-ZXdpb3IgPGJpZ2Vhc3lAbGludXRyb25peC5kZT4NCj4gDQo+IHBpbmcNCg0KSXQgaXMgaW4gbXkg
-cXVldWU7IHdpbGwgc3VibWl0IGl0IHNvb24uDQoNCksuIFkNCj4gDQo+ID4gLS0tDQo+ID4gIGRy
-aXZlcnMvaHYvaHlwZXJ2X3ZtYnVzLmggfCAxICsNCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5z
-ZXJ0aW9uKCspDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9odi9oeXBlcnZfdm1idXMu
-aCBiL2RyaXZlcnMvaHYvaHlwZXJ2X3ZtYnVzLmgNCj4gPiBpbmRleCA3MmVhYmEzZDUwZmMyLi43
-OTdmMDc5MTgxOTdjIDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvaHYvaHlwZXJ2X3ZtYnVzLmgN
-Cj4gPiArKysgYi9kcml2ZXJzL2h2L2h5cGVydl92bWJ1cy5oDQo+ID4gQEAgLTMxLDYgKzMxLDcg
-QEANCj4gPiAgI2luY2x1ZGUgPGxpbnV4L2F0b21pYy5oPg0KPiA+ICAjaW5jbHVkZSA8bGludXgv
-aHlwZXJ2Lmg+DQo+ID4gICNpbmNsdWRlIDxsaW51eC9pbnRlcnJ1cHQuaD4NCj4gPiArI2luY2x1
-ZGUgPGxpbnV4L2lycS5oPg0KPiA+DQo+ID4gICNpbmNsdWRlICJodl90cmFjZS5oIg0KPiA+DQo+
-ID4gLS0NCj4gPiAyLjE4LjANCj4gPg0K
+This reverts commit 12eeeb4f4733bbc4481d01df35933fc15beb8b19.
+
+The patch doesn't fix accessing memory with null pointer in
+skl_interrupt().
+
+There are two problems: 1) skl_init_chip() is called twice, before
+and after dma buffer is allocate. The first call sets bus->chip_init
+which prevents the second from initializing bus->corb.buf and
+rirb.buf from bus->rb.area. 2) snd_hdac_bus_init_chip() enables
+interrupt before snd_hdac_bus_init_cmd_io() initializing dma buffers.
+There is a small window which skl_interrupt() can be called if irq
+has been acquired. If so, it crashes when using null dma buffer
+pointers.
+
+Will fix the problems in the following patches. Also attaching the
+crash for future reference.
+
+[   16.949148] general protection fault: 0000 [#1] PREEMPT SMP KASAN PTI
+[   16.950829] gsmi: Log Shutdown Reason 0x03
+[   16.950830] Modules linked in: uvcvideo(+) videobuf2_vmalloc snd_soc_skl(+) videobuf2_memops videobuf2_v4l2 videobuf2_core snd_soc_skl_ipc snd_soc_sst_ipc snd_soc_sst_dsp snd_soc_acpi snd_hda_ext_core snd_hda_core snd_soc_max98357a acpi_als snd_soc_da7219 lzo lzo_compress zram snd_seq_dummy snd_seq snd_seq_device bridge stp llc ipt_MASQUERADE nf_nat_masquerade_ipv4 xt_mark fuse cfg80211 iio_trig_sysfs cros_ec_sensors cros_ec_sensors_ring cros_ec_sensors_core industrialio_triggered_buffer kfifo_buf industrialio smsc95xx usbnet mii joydev
+[   16.950874] CPU: 0 PID: 1083 Comm: chrome Not tainted 4.14.64 #14
+[   16.950875] Hardware name: Google Yorp/Yorp, BIOS Google_Yorp.10985.0.2018_08_20_1648 08/17/2018
+[   16.950878] task: ffff88015b1c2b80 task.stack: ffff880155f30000
+[   16.950887] RIP: 0010:snd_hdac_bus_update_rirb+0x19b/0x4cf [snd_hda_core]
+[   16.950889] RSP: 0000:ffff88015c807c08 EFLAGS: 00010003
+[   16.950891] RAX: 0000000000000101 RBX: 000000000000080c RCX: 1ffff10026822185
+[   16.950893] RDX: dffffc0000000000 RSI: ffff88015b1c2b80 RDI: ffffc90000514058
+[   16.950894] RBP: ffff88015c807c68 R08: 0000000000000000 R09: 0000000000000000
+[   16.950895] R10: 0000000000000000 R11: ffffffffc043074f R12: 0000000000000800
+[   16.950897] R13: 0000000000000001 R14: 0000000000000002 R15: 1ffff10026822119
+[   16.950899] FS:  00007d85924cc740(0000) GS:ffff88015c800000(0000) knlGS:0000000000000000
+[   16.950900] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   16.950902] CR2: 000058a54df16038 CR3: 00000001551c0000 CR4: 00000000003406f0
+[   16.950903] Call Trace:
+[   16.950906]  <IRQ>
+[   16.950918]  skl_interrupt+0x19e/0x2d6 [snd_soc_skl]
+[   16.950926]  ? dma_supported+0xb5/0xb5 [snd_soc_skl]
+[   16.950933]  __handle_irq_event_percpu+0x27a/0x6c8
+[   16.950937]  ? __irq_wake_thread+0x1d1/0x1d1
+[   16.950942]  ? __do_softirq+0x57a/0x69e
+[   16.950944]  handle_irq_event_percpu+0x95/0x1ba
+[   16.950948]  ? _raw_spin_unlock+0x65/0xdc
+[   16.950951]  ? __handle_irq_event_percpu+0x6c8/0x6c8
+[   16.950953]  ? _raw_spin_unlock+0x65/0xdc
+[   16.950957]  ? time_cpufreq_notifier+0x483/0x483
+[   16.950959]  handle_irq_event+0x89/0x123
+[   16.950962]  handle_fasteoi_irq+0x16f/0x425
+[   16.950965]  handle_irq+0x1fe/0x28e
+[   16.950969]  do_IRQ+0x6e/0x12e
+[   16.950972]  common_interrupt+0x7a/0x7a
+[   16.950974]  </IRQ>
+[   16.950976] RIP: 0033:0x58097f61a5c0
+[   16.950978] RSP: 002b:00007ffe95c971a8 EFLAGS: 00000206 ORIG_RAX: ffffffffffffffbc
+[   16.950980] RAX: 000058097f61a5c0 RBX: 00000e4ac5220560 RCX: 0000000000004e10
+[   16.950982] RDX: 000058098563df20 RSI: 00007ffe95c97250 RDI: 00000e4ac5220500
+[   16.950983] RBP: 00007ffe95c97410 R08: 0000000000000000 R09: 00007ffe95c97250
+[   16.950984] R10: 0000000000000000 R11: 0000000000000000 R12: 00000e4ac5220560
+[   16.950986] R13: 00000e4ac5220560 R14: 00000e4ac47c9650 R15: 0000580987646350
+[   16.950988] Code: 74 12 48 89 df e8 eb 2d 8e cd 48 ba 00 00 00 00 00 fc ff df 4c 8b 23 44 89 f0 83 c8 01 0f b7 c0 49 8d 1c 84 48 89 d8 48 c1 e8 03 <8a> 04 10 84 c0 0f 85 da 01 00 00 44 8b 3b 41 0f b7 c6 49 8d 1c
+[   16.951031] RIP: snd_hdac_bus_update_rirb+0x19b/0x4cf [snd_hda_core] RSP: ffff88015c807c08
+[   16.951036] ---[ end trace 58bf9ece1775bc92 ]---
+[   16.956871] Kernel panic - not syncing: Fatal exception in interrupt
+[   16.956888] Kernel Offset: 0xc800000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+
+Signed-off-by: Yu Zhao <yuzhao@google.com>
+---
+ sound/soc/intel/skylake/skl.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/sound/soc/intel/skylake/skl.c b/sound/soc/intel/skylake/skl.c
+index cf09721ca13e..dce649485649 100644
+--- a/sound/soc/intel/skylake/skl.c
++++ b/sound/soc/intel/skylake/skl.c
+@@ -838,7 +838,11 @@ static int skl_first_init(struct hdac_bus *bus)
+ 
+ 	snd_hdac_bus_parse_capabilities(bus);
+ 
++	if (skl_acquire_irq(bus, 0) < 0)
++		return -EBUSY;
++
+ 	pci_set_master(pci);
++	synchronize_irq(bus->irq);
+ 
+ 	gcap = snd_hdac_chip_readw(bus, GCAP);
+ 	dev_dbg(bus->dev, "chipset global capabilities = 0x%x\n", gcap);
+@@ -871,12 +875,6 @@ static int skl_first_init(struct hdac_bus *bus)
+ 	if (err < 0)
+ 		return err;
+ 
+-	err = skl_acquire_irq(bus, 0);
+-	if (err < 0)
+-		return err;
+-
+-	synchronize_irq(bus->irq);
+-
+ 	/* initialize chip */
+ 	skl_init_pci(skl);
+ 
+-- 
+2.19.0.rc2.392.g5ba43deb5a-goog
+
