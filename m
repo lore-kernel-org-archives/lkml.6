@@ -2,127 +2,129 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF146C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:46:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D3DC4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:47:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85CEF20645
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:46:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85CEF20645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id BBA9320645
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:47:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBA9320645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728697AbeIJTlN (ORCPT
+        id S1728802AbeIJTlz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 15:41:13 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:8109 "EHLO pegase1.c-s.fr"
+        Mon, 10 Sep 2018 15:41:55 -0400
+Received: from mga18.intel.com ([134.134.136.126]:31222 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727744AbeIJTlN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 15:41:13 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 4289q13fr7z9ttC8;
-        Mon, 10 Sep 2018 16:46:37 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id rxG_HcX9c2DI; Mon, 10 Sep 2018 16:46:37 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 4289q1360Pz9ttBp;
-        Mon, 10 Sep 2018 16:46:37 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 840098B7B7;
-        Mon, 10 Sep 2018 16:46:46 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id OfUJIAZLR9pY; Mon, 10 Sep 2018 16:46:46 +0200 (CEST)
-Received: from pc16082vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 24B8F8B7B5;
-        Mon, 10 Sep 2018 16:46:46 +0200 (CEST)
-To:     akpm@linux-foundation.org, linux-mm@kvack.org,
-        aneesh.kumar@linux.vnet.ibm.com,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev@lists.ozlabs.org
-Cc:     LKML <linux-kernel@vger.kernel.org>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: How to handle PTE tables with non contiguous entries ?
-Message-ID: <ddc3bb56-4da0-c093-256f-185d4a612b5c@c-s.fr>
-Date:   Mon, 10 Sep 2018 14:34:37 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1728541AbeIJTly (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 15:41:54 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2018 07:47:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,356,1531810800"; 
+   d="scan'208";a="73070217"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by orsmga006.jf.intel.com with ESMTP; 10 Sep 2018 07:47:26 -0700
+Received: from andy by smile with local (Exim 4.91)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1fzNTI-0004r1-W6; Mon, 10 Sep 2018 17:47:24 +0300
+Date:   Mon, 10 Sep 2018 17:47:24 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     William Breathitt Gray <vilhelm.gray@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-arch@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v4 0/8] Introduce the for_each_set_clump macro
+Message-ID: <20180910144724.GY11447@smile.fi.intel.com>
+References: <cover.1526400945.git.vilhelm.gray@gmail.com>
+ <CACRpkdbRH-Bz3BoczD+YmaSGqtoeCwtvGj4dGm8PKRKYFXTdKA@mail.gmail.com>
+ <20180905150348.GA27089@sophia>
+ <CACRpkdah-CSkdmpYQ_sgOFNqXMD5mMLkmRDRBszK+twPbRNLpA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACRpkdah-CSkdmpYQ_sgOFNqXMD5mMLkmRDRBszK+twPbRNLpA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Mon, Sep 10, 2018 at 09:54:47AM +0200, Linus Walleij wrote:
+> On Wed, Sep 5, 2018 at 5:04 PM William Breathitt Gray
+> <vilhelm.gray@gmail.com> wrote:
+> > On Wed, May 16, 2018 at 04:03:51PM +0200, Linus Walleij wrote:
+> > >On Tue, May 15, 2018 at 6:22 PM, William Breathitt Gray
+> > ><vilhelm.gray@gmail.com> wrote:
+> > >
+> > >> For example, suppose you would like to iterate over a 16-bit integer 4
+> > >> bits at a time, skipping over 4-bit groups with no set bit, where XXXX
+> > >> represents the current 4-bit group:
+> > >>
+> > >>     Example:        1011 1110 0000 1111
+> > >>     First loop:     1011 1110 0000 XXXX
+> > >>     Second loop:    1011 XXXX 0000 1111
+> > >>     Third loop:     XXXX 1110 0000 1111
+> > >>
+> > >> Each iteration of the loop returns the next 4-bit group that has at
+> > >> least one set bit.
+> > >>
+> > >> The for_each_set_clump macro has six parameters:
+> > >>
+> > >>     * clump: set to current clump index for the iteration
+> > >>     * index: set to current bitmap word index for the iteration
+> > >>     * offset: bits offset of the found clump in the bitmap word
+> > >>     * bits: bitmap to search within
+> > >>     * size: bitmap size in number of clumps
+> > >>     * clump_size: clump size in number of bits
+> > >>
+> > >> The clump_size argument can be an arbitrary number of bits and is not
+> > >> required to be a multiple of 2.
+> > >
+> > >I must say I'm impressed. Very nice arithmetics going on there.
+> > >
+> > >If I can get some ACK for the bitops patch I'd be happy to merge
+> > >it all through the GPIO tree. The users are pretty clear cut.
+> > >
+> > >BTW: if I could, I would pull out Donald Knuth's "The Art of Computer
+> > >Programming vol 4A" chapter 7.1.3 "Bitwise Tricks and Techniques"
+> > >to see what he has to say about the subject, but I don't have
+> > >that book as it turns out.
+> > >
+> > >Yours,
+> > >Linus Walleij
+> >
+> > Hi Linus,
+> >
+> > I'd like to get this patchset merged, but I'm aware that we haven't yet
+> > received additional ACKs in the past couple months. Are there any
+> > changes you would like made, or should I resubmit this patchset with
+> > additional CCs in the hopes of some ACKs for the bitops patch?
+> 
+> It seems Andy wanted some time and he had ~4 months now
+> so either he forgot it or has way too much to do.
 
-I'm having a hard time figuring out the best way to handle the following 
-situation:
+Sorry, indeed, it got piled under huge backlog I have.
 
-On the powerpc8xx, handling 16k size pages requires to have page tables 
-with 4 identical entries.
+> 
+> I would say send this patch to Andrew Morton (the bitops patches)
+> so he can decide on it. He has the right bird's eye view on this
+> kind of things.
 
-Initially I was thinking about handling this by simply modifying 
-pte_index() which changing pte_t type in order to have one entry every 
-16 bytes, then replicate the PTE value at *ptep, *ptep+1,*ptep+2 and 
-*ptep+3 both in set_pte_at() and pte_update().
-
-However, this doesn't work because many many places in the mm core part 
-of the kernel use loops on ptep with single ptep++ increment.
-
-Therefore did it with the following hack:
-
-  /* PTE level */
-+#if defined(CONFIG_PPC_8xx) && defined(CONFIG_PPC_16K_PAGES)
-+typedef struct { pte_basic_t pte, pte1, pte2, pte3; } pte_t;
-+#else
-  typedef struct { pte_basic_t pte; } pte_t;
-+#endif
-
-@@ -181,7 +192,13 @@ static inline unsigned long pte_update(pte_t *p,
-         : "cc" );
-  #else /* PTE_ATOMIC_UPDATES */
-         unsigned long old = pte_val(*p);
--       *p = __pte((old & ~clr) | set);
-+       unsigned long new = (old & ~clr) | set;
-+
-+#if defined(CONFIG_PPC_8xx) && defined(CONFIG_PPC_16K_PAGES)
-+       p->pte = p->pte1 = p->pte2 = p->pte3 = new;
-+#else
-+       *p = __pte(new);
-+#endif
-  #endif /* !PTE_ATOMIC_UPDATES */
-
-  #ifdef CONFIG_44x
+Agreed, and please add Rasmus as well.
 
 
-@@ -161,7 +161,11 @@ static inline void __set_pte_at(struct mm_struct 
-*mm, unsigned long addr,
-         /* Anything else just stores the PTE normally. That covers all 
-64-bit
-          * cases, and 32-bit non-hash with 32-bit PTEs.
-          */
-+#if defined(CONFIG_PPC_8xx) && defined(CONFIG_PPC_16K_PAGES)
-+       ptep->pte = ptep->pte1 = ptep->pte2 = ptep->pte3 = pte_val(pte);
-+#else
-         *ptep = pte;
-+#endif
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-
-But I'm not too happy with it as it means pte_t is not a single type 
-anymore so passing it from one function to the other is quite heavy.
-
-
-Would someone have an idea of an elegent way to handle that ?
-
-Thanks
-Christophe
