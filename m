@@ -2,95 +2,133 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55A41C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:49:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9B73C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:50:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 184FE2086B
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:49:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 184FE2086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 756D0204FD
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:50:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 756D0204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728117AbeIJOnG (ORCPT
+        id S1728094AbeIJOns (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 10:43:06 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54184 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726907AbeIJOnG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 10:43:06 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B71A618A;
-        Mon, 10 Sep 2018 02:49:53 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 8825B3F557;
-        Mon, 10 Sep 2018 02:49:53 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id A7B1E1AE33B8; Mon, 10 Sep 2018 10:50:09 +0100 (BST)
-Date:   Mon, 10 Sep 2018 10:50:09 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arch/arm64/include/asm/jump_label.h: use
- asm_volatile_goto
-Message-ID: <20180910095008.GB31531@arm.com>
-References: <20180909154731.GA20381@gmail.com>
+        Mon, 10 Sep 2018 10:43:48 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:60535 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727261AbeIJOns (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 10:43:48 -0400
+X-UUID: 4e2a515c2b764d2eac1bc721134295e6-20180910
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        (envelope-from <honghui.zhang@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1567075511; Mon, 10 Sep 2018 17:50:29 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Mon, 10 Sep 2018 17:50:27 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Mon, 10 Sep 2018 17:50:26 +0800
+From:   <honghui.zhang@mediatek.com>
+To:     <lorenzo.pieralisi@arm.com>, <marc.zyngier@arm.com>,
+        <bhelgaas@google.com>, <matthias.bgg@gmail.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
+        <ryder.lee@mediatek.com>
+CC:     <ulf.hansson@linaro.org>, <honghui.zhang@mediatek.com>,
+        <hongkun.cao@mediatek.com>, <youlin.pei@mediatek.com>,
+        <yong.wu@mediatek.com>, <yt.shen@mediatek.com>,
+        <sean.wang@mediatek.com>, <xinping.qian@mediatek.com>
+Subject: [PATCH v4 1/4] PCI: mediatek: fixup mtk_pcie_find_port logical
+Date:   Mon, 10 Sep 2018 17:50:20 +0800
+Message-ID: <1536573023-6720-2-git-send-email-honghui.zhang@mediatek.com>
+X-Mailer: git-send-email 2.6.4
+In-Reply-To: <1536573023-6720-1-git-send-email-honghui.zhang@mediatek.com>
+References: <1536573023-6720-1-git-send-email-honghui.zhang@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180909154731.GA20381@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 09, 2018 at 05:47:31PM +0200, Miguel Ojeda wrote:
-> All other uses of "asm goto" go through asm_volatile_goto
-> (including the arm version of the same file). For consistency,
-> use it here as well.
-> 
-> Cc: Nick Desaulniers <ndesaulniers@google.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-> ---
->  arch/arm64/include/asm/jump_label.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+From: Honghui Zhang <honghui.zhang@mediatek.com>
 
-Thanks, I'll pick this up as a fix.
+The Mediatek's host controller has two slots, each with it's own control
+registers. The host driver need to identify which slot was connected
+in order to access the device's configuration space. There's problem
+for current host driver to find out which slot was connected to for
+a given EP device.
 
-Will
+Assuming each slot have connect with one EP device as below:
 
-> diff --git a/arch/arm64/include/asm/jump_label.h b/arch/arm64/include/asm/jump_label.h
-> index 1b5e0e843c3a..7e2b3e360086 100644
-> --- a/arch/arm64/include/asm/jump_label.h
-> +++ b/arch/arm64/include/asm/jump_label.h
-> @@ -28,7 +28,7 @@
->  
->  static __always_inline bool arch_static_branch(struct static_key *key, bool branch)
->  {
-> -	asm goto("1: nop\n\t"
-> +	asm_volatile_goto("1: nop\n\t"
->  		 ".pushsection __jump_table,  \"aw\"\n\t"
->  		 ".align 3\n\t"
->  		 ".quad 1b, %l[l_yes], %c0\n\t"
-> @@ -42,7 +42,7 @@ static __always_inline bool arch_static_branch(struct static_key *key, bool bran
->  
->  static __always_inline bool arch_static_branch_jump(struct static_key *key, bool branch)
->  {
-> -	asm goto("1: b %l[l_yes]\n\t"
-> +	asm_volatile_goto("1: b %l[l_yes]\n\t"
->  		 ".pushsection __jump_table,  \"aw\"\n\t"
->  		 ".align 3\n\t"
->  		 ".quad 1b, %l[l_yes], %c0\n\t"
-> -- 
-> 2.17.1
-> 
+                host bridge
+  bus 0 --> __________|_______
+           |                  |
+           |                  |
+         slot 0             slot 1
+  bus 1 -->|        bus 2 --> |
+           |                  |
+         EP 0               EP 1
+
+During PCI enumeration, system software will scan all the PCI device
+starting from devfn 0. So it will get the proper port for slot0 and
+slot1 device when using PCI_SLOT(devfn) for match. But it will get
+the wrong slot for EP1: The devfn will be start from 0 when scanning
+EP1 behind slot1, it will get port0 since the PCI_SLOT(EP1) is match
+for port0's slot value. So the host driver should not using EP's devfn
+but the slot's devfn(the slot which EP was connected to) for match.
+
+This patch fix the mtk_pcie_find_port's logical by using the slot's
+devfn for match.
+
+Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
+Acked-by: Ryder Lee <ryder.lee@mediatek.com>
+---
+ drivers/pci/controller/pcie-mediatek.c | 19 +++++++++++++++++--
+ 1 file changed, 17 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
+index 861dda6..20b9088 100644
+--- a/drivers/pci/controller/pcie-mediatek.c
++++ b/drivers/pci/controller/pcie-mediatek.c
+@@ -337,11 +337,26 @@ static struct mtk_pcie_port *mtk_pcie_find_port(struct pci_bus *bus,
+ {
+ 	struct mtk_pcie *pcie = bus->sysdata;
+ 	struct mtk_pcie_port *port;
++	struct pci_dev *dev;
++	struct pci_bus *pbus;
+ 
+-	list_for_each_entry(port, &pcie->ports, list)
+-		if (port->slot == PCI_SLOT(devfn))
++	list_for_each_entry(port, &pcie->ports, list) {
++		if (!bus->number && port->slot == PCI_SLOT(devfn))
+ 			return port;
+ 
++		if (bus->number) {
++			pbus = bus;
++
++			while (pbus->number) {
++				dev = pbus->self;
++				pbus = dev->bus;
++			}
++
++			if (port->slot == PCI_SLOT(dev->devfn))
++				return port;
++		}
++	}
++
+ 	return NULL;
+ }
+ 
+-- 
+2.6.4
+
