@@ -2,111 +2,94 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CF3DC4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 12:13:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06318C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 12:13:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4712120870
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 12:13:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=obeliks.de header.i=@obeliks.de header.b="jiEBscSQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4712120870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nospam.obeliks.de
+	by mail.kernel.org (Postfix) with ESMTP id 9CEAD20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 12:13:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CEAD20870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728429AbeIJRG6 (ORCPT
+        id S1728488AbeIJRHC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 13:06:58 -0400
-Received: from scopuli.esotechnik.de ([79.143.188.15]:47140 "EHLO
-        mail.esotechnik.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727649AbeIJRG5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 13:06:57 -0400
-Received: by mail.esotechnik.net (Postfix) with ESMTPSA id 5567EAE002F;
-        Mon, 10 Sep 2018 14:13:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=obeliks.de; s=jul2017;
-        t=1536581588; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=d1JRr6btLiTvcbIB/c6MMSGgl7eI1r9n7QL7cbahoJA=;
-        b=jiEBscSQ6y7aB4ZEjooZAsmDE6nixq7q2ZlC5KI7DyW8u5bWQHRudQTDaOH4wtCRl90yGu
-        aGRfYSr04JiN/0K0SyjgxtRqXiMQBWNfH7eFrl6yY3q5AscvqCLHipGZI5k61O0U6LdHjm
-        ExlEehyF/X+oje6HI54AX2gloslx9yYBHohpeePBVnSgoC5kTorXEyAbcSNqE8Iwo3FgHS
-        8BItJ+ql97iCa8xAX9LB8a+jJ89V5FyE10FYCnRa0Z2pVVMDtBWOCBR91QI75lXK2UA6uc
-        HD98MxMjjU//duckgYjYqXg/Wws8jJmpqyiVFfEJO+9l2fqBTPn1fxerzSV1Jw==
-Subject: Re: [PATCH v3 2/3] dt-bindings: add bindings for mtd-concat devices
-To:     =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
-        kernel@nospam.obeliks.de
-Cc:     David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-mtd@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-References: <20180908131345.8145-1-kernel@nospam.obeliks.de>
- <20180908131345.8145-3-kernel@nospam.obeliks.de>
- <CACna6ryWCwKZJm2rq0_KeaKve8Ym9zi6AU+Kat9cpYAqtzCMdg@mail.gmail.com>
-From:   Bernhard Frauendienst <kernel@nospam.obeliks.de>
-Message-ID: <bf3d2900-aa99-e39f-24af-aa57d1f41928@nospam.obeliks.de>
-Date:   Mon, 10 Sep 2018 14:13:08 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <CACna6ryWCwKZJm2rq0_KeaKve8Ym9zi6AU+Kat9cpYAqtzCMdg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        Mon, 10 Sep 2018 13:07:02 -0400
+Received: from shell.v3.sk ([90.176.6.54]:36176 "EHLO shell.v3.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727649AbeIJRHB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 13:07:01 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id A815CB81C1;
+        Mon, 10 Sep 2018 14:13:13 +0200 (CEST)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id Xszom_vesaKN; Mon, 10 Sep 2018 14:13:11 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 369EFB8228;
+        Mon, 10 Sep 2018 14:13:11 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id SA-6GENVX_FK; Mon, 10 Sep 2018 14:13:10 +0200 (CEST)
+Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 86C72B81C1;
+        Mon, 10 Sep 2018 14:13:10 +0200 (CEST)
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     linux-kernel@vger.kernel.org
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Lubomir Rintel <lkundrak@v3.sk>
+Subject: [PATCH] irqchip/mmp: use cpu_is_pj4() instead of CONFIG_CPU_MMP2
+Date:   Mon, 10 Sep 2018 14:13:06 +0200
+Message-Id: <20180910121306.168536-1-lkundrak@v3.sk>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 10.09.2018 um 12:51 schrieb Rafał Miłecki:
-> On Sat, 8 Sep 2018 at 15:14, Bernhard Frauendienst  > <kernel@nospam.obeliks.de> wrote: >> >> Document virtual mtd-concat 
-device bindings. >> >> Signed-off-by: Bernhard Frauendienst 
-<kernel@nospam.obeliks.de> >> --- >> 
-.../devicetree/bindings/mtd/mtd-concat.txt | 36 +++++++++++++++++++ >> 1 
-file changed, 36 insertions(+) >> create mode 100644 
-Documentation/devicetree/bindings/mtd/mtd-concat.txt >> >> diff --git 
-a/Documentation/devicetree/bindings/mtd/mtd-concat.txt 
-b/Documentation/devicetree/bindings/mtd/mtd-concat.txt >> new file mode 
-100644 >> index 000000000000..2daf3157b163 >> --- /dev/null >> +++ 
-b/Documentation/devicetree/bindings/mtd/mtd-concat.txt >> @@ -0,0 +1,36 
-@@ >> +Virtual MTD concat device > > I think you forgot to include the 
-documentation. Please ***describe*** > that binding.
-You are right, I'm afraid I was mislead by some of the rather sparse
-documentation files in the mtd directory.
-Would something along these lines be sufficient?
+CONFIG_CPU_MMP2 is not there on multiplatform kernels with MACH_MMP2_DT.
+The MMP2 platform uses the PJ4 CPU.
 
---snip--
-Virtual MTD concat device
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+---
+ drivers/irqchip/irq-mmp.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-A virtual composite device that concatenates multiple child devices into a
-single mtd device. The child mtd nodes must also be defined in the tree and
-are referenced using phandles.
-
-Required properties:
-- compatible : must be "mtd-concat"
-- devices : list of phandles to mtd nodes in the order they should be
-         concatenated
-
-The device tree may optionally contain sub-nodes describing partitions 
-of the
-address space. See partition.txt for more detail.
-
-
-Example:
---snip--
-
-Regards,
-Bernhard
+diff --git a/drivers/irqchip/irq-mmp.c b/drivers/irqchip/irq-mmp.c
+index 25f32e1d7764..10aa2b553145 100644
+--- a/drivers/irqchip/irq-mmp.c
++++ b/drivers/irqchip/irq-mmp.c
+@@ -22,6 +22,7 @@
+ #include <linux/of_address.h>
+ #include <linux/of_irq.h>
+ 
++#include <asm/cputype.h>
+ #include <asm/exception.h>
+ #include <asm/hardirq.h>
+ 
+@@ -74,11 +75,11 @@ static void icu_mask_ack_irq(struct irq_data *d)
+ 		r |= data->conf_disable;
+ 		writel_relaxed(r, mmp_icu_base + (hwirq << 2));
+ 	} else {
+-#ifdef CONFIG_CPU_MMP2
+-		if ((data->virq_base == data->clr_mfp_irq_base)
+-			&& (hwirq == data->clr_mfp_hwirq))
+-			mmp2_clear_pmic_int();
+-#endif
++		if (cpu_is_pj4()) {
++			if ((data->virq_base == data->clr_mfp_irq_base)
++				&& (hwirq == data->clr_mfp_hwirq))
++				mmp2_clear_pmic_int();
++		}
+ 		r = readl_relaxed(data->reg_mask) | (1 << hwirq);
+ 		writel_relaxed(r, data->reg_mask);
+ 	}
+-- 
+2.17.1
 
