@@ -3,132 +3,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6416EC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:12:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B74CAC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:13:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 148D020870
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:12:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 148D020870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=katsuster.net
+	by mail.kernel.org (Postfix) with ESMTP id 4D53820870
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:13:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D53820870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728570AbeIJVHJ (ORCPT
+        id S1728617AbeIJVIM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 17:07:09 -0400
-Received: from www1102.sakura.ne.jp ([219.94.129.142]:11769 "EHLO
-        www1102.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727674AbeIJVHJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 17:07:09 -0400
-Received: from fsav104.sakura.ne.jp (fsav104.sakura.ne.jp [27.133.134.231])
-        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w8AGC3sp042546;
-        Tue, 11 Sep 2018 01:12:03 +0900 (JST)
-        (envelope-from katsuhiro@katsuster.net)
-Received: from www1102.sakura.ne.jp (219.94.129.142)
- by fsav104.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp);
- Tue, 11 Sep 2018 01:12:03 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp)
-Received: from [192.168.1.2] (239.166.151.153.ap.dti.ne.jp [153.151.166.239])
-        (authenticated bits=0)
-        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w8AGC38a042542
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Tue, 11 Sep 2018 01:12:03 +0900 (JST)
-        (envelope-from katsuhiro@katsuster.net)
-Subject: Re: [PATCH] arm64: dts: rockchip: add i2s and spdif endpoints of
- rk3328
-To:     Heiko Stuebner <heiko@sntech.de>,
-        linux-rockchip@lists.infradead.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20180910161011.613-1-katsuhiro@katsuster.net>
-From:   Katsuhiro Suzuki <katsuhiro@katsuster.net>
-Message-ID: <8acd8c0d-0185-e9b4-160b-0d406c0fa7ac@katsuster.net>
-Date:   Tue, 11 Sep 2018 01:12:03 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180910161011.613-1-katsuhiro@katsuster.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+        Mon, 10 Sep 2018 17:08:12 -0400
+Received: from mga09.intel.com ([134.134.136.24]:57706 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728160AbeIJVIM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 17:08:12 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2018 09:13:23 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,356,1531810800"; 
+   d="scan'208";a="255987272"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.20])
+  by orsmga005.jf.intel.com with ESMTP; 10 Sep 2018 09:13:23 -0700
+Message-ID: <1536596003.11460.82.camel@intel.com>
+Subject: Re: [PATCH v6 5/5] x86/kvm: Avoid dynamic allocation of pvclock
+ data when SEV is active
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Borislav Petkov <bp@suse.de>, Brijesh Singh <brijesh.singh@amd.com>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?UTF-8?Q?Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Date:   Mon, 10 Sep 2018 09:13:23 -0700
+In-Reply-To: <20180910155329.GB20286@zn.tnic>
+References: <1536343050-18532-1-git-send-email-brijesh.singh@amd.com>
+         <1536343050-18532-6-git-send-email-brijesh.singh@amd.com>
+         <20180910122727.GE21815@zn.tnic>
+         <026d5ca5-7b77-de6c-477e-ff39f0291ac0@amd.com>
+         <20180910155329.GB20286@zn.tnic>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ugh, sorry. I got mistake.
-This is 'v2' patch.
+On Mon, 2018-09-10 at 17:53 +0200, Borislav Petkov wrote:
+> On Mon, Sep 10, 2018 at 08:15:38AM -0500, Brijesh Singh wrote:
+> > 
+> > > 
+> > > Now, the real question from all this SNAFU is, why can't all those point
+> > > to a single struct pvclock_vsyscall_time_info and all CPUs read a single
+> > > thing? Why do they have to be per-CPU and thus waste so much memory?
+> You forgot to answer to the real question - why do we need those things
+> to be perCPU and why can't we use a single instance to share with *all*
+> CPUs?
 
-On 2018年09月11日 01:10, Katsuhiro Suzuki wrote:
-> This patch adds port and endpoint of i2s and spdif nodes for rk3328.
-> Because to use modern sound card interface such as audio-graph-card.
-> 
-> Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
-> ---
->   arch/arm64/boot/dts/rockchip/rk3328.dtsi | 24 ++++++++++++++++++++++++
->   1 file changed, 24 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3328.dtsi b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
-> index d3ef6566325e..fd35dbd37ee2 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3328.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
-> @@ -179,7 +179,13 @@
->   		clock-names = "i2s_clk", "i2s_hclk";
->   		dmas = <&dmac 11>, <&dmac 12>;
->   		dma-names = "tx", "rx";
-> +		#sound-dai-cells = <0>;
->   		status = "disabled";
-> +
-> +		i2s0_p0: port {
-> +			i2s0_p0_0: endpoint {
-> +			};
-> +		};
->   	};
->   
->   	i2s1: i2s@ff010000 {
-> @@ -190,7 +196,13 @@
->   		clock-names = "i2s_clk", "i2s_hclk";
->   		dmas = <&dmac 14>, <&dmac 15>;
->   		dma-names = "tx", "rx";
-> +		#sound-dai-cells = <0>;
->   		status = "disabled";
-> +
-> +		i2s1_p0: port {
-> +			i2s1_p0_0: endpoint {
-> +			};
-> +		};
->   	};
->   
->   	i2s2: i2s@ff020000 {
-> @@ -201,7 +213,13 @@
->   		clock-names = "i2s_clk", "i2s_hclk";
->   		dmas = <&dmac 0>, <&dmac 1>;
->   		dma-names = "tx", "rx";
-> +		#sound-dai-cells = <0>;
->   		status = "disabled";
-> +
-> +		i2s2_p0: port {
-> +			i2s2_p0_0: endpoint {
-> +			};
-> +		};
->   	};
->   
->   	spdif: spdif@ff030000 {
-> @@ -214,7 +232,13 @@
->   		dma-names = "tx";
->   		pinctrl-names = "default";
->   		pinctrl-0 = <&spdifm2_tx>;
-> +		#sound-dai-cells = <0>;
->   		status = "disabled";
-> +
-> +		spdif_p0: port {
-> +			spdif_p0_0: endpoint {
-> +			};
-> +		};
->   	};
->   
->   	pdm: pdm@ff040000 {
-> 
+I can't speak to the actual TSC stuff, but...
 
+The pvclock ABI includes a per-vCPU bit, PVCLOCK_GUEST_STOPPED, to indicate
+that the VM has been paused by the host.  The guest uses this information to
+update its watchdogs to avoid false positives.  I have no idea if there are
+use cases for setting STOPPED on a subset of vCPUs, but the ABI allows it so
+here we are...
