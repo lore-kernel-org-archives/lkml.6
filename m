@@ -2,76 +2,96 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B74CAC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:13:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2167EC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:13:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D53820870
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:13:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D53820870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id CF7D020881
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:13:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="C9ZbEHsG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF7D020881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728617AbeIJVIM (ORCPT
+        id S1728691AbeIJVIX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 17:08:12 -0400
-Received: from mga09.intel.com ([134.134.136.24]:57706 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728160AbeIJVIM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 17:08:12 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2018 09:13:23 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,356,1531810800"; 
-   d="scan'208";a="255987272"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.20])
-  by orsmga005.jf.intel.com with ESMTP; 10 Sep 2018 09:13:23 -0700
-Message-ID: <1536596003.11460.82.camel@intel.com>
-Subject: Re: [PATCH v6 5/5] x86/kvm: Avoid dynamic allocation of pvclock
- data when SEV is active
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Borislav Petkov <bp@suse.de>, Brijesh Singh <brijesh.singh@amd.com>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Tom Lendacky <thomas.lendacky@amd.com>,
+        Mon, 10 Sep 2018 17:08:23 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52148 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728396AbeIJVIW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 17:08:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=YP+cQTdRCyu7Z5q8SLU9kLg4ZY4ThJMQ0EgCZBOA+50=; b=C9ZbEHsGbjhTJXkBpAsKWVCbS
+        X1CGWqBterp+q1fL5JWgoreTravR1hY9cuk0S3nR6YWtrMhA5gGfE4qxqFRtdTG7kHwZGKtQSA5Qt
+        OsFOO5i5UtCp4W0JIwfvH93BXbNkMGwnJ5GAmANuaPOAgJDFTX2bHL8nESsf3Yuwl4ei86TVkvG+J
+        94roAFYyHEuO4aEsqcOXgTUEwgtVdzv+6nZqc3Iy+PeDlWJ/+2JBwLVUMq4+rXSD/dQFukv4kqqXQ
+        /VFbE4para4xIXoz0T/BB+x+d7a6XiqqzezI/laFwCgWKpCl104oaH2a9pi5Ey79aiu1sxTsJiC0P
+        T6ZzvwT+A==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fzOoa-0003oX-D5; Mon, 10 Sep 2018 16:13:28 +0000
+Date:   Mon, 10 Sep 2018 09:13:28 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Anup Patel <anup@brainfault.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?UTF-8?Q?Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
-Date:   Mon, 10 Sep 2018 09:13:23 -0700
-In-Reply-To: <20180910155329.GB20286@zn.tnic>
-References: <1536343050-18532-1-git-send-email-brijesh.singh@amd.com>
-         <1536343050-18532-6-git-send-email-brijesh.singh@amd.com>
-         <20180910122727.GE21815@zn.tnic>
-         <026d5ca5-7b77-de6c-477e-ff39f0291ac0@amd.com>
-         <20180910155329.GB20286@zn.tnic>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
+        Atish Patra <atish.patra@wdc.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v2 3/5] irqchip: RISC-V Local Interrupt Controller Driver
+Message-ID: <20180910161328.GA13171@infradead.org>
+References: <20180906123651.28500-4-anup@brainfault.org>
+ <20180906140628.GA10580@infradead.org>
+ <alpine.DEB.2.21.1809081241310.1402@nanos.tec.linutronix.de>
+ <20180910132924.GA6987@infradead.org>
+ <alpine.DEB.2.21.1809101533330.1292@nanos.tec.linutronix.de>
+ <alpine.DEB.2.21.1809101536410.1292@nanos.tec.linutronix.de>
+ <20180910133902.GB21593@infradead.org>
+ <alpine.DEB.2.21.1809101544560.1292@nanos.tec.linutronix.de>
+ <20180910134915.GB30774@infradead.org>
+ <CAAhSdy1be_ibiowifBdgBZjbHuFU=CR4rZXQDwQghVYkex5bMg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAAhSdy1be_ibiowifBdgBZjbHuFU=CR4rZXQDwQghVYkex5bMg@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-09-10 at 17:53 +0200, Borislav Petkov wrote:
-> On Mon, Sep 10, 2018 at 08:15:38AM -0500, Brijesh Singh wrote:
-> > 
-> > > 
-> > > Now, the real question from all this SNAFU is, why can't all those point
-> > > to a single struct pvclock_vsyscall_time_info and all CPUs read a single
-> > > thing? Why do they have to be per-CPU and thus waste so much memory?
-> You forgot to answer to the real question - why do we need those things
-> to be perCPU and why can't we use a single instance to share with *all*
-> CPUs?
+On Mon, Sep 10, 2018 at 07:59:15PM +0530, Anup Patel wrote:
+> > Yes.  external is chained and IPI is still handled explicitly.
+> 
+> On riscv64, there are 64 local interrupts (i.e. per-CPU interrupts).
 
-I can't speak to the actual TSC stuff, but...
+There aren't.  There are 9 right now, which are your three below:
 
-The pvclock ABI includes a per-vCPU bit, PVCLOCK_GUEST_STOPPED, to indicate
-that the VM has been paused by the host.  The guest uses this information to
-update its watchdogs to avoid false positives.  I have no idea if there are
-use cases for setting STOPPED on a subset of vCPUs, but the ABI allows it so
-here we are...
+> Three of these local interrupts have clearly defined use:
+> 1. Software interrupt (inter-processor interrupt)
+> 2. External interrupt (interrupt from PLIC)
+> 3. Timer interrupt (interrupt from per-CPU timer)
+
+multiplied by 3 for machine, supervisor, user.
+
+> Other local interrupts are available for future use.
+
+The others aren't even defined as other interrupts, but just reserved
+fields.  And only one bit per privilege level would even fit into the
+encoding scheme used right now.
