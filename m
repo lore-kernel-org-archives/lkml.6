@@ -2,127 +2,122 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 971CCC4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:01:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EDA3C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:01:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54E762087F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:01:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54E762087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id F25B22087F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:01:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F25B22087F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728914AbeIJTzj convert rfc822-to-8bit (ORCPT
+        id S1728926AbeIJT4S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 15:55:39 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40166 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728874AbeIJTzi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 15:55:38 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BD2F3412CA60;
-        Mon, 10 Sep 2018 15:01:07 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-55.bos.redhat.com [10.18.17.55])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 80107112D19F;
-        Mon, 10 Sep 2018 15:01:07 +0000 (UTC)
-Subject: Re: [PATCH] locking/rwsem: Make owner store task pointer of last
- owning reader
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>
-References: <1536265114-10842-1-git-send-email-longman@redhat.com>
- <20180910093156.GS24082@hirez.programming.kicks-ass.net>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <83b333ea-8ef2-84ea-6810-4ab1a67eef88@redhat.com>
-Date:   Mon, 10 Sep 2018 11:01:06 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Mon, 10 Sep 2018 15:56:18 -0400
+Received: from smtp.eu.citrix.com ([185.25.65.24]:46413 "EHLO
+        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728795AbeIJT4R (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 15:56:17 -0400
+X-IronPort-AV: E=Sophos;i="5.53,356,1531785600"; 
+   d="scan'208";a="78796359"
+Date:   Mon, 10 Sep 2018 17:00:58 +0200
+From:   Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
+To:     Valentin Vidic <Valentin.Vidic@CARNet.hr>
+CC:     <drbd-user@lists.linbit.com>, Jens Axboe <axboe@kernel.dk>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <xen-devel@lists.xenproject.org>
+Subject: Re: [DRBD-user] [PATCH] xen-blkback: Switch to closed state after
+ releasing the backing device
+Message-ID: <20180910150058.suxehc3uheyho4qx@mac.bytemobile.com>
+References: <20180905103649.edugijsjx4v2fbxd@mac.bytemobile.com>
+ <20180905162756.GA26705@gavran.carpriv.carnet.hr>
+ <20180907120337.GB11834@soda.linbit>
+ <20180907121348.GM26705@gavran.carpriv.carnet.hr>
+ <20180907132828.GC11834@soda.linbit>
+ <20180907164500.GN26705@gavran.carpriv.carnet.hr>
+ <20180907171459.GO26705@gavran.carpriv.carnet.hr>
+ <20180908073432.GP26705@gavran.carpriv.carnet.hr>
+ <20180910124531.GA31737@soda.linbit>
+ <20180910132252.GE26705@gavran.carpriv.carnet.hr>
 MIME-Version: 1.0
-In-Reply-To: <20180910093156.GS24082@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 10 Sep 2018 15:01:07 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 10 Sep 2018 15:01:07 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180910132252.GE26705@gavran.carpriv.carnet.hr>
+User-Agent: NeoMutt/20180716
+X-ClientProxiedBy: AMSPEX02CAS02.citrite.net (10.69.22.113) To
+ AMSPEX02CL02.citrite.net (10.69.22.126)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/10/2018 05:31 AM, Peter Zijlstra wrote:
-> On Thu, Sep 06, 2018 at 04:18:34PM -0400, Waiman Long wrote:
->> Currently, when a reader acquires a lock, it only sets the
->> RWSEM_READER_OWNED bit in the owner field. The other bits are simply
->> not used. When debugging hanging cases involving rwsems and readers,
->> the owner value does not provide much useful information at all.
->>
->> This patch modifies the current behavior to always store the task_struct
->> pointer of the last rwsem-acquiring reader in a reader-owned rwsem. This
->> may be useful in debugging rwsem hanging cases especially if only one
->> reader is involved. However, the task in the owner field may not the
->> real owner or one of the real owners at all when the owner value is
->> examined, for example, in a crash dump. So it is just an additional
->> hint about the past history.
->>
->> If CONFIG_DEBUG_RWSEMS is enabled, the owner field will be checked at
->> unlock time too to make sure the task pointer value is valid. That does
->> have a slight performance cost and so is only enabled as part of that
->> debug option.
->>
->> From the performance point of view, it is expected that the changes
->> shouldn't have any noticeable performance impact. A rwsem microbenchmark
->> (with 48 worker threads and 1:1 reader/writer ratio) was ran on a
->> 2-socket 24-core 48-thread Haswell system.  The locking rates on a
->> 4.19-rc1 based kernel were as follows:
->>
->>   1) Unpatched kernel:				543.3 kops/s
->>   2) Patched kernel:				549.2 kops/s
->>   3) Patched kernel (CONFIG_DEBUG_RWSEMS on):	546.6 kops/s
->>
->> There was actually a slight increase in performance (1.1%) in this
->> particular case. Maybe it was caused by the elimination of a branch or
->> just a testing noise. Turning on the CONFIG_DEBUG_RWSEMS option also
->> had less than the expected impact on performance.
->>
->> The least significant 2 bits of the owner value are now used to designate
->> the rwsem is readers owned and the owners are anonymous.
-> So no immediate objection; but I'm still hoping to some day rewrite the
-> whole rwsem thing along the lines we did mutex and merge the 'count' and
-> 'owner' fields into one.
->
-> [ RT has something along those lines, and I have half a patch that
->   starts doing that too, but I never found enough time to really work on
->   it :-( ]
->
-> Anyway, when we do something like that, this goes out the window of
-> course.
+On Mon, Sep 10, 2018 at 03:22:52PM +0200, Valentin Vidic wrote:
+> On Mon, Sep 10, 2018 at 02:45:31PM +0200, Lars Ellenberg wrote:
+> > On Sat, Sep 08, 2018 at 09:34:32AM +0200, Valentin Vidic wrote:
+> > > On Fri, Sep 07, 2018 at 07:14:59PM +0200, Valentin Vidic wrote:
+> > > > In fact the first one is the original code path before I modified
+> > > > blkback.  The problem is it gets executed async from workqueue so
+> > > > it might not always run before the call to drbdadm secondary.
+> > > 
+> > > As the DRBD device gets released only when the last IO request
+> > > has finished, I found a way to check and wait for this in the
+> > > block-drbd script:
+> > 
+> > > --- block-drbd.orig     2018-09-08 09:07:23.499648515 +0200
+> > > +++ block-drbd  2018-09-08 09:28:12.892193649 +0200
+> > > @@ -230,6 +230,24 @@
+> > >  and so cannot be mounted ${m2}${when}."
+> > >  }
+> > >  
+> > > +wait_for_inflight()
+> > > +{
+> > > +  local dev="$1"
+> > > +  local inflight="/sys/block/${dev#/dev/}/inflight"
+> > > +  local rd wr
+> > > +
+> > > +  if ! [ -f "$inflight" ]; then
+> > > +    return
+> > > +  fi
+> > > +
+> > > +  while true; do
+> > > +    read rd wr < $inflight
+> > > +    if [ "$rd" = "0" -a "$wr" = "0" ]; then
+> > 
+> > If it is "idle" now, but still "open",
+> > this will not sleep, and still fail the demotion below.
+> 
+> True, but in this case blkback is holding it open until all
+> the writes have finished and the last write closes the device.
+> Since fuser can't check blkback this is an approximation that
+> seems to work because I don't get any failed drbdadm calls now.
+> 
+> > You try to help it by "waiting forever until it appears to be idle".
+> > I suggest to at least limit the retries by iteration or time.
+> > And also (or, instead; but you'd potentially get a number of
+> > "scary messages" in the logs) add something like:
+> 
+> Ok, should I open a PR to discuss this change further?
+> 
+> > Or, well, yes, fix blkback to not "defer" the final close "too long",
+> > if at all possible.
+> 
+> blkback needs to finish the writes on shutdown or I get a fsck errors
+> on next boot. Ideally XenbusStateClosed should be delayed until the
+> device release but currently it does not seem possible without breaking
+> other things.
 
-That may not be the case. I have also thought about merging owner and
-count. For writer, it can write its owner value to the combined
-count/owner. For readers, I think we will need to keep a reader count
-and so cannot store its owner value there. In that case, we could have a
-debug-only field for the reader-owner value.
+I can try to take a look at this and attempt to make sure the state is
+only changed to closed in blkback _after_ the device has been
+released, but it might take me a couple of days to get you a patch.
 
-One major issue with a combined count/owner is that we may have to use
-cmpxchg for reader lock which will certainly impact reader-heavy
-workloads. I have also thought about ways to compress the task pointer
-address so that it can use fewer bits and leave the rests for reader
-count. It is probably doable on 64-bit systems, but likely not on 32-bit
-system given that there are less bits to play around.
+I'm afraid that other hotplug scripts will also have issues with such
+behavior, and we shouldn't force all users of hotplug scripts to add
+such workarounds.
 
-I would certainly like to hear your thought on how to handle these
-dilemmas as I may be able to find time to work on that. I had a reader
-optimistic spinning patch that was sent out a while ago. I know it won't
-get serious time for review until we can resolve this combine
-owner/count issue first.
-
-Cheers,
-Longman
-
-
+Roger.
