@@ -6,48 +6,51 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31563C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:06:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE696C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:06:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D210520865
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:06:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D210520865
+	by mail.kernel.org (Postfix) with ESMTP id A1BFD20865
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:06:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1BFD20865
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728145AbeIJO7Z (ORCPT
+        id S1728176AbeIJPAN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 10:59:25 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:48233 "EHLO
+        Mon, 10 Sep 2018 11:00:13 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:52925 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726907AbeIJO7Y (ORCPT
+        with ESMTP id S1726907AbeIJPAN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 10:59:24 -0400
+        Mon, 10 Sep 2018 11:00:13 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8AA5Z031806669
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8AA6Bdj1806869
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 10 Sep 2018 03:05:36 -0700
+        Mon, 10 Sep 2018 03:06:11 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8AA5Zhh1806666;
-        Mon, 10 Sep 2018 03:05:35 -0700
-Date:   Mon, 10 Sep 2018 03:05:35 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8AA697p1806859;
+        Mon, 10 Sep 2018 03:06:09 -0700
+Date:   Mon, 10 Sep 2018 03:06:09 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jiada Wang <tipbot@zytor.com>
-Message-ID: <tip-e73e81975f2447e6f556100cada64a18ec631cbb@git.kernel.org>
-Cc:     dietmar.eggemann@arm.com, torvalds@linux-foundation.org,
-        tglx@linutronix.de, hpa@zytor.com, jiada_wang@mentor.com,
-        erosca@de.adit-jv.com, george_davis@mentor.com, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, peterz@infradead.org
-Reply-To: dietmar.eggemann@arm.com, torvalds@linux-foundation.org,
-          tglx@linutronix.de, hpa@zytor.com, jiada_wang@mentor.com,
-          erosca@de.adit-jv.com, george_davis@mentor.com, mingo@kernel.org,
-          peterz@infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20180731121222.26195-1-jiada_wang@mentor.com>
-References: <20180731121222.26195-1-jiada_wang@mentor.com>
+From:   tip-bot for Srikar Dronamraju <tipbot@zytor.com>
+Message-ID: <tip-e5e96fafd9028b1478b165db78c52d981c14f471@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        torvalds@linux-foundation.org, wild@linux.vnet.ibm.com,
+        suravee.suthikulpanit@amd.com, hpa@zytor.com, mingo@kernel.org,
+        mpe@ellerman.id.au, heiko.carstens@de.ibm.com, tglx@linutronix.de,
+        peterz@infradead.org, riel@surriel.com, srikar@linux.vnet.ibm.com,
+        mgorman@techsingularity.net
+Reply-To: mingo@kernel.org, hpa@zytor.com, suravee.suthikulpanit@amd.com,
+          torvalds@linux-foundation.org, linuxppc-dev@lists.ozlabs.org,
+          wild@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
+          srikar@linux.vnet.ibm.com, mgorman@techsingularity.net,
+          riel@surriel.com, peterz@infradead.org, tglx@linutronix.de,
+          heiko.carstens@de.ibm.com, mpe@ellerman.id.au
+In-Reply-To: <1533920419-17410-1-git-send-email-srikar@linux.vnet.ibm.com>
+References: <1533920419-17410-1-git-send-email-srikar@linux.vnet.ibm.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/debug: Fix potential deadlock when writing
- to sched_features
-Git-Commit-ID: e73e81975f2447e6f556100cada64a18ec631cbb
+Subject: [tip:sched/core] sched/topology: Set correct NUMA topology type
+Git-Commit-ID: e5e96fafd9028b1478b165db78c52d981c14f471
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -61,209 +64,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e73e81975f2447e6f556100cada64a18ec631cbb
-Gitweb:     https://git.kernel.org/tip/e73e81975f2447e6f556100cada64a18ec631cbb
-Author:     Jiada Wang <jiada_wang@mentor.com>
-AuthorDate: Tue, 31 Jul 2018 21:12:22 +0900
+Commit-ID:  e5e96fafd9028b1478b165db78c52d981c14f471
+Gitweb:     https://git.kernel.org/tip/e5e96fafd9028b1478b165db78c52d981c14f471
+Author:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+AuthorDate: Fri, 10 Aug 2018 22:30:18 +0530
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Mon, 10 Sep 2018 10:13:45 +0200
 
-sched/debug: Fix potential deadlock when writing to sched_features
+sched/topology: Set correct NUMA topology type
 
-The following lockdep report can be triggered by writing to /sys/kernel/debug/sched_features:
+With the following commit:
 
-  ======================================================
-  WARNING: possible circular locking dependency detected
-  4.18.0-rc6-00152-gcd3f77d74ac3-dirty #18 Not tainted
-  ------------------------------------------------------
-  sh/3358 is trying to acquire lock:
-  000000004ad3989d (cpu_hotplug_lock.rw_sem){++++}, at: static_key_enable+0x14/0x30
-  but task is already holding lock:
-  00000000c1b31a88 (&sb->s_type->i_mutex_key#3){+.+.}, at: sched_feat_write+0x160/0x428
-  which lock already depends on the new lock.
-  the existing dependency chain (in reverse order) is:
-  -> #3 (&sb->s_type->i_mutex_key#3){+.+.}:
-         lock_acquire+0xb8/0x148
-         down_write+0xac/0x140
-         start_creating+0x5c/0x168
-         debugfs_create_dir+0x18/0x220
-         opp_debug_register+0x8c/0x120
-         _add_opp_dev+0x104/0x1f8
-         dev_pm_opp_get_opp_table+0x174/0x340
-         _of_add_opp_table_v2+0x110/0x760
-         dev_pm_opp_of_add_table+0x5c/0x240
-         dev_pm_opp_of_cpumask_add_table+0x5c/0x100
-         cpufreq_init+0x160/0x430
-         cpufreq_online+0x1cc/0xe30
-         cpufreq_add_dev+0x78/0x198
-         subsys_interface_register+0x168/0x270
-         cpufreq_register_driver+0x1c8/0x278
-         dt_cpufreq_probe+0xdc/0x1b8
-         platform_drv_probe+0xb4/0x168
-         driver_probe_device+0x318/0x4b0
-         __device_attach_driver+0xfc/0x1f0
-         bus_for_each_drv+0xf8/0x180
-         __device_attach+0x164/0x200
-         device_initial_probe+0x10/0x18
-         bus_probe_device+0x110/0x178
-         device_add+0x6d8/0x908
-         platform_device_add+0x138/0x3d8
-         platform_device_register_full+0x1cc/0x1f8
-         cpufreq_dt_platdev_init+0x174/0x1bc
-         do_one_initcall+0xb8/0x310
-         kernel_init_freeable+0x4b8/0x56c
-         kernel_init+0x10/0x138
-         ret_from_fork+0x10/0x18
-  -> #2 (opp_table_lock){+.+.}:
-         lock_acquire+0xb8/0x148
-         __mutex_lock+0x104/0xf50
-         mutex_lock_nested+0x1c/0x28
-         _of_add_opp_table_v2+0xb4/0x760
-         dev_pm_opp_of_add_table+0x5c/0x240
-         dev_pm_opp_of_cpumask_add_table+0x5c/0x100
-         cpufreq_init+0x160/0x430
-         cpufreq_online+0x1cc/0xe30
-         cpufreq_add_dev+0x78/0x198
-         subsys_interface_register+0x168/0x270
-         cpufreq_register_driver+0x1c8/0x278
-         dt_cpufreq_probe+0xdc/0x1b8
-         platform_drv_probe+0xb4/0x168
-         driver_probe_device+0x318/0x4b0
-         __device_attach_driver+0xfc/0x1f0
-         bus_for_each_drv+0xf8/0x180
-         __device_attach+0x164/0x200
-         device_initial_probe+0x10/0x18
-         bus_probe_device+0x110/0x178
-         device_add+0x6d8/0x908
-         platform_device_add+0x138/0x3d8
-         platform_device_register_full+0x1cc/0x1f8
-         cpufreq_dt_platdev_init+0x174/0x1bc
-         do_one_initcall+0xb8/0x310
-         kernel_init_freeable+0x4b8/0x56c
-         kernel_init+0x10/0x138
-         ret_from_fork+0x10/0x18
-  -> #1 (subsys mutex#6){+.+.}:
-         lock_acquire+0xb8/0x148
-         __mutex_lock+0x104/0xf50
-         mutex_lock_nested+0x1c/0x28
-         subsys_interface_register+0xd8/0x270
-         cpufreq_register_driver+0x1c8/0x278
-         dt_cpufreq_probe+0xdc/0x1b8
-         platform_drv_probe+0xb4/0x168
-         driver_probe_device+0x318/0x4b0
-         __device_attach_driver+0xfc/0x1f0
-         bus_for_each_drv+0xf8/0x180
-         __device_attach+0x164/0x200
-         device_initial_probe+0x10/0x18
-         bus_probe_device+0x110/0x178
-         device_add+0x6d8/0x908
-         platform_device_add+0x138/0x3d8
-         platform_device_register_full+0x1cc/0x1f8
-         cpufreq_dt_platdev_init+0x174/0x1bc
-         do_one_initcall+0xb8/0x310
-         kernel_init_freeable+0x4b8/0x56c
-         kernel_init+0x10/0x138
-         ret_from_fork+0x10/0x18
-  -> #0 (cpu_hotplug_lock.rw_sem){++++}:
-         __lock_acquire+0x203c/0x21d0
-         lock_acquire+0xb8/0x148
-         cpus_read_lock+0x58/0x1c8
-         static_key_enable+0x14/0x30
-         sched_feat_write+0x314/0x428
-         full_proxy_write+0xa0/0x138
-         __vfs_write+0xd8/0x388
-         vfs_write+0xdc/0x318
-         ksys_write+0xb4/0x138
-         sys_write+0xc/0x18
-         __sys_trace_return+0x0/0x4
-  other info that might help us debug this:
-  Chain exists of:
-    cpu_hotplug_lock.rw_sem --> opp_table_lock --> &sb->s_type->i_mutex_key#3
-   Possible unsafe locking scenario:
-         CPU0                    CPU1
-         ----                    ----
-    lock(&sb->s_type->i_mutex_key#3);
-                                 lock(opp_table_lock);
-                                 lock(&sb->s_type->i_mutex_key#3);
-    lock(cpu_hotplug_lock.rw_sem);
-   *** DEADLOCK ***
-  2 locks held by sh/3358:
-   #0: 00000000a8c4b363 (sb_writers#10){.+.+}, at: vfs_write+0x238/0x318
-   #1: 00000000c1b31a88 (&sb->s_type->i_mutex_key#3){+.+.}, at: sched_feat_write+0x160/0x428
-  stack backtrace:
-  CPU: 5 PID: 3358 Comm: sh Not tainted 4.18.0-rc6-00152-gcd3f77d74ac3-dirty #18
-  Hardware name: Renesas H3ULCB Kingfisher board based on r8a7795 ES2.0+ (DT)
-  Call trace:
-   dump_backtrace+0x0/0x288
-   show_stack+0x14/0x20
-   dump_stack+0x13c/0x1ac
-   print_circular_bug.isra.10+0x270/0x438
-   check_prev_add.constprop.16+0x4dc/0xb98
-   __lock_acquire+0x203c/0x21d0
-   lock_acquire+0xb8/0x148
-   cpus_read_lock+0x58/0x1c8
-   static_key_enable+0x14/0x30
-   sched_feat_write+0x314/0x428
-   full_proxy_write+0xa0/0x138
-   __vfs_write+0xd8/0x388
-   vfs_write+0xdc/0x318
-   ksys_write+0xb4/0x138
-   sys_write+0xc/0x18
-   __sys_trace_return+0x0/0x4
+  051f3ca02e46 ("sched/topology: Introduce NUMA identity node sched domain")
 
-This is because when loading the cpufreq_dt module we first acquire
-cpu_hotplug_lock.rw_sem lock, then in cpufreq_init(), we are taking
-the &sb->s_type->i_mutex_key lock.
+the scheduler introduced a new NUMA level. However this leads to the NUMA topology
+on 2 node systems to not be marked as NUMA_DIRECT anymore.
 
-But when writing to /sys/kernel/debug/sched_features, the
-cpu_hotplug_lock.rw_sem lock depends on the &sb->s_type->i_mutex_key lock.
+After this commit, it gets reported as NUMA_BACKPLANE, because
+sched_domains_numa_level is now 2 on 2 node systems.
 
-To fix this bug, reverse the lock acquisition order when writing to
-sched_features, this way cpu_hotplug_lock.rw_sem no longer depends on
-&sb->s_type->i_mutex_key.
+Fix this by allowing setting systems that have up to 2 NUMA levels as
+NUMA_DIRECT.
 
-Tested-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+While here remove code that assumes that level can be 0.
+
+Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Eugeniu Rosca <erosca@de.adit-jv.com>
-Cc: George G. Davis <george_davis@mentor.com>
+Cc: Andre Wild <wild@linux.vnet.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mel Gorman <mgorman@techsingularity.net>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
 Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20180731121222.26195-1-jiada_wang@mentor.com
+Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Fixes: 051f3ca02e46 "Introduce NUMA identity node sched domain"
+Link: http://lkml.kernel.org/r/1533920419-17410-1-git-send-email-srikar@linux.vnet.ibm.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/sched/debug.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ kernel/sched/topology.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
-index 60caf1fb94e0..6383aa6a60ca 100644
---- a/kernel/sched/debug.c
-+++ b/kernel/sched/debug.c
-@@ -89,12 +89,12 @@ struct static_key sched_feat_keys[__SCHED_FEAT_NR] = {
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index 56a0fed30c0a..505a41c42b96 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -1295,7 +1295,7 @@ static void init_numa_topology_type(void)
  
- static void sched_feat_disable(int i)
- {
--	static_key_disable(&sched_feat_keys[i]);
-+	static_key_disable_cpuslocked(&sched_feat_keys[i]);
- }
+ 	n = sched_max_numa_distance;
  
- static void sched_feat_enable(int i)
- {
--	static_key_enable(&sched_feat_keys[i]);
-+	static_key_enable_cpuslocked(&sched_feat_keys[i]);
- }
- #else
- static void sched_feat_disable(int i) { };
-@@ -146,9 +146,11 @@ sched_feat_write(struct file *filp, const char __user *ubuf,
+-	if (sched_domains_numa_levels <= 1) {
++	if (sched_domains_numa_levels <= 2) {
+ 		sched_numa_topology_type = NUMA_DIRECT;
+ 		return;
+ 	}
+@@ -1380,9 +1380,6 @@ void sched_init_numa(void)
+ 			break;
+ 	}
  
- 	/* Ensure the static_key remains in a consistent state */
- 	inode = file_inode(filp);
-+	cpus_read_lock();
- 	inode_lock(inode);
- 	ret = sched_feat_set(cmp);
- 	inode_unlock(inode);
-+	cpus_read_unlock();
- 	if (ret < 0)
- 		return ret;
- 
+-	if (!level)
+-		return;
+-
+ 	/*
+ 	 * 'level' contains the number of unique distances
+ 	 *
