@@ -2,114 +2,128 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09B34C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 17:17:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4765AC4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 17:18:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1EEA2087F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 17:17:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1EEA2087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id F26C92086E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 17:18:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F26C92086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728398AbeIJWLd (ORCPT
+        id S1728825AbeIJWN2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 18:11:33 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:59502 "EHLO inva020.nxp.com"
+        Mon, 10 Sep 2018 18:13:28 -0400
+Received: from mga04.intel.com ([192.55.52.120]:49560 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727007AbeIJWLc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 18:11:32 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id ABBAD1A00C1;
-        Mon, 10 Sep 2018 19:16:26 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9EB9D1A003C;
-        Mon, 10 Sep 2018 19:16:26 +0200 (CEST)
-Received: from enigma.ea.freescale.net (enigma.ea.freescale.net [10.171.81.110])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 20B7D2060B;
-        Mon, 10 Sep 2018 19:16:26 +0200 (CEST)
-From:   =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Stuart Yoder <stuyoder@gmail.com>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Li Yang <leoyang.li@nxp.com>, Roy Pledge <roy.pledge@nxp.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 01/11] bus: fsl-mc: add support for dpseci device type
-Date:   Mon, 10 Sep 2018 20:15:40 +0300
-Message-Id: <20180910171550.5659-2-horia.geanta@nxp.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180910171550.5659-1-horia.geanta@nxp.com>
-References: <20180910171550.5659-1-horia.geanta@nxp.com>
+        id S1727705AbeIJWN2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 18:13:28 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2018 10:18:23 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,356,1531810800"; 
+   d="scan'208";a="262274801"
+Received: from tstruk-mobl1.jf.intel.com ([10.24.8.238])
+  by fmsmga006.fm.intel.com with ESMTP; 10 Sep 2018 10:18:22 -0700
+Subject: [PATCH v6 0/2] tpm: add support for nonblocking operation
+From:   Tadeusz Struk <tadeusz.struk@intel.com>
+To:     jarkko.sakkinen@linux.intel.com
+Cc:     flihp@twobit.us, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tadeusz.struk@intel.com
+Date:   Mon, 10 Sep 2018 10:18:22 -0700
+Message-ID: <153659990230.2284.5511495299744743989.stgit@tstruk-mobl1.jf.intel.com>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
+The TCG SAPI specification [1] defines a set of functions, which allow
+applications to use the TPM device in either blocking or non-blocking fashion.
+Each command defined by the specification has a corresponding
+Tss2_Sys_<COMMAND>_Prepare() and Tss2_Sys_<COMMAND>_Complete() call, which
+together with Tss2_Sys_ExecuteAsync() is designed to allow asynchronous
+mode of operation. Currently the TPM driver supports only blocking calls,
+which doesn't allow asynchronous IO operations.
+This patch changes it and adds support for nonblocking write and a new poll
+function to enable applications, which want to take advantage of this feature.
+The new functionality can be tested using standard TPM tools implemented
+in [2], together with modified TCTI from [3], and an example application
+by Philip Tricca [4]. Here is a short description from Philip:
+
+"The example application `glib-tss2-event` uses a glib main event loop
+to create an RSA 2048 primary key in the TPM2 NULL hierarchy while
+using a glib timer event to time the operation. A GSource object is
+used to generate an event when the FD underlying the tss2 function
+call has data ready. While the application waits for an event indicating
+that the CreatePrimary operation is complete, it counts timer events
+that occur every 100ms. Once the CreatePrimary operation completes the
+number of timer events that occurred is used to make a rough calculation
+of the elapsed time. This value is then printed to the console.
+This takes ~300 lines of C code and requires no management or
+synchronization of threads. The glib GMainContext is "just a poll()
+loop" according to the glib documentation here:
+
+https://developer.gnome.org/programming-guidelines/stable/main-contexts.html.en
+
+and so supporting 'poll' is the easiest way to integrate with glib /
+gtk+. This is true of any other event system that relies on 'poll'
+instead of worker threads."
+
+[1] https://trustedcomputinggroup.org/wp-content/uploads/TSS_SAPI_Version-1.1_Revision-22_review_030918.pdf
+[2] https://github.com/tpm2-software/tpm2-tools
+[3] https://github.com/tstruk/tpm2-tss/tree/async
+[4] https://github.com/flihp/glib-tss2-async-example
+
 ---
- drivers/bus/fsl-mc/fsl-mc-bus.c | 5 +++++
- include/linux/fsl/mc.h          | 6 ++++++
- 2 files changed, 11 insertions(+)
+Changes in v6:
+- Changed commit message in the first patch to more specific.
+- Chenged labels names in tpm-interface.c
 
-diff --git a/drivers/bus/fsl-mc/fsl-mc-bus.c b/drivers/bus/fsl-mc/fsl-mc-bus.c
-index 5d8266c6571f..4552b06fe601 100644
---- a/drivers/bus/fsl-mc/fsl-mc-bus.c
-+++ b/drivers/bus/fsl-mc/fsl-mc-bus.c
-@@ -188,6 +188,10 @@ struct device_type fsl_mc_bus_dprtc_type = {
- 	.name = "fsl_mc_bus_dprtc"
- };
- 
-+struct device_type fsl_mc_bus_dpseci_type = {
-+	.name = "fsl_mc_bus_dpseci"
-+};
-+
- static struct device_type *fsl_mc_get_device_type(const char *type)
- {
- 	static const struct {
-@@ -203,6 +207,7 @@ static struct device_type *fsl_mc_get_device_type(const char *type)
- 		{ &fsl_mc_bus_dpmcp_type, "dpmcp" },
- 		{ &fsl_mc_bus_dpmac_type, "dpmac" },
- 		{ &fsl_mc_bus_dprtc_type, "dprtc" },
-+		{ &fsl_mc_bus_dpseci_type, "dpseci" },
- 		{ NULL, NULL }
- 	};
- 	int i;
-diff --git a/include/linux/fsl/mc.h b/include/linux/fsl/mc.h
-index f27cb14088a4..5160f06ffbac 100644
---- a/include/linux/fsl/mc.h
-+++ b/include/linux/fsl/mc.h
-@@ -405,6 +405,7 @@ extern struct device_type fsl_mc_bus_dpcon_type;
- extern struct device_type fsl_mc_bus_dpmcp_type;
- extern struct device_type fsl_mc_bus_dpmac_type;
- extern struct device_type fsl_mc_bus_dprtc_type;
-+extern struct device_type fsl_mc_bus_dpseci_type;
- 
- static inline bool is_fsl_mc_bus_dprc(const struct fsl_mc_device *mc_dev)
- {
-@@ -451,6 +452,11 @@ static inline bool is_fsl_mc_bus_dprtc(const struct fsl_mc_device *mc_dev)
- 	return mc_dev->dev.type == &fsl_mc_bus_dprtc_type;
- }
- 
-+static inline bool is_fsl_mc_bus_dpseci(const struct fsl_mc_device *mc_dev)
-+{
-+	return mc_dev->dev.type == &fsl_mc_bus_dpseci_type;
-+}
-+
- /*
-  * Data Path Buffer Pool (DPBP) API
-  * Contains initialization APIs and runtime control APIs for DPBP
--- 
-2.16.2
+Changes in v5:
+- Changed the workqueue allocation time back from the first user interface
+  open to module init.
 
+Changes in v4:
+- Changed the way buffer_mutex is handled in nonblocking mode so that
+  it is not held when write() returns to user space.
+
+Changes in v3:
+- Fixed problem reported by 0-dey kbuild test robot around __exitcall.
+  It complained because there is a module_exit() in another file already.
+- Added info on example application from Philip
+
+Changes in v2:
+- Split the change into two separate patches. First patch adds a pointer
+  to the space to the struct file_priv to have access to it from the async job.
+  This is to avoid memory allocations on every write call. Now everything
+  what's needed is in the file_priv struct.
+- Renamed the 'work' member of the timer to avoid confusion.
+  Now there are 'timeout_work' and 'async_work'.
+- Removed the global wait queue and moved it to file_priv.
+- Only creating the work queue when the first file is opened.
+
+Tadeusz Struk (2):
+      tpm: add ptr to the tpm_space struct to file_priv
+      tpm: add support for nonblocking operation
+
+ drivers/char/tpm/tpm-dev-common.c |  150 +++++++++++++++++++++++++++----------
+ drivers/char/tpm/tpm-dev.c        |   22 +++--
+ drivers/char/tpm/tpm-dev.h        |   19 +++--
+ drivers/char/tpm/tpm-interface.c  |    1 
+ drivers/char/tpm/tpm.h            |    1 
+ drivers/char/tpm/tpmrm-dev.c      |   31 ++++----
+ 6 files changed, 152 insertions(+), 72 deletions(-)
+
+--
+TS
