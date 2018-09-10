@@ -2,123 +2,97 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB8A9C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 12:40:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3A46C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 12:40:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D56F20866
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 12:40:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D56F20866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 5877820866
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 12:40:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="E77K85Fg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5877820866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728549AbeIJRd6 (ORCPT
+        id S1728623AbeIJReH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 13:33:58 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:43333 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727649AbeIJRd6 (ORCPT
+        Mon, 10 Sep 2018 13:34:07 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:34075 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727649AbeIJReH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 13:33:58 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8ACdd9F1846821
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 10 Sep 2018 05:39:39 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8ACdd2o1846818;
-        Mon, 10 Sep 2018 05:39:39 -0700
-Date:   Mon, 10 Sep 2018 05:39:39 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Yabin Cui <tipbot@zytor.com>
-Message-ID: <tip-02e184476eff848273826c1d6617bb37e5bcc7ad@git.kernel.org>
-Cc:     torvalds@linux-foundation.org, hpa@zytor.com,
-        stable@vger.kernel.org, yabinc@google.com, peterz@infradead.org,
-        linux-kernel@vger.kernel.org, namhyung@kernel.org,
-        tglx@linutronix.de, jolsa@redhat.com,
-        alexander.shishkin@linux.intel.com, mingo@kernel.org,
-        acme@kernel.org
-Reply-To: acme@kernel.org, mingo@kernel.org, namhyung@kernel.org,
-          alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-          tglx@linutronix.de, linux-kernel@vger.kernel.org,
-          peterz@infradead.org, yabinc@google.com, stable@vger.kernel.org,
-          hpa@zytor.com, torvalds@linux-foundation.org
-In-Reply-To: <20180823225935.27035-1-yabinc@google.com>
-References: <20180823225935.27035-1-yabinc@google.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf/core: Force USER_DS when recording user
- stack data
-Git-Commit-ID: 02e184476eff848273826c1d6617bb37e5bcc7ad
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 10 Sep 2018 13:34:07 -0400
+Received: by mail-io0-f196.google.com with SMTP id c22-v6so492042iob.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 05:40:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=I/SVEyUIqd7c+mR/SMjGT+7jSViUYdBXOKQNPpyg1mc=;
+        b=E77K85FgHRuL0rtkDBLQNnftKXo4lsYXK72g2ZRDgD+tXFYyEGJ5z7KpYyjJq/mOxn
+         lD+n6uGc74ZIvQ2XkkLJt38w7TMZwGw+MEmwpkzuvV8dmOY9pEQs9VgOWelnaUbeAdu9
+         eHuDF1UKK6Q9Opvnhd+p6J8jfzq8IDM+zV2CE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=I/SVEyUIqd7c+mR/SMjGT+7jSViUYdBXOKQNPpyg1mc=;
+        b=Q/v3XwDB5UGpfen4Uhx6uFG6lLT/jKJ1Svfg+FCB7j/Zzg7GLbBQ0QqO1XHFnLqH61
+         27ncQau/oFu+hp69GeKJUC2DsHxEoEa+9iXgP8DGbjh2kRXlyDgGQeEdVwviTPGAVflc
+         rRNEWVTueyQi3uh5OeITpHRL4hTXIgtkeMPgD088ZD9nd4GqNU2hqY725JjPTpwhBuMD
+         11i58oITS0BQLGY1cvZmwqroMKIEhQClWhsJgocrZ8cCYM6BLBCKAD0XECTRZWCXxm5u
+         hTRHRqSj+3ss+w1Zr25fh0ZWbZMWPEJba3talemaSpSN0isPNaBHrdhT13jQCqhcPSWS
+         dtuA==
+X-Gm-Message-State: APzg51Cq4/yciz6nTmP983QtHlzQx/ErW4fJHSTrL+Z1CUFrA49Q9DHN
+        P9+seB9zfGvImdPbgMb3I3Mfnpmz+KXDsqEthoDomg==
+X-Google-Smtp-Source: ANB0VdYVxI+IyjhAdrIX8hJYt5/rysnlQXLIBnoduz4R7u+XM6ZiIqZWvEEwt4MM+hda/fpSACXM+8vK+E+ZTLEXQZw=
+X-Received: by 2002:a5e:8a0a:: with SMTP id d10-v6mr15402927iok.183.1536583213265;
+ Mon, 10 Sep 2018 05:40:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+References: <1533657387-29039-1-git-send-email-vincent.guittot@linaro.org>
+In-Reply-To: <1533657387-29039-1-git-send-email-vincent.guittot@linaro.org>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Mon, 10 Sep 2018 14:40:02 +0200
+Message-ID: <CAKfTPtAt4Lmyi6Cx6FGwBJEF8+V14L+N3HeiQRvnStQwmWjygA@mail.gmail.com>
+Subject: Re: [PATCH 0/3] sched/fair: some fixes for asym_packing
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Cc:     Valentin Schneider <valentin.schneider@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  02e184476eff848273826c1d6617bb37e5bcc7ad
-Gitweb:     https://git.kernel.org/tip/02e184476eff848273826c1d6617bb37e5bcc7ad
-Author:     Yabin Cui <yabinc@google.com>
-AuthorDate: Thu, 23 Aug 2018 15:59:35 -0700
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 10 Sep 2018 14:01:46 +0200
+Hi,
 
-perf/core: Force USER_DS when recording user stack data
+On Tue, 7 Aug 2018 at 17:56, Vincent Guittot <vincent.guittot@linaro.org> wrote:
+>
+> During the review of misfit task patchset, Morten and Valentin raised some
+> problems with the use of SD_ASYM_PACKING flag on asymetric system like
+> hikey960 arm64 big/LITTLE platform. The study of the use cases has shown
+> some problems that can happen for every systems that use the flag.
+>
+> The 3 patches fixes the problems raised for lmbench and the rt-app UC that
+> creates 2 tasks that start as small tasks and then become suddenly always
+> running tasks. (I can provide the rt-app json isf needed)
 
-Perf can record user stack data in response to a synchronous request, such
-as a tracepoint firing. If this happens under set_fs(KERNEL_DS), then we
-end up reading user stack data using __copy_from_user_inatomic() under
-set_fs(KERNEL_DS). I think this conflicts with the intention of using
-set_fs(KERNEL_DS). And it is explicitly forbidden by hardware on ARM64
-when both CONFIG_ARM64_UAO and CONFIG_ARM64_PAN are used.
+Gentle ping on this patchset
 
-So fix this by forcing USER_DS when recording user stack data.
-
-Signed-off-by: Yabin Cui <yabinc@google.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: <stable@vger.kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: 88b0193d9418 ("perf/callchain: Force USER_DS when invoking perf_callchain_user()")
-Link: http://lkml.kernel.org/r/20180823225935.27035-1-yabinc@google.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- kernel/events/core.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index abaed4f8bb7f..c80549bf82c6 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -5943,6 +5943,7 @@ perf_output_sample_ustack(struct perf_output_handle *handle, u64 dump_size,
- 		unsigned long sp;
- 		unsigned int rem;
- 		u64 dyn_size;
-+		mm_segment_t fs;
- 
- 		/*
- 		 * We dump:
-@@ -5960,7 +5961,10 @@ perf_output_sample_ustack(struct perf_output_handle *handle, u64 dump_size,
- 
- 		/* Data. */
- 		sp = perf_user_stack_pointer(regs);
-+		fs = get_fs();
-+		set_fs(USER_DS);
- 		rem = __output_copy_user(handle, (void *) sp, dump_size);
-+		set_fs(fs);
- 		dyn_size = dump_size - rem;
- 
- 		perf_output_skip(handle, rem);
+>
+> Vincent Guittot (3):
+>   sched/fair: fix rounding issue for asym packing
+>   sched/fair: trigger asym_packing during idle load balance
+>   sched/fair: fix unnecessary increase of balance interval
+>
+>  kernel/sched/fair.c | 33 +++++++++++++++++++++++++--------
+>  1 file changed, 25 insertions(+), 8 deletions(-)
+>
+> --
+> 2.7.4
+>
