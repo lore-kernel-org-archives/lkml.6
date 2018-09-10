@@ -6,47 +6,51 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91B4CC4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 12:39:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB8A9C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 12:40:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 494FB2087E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 12:39:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 494FB2087E
+	by mail.kernel.org (Postfix) with ESMTP id 8D56F20866
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 12:40:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D56F20866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728608AbeIJRdY (ORCPT
+        id S1728549AbeIJRd6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 13:33:24 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:57999 "EHLO
+        Mon, 10 Sep 2018 13:33:58 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:43333 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727649AbeIJRdY (ORCPT
+        with ESMTP id S1727649AbeIJRd6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 13:33:24 -0400
+        Mon, 10 Sep 2018 13:33:58 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8ACd7hN1846755
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8ACdd9F1846821
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 10 Sep 2018 05:39:07 -0700
+        Mon, 10 Sep 2018 05:39:39 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8ACd7ri1846752;
-        Mon, 10 Sep 2018 05:39:07 -0700
-Date:   Mon, 10 Sep 2018 05:39:07 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8ACdd2o1846818;
+        Mon, 10 Sep 2018 05:39:39 -0700
+Date:   Mon, 10 Sep 2018 05:39:39 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Colin Ian King <tipbot@zytor.com>
-Message-ID: <tip-0b405c65ad459f5f4d3db1672246172bd19d946d@git.kernel.org>
-Cc:     will.deacon@arm.com, colin.king@canonical.com,
-        peterz@infradead.org, tglx@linutronix.de,
-        torvalds@linux-foundation.org, mingo@kernel.org, hpa@zytor.com,
-        linux-kernel@vger.kernel.org
-Reply-To: hpa@zytor.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
-          torvalds@linux-foundation.org, peterz@infradead.org,
-          tglx@linutronix.de, colin.king@canonical.com, will.deacon@arm.com
-In-Reply-To: <20180824112235.8842-1-colin.king@canonical.com>
-References: <20180824112235.8842-1-colin.king@canonical.com>
+From:   tip-bot for Yabin Cui <tipbot@zytor.com>
+Message-ID: <tip-02e184476eff848273826c1d6617bb37e5bcc7ad@git.kernel.org>
+Cc:     torvalds@linux-foundation.org, hpa@zytor.com,
+        stable@vger.kernel.org, yabinc@google.com, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, namhyung@kernel.org,
+        tglx@linutronix.de, jolsa@redhat.com,
+        alexander.shishkin@linux.intel.com, mingo@kernel.org,
+        acme@kernel.org
+Reply-To: acme@kernel.org, mingo@kernel.org, namhyung@kernel.org,
+          alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+          tglx@linutronix.de, linux-kernel@vger.kernel.org,
+          peterz@infradead.org, yabinc@google.com, stable@vger.kernel.org,
+          hpa@zytor.com, torvalds@linux-foundation.org
+In-Reply-To: <20180823225935.27035-1-yabinc@google.com>
+References: <20180823225935.27035-1-yabinc@google.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/urgent] locking/ww_mutex: Fix spelling mistake "cylic"
- -> "cyclic"
-Git-Commit-ID: 0b405c65ad459f5f4d3db1672246172bd19d946d
+Subject: [tip:perf/urgent] perf/core: Force USER_DS when recording user
+ stack data
+Git-Commit-ID: 02e184476eff848273826c1d6617bb37e5bcc7ad
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -60,39 +64,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  0b405c65ad459f5f4d3db1672246172bd19d946d
-Gitweb:     https://git.kernel.org/tip/0b405c65ad459f5f4d3db1672246172bd19d946d
-Author:     Colin Ian King <colin.king@canonical.com>
-AuthorDate: Fri, 24 Aug 2018 12:22:35 +0100
+Commit-ID:  02e184476eff848273826c1d6617bb37e5bcc7ad
+Gitweb:     https://git.kernel.org/tip/02e184476eff848273826c1d6617bb37e5bcc7ad
+Author:     Yabin Cui <yabinc@google.com>
+AuthorDate: Thu, 23 Aug 2018 15:59:35 -0700
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 10 Sep 2018 14:00:01 +0200
+CommitDate: Mon, 10 Sep 2018 14:01:46 +0200
 
-locking/ww_mutex: Fix spelling mistake "cylic" -> "cyclic"
+perf/core: Force USER_DS when recording user stack data
 
-Trivial fix to spelling mistake in pr_err() error message
+Perf can record user stack data in response to a synchronous request, such
+as a tracepoint firing. If this happens under set_fs(KERNEL_DS), then we
+end up reading user stack data using __copy_from_user_inatomic() under
+set_fs(KERNEL_DS). I think this conflicts with the intention of using
+set_fs(KERNEL_DS). And it is explicitly forbidden by hardware on ARM64
+when both CONFIG_ARM64_UAO and CONFIG_ARM64_PAN are used.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Acked-by: Will Deacon <will.deacon@arm.com>
+So fix this by forcing USER_DS when recording user stack data.
+
+Signed-off-by: Yabin Cui <yabinc@google.com>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: <stable@vger.kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: kernel-janitors@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180824112235.8842-1-colin.king@canonical.com
+Fixes: 88b0193d9418 ("perf/callchain: Force USER_DS when invoking perf_callchain_user()")
+Link: http://lkml.kernel.org/r/20180823225935.27035-1-yabinc@google.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/locking/test-ww_mutex.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/events/core.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/kernel/locking/test-ww_mutex.c b/kernel/locking/test-ww_mutex.c
-index 5b915b370d5a..0be047dbd897 100644
---- a/kernel/locking/test-ww_mutex.c
-+++ b/kernel/locking/test-ww_mutex.c
-@@ -324,7 +324,7 @@ static int __test_cycle(unsigned int nthreads)
- 		if (!cycle->result)
- 			continue;
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index abaed4f8bb7f..c80549bf82c6 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -5943,6 +5943,7 @@ perf_output_sample_ustack(struct perf_output_handle *handle, u64 dump_size,
+ 		unsigned long sp;
+ 		unsigned int rem;
+ 		u64 dyn_size;
++		mm_segment_t fs;
  
--		pr_err("cylic deadlock not resolved, ret[%d/%d] = %d\n",
-+		pr_err("cyclic deadlock not resolved, ret[%d/%d] = %d\n",
- 		       n, nthreads, cycle->result);
- 		ret = -EINVAL;
- 		break;
+ 		/*
+ 		 * We dump:
+@@ -5960,7 +5961,10 @@ perf_output_sample_ustack(struct perf_output_handle *handle, u64 dump_size,
+ 
+ 		/* Data. */
+ 		sp = perf_user_stack_pointer(regs);
++		fs = get_fs();
++		set_fs(USER_DS);
+ 		rem = __output_copy_user(handle, (void *) sp, dump_size);
++		set_fs(fs);
+ 		dyn_size = dump_size - rem;
+ 
+ 		perf_output_skip(handle, rem);
