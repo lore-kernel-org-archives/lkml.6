@@ -2,82 +2,114 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11B0DC4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:53:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5153C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:53:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6EA520870
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:53:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6EA520870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
+	by mail.kernel.org (Postfix) with ESMTP id 601F620870
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:53:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OM2DVv0M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 601F620870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728482AbeIJVsH (ORCPT
+        id S1728590AbeIJVsR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 17:48:07 -0400
-Received: from smtp2-g21.free.fr ([212.27.42.2]:49332 "EHLO smtp2-g21.free.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727989AbeIJVsH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 17:48:07 -0400
-Received: from [IPv6:2a01:cb1d:1a3:2a00:dacb:8aff:fef1:ed46] (unknown [IPv6:2a01:cb1d:1a3:2a00:dacb:8aff:fef1:ed46])
-        (Authenticated sender: sed)
-        by smtp2-g21.free.fr (Postfix) with ESMTPSA id DC5C320040B;
-        Mon, 10 Sep 2018 18:52:55 +0200 (CEST)
-Subject: Re: [PATCH v3 2/2] ARM: s3c24xx: Correct SD card write protect
- detection on Mini2440
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     kgene@kernel.org, linux@armlinux.org.uk,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
-References: <20180907215446.15160-1-sed@free.fr>
- <20180907215446.15160-2-sed@free.fr>
- <CAJKOXPeYO3VR5LABP3zKYnKckqUBahKPt7MCjzuo3j6oe+d87w@mail.gmail.com>
-From:   Cedric Roux <sed@free.fr>
-Message-ID: <ba9d81bf-f000-f6ae-30b1-3e922985f655@free.fr>
-Date:   Mon, 10 Sep 2018 18:55:09 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 10 Sep 2018 17:48:17 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44660 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727989AbeIJVsQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 17:48:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=9Eznk4kjbNQVr49np7GzRXYgriwfG704dexZsXT65Qs=; b=OM2DVv0MShb7UWNPlx5E1u/jn
+        BUiN7E6R8HJyt8Uq7KhDZkkBXdCpj6CGZMl5cXvd5qqAdATGyeqa4/8zfQyGuzHzLVSvqpDfDOwje
+        FBtTlpW4rJapiz7cP+1DIfIlFxP2rDGMmjkD3gRsV2IBr+VpM0EiJd4M9luL3agOArvEhNbe3wfKE
+        1RHXMcbUAYtNXJAhkfqFQxExEy/EuJhRJyiCL5EGYG32h7sAPpIy58RkJBylU0Yn2C1Sagz7QjsTB
+        iDtQTOIlW75nMQwcdXAMA3qhhHSGlKGVSJodg5NHKiQzeUjHqjsINdFDUQV9Vpxq0sJqH5lYCzvah
+        UysLmD4Hg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fzPR7-0002ok-8s; Mon, 10 Sep 2018 16:53:17 +0000
+Date:   Mon, 10 Sep 2018 09:53:17 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     syzbot <syzbot+5b1df0420c523b45a953@syzkaller.appspotmail.com>
+Cc:     bcrl@kvack.org, linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk, Andrea Arcangeli <aarcange@redhat.com>,
+        akpm@linux-foundation.org
+Subject: Re: possible deadlock in aio_poll
+Message-ID: <20180910165317.GA3237@infradead.org>
+References: <000000000000cbb35d05757f7a3a@google.com>
 MIME-Version: 1.0
-In-Reply-To: <CAJKOXPeYO3VR5LABP3zKYnKckqUBahKPt7MCjzuo3j6oe+d87w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000000000000cbb35d05757f7a3a@google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/10/2018 12:23 PM, Krzysztof Kozlowski wrote:
->>  static struct s3c24xx_mci_pdata mini2440_mmc_cfg __initdata = {
->> -       .gpio_detect   = S3C2410_GPG(8),
->> -       .gpio_wprotect = S3C2410_GPH(8),
->> -       .set_power     = NULL,
->> -       .ocr_avail     = MMC_VDD_32_33|MMC_VDD_33_34,
->> +       .gpio_detect     = S3C2410_GPG(8),
->> +       .gpio_wprotect   = S3C2410_GPH(8),
->> +       .wprotect_invert = 1,
->> +       .set_power       = NULL,
->> +       .ocr_avail       = MMC_VDD_32_33|MMC_VDD_33_34,
+On Mon, Sep 10, 2018 at 12:41:05AM -0700, syzbot wrote:
+> =====================================================
+> WARNING: SOFTIRQ-safe -> SOFTIRQ-unsafe lock order detected
+> 4.19.0-rc2+ #229 Not tainted
+> -----------------------------------------------------
+> syz-executor2/9399 [HC0[0]:SC0[0]:HE0:SE1] is trying to acquire:
+> 00000000126506e0 (&ctx->fd_wqh){+.+.}, at: spin_lock
+> include/linux/spinlock.h:329 [inline]
+> 00000000126506e0 (&ctx->fd_wqh){+.+.}, at: aio_poll+0x760/0x1420
+> fs/aio.c:1747
 > 
-> This looks unexpected... after patch 1 there should be only one change
-> - one new line added. What happened here?
+> and this task is already holding:
+> 000000002bed6bf6 (&(&ctx->ctx_lock)->rlock){..-.}, at: spin_lock_irq
+> include/linux/spinlock.h:354 [inline]
+> 000000002bed6bf6 (&(&ctx->ctx_lock)->rlock){..-.}, at: aio_poll+0x738/0x1420
+> fs/aio.c:1746
+> which would create a new lock dependency:
+>  (&(&ctx->ctx_lock)->rlock){..-.} -> (&ctx->fd_wqh){+.+.}
 
-This is to align all the '='.
+ctx->fd_wqh seems to only exist in userfaultfd, which indeed seems
+to do strange open coded waitqueue locking, and seems to fail to disable
+irqs.  Something like this should fix it:
 
-These were spaces before the '=' so I also used spaces.
-Should I put TABs instead? I looked in the coding style
-and didn't find anything about this specific thing
-(maybe I read too fast though).
-
-And if this ends up unaligned because 'wprotect_invert'
-requires a second TAB for the others, should I do a separate
-commit?
-
-Thanks.
-
-Regards,
-Cédric.
+diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+index bfa0ec69f924..356d2b8568c1 100644
+--- a/fs/userfaultfd.c
++++ b/fs/userfaultfd.c
+@@ -1026,7 +1026,7 @@ static ssize_t userfaultfd_ctx_read(struct userfaultfd_ctx *ctx, int no_wait,
+ 	struct userfaultfd_ctx *fork_nctx = NULL;
+ 
+ 	/* always take the fd_wqh lock before the fault_pending_wqh lock */
+-	spin_lock(&ctx->fd_wqh.lock);
++	spin_lock_irq(&ctx->fd_wqh.lock);
+ 	__add_wait_queue(&ctx->fd_wqh, &wait);
+ 	for (;;) {
+ 		set_current_state(TASK_INTERRUPTIBLE);
+@@ -1112,13 +1112,13 @@ static ssize_t userfaultfd_ctx_read(struct userfaultfd_ctx *ctx, int no_wait,
+ 			ret = -EAGAIN;
+ 			break;
+ 		}
+-		spin_unlock(&ctx->fd_wqh.lock);
++		spin_unlock_irq(&ctx->fd_wqh.lock);
+ 		schedule();
+-		spin_lock(&ctx->fd_wqh.lock);
++		spin_lock_irq(&ctx->fd_wqh.lock);
+ 	}
+ 	__remove_wait_queue(&ctx->fd_wqh, &wait);
+ 	__set_current_state(TASK_RUNNING);
+-	spin_unlock(&ctx->fd_wqh.lock);
++	spin_unlock_irq(&ctx->fd_wqh.lock);
+ 
+ 	if (!ret && msg->event == UFFD_EVENT_FORK) {
+ 		ret = resolve_userfault_fork(ctx, fork_nctx, msg);
