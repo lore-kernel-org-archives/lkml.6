@@ -3,331 +3,112 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C58CC4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 03:59:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9FC7C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 04:01:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B563B2086B
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 03:59:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71DE32086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 04:01:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="VGwvCyje"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B563B2086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="y86nQ739"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71DE32086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726587AbeIJIvq (ORCPT
+        id S1727002AbeIJIxH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 04:51:46 -0400
-Received: from ozlabs.org ([203.11.71.1]:60201 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726083AbeIJIvq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 04:51:46 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 427vSY67R1z9sBs;
-        Mon, 10 Sep 2018 13:59:41 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1536551981;
-        bh=EeYt7n090wd38B7yQ/MMTXRmHmNVb3uHICYDFVFJDoE=;
-        h=Date:From:To:Cc:Subject:From;
-        b=VGwvCyjeVnTIc4f7Q8A/vAM9aaAtPh58w3aWKFEeaBr6HWEnYUdVy00mLNSLhijHO
-         yJN/6hDMIVR1BYBuz2yJITi7HazJDYyIXDMwwWLEXtPZQ+FZz04tbXs8nbP04IPfZC
-         EKxBmvrsl4MmpKmjG7tn0WBW7RupCP8zegxqsLkiEwwlLSXAHllVcQtaGs27laguqn
-         XkAi+55q0q+cBdVPLCJYUQNlhygon3bqZlQrttzUUONTXwhVH28Ih4Xl/BwrRMeric
-         ia+1sf3xqQyyObajkiUDRq2Hv2EVrzHqZDfv7J1KqfgiptJ6aruUJiLc1CERf1WSps
-         jN22I8u6FDgtg==
-Date:   Mon, 10 Sep 2018 13:59:41 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: build failure after merge of the vfs tree
-Message-ID: <20180910135941.1da2426d@canb.auug.org.au>
+        Mon, 10 Sep 2018 04:53:07 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:37128 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726083AbeIJIxH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 04:53:07 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w8A40mwv039443;
+        Sun, 9 Sep 2018 23:00:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1536552048;
+        bh=il9eeY8kaCYfB5txv5IJorCAErFzWSric+0nlahQic8=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=y86nQ739NOHbhC7bsG4+/G1pzAMKdjyebaSSQW2G/lSYWeALed6CUciOYFgaY4PnR
+         oRW0C8cDn9YwFtbDvwgN6J8yWBAp+Joi/NUjog8rs1qZOJWmgIjw+F1pd875bNe8Hu
+         A8TlTZHFYADQwsWcUvGmByTVVL0H5T3frd6sXncc=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8A40mbq005106;
+        Sun, 9 Sep 2018 23:00:48 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Sun, 9 Sep
+ 2018 23:00:47 -0500
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Sun, 9 Sep 2018 23:00:47 -0500
+Received: from [172.24.190.89] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8A40jlD001123;
+        Sun, 9 Sep 2018 23:00:45 -0500
+Subject: Re: [PATCH] serial: 8250_omap: Make 8250_omap driver driver depend on
+ ARCH_K3
+To:     Nishanth Menon <nm@ti.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Sekhar Nori <nsekhar@ti.com>
+References: <20180828010302.2751-1-nm@ti.com>
+From:   Vignesh R <vigneshr@ti.com>
+Message-ID: <9bc2eab8-af4c-1a90-50da-533087b0314b@ti.com>
+Date:   Mon, 10 Sep 2018 09:31:40 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/0bX3eQ4SOS.md+MLLpVLtpX"; protocol="application/pgp-signature"
+In-Reply-To: <20180828010302.2751-1-nm@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/0bX3eQ4SOS.md+MLLpVLtpX
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi Al,
 
-After merging the vfs tree, today's linux-next build (sparc64 defconfig)
-failed like this:
+On Tuesday 28 August 2018 06:33 AM, Nishanth Menon wrote:
+> From: Lokesh Vutla <lokeshvutla@ti.com>
+> 
+> Allow 8250 omap serial driver to be used for K3 platforms.
+> 
+> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
+> Signed-off-by: Nishanth Menon <nm@ti.com>
+> ---
+> 
 
-In file included from arch/sparc/include/asm/fbio.h:5:0,
-                 from fs/compat_ioctl.c:76:
-arch/sparc/include/uapi/asm/fbio.h:100:25: error: field 'pos' has incomplet=
-e type
-         struct fbcurpos pos;    /* cursor position */
-                         ^~~
-arch/sparc/include/uapi/asm/fbio.h:101:25: error: field 'hot' has incomplet=
-e type
-         struct fbcurpos hot;    /* cursor hot spot */
-                         ^~~
-arch/sparc/include/uapi/asm/fbio.h:103:25: error: field 'size' has incomple=
-te type
-         struct fbcurpos size;   /* cursor bit map size */
-                         ^~~~
-In file included from fs/compat_ioctl.c:76:0:
-arch/sparc/include/asm/fbio.h:63:18: error: field 'pos' has incomplete type
-  struct fbcurpos pos; /* cursor position */
-                  ^~~
-arch/sparc/include/asm/fbio.h:64:18: error: field 'hot' has incomplete type
-  struct fbcurpos hot; /* cursor hot spot */
-                  ^~~
-arch/sparc/include/asm/fbio.h:66:18: error: field 'size' has incomplete type
-  struct fbcurpos size; /* cursor bit map size */
-                  ^~~~
-arch/sparc/include/uapi/asm/fbio.h:113:39: error: invalid application of 's=
-izeof' to incomplete type 'struct fbcurpos'
- #define FBIOSCURPOS     _IOW('F', 26, struct fbcurpos)
-                                       ^
-fs/compat_ioctl.c:640:21: note: in definition of macro 'XFORM'
- #define XFORM(i) (((i) ^ ((i) << 27) ^ ((i) << 17)) & 0xffffffff)
-                     ^
-fs/compat_ioctl.c:650:27: note: in expansion of macro 'COMPATIBLE_IOCTL'
- #define IGNORE_IOCTL(cmd) COMPATIBLE_IOCTL(cmd)
-                           ^~~~~~~~~~~~~~~~
-fs/compat_ioctl.c:1188:1: note: in expansion of macro 'IGNORE_IOCTL'
- IGNORE_IOCTL(FBIOSCURPOS)
- ^~~~~~~~~~~~
-arch/sparc/include/uapi/asm/ioctl.h:47:29: note: in expansion of macro '_IO=
-C'
- #define _IOW(type,nr,size)  _IOC(_IOC_WRITE,(type),(nr),sizeof(size))
-                             ^~~~
-arch/sparc/include/uapi/asm/fbio.h:113:25: note: in expansion of macro '_IO=
-W'
- #define FBIOSCURPOS     _IOW('F', 26, struct fbcurpos)
-                         ^~~~
-fs/compat_ioctl.c:1188:14: note: in expansion of macro 'FBIOSCURPOS'
- IGNORE_IOCTL(FBIOSCURPOS)
-              ^~~~~~~~~~~
-arch/sparc/include/uapi/asm/fbio.h:113:39: error: invalid application of 's=
-izeof' to incomplete type 'struct fbcurpos'
- #define FBIOSCURPOS     _IOW('F', 26, struct fbcurpos)
-                                       ^
-fs/compat_ioctl.c:640:28: note: in definition of macro 'XFORM'
- #define XFORM(i) (((i) ^ ((i) << 27) ^ ((i) << 17)) & 0xffffffff)
-                            ^
-fs/compat_ioctl.c:650:27: note: in expansion of macro 'COMPATIBLE_IOCTL'
- #define IGNORE_IOCTL(cmd) COMPATIBLE_IOCTL(cmd)
-                           ^~~~~~~~~~~~~~~~
-fs/compat_ioctl.c:1188:1: note: in expansion of macro 'IGNORE_IOCTL'
- IGNORE_IOCTL(FBIOSCURPOS)
- ^~~~~~~~~~~~
-arch/sparc/include/uapi/asm/ioctl.h:47:29: note: in expansion of macro '_IO=
-C'
- #define _IOW(type,nr,size)  _IOC(_IOC_WRITE,(type),(nr),sizeof(size))
-                             ^~~~
-arch/sparc/include/uapi/asm/fbio.h:113:25: note: in expansion of macro '_IO=
-W'
- #define FBIOSCURPOS     _IOW('F', 26, struct fbcurpos)
-                         ^~~~
-fs/compat_ioctl.c:1188:14: note: in expansion of macro 'FBIOSCURPOS'
- IGNORE_IOCTL(FBIOSCURPOS)
-              ^~~~~~~~~~~
-arch/sparc/include/uapi/asm/fbio.h:113:39: error: invalid application of 's=
-izeof' to incomplete type 'struct fbcurpos'
- #define FBIOSCURPOS     _IOW('F', 26, struct fbcurpos)
-                                       ^
-fs/compat_ioctl.c:640:42: note: in definition of macro 'XFORM'
- #define XFORM(i) (((i) ^ ((i) << 27) ^ ((i) << 17)) & 0xffffffff)
-                                          ^
-fs/compat_ioctl.c:650:27: note: in expansion of macro 'COMPATIBLE_IOCTL'
- #define IGNORE_IOCTL(cmd) COMPATIBLE_IOCTL(cmd)
-                           ^~~~~~~~~~~~~~~~
-fs/compat_ioctl.c:1188:1: note: in expansion of macro 'IGNORE_IOCTL'
- IGNORE_IOCTL(FBIOSCURPOS)
- ^~~~~~~~~~~~
-arch/sparc/include/uapi/asm/ioctl.h:47:29: note: in expansion of macro '_IO=
-C'
- #define _IOW(type,nr,size)  _IOC(_IOC_WRITE,(type),(nr),sizeof(size))
-                             ^~~~
-arch/sparc/include/uapi/asm/fbio.h:113:25: note: in expansion of macro '_IO=
-W'
- #define FBIOSCURPOS     _IOW('F', 26, struct fbcurpos)
-                         ^~~~
-fs/compat_ioctl.c:1188:14: note: in expansion of macro 'FBIOSCURPOS'
- IGNORE_IOCTL(FBIOSCURPOS)
-              ^~~~~~~~~~~
-arch/sparc/include/uapi/asm/fbio.h:114:39: error: invalid application of 's=
-izeof' to incomplete type 'struct fbcurpos'
- #define FBIOGCURPOS     _IOW('F', 27, struct fbcurpos)
-                                       ^
-fs/compat_ioctl.c:640:21: note: in definition of macro 'XFORM'
- #define XFORM(i) (((i) ^ ((i) << 27) ^ ((i) << 17)) & 0xffffffff)
-                     ^
-fs/compat_ioctl.c:650:27: note: in expansion of macro 'COMPATIBLE_IOCTL'
- #define IGNORE_IOCTL(cmd) COMPATIBLE_IOCTL(cmd)
-                           ^~~~~~~~~~~~~~~~
-fs/compat_ioctl.c:1189:1: note: in expansion of macro 'IGNORE_IOCTL'
- IGNORE_IOCTL(FBIOGCURPOS)
- ^~~~~~~~~~~~
-arch/sparc/include/uapi/asm/ioctl.h:47:29: note: in expansion of macro '_IO=
-C'
- #define _IOW(type,nr,size)  _IOC(_IOC_WRITE,(type),(nr),sizeof(size))
-                             ^~~~
-arch/sparc/include/uapi/asm/fbio.h:114:25: note: in expansion of macro '_IO=
-W'
- #define FBIOGCURPOS     _IOW('F', 27, struct fbcurpos)
-                         ^~~~
-fs/compat_ioctl.c:1189:14: note: in expansion of macro 'FBIOGCURPOS'
- IGNORE_IOCTL(FBIOGCURPOS)
-              ^~~~~~~~~~~
-arch/sparc/include/uapi/asm/fbio.h:114:39: error: invalid application of 's=
-izeof' to incomplete type 'struct fbcurpos'
- #define FBIOGCURPOS     _IOW('F', 27, struct fbcurpos)
-                                       ^
-fs/compat_ioctl.c:640:28: note: in definition of macro 'XFORM'
- #define XFORM(i) (((i) ^ ((i) << 27) ^ ((i) << 17)) & 0xffffffff)
-                            ^
-fs/compat_ioctl.c:650:27: note: in expansion of macro 'COMPATIBLE_IOCTL'
- #define IGNORE_IOCTL(cmd) COMPATIBLE_IOCTL(cmd)
-                           ^~~~~~~~~~~~~~~~
-fs/compat_ioctl.c:1189:1: note: in expansion of macro 'IGNORE_IOCTL'
- IGNORE_IOCTL(FBIOGCURPOS)
- ^~~~~~~~~~~~
-arch/sparc/include/uapi/asm/ioctl.h:47:29: note: in expansion of macro '_IO=
-C'
- #define _IOW(type,nr,size)  _IOC(_IOC_WRITE,(type),(nr),sizeof(size))
-                             ^~~~
-arch/sparc/include/uapi/asm/fbio.h:114:25: note: in expansion of macro '_IO=
-W'
- #define FBIOGCURPOS     _IOW('F', 27, struct fbcurpos)
-                         ^~~~
-fs/compat_ioctl.c:1189:14: note: in expansion of macro 'FBIOGCURPOS'
- IGNORE_IOCTL(FBIOGCURPOS)
-              ^~~~~~~~~~~
-arch/sparc/include/uapi/asm/fbio.h:114:39: error: invalid application of 's=
-izeof' to incomplete type 'struct fbcurpos'
- #define FBIOGCURPOS     _IOW('F', 27, struct fbcurpos)
-                                       ^
-fs/compat_ioctl.c:640:42: note: in definition of macro 'XFORM'
- #define XFORM(i) (((i) ^ ((i) << 27) ^ ((i) << 17)) & 0xffffffff)
-                                          ^
-fs/compat_ioctl.c:650:27: note: in expansion of macro 'COMPATIBLE_IOCTL'
- #define IGNORE_IOCTL(cmd) COMPATIBLE_IOCTL(cmd)
-                           ^~~~~~~~~~~~~~~~
-fs/compat_ioctl.c:1189:1: note: in expansion of macro 'IGNORE_IOCTL'
- IGNORE_IOCTL(FBIOGCURPOS)
- ^~~~~~~~~~~~
-arch/sparc/include/uapi/asm/ioctl.h:47:29: note: in expansion of macro '_IO=
-C'
- #define _IOW(type,nr,size)  _IOC(_IOC_WRITE,(type),(nr),sizeof(size))
-                             ^~~~
-arch/sparc/include/uapi/asm/fbio.h:114:25: note: in expansion of macro '_IO=
-W'
- #define FBIOGCURPOS     _IOW('F', 27, struct fbcurpos)
-                         ^~~~
-fs/compat_ioctl.c:1189:14: note: in expansion of macro 'FBIOGCURPOS'
- IGNORE_IOCTL(FBIOGCURPOS)
-              ^~~~~~~~~~~
-arch/sparc/include/uapi/asm/fbio.h:117:39: error: invalid application of 's=
-izeof' to incomplete type 'struct fbcurpos'
- #define FBIOGCURMAX     _IOR('F', 28, struct fbcurpos)
-                                       ^
-fs/compat_ioctl.c:640:21: note: in definition of macro 'XFORM'
- #define XFORM(i) (((i) ^ ((i) << 27) ^ ((i) << 17)) & 0xffffffff)
-                     ^
-fs/compat_ioctl.c:650:27: note: in expansion of macro 'COMPATIBLE_IOCTL'
- #define IGNORE_IOCTL(cmd) COMPATIBLE_IOCTL(cmd)
-                           ^~~~~~~~~~~~~~~~
-fs/compat_ioctl.c:1190:1: note: in expansion of macro 'IGNORE_IOCTL'
- IGNORE_IOCTL(FBIOGCURMAX)
- ^~~~~~~~~~~~
-arch/sparc/include/uapi/asm/ioctl.h:46:29: note: in expansion of macro '_IO=
-C'
- #define _IOR(type,nr,size)  _IOC(_IOC_READ,(type),(nr),sizeof(size))
-                             ^~~~
-arch/sparc/include/uapi/asm/fbio.h:117:25: note: in expansion of macro '_IO=
-R'
- #define FBIOGCURMAX     _IOR('F', 28, struct fbcurpos)
-                         ^~~~
-fs/compat_ioctl.c:1190:14: note: in expansion of macro 'FBIOGCURMAX'
- IGNORE_IOCTL(FBIOGCURMAX)
-              ^~~~~~~~~~~
-arch/sparc/include/uapi/asm/fbio.h:117:39: error: invalid application of 's=
-izeof' to incomplete type 'struct fbcurpos'
- #define FBIOGCURMAX     _IOR('F', 28, struct fbcurpos)
-                                       ^
-fs/compat_ioctl.c:640:28: note: in definition of macro 'XFORM'
- #define XFORM(i) (((i) ^ ((i) << 27) ^ ((i) << 17)) & 0xffffffff)
-                            ^
-fs/compat_ioctl.c:650:27: note: in expansion of macro 'COMPATIBLE_IOCTL'
- #define IGNORE_IOCTL(cmd) COMPATIBLE_IOCTL(cmd)
-                           ^~~~~~~~~~~~~~~~
-fs/compat_ioctl.c:1190:1: note: in expansion of macro 'IGNORE_IOCTL'
- IGNORE_IOCTL(FBIOGCURMAX)
- ^~~~~~~~~~~~
-arch/sparc/include/uapi/asm/ioctl.h:46:29: note: in expansion of macro '_IO=
-C'
- #define _IOR(type,nr,size)  _IOC(_IOC_READ,(type),(nr),sizeof(size))
-                             ^~~~
-arch/sparc/include/uapi/asm/fbio.h:117:25: note: in expansion of macro '_IO=
-R'
- #define FBIOGCURMAX     _IOR('F', 28, struct fbcurpos)
-                         ^~~~
-fs/compat_ioctl.c:1190:14: note: in expansion of macro 'FBIOGCURMAX'
- IGNORE_IOCTL(FBIOGCURMAX)
-              ^~~~~~~~~~~
-arch/sparc/include/uapi/asm/fbio.h:117:39: error: invalid application of 's=
-izeof' to incomplete type 'struct fbcurpos'
- #define FBIOGCURMAX     _IOR('F', 28, struct fbcurpos)
-                                       ^
-fs/compat_ioctl.c:640:42: note: in definition of macro 'XFORM'
- #define XFORM(i) (((i) ^ ((i) << 27) ^ ((i) << 17)) & 0xffffffff)
-                                          ^
-fs/compat_ioctl.c:650:27: note: in expansion of macro 'COMPATIBLE_IOCTL'
- #define IGNORE_IOCTL(cmd) COMPATIBLE_IOCTL(cmd)
-                           ^~~~~~~~~~~~~~~~
-fs/compat_ioctl.c:1190:1: note: in expansion of macro 'IGNORE_IOCTL'
- IGNORE_IOCTL(FBIOGCURMAX)
- ^~~~~~~~~~~~
-arch/sparc/include/uapi/asm/ioctl.h:46:29: note: in expansion of macro '_IO=
-C'
- #define _IOR(type,nr,size)  _IOC(_IOC_READ,(type),(nr),sizeof(size))
-                             ^~~~
-arch/sparc/include/uapi/asm/fbio.h:117:25: note: in expansion of macro '_IO=
-R'
- #define FBIOGCURMAX     _IOR('F', 28, struct fbcurpos)
-                         ^~~~
-fs/compat_ioctl.c:1190:14: note: in expansion of macro 'FBIOGCURMAX'
- IGNORE_IOCTL(FBIOGCURMAX)
-              ^~~~~~~~~~~
+Acked-by: Vignesh R <vigneshr@ti.com>
 
-Caused by commit
+> Now that we have the device tree support merged integrated AND we have ARCH_K3,
+> Lets enable the 820 OMAP Driver to build for ARCH_K3 and make it operational.
+> 
+>  drivers/tty/serial/8250/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/tty/serial/8250/Kconfig b/drivers/tty/serial/8250/Kconfig
+> index f005eaf8bc57..15c2c5463835 100644
+> --- a/drivers/tty/serial/8250/Kconfig
+> +++ b/drivers/tty/serial/8250/Kconfig
+> @@ -375,7 +375,7 @@ config SERIAL_8250_RT288X
+>  
+>  config SERIAL_8250_OMAP
+>  	tristate "Support for OMAP internal UART (8250 based driver)"
+> -	depends on SERIAL_8250 && ARCH_OMAP2PLUS
+> +	depends on SERIAL_8250 && (ARCH_OMAP2PLUS || ARCH_K3)
+>  	help
+>  	  If you have a machine based on an Texas Instruments OMAP CPU you
+>  	  can enable its onboard serial ports by enabling this option.
+> 
 
-  be248ed54d65 ("compat_ioctl: trim the pointless includes")
-
-I have reverted that commit for today.
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/0bX3eQ4SOS.md+MLLpVLtpX
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluV7C0ACgkQAVBC80lX
-0GxbjQf/ZIpdI+dhw6hfDUoVjyGmpmJn+4IotYssS11TB+4DdMMqSWIsfeDt1f3U
-TxZ7xdKKYzRQt3gN6KjQaZ1RgmrGwWxpeJ+e9LjMNBiHv6BqIBTDN9lGvO7ZrbQP
-0yy9A2zGacybtZdO1u7G32sa4btFenx4+gWGKUWAklIJzGjQixb70FSMU6e5jhoX
-C/dMPGpDRvSQSexYLby+0NxcRmum/wCpkw2POCnpkjvBpvHSOejK0cLpKin/XX+Q
-JvlZ99Z6gBXmTXp5cQYIV2mxd1zlS8EOgIPuW251SSV7yTzta0drHvaMKJNiKEL1
-b76CbYKOqWC84HXc5PG3Tl5/AIHkVQ==
-=LSID
------END PGP SIGNATURE-----
-
---Sig_/0bX3eQ4SOS.md+MLLpVLtpX--
+-- 
+Regards
+Vignesh
