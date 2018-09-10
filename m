@@ -2,138 +2,100 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50B09C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:06:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68ACAC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:07:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 157B120870
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:06:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 157B120870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1474F20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:07:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1474F20870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728755AbeIJVBh (ORCPT
+        id S1728762AbeIJVCJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 17:01:37 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60090 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727815AbeIJVBh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 17:01:37 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 471F61596;
-        Mon, 10 Sep 2018 09:06:50 -0700 (PDT)
-Received: from e107155-lin (e107155-lin.Emea.Arm.com [10.4.12.116])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5CD2F3F557;
-        Mon, 10 Sep 2018 09:06:49 -0700 (PDT)
-Date:   Mon, 10 Sep 2018 17:06:38 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH v2] firmware: arm_scmi: add a getter for power of
- performance states
-Message-ID: <20180910160638.GA14835@e107155-lin>
-References: <20180903102439.24012-1-quentin.perret@arm.com>
+        Mon, 10 Sep 2018 17:02:09 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:39914 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727796AbeIJVCJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 17:02:09 -0400
+Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fzOiW-0004F8-QO; Mon, 10 Sep 2018 18:07:12 +0200
+Date:   Mon, 10 Sep 2018 18:07:12 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Anup Patel <anup@brainfault.org>
+cc:     Christoph Hellwig <hch@infradead.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
+        Atish Patra <atish.patra@wdc.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v2 3/5] irqchip: RISC-V Local Interrupt Controller
+ Driver
+In-Reply-To: <CAAhSdy1be_ibiowifBdgBZjbHuFU=CR4rZXQDwQghVYkex5bMg@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1809101805110.1419@nanos.tec.linutronix.de>
+References: <20180906123651.28500-1-anup@brainfault.org> <20180906123651.28500-4-anup@brainfault.org> <20180906140628.GA10580@infradead.org> <alpine.DEB.2.21.1809081241310.1402@nanos.tec.linutronix.de> <20180910132924.GA6987@infradead.org>
+ <alpine.DEB.2.21.1809101533330.1292@nanos.tec.linutronix.de> <alpine.DEB.2.21.1809101536410.1292@nanos.tec.linutronix.de> <20180910133902.GB21593@infradead.org> <alpine.DEB.2.21.1809101544560.1292@nanos.tec.linutronix.de> <20180910134915.GB30774@infradead.org>
+ <CAAhSdy1be_ibiowifBdgBZjbHuFU=CR4rZXQDwQghVYkex5bMg@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180903102439.24012-1-quentin.perret@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 03, 2018 at 11:24:39AM +0100, Quentin Perret wrote:
-> The SCMI protocol can be used to get power estimates from firmware
-> corresponding to each performance state of a device. Although these power
-> costs are already managed by the SCMI firmware driver, they are not
-> exposed to any external subsystem yet.
+On Mon, 10 Sep 2018, Anup Patel wrote:
+
+> On Mon, Sep 10, 2018 at 7:19 PM, Christoph Hellwig <hch@infradead.org> wrote:
+> > On Mon, Sep 10, 2018 at 03:45:42PM +0200, Thomas Gleixner wrote:
+> >> > He has an irqchip that is called from the RISC-V exception handler
+> >> > when the interrupt flag is set in scause and then dispatches to one
+> >> > of:  IPI, timer, actual irqchip.
+> >>
+> >> So the per cpu timer is the only per cpu interrupt and that thing is used
+> >> unconditionally, right?
+> >
+> > Yes.  external is chained and IPI is still handled explicitly.
 > 
-> Fix this by adding a new get_power() interface to the exisiting perf_ops
-> defined for the SCMI protocol.
+> On riscv64, there are 64 local interrupts (i.e. per-CPU interrupts).
 > 
-> Signed-off-by: Quentin Perret <quentin.perret@arm.com>
-> ---
-> v2: rebased on 4.19-rc2
-> ---
->  drivers/firmware/arm_scmi/perf.c | 28 ++++++++++++++++++++++++++++
->  include/linux/scmi_protocol.h    |  4 ++++
->  2 files changed, 32 insertions(+)
+> Three of these local interrupts have clearly defined use:
+> 1. Software interrupt (inter-processor interrupt)
+> 2. External interrupt (interrupt from PLIC)
+> 3. Timer interrupt (interrupt from per-CPU timer)
 > 
-> diff --git a/drivers/firmware/arm_scmi/perf.c b/drivers/firmware/arm_scmi/perf.c
-> index 721e6c57beae..272abd2cb3f0 100644
-> --- a/drivers/firmware/arm_scmi/perf.c
-> +++ b/drivers/firmware/arm_scmi/perf.c
-> @@ -421,6 +421,33 @@ static int scmi_dvfs_freq_get(const struct scmi_handle *handle, u32 domain,
->  	return ret;
->  }
->  
-> +static int scmi_dvfs_power_get(const struct scmi_handle *handle, u32 domain,
-> +			       unsigned long *freq, unsigned long *power)
+> Other local interrupts are available for future use.
+> 
+> Taking inspiration from ARM world, I had give quite a few
+> examples how these RISC-V local interrupts can be used
+> for other purposes:
+> 1. per-CPU interrupt for per-HART performance monitoring unit
+> 2. interrupt controller virtualizaton extension can use per-CPU
+> interrupts for managing resources (just like ARM GICv2/v3 virt
+> extensions)
+> 3. bus errors can be reported as per-CPU interrupts
+> 
+> Considering above, it is better to have a distinct irqchip and
+> irq_domain for all local interrupts (just like this patch).
 
-I feel the name "power_get" gives me feeling that it refers to instant
-power than the computed value. At least in scmi interface, freq_get
-provides current value of running frequency. I am not sure of the
-consistency in the naming in other subsystems.
+If that's the future usage and that's what my impression was, under which I
+changed my mind, yes, then having a domain model is certainly of advantage
+especially when those things end up being different per SoC.
 
-Does it makes sense to name it "scmi_dvfs_est_power_get" as it actually
-refers to estimated power cost ?
+Thanks,
 
-> +{
-> +	struct scmi_perf_info *pi = handle->perf_priv;
-> +	struct perf_dom_info *dom;
-> +	unsigned long opp_freq;
-> +	int idx, ret = -EINVAL;
-> +	struct scmi_opp *opp;
-> +
-> +	dom = pi->dom_info + domain;
-> +	if (!dom)
-> +		return -EIO;
-> +
-> +	for (opp = dom->opp, idx = 0; idx < dom->opp_count; idx++, opp++) {
-> +		opp_freq = opp->perf * dom->mult_factor;
-> +		if (opp_freq < *freq)
-> +			continue;
-> +
-> +		*freq = opp_freq;
-> +		*power = opp->power;
-> +		ret = 0;
-> +		break;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
->  static struct scmi_perf_ops perf_ops = {
->  	.limits_set = scmi_perf_limits_set,
->  	.limits_get = scmi_perf_limits_get,
-> @@ -431,6 +458,7 @@ static struct scmi_perf_ops perf_ops = {
->  	.device_opps_add = scmi_dvfs_device_opps_add,
->  	.freq_set = scmi_dvfs_freq_set,
->  	.freq_get = scmi_dvfs_freq_get,
-> +	.power_get = scmi_dvfs_power_get,
-
-same here s/.power_get/.est_power_get/
-
->  };
->  
->  static int scmi_perf_protocol_init(struct scmi_handle *handle)
-> diff --git a/include/linux/scmi_protocol.h b/include/linux/scmi_protocol.h
-> index f4c9fc0fc755..2ecbd2c5a249 100644
-> --- a/include/linux/scmi_protocol.h
-> +++ b/include/linux/scmi_protocol.h
-> @@ -91,6 +91,8 @@ struct scmi_clk_ops {
->   *	to sustained performance level mapping
->   * @freq_get: gets the frequency for a given device using sustained frequency
->   *	to sustained performance level mapping
-> + * @power_get: gets the power dissipated for a given performance domain at a
-
-s/power dissipated/estimated power cost/
-
---
-Regards,
-Sudeep
+	tglx
