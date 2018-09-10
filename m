@@ -2,155 +2,135 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55F20C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 02:44:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92E51C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 02:45:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E1AA206BB
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 02:44:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BK2PipI6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E1AA206BB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 36896206BB
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 02:45:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36896206BB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726473AbeIJHga (ORCPT
+        id S1726735AbeIJHg7 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 03:36:30 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:46387 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725960AbeIJHg3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 03:36:29 -0400
-Received: by mail-lj1-f193.google.com with SMTP id 203-v6so16511940ljj.13;
-        Sun, 09 Sep 2018 19:44:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=M/QBgS5czV0iRAtflFDT2zvaSpvt1iMlKHvBYDahNH0=;
-        b=BK2PipI63jK7bS8duqrxQsgUHGioMSIyS5BZ8q/FtzxBqKAzTQPvA4fibDXK3RAXm0
-         kdGJRtV/g5EO5ghMNB2VciyH765nIMOZYu936OMMptNgnWc96jJJc4Y3tt4s+qtA8yOp
-         pfuI0Gl9T/bIikxE9K6BuXk8Y0ipRdSo6WT9qorVXH/hWFY2cfvYSNDrX4Evu0XFQje3
-         OUcdWzQYC0M5AdqkLxpVHls/XKGBxc3t8GpGuMaDWt/4NxwBPXbm/Pb2jNFfHQh/a7/f
-         zVCe+5UZRlcGg8hRjI76+Ig81ROc0/tA8NZwwXL2V1cw+3s0GB5Qs880PRpEWDXjuvW1
-         bfBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=M/QBgS5czV0iRAtflFDT2zvaSpvt1iMlKHvBYDahNH0=;
-        b=cUTi9LipbmEryBDYZSyesfwMJWw3F0cEDU6xSP4sidGUq3hl5fuvTeh7uYNACR9r3Z
-         SZ+zeo5pWZcJmp6IA7eNApm6Yie2sWvHXEndULTdjTnew4Blec47xDEkLiKcZ7in9tTX
-         jrm0c7Dma5TIA2ICcfiwNZWvW83ARfPoPOFzfaLWM2Jb+jTYyePDIVh9MQe96EYftAub
-         96kK+xGfHKlWJcUstOCwEHOs/iiHsVkS9bRBpTb1nojahRSSi+54uG6HoMMoexs9s/3V
-         TwbY5u+hJFLy6xuk3aDBDatYx62+FQ4b8+Owgi6vwY45rAaSyHXLYhae3J8U9qEE/bTx
-         s6jw==
-X-Gm-Message-State: APzg51BwAT3pbft8pW2JKPv32jWMyOrein1ju+jC120nTu+QJ74olCQk
-        7ui8oh0i9HfZ9loIlHPYNhiVeOhk
-X-Google-Smtp-Source: ANB0VdY3f3wsbkPs3gtwWf8Md/cAGRxnWXEJm8I/n4LqgKo1aIoA6FcNO92NYvaicD02CVItQbaibg==
-X-Received: by 2002:a2e:6a04:: with SMTP id f4-v6mr11225686ljc.109.1536536597340;
-        Sun, 09 Sep 2018 16:43:17 -0700 (PDT)
-Received: from z50.lan (93-181-165-181.internetia.net.pl. [93.181.165.181])
-        by smtp.gmail.com with ESMTPSA id h4-v6sm2355373lfj.69.2018.09.09.16.43.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 09 Sep 2018 16:43:16 -0700 (PDT)
-From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] ARM: OMAP1: ams-delta: register MODEM device earlier
-Date:   Mon, 10 Sep 2018 01:44:19 +0200
-Message-Id: <20180909234419.31261-4-jmkrzyszt@gmail.com>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20180909234419.31261-1-jmkrzyszt@gmail.com>
-References: <20180820181333.2527-1-jmkrzyszt@gmail.com>
- <20180909234419.31261-1-jmkrzyszt@gmail.com>
+        Mon, 10 Sep 2018 03:36:59 -0400
+Received: from mga09.intel.com ([134.134.136.24]:36766 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725960AbeIJHg7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 03:36:59 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Sep 2018 19:45:15 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,354,1531810800"; 
+   d="scan'208";a="262093375"
+Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
+  by fmsmga006.fm.intel.com with ESMTP; 09 Sep 2018 19:45:15 -0700
+Received: from fmsmsx111.amr.corp.intel.com (10.18.116.5) by
+ FMSMSX108.amr.corp.intel.com (10.18.124.206) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Sun, 9 Sep 2018 19:45:15 -0700
+Received: from shsmsx152.ccr.corp.intel.com (10.239.6.52) by
+ fmsmsx111.amr.corp.intel.com (10.18.116.5) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Sun, 9 Sep 2018 19:45:14 -0700
+Received: from shsmsx102.ccr.corp.intel.com ([169.254.2.226]) by
+ SHSMSX152.ccr.corp.intel.com ([169.254.6.150]) with mapi id 14.03.0319.002;
+ Mon, 10 Sep 2018 10:45:13 +0800
+From:   "Xu, Pinzhen" <pinzhen.xu@intel.com>
+To:     "platform-driver-x86@vger.kernel.org" 
+        <platform-driver-x86@vger.kernel.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Memory leak in dell-smbios-wmi.c
+Thread-Topic: Memory leak in dell-smbios-wmi.c
+Thread-Index: AdRIsEPpnVfZn1gkSpGOXsiT60g38Q==
+Date:   Mon, 10 Sep 2018 02:45:12 +0000
+Message-ID: <9B08B519B25F86498FA0D010F395E43DED0AD3@shsmsx102.ccr.corp.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiOTJkYjU3MjEtOTY3Ni00OGZhLWJhMzktMzY5MDA4ZjI4ZWQyIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoidmNkRDN0VnFkdXhCb0Q0dmtURmxMNVREejBlR2toem1FN1dNVkJuM1kyeHd4SkRWWnRIVmhIYnRLdWp0VFU3eCJ9
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Amstrad Delta MODEM device used to be initialized at arch_initcall
-before it was once moved to late_initcall by commit f7519d8c8290 ("ARM:
-OMAP1: ams-delta: register latch dependent devices later"). The purpose
-of that change was to postpone initialization of devices which depended
-on latch2 pins until latch2 converted to GPIO device was ready.
+There might be a possible memory leak in drivers/platform/x86/dell-smbios-wmi.c
+In the `run_smbios_call' function, the buffer created via ACPI_ALLOCATE_BUFFER
+within the output object is not freed properly.
 
-After recent fixes to GPIO handling, it was possible to moove
-registration of most of those device back to where they were before.
-The same can be safely done with the MODEM device as initialization
-of GPIO pins it depends on was moved to machine_init by preceding
-patch.
 
-Move registration of the MODEM device to arch_initcall_sync, not to
-arch_initcall, so it is never exposed to potential conflict in
-registration order hazard against OMAP serial ports.
+Generally, this buffer should be freed using:
+  kfree(output.pointer);
 
-Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
----
- arch/arm/mach-omap1/board-ams-delta.c | 22 ++++++++++++++++++----
- 1 file changed, 18 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/mach-omap1/board-ams-delta.c b/arch/arm/mach-omap1/board-ams-delta.c
-index 1d451142248c..667c3c1f05f5 100644
---- a/arch/arm/mach-omap1/board-ams-delta.c
-+++ b/arch/arm/mach-omap1/board-ams-delta.c
-@@ -896,11 +896,28 @@ static int __init modem_nreset_init(void)
- /*
-  * This function expects MODEM IRQ number already assigned to the port
-  * and fails if it's not.
-+ * The MODEM device requires its RESET# pin kept high during probe.
-+ * That requirement can be fulfilled in several ways:
-+ * - with a descriptor of already functional modem_nreset regulator
-+ *   assigned to the MODEM private data,
-+ * - with the regulator not yet controlled by modem_pm function but
-+ *   already enabled by default on probe,
-+ * - before the modem_nreset regulator is probed, with the pin already
-+ *   set high explicitly.
-+ * The last one is already guaranteed by ams_delta_latch2_init() called
-+ * from machine_init.
-+ * In order to avoid taking over ttyS0 device slot, the MODEM device
-+ * should be registered after OMAP serial ports.  Since those ports
-+ * are registered at arch_initcall, this function can be called safely
-+ * at arch_initcall_sync earliest.
-  */
- static int __init ams_delta_modem_init(void)
- {
- 	int err;
- 
-+	if (!machine_is_ams_delta())
-+		return -ENODEV;
-+
- 	if (ams_delta_modem_ports[0].irq < 0)
- 		return ams_delta_modem_ports[0].irq;
- 
-@@ -913,6 +930,7 @@ static int __init ams_delta_modem_init(void)
- 
- 	return err;
- }
-+arch_initcall_sync(ams_delta_modem_init);
- 
- static int __init late_init(void)
- {
-@@ -922,10 +940,6 @@ static int __init late_init(void)
- 	if (err)
- 		return err;
- 
--	err = ams_delta_modem_init();
--	if (err)
--		return err;
--
- 	/*
- 	 * Once the modem device is registered, the modem_nreset
- 	 * regulator can be requested on behalf of that device.
--- 
-2.16.4
+But it hasn't been cleaned up after a `memcpy' being done.
+static int run_smbios_call(struct wmi_device *wdev)
+{
+      struct acpi_buffer output = {ACPI_ALLOCATE_BUFFER, NULL};
+      struct wmi_smbios_priv *priv;
+      struct acpi_buffer input;
+      union acpi_object *obj;
+      acpi_status status;
 
+      priv = dev_get_drvdata(&wdev->dev);
+      input.length = priv->req_buf_size - sizeof(u64);
+      input.pointer = &priv->buf->std;
+
+      dev_dbg(&wdev->dev, "evaluating: %u/%u [%x,%x,%x,%x]\n",
+            priv->buf->std.cmd_class, priv->buf->std.cmd_select,
+            priv->buf->std.input[0], priv->buf->std.input[1],
+            priv->buf->std.input[2], priv->buf->std.input[3]);
+
+      status = wmidev_evaluate_method(wdev, 0, 1, &input, &output);
+      if (ACPI_FAILURE(status))
+            return -EIO;
+      obj = (union acpi_object *)output.pointer;
+      if (obj->type != ACPI_TYPE_BUFFER) {
+            dev_dbg(&wdev->dev, "received type: %d\n", obj->type);
+            if (obj->type == ACPI_TYPE_INTEGER)
+                  dev_dbg(&wdev->dev, "SMBIOS call failed: %llu\n",
+                        obj->integer.value);
+            return -EIO;
+      }
+      memcpy(&priv->buf->std, obj->buffer.pointer, obj->buffer.length);
+      dev_dbg(&wdev->dev, "result: [%08x,%08x,%08x,%08x]\n",
+            priv->buf->std.output[0], priv->buf->std.output[1],
+            priv->buf->std.output[2], priv->buf->std.output[3]);
+
+      return 0;
+}
+
+
+Found with kmemleak:
+unreferenced object 0xffff8f79382e0000 (size 8192):
+  comm "fwupd", pid 3467, jiffies 4294967131 (age 265623.160s)
+  hex dump (first 32 bytes):
+    03 00 00 00 00 10 00 00 18 00 2e 38 79 8f ff ff  ...........8y...
+    00 00 00 00 00 00 00 00 11 00 16 00 00 00 00 00  ................
+  backtrace:
+    [<0000000000d8a77d>] __kmalloc+0x14e/0x240
+    [<00000000affbc59b>] acpi_os_allocate+0x27/0x29
+    [<000000003fd4a388>] acpi_ut_initialize_buffer+0x3f/0x73
+    [<0000000027ecea33>] acpi_evaluate_object+0x22b/0x3aa
+    [<00000000e26b12ce>] wmidev_evaluate_method+0x114/0x150 [wmi]
+    [<00000000ccecc6ff>] run_smbios_call+0x6d/0x190 [dell_smbios]
+    [<00000000e8e58b51>] dell_smbios_wmi_filter+0x71/0xd0 [dell_smbios]
+    [<00000000c3818758>] wmi_ioctl+0x100/0x232 [wmi]
+    [<00000000cbfe4a18>] do_vfs_ioctl+0xa8/0x620
+    [<0000000035f23e13>] ksys_ioctl+0x67/0x90
+    [<00000000b3776114>] __x64_sys_ioctl+0x1a/0x20
+    [<00000000477604b1>] do_syscall_64+0x5a/0x110
+    [<00000000a6b58460>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+    [<00000000fa4ff21e>] 0xffffffffffffffff
