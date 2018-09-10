@@ -2,197 +2,163 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_SBL,URIBL_SBL_A autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4524DC4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:54:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DC7CC4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:54:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC64620833
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:54:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC64620833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 2B9EE206B8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:54:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AwjfRRIX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B9EE206B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727650AbeIJLqr (ORCPT
+        id S1727690AbeIJLrL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 07:46:47 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45476 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726185AbeIJLqr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 07:46:47 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 504C3ACBC;
-        Mon, 10 Sep 2018 06:54:13 +0000 (UTC)
-Subject: Re: [PATCH] x86/paravirt: Cleanup native_patch()
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        virtualization@lists.linux-foundation.org
-References: <20180907104917.12502-1-bp@alien8.de>
- <20180907105112.GD12849@zn.tnic> <20180907201050.GF12849@zn.tnic>
- <65bb69fa-855f-9efc-19ba-c0fab69f468c@suse.com>
- <20180908152800.GA8286@zn.tnic>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <229941d4-c152-89fb-eb75-fcfa5f265ad4@suse.com>
-Date:   Mon, 10 Sep 2018 08:54:12 +0200
+        Mon, 10 Sep 2018 07:47:11 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:40626 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726148AbeIJLrL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 07:47:11 -0400
+Received: by mail-pf1-f195.google.com with SMTP id s13-v6so9964936pfi.7;
+        Sun, 09 Sep 2018 23:54:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=HOrMkipbW0LGQ5+Xi8ZID/2Cad+ZIA+31CCV7M5E1lA=;
+        b=AwjfRRIXKxLLzEpNAeNaUtHgPh0KUgqz10Pbzp3yWNUUX/x3rnuMiLPcB3MNbF4Gch
+         aOEpq/z6RTLgilDPzTZTLtDdjXsOV/0yhx++AiCm36pR7i03U21aX3F0wLVd+s+c+xmS
+         OH/PsZ68yXi0Frs5DQLq1NYCuA2bluCPBSe1wQ4IN989AAnlF0mcBMtZhc95HFbCkFm2
+         XDgTpDEiclFSxz8LYLNvQ4aQ/aP2JZ4QTy1iMSYR8Vh7JbATlUvDU7iz+mT7mEOqW+ZD
+         b69CsfAmXPMcZy/yv5Rc21OxwKPnRkX4tcJJa/tsjJTZvWbxanM1omgFaTCBQDQp9yzH
+         FF1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=HOrMkipbW0LGQ5+Xi8ZID/2Cad+ZIA+31CCV7M5E1lA=;
+        b=i0FprM/V8pxyAqO9+pZG0oA5lGRxYwaqf4zKy41l72v+ryhFz2eDc3ajomxxPJNFol
+         b6Yyyk67TzsKg+5xSXrp7JF9sRKZBj3+Ghwh1QSvKgVXa02rmRqcrKIcnaFJKDuSVKwT
+         YplYKv8+NjKE6/GhIMAyHx8U7nNZ+why/Z4/KreQC7lZShVWdNKTMp+jWjaJPQmb7okw
+         9vNROTmGsMAsvnHIB5J1GfoWouHR0sxIPYYueuk7nnIc4UryNs6AlcT9yLkunNpqW6zo
+         nwjNpV97bqQQuOiZOkbJTJJ3cCDqxZ1/ZVV1EZW4eJPUELQQhypSdsFEg6iJsB+9jbto
+         2Tuw==
+X-Gm-Message-State: APzg51ARyKRj6BwLTXPgkufxlM5XUiv/62ZqByfsjqNLDEpYk7DXkn6p
+        50pj/kU0RCX39orMHZGycVfhN5HP
+X-Google-Smtp-Source: ANB0VdYbgyiMBd/pZ4mDgydvIWJvlbLqCpwzYnB4eyVFqV6AcevvHkrHDVdOWRIZfY/OAJtpGBmPTg==
+X-Received: by 2002:a63:9619:: with SMTP id c25-v6mr21164889pge.23.1536562478786;
+        Sun, 09 Sep 2018 23:54:38 -0700 (PDT)
+Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id l127-v6sm20482728pfc.55.2018.09.09.23.54.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 09 Sep 2018 23:54:37 -0700 (PDT)
+Subject: Re: [PATCH 4.9 00/63] 4.9.126-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+References: <20180907211012.965501324@linuxfoundation.org>
+ <e1fa8fda-e277-3c83-5e35-826df83f3cd5@roeck-us.net>
+ <20180909085530.GC14455@kroah.com>
+ <1231d8c4-0788-6d02-308a-176666b4a71f@roeck-us.net>
+ <20180909180326.GA22151@kroah.com>
+ <ac7e94d7-e8d3-1a29-3d38-ad510635171c@roeck-us.net>
+ <20180910063541.GA19096@kroah.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <8b1f728a-dd97-92d6-debc-28a479799324@roeck-us.net>
+Date:   Sun, 9 Sep 2018 23:54:36 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180908152800.GA8286@zn.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180910063541.GA19096@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/09/18 17:28, Borislav Petkov wrote:
-> When CONFIG_PARAVIRT_SPINLOCKS=n, it fires
+On 09/09/2018 11:35 PM, Greg Kroah-Hartman wrote:
+> On Sun, Sep 09, 2018 at 01:53:51PM -0700, Guenter Roeck wrote:
+>> On 09/09/2018 11:03 AM, Greg Kroah-Hartman wrote:
+>>> On Sun, Sep 09, 2018 at 08:54:41AM -0700, Guenter Roeck wrote:
+>>>> On 09/09/2018 01:55 AM, Greg Kroah-Hartman wrote:
+>>>>> On Sat, Sep 08, 2018 at 02:14:53PM -0700, Guenter Roeck wrote:
+>>>>>> On 09/07/2018 02:09 PM, Greg Kroah-Hartman wrote:
+>>>>>>> This is the start of the stable review cycle for the 4.9.126 release.
+>>>>>>> There are 63 patches in this series, all will be posted as a response
+>>>>>>> to this one.  If anyone has any issues with these being applied, please
+>>>>>>> let me know.
+>>>>>>>
+>>>>>>> Responses should be made by Sun Sep  9 21:09:58 UTC 2018.
+>>>>>>> Anything received after that time might be too late.
+>>>>>>>
+>>>>>>
+>>>>>> Build results:
+>>>>>> 	total: 151 pass: 149 fail: 2
+>>>>>> Failed builds:
+>>>>>> 	powerpc:defconfig
+>>>>>> 	powerpc:allmodconfig
+>>>>>> Qemu test results:
+>>>>>> 	total: 301 pass: 285 fail: 16
+>>>>>> Failed tests:
+>>>>>> 	powerpc:mac99:ppc64_book3s_defconfig:nosmp:initrd
+>>>>>> 	powerpc:mac99:ppc64_book3s_defconfig:smp:cpu4:initrd
+>>>>>> 	powerpc:mac99:ppc64_book3s_defconfig:smp:cpu4:ide:rootfs
+>>>>>> 	powerpc:mac99:ppc64_book3s_defconfig:smp:cpu4:mmc:rootfs
+>>>>>> 	powerpc:mac99:ppc64_book3s_defconfig:smp:cpu4:scsi[DC395]:rootfs
+>>>>>> 	powerpc:pseries:pseries_defconfig:initrd
+>>>>>> 	powerpc:pseries:pseries_defconfig:scsi:rootfs
+>>>>>> 	powerpc:pseries:pseries_defconfig:mmc:rootfs
+>>>>>> 	powerpc:pseries:pseries_defconfig:nvme:rootfs
+>>>>>> 	powerpc:pseries:pseries_defconfig:little:initrd
+>>>>>> 	powerpc:pseries:pseries_defconfig:little:scsi:rootfs
+>>>>>> 	powerpc:pseries:pseries_defconfig:little:scsi[MEGASAS]:rootfs
+>>>>>> 	powerpc:pseries:pseries_defconfig:little:scsi[FUSION]:rootfs
+>>>>>> 	powerpc:pseries:pseries_defconfig:little:mmc:rootfs
+>>>>>> 	powerpc:pseries:pseries_defconfig:little:nvme:rootfs
+>>>>>> 	powerpc:powernv:powernv_defconfig:initrd
+>>>>>>
+>>>>>> Details are available at https://kerneltests.org/builders/.
+>>>>>
+>>>>> I've pushed out a -rc2 to fix this.  Hopefully.  There were a bunch of
+>>>>> warnings for power that I don't think were caused by these series, I
+>>>>> don't know if they have always been there or not.
+>>>>>
+>>>>
+>>>> For v4.9.125-65-g0f793f1ec4f3:
+>>>>
+>>>> Build results:
+>>>> 	total: 151 pass: 150 fail: 1
+>>>> Failed builds:
+>>>> 	powerpc:allmodconfig
+>>>> Qemu test results:
+>>>> 	total: 301 pass: 301 fail: 0
+>>>>
+>>>> arch/powerpc/kernel/fadump.c: In function 'free_crash_memory_ranges':
+>>>> arch/powerpc/kernel/fadump.c:738:2: error: implicit declaration of function 'kfree'
+>>>>
+>>>> arch/powerpc/kernel/fadump.c: In function 'allocate_crash_memory_ranges':
+>>>> arch/powerpc/kernel/fadump.c:757:14: error: implicit declaration of function 'krealloc'
+>>>
+>>> Oops, forgot to fix that one.  Shoould now be resolved.
+>>>
+>>
+>> Did you push your change ? My builders didn't pick it up.
 > 
->   arch/x86/kernel/paravirt_patch_64.c: In function ‘native_patch’:
->   arch/x86/kernel/paravirt_patch_64.c:89:1: warning: label ‘patch_site’ defined but not used [-Wunused-label]
->    patch_site:
+> Yes, I pushed out the "real" 4.9.125 release with the fix in it.
 > 
-> but those labels can simply be removed by directly calling the
-> respective functions there.
-> 
-> Get rid of local variables too, while at it.
-> 
-> Signed-off-by: Borislav Petkov <bp@suse.de>
-> Cc: Juergen Gross <jgross@suse.com>
-> Cc: x86@kernel.org
-> Cc: virtualization@lists.linux-foundation.org
-> ---
-> 
-> It looks even more cleaner now. :)
 
-And there is still some more clean up possible:
+You mean 4.9.126. But you didn't push the update to linux-stable-rc, which is why
+my builders don't see it.
 
-> 
->  arch/x86/kernel/paravirt_patch_32.c | 48 +++++++++++-----------------
->  arch/x86/kernel/paravirt_patch_64.c | 49 ++++++++++++-----------------
->  2 files changed, 39 insertions(+), 58 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/paravirt_patch_32.c b/arch/x86/kernel/paravirt_patch_32.c
-> index d460cbcabcfe..0865323c2716 100644
-> --- a/arch/x86/kernel/paravirt_patch_32.c
-> +++ b/arch/x86/kernel/paravirt_patch_32.c
-> @@ -34,14 +34,10 @@ extern bool pv_is_native_vcpu_is_preempted(void);
->  
->  unsigned native_patch(u8 type, void *ibuf, unsigned long addr, unsigned len)
->  {
-> -	const unsigned char *start, *end;
-> -	unsigned ret;
-> -
->  #define PATCH_SITE(ops, x)					\
-> -		case PARAVIRT_PATCH(ops.x):			\
-> -			start = start_##ops##_##x;		\
-> -			end = end_##ops##_##x;			\
-> -			goto patch_site
-> +	case PARAVIRT_PATCH(ops.x):				\
-> +		return paravirt_patch_insns(ibuf, len, start_##ops##_##x, end_##ops##_##x)
-> +
->  	switch (type) {
->  #ifdef CONFIG_PARAVIRT_XXL
->  		PATCH_SITE(irq, irq_disable);
-> @@ -54,32 +50,26 @@ unsigned native_patch(u8 type, void *ibuf, unsigned long addr, unsigned len)
->  		PATCH_SITE(mmu, write_cr3);
->  #endif
->  #if defined(CONFIG_PARAVIRT_SPINLOCKS)
-> -		case PARAVIRT_PATCH(lock.queued_spin_unlock):
-> -			if (pv_is_native_spin_unlock()) {
-> -				start = start_lock_queued_spin_unlock;
-> -				end   = end_lock_queued_spin_unlock;
-> -				goto patch_site;
-> -			}
-> -			goto patch_default;
-> +	case PARAVIRT_PATCH(lock.queued_spin_unlock):
-> +		if (pv_is_native_spin_unlock())
-> +			return paravirt_patch_insns(ibuf, len,
-> +						    start_lock_queued_spin_unlock,
-> +						    end_lock_queued_spin_unlock);
-> +		else
-> +			return paravirt_patch_default(type, ibuf, addr, len);
-
-Why not replace the else clause by a "break;" and ...
-
->  
-> -		case PARAVIRT_PATCH(lock.vcpu_is_preempted):
-> -			if (pv_is_native_vcpu_is_preempted()) {
-> -				start = start_lock_vcpu_is_preempted;
-> -				end   = end_lock_vcpu_is_preempted;
-> -				goto patch_site;
-> -			}
-> -			goto patch_default;
-> +	case PARAVIRT_PATCH(lock.vcpu_is_preempted):
-> +		if (pv_is_native_vcpu_is_preempted())
-> +			return paravirt_patch_insns(ibuf, len,
-> +						    start_lock_vcpu_is_preempted,
-> +						    end_lock_vcpu_is_preempted);
-> +		else
-> +			return paravirt_patch_default(type, ibuf, addr, len);
-
-... this as well and ...
-
->  #endif
->  
->  	default:
-> -patch_default: __maybe_unused
-> -		ret = paravirt_patch_default(type, ibuf, addr, len);
-> -		break;
-> -
-> -patch_site:
-> -		ret = paravirt_patch_insns(ibuf, len, start, end);
-> -		break;
-> +		return paravirt_patch_default(type, ibuf, addr, len);
-
-... remove this return and ...
-
->  	}
->  #undef PATCH_SITE
-> -	return ret;
-> +	return 0;
-
-Replace this by
-	return paravirt_patch_default(type, ibuf, addr, len);
-
-
-Same for paravirt_patch_64.c, of course.
-
-
-Juergen
+Guenter
