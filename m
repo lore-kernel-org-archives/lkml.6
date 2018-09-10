@@ -2,72 +2,81 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80BB1C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:25:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B03EAC4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:27:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34F2C20833
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:25:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34F2C20833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 5988520833
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:27:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5988520833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728606AbeIJTTm (ORCPT
+        id S1728428AbeIJTWN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 15:19:42 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58472 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728110AbeIJTTl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 15:19:41 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2D2D280D;
-        Mon, 10 Sep 2018 07:25:21 -0700 (PDT)
-Received: from DESKTOP-E1NTVVP.localdomain (DESKTOP-E1NTVVP.cambridge.arm.com [10.1.27.162])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 10CC63F557;
-        Mon, 10 Sep 2018 07:25:18 -0700 (PDT)
-Date:   Mon, 10 Sep 2018 15:25:13 +0100
-From:   Brian Starkey <brian.starkey@arm.com>
-To:     Ayan Halder <ayan.halder@arm.com>
-Cc:     dri-devel@lists.freedesktop.org, daniel@fooishbar.org,
-        airlied@linux.ie, gustavo@padovan.org,
-        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
-        linux-kernel@vger.kernel.org, alexandru-cosmin.gheorghe@arm.com,
-        liviu.dudau@arm.com, tfiga@chromium.org, hoegsberg@chromium.org,
-        nd@arm.com
-Subject: Re: [RFC PATCH v2 1/3] drm/fourcc: Add 'bpp' field for formats with
- non-integer bytes-per-pixel
-Message-ID: <20180910142512.GA4164@DESKTOP-E1NTVVP.localdomain>
-References: <20180823152343.6474-1-brian.starkey@arm.com>
- <20180823152343.6474-2-brian.starkey@arm.com>
- <20180831081730.GM21634@phenom.ffwll.local>
- <20180910141134.GA19567@arm.com>
+        Mon, 10 Sep 2018 15:22:13 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58972 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728187AbeIJTWM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 15:22:12 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 6D56EAE46;
+        Mon, 10 Sep 2018 14:27:50 +0000 (UTC)
+Date:   Mon, 10 Sep 2018 16:27:48 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     zhong jiang <zhongjiang@huawei.com>
+Cc:     akpm@linux-foundation.org, pasha.tatashin@oracle.com,
+        dan.j.williams@intel.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: Use BUG_ON directly instead of a if condition
+ followed by BUG
+Message-ID: <20180910142748.GK10951@dhcp22.suse.cz>
+References: <1536588197-22115-1-git-send-email-zhongjiang@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180910141134.GA19567@arm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1536588197-22115-1-git-send-email-zhongjiang@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ayan,
+On Mon 10-09-18 22:03:17, zhong jiang wrote:
+> The if condition can be removed if we use BUG_ON directly.
+> The issule is detected with the help of Coccinelle.
 
-On Mon, Sep 10, 2018 at 03:11:34PM +0100, Ayan Halder wrote:
->On Fri, Aug 31, 2018 at 10:17:30AM +0200, Daniel Vetter wrote:
->> On Thu, Aug 23, 2018 at 04:23:41PM +0100, Brian Starkey wrote:
+typo here
 
-[snip]
+Is this really worth changing? If anything I would really love to see
+the BUG_ON going away rather than make a cosmetic changes to it.
 
->> >  		unsigned int min_size;
->> > +		u8 bpp = drm_format_info_plane_bpp(fb->format, i);
->You might want to pass info here instead of fb->format because fb is
->NULL. ie drm_format_info_plane_bpp(info, i);
->
+> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+> ---
+>  mm/memory_hotplug.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> index 38d94b7..280b26c 100644
+> --- a/mm/memory_hotplug.c
+> +++ b/mm/memory_hotplug.c
+> @@ -1888,8 +1888,7 @@ void __ref remove_memory(int nid, u64 start, u64 size)
+>  	 */
+>  	ret = walk_memory_range(PFN_DOWN(start), PFN_UP(start + size - 1), NULL,
+>  				check_memblock_offlined_cb);
+> -	if (ret)
+> -		BUG();
+> +	BUG(ret);
+>  
+>  	/* remove memmap entry */
+>  	firmware_map_remove(start, start + size, "System RAM");
+> -- 
+> 1.7.12.4
+> 
 
-Thanks, good catch. I have to admit I only compile-tested these.
-
--Brian
+-- 
+Michal Hocko
+SUSE Labs
