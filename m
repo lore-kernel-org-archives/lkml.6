@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2F3BC4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 18:35:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF64AC4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 18:35:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 064882086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 18:35:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 064882086A
+	by mail.kernel.org (Postfix) with ESMTP id 1EEE12086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 18:35:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EEE12086A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728353AbeIJXbC (ORCPT
+        id S1728563AbeIJXbO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 19:31:02 -0400
-Received: from mga07.intel.com ([134.134.136.100]:35204 "EHLO mga07.intel.com"
+        Mon, 10 Sep 2018 19:31:14 -0400
+Received: from mga02.intel.com ([134.134.136.20]:13813 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727784AbeIJXbC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 19:31:02 -0400
+        id S1726657AbeIJXbN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 19:31:13 -0400
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2018 11:35:37 -0700
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2018 11:34:41 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,356,1531810800"; 
-   d="gz'50?scan'50,208,50";a="82374653"
+   d="gz'50?scan'50,208,50";a="88797222"
 Received: from bee.sh.intel.com (HELO lkp-server01) ([10.239.97.14])
-  by orsmga003.jf.intel.com with ESMTP; 10 Sep 2018 11:31:30 -0700
+  by fmsmga001.fm.intel.com with ESMTP; 10 Sep 2018 11:34:28 -0700
 Received: from kbuild by lkp-server01 with local (Exim 4.89)
         (envelope-from <lkp@intel.com>)
-        id 1fzQy9-000AZ9-Sw; Tue, 11 Sep 2018 02:31:29 +0800
-Date:   Tue, 11 Sep 2018 02:31:24 +0800
+        id 1fzR14-00081W-0t; Tue, 11 Sep 2018 02:34:30 +0800
+Date:   Tue, 11 Sep 2018 02:34:06 +0800
 From:   kbuild test robot <lkp@intel.com>
 To:     jglisse@redhat.com
 Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org,
@@ -47,14 +47,14 @@ Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org,
         amd-gfx@lists.freedesktop.org,
         Alex Deucher <alexander.deucher@amd.com>,
         Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
-Subject: Re: [PATCH 2/2] gpu/radeon: use HMM mirror for userptr buffer object.
-Message-ID: <201809110221.9Qqqwzns%fengguang.wu@intel.com>
-References: <20180910005753.5860-3-jglisse@redhat.com>
+Subject: Re: [PATCH 1/2] gpu/radeon: use HMM mirror instead of mmu_notifier
+Message-ID: <201809110233.kOht5l7w%fengguang.wu@intel.com>
+References: <20180910005753.5860-2-jglisse@redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="UugvWAfsgieZRqgk"
+Content-Type: multipart/mixed; boundary="RnlQjJ0d97Da+TV1"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180910005753.5860-3-jglisse@redhat.com>
+In-Reply-To: <20180910005753.5860-2-jglisse@redhat.com>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -62,7 +62,7 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---UugvWAfsgieZRqgk
+--RnlQjJ0d97Da+TV1
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -82,20 +82,20 @@ reproduce:
         # save the attached .config to linux build tree
         make ARCH=x86_64 
 
-All errors (new ones prefixed by >>):
+All error/warnings (new ones prefixed by >>):
 
-   drivers/gpu/drm/radeon/radeon_mn.c:43:20: error: field 'mirror' has incomplete type
+>> drivers/gpu/drm/radeon/radeon_mn.c:43:20: error: field 'mirror' has incomplete type
      struct hmm_mirror mirror;
                        ^~~~~~
    drivers/gpu/drm/radeon/radeon_mn.c: In function 'radeon_mn_destroy':
-   drivers/gpu/drm/radeon/radeon_mn.c:90:2: error: implicit declaration of function 'hmm_mirror_unregister'; did you mean 'drm_dp_aux_unregister'? [-Werror=implicit-function-declaration]
+>> drivers/gpu/drm/radeon/radeon_mn.c:90:2: error: implicit declaration of function 'hmm_mirror_unregister'; did you mean 'drm_dp_aux_unregister'? [-Werror=implicit-function-declaration]
      hmm_mirror_unregister(&rmn->mirror);
      ^~~~~~~~~~~~~~~~~~~~~
      drm_dp_aux_unregister
    In file included from include/linux/firmware.h:6:0,
                     from drivers/gpu/drm/radeon/radeon_mn.c:31:
    drivers/gpu/drm/radeon/radeon_mn.c: In function 'radeon_mirror_release':
-   include/linux/kernel.h:997:32: error: dereferencing pointer to incomplete type 'struct hmm_mirror'
+>> include/linux/kernel.h:997:32: error: dereferencing pointer to incomplete type 'struct hmm_mirror'
      BUILD_BUG_ON_MSG(!__same_type(*(ptr), ((type *)0)->member) && \
                                    ^~~~~~
    include/linux/compiler.h:335:18: note: in definition of macro '__compiletime_assert'
@@ -113,29 +113,29 @@ All errors (new ones prefixed by >>):
    include/linux/kernel.h:997:20: note: in expansion of macro '__same_type'
      BUILD_BUG_ON_MSG(!__same_type(*(ptr), ((type *)0)->member) && \
                        ^~~~~~~~~~~
-   drivers/gpu/drm/radeon/radeon_mn.c:103:26: note: in expansion of macro 'container_of'
+>> drivers/gpu/drm/radeon/radeon_mn.c:103:26: note: in expansion of macro 'container_of'
      struct radeon_mn *rmn = container_of(mirror, struct radeon_mn, mirror);
                              ^~~~~~~~~~~~
    drivers/gpu/drm/radeon/radeon_mn.c: At top level:
-   drivers/gpu/drm/radeon/radeon_mn.c:119:24: warning: 'struct hmm_update' declared inside parameter list will not be visible outside of this definition or declaration
+>> drivers/gpu/drm/radeon/radeon_mn.c:119:24: warning: 'struct hmm_update' declared inside parameter list will not be visible outside of this definition or declaration
               const struct hmm_update *update)
                            ^~~~~~~~~~
    drivers/gpu/drm/radeon/radeon_mn.c: In function 'radeon_sync_cpu_device_pagetables':
-   drivers/gpu/drm/radeon/radeon_mn.c:128:14: error: dereferencing pointer to incomplete type 'const struct hmm_update'
+>> drivers/gpu/drm/radeon/radeon_mn.c:128:14: error: dereferencing pointer to incomplete type 'const struct hmm_update'
      end = update->end - 1;
                  ^~
    drivers/gpu/drm/radeon/radeon_mn.c: At top level:
-   drivers/gpu/drm/radeon/radeon_mn.c:183:21: error: variable 'radeon_mirror_ops' has initializer but incomplete type
+>> drivers/gpu/drm/radeon/radeon_mn.c:183:21: error: variable 'radeon_mirror_ops' has initializer but incomplete type
     static const struct hmm_mirror_ops radeon_mirror_ops = {
                         ^~~~~~~~~~~~~~
-   drivers/gpu/drm/radeon/radeon_mn.c:184:3: error: 'const struct hmm_mirror_ops' has no member named 'sync_cpu_device_pagetables'
+>> drivers/gpu/drm/radeon/radeon_mn.c:184:3: error: 'const struct hmm_mirror_ops' has no member named 'sync_cpu_device_pagetables'
      .sync_cpu_device_pagetables = &radeon_sync_cpu_device_pagetables,
       ^~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/gpu/drm/radeon/radeon_mn.c:184:32: warning: excess elements in struct initializer
+>> drivers/gpu/drm/radeon/radeon_mn.c:184:32: warning: excess elements in struct initializer
      .sync_cpu_device_pagetables = &radeon_sync_cpu_device_pagetables,
                                    ^
    drivers/gpu/drm/radeon/radeon_mn.c:184:32: note: (near initialization for 'radeon_mirror_ops')
-   drivers/gpu/drm/radeon/radeon_mn.c:185:3: error: 'const struct hmm_mirror_ops' has no member named 'release'
+>> drivers/gpu/drm/radeon/radeon_mn.c:185:3: error: 'const struct hmm_mirror_ops' has no member named 'release'
      .release = &radeon_mirror_release,
       ^~~~~~~
    drivers/gpu/drm/radeon/radeon_mn.c:185:13: warning: excess elements in struct initializer
@@ -143,63 +143,234 @@ All errors (new ones prefixed by >>):
                 ^
    drivers/gpu/drm/radeon/radeon_mn.c:185:13: note: (near initialization for 'radeon_mirror_ops')
    drivers/gpu/drm/radeon/radeon_mn.c: In function 'radeon_mn_get':
-   drivers/gpu/drm/radeon/radeon_mn.c:224:6: error: implicit declaration of function 'hmm_mirror_register'; did you mean 'drm_dp_aux_register'? [-Werror=implicit-function-declaration]
+>> drivers/gpu/drm/radeon/radeon_mn.c:224:6: error: implicit declaration of function 'hmm_mirror_register'; did you mean 'drm_dp_aux_register'? [-Werror=implicit-function-declaration]
      r = hmm_mirror_register(&new->mirror, mm);
          ^~~~~~~~~~~~~~~~~~~
          drm_dp_aux_register
-   drivers/gpu/drm/radeon/radeon_mn.c: In function 'radeon_mn_bo_map':
->> drivers/gpu/drm/radeon/radeon_mn.c:373:43: error: 'HMM_PFN_FLAG_MAX' undeclared (first use in this function); did you mean 'TTM_PL_FLAG_VRAM'?
-     static const uint64_t radeon_range_flags[HMM_PFN_FLAG_MAX] = {
-                                              ^~~~~~~~~~~~~~~~
-                                              TTM_PL_FLAG_VRAM
-   drivers/gpu/drm/radeon/radeon_mn.c:373:43: note: each undeclared identifier is reported only once for each function it appears in
->> drivers/gpu/drm/radeon/radeon_mn.c:378:44: error: 'HMM_PFN_VALUE_MAX' undeclared (first use in this function); did you mean 'HMM_PFN_FLAG_MAX'?
-     static const uint64_t radeon_range_values[HMM_PFN_VALUE_MAX] = {
-                                               ^~~~~~~~~~~~~~~~~
-                                               HMM_PFN_FLAG_MAX
->> drivers/gpu/drm/radeon/radeon_mn.c:389:19: error: storage size of 'range' isn't known
-     struct hmm_range range;
-                      ^~~~~
->> drivers/gpu/drm/radeon/radeon_mn.c:421:31: error: 'HMM_PFN_VALID' undeclared (first use in this function); did you mean 'HMM_PFN_VALUE_MAX'?
-      range.pfns[i] = range.flags[HMM_PFN_VALID];
-                                  ^~~~~~~~~~~~~
-                                  HMM_PFN_VALUE_MAX
->> drivers/gpu/drm/radeon/radeon_mn.c:422:40: error: 'HMM_PFN_WRITE' undeclared (first use in this function); did you mean 'HMM_PFN_VALID'?
-      range.pfns[i] |= write ? range.flags[HMM_PFN_WRITE] : 0;
-                                           ^~~~~~~~~~~~~
-                                           HMM_PFN_VALID
->> drivers/gpu/drm/radeon/radeon_mn.c:425:8: error: implicit declaration of function 'hmm_vma_fault'; did you mean 'filemap_fault'? [-Werror=implicit-function-declaration]
-     ret = hmm_vma_fault(&range, true);
-           ^~~~~~~~~~~~~
-           filemap_fault
->> drivers/gpu/drm/radeon/radeon_mn.c:430:23: error: implicit declaration of function 'hmm_pfn_to_page'; did you mean '__pfn_to_page'? [-Werror=implicit-function-declaration]
-      struct page *page = hmm_pfn_to_page(&range, range.pfns[i]);
-                          ^~~~~~~~~~~~~~~
-                          __pfn_to_page
->> drivers/gpu/drm/radeon/radeon_mn.c:446:4: error: implicit declaration of function 'hmm_vma_range_done'; did you mean 'drm_vma_node_size'? [-Werror=implicit-function-declaration]
-       hmm_vma_range_done(&range);
-       ^~~~~~~~~~~~~~~~~~
-       drm_vma_node_size
-   drivers/gpu/drm/radeon/radeon_mn.c:389:19: warning: unused variable 'range' [-Wunused-variable]
-     struct hmm_range range;
-                      ^~~~~
-   drivers/gpu/drm/radeon/radeon_mn.c:378:24: warning: unused variable 'radeon_range_values' [-Wunused-variable]
-     static const uint64_t radeon_range_values[HMM_PFN_VALUE_MAX] = {
-                           ^~~~~~~~~~~~~~~~~~~
-   drivers/gpu/drm/radeon/radeon_mn.c:373:24: warning: unused variable 'radeon_range_flags' [-Wunused-variable]
-     static const uint64_t radeon_range_flags[HMM_PFN_FLAG_MAX] = {
-                           ^~~~~~~~~~~~~~~~~~
    drivers/gpu/drm/radeon/radeon_mn.c: At top level:
-   drivers/gpu/drm/radeon/radeon_mn.c:183:36: error: storage size of 'radeon_mirror_ops' isn't known
+>> drivers/gpu/drm/radeon/radeon_mn.c:183:36: error: storage size of 'radeon_mirror_ops' isn't known
+    static const struct hmm_mirror_ops radeon_mirror_ops = {
+                                       ^~~~~~~~~~~~~~~~~
+   cc1: some warnings being treated as errors
+--
+   drivers/gpu//drm/radeon/radeon_mn.c:43:20: error: field 'mirror' has incomplete type
+     struct hmm_mirror mirror;
+                       ^~~~~~
+   drivers/gpu//drm/radeon/radeon_mn.c: In function 'radeon_mn_destroy':
+   drivers/gpu//drm/radeon/radeon_mn.c:90:2: error: implicit declaration of function 'hmm_mirror_unregister'; did you mean 'drm_dp_aux_unregister'? [-Werror=implicit-function-declaration]
+     hmm_mirror_unregister(&rmn->mirror);
+     ^~~~~~~~~~~~~~~~~~~~~
+     drm_dp_aux_unregister
+   In file included from include/linux/firmware.h:6:0,
+                    from drivers/gpu//drm/radeon/radeon_mn.c:31:
+   drivers/gpu//drm/radeon/radeon_mn.c: In function 'radeon_mirror_release':
+>> include/linux/kernel.h:997:32: error: dereferencing pointer to incomplete type 'struct hmm_mirror'
+     BUILD_BUG_ON_MSG(!__same_type(*(ptr), ((type *)0)->member) && \
+                                   ^~~~~~
+   include/linux/compiler.h:335:18: note: in definition of macro '__compiletime_assert'
+      int __cond = !(condition);    \
+                     ^~~~~~~~~
+   include/linux/compiler.h:358:2: note: in expansion of macro '_compiletime_assert'
+     _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
+     ^~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:45:37: note: in expansion of macro 'compiletime_assert'
+    #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+                                        ^~~~~~~~~~~~~~~~~~
+   include/linux/kernel.h:997:2: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+     BUILD_BUG_ON_MSG(!__same_type(*(ptr), ((type *)0)->member) && \
+     ^~~~~~~~~~~~~~~~
+   include/linux/kernel.h:997:20: note: in expansion of macro '__same_type'
+     BUILD_BUG_ON_MSG(!__same_type(*(ptr), ((type *)0)->member) && \
+                       ^~~~~~~~~~~
+   drivers/gpu//drm/radeon/radeon_mn.c:103:26: note: in expansion of macro 'container_of'
+     struct radeon_mn *rmn = container_of(mirror, struct radeon_mn, mirror);
+                             ^~~~~~~~~~~~
+   drivers/gpu//drm/radeon/radeon_mn.c: At top level:
+   drivers/gpu//drm/radeon/radeon_mn.c:119:24: warning: 'struct hmm_update' declared inside parameter list will not be visible outside of this definition or declaration
+              const struct hmm_update *update)
+                           ^~~~~~~~~~
+   drivers/gpu//drm/radeon/radeon_mn.c: In function 'radeon_sync_cpu_device_pagetables':
+   drivers/gpu//drm/radeon/radeon_mn.c:128:14: error: dereferencing pointer to incomplete type 'const struct hmm_update'
+     end = update->end - 1;
+                 ^~
+   drivers/gpu//drm/radeon/radeon_mn.c: At top level:
+   drivers/gpu//drm/radeon/radeon_mn.c:183:21: error: variable 'radeon_mirror_ops' has initializer but incomplete type
+    static const struct hmm_mirror_ops radeon_mirror_ops = {
+                        ^~~~~~~~~~~~~~
+   drivers/gpu//drm/radeon/radeon_mn.c:184:3: error: 'const struct hmm_mirror_ops' has no member named 'sync_cpu_device_pagetables'
+     .sync_cpu_device_pagetables = &radeon_sync_cpu_device_pagetables,
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/gpu//drm/radeon/radeon_mn.c:184:32: warning: excess elements in struct initializer
+     .sync_cpu_device_pagetables = &radeon_sync_cpu_device_pagetables,
+                                   ^
+   drivers/gpu//drm/radeon/radeon_mn.c:184:32: note: (near initialization for 'radeon_mirror_ops')
+   drivers/gpu//drm/radeon/radeon_mn.c:185:3: error: 'const struct hmm_mirror_ops' has no member named 'release'
+     .release = &radeon_mirror_release,
+      ^~~~~~~
+   drivers/gpu//drm/radeon/radeon_mn.c:185:13: warning: excess elements in struct initializer
+     .release = &radeon_mirror_release,
+                ^
+   drivers/gpu//drm/radeon/radeon_mn.c:185:13: note: (near initialization for 'radeon_mirror_ops')
+   drivers/gpu//drm/radeon/radeon_mn.c: In function 'radeon_mn_get':
+   drivers/gpu//drm/radeon/radeon_mn.c:224:6: error: implicit declaration of function 'hmm_mirror_register'; did you mean 'drm_dp_aux_register'? [-Werror=implicit-function-declaration]
+     r = hmm_mirror_register(&new->mirror, mm);
+         ^~~~~~~~~~~~~~~~~~~
+         drm_dp_aux_register
+   drivers/gpu//drm/radeon/radeon_mn.c: At top level:
+   drivers/gpu//drm/radeon/radeon_mn.c:183:36: error: storage size of 'radeon_mirror_ops' isn't known
     static const struct hmm_mirror_ops radeon_mirror_ops = {
                                        ^~~~~~~~~~~~~~~~~
    cc1: some warnings being treated as errors
 
-vim +373 drivers/gpu/drm/radeon/radeon_mn.c
+vim +/mirror +43 drivers/gpu/drm/radeon/radeon_mn.c
 
+    38	
+    39	struct radeon_mn {
+    40		/* constant after initialisation */
+    41		struct radeon_device	*rdev;
+    42		struct mm_struct	*mm;
+  > 43		struct hmm_mirror	mirror;
+    44	
+    45		/* only used on destruction */
+    46		struct work_struct	work;
+    47	
+    48		/* protected by rdev->mn_lock */
+    49		struct hlist_node	node;
+    50	
+    51		/* objects protected by lock */
+    52		struct mutex		lock;
+    53		struct rb_root_cached	objects;
+    54	};
+    55	
+    56	struct radeon_mn_node {
+    57		struct interval_tree_node	it;
+    58		struct list_head		bos;
+    59	};
+    60	
+    61	/**
+    62	 * radeon_mn_destroy - destroy the rmn
+    63	 *
+    64	 * @work: previously sheduled work item
+    65	 *
+    66	 * Lazy destroys the notifier from a work item
+    67	 */
+    68	static void radeon_mn_destroy(struct work_struct *work)
+    69	{
+    70		struct radeon_mn *rmn = container_of(work, struct radeon_mn, work);
+    71		struct radeon_device *rdev = rmn->rdev;
+    72		struct radeon_mn_node *node, *next_node;
+    73		struct radeon_bo *bo, *next_bo;
+    74	
+    75		mutex_lock(&rdev->mn_lock);
+    76		mutex_lock(&rmn->lock);
+    77		hash_del(&rmn->node);
+    78		rbtree_postorder_for_each_entry_safe(node, next_node,
+    79						     &rmn->objects.rb_root, it.rb) {
+    80	
+    81			interval_tree_remove(&node->it, &rmn->objects);
+    82			list_for_each_entry_safe(bo, next_bo, &node->bos, mn_list) {
+    83				bo->mn = NULL;
+    84				list_del_init(&bo->mn_list);
+    85			}
+    86			kfree(node);
+    87		}
+    88		mutex_unlock(&rmn->lock);
+    89		mutex_unlock(&rdev->mn_lock);
+  > 90		hmm_mirror_unregister(&rmn->mirror);
+    91		kfree(rmn);
+    92	}
+    93	
+    94	/**
+    95	 * radeon_mn_release - callback to notify about mm destruction
+    96	 *
+    97	 * @mirror: our mirror struct
+    98	 *
+    99	 * Shedule a work item to lazy destroy our notifier.
+   100	 */
+   101	static void radeon_mirror_release(struct hmm_mirror *mirror)
+   102	{
+ > 103		struct radeon_mn *rmn = container_of(mirror, struct radeon_mn, mirror);
+   104		INIT_WORK(&rmn->work, radeon_mn_destroy);
+   105		schedule_work(&rmn->work);
+   106	}
+   107	
+   108	/**
+   109	 * radeon_sync_cpu_device_pagetables - callback to synchronize with mm changes
+   110	 *
+   111	 * @mirror: our HMM mirror
+   112	 * @update: update informations (start, end, event, blockable, ...)
+   113	 *
+   114	 * We block for all BOs between start and end to be idle and unmap them by
+   115	 * moving them into system domain again (trigger a call to ttm_backend_func.
+   116	 * unbind see radeon_ttm.c).
+   117	 */
+   118	static int radeon_sync_cpu_device_pagetables(struct hmm_mirror *mirror,
+ > 119						     const struct hmm_update *update)
+   120	{
+   121		struct radeon_mn *rmn = container_of(mirror, struct radeon_mn, mirror);
+   122		struct ttm_operation_ctx ctx = { false, false };
+   123		struct interval_tree_node *it;
+   124		unsigned long end;
+   125		int ret = 0;
+   126	
+   127		/* notification is exclusive, but interval is inclusive */
+ > 128		end = update->end - 1;
+   129	
+   130		/* TODO we should be able to split locking for interval tree and
+   131		 * the tear down.
+   132		 */
+   133		if (update->blockable)
+   134			mutex_lock(&rmn->lock);
+   135		else if (!mutex_trylock(&rmn->lock))
+   136			return -EAGAIN;
+   137	
+   138		it = interval_tree_iter_first(&rmn->objects, update->start, end);
+   139		while (it) {
+   140			struct radeon_mn_node *node;
+   141			struct radeon_bo *bo;
+   142			long r;
+   143	
+   144			if (!update->blockable) {
+   145				ret = -EAGAIN;
+   146				goto out_unlock;
+   147			}
+   148	
+   149			node = container_of(it, struct radeon_mn_node, it);
+   150			it = interval_tree_iter_next(it, update->start, end);
+   151	
+   152			list_for_each_entry(bo, &node->bos, mn_list) {
+   153	
+   154				if (!bo->tbo.ttm || bo->tbo.ttm->state != tt_bound)
+   155					continue;
+   156	
+   157				r = radeon_bo_reserve(bo, true);
+   158				if (r) {
+   159					DRM_ERROR("(%ld) failed to reserve user bo\n", r);
+   160					continue;
+   161				}
+   162	
+   163				r = reservation_object_wait_timeout_rcu(bo->tbo.resv,
+   164					true, false, MAX_SCHEDULE_TIMEOUT);
+   165				if (r <= 0)
+   166					DRM_ERROR("(%ld) failed to wait for user bo\n", r);
+   167	
+   168				radeon_ttm_placement_from_domain(bo, RADEON_GEM_DOMAIN_CPU);
+   169				r = ttm_bo_validate(&bo->tbo, &bo->placement, &ctx);
+   170				if (r)
+   171					DRM_ERROR("(%ld) failed to validate user bo\n", r);
+   172	
+   173				radeon_bo_unreserve(bo);
+   174			}
+   175		}
+   176	
+   177	out_unlock:
+   178		mutex_unlock(&rmn->lock);
+   179	
+   180		return ret;
+   181	}
    182	
-   183	static const struct hmm_mirror_ops radeon_mirror_ops = {
-   184		.sync_cpu_device_pagetables = &radeon_sync_cpu_device_pagetables,
+ > 183	static const struct hmm_mirror_ops radeon_mirror_ops = {
+ > 184		.sync_cpu_device_pagetables = &radeon_sync_cpu_device_pagetables,
  > 185		.release = &radeon_mirror_release,
    186	};
    187	
@@ -239,7 +410,7 @@ vim +373 drivers/gpu/drm/radeon/radeon_mn.c
    221			kfree(new);
    222			return ERR_PTR(-EINTR);
    223		}
-   224		r = hmm_mirror_register(&new->mirror, mm);
+ > 224		r = hmm_mirror_register(&new->mirror, mm);
    225		up_write(&mm->mmap_sem);
    226		if (r) {
    227			kfree(new);
@@ -262,240 +433,17 @@ vim +373 drivers/gpu/drm/radeon/radeon_mn.c
    244		return new;
    245	}
    246	
-   247	/**
-   248	 * radeon_mn_register - register a BO for notifier updates
-   249	 *
-   250	 * @bo: radeon buffer object
-   251	 * @addr: userptr addr we should monitor
-   252	 *
-   253	 * Registers an MMU notifier for the given BO at the specified address.
-   254	 * Returns 0 on success, -ERRNO if anything goes wrong.
-   255	 */
-   256	int radeon_mn_register(struct radeon_bo *bo, unsigned long addr)
-   257	{
-   258		unsigned long end = addr + radeon_bo_size(bo) - 1;
-   259		struct radeon_device *rdev = bo->rdev;
-   260		struct radeon_mn *rmn;
-   261		struct radeon_mn_node *node = NULL;
-   262		struct list_head bos;
-   263		struct interval_tree_node *it;
-   264	
-   265		bo->userptr = addr;
-   266		bo->pfns = kvmalloc_array(bo->tbo.num_pages, sizeof(uint64_t),
-   267					  GFP_KERNEL | __GFP_ZERO);
-   268		if (bo->pfns == NULL)
-   269			return -ENOMEM;
-   270	
-   271		rmn = radeon_mn_get(rdev);
-   272		if (IS_ERR(rmn)) {
-   273			kvfree(bo->pfns);
-   274			bo->pfns = NULL;
-   275			return PTR_ERR(rmn);
-   276		}
-   277	
-   278		INIT_LIST_HEAD(&bos);
-   279	
-   280		mutex_lock(&rmn->lock);
-   281	
-   282		while ((it = interval_tree_iter_first(&rmn->objects, addr, end))) {
-   283			kfree(node);
-   284			node = container_of(it, struct radeon_mn_node, it);
-   285			interval_tree_remove(&node->it, &rmn->objects);
-   286			addr = min(it->start, addr);
-   287			end = max(it->last, end);
-   288			list_splice(&node->bos, &bos);
-   289		}
-   290	
-   291		if (!node) {
-   292			node = kmalloc(sizeof(struct radeon_mn_node), GFP_KERNEL);
-   293			if (!node) {
-   294				mutex_unlock(&rmn->lock);
-   295				kvfree(bo->pfns);
-   296				bo->pfns = NULL;
-   297				return -ENOMEM;
-   298			}
-   299		}
-   300	
-   301		bo->mn = rmn;
-   302	
-   303		node->it.start = addr;
-   304		node->it.last = end;
-   305		INIT_LIST_HEAD(&node->bos);
-   306		list_splice(&bos, &node->bos);
-   307		list_add(&bo->mn_list, &node->bos);
-   308	
-   309		interval_tree_insert(&node->it, &rmn->objects);
-   310	
-   311		mutex_unlock(&rmn->lock);
-   312	
-   313		return 0;
-   314	}
-   315	
-   316	/**
-   317	 * radeon_mn_unregister - unregister a BO for notifier updates
-   318	 *
-   319	 * @bo: radeon buffer object
-   320	 *
-   321	 * Remove any registration of MMU notifier updates from the buffer object.
-   322	 */
-   323	void radeon_mn_unregister(struct radeon_bo *bo)
-   324	{
-   325		struct radeon_device *rdev = bo->rdev;
-   326		struct radeon_mn *rmn;
-   327		struct list_head *head;
-   328	
-   329		mutex_lock(&rdev->mn_lock);
-   330		rmn = bo->mn;
-   331		if (rmn == NULL) {
-   332			mutex_unlock(&rdev->mn_lock);
-   333			return;
-   334		}
-   335	
-   336		mutex_lock(&rmn->lock);
-   337		/* save the next list entry for later */
-   338		head = bo->mn_list.next;
-   339	
-   340		bo->mn = NULL;
-   341		list_del(&bo->mn_list);
-   342	
-   343		if (list_empty(head)) {
-   344			struct radeon_mn_node *node;
-   345			node = container_of(head, struct radeon_mn_node, bos);
-   346			interval_tree_remove(&node->it, &rmn->objects);
-   347			kfree(node);
-   348		}
-   349	
-   350		mutex_unlock(&rmn->lock);
-   351		mutex_unlock(&rdev->mn_lock);
-   352	
-   353		kvfree(bo->pfns);
-   354		bo->pfns = NULL;
-   355	}
-   356	
-   357	/**
-   358	 * radeon_mn_bo_map - map range of virtual address as buffer object
-   359	 *
-   360	 * @bo: radeon buffer object
-   361	 * @ttm: ttm_tt object in which holds mirroring result
-   362	 * @write: can GPU write to the range ?
-   363	 * Returns: 0 on success, error code otherwise
-   364	 *
-   365	 * Use HMM to mirror a range of virtual address as a buffer object mapped into
-   366	 * GPU address space (thus allowing transparent GPU access to this range). It
-   367	 * does not pin pages for range but rely on HMM and underlying synchronizations
-   368	 * to make sure that both CPU and GPU points to same physical memory for the
-   369	 * range.
-   370	 */
-   371	int radeon_mn_bo_map(struct radeon_bo *bo, struct ttm_dma_tt *dma, bool write)
-   372	{
- > 373		static const uint64_t radeon_range_flags[HMM_PFN_FLAG_MAX] = {
-   374			(1 << 0), /* HMM_PFN_VALID */
-   375			(1 << 1), /* HMM_PFN_WRITE */
-   376			0 /* HMM_PFN_DEVICE_PRIVATE */
-   377		};
- > 378		static const uint64_t radeon_range_values[HMM_PFN_VALUE_MAX] = {
-   379			0xfffffffffffffffeUL, /* HMM_PFN_ERROR */
-   380			0, /* HMM_PFN_NONE */
-   381			0xfffffffffffffffcUL /* HMM_PFN_SPECIAL */
-   382		};
-   383	
-   384		unsigned long i, npages = bo->tbo.num_pages;
-   385		enum dma_data_direction direction = write ?
-   386			DMA_BIDIRECTIONAL : DMA_TO_DEVICE;
-   387		struct radeon_device *rdev = bo->rdev;
-   388		struct ttm_tt *ttm = &dma->ttm;
- > 389		struct hmm_range range;
-   390		struct radeon_mn *rmn;
-   391		int ret;
-   392	
-   393		/*
-   394		 * FIXME This whole protection shouldn't be needed as we should only
-   395		 * reach that code with a valid reserved bo that can not under go a
-   396		 * concurrent radeon_mn_unregister().
-   397		 */
-   398		mutex_lock(&rdev->mn_lock);
-   399		if (bo->mn == NULL) {
-   400			mutex_unlock(&rdev->mn_lock);
-   401			return -EINVAL;
-   402		}
-   403		rmn = bo->mn;
-   404		mutex_unlock(&rdev->mn_lock);
-   405	
-   406		range.pfn_shift = 12;
-   407		range.pfns = bo->pfns;
-   408		range.start = bo->userptr;
-   409		range.flags = radeon_range_flags;
-   410		range.values = radeon_range_values;
-   411		range.end = bo->userptr + radeon_bo_size(bo);
-   412	
-   413		range.vma = find_vma(rmn->mm, bo->userptr);
-   414		if (!range.vma || range.vma->vm_file || range.vma->vm_end < range.end)
-   415			return -EPERM;
-   416	
-   417		memset(ttm->pages, 0, sizeof(void*) * npages);
-   418	
-   419	again:
-   420		for (i = 0; i < npages; ++i) {
- > 421			range.pfns[i] = range.flags[HMM_PFN_VALID];
- > 422			range.pfns[i] |= write ? range.flags[HMM_PFN_WRITE] : 0;
-   423		}
-   424	
- > 425		ret = hmm_vma_fault(&range, true);
-   426		if (ret)
-   427			goto err_unmap;
-   428	
-   429		for (i = 0; i < npages; ++i) {
- > 430			struct page *page = hmm_pfn_to_page(&range, range.pfns[i]);
-   431	
-   432			if (page == NULL)
-   433				goto again;
-   434	
-   435			if (ttm->pages[i] == page)
-   436				continue;
-   437	
-   438			if (ttm->pages[i])
-   439				dma_unmap_page(rdev->dev, dma->dma_address[i],
-   440					       PAGE_SIZE, direction);
-   441			ttm->pages[i] = page;
-   442	
-   443			dma->dma_address[i] = dma_map_page(rdev->dev, page, 0,
-   444							   PAGE_SIZE, direction);
-   445			if (dma_mapping_error(rdev->dev, dma->dma_address[i])) {
- > 446				hmm_vma_range_done(&range);
-   447				ttm->pages[i] = NULL;
-   448				ret = -ENOMEM;
-   449				goto err_unmap;
-   450			}
-   451		}
-   452	
-   453		/*
-   454		 * Taking rmn->lock is not necessary here as we are protected from any
-   455		 * concurrent invalidation through ttm object reservation. Involved
-   456		 * functions: radeon_sync_cpu_device_pagetables()
-   457		 *            radeon_bo_list_validate()
-   458		 *            radeon_gem_userptr_ioctl()
-   459		 */
-   460		if (!hmm_vma_range_done(&range))
-   461			goto again;
-   462	
-   463		return 0;
-   464	
-   465	err_unmap:
-   466		radeon_mn_bo_unmap(bo, dma, write);
-   467		return ret;
-   468	}
-   469	
 
 ---
 0-DAY kernel test infrastructure                Open Source Technology Center
 https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
---UugvWAfsgieZRqgk
+--RnlQjJ0d97Da+TV1
 Content-Type: application/gzip
 Content-Disposition: attachment; filename=".config.gz"
 Content-Transfer-Encoding: base64
 
-H4sICOy2llsAAy5jb25maWcAlDzbcuM2su/5CtXkJamtSXwbz+w55QeQBCVEvCAAKEt+YSm2
+H4sICGG2llsAAy5jb25maWcAlDzbcuM2su/5CtXkJamtSXwbz+w55QeQBCVEvCAAKEt+YSm2
 ZuJaX2ZlezPz96cbIEUAbCp7UqnERDcat76joR9/+HHG3l6fH7ev97fbh4fvsy+7p91++7q7
 m32+f9j97yyrZ1VtZjwT5hdALu6f3r79+u3TZXt5Mbv45fSfv5y839+ez5a7/dPuYZY+P32+
 //IGBO6fn3748Qf490dofPwKtPb/M/tye/v+4+ynbPfH/fZp9vGXc+h9+rP7A1DTusrFvE3T
@@ -1052,4 +1000,4 @@ Kho8MdQSp4UdqxmOlEMpu9n+ejapS1wcjP+cx+ltYaQXsLAkoyzNrvVYrO5Um6jKf5gPT2zD
 kQZrZUe8v8OYTfS1t9pohaqsQFCBUgQnp4Ctm+EOUXmqevW9UzzJ/cH1kGeK0TboGaX7Vmkc
 nDoDFB5E45V22Ij5TofagvusbRvq4drWRCKMLdX9H+p8rO5DygEA
 
---UugvWAfsgieZRqgk--
+--RnlQjJ0d97Da+TV1--
