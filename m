@@ -7,140 +7,198 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 564D3C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:45:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF4C5C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:46:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F29EC204FD
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:45:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9735220645
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:46:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uUW+3Ifl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F29EC204FD
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XnZ6Icvr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9735220645
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727768AbeIJLiH (ORCPT
+        id S1727780AbeIJLir (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 07:38:07 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:43036 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726405AbeIJLiH (ORCPT
+        Mon, 10 Sep 2018 07:38:47 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:44627 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726405AbeIJLir (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 07:38:07 -0400
-Received: by mail-lj1-f194.google.com with SMTP id m84-v6so16870608lje.10
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Sep 2018 23:45:36 -0700 (PDT)
+        Mon, 10 Sep 2018 07:38:47 -0400
+Received: by mail-lf1-f65.google.com with SMTP id g6-v6so16460874lfb.11;
+        Sun, 09 Sep 2018 23:46:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=XKjI7OcPAZOLqTChtXk7dZaNfTGdof+2cOxnYItM/cI=;
-        b=uUW+3Ifl6rrGeOahvbH/47NoTbhDg1cg8e9UQeyr4EBWmY+dVLM4gWK4qfE+5fVuKQ
-         ybRjJ2ModJ5kkCO+AqjAgaPO7f0qn4o2Cf/tjoQ8p1g+CZs7DMpb4TJ6e30noyVWG51n
-         M5CPy9t4iQnhvZntmenuhK5JM7UlKaKLzWNk+0yipFBzIQO6WFCxhrRYjMiW4h3FUp0e
-         8vvNLni4SfGhexucSUxBd4vX0fyX+6qB+io0nbV8bk8xmKJ7LZ5+JlanNSbmLtfO5uml
-         phDivg0pdXrpBmRWbnKrIWT6oPXS1L6g10LAL/2T1s1E8Bbu8FL634tB0B0ZK6B6Te63
-         MEzA==
+        bh=i/oJ26wjdf8EnOrOn5VHrxZ3ayfdXFf+KlII0BkR+Ag=;
+        b=XnZ6IcvrQoKlIS6D1igSHQqoyZB/uZrUFEAnSjwzGv2HhqnrbfJvsCpKTu4NY7OJtu
+         Wteji4pyx6suPIoBZS47bwXArFBlQTOW/Uu1ppp89J8XOnqifIgKu5FBhsVvTxzGdTW7
+         Uhg7ifQipsml7XjidXYMievyBHxd2L4vpgPMjThwDiWvBgptjVuz/ErdwlxBskOIhlu5
+         8DMgo16pWUFpAMlXvcbG7N34x5bHCjZZiwkBGVgyyZPVhvtJP03p3nu6zjiBDiTksxjV
+         sHqdpRw8LLqpR2W8kHrpqnb/WXzUhL722K356zW+jLdHcT/DXpMRvczTvBKA9cQ4i43N
+         DslA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=XKjI7OcPAZOLqTChtXk7dZaNfTGdof+2cOxnYItM/cI=;
-        b=n+2hNyJJv1tuLdF7FSWe7ZpF7LLLNTPIDwas4pGSBBOUZ612OxpTsbbzn+k07LFqOj
-         w/vNeCktKm4loWZ5A7YY8TDCqC7Tj/56E5XZgg600R1H7bU0n75/dNgrWXLHGGu41kcU
-         df5e+10ebGitXT5frLGEiAuyhdFPZe+jvuMZjhzCm+sDb4QQjvE5nM9uUP0rsHO+OfHi
-         wy3BqmjP1kVd6G/iAEALLimS+AdKvunHAAf3M35QRQQhtnF9/iSyKrC/xtByjVFn6CUE
-         1gp+5pGEuumUXQTyZMxihgDz+CUFQceyD9XOT+tPg/eg/YtUqzWu34ELNFt5uByy6WSa
-         V2ug==
-X-Gm-Message-State: APzg51CDpHOzQL0nudc1gEWkb6e422fkNa3pf/H5d2cv7mwbWg1G9qmT
-        PKfqIv911Wk5ykyjju5M7aEJJzZFQZaY/WTRpYdJsQ==
-X-Google-Smtp-Source: ANB0VdbdYBAlNBgKVGupayP9mV/JcoB6QCqE2U3zN7cv0Q5KChMWKHHYBsuj8jJnqgvRyE7Dk/2UA+RuCslSmbS1r6o=
-X-Received: by 2002:a2e:4619:: with SMTP id t25-v6mr12005428lja.96.1536561936146;
- Sun, 09 Sep 2018 23:45:36 -0700 (PDT)
+        bh=i/oJ26wjdf8EnOrOn5VHrxZ3ayfdXFf+KlII0BkR+Ag=;
+        b=cdAKeaeXMLRc2VPpolQxZ2BdfQCLWUrdAJBlNXP9KIXF7vyL+lltAbNOLDmZ073lNw
+         9EsgCUhXfSK1e2v92PDF/hppGdvEfrdJUf941Yd7e+Azpc3kLs+DeGgy6z4Rp5AXlVCs
+         Ah+706+Cl+F3c0ZYOLRyspU918Xce9N3Atq85FfmeVIOy20WeUM2VeXR1B1XVnDLD2B6
+         Lay4UAmnV1vpB6ZOAbDxoV6BREAozMhmeOa+1syeXMhXp0Z95xbp6PLQk2ii470j/O52
+         FU5f9YfjUqcwsa8ySHwL+DQaKHSf7c4kQe+BDHC85MFLhjXzL/SG295m5Uw9uvR4fFWP
+         jkdg==
+X-Gm-Message-State: APzg51CWMG7g5PqKgQvlHFsrWwJHFPLKk42tpa+8r3u28VVKUE82tydU
+        5NIBflf1HYMNb+gN+CJlB/duPrrVJ7rwllmV/pc=
+X-Google-Smtp-Source: ANB0VdatKJAYabT46WfUO7/+4r8nxeQLJuPUscrOqAjv+GpERoYiz6fkqv6h5pLBGIAA0oj56eQPqUxhFVZUBdWPPwE=
+X-Received: by 2002:a19:d78d:: with SMTP id q13-v6mr11420431lfi.27.1536561975256;
+ Sun, 09 Sep 2018 23:46:15 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180808161641.GA20483@jordon-HP-15-Notebook-PC>
-In-Reply-To: <20180808161641.GA20483@jordon-HP-15-Notebook-PC>
+References: <20180731200705.GA21510@jordon-HP-15-Notebook-PC> <CAFqt6zZM_MzAo8vEZ3+C3W6E-xE_78acnNvmMYoPVgYuxaMvGA@mail.gmail.com>
+In-Reply-To: <CAFqt6zZM_MzAo8vEZ3+C3W6E-xE_78acnNvmMYoPVgYuxaMvGA@mail.gmail.com>
 From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Mon, 10 Sep 2018 12:15:24 +0530
-Message-ID: <CAFqt6zYn_kf+sQ0Dih83CH7hVR2f6ZW-ANVRm9+MX54KcMk=jQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/tilcdc: Convert drm_atomic_helper_suspend/resume()
-To:     jsarha@ti.com, Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        airlied@linux.ie, Daniel Vetter <daniel@ffwll.ch>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Ajit Linux <ajitn.linux@gmail.com>
+Date:   Mon, 10 Sep 2018 12:16:03 +0530
+Message-ID: <CAFqt6zYTzErgrE_vM0dUJn8FGcBxHHeM9thJbRtHdEXKQQMdtA@mail.gmail.com>
+Subject: Re: [PATCH] drm/tegra: Convert drm_atomic_helper_suspend/resume()
+To:     Thierry Reding <thierry.reding@gmail.com>, airlied@linux.ie,
+        jonathanh@nvidia.com, Ajit Linux <ajitn.linux@gmail.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 8, 2018 at 9:43 PM Souptick Joarder <jrdr.linux@gmail.com> wrote:
+On Mon, Aug 6, 2018 at 11:42 AM Souptick Joarder <jrdr.linux@gmail.com> wrote:
 >
-> convert drm_atomic_helper_suspend/resume() to use
-> drm_mode_config_helper_suspend/resume().
+> On Wed, Aug 1, 2018 at 1:37 AM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+> > convert drm_atomic_helper_suspend/resume() to use
+> > drm_mode_config_helper_suspend/resume().
+> >
+> > With this conversion, tegra_drm_fb_suspend() and
+> > tegra_drm_fb_resume() wil not be used anymore.
+> > Both of these functions can be removed.
+> >
+> > Also, in tegra_drm struct's member state will not be
+> > used anymore. So this can be removed forever.
+> >
+> > Fixed one sparse warning.
+> >
+> > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> > Signed-off-by: Ajit Negi <ajitn.linux@gmail.com>
+> > ---
 >
-> saved_state in tilcdc_drm_private will not be used
-> anymore, so it can be removed.
+> Any comment on this patch ?
 
-Any comment on this patch ?
+If no comment, can we get this patch in queue for 4.20 ?
 >
-> Signed-off-by: Ajit Negi <ajitn.linux@gmail.com>
-> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> ---
->  drivers/gpu/drm/tilcdc/tilcdc_drv.c | 14 ++++----------
->  drivers/gpu/drm/tilcdc/tilcdc_drv.h |  3 ---
->  2 files changed, 4 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/gpu/drm/tilcdc/tilcdc_drv.c b/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-> index 0fb300d..33e5332 100644
-> --- a/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-> +++ b/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-> @@ -554,29 +554,23 @@ static int tilcdc_debugfs_init(struct drm_minor *minor)
->  static int tilcdc_pm_suspend(struct device *dev)
->  {
->         struct drm_device *ddev = dev_get_drvdata(dev);
-> -       struct tilcdc_drm_private *priv = ddev->dev_private;
-> +       int ret = 0;
->
-> -       priv->saved_state = drm_atomic_helper_suspend(ddev);
-> +       ret = drm_mode_config_helper_suspend(ddev);
->
->         /* Select sleep pin state */
->         pinctrl_pm_select_sleep_state(dev);
->
-> -       return 0;
-> +       return ret;
->  }
->
->  static int tilcdc_pm_resume(struct device *dev)
->  {
->         struct drm_device *ddev = dev_get_drvdata(dev);
-> -       struct tilcdc_drm_private *priv = ddev->dev_private;
-> -       int ret = 0;
->
->         /* Select default pin state */
->         pinctrl_pm_select_default_state(dev);
-> -
-> -       if (priv->saved_state)
-> -               ret = drm_atomic_helper_resume(ddev, priv->saved_state);
-> -
-> -       return ret;
-> +       return  drm_mode_config_helper_resume(ddev);
->  }
->  #endif
->
-> diff --git a/drivers/gpu/drm/tilcdc/tilcdc_drv.h b/drivers/gpu/drm/tilcdc/tilcdc_drv.h
-> index ead5122..62cea5f 100644
-> --- a/drivers/gpu/drm/tilcdc/tilcdc_drv.h
-> +++ b/drivers/gpu/drm/tilcdc/tilcdc_drv.h
-> @@ -70,9 +70,6 @@ struct tilcdc_drm_private {
->         const uint32_t *pixelformats;
->         uint32_t num_pixelformats;
->
-> -       /* The context for pm susped/resume cycle is stored here */
-> -       struct drm_atomic_state *saved_state;
-> -
->  #ifdef CONFIG_CPU_FREQ
->         struct notifier_block freq_transition;
->  #endif
-> --
-> 1.9.1
->
+> >  drivers/gpu/drm/tegra/drm.c | 20 ++------------------
+> >  drivers/gpu/drm/tegra/drm.h |  4 ----
+> >  drivers/gpu/drm/tegra/fb.c  | 24 +-----------------------
+> >  3 files changed, 3 insertions(+), 45 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+> > index a2bd587..9a0efce 100644
+> > --- a/drivers/gpu/drm/tegra/drm.c
+> > +++ b/drivers/gpu/drm/tegra/drm.c
+> > @@ -1212,31 +1212,15 @@ static int host1x_drm_remove(struct host1x_device *dev)
+> >  static int host1x_drm_suspend(struct device *dev)
+> >  {
+> >         struct drm_device *drm = dev_get_drvdata(dev);
+> > -       struct tegra_drm *tegra = drm->dev_private;
+> > -
+> > -       drm_kms_helper_poll_disable(drm);
+> > -       tegra_drm_fb_suspend(drm);
+> > -
+> > -       tegra->state = drm_atomic_helper_suspend(drm);
+> > -       if (IS_ERR(tegra->state)) {
+> > -               tegra_drm_fb_resume(drm);
+> > -               drm_kms_helper_poll_enable(drm);
+> > -               return PTR_ERR(tegra->state);
+> > -       }
+> >
+> > -       return 0;
+> > +       return drm_mode_config_helper_suspend(drm);
+> >  }
+> >
+> >  static int host1x_drm_resume(struct device *dev)
+> >  {
+> >         struct drm_device *drm = dev_get_drvdata(dev);
+> > -       struct tegra_drm *tegra = drm->dev_private;
+> >
+> > -       drm_atomic_helper_resume(drm, tegra->state);
+> > -       tegra_drm_fb_resume(drm);
+> > -       drm_kms_helper_poll_enable(drm);
+> > -
+> > -       return 0;
+> > +       return drm_mode_config_helper_resume(drm);
+> >  }
+> >  #endif
+> >
+> > diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
+> > index 92d2487..1012335 100644
+> > --- a/drivers/gpu/drm/tegra/drm.h
+> > +++ b/drivers/gpu/drm/tegra/drm.h
+> > @@ -60,8 +60,6 @@ struct tegra_drm {
+> >         unsigned int pitch_align;
+> >
+> >         struct tegra_display_hub *hub;
+> > -
+> > -       struct drm_atomic_state *state;
+> >  };
+> >
+> >  struct tegra_drm_client;
+> > @@ -186,8 +184,6 @@ struct drm_framebuffer *tegra_fb_create(struct drm_device *drm,
+> >  void tegra_drm_fb_free(struct drm_device *drm);
+> >  int tegra_drm_fb_init(struct drm_device *drm);
+> >  void tegra_drm_fb_exit(struct drm_device *drm);
+> > -void tegra_drm_fb_suspend(struct drm_device *drm);
+> > -void tegra_drm_fb_resume(struct drm_device *drm);
+> >
+> >  extern struct platform_driver tegra_display_hub_driver;
+> >  extern struct platform_driver tegra_dc_driver;
+> > diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
+> > index 4c22cdd..b947e82 100644
+> > --- a/drivers/gpu/drm/tegra/fb.c
+> > +++ b/drivers/gpu/drm/tegra/fb.c
+> > @@ -356,7 +356,7 @@ static void tegra_fbdev_exit(struct tegra_fbdev *fbdev)
+> >                 /* Undo the special mapping we made in fbdev probe. */
+> >                 if (bo && bo->pages) {
+> >                         vunmap(bo->vaddr);
+> > -                       bo->vaddr = 0;
+> > +                       bo->vaddr = NULL;
+> >                 }
+> >
+> >                 drm_framebuffer_remove(fbdev->fb);
+> > @@ -412,25 +412,3 @@ void tegra_drm_fb_exit(struct drm_device *drm)
+> >         tegra_fbdev_exit(tegra->fbdev);
+> >  #endif
+> >  }
+> > -
+> > -void tegra_drm_fb_suspend(struct drm_device *drm)
+> > -{
+> > -#ifdef CONFIG_DRM_FBDEV_EMULATION
+> > -       struct tegra_drm *tegra = drm->dev_private;
+> > -
+> > -       console_lock();
+> > -       drm_fb_helper_set_suspend(&tegra->fbdev->base, 1);
+> > -       console_unlock();
+> > -#endif
+> > -}
+> > -
+> > -void tegra_drm_fb_resume(struct drm_device *drm)
+> > -{
+> > -#ifdef CONFIG_DRM_FBDEV_EMULATION
+> > -       struct tegra_drm *tegra = drm->dev_private;
+> > -
+> > -       console_lock();
+> > -       drm_fb_helper_set_suspend(&tegra->fbdev->base, 0);
+> > -       console_unlock();
+> > -#endif
+> > -}
+> > --
+> > 1.9.1
+> >
