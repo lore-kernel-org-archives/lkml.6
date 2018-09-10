@@ -2,89 +2,99 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1979C43143
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:08:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1E2DC4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:09:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 772F720865
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:08:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 772F720865
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4DA8420865
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:09:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DA8420865
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728273AbeIJPCC (ORCPT
+        id S1728201AbeIJPCy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 11:02:02 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47754 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727635AbeIJPCB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 11:02:01 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AE2FE40201BC;
-        Mon, 10 Sep 2018 10:08:43 +0000 (UTC)
-Received: from krava (unknown [10.43.17.10])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 663A310B7C93;
-        Mon, 10 Sep 2018 10:08:42 +0000 (UTC)
-Date:   Mon, 10 Sep 2018 12:08:41 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v8 0/3]: perf: reduce data loss when profiling highly
- parallel CPU bound workloads
-Message-ID: <20180910100841.GB15548@krava>
-References: <e1144f9d-b231-e42c-d698-4db0e62b71ff@linux.intel.com>
- <20180910091841.GA4664@gmail.com>
- <20180910095909.GA15548@krava>
- <20180910100303.GA101776@gmail.com>
+        Mon, 10 Sep 2018 11:02:54 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:43753 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727261AbeIJPCy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 11:02:54 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8AA8vLc1807133
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 10 Sep 2018 03:08:57 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8AA8u5t1807130;
+        Mon, 10 Sep 2018 03:08:56 -0700
+Date:   Mon, 10 Sep 2018 03:08:56 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Borislav Petkov <tipbot@zytor.com>
+Message-ID: <tip-da260fe12330be8b003c2ab07a112704163ea675@git.kernel.org>
+Cc:     torvalds@linux-foundation.org, tglx@linutronix.de,
+        peterz@infradead.org, rostedt@goodmis.org, bp@suse.de,
+        mingo@kernel.org, linux-kernel@vger.kernel.org, jbaron@akamai.com,
+        jpoimboe@redhat.com, hpa@zytor.com
+Reply-To: bp@suse.de, mingo@kernel.org, linux-kernel@vger.kernel.org,
+          jpoimboe@redhat.com, jbaron@akamai.com, hpa@zytor.com,
+          torvalds@linux-foundation.org, tglx@linutronix.de,
+          peterz@infradead.org, rostedt@goodmis.org
+In-Reply-To: <20180907103521.31344-1-bp@alien8.de>
+References: <20180907103521.31344-1-bp@alien8.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:locking/core] jump_label: Fix typo in warning message
+Git-Commit-ID: da260fe12330be8b003c2ab07a112704163ea675
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20180910100303.GA101776@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 10 Sep 2018 10:08:43 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 10 Sep 2018 10:08:43 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 10, 2018 at 12:03:03PM +0200, Ingo Molnar wrote:
-> 
-> * Jiri Olsa <jolsa@redhat.com> wrote:
-> 
-> > > Per-CPU threading the record session would have so many other advantages as well (scalability, 
-> > > etc.).
-> > > 
-> > > Jiri did per-CPU recording patches a couple of months ago, not sure how usable they are at the 
-> > > moment?
-> > 
-> > it's still usable, I can rebase it and post a branch pointer,
-> > the problem is I haven't been able to find a case with a real
-> > performance benefit yet.. ;-)
-> > 
-> > perhaps because I haven't tried on server with really big cpu
-> > numbers
-> 
-> Maybe Alexey could pick up from there? Your concept looked fairly mature to me
-> and I tried it on a big-CPU box back then and there were real improvements.
+Commit-ID:  da260fe12330be8b003c2ab07a112704163ea675
+Gitweb:     https://git.kernel.org/tip/da260fe12330be8b003c2ab07a112704163ea675
+Author:     Borislav Petkov <bp@suse.de>
+AuthorDate: Fri, 7 Sep 2018 12:35:21 +0200
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 10 Sep 2018 10:15:48 +0200
 
-too bad u did not share your results, it could have been already in ;-)
+jump_label: Fix typo in warning message
 
-let me rebase/repost once more and let's see
+There's no 'allocatote' - use the next best thing: 'allocate' :-)
 
-I think we could benefit from both multiple threads event reading
-and AIO writing for perf.data.. it could be merged together
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Jason Baron <jbaron@akamai.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20180907103521.31344-1-bp@alien8.de
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/jump_label.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-jirka
+diff --git a/kernel/jump_label.c b/kernel/jump_label.c
+index 01ebdf1f9f40..2e62503bea0d 100644
+--- a/kernel/jump_label.c
++++ b/kernel/jump_label.c
+@@ -678,7 +678,7 @@ jump_label_module_notify(struct notifier_block *self, unsigned long val,
+ 	case MODULE_STATE_COMING:
+ 		ret = jump_label_add_module(mod);
+ 		if (ret) {
+-			WARN(1, "Failed to allocatote memory: jump_label may not work properly.\n");
++			WARN(1, "Failed to allocate memory: jump_label may not work properly.\n");
+ 			jump_label_del_module(mod);
+ 		}
+ 		break;
