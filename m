@@ -3,77 +3,138 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 614A0C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 11:56:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82DEEC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 11:57:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1790620833
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 11:56:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1790620833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 2B07E20833
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 11:57:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B07E20833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728269AbeIJQtx (ORCPT
+        id S1728295AbeIJQvi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 12:49:53 -0400
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:45830 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727871AbeIJQtx (ORCPT
+        Mon, 10 Sep 2018 12:51:38 -0400
+Received: from lb2-smtp-cloud7.xs4all.net ([194.109.24.28]:41551 "EHLO
+        lb2-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727727AbeIJQvh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 12:49:53 -0400
-Received: by mail-ua1-f66.google.com with SMTP id q7-v6so17045800uam.12
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 04:56:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=rC8OrIaxxR9IT1hUb2MIrIEZ6k43EfvfEnnvcXH4MNg=;
-        b=dg1IwOZ6JPYCzowJbbp0Tn5dOSYEx/7TqI6UEIr+8zS8W08kxuS2YyHqDflqgSXwzx
-         N/BvlhJSgXUFCVqfhnmisBtpXkW12AYd9K+f84rc+NPfRtr56U1tRED65r5p1LoyEbKw
-         BXVcsBV5c6yWhozaAqLay880bri6mnbiNlM9yDXwsOqu0Y1Gz1WMfeAkB8d+ecQ9x/pF
-         pY4pRzFV3wGkkq5sLlQ5jVIj9Jm9zVlIM1uzA5/vqv8XR3ytPyeaB5axPOVE/Ra2X5rd
-         UHu4AGreFPG1Vi8Mn+zMXA2P2WNvWdf3SMv6aVeUQAD+bsUIUYtkf2i4gcCUxi+Ex4lS
-         0Ipg==
-X-Gm-Message-State: APzg51AONFnxuyPpCW/reDkbrKgeItP0fiQ2cgeORx4DcYvvKO/oUg9O
-        rwsVXDvpsXh21btv1ma6L1Q9zYu56GMPnIIDrlfiH8V6
-X-Google-Smtp-Source: ANB0VdaVSqe9ZoWedzr7S9wW90N6GpwbugnFVq5IUpDgMhQi9s+MsDsZib3kezrdqZxnM70CF8XJIT9sitUCJwVGeVk=
-X-Received: by 2002:ab0:60ae:: with SMTP id f14-v6mr6782686uam.153.1536580569101;
- Mon, 10 Sep 2018 04:56:09 -0700 (PDT)
+        Mon, 10 Sep 2018 12:51:37 -0400
+Received: from [192.168.2.10] ([212.251.195.8])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id zKpBf2g1Rw2L8zKpEfKH5a; Mon, 10 Sep 2018 13:57:52 +0200
+Subject: Re: [RFC PATCH] media: docs-rst: Document m2m stateless video decoder
+ interface
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+To:     Alexandre Courbot <acourbot@chromium.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Pawel Osciak <posciak@chromium.org>,
+        linux-media@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
+References: <20180831074743.235010-1-acourbot@chromium.org>
+ <b8a80df8-fd07-6820-3021-670c360ff306@xs4all.nl>
+Message-ID: <38b32d24-6957-4bee-9168-b3afbfcae083@xs4all.nl>
+Date:   Mon, 10 Sep 2018 13:57:49 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-References: <20180910115327.17344-1-geert@linux-m68k.org>
-In-Reply-To: <20180910115327.17344-1-geert@linux-m68k.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 10 Sep 2018 13:55:57 +0200
-Message-ID: <CAMuHMdUPG=KTNK5GuGQyq5j22or_QmsPP0P03mdKemO1GxQVng@mail.gmail.com>
-Subject: Re: Build regressions/improvements in v4.19-rc3
-To:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <b8a80df8-fd07-6820-3021-670c360ff306@xs4all.nl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfH0ubcmSl7w0k5sl2GBmFNf8aH7TwDsPyVyc6FtpNg85nVNhISHtew5TmDMAxkcwmonvTMvhwFnmZy76BrVRLL2XIqbAw3LaAFrp6TSNmAvJLBo2nhUD
+ 52JfMtOLjNecTAvs8h8yrVTUp5t4EJMrIFBgc16O9UoEB0LLePySd6dP0tdH1tdxvaRc/63GrFQqRvLfDC/9nK46CHk+R5jLTCKGgKpsCMb89gVcO1kT/X5x
+ m+mWhJmjXJkvls0lz6+n0ScLOe+8Paq8NroxhdlnIoh6OQMdnlxLaDkwR2CjvAHSL23ez7U0rs3ldxS0WzeLz3G7ChO7Fhk6rSDiZe2hEPRNiwqTsYEIjAJm
+ 8f3iMu4LKVCTHbPRVb5+dj65QwK+kPqiQR9LrXQONygqdAyoiRk=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 10, 2018 at 1:54 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> JFYI, when comparing v4.19-rc3[1] to v4.19-rc2[3], the summaries are:
->   - build errors: +1/-1
+On 09/10/2018 01:25 PM, Hans Verkuil wrote:
+>> +
+>> +Decoding
+>> +========
+>> +
+>> +For each frame, the client is responsible for submitting a request to which the
+>> +following is attached:
+>> +
+>> +* Exactly one frame worth of encoded data in a buffer submitted to the
+>> +  ``OUTPUT`` queue,
+>> +* All the controls relevant to the format being decoded (see below for details).
+>> +
+>> +``CAPTURE`` buffers must not be part of the request, but must be queued
+>> +independently. The driver will pick one of the queued ``CAPTURE`` buffers and
+>> +decode the frame into it. Although the client has no control over which
+>> +``CAPTURE`` buffer will be used with a given ``OUTPUT`` buffer, it is guaranteed
+>> +that ``CAPTURE`` buffers will be returned in decode order (i.e. the same order
+>> +as ``OUTPUT`` buffers were submitted), so it is trivial to associate a dequeued
+>> +``CAPTURE`` buffer to its originating request and ``OUTPUT`` buffer.
+>> +
+>> +If the request is submitted without an ``OUTPUT`` buffer or if one of the
+>> +required controls are missing, then :c:func:`MEDIA_REQUEST_IOC_QUEUE` will return
+>> +``-EINVAL``.
+> 
+> Not entirely true: if buffers are missing, then ENOENT is returned. Missing required
+> controls or more than one OUTPUT buffer will result in EINVAL. This per the latest
+> Request API changes.
+> 
+>  Decoding errors are signaled by the ``CAPTURE`` buffers being
+>> +dequeued carrying the ``V4L2_BUF_FLAG_ERROR`` flag.
+> 
+> Add here that if the reference frame had an error, then all other frames that refer
+> to it should also set the ERROR flag. It is up to userspace to decide whether or
+> not to drop them (part of the frame might still be valid).
+> 
+> I am not sure whether this should be documented, but there are some additional
+> restrictions w.r.t. reference frames:
+> 
+> Since decoders need access to the decoded reference frames there are some corner
+> cases that need to be checked:
+> 
+> 1) V4L2_MEMORY_USERPTR cannot be used for the capture queue: the driver does not
+>    know when a malloced but dequeued buffer is freed, so the reference frame
+>    could suddenly be gone.
+> 
+> 2) V4L2_MEMORY_DMABUF can be used, but drivers should check that the dma buffer is
+>    still available AND increase the dmabuf refcount while it is used by the HW.
+> 
+> 3) What to do if userspace has requeued a buffer containing a reference frame,
+>    and you want to decode a B/P-frame that refers to that buffer? We need to
+>    check against that: I think that when you queue a capture buffer whose index
+>    is used in a pending request as a reference frame, than that should fail with
+>    an error. And trying to queue a request referring to a buffer that has been
+>    requeued should also fail.
+> 
+> We might need to add some support for this in v4l2-mem2mem.c or vb2.
+> 
+> We will have similar (but not quite identical) issues with stateless encoders.
 
-  + error: ene_ub6250.c: relocation truncated to fit:
-R_NDS32_9_PCREL_RELA against `.text':  => (.text+0x284)
+Related to this is the question whether buffer indices that are used to refer
+to reference frames should refer to the capture or output queue.
 
-nds32le/nds32-allyesconfig
+Using capture indices works if you never queue more than one request at a time:
+you know exactly what the capture buffer index is of the decoded I-frame, and
+you can use that in the following requests.
 
-> [1] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/11da3a7f84f19c26da6f86af878298694ede0804/ (all 240 configs)
-> [3] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/57361846b52bc686112da6ca5368d11210796804/ (all 240 configs)
+But if multiple requests are queued, then you don't necessarily know to which
+capture buffer an I-frame will be decoded, so then you can't provide this index
+to following B/P-frames. This puts restrictions on userspace: you can only
+queue B/P-frames once you have decoded the I-frame. This might be perfectly
+acceptable, though.
 
-Gr{oetje,eeting}s,
+Using output buffer indices will work (the driver will know to which capture
+buffer index the I-frames mapped), but it requires that the output buffer that
+contained a reference frame isn't requeued, since that means that the driver
+will lose this mapping. I think this will make things too confusing, though.
 
-                        Geert
+A third option is that you don't refer to reference frames by buffer index,
+but instead by some other counter (sequence counter, perhaps?).
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Regards,
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+	Hans
