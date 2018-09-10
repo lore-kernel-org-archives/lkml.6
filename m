@@ -1,139 +1,160 @@
 Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.0 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A708C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:13:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB731C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:13:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E63F42087E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:13:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ITsXeRgX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E63F42087E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id A7C5120865
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:13:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7C5120865
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728270AbeIJPGs (ORCPT
+        id S1728289AbeIJPG7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 11:06:48 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:46059 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726738AbeIJPGs (ORCPT
+        Mon, 10 Sep 2018 11:06:59 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:44911 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726738AbeIJPG7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 11:06:48 -0400
-Received: by mail-wr1-f67.google.com with SMTP id 20-v6so21251631wrb.12
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 03:13:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=YOXCKotjxOOdZ9FqN3It1xDQqaRgjVaJuy02OPwNEgY=;
-        b=ITsXeRgXuKkHicVsTSQm2fNgXKBoI5WehnJeK2gD4ip/YlroUk3kWmtMaQtnyjcjfY
-         xNy+Zz1+DyMNQ5QrKFSv2ofhqQ6KuFqEDKMHA9amD4w/l5eJfDG9GTpU9khw0aDbyVtt
-         NXzEcbAjrCZoRia+eqA/YM2Fia16xZH5znYFRg1QgwiV/Imuq6X0irBTsEmKcxDuU/k1
-         mnimDdPVzuXD9bXRHlpXC8thDr/CqwfK31e4DMm4kPXOSL/1JC29wvhU52SePDBlFXKf
-         HeFwuTz+RxrYz/0AVKo3ssPF3vpwRsyi//gOkP2wHiSz++LnMeUSkvjN6OZ+IY9qqoRN
-         6RFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YOXCKotjxOOdZ9FqN3It1xDQqaRgjVaJuy02OPwNEgY=;
-        b=g6QUcfJ0JxfZTKVq0qBFbGbQUidDL12bbpncR4wGlMyrNh2vVMPj0XZpnFg02KlHEX
-         uvax4BWZGHuWBplOKc+P2dJPVuIVRuchWhcvb6cUoKNhRRfWN1TAgeeb5VrEvywRTPqx
-         nfFndF/9SO3aPBcbHtCXb8PlvksHet8K9cG7iJnDoQdwrLG0ng6u/Z85A/gKllSw9EbJ
-         +a/dsbEM2ExgCcy8TwQn5ADZWFkqTTa98eMrFwhlxbyP2waVjPSaFSyTT7BxsPIjuN3E
-         QW8g27pvga8+SAiGWJkxL3Ardsv3/yNFLeTxnIK5lOvzem+SHlLwEJWIx3NPia5l7o/b
-         YwFg==
-X-Gm-Message-State: APzg51DXDA9XEivSuedQRf9wjijmM/wdtqDCoE2cuRt/dxCc+j/EuyR7
-        Vz4wWXe5wFxWjrQp0C7+53M=
-X-Google-Smtp-Source: ANB0VdbIvtdolWIFZpcTIe+BjzQ9DXKk/iZfwfFz1Q36dZ8a3c/62rqXECUNHPOA8Yy7nuKxsMPaqw==
-X-Received: by 2002:a5d:6b8d:: with SMTP id n13-v6mr5511601wrx.149.1536574408085;
-        Mon, 10 Sep 2018 03:13:28 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id 72-v6sm20057038wrb.48.2018.09.10.03.13.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 10 Sep 2018 03:13:27 -0700 (PDT)
-Date:   Mon, 10 Sep 2018 12:13:25 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v8 0/3]: perf: reduce data loss when profiling highly
- parallel CPU bound workloads
-Message-ID: <20180910101325.GA5544@gmail.com>
-References: <e1144f9d-b231-e42c-d698-4db0e62b71ff@linux.intel.com>
- <20180910091841.GA4664@gmail.com>
- <20180910095909.GA15548@krava>
- <20180910100303.GA101776@gmail.com>
- <20180910100841.GB15548@krava>
+        Mon, 10 Sep 2018 11:06:59 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8AADJWD1807810
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 10 Sep 2018 03:13:19 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8AADJEO1807807;
+        Mon, 10 Sep 2018 03:13:19 -0700
+Date:   Mon, 10 Sep 2018 03:13:19 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Morten Rasmussen <tipbot@zytor.com>
+Message-ID: <tip-df054e8445a4011e3d693c2268129c0456108663@git.kernel.org>
+Cc:     tglx@linutronix.de, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org, mingo@kernel.org,
+        peterz@infradead.org, morten.rasmussen@arm.com
+Reply-To: hpa@zytor.com, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+          morten.rasmussen@arm.com, peterz@infradead.org,
+          torvalds@linux-foundation.org, mingo@kernel.org
+In-Reply-To: <1530699470-29808-2-git-send-email-morten.rasmussen@arm.com>
+References: <1530699470-29808-2-git-send-email-morten.rasmussen@arm.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:sched/core] sched/topology: Add static_key for asymmetric CPU
+ capacity optimizations
+Git-Commit-ID: df054e8445a4011e3d693c2268129c0456108663
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20180910100841.GB15548@krava>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  df054e8445a4011e3d693c2268129c0456108663
+Gitweb:     https://git.kernel.org/tip/df054e8445a4011e3d693c2268129c0456108663
+Author:     Morten Rasmussen <morten.rasmussen@arm.com>
+AuthorDate: Wed, 4 Jul 2018 11:17:39 +0100
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 10 Sep 2018 11:05:48 +0200
 
-* Jiri Olsa <jolsa@redhat.com> wrote:
+sched/topology: Add static_key for asymmetric CPU capacity optimizations
 
-> On Mon, Sep 10, 2018 at 12:03:03PM +0200, Ingo Molnar wrote:
-> > 
-> > * Jiri Olsa <jolsa@redhat.com> wrote:
-> > 
-> > > > Per-CPU threading the record session would have so many other advantages as well (scalability, 
-> > > > etc.).
-> > > > 
-> > > > Jiri did per-CPU recording patches a couple of months ago, not sure how usable they are at the 
-> > > > moment?
-> > > 
-> > > it's still usable, I can rebase it and post a branch pointer,
-> > > the problem is I haven't been able to find a case with a real
-> > > performance benefit yet.. ;-)
-> > > 
-> > > perhaps because I haven't tried on server with really big cpu
-> > > numbers
-> > 
-> > Maybe Alexey could pick up from there? Your concept looked fairly mature to me
-> > and I tried it on a big-CPU box back then and there were real improvements.
-> 
-> too bad u did not share your results, it could have been already in ;-)
+The existing asymmetric CPU capacity code should cause minimal overhead
+for others. Putting it behind a static_key, it has been done for SMT
+optimizations, would make it easier to extend and improve without
+causing harm to others moving forward.
 
-Yeah :-/ Had a proper round of testing on my TODO, then the big box I'd have tested it on
-broke ...
+Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: dietmar.eggemann@arm.com
+Cc: gaku.inami.xh@renesas.com
+Cc: valentin.schneider@arm.com
+Cc: vincent.guittot@linaro.org
+Link: http://lkml.kernel.org/r/1530699470-29808-2-git-send-email-morten.rasmussen@arm.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/sched/fair.c     | 3 +++
+ kernel/sched/sched.h    | 1 +
+ kernel/sched/topology.c | 9 ++++++++-
+ 3 files changed, 12 insertions(+), 1 deletion(-)
 
-> let me rebase/repost once more and let's see
-
-Thanks!
-
-> I think we could benefit from both multiple threads event reading
-> and AIO writing for perf.data.. it could be merged together
-
-So instead of AIO writing perf.data, why not just turn perf.data into a directory structure 
-with per CPU files? That would allow all sorts of neat future performance features such as 
-mmap() or splice() based zero-copy.
-
-User-space post-processing can then read the files and put them into global order - or use the 
-per CPU nature of them, which would be pretty useful too.
-
-Also note how well this works on NUMA as well, as the backing pages would be allocated in a 
-NUMA-local fashion.
-
-I.e. the whole per-CPU threading would enable such a separation of the tracing/event streams 
-and would allow true scalability.
-
-Thanks,
-
-	Ingo
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index f808ddf2a868..3e5071aeb117 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -6188,6 +6188,9 @@ static int wake_cap(struct task_struct *p, int cpu, int prev_cpu)
+ {
+ 	long min_cap, max_cap;
+ 
++	if (!static_branch_unlikely(&sched_asym_cpucapacity))
++		return 0;
++
+ 	min_cap = min(capacity_orig_of(prev_cpu), capacity_orig_of(cpu));
+ 	max_cap = cpu_rq(cpu)->rd->max_cpu_capacity;
+ 
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 4a2e8cae63c4..0f36adc31ba5 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -1185,6 +1185,7 @@ DECLARE_PER_CPU(int, sd_llc_id);
+ DECLARE_PER_CPU(struct sched_domain_shared *, sd_llc_shared);
+ DECLARE_PER_CPU(struct sched_domain *, sd_numa);
+ DECLARE_PER_CPU(struct sched_domain *, sd_asym);
++extern struct static_key_false sched_asym_cpucapacity;
+ 
+ struct sched_group_capacity {
+ 	atomic_t		ref;
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index 5c4d583d53ee..b0cdf5e95bda 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -398,6 +398,7 @@ DEFINE_PER_CPU(int, sd_llc_id);
+ DEFINE_PER_CPU(struct sched_domain_shared *, sd_llc_shared);
+ DEFINE_PER_CPU(struct sched_domain *, sd_numa);
+ DEFINE_PER_CPU(struct sched_domain *, sd_asym);
++DEFINE_STATIC_KEY_FALSE(sched_asym_cpucapacity);
+ 
+ static void update_top_cache_domain(int cpu)
+ {
+@@ -1705,6 +1706,7 @@ build_sched_domains(const struct cpumask *cpu_map, struct sched_domain_attr *att
+ 	struct rq *rq = NULL;
+ 	int i, ret = -ENOMEM;
+ 	struct sched_domain_topology_level *tl_asym;
++	bool has_asym = false;
+ 
+ 	alloc_state = __visit_domain_allocation_hell(&d, cpu_map);
+ 	if (alloc_state != sa_rootdomain)
+@@ -1720,8 +1722,10 @@ build_sched_domains(const struct cpumask *cpu_map, struct sched_domain_attr *att
+ 		for_each_sd_topology(tl) {
+ 			int dflags = 0;
+ 
+-			if (tl == tl_asym)
++			if (tl == tl_asym) {
+ 				dflags |= SD_ASYM_CPUCAPACITY;
++				has_asym = true;
++			}
+ 
+ 			sd = build_sched_domain(tl, cpu_map, attr, sd, dflags, i);
+ 
+@@ -1773,6 +1777,9 @@ build_sched_domains(const struct cpumask *cpu_map, struct sched_domain_attr *att
+ 	}
+ 	rcu_read_unlock();
+ 
++	if (has_asym)
++		static_branch_enable_cpuslocked(&sched_asym_cpucapacity);
++
+ 	if (rq && sched_debug_enabled) {
+ 		pr_info("root domain span: %*pbl (max cpu_capacity = %lu)\n",
+ 			cpumask_pr_args(cpu_map), rq->rd->max_cpu_capacity);
