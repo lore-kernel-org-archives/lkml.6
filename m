@@ -2,112 +2,105 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5FC2C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:13:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E5FFC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:14:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E3262086B
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:13:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LpSOnnZR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E3262086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 4004420866
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:14:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4004420866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727976AbeIJOGw (ORCPT
+        id S1728001AbeIJOHL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 10:06:52 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:45559 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726081AbeIJOGw (ORCPT
+        Mon, 10 Sep 2018 10:07:11 -0400
+Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:48420 "EHLO
+        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726081AbeIJOHL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 10:06:52 -0400
-Received: by mail-io0-f193.google.com with SMTP id e12-v6so25776iok.12
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 02:13:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bKwLsGkvnyzYF+jIdXeK91qBWk7wtIOS4afg/iF9Fb0=;
-        b=LpSOnnZR66xGj+ikztCUeMi0WiSBFLsNRdTC5l2cVAxdmF51KJiCBHHvMQ8qlHONsi
-         gITXst3ePXL8BT6UbKx7XwWCSFB5FSNGzn5Vp+pTqzhXlC9NrvajVKNBd5p5Rt1U7VdF
-         bodp/csTE3V9YrZBnXEdSCafnUVZfvrPmfoZRRkji37exUCJUg30E+7mzrHKGloILzGp
-         O+4KUDHd1jWHS33BkcDOp5p5WRs98Bs8I02NrR3MBtrLYMllA/HwwkMVfpEWY0/FeQU+
-         rF2yUfeDGBGC/LcfqDL0C5hP684YDqpeD/EkdB2NIk+C7t4EFd67J9bwLcxr1dig6GEt
-         apEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bKwLsGkvnyzYF+jIdXeK91qBWk7wtIOS4afg/iF9Fb0=;
-        b=oI4tVFwm82473JqGsJ7VQ1bSv/PIIsoxbSv1e0qpP0YWxievcupw+2rD4Ip6xd/Ld6
-         MHmeDcSwFPyAaKUiCr0vIa91vH3uNRVKk3cr3sQYYYPXw0ty912kOENQGigvJXbmmVeG
-         CeykchfJEaBS0ZQ7TdH7/IFJwMfzqisWMeUA/LRl76f46lsoJIP16m8sb/qS5INYgevB
-         BhMxBxsVpzHGfelW8pwP7QztjPhE1b5b+cmsjAUMHk4iRP+A56kiTAT1ZADaRk1TRBgn
-         9F4pA3c1xcotBQSgEz+X5qO3Qj6JZU9iLkb2SM+iojqcgG/pKmhwY96a19MjihHlVbGW
-         aOag==
-X-Gm-Message-State: APzg51B7tCq1PbSkkzy1jjPhQd/dQo8FS7PnY8n3T3KRy1/V5epsIN2b
-        VRtUmkF11tw/gKm49o0PmQwtn6KB30brMVoFEaTAGwh7dDY=
-X-Google-Smtp-Source: ANB0Vdag8QSLYW4JY4NSiGVI4f7jHPk0sDQ+v5CAu0M9gZbp0JLZVV1bexDuEbFJXOFiaUa8MFP/aIqul5knPJUwkZA=
-X-Received: by 2002:a6b:18c5:: with SMTP id 188-v6mr15388663ioy.211.1536570827585;
- Mon, 10 Sep 2018 02:13:47 -0700 (PDT)
+        Mon, 10 Sep 2018 10:07:11 -0400
+Received: from [192.168.2.10] ([212.251.195.8])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id zIGdf1IMSw2L8zIGgfJUft; Mon, 10 Sep 2018 11:14:06 +0200
+Subject: Re: [PATCH 0/2] Document memory-to-memory video codec interfaces
+To:     Tomasz Figa <tfiga@chromium.org>, linux-media@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Pawel Osciak <posciak@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
+        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        jtp.park@samsung.com, Philipp Zabel <p.zabel@pengutronix.de>,
+        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= 
+        <tiffany.lin@mediatek.com>,
+        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?= 
+        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
+        nicolas@ndufresne.ca,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Dave Stevenson <dave.stevenson@raspberrypi.org>,
+        ezequiel@collabora.com
+References: <20180724140621.59624-1-tfiga@chromium.org>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <bed0d45d-d5c0-d2dc-03d7-eedf99246182@xs4all.nl>
+Date:   Mon, 10 Sep 2018 11:13:59 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-References: <20180718160956.19864-1-enric.balletbo@collabora.com>
- <20180718160956.19864-3-enric.balletbo@collabora.com> <20180907075438.GB95655@rodete-laptop-imager.corp.google.com>
- <20180910091208.GH28860@dell>
-In-Reply-To: <20180910091208.GH28860@dell>
-From:   Benson Leung <bleung@google.com>
-Date:   Mon, 10 Sep 2018 17:13:34 +0800
-Message-ID: <CANLzEkvuNYS4q_bATF1kz205dzfrjzEkRZ0MaT71-Cd46-D0fA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mfd: cros_ec: Fix and improve kerneldoc comments.
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Guenter Roeck <groeck@chromium.org>, kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180724140621.59624-1-tfiga@chromium.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4wfO7Po06B+pNkxnZnTT52T1RpE3JIQs+lVtVxvLV2psyw5PQHmTvSeQWGkyuGzCYhGObLhpbwNRM1h+S8T+RI1Se3Xy/lwv+ypiiDR+WsYiuhdsL3bCDl
+ yXyWgle8NXfFauNPYY8WZXlsSHt4KSXz5evFrM5X/0wUC6IsGDj3JJBbCv2kcFrHL1xlQvp6RhDE7UvcU0AhxV84DmONLxWE6g4PLjDT8k0c+mbNQlX8nVWN
+ iHEHJ7dQCn3S/iKFrUgP4DqCoMHXZ4cWsxFV98m8Kvaq+GHZ/pIHQArzA6xnv3DEENgb53uVRLoFvLSlGmY6f2GvWZblivsUDcFRRcE479ZzYHHAH+T1OewE
+ rLuvxRcx79Va9lfXqlaa9IK86y5gIUH0BhKwOk7QizpiQ73CyqQr1OrdCgPL1mo29sePU5Tm50wrnUpeO2wfXwD1bA0+Jh9VgyUhs/4FGSRhqhILPOCSC7AO
+ oybpn+dZuAvd8Kzpk3pkM4nGjGTCfcDAuDwMWmTqx8ZzVz7Uj5DUtv1kZ/Sf2LmDnBv8az4en6hhTjhHC2vi4HqvQIkBaJy5hAorhBu0Q/09yXFDwArejSMV
+ gh/QOQLMyF9vuI+SJ2u7L81iqQHplCQn6h7f9NzjTHSxD/vQCVY0phHfH8yippUbQyjcpLo6E+g5DEoNU2i834Uapi2Pj4RTQ2B4ViYMFQEKnnUrko9eWfWa
+ iANhEBZGzCnhG3xhzoy8h9VyxGg+N22LYePI8v5Pq3phgm9FWIV8MvNJksUmbhsQ57ETeipN3GjsTRFESJDD2ARuC6Yea/et0hXr1xAb2DBMxzRQwKuu3Euf
+ YcGKpkMJ5AI+9NChPA31shLbUbjPAwpH9FzsnHvy
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 10, 2018 at 5:12 PM Lee Jones <lee.jones@linaro.org> wrote:
->
-> On Fri, 07 Sep 2018, Benson Leung wrote:
->
-> > Hi Enric,
-> >
-> > On Wed, Jul 18, 2018 at 06:09:56PM +0200, Enric Balletbo i Serra wrote:
-> > > cros-ec includes inside the MFD subsystem, specially the file
-> > > cros_ec_commands.h, has been modified several times and it has grown a
-> > > lot, unfortunately, we didn't have care too much about the documentation.
-> > > This patch tries to improve the documentation and also fixes all the
-> > > issues reported by kerneldoc script.
-> > >
-> > > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> >
-> > Applied, thanks.
->
-> If applying patches from other subsystems, you need to wait for an
-> appropriate Ack before applying.  Please send me a succinct
-> pull-request for this patch, so that we might avoid potential conflict
-> at merge time.
->
+Hi Tomasz,
 
-Ok Lee, sorry about that.  Actually this hasn't landed in my for-next
-branch yet so no conflict has happened yet. I  will send you a PR
-shortly.
+On 07/24/2018 04:06 PM, Tomasz Figa wrote:
+> This series attempts to add the documentation of what was discussed
+> during Media Workshops at LinuxCon Europe 2012 in Barcelona and then
+> later Embedded Linux Conference Europe 2014 in Düsseldorf and then
+> eventually written down by Pawel Osciak and tweaked a bit by Chrome OS
+> video team (but mostly in a cosmetic way or making the document more
+> precise), during the several years of Chrome OS using the APIs in
+> production.
+> 
+> Note that most, if not all, of the API is already implemented in
+> existing mainline drivers, such as s5p-mfc or mtk-vcodec. Intention of
+> this series is just to formalize what we already have.
+> 
+> It is an initial conversion from Google Docs to RST, so formatting is
+> likely to need some further polishing. It is also the first time for me
+> to create such long RST documention. I could not find any other instance
+> of similar userspace sequence specifications among our Media documents,
+> so I mostly followed what was there in the source. Feel free to suggest
+> a better format.
+> 
+> Much of credits should go to Pawel Osciak, for writing most of the
+> original text of the initial RFC.
 
+I'm adding this here as a result of an irc discussion, since it applies
+to both encoders and decoders:
 
+How to handle non-square pixel aspect ratios?
 
--- 
-Benson Leung
-Staff Software Engineer
-Chrome OS Kernel
-Google Inc.
-bleung@google.com
-Chromium OS Project
-bleung@chromium.org
+Decoders would have to report it through VIDIOC_CROPCAP, so this needs
+to be documented when the application should call this, but I don't
+think we can provide this information today for encoders.
+
+Regards,
+
+	Hans
