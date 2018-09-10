@@ -2,220 +2,241 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53EFDC4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 03:32:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B32AC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 03:33:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E32D5206BB
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 03:32:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="xVgFMA0k"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E32D5206BB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 37889206BB
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 03:33:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37889206BB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727047AbeIJIXz (ORCPT
+        id S1727022AbeIJIZW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 04:23:55 -0400
-Received: from mail-eopbgr40049.outbound.protection.outlook.com ([40.107.4.49]:43648
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        Mon, 10 Sep 2018 04:25:22 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33644 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725974AbeIJIXy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 04:23:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CSOIv++efP3OLQKaSY4AgH3Ma/uAL/wt8vdz96RUBUY=;
- b=xVgFMA0kaA4r+at3h4MncDwdayNE+fTttcglhSUEOsH2rdlVTNjjJSEfNcujahiFxzi505VV6BxmFhs2MXOOJDkK746x1H1XmBczs/UtLSYXJnBFdMof4GRRqRfqVItPX7s2bRMLW89iwXeR/Y/nBrGudpYIbE7ADWFGf/cSvVA=
-Received: from AM5PR0402MB2865.eurprd04.prod.outlook.com (10.175.41.148) by
- AM5PR0402MB2753.eurprd04.prod.outlook.com (10.175.41.7) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1122.15; Mon, 10 Sep 2018 03:31:56 +0000
-Received: from AM5PR0402MB2865.eurprd04.prod.outlook.com
- ([fe80::71ae:eae6:c08c:4766]) by AM5PR0402MB2865.eurprd04.prod.outlook.com
- ([fe80::71ae:eae6:c08c:4766%9]) with mapi id 15.20.1122.019; Mon, 10 Sep 2018
- 03:31:56 +0000
-From:   Ran Wang <ran.wang_1@nxp.com>
-To:     Leo Li <leoyang.li@nxp.com>
-CC:     Mark Rutland <mark.rutland@arm.com>,
-        "dongsheng.wang@hxt-semitech.com" <dongsheng.wang@hxt-semitech.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH 3/3] soc: fsl: add RCPM driver
-Thread-Topic: [PATCH 3/3] soc: fsl: add RCPM driver
-Thread-Index: AQHUQN58GshJMZ1zr02GefLWKtgWa6ThDXGAgAOLMVCAAJ6egIADs6/g
-Date:   Mon, 10 Sep 2018 03:31:56 +0000
-Message-ID: <AM5PR0402MB2865939D4412A4129AC0FC67F1050@AM5PR0402MB2865.eurprd04.prod.outlook.com>
-References: <20180831035219.31619-1-ran.wang_1@nxp.com>
- <20180831035219.31619-3-ran.wang_1@nxp.com>
- <be39f5ea8c9046b0bf1f6bbfe935fae4@HXTBJIDCEMVIW02.hxtcorp.net>
- <CADRPPNQN=27+pOSckxvwSuBJoFaz7pT+Z6h07Wu3Liz5ao5kkA@mail.gmail.com>
- <AM5PR0402MB2865E57EDC0DE8B0047282A2F1000@AM5PR0402MB2865.eurprd04.prod.outlook.com>
- <CADRPPNTGrKBxzpbP05R0T3ovngYgQ4P_kgwgYwB6Aqrs8maXqw@mail.gmail.com>
-In-Reply-To: <CADRPPNTGrKBxzpbP05R0T3ovngYgQ4P_kgwgYwB6Aqrs8maXqw@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=ran.wang_1@nxp.com; 
-x-originating-ip: [92.121.36.197]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM5PR0402MB2753;6:XujNIWBgVhk4e+WhHGQc3ut90pq1A/dt/w+cgEDQM7UQ5HUkWgXSuSL17gJo/aS5sjgV8N7uezskBsva2ROoWj/gd1qBvJ9eXf+I/8xrUVhwYJMlOCwBz0s2ehFATkNVky9Z8i78v/6ByNyZ+hu4bs6jJyhbHIHKr8pFyU+E69+aMXgbTzXkQ2pDUW94eu+H93SwnW2wp3bviQZE8QuZfT9SWCuzTdzqRFF+gqIUqpy8UCG3cz1bDoo3fBLicgxa4ke4el6njYUddHW2kyXGbDzjnfeoYG5D1JVncnvWXqTFssQ5DT2qULbAtFOzoD7xe0xKJnVOK5wc1V5cWOtlJAZKdzT04GJdzhr7RRvam6/3cV5lGNK1A6uUflCDmqzN2SnXuH/h2OCi65xTLf1dVYt1rgEQ2uteMT7X91mgY0vRHkze9wE3adetJv/4isxZ43JlYw4DjwmnSCiBjhknPQ==;5:xM0b3OLX1n0z8t9rXx6FZdVIItA5DkiQahrRZpRsk6yz/+ZoCV75D2boXTh6cn2mP/wwe9zyOlBBjiF325rBJ6z2C9QKu0gDhVlwvuF6e+Muuw50PtBsoK++Izgcj0o+8SqiczpnG2dgZDskpwqd8nWGjz443qDnTNNTb7v+9cg=;7:5GU3mFjI6qA4h8LIqSWYidO8a6HMHk4gpvP4q6tk+HhhiNGzbnhayH4Z3XzvbV9XPhFeDz1ZR2oxkZQahBBiGoBXtSTgmpvbt+g+6yF+Vs8r9z8TZ6w8UOduqIif0q8O2yTVJpTh5wN+y/zqOI65rAdP60RGWGkys3MXh+iKEFmFDmjg+AJh3P5D8/hJ3PP4miNQpPQyhU05CD4ialqJ5lfyHU2S7zrYSLin5QkEgFJ+42gJ68f03z+J30Oh4wJh
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 91ff394e-6dcd-43f4-3337-08d616cdf5dc
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM5PR0402MB2753;
-x-ms-traffictypediagnostic: AM5PR0402MB2753:
-x-microsoft-antispam-prvs: <AM5PR0402MB27532FFF66538E86848ACDA4F1050@AM5PR0402MB2753.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(189930954265078)(65623756079841)(185117386973197)(258649278758335)(45079756050767);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823301075)(93006095)(93001095)(10201501046)(3002001)(3231311)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699050);SRVR:AM5PR0402MB2753;BCL:0;PCL:0;RULEID:;SRVR:AM5PR0402MB2753;
-x-forefront-prvs: 07915F544A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(39860400002)(376002)(136003)(396003)(366004)(189003)(199004)(13464003)(55016002)(8676002)(6306002)(966005)(7696005)(229853002)(14454004)(54906003)(6506007)(53546011)(53936002)(6636002)(316002)(9686003)(93886005)(5660300001)(26005)(99286004)(86362001)(575784001)(8936002)(2900100001)(102836004)(76176011)(6436002)(74316002)(486006)(7736002)(446003)(11346002)(305945005)(97736004)(6246003)(106356001)(6862004)(25786009)(5250100002)(476003)(105586002)(33656002)(2906002)(81156014)(81166006)(3846002)(6116002)(68736007)(4326008)(45080400002)(66066001)(14444005)(478600001)(256004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM5PR0402MB2753;H:AM5PR0402MB2865.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: VdZve2dgow+SWKWeuJ7CmO7UTHkZUyRWKmYOjsd8CKlvaHddKDWXrH/+mvWpsYi5DAqdxkePFLByhiEHdlIdvUubVpsmUR9KO4SSmrJZ/p8EEeoRmb92cm7tUjmU08x/alo2p5a/JRH4Kpf/7NYvuXIvgHeo3SKIn5OjF299QceHXoN38pRKQPjIztSwxojqEwxpLwoUU694QV8g1ucCScxHn38PwjYpqwMnYolH+bCehaMtwcKXXZAqgfm2/pld4JCKHwIqoHYjLJ39Xu54jmQTgJEgMgfCYx5y/Sh6aYRbTg4vc9nnYZoSlrgDUV8gAisdY9cOK2r3CTXPRch4SeRJhT6wPLzgz2okMJMORwg=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1726132AbeIJIZW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 04:25:22 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4FE29801145A;
+        Mon, 10 Sep 2018 03:33:27 +0000 (UTC)
+Received: from [10.72.12.30] (ovpn-12-30.pek2.redhat.com [10.72.12.30])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id DC0842026D66;
+        Mon, 10 Sep 2018 03:33:19 +0000 (UTC)
+Subject: Re: [virtio-dev] Re: [PATCH net-next v2 0/5] virtio: support packed
+ ring
+To:     Tiwei Bie <tiwei.bie@intel.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        virtio-dev@lists.oasis-open.org, wexu@redhat.com,
+        jfreimann@redhat.com
+References: <20180711022711.7090-1-tiwei.bie@intel.com>
+ <20180827170005-mutt-send-email-mst@kernel.org>
+ <20180907012225.GA32677@debian>
+ <20180907084509-mutt-send-email-mst@kernel.org>
+ <20180910030053.GA15645@debian>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <f5ef0393-cf02-0795-a51a-8783ee300037@redhat.com>
+Date:   Mon, 10 Sep 2018 11:33:17 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 91ff394e-6dcd-43f4-3337-08d616cdf5dc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Sep 2018 03:31:56.8089
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0402MB2753
+In-Reply-To: <20180910030053.GA15645@debian>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 10 Sep 2018 03:33:27 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 10 Sep 2018 03:33:27 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jasowang@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgTGVvLA0KDQpPbiAyMDE4LzkvNyA0OjUxLCBZYW5nIExpIHdyb3RlOg0KPiANCj4gT24gRnJp
-LCBTZXAgNywgMjAxOCBhdCA0OjUxIEFNIFJhbiBXYW5nIDxyYW4ud2FuZ18xQG54cC5jb20+IHdy
-b3RlOg0KPiA+DQo+ID4gSGkgTGVvLA0KPiA+DQo+ID4gT24gU2VwdGVtYmVyIDA1LCAyMDE4IGF0
-IDExOjIyIFlhbmcgTGkgd3JvdGU6DQo+ID4gPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0K
-PiA+ID4gRnJvbTogTGkgWWFuZyA8bGVveWFuZy5saUBueHAuY29tPg0KPiA+ID4gU2VudDogV2Vk
-bmVzZGF5LCBTZXB0ZW1iZXIgMDUsIDIwMTggMTE6MjINCj4gPiA+IFRvOiBkb25nc2hlbmcud2Fu
-Z0BoeHQtc2VtaXRlY2guY29tDQo+ID4gPiBDYzogUmFuIFdhbmcgPHJhbi53YW5nXzFAbnhwLmNv
-bT47IFJvYiBIZXJyaW5nDQo+IDxyb2JoK2R0QGtlcm5lbC5vcmc+Ow0KPiA+ID4gTWFyayBSdXRs
-YW5kIDxtYXJrLnJ1dGxhbmRAYXJtLmNvbT47IG9wZW4gbGlzdDpPUEVOIEZJUk1XQVJFIEFORA0K
-PiA+ID4gRkxBVFRFTkVEIERFVklDRSBUUkVFIEJJTkRJTkdTIDxkZXZpY2V0cmVlQHZnZXIua2Vy
-bmVsLm9yZz47DQo+ID4gPiBsaW51eHBwYy0gZGV2IDxsaW51eHBwYy1kZXZAbGlzdHMub3psYWJz
-Lm9yZz47IGxrbWwNCj4gPiA+IDxsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnPjsgbW9kZXJh
-dGVkIGxpc3Q6QVJNL0ZSRUVTQ0FMRSBJTVggLw0KPiA+ID4gTVhDIEFSTSBBUkNISVRFQ1RVUkUg
-PGxpbnV4LWFybS0ga2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc+DQo+ID4gPiBTdWJqZWN0OiBS
-ZTogW1BBVENIIDMvM10gc29jOiBmc2w6IGFkZCBSQ1BNIGRyaXZlcg0KPiA+ID4NCj4gPiA+IE9u
-IFR1ZSwgU2VwIDQsIDIwMTggYXQgOTo1OCBQTSBXYW5nLCBEb25nc2hlbmcNCj4gPGRvbmdzaGVu
-Zy53YW5nQGh4dC0NCj4gPiA+IHNlbWl0ZWNoLmNvbT4gd3JvdGU6DQo+ID4gPiA+DQo+ID4gPiA+
-IFBsZWFzZSBjaGFuZ2UgeW91ciBjb21tZW50cyBzdHlsZS4NCj4gPiA+DQo+ID4gPiBBbHRob3Vn
-aCB0aGlzIGRvZXNuJ3QgZ2V0IGludG8gdGhlIExpbnV4IGtlcm5lbCBjb2Rpbmcgc3R5bGUNCj4g
-PiA+IGRvY3VtZW50YXRpb24geWV0LCBMaW51cyBzZWVtcyBjaGFuZ2VkIGhpcyBtaW5kIHRvIHBy
-ZWZlciAvLyB0aGFuIC8qDQo+ID4gPiAqLyBjb21tZW50IHN0eWxlIG5vdy4NCj4gPiA+IGh0dHBz
-Oi8vZW1lYTAxLnNhZmVsaW5rcy5wcm90ZWN0aW9uLm91dGxvb2suY29tLz91cmw9aHR0cHMlM0El
-MkYlMkZsDQo+ID4gPg0KPiBrbWwgLm9yZyUyRmxrbWwlMkYyMDE3JTJGMTElMkYyNSUyRjEzMyZh
-bXA7ZGF0YT0wMiU3QzAxJTdDcmFuLncNCj4gYW5nXw0KPiA+ID4NCj4gMSU0MG54cC5jb20lN0Nj
-MGQ4OGU2NjkwMzg0ZTAyYjk1MTA4ZDYxMmRlYzIzNSU3QzY4NmVhMWQzYmMyYjRjDQo+ID4gPg0K
-PiA2ZmE5MmNkOTljNWMzMDE2MzUlN0MwJTdDMCU3QzYzNjcxNzE0NTI4NTEyNjIwMCZhbXA7c2Rh
-dGE9SklvQ1pwDQo+ID4gPg0KPiBXaFJ5Vzc2RXFnU2ZsZlREQTFmMGdNUUdLYSUyRmNidlNjNUNP
-JTJGdyUzRCZhbXA7cmVzZXJ2ZWQ9MA0KPiA+ID4gU28gdGhlDQo+ID4gPiAvLyBzdHlsZSBzaG91
-bGQgYmUgYWNjZXB0YWJsZSBmb3Igbm93Lg0KPiA+ID4NCj4gPiA+ID4NCj4gPiA+ID4gT24gMjAx
-OC84LzMxIDExOjU2LCBSYW4gV2FuZyB3cm90ZToNCj4gPiA+ID4gPiBUaGUgTlhQJ3MgUW9ySVEg
-UHJvY2Vzc29ycyBiYXNlZCBvbiBBUk0gQ29yZSBoYXZlIFJDUE0gbW9kdWxlDQo+ID4gPiA+ID4g
-KFJ1biBDb250cm9sIGFuZCBQb3dlciBNYW5hZ2VtZW50KSwgd2hpY2ggcGVyZm9ybXMgYWxsDQo+
-ID4gPiA+ID4gZGV2aWNlLWxldmVsIHRhc2tzIGFzc29jaWF0ZWQgd2l0aCBwb3dlciBtYW5hZ2Vt
-ZW50IHN1Y2ggYXMNCj4gd2FrZXVwIHNvdXJjZSBjb250cm9sLg0KPiA+ID4gPiA+DQo+ID4gPiA+
-ID4gVGhpcyBkcml2ZXIgZGVwZW5kcyBvbiBGU0wgcGxhdGZvcm0gUE0gZHJpdmVyIGZyYW1ld29y
-ayB3aGljaA0KPiA+ID4gPiA+IGhlbHAgdG8gaXNvbGF0ZSB1c2VyIGFuZCBQTSBzZXJ2aWNlIHBy
-b3ZpZGVyIChzdWNoIGFzIFJDUE0gZHJpdmVyKS4NCj4gPiA+ID4gPg0KPiA+ID4gPiA+IFNpZ25l
-ZC1vZmYtYnk6IENoZW5odWkgWmhhbyA8Y2hlbmh1aS56aGFvQG54cC5jb20+DQo+ID4gPiA+ID4g
-U2lnbmVkLW9mZi1ieTogWWluZyBaaGFuZyA8eWluZy56aGFuZzIyNDU1QG54cC5jb20+DQo+ID4g
-PiA+ID4gU2lnbmVkLW9mZi1ieTogUmFuIFdhbmcgPHJhbi53YW5nXzFAbnhwLmNvbT4NCj4gPiA+
-ID4gPiAtLS0NCj4gPiA+ID4gPiAgZHJpdmVycy9zb2MvZnNsL0tjb25maWcgICB8ICAgIDYgKysN
-Cj4gPiA+ID4gPiAgZHJpdmVycy9zb2MvZnNsL01ha2VmaWxlICB8ICAgIDEgKw0KPiA+ID4gPiA+
-ICBkcml2ZXJzL3NvYy9mc2wvbHMtcmNwbS5jIHwgIDE1Mw0KPiA+ID4gPiA+ICsrKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKw0KPiA+ID4gPiA+ICAzIGZpbGVzIGNo
-YW5nZWQsIDE2MCBpbnNlcnRpb25zKCspLCAwIGRlbGV0aW9ucygtKSAgY3JlYXRlIG1vZGUNCj4g
-PiA+ID4gPiAxMDA2NDQgZHJpdmVycy9zb2MvZnNsL2xzLXJjcG0uYw0KPiA+ID4gPiA+DQo+ID4g
-PiA+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvc29jL2ZzbC9LY29uZmlnIGIvZHJpdmVycy9zb2Mv
-ZnNsL0tjb25maWcNCj4gPiA+ID4gPiBpbmRleCA2NTE3NDEyLi44ODIzMzBkIDEwMDY0NA0KPiA+
-ID4gPiA+IC0tLSBhL2RyaXZlcnMvc29jL2ZzbC9LY29uZmlnDQo+ID4gPiA+ID4gKysrIGIvZHJp
-dmVycy9zb2MvZnNsL0tjb25maWcNCj4gPiA+ID4gPiBAQCAtMzAsMyArMzAsOSBAQCBjb25maWcg
-RlNMX1BMQVRfUE0NCj4gPiA+ID4gPiAgICAgICAgIGhhdmUgdG8ga25vdyB0aGUgaW1wbGVtZW50
-IGRldGFpbHMgb2Ygd2FrZXVwIGZ1bmN0aW9uIGl0DQo+IHJlcXVpcmUuDQo+ID4gPiA+ID4gICAg
-ICAgICBCZXNpZGVzLCBpdCBpcyBhbHNvIGVhc3kgZm9yIHNlcnZpY2Ugc2lkZSB0byB1cGdyYWRl
-IGl0cyBsb2dpYyB3aGVuDQo+ID4gPiA+ID4gICAgICAgICBkZXNpZ24gY2hhbmdlZCBhbmQgcmVt
-YWluIHVzZXIgc2lkZSB1bmNoYW5nZWQuDQo+ID4gPiA+ID4gKw0KPiA+ID4gPiA+ICtjb25maWcg
-TFNfUkNQTQ0KPiA+ID4gPiA+ICsgICAgIGJvb2wgIkZyZWVzY2FsZSBSQ1BNIHN1cHBvcnQiDQo+
-ID4gPiA+ID4gKyAgICAgZGVwZW5kcyBvbiAoRlNMX1BMQVRfUE0pDQo+ID4gPiA+ID4gKyAgICAg
-aGVscA0KPiA+ID4gPiA+ICsgICAgICAgVGhpcyBmZWF0dXJlIGlzIHRvIGVuYWJsZSBzcGVjaWZp
-ZWQgd2FrZXVwIHNvdXJjZSBmb3Igc3lzdGVtDQo+IHNsZWVwLg0KPiA+ID4gPiA+IGRpZmYgLS1n
-aXQgYS9kcml2ZXJzL3NvYy9mc2wvTWFrZWZpbGUgYi9kcml2ZXJzL3NvYy9mc2wvTWFrZWZpbGUN
-Cj4gPiA+ID4gPiBpbmRleCA4ZjlkYjIzLi40M2ZmNzFhIDEwMDY0NA0KPiA+ID4gPiA+IC0tLSBh
-L2RyaXZlcnMvc29jL2ZzbC9NYWtlZmlsZQ0KPiA+ID4gPiA+ICsrKyBiL2RyaXZlcnMvc29jL2Zz
-bC9NYWtlZmlsZQ0KPiA+ID4gPiA+IEBAIC03LDMgKzcsNCBAQCBvYmotJChDT05GSUdfUVVJQ0Nf
-RU5HSU5FKSAgICAgICAgICAgICs9IHFlLw0KPiA+ID4gPiA+ICBvYmotJChDT05GSUdfQ1BNKSAg
-ICAgICAgICAgICAgICAgICAgKz0gcWUvDQo+ID4gPiA+ID4gIG9iai0kKENPTkZJR19GU0xfR1VU
-UykgICAgICAgICAgICAgICAgICAgICAgICs9IGd1dHMubw0KPiA+ID4gPiA+ICBvYmotJChDT05G
-SUdfRlNMX1BMQVRfUE0pICAgICs9IHBsYXRfcG0ubw0KPiA+ID4gPiA+ICtvYmotJChDT05GSUdf
-TFNfUkNQTSkgICAgICAgICAgICAgICAgKz0gbHMtcmNwbS5vDQo+ID4gPg0KPiA+ID4gUHJvYmFi
-bHkgdXNlICJfIiBpbnN0ZWFkIG9mICItIiBmb3IgYWxpZ25tZW50Lg0KPiA+DQo+ID4gT0ssIHdp
-bGwgdXBkYXRlIGluIG5leHQgdmVyc2lvbg0KPiA+DQo+ID4gPiA+ID4gZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvc29jL2ZzbC9scy1yY3BtLmMNCj4gPiA+ID4gPiBiL2RyaXZlcnMvc29jL2ZzbC9scy1y
-Y3BtLmMgbmV3IGZpbGUgbW9kZSAxMDA2NDQgaW5kZXgNCj4gPiA+ID4gPiAwMDAwMDAwLi5iMGZl
-Yjg4DQo+ID4gPiA+ID4gLS0tIC9kZXYvbnVsbA0KPiA+ID4gPiA+ICsrKyBiL2RyaXZlcnMvc29j
-L2ZzbC9scy1yY3BtLmMNCj4gPiA+ID4gPiBAQCAtMCwwICsxLDE1MyBAQA0KPiA+ID4gPiA+ICsv
-LyBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMCAvLyAvLyBwbGF0X3BtLmMgLSBGcmVl
-c2NhbGUNCj4gPiA+ID4gPiArTGF5ZXJzY2FwZSBSQ1BNIGRyaXZlcg0KPiA+ID4NCj4gPiA+IFRo
-ZSBmaWxlIG5hbWUgaGVyZSBpcyBub3QgdGhlIHNhbWUgYXMgdGhlIHJlYWwgZmlsZSBuYW1lLg0K
-PiA+DQo+ID4gR290IGl0LCB3aWxsIGNvcnJlY3QgaXQuDQo+ID4NCj4gPiA+ID4gPiArLy8NCj4g
-PiA+ID4gPiArLy8gQ29weXJpZ2h0IDIwMTggTlhQDQo+ID4gPiA+ID4gKy8vDQo+ID4gPiA+ID4g
-Ky8vIEF1dGhvcjogUmFuIFdhbmcgPHJhbi53YW5nXzFAbnhwLmNvbT4sDQo+ID4gPg0KPiA+ID4g
-V2hlcmUgZG8geW91IG5lZWQgdGhlIGNvbW1hIGluIHRoZSBlbmQ/DQo+ID4NCj4gPiBNeSBiYWQs
-IHdpbGwgcmVtb3ZlIGNvbW1hIGluIG5leHQgdmVyc2lvbi4NCj4gPg0KPiA+ID4gPiA+ICsNCj4g
-PiA+ID4gPiArI2luY2x1ZGUgPGxpbnV4L2luaXQuaD4NCj4gPiA+ID4gPiArI2luY2x1ZGUgPGxp
-bnV4L21vZHVsZS5oPg0KPiA+ID4gPiA+ICsjaW5jbHVkZSA8bGludXgvcGxhdGZvcm1fZGV2aWNl
-Lmg+ICNpbmNsdWRlDQo+ID4gPiA+ID4gKzxsaW51eC9vZl9hZGRyZXNzLmg+ICNpbmNsdWRlIDxs
-aW51eC9zbGFiLmg+ICNpbmNsdWRlDQo+ID4gPiA+ID4gKzxzb2MvZnNsL3BsYXRfcG0uaD4NCj4g
-PiA+ID4gPiArDQo+ID4gPiA+ID4gKyNkZWZpbmUgTUFYX0NPTVBBVElCTEVfTlVNICAgMTANCj4g
-PiA+ID4gPiArDQo+ID4gPiA+ID4gK3N0cnVjdCByY3BtX3Qgew0KPiA+ID4gPiA+ICsgICAgIHN0
-cnVjdCBkZXZpY2UgKmRldjsNCj4gPiA+ID4gPiArICAgICB2b2lkIF9faW9tZW0gKmlwcGRleHBj
-cl9hZGRyOw0KPiA+ID4gPiA+ICsgICAgIGJvb2wgYmlnX2VuZGlhbjsgICAgICAgIC8qIEJpZy9M
-aXR0bGUgZW5kaWFuIG9mIFJDUE0gbW9kdWxlICovDQo+ID4gPiA+ID4gK307DQo+ID4gPiA+ID4g
-Kw0KPiA+ID4gPiA+ICsvLyByY3BtX2hhbmRsZSAtIENvbmZpZ3VyZSBSQ1BNIHJlZyBhY2NvcmRp
-bmcgdG8gd2FrZSB1cCBzb3VyY2UNCj4gPiA+ID4gPiArcmVxdWVzdCAvLyBAdXNlcl9kZXY6IHBv
-aW50ZXIgdG8gdXNlcidzIGRldmljZSBzdHJ1Y3QgLy8gQGZsYWc6DQo+ID4gPiA+ID4gK3RvDQo+
-ID4gPiA+ID4gK2VuYWJsZSh0cnVlKSBvciBkaXNhYmxlKGZhbHNlKSB3YWtldXAgc291cmNlIC8v
-IEBoYW5kbGVfcHJpdjoNCj4gPiA+ID4gPiArcG9pbnRlciB0byBzdHJ1Y3QgcmNwbV90IGluc3Rh
-bmNlIC8vIC8vIFJldHVybiAwIG9uIHN1Y2Nlc3MNCj4gPiA+ID4gPiArb3RoZXIgbmVnYXRpdmUg
-ZXJybm8NCj4gPiA+DQo+ID4gPiBBbHRob3VnaCBMaW51cyBwcmVmZXJyZWQgdGhpcyAvLyBjb21t
-ZW50IHN0eWxlLiAgSSdtIG5vdCBzdXJlIGlmDQo+ID4gPiB0aGlzIHdpbGwgYmUgaGFuZGxlZCBj
-b3JyZWN0bHkgYnkgdGhlIGtlcm5lbC1kb2MgY29tcGlsZXIuDQo+ID4gPg0KPiBodHRwczovL2Vt
-ZWEwMS5zYWZlbGlua3MucHJvdGVjdGlvbi5vdXRsb29rLmNvbS8/dXJsPWh0dHBzJTNBJTJGJTJG
-dw0KPiA+ID4gdw0KPiA+ID4gdy5rZXJuZWwub3JnJTJGZG9jJTJGaHRtbCUyRnY0LjE4JTJGZG9j
-LWd1aWRlJTJGa2VybmVsLQ0KPiA+ID4NCj4gZG9jLmh0bWwmYW1wO2RhdGE9MDIlN0MwMSU3Q3Jh
-bi53YW5nXzElNDBueHAuY29tJTdDYzBkODhlNjY5MDM4DQo+ID4gPg0KPiA0ZTAyYjk1MTA4ZDYx
-MmRlYzIzNSU3QzY4NmVhMWQzYmMyYjRjNmZhOTJjZDk5YzVjMzAxNjM1JTdDMCU3QzANCj4gPiA+
-ICU3QzYzNjcxNzE0NTI4NTEyNjIwMCZhbXA7c2RhdGE9SDdHa1VOT0xWRyUyRkNjWkVTemh0SEJl
-SEMNCj4gYk85DQo+ID4gPiAlMkZLNGs5RWRIMzBDeHEyJTJCTSUzRCZhbXA7cmVzZXJ2ZWQ9MA0K
-PiA+DQo+ID4gU28sIGRvIHlvdSB0aGluayBJIG5lZWQgdG8gY2hhbmdlIGFsbCBjb21tZW50IHN0
-eWxlIGJhY2sgdG8gJy8qIC4uLiAqLycgPw0KPiA+IEFjdHVhbGx5IEkgZmVlbCBhIGxpdHRsZSBi
-aXQgY29uZnVzZWQgaGVyZS4NCj4gDQo+IEkgdGhpbmsgTGludXMncyBjb21tZW50IGFib3V0IC8v
-IGNvbW1lbnQgc3R5bGUgYXBwbGllcyB0byBub3JtYWwgY29kZQ0KPiBjb21tZW50LiAgQnV0IGtl
-cm5lbC1kb2MgY29tbWVudCBpcyBhIHNwZWNpYWwga2luZCBvZiBjb2RlIGNvbW1lbnQgdGhhdA0K
-PiBuZWVkcyB0byBtZWV0IGNlcnRhaW4gcmVxdWlyZW1lbnRzLiAgUGVvcGxlIGNhbiB1c2UgdGhl
-IHNjcmlwdHMva2VybmVsLWRvYw0KPiB0b29sIHRvIGdlbmVyYXRlIHJlYWRhYmxlIEFQSSBkb2N1
-bWVudHMgZnJvbSB0aGUgc291cmNlIGNvZGUuICBJdCBsb29rcyBsaWtlDQo+IHlvdSB3YW50ZWQg
-dG8gbWFrZSB0aGUgZnVuY3Rpb24gZGVzY3JpcHRpb24gYWxpZ25lZCB3aXRoIHRoZSBrZXJuZWwt
-ZG9jDQo+IGZvcm1hdCwgYnV0IGtlcm5lbC1kb2Mgc3BlY2lmaWNhbGx5IHJlcXVpcmVzIHRvIHVz
-ZSB0aGUgLyogKi8gc3R5bGUoYXQgbGVhc3QgZm9yDQo+IG5vdykuDQoNCk9LLCB3aWxsIGNoYW5n
-ZSBzdHlsZSBiYWNrIHRvIC8qICovLg0KDQpSZWdhcmRzLA0KUmFuDQoNCj4gUmVnYXJkcywNCj4g
-TGVvDQo=
+
+
+On 2018年09月10日 11:00, Tiwei Bie wrote:
+> On Fri, Sep 07, 2018 at 09:00:49AM -0400, Michael S. Tsirkin wrote:
+>> On Fri, Sep 07, 2018 at 09:22:25AM +0800, Tiwei Bie wrote:
+>>> On Mon, Aug 27, 2018 at 05:00:40PM +0300, Michael S. Tsirkin wrote:
+>>>> Are there still plans to test the performance with vost pmd?
+>>>> vhost doesn't seem to show a performance gain ...
+>>>>
+>>> I tried some performance tests with vhost PMD. In guest, the
+>>> XDP program will return XDP_DROP directly. And in host, testpmd
+>>> will do txonly fwd.
+>>>
+>>> When burst size is 1 and packet size is 64 in testpmd and
+>>> testpmd needs to iterate 5 Tx queues (but only the first two
+>>> queues are enabled) to prepare and inject packets, I got ~12%
+>>> performance boost (5.7Mpps -> 6.4Mpps). And if the vhost PMD
+>>> is faster (e.g. just need to iterate the first two queues to
+>>> prepare and inject packets), then I got similar performance
+>>> for both rings (~9.9Mpps) (packed ring's performance can be
+>>> lower, because it's more complicated in driver.)
+>>>
+>>> I think packed ring makes vhost PMD faster, but it doesn't make
+>>> the driver faster. In packed ring, the ring is simplified, and
+>>> the handling of the ring in vhost (device) is also simplified,
+>>> but things are not simplified in driver, e.g. although there is
+>>> no desc table in the virtqueue anymore, driver still needs to
+>>> maintain a private desc state table (which is still managed as
+>>> a list in this patch set) to support the out-of-order desc
+>>> processing in vhost (device).
+>>>
+>>> I think this patch set is mainly to make the driver have a full
+>>> functional support for the packed ring, which makes it possible
+>>> to leverage the packed ring feature in vhost (device). But I'm
+>>> not sure whether there is any other better idea, I'd like to
+>>> hear your thoughts. Thanks!
+>> Just this: Jens seems to report a nice gain with virtio and
+>> vhost pmd across the board. Try to compare virtio and
+>> virtio pmd to see what does pmd do better?
+> The virtio PMD (drivers/net/virtio) in DPDK doesn't need to share
+> the virtio ring operation code with other drivers and is highly
+> optimized for network. E.g. in Rx, the Rx burst function won't
+> chain descs. So the ID management for the Rx ring can be quite
+> simple and straightforward, we just need to initialize these IDs
+> when initializing the ring and don't need to change these IDs
+> in data path anymore (the mergable Rx code in that patch set
+> assumes the descs will be written back in order, which should be
+> fixed. I.e., the ID in the desc should be used to index vq->descx[]).
+> The Tx code in that patch set also assumes the descs will be
+> written back by device in order, which should be fixed.
+
+Yes it is. I think I've pointed it out in some early version of pmd 
+patch. So I suspect part (or all) of the boost may come from in order 
+feature.
+
+>
+> But in kernel virtio driver, the virtio_ring.c is very generic.
+> The enqueue (virtqueue_add()) and dequeue (virtqueue_get_buf_ctx())
+> functions need to support all the virtio devices and should be
+> able to handle all the possible cases that may happen. So although
+> the packed ring can be very efficient in some cases, currently
+> the room to optimize the performance in kernel's virtio_ring.c
+> isn't that much. If we want to take the fully advantage of the
+> packed ring's efficiency, we need some further e.g. API changes
+> in virtio_ring.c, which shouldn't be part of this patch set.
+
+Could you please share more thoughts on this e.g how to improve the API? 
+Notice since the API is shared by both split ring and packed ring, it 
+may improve the performance of split ring as well. One can easily 
+imagine a batching API, but it does not have many real users now, the 
+only case is the XDP transmission which can accept an array of XDP frames.
+
+> So
+> I still think this patch set is mainly to make the kernel virtio
+> driver to have a full functional support of the packed ring, and
+> we can't expect impressive performance boost with it.
+
+We can only gain when virtio ring layout is the bottleneck. If there're 
+bottlenecks elsewhere, we probably won't see any increasing in the 
+numbers. Vhost-net is an example, and lots of optimizations have proved 
+that virtio ring is not the main bottleneck for the current codes. I 
+suspect it also the case of virtio driver. Did perf tell us any 
+interesting things in virtio driver?
+
+Thanks
+
+>
+>>
+>>>> On Wed, Jul 11, 2018 at 10:27:06AM +0800, Tiwei Bie wrote:
+>>>>> Hello everyone,
+>>>>>
+>>>>> This patch set implements packed ring support in virtio driver.
+>>>>>
+>>>>> Some functional tests have been done with Jason's
+>>>>> packed ring implementation in vhost:
+>>>>>
+>>>>> https://lkml.org/lkml/2018/7/3/33
+>>>>>
+>>>>> Both of ping and netperf worked as expected.
+>>>>>
+>>>>> v1 -> v2:
+>>>>> - Use READ_ONCE() to read event off_wrap and flags together (Jason);
+>>>>> - Add comments related to ccw (Jason);
+>>>>>
+>>>>> RFC (v6) -> v1:
+>>>>> - Avoid extra virtio_wmb() in virtqueue_enable_cb_delayed_packed()
+>>>>>    when event idx is off (Jason);
+>>>>> - Fix bufs calculation in virtqueue_enable_cb_delayed_packed() (Jason);
+>>>>> - Test the state of the desc at used_idx instead of last_used_idx
+>>>>>    in virtqueue_enable_cb_delayed_packed() (Jason);
+>>>>> - Save wrap counter (as part of queue state) in the return value
+>>>>>    of virtqueue_enable_cb_prepare_packed();
+>>>>> - Refine the packed ring definitions in uapi;
+>>>>> - Rebase on the net-next tree;
+>>>>>
+>>>>> RFC v5 -> RFC v6:
+>>>>> - Avoid tracking addr/len/flags when DMA API isn't used (MST/Jason);
+>>>>> - Define wrap counter as bool (Jason);
+>>>>> - Use ALIGN() in vring_init_packed() (Jason);
+>>>>> - Avoid using pointer to track `next` in detach_buf_packed() (Jason);
+>>>>> - Add comments for barriers (Jason);
+>>>>> - Don't enable RING_PACKED on ccw for now (noticed by Jason);
+>>>>> - Refine the memory barrier in virtqueue_poll();
+>>>>> - Add a missing memory barrier in virtqueue_enable_cb_delayed_packed();
+>>>>> - Remove the hacks in virtqueue_enable_cb_prepare_packed();
+>>>>>
+>>>>> RFC v4 -> RFC v5:
+>>>>> - Save DMA addr, etc in desc state (Jason);
+>>>>> - Track used wrap counter;
+>>>>>
+>>>>> RFC v3 -> RFC v4:
+>>>>> - Make ID allocation support out-of-order (Jason);
+>>>>> - Various fixes for EVENT_IDX support;
+>>>>>
+>>>>> RFC v2 -> RFC v3:
+>>>>> - Split into small patches (Jason);
+>>>>> - Add helper virtqueue_use_indirect() (Jason);
+>>>>> - Just set id for the last descriptor of a list (Jason);
+>>>>> - Calculate the prev in virtqueue_add_packed() (Jason);
+>>>>> - Fix/improve desc suppression code (Jason/MST);
+>>>>> - Refine the code layout for XXX_split/packed and wrappers (MST);
+>>>>> - Fix the comments and API in uapi (MST);
+>>>>> - Remove the BUG_ON() for indirect (Jason);
+>>>>> - Some other refinements and bug fixes;
+>>>>>
+>>>>> RFC v1 -> RFC v2:
+>>>>> - Add indirect descriptor support - compile test only;
+>>>>> - Add event suppression supprt - compile test only;
+>>>>> - Move vring_packed_init() out of uapi (Jason, MST);
+>>>>> - Merge two loops into one in virtqueue_add_packed() (Jason);
+>>>>> - Split vring_unmap_one() for packed ring and split ring (Jason);
+>>>>> - Avoid using '%' operator (Jason);
+>>>>> - Rename free_head -> next_avail_idx (Jason);
+>>>>> - Add comments for virtio_wmb() in virtqueue_add_packed() (Jason);
+>>>>> - Some other refinements and bug fixes;
+>>>>>
+>>>>> Thanks!
+>>>>>
+>>>>> Tiwei Bie (5):
+>>>>>    virtio: add packed ring definitions
+>>>>>    virtio_ring: support creating packed ring
+>>>>>    virtio_ring: add packed ring support
+>>>>>    virtio_ring: add event idx support in packed ring
+>>>>>    virtio_ring: enable packed ring
+>>>>>
+>>>>>   drivers/s390/virtio/virtio_ccw.c   |   14 +
+>>>>>   drivers/virtio/virtio_ring.c       | 1365 ++++++++++++++++++++++------
+>>>>>   include/linux/virtio_ring.h        |    8 +-
+>>>>>   include/uapi/linux/virtio_config.h |    3 +
+>>>>>   include/uapi/linux/virtio_ring.h   |   43 +
+>>>>>   5 files changed, 1157 insertions(+), 276 deletions(-)
+>>>>>
+>>>>> -- 
+>>>>> 2.18.0
+>>>> ---------------------------------------------------------------------
+>>>> To unsubscribe, e-mail: virtio-dev-unsubscribe@lists.oasis-open.org
+>>>> For additional commands, e-mail: virtio-dev-help@lists.oasis-open.org
+>>>>
+
