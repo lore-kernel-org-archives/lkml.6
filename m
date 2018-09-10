@@ -2,174 +2,150 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD2ECC46469
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 23:44:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61726C43143
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 23:47:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 678C320855
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 23:44:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E75E920855
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 23:47:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PO+/yHzK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 678C320855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="BXZQV+D5";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="I47c2/OJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E75E920855
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726645AbeIKEk1 (ORCPT
+        id S1726330AbeIKEnh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 00:40:27 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:33946 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725945AbeIKEk1 (ORCPT
+        Tue, 11 Sep 2018 00:43:37 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:54342 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725951AbeIKEng (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 00:40:27 -0400
-Received: by mail-pl1-f194.google.com with SMTP id f6-v6so10463950plo.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 16:44:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:date:message-id:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=MJv9XTQcitO3gy5LNlz5Iv9gvth5EHKXzc6g36JI3Fc=;
-        b=PO+/yHzKVe6BrtyAYDCrPoH1MS/MgG2SdH2MWE4Pu16baBk2jwxUqndfwe7rrtFeej
-         oNi0xoLwWDoh/gd29YEKhez5Fy1B0bGTUGlQS4awi43cRSQ8iOBoIPq5oivMRFj72UY5
-         f/VQa99Utf8IKzhwwIc7PqOHfuuG7xBmEB/exPT+8K0id8EJdHbVG4JJatsFCVZDMBi5
-         2gMw6sr3IyU1oH20TXT94TN7u7jJ3We/C7qEycP6m4tSiuK2GvyPZIZu3sCMOBGm/r0U
-         e8ToHPOnpYI6rp3t/sHjxch8Nt0PHUEgdYOTrCXwZ1s33o4RIGLboXtgZK6qo7kLre/9
-         vMFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:date:message-id:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=MJv9XTQcitO3gy5LNlz5Iv9gvth5EHKXzc6g36JI3Fc=;
-        b=XesGyFVYgpJ8E/a4FRZ5k4E3ScUPGZzBC10SQ4V55pYcd/gGSMfFfxB6O6TIIsJLAD
-         5wcKRIY2n3d1Rhkv5tJZ2/ziwVfzBMQMJfnPsGH5xg0a9FqfNWv0XJEnByNXi1BcTUrO
-         AMoShwH1GObg0amJRruAb/O0+l9P9DY41HkbhA9IcF6Wmq5D54kNd9QG8h4JdgzFGQ1o
-         TI+IRvBKhXRhFIZBHHR66y5vPFLPN7I8pmOnJkQWgaG54A21SmiOnsQ6JauevDJtBNwe
-         5vvp3EVidW6AhOytYLpBG171RlNnSYlCm9LIi3DivUND4Y/6EVEb3aFXaKpKjtcxRH5+
-         ZBew==
-X-Gm-Message-State: APzg51Ct3cUF2bRdoVYta4BH3HBKUdNcpVf1evB+NLFK173Smm1BQWcP
-        t8obgaOqaMdAS39NQakFAp4i0eVI
-X-Google-Smtp-Source: ANB0Vdae3zS05W6i/7y646GBZXtkkHI+KeQ/8novIzql8yYtiMRq7VA37016jMUlgSw8jVTKp/3lWw==
-X-Received: by 2002:a17:902:7402:: with SMTP id g2-v6mr24285976pll.321.1536623041876;
-        Mon, 10 Sep 2018 16:44:01 -0700 (PDT)
-Received: from localhost.localdomain (static-50-53-21-37.bvtn.or.frontiernet.net. [50.53.21.37])
-        by smtp.gmail.com with ESMTPSA id u184-v6sm21581039pgd.46.2018.09.10.16.44.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Sep 2018 16:44:01 -0700 (PDT)
-Subject: [PATCH 4/4] nvdimm: Trigger the device probe on a cpu local to the
- device
-From:   Alexander Duyck <alexander.duyck@gmail.com>
-To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org
-Cc:     pavel.tatashin@microsoft.com, mhocko@suse.com,
-        dave.jiang@intel.com, mingo@kernel.org, dave.hansen@intel.com,
-        jglisse@redhat.com, akpm@linux-foundation.org, logang@deltatee.com,
-        dan.j.williams@intel.com, kirill.shutemov@linux.intel.com
-Date:   Mon, 10 Sep 2018 16:44:00 -0700
-Message-ID: <20180910234400.4068.15541.stgit@localhost.localdomain>
-In-Reply-To: <20180910232615.4068.29155.stgit@localhost.localdomain>
-References: <20180910232615.4068.29155.stgit@localhost.localdomain>
-User-Agent: StGit/0.17.1-dirty
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Tue, 11 Sep 2018 00:43:36 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id AD5B3606DD; Mon, 10 Sep 2018 23:47:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1536623229;
+        bh=/UURcMK0Y4IU2vUYwtFxWYEndSCkll5M2A9R34tXnyk=;
+        h=From:To:Subject:Date:From;
+        b=BXZQV+D5uAyvZMDS0HlnyxRo/+CzWvCpF4bRCPhQ7xjv4fqcafXzAJ6bCty0GDSxX
+         tvx9Hav2q/FkCfHveAYU5gd165jfjp4DrsCSKAX47Deb+6fe5NOIm8/8pGe7x9SxrF
+         JePijUG/V5zArZI2H3EvKhdWEcENL0jKMCj2VQKY=
+Received: from vgutta-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vnkgutta@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 28456606DD;
+        Mon, 10 Sep 2018 23:47:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1536623228;
+        bh=/UURcMK0Y4IU2vUYwtFxWYEndSCkll5M2A9R34tXnyk=;
+        h=From:To:Subject:Date:From;
+        b=I47c2/OJkUm7tj9YPrp8BH5QlRb8RGg4n5lljAW71gyXDToA7Xd01NWmHSsANQxEA
+         9yd4UTtrjyUUhGZegWnDrhUK/7YMf/Ufhfva02/D4qIFV/PWfPBsS9HSfXkmOixMzJ
+         J14ebG2for7Li8vx9u96esHygaFPsgUxqGZ7vNsQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 28456606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vnkgutta@codeaurora.org
+From:   Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
+To:     Borislav Petkov <bp@alien8.de>, evgreen@chromium.org,
+        robh@kernel.org, mchehab@kernel.org, linux-edac@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, tsoni@codeaurora.org,
+        ckadabi@codeaurora.org, rishabhb@codeaurora.org,
+        swboyd@chromium.org, bjorn.andersson@linaro.org,
+        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Subject: [PATCH v5 0/4] Add EDAC driver for QCOM SoCs
+Date:   Mon, 10 Sep 2018 16:46:51 -0700
+Message-Id: <1536623215-20018-1-git-send-email-vnkgutta@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Duyck <alexander.h.duyck@intel.com>
+This series implements EDAC driver for QCOM SoCs. As of now, this driver
+supports EDAC for Last Level Cache Controller (LLCC). LLCC EDAC driver is
+to detect and report single and double bit errors on Last Level Cache
+Controller (LLCC) cache. Interrupts are triggered when the errors happen
+in the cache, the driver handles those interrupts and dumps the syndrome
+registers.
 
-This patch is based off of the pci_call_probe function used to initialize
-PCI devices. The general idea here is to move the probe call to a location
-that is local to the memory being initialized. By doing this we can shave
-significant time off of the total time needed for initialization.
+The driver functionality is implemented in:
+qcom_edac.c : This platform driver registers to edac framework and
+handles the single and double bit errors in cache by registering
+interrupt handlers.
 
-With this patch applied I see a significant reduction in overall init time
-as without it the init varied between 23 and 37 seconds to initialize a 3GB
-node. With this patch applied the variance is only between 23 and 26
-seconds to initialize each node.
+llcc-slice.c: It invokes the llcc edac driver and passes platform
+data to it.
 
-I hope to refine this further in the future by combining this logic into
-the async_schedule_domain code that is already in use. By doing that it
-would likely make this functionality redundant.
+This patchset depends on the LLCC driver, which is part of 4.19 release.
+Link: https://patchwork.kernel.org/patch/10422531/
+Link: http://lists-archives.com/linux-kernel/29157082-dt-bindings-documentation-for-qcom-llcc.html
 
-Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
----
- drivers/nvdimm/bus.c |   45 ++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 44 insertions(+), 1 deletion(-)
+Patch wise description given below:
 
-diff --git a/drivers/nvdimm/bus.c b/drivers/nvdimm/bus.c
-index 8aae6dcc839f..5b73953176b1 100644
---- a/drivers/nvdimm/bus.c
-+++ b/drivers/nvdimm/bus.c
-@@ -27,6 +27,7 @@
- #include <linux/io.h>
- #include <linux/mm.h>
- #include <linux/nd.h>
-+#include <linux/cpu.h>
- #include "nd-core.h"
- #include "nd.h"
- #include "pfn.h"
-@@ -90,6 +91,48 @@ static void nvdimm_bus_probe_end(struct nvdimm_bus *nvdimm_bus)
- 	nvdimm_bus_unlock(&nvdimm_bus->dev);
- }
- 
-+struct nvdimm_drv_dev {
-+	struct nd_device_driver *nd_drv;
-+	struct device *dev;
-+};
-+
-+static long __nvdimm_call_probe(void *_nddd)
-+{
-+	struct nvdimm_drv_dev *nddd = _nddd;
-+	struct nd_device_driver *nd_drv = nddd->nd_drv;
-+
-+	return nd_drv->probe(nddd->dev);
-+}
-+
-+static int nvdimm_call_probe(struct nd_device_driver *nd_drv,
-+			     struct device *dev)
-+{
-+	struct nvdimm_drv_dev nddd = { nd_drv, dev };
-+	int rc, node, cpu;
-+
-+	/*
-+	 * Execute driver initialization on node where the device is
-+	 * attached.  This way the driver will be able to access local
-+	 * memory instead of having to initialize memory across nodes.
-+	 */
-+	node = dev_to_node(dev);
-+
-+	cpu_hotplug_disable();
-+
-+	if (node < 0 || node >= MAX_NUMNODES || !node_online(node))
-+		cpu = nr_cpu_ids;
-+	else
-+		cpu = cpumask_any_and(cpumask_of_node(node), cpu_online_mask);
-+
-+	if (cpu < nr_cpu_ids)
-+		rc = work_on_cpu(cpu, __nvdimm_call_probe, &nddd);
-+	else
-+		rc = __nvdimm_call_probe(&nddd);
-+
-+	cpu_hotplug_enable();
-+	return rc;
-+}
-+
- static int nvdimm_bus_probe(struct device *dev)
- {
- 	struct nd_device_driver *nd_drv = to_nd_device_driver(dev->driver);
-@@ -104,7 +147,7 @@ static int nvdimm_bus_probe(struct device *dev)
- 			dev->driver->name, dev_name(dev));
- 
- 	nvdimm_bus_probe_start(nvdimm_bus);
--	rc = nd_drv->probe(dev);
-+	rc = nvdimm_call_probe(nd_drv, dev);
- 	if (rc == 0)
- 		nd_region_probe_success(nvdimm_bus, dev);
- 	else
+Patch 1 adds the broadcast base regmap for broadcast writes in llcc.
+
+Patch 2 adds the required changes to register edac driver from llcc driver.
+
+Patch 3 adds the EDAC driver support for QCOM SoCS.
+
+Patch 4 updates the dt bindings of llcc.
+
+Changes since v4:
+  * Removed of_device_id struct entry from edac driver
+  * Modified reg-names in the documentation
+
+Changes since v3:
+  * Updated the Kconfig and addressed minor comments in the driver
+
+Changes since v2:
+  * Modified the edac driver and Kconfig
+    -  removed unnecessary header files, typecasting and redundant comments.
+    -  Changed the initialization of reg_data datastructure to static,
+       Also updated the llcc_edac_reg_data member names and datatypes.
+    -  Removed "EDAC_QCOM_LLCC_PANIC_ON_UE" Kconfig variable
+
+Changes since v1:
+  * Modified the edac driver
+    - Removed duplicate functions that are used to dump the syndrome registers,
+      replaced that with a common function and a reg_data datastructure.
+    - Removed structure containing function pointers.
+    - Addressed comments on error handling to clear the interrupt status.
+  * Updated Kconfig
+
+Changes since v0:
+  * Added EDAC_QCOM config and updated the driver
+  * Addressed comments related to indentation and other minor ones
+
+Channagoud Kadabi (1):
+  drivers: edac: Add EDAC driver support for QCOM SoCs
+
+Venkata Narendra Kumar Gutta (3):
+  drivers: soc: Add broadcast base for Last Level Cache Controller
+    (LLCC)
+  drivers: soc: Add support to register LLCC EDAC driver
+  dt-bindings: msm: Update documentation of qcom,llcc
+
+ .../devicetree/bindings/arm/msm/qcom,llcc.txt      |  19 +-
+ MAINTAINERS                                        |   8 +
+ drivers/edac/Kconfig                               |  14 +
+ drivers/edac/Makefile                              |   1 +
+ drivers/edac/qcom_edac.c                           | 414 +++++++++++++++++++++
+ drivers/soc/qcom/llcc-slice.c                      |  73 ++--
+ include/linux/soc/qcom/llcc-qcom.h                 |  30 +-
+ 7 files changed, 531 insertions(+), 28 deletions(-)
+ create mode 100644 drivers/edac/qcom_edac.c
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
