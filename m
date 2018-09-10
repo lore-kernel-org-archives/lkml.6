@@ -2,147 +2,146 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2B6BC4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 12:49:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40908C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 12:51:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 736712087E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 12:49:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 736712087E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id D7A41204EC
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 12:51:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="vVNPpO0S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7A41204EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728575AbeIJRnr (ORCPT
+        id S1728576AbeIJRpC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 13:43:47 -0400
-Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:53077 "EHLO
-        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727974AbeIJRnr (ORCPT
+        Mon, 10 Sep 2018 13:45:02 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:44722 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728152AbeIJRpC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 13:43:47 -0400
-Received: from [192.168.2.10] ([212.251.195.8])
-        by smtp-cloud7.xs4all.net with ESMTPA
-        id zLdRf389Yw2L8zLdVfKX8g; Mon, 10 Sep 2018 14:49:49 +0200
-Subject: Re: [RFC PATCH] media: docs-rst: Document m2m stateless video decoder
- interface
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-To:     Alexandre Courbot <acourbot@chromium.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Pawel Osciak <posciak@chromium.org>,
-        linux-media@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org
-References: <20180831074743.235010-1-acourbot@chromium.org>
- <b8a80df8-fd07-6820-3021-670c360ff306@xs4all.nl>
- <38b32d24-6957-4bee-9168-b3afbfcae083@xs4all.nl>
-Message-ID: <a5c47693-4d66-1afc-9053-45bbbbef9d7c@xs4all.nl>
-Date:   Mon, 10 Sep 2018 14:49:45 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Mon, 10 Sep 2018 13:45:02 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180910125104euoutp02121e2ad112842fa354cdb37dd19a9760~TCuI9y4751277912779euoutp02G
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 12:51:04 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180910125104euoutp02121e2ad112842fa354cdb37dd19a9760~TCuI9y4751277912779euoutp02G
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1536583864;
+        bh=ypbjOLndNJqAAulvloZBVdYQRWSgTTtXktdAR8+U+kE=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=vVNPpO0SLsTC6K4c40ALg2Pk5AT1VZ3ycdpSMqY2U3mBZBGpwOIkPF6VsoBblomkv
+         aLrPxmh2/h8blJdcscIs2FaoFMvpMlwoIQuqxX8mxULYK2BljLHOzSNpnGKAF3cTi7
+         KYCpdN1lAGylRs6P8nD7QtpUfEKKlln7acmpOYiQ=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20180910125103eucas1p19706c6ccaf6155e7d14ea4aafab39a44~TCuIPLCX-0751307513eucas1p14;
+        Mon, 10 Sep 2018 12:51:03 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id A0.56.04441.7B8669B5; Mon, 10
+        Sep 2018 13:51:03 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20180910125103eucas1p1e7da7341048a5e54a89e21a94559f576~TCuHaF7jg0750707507eucas1p1q;
+        Mon, 10 Sep 2018 12:51:03 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20180910125102eusmtrp13e76e8a49e52181906d29f8162f820a1~TCuHJTukm1989119891eusmtrp1a;
+        Mon, 10 Sep 2018 12:51:02 +0000 (GMT)
+X-AuditID: cbfec7f2-5e3ff70000001159-83-5b9668b7bcfa
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 15.65.04284.6B8669B5; Mon, 10
+        Sep 2018 13:51:02 +0100 (BST)
+Received: from [106.120.53.102] (unknown [106.120.53.102]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20180910125102eusmtip2f693f896e77efb6b32be2af2731c7080~TCuG1rXeb0989509895eusmtip2c;
+        Mon, 10 Sep 2018 12:51:02 +0000 (GMT)
+Subject: Re: [PATCH 3/4] fbdev: Add FBINFO_HIDE_SMEM_START flag
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        DRI Development <dri-devel@lists.freedesktop.org>
+Cc:     Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>, linux-fbdev@vger.kernel.org,
+        Daniel Vetter <daniel.vetter@intel.com>
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Date:   Mon, 10 Sep 2018 14:51:01 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+        Thunderbird/45.3.0
 MIME-Version: 1.0
-In-Reply-To: <38b32d24-6957-4bee-9168-b3afbfcae083@xs4all.nl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20180822085405.10787-3-daniel.vetter@ffwll.ch>
 Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfKDCyMhQoPS4WykIhQG/5bq4wIL+TDfVnmsMwMtLenBVl5Q29TlacvtyYsDI5khQLfZ+RGAWALROm7OyUFdwQvTjKezSNTR0WnndzoEO/LjMFHTsIiz8
- CPbvjOb/QIi+6E2UirAhQ65AeroSkBpIlV69etNERbFuGKGTHXMBPf2BFrgq2L6HIQAqb9vlYuY1IwzXSDWmUn3ili4aUxauyklgxL5Z3msJVKha7RX8YtZ7
- V+SpXtqI/TDhBnwE4K5IVxEm+tbypnwnEyyE7qF8pZX/AnKvuCxu/qtTDkvDhifJSmvNhskXznw6rJdfykK+2XHk2Oi1hDyww/XRf6IcM3ZTqFWwXLE5+AKa
- TVoRocJGmnfUpe9hZUlRlZaX54ghjojGP9SwgZprFpfP6wSdpDI=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLKsWRmVeSWpSXmKPExsWy7djP87rbM6ZFG/y7pmCx8OFdZovlZ9Yx
+        W1z5+p7NYvaEzUwWZ7pzLU70fWC1uLxrDpsDu8fshossHnu/LWDxWLznJZPH/e7jTB6fN8kF
+        sEZx2aSk5mSWpRbp2yVwZVyffJax4A5HxY8pJ5gbGOexdzFyckgImEg09q9k7WLk4hASWMEo
+        8fXtXCYI5wujRPONCWwQzmdGiS+nmlhhWjZ864dKLGeUmDS9Bcp5zyjx4OVUNpAqYQF7iU2P
+        f4ItERGIlzg8YzU7SBGzwCVGickfrjCBJNgErCQmtq9iBLFZBFQl9i7uZeli5OAQFYiQ6D+j
+        DhLmFRCUODnzCQuIzSlgI3Gn/QZYK7OAvMT2t3OYQWZKCCxjl9i+9gw7SC+vQJnEso1JEJe6
+        SDy9fJYNwhaWeHV8C9TTMhKnJ/ewQPROZ5R482splLOeUWLNmWNMEFXWEoePX2QFGcosoCmx
+        fpc+iCkh4ChxsMEOwuSTuPFWEOIcPolJ26YzQ4R5JTrahCBmqElsWLaBDWZr186VzBC2h8S7
+        5y/ZJzAqzkLy5Cwkj81CWLuAkXkVo3hqaXFuemqxYV5quV5xYm5xaV66XnJ+7iZGYKI5/e/4
+        px2MXy8lHWIU4GBU4uHlKJgaLcSaWFZcmXuIUYKDWUmEd5fOtGgh3pTEyqrUovz4otKc1OJD
+        jNIcLErivHxaadFCAumJJanZqakFqUUwWSYOTqkGRhaNVSY+al3z+dlj9pr1vdK4OjXioOWp
+        leeu/PjJyLco2PhN5EGJdW8PdzNrbz2dFyLmp5f71/IOz3NdQ7Nz5+tcvbsefOTYdO/Ltf0e
+        AldZjPZHrld1m9LOVcG5sap606ROLT3f9ml7F0fd2v9q18rJt4QWprnaTQjs5y50ZG1q3Nh/
+        NmT9IiWW4oxEQy3mouJEAM16+YQwAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCIsWRmVeSWpSXmKPExsVy+t/xe7rbMqZFG7xv07ZY+PAus8XyM+uY
+        La58fc9mMXvCZiaLM925Fif6PrBaXN41h82B3WN2w0UWj73fFrB4LN7zksnjfvdxJo/Pm+QC
+        WKP0bIryS0tSFTLyi0tslaINLYz0DC0t9IxMLPUMjc1jrYxMlfTtbFJSczLLUov07RL0Mq5P
+        PstYcIej4seUE8wNjPPYuxg5OSQETCQ2fOtn62Lk4hASWMooseTDe5YuRg6ghIzE8fVlEDXC
+        En+udUHVvGWUmNj6iQkkISxgL7Hp8U+wQSIC8RKdJ04zgthCAgcZJRb8cgZpYBa4xCgxZ+Jj
+        FpAEm4CVxMT2VWBFvAJ2EidPPQSLswioSuxd3AtmiwpESNx62MECUSMocXLmEzCbU8BG4k77
+        DbDFzALqEn/mXWKGsOUltr+dwzyBUXAWkpZZSMpmISlbwMi8ilEktbQ4Nz232FCvODG3uDQv
+        XS85P3cTIzCGth37uXkH46WNwYcYBTgYlXh4OQqmRguxJpYVV+YeYpTgYFYS4d2lMy1aiDcl
+        sbIqtSg/vqg0J7X4EKMp0BMTmaVEk/OB8Z1XEm9oamhuYWlobmxubGahJM573qAySkggPbEk
+        NTs1tSC1CKaPiYNTqoGxfcKOo199WaUeTWH+X7172cXPv9xnM0lX3WR5Z/p6UlnIwR+J649u
+        4Qh+fPv/+0vy+gtS688tyrPsPX6P5/qK6QdWXRQVMvwY16V4Tj5XVenO1AfrozgmzvpvfflY
+        xEKx6Vvv2XBe/uYhml5fHx7LGl+bVuFg/G/LGsaWAp6z3afcwrIVZj1kUGIpzkg01GIuKk4E
+        AE59R763AgAA
+Message-Id: <20180910125103eucas1p1e7da7341048a5e54a89e21a94559f576~TCuHaF7jg0750707507eucas1p1q@eucas1p1.samsung.com>
+X-CMS-MailID: 20180910125103eucas1p1e7da7341048a5e54a89e21a94559f576
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20180822085420epcas1p1725a9444c93e8deb30d253d0fea2d5d6
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180822085420epcas1p1725a9444c93e8deb30d253d0fea2d5d6
+References: <20180822085405.10787-1-daniel.vetter@ffwll.ch>
+        <CGME20180822085420epcas1p1725a9444c93e8deb30d253d0fea2d5d6@epcas1p1.samsung.com>
+        <20180822085405.10787-3-daniel.vetter@ffwll.ch>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/10/2018 01:57 PM, Hans Verkuil wrote:
-> On 09/10/2018 01:25 PM, Hans Verkuil wrote:
->>> +
->>> +Decoding
->>> +========
->>> +
->>> +For each frame, the client is responsible for submitting a request to which the
->>> +following is attached:
->>> +
->>> +* Exactly one frame worth of encoded data in a buffer submitted to the
->>> +  ``OUTPUT`` queue,
->>> +* All the controls relevant to the format being decoded (see below for details).
->>> +
->>> +``CAPTURE`` buffers must not be part of the request, but must be queued
->>> +independently. The driver will pick one of the queued ``CAPTURE`` buffers and
->>> +decode the frame into it. Although the client has no control over which
->>> +``CAPTURE`` buffer will be used with a given ``OUTPUT`` buffer, it is guaranteed
->>> +that ``CAPTURE`` buffers will be returned in decode order (i.e. the same order
->>> +as ``OUTPUT`` buffers were submitted), so it is trivial to associate a dequeued
->>> +``CAPTURE`` buffer to its originating request and ``OUTPUT`` buffer.
->>> +
->>> +If the request is submitted without an ``OUTPUT`` buffer or if one of the
->>> +required controls are missing, then :c:func:`MEDIA_REQUEST_IOC_QUEUE` will return
->>> +``-EINVAL``.
->>
->> Not entirely true: if buffers are missing, then ENOENT is returned. Missing required
->> controls or more than one OUTPUT buffer will result in EINVAL. This per the latest
->> Request API changes.
->>
->>  Decoding errors are signaled by the ``CAPTURE`` buffers being
->>> +dequeued carrying the ``V4L2_BUF_FLAG_ERROR`` flag.
->>
->> Add here that if the reference frame had an error, then all other frames that refer
->> to it should also set the ERROR flag. It is up to userspace to decide whether or
->> not to drop them (part of the frame might still be valid).
->>
->> I am not sure whether this should be documented, but there are some additional
->> restrictions w.r.t. reference frames:
->>
->> Since decoders need access to the decoded reference frames there are some corner
->> cases that need to be checked:
->>
->> 1) V4L2_MEMORY_USERPTR cannot be used for the capture queue: the driver does not
->>    know when a malloced but dequeued buffer is freed, so the reference frame
->>    could suddenly be gone.
->>
->> 2) V4L2_MEMORY_DMABUF can be used, but drivers should check that the dma buffer is
->>    still available AND increase the dmabuf refcount while it is used by the HW.
->>
->> 3) What to do if userspace has requeued a buffer containing a reference frame,
->>    and you want to decode a B/P-frame that refers to that buffer? We need to
->>    check against that: I think that when you queue a capture buffer whose index
->>    is used in a pending request as a reference frame, than that should fail with
->>    an error. And trying to queue a request referring to a buffer that has been
->>    requeued should also fail.
->>
->> We might need to add some support for this in v4l2-mem2mem.c or vb2.
->>
->> We will have similar (but not quite identical) issues with stateless encoders.
-> 
-> Related to this is the question whether buffer indices that are used to refer
-> to reference frames should refer to the capture or output queue.
-> 
-> Using capture indices works if you never queue more than one request at a time:
-> you know exactly what the capture buffer index is of the decoded I-frame, and
-> you can use that in the following requests.
-> 
-> But if multiple requests are queued, then you don't necessarily know to which
-> capture buffer an I-frame will be decoded, so then you can't provide this index
-> to following B/P-frames. This puts restrictions on userspace: you can only
-> queue B/P-frames once you have decoded the I-frame. This might be perfectly
-> acceptable, though.
-> 
-> Using output buffer indices will work (the driver will know to which capture
-> buffer index the I-frames mapped), but it requires that the output buffer that
-> contained a reference frame isn't requeued, since that means that the driver
-> will lose this mapping. I think this will make things too confusing, though.
-> 
-> A third option is that you don't refer to reference frames by buffer index,
-> but instead by some other counter (sequence counter, perhaps?).
 
-Definitely not sequence number, since it has the same problem as buffer index.
+On 08/22/2018 10:54 AM, Daniel Vetter wrote:
+> DRM drivers really, really, really don't want random userspace to
+> share buffer behind it's back, bypassing the dma-buf buffer sharing
+> machanism. For that reason we've ruthlessly rejected any IOCTL
+> exposing the physical address of any graphics buffer.
+> 
+> Unfortunately fbdev comes with that built-in. We could just set
+> smem_start to 0, but that means we'd have to hand-roll our own fb_mmap
+> implementation. For good reasons many drivers do that, but
+> smem_start/length is still super convenient.
+> 
+> Hence instead just stop the leak in the ioctl, to keep fb mmap working
+> as-is. A second patch will set this flag for all drm drivers.
+> 
+> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+> Cc: linux-fbdev@vger.kernel.org
+> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
 
-This could be a value relative to the frame you are trying to decode: i.e. 'use
-the capture buffer from X frames ago'. This makes it index independent and is
-still easy to keep track of inside the driver and application.
+Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Regards,
-
-	Hans
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
