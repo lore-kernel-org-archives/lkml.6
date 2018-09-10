@@ -2,126 +2,98 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63E51C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:51:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 062DBC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:51:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25E33204FD
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:51:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25E33204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B2057204FD
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:51:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jBzK/M/Y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2057204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728558AbeIJUqC (ORCPT
+        id S1728602AbeIJUqK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 16:46:02 -0400
-Received: from mga12.intel.com ([192.55.52.136]:40965 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728101AbeIJUqB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 16:46:01 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2018 08:51:18 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,356,1531810800"; 
-   d="scan'208";a="88753322"
-Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
-  by fmsmga001.fm.intel.com with SMTP; 10 Sep 2018 08:51:13 -0700
-Received: by stinkbox (sSMTP sendmail emulation); Mon, 10 Sep 2018 18:51:13 +0300
-Date:   Mon, 10 Sep 2018 18:51:13 +0300
-From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Dou Liyang <douly.fnst@cn.fujitsu.com>,
-        Pavel Tatashin <pasha.tatashin@microsoft.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH] Revert "x86/tsc: Consolidate init code"
-Message-ID: <20180910155112.GT5565@intel.com>
-References: <20180910121925.27682-1-ville.syrjala@linux.intel.com>
- <alpine.DEB.2.21.1809101443290.1292@nanos.tec.linutronix.de>
- <20180910140710.GR5565@intel.com>
- <20180910144720.GA28349@zn.tnic>
- <20180910150910.GS5565@intel.com>
- <20180910152538.GA4386@zn.tnic>
+        Mon, 10 Sep 2018 16:46:10 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:38655 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728101AbeIJUqJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 16:46:09 -0400
+Received: by mail-wm0-f67.google.com with SMTP id t25-v6so21941898wmi.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 08:51:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=box/eFIx3OHWULUQYhuMFmUTDQAw3Q+uP8OwMJizTfs=;
+        b=jBzK/M/Ykkuboq52cBLrdZj8FO2pKt7xfeaplygt1fZa9M2jArhqvZ5JP0TX3TmqUP
+         6f7XgDSJWpzLdLE7UVJxNC0bDUeyQnaQZsKNb90gZFpyUoQLSg0NwpBebJNRxpCXYlDv
+         OLyJS5kEJMmPF1MF2cFoS15HVTIdWBvFF0TI0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=box/eFIx3OHWULUQYhuMFmUTDQAw3Q+uP8OwMJizTfs=;
+        b=N39c3U+vmcLzofqBWSM6tPk2tEAKQsZx0Zot1u9zxiIENnWUas1kepVljdAHHzGe3O
+         Z5cIe6N+Re6L/TWa/HpZ8qIIbGGH3Gv1v9XYTpr6GzwS1dYCfrySSPZYLGpMZ6pEtxvw
+         HNZpO4n7WhUp2pBFT2jT3H8Vh1NQLNwmx+qAOi1rXqWNSEO9OubLuklCmnRxeL/fcivG
+         p/sAQLHQjjGwaKJH14/9PS1XUuQQNbFYj9YFxOn/D0EmZTVjxVspQl53GJYPgqIn/rW+
+         KVkxjJZPt8C9WNARQf1hYzL1bMMZe2qkYvTWpOxp7DaD+bU3AfO92Hd4CRGNdU8zGFuj
+         +5Ag==
+X-Gm-Message-State: APzg51Anv+GGeF9dFdrylbxbo74056DDX0qPRNaV5E5QtFuDoOsVPK+T
+        cTzxV7tiIG2uDYYqOgxAQuWAkw==
+X-Google-Smtp-Source: ANB0VdZcQBM53miGCjuYeVEgscr3L1+S9WHT1KbTGquw15hQV2iRtd8oHn+ixSPzX3QeIp87lYnJyQ==
+X-Received: by 2002:a1c:1a49:: with SMTP id a70-v6mr1117726wma.91.1536594686160;
+        Mon, 10 Sep 2018 08:51:26 -0700 (PDT)
+Received: from dell ([2.27.167.7])
+        by smtp.gmail.com with ESMTPSA id j2-v6sm27615073wmj.5.2018.09.10.08.51.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 10 Sep 2018 08:51:25 -0700 (PDT)
+Date:   Mon, 10 Sep 2018 16:51:23 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Hans de Goede <hdegoede@redhat.com>, linux-kernel@vger.kernel.org,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v1 3/7] mfd: intel_soc_pmic_crc: Use REGMAP_IRQ_REG()
+ macro
+Message-ID: <20180910155123.GI28860@dell>
+References: <20180830165255.43114-1-andriy.shevchenko@linux.intel.com>
+ <20180830165255.43114-3-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180910152538.GA4386@zn.tnic>
+In-Reply-To: <20180830165255.43114-3-andriy.shevchenko@linux.intel.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 10, 2018 at 05:25:38PM +0200, Borislav Petkov wrote:
-> On Mon, Sep 10, 2018 at 06:09:10PM +0300, Ville Syrj‰l‰ wrote:
-> > But it is a patch, and if it happens to get accepted as is so be
-> > it. If not, it's a good place where to start the conversation on
-> > how to fix the bug in another way.
+On Thu, 30 Aug 2018, Andy Shevchenko wrote:
+
+> Instead of open coding each data structure with regmap IRQresources,
+> use dedicated macro.
 > 
-> Uh, more of that "logic".
+> No functional change intended.
 > 
-> It is a patch but not really, if it is applied, good, if not, also good.
-> WTF dude?
-> 
-> > You guys seem to have a notion that anything which says '[PATCH]'
-> > is somehow final. In my book any patch is up for debate. Nothing
-> > special about this one in that regard.
-> 
-> Well, let's see: imagine you're a maintainer. You get gazillion patches
-> a day. And you think, oh well, I need to review and possibly apply this.
-> And then move on to the next one. Because everyone is asking, when is
-> she/he going to apply my damn patches...
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/mfd/intel_soc_pmic_crc.c | 28 +++++++---------------------
+>  1 file changed, 7 insertions(+), 21 deletions(-)
 
-Sounds to me like the maintainer should figure out how to delegate some
-of the load a bit. Or just go on vacation and ignore all mails. I hear
-stress isn't good for you.
-
-> 
-> But nooo, *some* of the patches are special - they're a conversation
-> starter *only*! But also if applied, that's fine too.
-
-That's what all patches are. No should be applying unreviewed patches
-blindly.
-
-Also often a revert is a perfect way to handle regressions. It gets
-the angry users off your back ASAP allowing you to fix the bug
-properly without having to rush it. I only wish all regression I've
-caused would have been caught early enough for a revert to apply
-cleanly. 
-
-Even if the revert isn't applied the fact that the mail has the 
-offending code right there makes the disussion easier. No need to
-git fetch; git show <copy paste sha>; copy paste some code snippets
-into the mail, etc.).
-
-> 
-> What a bunch of bull!
-
-Calm down. No one is out to revert all your patches.
-
-> 
-> What's wrong with sending a mail tagged with "[REGRESSION]" - this looks
-> like the tag people have adopted - and explain what the problem is, what
-> you've bisected it to and what your observations are? Like everyone else
-> reporting bugs/regressions/...
-
-Maybe you can propose a new git-regression tool then? And document that
-you want bugs reported using it? Ideally I'd say it should do almost
-exactly what git revert does except s/revert/regression/. Though I
-suppose it could include the original diff instead of the reverse.
-
-Now, how about we stop this pointless "logic" discussion and
-focus on the techinal stuff from now on?
+Applied, thanks.
 
 -- 
-Ville Syrj‰l‰
-Intel
+Lee Jones [ÊùéÁêºÊñØ]
+Linaro Services Technical Lead
+Linaro.org ‚îÇ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
