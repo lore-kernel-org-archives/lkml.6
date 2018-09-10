@@ -2,143 +2,134 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49E50C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:24:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C44DBC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:26:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F33DB20866
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:24:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5EEFC20866
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:26:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jXSLJXlo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F33DB20866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="aFMwXSGE";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="AF1sa0Hd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EEFC20866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727713AbeIJLQg (ORCPT
+        id S1727473AbeIJLSj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 07:16:36 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:41207 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726405AbeIJLQf (ORCPT
+        Mon, 10 Sep 2018 07:18:39 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:38854 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726405AbeIJLSj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 07:16:35 -0400
-Received: by mail-pl1-f196.google.com with SMTP id b12-v6so9230560plr.8
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Sep 2018 23:24:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=3MmFh5VYNhBbWAgBarErsEIFlbjZvJPeEdHR7yalks8=;
-        b=jXSLJXlot2IR2g7En6xCzJouoS5MAIcvPjxxGHeNhNdxkewv0TeRiuJkK58S6mGHdv
-         CnEfwzqUoPNVTh6snNhv1eUfc7WMDg5fcA1NH+x0binvxbJJ1r+RUGWH1+aoWblULpmM
-         HO6sAjz+7dz1Cd1PKEaFKE0PU+ztrm4eWWF/nOQxa49FVsPEIqXGvr70HVep1A5NcOBx
-         MZrAftjohhWoxPtwHpYzOnLY61y6huNIPdULZf/3WfDJs1s6A2+wzXxBsC2GwrmPU3KM
-         lepmp6NQcphykNAK4Bo/dDmOTkiray0cV8rf879Q73zdoTFSipVcmsZpWTGXXLf786NB
-         lXfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=3MmFh5VYNhBbWAgBarErsEIFlbjZvJPeEdHR7yalks8=;
-        b=QtKNBnGYsxexorRtlHt+zwh8I9bXZJohg3PglWeKrC+Rp2VUmkQABMgxNIwJ7ObsUs
-         SvghZ45nYcSwGtk5pScQId5GtW6rWomQnwBRQVMiB7u1oO4vJnOanMJZWbW9nCb5k/eB
-         kxdpbxXe8yMxZ0HjZWTHdLvREIxGQfGu1E6NSoOb7B9vV+tGRNDzWaJzzQF8nIk4Pjt5
-         qNXpn/iwhmMVDHfal41rjD4qeAw8eSePiBwq1x92k4/OZkIovhV7qP4wnASywJbKaVIW
-         eqBnzaUCaaAY2MyoVJRiajqCRcENAxuyaVKfVTzHirwUs5rXrbYuipMbZm8DktxpCEsh
-         kBrw==
-X-Gm-Message-State: APzg51CMrD51jbtXj+7By9/RtPwiaQpDd6Gi8R+hMsUy2t2v0NdKdnBg
-        ewwtRX6ynnm7MPeKp/hhqcBFmtU9
-X-Google-Smtp-Source: ANB0VdYwY1BEVzHUSZwG2PauzFQWzUu+hfuHu+/oMhmB2V8nB8hDeIBDfWFERedxly7NycDgbhFr5w==
-X-Received: by 2002:a17:902:b089:: with SMTP id p9-v6mr20108057plr.254.1536560650554;
-        Sun, 09 Sep 2018 23:24:10 -0700 (PDT)
-Received: from localhost.localdomain ([104.237.86.186])
-        by smtp.gmail.com with ESMTPSA id e190-v6sm29884955pfc.81.2018.09.09.23.24.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 09 Sep 2018 23:24:10 -0700 (PDT)
-From:   Ocean He <oceanhehy@gmail.com>
-To:     dan.j.williams@intel.com, zwisler@kernel.org,
-        vishal.l.verma@intel.com, dave.jiang@intel.com
-Cc:     linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
-        Ocean He <hehy1@lenovo.com>
-Subject: [PATCH 3/3] libnvdimm, region_devs: reset related seeds when fail to create namespace
-Date:   Mon, 10 Sep 2018 02:21:48 -0400
-Message-Id: <1536560508-24564-4-git-send-email-oceanhehy@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1536560508-24564-1-git-send-email-oceanhehy@gmail.com>
-References: <1536560508-24564-1-git-send-email-oceanhehy@gmail.com>
+        Mon, 10 Sep 2018 07:18:39 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 983A46053B; Mon, 10 Sep 2018 06:26:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1536560772;
+        bh=i4lACEsQgF5s2kirjXBD2e/PQzU10q26/V7kKuu1hRs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=aFMwXSGEcyrbZoQlGNYd5C5JXSnDIPloNbwME4j5u7pEWmIFNrwdG6+S7L5gW60ew
+         F7jXW9LA0reIyaor1WmKwRImJyTytPn94RNHCu+QI1qxhHWls1oi9lyS32pZaKOS/9
+         3IpbJzLgeDru//lmLS4yU+E6OMP1lov1ZHfJmlH8=
+Received: from blr-ubuntu-41.ap.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7FE0860721;
+        Mon, 10 Sep 2018 06:26:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1536560771;
+        bh=i4lACEsQgF5s2kirjXBD2e/PQzU10q26/V7kKuu1hRs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=AF1sa0Hd/EGO5EihjNWzBOkTkZOTLifKQDPP8Tr8lIb4iggUT1dCqyawxl91kYNz3
+         2egWSP/ohVnDpjq4LHyvypMdxDceqi8HZO0ogiRJfLMJHdEsq2RXj8ZdKzk2SBk3YD
+         JRUhzgj5N0+4qd9qQh1IJU63i/yhMn3eEoOzAMTM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7FE0860721
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+From:   Vivek Gautam <vivek.gautam@codeaurora.org>
+To:     joro@8bytes.org, andy.gross@linaro.org, will.deacon@arm.com,
+        robin.murphy@arm.com, bjorn.andersson@linaro.org,
+        iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     david.brown@linaro.org, tfiga@chromium.org, swboyd@chromium.org,
+        linux-kernel@vger.kernel.org, robdclark@gmail.com,
+        Vivek Gautam <vivek.gautam@codeaurora.org>
+Subject: [PATCH v2 0/4] Qcom smmu-500 TLB invalidation errata for sdm845
+Date:   Mon, 10 Sep 2018 11:55:47 +0530
+Message-Id: <20180910062551.28175-1-vivek.gautam@codeaurora.org>
+X-Mailer: git-send-email 2.16.1.72.g5be1f00a9a70
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ocean He <hehy1@lenovo.com>
+Qcom's implementation of arm,mmu-500 on sdm845 has a functional/performance
+errata [1] because of which the TCU cache look ups are stalled during
+invalidation cycle. This is mitigated by serializing all the invalidation
+requests coming to the smmu.
 
-During runtime, namespace creation may fail if blocked by
-commit 15d36fecd0bdc7510b70 ("mm: disallow mappings that conflict for
-devm_memremap_pages()"). To ensure pfn_seed/dax_seed and namespace_seed
-are ready for next namespace creation, here to do detach and reset.
+This patch series addresses this errata by adding new tlb_ops for
+qcom,sdm845-smmu-500 [2]. These ops take context bank locks for all the
+tlb_ops that queue and sync the TLB invalidation requests.
 
-Signed-off-by: Ocean He <hehy1@lenovo.com>
----
- drivers/nvdimm/region_devs.c | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+Besides adding locks, there's a way to expadite these TLB invalidations
+for display and camera devices by turning off the 'wait-for-safe' logic
+in hardware that holds the tlb invalidations until a safe level.
+This 'wait-for-safe' logic is controlled by toggling a chicken bit
+through a secure register. This secure register is accessed by making an
+explicit SCM call into the EL3 firmware.
+There are two ways of handling this logic -
+ * Firmware, such as tz present on sdm845-mtp devices has a handler to do
+   all the register access and bit set/clear. So is the handling in
+   downstream arm-smmu driver [3].
+ * Other firmwares can have handlers to just read/write this secure
+   register. In such cases the kernel make io_read/writel scm calls to
+   modify the register.
+This patch series adds APIs in qcom-scm driver to handle both of these
+cases.
 
-diff --git a/drivers/nvdimm/region_devs.c b/drivers/nvdimm/region_devs.c
-index fa37afc..4c46fb6 100644
---- a/drivers/nvdimm/region_devs.c
-+++ b/drivers/nvdimm/region_devs.c
-@@ -703,7 +703,27 @@ void nd_mapping_free_labels(struct nd_mapping *nd_mapping)
- 		kfree(label_ent);
- 	}
- }
-+/*
-+ * To ensure pfn_seed/dax_seed and namespace_seed are ready for
-+ * next namespace creation, here to do detach and reset.
-+ */
-+void nd_region_detach_and_reset(struct device *dev,
-+		struct nd_region *nd_region)
-+{
-+	/* Only nd_pmem has been verified, fix me for other dev type. */
-+	if (!is_nd_pmem(&nd_region->dev))
-+		return;
- 
-+	if (is_nd_pfn(dev) || is_nd_dax(dev)) {
-+		struct nd_pfn *nd_pfn = to_nd_pfn_safe(dev);
-+		struct nd_namespace_common *ndns = to_ndns(nd_region->ns_seed);
-+
-+		if (nd_pfn->ndns == ndns && ndns->claim == dev) {
-+			nd_detach_and_reset(dev, &nd_pfn->ndns);
-+			nd_region_reset_ns_seed(nd_region);
-+			}
-+	}
-+}
- /*
-  * Upon successful probe/remove, take/release a reference on the
-  * associated interleave set (if present), and plant new btt + namespace
-@@ -774,6 +794,20 @@ static void nd_region_notify_driver_action(struct nvdimm_bus *nvdimm_bus,
- 			nd_region_create_ns_seed(nd_region);
- 		nvdimm_bus_unlock(dev);
- 	}
-+	if (is_nd_pfn(dev) && !probe) {
-+		nd_region = to_nd_region(dev->parent);
-+		nvdimm_bus_lock(dev);
-+		if (nd_region->pfn_seed == dev)
-+			nd_region_detach_and_reset(dev, nd_region);
-+		nvdimm_bus_unlock(dev);
-+	}
-+	if (is_nd_dax(dev) && !probe) {
-+		nd_region = to_nd_region(dev->parent);
-+		nvdimm_bus_lock(dev);
-+		if (nd_region->dax_seed == dev)
-+			nd_region_detach_and_reset(dev, nd_region);
-+		nvdimm_bus_unlock(dev);
-+	}
- }
- 
- void nd_region_probe_success(struct nvdimm_bus *nvdimm_bus, struct device *dev)
+Lastly, since these TLB invalidations can happen in atomic contexts
+there's a need to add atomic versions of qcom_scm_io_readl/writel() and
+qcom_scm_call() APIs. The traditional scm calls take mutex and we therefore
+can't use these calls in atomic contexts.
+
+This patch series is adapted version of how the errata is handled in
+downstream [1].
+
+Changes since v1:
+ * Addressed Will and Robin's comments:
+    - Dropped the patch[4] that forked out __arm_smmu_tlb_inv_range_nosync(),
+      and __arm_smmu_tlb_sync().
+    - Cleaned up the errata patch further to use downstream polling mechanism
+      for tlb sync.
+ * No change in SCM call patches - patches 1 to 3.
+
+[1] https://source.codeaurora.org/quic/la/kernel/msm-4.9/tree/drivers/iommu/arm-smmu.c?h=msm-4.9#n4842
+[2] https://lore.kernel.org/patchwork/patch/974114/
+[3] https://source.codeaurora.org/quic/la/kernel/msm-4.9/tree/drivers/iommu/arm-smmu.c?h=msm-4.9#n4864
+[4] https://patchwork.kernel.org/patch/10565349/
+
+Vivek Gautam (4):
+  firmware: qcom_scm-64: Add atomic version of qcom_scm_call
+  firmware/qcom_scm: Add atomic version of io read/write APIs
+  firmware/qcom_scm: Add scm call to handle smmu errata
+  iommu/arm-smmu: Add support to handle Qcom's TLBI serialization errata
+
+ drivers/firmware/qcom_scm-32.c |  17 ++++
+ drivers/firmware/qcom_scm-64.c | 181 +++++++++++++++++++++++++++++++----------
+ drivers/firmware/qcom_scm.c    |  18 ++++
+ drivers/firmware/qcom_scm.h    |   9 ++
+ drivers/iommu/arm-smmu-regs.h  |   2 +
+ drivers/iommu/arm-smmu.c       | 133 +++++++++++++++++++++++++++++-
+ include/linux/qcom_scm.h       |   6 ++
+ 7 files changed, 320 insertions(+), 46 deletions(-)
+
 -- 
-1.8.3.1
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
 
