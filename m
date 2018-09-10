@@ -2,94 +2,117 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FA04C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:28:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD553C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:28:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD5C82086E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:28:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ToyVfpHi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD5C82086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 6DAF42086E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:28:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DAF42086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728588AbeIJUWr (ORCPT
+        id S1728677AbeIJUWz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 16:22:47 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:33399 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727856AbeIJUWr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 16:22:47 -0400
-Received: by mail-wm0-f66.google.com with SMTP id r1-v6so5752944wmh.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 08:28:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=SVUMosySlGmO+E67ykB6ytXU1f+ejqD3RhE+eKO2LCQ=;
-        b=ToyVfpHi5l5MtuXUdbnhwIRaCcvmkelWSFjGHEBimzt5ycfZ3dkrhURzMlmWCbey1m
-         pCUXWrhEXGhyfcwDzrLZeIn4HrjlE1dCzOK+3iffdhi4PWOBJ+vW99squABjaxCGzoV6
-         +FFz5WUpZceOj4Yv6jurIRMA4NoVDqWOi4Qe8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=SVUMosySlGmO+E67ykB6ytXU1f+ejqD3RhE+eKO2LCQ=;
-        b=FtUtEdd8w5xKc0osirEmt4TirlqCu7qOCl8hy5ukIPPLjUVNU7hyYo8mFiJQGVZKqQ
-         3shs3gwrYmdtLtZT41+xOOeI2oVuZ/EAgl2+RXZGVwuFgKICKnEpGKusrsWdMcfZhnt2
-         rAN0GaaOAwcYF8ewdNPT/1ktAxJ3rr6jalOv4brw0kNXPlZcMcHi19i+Lhqgrq2LScBu
-         ekXHCsCssf/sCTGrP4N9jEcTYgCrOM0b09vyIzGgKyKE8T2FB3Fj7/Oi6k4ek1JmcToE
-         AksE4agZl/0AEPpAF10sG1um3wT/AuBBDcIXcHvnZnle5s3RUQ4cBhPi20PWbo/nZIx/
-         3CDQ==
-X-Gm-Message-State: APzg51ColV4ugqUiqB9tvo8CSUywIskYLaym95TcYFTpc82zHtAa7f0y
-        zC6Icvjru3AIg49jEe2OYKsNpg==
-X-Google-Smtp-Source: ANB0VdafsfEj5coF2C7MmhyTd4fizRrfIO3ZnVqwT0smTEg8NBjuZkbwlyplmyruR0833olvXEZ/Xg==
-X-Received: by 2002:a7b:c04c:: with SMTP id u12-v6mr1151608wmc.24.1536593289165;
-        Mon, 10 Sep 2018 08:28:09 -0700 (PDT)
-Received: from dell ([2.27.167.7])
-        by smtp.gmail.com with ESMTPSA id b22-v6sm16212592wme.48.2018.09.10.08.28.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 10 Sep 2018 08:28:08 -0700 (PDT)
-Date:   Mon, 10 Sep 2018 16:28:06 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc:     patches@opensource.cirrus.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mfd: madera: Remove unused forward reference
-Message-ID: <20180910152806.GA28860@dell>
-References: <20180828084158.20554-1-rf@opensource.cirrus.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+        Mon, 10 Sep 2018 16:22:55 -0400
+Received: from mga06.intel.com ([134.134.136.31]:16003 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727856AbeIJUWz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 16:22:55 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2018 08:28:18 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,356,1531810800"; 
+   d="scan'208";a="72050113"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.20])
+  by orsmga008.jf.intel.com with ESMTP; 10 Sep 2018 08:28:17 -0700
+Message-ID: <1536593297.11460.72.camel@intel.com>
+Subject: Re: [PATCH v6 5/5] x86/kvm: Avoid dynamic allocation of pvclock
+ data when SEV is active
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Brijesh Singh <brijesh.singh@amd.com>, Borislav Petkov <bp@suse.de>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?UTF-8?Q?Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Date:   Mon, 10 Sep 2018 08:28:17 -0700
+In-Reply-To: <097eb5f5-2cd9-8b08-32c5-d90c8e0cbb6d@amd.com>
+References: <1536343050-18532-1-git-send-email-brijesh.singh@amd.com>
+         <1536343050-18532-6-git-send-email-brijesh.singh@amd.com>
+         <20180910122727.GE21815@zn.tnic>
+         <026d5ca5-7b77-de6c-477e-ff39f0291ac0@amd.com>
+         <1536586152.11460.40.camel@intel.com>
+         <097eb5f5-2cd9-8b08-32c5-d90c8e0cbb6d@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180828084158.20554-1-rf@opensource.cirrus.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 28 Aug 2018, Richard Fitzgerald wrote:
-
-> The madera_irqchip_pdata struct was replaced by the irq_flags
-> member of struct madera_pdata so the forward reference is
-> obsolete.
+On Mon, 2018-09-10 at 10:10 -0500, Brijesh Singh wrote:
 > 
-> Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
-> ---
->  include/linux/mfd/madera/pdata.h | 1 -
->  1 file changed, 1 deletion(-)
+> On 09/10/2018 08:29 AM, Sean Christopherson wrote:
+> ...
+> 
+> > > > > + */
+> > > > > +static struct pvclock_vsyscall_time_info
+> > > > > +			hv_clock_aux[NR_CPUS] __decrypted_aux;
+> > > > Hmm, so worst case that's 64 4K pages:
+> > > > 
+> > > > (8192*32)/4096 = 64 4K pages.
+> > > We can minimize the worst case memory usage. The number of VCPUs
+> > > supported by KVM maybe less than NR_CPUS. e.g Currently KVM_MAX_VCPUS is
+> > > set to 288
+> > KVM_MAX_VCPUS is a property of the host, whereas this code runs in the
+> > guest, e.g. KVM_MAX_VCPUS could be 2048 in the host for all we know.
+> > 
+> 
+> IIRC, during guest creation time qemu will check the host supported
+> VCPUS count. If count is greater than KVM_MAX_VCPUS then it will
+> fail to launch guest (or fail to hot plug vcpus). In other words, the
+> number of vcpus in a KVM guest will never to > KVM_MAX_VCPUS.
+> 
+> Am I missing something ?
 
-Applied, thanks.
+KVM_MAX_VCPUS is a definition for use in the *host*, it's even defined
+in kvm_host.h.  The guest's pvclock code won't get magically recompiled
+if KVM_MAX_VCPUS is changed in the host.  KVM_MAX_VCPUS is an arbitrary
+value in the sense that there isn't a fundamental hard limit, i.e. the
+value can be changed, either for a custom KVM build or in mainline,
+e.g. it was bumped in 2016:
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+commit 682f732ecf7396e9d6fe24d44738966699fae6c0
+Author: Radim Krčmář <rkrcmar@redhat.com>
+Date:   Tue Jul 12 22:09:29 2016 +0200
+
+    KVM: x86: bump MAX_VCPUS to 288
+    
+    288 is in high demand because of Knights Landing CPU.
+    We cannot set the limit to 640k, because that would be wasting space.
+    
+    Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
+    Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
+    Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 074b5c760327..21a40dc7aad6 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -34,7 +34,7 @@
+ #include <asm/asm.h>
+ #include <asm/kvm_page_track.h>
+ 
+-#define KVM_MAX_VCPUS 255
++#define KVM_MAX_VCPUS 288
+ #define KVM_SOFT_MAX_VCPUS 240
+ #define KVM_USER_MEM_SLOTS 509
+ /* memory slots that are not exposed to userspace */
