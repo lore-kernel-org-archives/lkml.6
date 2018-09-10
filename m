@@ -2,120 +2,216 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC7BFC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 03:02:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06EFAC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 03:03:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 662C6204FD
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 03:02:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 662C6204FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tuyoix.net
+	by mail.kernel.org (Postfix) with ESMTP id A7792204FD
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 03:03:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7792204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726396AbeIJHyk (ORCPT
+        id S1726739AbeIJHzm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 03:54:40 -0400
-Received: from smtp-out-no.shaw.ca ([64.59.134.13]:58192 "EHLO
-        smtp-out-no.shaw.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726106AbeIJHyk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 03:54:40 -0400
-X-Greylist: delayed 18536 seconds by postgrey-1.27 at vger.kernel.org; Mon, 10 Sep 2018 03:54:39 EDT
-Received: from fanir.tuyoix.net ([68.150.218.192])
-        by shaw.ca with ESMTP
-        id z7f8fwEklWppDz7f9fTzwb; Sun, 09 Sep 2018 15:54:36 -0600
-X-Authority-Analysis: v=2.3 cv=YIcrNiOx c=1 sm=1 tr=0
- a=LfNn7serMq+1bQZBlMsSfQ==:117 a=LfNn7serMq+1bQZBlMsSfQ==:17
- a=JBFolyDoGHsA:10 a=nlC_4_pT8q9DhB4Ho9EA:9 a=3I1X_3ewAAAA:8
- a=OxNYDVJMC5hWt7gQjnkA:9 a=QEXdDO2ut3YA:10 a=VG9N9RgkD3hcbI6YpJ1l:22
-Received: from CLUIJ (cluij.tuyoix.net [192.168.144.15])
-        (authenticated bits=0)
-        by fanir.tuyoix.net (8.15.2/8.15.2) with ESMTPSA id w89LsWgO015563
-        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Sun, 9 Sep 2018 15:54:33 -0600
-Date:   Sun, 9 Sep 2018 15:54:19 -0600 (Mountain Daylight Time)
-From:   Marc Aurele La France <tsi@tuyoix.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org,
-        Andreas Gruenbacher <agruenba@redhat.com>
-Subject: sysfs:  Do not return POSIX ACL xattrs via listxattr()
-Message-ID: <alpine.LNX.2.20.1809091544070.15534@fanir.tuyoix.net>
-User-Agent: Alpine 2.20 (WNT 67 2015-01-07)
+        Mon, 10 Sep 2018 03:55:42 -0400
+Received: from mga04.intel.com ([192.55.52.120]:49200 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725972AbeIJHzm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 03:55:42 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Sep 2018 20:01:53 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,354,1531810800"; 
+   d="scan'208";a="72917995"
+Received: from btwcube1.sh.intel.com (HELO debian) ([10.67.104.194])
+  by orsmga006.jf.intel.com with ESMTP; 09 Sep 2018 20:01:51 -0700
+Date:   Mon, 10 Sep 2018 11:00:53 +0800
+From:   Tiwei Bie <tiwei.bie@intel.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     jasowang@redhat.com, virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        virtio-dev@lists.oasis-open.org, wexu@redhat.com,
+        jfreimann@redhat.com
+Subject: Re: [virtio-dev] Re: [PATCH net-next v2 0/5] virtio: support packed
+ ring
+Message-ID: <20180910030053.GA15645@debian>
+References: <20180711022711.7090-1-tiwei.bie@intel.com>
+ <20180827170005-mutt-send-email-mst@kernel.org>
+ <20180907012225.GA32677@debian>
+ <20180907084509-mutt-send-email-mst@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="79591-22480-1536530061=:4216"
-X-CMAE-Envelope: MS4wfE7BOFHeJIs/jCQu2lY2bQx8vbMOZyBDzScoYtPfC87HnWNLCFh09wx0EGwHwbFHGP51/XHy87u6MmZYdjMsJ/vRJDanfl45eKcSr3lgCpTHGUnKewf5
- eId1nUtKE+7g19l6IJzwto02WJ+UctX9vv5O1+BXKqHUcSWkhF9zJjY3Fie168X7eVB4RyidnhkBYep8JvlIIbLKK9HcNNFIWFFw1zoHD4IXvMPPdImlrW/r
- yfqmz7vyz9a006x/lKMfp5eIQYna0ugbCVAnpA3fj53IBhQNJJuvCjauplqL/CkRU2P4gXjlOkfQYXwpcu5gWgFU+p+jHrI1QYgPMPk+4RbVC1qUNiwgypNP
- 077IXSxeO+nS/xlpeOWQR4eWfIjvng==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180907084509-mutt-send-email-mst@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Fri, Sep 07, 2018 at 09:00:49AM -0400, Michael S. Tsirkin wrote:
+> On Fri, Sep 07, 2018 at 09:22:25AM +0800, Tiwei Bie wrote:
+> > On Mon, Aug 27, 2018 at 05:00:40PM +0300, Michael S. Tsirkin wrote:
+> > > Are there still plans to test the performance with vost pmd?
+> > > vhost doesn't seem to show a performance gain ...
+> > > 
+> > 
+> > I tried some performance tests with vhost PMD. In guest, the
+> > XDP program will return XDP_DROP directly. And in host, testpmd
+> > will do txonly fwd.
+> > 
+> > When burst size is 1 and packet size is 64 in testpmd and
+> > testpmd needs to iterate 5 Tx queues (but only the first two
+> > queues are enabled) to prepare and inject packets, I got ~12%
+> > performance boost (5.7Mpps -> 6.4Mpps). And if the vhost PMD
+> > is faster (e.g. just need to iterate the first two queues to
+> > prepare and inject packets), then I got similar performance
+> > for both rings (~9.9Mpps) (packed ring's performance can be
+> > lower, because it's more complicated in driver.)
+> > 
+> > I think packed ring makes vhost PMD faster, but it doesn't make
+> > the driver faster. In packed ring, the ring is simplified, and
+> > the handling of the ring in vhost (device) is also simplified,
+> > but things are not simplified in driver, e.g. although there is
+> > no desc table in the virtqueue anymore, driver still needs to
+> > maintain a private desc state table (which is still managed as
+> > a list in this patch set) to support the out-of-order desc
+> > processing in vhost (device).
+> > 
+> > I think this patch set is mainly to make the driver have a full
+> > functional support for the packed ring, which makes it possible
+> > to leverage the packed ring feature in vhost (device). But I'm
+> > not sure whether there is any other better idea, I'd like to
+> > hear your thoughts. Thanks!
+> 
+> Just this: Jens seems to report a nice gain with virtio and
+> vhost pmd across the board. Try to compare virtio and
+> virtio pmd to see what does pmd do better?
 
---79591-22480-1536530061=:4216
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+The virtio PMD (drivers/net/virtio) in DPDK doesn't need to share
+the virtio ring operation code with other drivers and is highly
+optimized for network. E.g. in Rx, the Rx burst function won't
+chain descs. So the ID management for the Rx ring can be quite
+simple and straightforward, we just need to initialize these IDs
+when initializing the ring and don't need to change these IDs
+in data path anymore (the mergable Rx code in that patch set
+assumes the descs will be written back in order, which should be
+fixed. I.e., the ID in the desc should be used to index vq->descx[]).
+The Tx code in that patch set also assumes the descs will be
+written back by device in order, which should be fixed.
 
-Greetings.
+But in kernel virtio driver, the virtio_ring.c is very generic.
+The enqueue (virtqueue_add()) and dequeue (virtqueue_get_buf_ctx())
+functions need to support all the virtio devices and should be
+able to handle all the possible cases that may happen. So although
+the packed ring can be very efficient in some cases, currently
+the room to optimize the performance in kernel's virtio_ring.c
+isn't that much. If we want to take the fully advantage of the
+packed ring's efficiency, we need some further e.g. API changes
+in virtio_ring.c, which shouldn't be part of this patch set. So
+I still think this patch set is mainly to make the kernel virtio
+driver to have a full functional support of the packed ring, and
+we can't expect impressive performance boost with it.
 
-Commit 786534b92f3ce68f4afc8a761c80b76887797b0a "tmpfs: listxattr
-should include POSIX ACL xattrs", which first appeared in 4.5 kernels,
-introduced a regression whereby listxattr() syscalls on anything in
-sysfs, or its mountpoint, return the name of the two POSIX ACL xattrs,
-but attempts to retrieve these values are denied with EOPNOTSUP.  For
-example ...
-
-        # getfattr -d --match=- /sys
-        /sys: system.posix_acl_access: Operation not supported
-        /sys: system.posix_acl_default: Operation not supported
-        #
-
-This inconsistent behaviour confuses rsync(1) (among others) when it
-runs into a sysfs mountpoint, even when told to not descend into it.
-This issue occurs because simple_xattr_list() does not correctly deal
-with cached ACLs.
-
-The suggested fix below was developed with a 4.18.7 kernel, but should
-apply, modulo patch fuzz, to any kernel >= 4.7.  A fix for 4.5 <=
-kernels < 4.7 is trivially different, but I won't bother given such
-kernels are no longer maintained.
-
-Note that the only other simple_xattr_list() caller, shmem, avoids
-this glitch by previously calling cache_no_acl() on all inodes it
-creates, so perhaps sysfs/kernfs should do the same.
-
-Please Reply-To-All.
-
-Thanks and have a great day.
-
-Marc.
-
-Signed-off-by: Marc Aurèle La France <tsi@tuyoix.net>
-
---- a/fs/xattr.c
-+++ b/fs/xattr.c
-@@ -949,13 +949,13 @@ ssize_t simple_xattr_list(struct inode *inode, struct simple_xattrs *xattrs,
- 	int err = 0;
-
- #ifdef CONFIG_FS_POSIX_ACL
--	if (inode->i_acl) {
-+	if (inode->i_acl && !is_uncached_acl(inode->i_acl)) {
- 		err = xattr_list_one(&buffer, &remaining_size,
- 				     XATTR_NAME_POSIX_ACL_ACCESS);
- 		if (err)
- 			return err;
- 	}
--	if (inode->i_default_acl) {
-+	if (inode->i_default_acl && !is_uncached_acl(inode->i_default_acl)) {
- 		err = xattr_list_one(&buffer, &remaining_size,
- 				     XATTR_NAME_POSIX_ACL_DEFAULT);
- 		if (err)
---79591-22480-1536530061=:4216--
+> 
+> 
+> > 
+> > > 
+> > > On Wed, Jul 11, 2018 at 10:27:06AM +0800, Tiwei Bie wrote:
+> > > > Hello everyone,
+> > > > 
+> > > > This patch set implements packed ring support in virtio driver.
+> > > > 
+> > > > Some functional tests have been done with Jason's
+> > > > packed ring implementation in vhost:
+> > > > 
+> > > > https://lkml.org/lkml/2018/7/3/33
+> > > > 
+> > > > Both of ping and netperf worked as expected.
+> > > > 
+> > > > v1 -> v2:
+> > > > - Use READ_ONCE() to read event off_wrap and flags together (Jason);
+> > > > - Add comments related to ccw (Jason);
+> > > > 
+> > > > RFC (v6) -> v1:
+> > > > - Avoid extra virtio_wmb() in virtqueue_enable_cb_delayed_packed()
+> > > >   when event idx is off (Jason);
+> > > > - Fix bufs calculation in virtqueue_enable_cb_delayed_packed() (Jason);
+> > > > - Test the state of the desc at used_idx instead of last_used_idx
+> > > >   in virtqueue_enable_cb_delayed_packed() (Jason);
+> > > > - Save wrap counter (as part of queue state) in the return value
+> > > >   of virtqueue_enable_cb_prepare_packed();
+> > > > - Refine the packed ring definitions in uapi;
+> > > > - Rebase on the net-next tree;
+> > > > 
+> > > > RFC v5 -> RFC v6:
+> > > > - Avoid tracking addr/len/flags when DMA API isn't used (MST/Jason);
+> > > > - Define wrap counter as bool (Jason);
+> > > > - Use ALIGN() in vring_init_packed() (Jason);
+> > > > - Avoid using pointer to track `next` in detach_buf_packed() (Jason);
+> > > > - Add comments for barriers (Jason);
+> > > > - Don't enable RING_PACKED on ccw for now (noticed by Jason);
+> > > > - Refine the memory barrier in virtqueue_poll();
+> > > > - Add a missing memory barrier in virtqueue_enable_cb_delayed_packed();
+> > > > - Remove the hacks in virtqueue_enable_cb_prepare_packed();
+> > > > 
+> > > > RFC v4 -> RFC v5:
+> > > > - Save DMA addr, etc in desc state (Jason);
+> > > > - Track used wrap counter;
+> > > > 
+> > > > RFC v3 -> RFC v4:
+> > > > - Make ID allocation support out-of-order (Jason);
+> > > > - Various fixes for EVENT_IDX support;
+> > > > 
+> > > > RFC v2 -> RFC v3:
+> > > > - Split into small patches (Jason);
+> > > > - Add helper virtqueue_use_indirect() (Jason);
+> > > > - Just set id for the last descriptor of a list (Jason);
+> > > > - Calculate the prev in virtqueue_add_packed() (Jason);
+> > > > - Fix/improve desc suppression code (Jason/MST);
+> > > > - Refine the code layout for XXX_split/packed and wrappers (MST);
+> > > > - Fix the comments and API in uapi (MST);
+> > > > - Remove the BUG_ON() for indirect (Jason);
+> > > > - Some other refinements and bug fixes;
+> > > > 
+> > > > RFC v1 -> RFC v2:
+> > > > - Add indirect descriptor support - compile test only;
+> > > > - Add event suppression supprt - compile test only;
+> > > > - Move vring_packed_init() out of uapi (Jason, MST);
+> > > > - Merge two loops into one in virtqueue_add_packed() (Jason);
+> > > > - Split vring_unmap_one() for packed ring and split ring (Jason);
+> > > > - Avoid using '%' operator (Jason);
+> > > > - Rename free_head -> next_avail_idx (Jason);
+> > > > - Add comments for virtio_wmb() in virtqueue_add_packed() (Jason);
+> > > > - Some other refinements and bug fixes;
+> > > > 
+> > > > Thanks!
+> > > > 
+> > > > Tiwei Bie (5):
+> > > >   virtio: add packed ring definitions
+> > > >   virtio_ring: support creating packed ring
+> > > >   virtio_ring: add packed ring support
+> > > >   virtio_ring: add event idx support in packed ring
+> > > >   virtio_ring: enable packed ring
+> > > > 
+> > > >  drivers/s390/virtio/virtio_ccw.c   |   14 +
+> > > >  drivers/virtio/virtio_ring.c       | 1365 ++++++++++++++++++++++------
+> > > >  include/linux/virtio_ring.h        |    8 +-
+> > > >  include/uapi/linux/virtio_config.h |    3 +
+> > > >  include/uapi/linux/virtio_ring.h   |   43 +
+> > > >  5 files changed, 1157 insertions(+), 276 deletions(-)
+> > > > 
+> > > > -- 
+> > > > 2.18.0
+> > > 
+> > > ---------------------------------------------------------------------
+> > > To unsubscribe, e-mail: virtio-dev-unsubscribe@lists.oasis-open.org
+> > > For additional commands, e-mail: virtio-dev-help@lists.oasis-open.org
+> > > 
