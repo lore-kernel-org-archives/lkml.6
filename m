@@ -2,71 +2,78 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5037DC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:14:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 079F8C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:15:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3C4420870
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:14:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="f5sI59Rp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3C4420870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=verge.net.au
+	by mail.kernel.org (Postfix) with ESMTP id BE0FD206BB
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:15:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE0FD206BB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728380AbeIJSI1 (ORCPT
+        id S1728616AbeIJSJM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 14:08:27 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:33173 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727799AbeIJSI1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 14:08:27 -0400
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 3A36825BE2C;
-        Mon, 10 Sep 2018 23:14:24 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1536585264; bh=vdmoJiMlvCmXIPvMsHzmN7h6aVra4agjdkM8rOevAIk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=f5sI59RpRl8UcTnciLDcJKUnUwq8e3Hkw4zDNFFhdtltovmpX6FQcNp3TkWELpVgW
-         Zn+Ec0jgoYnAAhzzqJKsmmBK+G8AJVoiwI79vegxE4RCeg9be4ZZlF3U+9EFngCEih
-         k/SiBIrAMrPL6N3Bk7Oj3WmGQeenNoULDyu1Rm/8=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 3994694017E; Mon, 10 Sep 2018 15:14:22 +0200 (CEST)
-Date:   Mon, 10 Sep 2018 15:14:22 +0200
-From:   Simon Horman <horms@verge.net.au>
-To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] phy: renesas: convert to SPDX identifiers
-Message-ID: <20180910131421.jwn6mbv7chypoalf@verge.net.au>
-References: <87zhwuoykl.wl-kuninori.morimoto.gx@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87zhwuoykl.wl-kuninori.morimoto.gx@renesas.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Mon, 10 Sep 2018 14:09:12 -0400
+Received: from mga05.intel.com ([192.55.52.43]:45309 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728369AbeIJSJM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 14:09:12 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2018 06:15:10 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,355,1531810800"; 
+   d="scan'208";a="90428126"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.20])
+  by orsmga002.jf.intel.com with ESMTP; 10 Sep 2018 06:15:10 -0700
+Message-ID: <1536585310.11460.34.camel@intel.com>
+Subject: Re: [PATCH v6 4/5] x86/kvm: use __decrypted attribute in shared
+ variables
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Borislav Petkov <bp@suse.de>, Brijesh Singh <brijesh.singh@amd.com>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?UTF-8?Q?Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Date:   Mon, 10 Sep 2018 06:15:10 -0700
+In-Reply-To: <20180910120416.GD21815@zn.tnic>
+References: <1536343050-18532-1-git-send-email-brijesh.singh@amd.com>
+         <1536343050-18532-5-git-send-email-brijesh.singh@amd.com>
+         <20180910120416.GD21815@zn.tnic>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 07, 2018 at 02:08:30AM +0000, Kuninori Morimoto wrote:
+On Mon, 2018-09-10 at 14:04 +0200, Borislav Petkov wrote:
+> On Fri, Sep 07, 2018 at 12:57:29PM -0500, Brijesh Singh wrote:
+> > 
+> > Commit: 368a540e0232 (x86/kvmclock: Remove memblock dependency)
+> > caused SEV guest regression.
+> When mentioning a commit in the commit message, put it on a separate
+> line, like this:
 > 
-> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> "Commit
 > 
-> This patch updates license to use SPDX-License-Identifier
-> instead of verbose license text.
+>   368a540e0232 (x86/kvmclock: Remove memblock dependency)
 > 
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> caused a SEV guest regression."
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Heh, that was the original formatting until I asked him to change it:
+https://lkml.org/lkml/2018/8/29/809.  Checkpatch throws an error if
+there's a newline after 'Commit'.  Though looking at this again, there
+shouldn't be a colon after 'Commit' and there should be quotes inside
+the parentheses, e.g. this satisfies checkpatch:
 
+Commit 368a540e0232 ("x86/kvmclock: Remove memblock dependency")
