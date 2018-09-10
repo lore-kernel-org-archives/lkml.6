@@ -2,98 +2,92 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6B90C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:06:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C1EEC43143
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:06:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89DB02087F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:06:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89DB02087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 2130320870
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:06:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2130320870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728533AbeIJVB2 (ORCPT
+        id S1728684AbeIJVBb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 17:01:28 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:58574 "EHLO mail.skyhub.de"
+        Mon, 10 Sep 2018 17:01:31 -0400
+Received: from foss.arm.com ([217.140.101.70]:60068 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727815AbeIJVB1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 17:01:27 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id lf0ERArjtTOl; Mon, 10 Sep 2018 18:06:39 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BC6F600329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bc6:f600:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4DC481EC04A6;
-        Mon, 10 Sep 2018 18:06:39 +0200 (CEST)
-Date:   Mon, 10 Sep 2018 18:06:33 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Dou Liyang <douly.fnst@cn.fujitsu.com>,
-        Pavel Tatashin <pasha.tatashin@microsoft.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH] Revert "x86/tsc: Consolidate init code"
-Message-ID: <20180910160633.GB4386@zn.tnic>
-References: <20180910121925.27682-1-ville.syrjala@linux.intel.com>
- <alpine.DEB.2.21.1809101443290.1292@nanos.tec.linutronix.de>
- <20180910140710.GR5565@intel.com>
- <20180910144720.GA28349@zn.tnic>
- <20180910150910.GS5565@intel.com>
- <20180910152538.GA4386@zn.tnic>
- <20180910155112.GT5565@intel.com>
+        id S1727815AbeIJVBa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 17:01:30 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AF80418A;
+        Mon, 10 Sep 2018 09:06:43 -0700 (PDT)
+Received: from [10.4.12.131] (e110467-lin.emea.arm.com [10.4.12.131])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7B8603F557;
+        Mon, 10 Sep 2018 09:06:42 -0700 (PDT)
+Subject: Re: [PATCH 2/5] dma-mapping: move the dma_coherent flag to struct
+ device
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     iommu@lists.linux-foundation.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-mips@linux-mips.org, linux-kernel@vger.kernel.org
+References: <20180910060533.27172-1-hch@lst.de>
+ <20180910060533.27172-3-hch@lst.de>
+ <71ec3eef-54c1-f692-5a17-4302c4dd4b05@arm.com>
+ <20180910154747.GA23578@lst.de>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <aa6f49f8-24ea-f166-9c58-aecb13df0418@arm.com>
+Date:   Mon, 10 Sep 2018 17:06:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180910155112.GT5565@intel.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180910154747.GA23578@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 10, 2018 at 06:51:13PM +0300, Ville Syrjälä wrote:
-> Sounds to me like the maintainer should figure out how to delegate some
-> of the load a bit. Or just go on vacation and ignore all mails. I hear
-> stress isn't good for you.
-
-Bullshit.
-
-> That's what all patches are. No should be applying unreviewed patches
-> blindly.
+On 10/09/18 16:47, Christoph Hellwig wrote:
+>>> --- a/kernel/dma/Kconfig
+>>> +++ b/kernel/dma/Kconfig
+>>> @@ -13,6 +13,9 @@ config NEED_DMA_MAP_STATE
+>>>    config ARCH_DMA_ADDR_T_64BIT
+>>>    	def_bool 64BIT || PHYS_ADDR_T_64BIT
+>>>    +config ARCH_HAS_DMA_COHERENCE_H
+>>> +	bool
+>>
+>> This seems a little crude - is it unbearably churny to make an
+>> asm-generic/dma-coherence.h implementation for everyone else?
 > 
-> Also often a revert is a perfect way to handle regressions. It gets
-> the angry users off your back ASAP allowing you to fix the bug
+> The case of having something else than the per-device flag is rather
+> odd, and I hope we don't grow any new user in addition to mips.
+> 
+> In fact I'm already thinking of ways to get rid of it for mips by
+> e.g. iterating over all devices and just setting dma_coherent,
+> but for now I wanted to solve the more urgen issues and tackle this
+> later, as this unification blocks a few other things
 
-More bullshit.
+Ah, somehow I started thinking that arm(64) would need to implement 
+their own as well, but I see the point now. In that case, TBH I'd be 
+quite happy with just a simple #ifdef CONFIG_MIPS in 
+linux/dma-noncoherent.h - plus then it looks even more like something 
+nobody else is expected to do.
 
-> Calm down. No one is out to revert all your patches.
+>> Nits aside, this otherwise looks sane to me for factoring out the
+>> equivalent Xen and arm64 DMA ops cases.
+> 
+> Like this? :)
+> 
+> http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/dma-maybe-coherent
 
-Even more bullshit.
+Man, that's going to take me a *lot* of time to pick through. All those 
+horrendous subtleties that I barely remember!
 
-> Maybe you can propose a new git-regression tool then? And document that
-> you want bugs reported using it? Ideally I'd say it should do almost
-> exactly what git revert does except s/revert/regression/. Though I
-> suppose it could include the original diff instead of the reverse.
-
-Even even more bullshit.
-
-> Now, how about we stop this pointless "logic" discussion and
-> focus on the techinal stuff from now on?
-
-That's the only constructive and serious thing you've said so far.
-Let's.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Robin.
