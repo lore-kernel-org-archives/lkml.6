@@ -2,90 +2,104 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A18D5C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:05:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81F08C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:05:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22C2E20854
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:05:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="HJlQr41d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22C2E20854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	by mail.kernel.org (Postfix) with ESMTP id 3F79A20854
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:05:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F79A20854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727348AbeIJK5a (ORCPT
+        id S1727461AbeIJK5y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 06:57:30 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:48296 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726148AbeIJK5a (ORCPT
+        Mon, 10 Sep 2018 06:57:54 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:44049 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726148AbeIJK5y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 06:57:30 -0400
-Received: from trochilidae.hsd1.wa.comcast.net (unknown [IPv6:2601:602:8700:fb00:81ae:bc59:4e6c:42ca])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 118775C00D5;
-        Mon, 10 Sep 2018 08:05:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1536559507;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:content-type:content-transfer-encoding:
-         in-reply-to:references; bh=vgpt+KqQZLMiSkIxd+n6bYFPukVKIl0ExLwl3OCRYTA=;
-        b=HJlQr41dJMNCDP4r0yyPCChE6k4FJkznQMka8zbDXcZLUm+qZVHwJZXrIsBLVbY6t5Sfbo
-        TEaLh0wYDWoKCGycC16MgaqiadnRtxR5fatC+s0sin/zaAOkX36hPxEnlg3G4uHgAEAvvl
-        iHyT6yrPvewQJiEjuUNV/RQVq77hZWY=
-From:   Stefan Agner <stefan@agner.ch>
-To:     torvalds@linux-foundation.org, ndesaulniers@google.com
-Cc:     akpm@linux-foundation.org, keescook@chromium.org,
-        tglx@linutronix.de, mingo@kernel.org, aryabinin@virtuozzo.com,
-        will.deacon@arm.com, linux@rasmusvillemoes.dk, dwmw@amazon.co.uk,
-        paullawrence@google.com, arnd@arndb.de,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Stefan Agner <stefan@agner.ch>
-Subject: [PATCH] include/linux/compiler-clang.h: define __naked
-Date:   Sun,  9 Sep 2018 23:04:55 -0700
-Message-Id: <20180910060455.20409-1-stefan@agner.ch>
-X-Mailer: git-send-email 2.18.0
+        Mon, 10 Sep 2018 06:57:54 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 6A65A805F0; Mon, 10 Sep 2018 08:05:32 +0200 (CEST)
+Date:   Mon, 10 Sep 2018 08:05:33 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     kernel list <linux-kernel@vger.kernel.org>
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org
+Subject: Re: linux-next: 0907 fails to boot on thinkpad x60 (32bit machine)
+Message-ID: <20180910060533.GA26941@amd>
+References: <20180909214632.GA26303@amd>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="envbJBWh7q8WU6mo"
+Content-Disposition: inline
+In-Reply-To: <20180909214632.GA26303@amd>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ARM32 arch code uses the __naked attribute. This has previously been
-defined in include/linux/compiler-gcc.h, which is no longer included
-for Clang. Define __naked for Clang. Conservatively add all attributes
-previously used (and supported by Clang).
 
-This fixes compile errors when building ARM32 using Clang:
-  arch/arm/mach-exynos/mcpm-exynos.c:193:13: error: variable has incomplete type 'void'
-  static void __naked exynos_pm_power_up_setup(unsigned int affinity_level)
-              ^
+--envbJBWh7q8WU6mo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: 815f0ddb346c ("include/linux/compiler*.h: make compiler-*.h mutually exclusive")
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
- include/linux/compiler-clang.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+On Sun 2018-09-09 23:46:32, Pavel Machek wrote:
+> Hi!
+>=20
+> I do have some oopses, but they seem to be different on each
+> boot. IIRC message was "scheduling?...on offline CPU?".
+>=20
+> Any ideas? Does it work for you?
 
-diff --git a/include/linux/compiler-clang.h b/include/linux/compiler-clang.h
-index b1ce500fe8b3..a593e3ac0720 100644
---- a/include/linux/compiler-clang.h
-+++ b/include/linux/compiler-clang.h
-@@ -23,6 +23,12 @@
- 
- #define __no_sanitize_address __attribute__((no_sanitize("address")))
- 
-+/*
-+ * ARM32 is currently the only user of __naked supported by Clang. Follow
-+ * gcc: Do not trace naked functions and make sure they don't get inlined.
-+ */
-+#define __naked __attribute__((naked)) noinline notrace
-+
- /*
-  * Not all versions of clang implement the the type-generic versions
-  * of the builtin overflow checkers. Fortunately, clang implements
--- 
-2.18.0
+Seems that error is different on each try.
 
+Now it is:
+
+FS: Cannot open root device "sda4" or unknown-block(8,4): error -2
+(followed by panic, but it listed sda4 as avialbe partition)
+
+Next try:
+
+sched: Unexpected reschedule of offline CPU#0!
+WARNING: CPU: 1 PID: 1 at ...smp.c:128 native_smp_send_reschedule
+(Aha, that's what I seen before)
+
+Next try:
+
+sched: Unexpected reschedule of offline CPU#0!
+
+Next try: I added "nosmp" on command line, and got
+
+FS: Cannot open root device "sda4" or unknown-block(8,4): error -2
+(followed by panic, but it listed sda4 as avialbe partition)
+
+Next try: with "l1tf=3Doff nospectre_v2 nospec_store_bypass_disable"
+
+FS: Cannot open root device "sda4" or unknown-block(8,4): error -2
+(followed by panic, but it listed sda4 as avialbe partition)
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--envbJBWh7q8WU6mo
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAluWCa0ACgkQMOfwapXb+vI1kACeK1QBa2Z7/9R3X7fX+E+luDBY
+CfEAn1OOqmg47/FsAp5ioNQ4HeQRyK56
+=yqKK
+-----END PGP SIGNATURE-----
+
+--envbJBWh7q8WU6mo--
