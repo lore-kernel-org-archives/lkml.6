@@ -6,289 +6,181 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DF03C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 03:47:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDF19C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 03:50:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF64A2086B
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 03:47:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7969A20833
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 03:50:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CrPa8qru";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="dJ8U3nYp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF64A2086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gu8ULdSc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7969A20833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727181AbeIJIjo (ORCPT
+        id S1726863AbeIJImz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 04:39:44 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:57062 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726083AbeIJIjo (ORCPT
+        Mon, 10 Sep 2018 04:42:55 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:33122 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726185AbeIJImy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 04:39:44 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 941066072E; Mon, 10 Sep 2018 03:47:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536551266;
-        bh=a0frQkfBkB5+677TFb9LHk1UH/EmtFpWhy5NY68Ja8Q=;
-        h=From:To:Cc:Subject:Date:From;
-        b=CrPa8qruYgLn1vbvgz9c8F9MG7oN7ROXqS+8RiUjapgheNHaq90UcHglM0q0wgmb8
-         gph1YuJ2ol/6zH7BgDnKoM/llcL2uIecPRUjhIQci5trrL7mP3DqV5vefL++MLuOcI
-         nbehh7MAthLJq6l28BBzaGajMsZi7PtR9y+OLeIw=
-Received: from codeaurora.org (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: stummala@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 32A376028D;
-        Mon, 10 Sep 2018 03:47:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536551265;
-        bh=a0frQkfBkB5+677TFb9LHk1UH/EmtFpWhy5NY68Ja8Q=;
-        h=From:To:Cc:Subject:Date:From;
-        b=dJ8U3nYppnKGN8dLvrZ53lMFwmw1LEaPzW77EkxNc7CMdAlLzoZYHiPjhRFlenAq3
-         eSpRv8WAKgQljx8/sq8cknb8OxajQtcvj2U0wUEbkDwGmBx7I4SkA9Kc1xfU+M/hOk
-         D6I49mU4JHgJTm4B6nx1YukvlrDwHV1nW5+fhJOU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 32A376028D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=stummala@codeaurora.org
-From:   Sahitya Tummala <stummala@codeaurora.org>
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Cc:     linux-kernel@vger.kernel.org,
-        Sahitya Tummala <stummala@codeaurora.org>
-Subject: [PATCH v2] f2fs: add new idle interval timing for discard and gc paths
-Date:   Mon, 10 Sep 2018 09:17:32 +0530
-Message-Id: <1536551252-24256-1-git-send-email-stummala@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Mon, 10 Sep 2018 04:42:54 -0400
+Received: by mail-pg1-f193.google.com with SMTP id s7-v6so9750444pgc.0
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Sep 2018 20:50:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=us8MiVjBc7nOe5bP1RkQsxOcd9Kj8H95GNP9AKTxXuE=;
+        b=gu8ULdScBWzQ+33TdqIUskkT6Ei3wa7797zGA7ghlECWWwE0xO025JfJ6NrHi0YoxA
+         GT1whHbfXUepjglrosZKskrYGF/SAZ2KWsvJDnneGbuD+A8JZof3UiyT8e+Z0ybankGN
+         niXs3PFgC/mI6FCP8q4vGOT0IVaAwPBz8cE3s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=us8MiVjBc7nOe5bP1RkQsxOcd9Kj8H95GNP9AKTxXuE=;
+        b=kqoIxeOygPcqXHXl4vOcI1YZPqP0eWyb5Ez+vYngtOEpN/gbVUbJkEZ7qaRjM4kLd0
+         JWdJry3toHUi3ZWPqb45aYF5cpyTvRVla239VCKykgeTBkaOziwRFNnuYQfHf+Yf6ULy
+         f7IORrp6dI7LimhiUL0Y0TjeHit75racXz4geRAic9v9pm/KgRjiEhWv987gD5YOVf0l
+         UDUERIsgxApmqE1CxRipnkjh2SFHuPYfqezhS43nLyIHfrEJfQV1V44UhYAjU5pXFa5G
+         7NdRfNc7/yCfgytpI/BW/gB8B5GhBSEoym0ir1OhAl15D7bA9PUThvp9JkdHXMpMfsxI
+         nxhQ==
+X-Gm-Message-State: APzg51DTvwbdqJj1zlxhbn5QHDLKwn78e+CgT4LwX/tK+KhonmUVB8e2
+        L/LumQ/Vl8tuzAZCInKXVOOkAg==
+X-Google-Smtp-Source: ANB0VdZYH2HCpMpsncDH19htrQ6JYFP83yTWSGWVyATe0IDhrHVsghoZbqelgUOTKA9CsxlSbF2KrQ==
+X-Received: by 2002:a62:9e08:: with SMTP id s8-v6mr21507109pfd.23.1536551457000;
+        Sun, 09 Sep 2018 20:50:57 -0700 (PDT)
+Received: from pihsun-z840.tpe.corp.google.com ([2401:fa00:1:10:7889:7a43:f899:134c])
+        by smtp.googlemail.com with ESMTPSA id u83-v6sm43209515pfj.37.2018.09.09.20.50.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 09 Sep 2018 20:50:56 -0700 (PDT)
+From:   Peter Shih <pihsun@chromium.org>
+Cc:     pihsun@chromium.org, Mark Brown <broonie@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: [PATCH] spi: mediatek: Don't modify spi_transfer when transfer.
+Date:   Mon, 10 Sep 2018 11:50:47 +0800
+Message-Id: <20180910035047.98496-1-pihsun@chromium.org>
+X-Mailer: git-send-email 2.19.0.rc2.392.g5ba43deb5a-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This helps to control the frequency of submission of discard and
-GC requests independently, based on the need. The sleep timing of
-GC thread is now aligned with this idle time when the dev is busy,
-to avoid unnecessary periodic wakeups.
+Mediatek SPI driver modifies some fields (tx_buf, rx_buf, len, tx_dma,
+rx_dma) of the spi_transfer* passed in when doing transfer_one and in
+interrupt handler. This is somewhat unexpected, and there are some
+caller (e.g. Cr50 spi driver) that reuse the spi_transfer for multiple
+messages. Add a field to record how many bytes have been transferred,
+and calculate the right len / buffer based on it instead.
 
-Suggested-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+BUG=b:113973051
+TEST=None
+
+Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
+
+Change-Id: I23e218cd964f16c0b2b26127d4a5ca6529867673
 ---
-v2:
--fix __issue_discard_cmd_orderly() path
+ drivers/spi/spi-mt65xx.c | 37 +++++++++++++++++++++----------------
+ 1 file changed, 21 insertions(+), 16 deletions(-)
 
- Documentation/ABI/testing/sysfs-fs-f2fs | 17 ++++++++++++++++-
- fs/f2fs/f2fs.h                          | 31 +++++++++++++++++++++++++++----
- fs/f2fs/gc.c                            |  6 ++++--
- fs/f2fs/segment.c                       | 16 ++++++----------
- fs/f2fs/super.c                         |  2 ++
- fs/f2fs/sysfs.c                         |  5 +++++
- 6 files changed, 60 insertions(+), 17 deletions(-)
-
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index 94a24ae..3ac4177 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -121,7 +121,22 @@ What:		/sys/fs/f2fs/<disk>/idle_interval
- Date:		January 2016
- Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
- Description:
--		 Controls the idle timing.
-+		 Controls the idle timing for all paths other than
-+		 discard and gc path.
-+
-+What:		/sys/fs/f2fs/<disk>/discard_idle_interval
-+Date:		September 2018
-+Contact:	"Chao Yu" <yuchao0@huawei.com>
-+Contact:	"Sahitya Tummala" <stummala@codeaurora.org>
-+Description:
-+		 Controls the idle timing for discard path.
-+
-+What:		/sys/fs/f2fs/<disk>/gc_idle_interval
-+Date:		September 2018
-+Contact:	"Chao Yu" <yuchao0@huawei.com>
-+Contact:	"Sahitya Tummala" <stummala@codeaurora.org>
-+Description:
-+		 Controls the idle timing for gc path.
+diff --git a/drivers/spi/spi-mt65xx.c b/drivers/spi/spi-mt65xx.c
+index 86bf45667a040..3dc31627c6558 100644
+--- a/drivers/spi/spi-mt65xx.c
++++ b/drivers/spi/spi-mt65xx.c
+@@ -98,6 +98,7 @@ struct mtk_spi {
+ 	struct clk *parent_clk, *sel_clk, *spi_clk;
+ 	struct spi_transfer *cur_transfer;
+ 	u32 xfer_len;
++	u32 num_xfered;
+ 	struct scatterlist *tx_sgl, *rx_sgl;
+ 	u32 tx_sgl_len, rx_sgl_len;
+ 	const struct mtk_spi_compatible *dev_comp;
+@@ -385,6 +386,7 @@ static int mtk_spi_fifo_transfer(struct spi_master *master,
  
- What:		/sys/fs/f2fs/<disk>/iostat_enable
- Date:		August 2017
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index abf9256..6070681 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1093,6 +1093,8 @@ enum {
- enum {
- 	CP_TIME,
- 	REQ_TIME,
-+	DISCARD_TIME,
-+	GC_TIME,
- 	MAX_TIME,
- };
+ 	mdata->cur_transfer = xfer;
+ 	mdata->xfer_len = min(MTK_SPI_MAX_FIFO_SIZE, xfer->len);
++	mdata->num_xfered = 0;
+ 	mtk_spi_prepare_transfer(master, xfer);
+ 	mtk_spi_setup_packet(master);
  
-@@ -1347,14 +1349,35 @@ static inline void f2fs_update_time(struct f2fs_sb_info *sbi, int type)
- 	sbi->last_time[type] = jiffies;
- }
+@@ -415,6 +417,7 @@ static int mtk_spi_dma_transfer(struct spi_master *master,
+ 	mdata->tx_sgl_len = 0;
+ 	mdata->rx_sgl_len = 0;
+ 	mdata->cur_transfer = xfer;
++	mdata->num_xfered = 0;
  
--static inline bool f2fs_time_over(struct f2fs_sb_info *sbi, int type)
-+static inline bool f2fs_time_over_cp(struct f2fs_sb_info *sbi)
-+{
-+	unsigned long interval = sbi->interval_time[CP_TIME] * HZ;
-+
-+	return time_after(jiffies, sbi->last_time[CP_TIME] + interval);
-+}
-+
-+static inline bool f2fs_time_over_req(struct f2fs_sb_info *sbi, int type)
-+{
-+	unsigned long interval = sbi->interval_time[type] * HZ;
-+
-+	return time_after(jiffies, sbi->last_time[REQ_TIME] + interval);
-+}
-+
-+static inline unsigned int f2fs_get_wait_time(struct f2fs_sb_info *sbi,
-+						int type)
+ 	mtk_spi_prepare_transfer(master, xfer);
+ 
+@@ -482,7 +485,7 @@ static int mtk_spi_setup(struct spi_device *spi)
+ 
+ static irqreturn_t mtk_spi_interrupt(int irq, void *dev_id)
  {
- 	unsigned long interval = sbi->interval_time[type] * HZ;
-+	unsigned int wait_ms = 0;
-+	long delta;
-+
-+	delta = (sbi->last_time[REQ_TIME] + interval) - jiffies;
-+	if (delta > 0)
-+		wait_ms = jiffies_to_msecs(delta);
- 
--	return time_after(jiffies, sbi->last_time[type] + interval);
-+	return wait_ms;
- }
- 
--static inline bool is_idle(struct f2fs_sb_info *sbi)
-+static inline bool is_idle(struct f2fs_sb_info *sbi, int type)
- {
- 	struct block_device *bdev = sbi->sb->s_bdev;
- 	struct request_queue *q = bdev_get_queue(bdev);
-@@ -1363,7 +1386,7 @@ static inline bool is_idle(struct f2fs_sb_info *sbi)
- 	if (rl->count[BLK_RW_SYNC] || rl->count[BLK_RW_ASYNC])
- 		return false;
- 
--	return f2fs_time_over(sbi, REQ_TIME);
-+	return f2fs_time_over_req(sbi, type);
- }
- 
- /*
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 5c8d004..c0bafea 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -83,8 +83,10 @@ static int gc_thread_func(void *data)
- 		if (!mutex_trylock(&sbi->gc_mutex))
- 			goto next;
- 
--		if (!is_idle(sbi)) {
--			increase_sleep_time(gc_th, &wait_ms);
-+		if (!is_idle(sbi, GC_TIME)) {
-+			wait_ms = f2fs_get_wait_time(sbi, GC_TIME);
-+			if (!wait_ms)
-+				increase_sleep_time(gc_th, &wait_ms);
- 			mutex_unlock(&sbi->gc_mutex);
- 			goto next;
- 		}
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index c5024f8..2d15733 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -511,7 +511,7 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
- 	else
- 		f2fs_build_free_nids(sbi, false, false);
- 
--	if (!is_idle(sbi) &&
-+	if (!is_idle(sbi, REQ_TIME) &&
- 		(!excess_dirty_nats(sbi) && !excess_dirty_nodes(sbi)))
- 		return;
- 
-@@ -521,7 +521,7 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
- 			excess_prefree_segs(sbi) ||
- 			excess_dirty_nats(sbi) ||
- 			excess_dirty_nodes(sbi) ||
--			f2fs_time_over(sbi, CP_TIME)) {
-+			f2fs_time_over_cp(sbi)) {
- 		if (test_opt(sbi, DATA_FLUSH)) {
- 			struct blk_plug plug;
- 
-@@ -1311,7 +1311,7 @@ static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
- 		if (dc->state != D_PREP)
- 			goto next;
- 
--		if (dpolicy->io_aware && !is_idle(sbi)) {
-+		if (dpolicy->io_aware && !is_idle(sbi, DISCARD_TIME)) {
- 			io_interrupted = true;
- 			break;
- 		}
-@@ -1371,7 +1371,7 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
- 			f2fs_bug_on(sbi, dc->state != D_PREP);
- 
- 			if (dpolicy->io_aware && i < dpolicy->io_aware_gran &&
--								!is_idle(sbi)) {
-+						!is_idle(sbi, DISCARD_TIME)) {
- 				io_interrupted = true;
- 				break;
+-	u32 cmd, reg_val, cnt, remainder;
++	u32 cmd, reg_val, cnt, remainder, len;
+ 	struct spi_master *master = dev_id;
+ 	struct mtk_spi *mdata = spi_master_get_devdata(master);
+ 	struct spi_transfer *trans = mdata->cur_transfer;
+@@ -497,36 +500,38 @@ static irqreturn_t mtk_spi_interrupt(int irq, void *dev_id)
+ 		if (trans->rx_buf) {
+ 			cnt = mdata->xfer_len / 4;
+ 			ioread32_rep(mdata->base + SPI_RX_DATA_REG,
+-				     trans->rx_buf, cnt);
++				     trans->rx_buf + mdata->num_xfered, cnt);
+ 			remainder = mdata->xfer_len % 4;
+ 			if (remainder > 0) {
+ 				reg_val = readl(mdata->base + SPI_RX_DATA_REG);
+-				memcpy(trans->rx_buf + (cnt * 4),
+-					&reg_val, remainder);
++				memcpy(trans->rx_buf +
++					mdata->num_xfered +
++					(cnt * 4),
++					&reg_val,
++					remainder);
  			}
-@@ -1564,8 +1564,6 @@ static int issue_discard_thread(void *data)
- 	struct discard_policy dpolicy;
- 	unsigned int wait_ms = DEF_MIN_DISCARD_ISSUE_TIME;
- 	int issued;
--	unsigned long interval = sbi->interval_time[REQ_TIME] * HZ;
--	long delta;
+ 		}
  
- 	set_freezable();
+-		trans->len -= mdata->xfer_len;
+-		if (!trans->len) {
++		mdata->num_xfered += mdata->xfer_len;
++		if (mdata->num_xfered == trans->len) {
+ 			spi_finalize_current_transfer(master);
+ 			return IRQ_HANDLED;
+ 		}
  
-@@ -1602,10 +1600,8 @@ static int issue_discard_thread(void *data)
- 			__wait_all_discard_cmd(sbi, &dpolicy);
- 			wait_ms = dpolicy.min_interval;
- 		} else if (issued == -1){
--			delta = (sbi->last_time[REQ_TIME] + interval) - jiffies;
--			if (delta > 0)
--				wait_ms = jiffies_to_msecs(delta);
--			else
-+			wait_ms = f2fs_get_wait_time(sbi, DISCARD_TIME);
-+			if (!wait_ms)
- 				wait_ms = dpolicy.mid_interval;
- 		} else {
- 			wait_ms = dpolicy.max_interval;
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 896b885..1706f45 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2423,6 +2423,8 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
- 	sbi->dir_level = DEF_DIR_LEVEL;
- 	sbi->interval_time[CP_TIME] = DEF_CP_INTERVAL;
- 	sbi->interval_time[REQ_TIME] = DEF_IDLE_INTERVAL;
-+	sbi->interval_time[DISCARD_TIME] = DEF_IDLE_INTERVAL;
-+	sbi->interval_time[GC_TIME] = DEF_IDLE_INTERVAL;
- 	clear_sbi_flag(sbi, SBI_NEED_FSCK);
+-		if (trans->tx_buf)
+-			trans->tx_buf += mdata->xfer_len;
+-		if (trans->rx_buf)
+-			trans->rx_buf += mdata->xfer_len;
+-
+-		mdata->xfer_len = min(MTK_SPI_MAX_FIFO_SIZE, trans->len);
++		len = trans->len - mdata->num_xfered;
++		mdata->xfer_len = min(MTK_SPI_MAX_FIFO_SIZE, len);
+ 		mtk_spi_setup_packet(master);
  
- 	for (i = 0; i < NR_COUNT_TYPE; i++)
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index 81c0e53..0afe99c 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -407,6 +407,9 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, dir_level, dir_level);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, cp_interval, interval_time[CP_TIME]);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, idle_interval, interval_time[REQ_TIME]);
-+F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, discard_idle_interval,
-+					interval_time[DISCARD_TIME]);
-+F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_idle_interval, interval_time[GC_TIME]);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, iostat_enable, iostat_enable);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, readdir_ra, readdir_ra);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_pin_file_thresh, gc_pin_file_threshold);
-@@ -460,6 +463,8 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
- 	ATTR_LIST(dirty_nats_ratio),
- 	ATTR_LIST(cp_interval),
- 	ATTR_LIST(idle_interval),
-+	ATTR_LIST(discard_idle_interval),
-+	ATTR_LIST(gc_idle_interval),
- 	ATTR_LIST(iostat_enable),
- 	ATTR_LIST(readdir_ra),
- 	ATTR_LIST(gc_pin_file_thresh),
+-		cnt = trans->len / 4;
+-		iowrite32_rep(mdata->base + SPI_TX_DATA_REG, trans->tx_buf, cnt);
++		cnt = len / 4;
++		iowrite32_rep(mdata->base + SPI_TX_DATA_REG,
++				trans->tx_buf + mdata->num_xfered, cnt);
+ 
+-		remainder = trans->len % 4;
++		remainder = len % 4;
+ 		if (remainder > 0) {
+ 			reg_val = 0;
+-			memcpy(&reg_val, trans->tx_buf + (cnt * 4), remainder);
++			memcpy(&reg_val,
++				trans->tx_buf + (cnt * 4) + mdata->num_xfered,
++				remainder);
+ 			writel(reg_val, mdata->base + SPI_TX_DATA_REG);
+ 		}
+ 
 -- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+2.19.0.rc2.392.g5ba43deb5a-goog
 
