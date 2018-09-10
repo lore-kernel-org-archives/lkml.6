@@ -2,99 +2,106 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94317C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:23:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B29D8C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:25:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 501B320881
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:23:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="d34YHbjO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 501B320881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6123120645
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:25:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6123120645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728294AbeIJPRM (ORCPT
+        id S1728246AbeIJPSi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 11:17:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44264 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727840AbeIJPRM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 11:17:12 -0400
-Received: from mail-wm0-f51.google.com (mail-wm0-f51.google.com [74.125.82.51])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 093E620881;
-        Mon, 10 Sep 2018 10:23:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536575030;
-        bh=Fa9EWbfhv2PCKSH1EMmaImakFzc0io5d5mH8SxNkKZw=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=d34YHbjOcm8jyb3oWhLL9CVBE/DjRXhelsYiJmiFsQ7/doMYezvcBPTqVKXz1N69K
-         XN0qolFdM3/Y9M3tf0yKbK9ktKoRmhxLHelgHmNJB9RI/t3JFiWWp0z+9gLXh2qp9O
-         56b1bs/NopwYIF19sidwEXgZLwxP/KyNQab/FkMI=
-Received: by mail-wm0-f51.google.com with SMTP id j192-v6so20897093wmj.1;
-        Mon, 10 Sep 2018 03:23:49 -0700 (PDT)
-X-Gm-Message-State: APzg51BUPRQUb7I6YxUbuqQeS9UG+DZDGtFbm/DHWtJSCpirHpdxXd4+
-        A9FLea7E12xlR4mw1w1YcqOP0hMS1lUtOt29dZQ=
-X-Google-Smtp-Source: ANB0VdYYHFfcj4wSVN0EpgYSeJPPrHPU0qS00xi6iqNdWySQg7hZ70g1xlALFsW4tOdlr9uSgp3LaDJyG1HQiRLf0nc=
-X-Received: by 2002:a1c:d785:: with SMTP id o127-v6mr217287wmg.67.1536575028422;
- Mon, 10 Sep 2018 03:23:48 -0700 (PDT)
+        Mon, 10 Sep 2018 11:18:38 -0400
+Received: from bmailout1.hostsharing.net ([83.223.95.100]:45239 "EHLO
+        bmailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727850AbeIJPSi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 11:18:38 -0400
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
+        by bmailout1.hostsharing.net (Postfix) with ESMTPS id A473B30002230;
+        Mon, 10 Sep 2018 12:25:14 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+        id 811E010751; Mon, 10 Sep 2018 12:25:14 +0200 (CEST)
+Date:   Mon, 10 Sep 2018 12:25:14 +0200
+From:   Lukas Wunner <lukas@wunner.de>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/5] MAINTAINERS: Add Lukas Wunner as co-maintainer of
+ thunderbolt
+Message-ID: <20180910102514.tjwortosyb32n5me@wunner.de>
+References: <cover.1536517047.git.lukas@wunner.de>
+ <76fccab34a66023c08b71a864a9fea77daac9742.1536517047.git.lukas@wunner.de>
+ <20180910093333.GI14465@lahna.fi.intel.com>
 MIME-Version: 1.0
-References: <20180907215446.15160-1-sed@free.fr> <20180907215446.15160-2-sed@free.fr>
-In-Reply-To: <20180907215446.15160-2-sed@free.fr>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Mon, 10 Sep 2018 12:23:37 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPeYO3VR5LABP3zKYnKckqUBahKPt7MCjzuo3j6oe+d87w@mail.gmail.com>
-Message-ID: <CAJKOXPeYO3VR5LABP3zKYnKckqUBahKPt7MCjzuo3j6oe+d87w@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] ARM: s3c24xx: Correct SD card write protect
- detection on Mini2440
-To:     sed@free.fr
-Cc:     kgene@kernel.org, linux@armlinux.org.uk,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180910093333.GI14465@lahna.fi.intel.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 7 Sep 2018 at 23:53, Cedric Roux <sed@free.fr> wrote:
->
-> The mini2440 computer uses "active high" to signal that the "write protect"
-> of the inserted MMC is set. The current code uses the opposite, leading to
-> a wrong detection of write protection. The solution is simply to use
-> ".wprotect_invert = 1" in the description of the MMC.
->
-> Signed-off-by: Cedric Roux <sed@free.fr>
-> ---
->  arch/arm/mach-s3c24xx/mach-mini2440.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/arm/mach-s3c24xx/mach-mini2440.c b/arch/arm/mach-s3c24xx/mach-mini2440.c
-> index 4a0bf6abba8c..bfce7971d741 100644
-> --- a/arch/arm/mach-s3c24xx/mach-mini2440.c
-> +++ b/arch/arm/mach-s3c24xx/mach-mini2440.c
-> @@ -234,10 +234,11 @@ static struct s3c2410fb_mach_info mini2440_fb_info __initdata = {
->  /* MMC/SD  */
->
->  static struct s3c24xx_mci_pdata mini2440_mmc_cfg __initdata = {
-> -       .gpio_detect   = S3C2410_GPG(8),
-> -       .gpio_wprotect = S3C2410_GPH(8),
-> -       .set_power     = NULL,
-> -       .ocr_avail     = MMC_VDD_32_33|MMC_VDD_33_34,
-> +       .gpio_detect     = S3C2410_GPG(8),
-> +       .gpio_wprotect   = S3C2410_GPH(8),
-> +       .wprotect_invert = 1,
-> +       .set_power       = NULL,
-> +       .ocr_avail       = MMC_VDD_32_33|MMC_VDD_33_34,
+On Mon, Sep 10, 2018 at 12:33:33PM +0300, Mika Westerberg wrote:
+> The reason for making the driver less verbose comes from direct feedback
+> from the community. For example:
+> 
+>   https://lkml.org/lkml/2017/10/31/864
 
-This looks unexpected... after patch 1 there should be only one change
-- one new line added. What happened here?
+I am not opposed to muting messages to KERN_DEBUG severity which merely
+report what the driver is doing such as:
 
-Best regards,
-Krzysztof
+    "control channel created"
+    "control channel starting..."
+
+However messages should NOT be muted which report register contents
+or register changes unless those registers are *fully* documented and
+register changes are known to work *reliably*.  The URL you're referring
+to above provides an example where that's not the case:
+
+    "disabling interrupt at register 0x38200 bit 12 (0xffffffff -> 0xffffefff)"
+
+Something is broken here, the register was read as "all ones".
+This doesn't seem to work as reliable as it should and in that case
+please don't mute the message until we know it's fixed and always
+works.
+
+Also, it is quite customary and serves a useful purpose to report
+devices at KERN_INFO severity as they're enumerated.  E.g. the PCI
+bus logs messages for each enumerated device, pciehp logs the
+port's capabilities on probe, and so on.  Therefore please do not
+mute the enumeration of switches and their ports.  If you find the
+messages too noisy, feel free to condense the data reported for each
+port to 1 or 2 lines.
+
+We currently print "Port ..." on enumeration, but use the syntax
+"<route string>:<port number>" for other port-related messages
+printed with tb_port_*().  It might be beneficial to use a single
+syntax consistently.
+
+In one of the patches I've posted yesterday, I'm logging unknown
+data that is stashed in the DROM for PCI ports.  To make sense of
+that data, at least one line for each port needs to be logged.
+(Such that we know which data pertains to which port.)
+
+I don't really like spamming the log with this unknown data that
+needs to be reverse-engineered.  I hate it.  You would do everyone
+a favor if you could divulge the meaning of such unknown registers.
+Then we don't need to log it in the first place.
+
+Thanks,
+
+Lukas
