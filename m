@@ -2,115 +2,100 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BCD0C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:34:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ACC6C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:35:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C544E2075A
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:34:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C544E2075A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 3FEFA2075A
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:35:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FEFA2075A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727662AbeIJL1N (ORCPT
+        id S1727711AbeIJL11 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 07:27:13 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:50251 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726794AbeIJL1N (ORCPT
+        Mon, 10 Sep 2018 07:27:27 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37704 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727666AbeIJL11 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 07:27:13 -0400
-Received: from 61-220-137-37.hinet-ip.hinet.net ([61.220.137.37] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1fzFmS-0004ZZ-Sf; Mon, 10 Sep 2018 06:34:41 +0000
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-To:     nic_swsd@realtek.com
-Cc:     davem@davemloft.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>
-Subject: [PATCH] r8169: Clear RTL_FLAG_TASK_*_PENDING when clearing RTL_FLAG_TASK_ENABLED
-Date:   Mon, 10 Sep 2018 14:34:36 +0800
-Message-Id: <20180910063436.2326-1-kai.heng.feng@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 10 Sep 2018 07:27:27 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8A6XlFU093742
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 02:34:59 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mdffuyucy-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 02:34:59 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <schwidefsky@de.ibm.com>;
+        Mon, 10 Sep 2018 07:34:56 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 10 Sep 2018 07:34:53 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8A6YrFM65142944
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 10 Sep 2018 06:34:53 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 33C2242045;
+        Mon, 10 Sep 2018 09:34:45 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DF7C34203F;
+        Mon, 10 Sep 2018 09:34:44 +0100 (BST)
+Received: from mschwideX1 (unknown [9.145.63.9])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 10 Sep 2018 09:34:44 +0100 (BST)
+Date:   Mon, 10 Sep 2018 08:34:50 +0200
+From:   Martin Schwidefsky <schwidefsky@de.ibm.com>
+To:     zhong jiang <zhongjiang@huawei.com>
+Cc:     <freude@linux.ibm.com>, <heiko.carstens@de.ibm.com>,
+        <linux-s390@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] s390/zcrypt: Use kmemdup to replace kmalloc + memcpy
+In-Reply-To: <1536396621-19363-1-git-send-email-zhongjiang@huawei.com>
+References: <1536396621-19363-1-git-send-email-zhongjiang@huawei.com>
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+X-TM-AS-GCONF: 00
+x-cbid: 18091006-0012-0000-0000-000002A67635
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18091006-0013-0000-0000-000020DAAC56
+Message-Id: <20180910083450.62379f4b@mschwideX1>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-10_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=693 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809100072
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After system suspend, sometimes the r8169 doesn't work when ethernet
-cable gets pluggued.
+On Sat, 8 Sep 2018 16:50:21 +0800
+zhong jiang <zhongjiang@huawei.com> wrote:
 
-This issue happens because rtl_reset_work() doesn't get called from
-rtl8169_runtime_resume(), after system suspend.
+> kmemdup has implemented the function that kmalloc() + memcpy() will
+> do. and we prefer to use the kmemdup rather than the open coded implementation.
+> 
+> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+> ---
+>  drivers/s390/crypto/zcrypt_msgtype6.c | 9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
 
-In rtl_task(), RTL_FLAG_TASK_* only gets cleared if this condition is
-met:
-if (!netif_running(dev) ||
-    !test_bit(RTL_FLAG_TASK_ENABLED, tp->wk.flags))
-    ...
+Applied to linux-390:features. Thanks.
 
-If RTL_FLAG_TASK_ENABLED was cleared during system suspend while
-RTL_FLAG_TASK_RESET_PENDING was set, the next rtl_schedule_task() won't
-schedule task as the flag is still there.
-
-So in addition to clearing RTL_FLAG_TASK_ENABLED, also clears other
-flags.
-
-Cc: Heiner Kallweit <hkallweit1@gmail.com>
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
----
- drivers/net/ethernet/realtek/r8169.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/realtek/r8169.c b/drivers/net/ethernet/realtek/r8169.c
-index b08d51bf7a20..20593245ef53 100644
---- a/drivers/net/ethernet/realtek/r8169.c
-+++ b/drivers/net/ethernet/realtek/r8169.c
-@@ -6648,6 +6648,7 @@ static int rtl8169_close(struct net_device *dev)
- {
- 	struct rtl8169_private *tp = netdev_priv(dev);
- 	struct pci_dev *pdev = tp->pci_dev;
-+	int i;
- 
- 	pm_runtime_get_sync(&pdev->dev);
- 
-@@ -6655,7 +6656,9 @@ static int rtl8169_close(struct net_device *dev)
- 	rtl8169_update_counters(tp);
- 
- 	rtl_lock_work(tp);
--	clear_bit(RTL_FLAG_TASK_ENABLED, tp->wk.flags);
-+	/* Clear all task flags */
-+	for (i = 0; i < RTL_FLAG_MAX; i++)
-+		clear_bit(i, tp->wk.flags);
- 
- 	rtl8169_down(dev);
- 	rtl_unlock_work(tp);
-@@ -6828,6 +6831,7 @@ rtl8169_get_stats64(struct net_device *dev, struct rtnl_link_stats64 *stats)
- static void rtl8169_net_suspend(struct net_device *dev)
- {
- 	struct rtl8169_private *tp = netdev_priv(dev);
-+	int i;
- 
- 	if (!netif_running(dev))
- 		return;
-@@ -6838,7 +6842,10 @@ static void rtl8169_net_suspend(struct net_device *dev)
- 
- 	rtl_lock_work(tp);
- 	napi_disable(&tp->napi);
--	clear_bit(RTL_FLAG_TASK_ENABLED, tp->wk.flags);
-+	/* Clear all task flags */
-+	for (i = 0; i < RTL_FLAG_MAX; i++)
-+		clear_bit(i, tp->wk.flags);
-+
- 	rtl_unlock_work(tp);
- 
- 	rtl_pll_power_down(tp);
 -- 
-2.17.1
+blue skies,
+   Martin.
+
+"Reality continues to ruin my life." - Calvin.
 
