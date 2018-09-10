@@ -2,130 +2,60 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98C52C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:18:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D331BC4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:18:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5819B2087F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:18:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5819B2087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
+	by mail.kernel.org (Postfix) with ESMTP id 93F9A206BB
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:18:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93F9A206BB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728863AbeIJSMc (ORCPT
+        id S1728876AbeIJSMv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 14:12:32 -0400
-Received: from smtp20.cstnet.cn ([159.226.251.20]:52354 "EHLO cstnet.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728513AbeIJSMb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 14:12:31 -0400
-Received: from pw-vbox.higon.com (unknown [182.150.46.145])
-        by APP-10 (Coremail) with SMTP id tACowACnfe8Wb5Zbtg2aCQ--.1831S2;
-        Mon, 10 Sep 2018 21:18:19 +0800 (CST)
-From:   Pu Wen <puwen@hygon.cn>
-To:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, thomas.lendacky@amd.com, bp@alien8.de,
-        pbonzini@redhat.com, rkrcmar@redhat.com
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        kvm@vger.kernel.org, Pu Wen <puwen@hygon.cn>
-Subject: [PATCH v6 11/16] x86/kvm: Add Hygon Dhyana support to KVM infrastructure
-Date:   Mon, 10 Sep 2018 21:18:12 +0800
-Message-Id: <25464d1d78acb6320c5791f3da84def07fb223ad.1536550550.git.puwen@hygon.cn>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1536550549.git.puwen@hygon.cn>
-References: <cover.1536550549.git.puwen@hygon.cn>
-X-CM-TRANSID: tACowACnfe8Wb5Zbtg2aCQ--.1831S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7CFWUCw1Duw13Xr4UJF15twb_yoW5JF1fpF
-        ZrGFs7ZFs5KrsIk34DGrn7Zw1UuFs8Kw18Kry5uw1FqF4jvayxXr4Fkw15Aa17Aaykua4r
-        KFy8W3WkJa1fZaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUvS14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-        1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-        JVWxJr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
-        1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
-        7VC0I7IYx2IY67AKxVWUtVWrXwAv7VC2z280aVAFwI0_Gr1j6F4UJwAm72CE4IkC6x0Yz7
-        v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF
-        7I0E8cxan2IY04v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
-        0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWU
-        tVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r4j6ryUMIIF0xvE2Ix0cI8IcV
-        CY1x0267AKxVW8Jr0_Cr1UMIIF0xvE42xK8VAvwI8IcIk0rVW8JVW3JwCI42IY6I8E87Iv
-        67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43
-        ZEXa7VUbKLvtUUUUU==
-X-Originating-IP: [182.150.46.145]
-X-CM-SenderInfo: psxzv046klw03qof0z/
+        Mon, 10 Sep 2018 14:12:51 -0400
+Received: from verein.lst.de ([213.95.11.211]:37696 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728597AbeIJSMv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 14:12:51 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 8FFDF68D00; Mon, 10 Sep 2018 15:23:04 +0200 (CEST)
+Date:   Mon, 10 Sep 2018 15:23:04 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Meelis Roos <mroos@linux.ee>
+Cc:     Linux Kernel list <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        iommu@lists.linux-foundation.org
+Subject: Re: 4.19-rc3: IOMMU PT warnings: WARNING: CPU: 0 PID: 1 at
+ mm/page_alloc.c:4065 __alloc_pages_slowpath+0xb7b/0xcd0
+Message-ID: <20180910132304.GA20244@lst.de>
+References: <alpine.LRH.2.21.1809101111040.31938@math.ut.ee>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LRH.2.21.1809101111040.31938@math.ut.ee>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Hygon Dhyana CPU has the SVM feature as AMD family 17h does.
-So enable the KVM infrastructure support to it.
+On Mon, Sep 10, 2018 at 11:16:12AM +0300, Meelis Roos wrote:
+> In 4.19-rc1, I found that to keep Intel integrated graphics working when 
+> VT-d is on, I need to have IOMMU passthough on or GPU init would fail 
+> with DMAR error and the screen would display static gibberish. So I 
+> turned IOMMU PT on by default in kernel config. It worked, also in rc2.
+> 
+> Now with rc3, it still works but I get some warning splats in dmesg 
+> about IOMMU passthrough:
 
-Reviewed-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Pu Wen <puwen@hygon.cn>
----
- arch/x86/include/asm/kvm_emulate.h |  4 ++++
- arch/x86/include/asm/virtext.h     |  5 +++--
- arch/x86/kvm/emulate.c             | 11 ++++++++++-
- 3 files changed, 17 insertions(+), 3 deletions(-)
+Any chance you could bisect this down to a specific commit?  For
+a start it might be worth if it is reproducable with:
 
-diff --git a/arch/x86/include/asm/kvm_emulate.h b/arch/x86/include/asm/kvm_emulate.h
-index 0f82cd9..93c4bf5 100644
---- a/arch/x86/include/asm/kvm_emulate.h
-+++ b/arch/x86/include/asm/kvm_emulate.h
-@@ -364,6 +364,10 @@ struct x86_emulate_ctxt {
- #define X86EMUL_CPUID_VENDOR_AMDisbetterI_ecx 0x21726574
- #define X86EMUL_CPUID_VENDOR_AMDisbetterI_edx 0x74656273
- 
-+#define X86EMUL_CPUID_VENDOR_HygonGenuine_ebx 0x6f677948
-+#define X86EMUL_CPUID_VENDOR_HygonGenuine_ecx 0x656e6975
-+#define X86EMUL_CPUID_VENDOR_HygonGenuine_edx 0x6e65476e
-+
- #define X86EMUL_CPUID_VENDOR_GenuineIntel_ebx 0x756e6547
- #define X86EMUL_CPUID_VENDOR_GenuineIntel_ecx 0x6c65746e
- #define X86EMUL_CPUID_VENDOR_GenuineIntel_edx 0x49656e69
-diff --git a/arch/x86/include/asm/virtext.h b/arch/x86/include/asm/virtext.h
-index 0116b2e..e05e0d3 100644
---- a/arch/x86/include/asm/virtext.h
-+++ b/arch/x86/include/asm/virtext.h
-@@ -83,9 +83,10 @@ static inline void cpu_emergency_vmxoff(void)
-  */
- static inline int cpu_has_svm(const char **msg)
- {
--	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD) {
-+	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD &&
-+	    boot_cpu_data.x86_vendor != X86_VENDOR_HYGON) {
- 		if (msg)
--			*msg = "not amd";
-+			*msg = "not amd or hygon";
- 		return 0;
- 	}
- 
-diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
-index 106482d..34edf19 100644
---- a/arch/x86/kvm/emulate.c
-+++ b/arch/x86/kvm/emulate.c
-@@ -2711,7 +2711,16 @@ static bool em_syscall_is_enabled(struct x86_emulate_ctxt *ctxt)
- 	    edx == X86EMUL_CPUID_VENDOR_AMDisbetterI_edx)
- 		return true;
- 
--	/* default: (not Intel, not AMD), apply Intel's stricter rules... */
-+	/* Hygon ("HygonGenuine") */
-+	if (ebx == X86EMUL_CPUID_VENDOR_HygonGenuine_ebx &&
-+	    ecx == X86EMUL_CPUID_VENDOR_HygonGenuine_ecx &&
-+	    edx == X86EMUL_CPUID_VENDOR_HygonGenuine_edx)
-+		return true;
-+
-+	/*
-+	 * default: (not Intel, not AMD, not Hygon), apply Intel's
-+	 * stricter rules...
-+	 */
- 	return false;
- }
- 
--- 
-2.7.4
+   git://git.infradead.org/users/hch/dma-mapping.git dma-mapping-4.19-2
 
+which were the only dma-mapping changes post -rc2.
