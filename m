@@ -2,143 +2,110 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC357C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 19:59:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15BCEC4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 19:59:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F40920658
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 19:59:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C75182086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 19:59:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=fieahl-im.20150623.gappssmtp.com header.i=@fieahl-im.20150623.gappssmtp.com header.b="dx8fef+b"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F40920658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fieahl.im
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="f0r34jwh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C75182086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728177AbeIKAzD (ORCPT
+        id S1728505AbeIKAzb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 20:55:03 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:37531 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727784AbeIKAzD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 20:55:03 -0400
-Received: by mail-pg1-f195.google.com with SMTP id 2-v6so11007972pgo.4
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 12:59:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fieahl-im.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=sBdJ9oYViXeZVkyZb9vjRimCOqGFkJZUAVyoAp38IlA=;
-        b=dx8fef+b/pua3UaSNK05cTCINcCht2eSfodVHcxtrasMBnXWs8Jjz9rKHwTPUDqXeT
-         B8baqPQOAxfFlm6Gltk1ndesmuE8msHK+ieqMgUdSlKMbsLDP507YY9N6rUzVTTMX/Se
-         UXRgWkgpsbeJ2IulwLVnSnLU/3M6Lxc0DhEjnO/eCnrrLfMcMKZS8PU7Frcjh3qKaYO+
-         oBbn/5zmC3ELyHl7Zj+2kAITJaha5OvwlP/W0aTNjs7qXX8j9DaylgM9QU80FWFEXZrI
-         +XlanzAs9DBB6J9rCPb14atKBrB18WaQ8i6j2Qi6kc4pNRUd8rsLf36YreSJv/HUCH/2
-         QRYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=sBdJ9oYViXeZVkyZb9vjRimCOqGFkJZUAVyoAp38IlA=;
-        b=QiEY4qmN63tMkY/lWq6LkDZ372Agec9EVefMPWQevUdbjZ4cXLgFczV/pFHQ5TJSrl
-         1R0lHiNtaaQr6DXqUMUtQYzu5poqp3YR6JCbjpoEaiuX6uq6SJLmu/uLJJOdWGkEdCJR
-         p9WR9GgNDWmHp0gCru0hWOOsr+jLPJELhCS028lByGUBQwx14EftA/LCr7IUu7khYz48
-         Hb5/ol/iRykLKvVg63NKb2fWJ1+nR6T1Oul/PL3+u3ChDDkKm2AO0PVwlWEtOoZAMQex
-         oFtK71j7Jr92Dicm+8K9RqAJujcCAoZR9j3wbo9RvLQs0INNTZRzIkJC1RIyMbs7OUXk
-         sHpw==
-X-Gm-Message-State: APzg51Bpla0U9yCoNX2LBvWKi0AQpoRTV8WLnUTrsVcb5DSoI8bk0Vyk
-        0L9DO7cgEHTMfNYtCu4Q/uDpXhe7IVlnPQ==
-X-Google-Smtp-Source: ANB0VdY8cYQgm5jz9qIt2LyfT9BTsFS7HMi4OqEGJpWszBaYaUJPKvKqHJ1Td2C0utG03OOflpCKew==
-X-Received: by 2002:a62:565c:: with SMTP id k89-v6mr25442861pfb.212.1536609561286;
-        Mon, 10 Sep 2018 12:59:21 -0700 (PDT)
-Received: from WorkZone.localdomain ([60.51.52.116])
-        by smtp.gmail.com with ESMTPSA id l3-v6sm20062604pff.8.2018.09.10.12.59.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Sep 2018 12:59:20 -0700 (PDT)
-From:   Fieah Lim <kw@fieahl.im>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-kernel@vger.kernel.org (open list),
-        linux-pm@vger.kernel.org (open list:CPUIDLE DRIVERS)
-Cc:     Fieah Lim <kw@fieahl.im>
-Subject: [PATCH v2] cpuidle: Remove unnecessary wrapper cpuidle_get_last_residency()
-Date:   Tue, 11 Sep 2018 03:59:01 +0800
-Message-Id: <20180910195901.15200-1-kw@fieahl.im>
-X-Mailer: git-send-email 2.18.0
+        Mon, 10 Sep 2018 20:55:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35340 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727784AbeIKAzb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 20:55:31 -0400
+Received: from [192.168.1.30] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4AD7420658;
+        Mon, 10 Sep 2018 19:59:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1536609588;
+        bh=Fc0Z4U+7osdOjmXaDpR/waga4osqYG98ueWVmmucyVE=;
+        h=To:Cc:From:Subject:Date:From;
+        b=f0r34jwhfpZPMiIt/7cFwfN+iRV3eVKErD7G06o9WAXl7NZ4DzCh5Ct7aOxxLg2Eo
+         JaDX9Gqjop0hao4+7xCy1JhjXC+wXXM837Obe7joj1w4+lHyBe6xQwKr0k7r/T0htT
+         nHGfaVJJPWJozJal5xHuC1GJGqFxqcDd/Iavq0NU=
+To:     Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marex@denx.de>
+From:   Dinh Nguyen <dinguyen@kernel.org>
+Subject: [RFC] reset: make reset controller driver initialize early
+Openpgp: preference=signencrypt
+Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <9854fd68-14e3-aed3-ca35-8e259baa0348@kernel.org>
+Date:   Mon, 10 Sep 2018 14:59:46 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-cpuidle_get_last_residency() is just a wrapper for retrieves
-device's last_residency, it's also weirdly the only
-wrapper function for accessing cpuidle_* struct member,
-and my best guess is it could be a leftover from v2.x
+Hi Philipp,
 
-Anyhow, since the only two users(ladder and menu governor)
-can access dev->last_residency directly, and it's more intuitive,
-let's just get rid of it.
+I need to make the reset controller on the SoCFPGA platform initialize
+early. I have one solution which is similar to what reset-sunxi is
+doing, making the "altr,rst-mgr" initialize early in a separate
+reset-socfpga.c but using the reset-simple operations.
 
-This patch tidies up CPU idle driver a bit without functional changes.
+I'm guessing SoCFPGA may not be the only platform that needs the reset
+driver early, would it make sense to have a solution in reset-simple
+that is capable of an early init?
 
-Signed-off-by: Fieah Lim <kw@fieahl.im>
----
-Changes from v1:
- - Rewrite changelog as Rafael J. Wysocki suggested
----
- drivers/cpuidle/governors/ladder.c |  2 +-
- drivers/cpuidle/governors/menu.c   |  2 +-
- include/linux/cpuidle.h            | 10 ----------
- 3 files changed, 2 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/cpuidle/governors/ladder.c b/drivers/cpuidle/governors/ladder.c
-index 704880a6612a..f0dddc66af26 100644
---- a/drivers/cpuidle/governors/ladder.c
-+++ b/drivers/cpuidle/governors/ladder.c
-@@ -80,7 +80,7 @@ static int ladder_select_state(struct cpuidle_driver *drv,
- 
- 	last_state = &ldev->states[last_idx];
- 
--	last_residency = cpuidle_get_last_residency(dev) - drv->states[last_idx].exit_latency;
-+	last_residency = dev->last_residency - drv->states[last_idx].exit_latency;
- 
- 	/* consider promotion */
- 	if (last_idx < drv->state_count - 1 &&
-diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors/menu.c
-index 1aef60d160eb..715520e339da 100644
---- a/drivers/cpuidle/governors/menu.c
-+++ b/drivers/cpuidle/governors/menu.c
-@@ -492,7 +492,7 @@ static void menu_update(struct cpuidle_driver *drv, struct cpuidle_device *dev)
- 		measured_us = 9 * MAX_INTERESTING / 10;
- 	} else {
- 		/* measured value */
--		measured_us = cpuidle_get_last_residency(dev);
-+		measured_us = dev->last_residency;
- 
- 		/* Deduct exit latency */
- 		if (measured_us > 2 * target->exit_latency)
-diff --git a/include/linux/cpuidle.h b/include/linux/cpuidle.h
-index 4325d6fdde9b..d262f620890e 100644
---- a/include/linux/cpuidle.h
-+++ b/include/linux/cpuidle.h
-@@ -99,16 +99,6 @@ struct cpuidle_device {
- DECLARE_PER_CPU(struct cpuidle_device *, cpuidle_devices);
- DECLARE_PER_CPU(struct cpuidle_device, cpuidle_dev);
- 
--/**
-- * cpuidle_get_last_residency - retrieves the last state's residency time
-- * @dev: the target CPU
-- */
--static inline int cpuidle_get_last_residency(struct cpuidle_device *dev)
--{
--	return dev->last_residency;
--}
--
--
- /****************************
-  * CPUIDLE DRIVER INTERFACE *
-  ****************************/
--- 
-2.18.0
-
+Dinh
