@@ -2,166 +2,159 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC651C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:34:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3F1DC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:38:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8843C2088E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:34:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8843C2088E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id 573752086E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:38:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 573752086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728297AbeIJP1X (ORCPT
+        id S1728113AbeIJPbg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 11:27:23 -0400
-Received: from lb2-smtp-cloud7.xs4all.net ([194.109.24.28]:48305 "EHLO
-        lb2-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727810AbeIJP1W (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 11:27:22 -0400
-Received: from [192.168.2.10] ([212.251.195.8])
-        by smtp-cloud7.xs4all.net with ESMTPA
-        id zJVwf1z31w2L8zJVzfJspm; Mon, 10 Sep 2018 12:33:56 +0200
-Subject: Re: [PATCH v9 2/9] media: v4l: Add definitions for MPEG-2 slice
- format and metadata
-To:     Paul Kocialkowski <contact@paulk.fr>, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-sunxi@googlegroups.com, Randy Li <ayaka@soulik.info>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-References: <20180906222442.14825-1-contact@paulk.fr>
- <20180906222442.14825-3-contact@paulk.fr>
- <9a7fd34d-50e3-4db6-4752-9e62bb160655@xs4all.nl>
- <2409ba6607e85acf3dbbaed394487fa8e92d93df.camel@paulk.fr>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <bd6dd135-1719-2e25-051b-d15b1fe52d61@xs4all.nl>
-Date:   Mon, 10 Sep 2018 12:33:52 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Mon, 10 Sep 2018 11:31:36 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54912 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727980AbeIJPbg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 11:31:36 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BBFB518A;
+        Mon, 10 Sep 2018 03:38:10 -0700 (PDT)
+Received: from queper01-lin (queper01-lin.emea.arm.com [10.4.13.27])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BD08E3F575;
+        Mon, 10 Sep 2018 03:38:06 -0700 (PDT)
+Date:   Mon, 10 Sep 2018 11:38:05 +0100
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
+        mingo@redhat.com, dietmar.eggemann@arm.com,
+        morten.rasmussen@arm.com, chris.redpath@arm.com,
+        patrick.bellasi@arm.com, valentin.schneider@arm.com,
+        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
+        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
+        smuckle@google.com, adharmap@codeaurora.org,
+        skannan@codeaurora.org, pkondeti@codeaurora.org,
+        juri.lelli@redhat.com, edubezval@gmail.com,
+        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
+        javi.merino@kernel.org
+Subject: Re: [PATCH v6 03/14] PM: Introduce an Energy Model management
+ framework
+Message-ID: <20180910103802.l4zhewxgskchflsa@queper01-lin>
+References: <20180820094420.26590-1-quentin.perret@arm.com>
+ <20180820094420.26590-4-quentin.perret@arm.com>
+ <1866195.ZKEIBQluJJ@aspire.rjw.lan>
 MIME-Version: 1.0
-In-Reply-To: <2409ba6607e85acf3dbbaed394487fa8e92d93df.camel@paulk.fr>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4wfKyR5UvawbHUCbuQEQpUeySBXJ4C/LhW9BVk50v7NPgDCzXi0pvRZuO/NcGVHK8oVWhBZ8FGqmal3GRNUQpXpMnpIjOWr6DfOOATj03YIkSN/654n/qz
- Xzd74J8W+94HEPh3qukC4v1vtnfv2EhMFvv1K2UwZlCaq0bY+obFwakDBKXREBTpotaQp2rxY38cQbAJ3AkLtU31s/xslXmzyz/NQe01JdsaRPdBZAmJonkV
- I2XCL1HXwxV20TP6VkU/a6jFdDCo5MtJSFWuLiq7GOxb6z3t4SdDWqjQJAMBbqPkIXWZCP7e7b8Oijix5/EeUxxnIf8ZpBiTG4oU60NZcwS9VM6A2S1lrKLr
- f8C/FWeiUUReTbrtwwe0pcDPc5leDDc5Xmapy9F7rtfgfC4RSJZqkyMbwsoHErgMONCPdA8Bwf4zSHjzerLG9G7H9cF31al+aDdClV3kI9MJT/ru+zsl6ET2
- G6PFBQ+uAuMAI4meo+4GoDI2AglkENmBQgY6uRsFQBy9VujXSb6MDW+Fl+/x9u+mMdTLPI9ayH7FdZHblVDdvb+IU40aoaqm/qIy4cIuZj9/ElNxj9LVbmPW
- Ws64iMwX9eWffmSvOYJhNCJVkyPUihuIBb9cTrEshVIQD/oKHZ2nuMdYTitteq/Dk4ebJINDfBpgfjhyi7CSAsfMdYrjKS9asPU34kzWqmfQjhwBGF3xbxfq
- eQQF00PjrWxitAWKjMsxQC76xYPUa6N6FGQ9GOa2TJeCB5X1Ogm0ED9YhfWAWMMOJpqJ4UK2bvAZYHKjxP2Ypfd7RtzSEuaa8Rz0IwPNgS/hlNeDJu/rOUsK
- w7X8l2rhci5KHV5dP90kFWi5LuuPyNZHvmd75HSWz0op1XSD0Xn5nFBLBtHbGnObSV0WFoLJVhB36XEZWL8=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1866195.ZKEIBQluJJ@aspire.rjw.lan>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/10/2018 11:47 AM, Paul Kocialkowski wrote:
-> Hi,
-> 
-> Le lundi 10 septembre 2018 à 11:41 +0200, Hans Verkuil a écrit :
->> On 09/07/2018 12:24 AM, Paul Kocialkowski wrote:
->>> From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
->>>
->>> Stateless video decoding engines require both the MPEG-2 slices and
->>> associated metadata from the video stream in order to decode frames.
->>>
->>> This introduces definitions for a new pixel format, describing buffers
->>> with MPEG-2 slice data, as well as control structure sfor passing the
->>> frame metadata to drivers.
->>>
->>> This is based on work from both Florent Revest and Hugues Fruchet.
->>>
->>> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
->>> ---
->>>  .../media/uapi/v4l/extended-controls.rst      | 176 ++++++++++++++++++
->>>  .../media/uapi/v4l/pixfmt-compressed.rst      |  16 ++
->>>  .../media/uapi/v4l/vidioc-queryctrl.rst       |  14 +-
->>>  .../media/videodev2.h.rst.exceptions          |   2 +
->>>  drivers/media/v4l2-core/v4l2-ctrls.c          |  63 +++++++
->>>  drivers/media/v4l2-core/v4l2-ioctl.c          |   1 +
->>>  include/media/v4l2-ctrls.h                    |  18 +-
->>>  include/uapi/linux/v4l2-controls.h            |  65 +++++++
->>>  include/uapi/linux/videodev2.h                |   5 +
->>>  9 files changed, 351 insertions(+), 9 deletions(-)
->>>
->>> diff --git a/Documentation/media/uapi/v4l/extended-controls.rst b/Documentation/media/uapi/v4l/extended-controls.rst
->>> index 9f7312bf3365..f1951236266a 100644
->>> --- a/Documentation/media/uapi/v4l/extended-controls.rst
->>> +++ b/Documentation/media/uapi/v4l/extended-controls.rst
->>> @@ -1497,6 +1497,182 @@ enum v4l2_mpeg_video_h264_hierarchical_coding_type -
->>>  
->>>  
->>>  
->>> +.. _v4l2-mpeg-mpeg2:
->>> +
->>> +``V4L2_CID_MPEG_VIDEO_MPEG2_SLICE_PARAMS (struct)``
->>> +    Specifies the slice parameters (as extracted from the bitstream) for the
->>> +    associated MPEG-2 slice data. This includes the necessary parameters for
->>> +    configuring a stateless hardware decoding pipeline for MPEG-2.
->>> +    The bitstream parameters are defined according to :ref:`mpeg2part2`.
->>> +
->>> +.. c:type:: v4l2_ctrl_mpeg2_slice_params
->>> +
->>> +.. cssclass:: longtable
->>> +
->>> +.. flat-table:: struct v4l2_ctrl_mpeg2_slice_params
->>> +    :header-rows:  0
->>> +    :stub-columns: 0
->>> +    :widths:       1 1 2
->>> +
->>> +    * - __u32
->>> +      - ``bit_size``
->>> +      - Size (in bits) of the current slice data.
->>> +    * - __u32
->>> +      - ``data_bit_offset``
->>> +      - Offset (in bits) to the video data in the current slice data.
->>> +    * - struct :c:type:`v4l2_mpeg2_sequence`
->>> +      - ``sequence``
->>> +      - Structure with MPEG-2 sequence metadata, merging relevant fields from
->>> +	the sequence header and sequence extension parts of the bitstream.
->>> +    * - struct :c:type:`v4l2_mpeg2_picture`
->>> +      - ``picture``
->>> +      - Structure with MPEG-2 picture metadata, merging relevant fields from
->>> +	the picture header and picture coding extension parts of the bitstream.
->>> +    * - __u8
->>> +      - ``quantiser_scale_code``
->>> +      - Code used to determine the quantization scale to use for the IDCT.
->>> +    * - __u8
->>> +      - ``backward_ref_index``
->>> +      - Index for the V4L2 buffer to use as backward reference, used with
->>> +	B-coded and P-coded frames.
->>> +    * - __u8
->>> +      - ``forward_ref_index``
->>> +      - Index for the V4L2 buffer to use as forward reference, used with
->>> +	P-coded frames.
->>
->> Should this be "B-coded frames"?
-> 
-> Oops, that's right, B-coded frames.
-> 
-> Should I make a follow-up patch for that (maybe gathered with other
-> changes if required)?
+On Monday 10 Sep 2018 at 11:44:33 (+0200), Rafael J. Wysocki wrote:
+> A kerneldoc comment would be useful here IMO.
 
-Follow-up patches, please. All on top of my last pull request that adds the
-cedrus driver.
+OK
 
-Regards,
+> > +struct em_cap_state {
+> > +	unsigned long frequency; /* Kilo-hertz */
+> 
+> I wonder if the "frequency" field here could be changed into something a bit
+> more abstract like "level" or similar?
+> 
+> The reason why is because in some cases we may end up with somewhat artificial
+> values of "frequency" like when the intel_pstate driver is in use (it uses
+> abstract "p-state" values internally and only produces "frequency" numbers for
+> the cpufreq core and the way they are derived from the "p-states" is not always
+> entirely clean).
+> 
+> The "level" could just be frequency on systems where cpufreq drivers operate on
+> frequencies directly or something else on the other systems.
 
-	Hans
+I see your point (and TBH we start to have same sort of problems on
+Arm) but at this stage I would rather keep this field coherent with
+what CPUFreq manages, that is, KHz. The only reason for that is because
+the thermal subsystem (IPA) will look at this table to apply a max freq
+capping on CPUFreq policies, so things need to be aligned.
+
+I agree that even if the unit of this field wasn't specified we could
+still build a system that works just fine. However if things are too
+loosely specified, problems are allowed to happen, so they will.
+
+Now, if the CPUFreq core is modified to manipulate abstract performance
+levels one day, I'll be happy to change the EM framework the same way :-)
+
+> 
+> > +	unsigned long power; /* Milli-watts */
+> > +	unsigned long cost; /* power * max_frequency / frequency */
+> > +};
+> > +
+> 
+> Like above, a kerneldoc comment documenting the structure below would be useful.
+
+OK for that one too.
+
+> > +struct em_perf_domain {
+> > +	struct em_cap_state *table; /* Capacity states, in ascending order. */
+> > +	int nr_cap_states;
+> > +	unsigned long cpus[0]; /* CPUs of the frequency domain. */
+> > +};
+> > +
+> > +#define EM_CPU_MAX_POWER 0xFFFF
+> > +
+> > +struct em_data_callback {
+> > +	/**
+> > +	 * active_power() - Provide power at the next capacity state of a CPU
+> > +	 * @power	: Active power at the capacity state in mW (modified)
+> > +	 * @freq	: Frequency at the capacity state in kHz (modified)
+> > +	 * @cpu		: CPU for which we do this operation
+> > +	 *
+> > +	 * active_power() must find the lowest capacity state of 'cpu' above
+> > +	 * 'freq' and update 'power' and 'freq' to the matching active power
+> > +	 * and frequency.
+> > +	 *
+> > +	 * The power is the one of a single CPU in the domain, expressed in
+> > +	 * milli-watts. It is expected to fit in the [0, EM_CPU_MAX_POWER]
+> > +	 * range.
+> > +	 *
+> > +	 * Return 0 on success.
+> > +	 */
+> > +	int (*active_power)(unsigned long *power, unsigned long *freq, int cpu);
+> > +};
+> > +#define EM_DATA_CB(_active_power_cb) { .active_power = &_active_power_cb }
+> > +
+> > +struct em_perf_domain *em_cpu_get(int cpu);
+> > +int em_register_perf_domain(cpumask_t *span, unsigned int nr_states,
+> > +						struct em_data_callback *cb);
+> > +
+> > +/**
+> > + * em_pd_energy() - Estimates the energy consumed by the CPUs of a perf. domain
+> > + * @pd		: performance domain for which energy has to be estimated
+> > + * @max_util	: highest utilization among CPUs of the domain
+> > + * @sum_util	: sum of the utilization of all CPUs in the domain
+> > + *
+> > + * Return: the sum of the energy consumed by the CPUs of the domain assuming
+> > + * a capacity state satisfying the max utilization of the domain.
+> 
+> Well, this confuses energy with power AFAICS.  The comment talks about energy,
+> but the return value is in the units of power.
+> 
+> I guess this assumes constant power over the next scheduling interval, which is
+> why energy and power can be treated as equivalent here, but that needs to be
+> clarified as it is somewhat confusing right now.
+
+That's right, manipulating power or energy is equivalent here (as in, it
+leads to the same conclusions).
+
+I can explain that better in the comment.
+
+Thanks,
+Quentin
