@@ -6,76 +6,79 @@ X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21CD7C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:44:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 704E2C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:45:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 861BC20870
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:44:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 174C72087F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:45:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Atgkh+Eg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 861BC20870
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OjK/lWa5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 174C72087F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728435AbeIJUjJ (ORCPT
+        id S1728438AbeIJUkO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 16:39:09 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:37347 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727411AbeIJUjI (ORCPT
+        Mon, 10 Sep 2018 16:40:14 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:46740 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727411AbeIJUkO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 16:39:08 -0400
-Received: by mail-wm0-f68.google.com with SMTP id n11-v6so21909606wmc.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 08:44:27 -0700 (PDT)
+        Mon, 10 Sep 2018 16:40:14 -0400
+Received: by mail-wr1-f66.google.com with SMTP id a108-v6so22442454wrc.13
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 08:45:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=4FYmIPieNdPNF3D8x42wKoCR9PMIsOBi5+RtoBilOhI=;
-        b=Atgkh+EgRIw5MRY5RNsZ4pT9wFpcbegyLlgbDWnJlmgoIceHwVrn0WToOoXD6PgN0i
-         eog3Dm/croOqRapqO7n9u/JeRZgS5638hPrHCS/1j11JZ0Ibn20tVDZipt3yNawtmZvG
-         AG0QzE0yz1gUkvFCC6JNN8YSJcugU4vXCZPi4=
+        bh=e5aoVLMQDvRZDoIZ3wZdjRwe3tZxPt0/pw8UN3pLQRc=;
+        b=OjK/lWa51MLlBr8khrJIRqWOH3+/fjM+x5x08QkEz5cGHFhJjAa6W2eARKuDD2gsNI
+         A73CCKI/doNW+kdaESbIqyB45FrERgKuqWT+ECDL4m3xmP+CN8n30hW2ZJjbNE5mhY++
+         /wuKAV8sWUWuLlOmwFWeOBECtACzfvY6itEdw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=4FYmIPieNdPNF3D8x42wKoCR9PMIsOBi5+RtoBilOhI=;
-        b=YazdTgooDZukQOE6/dyYRXelHEm0AHGWM7IGA8y5I5oZcFMgx0mFEz9SpbM1Erlw4z
-         z1CImbCVP1qNd8m1gmzE/dVzyarLkL5WxUaKfMCSdtnb6vitxHr6WmhKHH3G1d5p7wwm
-         VrhHjWG/BAFFfC9/u92bC0ZKx132cRZ8WldcDX536gY/BEbsmFSKLS0M2+ec5jfR2A2o
-         i6n+AzuAAQ5L6fLNHbzliRBNNk+t4ikDkMquBgR/FI9V6vcG4QLNHjTFWk0EJ2hAQrCm
-         J1vmhw9/itJdVSV8+cAJ5z6fcOi0QBGeB+eAq8GSa5XCgCQdgvZDhNIe+ofP1Pitnbqk
-         T8rQ==
-X-Gm-Message-State: APzg51ABUVgToFhP4y57SfYvYFjVn/VbqH0c0Sjcx8lxWsmdW2tt4CDG
-        6IHRzyFguZQgnNfxcmVhjbrOhQ==
-X-Google-Smtp-Source: ANB0VdZLmCy0ZIVea86Du+3ZL6cCJ6S9mOpKPqnhRIDzPnqjFl+aw9/4uKugYGRpo2XCnGxNAzh5bQ==
-X-Received: by 2002:a1c:6782:: with SMTP id b124-v6mr1144954wmc.30.1536594266910;
-        Mon, 10 Sep 2018 08:44:26 -0700 (PDT)
+        bh=e5aoVLMQDvRZDoIZ3wZdjRwe3tZxPt0/pw8UN3pLQRc=;
+        b=FKkqffjHTHw+Szi7RMrq5S/wun7nBKwb5byJtpIHPrBuY1OvtyylFuywniBssbGv9I
+         h2mP+hVPYWYJkFuACX1c4KiSVcPMonNFx0du/UScbpYcVGHLikCoxIgrsWC/iKQk2pOQ
+         YnBs/WkIM54iBRyv4+Jzp2UXogwVGyZYFVGUnM7/Tlp996g3bZRq/9VZ8EKudsd0Yojy
+         F1BoSAAxZ76d6x1NjkcfiDSskKa0xlq7tV8Ecu8Ofo9xBOMAgxAURz0B0/LSFgvs7oFj
+         VjCi4kIimNu52c8+qSRlS56z1xQWi08CNPChZg/CU8k4kHIRnCeEEicoDN+yqrnP8nXR
+         aDYQ==
+X-Gm-Message-State: APzg51AgAuT5zu9ZYmAKRcWHYQX3t1Vg93PujUbCfpDjIghRZ1Vkkop4
+        jjO1L2Fe1Gt6G6YsT5MdssMNFw==
+X-Google-Smtp-Source: ANB0VdZKL6N8jNFSlA1eod/TektolDPzqMizrW45AueKEpM0xcfjZEXnVxZue2xP76vtcwxO8eWsWg==
+X-Received: by 2002:a5d:434c:: with SMTP id u12-v6mr15269461wrr.189.1536594332188;
+        Mon, 10 Sep 2018 08:45:32 -0700 (PDT)
 Received: from dell ([2.27.167.7])
-        by smtp.gmail.com with ESMTPSA id c19-v6sm16081085wre.86.2018.09.10.08.44.25
+        by smtp.gmail.com with ESMTPSA id x16-v6sm11426216wro.84.2018.09.10.08.45.31
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 10 Sep 2018 08:44:26 -0700 (PDT)
-Date:   Mon, 10 Sep 2018 16:44:24 +0100
+        Mon, 10 Sep 2018 08:45:31 -0700 (PDT)
+Date:   Mon, 10 Sep 2018 16:45:29 +0100
 From:   Lee Jones <lee.jones@linaro.org>
 To:     Richard Fitzgerald <rf@opensource.cirrus.com>
 Cc:     tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
         patches@opensource.cirrus.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v11 1/2] mfd: madera: Add irqchip data pointer into
- struct madera
-Message-ID: <20180910154424.GE28860@dell>
+Subject: [GIT PULL] Immutable branch between MFD and IRQChip due for the
+ v4.20 merge window
+Message-ID: <20180910154529.GF28860@dell>
 References: <20180830132005.19500-1-rf@opensource.cirrus.com>
+ <20180910154424.GE28860@dell>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180830132005.19500-1-rf@opensource.cirrus.com>
+In-Reply-To: <20180910154424.GE28860@dell>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+
+[Resending with correct subject line this time]
 
 Enjoy!
 
