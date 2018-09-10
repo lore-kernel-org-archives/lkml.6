@@ -2,69 +2,84 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB315C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:54:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F634C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:55:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6085420855
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:54:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6085420855
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 3A35B20855
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:55:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="F9AD8UD1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A35B20855
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728724AbeIJSs5 (ORCPT
+        id S1728753AbeIJSti (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 14:48:57 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:46323 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728291AbeIJSs5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 14:48:57 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 34E19BCA589EB;
-        Mon, 10 Sep 2018 21:54:38 +0800 (CST)
-Received: from [127.0.0.1] (10.177.29.68) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.399.0; Mon, 10 Sep 2018
- 21:54:37 +0800
-Message-ID: <5B96779C.5060306@huawei.com>
-Date:   Mon, 10 Sep 2018 21:54:36 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
+        Mon, 10 Sep 2018 14:49:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48032 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728308AbeIJSti (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 14:49:38 -0400
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 588F720855
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 13:55:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1536587724;
+        bh=c5IKRwdEKTKgP75ZS44+5PMamgf9QOclPkp1XJpTsjQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=F9AD8UD131IxYIB+piIUJEy9SM64pkNQihCxW21dIn6uOKB2T+trUXvFbxu3woGkT
+         /8ARKrxOwdbVK+fUZAjY9wB5wGMrW4bQKPsOg1cjSOmwp8RFTQ2EIbpa+K3NoXGAQs
+         BMAp4rgyFRFs7s6QGFPZlGLzMl247aw0/bxRPBAk=
+Received: by mail-qk1-f169.google.com with SMTP id f17-v6so14362673qkh.4
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 06:55:24 -0700 (PDT)
+X-Gm-Message-State: APzg51AeUP2xGStVKnJC4RynXQVa6oyV1ZlJ0u3YMI+m+c4HRf3WfSF3
+        YB9fici5vViFdHXQFT5rboxp96mlMiX/w47Pfw==
+X-Google-Smtp-Source: ANB0VdZb7JsNfQT+F0zJfv6eUQ/FwstmqBKPIXC83whOMkWOLJivgnuMR85lVNFMrmmctnAXQ0z5YZ4k+tLzYKLvNNA=
+X-Received: by 2002:a37:56c7:: with SMTP id k190-v6mr14209560qkb.29.1536587723570;
+ Mon, 10 Sep 2018 06:55:23 -0700 (PDT)
 MIME-Version: 1.0
-To:     Johannes Berg <johannes@sipsolutions.net>
-CC:     <davem@davemloft.net>, <linux-wireless@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] wireless: remove unnecessary condition check before kfree
-References: <1536415955-33776-1-git-send-email-zhongjiang@huawei.com> <1536563406.3224.2.camel@sipsolutions.net>
-In-Reply-To: <1536563406.3224.2.camel@sipsolutions.net>
+References: <20180828015252.28511-1-robh@kernel.org> <20180828015252.28511-24-robh@kernel.org>
+ <alpine.DEB.2.21.1809081414150.1402@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1809081414150.1402@nanos.tec.linutronix.de>
+From:   Rob Herring <robh@kernel.org>
+Date:   Mon, 10 Sep 2018 08:55:12 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJVbc4ecRfSp4=crH0Ci9duP-2_mZmKW-5NW-zZv4QwQw@mail.gmail.com>
+Message-ID: <CAL_JsqJVbc4ecRfSp4=crH0Ci9duP-2_mZmKW-5NW-zZv4QwQw@mail.gmail.com>
+Subject: Re: [PATCH] irqchip: Convert to using %pOFn instead of device_node.name
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.68]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/9/10 15:10, Johannes Berg wrote:
-> On Sat, 2018-09-08 at 22:12 +0800, zhong jiang wrote:
->> kfree has taken the null pointer into account. Just remove the
->> redundant condition check before kfree.
-> I'm all for doing that if it actually removes conditionals, but
+On Sat, Sep 8, 2018 at 7:15 AM Thomas Gleixner <tglx@linutronix.de> wrote:
 >
->> -	if (!IS_ERR_OR_NULL(regdb))
->> +	if (!IS_ERR(regdb))
->>  		kfree(regdb);
-> this seems rather pointless since there's still a condition. In that
-> case, I feel it's easier to understand the original code.
- Fine, make sense you have said. I just consider the duplication of function.
- 
- Thanks,
- zhong jiang
-> johannes
+> On Mon, 27 Aug 2018, Rob Herring wrote:
 >
-> .
+> > In preparation to remove the node name pointer from struct device_node,
+> > convert printf users to use the %pOFn format specifier.
+> >
+> > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > Cc: Jason Cooper <jason@lakedaemon.net>
+> > Cc: Marc Zyngier <marc.zyngier@arm.com>
+> > Cc: linux-arm-kernel@lists.infradead.org
+> > Signed-off-by: Rob Herring <robh@kernel.org>
 >
+> Should I take it or do you want to take it with others? If the latter,
+> acked-by-me.
 
+Please take it. There's no dependency.
 
+Rob
