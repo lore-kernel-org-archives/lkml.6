@@ -2,104 +2,99 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18C47C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:52:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53621C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:53:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA71720855
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:52:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA71720855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=iki.fi
+	by mail.kernel.org (Postfix) with ESMTP id 0AF0C2086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:53:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AF0C2086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728200AbeIJOpt (ORCPT
+        id S1728061AbeIJOq6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 10:45:49 -0400
-Received: from emh03.mail.saunalahti.fi ([62.142.5.109]:52536 "EHLO
-        emh03.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727714AbeIJOpt (ORCPT
+        Mon, 10 Sep 2018 10:46:58 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:38838 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726738AbeIJOq6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 10:45:49 -0400
-Received: from ydin.reaktio.net (reaktio.net [85.76.255.15])
-        by emh03.mail.saunalahti.fi (Postfix) with ESMTP id 2846C400D7;
-        Mon, 10 Sep 2018 12:52:32 +0300 (EEST)
-Received: by ydin.reaktio.net (Postfix, from userid 1001)
-        id BE5AC36C0F6; Mon, 10 Sep 2018 12:52:31 +0300 (EEST)
-Date:   Mon, 10 Sep 2018 12:52:31 +0300
-From:   Pasi =?iso-8859-1?Q?K=E4rkk=E4inen?= <pasik@iki.fi>
-To:     Sinan Kaya <okaya@kernel.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Bjorn Helgaas <helgaas@kernel.org>, jgross@suse.com,
-        Sinan Kaya <okaya@codeaurora.org>,
-        Govinda Tatti <Govinda.Tatti@Oracle.COM>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Satanand Burla <satananda.burla@caviumnetworks.com>,
-        linux-pci@vger.kernel.org,
-        Felix Manlunas <felix.manlunas@caviumnetworks.com>,
-        linux-kernel@vger.kernel.org,
-        Derek Chickles <derek.chickles@caviumnetworks.com>,
-        Srikanth Jampala <Jampala.Srikanth@cavium.com>,
-        JBeulich@suse.com, Russell Currey <ruscur@russell.cc>,
-        bhelgaas@google.com, xen-devel@lists.xenproject.org,
-        boris.ostrovsky@Oracle.COM,
-        Raghu Vatsavayi <raghu.vatsavayi@caviumnetworks.com>,
-        roger.pau@citrix.com
-Subject: Re: [Xen-devel] [PATCH V3 1/2] Drivers/PCI: Export pcie_has_flr()
- interface
-Message-ID: <20180910095231.GD18222@reaktio.net>
-References: <20171208202424.GC12367@bhelgaas-glaptop.roam.corp.google.com>
- <426eeeab-0dcd-8de3-9c5f-a166acf2c130@Oracle.COM>
- <20171212005919.GB30595@bhelgaas-glaptop.roam.corp.google.com>
- <49956aaf-5fd5-939d-5fc7-231ffdb98b70@Oracle.COM>
- <20171213212420.GH30595@bhelgaas-glaptop.roam.corp.google.com>
- <fea075cf-fe6f-0d0b-11e4-4279fbfc280a@Oracle.COM>
- <20171215181801.GU30595@bhelgaas-glaptop.roam.corp.google.com>
- <20171218122629.GA18423@infradead.org>
- <20180909185944.GC18222@reaktio.net>
- <9ffe43d2-a44b-974c-85c9-9923d71c5dba@kernel.org>
+        Mon, 10 Sep 2018 10:46:58 -0400
+Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fzIt2-0004LP-1i; Mon, 10 Sep 2018 11:53:40 +0200
+Date:   Mon, 10 Sep 2018 11:53:39 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Feng Tang <feng.tang@intel.com>
+cc:     Michal Hocko <mhocko@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        Ingo Molnar <mingo@elte.hu>,
+        "H . Peter Anvin" <hpa@linux.intel.com>,
+        Yinghai Lu <yinghai@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH] x86, mm: Reserver some memory for bootmem allocator for
+ NO_BOOTMEM
+In-Reply-To: <20180910093938.ka732apzy3d3a5ip@shbuild888>
+Message-ID: <alpine.DEB.2.21.1809101147500.1402@nanos.tec.linutronix.de>
+References: <20180830124915.GH2656@dhcp22.suse.cz> <20180830125909.uq3e76akcmep6j2u@shbuild888> <alpine.DEB.2.21.1808301504300.1210@nanos.tec.linutronix.de> <20180830131920.w2jqjvlkpfb4ejb2@shbuild888> <alpine.DEB.2.21.1808301523510.1210@nanos.tec.linutronix.de>
+ <20180831061519.3zbxsjs4rd6mmsuo@shbuild888> <alpine.DEB.2.21.1808311328260.2208@nanos.tec.linutronix.de> <20180831133659.pkmscqpudjnkujbg@shbuild888> <20180907081716.bxw3hmcl6w7gqvax@shbuild888> <alpine.DEB.2.21.1809071250240.1402@nanos.tec.linutronix.de>
+ <20180910093938.ka732apzy3d3a5ip@shbuild888>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9ffe43d2-a44b-974c-85c9-9923d71c5dba@kernel.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Sun, Sep 09, 2018 at 10:33:02PM -0400, Sinan Kaya wrote:
-> On 9/9/2018 2:59 PM, Pasi Kärkkäinen wrote:
-> >I noticed pcie_has_flr() has been recently exported in upstream Linux:
-> >https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=2d2917f7747805a1f4188672f308d82a8ba01700
-> >
-> >Are there more changes / cleanups planned to these interfaces, as mentioned last year?
-> >
-> >(context: xen-pciback reset/do_flr features upstreaming, which kind of stalled last year when pcie_has_flr() wasn't exported at the time)
+On Mon, 10 Sep 2018, Feng Tang wrote:
+> On Fri, Sep 07, 2018 at 12:52:17PM +0200, Thomas Gleixner wrote:
+> > You really want to add a proper sanity check for this. The static stuff has
+> > to cover the fixmap. Just making it work for this particular case is sloppy
+> > at best as the next larger change of the fixmap will just bring the problem
+> > back.
+> Yes, agree.
 > 
-> Exporting pcie_has_flr() is a very simple change which could have been done
-> by the XEN porting effort.
-> 
-> Maybe, the right question is what is so special about XEN reset?
-> 
-> What feature PCI core is missing to support XEN FLR reset that caused
-> the effort to stall?
->
+> Since the issue happens very early before any serial console, I can only think
+> of a build time check.
 
-Well one of the reasons probably was because Christoph was planning to deprecate the pcie_has_flr() functionality..
+Of course. That's obvious. The size _IS_ known at build time.
 
-https://lists.xen.org/archives/html/xen-devel/2017-12/msg01057.html
-https://lists.xen.org/archives/html/xen-devel/2017-12/msg01252.html
+> diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
+> index e848a4811785..fc172551048a 100644
+> --- a/arch/x86/mm/pgtable.c
+> +++ b/arch/x86/mm/pgtable.c
+> @@ -637,6 +637,19 @@ void __native_set_fixmap(enum fixed_addresses idx, pte_t pte)
+>  {
+>  	unsigned long address = __fix_to_virt(idx);
+>  
+> +#ifdef CONFIG_X86_64
+> +	/*
+> +	 * In arch/x86/kernel/head_64.S, the static page table
+> +	 * has been setup for 4M space [-12M, -8M]
+> +	 *	0xFFFFFFFFFF400000 ~ 0xFFFFFFFFFF7FFFFF
+> +	 * Add a sanity check whether fixed_address crosses
+> +	 * the boundary.
+> +	 */
+> +	#define FIXMAP_STATIC_PGTABLE_START	0xFFFFFFFFFF400000
 
-But now that pcie_has_flr() is exported and available I guess it's fine to continue using it also for xen-pciback :)
+Errm what? This is beyond hillarious, really. What helps that if I remove
+that second FIXMAP entry in head_64.S?
 
+The size of the fixmap is known at compile time and it is known when
+building head_64.S. So the obvious check is to check right there where the
+static pagetable is set up and where you know how many entries you set up
+whether it's covering the full size or not and err out there.
 
 Thanks,
 
--- Pasi
-
+	tglx
