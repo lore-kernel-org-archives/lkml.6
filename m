@@ -1,111 +1,87 @@
 Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.0 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 495FEC4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:00:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A274C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:01:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD3D5204EC
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:00:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RL/wHA6J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD3D5204EC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D17FD204EC
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:01:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D17FD204EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728456AbeIJRyd (ORCPT
+        id S1728464AbeIJRz3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 13:54:33 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:39135 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727796AbeIJRyd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 13:54:33 -0400
-Received: by mail-wm0-f68.google.com with SMTP id q8-v6so21389482wmq.4;
-        Mon, 10 Sep 2018 06:00:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=tR/j/RoXUEJTASIIoGcSfNGZbqRPk4f6bTy4VI6P01I=;
-        b=RL/wHA6JaOEJXoJ18VSjXIoBCD6HCuFcV0wu4Qu10SyetIcx7HrD35UUkEsDG/Av2L
-         PEXz+GDdErqz5otLTUgHB4HoAzVYfRyhBjL+7njWPNrgAr/fcDhsbWALW9mDp+pYYMfe
-         FJSaA7QtcEb+Td0mq935I7wLFV91jTticI7WGE93DHMQhBqsHtKyGtLBM8U0lmHeG2iQ
-         flp3WlqTpLHv0BmnoKJXR+jIp6cnkf/RAVGlHxaEp46aW2PuLIinHElTq5Ief7f/26Nz
-         uiv6MLAPRD9QkNFAK5ipSeu/D2VfImt8H3mtEfKbmtmZy8gbWoiDdGh86fG+Nw4jbphJ
-         Z2qQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tR/j/RoXUEJTASIIoGcSfNGZbqRPk4f6bTy4VI6P01I=;
-        b=qVzGrrvVRkcjtMzn57J6TMh8ZNBQItNEShG+ryIP8fDy7Q8OL/Xser2c26S4lg7i+W
-         un7MirXrJ+wE87CiAtkvWJ8AgUjsQj22v4DK7bsiOH9VnhBeAZ+eEuNtYz0+8KAyp171
-         OSUee0QiGRqb3dZiZfxIZj3G0rC7ZNhayv9WS1Gwjbk+LmLe9H9+r9lIdMpo+OK1IX3S
-         PBG726jyi/gd/i9Fr9HRMrraW7jlm+VyCSH47YLI7DR5w5fd6WT780icXvLjgsXWVEl3
-         T9TnDrkse1ijIw07674co1cYroa8I87cdv01eraIVEeb4/WPDDKiWeMwPsHxaM1vBumD
-         E87w==
-X-Gm-Message-State: APzg51ChMzSC8DqPd2IdftJRX4H3qjdNlpAEftv4YjFit7/gpVK6oQha
-        qx3oamL/k4ThF3LvbUI3ZJI=
-X-Google-Smtp-Source: ANB0VdaFZWfMF/LmgJkxKfSztlKXBCTfpHy1kMZYjGLlhQ/Sx9rAZSGM49gzUCvEjqguIwbfM3sZ2g==
-X-Received: by 2002:a1c:1314:: with SMTP id 20-v6mr659808wmt.55.1536584433128;
-        Mon, 10 Sep 2018 06:00:33 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id x16-v6sm11214008wro.84.2018.09.10.06.00.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 10 Sep 2018 06:00:32 -0700 (PDT)
-Date:   Mon, 10 Sep 2018 15:00:29 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Nadav Amit <namit@vmware.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, X86 ML <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Alok Kataria <akataria@vmware.com>,
-        Christopher Li <sparse@chrisli.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Jan Beulich <JBeulich@suse.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        "linux-sparse@vger.kernel.org" <linux-sparse@vger.kernel.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        "linux-xtensa@linux-xtensa.org" <linux-xtensa@linux-xtensa.org>
-Subject: Re: [PATCH v7 00/10] x86: macrofying inline asm for better
- compilation
-Message-ID: <20180910130029.GA66583@gmail.com>
-References: <20180809201554.168804-1-namit@vmware.com>
- <4EDCB9E5-22C4-4168-A80A-4EC81ECE43EF@vmware.com>
+        Mon, 10 Sep 2018 13:55:29 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:12092 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727269AbeIJRz3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 13:55:29 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id DCC9DA7FDF2DA;
+        Mon, 10 Sep 2018 21:01:25 +0800 (CST)
+Received: from szvp000100637.huawei.com (10.162.55.131) by smtp.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server (TLS) id 14.3.399.0; Mon, 10 Sep
+ 2018 21:01:20 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>
+CC:     Eric Biggers <ebiggers@google.com>,
+        <linux-fscrypt@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Chao Yu <yuchao0@huawei.com>, Miao Xie <miaoxie@huawei.com>,
+        <weidu.du@huawei.com>, Gao Xiang <gaoxiang25@huawei.com>
+Subject: [RFC PATCH 1/2] fscrypt: remove d_lock on reading DCACHE_ENCRYPTED_WITH_KEY
+Date:   Mon, 10 Sep 2018 21:01:07 +0800
+Message-ID: <1536584468-15695-1-git-send-email-gaoxiang25@huawei.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4EDCB9E5-22C4-4168-A80A-4EC81ECE43EF@vmware.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-Originating-IP: [10.162.55.131]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+It seems there is no need to take d_lock when
+accessing dentry->d_flags & DCACHE_ENCRYPTED_WITH_KEY
+in fscrypt_d_revalidate. It only needs to be
+serialized for updating.
 
-* Nadav Amit <namit@vmware.com> wrote:
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+---
+Hi,
 
-> Ping.
-
-Masahiro Yamada noted that some Reviewed-by tags were not added - could you please double check 
-past mails and add them and re-send against the latest kernel?
+At glance, I have no idea why fscrypt_d_revalidate disables
+RCU-lookup. Therefore I made patches to raise a question and
+do some basic test, and it seems to work.
 
 Thanks,
 
-	Ingo
+ fs/crypto/crypto.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
+index 0f46cf5..b38c574 100644
+--- a/fs/crypto/crypto.c
++++ b/fs/crypto/crypto.c
+@@ -329,9 +329,8 @@ static int fscrypt_d_revalidate(struct dentry *dentry, unsigned int flags)
+ 		return 0;
+ 	}
+ 
+-	spin_lock(&dentry->d_lock);
+-	cached_with_key = dentry->d_flags & DCACHE_ENCRYPTED_WITH_KEY;
+-	spin_unlock(&dentry->d_lock);
++	cached_with_key = READ_ONCE(dentry->d_flags) &
++		DCACHE_ENCRYPTED_WITH_KEY;
+ 	dir_has_key = (d_inode(dir)->i_crypt_info != NULL);
+ 	dput(dir);
+ 
+-- 
+1.9.1
+
