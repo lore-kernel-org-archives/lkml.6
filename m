@@ -3,168 +3,147 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E10EC4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 08:07:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 450D8C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 08:08:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAB962086B
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 08:07:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E918D20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 08:08:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="abUEPkUT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAB962086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="dl15Dl1+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E918D20870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727703AbeIJNAS (ORCPT
+        id S1727729AbeIJNAz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 09:00:18 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:37396 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726505AbeIJNAS (ORCPT
+        Mon, 10 Sep 2018 09:00:55 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:37962 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726505AbeIJNAy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 09:00:18 -0400
-Received: by mail-lf1-f66.google.com with SMTP id j8-v6so16647634lfb.4
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 01:07:30 -0700 (PDT)
+        Mon, 10 Sep 2018 09:00:54 -0400
+Received: by mail-it0-f67.google.com with SMTP id p129-v6so27514141ite.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 01:08:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=DEanT5STU0/oQw8z/5QuYfY/ru455E/DyywX6JOmCHc=;
-        b=abUEPkUT5Yg+otS7s5oqYPqxRyLHwBYPTGNsQYx6mb9OBQIYmAZKtMcYwFO3c1yN9J
-         Hs0AKxur+QyrT/iYj/ybgCXJ9h5qazF/dkHF58vFtuBU9oWBnB9g3+WnJG2cffk6cWZM
-         ss//g43NaiqFica204/RfKfyAnNPBKL94qO79WRCXbQbFRk5nft3+8Y6dhOSQvIc+eqt
-         ymHPMAMWXKiafMwGbLpKrBiTPqyiY6pRaXo1d2rY5GjlqqSIDisdpH+fvnwBf+/19WCS
-         R7qy9cqE8uNFhyJGc80REHWWYkKv2RF8Zr7Li4R5Fi+H9wi8pee81fsQW+fVwmOqcP2F
-         hdrw==
+        bh=XIdPMJhmh+LMeKFD0+SWYOXl8kuTA3I/4wpzbVA9Dmg=;
+        b=dl15Dl1+iEKxAmH3GZ4pDRmSePKmYHN3p+DOYXUwyQYz/h/nlzkiPWpnQQ6MP1d9Zo
+         iiZuLQrI5RaOfajxINVukLdqFqta9tIF6o1IHClWPi3BTLSn7qw4MnQswV7thd/8zcH/
+         Kn0JGF122FF5uMUUboFZQiQ4apZL0+Fx1YpMvw3PTiBvklaSusqLAXRMYM2JLaSwRk+F
+         MysrPnCGRV6ifE0WavXuP6dGtP+IDF9TTSZZdFNo2s2aVFkdSFtSf6nlUvW7lhDa2uX3
+         OZCx7inspiWe9pIj1KzvbG0LtvMUoki3bwhPtN8XxOIe72sMB0idnc1nog+T7+tQ7+Pe
+         Bnqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=DEanT5STU0/oQw8z/5QuYfY/ru455E/DyywX6JOmCHc=;
-        b=UcBqypRkJhbKnf9lfq3VsY6Y6CtaZZ7635QKmVq55DcUmKUQd3wOBEwOB2rfYQiNWd
-         vyOWL2o04jdOR/PwBZqqbkJqcY+KXo4+qAPTXw6DeWKxQgb5UMzgHfwbV/UuC1S+FGva
-         vDmdWn0uScDjEjpLfNzjNLgIdi14/6ytug9TusqufufmUbEyEiaSnhWT/QELu5U4rEsq
-         y+gKrNVq6wYF7DHu8ETvgPdwkRuGLrSCmbiXaSVfWs4sKfUUixP3CC4xJGm7TFmHSPYP
-         p6AvGIcXCO6Eydt9YUeHmVlS259myhSqZlUk9W4MYZklxUHL8i29I6O+jjLKKLjhCY3G
-         1Ilw==
-X-Gm-Message-State: APzg51D6cTfq2/LBtGjRFpnSGcc8JU/civQhGcbt+iQt/WJ5Rr1s+q7T
-        4ZzTpOgUsYXPgZMo+W27muwmioz/3wpMMBt4ZIA=
-X-Google-Smtp-Source: ANB0Vdac+52eTInBuDUicTVPu5GmwsaUrzTZvBuv0ujFmDQ7fUmDmeUc2/HgRZnfhm21cYe5QDLk1BppEcyfi0qMxnk=
-X-Received: by 2002:a19:6756:: with SMTP id e22-v6mr11198296lfj.54.1536566849489;
- Mon, 10 Sep 2018 01:07:29 -0700 (PDT)
+        bh=XIdPMJhmh+LMeKFD0+SWYOXl8kuTA3I/4wpzbVA9Dmg=;
+        b=h9nnzDILot/B7mrKPhMr6V+1BCo4uTR5hzhPPSeZlcTxDw1iIcOQ2MepdwowcXNX+1
+         ebuWGUPq8Jnh4BQzs6P+fzM9hEZYIDn8IAMmcugbBE2SMHwZefTR/wUlH9maLFYRMmIK
+         +gXwHpoyka6Qiqn0u2K+MDR4/LZtVGBkI2Ig3Aep8ik0HR8Nd4f9qOQ9jTaT+Tzba/js
+         7x7AaYhf4ucN+M9pr0DAdLyGkrToJeJNoLjjPXMUc+rNZKlu27nSYDcb9LppfPdi9EuH
+         y5dTrJi8IIuXxvj735+qRaY6f71dOSsAgUznTklO5CbyrpopUXnoojqAKT0gjLS01+21
+         a22A==
+X-Gm-Message-State: APzg51B6IRaUGuuFZKcsSkMNXsX78sHQ80o4TQ1l27K3opKHAdUlO/I9
+        YUg/owNo8ccLbMSwa0ji45smfGdaPc/XOwhsc3aNr3xXZ+E=
+X-Google-Smtp-Source: ANB0VdbAtmNqz9qkElkqkZtZJINEGjDBvnUFP7QtNtalVxJYNCN1xzACpq6S2D0US+MpxCLle1FXWI2xO7hIm110IQ8=
+X-Received: by 2002:a24:41cd:: with SMTP id b74-v6mr16224380itd.85.1536566887184;
+ Mon, 10 Sep 2018 01:08:07 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180808161641.GA20483@jordon-HP-15-Notebook-PC>
- <CAFqt6zYn_kf+sQ0Dih83CH7hVR2f6ZW-ANVRm9+MX54KcMk=jQ@mail.gmail.com> <1f0a17d5-59cc-0d6a-a1dc-a865975bffe2@ti.com>
-In-Reply-To: <1f0a17d5-59cc-0d6a-a1dc-a865975bffe2@ti.com>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Mon, 10 Sep 2018 13:37:17 +0530
-Message-ID: <CAFqt6zb=fUvFqF0BBBNJXnZjDQVGxaO-1oSZkokZRsR9eDR8YQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/tilcdc: Convert drm_atomic_helper_suspend/resume()
-To:     jsarha@ti.com
-Cc:     Tomi Valkeinen <tomi.valkeinen@ti.com>, airlied@linux.ie,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Ajit Linux <ajitn.linux@gmail.com>
+Received: by 2002:a6b:1905:0:0:0:0:0 with HTTP; Mon, 10 Sep 2018 01:08:06
+ -0700 (PDT)
+In-Reply-To: <13424edc-ce9e-7785-4550-cc224ec58a9e@linaro.org>
+References: <20180910074404.8041-1-brgl@bgdev.pl> <a25ef4b9-18cf-ab08-af8f-72b6eaa32602@linaro.org>
+ <CAMRc=Md+Cr8cBQGJuy0UL+oQjatH+mLV28279-qccgvyy18CAA@mail.gmail.com> <13424edc-ce9e-7785-4550-cc224ec58a9e@linaro.org>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Mon, 10 Sep 2018 10:08:06 +0200
+Message-ID: <CAMRc=McCe0t1gb6BPkN=tU1zgT5tPwzhz_-WzvFhXXQS041nNw@mail.gmail.com>
+Subject: Re: [PATCH 0/2] eeprom: use devres for nvmem providers
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh@kernel.org>,
+        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
+        Devang Panchal <devang.panchal@softnautics.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 10, 2018 at 1:11 PM Jyri Sarha <jsarha@ti.com> wrote:
+2018-09-10 9:59 GMT+02:00 Srinivas Kandagatla <srinivas.kandagatla@linaro.org>:
 >
-> On 10/09/18 09:45, Souptick Joarder wrote:
-> > On Wed, Aug 8, 2018 at 9:43 PM Souptick Joarder <jrdr.linux@gmail.com> wrote:
-> >>
-> >> convert drm_atomic_helper_suspend/resume() to use
-> >> drm_mode_config_helper_suspend/resume().
-> >>
-> >> saved_state in tilcdc_drm_private will not be used
-> >> anymore, so it can be removed.
-> >
-> > Any comment on this patch ?
 >
-> I planned to test this out, but I did not find time to do that. But here
-> is my:
+> On 10/09/18 08:54, Bartosz Golaszewski wrote:
+>>
+>> 2018-09-10 9:50 GMT+02:00 Srinivas Kandagatla
+>> <srinivas.kandagatla@linaro.org>:
+>>>
+>>>
+>>>
+>>> On 10/09/18 08:44, Bartosz Golaszewski wrote:
+>>>>
+>>>>
+>>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>>
+>>>> While working on the nvmem framework recently I noticed that there are
+>>>> many providers that don't use the devm variant of nvmem_register().
+>>>> This series contains relevant updates for eeprom drivers.
+>>>>
+>>>> Bartosz Golaszewski (2):
+>>>>     eeprom: eeprom_93xx46: use resource management
+>>>>     eeprom: at25: use devm_nvmem_register()
+>>>>
+>>>>    drivers/misc/eeprom/at25.c          | 3 +--
+>>>>    drivers/misc/eeprom/eeprom_93xx46.c | 7 ++-----
+>>>
+>>>
+>>>
+>>> Can you please consider consolidating the devm related changes in a
+>>> single
+>>> series, to easy the review!
+>>>
+>>>
+>>>>    2 files changed, 3 insertions(+), 7 deletions(-)
+>>>>
+>>>
+>>
+>> Are you referring to the devm part of the bigger nvmem series? If so:
+>> no, because the nvmem patches are required by the later patches in
 >
-> Reviewed-by: Jyri Sarha <jsarha@ti.com>
+> Yes, am referring to that series.
+> I dont see any reason why lpc and sunxi changes should not be in this
+> series? Or there is no implicit reasoning or change log that suggests that
+> these have to be part of that series!
 >
-> I'll pick this up for my next pull request.
 >
 
-Thanks, Hopefully It will make into 4.20 :)
+Patch ("nvmem: change the signature of nvmem_unregister()") depends on
+those three patches in the other series. We need to change them first
+because they were still checking the return value of
+nvmem_unregister(). And this patch results from the earlier kref
+patch. I think that although this nvmem series is pretty big, it
+contains mostly related changes and it will be hard to submit them
+separately.
 
-> BR,
-> Jyri
->
-> >>
-> >> Signed-off-by: Ajit Negi <ajitn.linux@gmail.com>
-> >> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> >> ---
-> >>  drivers/gpu/drm/tilcdc/tilcdc_drv.c | 14 ++++----------
-> >>  drivers/gpu/drm/tilcdc/tilcdc_drv.h |  3 ---
-> >>  2 files changed, 4 insertions(+), 13 deletions(-)
-> >>
-> >> diff --git a/drivers/gpu/drm/tilcdc/tilcdc_drv.c b/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-> >> index 0fb300d..33e5332 100644
-> >> --- a/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-> >> +++ b/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-> >> @@ -554,29 +554,23 @@ static int tilcdc_debugfs_init(struct drm_minor *minor)
-> >>  static int tilcdc_pm_suspend(struct device *dev)
-> >>  {
-> >>         struct drm_device *ddev = dev_get_drvdata(dev);
-> >> -       struct tilcdc_drm_private *priv = ddev->dev_private;
-> >> +       int ret = 0;
-> >>
-> >> -       priv->saved_state = drm_atomic_helper_suspend(ddev);
-> >> +       ret = drm_mode_config_helper_suspend(ddev);
-> >>
-> >>         /* Select sleep pin state */
-> >>         pinctrl_pm_select_sleep_state(dev);
-> >>
-> >> -       return 0;
-> >> +       return ret;
-> >>  }
-> >>
-> >>  static int tilcdc_pm_resume(struct device *dev)
-> >>  {
-> >>         struct drm_device *ddev = dev_get_drvdata(dev);
-> >> -       struct tilcdc_drm_private *priv = ddev->dev_private;
-> >> -       int ret = 0;
-> >>
-> >>         /* Select default pin state */
-> >>         pinctrl_pm_select_default_state(dev);
-> >> -
-> >> -       if (priv->saved_state)
-> >> -               ret = drm_atomic_helper_resume(ddev, priv->saved_state);
-> >> -
-> >> -       return ret;
-> >> +       return  drm_mode_config_helper_resume(ddev);
-> >>  }
-> >>  #endif
-> >>
-> >> diff --git a/drivers/gpu/drm/tilcdc/tilcdc_drv.h b/drivers/gpu/drm/tilcdc/tilcdc_drv.h
-> >> index ead5122..62cea5f 100644
-> >> --- a/drivers/gpu/drm/tilcdc/tilcdc_drv.h
-> >> +++ b/drivers/gpu/drm/tilcdc/tilcdc_drv.h
-> >> @@ -70,9 +70,6 @@ struct tilcdc_drm_private {
-> >>         const uint32_t *pixelformats;
-> >>         uint32_t num_pixelformats;
-> >>
-> >> -       /* The context for pm susped/resume cycle is stored here */
-> >> -       struct drm_atomic_state *saved_state;
-> >> -
-> >>  #ifdef CONFIG_CPU_FREQ
-> >>         struct notifier_block freq_transition;
-> >>  #endif
-> >> --
-> >> 1.9.1
-> >>
+Bart
+
+
+> --srini
 >
 >
-> --
-> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+>> that series. These two patches are independent and should probably go
+>> through Greg's tree directly.
+>>
+>> Best regards,
+>> Bartosz Golaszewski
+>>
+>
