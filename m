@@ -2,106 +2,92 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A23BFC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:48:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29377C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:49:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CC5D2086B
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:48:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Huz+vNw2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CC5D2086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id D4EAB20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:49:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4EAB20870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728103AbeIJOle (ORCPT
+        id S1728099AbeIJOmw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 10:41:34 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:53420 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727311AbeIJOld (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 10:41:33 -0400
-Received: by mail-wm0-f67.google.com with SMTP id b19-v6so20876377wme.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 02:48:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=tvW7B19VUb04doqNJ038sjjvWyKM9RKSu6TrvuBh/g8=;
-        b=Huz+vNw2Nw9fgU4ahg4RA+i8dB8vEy3BkjS6rbvOamxWxqrIFe+dK/I987qf8TqZun
-         a127XChlmVrM1eKd6e2oPXpu+A9rBxbpO0R2ARDhAOey/EuNXvaOguQYK63eww5Ud5cH
-         V636wh7U7LUB1hFmT8Rnjgg12W4GWXUSbIiBQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=tvW7B19VUb04doqNJ038sjjvWyKM9RKSu6TrvuBh/g8=;
-        b=oB8VIO4heUnv60k+B8FRPuJUeu+UKWCe7nXnCuMaHseR5/sYXzTzKxqFZRT/81BTuZ
-         Cudrmx+5vRRs/5H0jfnd7PtOmAL+1oT41gKwLjMsLBIWttFzdkk0K6YF6BVD8iu34/H4
-         a1B7u+rSmtz3hiZ6Z3hz45Qn+VuvcYyWzBjGd4VQjKL126ij05wGMdxgWjLIQsW2Xu34
-         Z7j+6/vylW+shQDyvTpMJqzzMkzEhIFFZWxGAq8VWAr7RHkDd72EyHyP5mHqrp3m8g4j
-         7mGnnp7bGYKkiUskxQ7OGCBnMuWGVtVCwjVmEWe+3CrevIEJSI8bwUQ+d8I0IrIjzrfF
-         zRkg==
-X-Gm-Message-State: APzg51CKQcDhTCl6d39swhjEQoBGW8/n37BuyqApd5ApxZjqP8bx+nxm
-        GbVVq1vSlCP1MKI9jgumLed/8A==
-X-Google-Smtp-Source: ANB0Vdbyz2p3iDxLITJK0p64f/OjcuOje+G06P5Blwt+SZ97ljxoNgAdPiqTKfOsS95RnM7wurynKQ==
-X-Received: by 2002:a1c:2dc8:: with SMTP id t191-v6mr132655wmt.94.1536572900412;
-        Mon, 10 Sep 2018 02:48:20 -0700 (PDT)
-Received: from dell ([2.27.167.7])
-        by smtp.gmail.com with ESMTPSA id m68-v6sm30511570wmb.10.2018.09.10.02.48.18
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 10 Sep 2018 02:48:19 -0700 (PDT)
-Date:   Mon, 10 Sep 2018 10:48:17 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Radu Pirea <radu_nicolae.pirea@upb.ro>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-        gregkh@linuxfoundation.org, broonie@kernel.org, jslaby@suse.com,
-        richard.genoud@gmail.com, davem@davemloft.net,
-        mchehab+samsung@kernel.org, akpm@linux-foundation.org,
-        arnd@arndb.de, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-spi@vger.kernel.org
-Subject: Re: [PATCH v12 0/6] Driver for at91 usart in spi mode
-Message-ID: <20180910094817.GJ28860@dell>
-References: <20180904111310.4049-1-radu_nicolae.pirea@upb.ro>
+        Mon, 10 Sep 2018 10:42:52 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:60179 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726907AbeIJOmw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 10:42:52 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id DAD37208AF; Mon, 10 Sep 2018 11:49:38 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-30-219.w90-88.abo.wanadoo.fr [90.88.15.219])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 684EF208BE;
+        Mon, 10 Sep 2018 11:49:28 +0200 (CEST)
+Date:   Mon, 10 Sep 2018 11:49:27 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Andrew Lunn <andrew@lunn.ch>, Alban Bedel <albeu@free.fr>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        linux-doc <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH v2 13/16] nvmem: add support for cell lookups from
+ machine code
+Message-ID: <20180910114927.083e2de8@bbrezillon>
+In-Reply-To: <CAMRc=Me0bYjdmaqqxKqFkRRSNdoOgDf1A==dASz0dJAtx9BDqg@mail.gmail.com>
+References: <20180907100750.14564-1-brgl@bgdev.pl>
+        <20180907100750.14564-14-brgl@bgdev.pl>
+        <484b6ec5-cd8e-e5c5-0c5c-2f11c504ea1c@linaro.org>
+        <CAMRc=MdnSHY1ah4X3Bu55HvZcOQHxPHaFudidDA4mEOW9ZzeEg@mail.gmail.com>
+        <20180910102324.52ecd8f7@bbrezillon>
+        <c72866dd-1fb0-c765-5815-ba63d051a09b@linaro.org>
+        <CAMRc=Me0bYjdmaqqxKqFkRRSNdoOgDf1A==dASz0dJAtx9BDqg@mail.gmail.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180904111310.4049-1-radu_nicolae.pirea@upb.ro>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 04 Sep 2018, Radu Pirea wrote:
-> Well, this is the 12th version of this patch series.
-> In this version I fixed a warning from kbuild-robot and I have no idea
-> how I forgot to add static in declaration of that functions. Also I
-> fixed the example for the SPI driver in bindings.
+On Mon, 10 Sep 2018 11:45:48 +0200
+Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 
-Okay great.  So which patches still require Acks?
+> 2018-09-10 10:55 GMT+02:00 Srinivas Kandagatla <srinivas.kandagatla@linaro.org>:
+> >
+> >
+> > On 10/09/18 09:23, Boris Brezillon wrote:  
+> >>
+> >> Well, if we get rid of nvmem-machine.h, the cell-lookup stuff
+> >> should go in nvmem-consumer.h not nvmem-provider.h. On the other hand,
+> >> everything that is related to cell creation should be placed in
+> >> nvmem-provider.h.  
+> >
+> > Yes, this is how it should be!
+> >  
+> 
+> Any actual reason for not putting these definitions into a separate
+> 'machine' header? This approach is currently used by gpio, pinctrl,
+> iio and regulator framework because most systems use either DT or ACPI
+> and don't need to pull in any stuff aimed at board files.
 
-[...]
-
-> Radu Pirea (6):
->   MAINTAINERS: add at91 usart mfd driver
->   dt-bindings: add binding for atmel-usart in SPI mode
->   mfd: at91-usart: added mfd driver for usart
->   MAINTAINERS: add at91 usart spi driver
->   spi: at91-usart: add driver for at91-usart as spi
->   tty/serial: atmel: change the driver to work under at91-usart mfd
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+I'm perfectly fine with the separate header file, all I'm saying is, if
+Srinivas does not want nvmem-machine.h, definitions should be placed in
+nvmem-provider.h or nvmem-consumer.h depending on who they're meant to
+be used by (providers or consumers).
