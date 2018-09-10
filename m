@@ -2,79 +2,100 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22E95C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:47:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81EC7C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:48:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2F3720645
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:47:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2F3720645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 2B19620645
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:48:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R8kBMiyR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B19620645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728758AbeIJTlx (ORCPT
+        id S1728722AbeIJTnL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 15:41:53 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:55556 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728541AbeIJTlx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 15:41:53 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id L1uvx7EcHa8B; Mon, 10 Sep 2018 16:47:26 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BC6F600329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bc6:f600:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3E2D91EC0317;
-        Mon, 10 Sep 2018 16:47:26 +0200 (CEST)
-Date:   Mon, 10 Sep 2018 16:47:20 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Dou Liyang <douly.fnst@cn.fujitsu.com>,
-        Pavel Tatashin <pasha.tatashin@microsoft.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH] Revert "x86/tsc: Consolidate init code"
-Message-ID: <20180910144720.GA28349@zn.tnic>
-References: <20180910121925.27682-1-ville.syrjala@linux.intel.com>
- <alpine.DEB.2.21.1809101443290.1292@nanos.tec.linutronix.de>
- <20180910140710.GR5565@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180910140710.GR5565@intel.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        Mon, 10 Sep 2018 15:43:11 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:45284 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727744AbeIJTnL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 15:43:11 -0400
+Received: by mail-qt0-f193.google.com with SMTP id g44-v6so24387402qtb.12
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 07:48:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=sHrpU9/Qk3D0ZVudXq4fSrkqH/oWI0SWLGVfSUJkZBA=;
+        b=R8kBMiyRlxg/g0JS92jSkHm2Mns+am6C7RCTHWQKwPC2u38RF2NzZTfhLEvyDXDFOu
+         CLlTli+kEer8KqWv5EAPyMFRpepWQJWJJwHCWg0DO9jrG/d3t861Pr10dF5UZrI7NSJk
+         5oSHzcHCbW1YSb7G/xlTWal3rKIylefbMHM2DWbhFBmyKE6EjzhkIjkP9P6pJ/E89vuq
+         nFQIlYDpgJt9rw3ytBhWZTCZQ2Lbz2uxy2BBBkVjROqyNdT0wB+ULfbiJrbYiap38hE+
+         AUmHeVuWhcqs8NaUnW2B79vL70+m/1TLZVLUVDY0HgHaFcEvHXBn/peJXFt0jxPe0MMt
+         eb5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=sHrpU9/Qk3D0ZVudXq4fSrkqH/oWI0SWLGVfSUJkZBA=;
+        b=qKX5h77MUWDLYdUQAJtON4mJSa7w4McJfvAqqwyiQ+WHVczy9iGm32AcHzmcADtQ1E
+         sWcX3uMJtjm/0keoKLC1TC7tdd7Mdnu8Xl0BDqSh/diPKwDjvMaDgOzptpdHwwgCykQC
+         LdnfPXgHjzigTyKAJDkxkmdXvK0jNnDxJIdwkRK5FY625fRPyudZ/lu341FMLb3JpkD9
+         SzpHPNGoFpfvtfNczmpTyP1OKBUZPpf313kJ7BbfeymuLHvT1WaHElCw6baWuNEx0Mo3
+         D5LHZQhrUnQmMfX2ZIyQPixSVFZ0v+LL7D8ziLunSS+zvGbJBEtX804jMJNwjoTwwzvR
+         UiZw==
+X-Gm-Message-State: APzg51CF6I9BPCwSp0EqMkXWZmxXcwm52WhhNZd47iANW7ipRUQLop3U
+        qtKEfw57ZTQ+NwKy/eXUsg==
+X-Google-Smtp-Source: ANB0VdZm4y7CHa8LsUCGd8+GWiQdZWBXO+37iqcaeyEdooO9o5Tcf7sIuFKTAnhTUX5q9k5D+kZG1A==
+X-Received: by 2002:ac8:6989:: with SMTP id o9-v6mr7267266qtq.244.1536590924374;
+        Mon, 10 Sep 2018 07:48:44 -0700 (PDT)
+Received: from gabell.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id d138-v6sm9086610qke.18.2018.09.10.07.48.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Sep 2018 07:48:44 -0700 (PDT)
+From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Cc:     Masayoshi Mizuma <msys.mizuma@gmail.com>,
+        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
+        linux-kernel@vger.kernel.org
+Subject: [RESEND] [PATCH] perf/x86/intel/uncore: Use boot_cpu_data.phys_proc_id instead of hardcorded phy id 0
+Date:   Mon, 10 Sep 2018 10:47:50 -0400
+Message-Id: <20180910144750.6782-1-msys.mizuma@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 10, 2018 at 05:07:10PM +0300, Ville Syrjälä wrote:
-> You're reading way too much into this. The revert is just a point to
-> start the conversion. I've found that it's the best way to get the
-> attention of the relevant developers. Other kind of regression
-> reports have an unfortunate habit of disappearing into /dev/null.
+From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
 
-That's some strange "logic".
+Physical package id 0 is not always exists. We should use
+boot_cpu_data.phys_proc_id here.
 
-You're sending a patch which has "[PATCH]" in the subject but now you
-say it is not really a patch but only a way to get people's attention?!?
+Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+---
+ arch/x86/events/intel/uncore_snbep.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-And nothing in it says so anywhere - it looks like an actual patch and
-all.
-
-If you do that a couple of times I'm afraid the opposite might happen -
-such "patches" would get ignored completely.
-
+diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
+index 51d7c11..53b981d 100644
+--- a/arch/x86/events/intel/uncore_snbep.c
++++ b/arch/x86/events/intel/uncore_snbep.c
+@@ -3061,7 +3061,7 @@ static struct event_constraint bdx_uncore_pcu_constraints[] = {
+ 
+ void bdx_uncore_cpu_init(void)
+ {
+-	int pkg = topology_phys_to_logical_pkg(0);
++	int pkg = topology_phys_to_logical_pkg(boot_cpu_data.phys_proc_id);
+ 
+ 	if (bdx_uncore_cbox.num_boxes > boot_cpu_data.x86_max_cores)
+ 		bdx_uncore_cbox.num_boxes = boot_cpu_data.x86_max_cores;
 -- 
-Regards/Gruss,
-    Boris.
+2.18.0
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
