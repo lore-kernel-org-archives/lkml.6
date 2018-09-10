@@ -3,162 +3,199 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDCB1C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:04:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4C7CC43143
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:04:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86AD420881
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:04:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86AD420881
+	by mail.kernel.org (Postfix) with ESMTP id 75A7F20880
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:04:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75A7F20880
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728127AbeIJT6h (ORCPT
+        id S1728218AbeIJT6i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 15:58:37 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:40127 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727411AbeIJT6h (ORCPT
+        Mon, 10 Sep 2018 15:58:38 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:43522 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727796AbeIJT6i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 15:58:37 -0400
-Received: by mail-oi0-f67.google.com with SMTP id l202-v6so40717248oig.7;
-        Mon, 10 Sep 2018 08:04:06 -0700 (PDT)
+        Mon, 10 Sep 2018 15:58:38 -0400
+Received: by mail-oi0-f68.google.com with SMTP id b15-v6so40699689oib.10;
+        Mon, 10 Sep 2018 08:04:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=zJYcPpjpq26XK/SMPEoVaTen2jr8d5LfXE7wtymr5Us=;
-        b=fvptOnw1cX8rRLSmIPR4R3GvfcyVMxJyeOU9tmZufC22jHy1pLkZz3gK4tofox2oiM
-         ip4DWfW+GgFG3gc04tnzLUs5LuMPnNG/K2tB/Y1pfmFLQ5gifNn9osX9vt5Gwz9oqyjT
-         272R+9Yszc56yOCwH6IBluNxe/tCTWJwe/DXY6UFXfDGCUatTIaFU4ckZjY7Ep9mUUiI
-         5/6Dcz5fYTb1uBiBqgDIxeEplxSQFX6b5aj8fKUyYV53ix3lnfOLXfw4ghbNGxAn7aW8
-         lSjd+VXDon7bhxZG3lTgbGFZ993wRsu9+b0E8t6tFhzkiODfrfa7G7yZ2mSWrdtSjGu2
-         Yang==
-X-Gm-Message-State: APzg51Dx5Ol8Fr+aA81XRioQm6VmXHR5ff7oe152eBqXWsvE7RQttL9c
-        XOiV3KNN9G0vNrHQSYy5GLCBIPQ=
-X-Google-Smtp-Source: ANB0VdZ/sKl9bn5u6uBsPY0Q/ugAgqUqCsYTxrWc6TsJIIGwgvN/4lCv+0q8ZJsqmhqMh0CICfD7oQ==
-X-Received: by 2002:aca:a93:: with SMTP id k19-v6mr23935864oiy.83.1536591845285;
-        Mon, 10 Sep 2018 08:04:05 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=8cEA1yXkOtSkcSxK2WRBIl5IFgMaiOSbOBhvlAhints=;
+        b=uX7je6fFDvxeHwoco840v+/fh919tn4dQ2gFbOkIv3o+6h7BamiPYMmIgHOLDjd5qY
+         hlBn7oLw9mR/+HfgiMFQUBdWd1jdVlKVzAmo+mBMz61KItA7Refx+PblrQDvFwiWhINN
+         LGcAewXMD1MhFuN3sw8f+zEAujBWU8qyW/RjZmtfW77Bc5lY70MhfehkDY8DXO/wJuFC
+         IVKfpU8Tkq9hLJqCGuK95Gf8sg0GV6LJ0IYjWbYG2XKhb1bZdc4ORKRZP3mYWM0Lu8WG
+         YB8Fde9tBePfu2cWA1GKqM2mDQDWF+Sj3PE2CNRv7Oqah+cMPjzyx5ziZK0n1ZgkXPCL
+         xBoA==
+X-Gm-Message-State: APzg51C+drMouvEVKrQciRfovo2ls5eYg34AIE8xdKtH0viu4DpguVUH
+        j4nwWm6wYfeueXhXL1OLlOyIewE=
+X-Google-Smtp-Source: ANB0VdbhOMUALECYQSS+u0wCYzEnzrjzPUZVTVkaEMj5BucPfAzkwqGsaY0f/W0mE0utoBQYJsfZxg==
+X-Received: by 2002:aca:d0d7:: with SMTP id j84-v6mr23216114oiy.37.1536591846179;
+        Mon, 10 Sep 2018 08:04:06 -0700 (PDT)
 Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id k85-v6sm49465631oiy.2.2018.09.10.08.04.03
+        by smtp.googlemail.com with ESMTPSA id k85-v6sm49465631oiy.2.2018.09.10.08.04.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Sep 2018 08:04:04 -0700 (PDT)
+        Mon, 10 Sep 2018 08:04:05 -0700 (PDT)
 From:   Rob Herring <robh@kernel.org>
 To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Masahiro Yamada <yamada.masahiro@socionext.com>
 Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Ley Foon Tan <ley.foon.tan@intel.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Aurelien Jacquiot <jacquiot.aurelien@gmail.com>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Chris Zankel <chris@zankel.net>,
-        James Hogan <jhogan@kernel.org>,
-        Ley Foon Tan <lftan@altera.com>,
-        Mark Salter <msalter@redhat.com>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Michal Simek <monstr@monstr.eu>,
-        nios2-dev@lists.rocketboards.org,
         Paul Mackerras <paulus@samba.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Russell King <linux@armlinux.org.uk>,
-        uclinux-h8-devel@lists.sourceforge.jp,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
-        linux-kbuild@vger.kernel.org, linux-mips@linux-mips.org,
-        linuxppc-dev@lists.ozlabs.org, linux-snps-arc@lists.infradead.org,
-        linux-xtensa@linux-xtensa.org
-Subject: [PATCH v3 0/9] Devicetree build consolidation
-Date:   Mon, 10 Sep 2018 10:03:54 -0500
-Message-Id: <20180910150403.19476-1-robh@kernel.org>
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH v3 1/9] powerpc: build .dtb files in dts directory
+Date:   Mon, 10 Sep 2018 10:03:55 -0500
+Message-Id: <20180910150403.19476-2-robh@kernel.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180910150403.19476-1-robh@kernel.org>
+References: <20180910150403.19476-1-robh@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series addresses a couple of issues I have with building dts files.
+Align powerpc with other architectures which build the dtb files in the
+same directory as the dts files. This is also in line with most other
+build targets which are located in the same directory as the source.
+This move will help enable the 'dtbs' target which builds all the dtbs
+regardless of kernel config.
 
-First, the ability to build all the dts files in the tree. This has been
-supported on most arches for some time with powerpc being the main
-exception. The reason powerpc wasn't supported was it needed a change
-in the location built dtb files are put.
+This transition could break some scripts if they expect dtb files in the
+old location.
 
-Secondly, it's a pain to acquire all the cross-compilers needed to build
-dtbs for each arch. There's no reason to build with the cross compiler and
-the host compiler is perfectly fine as we only need the pre-processor.
-
-I started addressing just those 2 problems, but kept finding small
-differences such as target dependencies and dtbs_install support across
-architectures. Instead of trying to align all these, I've consolidated the
-build targets moving them out of the arch makefiles.
-
-I'd like to take the series via the DT tree.
-
-Rob
-
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: linuxppc-dev@lists.ozlabs.org
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
 v3:
- - Rework dtc dependency to avoid 2 entry paths to scripts/dtc/. Essentially,
-   I copied 'scripts_basic'.
- - Add missing scripts_basic dependency for dtc and missing PHONY tag.
- - Drop the '|' order only from dependencies
- - Drop %.dtb.S and %.dtb.o as top-level targets
- - PPC: remove duplicate mpc5200 dtbs from image-y targets
+ - Remove duplicate mpc5200 dtbs from image-y targets. The dtb target already
+   comes from the cuImage.<platform> target.
 
-v2:
- - Fix $arch/boot/dts path check for out of tree builds
- - Fix dtc dependency for building built-in dtbs
- - Fix microblaze built-in dtb building
- - Add dtbs target for microblaze
-
-Rob Herring (9):
-  powerpc: build .dtb files in dts directory
-  nios2: build .dtb files in dts directory
-  nios2: use common rules to build built-in dtb
-  nios2: fix building all dtbs
-  c6x: use common built-in dtb support
-  kbuild: consolidate Devicetree dtb build rules
-  powerpc: enable building all dtbs
-  c6x: enable building all dtbs
-  microblaze: enable building all dtbs
-
- Makefile                           | 35 ++++++++++++++++++-
- arch/arc/Makefile                  |  6 ----
- arch/arm/Makefile                  | 20 +----------
- arch/arm64/Makefile                | 17 +--------
- arch/c6x/Makefile                  |  2 --
- arch/c6x/boot/dts/Makefile         | 17 ++++-----
- arch/c6x/boot/dts/linked_dtb.S     |  2 --
- arch/c6x/include/asm/sections.h    |  1 -
- arch/c6x/kernel/setup.c            |  4 +--
- arch/c6x/kernel/vmlinux.lds.S      | 10 ------
- arch/h8300/Makefile                | 11 +-----
- arch/microblaze/Makefile           |  4 +--
- arch/microblaze/boot/dts/Makefile  |  4 +++
- arch/mips/Makefile                 | 15 +-------
- arch/nds32/Makefile                |  2 +-
- arch/nios2/Makefile                | 11 +-----
- arch/nios2/boot/Makefile           | 22 ------------
- arch/nios2/boot/dts/Makefile       |  6 ++++
- arch/nios2/boot/linked_dtb.S       | 19 -----------
- arch/powerpc/Makefile              |  3 --
- arch/powerpc/boot/Makefile         | 55 ++++++++++++++----------------
- arch/powerpc/boot/dts/Makefile     |  6 ++++
- arch/powerpc/boot/dts/fsl/Makefile |  4 +++
- arch/xtensa/Makefile               | 12 +------
- scripts/Makefile                   |  3 +-
- scripts/Makefile.lib               |  2 +-
- scripts/dtc/Makefile               |  2 +-
- 27 files changed, 100 insertions(+), 195 deletions(-)
- delete mode 100644 arch/c6x/boot/dts/linked_dtb.S
- create mode 100644 arch/nios2/boot/dts/Makefile
- delete mode 100644 arch/nios2/boot/linked_dtb.S
+ arch/powerpc/Makefile          |  2 +-
+ arch/powerpc/boot/Makefile     | 55 ++++++++++++++++------------------
+ arch/powerpc/boot/dts/Makefile |  1 +
+ 3 files changed, 28 insertions(+), 30 deletions(-)
  create mode 100644 arch/powerpc/boot/dts/Makefile
- create mode 100644 arch/powerpc/boot/dts/fsl/Makefile
 
+diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
+index 11a1acba164a..53ea887eb34e 100644
+--- a/arch/powerpc/Makefile
++++ b/arch/powerpc/Makefile
+@@ -294,7 +294,7 @@ bootwrapper_install:
+ 	$(Q)$(MAKE) $(build)=$(boot) $(patsubst %,$(boot)/%,$@)
+
+ %.dtb: scripts
+-	$(Q)$(MAKE) $(build)=$(boot) $(patsubst %,$(boot)/%,$@)
++	$(Q)$(MAKE) $(build)=$(boot)/dts $(patsubst %,$(boot)/dts/%,$@)
+
+ # Used to create 'merged defconfigs'
+ # To use it $(call) it with the first argument as the base defconfig
+diff --git a/arch/powerpc/boot/Makefile b/arch/powerpc/boot/Makefile
+index 0fb96c26136f..bca5c23767df 100644
+--- a/arch/powerpc/boot/Makefile
++++ b/arch/powerpc/boot/Makefile
+@@ -304,9 +304,9 @@ image-$(CONFIG_PPC_ADDER875)		+= cuImage.adder875-uboot \
+ 					   dtbImage.adder875-redboot
+
+ # Board ports in arch/powerpc/platform/52xx/Kconfig
+-image-$(CONFIG_PPC_LITE5200)		+= cuImage.lite5200 lite5200.dtb
+-image-$(CONFIG_PPC_LITE5200)		+= cuImage.lite5200b lite5200b.dtb
+-image-$(CONFIG_PPC_MEDIA5200)		+= cuImage.media5200 media5200.dtb
++image-$(CONFIG_PPC_LITE5200)		+= cuImage.lite5200
++image-$(CONFIG_PPC_LITE5200)		+= cuImage.lite5200b
++image-$(CONFIG_PPC_MEDIA5200)		+= cuImage.media5200
+
+ # Board ports in arch/powerpc/platform/82xx/Kconfig
+ image-$(CONFIG_MPC8272_ADS)		+= cuImage.mpc8272ads
+@@ -381,11 +381,11 @@ $(addprefix $(obj)/, $(sort $(filter zImage.%, $(image-y)))): vmlinux $(wrapperb
+ 	$(call if_changed,wrap,$(subst $(obj)/zImage.,,$@))
+
+ # dtbImage% - a dtbImage is a zImage with an embedded device tree blob
+-$(obj)/dtbImage.initrd.%: vmlinux $(wrapperbits) $(obj)/%.dtb FORCE
+-	$(call if_changed,wrap,$*,,$(obj)/$*.dtb,$(obj)/ramdisk.image.gz)
++$(obj)/dtbImage.initrd.%: vmlinux $(wrapperbits) $(obj)/dts/%.dtb FORCE
++	$(call if_changed,wrap,$*,,$(obj)/dts/$*.dtb,$(obj)/ramdisk.image.gz)
+
+-$(obj)/dtbImage.%: vmlinux $(wrapperbits) $(obj)/%.dtb FORCE
+-	$(call if_changed,wrap,$*,,$(obj)/$*.dtb)
++$(obj)/dtbImage.%: vmlinux $(wrapperbits) $(obj)/dts/%.dtb FORCE
++	$(call if_changed,wrap,$*,,$(obj)/dts/$*.dtb)
+
+ # This cannot be in the root of $(src) as the zImage rule always adds a $(obj)
+ # prefix
+@@ -395,36 +395,33 @@ $(obj)/vmlinux.strip: vmlinux
+ $(obj)/uImage: vmlinux $(wrapperbits) FORCE
+ 	$(call if_changed,wrap,uboot)
+
+-$(obj)/uImage.initrd.%: vmlinux $(obj)/%.dtb $(wrapperbits) FORCE
+-	$(call if_changed,wrap,uboot-$*,,$(obj)/$*.dtb,$(obj)/ramdisk.image.gz)
++$(obj)/uImage.initrd.%: vmlinux $(obj)/dts/%.dtb $(wrapperbits) FORCE
++	$(call if_changed,wrap,uboot-$*,,$(obj)/dts/$*.dtb,$(obj)/ramdisk.image.gz)
+
+-$(obj)/uImage.%: vmlinux $(obj)/%.dtb $(wrapperbits) FORCE
+-	$(call if_changed,wrap,uboot-$*,,$(obj)/$*.dtb)
++$(obj)/uImage.%: vmlinux $(obj)/dts/%.dtb $(wrapperbits) FORCE
++	$(call if_changed,wrap,uboot-$*,,$(obj)/dts/$*.dtb)
+
+-$(obj)/cuImage.initrd.%: vmlinux $(obj)/%.dtb $(wrapperbits) FORCE
+-	$(call if_changed,wrap,cuboot-$*,,$(obj)/$*.dtb,$(obj)/ramdisk.image.gz)
++$(obj)/cuImage.initrd.%: vmlinux $(obj)/dts/%.dtb $(wrapperbits) FORCE
++	$(call if_changed,wrap,cuboot-$*,,$(obj)/dts/$*.dtb,$(obj)/ramdisk.image.gz)
+
+-$(obj)/cuImage.%: vmlinux $(obj)/%.dtb $(wrapperbits) FORCE
+-	$(call if_changed,wrap,cuboot-$*,,$(obj)/$*.dtb)
++$(obj)/cuImage.%: vmlinux $(obj)/dts/%.dtb $(wrapperbits) FORCE
++	$(call if_changed,wrap,cuboot-$*,,$(obj)/dts/$*.dtb)
+
+-$(obj)/simpleImage.initrd.%: vmlinux $(obj)/%.dtb $(wrapperbits) FORCE
+-	$(call if_changed,wrap,simpleboot-$*,,$(obj)/$*.dtb,$(obj)/ramdisk.image.gz)
++$(obj)/simpleImage.initrd.%: vmlinux $(obj)/dts/%.dtb $(wrapperbits) FORCE
++	$(call if_changed,wrap,simpleboot-$*,,$(obj)/dts/$*.dtb,$(obj)/ramdisk.image.gz)
+
+-$(obj)/simpleImage.%: vmlinux $(obj)/%.dtb $(wrapperbits) FORCE
+-	$(call if_changed,wrap,simpleboot-$*,,$(obj)/$*.dtb)
++$(obj)/simpleImage.%: vmlinux $(obj)/dts/%.dtb $(wrapperbits) FORCE
++	$(call if_changed,wrap,simpleboot-$*,,$(obj)/dts/$*.dtb)
+
+-$(obj)/treeImage.initrd.%: vmlinux $(obj)/%.dtb $(wrapperbits) FORCE
+-	$(call if_changed,wrap,treeboot-$*,,$(obj)/$*.dtb,$(obj)/ramdisk.image.gz)
++$(obj)/treeImage.initrd.%: vmlinux $(obj)/dts/%.dtb $(wrapperbits) FORCE
++	$(call if_changed,wrap,treeboot-$*,,$(obj)/dts/$*.dtb,$(obj)/ramdisk.image.gz)
+
+-$(obj)/treeImage.%: vmlinux $(obj)/%.dtb $(wrapperbits) FORCE
+-	$(call if_changed,wrap,treeboot-$*,,$(obj)/$*.dtb)
++$(obj)/treeImage.%: vmlinux $(obj)/dts/%.dtb $(wrapperbits) FORCE
++	$(call if_changed,wrap,treeboot-$*,,$(obj)/dts/$*.dtb)
+
+-# Rule to build device tree blobs
+-$(obj)/%.dtb: $(src)/dts/%.dts FORCE
+-	$(call if_changed_dep,dtc)
+-
+-$(obj)/%.dtb: $(src)/dts/fsl/%.dts FORCE
+-	$(call if_changed_dep,dtc)
++# Needed for the above targets to work with dts/fsl/ files
++$(obj)/dts/%.dtb: $(obj)/dts/fsl/%.dtb
++	@cp $< $@
+
+ # If there isn't a platform selected then just strip the vmlinux.
+ ifeq (,$(image-y))
+diff --git a/arch/powerpc/boot/dts/Makefile b/arch/powerpc/boot/dts/Makefile
+new file mode 100644
+index 000000000000..f66554cd5c45
+--- /dev/null
++++ b/arch/powerpc/boot/dts/Makefile
+@@ -0,0 +1 @@
++# SPDX-License-Identifier: GPL-2.0
 --
 2.17.1
