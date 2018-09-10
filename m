@@ -2,252 +2,299 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80CCFC4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 21:57:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2B46C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 21:59:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30E7720866
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 21:57:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cIx3RFiC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30E7720866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id 0A6F12086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 21:59:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A6F12086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727122AbeIKCxI (ORCPT
+        id S1727491AbeIKC4A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 22:53:08 -0400
-Received: from mail-pl1-f181.google.com ([209.85.214.181]:37000 "EHLO
-        mail-pl1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726141AbeIKCxI (ORCPT
+        Mon, 10 Sep 2018 22:56:00 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56806 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726191AbeIKCz7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 22:53:08 -0400
-Received: by mail-pl1-f181.google.com with SMTP id f1-v6so10346236plt.4;
-        Mon, 10 Sep 2018 14:57:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=7OLEc4fdAnMdwAASrTlPUVV7zYeOqLpytr1A/wAoTHw=;
-        b=cIx3RFiCbbOTTdQw6rSqMpNlHfj426biYe6hFQBNRj92Qsydg4aHzsj2iLK+m6eAz8
-         tQa4H0Xn5A/uEDy0ihYu5RQlI3L/CoUvE0AD7S0VcYyOKN6qq5xy3JLbP7GolKVM9wFY
-         OZgzhNYKkU21V+qBxR7M0qSTrbf3Rqo05xoQYbb12hr1p0my7pQZjms4Z7LNAHgV9TkX
-         wLrESZ454M74WhA5NGZt8u3cuRYlCDL8pAArkxpo1UhlxBb90Alx0i4zB68WLKyEMARw
-         GwxFScNd+ZJw72lFEbLCN0C1AGw0Sqqs1KV+CVoqbrCaOUuMEEmpS3jeT+AUXtorAkF8
-         TawQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=7OLEc4fdAnMdwAASrTlPUVV7zYeOqLpytr1A/wAoTHw=;
-        b=bs1n3CM9jIaFey4C/pMJm115olgkZnd8whnSqdU8OkusVAIWAX/FiKoHoLe2JCxc8Q
-         e6JWl7eDjjjefJLS2XLmw6kSYa4d0ToCvbCvc9zzjhv9s4A3CtFN+OJbqhWrbnUd7ZNG
-         C4qrowUGbB7xCJh7uq1sIL/oXuSClATWMUkpbl+256VqcOzTJf9Fbd/qyqotKBmCMJWn
-         WL7MBSpNAgFDSGVRuq8zlOkJ8B0NaVj3k1aYwWcdTTcWw2xfH6nUtJO5oNOAEAIV1BnZ
-         zG6czkgyRRwdX7i2ydO5sRD0ozPY7BiHszS2lcJKTLQXBdgg17dzHKVouLLDIs6KXNsc
-         tSjw==
-X-Gm-Message-State: APzg51AW75FZN6nKu2JaXXKZwGMlncJha16ZTM5jeLq0vV/q737IAHsy
-        IUgmYOv7bYiMM2g20YoWoK3/ZYTc
-X-Google-Smtp-Source: ANB0VdYKpOS/EXVacirpB/C4uNChZ5J/hAJQqVLRTe8xwImuDBdicuez3Fi4mqZpxLibA//rPBYb7A==
-X-Received: by 2002:a17:902:8215:: with SMTP id x21-v6mr23538246pln.175.1536616621717;
-        Mon, 10 Sep 2018 14:57:01 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id p3-v6sm21731332pfo.130.2018.09.10.14.57.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Sep 2018 14:57:00 -0700 (PDT)
-Date:   Mon, 10 Sep 2018 14:56:59 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Joerg Roedel <jroedel@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Michal Hocko <mhocko@suse.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Pavel Machek <pavel@ucw.cz>, linux-efi@vger.kernel.org,
-        x86@kernel.org
-Subject: Random crashes with i386 and efi boots
-Message-ID: <20180910215659.GA17966@roeck-us.net>
+        Mon, 10 Sep 2018 22:55:59 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8ALrsSO064946
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 17:59:52 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mdyqutq20-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 17:59:52 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pasic@linux.ibm.com>;
+        Mon, 10 Sep 2018 22:59:50 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 10 Sep 2018 22:59:47 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8ALwVR256557620
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 10 Sep 2018 21:58:31 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EA1BB5204F;
+        Tue, 11 Sep 2018 00:58:20 +0100 (BST)
+Received: from oc0155643701.ibm.com (unknown [9.145.148.229])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id AE17D52050;
+        Tue, 11 Sep 2018 00:58:19 +0100 (BST)
+Subject: Re: [PATCH v9 09/22] s390: vfio-ap: register matrix device with VFIO
+ mdev framework
+To:     Tony Krowiak <akrowiak@linux.ibm.com>, pmorel@linux.ibm.com,
+        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com
+References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1534196899-16987-10-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <af1cd7a8-446c-ddf6-cf17-886dd259da3d@linux.ibm.com>
+ <a89e99e9-5670-bc2e-8e08-a5f6edaaaf9c@linux.ibm.com>
+From:   Halil Pasic <pasic@linux.ibm.com>
+Date:   Mon, 10 Sep 2018 23:58:29 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <a89e99e9-5670-bc2e-8e08-a5f6edaaaf9c@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18091021-0016-0000-0000-000002035FE9
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18091021-0017-0000-0000-0000325A1EB4
+Message-Id: <8f40992c-5dbe-92a2-2b9d-d29bd3647567@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-10_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=4 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809100216
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi folks,
 
-even after commit eeb89e2bb1ac ("x86/efi: Load fixmap GDT in
-efi_call_phys_epilog()"), my i386/efi qemu boot tests still crash randomly
-(roughly 5-10% of the time). As before, I don't see much useful output in
-the qemu log (this time it doesn't even complain about a triple fault). 
 
-Debugging shows that the crash happens in efi_call_phys_epilog().
-A sample log from a crashed test run is attached below. It appears that
-the crash happens if there is an interrupt at a critical section of the
-code.
+On 09/10/2018 03:38 PM, Tony Krowiak wrote:
+> On 09/06/2018 04:49 AM, Pierre Morel wrote:
+>> On 13/08/2018 23:48, Tony Krowiak wrote:
+>>> From: Tony Krowiak <akrowiak@linux.ibm.com>
+>>>
+>>> Registers the matrix device created by the VFIO AP device
+>>> driver with the VFIO mediated device framework.
+>>> Registering the matrix device will create the sysfs
+>>> structures needed to create mediated matrix devices
+>>> each of which will be used to configure the AP matrix
+>>> for a guest and connect it to the VFIO AP device driver.
+>>>
+>>> Registering the matrix device with the VFIO mediated device
+>>> framework will create the following sysfs structures:
+>>>
+>>> /sys/devices/vfio_ap/matrix/
+>>> ...... [mdev_supported_types]
+>>> ......... [vfio_ap-passthrough]
+>>> ............ create
+>>>
+>>> To create a mediated device for the AP matrix device, write a UUID
+>>> to the create file:
+>>>
+>>>     uuidgen > create
+>>>
+>>> A symbolic link to the mediated device's directory will be created in the
+>>> devices subdirectory named after the generated $uuid:
+>>>
+>>> /sys/devices/vfio_ap/matrix/
+>>> ...... [mdev_supported_types]
+>>> ......... [vfio_ap-passthrough]
+>>> ............ [devices]
+>>> ............... [$uuid]
+>>>
+>>> A symbolic link to the mediated device will also be created
+>>> in the vfio_ap matrix's directory:
+>>>
+>>> /sys/devices/vfio_ap/matrix/[$uuid]
+>>>
+>>> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+>>> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
+>>> Tested-by: Michael Mueller <mimu@linux.ibm.com>
+>>> Tested-by: Farhan Ali <alifm@linux.ibm.com>
+>>> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+>>> ---
+>>>   MAINTAINERS                           |    1 +
+>>>   drivers/s390/crypto/Makefile          |    2 +-
+>>>   drivers/s390/crypto/vfio_ap_drv.c     |   23 ++++++
+>>>   drivers/s390/crypto/vfio_ap_ops.c     |  124 +++++++++++++++++++++++++++++++++
+>>>   drivers/s390/crypto/vfio_ap_private.h |   45 ++++++++++++
+>>>   include/uapi/linux/vfio.h             |    1 +
+>>>   6 files changed, 195 insertions(+), 1 deletions(-)
+>>>   create mode 100644 drivers/s390/crypto/vfio_ap_ops.c
+>>>
+>>> diff --git a/MAINTAINERS b/MAINTAINERS
+>>> index e84c559..f60dd56 100644
+>>> --- a/MAINTAINERS
+>>> +++ b/MAINTAINERS
+>>> @@ -12427,6 +12427,7 @@ W: http://www.ibm.com/developerworks/linux/linux390/
+>>>   S:    Supported
+>>>   F:    drivers/s390/crypto/vfio_ap_drv.c
+>>>   F:    drivers/s390/crypto/vfio_ap_private.h
+>>> +F:    drivers/s390/crypto/vfio_ap_ops.c
+>>>
+>>>   S390 ZFCP DRIVER
+>>>   M:    Steffen Maier <maier@linux.ibm.com>
+>>> diff --git a/drivers/s390/crypto/Makefile b/drivers/s390/crypto/Makefile
+>>> index 48e466e..8d36b05 100644
+>>> --- a/drivers/s390/crypto/Makefile
+>>> +++ b/drivers/s390/crypto/Makefile
+>>> @@ -17,5 +17,5 @@ pkey-objs := pkey_api.o
+>>>   obj-$(CONFIG_PKEY) += pkey.o
+>>>
+>>>   # adjunct processor matrix
+>>> -vfio_ap-objs := vfio_ap_drv.o
+>>> +vfio_ap-objs := vfio_ap_drv.o vfio_ap_ops.o
+>>>   obj-$(CONFIG_VFIO_AP) += vfio_ap.o
+>>> diff --git a/drivers/s390/crypto/vfio_ap_drv.c b/drivers/s390/crypto/vfio_ap_drv.c
+>>> index 5069580..fa04c5a 100644
+>>> --- a/drivers/s390/crypto/vfio_ap_drv.c
+>>> +++ b/drivers/s390/crypto/vfio_ap_drv.c
+>>> @@ -11,6 +11,7 @@
+>>>   #include <linux/mod_devicetable.h>
+>>>   #include <linux/slab.h>
+>>>   #include <linux/string.h>
+>>> +#include <asm/zcrypt.h>
+>>>   #include "vfio_ap_private.h"
+>>>
+>>>   #define VFIO_AP_ROOT_NAME "vfio_ap"
+>>> @@ -65,6 +66,19 @@ static int vfio_ap_matrix_dev_init(void)
+>>>           return ret;
+>>>       }
+>>>
+>>> +    mutex_init(&matrix_dev.lock);
+>>> +    INIT_LIST_HEAD(&matrix_dev.mdev_list);
+>>> +
+>>> +    /* Test if PQAP(QCI) instruction is available */
+>>> +    if (test_facility(12)) {
+>>> +        ret = ap_qci(&matrix_dev.info);
+>>> +        if (ret) {
+>>> +            root_device_unregister(root_device);
+>>> +            return ret;
+>>> +        }
+>>> +    }
+>>> +
+>>> +    atomic_set(&matrix_dev.available_instances, MAX_ZDEV_ENTRIES_EXT);
+>>>       matrix_dev.device.type = &vfio_ap_dev_type;
+>>>       dev_set_name(&matrix_dev.device, "%s", VFIO_AP_DEV_NAME);
+>>>       matrix_dev.device.type = &vfio_ap_dev_type;
+>>> @@ -105,11 +119,20 @@ int __init vfio_ap_init(void)
+>>>           return ret;
+>>>       }
+>>>
+>>> +    ret = vfio_ap_mdev_register();
+>>> +    if (ret) {
+>>> +        ap_driver_unregister(&vfio_ap_drv);
+>>> +        vfio_ap_matrix_dev_destroy();
+>>> +
+>>> +        return ret;
+>>> +    }
+>>> +
+>>>       return 0;
+>>>   }
+>>>
+>>>   void __exit vfio_ap_exit(void)
+>>>   {
+>>> +    vfio_ap_mdev_unregister();
+>>>       ap_driver_unregister(&vfio_ap_drv);
+>>>       vfio_ap_matrix_dev_destroy();
+>>>   }
+>>> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
+>>> new file mode 100644
+>>> index 0000000..8018c2d
+>>> --- /dev/null
+>>> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+>>> @@ -0,0 +1,124 @@
+>>> +// SPDX-License-Identifier: GPL-2.0+
+>>> +/*
+>>> + * Adjunct processor matrix VFIO device driver callbacks.
+>>> + *
+>>> + * Copyright IBM Corp. 2018
+>>> + *
+>>> + * Author(s): Tony Krowiak <akrowiak@linux.ibm.com>
+>>> + *          Halil Pasic <pasic@linux.ibm.com>
+>>> + *          Pierre Morel <pmorel@linux.ibm.com>
+>>> + */
+>>> +#include <linux/string.h>
+>>> +#include <linux/vfio.h>
+>>> +#include <linux/device.h>
+>>> +#include <linux/list.h>
+>>> +#include <linux/ctype.h>
+>>> +
+>>> +#include "vfio_ap_private.h"
+>>> +
+>>> +#define VFIO_AP_MDEV_TYPE_HWVIRT "passthrough"
+>>> +#define VFIO_AP_MDEV_NAME_HWVIRT "VFIO AP Passthrough Device"
+>>> +
+>>> +static void vfio_ap_matrix_init(struct ap_config_info *info,
+>>> +                struct ap_matrix *matrix)
+>>> +{
+>>> +    matrix->apm_max = info->apxa ? info->Na : 63;
+>>> +    matrix->aqm_max = info->apxa ? info->Nd : 15;
+>>> +    matrix->adm_max = info->apxa ? info->Nd : 15;
+>>> +}
+>>> +
+>>> +static int vfio_ap_mdev_create(struct kobject *kobj, struct mdev_device *mdev)
+>>> +{
+>>> +    struct ap_matrix_mdev *matrix_mdev;
+>>> +
+>>> +    matrix_mdev = kzalloc(sizeof(*matrix_mdev), GFP_KERNEL);
+>>> +    if (!matrix_mdev)
+>>> +        return -ENOMEM;
+>>> +
+>>> +    matrix_mdev->name = dev_name(mdev_dev(mdev));
+>>> +    vfio_ap_matrix_init(&matrix_dev.info, &matrix_mdev->matrix);
+>>> +    mdev_set_drvdata(mdev, matrix_mdev);
+>>> +
+>>> +    if (atomic_dec_if_positive(&matrix_dev.available_instances) < 0) {
+>>> +        kfree(matrix_mdev);
+>>> +        return -EPERM;
+>>> +    }
+>>> +
+>>> +    mutex_lock(&matrix_dev.lock);
+>>> +    list_add(&matrix_mdev->list, &matrix_dev.mdev_list);
+>>> +    mutex_unlock(&matrix_dev.lock);
+>>> +
+>> Hi Tony,
+>>
+>> You need to initialize the matrix_mdev->list before
+>> using it.
+> 
+> Why? Initialization only sets its prev and next pointers to point to itself. The
+> list_add immediately sets those pointers to insert it into the matrix_dev.mdev_list,
+> so what would be the purose?
+> 
 
-While playing with the code, I found a possible fix.
+I think the source of the confusion is that matrix_mdev->list a new element to be
+added to the matrix_dev.mdev_list and not a sentinel node of some list (which in
+a sense stands for the list as a whole).
 
-diff --git a/arch/x86/platform/efi/efi_32.c b/arch/x86/platform/efi/efi_32.c
-index 05ca14222463..9959657127f4 100644
---- a/arch/x86/platform/efi/efi_32.c
-+++ b/arch/x86/platform/efi/efi_32.c
-@@ -85,10 +85,9 @@ pgd_t * __init efi_call_phys_prolog(void)
- 
- void __init efi_call_phys_epilog(pgd_t *save_pgd)
- {
-+	load_fixmap_gdt(0);
- 	load_cr3(save_pgd);
- 	__flush_tlb_all();
--
--	load_fixmap_gdt(0);
- }
+Regards,
+Halil
 
-This restores the execution order prior to commit eeb89e2bb1ac.
-I have no real idea what I am doing, so this change is to be taken with
-a grain of salt. All I can say is that 100 boots with the above change
-were successful while the current upstream code (v4.19-rc3) crashes on
-a regular basis (in a controlled test I observed 6 failures out of 100
-boots).
-
-It would be great if someone with a bit more experience can have another
-look and figure out the underlying problem. Please let me know if I can
-provide additional information.
-
-Thanks,
-Guenter
-
-----------------
-IN:
-# efi_call_phys_epilog(save_pgd);
-0xd8f9c12c:  8b 45 f0                 movl     -0x10(%ebp), %eax
-0xd8f9c12f:  e8 49 01 00 00           calll    0xd8f9c27d
-
-----------------
-IN:
-# efi_call_phys_epilog():
-# load_cr3();
-0xd8f9c27d:  55                       pushl    %ebp
-0xd8f9c27e:  05 00 00 00 40           addl     $0x40000000, %eax
-0xd8f9c283:  89 e5                    movl     %esp, %ebp
-0xd8f9c285:  0f 22 d8                 movl     %eax, %cr3
-
-CR3 update: CR3=1904e000
-----------------
-IN:
-# __flush_tlb_all();
-0xd8f9c288:  e8 c8 5e 2b ff           calll    0xd8252155
-
-EAX=1904e000 EBX=00000000 ECX=d8f9c126 EDX=d8eafd60
-ESI=1f09a000 EDI=00000030 EBP=d8e99f3c ESP=d8e99f3c
-EIP=d8f9c288 EFL=00200207 [-----PC] CPL=0 II=0 A20=1 SMM=0 HLT=0
-ES =007b 00000000 ffffffff 00cff300 DPL=3 DS   [-WA]
-CS =0060 00000000 ffffffff 00cf9a00 DPL=0 CS32 [-R-]
-SS =0068 00000000 ffffffff 00cf9300 DPL=0 DS   [-WA]
-DS =007b 00000000 ffffffff 00cff300 DPL=3 DS   [-WA]
-FS =00d8 06c92000 ffffffff 008f9300 DPL=0 DS16 [-WA]
-GS =00e0 dfcd09c0 00000018 00409100 DPL=0 DS   [--A]
-LDT=0000 00000000 00000000 00008200 DPL=0 LDT
-TR =0080 ff803000 0000206b 00008900 DPL=0 TSS32-avl
-GDT=     1fcc0000 000000ff
-IDT=     ff800000 000007ff
-CR0=80050033 CR2=ffd17000 CR3=1904e000 CR4=00040690
-DR0=00000000 DR1=00000000 DR2=00000000 DR3=00000000
-DR6=ffff0ff0 DR7=00000400
-CCS=40000000 CCD=1904e000 CCO=ADDL
-EFER=0000000000000000
-Servicing hardware INT=0x30
-  508: v=30 e=0000 i=0 cpl=0 IP=0060:d8f9c288 pc=d8f9c288 SP=0068:d8e99f3c env->regs[R_EAX]=1904e000
-X=1904e000 EBX=00000000 ECX=d8f9c126 EDX=d8eafd60
-ESI=1f09a000 EDI=00000030 EBP=d8e99f3c ESP=d8e99f3c
-EIP=d8f9c288 EFL=00200207 [-----PC] CPL=0 II=0 A20=1 SMM=0 HLT=0
-ES =007b 00000000 ffffffff 00cff300 DPL=3 DS   [-WA]
-CS =0060 00000000 ffffffff 00cf9a00 DPL=0 CS32 [-R-]
-SS =0068 00000000 ffffffff 00cf9300 DPL=0 DS   [-WA]
-DS =007b 00000000 ffffffff 00cff300 DPL=3 DS   [-WA]
-FS =00d8 06c92000 ffffffff 008f9300 DPL=0 DS16 [-WA]
-GS =00e0 dfcd09c0 00000018 00409100 DPL=0 DS   [--A]
-LDT=0000 00000000 00000000 00008200 DPL=0 LDT
-TR =0080 ff803000 0000206b 00008900 DPL=0 TSS32-avl
-GDT=     1fcc0000 000000ff
-IDT=     ff800000 000007ff
-CR0=80050033 CR2=ffd17000 CR3=1904e000 CR4=00040690
-DR0=00000000 DR1=00000000 DR2=00000000 DR3=00000000
-DR6=ffff0ff0 DR7=00000400
-CCS=00000005 CCD=1904e000 CCO=EFLAGS
-EFER=0000000000000000
-check_exception old: 0xffffffff new 0xe
-  509: v=0e e=0000 i=0 cpl=0 IP=0060:d8f9c288 pc=d8f9c288 SP=0068:d8e99f3c CR2=1fcc0060
-EAX=1904e000 EBX=00000000 ECX=d8f9c126 EDX=d8eafd60
-ESI=1f09a000 EDI=00000030 EBP=d8e99f3c ESP=d8e99f3c
-EIP=d8f9c288 EFL=00200207 [-----PC] CPL=0 II=0 A20=1 SMM=0 HLT=0
-ES =007b 00000000 ffffffff 00cff300 DPL=3 DS   [-WA]
-CS =0060 00000000 ffffffff 00cf9a00 DPL=0 CS32 [-R-]
-SS =0068 00000000 ffffffff 00cf9300 DPL=0 DS   [-WA]
-DS =007b 00000000 ffffffff 00cff300 DPL=3 DS   [-WA]
-FS =00d8 06c92000 ffffffff 008f9300 DPL=0 DS16 [-WA]
-GS =00e0 dfcd09c0 00000018 00409100 DPL=0 DS   [--A]
-LDT=0000 00000000 00000000 00008200 DPL=0 LDT
-TR =0080 ff803000 0000206b 00008900 DPL=0 TSS32-avl
-GDT=     1fcc0000 000000ff
-IDT=     ff800000 000007ff
-CR0=80050033 CR2=1fcc0060 CR3=1904e000 CR4=00040690
-DR0=00000000 DR1=00000000 DR2=00000000 DR3=00000000
-DR6=ffff0ff0 DR7=00000400
-CCS=00000005 CCD=1904e000 CCO=EFLAGS
-EFER=0000000000000000
-check_exception old: 0xe new 0xe
-  510: v=08 e=0000 i=0 cpl=0 IP=0060:d8f9c288 pc=d8f9c288 SP=0068:d8e99f3c env->regs[R_EAX]=1904e000
-EAX=1904e000 EBX=00000000 ECX=d8f9c126 EDX=d8eafd60
-ESI=1f09a000 EDI=00000030 EBP=d8e99f3c ESP=d8e99f3c
-EIP=d8f9c288 EFL=00200207 [-----PC] CPL=0 II=0 A20=1 SMM=0 HLT=0
-ES =007b 00000000 ffffffff 00cff300 DPL=3 DS   [-WA]
-CS =0060 00000000 ffffffff 00cf9a00 DPL=0 CS32 [-R-]
-SS =0068 00000000 ffffffff 00cf9300 DPL=0 DS   [-WA]
-DS =007b 00000000 ffffffff 00cff300 DPL=3 DS   [-WA]
-FS =00d8 06c92000 ffffffff 008f9300 DPL=0 DS16 [-WA]
-GS =00e0 dfcd09c0 00000018 00409100 DPL=0 DS   [--A]
-LDT=0000 00000000 00000000 00008200 DPL=0 LDT
-TR =0080 ff803000 0000206b 00008900 DPL=0 TSS32-avl
-GDT=     1fcc0000 000000ff
-IDT=     ff800000 000007ff
-CR0=80050033 CR2=1fcc0060 CR3=1904e000 CR4=00040690
-DR0=00000000 DR1=00000000 DR2=00000000 DR3=00000000
-DR6=ffff0ff0 DR7=00000400
-CCS=00000005 CCD=1904e000 CCO=EFLAGS
-EFER=0000000000000000
-check_exception old: 0x8 new 0xe
-
-# qemu dies silently here
-
----
-
-In another log, the code proceeeds a little further:
-
-CR3 update: CR3=13668000
-----------------
-IN:
-0xd35b6412:  e8 ae cb 29 ff           calll    0xd2852fc5
-
-----------------
-IN:
-0xd35b6417:  31 c0                    xorl     %eax, %eax
-0xd35b6419:  e8 12 2e 27 ff           calll    0xd2829230
-
-----------------
-IN:
-0xd2829230:  55                       pushl    %ebp
-0xd2829231:  89 e5                    movl     %esp, %ebp
-0xd2829233:  83 ec 08                 subl     $8, %esp
-0xd2829236:  e8 75 6c 02 00           calll    0xd284feb0
-
-Servicing hardware INT=0x30
-
-... subsequent log messages and crash are as before.
