@@ -6,138 +6,137 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADE62C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:56:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC54AC4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:58:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 764CB2086E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:56:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 764CB2086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 67CA02086E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:58:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67CA02086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728119AbeIJOty (ORCPT
+        id S1727955AbeIJOvX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 10:49:54 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54412 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726738AbeIJOtx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 10:49:53 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 571571596;
-        Mon, 10 Sep 2018 02:56:39 -0700 (PDT)
-Received: from [10.4.13.119] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 370903F557;
-        Mon, 10 Sep 2018 02:56:38 -0700 (PDT)
-Subject: Re: [PATCH] KVM: arm/arm64: Check memslot bounds before mapping
- hugepages
-To:     Lukas Braun <koomi@moshbit.net>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        linux-kernel@vger.kernel.org
-Cc:     Ralph Palutke <ralph.palutke@fau.de>
-References: <20180904163937.12759-1-koomi@moshbit.net>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <1e88db29-9bfd-7a47-ba36-c025c121c223@arm.com>
-Date:   Mon, 10 Sep 2018 10:56:36 +0100
+        Mon, 10 Sep 2018 10:51:23 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:36544 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726738AbeIJOvX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 10:51:23 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 4283Pw3ZYgz9ttC6;
+        Mon, 10 Sep 2018 11:57:56 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id 1-ZewPE5IifL; Mon, 10 Sep 2018 11:57:56 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 4283Pw30VMz9ttBx;
+        Mon, 10 Sep 2018 11:57:56 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id CE3FB8B78F;
+        Mon, 10 Sep 2018 11:58:04 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id Z2ZfvjQkw2WE; Mon, 10 Sep 2018 11:58:04 +0200 (CEST)
+Received: from pc16082vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 2DAAB8B798;
+        Mon, 10 Sep 2018 11:58:02 +0200 (CEST)
+Subject: Re: Conflict between sparse and commit cafa0010cd51f ("Raise the
+ minimum required gcc version to 4.6")
+To:     Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>, joe@perches.com,
+        Kees Cook <keescook@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-sparse@vger.kernel.org, sparse@chrisli.org,
+        linuxppc-dev@lists.ozlabs.org
+References: <81a5fd11-366c-0897-4143-d8d041420a41@c-s.fr>
+ <1324e7d6-83f8-f40f-ad34-c46e4ad3139b@c-s.fr>
+ <CAKwvOdmuXydQsQyD2CUyoSkkDpF1e1CXg6v1SRv2q-bpYa9SQg@mail.gmail.com>
+ <20180907181337.peyfq7yvhahduvmq@ltop.local>
+ <CAKwvOdmXs+pWJGXu-zr-XSu7p-7hw=2m1vVQmVLwJcmGEFz0gg@mail.gmail.com>
+ <e6db84f1-ee8d-9377-5f1c-6a0e7972ba50@c-s.fr>
+ <20180910092835.v5nex5nzfgtl475m@ltop.local>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <061b3056-1a9a-af6b-de2a-49fea394320d@c-s.fr>
+Date:   Mon, 10 Sep 2018 09:56:33 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180904163937.12759-1-koomi@moshbit.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180910092835.v5nex5nzfgtl475m@ltop.local>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lukas,
 
-On 04/09/18 17:39, Lukas Braun wrote:
-> Userspace can create a memslot with memory backed by (transparent)
-> hugepages, but with bounds that do not align with hugepages.
-> In that case, we cannot map the entire region in the guest as hugepages
-> without exposing additional host memory to the guest and potentially
-> interfering with other memslots.
-> Consequently, this patch adds a bounds check when populating guest page
-> tables and forces the creation of regular PTEs if mapping an entire
-> hugepage would violate the memslots bounds.
+
+On 09/10/2018 09:28 AM, Luc Van Oostenryck wrote:
+> On Mon, Sep 10, 2018 at 08:49:07AM +0200, Christophe LEROY wrote:
+>> Le 07/09/2018 à 20:19, Nick Desaulniers a écrit :
+>>> On Fri, Sep 7, 2018 at 11:13 AM Luc Van Oostenryck wrote:
+>>>>
+>>>> Sparse expand these macros to the same version than the compiler used
+>>>> to compile GCC. I find a bit strange though to have sparse v0.5.2 but
+>>>> using an old compiler.
+>>>
+>>> So Christophe must have a version of gcc < 4.6 installed somewhere?
+>>> Does sparse use `cc`? If so, Christophe, does your `ls -l $(which cc)`
+>>> point to an old version of gcc maybe?
+>>
+>> Indeed it looks like sparse expand these macros to the version of
+>> the compiler it was compiled with.
+>>
+>> I'm building kernels for a powerpc platforms, with CROSS_COMPILE set
+>> to ppc-linux- and ppc-linux-gcc being version 5.4
+>>
+>> However my build machine is a CentOS6 and the native gcc has version
+>> 4.4.7, so sparse expands that version.
 > 
-> Signed-off-by: Lukas Braun <koomi@moshbit.net>
-> ---
->  virt/kvm/arm/mmu.c | 15 +++++++++++++--
->  1 file changed, 13 insertions(+), 2 deletions(-)
+> OK, I see.
+>   
+>> Is there a way to get sparse in line with my cross compiler version
+>> and not with the local native version ?
 > 
-> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-> index ed162a6c57c5..bdbec1d136a1 100644
-> --- a/virt/kvm/arm/mmu.c
-> +++ b/virt/kvm/arm/mmu.c
-> @@ -1504,6 +1504,8 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->  		hugetlb = true;
->  		gfn = (fault_ipa & PMD_MASK) >> PAGE_SHIFT;
->  	} else {
-> +		unsigned long pmd_fn_mask = PTRS_PER_PMD - 1;
-> +
->  		/*
->  		 * Pages belonging to memslots that don't have the same
->  		 * alignment for userspace and IPA cannot be mapped using
-> @@ -1513,8 +1515,17 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->  		 * unmapping, updates, and splits of the THP or other pages
->  		 * in the stage-2 block range.
->  		 */
-> -		if ((memslot->userspace_addr & ~PMD_MASK) !=
-> -		    ((memslot->base_gfn << PAGE_SHIFT) & ~PMD_MASK))
-> +		int aligned = ((memslot->userspace_addr & ~PMD_MASK) ==
-> +			((memslot->base_gfn << PAGE_SHIFT) & ~PMD_MASK));
-
-This should most probably be a bool, together with the in_bounds variable.
-
-> +
-> +		/*
-> +		 * We also can't map a huge page if it would violate the bounds
-> +		 * of the containing memslot.
-> +		 */
-> +		int in_bounds = ((memslot->base_gfn <= (gfn & ~pmd_fn_mask)) &&
-> +			((memslot->base_gfn + memslot->npages) > (gfn | pmd_fn_mask)));
-
-It's the morning, and I haven't had much coffee, but this looks 
-confusing as hell. Most of the reasoning here is done in terms of 
-addresses, and you're now mixing it with a different unit, making the 
-result more unreadable.
-
-I find it easier to read it as:
-
-diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-index b3c9cc73b0f1..3729ca414fc3 100644
---- a/virt/kvm/arm/mmu.c
-+++ b/virt/kvm/arm/mmu.c
-@@ -1516,6 +1516,14 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
- 		if ((memslot->userspace_addr & ~PMD_MASK) !=
- 		    ((memslot->base_gfn << PAGE_SHIFT) & ~PMD_MASK))
- 			force_pte = true;
-+
-+		/*
-+		 * Force PTE mapping if a THP would lead to map
-+		 * something outside of the memslot.
-+		 */
-+		if ((fault_ipa & S2_PMD_MASK) < (memslot->base_gfn << PAGE_SHIFT) ||
-+		    ALIGN(fault_ipa, S2_PMD_SIZE) >= ((memslot->base_gfn + memslot->npages) << PAGE_SHIFT))
-+			force_pte = true;
- 	}
- 	up_read(&current->mm->mmap_sem);
- 
-which is of course completely untested.
-
-> +
-> +		if (!aligned || !in_bounds)
->  			force_pte = true;
->  	}
->  	up_read(&current->mm->mmap_sem);
+> When cross-compiling, there is also things like the machine word-size
+> and the endianness to take in account (they also default to the
+> native compiler used to compile sparse itself) as well as a few
+> defines (like __PPC64__). To be in line with your cross-compiler
+> you can use to the wrapper 'cgcc' (installed with sparse) and call
+> it, for example, like this:
+> 	$ export REAL_CC=ppc-linux-gcc
+> 	$ cgcc -target=ppcc64 -D_CALL_ELF=2 -D__GCC__=5 -D__GCC_MINOR__=4 ...
+> or, since this is for the kernel:
+> 	$ export REAL_CC=ppc-linux-gcc
+> 	$ make CHECK='cgcc -target=ppcc64 ...
 > 
+> 
+> I think this should solve it. Do not hesitate to report any
+> difficulties you may encounter.
 
-Thanks,
+# export REAL_CC=ppc-linux-gcc
+# make CHECK="cgcc -target=ppc -D_CALL_ELF=2 -D__GCC__=5 
+-D__GCC_MINOR__=4" C=2 arch/powerpc/kernel/process.o
+scripts/kconfig/conf  --syncconfig Kconfig
+#
+# configuration written to .config
+#
+   UPD     include/config/kernel.release
+   UPD     include/generated/utsrelease.h
+   CC      kernel/bounds.s
+   CC      arch/powerpc/kernel/asm-offsets.s
+   CALL    scripts/checksyscalls.sh
+   CHECK   scripts/mod/empty.c
+Can't exec "/bin/sh": Argument list too long at /usr/local/bin/cgcc line 86.
+make[2]: *** [scripts/mod/empty.o] Error 1
+make[1]: *** [scripts/mod] Error 2
+make: *** [scripts] Error 2
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+Christophe
+
+> 
+> -- Luc
+> 
