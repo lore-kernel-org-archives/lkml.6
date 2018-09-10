@@ -2,119 +2,131 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D579C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 07:58:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A732EC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 07:59:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AD76204FD
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 07:58:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53B9420833
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 07:59:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="pmDc6lOU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AD76204FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iscdICSj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53B9420833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727413AbeIJMvg (ORCPT
+        id S1727655AbeIJMwk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 08:51:36 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:41558 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726405AbeIJMvf (ORCPT
+        Mon, 10 Sep 2018 08:52:40 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:39955 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726405AbeIJMwj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 08:51:35 -0400
-Received: by mail-io1-f66.google.com with SMTP id q4-v6so6276222iob.8
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 00:58:50 -0700 (PDT)
+        Mon, 10 Sep 2018 08:52:39 -0400
+Received: by mail-wr1-f68.google.com with SMTP id n2-v6so20815999wrw.7
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 00:59:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=mudgGYqP8LqZ9x4Y1sGfRvAnBv4+WIk3H51rEOkU1Lo=;
-        b=pmDc6lOU676xZlldcHYUG9YiZR104sNAgYTAS/rhSEbSXvL3V/sOiwCXAqaCoWXKzd
-         O2lC/U8onET4ZpCppU6Ab+wBWTT/HhLOFkuul5jEmQe6RBnbBRoLTMaKBP3fibQixaQa
-         LyYxw/WSPLEpZRVQh11s4M4CDSkoOrVIVX9tdd2UXjxDOv2VwJnq9JnB8DZ93P+qcq/X
-         HiIazSSGnXYvueOmsUsK/P7LB/LOiUWHFiNBqjGVZLl8SuI1OUqjG8Z8bj53dRmQb+ej
-         ZusMZI9ab6LwiyZ8F5lXJ2OiigjFeqHBe+fl+Xw0pCU7ns3z4louqA83Mq/ID+Nb58pj
-         QjqQ==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=EOzQGXhW8BewvvW50fP2JMXUrLlSJn8ziHRnPBCQ5ag=;
+        b=iscdICSjHBwCcoIsmz6u91cZ7MGQ3x+jrgB/qQxGL9r2pK2+UTwCotykzgDBgcLcYS
+         X+RhxO70ZQtBrIYDXR17bLT6NVx4bTCTK6UMhrXRMhMEi975G9Z9fDapfKjy68N8PhWf
+         3/YLfkufbITqK1MavyqB3yGhZ1dwxx4giLM9o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=mudgGYqP8LqZ9x4Y1sGfRvAnBv4+WIk3H51rEOkU1Lo=;
-        b=JuUIhzltPjxJneDDfJ2S6JEZqCGw2Ea2jYiznWRUYkqEwIa/ZbdB68kpb9RDqDOdwq
-         2srRZrIlVBzZBOgQQFGGFZ9tWa9kRTcZSd0AQh3UTwRruiLFHC8Mce9j8q0eIUrafQho
-         htwXIM9ufEYadFHTfbPclDDHBLQ5exNW5g7L8Ta4494ZGpoRAYlF5oC6/xuvZ3/wGryc
-         ClH81JCd/vcCO4tDEbbZ0Du1ofbnlEqHcg4n8QOTH8xM/5JaN+bEo/BkqDb/bapTNrr3
-         3uASakZCHY+LsYmWD4uCo1G+662G+OKgbrzl7P66/BG7rhlxWpB+Sjam76E5b5ijjKka
-         SJIw==
-X-Gm-Message-State: APzg51CkFZ4kx6KdTt4ccPVNu+Uan/EU7Yn/2MVVaEOv3jZThIHILyV2
-        BiJRSvWNLwIhKZMFnFkyU7YZ/v5bORt0RaGcDBiB4g==
-X-Google-Smtp-Source: ANB0VdY7OCSYMec0N9d9FJc5hPjnz0pTQAc/g6Y/wR0UOZK+beKmWZETxPoorQvbCtsx+6QujgcYNjtSuz9J5NxkqDQ=
-X-Received: by 2002:a6b:6401:: with SMTP id t1-v6mr16589703iog.111.1536566329774;
- Mon, 10 Sep 2018 00:58:49 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a6b:1905:0:0:0:0:0 with HTTP; Mon, 10 Sep 2018 00:58:49
- -0700 (PDT)
-In-Reply-To: <c0b0c411-65f6-62f9-6d6d-2884e5a17250@linaro.org>
-References: <20180907100750.14564-1-brgl@bgdev.pl> <20180907100750.14564-2-brgl@bgdev.pl>
- <c0b0c411-65f6-62f9-6d6d-2884e5a17250@linaro.org>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Mon, 10 Sep 2018 09:58:49 +0200
-Message-ID: <CAMRc=MfO01EQAfY4Uu3UwzzvhVOMF7_BpCOPVz2yVXqDgpb0AA@mail.gmail.com>
-Subject: Re: [PATCH v2 01/16] nvmem: remove unused APIs
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=EOzQGXhW8BewvvW50fP2JMXUrLlSJn8ziHRnPBCQ5ag=;
+        b=lKYUlOkSefkwPPCQWKhqcYLwYX6uh9Aa/GZndKCZ1vkWaZvVPKyKlRKCgU/wzoAZ/X
+         J5bvhmH9TgLhyfGZya6OCMuppw7Wp8xAkT2rYfuvAa9wOtUrkEtsYOc2vVDdKhMde4iz
+         vGujTMJblnCaTlVkKIuWc5AVOYQCo5XITo/PJrW21/WRjE/HJMVMDFLBXMKnsc1xy8wd
+         z29eUbtg9PWYgevKfhEcrNQHNRQ5uSGu6KUF+Ao5D/R20yawmiHA0HEK8wafFFZ3qauQ
+         KFlEMTnR70D+jngzyItkv/QvsHZQ3k1pyXzWCjI0rgVa0TAXxZQKcGaA2JDCmgqJporS
+         RK+A==
+X-Gm-Message-State: APzg51AT6Urmn9U6mCBQw567syjsBJzhMKQq9YglnEfsgWPbUGCcxvMB
+        02rEZNJwufQfHsC8JJP1tamQhA==
+X-Google-Smtp-Source: ANB0VdZnfbNFNfpVTJ+Vp4E0QOuQIOeFmJiVGR1vRIUV5erWKvNoAq9CvwHbkSW0EV0WnwXMtNO7WQ==
+X-Received: by 2002:adf:ce06:: with SMTP id p6-v6mr14888855wrn.118.1536566392336;
+        Mon, 10 Sep 2018 00:59:52 -0700 (PDT)
+Received: from [192.168.0.18] (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
+        by smtp.googlemail.com with ESMTPSA id m68-v6sm30083565wmb.10.2018.09.10.00.59.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Sep 2018 00:59:51 -0700 (PDT)
+Subject: Re: [PATCH 0/2] eeprom: use devres for nvmem providers
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Andrew Lunn <andrew@lunn.ch>, Alban Bedel <albeu@free.fr>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        linux-doc <linux-doc@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
+        Devang Panchal <devang.panchal@softnautics.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+References: <20180910074404.8041-1-brgl@bgdev.pl>
+ <a25ef4b9-18cf-ab08-af8f-72b6eaa32602@linaro.org>
+ <CAMRc=Md+Cr8cBQGJuy0UL+oQjatH+mLV28279-qccgvyy18CAA@mail.gmail.com>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <13424edc-ce9e-7785-4550-cc224ec58a9e@linaro.org>
+Date:   Mon, 10 Sep 2018 08:59:50 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
+MIME-Version: 1.0
+In-Reply-To: <CAMRc=Md+Cr8cBQGJuy0UL+oQjatH+mLV28279-qccgvyy18CAA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-09-10 9:32 GMT+02:00 Srinivas Kandagatla <srinivas.kandagatla@linaro.org>:
->
->
-> On 07/09/18 11:07, Bartosz Golaszewski wrote:
->>
->> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>
->> Remove all APIs dealing with nvmem_cell_info. There are no users and
->> this part of the subsystem will be reworked.
->>
->> This patch temprarily disables support for non-DT users.
->>
->> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->> ---
->>   drivers/nvmem/core.c           | 212 ++-------------------------------
->>   include/linux/nvmem-consumer.h |  26 ----
->>   include/linux/nvmem-provider.h |  13 --
->>   3 files changed, 12 insertions(+), 239 deletions(-)
->
->
-> This looks totally un-necessary, Other patches in this series adds them
-> back.. Consider updating these in those respective patches.!
->
 
-While this may not be entirely necessary, it's very useful. There's
-almost nothing common between this API and the new one added later in
-this series. Later patches are MUCH cleaner thanks to this removal and
-I believe it makes them easier for review.
 
-Best regards,
-Bart
+On 10/09/18 08:54, Bartosz Golaszewski wrote:
+> 2018-09-10 9:50 GMT+02:00 Srinivas Kandagatla <srinivas.kandagatla@linaro.org>:
+>>
+>>
+>> On 10/09/18 08:44, Bartosz Golaszewski wrote:
+>>>
+>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>
+>>> While working on the nvmem framework recently I noticed that there are
+>>> many providers that don't use the devm variant of nvmem_register().
+>>> This series contains relevant updates for eeprom drivers.
+>>>
+>>> Bartosz Golaszewski (2):
+>>>     eeprom: eeprom_93xx46: use resource management
+>>>     eeprom: at25: use devm_nvmem_register()
+>>>
+>>>    drivers/misc/eeprom/at25.c          | 3 +--
+>>>    drivers/misc/eeprom/eeprom_93xx46.c | 7 ++-----
+>>
+>>
+>> Can you please consider consolidating the devm related changes in a single
+>> series, to easy the review!
+>>
+>>
+>>>    2 files changed, 3 insertions(+), 7 deletions(-)
+>>>
+>>
+> 
+> Are you referring to the devm part of the bigger nvmem series? If so:
+> no, because the nvmem patches are required by the later patches in
+Yes, am referring to that series.
+I dont see any reason why lpc and sunxi changes should not be in this 
+series? Or there is no implicit reasoning or change log that suggests 
+that these have to be part of that series!
+
+
+--srini
+
+> that series. These two patches are independent and should probably go
+> through Greg's tree directly.
+> 
+> Best regards,
+> Bartosz Golaszewski
+> 
