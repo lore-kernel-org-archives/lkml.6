@@ -2,128 +2,306 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAE51C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 19:06:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD50EC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 19:06:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3905920880
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 19:06:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="0JUgui5n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3905920880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 8EA172086E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 19:06:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EA172086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728068AbeIKABg (ORCPT
+        id S1728211AbeIKABu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 20:01:36 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:37755 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726603AbeIKABg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 20:01:36 -0400
-Received: by mail-oi0-f65.google.com with SMTP id p84-v6so42336508oic.4
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 12:06:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=jKyub4B9Q64SfHqCBkA854eodPXkyEKwX8P1lU6zRK8=;
-        b=0JUgui5n5+DXIq43nr06xiK0susLpUI1r+hmKaMiJ9TzeH8XSKpDk4rZ17mXCzfMp1
-         h5ELLOJ/fw1bCdrIFvk1fMItJnGi1v402XGXusPF/qZg+PcVVG3VlOeq2GRvA+Ttq82O
-         U/Z1/YFc+wIxEdm9F/i4PnZBjxU88jnb30VRI2mLkXakgXqvqnjQnff0rPPTjm4AUzn0
-         AEbsnc1T4QC86ltriWuN24UrhJ6VDPreNtNVNQaAFqb6Y7bMIx9w38HQTHEd6zWc0e8Y
-         vDhTImEaqBEZ0oCq9XtXAGgfE8kUocJyIpRIN4X3Ws7o2sMSl9O81GL81E9g3wSdjBfy
-         8jtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=jKyub4B9Q64SfHqCBkA854eodPXkyEKwX8P1lU6zRK8=;
-        b=rdXQRihRNEPjkalY2LasO5J6i7G9kRkeBeRAysDkAmQ/Dj8FR+gyy9occhnLzTpZXy
-         qCyjgFXDSqjC27N2+wIF3c5djG9BzgsRxZYEO6aNZ1xG7Xvww8LDSjrYLIInjfJZTT5A
-         oRB+e2iV9GMDlPD8zbrlq20mIkMl1WrMoVrttyxD/gb9ZYSmsmniiqUNoLhxeJMBbIjM
-         dZLQIw+CihfyoRlr9q7eVi65cTbYcQ6HkyuNRWIJdQC2z4vDWDjQHwZEm/5aHTljYypI
-         T5tlMly0yV7V2KCdj8vZGuY35dQGIlp0EI+VA8UFjkp7mtIltyVHEAyLtxvSXIp7DIGg
-         qQNg==
-X-Gm-Message-State: APzg51CiUbBhqOsy8pxEZo66L3c2aD7LWSlHsMFf4snvDjFYiwWYDww2
-        7sP4E1bxmsOfz0KTgptE3keHG+K3Ia3Ey5v9bNMeKA==
-X-Google-Smtp-Source: ANB0VdZ5crlKKc41md/JcT/NrOlOKc9CA9QEtRoZTd9V2MWaBOVfh9jKcp8PzKzoW6Uev2bNNtWmWvPeyl41p4Prd6E=
-X-Received: by 2002:aca:4914:: with SMTP id w20-v6mr25153979oia.5.1536606365531;
- Mon, 10 Sep 2018 12:06:05 -0700 (PDT)
+        Mon, 10 Sep 2018 20:01:50 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41478 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726603AbeIKABu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 20:01:50 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 01E872BCA9;
+        Mon, 10 Sep 2018 19:06:19 +0000 (UTC)
+Received: from [10.36.116.94] (ovpn-116-94.ams2.redhat.com [10.36.116.94])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 910C91CBB3;
+        Mon, 10 Sep 2018 19:06:13 +0000 (UTC)
+Subject: Re: [PATCH v5 14/23] iommu: introduce page response function
+To:     Jacob Pan <jacob.jun.pan@linux.intel.com>
+Cc:     iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        Raj Ashok <ashok.raj@intel.com>,
+        Rafael Wysocki <rafael.j.wysocki@intel.com>,
+        Jean Delvare <khali@linux-fr.org>
+References: <1526072055-86990-1-git-send-email-jacob.jun.pan@linux.intel.com>
+ <1526072055-86990-15-git-send-email-jacob.jun.pan@linux.intel.com>
+ <b6743e3d-b8eb-ad44-9b13-c7231807b114@redhat.com>
+ <20180910105031.217a52c3@jacob-builder>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <ff2084ba-bab2-506d-e480-cab40a2a0c88@redhat.com>
+Date:   Mon, 10 Sep 2018 21:06:11 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a4a:8e85:0:0:0:0:0 with HTTP; Mon, 10 Sep 2018 12:06:04
- -0700 (PDT)
-In-Reply-To: <20180724072937.GD28386@dhcp22.suse.cz>
-References: <153176041838.12695.3365448145295112857.stgit@dwillia2-desk3.amr.corp.intel.com>
- <CAGM2rea9AwQGaf1JiV_SDDKTKyP_n+dG9Z20gtTZEkuZPFnXFQ@mail.gmail.com>
- <CAPcyv4jo91jKjwn-M7cOhG=6vJ3c-QCyp0W+T+CtmiKGyZP1ng@mail.gmail.com>
- <CAGM2reacO1HF91yH8OR5w5AdZwPgwfSFfjDNBsHbP66v1rEg=g@mail.gmail.com>
- <20180717155006.GL7193@dhcp22.suse.cz> <CAA9_cmez_vrjBYvcpXT_5ziQ2CqRFzPbEWMO2kdmjW0rWhkaCA@mail.gmail.com>
- <20180718120529.GY7193@dhcp22.suse.cz> <3f43729d-fd4e-a488-e04d-026ef5a28dd9@intel.com>
- <20180723110928.GC31229@dhcp22.suse.cz> <510a1213-e391-bad6-4239-60fa477aaac0@intel.com>
- <20180724072937.GD28386@dhcp22.suse.cz>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 10 Sep 2018 12:06:04 -0700
-Message-ID: <CAPcyv4hZUgoMvUTcQLVQWvpvHnJYoPaet4b2VE-qPLtUPDgSaQ@mail.gmail.com>
-Subject: Re: [PATCH v2 00/14] mm: Asynchronous + multithreaded memmap init for ZONE_DEVICE
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Dave Hansen <dave.hansen@intel.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Rich Felker <dalias@libc.org>, Jan Kara <jack@suse.cz>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        linux-mm <linux-mm@kvack.org>, Paul Mackerras <paulus@samba.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Luck, Tony" <tony.luck@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Alexander Duyck <alexander.h.duyck@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180910105031.217a52c3@jacob-builder>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 10 Sep 2018 19:06:19 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 10 Sep 2018 19:06:19 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'eric.auger@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ adding Alex ]
+Hi Jacob,
 
-On Tue, Jul 24, 2018 at 12:29 AM, Michal Hocko <mhocko@kernel.org> wrote:
-> On Mon 23-07-18 09:15:32, Dave Hansen wrote:
->> On 07/23/2018 04:09 AM, Michal Hocko wrote:
->> > On Thu 19-07-18 11:41:10, Dave Hansen wrote:
->> >> Are you looking for the actual end-user reports?  This was more of a
->> >> case of the customer plugging in some persistent memory DIMMs, noticing
->> >> the boot delta and calling the folks who sold them the DIMMs (Intel).
->> > But this doesn't sound like something to rush a solution for in the
->> > upcoming merge windown, does it?
+On 09/10/2018 07:50 PM, Jacob Pan wrote:
+> On Mon, 10 Sep 2018 16:52:24 +0200
+> Auger Eric <eric.auger@redhat.com> wrote:
+> 
+>> Hi Jacob,
 >>
->> No, we should not rush it.  We'll try to rework it properly.
->
-> Thanks a lot Dave! I definitely do not mean to block this at all. I just
-> really do not like to have the code even more cluttered than we have
-> now.
+> Hi Eric,
+> 
+> Thanks for the review, please comments inline.
+>> On 05/11/2018 10:54 PM, Jacob Pan wrote:
+>>> IO page faults can be handled outside IOMMU subsystem. For an
+>>> example, when nested translation is turned on and guest owns the
+>>> first level page tables, device page request can be forwared  
+>> forwarded
+>>> to the guest for handling faults. As the page response returns
+>>> by the guest, IOMMU driver on the host need to process the  
+>> from the guest ...  host needs
+>>> response which informs the device and completes the page request
+>>> transaction.
+>>>
+>>> This patch introduces generic API function for page response
+>>> passing from the guest or other in-kernel users. The definitions of
+>>> the generic data is based on PCI ATS specification not limited to
+>>> any vendor.
+>>>
+>>> Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+>>> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+>>> Link: https://lkml.org/lkml/2017/12/7/1725
+>>> ---
+>>>  drivers/iommu/iommu.c | 45
+>>> +++++++++++++++++++++++++++++++++++++++++++++ include/linux/iommu.h
+>>> | 43 +++++++++++++++++++++++++++++++++++++++++++ 2 files changed,
+>>> 88 insertions(+)
+>>>
+>>> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+>>> index b3f9daf..02fed3e 100644
+>>> --- a/drivers/iommu/iommu.c
+>>> +++ b/drivers/iommu/iommu.c
+>>> @@ -1533,6 +1533,51 @@ int iommu_sva_invalidate(struct iommu_domain
+>>> *domain, }
+>>>  EXPORT_SYMBOL_GPL(iommu_sva_invalidate);
+>>>  
+>>> +int iommu_page_response(struct device *dev,
+>>> +			struct page_response_msg *msg)
+>>> +{
+>>> +	struct iommu_param *param = dev->iommu_param;
+>>> +	int ret = -EINVAL;
+>>> +	struct iommu_fault_event *evt;
+>>> +	struct iommu_domain *domain =
+>>> iommu_get_domain_for_dev(dev); +
+>>> +	if (!domain || !domain->ops->page_response)
+>>> +		return -ENODEV;
+>>> +
+>>> +	/*
+>>> +	 * Device iommu_param should have been allocated when
+>>> device is
+>>> +	 * added to its iommu_group.
+>>> +	 */
+>>> +	if (!param || !param->fault_param)
+>>> +		return -EINVAL;
+>>> +
+>>> +	/* Only send response if there is a fault report pending */
+>>> +	mutex_lock(&param->fault_param->lock);
+>>> +	if (list_empty(&param->fault_param->faults)) {
+>>> +		pr_warn("no pending PRQ, drop response\n");
+>>> +		goto done_unlock;
+>>> +	}
+>>> +	/*
+>>> +	 * Check if we have a matching page request pending to
+>>> respond,
+>>> +	 * otherwise return -EINVAL
+>>> +	 */
+>>> +	list_for_each_entry(evt, &param->fault_param->faults,
+>>> list) {
+>>> +		if (evt->pasid == msg->pasid &&
+>>> +		    msg->page_req_group_id ==
+>>> evt->page_req_group_id) {
+>>> +			msg->private_data = evt->iommu_private;
+>>> +			ret = domain->ops->page_response(dev, msg);
+>>> +			list_del(&evt->list);  
+>> don't you need a list_for_each_entry_safe?
+> why? I am here exiting the loop.
+>>> +			kfree(evt);
+>>> +			break;
+Ah OK I missed the break. If you delete a single entry per page response
+it is OK then. sorry for the noise.
+>>> +		}
+>>> +	}
+>>> +
+>>> +done_unlock:
+>>> +	mutex_unlock(&param->fault_param->lock);
+>>> +	return ret;
+>>> +}
+>>> +EXPORT_SYMBOL_GPL(iommu_page_response);
+>>> +
+>>>  static void __iommu_detach_device(struct iommu_domain *domain,
+>>>  				  struct device *dev)
+>>>  {
+>>> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+>>> index b3312ee..722b90f 100644
+>>> --- a/include/linux/iommu.h
+>>> +++ b/include/linux/iommu.h
+>>> @@ -163,6 +163,41 @@ struct iommu_resv_region {
+>>>  #ifdef CONFIG_IOMMU_API
+>>>  
+>>>  /**
+>>> + * enum page_response_code - Return status of fault handlers,
+>>> telling the IOMMU
+>>> + * driver how to proceed with the fault.
+>>> + *
+>>> + * @IOMMU_PAGE_RESP_SUCCESS: Fault has been handled and the page
+>>> tables
+>>> + *	populated, retry the access. This is "Success" in PCI
+>>> PRI.
+>>> + * @IOMMU_PAGE_RESP_FAILURE: General error. Drop all subsequent
+>>> faults from
+>>> + *	this device if possible. This is "Response Failure" in
+>>> PCI PRI.
+>>> + * @IOMMU_PAGE_RESP_INVALID: Could not handle this fault, don't
+>>> retry the
+>>> + *	access. This is "Invalid Request" in PCI PRI.
+>>> + */
+>>> +enum page_response_code {
+>>> +	IOMMU_PAGE_RESP_SUCCESS = 0,
+>>> +	IOMMU_PAGE_RESP_INVALID,
+>>> +	IOMMU_PAGE_RESP_FAILURE,
+>>> +};
+>>> +
+>>> +/**
+>>> + * Generic page response information based on PCI ATS and PASID
+>>> spec.
+>>> + * @addr: servicing page address
+>>> + * @pasid: contains process address space ID
+>>> + * @resp_code: response code  
+>> nit: @pasid_present doc missing although quite obvious
+>>> + * @page_req_group_id: page request group index
+>>> + * @private_data: uniquely identify device-specific private data
+>>> for an
+>>> + *                individual page response
+>>> + */
+>>> +struct page_response_msg {
+>>> +	u64 addr;
+>>> +	u32 pasid;
+>>> +	enum page_response_code resp_code;
+>>> +	u32 pasid_present:1;
+>>> +	u32 page_req_group_id;
+>>> +	u64 private_data;
+>>> +};  
+>> Doesn't it need to be part of iommu uapi header since the virtualizer
+>> will pass the response through VFIO?
+>>
+> Right, that has been the same feedback from others as well. I am moving
+> it to uapi in the next rev.
+>> As mentioned in previous discussion this is really PRI related and
+>> does not really fit unrecoverable fault reporting. To me we should
+>> clarify if this API targets both use cases or only the PRI response
+>> use case.
+> Yes, I should clarify this is for PRI only. It is little bit asymmetric
+> in that per IOMMU device fault reporting covers both unrecoverable
+> faults and PRI, but only PRI needs page response.
+OK. Still unrecoverable errors need a "read" API as the virtualizer may
+inject them into a guest. The fault handler may signal an eventfd and
+the userspace handler needs to retrieve the pending fault event(s).
+> 
+>> Also in the implementation we check pasid and PRGindex. As
+>> mentionned by Jean-Philippe, unrecoverable "traditional" faults do
+>> not require to manage a list in the iommu subsystem.
 
-Hi Michal,
+>>
+> I am not sure if that is a question. We support PRI with PASID only.
+> We keep the group ID for page responses.
+As I was trying to reuse this API for unrecoverable errors for SMMU
+stage1, (unrelated to PRI management), the check of pasid and PRGindex
+looked very PRI specific.
+>> Have you considered using a kfifo instead of a list to manage the
+>> pending PRI requests?
+>>
+> No, I will look into it. But we may need too traverse the list in case
+> of exceptions. e.g. dropping some pending requests if device faults or
+> process/vm terminates.
+Yes thinking more about it the kfifo does not seem to be adapted to your
+needs. Also I think the PRI requests may be sent out of order (?). Kfifo
+looks more adapted to unrecoverable errors.
 
-I'm back from vacation. I owe you an apology I was entirely too
-prickly on this thread, and the vacation cool-off-time was much
-needed.
+Thanks
 
-I come back to see that Alex has found a trove of low hanging fruit to
-speed up ZONE_DEVICE init and ditch most of the complication I was
-pushing. I'll let him chime in on the direction he wants to take this.
+Eric
+> 
+>> Thanks
+>>
+>> Eric
+>>> +
+>>> +/**
+>>>   * struct iommu_ops - iommu ops and capabilities
+>>>   * @capable: check capability
+>>>   * @domain_alloc: allocate iommu domain
+>>> @@ -195,6 +230,7 @@ struct iommu_resv_region {
+>>>   * @bind_pasid_table: bind pasid table pointer for guest SVM
+>>>   * @unbind_pasid_table: unbind pasid table pointer and restore
+>>> defaults
+>>>   * @sva_invalidate: invalidate translation caches of shared
+>>> virtual address
+>>> + * @page_response: handle page request response
+>>>   */
+>>>  struct iommu_ops {
+>>>  	bool (*capable)(enum iommu_cap);
+>>> @@ -250,6 +286,7 @@ struct iommu_ops {
+>>>  				struct device *dev);
+>>>  	int (*sva_invalidate)(struct iommu_domain *domain,
+>>>  		struct device *dev, struct tlb_invalidate_info
+>>> *inv_info);
+>>> +	int (*page_response)(struct device *dev, struct
+>>> page_response_msg *msg); 
+>>>  	unsigned long pgsize_bitmap;
+>>>  };
+>>> @@ -470,6 +507,7 @@ extern int
+>>> iommu_unregister_device_fault_handler(struct device *dev); 
+>>>  extern int iommu_report_device_fault(struct device *dev, struct
+>>> iommu_fault_event *evt); 
+>>> +extern int iommu_page_response(struct device *dev, struct
+>>> page_response_msg *msg); extern int iommu_group_id(struct
+>>> iommu_group *group); extern struct iommu_group
+>>> *iommu_group_get_for_dev(struct device *dev); extern struct
+>>> iommu_domain *iommu_group_default_domain(struct iommu_group *); @@
+>>> -758,6 +796,11 @@ static inline int
+>>> iommu_report_device_fault(struct device *dev, struct iommu_fau
+>>> return -ENODEV; } 
+>>> +static inline int iommu_page_response(struct device *dev, struct
+>>> page_response_msg *msg) +{
+>>> +	return -ENODEV;
+>>> +}
+>>> +
+>>>  static inline int iommu_group_id(struct iommu_group *group)
+>>>  {
+>>>  	return -ENODEV;
+>>>   
+> 
+> [Jacob Pan]
+> 
