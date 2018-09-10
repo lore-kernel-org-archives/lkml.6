@@ -6,46 +6,48 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85DBDC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:05:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31563C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:06:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E74420833
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:05:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E74420833
+	by mail.kernel.org (Postfix) with ESMTP id D210520865
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:06:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D210520865
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728186AbeIJO6n (ORCPT
+        id S1728145AbeIJO7Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 10:58:43 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:57467 "EHLO
+        Mon, 10 Sep 2018 10:59:25 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:48233 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726907AbeIJO6n (ORCPT
+        with ESMTP id S1726907AbeIJO7Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 10:58:43 -0400
+        Mon, 10 Sep 2018 10:59:24 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8AA52RF1806609
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8AA5Z031806669
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 10 Sep 2018 03:05:02 -0700
+        Mon, 10 Sep 2018 03:05:36 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8AA52rh1806606;
-        Mon, 10 Sep 2018 03:05:02 -0700
-Date:   Mon, 10 Sep 2018 03:05:02 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8AA5Zhh1806666;
+        Mon, 10 Sep 2018 03:05:35 -0700
+Date:   Mon, 10 Sep 2018 03:05:35 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Thomas Hellstrom <tipbot@zytor.com>
-Message-ID: <tip-e13e2366d8415e029fe96a62502955083e272cef@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org, hpa@zytor.com,
-        tglx@linutronix.de, thellstrom@vmware.com, peterz@infradead.org,
-        torvalds@linux-foundation.org
-Reply-To: hpa@zytor.com, tglx@linutronix.de, mingo@kernel.org,
-          linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-          peterz@infradead.org, thellstrom@vmware.com
-In-Reply-To: <20180903140708.2401-1-thellstrom@vmware.com>
-References: <20180903140708.2401-1-thellstrom@vmware.com>
+From:   tip-bot for Jiada Wang <tipbot@zytor.com>
+Message-ID: <tip-e73e81975f2447e6f556100cada64a18ec631cbb@git.kernel.org>
+Cc:     dietmar.eggemann@arm.com, torvalds@linux-foundation.org,
+        tglx@linutronix.de, hpa@zytor.com, jiada_wang@mentor.com,
+        erosca@de.adit-jv.com, george_davis@mentor.com, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, peterz@infradead.org
+Reply-To: dietmar.eggemann@arm.com, torvalds@linux-foundation.org,
+          tglx@linutronix.de, hpa@zytor.com, jiada_wang@mentor.com,
+          erosca@de.adit-jv.com, george_davis@mentor.com, mingo@kernel.org,
+          peterz@infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20180731121222.26195-1-jiada_wang@mentor.com>
+References: <20180731121222.26195-1-jiada_wang@mentor.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] locking/mutex: Fix mutex debug call and ww_mutex
- documentation
-Git-Commit-ID: e13e2366d8415e029fe96a62502955083e272cef
+Subject: [tip:sched/core] sched/debug: Fix potential deadlock when writing
+ to sched_features
+Git-Commit-ID: e73e81975f2447e6f556100cada64a18ec631cbb
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -59,58 +61,209 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e13e2366d8415e029fe96a62502955083e272cef
-Gitweb:     https://git.kernel.org/tip/e13e2366d8415e029fe96a62502955083e272cef
-Author:     Thomas Hellstrom <thellstrom@vmware.com>
-AuthorDate: Mon, 3 Sep 2018 16:07:08 +0200
+Commit-ID:  e73e81975f2447e6f556100cada64a18ec631cbb
+Gitweb:     https://git.kernel.org/tip/e73e81975f2447e6f556100cada64a18ec631cbb
+Author:     Jiada Wang <jiada_wang@mentor.com>
+AuthorDate: Tue, 31 Jul 2018 21:12:22 +0900
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 10 Sep 2018 10:05:10 +0200
+CommitDate: Mon, 10 Sep 2018 10:13:45 +0200
 
-locking/mutex: Fix mutex debug call and ww_mutex documentation
+sched/debug: Fix potential deadlock when writing to sched_features
 
-The following commit:
+The following lockdep report can be triggered by writing to /sys/kernel/debug/sched_features:
 
-  08295b3b5bee ("Implement an algorithm choice for Wound-Wait mutexes")
+  ======================================================
+  WARNING: possible circular locking dependency detected
+  4.18.0-rc6-00152-gcd3f77d74ac3-dirty #18 Not tainted
+  ------------------------------------------------------
+  sh/3358 is trying to acquire lock:
+  000000004ad3989d (cpu_hotplug_lock.rw_sem){++++}, at: static_key_enable+0x14/0x30
+  but task is already holding lock:
+  00000000c1b31a88 (&sb->s_type->i_mutex_key#3){+.+.}, at: sched_feat_write+0x160/0x428
+  which lock already depends on the new lock.
+  the existing dependency chain (in reverse order) is:
+  -> #3 (&sb->s_type->i_mutex_key#3){+.+.}:
+         lock_acquire+0xb8/0x148
+         down_write+0xac/0x140
+         start_creating+0x5c/0x168
+         debugfs_create_dir+0x18/0x220
+         opp_debug_register+0x8c/0x120
+         _add_opp_dev+0x104/0x1f8
+         dev_pm_opp_get_opp_table+0x174/0x340
+         _of_add_opp_table_v2+0x110/0x760
+         dev_pm_opp_of_add_table+0x5c/0x240
+         dev_pm_opp_of_cpumask_add_table+0x5c/0x100
+         cpufreq_init+0x160/0x430
+         cpufreq_online+0x1cc/0xe30
+         cpufreq_add_dev+0x78/0x198
+         subsys_interface_register+0x168/0x270
+         cpufreq_register_driver+0x1c8/0x278
+         dt_cpufreq_probe+0xdc/0x1b8
+         platform_drv_probe+0xb4/0x168
+         driver_probe_device+0x318/0x4b0
+         __device_attach_driver+0xfc/0x1f0
+         bus_for_each_drv+0xf8/0x180
+         __device_attach+0x164/0x200
+         device_initial_probe+0x10/0x18
+         bus_probe_device+0x110/0x178
+         device_add+0x6d8/0x908
+         platform_device_add+0x138/0x3d8
+         platform_device_register_full+0x1cc/0x1f8
+         cpufreq_dt_platdev_init+0x174/0x1bc
+         do_one_initcall+0xb8/0x310
+         kernel_init_freeable+0x4b8/0x56c
+         kernel_init+0x10/0x138
+         ret_from_fork+0x10/0x18
+  -> #2 (opp_table_lock){+.+.}:
+         lock_acquire+0xb8/0x148
+         __mutex_lock+0x104/0xf50
+         mutex_lock_nested+0x1c/0x28
+         _of_add_opp_table_v2+0xb4/0x760
+         dev_pm_opp_of_add_table+0x5c/0x240
+         dev_pm_opp_of_cpumask_add_table+0x5c/0x100
+         cpufreq_init+0x160/0x430
+         cpufreq_online+0x1cc/0xe30
+         cpufreq_add_dev+0x78/0x198
+         subsys_interface_register+0x168/0x270
+         cpufreq_register_driver+0x1c8/0x278
+         dt_cpufreq_probe+0xdc/0x1b8
+         platform_drv_probe+0xb4/0x168
+         driver_probe_device+0x318/0x4b0
+         __device_attach_driver+0xfc/0x1f0
+         bus_for_each_drv+0xf8/0x180
+         __device_attach+0x164/0x200
+         device_initial_probe+0x10/0x18
+         bus_probe_device+0x110/0x178
+         device_add+0x6d8/0x908
+         platform_device_add+0x138/0x3d8
+         platform_device_register_full+0x1cc/0x1f8
+         cpufreq_dt_platdev_init+0x174/0x1bc
+         do_one_initcall+0xb8/0x310
+         kernel_init_freeable+0x4b8/0x56c
+         kernel_init+0x10/0x138
+         ret_from_fork+0x10/0x18
+  -> #1 (subsys mutex#6){+.+.}:
+         lock_acquire+0xb8/0x148
+         __mutex_lock+0x104/0xf50
+         mutex_lock_nested+0x1c/0x28
+         subsys_interface_register+0xd8/0x270
+         cpufreq_register_driver+0x1c8/0x278
+         dt_cpufreq_probe+0xdc/0x1b8
+         platform_drv_probe+0xb4/0x168
+         driver_probe_device+0x318/0x4b0
+         __device_attach_driver+0xfc/0x1f0
+         bus_for_each_drv+0xf8/0x180
+         __device_attach+0x164/0x200
+         device_initial_probe+0x10/0x18
+         bus_probe_device+0x110/0x178
+         device_add+0x6d8/0x908
+         platform_device_add+0x138/0x3d8
+         platform_device_register_full+0x1cc/0x1f8
+         cpufreq_dt_platdev_init+0x174/0x1bc
+         do_one_initcall+0xb8/0x310
+         kernel_init_freeable+0x4b8/0x56c
+         kernel_init+0x10/0x138
+         ret_from_fork+0x10/0x18
+  -> #0 (cpu_hotplug_lock.rw_sem){++++}:
+         __lock_acquire+0x203c/0x21d0
+         lock_acquire+0xb8/0x148
+         cpus_read_lock+0x58/0x1c8
+         static_key_enable+0x14/0x30
+         sched_feat_write+0x314/0x428
+         full_proxy_write+0xa0/0x138
+         __vfs_write+0xd8/0x388
+         vfs_write+0xdc/0x318
+         ksys_write+0xb4/0x138
+         sys_write+0xc/0x18
+         __sys_trace_return+0x0/0x4
+  other info that might help us debug this:
+  Chain exists of:
+    cpu_hotplug_lock.rw_sem --> opp_table_lock --> &sb->s_type->i_mutex_key#3
+   Possible unsafe locking scenario:
+         CPU0                    CPU1
+         ----                    ----
+    lock(&sb->s_type->i_mutex_key#3);
+                                 lock(opp_table_lock);
+                                 lock(&sb->s_type->i_mutex_key#3);
+    lock(cpu_hotplug_lock.rw_sem);
+   *** DEADLOCK ***
+  2 locks held by sh/3358:
+   #0: 00000000a8c4b363 (sb_writers#10){.+.+}, at: vfs_write+0x238/0x318
+   #1: 00000000c1b31a88 (&sb->s_type->i_mutex_key#3){+.+.}, at: sched_feat_write+0x160/0x428
+  stack backtrace:
+  CPU: 5 PID: 3358 Comm: sh Not tainted 4.18.0-rc6-00152-gcd3f77d74ac3-dirty #18
+  Hardware name: Renesas H3ULCB Kingfisher board based on r8a7795 ES2.0+ (DT)
+  Call trace:
+   dump_backtrace+0x0/0x288
+   show_stack+0x14/0x20
+   dump_stack+0x13c/0x1ac
+   print_circular_bug.isra.10+0x270/0x438
+   check_prev_add.constprop.16+0x4dc/0xb98
+   __lock_acquire+0x203c/0x21d0
+   lock_acquire+0xb8/0x148
+   cpus_read_lock+0x58/0x1c8
+   static_key_enable+0x14/0x30
+   sched_feat_write+0x314/0x428
+   full_proxy_write+0xa0/0x138
+   __vfs_write+0xd8/0x388
+   vfs_write+0xdc/0x318
+   ksys_write+0xb4/0x138
+   sys_write+0xc/0x18
+   __sys_trace_return+0x0/0x4
 
-introduced a reference in the documentation to a function that was
-removed in an earlier commit.
+This is because when loading the cpufreq_dt module we first acquire
+cpu_hotplug_lock.rw_sem lock, then in cpufreq_init(), we are taking
+the &sb->s_type->i_mutex_key lock.
 
-It also forgot to remove a call to debug_mutex_add_waiter() which is now
-unconditionally called by __mutex_add_waiter().
+But when writing to /sys/kernel/debug/sched_features, the
+cpu_hotplug_lock.rw_sem lock depends on the &sb->s_type->i_mutex_key lock.
 
-Fix those bugs.
+To fix this bug, reverse the lock acquisition order when writing to
+sched_features, this way cpu_hotplug_lock.rw_sem no longer depends on
+&sb->s_type->i_mutex_key.
 
-Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
+Tested-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Eugeniu Rosca <erosca@de.adit-jv.com>
+Cc: George G. Davis <george_davis@mentor.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: dri-devel@lists.freedesktop.org
-Fixes: 08295b3b5bee ("Implement an algorithm choice for Wound-Wait mutexes")
-Link: http://lkml.kernel.org/r/20180903140708.2401-1-thellstrom@vmware.com
+Link: http://lkml.kernel.org/r/20180731121222.26195-1-jiada_wang@mentor.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/locking/mutex.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ kernel/sched/debug.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/locking/mutex.c b/kernel/locking/mutex.c
-index 1a81a1257b3f..3f8a35104285 100644
---- a/kernel/locking/mutex.c
-+++ b/kernel/locking/mutex.c
-@@ -389,7 +389,7 @@ static bool __ww_mutex_wound(struct mutex *lock,
- 		/*
- 		 * wake_up_process() paired with set_current_state()
- 		 * inserts sufficient barriers to make sure @owner either sees
--		 * it's wounded in __ww_mutex_lock_check_stamp() or has a
-+		 * it's wounded in __ww_mutex_check_kill() or has a
- 		 * wakeup pending to re-read the wounded state.
- 		 */
- 		if (owner != current)
-@@ -946,7 +946,6 @@ __mutex_lock_common(struct mutex *lock, long state, unsigned int subclass,
- 	}
+diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
+index 60caf1fb94e0..6383aa6a60ca 100644
+--- a/kernel/sched/debug.c
++++ b/kernel/sched/debug.c
+@@ -89,12 +89,12 @@ struct static_key sched_feat_keys[__SCHED_FEAT_NR] = {
  
- 	debug_mutex_lock_common(lock, &waiter);
--	debug_mutex_add_waiter(lock, &waiter, current);
+ static void sched_feat_disable(int i)
+ {
+-	static_key_disable(&sched_feat_keys[i]);
++	static_key_disable_cpuslocked(&sched_feat_keys[i]);
+ }
  
- 	lock_contended(&lock->dep_map, ip);
+ static void sched_feat_enable(int i)
+ {
+-	static_key_enable(&sched_feat_keys[i]);
++	static_key_enable_cpuslocked(&sched_feat_keys[i]);
+ }
+ #else
+ static void sched_feat_disable(int i) { };
+@@ -146,9 +146,11 @@ sched_feat_write(struct file *filp, const char __user *ubuf,
+ 
+ 	/* Ensure the static_key remains in a consistent state */
+ 	inode = file_inode(filp);
++	cpus_read_lock();
+ 	inode_lock(inode);
+ 	ret = sched_feat_set(cmp);
+ 	inode_unlock(inode);
++	cpus_read_unlock();
+ 	if (ret < 0)
+ 		return ret;
  
