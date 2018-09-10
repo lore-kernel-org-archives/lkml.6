@@ -2,282 +2,572 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3587C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:15:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A4CAC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:15:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5352220870
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:15:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="dtqGJQSQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5352220870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	by mail.kernel.org (Postfix) with ESMTP id A65FE206BB
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:15:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A65FE206BB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728657AbeIJSJu (ORCPT
+        id S1728679AbeIJSJ5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 14:09:50 -0400
-Received: from mail-bn3nam01on0067.outbound.protection.outlook.com ([104.47.33.67]:61312
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        Mon, 10 Sep 2018 14:09:57 -0400
+Received: from smtp20.cstnet.cn ([159.226.251.20]:51116 "EHLO cstnet.cn"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727799AbeIJSJu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 14:09:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+sssQNW2ndHn+z0K361ha3JWfGFvZPuvgF4gE45DWfQ=;
- b=dtqGJQSQ4HngjoK12SLMN5pkmz1mWoDvOq51rK5CPpOoiZ/jRooH+n693R7ORLd5+uMPPdQc97URGY2PpWt8KFghB6qaLz4R+ca0Eyx0dONZeYiwRIh4HNN48z4c3F50TerdUfWJuklys1tZ5LYWkO+x3V8jNZZL7C6F+fX42/I=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=brijesh.singh@amd.com; 
-Received: from Brijeshs-MacBook-Pro.local (70.112.153.56) by
- DM6PR12MB2684.namprd12.prod.outlook.com (2603:10b6:5:4a::33) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1122.16; Mon, 10 Sep 2018 13:15:41 +0000
-Cc:     brijesh.singh@amd.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Subject: Re: [PATCH v6 5/5] x86/kvm: Avoid dynamic allocation of pvclock data
- when SEV is active
-To:     Borislav Petkov <bp@suse.de>
-References: <1536343050-18532-1-git-send-email-brijesh.singh@amd.com>
- <1536343050-18532-6-git-send-email-brijesh.singh@amd.com>
- <20180910122727.GE21815@zn.tnic>
-From:   Brijesh Singh <brijesh.singh@amd.com>
-Message-ID: <026d5ca5-7b77-de6c-477e-ff39f0291ac0@amd.com>
-Date:   Mon, 10 Sep 2018 08:15:38 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180910122727.GE21815@zn.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Originating-IP: [70.112.153.56]
-X-ClientProxiedBy: SN4PR0401CA0004.namprd04.prod.outlook.com
- (2603:10b6:803:21::14) To DM6PR12MB2684.namprd12.prod.outlook.com
- (2603:10b6:5:4a::33)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: b0faedee-4e2e-48db-b90d-08d6171f82ae
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM6PR12MB2684;
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR12MB2684;3:DwRz1/5Rb8g3bvWV22g5BmrVxarzYhczJPs/uDd3JNEtmr4KDSvd4PsozFMkabnFZ+jYaVaKy8T1lXTECb4XH6PKrs6kuU+u8CsNB4ucp5D6CgT26dbj3iDolFx/dk3QmfrbyYnUDHVZeQs7QZSFkFqqvuAX/wdqdhgwSRwGg0t3Wc0z/WvgQo3a4WO81EZPJ8W1MFkpplV1KMdof+XqqpRmQMsr3CRzMGpQWRUJ1Zshbmwb8vxBeYS2gP1TOC1p;25:DPABHuZ5sflGyaK6TsG+fy5cLlAjqK+f1GrkISECisVw2lU0LupF/PO5VOZjMT1LxQw20Kpx5UCRcrDYtgIVwJjTmtKdoybMRsZpQAyQzYggzINHNsxWGBZUp7klgcVFlh4dpRO3dwMgLEj/9D1kioiatbCV3NzY5uSF6jR5N4pIJTf8F2ZynbOjohwnza34a3fwz2TH3+2ulgbCfmjrz8+pbE9lAE44i2nEQOr4QjGJv8IRlnFGh2KpalkcqFsf/ElyOT/gqhVLGvfIJ1qAOzOTTmtucM0imyybvaQmFlvVgBaLeGcUpqAy+aIm6UO3VxNOkBrEyof9tZuxAEQWdg==;31:TlUXdGSUIIlIOh14jvA22k4mNYmR2NlZ1DXffHReZw4pQ+KTz5uLCZz0tgnQtK46IPG/v+ZI4lEnXOiDSz9CNKT+6miGSU9S1IxCUod+q8ELXaxan6dvmYHy68y/tuBPHcB4JOP/zbALImc21Pp8ZEXrjiuloaiJGolmzH1k+sos2bPULfIr/+0Qeu8HNDePk2rV5dirj2yfX5b7GWlTgSG91usJt17uxXP8nYHzD/Q=
-X-MS-TrafficTypeDiagnostic: DM6PR12MB2684:
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR12MB2684;20:eoMf5T2IERX4JXZikaSlK+cECT9StZrxAgaYoNyUy87Kxh9pk99OKvvxC7X56hwNofr6W0RCRi3Ve1cqvNYOEDHgf1dcNgZ3C5D43RS0If+XEV0l1G9T5t80VAs7xGCJ8odp2zlN4YcFdgS43ncpOjF7bSTGpTq+IILEbonSz5XjrYWicKimMQqmcQ7/lRytUfOg67SzKEpQlGINlYTn0ZGvxburEKDkkSUbgUvEJoY+pBBVcjDolq3ckBJbEKrwW0cutdq5KO8mTCUmWah7ABZ+pT0pqLbJrsirMljWa6qzlxbYySuzj7Iu5hqRfLitDvwZnbbBN0Ni9b+uh5usKgITBHJVnfLLyS7oy/U7dNFMh2AcY9lz1tRZfnfHKPLtIP8CGXjn/7j+Rc5X/xBEc6y/vVHCxCt8dYq/zd21V5Rz+fYuPSkFtzPp/cV4YK0eAKbCNH58EPpg0xkAGpA3g/kPOiT/Oe1w19L4RndLPrUp0ZJ74Pu1kLQTjWhTaPy2;4:11hZxbENdPGCoBELQeF1PzKNpMADs0sQhz0BQOh7Ult09dTm48onWCrTAoXsKNB0Z7uqxSyIffQcMQ/WZF3m2A788ZvOXi23mI+P3zKjVpOfQxEIKwn2rnu86oKdVozVH9Cakm+fYDZvlXumk2a7rx3FrePMgXCKfHNgmK2m26Peg/ax5P8XSetaOioeoVVte5Q52vwGLoTSbM/4HGLa+kBHKrZ6dJxjAgHF7M6jF7CRQO3KIf2aeil2Fk2M67Utj54ZdgFq00dDc8KPTpiOolevj5TrLE4WpgC4otA7iVbbDpdgf+w7MPvgG12KnIDmf3115d/QJHjH060URzsTne6jUImivEhq515TvmvwrHTsQo2pakx2VUwHNTwvhgFA
-X-Microsoft-Antispam-PRVS: <DM6PR12MB268420D9A885D19B5F93F48EE5050@DM6PR12MB2684.namprd12.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(9452136761055)(767451399110)(228905959029699);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231311)(944501410)(52105095)(93006095)(93001095)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123562045)(20161123564045)(201708071742011)(7699050);SRVR:DM6PR12MB2684;BCL:0;PCL:0;RULEID:;SRVR:DM6PR12MB2684;
-X-Forefront-PRVS: 07915F544A
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(376002)(396003)(346002)(366004)(136003)(39860400002)(199004)(189003)(81166006)(6116002)(3846002)(8936002)(2870700001)(105586002)(186003)(81156014)(36756003)(4326008)(6246003)(31696002)(31686004)(86362001)(26005)(106356001)(16526019)(25786009)(44832011)(68736007)(97736004)(66066001)(6506007)(386003)(6486002)(229853002)(2906002)(7736002)(76176011)(58126008)(6512007)(11346002)(53546011)(54906003)(64126003)(446003)(2616005)(486006)(5660300001)(476003)(956004)(6916009)(53936002)(478600001)(65826007)(52146003)(2486003)(23676004)(8676002)(6666003)(52116002)(305945005)(50466002)(47776003)(65806001)(316002)(65956001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB2684;H:Brijeshs-MacBook-Pro.local;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtETTZQUjEyTUIyNjg0OzIzOkVIZlY0TVBIaVhTeXpBRzl2aWJ6QmNlajRz?=
- =?utf-8?B?NGY0Uk1uNm9sbUo4cVlhNzhOYnZpbVpodHR2YUhoWWRhWU5rRkVvRkl6NjFR?=
- =?utf-8?B?Y3pOVU5RRzBybW12ZnFBNEd4Z3R1YlMwVDlNeHFQVk5vQVlCaEZMS0kxejAr?=
- =?utf-8?B?L2hQSkY0SDArZjJLbDZrYWNucHlSU0dOOFlSMXA3Q3dCdFV1UXNZS01HR3My?=
- =?utf-8?B?QXpJMjRwV2NKbEwvSjIyeEVDY0c4dFlaWjB6d09ram9PZFdnU3NiWmdBY2tM?=
- =?utf-8?B?OWgwNlRHVVorMnVucXpqWDJ5UzYwVVVpT1pncXJlTzE1VzY5TGZ0dVBtV3FF?=
- =?utf-8?B?WmZ1T1gzdDkxMjNJako0M0pOYk14WklZa2FITlJHaXk2QXdVbEV3YnY0S2pQ?=
- =?utf-8?B?UVFVNXo5QmEwZFM2S3JtR0lkVmhMcTZ1aWhFUkV6cGZ6OVQ1b2FMa0ZsZlRI?=
- =?utf-8?B?SFZ6T1JWMlNrNjB5V2ZCQ2VHUDJwbG5qbEUvb2hydDhUS0RkUUJ1WHpyM2NR?=
- =?utf-8?B?Y0tWcStiMDV1TWVmclp1d0h0VmlCcnFqaTBqb3o5WHFVdWUyU3FxYitaYkZ3?=
- =?utf-8?B?WWM0NXBBUDlwNmcvZXJMNzR5bSt3b25xVmpScVAvZkltbDZ6ZDhqN3kyVnRu?=
- =?utf-8?B?TTdnVENpTThFWnR5bm4rL1VvMUJQbnFESzNqT0FFN0ZZWlpGMjM1aHphUVlE?=
- =?utf-8?B?VjZ3YmZzNFFOd1lNYTRPeTU2cHdmM2FVbFZHR3BHTDlTMjRFa0VyZHZzVk5y?=
- =?utf-8?B?ZWFGOW5hZEdodWRETTJhbkppeUZpTzA1OVpRK21nMHJaUmhFdlpqMHZld010?=
- =?utf-8?B?aVlWUEdRaWo1S2hNc3puUkpYR0w1OUlKbFN6K29aTFpRd01NQkI5TU5yTHRD?=
- =?utf-8?B?OGxJRElRRktqWXFhTFEzSndidEpqYVpSL0k3dzVyR01rWDFKbkNhWTgwck94?=
- =?utf-8?B?cGt3eHpkOTRxTkJPcVdndHJ4YXZRYzhyd0tsYzJ4ZXdwN1o4Qit4NDI1VHRi?=
- =?utf-8?B?SnFGYVlMd1ZhR2lQSGFldzFheVhhVEs1RWxOV2Z3YTZBLzJQZE9QRzU2Vk51?=
- =?utf-8?B?VU5DczdUQVdqek9yendCVDlnUktNQVJEYzBvS0RBOWdGRFZFZzVqZU54NU9G?=
- =?utf-8?B?S2RybnlLYWthemZpMTBYMEFIU3l1empQT1Y4TldCMEFjNk9MVnZFWHhMT29l?=
- =?utf-8?B?ckNHY0I1NE83VWxsbFhhQWNWWTIvWnN3Q3dOT1NBTEF5emdMV1BCalRCMzlw?=
- =?utf-8?B?blZwcEVzUTY4WTlwOWREbjRjd2ZKNmQva1JQMFJqR2tLTVNtS2lUekhpNW4z?=
- =?utf-8?B?Y0NTbytCMXYxOG0vY0Y5RWt3TXZxTDVwSVZoZUE1SnlzdXg0Qjlabmt4dGs0?=
- =?utf-8?B?aFBxVWZFZGQ1U0NaV3ROVFA1VnVjVDZjVGJBMHZMYUNkN2pCNDJqMWxEbk1m?=
- =?utf-8?B?WHc1YlhKSGRFVmtCbWp6M0hqRDZsWHJBZ3VtcXNPV3BJQmtaTUxmdkt5YmRa?=
- =?utf-8?B?ZTkwclhPMzVXMjd3ZDkvYkRZS3lDSnAzWGdoNklMTkxvZFhGWEkrNzVGV0x5?=
- =?utf-8?B?RldiU0YycGZkbUc4Zll5M3ZzNVJCaTJYNlZUbHBSLy93dzNnWmJneU9FU2Fo?=
- =?utf-8?B?S2JSbWVIMmo5bVl3bWg1TVBtSnVoZHFRZ3Z2ZS9MTG5LOUlZeU11UDdycDA5?=
- =?utf-8?B?dWhqckNXYytkTDdlckdoRzhlZ29RL1dramhpRXpVN1E2Wkw1UkJTQVh6VlNT?=
- =?utf-8?B?LzBxeEl5VFBHRG52dW5MODV6cW1UVWptaEM0MmZRbkxYSWJ1N1NRekFyQTk3?=
- =?utf-8?B?MitIL0Z5ZEUrWWM4LzJ6MzA1dENSMk5oQVlHRWYzaXZGL25Lc3JnTVpIU2ZM?=
- =?utf-8?B?Z2JaYy9HTWFKbndpcjVJS0U3ZmFIWEo3Z1cxb0NXNjV5ZjY5bHVkQmRoVXRM?=
- =?utf-8?B?YUVFc2E1RjNnPT0=?=
-X-Microsoft-Antispam-Message-Info: kX9kVL8Uae9X1IyfLW72qhwe2YAOODH7f4nlTkDHSN2v/L8a3IAh0vjmLY37m55c3KaCwb3CekORkG8V7pfXAx7/Fa9memuRg7hEtDRfwwUnOKjc0LKcVvfVZBkeJ7W87cyOWjuVf3iK0rYU8glxOFs26nhiZF1u+cieJB1mFbt2gBm467UGC6vVQy1keaZSlrGiLEHeR+4gPQSKLbMe/1HMJfn2Xe49xkHflDaZB/XeUmSSw+X6mHqBSStNgiQVACzJhy6iamao6hfJdlHrCUVwtrt0lexhg4eQpncAbA8T0O8SDiwUaGsfT2dgaWj0Vg9rjP2avTa6ImUkxXi4Ox4F/cGVWlZMLYLApAhx1to=
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR12MB2684;6:kG4z1kFqfbrKwDE7C75ZRhpSZWwxTu2oaipZLKIAJ9lGoDnoae5Ke2NeGjOoySt8eVm6M+xwLwfgtLSYpFXW7YTUMgmbZDW9xVjtLZKzpmxnFY0fBQSfzmuiaGgOeQP4prS7UtX0L6Ret6PuTYoNmmZapukmC+qzcw3NZMk0XhGqeEDH6oq34e/NzJeO9tjRamXxjKQVOwMM9SbjanC5rHFjet0D8VcEc2tRfKaAbMi4uv1A7vAuS7TEJZj2U66UXBiAWfp8bIRp1VT6Qz9ARJazeF3joDDwGpadr/AL6Iaa5Ot6sL/DENot/dtLVGUh/OT9J7vRIn1K1yebBHd3575WPfJhv33dDJxiBLvfial9Vc8OI8aO2jRtTsfKIrhPppRGkJIyJ9LtLWLr+e8xyqKMH7j8hqqXxptixxbcoWjRYN0lWC2aYxyi6IdTowEFwQtf4W7tIglw7Ev8rTkCOw==;5:gxrYaIjoS4WYu3BOQQZbqZEnutg2NlCW6OMU4gUhm07/W9p7U/ZVP9MqSF+8H2olwiBI5UcXhMPpSYLSOSePGLMZf8BqrIKn2zQ4namyzIrujo05KFUNIL1h2U7aWdMzJR8MIkq3Nrs5E6HZfD+ZojifA95240wX81dGHUVFtnc=;7:mMl45Y0I1UvWNIUfbN001mx7NeGSMkghETpAmyW+KUNywcF2PextJ70feuhsccUMkUGRVsArOHZcBZybnyIwvGojWXP+uHu2ldscuXJTUFaWlASiBt2+ovLAj+mIOehqJzFXQxbIosDiHu5CvgVHaE/GPYlEIj5JJrVjbfHCQGSz3LOV21MqrQGyI5vP1tinnj0ooZA6wNXD7GVRd50lqjBT+2RjlYeHlMRt0V9tKgDOZpHzFgh6HkzIrZjbHH4J
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR12MB2684;20:6L5sSjhkHnWelk/C8zpq6rr0c841+6td7fHLbNFl6UqFPmmRdir2Gmc4o0Mi3uanI1/H2LdrLqvQBtFgjNfr6LZn0Om722/89rAARG9v3R3zbfQwuo3NtlmO6pxfpZBJhh1p0y9I2QHDoYeLB0xKTHsX5WsaaqwXS2btGVVF4zLQtRgAkEnD16cDlikBMZLTaUvPrqk/8Cex7DMzYTvuDsZMWePnoF3H0Xcx9CW8wDiwzyVi/ENEmw/tKe2PUtZX
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2018 13:15:41.5231 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b0faedee-4e2e-48db-b90d-08d6171f82ae
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB2684
+        id S1728659AbeIJSJ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 14:09:57 -0400
+Received: from pw-vbox.higon.com (unknown [182.150.46.145])
+        by APP-10 (Coremail) with SMTP id tACowAB3fcV3bpZb2eqZCQ--.1545S2;
+        Mon, 10 Sep 2018 21:15:40 +0800 (CST)
+From:   Pu Wen <puwen@hygon.cn>
+To:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, thomas.lendacky@amd.com, bp@alien8.de,
+        pbonzini@redhat.com
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        Pu Wen <puwen@hygon.cn>
+Subject: [PATCH v6 01/16] x86/cpu: Create Hygon Dhyana architecture support file
+Date:   Mon, 10 Sep 2018 21:15:29 +0800
+Message-Id: <d99e831f739308221798c9939efc6e6fc1648e0c.1536550550.git.puwen@hygon.cn>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1536550549.git.puwen@hygon.cn>
+References: <cover.1536550549.git.puwen@hygon.cn>
+X-CM-TRANSID: tACowAB3fcV3bpZb2eqZCQ--.1545S2
+X-Coremail-Antispam: 1UD129KBjvAXoW3CF4xCrWrur1rKw1rCF45Jrb_yoW8GFykWo
+        WrAr4Fgr1FyrW7Zws5u3WrGr4UWryUKFs3ArWrJrsIvFn7XF1jvry7Kw4DAF1fArWfWrW7
+        ZwnxXr92va1aqr93n29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+        AaLaJ3UjIYCTnIWjp_UUUYc7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20EY4v20xva
+        j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2
+        x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8
+        JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr
+        0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+        6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVW8Jr0_Cr1UMcvjeVCFs4IE7xkEbV
+        WUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7Cj
+        xVA2Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+        Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
+        6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+        kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVW8JVW3JwCI42IY6I8E87Iv67AK
+        xVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
+        fUryxRDUUUU
+X-Originating-IP: [182.150.46.145]
+X-CM-SenderInfo: psxzv046klw03qof0z/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Add x86 architecture support for new processor Hygon Dhyana Family
+18h. Rework to create a separated file(arch/x86/kernel/cpu/hygon.c)
+from the AMD one(arch/x86/kernel/cpu/amd.c) to initialize Dhyana.
+In this way we can remove old AMD architecture support codes and
+generate a clear initialization flow for Hygon Dhyana CPU. It also
+reduce the long-term maintenance effort. Add Maintainer information
+for hygon.c in accordance.
 
+To identify Hygon Dhyana CPU, add a new vendor type X86_VENDOR_HYGON(9)
+for system recognition.
 
-On 9/10/18 7:27 AM, Borislav Petkov wrote:
-> On Fri, Sep 07, 2018 at 12:57:30PM -0500, Brijesh Singh wrote:
->> Currently, the per-cpu pvclock data is allocated dynamically when
->> cpu > HVC_BOOT_ARRAY_SIZE.
-> Well no, you need to write this correctly - what is "cpu >
-> HVC_BOOT_ARRAY_SIZE" ?!
->
-> ( I know what it is but I know it only because I've looked at that code before.  )
->
-> So no, please explain it in English not in code.
+To enable the config for Hygon Dhyana CPU, add a separated Kconfig
+entry(CPU_SUP_HYGON) in kernel config setup. And select CPU_SUP_AMD
+to solve the dependency issues in kernel.
 
+Signed-off-by: Pu Wen <puwen@hygon.cn>
+---
+ MAINTAINERS                      |   6 +
+ arch/x86/Kconfig.cpu             |  14 ++
+ arch/x86/include/asm/processor.h |   3 +-
+ arch/x86/kernel/cpu/Makefile     |   1 +
+ arch/x86/kernel/cpu/hygon.c      | 408 +++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 431 insertions(+), 1 deletion(-)
+ create mode 100644 arch/x86/kernel/cpu/hygon.c
 
->> The physical address of this variable is
->> shared between the guest and the hypervisor hence it must be mapped as
->> unencrypted (ie. C=0) when SEV is active.
-> This sentence is a good example about how to explain stuff in commit
-> messages.
->
->> The C-bit works on a page,
-> "The C-bit determines the encryption status of a 4K page."
->
->> hence we will be required to perform a
-> Use passive tone in your commit message: no "we", etc...
->
->> full 4k page allocation to store a single 32-byte pvclock variable. It
->> will waste fairly sizeable amount of memory since each CPU will be doing
-> "... will waste *a* fairly sizeable amount of ..."
->
->> a separate 4k allocation.
-> Start new paragraph here and use passive tone.
->
->> Let's define a second array for the SEV case to
->> statically allocate for NR_CPUS and put this array in .data..decrypted
-> NR_CPUS needs explaining for the unenlightened reader. Also,
->
-> 	"... put this array in *the* .data..decrypted section... "
->
->> section so that its mapped with C=0 during boot.
-> <---- newline here.
->
->> The .data..decrypted
->> section has a big chunk of memory that is currently unused. And since
->> second array will be used only when memory encryption is active hence
-> "... since *the* second array... "
->
-> s/hence //
->
->> free it when encryption is not active.
->>
->> Signed-off-by: Brijesh Singh <brijesh.singh@amd.com>
->> Suggested-by: Sean Christopherson <sean.j.christopherson@intel.com>
->> Cc: Tom Lendacky <thomas.lendacky@amd.com>
->> Cc: kvm@vger.kernel.org
->> Cc: Thomas Gleixner <tglx@linutronix.de>
->> Cc: Borislav Petkov <bp@suse.de>
->> Cc: "H. Peter Anvin" <hpa@zytor.com>
->> Cc: linux-kernel@vger.kernel.org
->> Cc: Paolo Bonzini <pbonzini@redhat.com>
->> Cc: Sean Christopherson <sean.j.christopherson@intel.com>
->> Cc: kvm@vger.kernel.org
->> Cc: "Radim Krčmář" <rkrcmar@redhat.com>
->> ---
->>  arch/x86/include/asm/mem_encrypt.h |  4 ++++
->>  arch/x86/kernel/kvmclock.c         | 14 ++++++++++++++
->>  arch/x86/kernel/vmlinux.lds.S      |  3 +++
->>  arch/x86/mm/init.c                 |  3 +++
->>  arch/x86/mm/mem_encrypt.c          | 10 ++++++++++
->>  5 files changed, 34 insertions(+)
->>
->> diff --git a/arch/x86/include/asm/mem_encrypt.h b/arch/x86/include/asm/mem_encrypt.h
->> index 802b2eb..cc46584 100644
->> --- a/arch/x86/include/asm/mem_encrypt.h
->> +++ b/arch/x86/include/asm/mem_encrypt.h
->> @@ -48,11 +48,13 @@ int __init early_set_memory_encrypted(unsigned long vaddr, unsigned long size);
->>  
->>  /* Architecture __weak replacement functions */
->>  void __init mem_encrypt_init(void);
->> +void __init free_decrypted_mem(void);
-> Proper prefixing:
->
-> "mem_encrypt_free_decrypted"
->
-> or so
->
->>  bool sme_active(void);
->>  bool sev_active(void);
->>  
->>  #define __decrypted __attribute__((__section__(".data..decrypted")))
->> +#define __decrypted_aux __attribute__((__section__(".data..decrypted.aux")))
->>  
->>  #else	/* !CONFIG_AMD_MEM_ENCRYPT */
->>  
->> @@ -80,6 +82,7 @@ static inline int __init
->>  early_set_memory_encrypted(unsigned long vaddr, unsigned long size) { return 0; }
->>  
->>  #define __decrypted
->> +#define __decrypted_aux
->>  
->>  #endif	/* CONFIG_AMD_MEM_ENCRYPT */
->>  
->> @@ -93,6 +96,7 @@ early_set_memory_encrypted(unsigned long vaddr, unsigned long size) { return 0;
->>  #define __sme_pa_nodebug(x)	(__pa_nodebug(x) | sme_me_mask)
->>  
->>  extern char __start_data_decrypted[], __end_data_decrypted[];
->> +extern char __start_data_decrypted_aux[];
->>  
->>  #endif	/* __ASSEMBLY__ */
->>  
->> diff --git a/arch/x86/kernel/kvmclock.c b/arch/x86/kernel/kvmclock.c
->> index 376fd3a..6086b56 100644
->> --- a/arch/x86/kernel/kvmclock.c
->> +++ b/arch/x86/kernel/kvmclock.c
->> @@ -65,6 +65,15 @@ static struct pvclock_vsyscall_time_info
->>  static struct pvclock_wall_clock wall_clock __decrypted;
->>  static DEFINE_PER_CPU(struct pvclock_vsyscall_time_info *, hv_clock_per_cpu);
->>  
->> +#ifdef CONFIG_AMD_MEM_ENCRYPT
->> +/*
->> + * The auxiliary array will be used when SEV is active. In non-SEV case,
->> + * it will be freed by free_decrypted_mem().
->> + */
->> +static struct pvclock_vsyscall_time_info
->> +			hv_clock_aux[NR_CPUS] __decrypted_aux;
-> Hmm, so worst case that's 64 4K pages:
->
-> (8192*32)/4096 = 64 4K pages.
-
-We can minimize the worst case memory usage. The number of VCPUs
-supported by KVM maybe less than NR_CPUS. e.g Currently KVM_MAX_VCPUS is
-set to 288
-
-(288 * 64)/4096 = 4 4K pages.
-
-(pvclock_vsyscall_time_info is cache aligned so it will be 64 bytes)
-
-
-#if NR_CPUS > KVM_MAX_VCPUS
-#define HV_AUX_ARRAY_SIZE  KVM_MAX_VCPUS
-#else
-#define HV_AUX_ARRAY_SIZE NR_CPUS
-#endif
-
-static struct pvclock_vsyscall_time_info
-                        hv_clock_aux[HV_AUX_ARRAY_SIZE] __decrypted_aux;
-
-
-> Now, the real question from all this SNAFU is, why can't all those point
-> to a single struct pvclock_vsyscall_time_info and all CPUs read a single
-> thing? Why do they have to be per-CPU and thus waste so much memory?
->
+diff --git a/MAINTAINERS b/MAINTAINERS
+index d870cb5..e924b39 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6760,6 +6760,12 @@ S:	Maintained
+ F:	mm/memory-failure.c
+ F:	mm/hwpoison-inject.c
+ 
++HYGON PROCESSOR SUPPORT
++M:	Pu Wen <puwen@hygon.cn>
++L:	linux-kernel@vger.kernel.org
++S:	Maintained
++F:	arch/x86/kernel/cpu/hygon.c
++
+ Hyper-V CORE AND DRIVERS
+ M:	"K. Y. Srinivasan" <kys@microsoft.com>
+ M:	Haiyang Zhang <haiyangz@microsoft.com>
+diff --git a/arch/x86/Kconfig.cpu b/arch/x86/Kconfig.cpu
+index 638411f..6adce15 100644
+--- a/arch/x86/Kconfig.cpu
++++ b/arch/x86/Kconfig.cpu
+@@ -426,6 +426,20 @@ config CPU_SUP_AMD
+ 
+ 	  If unsure, say N.
+ 
++config CPU_SUP_HYGON
++	default y
++	bool "Support Hygon processors" if PROCESSOR_SELECT
++	select CPU_SUP_AMD
++	help
++	  This enables detection, tunings and quirks for Hygon processors
++
++	  You need this enabled if you want your kernel to run on an
++	  Hygon CPU. Disabling this option on other types of CPUs
++	  makes the kernel a tiny bit smaller. Disabling it on an Hygon
++	  CPU might render the kernel unbootable.
++
++	  If unsure, say N.
++
+ config CPU_SUP_CENTAUR
+ 	default y
+ 	bool "Support Centaur processors" if PROCESSOR_SELECT
+diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+index d53c54b..d4dfd02 100644
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -155,7 +155,8 @@ enum cpuid_regs_idx {
+ #define X86_VENDOR_CENTAUR	5
+ #define X86_VENDOR_TRANSMETA	7
+ #define X86_VENDOR_NSC		8
+-#define X86_VENDOR_NUM		9
++#define X86_VENDOR_HYGON	9
++#define X86_VENDOR_NUM		10
+ 
+ #define X86_VENDOR_UNKNOWN	0xff
+ 
+diff --git a/arch/x86/kernel/cpu/Makefile b/arch/x86/kernel/cpu/Makefile
+index 347137e..1f5d229 100644
+--- a/arch/x86/kernel/cpu/Makefile
++++ b/arch/x86/kernel/cpu/Makefile
+@@ -30,6 +30,7 @@ obj-$(CONFIG_X86_FEATURE_NAMES) += capflags.o powerflags.o
+ 
+ obj-$(CONFIG_CPU_SUP_INTEL)		+= intel.o intel_pconfig.o
+ obj-$(CONFIG_CPU_SUP_AMD)		+= amd.o
++obj-$(CONFIG_CPU_SUP_HYGON)		+= hygon.o
+ obj-$(CONFIG_CPU_SUP_CYRIX_32)		+= cyrix.o
+ obj-$(CONFIG_CPU_SUP_CENTAUR)		+= centaur.o
+ obj-$(CONFIG_CPU_SUP_TRANSMETA_32)	+= transmeta.o
+diff --git a/arch/x86/kernel/cpu/hygon.c b/arch/x86/kernel/cpu/hygon.c
+new file mode 100644
+index 0000000..9f5679e
+--- /dev/null
++++ b/arch/x86/kernel/cpu/hygon.c
+@@ -0,0 +1,408 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Hygon Processor Support for Linux
++ *
++ * Copyright (C) 2018 Chengdu Haiguang IC Design Co., Ltd.
++ *
++ * Author: Pu Wen <puwen@hygon.cn>
++ *
++ * This file is licensed under the terms of the GNU General
++ * License v2.0 or later. See file COPYING for details.
++ */
++#include <linux/io.h>
++
++#include <asm/cpu.h>
++#include <asm/smp.h>
++#include <asm/cacheinfo.h>
++#include <asm/spec-ctrl.h>
++#include <asm/delay.h>
++#ifdef CONFIG_X86_64
++# include <asm/set_memory.h>
++#endif
++
++#include "cpu.h"
++
++/*
++ * nodes_per_socket: Stores the number of nodes per socket.
++ * Refer to CPUID Fn8000_001E_ECX Node Identifiers[10:8]
++ */
++static u32 nodes_per_socket = 1;
++
++#ifdef CONFIG_NUMA
++/*
++ * To workaround broken NUMA config.  Read the comment in
++ * srat_detect_node().
++ */
++static int nearby_node(int apicid)
++{
++	int i, node;
++
++	for (i = apicid - 1; i >= 0; i--) {
++		node = __apicid_to_node[i];
++		if (node != NUMA_NO_NODE && node_online(node))
++			return node;
++	}
++	for (i = apicid + 1; i < MAX_LOCAL_APIC; i++) {
++		node = __apicid_to_node[i];
++		if (node != NUMA_NO_NODE && node_online(node))
++			return node;
++	}
++	return first_node(node_online_map); /* Shouldn't happen */
++}
++#endif
++
++static void hygon_get_topology_early(struct cpuinfo_x86 *c)
++{
++	if (cpu_has(c, X86_FEATURE_TOPOEXT))
++		smp_num_siblings = ((cpuid_ebx(0x8000001e) >> 8) & 0xff) + 1;
++}
++
++/*
++ * Fixup core topology information for
++ * (1) Hygon multi-node processors
++ *     Assumption: Number of cores in each internal node is the same.
++ * (2) Hygon processors supporting compute units
++ */
++static void hygon_get_topology(struct cpuinfo_x86 *c)
++{
++	u8 node_id;
++	int cpu = smp_processor_id();
++
++	/* get information required for multi-node processors */
++	if (boot_cpu_has(X86_FEATURE_TOPOEXT)) {
++		int err;
++		u32 eax, ebx, ecx, edx;
++
++		cpuid(0x8000001e, &eax, &ebx, &ecx, &edx);
++
++		node_id  = ecx & 0xff;
++
++		c->cpu_core_id = ebx & 0xff;
++
++		if (smp_num_siblings > 1)
++			c->x86_max_cores /= smp_num_siblings;
++
++		/*
++		 * In case leaf B is available, use it to derive
++		 * topology information.
++		 */
++		err = detect_extended_topology(c);
++		if (!err)
++			c->x86_coreid_bits = get_count_order(c->x86_max_cores);
++
++	} else if (cpu_has(c, X86_FEATURE_NODEID_MSR)) {
++		u64 value;
++
++		rdmsrl(MSR_FAM10H_NODE_ID, value);
++		node_id = value & 7;
++
++		per_cpu(cpu_llc_id, cpu) = node_id;
++	} else
++		return;
++
++	if (nodes_per_socket > 1)
++		set_cpu_cap(c, X86_FEATURE_AMD_DCM);
++}
++
++/*
++ * On Hygon setup the lower bits of the APIC id distinguish the cores.
++ * Assumes number of cores is a power of two.
++ */
++static void hygon_detect_cmp(struct cpuinfo_x86 *c)
++{
++	unsigned int bits;
++	int cpu = smp_processor_id();
++
++	bits = c->x86_coreid_bits;
++	/* Low order bits define the core id (index of core in socket) */
++	c->cpu_core_id = c->initial_apicid & ((1 << bits)-1);
++	/* Convert the initial APIC ID into the socket ID */
++	c->phys_proc_id = c->initial_apicid >> bits;
++	/* use socket ID also for last level cache */
++	per_cpu(cpu_llc_id, cpu) = c->phys_proc_id;
++}
++
++static void srat_detect_node(struct cpuinfo_x86 *c)
++{
++#ifdef CONFIG_NUMA
++	int cpu = smp_processor_id();
++	int node;
++	unsigned int apicid = c->apicid;
++
++	node = numa_cpu_node(cpu);
++	if (node == NUMA_NO_NODE)
++		node = per_cpu(cpu_llc_id, cpu);
++
++	/*
++	 * On multi-fabric platform (e.g. Numascale NumaChip) a
++	 * platform-specific handler needs to be called to fixup some
++	 * IDs of the CPU.
++	 */
++	if (x86_cpuinit.fixup_cpu_id)
++		x86_cpuinit.fixup_cpu_id(c, node);
++
++	if (!node_online(node)) {
++		/*
++		 * Two possibilities here:
++		 *
++		 * - The CPU is missing memory and no node was created.  In
++		 *   that case try picking one from a nearby CPU.
++		 *
++		 * - The APIC IDs differ from the HyperTransport node IDs.
++		 *   Assume they are all increased by a constant offset, but
++		 *   in the same order as the HT nodeids.  If that doesn't
++		 *   result in a usable node fall back to the path for the
++		 *   previous case.
++		 *
++		 * This workaround operates directly on the mapping between
++		 * APIC ID and NUMA node, assuming certain relationship
++		 * between APIC ID, HT node ID and NUMA topology.  As going
++		 * through CPU mapping may alter the outcome, directly
++		 * access __apicid_to_node[].
++		 */
++		int ht_nodeid = c->initial_apicid;
++
++		if (__apicid_to_node[ht_nodeid] != NUMA_NO_NODE)
++			node = __apicid_to_node[ht_nodeid];
++		/* Pick a nearby node */
++		if (!node_online(node))
++			node = nearby_node(apicid);
++	}
++	numa_set_node(cpu, node);
++#endif
++}
++
++static void early_init_hygon_mc(struct cpuinfo_x86 *c)
++{
++#ifdef CONFIG_SMP
++	unsigned int bits, ecx;
++
++	/* Multi core CPU? */
++	if (c->extended_cpuid_level < 0x80000008)
++		return;
++
++	ecx = cpuid_ecx(0x80000008);
++
++	c->x86_max_cores = (ecx & 0xff) + 1;
++
++	/* CPU telling us the core id bits shift? */
++	bits = (ecx >> 12) & 0xF;
++
++	/* Otherwise recompute */
++	if (bits == 0) {
++		while ((1 << bits) < c->x86_max_cores)
++			bits++;
++	}
++
++	c->x86_coreid_bits = bits;
++#endif
++}
++
++static void bsp_init_hygon(struct cpuinfo_x86 *c)
++{
++#ifdef CONFIG_X86_64
++	unsigned long long tseg;
++
++	/*
++	 * Split up direct mapping around the TSEG SMM area.
++	 * Don't do it for gbpages because there seems very little
++	 * benefit in doing so.
++	 */
++	if (!rdmsrl_safe(MSR_K8_TSEG_ADDR, &tseg)) {
++		unsigned long pfn = tseg >> PAGE_SHIFT;
++
++		pr_debug("tseg: %010llx\n", tseg);
++		if (pfn_range_is_mapped(pfn, pfn + 1))
++			set_memory_4k((unsigned long)__va(tseg), 1);
++	}
++#endif
++
++	if (cpu_has(c, X86_FEATURE_CONSTANT_TSC)) {
++		u64 val;
++
++		rdmsrl(MSR_K7_HWCR, val);
++		if (!(val & BIT(24)))
++			pr_warn(FW_BUG "TSC doesn't count with P0 frequency!\n");
++	}
++
++	if (cpu_has(c, X86_FEATURE_MWAITX))
++		use_mwaitx_delay();
++
++	if (boot_cpu_has(X86_FEATURE_TOPOEXT)) {
++		u32 ecx;
++
++		ecx = cpuid_ecx(0x8000001e);
++		nodes_per_socket = ((ecx >> 8) & 7) + 1;
++	} else if (boot_cpu_has(X86_FEATURE_NODEID_MSR)) {
++		u64 value;
++
++		rdmsrl(MSR_FAM10H_NODE_ID, value);
++		nodes_per_socket = ((value >> 3) & 7) + 1;
++	}
++
++	if (!boot_cpu_has(X86_FEATURE_AMD_SSBD) &&
++	    !boot_cpu_has(X86_FEATURE_VIRT_SSBD)) {
++		/*
++		 * Try to cache the base value so further operations can
++		 * avoid RMW. If that faults, do not enable SSBD.
++		 */
++		if (!rdmsrl_safe(MSR_AMD64_LS_CFG, &x86_amd_ls_cfg_base)) {
++			setup_force_cpu_cap(X86_FEATURE_LS_CFG_SSBD);
++			setup_force_cpu_cap(X86_FEATURE_SSBD);
++			x86_amd_ls_cfg_ssbd_mask = 1ULL << 10;
++		}
++	}
++}
++
++static void early_init_hygon(struct cpuinfo_x86 *c)
++{
++	u32 dummy;
++
++	early_init_hygon_mc(c);
++
++	set_cpu_cap(c, X86_FEATURE_K8);
++
++	rdmsr_safe(MSR_AMD64_PATCH_LEVEL, &c->microcode, &dummy);
++
++	/*
++	 * c->x86_power is 8000_0007 edx. Bit 8 is TSC runs at constant rate
++	 * with P/T states and does not stop in deep C-states
++	 */
++	if (c->x86_power & (1 << 8)) {
++		set_cpu_cap(c, X86_FEATURE_CONSTANT_TSC);
++		set_cpu_cap(c, X86_FEATURE_NONSTOP_TSC);
++	}
++
++	/* Bit 12 of 8000_0007 edx is accumulated power mechanism. */
++	if (c->x86_power & BIT(12))
++		set_cpu_cap(c, X86_FEATURE_ACC_POWER);
++
++#ifdef CONFIG_X86_64
++	set_cpu_cap(c, X86_FEATURE_SYSCALL32);
++#endif
++
++#if defined(CONFIG_X86_LOCAL_APIC) && defined(CONFIG_PCI)
++	/*
++	 * ApicID can always be treated as an 8-bit value for Hygon APIC So, we
++	 * can safely set X86_FEATURE_EXTD_APICID unconditionally.
++	 */
++	if (boot_cpu_has(X86_FEATURE_APIC))
++		set_cpu_cap(c, X86_FEATURE_EXTD_APICID);
++#endif
++
++	/*
++	 * This is only needed to tell the kernel whether to use VMCALL
++	 * and VMMCALL.  VMMCALL is never executed except under virt, so
++	 * we can set it unconditionally.
++	 */
++	set_cpu_cap(c, X86_FEATURE_VMMCALL);
++
++	hygon_get_topology_early(c);
++}
++
++static void init_hygon(struct cpuinfo_x86 *c)
++{
++	early_init_hygon(c);
++
++	/*
++	 * Bit 31 in normal CPUID used for nonstandard 3DNow ID;
++	 * 3DNow is IDd by bit 31 in extended CPUID (1*32+31) anyway
++	 */
++	clear_cpu_cap(c, 0*32+31);
++
++	set_cpu_cap(c, X86_FEATURE_REP_GOOD);
++
++	/* get apicid instead of initial apic id from cpuid */
++	c->apicid = hard_smp_processor_id();
++
++	set_cpu_cap(c, X86_FEATURE_ZEN);
++	set_cpu_cap(c, X86_FEATURE_CPB);
++
++	cpu_detect_cache_sizes(c);
++
++	hygon_detect_cmp(c);
++	hygon_get_topology(c);
++	srat_detect_node(c);
++
++	if (cpu_has(c, X86_FEATURE_XMM2)) {
++		unsigned long long val;
++		int ret;
++
++		/*
++		 * A serializing LFENCE has less overhead than MFENCE, so
++		 * use it for execution serialization.  On families which
++		 * don't have that MSR, LFENCE is already serializing.
++		 * msr_set_bit() uses the safe accessors, too, even if the MSR
++		 * is not present.
++		 */
++		msr_set_bit(MSR_F10H_DECFG,
++			    MSR_F10H_DECFG_LFENCE_SERIALIZE_BIT);
++
++		/*
++		 * Verify that the MSR write was successful (could be running
++		 * under a hypervisor) and only then assume that LFENCE is
++		 * serializing.
++		 */
++		ret = rdmsrl_safe(MSR_F10H_DECFG, &val);
++		if (!ret && (val & MSR_F10H_DECFG_LFENCE_SERIALIZE)) {
++			/* A serializing LFENCE stops RDTSC speculation */
++			set_cpu_cap(c, X86_FEATURE_LFENCE_RDTSC);
++		} else {
++			/* MFENCE stops RDTSC speculation */
++			set_cpu_cap(c, X86_FEATURE_MFENCE_RDTSC);
++		}
++	}
++
++	/*
++	 * Hygon processors have APIC timer running in deep C states.
++	 */
++	set_cpu_cap(c, X86_FEATURE_ARAT);
++
++	/* Hygon CPUs don't reset SS attributes on SYSRET, Xen does. */
++	if (!cpu_has(c, X86_FEATURE_XENPV))
++		set_cpu_bug(c, X86_BUG_SYSRET_SS_ATTRS);
++}
++
++static void cpu_detect_tlb_hygon(struct cpuinfo_x86 *c)
++{
++	u32 ebx, eax, ecx, edx;
++	u16 mask = 0xfff;
++
++	if (c->extended_cpuid_level < 0x80000006)
++		return;
++
++	cpuid(0x80000006, &eax, &ebx, &ecx, &edx);
++
++	tlb_lld_4k[ENTRIES] = (ebx >> 16) & mask;
++	tlb_lli_4k[ENTRIES] = ebx & mask;
++
++	/* Handle DTLB 2M and 4M sizes, fall back to L1 if L2 is disabled */
++	if (!((eax >> 16) & mask))
++		tlb_lld_2m[ENTRIES] = (cpuid_eax(0x80000005) >> 16) & 0xff;
++	else
++		tlb_lld_2m[ENTRIES] = (eax >> 16) & mask;
++
++	/* a 4M entry uses two 2M entries */
++	tlb_lld_4m[ENTRIES] = tlb_lld_2m[ENTRIES] >> 1;
++
++	/* Handle ITLB 2M and 4M sizes, fall back to L1 if L2 is disabled */
++	if (!(eax & mask)) {
++		cpuid(0x80000005, &eax, &ebx, &ecx, &edx);
++		tlb_lli_2m[ENTRIES] = eax & 0xff;
++	} else
++		tlb_lli_2m[ENTRIES] = eax & mask;
++
++	tlb_lli_4m[ENTRIES] = tlb_lli_2m[ENTRIES] >> 1;
++}
++
++static const struct cpu_dev hygon_cpu_dev = {
++	.c_vendor	= "Hygon",
++	.c_ident	= { "HygonGenuine" },
++	.c_early_init   = early_init_hygon,
++	.c_detect_tlb	= cpu_detect_tlb_hygon,
++	.c_bsp_init	= bsp_init_hygon,
++	.c_init		= init_hygon,
++	.c_x86_vendor	= X86_VENDOR_HYGON,
++};
++
++cpu_dev_register(hygon_cpu_dev);
+-- 
+2.7.4
 
