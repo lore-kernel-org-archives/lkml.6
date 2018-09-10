@@ -2,104 +2,205 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2155FC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 02:45:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F116C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 02:47:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFB542075A
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 02:45:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C13202075A
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 02:47:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nR0LicQJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFB542075A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BBKMg6Tr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C13202075A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726839AbeIJHh2 (ORCPT
+        id S1726402AbeIJHjX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 03:37:28 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:46299 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725960AbeIJHh1 (ORCPT
+        Mon, 10 Sep 2018 03:39:23 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:39860 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725957AbeIJHjX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 03:37:27 -0400
-Received: by mail-oi0-f65.google.com with SMTP id y207-v6so37280884oie.13;
-        Sun, 09 Sep 2018 19:45:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=dQMPIv+2SRQooSqf2f1FtIXbctKsHqkGdT0UqymyeDk=;
-        b=nR0LicQJROW/+opF2t9jlpcF0r9X7WrQrFG+5ufNBsvJkPZ1jPBTNpgj4gBlnKnJBb
-         g0qKNPnY5aoZx71cYBrDsRhJLa3vlVLJ36SNzPayLbNb1uN1UhhFdl3ptlg+cXv/F5AY
-         YLb7FcRhCEnNhnVSafdn4YtEAr/1TnjHa+TO3HLl+B3BzedUjlzZhdt02Mcqj0Nf6nlr
-         LlexBksO63ZDsFue4199Kz7p3Sr1N6JcRWLiywW/qADj3wYJlSDWML6HJIvD8vemfcx5
-         9sj7LtPxsBaLs1oOGZTFsIBB217dZ2Gv12Wy9BKflLqkQuzgLlgZeJzIBN7BR1TcHGWI
-         S2VA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=dQMPIv+2SRQooSqf2f1FtIXbctKsHqkGdT0UqymyeDk=;
-        b=BCeS/gWhuUrF0Tt4sWaTJC2bQslatX4emADJfCHLZl1AebbTSCN8qb4VilrvXIA/q2
-         +tB492TqAhOyr1gnVldhimEB+GdpFmyNw1GaiHFeiM07diR+e0VwnmjJYoklIBJscLna
-         sEIQQI69v/dJZhN0105OD1bkI4mf2ivXKwRVCnzly3X/nJF7wDqUG/OZWeioPFPRQsh1
-         jg8gzdCLeyniMygVoNbjdCGQeFTlNmkRTAEqW/bUMy9n/YTPY5gTuY4b+R7Glz6eHIHF
-         SFGOJXd/Fp5Rmxo6h1TLS/cUXZdAJ9kLWFuuRGpKxV2Cdu6Au+6GJhCVHzbxxtCqUdL1
-         +6Tg==
-X-Gm-Message-State: APzg51ATydhNgI62CmPRrbyQja09xUsCZPvg6zKQtclY7G+BLzNIjIJX
-        lRXARi+4Or0ypkpEgXzHtyGFRNUpV3uU7Hjft+UcFyw+
-X-Google-Smtp-Source: ANB0VdbrW6dCjswKaJpd0RV0nhMTnHPMMAgGcn14YdIPSDH8SHA/HBlm+3hvUtX/1Sc2ev8lOg9op1tyn64DOlZxq2c=
-X-Received: by 2002:aca:6087:: with SMTP id u129-v6mr17778821oib.99.1536540601007;
- Sun, 09 Sep 2018 17:50:01 -0700 (PDT)
+        Mon, 10 Sep 2018 03:39:23 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w8A2la7Z055280;
+        Sun, 9 Sep 2018 21:47:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1536547656;
+        bh=C3tmGvPxiVk4SsDF0siTwrBFh5bcFYJRNFcBE2sPGMM=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=BBKMg6TreakIN+U95pWZs0h0bEXTskmcSMLff8/55XXPRExX8GKmkwK/DpYIMYZy1
+         zAb1DBCxrLMUxk60zAqP9E08ZBrNTTexMcQM7M6AQAoxQnRRfjdQ3F84pq8FWTBeQZ
+         2z6citqdfsc5t5yDhtM48ssZZ21quu/Vl5G8TSoE=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8A2lagB020590;
+        Sun, 9 Sep 2018 21:47:36 -0500
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Sun, 9 Sep
+ 2018 21:47:37 -0500
+Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Sun, 9 Sep 2018 21:47:36 -0500
+Received: from [172.24.191.45] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8A2lXa4013944;
+        Sun, 9 Sep 2018 21:47:34 -0500
+Subject: Re: [PATCH 2/5] gpio: davinci: Use dev name for label and automatic
+ base selection
+To:     Grygorii Strashko <grygorii.strashko@ti.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+CC:     "Andrew F. Davis" <afd@ti.com>, "Nori, Sekhar" <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20180831191326.25106-1-afd@ti.com>
+ <20180831191326.25106-2-afd@ti.com>
+ <2a02c241-ac91-1bac-380d-122858bb03c3@ti.com>
+ <CACRpkdYvNeKyfRf5Et5zC4=hcu9cfDubftRFRHtrKLN-5Snd1Q@mail.gmail.com>
+ <040ce524-f6e2-81a2-68db-57a645de22ea@ti.com>
+ <0e199aa3-2d9d-4e7d-af23-8523722f017a@ti.com>
+From:   Keerthy <j-keerthy@ti.com>
+Message-ID: <7ffe6694-0bb1-d1ae-3d93-51f11a358cc0@ti.com>
+Date:   Mon, 10 Sep 2018 08:17:32 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-References: <1536411327-30127-1-git-send-email-zhongjiang@huawei.com>
-In-Reply-To: <1536411327-30127-1-git-send-email-zhongjiang@huawei.com>
-From:   Junhui Tang <tang.junhui.linux@gmail.com>
-Date:   Mon, 10 Sep 2018 08:50:11 +0800
-Message-ID: <CA+NNRhENeguvt7dXY=F_2NaD=ihMbAQ8R-MN9mZf73YmU9mEwQ@mail.gmail.com>
-Subject: Re: [PATCH] bcache: remove redundant condition before debugfs_remove
-To:     zhongjiang@huawei.com
-Cc:     colyli@suse.de, Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <0e199aa3-2d9d-4e7d-af23-8523722f017a@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-LGTM
 
-Reviewed-by: tang.junhui.linux@gmail.com
-zhong jiang <zhongjiang@huawei.com> =E4=BA=8E2018=E5=B9=B49=E6=9C=888=E6=97=
-=A5=E5=91=A8=E5=85=AD =E4=B8=8B=E5=8D=889:08=E5=86=99=E9=81=93=EF=BC=9A
->
-> debugfs_remove has taken the IS_ERR_OR_NULL into account. Just
-> remove the unnecessary condition.
->
-> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-> ---
->  drivers/md/bcache/super.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> index 2d26f9e..a3d2a94 100644
-> --- a/drivers/md/bcache/super.c
-> +++ b/drivers/md/bcache/super.c
-> @@ -1506,8 +1506,7 @@ static void cache_set_free(struct closure *cl)
->         struct cache *ca;
->         unsigned int i;
->
-> -       if (!IS_ERR_OR_NULL(c->debug))
-> -               debugfs_remove(c->debug);
-> +       debugfs_remove(c->debug);
->
->         bch_open_buckets_free(c);
->         bch_btree_cache_free(c);
-> --
-> 1.7.12.4
->
+
+On Sunday 09 September 2018 01:11 AM, Grygorii Strashko wrote:
+> 
+> 
+> On 09/06/2018 09:16 AM, Keerthy wrote:
+>>
+>>
+>> On Wednesday 05 September 2018 04:07 PM, Linus Walleij wrote:
+>>> On Mon, Sep 3, 2018 at 7:40 AM Keerthy <j-keerthy@ti.com> wrote:
+>>>> On Saturday 01 September 2018 12:43 AM, Andrew F. Davis wrote:
+>>>>> Use dev_name to get a unique label and use -1 for a base to get our
+>>>>> selection automatically. We pull in all GPIOs per chip now so this
+>>>>> does not have the effect of out of order labels like before.
+>>>>>
+>>>>> We do these both together so we can drop all the static data in one
+>>>>> patch. This also lets us normalize the return paths as we don't need
+>>>>> any cleanup after this change.
+>>>>
+>>>> echo 28 > /sys/class/gpio/export
+>>>> / # echo 28 > /sys/class/gpi[   12.839205] export_store: invalid GPIO 28
+>>>> o/export
+>>>> echo 2 > /sys/class/gp[   22.165728] export_store: invalid GPIO 2
+>>>> io/export
+>>>> / # echo 1 > /sys/class/gp[   25.961392] export_store: invalid GPIO 1
+>>>> io/export
+>>>> / # echo 3 > /sys/class/gp[   29.981918] export_store: invalid GPIO 3
+>>>> io/export
+>>>>
+>>>> Export fails with this patch. I am testing this on keystone-k2g-evm.
+>>>
+>>> I think the GPIO got a new number didn't it?
+>>>
+>>> Did you check the gpio file in debugfs to see which number
+>>> it got.
+>>
+>> Okay now its numbered differently:
+>>
+>> cat /sys/class/gpio/gpiochip340/ngpio
+>> 144
+>>
+>> cat /sys/class/gpio/gpiochip272/ngpio
+>> 68
+> 
+> could you or Andrew provide content of /debug/gpio before/after?
+> And ls /sys/class/gpio/?
+
+Output on K2G:
+
+Before
+======
+
+cat /debug/gpio
+gpiochip1: GPIOs 0-143, parent: platform/2603000.gpio, davinci_gpio.0:
+
+gpiochip2: GPIOs 144-211, parent: platform/260a000.gpio, davinci_gpio.1:
+ gpio-156 (                    |cd                  ) in  lo
+
+gpiochip0: GPIOs 484-511, parent: platform/2620240.keystone_dsp_gpio,
+2620240.keystone_dsp_gpio:
+
+ ls /sys/class/gpio/
+export       gpiochip0    gpiochip144  gpiochip484  unexport
+
+cat /sys/class/gpio/gpiochip0/label
+davinci_gpio.0
+
+cat /sys/class/gpio/gpiochip144/label
+davinci_gpio.1
+
+cat /sys/class/gpio/gpiochip144/ngpio
+68
+/ # cat /sys/class/gpio/gpiochip0/ngpio
+144
+
+
+After
+=====
+
+ cat /debug/gpio
+gpiochip2: GPIOs 272-339, parent: platform/260a000.gpio, 260a000.gpio:
+ gpio-284 (                    |cd                  ) in  lo
+
+gpiochip1: GPIOs 340-483, parent: platform/2603000.gpio, 2603000.gpio:
+
+gpiochip0: GPIOs 484-511, parent: platform/2620240.keystone_dsp_gpio,
+2620240.keystone_dsp_gpio:
+
+ls /sys/class/gpio/
+export       gpiochip272  gpiochip340  gpiochip484  unexport
+
+
+cat /sys/class/gpio/gpiochip340/label
+2603000.gpio
+/ # cat /sys/class/gpio/gpiochip272/label
+260a000.gpio
+/ # cat /sys/class/gpio/gpiochip272/label
+
+cat /sys/class/gpio/gpiochip272/ngpio
+68
+/ # cat /sys/class/gpio/gpiochip340/ngpio
+144
+
+In the case of SoCs that support multiple instances of Davinci GPIO IPs
+it is harder to figure out the right gpio number to export.
+
+>>
+>> So gpio bank2 and bank1 have different gpio numbers. Is that acceptable?
+>>
+>>>
+>>> This is sadly the global numberspace that we are tying to
+>>> get rid of (new apps/scripts should use the chardev).
+>>>
+>>> Are there applications that rely on the sysfs ABI on DaVinci?
+>>>
+>>> In that case base needs to be prerseved.
+> 
+> Not only base, but label also - /sys/class/gpio/gpiochip0/label, as this is
+> the way to find proper GPIO chip in sysfs using legacy GPIO ABI.
+> 
+> Linus, this platform is old and most of the users do not use new ABI (chardev),
+> so we could try change this, but need to be prepared for regressions reports.
+> 
+
+Totally agree with this.
