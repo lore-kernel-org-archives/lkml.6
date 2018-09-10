@@ -5,155 +5,305 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA3B3C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:38:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 022E3C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:38:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72CC320890
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:38:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72CC320890
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id A445E2086E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:38:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A445E2086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728810AbeIJSco (ORCPT
+        id S1728828AbeIJScx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 14:32:44 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43814 "EHLO
+        Mon, 10 Sep 2018 14:32:53 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58836 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727970AbeIJSco (ORCPT
+        by vger.kernel.org with ESMTP id S1728538AbeIJScw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 14:32:44 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8ADZSLQ003257
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 09:38:35 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mdpvjr8hb-1
+        Mon, 10 Sep 2018 14:32:52 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8ADZt6K056324
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 09:38:43 -0400
+Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mdrswb2b6-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 09:38:35 -0400
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 09:38:42 -0400
 Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ldufour@linux.vnet.ibm.com>;
-        Mon, 10 Sep 2018 14:38:32 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Mon, 10 Sep 2018 09:38:40 -0400
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 10 Sep 2018 14:38:30 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8ADcTtw51904716
+        Mon, 10 Sep 2018 09:38:36 -0400
+Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8ADcYEj25755710
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 10 Sep 2018 13:38:29 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CB5D2AE051;
-        Mon, 10 Sep 2018 16:37:46 +0100 (BST)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4D21BAE04D;
-        Mon, 10 Sep 2018 16:37:46 +0100 (BST)
-Received: from [9.145.72.33] (unknown [9.145.72.33])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 10 Sep 2018 16:37:46 +0100 (BST)
-From:   Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Subject: Re: [PATCH v2 0/3] powerpc/pseries: use H_BLOCK_REMOVE
-To:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        mpe@ellerman.id.au
-Cc:     aneesh.kumar@linux.ibm.com, benh@kernel.crashing.org,
-        paulus@samba.org, npiggin@gmail.com
-References: <1534775376-22480-1-git-send-email-ldufour@linux.vnet.ibm.com>
-Date:   Mon, 10 Sep 2018 15:38:28 +0200
+        Mon, 10 Sep 2018 13:38:34 GMT
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BECC4AC05B;
+        Mon, 10 Sep 2018 09:38:21 -0400 (EDT)
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C9695AC059;
+        Mon, 10 Sep 2018 09:38:19 -0400 (EDT)
+Received: from oc8043147753.ibm.com (unknown [9.80.231.164])
+        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon, 10 Sep 2018 09:38:19 -0400 (EDT)
+Subject: Re: [PATCH v9 09/22] s390: vfio-ap: register matrix device with VFIO
+ mdev framework
+To:     pmorel@linux.ibm.com, Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com
+References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1534196899-16987-10-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <af1cd7a8-446c-ddf6-cf17-886dd259da3d@linux.ibm.com>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Mon, 10 Sep 2018 09:38:32 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <1534775376-22480-1-git-send-email-ldufour@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <af1cd7a8-446c-ddf6-cf17-886dd259da3d@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 X-TM-AS-GCONF: 00
-x-cbid: 18091013-0008-0000-0000-0000026F2CA2
+x-cbid: 18091013-0068-0000-0000-000003385167
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009696; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01086291; UDB=6.00560839; IPR=6.00866301;
+ MB=3.00023208; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-10 13:38:39
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18091013-0009-0000-0000-000021D75FF0
-Message-Id: <febd6c4b-e7b8-02a7-c570-0d1fe9e2e3a0@linux.vnet.ibm.com>
+x-cbparentid: 18091013-0069-0000-0000-000045AF43C4
+Message-Id: <a89e99e9-5670-bc2e-8e08-a5f6edaaaf9c@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-10_08:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=4 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=728 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1807170000 definitions=main-1809100140
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michael,
+On 09/06/2018 04:49 AM, Pierre Morel wrote:
+> On 13/08/2018 23:48, Tony Krowiak wrote:
+>> From: Tony Krowiak <akrowiak@linux.ibm.com>
+>>
+>> Registers the matrix device created by the VFIO AP device
+>> driver with the VFIO mediated device framework.
+>> Registering the matrix device will create the sysfs
+>> structures needed to create mediated matrix devices
+>> each of which will be used to configure the AP matrix
+>> for a guest and connect it to the VFIO AP device driver.
+>>
+>> Registering the matrix device with the VFIO mediated device
+>> framework will create the following sysfs structures:
+>>
+>> /sys/devices/vfio_ap/matrix/
+>> ...... [mdev_supported_types]
+>> ......... [vfio_ap-passthrough]
+>> ............ create
+>>
+>> To create a mediated device for the AP matrix device, write a UUID
+>> to the create file:
+>>
+>>     uuidgen > create
+>>
+>> A symbolic link to the mediated device's directory will be created in 
+>> the
+>> devices subdirectory named after the generated $uuid:
+>>
+>> /sys/devices/vfio_ap/matrix/
+>> ...... [mdev_supported_types]
+>> ......... [vfio_ap-passthrough]
+>> ............ [devices]
+>> ............... [$uuid]
+>>
+>> A symbolic link to the mediated device will also be created
+>> in the vfio_ap matrix's directory:
+>>
+>> /sys/devices/vfio_ap/matrix/[$uuid]
+>>
+>> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+>> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
+>> Tested-by: Michael Mueller <mimu@linux.ibm.com>
+>> Tested-by: Farhan Ali <alifm@linux.ibm.com>
+>> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+>> ---
+>>   MAINTAINERS                           |    1 +
+>>   drivers/s390/crypto/Makefile          |    2 +-
+>>   drivers/s390/crypto/vfio_ap_drv.c     |   23 ++++++
+>>   drivers/s390/crypto/vfio_ap_ops.c     |  124 
+>> +++++++++++++++++++++++++++++++++
+>>   drivers/s390/crypto/vfio_ap_private.h |   45 ++++++++++++
+>>   include/uapi/linux/vfio.h             |    1 +
+>>   6 files changed, 195 insertions(+), 1 deletions(-)
+>>   create mode 100644 drivers/s390/crypto/vfio_ap_ops.c
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index e84c559..f60dd56 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -12427,6 +12427,7 @@ W: 
+>> http://www.ibm.com/developerworks/linux/linux390/
+>>   S:    Supported
+>>   F:    drivers/s390/crypto/vfio_ap_drv.c
+>>   F:    drivers/s390/crypto/vfio_ap_private.h
+>> +F:    drivers/s390/crypto/vfio_ap_ops.c
+>>
+>>   S390 ZFCP DRIVER
+>>   M:    Steffen Maier <maier@linux.ibm.com>
+>> diff --git a/drivers/s390/crypto/Makefile b/drivers/s390/crypto/Makefile
+>> index 48e466e..8d36b05 100644
+>> --- a/drivers/s390/crypto/Makefile
+>> +++ b/drivers/s390/crypto/Makefile
+>> @@ -17,5 +17,5 @@ pkey-objs := pkey_api.o
+>>   obj-$(CONFIG_PKEY) += pkey.o
+>>
+>>   # adjunct processor matrix
+>> -vfio_ap-objs := vfio_ap_drv.o
+>> +vfio_ap-objs := vfio_ap_drv.o vfio_ap_ops.o
+>>   obj-$(CONFIG_VFIO_AP) += vfio_ap.o
+>> diff --git a/drivers/s390/crypto/vfio_ap_drv.c 
+>> b/drivers/s390/crypto/vfio_ap_drv.c
+>> index 5069580..fa04c5a 100644
+>> --- a/drivers/s390/crypto/vfio_ap_drv.c
+>> +++ b/drivers/s390/crypto/vfio_ap_drv.c
+>> @@ -11,6 +11,7 @@
+>>   #include <linux/mod_devicetable.h>
+>>   #include <linux/slab.h>
+>>   #include <linux/string.h>
+>> +#include <asm/zcrypt.h>
+>>   #include "vfio_ap_private.h"
+>>
+>>   #define VFIO_AP_ROOT_NAME "vfio_ap"
+>> @@ -65,6 +66,19 @@ static int vfio_ap_matrix_dev_init(void)
+>>           return ret;
+>>       }
+>>
+>> +    mutex_init(&matrix_dev.lock);
+>> +    INIT_LIST_HEAD(&matrix_dev.mdev_list);
+>> +
+>> +    /* Test if PQAP(QCI) instruction is available */
+>> +    if (test_facility(12)) {
+>> +        ret = ap_qci(&matrix_dev.info);
+>> +        if (ret) {
+>> +            root_device_unregister(root_device);
+>> +            return ret;
+>> +        }
+>> +    }
+>> +
+>> +    atomic_set(&matrix_dev.available_instances, MAX_ZDEV_ENTRIES_EXT);
+>>       matrix_dev.device.type = &vfio_ap_dev_type;
+>>       dev_set_name(&matrix_dev.device, "%s", VFIO_AP_DEV_NAME);
+>>       matrix_dev.device.type = &vfio_ap_dev_type;
+>> @@ -105,11 +119,20 @@ int __init vfio_ap_init(void)
+>>           return ret;
+>>       }
+>>
+>> +    ret = vfio_ap_mdev_register();
+>> +    if (ret) {
+>> +        ap_driver_unregister(&vfio_ap_drv);
+>> +        vfio_ap_matrix_dev_destroy();
+>> +
+>> +        return ret;
+>> +    }
+>> +
+>>       return 0;
+>>   }
+>>
+>>   void __exit vfio_ap_exit(void)
+>>   {
+>> +    vfio_ap_mdev_unregister();
+>>       ap_driver_unregister(&vfio_ap_drv);
+>>       vfio_ap_matrix_dev_destroy();
+>>   }
+>> diff --git a/drivers/s390/crypto/vfio_ap_ops.c 
+>> b/drivers/s390/crypto/vfio_ap_ops.c
+>> new file mode 100644
+>> index 0000000..8018c2d
+>> --- /dev/null
+>> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+>> @@ -0,0 +1,124 @@
+>> +// SPDX-License-Identifier: GPL-2.0+
+>> +/*
+>> + * Adjunct processor matrix VFIO device driver callbacks.
+>> + *
+>> + * Copyright IBM Corp. 2018
+>> + *
+>> + * Author(s): Tony Krowiak <akrowiak@linux.ibm.com>
+>> + *          Halil Pasic <pasic@linux.ibm.com>
+>> + *          Pierre Morel <pmorel@linux.ibm.com>
+>> + */
+>> +#include <linux/string.h>
+>> +#include <linux/vfio.h>
+>> +#include <linux/device.h>
+>> +#include <linux/list.h>
+>> +#include <linux/ctype.h>
+>> +
+>> +#include "vfio_ap_private.h"
+>> +
+>> +#define VFIO_AP_MDEV_TYPE_HWVIRT "passthrough"
+>> +#define VFIO_AP_MDEV_NAME_HWVIRT "VFIO AP Passthrough Device"
+>> +
+>> +static void vfio_ap_matrix_init(struct ap_config_info *info,
+>> +                struct ap_matrix *matrix)
+>> +{
+>> +    matrix->apm_max = info->apxa ? info->Na : 63;
+>> +    matrix->aqm_max = info->apxa ? info->Nd : 15;
+>> +    matrix->adm_max = info->apxa ? info->Nd : 15;
+>> +}
+>> +
+>> +static int vfio_ap_mdev_create(struct kobject *kobj, struct 
+>> mdev_device *mdev)
+>> +{
+>> +    struct ap_matrix_mdev *matrix_mdev;
+>> +
+>> +    matrix_mdev = kzalloc(sizeof(*matrix_mdev), GFP_KERNEL);
+>> +    if (!matrix_mdev)
+>> +        return -ENOMEM;
+>> +
+>> +    matrix_mdev->name = dev_name(mdev_dev(mdev));
+>> +    vfio_ap_matrix_init(&matrix_dev.info, &matrix_mdev->matrix);
+>> +    mdev_set_drvdata(mdev, matrix_mdev);
+>> +
+>> +    if (atomic_dec_if_positive(&matrix_dev.available_instances) < 0) {
+>> +        kfree(matrix_mdev);
+>> +        return -EPERM;
+>> +    }
+>> +
+>> +    mutex_lock(&matrix_dev.lock);
+>> +    list_add(&matrix_mdev->list, &matrix_dev.mdev_list);
+>> +    mutex_unlock(&matrix_dev.lock);
+>> +
+> Hi Tony,
+>
+> You need to initialize the matrix_mdev->list before
+> using it.
 
-Do you plan to pull it for 4.20 ?
+Why? Initialization only sets its prev and next pointers to point to 
+itself. The
+list_add immediately sets those pointers to insert it into the 
+matrix_dev.mdev_list,
+so what would be the purose?
 
-Cheers,
-Laurent.
-
-On 20/08/2018 16:29, Laurent Dufour wrote:
-> On very large system we could see soft lockup fired when a process is
-> exiting
-> 
-> watchdog: BUG: soft lockup - CPU#851 stuck for 21s! [forkoff:215523]
-> Modules linked in: pseries_rng rng_core xfs raid10 vmx_crypto btrfs libcrc32c xor zstd_decompress zstd_compress xxhash lzo_compress raid6_pq crc32c_vpmsum lpfc crc_t10dif crct10dif_generic crct10dif_common dm_multipath scsi_dh_rdac scsi_dh_alua autofs4
-> CPU: 851 PID: 215523 Comm: forkoff Not tainted 4.17.0 #1
-> NIP:  c0000000000b995c LR: c0000000000b8f64 CTR: 000000000000aa18
-> REGS: c00006b0645b7610 TRAP: 0901   Not tainted  (4.17.0)
-> MSR:  800000010280b033 <SF,VEC,VSX,EE,FP,ME,IR,DR,RI,LE,TM[E]>  CR: 22042082  XER: 00000000
-> CFAR: 00000000006cf8f0 SOFTE: 0 
-> GPR00: 0010000000000000 c00006b0645b7890 c000000000f99200 0000000000000000 
-> GPR04: 8e000001a5a4de58 400249cf1bfd5480 8e000001a5a4de50 400249cf1bfd5480 
-> GPR08: 8e000001a5a4de48 400249cf1bfd5480 8e000001a5a4de40 400249cf1bfd5480 
-> GPR12: ffffffffffffffff c00000001e690800 
-> NIP [c0000000000b995c] plpar_hcall9+0x44/0x7c
-> LR [c0000000000b8f64] pSeries_lpar_flush_hash_range+0x324/0x3d0
-> Call Trace:
-> [c00006b0645b7890] [8e000001a5a4dd20] 0x8e000001a5a4dd20 (unreliable)
-> [c00006b0645b7a00] [c00000000006d5b0] flush_hash_range+0x60/0x110
-> [c00006b0645b7a50] [c000000000072a2c] __flush_tlb_pending+0x4c/0xd0
-> [c00006b0645b7a80] [c0000000002eaf44] unmap_page_range+0x984/0xbd0
-> [c00006b0645b7bc0] [c0000000002eb594] unmap_vmas+0x84/0x100
-> [c00006b0645b7c10] [c0000000002f8afc] exit_mmap+0xac/0x1f0
-> [c00006b0645b7cd0] [c0000000000f2638] mmput+0x98/0x1b0
-> [c00006b0645b7d00] [c0000000000fc9d0] do_exit+0x330/0xc00
-> [c00006b0645b7dc0] [c0000000000fd384] do_group_exit+0x64/0x100
-> [c00006b0645b7e00] [c0000000000fd44c] sys_exit_group+0x2c/0x30
-> [c00006b0645b7e30] [c00000000000b960] system_call+0x58/0x6c
-> Instruction dump:
-> 60000000 f8810028 7ca42b78 7cc53378 7ce63b78 7d074378 7d284b78 7d495378 
-> e9410060 e9610068 e9810070 44000022 <7d806378> e9810028 f88c0000 f8ac0008
-> 
-> This happens when removing the PTE by calling the hypervisor using the
-> H_BULK_REMOVE call. This call is processing up to 4 PTEs but is doing a
-> tlbie for each PTE it is processing. This could lead to long time spent in
-> the hypervisor (sometimes up to 4s) and soft lockup being raised because
-> the scheduler is not called in zap_pte_range().
-> 
-> Since the Power7's time, the hypervisor is providing a new hcall
-> H_BLOCK_REMOVE allowing processing up to 8 PTEs with one call to
-> tlbie. By limiting the amount of tlbie generated, this reduces the time
-> spent invalidating the PTEs.
-> 
-> This hcall requires that the pages are "all within the same naturally
-> aligned 8 page virtual address block".
-> 
-> With this patch series applied, I couldn't see any soft lockup raised on
-> the victim LPAR I was running the test one.
-> 
-> Changes since V1:
-> - Remove a call to BUG_ON() in call_block_remove() since this one can be
->   handled gently.
-> - Remove uneeded of current_vpgb to 0 when retrying entries in
->   hugepage_block_invalidate() and do_block_remove().
-> 
-> Laurent Dufour (3):
->   powerpc/pseries/mm: Introducing FW_FEATURE_BLOCK_REMOVE
->   powerpc/pseries/mm: factorize PTE slot computation
->   powerpc/pseries/mm: call H_BLOCK_REMOVE
-> 
->  arch/powerpc/include/asm/firmware.h       |   3 +-
->  arch/powerpc/include/asm/hvcall.h         |   1 +
->  arch/powerpc/platforms/pseries/firmware.c |   1 +
->  arch/powerpc/platforms/pseries/lpar.c     | 241 ++++++++++++++++++++++++++++--
->  4 files changed, 230 insertions(+), 16 deletions(-)
-> 
+>
+>
+> Regards,
+> Pierre
+>
+>
 
