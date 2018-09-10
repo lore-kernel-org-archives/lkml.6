@@ -2,112 +2,396 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5150CC4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 11:38:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D01ACC4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 11:39:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB4C62087E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 11:38:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 617FE20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 11:39:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="IfyHnYLL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB4C62087E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pA0vP74L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 617FE20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728196AbeIJQcR (ORCPT
+        id S1728343AbeIJQdH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 12:32:17 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44652 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727646AbeIJQcR (ORCPT
+        Mon, 10 Sep 2018 12:33:07 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:40072 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727646AbeIJQdH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 12:32:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=3i8cqO83hprtHSwfrCBgZDmbQdfk4arbckma1HzOpfw=; b=IfyHnYLLEY2VB9gW8Q/whQIRr
-        OSdMIp5GKp6yFS6vGCKm4k3SdBiLk4PA/1BBpWvI798NNuC3ZEHaodMUn6ih8vCuowjCqK4IsHQXo
-        Fqmu3rzXwYz56FLeFJuqOttAh/MTH0/GMMMkpy0AHA+tSOe/ixYtuKG3W8yfk96atYc4w=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fzKWL-0001w9-86; Mon, 10 Sep 2018 11:38:21 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id F3BF61122D51; Mon, 10 Sep 2018 12:38:20 +0100 (BST)
-Date:   Mon, 10 Sep 2018 12:38:20 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Akshu Agrawal <akshu.agrawal@amd.com>
-Cc:     djkurtz@chromium.org, Alexander.Deucher@amd.com,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        "Mukunda, Vijendar" <Vijendar.Mukunda@amd.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Wei Yongjun <weiyongjun1@huawei.com>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] ASoC: AMD: Fix simultaneous playback and capture on
- different channel
-Message-ID: <20180910113820.GD5856@sirena.org.uk>
-References: <1536566815-3271-1-git-send-email-akshu.agrawal@amd.com>
+        Mon, 10 Sep 2018 12:33:07 -0400
+Received: by mail-it0-f65.google.com with SMTP id h23-v6so28165859ita.5;
+        Mon, 10 Sep 2018 04:39:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ax7ycqPLuoJ3oB5Bz4PbOqq8S7MZaUisJnhXJ1ggwzI=;
+        b=pA0vP74LAf5CEcoW1EyCv/ZWLwNEFhGiaFOaGHYHDKOO8hj67K2fc6GuD436j544YA
+         c60K5LZINbhn0W6fEt5OuM3vVUZw18H3/EQ86rwERzJ7AvtRZxMspGV0KCXYe3nB72GH
+         O/1r9Hqv5MH0/0yzpidtZl9evRPCfW3nmGeWlQDh8ppt/J8HHbpS7cqXG/CrgIgv+Gp9
+         lptYyMuerfpaW9+talAzpRcQU7HQMI8VD7ijrOOOBrzr1V+KM2t82Ytc47Ld4Am26Hbq
+         uts5IUrno91KkOijTb4EfnTLHmGWja9FRD9ZxQ0uduKgS+VwyY3x6VT92iH4C8Jj3hW2
+         ac7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ax7ycqPLuoJ3oB5Bz4PbOqq8S7MZaUisJnhXJ1ggwzI=;
+        b=QlluZXAyPQBtzP4C1un6b3T+wLb4lCnaGeZurTLQoM14oz2+8AGOs+pSoQ0tC01G6t
+         T4t/LvzVMUdvWIxVcekJa5LjnAII5+HcltXO5wDR3irvzWq44nhWvByLxlHfiTw10bT2
+         HtvIp1ttSgG5P6t7OIPd8DHNamx8t2M4p+HATZPAFJC+RHvEI8X8rxy+6oT2taAOmTjb
+         vKccWrPGpXGcbRDWMLpr5PQkWibT+of/TtGwlyoYoCRWaD3ozQ5ucTfi5+NcydOWBCaI
+         Fi8w4rYjBbfHBh9+ZRZMZzDjWz0mScGOjail8m+tAByfZhzvirApjmXMnaj6N6nen3LS
+         IV6w==
+X-Gm-Message-State: APzg51CeSsJqcPte7JSwm+rFMG+HRGbWEHTS06+pAKfr7I00vKEX+aM5
+        uT52h3E9Y+J6w9XTQNVQA4VshX/fCecZW72jzzQ=
+X-Google-Smtp-Source: ANB0VdaHPkR9bY13F2uO9S9JpTuPvp0Cb+vO4iuQbAOhMvLUr+mojV9OHkReogNgCA4H9BdhJwl2ba+TQzraI9GMdgI=
+X-Received: by 2002:a24:1d84:: with SMTP id 126-v6mr16659317itj.63.1536579567299;
+ Mon, 10 Sep 2018 04:39:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="GpGaEY17fSl8rd50"
-Content-Disposition: inline
-In-Reply-To: <1536566815-3271-1-git-send-email-akshu.agrawal@amd.com>
-X-Cookie: Yow!  We're going to a new disco!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20180908125754.1947-1-kristian.evensen@gmail.com> <20180910103022.GR1089@localhost>
+In-Reply-To: <20180910103022.GR1089@localhost>
+From:   Kristian Evensen <kristian.evensen@gmail.com>
+Date:   Mon, 10 Sep 2018 13:39:16 +0200
+Message-ID: <CAKfDRXiVbE3-eteTCZjEqyR0LaLMpN8t4P_ihzHPChse9=FxmQ@mail.gmail.com>
+Subject: Re: [PATCH] option: Improve Quectel EP06 detection
+To:     Johan Hovold <johan@kernel.org>
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
---GpGaEY17fSl8rd50
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, Sep 10, 2018 at 12:30 PM Johan Hovold <johan@kernel.org> wrote:
+> Please provide the output of usb-devices (or lsusb -v) for both
+> "configurations". How do you update the configuration by the way?
 
-On Mon, Sep 10, 2018 at 01:36:29PM +0530, Akshu Agrawal wrote:
-> If capture and playback are started on different channel (I2S/BT)
-> there is a possibilty that channel information passed from machine driver
-> is overwritten before the configuration is done in dma driver.
-> Example:
-> 113.597588: cz_max_startup: ---playback sets BT channel
-> 113.597694: cz_dmic1_startup: ---capture sets I2S channel
-> 113.597979: acp_dma_hw_params: ---configures capture for I2S channel
-> 113.598114: acp_dma_hw_params: ---configures playback for I2S channel
->=20
-> This is fixed by having lock between startup and prepare. This ensures
-> no other codec startup gets called between a codec's startup(where channel
-> info is set) and hw_params(where channel info is read).
+The configuration is updated using a proprietary AT-command
+(AT+QCFG="usbcfg"). The format of the command is as follows:
+AT+QCFG="usbcfg",<vid>,<pid>,<diag>,<nmea>,<at_port>,<modem>,<rmnet>,<adb>.
+In other words, you set which interfaces to enable/disable. Based on
+my testing, it is only possible to enable/disable diag, rmnet (QMI)
+and adb, as well as nmea, at_port and modem together. I.e., it is not
+possible to only disable for example nmea.
 
-This isn't viable - the driver will deadlock if the application hits an
-error and never gets to startup, or if the application tries to
-simultaneously configure two channels (ie, do all the prepares and then
-all the parameter configuration and then startup).  The DMA driver needs
-to remember the configurations for the different channels separately.
+With all interfaces are enabled, the output of lsusb -v looks as follows:
 
---GpGaEY17fSl8rd50
-Content-Type: application/pgp-signature; name="signature.asc"
+Bus 002 Device 008: ID 2c7c:0306 Quectel Wireless Solutions Co., Ltd.
+EG06/EP06/EM06 LTE-A modem
+Device Descriptor:
+  bLength                18
+  bDescriptorType         1
+  bcdUSB               3.00
+  bDeviceClass          239 Miscellaneous Device
+  bDeviceSubClass         2 ?
+  bDeviceProtocol         1 Interface Association
+  bMaxPacketSize0         9
+  idVendor           0x2c7c Quectel Wireless Solutions Co., Ltd.
+  idProduct          0x0306 EG06/EP06/EM06 LTE-A modem
+  bcdDevice            3.10
+  iManufacturer           1 Quectel
+  iProduct                2 LTE-A Module
+  iSerial                 3 c1494706
+  bNumConfigurations      1
+  Configuration Descriptor:
+    bLength                 9
+    bDescriptorType         2
+    wTotalLength          328
+    bNumInterfaces          6
+    bConfigurationValue     1
+    iConfiguration          0
+    bmAttributes         0xa0
+      (Bus Powered)
+      Remote Wakeup
+    MaxPower              126mA
+    Interface Descriptor:
+      bLength                 9
+      bDescriptorType         4
+      bInterfaceNumber        0
+      bAlternateSetting       0
+      bNumEndpoints           2
+      bInterfaceClass       255 Vendor Specific Class
+      bInterfaceSubClass    255 Vendor Specific Subclass
+      bInterfaceProtocol    255 Vendor Specific Protocol
+      iInterface              0
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x81  EP 1 IN
+        bmAttributes            2
+          Transfer Type            Bulk
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0400  1x 1024 bytes
+        bInterval               0
+        bMaxBurst               0
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x01  EP 1 OUT
+        bmAttributes            2
+          Transfer Type            Bulk
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0400  1x 1024 bytes
+        bInterval               0
+        bMaxBurst               0
+    Interface Descriptor:
+      bLength                 9
+      bDescriptorType         4
+      bInterfaceNumber        1
+      bAlternateSetting       0
+      bNumEndpoints           3
+      bInterfaceClass       255 Vendor Specific Class
+      bInterfaceSubClass      0
+      bInterfaceProtocol      0
+      iInterface              0
+      ** UNRECOGNIZED:  05 24 00 10 01
+      ** UNRECOGNIZED:  05 24 01 00 00
+      ** UNRECOGNIZED:  04 24 02 02
+      ** UNRECOGNIZED:  05 24 06 00 00
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x83  EP 3 IN
+        bmAttributes            3
+          Transfer Type            Interrupt
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x000a  1x 10 bytes
+        bInterval               9
+        bMaxBurst               0
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x82  EP 2 IN
+        bmAttributes            2
+          Transfer Type            Bulk
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0400  1x 1024 bytes
+        bInterval               0
+        bMaxBurst               0
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x02  EP 2 OUT
+        bmAttributes            2
+          Transfer Type            Bulk
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0400  1x 1024 bytes
+        bInterval               0
+        bMaxBurst               0
+    Interface Descriptor:
+      bLength                 9
+      bDescriptorType         4
+      bInterfaceNumber        2
+      bAlternateSetting       0
+      bNumEndpoints           3
+      bInterfaceClass       255 Vendor Specific Class
+      bInterfaceSubClass      0
+      bInterfaceProtocol      0
+      iInterface              0
+      ** UNRECOGNIZED:  05 24 00 10 01
+      ** UNRECOGNIZED:  05 24 01 00 00
+      ** UNRECOGNIZED:  04 24 02 02
+      ** UNRECOGNIZED:  05 24 06 00 00
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x85  EP 5 IN
+        bmAttributes            3
+          Transfer Type            Interrupt
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x000a  1x 10 bytes
+        bInterval               9
+        bMaxBurst               0
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x84  EP 4 IN
+        bmAttributes            2
+          Transfer Type            Bulk
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0400  1x 1024 bytes
+        bInterval               0
+        bMaxBurst               0
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x03  EP 3 OUT
+        bmAttributes            2
+          Transfer Type            Bulk
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0400  1x 1024 bytes
+        bInterval               0
+        bMaxBurst               0
+    Interface Descriptor:
+      bLength                 9
+      bDescriptorType         4
+      bInterfaceNumber        3
+      bAlternateSetting       0
+      bNumEndpoints           3
+      bInterfaceClass       255 Vendor Specific Class
+      bInterfaceSubClass      0
+      bInterfaceProtocol      0
+      iInterface              0
+      ** UNRECOGNIZED:  05 24 00 10 01
+      ** UNRECOGNIZED:  05 24 01 00 00
+      ** UNRECOGNIZED:  04 24 02 02
+      ** UNRECOGNIZED:  05 24 06 00 00
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x87  EP 7 IN
+        bmAttributes            3
+          Transfer Type            Interrupt
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x000a  1x 10 bytes
+        bInterval               9
+        bMaxBurst               0
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x86  EP 6 IN
+        bmAttributes            2
+          Transfer Type            Bulk
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0400  1x 1024 bytes
+        bInterval               0
+        bMaxBurst               0
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x04  EP 4 OUT
+        bmAttributes            2
+          Transfer Type            Bulk
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0400  1x 1024 bytes
+        bInterval               0
+        bMaxBurst               0
+    Interface Descriptor:
+      bLength                 9
+      bDescriptorType         4
+      bInterfaceNumber        4
+      bAlternateSetting       0
+      bNumEndpoints           3
+      bInterfaceClass       255 Vendor Specific Class
+      bInterfaceSubClass    255 Vendor Specific Subclass
+      bInterfaceProtocol    255 Vendor Specific Protocol
+      iInterface              0
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x89  EP 9 IN
+        bmAttributes            3
+          Transfer Type            Interrupt
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0008  1x 8 bytes
+        bInterval               9
+        bMaxBurst               0
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x88  EP 8 IN
+        bmAttributes            2
+          Transfer Type            Bulk
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0400  1x 1024 bytes
+        bInterval               0
+        bMaxBurst               0
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x05  EP 5 OUT
+        bmAttributes            2
+          Transfer Type            Bulk
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0400  1x 1024 bytes
+        bInterval               0
+        bMaxBurst               0
+    Interface Descriptor:
+      bLength                 9
+      bDescriptorType         4
+      bInterfaceNumber        5
+      bAlternateSetting       0
+      bNumEndpoints           2
+      bInterfaceClass       255 Vendor Specific Class
+      bInterfaceSubClass     66
+      bInterfaceProtocol      1
+      iInterface              4 ADB Interface
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x06  EP 6 OUT
+        bmAttributes            2
+          Transfer Type            Bulk
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0400  1x 1024 bytes
+        bInterval               0
+        bMaxBurst               0
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x8a  EP 10 IN
+        bmAttributes            2
+          Transfer Type            Bulk
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0400  1x 1024 bytes
+        bInterval               0
+        bMaxBurst               0
+Binary Object Store Descriptor:
+  bLength                 5
+  bDescriptorType        15
+  wTotalLength           22
+  bNumDeviceCaps          2
+  USB 2.0 Extension Device Capability:
+    bLength                 7
+    bDescriptorType        16
+    bDevCapabilityType      2
+    bmAttributes   0x00000002
+      Link Power Management (LPM) Supported
+  SuperSpeed USB Device Capability:
+    bLength                10
+    bDescriptorType        16
+    bDevCapabilityType      3
+    bmAttributes         0x00
+    wSpeedsSupported   0x000f
+      Device can operate at Low Speed (1Mbps)
+      Device can operate at Full Speed (12Mbps)
+      Device can operate at High Speed (480Mbps)
+      Device can operate at SuperSpeed (5Gbps)
+    bFunctionalitySupport   1
+      Lowest fully-functional device speed is Full Speed (12Mbps)
+    bU1DevExitLat           1 micro seconds
+    bU2DevExitLat         500 micro seconds
+Device Status:     0x0000
+  (Bus Powered)
 
------BEGIN PGP SIGNATURE-----
+If I for example disable diag, then the bInterfaceNumber of nmea
+changes from 1 to 0, at from 2 to 1, etc., etc.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAluWV6wACgkQJNaLcl1U
-h9CujQf/dW83AWCa4lWvkfHryxAKuYFIxv1USSFz30+0uzXDmLTxOt3ZRu4D8gVW
-i1Is4Fk5sY2zj0HXU0DH4PPA+NSnpoUg7IHa3aI8hzmkIiKtKP2ZH3Q6EVjZChgS
-bf/isOGQ01RJl/QNFZ2u393l9C4ZX5i7EgYQI2PwCdt9DzgbyFGgvYIcs4Ac2eLF
-tgeEHq8N0qvl4W3Q2NT6s+fBaxIYqHzNHZIE/jvMgTccM38J7YhK+OvPdjmsnwtW
-ukPoZxjEfMYvhA574ApIpwONMmRwsB9YfmAK7vXE0S3nLSTWZC9ftDXOtRG5HwZC
-b96+fJx6o07IHeQ1Mwu4lRv5drDXEA==
-=sbh/
------END PGP SIGNATURE-----
-
---GpGaEY17fSl8rd50--
+BR,
+Kristian
