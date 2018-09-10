@@ -6,51 +6,46 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE696C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:06:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDDD9C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:07:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1BFD20865
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:06:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1BFD20865
+	by mail.kernel.org (Postfix) with ESMTP id 8D40820865
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:07:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D40820865
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728176AbeIJPAN (ORCPT
+        id S1728221AbeIJPAT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 11:00:13 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:52925 "EHLO
+        Mon, 10 Sep 2018 11:00:19 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:53545 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726907AbeIJPAN (ORCPT
+        with ESMTP id S1726907AbeIJPAT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 11:00:13 -0400
+        Mon, 10 Sep 2018 11:00:19 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8AA6Bdj1806869
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8AA6gv71806911
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 10 Sep 2018 03:06:11 -0700
+        Mon, 10 Sep 2018 03:06:42 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8AA697p1806859;
-        Mon, 10 Sep 2018 03:06:09 -0700
-Date:   Mon, 10 Sep 2018 03:06:09 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8AA6g2W1806908;
+        Mon, 10 Sep 2018 03:06:42 -0700
+Date:   Mon, 10 Sep 2018 03:06:42 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Srikar Dronamraju <tipbot@zytor.com>
-Message-ID: <tip-e5e96fafd9028b1478b165db78c52d981c14f471@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        torvalds@linux-foundation.org, wild@linux.vnet.ibm.com,
-        suravee.suthikulpanit@amd.com, hpa@zytor.com, mingo@kernel.org,
-        mpe@ellerman.id.au, heiko.carstens@de.ibm.com, tglx@linutronix.de,
-        peterz@infradead.org, riel@surriel.com, srikar@linux.vnet.ibm.com,
-        mgorman@techsingularity.net
-Reply-To: mingo@kernel.org, hpa@zytor.com, suravee.suthikulpanit@amd.com,
-          torvalds@linux-foundation.org, linuxppc-dev@lists.ozlabs.org,
-          wild@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
-          srikar@linux.vnet.ibm.com, mgorman@techsingularity.net,
-          riel@surriel.com, peterz@infradead.org, tglx@linutronix.de,
-          heiko.carstens@de.ibm.com, mpe@ellerman.id.au
-In-Reply-To: <1533920419-17410-1-git-send-email-srikar@linux.vnet.ibm.com>
-References: <1533920419-17410-1-git-send-email-srikar@linux.vnet.ibm.com>
+From:   tip-bot for Vincent Guittot <tipbot@zytor.com>
+Message-ID: <tip-12b04875d666e83d27511df25580de84505bc758@git.kernel.org>
+Cc:     vincent.guittot@linaro.org, hpa@zytor.com,
+        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        peterz@infradead.org, mingo@kernel.org, tglx@linutronix.de
+Reply-To: hpa@zytor.com, torvalds@linux-foundation.org,
+          vincent.guittot@linaro.org, tglx@linutronix.de, mingo@kernel.org,
+          linux-kernel@vger.kernel.org, peterz@infradead.org
+In-Reply-To: <1535728975-22799-1-git-send-email-vincent.guittot@linaro.org>
+References: <1535728975-22799-1-git-send-email-vincent.guittot@linaro.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/topology: Set correct NUMA topology type
-Git-Commit-ID: e5e96fafd9028b1478b165db78c52d981c14f471
+Subject: [tip:sched/core] sched/pelt: Fix update_blocked_averages() for RT
+ and DL classes
+Git-Commit-ID: 12b04875d666e83d27511df25580de84505bc758
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -64,69 +59,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e5e96fafd9028b1478b165db78c52d981c14f471
-Gitweb:     https://git.kernel.org/tip/e5e96fafd9028b1478b165db78c52d981c14f471
-Author:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-AuthorDate: Fri, 10 Aug 2018 22:30:18 +0530
+Commit-ID:  12b04875d666e83d27511df25580de84505bc758
+Gitweb:     https://git.kernel.org/tip/12b04875d666e83d27511df25580de84505bc758
+Author:     Vincent Guittot <vincent.guittot@linaro.org>
+AuthorDate: Fri, 31 Aug 2018 17:22:55 +0200
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 10 Sep 2018 10:13:45 +0200
+CommitDate: Mon, 10 Sep 2018 10:13:46 +0200
 
-sched/topology: Set correct NUMA topology type
+sched/pelt: Fix update_blocked_averages() for RT and DL classes
 
-With the following commit:
+update_blocked_averages() is called to periodiccally decay the stalled load
+of idle CPUs and to sync all loads before running load balance.
 
-  051f3ca02e46 ("sched/topology: Introduce NUMA identity node sched domain")
+When cfs rq is idle, it trigs a load balance during pick_next_task_fair()
+in order to potentially pull tasks and to use this newly idle CPU. This
+load balance happens whereas prev task from another class has not been put
+and its utilization updated yet. This may lead to wrongly account running
+time as idle time for RT or DL classes.
 
-the scheduler introduced a new NUMA level. However this leads to the NUMA topology
-on 2 node systems to not be marked as NUMA_DIRECT anymore.
+Test that no RT or DL task is running when updating their utilization in
+update_blocked_averages().
 
-After this commit, it gets reported as NUMA_BACKPLANE, because
-sched_domains_numa_level is now 2 on 2 node systems.
+We still update RT and DL utilization instead of simply skipping them to
+make sure that all metrics are synced when used during load balance.
 
-Fix this by allowing setting systems that have up to 2 NUMA levels as
-NUMA_DIRECT.
-
-While here remove code that assumes that level can be 0.
-
-Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Andre Wild <wild@linux.vnet.ibm.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mel Gorman <mgorman@techsingularity.net>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Fixes: 051f3ca02e46 "Introduce NUMA identity node sched domain"
-Link: http://lkml.kernel.org/r/1533920419-17410-1-git-send-email-srikar@linux.vnet.ibm.com
+Fixes: 371bf4273269 ("sched/rt: Add rt_rq utilization tracking")
+Fixes: 3727e0e16340 ("sched/dl: Add dl_rq utilization tracking")
+Link: http://lkml.kernel.org/r/1535728975-22799-1-git-send-email-vincent.guittot@linaro.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/sched/topology.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ kernel/sched/fair.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 56a0fed30c0a..505a41c42b96 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -1295,7 +1295,7 @@ static void init_numa_topology_type(void)
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index b39fb596f6c1..8cff8d55ee95 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -7263,6 +7263,7 @@ static void update_blocked_averages(int cpu)
+ {
+ 	struct rq *rq = cpu_rq(cpu);
+ 	struct cfs_rq *cfs_rq, *pos;
++	const struct sched_class *curr_class;
+ 	struct rq_flags rf;
+ 	bool done = true;
  
- 	n = sched_max_numa_distance;
- 
--	if (sched_domains_numa_levels <= 1) {
-+	if (sched_domains_numa_levels <= 2) {
- 		sched_numa_topology_type = NUMA_DIRECT;
- 		return;
+@@ -7299,8 +7300,10 @@ static void update_blocked_averages(int cpu)
+ 		if (cfs_rq_has_blocked(cfs_rq))
+ 			done = false;
  	}
-@@ -1380,9 +1380,6 @@ void sched_init_numa(void)
- 			break;
- 	}
+-	update_rt_rq_load_avg(rq_clock_task(rq), rq, 0);
+-	update_dl_rq_load_avg(rq_clock_task(rq), rq, 0);
++
++	curr_class = rq->curr->sched_class;
++	update_rt_rq_load_avg(rq_clock_task(rq), rq, curr_class == &rt_sched_class);
++	update_dl_rq_load_avg(rq_clock_task(rq), rq, curr_class == &dl_sched_class);
+ 	update_irq_load_avg(rq, 0);
+ 	/* Don't need periodic decay once load/util_avg are null */
+ 	if (others_have_blocked(rq))
+@@ -7365,13 +7368,16 @@ static inline void update_blocked_averages(int cpu)
+ {
+ 	struct rq *rq = cpu_rq(cpu);
+ 	struct cfs_rq *cfs_rq = &rq->cfs;
++	const struct sched_class *curr_class;
+ 	struct rq_flags rf;
  
--	if (!level)
--		return;
--
- 	/*
- 	 * 'level' contains the number of unique distances
- 	 *
+ 	rq_lock_irqsave(rq, &rf);
+ 	update_rq_clock(rq);
+ 	update_cfs_rq_load_avg(cfs_rq_clock_task(cfs_rq), cfs_rq);
+-	update_rt_rq_load_avg(rq_clock_task(rq), rq, 0);
+-	update_dl_rq_load_avg(rq_clock_task(rq), rq, 0);
++
++	curr_class = rq->curr->sched_class;
++	update_rt_rq_load_avg(rq_clock_task(rq), rq, curr_class == &rt_sched_class);
++	update_dl_rq_load_avg(rq_clock_task(rq), rq, curr_class == &dl_sched_class);
+ 	update_irq_load_avg(rq, 0);
+ #ifdef CONFIG_NO_HZ_COMMON
+ 	rq->last_blocked_load_update_tick = jiffies;
