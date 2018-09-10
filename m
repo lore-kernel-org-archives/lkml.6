@@ -2,94 +2,62 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F55EC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 18:39:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB363C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 18:44:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0FBF20866
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 18:39:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="1s1bo5Ym"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0FBF20866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id 7E02320866
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 18:44:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E02320866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728404AbeIJXej (ORCPT
+        id S1728163AbeIJXjw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 19:34:39 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:38294 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726755AbeIJXej (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 19:34:39 -0400
-Received: by mail-wm0-f68.google.com with SMTP id t25-v6so22445718wmi.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 11:39:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=r8OnygGIGwgPwNrID8QMkntNDNypXvjFXll4EsC1hu8=;
-        b=1s1bo5Ymjf/GuyK48l3oUyt9jjJSFh9lunmPHuRfXFaQuk94dRVgbaaezZN+vOg+X/
-         MX6u+I9Ywj43aq4jVOk1M0Yovdk6l4F6PHZQzQCF1xARwckTTNrXi0kAGWA4fnGw/wd4
-         RNj2V5sxQWYA785aKsCBT0y46HiXk9QGpfyR1/EpBC6In84b0UZuiuY72bVPq3PSYbrD
-         c+H9YfvnPhTqsrUY30Ishw7Qs1EehN2oEEDCowBvFlnXKdO3W1thg8LZUBlAtwFh81ra
-         Qi5dErtS1SBHGkRBZ0uWJinsiRB39I4f8o+ZWI1yDW9wmo4BrLeQ3efeWnuwTSk3/bz6
-         t9zQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=r8OnygGIGwgPwNrID8QMkntNDNypXvjFXll4EsC1hu8=;
-        b=d6UEAXwxNmV+DNzL9TXCTkMowSTWbzhLcuR3XMb2XaA2GumiytpqLaDa2CTT6AVY+F
-         gyXpW45vSntnL/hAzboPzOvBhdfA5IoP/ZdkcAD3ILEnksya4eT09L/tySAdmvhMO+BS
-         8fkjTR8ldXvTtcCHpB+UxyBLW8b2HWNhE08BFlfICQw8plzAuCSvwwKcOSmRp2cWL5R0
-         U86QnaY+5BinyNodihevBGPr3IZccEkv4Ei5ANbbYzx5BA3cjOCnPSS7wtGTAmTRKeGZ
-         5b/osw9qUllsR4vwPqcrJcl0dZTqgId9DgsGOmEG6SSccZedYoGhTb2BlJ1gIqBvDOMr
-         ghHw==
-X-Gm-Message-State: APzg51AFOmRnAmeW4n99iMSp78IZleo/2gtnIoJnwVSZ65KEfhqdFEiv
-        MpYTrK3amqUu/dzlt7mqb/5vuA==
-X-Google-Smtp-Source: ANB0VdadA3hKEDVBX82aCFyqGL+EFZeOS2ljd2G8VqvRSjScJ7MRZUOh3BpOTY+U9nV1n2SRAlAjIw==
-X-Received: by 2002:a1c:65c5:: with SMTP id z188-v6mr1673959wmb.57.1536604753232;
-        Mon, 10 Sep 2018 11:39:13 -0700 (PDT)
-Received: from bender.home ([2a01:cb1d:4ce:ea00:10fd:4780:9fae:1ba3])
-        by smtp.gmail.com with ESMTPSA id f17-v6sm20261659wrs.1.2018.09.10.11.39.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 10 Sep 2018 11:39:12 -0700 (PDT)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     khilman@baylibre.com
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: meson-axg: use the proper compatible for ethmac
-Date:   Mon, 10 Sep 2018 20:39:10 +0200
-Message-Id: <1536604750-32621-1-git-send-email-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 10 Sep 2018 19:39:52 -0400
+Received: from mga18.intel.com ([134.134.136.126]:56425 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726755AbeIJXjw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 19:39:52 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2018 11:44:26 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,356,1531810800"; 
+   d="scan'208";a="88799412"
+Received: from fbaehren-mobl2.ger.corp.intel.com (HELO localhost) ([10.252.49.250])
+  by fmsmga001.fm.intel.com with ESMTP; 10 Sep 2018 11:44:18 -0700
+Date:   Mon, 10 Sep 2018 21:44:16 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Tadeusz Struk <tadeusz.struk@intel.com>
+Cc:     flihp@twobit.us, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 1/2] tpm: add ptr to the tpm_space struct to file_priv
+Message-ID: <20180910184416.GD20225@linux.intel.com>
+References: <153659990230.2284.5511495299744743989.stgit@tstruk-mobl1.jf.intel.com>
+ <153659990801.2284.8342428711970626698.stgit@tstruk-mobl1.jf.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <153659990801.2284.8342428711970626698.stgit@tstruk-mobl1.jf.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the correct compatible for the AXG ethernet mac node.
+On Mon, Sep 10, 2018 at 10:18:28AM -0700, Tadeusz Struk wrote:
+> Add a ptr to struct tpm_space to the file_priv and consolidate
+> of the write operations for the two interfaces.
+> 
+> Tested-by: Philip Tricca <philip.b.tricca@intel.com>
+> Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.om>
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-index 32f6dca..75f4ca7 100644
---- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-@@ -525,7 +525,7 @@
- 		};
- 
- 		ethmac: ethernet@ff3f0000 {
--			compatible = "amlogic,meson-gxbb-dwmac", "snps,dwmac";
-+			compatible = "amlogic,meson-axg-dwmac", "snps,dwmac";
- 			reg = <0x0 0xff3f0000 0x0 0x10000
- 				0x0 0xff634540 0x0 0x8>;
- 			interrupts = <GIC_SPI 8 IRQ_TYPE_EDGE_RISING>;
--- 
-2.7.4
-
+/Jarkko
