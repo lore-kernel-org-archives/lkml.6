@@ -2,123 +2,100 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4000DC4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:49:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1329C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:50:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E57832087F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:49:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vfhTsBGf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E57832087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 8C01220645
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:50:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C01220645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728723AbeIJVoX (ORCPT
+        id S1728789AbeIJVpO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 17:44:23 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:41082 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727784AbeIJVoW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 17:44:22 -0400
-Received: by mail-yw1-f67.google.com with SMTP id q129-v6so8090461ywg.8;
-        Mon, 10 Sep 2018 09:49:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=yBo+85NhrUdN6aK7r+jXnl4rvCHAICnsTnP5HSqpDCI=;
-        b=vfhTsBGf6nWARbvnLkOoWzM7qoHCoHnPSKBYojJrwdz4z5Ctb7rITLVMtmTJ5xb3zc
-         FHSSB4KYpnG3OCjNs9aMO+sOMeReYoad3nhKqAyvdnlsVOHhVbHnGwSUrrlFuQgCkjfx
-         2gZwT6BU9fwpQyMseMyKIddiyNO2mz1eVGAhQ7qTbFGaDPHgwaXirrZN3AWUwPX6DFYF
-         yuZajW9Ctum2oxVbW883s5jmtDM2VyevvpG7ovCnVQtYA6aYj4NuOv3zLLAASUWyKjGn
-         aarMIg5dw5itm6S8Cq7J8vnRfWoVHaLTI80d0L4HtlzYrotvdViDckzuy/nwLfMjUmdU
-         +/VQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yBo+85NhrUdN6aK7r+jXnl4rvCHAICnsTnP5HSqpDCI=;
-        b=WzOa6vkDSfK4fYtT4tm/Ix8/L2QRUqZoHYLNW5LyrquY1NhqfpIiLnil0P1g+6Jaew
-         iQCo4h+wNRhXjC+q4PSzDfYxgT7OirLLDmw1aSBDcKrDx/tVvI9jj160mo55/RLoSqVG
-         3p5DKkhTnRLq+d5o1O70fjxwravGxpR8J7omxd0EDaYXcE8YMPywxX28LNd2znn2NpFf
-         Gt1maSRvYhN6ohjJgulMJc8tb2SxmiGU1J0tQvepn1Oq+/6hjP17Ic+ELNLJoGvkvcQC
-         T0PnZs+gjEAqnpAvd2QFGMbOFy4PS7V6M0kz1xYX+JYScK8g50ECLwnNcVsHnJhsjyMt
-         fW0Q==
-X-Gm-Message-State: APzg51C2VjYB/dIuwY0Se8jgQPRwxm41HbSHl7Lui1o6tBj2nEqA2VSU
-        hGfcFYrMa0FDPaOntnuflwM=
-X-Google-Smtp-Source: ANB0VdYh5dz6PaXeLZtMLYBhUpNLPuTq1apu8WkTwRsPgR56psaVtGwkNfz7gnLLATSpWUpXbub/SQ==
-X-Received: by 2002:a81:120c:: with SMTP id 12-v6mr1587847yws.61.1536598164241;
-        Mon, 10 Sep 2018 09:49:24 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:200::3:3223])
-        by smtp.gmail.com with ESMTPSA id r69-v6sm5840427ywh.44.2018.09.10.09.49.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Sep 2018 09:49:23 -0700 (PDT)
-Date:   Mon, 10 Sep 2018 09:49:20 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Jianchao Wang <jianchao.w.wang@oracle.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-block@vger.kernel.org
-Subject: Re: [PATCH] percpu-refcount: relax limit on percpu_ref_reinit()
-Message-ID: <20180910164920.GE1100574@devbig004.ftw2.facebook.com>
-References: <20180909125824.9150-1-ming.lei@redhat.com>
+        Mon, 10 Sep 2018 17:45:14 -0400
+Received: from foss.arm.com ([217.140.101.70]:60756 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727772AbeIJVpO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 17:45:14 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4FCD618A;
+        Mon, 10 Sep 2018 09:50:16 -0700 (PDT)
+Received: from armageddon.cambridge.arm.com (armageddon.emea.arm.com [10.4.13.16])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 843BB3F557;
+        Mon, 10 Sep 2018 09:50:14 -0700 (PDT)
+Date:   Mon, 10 Sep 2018 17:50:11 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Minchan Kim <minchan@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux@armlinux.org.uk,
+        steve.capper@linaro.org, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org,
+        android-treble-mediatek-ext@partner.android.com,
+        kernel-team@android.com, linux-arm-kernel@lists.infradead.org,
+        Simon Horman <horms@verge.net.au>
+Subject: Re: [RFC 1/3] arm: mm: reordering memory type table
+Message-ID: <20180910165011.zcighyuabshsmxjb@armageddon.cambridge.arm.com>
+References: <20180906102212.218294-1-minchan@kernel.org>
+ <20180906102212.218294-2-minchan@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180909125824.9150-1-ming.lei@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180906102212.218294-2-minchan@kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Ming.
+On Thu, Sep 06, 2018 at 07:22:10PM +0900, Minchan Kim wrote:
+> diff --git a/arch/arm/include/asm/pgtable-2level.h b/arch/arm/include/asm/pgtable-2level.h
+> index 92fd2c8a9af0..91b99fadcba1 100644
+> --- a/arch/arm/include/asm/pgtable-2level.h
+> +++ b/arch/arm/include/asm/pgtable-2level.h
+> @@ -164,14 +164,23 @@
+>  #define L_PTE_MT_BUFFERABLE	(_AT(pteval_t, 0x01) << 2)	/* 0001 */
+>  #define L_PTE_MT_WRITETHROUGH	(_AT(pteval_t, 0x02) << 2)	/* 0010 */
+>  #define L_PTE_MT_WRITEBACK	(_AT(pteval_t, 0x03) << 2)	/* 0011 */
+> +#define L_PTE_MT_DEV_SHARED	(_AT(pteval_t, 0x04) << 2)	/* 0100 */
+>  #define L_PTE_MT_MINICACHE	(_AT(pteval_t, 0x06) << 2)	/* 0110 (sa1100, xscale) */
+>  #define L_PTE_MT_WRITEALLOC	(_AT(pteval_t, 0x07) << 2)	/* 0111 */
+> -#define L_PTE_MT_DEV_SHARED	(_AT(pteval_t, 0x04) << 2)	/* 0100 */
+> -#define L_PTE_MT_DEV_NONSHARED	(_AT(pteval_t, 0x0c) << 2)	/* 1100 */
+> +#if defined(CONFIG_CPU_V7) || defined(CONFIG_CPU_V7M) || \
+> +	defined (CONFIG_CPU_V6) || defined(CONFIG_CPU_V6K)
+> +#define L_PTE_MT_DEV_WC		L_PTE_MT_BUFFERABLE
+> +#define L_PTE_MT_DEV_CACHED	L_PTE_MT_WRITEBACK
+> +#define L_PTE_MT_DEV_NONSHARED	L_PTE_MT_MINICACHE
 
-On Sun, Sep 09, 2018 at 08:58:24PM +0800, Ming Lei wrote:
-> @@ -196,15 +197,6 @@ static void __percpu_ref_switch_to_percpu(struct percpu_ref *ref)
->  
->  	atomic_long_add(PERCPU_COUNT_BIAS, &ref->count);
->  
-> -	/*
-> -	 * Restore per-cpu operation.  smp_store_release() is paired
-> -	 * with READ_ONCE() in __ref_is_percpu() and guarantees that the
-> -	 * zeroing is visible to all percpu accesses which can see the
-> -	 * following __PERCPU_REF_ATOMIC clearing.
-> -	 */
+I think you can just ignore v7M here, it doesn't have an MMU.
 
-So, while the location of percpu counter resetting moved, the pairing
-of store_release and READ_ONCE is still required to ensure that the
-clearing is visible before the switching to percpu mode becomes
-effective.  Can you please rephrase and keep the above comment?
+You are defining L_PTE_MT_DEV_NONSHARED to L_PTE_MT_MINICACHE but what I
+think you just meant is index 6 in the cpu_v6_mt_table which I would use
+explicitly to avoid confusion.
 
-> -	for_each_possible_cpu(cpu)
-> -		*per_cpu_ptr(percpu_count, cpu) = 0;
-> -
->  	smp_store_release(&ref->percpu_count_ptr,
->  			  ref->percpu_count_ptr & ~__PERCPU_REF_ATOMIC);
->  }
-...
-> @@ -357,10 +349,11 @@ EXPORT_SYMBOL_GPL(percpu_ref_kill_and_confirm);
->  void percpu_ref_reinit(struct percpu_ref *ref)
->  {
->  	unsigned long flags;
-> +	unsigned long __percpu *percpu_count;
->  
->  	spin_lock_irqsave(&percpu_ref_switch_lock, flags);
->  
-> -	WARN_ON_ONCE(!percpu_ref_is_zero(ref));
-> +	WARN_ON_ONCE(__ref_is_percpu(ref, &percpu_count));
+Anyway, on ARMv7 or ARMv6+LPAE, the non-shared device gets mapped to
+shared device in hardware. Looking through the arm32 code, it seems that
+MT_DEVICE_NONSHARED is used by arch/arm/mach-shmobile/setup-r8a7779.c
+and IIUC that's a v7 platform (R-Car H1, Cortex-A9). I think the above
+should be defined to L_PTE_MT_DEV_SHARED, unless I miss any place where
+DEV_NONSHARED is relevant on ARMv6 (adding Simon to confirm on
+shmobile).
 
-Can you elaborate this part?  This doesn't seem required for the
-described change.  Why is it part of the patch?
+> diff --git a/arch/arm/mm/proc-macros.S b/arch/arm/mm/proc-macros.S
+> index 81d0efb055c6..f896a30653fa 100644
+> --- a/arch/arm/mm/proc-macros.S
+> +++ b/arch/arm/mm/proc-macros.S
+> @@ -134,21 +134,21 @@
+>  	.macro	armv6_mt_table pfx
+>  \pfx\()_mt_table:
 
-Thanks.
+Since you changed the MT index, you'd have to fix proc-v7-*levels.S  as
+well. If you define DEV_NONSHARED to SHARED, I think you only need to
+update the index for L_PTE_MT_VECTORS.
 
 -- 
-tejun
+Catalin
