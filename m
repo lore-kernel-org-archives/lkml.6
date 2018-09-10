@@ -2,184 +2,128 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84809C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 03:54:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE62BC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 03:56:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A5C420833
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 03:54:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MO6yuRou"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A5C420833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 94A1B20833
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 03:56:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94A1B20833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726870AbeIJIqZ (ORCPT
+        id S1726859AbeIJIsr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 04:46:25 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:36743 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726185AbeIJIqY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 04:46:24 -0400
-Received: by mail-pg1-f195.google.com with SMTP id d1-v6so9742527pgo.3
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Sep 2018 20:54:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=SG8sWWsUdQ+QzU3DR1/zmYzm4TBejOsatzqsOC1dbUU=;
-        b=MO6yuRoub75Fge2FUR3Cs2ems7spAWXzGd9SaUiZBClGnvR49R6YJ9Brtp2SDVgMPW
-         CiUuNdukgcHa760+BJ9ijW+451d70oXLmmRC6Pzn+QKuEa3pgr1JQQ8Lf4JB/NUhRVY2
-         4yopA2nD1m1eXShM3un2QoWBiHZviKyGDzVVo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=SG8sWWsUdQ+QzU3DR1/zmYzm4TBejOsatzqsOC1dbUU=;
-        b=Y1ry6SkZRzpjAx4cLMJ+OoTY4T0Aiu8xOAPAcCGOyQ/xUAKWHh8rfWxgm+UrcZ/Txk
-         Zv6rXSZus5UyY8Qy09WleG8s5+ls+dshOaF3pADq+llQhqD2Rnhr4S3F3MOYA31LezR0
-         Ccm3GFpOf6SBKN+n8rvEvveJlEqgO2Ju/U2lh5REooOiPRoxUg16gJSgdZg+yeFnWoQO
-         vPqiIpvIQW7s3SDJHvM5O3PuP8ne54KKPxlMRe+uq7mvpJ8TrIdlMJ/XFJWNmKTUSUnl
-         8JA5mYWprJzI540Iq/rXShrD86o6qN8Bi9S2SNLYBTDJliBQLiDgtJJ2/fkbbhKh0rco
-         iTUg==
-X-Gm-Message-State: APzg51D40G7eBedcRQiJB4uf12QW1VuGIFt+gt98lGaNoCxOkMa5cpbT
-        x0ojepUVnR9/X1z9KKKeToHAkA==
-X-Google-Smtp-Source: ANB0Vdahp8iBOTB20SkX/l621r8+oWce7o4T17Syo965DCVzreBhpQTFFHxMSeTEldc+fcdYja+JCg==
-X-Received: by 2002:a63:d150:: with SMTP id c16-v6mr20549007pgj.188.1536551666605;
-        Sun, 09 Sep 2018 20:54:26 -0700 (PDT)
-Received: from pihsun-z840.tpe.corp.google.com ([2401:fa00:1:10:7889:7a43:f899:134c])
-        by smtp.googlemail.com with ESMTPSA id m21-v6sm20223932pgd.6.2018.09.09.20.54.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 09 Sep 2018 20:54:25 -0700 (PDT)
-From:   Peter Shih <pihsun@chromium.org>
-Cc:     pihsun@chromium.org, Mark Brown <broonie@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: [PATCH v2] spi: mediatek: Don't modify spi_transfer when transfer.
-Date:   Mon, 10 Sep 2018 11:54:21 +0800
-Message-Id: <20180910035421.101505-1-pihsun@chromium.org>
-X-Mailer: git-send-email 2.19.0.rc2.392.g5ba43deb5a-goog
-In-Reply-To: <20180910035047.98496-1-pihsun@chromium.org>
-References: <20180910035047.98496-1-pihsun@chromium.org>
+        Mon, 10 Sep 2018 04:48:47 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:11675 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726024AbeIJIsq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 04:48:46 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id D6F6830F8BA9F;
+        Mon, 10 Sep 2018 11:56:45 +0800 (CST)
+Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server (TLS) id 14.3.399.0; Mon, 10 Sep
+ 2018 11:56:41 +0800
+Subject: Re: [PATCH] MAINTAINERS: add tree location for staging/erofs
+To:     =?UTF-8?Q?Thomas_Wei=c3=9fschuh?= <linux@weissschuh.net>,
+        Chao Yu <yuchao0@huawei.com>, <linux-erofs@lists.ozlabs.org>,
+        <devel@driverdev.osuosl.org>, <linux-kernel@vger.kernel.org>
+References: <5c44a63b-041d-1fce-0748-53c0b44f5983@huawei.com>
+ <20180909183432.9752-1-linux@weissschuh.net>
+From:   Gao Xiang <gaoxiang25@huawei.com>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Message-ID: <2dc6fb51-dfd6-3509-8833-c889193dd4a9@huawei.com>
+Date:   Mon, 10 Sep 2018 11:56:09 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
+In-Reply-To: <20180909183432.9752-1-linux@weissschuh.net>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+X-Originating-IP: [10.151.23.176]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mediatek SPI driver modifies some fields (tx_buf, rx_buf, len, tx_dma,
-rx_dma) of the spi_transfer* passed in when doing transfer_one and in
-interrupt handler. This is somewhat unexpected, and there are some
-caller (e.g. Cr50 spi driver) that reuse the spi_transfer for multiple
-messages. Add a field to record how many bytes have been transferred,
-and calculate the right len / buffer based on it instead.
 
-Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
 
-Change-Id: I23e218cd964f16c0b2b26127d4a5ca6529867673
----
- drivers/spi/spi-mt65xx.c | 37 +++++++++++++++++++++----------------
- 1 file changed, 21 insertions(+), 16 deletions(-)
+On 2018/9/10 2:34, Thomas Weißschuh wrote:
+> Hi Chao, hi Gao,
+> 
+> On Sun, 2018-09-09T23:16+0800, Chao Yu wrote:
+>> Hi Thomas,
+>>
+>> On 2018/9/8 11:28, Gao Xiang wrote:
+>>> Hi Thomas,
+>>>
+>>> Thanks for your new patch.
+>>>
+>>> It seems that this patch also introduces 2 new 'WARNING: line over 80 characters',
+>>> could you please fix it in the patch?
+> 
+> @Chao,Gao: For some reason there seems to be a problem when receiving mails
+> from you. The one I received now was the first one from you that reached me
+> directly. Before I only got your messages in the quotes from Dan and now in the
+> quotes from the mail I am responding to.
+> (I will try to investigate the reason for this)
+> 
+> Sorry for my slow responses before.
+> 
+>> It will be better to fix that.
+> 
+> A new patch will shortly follow.
+> 
+>> Some reviewed cleanup patches are merged before this patch, then I failed to add
+>> this one, so could you rebase on top of erofs dev branch in below link:
+>>
+>> https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git/log/?h=erofs
+> 
+> I was not aware of this tree and worked off of staging / next.
+> A patch is attached to this message that adds the tree to the MAINTAINERS file.
 
-diff --git a/drivers/spi/spi-mt65xx.c b/drivers/spi/spi-mt65xx.c
-index 86bf45667a040..3dc31627c6558 100644
---- a/drivers/spi/spi-mt65xx.c
-+++ b/drivers/spi/spi-mt65xx.c
-@@ -98,6 +98,7 @@ struct mtk_spi {
- 	struct clk *parent_clk, *sel_clk, *spi_clk;
- 	struct spi_transfer *cur_transfer;
- 	u32 xfer_len;
-+	u32 num_xfered;
- 	struct scatterlist *tx_sgl, *rx_sgl;
- 	u32 tx_sgl_len, rx_sgl_len;
- 	const struct mtk_spi_compatible *dev_comp;
-@@ -385,6 +386,7 @@ static int mtk_spi_fifo_transfer(struct spi_master *master,
- 
- 	mdata->cur_transfer = xfer;
- 	mdata->xfer_len = min(MTK_SPI_MAX_FIFO_SIZE, xfer->len);
-+	mdata->num_xfered = 0;
- 	mtk_spi_prepare_transfer(master, xfer);
- 	mtk_spi_setup_packet(master);
- 
-@@ -415,6 +417,7 @@ static int mtk_spi_dma_transfer(struct spi_master *master,
- 	mdata->tx_sgl_len = 0;
- 	mdata->rx_sgl_len = 0;
- 	mdata->cur_transfer = xfer;
-+	mdata->num_xfered = 0;
- 
- 	mtk_spi_prepare_transfer(master, xfer);
- 
-@@ -482,7 +485,7 @@ static int mtk_spi_setup(struct spi_device *spi)
- 
- static irqreturn_t mtk_spi_interrupt(int irq, void *dev_id)
- {
--	u32 cmd, reg_val, cnt, remainder;
-+	u32 cmd, reg_val, cnt, remainder, len;
- 	struct spi_master *master = dev_id;
- 	struct mtk_spi *mdata = spi_master_get_devdata(master);
- 	struct spi_transfer *trans = mdata->cur_transfer;
-@@ -497,36 +500,38 @@ static irqreturn_t mtk_spi_interrupt(int irq, void *dev_id)
- 		if (trans->rx_buf) {
- 			cnt = mdata->xfer_len / 4;
- 			ioread32_rep(mdata->base + SPI_RX_DATA_REG,
--				     trans->rx_buf, cnt);
-+				     trans->rx_buf + mdata->num_xfered, cnt);
- 			remainder = mdata->xfer_len % 4;
- 			if (remainder > 0) {
- 				reg_val = readl(mdata->base + SPI_RX_DATA_REG);
--				memcpy(trans->rx_buf + (cnt * 4),
--					&reg_val, remainder);
-+				memcpy(trans->rx_buf +
-+					mdata->num_xfered +
-+					(cnt * 4),
-+					&reg_val,
-+					remainder);
- 			}
- 		}
- 
--		trans->len -= mdata->xfer_len;
--		if (!trans->len) {
-+		mdata->num_xfered += mdata->xfer_len;
-+		if (mdata->num_xfered == trans->len) {
- 			spi_finalize_current_transfer(master);
- 			return IRQ_HANDLED;
- 		}
- 
--		if (trans->tx_buf)
--			trans->tx_buf += mdata->xfer_len;
--		if (trans->rx_buf)
--			trans->rx_buf += mdata->xfer_len;
--
--		mdata->xfer_len = min(MTK_SPI_MAX_FIFO_SIZE, trans->len);
-+		len = trans->len - mdata->num_xfered;
-+		mdata->xfer_len = min(MTK_SPI_MAX_FIFO_SIZE, len);
- 		mtk_spi_setup_packet(master);
- 
--		cnt = trans->len / 4;
--		iowrite32_rep(mdata->base + SPI_TX_DATA_REG, trans->tx_buf, cnt);
-+		cnt = len / 4;
-+		iowrite32_rep(mdata->base + SPI_TX_DATA_REG,
-+				trans->tx_buf + mdata->num_xfered, cnt);
- 
--		remainder = trans->len % 4;
-+		remainder = len % 4;
- 		if (remainder > 0) {
- 			reg_val = 0;
--			memcpy(&reg_val, trans->tx_buf + (cnt * 4), remainder);
-+			memcpy(&reg_val,
-+				trans->tx_buf + (cnt * 4) + mdata->num_xfered,
-+				remainder);
- 			writel(reg_val, mdata->base + SPI_TX_DATA_REG);
- 		}
- 
--- 
-2.19.0.rc2.392.g5ba43deb5a-goog
+Hi Chao,
 
+I think this tree has some PREVIEW patches which preview in linux-erofs mailing list only and
+doesn't send to staging mailing list and LKML,
+
+https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git/log/?h=erofs
+
+so erofs tree is actually Greg's staging tree.
+
+> 
+> -- >8 --
+> 
+> Currently this location is not documented.
+> 
+> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> ---
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index a5b256b25905..9087e0b74821 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -13747,6 +13747,7 @@ F:	drivers/staging/comedi/
+>  STAGING - EROFS FILE SYSTEM
+>  M:	Gao Xiang <gaoxiang25@huawei.com>
+>  M:	Chao Yu <yuchao0@huawei.com>
+> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git erofs
+
+Hi Thomas,
+nope, the erofs tree is actually the same as staging tree, so any patch should be based
+on Greg's upstream tree.
+
+Thanks,
+Gao Xiang
+
+>  L:	linux-erofs@lists.ozlabs.org
+>  S:	Maintained
+>  F:	drivers/staging/erofs/
+> 
