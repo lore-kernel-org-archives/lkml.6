@@ -2,308 +2,87 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 022E3C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:38:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5957AC4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:39:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A445E2086E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:38:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A445E2086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id DE2FB20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:39:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="m8McbfYF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE2FB20870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728828AbeIJScx (ORCPT
+        id S1728842AbeIJSdP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 14:32:53 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58836 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728538AbeIJScw (ORCPT
+        Mon, 10 Sep 2018 14:33:15 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41600 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728174AbeIJSdP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 14:32:52 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8ADZt6K056324
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 09:38:43 -0400
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mdrswb2b6-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 09:38:42 -0400
-Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
-        Mon, 10 Sep 2018 09:38:40 -0400
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 10 Sep 2018 09:38:36 -0400
-Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8ADcYEj25755710
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 10 Sep 2018 13:38:34 GMT
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BECC4AC05B;
-        Mon, 10 Sep 2018 09:38:21 -0400 (EDT)
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C9695AC059;
-        Mon, 10 Sep 2018 09:38:19 -0400 (EDT)
-Received: from oc8043147753.ibm.com (unknown [9.80.231.164])
-        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 10 Sep 2018 09:38:19 -0400 (EDT)
-Subject: Re: [PATCH v9 09/22] s390: vfio-ap: register matrix device with VFIO
- mdev framework
-To:     pmorel@linux.ibm.com, Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com
-References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1534196899-16987-10-git-send-email-akrowiak@linux.vnet.ibm.com>
- <af1cd7a8-446c-ddf6-cf17-886dd259da3d@linux.ibm.com>
-From:   Tony Krowiak <akrowiak@linux.ibm.com>
-Date:   Mon, 10 Sep 2018 09:38:32 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Mon, 10 Sep 2018 14:33:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=VZOQvIcR/kpoQ140TuVz/eQ+jw10+47lv+lJD9wJO/Y=; b=m8McbfYFH/jtufN1KjUC8LAAt
+        ihvbCH2gsFIM21t7I398/PMiq8R1hetfy/R8dMDdn0Wvw38+SqTTNTPNWxkHIJZT8wY0DlkLQjnSi
+        R1NirZdFj2tadaO6bM2fKjbph5yQxyjyQ9fxah3ACTk4qtXEhaOYwlCbnt5x4teSotemyonvBrl+q
+        YHrV7wFwh2GDe9qqxeBsAkLBCwSAX38p9v5kWWWeH5soW5DcWLfGyNFEAsPwqU9Xnn/3KOWtxbeub
+        6KXl/C7Eftx3r7cXlT7aZOExZJCkoVJD0AaA/5jcTFVgcoTMfVBR5Oo1TnpwDGWG12osOjf8thHat
+        yFBpKBdAA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fzMP9-0006Ol-3r; Mon, 10 Sep 2018 13:39:03 +0000
+Date:   Mon, 10 Sep 2018 06:39:02 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Anup Patel <anup@brainfault.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        linux-kernel@vger.kernel.org, Atish Patra <atish.patra@wdc.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v2 3/5] irqchip: RISC-V Local Interrupt Controller Driver
+Message-ID: <20180910133902.GB21593@infradead.org>
+References: <20180906123651.28500-1-anup@brainfault.org>
+ <20180906123651.28500-4-anup@brainfault.org>
+ <20180906140628.GA10580@infradead.org>
+ <alpine.DEB.2.21.1809081241310.1402@nanos.tec.linutronix.de>
+ <20180910132924.GA6987@infradead.org>
+ <alpine.DEB.2.21.1809101533330.1292@nanos.tec.linutronix.de>
+ <alpine.DEB.2.21.1809101536410.1292@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <af1cd7a8-446c-ddf6-cf17-886dd259da3d@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18091013-0068-0000-0000-000003385167
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009696; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01086291; UDB=6.00560839; IPR=6.00866301;
- MB=3.00023208; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-10 13:38:39
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18091013-0069-0000-0000-000045AF43C4
-Message-Id: <a89e99e9-5670-bc2e-8e08-a5f6edaaaf9c@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-10_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=4 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809100140
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1809101536410.1292@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/06/2018 04:49 AM, Pierre Morel wrote:
-> On 13/08/2018 23:48, Tony Krowiak wrote:
->> From: Tony Krowiak <akrowiak@linux.ibm.com>
->>
->> Registers the matrix device created by the VFIO AP device
->> driver with the VFIO mediated device framework.
->> Registering the matrix device will create the sysfs
->> structures needed to create mediated matrix devices
->> each of which will be used to configure the AP matrix
->> for a guest and connect it to the VFIO AP device driver.
->>
->> Registering the matrix device with the VFIO mediated device
->> framework will create the following sysfs structures:
->>
->> /sys/devices/vfio_ap/matrix/
->> ...... [mdev_supported_types]
->> ......... [vfio_ap-passthrough]
->> ............ create
->>
->> To create a mediated device for the AP matrix device, write a UUID
->> to the create file:
->>
->>     uuidgen > create
->>
->> A symbolic link to the mediated device's directory will be created in 
->> the
->> devices subdirectory named after the generated $uuid:
->>
->> /sys/devices/vfio_ap/matrix/
->> ...... [mdev_supported_types]
->> ......... [vfio_ap-passthrough]
->> ............ [devices]
->> ............... [$uuid]
->>
->> A symbolic link to the mediated device will also be created
->> in the vfio_ap matrix's directory:
->>
->> /sys/devices/vfio_ap/matrix/[$uuid]
->>
->> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
->> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
->> Tested-by: Michael Mueller <mimu@linux.ibm.com>
->> Tested-by: Farhan Ali <alifm@linux.ibm.com>
->> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
->> ---
->>   MAINTAINERS                           |    1 +
->>   drivers/s390/crypto/Makefile          |    2 +-
->>   drivers/s390/crypto/vfio_ap_drv.c     |   23 ++++++
->>   drivers/s390/crypto/vfio_ap_ops.c     |  124 
->> +++++++++++++++++++++++++++++++++
->>   drivers/s390/crypto/vfio_ap_private.h |   45 ++++++++++++
->>   include/uapi/linux/vfio.h             |    1 +
->>   6 files changed, 195 insertions(+), 1 deletions(-)
->>   create mode 100644 drivers/s390/crypto/vfio_ap_ops.c
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index e84c559..f60dd56 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -12427,6 +12427,7 @@ W: 
->> http://www.ibm.com/developerworks/linux/linux390/
->>   S:    Supported
->>   F:    drivers/s390/crypto/vfio_ap_drv.c
->>   F:    drivers/s390/crypto/vfio_ap_private.h
->> +F:    drivers/s390/crypto/vfio_ap_ops.c
->>
->>   S390 ZFCP DRIVER
->>   M:    Steffen Maier <maier@linux.ibm.com>
->> diff --git a/drivers/s390/crypto/Makefile b/drivers/s390/crypto/Makefile
->> index 48e466e..8d36b05 100644
->> --- a/drivers/s390/crypto/Makefile
->> +++ b/drivers/s390/crypto/Makefile
->> @@ -17,5 +17,5 @@ pkey-objs := pkey_api.o
->>   obj-$(CONFIG_PKEY) += pkey.o
->>
->>   # adjunct processor matrix
->> -vfio_ap-objs := vfio_ap_drv.o
->> +vfio_ap-objs := vfio_ap_drv.o vfio_ap_ops.o
->>   obj-$(CONFIG_VFIO_AP) += vfio_ap.o
->> diff --git a/drivers/s390/crypto/vfio_ap_drv.c 
->> b/drivers/s390/crypto/vfio_ap_drv.c
->> index 5069580..fa04c5a 100644
->> --- a/drivers/s390/crypto/vfio_ap_drv.c
->> +++ b/drivers/s390/crypto/vfio_ap_drv.c
->> @@ -11,6 +11,7 @@
->>   #include <linux/mod_devicetable.h>
->>   #include <linux/slab.h>
->>   #include <linux/string.h>
->> +#include <asm/zcrypt.h>
->>   #include "vfio_ap_private.h"
->>
->>   #define VFIO_AP_ROOT_NAME "vfio_ap"
->> @@ -65,6 +66,19 @@ static int vfio_ap_matrix_dev_init(void)
->>           return ret;
->>       }
->>
->> +    mutex_init(&matrix_dev.lock);
->> +    INIT_LIST_HEAD(&matrix_dev.mdev_list);
->> +
->> +    /* Test if PQAP(QCI) instruction is available */
->> +    if (test_facility(12)) {
->> +        ret = ap_qci(&matrix_dev.info);
->> +        if (ret) {
->> +            root_device_unregister(root_device);
->> +            return ret;
->> +        }
->> +    }
->> +
->> +    atomic_set(&matrix_dev.available_instances, MAX_ZDEV_ENTRIES_EXT);
->>       matrix_dev.device.type = &vfio_ap_dev_type;
->>       dev_set_name(&matrix_dev.device, "%s", VFIO_AP_DEV_NAME);
->>       matrix_dev.device.type = &vfio_ap_dev_type;
->> @@ -105,11 +119,20 @@ int __init vfio_ap_init(void)
->>           return ret;
->>       }
->>
->> +    ret = vfio_ap_mdev_register();
->> +    if (ret) {
->> +        ap_driver_unregister(&vfio_ap_drv);
->> +        vfio_ap_matrix_dev_destroy();
->> +
->> +        return ret;
->> +    }
->> +
->>       return 0;
->>   }
->>
->>   void __exit vfio_ap_exit(void)
->>   {
->> +    vfio_ap_mdev_unregister();
->>       ap_driver_unregister(&vfio_ap_drv);
->>       vfio_ap_matrix_dev_destroy();
->>   }
->> diff --git a/drivers/s390/crypto/vfio_ap_ops.c 
->> b/drivers/s390/crypto/vfio_ap_ops.c
->> new file mode 100644
->> index 0000000..8018c2d
->> --- /dev/null
->> +++ b/drivers/s390/crypto/vfio_ap_ops.c
->> @@ -0,0 +1,124 @@
->> +// SPDX-License-Identifier: GPL-2.0+
->> +/*
->> + * Adjunct processor matrix VFIO device driver callbacks.
->> + *
->> + * Copyright IBM Corp. 2018
->> + *
->> + * Author(s): Tony Krowiak <akrowiak@linux.ibm.com>
->> + *          Halil Pasic <pasic@linux.ibm.com>
->> + *          Pierre Morel <pmorel@linux.ibm.com>
->> + */
->> +#include <linux/string.h>
->> +#include <linux/vfio.h>
->> +#include <linux/device.h>
->> +#include <linux/list.h>
->> +#include <linux/ctype.h>
->> +
->> +#include "vfio_ap_private.h"
->> +
->> +#define VFIO_AP_MDEV_TYPE_HWVIRT "passthrough"
->> +#define VFIO_AP_MDEV_NAME_HWVIRT "VFIO AP Passthrough Device"
->> +
->> +static void vfio_ap_matrix_init(struct ap_config_info *info,
->> +                struct ap_matrix *matrix)
->> +{
->> +    matrix->apm_max = info->apxa ? info->Na : 63;
->> +    matrix->aqm_max = info->apxa ? info->Nd : 15;
->> +    matrix->adm_max = info->apxa ? info->Nd : 15;
->> +}
->> +
->> +static int vfio_ap_mdev_create(struct kobject *kobj, struct 
->> mdev_device *mdev)
->> +{
->> +    struct ap_matrix_mdev *matrix_mdev;
->> +
->> +    matrix_mdev = kzalloc(sizeof(*matrix_mdev), GFP_KERNEL);
->> +    if (!matrix_mdev)
->> +        return -ENOMEM;
->> +
->> +    matrix_mdev->name = dev_name(mdev_dev(mdev));
->> +    vfio_ap_matrix_init(&matrix_dev.info, &matrix_mdev->matrix);
->> +    mdev_set_drvdata(mdev, matrix_mdev);
->> +
->> +    if (atomic_dec_if_positive(&matrix_dev.available_instances) < 0) {
->> +        kfree(matrix_mdev);
->> +        return -EPERM;
->> +    }
->> +
->> +    mutex_lock(&matrix_dev.lock);
->> +    list_add(&matrix_mdev->list, &matrix_dev.mdev_list);
->> +    mutex_unlock(&matrix_dev.lock);
->> +
-> Hi Tony,
->
-> You need to initialize the matrix_mdev->list before
-> using it.
+On Mon, Sep 10, 2018 at 03:37:31PM +0200, Thomas Gleixner wrote:
+> > > Just a few weeks ago you said the contrary:
+> > > 
+> > > http://lists.infradead.org/pipermail/linux-riscv/2018-August/000943.html
+> > 
+> > Sigh. Yes. Now that you remind me. 
+> 
+> Just for clarification. I had the impression that Anup was trying to wire
+> up more than just the timer interrupt, but that doesn't seem to be the
+> case.
 
-Why? Initialization only sets its prev and next pointers to point to 
-itself. The
-list_add immediately sets those pointers to insert it into the 
-matrix_dev.mdev_list,
-so what would be the purose?
-
->
->
-> Regards,
-> Pierre
->
->
-
+He has an irqchip that is called from the RISC-V exception handler
+when the interrupt flag is set in scause and then dispatches to one
+of:  IPI, timer, actual irqchip.
