@@ -6,125 +6,75 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D3DC4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:47:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22E95C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:47:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBA9320645
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:47:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBA9320645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C2F3720645
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:47:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2F3720645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728802AbeIJTlz (ORCPT
+        id S1728758AbeIJTlx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 15:41:55 -0400
-Received: from mga18.intel.com ([134.134.136.126]:31222 "EHLO mga18.intel.com"
+        Mon, 10 Sep 2018 15:41:53 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:55556 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728541AbeIJTly (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 15:41:54 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2018 07:47:27 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,356,1531810800"; 
-   d="scan'208";a="73070217"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by orsmga006.jf.intel.com with ESMTP; 10 Sep 2018 07:47:26 -0700
-Received: from andy by smile with local (Exim 4.91)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1fzNTI-0004r1-W6; Mon, 10 Sep 2018 17:47:24 +0300
-Date:   Mon, 10 Sep 2018 17:47:24 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     William Breathitt Gray <vilhelm.gray@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-arch@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v4 0/8] Introduce the for_each_set_clump macro
-Message-ID: <20180910144724.GY11447@smile.fi.intel.com>
-References: <cover.1526400945.git.vilhelm.gray@gmail.com>
- <CACRpkdbRH-Bz3BoczD+YmaSGqtoeCwtvGj4dGm8PKRKYFXTdKA@mail.gmail.com>
- <20180905150348.GA27089@sophia>
- <CACRpkdah-CSkdmpYQ_sgOFNqXMD5mMLkmRDRBszK+twPbRNLpA@mail.gmail.com>
+        id S1728541AbeIJTlx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 15:41:53 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id L1uvx7EcHa8B; Mon, 10 Sep 2018 16:47:26 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BC6F600329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bc6:f600:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3E2D91EC0317;
+        Mon, 10 Sep 2018 16:47:26 +0200 (CEST)
+Date:   Mon, 10 Sep 2018 16:47:20 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Dou Liyang <douly.fnst@cn.fujitsu.com>,
+        Pavel Tatashin <pasha.tatashin@microsoft.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH] Revert "x86/tsc: Consolidate init code"
+Message-ID: <20180910144720.GA28349@zn.tnic>
+References: <20180910121925.27682-1-ville.syrjala@linux.intel.com>
+ <alpine.DEB.2.21.1809101443290.1292@nanos.tec.linutronix.de>
+ <20180910140710.GR5565@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CACRpkdah-CSkdmpYQ_sgOFNqXMD5mMLkmRDRBszK+twPbRNLpA@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180910140710.GR5565@intel.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 10, 2018 at 09:54:47AM +0200, Linus Walleij wrote:
-> On Wed, Sep 5, 2018 at 5:04 PM William Breathitt Gray
-> <vilhelm.gray@gmail.com> wrote:
-> > On Wed, May 16, 2018 at 04:03:51PM +0200, Linus Walleij wrote:
-> > >On Tue, May 15, 2018 at 6:22 PM, William Breathitt Gray
-> > ><vilhelm.gray@gmail.com> wrote:
-> > >
-> > >> For example, suppose you would like to iterate over a 16-bit integer 4
-> > >> bits at a time, skipping over 4-bit groups with no set bit, where XXXX
-> > >> represents the current 4-bit group:
-> > >>
-> > >>     Example:        1011 1110 0000 1111
-> > >>     First loop:     1011 1110 0000 XXXX
-> > >>     Second loop:    1011 XXXX 0000 1111
-> > >>     Third loop:     XXXX 1110 0000 1111
-> > >>
-> > >> Each iteration of the loop returns the next 4-bit group that has at
-> > >> least one set bit.
-> > >>
-> > >> The for_each_set_clump macro has six parameters:
-> > >>
-> > >>     * clump: set to current clump index for the iteration
-> > >>     * index: set to current bitmap word index for the iteration
-> > >>     * offset: bits offset of the found clump in the bitmap word
-> > >>     * bits: bitmap to search within
-> > >>     * size: bitmap size in number of clumps
-> > >>     * clump_size: clump size in number of bits
-> > >>
-> > >> The clump_size argument can be an arbitrary number of bits and is not
-> > >> required to be a multiple of 2.
-> > >
-> > >I must say I'm impressed. Very nice arithmetics going on there.
-> > >
-> > >If I can get some ACK for the bitops patch I'd be happy to merge
-> > >it all through the GPIO tree. The users are pretty clear cut.
-> > >
-> > >BTW: if I could, I would pull out Donald Knuth's "The Art of Computer
-> > >Programming vol 4A" chapter 7.1.3 "Bitwise Tricks and Techniques"
-> > >to see what he has to say about the subject, but I don't have
-> > >that book as it turns out.
-> > >
-> > >Yours,
-> > >Linus Walleij
-> >
-> > Hi Linus,
-> >
-> > I'd like to get this patchset merged, but I'm aware that we haven't yet
-> > received additional ACKs in the past couple months. Are there any
-> > changes you would like made, or should I resubmit this patchset with
-> > additional CCs in the hopes of some ACKs for the bitops patch?
-> 
-> It seems Andy wanted some time and he had ~4 months now
-> so either he forgot it or has way too much to do.
+On Mon, Sep 10, 2018 at 05:07:10PM +0300, Ville Syrjälä wrote:
+> You're reading way too much into this. The revert is just a point to
+> start the conversion. I've found that it's the best way to get the
+> attention of the relevant developers. Other kind of regression
+> reports have an unfortunate habit of disappearing into /dev/null.
 
-Sorry, indeed, it got piled under huge backlog I have.
+That's some strange "logic".
 
-> 
-> I would say send this patch to Andrew Morton (the bitops patches)
-> so he can decide on it. He has the right bird's eye view on this
-> kind of things.
+You're sending a patch which has "[PATCH]" in the subject but now you
+say it is not really a patch but only a way to get people's attention?!?
 
-Agreed, and please add Rasmus as well.
+And nothing in it says so anywhere - it looks like an actual patch and
+all.
 
+If you do that a couple of times I'm afraid the opposite might happen -
+such "patches" would get ignored completely.
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Regards/Gruss,
+    Boris.
 
-
+Good mailing practices for 400: avoid top-posting and trim the reply.
