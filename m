@@ -2,105 +2,114 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F6D0C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 17:09:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8B23C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 17:11:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C332120880
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 17:09:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C332120880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 78D2420865
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 17:11:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="rUd33oBW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78D2420865
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728118AbeIJWEp convert rfc822-to-8bit (ORCPT
+        id S1728141AbeIJWG2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 18:04:45 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47346 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726603AbeIJWEp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 18:04:45 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id ABCC95BCDE;
-        Mon, 10 Sep 2018 17:09:40 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-55.bos.redhat.com [10.18.17.55])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 569AA2156889;
-        Mon, 10 Sep 2018 17:09:36 +0000 (UTC)
-Subject: Re: Plumbers 2018 - Performance and Scalability Microconference
-To:     John Hubbard <jhubbard@nvidia.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        linux-kernel@vger.kernel.org,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-Cc:     Aaron Lu <aaron.lu@intel.com>, alex.kogan@oracle.com,
-        akpm@linux-foundation.org, boqun.feng@gmail.com, brouer@redhat.com,
-        dave@stgolabs.net, dave.dice@oracle.com,
-        Dhaval Giani <dhaval.giani@oracle.com>, ktkhai@virtuozzo.com,
-        ldufour@linux.vnet.ibm.com, Pavel.Tatashin@microsoft.com,
-        paulmck@linux.vnet.ibm.com, shady.issa@oracle.com,
-        tariqt@mellanox.com, tglx@linutronix.de, tim.c.chen@intel.com,
-        vbabka@suse.cz, yang.shi@linux.alibaba.com, shy828301@gmail.com,
-        Huang Ying <ying.huang@intel.com>, subhra.mazumdar@oracle.com,
-        Steven Sistare <steven.sistare@oracle.com>, jwadams@google.com,
-        ashwinch@google.com, sqazi@google.com,
-        Shakeel Butt <shakeelb@google.com>, walken@google.com,
-        rientjes@google.com, junaids@google.com,
-        Neha Agarwal <nehaagarwal@google.com>
-References: <1dc80ff6-f53f-ae89-be29-3408bf7d69cc@oracle.com>
- <35c2c79f-efbe-f6b2-43a6-52da82145638@nvidia.com>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <55b44432-ade5-f090-bfe7-ea20f3e87285@redhat.com>
-Date:   Mon, 10 Sep 2018 13:09:36 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Mon, 10 Sep 2018 18:06:28 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:40873 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727031AbeIJWG2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 18:06:28 -0400
+Received: by mail-wr1-f67.google.com with SMTP id n2-v6so22771882wrw.7
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 10:11:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=vaMQR0dRmZEQ+ju6zEMmH7ubkKV3XafxDe1F0Ae3TdI=;
+        b=rUd33oBWWPGiHnMsYGk402Dav0s1oopmGRXNjCAB4jBEhO8FKBABSgQtLb9g0nLwxG
+         cahtdx7WVmsFaqPmL3Dm7WI0lSS8gGhs/SpfEtWCI7sQyd50gK69gIBwnCnYaOORusb3
+         j0nbeWQKCrSkkpoYqLMkhlDhi48jk6xFBdvyMnpZoD9jpKEexCrsK2aJ5gAYaBmalnZf
+         CWWeM23mHE8NpVUn2SNbW3cCA5perEDIZVV3RIkwRYLjAJOK19EBTdSW098VujIzx8J6
+         joJQxspap3FUQ4EaXn0uasjhXkvHeuOL50s3SONzgfrHRticDuYLLp6oii7VHYEnueq8
+         RHUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=vaMQR0dRmZEQ+ju6zEMmH7ubkKV3XafxDe1F0Ae3TdI=;
+        b=kw+d1XkXCQGfkE1K6lxcUMmd8CWz4fCnCoa3jQjuz9YpGjWWbN9v4lNpp/uau7glyV
+         y1mvUSyuOeiGHnLAHVFVYTiua17My90FVWvJdDJ98ZLLG6lOXWSoRuppCKKA0RCjLxnB
+         QN3k20mJQEhASMlKgSGWnlSz02hLZa44kcCg/PJDwgZDKcTvMkxzlw2j1fcZNPyzl9WC
+         0Ln2jZ+UNxShXJOjECEIpvYKMkKoZpGUgqUtXQICfXosllyIpgozHNQGiwLjw/xMUT9Y
+         4Sshq7V6qZ8g7sjyokhkdegfO7yEoj1W7q4HXBDHij3PB/00X0tXoGxPZl9DNxpUznOA
+         APqg==
+X-Gm-Message-State: APzg51CcjrO5wb/N93c8E2pO165wEEOhSZgM6ii1vpObrHrjZgb5Etls
+        YMn7wl3sfTlxhPcjkXisMo3t7r+ASbNlkCBqgvX6yQ==
+X-Google-Smtp-Source: ANB0Vdbpdzh/OPS208fKeHaZiAiT3jYiYZMytguz2ChdXKVtdr6cdWb3OkuD8L1z4lSCjY+hDn+P6puvD7SdH9dakY0=
+X-Received: by 2002:adf:c554:: with SMTP id s20-v6mr15151351wrf.46.1536599483636;
+ Mon, 10 Sep 2018 10:11:23 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <35c2c79f-efbe-f6b2-43a6-52da82145638@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 10 Sep 2018 17:09:41 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 10 Sep 2018 17:09:41 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
+Received: by 2002:adf:9dcb:0:0:0:0:0 with HTTP; Mon, 10 Sep 2018 10:11:22
+ -0700 (PDT)
+In-Reply-To: <20180910163936.GA18699@infradead.org>
+References: <20180910132924.GA6987@infradead.org> <alpine.DEB.2.21.1809101533330.1292@nanos.tec.linutronix.de>
+ <alpine.DEB.2.21.1809101536410.1292@nanos.tec.linutronix.de>
+ <20180910133902.GB21593@infradead.org> <alpine.DEB.2.21.1809101544560.1292@nanos.tec.linutronix.de>
+ <20180910134915.GB30774@infradead.org> <CAAhSdy1be_ibiowifBdgBZjbHuFU=CR4rZXQDwQghVYkex5bMg@mail.gmail.com>
+ <alpine.DEB.2.21.1809101805110.1419@nanos.tec.linutronix.de>
+ <20180910161143.GA1053@infradead.org> <CAAhSdy0kgsy0QFDQGYeVy6vxu8v7UwRGbdJC9Hhz+36TNYjyGA@mail.gmail.com>
+ <20180910163936.GA18699@infradead.org>
+From:   Anup Patel <anup@brainfault.org>
+Date:   Mon, 10 Sep 2018 22:41:22 +0530
+Message-ID: <CAAhSdy3AN4YTaAJCR50WMB8CgaoZNeT9uOZt2GH2O6i8Y6z6ew@mail.gmail.com>
+Subject: Re: [PATCH v2 3/5] irqchip: RISC-V Local Interrupt Controller Driver
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
+        Atish Patra <atish.patra@wdc.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/08/2018 12:13 AM, John Hubbard wrote:
+On Mon, Sep 10, 2018 at 10:09 PM, Christoph Hellwig <hch@infradead.org> wrote:
+> On Mon, Sep 10, 2018 at 10:05:42PM +0530, Anup Patel wrote:
+>> I am quite sure RISC-V spec does not restrict the use of other
+>> local interrupts. Different CPU implementations can have their
+>> own local interrupts.
 >
-> Hi Daniel and all,
->
-> I'm interested in the first 3 of those 4 topics, so if it doesn't conflict with HMM topics or
-> fix-gup-with-dma topics, I'd like to attend. GPUs generally need to access large chunks of
-> memory, and that includes migrating (dma-copying) pages around.  
->
-> So for example a multi-threaded migration of huge pages between normal RAM and GPU memory is an 
-> intriguing direction (and I realize that it's a well-known topic, already). Doing that properly
-> (how many threads to use?) seems like it requires scheduler interaction.
->
-> It's also interesting that there are two main huge page systems (THP and Hugetlbfs), and I sometimes
-> wonder the obvious thing to wonder: are these sufficiently different to warrant remaining separate,
-> long-term?  Yes, I realize they're quite different in some ways, but still, one wonders. :)
+> Please take a look at sections 3.1.14 and 4.1.1 of the RISC-V privileged
+> spec 1.10.
 
-One major difference between hugetlbfs and THP is that the former has to
-be explicitly managed by the applications that use it whereas the latter
-is done automatically without the applications being aware that THP is
-being used at all. Performance wise, THP may or may not increase
-application performance depending on the exact memory access pattern,
-though the chance is usually higher that an application will benefit
-than suffer from it.
+RISC-V priv spec 1.10 defines the 9 bits in MIE and MIP registers and
+other bits are reserved.
 
-If an application know what it is doing, using hughtblfs can boost
-performance more than it can ever achieved by THP. Many large enterprise
-applications, like Oracle DB, are using hugetlbfs and explicitly disable
-THP. So unless THP can improve its performance to a level that is
-comparable to hugetlbfs, I won't see the later going away.
+The unused bits in MIP are WIRI (reserved write ignored and read ignored)
+and unused bits in MIE are WPRI (reserved write preserve values and
+read ignored).
 
-Cheers,
-Longman
+The RISC-V priv spec 1.10 does not tell that unused reserved bits in
+MIE/MIP cannot be used for:
+1. CPU implementation specific local interrupts
+2. Per-CPU device interrupts.
 
+The RISC-V priv spec 1.10 tries to only describe MIE/MIP bits which
+are mandatory on any RISC-V 1.10 compliant CPU but it possible to
+used other reserved bits for implementation specific local interrupts.
 
-
+Regards,
+Anup
