@@ -6,150 +6,101 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F39AC4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:41:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BC86C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:41:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C3312088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:41:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C3312088F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id 5EEAF20866
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:41:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EEAF20866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728076AbeIJOee (ORCPT
+        id S1728091AbeIJOe4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 10:34:34 -0400
-Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:56114 "EHLO
-        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727396AbeIJOed (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 10:34:33 -0400
-Received: from [192.168.2.10] ([212.251.195.8])
-        by smtp-cloud7.xs4all.net with ESMTPA
-        id zIh4f1XFrw2L8zIh7fJdVK; Mon, 10 Sep 2018 11:41:22 +0200
-Subject: Re: [PATCH v9 2/9] media: v4l: Add definitions for MPEG-2 slice
- format and metadata
-To:     Paul Kocialkowski <contact@paulk.fr>, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-sunxi@googlegroups.com, Randy Li <ayaka@soulik.info>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-References: <20180906222442.14825-1-contact@paulk.fr>
- <20180906222442.14825-3-contact@paulk.fr>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <9a7fd34d-50e3-4db6-4752-9e62bb160655@xs4all.nl>
-Date:   Mon, 10 Sep 2018 11:41:18 +0200
+        Mon, 10 Sep 2018 10:34:56 -0400
+Received: from foss.arm.com ([217.140.101.70]:53938 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727614AbeIJOe4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 10:34:56 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ABF8518A;
+        Mon, 10 Sep 2018 02:41:45 -0700 (PDT)
+Received: from [10.1.214.36] (unknown [10.1.214.36])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DD6A03F557;
+        Mon, 10 Sep 2018 02:41:44 -0700 (PDT)
+Subject: Re: [PATCH AUTOSEL 4.18 074/131] ARM: 8783/1: NOMMU: Extend check for
+ VBAR support
+To:     Sasha Levin <Alexander.Levin@microsoft.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     Russell King <rmk+kernel@armlinux.org.uk>
+References: <20180902064601.183036-1-alexander.levin@microsoft.com>
+ <20180902064601.183036-74-alexander.levin@microsoft.com>
+From:   Vladimir Murzin <vladimir.murzin@arm.com>
+Message-ID: <bb9d354b-6a8f-529e-3e62-0d250b967b1a@arm.com>
+Date:   Mon, 10 Sep 2018 10:41:43 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180906222442.14825-3-contact@paulk.fr>
+In-Reply-To: <20180902064601.183036-74-alexander.levin@microsoft.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfImcYCQPy/yl90MmlYGGDsC+cJIXfXYVgQsRppJdmL8kirtmdXy0lBe4rWqrFHwERN/GxhTouoXvorlNmu6ksP+aGpsb3bdOPHE5OrbULesS1BnrG7XN
- NjzBXr3Sx4/vN9QFulPe/y467DCQlPeMaS6AE8Edg/7hZVRGDsLOUUb2VjoKIggIoiwJIaLLPSddl0CY2dtfRbXsudLrd4GUD9+Mr1grADyiRKgxbxK+VnhH
- I1ZEvUBIQRaoW04qY3UhigEL1zUopiwody0vHZy14Xjuge+Oh2blp4ZVvaD2pDSRExdxgeXQFAw5B2dxqp+KmD07A02h6xwD6W0w6pFMY+sv4nw8C8d9rzff
- 6YzI6XLXA9hWBrBjis0STIGD/5YQeZwRXzoXsrqlw1KHpZUqF/0Pg/xmZRtediUwcAWRrGBtlhszP2gCwRn4tVA66YO1FPIt8NKJAVzHNJX72Glthn3470V+
- RTzrg/qZ9ecXI+dqqy/nHyW2g59+8v8A9sxkR6ELcGSCoMpE0LJ5rHIs21iOK9N2t2Rk1GZpRrNt2sjvc1LbLaP8TDJ6zm+K93G2rz3x2cro0FHnIpiXlCIG
- MEn3pIfEX1FsPe8f4B5uXjZlnJRuyyoNJtM60sHCD7u8JxureEK0ElghRDT+m1Y2cFVzxY0+PWB9QfKuHNnxqwALzcaswwEL43TB+Bp4Gm/aO/0R+9JQsuNv
- J95fGo3m7lS7zmRofTHwcVslX/vTivziaax7+X1Ac162PQhe72x59Q8uhNBTsLlz55Tj0a3XMwvABLE7hOaDVvL4QMqueA/vhHdBMW2vqB03Kr8/mLO4bejF
- 7/U93Dp7M3XXllRwT0Od9NA8XMtDP37j7sVYMf15WjI1xYMKEqZp82bblaZQVZ2nGWtYSWvC1t39VwAz9REErxSo1m9UjuoWnPv+CAg5/NlY3Qm0K3nrh60J
- C1m8+A==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/07/2018 12:24 AM, Paul Kocialkowski wrote:
-> From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+On 02/09/18 14:04, Sasha Levin wrote:
+> From: Vladimir Murzin <vladimir.murzin@arm.com>
 > 
-> Stateless video decoding engines require both the MPEG-2 slices and
-> associated metadata from the video stream in order to decode frames.
+> [ Upstream commit c803ce3f18bd93b3b4a15d1da0c5b5ebc60e0b85 ]
 > 
-> This introduces definitions for a new pixel format, describing buffers
-> with MPEG-2 slice data, as well as control structure sfor passing the
-> frame metadata to drivers.
+> ARMv8R adds support for VBAR and updates ID_PFR1 with the new filed
+> Sec_frac (bits [23:20]):
 > 
-> This is based on work from both Florent Revest and Hugues Fruchet.
+> Security fractional field. When the Security field is 0000, determines
+> the support for features from the ARMv7 Security Extensions. Permitted
+> values are:
 > 
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> 0000 No features from the ARMv7 Security Extensions are implemented.
+>      This value is not supported in ARMv8 if ID_PFR1 bits [7:4] are zero.
+> 
+> 0001 The implementation includes the VBAR, and the TCR.PD0 and TCR.PD1
+>      bits.
+> 
+> 0010 As for 0001, plus the ability to access Secure or Non-secure
+>      physical memory is supported.
+> 
+> All other values are reserved.
+> 
+> This field is only valid when ID_PFR1[7:4] == 0, otherwise it holds
+> the value 0000.
+> 
+> Signed-off-by: Vladimir Murzin <vladimir.murzin@arm.com>
+> Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+> Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 > ---
->  .../media/uapi/v4l/extended-controls.rst      | 176 ++++++++++++++++++
->  .../media/uapi/v4l/pixfmt-compressed.rst      |  16 ++
->  .../media/uapi/v4l/vidioc-queryctrl.rst       |  14 +-
->  .../media/videodev2.h.rst.exceptions          |   2 +
->  drivers/media/v4l2-core/v4l2-ctrls.c          |  63 +++++++
->  drivers/media/v4l2-core/v4l2-ioctl.c          |   1 +
->  include/media/v4l2-ctrls.h                    |  18 +-
->  include/uapi/linux/v4l2-controls.h            |  65 +++++++
->  include/uapi/linux/videodev2.h                |   5 +
->  9 files changed, 351 insertions(+), 9 deletions(-)
+>  arch/arm/mm/nommu.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/Documentation/media/uapi/v4l/extended-controls.rst b/Documentation/media/uapi/v4l/extended-controls.rst
-> index 9f7312bf3365..f1951236266a 100644
-> --- a/Documentation/media/uapi/v4l/extended-controls.rst
-> +++ b/Documentation/media/uapi/v4l/extended-controls.rst
-> @@ -1497,6 +1497,182 @@ enum v4l2_mpeg_video_h264_hierarchical_coding_type -
+> diff --git a/arch/arm/mm/nommu.c b/arch/arm/mm/nommu.c
+> index 5dd6c58d653b..7d67c70bbded 100644
+> --- a/arch/arm/mm/nommu.c
+> +++ b/arch/arm/mm/nommu.c
+> @@ -53,7 +53,8 @@ static inline bool security_extensions_enabled(void)
+>  {
+>  	/* Check CPUID Identification Scheme before ID_PFR1 read */
+>  	if ((read_cpuid_id() & 0x000f0000) == 0x000f0000)
+> -		return !!cpuid_feature_extract(CPUID_EXT_PFR1, 4);
+> +		return cpuid_feature_extract(CPUID_EXT_PFR1, 4) ||
+> +			cpuid_feature_extract(CPUID_EXT_PFR1, 20);
+>  	return 0;
+>  }
 >  
->  
->  
-> +.. _v4l2-mpeg-mpeg2:
-> +
-> +``V4L2_CID_MPEG_VIDEO_MPEG2_SLICE_PARAMS (struct)``
-> +    Specifies the slice parameters (as extracted from the bitstream) for the
-> +    associated MPEG-2 slice data. This includes the necessary parameters for
-> +    configuring a stateless hardware decoding pipeline for MPEG-2.
-> +    The bitstream parameters are defined according to :ref:`mpeg2part2`.
-> +
-> +.. c:type:: v4l2_ctrl_mpeg2_slice_params
-> +
-> +.. cssclass:: longtable
-> +
-> +.. flat-table:: struct v4l2_ctrl_mpeg2_slice_params
-> +    :header-rows:  0
-> +    :stub-columns: 0
-> +    :widths:       1 1 2
-> +
-> +    * - __u32
-> +      - ``bit_size``
-> +      - Size (in bits) of the current slice data.
-> +    * - __u32
-> +      - ``data_bit_offset``
-> +      - Offset (in bits) to the video data in the current slice data.
-> +    * - struct :c:type:`v4l2_mpeg2_sequence`
-> +      - ``sequence``
-> +      - Structure with MPEG-2 sequence metadata, merging relevant fields from
-> +	the sequence header and sequence extension parts of the bitstream.
-> +    * - struct :c:type:`v4l2_mpeg2_picture`
-> +      - ``picture``
-> +      - Structure with MPEG-2 picture metadata, merging relevant fields from
-> +	the picture header and picture coding extension parts of the bitstream.
-> +    * - __u8
-> +      - ``quantiser_scale_code``
-> +      - Code used to determine the quantization scale to use for the IDCT.
-> +    * - __u8
-> +      - ``backward_ref_index``
-> +      - Index for the V4L2 buffer to use as backward reference, used with
-> +	B-coded and P-coded frames.
-> +    * - __u8
-> +      - ``forward_ref_index``
-> +      - Index for the V4L2 buffer to use as forward reference, used with
-> +	P-coded frames.
+> 
 
-Should this be "B-coded frames"?
+NAK - it is not stable material.
 
-Regards,
-
-	Hans
+Thanks
+Vladimir
