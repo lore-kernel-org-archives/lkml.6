@@ -2,109 +2,221 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74107C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 19:32:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9113EC4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 19:33:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22E0320866
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 19:32:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nzzjCqMe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22E0320866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id 587482086E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 19:33:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 587482086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728780AbeIKA2O (ORCPT
+        id S1728874AbeIKA3A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 20:28:14 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:35296 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728013AbeIKA2O (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 20:28:14 -0400
-Received: by mail-pg1-f195.google.com with SMTP id 7-v6so10985909pgf.2;
-        Mon, 10 Sep 2018 12:32:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=tG3BOUC4G+pUOfDcvD9E3iSEGX+icyihwASV9TTf7MU=;
-        b=nzzjCqMeOvn2KkNZk0dqUbrtwPiYHSDHssYLRifoPJGEN5cr0fN2XBSpfu4vefjuFn
-         WZSF3VFYC62AojVjU9LqWcWLFrPTKOS2HC8ubkB5isQyY6L7JqdyFk9XBGpi/jDA/xYn
-         4sUFHs/ctILb1mXfe4HKHozjAZC0N6fJBiUheMLXd5TPGB6HMASFoCmuzmkeo6vpyu6D
-         +g4RaxZwpAFFjo40xH+LMmb2XY+/ibkFAUuvOzhyaJsRRbehvXuF4SN1jTJVm3EGUJ8s
-         ZPbsFSPRt7JaWj18fwiNzSlnU9d7BO4jX11a+9/UQy/uD93enznoMDNFV4+VntKVgCqm
-         GK2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tG3BOUC4G+pUOfDcvD9E3iSEGX+icyihwASV9TTf7MU=;
-        b=nD26GSqkh40fV5+SeHSpKnjEe1X0tzokJxPfGXcNNhaQSSaVUaYtioBHRkc6yerFB4
-         d2rD8jV34oDKQci8rhrs1wWIghKDcN7L+CjZM0i24thTkczHJiz/gm3M1nw0A82fn0rK
-         F7FzBsSj0bLyMzCgbYAFJ/C2zd6vsFBupaKTNw4qHcHRCjgRQA2P/YBgkal51XvX2CpS
-         8GrpwWRvYOy0q8cv0NEbXsyi3hHLyULacUxrWGYE7YCAe+x6aA517gn57XhuIOAgbSlf
-         A4OLwwToOzjlJbE5ABiwBekmp8/T25cpxl9w72OsWYIUqSIS/V78JVAAnVTexFzrbWgf
-         +lJg==
-X-Gm-Message-State: APzg51AgZdNB1Aalu7Bce+38ZWdigDH/U4WxbzSu+R+lAKpt+csGFd+q
-        OYBZOTKCaGGU/APyrq4RTg27gLEG
-X-Google-Smtp-Source: ANB0VdZgOQKx2yWdymVp5XYa+S3ZdTlXMjumf6DEkexYB9dh+O/ZJpyPv9KAKpTVwF9Bi3eeJLviiA==
-X-Received: by 2002:aa7:850b:: with SMTP id v11-v6mr25558217pfn.165.1536607958445;
-        Mon, 10 Sep 2018 12:32:38 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id e190-v6sm33154945pfc.81.2018.09.10.12.32.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Sep 2018 12:32:37 -0700 (PDT)
-Date:   Mon, 10 Sep 2018 12:32:35 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-omap@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Regression in next with filesystem context concept
-Message-ID: <20180910193235.GA8769@roeck-us.net>
-References: <20180907161023.GF5662@atomide.com>
- <20180906164358.GI5659@atomide.com>
- <9053.1536310046@warthog.procyon.org.uk>
- <11959.1536420266@warthog.procyon.org.uk>
- <20180910160836.GT5662@atomide.com>
- <20180910183146.GA17726@roeck-us.net>
- <20180910192658.GX5662@atomide.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180910192658.GX5662@atomide.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Mon, 10 Sep 2018 20:29:00 -0400
+Received: from mga04.intel.com ([192.55.52.120]:65105 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727742AbeIKA3A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 20:29:00 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2018 12:33:24 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,356,1531810800"; 
+   d="scan'208";a="73137890"
+Received: from sai-dev-mach.sc.intel.com ([143.183.140.52])
+  by orsmga006.jf.intel.com with ESMTP; 10 Sep 2018 12:33:21 -0700
+From:   Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+To:     linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        x86@kernel.org
+Cc:     Sai Praneeth <sai.praneeth.prakhya@intel.com>,
+        Al Stone <astone@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [PATCH V5 1/2] efi: Make efi_rts_work accessible to efi page fault handler
+Date:   Mon, 10 Sep 2018 12:32:24 -0700
+Message-Id: <1536607945-22018-2-git-send-email-sai.praneeth.prakhya@intel.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1536607945-22018-1-git-send-email-sai.praneeth.prakhya@intel.com>
+References: <1536607945-22018-1-git-send-email-sai.praneeth.prakhya@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 10, 2018 at 12:26:58PM -0700, Tony Lindgren wrote:
-> * Guenter Roeck <linux@roeck-us.net> [180910 18:35]:
-> > On Mon, Sep 10, 2018 at 09:08:36AM -0700, Tony Lindgren wrote:
-> > > OK thanks for tracking that down, next-20180910 boots again
-> > > for me.
-> > > 
-> > 
-> > Did you try to shutdown and/or reboot ?
-> > 
-> > You might see something like the attached if you try.
-> 
-> Hmm not seeing that here with next-20180910 on ARM at least.
-> 
+From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
 
-Correct, the problem doesn't happen on arm. That is the one
-and only exception as far as I can see.
+After the kernel has booted, if any accesses by firmware causes a page
+fault, the efi page fault handler would freeze efi_rts_wq and schedules
+a new process. To do this, the efi page fault handler needs
+efi_rts_work. Hence, make it accessible.
 
-On arm, the only boot failure is witherspoon-bmc with
-aspeed_g5_defconfig, but that doesn't crash but simply hang
-during boot.
+There will be no race conditions in accessing this structure, because,
+all the calls to efi runtime services are already serialized.
 
-arm64 still fails to build, so I don't have any data there.
+Tested-by: Bhupesh Sharma <bhsharma@redhat.com>
+Suggested-by: Matt Fleming <matt@codeblueprint.co.uk>
+Based-on-code-from: Ricardo Neri <ricardo.neri@intel.com>
+Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Cc: Al Stone <astone@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Bhupesh Sharma <bhsharma@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+---
+ drivers/firmware/efi/runtime-wrappers.c | 53 ++++++---------------------------
+ include/linux/efi.h                     | 36 ++++++++++++++++++++++
+ 2 files changed, 45 insertions(+), 44 deletions(-)
 
-Guenter
+diff --git a/drivers/firmware/efi/runtime-wrappers.c b/drivers/firmware/efi/runtime-wrappers.c
+index aa66cbf23512..b18b2d864c2c 100644
+--- a/drivers/firmware/efi/runtime-wrappers.c
++++ b/drivers/firmware/efi/runtime-wrappers.c
+@@ -45,39 +45,7 @@
+ #define __efi_call_virt(f, args...) \
+ 	__efi_call_virt_pointer(efi.systab->runtime, f, args)
+ 
+-/* efi_runtime_service() function identifiers */
+-enum efi_rts_ids {
+-	GET_TIME,
+-	SET_TIME,
+-	GET_WAKEUP_TIME,
+-	SET_WAKEUP_TIME,
+-	GET_VARIABLE,
+-	GET_NEXT_VARIABLE,
+-	SET_VARIABLE,
+-	QUERY_VARIABLE_INFO,
+-	GET_NEXT_HIGH_MONO_COUNT,
+-	UPDATE_CAPSULE,
+-	QUERY_CAPSULE_CAPS,
+-};
+-
+-/*
+- * efi_runtime_work:	Details of EFI Runtime Service work
+- * @arg<1-5>:		EFI Runtime Service function arguments
+- * @status:		Status of executing EFI Runtime Service
+- * @efi_rts_id:		EFI Runtime Service function identifier
+- * @efi_rts_comp:	Struct used for handling completions
+- */
+-struct efi_runtime_work {
+-	void *arg1;
+-	void *arg2;
+-	void *arg3;
+-	void *arg4;
+-	void *arg5;
+-	efi_status_t status;
+-	struct work_struct work;
+-	enum efi_rts_ids efi_rts_id;
+-	struct completion efi_rts_comp;
+-};
++struct efi_runtime_work efi_rts_work;
+ 
+ /*
+  * efi_queue_work:	Queue efi_runtime_service() and wait until it's done
+@@ -91,7 +59,6 @@ struct efi_runtime_work {
+  */
+ #define efi_queue_work(_rts, _arg1, _arg2, _arg3, _arg4, _arg5)		\
+ ({									\
+-	struct efi_runtime_work efi_rts_work;				\
+ 	efi_rts_work.status = EFI_ABORTED;				\
+ 									\
+ 	init_completion(&efi_rts_work.efi_rts_comp);			\
+@@ -184,18 +151,16 @@ static DEFINE_SEMAPHORE(efi_runtime_lock);
+  */
+ static void efi_call_rts(struct work_struct *work)
+ {
+-	struct efi_runtime_work *efi_rts_work;
+ 	void *arg1, *arg2, *arg3, *arg4, *arg5;
+ 	efi_status_t status = EFI_NOT_FOUND;
+ 
+-	efi_rts_work = container_of(work, struct efi_runtime_work, work);
+-	arg1 = efi_rts_work->arg1;
+-	arg2 = efi_rts_work->arg2;
+-	arg3 = efi_rts_work->arg3;
+-	arg4 = efi_rts_work->arg4;
+-	arg5 = efi_rts_work->arg5;
++	arg1 = efi_rts_work.arg1;
++	arg2 = efi_rts_work.arg2;
++	arg3 = efi_rts_work.arg3;
++	arg4 = efi_rts_work.arg4;
++	arg5 = efi_rts_work.arg5;
+ 
+-	switch (efi_rts_work->efi_rts_id) {
++	switch (efi_rts_work.efi_rts_id) {
+ 	case GET_TIME:
+ 		status = efi_call_virt(get_time, (efi_time_t *)arg1,
+ 				       (efi_time_cap_t *)arg2);
+@@ -253,8 +218,8 @@ static void efi_call_rts(struct work_struct *work)
+ 		 */
+ 		pr_err("Requested executing invalid EFI Runtime Service.\n");
+ 	}
+-	efi_rts_work->status = status;
+-	complete(&efi_rts_work->efi_rts_comp);
++	efi_rts_work.status = status;
++	complete(&efi_rts_work.efi_rts_comp);
+ }
+ 
+ static efi_status_t virt_efi_get_time(efi_time_t *tm, efi_time_cap_t *tc)
+diff --git a/include/linux/efi.h b/include/linux/efi.h
+index 401e4b254e30..855992b15269 100644
+--- a/include/linux/efi.h
++++ b/include/linux/efi.h
+@@ -1659,7 +1659,43 @@ struct linux_efi_tpm_eventlog {
+ 
+ extern int efi_tpm_eventlog_init(void);
+ 
++/* efi_runtime_service() function identifiers */
++enum efi_rts_ids {
++	GET_TIME,
++	SET_TIME,
++	GET_WAKEUP_TIME,
++	SET_WAKEUP_TIME,
++	GET_VARIABLE,
++	GET_NEXT_VARIABLE,
++	SET_VARIABLE,
++	QUERY_VARIABLE_INFO,
++	GET_NEXT_HIGH_MONO_COUNT,
++	UPDATE_CAPSULE,
++	QUERY_CAPSULE_CAPS,
++};
++
++/*
++ * efi_runtime_work:	Details of EFI Runtime Service work
++ * @arg<1-5>:		EFI Runtime Service function arguments
++ * @status:		Status of executing EFI Runtime Service
++ * @efi_rts_id:		EFI Runtime Service function identifier
++ * @efi_rts_comp:	Struct used for handling completions
++ */
++struct efi_runtime_work {
++	void *arg1;
++	void *arg2;
++	void *arg3;
++	void *arg4;
++	void *arg5;
++	efi_status_t status;
++	struct work_struct work;
++	enum efi_rts_ids efi_rts_id;
++	struct completion efi_rts_comp;
++};
++
+ /* Workqueue to queue EFI Runtime Services */
+ extern struct workqueue_struct *efi_rts_wq;
+ 
++extern struct efi_runtime_work efi_rts_work;
++
+ #endif /* _LINUX_EFI_H */
+-- 
+2.7.4
+
