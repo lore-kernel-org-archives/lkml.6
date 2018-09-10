@@ -2,452 +2,207 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C53AC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 04:07:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98593C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 04:24:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 057A920866
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 04:07:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 057A920866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 076AF2075A
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 04:24:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=terinstock-com.20150623.gappssmtp.com header.i=@terinstock-com.20150623.gappssmtp.com header.b="ED4Drxct"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 076AF2075A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=terinstock.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727034AbeIJI7v (ORCPT
+        id S1727183AbeIJJQh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 04:59:51 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39108 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726083AbeIJI7v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 04:59:51 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 64F61402242D;
-        Mon, 10 Sep 2018 04:07:45 +0000 (UTC)
-Received: from xz-x1 (ovpn-12-49.pek2.redhat.com [10.72.12.49])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 017561002967;
-        Mon, 10 Sep 2018 04:07:33 +0000 (UTC)
-Date:   Mon, 10 Sep 2018 12:07:32 +0800
-From:   Peter Xu <peterx@redhat.com>
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Zi Yan <zi.yan@cs.rutgers.edu>, linux-kernel@vger.kernel.org,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Souptick Joarder <jrdr.linux@gmail.com>, linux-mm@kvack.org
-Subject: Re: [PATCH] mm: hugepage: mark splitted page dirty when needed
-Message-ID: <20180910040732.GN16937@xz-x1>
-References: <20180904075510.22338-1-peterx@redhat.com>
- <20180904080115.o2zj4mlo7yzjdqfl@kshutemo-mobl1>
- <D3B32B41-61D5-47B3-B1FC-77B0F71ADA47@cs.rutgers.edu>
- <20180905073037.GA23021@xz-x1>
- <20180905125522.x2puwfn5sr2zo3go@kshutemo-mobl1>
- <20180906113933.GG16937@xz-x1>
- <20180906140842.jzf7tluzocb5nv3f@kshutemo-mobl1>
- <20180907043524.GM16937@xz-x1>
- <20180907175434.GB3519@redhat.com>
+        Mon, 10 Sep 2018 05:16:37 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:38039 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726271AbeIJJQh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 05:16:37 -0400
+Received: by mail-pg1-f196.google.com with SMTP id t84-v6so7927212pgb.5
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Sep 2018 21:24:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=terinstock-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:user-agent:user-agent
+         :mime-version:content-transfer-encoding;
+        bh=0GJT8aUy4iqr6EgmOSFrj5tBnAsNbu81CXu4t5FtCh4=;
+        b=ED4Drxct0U2JjHU6lUDoVh5gNGhUZttSkOPPPyfNfIfOyq4wWo5k3m8JtZ+kJJ/Nk5
+         8wDV+3f1fjHb9fo0Z+inByfoZecjgOF2IM1mcaUZqvLvHnZ/FmpKx0N63A26SSnACfGZ
+         /InksnyDXozFMzuxyF/mNRNfPvZ8/Sjf4sMfIKr1kdQ55E+M4GafYgMzd4pqMbUTfwsw
+         ToVJ8608wAKqYG7Ef7J/KQI2AP3iRQ47/0wQ+03KiaVltRWkHMvAhSuVOr8UiDki9wEB
+         FexOuWsyd58DZQhDy7gwLhHWn+7wdKEcpCkH6U1UcwwFQSxjSzf5orYDQOuPV4Eizeqz
+         9pJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:user-agent
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=0GJT8aUy4iqr6EgmOSFrj5tBnAsNbu81CXu4t5FtCh4=;
+        b=rZiKGTeflWyoNZllgpmz03qbOR3u0QV2g1fp6saOW/AKTyELFkFiSQPTSJ4lanPFKA
+         WHVH8SHSeS32q+vMmQsvwcLeb0wkZ3g20A5JnsscIvM09eI/wfeu2Ctd/0dfjPVih1xv
+         iLCIzHoWY9cxIR+r7iIU3tnofP1j2iT6C0hfL05PLAbTWJtyUb3n1OGDF+x2z/LRJcp0
+         JCL9g+cWEjkgBsKx+9auhHeThKKtglpQ114MlV0pJVfKDCdUl2Wp7XHAZytYPPkL+c06
+         GcfoEWzIiafLdvF8zTkGEfZ8FJgouhyMi/cf6ptzeRrY7tgnC3Fz+qnIK1z+UaZl+GZJ
+         Mp3Q==
+X-Gm-Message-State: APzg51Adc0l0Yr3FQmr0gxLIF/mSqLk6jnookcWLLj7eyexOlWhyOgIU
+        UgNxQP7b2pG2IxH0Yrkj5Xao
+X-Google-Smtp-Source: ANB0VdYvpozOSTBq5YSNbyCgul67QfHlbDeKrDwljTlzIgtcgmj6midqhx6KWhBS/1bApo5+2K003A==
+X-Received: by 2002:a62:5cc1:: with SMTP id q184-v6mr21789584pfb.241.1536553473579;
+        Sun, 09 Sep 2018 21:24:33 -0700 (PDT)
+Received: from rincon.localdomain ([136.24.13.23])
+        by smtp.gmail.com with ESMTPSA id v22-v6sm26998021pfi.60.2018.09.09.21.24.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 09 Sep 2018 21:24:32 -0700 (PDT)
+Date:   Sun, 09 Sep 2018 21:24:31 -0700
+From:   Terin Stock <terin@terinstock.com>
+To:     linux-usb@vger.kernel.org
+Cc:     dianders@chromium.org, jwerner@chromium.org, dtor@chromium.org,
+        hminas@synopsys.com, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] usb: dwc2: host: use hrtimer for NAK retries
+Message-ID: <153655347149.19910.4781444209586693527.stgit@Rincon.localdomain>
+User-Agent: mail v14.9.11
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180907175434.GB3519@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 10 Sep 2018 04:07:45 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 10 Sep 2018 04:07:45 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'peterx@redhat.com' RCPT:''
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 07, 2018 at 01:54:35PM -0400, Jerome Glisse wrote:
-> On Fri, Sep 07, 2018 at 12:35:24PM +0800, Peter Xu wrote:
-> > On Thu, Sep 06, 2018 at 05:08:42PM +0300, Kirill A. Shutemov wrote:
-> > > On Thu, Sep 06, 2018 at 07:39:33PM +0800, Peter Xu wrote:
-> > > > On Wed, Sep 05, 2018 at 03:55:22PM +0300, Kirill A. Shutemov wrote:
-> > > > > On Wed, Sep 05, 2018 at 03:30:37PM +0800, Peter Xu wrote:
-> > > > > > On Tue, Sep 04, 2018 at 10:00:28AM -0400, Zi Yan wrote:
-> > > > > > > On 4 Sep 2018, at 4:01, Kirill A. Shutemov wrote:
-> > > > > > > 
-> > > > > > > > On Tue, Sep 04, 2018 at 03:55:10PM +0800, Peter Xu wrote:
-> > > > > > > >> When splitting a huge page, we should set all small pages as dirty if
-> > > > > > > >> the original huge page has the dirty bit set before.  Otherwise we'll
-> > > > > > > >> lose the original dirty bit.
-> > > > > > > >
-> > > > > > > > We don't lose it. It got transfered to struct page flag:
-> > > > > > > >
-> > > > > > > > 	if (pmd_dirty(old_pmd))
-> > > > > > > > 		SetPageDirty(page);
-> > > > > > > >
-> > > > > > > 
-> > > > > > > Plus, when split_huge_page_to_list() splits a THP, its subroutine __split_huge_page()
-> > > > > > > propagates the dirty bit in the head page flag to all subpages in __split_huge_page_tail().
-> > > > > > 
-> > > > > > Hi, Kirill, Zi,
-> > > > > > 
-> > > > > > Thanks for your responses!
-> > > > > > 
-> > > > > > Though in my test the huge page seems to be splitted not by
-> > > > > > split_huge_page_to_list() but by explicit calls to
-> > > > > > change_protection().  The stack looks like this (again, this is a
-> > > > > > customized kernel, and I added an explicit dump_stack() there):
-> > > > > > 
-> > > > > >   kernel:  dump_stack+0x5c/0x7b
-> > > > > >   kernel:  __split_huge_pmd+0x192/0xdc0
-> > > > > >   kernel:  ? update_load_avg+0x8b/0x550
-> > > > > >   kernel:  ? update_load_avg+0x8b/0x550
-> > > > > >   kernel:  ? account_entity_enqueue+0xc5/0xf0
-> > > > > >   kernel:  ? enqueue_entity+0x112/0x650
-> > > > > >   kernel:  change_protection+0x3a2/0xab0
-> > > > > >   kernel:  mwriteprotect_range+0xdd/0x110
-> > > > > >   kernel:  userfaultfd_ioctl+0x50b/0x1210
-> > > > > >   kernel:  ? do_futex+0x2cf/0xb20
-> > > > > >   kernel:  ? tty_write+0x1d2/0x2f0
-> > > > > >   kernel:  ? do_vfs_ioctl+0x9f/0x610
-> > > > > >   kernel:  do_vfs_ioctl+0x9f/0x610
-> > > > > >   kernel:  ? __x64_sys_futex+0x88/0x180
-> > > > > >   kernel:  ksys_ioctl+0x70/0x80
-> > > > > >   kernel:  __x64_sys_ioctl+0x16/0x20
-> > > > > >   kernel:  do_syscall_64+0x55/0x150
-> > > > > >   kernel:  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> > > > > > 
-> > > > > > At the very time the userspace is sending an UFFDIO_WRITEPROTECT ioctl
-> > > > > > to kernel space, which is handled by mwriteprotect_range().  In case
-> > > > > > you'd like to refer to the kernel, it's basically this one from
-> > > > > > Andrea's (with very trivial changes):
-> > > > > > 
-> > > > > >   https://git.kernel.org/pub/scm/linux/kernel/git/andrea/aa.git userfault
-> > > > > > 
-> > > > > > So... do we have two paths to split the huge pages separately?
-> > > > > 
-> > > > > We have two entiries that can be split: page table enties and underlying
-> > > > > compound page.
-> > > > > 
-> > > > > split_huge_pmd() (and variants of it) split the PMD entry into a PTE page
-> > > > > table. It doens't touch underlying compound page. The page still can be
-> > > > > mapped in other place as huge.
-> > > > > 
-> > > > > split_huge_page() (and ivariants of it) split compound page into a number
-> > > > > of 4k (or whatever PAGE_SIZE is). The operation requires splitting all
-> > > > > PMD, but not other way around.
-> > > > > 
-> > > > > > 
-> > > > > > Another (possibly very naive) question is: could any of you hint me
-> > > > > > how the page dirty bit is finally applied to the PTEs?  These two
-> > > > > > dirty flags confused me for a few days already (the SetPageDirty() one
-> > > > > > which sets the page dirty flag, and the pte_mkdirty() which sets that
-> > > > > > onto the real PTEs).
-> > > > > 
-> > > > > Dirty bit from page table entries transferes to sturct page flug and used
-> > > > > for decision making in reclaim path.
-> > > > 
-> > > > Thanks for explaining.  It's much clearer for me.
-> > > > 
-> > > > Though for the issue I have encountered, I am still confused on why
-> > > > that dirty bit can be ignored for the splitted PTEs.  Indeed we have:
-> > > > 
-> > > > 	if (pmd_dirty(old_pmd))
-> > > > 		SetPageDirty(page);
-> > > > 
-> > > > However to me this only transfers (as you explained above) the dirty
-> > > > bit (AFAIU it's possibly set by the hardware when the page is written)
-> > > > to the page struct of the compound page.  It did not really apply to
-> > > > every small page of the splitted huge page.  As you also explained,
-> > > > this __split_huge_pmd() only splits the PMD entry but it keeps the
-> > > > compound huge page there, then IMHO it should also apply the dirty
-> > > > bits from the huge page to all the small page entries, no?
-> > > 
-> > > The bit on compound page represents all small subpages. PageDirty() on any
-> > > subpage will return you true if the compound page is dirty.
-> > 
-> > Ah I didn't notice this before (since PageDirty is defined with
-> > PF_HEAD), thanks for pointing out.
-> > 
-> > > 
-> > > > These dirty bits are really important to my scenario since AFAIU the
-> > > > change_protection() call is using these dirty bits to decide whether
-> > > > it should append the WRITE bit - it finally corresponds to the lines
-> > > > in change_pte_range():
-> > > > 
-> > > >         /* Avoid taking write faults for known dirty pages */
-> > > >         if (dirty_accountable && pte_dirty(ptent) &&
-> > > >                         (pte_soft_dirty(ptent) ||
-> > > >                                 !(vma->vm_flags & VM_SOFTDIRTY))) {
-> > > >                 ptent = pte_mkwrite(ptent);
-> > > >         }
-> > > > 
-> > > > So when mprotect() with that range (my case is UFFDIO_WRITEPROTECT,
-> > > > which is similar) although we pass in the new protocol with VM_WRITE
-> > > > here it'll still mask it since the dirty bit is not set, then the
-> > > > userspace program (in my case, the QEMU thread that handles write
-> > > > protect failures) can never fixup the write-protected page fault.
-> > > 
-> > > I don't follow here.
-> > > 
-> > > The code you quoting above is an apportunistic optimization and should not
-> > > be mission-critical. The dirty and writable bits can go away as soon as
-> > > you drop page table lock for the page.
-> > 
-> > Indeed it's an optimization, IIUC it tries to avoid an extra but
-> > possibly useless write-protect page fault when the dirty bits are
-> > already set after all.  However that's a bit trickly here - in my use
-> > case the write-protect page faults will be handled by one of the QEMU
-> > thread that reads the userfaultfd handle, so the fault must be handled
-> > there instead of inside kernel otherwise there'll be nested page
-> > faults forever (and userfaultfd will detect that then send a SIGBUS
-> > instead).
-> > 
-> > I'll try to explain with some more details on how I understand what
-> > happened.  This should also answer Zi's question so I'll avoid
-> > replying twice there.  Please feel free to correct me.
-> > 
-> > Firstly, below should be the correct steps to handle a userspace write
-> > protect page fault using Andrea's userfault-wp tree (I only mentioned
-> > the page fault steps and ignored most of the irrelevant setup
-> > procedures):
-> > 
-> > 1. QEMU write-protects page P using UFFDIO_WRITEPROTECT ioctl, then
-> >    the write bit removed from PTE, so QEMU can capture any further
-> >    writes to the page
-> > 
-> >    ... (time passes)...
-> 
-> UFFDIO_WRITEPROTECT with UFFDIO_WRITEPROTECT_MODE_WP
-> 
-> > 
-> > 2. [vCPU thread] Guest writes to the page P, trigger wp page fault
-> > 
-> > 3. [vCPU thread] Since the page (and the whole vma) is tracked by
-> >    userfault-wp, it goes into handle_userfault() to notify userspace
-> >    about the page fault and waits...
-> > 
-> > 4. [userfault thread] Gets the message about the page fault, do
-> >    anything it like with the page P (mostly copy it somewhere), and
-> >    fixup the page fault by another UFFDIO_WRITEPROTECT ioctl, this
-> >    time to reset the write bit.  After that, it'll wake up the vCPU
-> >    thread
-> 
-> UFFDIO_WRITEPROTECT with !UFFDIO_WRITEPROTECT_MODE_WP
-> 
-> It confused me when looking at code:
-> https://git.kernel.org/pub/scm/linux/kernel/git/andrea/aa.git/commit/?id=aa97daa6e54f2cfed1a6f1f38f9629608b8aadcc
-> 
-> > 
-> > 5. [vCPU thread] Got waked up, retry the page fault by returning a
-> >    VM_FAULT_RETRY in handle_userfault().  Then this time we'll see the
-> >    PTE with write bit set correctly.  vCPU continues execution.
-> > 
-> > Then let's consider THP here, where we might miss the dirty page for
-> > the PTE of the small page P.  In that case at step (4) when we want to
-> > recover the write bit we'll fail since the dirty bit is missing in the
-> > small PTE, so the write bit will still be cleared (expecting that the
-> > next page fault will fill it up).  However in step (5) we can't really
-> > fill in the write bit since we'll fault again into the
-> > handle_userfault() before that happens and then it goes back to step
-> > (3) then it can actualy loop forever if without the loop detection
-> > code in handle_userfault().
-> > 
-> > So I think now I understand that setting up the dirty bit in the
-> > compound page should be enough, then would below change acceptable
-> > instead?
-> > 
-> > diff --git a/mm/mprotect.c b/mm/mprotect.c
-> > index 6d331620b9e5..0d4a8129a5e7 100644
-> > --- a/mm/mprotect.c
-> > +++ b/mm/mprotect.c
-> > @@ -73,6 +73,7 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,                                                                             
-> >                 if (pte_present(oldpte)) {
-> >                         pte_t ptent;
-> >                         bool preserve_write = prot_numa && pte_write(oldpte);
-> > +                       bool dirty;
-> > 
-> >                         /*
-> >                          * Avoid trapping faults against the zero or KSM
-> > @@ -115,8 +116,18 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,                                                                          
-> >                         if (preserve_write)
-> >                                 ptent = pte_mk_savedwrite(ptent);
-> > 
-> > +                       /*
-> > +                        * The extra PageDirty() check will make sure
-> > +                        * we'll capture the dirty page even if the
-> > +                        * PTE dirty bit unset.  One case is when the
-> > +                        * PTE is splitted from a huge PMD, in that
-> > +                        * case the dirty flag might only be set on
-> > +                        * the compound page instead of this PTE.
-> > +                        */
-> > +                       dirty = pte_dirty(ptent) || PageDirty(pte_page(ptent));
-> > +
-> >                         /* Avoid taking write faults for known dirty pages */
-> > -                       if (dirty_accountable && pte_dirty(ptent) &&
-> > +                       if (dirty_accountable && dirty &&
-> >                                         (pte_soft_dirty(ptent) ||
-> >                                          !(vma->vm_flags & VM_SOFTDIRTY))) {
-> >                                 ptent = pte_mkwrite(ptent);
-> > 
-> > I tested that this change can also fix my problem (QEMU will not get
-> > SIGBUS after write protection starts).
-> 
-> This is wrong mwriteprotect_range() should already properly set pte
-> entry to non write protect:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/andrea/aa.git/commit/?id=b16cb9fcb76bec59cbe1427e73246dc81a4942e2
-> 
-> 	if (enable_wp)
-> 		newprot = vm_get_page_prot(dst_vma->vm_flags & ~(VM_WRITE));
-> 	else
-> 		newprot = vm_get_page_prot(dst_vma->vm_flags);
-> 
-> So it seems that the vm_flags do not have VM_WRITE set.
+Modify the wait delay utilize the high resolution timer API to allow for
+more precisely scheduled callbacks.
 
-Hi, Jerome,
+A previous commit added a 1ms retry delay after multiple consecutive
+NAKed transactions using jiffies. On systems with a low timer interrupt
+frequency, this delay may be significantly longer than specified,
+resulting in misbehavior with some USB devices.
 
-I think the vma has correct VM_WRITE flag there.  I added some prints
-into mwriteprotect_range() to trap more information when coredump
-happens:
+This scenario was reached on a Raspberry Pi 3B with a Macally FDD-USB
+floppy drive (identified as 0424:0fdc Standard Microsystems Corp.
+Floppy, based on the USB97CFDC USB FDC). With the relay delay, the drive
+would be unable to mount a disk, replying with NAKs until the device was
+reset.
 
-diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-index d3d0a13a636f..ebdcd76887df 100644
---- a/mm/userfaultfd.c
-+++ b/mm/userfaultfd.c
-@@ -606,6 +606,7 @@ int mwriteprotect_range(struct mm_struct *dst_mm, unsigned long start,
-        struct vm_area_struct *dst_vma;
-        pgprot_t newprot;
-        int err;
-+       unsigned long pages;
+Using ktime, the delta between starting the timer (in dwc2_hcd_qh_add)
+and the callback function can be determined. With the original delay
+implementation, this value was consistently approximately 12ms. (output
+in us).
+
+    <idle>-0     [000] ..s.  1600.559974: dwc2_wait_timer_fn: wait_timer delta: 11976
+    <idle>-0     [000] ..s.  1600.571974: dwc2_wait_timer_fn: wait_timer delta: 11977
+    <idle>-0     [000] ..s.  1600.583974: dwc2_wait_timer_fn: wait_timer delta: 11976
+    <idle>-0     [000] ..s.  1600.595974: dwc2_wait_timer_fn: wait_timer delta: 11977
+
+After converting the relay delay to using a higher resolution timer, the
+delay was much closer to 1ms.
+
+    <idle>-0     [000] d.h.  1956.553017: dwc2_wait_timer_fn: wait_timer delta: 1002
+    <idle>-0     [000] d.h.  1956.554114: dwc2_wait_timer_fn: wait_timer delta: 1002
+    <idle>-0     [000] d.h.  1957.542660: dwc2_wait_timer_fn: wait_timer delta: 1004
+    <idle>-0     [000] d.h.  1957.543701: dwc2_wait_timer_fn: wait_timer delta: 1002
+
+The floppy drive operates properly with delays up to approximately 5ms,
+and sends NAKs for any delays that are longer.
+
+Fixes: 38d2b5fb75c1 ("usb: dwc2: host: Don't retry NAKed transactions right away")
+Signed-off-by: Terin Stock <terin@terinstock.com>
+---
+ drivers/usb/dwc2/hcd.h       |    2 +-
+ drivers/usb/dwc2/hcd_queue.c |   19 ++++++++++++-------
+ 2 files changed, 13 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/usb/dwc2/hcd.h b/drivers/usb/dwc2/hcd.h
+index 5502a501f516..93483dc37801 100644
+--- a/drivers/usb/dwc2/hcd.h
++++ b/drivers/usb/dwc2/hcd.h
+@@ -366,7 +366,7 @@ struct dwc2_qh {
+ 	u32 desc_list_sz;
+ 	u32 *n_bytes;
+ 	struct timer_list unreserve_timer;
+-	struct timer_list wait_timer;
++	struct hrtimer wait_timer;
+ 	struct dwc2_tt *dwc_tt;
+ 	int ttport;
+ 	unsigned tt_buffer_dirty:1;
+diff --git a/drivers/usb/dwc2/hcd_queue.c b/drivers/usb/dwc2/hcd_queue.c
+index 301ced1618f8..60caf8e0b762 100644
+--- a/drivers/usb/dwc2/hcd_queue.c
++++ b/drivers/usb/dwc2/hcd_queue.c
+@@ -59,7 +59,7 @@
+ #define DWC2_UNRESERVE_DELAY (msecs_to_jiffies(5))
  
-        /*
-         * Sanitize the command parameters:
-@@ -638,13 +639,17 @@ int mwriteprotect_range(struct mm_struct *dst_mm, unsigned long start,
-        if (!vma_is_anonymous(dst_vma))
-                goto out_unlock;
+ /* If we get a NAK, wait this long before retrying */
+-#define DWC2_RETRY_WAIT_DELAY (msecs_to_jiffies(1))
++#define DWC2_RETRY_WAIT_DELAY 1*1E6L
  
-+       pr_info("%s: vm_flags: 0x%lx\n", __func__, dst_vma->vm_flags);
-+
-        if (enable_wp)
-                newprot = vm_get_page_prot(dst_vma->vm_flags & ~(VM_WRITE));
-        else
-                newprot = vm_get_page_prot(dst_vma->vm_flags);
+ /**
+  * dwc2_periodic_channel_available() - Checks that a channel is available for a
+@@ -1464,10 +1464,12 @@ static void dwc2_deschedule_periodic(struct dwc2_hsotg *hsotg,
+  * qh back to the "inactive" list, then queues transactions.
+  *
+  * @t: Pointer to wait_timer in a qh.
++ *
++ * Return: HRTIMER_NORESTART to not automatically restart this timer.
+  */
+-static void dwc2_wait_timer_fn(struct timer_list *t)
++static enum hrtimer_restart dwc2_wait_timer_fn(struct hrtimer *t)
+ {
+-	struct dwc2_qh *qh = from_timer(qh, t, wait_timer);
++	struct dwc2_qh *qh = container_of(t, struct dwc2_qh, wait_timer);
+ 	struct dwc2_hsotg *hsotg = qh->hsotg;
+ 	unsigned long flags;
  
--       change_protection(dst_vma, start, start + len, newprot,
--                               !enable_wp, 0);
-+       pages = change_protection(dst_vma, start, start + len, newprot,
-+                                 !enable_wp, 0);
-+       pr_info("%s: 0x%lx-0x%lx changed %ld pages (newprot=%lx, wp=%d)\n",
-+               __func__, start, start + len, pages, newprot.pgprot, enable_wp);
+@@ -1491,6 +1493,7 @@ static void dwc2_wait_timer_fn(struct timer_list *t)
+ 	}
  
-        err = 0;
- out_unlock:
+ 	spin_unlock_irqrestore(&hsotg->lock, flags);
++	return HRTIMER_NORESTART;
+ }
+ 
+ /**
+@@ -1521,7 +1524,8 @@ static void dwc2_qh_init(struct dwc2_hsotg *hsotg, struct dwc2_qh *qh,
+ 	/* Initialize QH */
+ 	qh->hsotg = hsotg;
+ 	timer_setup(&qh->unreserve_timer, dwc2_unreserve_timer_fn, 0);
+-	timer_setup(&qh->wait_timer, dwc2_wait_timer_fn, 0);
++	hrtimer_init(&qh->wait_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
++	qh->wait_timer.function = &dwc2_wait_timer_fn;
+ 	qh->ep_type = ep_type;
+ 	qh->ep_is_in = ep_is_in;
+ 
+@@ -1690,7 +1694,7 @@ void dwc2_hcd_qh_free(struct dwc2_hsotg *hsotg, struct dwc2_qh *qh)
+ 	 * won't do anything anyway, but we want it to finish before we free
+ 	 * memory.
+ 	 */
+-	del_timer_sync(&qh->wait_timer);
++	hrtimer_cancel(&qh->wait_timer);
+ 
+ 	dwc2_host_put_tt_info(hsotg, qh->dwc_tt);
+ 
+@@ -1716,6 +1720,7 @@ int dwc2_hcd_qh_add(struct dwc2_hsotg *hsotg, struct dwc2_qh *qh)
+ {
+ 	int status;
+ 	u32 intr_mask;
++	ktime_t delay;
+ 
+ 	if (dbg_qh(qh))
+ 		dev_vdbg(hsotg->dev, "%s()\n", __func__);
+@@ -1734,8 +1739,8 @@ int dwc2_hcd_qh_add(struct dwc2_hsotg *hsotg, struct dwc2_qh *qh)
+ 			list_add_tail(&qh->qh_list_entry,
+ 				      &hsotg->non_periodic_sched_waiting);
+ 			qh->wait_timer_cancel = false;
+-			mod_timer(&qh->wait_timer,
+-				  jiffies + DWC2_RETRY_WAIT_DELAY + 1);
++			delay = ktime_set(0, DWC2_RETRY_WAIT_DELAY);
++			hrtimer_start(&qh->wait_timer, delay, HRTIMER_MODE_REL);
+ 		} else {
+ 			list_add_tail(&qh->qh_list_entry,
+ 				      &hsotg->non_periodic_sched_inactive);
 
-Here's what I got starting from when QEMU starts until QEMU coredumps:
-
-Sep 10 11:40:24 px-ws kernel: mwriteprotect_range: vm_flags: 0xa0121073
-Sep 10 11:40:24 px-ws kernel: mwriteprotect_range: 0x7f205fe00000-0x7f209fe00000 changed 1024 pages (newprot=8000000000000025, wp=1)                                        
-Sep 10 11:40:24 px-ws kernel: mwriteprotect_range: vm_flags: 0xa0121073
-Sep 10 11:40:24 px-ws kernel: mwriteprotect_range: 0x7f20aa000000-0x7f20ab000000 changed 512 pages (newprot=8000000000000025, wp=1)                                         
-Sep 10 11:40:24 px-ws kernel: mwriteprotect_range: vm_flags: 0xa0121073   <----------------------------------- [1]
-Sep 10 11:40:24 px-ws kernel: mwriteprotect_range: 0x7f205fe7f000-0x7f205fe80000 changed 1 pages (newprot=8000000000000025, wp=0)                                           
-Sep 10 11:40:24 px-ws kernel: FAULT_FLAG_ALLOW_RETRY missing 71
-Sep 10 11:40:24 px-ws kernel: CPU: 7 PID: 1637 Comm: qemu-system-x86 Not tainted 4.19.0-rc2+ #27                                                                            
-Sep 10 11:40:24 px-ws kernel: Hardware name: LENOVO ThinkCentre M8500t-N000/SHARKBAY, BIOS FBKTC6AUS 06/22/2016                                                             
-Sep 10 11:40:24 px-ws kernel: Call Trace:
-Sep 10 11:40:24 px-ws kernel:  dump_stack+0x5c/0x7b
-Sep 10 11:40:24 px-ws kernel:  handle_userfault+0x4b5/0x780
-Sep 10 11:40:24 px-ws kernel:  ? schedule+0x32/0x80
-Sep 10 11:40:24 px-ws kernel:  ? handle_userfault+0x47e/0x780
-Sep 10 11:40:24 px-ws kernel:  do_wp_page+0x1bd/0x5a0
-Sep 10 11:40:24 px-ws kernel:  __handle_mm_fault+0x7f9/0x1250
-Sep 10 11:40:24 px-ws kernel:  handle_mm_fault+0xfc/0x1f0
-Sep 10 11:40:24 px-ws kernel:  __do_page_fault+0x255/0x520
-Sep 10 11:40:24 px-ws kernel:  do_page_fault+0x32/0x110
-Sep 10 11:40:24 px-ws kernel:  ? page_fault+0x8/0x30
-Sep 10 11:40:24 px-ws kernel:  page_fault+0x1e/0x30
-Sep 10 11:40:24 px-ws kernel: RIP: 0033:0x7f20ac9108c9
-Sep 10 11:40:24 px-ws kernel: Code: 75 03 c1 ef 07 48 81 e6 00 f0 ff ff 81 e7 e0 1f 00 00 49 8d bc 3e 40 57 00 00 48 3b 37 48 8b f5 0f 85 32 00 00 00 48 03 77 10 <89> 1e 49f
-Sep 10 11:40:24 px-ws kernel: RSP: 002b:00007f20abdda390 EFLAGS: 00010202
-Sep 10 11:40:24 px-ws kernel: RAX: 00007f20ac915b80 RBX: 000000003fec3baa RCX: 0000000000007318                                                                             
-Sep 10 11:40:24 px-ws kernel: RDX: 0000000000000000 RSI: 00007f205fe7fed0 RDI: 000055cc4efef980                                                                             
-Sep 10 11:40:24 px-ws kernel: RBP: 000000000007fed0 R08: 0000000000000000 R09: 0000000000000007                                                                             
-Sep 10 11:40:24 px-ws kernel: R10: 0000000000000030 R11: 0000000000000000 R12: 0000000000000242                                                                             
-Sep 10 11:40:24 px-ws kernel: R13: 0000000000000000 R14: 000055cc4efe9260 R15: 00007f20abddb700                                                                             
-
-The first four lines of mwriteprotect_range() are trying to set things
-up (they have wp=1) which seems fine.  Note that lines 5-6 of
-mwriteprotect_range() entry (marked with [1]) is the wp=0 one where
-QEMU tries to recover a write protect page fault for a 4K page.  We
-can see that the vm_flags has VM_WRITE properly set (bit 2 of
-0xa0121073) rather than missing.
-
-Though we can see the newprot didn't really have that VM_WRITE set but
-it's expected since in vm_get_page_prot (further, which is actually
-protection_map) we'll drop that write bit due to the protect mapping
-(READ+WRITE will map to PAGE_COPY, which does not have VM_WRITE set).
-
-> 
-> To me this all points out so a bug somewhere in userspace or a miss use
-> of userfaultfd. Here is what i believe to be the chain of event:
-> 
->   1 QEMU or vCPU write to the affected ufaultfd range and this set the pte
->     dirty bit on all the entry in the affected range
-> 
->   ...
-> 
->   2 QEMU write protect the affected range with UFFDIO_WRITEPROTECT and
->     UFFDIO_WRITEPROTECT_MODE_WP flag set. This clear the pte write bit
->     and thus write protect the range. Because it is anonymous memory and
->     soft dirty is likely disabled, the dirty bit set in 1 is still there
->     and is preserved.
-> 
->   3 vCPU tries to write to the affected range. This trigger a userfaultfd
->     and QEMU handle it and call UFFDIO_WRITEPROTECT but this time without
->     UFFDIO_WRITEPROTECT_MODE_WP flag (ie to unprotect).
-> 
->     For some reasons the affected vma do not have the VM_WRITE flags set
->     anymore probably through mprotect() syscall by QEMU. So that the new
->     prot for the pte do not have the write bit set.
-
-Please refers to [1] above.  The crash happens stably every time if
-without my fix patch applied.
-
-> 
->     But because of the change_pte_range() optimization and because the
->     pte dirty bit is set from 1 then the pte write bit set which is wrong
->     as the VM_WRITE have been clear.
-
-I actually have dumped the dirty flag there too and it's missing, and
-that's why I think we should have the bit.  It's indeed a bit awkward
-at least to me since when running with the userfault-wp tree the dirty
-bit optimization becomes more like a correctness issue rather than a
-performance issue.
-
-> 
-> 
-> So hence there is a bug in QEMU somewhere is my best guess.
-> 
-> Note that this means that the:
->   https://git.kernel.org/pub/scm/linux/kernel/git/andrea/aa.git/commit/?id=b16cb9fcb76bec59cbe1427e73246dc81a4942e2
-> 
-> Needs to be updated with:
-> -change_protection(dst_vma, start, start + len, newprot, !enable_wp, 0);
-> +change_protection(dst_vma, start, start + len, newprot, 0, 0);
-
-I'm not sure about this suggestion as well - if we keep the
-change_pte_range() with dirty_accountable=false, then how could we
-further apply the WM_WRITE flag at all with current implementation
-(note that with the dirty bit optimization, we'll just ignore the
-VM_WRITE bit if dirty_accountable is false...)?  If without VM_WRITE,
-how could we fix a write-protect page fault after all from userspace?
-
-Please correct me if I missed anything important.
-
-Thanks!
-
--- 
-Peter Xu
