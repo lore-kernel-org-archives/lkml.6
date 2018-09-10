@@ -2,131 +2,126 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67F03C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 07:35:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B955C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 07:36:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0ACA2206BB
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 07:35:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0ACA2206BB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2139C206BB
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 07:36:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2139C206BB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727843AbeIJM2g (ORCPT
+        id S1727942AbeIJM3Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 08:28:36 -0400
-Received: from mga04.intel.com ([192.55.52.120]:58106 "EHLO mga04.intel.com"
+        Mon, 10 Sep 2018 08:29:25 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:55043 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727584AbeIJM2g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 08:28:36 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2018 00:35:55 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,355,1531810800"; 
-   d="scan'208";a="88641967"
-Received: from kuha.fi.intel.com ([10.237.72.189])
-  by fmsmga001.fm.intel.com with SMTP; 10 Sep 2018 00:35:30 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 10 Sep 2018 10:35:29 +0300
-Date:   Mon, 10 Sep 2018 10:35:29 +0300
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     "Angus Ainslie (Purism)" <angus@akkea.ca>
-Cc:     groeck7@gmail.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] usb: typec: get the vbus source and charge values
- from the devicetree
-Message-ID: <20180910073529.GL25121@kuha.fi.intel.com>
-References: <20180906192644.24587-1-angus@akkea.ca>
- <20180909180531.28092-1-angus@akkea.ca>
+        id S1727584AbeIJM3Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 08:29:25 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 25DD12071D; Mon, 10 Sep 2018 09:36:44 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-30-219.w90-88.abo.wanadoo.fr [90.88.15.219])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 94CF7204AE;
+        Mon, 10 Sep 2018 09:36:33 +0200 (CEST)
+Date:   Mon, 10 Sep 2018 09:36:32 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        "David S . Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Andrew Lunn <andrew@lunn.ch>, Alban Bedel <albeu@free.fr>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH v2 11/16] nvmem: add support for cell info
+Message-ID: <20180910093632.3a9337a9@bbrezillon>
+In-Reply-To: <21ec4e6f-aa39-66cf-af32-d9e8e85f4961@linaro.org>
+References: <20180907100750.14564-1-brgl@bgdev.pl>
+        <20180907100750.14564-12-brgl@bgdev.pl>
+        <21ec4e6f-aa39-66cf-af32-d9e8e85f4961@linaro.org>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180909180531.28092-1-angus@akkea.ca>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 09, 2018 at 12:05:31PM -0600, Angus Ainslie (Purism) wrote:
-> If the board is being powered by USB disabling the source and sink
-> can remove power from the board. Allow the source and sink to be
-> initallized based on devicetree values.
+Hi Srinivas,
+
+On Mon, 10 Sep 2018 08:32:21 +0100
+Srinivas Kandagatla <srinivas.kandagatla@linaro.org> wrote:
+
+> On 07/09/18 11:07, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > 
+> > Add new structs and routines allowing users to define nvmem cells from
+> > machine code. This global list of entries is parsed when a provider
+> > is registered and cells are associated with the relevant nvmem_device
+> > struct.
+> > 
+> > A possible improvement for the future is to allow users to register
+> > cell tables after the nvmem provider has been registered by updating
+> > the cell list at each call to nvmem_(add|del)_cell_table().
+> > 
+> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > ---
+> >   MAINTAINERS                   |  1 +
+> >   drivers/nvmem/core.c          | 97 ++++++++++++++++++++++++++++++++++-  
 > 
-> Changed since V1:
+> I see some of this code is removed in first patch and added back here, I 
+> dont really see a value in doing this in a single series of patchset.
 > 
-> use devicetree values instead of hardcoded initialization.
+> I would recommend "[PATCH v2 01/16] nvmem: remove unused APIs" and this 
+> patch to be merged.
 > 
-> Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
-> ---
->  .../bindings/connector/usb-connector.txt           |  4 ++++
->  drivers/usb/typec/tcpm.c                           | 14 +++++++++++---
->  2 files changed, 15 insertions(+), 3 deletions(-)
+> >   include/linux/nvmem-machine.h | 41 +++++++++++++++
+> >   3 files changed, 138 insertions(+), 1 deletion(-)
+> >   create mode 100644 include/linux/nvmem-machine.h
+> > 
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 9ad052aeac39..a520924bf0a9 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -10391,6 +10391,7 @@ F:	drivers/nvmem/
+> >   F:	Documentation/devicetree/bindings/nvmem/
+> >   F:	Documentation/ABI/stable/sysfs-bus-nvmem
+> >   F:	include/linux/nvmem-consumer.h
+> > +F:	include/linux/nvmem-machine.h
+> >   F:	include/linux/nvmem-provider.h
+> >   
+> >   NXP SGTL5000 DRIVER
+> > diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+> > index 17307015905a..854baa0559a1 100644
+> > --- a/drivers/nvmem/core.c
+> > +++ b/drivers/nvmem/core.c  
+> ...
+> >    *
+> > diff --git a/include/linux/nvmem-machine.h b/include/linux/nvmem-machine.h
+> > new file mode 100644
+> > index 000000000000..1e199dfaacab
+> > --- /dev/null
+> > +++ b/include/linux/nvmem-machine.h  
 > 
-> diff --git a/Documentation/devicetree/bindings/connector/usb-connector.txt b/Documentation/devicetree/bindings/connector/usb-connector.txt
-> index 8855bfcfd778..afe851a713c3 100644
-> --- a/Documentation/devicetree/bindings/connector/usb-connector.txt
-> +++ b/Documentation/devicetree/bindings/connector/usb-connector.txt
-> @@ -22,6 +22,10 @@ Optional properties for usb-c-connector:
->    or Try.SRC, should be "sink" for Try.SNK or "source" for Try.SRC.
->  - data-role: should be one of "host", "device", "dual"(DRD) if typec
->    connector supports USB data.
-> +- init-vbus-source: set the initalization value for vbus-source to true.
-> +  If this property is not present the initial value will be false.
-> +- init-vbus-charge: set the initalization value for vbus-charge to true.
-> +  If this property is not present the initial value will be false.
+> This should go in nvmem-consumer.h, I don't think we should add header 
+> files for each usecase. These are nvmem consumers so lets put them in 
+> correct header file.
 
-If you put the description of those properties here, you are going to
-need to rename them. Those describe tcpm specific properties, but to
-that file you want to put descriptions of generic properties.
+Actually no, it should go in nvmem-provider.h. Consumer should not be
+allowed to define cells, only reference existing ones.
 
-Your problem is that you can not cope with a lose of VBUS as a sink,
-right? For that you just need one boolean device property IMO.
-Something like depend-on-vbus.
+Regards,
 
->  Required properties for usb-c-connector with power delivery support:
->  - source-pdos: An array of u32 with each entry providing supported power
-> diff --git a/drivers/usb/typec/tcpm.c b/drivers/usb/typec/tcpm.c
-> index ca7bedb46f7f..7f5d4f209e07 100644
-> --- a/drivers/usb/typec/tcpm.c
-> +++ b/drivers/usb/typec/tcpm.c
-> @@ -2462,9 +2462,7 @@ static int tcpm_init_vbus(struct tcpm_port *port)
->  {
->  	int ret;
->  
-> -	ret = port->tcpc->set_vbus(port->tcpc, false, false);
-> -	port->vbus_source = false;
-> -	port->vbus_charge = false;
-> +	ret = port->tcpc->set_vbus(port->tcpc, port->vbus_source, port->vbus_charge);
->  	return ret;
->  }
->  
-> @@ -4266,6 +4264,16 @@ static int tcpm_fw_get_caps(struct tcpm_port *port,
->  		return -EINVAL;
->  	port->port_type = port->typec_caps.type;
->  
-> +	if (fwnode_property_present(fwnode, "init-vbus-source"))
-> +		port->vbus_source = true;
-> +	else
-> +		port->vbus_source = false;
-> +
-> +	if (fwnode_property_present(fwnode, "init-vbus-charge"))
-> +	        port->vbus_charge = true;
-> +	else
-> +	        port->vbus_charge = false;
-> +
->  	if (port->port_type == TYPEC_PORT_SNK)
->  		goto sink;
->  
-> -- 
-> 2.17.1
-
-Thanks,
-
--- 
-heikki
+Boris
