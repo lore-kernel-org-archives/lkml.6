@@ -2,144 +2,370 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 850DCC4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 03:27:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D3C5C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 03:28:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5290206BB
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 03:27:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5290206BB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name
+	by mail.kernel.org (Postfix) with ESMTP id C3B482086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 03:28:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="a2Ur9Fpo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3B482086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726725AbeIJITB (ORCPT
+        id S1726866AbeIJITw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 04:19:01 -0400
-Received: from vps-vb.mhejs.net ([37.28.154.113]:36082 "EHLO vps-vb.mhejs.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726024AbeIJITB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 04:19:01 -0400
-Received: from MUA
-        by vps-vb.mhejs.net with esmtps (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <mail@maciej.szmigiero.name>)
-        id 1fz7mI-0006gd-US; Mon, 10 Sep 2018 00:01:58 +0200
-Subject: Re: [PATCH] r8169: inform about CLKRUN protocol issue when behind a
- CardBus bridge
-To:     David Miller <davem@davemloft.net>
-Cc:     nic_swsd@realtek.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <fcf6a23a-4721-5912-281e-488eb6a736c6@maciej.szmigiero.name>
- <20180909.080907.992434701890231030.davem@davemloft.net>
-From:   "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Openpgp: preference=signencrypt
-Autocrypt: addr=mail@maciej.szmigiero.name; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <0a5f601c-88cc-4d5e-94f1-f38dbd093fc0@maciej.szmigiero.name>
-Date:   Mon, 10 Sep 2018 00:01:53 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <20180909.080907.992434701890231030.davem@davemloft.net>
-Content-Type: text/plain; charset=utf-8
+        Mon, 10 Sep 2018 04:19:52 -0400
+Received: from mail-eopbgr40083.outbound.protection.outlook.com ([40.107.4.83]:65046
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725972AbeIJITw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 04:19:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Hy0BmM4szB6Yq6rk/p22HvjoOlhwwt4M1AHi1R4ipUc=;
+ b=a2Ur9FpoD4+vUDvi6OIgAyPhhnudtT2p6WvsP8MW7lQzdZAWuBTXdm1K4R6ORdUmMTOvn+skWtO4+QBeP9GfzgqublMgRcmcrhOp2kDeys2I0fb1/ScaFBMhg/JwSvLCIqJjHT13cS9nn00W96orxEqtiWLPFOrdM1FG4S7m8hA=
+Received: from AM5PR0402MB2865.eurprd04.prod.outlook.com (10.175.41.148) by
+ AM5PR0402MB2753.eurprd04.prod.outlook.com (10.175.41.7) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1122.15; Mon, 10 Sep 2018 03:27:52 +0000
+Received: from AM5PR0402MB2865.eurprd04.prod.outlook.com
+ ([fe80::71ae:eae6:c08c:4766]) by AM5PR0402MB2865.eurprd04.prod.outlook.com
+ ([fe80::71ae:eae6:c08c:4766%9]) with mapi id 15.20.1122.019; Mon, 10 Sep 2018
+ 03:27:52 +0000
+From:   Ran Wang <ran.wang_1@nxp.com>
+To:     "Wang, Dongsheng" <dongsheng.wang@hxt-semitech.com>
+CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Leo Li <leoyang.li@nxp.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-pm@lists.linux-foundation.org" 
+        <linux-pm@lists.linux-foundation.org>
+Subject: RE: [PATCH 1/3] soc: fsl: add Platform PM driver QorIQ platforms
+Thread-Topic: [PATCH 1/3] soc: fsl: add Platform PM driver QorIQ platforms
+Thread-Index: AQHUQN58CVZQFHBBjEyvga7omBlOu6To5pkQ
+Date:   Mon, 10 Sep 2018 03:27:51 +0000
+Message-ID: <AM5PR0402MB28658124F24A83D8715F9C6DF1050@AM5PR0402MB2865.eurprd04.prod.outlook.com>
+References: <20180831035219.31619-1-ran.wang_1@nxp.com>
+ <366f03eab44e489b9fef82fb8e8f3c3b@HXTBJIDCEMVIW02.hxtcorp.net>
+ <AM5PR0402MB2865774C03981F9808AB3A13F1000@AM5PR0402MB2865.eurprd04.prod.outlook.com>
+ <35f171989af34850bd192c2b4de9b43b@HXTBJIDCEMVIW02.hxtcorp.net>
+In-Reply-To: <35f171989af34850bd192c2b4de9b43b@HXTBJIDCEMVIW02.hxtcorp.net>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=ran.wang_1@nxp.com; 
+x-originating-ip: [92.121.36.197]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM5PR0402MB2753;6:B6PBNMqk+iMfZflS3pVoWlzPLrj7DgzvLpbErpJvhVMPhA8clXUL6Z/O4ViJojZ6258Ht6+KR4o22j5PPHbkric30DICQgvUfLB7swLLgBrBeQRM+9GgR4XGkKhJmVlC6IGwYpMLp+++J51UFMLi4pGCsdAybMfuTECoFtJnJr1/BhxTStrDEfbTWPWhjTbr7vHobNq/EgI1ZGVe6wYLXNV3Bwx9JV72fXRIKsw4Cphb6CCihsPCcousVPKowQ/ITr2KtoTU4rJv5W4tIxMBRsrPVk6NnEa5VcQt38A52RQUoR8LgUmzMN6LJ9CmgoQ0E2qkRXQ9fSQuQO7VQ+fbDsH0KVGdRFcmaH0KwigWOP6GApO1OFx7+7mX4yGypskJstjZe2xqYBz9swi5Vwva4ZJsnEvuvz2bw2FPQeS9sCC3574puWNNzE2+LzkN8ikXBfUmkZyxwRdnMu6UjZ4vQg==;5:/hN6kfgUPWiINsnmUmMVz5PDIo07DB7QVMfXF+BaG2jvmm3xTICEyJZMofbfR81BQgEHp3tW5qKptdQmETLdvcJUiNIOiyy6obSQBTLtInhN5zsf8CLs5GlfJhsZOIl6EY7s9hQ/Inlo98YEYmK1DYTad+lC7/5AvHN1nGmKmqs=;7:Rbsp20zBPsQCStaTm+Zhimn/v5p2bRZDuQMRPgQWzAKkyBRENTGFMJtd+aRrP+n1oYTcEiYR2H/zmxWAu0x/RY0H0mOGoLn5OYgrcZYkjNtHaoZPD8rAVQjWsZHZf6hhZ21cpYW5UGd2vADfUN8aydmeHFV4j+0Kt1PKp3J0LWLtFhs3dlFLKFIMotNBVR+fE5qIC39R2OpBobWhbxkADVM35wCC7ZGxNFyZn3cy/6cv6XJVCc7xgzQmnEer5ioG
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 01d3dc26-cba3-485a-14c2-08d616cd63f1
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM5PR0402MB2753;
+x-ms-traffictypediagnostic: AM5PR0402MB2753:
+x-microsoft-antispam-prvs: <AM5PR0402MB2753338C10715B440ECF4162F1050@AM5PR0402MB2753.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(185117386973197);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823301075)(93006095)(93001095)(10201501046)(3002001)(3231311)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699050);SRVR:AM5PR0402MB2753;BCL:0;PCL:0;RULEID:;SRVR:AM5PR0402MB2753;
+x-forefront-prvs: 07915F544A
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(39860400002)(376002)(136003)(396003)(366004)(189003)(199004)(55016002)(8676002)(7696005)(229853002)(14454004)(54906003)(6506007)(53546011)(53936002)(316002)(6916009)(9686003)(93886005)(5660300001)(26005)(99286004)(186003)(86362001)(8936002)(2900100001)(102836004)(76176011)(6436002)(74316002)(486006)(7736002)(446003)(11346002)(305945005)(97736004)(6246003)(106356001)(25786009)(5250100002)(476003)(105586002)(33656002)(2906002)(81156014)(81166006)(3846002)(6116002)(68736007)(4326008)(66066001)(14444005)(478600001)(256004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM5PR0402MB2753;H:AM5PR0402MB2865.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: Y8+3zJJSIPRjk/48oroT165XlHxFnxPndKwUZIe4ARCoOBIW1ch5xyZ/yje9Ezoy7LJqKEj1tAhMdGhprEGsz1sJJfyfK4NFCVPb0pCqYgjoWfEuCweoW9hzh/8gPxEFFHGAMhNqdtf1Fu+jbM5I9UDbqup9ZC4rRRnk7Ur/XWgydy+AJLeI0dZz2e/d3xRARDCrjGieroH40gV1Db0ThDS9gzeorr4sR7UHQbRAmgJr7FuFpeNavrwQxIRyD639fdhbjU5vgzJ9wdbOS4exvB9+HhWfbbKK7Mr3EOS42jkxlqNbYc6dK2uAEEdm5weY+2p0ScAxX1nqjcUInAu6w37Qszooruc0kkFMbjKVHWo=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 01d3dc26-cba3-485a-14c2-08d616cd63f1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Sep 2018 03:27:51.9053
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0402MB2753
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09.09.2018 17:09, David Miller wrote:
-> From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-> Date: Thu, 6 Sep 2018 18:10:53 +0200
-> 
->> It turns out that at least some r8169 CardBus cards don't operate correctly
->> when CLKRUN protocol is enabled - the symptoms are recurring timeouts
->> during PHY reads / writes and a very high packet drop rate.
->> This is true of at least RTL8169sc/8110sc (XID 18000000) chip in
->> Sunrich C-160 CardBus NIC.
->>
->> Such behavior was observed on two separate laptops, the first one has
->> TI PCIxx12 CardBus bridge, while the second one has Ricoh RL5c476II.
->>
->> Setting CLKRUN_En bit in CONFIG 3 register via an EEPROM write didn't
->> improve things in either case (this is probably why it wasn't set by the
->> card manufacturer).
->> The only way to fix the issue was to disable the CLKRUN protocol either
->> in the CardBus bridge (only possible in the TI one) or in the southbridge.
->>
->> Since the problem takes some time to debug let's warn people that have
->> the suspect configuration (Conventional PCI r8169 NIC behind a CardBus
->> bridge) so they know what they can do if they encounter it.
->>
->> Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
-> 
-> I don't know about this.
-> 
-> Barking at the user in the kernel log about an obscure knob (which btw
-> doesn't exist for all cardbus bridges without other patches you are
-> posting elsewhere) is rarely effective.
-> 
-> We should just disable clkrun automatically we know it causes problems.
+Hi Dongsheng,
 
-Unfortunately, as you wrote above, this workaround is only available on
-TI CardBus bridges (and I hope will be available for two Ricoh ones soon,
-too), while for other CardBus bridges it is either not implemented or
-not available at all.
-So we can't reliably just turn it on automatically when needed.
+On 2018/9/7 18:16, Dongsheng Wang wrote:
+>=20
+> On 2018/9/7 16:49, Ran Wang wrote:
+> > Hi Dongsheng
+> >
+> >> On 2018/9/5 11:05, Dongsheng Wang wrote:
+> >>
+> >> Please change your comments style.
+> >>
+> >> On 2018/8/31 11:57, Ran Wang wrote:
+> >>> This driver is to provide a independent framework for PM service
+> >>> provider and consumer to configure system level wake up feature. For
+> >>> example, RCPM driver could register a callback function on this
+> >>> platform first, and Flex timer driver who want to enable timer wake
+> >>> up feature, will call generic API provided by this platform driver,
+> >>> and then it will trigger RCPM driver to do it. The benefit is to
+> >>> isolate the user and service, such as flex timer driver will not
+> >>> have to know the implement details of wakeup function it require.
+> >>> Besides, it is also easy for service side to upgrade its logic when
+> >>> design is changed and remain user side unchanged.
+> >>>
+> >>> Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
+> >>> ---
+> >>>  drivers/soc/fsl/Kconfig   |   14 +++++
+> >>>  drivers/soc/fsl/Makefile  |    1 +
+> >>>  drivers/soc/fsl/plat_pm.c |  144
+> >> +++++++++++++++++++++++++++++++++++++++++++++
+> >>>  include/soc/fsl/plat_pm.h |   22 +++++++
+> >>>  4 files changed, 181 insertions(+), 0 deletions(-)  create mode
+> >>> 100644 drivers/soc/fsl/plat_pm.c  create mode 100644
+> >>> include/soc/fsl/plat_pm.h
+> >>>
+> >>> diff --git a/drivers/soc/fsl/Kconfig b/drivers/soc/fsl/Kconfig index
+> >>> 7a9fb9b..6517412 100644
+> >>> --- a/drivers/soc/fsl/Kconfig
+> >>> +++ b/drivers/soc/fsl/Kconfig
+> >>> @@ -16,3 +16,17 @@ config FSL_GUTS
+> >>>  	  Initially only reading SVR and registering soc device are support=
+ed.
+> >>>  	  Other guts accesses, such as reading RCW, should eventually be
+> >> moved
+> >>>  	  into this driver as well.
+> >>> +
+> >>> +config FSL_PLAT_PM
+> >>> +	bool "Freescale platform PM framework"
+> >>> +	help
+> >>> +	  This driver is to provide a independent framework for PM service
+> >>> +	  provider and consumer to configure system level wake up feature.
+> >> For
+> >>> +	  example, RCPM driver could register a callback function on this
+> >>> +	  platform first, and Flex timer driver who want to enable timer wa=
+ke
+> >>> +	  up feature, will call generic API provided by this platform drive=
+r,
+> >>> +	  and then it will trigger RCPM driver to do it. The benefit is to
+> >>> +	  isolate the user and service, such as  flex timer driver will not
+> >>> +	  have to know the implement details of wakeup function it require.
+> >>> +	  Besides, it is also easy for service side to upgrade its logic wh=
+en
+> >>> +	  design changed and remain user side unchanged.
+> >>> diff --git a/drivers/soc/fsl/Makefile b/drivers/soc/fsl/Makefile
+> >>> index
+> >>> 44b3beb..8f9db23 100644
+> >>> --- a/drivers/soc/fsl/Makefile
+> >>> +++ b/drivers/soc/fsl/Makefile
+> >>> @@ -6,3 +6,4 @@ obj-$(CONFIG_FSL_DPAA)                 +=3D qbman/
+> >>>  obj-$(CONFIG_QUICC_ENGINE)		+=3D qe/
+> >>>  obj-$(CONFIG_CPM)			+=3D qe/
+> >>>  obj-$(CONFIG_FSL_GUTS)			+=3D guts.o
+> >>> +obj-$(CONFIG_FSL_PLAT_PM)	+=3D plat_pm.o
+> >>> diff --git a/drivers/soc/fsl/plat_pm.c b/drivers/soc/fsl/plat_pm.c
+> >>> new file mode 100644 index 0000000..19ea14e
+> >>> --- /dev/null
+> >>> +++ b/drivers/soc/fsl/plat_pm.c
+> >>> @@ -0,0 +1,144 @@
+> >>> +// SPDX-License-Identifier: GPL-2.0 // // plat_pm.c - Freescale
+> >>> +platform PM framework // // Copyright 2018 NXP // // Author: Ran
+> >>> +Wang <ran.wang_1@nxp.com>,
+> >>> +
+> >>> +#include <linux/kernel.h>
+> >>> +#include <linux/device.h>
+> >>> +#include <linux/list.h>
+> >>> +#include <linux/slab.h>
+> >>> +#include <linux/err.h>
+> >>> +#include <soc/fsl/plat_pm.h>
+> >>> +
+> >>> +
+> >>> +struct plat_pm_t {
+> >>> +	struct list_head node;
+> >>> +	fsl_plat_pm_handle handle;
+> >>> +	void *handle_priv;
+> >>> +	spinlock_t	lock;
+> >>> +};
+> >>> +
+> >>> +static struct plat_pm_t plat_pm;
+> >>> +
+> >>> +// register_fsl_platform_wakeup_source - Register callback function
+> >>> +to plat_pm // @handle: Pointer to handle PM feature requirement //
+> >>> +@handle_priv: Handler specific data struct // // Return 0 on
+> >>> +success other negative errno int
+> >>> +register_fsl_platform_wakeup_source(fsl_plat_pm_handle handle,
+> >>> +		void *handle_priv)
+> >>> +{
+> >>> +	struct plat_pm_t *p;
+> >>> +	unsigned long	flags;
+> >>> +
+> >>> +	if (!handle) {
+> >>> +		pr_err("FSL plat_pm: Handler invalid, reject\n");
+> >>> +		return -EINVAL;
+> >>> +	}
+> >>> +
+> >>> +	p =3D kmalloc(sizeof(*p), GFP_KERNEL);
+> >>> +	if (!p)
+> >>> +		return -ENOMEM;
+> >>> +
+> >>> +	p->handle =3D handle;
+> >>> +	p->handle_priv =3D handle_priv;
+> >>> +
+> >>> +	spin_lock_irqsave(&plat_pm.lock, flags);
+> >>> +	list_add_tail(&p->node, &plat_pm.node);
+> >>> +	spin_unlock_irqrestore(&plat_pm.lock, flags);
+> >>> +
+> >>> +	return 0;
+> >>> +}
+> >>> +EXPORT_SYMBOL_GPL(register_fsl_platform_wakeup_source);
+> >>> +
+> >>> +// Deregister_fsl_platform_wakeup_source - deregister callback
+> >>> +function // @handle_priv: Handler specific data struct // // Return
+> >>> +0 on success other negative errno int
+> >>> +deregister_fsl_platform_wakeup_source(void *handle_priv) {
+> >>> +	struct plat_pm_t *p, *tmp;
+> >>> +	unsigned long	flags;
+> >>> +
+> >>> +	spin_lock_irqsave(&plat_pm.lock, flags);
+> >>> +	list_for_each_entry_safe(p, tmp, &plat_pm.node, node) {
+> >>> +		if (p->handle_priv =3D=3D handle_priv) {
+> >>> +			list_del(&p->node);
+> >>> +			kfree(p);
+> >>> +		}
+> >>> +	}
+> >>> +	spin_unlock_irqrestore(&plat_pm.lock, flags);
+> >>> +	return 0;
+> >>> +}
+> >>> +EXPORT_SYMBOL_GPL(deregister_fsl_platform_wakeup_source);
+> >>> +
+> >>> +// fsl_platform_wakeup_config - Configure wakeup source by calling
+> >>> +handlers // @dev: pointer to user's device struct // @flag: to tell
+> >>> +enable or disable wakeup source // // Return 0 on success other
+> >>> +negative errno int fsl_platform_wakeup_config(struct device *dev,
+> >>> +bool flag) {
+> >>> +	struct plat_pm_t *p;
+> >>> +	int ret;
+> >>> +	bool success_handled;
+> >>> +	unsigned long	flags;
+> >>> +
+> >>> +	success_handled =3D false;
+> >>> +
+> >>> +	// Will consider success if at least one callback return 0.
+> >>> +	// Also, rest handles still get oppertunity to be executed
+> >>> +	spin_lock_irqsave(&plat_pm.lock, flags);
+> >>> +	list_for_each_entry(p, &plat_pm.node, node) {
+> >>> +		if (p->handle) {
+> >>> +			ret =3D p->handle(dev, flag, p->handle_priv);
+> >>> +			if (!ret)
+> >>> +				success_handled =3D true;
+> >> Miss a break?
+> > Actually my idea is to allow more than one registered handler to
+> > handle this request, so I define a flag rather than return to
+> > indicated if there is at least one handler successfully do it. This des=
+ign
+> might give more flexibility to framework when running.
+> There is only one flag(success_handled) here, how did know which handler
+> failed?
+>=20
+> BTW, I don't think we need this flag. We can only use the return value.
 
-BTW, it seems that my RTL8169 card isn't the only model affected.
-In fact, the original CLKRUN protocol disabling workaround on TI bridges
-was implemented in 2005 because somebody's RTL8139 also had this
-problem: https://lkml.org/lkml/2005/2/5/129
+Well, the plat_pm driver will not handle most errors returned by registered
+handlers, except -NODEV. For -NODEV, plat_pm driver consider that handler
+cannot support this request and will go to call next one.=20
 
-The main reason I wanted to add this warning is to save people time
-debugging this issue, as it is rather unobvious.
-But if this solution is unacceptable then I hope at least this
-description will pop out in search results when searching for some
-related keywords.
+Besides, actually it doesn't restrict that request can be served by only on=
+e=20
+handler. So I add that flag to cover the case of more than one handler can=
+=20
+successfully support and others might return -NODEV.
 
-Thanks,
-Maciej
+Regards,
+Ran
+
+> Cheers,
+> Dongsheng
+>=20
+> >>> +			else if (ret !=3D -ENODEV) {
+> >>> +				pr_err("FSL plat_pm: Failed to config wakeup
+> >> source:%d\n", ret);
+> >> Please unlock before return.
+> > Yes, will fix it in next version, thanks for pointing out!
+> >
+> >>> +				return ret;
+> >>> +			}
+> >>> +		} else
+> >>> +			pr_warn("FSL plat_pm: Invalid handler detected,
+> >> skip\n");
+> >>> +	}
+> >>> +	spin_unlock_irqrestore(&plat_pm.lock, flags);
+> >>> +
+> >>> +	if (success_handled =3D=3D false) {
+> >>> +		pr_err("FSL plat_pm: Cannot find the matchhed handler for
+> >> wakeup source config\n");
+> >>> +		return -ENODEV;
+> >>> +	}
+> >> Add this into the loop.
+> > My design is that if the 1st handler return -ENODEV to indicated this
+> > device it doesn't support, then the framework will continue try 2nd
+> handler...
+> >
+> > So I think it is needed to place this checking out of loop, what do you=
+ say?
+> >
+> > Regards,
+> > Ran
+> >>> +
+> >>> +	return 0;
+> >>> +}
+> >>> +
+> >>> +// fsl_platform_wakeup_enable - Enable wakeup source // @dev:
+> >>> +pointer to user's device struct // // Return 0 on success other
+> >>> +negative errno int fsl_platform_wakeup_enable(struct device *dev) {
+> >>> +	return fsl_platform_wakeup_config(dev, true); }
+> >>> +EXPORT_SYMBOL_GPL(fsl_platform_wakeup_enable);
+> >>> +
+> >>> +// fsl_platform_wakeup_disable - Disable wakeup source // @dev:
+> >>> +pointer to user's device struct // // Return 0 on success other
+> >>> +negative errno int fsl_platform_wakeup_disable(struct device *dev) {
+> >>> +	return fsl_platform_wakeup_config(dev, false); }
+> >>> +EXPORT_SYMBOL_GPL(fsl_platform_wakeup_disable);
+> >>> +
+> >>> +static int __init fsl_plat_pm_init(void) {
+> >>> +	spin_lock_init(&plat_pm.lock);
+> >>> +	INIT_LIST_HEAD(&plat_pm.node);
+> >>> +	return 0;
+> >>> +}
+> >>> +
+> >>> +core_initcall(fsl_plat_pm_init);
+> >>> diff --git a/include/soc/fsl/plat_pm.h b/include/soc/fsl/plat_pm.h
+> >>> new file mode 100644 index 0000000..bbe151e
+> >>> --- /dev/null
+> >>> +++ b/include/soc/fsl/plat_pm.h
+> >>> @@ -0,0 +1,22 @@
+> >>> +// SPDX-License-Identifier: GPL-2.0 // // plat_pm.h - Freescale
+> >>> +platform PM Header // // Copyright 2018 NXP // // Author: Ran Wang
+> >>> +<ran.wang_1@nxp.com>,
+> >>> +
+> >>> +#ifndef __FSL_PLAT_PM_H
+> >>> +#define __FSL_PLAT_PM_H
+> >>> +
+> >>> +typedef int (*fsl_plat_pm_handle)(struct device *dev, bool flag,
+> >>> +		void *handle_priv);
+> >>> +
+> >>> +int register_fsl_platform_wakeup_source(fsl_plat_pm_handle handle,
+> >>> +		void *handle_priv);
+> >>> +int deregister_fsl_platform_wakeup_source(void *handle_priv); int
+> >>> +fsl_platform_wakeup_config(struct device *dev, bool flag); int
+> >>> +fsl_platform_wakeup_enable(struct device *dev); int
+> >>> +fsl_platform_wakeup_disable(struct device *dev);
+> >>> +
+> >>> +#endif	// __FSL_PLAT_PM_H
+> >
+
