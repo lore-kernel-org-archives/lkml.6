@@ -2,74 +2,48 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DDB3C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:35:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E1CFC4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:35:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE64520645
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:35:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1382520645
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:35:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="ZPFADis7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE64520645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="E/hkDwB9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1382520645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728258AbeIJVaj (ORCPT
+        id S1728453AbeIJVan (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 17:30:39 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:50821 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728137AbeIJVaj (ORCPT
+        Mon, 10 Sep 2018 17:30:43 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:60170 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728137AbeIJVam (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 17:30:39 -0400
-Received: by mail-wm0-f68.google.com with SMTP id s12-v6so22245723wmc.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 09:35:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=LtEVNMYXuH9Tfuc/2myhioMYZ8+l6i78docegJAa92I=;
-        b=ZPFADis79vI4yVTqlt/BUWNZZXn0hu/xz4WiAIRGGOcS/+E4N1Y7wRrK/7XW7jVeD5
-         CNwwiIEV4o1zxGU6k8j8AyT2fxlqp9bfbj1LUhABtD+oJGc0n969m2y/zyFkEbPNQVYj
-         zbP16zFUSy8yeZwIP98RIBKLHMBTcE9eIUhfJ1uJFrJpzLaq1oqIYKLaIiyJFupxHXb8
-         DH1t5zRcoBcSyx03OgWtBjae1aIHx16csLmfqkOhg/1OmyvmuMvGqhMCW60j6vK+n0OH
-         ViycsKG40cBWkdL9HzFY5VyqxYEnocaQV+pK+xWkTMU/YX1uO84gFI6DB6cakCVZj/Vv
-         U8uA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=LtEVNMYXuH9Tfuc/2myhioMYZ8+l6i78docegJAa92I=;
-        b=KepUUc9K7lvowye4bMBhDTQOj4Z+mQA0ixtCFTI6K2ytIYlWGVTZax3PZxt16XqY7U
-         OOWvs9mIIUR4vYSBuz55wb9GymhBMK+Xbfm/cu8bD69UbeQQLypsIssTs4DJKAs9q1Iz
-         uj1RsRpjbD51Z3uBEY39P124/GLhhtzOpQFo9dARdsgwOoYE5EnST94cs2/QliKi+mPz
-         ozM2JzDmvFNtHCMT+JRWqxnkLYSLg5kIia5JEwRrPUFqdcPLkDSMnq1VfZbL5SK8lAAU
-         YjtCpddZVqn1ccO+Z4K+mQFVBoWNul6Dn2ArhAbywe1lFwuQ7E4aMT78zx3O6ZFlxIQs
-         CMkw==
-X-Gm-Message-State: APzg51Aczp07Cc2bMWTzBzNRVrhQhVKclRN3KxNW0rulu6lpAk2G/Zrn
-        JgQonLLNCQ4sJLTh9Hit1uRKASRxeqj5diiYyz/pZw==
-X-Google-Smtp-Source: ANB0VdaCZV3tJX9KnXc3dvSuOb7lLP5Ls8EwDUh58uDqiRT8tQ4fJCIr1S9SH4PWlhPa1pI9oLXDJSHLE3sSb2hZRq8=
-X-Received: by 2002:a1c:ac04:: with SMTP id v4-v6mr1376237wme.51.1536597343065;
- Mon, 10 Sep 2018 09:35:43 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:adf:9dcb:0:0:0:0:0 with HTTP; Mon, 10 Sep 2018 09:35:42
- -0700 (PDT)
-In-Reply-To: <20180910161143.GA1053@infradead.org>
-References: <20180906140628.GA10580@infradead.org> <alpine.DEB.2.21.1809081241310.1402@nanos.tec.linutronix.de>
- <20180910132924.GA6987@infradead.org> <alpine.DEB.2.21.1809101533330.1292@nanos.tec.linutronix.de>
- <alpine.DEB.2.21.1809101536410.1292@nanos.tec.linutronix.de>
- <20180910133902.GB21593@infradead.org> <alpine.DEB.2.21.1809101544560.1292@nanos.tec.linutronix.de>
- <20180910134915.GB30774@infradead.org> <CAAhSdy1be_ibiowifBdgBZjbHuFU=CR4rZXQDwQghVYkex5bMg@mail.gmail.com>
- <alpine.DEB.2.21.1809101805110.1419@nanos.tec.linutronix.de> <20180910161143.GA1053@infradead.org>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Mon, 10 Sep 2018 22:05:42 +0530
-Message-ID: <CAAhSdy0kgsy0QFDQGYeVy6vxu8v7UwRGbdJC9Hhz+36TNYjyGA@mail.gmail.com>
-Subject: Re: [PATCH v2 3/5] irqchip: RISC-V Local Interrupt Controller Driver
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Mon, 10 Sep 2018 17:30:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=jON4lN9Cmgjvu23tnYMldLvotKPjMdzYd/j2VBA4Wnc=; b=E/hkDwB9r1Of+nHTWMSTog1VI
+        thj0GFccdta2jOTZaw6S4xHQ6JkkBmg3FyEehFgL/400okvp5QnN7Bw0Vev48OVe36e+wPWFS+1Hi
+        LJOK4ZGD++Ra78aLSk1GEq0MTYtf6yykIBr2IrK2M/sN1T7rnxE0usVWDewmRUbX4K0is3uv1fd5l
+        oxfGJ7BP2XnJ6JqIlyIR/x5b5wTx09NuQFNRxmQ42eE94r72PU44Q1IIcFiPunlRAAHIeGBbXrk9/
+        yexiJaqfahXTLwkI8ZyGUyhzpWGg+P6frGKmV54gtxL727qdgQGd8TqY8NYOqj6uX6OxSCU5Amc8Y
+        6fFXMdBQg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fzPA7-0004hE-Rf; Mon, 10 Sep 2018 16:35:43 +0000
+Date:   Mon, 10 Sep 2018 09:35:43 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Anup Patel <anup@brainfault.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
         Jason Cooper <jason@lakedaemon.net>,
         Marc Zyngier <marc.zyngier@arm.com>,
@@ -79,33 +53,42 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Albert Ou <aou@eecs.berkeley.edu>,
         Palmer Dabbelt <palmer@dabbelt.com>,
         linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v2 3/5] irqchip: RISC-V Local Interrupt Controller Driver
+Message-ID: <20180910163543.GA13052@infradead.org>
+References: <alpine.DEB.2.21.1809081241310.1402@nanos.tec.linutronix.de>
+ <20180910132924.GA6987@infradead.org>
+ <alpine.DEB.2.21.1809101533330.1292@nanos.tec.linutronix.de>
+ <alpine.DEB.2.21.1809101536410.1292@nanos.tec.linutronix.de>
+ <20180910133902.GB21593@infradead.org>
+ <alpine.DEB.2.21.1809101544560.1292@nanos.tec.linutronix.de>
+ <20180910134915.GB30774@infradead.org>
+ <CAAhSdy1be_ibiowifBdgBZjbHuFU=CR4rZXQDwQghVYkex5bMg@mail.gmail.com>
+ <20180910161328.GA13171@infradead.org>
+ <CAAhSdy2Y-XTZ12i5aV+SzraMZP1YQBhAArpER-YssPcBJNOPOA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAAhSdy2Y-XTZ12i5aV+SzraMZP1YQBhAArpER-YssPcBJNOPOA@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 10, 2018 at 9:41 PM, Christoph Hellwig <hch@infradead.org> wrote:
-> On Mon, Sep 10, 2018 at 06:07:12PM +0200, Thomas Gleixner wrote:
->> > Considering above, it is better to have a distinct irqchip and
->> > irq_domain for all local interrupts (just like this patch).
->>
->> If that's the future usage
->
-> It's not, at least there has been no proposal for that so far, and I
-> don't really think it is how the architecture was intended.
->
->> and that's what my impression was, under which I
->> changed my mind, yes, then having a domain model is certainly of advantage
->> especially when those things end up being different per SoC.
->
-> And even if we went down the way of using the other bits it would
-> be architectureal in the RISC-V spec - these are not available for
-> vendor specific uses.
+On Mon, Sep 10, 2018 at 10:02:09PM +0530, Anup Patel wrote:
+> You are thinking very much in-context of SiFive CPUs only.
 
-I am quite sure RISC-V spec does not restrict the use of other
-local interrupts. Different CPU implementations can have their
-own local interrupts.
+No.  I think in terms of the RISC-V spec.  I could care less about
+SiFive to be honest.
 
-Regards,
-Anup
+> Lot of SOC vendors are trying to come-up with their own CPUs
+> and RISC-V spec does not restrict the use of local interrupts.
+
+Yes, it does.
+
+> The mie/mip/sie/sip/uie/uip are all machine word size so on
+> riscv64 we can theoretically have maximum 64 local interrupts.
+
+They could in theory IFF someone actually get the use case through
+the riscv privileged spec working group.
