@@ -2,127 +2,82 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82195C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:51:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11B0DC4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:53:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D83820870
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:51:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UyeYrVAg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D83820870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id A6EA520870
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:53:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6EA520870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728388AbeIJVqf (ORCPT
+        id S1728482AbeIJVsH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 17:46:35 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:36966 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727989AbeIJVqf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 17:46:35 -0400
-Received: by mail-pg1-f196.google.com with SMTP id 2-v6so10769503pgo.4
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 09:51:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Fj8Vwgnm5vG9Ic+sWDoy9ZkH/s6g4C32w7cC6u21FHk=;
-        b=UyeYrVAgbxe05YoTgD2U3AQ9jL+xQHgJeyWAv8PYbEjMiGGumYQlFYb7AjqBREWYG0
-         69SgiBHluHZbsAAEDY55h67fygaPAPr8gepUP29i7HN7C/2hZPVtBrP7cWcSpuGZfDiU
-         6UmS46NUN43GZXv6p4IwUTcARXN1OJ1JmWf/w2cgVvzfuRpR6RqUdplHhWpATHqecuMT
-         pokizQ9+d3cJMhgXze8bV8AgNFhIfzPABczW9iDsb89Ll/jFZ31Tjesv4NI30CypaNW4
-         uU8oUZCZ5OhE/BFw9mFQZNzmRoDbegkJHhqwgbOsRe1Ht2jZoIQ6tvJL1D/KQRJuqx1K
-         rNdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Fj8Vwgnm5vG9Ic+sWDoy9ZkH/s6g4C32w7cC6u21FHk=;
-        b=oFAz5j1GZdYEQo2jH/qf7ECuZAR9RMdmEDDJVGruzIRoAzkf/GIikvToEkirEAknY1
-         Y116kHQ/Ub5s460sNb6lz7dcgcjsZqR17PoxZcB6wihZRNKwHs8mvIN9SwZLCl13pI4S
-         3ghK2iL2NTFpN4k1QK8G4b2Z8RqrPk/8Chx3rbLP29J0j+isUvEt7foGqHKP50K6prYd
-         IDoHu0VB1EIoud4IrNzrt5emMtbNcFsTAsBotcuiNnDQ0c5HixB8kKMkfO0SjmC5KYzN
-         it1hmpw8qH63QzTzl8c6NLs5EZt3S3LRSktMWSSrfo187fmptQCkTQl4LnomRy4KsD8T
-         lPEw==
-X-Gm-Message-State: APzg51DuZYc5KlasoPg001pnpy8iPeCQIjZZbgBo7I5lfJdKNJwphjzr
-        7OJuw4T4d4lvv+OiRruXSNgwqV1PKUTKcO9QH+O3Ww==
-X-Google-Smtp-Source: ANB0VdZ4rclKUjkwKyig25pL38OC2WHKdpNGniTvnyF9lx39HcT9yuz54pRKteuRa1JGeDrDvGsZ8UDGPOTLGWysuKI=
-X-Received: by 2002:a63:1363:: with SMTP id 35-v6mr23759654pgt.202.1536598296091;
- Mon, 10 Sep 2018 09:51:36 -0700 (PDT)
+        Mon, 10 Sep 2018 17:48:07 -0400
+Received: from smtp2-g21.free.fr ([212.27.42.2]:49332 "EHLO smtp2-g21.free.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727989AbeIJVsH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 17:48:07 -0400
+Received: from [IPv6:2a01:cb1d:1a3:2a00:dacb:8aff:fef1:ed46] (unknown [IPv6:2a01:cb1d:1a3:2a00:dacb:8aff:fef1:ed46])
+        (Authenticated sender: sed)
+        by smtp2-g21.free.fr (Postfix) with ESMTPSA id DC5C320040B;
+        Mon, 10 Sep 2018 18:52:55 +0200 (CEST)
+Subject: Re: [PATCH v3 2/2] ARM: s3c24xx: Correct SD card write protect
+ detection on Mini2440
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     kgene@kernel.org, linux@armlinux.org.uk,
+        linux-arm-kernel@lists.infradead.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
+References: <20180907215446.15160-1-sed@free.fr>
+ <20180907215446.15160-2-sed@free.fr>
+ <CAJKOXPeYO3VR5LABP3zKYnKckqUBahKPt7MCjzuo3j6oe+d87w@mail.gmail.com>
+From:   Cedric Roux <sed@free.fr>
+Message-ID: <ba9d81bf-f000-f6ae-30b1-3e922985f655@free.fr>
+Date:   Mon, 10 Sep 2018 18:55:09 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180910060455.20409-1-stefan@agner.ch> <CAK8P3a2cc741UqFSk+hXpC2s4S+A+0FuiM1yP=Z4rC18sJHq9g@mail.gmail.com>
-In-Reply-To: <CAK8P3a2cc741UqFSk+hXpC2s4S+A+0FuiM1yP=Z4rC18sJHq9g@mail.gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 10 Sep 2018 09:51:24 -0700
-Message-ID: <CAKwvOd=E6+QSoRqcMJ0o1_q8VSMO8Zoi75e+zhj2SRSTdfacJw@mail.gmail.com>
-Subject: Re: [PATCH] include/linux/compiler-clang.h: define __naked
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Stefan Agner <stefan@agner.ch>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>, dwmw@amazon.co.uk,
-        Paul Lawrence <paullawrence@google.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAJKOXPeYO3VR5LABP3zKYnKckqUBahKPt7MCjzuo3j6oe+d87w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 10, 2018 at 5:14 AM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Mon, Sep 10, 2018 at 8:05 AM Stefan Agner <stefan@agner.ch> wrote:
-> >
-> > ARM32 arch code uses the __naked attribute. This has previously been
-> > defined in include/linux/compiler-gcc.h, which is no longer included
-> > for Clang. Define __naked for Clang. Conservatively add all attributes
-> > previously used (and supported by Clang).
-> >
-> > This fixes compile errors when building ARM32 using Clang:
-> >   arch/arm/mach-exynos/mcpm-exynos.c:193:13: error: variable has incomplete type 'void'
-> >   static void __naked exynos_pm_power_up_setup(unsigned int affinity_level)
-> >               ^
-> >
-> > Fixes: 815f0ddb346c ("include/linux/compiler*.h: make compiler-*.h mutually exclusive")
-> > Signed-off-by: Stefan Agner <stefan@agner.ch>
+On 09/10/2018 12:23 PM, Krzysztof Kozlowski wrote:
+>>  static struct s3c24xx_mci_pdata mini2440_mmc_cfg __initdata = {
+>> -       .gpio_detect   = S3C2410_GPG(8),
+>> -       .gpio_wprotect = S3C2410_GPH(8),
+>> -       .set_power     = NULL,
+>> -       .ocr_avail     = MMC_VDD_32_33|MMC_VDD_33_34,
+>> +       .gpio_detect     = S3C2410_GPG(8),
+>> +       .gpio_wprotect   = S3C2410_GPH(8),
+>> +       .wprotect_invert = 1,
+>> +       .set_power       = NULL,
+>> +       .ocr_avail       = MMC_VDD_32_33|MMC_VDD_33_34,
+> 
+> This looks unexpected... after patch 1 there should be only one change
+> - one new line added. What happened here?
 
-Cool, thanks for this patch! I'll admit I need to start testing more
-architectures with Clang.
+This is to align all the '='.
 
->
-> > +/*
-> > + * ARM32 is currently the only user of __naked supported by Clang. Follow
-> > + * gcc: Do not trace naked functions and make sure they don't get inlined.
-> > + */
-> > +#define __naked __attribute__((naked)) noinline notrace
-> > +
->
-> Please see patches 5 and 6 of the series that Miguel posted:
->
-> https://lore.kernel.org/lkml/20180908212459.19736-6-miguel.ojeda.sandonis@gmail.com/
+These were spaces before the '=' so I also used spaces.
+Should I put TABs instead? I looked in the coding style
+and didn't find anything about this specific thing
+(maybe I read too fast though).
 
-Yes, I'd prefer those 2 patches.
+And if this ends up unaligned because 'wprotect_invert'
+requires a second TAB for the others, should I do a separate
+commit?
 
->
-> I suppose we want the patch to fix clang build as soon as possible though,
-> and follow up with the cleanup for the next merge window, right?
+Thanks.
 
-Can we take Miguel's two patches from above in the ARM tree, since
-this attribute is only used on ARM, IIUC?
-
--- 
-Thanks,
-~Nick Desaulniers
+Regards,
+Cédric.
