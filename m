@@ -2,120 +2,99 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7218C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:23:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94317C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:23:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 538592087E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:23:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 538592087E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 501B320881
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:23:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="d34YHbjO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 501B320881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728121AbeIJPQx (ORCPT
+        id S1728294AbeIJPRM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 11:16:53 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60468 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727840AbeIJPQx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 11:16:53 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Mon, 10 Sep 2018 11:17:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44264 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727840AbeIJPRM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 11:17:12 -0400
+Received: from mail-wm0-f51.google.com (mail-wm0-f51.google.com [74.125.82.51])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 09C4B40216E7;
-        Mon, 10 Sep 2018 10:23:31 +0000 (UTC)
-Received: from krava (unknown [10.43.17.10])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 7709DA9F0C;
-        Mon, 10 Sep 2018 10:23:29 +0000 (UTC)
-Date:   Mon, 10 Sep 2018 12:23:28 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v8 0/3]: perf: reduce data loss when profiling highly
- parallel CPU bound workloads
-Message-ID: <20180910102328.GC15548@krava>
-References: <e1144f9d-b231-e42c-d698-4db0e62b71ff@linux.intel.com>
- <20180910091841.GA4664@gmail.com>
- <20180910095909.GA15548@krava>
- <20180910100303.GA101776@gmail.com>
- <20180910100841.GB15548@krava>
- <20180910101325.GA5544@gmail.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 093E620881;
+        Mon, 10 Sep 2018 10:23:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1536575030;
+        bh=Fa9EWbfhv2PCKSH1EMmaImakFzc0io5d5mH8SxNkKZw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=d34YHbjOcm8jyb3oWhLL9CVBE/DjRXhelsYiJmiFsQ7/doMYezvcBPTqVKXz1N69K
+         XN0qolFdM3/Y9M3tf0yKbK9ktKoRmhxLHelgHmNJB9RI/t3JFiWWp0z+9gLXh2qp9O
+         56b1bs/NopwYIF19sidwEXgZLwxP/KyNQab/FkMI=
+Received: by mail-wm0-f51.google.com with SMTP id j192-v6so20897093wmj.1;
+        Mon, 10 Sep 2018 03:23:49 -0700 (PDT)
+X-Gm-Message-State: APzg51BUPRQUb7I6YxUbuqQeS9UG+DZDGtFbm/DHWtJSCpirHpdxXd4+
+        A9FLea7E12xlR4mw1w1YcqOP0hMS1lUtOt29dZQ=
+X-Google-Smtp-Source: ANB0VdYYHFfcj4wSVN0EpgYSeJPPrHPU0qS00xi6iqNdWySQg7hZ70g1xlALFsW4tOdlr9uSgp3LaDJyG1HQiRLf0nc=
+X-Received: by 2002:a1c:d785:: with SMTP id o127-v6mr217287wmg.67.1536575028422;
+ Mon, 10 Sep 2018 03:23:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180910101325.GA5544@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 10 Sep 2018 10:23:31 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 10 Sep 2018 10:23:31 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
+References: <20180907215446.15160-1-sed@free.fr> <20180907215446.15160-2-sed@free.fr>
+In-Reply-To: <20180907215446.15160-2-sed@free.fr>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Mon, 10 Sep 2018 12:23:37 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPeYO3VR5LABP3zKYnKckqUBahKPt7MCjzuo3j6oe+d87w@mail.gmail.com>
+Message-ID: <CAJKOXPeYO3VR5LABP3zKYnKckqUBahKPt7MCjzuo3j6oe+d87w@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] ARM: s3c24xx: Correct SD card write protect
+ detection on Mini2440
+To:     sed@free.fr
+Cc:     kgene@kernel.org, linux@armlinux.org.uk,
+        linux-arm-kernel@lists.infradead.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 10, 2018 at 12:13:25PM +0200, Ingo Molnar wrote:
-> 
-> * Jiri Olsa <jolsa@redhat.com> wrote:
-> 
-> > On Mon, Sep 10, 2018 at 12:03:03PM +0200, Ingo Molnar wrote:
-> > > 
-> > > * Jiri Olsa <jolsa@redhat.com> wrote:
-> > > 
-> > > > > Per-CPU threading the record session would have so many other advantages as well (scalability, 
-> > > > > etc.).
-> > > > > 
-> > > > > Jiri did per-CPU recording patches a couple of months ago, not sure how usable they are at the 
-> > > > > moment?
-> > > > 
-> > > > it's still usable, I can rebase it and post a branch pointer,
-> > > > the problem is I haven't been able to find a case with a real
-> > > > performance benefit yet.. ;-)
-> > > > 
-> > > > perhaps because I haven't tried on server with really big cpu
-> > > > numbers
-> > > 
-> > > Maybe Alexey could pick up from there? Your concept looked fairly mature to me
-> > > and I tried it on a big-CPU box back then and there were real improvements.
-> > 
-> > too bad u did not share your results, it could have been already in ;-)
-> 
-> Yeah :-/ Had a proper round of testing on my TODO, then the big box I'd have tested it on
-> broke ...
-> 
-> > let me rebase/repost once more and let's see
-> 
-> Thanks!
-> 
-> > I think we could benefit from both multiple threads event reading
-> > and AIO writing for perf.data.. it could be merged together
-> 
-> So instead of AIO writing perf.data, why not just turn perf.data into a directory structure 
-> with per CPU files? That would allow all sorts of neat future performance features such as 
+On Fri, 7 Sep 2018 at 23:53, Cedric Roux <sed@free.fr> wrote:
+>
+> The mini2440 computer uses "active high" to signal that the "write protect"
+> of the inserted MMC is set. The current code uses the opposite, leading to
+> a wrong detection of write protection. The solution is simply to use
+> ".wprotect_invert = 1" in the description of the MMC.
+>
+> Signed-off-by: Cedric Roux <sed@free.fr>
+> ---
+>  arch/arm/mach-s3c24xx/mach-mini2440.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+>
+> diff --git a/arch/arm/mach-s3c24xx/mach-mini2440.c b/arch/arm/mach-s3c24xx/mach-mini2440.c
+> index 4a0bf6abba8c..bfce7971d741 100644
+> --- a/arch/arm/mach-s3c24xx/mach-mini2440.c
+> +++ b/arch/arm/mach-s3c24xx/mach-mini2440.c
+> @@ -234,10 +234,11 @@ static struct s3c2410fb_mach_info mini2440_fb_info __initdata = {
+>  /* MMC/SD  */
+>
+>  static struct s3c24xx_mci_pdata mini2440_mmc_cfg __initdata = {
+> -       .gpio_detect   = S3C2410_GPG(8),
+> -       .gpio_wprotect = S3C2410_GPH(8),
+> -       .set_power     = NULL,
+> -       .ocr_avail     = MMC_VDD_32_33|MMC_VDD_33_34,
+> +       .gpio_detect     = S3C2410_GPG(8),
+> +       .gpio_wprotect   = S3C2410_GPH(8),
+> +       .wprotect_invert = 1,
+> +       .set_power       = NULL,
+> +       .ocr_avail       = MMC_VDD_32_33|MMC_VDD_33_34,
 
-that's basically what the multiple-thread record patchset does
+This looks unexpected... after patch 1 there should be only one change
+- one new line added. What happened here?
 
-jirka
-
-> mmap() or splice() based zero-copy.
-> 
-> User-space post-processing can then read the files and put them into global order - or use the 
-> per CPU nature of them, which would be pretty useful too.
-> 
-> Also note how well this works on NUMA as well, as the backing pages would be allocated in a 
-> NUMA-local fashion.
-> 
-> I.e. the whole per-CPU threading would enable such a separation of the tracing/event streams 
-> and would allow true scalability.
-> 
-> Thanks,
-> 
-> 	Ingo
+Best regards,
+Krzysztof
