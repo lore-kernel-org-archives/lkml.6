@@ -2,241 +2,146 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B32AC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 03:33:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C33FC4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 03:35:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37889206BB
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 03:33:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37889206BB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id BD6A4206BB
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 03:35:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OXA8K7bt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD6A4206BB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727022AbeIJIZW (ORCPT
+        id S1726795AbeIJI0x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 04:25:22 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33644 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726132AbeIJIZW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 04:25:22 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4FE29801145A;
-        Mon, 10 Sep 2018 03:33:27 +0000 (UTC)
-Received: from [10.72.12.30] (ovpn-12-30.pek2.redhat.com [10.72.12.30])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id DC0842026D66;
-        Mon, 10 Sep 2018 03:33:19 +0000 (UTC)
-Subject: Re: [virtio-dev] Re: [PATCH net-next v2 0/5] virtio: support packed
- ring
-To:     Tiwei Bie <tiwei.bie@intel.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        virtio-dev@lists.oasis-open.org, wexu@redhat.com,
-        jfreimann@redhat.com
-References: <20180711022711.7090-1-tiwei.bie@intel.com>
- <20180827170005-mutt-send-email-mst@kernel.org>
- <20180907012225.GA32677@debian>
- <20180907084509-mutt-send-email-mst@kernel.org>
- <20180910030053.GA15645@debian>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <f5ef0393-cf02-0795-a51a-8783ee300037@redhat.com>
-Date:   Mon, 10 Sep 2018 11:33:17 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 10 Sep 2018 04:26:53 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:41236 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726024AbeIJI0x (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 04:26:53 -0400
+Received: by mail-yw1-f66.google.com with SMTP id q129-v6so7350660ywg.8
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Sep 2018 20:34:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+coeGVmDd/qtnalfNXmUNK2ofGpnOtfPUFXqaO04+fU=;
+        b=OXA8K7btg+U/KqqOufL2Xea3TsfYcJCm3x6lbqXKe8bmqqPK7AmTypFL9AQ2ccTHV9
+         hyDdEe/gY/OFGepjOY/jdWpGWX2AbM27wD+Z03D5a+HLofBx4SmQhs3b38blQ+aD4ZED
+         CBoubzNqASHI2TuCwsYl0WiY6yerLNIlQTOnc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+coeGVmDd/qtnalfNXmUNK2ofGpnOtfPUFXqaO04+fU=;
+        b=Yz9fHZdBWcpFrppFDXBHJHIklASaI8a+HnJJ7WBUfvJsLb9jmknHb3Qf9yF/SF/Qj2
+         9ZwG6GKDQ4qMtiZtR3Y26+XsQpcQtZys2deje4QCSlka7qNS4owSEriRcvQsTC6NhVme
+         YuRuqCid51myXi4Nl8gc+kqMSKR73B0ZZc8y/rSgwfPax6gEZFalRCt1r7xsD7W1vtmG
+         cLOdsduxnxZouv8TEf9BZL3aJnHeH5baTWi/39dbMpiXvbsXzz+sPSm6Vvdktf2F2LAp
+         K9W41SMnKdKuBFQOdgohdgGt1rNe6cmgrTMB2GLdy8B+RtFE1tUBlRszVOzL9+Wh1eNH
+         qqFw==
+X-Gm-Message-State: APzg51CvEWo4YzvOuD5/uaHBJJSFC4rWCd7GJIHG8eWThcn0x4w3jASV
+        Fz7NqkBnTnkIz5bCh9FLtoo4SEzIBYA=
+X-Google-Smtp-Source: ANB0VdZaKCavoszAD+L8wGCguFq6v8z1Z64Xdz6YSRRGaS2e5krkzcgarlGxGIqojtz6QdVp0U7cBg==
+X-Received: by 2002:a81:7b08:: with SMTP id w8-v6mr9368147ywc.249.1536550498629;
+        Sun, 09 Sep 2018 20:34:58 -0700 (PDT)
+Received: from mail-yw1-f48.google.com (mail-yw1-f48.google.com. [209.85.161.48])
+        by smtp.gmail.com with ESMTPSA id f5-v6sm5116059ywd.53.2018.09.09.20.34.57
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 09 Sep 2018 20:34:57 -0700 (PDT)
+Received: by mail-yw1-f48.google.com with SMTP id y134-v6so7364993ywg.1
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Sep 2018 20:34:57 -0700 (PDT)
+X-Received: by 2002:a81:6ec5:: with SMTP id j188-v6mr8887284ywc.92.1536550497025;
+ Sun, 09 Sep 2018 20:34:57 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180910030053.GA15645@debian>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 10 Sep 2018 03:33:27 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 10 Sep 2018 03:33:27 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jasowang@redhat.com' RCPT:''
+References: <20180724140621.59624-1-tfiga@chromium.org> <20180724140621.59624-3-tfiga@chromium.org>
+ <19062a24c3aa2cb9e0410cf2884b4589e44c263b.camel@collabora.com>
+In-Reply-To: <19062a24c3aa2cb9e0410cf2884b4589e44c263b.camel@collabora.com>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Mon, 10 Sep 2018 12:34:45 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5A2xskpHpm8XqWoNKGt9As53Pft1NO32Ziys+PEJ2fh1A@mail.gmail.com>
+Message-ID: <CAAFQd5A2xskpHpm8XqWoNKGt9As53Pft1NO32Ziys+PEJ2fh1A@mail.gmail.com>
+Subject: Re: [PATCH 2/2] media: docs-rst: Document memory-to-memory video
+ encoder interface
+To:     Ezequiel Garcia <ezequiel@collabora.com>
+Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Pawel Osciak <posciak@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
+        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        jtp.park@samsung.com, Philipp Zabel <p.zabel@pengutronix.de>,
+        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= 
+        <tiffany.lin@mediatek.com>,
+        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?= 
+        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
+        nicolas@ndufresne.ca,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        dave.stevenson@raspberrypi.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2018年09月10日 11:00, Tiwei Bie wrote:
-> On Fri, Sep 07, 2018 at 09:00:49AM -0400, Michael S. Tsirkin wrote:
->> On Fri, Sep 07, 2018 at 09:22:25AM +0800, Tiwei Bie wrote:
->>> On Mon, Aug 27, 2018 at 05:00:40PM +0300, Michael S. Tsirkin wrote:
->>>> Are there still plans to test the performance with vost pmd?
->>>> vhost doesn't seem to show a performance gain ...
->>>>
->>> I tried some performance tests with vhost PMD. In guest, the
->>> XDP program will return XDP_DROP directly. And in host, testpmd
->>> will do txonly fwd.
->>>
->>> When burst size is 1 and packet size is 64 in testpmd and
->>> testpmd needs to iterate 5 Tx queues (but only the first two
->>> queues are enabled) to prepare and inject packets, I got ~12%
->>> performance boost (5.7Mpps -> 6.4Mpps). And if the vhost PMD
->>> is faster (e.g. just need to iterate the first two queues to
->>> prepare and inject packets), then I got similar performance
->>> for both rings (~9.9Mpps) (packed ring's performance can be
->>> lower, because it's more complicated in driver.)
->>>
->>> I think packed ring makes vhost PMD faster, but it doesn't make
->>> the driver faster. In packed ring, the ring is simplified, and
->>> the handling of the ring in vhost (device) is also simplified,
->>> but things are not simplified in driver, e.g. although there is
->>> no desc table in the virtqueue anymore, driver still needs to
->>> maintain a private desc state table (which is still managed as
->>> a list in this patch set) to support the out-of-order desc
->>> processing in vhost (device).
->>>
->>> I think this patch set is mainly to make the driver have a full
->>> functional support for the packed ring, which makes it possible
->>> to leverage the packed ring feature in vhost (device). But I'm
->>> not sure whether there is any other better idea, I'd like to
->>> hear your thoughts. Thanks!
->> Just this: Jens seems to report a nice gain with virtio and
->> vhost pmd across the board. Try to compare virtio and
->> virtio pmd to see what does pmd do better?
-> The virtio PMD (drivers/net/virtio) in DPDK doesn't need to share
-> the virtio ring operation code with other drivers and is highly
-> optimized for network. E.g. in Rx, the Rx burst function won't
-> chain descs. So the ID management for the Rx ring can be quite
-> simple and straightforward, we just need to initialize these IDs
-> when initializing the ring and don't need to change these IDs
-> in data path anymore (the mergable Rx code in that patch set
-> assumes the descs will be written back in order, which should be
-> fixed. I.e., the ID in the desc should be used to index vq->descx[]).
-> The Tx code in that patch set also assumes the descs will be
-> written back by device in order, which should be fixed.
-
-Yes it is. I think I've pointed it out in some early version of pmd 
-patch. So I suspect part (or all) of the boost may come from in order 
-feature.
-
+On Sat, Sep 8, 2018 at 5:17 AM Ezequiel Garcia <ezequiel@collabora.com> wrote:
 >
-> But in kernel virtio driver, the virtio_ring.c is very generic.
-> The enqueue (virtqueue_add()) and dequeue (virtqueue_get_buf_ctx())
-> functions need to support all the virtio devices and should be
-> able to handle all the possible cases that may happen. So although
-> the packed ring can be very efficient in some cases, currently
-> the room to optimize the performance in kernel's virtio_ring.c
-> isn't that much. If we want to take the fully advantage of the
-> packed ring's efficiency, we need some further e.g. API changes
-> in virtio_ring.c, which shouldn't be part of this patch set.
-
-Could you please share more thoughts on this e.g how to improve the API? 
-Notice since the API is shared by both split ring and packed ring, it 
-may improve the performance of split ring as well. One can easily 
-imagine a batching API, but it does not have many real users now, the 
-only case is the XDP transmission which can accept an array of XDP frames.
-
-> So
-> I still think this patch set is mainly to make the kernel virtio
-> driver to have a full functional support of the packed ring, and
-> we can't expect impressive performance boost with it.
-
-We can only gain when virtio ring layout is the bottleneck. If there're 
-bottlenecks elsewhere, we probably won't see any increasing in the 
-numbers. Vhost-net is an example, and lots of optimizations have proved 
-that virtio ring is not the main bottleneck for the current codes. I 
-suspect it also the case of virtio driver. Did perf tell us any 
-interesting things in virtio driver?
-
-Thanks
-
+> On Tue, 2018-07-24 at 23:06 +0900, Tomasz Figa wrote:
+[snip]
+> > +Querying capabilities
+> > +=====================
+> > +
+> > +1. To enumerate the set of coded formats supported by the driver, the
+> > +   client may call :c:func:`VIDIOC_ENUM_FMT` on ``CAPTURE``.
+> > +
+> > +   * The driver must always return the full set of supported formats,
+> > +     irrespective of the format set on the ``OUTPUT`` queue.
+> > +
+> > +2. To enumerate the set of supported raw formats, the client may call
+> > +   :c:func:`VIDIOC_ENUM_FMT` on ``OUTPUT``.
+> > +
+> > +   * The driver must return only the formats supported for the format
+> > +     currently active on ``CAPTURE``.
+> > +
 >
->>
->>>> On Wed, Jul 11, 2018 at 10:27:06AM +0800, Tiwei Bie wrote:
->>>>> Hello everyone,
->>>>>
->>>>> This patch set implements packed ring support in virtio driver.
->>>>>
->>>>> Some functional tests have been done with Jason's
->>>>> packed ring implementation in vhost:
->>>>>
->>>>> https://lkml.org/lkml/2018/7/3/33
->>>>>
->>>>> Both of ping and netperf worked as expected.
->>>>>
->>>>> v1 -> v2:
->>>>> - Use READ_ONCE() to read event off_wrap and flags together (Jason);
->>>>> - Add comments related to ccw (Jason);
->>>>>
->>>>> RFC (v6) -> v1:
->>>>> - Avoid extra virtio_wmb() in virtqueue_enable_cb_delayed_packed()
->>>>>    when event idx is off (Jason);
->>>>> - Fix bufs calculation in virtqueue_enable_cb_delayed_packed() (Jason);
->>>>> - Test the state of the desc at used_idx instead of last_used_idx
->>>>>    in virtqueue_enable_cb_delayed_packed() (Jason);
->>>>> - Save wrap counter (as part of queue state) in the return value
->>>>>    of virtqueue_enable_cb_prepare_packed();
->>>>> - Refine the packed ring definitions in uapi;
->>>>> - Rebase on the net-next tree;
->>>>>
->>>>> RFC v5 -> RFC v6:
->>>>> - Avoid tracking addr/len/flags when DMA API isn't used (MST/Jason);
->>>>> - Define wrap counter as bool (Jason);
->>>>> - Use ALIGN() in vring_init_packed() (Jason);
->>>>> - Avoid using pointer to track `next` in detach_buf_packed() (Jason);
->>>>> - Add comments for barriers (Jason);
->>>>> - Don't enable RING_PACKED on ccw for now (noticed by Jason);
->>>>> - Refine the memory barrier in virtqueue_poll();
->>>>> - Add a missing memory barrier in virtqueue_enable_cb_delayed_packed();
->>>>> - Remove the hacks in virtqueue_enable_cb_prepare_packed();
->>>>>
->>>>> RFC v4 -> RFC v5:
->>>>> - Save DMA addr, etc in desc state (Jason);
->>>>> - Track used wrap counter;
->>>>>
->>>>> RFC v3 -> RFC v4:
->>>>> - Make ID allocation support out-of-order (Jason);
->>>>> - Various fixes for EVENT_IDX support;
->>>>>
->>>>> RFC v2 -> RFC v3:
->>>>> - Split into small patches (Jason);
->>>>> - Add helper virtqueue_use_indirect() (Jason);
->>>>> - Just set id for the last descriptor of a list (Jason);
->>>>> - Calculate the prev in virtqueue_add_packed() (Jason);
->>>>> - Fix/improve desc suppression code (Jason/MST);
->>>>> - Refine the code layout for XXX_split/packed and wrappers (MST);
->>>>> - Fix the comments and API in uapi (MST);
->>>>> - Remove the BUG_ON() for indirect (Jason);
->>>>> - Some other refinements and bug fixes;
->>>>>
->>>>> RFC v1 -> RFC v2:
->>>>> - Add indirect descriptor support - compile test only;
->>>>> - Add event suppression supprt - compile test only;
->>>>> - Move vring_packed_init() out of uapi (Jason, MST);
->>>>> - Merge two loops into one in virtqueue_add_packed() (Jason);
->>>>> - Split vring_unmap_one() for packed ring and split ring (Jason);
->>>>> - Avoid using '%' operator (Jason);
->>>>> - Rename free_head -> next_avail_idx (Jason);
->>>>> - Add comments for virtio_wmb() in virtqueue_add_packed() (Jason);
->>>>> - Some other refinements and bug fixes;
->>>>>
->>>>> Thanks!
->>>>>
->>>>> Tiwei Bie (5):
->>>>>    virtio: add packed ring definitions
->>>>>    virtio_ring: support creating packed ring
->>>>>    virtio_ring: add packed ring support
->>>>>    virtio_ring: add event idx support in packed ring
->>>>>    virtio_ring: enable packed ring
->>>>>
->>>>>   drivers/s390/virtio/virtio_ccw.c   |   14 +
->>>>>   drivers/virtio/virtio_ring.c       | 1365 ++++++++++++++++++++++------
->>>>>   include/linux/virtio_ring.h        |    8 +-
->>>>>   include/uapi/linux/virtio_config.h |    3 +
->>>>>   include/uapi/linux/virtio_ring.h   |   43 +
->>>>>   5 files changed, 1157 insertions(+), 276 deletions(-)
->>>>>
->>>>> -- 
->>>>> 2.18.0
->>>> ---------------------------------------------------------------------
->>>> To unsubscribe, e-mail: virtio-dev-unsubscribe@lists.oasis-open.org
->>>> For additional commands, e-mail: virtio-dev-help@lists.oasis-open.org
->>>>
+> Paul and I where discussing about the default active format on CAPTURE
+> and OUTPUT queues. That is, the format that is active (if any) right
+> after driver probes.
+>
+> Currently, the v4l2-compliance tool tests the default active format,
+> by requiring drivers to support:
+>
+>     fmt = g_fmt()
+>     s_fmt(fmt)
+>
+> Is this actually required? Should we also require this for stateful
+> and stateless codecs? If yes, should it be documented?
 
+The general V4L2 principle is that drivers must maintain some sane
+default state right from when they are exposed to the userspace. I'd
+try to stick to the common V4L2 semantics, unless there is a very good
+reason not to do so.
+
+Note that we actually diverged from it on CAPTURE state for stateful
+decoders, because we return an error, if any format-related ioctl is
+called on CAPTURE queue before OUTPUT queue is initialized with a
+valid coded format, either explicitly by the client or implicitly via
+bitstream parsing. The reason was backwards compatibility with clients
+which don't handle source change events. If that wasn't the case, we
+could have made the CAPTURE queue completely independent and have the
+format there reset with source change event, whenever it becomes
+invalid due to things like resolution change or speculative
+initialization miss, which would make things much more symmetrical.
+
+Best regards,
+Tomasz
