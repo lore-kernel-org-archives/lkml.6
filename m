@@ -2,203 +2,106 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4C0CC4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:48:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A23BFC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:48:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 532842086B
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:48:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 532842086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paulk.fr
+	by mail.kernel.org (Postfix) with ESMTP id 5CC5D2086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:48:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Huz+vNw2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CC5D2086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728080AbeIJOld (ORCPT
+        id S1728103AbeIJOle (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 10 Sep 2018 10:41:34 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:53420 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727311AbeIJOld (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 10 Sep 2018 10:41:33 -0400
-Received: from leonov.paulk.fr ([185.233.101.22]:49102 "EHLO leonov.paulk.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726738AbeIJOld (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 10:41:33 -0400
-Received: from gagarine.paulk.fr (gagarine [192.168.1.127])
-        by leonov.paulk.fr (Postfix) with ESMTPS id B2E50C0279;
-        Mon, 10 Sep 2018 11:48:19 +0200 (CEST)
-Received: by gagarine.paulk.fr (Postfix, from userid 114)
-        id 05AA5C0F71; Mon, 10 Sep 2018 11:48:18 +0200 (CEST)
-Received: from collins (unknown [192.168.1.1])
-        by gagarine.paulk.fr (Postfix) with ESMTPSA id B7512C0F66;
-        Mon, 10 Sep 2018 11:47:52 +0200 (CEST)
-Message-ID: <2409ba6607e85acf3dbbaed394487fa8e92d93df.camel@paulk.fr>
-Subject: Re: [PATCH v9 2/9] media: v4l: Add definitions for MPEG-2 slice
- format and metadata
-From:   Paul Kocialkowski <contact@paulk.fr>
-To:     Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-sunxi@googlegroups.com, Randy Li <ayaka@soulik.info>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Date:   Mon, 10 Sep 2018 11:47:47 +0200
-In-Reply-To: <9a7fd34d-50e3-4db6-4752-9e62bb160655@xs4all.nl>
-References: <20180906222442.14825-1-contact@paulk.fr>
-         <20180906222442.14825-3-contact@paulk.fr>
-         <9a7fd34d-50e3-4db6-4752-9e62bb160655@xs4all.nl>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-YrlIFe9eOeQdIb272dAH"
-X-Mailer: Evolution 3.28.5 
-Mime-Version: 1.0
+Received: by mail-wm0-f67.google.com with SMTP id b19-v6so20876377wme.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 02:48:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=tvW7B19VUb04doqNJ038sjjvWyKM9RKSu6TrvuBh/g8=;
+        b=Huz+vNw2Nw9fgU4ahg4RA+i8dB8vEy3BkjS6rbvOamxWxqrIFe+dK/I987qf8TqZun
+         a127XChlmVrM1eKd6e2oPXpu+A9rBxbpO0R2ARDhAOey/EuNXvaOguQYK63eww5Ud5cH
+         V636wh7U7LUB1hFmT8Rnjgg12W4GWXUSbIiBQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=tvW7B19VUb04doqNJ038sjjvWyKM9RKSu6TrvuBh/g8=;
+        b=oB8VIO4heUnv60k+B8FRPuJUeu+UKWCe7nXnCuMaHseR5/sYXzTzKxqFZRT/81BTuZ
+         Cudrmx+5vRRs/5H0jfnd7PtOmAL+1oT41gKwLjMsLBIWttFzdkk0K6YF6BVD8iu34/H4
+         a1B7u+rSmtz3hiZ6Z3hz45Qn+VuvcYyWzBjGd4VQjKL126ij05wGMdxgWjLIQsW2Xu34
+         Z7j+6/vylW+shQDyvTpMJqzzMkzEhIFFZWxGAq8VWAr7RHkDd72EyHyP5mHqrp3m8g4j
+         7mGnnp7bGYKkiUskxQ7OGCBnMuWGVtVCwjVmEWe+3CrevIEJSI8bwUQ+d8I0IrIjzrfF
+         zRkg==
+X-Gm-Message-State: APzg51CKQcDhTCl6d39swhjEQoBGW8/n37BuyqApd5ApxZjqP8bx+nxm
+        GbVVq1vSlCP1MKI9jgumLed/8A==
+X-Google-Smtp-Source: ANB0Vdbyz2p3iDxLITJK0p64f/OjcuOje+G06P5Blwt+SZ97ljxoNgAdPiqTKfOsS95RnM7wurynKQ==
+X-Received: by 2002:a1c:2dc8:: with SMTP id t191-v6mr132655wmt.94.1536572900412;
+        Mon, 10 Sep 2018 02:48:20 -0700 (PDT)
+Received: from dell ([2.27.167.7])
+        by smtp.gmail.com with ESMTPSA id m68-v6sm30511570wmb.10.2018.09.10.02.48.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 10 Sep 2018 02:48:19 -0700 (PDT)
+Date:   Mon, 10 Sep 2018 10:48:17 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Radu Pirea <radu_nicolae.pirea@upb.ro>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+        gregkh@linuxfoundation.org, broonie@kernel.org, jslaby@suse.com,
+        richard.genoud@gmail.com, davem@davemloft.net,
+        mchehab+samsung@kernel.org, akpm@linux-foundation.org,
+        arnd@arndb.de, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-spi@vger.kernel.org
+Subject: Re: [PATCH v12 0/6] Driver for at91 usart in spi mode
+Message-ID: <20180910094817.GJ28860@dell>
+References: <20180904111310.4049-1-radu_nicolae.pirea@upb.ro>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180904111310.4049-1-radu_nicolae.pirea@upb.ro>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 04 Sep 2018, Radu Pirea wrote:
+> Well, this is the 12th version of this patch series.
+> In this version I fixed a warning from kbuild-robot and I have no idea
+> how I forgot to add static in declaration of that functions. Also I
+> fixed the example for the SPI driver in bindings.
 
---=-YrlIFe9eOeQdIb272dAH
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Okay great.  So which patches still require Acks?
 
-Hi,
+[...]
 
-Le lundi 10 septembre 2018 =C3=A0 11:41 +0200, Hans Verkuil a =C3=A9crit :
-> On 09/07/2018 12:24 AM, Paul Kocialkowski wrote:
-> > From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> >=20
-> > Stateless video decoding engines require both the MPEG-2 slices and
-> > associated metadata from the video stream in order to decode frames.
-> >=20
-> > This introduces definitions for a new pixel format, describing buffers
-> > with MPEG-2 slice data, as well as control structure sfor passing the
-> > frame metadata to drivers.
-> >=20
-> > This is based on work from both Florent Revest and Hugues Fruchet.
-> >=20
-> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> > ---
-> >  .../media/uapi/v4l/extended-controls.rst      | 176 ++++++++++++++++++
-> >  .../media/uapi/v4l/pixfmt-compressed.rst      |  16 ++
-> >  .../media/uapi/v4l/vidioc-queryctrl.rst       |  14 +-
-> >  .../media/videodev2.h.rst.exceptions          |   2 +
-> >  drivers/media/v4l2-core/v4l2-ctrls.c          |  63 +++++++
-> >  drivers/media/v4l2-core/v4l2-ioctl.c          |   1 +
-> >  include/media/v4l2-ctrls.h                    |  18 +-
-> >  include/uapi/linux/v4l2-controls.h            |  65 +++++++
-> >  include/uapi/linux/videodev2.h                |   5 +
-> >  9 files changed, 351 insertions(+), 9 deletions(-)
-> >=20
-> > diff --git a/Documentation/media/uapi/v4l/extended-controls.rst b/Docum=
-entation/media/uapi/v4l/extended-controls.rst
-> > index 9f7312bf3365..f1951236266a 100644
-> > --- a/Documentation/media/uapi/v4l/extended-controls.rst
-> > +++ b/Documentation/media/uapi/v4l/extended-controls.rst
-> > @@ -1497,6 +1497,182 @@ enum v4l2_mpeg_video_h264_hierarchical_coding_t=
-ype -
-> > =20
-> > =20
-> > =20
-> > +.. _v4l2-mpeg-mpeg2:
-> > +
-> > +``V4L2_CID_MPEG_VIDEO_MPEG2_SLICE_PARAMS (struct)``
-> > +    Specifies the slice parameters (as extracted from the bitstream) f=
-or the
-> > +    associated MPEG-2 slice data. This includes the necessary paramete=
-rs for
-> > +    configuring a stateless hardware decoding pipeline for MPEG-2.
-> > +    The bitstream parameters are defined according to :ref:`mpeg2part2=
-`.
-> > +
-> > +.. c:type:: v4l2_ctrl_mpeg2_slice_params
-> > +
-> > +.. cssclass:: longtable
-> > +
-> > +.. flat-table:: struct v4l2_ctrl_mpeg2_slice_params
-> > +    :header-rows:  0
-> > +    :stub-columns: 0
-> > +    :widths:       1 1 2
-> > +
-> > +    * - __u32
-> > +      - ``bit_size``
-> > +      - Size (in bits) of the current slice data.
-> > +    * - __u32
-> > +      - ``data_bit_offset``
-> > +      - Offset (in bits) to the video data in the current slice data.
-> > +    * - struct :c:type:`v4l2_mpeg2_sequence`
-> > +      - ``sequence``
-> > +      - Structure with MPEG-2 sequence metadata, merging relevant fiel=
-ds from
-> > +	the sequence header and sequence extension parts of the bitstream.
-> > +    * - struct :c:type:`v4l2_mpeg2_picture`
-> > +      - ``picture``
-> > +      - Structure with MPEG-2 picture metadata, merging relevant field=
-s from
-> > +	the picture header and picture coding extension parts of the bitstrea=
-m.
-> > +    * - __u8
-> > +      - ``quantiser_scale_code``
-> > +      - Code used to determine the quantization scale to use for the I=
-DCT.
-> > +    * - __u8
-> > +      - ``backward_ref_index``
-> > +      - Index for the V4L2 buffer to use as backward reference, used w=
-ith
-> > +	B-coded and P-coded frames.
-> > +    * - __u8
-> > +      - ``forward_ref_index``
-> > +      - Index for the V4L2 buffer to use as forward reference, used wi=
-th
-> > +	P-coded frames.
->=20
-> Should this be "B-coded frames"?
+> Radu Pirea (6):
+>   MAINTAINERS: add at91 usart mfd driver
+>   dt-bindings: add binding for atmel-usart in SPI mode
+>   mfd: at91-usart: added mfd driver for usart
+>   MAINTAINERS: add at91 usart spi driver
+>   spi: at91-usart: add driver for at91-usart as spi
+>   tty/serial: atmel: change the driver to work under at91-usart mfd
 
-Oops, that's right, B-coded frames.
-
-Should I make a follow-up patch for that (maybe gathered with other
-changes if required)?
-
-Cheers,
-
-Paul
-
---=20
-Developer of free digital technology and hardware support.
-
-Website: https://www.paulk.fr/
-Coding blog: https://code.paulk.fr/
-Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
-
---=-YrlIFe9eOeQdIb272dAH
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAluWPcMACgkQhP3B6o/u
-lQxIEQ//eGI0dpOkNfiLbEpqBwBGb9xGo3qAOTvktnFFLyHDrVW9UcCl+Lxsrpw5
-wR1MxxbeejkVmb897/Y+AyfTPhxo5mg6DzD7/tWY3ooT4d74v3DySO7UW+5M6fc3
-3UMu9NGUOCWew02TtXowXMm7OFa0KO4JJofdkItpIGT57YynoriYqVTSlYrWhGQa
-6PtbOlUfJg0Fz7PloHvyEeXU4swP1Oz4xzjPoxLz+pu43SR7PFiO6vvVwvf6R2FB
-IX9ahPFqARtWyli9296l6bRk7ha5/3Q5oP/PmF8c9n8+bwiymQZxC2M97Hdm+uEx
-LCVFUELUcWLcV0EUIw3RsDnwdTkUZGvSr/r+YXIiqAoBlZBzwd7HjGht4xqhuNGX
-KisNN9zYD7yoJ7wl3RyiUskfwgqxPRYrxL0fsmPji4VKhgFSmrLHXQ/kwlH8hNiK
-Ek9mbq0QtVn64cOIt75PPGZjP8/D5f+w3JKgyoRYofC5DNaQhaOgygBnTs9QqMcZ
-puKwiiZz1NtUX5hk1JgO6xCpoCcim2qDR6eeBEFVKU3rCdbNBtenMQX3L/DwE/PB
-ct0THCwIhnB8oOoHS5u8jI8D3HTfJkXj1FqxS+EkamcJvJHrtzvewJarA6/b6aB3
-XND21Hg8S4OuwSKIQ9lUcz2E08RZJGAlpvjxQc605EFAlbo4QZk=
-=ZnXS
------END PGP SIGNATURE-----
-
---=-YrlIFe9eOeQdIb272dAH--
-
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
