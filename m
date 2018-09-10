@@ -3,104 +3,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AED9CC4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 17:44:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6B8EC4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 17:45:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66A5B2086E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 17:44:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66A5B2086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+	by mail.kernel.org (Postfix) with ESMTP id 7E56A2086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 17:45:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E56A2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728694AbeIJWkJ (ORCPT
+        id S1728771AbeIJWkQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 18:40:09 -0400
-Received: from muru.com ([72.249.23.125]:55810 "EHLO muru.com"
+        Mon, 10 Sep 2018 18:40:16 -0400
+Received: from foss.arm.com ([217.140.101.70]:33492 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727031AbeIJWkJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 18:40:09 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id CA02F80B6;
-        Mon, 10 Sep 2018 17:49:01 +0000 (UTC)
-Date:   Mon, 10 Sep 2018 10:44:53 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Pavel Machek <pavel@ucw.cz>, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, sre@kernel.org, nekit1000@gmail.com,
-        mpartap@gmx.net, merlijn@wizzup.org
-Subject: Re: omap4: support for manually updated display
-Message-ID: <20180910174453.GV5662@atomide.com>
-References: <20180830090456.GA17277@amd>
- <797c13fa-7a5b-a809-7dd0-14b01a3046be@ti.com>
- <3205865.8O8aibZXye@avalon>
+        id S1727031AbeIJWkQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 18:40:16 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 28A0D80D;
+        Mon, 10 Sep 2018 10:45:04 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id ED35E3F575;
+        Mon, 10 Sep 2018 10:45:03 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 3A37D1AE3231; Mon, 10 Sep 2018 18:45:20 +0100 (BST)
+Date:   Mon, 10 Sep 2018 18:45:20 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     npiggin@gmail.com, peterz@infradead.org, akpm@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, catalin.marinas@arm.com
+Subject: Stable branch for core tlb.h changes
+Message-ID: <20180910174519.GA19027@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3205865.8O8aibZXye@avalon>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Laurent Pinchart <laurent.pinchart@ideasonboard.com> [180910 12:28]:
-> On Monday, 10 September 2018 14:59:23 EEST Tomi Valkeinen wrote:
-> > A large omapdrm change set from Laurent was merged into drm-next, and
-> > I'm certain they conflict with this series. Laurent also has continued
-> > that work, and while those new patches haven't been sent for review yet,
-> > I fear they'll also conflict with these.
-> > 
-> > So in the minimum, a rebase on top of drm-next is needed.
-> > 
-> > I also continue to be very worried that adding DSI support to omapdrm at
-> > this stage will be a huge extra burden for Laurent's work.
-> > 
-> > We should transform the panel-dsi-cm.c towards the common DRM model.
-> > With a quick look, there seems to be a driver for Samsung's S6E63J0X03
-> > panel. So possibly all the DSI features are there in the DRM framework,
-> > but someone needs to check that and start working on panel-dsi-cm.c so
-> > that it's ready when we finally switch to the DRM model.
-> > 
-> > In my opinion, which I've also expressed before, the above work is much
-> > easier to do by first changing the omapdrm to DRM model, without any DSI
-> > displays, and then add the DSI command mode support. But if people
-> > insist on adding the DSI support already now, I would appreciate the
-> > same people working on the DSI support so that Laurent doesn't have to
-> > do it all.
-> 
-> I want to make it clear that I don't want to claim any privilege in getting 
-> patches merged first. I am however worried that, without an easy way to test 
-> DSI support, and without enough time to focus on it, I would break whatever 
-> would be merged now in future reworks. I would thus like to find out how to 
-> collaborate on this task, hopefully to move towards usage of drm_bridge and 
-> drm_panel for DSI-based pipelines.
+Hi all,
 
-Real users with mainline kernel with a real product should
-always have priority over any ongoing clean-up.
+Just to say that I've pushed the base tlb.h changes to a stable branch
+here:
 
-And for testing, a bunch of real users is something you can't
-beat for proper testing of code on ongoing basis!
+git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tlb/asm-generic
 
-Naturally the burden of getting the patches ready is on the people
-using them for rebase and fixing comments. And Sebastian has
-already agreed help with maintaining it.
+and this is already in -next via the arm64 tree. Feel free to pull this
+into your own trees if you need it too.
 
-I've been actually using DSI command mode support and testing
-Linux next several times a week to prevent regressions from
-sneaking into -rc1 in general. So now I can't test omapdrm with
-next until Sebastian is done with rebasing.. Back to headless
-testing then.
+Cheers,
 
-Anyways, I'd say let's add the DSI command mode support ASAP after
-rebasing, there are at least Sebastian, Pavel and I then testing
-and helping with further ongoing panel conversion work.
-
-Regards,
-
-Tony
+Will
