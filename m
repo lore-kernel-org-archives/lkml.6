@@ -2,104 +2,82 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81F08C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:05:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EE86C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:05:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F79A20854
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:05:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F79A20854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 07DB420854
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:05:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iRGTeGUr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07DB420854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727461AbeIJK5y (ORCPT
+        id S1727600AbeIJK6I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 06:57:54 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:44049 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726148AbeIJK5y (ORCPT
+        Mon, 10 Sep 2018 06:58:08 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49214 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726148AbeIJK6I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 06:57:54 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 6A65A805F0; Mon, 10 Sep 2018 08:05:32 +0200 (CEST)
-Date:   Mon, 10 Sep 2018 08:05:33 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     kernel list <linux-kernel@vger.kernel.org>
-Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org
-Subject: Re: linux-next: 0907 fails to boot on thinkpad x60 (32bit machine)
-Message-ID: <20180910060533.GA26941@amd>
-References: <20180909214632.GA26303@amd>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="envbJBWh7q8WU6mo"
-Content-Disposition: inline
-In-Reply-To: <20180909214632.GA26303@amd>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Mon, 10 Sep 2018 06:58:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Message-Id:Date:Subject:Cc:To:From:
+        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=rl9VsC8YtoqxZDi65X5wq6sAbW8snqOj8zWTPGtWDoU=; b=iRGTeGUrZQwDzsEssdzH505tP
+        QBRnpWl4YEG4Bi79ypCil93pjusfWtRZncpV5D1c5PpczCbE1iMlmPi1ocfaMCKIY1DHgXbN9dwtO
+        cN7BmkYLIVPhm49cL7Mp4WI7hpijfIgTsOK19OKi4aOTsW0tZv2wqeTMXFF3bWqxjsQPmC40KPyYz
+        BO5SjRXeMHPySefWkaClf2rY7/EpADDMEyYgf6XiXHAQvMK9goaZ+V4iOnxkUNMkxD4vA7Tlflh7y
+        QyMC7SEkXnV5fcLMebwaxDBPqBXuPkw2ynQaqPOpWrywM2mpJOU3kYpGVbysK40guBG6MvV+gYBvb
+        2Xo3zAdZw==;
+Received: from 213-225-3-213.nat.highway.a1.net ([213.225.3.213] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fzFKK-0007xA-3M; Mon, 10 Sep 2018 06:05:36 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     iommu@lists.linux-foundation.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-mips@linux-mips.org, linux-kernel@vger.kernel.org
+Subject: merge dma_direct_ops and dma_noncoherent_ops v2
+Date:   Mon, 10 Sep 2018 08:05:28 +0200
+Message-Id: <20180910060533.27172-1-hch@lst.de>
+X-Mailer: git-send-email 2.18.0
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+While most architectures are either always or never dma coherent for a
+given build, the arm, arm64, mips and soon arc architectures can have
+different dma coherent settings on a per-device basis.  Additionally
+some mips builds can decide at boot time if dma is coherent or not.
 
---envbJBWh7q8WU6mo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I've started to look into handling noncoherent dma in swiotlb, and
+moving the dma-iommu ops into common code [1], and for that we need a
+generic way to check if a given device is coherent or not.  Moving
+this flag into struct device also simplifies the conditionally coherent
+architecture implementations.
 
-On Sun 2018-09-09 23:46:32, Pavel Machek wrote:
-> Hi!
->=20
-> I do have some oopses, but they seem to be different on each
-> boot. IIRC message was "scheduling?...on offline CPU?".
->=20
-> Any ideas? Does it work for you?
+These patches are also available in a git tree given that they have
+a few previous posted dependencies:
 
-Seems that error is different on each try.
+    git://git.infradead.org/users/hch/misc.git dma-direct-noncoherent-merge
 
-Now it is:
+Gitweb:
 
-FS: Cannot open root device "sda4" or unknown-block(8,4): error -2
-(followed by panic, but it listed sda4 as avialbe partition)
+    http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/dma-direct-noncoherent-merge
 
-Next try:
-
-sched: Unexpected reschedule of offline CPU#0!
-WARNING: CPU: 1 PID: 1 at ...smp.c:128 native_smp_send_reschedule
-(Aha, that's what I seen before)
-
-Next try:
-
-sched: Unexpected reschedule of offline CPU#0!
-
-Next try: I added "nosmp" on command line, and got
-
-FS: Cannot open root device "sda4" or unknown-block(8,4): error -2
-(followed by panic, but it listed sda4 as avialbe partition)
-
-Next try: with "l1tf=3Doff nospectre_v2 nospec_store_bypass_disable"
-
-FS: Cannot open root device "sda4" or unknown-block(8,4): error -2
-(followed by panic, but it listed sda4 as avialbe partition)
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---envbJBWh7q8WU6mo
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAluWCa0ACgkQMOfwapXb+vI1kACeK1QBa2Z7/9R3X7fX+E+luDBY
-CfEAn1OOqmg47/FsAp5ioNQ4HeQRyK56
-=yqKK
------END PGP SIGNATURE-----
-
---envbJBWh7q8WU6mo--
+Changes since v1:
+ - rebased to the latest Linus' tree which includes coherent dma support
+   for arc
+ - a couple tidyups suggested by Paul Burton
