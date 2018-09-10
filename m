@@ -4,331 +4,128 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24528C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:32:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42358C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:33:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCFAD20870
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:32:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3EF720833
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:33:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=akkea.ca header.i=@akkea.ca header.b="ifLzgl4e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCFAD20870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=akkea.ca
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="nbP/VkMa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3EF720833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728559AbeIJT1L (ORCPT
+        id S1728620AbeIJT1V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 15:27:11 -0400
-Received: from node.akkea.ca ([192.155.83.177]:46892 "EHLO node.akkea.ca"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728187AbeIJT1L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 15:27:11 -0400
-Received: by node.akkea.ca (Postfix, from userid 33)
-        id 92AE45420DB; Mon, 10 Sep 2018 14:32:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
-        t=1536589968; bh=ePVdCf8fJ7tl+04eXbHTTaTqDqoclnIkhGZX6/WiIJ0=;
-        h=To:Subject:Date:From:Cc:In-Reply-To:References;
-        b=ifLzgl4e7285XBMTylDfHJpj5gKUn3+j2/N+0mCZven0WEtuTkMOEIbEBrmphSk41
-         cmDpW6j3InxwOy2JTx3g29vFwW66qzITfgZC/7HeRqgCwJFX1VeqfmB4nEw9ycVZZy
-         RutuajrMuZ2seRu6o4rQN0UBH3F2cDbxeKeFoxC4=
-To:     Guenter Roeck <guenter@roeck-us.net>
-Subject: Re: [PATCH v2] usb: typec: get the vbus source and charge values from  the devicetree
-X-PHP-Originating-Script: 1000:rcube.php
+        Mon, 10 Sep 2018 15:27:21 -0400
+Received: from mail-co1nam03on0094.outbound.protection.outlook.com ([104.47.40.94]:18975
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728127AbeIJT1V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 15:27:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=X0vMdu/7Z6EU4Q/WrE5s9jU/CViv8kaxKvaumOJrzOA=;
+ b=nbP/VkMaZdmMsoVJs6lAffo5W1Hn7XQCZIeQbeZnIjeXtgWHwSrqw+pk/8zonXp4MiQMBQaEDEMJpt8uE8KNDbTdzAXL1gi7ZemhW9H1hIXKvtVMMJ0R0xxeOX7U8vkch16F1b8iagIiAFGyun0Bjl6h/doB2TpYWtYGYYBvqxg=
+Received: from DM5PR21MB0508.namprd21.prod.outlook.com (10.172.91.142) by
+ DM5PR21MB0476.namprd21.prod.outlook.com (10.172.92.18) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1164.6; Mon, 10 Sep 2018 14:32:17 +0000
+Received: from DM5PR21MB0508.namprd21.prod.outlook.com
+ ([fe80::88e6:fdc:1d8e:71f5]) by DM5PR21MB0508.namprd21.prod.outlook.com
+ ([fe80::88e6:fdc:1d8e:71f5%4]) with mapi id 15.20.1164.006; Mon, 10 Sep 2018
+ 14:32:16 +0000
+From:   Pasha Tatashin <Pavel.Tatashin@microsoft.com>
+To:     "mhocko@kernel.org" <mhocko@kernel.org>
+CC:     "zaslonko@linux.ibm.com" <zaslonko@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        "osalvador@suse.de" <osalvador@suse.de>,
+        "gerald.schaefer@de.ibm.com" <gerald.schaefer@de.ibm.com>
+Subject: Re: [PATCH] memory_hotplug: fix the panic when memory end is not on
+ the section boundary
+Thread-Topic: [PATCH] memory_hotplug: fix the panic when memory end is not on
+ the section boundary
+Thread-Index: AQHUSQLFF/mQjCkfKkuMMO7HZfKu+6Tpf1cAgAAIDwCAAAOzgIAAAx4AgAACaQCAAANSgA==
+Date:   Mon, 10 Sep 2018 14:32:16 +0000
+Message-ID: <CAGM2reZ5OD9SRW8j9iaQAk9jpr86pF2NqpBjv-dxH+1vJZs0=g@mail.gmail.com>
+References: <20180910123527.71209-1-zaslonko@linux.ibm.com>
+ <20180910131754.GG10951@dhcp22.suse.cz>
+ <e8d75768-9122-332b-3b16-cad032aeb27f@microsoft.com>
+ <20180910135959.GI10951@dhcp22.suse.cz>
+ <CAGM2reZuGAPmfO8x0TnHnqHci_Hsga3-CfM9+udJs=gUQCw-1g@mail.gmail.com>
+ <20180910141946.GJ10951@dhcp22.suse.cz>
+In-Reply-To: <20180910141946.GJ10951@dhcp22.suse.cz>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [137.117.57.82]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR21MB0476;6:HSU2BVbLyGrm+DI40JGf9m/gYdfpsffo3ZoE6iam0vrHLtq0ag6lAULxqow2N7usW72U42vBWI2QsXXs2rjG9SUw2Q3muyPBGMSdSf1LDBOVB6qncEwSi/TWxI25MMGQRZK7shQIUubJbt/8hzI589eUnP//sQZHLXvCZR2K/p/nVgFLg80pzyLJVLJQq74WLOXbs/txUzAGbvuDy+lfg+nbvovfDGCUgfBud2XLw7k1kH2BpTDAUIdsSu+0ZKJVhwIFqtUtgp5+ljMy0cm7nR7Tzfm1zLJRQn52TgGouuM9bmR2NtNOnXoV8drJPofiWwDo47IUs5aZM+iOkmlGT6FoBYBO4Gwh/l6seFGck5W4HEMUa8Ar7sB8OyhyATmiy4PCxt5CymwMm6rwTxkw97R9N2Yu7qwiBqrFtzo5ZLVeWQP+TiGFTO2maz/WvHBRu4/5JECLxj85gEev7pmE4w==;5:cxpESLGtj4PxgYiGo/NCQ2cxZ8+fBJ5o16hgYbOOeJ8ytTNzDIwPfwuyn+CcmvAPzpTbJFdBZhm0oJjo6VYfnOhcV6cKLdBde0Z5KW54iIsJ0rcHZU+j3ycNg6XsXEMOe8TH3QP3ql9tYbjqGf2Uv5vMpyk2BbGu9R1n4TYaYa4=;7:CecGh5gaGeb0VZAf7CTUGxqIy++BUXyJ/XyCHBpd/hRHVTh+9RbUirlPexZGMurpeC+Ah6xG89ykQ/1snvHjv6SU3oEWJNueepmaUzgT7DCZI92SRGz8vU4/OFxteka06qOrwf7PGq7sMUmzxTWqobYxhjSf9S6Ke29dxXh54m0AEe+Kvrb4bP9HnuuwiaWsZTNR5U/uXu5sJ8O9go37xmRgVHmwJ7LeI5WWVhTE0G9NW7XbLsPtaiw7Dj4jPKDC
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: cc248028-8efa-4ced-56ee-08d6172a3549
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:DM5PR21MB0476;
+x-ms-traffictypediagnostic: DM5PR21MB0476:
+x-microsoft-antispam-prvs: <DM5PR21MB0476D8789E9771E69AF577B39D050@DM5PR21MB0476.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(3231344)(944501410)(52105095)(2018427008)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699050)(76991033);SRVR:DM5PR21MB0476;BCL:0;PCL:0;RULEID:;SRVR:DM5PR21MB0476;
+x-forefront-prvs: 07915F544A
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(136003)(366004)(346002)(376002)(39860400002)(199004)(189003)(186003)(316002)(6346003)(26005)(102836004)(9686003)(25786009)(61726006)(6512007)(8936002)(1730700003)(22452003)(53546011)(66066001)(54906003)(6246003)(68736007)(81156014)(81166006)(256004)(5250100002)(8676002)(6506007)(14444005)(86362001)(55446002)(93886005)(2900100001)(2351001)(61266001)(86612001)(6916009)(3846002)(106356001)(229853002)(97736004)(305945005)(5640700003)(4326008)(10090500001)(7736002)(105586002)(478600001)(486006)(498394004)(14454004)(2501003)(2906002)(33896004)(476003)(10290500003)(6486002)(76176011)(446003)(5660300001)(6116002)(99286004)(8990500004)(53936002)(11346002)(6436002)(72206003)(98316002);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR21MB0476;H:DM5PR21MB0508.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Pavel.Tatashin@microsoft.com; 
+x-microsoft-antispam-message-info: taXqIst6VTu/cUs21ykiLXvKq1WQIvy8MFKQtfKChremlZ8JUNNxvQUQP7mINWNgT8dJchN8/lfryGSbAyB9axt1ru8VP23r+RvB43gWkFgnkz8n0yWJpb26hsdG5F2f88tnVklgChYSj8mmqYpd6jtRQnpXMmXAXwJnuD2PL6V0sl0TIg3r0whh/6KedGaGs9+fF5alEHsvXrA5JIi4isSnGlUPlvf54G2a7B+LSCdbhDfqlVLgWwO5jWBf6HkXFfewk/EwxSkAd6r5fXh2uvZxZwQhT+skMxvqhWP0QJnD3N2BOucZRVr3MH/Fi8aXqZiBjPRK2cMoo3X0yZP6740fW1TbgeWnCs7bYKbIHoE=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <4B5AC2E24D7AED4EA6437DE74B7EC4FC@namprd21.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Mon, 10 Sep 2018 08:32:48 -0600
-From:   Angus Ainslie <angus@akkea.ca>
-Cc:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        groeck7@gmail.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <cf237e3a-30fb-a98d-ba2b-cf5485bdb5f6@roeck-us.net>
-References: <20180906192644.24587-1-angus@akkea.ca>
- <20180909180531.28092-1-angus@akkea.ca>
- <20180910073529.GL25121@kuha.fi.intel.com>
- <18a1f08b114adb65baf55f202a28d85e@www.akkea.ca>
- <cf237e3a-30fb-a98d-ba2b-cf5485bdb5f6@roeck-us.net>
-Message-ID: <98e0f35924b3c1e9ce0f5fff602cdc01@www.akkea.ca>
-X-Sender: angus@akkea.ca
-User-Agent: Roundcube Webmail/1.1.3
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cc248028-8efa-4ced-56ee-08d6172a3549
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Sep 2018 14:32:16.7606
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR21MB0476
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-09-10 07:43, Guenter Roeck wrote:
-> On 09/10/2018 06:11 AM, Angus Ainslie wrote:
->> Hi Heikki
->> 
->> On 2018-09-10 01:35, Heikki Krogerus wrote:
->>> On Sun, Sep 09, 2018 at 12:05:31PM -0600, Angus Ainslie (Purism) 
->>> wrote:
->>>> If the board is being powered by USB disabling the source and sink
->>>> can remove power from the board. Allow the source and sink to be
->>>> initallized based on devicetree values.
->>>> 
->>>> Changed since V1:
->>>> 
->>>> use devicetree values instead of hardcoded initialization.
->>>> 
->>>> Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
->>>> ---
->>>>  .../bindings/connector/usb-connector.txt           |  4 ++++
->>>>  drivers/usb/typec/tcpm.c                           | 14 
->>>> +++++++++++---
->>>>  2 files changed, 15 insertions(+), 3 deletions(-)
->>>> 
->>>> diff --git 
->>>> a/Documentation/devicetree/bindings/connector/usb-connector.txt 
->>>> b/Documentation/devicetree/bindings/connector/usb-connector.txt
->>>> index 8855bfcfd778..afe851a713c3 100644
->>>> --- a/Documentation/devicetree/bindings/connector/usb-connector.txt
->>>> +++ b/Documentation/devicetree/bindings/connector/usb-connector.txt
->>>> @@ -22,6 +22,10 @@ Optional properties for usb-c-connector:
->>>>    or Try.SRC, should be "sink" for Try.SNK or "source" for Try.SRC.
->>>>  - data-role: should be one of "host", "device", "dual"(DRD) if 
->>>> typec
->>>>    connector supports USB data.
->>>> +- init-vbus-source: set the initalization value for vbus-source to 
->>>> true.
->>>> +  If this property is not present the initial value will be false.
->>>> +- init-vbus-charge: set the initalization value for vbus-charge to 
->>>> true.
->>>> +  If this property is not present the initial value will be false.
->>> 
->>> If you put the description of those properties here, you are going to
->>> need to rename them. Those describe tcpm specific properties, but to
->>> that file you want to put descriptions of generic properties.
->>> 
->> 
->> They are tcpm specific but need to go into the connector sub-node to 
->> get parsed correctly. Would something like below be better ?
->> 
->> diff --git a/Documentation/devicetree/bindings/usb/typec-tcpci.txt 
->> b/Documentation/devicetree/bindings/usb/typec-tcpci.txt
->> index 0dd1469e7318..ae0a3e97d9b6 100644
->> --- a/Documentation/devicetree/bindings/usb/typec-tcpci.txt
->> +++ b/Documentation/devicetree/bindings/usb/typec-tcpci.txt
->> @@ -15,6 +15,12 @@ Required sub-node:
->>    of connector node are specified in
->>    Documentation/devicetree/bindings/connector/usb-connector.txt
->> 
->> +Optional properties for usb-c-connector sub-node:
->> +- init-vbus-source: set the initalization value for vbus-source to 
->> true.
->> +  If this property is not present the initial value will be false.
->> +- init-vbus-charge: set the initalization value for vbus-charge to 
->> true.
->> +  If this property is not present the initial value will be false.
->> +
->>  Example:
->> 
->>  ptn5110@50 {
->> 
->> 
->>> Your problem is that you can not cope with a lose of VBUS as a sink,
->>> right? For that you just need one boolean device property IMO.
->>> Something like depend-on-vbus.
->> 
->> I thought that it would better to be able to control each 
->> independently. With my specific hardware I need both defaulted to true 
->> but for another piece of HW just being able to control one of them 
->> might be sufficient.
->> 
-> 
-> Turns out the problem goes deeper: Only one of the two values is 
-> supposed to
-> be true at any given time. The system is either a sink 
-> (vbus_charge=true)
-> or a source (vbus_src=true), but it can not be both.
-> 
-
-I agree but my hardware is being obstinant.
-
-> I think we first need to figure out what actually happens in your 
-> system; the
-> result from setting both values to true is that the initial request to 
-> set vbus
-> (either as source or as sink) should fail, unless the value is actually 
-> cleared
-> and the other value (supposed to be untouched) is set. This does not 
-> make
-> sense and warrants further debugging. Can you do that and let us know 
-> what
-> exactly actually happens and why your hardware needs that request to 
-> fail ?
-> 
-
-Neither call fails at the software level.
-
-[    3.762504] (NULL device *): tcpci drivers/usb/typec/tcpci.c 
-tcpci_register_port 557
-[    3.830968] tcpci 0-0052: tcpci drivers/usb/typec/tcpci.c 
-tcpci_parse_config 534
-[    3.849299] tcpci 0-0052: tcpci drivers/usb/typec/tcpci.c tcpci_init 
-400
-[    3.872283] tcpci 0-0052: tcpci drivers/usb/typec/tcpci.c 
-tcpci_set_pd_rx 265
-[    3.879952] tcpci 0-0052: tcpci drivers/usb/typec/tcpci.c 
-tcpci_set_vbus 297 source 1 sink 1
-[    3.879957] tcpci 0-0052: tcpci set source drivers/usb/typec/tcpci.c 
-tcpci_set_vbus 327
-[    3.916407] tcpci 0-0052: tcpci set sink drivers/usb/typec/tcpci.c 
-tcpci_set_vbus 340
-
-When the source gets disabled is when the board loses power.
-
-[    3.762504] (NULL device *): tcpci drivers/usb/typec/tcpci.c 
-tcpci_register_port 557
-[    3.770603] tcpci 0-0052: tcpci drivers/usb/typec/tcpci.c 
-tcpci_parse_config 534
-[    3.789508] tcpci 0-0052: tcpci drivers/usb/typec/tcpci.c tcpci_init 
-400
-[    3.799676] tcpci 0-0052: tcpci drivers/usb/typec/tcpci.c 
-tcpci_set_pd_rx 265
-[    3.809322] tcpci 0-0052: tcpci drivers/usb/typec/tcpci.c 
-tcpci_set_vbus 297 source 0 sink 1
-[    3.817956] tcpci 0-0052: tcpci disable source 
-drivers/usb/typec/tcpci.c tcpci_set_vbus 302
-< board stops booting here>
-
-I've added these prints for debugging
-
-@@ -275,36 +293,64 @@ static int tcpci_set_vbus(struct tcpc_dev *tcpc, 
-bool source, bool sink)
-         struct tcpci *tcpci = tcpc_to_tcpci(tcpc);
-         int ret;
-
--       /* Disable both source and sink first before enabling anything 
-*/
-+       dev_err(tcpci->dev, "tcpci %s %s %d source %d sink %d\n" , 
-__FILE__,
-+               __func__, __LINE__, source, sink );
-
-+       /* Disable both source and sink first before enabling anything 
-*/
-         if (!source) {
-+               dev_err(tcpci->dev, "tcpci disable source %s %s %d\n" , 
-__FILE__,
-+                       __func__, __LINE__ );
-                 ret = regmap_write(tcpci->regmap, TCPC_COMMAND,
-                                    TCPC_CMD_DISABLE_SRC_VBUS);
--               if (ret < 0)
-+               if (ret < 0) {
-+                       dev_err(tcpci->dev, "tcpci disable source failed 
-%s %s %d\n" , __FILE__,
-+                               __func__, __LINE__ );
-                         return ret;
-+               }
-         }
-
-         if (!sink) {
-+               dev_err(tcpci->dev, "tcpci disable sink %s %s %d\n" , 
-__FILE__,
-+                       __func__, __LINE__ );
-+
-                 ret = regmap_write(tcpci->regmap, TCPC_COMMAND,
-                                    TCPC_CMD_DISABLE_SINK_VBUS);
--               if (ret < 0)
-+               if (ret < 0) {
-+                       dev_err(tcpci->dev, "tcpci disable sink failed 
-%s %s %d\n" , __FILE__,
-+                               __func__, __LINE__ );
-                         return ret;
-+               }
-         }
-
-         if (source) {
-+               dev_err(tcpci->dev, "tcpci set source %s %s %d\n" , 
-__FILE__,
-+                       __func__, __LINE__ );
-+
-                 ret = regmap_write(tcpci->regmap, TCPC_COMMAND,
-                                    TCPC_CMD_SRC_VBUS_DEFAULT);
--               if (ret < 0)
-+               if (ret < 0) {
-+                       dev_err(tcpci->dev, "tcpci enable source failed 
-%s %s %d\n" , __FILE__,
-+                               __func__, __LINE__ );
-                         return ret;
-+               }
-         }
-
-         if (sink) {
-+               dev_err(tcpci->dev, "tcpci set sink %s %s %d\n" , 
-__FILE__,
-+                       __func__, __LINE__ );
-+
-                 ret = regmap_write(tcpci->regmap, TCPC_COMMAND,
-                                    TCPC_CMD_SINK_VBUS);
--               if (ret < 0)
-+               if (ret < 0) {
-+                       dev_err(tcpci->dev, "tcpci enable sink failed %s 
-%s %d\n" , __FILE__,
-+                               __func__, __LINE__ );
-                         return ret;
-+               }
-         }
-
-+       dev_err(tcpci->dev, "tcpci %s %s %d source %d sink %d\n" , 
-__FILE__,
-+               __func__, __LINE__, source, sink );
-+
-         return 0;
-  }
-
-
-> Thanks,
-> Guenter
-> 
->> Thanks
->> Angus
->> 
->>> 
->>>>  Required properties for usb-c-connector with power delivery 
->>>> support:
->>>>  - source-pdos: An array of u32 with each entry providing supported 
->>>> power
->>>> diff --git a/drivers/usb/typec/tcpm.c b/drivers/usb/typec/tcpm.c
->>>> index ca7bedb46f7f..7f5d4f209e07 100644
->>>> --- a/drivers/usb/typec/tcpm.c
->>>> +++ b/drivers/usb/typec/tcpm.c
->>>> @@ -2462,9 +2462,7 @@ static int tcpm_init_vbus(struct tcpm_port 
->>>> *port)
->>>>  {
->>>>      int ret;
->>>> 
->>>> -    ret = port->tcpc->set_vbus(port->tcpc, false, false);
->>>> -    port->vbus_source = false;
->>>> -    port->vbus_charge = false;
->>>> +    ret = port->tcpc->set_vbus(port->tcpc, port->vbus_source, 
->>>> port->vbus_charge);
->>>>      return ret;
->>>>  }
->>>> 
->>>> @@ -4266,6 +4264,16 @@ static int tcpm_fw_get_caps(struct tcpm_port 
->>>> *port,
->>>>          return -EINVAL;
->>>>      port->port_type = port->typec_caps.type;
->>>> 
->>>> +    if (fwnode_property_present(fwnode, "init-vbus-source"))
->>>> +        port->vbus_source = true;
->>>> +    else
->>>> +        port->vbus_source = false;
->>>> +
->>>> +    if (fwnode_property_present(fwnode, "init-vbus-charge"))
->>>> +            port->vbus_charge = true;
->>>> +    else
->>>> +            port->vbus_charge = false;
->>>> +
->>>>      if (port->port_type == TYPEC_PORT_SNK)
->>>>          goto sink;
->>>> 
->>>> -- 2.17.1
->>> 
->>> Thanks,
->> 
->> 
-
+T24gTW9uLCBTZXAgMTAsIDIwMTggYXQgMTA6MTkgQU0gTWljaGFsIEhvY2tvIDxtaG9ja29Aa2Vy
+bmVsLm9yZz4gd3JvdGU6DQo+DQo+IE9uIE1vbiAxMC0wOS0xOCAxNDoxMTo0NSwgUGF2ZWwgVGF0
+YXNoaW4gd3JvdGU6DQo+ID4gSGkgTWljaGFsLA0KPiA+DQo+ID4gSXQgaXMgdHJpY2t5LCBidXQg
+cHJvYmFibHkgY2FuIGJlIGRvbmUuIEVpdGhlciBjaGFuZ2UNCj4gPiBtZW1tYXBfaW5pdF96b25l
+KCkgb3IgaXRzIGNhbGxlciB0byBhbHNvIGNvdmVyIHRoZSBlbmRzIGFuZCBzdGFydHMgb2YNCj4g
+PiB1bmFsaWduZWQgc2VjdGlvbnMgdG8gaW5pdGlhbGl6ZSBhbmQgcmVzZXJ2ZSBwYWdlcy4NCj4g
+Pg0KPiA+IFRoZSBzYW1lIHRoaW5nIHdvdWxkIGFsc28gbmVlZCB0byBiZSBkb25lIGluIGRlZmVy
+cmVkX2luaXRfbWVtbWFwKCkgdG8NCj4gPiBjb3ZlciB0aGUgZGVmZXJyZWQgaW5pdCBjYXNlLg0K
+Pg0KPiBXZWxsLCBJIGFtIG5vdCBzdXJlIFRCSC4gSSBoYXZlIHRvIHRoaW5rIGFib3V0IHRoYXQg
+bXVjaCBtb3JlLiBNYXliZSBpdA0KPiB3b3VsZCBiZSBtdWNoIG1vcmUgc2ltcGxlIHRvIG1ha2Ug
+c3VyZSB0aGF0IHdlIHdpbGwgbmV2ZXIgYWRkIGluY29tcGxldGUNCj4gbWVtYmxvY2tzIGFuZCBz
+aW1wbHkgcmVmdXNlIHRoZW0gZHVyaW5nIHRoZSBkaXNjb3ZlcnkuIEF0IGxlYXN0IGZvciBub3cu
+DQoNCk9uIHg4NiBtZW1ibG9ja3MgY2FuIGJlIHVwdG8gMkcgb24gbWFjaGluZXMgd2l0aCBvdmVy
+IDY0RyBvZiBSQU0uDQpBbHNvLCBtZW1vcnkgc2l6ZSBpcyB3YXkgdG8gZWFzeSB0b28gY2hhbmdl
+IHZpYSBxZW11IGFyZ3VtZW50cyB3aGVuIFZNDQpzdGFydHMuIElmIHdlIHNpbXBseSBkaXNhYmxl
+IHVuYWxpZ25lZCB0cmFpbGluZyBtZW1ibG9ja3MsIEkgYW0gc3VyZQ0Kd2Ugd291bGQgZ2V0IHRv
+bnMgb2Ygbm9pc2Ugb2YgbWlzc2luZyBtZW1vcnkuDQoNCkkgdGhpbmssIGFkZGluZyBjaGVja19o
+b3RwbHVnX21lbW9yeV9yYW5nZSgpIHdvdWxkIHdvcmsgdG8gZml4IHRoZQ0KaW1tZWRpYXRlIHBy
+b2JsZW0uIEJ1dCwgd2UgZG8gbmVlZCB0byBmaWd1cmUgb3V0ICBhIGJldHRlciBzb2x1dGlvbi4N
+Cg0KbWVtYmxvY2sgZGVzaWduIGlzIGJhc2VkIG9uIGFyY2hhaWMgYXNzdW1wdGlvbiB0aGF0IGhv
+dHBsdWcgdW5pdHMgYXJlDQpwaHlzaWNhbCBkaW1tcy4gVk1zIGFuZCBoeXBlcnZpc29ycyBjaGFu
+Z2VkIGFsbCBvZiB0aGF0LCBhbmQgd2UgY2FuDQpoYXZlIG11Y2ggZmluZXIgaG90cGx1ZyByZXF1
+ZXN0cyBvbiBtYWNoaW5lcyB3aXRoIGh1Z2UgRElNTXMuIFlldCwgd2UNCmRvIG5vdCB3YW50IHRv
+IHBvbGx1dGUgc3lzZnMgd2l0aCBtaWxsaW9ucyBvZiB0aW55IG1lbW9yeSBkZXZpY2VzLiBJDQph
+bSBub3Qgc3VyZSB3aGF0IGEgbG9uZyB0ZXJtIHByb3BlciBzb2x1dGlvbiBmb3IgdGhpcyBwcm9i
+bGVtIHNob3VsZA0KYmUsIGJ1dCBJIHNlZSB0aGF0IGxpbnV4IGhvdHBsdWcvaG90cmVtb3ZlIHN1
+YnN5c3RlbXMgbXVzdCBiZQ0KcmVkZXNpZ25lZCBiYXNlZCBvbiB0aGUgbmV3IHJlcXVpcmVtZW50
+cy4NCg0KUGF2ZWw=
