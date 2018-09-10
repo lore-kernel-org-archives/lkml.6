@@ -2,128 +2,126 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 933A3C43143
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 23:30:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE7ECC43143
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 23:43:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3172F206BB
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 23:30:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C30320855
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 23:43:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dFXeI7Ws"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3172F206BB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bcjDolYs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C30320855
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726426AbeIKE1O (ORCPT
+        id S1726360AbeIKEkD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 00:27:14 -0400
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:42461 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726143AbeIKE1O (ORCPT
+        Tue, 11 Sep 2018 00:40:03 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:43701 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725945AbeIKEkC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 00:27:14 -0400
-Received: by mail-yb1-f195.google.com with SMTP id j8-v6so8634676ybg.9
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 16:30:50 -0700 (PDT)
+        Tue, 11 Sep 2018 00:40:02 -0400
+Received: by mail-pg1-f193.google.com with SMTP id v66-v6so11238023pgb.10
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 16:43:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=NcJTiVda9qNLkIcK6ilDi4YUjY23ckcR220NYasT/7I=;
-        b=dFXeI7WstUtnaOoeKX4qnTmMVKYrX4z6q1smOuZGBbrYZyIEl42CxRpxAuS3atHKaD
-         bdBtbUkyvquwkzqghp7X3QfWmfXXaNpiuKgo+3dV/ey11cPXnKLg0JiaEeyJejcH20Ze
-         spx4FaoC11dWvOXMTFUSd3EzrVctLkvCx38C4=
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:date:message-id:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=Yw9vxWJ6YGklpxQJwQlNRm6osFUbXs3EZVyomclg/uU=;
+        b=bcjDolYst6bXqjaW2RF8VHS4mSuZOYlLSSbZ6BmoiNT0YAd2yOI5U3yIwRYQA+ds82
+         uYAX3p/rJJTc3cM1WNxmUAIGs378sHp/YuIBRuQKfhv6+jSga3YCYPcHBX8jX1GWkJYX
+         DkHdoSOk1DIV4T8Xx9WGiGb8LqEmVXpld9UbgbhfgAgOd+j5u5eo9+j0I1PHPoZP190C
+         1+tCDBUsj73eqWH6dUM18zs5q+BaIDG5jmZd28uH8dJi30iCMr28MMUuxTsIlukpdfId
+         VNfGa11mwN3fGGZ/W6LcU4slqG+ywFzP2FgE98tU81ta3isMFZi86114mNnIUuIDggK1
+         vArQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=NcJTiVda9qNLkIcK6ilDi4YUjY23ckcR220NYasT/7I=;
-        b=HU4gK649m/Y+3nZVGvtNoSFNBLXDFkLqHwZWvVM5J3rfI54VGlknFAiWDehXrGYvl9
-         sT1o1HCcaRe32I0xTiVItG3qFnIu+1yXUCSYgmw2/FDJTWe66JTUshgn1uMZE77Z4BWQ
-         DdmFlML3IQ2keeVehzga6IZ4X+N06s2f7hYYpDQPjqzc2ICL1MVbSPP+pofryWFjZgoN
-         2yl8x2Sxa3d0vGKkYiDWUVRpQyJsXCdDFc/B1Q1eGd4MDOTdBdYIYgPbhsa9xEiR018E
-         d2NiAKkuJrgjEuf1n0QcA2xPp5eI3NGymMojaDN5B0HRMm8amC62KnI/dHnhcR9o3BUP
-         y4tg==
-X-Gm-Message-State: APzg51CfyTif9DxJ4qfh18r8+den2il+P0jqAnbRpQaC1+OLzJif6ey0
-        o1VIFj0dzmKFctCQyZjiiWrrj+nkLVE=
-X-Google-Smtp-Source: ANB0VdakzAMEePUoeBNJYcS/xXjcqAeTnAGZyF7RsikyU01ZEx/ClNCOR+fk1cHzLLzI6GPDKg/Qyg==
-X-Received: by 2002:a25:a4c8:: with SMTP id g66-v6mr11278808ybi.76.1536622249723;
-        Mon, 10 Sep 2018 16:30:49 -0700 (PDT)
-Received: from mail-yw1-f48.google.com (mail-yw1-f48.google.com. [209.85.161.48])
-        by smtp.gmail.com with ESMTPSA id d6-v6sm5743303ywa.85.2018.09.10.16.30.47
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:subject:from:to:cc:date:message-id:user-agent
+         :mime-version:content-transfer-encoding;
+        bh=Yw9vxWJ6YGklpxQJwQlNRm6osFUbXs3EZVyomclg/uU=;
+        b=PdGk5AcYuuHjUED3PjWUU3QmIBGppMOqsgcQz7f21X+4iC6sFscnLRcMdykLaZCh9p
+         2xNYf3+lystFdZeYY9Bh9pGjzcsMjUN/S5/dTKADTpL7PzKV0+zZVeCAPVI3od0tDaZ6
+         6SjBDrDU47MV1qQFeMZiGZnwVYPaaBD1CQbfmnZN6s62hpPPV/CHd8yJPyyEfB6Ug2Ho
+         GcZ9vEg2VCf9gAJOY1m4N+ietaKjSV/f5zaJzWFAQKGRZNsr8ruEO0WICjqfDdEvhpIl
+         6f9e7lEd/LU3mFDgXxmVd/+K3EdJAJIMlIYHrTVUqsTqqrSCRvRreZt01Ke31Ln6+Jqr
+         oMtg==
+X-Gm-Message-State: APzg51BAvsFGR1ym7fT1ew1+S/aIT04PsKAetwjXJ9QAhYqrnqMpVKtD
+        Kt/qa1jCntU2+cMm+jAdfFQexXcX
+X-Google-Smtp-Source: ANB0VdaYs/qwPckOqIjVc/MF9qQPl75UPWohNaI8P/32wDdPVKiG2ZTn76uNfSuuQoMVnCuOBlIxiw==
+X-Received: by 2002:a63:d90b:: with SMTP id r11-v6mr25397961pgg.315.1536623016848;
+        Mon, 10 Sep 2018 16:43:36 -0700 (PDT)
+Received: from localhost.localdomain (static-50-53-21-37.bvtn.or.frontiernet.net. [50.53.21.37])
+        by smtp.gmail.com with ESMTPSA id 16-v6sm27924027pfo.164.2018.09.10.16.43.35
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Sep 2018 16:30:48 -0700 (PDT)
-Received: by mail-yw1-f48.google.com with SMTP id n21-v6so8532019ywh.5
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 16:30:47 -0700 (PDT)
-X-Received: by 2002:a81:1194:: with SMTP id 142-v6mr11699570ywr.168.1536622247298;
- Mon, 10 Sep 2018 16:30:47 -0700 (PDT)
+        Mon, 10 Sep 2018 16:43:36 -0700 (PDT)
+Subject: [PATCH 0/4] Address issues slowing persistent memory initialization
+From:   Alexander Duyck <alexander.duyck@gmail.com>
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org
+Cc:     pavel.tatashin@microsoft.com, mhocko@suse.com,
+        dave.jiang@intel.com, mingo@kernel.org, dave.hansen@intel.com,
+        jglisse@redhat.com, akpm@linux-foundation.org, logang@deltatee.com,
+        dan.j.williams@intel.com, kirill.shutemov@linux.intel.com
+Date:   Mon, 10 Sep 2018 16:43:35 -0700
+Message-ID: <20180910232615.4068.29155.stgit@localhost.localdomain>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Received: by 2002:a25:5f04:0:0:0:0:0 with HTTP; Mon, 10 Sep 2018 16:30:46
- -0700 (PDT)
-In-Reply-To: <20180910223723.25357-1-labbott@redhat.com>
-References: <20180910223723.25357-1-labbott@redhat.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 10 Sep 2018 16:30:46 -0700
-X-Gmail-Original-Message-ID: <CAGXu5j+-RNeEr+FUc6maamvzYpY7W0VJ-yYGDHnFTuNPeOUMFw@mail.gmail.com>
-Message-ID: <CAGXu5j+-RNeEr+FUc6maamvzYpY7W0VJ-yYGDHnFTuNPeOUMFw@mail.gmail.com>
-Subject: Re: [PATCH] scsi: ibmvscsis: Fix a stringop-overflow warning
-To:     Laura Abbott <labbott@redhat.com>
-Cc:     "Bryant G. Ly" <bryantly@linux.vnet.ibm.com>,
-        Michael Cyr <mikecyr@linux.vnet.ibm.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org,
-        target-devel <target-devel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Prarit Bhargava <prarit@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 10, 2018 at 3:37 PM, Laura Abbott <labbott@redhat.com> wrote:
-> There's currently a warning about string overflow with strncat:
->
-> drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c: In function 'ibmvscsis_probe':
-> drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c:3479:2: error: 'strncat' specified
-> bound 64 equals destination size [-Werror=stringop-overflow=]
->   strncat(vscsi->eye, vdev->name, MAX_EYE);
->   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->
-> Switch to using strlcat which correctly accounts for lengths that
-> are equal to the destination buffer.
->
-> Signed-off-by: Laura Abbott <labbott@redhat.com>
-> ---
->  drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c b/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
-> index fac377320158..53d344d8dc43 100644
-> --- a/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
-> +++ b/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
-> @@ -3475,7 +3475,7 @@ static int ibmvscsis_probe(struct vio_dev *vdev,
->                 vscsi->dds.window[REMOTE].liobn);
->
->         strcpy(vscsi->eye, "VSCSI ");
-> -       strncat(vscsi->eye, vdev->name, MAX_EYE);
-> +       strlcat(vscsi->eye, vdev->name, MAX_EYE);
+This patch set is meant to be a v3 to my earlier patch set "Address issues
+slowing memory init"[1]. However I have added 2 additional patches to
+address issues seen in which NVDIMM memory was slow to initialize
+especially on systems with multiple NUMA nodes.
 
-Can this just get switched to snprintf() instead?
+Since v2 of the patch set I have replaced the config option to work around
+the page init poisoning with a kernel parameter. I also updated one comment
+based on input from Michal.
 
-snprintf(vscsi->eye, sizeof(vscsi->eye), "VSCSI%s", vdev->name);
+The third patch in this set is new and is meant to address the need to
+defer some page initialization to outside of the hot-plug lock. It is
+loosely based on the original patch set by Dan Williams to perform
+asynchronous page init for ZONE_DEVICE pages[2]. However, it is  based
+more around the deferred page init model where memory init is deferred to a
+fixed point, which in this case is to just outside of the hot-plug lock.
 
->         vscsi->dds.unit_id = vdev->unit_address;
->         strncpy(vscsi->dds.partition_name, partition_name,
+The fourth patch allows nvdimm init to be more node specific where
+possible. I basically just copy/pasted the approach used in
+pci_call_probe to allow for us to get the initialization code on the node
+as close to the memory as possible. Doing so allows us to save considerably
+on init time.
 
-And does this strncpy need a NUL-termination and/or trailing padding?
+[1]: https://lkml.org/lkml/2018/9/5/924
+[2]: https://lkml.org/lkml/2018/7/16/828
 
--Kees
+---
 
--- 
-Kees Cook
-Pixel Security
+Alexander Duyck (4):
+      mm: Provide kernel parameter to allow disabling page init poisoning
+      mm: Create non-atomic version of SetPageReserved for init use
+      mm: Defer ZONE_DEVICE page initialization to the point where we init pgmap
+      nvdimm: Trigger the device probe on a cpu local to the device
+
+
+ Documentation/admin-guide/kernel-parameters.txt |    8 ++
+ drivers/nvdimm/bus.c                            |   45 ++++++++++
+ include/linux/mm.h                              |    2 
+ include/linux/page-flags.h                      |    9 ++
+ kernel/memremap.c                               |   24 ++---
+ mm/debug.c                                      |   16 +++
+ mm/hmm.c                                        |   12 ++-
+ mm/memblock.c                                   |    5 -
+ mm/page_alloc.c                                 |  106 ++++++++++++++++++++++-
+ mm/sparse.c                                     |    4 -
+ 10 files changed, 200 insertions(+), 31 deletions(-)
+
+--
