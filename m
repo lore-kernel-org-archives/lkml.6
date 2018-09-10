@@ -2,86 +2,107 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90ACDC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 20:43:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6FBAC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 20:49:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A84820658
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 20:43:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A84820658
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 7356420865
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 20:49:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VgtqcP1w"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7356420865
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726876AbeIKBjM (ORCPT
+        id S1726722AbeIKBpG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 21:39:12 -0400
-Received: from mga01.intel.com ([192.55.52.88]:54885 "EHLO mga01.intel.com"
+        Mon, 10 Sep 2018 21:45:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51042 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726795AbeIKBjM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 21:39:12 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2018 13:43:21 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,357,1531810800"; 
-   d="scan'208";a="73150820"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.20])
-  by orsmga006.jf.intel.com with ESMTP; 10 Sep 2018 13:43:17 -0700
-Message-ID: <1536612197.3236.13.camel@intel.com>
-Subject: Re: [RFC][PATCH 5/8] x86/mm: fix exception table comments
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Dave Hansen <dave.hansen@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Cc:     peterz@infradead.org, tglx@linutronix.de, x86@kernel.org,
-        luto@kernel.org
-Date:   Mon, 10 Sep 2018 13:43:17 -0700
-In-Reply-To: <bc50acea-ebc9-5be8-0fcc-9b96031a7348@linux.intel.com>
-References: <20180907194852.3C351B82@viggo.jf.intel.com>
-         <20180907194900.DF3B41C0@viggo.jf.intel.com>
-         <1536354280.11460.28.camel@intel.com>
-         <bc50acea-ebc9-5be8-0fcc-9b96031a7348@linux.intel.com>
+        id S1726150AbeIKBpF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 21:45:05 -0400
+Received: from mail-qt0-f169.google.com (mail-qt0-f169.google.com [209.85.216.169])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7796620865;
+        Mon, 10 Sep 2018 20:49:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1536612553;
+        bh=qXybzrn47r2UwyUE/7E1D73V+iIG0bGVkgw9Jn9KH88=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=VgtqcP1wPYW11FbZIbig7wepKD4wAd+vxUeJH9XU8N3QvLuu+CgPPMhg3/OEIhHA6
+         dqyI9WaGtXkpEnKXr74YOEwLT5LOBIC+YKH1Q6aMRJ7sDL8PJ+0Z1TDmZplimG+i5s
+         8XxurTik/b2YpxDZe5hosw/MOmH/Q0wNzWiWecOw=
+Received: by mail-qt0-f169.google.com with SMTP id l42-v6so590886qtf.13;
+        Mon, 10 Sep 2018 13:49:13 -0700 (PDT)
+X-Gm-Message-State: APzg51DDXg+ZXeCIIkT4zpnqyqy7d/6wpej6zcdEm+Yb+VLpfj+/s7NZ
+        XE9yT/HDG2ozL4sRvRgJrjw6slzrEtqQYnjE/g==
+X-Google-Smtp-Source: ANB0VdZvBcqr7DHVc8tHGdSvjDxprKgGHvPlC10mb1bkQ9eIkHiYagj8VoksLLlcSJS7eoHJcUdseItgaOwwpRHdOI8=
+X-Received: by 2002:a0c:e9ce:: with SMTP id q14-v6mr16313165qvo.106.1536612552531;
+ Mon, 10 Sep 2018 13:49:12 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180905193738.19325-1-robh@kernel.org> <20180905193738.19325-9-robh@kernel.org>
+ <8b227f8c-f351-18da-b55d-e8979281f510@xilinx.com>
+In-Reply-To: <8b227f8c-f351-18da-b55d-e8979281f510@xilinx.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Mon, 10 Sep 2018 15:49:01 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKWy8dmfF2zCAsEVkDdFM14niKtapqnR_K45Kr3-mZhqQ@mail.gmail.com>
+Message-ID: <CAL_JsqKWy8dmfF2zCAsEVkDdFM14niKtapqnR_K45Kr3-mZhqQ@mail.gmail.com>
+Subject: Re: [PATCH 08/21] microblaze: get cpu node with of_get_cpu_node
+To:     Michal Simek <michal.simek@xilinx.com>
+Cc:     devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-09-07 at 14:51 -0700, Dave Hansen wrote:
-> > 
-> > > 
-> > > +	 * Only do the expensive exception table search when we might be at
-> > > +	 * risk of a deadlock:
-> > > +	 * 1. We failed to acquire mmap_sem, and
-> > > +	 * 2. The access was an explicit kernel-mode access
-> > > +	 *    (X86_PF_USER=0).
-> > Might be worth reminding the reader that X86_PF_USER will be set in
-> > sw_error_code for implicit accesses.  I saw "explicit" and my mind
-> > immediately jumped to hw_error_code for whatever reason.  E.g.:
-> > 
-> > 	* 2. The access was an explicit kernel-mode access (we set X86_PF_USER
-> > 	*    in sw_error_code for implicit kernel-mode accesses).
-> Yeah, that was not worded well.  Is this better?
-> 
-> > 
-> >          * Only do the expensive exception table search when we might be at
-> >          * risk of a deadlock:
-> >          * 1. We failed to acquire mmap_sem, and
-> >          * 2. The access was an explicit kernel-mode access.  An access
-> >          *    from user-mode will X86_PF_USER=1 set via hw_error_code or
-> >          *    set in sw_error_code if it were an implicit kernel-mode
-> >          *    access that originated in user mode.
+On Mon, Sep 10, 2018 at 9:56 AM Michal Simek <michal.simek@xilinx.com> wrote:
+>
+> On 5.9.2018 21:37, Rob Herring wrote:
+> > "device_type" use is deprecated for FDT though it has continued to be used
+> > for nodes like cpu nodes. Use of_get_cpu_node() instead which works using
+> > node names by default. This will allow the eventually removal of cpu
+> > device_type properties.
+> >
+> > Also, fix a leaked reference by adding a missing of_node_put.
+> >
+> > Cc: Michal Simek <monstr@monstr.eu>
+> > Signed-off-by: Rob Herring <robh@kernel.org>
+> > ---
+> > Please ack and I will take via the DT tree. This is dependent on the
+> > first 2 patches.
+>
+> I have tested it and it is align with the spec and all dtses generated
+> before 2015 will work without any issue.
+> In 2015 new device tree generator was introduced and it is not adding
+> reg property to cpu node which is required by this change.
+> This will be fixed but that means that all generated dtses from 2015 are
+> affected.
 
-For me, mentioning hw_error_code just muddies the waters, e.g. why is
-hw_error_code mentioned when it's not checked in the code?  Comments
-alone won't help someone that's reading this code and doesn't understand
-that hardware sets X86_PF_USER for user-mode accesses.  Maybe this?
+Patch 2 was supposed to handle that case. However, it does expect that
+there should be an #address-cells equal to 0 in that case. Is that not
+a valid assumption?
 
-	 * 2. The access was an explicit kernel-mode access.  X86_PF_USER
-	 *    is set in sw_error_code for both user-mode accesses and
-	 *    implicit kernel-mode accesses that originated in user mode.
+> That's why will be great if you can also change that pr_err message to
+> mentioned to also check reg property to give users a chance to fix it
+> properly. Error log below.
+
+I don't think breaking users is good.
+
+I could make this a find by path (/cpus/cpu) instead or just drop it
+for microblaze. It doesn't really affect my plans for removing
+device_node.type ptr.
+
+Rob
+
+
+> Anyway here is my
+> Tested-by: Michal Simek <michal.simek@xilinx.com>
+>
+> Thanks,
+> Michal
