@@ -2,138 +2,175 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CC77C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:23:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6EEBC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:24:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DACA20866
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:23:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DACA20866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 611BE2086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:24:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RYOZL2vh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 611BE2086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727560AbeIJLPb (ORCPT
+        id S1727618AbeIJLQ2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 07:15:31 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57466 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726405AbeIJLPb (ORCPT
+        Mon, 10 Sep 2018 07:16:28 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:33248 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726405AbeIJLQ2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 07:15:31 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8A6Jvdu114186
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 02:23:05 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mdj3mjkv2-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 02:23:05 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <bblock@linux.ibm.com>;
-        Mon, 10 Sep 2018 07:23:03 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 10 Sep 2018 07:23:02 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8A6N1oL47120496
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 10 Sep 2018 06:23:01 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 40F31A405B;
-        Mon, 10 Sep 2018 09:22:51 +0100 (BST)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2EED2A404D;
-        Mon, 10 Sep 2018 09:22:51 +0100 (BST)
-Received: from w530-pk1mzal (unknown [9.152.212.186])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Mon, 10 Sep 2018 09:22:51 +0100 (BST)
-Received: from bblock by w530-pk1mzal with local (Exim 4.91)
-        (envelope-from <bblock@linux.ibm.com>)
-        id 1fzFbA-0000hK-Oo; Mon, 10 Sep 2018 08:23:00 +0200
-Date:   Mon, 10 Sep 2018 08:23:00 +0200
-From:   Benjamin Block <bblock@linux.ibm.com>
-To:     zhong jiang <zhongjiang@huawei.com>
-Cc:     maier@linux.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] s390: zfcp_aux: remove unnecessary null pointer check
- before mempool_destroy
-References: <1536399705-21676-1-git-send-email-zhongjiang@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1536399705-21676-1-git-send-email-zhongjiang@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-TM-AS-GCONF: 00
-x-cbid: 18091006-0016-0000-0000-00000202FE85
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18091006-0017-0000-0000-00003259B94D
-Message-Id: <20180910062300.GA6465@w530-pk1mzal>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-10_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809100069
+        Mon, 10 Sep 2018 07:16:28 -0400
+Received: by mail-pg1-f193.google.com with SMTP id s7-v6so9930275pgc.0
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Sep 2018 23:24:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=wkOrn52A2N0c4FZR5EYFMEE0+LMJfprNaVOHi0yDTSc=;
+        b=RYOZL2vhHSSPw8JHXxpWprBgAScXuT0LthF8wb6GrtE/mMgDbpM6nlO402HAIMm+EY
+         O8BmPxi0KlrHmPp7Dm6KAqMpFzeoVWSog4pvUP7xrjJsUtNPRbFwlquNxIs47TN7oj/k
+         B1ll2i/W/PIhmVCOJ+Q/MYD8iRQoatT+3kCM7wYAqSysoHEhZt2PTqaT7RTnLVcVlY4I
+         8uFARfEnWiFo5S0x8cnapz1KnjvHS4rFyTjEmzkn/raiIKHNgKrWcZSYscV3iWHqbzch
+         qQOEFrbNEssdb3xaT0dGBPQU5I2ioRRBlV6mn+1+dTQBnsOO4k4C27CSz+qteukKPkr2
+         wfmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=wkOrn52A2N0c4FZR5EYFMEE0+LMJfprNaVOHi0yDTSc=;
+        b=FAft00+TpWi7q8v1MmsIqeklFEka+O2CQ23kLj6Z7awWZ11oYj+yDbTkvDVhmm5b4M
+         KK6ANZ4RL1u3sArS53YNHnsB6SP7wm0szbfNcxqNk5y86+88Plf/TsZVGLmrI8lYwoxG
+         5hsUenXrDwpDbyQrYyPfGlqrNoXfZ/ASU9dAZ47aC+pty2RonnsZ/CfzzHB9EQP+7ILT
+         q5xFwd+oFDFRosMLh2heXkoJCjJaoTSOQ6oXKwFNtFhf8CPWxWajJ1aWWS2rsS3bj9tj
+         ux6LlXDQKAojfAfIw7i0ARkNtM6NQ4aq0GsmflcUhkPbMDlBxOnyT7vhugqWqaTMfIV8
+         sbIA==
+X-Gm-Message-State: APzg51ADIdYJtXkMGW+sh8DZ7SBRmrqUao3151CQDLsU10HLmsxkleki
+        NxDSM7hW2C/zerZyrTtZd1s=
+X-Google-Smtp-Source: ANB0VdZjhmX5lBM789Yg/BzlQPNvnmMefTAJv9xa/x4eRQMrYl7/gCl/+SzErGFWBqYQI8jZVZUx4g==
+X-Received: by 2002:a63:d518:: with SMTP id c24-v6mr19978252pgg.357.1536560642462;
+        Sun, 09 Sep 2018 23:24:02 -0700 (PDT)
+Received: from localhost.localdomain ([104.237.86.186])
+        by smtp.gmail.com with ESMTPSA id e190-v6sm29884955pfc.81.2018.09.09.23.23.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 09 Sep 2018 23:24:02 -0700 (PDT)
+From:   Ocean He <oceanhehy@gmail.com>
+To:     dan.j.williams@intel.com, zwisler@kernel.org,
+        vishal.l.verma@intel.com, dave.jiang@intel.com
+Cc:     linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
+        Ocean He <hehy1@lenovo.com>
+Subject: [PATCH 0/3] libnvdimm: reset seeds for next namespace creation 
+Date:   Mon, 10 Sep 2018 02:21:45 -0400
+Message-Id: <1536560508-24564-1-git-send-email-oceanhehy@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 08, 2018 at 05:41:45PM +0800, zhong jiang wrote:
-> mempool_destroy has taken null pointer check into account. so remove the
-> redundant check.
-> 
-> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-> ---
->  drivers/s390/scsi/zfcp_aux.c | 21 +++++++--------------
->  1 file changed, 7 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/s390/scsi/zfcp_aux.c b/drivers/s390/scsi/zfcp_aux.c
-> index 94f4d8f..e06c3f2 100644
-> --- a/drivers/s390/scsi/zfcp_aux.c
-> +++ b/drivers/s390/scsi/zfcp_aux.c
-> @@ -248,20 +248,13 @@ static int zfcp_allocate_low_mem_buffers(struct zfcp_adapter *adapter)
->  
->  static void zfcp_free_low_mem_buffers(struct zfcp_adapter *adapter)
->  {
-> -	if (adapter->pool.erp_req)
-> -		mempool_destroy(adapter->pool.erp_req);
-> -	if (adapter->pool.scsi_req)
-> -		mempool_destroy(adapter->pool.scsi_req);
-> -	if (adapter->pool.scsi_abort)
-> -		mempool_destroy(adapter->pool.scsi_abort);
-> -	if (adapter->pool.qtcb_pool)
-> -		mempool_destroy(adapter->pool.qtcb_pool);
-> -	if (adapter->pool.status_read_req)
-> -		mempool_destroy(adapter->pool.status_read_req);
-> -	if (adapter->pool.sr_data)
-> -		mempool_destroy(adapter->pool.sr_data);
-> -	if (adapter->pool.gid_pn)
-> -		mempool_destroy(adapter->pool.gid_pn);
-> +	mempool_destroy(adapter->pool.erp_req);
-> +	mempool_destroy(adapter->pool.scsi_req);
-> +	mempool_destroy(adapter->pool.scsi_abort);
-> +	mempool_destroy(adapter->pool.qtcb_pool);
-> +	mempool_destroy(adapter->pool.status_read_req);
-> +	mempool_destroy(adapter->pool.sr_data);
-> +	mempool_destroy(adapter->pool.gid_pn);
->  }
->  
+From: Ocean He <hehy1@lenovo.com>
 
-Acked-by: Benjamin Block <bblock@linux.ibm.com>
+When pmem namespaces created are smaller than section size twice, the
+second creation would fail and meanwhile there is a kernel call trace
+which comes from commit 15d36fecd0bdc7510b70 ("mm: disallow mappings that
+conflict for devm_memremap_pages()").
+	------------[ cut here ]------------
+	nd_pmem pfn1.1: Conflicting mapping in same section
+	WARNING: CPU: 84 PID: 51974 at kernel/memremap.c:194 devm_memremap_pages+0x4a0/0x4e0
+	CPU: 84 PID: 51974 Comm: ndctl Kdump: loaded Tainted: G W E 4.19.0-rc2-23-default+ #27
+	RIP: 0010:devm_memremap_pages+0x4a0/0x4e0
+	Call Trace:
+	 pmem_attach_disk+0x3ab/0x581 [nd_pmem]
+	 nvdimm_bus_probe+0x69/0x150 [libnvdimm]
+	 really_probe+0x262/0x3d0
+	 driver_probe_device+0x60/0x120
+	 bind_store+0x102/0x190
+	 kernfs_fop_write+0x105/0x180
+	 __vfs_write+0x36/0x1a0
+	 ? common_file_perm+0x47/0x130
+	 ? security_file_permission+0x2c/0xb0
+	 vfs_write+0xad/0x1a0
+	 ksys_write+0x52/0xc0
+	 do_syscall_64+0x5b/0x180
+	 entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-Thank you. We'll send it along when we next send patches upstream.
+Here is an example (section size is 128MB) based on kernel 4.19-rc2.
+	# ndctl create-namespace -r region1 -s 100m -t pmem -m fsdax
+	{
+	  "dev":"namespace1.0",
+	  "mode":"fsdax",
+	  "map":"dev",
+	  "size":"96.00 MiB (100.66 MB)",
+	  "uuid":"ef9a0556-a610-40b5-8c71-43991765a2cc",
+	  "raw_uuid":"177b22e2-b7e8-482f-a063-2b8de876d979",
+	  "sector_size":512,
+	  "blockdev":"pmem1",
+	  "numa_node":1
+	}
+	# ndctl create-namespace -r region1 -s 100m -t pmem -m fsdax
+	libndctl: ndctl_pfn_enable: pfn1.1: failed to enable
+	  Error: namespace1.1: failed to enable
+	failed to create namespace: No such device or address
 
---
-With Best Regards, Benjamin Block      /      Linux on IBM Z Kernel Development
-IBM Systems & Technology Group   /  IBM Deutschland Research & Development GmbH
-Vorsitz. AufsR.: Martina Koederitz       /      Geschäftsführung: Dirk Wittkopp
-Sitz der Gesellschaft: Böblingen / Registergericht: AmtsG Stuttgart, HRB 243294
+When above second creation failure occurs, the expectation is to destroy
+namespace1.0 to create a new namespace which size is aligned with section
+size. However, both namespace seed and pfn seed have been consumed, the
+new namespace creation still fails.
+	# ndctl destroy-namespace namespace1.0 -f
+	destroyed 1 namespace
+	# ndctl create-namespace -r region1 -s 128m -t pmem -m fsdax
+	failed to create namespace: Device or resource busy
+
+To ensure pfn_seed/dax_seed and namespace_seed are always ready for next
+namespace creation, this patch set enables seed detach and reset. Back to
+the example, the new namespace creation never fails if this patch set
+applied.
+	# ndctl destroy-namespace namespace1.0 -f
+	destroyed 1 namespace
+	# ndctl create-namespace -r region1 -s 128m -t pmem -m fsdax
+	{
+	  "dev":"namespace1.0",
+	  "mode":"fsdax",
+	  "map":"dev",
+	  "size":"124.00 MiB (130.02 MB)",
+	  "uuid":"0d0e7506-d108-4a88-824a-edef26fd0399",
+	  "raw_uuid":"efeb9647-12f5-44cd-8a52-2f3a0d14589a",
+	  "sector_size":512,
+	  "blockdev":"pmem1",
+	  "numa_node":1
+	}
+	# ndctl create-namespace -r region1 -s 128m -t pmem -m fsdax
+	{
+ 	  "dev":"namespace1.1",
+ 	  "mode":"fsdax",
+ 	  "map":"dev",
+ 	  "size":130023424,
+ 	  "uuid":"689828dc-8779-434d-8e93-0406d4e1e536",
+ 	  "raw_uuid":"d86e1025-c224-48b6-b2a7-6ccef152d5fd",
+ 	  "sector_size":512,
+ 	  "blockdev":"pmem1.1",
+ 	  "numa_node":1
+	}
+
+The mode devdax (-m devdax) has the same issue, this patch set could
+cover it.
+
+Ocean He (3):
+  libnvdimm, claim: remove static attribute of nd_detach_and_reset
+  libnvdimm, namespace_devs: add function nd_region_reset_ns_seed for
+    namespace seed reset
+  libnvdimm, region_devs: reset related seeds when fail to create
+    namespace
+
+ drivers/nvdimm/claim.c          |  2 +-
+ drivers/nvdimm/namespace_devs.c | 32 ++++++++++++++++++++++++++++++++
+ drivers/nvdimm/nd-core.h        |  2 ++
+ drivers/nvdimm/region_devs.c    | 34 ++++++++++++++++++++++++++++++++++
+ 4 files changed, 69 insertions(+), 1 deletion(-)
+
+-- 
+1.8.3.1
 
