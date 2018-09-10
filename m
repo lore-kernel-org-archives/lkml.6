@@ -2,151 +2,134 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55821C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:43:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85084C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:43:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 092942086B
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:43:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 092942086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 394952086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:43:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Eg4DYcG5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 394952086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728139AbeIJOgR (ORCPT
+        id S1728059AbeIJOhD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 10:36:17 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53984 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727261AbeIJOgR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 10:36:17 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A8B6B18A;
-        Mon, 10 Sep 2018 02:43:06 -0700 (PDT)
-Received: from queper01-lin (queper01-lin.emea.arm.com [10.4.13.27])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 90D783F557;
-        Mon, 10 Sep 2018 02:43:02 -0700 (PDT)
-Date:   Mon, 10 Sep 2018 10:43:01 +0100
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Chris Redpath <chris.redpath@arm.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Steve Muckle <smuckle@google.com>, adharmap@codeaurora.org,
-        Saravana Kannan <skannan@codeaurora.org>,
-        Pavan Kondeti <pkondeti@codeaurora.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        currojerez@riseup.net, Javi Merino <javi.merino@kernel.org>
-Subject: Re: [PATCH v6 13/14] sched/topology: Make Energy Aware Scheduling
- depend on schedutil
-Message-ID: <20180910094255.nzjjsiphjplh7ruk@queper01-lin>
-References: <20180820094420.26590-1-quentin.perret@arm.com>
- <CAJZ5v0jL_k36RPc6e8yUHxAYGXp7HHWK+hLnBZWnu5Oi__7j3w@mail.gmail.com>
- <20180906143842.xlxcg5notwdaflww@queper01-lin>
- <1545744.fI5ZvP8FO0@aspire.rjw.lan>
- <20180907152923.oxsmcqciez4yhmkk@queper01-lin>
- <CAJZ5v0gs1Fb-Y1FbjmnxLNHQR=CSHFX_=KpDEkqRCYDJ9EJByQ@mail.gmail.com>
- <20180910082411.oyedkqerxs6b7um5@queper01-lin>
- <CAJZ5v0jSE2u7DpT6KBiR=zEN0RSBq4cO1Ve=e+pju6cwj8toFQ@mail.gmail.com>
+        Mon, 10 Sep 2018 10:37:03 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:53520 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727353AbeIJOhD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 10:37:03 -0400
+Received: by mail-it0-f65.google.com with SMTP id p79-v6so28667427itp.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 02:43:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=YBt2LLg3d5Qo0TxZy9S5pEDXQ5aB88QJQEYbY43HYbk=;
+        b=Eg4DYcG5H+Jqu/jgbv5bmFsSxte9WYzzMgjHTRY6nc+OEKpIbhzsP83wN0GdBnCqqQ
+         +Xi/LjnUHHrpNmpgFydJE2dfR5ljVALGJHmP8dEMVxdA13efczwGcjAVH2X6ztcSi5p/
+         OBesMJIuFY3wZAk/Bje/dddTq0bki2ab3TrBkFBhYKuqKPnmSONybJ9Wepzp7gCzNOZ9
+         G4vGIsDU7wkmfhA0hqzFzld3MC8w9C59F8jV7igHVv+BaL1UDpdn1GViQH7bMD65nnks
+         112K8JiccGjwOFWQ/Jce0CutF7xFoK6IRtJ3C+hZrM2akqYiRtLjx7WAy40SuUKWW0ZG
+         cNqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=YBt2LLg3d5Qo0TxZy9S5pEDXQ5aB88QJQEYbY43HYbk=;
+        b=XZXpTAPg/1iC76ipn23239co3qm5+GOW3U0lm9h/LKArL2xmmINmMoc7eMAqmrPayu
+         VwPgxZFIhQIxiC+qNB8/JFKhC14MXAL44lFvBsXFwRvKZ4fB93Q7ARh1/whG07cXW8/t
+         LA8LVWx5fIj2p90Hk/TXaPDQL1552b0RBt+JITBNfkpr4d78MCcks7h0mCmEGI273By3
+         hV4Xu7xO7Kjd3WDrv27ZGnkmobG/jagQFFqG5L5zj3CjKLGC7lujPXYmIXRdflAPo7H/
+         Fxkh/vJcSNLT8t35wR93x6IQBEzbMV+Kz920tKbw+AcNp92buMHPwFau0+MiPucdA/F5
+         eY9g==
+X-Gm-Message-State: APzg51COugfVyFHJJNJexbZ6UND932VwNkT88CcwfKFnYbE3KYJYBLHj
+        yplArBpujFxB0DKbR8koRsP4b/fYUnSOkcFQDyu1bw==
+X-Google-Smtp-Source: ANB0VdYT6GS3SiUmeZhbcEFAVDKLdRIOCeXyIESzP8XdFggIE97xaNRmHSaWi+393t2dh8dckJ9Dk8HKCWuuHmImzO8=
+X-Received: by 2002:a24:ef43:: with SMTP id i64-v6mr16696191ith.47.1536572631532;
+ Mon, 10 Sep 2018 02:43:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0jSE2u7DpT6KBiR=zEN0RSBq4cO1Ve=e+pju6cwj8toFQ@mail.gmail.com>
-User-Agent: NeoMutt/20171215
+Received: by 2002:a02:5942:0:0:0:0:0 with HTTP; Mon, 10 Sep 2018 02:43:31
+ -0700 (PDT)
+In-Reply-To: <CAJfpegsqsESUft-azOkirq9363nUXM=Sx4YMX6XVQxquEbjS7Q@mail.gmail.com>
+References: <00000000000024df4605757495a8@google.com> <CAJfpegsqsESUft-azOkirq9363nUXM=Sx4YMX6XVQxquEbjS7Q@mail.gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 10 Sep 2018 11:43:31 +0200
+Message-ID: <CACT4Y+bhGKrHk_BB4g9nDtRYD9VaaPyBTRxTo98r1BufAh6Z8A@mail.gmail.com>
+Subject: Re: possible deadlock in free_ioctx_users
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     syzbot <syzbot+d86c4426a01f60feddc7@syzkaller.appspotmail.com>,
+        bcrl <bcrl@kvack.org>, linux-aio <linux-aio@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday 10 Sep 2018 at 10:55:43 (+0200), Rafael J. Wysocki wrote:
-> On Mon, Sep 10, 2018 at 10:24 AM Quentin Perret <quentin.perret@arm.com> wrote:
-> >
-> > Hi Rafael,
-> >
-> > On Sunday 09 Sep 2018 at 22:13:52 (+0200), Rafael J. Wysocki wrote:
-> > > On Fri, Sep 7, 2018 at 5:29 PM Quentin Perret <quentin.perret@arm.com> wrote:
-> > > > On Friday 07 Sep 2018 at 10:52:01 (+0200), Rafael J. Wysocki wrote:
-> > > > > Well, why don't you implement it as something like "if the governor changes
-> > > > > from sugov to something else (or the other way around), call this function
-> > > > > from the scheduler"?
-> > > >
-> > > > I just gave it a try and ended up with the diff below. It's basically
-> > > > the exact same patch with a direct function call instead of a notifier.
-> > > > (I also tried the sugov_start/stop thing I keep mentioning but it is
-> > > > more complex, so let's see if the simplest solution could work first).
-> > > >
-> > > > What do you think ?
-> > >
-> > > This generally works for me from the cpufreq perspective, but I would
-> > > add "cpufreq" to the name of the new function, that is call it
-> > > something like sched_cpufreq_governor_change().
-> >
-> > Ok, no problem.
-> >
-> > > Also do you really need the extra work item?  Governor changes are
-> > > carried out in process context anyway.
-> >
-> > Ah, good point, I can remove that. I just tried and got the following
-> > lock warning on boot, though:
-> >
-> > [    2.518684] ============================================
-> > [    2.523942] WARNING: possible recursive locking detected
-> > [    2.529200] 4.18.0-rc6-00086-g940e7a9fd5ec #10 Not tainted
-> > [    2.534630] --------------------------------------------
-> > [    2.539888] kworker/2:3/1349 is trying to acquire lock:
-> > [    2.545059] (____ptrval____) (cpu_hotplug_lock.rw_sem){++++}, at: rebuild_sched_domains_locked+0x2c/0x598
-> > [    2.554559]
-> > [    2.554559] but task is already holding lock:
-> > [    2.560332] (____ptrval____) (cpu_hotplug_lock.rw_sem){++++}, at: cpufreq_register_driver+0x80/0x1d0
-> > [    2.569396]
-> > [    2.569396] other info that might help us debug this:
-> > [    2.575858]  Possible unsafe locking scenario:
-> > [    2.575858]
-> > [    2.581717]        CPU0
-> > [    2.584135]        ----
-> > [    2.586553]   lock(cpu_hotplug_lock.rw_sem);
-> > [    2.590785]   lock(cpu_hotplug_lock.rw_sem);
-> > [    2.595017]
-> > [    2.595017]  *** DEADLOCK ***
-> > [    2.595017]
-> > [    2.600877]  May be due to missing lock nesting notation
-> >
-> > That seems to happen because cpufreq_register_driver() calls
-> > cpus_read_lock(), which is then called again by rebuild_sched_domains()
-> > down the line. So it might just be a missing lock nesting notation as
-> > the warning suggests ?
-> >
-> > I'll have a look.
-> 
-> It only is nested in the _register_driver() code path, otherwise it may not be.
+On Mon, Sep 10, 2018 at 11:28 AM, Miklos Szeredi <miklos@szeredi.hu> wrote:
+> On Sun, Sep 9, 2018 at 8:41 PM, syzbot
+> <syzbot+d86c4426a01f60feddc7@syzkaller.appspotmail.com> wrote:
+>> Hello,
+>>
+>> syzbot found the following crash on:
+>>
+>> HEAD commit:    f8f65382c98a Merge tag 'for-linus' of git://git.kernel.org..
+>> git tree:       upstream
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=113260ae400000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=8f59875069d721b6
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=d86c4426a01f60feddc7
+>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=120baa9e400000
+>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13979cbe400000
+>>
+>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>> Reported-by: syzbot+d86c4426a01f60feddc7@syzkaller.appspotmail.com
+>>
+>> random: sshd: uninitialized urandom read (32 bytes read)
+>> random: sshd: uninitialized urandom read (32 bytes read)
+>> random: sshd: uninitialized urandom read (32 bytes read)
+>>
+>> ========================================================
+>> WARNING: possible irq lock inversion dependency detected
+>> 4.19.0-rc2+ #229 Not tainted
+>> --------------------------------------------------------
+>> swapper/0/0 just changed the state of lock:
+>> 00000000c02bddef (&(&ctx->ctx_lock)->rlock){..-.}, at: spin_lock_irq
+>> include/linux/spinlock.h:354 [inline]
+>> 00000000c02bddef (&(&ctx->ctx_lock)->rlock){..-.}, at:
+>> free_ioctx_users+0xbc/0x710 fs/aio.c:603
+>> but this lock took another, SOFTIRQ-unsafe lock in the past:
+>>  (&fiq->waitq){+.+.}
+>>
+>>
+>> and interrupts could create inverse lock ordering between them.
+>>
+>>
+>> other info that might help us debug this:
+>>  Possible interrupt unsafe locking scenario:
+>>
+>>        CPU0                    CPU1
+>>        ----                    ----
+>>   lock(&fiq->waitq);
+>>                                local_irq_disable();
+>>                                lock(&(&ctx->ctx_lock)->rlock);
+>>                                lock(&fiq->waitq);
+>>   <Interrupt>
+>>     lock(&(&ctx->ctx_lock)->rlock);
+>
+> Fuse device doesn't support AIO ops.  So false positive, AFAICS.
 
-Right.
+Hi Miklos,
 
-> Using the work item may be the most straightforward way to deal with
-> that, but then I would add a comment to explain what's up.
-
-Indeed, rw_sems don't seem to be appropriate for nested locking:
-https://elixir.bootlin.com/linux/latest/source/include/linux/rwsem.h#L156
-
-I'll stick a comment explaining that for now, unless I find a better
-idea than using a work item in the meantime.
-
-Thanks,
-Quentin
+We still need to annotate this. How?
