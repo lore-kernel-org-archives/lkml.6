@@ -2,133 +2,94 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB129C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 17:17:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82BEEC4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 17:17:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84B2D2087F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 17:17:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Kjg3heJs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84B2D2087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 3C0502086E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 17:17:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C0502086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729036AbeIJWMn (ORCPT
+        id S1728676AbeIJWLf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 18:12:43 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:33970 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728012AbeIJWMm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 18:12:42 -0400
-Received: by mail-lf1-f68.google.com with SMTP id c29-v6so18124726lfj.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 10:17:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qVLiwjP9SKl4jZxY2AkSujZSfyE/upl+/yiMB1QzDek=;
-        b=Kjg3heJsDeBjKyJbb/2E8J2f+mi8P5trkxnLdx7Zm0BTewIMhEu2DlA4Hkq88qwQ56
-         uE+zCW3UwvoZ2OlEmMT8JBHG3kOpqwVGy3hz9avfC7dN2zFMDL0pDzijxVTi4oocWf3x
-         +Non2twI3Fv2e/Vwn4kRqwD2IhlpASD1gdJFU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qVLiwjP9SKl4jZxY2AkSujZSfyE/upl+/yiMB1QzDek=;
-        b=n32SsFVQuTTPy3OHFtnkenNmzZeO1zis05UuQa6fFp0QWHhB20i+pLLEdvPXb2MLFb
-         6QMoqJT1uCFlOWeSgTQcqM0Fm/FG2PmRcRZ0nUmAMzjVhQXVn8B42ob0eHLZYhc9aHaJ
-         18GGlfHMDsGC1C69ioRgag5hMb4M0Vb9n0n50VWjytsyhp4HhXKjaeFRCZ219hYDVCXn
-         iK6PE6PuYEOGOHuOAaZsioB+sYYOQGh2JliVc3wFBIDgPvN0IOIPdz5o0DUEKBYmlz7d
-         cltBRm2V9ruTUBM89elE84hl4gs0YB7LaCVjCPUJHjwxXCq9Lz+hx/nGeft7/20IoO9k
-         Tnvg==
-X-Gm-Message-State: APzg51Anrfn9uPj5zzcvfXpLi9jioXEdPspWC3eiJUPLWCXCM6TeZn8M
-        sYW50JhlZ0u+RUQHpq40edXJdCq25uiGmmIE1Zf2PQ==
-X-Google-Smtp-Source: ANB0VdY8BQugFk7DjIihn9MQ5j0buIOk0eMcnu3AVKxaJmOKAM2c2FEimDSFqLIPq1Y7A2QXuwLcArwtdNDQAcovgLg=
-X-Received: by 2002:a19:d38b:: with SMTP id k133-v6mr12949787lfg.43.1536599855689;
- Mon, 10 Sep 2018 10:17:35 -0700 (PDT)
+        Mon, 10 Sep 2018 18:11:35 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:59572 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728296AbeIJWLe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 18:11:34 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 723C81A0190;
+        Mon, 10 Sep 2018 19:16:28 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 661751A011F;
+        Mon, 10 Sep 2018 19:16:28 +0200 (CEST)
+Received: from enigma.ea.freescale.net (enigma.ea.freescale.net [10.171.81.110])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id D24612060B;
+        Mon, 10 Sep 2018 19:16:27 +0200 (CEST)
+From:   =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Stuart Yoder <stuyoder@gmail.com>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Li Yang <leoyang.li@nxp.com>, Roy Pledge <roy.pledge@nxp.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 04/11] soc: fsl: dpio: add congestion notification support
+Date:   Mon, 10 Sep 2018 20:15:43 +0300
+Message-Id: <20180910171550.5659-5-horia.geanta@nxp.com>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180910171550.5659-1-horia.geanta@nxp.com>
+References: <20180910171550.5659-1-horia.geanta@nxp.com>
 MIME-Version: 1.0
-References: <1536142147-21323-1-git-send-email-leo.yan@linaro.org>
-In-Reply-To: <1536142147-21323-1-git-send-email-leo.yan@linaro.org>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Mon, 10 Sep 2018 11:17:24 -0600
-Message-ID: <CANLsYkw092cYLUKOw9hc6SDMgw+rSHj2NTdx73m1zybLO7Z0Sg@mail.gmail.com>
-Subject: Re: [PATCH] coresight: tmc: Refactor loops in etb dump
-To:     Leo Yan <leo.yan@linaro.org>
-Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        coresight@lists.linaro.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 5 Sep 2018 at 04:09, Leo Yan <leo.yan@linaro.org> wrote:
->
-> In ETB dump function tmc_etb_dump_hw() it has nested loops.  The second
-> level loop is to iterate index in the range [0 .. drvdata->memwidth);
-> but the index isn't really used in the code, thus the second level
-> loop is useless.
->
-> This patch is to remove the second level loop; the refactor also reduces
-> indentation and we can use 'break' to replace 'goto' tag.
->
-> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> ---
->  drivers/hwtracing/coresight/coresight-tmc-etf.c | 17 +++++++----------
->  1 file changed, 7 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/hwtracing/coresight/coresight-tmc-etf.c b/drivers/hwtracing/coresight/coresight-tmc-etf.c
-> index 9c599c9..8b34161 100644
-> --- a/drivers/hwtracing/coresight/coresight-tmc-etf.c
-> +++ b/drivers/hwtracing/coresight/coresight-tmc-etf.c
-> @@ -34,23 +34,20 @@ static void tmc_etb_dump_hw(struct tmc_drvdata *drvdata)
->  {
->         char *bufp;
->         u32 read_data, lost;
-> -       int i;
->
->         /* Check if the buffer wrapped around. */
->         lost = readl_relaxed(drvdata->base + TMC_STS) & TMC_STS_FULL;
->         bufp = drvdata->buf;
->         drvdata->len = 0;
->         while (1) {
-> -               for (i = 0; i < drvdata->memwidth; i++) {
-> -                       read_data = readl_relaxed(drvdata->base + TMC_RRD);
-> -                       if (read_data == 0xFFFFFFFF)
-> -                               goto done;
-> -                       memcpy(bufp, &read_data, 4);
-> -                       bufp += 4;
-> -                       drvdata->len += 4;
-> -               }
-> +               read_data = readl_relaxed(drvdata->base + TMC_RRD);
-> +               if (read_data == 0xFFFFFFFF)
-> +                       break;
-> +               memcpy(bufp, &read_data, 4);
-> +               bufp += 4;
-> +               drvdata->len += 4;
+Add support for Congestion State Change Notifications (CSCN), which
+allow DPIO users to be notified when a congestion group changes its
+state (due to hitting the entrance / exit threshold).
 
-I implemented these loops in accordance with the reference manual,
-which is advising to read one ETB memory word at a time.  But taking a
-step back getting rid of the inner loop yields exactly the same
-result.  So I'll go ahead and apply your patch.
+Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
+---
+ include/soc/fsl/dpaa2-global.h | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-Thanks,
-Mathieu
+diff --git a/include/soc/fsl/dpaa2-global.h b/include/soc/fsl/dpaa2-global.h
+index 9bc0713346a8..2bfc379d3dc9 100644
+--- a/include/soc/fsl/dpaa2-global.h
++++ b/include/soc/fsl/dpaa2-global.h
+@@ -174,4 +174,19 @@ static inline const struct dpaa2_fd *dpaa2_dq_fd(const struct dpaa2_dq *dq)
+ 	return (const struct dpaa2_fd *)&dq->dq.fd[0];
+ }
+ 
++#define DPAA2_CSCN_SIZE		sizeof(struct dpaa2_dq)
++#define DPAA2_CSCN_ALIGN	16
++#define DPAA2_CSCN_STATE_CG	BIT(0)
++
++/**
++ * dpaa2_cscn_state_congested() - Check congestion state
++ * @cscn: congestion SCN (delivered to WQ or memory)
++ *
++i * Return true is congested.
++ */
++static inline bool dpaa2_cscn_state_congested(struct dpaa2_dq *cscn)
++{
++	return !!(cscn->scn.state & DPAA2_CSCN_STATE_CG);
++}
++
+ #endif /* __FSL_DPAA2_GLOBAL_H */
+-- 
+2.16.2
 
->         }
-> -done:
-> +
->         if (lost)
->                 coresight_insert_barrier_packet(drvdata->buf);
->         return;
-> --
-> 2.7.4
->
