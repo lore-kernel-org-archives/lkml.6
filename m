@@ -2,226 +2,269 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6044BC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 02:37:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C58AAC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 02:37:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 953DF2064D
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 02:37:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 953DF2064D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3B6FD20893
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 02:37:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="H4WVNWni"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B6FD20893
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726332AbeIJH2l (ORCPT
+        id S1726683AbeIJH3U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 03:28:41 -0400
-Received: from mga06.intel.com ([134.134.136.31]:11351 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725889AbeIJH2l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 03:28:41 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Sep 2018 19:36:58 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,354,1531810800"; 
-   d="scan'208";a="262092421"
-Received: from btwcube1.sh.intel.com (HELO debian) ([10.67.104.194])
-  by fmsmga006.fm.intel.com with ESMTP; 09 Sep 2018 19:36:57 -0700
-Date:   Mon, 10 Sep 2018 10:35:59 +0800
-From:   Tiwei Bie <tiwei.bie@intel.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     jasowang@redhat.com, virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        virtio-dev@lists.oasis-open.org, wexu@redhat.com,
-        jfreimann@redhat.com
-Subject: Re: [virtio-dev] Re: [PATCH net-next v2 4/5] virtio_ring: add event
- idx support in packed ring
-Message-ID: <20180910023559.GB11822@debian>
-References: <20180711022711.7090-1-tiwei.bie@intel.com>
- <20180711022711.7090-5-tiwei.bie@intel.com>
- <20180907100341-mutt-send-email-mst@kernel.org>
+        Mon, 10 Sep 2018 03:29:20 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:38906 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725889AbeIJH3U (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 03:29:20 -0400
+Received: by mail-pl1-f195.google.com with SMTP id u11-v6so9008169plq.5
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Sep 2018 19:37:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9Si9Oe38ub8Xry5j1lutubNrUedyVFyTsK7019+QGMM=;
+        b=H4WVNWniYLrvRzyCrnskGEZkNxictRye1vYen49FLm4P9KO26cCSxa4w02WZ9aBLeB
+         BxuQO1m3gEOVMlPShav7CB/sNMrE436ym6tLONHvSkoz2a/DvZ5/35nk/73Kp5MTvyqm
+         izDcWmjNdHarHTcNhS40zQpg74y/VpFM8VIxM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=9Si9Oe38ub8Xry5j1lutubNrUedyVFyTsK7019+QGMM=;
+        b=qFBEVIx1zfYKGSCegs7SCyfB92MFMmzDrOavY+etnQILpieeKDuVciYBZZrRUidtnm
+         kF6b7P8xiIZbP8JWZ6/g8851+zjlFJJgwRPEm9xz1i8FFreBsi59lFvz/QFJ4gdr2Ocw
+         VCZPKaWWIKeSrXyuKUV8dm2lsMXRFfLmKqe20AOmgpyLEWKooE6rPiW7pxR0lV+dv1Ps
+         me7Pq9AZK2l394FvMrcbWxXK7R7ELH1NFOrYDq3BnNpfvEWQhTZkNp0h/l7oBkgoaGC5
+         XuQ2PG83n8C7qB7Cb0Aw1aNSuSn5lBjhMCYSc8m5KNpsD/MVcX5eC2PLD8TqH6mN2ye7
+         JRwg==
+X-Gm-Message-State: APzg51D0xMEEWSNUbggg+fZRdqT/NI32Bs8jfG1q82pWfbjp/fr34/2+
+        AoxhqaMVslm11jLa7qYcEgdvRA==
+X-Google-Smtp-Source: ANB0Vdbx+8ypyVBFjN6D2UbOLEOGl6y4DDYtL/6xuOtu7X3ihwKMkdhUiiVYOgU5e/WlDLbXSpzGLg==
+X-Received: by 2002:a17:902:402:: with SMTP id 2-v6mr19341999ple.277.1536547057786;
+        Sun, 09 Sep 2018 19:37:37 -0700 (PDT)
+Received: from linaro.org ([121.95.100.191])
+        by smtp.googlemail.com with ESMTPSA id n26-v6sm15995849pgv.78.2018.09.09.19.37.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 09 Sep 2018 19:37:37 -0700 (PDT)
+Date:   Mon, 10 Sep 2018 11:38:21 +0900
+From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
+To:     Frank Rowand <frowand.list@gmail.com>
+Cc:     catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
+        vgoyal@redhat.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net, dyoung@redhat.com, bhe@redhat.com,
+        arnd@arndb.de, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        prudo@linux.ibm.com, ard.biesheuvel@linaro.org,
+        james.morse@arm.com, bhsharma@redhat.com,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH v14 06/16] of/fdt: add helper functions for handling
+ properties
+Message-ID: <20180910023819.GA30795@linaro.org>
+Mail-Followup-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Frank Rowand <frowand.list@gmail.com>, catalin.marinas@arm.com,
+        will.deacon@arm.com, dhowells@redhat.com, vgoyal@redhat.com,
+        herbert@gondor.apana.org.au, davem@davemloft.net, dyoung@redhat.com,
+        bhe@redhat.com, arnd@arndb.de, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, prudo@linux.ibm.com,
+        ard.biesheuvel@linaro.org, james.morse@arm.com, bhsharma@redhat.com,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
+References: <20180907080040.4967-1-takahiro.akashi@linaro.org>
+ <a535515a-92f1-fc33-bdb9-6f5e0392cb11@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180907100341-mutt-send-email-mst@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <a535515a-92f1-fc33-bdb9-6f5e0392cb11@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 07, 2018 at 10:10:14AM -0400, Michael S. Tsirkin wrote:
-> On Wed, Jul 11, 2018 at 10:27:10AM +0800, Tiwei Bie wrote:
-> > This commit introduces the EVENT_IDX support in packed ring.
+Frank,
+
+Thank you for the comments. I will address all of them, but
+have one question:
+
+On Fri, Sep 07, 2018 at 12:53:58PM -0700, Frank Rowand wrote:
+> On 09/07/18 01:00, AKASHI Takahiro wrote:
+> > These functions will be used later to handle kexec-specific properties
+> > in arm64's kexec_file implementation.
 > > 
-> > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
-> 
-> Besides the usual comment about hard-coded constants like <<15:
-> does this actually do any good for performance? We don't
-> have to if we do not want to.
-
-Got it. Thanks.
-
-> 
+> > Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
+> > Cc: Rob Herring <robh+dt@kernel.org>
+> > Cc: Frank Rowand <frowand.list@gmail.com>
 > > ---
-> >  drivers/virtio/virtio_ring.c | 73 ++++++++++++++++++++++++++++++++----
-> >  1 file changed, 65 insertions(+), 8 deletions(-)
+> >  drivers/of/fdt.c       | 62 ++++++++++++++++++++++++++++++++++++++++--
+> >  include/linux/of_fdt.h | 10 +++++--
+> >  2 files changed, 68 insertions(+), 4 deletions(-)
 > > 
-> > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> > index f317b485ba54..f79a1e17f7d1 100644
-> > --- a/drivers/virtio/virtio_ring.c
-> > +++ b/drivers/virtio/virtio_ring.c
-> > @@ -1050,7 +1050,7 @@ static inline int virtqueue_add_packed(struct virtqueue *_vq,
-> >  static bool virtqueue_kick_prepare_packed(struct virtqueue *_vq)
-> >  {
-> >  	struct vring_virtqueue *vq = to_vvq(_vq);
-> > -	u16 flags;
-> > +	u16 new, old, off_wrap, flags, wrap_counter, event_idx;
-> >  	bool needs_kick;
-> >  	u32 snapshot;
+> > diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
+> > index 800ad252cf9c..dc960cea1355 100644
+> > --- a/drivers/of/fdt.c
+> > +++ b/drivers/of/fdt.c
+> > @@ -25,6 +25,7 @@
+> >  #include <linux/debugfs.h>
+> >  #include <linux/serial_core.h>
+> >  #include <linux/sysfs.h>
+> > +#include <linux/types.h>
 > >  
-> > @@ -1059,9 +1059,19 @@ static bool virtqueue_kick_prepare_packed(struct virtqueue *_vq)
-> >  	 * suppressions. */
-> >  	virtio_mb(vq->weak_barriers);
+> >  #include <asm/setup.h>  /* for COMMAND_LINE_SIZE */
+> >  #include <asm/page.h>
+> > @@ -537,8 +538,8 @@ void *of_fdt_unflatten_tree(const unsigned long *blob,
+> >  EXPORT_SYMBOL_GPL(of_fdt_unflatten_tree);
 > >  
-> > +	old = vq->next_avail_idx - vq->num_added;
-> > +	new = vq->next_avail_idx;
-> > +	vq->num_added = 0;
-> > +
-> >  	snapshot = READ_ONCE(*(u32 *)vq->vring_packed.device);
-> > +	off_wrap = virtio16_to_cpu(_vq->vdev, (__virtio16)(snapshot & 0xffff));
-> >  	flags = virtio16_to_cpu(_vq->vdev, (__virtio16)(snapshot >> 16)) & 0x3;
-> 
-> 
-> some kind of struct union would be helpful to make this readable.
-
-I will define a struct/union for this.
-
-> 
+> >  /* Everything below here references initial_boot_params directly. */
+> > -int __initdata dt_root_addr_cells;
+> > -int __initdata dt_root_size_cells;
+> > +int dt_root_addr_cells;
+> > +int dt_root_size_cells;
 > >  
-> > +	wrap_counter = off_wrap >> 15;
-> > +	event_idx = off_wrap & ~(1 << 15);
-> > +	if (wrap_counter != vq->avail_wrap_counter)
-> > +		event_idx -= vq->vring_packed.num;
-> > +
-> >  #ifdef DEBUG
-> >  	if (vq->last_add_time_valid) {
-> >  		WARN_ON(ktime_to_ms(ktime_sub(ktime_get(),
-> > @@ -1070,7 +1080,10 @@ static bool virtqueue_kick_prepare_packed(struct virtqueue *_vq)
-> >  	vq->last_add_time_valid = false;
+> >  void *initial_boot_params;
+> >  
+> > @@ -1323,3 +1324,60 @@ late_initcall(of_fdt_raw_init);
 > >  #endif
 > >  
-> > -	needs_kick = (flags != VRING_EVENT_F_DISABLE);
-> > +	if (flags == VRING_EVENT_F_DESC)
-> > +		needs_kick = vring_need_event(event_idx, new, old);
-> > +	else
-> > +		needs_kick = (flags != VRING_EVENT_F_DISABLE);
-> >  	END_USE(vq);
-> >  	return needs_kick;
-> >  }
-> > @@ -1185,6 +1198,15 @@ static void *virtqueue_get_buf_ctx_packed(struct virtqueue *_vq,
-> >  	ret = vq->desc_state_packed[id].data;
-> >  	detach_buf_packed(vq, id, ctx);
-> >  
-> > +	/* If we expect an interrupt for the next entry, tell host
-> > +	 * by writing event index and flush out the write before
-> > +	 * the read in the next get_buf call. */
-> > +	if (vq->event_flags_shadow == VRING_EVENT_F_DESC)
-> > +		virtio_store_mb(vq->weak_barriers,
-> > +				&vq->vring_packed.driver->off_wrap,
-> > +				cpu_to_virtio16(_vq->vdev, vq->last_used_idx |
-> > +					((u16)vq->used_wrap_counter << 15)));
-> > +
-> >  #ifdef DEBUG
-> >  	vq->last_add_time_valid = false;
-> >  #endif
-> > @@ -1213,8 +1235,18 @@ static unsigned virtqueue_enable_cb_prepare_packed(struct virtqueue *_vq)
-> >  	/* We optimistically turn back on interrupts, then check if there was
-> >  	 * more to do. */
-> >  
-> > +	if (vq->event) {
-> > +		vq->vring_packed.driver->off_wrap = cpu_to_virtio16(_vq->vdev,
-> > +				vq->last_used_idx |
-> > +				((u16)vq->used_wrap_counter << 15));
-> > +		/* We need to update event offset and event wrap
-> > +		 * counter first before updating event flags. */
-> > +		virtio_wmb(vq->weak_barriers);
-> > +	}
-> > +
-> >  	if (vq->event_flags_shadow == VRING_EVENT_F_DISABLE) {
-> > -		vq->event_flags_shadow = VRING_EVENT_F_ENABLE;
-> > +		vq->event_flags_shadow = vq->event ? VRING_EVENT_F_DESC :
-> > +						     VRING_EVENT_F_ENABLE;
-> >  		vq->vring_packed.driver->flags = cpu_to_virtio16(_vq->vdev,
-> >  							vq->event_flags_shadow);
-> >  	}
-> > @@ -1238,22 +1270,47 @@ static bool virtqueue_poll_packed(struct virtqueue *_vq, unsigned off_wrap)
-> >  static bool virtqueue_enable_cb_delayed_packed(struct virtqueue *_vq)
-> >  {
-> >  	struct vring_virtqueue *vq = to_vvq(_vq);
-> > +	u16 bufs, used_idx, wrap_counter;
-> >  
-> >  	START_USE(vq);
-> >  
-> >  	/* We optimistically turn back on interrupts, then check if there was
-> >  	 * more to do. */
-> >  
-> > +	if (vq->event) {
-> > +		/* TODO: tune this threshold */
-> > +		bufs = (vq->vring_packed.num - _vq->num_free) * 3 / 4;
-> > +		wrap_counter = vq->used_wrap_counter;
-> > +
-> > +		used_idx = vq->last_used_idx + bufs;
-> > +		if (used_idx >= vq->vring_packed.num) {
-> > +			used_idx -= vq->vring_packed.num;
-> > +			wrap_counter ^= 1;
-> > +		}
-> > +
-> > +		vq->vring_packed.driver->off_wrap = cpu_to_virtio16(_vq->vdev,
-> > +				used_idx | (wrap_counter << 15));
-> > +
-> > +		/* We need to update event offset and event wrap
-> > +		 * counter first before updating event flags. */
-> > +		virtio_wmb(vq->weak_barriers);
-> > +	} else {
-> > +		used_idx = vq->last_used_idx;
-> > +		wrap_counter = vq->used_wrap_counter;
-> > +	}
-> > +
-> >  	if (vq->event_flags_shadow == VRING_EVENT_F_DISABLE) {
-> > -		vq->event_flags_shadow = VRING_EVENT_F_ENABLE;
-> > +		vq->event_flags_shadow = vq->event ? VRING_EVENT_F_DESC :
-> > +						     VRING_EVENT_F_ENABLE;
-> >  		vq->vring_packed.driver->flags = cpu_to_virtio16(_vq->vdev,
-> >  							vq->event_flags_shadow);
-> > -		/* We need to enable interrupts first before re-checking
-> > -		 * for more used buffers. */
-> > -		virtio_mb(vq->weak_barriers);
-> >  	}
-> >  
-> > -	if (more_used_packed(vq)) {
-> > +	/* We need to update event suppression structure first
-> > +	 * before re-checking for more used buffers. */
-> > +	virtio_mb(vq->weak_barriers);
+> >  #endif /* CONFIG_OF_EARLY_FLATTREE */
 > > +
 > 
-> mb is expensive. We should not do it if we changed nothing.
+> Please add comment:
+> 
+> /* helper functions for arm64 kexec */
+> 
+> 
+> > +bool of_fdt_cells_size_fitted(u64 base, u64 size)
+> 
+> Please rename as of_fdt_range_valid()
+> 
+> 
+> > +{
+> > +	/* if *_cells >= 2, cells can hold 64-bit values anyway */
+> > +	if ((dt_root_addr_cells == 1) && (base > U32_MAX))
+> > +		return false;
+> > +
+> > +	if ((dt_root_size_cells == 1) && (size > U32_MAX))
+> > +		return false;
+> 
+> Should also check that base + size does not wrap around.
 
-I will try to avoid it when possible.
+What is the upper limit here?
+For instance, #address_cells = <1> and #size_cells = <1>,
+and can 'base + size' be over U32_MAX?
+Assuming 'not' is quite reasonable, but it seems to me
+that devicetree spec doesn't exclude it, as least I couldn't
+find any notes about such a case.
+(In my understands, #address_cells only restricts a size in 'reg' property.)
+
+Thanks,
+-Takahiro Akashi
 
 > 
-> > +	if (is_used_desc_packed(vq, used_idx, wrap_counter)) {
-> >  		END_USE(vq);
-> >  		return false;
-> >  	}
-> > -- 
-> > 2.18.0
+> > +
+> > +	return true;
+> > +}
+> > +
+> > +size_t of_fdt_reg_cells_size(void)
 > 
-> ---------------------------------------------------------------------
-> To unsubscribe, e-mail: virtio-dev-unsubscribe@lists.oasis-open.org
-> For additional commands, e-mail: virtio-dev-help@lists.oasis-open.org
+> Please rename as of_fdt_root_range_size()
+> 
+> 
+> > +{
+> > +	return (dt_root_addr_cells + dt_root_size_cells) * sizeof(u32);
+> > +}
+> > +
+> > +#define FDT_ALIGN(x, a)	(((x) + (a) - 1) & ~((a) - 1))
+> > +#define FDT_TAGALIGN(x)	(FDT_ALIGN((x), FDT_TAGSIZE))
+> > +
+> > +int fdt_prop_len(const char *prop_name, int len)
+> 
+> Please rename as fdt_len_added_prop()
+> 
+> 
+> > +{
+> > +	return (strlen(prop_name) + 1) +
+> > +		sizeof(struct fdt_property) +
+> > +		FDT_TAGALIGN(len);
+> > +}
+> > +
+> 
+> Please add comment, something like:
+> 
+> /* cells must be 1 or 2 */
+> 
+> 
+> > +static void fill_property(void *buf, u64 val64, int cells)
+> 
+> Please rename as cpu64_to_fdt_cells()
+> 
+> Thanks,
+> 
+> Frank
+> 
+> > +{
+> > +	__be32 val32;
+> > +
+> > +	while (cells) {
+> > +		val32 = cpu_to_fdt32((val64 >> (32 * (--cells))) & U32_MAX);
+> > +		memcpy(buf, &val32, sizeof(val32));
+> > +		buf += sizeof(val32);
+> > +	}
+> > +}
+> > +
+> > +int fdt_setprop_reg(void *fdt, int nodeoffset, const char *name,
+> > +						u64 addr, u64 size)
+> > +{
+> > +	char buf[sizeof(__be32) * 2 * 2];
+> > +		/* assume dt_root_[addr|size]_cells <= 2 */
+> > +	void *prop;
+> > +	size_t buf_size;
+> > +
+> > +	buf_size = of_fdt_reg_cells_size();
+> > +	prop = buf;
+> > +
+> > +	fill_property(prop, addr, dt_root_addr_cells);
+> > +	prop += dt_root_addr_cells * sizeof(u32);
+> > +
+> > +	fill_property(prop, size, dt_root_size_cells);
+> > +
+> > +	return fdt_setprop(fdt, nodeoffset, name, buf, buf_size);
+> > +}
+> > diff --git a/include/linux/of_fdt.h b/include/linux/of_fdt.h
+> > index b9cd9ebdf9b9..9615d6142578 100644
+> > --- a/include/linux/of_fdt.h
+> > +++ b/include/linux/of_fdt.h
+> > @@ -37,8 +37,8 @@ extern void *of_fdt_unflatten_tree(const unsigned long *blob,
+> >  				   struct device_node **mynodes);
+> >  
+> >  /* TBD: Temporary export of fdt globals - remove when code fully merged */
+> > -extern int __initdata dt_root_addr_cells;
+> > -extern int __initdata dt_root_size_cells;
+> > +extern int dt_root_addr_cells;
+> > +extern int dt_root_size_cells;
+> >  extern void *initial_boot_params;
+> >  
+> >  extern char __dtb_start[];
+> > @@ -108,5 +108,11 @@ static inline void unflatten_device_tree(void) {}
+> >  static inline void unflatten_and_copy_device_tree(void) {}
+> >  #endif /* CONFIG_OF_EARLY_FLATTREE */
+> >  
+> > +bool of_fdt_cells_size_fitted(u64 base, u64 size);
+> > +size_t of_fdt_reg_cells_size(void);
+> > +int fdt_prop_len(const char *prop_name, int len);
+> > +int fdt_setprop_reg(void *fdt, int nodeoffset, const char *name,
+> > +						u64 addr, u64 size);
+> > +
+> >  #endif /* __ASSEMBLY__ */
+> >  #endif /* _LINUX_OF_FDT_H */
+> > 
 > 
