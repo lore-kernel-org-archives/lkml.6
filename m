@@ -2,109 +2,115 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50451C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:28:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C633C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:28:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0287A20870
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:28:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6AC320833
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:28:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="sv1wMdV6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0287A20870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PhL2c3EO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6AC320833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728552AbeIJTWY (ORCPT
+        id S1728597AbeIJTWm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 15:22:24 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:54288 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728187AbeIJTWX (ORCPT
+        Mon, 10 Sep 2018 15:22:42 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:45918 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728462AbeIJTWm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 15:22:23 -0400
-Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 928EF57;
-        Mon, 10 Sep 2018 16:28:00 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1536589681;
-        bh=wSXNFler1XIm9xK9NCdFNHWXd3+aJKiN5nVgscPQWDs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sv1wMdV6Re3JO8Z+o8kXAxi0GGStvtRs+v9QqGsLTLHuxrDBitMgcN2fowtso/u3R
-         lQfKW7G+gN/cx5HX3QebmdEkH51oMBq2wwMlvTs6hR7sy04R6JR5zCZj3xbHjPHZNP
-         D/C5ixKzkfRNV7Twwy4E7bnD/9AlRb0DUg3ZZOG8=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-media@vger.kernel.org,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        Krzysztof Witos <kwitos@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>
-Subject: Re: [PATCH 04/10] phy: dphy: Add configuration helpers
-Date:   Mon, 10 Sep 2018 17:28:11 +0300
-Message-ID: <3954754.hq6Pmoh9iE@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20180910141603.gnwpkmemevaxbi7b@flea>
-References: <cover.ee6158898d563fcc01d45c9652501180bccff0f0.1536138624.git-series.maxime.ripard@bootlin.com> <1923627.Ifno3EcWVN@avalon> <20180910141603.gnwpkmemevaxbi7b@flea>
+        Mon, 10 Sep 2018 15:22:42 -0400
+Received: by mail-io0-f196.google.com with SMTP id e12-v6so760033iok.12;
+        Mon, 10 Sep 2018 07:28:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9SifSyhMuydHQHrtbDlzmaT0ctZMeBqJ7gvlao09c98=;
+        b=PhL2c3EOzhBBWNDjMcwoyCJM0P/gbegicSYMz0dyGXP8B0kLd3kcyRfqMaryz1tLVT
+         7W7lR61I51ZtWBmENpMNWFdv4t8dcdExFgdQ7t8SFjb4S0BFGgg+cuhmdvWkBccP0akP
+         HvxS6wSp1aMZEwXRfItb9F5NFcBnbBnbdXp8tl3vV2vjhfltk/2CGlfDCpu+B8q1R+yp
+         j/n1/4Io3a+Pu3mxFP+nlJI7DyUlODgAlO5ZyMaI0hLw/H8xGn96AEMb5y53D+xBejOA
+         TkYx/enwEyRO2OKo51jan7W516tL9YaOLoXwA2j6+UNhpCDUkLaK0c7TR7hfVYtilh8e
+         PYRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9SifSyhMuydHQHrtbDlzmaT0ctZMeBqJ7gvlao09c98=;
+        b=bbXaPbwMvb5gEaYafajXRfBbB1sQisKMiSO1l1cItqEfTOUp1UjWaYFr2pbufv9t24
+         FgD1M8nDpQa/+C4FFeUo43l4rHzSi/vtEzj1Q5zNHc6B4/8hWJyF21ugOMUDO1q5eNDS
+         1nrJJBxtnLH+1Q0klzyHwqbAHn4bEk3Ix/nX8hVt/T+wH+3+kXpbCIMxwPK/TPnZx7oP
+         FZCoSQmM1LDSdhR7vMydydgKcgAgADJm6Sb+n6TdjQbPHXBs87h5h85JtqD7R/8HEVLW
+         8r1Vy0FttxFj2ht0P1IApY1p22JoAUyRFVx0OlrnRl3iODdfnZBokUE6JHSuIfzK1YpE
+         Sf8g==
+X-Gm-Message-State: APzg51BPENKFuBR1OY+gsFGvCyXGkfwHnd/kLsg+ABCxeK4gAErzrcKP
+        aPB99xIXmIf9+PkyqBlOF2LpdVQ4cJsBXDsmETopHhFT
+X-Google-Smtp-Source: ANB0VdbNRlQ6sTmTHqKYptyaMaozJ2CRB9tQgAiN+Sl6OhKaP9VjSxAuEIYXseVIiqKqNiBSMC4FYyAKjGgNDFQyiiU=
+X-Received: by 2002:a6b:15c2:: with SMTP id 185-v6mr18444764iov.161.1536589699597;
+ Mon, 10 Sep 2018 07:28:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <3c4cddf185438cc7200908b4f971a8e6ed7472fd.1536558233.git.christophe.leroy@c-s.fr>
+In-Reply-To: <3c4cddf185438cc7200908b4f971a8e6ed7472fd.1536558233.git.christophe.leroy@c-s.fr>
+From:   Xin Long <lucien.xin@gmail.com>
+Date:   Mon, 10 Sep 2018 22:28:08 +0800
+Message-ID: <CADvbK_c+VVoC=tcX4z-NbX6xGHfkzzNuBXoMHFJfZdiBMzX3+w@mail.gmail.com>
+Subject: Re: [PATCH] powerpc: fix csum_ipv6_magic() on little endian platforms
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     benh@kernel.crashing.org, paulus@samba.org,
+        Michael Ellerman <mpe@ellerman.id.au>, jishi@redhat.com,
+        LKML <linux-kernel@vger.kernel.org>,
+        linuxppc-dev@lists.ozlabs.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Maxime,
-
-On Monday, 10 September 2018 17:16:03 EEST Maxime Ripard wrote:
-> On Fri, Sep 07, 2018 at 05:26:29PM +0300, Laurent Pinchart wrote:
-> >>>> + */
-> >>>> +int phy_mipi_dphy_get_default_config(unsigned long pixel_clock,
-> >>>> +				     unsigned int bpp,
-> >>>> +				     unsigned int lanes,
-> >>>> +				     struct phy_configure_opts_mipi_dphy *cfg)
-> >>>> +{
-> >>>> +	unsigned long hs_clk_rate;
-> >>>> +	unsigned long ui;
-> >>>> +
-> >>>> +	if (!cfg)
-> >>>> +		return -EINVAL;
-> >>> 
-> >>> Should we really expect cfg to be NULL ?
-> >> 
-> >> It avoids a kernel panic and it's not in a hot patch, so I'd say yes?
-> > 
-> > A few line below you divide by the lanes parameter without checking
-> > whether it is equal to 0 first, which would also cause issues.
-> 
-> You say that like it would be a bad thing to test for this.
-> 
-> > I believe that invalid values in input parameters should only be handled
-> > explicitly when considered acceptable for the caller to pass such values.
-> > In this case a NULL cfg pointer is a bug in the caller, which would get
-> > noticed during development if the kernel panics.
-> 
-> In the common case, yes. In the case where that pointer is actually
-> being lost by the caller somewhere down the line and you have to wait
-> for a while before it happens, then having the driver inoperant
-> instead of just having a panic seems like the right thing to do.
-
-But why would it happen in the first place ? Why would the pointer be more 
-likely here to be NULL than to contain, for instance, an uninitialized value, 
-which we don't guard against ?
-
--- 
-Regards,
-
-Laurent Pinchart
-
-
-
+On Mon, Sep 10, 2018 at 2:09 PM Christophe Leroy
+<christophe.leroy@c-s.fr> wrote:
+>
+> On little endian platforms, csum_ipv6_magic() keeps len and proto in
+> CPU byte order. This generates a bad results leading to ICMPv6 packets
+> from other hosts being dropped by powerpc64le platforms.
+>
+> In order to fix this, len and proto should be converted to network
+> byte order ie bigendian byte order. However checksumming 0x12345678
+> and 0x56341278 provide the exact same result so it is enough to
+> rotate the sum of len and proto by 1 byte.
+>
+> PPC32 only support bigendian so the fix is needed for PPC64 only
+>
+> Fixes: e9c4943a107b ("powerpc: Implement csum_ipv6_magic in assembly")
+> Reported-by: Jianlin Shi <jishi@redhat.com>
+> Reported-by: Xin Long <lucien.xin@gmail.com>
+> Cc: <stable@vger.kernel.org> # 4.18+
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> ---
+>  arch/powerpc/lib/checksum_64.S | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/arch/powerpc/lib/checksum_64.S b/arch/powerpc/lib/checksum_64.S
+> index 886ed94b9c13..2a68c43e13f5 100644
+> --- a/arch/powerpc/lib/checksum_64.S
+> +++ b/arch/powerpc/lib/checksum_64.S
+> @@ -443,6 +443,9 @@ _GLOBAL(csum_ipv6_magic)
+>         addc    r0, r8, r9
+>         ld      r10, 0(r4)
+>         ld      r11, 8(r4)
+> +#ifndef CONFIG_CPU_BIG_ENDIAN
+> +       rotldi  r5, r5, 8
+> +#endif
+>         adde    r0, r0, r10
+>         add     r5, r5, r7
+>         adde    r0, r0, r11
+> --
+> 2.13.3
+>
+Tested-by: Xin Long <lucien.xin@gmail.com>
