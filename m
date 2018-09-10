@@ -2,130 +2,95 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1080EC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:30:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23412C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:31:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC70E2086E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:30:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC70E2086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id D940A2086E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:30:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D940A2086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728783AbeIJSYz (ORCPT
+        id S1728804AbeIJSZE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 14:24:55 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:1052 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727970AbeIJSYz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 14:24:55 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42887L2Ndmz9ttC0;
-        Mon, 10 Sep 2018 15:30:38 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 8ddVZpZF0eYa; Mon, 10 Sep 2018 15:30:38 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42887L1jJyz9ttBp;
-        Mon, 10 Sep 2018 15:30:38 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 8B7968B7AD;
-        Mon, 10 Sep 2018 15:30:46 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id Zf23eJ1q_5Hz; Mon, 10 Sep 2018 15:30:46 +0200 (CEST)
-Received: from pc16082vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4EB2F8B7A5;
-        Mon, 10 Sep 2018 15:30:46 +0200 (CEST)
-Subject: Re: Conflict between sparse and commit cafa0010cd51f ("Raise the
- minimum required gcc version to 4.6")
-To:     Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>, joe@perches.com,
-        Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-sparse@vger.kernel.org, sparse@chrisli.org,
-        linuxppc-dev@lists.ozlabs.org
-References: <81a5fd11-366c-0897-4143-d8d041420a41@c-s.fr>
- <1324e7d6-83f8-f40f-ad34-c46e4ad3139b@c-s.fr>
- <CAKwvOdmuXydQsQyD2CUyoSkkDpF1e1CXg6v1SRv2q-bpYa9SQg@mail.gmail.com>
- <20180907181337.peyfq7yvhahduvmq@ltop.local>
- <CAKwvOdmXs+pWJGXu-zr-XSu7p-7hw=2m1vVQmVLwJcmGEFz0gg@mail.gmail.com>
- <e6db84f1-ee8d-9377-5f1c-6a0e7972ba50@c-s.fr>
- <20180910092835.v5nex5nzfgtl475m@ltop.local>
- <061b3056-1a9a-af6b-de2a-49fea394320d@c-s.fr>
- <20180910113448.dxnfvznyimtj3tkv@ltop.local>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <9409138a-dc14-2b12-edc0-cfa0b471da6e@c-s.fr>
-Date:   Mon, 10 Sep 2018 13:19:07 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 10 Sep 2018 14:25:04 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37270 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727970AbeIJSZE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 14:25:04 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E76F94021709;
+        Mon, 10 Sep 2018 13:30:56 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-66.ams2.redhat.com [10.36.116.66])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8288E20290B1;
+        Mon, 10 Sep 2018 13:30:56 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id BAF7316E28; Mon, 10 Sep 2018 15:30:50 +0200 (CEST)
+Date:   Mon, 10 Sep 2018 15:30:50 +0200
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     Gert Wollny <gert.wollny@collabora.com>
+Cc:     linux-kernel@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v7] Add udmabuf misc device
+Message-ID: <20180910133050.tr2lozfmhimqs4c4@sirius.home.kraxel.org>
+References: <1536491489.4810.22.camel@collabora.com>
+ <20180910083731.o4rryvermyighbtp@sirius.home.kraxel.org>
+ <1536571118.4810.38.camel@collabora.com>
+ <20180910105309.zmyoo5yhrmqg47md@sirius.home.kraxel.org>
+ <1536579068.4810.68.camel@collabora.com>
 MIME-Version: 1.0
-In-Reply-To: <20180910113448.dxnfvznyimtj3tkv@ltop.local>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1536579068.4810.68.camel@collabora.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 10 Sep 2018 13:30:56 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 10 Sep 2018 13:30:56 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'kraxel@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 09/10/2018 11:34 AM, Luc Van Oostenryck wrote:
-> On Mon, Sep 10, 2018 at 09:56:33AM +0000, Christophe Leroy wrote:
->>
->> # export REAL_CC=ppc-linux-gcc
->> # make CHECK="cgcc -target=ppc -D_CALL_ELF=2 -D__GCC__=5
->> -D__GCC_MINOR__=4" C=2 arch/powerpc/kernel/process.o
->> scripts/kconfig/conf  --syncconfig Kconfig
->> #
->> # configuration written to .config
->> #
->>    UPD     include/config/kernel.release
->>    UPD     include/generated/utsrelease.h
->>    CC      kernel/bounds.s
->>    CC      arch/powerpc/kernel/asm-offsets.s
->>    CALL    scripts/checksyscalls.sh
->>    CHECK   scripts/mod/empty.c
->> Can't exec "/bin/sh": Argument list too long at /usr/local/bin/cgcc line 86.
->> make[2]: *** [scripts/mod/empty.o] Error 1
->> make[1]: *** [scripts/mod] Error 2
->> make: *** [scripts] Error 2
+On Mon, Sep 10, 2018 at 01:31:08PM +0200, Gert Wollny wrote:
+> Am Montag, den 10.09.2018, 12:53 +0200 schrieb Gerd Hoffmann:
+> > 
+> > By default qemu doesn't use memfd for backing storage, you have to
+> > explicitly configure qemu that way (see qemu commit log of the test
+> > branch):
+> > 
+> >     qemu-system-x86_64 -m 2G
+> >             -object memory-backend-memfd,id=ram,size=2G
+> >             -numa node,memdev=ram"
 > 
-> OK. Clearly nobody has ever used it so :(
-> There is an infinite loop because cgcc use the env var CHECK
-> to call sparse while kbuild use CHECK to call cgcc here.
-> 
-> The following seems to work here.
-> $ export REAL_CC=ppc-linux-gcc
-> $ make CHECK="CHECK=sparse cgcc -target=ppc ...
+> Thanks, but that doesn't seem to help.
 
-Not yet ...
+Note the memory is specified twice, once with -m, once for the
+memory-backend-memfd object.  The two must match of course (or, to be
+exact, the sum of all memory backends must match the total memory, but
+unless you want create a virtual numa machine there is no reason to have
+multiple memory-backends).
 
-[root@pc16082vm linux-powerpc]# export REAL_CC=ppc-linux-gcc
-[root@pc16082vm linux-powerpc]# make CHECK="CHECK=sparse cgcc 
--target=ppc -D_CALL_ELF=2 -D__GNUC__=5 -D__GNUC_MINOR__=4" C=2 
-arch/powerpc/kernel/process.o
-   CALL    scripts/checksyscalls.sh
-   CHECK   scripts/mod/empty.c
-<command-line>:0:0: warning: "__STDC__" redefined
-<built-in>: note: this is the location of the previous definition
-/opt/cldk-1.4.0/lib/gcc/ppc-linux/5.4.0/../../../../ppc-linux/lib/crt1.o:(.rodata+0x4): 
-undefined reference to `main'
-collect2: error: ld returned 1 exit status
-make[2]: *** [scripts/mod/empty.o] Error 1
-make[1]: *** [scripts/mod] Error 2
-make: *** [scripts] Error 2
+> Are there any host kernel
+> configuration parameters or features that I should set (apart from
+> enabling udmabuf)? 
 
-Christophe
+I'm not aware of any unusual parameters required.  My config is based on
+rhel-7, then stripped down with localmodconfig, then enabled the bits I
+want in my test kernel.
 
-> 
-> It's a bit kludgy, I admit.
-> 
-> -- Luc
-> 
+Oh, wait, CONFIG_MEMFD_CREATE could be the one.  I guess I should add a
+Kconfig dependency.  Even though udmabuf will build just fine without
+that (because memfd is basically shmem with some features on top) it
+doesn't buy you much if the memfd_create syscall is not available ...
+
+cheers,
+  Gerd
+
