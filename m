@@ -2,298 +2,161 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D5E6C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 19:30:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB4EFC4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 19:31:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E608D20866
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 19:30:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6883320866
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 19:31:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Wjwhs6iL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E608D20866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="eGhEv/hF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6883320866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728794AbeIKAZz (ORCPT
+        id S1728846AbeIKA0j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 20:25:55 -0400
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:37961 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728063AbeIKAZy (ORCPT
+        Mon, 10 Sep 2018 20:26:39 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:51489 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727742AbeIKA0j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 20:25:54 -0400
-Received: by mail-ua1-f66.google.com with SMTP id o11-v6so18420935uak.5
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 12:30:18 -0700 (PDT)
+        Mon, 10 Sep 2018 20:26:39 -0400
+Received: by mail-it0-f66.google.com with SMTP id e14-v6so31120908itf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 12:31:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3qAgghxsUxy35dA7x81KoYn2yPTZ/zcubHf3SKeIk0w=;
-        b=Wjwhs6iLbouBSmEK/zuU+ZZYY+MhLDTt4gYlptVTAIX8noJ1c2/u7FRWBYmhequS8P
-         ng3riKaRAjyx/3ccE7PWMPT3nb6kvERPfKP/wGFjN2bS/xXht++8TQzLO1hVauaGrH2e
-         Ele6Mi1G3hF9POZjjcmU4ISA+X11eFO3qxKJ0=
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to;
+        bh=jE6dzmo2fE/yaOhHiGue+E/leNX73Knb17dB+41JYpA=;
+        b=eGhEv/hFBOThchr66aeDGMW1PVuFUUUfFFbIh15/gRRYkeBW693+VVNZsKXb975ZTK
+         qJ5OOyGlYyzCbtUXHAUnpoVIlvUoizzyM9UkB38a8IrgkZF425NS7Pj9KVPxwPqoIQ/J
+         RHpZB2WEz3Cp2MMycvluJycS6F2eLoMvSkMXU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3qAgghxsUxy35dA7x81KoYn2yPTZ/zcubHf3SKeIk0w=;
-        b=UGpM14FYSjADRPbMjaUKyRTJ1yIlYsNIxwYQPOyBApm1ouuhOW1Y8RFbaB2eNr5mPb
-         FPjXt7wx48/Vn2q4Vvb68WjnMzSdAq9qivRaT6I9S1SknxJQc4JiOqSZmpt5zgo3V/yS
-         S2SX76FzQuE4zqdxUkXmC9sZ7mtehu6aqFbsXRg7coPS244XjqyvJ31e8TrxkZXDzzp0
-         7xrwbr068tfWiwVbhpsL7+uI4PZ6m9uWaJ0vY0hk4BCtQTZMmYQAJNSZ65JvlqRlNGNd
-         JAM3ZQ/IQoUm42crdvomH0HEUnYDhpGAHssvcx+J4oSPTs7HWyoInz9lHmdrp0vnRRmO
-         ma4Q==
-X-Gm-Message-State: APzg51BSfbR8hqWmnd99DF0b4dILF4TgNyKBLf9bVN3iG3WSbx3UgOUB
-        S3+2EFR3vIvIqkOXQLN0GcCsOw==
-X-Google-Smtp-Source: ANB0VdY1Biotpa8hczemR/UiOn1T8ozefAgw7ksiML7iWlRBqM+Cd9Ugsadrivzjvq+UClEHaq7kUw==
-X-Received: by 2002:ab0:644f:: with SMTP id j15-v6mr7694532uap.70.1536607818468;
-        Mon, 10 Sep 2018 12:30:18 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
-        by smtp.gmail.com with ESMTPSA id e185-v6sm7255416vkd.15.2018.09.10.12.30.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 10 Sep 2018 12:30:17 -0700 (PDT)
-Date:   Mon, 10 Sep 2018 12:30:16 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Taniya Das <tdas@codeaurora.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Amit Nischal <anischal@codeaurora.org>,
-        devicetree@vger.kernel.org, robh@kernel.org,
-        skannan@codeaurora.org, amit.kucheria@linaro.org,
-        evgreen@google.com
-Subject: Re: [PATCH v7 2/2] cpufreq: qcom-hw: Add support for QCOM cpufreq HW
- driver
-Message-ID: <20180910193016.GG22824@google.com>
-References: <1532428970-18122-1-git-send-email-tdas@codeaurora.org>
- <1532428970-18122-3-git-send-email-tdas@codeaurora.org>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to;
+        bh=jE6dzmo2fE/yaOhHiGue+E/leNX73Knb17dB+41JYpA=;
+        b=dGgEIo1+K8x3eMcBG7akQWiYjB3vEE/89muAjzS37Reqnf8nwcofDpvw2g7pHLRwMG
+         6tJtC6Y6LQ6y6UCbCrxNB8HGVBwSh603a/NMfcBYRSjq/YrqEc6R479m4W2cQvou6PWZ
+         65zHqr6h3ZbuMemEQCu4Bt34eTLMyx3OP46cH0hOyg0xfRN7y/1bcah6xSx/PniGDY6W
+         4f4qZcIkyqTDUBnA7qE75Hg9e2m5mPKpMxkB5scDfHVhjRpyLLlWEx1cAs25Y19iuM58
+         IFf8tT8NuLhmjBLtsyexLuWsAkcMdkTZl1n8MmmL0P8ySFpzArviFF/uE2N53EwtMDWw
+         Jr5g==
+X-Gm-Message-State: APzg51CLVjFY8+yq5R+GGPJgfdS7ueLrHdU+qO2FOIliMMynS/CIqH9T
+        ZndNApsHMSb2GbGOR0PvDVTINAf5ilBphY5wDZNnFg==
+X-Google-Smtp-Source: ANB0VdaJSXWJflQsTEuN3cPyPsl0PoSkGWrsLstqo/R9VpMKmZRKluLVZaBEZNThCNus/XxPv8lfzZjGVi9hqRiFD7g=
+X-Received: by 2002:a24:57cb:: with SMTP id u194-v6mr19303928ita.148.1536607862941;
+ Mon, 10 Sep 2018 12:31:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1532428970-18122-3-git-send-email-tdas@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Received: by 2002:a6b:2848:0:0:0:0:0 with HTTP; Mon, 10 Sep 2018 12:31:02
+ -0700 (PDT)
+In-Reply-To: <20180910190355.GA2166@vnote>
+References: <20180910190355.GA2166@vnote>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Mon, 10 Sep 2018 21:31:02 +0200
+Message-ID: <CAKv+Gu_Di8sb6g1Hm3zoih-031Y1yORwXxd+Te68-2PeUioTiQ@mail.gmail.com>
+Subject: Re: [PATCH] efi: take size of partition entry from GPT header
+To:     Eugene Korenevsky <ekorenevsky@gmail.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 24, 2018 at 04:12:50PM +0530, Taniya Das wrote:
-> The CPUfreq HW present in some QCOM chipsets offloads the steps necessary
-> for changing the frequency of CPUs. The driver implements the cpufreq
-> driver interface for this hardware engine.
-> 
-> Signed-off-by: Saravana Kannan <skannan@codeaurora.org>
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
->  drivers/cpufreq/Kconfig.arm       |  11 ++
->  drivers/cpufreq/Makefile          |   1 +
->  drivers/cpufreq/qcom-cpufreq-hw.c | 348 ++++++++++++++++++++++++++++++++++++++
->  3 files changed, 360 insertions(+)
->  create mode 100644 drivers/cpufreq/qcom-cpufreq-hw.c
-> 
-> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-> index 0cd8eb7..93a9d72 100644
-> --- a/drivers/cpufreq/Kconfig.arm
-> +++ b/drivers/cpufreq/Kconfig.arm
-> @@ -298,3 +298,14 @@ config ARM_PXA2xx_CPUFREQ
->  	  This add the CPUFreq driver support for Intel PXA2xx SOCs.
-> 
->  	  If in doubt, say N.
-> +
-> +config ARM_QCOM_CPUFREQ_HW
-> +	bool "QCOM CPUFreq HW driver"
-> +	depends on ARCH_QCOM
-> +	help
-> +	 Support for the CPUFreq HW driver.
-> +	 Some QCOM chipsets have a HW engine to offload the steps
-> +	 necessary for changing the frequency of the CPUs. Firmware loaded
-> +	 in this engine exposes a programming interface to the OS.
-> +	 The driver implements the cpufreq interface for this HW engine.
-> +	 Say Y if you want to support CPUFreq HW.
-> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-> index c1ffeab..ca48a1d 100644
-> --- a/drivers/cpufreq/Makefile
-> +++ b/drivers/cpufreq/Makefile
-> @@ -85,6 +85,7 @@ obj-$(CONFIG_ARM_TEGRA124_CPUFREQ)	+= tegra124-cpufreq.o
->  obj-$(CONFIG_ARM_TEGRA186_CPUFREQ)	+= tegra186-cpufreq.o
->  obj-$(CONFIG_ARM_TI_CPUFREQ)		+= ti-cpufreq.o
->  obj-$(CONFIG_ARM_VEXPRESS_SPC_CPUFREQ)	+= vexpress-spc-cpufreq.o
-> +obj-$(CONFIG_ARM_QCOM_CPUFREQ_HW)	+= qcom-cpufreq-hw.o
-> 
-> 
->  ##################################################################################
-> diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufreq-hw.c
-> new file mode 100644
-> index 0000000..ea8f7d1
-> --- /dev/null
-> +++ b/drivers/cpufreq/qcom-cpufreq-hw.c
-> @@ -0,0 +1,348 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-> + */
-> +
-> +#include <linux/cpufreq.h>
-> +#include <linux/init.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_platform.h>
-> +
-> +#define INIT_RATE			300000000UL
-> +#define LUT_MAX_ENTRIES			40U
-> +#define CORE_COUNT_VAL(val)		(((val) & (GENMASK(18, 16))) >> 16)
-> +#define LUT_ROW_SIZE			32
-> +
-> +enum {
-> +	REG_ENABLE,
-> +	REG_LUT_TABLE,
-> +	REG_PERF_STATE,
-> +
-> +	REG_ARRAY_SIZE,
-> +};
-> +
-> +struct cpufreq_qcom {
-> +	struct cpufreq_frequency_table *table;
-> +	struct device *dev;
-> +	void __iomem *reg_bases[REG_ARRAY_SIZE];
-> +	cpumask_t related_cpus;
-> +	unsigned int max_cores;
-> +	unsigned long xo_rate;
-> +};
-> +
-> +static const u16 cpufreq_qcom_std_offsets[REG_ARRAY_SIZE] = {
-> +	[REG_ENABLE]		= 0x0,
-> +	[REG_LUT_TABLE]		= 0x110,
-> +	[REG_PERF_STATE]	= 0x920,
-> +};
-> +
-> +static struct cpufreq_qcom *qcom_freq_domain_map[NR_CPUS];
-> +
-> +static int
-> +qcom_cpufreq_hw_target_index(struct cpufreq_policy *policy,
-> +			     unsigned int index)
-> +{
-> +	struct cpufreq_qcom *c = policy->driver_data;
-> +
-> +	writel_relaxed(index, c->reg_bases[REG_PERF_STATE]);
-> +
-> +	return 0;
-> +}
-> +
-> +static unsigned int qcom_cpufreq_hw_get(unsigned int cpu)
-> +{
-> +	struct cpufreq_qcom *c;
-> +	struct cpufreq_policy *policy;
-> +	unsigned int index;
-> +
-> +	policy = cpufreq_cpu_get_raw(cpu);
-> +	if (!policy)
-> +		return 0;
-> +
-> +	c = policy->driver_data;
-> +
-> +	index = readl_relaxed(c->reg_bases[REG_PERF_STATE]);
-> +	index = min(index, LUT_MAX_ENTRIES - 1);
-> +
-> +	return policy->freq_table[index].frequency;
-> +}
-> +
-> +static unsigned int
-> +qcom_cpufreq_hw_fast_switch(struct cpufreq_policy *policy,
-> +			    unsigned int target_freq)
-> +{
-> +	struct cpufreq_qcom *c = policy->driver_data;
-> +	int index;
-> +
-> +	index = policy->cached_resolved_idx;
-> +	if (index < 0)
-> +		return 0;
-> +
-> +	writel_relaxed(index, c->reg_bases[REG_PERF_STATE]);
-> +
-> +	return policy->freq_table[index].frequency;
-> +}
-> +
-> +static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
-> +{
-> +	struct cpufreq_qcom *c;
-> +
-> +	c = qcom_freq_domain_map[policy->cpu];
-> +	if (!c) {
-> +		pr_err("No scaling support for CPU%d\n", policy->cpu);
-> +		return -ENODEV;
-> +	}
-> +
-> +	cpumask_copy(policy->cpus, &c->related_cpus);
-> +
-> +	policy->fast_switch_possible = true;
-> +	policy->freq_table = c->table;
-> +	policy->driver_data = c;
-> +
-> +	return 0;
-> +}
-> +
-> +static struct freq_attr *qcom_cpufreq_hw_attr[] = {
-> +	&cpufreq_freq_attr_scaling_available_freqs,
-> +	&cpufreq_freq_attr_scaling_boost_freqs,
-> +	NULL
-> +};
-> +
-> +static struct cpufreq_driver cpufreq_qcom_hw_driver = {
-> +	.flags		= CPUFREQ_STICKY | CPUFREQ_NEED_INITIAL_FREQ_CHECK |
-> +			  CPUFREQ_HAVE_GOVERNOR_PER_POLICY,
-> +	.verify		= cpufreq_generic_frequency_table_verify,
-> +	.target_index	= qcom_cpufreq_hw_target_index,
-> +	.get		= qcom_cpufreq_hw_get,
-> +	.init		= qcom_cpufreq_hw_cpu_init,
-> +	.fast_switch    = qcom_cpufreq_hw_fast_switch,
-> +	.name		= "qcom-cpufreq-hw",
-> +	.attr		= qcom_cpufreq_hw_attr,
-> +	.boost_enabled	= true,
-> +};
-> +
-> +static int qcom_cpufreq_hw_read_lut(struct platform_device *pdev,
-> +				    struct cpufreq_qcom *c)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	void __iomem *base;
-> +	u32 data, src, lval, i, core_count, prev_cc, prev_freq, cur_freq;
-> +
-> +	c->table = devm_kcalloc(dev, LUT_MAX_ENTRIES + 1,
-> +				sizeof(*c->table), GFP_KERNEL);
-> +	if (!c->table)
-> +		return -ENOMEM;
-> +
-> +	base = c->reg_bases[REG_LUT_TABLE];
-> +
-> +	for (i = 0; i < LUT_MAX_ENTRIES; i++) {
-> +		data = readl_relaxed(base + i * LUT_ROW_SIZE);
-> +		src = (data & GENMASK(31, 30)) >> 30;
-> +		lval = data & GENMASK(7, 0);
-> +		core_count = CORE_COUNT_VAL(data);
-> +
-> +		if (src)
-> +			c->table[i].frequency = c->xo_rate * lval / 1000;
-> +		else
-> +			c->table[i].frequency = INIT_RATE / 1000;
-> +
-> +		cur_freq = c->table[i].frequency;
-> +
-> +		dev_dbg(dev, "index=%d freq=%d, core_count %d\n",
-> +			i, c->table[i].frequency, core_count);
-> +
-> +		if (core_count != c->max_cores)
-> +			cur_freq = CPUFREQ_ENTRY_INVALID;
-> +
+On 10 September 2018 at 21:03, Eugene Korenevsky <ekorenevsky@gmail.com> wrote:
+> Use gpt_header.sizeof_partition_entry instead of sizeof(gpt_entry)
+> for GPT entry size.
+> According to UEFI spec, GPT entry size is specified in GPT header.
+>
 
-I noticed that the 'power_allocator' thermal governor currently can't
-be used with this driver since there is no OPP table with frequency and
-voltage information. Does the LUT contain information about the
-voltage or is there another mechanism to retrieve it?
+I think this patch is probably correct, but could you please provide
+more information:
+- why do you need this patch
+- which UEFI spec section/paragraph are you quoting
+
+
+> Signed-off-by: Eugene Korenevsky <ekorenevsky@gmail.com>
+> ---
+>  block/partitions/efi.c | 26 ++++++++++++--------------
+>  1 file changed, 12 insertions(+), 14 deletions(-)
+>
+> diff --git a/block/partitions/efi.c b/block/partitions/efi.c
+> index 39f70d968754..29f7ec585e1d 100644
+> --- a/block/partitions/efi.c
+> +++ b/block/partitions/efi.c
+> @@ -428,11 +428,6 @@ static int is_gpt_valid(struct parsed_partitions *state, u64 lba,
+>                          (unsigned long long)le64_to_cpu((*gpt)->first_usable_lba));
+>                 goto fail;
+>         }
+> -       /* Check that sizeof_partition_entry has the correct value */
+> -       if (le32_to_cpu((*gpt)->sizeof_partition_entry) != sizeof(gpt_entry)) {
+> -               pr_debug("GUID Partition Entry Size check failed.\n");
+> -               goto fail;
+> -       }
+>
+
+Shouldn't we assert that sizeof_partition_entry >= sizeof(gpt_entry) ?
+
+>         /* Sanity check partition table size */
+>         pt_size = (u64)le32_to_cpu((*gpt)->num_partition_entries) *
+> @@ -692,7 +687,7 @@ static int find_valid_gpt(struct parsed_partitions *state, gpt_header **gpt,
+>  int efi_partition(struct parsed_partitions *state)
+>  {
+>         gpt_header *gpt = NULL;
+> -       gpt_entry *ptes = NULL;
+> +       gpt_entry *ptes = NULL, *pte;
+>         u32 i;
+>         unsigned ssz = bdev_logical_block_size(state->bdev) / 512;
+>
+> @@ -704,13 +699,16 @@ int efi_partition(struct parsed_partitions *state)
+>
+>         pr_debug("GUID Partition Table is valid!  Yea!\n");
+>
+> -       for (i = 0; i < le32_to_cpu(gpt->num_partition_entries) && i < state->limit-1; i++) {
+> +       pte = ptes;
+> +       for (i = 0; i < le32_to_cpu(gpt->num_partition_entries) && i < state->limit-1;
+> +                       i++,
+> +                       pte = (gpt_entry *)((u8*)pte + gpt->sizeof_partition_entry)) {
+>                 struct partition_meta_info *info;
+>                 unsigned label_count = 0;
+>                 unsigned label_max;
+> -               u64 start = le64_to_cpu(ptes[i].starting_lba);
+> -               u64 size = le64_to_cpu(ptes[i].ending_lba) -
+> -                          le64_to_cpu(ptes[i].starting_lba) + 1ULL;
+> +               u64 start = le64_to_cpu(pte->starting_lba);
+> +               u64 size = le64_to_cpu(pte->ending_lba) -
+> +                          le64_to_cpu(pte->starting_lba) + 1ULL;
+>
+>                 if (!is_pte_valid(&ptes[i], last_lba(state->bdev)))
+>                         continue;
+> @@ -718,18 +716,18 @@ int efi_partition(struct parsed_partitions *state)
+>                 put_partition(state, i+1, start * ssz, size * ssz);
+>
+>                 /* If this is a RAID volume, tell md */
+> -               if (!efi_guidcmp(ptes[i].partition_type_guid, PARTITION_LINUX_RAID_GUID))
+> +               if (!efi_guidcmp(pte->partition_type_guid, PARTITION_LINUX_RAID_GUID))
+>                         state->parts[i + 1].flags = ADDPART_FLAG_RAID;
+>
+>                 info = &state->parts[i + 1].info;
+> -               efi_guid_to_str(&ptes[i].unique_partition_guid, info->uuid);
+> +               efi_guid_to_str(&pte->unique_partition_guid, info->uuid);
+>
+>                 /* Naively convert UTF16-LE to 7 bits. */
+>                 label_max = min(ARRAY_SIZE(info->volname) - 1,
+> -                               ARRAY_SIZE(ptes[i].partition_name));
+> +                               ARRAY_SIZE(pte->partition_name));
+>                 info->volname[label_max] = 0;
+>                 while (label_count < label_max) {
+> -                       u8 c = ptes[i].partition_name[label_count] & 0xff;
+> +                       u8 c = pte->partition_name[label_count] & 0xff;
+>                         if (c && !isprint(c))
+>                                 c = '!';
+>                         info->volname[label_count] = c;
+> --
+> 2.18.0
