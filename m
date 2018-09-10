@@ -2,119 +2,126 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1D95C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 20:05:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9F88C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 20:06:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52CE32086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 20:05:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=konsulko.com header.i=@konsulko.com header.b="aB0PRChr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52CE32086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.com
+	by mail.kernel.org (Postfix) with ESMTP id 73DE720658
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 20:06:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73DE720658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728245AbeIKBB2 (ORCPT
+        id S1728808AbeIKBCi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 21:01:28 -0400
-Received: from mail-pl1-f181.google.com ([209.85.214.181]:34563 "EHLO
-        mail-pl1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727709AbeIKBB2 (ORCPT
+        Mon, 10 Sep 2018 21:02:38 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:40499 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727709AbeIKBCi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 21:01:28 -0400
-Received: by mail-pl1-f181.google.com with SMTP id f6-v6so10245188plo.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 13:05:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=OlHD2rrGBV6b0MGnrLFYcoHFj7xvql2uwUrV0URvZI4=;
-        b=aB0PRChrYVT1hwRsnct4dFvPyD+MpiktEFU4WkIb95If5Bs5wQEY1e/p7H31/hMa+f
-         j7mikckJ1qhkHMoPiGSUSEjttBw3EDXsTzHGnG9B31AlB+CGvdHfnr/+9UfZxnxJzGS3
-         EM2dgLtcnk6rB4fDL6tkOF6SbwPQRwqZn3wFM=
+        Mon, 10 Sep 2018 21:02:38 -0400
+Received: by mail-oi0-f66.google.com with SMTP id l202-v6so42672132oig.7;
+        Mon, 10 Sep 2018 13:06:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=OlHD2rrGBV6b0MGnrLFYcoHFj7xvql2uwUrV0URvZI4=;
-        b=hf654+BKbP2b1LU2sVurfZbnmAkduIiCfO8ZO2lgTVkWJMHw5JedYpKVKRTrWaLb+H
-         7ZRYhJPZ7/Hrzepd/v34Rjsqt8Sbs51WHVxLE3YkqUAol+Eb3AmWc9bSkUjXZDcjGRKq
-         VwdV+0tSHgkvg9SSdH0q4Jo/azGJDoZ1XwmEIjuxVuRn8pTXeZ3GvkwhnkUiQ2l5lDhr
-         tvwRxXjgP5mmpwI13/ppH91UlNgR887x/GzQIcmiLmjzevPN3Jbzq/WydZWkZexNdiij
-         RYyrEKXWKvCjdvUo+Fl87Kj9V+4F0iUrUCdO1/tyBoEQVYR7QpJfSQC8UCD7K+RSPIZk
-         4YGw==
-X-Gm-Message-State: APzg51ALA+OL9xhZEW1+nyJazESGZMELg8fSDsnQnC2BP3uh7nKEp66c
-        sw7uXoBgU6SaXpztRV92CFUgXw==
-X-Google-Smtp-Source: ANB0VdbG6j7zXcsewpyyF1ug1vYUUclu9+K9G4Obk0JwaGdLDofCK94Po8tfx7o2s4yWPzVjkeB65A==
-X-Received: by 2002:a17:902:7e06:: with SMTP id b6-v6mr24044011plm.230.1536609944613;
-        Mon, 10 Sep 2018 13:05:44 -0700 (PDT)
-Received: from ?IPv6:2600:1010:b01a:2c7b:2c15:2527:16b2:76b4? ([2600:1010:b01a:2c7b:2c15:2527:16b2:76b4])
-        by smtp.gmail.com with ESMTPSA id h190-v6sm26477662pge.18.2018.09.10.13.05.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Sep 2018 13:05:43 -0700 (PDT)
-Content-Type: text/plain; charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: How to handle PTE tables with non contiguous entries ?
-From:   Dan Malek <dan.malek@konsulko.com>
-In-Reply-To: <ddc3bb56-4da0-c093-256f-185d4a612b5c@c-s.fr>
-Date:   Mon, 10 Sep 2018 13:05:41 -0700
-Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
-        aneesh.kumar@linux.vnet.ibm.com,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <98C61C92-0D24-41C6-B9DA-8335B34D3B07@konsulko.com>
-References: <ddc3bb56-4da0-c093-256f-185d4a612b5c@c-s.fr>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>
-X-Mailer: Apple Mail (2.3273)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Ox1tNDQlT0zHgXKL0oY/nhejzZ/RkcQzbonEu9+KPks=;
+        b=gN9uwcO4GvWvNc1ebOQxOSqI+IYxjJyBxpFDmn6Se5Djf2anUXEbB2yfcWGuhBkcFF
+         aaPNebvmSnh99cbmjKl+uONkHFRJv83SJcaZ9Ry4Q5WAQ/QVaDKAx+1MWmhqkDR3HoKJ
+         qmcRF52GiL5oomTE2/tIxa4A5ISntnUgwoeKk/L8E4C7egBeN1KyieTcRyzHcW9QYiTY
+         YjnDsFD8WBl08BPnCr1QMCRZLkwimlhCb0xez+dHaVAQPrQxQQuFFyMB8BlYtDjGWGh5
+         MBI1jJCNp04swbhFKMg7S3K+Ppp2XbrDz4F71vp1+EW60iudaEzZYmGV4LhAVGibrAgq
+         Qs7A==
+X-Gm-Message-State: APzg51CFv3pgU8+tE8RUYPnHC75jNbAsgjAqJZKfUEZJrxOY7mytmFSv
+        vDau202W0ctq1/7BGV8NLw==
+X-Google-Smtp-Source: ANB0VdbHGo8BdU/HuZWllceQH+7CgcWCCET3VQCRRsGE/tnlLFJ3BxRW82hVjfgX7hSKLtL9WiQjBA==
+X-Received: by 2002:aca:6087:: with SMTP id u129-v6mr21631119oib.99.1536610014243;
+        Mon, 10 Sep 2018 13:06:54 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id q63-v6sm18647429oia.54.2018.09.10.13.06.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 10 Sep 2018 13:06:53 -0700 (PDT)
+Date:   Mon, 10 Sep 2018 15:06:53 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     lee.jones@linaro.org, broonie@kernel.org, mark.rutland@arm.com,
+        lgirdwood@gmail.com, bgoswami@codeaurora.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        vkoul@kernel.org, alsa-devel@alsa-project.org
+Subject: Re: [PATCH v3 10/13] ASoC: dt-bindings: Add WCD9335 MBHC specific
+ properties
+Message-ID: <20180910200652.GA20896@bogus>
+References: <20180904102500.30318-1-srinivas.kandagatla@linaro.org>
+ <20180904102500.30318-11-srinivas.kandagatla@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180904102500.30318-11-srinivas.kandagatla@linaro.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Sep 04, 2018 at 11:24:57AM +0100, Srinivas Kandagatla wrote:
+> This patch add new bindings required to support MBHC
+> (Multi Button Headset Control) block in the codec.
+> This block is used for jack insert/removal detection,
+> headset type detection and 8 button press/release events.
+> 
+> All these properties are very much specific to board.
+> 
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+>  .../bindings/sound/qcom,wcd9335.txt           | 20 +++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/sound/qcom,wcd9335.txt b/Documentation/devicetree/bindings/sound/qcom,wcd9335.txt
+> index 5d6ea66a863f..4d56c3ca9fa8 100644
+> --- a/Documentation/devicetree/bindings/sound/qcom,wcd9335.txt
+> +++ b/Documentation/devicetree/bindings/sound/qcom,wcd9335.txt
+> @@ -55,6 +55,26 @@ Required properties with SLIMbus Interface:
+>  	Value type: <string>
+>  	Definition: Must contain "mclk", "mclk2" and "slimbus" strings.
+>  
+> +- qcom,mbhc-vthreshold:
 
-Hello Cristophe.
+Needs unit suffix.
 
-> On Sep 10, 2018, at 7:34 AM, Christophe Leroy =
-<christophe.leroy@c-s.fr> wrote:
->=20
-> On the powerpc8xx, handling 16k size pages requires to have page =
-tables with 4 identical entries.
+> +	Usage: Optional, only required if headset button support required.
+> +	Value type: <u32 array>
+> +	Definition: Must contain an array of 8 threshold voltages in mV for
+> +		 8 buttons detection on headset.
+> +
+> +- qcom,hphl-jack-type-normally-open:
+> +	Usage: Optional, only required if headset button support required.
 
-Do you think a 16k page is useful?  Back in the day, the goal was to =
-keep the fault handling and management overhead as simple and generic as =
-possible, as you know this affects the system performance.  I understand =
-there would be fewer page faults and more efficient use of the MMU =
-resources with 16k, but if this comes at an overhead cost, is it really =
-worth it?
+It's not required if the pin is NC, right?
 
-In addition to the normal 4k mapping, I had thought about using 512k =
-mapping, which could be easily detected at level 2 (PMD), with a single =
-entry loaded into the MMU.  We would need an aux header or something =
-from the executable/library to assist with knowing when this could be =
-done.  I never got around to it. :)
+> +	Value type: <boolean>
+> +	Definition: present if hphl pin on jack is a NO (Normally Open).
+> +		If not specified, then its assumed that hphl pin on jack
+> +		is NC (Normally Closed).
 
-The 8xx platforms tended to have smaller memory resources, so the 4k =
-granularity was also useful in making better use of the available space.
+Is the not specified case the more common case? If not, it should be.
 
-> Would someone have an idea of an elegent way to handle that ?
+> +
+> +- qcom,gnd-jack-type-normally-open:
+> +	Usage: Optional, only required if headset button support required.
 
-My suggestion would be to not change the PTE table, but have the fault =
-handler detect a 16k page and load any one of the four entries based =
-upon miss offset.  Kinda use the same 4k miss hander, but with 16k =
-knowledge.  You wouldn=E2=80=99t save any PTE table space, but the MMU =
-efficiency may be worth it.  As I recall, the hardware may ignore/mask =
-any LS bits, and there is PMD level information to utilize as well.
+Same here.
 
-It=E2=80=99s been a long time since I=E2=80=99ve investigated how things =
-have evolved, glad it=E2=80=99s still in use, and I hope you at least =
-have some fun with the development :)
-
-Thanks.
-
-	=E2=80=94 Dan
-
+> +	Value type: <boolean>
+> +	Definition: present if gnd pin on jack is NO (Normally Open).
+> +		 If not specified, then its assumed that gnd pin on
+> +		 jack is NC  (Normally Closed).
+> +
+>  - vdd-buck-supply:
+>  	Usage: required
+>  	Value type: <phandle>
+> -- 
+> 2.18.0
+> 
