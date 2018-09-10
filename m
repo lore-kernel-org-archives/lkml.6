@@ -6,48 +6,45 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5A3EC4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:10:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17AF7C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:10:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B0D220865
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:10:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B0D220865
+	by mail.kernel.org (Postfix) with ESMTP id 9DEAC20865
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 10:10:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DEAC20865
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728148AbeIJPDv (ORCPT
+        id S1728212AbeIJPEL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 11:03:51 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:38751 "EHLO
+        Mon, 10 Sep 2018 11:04:11 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:56983 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727261AbeIJPDv (ORCPT
+        with ESMTP id S1727261AbeIJPEL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 11:03:51 -0400
+        Mon, 10 Sep 2018 11:04:11 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8AAA2PQ1807387
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8AAAYbi1807416
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 10 Sep 2018 03:10:02 -0700
+        Mon, 10 Sep 2018 03:10:34 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8AAA1VO1807384;
-        Mon, 10 Sep 2018 03:10:01 -0700
-Date:   Mon, 10 Sep 2018 03:10:01 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8AAAXhB1807411;
+        Mon, 10 Sep 2018 03:10:33 -0700
+Date:   Mon, 10 Sep 2018 03:10:33 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Waiman Long <tipbot@zytor.com>
-Message-ID: <tip-4b486b535c33ef354ecf02a2650919004fd7d2b0@git.kernel.org>
-Cc:     will.deacon@arm.com, dbueso@suse.de, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
-        mingo@kernel.org, longman@redhat.com, jmario@redhat.com,
-        peterz@infradead.org
-Reply-To: jmario@redhat.com, peterz@infradead.org, longman@redhat.com,
-          tglx@linutronix.de, mingo@kernel.org,
-          linux-kernel@vger.kernel.org, hpa@zytor.com, dbueso@suse.de,
-          torvalds@linux-foundation.org, will.deacon@arm.com
-In-Reply-To: <1532459425-19204-1-git-send-email-longman@redhat.com>
-References: <1532459425-19204-1-git-send-email-longman@redhat.com>
+From:   tip-bot for Randy Dunlap <tipbot@zytor.com>
+Message-ID: <tip-882a78a9f39f5535b209b4aa0a1741e35b8c67fb@git.kernel.org>
+Cc:     hpa@zytor.com, rdunlap@infradead.org, tglx@linutronix.de,
+        torvalds@linux-foundation.org, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, mingo@kernel.org
+Reply-To: torvalds@linux-foundation.org, peterz@infradead.org,
+          mingo@kernel.org, linux-kernel@vger.kernel.org, hpa@zytor.com,
+          rdunlap@infradead.org, tglx@linutronix.de
+In-Reply-To: <cdda0d42-880d-4229-a9f7-5899c977a063@infradead.org>
+References: <cdda0d42-880d-4229-a9f7-5899c977a063@infradead.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] locking/rwsem: Exit read lock slowpath if queue
- empty & no writer
-Git-Commit-ID: 4b486b535c33ef354ecf02a2650919004fd7d2b0
+Subject: [tip:sched/core] sched/fair: Fix kernel-doc notation warning
+Git-Commit-ID: 882a78a9f39f5535b209b4aa0a1741e35b8c67fb
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -61,82 +58,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  4b486b535c33ef354ecf02a2650919004fd7d2b0
-Gitweb:     https://git.kernel.org/tip/4b486b535c33ef354ecf02a2650919004fd7d2b0
-Author:     Waiman Long <longman@redhat.com>
-AuthorDate: Tue, 24 Jul 2018 15:10:25 -0400
+Commit-ID:  882a78a9f39f5535b209b4aa0a1741e35b8c67fb
+Gitweb:     https://git.kernel.org/tip/882a78a9f39f5535b209b4aa0a1741e35b8c67fb
+Author:     Randy Dunlap <rdunlap@infradead.org>
+AuthorDate: Mon, 3 Sep 2018 12:53:17 -0700
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 10 Sep 2018 10:16:39 +0200
+CommitDate: Mon, 10 Sep 2018 10:31:37 +0200
 
-locking/rwsem: Exit read lock slowpath if queue empty & no writer
+sched/fair: Fix kernel-doc notation warning
 
-It was discovered that a constant stream of readers with occassional
-writers pounding on a rwsem may cause many of the readers to enter the
-slowpath unnecessarily thus increasing latency and lowering performance.
+Fix kernel-doc warning for missing 'flags' parameter description:
 
-In the current code, a reader entering the slowpath critical section
-will unconditionally set the WAITING_BIAS, if not set yet, and clear
-its active count even if no one is in the wait queue and no writer
-is present. This causes some incoming readers to observe the presence
-of waiters in the wait queue and hence have to go into the slowpath
-themselves.
+../kernel/sched/fair.c:3371: warning: Function parameter or member 'flags' not described in 'attach_entity_load_avg'
 
-With sufficient numbers of readers and a relatively short lock hold time,
-the WAITING_BIAS may be repeatedly turned on and off and a substantial
-portion of the readers will go into the slowpath sustaining a rather
-long queue in the wait queue spinlock and repeated WAITING_BIAS on/off
-cycle until the logjam is broken opportunistically.
-
-To avoid this situation from happening, an additional check is added to
-detect the special case that the reader in the critical section is the
-only one in the wait queue and no writer is present. When that happens,
-it can just exit the slowpath and return immediately as its active count
-has already been set in the lock.  Other incoming readers won't observe
-the presence of waiters and so will not be forced into the slowpath.
-
-The issue was found in a customer site where they had an application
-that pounded on the pread64 syscalls heavily on an XFS filesystem. The
-application was run in a recent 4-socket boxes with a lot of CPUs. They
-saw significant spinlock contention in the rwsem_down_read_failed() call.
-With this patch applied, the system CPU usage went down from 85% to 57%,
-and the spinlock contention in the pread64 syscalls was gone.
-
-Signed-off-by: Waiman Long <longman@redhat.com>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Davidlohr Bueso <dbueso@suse.de>
-Acked-by: Will Deacon <will.deacon@arm.com>
-Cc: Joe Mario <jmario@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/1532459425-19204-1-git-send-email-longman@redhat.com
+Fixes: ea14b57e8a18 ("sched/cpufreq: Provide migration hint")
+Link: http://lkml.kernel.org/r/cdda0d42-880d-4229-a9f7-5899c977a063@infradead.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/locking/rwsem-xadd.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ kernel/sched/fair.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/kernel/locking/rwsem-xadd.c b/kernel/locking/rwsem-xadd.c
-index 3064c50e181e..01fcb807598c 100644
---- a/kernel/locking/rwsem-xadd.c
-+++ b/kernel/locking/rwsem-xadd.c
-@@ -233,8 +233,19 @@ __rwsem_down_read_failed_common(struct rw_semaphore *sem, int state)
- 	waiter.type = RWSEM_WAITING_FOR_READ;
- 
- 	raw_spin_lock_irq(&sem->wait_lock);
--	if (list_empty(&sem->wait_list))
-+	if (list_empty(&sem->wait_list)) {
-+		/*
-+		 * In case the wait queue is empty and the lock isn't owned
-+		 * by a writer, this reader can exit the slowpath and return
-+		 * immediately as its RWSEM_ACTIVE_READ_BIAS has already
-+		 * been set in the count.
-+		 */
-+		if (atomic_long_read(&sem->count) >= 0) {
-+			raw_spin_unlock_irq(&sem->wait_lock);
-+			return sem;
-+		}
- 		adjustment += RWSEM_WAITING_BIAS;
-+	}
- 	list_add_tail(&waiter.list, &sem->wait_list);
- 
- 	/* we're now waiting on the lock, but no longer actively locking */
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index fc9a484ef82b..f808ddf2a868 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -3362,6 +3362,7 @@ update_cfs_rq_load_avg(u64 now, struct cfs_rq *cfs_rq)
+  * attach_entity_load_avg - attach this entity to its cfs_rq load avg
+  * @cfs_rq: cfs_rq to attach to
+  * @se: sched_entity to attach
++ * @flags: migration hints
+  *
+  * Must call update_cfs_rq_load_avg() before this, since we rely on
+  * cfs_rq->avg.last_update_time being current.
