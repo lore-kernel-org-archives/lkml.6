@@ -2,166 +2,172 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B18DFC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 12:45:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 962D8C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 12:45:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B4572086E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 12:45:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linbit-com.20150623.gappssmtp.com header.i=@linbit-com.20150623.gappssmtp.com header.b="B8uESlLH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B4572086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linbit.com
+	by mail.kernel.org (Postfix) with ESMTP id 4DAFC2086E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 12:45:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DAFC2086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lip6.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728332AbeIJRja (ORCPT
+        id S1728476AbeIJRjs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 13:39:30 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:56165 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727815AbeIJRja (ORCPT
+        Mon, 10 Sep 2018 13:39:48 -0400
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:4922 "EHLO
+        mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727796AbeIJRjs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 13:39:30 -0400
-Received: by mail-wm0-f66.google.com with SMTP id f21-v6so21411150wmc.5
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 05:45:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linbit-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=n8lSDqnHi4bVqautm2beJdS+qDTrEK2Gazzns3VX8N0=;
-        b=B8uESlLHsybQBT/2Sw3RdOBdp/hl7p6bhpOo8p3xOn/fThE4WjmzJOizCANtxTTlNg
-         ItSoNRW1iCMvIq7NBeoc4zw7yMWxEDZ+0FHVjaE2M3A0NcGdKUut9EUPXVoL/nZCs05k
-         fFobN1lgcAcrR5oDuZkcoV+gj05kWDuHS+IMdJaElGNX6AMscvcbH+ALQ886ohh8Viiv
-         V9bdvepUZx+QTpORqc21hgrcFUTm1Bl/dkjgmJEpPLFfpi7m5HzIYNRWUA6mg7//OwiY
-         EStayIjbSxquIhPxAatNFaeeh5FyCyQTgIP9KZixm+I1H5k1g9p57lQAdKLbQKec6/Y5
-         kWeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=n8lSDqnHi4bVqautm2beJdS+qDTrEK2Gazzns3VX8N0=;
-        b=oMFNDhRTBF6EQ63W3XM9ltREV1NF4+1W/4Fqdlxz47kwQl4fnvvnH3ah7StKnuwyxV
-         YBSsw2REx4A0UpqhRhdXE+Lb8qX0aNw0nFJYQosfagEmCr72PWLvZ1K0WSVbj8LnDNuV
-         XhsEUQgkBHlxopVTIf2N3ycuuQb+XlJ3PJQ6+Q0pwrAleNdhkxo+QRWFD09XaFnW8IgM
-         DTAxpo3UoLRn80IwbZb1lT+uMMGJji0NxDLyx1+ZNbkWHJD/AFAR/x7p00ehADGuxaTX
-         kwN6KtBgpWZWLuf85F7Yjer1nrFGVg7GDxQgYAqQ1n/MXOaRM/UmKxGcTi3OAyyoh7tP
-         BJZw==
-X-Gm-Message-State: APzg51DRip0luyWtUMkNiRLccde/kTLHsaWNEv0lI+mm+k4fwv6yxR4d
-        scHaAvCEn6nqGZYD1T6xIlKzKQ==
-X-Google-Smtp-Source: ANB0VdaIQypliyjxoJrBCktMZW8Tz3Klo8lUSkvv+L4rk0SVuRIeAwcm7FRyV80oQped2cpj86L9pQ==
-X-Received: by 2002:a1c:9cd3:: with SMTP id f202-v6mr618928wme.148.1536583532798;
-        Mon, 10 Sep 2018 05:45:32 -0700 (PDT)
-Received: from soda.linbit (212-186-191-219.static.upcbusiness.at. [212.186.191.219])
-        by smtp.gmail.com with ESMTPSA id t131-v6sm23810152wmg.10.2018.09.10.05.45.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 10 Sep 2018 05:45:32 -0700 (PDT)
-Date:   Mon, 10 Sep 2018 14:45:31 +0200
-From:   Lars Ellenberg <lars.ellenberg@linbit.com>
-To:     Valentin Vidic <Valentin.Vidic@CARNet.hr>
-Cc:     drbd-user@lists.linbit.com, Jens Axboe <axboe@kernel.dk>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        linux-block@vger.kernel.org, xen-devel@lists.xenproject.org,
-        Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>
-Subject: Re: [DRBD-user] [PATCH] xen-blkback: Switch to closed state after
- releasing the backing device
-Message-ID: <20180910124531.GA31737@soda.linbit>
-Mail-Followup-To: Valentin Vidic <Valentin.Vidic@CARNet.hr>,
-        drbd-user@lists.linbit.com, Jens Axboe <axboe@kernel.dk>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        linux-block@vger.kernel.org, xen-devel@lists.xenproject.org,
-        Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>
-References: <20180829065214.23546-1-Valentin.Vidic@CARNet.hr>
- <20180905103649.edugijsjx4v2fbxd@mac.bytemobile.com>
- <20180905162756.GA26705@gavran.carpriv.carnet.hr>
- <20180907120337.GB11834@soda.linbit>
- <20180907121348.GM26705@gavran.carpriv.carnet.hr>
- <20180907132828.GC11834@soda.linbit>
- <20180907164500.GN26705@gavran.carpriv.carnet.hr>
- <20180907171459.GO26705@gavran.carpriv.carnet.hr>
- <20180908073432.GP26705@gavran.carpriv.carnet.hr>
+        Mon, 10 Sep 2018 13:39:48 -0400
+X-IronPort-AV: E=Sophos;i="5.53,355,1531778400"; 
+   d="scan'208";a="278352467"
+Received: from vaio-julia.rsr.lip6.fr ([132.227.76.33])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2018 14:45:48 +0200
+Date:   Mon, 10 Sep 2018 14:45:47 +0200 (CEST)
+From:   Julia Lawall <julia.lawall@lip6.fr>
+X-X-Sender: jll@hadrien
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh@kernel.org>,
+        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
+        Devang Panchal <devang.panchal@softnautics.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        linux-kernel@vger.kernel.org, kbuild-all@01.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH 1/2] eeprom: eeprom_93xx46: use resource management
+ (fwd)
+Message-ID: <alpine.DEB.2.20.1809101444340.3655@hadrien>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180908073432.GP26705@gavran.carpriv.carnet.hr>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 08, 2018 at 09:34:32AM +0200, Valentin Vidic wrote:
-> On Fri, Sep 07, 2018 at 07:14:59PM +0200, Valentin Vidic wrote:
-> > In fact the first one is the original code path before I modified
-> > blkback.  The problem is it gets executed async from workqueue so
-> > it might not always run before the call to drbdadm secondary.
-> 
-> As the DRBD device gets released only when the last IO request
-> has finished, I found a way to check and wait for this in the
-> block-drbd script:
+Line 494 should be dropped.  The whole fail label could be dropped as
+well.
 
-> --- block-drbd.orig     2018-09-08 09:07:23.499648515 +0200
-> +++ block-drbd  2018-09-08 09:28:12.892193649 +0200
-> @@ -230,6 +230,24 @@
->  and so cannot be mounted ${m2}${when}."
->  }
->  
-> +wait_for_inflight()
-> +{
-> +  local dev="$1"
-> +  local inflight="/sys/block/${dev#/dev/}/inflight"
-> +  local rd wr
-> +
-> +  if ! [ -f "$inflight" ]; then
-> +    return
-> +  fi
-> +
-> +  while true; do
-> +    read rd wr < $inflight
-> +    if [ "$rd" = "0" -a "$wr" = "0" ]; then
+julia
 
-If it is "idle" now, but still "open",
-this will not sleep, and still fail the demotion below.
+---------- Forwarded message ----------
+Date: Mon, 10 Sep 2018 20:27:41 +0800
+From: kbuild test robot <lkp@intel.com>
+To: kbuild@01.org
+Cc: Julia Lawall <julia.lawall@lip6.fr>
+Subject: Re: [PATCH 1/2] eeprom: eeprom_93xx46: use resource management
 
-> +      return
-> +    fi
-> +    sleep 1
-> +  done
-> +}
->  
->  t=$(xenstore_read_default "$XENBUS_PATH/type" 'MISSING')
->  
-> @@ -285,6 +303,8 @@
->          drbd_lrole="${drbd_role%%/*}"
->          drbd_dev="$(drbdadm sh-dev $drbd_resource)"
->  
-> +        wait_for_inflight $drbd_dev
-> +
->          if [ "$drbd_lrole" != 'Secondary' ]; then
->            drbdadm secondary $drbd_resource
+In-Reply-To: <20180910074404.8041-2-brgl@bgdev.pl>
+References: <20180910074404.8041-2-brgl@bgdev.pl>
 
-You try to help it by "waiting forever until it appears to be idle".
-I suggest to at least limit the retries by iteration or time.
-And also (or, instead; but you'd potentially get a number of
-"scary messages" in the logs) add something like:
-	  for i in 1 2 3 5 7 x; do
-            drbdadm secondary $drbd_resource && exit 0
-            if [ $i = x ]; then
-	      # ... "appears to still be in use, maybe by" ...
-              fuser -v $drbd_dev
-              exit 1
-	    # else ... "will retry in $i seconds" ...
-            fi
-            sleep $i
-	  done
-...
+Hi Bartosz,
 
-Or, well, yes, fix blkback to not "defer" the final close "too long",
-if at all possible.
+I love your patch! Perhaps something to improve:
 
-    Lars
+[auto build test WARNING on char-misc/char-misc-testing]
+[also build test WARNING on v4.19-rc2 next-20180906]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+
+url:    https://github.com/0day-ci/linux/commits/Bartosz-Golaszewski/eeprom-eeprom_93xx46-use-resource-management/20180910-192124
+:::::: branch date: 66 minutes ago
+:::::: commit date: 66 minutes ago
+
+>> drivers/misc/eeprom/eeprom_93xx46.c:494:1-6: WARNING: invalid free of devm_ allocated data
+
+# https://github.com/0day-ci/linux/commit/d51b089674382bcc4f773d88ecd7c76d5ce472f7
+git remote add linux-review https://github.com/0day-ci/linux
+git remote update linux-review
+git checkout d51b089674382bcc4f773d88ecd7c76d5ce472f7
+vim +494 drivers/misc/eeprom/eeprom_93xx46.c
+
+c074abe02 Cory Tusar          2016-01-06  423
+80c8ae289 Bill Pemberton      2012-11-19  424  static int eeprom_93xx46_probe(struct spi_device *spi)
+06b4501e8 Anatolij Gustschin  2011-07-25  425  {
+06b4501e8 Anatolij Gustschin  2011-07-25  426  	struct eeprom_93xx46_platform_data *pd;
+06b4501e8 Anatolij Gustschin  2011-07-25  427  	struct eeprom_93xx46_dev *edev;
+06b4501e8 Anatolij Gustschin  2011-07-25  428  	int err;
+06b4501e8 Anatolij Gustschin  2011-07-25  429
+c074abe02 Cory Tusar          2016-01-06  430  	if (spi->dev.of_node) {
+c074abe02 Cory Tusar          2016-01-06  431  		err = eeprom_93xx46_probe_dt(spi);
+c074abe02 Cory Tusar          2016-01-06  432  		if (err < 0)
+c074abe02 Cory Tusar          2016-01-06  433  			return err;
+c074abe02 Cory Tusar          2016-01-06  434  	}
+c074abe02 Cory Tusar          2016-01-06  435
+06b4501e8 Anatolij Gustschin  2011-07-25  436  	pd = spi->dev.platform_data;
+06b4501e8 Anatolij Gustschin  2011-07-25  437  	if (!pd) {
+06b4501e8 Anatolij Gustschin  2011-07-25  438  		dev_err(&spi->dev, "missing platform data\n");
+06b4501e8 Anatolij Gustschin  2011-07-25  439  		return -ENODEV;
+06b4501e8 Anatolij Gustschin  2011-07-25  440  	}
+06b4501e8 Anatolij Gustschin  2011-07-25  441
+d51b08967 Bartosz Golaszewski 2018-09-10  442  	edev = devm_kzalloc(&spi->dev, sizeof(*edev), GFP_KERNEL);
+06b4501e8 Anatolij Gustschin  2011-07-25  443  	if (!edev)
+06b4501e8 Anatolij Gustschin  2011-07-25  444  		return -ENOMEM;
+06b4501e8 Anatolij Gustschin  2011-07-25  445
+06b4501e8 Anatolij Gustschin  2011-07-25  446  	if (pd->flags & EE_ADDR8)
+06b4501e8 Anatolij Gustschin  2011-07-25  447  		edev->addrlen = 7;
+06b4501e8 Anatolij Gustschin  2011-07-25  448  	else if (pd->flags & EE_ADDR16)
+06b4501e8 Anatolij Gustschin  2011-07-25  449  		edev->addrlen = 6;
+06b4501e8 Anatolij Gustschin  2011-07-25  450  	else {
+06b4501e8 Anatolij Gustschin  2011-07-25  451  		dev_err(&spi->dev, "unspecified address type\n");
+06b4501e8 Anatolij Gustschin  2011-07-25  452  		err = -EINVAL;
+06b4501e8 Anatolij Gustschin  2011-07-25  453  		goto fail;
+06b4501e8 Anatolij Gustschin  2011-07-25  454  	}
+06b4501e8 Anatolij Gustschin  2011-07-25  455
+06b4501e8 Anatolij Gustschin  2011-07-25  456  	mutex_init(&edev->lock);
+06b4501e8 Anatolij Gustschin  2011-07-25  457
+dd69a18ae Mark Brown          2016-04-20  458  	edev->spi = spi;
+06b4501e8 Anatolij Gustschin  2011-07-25  459  	edev->pdata = pd;
+06b4501e8 Anatolij Gustschin  2011-07-25  460
+1c4b6e2c7 Andrew Lunn         2016-02-26  461  	edev->size = 128;
+1c4b6e2c7 Andrew Lunn         2016-02-26  462  	edev->nvmem_config.name = dev_name(&spi->dev);
+1c4b6e2c7 Andrew Lunn         2016-02-26  463  	edev->nvmem_config.dev = &spi->dev;
+1c4b6e2c7 Andrew Lunn         2016-02-26  464  	edev->nvmem_config.read_only = pd->flags & EE_READONLY;
+1c4b6e2c7 Andrew Lunn         2016-02-26  465  	edev->nvmem_config.root_only = true;
+1c4b6e2c7 Andrew Lunn         2016-02-26  466  	edev->nvmem_config.owner = THIS_MODULE;
+1c4b6e2c7 Andrew Lunn         2016-02-26  467  	edev->nvmem_config.compat = true;
+1c4b6e2c7 Andrew Lunn         2016-02-26  468  	edev->nvmem_config.base_dev = &spi->dev;
+a8ab316ab Srinivas Kandagatla 2016-04-24  469  	edev->nvmem_config.reg_read = eeprom_93xx46_read;
+a8ab316ab Srinivas Kandagatla 2016-04-24  470  	edev->nvmem_config.reg_write = eeprom_93xx46_write;
+a8ab316ab Srinivas Kandagatla 2016-04-24  471  	edev->nvmem_config.priv = edev;
+a8ab316ab Srinivas Kandagatla 2016-04-24  472  	edev->nvmem_config.stride = 4;
+a8ab316ab Srinivas Kandagatla 2016-04-24  473  	edev->nvmem_config.word_size = 1;
+a8ab316ab Srinivas Kandagatla 2016-04-24  474  	edev->nvmem_config.size = edev->size;
+1c4b6e2c7 Andrew Lunn         2016-02-26  475
+d51b08967 Bartosz Golaszewski 2018-09-10  476  	edev->nvmem = devm_nvmem_register(&spi->dev, &edev->nvmem_config);
+1c4b6e2c7 Andrew Lunn         2016-02-26  477  	if (IS_ERR(edev->nvmem)) {
+1c4b6e2c7 Andrew Lunn         2016-02-26  478  		err = PTR_ERR(edev->nvmem);
+06b4501e8 Anatolij Gustschin  2011-07-25  479  		goto fail;
+1c4b6e2c7 Andrew Lunn         2016-02-26  480  	}
+06b4501e8 Anatolij Gustschin  2011-07-25  481
+06b4501e8 Anatolij Gustschin  2011-07-25  482  	dev_info(&spi->dev, "%d-bit eeprom %s\n",
+06b4501e8 Anatolij Gustschin  2011-07-25  483  		(pd->flags & EE_ADDR8) ? 8 : 16,
+06b4501e8 Anatolij Gustschin  2011-07-25  484  		(pd->flags & EE_READONLY) ? "(readonly)" : "");
+06b4501e8 Anatolij Gustschin  2011-07-25  485
+06b4501e8 Anatolij Gustschin  2011-07-25  486  	if (!(pd->flags & EE_READONLY)) {
+06b4501e8 Anatolij Gustschin  2011-07-25  487  		if (device_create_file(&spi->dev, &dev_attr_erase))
+06b4501e8 Anatolij Gustschin  2011-07-25  488  			dev_err(&spi->dev, "can't create erase interface\n");
+06b4501e8 Anatolij Gustschin  2011-07-25  489  	}
+06b4501e8 Anatolij Gustschin  2011-07-25  490
+5ba75b559 Jingoo Han          2013-04-05  491  	spi_set_drvdata(spi, edev);
+06b4501e8 Anatolij Gustschin  2011-07-25  492  	return 0;
+06b4501e8 Anatolij Gustschin  2011-07-25  493  fail:
+06b4501e8 Anatolij Gustschin  2011-07-25 @494  	kfree(edev);
+06b4501e8 Anatolij Gustschin  2011-07-25  495  	return err;
+06b4501e8 Anatolij Gustschin  2011-07-25  496  }
+06b4501e8 Anatolij Gustschin  2011-07-25  497
+
+:::::: The code at line 494 was first introduced by commit
+:::::: 06b4501e88ad10f02849a3f9d7408ed6ae15a53f misc/eeprom: add driver for microwire 93xx46 EEPROMs
+
+:::::: TO: Anatolij Gustschin <agust@denx.de>
+:::::: CC: Linus Torvalds <torvalds@linux-foundation.org>
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
