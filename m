@@ -3,118 +3,81 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 677AEC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 17:20:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C40FFC4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 17:21:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13FA720866
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 17:20:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13FA720866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
+	by mail.kernel.org (Postfix) with ESMTP id 896FB2086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 17:21:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 896FB2086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728272AbeIJWPa (ORCPT
+        id S1728432AbeIJWQT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 18:15:30 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54760 "EHLO mx1.suse.de"
+        Mon, 10 Sep 2018 18:16:19 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55816 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726709AbeIJWPa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 18:15:30 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 702E8AF44;
-        Mon, 10 Sep 2018 17:20:22 +0000 (UTC)
-Date:   Mon, 10 Sep 2018 10:20:11 -0700
-From:   Davidlohr Bueso <dave@stgolabs.net>
-To:     Waiman Long <longman@redhat.com>
-Cc:     John Hubbard <jhubbard@nvidia.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        linux-kernel@vger.kernel.org,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Aaron Lu <aaron.lu@intel.com>, alex.kogan@oracle.com,
-        akpm@linux-foundation.org, boqun.feng@gmail.com, brouer@redhat.com,
-        dave.dice@oracle.com, Dhaval Giani <dhaval.giani@oracle.com>,
-        ktkhai@virtuozzo.com, ldufour@linux.vnet.ibm.com,
-        Pavel.Tatashin@microsoft.com, paulmck@linux.vnet.ibm.com,
-        shady.issa@oracle.com, tariqt@mellanox.com, tglx@linutronix.de,
-        tim.c.chen@intel.com, vbabka@suse.cz, yang.shi@linux.alibaba.com,
-        shy828301@gmail.com, Huang Ying <ying.huang@intel.com>,
-        subhra.mazumdar@oracle.com,
-        Steven Sistare <steven.sistare@oracle.com>, jwadams@google.com,
-        ashwinch@google.com, sqazi@google.com,
-        Shakeel Butt <shakeelb@google.com>, walken@google.com,
-        rientjes@google.com, junaids@google.com,
-        Neha Agarwal <nehaagarwal@google.com>
-Subject: Re: Plumbers 2018 - Performance and Scalability Microconference
-Message-ID: <20180910172011.GB3902@linux-r8p5>
-Mail-Followup-To: Waiman Long <longman@redhat.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        linux-kernel@vger.kernel.org,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Aaron Lu <aaron.lu@intel.com>, alex.kogan@oracle.com,
-        akpm@linux-foundation.org, boqun.feng@gmail.com, brouer@redhat.com,
-        dave.dice@oracle.com, Dhaval Giani <dhaval.giani@oracle.com>,
-        ktkhai@virtuozzo.com, ldufour@linux.vnet.ibm.com,
-        Pavel.Tatashin@microsoft.com, paulmck@linux.vnet.ibm.com,
-        shady.issa@oracle.com, tariqt@mellanox.com, tglx@linutronix.de,
-        tim.c.chen@intel.com, vbabka@suse.cz, yang.shi@linux.alibaba.com,
-        shy828301@gmail.com, Huang Ying <ying.huang@intel.com>,
-        subhra.mazumdar@oracle.com,
-        Steven Sistare <steven.sistare@oracle.com>, jwadams@google.com,
-        ashwinch@google.com, sqazi@google.com,
-        Shakeel Butt <shakeelb@google.com>, walken@google.com,
-        rientjes@google.com, junaids@google.com,
-        Neha Agarwal <nehaagarwal@google.com>
-References: <1dc80ff6-f53f-ae89-be29-3408bf7d69cc@oracle.com>
- <35c2c79f-efbe-f6b2-43a6-52da82145638@nvidia.com>
- <55b44432-ade5-f090-bfe7-ea20f3e87285@redhat.com>
+        id S1728021AbeIJWQT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 18:16:19 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 133DF8076894;
+        Mon, 10 Sep 2018 17:21:13 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.34.27.30])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 5268A2027EA4;
+        Mon, 10 Sep 2018 17:21:10 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Mon, 10 Sep 2018 19:21:12 +0200 (CEST)
+Date:   Mon, 10 Sep 2018 19:21:09 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Rik van Riel <riel@redhat.com>, Michal Hocko <mhocko@suse.com>,
+        Stanislav Kozina <skozina@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: get_arg_page() && ptr_size accounting
+Message-ID: <20180910172109.GB27005@redhat.com>
+References: <20180910122907.GA23963@redhat.com>
+ <CAGXu5jKYVAfWkd3WTM4EkVHWGoUY9BtSGKMLb1RAKhUfgCVxfA@mail.gmail.com>
+ <CAGXu5jJ+aiJWL0G0Zpq2Df4ADEmpSBZHSTaUkzJiNbgg+B6x2Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <55b44432-ade5-f090-bfe7-ea20f3e87285@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAGXu5jJ+aiJWL0G0Zpq2Df4ADEmpSBZHSTaUkzJiNbgg+B6x2Q@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 10 Sep 2018 17:21:13 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 10 Sep 2018 17:21:13 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'oleg@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 10 Sep 2018, Waiman Long wrote:
-
->On 09/08/2018 12:13 AM, John Hubbard wrote:
->>
->> Hi Daniel and all,
->>
->> I'm interested in the first 3 of those 4 topics, so if it doesn't conflict with HMM topics or
->> fix-gup-with-dma topics, I'd like to attend. GPUs generally need to access large chunks of
->> memory, and that includes migrating (dma-copying) pages around.
->>
->> So for example a multi-threaded migration of huge pages between normal RAM and GPU memory is an
->> intriguing direction (and I realize that it's a well-known topic, already). Doing that properly
->> (how many threads to use?) seems like it requires scheduler interaction.
->>
->> It's also interesting that there are two main huge page systems (THP and Hugetlbfs), and I sometimes
->> wonder the obvious thing to wonder: are these sufficiently different to warrant remaining separate,
->> long-term?  Yes, I realize they're quite different in some ways, but still, one wonders. :)
+On 09/10, Kees Cook wrote:
 >
->One major difference between hugetlbfs and THP is that the former has to
->be explicitly managed by the applications that use it whereas the latter
->is done automatically without the applications being aware that THP is
->being used at all. Performance wise, THP may or may not increase
->application performance depending on the exact memory access pattern,
->though the chance is usually higher that an application will benefit
->than suffer from it.
+> On Mon, Sep 10, 2018 at 9:41 AM, Kees Cook <keescook@chromium.org> wrote:
+> > On Mon, Sep 10, 2018 at 5:29 AM, Oleg Nesterov <oleg@redhat.com> wrote:
+> >> Hi Kees,
+> >>
+> >> I was thinking about backporting the commit 98da7d08850fb8bde
+> >> ("fs/exec.c: account for argv/envp pointers"), but I am not sure
+> >> I understand it...
 >
->If an application know what it is doing, using hughtblfs can boost
->performance more than it can ever achieved by THP. Many large enterprise
->applications, like Oracle DB, are using hugetlbfs and explicitly disable
->THP. So unless THP can improve its performance to a level that is
->comparable to hugetlbfs, I won't see the later going away.
+> BTW, if you backport that, please get the rest associated with the
+> various Stack Clash related weaknesses:
 
-Yep, there are a few non-trivial workloads out there that flat out discourage
-thp, ie: redis to avoid latency issues.
+may be...
 
-Thanks,
-Davidlohr
+> da029c11e6b1 exec: Limit arg stack to at most 75% of _STK_LIM
+
+and I have to admit that I do not understand this patch at all, the
+changelog explains nothing.
+
+Could you explain what this patch actually prevents from? Especially
+now that we have stack_guard_gap?
+
+Oleg.
+
