@@ -2,91 +2,86 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E1AFC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 20:42:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90ACDC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 20:43:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F15F20658
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 20:42:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F15F20658
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 2A84820658
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 20:43:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A84820658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726782AbeIKBiQ (ORCPT
+        id S1726876AbeIKBjM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 21:38:16 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48676 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726043AbeIKBiQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 21:38:16 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A00C9ADCD;
-        Mon, 10 Sep 2018 20:42:23 +0000 (UTC)
-Date:   Mon, 10 Sep 2018 22:42:21 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     "Schaufler, Casey" <casey.schaufler@intel.com>
-cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Woodhouse, David" <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>
-Subject: RE: [PATCH v5 1/2] x86/speculation: apply IBPB more strictly to
- avoid cross-process data leak
-In-Reply-To: <99FC4B6EFCEFD44486C35F4C281DC6732144AF24@ORSMSX107.amr.corp.intel.com>
-Message-ID: <nycvar.YFH.7.76.1809102235010.15880@cbobk.fhfr.pm>
-References: <nycvar.YFH.7.76.1809101119280.15880@cbobk.fhfr.pm> <nycvar.YFH.7.76.1809101123020.15880@cbobk.fhfr.pm> <99FC4B6EFCEFD44486C35F4C281DC6732144ADF9@ORSMSX107.amr.corp.intel.com> <nycvar.YFH.7.76.1809102111410.15880@cbobk.fhfr.pm>
- <99FC4B6EFCEFD44486C35F4C281DC6732144AEC9@ORSMSX107.amr.corp.intel.com> <nycvar.YFH.7.76.1809102132480.15880@cbobk.fhfr.pm> <99FC4B6EFCEFD44486C35F4C281DC6732144AF24@ORSMSX107.amr.corp.intel.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Mon, 10 Sep 2018 21:39:12 -0400
+Received: from mga01.intel.com ([192.55.52.88]:54885 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726795AbeIKBjM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 21:39:12 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2018 13:43:21 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,357,1531810800"; 
+   d="scan'208";a="73150820"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.20])
+  by orsmga006.jf.intel.com with ESMTP; 10 Sep 2018 13:43:17 -0700
+Message-ID: <1536612197.3236.13.camel@intel.com>
+Subject: Re: [RFC][PATCH 5/8] x86/mm: fix exception table comments
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Dave Hansen <dave.hansen@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Cc:     peterz@infradead.org, tglx@linutronix.de, x86@kernel.org,
+        luto@kernel.org
+Date:   Mon, 10 Sep 2018 13:43:17 -0700
+In-Reply-To: <bc50acea-ebc9-5be8-0fcc-9b96031a7348@linux.intel.com>
+References: <20180907194852.3C351B82@viggo.jf.intel.com>
+         <20180907194900.DF3B41C0@viggo.jf.intel.com>
+         <1536354280.11460.28.camel@intel.com>
+         <bc50acea-ebc9-5be8-0fcc-9b96031a7348@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 10 Sep 2018, Schaufler, Casey wrote:
+On Fri, 2018-09-07 at 14:51 -0700, Dave Hansen wrote:
+> > 
+> > > 
+> > > +	 * Only do the expensive exception table search when we might be at
+> > > +	 * risk of a deadlock:
+> > > +	 * 1. We failed to acquire mmap_sem, and
+> > > +	 * 2. The access was an explicit kernel-mode access
+> > > +	 *    (X86_PF_USER=0).
+> > Might be worth reminding the reader that X86_PF_USER will be set in
+> > sw_error_code for implicit accesses.  I saw "explicit" and my mind
+> > immediately jumped to hw_error_code for whatever reason.  E.g.:
+> > 
+> > 	* 2. The access was an explicit kernel-mode access (we set X86_PF_USER
+> > 	*    in sw_error_code for implicit kernel-mode accesses).
+> Yeah, that was not worded well.  Is this better?
+> 
+> > 
+> >          * Only do the expensive exception table search when we might be at
+> >          * risk of a deadlock:
+> >          * 1. We failed to acquire mmap_sem, and
+> >          * 2. The access was an explicit kernel-mode access.  An access
+> >          *    from user-mode will X86_PF_USER=1 set via hw_error_code or
+> >          *    set in sw_error_code if it were an implicit kernel-mode
+> >          *    access that originated in user mode.
 
-> It you're going to call __ptrace_access_check(), 
+For me, mentioning hw_error_code just muddies the waters, e.g. why is
+hw_error_code mentioned when it's not checked in the code?  Comments
+alone won't help someone that's reading this code and doesn't understand
+that hardware sets X86_PF_USER for user-mode accesses.  Maybe this?
 
-I guess you mean __ptrace_may_access() here.
-
-> which already includes an LSM hook, it makes a whole lot of sense to 
-> make that the path for doing any module specific checks. It seems wrong 
-> to disable the LSM hook there, then turn around and introduce a new one 
-> that does the check you just disabled. The patches I had proposed 
-> created a new LSM hook because there was not path to an existing hook. 
-> With your addition of __ptrace_access_check() that is no longer an issue 
-> once any locking problems are resolved. Rather than use a new hook, the 
-> existing ptrace hooks ought to work just fine, and any new checks can be 
-> added in a new module that has its own ptrace_access_check hook.
-
-Sorry for being dense, but what exactly are you proposing here then?
-
-This patch (v4 and v5) explicitly avoids calling out to ptrace_has_cap() 
-(which calls out to LSM through has_ns_capability_*() -> 
-security_capable()) in PTRACE_MODE_IBPB case, exactly to avoid locking 
-issues with security modules; there are known callchains that lead to 
-deadlock.
-
-With the same reasoning, security_ptrace_access_check() call is avoided, 
-only there is no know particular callchain that'd lead to a lock being 
-taken, but noone has done such audit (yet), as it's all hidden behind LSM 
-callbacks.
-
-So please tell me what exactly you'd like to see changed in the IBPB patch 
-and why exactly, I am not seeing it yet.
-
-Thanks,
-
--- 
-Jiri Kosina
-SUSE Labs
-
+	 * 2. The access was an explicit kernel-mode access.  X86_PF_USER
+	 *    is set in sw_error_code for both user-mode accesses and
+	 *    implicit kernel-mode accesses that originated in user mode.
