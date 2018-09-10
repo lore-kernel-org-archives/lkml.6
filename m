@@ -1,93 +1,129 @@
 Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.0 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3525AC4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:13:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1524AC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:18:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2A2820854
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:13:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A383220866
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:18:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mE5ouElt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2A2820854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="laJRrSPi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A383220866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727707AbeIJLGL (ORCPT
+        id S1727164AbeIJLLI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 07:06:11 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:50224 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727680AbeIJLGK (ORCPT
+        Mon, 10 Sep 2018 07:11:08 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34662 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726148AbeIJLLI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 07:06:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=dMSYRDJ2DKnp0sh1+FO5EiP7oVb0QT7X44eAVfEZQxk=; b=mE5ouEltnQP2jk7J/U5Szsm51
-        wzmXUCBn/YAIaxipEJIVdPdowiVytZufqeeyKYcJqZ1gJllLi0bylEf4ywvJF84/ngQfT4XBwn7eT
-        WtrytKRXWQQoF/TsuPntu/6mlLLZvlFCPKfDq+8sNmQMT1jjzKtjFh3CRgD7vFhuTGIMultjUYxki
-        jc/edqG3yEF4v20t2pSQtkCahmjItpVWT7QBuk2rU5NXLyI4YiD9mqzKjN2kZcQKPn2NV6rfIKcHP
-        9aXFFhyTBgq/991nYodTCLiYPOsY6sK5GxNcKV5xTGfQIiVzqUhy6cnaVOUX4YPlrP8k623scWGdb
-        TFid/zasg==;
-Received: from 213-225-3-213.nat.highway.a1.net ([213.225.3.213] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fzFSB-00022Y-NW; Mon, 10 Sep 2018 06:13:44 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     iommu@lists.linux-foundation.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] dma-mapping: use phys_to_dma in dma_direct_get_required
-Date:   Mon, 10 Sep 2018 08:13:32 +0200
-Message-Id: <20180910061332.28187-4-hch@lst.de>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180910061332.28187-1-hch@lst.de>
-References: <20180910061332.28187-1-hch@lst.de>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Mon, 10 Sep 2018 07:11:08 -0400
+Received: by mail-wr1-f66.google.com with SMTP id g33-v6so20563359wrd.1
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Sep 2018 23:18:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KXQz/cUlix1xn6o7UaLdHX6Uh6j32KSOYR/NHWrB3UA=;
+        b=laJRrSPiN+7fzXlqpL9NS9ioIKp96e6IyR6lXQ6eVVZ6trikkja0I4UlMIQcI+Fv0/
+         roybR34WJ4Gz1sslg78SRomZgTsEoHXOFI8TDfutF/jqY7w92j/Kl2PGKCluxkl+Jo1l
+         1NLEaPHYeyZ5lw3ZiBDO950pTWY3ne9gKaRFZ6wqLUfDqo5jyjK6lX8L/ACfKfV01agh
+         S6IYnv7wflsLqzQJR+VVwVh3qYpmPuuvIMyZV3zvMQSeVsWFya/cpaXXQIR0igixtghN
+         tLaDP5GeJlYuoQfycPn22MYj5ki1uWW+Ft/SPedVeGACR5alPPzvY4fJuo/deq07xUOp
+         7WnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KXQz/cUlix1xn6o7UaLdHX6Uh6j32KSOYR/NHWrB3UA=;
+        b=EiOIFaaOJ13b1BLI5jrINzbBmuC1GDXqD/WDQo/go04H+OzyXlo5OiLHR8NuYNxwOh
+         KAp6vDFiF83LI9bLU/3orK/SmtcuDxffHbCgaJKQReoH1OyX3ELiyEnOLwc7py1ibDuy
+         J7GDVyfcoW00VxXCf8ob9J7pGwn5+skOndm85r/oTIgtkIlJS1PUfbtT9zFSf4Pwmsp9
+         jtkQtPdakkWEQmvkA4nHeZEoUgNauArHub6mCDkBXLYXX5SNsUhUEezluf//ZQLl1JpJ
+         MZbjPQJDmWKcs32f+iYdHm35FduyQ6Fot6NEjI2uik/RDhFjxzirFiVLPsAjDmQSDxjC
+         ztWg==
+X-Gm-Message-State: APzg51CjUHD2MgdRuKUhh0p7PdwWvv5KeMl8J/HdQHbZ8hF61iCYpsj+
+        rixM6fOzUGO87MCXJZhC2Fs=
+X-Google-Smtp-Source: ANB0VdY7NRFjGr6hqCVCErLcIpAj6h+XWAvpl0W46lcVN7b64Tlbxig/CRX/UhWeJTbxK6idV5OiKg==
+X-Received: by 2002:a05:6000:81:: with SMTP id m1mr2879871wrx.28.1536560322606;
+        Sun, 09 Sep 2018 23:18:42 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id b12sm10623148wrx.11.2018.09.09.23.18.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 09 Sep 2018 23:18:41 -0700 (PDT)
+Date:   Mon, 10 Sep 2018 08:18:39 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Baoquan He <bhe@redhat.com>
+Cc:     tglx@linutronix.de, hpa@zytor.com, thgarnie@google.com,
+        kirill.shutemov@linux.intel.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: Re: [PATCH v2 1/3] x86/mm/KASLR: Fix the wrong calculation of kalsr
+ region initial size
+Message-ID: <20180910061839.GA90334@gmail.com>
+References: <20180909124946.17988-1-bhe@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180909124946.17988-1-bhe@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We need to apply an DMA offset for the function to work as expected.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- drivers/base/platform.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+* Baoquan He <bhe@redhat.com> wrote:
 
-diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-index 7812b861b6da..6feac7294f8d 100644
---- a/drivers/base/platform.c
-+++ b/drivers/base/platform.c
-@@ -15,7 +15,7 @@
- #include <linux/of_irq.h>
- #include <linux/module.h>
- #include <linux/init.h>
--#include <linux/dma-mapping.h>
-+#include <linux/dma-direct.h>
- #include <linux/bootmem.h>
- #include <linux/err.h>
- #include <linux/slab.h>
-@@ -1185,7 +1185,7 @@ int __init platform_bus_init(void)
-  */
- u64 dma_direct_get_required_mask(struct device *dev)
- {
--	u64 end = ((max_pfn - 1) << PAGE_SHIFT);
-+	u64 end = phys_to_dma(dev, (max_pfn - 1) << PAGE_SHIFT);
- 
- 	return (1 << (fls64(end) - 1)) * 2 - 1;
- }
--- 
-2.18.0
+> In memory KASLR, __PHYSICAL_MASK_SHIFT is taken to calculate the
+> initial size of the direct mapping region. This is right in the
+> old code where __PHYSICAL_MASK_SHIFT was equal to MAX_PHYSMEM_BITS,
+> 46bit, and only 4-level mode was supported.
+> 
+> Later, in commit:
+> b83ce5ee91471d ("x86/mm/64: Make __PHYSICAL_MASK_SHIFT always 52"),
+> __PHYSICAL_MASK_SHIFT was changed to be 52 always, no matter it's
+> 5-level or 4-level. This is wrong for 4-level paging. Then when
+> adapt phyiscal memory region size based on available memory, it
+> will overflow if the amount of system RAM and the padding is bigger
+> than 64TB.
+> 
+> In fact, here MAX_PHYSMEM_BITS should be used instead. Fix it by
+> replacing __PHYSICAL_MASK_SHIFT with MAX_PHYSMEM_BITS.
+> 
+> Fixes: b83ce5ee9147 ("x86/mm/64: Make __PHYSICAL_MASK_SHIFT always 52")
+> Signed-off-by: Baoquan He <bhe@redhat.com>
+> Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Reviewed-by: Thomas Garnier <thgarnie@google.com>
 
+So this changelog has a handful of problems:
+
+ - there's a typo in the title
+
+ - what does 'memory KASLR' mean? All KASLR deals with memory.
+
+ - there's a typo in the second paragraph
+
+ - Please punctuate more precisely: '64TB' is written as '64 TB' and '46bit' is written as 
+   '46 bits'
+
+ - '52 always' is accurate but '52 bits always' would be more useful: write out units where
+   appropriate to reduce  ambiguity and parsing complexity of changelogs. Also, in this
+   particular sentence it should be 'always 52 bits'.
+
+ - s/when adapt
+    /when we adapt
+
+ - s/This is right in the old code
+    /This is correct in the old code
+
+Thanks,
+
+	Ingo
