@@ -2,93 +2,146 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A68AC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 08:38:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF03CC4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 08:38:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12904204FD
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 08:38:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A36C2086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 08:38:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="kVl4ZRx0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12904204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="ReevAI5r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A36C2086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728005AbeIJNbZ (ORCPT
+        id S1728071AbeIJNb2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 09:31:25 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:38876 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727488AbeIJNbZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 09:31:25 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8A8YPC5049511;
-        Mon, 10 Sep 2018 08:38:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2018-07-02;
- bh=V02W+xrWX+v1zqfK0uSjga+7RCLkKOvtqGoE0s2iC/E=;
- b=kVl4ZRx06rx2Rs+fpX1c+8BTJ/ISNQAz7eotLXJ2VI4+Qim1QUxn7bveOvdpBuatbVhi
- FLRfOjHi8/6Svf34A5356VqEFcRQxchA/KVnLvl0EjZcPO2MFAPZFiVI1IEyFGH1gnan
- pbueBMSG1/bAJYDtnabmjWZBNIvJksU3ySdut2pCl613T3MQKo69/YitQbRv8itpmGI3
- 5LdvpyMswcjIkGaXaCD3lXEcKXjbchaiZcw2lmxtDBRgMLgvUJTxKlv7ylyPzv8Z6BNJ
- Plhvoa+tZ6pfb6plticJ0udlRa3kcczLGUVBTsBVIgciXyCNO3p3ELqwAya6xig9j9IU Gg== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2mc5ut4kuy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 10 Sep 2018 08:38:27 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w8A8cPWE007438
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 10 Sep 2018 08:38:26 GMT
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w8A8cPGQ027309;
-        Mon, 10 Sep 2018 08:38:25 GMT
-Received: from kili.mountain (/197.232.248.111)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 10 Sep 2018 01:38:24 -0700
-Date:   Mon, 10 Sep 2018 11:38:18 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH] vlynq: uninitialized return in vlynq_probe()
-Message-ID: <20180910083817.l2xdfkxhrlml5q5q@kili.mountain>
+        Mon, 10 Sep 2018 09:31:28 -0400
+Received: from mail-sg2apc01on0113.outbound.protection.outlook.com ([104.47.125.113]:28222
+        "EHLO APC01-SG2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727488AbeIJNb1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 09:31:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6SH7bYwvFrKYhRncnSi+HAPsCvUzaO9fKNNiRueHzgE=;
+ b=ReevAI5r70nCrQUUb10oPAtEQLM83jJ7peVqCeRDF0c4OSIyglPNCtwsyNyRMtbvQeulfGsIFTsBdu7AFCRoIjtJ9D+TuOfVtiSGi8s4s2OYfG9Dz/BK+O0vpJMLiq/sDRpAplLJnpNx9ta4ZHeHDeXQBUC8pdQlMPp0T+T48/c=
+Received: from HK0P153MB0129.APCP153.PROD.OUTLOOK.COM (52.133.156.18) by
+ HK0P153MB0097.APCP153.PROD.OUTLOOK.COM (52.133.156.10) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1164.5; Mon, 10 Sep 2018 08:38:21 +0000
+Received: from HK0P153MB0129.APCP153.PROD.OUTLOOK.COM
+ ([fe80::194c:c2f9:171:1890]) by HK0P153MB0129.APCP153.PROD.OUTLOOK.COM
+ ([fe80::194c:c2f9:171:1890%5]) with mapi id 15.20.1143.010; Mon, 10 Sep 2018
+ 08:38:21 +0000
+From:   Tianyu Lan <Tianyu.Lan@microsoft.com>
+CC:     Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        KY Srinivasan <kys@microsoft.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        vkuznets <vkuznets@redhat.com>,
+        Jork Loeser <Jork.Loeser@microsoft.com>
+Subject: [PATCH 00/13] x86/KVM/Hyper-v: Add HV ept tlb range flush hypercall
+ support in KVM  
+Thread-Topic: [PATCH 00/13] x86/KVM/Hyper-v: Add HV ept tlb range flush
+ hypercall support in KVM  
+Thread-Index: AQHUSOGhPBr369CIR06oyti6PMRcCA==
+Date:   Mon, 10 Sep 2018 08:38:21 +0000
+Message-ID: <20180910083806.65177-1-Tianyu.Lan@microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Tianyu.Lan@microsoft.com; 
+x-originating-ip: [52.168.54.252]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;HK0P153MB0097;6:Om+nfNGi5yuhFDvtBBkCi2qrbkCCIrywjX7LQ5blwGZKCPJFIHS75YulmfEIj6ulbOThvk/or9iD5Yv/RsX6UoJmQQRKQyH7lyS90BgDC5Iz+KiW5ixjigWW9dvoc8y6bIfDRmvJaTeeIiepZH48HW/ym8oqGhnG9sGdaBlTQIQedT++yAfjhGPtTOtGxjfdCxY+0a8zun6BrqitKwlA9a5IcamVJEkIxFW9D9kuYAL7eG3vHgWg9x+JGge2JBP5ke2M3Wi3wHzGXO9GnaUlsxQJtOfo9ljw1QHk77OPlZr54ekwapBFgOD8qvGgsqbVqmOo0v6Ig3ParSRnRV9oujvEm5Ag6cXTL1zNUEZMMQA6ulse3R05nSTbkzOtxju1NnTbaci35TBr8IO9WfwldsMHWWqXJcnKSeWco6NRtM+3vmvt1h+x1VvCFKMyX/Aw5gVSjPFEd6Al/srAUmXpDg==;5:/AZvcjNh+oJaA92x+lgBXX+DdGBP9wZNXNTElfXjd3gqGMwHY4LOshkZWYKzUdy0iytalzgwavkbQ3O9ukKZKk9uV8XvQEWUlgqyQ/YfNseNYijmMoB3nFNQYNHAVFqEW1AN2U+ZN8843BXQFV2sYtp3KyyLqAGdWYPATvjtKww=;7:Sz9BQZnFuITIyJKDGg4GHm3uabVxxJCcUwdr+vY1Kp06Y8XMQsZK6xIxDQvqK/GCzZAAAGnNoxv0BCSVCZwO8ELoO7vYL7wbGkG7/fPbcVNLuiL6M2HOGvZ/ADUHPAz4i2AcfXQE5sN7mLxRYmYRuRGUZqz6QdpbzpPOiYx/7MEt/GkBjNi74fqDpOcyX5MFUHg7is5t+WD0/ARbAqf2bA0Nf+2gxztpLl7fjZBOHWklSiPtgTN1dALIBXjq0eEh
+x-ms-office365-filtering-correlation-id: fd4abdf3-50a1-49d5-6284-08d616f8c41a
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:HK0P153MB0097;
+x-ms-traffictypediagnostic: HK0P153MB0097:
+x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
+x-microsoft-antispam-prvs: <HK0P153MB0097BEB68B8850C88C4CF98392050@HK0P153MB0097.APCP153.PROD.OUTLOOK.COM>
+x-exchange-antispam-report-test: UriScan:(788757137089);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(3231311)(944501410)(52105095)(10201501046)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699050);SRVR:HK0P153MB0097;BCL:0;PCL:0;RULEID:;SRVR:HK0P153MB0097;
+x-forefront-prvs: 07915F544A
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(366004)(396003)(376002)(39850400004)(136003)(199004)(189003)(4326008)(68736007)(107886003)(109986005)(25786009)(81166006)(8936002)(81156014)(8676002)(86612001)(86362001)(102836004)(22452003)(26005)(2906002)(6506007)(53936002)(1076002)(10090500001)(97736004)(5250100002)(6512007)(6436002)(256004)(6486002)(2900100001)(14454004)(10290500003)(99286004)(2616005)(478600001)(476003)(316002)(36756003)(54906003)(6116002)(486006)(106356001)(105586002)(3846002)(1671002)(305945005)(7416002)(7736002)(59246006)(72206003)(66066001)(5660300001);DIR:OUT;SFP:1102;SCL:1;SRVR:HK0P153MB0097;H:HK0P153MB0129.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: ecx8dEaxDVXsCLSnYxWF0gPQkIf5+4yOJ+qY59+73kYtJUI1wxZVEoBpxhRrOy+I2J9oJ7nLzK8s/Fix13R+T00kQe8Mkf5/JlfAsSNZyfaIvxdUBfNgH9A6zEfXbkBVsq9KllzNO1rS0TlPEQjlvt9036LuzVZhLEWc6C26zyFZNGQXoxG4vpXaZcM989MHSXsMVigvnjMDRLT2oLL2UnWb8gYSiQlk6Um7egRxPKNETo45boMfruHOwz/hE0QpLkymfR/fxZ/nGbPp9RG9KqUTqMZC/sxrHnf2G8I+uCp5Wmtsd38w9Ucc278vwJgofh2HQgEL8gCvHvB/9n8g/5G9gxIBMpC4lNwUF5NTetg=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9011 signatures=668708
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=832
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809100093
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fd4abdf3-50a1-49d5-6284-08d616f8c41a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Sep 2018 08:38:21.2734
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK0P153MB0097
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"result" isn't initialized on this error path.
+For nested memory virtualization, Hyper-v doesn't set write-protect
+L1 hypervisor EPT page directory and page table node to track changes=20
+while it relies on guest to tell it changes via HvFlushGuestAddressLlist
+hypercall. HvFlushGuestAddressLlist hypercall provides a way to flush
+EPT page table with ranges which are specified by L1 hypervisor.
 
-Fixes: 55e331cf7ebe ("drivers: add support for the TI VLYNQ bus")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+If L1 hypervisor uses INVEPT or HvFlushGuestAddressSpace hypercall to
+flush EPT tlb, Hyper-V will invalidate associated EPT shadow page table
+and sync L1's EPT table when next EPT page fault is triggered.
+HvFlushGuestAddressLlist hypercall helps to avoid such redundant EPT
+page fault and synchronization of shadow page table.
 
-diff --git a/drivers/vlynq/vlynq.c b/drivers/vlynq/vlynq.c
-index c0227f9418eb..44d3485d1108 100644
---- a/drivers/vlynq/vlynq.c
-+++ b/drivers/vlynq/vlynq.c
-@@ -727,7 +727,8 @@ static int vlynq_probe(struct platform_device *pdev)
- 	dev->local_irq = dev->irq_end - dev->irq_start;
- 	dev->remote_irq = dev->local_irq - 1;
- 
--	if (device_register(&dev->dev))
-+	result = device_register(&dev->dev);
-+	if (result)
- 		goto fail_register;
- 	platform_set_drvdata(pdev, dev);
- 
+Lan Tianyu (13):
+  KVM: Add tlb_remote_flush_with_range callback in kvm_x86_ops
+  KVM/MMU: Add tlb flush with range helper function
+  KVM: Replace old tlb flush function with new one to flush a specified
+    range.
+  KVM/MMU: Flush tlb directly in the kvm_handle_hva_range()
+  KVM/MMU: Flush tlb directly in the kvm_zap_gfn_range()
+  KVM/MMU: Flush tlb directly in kvm_mmu_zap_collapsible_spte()
+  KVM: Add flush_link and parent_pte in the struct kvm_mmu_page
+  KVM: Add spte's point in the struct kvm_mmu_page
+  KVM/MMU: Replace tlb flush function with range list flush function
+  x86/hyper-v: Add HvFlushGuestAddressList hypercall support
+  x86/Hyper-v: Add trace in the
+    hyperv_nested_flush_guest_mapping_range()
+  KVM/VMX: Change hv flush logic when ept tables are mismatched.
+  KVM/VMX: Add hv tlb range flush support
+
+ arch/x86/hyperv/nested.c            | 111 +++++++++++++++++++++++++++
+ arch/x86/include/asm/hyperv-tlfs.h  |  17 +++++
+ arch/x86/include/asm/kvm_host.h     |  10 +++
+ arch/x86/include/asm/mshyperv.h     |   7 ++
+ arch/x86/include/asm/trace/hyperv.h |  14 ++++
+ arch/x86/kvm/mmu.c                  | 146 +++++++++++++++++++++++++++++++-=
+----
+ arch/x86/kvm/paging_tmpl.h          |  16 +++-
+ arch/x86/kvm/vmx.c                  |  41 +++++++---
+ 8 files changed, 331 insertions(+), 31 deletions(-)
+
+--=20
+2.14.4
