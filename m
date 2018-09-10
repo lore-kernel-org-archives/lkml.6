@@ -2,127 +2,153 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23B19C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:28:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB817C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:30:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C9D120865
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:28:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8818520865
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:30:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="KsWbiiPA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C9D120865
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tyR80GIF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8818520865
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727982AbeIJOV4 (ORCPT
+        id S1728011AbeIJOXd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 10:21:56 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:44061 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726081AbeIJOV4 (ORCPT
+        Mon, 10 Sep 2018 10:23:33 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:36224 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726738AbeIJOXc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 10:21:56 -0400
-Received: by mail-oi0-f67.google.com with SMTP id l82-v6so38797638oih.11
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 02:28:49 -0700 (PDT)
+        Mon, 10 Sep 2018 10:23:32 -0400
+Received: by mail-wm0-f65.google.com with SMTP id j192-v6so20716135wmj.1;
+        Mon, 10 Sep 2018 02:30:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=wKNViIvO1QwPyBuOVDlCe2ARkxs1nn+CjDgAg5AbrA4=;
-        b=KsWbiiPAWtZufowQbVlI3CTDtw2EBOoPGaG5Q1uYKuNMk3+1KhwG77Y07cGDZhU9I2
-         LuIJCGWYVcTgYTmizqkSH5wKyQL6hsgkhIFGNbjNFNmsqxvBWbsfSlSCzY8pNSSHxwH9
-         fhTMDb4XJesFUw+Eh210iD0F2Z6o9NBUF1B38=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=/JF4voVLLJvB71QWNMd5pns4SrZO5FuvQwf249gfCLM=;
+        b=tyR80GIF3l/srr1t6M/pefKsGwJcEMmfe7thGJ36WEWp7SBL8NYEAD0If7BYvSH2/n
+         T7VMDlbEeKQH0908G/3e+ZxUBLKrToqkeHYIlzWgGQRsX/lx3ZehwoEURCCRYZmIZqsP
+         QeD06eCSLffhI4YQNCvP9zwQXKdecYGOoBGUDb+DPZ7EAuav/sncrQ3/vvU4Li0Yngu6
+         0JozZjA0Grt+bOdDESpb5F7hlLy7N3+4u7JYQaSTRt/p/j5NB3BnXJ7xd236wnUP4pxg
+         dyQgBec0Uqfab+3VEb1UZcGalZPMQT6p4vJ+7V6iNg7IZexv38/lRgGmRipEweOjgaMl
+         EaRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=wKNViIvO1QwPyBuOVDlCe2ARkxs1nn+CjDgAg5AbrA4=;
-        b=KiqsALpoZbhK8dx7+lvEWRtMZAkgiNqmu+kcDYgNWkCJ4LHJq7PRTdRrMHZL1MyKik
-         6YFQV6n4PRumUVMxbCeRLhTZjOG4Xp3HwC9vC+RTrTjJizW7txeElwdxui7oSMcT7jC8
-         Rpd17LKj0g6SvqwKFFULSGW3Kl3+5cRqfE2+VLcck2TQs9WW8HGXZ9YYU/c3ttzQgpTW
-         Db8bMF65UAgXsnXlNJQGEIE37gFptPTbud7Bl2aU+kFj1HpbKmH4N3EQJnPhnFV/3PiG
-         lyQ7Tq93l4usF+kyeuFpoob3alufsLp/I8o2M9vt/FTxru95XZ4ja666xHnLQ2WdTlKg
-         Wasg==
-X-Gm-Message-State: APzg51By7EYCr4mzAGxcYgwiGAvrZ6ei4z10xBydpOkyxFz/uH8x27Sf
-        m0tdan0l6KxEd4otdikfLPVuYiN29aYgbrEEyNT7uQ==
-X-Google-Smtp-Source: ANB0VdZiWeGf3rT4xTpdY7caQEsH8wFV9v3vnrvA54azyXbjfziJcKXuAXyG84i7P1BlVkgqW1MqLKDpLqeXsCaXCrA=
-X-Received: by 2002:aca:5043:: with SMTP id e64-v6mr19963122oib.111.1536571728912;
- Mon, 10 Sep 2018 02:28:48 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=/JF4voVLLJvB71QWNMd5pns4SrZO5FuvQwf249gfCLM=;
+        b=l5ZTY1Xc4PaBi0JvZmpmqqB7ZdxNAxht2QWWVApszoD+DS9C8cyBVfg+f+4DU70r+o
+         C4Rigz5Yqh7ZDVzFjtPLP5nREsMbZLW7MxE6Ff+nEeiOY9dakmh1CY5QBOZpciajs4jy
+         /u7p8xkdRm3xbcccL1hlt/eF2KafqNoD4juQ2IM3eqntQVGSC6Tr8sUI0HU+7x7gyxf7
+         M6vlxflnzrb9m3FVs8wOq2KL1J0dI3pYajb6PvxUEtxQoXoB828QykgMt3Xswuwvbgq4
+         uzjhUQKhxS4bfLkMCOHNlofG31hmgWbS8tmk8Y2AL3x1MxUaUQscDWD1sfjW2m3cOa0J
+         H+QA==
+X-Gm-Message-State: APzg51BPlTcEx3idgnk3ZO+x1yxjAx4N7a36K+7H0LKTdmLvD9T8JGdD
+        iLfPGCn41xqz2jfHJA4EyPM=
+X-Google-Smtp-Source: ANB0VdYXBXezuVMKykxqjiCh5bN+hSR9MFt7M+b5zPNnpfmGS3Nec7dP8YgG1OKHXwPW0L3Vi9XvDA==
+X-Received: by 2002:a1c:c14:: with SMTP id 20-v6mr56004wmm.117.1536571822897;
+        Mon, 10 Sep 2018 02:30:22 -0700 (PDT)
+Received: from ?IPv6:2003:ee:f01:8400:8022:ac53:b7cf:59f1? (p200300EE0F0184008022AC53B7CF59F1.dip0.t-ipconnect.de. [2003:ee:f01:8400:8022:ac53:b7cf:59f1])
+        by smtp.gmail.com with ESMTPSA id r13-v6sm13328602wmf.35.2018.09.10.02.30.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Sep 2018 02:30:22 -0700 (PDT)
+Subject: Re: [PATCH 1/1] ipv6: Add sockopt IPV6_MULTICAST_ALL analogue to
+ IP_MULTICAST_ALL
+To:     =?UTF-8?Q?Maciej_=c5=bbenczykowski?= <maze@google.com>
+Cc:     Linux NetDev <netdev@vger.kernel.org>,
+        Kernel hackers <linux-kernel@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>, kuznet@ms2.inr.ac.ru,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Erik Kline <ek@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Shaohua Li <shli@fb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>
+References: <20180910082715.11506-1-nautsch2@gmail.com>
+ <20180910082715.11506-2-nautsch2@gmail.com>
+ <CANP3RGfGkH33mYDrenwWVkQ4uG4qyrddA+yvJ+t+=y6wGd7uDA@mail.gmail.com>
+From:   Andre Naujoks <nautsch2@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=nautsch2@gmail.com; prefer-encrypt=mutual; keydata=
+ mQENBEuVIO4BCADaPWxLdKao/quVbf1+wVSuDMf1tJmEpeEZ6qojmlR/5vcTj+me6c5UvBSr
+ wBckL0EK/JdzZMVwny1oFfAjTgO252A7Mn1Q+ss8w4RJBI6YnpeAlQIyNm7UTN2wUCY90ObO
+ z019BQs3BpQ7iHG2cUWy0KunRMj6dOIGvMKCpETyI83R5annZAR0+5ZhcCB3embvKzRySf7/
+ YfAXXBGYkMV9ND7r66BECmDVH/MHTENCqMOvbfVOCKwj1JdVYx/WUqLd48flZ6sx/Psfp/r1
+ mY1sN0yebElCkUNzOWonqlgr5kwMZh0+lD1DSQnNhdH2FL5Vvo8qbQ/WTdJd1Equ5BejABEB
+ AAG0IkFuZHJlIE5hdWpva3MgPG5hdXRzY2gyQGdtYWlsLmNvbT6JATgEEwECACIFAlO0ExIC
+ GwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEFjpxyF47AzYIPEH/jTWaF3CnPugN3CI
+ 6AfbNP6T46tpDZ1e4QuWBZdFY2eBfDkajfWtqoLCqU7xctmkcuRtFULHnMZwu0dUAXVExlMi
+ VYRTLCLYWzFrZ26P7KIudHFyb8XWSh/HTEdahRv4JKscR66kHzM4jdYeKJCud18+gxepPvPi
+ 7X6sJvA4JlFnomIjW4UHJByif0LRR47KOtOQD5oVon7urSE+K2ib2BqgFIy8o7+laq3/KKhI
+ 92/ZnNBX/KoZVChFkBCSJEKmaLQCQdCnjXDx+nz6wJT3JYF1FkrGx49An/yTHlEv3nwwDLFF
+ 0Ff24e/E9PpQ4lIupfqWMfgYhNCbMe2mScwZoWi5AQ0ES5Ug7gEIAMexJPQTFF+ENQxNHFGU
+ dw/vq19odo/iB6CgoySTxO28FCbh00Yo/Xw9/CZgKaLxsBuA+Wie1t/MEN/6/pNVpOaTqc7O
+ fR4oSbRIsthSHUAQYPAo+bES7jBu+uIO8WNWk2B6sqb2JgS104yHKtlmeZP7+VhEe1nekTkv
+ i2ASyywgwkH4dFrMjjkYCt6tTqE7QDRrMmrx6NW31nOjLKSA2Nst3o62b1Z0D+YZeVUspytz
+ rAuuv0bKT5GH0zsc9+yNtOYLvkmVhi4x3VW0CD0aLsIq7E9kellZ0oRh4xT9ObuAstI1mG1Q
+ yAufU8LZyPRjLVcqrNzemekB59w3gmcMmKEAEQEAAYkBHwQYAQIACQUCS5Ug7gIbDAAKCRBY
+ 6ccheOwM2KXwCAC3D+3yvZwBycTofZ60G7xvdp2NYBZOszVRFvZK5JRsoI7tNTF635BPJ1Sd
+ 1Pv/FFt5FUSt/Fv7G9ibunh8He2cbcA5TjwbihhxNT1yAWd6pPKgNlUDMPlHYLBTHq5vwIDz
+ 3WVq651ihMFwJ9MSSLUbo5PyUpvMEVHPcChUD+nKNufI4/Y7Ob4I90nXgHB3OUXbmOcwZ9+S
+ YpcJso4jCmjGBOcaOKZHCN+OX2r4nzE+vMDGWephhg5d8HLxFFDiD+Buw2SsOVxH1qXhG8nk
+ AGjD/Q5oL3gtVPTrPh0XTk3JN3LLFOddMQ8oZcuIAh+4aLlGEmK+L5RPAbcigApJNjcZ
+Message-ID: <5532db3d-5387-8347-e017-6443d0096d08@gmail.com>
+Date:   Mon, 10 Sep 2018 11:30:21 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Received: by 2002:a9d:24a3:0:0:0:0:0 with HTTP; Mon, 10 Sep 2018 02:28:48
- -0700 (PDT)
-X-Originating-IP: [94.21.245.65]
-In-Reply-To: <00000000000024df4605757495a8@google.com>
-References: <00000000000024df4605757495a8@google.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 10 Sep 2018 11:28:48 +0200
-Message-ID: <CAJfpegsqsESUft-azOkirq9363nUXM=Sx4YMX6XVQxquEbjS7Q@mail.gmail.com>
-Subject: Re: possible deadlock in free_ioctx_users
-To:     syzbot <syzbot+d86c4426a01f60feddc7@syzkaller.appspotmail.com>
-Cc:     bcrl@kvack.org, linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CANP3RGfGkH33mYDrenwWVkQ4uG4qyrddA+yvJ+t+=y6wGd7uDA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 9, 2018 at 8:41 PM, syzbot
-<syzbot+d86c4426a01f60feddc7@syzkaller.appspotmail.com> wrote:
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    f8f65382c98a Merge tag 'for-linus' of git://git.kernel.org..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=113260ae400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=8f59875069d721b6
-> dashboard link: https://syzkaller.appspot.com/bug?extid=d86c4426a01f60feddc7
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=120baa9e400000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13979cbe400000
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+d86c4426a01f60feddc7@syzkaller.appspotmail.com
->
-> random: sshd: uninitialized urandom read (32 bytes read)
-> random: sshd: uninitialized urandom read (32 bytes read)
-> random: sshd: uninitialized urandom read (32 bytes read)
->
-> ========================================================
-> WARNING: possible irq lock inversion dependency detected
-> 4.19.0-rc2+ #229 Not tainted
-> --------------------------------------------------------
-> swapper/0/0 just changed the state of lock:
-> 00000000c02bddef (&(&ctx->ctx_lock)->rlock){..-.}, at: spin_lock_irq
-> include/linux/spinlock.h:354 [inline]
-> 00000000c02bddef (&(&ctx->ctx_lock)->rlock){..-.}, at:
-> free_ioctx_users+0xbc/0x710 fs/aio.c:603
-> but this lock took another, SOFTIRQ-unsafe lock in the past:
->  (&fiq->waitq){+.+.}
->
->
-> and interrupts could create inverse lock ordering between them.
->
->
-> other info that might help us debug this:
->  Possible interrupt unsafe locking scenario:
->
->        CPU0                    CPU1
->        ----                    ----
->   lock(&fiq->waitq);
->                                local_irq_disable();
->                                lock(&(&ctx->ctx_lock)->rlock);
->                                lock(&fiq->waitq);
->   <Interrupt>
->     lock(&(&ctx->ctx_lock)->rlock);
+On 9/10/18 11:07 AM, Maciej Żenczykowski wrote:
+> Any reason not to use the same bit that is used by ipv4?
+> (as in add the setsockopt/getsockopt but just toggle the v4 bit)
+> 
 
-Fuse device doesn't support AIO ops.  So false positive, AFAICS.
+I wanted to keep the current behavior for an ipv6 socket as is. I think
+user space api/behavioral changes are frowned upon!?
 
-Thanks,
-Miklos
+Currently the bit is settable for an ipv6 socket and changes the
+handling for ipv4 multicasts for that socket. If I had just added the
+socket option and set the v4 bit, you would get maybe unexpected
+behavior from that, if you used it for ipv4 multicasts.
+
+Another approach I tried, was to just honor the v4 bit in v6 context,
+like this:
+
+diff --git a/net/ipv6/mcast.c b/net/ipv6/mcast.c
+index 4ae54aaca373..af1659327d46 100644
+--- a/net/ipv6/mcast.c
++++ b/net/ipv6/mcast.c
+@@ -636,7 +636,7 @@ bool inet6_mc_check(struct sock *sk, const struct
+in6_addr *mc_addr,
+ 	}
+ 	if (!mc) {
+ 		rcu_read_unlock();
+-		return true;
++		return inet_sk(sk)->mc_all;
+ 	}
+ 	read_lock(&mc->sflock);
+ 	psl = mc->sflist;
+
+
+But that has the same problem of changing current behavior in a possibly
+unexpected way.
+
+Regards
+  Andre
