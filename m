@@ -2,121 +2,134 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90108C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 21:18:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B48FAC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 21:19:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D69D20855
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 21:18:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="a+aWukWU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D69D20855
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	by mail.kernel.org (Postfix) with ESMTP id 6D5A620855
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 21:19:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D5A620855
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726909AbeIKCOE (ORCPT
+        id S1726980AbeIKCPf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 22:14:04 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:32927 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726141AbeIKCOD (ORCPT
+        Mon, 10 Sep 2018 22:15:35 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:38801 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726141AbeIKCPf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 22:14:03 -0400
-Received: by mail-pg1-f195.google.com with SMTP id s7-v6so11115464pgc.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 14:18:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=IwcdkSm81djM6XMMmQzGULl1ECGmI+7A3l600DGR7Y8=;
-        b=a+aWukWUcxC4JEe0NofXl+frtPD2OggPIQkHWyQEIm0ZViqS8s5l8+NzYaoPaQvE3J
-         ilixjlPioMftJbBK76T/foaMkcB6Pu4+wYOefRjUU869iqG0LNdN13jdYjfrckEz3mMb
-         SUNDo6aRpEhBC5BnvhLA6zvOcJbw/MaUeeb3jDFzkU/+Jp3vn6rdB+nIGfjSfaXRan22
-         vUNpsO/bXICiJRkFYaUdhfX+MvLzoKmoxl72vAcBtxv3As9wXwl9uKvsdWU2EOk3psjL
-         pTDDF8zt8iXwKtMi3l5eGO9XqhhCegDJrhuqM1kfohlJB7UAa0z+Uvqc54Ba1MjQ0cLO
-         Zdlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=IwcdkSm81djM6XMMmQzGULl1ECGmI+7A3l600DGR7Y8=;
-        b=IVJF/l+M88EsHO5hYaZCTdZjA7/siNYUPPyrFh0hVzp94XsFBCrh44rG+BzrpVJT7B
-         06yoze3ooh6GiHgzhBfX49ESBVVcs30Qe24LjBTFloFQkVBEYbyGeewL2eeQOYQ8nkKE
-         ESU0LR+zqzviz58ozI98Lp8BWlbGNnP8JbTDJOZOa4M8InyvOIOcIyI8udRwjSP8wBBJ
-         MnbHyLdqbwze1optOg/MPNroPXnaOWLMSkhycwL9KahmI3nwR1xbvA7ONws4PLI/Hhlk
-         hh/d2dnMPYig9RhA2KeNf7RgS+ZD39wpN1hVErZiF2SM/tB5k49o9Y/qbPKKZ2FJq4Qt
-         Swsw==
-X-Gm-Message-State: APzg51BQS2kjADB/SIc8MMiJrNmyOP50sihmgNWHZ0/w3tOGamv4jMeu
-        TwIpBZsjoKHryDb1AINZ8cqSiQ==
-X-Google-Smtp-Source: ANB0VdacaekJfKjwQrrH65ASvY+w0Z6gzN7WsGRHgUXtA1b3/qjR4BIoakEQCHszlb8q3REfOiEM2w==
-X-Received: by 2002:a62:cc41:: with SMTP id a62-v6mr25767789pfg.131.1536614285812;
-        Mon, 10 Sep 2018 14:18:05 -0700 (PDT)
-Received: from ?IPv6:2601:646:c200:7429:a1db:83d1:3cfc:8736? ([2601:646:c200:7429:a1db:83d1:3cfc:8736])
-        by smtp.gmail.com with ESMTPSA id i65-v6sm38420755pfk.43.2018.09.10.14.18.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Sep 2018 14:18:04 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [RFC][PATCH 1/8] x86/mm: clarify hardware vs. software "error_code"
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (15G77)
-In-Reply-To: <6f75823d-ce8b-d483-6046-4efbe20d0410@linux.intel.com>
-Date:   Mon, 10 Sep 2018 14:17:56 -0700
-Cc:     linux-kernel@vger.kernel.org, sean.j.christopherson@intel.com,
-        peterz@infradead.org, tglx@linutronix.de, x86@kernel.org,
-        luto@kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <E480E807-701D-43C6-A0AF-DF7829A701BC@amacapital.net>
-References: <20180907194852.3C351B82@viggo.jf.intel.com> <20180907194854.74729D71@viggo.jf.intel.com> <561334F6-9C13-424A-95ED-D377CE48DA46@amacapital.net> <6f75823d-ce8b-d483-6046-4efbe20d0410@linux.intel.com>
-To:     Dave Hansen <dave.hansen@linux.intel.com>
+        Mon, 10 Sep 2018 22:15:35 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id AFFBA8057B; Mon, 10 Sep 2018 23:19:35 +0200 (CEST)
+Date:   Mon, 10 Sep 2018 23:19:35 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Baolin Wang <baolin.wang@linaro.org>, jacek.anaszewski@gmail.com,
+        rteysseyre@gmail.com, broonie@kernel.org, linus.walleij@linaro.org,
+        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 1/2] leds: core: Introduce LED pattern trigger
+Message-ID: <20180910211935.GA4697@amd>
+References: <5a502ec29251c019ddad8f3314ab45fc0f6feaf7.1536027873.git.baolin.wang@linaro.org>
+ <20180908050208.GY2523@minitux>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="cNdxnHkX5QqsyA0e"
+Content-Disposition: inline
+In-Reply-To: <20180908050208.GY2523@minitux>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--cNdxnHkX5QqsyA0e
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Sep 10, 2018, at 1:07 PM, Dave Hansen <dave.hansen@linux.intel.com> wro=
-te:
+On Fri 2018-09-07 22:02:08, Bjorn Andersson wrote:
+> On Tue 04 Sep 04:01 PDT 2018, Baolin Wang wrote:
 >=20
-> On 09/07/2018 03:48 PM, Andy Lutomirski wrote:
->>>=20
->>> For part of the page fault handler, "error_code" does exactly
->>> match PFEC.  But, during later parts, it diverges and starts to
->>> mean something a bit different.
->>>=20
->>> Give it two names for its two jobs.
->> How hard would it be to just remove sw_error_code instead?  It seems
->> like it adds little value and much confusion.
+> > diff --git a/Documentation/ABI/testing/sysfs-class-led-trigger-pattern =
+b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+> [..]
+> > +What:		/sys/class/leds/<led>/hw_pattern
+> > +Date:		September 2018
+> > +KernelVersion:	4.20
+> > +Description:
+> > +		Specify a hardware pattern for the LED, for LED hardware that
+> > +		supports autonomously controlling brightness over time, according
+> > +		to some preprogrammed hardware patterns.
+> > +
+> > +		Since different LED hardware can have different semantics of
+> > +		hardware patterns, each driver is expected to provide its own
+> > +		description for the hardware patterns in their ABI documentation
+> > +		file.
+> > +
 >=20
-> I think it would be really nice to have hw_error_code stand by itself
-> and be limited in scope to just __do_page_fault() and then have
-> FAULT_FLAG_* for everything else.
+> So, after a full circle we're back at drivers with support for hardware
+> patterns should have their own ABI for setting that pattern.
 >=20
-> But, I was a little scared off of that.  For one, I think we fill in
-> signal info with error_code, which makes it nominally part of the ABI.
-> So, I wanted to muck with it as little as possible in this set.
->=20
-> But, if we just said that
-> 1. hw_error_code goes out to userspace, always, and
+> The controls for my hardware is:
+> * a list of brightness values
+> * the rate of the pattern
+> * a flag to indicate that the pattern should be played from start
+>   to end, end to start or start to end to start
+> * a boolean indicating if the pattern should be played once or repeated
+>   indefinitely.
 
-Nope, it=E2=80=99s an info leak. If the address is in kernel land (and not v=
-syscall), we must (and do, I believe) fake it.
+No, we are not back to full circle.
 
-> 2. We drive all kernel behavior off of FAULT_FLAG_*, not error_code,
->   I think we can get away with it.
->=20
->> I=E2=80=99m also unconvinced that the warning is terribly useful. We=E2=80=
-=99re going
->> to oops when this happens anyway.
->=20
-> One thing I wanted to get out of the warning was the contents of
-> hw_error_code before we go screwing with it.  I also don't mind a nice,
-> clarifying warning showing up just before an oops.  Maybe it could be a
-> pr_warn/err() instead of a full warning?
+Or at least we should not be.
 
-Sure.=
+Yes, hw_pattern can have some limitation pattern does not, but if you
+take values from hw_pattern file and put them into pattern file, you
+should get the same pattern (with more power being consumed). And that
+property is kind of important for me, because it should keep the ABI
+reasonable.
+
+
+> > +What:		/sys/class/leds/<led>/repeat
+> > +Date:		September 2018
+> > +KernelVersion:	4.20
+> > +Description:
+> > +		Specify a pattern repeat number. 0 means repeat indefinitely.
+> > +
+> > +		This file will always return the originally written repeat
+> > +		number.
+>=20
+> I'm still convinced that this will confuse our users and to me it would
+> be more logical if this denotes the number of times the pattern should
+> be repeated, with e.g. negative numbers denoting infinite.
+>=20
+> In particular I expect to have to explain why my driver expects that you
+> write 0 in the file named "repeat" to make it repeat and 1 to make it
+> not repeat.
+
+Ok, -1 works for me :-).
+
+Thanks,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--cNdxnHkX5QqsyA0e
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAluW3+cACgkQMOfwapXb+vLfhwCggPzf4UFQRwlNmyNbpUNg9TBI
+iKUAoK+ksS0tKjEMqCfLrnqXN2kn847m
+=S0ab
+-----END PGP SIGNATURE-----
+
+--cNdxnHkX5QqsyA0e--
