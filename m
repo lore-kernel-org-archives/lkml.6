@@ -2,95 +2,113 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61E3DC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 08:53:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA64AC4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 08:53:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D44820833
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 08:53:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D44820833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 5F28920833
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 08:53:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WgOMCvJP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F28920833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727704AbeIJNqW (ORCPT
+        id S1727785AbeIJNqx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 09:46:22 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41330 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726148AbeIJNqW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 09:46:22 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1945981663CE;
-        Mon, 10 Sep 2018 08:53:22 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-66.ams2.redhat.com [10.36.116.66])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C9F5E63F62;
-        Mon, 10 Sep 2018 08:53:17 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id C88A64FD7D; Mon, 10 Sep 2018 10:53:16 +0200 (CEST)
-Date:   Mon, 10 Sep 2018 10:53:16 +0200
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Jiandi An <jiandi@amd.com>, brijesh.singh@amd.com,
-        srikar@linux.vnet.ibm.com, "Michael S. Tsirkin" <mst@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Will Deacon <will.deacon@arm.com>,
-        virtualization@lists.linux-foundation.org, paulus@samba.org,
-        elfring@users.sourceforge.net,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        robh@kernel.org, jean-philippe.brucker@arm.com, mpe@ellerman.id.au,
-        thomas.lendacky@amd.com, marc.zyngier@arm.com, linuxram@us.ibm.com,
-        david@gibson.dropbear.id.au, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, joe@perches.com, jiandi.an@amd.com,
-        robin.murphy@arm.com, haren@linux.vnet.ibm.com
-Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
-Message-ID: <20180910085316.yzjbvoohqhdng2vb@sirius.home.kraxel.org>
-References: <2103ecfe52d23cec03f185d08a87bfad9c9d82b5.camel@kernel.crashing.org>
- <20180808063158.GA2474@infradead.org>
- <4b596883892b5cb5560bef26fcd249e7107173ac.camel@kernel.crashing.org>
- <20180808123036.GA2525@infradead.org>
- <b8b9150a747453c070ad3b0e4c92d2b1b052ad06.camel@kernel.crashing.org>
- <20180808232210-mutt-send-email-mst@kernel.org>
- <98eb367ce322ad84baa31e3c7beffc4a42be8458.camel@kernel.crashing.org>
- <20180809054013.GA20507@infradead.org>
- <f1eeb994-ea13-d0f1-dc55-7c5049e70670@amd.com>
- <20180910061947.GA30666@infradead.org>
+        Mon, 10 Sep 2018 09:46:53 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:38946 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727093AbeIJNqw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 09:46:52 -0400
+Received: by mail-wm0-f67.google.com with SMTP id q8-v6so20566092wmq.4
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 01:53:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=CPxOIUGhEj9rJaqY/EHPHSI+pPP+5egIMA38qsMH3+8=;
+        b=WgOMCvJP0aBXl467hnny/mzd+5NwXpYFzEUwjews5WEIKSY1/syyxXF25HIGgULPn+
+         /QW0yuekbWeYXT2460xheMVnHnDszRmLEDk+ZwjLEKSxNbZhSABnwaydryiJ3ne44N8u
+         kyxRpMMX2Sdqy5EdZk4NngNm1k26aRcFXPlQM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=CPxOIUGhEj9rJaqY/EHPHSI+pPP+5egIMA38qsMH3+8=;
+        b=lOM1qXyxbE9Kez6vBYoNt6dfERtX49wO++qCzC8gsdx6MGL8bf+KMqY658puaqGuaH
+         HWLzFrdzkcEI65NpMpqZ5pDU7Tz2Uef8vZajyGNiVWG+zhCF7MP2cuCfuhsAllXnsUfa
+         7hxbUUcvH77BoxNGULf8g3km4AfsLCmeoBcOabi5FVMJS5RwivjOrw/Yy2S1oaYJkmbl
+         qeGdnSTXqAVWLn5fKWd3KB68nJhJeCLQnGvEA/lmMfax2Zk/vC88qtQLbTcPaqdk9IgQ
+         /21zi2TfhU62Mll0RxkACy4GZDIXYFGlMRhhdnv/dK+3bNKC30nE7Q71BuE4UhLIiP8t
+         Ln3g==
+X-Gm-Message-State: APzg51BxhRkY/GmTvU/WZ8Nu+aPxSFaH9iPE1cg2veVZ6AZB0O+4GB2U
+        RMBPTf5aZsExWPLFm3CrU9yveA==
+X-Google-Smtp-Source: ANB0VdafNtS6bn8zpBGy4+22UbFlXFm9afg3lnfan+aWNnfrFDCy9OPItsc/ojIutsT3hL1045515w==
+X-Received: by 2002:a1c:ed4:: with SMTP id 203-v6mr12447417wmo.96.1536569631643;
+        Mon, 10 Sep 2018 01:53:51 -0700 (PDT)
+Received: from [192.168.0.18] (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
+        by smtp.googlemail.com with ESMTPSA id x15-v6sm13986746wrt.53.2018.09.10.01.53.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Sep 2018 01:53:50 -0700 (PDT)
+Subject: Re: [PATCH v2 11/16] nvmem: add support for cell info
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        "David S . Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Andrew Lunn <andrew@lunn.ch>, Alban Bedel <albeu@free.fr>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180907100750.14564-1-brgl@bgdev.pl>
+ <20180907100750.14564-12-brgl@bgdev.pl>
+ <21ec4e6f-aa39-66cf-af32-d9e8e85f4961@linaro.org>
+ <20180910093632.3a9337a9@bbrezillon>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <4c569813-aba0-8e9d-dfc8-653b6c2e365b@linaro.org>
+Date:   Mon, 10 Sep 2018 09:53:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180910061947.GA30666@infradead.org>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 10 Sep 2018 08:53:22 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 10 Sep 2018 08:53:22 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'kraxel@redhat.com' RCPT:''
+In-Reply-To: <20180910093632.3a9337a9@bbrezillon>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > this to set the VIRTIO_F_IOMMU_PLATFORM flag. But for example
-> > QEMU has the use of iommu_platform attribute disabled for virtio-gpu
-> > device.  So would also like to move towards not having to specify
-> > the VIRTIO_F_IOMMU_PLATFORM flag.
+
+
+On 10/09/18 08:36, Boris Brezillon wrote:
+>>> --- /dev/null
+>>> +++ b/include/linux/nvmem-machine.h
+>> This should go in nvmem-consumer.h, I don't think we should add header
+>> files for each usecase. These are nvmem consumers so lets put them in
+>> correct header file.
+> Actually no, it should go in nvmem-provider.h. Consumer should not be
+> allowed to define cells, only reference existing ones.The usecase can be provider and consumer.
+In arm machine use case it is a consumer and it other use cases this can 
+be a provider.
+
+I agree with you, It makes more sense to be in nvmem-provider.h
+
+thanks,
+srini
 > 
-> Specifying VIRTIO_F_IOMMU_PLATFORM is the right thing for your 
-> platform given that you can't directly use physical addresses.
-> Please fix qemu so that virtio-gpu works with VIRTIO_F_IOMMU_PLATFORM.
-
-This needs both host and guest side changes btw.
-
-Guest side patch is in drm-misc (a3b815f09bb8) and should land in the
-next merge window.
-
-Host side patches are here:
-  https://git.kraxel.org/cgit/qemu/log/?h=sirius/virtio-gpu-iommu
-
-Should also land in the next qemu version.
-
-cheers,
-  Gerd
-
+> Regards,
+> 
+> Boris
