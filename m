@@ -6,96 +6,126 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70633C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:30:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1080EC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:30:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3365C206BB
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:30:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3365C206BB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id BC70E2086E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:30:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC70E2086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728779AbeIJSYM (ORCPT
+        id S1728783AbeIJSYz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 14:24:12 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:39374 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728491AbeIJSYM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 14:24:12 -0400
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fzMGN-0000OK-5f; Mon, 10 Sep 2018 15:29:59 +0200
-Date:   Mon, 10 Sep 2018 15:29:58 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-cc:     Borislav Petkov <bp@suse.de>,
-        Brijesh Singh <brijesh.singh@amd.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?ISO-8859-2?Q?Radim_Kr=E8m=E1=F8?= <rkrcmar@redhat.com>
-Subject: Re: [PATCH v6 4/5] x86/kvm: use __decrypted attribute in shared
- variables
-In-Reply-To: <1536585310.11460.34.camel@intel.com>
-Message-ID: <alpine.DEB.2.21.1809101527030.1292@nanos.tec.linutronix.de>
-References: <1536343050-18532-1-git-send-email-brijesh.singh@amd.com>         <1536343050-18532-5-git-send-email-brijesh.singh@amd.com>         <20180910120416.GD21815@zn.tnic> <1536585310.11460.34.camel@intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 10 Sep 2018 14:24:55 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:1052 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727970AbeIJSYz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 14:24:55 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 42887L2Ndmz9ttC0;
+        Mon, 10 Sep 2018 15:30:38 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id 8ddVZpZF0eYa; Mon, 10 Sep 2018 15:30:38 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42887L1jJyz9ttBp;
+        Mon, 10 Sep 2018 15:30:38 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 8B7968B7AD;
+        Mon, 10 Sep 2018 15:30:46 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id Zf23eJ1q_5Hz; Mon, 10 Sep 2018 15:30:46 +0200 (CEST)
+Received: from pc16082vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4EB2F8B7A5;
+        Mon, 10 Sep 2018 15:30:46 +0200 (CEST)
+Subject: Re: Conflict between sparse and commit cafa0010cd51f ("Raise the
+ minimum required gcc version to 4.6")
+To:     Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>, joe@perches.com,
+        Kees Cook <keescook@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-sparse@vger.kernel.org, sparse@chrisli.org,
+        linuxppc-dev@lists.ozlabs.org
+References: <81a5fd11-366c-0897-4143-d8d041420a41@c-s.fr>
+ <1324e7d6-83f8-f40f-ad34-c46e4ad3139b@c-s.fr>
+ <CAKwvOdmuXydQsQyD2CUyoSkkDpF1e1CXg6v1SRv2q-bpYa9SQg@mail.gmail.com>
+ <20180907181337.peyfq7yvhahduvmq@ltop.local>
+ <CAKwvOdmXs+pWJGXu-zr-XSu7p-7hw=2m1vVQmVLwJcmGEFz0gg@mail.gmail.com>
+ <e6db84f1-ee8d-9377-5f1c-6a0e7972ba50@c-s.fr>
+ <20180910092835.v5nex5nzfgtl475m@ltop.local>
+ <061b3056-1a9a-af6b-de2a-49fea394320d@c-s.fr>
+ <20180910113448.dxnfvznyimtj3tkv@ltop.local>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <9409138a-dc14-2b12-edc0-cfa0b471da6e@c-s.fr>
+Date:   Mon, 10 Sep 2018 13:19:07 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-590345044-1536586199=:1292"
+In-Reply-To: <20180910113448.dxnfvznyimtj3tkv@ltop.local>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
 
---8323329-590345044-1536586199=:1292
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
 
-On Mon, 10 Sep 2018, Sean Christopherson wrote:
-
-> On Mon, 2018-09-10 at 14:04 +0200, Borislav Petkov wrote:
-> > On Fri, Sep 07, 2018 at 12:57:29PM -0500, Brijesh Singh wrote:
-> > > 
-> > > Commit: 368a540e0232 (x86/kvmclock: Remove memblock dependency)
-> > > caused SEV guest regression.
-> > When mentioning a commit in the commit message, put it on a separate
-> > line, like this:
-> > 
-> > "Commit
-> > 
-> >   368a540e0232 (x86/kvmclock: Remove memblock dependency)
-> > 
-> > caused a SEV guest regression."
+On 09/10/2018 11:34 AM, Luc Van Oostenryck wrote:
+> On Mon, Sep 10, 2018 at 09:56:33AM +0000, Christophe Leroy wrote:
+>>
+>> # export REAL_CC=ppc-linux-gcc
+>> # make CHECK="cgcc -target=ppc -D_CALL_ELF=2 -D__GCC__=5
+>> -D__GCC_MINOR__=4" C=2 arch/powerpc/kernel/process.o
+>> scripts/kconfig/conf  --syncconfig Kconfig
+>> #
+>> # configuration written to .config
+>> #
+>>    UPD     include/config/kernel.release
+>>    UPD     include/generated/utsrelease.h
+>>    CC      kernel/bounds.s
+>>    CC      arch/powerpc/kernel/asm-offsets.s
+>>    CALL    scripts/checksyscalls.sh
+>>    CHECK   scripts/mod/empty.c
+>> Can't exec "/bin/sh": Argument list too long at /usr/local/bin/cgcc line 86.
+>> make[2]: *** [scripts/mod/empty.o] Error 1
+>> make[1]: *** [scripts/mod] Error 2
+>> make: *** [scripts] Error 2
 > 
-> Heh, that was the original formatting until I asked him to change it:
-> https://lkml.org/lkml/2018/8/29/809.  Checkpatch throws an error if
-> there's a newline after 'Commit'.  Though looking at this again, there
-> shouldn't be a colon after 'Commit' and there should be quotes inside
-> the parentheses, e.g. this satisfies checkpatch:
+> OK. Clearly nobody has ever used it so :(
+> There is an infinite loop because cgcc use the env var CHECK
+> to call sparse while kbuild use CHECK to call cgcc here.
 > 
-> Commit 368a540e0232 ("x86/kvmclock: Remove memblock dependency")
+> The following seems to work here.
+> $ export REAL_CC=ppc-linux-gcc
+> $ make CHECK="CHECK=sparse cgcc -target=ppc ...
 
-The whole 5 lines of 'commit bla broke' are bogus to me. They convey not
-really useful information and the commit line will repeat itself in the
-Fixes: tag. So something like:
+Not yet ...
 
-  The recent removal of the memblock dependency caused a SEV guest
-  regression because bla....
+[root@pc16082vm linux-powerpc]# export REAL_CC=ppc-linux-gcc
+[root@pc16082vm linux-powerpc]# make CHECK="CHECK=sparse cgcc 
+-target=ppc -D_CALL_ELF=2 -D__GNUC__=5 -D__GNUC_MINOR__=4" C=2 
+arch/powerpc/kernel/process.o
+   CALL    scripts/checksyscalls.sh
+   CHECK   scripts/mod/empty.c
+<command-line>:0:0: warning: "__STDC__" redefined
+<built-in>: note: this is the location of the previous definition
+/opt/cldk-1.4.0/lib/gcc/ppc-linux/5.4.0/../../../../ppc-linux/lib/crt1.o:(.rodata+0x4): 
+undefined reference to `main'
+collect2: error: ld returned 1 exit status
+make[2]: *** [scripts/mod/empty.o] Error 1
+make[1]: *** [scripts/mod] Error 2
+make: *** [scripts] Error 2
 
+Christophe
 
-  Fixes: 368a540e0232 ("x86/kvmclock: Remove memblock dependency")
-
-Is much more useful than the above independent of its formatting.
-
-Thanks,
-
-	tglx
-
---8323329-590345044-1536586199=:1292--
+> 
+> It's a bit kludgy, I admit.
+> 
+> -- Luc
+> 
