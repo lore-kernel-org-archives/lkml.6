@@ -2,133 +2,103 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9869FC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 08:24:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 697D4C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 08:25:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 458B3206BB
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 08:24:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 458B3206BB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 20EDF2086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 08:25:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20EDF2086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727939AbeIJNRO (ORCPT
+        id S1727963AbeIJNSJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 09:17:14 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52640 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727649AbeIJNRO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 09:17:14 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6F82980D;
-        Mon, 10 Sep 2018 01:24:22 -0700 (PDT)
-Received: from queper01-lin (queper01-lin.emea.arm.com [10.4.13.27])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 567373F557;
-        Mon, 10 Sep 2018 01:24:18 -0700 (PDT)
-Date:   Mon, 10 Sep 2018 09:24:13 +0100
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
+        Mon, 10 Sep 2018 09:18:09 -0400
+Received: from lb3-smtp-cloud7.xs4all.net ([194.109.24.31]:48960 "EHLO
+        lb3-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727639AbeIJNSJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 09:18:09 -0400
+Received: from [192.168.2.10] ([212.251.195.8])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id zHVNf0sCPw2L8zHVQfJFVe; Mon, 10 Sep 2018 10:25:16 +0200
+Subject: Re: [PATCH v2 4/4] media: cedrus: Select the sunxi SRAM driver in
+ Kconfig
+To:     Paul Kocialkowski <contact@paulk.fr>, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Chris Redpath <chris.redpath@arm.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Steve Muckle <smuckle@google.com>, adharmap@codeaurora.org,
-        Saravana Kannan <skannan@codeaurora.org>,
-        Pavan Kondeti <pkondeti@codeaurora.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        currojerez@riseup.net, Javi Merino <javi.merino@kernel.org>
-Subject: Re: [PATCH v6 13/14] sched/topology: Make Energy Aware Scheduling
- depend on schedutil
-Message-ID: <20180910082411.oyedkqerxs6b7um5@queper01-lin>
-References: <20180820094420.26590-1-quentin.perret@arm.com>
- <CAJZ5v0jL_k36RPc6e8yUHxAYGXp7HHWK+hLnBZWnu5Oi__7j3w@mail.gmail.com>
- <20180906143842.xlxcg5notwdaflww@queper01-lin>
- <1545744.fI5ZvP8FO0@aspire.rjw.lan>
- <20180907152923.oxsmcqciez4yhmkk@queper01-lin>
- <CAJZ5v0gs1Fb-Y1FbjmnxLNHQR=CSHFX_=KpDEkqRCYDJ9EJByQ@mail.gmail.com>
+        Chen-Yu Tsai <wens@csie.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-sunxi@googlegroups.com, Randy Li <ayaka@soulik.info>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+References: <20180909191015.20902-1-contact@paulk.fr>
+ <20180909191015.20902-5-contact@paulk.fr>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <16fd7291-f51b-b0bc-4299-97adbe197e54@xs4all.nl>
+Date:   Mon, 10 Sep 2018 10:25:08 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0gs1Fb-Y1FbjmnxLNHQR=CSHFX_=KpDEkqRCYDJ9EJByQ@mail.gmail.com>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20180909191015.20902-5-contact@paulk.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfKM2pR5g4cCbyblYaFwjuh2d8m8dV9rVgIeB8Q16LgcZcVETeGvsYXPOMHJVDx6GoUdU0mZnOWHIqRH22yvpmg8asuMeq9sXEWZpA8WFCaCakLH7wREW
+ r5WNrZGvdEozqFgwMzdUdzW5aoPmE8/J0kA4dx7fmiI8acvP5IW5zKhVlCU0418fEY38TSOmckAd3LPWY/YIIx6vf+OH5Sg6QqythpuYF6wiGsP8mSzuxJxS
+ UHzIExDGOZR/evhWS/+p1vblQvijIAk8SIWMQSEU/X1x8g7cKyMEMObPtTAgOTCdDDpKGmmrfwfdrvLacRA3x7fniSzFTobiOTW6lXqro1qJnzd5wUkILzOk
+ QqGOwiz2RIwRhoHOCamdzYH1ninjKGJV0MrBoq0SR2FyE8MVfOyDf3Nd9eKjZJGrVGf4X27Qe0JUMIBeym9OwcxBkLgRwxXGy0cUASbDctOeJIXETDGbVqq5
+ pX7Tumltlu6c+JycOhJ4GzjfyGX2sC4qMZbf/WoA4cBefFa8w5ju1iOPXFt3AhgvuEZgGyhSaNM+I+iKZJc6p6JV6JgrplMeyI9Fx/OKMzZC4EGbBFqZkdGc
+ hrson1nXClWO8mf7D4RC289KWb8mokuSLKB6KdloVxnvQx3bza6xjK+eSBWPznYUaqxl/Arjjkijc6/GxEZokH4ghwkAezvp4HBP9vjmpVUjUYMMSxe6iYcU
+ czKtg+i5AV7kZ89iqvrWHyTTReyhpqBG6CoqTDRqsvWtVovFe4NmikFBvsncfezMJPdA6BtVU31Jju/r1Xzs1WoH4n3hGsSvyiUftcCUi5NdmRLS1Wfj1GxB
+ NMh2XC1PQjReEjIuTlc=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rafael,
-
-On Sunday 09 Sep 2018 at 22:13:52 (+0200), Rafael J. Wysocki wrote:
-> On Fri, Sep 7, 2018 at 5:29 PM Quentin Perret <quentin.perret@arm.com> wrote:
-> > On Friday 07 Sep 2018 at 10:52:01 (+0200), Rafael J. Wysocki wrote:
-> > > Well, why don't you implement it as something like "if the governor changes
-> > > from sugov to something else (or the other way around), call this function
-> > > from the scheduler"?
-> >
-> > I just gave it a try and ended up with the diff below. It's basically
-> > the exact same patch with a direct function call instead of a notifier.
-> > (I also tried the sugov_start/stop thing I keep mentioning but it is
-> > more complex, so let's see if the simplest solution could work first).
-> >
-> > What do you think ?
+On 09/09/2018 09:10 PM, Paul Kocialkowski wrote:
+> Since the sunxi SRAM driver is required to build the Cedrus driver,
+> select it in Kconfig.
 > 
-> This generally works for me from the cpufreq perspective, but I would
-> add "cpufreq" to the name of the new function, that is call it
-> something like sched_cpufreq_governor_change().
+> Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
+> ---
+>  drivers/staging/media/sunxi/cedrus/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/staging/media/sunxi/cedrus/Kconfig b/drivers/staging/media/sunxi/cedrus/Kconfig
+> index afd7d7ee0388..3b06283e4bf3 100644
+> --- a/drivers/staging/media/sunxi/cedrus/Kconfig
+> +++ b/drivers/staging/media/sunxi/cedrus/Kconfig
+> @@ -3,6 +3,7 @@ config VIDEO_SUNXI_CEDRUS
+>  	depends on VIDEO_DEV && VIDEO_V4L2 && MEDIA_CONTROLLER
+>  	depends on HAS_DMA
+>  	depends on OF
+> +	select SUNXI_SRAM
+>  	select VIDEOBUF2_DMA_CONTIG
+>  	select MEDIA_REQUEST_API
 
-Ok, no problem.
+I noticed this select, but CONFIG_MEDIA_REQUEST_API doesn't exist. It's
+probably from an old version and I have dropped it from the patch that
+added this.
 
-> Also do you really need the extra work item?  Governor changes are
-> carried out in process context anyway.
+No need for you to do anything.
 
-Ah, good point, I can remove that. I just tried and got the following
-lock warning on boot, though:
+>  	select V4L2_MEM2MEM_DEV
+> 
 
-[    2.518684] ============================================
-[    2.523942] WARNING: possible recursive locking detected
-[    2.529200] 4.18.0-rc6-00086-g940e7a9fd5ec #10 Not tainted
-[    2.534630] --------------------------------------------
-[    2.539888] kworker/2:3/1349 is trying to acquire lock:
-[    2.545059] (____ptrval____) (cpu_hotplug_lock.rw_sem){++++}, at: rebuild_sched_domains_locked+0x2c/0x598
-[    2.554559]
-[    2.554559] but task is already holding lock:
-[    2.560332] (____ptrval____) (cpu_hotplug_lock.rw_sem){++++}, at: cpufreq_register_driver+0x80/0x1d0
-[    2.569396]
-[    2.569396] other info that might help us debug this:
-[    2.575858]  Possible unsafe locking scenario:
-[    2.575858]
-[    2.581717]        CPU0
-[    2.584135]        ----
-[    2.586553]   lock(cpu_hotplug_lock.rw_sem);
-[    2.590785]   lock(cpu_hotplug_lock.rw_sem);
-[    2.595017]
-[    2.595017]  *** DEADLOCK ***
-[    2.595017]
-[    2.600877]  May be due to missing lock nesting notation
+Regards,
 
-That seems to happen because cpufreq_register_driver() calls
-cpus_read_lock(), which is then called again by rebuild_sched_domains()
-down the line. So it might just be a missing lock nesting notation as
-the warning suggests ?
-
-I'll have a look.
-
-Thanks,
-Quentin
+	Hans
