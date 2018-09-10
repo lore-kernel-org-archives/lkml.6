@@ -2,136 +2,95 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69B00C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:18:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CA9DC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:19:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 208672087F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:18:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB5B720870
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:19:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="eqPh42co"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 208672087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="cYOjrCnS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB5B720870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728687AbeIJTNN (ORCPT
+        id S1728560AbeIJTOB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 15:13:13 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:33810 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728656AbeIJTNN (ORCPT
+        Mon, 10 Sep 2018 15:14:01 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:32772 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727674AbeIJTOB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 15:13:13 -0400
-Received: by mail-io0-f196.google.com with SMTP id c22-v6so771630iob.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 07:18:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Y2uNSq5asWlq/4LtS6DI2f5UoPV1sEkPu5yZEStD6Lw=;
-        b=eqPh42coJVC2oVSUY/6G3Sx3t3HqRJ61OULx82HK4NhAjCqczwBUmHEw3D2Z6geJ/p
-         KNHPwzAesjhb+3wxWRc2HKMOrs8x2Rut4G/0NlqygfPnd6twDwifSDKrTgWVzNKitf7f
-         PpXpUyo6pku4Ud8cJ0qSU+0145d33cuo1o69o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Y2uNSq5asWlq/4LtS6DI2f5UoPV1sEkPu5yZEStD6Lw=;
-        b=DRn8YkIpzYDxixn0NnQZb17PzWELtYmHC8lKAtLxyJT//GlmphO3FrsztHTx25UmrE
-         KI0hYuyoU0HnZG6EuJh2KfgSGLMUhcCIhUxuqHJK9HhC3MLy26GuxmfEbBAIN+ryAXos
-         fJJzJfT2+L22hZoE/ghmF8r+kD5v5kjGuGIPQB/mRBDAxZQ3PdxuV7Bw3jL/mkfLl3Gq
-         j/gg3uz83j/S2QHZ+ZQyULoGdXpVBQoTB0NYasQ6YVUrkVDg6Pzpg162an8etQmA7TR+
-         Stp9ACQ7jzLzC5AzWqY5nLsn8lCAAsvgGUfToPmqdVsSfQYuqmiShOVHLeVcZy3MQVnK
-         u7HA==
-X-Gm-Message-State: APzg51An/M9qbGC6M4bnMToEMiqVNdc49N5BAxGdjMAt3d7JnUq6Qo3X
-        OirDI7ZCq+qAdCU0oQjvVUOMFTDR24/m0ZVoPtPFEw==
-X-Google-Smtp-Source: ANB0VdbTgDpl7hlneDJHPYR9L87Msdi+Iypy0bKEQjRIjHynm9dTLPU79lqMe+Nm6Gx90x5ZM59ljcscl2ozq4x/+Us=
-X-Received: by 2002:a6b:1416:: with SMTP id 22-v6mr16530449iou.218.1536589133797;
- Mon, 10 Sep 2018 07:18:53 -0700 (PDT)
+        Mon, 10 Sep 2018 15:14:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=QdogK+Ak2py2LrhN7XtqqL4CaidQnfDwiGThmP5/l/s=; b=cYOjrCnSyO8XV77hEUjSDrMbg
+        kofl0a/Frz6MglJbVlpwvxSwSzTduCQeMvyi1ae5FcFirYM5GOXuNk2jGV+3hUO1TUAYwsmqfOPkx
+        8xaPrl4uh/9DKLPv3/p6i8B9Q6hLTvBdMPqCveYX1WAse3FnFvNDeI06Yn8rBuoVT9A7c=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fzN2H-00023T-4X; Mon, 10 Sep 2018 14:19:29 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id AAAFA1122D51; Mon, 10 Sep 2018 15:19:28 +0100 (BST)
+Date:   Mon, 10 Sep 2018 15:19:28 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     zhong jiang <zhongjiang@huawei.com>
+Cc:     tiwai@suse.com, perex@perex.cz, lgirdwood@gmail.com,
+        bgoswami@codeaurora.org, plai@codeaurora.org,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] sound: q6core: Use kmemdup to replace kzalloc +
+ memcpy
+Message-ID: <20180910141928.GI5856@sirena.org.uk>
+References: <1536395780-18725-1-git-send-email-zhongjiang@huawei.com>
+ <1536395780-18725-2-git-send-email-zhongjiang@huawei.com>
 MIME-Version: 1.0
-Received: by 2002:a02:6a18:0:0:0:0:0 with HTTP; Mon, 10 Sep 2018 07:18:53
- -0700 (PDT)
-In-Reply-To: <282ac8092650c95595c84213dc87a4bf6b278da8.1530252803.git.viresh.kumar@linaro.org>
-References: <cover.1530252803.git.viresh.kumar@linaro.org> <282ac8092650c95595c84213dc87a4bf6b278da8.1530252803.git.viresh.kumar@linaro.org>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 10 Sep 2018 16:18:53 +0200
-Message-ID: <CAPDyKFrM2x9NwSS0JTjoyu-SdtckQdbZHjWeqmH8NF3_Q2tw-w@mail.gmail.com>
-Subject: Re: [PATCH 06/10] OPP: Add dev_pm_opp_{set|put}_required_device() helper
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Rafael Wysocki <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Len Brown <len.brown@intel.com>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="FK65GREB+Evh/hTL"
+Content-Disposition: inline
+In-Reply-To: <1536395780-18725-2-git-send-email-zhongjiang@huawei.com>
+X-Cookie: Yow!  We're going to a new disco!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29 June 2018 at 08:19, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> Multiple generic power domains for a device are supported with the help
-> of virtual devices, which are created for each device-genpd pair. These
 
-What "device-genpd" pair are you referring to?
+--FK65GREB+Evh/hTL
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> are the device structures which are attached to the power domain and are
-> required by the OPP core to set the performance state of the genpd.
->
-> The helpers added by this commit are required to be called once for each
-> genpd of a device. These are required only if multiple domains are
-> present for a device, otherwise the actual device structure will be used
-> instead by the OPP core.
->
-> This commit also updates the genpd core to automatically call the new
-> helper to set the required devices with the OPP layer, whenever the
-> virtual devices are created for multiple genpd. The prototype of
-> __genpd_dev_pm_attach() is slightly updated for this.
->
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
->  drivers/base/power/domain.c | 31 ++++++++++++++---
->  drivers/opp/core.c          | 69 +++++++++++++++++++++++++++++++++++++
->  drivers/opp/of.c            | 12 +++++++
->  drivers/opp/opp.h           |  2 ++
->  include/linux/pm_opp.h      |  8 +++++
->  5 files changed, 118 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> index c298de8a8308..e9c85c96580c 100644
-> --- a/drivers/base/power/domain.c
-> +++ b/drivers/base/power/domain.c
-> @@ -2219,8 +2219,14 @@ static void genpd_dev_pm_detach(struct device *dev, bool power_off)
->         genpd_queue_power_off_work(pd);
->
->         /* Unregister the device if it was created by genpd. */
-> -       if (dev->bus == &genpd_bus_type)
-> +       if (dev->bus == &genpd_bus_type) {
-> +               struct opp_table *opp_table = dev_get_drvdata(dev);
+On Sat, Sep 08, 2018 at 04:36:19PM +0800, zhong jiang wrote:
+> kmemdup has implemented the function that kzalloc() + memcpy() will
+> do. and we prefer to use the kmemdup rather than the open coded implementation.
 
-This feels wrong, to me. Genpd is not a driver, but rather a
-subsystem, hence I think it's a bad idea to "abuse" the driver data
-pointer like this.
+Please submit patches using subject lines reflecting the style for the
+subsystem.  This makes it easier for people to identify relevant
+patches.  Look at what existing commits in the area you're changing are
+doing and make sure your subject lines visually resemble what they're
+doing.
 
-Instead, in genpd we store device specific data, through the
-dev->power.subsys_data.
+--FK65GREB+Evh/hTL
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Seems like a better option is to extend the subsys_data, to also
-include data needed to be shared for opp/performance states.
+-----BEGIN PGP SIGNATURE-----
 
-In that way, we might not even need to call into the opp library
-(dev_pm_opp_set_required_device()) API, but rather the opp library can
-itself check what is in the subsys_data for the device that is being
-targeted. Would that work?
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAluWfW8ACgkQJNaLcl1U
+h9CyUgf/XqtV7Eclu39YGeJCdlYnt7Hq1XT9fgf87Qtf3o+Z0bBqDZQqhRKHusUh
+Jz016WEw/y/szYZFnsVofz28QnFv7tEt6lazhaKyM5d++8BliGvbHZoeXobbWI3C
+Z1gMCl5TfPL4JDVwDgTn2p70azBShev3+wygQQ/etQfO7iEBEaZltIPFDwQlsDHy
+TG0XHCdajCOOtbwRPPnm1IOmcZbNOMQ3D6YcQ+IJwKOda+LC29O0McDm8RhoXvVD
+RjUXKMSo0G51U5PDT37gsJ/S1Uhxr28aTl0h164WKQXyTdCputwPrQ1h3nIVvsWM
+nenQ5ghluDeP3aYVSmWMN93sqtPqjw==
+=OELS
+-----END PGP SIGNATURE-----
 
-[...]
-
-Kind regards
-Uffe
+--FK65GREB+Evh/hTL--
