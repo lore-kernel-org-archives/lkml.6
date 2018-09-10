@@ -2,72 +2,84 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D757C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:15:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 622D4C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:15:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45FDC20870
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:15:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45FDC20870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 1248D2087F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:15:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fJAn1UQG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1248D2087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728346AbeIJTJv (ORCPT
+        id S1728497AbeIJTKJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 15:09:51 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:52242 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727695AbeIJTJu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 15:09:50 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id F29A7D3BC25DE;
-        Mon, 10 Sep 2018 22:15:28 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.399.0; Mon, 10 Sep 2018 22:15:30 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-To:     <akpm@linux-foundation.org>
-CC:     <mhocko@suse.com>, <pasha.tatashin@oracle.com>,
-        <dan.j.williams@intel.com>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] mm: Use BUG_ON directly instead of a if condition followed by BUG
-Date:   Mon, 10 Sep 2018 22:03:17 +0800
-Message-ID: <1536588197-22115-1-git-send-email-zhongjiang@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
+        Mon, 10 Sep 2018 15:10:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55392 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728127AbeIJTKJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 15:10:09 -0400
+Received: from [192.168.0.101] (unknown [49.77.179.173])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A08620870;
+        Mon, 10 Sep 2018 14:15:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1536588951;
+        bh=Bv+d/J2+pucT3E1Cwx4Os+UYIgLD+VrkpZ8fn46SgfI=;
+        h=Subject:To:References:From:Date:In-Reply-To:From;
+        b=fJAn1UQGm8k5fUVE668cxYdFTi4Oj7nl7L2IlHPLTHPrxJg15Sq5rsCiUu/JSJ0UN
+         r3sU761qpoFXKzd9/vrvqZi77ATwPhRNSIRDPbqTmxmabaW/bQ49+pd8yRxJc7vhXC
+         fXoanEoHZQqRk6GruFXYbKbSODhTz/xk9vnVxaJw=
+Subject: Re: [f2fs-dev] [PATCH] f2fs: submit bio after shutdown
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+References: <20180907212804.91462-1-jaegeuk@kernel.org>
+From:   Chao Yu <chao@kernel.org>
+Message-ID: <42844d87-587c-1fd6-e2f7-ade84007882e@kernel.org>
+Date:   Mon, 10 Sep 2018 22:15:46 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20180907212804.91462-1-jaegeuk@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The if condition can be removed if we use BUG_ON directly.
-The issule is detected with the help of Coccinelle.
+On 2018/9/8 5:28, Jaegeuk Kim wrote:
+> Sometimes, some merged IOs could get a chance to be submitted, resulting in
+> system hang in shutdown test. This issues IOs all the time after shutdown.
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
----
- mm/memory_hotplug.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 38d94b7..280b26c 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -1888,8 +1888,7 @@ void __ref remove_memory(int nid, u64 start, u64 size)
- 	 */
- 	ret = walk_memory_range(PFN_DOWN(start), PFN_UP(start + size - 1), NULL,
- 				check_memblock_offlined_cb);
--	if (ret)
--		BUG();
-+	BUG(ret);
- 
- 	/* remove memmap entry */
- 	firmware_map_remove(start, start + size, "System RAM");
--- 
-1.7.12.4
+Thanks,
 
+> ---
+>  fs/f2fs/data.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 8c204f896c22..26f38b224bb2 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -533,6 +533,8 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
+>  	if (fio->in_list)
+>  		goto next;
+>  out:
+> +	if (is_sbi_flag_set(sbi, SBI_IS_SHUTDOWN))
+> +		__submit_merged_bio(io);
+>  	up_write(&io->io_rwsem);
+>  }
+>  
+> 
