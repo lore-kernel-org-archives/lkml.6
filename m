@@ -3,56 +3,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E67F0C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:04:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F22CC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:04:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85BAE20880
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:04:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85BAE20880
+	by mail.kernel.org (Postfix) with ESMTP id D660420881
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:04:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D660420881
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728618AbeIJT6r (ORCPT
+        id S1728819AbeIJT6u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 15:58:47 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:43556 "EHLO
+        Mon, 10 Sep 2018 15:58:50 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:38848 "EHLO
         mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728362AbeIJT6r (ORCPT
+        with ESMTP id S1728362AbeIJT6s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 15:58:47 -0400
-Received: by mail-oi0-f68.google.com with SMTP id b15-v6so40700776oib.10;
-        Mon, 10 Sep 2018 08:04:16 -0700 (PDT)
+        Mon, 10 Sep 2018 15:58:48 -0400
+Received: by mail-oi0-f68.google.com with SMTP id x197-v6so40749879oix.5;
+        Mon, 10 Sep 2018 08:04:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=96bgZeDJu8lmzLzGQEjyQG1f1/HFZ+sSY2PjMNDbDoY=;
-        b=NJXqkmoqngjRO+h68JUhVBkwT5wGvz4tnPMIdMUnrz/T/Tl8PMOUfrjKnkhBa8x9S5
-         2wOOaCLnvRbQBRrGl85bqemENNk+IM7mXUVpKwZiIHiOeBGkfbdwkx9p7BtSDwJ4Cctf
-         cYUIJ9VBw6bTGjcSwlGeMpbHZizWa+XqEVAtApApp5Po7v0aBlrrj5JeVuqS0Yd5DeQW
-         YnflYxhD2SJRin+fW51787tBwBq3YcCV1ilTH7J2uiaL8gM+5F3O3mQXjDl1J0MOdL73
-         KeMnZYo4BnEr9Dm06OV6nsnDByHMup8fycd54COhVJ4RkL1TEnTli5aQ39LR8LNzjH0a
-         16Sw==
-X-Gm-Message-State: APzg51DkJAONxTUtQ4aagVToCu8ZXoR5s0QGZNzET6nnJ1yriwUgPWRd
-        UwhJ3V2mbyBfy1QynOxp0fGCayA=
-X-Google-Smtp-Source: ANB0VdaPDp8+4xSUGBhRa/u7QkzIE8jXUFOH91J12+sv8KOR8gNDnQv6lkPoJajpDbZ4bcDrXULSvw==
-X-Received: by 2002:aca:c5d8:: with SMTP id v207-v6mr23101050oif.264.1536591851179;
-        Mon, 10 Sep 2018 08:04:11 -0700 (PDT)
+        bh=OFEEaVtg96Vzr+wRENqq56ej9KS7VctFB/C9wMh58yU=;
+        b=ES7gQdL0fAyRZoWgzsoK5uwOjhIPd3NzwHhHUEGjm/SSViBYiqbi8+M9xhw0rdiEzj
+         8/KdG1HcfaSJb5jTON5uIWtPB2mipTYerQ1AXmoBf45nHVitNEU+cpX9U6ocKyyLOany
+         ujWfC4A0nixeOxGnrCf04c1w9ywtjwrkUwrzminZfW4XP22YVTLh2gIs9/53Uo7u+9gh
+         RliD1zVuhH2kNXQZhhv3LqbiRowu51iGyHVoNEO+YO2FfyyWAKVQim8g+xW/a48LIptc
+         bhyHFG7/3181VxaCYq7jkJKeiHk/OocEf1d5XICPXOukVuaHFQ6TJUvUbJ3EnFDZg4s4
+         nY/g==
+X-Gm-Message-State: APzg51BeDjak5kUk4IgYRsRzfLdtIRlmMOBvzY9W9xpHdlnh4bHcM80S
+        URN+fw3cJnrDFzXhlfhyRz754Rw=
+X-Google-Smtp-Source: ANB0Vdb3atiXpPzZ8e3KjLnPZswWlneQlpePDRsGf4Xq7lAIFWSB8aTtyX2z7GXKspQMszsLu1RIeA==
+X-Received: by 2002:aca:3110:: with SMTP id x16-v6mr23782030oix.126.1536591852622;
+        Mon, 10 Sep 2018 08:04:12 -0700 (PDT)
 Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id k85-v6sm49465631oiy.2.2018.09.10.08.04.09
+        by smtp.googlemail.com with ESMTPSA id k85-v6sm49465631oiy.2.2018.09.10.08.04.11
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Sep 2018 08:04:10 -0700 (PDT)
+        Mon, 10 Sep 2018 08:04:11 -0700 (PDT)
 From:   Rob Herring <robh@kernel.org>
 To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Masahiro Yamada <yamada.masahiro@socionext.com>
 Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Ley Foon Tan <lftan@altera.com>,
-        nios2-dev@lists.rocketboards.org
-Subject: [PATCH v3 4/9] nios2: fix building all dtbs
-Date:   Mon, 10 Sep 2018 10:03:58 -0500
-Message-Id: <20180910150403.19476-5-robh@kernel.org>
+        Mark Salter <msalter@redhat.com>,
+        Aurelien Jacquiot <jacquiot.aurelien@gmail.com>,
+        linux-c6x-dev@linux-c6x.org
+Subject: [PATCH v3 5/9] c6x: use common built-in dtb support
+Date:   Mon, 10 Sep 2018 10:03:59 -0500
+Message-Id: <20180910150403.19476-6-robh@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180910150403.19476-1-robh@kernel.org>
 References: <20180910150403.19476-1-robh@kernel.org>
@@ -61,28 +62,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-nios2 has a 'dtbs' target, but nothing is added to 'dtb-*' targets and
-no dtbs were getting built. This enables building all the dts files in
-arch/nios2/boot/dts/ when COMPILE_TEST and OF_ALL_DTBS are enabled.
+Using the common build support for built-in dtb files just requires
+adding a .dtb.o target to obj-y.
 
-Cc: Ley Foon Tan <lftan@altera.com>
-Cc: nios2-dev@lists.rocketboards.org
+The dtb now needs to be copied when unflattened because an init section
+is used now.
+
+Cc: Mark Salter <msalter@redhat.com>
+Cc: Aurelien Jacquiot <jacquiot.aurelien@gmail.com>
+Cc: linux-c6x-dev@linux-c6x.org
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- arch/nios2/boot/dts/Makefile | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/c6x/boot/dts/Makefile      | 11 +----------
+ arch/c6x/boot/dts/linked_dtb.S  |  2 --
+ arch/c6x/include/asm/sections.h |  1 -
+ arch/c6x/kernel/setup.c         |  4 ++--
+ arch/c6x/kernel/vmlinux.lds.S   | 10 ----------
+ 5 files changed, 3 insertions(+), 25 deletions(-)
+ delete mode 100644 arch/c6x/boot/dts/linked_dtb.S
 
-diff --git a/arch/nios2/boot/dts/Makefile b/arch/nios2/boot/dts/Makefile
-index f6358e395b25..a91a0b09be63 100644
---- a/arch/nios2/boot/dts/Makefile
-+++ b/arch/nios2/boot/dts/Makefile
-@@ -1,3 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
+diff --git a/arch/c6x/boot/dts/Makefile b/arch/c6x/boot/dts/Makefile
+index b212d278ebc4..fd937f781d16 100644
+--- a/arch/c6x/boot/dts/Makefile
++++ b/arch/c6x/boot/dts/Makefile
+@@ -6,14 +6,5 @@
+ DTC_FLAGS ?= -p 1024
  
- obj-y := $(patsubst "%.dts",%.dtb.o,$(CONFIG_NIOS2_DTB_SOURCE))
-+
-+dtstree		:= $(srctree)/$(src)
-+dtb-$(CONFIG_OF_ALL_DTBS) := $(patsubst $(dtstree)/%.dts,%.dtb, $(wildcard $(dtstree)/*.dts))
+ ifneq ($(DTB),)
+-obj-y += linked_dtb.o
++obj-y += $(DTB).dtb.o
+ endif
+-
+-quiet_cmd_cp = CP      $< $@$2
+-	cmd_cp = cat $< >$@$2 || (rm -f $@ && echo false)
+-
+-# Generate builtin.dtb from $(DTB).dtb
+-$(obj)/builtin.dtb: $(obj)/$(DTB).dtb
+-	$(call if_changed,cp)
+-
+-$(obj)/linked_dtb.o: $(obj)/builtin.dtb
+diff --git a/arch/c6x/boot/dts/linked_dtb.S b/arch/c6x/boot/dts/linked_dtb.S
+deleted file mode 100644
+index cf347f1d16ce..000000000000
+--- a/arch/c6x/boot/dts/linked_dtb.S
++++ /dev/null
+@@ -1,2 +0,0 @@
+-.section __fdt_blob,"a"
+-.incbin "arch/c6x/boot/dts/builtin.dtb"
+diff --git a/arch/c6x/include/asm/sections.h b/arch/c6x/include/asm/sections.h
+index d6c591ab5b7e..dc2f15eb3bde 100644
+--- a/arch/c6x/include/asm/sections.h
++++ b/arch/c6x/include/asm/sections.h
+@@ -8,6 +8,5 @@ extern char _vectors_start[];
+ extern char _vectors_end[];
+ 
+ extern char _data_lma[];
+-extern char _fdt_start[], _fdt_end[];
+ 
+ #endif /* _ASM_C6X_SECTIONS_H */
+diff --git a/arch/c6x/kernel/setup.c b/arch/c6x/kernel/setup.c
+index 786e36e2f61d..509c5f086496 100644
+--- a/arch/c6x/kernel/setup.c
++++ b/arch/c6x/kernel/setup.c
+@@ -270,7 +270,7 @@ int __init c6x_add_memory(phys_addr_t start, unsigned long size)
+ notrace void __init machine_init(unsigned long dt_ptr)
+ {
+ 	void *dtb = __va(dt_ptr);
+-	void *fdt = _fdt_start;
++	void *fdt = __dtb_start;
+ 
+ 	/* interrupts must be masked */
+ 	set_creg(IER, 2);
+@@ -363,7 +363,7 @@ void __init setup_arch(char **cmdline_p)
+ 					 memory_end >> PAGE_SHIFT);
+ 	memblock_reserve(memory_start, bootmap_size);
+ 
+-	unflatten_device_tree();
++	unflatten_and_copy_device_tree();
+ 
+ 	c6x_cache_init();
+ 
+diff --git a/arch/c6x/kernel/vmlinux.lds.S b/arch/c6x/kernel/vmlinux.lds.S
+index 1fba5b421eee..584bab2bace6 100644
+--- a/arch/c6x/kernel/vmlinux.lds.S
++++ b/arch/c6x/kernel/vmlinux.lds.S
+@@ -90,16 +90,6 @@ SECTIONS
+ 		*(.switch)
+ 	}
+ 
+-	. = ALIGN (8) ;
+-	__fdt_blob : AT(ADDR(__fdt_blob) - LOAD_OFFSET)
+-	{
+-		_fdt_start = . ;	/* place for fdt blob */
+-		*(__fdt_blob) ;		/* Any link-placed DTB */
+-		BYTE(0);		/* section always has contents */
+-	        . = _fdt_start + 0x4000;	/* Pad up to 16kbyte */
+-		_fdt_end = . ;
+-	}
+-
+ 	_etext = .;
+ 
+ 	/*
 -- 
 2.17.1
 
