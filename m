@@ -2,132 +2,78 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0AC0C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 07:03:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B53FC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 07:04:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DE3020833
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 07:03:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DE3020833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 9AF2E20866
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 07:04:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AF2E20866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727631AbeIJLzr (ORCPT
+        id S1727739AbeIJL5R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 07:55:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57994 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726185AbeIJLzr (ORCPT
+        Mon, 10 Sep 2018 07:57:17 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:38528 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726185AbeIJL5R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 07:55:47 -0400
-Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2E916C83;
-        Mon, 10 Sep 2018 07:03:13 +0000 (UTC)
-Date:   Mon, 10 Sep 2018 09:03:10 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.9 00/63] 4.9.126-stable review
-Message-ID: <20180910070310.GA20641@kroah.com>
-References: <20180907211012.965501324@linuxfoundation.org>
- <e1fa8fda-e277-3c83-5e35-826df83f3cd5@roeck-us.net>
- <20180909085530.GC14455@kroah.com>
- <1231d8c4-0788-6d02-308a-176666b4a71f@roeck-us.net>
- <20180909180326.GA22151@kroah.com>
- <ac7e94d7-e8d3-1a29-3d38-ad510635171c@roeck-us.net>
- <20180910063541.GA19096@kroah.com>
- <8b1f728a-dd97-92d6-debc-28a479799324@roeck-us.net>
+        Mon, 10 Sep 2018 07:57:17 -0400
+Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fzGFR-000153-9w; Mon, 10 Sep 2018 09:04:37 +0200
+Date:   Mon, 10 Sep 2018 09:04:36 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     "Yang, Bin" <bin.yang@intel.com>
+cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Gross, Mark" <mark.gross@intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>
+Subject: Re: [patch 01/10] x86/mm/cpa: Split, rename and clean up
+ try_preserve_large_page()
+In-Reply-To: <10a05617853975fce8560ec688b6aa1bb58868ae.camel@intel.com>
+Message-ID: <alpine.DEB.2.21.1809100902520.1402@nanos.tec.linutronix.de>
+References: <20180907150119.325866892@linutronix.de>  <20180907152054.463798054@linutronix.de> <10a05617853975fce8560ec688b6aa1bb58868ae.camel@intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8b1f728a-dd97-92d6-debc-28a479799324@roeck-us.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 09, 2018 at 11:54:36PM -0700, Guenter Roeck wrote:
-> On 09/09/2018 11:35 PM, Greg Kroah-Hartman wrote:
-> > On Sun, Sep 09, 2018 at 01:53:51PM -0700, Guenter Roeck wrote:
-> > > On 09/09/2018 11:03 AM, Greg Kroah-Hartman wrote:
-> > > > On Sun, Sep 09, 2018 at 08:54:41AM -0700, Guenter Roeck wrote:
-> > > > > On 09/09/2018 01:55 AM, Greg Kroah-Hartman wrote:
-> > > > > > On Sat, Sep 08, 2018 at 02:14:53PM -0700, Guenter Roeck wrote:
-> > > > > > > On 09/07/2018 02:09 PM, Greg Kroah-Hartman wrote:
-> > > > > > > > This is the start of the stable review cycle for the 4.9.126 release.
-> > > > > > > > There are 63 patches in this series, all will be posted as a response
-> > > > > > > > to this one.  If anyone has any issues with these being applied, please
-> > > > > > > > let me know.
-> > > > > > > > 
-> > > > > > > > Responses should be made by Sun Sep  9 21:09:58 UTC 2018.
-> > > > > > > > Anything received after that time might be too late.
-> > > > > > > > 
-> > > > > > > 
-> > > > > > > Build results:
-> > > > > > > 	total: 151 pass: 149 fail: 2
-> > > > > > > Failed builds:
-> > > > > > > 	powerpc:defconfig
-> > > > > > > 	powerpc:allmodconfig
-> > > > > > > Qemu test results:
-> > > > > > > 	total: 301 pass: 285 fail: 16
-> > > > > > > Failed tests:
-> > > > > > > 	powerpc:mac99:ppc64_book3s_defconfig:nosmp:initrd
-> > > > > > > 	powerpc:mac99:ppc64_book3s_defconfig:smp:cpu4:initrd
-> > > > > > > 	powerpc:mac99:ppc64_book3s_defconfig:smp:cpu4:ide:rootfs
-> > > > > > > 	powerpc:mac99:ppc64_book3s_defconfig:smp:cpu4:mmc:rootfs
-> > > > > > > 	powerpc:mac99:ppc64_book3s_defconfig:smp:cpu4:scsi[DC395]:rootfs
-> > > > > > > 	powerpc:pseries:pseries_defconfig:initrd
-> > > > > > > 	powerpc:pseries:pseries_defconfig:scsi:rootfs
-> > > > > > > 	powerpc:pseries:pseries_defconfig:mmc:rootfs
-> > > > > > > 	powerpc:pseries:pseries_defconfig:nvme:rootfs
-> > > > > > > 	powerpc:pseries:pseries_defconfig:little:initrd
-> > > > > > > 	powerpc:pseries:pseries_defconfig:little:scsi:rootfs
-> > > > > > > 	powerpc:pseries:pseries_defconfig:little:scsi[MEGASAS]:rootfs
-> > > > > > > 	powerpc:pseries:pseries_defconfig:little:scsi[FUSION]:rootfs
-> > > > > > > 	powerpc:pseries:pseries_defconfig:little:mmc:rootfs
-> > > > > > > 	powerpc:pseries:pseries_defconfig:little:nvme:rootfs
-> > > > > > > 	powerpc:powernv:powernv_defconfig:initrd
-> > > > > > > 
-> > > > > > > Details are available at https://kerneltests.org/builders/.
-> > > > > > 
-> > > > > > I've pushed out a -rc2 to fix this.  Hopefully.  There were a bunch of
-> > > > > > warnings for power that I don't think were caused by these series, I
-> > > > > > don't know if they have always been there or not.
-> > > > > > 
-> > > > > 
-> > > > > For v4.9.125-65-g0f793f1ec4f3:
-> > > > > 
-> > > > > Build results:
-> > > > > 	total: 151 pass: 150 fail: 1
-> > > > > Failed builds:
-> > > > > 	powerpc:allmodconfig
-> > > > > Qemu test results:
-> > > > > 	total: 301 pass: 301 fail: 0
-> > > > > 
-> > > > > arch/powerpc/kernel/fadump.c: In function 'free_crash_memory_ranges':
-> > > > > arch/powerpc/kernel/fadump.c:738:2: error: implicit declaration of function 'kfree'
-> > > > > 
-> > > > > arch/powerpc/kernel/fadump.c: In function 'allocate_crash_memory_ranges':
-> > > > > arch/powerpc/kernel/fadump.c:757:14: error: implicit declaration of function 'krealloc'
-> > > > 
-> > > > Oops, forgot to fix that one.  Shoould now be resolved.
-> > > > 
-> > > 
-> > > Did you push your change ? My builders didn't pick it up.
-> > 
-> > Yes, I pushed out the "real" 4.9.125 release with the fix in it.
-> > 
+On Mon, 10 Sep 2018, Yang, Bin wrote:
+
+Can you please trim your replies? It's a pain in the neck to find the
+single line of information within a large pile of useless quoted text.
+
+> On Fri, 2018-09-07 at 17:01 +0200, Thomas Gleixner wrote:
+> >  	/*
+> > -	 * We need to check the full range, whether
+> > -	 * static_protection() requires a different pgprot for one of
+> > -	 * the pages in the range we try to preserve:
+> > +	 * Make sure that the requested pgprot does not violate the static
+> > +	 * protections. Check the full large page whether one of the pages
+> > +	 * in it results in a different pgprot than the first one of the
+> > +	 * requested range. If yes, then the page needs to be split.
+> >  	 */
+> > -	addr = address & pmask;
+> > +	new_prot = static_protections(req_prot, address, pfn, 1);
 > 
-> You mean 4.9.126. But you didn't push the update to linux-stable-rc, which is why
-> my builders don't see it.
+> "npg" is introduced by patch #3. It might be better to keep old API in
+> this patch.
 
-Ugh, you are right, now updated, sorry for the confusion.
+Yes. That's bogus. Will fix.
 
-greg k-h
+Thanks,
+
+	tglx
