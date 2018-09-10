@@ -2,105 +2,93 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BC86C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:41:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E498C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:41:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EEAF20866
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:41:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EEAF20866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 026D820866
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:41:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 026D820866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728091AbeIJOe4 (ORCPT
+        id S1728108AbeIJOfB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 10:34:56 -0400
-Received: from foss.arm.com ([217.140.101.70]:53938 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727614AbeIJOe4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 10:34:56 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ABF8518A;
-        Mon, 10 Sep 2018 02:41:45 -0700 (PDT)
-Received: from [10.1.214.36] (unknown [10.1.214.36])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DD6A03F557;
-        Mon, 10 Sep 2018 02:41:44 -0700 (PDT)
-Subject: Re: [PATCH AUTOSEL 4.18 074/131] ARM: 8783/1: NOMMU: Extend check for
- VBAR support
-To:     Sasha Levin <Alexander.Levin@microsoft.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     Russell King <rmk+kernel@armlinux.org.uk>
-References: <20180902064601.183036-1-alexander.levin@microsoft.com>
- <20180902064601.183036-74-alexander.levin@microsoft.com>
-From:   Vladimir Murzin <vladimir.murzin@arm.com>
-Message-ID: <bb9d354b-6a8f-529e-3e62-0d250b967b1a@arm.com>
-Date:   Mon, 10 Sep 2018 10:41:43 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 10 Sep 2018 10:35:01 -0400
+Received: from outbound-smtp08.blacknight.com ([46.22.139.13]:37861 "EHLO
+        outbound-smtp08.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728093AbeIJOfA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 10:35:00 -0400
+Received: from mail.blacknight.com (pemlinmail05.blacknight.ie [81.17.254.26])
+        by outbound-smtp08.blacknight.com (Postfix) with ESMTPS id 13B1A1C313A
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 10:41:49 +0100 (IST)
+Received: (qmail 12986 invoked from network); 10 Sep 2018 09:41:48 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.229.88])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 10 Sep 2018 09:41:48 -0000
+Date:   Mon, 10 Sep 2018 10:41:47 +0100
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/4] sched/numa: Do not move imbalanced load purely on
+ the basis of an idle CPU
+Message-ID: <20180910094147.GH1719@techsingularity.net>
+References: <20180907101139.20760-1-mgorman@techsingularity.net>
+ <20180907101139.20760-5-mgorman@techsingularity.net>
+ <20180907113309.GU24106@hirez.programming.kicks-ass.net>
+ <20180907123739.GE1719@techsingularity.net>
 MIME-Version: 1.0
-In-Reply-To: <20180902064601.183036-74-alexander.levin@microsoft.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <20180907123739.GE1719@techsingularity.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/09/18 14:04, Sasha Levin wrote:
-> From: Vladimir Murzin <vladimir.murzin@arm.com>
+On Fri, Sep 07, 2018 at 01:37:39PM +0100, Mel Gorman wrote:
+> > > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > > index d59d3e00a480..d4c289c11012 100644
+> > > --- a/kernel/sched/fair.c
+> > > +++ b/kernel/sched/fair.c
+> > > @@ -1560,7 +1560,7 @@ static bool task_numa_compare(struct task_numa_env *env,
+> > >  		goto unlock;
+> > >  
+> > >  	if (!cur) {
+> > > -		if (maymove || imp > env->best_imp)
+> > > +		if (maymove)
+> > >  			goto assign;
+> > >  		else
+> > >  			goto unlock;
+> > 
+> > Srikar's patch here:
+> > 
+> >   http://lkml.kernel.org/r/1533276841-16341-4-git-send-email-srikar@linux.vnet.ibm.com
+> > 
+> > Also frobs this condition, but in a less radical way. Does that yield
+> > similar results?
 > 
-> [ Upstream commit c803ce3f18bd93b3b4a15d1da0c5b5ebc60e0b85 ]
-> 
-> ARMv8R adds support for VBAR and updates ID_PFR1 with the new filed
-> Sec_frac (bits [23:20]):
-> 
-> Security fractional field. When the Security field is 0000, determines
-> the support for features from the ARMv7 Security Extensions. Permitted
-> values are:
-> 
-> 0000 No features from the ARMv7 Security Extensions are implemented.
->      This value is not supported in ARMv8 if ID_PFR1 bits [7:4] are zero.
-> 
-> 0001 The implementation includes the VBAR, and the TCR.PD0 and TCR.PD1
->      bits.
-> 
-> 0010 As for 0001, plus the ability to access Secure or Non-secure
->      physical memory is supported.
-> 
-> All other values are reserved.
-> 
-> This field is only valid when ID_PFR1[7:4] == 0, otherwise it holds
-> the value 0000.
-> 
-> Signed-off-by: Vladimir Murzin <vladimir.murzin@arm.com>
-> Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-> Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-> ---
->  arch/arm/mm/nommu.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/mm/nommu.c b/arch/arm/mm/nommu.c
-> index 5dd6c58d653b..7d67c70bbded 100644
-> --- a/arch/arm/mm/nommu.c
-> +++ b/arch/arm/mm/nommu.c
-> @@ -53,7 +53,8 @@ static inline bool security_extensions_enabled(void)
->  {
->  	/* Check CPUID Identification Scheme before ID_PFR1 read */
->  	if ((read_cpuid_id() & 0x000f0000) == 0x000f0000)
-> -		return !!cpuid_feature_extract(CPUID_EXT_PFR1, 4);
-> +		return cpuid_feature_extract(CPUID_EXT_PFR1, 4) ||
-> +			cpuid_feature_extract(CPUID_EXT_PFR1, 20);
->  	return 0;
->  }
->  
+> I can check. I do wonder of course if the less radical approach just means
+> that automatic NUMA balancing and the load balancer simply disagree about
+> placement at a different time. It'll take a few days to have an answer as
+> the battery of workloads to check this take ages.
 > 
 
-NAK - it is not stable material.
+Tests completed over the weekend and I've found that the performance of
+both patches are very similar for two machines (both 2 socket) running a
+variety of workloads. Hence, I'm not worried about which patch gets picked
+up. However, I would prefer my own on the grounds that the additional
+complexity does not appear to get us anything. Of course, that changes if
+Srikar's tests on his larger ppc64 machines show the more complex approach
+is justified.
 
-Thanks
-Vladimir
+-- 
+Mel Gorman
+SUSE Labs
