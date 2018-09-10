@@ -3,111 +3,166 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1458DC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 20:20:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2AB3C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 20:22:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A15632086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 20:20:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A15632086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 8FE9320866
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 20:22:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FE9320866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=profihost.ag
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726683AbeIKBQK (ORCPT
+        id S1726782AbeIKBSA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 21:16:10 -0400
-Received: from mga12.intel.com ([192.55.52.136]:6543 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726121AbeIKBQJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 21:16:09 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2018 13:20:20 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,356,1531810800"; 
-   d="scan'208";a="89272266"
-Received: from ray.jf.intel.com (HELO [10.7.201.22]) ([10.7.201.22])
-  by orsmga001.jf.intel.com with ESMTP; 10 Sep 2018 13:20:06 -0700
-Subject: Re: [RFC][PATCH 3/8] x86/mm: break out user address space handling
-To:     Peter Zijlstra <peterz@infradead.org>
-References: <20180907194852.3C351B82@viggo.jf.intel.com>
- <20180907194857.93621ACE@viggo.jf.intel.com>
- <20180908093805.GO24082@hirez.programming.kicks-ass.net>
-Cc:     linux-kernel@vger.kernel.org, sean.j.christopherson@intel.com,
-        tglx@linutronix.de, x86@kernel.org, luto@kernel.org
-From:   Dave Hansen <dave.hansen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <029066e3-68e9-c6be-add2-a13b1c424818@linux.intel.com>
-Date:   Mon, 10 Sep 2018 13:20:06 -0700
+        Mon, 10 Sep 2018 21:18:00 -0400
+Received: from cloud1-vm154.de-nserver.de ([178.250.10.56]:53326 "EHLO
+        cloud1-vm154.de-nserver.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726043AbeIKBR7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 21:17:59 -0400
+Received: (qmail 4379 invoked from network); 10 Sep 2018 22:22:10 +0200
+X-Fcrdns: No
+Received: from phoffice.de-nserver.de (HELO [10.242.2.5]) (185.39.223.5)
+  (smtp-auth username hostmaster@profihost.com, mechanism plain)
+  by cloud1-vm154.de-nserver.de (qpsmtpd/0.92) with (ECDHE-RSA-AES256-GCM-SHA384 encrypted) ESMTPSA; Mon, 10 Sep 2018 22:22:10 +0200
+Subject: Re: [PATCH] mm, thp: relax __GFP_THISNODE for MADV_HUGEPAGE mappings
+To:     David Rientjes <rientjes@google.com>,
+        Michal Hocko <mhocko@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>
+References: <20180907130550.11885-1-mhocko@kernel.org>
+ <alpine.DEB.2.21.1809101253080.177111@chino.kir.corp.google.com>
+From:   Stefan Priebe - Profihost AG <s.priebe@profihost.ag>
+Message-ID: <d7389d81-f4df-f879-f646-3284189f3b7c@profihost.ag>
+Date:   Mon, 10 Sep 2018 22:22:08 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180908093805.GO24082@hirez.programming.kicks-ass.net>
+In-Reply-To: <alpine.DEB.2.21.1809101253080.177111@chino.kir.corp.google.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
+X-User-Auth: Auth by hostmaster@profihost.com through 185.39.223.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/08/2018 02:38 AM, Peter Zijlstra wrote:
->> +	/* Was the fault on kernel-controlled part of the address space? */
->> +	if (unlikely(fault_in_kernel_space(address)))
->> +		do_kern_addr_space_fault(regs, hw_error_code, address);
->> +	else
->> +		do_user_addr_space_fault(regs, hw_error_code, address);
->> +}
-> How about: do_{user,kernel}_fault() ? That _addr_space_ is just a lot of
-> typing for no real benefit imo.
+Am 10.09.2018 um 22:08 schrieb David Rientjes:
+> On Fri, 7 Sep 2018, Michal Hocko wrote:
+> 
+>> From: Michal Hocko <mhocko@suse.com>
+>>
+>> Andrea has noticed [1] that a THP allocation might be really disruptive
+>> when allocated on NUMA system with the local node full or hard to
+>> reclaim. Stefan has posted an allocation stall report on 4.12 based
+>> SLES kernel which suggests the same issue:
+>> [245513.362669] kvm: page allocation stalls for 194572ms, order:9, mode:0x4740ca(__GFP_HIGHMEM|__GFP_IO|__GFP_FS|__GFP_COMP|__GFP_NOMEMALLOC|__GFP_HARDWALL|__GFP_THISNODE|__GFP_MOVABLE|__GFP_DIRECT_RECLAIM), nodemask=(null)
+>> [245513.363983] kvm cpuset=/ mems_allowed=0-1
+>> [245513.364604] CPU: 10 PID: 84752 Comm: kvm Tainted: G        W 4.12.0+98-ph <a href="/view.php?id=1" title="[geschlossen] Integration Ramdisk" class="resolved">0000001</a> SLE15 (unreleased)
+>> [245513.365258] Hardware name: Supermicro SYS-1029P-WTRT/X11DDW-NT, BIOS 2.0 12/05/2017
+>> [245513.365905] Call Trace:
+>> [245513.366535]  dump_stack+0x5c/0x84
+>> [245513.367148]  warn_alloc+0xe0/0x180
+>> [245513.367769]  __alloc_pages_slowpath+0x820/0xc90
+>> [245513.368406]  ? __slab_free+0xa9/0x2f0
+>> [245513.369048]  ? __slab_free+0xa9/0x2f0
+>> [245513.369671]  __alloc_pages_nodemask+0x1cc/0x210
+>> [245513.370300]  alloc_pages_vma+0x1e5/0x280
+>> [245513.370921]  do_huge_pmd_wp_page+0x83f/0xf00
+>> [245513.371554]  ? set_huge_zero_page.isra.52.part.53+0x9b/0xb0
+>> [245513.372184]  ? do_huge_pmd_anonymous_page+0x631/0x6d0
+>> [245513.372812]  __handle_mm_fault+0x93d/0x1060
+>> [245513.373439]  handle_mm_fault+0xc6/0x1b0
+>> [245513.374042]  __do_page_fault+0x230/0x430
+>> [245513.374679]  ? get_vtime_delta+0x13/0xb0
+>> [245513.375411]  do_page_fault+0x2a/0x70
+>> [245513.376145]  ? page_fault+0x65/0x80
+>> [245513.376882]  page_fault+0x7b/0x80
+> 
+> Since we don't have __GFP_REPEAT, this suggests that 
+> __alloc_pages_direct_compact() took >100s to complete.  The memory 
+> capacity of the system isn't shown, but I assume it's around 768GB?  This 
+> should be with COMPACT_PRIO_ASYNC, and MIGRATE_ASYNC compaction certainly 
+> should abort much earlier.
 
-Yeah, totally, the names are long.
+Yes it's 768GB.
 
-I was just trying to make it obvious to differentiate address space from
-*mode* when the fault occurred.  I can probably do that in comments
-instead, though.
+Greets,
+Stefan
+
+>> [245513.382056] Mem-Info:
+>> [245513.382634] active_anon:126315487 inactive_anon:1612476 isolated_anon:5
+>>                  active_file:60183 inactive_file:245285 isolated_file:0
+>>                  unevictable:15657 dirty:286 writeback:1 unstable:0
+>>                  slab_reclaimable:75543 slab_unreclaimable:2509111
+>>                  mapped:81814 shmem:31764 pagetables:370616 bounce:0
+>>                  free:32294031 free_pcp:6233 free_cma:0
+>> [245513.386615] Node 0 active_anon:254680388kB inactive_anon:1112760kB active_file:240648kB inactive_file:981168kB unevictable:13368kB isolated(anon):0kB isolated(file):0kB mapped:280240kB dirty:1144kB writeback:0kB shmem:95832kB shmem_thp: 0kB shmem_pmdmapped: 0kB anon_thp: 81225728kB writeback_tmp:0kB unstable:0kB all_unreclaimable? no
+>> [245513.388650] Node 1 active_anon:250583072kB inactive_anon:5337144kB active_file:84kB inactive_file:0kB unevictable:49260kB isolated(anon):20kB isolated(file):0kB mapped:47016kB dirty:0kB writeback:4kB shmem:31224kB shmem_thp: 0kB shmem_pmdmapped: 0kB anon_thp: 31897600kB writeback_tmp:0kB unstable:0kB all_unreclaimable? no
+>>
+>> The defrag mode is "madvise" and from the above report it is clear that
+>> the THP has been allocated for MADV_HUGEPAGA vma.
+>>
+>> Andrea has identified that the main source of the problem is
+>> __GFP_THISNODE usage:
+>>
+>> : The problem is that direct compaction combined with the NUMA
+>> : __GFP_THISNODE logic in mempolicy.c is telling reclaim to swap very
+>> : hard the local node, instead of failing the allocation if there's no
+>> : THP available in the local node.
+>> :
+>> : Such logic was ok until __GFP_THISNODE was added to the THP allocation
+>> : path even with MPOL_DEFAULT.
+>> :
+>> : The idea behind the __GFP_THISNODE addition, is that it is better to
+>> : provide local memory in PAGE_SIZE units than to use remote NUMA THP
+>> : backed memory. That largely depends on the remote latency though, on
+>> : threadrippers for example the overhead is relatively low in my
+>> : experience.
+>> :
+>> : The combination of __GFP_THISNODE and __GFP_DIRECT_RECLAIM results in
+>> : extremely slow qemu startup with vfio, if the VM is larger than the
+>> : size of one host NUMA node. This is because it will try very hard to
+>> : unsuccessfully swapout get_user_pages pinned pages as result of the
+>> : __GFP_THISNODE being set, instead of falling back to PAGE_SIZE
+>> : allocations and instead of trying to allocate THP on other nodes (it
+>> : would be even worse without vfio type1 GUP pins of course, except it'd
+>> : be swapping heavily instead).
+>>
+>> Fix this by removing __GFP_THISNODE handling from alloc_pages_vma where
+>> it doesn't belong and move it to alloc_hugepage_direct_gfpmask where we
+>> juggle gfp flags for different allocation modes. The rationale is that
+>> __GFP_THISNODE is helpful in relaxed defrag modes because falling back
+>> to a different node might be more harmful than the benefit of a large page.
+>> If the user really requires THP (e.g. by MADV_HUGEPAGE) then the THP has
+>> a higher priority than local NUMA placement.
+>>
+> 
+> That's not entirely true, the remote access latency for remote thp on all 
+> of our platforms is greater than local small pages, this is especially 
+> true for remote thp that is allocated intersocket and must be accessed 
+> through the interconnect.
+> 
+> Our users of MADV_HUGEPAGE are ok with assuming the burden of increased 
+> allocation latency, but certainly not remote access latency.  There are 
+> users who remap their text segment onto transparent hugepages are fine 
+> with startup delay if they are access all of their text from local thp.  
+> Remote thp would be a significant performance degradation.
+> 
+> When Andrea brought this up, I suggested that the full solution would be a 
+> MPOL_F_HUGEPAGE flag that could define thp allocation policy -- the added 
+> benefit is that we could replace the thp "defrag" mode default by setting 
+> this as part of default_policy.  Right now, MADV_HUGEPAGE users are 
+> concerned about (1) getting thp when system-wide it is not default and (2) 
+> additional fault latency when direct compaction is not default.  They are 
+> not anticipating the degradation of remote access latency, so overloading 
+> the meaning of the mode is probably not a good idea.
+> 
