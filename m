@@ -2,92 +2,95 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29377C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:49:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55A41C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:49:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4EAB20870
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:49:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4EAB20870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 184FE2086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:49:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 184FE2086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728099AbeIJOmw (ORCPT
+        id S1728117AbeIJOnG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 10:42:52 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:60179 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726907AbeIJOmw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 10:42:52 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id DAD37208AF; Mon, 10 Sep 2018 11:49:38 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-30-219.w90-88.abo.wanadoo.fr [90.88.15.219])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 684EF208BE;
-        Mon, 10 Sep 2018 11:49:28 +0200 (CEST)
-Date:   Mon, 10 Sep 2018 11:49:27 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Andrew Lunn <andrew@lunn.ch>, Alban Bedel <albeu@free.fr>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        linux-doc <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v2 13/16] nvmem: add support for cell lookups from
- machine code
-Message-ID: <20180910114927.083e2de8@bbrezillon>
-In-Reply-To: <CAMRc=Me0bYjdmaqqxKqFkRRSNdoOgDf1A==dASz0dJAtx9BDqg@mail.gmail.com>
-References: <20180907100750.14564-1-brgl@bgdev.pl>
-        <20180907100750.14564-14-brgl@bgdev.pl>
-        <484b6ec5-cd8e-e5c5-0c5c-2f11c504ea1c@linaro.org>
-        <CAMRc=MdnSHY1ah4X3Bu55HvZcOQHxPHaFudidDA4mEOW9ZzeEg@mail.gmail.com>
-        <20180910102324.52ecd8f7@bbrezillon>
-        <c72866dd-1fb0-c765-5815-ba63d051a09b@linaro.org>
-        <CAMRc=Me0bYjdmaqqxKqFkRRSNdoOgDf1A==dASz0dJAtx9BDqg@mail.gmail.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Mon, 10 Sep 2018 10:43:06 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54184 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726907AbeIJOnG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 10:43:06 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B71A618A;
+        Mon, 10 Sep 2018 02:49:53 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 8825B3F557;
+        Mon, 10 Sep 2018 02:49:53 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id A7B1E1AE33B8; Mon, 10 Sep 2018 10:50:09 +0100 (BST)
+Date:   Mon, 10 Sep 2018 10:50:09 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arch/arm64/include/asm/jump_label.h: use
+ asm_volatile_goto
+Message-ID: <20180910095008.GB31531@arm.com>
+References: <20180909154731.GA20381@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180909154731.GA20381@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 10 Sep 2018 11:45:48 +0200
-Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-
-> 2018-09-10 10:55 GMT+02:00 Srinivas Kandagatla <srinivas.kandagatla@linaro.org>:
-> >
-> >
-> > On 10/09/18 09:23, Boris Brezillon wrote:  
-> >>
-> >> Well, if we get rid of nvmem-machine.h, the cell-lookup stuff
-> >> should go in nvmem-consumer.h not nvmem-provider.h. On the other hand,
-> >> everything that is related to cell creation should be placed in
-> >> nvmem-provider.h.  
-> >
-> > Yes, this is how it should be!
-> >  
+On Sun, Sep 09, 2018 at 05:47:31PM +0200, Miguel Ojeda wrote:
+> All other uses of "asm goto" go through asm_volatile_goto
+> (including the arm version of the same file). For consistency,
+> use it here as well.
 > 
-> Any actual reason for not putting these definitions into a separate
-> 'machine' header? This approach is currently used by gpio, pinctrl,
-> iio and regulator framework because most systems use either DT or ACPI
-> and don't need to pull in any stuff aimed at board files.
+> Cc: Nick Desaulniers <ndesaulniers@google.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+> ---
+>  arch/arm64/include/asm/jump_label.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-I'm perfectly fine with the separate header file, all I'm saying is, if
-Srinivas does not want nvmem-machine.h, definitions should be placed in
-nvmem-provider.h or nvmem-consumer.h depending on who they're meant to
-be used by (providers or consumers).
+Thanks, I'll pick this up as a fix.
+
+Will
+
+> diff --git a/arch/arm64/include/asm/jump_label.h b/arch/arm64/include/asm/jump_label.h
+> index 1b5e0e843c3a..7e2b3e360086 100644
+> --- a/arch/arm64/include/asm/jump_label.h
+> +++ b/arch/arm64/include/asm/jump_label.h
+> @@ -28,7 +28,7 @@
+>  
+>  static __always_inline bool arch_static_branch(struct static_key *key, bool branch)
+>  {
+> -	asm goto("1: nop\n\t"
+> +	asm_volatile_goto("1: nop\n\t"
+>  		 ".pushsection __jump_table,  \"aw\"\n\t"
+>  		 ".align 3\n\t"
+>  		 ".quad 1b, %l[l_yes], %c0\n\t"
+> @@ -42,7 +42,7 @@ static __always_inline bool arch_static_branch(struct static_key *key, bool bran
+>  
+>  static __always_inline bool arch_static_branch_jump(struct static_key *key, bool branch)
+>  {
+> -	asm goto("1: b %l[l_yes]\n\t"
+> +	asm_volatile_goto("1: b %l[l_yes]\n\t"
+>  		 ".pushsection __jump_table,  \"aw\"\n\t"
+>  		 ".align 3\n\t"
+>  		 ".quad 1b, %l[l_yes], %c0\n\t"
+> -- 
+> 2.17.1
+> 
