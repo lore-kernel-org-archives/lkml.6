@@ -2,87 +2,83 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5823EC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:51:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EB1DC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:53:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 062252087E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:51:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mLuSZlkF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 062252087E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 9897920870
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:53:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9897920870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729020AbeIJSpu (ORCPT
+        id S1728675AbeIJSrM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 14:45:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46624 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728110AbeIJSpt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 14:45:49 -0400
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8D5132087E;
-        Mon, 10 Sep 2018 13:51:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536587497;
-        bh=grLWO9SNv97XjpeahKkFZ6ptyvFdnnY9DMayeP5Ds8E=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=mLuSZlkFkjPp7npO/OctFj48odyrYXYiZ5FWyDecIFamq5d0+/rGwERq9pZgID+J2
-         9Au+we1fyyGV8YjB2Xps5/EN89exiTz7stsMeYzatPmqevRU2/U3yaF52T6ODNNwRt
-         jvc9CQgEAlW/LCpfJgN5R+IsOSe3nFtmlQpXizMQ=
-Received: by mail-qk1-f182.google.com with SMTP id 130-v6so14368369qkd.10;
-        Mon, 10 Sep 2018 06:51:37 -0700 (PDT)
-X-Gm-Message-State: APzg51CC+YVdsqYHFSFc3c4thNz5HHUqt7p/W74hUiLOJZkInVYlhLdj
-        DWPHS0iP7LAyThn5R8YPSc2jfIqmAUbjEPBxQg==
-X-Google-Smtp-Source: ANB0VdakuiABDqiVrpsaWHqTvtoZ+HupH0IxSoaNPd9I8LuBQXtZIon+kKU6YD1uH4X39pq2GBJLNr5pdG40PARjlLo=
-X-Received: by 2002:a37:169c:: with SMTP id 28-v6mr14778861qkw.184.1536587496785;
- Mon, 10 Sep 2018 06:51:36 -0700 (PDT)
+        Mon, 10 Sep 2018 14:47:12 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:45852 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728110AbeIJSrL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 14:47:11 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 0B42AC7984261;
+        Mon, 10 Sep 2018 21:52:55 +0800 (CST)
+Received: from [127.0.0.1] (10.177.29.68) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.399.0; Mon, 10 Sep 2018
+ 21:52:53 +0800
+Message-ID: <5B967735.1020001@huawei.com>
+Date:   Mon, 10 Sep 2018 21:52:53 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
 MIME-Version: 1.0
-References: <20180905193738.19325-1-robh@kernel.org> <20180905193738.19325-15-robh@kernel.org>
- <20180910133757.GA21593@infradead.org>
-In-Reply-To: <20180910133757.GA21593@infradead.org>
-From:   Rob Herring <robh@kernel.org>
-Date:   Mon, 10 Sep 2018 08:51:25 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJ3VG7Yr6OqKTZD16TowOksNTQkO859UNLFdyMSnS3VQQ@mail.gmail.com>
-Message-ID: <CAL_JsqJ3VG7Yr6OqKTZD16TowOksNTQkO859UNLFdyMSnS3VQQ@mail.gmail.com>
-Subject: Re: [PATCH 14/21] riscv: use for_each_of_cpu_node iterator
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-riscv@lists.infradead.org,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>
+To:     Juergen Gross <jgross@suse.com>
+CC:     <boris.ostrovsky@oracle.com>, <xen-devel@lists.xenproject.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] xen: remove unnecessary condition check before kfree
+References: <1536416318-34106-1-git-send-email-zhongjiang@huawei.com> <12d9b430-e08a-3e28-5289-028f6b395d11@suse.com>
+In-Reply-To: <12d9b430-e08a-3e28-5289-028f6b395d11@suse.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.68]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 10, 2018 at 8:38 AM Christoph Hellwig <hch@infradead.org> wrote:
+On 2018/9/10 17:52, Juergen Gross wrote:
+> On 08/09/18 16:18, zhong jiang wrote:
+>> kfree has taken null pointer into account. So just remove the
+>> condition check before kfree.
+>>
+>> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+>> ---
+>>  drivers/xen/xen-acpi-processor.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/xen/xen-acpi-processor.c b/drivers/xen/xen-acpi-processor.c
+>> index fbb9137..7e1d49e 100644
+>> --- a/drivers/xen/xen-acpi-processor.c
+>> +++ b/drivers/xen/xen-acpi-processor.c
+>> @@ -268,7 +268,7 @@ static int push_pxx_to_hypervisor(struct acpi_processor *_pr)
+>>  		pr_warn("(_PXX): Hypervisor error (%d) for ACPI CPU%u\n",
+>>  			ret, _pr->acpi_id);
+>>  err_free:
+>> -	if (!IS_ERR_OR_NULL(dst_states))
+>> +	if (!IS_ERR(dst_states))
+> This is just a change of the condition, not a removal.
 >
-> On Wed, Sep 05, 2018 at 02:37:31PM -0500, Rob Herring wrote:
-> > Use the for_each_of_cpu_node iterator to iterate over cpu nodes. This
-> > has the side effect of defaulting to iterating using "cpu" node names in
-> > preference to the deprecated (for FDT) device_type == "cpu".
-> >
-> > Cc: Palmer Dabbelt <palmer@sifive.com>
-> > Cc: Albert Ou <aou@eecs.berkeley.edu>
-> > Cc: linux-riscv@lists.infradead.org
-> > Signed-off-by: Rob Herring <robh@kernel.org>
-> > ---
-> > Please ack and I will take via the DT tree. This is dependent on the
-> > first 2 patches.
+> I don't think change is worth it.
 >
-> We have a few pending patches in this area that look like they might
-> conflict.  It might be worth to delay this one and apply it post -rc1
-> to avoid dependencies if that isn't a problem for you.
+ Fine, I just consider the duplication of function.  Of course. make sense you have said.
+ Maybe it will more clear to have the judgement.
 
-Sure. That's fine.
+ Thanks,
+ zhong jiang
+> Juergen
+>
+>
 
-Rob
+
