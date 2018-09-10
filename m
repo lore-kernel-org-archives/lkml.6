@@ -2,96 +2,82 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2167EC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:13:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF709C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:13:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF7D020881
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:13:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="C9ZbEHsG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF7D020881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 6225920870
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:13:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6225920870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728691AbeIJVIX (ORCPT
+        id S1728719AbeIJVIn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 17:08:23 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52148 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728396AbeIJVIW (ORCPT
+        Mon, 10 Sep 2018 17:08:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45350 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728137AbeIJVIn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 17:08:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=YP+cQTdRCyu7Z5q8SLU9kLg4ZY4ThJMQ0EgCZBOA+50=; b=C9ZbEHsGbjhTJXkBpAsKWVCbS
-        X1CGWqBterp+q1fL5JWgoreTravR1hY9cuk0S3nR6YWtrMhA5gGfE4qxqFRtdTG7kHwZGKtQSA5Qt
-        OsFOO5i5UtCp4W0JIwfvH93BXbNkMGwnJ5GAmANuaPOAgJDFTX2bHL8nESsf3Yuwl4ei86TVkvG+J
-        94roAFYyHEuO4aEsqcOXgTUEwgtVdzv+6nZqc3Iy+PeDlWJ/+2JBwLVUMq4+rXSD/dQFukv4kqqXQ
-        /VFbE4para4xIXoz0T/BB+x+d7a6XiqqzezI/laFwCgWKpCl104oaH2a9pi5Ey79aiu1sxTsJiC0P
-        T6ZzvwT+A==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fzOoa-0003oX-D5; Mon, 10 Sep 2018 16:13:28 +0000
-Date:   Mon, 10 Sep 2018 09:13:28 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Anup Patel <anup@brainfault.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
-        Atish Patra <atish.patra@wdc.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 3/5] irqchip: RISC-V Local Interrupt Controller Driver
-Message-ID: <20180910161328.GA13171@infradead.org>
-References: <20180906123651.28500-4-anup@brainfault.org>
- <20180906140628.GA10580@infradead.org>
- <alpine.DEB.2.21.1809081241310.1402@nanos.tec.linutronix.de>
- <20180910132924.GA6987@infradead.org>
- <alpine.DEB.2.21.1809101533330.1292@nanos.tec.linutronix.de>
- <alpine.DEB.2.21.1809101536410.1292@nanos.tec.linutronix.de>
- <20180910133902.GB21593@infradead.org>
- <alpine.DEB.2.21.1809101544560.1292@nanos.tec.linutronix.de>
- <20180910134915.GB30774@infradead.org>
- <CAAhSdy1be_ibiowifBdgBZjbHuFU=CR4rZXQDwQghVYkex5bMg@mail.gmail.com>
+        Mon, 10 Sep 2018 17:08:43 -0400
+Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 79262F73;
+        Mon, 10 Sep 2018 16:13:53 +0000 (UTC)
+Date:   Mon, 10 Sep 2018 18:13:50 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     iommu@lists.linux-foundation.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Paul Burton <paul.burton@mips.com>, linux-mips@linux-mips.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/5] dma-mapping: move the dma_coherent flag to struct
+ device
+Message-ID: <20180910161350.GA10380@kroah.com>
+References: <20180910060533.27172-1-hch@lst.de>
+ <20180910060533.27172-3-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAAhSdy1be_ibiowifBdgBZjbHuFU=CR4rZXQDwQghVYkex5bMg@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20180910060533.27172-3-hch@lst.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 10, 2018 at 07:59:15PM +0530, Anup Patel wrote:
-> > Yes.  external is chained and IPI is still handled explicitly.
-> 
-> On riscv64, there are 64 local interrupts (i.e. per-CPU interrupts).
+On Mon, Sep 10, 2018 at 08:05:30AM +0200, Christoph Hellwig wrote:
+> diff --git a/include/linux/device.h b/include/linux/device.h
+> index 8f882549edee..983506789402 100644
+> --- a/include/linux/device.h
+> +++ b/include/linux/device.h
+> @@ -927,6 +927,8 @@ struct dev_links_info {
+>   * @offline:	Set after successful invocation of bus type's .offline().
+>   * @of_node_reused: Set if the device-tree node is shared with an ancestor
+>   *              device.
+> + * @dma_coherent: this particular device is dma coherent, even if the
+> + *		architecture supports non-coherent devices.
+>   *
+>   * At the lowest level, every device in a Linux system is represented by an
+>   * instance of struct device. The device structure contains the information
+> @@ -1016,6 +1018,11 @@ struct device {
+>  	bool			offline_disabled:1;
+>  	bool			offline:1;
+>  	bool			of_node_reused:1;
+> +#if defined(CONFIG_ARCH_HAS_SYNC_DMA_FOR_DEVICE) || \
+> +    defined(CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU) || \
+> +    defined(CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU_ALL)
+> +	bool			dma_coherent:1;
+> +#endif
 
-There aren't.  There are 9 right now, which are your three below:
+It's just one bit, why not always have it enabled here?  If the arch
+uses it or doesn't, no big deal.
 
-> Three of these local interrupts have clearly defined use:
-> 1. Software interrupt (inter-processor interrupt)
-> 2. External interrupt (interrupt from PLIC)
-> 3. Timer interrupt (interrupt from per-CPU timer)
+Or are you using this to "catch" arches that mess something up?
 
-multiplied by 3 for machine, supervisor, user.
+thanks,
 
-> Other local interrupts are available for future use.
-
-The others aren't even defined as other interrupts, but just reserved
-fields.  And only one bit per privilege level would even fit into the
-encoding scheme used right now.
+greg k-h
