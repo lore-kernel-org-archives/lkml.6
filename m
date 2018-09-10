@@ -6,78 +6,85 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B05AC4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:09:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6CF0C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:09:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3601820833
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:09:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3601820833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A7E0220833
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:09:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7E0220833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728281AbeIJUEB (ORCPT
+        id S1728333AbeIJUED (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 16:04:01 -0400
-Received: from mga09.intel.com ([134.134.136.24]:50940 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728072AbeIJUEB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 16:04:01 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2018 08:09:29 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,356,1531810800"; 
-   d="scan'208";a="90452461"
-Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
-  by orsmga002.jf.intel.com with SMTP; 10 Sep 2018 08:09:10 -0700
-Received: by stinkbox (sSMTP sendmail emulation); Mon, 10 Sep 2018 18:09:10 +0300
-Date:   Mon, 10 Sep 2018 18:09:10 +0300
-From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Dou Liyang <douly.fnst@cn.fujitsu.com>,
-        Pavel Tatashin <pasha.tatashin@microsoft.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH] Revert "x86/tsc: Consolidate init code"
-Message-ID: <20180910150910.GS5565@intel.com>
-References: <20180910121925.27682-1-ville.syrjala@linux.intel.com>
- <alpine.DEB.2.21.1809101443290.1292@nanos.tec.linutronix.de>
- <20180910140710.GR5565@intel.com>
- <20180910144720.GA28349@zn.tnic>
+        Mon, 10 Sep 2018 16:04:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41316 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728072AbeIJUEC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 16:04:02 -0400
+Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5B66CD57;
+        Mon, 10 Sep 2018 15:09:30 +0000 (UTC)
+Date:   Mon, 10 Sep 2018 17:09:27 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     John Whitmore <johnfwhitmore@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org
+Subject: Re: [PATCH 20/20] staging:rtl8192u: Rename OWN - Style
+Message-ID: <20180910150927.GC25530@kroah.com>
+References: <20180831230250.16810-1-johnfwhitmore@gmail.com>
+ <20180831230250.16810-21-johnfwhitmore@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180910144720.GA28349@zn.tnic>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180831230250.16810-21-johnfwhitmore@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 10, 2018 at 04:47:20PM +0200, Borislav Petkov wrote:
-> On Mon, Sep 10, 2018 at 05:07:10PM +0300, Ville Syrjälä wrote:
-> > You're reading way too much into this. The revert is just a point to
-> > start the conversion. I've found that it's the best way to get the
-> > attention of the relevant developers. Other kind of regression
-> > reports have an unfortunate habit of disappearing into /dev/null.
+On Sat, Sep 01, 2018 at 12:02:50AM +0100, John Whitmore wrote:
+> Rename the member variable 'OWN' to 'own', this is to comply with the
+> coding standard, where variables are named in lowercase.
 > 
-> That's some strange "logic".
+> This is a simple coding style change which should have no impact on
+> runtime code execution.
 > 
-> You're sending a patch which has "[PATCH]" in the subject but now you
-> say it is not really a patch but only a way to get people's attention?!?
+> Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
+> ---
+>  drivers/staging/rtl8192u/r8192U.h      | 2 +-
+>  drivers/staging/rtl8192u/r8192U_core.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/rtl8192u/r8192U.h b/drivers/staging/rtl8192u/r8192U.h
+> index 68e82b32a88e..f963b664e221 100644
+> --- a/drivers/staging/rtl8192u/r8192U.h
+> +++ b/drivers/staging/rtl8192u/r8192U.h
+> @@ -165,7 +165,7 @@ struct tx_desc_819x_usb {
+>  	u8	last_seg:1;
+>  	u8	first_seg:1;
+>  	u8	linip:1;
+> -	u8	OWN:1;
+> +	u8	own:1;
+>  
+>  	/* DWORD 1 */
+>  	u8	TxFWInfoSize;
+> diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
+> index 911d0214b48a..4d0f70ec31ac 100644
+> --- a/drivers/staging/rtl8192u/r8192U_core.c
+> +++ b/drivers/staging/rtl8192u/r8192U_core.c
+> @@ -1558,7 +1558,7 @@ short rtl8192_tx(struct net_device *dev, struct sk_buff *skb)
+>  	/* DWORD 0 */
+>  	tx_desc->first_seg = 1;
+>  	tx_desc->last_seg = 1;
+> -	tx_desc->OWN = 1;
+> +	tx_desc->own = 1;
 
-But it is a patch, and if it happens to get accepted as is so be
-it. If not, it's a good place where to start the conversation on
-how to fix the bug in another way.
+Is this another case of a variable being set once and then never used?
 
-You guys seem to have a notion that anything which says '[PATCH]'
-is somehow final. In my book any patch is up for debate. Nothing
-special about this one in that regard.
+If so, just delete it.
 
--- 
-Ville Syrjälä
-Intel
+thanks,
+
+greg k-h
