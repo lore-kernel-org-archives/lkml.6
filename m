@@ -6,106 +6,127 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1040BC4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 07:54:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9855EC4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 07:55:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD50D20866
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 07:54:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 491BE2086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 07:55:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jSXTqMPV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD50D20866
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="COmLX/3k"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 491BE2086B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727666AbeIJMrc (ORCPT
+        id S1727730AbeIJMro (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 08:47:32 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:34956 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726148AbeIJMrb (ORCPT
+        Mon, 10 Sep 2018 08:47:44 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:45015 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727353AbeIJMro (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 08:47:31 -0400
-Received: by mail-wm0-f65.google.com with SMTP id o18-v6so20386034wmc.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 00:54:46 -0700 (PDT)
+        Mon, 10 Sep 2018 08:47:44 -0400
+Received: by mail-io1-f68.google.com with SMTP id 75-v6so6270685iou.11
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 00:54:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=6A1tFdCVNhN8Bf2/8522/65gR4zta7XMrZct/IY0Pz4=;
-        b=jSXTqMPVGWLDSwtMYEP1nhs+6xm2vp1ZO7ReLIW7svi7YZeGikVoxE0uyfY3xupnxw
-         6FuoPGGEpQ7q1Bs3uxCXZQD2B57M9r6xbi6bh86wzFDmDQuoUFVn0GhF7J0r/MEov1VC
-         iGyHn0z4tRTHzIhtyMa7DJ6I2yamvVJFBikGY=
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BAaVZfXxkxG2QPmLeC0tnHiumOVMC+J38AHY/HMfKwE=;
+        b=COmLX/3kCvi3CQ+w3GZHG/pQrOLGg9eWll6ZtljbsBguksZQxR6SreWi3vkgBgIkdB
+         QOMpdjzmBAwzVUTH3qikzUFPLccp/uVdu4FJA3RWP55aOD3lpTCd7loICLshcW+qEaad
+         vRA5rOULwICijcCRHOxWY8Y0PGmJN3hDvGk6U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=6A1tFdCVNhN8Bf2/8522/65gR4zta7XMrZct/IY0Pz4=;
-        b=AMetCENeaHwhbMSiNciMaPzCYkdIdoNSD7oRDPtG6K+kX1hiawTAA36WVmnxBRrnjL
-         wLsicGNj6UenyUwbAoFN+X9Dkp9NtbRqQvqkg/8xp1dLZ9tlSvs4IJUsQMSNHIMsFvq2
-         cLzAH6sYkjzzrQzxbGeb7wjK4kAkpwMKBRWeJ1XaKPmqnxycROva0D9WxPgNpraKkpbF
-         CE82ZfEgkuoeaVre6jyIXGwavXbUQrVoTFGFuQ5BzxQtg8ll6eu/maE8caW4OJaSu102
-         ExIFx/cxWM0NZ9+fGROP/q4rtRw0pBGAnFS2WJfCyDyl8lgAIxwBMfZioCDaRCxzL+Y2
-         nJbA==
-X-Gm-Message-State: APzg51Cl9y+BhJTy+6LLV0fmT2fWfOTx8WVmMDML0yY4p5evwC9Q9aUc
-        kzE8UC+yLH1KQ+msbG5L06bfDQ==
-X-Google-Smtp-Source: ANB0VdbIbyB0UdmjyYb/7pmIjhAWVuuEORSjXyvrisvJjLZ/3hcu8YQQGxr8CXrMoFoUS2VvWaRTgA==
-X-Received: by 2002:a1c:3545:: with SMTP id c66-v6mr12319942wma.120.1536566085688;
-        Mon, 10 Sep 2018 00:54:45 -0700 (PDT)
-Received: from [192.168.0.18] (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.googlemail.com with ESMTPSA id d22-v6sm35578030wra.80.2018.09.10.00.54.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Sep 2018 00:54:45 -0700 (PDT)
-Subject: Re: [PATCH v2 00/16] nvmem: rework of the subsystem for non-DT users
-To:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        "David S . Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Andrew Lunn <andrew@lunn.ch>, Alban Bedel <albeu@free.fr>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20180907100750.14564-1-brgl@bgdev.pl>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <da9556fd-0022-8e6a-12b4-cc3babbae5b0@linaro.org>
-Date:   Mon, 10 Sep 2018 08:54:44 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BAaVZfXxkxG2QPmLeC0tnHiumOVMC+J38AHY/HMfKwE=;
+        b=Q9mMnzgUXrFTiEBiIVCaya2gByU7+M0rDFlOnQw3n+NABa44gmcRpaL/TqkL01Spkp
+         naa4lOgFs4GhgjVW3r+oluHSz9A797nMNUwbuXEZXoBs9qmoQjSiKflmTJjCKbamUVc3
+         2tK/ZClUGco32JwbjSQHpZZ3QbSWQENNW1jIHQuz0JXJkL96ZfmGW6eSr2P7HS5qzMgr
+         GOH6jBBYq0kBL1EdhsIe911TLKKRTycZ6ARo2tDtq6rekVTvqx9b3ps6yKw/dNEAI+3B
+         6U9oLDzJyjcu43KGGUVFUqUlWGFtCF4sdtlmzzwNNhqMB7Fg3ymTxImmMo2m88MqSO/J
+         /O6Q==
+X-Gm-Message-State: APzg51Cpm/kU/oYMi87X2yf1D/MxWO4gVxTUyUSbNXRTHHYVVemB18UL
+        PL6Rtd7AbRrAsU4OCbGd8TtrDcajbR708jNUwJoUOQ==
+X-Google-Smtp-Source: ANB0VdadEvZoJBTSwZ4NMNr6G69JvSdQSPokBnY4EtK5wFDn5r9OoBjc6mBooE11trLTSQPhghVmMM0DfLEXsZKurj0=
+X-Received: by 2002:a6b:630a:: with SMTP id p10-v6mr15242517iog.175.1536566099406;
+ Mon, 10 Sep 2018 00:54:59 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180907100750.14564-1-brgl@bgdev.pl>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <cover.1526400945.git.vilhelm.gray@gmail.com> <CACRpkdbRH-Bz3BoczD+YmaSGqtoeCwtvGj4dGm8PKRKYFXTdKA@mail.gmail.com>
+ <20180905150348.GA27089@sophia>
+In-Reply-To: <20180905150348.GA27089@sophia>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 10 Sep 2018 09:54:47 +0200
+Message-ID: <CACRpkdah-CSkdmpYQ_sgOFNqXMD5mMLkmRDRBszK+twPbRNLpA@mail.gmail.com>
+Subject: Re: [PATCH v4 0/8] Introduce the for_each_set_clump macro
+To:     William Breathitt Gray <vilhelm.gray@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-arch@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Sep 5, 2018 at 5:04 PM William Breathitt Gray
+<vilhelm.gray@gmail.com> wrote:
+> On Wed, May 16, 2018 at 04:03:51PM +0200, Linus Walleij wrote:
+> >On Tue, May 15, 2018 at 6:22 PM, William Breathitt Gray
+> ><vilhelm.gray@gmail.com> wrote:
+> >
+> >> For example, suppose you would like to iterate over a 16-bit integer 4
+> >> bits at a time, skipping over 4-bit groups with no set bit, where XXXX
+> >> represents the current 4-bit group:
+> >>
+> >>     Example:        1011 1110 0000 1111
+> >>     First loop:     1011 1110 0000 XXXX
+> >>     Second loop:    1011 XXXX 0000 1111
+> >>     Third loop:     XXXX 1110 0000 1111
+> >>
+> >> Each iteration of the loop returns the next 4-bit group that has at
+> >> least one set bit.
+> >>
+> >> The for_each_set_clump macro has six parameters:
+> >>
+> >>     * clump: set to current clump index for the iteration
+> >>     * index: set to current bitmap word index for the iteration
+> >>     * offset: bits offset of the found clump in the bitmap word
+> >>     * bits: bitmap to search within
+> >>     * size: bitmap size in number of clumps
+> >>     * clump_size: clump size in number of bits
+> >>
+> >> The clump_size argument can be an arbitrary number of bits and is not
+> >> required to be a multiple of 2.
+> >
+> >I must say I'm impressed. Very nice arithmetics going on there.
+> >
+> >If I can get some ACK for the bitops patch I'd be happy to merge
+> >it all through the GPIO tree. The users are pretty clear cut.
+> >
+> >BTW: if I could, I would pull out Donald Knuth's "The Art of Computer
+> >Programming vol 4A" chapter 7.1.3 "Bitwise Tricks and Techniques"
+> >to see what he has to say about the subject, but I don't have
+> >that book as it turns out.
+> >
+> >Yours,
+> >Linus Walleij
+>
+> Hi Linus,
+>
+> I'd like to get this patchset merged, but I'm aware that we haven't yet
+> received additional ACKs in the past couple months. Are there any
+> changes you would like made, or should I resubmit this patchset with
+> additional CCs in the hopes of some ACKs for the bitops patch?
 
+It seems Andy wanted some time and he had ~4 months now
+so either he forgot it or has way too much to do.
 
-On 07/09/18 11:07, Bartosz Golaszewski wrote:
-> Next three patches improve the framework by adding a notifier chain
-> for future use and fixing the issue with nvmem device names.
-> 
-> Finally we add support for cell definitions, cell lookups and make
-> DT systems resolve the nvmem cells during provider's registration.
-> 
-> Last patches just use the SPDX license identifiers and make the
-> naming convention for some arguments more consistent.
-Please send separate series for fixes and things that do not depend on 
-this new apis or Order/place them at the end of the series.
+I would say send this patch to Andrew Morton (the bitops patches)
+so he can decide on it. He has the right bird's eye view on this
+kind of things.
 
-This can help reviewer when there is large number of patches in series 
-with unrelated subject.
-
--s-rini
-
-
+Yours,
+Linus Walleij
