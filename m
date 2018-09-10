@@ -1,184 +1,75 @@
 Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.0 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F492C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:11:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D28C5C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:13:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85B2920854
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:11:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7543820854
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:13:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rAMVaE7C"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85B2920854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="L1Nk69hR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7543820854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727384AbeIJLES (ORCPT
+        id S1727419AbeIJLGC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 07:04:18 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:52341 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726185AbeIJLES (ORCPT
+        Mon, 10 Sep 2018 07:06:02 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:50164 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726738AbeIJLGC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 07:04:18 -0400
-Received: by mail-wm0-f67.google.com with SMTP id y139-v6so20043323wmc.2
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Sep 2018 23:11:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ASe+7aPSALyJ1urFwSG4W5RbcgnSurf38LZO4NvJtIo=;
-        b=rAMVaE7CeSzOfbN8DXX2y9MKCa6T90jBhIdKkc7YcXeHvmYuW8ZeecZAPlB8/+5txm
-         AYRIz6Q4zW/li6oMqdos+qww715SrPMeFIBhtI3QlZ3exZKMu9yrmEMuOTPMUz6xTO8H
-         cCiNgJ3rowfCjAgbNmkOa6MPeIMKPhMNJJWxfC9IJw5gSGPHlmAiJYM8+7/k80/p+sZY
-         qw38xWrwx8rVhW5V6FW8w+6Hb/V8UKLyjpb3/JU+2SE7qU7bjlxngnvvsqSOv+Gnhk7R
-         NTxotDjigX+XlZCZEwGvoZyvQsMYQOA18V6JP+1lUIe3yq6/WTNgxcYHZ9QJum6xU6bb
-         NZKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ASe+7aPSALyJ1urFwSG4W5RbcgnSurf38LZO4NvJtIo=;
-        b=AvbeefcLOgdML6AyNx51g4dnbKgCvFdnfrpq9kj89npqczXuTpjv5dll31QL7GgAtv
-         5SJCsU6wahp4jr1CSuKR/M9OnVawmrMSihEFt7xYj/9Z61VhqqoQmtmkU/Py/TAYGvbL
-         ZSI73cmDG2Ns+1RDQwD+dBbSfyV0DBt+ULYo9UooDGt34mj5XsYOCM0AodWGYsB0XXrM
-         G+SswpP3dZjh2FTBjejW5MGkE7FoAMkC2LvybxgqK3IkzYcPUH9pwUB6F882Pma8uwxK
-         21VjaLN1R/X8gcwyyHSllg+vt+E8mTuH+1ovi9V643BEPsnAhx3jl7PglvOYyQue9hJ3
-         CcDQ==
-X-Gm-Message-State: APzg51DgospBHnAf79fPXNrWzvgk0x2itXyIljp7Lp0pnkoHY0+KJJ9u
-        KRhoBr+2iLBkrFRylEDj1Qw=
-X-Google-Smtp-Source: ANB0Vdal6CPGfj3xHPBLAXO7vFGXehUtAzQxFVtS7NabX47n57S0aOIohuKJ87Nd/4KsWO7Wrw/9IA==
-X-Received: by 2002:a1c:1f50:: with SMTP id f77-v6mr12866941wmf.52.1536559913905;
-        Sun, 09 Sep 2018 23:11:53 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id a37-v6sm33103378wrc.21.2018.09.09.23.11.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 09 Sep 2018 23:11:53 -0700 (PDT)
-Date:   Mon, 10 Sep 2018 08:11:51 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Baoquan He <bhe@redhat.com>
-Cc:     tglx@linutronix.de, hpa@zytor.com, thgarnie@google.com,
-        kirill.shutemov@linux.intel.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH v2 2/3] x86/mm/KASLR: Calculate the actual size of
- vmemmap region
-Message-ID: <20180910061151.GA85199@gmail.com>
-References: <20180909124946.17988-1-bhe@redhat.com>
- <20180909124946.17988-2-bhe@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180909124946.17988-2-bhe@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Mon, 10 Sep 2018 07:06:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Message-Id:Date:Subject:Cc:To:From:
+        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=LF/RVzydT85TdtMP30KdU84VHvQAajvv9eAJXw6hL6E=; b=L1Nk69hRbc4fzE5I0mCfd/s2M
+        2fBeJeuffAqiekkstITjrvjPs8EB8bZZuguHy2EyLSxJ6ljC5SNdvJ9ZSwjlafVFNqut+DCm5Q4mA
+        m0agG7QfJmmShn2Jd2VfFhQdnJAoTcv+0JtD4ygirZknhg3Qs+onzS0fyhADvPXZdjiI6EG87q9re
+        08hnsCwrfMxALM1ZBktFCk4wbRdLnSWRlWLrhNqtuWhQrD2P8Z85+8liHBvAMLBYCVnTEdYSWxgPk
+        6vfKyhtROHAy9D7UEG+zvLfwUVYw3yovmq0iCyY6nS8klIa0HnZbzmxDzKO7EjFbw2AhjggIfniCP
+        4MaL/xecg==;
+Received: from 213-225-3-213.nat.highway.a1.net ([213.225.3.213] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fzFS2-00021r-Qi; Mon, 10 Sep 2018 06:13:35 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     iommu@lists.linux-foundation.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: dma_get_required_mask tidyups
+Date:   Mon, 10 Sep 2018 08:13:29 +0200
+Message-Id: <20180910061332.28187-1-hch@lst.de>
+X-Mailer: git-send-email 2.18.0
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi all,
 
-* Baoquan He <bhe@redhat.com> wrote:
+the dma_get_required_mask dma API implementation has always been a little
+odd, in that we by default don't wire it up struct dma_map_ops, but
+instead hard code a default implementation.  powerpc and ia64 override
+this default and either call a method or otherwise duplicate the default.
 
-> Vmemmap region has different maximum size depending on paging mode.
-> Now its size is hardcoded as 1TB in memory KASLR, this is not
-> right for 5-level paging mode. It will cause overflow if vmemmap
-> region is randomized to be adjacent to cpu_entry_area region and
-> its actual size is bigger than 1TB.
-> 
-> So here calculate how many TB by the actual size of vmemmap region
-> and align up to 1TB boundary.
-> 
-> Signed-off-by: Baoquan He <bhe@redhat.com>
-> ---
->  arch/x86/mm/kaslr.c | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
-> index 0988971069c9..1db8e166455e 100644
-> --- a/arch/x86/mm/kaslr.c
-> +++ b/arch/x86/mm/kaslr.c
-> @@ -51,7 +51,7 @@ static __initdata struct kaslr_memory_region {
->  } kaslr_regions[] = {
->  	{ &page_offset_base, 0 },
->  	{ &vmalloc_base, 0 },
-> -	{ &vmemmap_base, 1 },
-> +	{ &vmemmap_base, 0 },
->  };
->  
->  /* Get size in bytes used by the memory region */
-> @@ -77,6 +77,7 @@ void __init kernel_randomize_memory(void)
->  	unsigned long rand, memory_tb;
->  	struct rnd_state rand_state;
->  	unsigned long remain_entropy;
-> +	unsigned long vmemmap_size;
->  
->  	vaddr_start = pgtable_l5_enabled() ? __PAGE_OFFSET_BASE_L5 : __PAGE_OFFSET_BASE_L4;
->  	vaddr = vaddr_start;
-> @@ -108,6 +109,14 @@ void __init kernel_randomize_memory(void)
->  	if (memory_tb < kaslr_regions[0].size_tb)
->  		kaslr_regions[0].size_tb = memory_tb;
->  
-> +	/*
-> +	 * Calculate how many TB vmemmap region needs, and align to
-> +	 * 1TB boundary.
-> +	 * */
-
-Yeah, so that's not the standard comment style ...
-
-> +	vmemmap_size = (kaslr_regions[0].size_tb << (TB_SHIFT - PAGE_SHIFT)) *
-> +		sizeof(struct page);
-> +	kaslr_regions[2].size_tb = DIV_ROUND_UP(vmemmap_size, 1UL << TB_SHIFT);
-
-So I tried to review what all this code does, and the comments aren't too great to explain the 
-concepts.
-
-For example:
-
-/*
- * Memory regions randomized by KASLR (except modules that use a separate logic
- * earlier during boot). The list is ordered based on virtual addresses. This
- * order is kept after randomization.
- */
-static __initdata struct kaslr_memory_region {
-        unsigned long *base;
-        unsigned long size_tb;
-} kaslr_regions[] = {
-        { &page_offset_base, 0 },
-        { &vmalloc_base, 0 },
-        { &vmemmap_base, 1 },
-};
-
-So I get the part where the 'base' pointer is essentially pointers to various global variables 
-used by the MM to get the virtual base address of the kernel, vmalloc and vmemmap areas from, 
-which base addresses can thus be modified by the very early KASLR code to dynamically shape the 
-virtual memory layout of these kernel memory areas on a per bootup basis.
-
-(BTW., that would be a great piece of information to add for the uninitiated. It's not like 
-it's obvious!)
-
-But what does 'size_tb' do? Nothing explains it and your patch doesn't make it clearer either. 
-Also, get_padding() looks like an unnecessary layer of obfuscation:
-
-/* Get size in bytes used by the memory region */
-static inline unsigned long get_padding(struct kaslr_memory_region *region)
-{
-        return (region->size_tb << TB_SHIFT);
-}
-
-It's used only twice and we do bit shifts in the parent function anyway so it's not like it's 
-hiding some uninteresting detail. (The style ugliness of the return statement makes it annoying 
-as well.)
-
-So could we please first clean up this code, explain it properly, name the fields properly, 
-etc., before modifying it? Because it still looks unnecessarily hard to review. I.e. this early 
-boot code needs improvements of quality and neither the base code nor your patches give me the 
-impression of carefully created, easy to maintain code.
-
-Thanks,
-
-	Ingo
+This series always enabled the method and just falls back to the previous
+default implementation when it is not available, as well as fixing up
+a few bits in the default implementations.  This already allows removing
+the ia64 override of the implementation, and will also allow to remove
+the powerpc one together with a few additional cleanups in the powerpc
+code, but those will be sent separately with other powerpc DMA API
+patches.  Last but not least the method will allow us to return a more
+sensible value for typical iommu dma_ops eventually, but that is left
+to another series as well.
