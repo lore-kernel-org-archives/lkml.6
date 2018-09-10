@@ -2,148 +2,116 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 568E2C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:19:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22CC4C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:19:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05AE320892
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:19:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05AE320892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id D03FF20833
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:19:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="ZYXl7Edu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D03FF20833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728409AbeIJUOI (ORCPT
+        id S1728481AbeIJUOU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 16:14:08 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59322 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728101AbeIJUOI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 16:14:08 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9CB7B18A;
-        Mon, 10 Sep 2018 08:19:33 -0700 (PDT)
-Received: from [10.4.12.131] (e110467-lin.emea.arm.com [10.4.12.131])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 58D3D3F557;
-        Mon, 10 Sep 2018 08:19:32 -0700 (PDT)
-Subject: Re: [PATCH 2/5] dma-mapping: move the dma_coherent flag to struct
- device
-To:     Christoph Hellwig <hch@lst.de>, iommu@lists.linux-foundation.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-mips@linux-mips.org, linux-kernel@vger.kernel.org
-References: <20180910060533.27172-1-hch@lst.de>
- <20180910060533.27172-3-hch@lst.de>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <71ec3eef-54c1-f692-5a17-4302c4dd4b05@arm.com>
-Date:   Mon, 10 Sep 2018 16:19:30 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 10 Sep 2018 16:14:20 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48840 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728101AbeIJUOU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 16:14:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=1o0MykD3OH18lEqlIxxUNdiwB8tDxqzb21rjViU0H4k=; b=ZYXl7EduEvx2e9WdJLITy8rhn
+        ERnQxN/w8QeK8y/Plx63WxcQUy0VapbTWNMfRo7B3pRATLSfdXQe34FoTnvzWB2hOo/ckweV1Vidw
+        43mYGA/o/l+JsSbuP+wf0qdutkr5AlwbnVAKgw6UxGerLQykdkKG1nX28WWai627lXPao=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fzNyK-00025e-3I; Mon, 10 Sep 2018 15:19:28 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 797271122D51; Mon, 10 Sep 2018 16:19:26 +0100 (BST)
+Date:   Mon, 10 Sep 2018 16:19:26 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Shawn Guo <shawnguo@kernel.org>
+Cc:     Oleksij Rempel <o.rempel@pengutronix.de>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        kernel@pengutronix.de, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Russell King <linux@armlinux.org.uk>, linux-imx@nxp.com,
+        yibin.gong@nxp.com, "A.s. Dong" <aisheng.dong@nxp.com>
+Subject: Re: [PATCH v9 3/6] kernel/reboot.c: export pm_power_off_prepare
+Message-ID: <20180910151926.GA10889@sirena.org.uk>
+References: <20180802103425.3053-1-o.rempel@pengutronix.de>
+ <20180802103425.3053-4-o.rempel@pengutronix.de>
+ <20180802104443.GH9117@sirena.org.uk>
+ <94d48ecb-7302-c7ed-e815-730be0426a04@pengutronix.de>
+ <20180802113552.GJ9117@sirena.org.uk>
+ <20180827014815.GD29208@dragon>
+ <20180906101516.GA5360@sirena.org.uk>
+ <20180909020021.GA18838@dragon>
 MIME-Version: 1.0
-In-Reply-To: <20180910060533.27172-3-hch@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="G4iJoqBmSsgzjUCe"
+Content-Disposition: inline
+In-Reply-To: <20180909020021.GA18838@dragon>
+X-Cookie: You must be present to win.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/09/18 07:05, Christoph Hellwig wrote:
-> Various architectures support both coherent and non-coherent dma on a
-> per-device basis.  Move the dma_noncoherent flag from the mips archdata
-> field to struct device proper to prepare the infrastructure for reuse on
-> other architectures.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Acked-by: Paul Burton <paul.burton@mips.com>
-> ---
 
-[...]
-> diff --git a/include/linux/device.h b/include/linux/device.h
-> index 8f882549edee..983506789402 100644
-> --- a/include/linux/device.h
-> +++ b/include/linux/device.h
-> @@ -927,6 +927,8 @@ struct dev_links_info {
->    * @offline:	Set after successful invocation of bus type's .offline().
->    * @of_node_reused: Set if the device-tree node is shared with an ancestor
->    *              device.
-> + * @dma_coherent: this particular device is dma coherent, even if the
-> + *		architecture supports non-coherent devices.
->    *
->    * At the lowest level, every device in a Linux system is represented by an
->    * instance of struct device. The device structure contains the information
-> @@ -1016,6 +1018,11 @@ struct device {
->   	bool			offline_disabled:1;
->   	bool			offline:1;
->   	bool			of_node_reused:1;
-> +#if defined(CONFIG_ARCH_HAS_SYNC_DMA_FOR_DEVICE) || \
-> +    defined(CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU) || \
-> +    defined(CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU_ALL)
+--G4iJoqBmSsgzjUCe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-If we're likely to refer to it more than once, is it worth wrapping that 
-condition up in something like ARCH_HAS_NONCOHERENT_DMA?
+On Sun, Sep 09, 2018 at 10:00:23AM +0800, Shawn Guo wrote:
+> On Thu, Sep 06, 2018 at 11:15:17AM +0100, Mark Brown wrote:
 
-> +	bool			dma_coherent:1;
-> +#endif
->   };
->   
->   static inline struct device *kobj_to_dev(struct kobject *kobj)
-> diff --git a/include/linux/dma-noncoherent.h b/include/linux/dma-noncoherent.h
-> index a0aa00cc909d..69630ec320be 100644
-> --- a/include/linux/dma-noncoherent.h
-> +++ b/include/linux/dma-noncoherent.h
-> @@ -4,6 +4,22 @@
->   
->   #include <linux/dma-mapping.h>
->   
-> +#ifdef CONFIG_ARCH_HAS_DMA_COHERENCE_H
-> +#include <asm/dma-coherence.h>
-> +#elif defined(CONFIG_ARCH_HAS_SYNC_DMA_FOR_DEVICE) || \
-> +	defined(CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU) || \
-> +	defined(CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU_ALL)
-> +static inline int dev_is_dma_coherent(struct device *dev)
+> > I was expecting to get a pull request with the precursor patches in it -
+> > the regulator driver seems to get a moderate amount of development so
+> > there's a reasonable risk of conflicts.
 
-Given that it's backed by a bool and used as a bool everywhere, this 
-(and its equivalents) should probably return a bool ;)
+> What about you create a stable topic branch for regulator patches and I
+> pull it into IMX tree?
 
-> +{
-> +	return dev->dma_coherent;
-> +}
-> +#else
-> +static inline int dev_is_dma_coherent(struct device *dev)
-> +{
-> +	return true;
-> +}
-> +#endif /* CONFIG_ARCH_HAS_DMA_COHERENCE_H */
-> +
->   void *arch_dma_alloc(struct device *dev, size_t size, dma_addr_t *dma_handle,
->   		gfp_t gfp, unsigned long attrs);
->   void arch_dma_free(struct device *dev, size_t size, void *cpu_addr,
-> diff --git a/kernel/dma/Kconfig b/kernel/dma/Kconfig
-> index 9bd54304446f..040859ac2a56 100644
-> --- a/kernel/dma/Kconfig
-> +++ b/kernel/dma/Kconfig
-> @@ -13,6 +13,9 @@ config NEED_DMA_MAP_STATE
->   config ARCH_DMA_ADDR_T_64BIT
->   	def_bool 64BIT || PHYS_ADDR_T_64BIT
->   
-> +config ARCH_HAS_DMA_COHERENCE_H
-> +	bool
+Sure, I can send a pull request back but the first two patches in the
+series are ARM ones - are you OK with me just applying them and sending
+them in the pull request or do you want to apply them first?
 
-This seems a little crude - is it unbearably churny to make an 
-asm-generic/dma-coherence.h implementation for everyone else?
+--G4iJoqBmSsgzjUCe
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Nits aside, this otherwise looks sane to me for factoring out the 
-equivalent Xen and arm64 DMA ops cases.
+-----BEGIN PGP SIGNATURE-----
 
-Robin.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAluWi30ACgkQJNaLcl1U
+h9DfjQf+Mzg14+HDipidgPh6Bdg+IJD1Nj7k+nkPf1Swd7eZoS05uU8JnDGs2EPD
+xNvyzY4s12YQUOt5PwoTsQqa78Qi4VlkyQ64alwucoTZAqr49ohIThUfst/igMXP
+7GydiWcdwcGyxgecT45qT9AU/sULkb0ygCdTgUL4Jnhcy5D2YZGeWOc7PFQ2kI4j
+GDyXyQGJTGq4kSmKLtZPyyshFYcfjc/ICzU9gt8e0SerwSD5HcK/ZAleF/9HRK22
+QqSg/Z4BPi1Q1dWXJcwD4QdHC+0FRLQPCOIQx20GPgOuW0hNavALc55scwkdmMgg
+9t9K8G+F9Y9TjZvYapu910gdzOriJA==
+=y7uB
+-----END PGP SIGNATURE-----
 
-> +
->   config HAVE_GENERIC_DMA_COHERENT
->   	bool
->   
-> 
+--G4iJoqBmSsgzjUCe--
