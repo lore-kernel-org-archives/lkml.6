@@ -2,160 +2,128 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEF3BC43143
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 23:27:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 933A3C43143
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 23:30:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EB5A20865
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 23:27:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EB5A20865
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 3172F206BB
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 23:30:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dFXeI7Ws"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3172F206BB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726305AbeIKEXj (ORCPT
+        id S1726426AbeIKE1O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 00:23:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55988 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726143AbeIKEXj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 00:23:39 -0400
-Received: from home.goodmis.org (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E3124206BB;
-        Mon, 10 Sep 2018 23:27:14 +0000 (UTC)
-Date:   Mon, 10 Sep 2018 19:27:12 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Peter Rosin <peda@axentia.se>
-Cc:     linux-kernel@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-i2c@vger.kernel.org, Peter Chang <dpf@google.com>,
-        Deepa Dinamani <deepadinamani@google.com>,
-        John Sperbeck <jsperbeck@google.com>
-Subject: Re: [PATCH v4 1/2] rtmutex: allow specifying a subclass for nested
- locking
-Message-ID: <20180910232712.fcpdfaagm4xdb24n@home.goodmis.org>
-References: <20180720083914.1950-1-peda@axentia.se>
- <20180720083914.1950-2-peda@axentia.se>
+        Tue, 11 Sep 2018 00:27:14 -0400
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:42461 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726143AbeIKE1O (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 00:27:14 -0400
+Received: by mail-yb1-f195.google.com with SMTP id j8-v6so8634676ybg.9
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 16:30:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=NcJTiVda9qNLkIcK6ilDi4YUjY23ckcR220NYasT/7I=;
+        b=dFXeI7WstUtnaOoeKX4qnTmMVKYrX4z6q1smOuZGBbrYZyIEl42CxRpxAuS3atHKaD
+         bdBtbUkyvquwkzqghp7X3QfWmfXXaNpiuKgo+3dV/ey11cPXnKLg0JiaEeyJejcH20Ze
+         spx4FaoC11dWvOXMTFUSd3EzrVctLkvCx38C4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=NcJTiVda9qNLkIcK6ilDi4YUjY23ckcR220NYasT/7I=;
+        b=HU4gK649m/Y+3nZVGvtNoSFNBLXDFkLqHwZWvVM5J3rfI54VGlknFAiWDehXrGYvl9
+         sT1o1HCcaRe32I0xTiVItG3qFnIu+1yXUCSYgmw2/FDJTWe66JTUshgn1uMZE77Z4BWQ
+         DdmFlML3IQ2keeVehzga6IZ4X+N06s2f7hYYpDQPjqzc2ICL1MVbSPP+pofryWFjZgoN
+         2yl8x2Sxa3d0vGKkYiDWUVRpQyJsXCdDFc/B1Q1eGd4MDOTdBdYIYgPbhsa9xEiR018E
+         d2NiAKkuJrgjEuf1n0QcA2xPp5eI3NGymMojaDN5B0HRMm8amC62KnI/dHnhcR9o3BUP
+         y4tg==
+X-Gm-Message-State: APzg51CfyTif9DxJ4qfh18r8+den2il+P0jqAnbRpQaC1+OLzJif6ey0
+        o1VIFj0dzmKFctCQyZjiiWrrj+nkLVE=
+X-Google-Smtp-Source: ANB0VdakzAMEePUoeBNJYcS/xXjcqAeTnAGZyF7RsikyU01ZEx/ClNCOR+fk1cHzLLzI6GPDKg/Qyg==
+X-Received: by 2002:a25:a4c8:: with SMTP id g66-v6mr11278808ybi.76.1536622249723;
+        Mon, 10 Sep 2018 16:30:49 -0700 (PDT)
+Received: from mail-yw1-f48.google.com (mail-yw1-f48.google.com. [209.85.161.48])
+        by smtp.gmail.com with ESMTPSA id d6-v6sm5743303ywa.85.2018.09.10.16.30.47
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Sep 2018 16:30:48 -0700 (PDT)
+Received: by mail-yw1-f48.google.com with SMTP id n21-v6so8532019ywh.5
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 16:30:47 -0700 (PDT)
+X-Received: by 2002:a81:1194:: with SMTP id 142-v6mr11699570ywr.168.1536622247298;
+ Mon, 10 Sep 2018 16:30:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180720083914.1950-2-peda@axentia.se>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Received: by 2002:a25:5f04:0:0:0:0:0 with HTTP; Mon, 10 Sep 2018 16:30:46
+ -0700 (PDT)
+In-Reply-To: <20180910223723.25357-1-labbott@redhat.com>
+References: <20180910223723.25357-1-labbott@redhat.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 10 Sep 2018 16:30:46 -0700
+X-Gmail-Original-Message-ID: <CAGXu5j+-RNeEr+FUc6maamvzYpY7W0VJ-yYGDHnFTuNPeOUMFw@mail.gmail.com>
+Message-ID: <CAGXu5j+-RNeEr+FUc6maamvzYpY7W0VJ-yYGDHnFTuNPeOUMFw@mail.gmail.com>
+Subject: Re: [PATCH] scsi: ibmvscsis: Fix a stringop-overflow warning
+To:     Laura Abbott <labbott@redhat.com>
+Cc:     "Bryant G. Ly" <bryantly@linux.vnet.ibm.com>,
+        Michael Cyr <mikecyr@linux.vnet.ibm.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org,
+        target-devel <target-devel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Prarit Bhargava <prarit@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I just noticed this patch because it conflicted with the PREEMPT_RT v4.14
-patch.
-
-On Fri, Jul 20, 2018 at 10:39:13AM +0200, Peter Rosin wrote:
-> Needed for annotating rt_mutex locks.
-> 
-> Tested-by: John Sperbeck <jsperbeck@google.com>
-> Signed-off-by: Peter Rosin <peda@axentia.se>
+On Mon, Sep 10, 2018 at 3:37 PM, Laura Abbott <labbott@redhat.com> wrote:
+> There's currently a warning about string overflow with strncat:
+>
+> drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c: In function 'ibmvscsis_probe':
+> drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c:3479:2: error: 'strncat' specified
+> bound 64 equals destination size [-Werror=stringop-overflow=]
+>   strncat(vscsi->eye, vdev->name, MAX_EYE);
+>   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>
+> Switch to using strlcat which correctly accounts for lengths that
+> are equal to the destination buffer.
+>
+> Signed-off-by: Laura Abbott <labbott@redhat.com>
 > ---
->  include/linux/rtmutex.h  |  7 +++++++
->  kernel/locking/rtmutex.c | 29 +++++++++++++++++++++++++----
->  2 files changed, 32 insertions(+), 4 deletions(-)
-> 
-> diff --git a/include/linux/rtmutex.h b/include/linux/rtmutex.h
-> index 1b92a28dd672..6fd615a0eea9 100644
-> --- a/include/linux/rtmutex.h
-> +++ b/include/linux/rtmutex.h
-> @@ -106,7 +106,14 @@ static inline int rt_mutex_is_locked(struct rt_mutex *lock)
->  extern void __rt_mutex_init(struct rt_mutex *lock, const char *name, struct lock_class_key *key);
->  extern void rt_mutex_destroy(struct rt_mutex *lock);
->  
-> +#ifdef CONFIG_DEBUG_LOCK_ALLOC
-> +extern void rt_mutex_lock_nested(struct rt_mutex *lock, unsigned int subclass);
-> +#define rt_mutex_lock(lock) rt_mutex_lock_nested(lock, 0)
-> +#else
->  extern void rt_mutex_lock(struct rt_mutex *lock);
-> +#define rt_mutex_lock_nested(lock, subclass) rt_mutex_lock(lock)
-> +#endif
-> +
->  extern int rt_mutex_lock_interruptible(struct rt_mutex *lock);
->  extern int rt_mutex_timed_lock(struct rt_mutex *lock,
->  			       struct hrtimer_sleeper *timeout);
-> diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
-> index 4f014be7a4b8..2823d4163a37 100644
-> --- a/kernel/locking/rtmutex.c
-> +++ b/kernel/locking/rtmutex.c
-> @@ -1465,6 +1465,29 @@ rt_mutex_fastunlock(struct rt_mutex *lock,
->  		rt_mutex_postunlock(&wake_q);
->  }
->  
-> +static inline void __rt_mutex_lock(struct rt_mutex *lock, unsigned int subclass)
-> +{
-> +	might_sleep();
-> +
-> +	mutex_acquire(&lock->dep_map, subclass, 0, _RET_IP_);
-> +	rt_mutex_fastlock(lock, TASK_UNINTERRUPTIBLE, rt_mutex_slowlock);
-> +}
-> +
-> +#ifdef CONFIG_DEBUG_LOCK_ALLOC
-> +/**
-> + * rt_mutex_lock_nested - lock a rt_mutex
-> + *
-> + * @lock: the rt_mutex to be locked
-> + * @subclass: the lockdep subclass
-> + */
-> +void __sched rt_mutex_lock_nested(struct rt_mutex *lock, unsigned int subclass)
-> +{
-> +	__rt_mutex_lock(lock, subclass);
-> +}
-> +EXPORT_SYMBOL_GPL(rt_mutex_lock_nested);
+>  drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c b/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
+> index fac377320158..53d344d8dc43 100644
+> --- a/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
+> +++ b/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
+> @@ -3475,7 +3475,7 @@ static int ibmvscsis_probe(struct vio_dev *vdev,
+>                 vscsi->dds.window[REMOTE].liobn);
+>
+>         strcpy(vscsi->eye, "VSCSI ");
+> -       strncat(vscsi->eye, vdev->name, MAX_EYE);
+> +       strlcat(vscsi->eye, vdev->name, MAX_EYE);
 
+Can this just get switched to snprintf() instead?
 
-> +#endif
-> +
-> +#ifndef CONFIG_DEBUG_LOCK_ALLOC
+snprintf(vscsi->eye, sizeof(vscsi->eye), "VSCSI%s", vdev->name);
 
-Why this:
+>         vscsi->dds.unit_id = vdev->unit_address;
+>         strncpy(vscsi->dds.partition_name, partition_name,
 
-#ifdef CONFIG_DEBUG_LOCK_ALLOC
-[..]
-#endif
+And does this strncpy need a NUL-termination and/or trailing padding?
 
-#ifndef CONFIG_DEBUG_LOCK_ALLOC
-[..]
-#endif
+-Kees
 
-???
-
-This should use #else.
-
--- Steve
-
-
->  /**
->   * rt_mutex_lock - lock a rt_mutex
->   *
-> @@ -1472,12 +1495,10 @@ rt_mutex_fastunlock(struct rt_mutex *lock,
->   */
->  void __sched rt_mutex_lock(struct rt_mutex *lock)
->  {
-> -	might_sleep();
-> -
-> -	mutex_acquire(&lock->dep_map, 0, 0, _RET_IP_);
-> -	rt_mutex_fastlock(lock, TASK_UNINTERRUPTIBLE, rt_mutex_slowlock);
-> +	__rt_mutex_lock(lock, 0);
->  }
->  EXPORT_SYMBOL_GPL(rt_mutex_lock);
-> +#endif
->  
->  /**
->   * rt_mutex_lock_interruptible - lock a rt_mutex interruptible
-> -- 
-> 2.11.0
+-- 
+Kees Cook
+Pixel Security
