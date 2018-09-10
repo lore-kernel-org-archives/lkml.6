@@ -1,166 +1,184 @@
 Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.0 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBBE3C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:10:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F492C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:11:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88A0C20854
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:10:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85B2920854
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:11:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZBYP8/QO";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="D1Toa8C0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88A0C20854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rAMVaE7C"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85B2920854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727675AbeIJLC1 (ORCPT
+        id S1727384AbeIJLES (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 07:02:27 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:59592 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726185AbeIJLC1 (ORCPT
+        Mon, 10 Sep 2018 07:04:18 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:52341 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726185AbeIJLES (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 07:02:27 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id E7D90606DD; Mon, 10 Sep 2018 06:10:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536559803;
-        bh=RN1eVSrMzYYfKNRJmGAJwgtrET0Fp6BzGtc2y64hDiU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ZBYP8/QOFRP5IE5sk7T/pr9Y/FSR35X88hnH19tie1sMGmeC+wCdiGLIHSijLRhi0
-         qlm1zjuv2eajAKew4LLB2+Wb6Qz7AnI02cYc92pwhuNiBwBUi/XDWEYpX4FTSB3RtW
-         icQxakOH2O70L8++tvn/BbEwyPeKr36uxxGd+lSI=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 790E360594;
-        Mon, 10 Sep 2018 06:10:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536559802;
-        bh=RN1eVSrMzYYfKNRJmGAJwgtrET0Fp6BzGtc2y64hDiU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=D1Toa8C05jHMWSjGP7cKjd2SAAUb3BZiOWMZyO/sg2w8ja67QjO/FV3Sx9qrC/bsJ
-         OiAml233BV7ZcTLOObeZHmKuI22I1vURx1nt+h5cz8GLmbegVlXCOgO05DM9zQQfHl
-         PQ1+DUchCXOOoRgPdIJ+uF45gLuOzLmkSu8g6gNU=
+        Mon, 10 Sep 2018 07:04:18 -0400
+Received: by mail-wm0-f67.google.com with SMTP id y139-v6so20043323wmc.2
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Sep 2018 23:11:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ASe+7aPSALyJ1urFwSG4W5RbcgnSurf38LZO4NvJtIo=;
+        b=rAMVaE7CeSzOfbN8DXX2y9MKCa6T90jBhIdKkc7YcXeHvmYuW8ZeecZAPlB8/+5txm
+         AYRIz6Q4zW/li6oMqdos+qww715SrPMeFIBhtI3QlZ3exZKMu9yrmEMuOTPMUz6xTO8H
+         cCiNgJ3rowfCjAgbNmkOa6MPeIMKPhMNJJWxfC9IJw5gSGPHlmAiJYM8+7/k80/p+sZY
+         qw38xWrwx8rVhW5V6FW8w+6Hb/V8UKLyjpb3/JU+2SE7qU7bjlxngnvvsqSOv+Gnhk7R
+         NTxotDjigX+XlZCZEwGvoZyvQsMYQOA18V6JP+1lUIe3yq6/WTNgxcYHZ9QJum6xU6bb
+         NZKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ASe+7aPSALyJ1urFwSG4W5RbcgnSurf38LZO4NvJtIo=;
+        b=AvbeefcLOgdML6AyNx51g4dnbKgCvFdnfrpq9kj89npqczXuTpjv5dll31QL7GgAtv
+         5SJCsU6wahp4jr1CSuKR/M9OnVawmrMSihEFt7xYj/9Z61VhqqoQmtmkU/Py/TAYGvbL
+         ZSI73cmDG2Ns+1RDQwD+dBbSfyV0DBt+ULYo9UooDGt34mj5XsYOCM0AodWGYsB0XXrM
+         G+SswpP3dZjh2FTBjejW5MGkE7FoAMkC2LvybxgqK3IkzYcPUH9pwUB6F882Pma8uwxK
+         21VjaLN1R/X8gcwyyHSllg+vt+E8mTuH+1ovi9V643BEPsnAhx3jl7PglvOYyQue9hJ3
+         CcDQ==
+X-Gm-Message-State: APzg51DgospBHnAf79fPXNrWzvgk0x2itXyIljp7Lp0pnkoHY0+KJJ9u
+        KRhoBr+2iLBkrFRylEDj1Qw=
+X-Google-Smtp-Source: ANB0Vdal6CPGfj3xHPBLAXO7vFGXehUtAzQxFVtS7NabX47n57S0aOIohuKJ87Nd/4KsWO7Wrw/9IA==
+X-Received: by 2002:a1c:1f50:: with SMTP id f77-v6mr12866941wmf.52.1536559913905;
+        Sun, 09 Sep 2018 23:11:53 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id a37-v6sm33103378wrc.21.2018.09.09.23.11.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 09 Sep 2018 23:11:53 -0700 (PDT)
+Date:   Mon, 10 Sep 2018 08:11:51 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Baoquan He <bhe@redhat.com>
+Cc:     tglx@linutronix.de, hpa@zytor.com, thgarnie@google.com,
+        kirill.shutemov@linux.intel.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v2 2/3] x86/mm/KASLR: Calculate the actual size of
+ vmemmap region
+Message-ID: <20180910061151.GA85199@gmail.com>
+References: <20180909124946.17988-1-bhe@redhat.com>
+ <20180909124946.17988-2-bhe@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 10 Sep 2018 11:40:02 +0530
-From:   poza@codeaurora.org
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Bharat Kumar Gogada <bharat.kumar.gogada@xilinx.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bhelgaas@google.com, rgummal@xilinx.com,
-        linux-pci-owner@vger.kernel.org
-Subject: Re: [PATCH v2] PCI/AER: Enable SERR# forwarding in non ACPI flow
-In-Reply-To: <20180905201047.GQ107892@bhelgaas-glaptop.roam.corp.google.com>
-References: <1533826657-24552-1-git-send-email-bharat.kumar.gogada@xilinx.com>
- <2f53b7dd9c1464f40b10217eb64d511e@codeaurora.org>
- <20180905201047.GQ107892@bhelgaas-glaptop.roam.corp.google.com>
-Message-ID: <fce5d2e4e32b424f41f79782cf447304@codeaurora.org>
-X-Sender: poza@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180909124946.17988-2-bhe@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-09-06 01:40, Bjorn Helgaas wrote:
-> On Thu, Aug 09, 2018 at 08:41:27PM +0530, poza@codeaurora.org wrote:
->> On 2018-08-09 20:27, Bharat Kumar Gogada wrote:
->> > As per Figure 6-3 in PCIe r4.0, sec 6.2.6, ERR_ messages
->> > will be forwarded from the secondary interface to the primary interface,
->> > if the SERR# Enable bit in the Bridge Control register is set.
->> > Currently PCI_BRIDGE_CTL_SERR is being enabled only in
->> > ACPI flow.
->> > This patch enables PCI_BRIDGE_CTL_SERR for Type-1 PCI device.
->> >
->> > Signed-off-by: Bharat Kumar Gogada <bharat.kumar.gogada@xilinx.com>
->> > ---
->> >  drivers/pci/pcie/aer.c |   23 +++++++++++++++++++++++
->> >  1 files changed, 23 insertions(+), 0 deletions(-)
->> >
->> > diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
->> > index a2e8838..4fb0d24 100644
->> > --- a/drivers/pci/pcie/aer.c
->> > +++ b/drivers/pci/pcie/aer.c
->> > @@ -343,6 +343,20 @@ int pci_enable_pcie_error_reporting(struct pci_dev
->> > *dev)
->> >  	if (!dev->aer_cap)
->> >  		return -EIO;
->> >
->> > +	if (dev->hdr_type == PCI_HEADER_TYPE_BRIDGE) {
->> > +		u16 control;
->> > +
->> > +		/*
->> > +		 * A Type-1 PCI bridge will not forward ERR_ messages coming
->> > +		 * from an endpoint if SERR# forwarding is not enabled.
->> > +		 */
->> > +		pci_read_config_word(dev, PCI_BRIDGE_CONTROL, &control);
->> > +		if (!(control & PCI_BRIDGE_CTL_SERR)) {
->> > +			control |= PCI_BRIDGE_CTL_SERR;
->> > +			pci_write_config_word(dev, PCI_BRIDGE_CONTROL, control);
->> > +		}
->> > +	}
->> > +
->> >  	return pcie_capability_set_word(dev, PCI_EXP_DEVCTL,
->> > PCI_EXP_AER_FLAGS);
->> >  }
->> >  EXPORT_SYMBOL_GPL(pci_enable_pcie_error_reporting);
->> > @@ -352,6 +366,15 @@ int pci_disable_pcie_error_reporting(struct pci_dev
->> > *dev)
->> >  	if (pcie_aer_get_firmware_first(dev))
->> >  		return -EIO;
->> >
->> > +	if (dev->hdr_type == PCI_HEADER_TYPE_BRIDGE) {
->> > +		u16 control;
->> > +
->> > +		/* Clear SERR Forwarding */
->> > +		pci_read_config_word(dev, PCI_BRIDGE_CONTROL, &control);
->> > +		control &= ~PCI_BRIDGE_CTL_SERR;
->> > +		pci_write_config_word(dev, PCI_BRIDGE_CONTROL, control);
->> > +	}
->> > +
->> >  	return pcie_capability_clear_word(dev, PCI_EXP_DEVCTL,
->> >  					  PCI_EXP_AER_FLAGS);
->> >  }
->> 
->> 
->> Hi Bjorn,
->> 
->> I made some comments on patchv1., same I am putting it across here.
->> 
->> what about hot-plug case ?
->> should not aer_init() call pci_enable_pcie_error_reporting() for all
->> the downstream pci_dev ?
->> and remove all the calls from drivers..
->> aer_init will be called for each device (pci_dev) while pciehp does
->> re-enumeration.
->> so probable we might want to call pci_enable_pcie_error_reporting()
->> but that dictates the design where AER framework is taking decision to
->> enable error reporting on behalf of drivers as well.
->> but thats fine I think, if drivers do not want to participate then 
->> they have
->> to call  pci_disable_pcie_error_reporting explicitly.
->> does this make sense ?
-> 
-> I just replied to the original patch; sorry, I forgot to add you to
-> the cc list.  Bharat, when people respond to your v<N> patch, can you
-> please add them (and anybody else *they* added) to the cc list when
-> you post your v<N+1> patch?
-> 
-> If we set PCI_BRIDGE_CTL_SERR in the pci_configure_device() path,
-> would that address your comments?
 
-yes, that should do.
+* Baoquan He <bhe@redhat.com> wrote:
 
+> Vmemmap region has different maximum size depending on paging mode.
+> Now its size is hardcoded as 1TB in memory KASLR, this is not
+> right for 5-level paging mode. It will cause overflow if vmemmap
+> region is randomized to be adjacent to cpu_entry_area region and
+> its actual size is bigger than 1TB.
 > 
-> There's still a separate question of where and how we should configure
-> the error bits in PCI_EXP_DEVCTL (currently done in
-> pci_enable_pcie_error_reporting()).
+> So here calculate how many TB by the actual size of vmemmap region
+> and align up to 1TB boundary.
 > 
-> Bjorn
+> Signed-off-by: Baoquan He <bhe@redhat.com>
+> ---
+>  arch/x86/mm/kaslr.c | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
+> index 0988971069c9..1db8e166455e 100644
+> --- a/arch/x86/mm/kaslr.c
+> +++ b/arch/x86/mm/kaslr.c
+> @@ -51,7 +51,7 @@ static __initdata struct kaslr_memory_region {
+>  } kaslr_regions[] = {
+>  	{ &page_offset_base, 0 },
+>  	{ &vmalloc_base, 0 },
+> -	{ &vmemmap_base, 1 },
+> +	{ &vmemmap_base, 0 },
+>  };
+>  
+>  /* Get size in bytes used by the memory region */
+> @@ -77,6 +77,7 @@ void __init kernel_randomize_memory(void)
+>  	unsigned long rand, memory_tb;
+>  	struct rnd_state rand_state;
+>  	unsigned long remain_entropy;
+> +	unsigned long vmemmap_size;
+>  
+>  	vaddr_start = pgtable_l5_enabled() ? __PAGE_OFFSET_BASE_L5 : __PAGE_OFFSET_BASE_L4;
+>  	vaddr = vaddr_start;
+> @@ -108,6 +109,14 @@ void __init kernel_randomize_memory(void)
+>  	if (memory_tb < kaslr_regions[0].size_tb)
+>  		kaslr_regions[0].size_tb = memory_tb;
+>  
+> +	/*
+> +	 * Calculate how many TB vmemmap region needs, and align to
+> +	 * 1TB boundary.
+> +	 * */
+
+Yeah, so that's not the standard comment style ...
+
+> +	vmemmap_size = (kaslr_regions[0].size_tb << (TB_SHIFT - PAGE_SHIFT)) *
+> +		sizeof(struct page);
+> +	kaslr_regions[2].size_tb = DIV_ROUND_UP(vmemmap_size, 1UL << TB_SHIFT);
+
+So I tried to review what all this code does, and the comments aren't too great to explain the 
+concepts.
+
+For example:
+
+/*
+ * Memory regions randomized by KASLR (except modules that use a separate logic
+ * earlier during boot). The list is ordered based on virtual addresses. This
+ * order is kept after randomization.
+ */
+static __initdata struct kaslr_memory_region {
+        unsigned long *base;
+        unsigned long size_tb;
+} kaslr_regions[] = {
+        { &page_offset_base, 0 },
+        { &vmalloc_base, 0 },
+        { &vmemmap_base, 1 },
+};
+
+So I get the part where the 'base' pointer is essentially pointers to various global variables 
+used by the MM to get the virtual base address of the kernel, vmalloc and vmemmap areas from, 
+which base addresses can thus be modified by the very early KASLR code to dynamically shape the 
+virtual memory layout of these kernel memory areas on a per bootup basis.
+
+(BTW., that would be a great piece of information to add for the uninitiated. It's not like 
+it's obvious!)
+
+But what does 'size_tb' do? Nothing explains it and your patch doesn't make it clearer either. 
+Also, get_padding() looks like an unnecessary layer of obfuscation:
+
+/* Get size in bytes used by the memory region */
+static inline unsigned long get_padding(struct kaslr_memory_region *region)
+{
+        return (region->size_tb << TB_SHIFT);
+}
+
+It's used only twice and we do bit shifts in the parent function anyway so it's not like it's 
+hiding some uninteresting detail. (The style ugliness of the return statement makes it annoying 
+as well.)
+
+So could we please first clean up this code, explain it properly, name the fields properly, 
+etc., before modifying it? Because it still looks unnecessarily hard to review. I.e. this early 
+boot code needs improvements of quality and neither the base code nor your patches give me the 
+impression of carefully created, easy to maintain code.
+
+Thanks,
+
+	Ingo
