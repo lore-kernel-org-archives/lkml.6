@@ -2,117 +2,133 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DD5BC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 08:24:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9869FC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 08:24:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 181942086B
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 08:24:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="NFQ/FLY+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 181942086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	by mail.kernel.org (Postfix) with ESMTP id 458B3206BB
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 08:24:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 458B3206BB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727837AbeIJNQ5 (ORCPT
+        id S1727939AbeIJNRO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 09:16:57 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:55411 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727777AbeIJNQ5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 09:16:57 -0400
-Received: by mail-it0-f65.google.com with SMTP id d10-v6so28426344itj.5
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 01:24:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=LZsdE3pMK2CgErmhYhxeMl7wRFqp2pzZraX4jaC3V38=;
-        b=NFQ/FLY+p/dV9kbB5kmtizYjxFya5hkYTzVnUeRGMacpxIWO5+3d/QQXfYerV9Bl+O
-         aHM9o5B10GR0fqtWljy+CTA9lwczePp4yS5G1zNnBG1w1bnt4Ksv10DcTpKcx1+Pze++
-         2/3VMwRSv+LsBG0NsCuMY8Q+RxdKmIF+SDmzkGxxVVqO0uRY5ZwOGhLXDCmiF25/Awn2
-         HK0x6QyGvR+ErB7mZtivDS6uQIfpJd1zeRGN0hZBVpBudyep+f0AnUv8NcbntM8GX4+t
-         VuQUiFtv/c+U/k7eh5AKu/DkKn1iogCIzJB5Cz95yKbEiswFyoK/1nLCYqLp2KmJzvDZ
-         ebBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=LZsdE3pMK2CgErmhYhxeMl7wRFqp2pzZraX4jaC3V38=;
-        b=Af6PnVRu+KwLX5lFG+VO7IGw+Ff5vVRoVBW+ppZOeAnCfEBQoyCPq9sk9Qg3Zj3xTm
-         EcpSPC7Oqe/mY0+ba62bm8VT/x2Bu3yH4LFOwk07rErfZQKRdOVsihCfUkt+EVko59Eb
-         jyeoHaiWdVT79Gli2uS6BCMpY0FMmT7qOygxqdGU2C9AekGI5uHk/XaXQyrgevLj1Teg
-         jsjLmOwufZ5ikGDwEaVZ52PimCO7OxH6Dwu3x+AyljkrXP5t7KlOIiQaKe/YaFEXtCOK
-         1H1Mx6cgTQ2GP3S0PasfzHp5fQkwyAm+RrA0ulnCE4eojkbK2cTCwtt+EVwvGjigy8A2
-         HyOg==
-X-Gm-Message-State: APzg51CWo/Sn4XLh/mqNlEov3b7sgVmGbrHHII2zLiS9NRDXdP1+8v9M
-        F+PYommds4DuSSxSH8VfNEQ1/tYlw5IyUc9T6j+3CQ==
-X-Google-Smtp-Source: ANB0Vdao5kQjGLxpp2ZzwOtVdhKwUmkjGbV0JpN4NH43yUOu0CJsJHOyYuX1FoTv5UGKSi1dP1QsngJQS5PeSFJaS9o=
-X-Received: by 2002:a24:41cd:: with SMTP id b74-v6mr16261634itd.85.1536567845368;
- Mon, 10 Sep 2018 01:24:05 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a6b:1905:0:0:0:0:0 with HTTP; Mon, 10 Sep 2018 01:24:04
- -0700 (PDT)
-In-Reply-To: <da9556fd-0022-8e6a-12b4-cc3babbae5b0@linaro.org>
-References: <20180907100750.14564-1-brgl@bgdev.pl> <da9556fd-0022-8e6a-12b4-cc3babbae5b0@linaro.org>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Mon, 10 Sep 2018 10:24:04 +0200
-Message-ID: <CAMRc=MeT7UP57x+Q-a1ODRCvcGKKj_NSfkBLVQ9O5dhTC1DAYg@mail.gmail.com>
-Subject: Re: [PATCH v2 00/16] nvmem: rework of the subsystem for non-DT users
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Andrew Lunn <andrew@lunn.ch>, Alban Bedel <albeu@free.fr>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        linux-doc <linux-doc@vger.kernel.org>,
+        Mon, 10 Sep 2018 09:17:14 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52640 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727649AbeIJNRO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 09:17:14 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6F82980D;
+        Mon, 10 Sep 2018 01:24:22 -0700 (PDT)
+Received: from queper01-lin (queper01-lin.emea.arm.com [10.4.13.27])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 567373F557;
+        Mon, 10 Sep 2018 01:24:18 -0700 (PDT)
+Date:   Mon, 10 Sep 2018 09:24:13 +0100
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Peter Zijlstra <peterz@infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+        Linux PM <linux-pm@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Chris Redpath <chris.redpath@arm.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Steve Muckle <smuckle@google.com>, adharmap@codeaurora.org,
+        Saravana Kannan <skannan@codeaurora.org>,
+        Pavan Kondeti <pkondeti@codeaurora.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        currojerez@riseup.net, Javi Merino <javi.merino@kernel.org>
+Subject: Re: [PATCH v6 13/14] sched/topology: Make Energy Aware Scheduling
+ depend on schedutil
+Message-ID: <20180910082411.oyedkqerxs6b7um5@queper01-lin>
+References: <20180820094420.26590-1-quentin.perret@arm.com>
+ <CAJZ5v0jL_k36RPc6e8yUHxAYGXp7HHWK+hLnBZWnu5Oi__7j3w@mail.gmail.com>
+ <20180906143842.xlxcg5notwdaflww@queper01-lin>
+ <1545744.fI5ZvP8FO0@aspire.rjw.lan>
+ <20180907152923.oxsmcqciez4yhmkk@queper01-lin>
+ <CAJZ5v0gs1Fb-Y1FbjmnxLNHQR=CSHFX_=KpDEkqRCYDJ9EJByQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0gs1Fb-Y1FbjmnxLNHQR=CSHFX_=KpDEkqRCYDJ9EJByQ@mail.gmail.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-09-10 9:54 GMT+02:00 Srinivas Kandagatla <srinivas.kandagatla@linaro.org>:
->
->
-> On 07/09/18 11:07, Bartosz Golaszewski wrote:
->>
->> Next three patches improve the framework by adding a notifier chain
->> for future use and fixing the issue with nvmem device names.
->>
->> Finally we add support for cell definitions, cell lookups and make
->> DT systems resolve the nvmem cells during provider's registration.
->>
->> Last patches just use the SPDX license identifiers and make the
->> naming convention for some arguments more consistent.
->
-> Please send separate series for fixes and things that do not depend on this
-> new apis or Order/place them at the end of the series.
->
+Hi Rafael,
 
-The API changes change so many things, that these series would be
-incompatible. I can send the series separately but they would be
-co-dependent anyway. Does it sound good?
+On Sunday 09 Sep 2018 at 22:13:52 (+0200), Rafael J. Wysocki wrote:
+> On Fri, Sep 7, 2018 at 5:29 PM Quentin Perret <quentin.perret@arm.com> wrote:
+> > On Friday 07 Sep 2018 at 10:52:01 (+0200), Rafael J. Wysocki wrote:
+> > > Well, why don't you implement it as something like "if the governor changes
+> > > from sugov to something else (or the other way around), call this function
+> > > from the scheduler"?
+> >
+> > I just gave it a try and ended up with the diff below. It's basically
+> > the exact same patch with a direct function call instead of a notifier.
+> > (I also tried the sugov_start/stop thing I keep mentioning but it is
+> > more complex, so let's see if the simplest solution could work first).
+> >
+> > What do you think ?
+> 
+> This generally works for me from the cpufreq perspective, but I would
+> add "cpufreq" to the name of the new function, that is call it
+> something like sched_cpufreq_governor_change().
 
-Bart
+Ok, no problem.
 
-> This can help reviewer when there is large number of patches in series with
-> unrelated subject.
->
-> -s-rini
->
->
+> Also do you really need the extra work item?  Governor changes are
+> carried out in process context anyway.
+
+Ah, good point, I can remove that. I just tried and got the following
+lock warning on boot, though:
+
+[    2.518684] ============================================
+[    2.523942] WARNING: possible recursive locking detected
+[    2.529200] 4.18.0-rc6-00086-g940e7a9fd5ec #10 Not tainted
+[    2.534630] --------------------------------------------
+[    2.539888] kworker/2:3/1349 is trying to acquire lock:
+[    2.545059] (____ptrval____) (cpu_hotplug_lock.rw_sem){++++}, at: rebuild_sched_domains_locked+0x2c/0x598
+[    2.554559]
+[    2.554559] but task is already holding lock:
+[    2.560332] (____ptrval____) (cpu_hotplug_lock.rw_sem){++++}, at: cpufreq_register_driver+0x80/0x1d0
+[    2.569396]
+[    2.569396] other info that might help us debug this:
+[    2.575858]  Possible unsafe locking scenario:
+[    2.575858]
+[    2.581717]        CPU0
+[    2.584135]        ----
+[    2.586553]   lock(cpu_hotplug_lock.rw_sem);
+[    2.590785]   lock(cpu_hotplug_lock.rw_sem);
+[    2.595017]
+[    2.595017]  *** DEADLOCK ***
+[    2.595017]
+[    2.600877]  May be due to missing lock nesting notation
+
+That seems to happen because cpufreq_register_driver() calls
+cpus_read_lock(), which is then called again by rebuild_sched_domains()
+down the line. So it might just be a missing lock nesting notation as
+the warning suggests ?
+
+I'll have a look.
+
+Thanks,
+Quentin
