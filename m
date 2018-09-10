@@ -2,95 +2,107 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05BEEC4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:48:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CF35C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:49:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABAEF20855
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:48:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABAEF20855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E04B62087E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:49:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E04B62087E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728852AbeIJSm6 (ORCPT
+        id S1728857AbeIJSn2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 14:42:58 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52356 "EHLO mx1.suse.de"
+        Mon, 10 Sep 2018 14:43:28 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:44735 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728110AbeIJSm6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 14:42:58 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2D272AD75;
-        Mon, 10 Sep 2018 13:48:46 +0000 (UTC)
-Date:   Mon, 10 Sep 2018 15:48:45 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Shuah Khan <shuah@kernel.org>
-Cc:     Will Deacon <will.deacon@arm.com>, catalin.marinas@arm.com,
-        sudeep.holla@arm.com, ganapatrao.kulkarni@cavium.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: add NUMA emulation support
-Message-ID: <20180910134845.GH10951@dhcp22.suse.cz>
-References: <20180824230559.32336-1-shuah@kernel.org>
- <20180828174011.GE20375@arm.com>
- <a58ad11f-3c22-ed7f-a0cd-938aabc4adaf@kernel.org>
- <20180829110802.GD10349@dhcp22.suse.cz>
- <f041ba95-03e6-4a7d-c324-870b45a2f648@kernel.org>
- <20180905064252.GW14951@dhcp22.suse.cz>
- <c1b58f13-6190-20e9-7e4f-b8bc2b9d5f80@kernel.org>
- <20180907083452.GC19621@dhcp22.suse.cz>
- <e46e715c-f115-f054-eeb2-3cecbcd1192d@kernel.org>
+        id S1728110AbeIJSn2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 14:43:28 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id D91755261AC65;
+        Mon, 10 Sep 2018 21:49:11 +0800 (CST)
+Received: from [127.0.0.1] (10.177.29.68) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.399.0; Mon, 10 Sep 2018
+ 21:49:08 +0800
+Message-ID: <5B967653.1030007@huawei.com>
+Date:   Mon, 10 Sep 2018 21:49:07 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e46e715c-f115-f054-eeb2-3cecbcd1192d@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+To:     Jonathan Cameron <jic23@kernel.org>
+CC:     Himanshu Jha <himanshujha199640@gmail.com>, <knaack.h@gmx.de>,
+        <lars@metafoo.de>, <pmeerw@pmeerw.net>,
+        <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] iio: remove unnecessary condition judgment in am2315_trigger_handler
+References: <1536404256-25189-1-git-send-email-zhongjiang@huawei.com> <20180908122913.GA4445@himanshu-Vostro-3559> <20180908151751.20e7396f@archlinux>
+In-Reply-To: <20180908151751.20e7396f@archlinux>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.68]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 07-09-18 16:30:59, Shuah Khan wrote:
-> On 09/07/2018 02:34 AM, Michal Hocko wrote:
-> > On Thu 06-09-18 15:53:34, Shuah Khan wrote:
-> > [...]
-> >> A few critical allocations could be satisfied and root cgroup prevails. It is not the
-> >> intent to have exclusivity at the expense of the kernel.
-> > 
-> > Well, it is not "few critical allocations". It can be a lot of
-> > memory. Basically any GFP_KERNEL allocation. So how exactly you expect
-> > this to work when you cannot estimate how much
-> > memory will kernel eat?
-> > 
-> >>
-> >> This feature will allow a way to configure cpusets on non-NUMA for workloads that can
-> >> benefit from the reservation and isolation that is available within the constraints of
-> >> exclusive cpuset policies.
-> > 
-> > AFAIR this was the first approach Google took for the memory isolation
-> > and they moved over to memory cgroups. 
-> 
-> In addition to isolation, being able to reserve a block instead is one of the
-> issues I am looking to address. Unfortunately memory cgroups won't address that
-> issue.
+On 2018/9/8 22:17, Jonathan Cameron wrote:
+> On Sat, 8 Sep 2018 17:59:13 +0530
+> Himanshu Jha <himanshujha199640@gmail.com> wrote:
+>
+>> On Sat, Sep 08, 2018 at 06:57:36PM +0800, zhong jiang wrote:
+>>> The iterator in for_each_set_bit is never null, therefore, remove
+>>> the redundant conditional judgment.
+>>>
+>>> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+>>> ---
+>>>  drivers/iio/humidity/am2315.c | 3 +--
+>>>  1 file changed, 1 insertion(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/iio/humidity/am2315.c b/drivers/iio/humidity/am2315.c
+>>> index 7d8669d..dc12e37 100644
+>>> --- a/drivers/iio/humidity/am2315.c
+>>> +++ b/drivers/iio/humidity/am2315.c
+>>> @@ -176,8 +176,7 @@ static irqreturn_t am2315_trigger_handler(int irq, void *p)
+>>>  		i = 0;
+>>>  		for_each_set_bit(bit, indio_dev->active_scan_mask,
+>>>  				 indio_dev->masklength) {
+>>> -			data->buffer[i] = (bit ? sensor_data.temp_data :
+>>> -						 sensor_data.hum_data);
+>>> +			data->buffer[i] = sensor_data.temp_data;  
+>> No, this seems wrong!
+>>
+>> We have buffer support to either take both readings(temp & humid)
+>> simultaneously, or only single channel using specified scan mask.
+> Key think is that bit most definitely can be 0 if the 0th bit is set.
+> This isn't a null check at all.
+>
+> I'm curious, was this a by inspection case or did some script throw
+> this one up?
+ Hi,  Jonathan
 
-Could you be more specific why you need reservations other than
-isolation.
+ bit is a iterator that find the non-zero bit in indio_dev->active_scan_mask. if  all bit is
+ zero ,  it should return the masklength.
 
-> I would recommend to talk to
-> > those guys bebfore you introduce potentially a lot of code that will not
-> > really work for the workload you indend it for.
-> > 
-> 
-> Will you be able to point me to a good contact at Goggle and/or some pointers
-> on finding discussion on the memory isolation. My searches on lkml came up
-> short,
+ Yep.  I find the issue with the help of Coccinelle.
 
-Well, Ying Han who used to work on memcg early days is working on a
-different project. So I am not really sure.
-https://lwn.net/Articles/459585/ might tell you more.
--- 
-Michal Hocko
-SUSE Labs
+ Thanks
+zhong jiang
+> Thanks,
+>
+> Jonathan
+>
+>> Patch title should be:
+>>
+>> "iio: humidity: am2315: .... .. "
+>>
+>>
+>> Thanks
+>
+> .
+>
+
+
