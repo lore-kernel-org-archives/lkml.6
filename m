@@ -2,132 +2,91 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AE3FC4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:28:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D4D2C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:28:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5961D20865
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:28:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5961D20865
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id C25EB20865
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:28:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C25EB20865
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728609AbeIJVXJ (ORCPT
+        id S1728701AbeIJVXR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 17:23:09 -0400
-Received: from foss.arm.com ([217.140.101.70]:60478 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728164AbeIJVXJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 17:23:09 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0446818A;
-        Mon, 10 Sep 2018 09:28:17 -0700 (PDT)
-Received: from queper01-lin.local (queper01-lin.emea.arm.com [10.4.13.27])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 188853F557;
-        Mon, 10 Sep 2018 09:28:15 -0700 (PDT)
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     sudeep.holla@arm.com
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        quentin.perret@arm.com
-Subject: [PATCH v3] firmware: arm_scmi: add a getter for power of performance states
-Date:   Mon, 10 Sep 2018 17:28:10 +0100
-Message-Id: <20180910162810.7307-1-quentin.perret@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180910161530.izm4l22clxqktetn@queper01-lin>
-References: <20180910161530.izm4l22clxqktetn@queper01-lin>
+        Mon, 10 Sep 2018 17:23:17 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:32844 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728164AbeIJVXR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 17:23:17 -0400
+Received: by mail-oi0-f67.google.com with SMTP id 8-v6so41373924oip.0;
+        Mon, 10 Sep 2018 09:28:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Dk6AEdIML5zjHTM+F9H7HY+ujDJKpFJin6Qq/5l7ea4=;
+        b=rbKm9YcuE3o5/rioohDIgqCez08BsJDcGeQwsMYs2qLl/vqJLvrYCcki0wpQnz/1Xr
+         kV9lp0fcxcbbPWmVG9bwMX8FdZe7KwI5tWeEYTPk3+lSEd4sF47vB7OaiNSODlXWBXNa
+         nBXWsIWv00reukQWfivk611t7WbIQ7UmfI781A56Ta/jleBNWk2ZrkbdwSH+s8uyifN7
+         9kwusmcZ2daQ90957MFxMpNmjVvlaMmFMvwRDsrgTzQnmPm1UzUZVmCmIQw8jBG6E2yw
+         AgkaMxSpqz2xvjyEuUWSUiEqIMuLv1Zr+OolE0I9kMR439tel7vTdwyEC6NpB7nlTyrg
+         CocQ==
+X-Gm-Message-State: APzg51AyEn8tQA7gQbfPAuXjCe4napTT4aJls9xTXKiBUvqI0dMRiH4L
+        wbM64+9LchF7kqeWUv8Syg==
+X-Google-Smtp-Source: ANB0VdbBlXKZfXShd6+ayP1004+J8Rt4tVlE5VfCRmLRG1HAhywCRW5FvSGwbq5On0mz2UiWQSntAQ==
+X-Received: by 2002:aca:3507:: with SMTP id c7-v6mr24490209oia.46.1536596904387;
+        Mon, 10 Sep 2018 09:28:24 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id k85-v6sm49792440oiy.2.2018.09.10.09.28.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 10 Sep 2018 09:28:23 -0700 (PDT)
+Date:   Mon, 10 Sep 2018 11:28:22 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Lina Iyer <ilina@codeaurora.org>
+Cc:     marc.zyngier@arm.com, bjorn.andersson@linaro.org, sboyd@kernel.org,
+        evgreen@chromium.org, linus.walleij@linaro.org,
+        rplsssn@codeaurora.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, rnayak@codeaurora.org,
+        devicetree@vger.kernel.org, andy.gross@linaro.org,
+        dianders@chromium.org
+Subject: Re: [PATCH v3 2/5] dt-bindings: pinctrl: add wakeup capable GPIOs
+ for SDM845
+Message-ID: <20180910162822.GA5636@bogus>
+References: <20180904211810.5506-1-ilina@codeaurora.org>
+ <20180904211810.5506-3-ilina@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180904211810.5506-3-ilina@codeaurora.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The SCMI protocol can be used to get power estimates from firmware
-corresponding to each performance state of a device. Although these power
-costs are already managed by the SCMI firmware driver, they are not
-exposed to any external subsystem yet.
+On Tue, Sep 04, 2018 at 03:18:07PM -0600, Lina Iyer wrote:
+> Update the documentation to use interrupts-extended format for
+> specifying the TLMM summary IRQ line that is requested from GIC and the
+> PDC interrupts corresponding to the wakeup capable GPIOs.
+> 
+> Update the example to show PDC interrupts for the wakeup capable GPIOs
+> for SDM845.
+> 
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+> ---
+> Changes in v2:
+> 	- Fix PDC IRQ number in example
+> 	- Describe IRQ trigger type in example
+> ---
+>  .../bindings/pinctrl/qcom,sdm845-pinctrl.txt  | 104 +++++++++++++++++-
+>  1 file changed, 101 insertions(+), 3 deletions(-)
 
-Fix this by adding a new get_power() interface to the exisiting perf_ops
-defined for the SCMI protocol.
+As I also mentioned in v2. Please add acks/reviewed-bys when posting new 
+versions.
 
-Signed-off-by: Quentin Perret <quentin.perret@arm.com>
----
-v3: Changed the accessor name to "scmi_dvfs_est_power_get"
-v2: rebased on 4.19-rc2
----
- drivers/firmware/arm_scmi/perf.c | 28 ++++++++++++++++++++++++++++
- include/linux/scmi_protocol.h    |  4 ++++
- 2 files changed, 32 insertions(+)
-
-diff --git a/drivers/firmware/arm_scmi/perf.c b/drivers/firmware/arm_scmi/perf.c
-index 721e6c57beae..3e6453b4ea1d 100644
---- a/drivers/firmware/arm_scmi/perf.c
-+++ b/drivers/firmware/arm_scmi/perf.c
-@@ -421,6 +421,33 @@ static int scmi_dvfs_freq_get(const struct scmi_handle *handle, u32 domain,
- 	return ret;
- }
- 
-+static int scmi_dvfs_est_power_get(const struct scmi_handle *handle, u32 domain,
-+			       unsigned long *freq, unsigned long *power)
-+{
-+	struct scmi_perf_info *pi = handle->perf_priv;
-+	struct perf_dom_info *dom;
-+	unsigned long opp_freq;
-+	int idx, ret = -EINVAL;
-+	struct scmi_opp *opp;
-+
-+	dom = pi->dom_info + domain;
-+	if (!dom)
-+		return -EIO;
-+
-+	for (opp = dom->opp, idx = 0; idx < dom->opp_count; idx++, opp++) {
-+		opp_freq = opp->perf * dom->mult_factor;
-+		if (opp_freq < *freq)
-+			continue;
-+
-+		*freq = opp_freq;
-+		*power = opp->power;
-+		ret = 0;
-+		break;
-+	}
-+
-+	return ret;
-+}
-+
- static struct scmi_perf_ops perf_ops = {
- 	.limits_set = scmi_perf_limits_set,
- 	.limits_get = scmi_perf_limits_get,
-@@ -431,6 +458,7 @@ static struct scmi_perf_ops perf_ops = {
- 	.device_opps_add = scmi_dvfs_device_opps_add,
- 	.freq_set = scmi_dvfs_freq_set,
- 	.freq_get = scmi_dvfs_freq_get,
-+	.est_power_get = scmi_dvfs_est_power_get,
- };
- 
- static int scmi_perf_protocol_init(struct scmi_handle *handle)
-diff --git a/include/linux/scmi_protocol.h b/include/linux/scmi_protocol.h
-index f4c9fc0fc755..e4db899c1cfb 100644
---- a/include/linux/scmi_protocol.h
-+++ b/include/linux/scmi_protocol.h
-@@ -91,6 +91,8 @@ struct scmi_clk_ops {
-  *	to sustained performance level mapping
-  * @freq_get: gets the frequency for a given device using sustained frequency
-  *	to sustained performance level mapping
-+ * @est_power_get: gets the estimated power cost for a given performance domain
-+ *	at a given frequency
-  */
- struct scmi_perf_ops {
- 	int (*limits_set)(const struct scmi_handle *handle, u32 domain,
-@@ -110,6 +112,8 @@ struct scmi_perf_ops {
- 			unsigned long rate, bool poll);
- 	int (*freq_get)(const struct scmi_handle *handle, u32 domain,
- 			unsigned long *rate, bool poll);
-+	int (*est_power_get)(const struct scmi_handle *handle, u32 domain,
-+			 unsigned long *rate, unsigned long *power);
- };
- 
- /**
--- 
-2.17.1
-
+Rob
