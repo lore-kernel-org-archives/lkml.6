@@ -2,213 +2,218 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C82C4C43143
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 17:17:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B4E4C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 17:17:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 836EA2086E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 17:17:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 836EA2086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id EF9522086E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 17:17:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FW95iO2q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF9522086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729005AbeIJWM2 (ORCPT
+        id S1729024AbeIJWMh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 18:12:28 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:46124 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728494AbeIJWLf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 18:11:35 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 9E3C020009D;
-        Mon, 10 Sep 2018 19:16:29 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 8DD97200049;
-        Mon, 10 Sep 2018 19:16:29 +0200 (CEST)
-Received: from enigma.ea.freescale.net (enigma.ea.freescale.net [10.171.81.110])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 0F5742060B;
-        Mon, 10 Sep 2018 19:16:29 +0200 (CEST)
-From:   =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Stuart Yoder <stuyoder@gmail.com>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Li Yang <leoyang.li@nxp.com>, Roy Pledge <roy.pledge@nxp.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 06/11] crypto: caam - add Queue Interface v2 error codes
-Date:   Mon, 10 Sep 2018 20:15:45 +0300
-Message-Id: <20180910171550.5659-7-horia.geanta@nxp.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180910171550.5659-1-horia.geanta@nxp.com>
-References: <20180910171550.5659-1-horia.geanta@nxp.com>
+        Mon, 10 Sep 2018 18:12:37 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:34164 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728820AbeIJWMh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 18:12:37 -0400
+Received: by mail-pf1-f196.google.com with SMTP id k19-v6so10818820pfi.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 10:17:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yuOIQZv6WjRvAbKrrWHpsdnwVgADihJ1PU5uAuXb3BU=;
+        b=FW95iO2qZ3Ex4T/a4AkaYhrtgxza99RtCOjp73h7nI08h9c3A56V0HSbuHpsDv3Fcf
+         TSBGrrH8rFiDndtU1QXuj70vmLpnyWZ+bZP+lo6EvsZ9+RCjY+C0A0WR748XaoV69QWh
+         zH+UpJWEEB+nKVH5Kl6JLHcOtFwdsAQZ5liZ6dSnc+/Wim86KCRtU4V2qaK9355XjDo/
+         tA7trYMmc/hKfViRtrtzKgTgmwyEozksyWVMwA7ykz2v4xJmqsxxPT7SqIPiwZdyCyQl
+         8+Ow+Y1Og+KM6E+6OdfBP9pnSpCpw7238zGZ4yz2wIqkI85vySCAHfBzPG/KOW+VWvoE
+         YOHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yuOIQZv6WjRvAbKrrWHpsdnwVgADihJ1PU5uAuXb3BU=;
+        b=OrqCZ3NYE2MIlzb7SgQmNdn0YoMCeuz7ZfOi9olnIusCljbsY21zKLc/REWwGOYMmN
+         DpTcZ8tQIuA+MilK6CpdXpi7zjmfpvF+MqCO7iD7M07RtZiLlZVsxxo6dfbp9T7ubKUq
+         W55a3gSmGLV6UQDQXUuUwWtTqqKpDaRX5203GzDuAQye43e/vtmBA8lAXpyGTqTlocge
+         MH6zeHq0h0yq3x8O1eylk1QlzVIej39Rmj2KR/K0xTfURvAbzrYrZSEU5KllsJszzNHS
+         ZIzX88CqhkIzHIcY9fAhGMnb+RejNv737qYuap/hegZFUvV88OVKor/suHv+Hr4YjGTK
+         Bptw==
+X-Gm-Message-State: APzg51CdaS3CAqzbIsJANMBT0rq3DUXPNywg0q6kpNVXD86bO4HAW6BU
+        khsImVru4zFP3pXVxoK23VitKBWLHMHtuupHlUu+ug20Wfk=
+X-Google-Smtp-Source: ANB0VdaW3j13q2uNXpgiXSag3uKGq3nENeeV44OPcM+rOCjFxPRDewEMg3G68+rKrOd9X3xRxU6wESZikdECP6RkxRU=
+X-Received: by 2002:a62:4b14:: with SMTP id y20-v6mr24769222pfa.93.1536599851787;
+ Mon, 10 Sep 2018 10:17:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+References: <20180908212459.19736-1-miguel.ojeda.sandonis@gmail.com>
+In-Reply-To: <20180908212459.19736-1-miguel.ojeda.sandonis@gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 10 Sep 2018 10:17:20 -0700
+Message-ID: <CAKwvOdnTxABJkQjdu6cv3e5zKB1z4n+rGkuzFxKvLAjUrqqCFA@mail.gmail.com>
+Subject: Re: [PATCH v4 00/13] Compiler Attributes
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        efriedma@codeaurora.org, sparse@chrisli.org,
+        Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        joe@perches.com, asmadeus@codewreck.org,
+        linux-sparse@vger.kernel.org, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support to translate error codes returned by QI v2, i.e.
-Queue Interface present on DataPath Acceleration Architecture
-v2 (DPAA2).
+On Sat, Sep 8, 2018 at 2:25 PM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> The Compiler Attributes series is an effort to disentangle
+> the include/linux/compiler*.h headers and bring them up to date.
+>
+> The main idea behind the series is to use feature checking macros
+> (i.e. __has_attribute) instead of compiler version checks (e.g. GCC_VERSION),
+> which are compiler-agnostic (so they can be shared, reducing the size
+> of compiler-specific headers) and version-agnostic.
+>
+> Other related improvements have been performed in the headers as well,
+> which on top of the use of __has_attribute it has amounted to a significant
+> simplification of these headers (e.g. GCC_VERSION is now only guarding 4
+> non-attribute macros).
+>
+> This series should also help the efforts to support compiling the kernel
+> with clang and icc. A fair amount of documentation and comments have also
+> been added, clarified or removed; and the headers are now more readable,
+> which should help kernel developers in general.
+>
+> The series was triggered due to the move to gcc >= 4.6. In turn, this series
+> has also triggered Sparse to gain the ability to recognize __has_attribute
+> on its own.
+>
+> You can also fetch it from:
+>
+>   https://github.com/ojeda/linux/tree/compiler-attributes-v4
+>
+> Enjoy!
+>
+> Cheers,
+> Miguel
+>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+> Cc: Eli Friedman <efriedma@codeaurora.org>
+> Cc: Christopher Li <sparse@chrisli.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Cc: Joe Perches <joe@perches.com>
+> Cc: Dominique Martinet <asmadeus@codewreck.org>
+> Cc: Nick Desaulniers <ndesaulniers@google.com>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: linux-sparse@vger.kernel.org
+> Cc: linux-doc@vger.kernel.org
+> Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+>
+> v3 -> v4
+>
+>   This time it is an important fix I found while doing randconfigs, plus
+>   the documentation sentence that Nick suggested and the MAINTAINERS file.
+>
+>   Compile-tested for a while on (x86_64, gcc-7.3) on a few randconfs.
+>
+>   New:
+>
+>   * Add MAINTAINERS entry for the new file (compiler_attributes.h)
+>     so that we try to maintain that one as clean as possible.
+>     (if someone else wants to join, feel free!)
+>
+>   Modified:
+>
+>   * Fix inline macro
+>
+>     __always_inline cannot be used in the inline macro,
+>     because people marking a function as __always_inline would
+>     expand to inline which in turn would expand back to __always_inline
+>     (under some configs), which would not be expanded again.
+>     Added a comment about this in the inline macro.
+>
+>     Also added another comment about __always_inline in compiler_attributes.h
+>     to note that users expect to not have to write inline (as well as
+>     the attribute). We cannot simply remove "inline" there (which would
+>     solve the problem described above) because using the attribute is
+>     not enough for gcc. A function marked as always_inline seems to require
+>     to be marked as inline itself so that the attribute is applied:
+>
+>       "warning: always_inline function might not be inlinable [-Wattributes]"
+>
+>     From the gcc docs:
+>
+>       "For functions declared inline, this attribute inlines the function
+>        independent of any restrictions that otherwise apply to inlining."
+>
+>     See https://godbolt.org/z/LpzUPj for an example.
+>
+>   From reviews:
+>
+>   * Add sentence about feature-detection in Docs (Nick)
+>
+> Miguel Ojeda (13):
+>   Compiler Attributes: remove unused attributes
+>   Compiler Attributes: always use the extra-underscores syntax
+>   Compiler Attributes: remove unneeded tests
+>   Compiler Attributes: homogenize __must_be_array
+>   Compiler Attributes: naked was fixed in gcc 4.6
+>   Compiler Attributes: naked can be shared
+>   Compiler Attributes: remove unneeded sparse (__CHECKER__) tests
+>   Compiler Attributes: add missing SPDX ID in compiler_types.h
+>   Compiler Attributes: use feature checks instead of version checks
+>   Compiler Attributes: KENTRY used twice the "used" attribute
+>   Compiler Attributes: remove uses of __attribute__ from compiler.h
+>   Compiler Attributes: add Doc/process/programming-language.rst
+>   Compiler Attributes: Add MAINTAINERS entry
+>
+>  Documentation/process/index.rst               |   1 +
+>  .../process/programming-language.rst          |  45 ++++
+>  MAINTAINERS                                   |   5 +
+>  include/linux/compiler-clang.h                |   5 -
+>  include/linux/compiler-gcc.h                  |  84 +-----
+>  include/linux/compiler-intel.h                |   9 -
+>  include/linux/compiler.h                      |  19 +-
+>  include/linux/compiler_attributes.h           | 244 ++++++++++++++++++
+>  include/linux/compiler_types.h                | 105 ++------
+>  9 files changed, 329 insertions(+), 188 deletions(-)
+>  create mode 100644 Documentation/process/programming-language.rst
+>  create mode 100644 include/linux/compiler_attributes.h
+>
+> --
+> 2.17.1
+>
 
-Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
----
- drivers/crypto/caam/error.c | 75 +++++++++++++++++++++++++++++++++++++++++++--
- drivers/crypto/caam/error.h |  6 +++-
- drivers/crypto/caam/regs.h  |  2 ++
- 3 files changed, 79 insertions(+), 4 deletions(-)
+For the ones I didn't already review:
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 
-diff --git a/drivers/crypto/caam/error.c b/drivers/crypto/caam/error.c
-index 8da88beb1abb..db0f0d96842e 100644
---- a/drivers/crypto/caam/error.c
-+++ b/drivers/crypto/caam/error.c
-@@ -108,6 +108,54 @@ static const struct {
- 	{ 0xF1, "3GPP HFN matches or exceeds the Threshold" },
- };
- 
-+static const struct {
-+	u8 value;
-+	const char *error_text;
-+} qi_error_list[] = {
-+	{ 0x1F, "Job terminated by FQ or ICID flush" },
-+	{ 0x20, "FD format error"},
-+	{ 0x21, "FD command format error"},
-+	{ 0x23, "FL format error"},
-+	{ 0x25, "CRJD specified in FD, but not enabled in FLC"},
-+	{ 0x30, "Max. buffer size too small"},
-+	{ 0x31, "DHR exceeds max. buffer size (allocate mode, S/G format)"},
-+	{ 0x32, "SGT exceeds max. buffer size (allocate mode, S/G format"},
-+	{ 0x33, "Size over/underflow (allocate mode)"},
-+	{ 0x34, "Size over/underflow (reuse mode)"},
-+	{ 0x35, "Length exceeds max. short length (allocate mode, S/G/ format)"},
-+	{ 0x36, "Memory footprint exceeds max. value (allocate mode, S/G/ format)"},
-+	{ 0x41, "SBC frame format not supported (allocate mode)"},
-+	{ 0x42, "Pool 0 invalid / pool 1 size < pool 0 size (allocate mode)"},
-+	{ 0x43, "Annotation output enabled but ASAR = 0 (allocate mode)"},
-+	{ 0x44, "Unsupported or reserved frame format or SGHR = 1 (reuse mode)"},
-+	{ 0x45, "DHR correction underflow (reuse mode, single buffer format)"},
-+	{ 0x46, "Annotation length exceeds offset (reuse mode)"},
-+	{ 0x48, "Annotation output enabled but ASA limited by ASAR (reuse mode)"},
-+	{ 0x49, "Data offset correction exceeds input frame data length (reuse mode)"},
-+	{ 0x4B, "Annotation output enabled but ASA cannote be expanded (frame list)"},
-+	{ 0x51, "Unsupported IF reuse mode"},
-+	{ 0x52, "Unsupported FL use mode"},
-+	{ 0x53, "Unsupported RJD use mode"},
-+	{ 0x54, "Unsupported inline descriptor use mode"},
-+	{ 0xC0, "Table buffer pool 0 depletion"},
-+	{ 0xC1, "Table buffer pool 1 depletion"},
-+	{ 0xC2, "Data buffer pool 0 depletion, no OF allocated"},
-+	{ 0xC3, "Data buffer pool 1 depletion, no OF allocated"},
-+	{ 0xC4, "Data buffer pool 0 depletion, partial OF allocated"},
-+	{ 0xC5, "Data buffer pool 1 depletion, partial OF allocated"},
-+	{ 0xD0, "FLC read error"},
-+	{ 0xD1, "FL read error"},
-+	{ 0xD2, "FL write error"},
-+	{ 0xD3, "OF SGT write error"},
-+	{ 0xD4, "PTA read error"},
-+	{ 0xD5, "PTA write error"},
-+	{ 0xD6, "OF SGT F-bit write error"},
-+	{ 0xD7, "ASA write error"},
-+	{ 0xE1, "FLC[ICR]=0 ICID error"},
-+	{ 0xE2, "FLC[ICR]=1 ICID error"},
-+	{ 0xE4, "source of ICID flush not trusted (BDI = 0)"},
-+};
-+
- static const char * const cha_id_list[] = {
- 	"",
- 	"AES",
-@@ -236,6 +284,27 @@ static void report_deco_status(struct device *jrdev, const u32 status,
- 		status, error, idx_str, idx, err_str, err_err_code);
- }
- 
-+static void report_qi_status(struct device *qidev, const u32 status,
-+			     const char *error)
-+{
-+	u8 err_id = status & JRSTA_QIERR_ERROR_MASK;
-+	const char *err_str = "unidentified error value 0x";
-+	char err_err_code[3] = { 0 };
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(qi_error_list); i++)
-+		if (qi_error_list[i].value == err_id)
-+			break;
-+
-+	if (i != ARRAY_SIZE(qi_error_list) && qi_error_list[i].error_text)
-+		err_str = qi_error_list[i].error_text;
-+	else
-+		snprintf(err_err_code, sizeof(err_err_code), "%02x", err_id);
-+
-+	dev_err(qidev, "%08x: %s: %s%s\n",
-+		status, error, err_str, err_err_code);
-+}
-+
- static void report_jr_status(struct device *jrdev, const u32 status,
- 			     const char *error)
- {
-@@ -250,7 +319,7 @@ static void report_cond_code_status(struct device *jrdev, const u32 status,
- 		status, error, __func__);
- }
- 
--void caam_jr_strstatus(struct device *jrdev, u32 status)
-+void caam_strstatus(struct device *jrdev, u32 status, bool qi_v2)
- {
- 	static const struct stat_src {
- 		void (*report_ssed)(struct device *jrdev, const u32 status,
-@@ -262,7 +331,7 @@ void caam_jr_strstatus(struct device *jrdev, u32 status)
- 		{ report_ccb_status, "CCB" },
- 		{ report_jump_status, "Jump" },
- 		{ report_deco_status, "DECO" },
--		{ NULL, "Queue Manager Interface" },
-+		{ report_qi_status, "Queue Manager Interface" },
- 		{ report_jr_status, "Job Ring" },
- 		{ report_cond_code_status, "Condition Code" },
- 		{ NULL, NULL },
-@@ -288,4 +357,4 @@ void caam_jr_strstatus(struct device *jrdev, u32 status)
- 	else
- 		dev_err(jrdev, "%d: unknown error source\n", ssrc);
- }
--EXPORT_SYMBOL(caam_jr_strstatus);
-+EXPORT_SYMBOL(caam_strstatus);
-diff --git a/drivers/crypto/caam/error.h b/drivers/crypto/caam/error.h
-index 5aa332bac4b0..67ea94079837 100644
---- a/drivers/crypto/caam/error.h
-+++ b/drivers/crypto/caam/error.h
-@@ -8,7 +8,11 @@
- #ifndef CAAM_ERROR_H
- #define CAAM_ERROR_H
- #define CAAM_ERROR_STR_MAX 302
--void caam_jr_strstatus(struct device *jrdev, u32 status);
-+
-+void caam_strstatus(struct device *dev, u32 status, bool qi_v2);
-+
-+#define caam_jr_strstatus(jrdev, status) caam_strstatus(jrdev, status, false)
-+#define caam_qi2_strstatus(qidev, status) caam_strstatus(qidev, status, true)
- 
- void caam_dump_sg(const char *level, const char *prefix_str, int prefix_type,
- 		  int rowsize, int groupsize, struct scatterlist *sg,
-diff --git a/drivers/crypto/caam/regs.h b/drivers/crypto/caam/regs.h
-index 4fb91ba39c36..cb930c868029 100644
---- a/drivers/crypto/caam/regs.h
-+++ b/drivers/crypto/caam/regs.h
-@@ -633,6 +633,8 @@ struct caam_job_ring {
- #define JRSTA_DECOERR_INVSIGN       0x86
- #define JRSTA_DECOERR_DSASIGN       0x87
- 
-+#define JRSTA_QIERR_ERROR_MASK      0x00ff
-+
- #define JRSTA_CCBERR_JUMP           0x08000000
- #define JRSTA_CCBERR_INDEX_MASK     0xff00
- #define JRSTA_CCBERR_INDEX_SHIFT    8
 -- 
-2.16.2
-
+Thanks,
+~Nick Desaulniers
