@@ -2,152 +2,84 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01A73C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:44:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A88ABC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:44:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AEF720854
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:44:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51467206BB
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:44:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GrjZKOa4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AEF720854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AumPSO77"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51467206BB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727679AbeIJLg6 (ORCPT
+        id S1727736AbeIJLhY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 07:36:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36414 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726405AbeIJLg6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 07:36:58 -0400
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 39E932087E;
-        Mon, 10 Sep 2018 06:44:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536561868;
-        bh=vGAUSZXmtKedctesOqToTPg7yvZ6wLvD2EAXQsdMdK8=;
-        h=References:In-Reply-To:From:Date:Subject:To:From;
-        b=GrjZKOa4p8PDyEeMZq9UPXfY8XTvEQ7uxdnVasJB2xLKRRGqrpo4tDhA66wesOcwS
-         bBSaCzaOuv24sgfeBn4ZrSimkqz314/JiivpCCBvKcJrJ/YaLlGKaOgrXLs54rCbj3
-         T/EDzDjYg4nbJoxPWpM20tt0sHZJVAj/Y+YpqO70=
-Received: by mail-wr1-f54.google.com with SMTP id v90-v6so20640957wrc.0;
-        Sun, 09 Sep 2018 23:44:28 -0700 (PDT)
-X-Gm-Message-State: APzg51AviXPcf+fuY0rJba1g0qZ3gFsxWOoz6wQv8s+9ejqpnmWYNnmj
-        /GVal3m2JzOrYZc7F+tklW+mLd0oqv7x7hXYwfY=
-X-Google-Smtp-Source: ANB0VdacIFs5tloWQj+EIebnu7pIY7zL6PThwq4Dz/4KKrvxRbDnToT2S665jUelbTaO5aGF9gz0ugA1ImgVyYcSLAc=
-X-Received: by 2002:a05:6000:10d0:: with SMTP id b16mr13948095wrx.226.1536561866603;
- Sun, 09 Sep 2018 23:44:26 -0700 (PDT)
+        Mon, 10 Sep 2018 07:37:24 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:35841 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726405AbeIJLhY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 07:37:24 -0400
+Received: by mail-io1-f66.google.com with SMTP id q5-v6so6136097iop.3
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Sep 2018 23:44:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9ZQsTl1pZ8feUmZh+T7DLuUmBLhi8FCBUg2HUTRjNpU=;
+        b=AumPSO77d2/qanzm3GAFh56Bj1urKebQF4oPP8zpovrp0cEQtyZY7Pf7QaX61a2lcv
+         FCVGGnGrVvtKTBY2/CMryFKvT1Wi+2vWkW8uju9UPfERCQAWljWrKsW5oY/kzBmnQqQY
+         zv4ZfJOCJLrmNvp64UUc707yWiK0i+8wH00Oo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9ZQsTl1pZ8feUmZh+T7DLuUmBLhi8FCBUg2HUTRjNpU=;
+        b=qW0BxDNAwWmnPhmedgFILpAy9mWETTvcsg67hpD1tTYIpSWBVfSsLT22YWQwdg7SmX
+         sMERlTfhHGLwPqXYeDWCp8xJHPW19N06zaIhVG3qC7/lzcJd4uAWr1eyCLbC72Gfm3nM
+         0niO8B+Ym5ecidL19SIx5veujtsnGB2FwwmE+w1LFsKaHi6byg6RgCmO+HLkwFbpR9/D
+         JvctDF3wuur1gZZ4SE/uYvf3HYolz4XAmeh8xff48Dz6CISvSW2fO/AUs0wl6ErzB+Br
+         UCy7WWC8pEX0D96h47PoHomeLugiZNLi6lHOYYKYAqZelBc1zwVrqa7+xbKM64a+QeLe
+         K9hw==
+X-Gm-Message-State: APzg51BFF3wqJUGE+O8cBkKa687wtgqSxoA9NYZd5saILxHZZ4La+s0Z
+        talKI7AawLkXWhOjD0CpAbmDLVYZJExzfGgd91FCCw==
+X-Google-Smtp-Source: ANB0VdZh5gu5QwR1mnloHL6Yj5YGAUcaH9q60rMc/YiBCIJQySWEH7p5nJGZCx0d7HUb60m+wvAp1LjHixbRZVQ/sho=
+X-Received: by 2002:a6b:630a:: with SMTP id p10-v6mr15077322iog.175.1536561894449;
+ Sun, 09 Sep 2018 23:44:54 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAJKOXPc49jh8RCDvn2Meci9iDcnnwGEHo6F7RuhkXpen=f_E8w@mail.gmail.com>
-In-Reply-To: <CAJKOXPc49jh8RCDvn2Meci9iDcnnwGEHo6F7RuhkXpen=f_E8w@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Mon, 10 Sep 2018 08:44:15 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPfc5O0c6HBtM=h2NUXwaiCWVgFC9eVeirLYynfUpU6d3Q@mail.gmail.com>
-Message-ID: <CAJKOXPfc5O0c6HBtM=h2NUXwaiCWVgFC9eVeirLYynfUpU6d3Q@mail.gmail.com>
-Subject: Re: [BUG BISECT] NFS root failure (NULL pointer)
-To:     dhowells@redhat.com, ebiggers@google.com, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>
+References: <20180909203848.3470-1-alexandre.belloni@bootlin.com> <20180909203848.3470-3-alexandre.belloni@bootlin.com>
+In-Reply-To: <20180909203848.3470-3-alexandre.belloni@bootlin.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 10 Sep 2018 08:44:42 +0200
+Message-ID: <CACRpkdaVH7_eVGC+CRQqsA1Y1+oMkkVhVPJmpiE=k90qa23SQQ@mail.gmail.com>
+Subject: Re: [PATCH 3/3] rtc: pl031: switch to devm_rtc_allocate_device/rtc_register_device
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     linux-rtc@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 6 Sep 2018 at 09:10, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> Hi,
->
-> Today's next fails to mount NFS root under my ARM targets and fails to
-> mount root from file image under QMU.
->
-> [ 21.512866] Unable to handle kernel NULL pointer dereference at
-> virtual address 00000000
-> [ 21.695484] [<c03bcc04>] (nfs_fs_mount) from [<c02cf6a4>]
-> (legacy_get_tree+0x34/0xec)
-> [ 21.703225] [<c02cf6a4>] (legacy_get_tree) from [<c029442c>]
-> (vfs_get_tree+0x64/0x180)
-> [ 21.711119] [<c029442c>] (vfs_get_tree) from [<c02b9140>]
-> (do_mount+0x21c/0x958)
-> [ 21.718478] [<c02b9140>] (do_mount) from [<c02b9c38>] (ksys_mount+0x8c/0xbc)
-> [ 21.725513] [<c02b9c38>] (ksys_mount) from [<c0101000>]
-> (ret_fast_syscall+0x0/0x28)
->
-> Full log from ARM (NFS root):
-> https://krzk.eu/#/builders/25/builds/750/steps/12/logs/serial0
->
-> The NFS root failure bisected to:
-> bae551929c5433bd56ec4dcb97c7d4a50153d357 is the first bad commit
-> commit bae551929c5433bd56ec4dcb97c7d4a50153d357
-> Author: David Howells <dhowells@redhat.com>
-> Date:   Tue Jul 10 21:43:37 2018 +0100
+On Sun, Sep 9, 2018 at 10:38 PM Alexandre Belloni
+<alexandre.belloni@bootlin.com> wrote:
 
-FYI, the bug is still present in linux-next. All boards fail to boot up.
+> Switch to devm_rtc_allocate_device to simplify the erro and driver removal
+> paths.
+>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-Let me know if I can help anymore in debugging this.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-Best regards,
-Krzysztof
-
->
->     vfs: Separate changing mount flags full remount
->
->     Separate just the changing of mount flags (MS_REMOUNT|MS_BIND) from full
->     remount because the mount data will get parsed with the new fs_context
->     stuff prior to doing a remount - and this causes the syscall to fail under
->     some circumstances.
->
-> The QEMU issue seems slightly different and I did not bisect it. The
-> QEMU just cannot find rootfs:
-> [    1.008052] Filesystem requires source device
-> [    1.008513] VFS: Cannot open root device "mmcblk0" or
-> unknown-block(179,0): error -2
-> [    1.008790] Please append a correct "root=" boot option; here are
-> the available partitions:
-> [    1.009300] 0100           16384 ram0
-> [    1.009337]  (driver?)
-> [    1.009806] fe00            5120 vda
-> [    1.009843]  driver: virtio_blk
-> [    1.010296] b300          110592 mmcblk0
-> [    1.010319]  driver: mmcblk
-> [    1.010859] Kernel panic - not syncing: VFS: Unable to mount root
-> fs on unknown-block(179,0)
-> [    1.011580] ---[ end Kernel panic - not syncing: VFS: Unable to
-> mount root fs on unknown-block(179,0) ]---
->
->
->
-> Boards config:
-> 1. Arch ARM Linux
-> 2. exynos_defconfig
->   - Odroid HC1
->     ARMv7, octa-core (Cortex-A7+A15), Exynos5422 SoC
->     Systemd: v239
->   - Odroid U3
->     ARMv7, quad-core, Exynos4412 SoC
->     Systemd: v238
->   - Odroid XU
->     ARMv7, octa-core (Cortex-A7+A15) but only A15 working, Exynos5410 SoC
->     Systemd: v236
->   - Odroid XU3
->     ARMv7, octa-core (Cortex-A7+A15), Exynos5422 SoC
->     Systemd: v236
-> 3. Custom VF50 defconfig
->   - Toradex Colibri VF50 on Iris board
->     ARMv7, UP, Cortext-A5, NXP VF500
->     Systemd: v232
-> 4. All boards boot from TFTP with NFS root (NFSv4)
-> 5. QEMU
->     ARMv7, vexpress-v2p-ca9, 128 MB RAM
->
->
->
-> Best regards,
-> Krzysztof
+Yours,
+Linus Walleij
