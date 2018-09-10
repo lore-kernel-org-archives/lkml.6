@@ -2,112 +2,140 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65ECEC4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:24:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21BBEC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:24:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1952C20833
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:24:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFDA220833
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:24:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oGRZaE2k";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oGRZaE2k"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1952C20833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aR1xp6l6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFDA220833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728682AbeIJTSt (ORCPT
+        id S1728726AbeIJTS5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 15:18:49 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:57300 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728110AbeIJTSt (ORCPT
+        Mon, 10 Sep 2018 15:18:57 -0400
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:32856 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728110AbeIJTS5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 15:18:49 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id D4CEF609BD; Mon, 10 Sep 2018 14:24:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536589467;
-        bh=20iBUyfiR+QPhmDuULz8I+TCs3sfk2A8FSDbjMYtBvU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=oGRZaE2km/P+sMNXvusxGWWIIRwq6A61NodHz7FCsYbZwP6IocTQl2JuvaQHre1hx
-         3jSEedSL0CKattSbXsEhAKu/9d8g4OoGX5yXwKT8LA6l6wAwDmJuPPcdgJPZiK5mDo
-         f+suZeZlSEVpdY3M2n+iVYBaw3a/KjqUXNpvcChY=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 4AF0D609A1;
-        Mon, 10 Sep 2018 14:24:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536589467;
-        bh=20iBUyfiR+QPhmDuULz8I+TCs3sfk2A8FSDbjMYtBvU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=oGRZaE2km/P+sMNXvusxGWWIIRwq6A61NodHz7FCsYbZwP6IocTQl2JuvaQHre1hx
-         3jSEedSL0CKattSbXsEhAKu/9d8g4OoGX5yXwKT8LA6l6wAwDmJuPPcdgJPZiK5mDo
-         f+suZeZlSEVpdY3M2n+iVYBaw3a/KjqUXNpvcChY=
+        Mon, 10 Sep 2018 15:18:57 -0400
+Received: by mail-ua1-f68.google.com with SMTP id i4-v6so17521189uak.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 07:24:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=CVxtbyv1lsxbgfGIveYFgHaTxuUQzigPQSvJIX/mXsk=;
+        b=aR1xp6l60Zty8Vrm0hbPLW0ksMoi9YFuFhg4GsEwHM9R10JNGasyuoxvU7mN19S+fU
+         bOx2iMb3y7yfHLto2aZdLTiv0+3Pl5Zhs2usu3tmi9hqVFj0P5ExTFjxBmwRrhdfrKCB
+         25ycdnK1Vja5PgiwfQlBqM4yC5krco+2sSUjs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=CVxtbyv1lsxbgfGIveYFgHaTxuUQzigPQSvJIX/mXsk=;
+        b=b2tCpAqnM8pXhqjVQpyF4WvyZnIrmrt6aps1TxEx6BSjMPUphejdhYu/gwjKB3HXAQ
+         YmTXWsj6MqzD7umrbmJ3TfYspVWNmaMFIgeZ8ExHVrmkdiLcS8Jg19hLLt3oAA1bO5vt
+         AFeepNImT9YV4TQ0m+VEMH8Gi5E3Zwha9ctz+ductj4GBJF4GrXYnxztOVTf+HziWBpI
+         O2gl6gUT7wzY2Qgd8FPt3d3zdA787LXYfztmpK5Qhc+gOrmYJQL56RrCDAEbwsWoJ8OH
+         UqoQjhmnaUUz9AtdZS1/YRM32dC0h3+SoY9EGCHHBV+uO+pSbuENWUr2cRSX1KWlmrsp
+         MKxg==
+X-Gm-Message-State: APzg51AwKXb12FlEUKFQuo1O04nPFZWJkWmyqQGF5/FyTXPWiQL6Hdd+
+        0LrZo93Vb1QXXQMIgIOxd660zMn15B4=
+X-Google-Smtp-Source: ANB0VdZIJ512QRvBbjV3Tbj+3JfbbeBHXysbhuAfgMtdCxYvtD+tIXQsqJjU/iEzg1dTgPuCpwbgVg==
+X-Received: by 2002:a67:5e82:: with SMTP id s124-v6mr3511083vsb.105.1536589475430;
+        Mon, 10 Sep 2018 07:24:35 -0700 (PDT)
+Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com. [209.85.222.50])
+        by smtp.gmail.com with ESMTPSA id j75-v6sm3510050vke.27.2018.09.10.07.24.34
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Sep 2018 07:24:34 -0700 (PDT)
+Received: by mail-ua1-f50.google.com with SMTP id m26-v6so17520771uap.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 07:24:34 -0700 (PDT)
+X-Received: by 2002:ab0:4c6c:: with SMTP id d44-v6mr7162423uag.102.1536589473399;
+ Mon, 10 Sep 2018 07:24:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 10 Sep 2018 19:54:27 +0530
-From:   dkota@codeaurora.org
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Doug Anderson <dianders@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        Girish Mahadevan <girishm@codeaurora.org>
-Subject: Re: [PATCH V3] spi: spi-geni-qcom: Add SPI driver support for GENI
- based QUP
-In-Reply-To: <20180910112633.GC5856@sirena.org.uk>
-References: <1535107336-2214-1-git-send-email-dkota@codeaurora.org>
- <CAD=FV=XigmU1LXnNbj9NYkjJmj18chBFjbctrBeOKoS=34PLXw@mail.gmail.com>
- <2493fc3fa3f6e5d2bcdde27cee1c33df@codeaurora.org>
- <CAD=FV=VzYYyive--RzN=_OCQnFT-wgHwbUy1Vao2-8GADxHDLw@mail.gmail.com>
- <c4982ce3fde57c86387cc906332f6d48@codeaurora.org>
- <20180910112633.GC5856@sirena.org.uk>
-Message-ID: <2c2260787f4c02702b02b8a85cd63187@codeaurora.org>
-X-Sender: dkota@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+References: <20180420115001.161745-1-lndmrk@chromium.org> <20180528142711.142466-1-lndmrk@chromium.org>
+In-Reply-To: <20180528142711.142466-1-lndmrk@chromium.org>
+From:   Sean Paul <seanpaul@chromium.org>
+Date:   Mon, 10 Sep 2018 10:23:53 -0400
+X-Gmail-Original-Message-ID: <CAOw6vb+3Y5bL+P8VqFuCmkpPYyySBtMzXc2dUOS88Hqz_8-B6g@mail.gmail.com>
+Message-ID: <CAOw6vb+3Y5bL+P8VqFuCmkpPYyySBtMzXc2dUOS88Hqz_8-B6g@mail.gmail.com>
+Subject: Re: [PATCH v2] drm: udl: Destroy framebuffer only if it was initialized
+To:     lndmrk@chromium.org
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        Dave Airlie <airlied@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        =?UTF-8?Q?St=C3=A9phane_Marchesin?= <stephane.marchesin@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-09-10 16:56, Mark Brown wrote:
-> On Mon, Sep 10, 2018 at 09:27:09AM +0530, dkota@codeaurora.org wrote:
-> 
->> > The thing is, we want it to be 100% reliable, not 99.9% reliable.  Is
->> > it somehow wrong to add the spinlock?  ...or are you noticing
->> > performance problems with the spinlock there?  It's just nice not to
->> > have to think about it.
-> 
->> As I said, timeout will be handled after the calculated time as per 
->> data
->> size and speed. Enough time is given for interrupt, there is no chance 
->> of
->> interrupt occurrence during the handle_fifo_timeout(). So there is no 
->> need
->> of spinlock.
-> 
-> Assuming nothing goes wrong - the system isn't under unusually heavy
-> load for example, there's some oversight in the code, there's no impact
-> from power management causing things to run more slowly than you were
-> expecting, someone uses the driver on a new bit of hardware where there
-> are extra considerations or whatever else might go wrong.  Like Doug
-> says unless we're in some performance critical situation where it's
-> worth thinking *really* hard about how things really are actually safe
-> even though they might not look it it's both easier and more
-> maintainable to just write software that's obviously safe to 
-> inspection.
+On Mon, May 28, 2018 at 10:27 AM Emil Lundmark <lndmrk@chromium.org> wrote:
+>
+> This fixes a NULL pointer dereference that can happen if the UDL
+> driver is unloaded before the framebuffer is initialized. This can
+> happen e.g. if the USB device is unplugged right after it was plugged
+> in.
+>
+> As explained by St=C3=A9phane Marchesin:
+>
+> It happens when fbdev is disabled (which is the case for Chrome OS).
+> Even though intialization of the fbdev part is optional (it's done in
+> udlfb_create which is the callback for fb_probe()), the teardown isn't
+> optional (udl_driver_unload -> udl_fbdev_cleanup ->
+> udl_fbdev_destroy).
+>
+> Note that udl_fbdev_cleanup *tries* to be conditional (you can see it
+> does if (!udl->fbdev)) but that doesn't work, because udl->fbdev is
+> always set during udl_fbdev_init.
+>
+> Suggested-by: Sean Paul <seanpaul@chromium.org>
+> Signed-off-by: Emil Lundmark <lndmrk@chromium.org>
 
-Agree with this perspective. There wont be any performance impact with 
-spinlock. I will include the spinlock in the code.
+Many apologies, Emil, I completely dropped the ball on this one. I've
+just applied it to -misc-fixes.
+
+Sean
+
+
+> ---
+> Changes in v2:
+> - Updated commit message with explanation from St=C3=A9phane Marchesin
+>
+>  drivers/gpu/drm/udl/udl_fb.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/udl/udl_fb.c b/drivers/gpu/drm/udl/udl_fb.c
+> index 2ebdc6d5a76e..5754e37f741b 100644
+> --- a/drivers/gpu/drm/udl/udl_fb.c
+> +++ b/drivers/gpu/drm/udl/udl_fb.c
+> @@ -426,9 +426,11 @@ static void udl_fbdev_destroy(struct drm_device *dev=
+,
+>  {
+>         drm_fb_helper_unregister_fbi(&ufbdev->helper);
+>         drm_fb_helper_fini(&ufbdev->helper);
+> -       drm_framebuffer_unregister_private(&ufbdev->ufb.base);
+> -       drm_framebuffer_cleanup(&ufbdev->ufb.base);
+> -       drm_gem_object_put_unlocked(&ufbdev->ufb.obj->base);
+> +       if (ufbdev->ufb.obj) {
+> +               drm_framebuffer_unregister_private(&ufbdev->ufb.base);
+> +               drm_framebuffer_cleanup(&ufbdev->ufb.base);
+> +               drm_gem_object_put_unlocked(&ufbdev->ufb.obj->base);
+> +       }
+>  }
+>
+>  int udl_fbdev_init(struct drm_device *dev)
+> --
+> 2.17.0.921.gf22659ad46-goog
+>
