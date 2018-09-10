@@ -2,113 +2,110 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B752EC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 07:54:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1040BC4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 07:54:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57E9A20866
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 07:54:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD50D20866
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 07:54:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="xExxGK3/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57E9A20866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jSXTqMPV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD50D20866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727579AbeIJMrS (ORCPT
+        id S1727666AbeIJMrc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 08:47:18 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:46984 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726148AbeIJMrS (ORCPT
+        Mon, 10 Sep 2018 08:47:32 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:34956 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726148AbeIJMrb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 08:47:18 -0400
-Received: by mail-io1-f66.google.com with SMTP id y12-v6so6266851ioj.13
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 00:54:33 -0700 (PDT)
+        Mon, 10 Sep 2018 08:47:31 -0400
+Received: by mail-wm0-f65.google.com with SMTP id o18-v6so20386034wmc.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 00:54:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=oHNjFEShMy06oeHy63dMj0Y0ej/1JsVPNH6DzjfNg98=;
-        b=xExxGK3/+V42oAbskQ8KABkUb6fgkJ+xX+pMo9YjV9yjaWn0lzooBuqMtMEvvqCUai
-         EM/A+FyjHq3zVI5qZI5fGeUXjUqEwcXv+PYwBtHVV0WqQQC3oWJSCsNZaBUp+jH3cOn0
-         tteKVPt4mBlRF8DB+Pjz2FxCFv6QeAyE2eqqP05tLt5QxLRpOrqQ8YgILJIl9qwGX7id
-         DPcFScFK2XMhBMGSBR6nNnT6H8AeoUxuJ/Ks0vaQnC+8xH6fXg11IHdhWTBog/MujZVq
-         7hFAJeaMX1Fxbyovj9bUUDgeC1QN6yB4mqHfCIHRBXe+yyWkOZWewAKLHKxDviVh/9oq
-         Kh8g==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=6A1tFdCVNhN8Bf2/8522/65gR4zta7XMrZct/IY0Pz4=;
+        b=jSXTqMPVGWLDSwtMYEP1nhs+6xm2vp1ZO7ReLIW7svi7YZeGikVoxE0uyfY3xupnxw
+         6FuoPGGEpQ7q1Bs3uxCXZQD2B57M9r6xbi6bh86wzFDmDQuoUFVn0GhF7J0r/MEov1VC
+         iGyHn0z4tRTHzIhtyMa7DJ6I2yamvVJFBikGY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=oHNjFEShMy06oeHy63dMj0Y0ej/1JsVPNH6DzjfNg98=;
-        b=pFHQc7b/7hly5YPRZpwiXOQpKH0I7f+JxBkYVlCkexzSWeSQJW+F+KqmjMWD/fxx+u
-         0bThnSChI3RGszf8NNF5yS4TCrVGBY5PxolocBesKIT1gzzQy3zGdv7+Kpnd7faNAzLA
-         o20HLo4YszwuTyonDp3x9E+5LSOw0TcpTGutkeTSnrF1lYuUBVsBq4BAnQSmhIUtgGwX
-         +wgeCX/3H8LbeV6t1yx0RAtslJL4GiPArhye+fAbid06NMdVm6opxR2dgxwRqnFvxJQY
-         Y4wKpT492GRKPWJkisYv/mkfPDLrLAItEHaSh+cgixxexw1QBn8eUFRI5LJTpzfaZxMn
-         sUsQ==
-X-Gm-Message-State: APzg51CzHUZmPhsNcHp4ifCZEjEaIe4uHPfONOfUfoKdhZNhznYBNKLv
-        h16ewJq6ttbGhmGAN2Q08UbaPKncEq9OpS5zqfG6upE+
-X-Google-Smtp-Source: ANB0VdbhCckQ/b77wApspjrMQ5nr56rVlJZqu+qfn/ybUlzb8AGLaNPQrneOL2qJdmu+rIo9yqgUu31Bx3GJdlFcIic=
-X-Received: by 2002:a6b:6401:: with SMTP id t1-v6mr16579259iog.111.1536566073435;
- Mon, 10 Sep 2018 00:54:33 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a6b:1905:0:0:0:0:0 with HTTP; Mon, 10 Sep 2018 00:54:33
- -0700 (PDT)
-In-Reply-To: <a25ef4b9-18cf-ab08-af8f-72b6eaa32602@linaro.org>
-References: <20180910074404.8041-1-brgl@bgdev.pl> <a25ef4b9-18cf-ab08-af8f-72b6eaa32602@linaro.org>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Mon, 10 Sep 2018 09:54:33 +0200
-Message-ID: <CAMRc=Md+Cr8cBQGJuy0UL+oQjatH+mLV28279-qccgvyy18CAA@mail.gmail.com>
-Subject: Re: [PATCH 0/2] eeprom: use devres for nvmem providers
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=6A1tFdCVNhN8Bf2/8522/65gR4zta7XMrZct/IY0Pz4=;
+        b=AMetCENeaHwhbMSiNciMaPzCYkdIdoNSD7oRDPtG6K+kX1hiawTAA36WVmnxBRrnjL
+         wLsicGNj6UenyUwbAoFN+X9Dkp9NtbRqQvqkg/8xp1dLZ9tlSvs4IJUsQMSNHIMsFvq2
+         cLzAH6sYkjzzrQzxbGeb7wjK4kAkpwMKBRWeJ1XaKPmqnxycROva0D9WxPgNpraKkpbF
+         CE82ZfEgkuoeaVre6jyIXGwavXbUQrVoTFGFuQ5BzxQtg8ll6eu/maE8caW4OJaSu102
+         ExIFx/cxWM0NZ9+fGROP/q4rtRw0pBGAnFS2WJfCyDyl8lgAIxwBMfZioCDaRCxzL+Y2
+         nJbA==
+X-Gm-Message-State: APzg51Cl9y+BhJTy+6LLV0fmT2fWfOTx8WVmMDML0yY4p5evwC9Q9aUc
+        kzE8UC+yLH1KQ+msbG5L06bfDQ==
+X-Google-Smtp-Source: ANB0VdbIbyB0UdmjyYb/7pmIjhAWVuuEORSjXyvrisvJjLZ/3hcu8YQQGxr8CXrMoFoUS2VvWaRTgA==
+X-Received: by 2002:a1c:3545:: with SMTP id c66-v6mr12319942wma.120.1536566085688;
+        Mon, 10 Sep 2018 00:54:45 -0700 (PDT)
+Received: from [192.168.0.18] (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
+        by smtp.googlemail.com with ESMTPSA id d22-v6sm35578030wra.80.2018.09.10.00.54.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Sep 2018 00:54:45 -0700 (PDT)
+Subject: Re: [PATCH v2 00/16] nvmem: rework of the subsystem for non-DT users
+To:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        "David S . Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh@kernel.org>,
-        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
-        Devang Panchal <devang.panchal@softnautics.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Andrew Lunn <andrew@lunn.ch>, Alban Bedel <albeu@free.fr>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+References: <20180907100750.14564-1-brgl@bgdev.pl>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <da9556fd-0022-8e6a-12b4-cc3babbae5b0@linaro.org>
+Date:   Mon, 10 Sep 2018 08:54:44 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
+MIME-Version: 1.0
+In-Reply-To: <20180907100750.14564-1-brgl@bgdev.pl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-09-10 9:50 GMT+02:00 Srinivas Kandagatla <srinivas.kandagatla@linaro.org>:
->
->
-> On 10/09/18 08:44, Bartosz Golaszewski wrote:
->>
->> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>
->> While working on the nvmem framework recently I noticed that there are
->> many providers that don't use the devm variant of nvmem_register().
->> This series contains relevant updates for eeprom drivers.
->>
->> Bartosz Golaszewski (2):
->>    eeprom: eeprom_93xx46: use resource management
->>    eeprom: at25: use devm_nvmem_register()
->>
->>   drivers/misc/eeprom/at25.c          | 3 +--
->>   drivers/misc/eeprom/eeprom_93xx46.c | 7 ++-----
->
->
-> Can you please consider consolidating the devm related changes in a single
-> series, to easy the review!
->
->
->>   2 files changed, 3 insertions(+), 7 deletions(-)
->>
->
 
-Are you referring to the devm part of the bigger nvmem series? If so:
-no, because the nvmem patches are required by the later patches in
-that series. These two patches are independent and should probably go
-through Greg's tree directly.
 
-Best regards,
-Bartosz Golaszewski
+On 07/09/18 11:07, Bartosz Golaszewski wrote:
+> Next three patches improve the framework by adding a notifier chain
+> for future use and fixing the issue with nvmem device names.
+> 
+> Finally we add support for cell definitions, cell lookups and make
+> DT systems resolve the nvmem cells during provider's registration.
+> 
+> Last patches just use the SPDX license identifiers and make the
+> naming convention for some arguments more consistent.
+Please send separate series for fixes and things that do not depend on 
+this new apis or Order/place them at the end of the series.
+
+This can help reviewer when there is large number of patches in series 
+with unrelated subject.
+
+-s-rini
+
+
