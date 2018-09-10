@@ -2,723 +2,897 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3335BC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 20:24:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A771DC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 20:25:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEC7920855
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 20:24:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEC7920855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 4CE0E2086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 20:25:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CE0E2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726795AbeIKBUG (ORCPT
+        id S1726866AbeIKBVG convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 21:20:06 -0400
-Received: from mga01.intel.com ([192.55.52.88]:52881 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726121AbeIKBUG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 21:20:06 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2018 13:24:10 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,356,1531810800"; 
-   d="gz'50?scan'50,208,50";a="82398671"
-Received: from bee.sh.intel.com (HELO lkp-server01) ([10.239.97.14])
-  by orsmga003.jf.intel.com with ESMTP; 10 Sep 2018 13:23:52 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1fzSit-000EkB-WF; Tue, 11 Sep 2018 04:23:52 +0800
-Date:   Tue, 11 Sep 2018 04:23:10 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     zhong jiang <zhongjiang@huawei.com>
-Cc:     kbuild-all@01.org, davem@davemloft.net, edumazet@google.com,
-        kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: ipv4: Use BUG_ON directly instead of a if condition
- followed by BUG
-Message-ID: <201809110441.PjWNmM0r%fengguang.wu@intel.com>
-References: <1536590282-23899-1-git-send-email-zhongjiang@huawei.com>
+        Mon, 10 Sep 2018 21:21:06 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:51880 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726121AbeIKBVG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 21:21:06 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8AKEjnD016312;
+        Mon, 10 Sep 2018 22:24:48 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2md8d6nmb3-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 10 Sep 2018 22:24:48 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8488F31;
+        Mon, 10 Sep 2018 20:24:47 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag7node3.st.com [10.75.127.21])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C45AFA5C6;
+        Mon, 10 Sep 2018 20:24:46 +0000 (GMT)
+Received: from SFHDAG7NODE2.st.com (10.75.127.20) by SFHDAG7NODE3.st.com
+ (10.75.127.21) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 10 Sep
+ 2018 22:24:46 +0200
+Received: from SFHDAG7NODE2.st.com ([fe80::d548:6a8f:2ca4:2090]) by
+ SFHDAG7NODE2.st.com ([fe80::d548:6a8f:2ca4:2090%20]) with mapi id
+ 15.00.1347.000; Mon, 10 Sep 2018 22:24:46 +0200
+From:   Loic PALLARDY <loic.pallardy@st.com>
+To:     Wendy Liang <wendy.liang@xilinx.com>,
+        "ohad@wizery.com" <ohad@wizery.com>,
+        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "rajan.vaja@xilinx.com" <rajan.vaja@xilinx.com>,
+        "jollys@xilinx.com" <jollys@xilinx.com>
+CC:     "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Wendy Liang <jliang@xilinx.com>
+Subject: RE: [PATCH 6/7] remoteproc: Add Xilinx ZynqMP R5 remoteproc
+Thread-Topic: [PATCH 6/7] remoteproc: Add Xilinx ZynqMP R5 remoteproc
+Thread-Index: AQHUNS/P0MO4/AmwIEG9Y6i34m7hB6TqEqbA
+Date:   Mon, 10 Sep 2018 20:24:46 +0000
+Message-ID: <0c0e49a9b3594799b572e539705f4f4b@SFHDAG7NODE2.st.com>
+References: <1534403190-28523-1-git-send-email-jliang@xilinx.com>
+ <1534403190-28523-7-git-send-email-jliang@xilinx.com>
+In-Reply-To: <1534403190-28523-7-git-send-email-jliang@xilinx.com>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.51]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="5vNYLRcllDrimb99"
-Content-Disposition: inline
-In-Reply-To: <1536590282-23899-1-git-send-email-zhongjiang@huawei.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-10_10:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Wendy,
+Please find below few comments.
 
---5vNYLRcllDrimb99
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> -----Original Message-----
+> From: linux-remoteproc-owner@vger.kernel.org <linux-remoteproc-
+> owner@vger.kernel.org> On Behalf Of Wendy Liang
+> Sent: Thursday, August 16, 2018 9:06 AM
+> To: ohad@wizery.com; bjorn.andersson@linaro.org;
+> michal.simek@xilinx.com; robh+dt@kernel.org; mark.rutland@arm.com;
+> rajan.vaja@xilinx.com; jollys@xilinx.com
+> Cc: linux-remoteproc@vger.kernel.org; linux-arm-
+> kernel@lists.infradead.org; devicetree@vger.kernel.org; linux-
+> kernel@vger.kernel.org; Wendy Liang <jliang@xilinx.com>
+> Subject: [PATCH 6/7] remoteproc: Add Xilinx ZynqMP R5 remoteproc
+> 
+> There are cortex-r5 processors in Xilinx Zynq UltraScale+
+> MPSoC platforms. This remoteproc driver is to manage the
+> R5 processors.
+> 
+> Signed-off-by: Wendy Liang <jliang@xilinx.com>
 
-Hi zhong,
+Jason Wu' signed-off-by missing as he is mentioned as author of this driver?
 
-Thank you for the patch! Yet something to improve:
+> ---
+>  drivers/remoteproc/Kconfig                |   9 +
+>  drivers/remoteproc/Makefile               |   1 +
+>  drivers/remoteproc/zynqmp_r5_remoteproc.c | 692
+> ++++++++++++++++++++++++++++++
+>  3 files changed, 702 insertions(+)
+>  create mode 100644 drivers/remoteproc/zynqmp_r5_remoteproc.c
+> 
+> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+> index cd1c168..83aac63 100644
+> --- a/drivers/remoteproc/Kconfig
+> +++ b/drivers/remoteproc/Kconfig
+> @@ -158,6 +158,15 @@ config ST_REMOTEPROC
+>  config ST_SLIM_REMOTEPROC
+>  	tristate
+> 
+> +config ZYNQMP_R5_REMOTEPROC
+> +	tristate "ZynqMP_r5 remoteproc support"
+> +	depends on ARM64 && PM && ARCH_ZYNQMP
+> +	select RPMSG_VIRTIO
+> +	select ZYNQMP_FIRMWARE
+> +	help
+> +	  Say y here to support ZynqMP R5 remote processors via the remote
+> +	  processor framework.
+> +
+>  endif # REMOTEPROC
+> 
+>  endmenu
+> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+> index 02627ed..147923c 100644
+> --- a/drivers/remoteproc/Makefile
+> +++ b/drivers/remoteproc/Makefile
+> @@ -23,3 +23,4 @@ qcom_wcnss_pil-y			+=
+> qcom_wcnss.o
+>  qcom_wcnss_pil-y			+= qcom_wcnss_iris.o
+>  obj-$(CONFIG_ST_REMOTEPROC)		+= st_remoteproc.o
+>  obj-$(CONFIG_ST_SLIM_REMOTEPROC)	+= st_slim_rproc.o
+> +obj-$(CONFIG_ZYNQMP_R5_REMOTEPROC)	+= zynqmp_r5_remoteproc.o
+> diff --git a/drivers/remoteproc/zynqmp_r5_remoteproc.c
+> b/drivers/remoteproc/zynqmp_r5_remoteproc.c
+> new file mode 100644
+> index 0000000..7fc3718
+> --- /dev/null
+> +++ b/drivers/remoteproc/zynqmp_r5_remoteproc.c
+> @@ -0,0 +1,692 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Zynq R5 Remote Processor driver
+> + *
+> + * Copyright (C) 2015 Xilinx, Inc.
+> + *
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/err.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/dma-mapping.h>
+> +#include <linux/remoteproc.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_irq.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/of_reserved_mem.h>
+> +#include <linux/slab.h>
+> +#include <linux/cpu.h>
+> +#include <linux/delay.h>
+> +#include <linux/list.h>
+> +#include <linux/genalloc.h>
+> +#include <linux/pfn.h>
+> +#include <linux/idr.h>
+> +#include <linux/firmware/xlnx-zynqmp.h>
 
-[auto build test ERROR on net/master]
-[also build test ERROR on v4.19-rc3 next-20180910]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+Includes to be classified in alphabetical order
 
-url:    https://github.com/0day-ci/linux/commits/zhong-jiang/net-ipv4-Use-BUG_ON-directly-instead-of-a-if-condition-followed-by-BUG/20180911-034152
-config: x86_64-randconfig-x009-201836 (attached as .config)
-compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
-reproduce:
-        # save the attached .config to linux build tree
-        make ARCH=x86_64 
+> +
+> +#include "remoteproc_internal.h"
+> +
+> +/* IPI reg offsets */
+> +#define TRIG_OFFSET		0x00000000
+> +#define OBS_OFFSET		0x00000004
+> +#define ISR_OFFSET		0x00000010
+> +#define IMR_OFFSET		0x00000014
+> +#define IER_OFFSET		0x00000018
+> +#define IDR_OFFSET		0x0000001C
+> +#define IPI_ALL_MASK		0x0F0F0301
+> +
+> +/* RPU IPI mask */
+> +#define RPU_IPI_INIT_MASK	0x00000100
+> +#define RPU_IPI_MASK(n)		(RPU_IPI_INIT_MASK << (n))
+> +#define RPU_0_IPI_MASK		RPU_IPI_MASK(0)
+> +#define RPU_1_IPI_MASK		RPU_IPI_MASK(1)
+> +
+> +/* PM proc states */
+> +#define PM_PROC_STATE_ACTIVE 1u
+> +
+> +/* Maximum TCM power nodes IDs */
+> +#define MAX_TCM_PNODES 4
+> +
+> +/* Register access macros */
+> +#define reg_read(base, reg) \
+> +	readl(((void __iomem *)(base)) + (reg))
+> +#define reg_write(base, reg, val) \
+> +	writel((val), ((void __iomem *)(base)) + (reg))
+> +
+> +#define DEFAULT_FIRMWARE_NAME	"rproc-rpu-fw"
+> +
+> +static bool autoboot __read_mostly;
+> +
+> +struct zynqmp_r5_rproc_pdata;
 
-All errors (new ones prefixed by >>):
+This definition is not needed as complete definition just below.
+> +
+> +/**
+> + * struct zynqmp_r5_rproc_pdata - zynqmp rpu remote processor instance
+> state
+> + * @rproc: rproc handle
+> + * @workqueue: workqueue for the RPU remoteproc
+> + * @ipi_base: virt ptr to IPI channel address registers for APU
+> + * @rpu_mode: RPU core configuration
+> + * @rpu_id: RPU CPU id
+> + * @rpu_pnode_id: RPU CPU power domain id
+> + * @mem_pools: list of gen_pool for firmware mmio_sram memory and
+> their
+> + *             power domain IDs
+> + * @mems: list of rproc_mem_entries for firmware
+> + * @irq: IRQ number
+> + * @ipi_dest_mask: IPI destination mask for the IPI channel
+> + */
+> +struct zynqmp_r5_rproc_pdata {
+> +	struct rproc *rproc;
+> +	struct work_struct workqueue;
+> +	void __iomem *ipi_base;
+> +	enum rpu_oper_mode rpu_mode;
+> +	struct list_head mems;
+> +	u32 ipi_dest_mask;
+> +	u32 rpu_id;
+> +	u32 rpu_pnode_id;
+> +	int irq;
+> +	u32 tcm_pnode_id[MAX_TCM_PNODES];
+> +};
+> +
+> +/**
+> + * r5_boot_addr_config - configure the boot address of R5
+> + * @pdata: platform data
+> + * @bootmem: boot from LOVEC or HIVEC
+> + *
+> + * This function will set the RPU boot address
+> + */
+> +static void r5_boot_addr_config(struct zynqmp_r5_rproc_pdata *pdata,
+> +				enum rpu_boot_mem bootmem)
+> +{
+> +	const struct zynqmp_eemi_ops *eemi =
+> zynqmp_pm_get_eemi_ops();
+> +
+> +	pr_debug("%s: R5 ID: %d, boot_dev %d\n",
+> +		 __func__, pdata->rpu_id, bootmem);
+> +
+> +	if (!eemi || !eemi->ioctl) {
+> +		pr_err("%s: no eemi ioctl operation.\n", __func__);
+> +		return;
+> +	}
+> +	eemi->ioctl(pdata->rpu_pnode_id,
+> IOCTL_RPU_BOOT_ADDR_CONFIG,
+> +		    bootmem, 0, NULL);
+> +}
+> +
+> +/**
+> + * r5_mode_config - configure R5 operation mode
+> + * @pdata: platform data
+> + *
+> + * configure R5 to split mode or lockstep mode
+> + * based on the platform data.
+> + */
+> +static void r5_mode_config(struct zynqmp_r5_rproc_pdata *pdata)
+> +{
+> +	const struct zynqmp_eemi_ops *eemi =
+> zynqmp_pm_get_eemi_ops();
+> +
+> +	pr_debug("%s: mode: %d\n", __func__, pdata->rpu_mode);
+> +
+> +	if (!eemi || !eemi->ioctl) {
+> +		pr_err("%s: no eemi ioctl operation.\n", __func__);
+> +		return;
+> +	}
+> +	eemi->ioctl(pdata->rpu_pnode_id, IOCTL_SET_RPU_OPER_MODE,
+> +		    pdata->rpu_mode, 0, NULL);
+> +}
+> +
+> +/**
+> + * r5_release_tcm() - release TCM
+> + * @pdata: platform data
+> + *
+> + * Release TCM
+> + */
+> +static void r5_release_tcm(struct zynqmp_r5_rproc_pdata *pdata)
+> +{
+> +	const struct zynqmp_eemi_ops *eemi =
+> zynqmp_pm_get_eemi_ops();
+> +	int i;
+> +
+> +	if (!eemi || !eemi->release_node) {
+> +		pr_err("Failed to release TCM\n");
+> +		return;
+> +	}
+> +
+> +	for (i = 0; i < MAX_TCM_PNODES; i++) {
+> +		if (pdata->tcm_pnode_id[i] != 0)
+> +			eemi->release_node(pdata->tcm_pnode_id[i]);
+> +	}
+> +}
+> +
+> +/**
+> + * disable_ipi - disable IPI
+> + * @pdata: platform data
+> + *
+> + * Disable IPI interrupt
+> + */
+> +static inline void disable_ipi(struct zynqmp_r5_rproc_pdata *pdata)
+> +{
+> +	/* Disable R5 IPI interrupt */
+> +	if (pdata->ipi_base)
+> +		reg_write(pdata->ipi_base, IDR_OFFSET, pdata-
+> >ipi_dest_mask);
+> +}
 
-   net//ipv4/tcp_input.c: In function 'tcp_collapse':
->> net//ipv4/tcp_input.c:4925:35: error: macro "BUG" passed 1 arguments, but takes just 0
-            skb_put(nskb, size), size));
-                                      ^
->> net//ipv4/tcp_input.c:4924:5: error: 'BUG' undeclared (first use in this function)
-        BUG(skb_copy_bits(skb, offset,
-        ^~~
-   net//ipv4/tcp_input.c:4924:5: note: each undeclared identifier is reported only once for each function it appears in
-   net//ipv4/tcp_input.c: In function 'tcp_urg':
-   net//ipv4/tcp_input.c:5318:40: error: macro "BUG" passed 1 arguments, but takes just 0
-       BUG(skb_copy_bits(skb, ptr, &tmp, 1));
-                                           ^
-   net//ipv4/tcp_input.c:5318:4: error: 'BUG' undeclared (first use in this function)
-       BUG(skb_copy_bits(skb, ptr, &tmp, 1));
-       ^~~
+All IPI functions should go below mailbox framework as you use it as a doorbell.
 
-vim +/BUG +4925 net//ipv4/tcp_input.c
+> +
+> +/**
+> + * enable_ipi - enable IPI
+> + * @pdata: platform data
+> + *
+> + * Enable IPI interrupt
+> + */
+> +static inline void enable_ipi(struct zynqmp_r5_rproc_pdata *pdata)
+> +{
+> +	/* Enable R5 IPI interrupt */
+> +	if (pdata->ipi_base)
+> +		reg_write(pdata->ipi_base, IER_OFFSET, pdata-
+> >ipi_dest_mask);
+> +}
+> +
+> +/**
+> + * event_notified_idr_cb - event notified idr callback
+> + * @id: idr id
+> + * @ptr: pointer to idr private data
+> + * @data: data passed to idr_for_each callback
+> + *
+> + * Pass notification to remoteproc virtio
+> + *
+> + * @return: 0. having return is to satisfy the idr_for_each() function
+> + *          pointer input argument requirement.
+> + */
+> +static int event_notified_idr_cb(int id, void *ptr, void *data)
+> +{
+> +	struct rproc *rproc = data;
+> +
+> +	(void)rproc_vq_interrupt(rproc, id);
+> +	return 0;
+> +}
+> +
+> +static void handle_event_notified(struct work_struct *work)
+> +{
+> +	struct rproc *rproc;
+> +	struct zynqmp_r5_rproc_pdata *local;
+> +
+> +	local = container_of(work, struct zynqmp_r5_rproc_pdata,
+> workqueue);
+> +	rproc = local->rproc;
+> +	idr_for_each(&rproc->notifyids, event_notified_idr_cb, rproc);
+> +}
+> +
+> +static int zynqmp_r5_rproc_start(struct rproc *rproc)
+> +{
+> +	struct device *dev = rproc->dev.parent;
+> +	struct zynqmp_r5_rproc_pdata *local = rproc->priv;
+> +	enum rpu_boot_mem bootmem;
+> +	const struct zynqmp_eemi_ops *eemi =
+> zynqmp_pm_get_eemi_ops();
+> +
+> +	dev_dbg(dev, "%s\n", __func__);
+> +
+> +	if (!eemi || !eemi->force_powerdown ||
+> +	    !eemi->request_wakeup) {
+> +		pr_err("Failed to start R5\n");
+> +		return -ENXIO;
+> +	}
+> +
+> +	/* Set up R5 */
+> +	if ((rproc->bootaddr & 0xF0000000) == 0xF0000000)
+> +		bootmem = PM_RPU_BOOTMEM_HIVEC;
+> +	else
+> +		bootmem = PM_RPU_BOOTMEM_LOVEC;
+> +	dev_info(dev, "RPU boot from %s.",
+> +		 bootmem == PM_RPU_BOOTMEM_HIVEC ? "OCM" :
+> "TCM");
+> +
+> +	r5_mode_config(local);
+> +	eemi->force_powerdown(local->rpu_pnode_id,
+> +			      ZYNQMP_PM_REQUEST_ACK_BLOCKING);
+> +	r5_boot_addr_config(local, bootmem);
 
-  4838	
-  4839	/* Collapse contiguous sequence of skbs head..tail with
-  4840	 * sequence numbers start..end.
-  4841	 *
-  4842	 * If tail is NULL, this means until the end of the queue.
-  4843	 *
-  4844	 * Segments with FIN/SYN are not collapsed (only because this
-  4845	 * simplifies code)
-  4846	 */
-  4847	static void
-  4848	tcp_collapse(struct sock *sk, struct sk_buff_head *list, struct rb_root *root,
-  4849		     struct sk_buff *head, struct sk_buff *tail, u32 start, u32 end)
-  4850	{
-  4851		struct sk_buff *skb = head, *n;
-  4852		struct sk_buff_head tmp;
-  4853		bool end_of_skbs;
-  4854	
-  4855		/* First, check that queue is collapsible and find
-  4856		 * the point where collapsing can be useful.
-  4857		 */
-  4858	restart:
-  4859		for (end_of_skbs = true; skb != NULL && skb != tail; skb = n) {
-  4860			n = tcp_skb_next(skb, list);
-  4861	
-  4862			/* No new bits? It is possible on ofo queue. */
-  4863			if (!before(start, TCP_SKB_CB(skb)->end_seq)) {
-  4864				skb = tcp_collapse_one(sk, skb, list, root);
-  4865				if (!skb)
-  4866					break;
-  4867				goto restart;
-  4868			}
-  4869	
-  4870			/* The first skb to collapse is:
-  4871			 * - not SYN/FIN and
-  4872			 * - bloated or contains data before "start" or
-  4873			 *   overlaps to the next one.
-  4874			 */
-  4875			if (!(TCP_SKB_CB(skb)->tcp_flags & (TCPHDR_SYN | TCPHDR_FIN)) &&
-  4876			    (tcp_win_from_space(sk, skb->truesize) > skb->len ||
-  4877			     before(TCP_SKB_CB(skb)->seq, start))) {
-  4878				end_of_skbs = false;
-  4879				break;
-  4880			}
-  4881	
-  4882			if (n && n != tail &&
-  4883			    TCP_SKB_CB(skb)->end_seq != TCP_SKB_CB(n)->seq) {
-  4884				end_of_skbs = false;
-  4885				break;
-  4886			}
-  4887	
-  4888			/* Decided to skip this, advance start seq. */
-  4889			start = TCP_SKB_CB(skb)->end_seq;
-  4890		}
-  4891		if (end_of_skbs ||
-  4892		    (TCP_SKB_CB(skb)->tcp_flags & (TCPHDR_SYN | TCPHDR_FIN)))
-  4893			return;
-  4894	
-  4895		__skb_queue_head_init(&tmp);
-  4896	
-  4897		while (before(start, end)) {
-  4898			int copy = min_t(int, SKB_MAX_ORDER(0, 0), end - start);
-  4899			struct sk_buff *nskb;
-  4900	
-  4901			nskb = alloc_skb(copy, GFP_ATOMIC);
-  4902			if (!nskb)
-  4903				break;
-  4904	
-  4905			memcpy(nskb->cb, skb->cb, sizeof(skb->cb));
-  4906	#ifdef CONFIG_TLS_DEVICE
-  4907			nskb->decrypted = skb->decrypted;
-  4908	#endif
-  4909			TCP_SKB_CB(nskb)->seq = TCP_SKB_CB(nskb)->end_seq = start;
-  4910			if (list)
-  4911				__skb_queue_before(list, skb, nskb);
-  4912			else
-  4913				__skb_queue_tail(&tmp, nskb); /* defer rbtree insertion */
-  4914			skb_set_owner_r(nskb, sk);
-  4915	
-  4916			/* Copy data, releasing collapsed skbs. */
-  4917			while (copy > 0) {
-  4918				int offset = start - TCP_SKB_CB(skb)->seq;
-  4919				int size = TCP_SKB_CB(skb)->end_seq - start;
-  4920	
-  4921				BUG_ON(offset < 0);
-  4922				if (size > 0) {
-  4923					size = min(copy, size);
-> 4924					BUG(skb_copy_bits(skb, offset,
-> 4925							  skb_put(nskb, size), size));
-  4926					TCP_SKB_CB(nskb)->end_seq += size;
-  4927					copy -= size;
-  4928					start += size;
-  4929				}
-  4930				if (!before(start, TCP_SKB_CB(skb)->end_seq)) {
-  4931					skb = tcp_collapse_one(sk, skb, list, root);
-  4932					if (!skb ||
-  4933					    skb == tail ||
-  4934					    (TCP_SKB_CB(skb)->tcp_flags & (TCPHDR_SYN | TCPHDR_FIN)))
-  4935						goto end;
-  4936	#ifdef CONFIG_TLS_DEVICE
-  4937					if (skb->decrypted != nskb->decrypted)
-  4938						goto end;
-  4939	#endif
-  4940				}
-  4941			}
-  4942		}
-  4943	end:
-  4944		skb_queue_walk_safe(&tmp, skb, n)
-  4945			tcp_rbtree_insert(root, skb);
-  4946	}
-  4947	
+Add some blank line to ease code reading. Some parts of the code are too compacted.
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+> +	/* Add delay before release from halt and reset */
+> +	usleep_range(400, 500);
+> +	eemi->request_wakeup(local->rpu_pnode_id,
+> +			     1, bootmem,
+> +			     ZYNQMP_PM_REQUEST_ACK_NO);
+> +
+> +	/* Make sure IPI is enabled */
+> +	enable_ipi(local);
+> +
+> +	return 0;
+> +}
+> +
+> +/* kick a firmware */
+> +static void zynqmp_r5_rproc_kick(struct rproc *rproc, int vqid)
+> +{
+> +	struct device *dev = rproc->dev.parent;
+> +	struct zynqmp_r5_rproc_pdata *local = rproc->priv;
+> +
+> +	dev_dbg(dev, "KICK Firmware to start send messages vqid %d\n",
+> vqid);
+> +
+> +	/*
+> +	 * send irq to R5 firmware
+> +	 * Currently vqid is not used because we only got one.
+> +	 */
+> +	if (local->ipi_base)
+> +		reg_write(local->ipi_base, TRIG_OFFSET, local-
+> >ipi_dest_mask);
+> +}
+> +
+> +/* power off the remote processor */
+> +static int zynqmp_r5_rproc_stop(struct rproc *rproc)
+> +{
+> +	struct device *dev = rproc->dev.parent;
+> +	struct zynqmp_r5_rproc_pdata *local = rproc->priv;
+> +	struct rproc_mem_entry *mem, *nmem;
+> +	const struct zynqmp_eemi_ops *eemi =
+> zynqmp_pm_get_eemi_ops();
 
---5vNYLRcllDrimb99
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
+Is it pointer on secure interface to control coprocessor?
+As it is used in most of functions, maybe ops could be recovered and checked only once at probe time?
 
-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
-uLd7xPwPWxADCQOsAQA=
+> +
+> +	dev_dbg(dev, "%s\n", __func__);
+> +
+> +	if (!eemi || !eemi->force_powerdown) {
+> +		pr_err("Failed to stop R5\n");
+> +		return -ENXIO;
+> +	}
+> +
+> +	disable_ipi(local);
+> +	eemi->force_powerdown(local->rpu_pnode_id,
+> +			      ZYNQMP_PM_REQUEST_ACK_BLOCKING);
+> +
+> +	return 0;
+> +}
+> +
+> +static void *zynqmp_r5_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
+> +{
+> +	struct rproc_mem_entry *mem;
+> +	void *va = NULL;
+> +	struct zynqmp_r5_rproc_pdata *local = rproc->priv;
+> +
+> +	list_for_each_entry(mem, &local->mems, node) {
+> +		int offset = da - mem->da;
+> +
+> +		/* try next carveout if da is too small */
+> +		if (offset < 0)
+> +			continue;
+> +
+> +		/* try next carveout if da is too large */
+> +		if (offset + len > mem->len)
+> +			continue;
+> +
+> +		va = mem->va + offset;
+> +
+> +		break;
+> +	}
+> +	return va;
+> +}
+> +
+> +static int zynqmp_r5_parse_fw(struct rproc *rproc, const struct firmware
+> *fw)
+> +{
+> +	int ret;
+> +
+> +	ret = rproc_elf_load_rsc_table(rproc, fw);
+> +	if (ret == -EINVAL)
+> +		/* No resource table */
+> +		return 0;
+> +	else
+> +		return ret;
+> +}
+> +
+> +static struct rproc_ops zynqmp_r5_rproc_ops = {
+> +	.start		= zynqmp_r5_rproc_start,
+> +	.stop		= zynqmp_r5_rproc_stop,
+> +	.kick		= zynqmp_r5_rproc_kick,
+> +	.da_to_va       = zynqmp_r5_rproc_da_to_va,
+> +};
+> +
+> +/* Release R5 from reset and make it halted.
+> + * In case the firmware uses TCM, in order to load firmware to TCM,
+> + * will need to release R5 from reset and stay in halted state.
+> + */
+> +static int zynqmp_r5_rproc_init(struct rproc *rproc)
+> +{
+> +	struct device *dev = rproc->dev.parent;
+> +	struct zynqmp_r5_rproc_pdata *local = rproc->priv;
+> +
+> +	dev_dbg(dev, "%s\n", __func__);
+> +	enable_ipi(local);
+> +	return 0;
+> +}
 
---5vNYLRcllDrimb99--
+Comment not aligned with function content. Only IPI enable here.
+> +
+> +static irqreturn_t r5_remoteproc_interrupt(int irq, void *dev_id)
+> +{
+> +	struct device *dev = dev_id;
+> +	struct platform_device *pdev = to_platform_device(dev);
+> +	struct rproc *rproc = platform_get_drvdata(pdev);
+> +	struct zynqmp_r5_rproc_pdata *local = rproc->priv;
+> +	u32 ipi_reg;
+> +
+> +	/* Check if there is a kick from R5 */
+> +	ipi_reg = reg_read(local->ipi_base, ISR_OFFSET);
+> +	if (!(ipi_reg & local->ipi_dest_mask))
+> +		return IRQ_NONE;
+> +
+> +	dev_dbg(dev, "KICK Linux because of pending message(irq%d)\n",
+> irq);
+> +	reg_write(local->ipi_base, ISR_OFFSET, local->ipi_dest_mask);
+> +	schedule_work(&local->workqueue);
+> +
+> +	return IRQ_HANDLED;
+> +}
+
+Should be part of IPI mailbox driver.
+
+> +
+> +/* zynqmp_r5_get_tcm_memories() - get tcm memories
+> + * @pdev: pointer to the platform device
+> + * @pdata: pointer to the remoteproc private data
+> + *
+> + * Function to create remoteproc memory entries for TCM memories.
+> + */
+> +static int zynqmp_r5_get_tcms(struct platform_device *pdev,
+> +			      struct zynqmp_r5_rproc_pdata *pdata)
+> +{
+> +	static const char * const mem_names[] = {"tcm_a", "tcm_b"};
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *np = dev->of_node;
+> +	int num_mems = 0;
+> +	int i, ret;
+> +	struct property *prop;
+> +	const __be32 *cur;
+> +	u32 val;
+> +	const struct zynqmp_eemi_ops *eemi =
+> zynqmp_pm_get_eemi_ops();
+> +
+> +	/* Get TCM power node ids */
+> +	i = 0;
+> +	of_property_for_each_u32(np, "tcm-pnode-id", prop, cur, val)
+> +		pdata->tcm_pnode_id[i++] = val;
+> +
+> +	/* Request TCMs */
+> +	for (i = 0; i < MAX_TCM_PNODES; i++) {
+> +		if (pdata->tcm_pnode_id[i] != 0) {
+> +			ret = eemi->request_node(pdata->tcm_pnode_id[i],
+> +
+> ZYNQMP_PM_CAPABILITY_ACCESS, 0,
+> +
+> ZYNQMP_PM_REQUEST_ACK_BLOCKING
+> +						);
+> +			if (ret < 0) {
+> +				dev_err(dev, "failed to request TCM: %u\n",
+> +					pdata->tcm_pnode_id[i]);
+> +				return ret;
+> +			}
+> +			dev_dbg(dev, "request tcm pnode: %u\n",
+> +				pdata->tcm_pnode_id[i]);
+> +		} else {
+> +			break;
+> +		}
+> +	}
+> +	/* Create remoteproc memories entries for TCM memories */
+> +	num_mems = ARRAY_SIZE(mem_names);
+> +	for (i = 0; i < num_mems; i++) {
+> +		struct resource *res;
+> +		struct rproc_mem_entry *mem;
+> +		dma_addr_t dma;
+> +		resource_size_t size;
+> +
+> +		res = platform_get_resource_byname(pdev,
+> IORESOURCE_MEM,
+> +						   mem_names[i]);
+> +		mem  = devm_kzalloc(dev, sizeof(struct rproc_mem_entry),
+> +				    GFP_KERNEL);
+> +		if (!mem)
+> +			return -ENOMEM;
+> +		/* Map it as normal memory */
+> +		size = resource_size(res);
+> +		mem->va = devm_ioremap_wc(dev, res->start, size);
+> +		mem->len = size;
+> +		dma = (dma_addr_t)res->start;
+> +		mem->dma = dma;
+> +		/* TCM memory:
+> +		 *   TCM_0: da 0 <-> global addr 0xFFE00000
+> +		 *   TCM_1: da 0 <-> global addr 0xFFE90000
+> +		 */
+> +		if ((dma & 0xFFF00000) == 0xFFE00000) {
+> +			if ((dma & 0xFFF80000) == 0xFFE80000)
+> +				mem->da -= 0x90000;
+> +			else
+> +				mem->da = (dma & 0x000FFFFF);
+> +		}
+> +		dev_dbg(dev, "%s: va = %p, da = 0x%x dma = 0x%llx\n",
+> +			__func__, mem->va, mem->da, mem->dma);
+> +		list_add_tail(&mem->node, &pdata->mems);
+
+Looks like carevout patch series [1]. Did you try it? I think it is better to communalize code instead of duplicated it in each platform driver.
+[1] https://lkml.org/lkml/2018/7/27/612
+
+> +	}
+> +	return 0;
+> +}
+> +
+> +/* zynqmp_r5_get_reserved_mems() - get reserved memories
+> + * @pdev: pointer to the platform device
+> + * @pdata: pointer to the remoteproc private data
+> + *
+> + * Function to create remoteproc memory entries from memory-region
+> + * property.
+> + */
+> +static int zynqmp_r5_get_reserved_mems(struct platform_device *pdev,
+> +				       struct zynqmp_r5_rproc_pdata *pdata)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *np = dev->of_node;
+> +	int num_mems;
+> +	int i;
+> +
+> +	num_mems = of_count_phandle_with_args(np, "memory-region",
+> NULL);
+> +	if (num_mems <= 0)
+> +		return 0;
+> +	for (i = 0; i < num_mems; i++) {
+> +		struct device_node *node;
+> +		struct resource res;
+> +		resource_size_t size;
+> +		struct rproc_mem_entry *mem;
+> +		int ret;
+> +
+> +		node = of_parse_phandle(np, "memory-region", i);
+> +		ret = of_device_is_compatible(node, "rproc-prog-memory");
+> +		if (!ret) {
+> +			/* it is DMA memory. */
+> +			dev_info(dev, "%s, dma memory %d\n", __func__,
+> i);
+> +			ret = of_reserved_mem_device_init_by_idx(dev,
+> +								 np, i);
+> +			if (ret) {
+> +				dev_err(dev, "unable to reserve DMA
+> mem.\n");
+> +				return ret;
+> +			}
+> +			continue;
+> +		}
+> +		ret = of_address_to_resource(node, 0, &res);
+> +		if (ret) {
+> +			dev_err(dev, "unable to resolve memory region.\n");
+> +			return ret;
+> +		}
+> +		mem  = devm_kzalloc(dev, sizeof(struct rproc_mem_entry),
+> +				    GFP_KERNEL);
+> +		if (!mem)
+> +			return -ENOMEM;
+> +		/* Map it as normal memory */
+> +		size = resource_size(&res);
+> +		mem->va = devm_ioremap_wc(dev, res.start, size);
+> +		mem->len = size;
+> +		mem->dma = (dma_addr_t)res.start;
+> +		mem->da = (u32)res.start;
+> +		dev_dbg(dev, "%s: va = %p, da = 0x%x dma = 0x%llx\n",
+> +			__func__, mem->va, mem->da, mem->dma);
+> +		list_add_tail(&mem->node, &pdata->mems);
+> +	}
+> +	return 0;
+> +}
+> +
+> +static int zynqmp_r5_remoteproc_probe(struct platform_device *pdev)
+> +{
+> +	const unsigned char *prop;
+> +	struct resource *res;
+> +	int ret = 0;
+> +	struct zynqmp_r5_rproc_pdata *local;
+> +	struct rproc *rproc;
+> +
+> +	rproc = rproc_alloc(&pdev->dev, dev_name(&pdev->dev),
+> +			    &zynqmp_r5_rproc_ops, NULL,
+> +		sizeof(struct zynqmp_r5_rproc_pdata));
+> +	if (!rproc) {
+> +		dev_err(&pdev->dev, "rproc allocation failed\n");
+> +		return -ENOMEM;
+> +	}
+> +	local = rproc->priv;
+> +	local->rproc = rproc;
+> +
+> +	platform_set_drvdata(pdev, rproc);
+> +
+> +	/* Override parse_fw op to allow no resource table firmware */
+> +	rproc->ops->parse_fw = zynqmp_r5_parse_fw;
+> +
+> +	ret = dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(32));
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "dma_set_coherent_mask: %d\n",
+> ret);
+> +		goto rproc_fault;
+> +	}
+> +
+> +	/* Get the RPU power domain id */
+> +	ret = of_property_read_u32(pdev->dev.of_node, "rpu-pnode-id",
+> +				   &local->rpu_pnode_id);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "No RPU power node ID is
+> specified.\n");
+> +		ret = -EINVAL;
+> +		goto rproc_fault;
+> +	}
+> +	dev_dbg(&pdev->dev, "RPU[%d] pnode_id = %d.\n",
+> +		local->rpu_id, local->rpu_pnode_id);
+> +
+> +	prop = of_get_property(pdev->dev.of_node, "core_conf", NULL);
+> +	if (!prop) {
+> +		dev_warn(&pdev->dev, "default core_conf used: lock-
+> step\n");
+> +		prop = "lock-step";
+> +	}
+> +
+> +	dev_info(&pdev->dev, "RPU core_conf: %s\n", prop);
+> +	if (!strcmp(prop, "split0")) {
+> +		local->rpu_mode = PM_RPU_MODE_SPLIT;
+> +		local->rpu_id = 0;
+> +		local->ipi_dest_mask = RPU_0_IPI_MASK;
+> +	} else if (!strcmp(prop, "split1")) {
+> +		local->rpu_mode = PM_RPU_MODE_SPLIT;
+> +		local->rpu_id = 1;
+> +		local->ipi_dest_mask = RPU_1_IPI_MASK;
+> +	} else if (!strcmp(prop, "lock-step")) {
+> +		local->rpu_mode = PM_RPU_MODE_LOCKSTEP;
+> +		local->rpu_id = 0;
+> +		local->ipi_dest_mask = RPU_0_IPI_MASK;
+> +	} else {
+> +		dev_err(&pdev->dev, "Invalid core_conf mode provided - %s
+> , %d\n",
+> +			prop, local->rpu_mode);
+> +		ret = -EINVAL;
+> +		goto rproc_fault;
+> +	}
+> +
+> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+> "ipi");
+> +	if (res) {
+> +		local->ipi_base = devm_ioremap(&pdev->dev, res->start,
+> +					       resource_size(res));
+> +		if (IS_ERR(local->ipi_base)) {
+> +			pr_err("%s: Unable to map IPI\n", __func__);
+> +			ret = PTR_ERR(local->ipi_base);
+> +			goto rproc_fault;
+> +		}
+> +	} else {
+> +		dev_info(&pdev->dev, "IPI resource is not specified.\n");
+> +	}
+> +	dev_dbg(&pdev->dev, "got ipi base address\n");
+> +
+> +	INIT_LIST_HEAD(&local->mems);
+> +	/* Get TCM memories */
+> +	ret = zynqmp_r5_get_tcms(pdev, local);
+> +	if (ret < 0) {
+> +		dev_err(&pdev->dev, "failed to get TCM memories.\n");
+> +		goto rproc_fault;
+> +	}
+> +	dev_dbg(&pdev->dev, "got TCM memories\n");
+> +	/* Get reserved memory regions for firmware */
+> +	ret = zynqmp_r5_get_reserved_mems(pdev, local);
+> +	if (ret < 0) {
+> +		dev_err(&pdev->dev, "failed to get reserved memories.\n");
+> +		goto rproc_fault;
+> +	}
+> +	dev_dbg(&pdev->dev, "got reserved memories.\n");
+> +
+> +	/* Disable IPI before requesting IPI IRQ */
+> +	disable_ipi(local);
+> +	INIT_WORK(&local->workqueue, handle_event_notified);
+> +
+> +	/* IPI IRQ */
+> +	if (local->ipi_base) {
+> +		ret = platform_get_irq(pdev, 0);
+> +		if (ret < 0) {
+> +			dev_err(&pdev->dev, "unable to find IPI IRQ\n");
+> +			goto rproc_fault;
+> +		}
+> +		local->irq = ret;
+> +		ret = devm_request_irq(&pdev->dev, local->irq,
+> +				       r5_remoteproc_interrupt, IRQF_SHARED,
+> +				       dev_name(&pdev->dev), &pdev->dev);
+> +		if (ret) {
+> +			dev_err(&pdev->dev, "IRQ %d already allocated\n",
+> +				local->irq);
+> +			goto rproc_fault;
+> +		}
+> +		dev_dbg(&pdev->dev, "notification irq: %d\n", local->irq);
+> +	}
+> +
+> +	ret = zynqmp_r5_rproc_init(local->rproc);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "failed to init ZynqMP R5 rproc\n");
+> +		goto rproc_fault;
+> +	}
+> +
+> +	rproc->auto_boot = autoboot;
+> +
+> +	ret = rproc_add(local->rproc);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "rproc registration failed\n");
+> +		goto rproc_fault;
+> +	}
+> +
+> +	return ret;
+> +
+> +rproc_fault:
+> +	rproc_free(local->rproc);
+> +
+> +	return ret;
+> +}
+> +
+> +static int zynqmp_r5_remoteproc_remove(struct platform_device *pdev)
+> +{
+> +	struct rproc *rproc = platform_get_drvdata(pdev);
+> +	struct zynqmp_r5_rproc_pdata *local = rproc->priv;
+> +	struct rproc_mem_entry *mem;
+> +
+> +	dev_info(&pdev->dev, "%s\n", __func__);
+> +
+> +	rproc_del(rproc);
+> +
+> +	list_for_each_entry(mem, &local->mems, node) {
+> +		if (mem->priv)
+> +			gen_pool_free((struct gen_pool *)mem->priv,
+> +				      (unsigned long)mem->va, mem->len);
+> +	}
+> +
+> +	r5_release_tcm(local);
+> +	of_reserved_mem_device_release(&pdev->dev);
+> +	rproc_free(rproc);
+> +
+> +	return 0;
+> +}
+> +
+> +/* Match table for OF platform binding */
+> +static const struct of_device_id zynqmp_r5_remoteproc_match[] = {
+> +	{ .compatible = "xlnx,zynqmp-r5-remoteproc-1.0", },
+> +	{ /* end of list */ },
+> +};
+> +MODULE_DEVICE_TABLE(of, zynqmp_r5_remoteproc_match);
+> +
+> +static struct platform_driver zynqmp_r5_remoteproc_driver = {
+> +	.probe = zynqmp_r5_remoteproc_probe,
+> +	.remove = zynqmp_r5_remoteproc_remove,
+> +	.driver = {
+> +		.name = "zynqmp_r5_remoteproc",
+> +		.of_match_table = zynqmp_r5_remoteproc_match,
+> +	},
+> +};
+> +module_platform_driver(zynqmp_r5_remoteproc_driver);
+> +
+> +module_param_named(autoboot,  autoboot, bool, 0444);
+> +MODULE_PARM_DESC(autoboot,
+> +		 "enable | disable autoboot. (default: true)");
+> +
+> +MODULE_AUTHOR("Jason Wu <j.wu@xilinx.com>");
+> +MODULE_LICENSE("GPL v2");
+> +MODULE_DESCRIPTION("ZynqMP R5 remote processor control driver");
+> --
+> 2.7.4
+
