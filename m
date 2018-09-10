@@ -2,104 +2,104 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70C4BC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:52:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18C47C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:52:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3630D20855
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:52:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3630D20855
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id CA71720855
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:52:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA71720855
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=iki.fi
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728256AbeIJOpe (ORCPT
+        id S1728200AbeIJOpt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 10:45:34 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45176 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727714AbeIJOpe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 10:45:34 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 265F8AF07;
-        Mon, 10 Sep 2018 09:52:19 +0000 (UTC)
-Subject: Re: [PATCH] xen: remove unnecessary condition check before kfree
-To:     zhong jiang <zhongjiang@huawei.com>, boris.ostrovsky@oracle.com
-Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-References: <1536416318-34106-1-git-send-email-zhongjiang@huawei.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <12d9b430-e08a-3e28-5289-028f6b395d11@suse.com>
-Date:   Mon, 10 Sep 2018 11:52:16 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 10 Sep 2018 10:45:49 -0400
+Received: from emh03.mail.saunalahti.fi ([62.142.5.109]:52536 "EHLO
+        emh03.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727714AbeIJOpt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 10:45:49 -0400
+Received: from ydin.reaktio.net (reaktio.net [85.76.255.15])
+        by emh03.mail.saunalahti.fi (Postfix) with ESMTP id 2846C400D7;
+        Mon, 10 Sep 2018 12:52:32 +0300 (EEST)
+Received: by ydin.reaktio.net (Postfix, from userid 1001)
+        id BE5AC36C0F6; Mon, 10 Sep 2018 12:52:31 +0300 (EEST)
+Date:   Mon, 10 Sep 2018 12:52:31 +0300
+From:   Pasi =?iso-8859-1?Q?K=E4rkk=E4inen?= <pasik@iki.fi>
+To:     Sinan Kaya <okaya@kernel.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Bjorn Helgaas <helgaas@kernel.org>, jgross@suse.com,
+        Sinan Kaya <okaya@codeaurora.org>,
+        Govinda Tatti <Govinda.Tatti@Oracle.COM>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Satanand Burla <satananda.burla@caviumnetworks.com>,
+        linux-pci@vger.kernel.org,
+        Felix Manlunas <felix.manlunas@caviumnetworks.com>,
+        linux-kernel@vger.kernel.org,
+        Derek Chickles <derek.chickles@caviumnetworks.com>,
+        Srikanth Jampala <Jampala.Srikanth@cavium.com>,
+        JBeulich@suse.com, Russell Currey <ruscur@russell.cc>,
+        bhelgaas@google.com, xen-devel@lists.xenproject.org,
+        boris.ostrovsky@Oracle.COM,
+        Raghu Vatsavayi <raghu.vatsavayi@caviumnetworks.com>,
+        roger.pau@citrix.com
+Subject: Re: [Xen-devel] [PATCH V3 1/2] Drivers/PCI: Export pcie_has_flr()
+ interface
+Message-ID: <20180910095231.GD18222@reaktio.net>
+References: <20171208202424.GC12367@bhelgaas-glaptop.roam.corp.google.com>
+ <426eeeab-0dcd-8de3-9c5f-a166acf2c130@Oracle.COM>
+ <20171212005919.GB30595@bhelgaas-glaptop.roam.corp.google.com>
+ <49956aaf-5fd5-939d-5fc7-231ffdb98b70@Oracle.COM>
+ <20171213212420.GH30595@bhelgaas-glaptop.roam.corp.google.com>
+ <fea075cf-fe6f-0d0b-11e4-4279fbfc280a@Oracle.COM>
+ <20171215181801.GU30595@bhelgaas-glaptop.roam.corp.google.com>
+ <20171218122629.GA18423@infradead.org>
+ <20180909185944.GC18222@reaktio.net>
+ <9ffe43d2-a44b-974c-85c9-9923d71c5dba@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <1536416318-34106-1-git-send-email-zhongjiang@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9ffe43d2-a44b-974c-85c9-9923d71c5dba@kernel.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/09/18 16:18, zhong jiang wrote:
-> kfree has taken null pointer into account. So just remove the
-> condition check before kfree.
+Hi,
+
+On Sun, Sep 09, 2018 at 10:33:02PM -0400, Sinan Kaya wrote:
+> On 9/9/2018 2:59 PM, Pasi Kärkkäinen wrote:
+> >I noticed pcie_has_flr() has been recently exported in upstream Linux:
+> >https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=2d2917f7747805a1f4188672f308d82a8ba01700
+> >
+> >Are there more changes / cleanups planned to these interfaces, as mentioned last year?
+> >
+> >(context: xen-pciback reset/do_flr features upstreaming, which kind of stalled last year when pcie_has_flr() wasn't exported at the time)
 > 
-> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-> ---
->  drivers/xen/xen-acpi-processor.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Exporting pcie_has_flr() is a very simple change which could have been done
+> by the XEN porting effort.
 > 
-> diff --git a/drivers/xen/xen-acpi-processor.c b/drivers/xen/xen-acpi-processor.c
-> index fbb9137..7e1d49e 100644
-> --- a/drivers/xen/xen-acpi-processor.c
-> +++ b/drivers/xen/xen-acpi-processor.c
-> @@ -268,7 +268,7 @@ static int push_pxx_to_hypervisor(struct acpi_processor *_pr)
->  		pr_warn("(_PXX): Hypervisor error (%d) for ACPI CPU%u\n",
->  			ret, _pr->acpi_id);
->  err_free:
-> -	if (!IS_ERR_OR_NULL(dst_states))
-> +	if (!IS_ERR(dst_states))
+> Maybe, the right question is what is so special about XEN reset?
+> 
+> What feature PCI core is missing to support XEN FLR reset that caused
+> the effort to stall?
+>
 
-This is just a change of the condition, not a removal.
+Well one of the reasons probably was because Christoph was planning to deprecate the pcie_has_flr() functionality..
 
-I don't think change is worth it.
+https://lists.xen.org/archives/html/xen-devel/2017-12/msg01057.html
+https://lists.xen.org/archives/html/xen-devel/2017-12/msg01252.html
+
+But now that pcie_has_flr() is exported and available I guess it's fine to continue using it also for xen-pciback :)
 
 
-Juergen
+Thanks,
+
+-- Pasi
+
