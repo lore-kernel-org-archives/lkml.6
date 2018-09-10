@@ -2,160 +2,147 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 503A5C43143
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 12:48:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2B6BC4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 12:49:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F30702086E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 12:48:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="d1HeyLnW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F30702086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	by mail.kernel.org (Postfix) with ESMTP id 736712087E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 12:49:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 736712087E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728571AbeIJRmq (ORCPT
+        id S1728575AbeIJRnr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 13:42:46 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:45193 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728063AbeIJRmq (ORCPT
+        Mon, 10 Sep 2018 13:43:47 -0400
+Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:53077 "EHLO
+        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727974AbeIJRnr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 13:42:46 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20180910124847euoutp01bf253a8d360e18c7d2458857e02943bc~TCsJIvvYH3161831618euoutp01H
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 12:48:47 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180910124847euoutp01bf253a8d360e18c7d2458857e02943bc~TCsJIvvYH3161831618euoutp01H
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1536583727;
-        bh=uQO0h0ZmTt9ANQqVIpDyqrTOsJgPJ6R0dGHOZ2cqOmc=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=d1HeyLnWpIYGo67UBBNa+sfv1FvhzayOXs7FKqGx7FzO3NLJX0Ojkr/XK+y1+krul
-         rcuyw/cOgh1LUUY4Jo5A8SXNZXKcwJ/CymRkmfg4lYjNuBTeZ+EW2pz14Lmu0HTqAR
-         jNmnE5hm/ILmhdU0eKE3FxJfDFZCaLoWO7bUugX4=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20180910124846eucas1p1498c193fa46bf1285649f91f49ce444b~TCsIK_7js1224212242eucas1p1q;
-        Mon, 10 Sep 2018 12:48:46 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 3E.C7.04294.E28669B5; Mon, 10
-        Sep 2018 13:48:46 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20180910124845eucas1p1b51674cd657757aadf5138e277e57ebe~TCsHYsLqt1779917799eucas1p18;
-        Mon, 10 Sep 2018 12:48:45 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20180910124845eusmtrp2bfc16b4dabc9488f8667b105bebceedf~TCsHHRhwZ3126931269eusmtrp2f;
-        Mon, 10 Sep 2018 12:48:45 +0000 (GMT)
-X-AuditID: cbfec7f4-84fff700000010c6-72-5b96682ed861
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 92.84.04128.D28669B5; Mon, 10
-        Sep 2018 13:48:45 +0100 (BST)
-Received: from [106.120.53.102] (unknown [106.120.53.102]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20180910124844eusmtip12ac25b60278a6bda718f86799dc7faf9~TCsGfGwrR1303813038eusmtip1Q;
-        Mon, 10 Sep 2018 12:48:44 +0000 (GMT)
-Subject: Re: [PATCH 1/4] fbdev: Drop FBINFO_CAN_FORCE_OUTPUT flag
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        DRI Development <dri-devel@lists.freedesktop.org>
-Cc:     Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Alexander Kapshuk <alexander.kapshuk@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Thierry Reding <treding@nvidia.com>,
-        David Lechner <david@lechnology.com>,
-        nouveau@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        Daniel Vetter <daniel.vetter@intel.com>
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date:   Mon, 10 Sep 2018 14:48:43 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
-        Thunderbird/45.3.0
+        Mon, 10 Sep 2018 13:43:47 -0400
+Received: from [192.168.2.10] ([212.251.195.8])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id zLdRf389Yw2L8zLdVfKX8g; Mon, 10 Sep 2018 14:49:49 +0200
+Subject: Re: [RFC PATCH] media: docs-rst: Document m2m stateless video decoder
+ interface
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+To:     Alexandre Courbot <acourbot@chromium.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Pawel Osciak <posciak@chromium.org>,
+        linux-media@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
+References: <20180831074743.235010-1-acourbot@chromium.org>
+ <b8a80df8-fd07-6820-3021-670c360ff306@xs4all.nl>
+ <38b32d24-6957-4bee-9168-b3afbfcae083@xs4all.nl>
+Message-ID: <a5c47693-4d66-1afc-9053-45bbbbef9d7c@xs4all.nl>
+Date:   Mon, 10 Sep 2018 14:49:45 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <20180822085405.10787-1-daniel.vetter@ffwll.ch>
+In-Reply-To: <38b32d24-6957-4bee-9168-b3afbfcae083@xs4all.nl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUxNcRjH9zvn3HNPl3v9uiXPiuKOTNML83KimTA7f5mZeavRpdOt6V65
-        py7FuDRlNb0t1a1QLnpd5WVR3lrRrRQaGZqXFk2k9xANnU6N/z6/7/N8f8/32R6GVL+QOTNh
-        hkjeaNCGa2gFVVk/+sTTKzQjwCdljGIrG+vlbHfBacTmd7wh2YLmMpK9aHZin4/00WystZxm
-        e2yZBJuTcp1gmxP1bENSv4x9Vp1Ls9+TkmRs+y/VWhWXY26luLvf8iiuKvuNnLPe6Sa4weRG
-        GXf/XKmce5doI7gzsb0013evjeaGrrluVuxS+AXz4WEm3ui9JkgR+v5bExVhVRx+mjmGzOgR
-        k4DsGMDLYMDaRousxoUIXrVtlXgYQfrQ6gSkGOchBJaSdGrK0NPbIZMKBQjSPg3LJEcfAuuI
-        SmQH7A+p/QNIZEe8B+qySuSigcQ9JHSYPxJigcarIDW+eKKJwgvgcur5cWaYmXgHJDcvFGUl
-        todGy4eJwXbYD9Jq4uUik9gNbn7NJcU/AY/KofdEHSUZTFDRZSGkpBsgNm5gMrUDfLbdkEs8
-        G/5UXSAkcyaCnp+XKelRjqC0uX7SvRrqbK0yMRGJF0F5tbck+0PT64eUKANWwcuv9lIgFaRV
-        ZpKSrITTcWqp2x0qrlTQU2MTqopIiTmoan+BUtC87P/WzP5vtex/c/MQWYxm8VGCXscLSw38
-        IS9BqxeiDDqvfQf019D4tT36bRu+harH9tYizCDNdCUTcTZALdOahGh9LQKG1DgqqxdnBKiV
-        wdroGN54YI8xKpwXapELQ2lmKVUeIQFqrNNG8vt5PoI3TlUJxs7ZjLaFxah1g+uvtgaajp/S
-        /Hib6qkien0LdTE1bRuP3Q5x2V0UdGq/z4pN0aNffl86nn/khG5uy9t21xUHcZyTd5Rb/VKH
-        dU0jRcr55i37fHemd3otL+4IefxF41I2I+t848/O0pb0k9stO2oe+K10NxVMa/h01McQeA53
-        NQmWNXNuT59/RUMJodolHqRR0P4F3Bl0BWkDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHIsWRmVeSWpSXmKPExsVy+t/xu7q6GdOiDWZ+Y7fYdvIYu8XL5R2M
-        Fgsf3mW2WH5mHbPFogYxiytf37NZNC9ez2bx5vh0JovZEzYzWZzpzrU40feB1eLyrjlsFt/7
-        +lgtbv/mc+DzmN1wkcVj77cFLB47Z91l91i85yWTx6f+k6we++euYfe4332cyaO3+R2bx/t9
-        V9k8Pm+SC+CK0rMpyi8tSVXIyC8usVWKNrQw0jO0tNAzMrHUMzQ2j7UyMlXSt7NJSc3JLEst
-        0rdL0Mt48O0US8FirooL0/8wNjCe5uhi5OSQEDCRePPuIWsXIxeHkMBSRonf61+ydDFyACVk
-        JI6vL4OoEZb4c62LDaLmLaPEmcW3mEASwgKOEhM/fGQEsUUE4iU6T5xmhCjqZ5S4dXsCO0iC
-        WeAds8T/J/IgNpuAlcTE9lVgDbwCdhJPHr5lAbFZBFQllk6cBxYXFYiQuPWwgwWiRlDi5Mwn
-        YDangI3EpAPtUDPVJf7Mu8QMYctLbH87h3kCo+AsJC2zkJTNQlK2gJF5FaNIamlxbnpusZFe
-        cWJucWleul5yfu4mRmDcbjv2c8sOxq53wYcYBTgYlXh4OQqmRguxJpYVV+YeYpTgYFYS4d2l
-        My1aiDclsbIqtSg/vqg0J7X4EKMp0BMTmaVEk/OBKSWvJN7Q1NDcwtLQ3Njc2MxCSZz3vEFl
-        lJBAemJJanZqakFqEUwfEwenVAOj0W9ZqaOdl6dUyCxdOOOvuOT9WexLZWZLNmo+nDTTY35w
-        1vlGFS8Fnn3/p50LvvnxCnuFroTKtFN7vHiPbty9zVtFM93Q6Naifbs+H5y9p3+pwPrJxoXC
-        sqcvV0eVHol66G4QtS11teHnS9/ueJttXLmjgqHP9c0aW9WzkhtmSAvMcFs8L2e6tBJLcUai
-        oRZzUXEiAC6Nx0HxAgAA
-Message-Id: <20180910124845eucas1p1b51674cd657757aadf5138e277e57ebe~TCsHYsLqt1779917799eucas1p18@eucas1p1.samsung.com>
-X-CMS-MailID: 20180910124845eucas1p1b51674cd657757aadf5138e277e57ebe
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20180822085418epcas5p30ab8aa4b49ba204f4891760af002bce1
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180822085418epcas5p30ab8aa4b49ba204f4891760af002bce1
-References: <CGME20180822085418epcas5p30ab8aa4b49ba204f4891760af002bce1@epcas5p3.samsung.com>
-        <20180822085405.10787-1-daniel.vetter@ffwll.ch>
+X-CMAE-Envelope: MS4wfKDCyMhQoPS4WykIhQG/5bq4wIL+TDfVnmsMwMtLenBVl5Q29TlacvtyYsDI5khQLfZ+RGAWALROm7OyUFdwQvTjKezSNTR0WnndzoEO/LjMFHTsIiz8
+ CPbvjOb/QIi+6E2UirAhQ65AeroSkBpIlV69etNERbFuGKGTHXMBPf2BFrgq2L6HIQAqb9vlYuY1IwzXSDWmUn3ili4aUxauyklgxL5Z3msJVKha7RX8YtZ7
+ V+SpXtqI/TDhBnwE4K5IVxEm+tbypnwnEyyE7qF8pZX/AnKvuCxu/qtTDkvDhifJSmvNhskXznw6rJdfykK+2XHk2Oi1hDyww/XRf6IcM3ZTqFWwXLE5+AKa
+ TVoRocJGmnfUpe9hZUlRlZaX54ghjojGP9SwgZprFpfP6wSdpDI=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 08/22/2018 10:54 AM, Daniel Vetter wrote:
-> This was only added for the drm's fbdev emulation support, so that it
-> would try harder to show the Oops.
+On 09/10/2018 01:57 PM, Hans Verkuil wrote:
+> On 09/10/2018 01:25 PM, Hans Verkuil wrote:
+>>> +
+>>> +Decoding
+>>> +========
+>>> +
+>>> +For each frame, the client is responsible for submitting a request to which the
+>>> +following is attached:
+>>> +
+>>> +* Exactly one frame worth of encoded data in a buffer submitted to the
+>>> +  ``OUTPUT`` queue,
+>>> +* All the controls relevant to the format being decoded (see below for details).
+>>> +
+>>> +``CAPTURE`` buffers must not be part of the request, but must be queued
+>>> +independently. The driver will pick one of the queued ``CAPTURE`` buffers and
+>>> +decode the frame into it. Although the client has no control over which
+>>> +``CAPTURE`` buffer will be used with a given ``OUTPUT`` buffer, it is guaranteed
+>>> +that ``CAPTURE`` buffers will be returned in decode order (i.e. the same order
+>>> +as ``OUTPUT`` buffers were submitted), so it is trivial to associate a dequeued
+>>> +``CAPTURE`` buffer to its originating request and ``OUTPUT`` buffer.
+>>> +
+>>> +If the request is submitted without an ``OUTPUT`` buffer or if one of the
+>>> +required controls are missing, then :c:func:`MEDIA_REQUEST_IOC_QUEUE` will return
+>>> +``-EINVAL``.
+>>
+>> Not entirely true: if buffers are missing, then ENOENT is returned. Missing required
+>> controls or more than one OUTPUT buffer will result in EINVAL. This per the latest
+>> Request API changes.
+>>
+>>  Decoding errors are signaled by the ``CAPTURE`` buffers being
+>>> +dequeued carrying the ``V4L2_BUF_FLAG_ERROR`` flag.
+>>
+>> Add here that if the reference frame had an error, then all other frames that refer
+>> to it should also set the ERROR flag. It is up to userspace to decide whether or
+>> not to drop them (part of the frame might still be valid).
+>>
+>> I am not sure whether this should be documented, but there are some additional
+>> restrictions w.r.t. reference frames:
+>>
+>> Since decoders need access to the decoded reference frames there are some corner
+>> cases that need to be checked:
+>>
+>> 1) V4L2_MEMORY_USERPTR cannot be used for the capture queue: the driver does not
+>>    know when a malloced but dequeued buffer is freed, so the reference frame
+>>    could suddenly be gone.
+>>
+>> 2) V4L2_MEMORY_DMABUF can be used, but drivers should check that the dma buffer is
+>>    still available AND increase the dmabuf refcount while it is used by the HW.
+>>
+>> 3) What to do if userspace has requeued a buffer containing a reference frame,
+>>    and you want to decode a B/P-frame that refers to that buffer? We need to
+>>    check against that: I think that when you queue a capture buffer whose index
+>>    is used in a pending request as a reference frame, than that should fail with
+>>    an error. And trying to queue a request referring to a buffer that has been
+>>    requeued should also fail.
+>>
+>> We might need to add some support for this in v4l2-mem2mem.c or vb2.
+>>
+>> We will have similar (but not quite identical) issues with stateless encoders.
 > 
-> Unfortunately this never really worked reliably, and in practice ended
-> up pushing the real Oops off the screen due to plentyfull locking,
-> sleep-while-atomic and other issues. So we removed all that support
-> from the fbdev emulation a while back. Aside: We've also removed the
-> kgdb support, for similar reasons.
+> Related to this is the question whether buffer indices that are used to refer
+> to reference frames should refer to the capture or output queue.
 > 
-> Since it's such a small patch I figured I don't split this up into the
-> usual 3-phase removal.
+> Using capture indices works if you never queue more than one request at a time:
+> you know exactly what the capture buffer index is of the decoded I-frame, and
+> you can use that in the following requests.
 > 
-> Cc: Ben Skeggs <bskeggs@redhat.com>
-> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Hans de Goede <hdegoede@redhat.com>
-> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> Cc: Alexander Kapshuk <alexander.kapshuk@gmail.com>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Thierry Reding <treding@nvidia.com>
-> Cc: David Lechner <david@lechnology.com>
-> Cc: nouveau@lists.freedesktop.org
-> Cc: linux-fbdev@vger.kernel.org
-> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+> But if multiple requests are queued, then you don't necessarily know to which
+> capture buffer an I-frame will be decoded, so then you can't provide this index
+> to following B/P-frames. This puts restrictions on userspace: you can only
+> queue B/P-frames once you have decoded the I-frame. This might be perfectly
+> acceptable, though.
+> 
+> Using output buffer indices will work (the driver will know to which capture
+> buffer index the I-frames mapped), but it requires that the output buffer that
+> contained a reference frame isn't requeued, since that means that the driver
+> will lose this mapping. I think this will make things too confusing, though.
+> 
+> A third option is that you don't refer to reference frames by buffer index,
+> but instead by some other counter (sequence counter, perhaps?).
 
-Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Definitely not sequence number, since it has the same problem as buffer index.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+This could be a value relative to the frame you are trying to decode: i.e. 'use
+the capture buffer from X frames ago'. This makes it index independent and is
+still easy to keep track of inside the driver and application.
+
+Regards,
+
+	Hans
