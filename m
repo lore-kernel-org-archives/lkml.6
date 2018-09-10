@@ -2,169 +2,127 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B3CCC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:50:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82195C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:51:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BE3420645
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:50:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BE3420645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 2D83820870
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 16:51:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UyeYrVAg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D83820870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728822AbeIJVpW (ORCPT
+        id S1728388AbeIJVqf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 17:45:22 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:11679 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727772AbeIJVpW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 17:45:22 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 74F99A42077C2;
-        Tue, 11 Sep 2018 00:50:15 +0800 (CST)
-Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
- (10.3.19.205) with Microsoft SMTP Server (TLS) id 14.3.399.0; Tue, 11 Sep
- 2018 00:50:06 +0800
-Subject: Re: [PATCH] MAINTAINERS: add tree location for staging/erofs
-To:     =?UTF-8?Q?Thomas_Wei=c3=9fschuh?= <linux@weissschuh.net>
-CC:     Chao Yu <chao@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        <linux-erofs@lists.ozlabs.org>, <devel@driverdev.osuosl.org>,
-        <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <5c44a63b-041d-1fce-0748-53c0b44f5983@huawei.com>
- <20180909183432.9752-1-linux@weissschuh.net>
- <2dc6fb51-dfd6-3509-8833-c889193dd4a9@huawei.com>
- <23218dc6-8aba-a4e6-7c18-64380082f747@kernel.org>
-From:   Gao Xiang <gaoxiang25@huawei.com>
-Message-ID: <e58d6b95-7ea8-63ca-1827-8680e9d4ef99@huawei.com>
-Date:   Tue, 11 Sep 2018 00:50:05 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Mon, 10 Sep 2018 17:46:35 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:36966 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727989AbeIJVqf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 17:46:35 -0400
+Received: by mail-pg1-f196.google.com with SMTP id 2-v6so10769503pgo.4
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 09:51:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Fj8Vwgnm5vG9Ic+sWDoy9ZkH/s6g4C32w7cC6u21FHk=;
+        b=UyeYrVAgbxe05YoTgD2U3AQ9jL+xQHgJeyWAv8PYbEjMiGGumYQlFYb7AjqBREWYG0
+         69SgiBHluHZbsAAEDY55h67fygaPAPr8gepUP29i7HN7C/2hZPVtBrP7cWcSpuGZfDiU
+         6UmS46NUN43GZXv6p4IwUTcARXN1OJ1JmWf/w2cgVvzfuRpR6RqUdplHhWpATHqecuMT
+         pokizQ9+d3cJMhgXze8bV8AgNFhIfzPABczW9iDsb89Ll/jFZ31Tjesv4NI30CypaNW4
+         uU8oUZCZ5OhE/BFw9mFQZNzmRoDbegkJHhqwgbOsRe1Ht2jZoIQ6tvJL1D/KQRJuqx1K
+         rNdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Fj8Vwgnm5vG9Ic+sWDoy9ZkH/s6g4C32w7cC6u21FHk=;
+        b=oFAz5j1GZdYEQo2jH/qf7ECuZAR9RMdmEDDJVGruzIRoAzkf/GIikvToEkirEAknY1
+         Y116kHQ/Ub5s460sNb6lz7dcgcjsZqR17PoxZcB6wihZRNKwHs8mvIN9SwZLCl13pI4S
+         3ghK2iL2NTFpN4k1QK8G4b2Z8RqrPk/8Chx3rbLP29J0j+isUvEt7foGqHKP50K6prYd
+         IDoHu0VB1EIoud4IrNzrt5emMtbNcFsTAsBotcuiNnDQ0c5HixB8kKMkfO0SjmC5KYzN
+         it1hmpw8qH63QzTzl8c6NLs5EZt3S3LRSktMWSSrfo187fmptQCkTQl4LnomRy4KsD8T
+         lPEw==
+X-Gm-Message-State: APzg51DuZYc5KlasoPg001pnpy8iPeCQIjZZbgBo7I5lfJdKNJwphjzr
+        7OJuw4T4d4lvv+OiRruXSNgwqV1PKUTKcO9QH+O3Ww==
+X-Google-Smtp-Source: ANB0VdZ4rclKUjkwKyig25pL38OC2WHKdpNGniTvnyF9lx39HcT9yuz54pRKteuRa1JGeDrDvGsZ8UDGPOTLGWysuKI=
+X-Received: by 2002:a63:1363:: with SMTP id 35-v6mr23759654pgt.202.1536598296091;
+ Mon, 10 Sep 2018 09:51:36 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <23218dc6-8aba-a4e6-7c18-64380082f747@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.151.23.176]
-X-CFilter-Loop: Reflected
+References: <20180910060455.20409-1-stefan@agner.ch> <CAK8P3a2cc741UqFSk+hXpC2s4S+A+0FuiM1yP=Z4rC18sJHq9g@mail.gmail.com>
+In-Reply-To: <CAK8P3a2cc741UqFSk+hXpC2s4S+A+0FuiM1yP=Z4rC18sJHq9g@mail.gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 10 Sep 2018 09:51:24 -0700
+Message-ID: <CAKwvOd=E6+QSoRqcMJ0o1_q8VSMO8Zoi75e+zhj2SRSTdfacJw@mail.gmail.com>
+Subject: Re: [PATCH] include/linux/compiler-clang.h: define __naked
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Stefan Agner <stefan@agner.ch>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>, dwmw@amazon.co.uk,
+        Paul Lawrence <paullawrence@google.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
+On Mon, Sep 10, 2018 at 5:14 AM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Mon, Sep 10, 2018 at 8:05 AM Stefan Agner <stefan@agner.ch> wrote:
+> >
+> > ARM32 arch code uses the __naked attribute. This has previously been
+> > defined in include/linux/compiler-gcc.h, which is no longer included
+> > for Clang. Define __naked for Clang. Conservatively add all attributes
+> > previously used (and supported by Clang).
+> >
+> > This fixes compile errors when building ARM32 using Clang:
+> >   arch/arm/mach-exynos/mcpm-exynos.c:193:13: error: variable has incomplete type 'void'
+> >   static void __naked exynos_pm_power_up_setup(unsigned int affinity_level)
+> >               ^
+> >
+> > Fixes: 815f0ddb346c ("include/linux/compiler*.h: make compiler-*.h mutually exclusive")
+> > Signed-off-by: Stefan Agner <stefan@agner.ch>
 
-On 2018/9/10 23:59, Chao Yu wrote:
-> On 2018/9/10 11:56, Gao Xiang wrote:
->>
->>
->> On 2018/9/10 2:34, Thomas Weißschuh wrote:
->>> Hi Chao, hi Gao,
->>>
->>> On Sun, 2018-09-09T23:16+0800, Chao Yu wrote:
->>>> Hi Thomas,
->>>>
->>>> On 2018/9/8 11:28, Gao Xiang wrote:
->>>>> Hi Thomas,
->>>>>
->>>>> Thanks for your new patch.
->>>>>
->>>>> It seems that this patch also introduces 2 new 'WARNING: line over 80 characters',
->>>>> could you please fix it in the patch?
->>>
->>> @Chao,Gao: For some reason there seems to be a problem when receiving mails
->>> from you. The one I received now was the first one from you that reached me
->>> directly. Before I only got your messages in the quotes from Dan and now in the
->>> quotes from the mail I am responding to.
->>> (I will try to investigate the reason for this)
->>>
->>> Sorry for my slow responses before.
->>>
->>>> It will be better to fix that.
->>>
->>> A new patch will shortly follow.
->>>
->>>> Some reviewed cleanup patches are merged before this patch, then I failed to add
->>>> this one, so could you rebase on top of erofs dev branch in below link:
->>>>
->>>> https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git/log/?h=erofs
->>>
->>> I was not aware of this tree and worked off of staging / next.
->>> A patch is attached to this message that adds the tree to the MAINTAINERS file.
->>
->> Hi Chao,
->>
->> I think this tree has some PREVIEW patches which preview in linux-erofs mailing list only and
->> doesn't send to staging mailing list and LKML,
->>
->> https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git/log/?h=erofs
->>
->> so erofs tree is actually Greg's staging tree.
-> 
-> Thomas,
-> 
-> I confirmed that erofs git repository for linux upstream is Greg's staging tree.
-> 
-> Let me explain, in order to avoid sending buggy or preview patch, Xiang and me
-> plan to review patches in erofs mailing list first, and then cache reviewed
-> patches in my git tree before sending them to Greg and staging mailing list.
-> 
-> Based on that, I'm trying to serialize all erofs patches, expecting that can
-> help those patches sent to staging mailing list can be merged by Greg with
-> lesser conflict. But I made a mistake that my erofs branch has merged some
-> pending patches, result in failing to merge yours, that mislead me to ask you to
-> rebase the code, sorry about that.
+Cool, thanks for this patch! I'll admit I need to start testing more
+architectures with Clang.
 
-As Chao's said, we keep on fetching the latest Greg's staging tree and develop
-, preview, and test new erofs features and bugfix based on it.
+>
+> > +/*
+> > + * ARM32 is currently the only user of __naked supported by Clang. Follow
+> > + * gcc: Do not trace naked functions and make sure they don't get inlined.
+> > + */
+> > +#define __naked __attribute__((naked)) noinline notrace
+> > +
+>
+> Please see patches 5 and 6 of the series that Miguel posted:
+>
+> https://lore.kernel.org/lkml/20180908212459.19736-6-miguel.ojeda.sandonis@gmail.com/
 
-For the cleanup patches, it could be better directly based on Greg's upstream
-staging tree. We will then rebase our developping code on your work. :)
+Yes, I'd prefer those 2 patches.
 
-> 
-> Now I can confirm that your v2 patch can apply on Greg's staging-next, so fixing
-> warning reported by checkpatch.pl on your v2 patch is enough. :)
+>
+> I suppose we want the patch to fix clang build as soon as possible though,
+> and follow up with the cleanup for the next merge window, right?
 
-Yes, we are sorry about that. could you please send v4 patch which follows Greg's
-and Chao's suggestions?
+Can we take Miguel's two patches from above in the ARM tree, since
+this attribute is only used on ARM, IIUC?
 
+-- 
 Thanks,
-Gao Xiang
-
-> 
-> Thanks,
-> 
->>
->>>
->>> -- >8 --
->>>
->>> Currently this location is not documented.
->>>
->>> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
->>> ---
->>>  MAINTAINERS | 1 +
->>>  1 file changed, 1 insertion(+)
->>>
->>> diff --git a/MAINTAINERS b/MAINTAINERS
->>> index a5b256b25905..9087e0b74821 100644
->>> --- a/MAINTAINERS
->>> +++ b/MAINTAINERS
->>> @@ -13747,6 +13747,7 @@ F:	drivers/staging/comedi/
->>>  STAGING - EROFS FILE SYSTEM
->>>  M:	Gao Xiang <gaoxiang25@huawei.com>
->>>  M:	Chao Yu <yuchao0@huawei.com>
->>> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git erofs
->>
->> Hi Thomas,
->> nope, the erofs tree is actually the same as staging tree, so any patch should be based
->> on Greg's upstream tree.
->>
->> Thanks,
->> Gao Xiang
->>
->>>  L:	linux-erofs@lists.ozlabs.org
->>>  S:	Maintained
->>>  F:	drivers/staging/erofs/
->>>
+~Nick Desaulniers
