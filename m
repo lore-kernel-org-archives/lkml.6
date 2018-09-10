@@ -2,236 +2,215 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AE2BC4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 17:36:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34FD7C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 17:37:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E55A42086E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 17:36:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB5E32086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 17:37:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j+UZkc7m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E55A42086E
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UFozTeRP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB5E32086A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728285AbeIJWcF (ORCPT
+        id S1728413AbeIJWcT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 18:32:05 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:41992 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726603AbeIJWcF (ORCPT
+        Mon, 10 Sep 2018 18:32:19 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:46311 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726603AbeIJWcT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 18:32:05 -0400
-Received: by mail-ed1-f65.google.com with SMTP id l5so17155289edw.9
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 10:36:54 -0700 (PDT)
+        Mon, 10 Sep 2018 18:32:19 -0400
+Received: by mail-pg1-f195.google.com with SMTP id b129-v6so10803727pga.13;
+        Mon, 10 Sep 2018 10:37:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:from:message-id:date:user-agent:mime-version
-         :content-transfer-encoding:content-language;
-        bh=c6Yq4mmjBI+HUcB7ikkW5uotP9DrYI+Gdl7GygbWCL8=;
-        b=j+UZkc7miI9MnQ3MCvur5eQmCk7HS6W+TEiOj3l/PLLQwTNpb1jY/MtUJcyrAXYrcR
-         GfjrplwC1c/NiLfjsvJIUhI3AGpgRyWboAvUlgiXM4s5/BOafSaCJ+QL1IlVLcY5WKE6
-         SAA+ITyrOIg6UwvxBurdRQBZigZsXtGuNBwaEU+nhPaTGtU5bEpkOQAvBBW6VMOUnHR+
-         NifvbfYciw7HOAq5LoVuBph1KdIsIrPqM1Jdvs88OZ5aIOglqnNBz6oiCdD7cfQl8tPn
-         2j6BvK+o+rfiLEHre6er9YkihtWXZJ1EcEnVpE6DoL1g/vgmxrVM8R+6qDQVtAu1qgTW
-         d4Vg==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=wagdiQetN/Iu6/tFPaSkBGalyN/sKqtafqZlGQJhCak=;
+        b=UFozTeRP19I2Y48nr7UVZa65B/ii8cl2fFVV0A0yYhxE/5T/Fc4RzygDYmVVkbTUkV
+         Y2lOOA5SkNlZ8g+17LkFiqwUlwihaYjUGm1qYyVU5fJ4z+aUlIWiEuz0fZ0r0+ZXXmPF
+         grqPfpD1i0LF6A/xfjxyLHXsFPxU5c2KdpE52KAygPQoCrTTSELHWTkXxsd1ac0iu9+Y
+         nwegvt9qkmoE3I8tjsp7zMGvxrHM1PlY0WZhPyuG6cDZLCO99hW/6lkXQhNSl2L+25uT
+         Lz8KiLaZmvRPUtYVHvCNc1RaNOwZ5BA6yDf1DNAZsC57PSRgffr8bG1Djerp8BMUCftd
+         TAzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:from:message-id:date:user-agent
-         :mime-version:content-transfer-encoding:content-language;
-        bh=c6Yq4mmjBI+HUcB7ikkW5uotP9DrYI+Gdl7GygbWCL8=;
-        b=gH1iz1ZkzB/m9J2avYCUb0EYNhhUZyzah72gLAARdsH7SGD87tOd0awNoA5M9EzaGJ
-         ael6/Mk/hnSwY1815QQldFtvROrXw14Cm0UWlkhVWKi0pG6g0dXxeEQWq1xhBZxfLq61
-         lYLrmmeCX69asjgbpV7RRmFSXz/LQgDVAfC1CPjvsNgIndAgRecIAqGv+FPAP9OiukBv
-         yWqEzMRnG9CUNSZ7Kbwl1O1e0Ja+JO0KcVMYT/Rhzx/XWfKy7dxTDNuusRAvD06WW2aQ
-         WNo2wkr5T7/XRDjogZaT4abYuOsAyrHwpgNXs0JLXmHHv5Z/P/qBkrab+z+V22zm8i9T
-         JYSQ==
-X-Gm-Message-State: APzg51BBIJID6iLRcQJio0s6B4Ftz+iZrAm/IKy6DO58zzT0h/a2sL1J
-        7T5HRqdhTp081cLL/9DGg4s=
-X-Google-Smtp-Source: ANB0VdY8c/BbeUXf5ZZEmAeiScJJoEPV4/YAxsxPtzfHcpVimKgSTpcxo4ZVMbL2baT0+dTFmr/tnw==
-X-Received: by 2002:a50:b53a:: with SMTP id y55-v6mr25357290edd.191.1536601013663;
-        Mon, 10 Sep 2018 10:36:53 -0700 (PDT)
-Received: from [192.168.1.88] ([194.230.155.198])
-        by smtp.googlemail.com with ESMTPSA id g20-v6sm7471875edm.36.2018.09.10.10.36.52
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wagdiQetN/Iu6/tFPaSkBGalyN/sKqtafqZlGQJhCak=;
+        b=qDjOq3zS5AveYAbtO5QvuJBKnOtMiEHBD8ohrrqMpPO34gSiukfdtJ2oTVT8OoX7g3
+         wGutjM8INy0WRyNO2W96OPBW6kaCAsRnfOSV1onWTp6lyY2wpRNHnefnNVZy74ZzmMWb
+         +EHB4y1t2hkwwCwKz4nBOP+RFd2k63tdzTQEkx4Zr34ViJjx7GFJVqjjgS0CM+RYyc0L
+         HAdfpKFlLYJBXhT4Dr2cXlG0B99EA0pz51kByR4w40P6V80gNDiwHdPs0L+L53uSRrEf
+         8W/JXk9GKwFRbrgl1vN9O6+RFA/D+/kWtQ0BX2yc7nbdCuNayzGHFNqJqpH+H75ghgle
+         aJAQ==
+X-Gm-Message-State: APzg51C+GkJbpunviChtz4vnsVCij5CCoxoxesnePGP2vqaCcFLkERgw
+        6PebwsRe383z8E1qukU4tQg=
+X-Google-Smtp-Source: ANB0VdY+uiyGHh2x2mENNj4dqgHdYUl7pA9oWMltMGwgy1gPxq/borLBZrVfR8bMVAJAo4C5rzeH7g==
+X-Received: by 2002:a63:66c7:: with SMTP id a190-v6mr24298443pgc.411.1536601028912;
+        Mon, 10 Sep 2018 10:37:08 -0700 (PDT)
+Received: from localhost.localdomain ([12.251.228.178])
+        by smtp.gmail.com with ESMTPSA id f184-v6sm36046747pfc.88.2018.09.10.10.37.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Sep 2018 10:36:52 -0700 (PDT)
-Subject: [PATCH] IAD Register is yet readable trough iad sys file. Fix
- snprintf (%u for unsigned, count for max size).
-To:     linux-kernel@vger.kernel.org
-Cc:     greg@kroah.com, manio@skyboo.net
-From:   Julien Folly <julien.folly@gmail.com>
-X-Forwarded-Message-Id: 
-Message-ID: <54c2ec84-8057-3ee2-0f68-684d6b589e64@gmail.com>
-Date:   Mon, 10 Sep 2018 19:36:51 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 10 Sep 2018 10:37:08 -0700 (PDT)
+Date:   Mon, 10 Sep 2018 10:37:01 -0700
+From:   Eduardo Valentin <edubezval@gmail.com>
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     Zhang Rui <rui.zhang@intel.com>, Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Markus Mayer <mmayer@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Heiko Stuebner <heiko@sntech.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Keerthy <j-keerthy@ti.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Jun Nie <jun.nie@linaro.org>,
+        Baoyou Xie <baoyou.xie@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/17] thermal: enable/check sensor after its setup is
+ finished
+Message-ID: <20180910173659.GB4196@localhost.localdomain>
+References: <CGME20180410124240epcas2p25c8979583c41f147ac34c49faf30aa14@epcas2p2.samsung.com>
+ <1523364131-31059-1-git-send-email-b.zolnierkie@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1523364131-31059-1-git-send-email-b.zolnierkie@samsung.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Apr 10, 2018 at 02:41:54PM +0200, Bartlomiej Zolnierkiewicz wrote:
+> Hi,
+> 
+> [devm]_thermal_zone_of_sensor_register() is used to register
+> thermal sensor by thermal drivers using DeviceTree. Besides
+> registering sensor this function also immediately enables it
+> (using ->set_mode method) and then checks it with a update call
+> to the thermal core (which ends up using ->get_temp method).
 
-Signed-off-by: Julien Folly <julien.folly@gmail.com>
-Acked-by: Evgeniy Polyakov <zbr@ioremap.net>
----
-  drivers/w1/slaves/w1_ds2438.c | 66 ++++++++++++++++++++++++++++++++++---------
-  1 file changed, 52 insertions(+), 14 deletions(-)
+Yeah, pretty much the driver needs to be ready to answer to callbacks
+once it calls thermal_*_register() method.
 
-diff --git a/drivers/w1/slaves/w1_ds2438.c b/drivers/w1/slaves/w1_ds2438.c
-index bf641a1..7c4e33d 100644
---- a/drivers/w1/slaves/w1_ds2438.c
-+++ b/drivers/w1/slaves/w1_ds2438.c
-@@ -186,8 +186,8 @@ static int w1_ds2438_change_config_bit(struct w1_slave *sl, u8 mask, u8 value)
-  	return -1;
-  }
-  
--static uint16_t w1_ds2438_get_voltage(struct w1_slave *sl,
--				      int adc_input, uint16_t *voltage)
-+static int w1_ds2438_get_voltage(struct w1_slave *sl,
-+				 int adc_input, uint16_t *voltage)
-  {
-  	unsigned int retries = W1_DS2438_RETRIES;
-  	u8 w1_buf[DS2438_PAGE_SIZE + 1 /*for CRC*/];
-@@ -235,6 +235,25 @@ static uint16_t w1_ds2438_get_voltage(struct w1_slave *sl,
-  	return ret;
-  }
-  
-+static int w1_ds2438_get_current(struct w1_slave *sl, int16_t *voltage)
-+{
-+	u8 w1_buf[DS2438_PAGE_SIZE + 1 /*for CRC*/];
-+	int ret;
-+
-+	mutex_lock(&sl->master->bus_mutex);
-+
-+	if (w1_ds2438_get_page(sl, 0, w1_buf) == 0) {
-+		/* The voltage measured across current sense resistor RSENS. */
-+		*voltage = (((int16_t) w1_buf[DS2438_CURRENT_MSB]) << 8) | ((int16_t) w1_buf[DS2438_CURRENT_LSB]);
-+		ret = 0;
-+	} else
-+		ret = -1;
-+
-+	mutex_unlock(&sl->master->bus_mutex);
-+
-+	return ret;
-+}
-+
-  static ssize_t iad_write(struct file *filp, struct kobject *kobj,
-  			 struct bin_attribute *bin_attr, char *buf,
-  			 loff_t off, size_t count)
-@@ -257,6 +276,27 @@ static ssize_t iad_write(struct file *filp, struct kobject *kobj,
-  	return ret;
-  }
-  
-+static ssize_t iad_read(struct file *filp, struct kobject *kobj,
-+			struct bin_attribute *bin_attr, char *buf,
-+			loff_t off, size_t count)
-+{
-+	struct w1_slave *sl = kobj_to_w1_slave(kobj);
-+	int ret;
-+	int16_t voltage;
-+
-+	if (off != 0)
-+		return 0;
-+	if (!buf)
-+		return -EINVAL;
-+
-+	if (w1_ds2438_get_current(sl, &voltage) == 0) {
-+		ret = snprintf(buf, count, "%i\n", voltage);
-+	} else
-+		ret = -EIO;
-+
-+	return ret;
-+}
-+
-  static ssize_t page0_read(struct file *filp, struct kobject *kobj,
-  			  struct bin_attribute *bin_attr, char *buf,
-  			  loff_t off, size_t count)
-@@ -272,9 +312,13 @@ static ssize_t page0_read(struct file *filp, struct kobject *kobj,
-  
-  	mutex_lock(&sl->master->bus_mutex);
-  
-+	/* Read no more than page0 size */
-+	if (count > DS2438_PAGE_SIZE)
-+		count = DS2438_PAGE_SIZE;
-+
-  	if (w1_ds2438_get_page(sl, 0, w1_buf) == 0) {
--		memcpy(buf, &w1_buf, DS2438_PAGE_SIZE);
--		ret = DS2438_PAGE_SIZE;
-+		memcpy(buf, &w1_buf, count);
-+		ret = count;
-  	} else
-  		ret = -EIO;
-  
-@@ -289,7 +333,6 @@ static ssize_t temperature_read(struct file *filp, struct kobject *kobj,
-  {
-  	struct w1_slave *sl = kobj_to_w1_slave(kobj);
-  	int ret;
--	ssize_t c = PAGE_SIZE;
-  	int16_t temp;
-  
-  	if (off != 0)
-@@ -298,8 +341,7 @@ static ssize_t temperature_read(struct file *filp, struct kobject *kobj,
-  		return -EINVAL;
-  
-  	if (w1_ds2438_get_temperature(sl, &temp) == 0) {
--		c -= snprintf(buf + PAGE_SIZE - c, c, "%d\n", temp);
--		ret = PAGE_SIZE - c;
-+		ret = snprintf(buf, count, "%i\n", temp);
-  	} else
-  		ret = -EIO;
-  
-@@ -312,7 +354,6 @@ static ssize_t vad_read(struct file *filp, struct kobject *kobj,
-  {
-  	struct w1_slave *sl = kobj_to_w1_slave(kobj);
-  	int ret;
--	ssize_t c = PAGE_SIZE;
-  	uint16_t voltage;
-  
-  	if (off != 0)
-@@ -321,8 +362,7 @@ static ssize_t vad_read(struct file *filp, struct kobject *kobj,
-  		return -EINVAL;
-  
-  	if (w1_ds2438_get_voltage(sl, DS2438_ADC_INPUT_VAD, &voltage) == 0) {
--		c -= snprintf(buf + PAGE_SIZE - c, c, "%d\n", voltage);
--		ret = PAGE_SIZE - c;
-+		ret = snprintf(buf, count, "%u\n", voltage);
-  	} else
-  		ret = -EIO;
-  
-@@ -335,7 +375,6 @@ static ssize_t vdd_read(struct file *filp, struct kobject *kobj,
-  {
-  	struct w1_slave *sl = kobj_to_w1_slave(kobj);
-  	int ret;
--	ssize_t c = PAGE_SIZE;
-  	uint16_t voltage;
-  
-  	if (off != 0)
-@@ -344,15 +383,14 @@ static ssize_t vdd_read(struct file *filp, struct kobject *kobj,
-  		return -EINVAL;
-  
-  	if (w1_ds2438_get_voltage(sl, DS2438_ADC_INPUT_VDD, &voltage) == 0) {
--		c -= snprintf(buf + PAGE_SIZE - c, c, "%d\n", voltage);
--		ret = PAGE_SIZE - c;
-+		ret = snprintf(buf, count, "%u\n", voltage);
-  	} else
-  		ret = -EIO;
-  
-  	return ret;
-  }
-  
--static BIN_ATTR(iad, S_IRUGO | S_IWUSR | S_IWGRP, NULL, iad_write, 1);
-+static BIN_ATTR(iad, S_IRUGO | S_IWUSR | S_IWGRP, iad_read, iad_write, 0);
-  static BIN_ATTR_RO(page0, DS2438_PAGE_SIZE);
-  static BIN_ATTR_RO(temperature, 0/* real length varies */);
-  static BIN_ATTR_RO(vad, 0/* real length varies */);
--- 
-2.7.4
+> For many DT thermal drivers this causes a problem because
 
+Can you be more specific? Are you seeing this problem in samsung driver
+or in other drivers too?
+
+> [devm]_thermal_zone_of_sensor_register() need to be called in
+> order to obtain data about thermal trips which are then used to
+> finish hardware sensor setup (only after which ->get_temp can
+> be used). The issue has been observed when using Samsung Exynos
+
+Oh I see, this is because trip info is read by the of thermal thermal
+then, correct?
+
+> thermal driver and fixed internally in the driver in commit
+> d8efad71e5b6 ("thermal: exynos: Reading temperature makes sense
+> only when TMU is turned on"). However after this commit there
+> are now following warnings from the thermal core visible:
+> 
+> [    3.453602] thermal thermal_zone0: failed to read out thermal zone (-22)
+> [    3.483468] thermal thermal_zone1: failed to read out thermal zone (-22)
+> [    3.505965] thermal thermal_zone2: failed to read out thermal zone (-22)
+> [    3.528455] thermal thermal_zone3: failed to read out thermal zone (-22)
+> [    3.550939] thermal thermal_zone4: failed to read out thermal zone (-22)
+> 
+> This patchset attempts to directly address the thermal core
+> problem with [devm]_thermal_zone_of_sensor_register() and
+> affected DT thermal drivers. In order to achieve this sensor
+> registration, enable and check operations are separated and
+> corresponding drivers are modified to use the new helpers to
+> enable and check sensor explicitly.
+> 
+
+Ok. Up to this point I followed that this is a samsung driver issue, not
+we need to change the core to fix adapt to it?
+
+And adapting the core should be fine to fit a new use/fix something,
+as long the issue is well described..
+
+> Tested on Exynos5422 based Odroid-XU3 Lite board (aforementioned
+> warnings from the thermal core are now gone).
+> 
+> Best regards,
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
+> 
+> 
+> Bartlomiej Zolnierkiewicz (17):
+>   thermal: add thermal_zone_device_toggle() helper
+>   thermal: separate sensor registration and enable
+>   thermal: add thermal_zone_device_check() helper
+>   thermal: do sensor checking explicitly in drivers
+>   thermal: bcm2835: enable/check sensor after its setup is finished
+>   thermal: brcmstb: enable/check sensor after its setup is finished
+>   thermal: hisi_thermal: enable/check sensor after its setup is finished
+>   thermal: qcom: tsens: enable/check sensor after its setup is finished
+>   thermal: qoriq: enable/check sensor after its setup is finished
+>   thermal: rcar_gen3_thermal: enable/check sensor after its setup is
+>     finished
+>   thermal: rockchip_thermal: enable/check sensor after its setup is
+>     finished
+>   thermal: exynos: enable/check sensor after its setup is finished
+>   thermal: tegra: enable/check sensor after its setup is finished
+>   thermal: ti-soc-thermal: enable/check sensor after its setup is
+>     finished
+>   thermal: uniphier: enable/check sensor after its setup is
+>     finished
+>   thermal: zx2967: enable/check sensor after its setup is finished
+>   thermal: warn on attempts to read temperature on disabled sensors
+> 
+>  drivers/acpi/thermal.c                             |  5 ++--
+>  drivers/net/ethernet/mellanox/mlxsw/core_thermal.c |  1 -
+>  drivers/platform/x86/acerhdf.c                     |  6 +++-
+>  drivers/regulator/max8973-regulator.c              |  3 +-
+>  drivers/thermal/broadcom/bcm2835_thermal.c         |  3 ++
+>  drivers/thermal/broadcom/brcmstb_thermal.c         |  3 ++
+>  drivers/thermal/broadcom/ns-thermal.c              |  3 ++
+>  drivers/thermal/da9062-thermal.c                   |  7 ++---
+>  drivers/thermal/db8500_thermal.c                   |  5 +++-
+>  drivers/thermal/hisi_thermal.c                     | 22 ++++----------
+>  drivers/thermal/imx_thermal.c                      |  3 +-
+>  drivers/thermal/int340x_thermal/int3400_thermal.c  |  1 +
+>  drivers/thermal/intel_bxt_pmic_thermal.c           |  3 +-
+>  drivers/thermal/intel_soc_dts_iosf.c               |  3 +-
+>  drivers/thermal/max77620_thermal.c                 |  6 ++--
+>  drivers/thermal/mtk_thermal.c                      |  3 ++
+>  drivers/thermal/of-thermal.c                       |  6 ++--
+>  drivers/thermal/qcom-spmi-temp-alarm.c             |  5 +++-
+>  drivers/thermal/qcom/tsens.c                       |  6 ++++
+>  drivers/thermal/qoriq_thermal.c                    |  3 ++
+>  drivers/thermal/rcar_gen3_thermal.c                |  7 +++--
+>  drivers/thermal/rcar_thermal.c                     |  8 +++--
+>  drivers/thermal/rockchip_thermal.c                 | 34 ++++++++++------------
+>  drivers/thermal/samsung/exynos_tmu.c               |  7 ++++-
+>  drivers/thermal/st/st_thermal_memmap.c             |  3 +-
+>  drivers/thermal/tango_thermal.c                    |  5 ++++
+>  drivers/thermal/tegra/soctherm.c                   |  3 ++
+>  drivers/thermal/tegra/tegra-bpmp-thermal.c         |  3 ++
+>  drivers/thermal/thermal-generic-adc.c              |  3 ++
+>  drivers/thermal/thermal_core.c                     | 14 ++++-----
+>  drivers/thermal/thermal_helpers.c                  | 33 +++++++++++++++++++++
+>  drivers/thermal/thermal_sysfs.c                    | 17 +++++++----
+>  drivers/thermal/ti-soc-thermal/ti-thermal-common.c |  7 ++++-
+>  drivers/thermal/uniphier_thermal.c                 |  6 +++-
+>  drivers/thermal/x86_pkg_temp_thermal.c             |  2 +-
+>  drivers/thermal/zx2967_thermal.c                   |  3 ++
+>  include/linux/thermal.h                            |  5 ++++
+>  37 files changed, 173 insertions(+), 84 deletions(-)
+> 
+> -- 
+> 1.9.1
