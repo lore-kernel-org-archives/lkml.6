@@ -2,98 +2,107 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0BCEC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 18:11:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2805C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 18:14:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48D91206BB
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 18:11:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48D91206BB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id 9B9A0206BB
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 18:14:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="GvQMLivU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B9A0206BB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728040AbeIJXGu (ORCPT
+        id S1728029AbeIJXJl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 19:06:50 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:49796 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726657AbeIJXGu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 19:06:50 -0400
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1fzQeR-0002BG-NJ; Mon, 10 Sep 2018 12:11:08 -0600
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-block@vger.kernel.org, Stephen Bates <sbates@raithlin.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-References: <20180905195647.GA1626@lst.de>
- <bcc1b3cf-2fd9-fa61-9cfb-b0e4d84e5d94@kernel.dk>
- <20180905201152.GA1893@lst.de>
- <eb42fb94-9da6-955b-8524-0a0f5ac4bd19@deltatee.com>
- <2a3394bd-5f13-4818-43f4-dfc61f501e05@kernel.dk>
- <e3ef26e6-6c8d-25b8-fa64-14594a51263c@deltatee.com>
- <3af4d1d4-da07-c0a6-8464-9ddc1378f2f4@kernel.dk>
- <f9e660cd-b597-bb6e-56a2-82fe71cb3649@deltatee.com>
- <34d9b2f7-9e6d-4a0a-77e5-ec0e99610f5c@kernel.dk>
- <c41c802c-9235-5383-2dfa-af9c1553f11b@deltatee.com>
- <20180910164144.GA24591@lst.de>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <fc4f14ae-9490-f901-a60c-2bd1522ef137@deltatee.com>
-Date:   Mon, 10 Sep 2018 12:11:01 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 10 Sep 2018 19:09:41 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:33431 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727411AbeIJXJk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 19:09:40 -0400
+Received: by mail-oi0-f65.google.com with SMTP id 8-v6so42055907oip.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 11:14:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=nr03am6QHgfX8f7Sz/7N3Thw4Y5UGcO2yrMwa4bFQaw=;
+        b=GvQMLivU/gUjAAXMbww7POc6Zbvp5D/aP7dG/BbLuuI8NPTIlpawOoWBlY1dU0VBqD
+         /smtIg076gY257Yq0tUX9vdr3stT+3IZOfS4M8XQXdk7N+GtG1uxh1Fg6fk++MYAXiSX
+         Xqb0dsorxyLSVoWjyo33M77JcbCXhu5PupEL0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=nr03am6QHgfX8f7Sz/7N3Thw4Y5UGcO2yrMwa4bFQaw=;
+        b=YaVERS11WeFjYNul1O0alfsRnTw9Ua456hpQ1EamC42Eih5yNQV/PUlbKN9qy5/3it
+         g+gqe7Jqe+SpdkRRMhING7RjZ6ScnmLHCt6LX0O3Jh91luFTaELj6htdMTa0PnNRAVWj
+         PqbdLFfd2Xjy3WddmqyU+ozRwdnappjx4YPQAOzo6jtwYS0/X5fX/Af/wCrLgva3hbIs
+         NzZKT0hR8oVI7ysF/2Hy38bUcQYZmOekYuzGO84Dk4Tk0eyAzKYDMkBowyG4HrrtbVPP
+         qOCjD3R/IhnXlV5xK3FMMWzpWBTDkBHoLJFmcC+uhM+xows+TTQwq+imFqfp69ZF6sl0
+         SPKg==
+X-Gm-Message-State: APzg51CGdBGrLOg9r9yoVAschdFaKeypJEYTmuwRuDwd++j8klg/fRBE
+        qV42St561Gwi2pM7iQV5uq0bT1DR6bzOPmCVHGYO/w==
+X-Google-Smtp-Source: ANB0VdYboOtlLEopcTE+DKyJL8iRFbS2U1pnUPwMEbOwSjJs4X8xdpf9SgMM2peUUe6+yRBWMDgd4NLVtSaxs9RigWI=
+X-Received: by 2002:aca:aa8d:: with SMTP id t135-v6mr21029423oie.218.1536603261249;
+ Mon, 10 Sep 2018 11:14:21 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180910164144.GA24591@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: christian.koenig@amd.com, alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, axboe@kernel.dk, hch@lst.de
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v5 07/13] block: Add PCI P2P flag for request queue and
- check support for requests
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Received: by 2002:a9d:24a3:0:0:0:0:0 with HTTP; Mon, 10 Sep 2018 11:14:20
+ -0700 (PDT)
+X-Originating-IP: [212.96.48.140]
+In-Reply-To: <20180910165317.GA3237@infradead.org>
+References: <000000000000cbb35d05757f7a3a@google.com> <20180910165317.GA3237@infradead.org>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 10 Sep 2018 20:14:20 +0200
+Message-ID: <CAJfpeguWqJgU8EfjvOtsBYRbbY2J7Ck2oNUcLNS8my9g2eNZfA@mail.gmail.com>
+Subject: Re: possible deadlock in aio_poll
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     syzbot <syzbot+5b1df0420c523b45a953@syzkaller.appspotmail.com>,
+        bcrl <bcrl@kvack.org>, linux-aio <linux-aio@kvack.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Sep 10, 2018 at 6:53 PM, Christoph Hellwig <hch@infradead.org> wrote:
+> On Mon, Sep 10, 2018 at 12:41:05AM -0700, syzbot wrote:
+>> =====================================================
+>> WARNING: SOFTIRQ-safe -> SOFTIRQ-unsafe lock order detected
+>> 4.19.0-rc2+ #229 Not tainted
+>> -----------------------------------------------------
+>> syz-executor2/9399 [HC0[0]:SC0[0]:HE0:SE1] is trying to acquire:
+>> 00000000126506e0 (&ctx->fd_wqh){+.+.}, at: spin_lock
+>> include/linux/spinlock.h:329 [inline]
+>> 00000000126506e0 (&ctx->fd_wqh){+.+.}, at: aio_poll+0x760/0x1420
+>> fs/aio.c:1747
+>>
+>> and this task is already holding:
+>> 000000002bed6bf6 (&(&ctx->ctx_lock)->rlock){..-.}, at: spin_lock_irq
+>> include/linux/spinlock.h:354 [inline]
+>> 000000002bed6bf6 (&(&ctx->ctx_lock)->rlock){..-.}, at: aio_poll+0x738/0x1420
+>> fs/aio.c:1746
+>> which would create a new lock dependency:
+>>  (&(&ctx->ctx_lock)->rlock){..-.} -> (&ctx->fd_wqh){+.+.}
+>
+> ctx->fd_wqh seems to only exist in userfaultfd, which indeed seems
+> to do strange open coded waitqueue locking, and seems to fail to disable
+> irqs.  Something like this should fix it:
 
+Why do pollable waitqueues need to disable interrupts generally?
 
-On 10/09/18 10:41 AM, Christoph Hellwig wrote:
-> On Wed, Sep 05, 2018 at 03:03:18PM -0600, Logan Gunthorpe wrote:
->> There is no special p2p submission process. In the nvme-of case we are
->> using the existing process and with the code in blk-core it didn't
->> change it's process at all. Creating a helper will create one and I can
->> look at making a pci_p2pdma_submit_bio() for v6; but if the developer
->> screws up and still calls the regular submit_bio() things will only be
->> very subtly broken and that won't be obvious.
-> 
-> I just saw you added that "helper" in your tree.  Please don't, it is
-> a negative value add as it doesn't help anything with the checking.
+I don't see anything fundamental in the poll interface to force this
+requirement on users of that interface.
 
-Alright, so what's the consensus then? Just have a check in
-nvmet_bdev_execute_rw() to add REQ_NOMERGE when appropriate? Jens is
-pretty dead set against adding to the common path.
-
-Logan
-
-
-P.S. Here's the commit in question for anyone else on the list:
-
-https://github.com/sbates130272/linux-p2pmem/commit/eeabe0bc94491d3eec4fe872274a9e3b4cdea538
+Thanks,
+Miklos
