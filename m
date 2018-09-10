@@ -3,113 +3,112 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42AFAC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 12:18:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 942C7C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 12:18:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0031A2087F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 12:18:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0031A2087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
+	by mail.kernel.org (Postfix) with ESMTP id 2E8F92087F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 12:18:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E8F92087F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728553AbeIJRLs (ORCPT
+        id S1728564AbeIJRMM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 13:11:48 -0400
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:58942 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727649AbeIJRLs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 13:11:48 -0400
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8ACEZWi013014;
-        Mon, 10 Sep 2018 07:17:46 -0500
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=rf@opensource.cirrus.com
-Received: from mail4.cirrus.com ([87.246.98.35])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2mcbu02bjw-1;
-        Mon, 10 Sep 2018 07:17:46 -0500
-Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail4.cirrus.com (Postfix) with ESMTP id B7A50611C8B6;
-        Mon, 10 Sep 2018 07:19:59 -0500 (CDT)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Mon, 10 Sep 2018
- 13:17:45 +0100
-Received: from [198.90.251.121] (edi-sw-dsktp006.ad.cirrus.com
- [198.90.251.121])      by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id
- w8ACHiDa005428;        Mon, 10 Sep 2018 13:17:45 +0100
-Subject: Re: [PATCH v10 2/2] irqchip: Add driver for Cirrus Logic Madera
- codecs
-From:   Richard Fitzgerald <rf@opensource.cirrus.com>
-To:     Lee Jones <lee.jones@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-CC:     Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        <patches@opensource.cirrus.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Kate Stewart" <kstewart@linuxfoundation.org>
-References: <20180828130934.18135-1-rf@opensource.cirrus.com>
- <20180828130934.18135-2-rf@opensource.cirrus.com>
- <alpine.DEB.2.21.1808301154040.1210@nanos.tec.linutronix.de>
- <4aa5941b-547d-7218-1b8f-4cd2a01a4fa5@opensource.cirrus.com>
- <alpine.DEB.2.21.1808301349380.1210@nanos.tec.linutronix.de>
- <20180910113333.GL28860@dell>
- <1eb18ed1-3c05-cec2-ec8c-0dfc512b366a@opensource.cirrus.com>
-Message-ID: <19faa66d-00a9-1c8d-8171-3f4436be0e05@opensource.cirrus.com>
-Date:   Mon, 10 Sep 2018 13:17:44 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 10 Sep 2018 13:12:12 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:37311 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727649AbeIJRMM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 13:12:12 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 018382074F; Mon, 10 Sep 2018 14:18:23 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-30-219.w90-88.abo.wanadoo.fr [90.88.15.219])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 7F99E206EE;
+        Mon, 10 Sep 2018 14:18:22 +0200 (CEST)
+Date:   Mon, 10 Sep 2018 14:18:20 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        "David S . Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Andrew Lunn <andrew@lunn.ch>, Alban Bedel <albeu@free.fr>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        linux-doc <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH v2 01/16] nvmem: remove unused APIs
+Message-ID: <20180910141820.6c715895@bbrezillon>
+In-Reply-To: <ec2ba4af-46cf-2025-1670-cbed366d0f15@linaro.org>
+References: <20180907100750.14564-1-brgl@bgdev.pl>
+        <20180907100750.14564-2-brgl@bgdev.pl>
+        <c0b0c411-65f6-62f9-6d6d-2884e5a17250@linaro.org>
+        <CAMRc=MfO01EQAfY4Uu3UwzzvhVOMF7_BpCOPVz2yVXqDgpb0AA@mail.gmail.com>
+        <7e138142-8161-3646-4daf-619995baf395@linaro.org>
+        <CAMRc=Mduu4CmLX5DFtJd8NSbzs5g65U9AmM=rbscit0JyQKVAQ@mail.gmail.com>
+        <3dbd65e5-c948-a784-0362-930fc41b840e@linaro.org>
+        <CAMRc=Mck=rAJ6jbm57ZecJWNvOYR5pjLy0JnyxFzA8kFvoK7Ew@mail.gmail.com>
+        <ec2ba4af-46cf-2025-1670-cbed366d0f15@linaro.org>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <1eb18ed1-3c05-cec2-ec8c-0dfc512b366a@opensource.cirrus.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=730 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
- definitions=main-1809100127
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/09/18 13:08, Richard Fitzgerald wrote:
-> On 10/09/18 12:33, Lee Jones wrote:
->> On Thu, 30 Aug 2018, Thomas Gleixner wrote:
->>
->>> On Thu, 30 Aug 2018, Richard Fitzgerald wrote:
->>>> On 30/08/18 11:31, Thomas Gleixner wrote:
->>>>> On Tue, 28 Aug 2018, Richard Fitzgerald wrote:
->>>>>> @@ -0,0 +1,244 @@
->>>>>> +// SPDX-License-Identifier: GPL-2.0
->>>>>> +/*
->>>>>> + * Interrupt support for Cirrus Logic Madera codecs
->>>>>> + *
->>>>>> + * Copyright (C) 2015-2018 Cirrus Logic
->>>>>> + *
->>>>>> + * This program is free software; you can redistribute it and/or modify
->>>>>> + * it under the terms of the GNU General Public License as published by
->>>>>> the
->>>>>> + * Free Software Foundation; version 2.
->>>>>
->>>>> You have the SPDX identifier above, which makes this boilerplate
->>>>> superfluous.
->>>>>
->>>>
->>>> Our legal people want it left here.
->>>> They are ok with the SPDX reference, but they want to keep an
->>>> explicit statement of the license that was intended.
->>>
->>> The SPDX identifier is an explicit statement. Sigh...
->>
->> Richard, could you please try to re-engage with your legal team and
->> explain that the SPDX identifier replaces the licence statement.
->>
-> 
-> I'll ask.
+Hi Srinivas,
 
-I just dug out what our legal dept told me, and noticed a point they made
-is that the licence referenced by the SPDX still says that these headers
-should be added to each source file.
+On Mon, 10 Sep 2018 12:47:19 +0100
+Srinivas Kandagatla <srinivas.kandagatla@linaro.org> wrote:
+
+> On 10/09/18 12:31, Bartosz Golaszewski wrote:
+> > About that: there are no users of nvmem_device_cell_read/write()
+> > currently and with the new API I'm not sure this is still needed. Are
+> > you alright with removing those two?  
+> 
+> Why do you want to remove them? Other than reason of no users.
+
+I'm just sharing my (and probably other maintainers/developers) PoV
+here, so please don't take this as an attempt to force you to change
+your mind, but rather an attempt at explaining why APIs usually stay
+private when they have no users.
+
+Kernel maintainers tend to reject APIs that have no users because
+adding something that nobody needs yet is hard to get right. I mean,
+you can design an API on what you think will be needed/appropriate, and
+then, when people actually start needing this feature, they realize it
+does not quite match what they need, and they have to adjust/rework
+this API.
+
+> 
+> All it boils down to if we support device based apis using cell info or 
+> not?
+
+But it looks like nobody is actually using it, and the first potential
+user (Bart) proposed a different approach with the nvmem cell table
+declaration.
+
+> IMO, I see no harm in leaving these apis as it is, unless there is a 
+> strong reason to do so.
+
+It's harmless, but it's also unused. If people start using it and you
+realize the API is not working for some use cases, then you'll have to
+patch all existing users.
+
+All this being said, it's your call to make, and if you think it makes
+sense to keep these functions around for any reason, then be it.
+
+Regards,
+
+Boris
