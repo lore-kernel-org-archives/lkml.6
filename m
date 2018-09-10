@@ -2,196 +2,124 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12773C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 21:46:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C16C5C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 21:47:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CABB720865
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 21:46:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CABB720865
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 6DA8320866
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 21:47:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=fieahl-im.20150623.gappssmtp.com header.i=@fieahl-im.20150623.gappssmtp.com header.b="cs6iqBy3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DA8320866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fieahl.im
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726945AbeIKClw (ORCPT
+        id S1726919AbeIKCni (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 22:41:52 -0400
-Received: from mga02.intel.com ([134.134.136.20]:2481 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726217AbeIKClw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 22:41:52 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2018 14:45:48 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,357,1531810800"; 
-   d="scan'208";a="256062314"
-Received: from maru.jf.intel.com ([10.54.51.80])
-  by orsmga005.jf.intel.com with ESMTP; 10 Sep 2018 14:45:38 -0700
-From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-To:     Brendan Higgins <brendanhiggins@google.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>, linux-i2c@vger.kernel.org,
-        openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Cc:     Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        James Feist <james.feist@linux.intel.com>,
-        Vernon Mauery <vernon.mauery@linux.intel.com>,
-        Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Subject: [RFC PATCH i2c-next 2/2] i2c: aspeed: Add bus idle waiting logic for multi-master use cases
-Date:   Mon, 10 Sep 2018 14:45:19 -0700
-Message-Id: <20180910214519.14126-3-jae.hyun.yoo@linux.intel.com>
+        Mon, 10 Sep 2018 22:43:38 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:38147 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726191AbeIKCni (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 22:43:38 -0400
+Received: by mail-pg1-f194.google.com with SMTP id t84-v6so9287516pgb.5
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 14:47:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fieahl-im.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=rZ/OKmh2EdrSEB5JUF2McdFFK7q1SMCf21VNiWROUfY=;
+        b=cs6iqBy3EEC29HrzYfFu7m2lUOMMpd7xKn5tgdkc2y/GDdYoJhVRGid7tIWAbwLnme
+         uDKYIrokqyTxeuMzTxm3KaWaXNQLiZCGzsAFxYAqIpSnQ5kC18Pi7dKgnp6BiccxAlKI
+         fAlMk0N5gTWO9mRVYjiDSbX3JWMjgb5c4nUeb2CgAdqGu/Ccn1dv60/nK+qFsWwnpHNF
+         hsRfLvHfocsnPhOnsxnJKkL2eoSNVoRcUam2kzm8Uw+4OEy0YdRqhA1k7fF5sJGpYsTS
+         pi0wuJ2HFrEG3GqiE/v6agNFgrZ0DbknF6t/VCI6sX4divEuIzAfi0CduYDHpzmVXJhR
+         YbHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=rZ/OKmh2EdrSEB5JUF2McdFFK7q1SMCf21VNiWROUfY=;
+        b=InvStJqZsHNs3C65tIJ9B+1JX/0GpBLZGIQnJxLljcITpnuSokhYPu7JXqSeGApWrs
+         YyF3GTwlO358gdEXtZ9uO6/t6n8jUXJetatnXJ8ngYGmVn6ug6AXTUnkpuH7P+B4MM4u
+         pJWE+NOyK50SyZ6dubL0o2kFduzthhwxAWVcdi8Ylg28aGjePkgPUegNbRn39tk8XRT1
+         TncSH6KJIB1TQ+WQK/B2ZD0tGi/CNdshpRi/3UOt/XwpeFwP4gz9iWekmiqCoigqDer7
+         vlkL2pitvoEOd9gNHNWVONMokCKee0Z8s5ncWyXXVZ+qVP/Sfl5dNMRIFFxHu0l7+6Mu
+         appQ==
+X-Gm-Message-State: APzg51DhNBoKLPAEX4K0OaTo9JHqL3oH1nxK96uF80s5UGYYduat6HRB
+        7eKGBfhuO8IRVSJ6ttm+1lv0gg==
+X-Google-Smtp-Source: ANB0VdZtXHMUZ5HuNzD/jw4bO10g+4YXCbNAaIESvr0UIjO1GWj8edQPkqGGwhky4LdklDnkqyADZw==
+X-Received: by 2002:a63:7f06:: with SMTP id a6-v6mr25035424pgd.296.1536616054622;
+        Mon, 10 Sep 2018 14:47:34 -0700 (PDT)
+Received: from WorkZone.localdomain ([60.51.52.116])
+        by smtp.gmail.com with ESMTPSA id o21-v6sm24454323pfi.165.2018.09.10.14.47.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Sep 2018 14:47:33 -0700 (PDT)
+From:   Fieah Lim <kw@fieahl.im>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-pm@vger.kernel.org (open list:CPUIDLE DRIVERS),
+        linux-kernel@vger.kernel.org (open list)
+Cc:     Fieah Lim <kw@fieahl.im>
+Subject: [PATCH v3] cpuidle: enter_state: Don't needlessly calculate diff time
+Date:   Tue, 11 Sep 2018 05:47:25 +0800
+Message-Id: <20180910214725.19525-1-kw@fieahl.im>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180910214519.14126-1-jae.hyun.yoo@linux.intel.com>
-References: <20180910214519.14126-1-jae.hyun.yoo@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In multi-master environment, this driver side master cannot know
-exactly when peer master sends data to this side master so a case
-can be happened that this master tries to send data through the
-master_xfer function but slave data from peer master is still
-being processed by this driver.
+Currently we use ktime_us_delta() to calculate last residency and
+state usage unconditionally, it makes no sense to do this calculation
+when we fails to enter any idle state.
+It can be optimize by moving the calculation after entered_state >= 0
 
-To prevent state corruption in the case, this patch adds checking
-if any slave operation is ongoing and it wait up to the timeout
-duration before starting a master_xfer operation.
+While at it, merge those comment blocks into one and remove a
+space between type casting of diff.
 
-Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+This patch has no functional changes.
+
+Signed-off-by: Fieah Lim <kw@fieahl.im>
 ---
- drivers/i2c/busses/i2c-aspeed.c | 70 ++++++++++++++++++++++++++-------
- 1 file changed, 55 insertions(+), 15 deletions(-)
+Changes from v1:
+ - Rewrite changelog as Rafael J. Wysocki suggested
+Changes from v2:
+ - Minor adjustment
+---
+ drivers/cpuidle/cpuidle.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-aspeed.c b/drivers/i2c/busses/i2c-aspeed.c
-index c258c4d9a4c0..73359eda98be 100644
---- a/drivers/i2c/busses/i2c-aspeed.c
-+++ b/drivers/i2c/busses/i2c-aspeed.c
-@@ -12,6 +12,7 @@
+diff --git a/drivers/cpuidle/cpuidle.c b/drivers/cpuidle/cpuidle.c
+index 6df894d65d9e..40442c3631ce 100644
+--- a/drivers/cpuidle/cpuidle.c
++++ b/drivers/cpuidle/cpuidle.c
+@@ -247,17 +247,16 @@ int cpuidle_enter_state(struct cpuidle_device *dev, struct cpuidle_driver *drv,
+ 	if (!cpuidle_state_is_coupled(drv, index))
+ 		local_irq_enable();
  
- #include <linux/clk.h>
- #include <linux/completion.h>
-+#include <linux/delay.h>
- #include <linux/err.h>
- #include <linux/errno.h>
- #include <linux/i2c.h>
-@@ -99,6 +100,7 @@
- 		 ASPEED_I2CD_INTR_TX_ACK)
- 
- /* 0x14 : I2CD Command/Status Register   */
-+#define ASPEED_I2CD_XFER_MODE_STS_MASK			GENMASK(22, 19)
- #define ASPEED_I2CD_SCL_LINE_STS			BIT(18)
- #define ASPEED_I2CD_SDA_LINE_STS			BIT(17)
- #define ASPEED_I2CD_BUS_BUSY_STS			BIT(16)
-@@ -115,6 +117,10 @@
- /* 0x18 : I2CD Slave Device Address Register   */
- #define ASPEED_I2CD_DEV_ADDR_MASK			GENMASK(6, 0)
- 
-+/* Timeout for bus busy checking */
-+#define ASPEED_I2CD_IDLE_WAIT_TIMEOUT_MS_DEFAULT	100   /* 100 ms */
-+#define ASPEED_I2CD_BUS_BUSY_CHECK_INTERVAL_US		10000 /* 10 ms */
-+
- enum aspeed_i2c_master_state {
- 	ASPEED_I2C_MASTER_INACTIVE,
- 	ASPEED_I2C_MASTER_START,
-@@ -155,6 +161,9 @@ struct aspeed_i2c_bus {
- 	int				cmd_err;
- 	/* Protected only by i2c_lock_bus */
- 	int				master_xfer_result;
-+	/* Multi-master */
-+	bool				multi_master;
-+	u32				idle_wait_timeout_ms;
- #if IS_ENABLED(CONFIG_I2C_SLAVE)
- 	struct i2c_client		*slave;
- 	enum aspeed_i2c_slave_state	slave_state;
-@@ -590,27 +599,49 @@ static irqreturn_t aspeed_i2c_bus_irq(int irq, void *dev_id)
- 	return irq_remaining ? IRQ_NONE : IRQ_HANDLED;
- }
- 
-+static int aspeed_i2c_check_bus_busy(struct aspeed_i2c_bus *bus)
-+{
-+	u32 status_check_mask = ASPEED_I2CD_BUS_BUSY_STS;
-+	ktime_t timeout;
-+
-+	if (bus->multi_master) {
-+		might_sleep();
-+		timeout = ktime_add_ms(ktime_get(), bus->idle_wait_timeout_ms);
-+		/*
-+		 * ASPEED_I2CD_XFER_MODE_STS_MASK is marked as
-+		 * 'for debugging purpose only' in datasheet but ASPEED
-+		 * confirmed that this reflects real information and good to be
-+		 * used in practical code. It will be used only in multi-master
-+		 * use cases.
-+		 */
-+		status_check_mask |= ASPEED_I2CD_XFER_MODE_STS_MASK;
-+	}
-+
-+	for (;;) {
-+		if (!(readl(bus->base + ASPEED_I2C_CMD_REG) &
-+		      status_check_mask))
-+			return 0;
-+		if (!bus->multi_master)
-+			break;
-+		if (ktime_compare(ktime_get(), timeout) > 0)
-+			break;
-+		usleep_range((ASPEED_I2CD_BUS_BUSY_CHECK_INTERVAL_US >> 2) + 1,
-+			     ASPEED_I2CD_BUS_BUSY_CHECK_INTERVAL_US);
-+	}
-+
-+	return aspeed_i2c_recover_bus(bus);
-+}
-+
- static int aspeed_i2c_master_xfer(struct i2c_adapter *adap,
- 				  struct i2c_msg *msgs, int num)
- {
- 	struct aspeed_i2c_bus *bus = i2c_get_adapdata(adap);
- 	unsigned long time_left, flags;
--	int ret = 0;
+-	diff = ktime_us_delta(time_end, time_start);
+-	if (diff > INT_MAX)
+-		diff = INT_MAX;
 -
--	spin_lock_irqsave(&bus->lock, flags);
--	bus->cmd_err = 0;
- 
--	/* If bus is busy, attempt recovery. We assume a single master
--	 * environment.
--	 */
--	if (readl(bus->base + ASPEED_I2C_CMD_REG) & ASPEED_I2CD_BUS_BUSY_STS) {
--		spin_unlock_irqrestore(&bus->lock, flags);
--		ret = aspeed_i2c_recover_bus(bus);
--		if (ret)
--			return ret;
--		spin_lock_irqsave(&bus->lock, flags);
--	}
-+	if (aspeed_i2c_check_bus_busy(bus))
-+		return -EAGAIN;
- 
-+	spin_lock_irqsave(&bus->lock, flags);
- 	bus->cmd_err = 0;
- 	bus->msgs = msgs;
- 	bus->msgs_index = 0;
-@@ -798,8 +829,17 @@ static int aspeed_i2c_init(struct aspeed_i2c_bus *bus,
- 	if (ret < 0)
- 		return ret;
- 
--	if (!of_property_read_bool(pdev->dev.of_node, "multi-master"))
-+	if (of_property_read_bool(pdev->dev.of_node, "multi-master")) {
-+		bus->multi_master = true;
-+		ret = of_property_read_u32(pdev->dev.of_node,
-+					   "idle-wait-timeout-ms",
-+					   &bus->idle_wait_timeout_ms);
-+		if (ret)
-+			bus->idle_wait_timeout_ms =
-+				ASPEED_I2CD_IDLE_WAIT_TIMEOUT_MS_DEFAULT;
-+	} else {
- 		fun_ctrl_reg |= ASPEED_I2CD_MULTI_MASTER_DIS;
-+	}
- 
- 	/* Enable Master Mode */
- 	writel(readl(bus->base + ASPEED_I2C_FUN_CTRL_REG) | fun_ctrl_reg,
+-	dev->last_residency = (int) diff;
+-
+ 	if (entered_state >= 0) {
+-		/* Update cpuidle counters */
+-		/* This can be moved to within driver enter routine
++		/* Update cpuidle counters
++		 * This can be moved to within driver enter routine,
+ 		 * but that results in multiple copies of same code.
+ 		 */
++		diff = ktime_us_delta(time_end, time_start);
++		if (diff > INT_MAX)
++			diff = INT_MAX;
++
++		dev->last_residency = (int)diff;
+ 		dev->states_usage[entered_state].time += dev->last_residency;
+ 		dev->states_usage[entered_state].usage++;
+ 	} else {
 -- 
 2.18.0
 
