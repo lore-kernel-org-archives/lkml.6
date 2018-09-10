@@ -2,86 +2,111 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.9 required=3.0 tests=DATE_IN_PAST_96_XX,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EE09C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 11:00:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78B0FC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 11:00:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3678020685
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 11:00:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 543E520685
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 11:00:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727835AbfBTLAA convert rfc822-to-8bit (ORCPT
+        id S1727670AbfBTLAZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 06:00:00 -0500
-Received: from unicorn.mansr.com ([81.2.72.234]:44264 "EHLO unicorn.mansr.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726612AbfBTLAA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 06:00:00 -0500
-Received: by unicorn.mansr.com (Postfix, from userid 51770)
-        id 710AA15632; Wed, 20 Feb 2019 10:59:58 +0000 (GMT)
-From:   =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ARM: dts: sun7i: add pinctrl for missing uart mux options
-References: <20190216182132.12895-1-mans@mansr.com>
-        <CAGb2v66C6HFKgF8kERfp2UQ5XUyNS0-prgC3sX2iobkz7SjBcw@mail.gmail.com>
-        <20190220090617.aprfndnidcamwcvy@flea>
-Date:   Wed, 20 Feb 2019 10:59:58 +0000
-In-Reply-To: <20190220090617.aprfndnidcamwcvy@flea> (Maxime Ripard's message
-        of "Wed, 20 Feb 2019 10:06:17 +0100")
-Message-ID: <yw1x36oiybbl.fsf@mansr.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8BIT
+        Wed, 20 Feb 2019 06:00:25 -0500
+Received: from mail.steuer-voss.de ([85.183.69.95]:58492 "EHLO
+        mail.steuer-voss.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727341AbfBTLAZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 06:00:25 -0500
+X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
+Received: by mail.steuer-voss.de (Postfix, from userid 1000)
+        id BFA344CE86; Wed, 20 Feb 2019 12:00:17 +0100 (CET)
+In-Reply-To: <20180425142209.30745-1-heikki.krogerus@linux.intel.com>
+From:   Nikolaus Voss <nv@vosn.de>
+To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        nikolaus.voss@loewensteinmedical.de
+Date:   Mon, 10 Sep 2018 07:05:01 +0200
+Subject: [PATCH] usb: typec: tps6598x: handle block writes separately with
+ plain-I2C adapters
+Message-Id: <20190220110017.BFA344CE86@mail.steuer-voss.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Maxime Ripard <maxime.ripard@bootlin.com> writes:
+Commit 1a2f474d328f handles block _reads_ separately with plain-I2C
+adapters, but the problem described with regmap-i2c not handling
+SMBus block transfers (i.e. read and writes) correctly also exists
+with writes.
 
-> On Wed, Feb 20, 2019 at 04:58:49PM +0800, Chen-Yu Tsai wrote:
->> On Sun, Feb 17, 2019 at 2:21 AM Mans Rullgard <mans@mansr.com> wrote:
->> >
->> > This adds pinctrl settings for various missing uart options.
->> >
->> > Signed-off-by: Mans Rullgard <mans@mansr.com>
->> > ---
->> >  arch/arm/boot/dts/sun7i-a20.dtsi | 45 ++++++++++++++++++++++++++++++++
->> >  1 file changed, 45 insertions(+)
->> >
->> > diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
->> > index af5b067a5f83..2295ff5adf48 100644
->> > --- a/arch/arm/boot/dts/sun7i-a20.dtsi
->> > +++ b/arch/arm/boot/dts/sun7i-a20.dtsi
->> > @@ -944,6 +944,31 @@
->> >                                 function = "uart0";
->> >                         };
->> >
->> > +                       uart0_pf_pins: uart0-pf-pins {
->> > +                               pins = "PF2", "PF4";
->> > +                               function = "uart0";
->> > +                       };
->> 
->> We've had the policy of not adding pinctrl nodes that aren't used in-tree,
->> to avoid bloating up the blob size. However DTC 1.4.7 introduced the new
->> /omit-if-no-ref/ directive, which would make the compiler discard marked
->> nodes if they aren't referenced.
->> 
->> So please add this to all the new nodes. It seems to work regardless whether
->> you add it before or after the label, though having it after the label seems
->> to make vim syntax highlighting happier.
+As workaround, this patch adds a block write function the same way
+1a2f474d328f adds a block read function.
 
-Should we also add this to existing nodes?
+Fixes: 1a2f474d328f ("usb: typec: tps6598x: handle block reads separately with plain-I2C adapters")
+Fixes: 0a4c005bd171 ("usb: typec: driver for TI TPS6598x USB Power Delivery controllers")
+Signed-off-by: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
+---
+ drivers/usb/typec/tps6598x.c | 22 ++++++++++++++++++----
+ 1 file changed, 18 insertions(+), 4 deletions(-)
 
-BTW, I really do need all those uart pin options.
-
+diff --git a/drivers/usb/typec/tps6598x.c b/drivers/usb/typec/tps6598x.c
+index c84c8c189e90..57a3e6c5c175 100644
+--- a/drivers/usb/typec/tps6598x.c
++++ b/drivers/usb/typec/tps6598x.c
+@@ -110,6 +110,20 @@ tps6598x_block_read(struct tps6598x *tps, u8 reg, void *val, size_t len)
+ 	return 0;
+ }
+ 
++static int tps6598x_block_write(struct tps6598x *tps, u8 reg,
++				void *val, size_t len)
++{
++	u8 data[len + 1];
++
++	if (!tps->i2c_protocol)
++		return regmap_raw_write(tps->regmap, reg, val, len);
++
++	data[0] = len;
++	memcpy(&data[1], val, len);
++
++	return regmap_raw_write(tps->regmap, reg, data, sizeof(data));
++}
++
+ static inline int tps6598x_read16(struct tps6598x *tps, u8 reg, u16 *val)
+ {
+ 	return tps6598x_block_read(tps, reg, val, sizeof(u16));
+@@ -127,23 +141,23 @@ static inline int tps6598x_read64(struct tps6598x *tps, u8 reg, u64 *val)
+ 
+ static inline int tps6598x_write16(struct tps6598x *tps, u8 reg, u16 val)
+ {
+-	return regmap_raw_write(tps->regmap, reg, &val, sizeof(u16));
++	return tps6598x_block_write(tps, reg, &val, sizeof(u16));
+ }
+ 
+ static inline int tps6598x_write32(struct tps6598x *tps, u8 reg, u32 val)
+ {
+-	return regmap_raw_write(tps->regmap, reg, &val, sizeof(u32));
++	return tps6598x_block_write(tps, reg, &val, sizeof(u32));
+ }
+ 
+ static inline int tps6598x_write64(struct tps6598x *tps, u8 reg, u64 val)
+ {
+-	return regmap_raw_write(tps->regmap, reg, &val, sizeof(u64));
++	return tps6598x_block_write(tps, reg, &val, sizeof(u64));
+ }
+ 
+ static inline int
+ tps6598x_write_4cc(struct tps6598x *tps, u8 reg, const char *val)
+ {
+-	return regmap_raw_write(tps->regmap, reg, &val, sizeof(u32));
++	return tps6598x_block_write(tps, reg, &val, sizeof(u32));
+ }
+ 
+ static int tps6598x_read_partner_identity(struct tps6598x *tps)
 -- 
-Måns Rullgård
+2.17.1
+
