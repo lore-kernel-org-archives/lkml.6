@@ -2,98 +2,58 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AAF7C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:39:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FAD5C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:40:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B07620870
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:39:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ch5BgmXz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B07620870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id B3E992087F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:40:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3E992087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728280AbeIJUdj (ORCPT
+        id S1728284AbeIJUem (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 16:33:39 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:52849 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728043AbeIJUdj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 16:33:39 -0400
-Received: by mail-wm0-f67.google.com with SMTP id y139-v6so21888768wmc.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 08:38:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=PAVofr0JXjgeA2OcxKQtOm7dSC4KXWRPynlQdHnEfUI=;
-        b=Ch5BgmXzd0B9tEu8n0krFZ2c6J7fwZIEF0qfHg8o7u46dKdt2rk99KFumAK2TG6NH/
-         CLkQKZQT9pDg852NLb0EHVOCeeEJ9q8GHjbwfZGNzfWjvMnSwNRqCLJ8Cd2BYwcUV8oN
-         Jtu1CYdii3Nm/mlGItK0tYHuBgf01MrB+szpw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=PAVofr0JXjgeA2OcxKQtOm7dSC4KXWRPynlQdHnEfUI=;
-        b=YSxTTbzVinzlMtpojPSTRHbkYGLjaXBfyo2H3Os6TFoPLafqw9UAjRxSPrtZz5f0pT
-         F190+79BKv4ALQGiRPZigv7FEUUWmS7K7A7AptgqmXSE9Ad6WNXfco52q4MHO0w0ikNt
-         VvbgjYFgPvqpU/ITHPhyKdi+69KA0DqCJIVLzhD3M/cK6nhBCXlpjK3TO5duh3eDH4Ul
-         yX47zBZp5WdEKkQBtu+aecnINTBNB15esZ5bY3XKWSZhNBVU/ay2rKaBJhBke828umJp
-         dT/fpboShTPakh8U71GcCsdpXI8rIlelsGUdbrde3CO6jVXvPgVdlIy+sewONY2HiBe1
-         V2gg==
-X-Gm-Message-State: APzg51ARv5ck5c5Jnu6UoLVS3G5q0a7jFO1USzh+boiNrZlT0fQBoR5p
-        JqmvGH7TsDdMpXiN6cvmPw9bWw==
-X-Google-Smtp-Source: ANB0Vdanw9LeaxKSMZPI1apeKYGAni2j2FpVrwtUr5713vTUDS2ezJF5uD9gqncpzfuUB33F9tabiQ==
-X-Received: by 2002:a7b:c017:: with SMTP id c23-v6mr1170511wmb.136.1536593938805;
-        Mon, 10 Sep 2018 08:38:58 -0700 (PDT)
-Received: from dell ([2.27.167.7])
-        by smtp.gmail.com with ESMTPSA id f17-v6sm19670885wrs.1.2018.09.10.08.38.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 10 Sep 2018 08:38:58 -0700 (PDT)
-Date:   Mon, 10 Sep 2018 16:38:56 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
-        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org
-Subject: Re: [PATCH] mfd: motorola-cpcap: Add audio-codec support
-Message-ID: <20180910153856.GC28860@dell>
-References: <20180829093104.GA22065@amd>
+        Mon, 10 Sep 2018 16:34:42 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57464 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727649AbeIJUel (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 16:34:41 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D8E8B4023461;
+        Mon, 10 Sep 2018 15:40:01 +0000 (UTC)
+Received: from localhost (ovpn-204-175.brq.redhat.com [10.40.204.175])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id BEEC663A70;
+        Mon, 10 Sep 2018 15:39:59 +0000 (UTC)
+Date:   Mon, 10 Sep 2018 17:39:57 +0200
+From:   Jiri Benc <jbenc@redhat.com>
+To:     zhong jiang <zhongjiang@huawei.com>
+Cc:     <davem@davemloft.net>, <edumazet@google.com>,
+        <kuznet@ms2.inr.ac.ru>, <yoshfuji@linux-ipv6.org>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] net: ipv4: Use BUG_ON directly instead of a if
+ condition followed by BUG
+Message-ID: <20180910173957.5f3728e6@redhat.com>
+In-Reply-To: <1536590282-23899-1-git-send-email-zhongjiang@huawei.com>
+References: <1536590282-23899-1-git-send-email-zhongjiang@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180829093104.GA22065@amd>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 10 Sep 2018 15:40:01 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 10 Sep 2018 15:40:01 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jbenc@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 29 Aug 2018, Pavel Machek wrote:
+On Mon, 10 Sep 2018 22:38:02 +0800, zhong jiang wrote:
+> +			BUG(skb_copy_bits(skb, ptr, &tmp, 1));
 
-> From: Sebastian Reichel <sre@kernel.org>
->     
-> Add support for the audio-codec node by converting from
-> devm_of_platform_populate() to devm_mfd_add_devices().
->    
-> Tested-by: Pavel Machek <pavel@ucw.cz>
-> Acked-by: Tony Lindgren <tony@atomide.com>
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-> Signed-off-by: Pavel Machek <pavel@ucw.cz>
+I doubt this builds.
 
-Applied, thanks.
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+ Jiri
