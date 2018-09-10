@@ -6,294 +6,199 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC968C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:47:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4C0CC4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:48:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EB8D20866
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:47:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EB8D20866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id 532842086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:48:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 532842086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paulk.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728037AbeIJOkZ (ORCPT
+        id S1728080AbeIJOld (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 10:40:25 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:41922 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727311AbeIJOkY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 10:40:24 -0400
-Received: from 79.184.255.178.ipv4.supernova.orange.pl (79.184.255.178) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.123)
- id b684e1a316c13c31; Mon, 10 Sep 2018 11:47:09 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
-        mingo@redhat.com, dietmar.eggemann@arm.com,
-        morten.rasmussen@arm.com, chris.redpath@arm.com,
-        patrick.bellasi@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
-        smuckle@google.com, adharmap@codeaurora.org,
-        skannan@codeaurora.org, pkondeti@codeaurora.org,
-        juri.lelli@redhat.com, edubezval@gmail.com,
-        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
-        javi.merino@kernel.org
-Subject: Re: [PATCH v6 03/14] PM: Introduce an Energy Model management framework
-Date:   Mon, 10 Sep 2018 11:44:33 +0200
-Message-ID: <1866195.ZKEIBQluJJ@aspire.rjw.lan>
-In-Reply-To: <20180820094420.26590-4-quentin.perret@arm.com>
-References: <20180820094420.26590-1-quentin.perret@arm.com> <20180820094420.26590-4-quentin.perret@arm.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Mon, 10 Sep 2018 10:41:33 -0400
+Received: from leonov.paulk.fr ([185.233.101.22]:49102 "EHLO leonov.paulk.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726738AbeIJOld (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 10:41:33 -0400
+Received: from gagarine.paulk.fr (gagarine [192.168.1.127])
+        by leonov.paulk.fr (Postfix) with ESMTPS id B2E50C0279;
+        Mon, 10 Sep 2018 11:48:19 +0200 (CEST)
+Received: by gagarine.paulk.fr (Postfix, from userid 114)
+        id 05AA5C0F71; Mon, 10 Sep 2018 11:48:18 +0200 (CEST)
+Received: from collins (unknown [192.168.1.1])
+        by gagarine.paulk.fr (Postfix) with ESMTPSA id B7512C0F66;
+        Mon, 10 Sep 2018 11:47:52 +0200 (CEST)
+Message-ID: <2409ba6607e85acf3dbbaed394487fa8e92d93df.camel@paulk.fr>
+Subject: Re: [PATCH v9 2/9] media: v4l: Add definitions for MPEG-2 slice
+ format and metadata
+From:   Paul Kocialkowski <contact@paulk.fr>
+To:     Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-sunxi@googlegroups.com, Randy Li <ayaka@soulik.info>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Date:   Mon, 10 Sep 2018 11:47:47 +0200
+In-Reply-To: <9a7fd34d-50e3-4db6-4752-9e62bb160655@xs4all.nl>
+References: <20180906222442.14825-1-contact@paulk.fr>
+         <20180906222442.14825-3-contact@paulk.fr>
+         <9a7fd34d-50e3-4db6-4752-9e62bb160655@xs4all.nl>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-YrlIFe9eOeQdIb272dAH"
+X-Mailer: Evolution 3.28.5 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, August 20, 2018 11:44:09 AM CEST Quentin Perret wrote:
-> Several subsystems in the kernel (task scheduler and/or thermal at the
-> time of writing) can benefit from knowing about the energy consumed by
-> CPUs. Yet, this information can come from different sources (DT or
-> firmware for example), in different formats, hence making it hard to
-> exploit without a standard API.
-> 
-> As an attempt to address this, introduce a centralized Energy Model
-> (EM) management framework which aggregates the power values provided
-> by drivers into a table for each performance domain in the system. The
-> power cost tables are made available to interested clients (e.g. task
-> scheduler or thermal) via platform-agnostic APIs. The overall design
-> is represented by the diagram below (focused on Arm-related drivers as
-> an example, but applicable to any architecture):
-> 
->      +---------------+  +-----------------+  +-------------+
->      | Thermal (IPA) |  | Scheduler (EAS) |  |    Other    |
->      +---------------+  +-----------------+  +-------------+
->              |                 | em_pd_energy()     |
->              |                 | em_cpu_get()       |
->              +-----------+     |         +----------+
->                          |     |         |
->                          v     v         v
->                       +---------------------+
->                       |                     |
->                       |    Energy Model     |
->                       |                     |
->                       |     Framework       |
->                       |                     |
->                       +---------------------+
->                          ^       ^       ^
->                          |       |       | em_register_perf_domain()
->               +----------+       |       +---------+
->               |                  |                 |
->       +---------------+  +---------------+  +--------------+
->       |  cpufreq-dt   |  |   arm_scmi    |  |    Other     |
->       +---------------+  +---------------+  +--------------+
->               ^                  ^                 ^
->               |                  |                 |
->       +--------------+   +---------------+  +--------------+
->       | Device Tree  |   |   Firmware    |  |      ?       |
->       +--------------+   +---------------+  +--------------+
-> 
-> Drivers (typically, but not limited to, CPUFreq drivers) can register
-> data in the EM framework using the em_register_perf_domain() API. The
-> calling driver must provide a callback function with a standardized
-> signature that will be used by the EM framework to build the power
-> cost tables of the performance domain. This design should offer a lot of
-> flexibility to calling drivers which are free of reading information
-> from any location and to use any technique to compute power costs.
-> Moreover, the capacity states registered by drivers in the EM framework
-> are not required to match real performance states of the target. This
-> is particularly important on targets where the performance states are
-> not known by the OS.
-> 
-> The power cost coefficients managed by the EM framework are specified in
-> milli-watts. Although the two potential users of those coefficients (IPA
-> and EAS) only need relative correctness, IPA specifically needs to
-> compare the power of CPUs with the power of other components (GPUs, for
-> example), which are still expressed in absolute terms in their
-> respective subsystems. Hence, specifiying the power of CPUs in
-> milli-watts should help transitioning IPA to using the EM framework
-> without introducing new problems by keeping units comparable across
-> sub-systems.
-> On the longer term, the EM of other devices than CPUs could also be
-> managed by the EM framework, which would enable to remove the absolute
-> unit. However, this is not absolutely required as a first step, so this
-> extension of the EM framework is left for later.
-> 
-> On the client side, the EM framework offers APIs to access the power
-> cost tables of a CPU (em_cpu_get()), and to estimate the energy
-> consumed by the CPUs of a performance domain (em_pd_energy()). Clients
-> such as the task scheduler can then use these APIs to access the shared
-> data structures holding the Energy Model of CPUs.
-> 
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> Signed-off-by: Quentin Perret <quentin.perret@arm.com>
-> ---
->  include/linux/energy_model.h | 161 ++++++++++++++++++++++++++++
->  kernel/power/Kconfig         |  15 +++
->  kernel/power/Makefile        |   2 +
->  kernel/power/energy_model.c  | 199 +++++++++++++++++++++++++++++++++++
->  4 files changed, 377 insertions(+)
->  create mode 100644 include/linux/energy_model.h
->  create mode 100644 kernel/power/energy_model.c
-> 
-> diff --git a/include/linux/energy_model.h b/include/linux/energy_model.h
-> new file mode 100644
-> index 000000000000..b89b5596c976
-> --- /dev/null
-> +++ b/include/linux/energy_model.h
-> @@ -0,0 +1,161 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _LINUX_ENERGY_MODEL_H
-> +#define _LINUX_ENERGY_MODEL_H
-> +#include <linux/cpumask.h>
-> +#include <linux/jump_label.h>
-> +#include <linux/kobject.h>
-> +#include <linux/rcupdate.h>
-> +#include <linux/sched/cpufreq.h>
-> +#include <linux/sched/topology.h>
-> +#include <linux/types.h>
-> +
-> +#ifdef CONFIG_ENERGY_MODEL
 
-A kerneldoc comment would be useful here IMO.
+--=-YrlIFe9eOeQdIb272dAH
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> +struct em_cap_state {
-> +	unsigned long frequency; /* Kilo-hertz */
+Hi,
 
-I wonder if the "frequency" field here could be changed into something a bit
-more abstract like "level" or similar?
+Le lundi 10 septembre 2018 =C3=A0 11:41 +0200, Hans Verkuil a =C3=A9crit :
+> On 09/07/2018 12:24 AM, Paul Kocialkowski wrote:
+> > From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> >=20
+> > Stateless video decoding engines require both the MPEG-2 slices and
+> > associated metadata from the video stream in order to decode frames.
+> >=20
+> > This introduces definitions for a new pixel format, describing buffers
+> > with MPEG-2 slice data, as well as control structure sfor passing the
+> > frame metadata to drivers.
+> >=20
+> > This is based on work from both Florent Revest and Hugues Fruchet.
+> >=20
+> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> > ---
+> >  .../media/uapi/v4l/extended-controls.rst      | 176 ++++++++++++++++++
+> >  .../media/uapi/v4l/pixfmt-compressed.rst      |  16 ++
+> >  .../media/uapi/v4l/vidioc-queryctrl.rst       |  14 +-
+> >  .../media/videodev2.h.rst.exceptions          |   2 +
+> >  drivers/media/v4l2-core/v4l2-ctrls.c          |  63 +++++++
+> >  drivers/media/v4l2-core/v4l2-ioctl.c          |   1 +
+> >  include/media/v4l2-ctrls.h                    |  18 +-
+> >  include/uapi/linux/v4l2-controls.h            |  65 +++++++
+> >  include/uapi/linux/videodev2.h                |   5 +
+> >  9 files changed, 351 insertions(+), 9 deletions(-)
+> >=20
+> > diff --git a/Documentation/media/uapi/v4l/extended-controls.rst b/Docum=
+entation/media/uapi/v4l/extended-controls.rst
+> > index 9f7312bf3365..f1951236266a 100644
+> > --- a/Documentation/media/uapi/v4l/extended-controls.rst
+> > +++ b/Documentation/media/uapi/v4l/extended-controls.rst
+> > @@ -1497,6 +1497,182 @@ enum v4l2_mpeg_video_h264_hierarchical_coding_t=
+ype -
+> > =20
+> > =20
+> > =20
+> > +.. _v4l2-mpeg-mpeg2:
+> > +
+> > +``V4L2_CID_MPEG_VIDEO_MPEG2_SLICE_PARAMS (struct)``
+> > +    Specifies the slice parameters (as extracted from the bitstream) f=
+or the
+> > +    associated MPEG-2 slice data. This includes the necessary paramete=
+rs for
+> > +    configuring a stateless hardware decoding pipeline for MPEG-2.
+> > +    The bitstream parameters are defined according to :ref:`mpeg2part2=
+`.
+> > +
+> > +.. c:type:: v4l2_ctrl_mpeg2_slice_params
+> > +
+> > +.. cssclass:: longtable
+> > +
+> > +.. flat-table:: struct v4l2_ctrl_mpeg2_slice_params
+> > +    :header-rows:  0
+> > +    :stub-columns: 0
+> > +    :widths:       1 1 2
+> > +
+> > +    * - __u32
+> > +      - ``bit_size``
+> > +      - Size (in bits) of the current slice data.
+> > +    * - __u32
+> > +      - ``data_bit_offset``
+> > +      - Offset (in bits) to the video data in the current slice data.
+> > +    * - struct :c:type:`v4l2_mpeg2_sequence`
+> > +      - ``sequence``
+> > +      - Structure with MPEG-2 sequence metadata, merging relevant fiel=
+ds from
+> > +	the sequence header and sequence extension parts of the bitstream.
+> > +    * - struct :c:type:`v4l2_mpeg2_picture`
+> > +      - ``picture``
+> > +      - Structure with MPEG-2 picture metadata, merging relevant field=
+s from
+> > +	the picture header and picture coding extension parts of the bitstrea=
+m.
+> > +    * - __u8
+> > +      - ``quantiser_scale_code``
+> > +      - Code used to determine the quantization scale to use for the I=
+DCT.
+> > +    * - __u8
+> > +      - ``backward_ref_index``
+> > +      - Index for the V4L2 buffer to use as backward reference, used w=
+ith
+> > +	B-coded and P-coded frames.
+> > +    * - __u8
+> > +      - ``forward_ref_index``
+> > +      - Index for the V4L2 buffer to use as forward reference, used wi=
+th
+> > +	P-coded frames.
+>=20
+> Should this be "B-coded frames"?
 
-The reason why is because in some cases we may end up with somewhat artificial
-values of "frequency" like when the intel_pstate driver is in use (it uses
-abstract "p-state" values internally and only produces "frequency" numbers for
-the cpufreq core and the way they are derived from the "p-states" is not always
-entirely clean).
+Oops, that's right, B-coded frames.
 
-The "level" could just be frequency on systems where cpufreq drivers operate on
-frequencies directly or something else on the other systems.
+Should I make a follow-up patch for that (maybe gathered with other
+changes if required)?
 
-> +	unsigned long power; /* Milli-watts */
-> +	unsigned long cost; /* power * max_frequency / frequency */
-> +};
-> +
+Cheers,
 
-Like above, a kerneldoc comment documenting the structure below would be useful.
+Paul
 
-> +struct em_perf_domain {
-> +	struct em_cap_state *table; /* Capacity states, in ascending order. */
-> +	int nr_cap_states;
-> +	unsigned long cpus[0]; /* CPUs of the frequency domain. */
-> +};
-> +
-> +#define EM_CPU_MAX_POWER 0xFFFF
-> +
-> +struct em_data_callback {
-> +	/**
-> +	 * active_power() - Provide power at the next capacity state of a CPU
-> +	 * @power	: Active power at the capacity state in mW (modified)
-> +	 * @freq	: Frequency at the capacity state in kHz (modified)
-> +	 * @cpu		: CPU for which we do this operation
-> +	 *
-> +	 * active_power() must find the lowest capacity state of 'cpu' above
-> +	 * 'freq' and update 'power' and 'freq' to the matching active power
-> +	 * and frequency.
-> +	 *
-> +	 * The power is the one of a single CPU in the domain, expressed in
-> +	 * milli-watts. It is expected to fit in the [0, EM_CPU_MAX_POWER]
-> +	 * range.
-> +	 *
-> +	 * Return 0 on success.
-> +	 */
-> +	int (*active_power)(unsigned long *power, unsigned long *freq, int cpu);
-> +};
-> +#define EM_DATA_CB(_active_power_cb) { .active_power = &_active_power_cb }
-> +
-> +struct em_perf_domain *em_cpu_get(int cpu);
-> +int em_register_perf_domain(cpumask_t *span, unsigned int nr_states,
-> +						struct em_data_callback *cb);
-> +
-> +/**
-> + * em_pd_energy() - Estimates the energy consumed by the CPUs of a perf. domain
-> + * @pd		: performance domain for which energy has to be estimated
-> + * @max_util	: highest utilization among CPUs of the domain
-> + * @sum_util	: sum of the utilization of all CPUs in the domain
-> + *
-> + * Return: the sum of the energy consumed by the CPUs of the domain assuming
-> + * a capacity state satisfying the max utilization of the domain.
+--=20
+Developer of free digital technology and hardware support.
 
-Well, this confuses energy with power AFAICS.  The comment talks about energy,
-but the return value is in the units of power.
+Website: https://www.paulk.fr/
+Coding blog: https://code.paulk.fr/
+Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
 
-I guess this assumes constant power over the next scheduling interval, which is
-why energy and power can be treated as equivalent here, but that needs to be
-clarified as it is somewhat confusing right now.
+--=-YrlIFe9eOeQdIb272dAH
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-> + */
-> +static inline unsigned long em_pd_energy(struct em_perf_domain *pd,
-> +				unsigned long max_util, unsigned long sum_util)
-> +{
-> +	unsigned long freq, scale_cpu;
-> +	struct em_cap_state *cs;
-> +	int i, cpu;
-> +
-> +	/*
-> +	 * In order to predict the capacity state, map the utilization of the
-> +	 * most utilized CPU of the performance domain to a requested frequency,
-> +	 * like schedutil.
-> +	 */
-> +	cpu = cpumask_first(to_cpumask(pd->cpus));
-> +	scale_cpu = arch_scale_cpu_capacity(NULL, cpu);
-> +	cs = &pd->table[pd->nr_cap_states - 1];
-> +	freq = map_util_freq(max_util, cs->frequency, scale_cpu);
-> +
-> +	/*
-> +	 * Find the lowest capacity state of the Energy Model above the
-> +	 * requested frequency.
-> +	 */
-> +	for (i = 0; i < pd->nr_cap_states; i++) {
-> +		cs = &pd->table[i];
-> +		if (cs->frequency >= freq)
-> +			break;
-> +	}
-> +
-> +	/*
-> +	 * The capacity of a CPU in the domain at that capacity state (cs)
-> +	 * can be computed as:
-> +	 *
-> +	 *             cs->freq * scale_cpu
-> +	 *   cs->cap = --------------------                          (1)
-> +	 *                 cpu_max_freq
-> +	 *
-> +	 * So, the energy consumed by this CPU at that capacity state is:
-> +	 *
-> +	 *             cs->power * cpu_util
-> +	 *   cpu_nrg = --------------------                          (2)
-> +	 *                   cs->cap
-> +	 *
-> +	 * since 'cpu_util / cs->cap' represents its percentage of busy time.
-> +	 * By injecting (1) in (2), 'cpu_nrg' can be re-expressed as a product
-> +	 * of two terms:
-> +	 *
-> +	 *             cs->power * cpu_max_freq   cpu_util
-> +	 *   cpu_nrg = ------------------------ * ---------          (3)
-> +	 *                    cs->freq            scale_cpu
-> +	 *
-> +	 * The first term is static, and is stored in the em_cap_state struct
-> +	 * as 'cs->cost'.
-> +	 *
-> +	 * Since all CPUs of the domain have the same micro-architecture, they
-> +	 * share the same 'cs->cost', and the same CPU capacity. Hence, the
-> +	 * total energy of the domain (which is the simple sum of the energy of
-> +	 * all of its CPUs) can be factorized as:
-> +	 *
-> +	 *            cs->cost * \Sum cpu_util
-> +	 *   pd_nrg = ------------------------                       (4)
-> +	 *                  scale_cpu
-> +	 */
-> +	return cs->cost * sum_util / scale_cpu;
-> +}
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAluWPcMACgkQhP3B6o/u
+lQxIEQ//eGI0dpOkNfiLbEpqBwBGb9xGo3qAOTvktnFFLyHDrVW9UcCl+Lxsrpw5
+wR1MxxbeejkVmb897/Y+AyfTPhxo5mg6DzD7/tWY3ooT4d74v3DySO7UW+5M6fc3
+3UMu9NGUOCWew02TtXowXMm7OFa0KO4JJofdkItpIGT57YynoriYqVTSlYrWhGQa
+6PtbOlUfJg0Fz7PloHvyEeXU4swP1Oz4xzjPoxLz+pu43SR7PFiO6vvVwvf6R2FB
+IX9ahPFqARtWyli9296l6bRk7ha5/3Q5oP/PmF8c9n8+bwiymQZxC2M97Hdm+uEx
+LCVFUELUcWLcV0EUIw3RsDnwdTkUZGvSr/r+YXIiqAoBlZBzwd7HjGht4xqhuNGX
+KisNN9zYD7yoJ7wl3RyiUskfwgqxPRYrxL0fsmPji4VKhgFSmrLHXQ/kwlH8hNiK
+Ek9mbq0QtVn64cOIt75PPGZjP8/D5f+w3JKgyoRYofC5DNaQhaOgygBnTs9QqMcZ
+puKwiiZz1NtUX5hk1JgO6xCpoCcim2qDR6eeBEFVKU3rCdbNBtenMQX3L/DwE/PB
+ct0THCwIhnB8oOoHS5u8jI8D3HTfJkXj1FqxS+EkamcJvJHrtzvewJarA6/b6aB3
+XND21Hg8S4OuwSKIQ9lUcz2E08RZJGAlpvjxQc605EFAlbo4QZk=
+=ZnXS
+-----END PGP SIGNATURE-----
+
+--=-YrlIFe9eOeQdIb272dAH--
 
