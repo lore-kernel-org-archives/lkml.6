@@ -6,84 +6,138 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD6FFC4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 05:45:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECA5EC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 05:58:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 786532075A
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 05:45:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 786532075A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 953E72075A
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 05:58:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 953E72075A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727241AbeIJKhp (ORCPT
+        id S1726981AbeIJKtN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 06:37:45 -0400
-Received: from mga09.intel.com ([134.134.136.24]:29409 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726165AbeIJKhp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 06:37:45 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Sep 2018 22:45:27 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,354,1531810800"; 
-   d="asc'?scan'208";a="231554382"
-Received: from pipin.fi.intel.com (HELO localhost) ([10.237.72.128])
-  by orsmga004.jf.intel.com with ESMTP; 09 Sep 2018 22:45:09 -0700
-From:   Felipe Balbi <felipe.balbi@linux.intel.com>
-To:     Yinbo Zhu <yinbo.zhu@nxp.com>, yinbo.zhu@nxp.com,
-        Shawn Guo <shawnguo@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     xiaobo.xie@nxp.com, Ran Wang <ran.wang_1@nxp.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, festevam@gmail.com
-Subject: Re: [PATCH v1] arm64: dts: dwc3: Add description of 'configure-gfladj'
-In-Reply-To: <20180829073324.36866-1-yinbo.zhu@nxp.com>
-References: <20180829073324.36866-1-yinbo.zhu@nxp.com>
-Date:   Mon, 10 Sep 2018 08:45:05 +0300
-Message-ID: <87y3c929em.fsf@linux.intel.com>
+        Mon, 10 Sep 2018 06:49:13 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:36726 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726185AbeIJKtN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 06:49:13 -0400
+Received: by mail-oi0-f66.google.com with SMTP id r69-v6so37930188oie.3
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Sep 2018 22:56:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xMLeQyYq3nOtSqnEgbJ2gMUK6DQuQ5f6G2vHTxmpMmg=;
+        b=Sc6X4oOJv1GnrRXO9cIb9OoRhK/NtW13SNVPdbykNb/ACMzk6d2QiHTTcIOLeoe+bJ
+         VMdif5Beb/sQFHeYFOoBjFT4+CskguRk0QXCZaMQs2UAnZ8dO3Jly8ZAtMPfj3S3B2H1
+         KczMSioDKMJbIRTgg0WBp4TXAB0YQBVYyG37N/5ylwvll/H4n2u7Skdt5/kYZ3ts7/ic
+         H9XLy0G910mnTwlZwiL4fjgNsde3xqGkdY78sweNy7AMVaRdVrsiwricnScUEbi/24gf
+         FRtK3XrTteq3nZJYOwai5Eadaiyuu+NBksoAhUGjgGz7XWpDnwDLqiuUKhqF0rEs/Nry
+         6rQA==
+X-Gm-Message-State: APzg51DELbSSoS0t0Qlhim7whM/0zDw7muT9S+mShUSzJeP/sNDAfaN2
+        7pmzMkUpzwpUkVFGLS9Ci8hCUAQG
+X-Google-Smtp-Source: ANB0VdbdQrrgGBRiH0n7F1O+bPJthXyJaBgyjYYFU3BrcSgqqPv3zBEXYh21i0UXRwJ2J8hkBxGV6g==
+X-Received: by 2002:aca:6087:: with SMTP id u129-v6mr18614576oib.99.1536559012082;
+        Sun, 09 Sep 2018 22:56:52 -0700 (PDT)
+Received: from mail-oi0-f46.google.com (mail-oi0-f46.google.com. [209.85.218.46])
+        by smtp.gmail.com with ESMTPSA id n84-v6sm15591753oif.23.2018.09.09.22.56.51
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 09 Sep 2018 22:56:51 -0700 (PDT)
+Received: by mail-oi0-f46.google.com with SMTP id l82-v6so37879572oih.11
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Sep 2018 22:56:51 -0700 (PDT)
+X-Received: by 2002:aca:601:: with SMTP id 1-v6mr2397310oig.291.1536559011577;
+ Sun, 09 Sep 2018 22:56:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+References: <20180903140840.23648-1-alexandre.belloni@bootlin.com> <20180910003946.GE21218@dragon>
+In-Reply-To: <20180910003946.GE21218@dragon>
+From:   Li Yang <leoyang.li@nxp.com>
+Date:   Mon, 10 Sep 2018 00:56:40 -0500
+X-Gmail-Original-Message-ID: <CADRPPNS1N7J_F4ApqSKPrOJ4JuPwgV8srsGsS9DSSURvyhhM9A@mail.gmail.com>
+Message-ID: <CADRPPNS1N7J_F4ApqSKPrOJ4JuPwgV8srsGsS9DSSURvyhhM9A@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] arm64: dts: fsl: use a generic node name for
+ m25p80 flashes
+To:     Shawn Guo <shawnguo@kernel.org>
+Cc:     alexandre.belloni@bootlin.com, lkml <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Sun, Sep 9, 2018 at 10:11 PM Shawn Guo <shawnguo@kernel.org> wrote:
+>
+> The series looks good to me.  @Leo, what about you?
 
-Yinbo Zhu <yinbo.zhu@nxp.com> writes:
+Looks fine to me too.
 
-> This patch is to add description of 'configure-gfladj' to binding
-> so that configuring devicetree
+Acked-by: Li Yang <leoyang.li@nxp.com>
 
-commit log looks incomplete.
-
-=2D-=20
-balbi
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAluWBOEACgkQzL64meEa
-mQbtGQ/+LNUqsxjOaN53sIMMZIQNLmzoCyQgsnOYLeurdEelmb0LRwQpsW3YE39u
-qlGfxZ7a2hFMN8JZwtWAm5iox8tSCwIULOTKC3Ic6maAcjpuoqgZByLxFVTBS6ez
-TQLy4a820xCQnAGTQjIB2KtyPMAfhp9AvrqKXNdCOFfB6AGdUMvbEqUFp4zKPFTz
-aPFM6Q/4mja0kvwsrG+vJGE2OGyF6uxydXMP3PMolHcewD0GXGc2t1eSI90Gj76x
-/iGEBzrh7+WITxAgase3PgEBc4F7uObhtFOBW6FMcB01Nb/U1aH0U3JA1gUXSKHO
-r1OBeOHNJbVq++bVOZY+QAoGOsC/x6vIpTjMtbEgUnXKvbWJWmho8w+ncUz6h8ug
-r1l7dXDURtlbfgli6fX81arTDPdjLFsNaBl/opoeWxct/1wjt00ynX4Q7XnsP6YW
-VtcS/Ke1cffwgo7kaPMlry5Fh1faAuofCRd/1t2igJxcNS8N44C56y5KOhkYXN2x
-qt/9onpKVIIaDS2TsUVHP4zgLeB5NEBWH1pu8yM42p0JgSlRn3Hrga/S+m5L9+gD
-Ub3hpyYWLtDCK3Hx4J+LsJmOQr8H2g9IFEJTWarBuBM0pS2G3Au9Q42opinG2aXu
-a8b+OZ6XiptN7JnUpbiWtNPF1ENkpSYE0l+wHAmKekkvdK/9Wz4=
-=a+vo
------END PGP SIGNATURE-----
---=-=-=--
+>
+> Shawn
+>
+> On Mon, Sep 03, 2018 at 04:08:36PM +0200, Alexandre Belloni wrote:
+> > Use a generic node name for the m25p80 flashes on ls1043 and ls1046 boards.
+> >
+> > Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> > ---
+> >  arch/arm64/boot/dts/freescale/fsl-ls1043a-qds.dts | 2 +-
+> >  arch/arm64/boot/dts/freescale/fsl-ls1046a-qds.dts | 2 +-
+> >  arch/arm64/boot/dts/freescale/fsl-ls1046a-rdb.dts | 4 ++--
+> >  3 files changed, 4 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1043a-qds.dts b/arch/arm64/boot/dts/freescale/fsl-ls1043a-qds.dts
+> > index c7b8d2c009cd..af972e91d6bc 100644
+> > --- a/arch/arm64/boot/dts/freescale/fsl-ls1043a-qds.dts
+> > +++ b/arch/arm64/boot/dts/freescale/fsl-ls1043a-qds.dts
+> > @@ -136,7 +136,7 @@
+> >       bus-num = <0>;
+> >       status = "okay";
+> >
+> > -     qflash0: s25fl128s@0 {
+> > +     qflash0: flash@0 {
+> >               compatible = "spansion,m25p80";
+> >               #address-cells = <1>;
+> >               #size-cells = <1>;
+> > diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a-qds.dts b/arch/arm64/boot/dts/freescale/fsl-ls1046a-qds.dts
+> > index e69306e6b0b1..219068220b84 100644
+> > --- a/arch/arm64/boot/dts/freescale/fsl-ls1046a-qds.dts
+> > +++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a-qds.dts
+> > @@ -165,7 +165,7 @@
+> >       bus-num = <0>;
+> >       status = "okay";
+> >
+> > -     qflash0: s25fl128s@0 {
+> > +     qflash0: flash@0 {
+> >               compatible = "spansion,m25p80";
+> >               #address-cells = <1>;
+> >               #size-cells = <1>;
+> > diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-ls1046a-rdb.dts
+> > index 440e111651d5..df676b30357b 100644
+> > --- a/arch/arm64/boot/dts/freescale/fsl-ls1046a-rdb.dts
+> > +++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a-rdb.dts
+> > @@ -103,7 +103,7 @@
+> >       bus-num = <0>;
+> >       status = "okay";
+> >
+> > -     qflash0: s25fs512s@0 {
+> > +     qflash0: flash@0 {
+> >               compatible = "spansion,m25p80";
+> >               #address-cells = <1>;
+> >               #size-cells = <1>;
+> > @@ -111,7 +111,7 @@
+> >               reg = <0>;
+> >       };
+> >
+> > -     qflash1: s25fs512s@1 {
+> > +     qflash1: flash@1 {
+> >               compatible = "spansion,m25p80";
+> >               #address-cells = <1>;
+> >               #size-cells = <1>;
+> > --
+> > 2.19.0.rc1
+> >
