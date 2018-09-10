@@ -2,109 +2,124 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27894C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:32:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8745C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:32:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9D7120865
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:32:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CrLQea5/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9D7120865
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 77D0320865
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:32:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77D0320865
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727991AbeIJOZK (ORCPT
+        id S1728041AbeIJOZO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 10:25:10 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:46768 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726148AbeIJOZK (ORCPT
+        Mon, 10 Sep 2018 10:25:14 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:62502 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726148AbeIJOZO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 10:25:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=teDaSrhg7+H+jyOz/RjOG4XyXD7TJuaoxB3sbcsnQ3s=; b=CrLQea5/haCmFgpBSSBnLBBzT
-        HwmZriXFFN9VBYFFDUMX77Ltz21qWTPOjjpgWln8rYTqu09xEwbMdA/Ota7jimsw8+yn+AvWL7LVh
-        B9x8aWqp8E2ed6BkRkgJ+pKiaTHRLSNr6jF092R/AE+sUx31O4s1tw51Olhmni7rzwdg1Adk9lbYR
-        8hCBiwUnGPv4TRBUXSuf2viYvZQzJYnHdw64/mFRGvyyAESVnWHdA7TYo00yZPENd8O5DLcTgZ89P
-        P3Myd1a/xO3Y+DDQQmN9rLJ4imiwgN8b2N6aGN6TDfywhPRgGOfB/V1+Z98dMDo6ve0ATJ1x+N0g8
-        iuSnhrZgQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fzIY1-0000KN-Ir; Mon, 10 Sep 2018 09:31:57 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 607CF202B2E3D; Mon, 10 Sep 2018 11:31:56 +0200 (CEST)
-Date:   Mon, 10 Sep 2018 11:31:56 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>
-Subject: Re: [PATCH] locking/rwsem: Make owner store task pointer of last
- owning reader
-Message-ID: <20180910093156.GS24082@hirez.programming.kicks-ass.net>
-References: <1536265114-10842-1-git-send-email-longman@redhat.com>
+        Mon, 10 Sep 2018 10:25:14 -0400
+Received: from 79.184.255.178.ipv4.supernova.orange.pl (79.184.255.178) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.123)
+ id 38a6200d9d1b09e6; Mon, 10 Sep 2018 11:32:04 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
+        mingo@redhat.com, dietmar.eggemann@arm.com,
+        morten.rasmussen@arm.com, chris.redpath@arm.com,
+        patrick.bellasi@arm.com, valentin.schneider@arm.com,
+        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
+        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
+        smuckle@google.com, adharmap@codeaurora.org,
+        skannan@codeaurora.org, pkondeti@codeaurora.org,
+        juri.lelli@redhat.com, edubezval@gmail.com,
+        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
+        javi.merino@kernel.org
+Subject: Re: [PATCH v6 02/14] sched/cpufreq: Factor out utilization to frequency mapping
+Date:   Mon, 10 Sep 2018 11:29:27 +0200
+Message-ID: <1631407.Oe3rajKQQm@aspire.rjw.lan>
+In-Reply-To: <20180820094420.26590-3-quentin.perret@arm.com>
+References: <20180820094420.26590-1-quentin.perret@arm.com> <20180820094420.26590-3-quentin.perret@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1536265114-10842-1-git-send-email-longman@redhat.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 06, 2018 at 04:18:34PM -0400, Waiman Long wrote:
-> Currently, when a reader acquires a lock, it only sets the
-> RWSEM_READER_OWNED bit in the owner field. The other bits are simply
-> not used. When debugging hanging cases involving rwsems and readers,
-> the owner value does not provide much useful information at all.
-> 
-> This patch modifies the current behavior to always store the task_struct
-> pointer of the last rwsem-acquiring reader in a reader-owned rwsem. This
-> may be useful in debugging rwsem hanging cases especially if only one
-> reader is involved. However, the task in the owner field may not the
-> real owner or one of the real owners at all when the owner value is
-> examined, for example, in a crash dump. So it is just an additional
-> hint about the past history.
-> 
-> If CONFIG_DEBUG_RWSEMS is enabled, the owner field will be checked at
-> unlock time too to make sure the task pointer value is valid. That does
-> have a slight performance cost and so is only enabled as part of that
-> debug option.
-> 
-> From the performance point of view, it is expected that the changes
-> shouldn't have any noticeable performance impact. A rwsem microbenchmark
-> (with 48 worker threads and 1:1 reader/writer ratio) was ran on a
-> 2-socket 24-core 48-thread Haswell system.  The locking rates on a
-> 4.19-rc1 based kernel were as follows:
-> 
->   1) Unpatched kernel:				543.3 kops/s
->   2) Patched kernel:				549.2 kops/s
->   3) Patched kernel (CONFIG_DEBUG_RWSEMS on):	546.6 kops/s
-> 
-> There was actually a slight increase in performance (1.1%) in this
-> particular case. Maybe it was caused by the elimination of a branch or
-> just a testing noise. Turning on the CONFIG_DEBUG_RWSEMS option also
-> had less than the expected impact on performance.
-> 
-> The least significant 2 bits of the owner value are now used to designate
-> the rwsem is readers owned and the owners are anonymous.
+On Monday, August 20, 2018 11:44:08 AM CEST Quentin Perret wrote:
+> The schedutil governor maps utilization values to frequencies by applying
+> a 25% margin. Since this sort of mapping mechanism can be needed by other
+> users (i.e. EAS), factor the utilization-to-frequency mapping code out
+> of schedutil and move it to include/linux/sched/cpufreq.h to avoid code
+> duplication. The new map_util_freq() function is inlined to avoid
+> overheads.
 
-So no immediate objection; but I'm still hoping to some day rewrite the
-whole rwsem thing along the lines we did mutex and merge the 'count' and
-'owner' fields into one.
+There really is more to this change than it seems at the face value IMO,
+because the formula in question represents the policy part of the governor.
 
-[ RT has something along those lines, and I have half a patch that
-  starts doing that too, but I never found enough time to really work on
-  it :-( ]
+Namely, it is roughly equivalent to the assumption that the governor will
+attempt to "stabilize" the "busy" time of the CPU at 80% of its total time
+(if possible for the given "raw" utilization and performance limits).
+If you take that formula into EAS, it will cause EAS to implicitly require
+the cpufreq governor to follow this assumption.
 
-Anyway, when we do something like that, this goes out the window of
-course.
+Now, I know that you want to let EAS only work with the schedutil governor,
+which is consistent with the above, but the implicit assumption here should
+at least be documented somehow IMO.
+
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Signed-off-by: Quentin Perret <quentin.perret@arm.com>
+> ---
+>  include/linux/sched/cpufreq.h    | 6 ++++++
+>  kernel/sched/cpufreq_schedutil.c | 3 ++-
+>  2 files changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/sched/cpufreq.h b/include/linux/sched/cpufreq.h
+> index 59667444669f..afa940cd50dc 100644
+> --- a/include/linux/sched/cpufreq.h
+> +++ b/include/linux/sched/cpufreq.h
+> @@ -20,6 +20,12 @@ void cpufreq_add_update_util_hook(int cpu, struct update_util_data *data,
+>                         void (*func)(struct update_util_data *data, u64 time,
+>  				    unsigned int flags));
+>  void cpufreq_remove_update_util_hook(int cpu);
+> +
+> +static inline unsigned long map_util_freq(unsigned long util,
+> +					unsigned long freq, unsigned long cap)
+> +{
+> +	return (freq + (freq >> 2)) * util / cap;
+> +}
+>  #endif /* CONFIG_CPU_FREQ */
+>  
+>  #endif /* _LINUX_SCHED_CPUFREQ_H */
+> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+> index 3fffad3bc8a8..f5206c950143 100644
+> --- a/kernel/sched/cpufreq_schedutil.c
+> +++ b/kernel/sched/cpufreq_schedutil.c
+> @@ -13,6 +13,7 @@
+>  
+>  #include "sched.h"
+>  
+> +#include <linux/sched/cpufreq.h>
+>  #include <trace/events/power.h>
+>  
+>  struct sugov_tunables {
+> @@ -167,7 +168,7 @@ static unsigned int get_next_freq(struct sugov_policy *sg_policy,
+>  	unsigned int freq = arch_scale_freq_invariant() ?
+>  				policy->cpuinfo.max_freq : policy->cur;
+>  
+> -	freq = (freq + (freq >> 2)) * util / max;
+> +	freq = map_util_freq(util, freq, max);
+>  
+>  	if (freq == sg_policy->cached_raw_freq && !sg_policy->need_freq_update)
+>  		return sg_policy->next_freq;
+> 
+
+
