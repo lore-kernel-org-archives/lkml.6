@@ -2,159 +2,416 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A311C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:10:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F35CDC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:12:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA27020833
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:10:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="TPnydy1l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA27020833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	by mail.kernel.org (Postfix) with ESMTP id 88DE020893
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 15:12:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88DE020893
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728490AbeIJUEs (ORCPT
+        id S1728097AbeIJUHV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 16:04:48 -0400
-Received: from mail-by2nam01on0062.outbound.protection.outlook.com ([104.47.34.62]:56222
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727940AbeIJUEs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 16:04:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hFjOvsWvUSV3eK44CXtsUdpCl83nwhKYAS+BMS2Jdq0=;
- b=TPnydy1lWhQ2L9Qilw3/ntj8JLC1NpvmAsLeDat88uYxTNkzzK71E5CxrXPsdVlxvCkXsxFWdD8sMwBxPoc2uhaEqHV1qBF5R125IBtQmBVWErEl+MAO4fPzrg/azIN7KmtOnbVrfUnpG4wUDo4ZLZqePI8NqvNqauXpFt5YrRY=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=brijesh.singh@amd.com; 
-Received: from [10.236.136.62] (165.204.77.1) by
- DM6PR12MB2682.namprd12.prod.outlook.com (2603:10b6:5:4a::31) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1122.16; Mon, 10 Sep 2018 15:10:12 +0000
-Cc:     brijesh.singh@amd.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Subject: Re: [PATCH v6 5/5] x86/kvm: Avoid dynamic allocation of pvclock data
- when SEV is active
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Borislav Petkov <bp@suse.de>
-References: <1536343050-18532-1-git-send-email-brijesh.singh@amd.com>
- <1536343050-18532-6-git-send-email-brijesh.singh@amd.com>
- <20180910122727.GE21815@zn.tnic>
- <026d5ca5-7b77-de6c-477e-ff39f0291ac0@amd.com>
- <1536586152.11460.40.camel@intel.com>
-From:   Brijesh Singh <brijesh.singh@amd.com>
-Message-ID: <097eb5f5-2cd9-8b08-32c5-d90c8e0cbb6d@amd.com>
-Date:   Mon, 10 Sep 2018 10:10:09 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 10 Sep 2018 16:07:21 -0400
+Received: from mga03.intel.com ([134.134.136.65]:60023 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727714AbeIJUHV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 16:07:21 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2018 08:12:47 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,356,1531810800"; 
+   d="scan'208";a="72046830"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by orsmga008.jf.intel.com with ESMTP; 10 Sep 2018 08:12:45 -0700
+Received: from andy by smile with local (Exim 4.91)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1fzNrn-0004xz-Q0; Mon, 10 Sep 2018 18:12:43 +0300
+Date:   Mon, 10 Sep 2018 18:12:43 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Song Qiang <songqiang1304521@gmail.com>
+Cc:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net, matt.ranostay@konsulko.com, robh@kernel.org,
+        kstewart@linuxfoundation.org, gregkh@linuxfoundation.org,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Song Qiang <songqiang.1304521@gmail.com>
+Subject: Re: [PATCH] iio: proximity: Add driver support for ST's VL53L0X ToF
+ ranging sensor.
+Message-ID: <20180910151243.GZ11447@smile.fi.intel.com>
+References: <20180910144259.1339-1-songqiang.1304521@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1536586152.11460.40.camel@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [165.204.77.1]
-X-ClientProxiedBy: SN6PR04CA0050.namprd04.prod.outlook.com
- (2603:10b6:805:2a::27) To DM6PR12MB2682.namprd12.prod.outlook.com
- (2603:10b6:5:4a::31)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 057cfb55-8cd5-4785-0772-08d6172f8240
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM6PR12MB2682;
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR12MB2682;3:e0jKnSu2YhmPpukZs7FOpvu2WmktnhSmU/SIdFfBXiMUqLbJ2qFFqVF1oYDA0FkeBQBpvPxqlRAZzFdaIVrw39GEKdunH6/3hn+RB8KBS5T/ZdF0E11fpz8NslLMIHgVdAhPEqARvt4K9/MgXhlsc38SC0RWEBkvwZ40s9zhIIcZCcD13UtEga87HpMIo+QZEK41rTApk0z9nah/tYPpOCsZ5rc2gXmj9cnE1PG73SOYu3z85217zeEDsDzPTW4R;25:oNBYuSAdIr3sCksihIgtyUs7+BkQqPIrbyZFBd6aV3RrZ4pyQDT2X7dw+wfrU7Kjy+smDj1/3PyZC4RcP0bfh/4PAjZWA2i/sds0E+vidVX/XJzMw32MEtcxNcG3Il2fdYGoB/RTV5S7VyiTg1DTrGeno9j2BVKRUzQxxkLcqlLfJvQ8oUeMJtIDn1KcjyWQ76UCKih2LYK9oGXAQY6i8CSlNDHNBL8XXxr43NF0T/jZDAy0lk2bfHbYTuJoRyl2G9vMJyv1AHUV69+kmg+v3HhfClB6Cc9OtLd6hQXXVG2VT567hzwJTcd70MVyGLCtJ581fuhvGEKc9+UujnIZUA==;31:4KCLSm+ZI/QZQW7gVEwKdiQ1hTCP3qszXaLa2DvlJ3D71/mqW4SXWl+Ixu7I4s/8CtgVaipVRHepf8xpKWk93hN+QcNCWXDA/laj9jP6kOI8QprOIZ/6QXOeabUmRsYNdWsh8N9o4ozMuBqScg4rbaRdNxFuoE4pfoF1rw/2MJDZnntnbYbS/qSEplqZUAAL3/CgV5D21YMCU9yvAlbb0ovxleCbVX6NMd5ZCIaWJLw=
-X-MS-TrafficTypeDiagnostic: DM6PR12MB2682:
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR12MB2682;20:bKQCnO2qZBPsoT0yTK7ZKdCPW42L7ynchGFallneegzxQhR1VmtNfCRK84Z1rjykLwpfPHdB6D/IWe0E5BJQzgc09f7M+74UPfLaM67b26w7CbupDkXtRR09ZVnRnPPWks7CArL5FwB9AiIAAuvCQ96wbkkkZqkhvat9+7yNOa/ZLJTgTde2TJx7PFboKc+PSvTRFtMOHJpK3j7o+ynO+M4r8u5ryaYtqj89jxMKTmjAb6nknXIA3YeO0XmnOGhNzc7tsheNY+C7kAipM/KcWCW+gptj9KG6SACixQOkxuQtkR9E/zZHM5N2GPK2MHgTh1uJXJNdaltLJ6Ki2VBq7t86/fhxFXyr5Ya+vbZa0lXOPcDHNScw6Mfx/14PQ8WNCZmmu+VBbGf3xcHY+kbmNOM0/3PJv3/b/Lj3/9kT80uAr1cSy3aql1SY0DWQ4Q5RfUGA2QyyyEw6RYLvrsCaQFE/qT31PmvX/yScLYUEFqFOPkA2sBzFDzOYCyO0jVWo;4:jmiJzPlr+u+hVXZddBrimwkFxTJ+fKfxTMSDuiaX4fJ+rDMXwV0hD4IRZgxZt5PF3Gsguto/9QZWHM7bRFkwnJJh3b2LwFVQZeIz7kDNc6sEa7CZuiRBq9xK+IE19llWktk47rIU8P67uv9A+zLuGdp2vALhisf+ARQ0RtSA4UwkqPNFnqXuJu/k3SdwgAHgTpIsDzFFAkn9z30yeszlheEWA2H0ZPC8pJJwoMgejaL0doMavrRE/7ASUHkYmz0JdsokoMQbN2E8zW51j+pxYQ==
-X-Microsoft-Antispam-PRVS: <DM6PR12MB268206BAE179B5218251171BE5050@DM6PR12MB2682.namprd12.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231311)(944501410)(52105095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699050);SRVR:DM6PR12MB2682;BCL:0;PCL:0;RULEID:;SRVR:DM6PR12MB2682;
-X-Forefront-PRVS: 07915F544A
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(366004)(39860400002)(376002)(346002)(396003)(136003)(199004)(189003)(25786009)(446003)(81156014)(81166006)(956004)(8936002)(2616005)(476003)(7736002)(305945005)(316002)(65956001)(16576012)(66066001)(65806001)(2870700001)(93886005)(36756003)(6246003)(2906002)(31696002)(478600001)(97736004)(44832011)(4326008)(11346002)(486006)(8676002)(64126003)(86362001)(50466002)(67846002)(31686004)(5660300001)(53936002)(53546011)(229853002)(52116002)(52146003)(23676004)(186003)(54906003)(58126008)(110136005)(16526019)(47776003)(2486003)(76176011)(68736007)(77096007)(26005)(386003)(6666003)(106356001)(65826007)(3846002)(6116002)(105586002)(6486002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB2682;H:[10.236.136.62];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtETTZQUjEyTUIyNjgyOzIzOnVBaXhRelIvK2dEYThvckpuajZLaGg0ZDZK?=
- =?utf-8?B?YmhIZU1Nc1I4Z1dUeGVBZGwyblNIRStkZWIwLzZad1VBanBEUmdVNSs3Um9U?=
- =?utf-8?B?OFlLUzZ1dDZIemxWdWJDRnlQTFViVnJOZWhiT1BvdTRXODIzUDJtSENPQmhH?=
- =?utf-8?B?OGZXN3VHSzJTbHJlYm9uTEwrd09QdDhWYzVaakhQMzNoMThwR1cxSUVrdjI5?=
- =?utf-8?B?dDdvbUtEQ1pObm9hZ242ZDdVcENiYnZ1a3pYTmFId3dBUmt3cWJCMk42cFE1?=
- =?utf-8?B?TmlLYnJxZlZMNS9yeHUyNWFoQWo4akdEZ1EyVlhvK3ZnK25IMGVWdFNKb1BK?=
- =?utf-8?B?c253M1BlNEgxQjM1VVVLU3hKMTk0ejREV3JNWWFTYm1GU3pSNzJsVURpQnAv?=
- =?utf-8?B?MlFSSGJhMkp0OWtIRmUwUzUwYVp3MDgwczNNN05hbFFFRUhOdHFrcEVkQ0Vp?=
- =?utf-8?B?cW80NTNFdS9aYkduLzkyVVJUL3hoOW9zbUtxSnl6bzJYb1BRR0hZM3JXbGRy?=
- =?utf-8?B?RlV2aFMxamlMT2V4SFA1NnZhZytsdlg0eEtNYk5vMHBVa0RIbUVwRjMrMWJP?=
- =?utf-8?B?V0tLdloyNnVXSytlWkdzNENBVUlWWnNja1ZUVmN4d3diNXlFRlIwampOdjZv?=
- =?utf-8?B?WXVrVXQ4UGxKWDFpc3FxaFlDa29xVFhmSDMwRm5NZUJNL2FuS2x5VXB5Z2Zi?=
- =?utf-8?B?cDFkU0VGeHJBMzRLSWV1Um5lQlpadzN6UzVsOHJwZnd6OXN5THV3ZmV0YzAy?=
- =?utf-8?B?d3dvRUtaU1VoYWp0SkFwa0VzamZabTgvek9YR004aEVqMCtRY015cnZ2d3c1?=
- =?utf-8?B?dUh0eVVGS205RzJOaFpUZFVkNnZEdlgvQWV6c1JQZXBhLzZ4eW1uME5KaHBN?=
- =?utf-8?B?eElwMXBWeHpjRVlVTXd3Wi93QlZFZDk5dzdqbjdFMlpyOFc1Mks4QkRvK29s?=
- =?utf-8?B?ZUxkeXRjQ0lubzNUY08xRWN0YmQ1d1AvZTZxZU9keHNMTCtzNXBEZkdvWWY3?=
- =?utf-8?B?REl2VWpjdEFiSDZDR29rc2QwWjkwK0hRdVRHWmhIZFU1emhRK0orSFRXWjBE?=
- =?utf-8?B?OE5DSkxsVVFua3NCVGtqVWhSR0RJVkt2bktqU2U2SXp0Z0J1WFlQZGl1UXZt?=
- =?utf-8?B?MDFhQkRWZjd1VEVmVlZJZjdhMUliOGprM2FNVnpwUm1iNE55V2tsazEyL05I?=
- =?utf-8?B?T0hDWnR6ZkdLZWduckFPMjdEczF6TXA4SVNUdHltTHFLWFBkN3JjU3c2NWhY?=
- =?utf-8?B?SnY4Tll3R1ZxMldUdjl3WjhvYm5JeWxmUThGTXE1WEVZWmR5amM4ejVQRk0z?=
- =?utf-8?B?WTMxbUVzbmlFSGlJam83V21qL0ZNazZTbUxmYThYM1MvRFVjU1M0Tlp2cTNs?=
- =?utf-8?B?M0ovdXZWd3AvYWtqRjJ3blVHMWNsVENreEZyWi9TUkVySUdtQnpHejJnQzg2?=
- =?utf-8?B?aDNzRlNQVWhCcWw4UkhNZGc4NUlCOE9JaFE0UW9UR25EWTIreDNWd05VK3RL?=
- =?utf-8?B?VkZodWZscUxTMHd6cmhQQVNaM1Rtd0hWRWVQUDE4Mk9oODVSV2tvazUrdnE3?=
- =?utf-8?B?S3lDbkp0MHhnZEw4V1hPdm9xaDVpdFprVkR4OTVuMTRRaGc2Tk50TUw1Q1A5?=
- =?utf-8?B?SVBqRlBBQm5KSzJUVkdUcWd1Nk9SV1A1WkhNeGpqaWkrMURQUm1JRFhHMUZh?=
- =?utf-8?B?Sk40TUlvSisxQnUrKzRnU3pnRjZYV1Q3QkVZUktFdlc0QUNQcW10K3hUT3c5?=
- =?utf-8?B?bWRTTkhFZ01Wa1I5U0N5aStRcEFZVXg0ME1HK0VQZHMvckFFTnlFWHRzVGpU?=
- =?utf-8?B?SWw2OGR4UWZlbjlQUEdueEUwcVBhdDdnVGZlRUpyMXJCZ1FOcVpFNTlacHUy?=
- =?utf-8?B?ZTdrdnQ1R09JMEpVU2FsUnlSUmU3aERMdVpwZGdLbmp4N0x1bVJmaDE3Uk10?=
- =?utf-8?B?S0I1Ly9keGN4NmZwREhsKzdqbE81MTBiYjAwQ29KWWVvNzJ2NDdveDF2dWFs?=
- =?utf-8?B?VWxQcXBlOUpvQktHN0VqcnR0MGY3OFBlNDdydz09?=
-X-Microsoft-Antispam-Message-Info: 6sAmyzC/lpP380tpnjz/Z5PBILaM34RKf84Lk9N2nLWr4wFxbFskjBeBYOMJVt7rBsyeairP0RErB5nZF+YPrO8A2LiHiA8IWjZELRAqHvOyN11j2/Mfle6lMNFi+0Nq1TOISa0Z+XC3ta4rIkHY7pDAUSayIXT2pKNpIbvz6kwNaMqauDUbuQ/o9cWCc1rRM7euapnt7qy6nKAvh4J3xC088eMNZN+R42xEJbB4Ff38+s5Hfqf55FZEcfvhIQ+l87GZS8cyVu1a9ebCtl05CfrNQKhI4IB3CT4GM1ROgC27ae2DQFAcNx0/IfJAsNMd+NPE4Iymyr13FuPT6huvLfsr56Akyv1CmEe0yb4yAr8=
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR12MB2682;6:I2QJmy9OP4RWlyIRL8oc4q2x7MD3MGvczv2zs2D62yPaKBXc8r1ZHzkQ00iSoTD1YZ5BHkFMs0RrDqEz9BcwSdyZMfybRjE32fBuVwuYRVT0p90kbn3+tGBLBXwk7qNpF5AJ4/kMU6VCCHDCDTQUmp/0HCgo02nfFg/ILBYn1uHvHhInwTPaoYUl8vWiDfQ3cv9XGt+US18R8jqy9HQK+xKYcQwAlXlo5tmk3r2VXAuHqc580zMX1CJoZ4HYhhg16MQ5cIb9RfJPgpDX9Y6sfov/pQd7/4SgfAmsBNmn5LS1HrPH2JgTCjE4xjCUVz3YNwQpM0xxDg9WQLycWLLg0TxkFjx3kLN8Ibzgi7yVZQYgEL7Fk1d8FsR7tOKIP8ZsxPb5Fgx87eBZ8xruHDbmfh3hg41wHLUBN6RfZD+Lg+vhmYDJXfuFVEq4WM1ZzfaM61qh797vtpGi8kNkbhd7Jw==;5:Mc4b2yCh20lQqNzDLISx896d3ZHDWQYeTaAdyUD1iCg1FRK1gPnm+sf3FG921j+RVU06VCiMFNuE2jTiuC7SC9ti/0vP2eylzw/MoKxg7/NfNb1UKPlFJWB5++ecOFYs0oTqmVDCbHoWGxP1slhHO51Au/vO0Ajyyb82dTROI1A=;7:eUFynTpzdT+VhJUC3vqdCgUVzHr2LbVVpw6w7/TDdVq9fHAAXDPlMlpVLALpmcekYQgHIjBwtINFFkY8/qy9fI1koN4triTwkCDNgsvkiGovYN5zZu87UW2iWFmA7e32HdaOeWcZRvlh0JdUC0JBPq5dEP1AfLQHTHckR0lkdE/r2OUq3/ByLY9g9G+w1Z8RcF3DhETSBUsvpZbzRIscDjz3qlvdc5RV9U5NYfLzErcQWZyMlZWooQhdo1PRjYNF
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR12MB2682;20:+eNgC+YknOKtQOKe0ztm7vZreRSfGdkhKBR1mEDcoJmI+5betea1uhT+L33+iJ3jn91DDgRZ72jlOfyV5ZonXTqGbucI1f8aLyIiy8bwmUecCkTiIVT9L1NpyrivAWZ5J53Gs78qlEP/8KypdT4r3aRyV2LXxJMsazjCF6qUDcUFtwfYegdDgrgeExxVxfEAapwQfzYzZujQSFGynrscFeelbbPQFF/iMC6r+/8PIuPGkiqyn9f0qm4n955s9m/P
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2018 15:10:12.6153 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 057cfb55-8cd5-4785-0772-08d6172f8240
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB2682
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180910144259.1339-1-songqiang.1304521@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Sep 10, 2018 at 10:42:59PM +0800, Song Qiang wrote:
+> This driver was originally written by ST in 2016 as a misc input device,
+> and hasn't been maintained for a long time. I grabbed some code from
+> it's API and reformed it to a iio proximity device driver.
+> This version of driver uses i2c bus to talk to the sensor and
+> polling for measuring completes, so no irq line is needed.
+> This version of driver supports only one-shot mode, and it can be
+> tested with reading from
+> /sys/bus/iio/devices/iio:deviceX/in_distance_raw
+
+Brief review for almost style issues...
+
+> + *  vl53l0x-i2c.c - Support for STM VL53L0X FlightSense TOF
+> + *					Ranger Sensor on a i2c bus.
+
+One line and without file name.
+
+> + *
+> + *  Copyright (C) 2016 STMicroelectronics Imaging Division.
+> + *  Copyright (C) 2018 Song Qiang <songqiang.1304521@gmail.com>
+
+> + *
+
+Redundant
+
+> + */
+> +
+> +#include <linux/module.h>
+> +#include <linux/slab.h>
+> +#include <linux/i2c.h>
+> +#include <linux/delay.h>
+> +#include <linux/kernel.h>
+
+Keep above sorted.
+
+> +#include <linux/iio/iio.h>
+> +
+> +#define VL53L0X_DRV_NAME			"vl53l0x"
+> +
+> +/* Device register map */
+> +#define VL_REG_SYSRANGE_START					0x000
+
+0x0000 ?
+
+> +#define VL_REG_SYSRANGE_MODE_MASK				0x0F
+
+GENMASK() ?
+
+> +#define VL_REG_SYSRANGE_MODE_START_STOP			0x01
+> +#define VL_REG_SYSRANGE_MODE_SINGLESHOT			0x00
+> +#define VL_REG_SYSRANGE_MODE_BACKTOBACK			0x02
+> +#define VL_REG_SYSRANGE_MODE_TIMED				0x04
+> +#define VL_REG_SYSRANGE_MODE_HISTOGRAM			0x08
+
+BIT() ?
+
+Above comments related to below definitions as well.
+
+> +
+> +#define VL_REG_SYS_THRESH_HIGH					0x000C
+> +#define VL_REG_SYS_THRESH_LOW					0x000E
+> +
+> +#define VL_REG_SYS_SEQUENCE_CFG					0x0001
+> +#define VL_REG_SYS_RANGE_CFG					0x0009
+> +#define VL_REG_SYS_INTERMEASUREMENT_PERIOD		0x0004
+> +
+> +#define VL_REG_SYS_INT_CFG_GPIO					0x000A
+
+If you chose 0xHHHH format for the registers, please, keep the list of them sorted by the offset / address.
+
+> +#define VL_REG_SYS_INT_GPIO_DISABLED			0x00
+> +#define VL_REG_SYS_INT_GPIO_LEVEL_LOW			0x01
+> +#define VL_REG_SYS_INT_GPIO_LEVEL_HIGH			0x02
+> +#define VL_REG_SYS_INT_GPIO_OUT_OF_WINDOW		0x03
+> +#define VL_REG_SYS_INT_GPIO_NEW_SAMPLE_READY	0x04
+> +#define VL_REG_GPIO_HV_MUX_ACTIVE_HIGH			0x0084
+> +#define VL_REG_SYS_INT_CLEAR					0x000B
+> +
+> +/* Result registers */
+> +#define VL_REG_RESULT_INT_STATUS				0x0013
+> +#define VL_REG_RESULT_RANGE_STATUS				0x0014
+> +
+> +#define VL_REG_RESULT_CORE_PAGE  1
+> +#define VL_REG_RESULT_CORE_AMBIENT_WINDOW_EVENTS_RTN	0x00BC
+> +#define VL_REG_RESULT_CORE_RANGING_TOTAL_EVENTS_RTN		0x00C0
+> +#define VL_REG_RESULT_CORE_AMBIENT_WINDOW_EVENTS_REF	0x00D0
+> +#define VL_REG_RESULT_CORE_RANGING_TOTAL_EVENTS_REF		0x00D4
+> +#define VL_REG_RESULT_PEAK_SIGNAL_RATE_REF				0x00B6
+> +
+> +/* Algo register */
+> +#define VL_REG_ALGO_PART_TO_PART_RANGE_OFFSET_MM		0x0028
+> +
+> +#define VL_REG_I2C_SLAVE_DEVICE_ADDRESS					0x008a
+> +
+> +/* Check Limit registers */
+> +#define VL_REG_MSRC_CFG_CONTROL						0x0060
+> +
+> +#define VL_REG_PRE_RANGE_CFG_MIN_SNR					0X0027
+> +#define VL_REG_PRE_RANGE_CFG_VALID_PHASE_LOW			0x0056
+> +#define VL_REG_PRE_RANGE_CFG_VALID_PHASE_HIGH			0x0057
+> +#define VL_REG_PRE_RANGE_MIN_COUNT_RATE_RTN_LIMIT		0x0064
+> +
+> +#define VL_REG_FINAL_RANGE_CFG_MIN_SNR					0X0067
+> +#define VL_REG_FINAL_RANGE_CFG_VALID_PHASE_LOW			0x0047
+> +#define VL_REG_FINAL_RANGE_CFG_VALID_PHASE_HIGH			0x0048
+> +#define VL_REG_FINAL_RANGE_CFG_MIN_COUNT_RATE_RTN_LIMIT	0x0044
+> +
+
+> +#define VL_REG_PRE_RANGE_CFG_SIGMA_THRESH_HI			0X0061
+> +#define VL_REG_PRE_RANGE_CFG_SIGMA_THRESH_LO			0X0062
+
+0x
+
+> +
+> +/* PRE RANGE registers */
+> +#define VL_REG_PRE_RANGE_CFG_VCSEL_PERIOD				0x0050
+> +#define VL_REG_PRE_RANGE_CFG_TIMEOUT_MACROP_HI			0x0051
+> +#define VL_REG_PRE_RANGE_CFG_TIMEOUT_MACROP_LO			0x0052
+> +
+> +#define VL_REG_SYS_HISTOGRAM_BIN					0x0081
+> +#define VL_REG_HISTOGRAM_CFG_INITIAL_PHASE_SELECT		0x0033
+> +#define VL_REG_HISTOGRAM_CFG_READOUT_CTRL				0x0055
+> +
+> +#define VL_REG_FINAL_RANGE_CFG_VCSEL_PERIOD				0x0070
+> +#define VL_REG_FINAL_RANGE_CFG_TIMEOUT_MACROP_HI		0x0071
+> +#define VL_REG_FINAL_RANGE_CFG_TIMEOUT_MACROP_LO		0x0072
+> +#define VL_REG_CROSSTALK_COMPENSATION_PEAK_RATE_MCPS	0x0020
+> +
+> +#define VL_REG_MSRC_CFG_TIMEOUT_MACROP					0x0046
+> +
+> +#define VL_REG_SOFT_RESET_GO2_SOFT_RESET_N				0x00bf
+> +#define VL_REG_IDENTIFICATION_MODEL_ID					0x00c0
+> +#define VL_REG_IDENTIFICATION_REVISION_ID				0x00c2
+> +
+> +#define VL_REG_OSC_CALIBRATE_VAL					0x00f8
+> +
+> +#define VL_SIGMA_ESTIMATE_MAX_VALUE					65535
+> +/* equivalent to a range sigma of 655.35mm */
+> +
+> +#define VL_REG_GLOBAL_CFG_VCSEL_WIDTH					0x032
+> +#define VL_REG_GLOBAL_CFG_SPAD_ENABLES_REF_0			0x0B0
+> +#define VL_REG_GLOBAL_CFG_SPAD_ENABLES_REF_1			0x0B1
+> +#define VL_REG_GLOBAL_CFG_SPAD_ENABLES_REF_2			0x0B2
+> +#define VL_REG_GLOBAL_CFG_SPAD_ENABLES_REF_3			0x0B3
+> +#define VL_REG_GLOBAL_CFG_SPAD_ENABLES_REF_4			0x0B4
+> +#define VL_REG_GLOBAL_CFG_SPAD_ENABLES_REF_5			0x0B5
+> +#define VL_REG_GLOBAL_CFG_REF_EN_START_SELECT			0xB6
+
+0x00 or 0x for prefix?
+
+> +#define VL_REG_DYNAMIC_SPAD_NUM_REQUESTED_REF_SPAD		0x4E /* 0x14E */
+> +#define VL_REG_DYNAMIC_SPAD_REF_EN_START_OFFSET			0x4F /* 0x14F */
+> +#define VL_REG_POWER_MANAGEMENT_GO1_POWER_FORCE			0x80
+> +
+> +/*
+> + * Speed of light in um per 1E-10 Seconds
+> + */
+> +#define VL_SPEED_OF_LIGHT_IN_AIR					2997
+> +#define VL_REG_VHV_CFG_PAD_SCL_SDA__EXTSUP_HV			0x0089
+> +#define VL_REG_ALGO_PHASECAL_LIM			0x0030 /* 0x130 */
+> +#define VL_REG_ALGO_PHASECAL_CFG_TIMEOUT				0x0030
+> +
+> +struct vl53l0x_data {
+> +	struct i2c_client *client;
+> +	struct mutex lock;
+> +	int	useLongRange;
+
+noCamelCasePlease.
+
+> +};
+> +
+> +static int vl53l0x_read_proximity(struct vl53l0x_data *data,
+> +				const struct iio_chan_spec *chan,
+> +				int *val)
+> +{
+> +	int ret;
+> +	struct i2c_client *client = data->client;
+> +	int tries = 20;
+
+unsigned int
+
+> +	u8 buffer[12];
+> +	struct i2c_msg msg[2];
+> +	u8 write_command = VL_REG_RESULT_RANGE_STATUS;
+
+Reversed xmas tree order, please
+
+> +
+> +	ret = i2c_smbus_write_byte_data(data->client,
+> +					VL_REG_SYSRANGE_START, 1);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	while (tries-- > 0) {
 
 
-On 09/10/2018 08:29 AM, Sean Christopherson wrote:
-...
+Better form is
 
->>>> + */
->>>> +static struct pvclock_vsyscall_time_info
->>>> +			hv_clock_aux[NR_CPUS] __decrypted_aux;
->>> Hmm, so worst case that's 64 4K pages:
->>>
->>> (8192*32)/4096 = 64 4K pages.
->> We can minimize the worst case memory usage. The number of VCPUs
->> supported by KVM maybe less than NR_CPUS. e.g Currently KVM_MAX_VCPUS is
->> set to 288
+do {
+	...
+} while (--tries);
+if (!tries)
+	return -ETIMEDOUT;
+
+> +		ret = i2c_smbus_read_byte_data(data->client,
+> +						VL_REG_RESULT_RANGE_STATUS);
+> +		if (ret < 0)
+> +			return ret;
+> +
+> +		if (ret & 0x01)
+> +			break;
+> +		usleep_range(1000, 5000);
+> +	}
+> +
+> +	if (tries < 0)
+> +		return -ETIMEDOUT;
+> +
+> +	msg[0].addr = client->addr;
+> +	msg[0].buf = &write_command;
+> +	msg[0].len = 1;
+> +	msg[0].flags = client->flags | I2C_M_STOP;
+> +
+> +	msg[1].addr = client->addr;
+> +	msg[1].buf = buffer;
+> +	msg[1].len = 12;
+> +	msg[1].flags = client->flags | I2C_M_RD;
+> +
+> +	ret = i2c_transfer(client->adapter, msg, 2);
+> +
+
+> +	if (ret != 2) {
+
+Shouldn't be simple if (ret < 0)
+
+> +		pr_err("vl53l0x: consecutively read error. ");
+
+dev_err(...);
+Also check other prints.
+
+> +		return ret;
+> +	}
+> +
+> +	*val = __le16_to_cpu((buffer[10] << 8) + buffer[11]);
+> +
+> +	return 0;
+> +}
+
+> +static int vl53l0x_probe(struct i2c_client *client,
+> +				   const struct i2c_device_id *id)
+
+(see below about ->probe_new() hook)
+
+> +{
+> +	int ret;
+> +	struct vl53l0x_data *data;
+> +	struct iio_dev *indio_dev;
+> +
+> +	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*data));
+> +	if (!indio_dev)
+> +		return -ENOMEM;
+> +
+> +	data = iio_priv(indio_dev);
+> +	data->client = client;
+> +	i2c_set_clientdata(client, indio_dev);
+> +	mutex_init(&data->lock);
+> +
+> +	if (!i2c_check_functionality(client->adapter, I2C_FUNC_SMBUS_BYTE))
+> +		return -EOPNOTSUPP;
+> +
+> +	indio_dev->dev.parent = &client->dev;
+> +	indio_dev->name = VL53L0X_DRV_NAME;
+> +	indio_dev->info = &vl53l0x_info;
+> +	indio_dev->channels = vl53l0x_channels;
+> +	indio_dev->num_channels = ARRAY_SIZE(vl53l0x_channels);
+> +	indio_dev->modes = INDIO_DIRECT_MODE;
+> +
+
+> +	//probe 0xc0 if the value is 0xEE.
+
+Useless commwnt  for now
+
+> +
+> +	ret = iio_device_register(indio_dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	dev_set_drvdata(&client->dev, data);
+> +
+> +	return 0;
+> +}
+> +
+> +static int vl53l0x_remove(struct i2c_client *client)
+> +{
+> +	struct iio_dev *indio_dev = i2c_get_clientdata(client);
+> +	struct vl53l0x_data *data = iio_priv(indio_dev);
+> +
+> +	iio_device_unregister(indio_dev);
+
+> +	kfree(data);
+
+how did you test it?
+
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct i2c_device_id vl53l0x_id[] = {
+> +	{ VL53L0X_DRV_NAME, 0 },
+
+> +	{ },
+Terminator better w/o comma
+
+> +};
+> +MODULE_DEVICE_TABLE(i2c, vl53l0x_id);
+
+Do you expect this to be used at all?
+
+> +
+> +static const struct of_device_id st_vl53l0x_dt_match[] = {
+> +	{ .compatible = "st,vl53l0x-i2c", },
+
+> +	{ },
+
+Terminator better w/o comma
+
+> +};
+> +
+> +static struct i2c_driver vl53l0x_driver = {
+> +	.driver = {
+> +		.name	= VL53L0X_DRV_NAME,
+
+> +		.owner	= THIS_MODULE,
+
+This done by macro.
+
+> +		.of_match_table = st_vl53l0x_dt_match,
+> +	},
+> +	.probe	= vl53l0x_probe,
+
+->probe_new(), please.
+
+> +	.remove	= vl53l0x_remove,
+> +	.id_table = vl53l0x_id,
+> +};
+> +module_i2c_driver(vl53l0x_driver);
+> +
+> +MODULE_AUTHOR("Song Qiang <songqiang.1304521@gmail.com>");
+> +MODULE_DESCRIPTION("ST vl53l0x ToF ranging sensor");
+> +MODULE_LICENSE("GPL");
+> -- 
+> 2.17.1
 > 
-> KVM_MAX_VCPUS is a property of the host, whereas this code runs in the
-> guest, e.g. KVM_MAX_VCPUS could be 2048 in the host for all we know.
-> 
 
+-- 
+With Best Regards,
+Andy Shevchenko
 
-IIRC, during guest creation time qemu will check the host supported
-VCPUS count. If count is greater than KVM_MAX_VCPUS then it will
-fail to launch guest (or fail to hot plug vcpus). In other words, the
-number of vcpus in a KVM guest will never to > KVM_MAX_VCPUS.
-
-Am I missing something ?
 
