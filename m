@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26200C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 11:30:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C55D3C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 11:30:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC82C20866
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 11:30:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC82C20866
+	by mail.kernel.org (Postfix) with ESMTP id 8A78B20866
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 11:30:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A78B20866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728349AbeIJQYV (ORCPT
+        id S1728401AbeIJQYX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 12:24:21 -0400
-Received: from shell.v3.sk ([90.176.6.54]:35848 "EHLO shell.v3.sk"
+        Mon, 10 Sep 2018 12:24:23 -0400
+Received: from shell.v3.sk ([90.176.6.54]:35858 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728153AbeIJQYU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 12:24:20 -0400
+        id S1728153AbeIJQYW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 12:24:22 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 5E2EEB82EC;
-        Mon, 10 Sep 2018 13:30:42 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id AD8FFB82EB;
+        Mon, 10 Sep 2018 13:30:43 +0200 (CEST)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id jSsH_S4ia3-7; Mon, 10 Sep 2018 13:30:37 +0200 (CEST)
+        with ESMTP id j7m1WpGDz42i; Mon, 10 Sep 2018 13:30:37 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id B60A2B82E2;
-        Mon, 10 Sep 2018 13:30:37 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id D9721B82EA;
+        Mon, 10 Sep 2018 13:30:36 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id kl7eB4ne_kkc; Mon, 10 Sep 2018 13:30:36 +0200 (CEST)
+        with ESMTP id RsxY7qAgOxoI; Mon, 10 Sep 2018 13:30:35 +0200 (CEST)
 Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id C95BCB82E8;
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 853A3B82E5;
         Mon, 10 Sep 2018 13:30:35 +0200 (CEST)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     linux-kernel@vger.kernel.org
@@ -49,9 +49,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         Haojian Zhuang <haojian.zhuang@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
         Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH 3/4] ARM: mmp2: initialize clocks before the timer
-Date:   Mon, 10 Sep 2018 13:30:30 +0200
-Message-Id: <20180910113031.42634-4-lkundrak@v3.sk>
+Subject: [PATCH 2/4] DT: marvell,mmp2: add clock to the timer
+Date:   Mon, 10 Sep 2018 13:30:29 +0200
+Message-Id: <20180910113031.42634-3-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180910113031.42634-1-lkundrak@v3.sk>
 References: <20180910113031.42634-1-lkundrak@v3.sk>
@@ -60,27 +60,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The timer shall enable its clock.
+The timer needs the timer clock to be enabled, otherwise it stops
+ticking.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 ---
- arch/arm/mach-mmp/mmp2-dt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/mmp2.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/mach-mmp/mmp2-dt.c b/arch/arm/mach-mmp/mmp2-dt.c
-index 0341359b24a4..50c5e8b5be3d 100644
---- a/arch/arm/mach-mmp/mmp2-dt.c
-+++ b/arch/arm/mach-mmp/mmp2-dt.c
-@@ -26,8 +26,8 @@ static void __init mmp_init_time(void)
- #ifdef CONFIG_CACHE_TAUROS2
- 	tauros2_init(0);
- #endif
--	mmp_dt_init_timer();
- 	of_clk_init(NULL);
-+	mmp_dt_init_timer();
- }
+diff --git a/arch/arm/boot/dts/mmp2.dtsi b/arch/arm/boot/dts/mmp2.dtsi
+index 766bbb8495b6..58e0098a007d 100644
+--- a/arch/arm/boot/dts/mmp2.dtsi
++++ b/arch/arm/boot/dts/mmp2.dtsi
+@@ -130,6 +130,7 @@
+ 				compatible = "mrvl,mmp-timer";
+ 				reg = <0xd4014000 0x100>;
+ 				interrupts = <13>;
++				clocks = <&soc_clocks MMP2_CLK_TIMER>;
+ 			};
  
- static const char *const mmp2_dt_board_compat[] __initconst = {
+ 			uart1: uart@d4030000 {
 -- 
 2.17.1
 
