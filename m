@@ -2,84 +2,131 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 622D4C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:15:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 082CAC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:16:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1248D2087F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:15:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fJAn1UQG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1248D2087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id BF2B320870
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:16:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF2B320870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728497AbeIJTKJ (ORCPT
+        id S1728530AbeIJTKe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 15:10:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55392 "EHLO mail.kernel.org"
+        Mon, 10 Sep 2018 15:10:34 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:41228 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728127AbeIJTKJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 15:10:09 -0400
-Received: from [192.168.0.101] (unknown [49.77.179.173])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A08620870;
-        Mon, 10 Sep 2018 14:15:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536588951;
-        bh=Bv+d/J2+pucT3E1Cwx4Os+UYIgLD+VrkpZ8fn46SgfI=;
-        h=Subject:To:References:From:Date:In-Reply-To:From;
-        b=fJAn1UQGm8k5fUVE668cxYdFTi4Oj7nl7L2IlHPLTHPrxJg15Sq5rsCiUu/JSJ0UN
-         r3sU761qpoFXKzd9/vrvqZi77ATwPhRNSIRDPbqTmxmabaW/bQ49+pd8yRxJc7vhXC
-         fXoanEoHZQqRk6GruFXYbKbSODhTz/xk9vnVxaJw=
-Subject: Re: [f2fs-dev] [PATCH] f2fs: submit bio after shutdown
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-References: <20180907212804.91462-1-jaegeuk@kernel.org>
-From:   Chao Yu <chao@kernel.org>
-Message-ID: <42844d87-587c-1fd6-e2f7-ade84007882e@kernel.org>
-Date:   Mon, 10 Sep 2018 22:15:46 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1728063AbeIJTKe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 15:10:34 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id A911F207B0; Mon, 10 Sep 2018 16:16:14 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-30-219.w90-88.abo.wanadoo.fr [90.88.15.219])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 6A8BF2074F;
+        Mon, 10 Sep 2018 16:16:04 +0200 (CEST)
+Date:   Mon, 10 Sep 2018 16:16:03 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-media@vger.kernel.org,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        Krzysztof Witos <kwitos@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>
+Subject: Re: [PATCH 04/10] phy: dphy: Add configuration helpers
+Message-ID: <20180910141603.gnwpkmemevaxbi7b@flea>
+References: <cover.ee6158898d563fcc01d45c9652501180bccff0f0.1536138624.git-series.maxime.ripard@bootlin.com>
+ <3617916.Vq2Smf1hnZ@avalon>
+ <20180907133739.6lvlw7wsdk4ffeua@flea>
+ <1923627.Ifno3EcWVN@avalon>
 MIME-Version: 1.0
-In-Reply-To: <20180907212804.91462-1-jaegeuk@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="fi6b2dacjrdoxmvg"
+Content-Disposition: inline
+In-Reply-To: <1923627.Ifno3EcWVN@avalon>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/9/8 5:28, Jaegeuk Kim wrote:
-> Sometimes, some merged IOs could get a chance to be submitted, resulting in
-> system hang in shutdown test. This issues IOs all the time after shutdown.
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+--fi6b2dacjrdoxmvg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
+Hi,
 
-> ---
->  fs/f2fs/data.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 8c204f896c22..26f38b224bb2 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -533,6 +533,8 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
->  	if (fio->in_list)
->  		goto next;
->  out:
-> +	if (is_sbi_flag_set(sbi, SBI_IS_SHUTDOWN))
-> +		__submit_merged_bio(io);
->  	up_write(&io->io_rwsem);
->  }
->  
-> 
+On Fri, Sep 07, 2018 at 05:26:29PM +0300, Laurent Pinchart wrote:
+> > >> + */
+> > >> +int phy_mipi_dphy_get_default_config(unsigned long pixel_clock,
+> > >> +				     unsigned int bpp,
+> > >> +				     unsigned int lanes,
+> > >> +				     struct phy_configure_opts_mipi_dphy *cfg)
+> > >> +{
+> > >> +	unsigned long hs_clk_rate;
+> > >> +	unsigned long ui;
+> > >> +
+> > >> +	if (!cfg)
+> > >> +		return -EINVAL;
+> > >=20
+> > > Should we really expect cfg to be NULL ?
+> >=20
+> > It avoids a kernel panic and it's not in a hot patch, so I'd say yes?
+>=20
+> A few line below you divide by the lanes parameter without checking wheth=
+er it=20
+> is equal to 0 first, which would also cause issues.
+
+You say that like it would be a bad thing to test for this.
+
+> I believe that invalid values in input parameters should only be handled=
+=20
+> explicitly when considered acceptable for the caller to pass such values.=
+ In=20
+> this case a NULL cfg pointer is a bug in the caller, which would get noti=
+ced=20
+> during development if the kernel panics.
+
+In the common case, yes. In the case where that pointer is actually
+being lost by the caller somewhere down the line and you have to wait
+for a while before it happens, then having the driver inoperant
+instead of just having a panic seems like the right thing to do.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--fi6b2dacjrdoxmvg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluWfKIACgkQ0rTAlCFN
+r3SuPQ/9E5zBCx4kDWAKagNrkI+Ew5i1nggHyuM4Mn2suJmx8gJfzPKUlmkVTBHj
+MFCt0XIZB/7v71pMDy2fRKrgDjJ8bda9d0Tyaj3QChPP16RwI6iyY/GCPQ/UsVgm
+KOhOUq1EZhQm9NtXphzrg1ImJFuhHiVhLD6b+uvfmvuBzTvOrX+yMFihhD5Mj9LX
+0jDcSXifmeGt2qS3hncIKmtlEviCydIisTQp2O82a1FwHVmYkk/y1dU0CrX5A1CK
+yPlKbugqt3hSWWk9MPIL/rEgszst5HsuX7i6+M61fLLokozS051r0aBy25KYRc1B
+C+Q8Q+xkoMY9v9RdpIUHAcklJdsWN9j4XbAfaUu+nqzxxcOoZaDjX/yUL4b06LLy
+G0rRD8kAK1BzxfyoWghZzUglbYKlF//KB4DWO6f5H0VHkKQNe1/1fJNIM9VZteM+
+WvPQzX30QbCBSt00gTPQyv0Em72BJH7UVDiXe04EgC0Wwt3RF1NtiGiSIE/AE7tM
+9a9g0F0LofcXC/0e41k4Mu8Y2a4QpgkB7KzgaYT/FA0kkFXvf65/XTaPHL8ARJ0o
+DpfSPgfgHI7DW20N8KZHtPp94mCET/wYdiQB4XVVoRjPSrWVt8UQqxewGz3BiQ9e
+G15pp1F3rlY8FWv9GZ8xLJbb3swRudfPofFR/rBS12dPZa7v7IE=
+=KrMk
+-----END PGP SIGNATURE-----
+
+--fi6b2dacjrdoxmvg--
