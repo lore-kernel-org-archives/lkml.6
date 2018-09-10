@@ -2,134 +2,150 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69346C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 17:49:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E7C4C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 17:50:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FB952086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 17:49:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CA1220870
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 17:50:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=CAVIUMNETWORKS.onmicrosoft.com header.i=@CAVIUMNETWORKS.onmicrosoft.com header.b="SnVOUNdT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FB952086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cavium.com
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="DPTaHtfg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CA1220870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728495AbeIJWob (ORCPT
+        id S1728372AbeIJWp5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 18:44:31 -0400
-Received: from mail-by2nam01on0046.outbound.protection.outlook.com ([104.47.34.46]:53955
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726603AbeIJWob (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 18:44:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=CAVIUMNETWORKS.onmicrosoft.com; s=selector1-cavium-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UVV7RJE0NvxjOScMhiokTO1YgiOaYyqyirRfmfmt5gU=;
- b=SnVOUNdTdzQZK0IpziQwkKpoDcKjLa1E9ci/69prdwehkyLO90+9cwlfoDvEgXoobNcmpvDrGG20IKoy1cWnAmgJwQ3uovGJaIRzTi9Ls69m5SgYXHZJdFmUaz719wrU0CVMA0BFHbU0HcXLillpUmFhN2ejP53T5jwXB0Zi6nY=
-Received: from CO2PR07MB2712.namprd07.prod.outlook.com (10.166.214.13) by
- CO2PR07MB2711.namprd07.prod.outlook.com (10.166.214.12) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1122.16; Mon, 10 Sep 2018 17:49:14 +0000
-Received: from CO2PR07MB2712.namprd07.prod.outlook.com
- ([fe80::d8c5:264f:e6a6:616c]) by CO2PR07MB2712.namprd07.prod.outlook.com
- ([fe80::d8c5:264f:e6a6:616c%4]) with mapi id 15.20.1122.018; Mon, 10 Sep 2018
- 17:49:14 +0000
-From:   "Madhani, Himanshu" <Himanshu.Madhani@cavium.com>
-To:     Colin King <colin.king@canonical.com>
-CC:     Dept-Eng QLA2xxx Upstream <qla2xxx-upstream@cavium.com>,
-        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] scsi: qla2xxx: fix typo "CT-PASSTRHU" -> "CT-PASSTHRU"
-Thread-Topic: [PATCH] scsi: qla2xxx: fix typo "CT-PASSTRHU" -> "CT-PASSTHRU"
-Thread-Index: AQHUSIv32OBy/owXvkaQfVA9seeqfaTpzBkA
-Date:   Mon, 10 Sep 2018 17:49:14 +0000
-Message-ID: <1E6E5FDA-33ED-4CBB-8E96-D3086EEE6B88@cavium.com>
-References: <20180909222503.8298-1-colin.king@canonical.com>
-In-Reply-To: <20180909222503.8298-1-colin.king@canonical.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Himanshu.Madhani@cavium.com; 
-x-originating-ip: [173.186.134.106]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CO2PR07MB2711;6:vWgNKSyEgSPHXhM+xyf14bLzVKXI/DRKaEJc4uvntFxiQVmPVqFM8eXqevfDcnk5Qyqe4Syw3tfM4IQffP4DFs4UjjERz8RJ0WS5l03HMsE3C31uwmFemaitBgfW5LaGFV9S/lj89Oi/C6gdL/DQfZuGcMvlcz1/J7oVXcF807XqFZ7Sx4XqCBP3XbEpeOYqxgknK0jTt3dj4t07fWQtQZcMMWTn2ViMB+6iD6PKMNjk1fBjhin56MqybekhvEQzCWbBIIWEDlDR6daPhgELtXigA4SJcFgNtYt04zXUm5TmetJYpnxXwbotnun0Aw7TNjjqxG68VfHj70JC6pwwHy5GeRN35FAVlVU/lKE+iAl/aW2esgnty0+VdjeCtd5Exiw62/z74dY/cnBW8a+HYj9i3yRylpFadb4cS5a/jXCzrwuqu4Bu51+BWLDO94WCs40HLBVoOUJ21dd2BibygA==;5:+ZTdnxulzNolVoE2Fdzss6RSO/KeZjqwvj8mHIbHEZVUijD6AHGImFO9Im5S0xHAMy18VZkfObluvcSaKRJOZfzFrU/jR1o9qEROKuhAR2AFs7R5ptfpl4yqG4LkhPxfSRD21Utfp7wP8yYU7ml48jg80u2gZSACNktw9FuC35I=;7:qteiOh036UW5xrovsxpr3AQYSVYQgZjaicn/w05lcQnKVhm5/LrvAIQuGtJZCZmSiGZjspKhnp7um/x+ITwsmdGbzF28id+rODg/t3n2Ty4+5Zlv8jNmElE6CMl0rnBqyu+xbDFNl0y2eg9oInVNK1s41NmlZWfVolHqc448eORlGH/ni7s0gErNgJnTqKIkuPKAjHPBWBucNUMw1DLG+hfZ0GcT50iQuJIQOLehaJrFbWx9FHJaDYSHMbLgkjQF
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: f4b39b6b-e498-48c0-4834-08d61745b95b
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(5600074)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:CO2PR07MB2711;
-x-ms-traffictypediagnostic: CO2PR07MB2711:
-x-microsoft-antispam-prvs: <CO2PR07MB2711ABED43D4B62A5F8818B9F5050@CO2PR07MB2711.namprd07.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(198206253151910);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823301075)(3002001)(10201501046)(93006095)(93001095)(3231311)(944501410)(52105095)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(201708071742011)(7699050);SRVR:CO2PR07MB2711;BCL:0;PCL:0;RULEID:;SRVR:CO2PR07MB2711;
-x-forefront-prvs: 07915F544A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(39860400002)(396003)(346002)(136003)(366004)(189003)(199004)(72206003)(6246003)(316002)(2906002)(6436002)(6486002)(256004)(4326008)(114624004)(53936002)(76176011)(99286004)(86362001)(186003)(5250100002)(486006)(26005)(14444005)(14454004)(6506007)(54906003)(102836004)(229853002)(106356001)(3846002)(105586002)(6116002)(66066001)(446003)(2616005)(476003)(6512007)(478600001)(53546011)(25786009)(11346002)(36756003)(8676002)(81156014)(81166006)(68736007)(82746002)(83716003)(7736002)(8936002)(305945005)(33656002)(2900100001)(97736004)(6916009)(5660300001);DIR:OUT;SFP:1101;SCL:1;SRVR:CO2PR07MB2711;H:CO2PR07MB2712.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: cavium.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 4oB/C9ZqCxYiIjsHDaC6Df6vWhzgqmLjrHfjK+glSn/zqT9Jrmv2dxE0OJVZyF/gV2yhN+tA/suwXodQcZasyh6LlvMCatKf7li3S7hYAVZErSvfeC79z0vPViD346aAvWlfw9VN9OGkWws3jxZQxzg6dQwBbRAH0Z2OdySoIhWDKfHmuUnejWZlAbGUPwidISqcBgxKf91pJIZLdLsca3CRQV8ZS/yqzcD4+TryBZnQvqtqBoN8xC6BUZIfu4ZUYS6DmyJ7aLg2d4WX0QBOteXZcrak8YsWhOHe414GBO8LfZnWB2ZJg07EVy93y5ZInBIQ1r2sqRpXAYfl5Zjc+rQf1ACUXyLZ9BmOUWvTo/s=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <B4D122E14D73874EA4963BC24ED530EB@namprd07.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Mon, 10 Sep 2018 18:45:57 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:54536 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726603AbeIJWp5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 18:45:57 -0400
+Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id E13435C19B2;
+        Mon, 10 Sep 2018 19:50:40 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1536601840;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=MEqyCQBeGFMuM69LrkARWUdBfgxnLdJ+yuLUFggzxuY=;
+        b=DPTaHtfgkHsVlnHRG913TfUw92pZnmasvyJs82fMyFjbDJWpEJe73DZcWM3YSA4mLxp4oy
+        9z3soxUofy27lOjWHWZ28V+EXKFb49Kv+0A0iO3rDu5Oixezh79twcokhdKovWo9VIBAgI
+        x8hC4yw/RBt0LCPd0cqUamMoMONsqzo=
 MIME-Version: 1.0
-X-OriginatorOrg: cavium.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f4b39b6b-e498-48c0-4834-08d61745b95b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Sep 2018 17:49:14.8562
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO2PR07MB2711
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 10 Sep 2018 10:50:40 -0700
+From:   Stefan Agner <stefan@agner.ch>
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Eli Friedman <efriedma@codeaurora.org>,
+        Christopher Li <sparse@chrisli.org>,
+        Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Joe Perches <joe@perches.com>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        linux-sparse@vger.kernel.org, linux-kernel-owner@vger.kernel.org
+Subject: Re: [PATCH v4 06/13] Compiler Attributes: naked can be shared
+In-Reply-To: <20180908212459.19736-7-miguel.ojeda.sandonis@gmail.com>
+References: <20180908212459.19736-1-miguel.ojeda.sandonis@gmail.com>
+ <20180908212459.19736-7-miguel.ojeda.sandonis@gmail.com>
+Message-ID: <9daffa34182b7163c2bfdbbe5b688189@agner.ch>
+X-Sender: stefan@agner.ch
+User-Agent: Roundcube Webmail/1.3.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 08.09.2018 14:24, Miguel Ojeda wrote:
+> The naked attribute is supported by at least gcc >= 4.6 (for ARM,
+> which is the only current user), gcc >= 8 (for x86), clang >= 3.1
+> and icc >= 13. See https://godbolt.org/z/350Dyc
+> 
+> Therefore, move it out of compiler-gcc.h so that the definition
+> is shared by all compilers.
+> 
 
-> On Sep 9, 2018, at 3:25 PM, Colin King <colin.king@canonical.com> wrote:
->=20
-> External Email
->=20
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> Trivial fix to typo in debug message text.
->=20
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+This actually fixes Clang support for ARM32, it fixes: 815f0ddb346c
+("include/linux/compiler*.h: make compiler-*.h mutually exclusive").
+
+So this should go in v4.19. Is this patch set (patches 5/6 in
+particular) planned for v4.19? If not, we probably have to split out
+this fix...
+
+--
+Stefan
+
+> Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+> Cc: Eli Friedman <efriedma@codeaurora.org>
+> Cc: Christopher Li <sparse@chrisli.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Cc: Joe Perches <joe@perches.com>
+> Cc: Dominique Martinet <asmadeus@codewreck.org>
+> Cc: Nick Desaulniers <ndesaulniers@google.com>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: linux-sparse@vger.kernel.org
+> Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 > ---
-> drivers/scsi/qla2xxx/qla_gs.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/scsi/qla2xxx/qla_gs.c b/drivers/scsi/qla2xxx/qla_gs.=
-c
-> index a0038d879b9d..b48ff0095843 100644
-> --- a/drivers/scsi/qla2xxx/qla_gs.c
-> +++ b/drivers/scsi/qla2xxx/qla_gs.c
-> @@ -4289,7 +4289,7 @@ static int qla24xx_async_gnnft(scsi_qla_host_t *vha=
-, struct srb *sp,
->        }
->=20
->        ql_dbg(ql_dbg_disc, vha, 0xfffff,
-> -           "%s: FC4Type %x, CT-PASSTRHU %s command ctarg rsp size %d, ct=
-arg req size %d\n",
-> +           "%s: FC4Type %x, CT-PASSTHRU %s command ctarg rsp size %d, ct=
-arg req size %d\n",
->            __func__, fc4_type, sp->name, sp->u.iocb_cmd.u.ctarg.rsp_size,
->             sp->u.iocb_cmd.u.ctarg.req_size);
->=20
-> --
-> 2.17.1
->=20
-
-Acked-By: Himanshu Madhani <himanshu.madhani@cavium.com>
-
-Thanks,
-- Himanshu
-
+>  include/linux/compiler-gcc.h   | 8 --------
+>  include/linux/compiler_types.h | 8 ++++++++
+>  2 files changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
+> index 4cd5e9264bce..3b32bbfa5a49 100644
+> --- a/include/linux/compiler-gcc.h
+> +++ b/include/linux/compiler-gcc.h
+> @@ -72,14 +72,6 @@
+>  #define __noretpoline __attribute__((__indirect_branch__("keep")))
+>  #endif
+>  
+> -/*
+> - * it doesn't make sense on ARM (currently the only user of __naked)
+> - * to trace naked functions because then mcount is called without
+> - * stack and frame pointer being set up and there is no chance to
+> - * restore the lr register to the value before mcount was called.
+> - */
+> -#define __naked		__attribute__((__naked__)) notrace
+> -
+>  #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
+>  
+>  #define __compiletime_object_size(obj) __builtin_object_size(obj, 0)
+> diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
+> index 83475515bc39..5ff9cda893f4 100644
+> --- a/include/linux/compiler_types.h
+> +++ b/include/linux/compiler_types.h
+> @@ -224,6 +224,14 @@ struct ftrace_likely_data {
+>  #define notrace			__attribute__((__no_instrument_function__))
+>  #endif
+>  
+> +/*
+> + * it doesn't make sense on ARM (currently the only user of __naked)
+> + * to trace naked functions because then mcount is called without
+> + * stack and frame pointer being set up and there is no chance to
+> + * restore the lr register to the value before mcount was called.
+> + */
+> +#define __naked			__attribute__((__naked__)) notrace
+> +
+>  #define __compiler_offsetof(a, b)	__builtin_offsetof(a, b)
+>  
+>  /*
