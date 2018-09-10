@@ -2,377 +2,143 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03FC8C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 03:30:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A551C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 03:30:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77E12206BB
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 03:30:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77E12206BB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
+	by mail.kernel.org (Postfix) with ESMTP id 430F3206BB
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 03:30:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="st4fOjB6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 430F3206BB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726909AbeIJIWF (ORCPT
+        id S1726985AbeIJIWV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 04:22:05 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:11656 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726024AbeIJIWF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 04:22:05 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 798FB552FA02C;
-        Mon, 10 Sep 2018 11:30:07 +0800 (CST)
-Received: from localhost (10.67.212.75) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server (TLS) id 14.3.399.0; Mon, 10 Sep
- 2018 11:29:59 +0800
-Date:   Mon, 10 Sep 2018 11:28:09 +0800
-From:   Kenneth Lee <liguozhu@hisilicon.com>
-To:     Jerome Glisse <jglisse@redhat.com>
-CC:     Kenneth Lee <nek.in.cn@gmail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        <kvm@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Joerg Roedel" <joro@8bytes.org>, <linux-doc@vger.kernel.org>,
-        Sanjay Kumar <sanjay.k.kumar@intel.com>,
-        Hao Fang <fanghao11@huawei.com>,
-        <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        <linux-crypto@vger.kernel.org>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        "Zaibo Xu" <xuzaibo@huawei.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        <linux-accelerators@lists.ozlabs.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>
-Subject: Re: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
-Message-ID: <20180910032809.GJ230707@Turing-Arch-b>
-References: <20180903005204.26041-1-nek.in.cn@gmail.com>
- <20180904150019.GA4024@redhat.com>
- <20180904101509.62314b67@t450s.home>
- <20180906094532.GG230707@Turing-Arch-b>
- <20180906133133.GA3830@redhat.com>
- <20180907040138.GI230707@Turing-Arch-b>
- <20180907165303.GA3519@redhat.com>
+        Mon, 10 Sep 2018 04:22:21 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:46208 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726024AbeIJIWU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 04:22:20 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8A1nKj0152301;
+        Mon, 10 Sep 2018 01:49:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=1TG4jx4Zm5kJAOqL3kuJRojVjuzboUSBhxHqtFJvOUg=;
+ b=st4fOjB6AmcvPsbDlwoKkYgRczg3XMniEFsPRmtWNuUCEV/ezZnmGCm/XxVyXPvKq2ZH
+ ngwBD6DJzy9ndMl/11JVyEfD1/XIEMh96rlaMKzQdF3HuWmShbimOjEYWIol3+kaTdHV
+ 2lIYXlbutsrhidkE19S76OoMTZHQI76cy89h1gm4pHRUN7TLdpgMRaqDBcxuqenX8CBF
+ g7pEa5fCzUMwoJywMMuUvvehQlsUP4bzgE4AOGU0cz8mXGOnmIhmvHRSEtNv30gAfOwD
+ HU54roFT3P2i3yJZ1pfoU7k55AJp+KbrRvOQCcySmQ50N0ttSaam4hh8yscS0rKqzJYH GA== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2130.oracle.com with ESMTP id 2mc5ut3ars-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 10 Sep 2018 01:49:44 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w8A1nhqg000372
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 10 Sep 2018 01:49:43 GMT
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w8A1ng1h023162;
+        Mon, 10 Sep 2018 01:49:42 GMT
+Received: from [10.182.70.180] (/10.182.70.180)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Sun, 09 Sep 2018 18:49:42 -0700
+Subject: Re: [PATCH 3/3] nvme-pci: use queue close instead of queue freeze
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     axboe@kernel.dk, keith.busch@intel.com, jsmart2021@gmail.com,
+        sagi@grimberg.me, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+        jthumshirn@suse.de, bart.vanassche@wdc.com
+References: <1536120586-3378-1-git-send-email-jianchao.w.wang@oracle.com>
+ <1536120586-3378-4-git-send-email-jianchao.w.wang@oracle.com>
+ <20180905220910.GC21352@ming.t460p>
+ <8ba97c77-0c3b-75df-0259-3c97ef7b774e@oracle.com>
+ <20180906130715.GB31250@ming.t460p>
+ <165989bc-949f-570e-c1d2-0ee1f0d4472a@oracle.com>
+ <20180907162331.GB9056@ming.t460p>
+From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
+Message-ID: <b50cc2a3-bf3b-4f5a-97e6-dc2bfd29c99c@oracle.com>
+Date:   Mon, 10 Sep 2018 09:49:41 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180907165303.GA3519@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20180907162331.GB9056@ming.t460p>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9011 signatures=668708
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1809100017
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 07, 2018 at 12:53:06PM -0400, Jerome Glisse wrote:
-> Date: Fri, 7 Sep 2018 12:53:06 -0400
-> From: Jerome Glisse <jglisse@redhat.com>
-> To: Kenneth Lee <liguozhu@hisilicon.com>
-> CC: Kenneth Lee <nek.in.cn@gmail.com>, Herbert Xu
->  <herbert@gondor.apana.org.au>, kvm@vger.kernel.org, Jonathan Corbet
->  <corbet@lwn.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Joerg
->  Roedel <joro@8bytes.org>, linux-doc@vger.kernel.org, Sanjay Kumar
->  <sanjay.k.kumar@intel.com>, Hao Fang <fanghao11@huawei.com>,
->  iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
->  linuxarm@huawei.com, Alex Williamson <alex.williamson@redhat.com>, Thomas
->  Gleixner <tglx@linutronix.de>, linux-crypto@vger.kernel.org, Zhou Wang
->  <wangzhou1@hisilicon.com>, Philippe Ombredanne <pombredanne@nexb.com>,
->  Zaibo Xu <xuzaibo@huawei.com>, "David S . Miller" <davem@davemloft.net>,
->  linux-accelerators@lists.ozlabs.org, Lu Baolu <baolu.lu@linux.intel.com>
-> Subject: Re: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
-> User-Agent: Mutt/1.10.0 (2018-05-17)
-> Message-ID: <20180907165303.GA3519@redhat.com>
+
+
+On 09/08/2018 12:23 AM, Ming Lei wrote:
+> On Thu, Sep 06, 2018 at 10:19:27PM +0800, jianchao.wang wrote:
+>>
+>>
+>> On 09/06/2018 09:07 PM, Ming Lei wrote:
+>>> On Thu, Sep 06, 2018 at 09:28:46AM +0800, jianchao.wang wrote:
+>>>> Hi Ming
+>>>>
+>>>> On 09/06/2018 06:09 AM, Ming Lei wrote:
+>>>>> nvme_dev_add() still may call freeze & unfreeze queue, so your patch
+>>>>> can't avoid draining queue completely here.
+>>>>
+>>>> Yes, I know this. We still need to freeze queue when update nr_hw_queues.
+>>>> But we move forward a step at least. :)
+>>>> We don't need to drain request queue in normal case of nvme_reset_work.
+>>>
+>>> It is hard to say who is the normal case. In case of CPU hotplug, it is quite
+>>> easy to trigger updating nr_hw_queues.
+>>>
+>>>>
+>>>> As for updating nr_hw_queues, we could try some other method on it next.
+>>>
+>>> The thing is that draining queue may be inevitable inside reset work
+>>> function because of updating nr_hw_queues, that means the approach in
+>>> this patchset is just a partial solution
+>>>
+>>> Or it may not make sense to do that because we may never remove the draining
+>>> queue in the code path of updating nr_hw_queues.
+>>>
+>>> Given they belong to same issue, I suggest to solve them all.
+>>
+>> I still think if just prevent new IO, freeze queue is over-kill.
+>>
+>> With respect to update nr_hw_queues, we could try to take the bios down from the
+>> queued requests as the blk_steal_bios. Then re-issue these bios after updating the
+>> nr_hw_queues.
 > 
-> On Fri, Sep 07, 2018 at 12:01:38PM +0800, Kenneth Lee wrote:
-> > On Thu, Sep 06, 2018 at 09:31:33AM -0400, Jerome Glisse wrote:
-> > > Date: Thu, 6 Sep 2018 09:31:33 -0400
-> > > From: Jerome Glisse <jglisse@redhat.com>
-> > > To: Kenneth Lee <liguozhu@hisilicon.com>
-> > > CC: Alex Williamson <alex.williamson@redhat.com>, Kenneth Lee
-> > >  <nek.in.cn@gmail.com>, Jonathan Corbet <corbet@lwn.net>, Herbert Xu
-> > >  <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>,
-> > >  Joerg Roedel <joro@8bytes.org>, Hao Fang <fanghao11@huawei.com>, Zhou Wang
-> > >  <wangzhou1@hisilicon.com>, Zaibo Xu <xuzaibo@huawei.com>, Philippe
-> > >  Ombredanne <pombredanne@nexb.com>, Greg Kroah-Hartman
-> > >  <gregkh@linuxfoundation.org>, Thomas Gleixner <tglx@linutronix.de>,
-> > >  linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-> > >  linux-crypto@vger.kernel.org, iommu@lists.linux-foundation.org,
-> > >  kvm@vger.kernel.org, linux-accelerators@lists.ozlabs.org, Lu Baolu
-> > >  <baolu.lu@linux.intel.com>, Sanjay Kumar <sanjay.k.kumar@intel.com>,
-> > >  linuxarm@huawei.com
-> > > Subject: Re: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
-> > > User-Agent: Mutt/1.10.0 (2018-05-17)
-> > > Message-ID: <20180906133133.GA3830@redhat.com>
-> > > 
-> > > On Thu, Sep 06, 2018 at 05:45:32PM +0800, Kenneth Lee wrote:
-> > > > On Tue, Sep 04, 2018 at 10:15:09AM -0600, Alex Williamson wrote:
-> > > > > Date: Tue, 4 Sep 2018 10:15:09 -0600
-> > > > > From: Alex Williamson <alex.williamson@redhat.com>
-> > > > > To: Jerome Glisse <jglisse@redhat.com>
-> > > > > CC: Kenneth Lee <nek.in.cn@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
-> > > > >  Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller"
-> > > > >  <davem@davemloft.net>, Joerg Roedel <joro@8bytes.org>, Kenneth Lee
-> > > > >  <liguozhu@hisilicon.com>, Hao Fang <fanghao11@huawei.com>, Zhou Wang
-> > > > >  <wangzhou1@hisilicon.com>, Zaibo Xu <xuzaibo@huawei.com>, Philippe
-> > > > >  Ombredanne <pombredanne@nexb.com>, Greg Kroah-Hartman
-> > > > >  <gregkh@linuxfoundation.org>, Thomas Gleixner <tglx@linutronix.de>,
-> > > > >  linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-> > > > >  linux-crypto@vger.kernel.org, iommu@lists.linux-foundation.org,
-> > > > >  kvm@vger.kernel.org, linux-accelerators@lists.ozlabs.org, Lu Baolu
-> > > > >  <baolu.lu@linux.intel.com>, Sanjay Kumar <sanjay.k.kumar@intel.com>,
-> > > > >  linuxarm@huawei.com
-> > > > > Subject: Re: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
-> > > > > Message-ID: <20180904101509.62314b67@t450s.home>
-> > > > > 
-> > > > > On Tue, 4 Sep 2018 11:00:19 -0400
-> > > > > Jerome Glisse <jglisse@redhat.com> wrote:
-> > > > > 
-> > > > > > On Mon, Sep 03, 2018 at 08:51:57AM +0800, Kenneth Lee wrote:
-> > > > > > > From: Kenneth Lee <liguozhu@hisilicon.com>
-> > > > > > > 
-> > > > > > > WarpDrive is an accelerator framework to expose the hardware capabilities
-> > > > > > > directly to the user space. It makes use of the exist vfio and vfio-mdev
-> > > > > > > facilities. So the user application can send request and DMA to the
-> > > > > > > hardware without interaction with the kernel. This removes the latency
-> > > > > > > of syscall.
-> > > > > > > 
-> > > > > > > WarpDrive is the name for the whole framework. The component in kernel
-> > > > > > > is called SDMDEV, Share Domain Mediated Device. Driver driver exposes its
-> > > > > > > hardware resource by registering to SDMDEV as a VFIO-Mdev. So the user
-> > > > > > > library of WarpDrive can access it via VFIO interface.
-> > > > > > > 
-> > > > > > > The patchset contains document for the detail. Please refer to it for more
-> > > > > > > information.
-> > > > > > > 
-> > > > > > > This patchset is intended to be used with Jean Philippe Brucker's SVA
-> > > > > > > patch [1], which enables not only IO side page fault, but also PASID
-> > > > > > > support to IOMMU and VFIO.
-> > > > > > > 
-> > > > > > > With these features, WarpDrive can support non-pinned memory and
-> > > > > > > multi-process in the same accelerator device.  We tested it in our SoC
-> > > > > > > integrated Accelerator (board ID: D06, Chip ID: HIP08). A reference work
-> > > > > > > tree can be found here: [2].
-> > > > > > > 
-> > > > > > > But it is not mandatory. This patchset is tested in the latest mainline
-> > > > > > > kernel without the SVA patches.  So it supports only one process for each
-> > > > > > > accelerator.
-> > > > > > > 
-> > > > > > > We have noticed the IOMMU aware mdev RFC announced recently [3].
-> > > > > > > 
-> > > > > > > The IOMMU aware mdev has similar idea but different intention comparing to
-> > > > > > > WarpDrive. It intends to dedicate part of the hardware resource to a VM.
-> > > > > > > And the design is supposed to be used with Scalable I/O Virtualization.
-> > > > > > > While sdmdev is intended to share the hardware resource with a big amount
-> > > > > > > of processes.  It just requires the hardware supporting address
-> > > > > > > translation per process (PCIE's PASID or ARM SMMU's substream ID).
-> > > > > > > 
-> > > > > > > But we don't see serious confliction on both design. We believe they can be
-> > > > > > > normalized as one.
-> > > > > > >   
-> > > > > > 
-> > > > > > So once again i do not understand why you are trying to do things
-> > > > > > this way. Kernel already have tons of example of everything you
-> > > > > > want to do without a new framework. Moreover i believe you are
-> > > > > > confuse by VFIO. To me VFIO is for VM not to create general device
-> > > > > > driver frame work.
-> > > > > 
-> > > > > VFIO is a userspace driver framework, the VM use case just happens to
-> > > > > be a rather prolific one.  VFIO was never intended to be solely a VM
-> > > > > device interface and has several other userspace users, notably DPDK
-> > > > > and SPDK, an NVMe backend in QEMU, a userspace NVMe driver, a ruby
-> > > > > wrapper, and perhaps others that I'm not aware of.  Whether vfio is
-> > > > > appropriate interface here might certainly still be a debatable topic,
-> > > > > but I would strongly disagree with your last sentence above.  Thanks,
-> > > > > 
-> > > > > Alex
-> > > > > 
-> > > > 
-> > > > Yes, that is also my standpoint here.
-> > > > 
-> > > > > > So here is your use case as i understand it. You have a device
-> > > > > > with a limited number of command queues (can be just one) and in
-> > > > > > some case it can support SVA/SVM (when hardware support it and it
-> > > > > > is not disabled). Final requirement is being able to schedule cmds
-> > > > > > from userspace without ioctl. All of this exists already exists
-> > > > > > upstream in few device drivers.
-> > > > > > 
-> > > > > > 
-> > > > > > So here is how every body else is doing it. Please explain why
-> > > > > > this does not work.
-> > > > > > 
-> > > > > > 1 Userspace open device file driver. Kernel device driver create
-> > > > > >   a context and associate it with on open. This context can be
-> > > > > >   uniq to the process and can bind hardware resources (like a
-> > > > > >   command queue) to the process.
-> > > > > > 2 Userspace bind/acquire a commands queue and initialize it with
-> > > > > >   an ioctl on the device file. Through that ioctl userspace can
-> > > > > >   be inform wether either SVA/SVM works for the device. If SVA/
-> > > > > >   SVM works then kernel device driver bind the process to the
-> > > > > >   device as part of this ioctl.
-> > > > > > 3 If SVM/SVA does not work userspace do an ioctl to create dma
-> > > > > >   buffer or something that does exactly the same thing.
-> > > > > > 4 Userspace mmap the command queue (mmap of the device file by
-> > > > > >   using informations gather at step 2)
-> > > > > > 5 Userspace can write commands into the queue it mapped
-> > > > > > 6 When userspace close the device file all resources are release
-> > > > > >   just like any existing device drivers.
-> > > > 
-> > > > Hi, Jerome,
-> > > > 
-> > > > Just one thing, as I said in the cover letter, dma-buf requires the application
-> > > > to use memory created by the driver for DMA. I did try the dma-buf way in
-> > > > WrapDrive (refer to [4] in the cover letter), it is a good backup for NOIOMMU
-> > > > mode or we cannot solve the problem in VFIO.
-> > > > 
-> > > > But, in many of my application scenario, the application already has some memory
-> > > > in hand, maybe allocated by the framework or libraries. Anyway, they don't get
-> > > > memory from my library, and they pass the poiter for data operation. And they
-> > > > may also have pointer in the buffer. Those pointer may be used by the
-> > > > accelerator. So I need hardware fully share the address space with the
-> > > > application. That is what dmabuf cannot do.
-> > > 
-> > > dmabuf can do that ... it is call uptr you can look at i915 for
-> > > instance. Still this does not answer my question above, why do
-> > > you need to be in VFIO to do any of the above thing ? Kernel has
-> > > tons of examples that does all of the above and are not in VFIO
-> > > (including usinng existing user pointer with device).
-> > > 
-> > > Cheers,
-> > > Jérôme
-> > 
-> > I took a look at i915_gem_execbuffer_ioctl(). It seems it "copy_from_user" the
-> > user memory to the kernel. That is not what we need. What we try to get is: the
-> > user application do something on its data, and push it away to the accelerator,
-> > and says: "I'm tied, it is your turn to do the job...". Then the accelerator has
-> > the memory, referring any portion of it with the same VAs of the application,
-> > even the VAs are stored inside the memory itself.
+> It is always easier to say than done, :-)
 > 
-> You were not looking at right place see drivers/gpu/drm/i915/i915_gem_userptr.c
-> It does GUP and create GEM object AFAICR you can wrap that GEM object into a
-> dma buffer object.
+> Please go ahead and post patches, and I am happy to review.
 > 
 
-Thank you for directing me to this implementation. It is interesting:).
+Yes, I'm trying it and will post it when complete. :)
 
-But it is not yet solve my problem. If I understand it right, the userptr in
-i915 do the following:
-
-1. The user process sets a user pointer with size to the kernel via ioctl.
-2. The kernel wraps it as a dma-buf and keeps the process's mm for further
-   reference.
-3. The user pages are allocated, GUPed or DMA mapped to the device. So the data
-   can be shared between the user space and the hardware.
-
-But my scenario is: 
-
-1. The user process has some data in the user space, pointed by a pointer, say
-   ptr1. And within the memory, there may be some other pointers, let's say one
-   of them is ptr2.
-2. Now I need to assign ptr1 *directly* to the hardware MMIO space. And the
-   hardware must refer ptr1 and ptr2 *directly* for data.
-
-Userptr lets the hardware and process share the same memory space. But I need
-them to share the same *address space*. So IOMMU is a MUST for WarpDrive,
-NOIOMMU mode, as Jean said, is just for verifying some of the procedure is OK.
-
-> > 
-> > And I don't understand why I should avoid to use VFIO? As Alex said, VFIO is the
-> > user driver framework. And I need exactly a user driver interface. Why should I
-> > invent another wheel? It has most of stuff I need:
-> > 
-> > 1. Connecting multiple devices to the same application space
-> > 2. Pinning and DMA from the application space to the whole set of device
-> > 3. Managing hardware resource by device
-> > 
-> > We just need the last step: make sure multiple applications and the kernel can
-> > share the same IOMMU. Then why shouldn't we use VFIO?
-> 
-> Because tons of other drivers already do all of the above outside VFIO. Many
-> driver have a sizeable userspace side to them (anything with ioctl do) so they
-> can be construded as userspace driver too.
-> 
-
-Ignoring if there are *tons* of drivers are doing that;), even I do the same as
-i915 and solve the address space problem. And if I don't need to with VFIO, why
-should I spend so much effort to do it again?
-
-> So there is no reasons to do that under VFIO. Especialy as in your example
-> it is not a real user space device driver, the userspace portion only knows
-> about writting command into command buffer AFAICT.
-> 
-> VFIO is for real userspace driver where interrupt, configurations, ... ie
-> all the driver is handled in userspace. This means that the userspace have
-> to be trusted as it could program the device to do DMA to anywhere (if
-> IOMMU is disabled at boot which is still the default configuration in the
-> kernel).
-> 
-
-But as Alex explained, VFIO is not simply used by VM. So it need not to have all
-stuffs as a driver in host system. And I do need to share the user space as DMA
-buffer to the hardware. And I can get it with just a little update, then it can
-service me perfectly. I don't understand why I should choose a long route.
-
-> So i do not see any reasons to do anything you want inside VFIO. All you
-> want to do can be done outside as easily. Moreover it would be better if
-> you define clearly each scenario because from where i sit it looks like
-> you are opening the door wide open to userspace to DMA anywhere when IOMMU
-> is disabled.
-> 
-> When IOMMU is disabled you can _not_ expose command queue to userspace
-> unless your device has its own page table and all commands are relative
-> to that page table and the device page table is populated by kernel driver
-> in secure way (ie by checking that what is populated can be access).
-> 
-> I do not believe your example device to have such page table nor do i see
-> a fallback path when IOMMU is disabled that force user to do ioctl for
-> each commands.
-> 
-> Yes i understand that you target SVA/SVM but still you claim to support
-> non SVA/SVM. The point is that userspace can not be trusted if you want
-> to have random program use your device. I am pretty sure that all user
-> of VFIO are trusted process (like QEMU).
-> 
-> 
-> Finaly i am convince that the IOMMU grouping stuff related to VFIO is
-> useless for your usecase. I really do not see the point of that, it
-> does complicate things for you for no reasons AFAICT.
-
-Indeed, I don't like the group thing. I believe VFIO's maintains would not like
-it very much either;). But the problem is, the group reflects to the same
-IOMMU(unit), which may shared with other devices.  It is a security problem. I
-cannot ignore it. I have to take it into account event I don't use VFIO.
+Thanks
+Jianchao
 
 > 
+> Thanks,
+> Ming
 > 
-> > 
-> > And personally, I believe the maturity and correctness of a framework are driven
-> > by applications. Now the problem in accelerator world is that we don't have a
-> > direction. If we believe the requirement is right, the method itself is not a
-> > big problem in the end. We just need to let people have a unify platform to
-> > share their work together.
+> _______________________________________________
+> Linux-nvme mailing list
+> Linux-nvme@lists.infradead.org
+> https://urldefense.proofpoint.com/v2/url?u=http-3A__lists.infradead.org_mailman_listinfo_linux-2Dnvme&d=DwICAg&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=7WdAxUBeiTUTCy8v-7zXyr4qk7sx26ATvfo6QSTvZyQ&m=8v99qftJpifVTL4l7Od8_RT0UZCUN1aIotRsKWugz28&s=Z56o8mcARcWcRHe1yOr8Hu2a7djUCM6hKtrDTHuA9Qc&e=
 > 
-> I am not against that but it seems to me that all you want to do is only
-> a matter of simplifying discovery of such devices and sharing few common
-> ioctl (DMA mapping, creating command queue, managing command queue, ...)
-> and again for all this i do not see the point of doing this under VFIO.
-
-It is not a problem of device management, it is a problem of sharing address
-space.
-
-Cheers,
-
-> 
-> 
-> Cheers,
-> Jérôme
-
--- 
-			-Kenneth(Hisilicon)
-
