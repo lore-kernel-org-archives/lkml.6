@@ -2,128 +2,191 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77E80C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 21:48:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AF83C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 21:49:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F98020870
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 21:48:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 083D720865
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 21:49:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ORV4yZ9m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F98020870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="oCgndVxL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 083D720865
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727441AbeIKCoo (ORCPT
+        id S1727560AbeIKCpd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 22:44:44 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:42535 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726217AbeIKCon (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 22:44:43 -0400
-Received: by mail-lf1-f65.google.com with SMTP id z11-v6so18685675lff.9;
-        Mon, 10 Sep 2018 14:48:37 -0700 (PDT)
+        Mon, 10 Sep 2018 22:45:33 -0400
+Received: from mail-sn1nam01on0063.outbound.protection.outlook.com ([104.47.32.63]:25492
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726145AbeIKCpd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 22:45:33 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=esSbTasgEEfMZC2V8Lgs4S9w1jZw7ZHyg5PfnBHukvE=;
-        b=ORV4yZ9msso6ZZzdGm8BP2PiB6NUAqBOveR6je8GOskYU6QI/s191phvU5vv2r4hJv
-         VENcHeXATRsqjlIqfxppOJH7efxW+Dnh46/wtgeSFn/WNAvbZxpmVKDJ1j3KZ4/8mO6E
-         djUXxsG71b2XJxCf0EpfWWqSC9H25MtQGJzow230IeIA7bY0Otb7L4jsXbLnEHRy6TjH
-         T1ZyKtvuLtmBpTv2B0SajLFH7N5HfVY2vVAbt+KtRkV0W75xmamKb10x+L+L47DRkyJG
-         d1dn49rDTcZAD4rIJ1YtUzDq/SBUVPJ72OyGtSusx1WAaB+GrHujQaUAspVrMBWB7/y+
-         WVpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=esSbTasgEEfMZC2V8Lgs4S9w1jZw7ZHyg5PfnBHukvE=;
-        b=hI8uGMqWQfsBDOHZ8nHJL8gnDp0+AWf88u+bnOS5nNioQuKo6LnTT3/cwUMgSiZ2pF
-         +HxPC9G2XXbEVM81NhieeDoo/8hFlCFG3Iw+wosuGnxg0bHOVsfBWZxly6k4b0xewcgU
-         NMwJtMFFlInGdCQJyN2vz33nJYEnaWQsY6bHnwg/0dWjuOhHnql7GhSzaB4443KJyr3Q
-         5xes3O8iCDzQ3KxKZJsdlJAVEEON+xVVDagsxqJNPoeurief+mr8Hp5g+JrjC7TgCayz
-         gkNWdN0Hr9D7FRdkhy+fyrXZPu8J6UPgRIpYKQ6dHKN+YuTglNnhahr2BGF9kLCYak9V
-         EwrA==
-X-Gm-Message-State: APzg51C0pYvxZ1HgkWfxiKjKoN5HSlVgVYiRvTMC4FjbhqAEkStqFea/
-        0+qKVcxoJ8U95hFJZw+Y54c=
-X-Google-Smtp-Source: ANB0VdaaiPAWuN2D9ZFtPV8fOlj2jzT6Cvk/jslkEx6qYCz6k+2SUQlo60RWrC8zxnIcs2vzzQIo1w==
-X-Received: by 2002:a19:e21b:: with SMTP id z27-v6mr13131384lfg.68.1536616116704;
-        Mon, 10 Sep 2018 14:48:36 -0700 (PDT)
-Received: from z50.localnet (93-181-165-181.internetia.net.pl. [93.181.165.181])
-        by smtp.gmail.com with ESMTPSA id u19-v6sm3001516lje.51.2018.09.10.14.48.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Sep 2018 14:48:36 -0700 (PDT)
-From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: Re: [PATCH v2 0/3] ARM: OMAP1: ams-delta: Clean up GPIO setup for MODEM
-Date:   Mon, 10 Sep 2018 23:49:56 +0200
-Message-ID: <2690911.AdkODg5D9b@z50>
-In-Reply-To: <20180909234419.31261-1-jmkrzyszt@gmail.com>
-References: <20180820181333.2527-1-jmkrzyszt@gmail.com> <20180909234419.31261-1-jmkrzyszt@gmail.com>
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=C9Jj1mnx3NECa+nE2ma3H3prTzKmyZW0SDAUWXQtYX8=;
+ b=oCgndVxLWn7tObDGKV9N6IiNRrnpSovySM5DmkJtBmkXX8Xwbz9vOTCqYV6CEedwENeOZh/dj/1zxnFsf/CqGwDl0RvAYE6Qte5lI6pCStd13Rqo0BLuu/d3qNCtCb8Ix0ViF3ydm7IIACd/D7CYlDI1dhBFc2h1R+gbLg35e1c=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=brijesh.singh@amd.com; 
+Received: from sbrijesh-desktop.amd.com (165.204.77.1) by
+ BYAPR12MB2680.namprd12.prod.outlook.com (2603:10b6:a03:69::29) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1122.15; Mon, 10 Sep 2018 21:49:25 +0000
+From:   Brijesh Singh <brijesh.singh@amd.com>
+To:     x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     Brijesh Singh <brijesh.singh@amd.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@suse.de>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Subject: [PATCH v7 0/5] x86: Fix SEV guest regression
+Date:   Mon, 10 Sep 2018 16:49:06 -0500
+Message-Id: <1536616151-16738-1-git-send-email-brijesh.singh@amd.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [165.204.77.1]
+X-ClientProxiedBy: MWHPR13CA0010.namprd13.prod.outlook.com
+ (2603:10b6:300:16::20) To BYAPR12MB2680.namprd12.prod.outlook.com
+ (2603:10b6:a03:69::29)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 18edae76-dd8a-4981-2210-08d617674739
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:BYAPR12MB2680;
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR12MB2680;3:d/MOz3wV7OKM5zUkQKjbRwjkHGybxYShS1TJIVOnDrR+TXvfQCQR62ZEylZbkDjTv6ahtHp9w07DL0cSD8dh5FoZN7tHS8WWDuezDD9bSn9qh8KJwCaE4s9yjRDvFmKWbyZyR6U9EeZlcvAFEIQv/PAHG569CxMIyK2cRWiMc8cR+pY14qxW1Ml5g0E5U98vfrHpGKaa6KnpNhOWJfHBlMjCeGLXh7/Hz2Wxljt2+smm+TKhMkDmk2eMMzJlyevW;25:nBEZKvDU062DRoAJ3WHVXgNqy6DUlFnBwEmwYGhhCcXZlFpIGQEOi8LEunBvQ7h5KPY+Gl6bjMm/ptQyAMZndNUNZgJgL9xN3/rmZ/+585o1tyDAUOyJJ/jzaA5M/KQssoOncJqnr0V4uNnUUoqfNkuHQrs4lAUo3/AyHoZcvl1+U3Qqb+B7xc3WRxr1cvfwapQxiVUH5/aLcbQwEzyEK2u+gTOcrldiBGF0teQK++8/EaXhJbHgM+EoAoTWSCHqsMdMmZswU65MXaF5h3IVZ7PZzL0XPro8A0fj8iB03BoVa3nx6K6G2l/swdYIEGpUwgDbZnqVBhjNytQBWZsS+A==;31:AHve0fURQSFyeDheQTW10iOk/WGF95caz5dqTkbiI8IMZ59ANIeMxjI5tW+r8PB/qscC+gguVJXOo/QsAPVeZj6yNTEvtNrixctkZRJbFbBpzi2aQt2c84ZhYys6xwYOwJofFZfSnTpzdl4m4WV1EivbEOkDdO0gbK3frnKrHGbLraSbXGB38auOArlnKILZ5zIjfR6UOCi3d35KUcr3Mo772SX4u9x1kGQWqfwtSOQ=
+X-MS-TrafficTypeDiagnostic: BYAPR12MB2680:
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR12MB2680;20:Bm1Sx8HyAFbDv+K2ZECnHjWQLv54zJSh9vfnHTurBWVhGYIhleBnLsIjJZdNIf2XpQwYE40NpUbetAPrNH3cy4ZtUf3hAi1eMN2iX0rBen4wYuIRzXYmtCBhVEeudh+ILXG9aqUW0arVsFNbtA/p/eYsY8NY2jIl3HdbP5ZZtSkth/kFGCYhCyMoaZKeeZShm/WEtYBhc2Yxb5+mwxCYul0QY5i8bESSMB1yvhtUFfImsAChWbqgeph0brD6A9C1G1hNvq/Iv1xsMEis8JDhpDy9u8cgCC7Q6zxSNW3Hm6Omw4IHVQFt5dxNgx07fZpBi7J3SCNOLXxp1rPbk0dY7uIbNnxqGY2jYnTdGyUHUuLUSpasTb2ZKf92ivAWvyvImiPRTATi/R3BMQ94VlAgQn9qIftcEQ1QEqsCzNwqV3FM9EpBnLcbwscBwq5ldinIr+rtJnxspZ9CGOelDGQms93qaUOCo6q06B5iDFEJoihyV48lpmmvyY2HdyXlrGJS;4:M4FP9H02T8pouENlK6QstsUo7U8LlBDL0yRyVBNyS4Q8A9ilN9uWHsma1Nr2cREDfys13gMRZzsfvlk3bRoSa9dvko/KUKBmPnDQ2cwDY0vWXRbOp5glJzQ01t1l5gZoi/2E5ulY1Oy7XphbhgUpsPnHZERwlm3j74jihFmBcfB1GBhndgKnpfHNbLM1TnleBZZwadJcVQmo1hVJacFcmS3RgDedE95dYMH21cyfOFGyD7d5u87RjhIg7figr3gFImmJkWxQgpyBogXqryv3uJdAPRy8Y/H/WpZDaK8+RIH/LHJ/Hw2mVbmKHCVWp0nsdL73X/9zED6VRwTAgjIYBrTS8Mx6+MXbo9Z1aFasXlQ7sWubAyR7/0lqecADRHKrfkaPtM6t+eB6v8mxKjgMsoJSQZdEiz7+REZWzyGznE0=
+X-Microsoft-Antispam-PRVS: <BYAPR12MB2680C5F6775DABFEB9080320E5050@BYAPR12MB2680.namprd12.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(131327999870524)(767451399110)(84791874153150)(228905959029699);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823301075)(10201501046)(93006095)(93001095)(3002001)(3231311)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(201708071742011)(7699050);SRVR:BYAPR12MB2680;BCL:0;PCL:0;RULEID:;SRVR:BYAPR12MB2680;
+X-Forefront-PRVS: 07915F544A
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(136003)(346002)(396003)(39860400002)(366004)(376002)(199004)(189003)(6666003)(386003)(8936002)(53416004)(7696005)(52116002)(25786009)(23676004)(105586002)(8676002)(106356001)(50466002)(50226002)(26005)(186003)(66066001)(16526019)(6116002)(54906003)(3846002)(47776003)(2906002)(97736004)(2870700001)(4326008)(316002)(81166006)(36756003)(81156014)(476003)(2616005)(305945005)(7736002)(5660300001)(956004)(86362001)(6306002)(44832011)(6486002)(966005)(14444005)(68736007)(53936002)(486006)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR12MB2680;H:sbrijesh-desktop.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtCWUFQUjEyTUIyNjgwOzIzOkZ1cEhQSlNrSFN2dThva3dSTURyZWozb2RQ?=
+ =?utf-8?B?VlFFUC9DMVAwd2xOR2Ruc1J6ODV3NGNhQWdiUkZOMXlOZkxmR0dNeTFWYU5U?=
+ =?utf-8?B?TUdGbnVtbGowTmEzMk05UTRWcDJvejU1UjVlMklzTmhVZnRwRkwrMXV2TUF5?=
+ =?utf-8?B?alBaYnJPa1EvVEVYdVpJNUEydmRMOWZ1YSsvaFBxanJmcGlsbjBLSVhtN0Iv?=
+ =?utf-8?B?ZzR5K1pWR25uSkU0UDdjUnhRSm9uc3E4SVFVUHFGSC9BR2c5T1BqS0pXNzhD?=
+ =?utf-8?B?MXFVVDFiQ1dkMTFienhEVjVpOGoyMVNmM1p1TVBMQnluUXp0VVVGclRVeURl?=
+ =?utf-8?B?Y2tSbmp2b1ZFRUhOSUJlSzFCNE1zSndXTnc2cmVXMlg5NWVQeXIyRVF2M1FN?=
+ =?utf-8?B?Z3FRSHZLLzI4UmlKZGJ3c3Z2Z0o0T3FnRU1Sb080UmYrbzhlR3JRNTdkOEZD?=
+ =?utf-8?B?dGVjOWJsTDl4WE9uT2V0VEd3dHl1QVJSTS9LbTFmRHFzcGFCVGpnZThnUFhZ?=
+ =?utf-8?B?RzFXb1NiWkZZNlpBY0ZQVnB6ZGUyNkNZaFYyRzc5Tk55SFJYb2RYYlpBdzB4?=
+ =?utf-8?B?NmRoN0FTdE5VQWtpdnBmMzZtRkVzNHFIaUowMzZqMmFLbnVBZCtUcS90UzBR?=
+ =?utf-8?B?STBQWWpGd0tFSEVYanU3M1ZFUzBrZFozZEtqTWJNaHQ2Qmh3RlZEajlrTkN5?=
+ =?utf-8?B?aG1iQnFMdTRuNGh1aEw2b1owNFdkdjI3bm1EZndETXJZckhtSytPWnhSemNl?=
+ =?utf-8?B?YlRUVXFDSDBabzZYWkFodFdJTFVtNGhDTWpXR1ViYVdLNDdvektxT1c0c2lK?=
+ =?utf-8?B?alRIY2x5TGpCejN6cXN2SEdFdnRCWnR4SWxhK1c1bFpSdDd4Y01jV2hlQnVu?=
+ =?utf-8?B?WHVQeGNUYnRrSDF1RGtmNndVU2ZBMmJXZEsrUnVrblJoQXJCMEVMNHpzbld2?=
+ =?utf-8?B?bmJaS1I2NTJ6NTdTTlBUQy93bmo3UmxBd21ib25ET2k3bUFRWFpPbTllMGt0?=
+ =?utf-8?B?ZUp0Y0MvRElUWHJCYXR3K1ZUajJUVFlDc3JVNTZPbURIOXNsb3AzelBYSEtV?=
+ =?utf-8?B?TG5TYjNDNHc3cjVtV25Bbk10VnQ1VGhPU0Z3Rlp1VE1ZdGRuaWRBYWZncFRt?=
+ =?utf-8?B?YkdFZ1ljZlFNRm9MVUZqTjFSNlZOY3lpRitkMlQrOVdDNUkwTjVqckpZTVVN?=
+ =?utf-8?B?SGd6aC9PVndsME9SMU5jamI2U0lXdWhyOEhIUzRLZ2JmOXBrYXcvd2VhWVF6?=
+ =?utf-8?B?Z1c4ejBRTFBZbStONFhQYzBoREJVWi9CVHlkaTl6MTN0SUljZU9CNlVxQ3ZZ?=
+ =?utf-8?B?b1NVNlZlZ1NBbmQ3YVphS3hmdU5ZSXExQmRjUFE4dGx2OEYrZktKQTVPMDRy?=
+ =?utf-8?B?OGs0SVVmQTMxQnJTQzJtOFBTMVp6TDY5OEYrZXl0aG1sRnZkWFBlcDAvTURH?=
+ =?utf-8?B?WGxrbERralFzTXdYUXNWMW1DWDVaeGdxaElQQzNzRmUvQnBjNzh2K29LcDBD?=
+ =?utf-8?B?Tkt0dE1XdXVGN1pUeVdQRGt3WittZ3E0bkprZWJqNEFuaXVGN2wydE9qVjE5?=
+ =?utf-8?Q?y2RI+QzW6Sb9WYyjfCCq/pfpLD1dSFO05FDoNnwP4Q/E=3D?=
+X-Microsoft-Antispam-Message-Info: hjNd9qXKCZg8E04FakzAaYEVFkJWKUVtU3bvWRvXz4+uSYdrDkUw/0/V4wQlY//NqL8tRFRf9UyiqPMi7qhrr9JR1KGCdKTo1lRF7iUEc0jk3449jd/fneVIxovtRICjqXIT3ZUq/IIC1eF/WDHImp2WXrZXfYt8zXXuMdgRYFiTeqXad4RsQPgE2/0XFjAR9KN7RngL+TidulG+iIreJXXdWLDupkNLdt3v7IMg0Vh9Z4IC5tf/N0DGsMxqbLznmwCLJBg4DDPFgHudBlFIYiWG+VtCRRjhCrty3gsXA33LpppS3KJfjVVvDsFY5d+lxvyciStp1ODyJmRwxS0J4fh8rEGBGfFP+HjIYf4fhQI=
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR12MB2680;6:RX+ijTzuQbFmjZ05eFUfvbWFMfJrUh3Ol3I4j1dxA0dl+FPfBTbik3+EdMk9j904sgLSPUxUxk/+ltgfvrCHQwP2t0z2M9c/KguJuV+RW9JEkKuBBHIpLVvTZT7IvSDo/ugJNIBFISLSZbhg46Qu3SKDV8HdPomwtwIp29CoRAN8ZhRF0hYj6UBgwy0/1AW5fNEDTRXlTkYIfHFsKdn3gz2oyjdnWU65KAJshXTiLVJw10VSWjuMSNELtgofDMn9C3J20Q/1ryoRZWqTPZLmtdTzaumNxTF3Lktq5yA23OVy2iyPspUJyRKCui91vXLFwIBvCN80+O2IFwtLJJs1WjVgplO1nygm+xiJCbBYvNn8iDkdS0J82f52kNizSOTH9+lHyvJmMjLVxgaQYRRoSUsQvfBTCgKHZmhHMKtd5fbFQwQpsjrJJbwR0pQe4U61osAxV2TKTc13SrfYRYd/dQ==;5:5mraV9O+bPTOgEFhnM2vsSM4CCUu3ZpqqUDALb7T7cBY4W6aIzGzxTpd4obxKnP7k+qbtgbLKScPuVSPIQxr8pDZF7I/l5Kw7S4bBWf5q8Si+csEXWB44j3WNztT2o4DJBiD7zD2ac2Y8ieLee3XVHhDy+V4QPjuQdCRVt6//is=;7:h4DI10XuWOCzbxLQFgmVYbaZ4fV3DY/ipo1VesWHFLn67eyV4yT0jC8D08O8CZzcuWHzFP1TivL1zEq/JTKrUmb4XPaX9ZAeSNWFF4diSFRdvwCHLLEIeM3yipuoTOe4aNxR692wlSWvRTcVbGT7EQlcNCZX1h1hcCsWYxTshTFd19eYr02x8Lg4Q7j3vJFMnvDIXim0VhdlLtnax8amaYrJbQ0vnUEEzlUNj/0T9rjiIrZoNy/DZHBS1QTVifQi
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR12MB2680;20:WQo3uu0BQ2AZqfp7Ck59PiHs36F0MIWuW33iuN+Ez8aGhDNjm3WdrdzyRZ2uY1t2HbcOMjgDSRQPhFH/Up2cztJZ0XySkbdEfSf1BwGd2CiqOiccfDvojjCv8ZlQzqzrXePyeyL+oeVsV7YUXD8FacjRTejLu+kWDVlO3XFKbWI7ds1xI86anvpjWzYdvZ4/NxYmmdsaoTtmlNnDCzliSjUtDnvisA8xAtvQWqvt4B7Av9zRvVGVam5NJ3za/YvX
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2018 21:49:25.2523 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 18edae76-dd8a-4981-2210-08d617674739
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB2680
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, September 10, 2018 1:44:16 AM CEST Janusz Krzysztofik wrote:
-> 
-> Convert modem related GPIO setup from integer space to GPIO descriptors.
-> Also, restore original initialization order of the MODEM device and its
-> related GPIO pins.
-> 
-> Cleanup of MODEM relaated regulator setup is postponed while waiting for
-> upcoming conversion of fixed regulator API to GPIO descriptors.
-> 
-> 
-> Janusz Krzysztofik (3):
->       ARM: OMAP1: ams-delta: assign MODEM IRQ from GPIO descriptor
->       ARM: OMAP1: ams-delta: initialize latch2 pins to safe values
->       ARM: OMAP1: ams-delta: register MODEM device earlier
-> 
-> 
-> Changelog:
-> v2:
-> - rebased on v4.19-rc1
+The following commit
 
-Hi Tony,
+"
+x86/kvmclock: Remove memblock dependency
 
-I forgot to mention: please apply on top of "[PATCH v3 0/3] ARM: OMAP1: ams-
-delta: Complete driver gpiod migration" series. Sorry.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=368a540e0232ad446931f5a4e8a5e06f69f21343
+"
 
-Thanks,
-Janusz
+introduced SEV guest regression.
 
-> - added Reviewed-by: obtained from Linus Walleij
-> 
-> Please ignore the patch "ARM: OMAP1: ams-delta: assign MODEM IRQ from GPIO"
-> sent alone on 2018-07-17.
-> 
-> Thanks,
-> Janusz
-> 
-> 
-> diffstat:
->  board-ams-delta.c |  121 ++++++++++++++++++++++++++++++++++++++
-+---------------
->  board-ams-delta.h |    7 ---
->  2 files changed, 88 insertions(+), 40 deletions(-)
-> 
-> 
+The guest physical address holding the wall_clock and hv_clock_boot
+are shared with the hypervisor must be mapped with C=0 when SEV
+is active. To clear the C-bit we use  kernel_physical_mapping_init() to
+split the large pages. The above commit moved the kvmclock initialization
+very early and kernel_physical_mapping_init() fails to allocate memory
+while spliting the large page.
 
+To solve it, we add a special .data..decrypted section, this section can be
+used to hold the shared variables. Early boot code maps this section with
+C=0. The section is pmd aligned and sized to avoid the need to split the pages.
+Caller can use __decrypted attribute to add the variables in .data..decrypted
+section. 
 
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>
+Cc: "Radim Krčmář" <rkrcmar@redhat.com>
 
+Changes since v6:
+ - improve commit messages
+ - rename free_decrypted_mem -> mem_encrypt_free_decrypted_mem
+
+Changes since v5:
+ - rename hvclock_boot_dec -> hvclock_boot_aux.
+ - rename section from .data..decrypted_aux -> .data..decrypted.aux.
+ - use NR_CPUS instead of random number elements in hv_clock_aux variable.
+
+Changes since v4:
+ - define few static pages in .data..decrypted which can be used
+   for cpus > HVC_BOOT_ARRAY_SIZE when SEV is active.
+
+Changes since v3:
+ - commit message improvements (based on Sean's feedback)
+
+Changes since v2:
+ - commit message and code comment improvements (based on Boris feedback)
+ - move sme_populate_pgd fixes in new patch.
+ - drop stable Cc - will submit to stable after patch is upstreamed.
+
+Changes since v1:
+ - move the logic to re-arrange mapping in new patch
+ - move the definition of __start_data_* in mem_encrypt.h
+ - map the workarea buffer as encrypted when SEV is enabled
+ - enhance the sme_populate_pgd to update the pte/pmd flags when mapping exist
+
+Brijesh Singh (5):
+  x86/mm: Restructure sme_encrypt_kernel()
+  x86/mm: Enhance sme_populate_pgd() to update page flags
+  x86/mm: add .data..decrypted section to hold shared variables
+  x86/kvm: use __decrypted attribute in shared variables
+  x86/kvm: Avoid dynamic allocation of pvclock data when SEV is active
+
+ arch/x86/include/asm/mem_encrypt.h |  10 ++
+ arch/x86/kernel/head64.c           |  11 ++
+ arch/x86/kernel/kvmclock.c         |  18 ++-
+ arch/x86/kernel/vmlinux.lds.S      |  20 ++++
+ arch/x86/mm/init.c                 |   3 +
+ arch/x86/mm/mem_encrypt.c          |  10 ++
+ arch/x86/mm/mem_encrypt_identity.c | 232 +++++++++++++++++++++++++++----------
+ 7 files changed, 240 insertions(+), 64 deletions(-)
+
+-- 
+2.7.4
 
