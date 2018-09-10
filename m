@@ -2,106 +2,86 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.3 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 840DAC43143
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 18:02:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04DD2C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 18:02:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 431B120866
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 18:02:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dell.com header.i=@dell.com header.b="fXaqM1dB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 431B120866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=dell.com
+	by mail.kernel.org (Postfix) with ESMTP id C377420866
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 18:02:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C377420866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728159AbeIJW52 (ORCPT
+        id S1728268AbeIJW5m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 18:57:28 -0400
-Received: from esa6.dell-outbound.iphmx.com ([68.232.149.229]:64654 "EHLO
-        esa6.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726709AbeIJW52 (ORCPT
+        Mon, 10 Sep 2018 18:57:42 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:45788 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726709AbeIJW5m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 18:57:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=dell.com; i=@dell.com; q=dns/txt; s=smtpout;
-  t=1536602532; x=1568138532;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references;
-  bh=g7d3HqtijHvSG1qn2XepmMw02he+0ZSar6vu1PYZCmc=;
-  b=fXaqM1dBvLD5krD9+xrvN7p9Ks2rFatyZnD5oXBoQImZJYanIG/rlArK
-   Ub/P/843zyXQKTSc50kWP/c63rKcwbtvETdxrtGrdJbthPon0PebJtn3R
-   NDc41Qc6kUqehbiirXuh5OSKcppHlELKjm/a103G5O5u1ILdk4X95rA7I
-   c=;
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2GqAADusJZbhyWd50NcHQEBBQELAYU?=
- =?us-ascii?q?yKIwFX4tAmEGBeguEbAKDeyE0GAECAQECAQECAQECEAEBAQoLCQgpL4I1JAG?=
- =?us-ascii?q?CYAIBAxIVUhA/ElcGARIign+CAppaiVcBAQGBaDOKAYZPhBaBWD+BEo1oAo4?=
- =?us-ascii?q?0jVQHAoIEBI16AhWOcJNmAgQCBAUCFIFCgg5wgzyCM44+UY4WAQE?=
-X-IPAS-Result: =?us-ascii?q?A2GqAADusJZbhyWd50NcHQEBBQELAYUyKIwFX4tAmEGBe?=
- =?us-ascii?q?guEbAKDeyE0GAECAQECAQECAQECEAEBAQoLCQgpL4I1JAGCYAIBAxIVUhA/E?=
- =?us-ascii?q?lcGARIign+CAppaiVcBAQGBaDOKAYZPhBaBWD+BEo1oAo40jVQHAoIEBI16A?=
- =?us-ascii?q?hWOcJNmAgQCBAUCFIFCgg5wgzyCM44+UY4WAQE?=
-Received: from mx0b-00154901.pphosted.com ([67.231.157.37])
-  by esa6.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 10 Sep 2018 13:02:11 -0500
-Received: from pps.filterd (m0144104.ppops.net [127.0.0.1])
-        by mx0b-00154901.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8AHwmEi107550;
-        Mon, 10 Sep 2018 14:02:10 -0400
-Received: from esa2.dell-outbound2.iphmx.com (esa2.dell-outbound2.iphmx.com [68.232.153.202])
-        by mx0b-00154901.pphosted.com with ESMTP id 2mdsbj1pky-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 10 Sep 2018 14:02:09 -0400
-Received: from ausc60pc101.us.dell.com ([143.166.85.206])
-  by esa2.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 11 Sep 2018 00:02:07 +0600
-X-LoopCount0: from 10.173.37.27
-X-IronPort-AV: E=Sophos;i="5.53,356,1531803600"; 
-   d="scan'208";a="1298566027"
-From:   Mario Limonciello <mario.limonciello@dell.com>
-To:     dvhart@infradead.org, Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        platform-driver-x86@vger.kernel.org,
-        Mario Limonciello <mario.limonciello@dell.com>,
-        stable@vger.kernel.org
-Subject: [PATCH 2/2] platform/x86: alienware-wmi: Correct a memory leak
-Date:   Mon, 10 Sep 2018 13:01:53 -0500
-Message-Id: <1536602513-13861-2-git-send-email-mario.limonciello@dell.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1536602513-13861-1-git-send-email-mario.limonciello@dell.com>
-References: <1536602513-13861-1-git-send-email-mario.limonciello@dell.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-10_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=994 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809100178
+        Mon, 10 Sep 2018 18:57:42 -0400
+Received: by mail-oi0-f66.google.com with SMTP id t68-v6so41879641oie.12;
+        Mon, 10 Sep 2018 11:02:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=jDtueIPbWPR76ivf/5H0WcfneS2KAnjV4dOpmmHUQmc=;
+        b=A7I+Q3xwXbwqbxzwXUuxtAzISUXHh4adjxmKJZCBP/2fTmHcsNjDFiNpyh9hh4C+LR
+         jR1wDRuFFqKoaQnd9YZpEfnqYWEkSPTM4wid4YC242M+i4S2ZIHB3Pn0QZ+SZIrWcvxJ
+         d16hwVXJbbxrKhMncDq/+ij8dtpUnhxU3BQGwfkvoFssfvYasenLo+VY1xUu00D1xg7P
+         kbJUY5zJ401OfKZpqI6wRyD0It1zUqR3NppSQ6FrTXBiNOfzuCA+JhF8XwQijLOFr/YD
+         XQ8iZ5t7eJqCEEvs2iNA4jQS0nywlpYIngyzr6DGqG6ajcPcP36Z3m9JeCrwBKj9nq/7
+         pN2g==
+X-Gm-Message-State: APzg51CHMDX6v3X0xE5JHsf2NHijwFsCHpP6mDtpuMK9zk2EVpdNDTuE
+        DIVkdd2ZK5+HRh7+CyOmog==
+X-Google-Smtp-Source: ANB0VdYBYCdBSLr/cqi59kH09/oJmWQeIagk9aaL6I5HU9wuCZt0SxIIvLpSKZvB6Dd7KQnlMgu/0A==
+X-Received: by 2002:aca:3c02:: with SMTP id j2-v6mr23608102oia.50.1536602545291;
+        Mon, 10 Sep 2018 11:02:25 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id w84-v6sm12833923oie.40.2018.09.10.11.02.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 10 Sep 2018 11:02:24 -0700 (PDT)
+Date:   Mon, 10 Sep 2018 13:02:24 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc:     joro@8bytes.org, robh+dt@kernel.org, robin.murphy@arm.com,
+        will.deacon@arm.com, iommu@lists.linux-foundation.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        alex.williamson@redhat.com, mark.rutland@arm.com,
+        rjw@rjwysocki.net, robdclark@gmail.com, linux-pm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, sboyd@kernel.org,
+        tfiga@chromium.org, jcrouse@codeaurora.org,
+        sricharan@codeaurora.org, m.szyprowski@samsung.com,
+        architt@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        Vivek Gautam <vivek.gautam@codeaurora.org>
+Subject: Re: [PATCH v16 4/5] dt-bindings: arm-smmu: Add bindings for
+ qcom,smmu-v2
+Message-ID: <20180910180224.GA22566@bogus>
+References: <20180830144541.17740-1-vivek.gautam@codeaurora.org>
+ <20180830144541.17740-5-vivek.gautam@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180830144541.17740-5-vivek.gautam@codeaurora.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-An ACPI buffer that was allocated was not being freed after use.
+On Thu, 30 Aug 2018 20:15:40 +0530, Vivek Gautam wrote:
+> Add bindings doc for Qcom's smmu-v2 implementation.
+> 
+> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
+> Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+>  .../devicetree/bindings/iommu/arm,smmu.txt         | 39 ++++++++++++++++++++++
+>  1 file changed, 39 insertions(+)
+> 
 
-Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
-Cc: stable@vger.kernel.org
----
- drivers/platform/x86/alienware-wmi.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/platform/x86/alienware-wmi.c b/drivers/platform/x86/alienware-wmi.c
-index d975462..f10af5c 100644
---- a/drivers/platform/x86/alienware-wmi.c
-+++ b/drivers/platform/x86/alienware-wmi.c
-@@ -536,6 +536,7 @@ static acpi_status alienware_wmax_command(struct wmax_basic_args *in_args,
- 		if (obj && obj->type == ACPI_TYPE_INTEGER)
- 			*out_data = (u32) obj->integer.value;
- 	}
-+	kfree(output.pointer);
- 	return status;
- 
- }
--- 
-2.7.4
-
+Reviewed-by: Rob Herring <robh@kernel.org>
