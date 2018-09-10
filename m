@@ -3,107 +3,187 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0C72C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 12:08:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3D10C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 12:09:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49BD120866
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 12:08:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49BD120866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
+	by mail.kernel.org (Postfix) with ESMTP id 5F47020866
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 12:09:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F47020866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728330AbeIJRC2 (ORCPT
+        id S1728411AbeIJRDU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 13:02:28 -0400
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:56512 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727649AbeIJRC1 (ORCPT
+        Mon, 10 Sep 2018 13:03:20 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:41024 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727649AbeIJRDU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 13:02:27 -0400
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8AC5JXi007805;
-        Mon, 10 Sep 2018 07:08:22 -0500
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=rf@opensource.cirrus.com
-Received: from mail4.cirrus.com ([87.246.98.35])
-        by mx0b-001ae601.pphosted.com with ESMTP id 2mcaukabgt-1;
-        Mon, 10 Sep 2018 07:08:22 -0500
-Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail4.cirrus.com (Postfix) with ESMTP id 086AF611C8B6;
-        Mon, 10 Sep 2018 07:10:36 -0500 (CDT)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Mon, 10 Sep 2018
- 13:08:21 +0100
-Received: from [198.90.251.121] (edi-sw-dsktp006.ad.cirrus.com
- [198.90.251.121])      by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id
- w8AC8KuE005118;        Mon, 10 Sep 2018 13:08:21 +0100
-Subject: Re: [PATCH v10 2/2] irqchip: Add driver for Cirrus Logic Madera
- codecs
-To:     Lee Jones <lee.jones@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-CC:     Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        <patches@opensource.cirrus.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Kate Stewart" <kstewart@linuxfoundation.org>
-References: <20180828130934.18135-1-rf@opensource.cirrus.com>
- <20180828130934.18135-2-rf@opensource.cirrus.com>
- <alpine.DEB.2.21.1808301154040.1210@nanos.tec.linutronix.de>
- <4aa5941b-547d-7218-1b8f-4cd2a01a4fa5@opensource.cirrus.com>
- <alpine.DEB.2.21.1808301349380.1210@nanos.tec.linutronix.de>
- <20180910113333.GL28860@dell>
-From:   Richard Fitzgerald <rf@opensource.cirrus.com>
-Message-ID: <1eb18ed1-3c05-cec2-ec8c-0dfc512b366a@opensource.cirrus.com>
-Date:   Mon, 10 Sep 2018 13:08:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 10 Sep 2018 13:03:20 -0400
+Received: by mail-oi0-f67.google.com with SMTP id k12-v6so39573342oiw.8;
+        Mon, 10 Sep 2018 05:09:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mc26UuR5dKmFOfDl0ahG1ant/pyws8OvJC2+hJ4ZzQQ=;
+        b=a5UW4kffEHloCN9BbhqGpH00j0SPJ8UJ9yGSRvfNu0QoeavvHIgg45KxudU/jG8GiR
+         G8gHzHqwHN/1Z0T5DbUsJRmQ4HjIBDPZjnzHmJIYTYcqzHPFOM/nL4U2GZNTqIR9BuxC
+         HXEnXJuyi6rRN4HDeFVHlMSh1lm6flHYyDI3unTSOiE7kOIhNXq06vsNMUTebNUIAhiz
+         hTXbHPBQeiMp7ErcXmhHkXqbCrztImMYdX8IkFvnrkbbiAbBnF3w72QbGZUVgb2rnfZW
+         c508m2Lp1Ga1G68QZ3EwQ++Q+29fTf9x9XZb6tsj7Fa4bKDeABf/bAsXdmPVjtXrLoaq
+         wlqg==
+X-Gm-Message-State: APzg51AlGdva8HDdDCQDk8q9Yasb/vCwBgJViX1q2CnEx0e+Cez9kw6q
+        BrLMDexyvUARAZOi2bfcqifwRdkfxV+lVIchrec=
+X-Google-Smtp-Source: ANB0VdZeuNfRr474GbcvjKjeT0c+fkKarTAIEi61O4LfOJOqJnQ1RZu+F2Mg9SS0bQnIj4AO7+jJg3H/ZeYCyqBfj5U=
+X-Received: by 2002:aca:3ad4:: with SMTP id h203-v6mr20456865oia.294.1536581373592;
+ Mon, 10 Sep 2018 05:09:33 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180910113333.GL28860@dell>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=599 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
- definitions=main-1809100125
+References: <20180907185414.2630-1-paul.burton@mips.com> <20180907185414.2630-2-paul.burton@mips.com>
+In-Reply-To: <20180907185414.2630-2-paul.burton@mips.com>
+From:   Mathieu Malaterre <malat@debian.org>
+Date:   Mon, 10 Sep 2018 14:09:21 +0200
+Message-ID: <CA+7wUsx8gmDNh_kYAxx=PUR2gNJFRCLNYq=hZE79jT=yjNrj+w@mail.gmail.com>
+Subject: Re: [PATCH 2/2] MIPS: Fix CONFIG_CMDLINE handling
+To:     Paul Burton <paul.burton@mips.com>
+Cc:     Linux-MIPS <linux-mips@linux-mips.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Jaedon Shin <jaedon.shin@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "# v4 . 11" <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/09/18 12:33, Lee Jones wrote:
-> On Thu, 30 Aug 2018, Thomas Gleixner wrote:
-> 
->> On Thu, 30 Aug 2018, Richard Fitzgerald wrote:
->>> On 30/08/18 11:31, Thomas Gleixner wrote:
->>>> On Tue, 28 Aug 2018, Richard Fitzgerald wrote:
->>>>> @@ -0,0 +1,244 @@
->>>>> +// SPDX-License-Identifier: GPL-2.0
->>>>> +/*
->>>>> + * Interrupt support for Cirrus Logic Madera codecs
->>>>> + *
->>>>> + * Copyright (C) 2015-2018 Cirrus Logic
->>>>> + *
->>>>> + * This program is free software; you can redistribute it and/or modify
->>>>> + * it under the terms of the GNU General Public License as published by
->>>>> the
->>>>> + * Free Software Foundation; version 2.
->>>>
->>>> You have the SPDX identifier above, which makes this boilerplate
->>>> superfluous.
->>>>
->>>
->>> Our legal people want it left here.
->>> They are ok with the SPDX reference, but they want to keep an
->>> explicit statement of the license that was intended.
->>
->> The SPDX identifier is an explicit statement. Sigh...
-> 
-> Richard, could you please try to re-engage with your legal team and
-> explain that the SPDX identifier replaces the licence statement.
-> 
+On Fri, Sep 7, 2018 at 8:55 PM Paul Burton <paul.burton@mips.com> wrote:
+>
+> Commit 8ce355cf2e38 ("MIPS: Setup boot_command_line before
+> plat_mem_setup") fixed a problem for systems which have
+> CONFIG_CMDLINE_BOOL=y & use a DT with a chosen node that has either no
+> bootargs property or an empty one. In this configuration
+> early_init_dt_scan_chosen() copies CONFIG_CMDLINE into
+> boot_command_line, but the MIPS code doesn't know this so it appends
+> CONFIG_CMDLINE (via builtin_cmdline) to boot_command_line again. The
+> result is that boot_command_line contains the arguments from
+> CONFIG_CMDLINE twice.
+>
+> That commit took the approach of simply setting up boot_command_line
+> from the MIPS code before early_init_dt_scan_chosen() runs, causing it
+> not to copy CONFIG_CMDLINE to boot_command_line if a chosen node with no
+> bootargs property is found.
+>
+> Unfortunately this is problematic for systems which do have a non-empty
+> bootargs property & CONFIG_CMDLINE_BOOL=y. There
+> early_init_dt_scan_chosen() will overwrite boot_command_line with the
+> arguments from DT, which means we lose those from CONFIG_CMDLINE
+> entirely. This breaks CONFIG_MIPS_CMDLINE_DTB_EXTEND. If we have
+> CONFIG_MIPS_CMDLINE_FROM_BOOTLOADER or
+> CONFIG_MIPS_CMDLINE_BUILTIN_EXTEND selected and the DT has a bootargs
+> property which we should ignore, it will instead be honoured breaking
+> those configurations too.
+>
+> Fix this by reverting commit 8ce355cf2e38 ("MIPS: Setup
+> boot_command_line before plat_mem_setup") to restore the former
+> behaviour, and fixing the CONFIG_CMDLINE duplication issue by instead
+> providing a no-op implementation of early_init_dt_fixup_cmdline_arch()
+> to prevent early_init_dt_scan_chosen() from using CONFIG_CMDLINE.
 
-I'll ask.
+Sorry I cannot test this patch ATM. I've simply CCed Paul C. just in case.
+
+> Signed-off-by: Paul Burton <paul.burton@mips.com>
+> Fixes: 8ce355cf2e38 ("MIPS: Setup boot_command_line before plat_mem_setup")
+> References: https://patchwork.linux-mips.org/patch/18804/
+> Cc: Frank Rowand <frowand.list@gmail.com>
+> Cc: Jaedon Shin <jaedon.shin@gmail.com>
+> Cc: Mathieu Malaterre <malat@debian.org>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-mips@linux-mips.org
+> Cc: stable@vger.kernel.org # v4.16+
+> ---
+>  arch/mips/kernel/setup.c | 47 +++++++++++++++++++++++-----------------
+>  1 file changed, 27 insertions(+), 20 deletions(-)
+>
+> diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
+> index c71d1eb7da59..7f755bc8a91c 100644
+> --- a/arch/mips/kernel/setup.c
+> +++ b/arch/mips/kernel/setup.c
+> @@ -841,11 +841,38 @@ static void __init request_crashkernel(struct resource *res)
+>  #define BUILTIN_EXTEND_WITH_PROM       \
+>         IS_ENABLED(CONFIG_MIPS_CMDLINE_BUILTIN_EXTEND)
+>
+> +void __init early_init_dt_fixup_cmdline_arch(char *data)
+> +{
+> +       /*
+> +        * Do nothing - arch_mem_init() will assemble our command line below,
+> +        * for both the DT & non-DT cases.
+> +        */
+> +}
+> +
+>  static void __init arch_mem_init(char **cmdline_p)
+>  {
+>         struct memblock_region *reg;
+>         extern void plat_mem_setup(void);
+>
+> +       /* call board setup routine */
+> +       plat_mem_setup();
+> +
+> +       /*
+> +        * Make sure all kernel memory is in the maps.  The "UP" and
+> +        * "DOWN" are opposite for initdata since if it crosses over
+> +        * into another memory section you don't want that to be
+> +        * freed when the initdata is freed.
+> +        */
+> +       arch_mem_addpart(PFN_DOWN(__pa_symbol(&_text)) << PAGE_SHIFT,
+> +                        PFN_UP(__pa_symbol(&_edata)) << PAGE_SHIFT,
+> +                        BOOT_MEM_RAM);
+> +       arch_mem_addpart(PFN_UP(__pa_symbol(&__init_begin)) << PAGE_SHIFT,
+> +                        PFN_DOWN(__pa_symbol(&__init_end)) << PAGE_SHIFT,
+> +                        BOOT_MEM_INIT_RAM);
+> +
+> +       pr_info("Determined physical RAM map:\n");
+> +       print_memory_map();
+> +
+>  #if defined(CONFIG_CMDLINE_BOOL) && defined(CONFIG_CMDLINE_OVERRIDE)
+>         strlcpy(boot_command_line, builtin_cmdline, COMMAND_LINE_SIZE);
+>  #else
+> @@ -873,26 +900,6 @@ static void __init arch_mem_init(char **cmdline_p)
+>         }
+>  #endif
+>  #endif
+> -
+> -       /* call board setup routine */
+> -       plat_mem_setup();
+> -
+> -       /*
+> -        * Make sure all kernel memory is in the maps.  The "UP" and
+> -        * "DOWN" are opposite for initdata since if it crosses over
+> -        * into another memory section you don't want that to be
+> -        * freed when the initdata is freed.
+> -        */
+> -       arch_mem_addpart(PFN_DOWN(__pa_symbol(&_text)) << PAGE_SHIFT,
+> -                        PFN_UP(__pa_symbol(&_edata)) << PAGE_SHIFT,
+> -                        BOOT_MEM_RAM);
+> -       arch_mem_addpart(PFN_UP(__pa_symbol(&__init_begin)) << PAGE_SHIFT,
+> -                        PFN_DOWN(__pa_symbol(&__init_end)) << PAGE_SHIFT,
+> -                        BOOT_MEM_INIT_RAM);
+> -
+> -       pr_info("Determined physical RAM map:\n");
+> -       print_memory_map();
+> -
+>         strlcpy(command_line, boot_command_line, COMMAND_LINE_SIZE);
+>
+>         *cmdline_p = command_line;
+> --
+> 2.18.0
+>
