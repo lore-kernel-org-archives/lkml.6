@@ -2,109 +2,144 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B416C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:33:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2E95C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:35:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24DD320865
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:33:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="K2FsWy2z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24DD320865
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 8A8FF20865
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:35:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A8FF20865
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728057AbeIJO0x (ORCPT
+        id S1727828AbeIJO2N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 10:26:53 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:33202 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726148AbeIJO0w (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 10:26:52 -0400
-Received: by mail-lf1-f67.google.com with SMTP id m26-v6so16881075lfb.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 02:33:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=axeLWSghoDFQLpc11pi/AURy7Pq9cAxxdpbSE6p5YWM=;
-        b=K2FsWy2z9gO6UMzfzCCXP4gb2RhIeAPw20BevoxqnjK5/jgPs1UNULdQIZpApz5s8Q
-         8BY8vrE0+Ds++ibL5fwS74TqCZqBYUIHRUN68GHUq/K83ahPk5F2uBz7bnXocv4TXPsO
-         5e9wpWM629MIMGOIyO6pupDnfgEC4paImiBbA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=axeLWSghoDFQLpc11pi/AURy7Pq9cAxxdpbSE6p5YWM=;
-        b=BBV7+63mCpA93CC5sJKyAvPN5KWSsESBpmwKCCHPwVQiT/V/nuimKPFo557at9Q4T4
-         Z9wSCVHQse/yfpnu/xcU9B6sIc9MumegreL6JqbmhDUMSuuATwkHzOI3XMsY2XaPQFD4
-         +KKGnnOrglMjQnpw+bZAbMuLC/pQCH2wio0/y9kQNmuCjhCow3luDAZpeOBuRB/1fTgm
-         /1lFwzBWlaWWv8++W1ZcWVtB4zcdR2w8PwAIGkQNR9viYvNabrBu+55l9FhehNNSsEI/
-         haRJlCf6RZ4eTR9ke7i2b4Wkv2q9/Q0hOl7N6d3Nf7KGg6awUmrOHAZEByDDIgZ6dRrs
-         KT2g==
-X-Gm-Message-State: APzg51AeUDGq8Tmurh8Ef9J7FsKRgMfjiELQsQ0AfmRSy4LPnGOqn6Mj
-        VbPYVHuCWjz1xfdG+K1Q1VDuqD8YdO2qs/VeXu9Byw==
-X-Google-Smtp-Source: ANB0VdZxmlDjJYnNE7kh49/IzB5ekSMjSosFeyXjPaoiVhfiIBIHZqNN0btL8M78v2ka0CqbTqfd2VbNN+dTiKumO+4=
-X-Received: by 2002:a19:f802:: with SMTP id a2-v6mr11497817lff.33.1536572022681;
- Mon, 10 Sep 2018 02:33:42 -0700 (PDT)
+        Mon, 10 Sep 2018 10:28:13 -0400
+Received: from mga03.intel.com ([134.134.136.65]:29368 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726148AbeIJO2N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 10:28:13 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2018 02:35:04 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,355,1531810800"; 
+   d="scan'208";a="79269878"
+Received: from shbuild888.sh.intel.com (HELO localhost) ([10.239.146.239])
+  by FMSMGA003.fm.intel.com with ESMTP; 10 Sep 2018 02:34:51 -0700
+Date:   Mon, 10 Sep 2018 17:39:38 +0800
+From:   Feng Tang <feng.tang@intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        Ingo Molnar <mingo@elte.hu>,
+        "H . Peter Anvin" <hpa@linux.intel.com>,
+        Yinghai Lu <yinghai@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH] x86, mm: Reserver some memory for bootmem allocator for
+ NO_BOOTMEM
+Message-ID: <20180910093938.ka732apzy3d3a5ip@shbuild888>
+References: <20180830124915.GH2656@dhcp22.suse.cz>
+ <20180830125909.uq3e76akcmep6j2u@shbuild888>
+ <alpine.DEB.2.21.1808301504300.1210@nanos.tec.linutronix.de>
+ <20180830131920.w2jqjvlkpfb4ejb2@shbuild888>
+ <alpine.DEB.2.21.1808301523510.1210@nanos.tec.linutronix.de>
+ <20180831061519.3zbxsjs4rd6mmsuo@shbuild888>
+ <alpine.DEB.2.21.1808311328260.2208@nanos.tec.linutronix.de>
+ <20180831133659.pkmscqpudjnkujbg@shbuild888>
+ <20180907081716.bxw3hmcl6w7gqvax@shbuild888>
+ <alpine.DEB.2.21.1809071250240.1402@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Received: by 2002:a19:118f:0:0:0:0:0 with HTTP; Mon, 10 Sep 2018 02:33:02
- -0700 (PDT)
-In-Reply-To: <20180910092009.y2p5n5owozaz6etw@holly.lan>
-References: <CAHqM-Qgy7zPjrnNm0Xdyz_F_BYbSPgDfQrkv0tGv_rB1G7tSXg@mail.gmail.com>
- <CAHqM-QgH3d3Fz=P-_Gj_ZJODK1YOxT49G=qhzAnM=g2HAYqoow@mail.gmail.com> <20180910092009.y2p5n5owozaz6etw@holly.lan>
-From:   Victor Chong <victor.chong@linaro.org>
-Date:   Mon, 10 Sep 2018 18:33:02 +0900
-Message-ID: <CAHqM-QgaweVSYPqqKwdwZQdqN6YT6gWpM5XdTZ7_KiSjPgrD+w@mail.gmail.com>
-Subject: Re: Fwd: [PATCH] tee: optee: log message if dynamic shm is enabled
-To:     Daniel Thompson <daniel.thompson@linaro.org>
-Cc:     Jens Wiklander <jens.wiklander@linaro.org>,
-        tee-dev@lists.linaro.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1809071250240.1402@nanos.tec.linutronix.de>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 10, 2018 at 6:20 PM, Daniel Thompson
-<daniel.thompson@linaro.org> wrote:
-> On Mon, Sep 10, 2018 at 05:57:28PM +0900, Victor Chong wrote:
->
-> This (empty) patch description seems unusually terse! Surely there
-> should be some clues in the description about why this messages
-> deserves user/dev/admin attention...
+On Fri, Sep 07, 2018 at 12:52:17PM +0200, Thomas Gleixner wrote:
+> On Fri, 7 Sep 2018, Feng Tang wrote:
+> > On Fri, Aug 31, 2018 at 09:36:59PM +0800, Feng Tang wrote:
+> > > Any sugestion? I can only have patch like this:
+> > 
+> > Could you review this patch, as at this time window there is no usable memory
+> > block or other memory allocators that I know, so I follow the exisitng static
+> > fixmap page table code and add one more.
+> 
+> You really want to add a proper sanity check for this. The static stuff has
+> to cover the fixmap. Just making it work for this particular case is sloppy
+> at best as the next larger change of the fixmap will just bring the problem
+> back.
+Yes, agree.
 
-Ok. Will add description and send out v2.
+Since the issue happens very early before any serial console, I can only think
+of a build time check.
 
-Thanks
+Thanks,
+Feng
 
->
->
->> Suggested-by: Jerome Forissier <jerome.forissier@linaro.org>
->> Signed-off-by: Victor Chong <victor.chong@linaro.org>
->> Reviewed-by: Jerome Forissier <jerome.forissier@linaro.org>
->> ---
->>  drivers/tee/optee/core.c | 3 +++
->>  1 file changed, 3 insertions(+)
->>
->> diff --git a/drivers/tee/optee/core.c b/drivers/tee/optee/core.c
->> index e1aafe842d66..cca5c091e55a 100644
->> --- a/drivers/tee/optee/core.c
->> +++ b/drivers/tee/optee/core.c
->> @@ -631,6 +631,9 @@ static struct optee *optee_probe(struct device_node *np)
->>
->>         optee_enable_shm_cache(optee);
->>
->> +       if (optee->sec_caps & OPTEE_SMC_SEC_CAP_DYNAMIC_SHM)
->> +               pr_info("dynamic shared memory is enabled\n");
->> +
->>         pr_info("initialized driver\n");
->>         return optee;
->>  err:
->> --
->> 2.17.1
+---
+ arch/x86/kernel/head_64.S |  6 +++++-
+ arch/x86/mm/pgtable.c     | 13 +++++++++++++
+ 2 files changed, 18 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
+index 15ebc2fc166e..3a1d33b43c29 100644
+--- a/arch/x86/kernel/head_64.S
++++ b/arch/x86/kernel/head_64.S
+@@ -448,11 +448,15 @@ NEXT_PAGE(level2_fixmap_pgt)
+ 	.fill	506,8,0
+ 	.quad	level1_fixmap_pgt - __START_KERNEL_map + _PAGE_TABLE_NOENC
+ 	/* 8MB reserved for vsyscalls + a 2MB hole = 4 + 1 entries */
+-	.fill	5,8,0
++	.quad	level1_fixmap_pgt1 - __START_KERNEL_map + _PAGE_TABLE_NOENC
++	.fill	4,8,0
+ 
+ NEXT_PAGE(level1_fixmap_pgt)
+ 	.fill	512,8,0
+ 
++NEXT_PAGE(level1_fixmap_pgt1)
++	.fill	512,8,0
++
+ #undef PMDS
+ 
+ 	.data
+diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
+index e848a4811785..fc172551048a 100644
+--- a/arch/x86/mm/pgtable.c
++++ b/arch/x86/mm/pgtable.c
+@@ -637,6 +637,19 @@ void __native_set_fixmap(enum fixed_addresses idx, pte_t pte)
+ {
+ 	unsigned long address = __fix_to_virt(idx);
+ 
++#ifdef CONFIG_X86_64
++	/*
++	 * In arch/x86/kernel/head_64.S, the static page table
++	 * has been setup for 4M space [-12M, -8M]
++	 *	0xFFFFFFFFFF400000 ~ 0xFFFFFFFFFF7FFFFF
++	 * Add a sanity check whether fixed_address crosses
++	 * the boundary.
++	 */
++	#define FIXMAP_STATIC_PGTABLE_START	0xFFFFFFFFFF400000
++	BUILD_BUG_ON(__fix_to_virt(__end_of_permanent_fixed_addresses)
++			< FIXMAP_STATIC_PGTABLE_START);
++#endif
++
+ 	if (idx >= __end_of_fixed_addresses) {
+ 		BUG();
+ 		return;
+-- 
+2.14.1
+
+> 
+> Thanks,
+> 
+> 	tglx
