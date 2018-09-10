@@ -3,112 +3,122 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9FC7C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 04:01:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69C78C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 04:06:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71DE32086B
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 04:01:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0181A20866
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 04:06:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="y86nQ739"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71DE32086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ZYlez+Ns"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0181A20866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727002AbeIJIxH (ORCPT
+        id S1726740AbeIJI6U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 04:53:07 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:37128 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726083AbeIJIxH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 04:53:07 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w8A40mwv039443;
-        Sun, 9 Sep 2018 23:00:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1536552048;
-        bh=il9eeY8kaCYfB5txv5IJorCAErFzWSric+0nlahQic8=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=y86nQ739NOHbhC7bsG4+/G1pzAMKdjyebaSSQW2G/lSYWeALed6CUciOYFgaY4PnR
-         oRW0C8cDn9YwFtbDvwgN6J8yWBAp+Joi/NUjog8rs1qZOJWmgIjw+F1pd875bNe8Hu
-         A8TlTZHFYADQwsWcUvGmByTVVL0H5T3frd6sXncc=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8A40mbq005106;
-        Sun, 9 Sep 2018 23:00:48 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Sun, 9 Sep
- 2018 23:00:47 -0500
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Sun, 9 Sep 2018 23:00:47 -0500
-Received: from [172.24.190.89] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8A40jlD001123;
-        Sun, 9 Sep 2018 23:00:45 -0500
-Subject: Re: [PATCH] serial: 8250_omap: Make 8250_omap driver driver depend on
- ARCH_K3
-To:     Nishanth Menon <nm@ti.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Sekhar Nori <nsekhar@ti.com>
-References: <20180828010302.2751-1-nm@ti.com>
-From:   Vignesh R <vigneshr@ti.com>
-Message-ID: <9bc2eab8-af4c-1a90-50da-533087b0314b@ti.com>
-Date:   Mon, 10 Sep 2018 09:31:40 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 10 Sep 2018 04:58:20 -0400
+Received: from ozlabs.org ([203.11.71.1]:35751 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726083AbeIJI6U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 04:58:20 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 427vc95vW9z9sBs;
+        Mon, 10 Sep 2018 14:06:17 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1536552378;
+        bh=bs6/jl4+5WTX3y4bN/CDimYZE3YzD3LcyDXQwyp3EkE=;
+        h=Date:From:To:Cc:Subject:From;
+        b=ZYlez+NsTD/bWbIa6cZOCSrlCJAln/gHe8KV7xzd4GRSTd+m+wHs1+0gQmMArVheW
+         UIxL8NEySltdVMxmo0GkLVZjDQyt9vXMb/AGxJE1EKCWWM/Yx2eOWqRHznpUV+2Ehx
+         l7wzT9MKcPWl5dobaaS8ja8U5G4zELSbO5kX5HmPZRiFq7oKybU2TzOXRSXjjoLUhj
+         NfTLryp5lUTvPOZyPb44fArBgucOsDI8niAJMRB0sIA3nrTHZ3CFIUz+gJgyxnsEFB
+         R4cNNgZSti5jZl3kKyCQZu7aWCSwy4t3ANFh67eCFim2zj5TN2PurGeEX9YYye1DLi
+         +gBIrwOb6VYAQ==
+Date:   Mon, 10 Sep 2018 14:06:17 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>
+Subject: linux-next: manual merge of the akpm-current tree with the
+ dma-mapping tree
+Message-ID: <20180910140617.5bf45eb5@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20180828010302.2751-1-nm@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/qjT27Ffv+XKr0c2p/jocOfQ"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Sig_/qjT27Ffv+XKr0c2p/jocOfQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On Tuesday 28 August 2018 06:33 AM, Nishanth Menon wrote:
-> From: Lokesh Vutla <lokeshvutla@ti.com>
-> 
-> Allow 8250 omap serial driver to be used for K3 platforms.
-> 
-> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
-> Signed-off-by: Nishanth Menon <nm@ti.com>
-> ---
-> 
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
-Acked-by: Vignesh R <vigneshr@ti.com>
+  arch/hexagon/Kconfig
 
-> Now that we have the device tree support merged integrated AND we have ARCH_K3,
-> Lets enable the 820 OMAP Driver to build for ARCH_K3 and make it operational.
-> 
->  drivers/tty/serial/8250/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/tty/serial/8250/Kconfig b/drivers/tty/serial/8250/Kconfig
-> index f005eaf8bc57..15c2c5463835 100644
-> --- a/drivers/tty/serial/8250/Kconfig
-> +++ b/drivers/tty/serial/8250/Kconfig
-> @@ -375,7 +375,7 @@ config SERIAL_8250_RT288X
->  
->  config SERIAL_8250_OMAP
->  	tristate "Support for OMAP internal UART (8250 based driver)"
-> -	depends on SERIAL_8250 && ARCH_OMAP2PLUS
-> +	depends on SERIAL_8250 && (ARCH_OMAP2PLUS || ARCH_K3)
->  	help
->  	  If you have a machine based on an Texas Instruments OMAP CPU you
->  	  can enable its onboard serial ports by enabling this option.
-> 
+between commit:
 
--- 
-Regards
-Vignesh
+  e0a9317d9004 ("hexagon: use generic dma_noncoherent_ops")
+
+from the dma-mapping tree and commit:
+
+  365c1f4922a4 ("hexagon: switch to NO_BOOTMEM")
+
+from the akpm-current tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/hexagon/Kconfig
+index 6cee842a9b44,f7934998913a..000000000000
+--- a/arch/hexagon/Kconfig
++++ b/arch/hexagon/Kconfig
+@@@ -30,7 -29,9 +30,10 @@@ config HEXAGO
+  	select GENERIC_CLOCKEVENTS_BROADCAST
+  	select MODULES_USE_ELF_RELA
+  	select GENERIC_CPU_DEVICES
+ +	select DMA_NONCOHERENT_OPS
++ 	select HAVE_MEMBLOCK
++ 	select ARCH_DISCARD_MEMBLOCK
++ 	select NO_BOOTMEM
+  	---help---
+  	  Qualcomm Hexagon is a processor architecture designed for high
+  	  performance and low power across a wide variety of applications.
+
+--Sig_/qjT27Ffv+XKr0c2p/jocOfQ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluV7bkACgkQAVBC80lX
+0GxBGAf9H2hBvda9VDsbzlZmsPxQKhQchweVcxp/bUmOjzBX409ijF8OaW6UD1GZ
+1C/pfh88O26qwdXMKl0xNx0vbXRMDVGY4eUY3XV/erHifas5k5jvtNCinUZzHcgB
+CHofD+i3Hs43gjAfh033rfzrZQC9zd8ApOE6cDVYqKlf9PWGl2NyIdirJSUSMhFG
+ZgKlLl1GBzsv3/1fT1Fy+yfkt1D4mrmPt4p6clpm8DaiKfSlW0uCmZ51/61YsPgk
+MbEfs5HEw9tVkCr4EbKcFlpgZ3hGP1G0sLrRMixwjdq6MIVb/LOLZINWsp++Xa6K
+FOOpxjzQ9TywMGVQO/WjCYoqKNIu6Q==
+=IH7B
+-----END PGP SIGNATURE-----
+
+--Sig_/qjT27Ffv+XKr0c2p/jocOfQ--
