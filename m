@@ -6,49 +6,49 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C44DBC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:26:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 252D9C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:26:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EEFC20866
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:26:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6D252086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 06:26:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="aFMwXSGE";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="AF1sa0Hd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EEFC20866
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="e0jTOUmC";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cl5agUCZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6D252086B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727473AbeIJLSj (ORCPT
+        id S1727673AbeIJLSo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 07:18:39 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:38854 "EHLO
+        Mon, 10 Sep 2018 07:18:44 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:39018 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726405AbeIJLSj (ORCPT
+        with ESMTP id S1726405AbeIJLSn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 07:18:39 -0400
+        Mon, 10 Sep 2018 07:18:43 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 983A46053B; Mon, 10 Sep 2018 06:26:12 +0000 (UTC)
+        id B6DCF6086B; Mon, 10 Sep 2018 06:26:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536560772;
-        bh=i4lACEsQgF5s2kirjXBD2e/PQzU10q26/V7kKuu1hRs=;
-        h=From:To:Cc:Subject:Date:From;
-        b=aFMwXSGEcyrbZoQlGNYd5C5JXSnDIPloNbwME4j5u7pEWmIFNrwdG6+S7L5gW60ew
-         F7jXW9LA0reIyaor1WmKwRImJyTytPn94RNHCu+QI1qxhHWls1oi9lyS32pZaKOS/9
-         3IpbJzLgeDru//lmLS4yU+E6OMP1lov1ZHfJmlH8=
+        s=default; t=1536560777;
+        bh=jbGwEGvIboJmsJey8JBBw2mYvZ7/OZ3on0hIwl7XBaM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=e0jTOUmCYpcMR65eyZc8IeoGqzMQYYo7EkOszP2R4+OAXLdCNwKvsfV3eTTyWuKUU
+         ymXU5zREEige0DrKLocu+MzFOD0Zn5yFSLHs8J0P70RJvvaNnbx8mk4o0mGBlIsQPF
+         nta2n+v332SyYQssw293jwmygVNVWzKWu9oivKnw=
 Received: from blr-ubuntu-41.ap.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7FE0860721;
-        Mon, 10 Sep 2018 06:26:07 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 438A76078C;
+        Mon, 10 Sep 2018 06:26:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536560771;
-        bh=i4lACEsQgF5s2kirjXBD2e/PQzU10q26/V7kKuu1hRs=;
-        h=From:To:Cc:Subject:Date:From;
-        b=AF1sa0Hd/EGO5EihjNWzBOkTkZOTLifKQDPP8Tr8lIb4iggUT1dCqyawxl91kYNz3
-         2egWSP/ohVnDpjq4LHyvypMdxDceqi8HZO0ogiRJfLMJHdEsq2RXj8ZdKzk2SBk3YD
-         JRUhzgj5N0+4qd9qQh1IJU63i/yhMn3eEoOzAMTM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7FE0860721
+        s=default; t=1536560776;
+        bh=jbGwEGvIboJmsJey8JBBw2mYvZ7/OZ3on0hIwl7XBaM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=cl5agUCZUh42HKRhSiBI1lmNDewHz7GzSC1WPx4otd4Fui6XWrr7fxTA6Hfl4I7Cp
+         QAYFeMUXX+CDe9x6um2MwnlRKKqXu56a8LywoNhU3hUhJrXeFdCTZ7lpmNph2/iMc2
+         uq9a7hwwRkNP75AL7mOf6evDUVj7yq+7zuxxzAw4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 438A76078C
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
 From:   Vivek Gautam <vivek.gautam@codeaurora.org>
@@ -59,76 +59,199 @@ To:     joro@8bytes.org, andy.gross@linaro.org, will.deacon@arm.com,
 Cc:     david.brown@linaro.org, tfiga@chromium.org, swboyd@chromium.org,
         linux-kernel@vger.kernel.org, robdclark@gmail.com,
         Vivek Gautam <vivek.gautam@codeaurora.org>
-Subject: [PATCH v2 0/4] Qcom smmu-500 TLB invalidation errata for sdm845
-Date:   Mon, 10 Sep 2018 11:55:47 +0530
-Message-Id: <20180910062551.28175-1-vivek.gautam@codeaurora.org>
+Subject: [PATCH v2 1/4] firmware: qcom_scm-64: Add atomic version of qcom_scm_call
+Date:   Mon, 10 Sep 2018 11:55:48 +0530
+Message-Id: <20180910062551.28175-2-vivek.gautam@codeaurora.org>
 X-Mailer: git-send-email 2.16.1.72.g5be1f00a9a70
+In-Reply-To: <20180910062551.28175-1-vivek.gautam@codeaurora.org>
+References: <20180910062551.28175-1-vivek.gautam@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Qcom's implementation of arm,mmu-500 on sdm845 has a functional/performance
-errata [1] because of which the TCU cache look ups are stalled during
-invalidation cycle. This is mitigated by serializing all the invalidation
-requests coming to the smmu.
+There are scnenarios where drivers are required to make a
+scm call in atomic context, such as in one of the qcom's
+arm-smmu-500 errata [1].
 
-This patch series addresses this errata by adding new tlb_ops for
-qcom,sdm845-smmu-500 [2]. These ops take context bank locks for all the
-tlb_ops that queue and sync the TLB invalidation requests.
+[1] ("https://source.codeaurora.org/quic/la/kernel/msm-4.9/
+      tree/drivers/iommu/arm-smmu.c?h=msm-4.9#n4842")
 
-Besides adding locks, there's a way to expadite these TLB invalidations
-for display and camera devices by turning off the 'wait-for-safe' logic
-in hardware that holds the tlb invalidations until a safe level.
-This 'wait-for-safe' logic is controlled by toggling a chicken bit
-through a secure register. This secure register is accessed by making an
-explicit SCM call into the EL3 firmware.
-There are two ways of handling this logic -
- * Firmware, such as tz present on sdm845-mtp devices has a handler to do
-   all the register access and bit set/clear. So is the handling in
-   downstream arm-smmu driver [3].
- * Other firmwares can have handlers to just read/write this secure
-   register. In such cases the kernel make io_read/writel scm calls to
-   modify the register.
-This patch series adds APIs in qcom-scm driver to handle both of these
-cases.
+Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+---
+ drivers/firmware/qcom_scm-64.c | 136 ++++++++++++++++++++++++++++-------------
+ 1 file changed, 92 insertions(+), 44 deletions(-)
 
-Lastly, since these TLB invalidations can happen in atomic contexts
-there's a need to add atomic versions of qcom_scm_io_readl/writel() and
-qcom_scm_call() APIs. The traditional scm calls take mutex and we therefore
-can't use these calls in atomic contexts.
-
-This patch series is adapted version of how the errata is handled in
-downstream [1].
-
-Changes since v1:
- * Addressed Will and Robin's comments:
-    - Dropped the patch[4] that forked out __arm_smmu_tlb_inv_range_nosync(),
-      and __arm_smmu_tlb_sync().
-    - Cleaned up the errata patch further to use downstream polling mechanism
-      for tlb sync.
- * No change in SCM call patches - patches 1 to 3.
-
-[1] https://source.codeaurora.org/quic/la/kernel/msm-4.9/tree/drivers/iommu/arm-smmu.c?h=msm-4.9#n4842
-[2] https://lore.kernel.org/patchwork/patch/974114/
-[3] https://source.codeaurora.org/quic/la/kernel/msm-4.9/tree/drivers/iommu/arm-smmu.c?h=msm-4.9#n4864
-[4] https://patchwork.kernel.org/patch/10565349/
-
-Vivek Gautam (4):
-  firmware: qcom_scm-64: Add atomic version of qcom_scm_call
-  firmware/qcom_scm: Add atomic version of io read/write APIs
-  firmware/qcom_scm: Add scm call to handle smmu errata
-  iommu/arm-smmu: Add support to handle Qcom's TLBI serialization errata
-
- drivers/firmware/qcom_scm-32.c |  17 ++++
- drivers/firmware/qcom_scm-64.c | 181 +++++++++++++++++++++++++++++++----------
- drivers/firmware/qcom_scm.c    |  18 ++++
- drivers/firmware/qcom_scm.h    |   9 ++
- drivers/iommu/arm-smmu-regs.h  |   2 +
- drivers/iommu/arm-smmu.c       | 133 +++++++++++++++++++++++++++++-
- include/linux/qcom_scm.h       |   6 ++
- 7 files changed, 320 insertions(+), 46 deletions(-)
-
+diff --git a/drivers/firmware/qcom_scm-64.c b/drivers/firmware/qcom_scm-64.c
+index 688525dd4aee..3a8c867cdf51 100644
+--- a/drivers/firmware/qcom_scm-64.c
++++ b/drivers/firmware/qcom_scm-64.c
+@@ -70,32 +70,71 @@ static DEFINE_MUTEX(qcom_scm_lock);
+ #define FIRST_EXT_ARG_IDX 3
+ #define N_REGISTER_ARGS (MAX_QCOM_SCM_ARGS - N_EXT_QCOM_SCM_ARGS + 1)
+ 
+-/**
+- * qcom_scm_call() - Invoke a syscall in the secure world
+- * @dev:	device
+- * @svc_id:	service identifier
+- * @cmd_id:	command identifier
+- * @desc:	Descriptor structure containing arguments and return values
+- *
+- * Sends a command to the SCM and waits for the command to finish processing.
+- * This should *only* be called in pre-emptible context.
+-*/
+-static int qcom_scm_call(struct device *dev, u32 svc_id, u32 cmd_id,
+-			 const struct qcom_scm_desc *desc,
+-			 struct arm_smccc_res *res)
++static void __qcom_scm_call_do(const struct qcom_scm_desc *desc,
++			       struct arm_smccc_res *res, u32 fn_id,
++			       u64 x5, u32 type)
++{
++	u64 cmd;
++	struct arm_smccc_quirk quirk = {.id = ARM_SMCCC_QUIRK_QCOM_A6};
++
++	cmd = ARM_SMCCC_CALL_VAL(type, qcom_smccc_convention,
++				 ARM_SMCCC_OWNER_SIP, fn_id);
++
++	quirk.state.a6 = 0;
++
++	do {
++		arm_smccc_smc_quirk(cmd, desc->arginfo, desc->args[0],
++				    desc->args[1], desc->args[2], x5,
++				    quirk.state.a6, 0, res, &quirk);
++
++		if (res->a0 == QCOM_SCM_INTERRUPTED)
++			cmd = res->a0;
++
++	} while (res->a0 == QCOM_SCM_INTERRUPTED);
++}
++
++static void qcom_scm_call_do(const struct qcom_scm_desc *desc,
++			     struct arm_smccc_res *res, u32 fn_id,
++			     u64 x5, bool atomic)
++{
++	int retry_count = 0;
++
++	if (!atomic) {
++		do {
++			mutex_lock(&qcom_scm_lock);
++
++			__qcom_scm_call_do(desc, res, fn_id, x5,
++					   ARM_SMCCC_STD_CALL);
++
++			mutex_unlock(&qcom_scm_lock);
++
++			if (res->a0 == QCOM_SCM_V2_EBUSY) {
++				if (retry_count++ > QCOM_SCM_EBUSY_MAX_RETRY)
++					break;
++				msleep(QCOM_SCM_EBUSY_WAIT_MS);
++			}
++		}  while (res->a0 == QCOM_SCM_V2_EBUSY);
++	} else {
++		__qcom_scm_call_do(desc, res, fn_id, x5, ARM_SMCCC_FAST_CALL);
++	}
++}
++
++static int ___qcom_scm_call(struct device *dev, u32 svc_id, u32 cmd_id,
++			    const struct qcom_scm_desc *desc,
++			    struct arm_smccc_res *res, bool atomic)
+ {
+ 	int arglen = desc->arginfo & 0xf;
+-	int retry_count = 0, i;
++	int i;
+ 	u32 fn_id = QCOM_SCM_FNID(svc_id, cmd_id);
+-	u64 cmd, x5 = desc->args[FIRST_EXT_ARG_IDX];
++	u64 x5 = desc->args[FIRST_EXT_ARG_IDX];
+ 	dma_addr_t args_phys = 0;
+ 	void *args_virt = NULL;
+ 	size_t alloc_len;
+-	struct arm_smccc_quirk quirk = {.id = ARM_SMCCC_QUIRK_QCOM_A6};
++	gfp_t flag = atomic ? GFP_ATOMIC : GFP_KERNEL;
+ 
+ 	if (unlikely(arglen > N_REGISTER_ARGS)) {
+ 		alloc_len = N_EXT_QCOM_SCM_ARGS * sizeof(u64);
+-		args_virt = kzalloc(PAGE_ALIGN(alloc_len), GFP_KERNEL);
++		args_virt = kzalloc(PAGE_ALIGN(alloc_len), flag);
+ 
+ 		if (!args_virt)
+ 			return -ENOMEM;
+@@ -125,33 +164,7 @@ static int qcom_scm_call(struct device *dev, u32 svc_id, u32 cmd_id,
+ 		x5 = args_phys;
+ 	}
+ 
+-	do {
+-		mutex_lock(&qcom_scm_lock);
+-
+-		cmd = ARM_SMCCC_CALL_VAL(ARM_SMCCC_STD_CALL,
+-					 qcom_smccc_convention,
+-					 ARM_SMCCC_OWNER_SIP, fn_id);
+-
+-		quirk.state.a6 = 0;
+-
+-		do {
+-			arm_smccc_smc_quirk(cmd, desc->arginfo, desc->args[0],
+-				      desc->args[1], desc->args[2], x5,
+-				      quirk.state.a6, 0, res, &quirk);
+-
+-			if (res->a0 == QCOM_SCM_INTERRUPTED)
+-				cmd = res->a0;
+-
+-		} while (res->a0 == QCOM_SCM_INTERRUPTED);
+-
+-		mutex_unlock(&qcom_scm_lock);
+-
+-		if (res->a0 == QCOM_SCM_V2_EBUSY) {
+-			if (retry_count++ > QCOM_SCM_EBUSY_MAX_RETRY)
+-				break;
+-			msleep(QCOM_SCM_EBUSY_WAIT_MS);
+-		}
+-	}  while (res->a0 == QCOM_SCM_V2_EBUSY);
++	qcom_scm_call_do(desc, res, fn_id, x5, atomic);
+ 
+ 	if (args_virt) {
+ 		dma_unmap_single(dev, args_phys, alloc_len, DMA_TO_DEVICE);
+@@ -164,6 +177,41 @@ static int qcom_scm_call(struct device *dev, u32 svc_id, u32 cmd_id,
+ 	return 0;
+ }
+ 
++/**
++ * qcom_scm_call() - Invoke a syscall in the secure world
++ * @dev:	device
++ * @svc_id:	service identifier
++ * @cmd_id:	command identifier
++ * @desc:	Descriptor structure containing arguments and return values
++ *
++ * Sends a command to the SCM and waits for the command to finish processing.
++ * This should *only* be called in pre-emptible context.
++ */
++static int qcom_scm_call(struct device *dev, u32 svc_id, u32 cmd_id,
++			 const struct qcom_scm_desc *desc,
++			 struct arm_smccc_res *res)
++{
++	return ___qcom_scm_call(dev, svc_id, cmd_id, desc, res, false);
++}
++
++/**
++ * qcom_scm_call_atomic() - atomic variation of qcom_scm_call()
++ * @dev:	device
++ * @svc_id:	service identifier
++ * @cmd_id:	command identifier
++ * @desc:	Descriptor structure containing arguments and return values
++ * @res:	Structure containing results from SMC/HVC call
++ *
++ * Sends a command to the SCM and waits for the command to finish processing.
++ * This should be called in atomic context only.
++ */
++static int qcom_scm_call_atomic(struct device *dev, u32 svc_id, u32 cmd_id,
++				const struct qcom_scm_desc *desc,
++				struct arm_smccc_res *res)
++{
++	return ___qcom_scm_call(dev, svc_id, cmd_id, desc, res, true);
++}
++
+ /**
+  * qcom_scm_set_cold_boot_addr() - Set the cold boot address for cpus
+  * @entry: Entry point function for the cpus
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
 of Code Aurora Forum, hosted by The Linux Foundation
