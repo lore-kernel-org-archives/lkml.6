@@ -2,93 +2,77 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FFDEC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:51:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4115C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:52:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D6A420855
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:51:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D6A420855
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id 6579220855
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:52:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6579220855
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728104AbeIJOpA (ORCPT
+        id S1728181AbeIJOp1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 10:45:00 -0400
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:49331 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726738AbeIJOpA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 10:45:00 -0400
+        Mon, 10 Sep 2018 10:45:27 -0400
+Received: from mga05.intel.com ([192.55.52.43]:28206 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728063AbeIJOp1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 10:45:27 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2018 02:52:14 -0700
+X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,355,1531810800"; 
-   d="scan'208";a="19658441"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 10 Sep 2018 02:51:46 -0700
-Received: from [10.159.245.112] (10.10.76.4) by chn-sv-exch03.mchp-main.com
- (10.10.76.49) with Microsoft SMTP Server id 14.3.352.0; Mon, 10 Sep 2018
- 02:51:46 -0700
-Subject: Re: [PATCH v12 0/6] Driver for at91 usart in spi mode
-To:     Lee Jones <lee.jones@linaro.org>,
-        Radu Pirea <radu_nicolae.pirea@upb.ro>
-CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <alexandre.belloni@bootlin.com>, <gregkh@linuxfoundation.org>,
-        <broonie@kernel.org>, <jslaby@suse.com>,
-        <richard.genoud@gmail.com>, <davem@davemloft.net>,
-        <mchehab+samsung@kernel.org>, <akpm@linux-foundation.org>,
-        <arnd@arndb.de>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-        <linux-spi@vger.kernel.org>
-References: <20180904111310.4049-1-radu_nicolae.pirea@upb.ro>
- <20180910094817.GJ28860@dell>
-From:   Nicolas Ferre <nicolas.ferre@microchip.com>
-Organization: microchip
-Message-ID: <2a8ccc95-bbf0-2211-0f88-c5a594600d34@microchip.com>
-Date:   Mon, 10 Sep 2018 11:51:42 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+   d="scan'208";a="87441673"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by fmsmga004.fm.intel.com with SMTP; 10 Sep 2018 02:52:10 -0700
+Received: by lahna (sSMTP sendmail emulation); Mon, 10 Sep 2018 12:52:10 +0300
+Date:   Mon, 10 Sep 2018 12:52:09 +0300
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Lukas Wunner <lukas@wunner.de>
+Cc:     Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/5] thunderbolt: Obtain PCI slot number from DROM
+Message-ID: <20180910095209.GK14465@lahna.fi.intel.com>
+References: <cover.1536517047.git.lukas@wunner.de>
+ <756f7148bc106d80d2e43273edd6dc8c48c1b87b.1536517047.git.lukas@wunner.de>
 MIME-Version: 1.0
-In-Reply-To: <20180910094817.GJ28860@dell>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <756f7148bc106d80d2e43273edd6dc8c48c1b87b.1536517047.git.lukas@wunner.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lee,
+On Sun, Sep 09, 2018 at 11:42:01PM +0200, Lukas Wunner wrote:
+> +struct tb_drom_entry_pci {
+> +	/* BYTES 0-1 */
+> +	struct tb_drom_entry_header header;
+> +	/* BYTE 2 */
+> +	u8 unknown:5;
+> +	u8 slot:3;
+> +	/* BYTES 3-10 are only present on PCIe upstream ports */
+> +} __packed;
 
-On 10/09/2018 at 11:48, Lee Jones wrote:
-> On Tue, 04 Sep 2018, Radu Pirea wrote:
->> Well, this is the 12th version of this patch series.
->> In this version I fixed a warning from kbuild-robot and I have no idea
->> how I forgot to add static in declaration of that functions. Also I
->> fixed the example for the SPI driver in bindings.
-> 
-> Okay great.  So which patches still require Acks?
+No need for __packed unless you absolutely are certain the compiler does
+not do the right thing. When I submitted the network driver, David
+Miller explained this to me and I ended up dropping those.
 
-None I would say: everything's ready to be integrated into your MFD tree 
-as you proposed some time ago.
+Also use of bitfields is something we should avoid when touching
+hardware/firmware records because compiler here can do all sorts of
+tricks.
 
-We are looking forward seeing this series integrated in linux-next as 
-soon as possible.
-
-Best regards,
-   Nicolas
-
-
->> Radu Pirea (6):
->>    MAINTAINERS: add at91 usart mfd driver
->>    dt-bindings: add binding for atmel-usart in SPI mode
->>    mfd: at91-usart: added mfd driver for usart
->>    MAINTAINERS: add at91 usart spi driver
->>    spi: at91-usart: add driver for at91-usart as spi
->>    tty/serial: atmel: change the driver to work under at91-usart mfd
-> 
-
-
--- 
-Nicolas Ferre
+I know the driver is currently using quite many of them but I think it
+is good for the new code not to include them anymore.
