@@ -2,160 +2,188 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AB92C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 21:52:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBA83C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 21:56:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9744020865
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 21:52:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A1FA20866
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 21:56:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="Nwlyqlo/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9744020865
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="KBbuiMxj";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="XzRL1AwT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A1FA20866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726870AbeIKCsu (ORCPT
+        id S1726852AbeIKCw6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 22:48:50 -0400
-Received: from mail-sn1nam01on0063.outbound.protection.outlook.com ([104.47.32.63]:25492
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726191AbeIKCst (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 22:48:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+        Mon, 10 Sep 2018 22:52:58 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:32916 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726191AbeIKCw6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 22:52:58 -0400
+Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8ALs0fH030472;
+        Mon, 10 Sep 2018 14:56:47 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=MGZdVmRmN+xAVRkWq4mvTV6wV+JEDsh8+laIrWHOoHE=;
+ b=KBbuiMxjardVlLWaM5ScyhFIpIlsoL5w2F6HhlsqdDCqdI2bOZhlrBA8ZTaC8CDj1sNx
+ 15tekQOtD+OQkH1rjrunphb1XuNzOw/uxfhuBgL+2dVT4nXX1nJLPoUNK/CQ6AzjOYOw
+ eCXeVTkq4rRyNa20GQqBLjj1Ee3QMQegIY8= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2mdy81rayv-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 10 Sep 2018 14:56:47 -0700
+Received: from NAM03-BY2-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.19) with Microsoft SMTP Server (TLS)
+ id 14.3.361.1; Mon, 10 Sep 2018 14:56:46 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lF5hpALd+4lw9cJPYuzM2DzA8EeYfMNYNZwx8a05Pno=;
- b=Nwlyqlo/qeD35mCpmO/7vcyIm3lRIA15+f+oClTOzGRaDkzksZ5lN2V4VtOdJPAlDiJyEccQrnqFRBriNWTMAwTQjKD1A5GFXKVrCmIBJcJOXvdoPz8MADsH6yhBnY2PcRoVOv7+JY3wfqvtA+Y6OT8QaxuNee3KAw9pOzJngLw=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=brijesh.singh@amd.com; 
-Received: from sbrijesh-desktop.amd.com (165.204.77.1) by
- BYAPR12MB2680.namprd12.prod.outlook.com (2603:10b6:a03:69::29) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1122.15; Mon, 10 Sep 2018 21:49:31 +0000
-From:   Brijesh Singh <brijesh.singh@amd.com>
-To:     x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     Brijesh Singh <brijesh.singh@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
-Subject: [PATCH v7 4/5] x86/kvm: use __decrypted attribute in shared variables
-Date:   Mon, 10 Sep 2018 16:49:10 -0500
-Message-Id: <1536616151-16738-5-git-send-email-brijesh.singh@amd.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1536616151-16738-1-git-send-email-brijesh.singh@amd.com>
-References: <1536616151-16738-1-git-send-email-brijesh.singh@amd.com>
+ bh=MGZdVmRmN+xAVRkWq4mvTV6wV+JEDsh8+laIrWHOoHE=;
+ b=XzRL1AwTOdnvYjSyt7/10a4WJhckc8HDbcSwGKKSnWCXGv+LJv2hY6RRsgPXFkq86vg2V0mC2pPLrV29+HqXf5B9AzEeDbaMtNEAlJnPWSivqgsiYXrrXjuNFGHvO4TkQe9Fmoggf97k3P93kRKeAJpUMzIPa2O11S1PShM4wg4=
+Received: from tower.thefacebook.com (2620:10d:c090:200::6:d788) by
+ SN1PR15MB0176.namprd15.prod.outlook.com (2a01:111:e400:58cf::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1122.17; Mon, 10 Sep
+ 2018 21:56:43 +0000
+From:   Roman Gushchin <guro@fb.com>
+To:     <linux-mm@kvack.org>
+CC:     <linux-kernel@vger.kernel.org>, <kernel-team@fb.com>,
+        Roman Gushchin <guro@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>
+Subject: [PATCH RFC] mm: don't raise MEMCG_OOM event due to failed high-order allocation
+Date:   Mon, 10 Sep 2018 14:56:22 -0700
+Message-ID: <20180910215622.4428-1-guro@fb.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [165.204.77.1]
-X-ClientProxiedBy: MWHPR13CA0010.namprd13.prod.outlook.com
- (2603:10b6:300:16::20) To BYAPR12MB2680.namprd12.prod.outlook.com
- (2603:10b6:a03:69::29)
+Content-Type: text/plain
+X-Originating-IP: [2620:10d:c090:200::6:d788]
+X-ClientProxiedBy: MWHPR12CA0050.namprd12.prod.outlook.com
+ (2603:10b6:300:103::12) To SN1PR15MB0176.namprd15.prod.outlook.com
+ (2a01:111:e400:58cf::15)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 9c238b46-cc54-4ea0-fa0b-08d617674b2b
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:BYAPR12MB2680;
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR12MB2680;3:29rFl7bO8TZQOg9MHuSzm/jGMOSsnIHJ52uErHuJZsVqXyA0iauGGVrmTdWWa0GIYUS59af3zYBcvWkFEYN4KekT4qzR35DsOadrGtQownrzafNUiroDqL5yjAFXkRZEefDggI2je/J6CvHqH7K/Y3uaLYmDs7XfDgIGL1xPHdG5I7+9cp5JfXVg1KHTB76jKzg9wwc7GyRnbNUh+xIzcFXM0fvcCvGuPipZSg+AxyTARYiGS7pdR3JRFcrP9iIU;25:x8d1SXN04TONjoe/CcRz15rvV+6XRKvR1UDfE5FA2dYATFi88DLw/v9lPAM9Km+B1bEYlewCv0t88XQ8QVHn4kQDdHzgfxLZ+FtmFXN+RCKsbVG1kSslsi5WeyDIGc9svk3vDVwNr3wh6N2jFAfWhpqBX3lIGQrsHVA4Xyp9vdkefvPMYhLUQDJYs+RQ8xyituZkCTdUZDgmHZF1N+2BSVBbR5+i3JPtBCFJxBqmuo8aZLWtx6Dta7Tkex6PIMf1BqZaCQXiPw2T8IIP/+g/iEg+VD+q9EjJAdkcWuadubDz1b9DbnAwEMpPikds2XHktCGDUKBQ+PPE6wL5lpA5Mw==;31:s7G/2dPyusJteqo2ya3qP+xgDvyEcoePI+0vXKWSHv4RpJUo1pODiUABqtuJPl97OP/UStTPVUsrJD7XhWO9YY4g2Ek8dd7p6OCwT8gkoFNH5IvRjB0Pe0QOTXh2c0iEdwYxNEjAaTmOeTo1As2//97S2kLrKN7aMDvk4ztZsILz2bPMP0Th/Mq5DrEDF+yffgnuW/kfEu1ZuwXkbtrlIGpnCSmaWvsZ9V83OoSXPfw=
-X-MS-TrafficTypeDiagnostic: BYAPR12MB2680:
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR12MB2680;20:QFzeBk+tU+2wDzl7Vg1WZBa8gBUFl/EH/tZKWa4nNc471wKNVhXG0plAksm7rdFa1LSqEiMMOXyOlWMTA0hdkJutyQh87U2zeZS34o0BPcza9m5eGvstIhLwkbXLGw1eFuLZgg2vH2aqvJ9ZCcmzgNxpt5yfpgOyY8rpqb2Kr8CYvanM5Le3VfjldcAl+rLNjrs2yyoZwBNqiyODk5oVZ2zHq6yKkgNOzvpeWT6fIynqfy8bKoVNLVSjXrtqt1dilgypZd4PsSjHntjXBgcqmZKXxkkgSAqeuiPKs04ew4tVZCwML/bIv0uj7UQvNUPwMDkL3tzjtc5MzkmcGLFPL1OaehlGTaefl/9fSSDFnq82v81PtVLYHANMs2WQEZJ1DVcKvINNuWcoQ8PwkXhiEAh+jqwMTqAu7OVOAI+ZlxmrunUdr+OUKqE5w3G9q6Fx+lqextxtquvmBBnI8tvn1Ldv2abYRhTR8ru2sZVLLEEANxqpyUJ9OTo9LwGn93Mf;4:XdBKY0yRFV9+EByhava84bRGVRwxreY4gjxMWf5ukTnNDPAqR3I74Mps9shlShqrP2Cdi8qV/mcTPGhPv6vGyyWusHRAKH21HL+rCCDZbCkvxENkH+cDxIyfzVoD1+t5TfOwZywNv6odxgsBXAbf5nSwxMgFHfm8CFu2ueOw1fCrkbJ2F0lJexDjDTuct7iWqW/2g9WGK86jomNFE0iUdK+b2PlcsmdOuR+sQyxNnmXobzvluooN5uJ3wkIOSK89MwfHhBHhDojR2fgYDWG4qiaT1YrVh4w1EWnHnRlktprIIibs4hbfLCLSWLGCT6oZ8Ce9kTZnRLnw5LC8r+oqIIVAyNZzNpj7tdn7X3n8Py/S6pJg/mL2y0p9Qk0Aq8Yi
-X-Microsoft-Antispam-PRVS: <BYAPR12MB2680CBC030A37A65B6F9656CE5050@BYAPR12MB2680.namprd12.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(9452136761055)(767451399110)(228905959029699);
+X-MS-Office365-Filtering-Correlation-Id: c498638c-4dbd-4eca-9a02-08d617684c61
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:SN1PR15MB0176;
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR15MB0176;3:Alohij6mtKj1/V0dMU/KJjNDBJkdONpX2//UAtQzMJY5wF0CKxrfw08dQ6YyM2yLKZTvPTLHrdb2x8AnBl7OuvlvInl6kdGLdp7AMG90rK/a/XYfa+A7FZ6tLIxWBP3EZbv5jMgIUiIHd77A6AW7BAIlv87BUB+kUzpfLrr9HXq/E0ymlMREgscT9qgTGyFM28NtskiEYR/NHAt6cgjnIk7xEqNBlVYw+8Jg6ge+/Wb/7YpyEtQtmVa71Lx6/sGo;25:3QMdLZrEVV8rBKeoRsN6fwkym6TLkdzykXCgI39ts5YhVtbzhdJU1HsoS3o+1NrqMNwvb1wJ/oIQ415Heqp9qUy5pPUMqkV7vqMMemWO3e7pO3toLKpaxdO2vC6HazP3hodqEErk+VsAaZMPL3eochKG7ZdLmbhoT0f5Fd1HKqh91JLDR7eU1ILemlEytyjVRiKm5luQ6Kbf23plLtGq7bJ7o19IpDvIgDbRo8Uc9ZdDfk8/AwO3BapGFh7Y6tNmiSNlNszHsa+yBPq6YWTY80Oy/iHQDZkhEsyzO4G7QtMe1BgJLJAtH2qkP9Ilsxq3quHFN/hagvC+N/nZkxgSDw==;31:OFBprtoAEXm+jhC+QM3C+nbnvlqLQTStdduUliCIfTJ1jP/4ZWj33TpBCVoI8xy0up9w2SuhUwL4NcvBvSJKVafUDWhlD/TeDyQ/oUzU/XG2uXv6H3op5nKc/ftoPx35GlsG110alQUJzLISuNbDeOM0sLVzk8w8Fa6k65dUADgVnbBRiWfkEU51S7b6ZAiROouPeEvzIRY9FO0mJcPqutLgQ5w1IkwNECKoZiAnYsE=
+X-MS-TrafficTypeDiagnostic: SN1PR15MB0176:
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR15MB0176;20:SxHkTZIE7rVMcy8J+6aq/jjNcwEidPa6S284MJ+DtCHURD5IAXTyzGtnQUOrpWc68fNKjdVoGuHt1C/+7LogqFE+9cgeXR06pqB0fkxhb/xisWpunV1eVpnE9An25Tm4GAn2tuD/KwFvFLx3786jFP4zTHIbeYKpjx2KEVTb7Yicow4MfdVcfJu4SGPzmwJjBO1P9uSI8bK3mxEhWyPQQlxkKCZWQb6iQfrN6FWCd7EoVLlEAkqFWRY/ebSgUvXgiZ2Fd6qIJ0fVnlnPeExR9no4ZptTlBV6BhS1mJaE2pFcNJsT+J4XD/rNfqxNcqk8OtwQNbLRKumbRtqEGceT2CIygC9Ahy/hoxvCoJSvEWFMoQ+vd0eO/iFHTeh5WqpRzPEv1p44w5mdSJ8zE7OZ3sOq7094xYzOTJCPDd31vVSFe4i/Br14PmLUa/6COgu6dbdkOj+2uzl1pARR1roG0WqY+fNCsUEiY44m/xH7ZfDdTqir409orA29iOchbyaj;4:5vlnhZ/u3tXONTrbJPxMuAE62AMIAT6axgDe4ffAP61XL1MbMBo1ML3KOnW3kaDCIM11X8thMwBKrIqrIW4h7Tmrq2XyiEqA36sO9UVIRsWlSudyg+7dWiOoJrovsiQ9SeUryyr42/TPwJwqPNt8ZY1cxyvF1G/Mi5gtE79gCXvx/CzEMnsknuHlUpJAg+vinB+uNiQjzswrCBIm4KU3XbU1CjUMJel0lfx/0Zd1wldHowdXWH7vDERT87B2t78p4C08LdVejrYJMHw0B3MTPXL9i5NtlFMXQ0vT7OqpEwEZlviK4jsRss3L9EyboJwqteFGTN/OLXOhoQ2a9FK2K8zpIOwPKZS5rG2UVmUc5IY=
+X-Microsoft-Antispam-PRVS: <SN1PR15MB01764D745FC2AA10B2CC6420BE050@SN1PR15MB0176.namprd15.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(85827821059158)(67672495146484);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823301075)(10201501046)(93006095)(93001095)(3002001)(3231311)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(201708071742011)(7699050);SRVR:BYAPR12MB2680;BCL:0;PCL:0;RULEID:;SRVR:BYAPR12MB2680;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823301075)(3002001)(10201501046)(3231311)(11241501184)(944501410)(52105095)(93006095)(93001095)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699050);SRVR:SN1PR15MB0176;BCL:0;PCL:0;RULEID:;SRVR:SN1PR15MB0176;
 X-Forefront-PRVS: 07915F544A
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(136003)(346002)(396003)(39860400002)(366004)(376002)(199004)(189003)(6666003)(386003)(8936002)(53416004)(7696005)(52116002)(25786009)(23676004)(76176011)(105586002)(8676002)(106356001)(50466002)(50226002)(26005)(186003)(66066001)(16526019)(6116002)(54906003)(3846002)(47776003)(2906002)(97736004)(2870700001)(4326008)(316002)(81166006)(36756003)(446003)(81156014)(476003)(2616005)(11346002)(305945005)(7736002)(5660300001)(956004)(86362001)(44832011)(6486002)(68736007)(53936002)(486006)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR12MB2680;H:sbrijesh-desktop.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(136003)(366004)(376002)(39860400002)(346002)(199004)(189003)(52314003)(316002)(2361001)(2351001)(36756003)(106356001)(105586002)(53416004)(54906003)(2906002)(69596002)(16586007)(50226002)(47776003)(7736002)(14444005)(305945005)(68736007)(8676002)(81156014)(86362001)(52116002)(51416003)(52396003)(81166006)(8936002)(6506007)(16526019)(39060400002)(48376002)(4326008)(97736004)(46003)(6512007)(53936002)(186003)(386003)(1076002)(25786009)(486006)(2616005)(476003)(6666003)(50466002)(6116002)(6916009)(478600001)(5660300001)(6486002)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:SN1PR15MB0176;H:tower.thefacebook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: fb.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtCWUFQUjEyTUIyNjgwOzIzOnJmbHFYZ2JxVStwT0dsZG11RjlreTdGQStB?=
- =?utf-8?B?Ui9uek5FL3FTaVJaQXZNZUhJYmxxaGJoc1k3TXRrL0lLRG9mMTc3UjVYOHhy?=
- =?utf-8?B?MFY1Q0I5RjVnWWYyMW5KME5XVFdMZkdwZ3UreHg2SUxWdkVzTzByUkNVcFVm?=
- =?utf-8?B?dk9KYzNPZ3RzM3BZUVowOU5XUVF5MzB4bERCQzByWlVtRXA0YnF2aUVwRmw0?=
- =?utf-8?B?bGJ1V0dxMmMrREllYkpUcEdzalgyK05GTy9WaThOK0JNZXdTYndsaU1qOFpr?=
- =?utf-8?B?WEE5QlBRQXV2OXI1bU95UGJwSEx3TGNSU0xySllXS2R4UHVMK0dWbVVtTEdF?=
- =?utf-8?B?bzFvNUMzNjN2ZkxYYk4zNitveDZPSXpPYkxxa3RoUk9ZdVpiOHp4RC9WQXpr?=
- =?utf-8?B?Rm9KTXRhNUNlZ09Za243S3BUeUt4THFJZGFzZnhIcnkxK0ZRQWQyTHkxcjV4?=
- =?utf-8?B?bnk4ajRJbG1FbzNDdmlKalVHWmFFek9ncWJ6a2FyVzd1MnJtem1YT3ZUZkc5?=
- =?utf-8?B?Y2Qrc0NpTDlkWk1YOGFhUDFlcHI4dEs5SnBHTm9Ha3htVFlmVTZlNVIxUHNL?=
- =?utf-8?B?dHdZd0ZLTUZuY3VRaXBkbWhTbk1nTEdybHRwd1pubGJFRTZDSjBOTkJKMTk5?=
- =?utf-8?B?SmlYMnl1cFZ0RUw5TVdtVkt5aWMybFgra0F0TDlUWnEvVEJrNkM5V0ZWd1Bp?=
- =?utf-8?B?cWdmSWtuczlMcnVoYVRscW1VdlhuYzBHYjJTMksrTlJibEpzSm93VkZJbDZa?=
- =?utf-8?B?Z1lxbkFSVUhpSmVYWlVQQjlQWjRkVmZpQ3JLQ00vbDBjYmlXZzEvRUo1ZC9q?=
- =?utf-8?B?UTh1N3g1amkxcjlmZTBTYUZXanhVYnBHc0RaNUM5bmdFcldzQ3N2YXVUaHVm?=
- =?utf-8?B?SVZmd0p4eGFaZVVBYzFlalVqbENwTEwyZDBRT3Z1S0VsZkxadEl5aXprRHN6?=
- =?utf-8?B?UDJLdjdmdjVocXQ4d1hMWE96MkZCMWQrdEZSRlNBSVB6TlpDbEtBK0lWWWxr?=
- =?utf-8?B?YlpIOGRUSmlvNW1ldndKVlN6NkFub2FiWUJubW1QTVh5S2taSWVIUmdvdHpI?=
- =?utf-8?B?TmViMjZZeG8xVlE3OCs0aTYwdC9BemlZamZXV1NzLzV2RHQ4eW9yVjBFVWVL?=
- =?utf-8?B?ck81Vk84KzVRSWlMNjVLRlp0Qnd0azBBLzhJMkJLQzRVenpPUWlMZExlQm14?=
- =?utf-8?B?Z0t1V3pLNUtpZE9YUFpnNE5taEJkL1dzRWdwaWphc2NXS1c4WU1mbEs2Rlg4?=
- =?utf-8?B?ZzhjTkJXbG1PYjJVSUZPZ29sNmZlR1ZSa1J3bHpMVnlzVmxZc0Ivdk1oMis3?=
- =?utf-8?B?VUY2WFVJR2ZRZTJWTE1yS0FqZHhidVV4eVFtczI4WGlaVjMzaTZsK1p5cmZy?=
- =?utf-8?B?dWVFUlB5WDlhelE2VVo3eW9hR3BLeDNDWU9LKzRQUUJ3ck0yTms5UmlkUi9n?=
- =?utf-8?B?dWE4U0dKS1hTbVpHRE1QTnpxTDFMVWVXMC9qUjE5djNDWG5ndzZET2pZUlN4?=
- =?utf-8?B?UWFnMkx2ZGJXNjFWY21NakFkN0VmeVNHSnNQTmJPc2JxTm5HU2p1Y20vK3VS?=
- =?utf-8?Q?b00+1zvBf4lKNk/VatsZmfYVIdEfvafL/9M2EXsshGl8=3D?=
-X-Microsoft-Antispam-Message-Info: sZhiqu3enM/J0GbQcry+sjq8UZ9EMHQiMSK+fEZfFUSyv0MVWZY/N1OBbKpiu0Rj+IbGxnG6xIi85KqzBSGIZHWrWJJVb4Rwk/8PKXjkCd0fgM3eAnxNA/gtWmfZocwYzdEIy04W+3LpoPggvyAgxFcHR6iVkuZCS4VKUMDMDSpJFEw6KVd7ktYblqUuW6rrU94rZqbiltLf+xpNoIhC7aHRgXiailesGSo8gsXk7BK22HmXaCVqaxuH16H0vdvKK0NFa0ce2/WydG/hQDhOFKFzOQeZhYsJKSQs2kP89hgiSzhOnXUqDeQaa/y+Pw29CfQ1Fgus7sxWonQl32XKsqjtwFPcaIZ63BMyNSsr9iU=
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR12MB2680;6:t9JfOKf2uBN4wDQS0pEf0yXtpdBjqOW9cA9D0wF09wDGsLH5tdxM+C3ozSEF05C8FvJIGNU8yQVjshsfJzXFK5Y13grAbEf2Jt7WpSGT/j+YSKeIys5mvFXBp49QCQ5/lMXE4nnTGcbHZQHFWY6GuIS7+dqidiNdTl8CtvMfGZSsG4puzF53k7aQvO/D1TqB57tdnAuetMRXWbX3XzhqsYt9inuiT8MWBEYc17HwSi5TnKlhqqB2/D+m7WbC//W5N/BYMzuMLe048DqF8aKQQScXyywjJxSG3CStQ/uCmYquBntapy5zHBztjFE0JEl/BOUl4vn1hUODww0XvgJ1uXhDwwuZ2Z4SWtn9/ZmueNcMIhYs6zGArhPwBmy6oZidTwcNfgmR1dwCqc3rTPqDMM3eJUNGvOpndH1iw9OJIgd04hGVEAv9r2KOWKOSPkusAxdgBFEgNY7+OoRh7So6KA==;5:PcppY8RFSmjsnyNO7+GJonaOOBmQzwwAoaHQSNE7B/Izmxm4pMrWA3PK5oTZZFxPsnFZkluC2PSQuzxUvEvZjR/Zo1rN2aKISLuQykRAVI9CtnC1xkql0SUWfITJGuyHgbjfnDZceNuIyT4jvSdWMUWQ34PPihng3pWti2LNW4w=;7:BkbxOnVlSqvFE90wWX5eSiTvntDXlvdVVnxRsUIMjYlyoaY9Bc/VgHcr/nUjyJS1NlQEMpwkw68xPGmubR3tI1CtgOx92tyHpnei4EQGkixlp2xY9ECACwEFXYFQEk9jfwHtWNSTfPUB3fEWRVCaVLJbF5U+EnpSuhgSm4KxwLFje6mC39X67WbtSjnchX8sjxe2ksJGVdP9G2baVmbmjBWnpITZwj56TTHXlotIeq4HpQ4zTHZObVhSV6CE2JgV
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN1PR15MB0176;23:g0PTZaSbYfc0l7o4t6OAIEwjIJBJ32YJ1XbJsJ4zN?=
+ =?us-ascii?Q?zVESYFywqQbBy/3AbhlgPCq5tj8kAol8a0WuQMYNC9IwDtl7dZjH423IOTYt?=
+ =?us-ascii?Q?pUC/gLfSV5rBBiLFfgBL3ij+gfiuXdADjH9j9yMrP/TT+d3L4Rt9AgY6uBCE?=
+ =?us-ascii?Q?9aNQFN7d1batt1k/dK4/Dr1P35RA0PDekz6BqcMMR/8rt3MLyM73avfsiw7N?=
+ =?us-ascii?Q?JeWW9be/otQ6LsleAlMREg/whIBfI+hdzrvlwYP4KhivObRFy3DZyd3qWKfJ?=
+ =?us-ascii?Q?3kpzxvIykbJl9V5AIqy78o5oj9ltEMuVLAXsYKKul0KSuGCqY2MiNT5XaDkS?=
+ =?us-ascii?Q?veSc68rZfXGVtOf6Z9TurtV+TOG+21J3nNryahmZCsAJLWCXapdGB/GK3hht?=
+ =?us-ascii?Q?A23sK10A3FdyRRt7ZIEGQz7yU4qDb8YgnR3kc3/3X8wuk405wR+iGIhrOZJg?=
+ =?us-ascii?Q?4VGnwW3fghfQ6WMzaqYvChs0foKexnuf2C4rZffdsKwpkZFEQim5jdrcrcyN?=
+ =?us-ascii?Q?LU+oC6eUWGAGGqjCEANhCMcOiT6TyvWiLQeFH9huwqYCmBMjmSFnxF6fgLST?=
+ =?us-ascii?Q?cOkFFemWrinaKKZFc7ZU/n2o/Dd4ip+dIeoVMieWekRBrHlgAMFfVOmKxMnb?=
+ =?us-ascii?Q?L93Eq9s6EqIl5Ldtidwydvl5VHboPYhCE2AhzFlgSS0ncay5fhYSty/kSuZP?=
+ =?us-ascii?Q?l9QQvGrUU0HC6kHGBoH8tPLLM+OMNXn2wXRRzvxDqyPnOZdNKfUygvgOJIeL?=
+ =?us-ascii?Q?GMuTPBmgH5A2FeyUwOCwf+i9dW/g8y3K3X2cLVO35xBEYmjnPv+Sx9A+lzma?=
+ =?us-ascii?Q?kwOd2+k3WMewEaJoghg3JvPK+eoLhMkPuZMZzcGb6IECjMrxJ9ZZ4vNk2vhQ?=
+ =?us-ascii?Q?+Gj2N5Y+YJzDgGlYUU5++U3B0GqrlDZLtAwrzidYCvBwa4tRkBQBrKrZwX3X?=
+ =?us-ascii?Q?WKmPz33kL3wjocPxLpzLlt72kgE++Kh/lPw1ajhCH275vPunH5dkDuyxyGd1?=
+ =?us-ascii?Q?04FgnAQusjN69wNf4UUOiT9n3Ce6evYpGCZlYCAZOSu/2ZrSAR1Fck7lHjnZ?=
+ =?us-ascii?Q?envz/EGk3si39HnrQ82whyV4HbRaZxQgFj1aKAlmrtRhxD5Routx/P2qvwYQ?=
+ =?us-ascii?Q?xF6ebLWFa4M2ODJoNPKo3N/zP9wUJn3dYPLsHlEr6gjv91o3nYPce8kHrRQO?=
+ =?us-ascii?Q?wocD/csbZDGqGbtrJBv+jkfEXWx7fS1E4NqD+2MXkvTjHRewkHUU95GwXsoJ?=
+ =?us-ascii?Q?k7ikikJVG3RgxIZYEpliNj+BPzlXvd/16K3ZJwM7dQGCfRLp4ajJqxHk+57Z?=
+ =?us-ascii?B?UT09?=
+X-Microsoft-Antispam-Message-Info: rn7w3/DvZf3MtV0yBHHktovWVbv9p+juplT4KLXWKnITX4cF7nVNkCL/TePW67AaK0fITaFfOss7+yV+eTsGKmZxV8l0Gj73s3ljoQE8aOGIm+9dqKLuVHmllgN9uYR/QwOqZ7NnNQgyJ7vhviT9m8FrkmlNUlLAIMXit09FoKigmCfUeCHETFV32DGtUMn+vwRtt/n2KNuciF60KZXexOul1CSiCKNh5w5Hirc/syzhFs1FvBmMfXULbKeklb2udkRSke4I3kmr57wyEeSd28heab2An5RGeOpP3E/JbGMrSlYQfAJbAOM/ISYVPVNG17ot92yHyOSYDeQYYJFDEhIEiDNlNWoGC8IrNO1yQIY=
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR15MB0176;6:fQEbLZ70s8LVelUL+qjVe0woHqZ2cirOoicz+95bNhq+2on9WVNZCWdQuIupTt7B2H1vRcTzofBDPKHnfKvMZo4kWT/mefEYbmtcV9Wq7mQrOjvpQ/DH8MesFxVyGy5yKL2X6kD5JcRuTqu2ZX25EjGXQ511QXXJSj4El1M5Ss5+hQWi/qBdy1g8BhWV8pw3km3PHXCS4h/M2Jx3XgEM9JksfWHbE9FlbU1QsIxrFGOZ0XwN5A8xorFz9i7grERkdMTnSfiPUd0QLG0bHVynEH6thTIHPBguB8dJ7x2e3tjCjJ/PV/diFZlal8omrBq90TjmW0Fim73RkUFJ6YrRQNvbcvI8aNKJmFGFXFw+7cEDbXZVZNEDTeqxXONUi3q4feVoD5X9FAUmTKpcuvn591PjjNiP9KyWC+UFjMGM7WZPD1JJtgb6YHudFI88h+VMwAGG869h552gPRq+eu87HQ==;5:44rNiYzgA1J8hfWNn402XLVSxDqSk1RtFnCxTcPiATE1tbbw8C3CCdnJ8QGJna71X8AM1sdP+1YGc7r50JiOEJLr3WC7GD9g9TGOJcowkb+HYuwP2WN+xVM9zwqIghW93gnGdj8posUPm4QtX3HqsdkiqWP9xOqHGYCh9jKn0oc=;7:gWUJlgiHUuRWj1XCiUQSCHweUY22E1dazZe8794ZgKI/fIT1HBhSU6oBZVyccG9PWi/2ZH5VZZmrBGfHybBm8OuM8F7hv9JHeabapCnV3A+V2iFK0YoHuviUxOmVO5dCI8LD4QTjMTgT/jFDLwONXhsnNTsbVxbBK2S6+3PEks9M+XcBYqQmLPt3rpjgv19MTkCH1nkKnGfAkJGSkaS9WZkv+9QmeiBNBpjNBthTwjTqGCs/Eow5fPZqrnxykOIW
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR12MB2680;20:7ii8exZZW5nb/zknT6Dmq/FdtdnQdv0DoMdztNzUdv3slo9wj48RUmc+TrLOd+kSuu3zfvlZB3iljmiWFJdoDR0Zg+LEEzynlXsBZqtNLh/GkhE0+L/j6AxbMR/N8kWk69B6fZ8kdWIBfX/+SUjAytI9ZLH4KAtCCNEtm2QaJ96WXuAB/99JXOefDT3wT+9pBrgcIQxNb1gMCj/Q8iC04FVdp81zEHaA9JYAEr/MAnNvtyRufoM9gbItV8BcQKvI
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2018 21:49:31.6878 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9c238b46-cc54-4ea0-fa0b-08d617674b2b
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR15MB0176;20:4FGzfvdtEi0fuRbJfU9HtD5WxFAn0MWst1dZ9fgiRMgU0Yix6wbB9Bhg2LzcbgvO4D9Fc/GwIfMs9Tt2ow38LCqhed3at/P7wvcKqkxLuxMkAGnk5qftOIJqEPTv6LeStkEXHgA1SqMjG6oeSKlek0Xg0Vn8AliDnmRJUhrZkV0=
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2018 21:56:43.8287 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c498638c-4dbd-4eca-9a02-08d617684c61
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB2680
+X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR15MB0176
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-10_10:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The recent removal of the memblock dependency from kvmclock caused a SEV
-guest regression because the wall_clock and hv_clock_boot variables are
-no longer mapped decrypted when SEV is active.
+The memcg OOM killer is never invoked due to a failed high-order
+allocation, however the MEMCG_OOM event can be easily raised.
 
-Use the __decrypted attribute to put the wall_clock and hv_clock_boot in
-the .data..decrypted section so that they are mapped decrypted during boot.
+Under some memory pressure it can happen easily because of a
+concurrent allocation. Let's look at try_charge(). Even if we were
+able to reclaim enough memory, this check can fail due to a race
+with another allocation:
 
-Signed-off-by: Brijesh Singh <brijesh.singh@amd.com>
-Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
-Reviewed-by: Borislav Petkov <bp@suse.de>
-Acked-by: Paolo Bonzini <pbonzini@redhat.com>
-Fixes: 368a540e0232 ("x86/kvmclock: Remove memblock dependency")
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: kvm@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-kernel@vger.kernel.org
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Sean Christopherson <sean.j.christopherson@intel.com>
-Cc: "Radim Krčmář" <rkrcmar@redhat.com>
+    if (mem_cgroup_margin(mem_over_limit) >= nr_pages)
+        goto retry;
+
+For regular pages the following condition will save us from triggering
+the OOM:
+
+   if (nr_reclaimed && nr_pages <= (1 << PAGE_ALLOC_COSTLY_ORDER))
+       goto retry;
+
+But for high-order allocation this condition will intentionally fail.
+The reason behind is that we'll likely fall to regular pages anyway,
+so it's ok and even preferred to return ENOMEM.
+
+In this case the idea of raising the MEMCG_OOM event looks dubious.
+
+Fix this by moving MEMCG_OOM raising to  mem_cgroup_oom() after
+allocation order check, so that the event won't be raised for high
+order allocations.
+
+Signed-off-by: Roman Gushchin <guro@fb.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
 ---
- arch/x86/kernel/kvmclock.c | 4 ++--
+ mm/memcontrol.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/kvmclock.c b/arch/x86/kernel/kvmclock.c
-index a36b93a..0b3110b 100644
---- a/arch/x86/kernel/kvmclock.c
-+++ b/arch/x86/kernel/kvmclock.c
-@@ -61,8 +61,8 @@ early_param("no-kvmclock-vsyscall", parse_no_kvmclock_vsyscall);
- 	(PAGE_SIZE / sizeof(struct pvclock_vsyscall_time_info))
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index fcec9b39e2a3..103ca3c31c04 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -1669,6 +1669,8 @@ static enum oom_status mem_cgroup_oom(struct mem_cgroup *memcg, gfp_t mask, int
+ 	if (order > PAGE_ALLOC_COSTLY_ORDER)
+ 		return OOM_SKIPPED;
  
- static struct pvclock_vsyscall_time_info
--			hv_clock_boot[HVC_BOOT_ARRAY_SIZE] __aligned(PAGE_SIZE);
--static struct pvclock_wall_clock wall_clock;
-+			hv_clock_boot[HVC_BOOT_ARRAY_SIZE] __decrypted __aligned(PAGE_SIZE);
-+static struct pvclock_wall_clock wall_clock __decrypted;
- static DEFINE_PER_CPU(struct pvclock_vsyscall_time_info *, hv_clock_per_cpu);
++	memcg_memory_event(memcg, MEMCG_OOM);
++
+ 	/*
+ 	 * We are in the middle of the charge context here, so we
+ 	 * don't want to block when potentially sitting on a callstack
+@@ -2250,8 +2252,6 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
+ 	if (fatal_signal_pending(current))
+ 		goto force;
  
- static inline struct pvclock_vcpu_time_info *this_cpu_pvti(void)
+-	memcg_memory_event(mem_over_limit, MEMCG_OOM);
+-
+ 	/*
+ 	 * keep retrying as long as the memcg oom killer is able to make
+ 	 * a forward progress or bypass the charge if the oom killer
 -- 
-2.7.4
+2.17.1
 
