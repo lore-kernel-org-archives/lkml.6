@@ -2,128 +2,127 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4765AC4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 17:18:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34B1CC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 17:18:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F26C92086E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 17:18:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F26C92086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id E5C2720880
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 17:18:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5C2720880
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728825AbeIJWN2 (ORCPT
+        id S1729038AbeIJWNb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 18:13:28 -0400
-Received: from mga04.intel.com ([192.55.52.120]:49560 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727705AbeIJWN2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 18:13:28 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2018 10:18:23 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,356,1531810800"; 
-   d="scan'208";a="262274801"
-Received: from tstruk-mobl1.jf.intel.com ([10.24.8.238])
-  by fmsmga006.fm.intel.com with ESMTP; 10 Sep 2018 10:18:22 -0700
-Subject: [PATCH v6 0/2] tpm: add support for nonblocking operation
-From:   Tadeusz Struk <tadeusz.struk@intel.com>
-To:     jarkko.sakkinen@linux.intel.com
-Cc:     flihp@twobit.us, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tadeusz.struk@intel.com
-Date:   Mon, 10 Sep 2018 10:18:22 -0700
-Message-ID: <153659990230.2284.5511495299744743989.stgit@tstruk-mobl1.jf.intel.com>
-User-Agent: StGit/unknown-version
+        Mon, 10 Sep 2018 18:13:31 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47798 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727701AbeIJWNb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 18:13:31 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B65FB4B75B;
+        Mon, 10 Sep 2018 17:18:25 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.34.27.30])
+        by smtp.corp.redhat.com (Postfix) with SMTP id F231742238;
+        Mon, 10 Sep 2018 17:18:22 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Mon, 10 Sep 2018 19:18:25 +0200 (CEST)
+Date:   Mon, 10 Sep 2018 19:18:22 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Rik van Riel <riel@redhat.com>, Michal Hocko <mhocko@suse.com>,
+        Stanislav Kozina <skozina@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: get_arg_page() && ptr_size accounting
+Message-ID: <20180910171822.GA27005@redhat.com>
+References: <20180910122907.GA23963@redhat.com>
+ <CAGXu5jKYVAfWkd3WTM4EkVHWGoUY9BtSGKMLb1RAKhUfgCVxfA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGXu5jKYVAfWkd3WTM4EkVHWGoUY9BtSGKMLb1RAKhUfgCVxfA@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 10 Sep 2018 17:18:25 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 10 Sep 2018 17:18:25 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'oleg@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The TCG SAPI specification [1] defines a set of functions, which allow
-applications to use the TPM device in either blocking or non-blocking fashion.
-Each command defined by the specification has a corresponding
-Tss2_Sys_<COMMAND>_Prepare() and Tss2_Sys_<COMMAND>_Complete() call, which
-together with Tss2_Sys_ExecuteAsync() is designed to allow asynchronous
-mode of operation. Currently the TPM driver supports only blocking calls,
-which doesn't allow asynchronous IO operations.
-This patch changes it and adds support for nonblocking write and a new poll
-function to enable applications, which want to take advantage of this feature.
-The new functionality can be tested using standard TPM tools implemented
-in [2], together with modified TCTI from [3], and an example application
-by Philip Tricca [4]. Here is a short description from Philip:
+On 09/10, Kees Cook wrote:
+>
+> > So get_arg_page() does
+> >
+> >                 /*
+> >                  * Since the stack will hold pointers to the strings, we
+> >                  * must account for them as well.
+> >                  *
+> >                  * The size calculation is the entire vma while each arg page is
+> >                  * built, so each time we get here it's calculating how far it
+> >                  * is currently (rather than each call being just the newly
+> >                  * added size from the arg page).  As a result, we need to
+> >                  * always add the entire size of the pointers, so that on the
+> >                  * last call to get_arg_page() we'll actually have the entire
+> >                  * correct size.
+> >                  */
+> >                 ptr_size = (bprm->argc + bprm->envc) * sizeof(void *);
+> >                 if (ptr_size > ULONG_MAX - size)
+> >                         goto fail;
+> >                 size += ptr_size;
+> >
+> > OK, but
+> >                 acct_arg_size(bprm, size / PAGE_SIZE);
+> >
+> > after that doesn't look exactly right. This additional space will be used later
+> > when the process already uses bprm->mm, right? so it shouldn't be accounted by
+> > acct_arg_size().
+>
+> My understanding (based on the comment about acct_arg_size()) is that
+> before exec_mmap() happens, the memory used to build the new arguments
+> copy memory area gets accounted to the MM_ANONPAGES resource limit of
+> the execing process.
 
-"The example application `glib-tss2-event` uses a glib main event loop
-to create an RSA 2048 primary key in the TPM2 NULL hierarchy while
-using a glib timer event to time the operation. A GSource object is
-used to generate an event when the FD underlying the tss2 function
-call has data ready. While the application waits for an event indicating
-that the CreatePrimary operation is complete, it counts timer events
-that occur every 100ms. Once the CreatePrimary operation completes the
-number of timer events that occurred is used to make a rough calculation
-of the elapsed time. This value is then printed to the console.
-This takes ~300 lines of C code and requires no management or
-synchronization of threads. The glib GMainContext is "just a poll()
-loop" according to the glib documentation here:
+Yes, because otherwise oom-killer can't account the memory populated by
+get_arg_page() in bprm->mm.
 
-https://developer.gnome.org/programming-guidelines/stable/main-contexts.html.en
+> I couldn't find any place where the argc/envc
+> pointers were being included in the count,
 
-and so supporting 'poll' is the easiest way to integrate with glib /
-gtk+. This is true of any other event system that relies on 'poll'
-instead of worker threads."
+But why??? To clarify,
 
-[1] https://trustedcomputinggroup.org/wp-content/uploads/TSS_SAPI_Version-1.1_Revision-22_review_030918.pdf
-[2] https://github.com/tpm2-software/tpm2-tools
-[3] https://github.com/tstruk/tpm2-tss/tree/async
-[4] https://github.com/flihp/glib-tss2-async-example
+	size += ptr_size;
 
----
-Changes in v6:
-- Changed commit message in the first patch to more specific.
-- Chenged labels names in tpm-interface.c
+after acct_arg_size() is clear and correct, we are going to check rlim_stack
+and thus the size should include the pointers we will add in create_elf_tables().
 
-Changes in v5:
-- Changed the workqueue allocation time back from the first user interface
-  open to module init.
 
-Changes in v4:
-- Changed the way buffer_mutex is handled in nonblocking mode so that
-  it is not held when write() returns to user space.
+But acct_arg_size() should only account the pages we allocate for bprm->mm,
+nothing more. create_elf_tables() does not allocate the memory when it populates
+arg_start/arg_end/env_start/env_end. Plus at this time the process has already
+switched to bprm->mm.
 
-Changes in v3:
-- Fixed problem reported by 0-dey kbuild test robot around __exitcall.
-  It complained because there is a module_exit() in another file already.
-- Added info on example application from Philip
+> > Not to mention that ptr_size/PAGE_SIZE doesn't look right in any case...
+>
+> Hm? acct_arg_size() takes pages, not bytes. I think this is correct?
+> What doesn't look right to you?
 
-Changes in v2:
-- Split the change into two separate patches. First patch adds a pointer
-  to the space to the struct file_priv to have access to it from the async job.
-  This is to avoid memory allocations on every write call. Now everything
-  what's needed is in the file_priv struct.
-- Renamed the 'work' member of the timer to avoid confusion.
-  Now there are 'timeout_work' and 'async_work'.
-- Removed the global wait queue and moved it to file_priv.
-- Only creating the work queue when the first file is opened.
+Please forget. I meant that _if_ we actually wanted to account this additional
+memory in bprm->pages, than we would probably need something like
+acct_arg_size(size/PAGE_SIZE + DIV_ROUND_UP(ptr_size, PAGE_SIZE)).
 
-Tadeusz Struk (2):
-      tpm: add ptr to the tpm_space struct to file_priv
-      tpm: add support for nonblocking operation
+> > In short. Am I totally confused or the patch below makes sense? This way we do
+> > not need the fat comment.
+>
+> Even if I'm wrong about acct_arg_size(), we need to keep the comment
 
- drivers/char/tpm/tpm-dev-common.c |  150 +++++++++++++++++++++++++++----------
- drivers/char/tpm/tpm-dev.c        |   22 +++--
- drivers/char/tpm/tpm-dev.h        |   19 +++--
- drivers/char/tpm/tpm-interface.c  |    1 
- drivers/char/tpm/tpm.h            |    1 
- drivers/char/tpm/tpmrm-dev.c      |   31 ++++----
- 6 files changed, 152 insertions(+), 72 deletions(-)
+I won't argue, but to me evrything looks obvious as long as we don't pass
+ptr_size acct_arg_size().
 
---
-TS
+Oleg.
+
