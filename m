@@ -2,102 +2,162 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D63CC4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 08:43:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69529C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 08:44:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EFEF204FD
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 08:43:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EFEF204FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 12FED2086E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 08:44:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="VjZ04faa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12FED2086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728044AbeIJNgd (ORCPT
+        id S1728082AbeIJNgz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 09:36:33 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52970 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727488AbeIJNgc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 09:36:32 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9B3AA18A;
-        Mon, 10 Sep 2018 01:43:35 -0700 (PDT)
-Received: from [10.4.12.116] (e107155-lin.Emea.Arm.com [10.4.12.116])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 47CCD3F557;
-        Mon, 10 Sep 2018 01:43:29 -0700 (PDT)
-Cc:     Sudeep Holla <sudeep.holla@arm.com>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        matt@codeblueprint.co.uk, hkallweit1@gmail.com,
-        Kees Cook <keescook@chromium.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-clk <linux-clk@vger.kernel.org>, rajanv@xilinx.com,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>, Jolly Shah <jollys@xilinx.com>
-Subject: Re: [PATCH v11 03/11] firmware: xilinx: Add zynqmp IOCTL API for
- device control
-To:     Olof Johansson <olof@lixom.net>, Jolly Shah <jolly.shah@xilinx.com>
-References: <1533318808-10781-1-git-send-email-jollys@xilinx.com>
- <1533318808-10781-4-git-send-email-jollys@xilinx.com>
- <CAOesGMi7Q9L4oZkUubKtV-m8XD67MQ05ZFhPA_0Hwky_qVUxfg@mail.gmail.com>
-From:   Sudeep Holla <sudeep.holla@arm.com>
-Organization: ARM
-Message-ID: <64fbd7ca-48a8-7cb0-af3a-131ee61aef5a@arm.com>
-Date:   Mon, 10 Sep 2018 09:43:27 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 10 Sep 2018 09:36:55 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:39436 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727976AbeIJNgy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 09:36:54 -0400
+Received: by mail-it0-f65.google.com with SMTP id h1-v6so27633679itj.4
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 01:43:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=vgB6GTrm+iJTbabFaj/clF7dRpCQRZyv/XEfU3sVYxQ=;
+        b=VjZ04faaAKpdMGrls6vDC/9Q9Oq2MxWbpMU/M9xL08k2Ly1l3bBguc1sg7mOoqijF6
+         wtLlZHj4vZhD5NE3w/Xtd8yj7hG60YixFatVR65KNhWPzOGZ3/2dkPi3yI1Y2+8v4ffC
+         Bt6CX4lRqSJgLveavvbHMi6R5cIXePDwRh4/qzC631FGvfKzHP+e0aE5ZLf7Atg4UZhB
+         RksDdFvPOoy/SbR5KME/hqdanIaf6rat5moQJFkLVBs+6ZtHBX+MJKxDQKi+iX6SHRaY
+         ODpbfs6bTE+m7ReoiiEDHzWVOYNtf+XWOFEd93hXYRxBwZOjK6wNqh5H9cdyp/WQNIv3
+         u6rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=vgB6GTrm+iJTbabFaj/clF7dRpCQRZyv/XEfU3sVYxQ=;
+        b=qtZ11TroYhXoASKTWnt0NkwsKz6dohQZpeAGIH9EM2RecHb80sQv+ojT+QH29342jb
+         ZpE1QBiNEbN6hEzolyGF42ZWvo6vMunex6rt/B6BttKq8ABSzwTj7AtQp36xdeyMCjEG
+         M44CiwOg7aLrJF8Gogk0XS2FP3iMJanFCfmpVJNnl32fxiNOmPbzRnEt2Do42TN63jPD
+         cCgwlZPFUadwtfGuVmMiREujBjBhg1VI62aPIIH/1vpNYpf4nlmJb3fPdnb24MvZZx0c
+         yhtNJJ1SP/LSkmuTY/rHiisCDjnYi45aa0prtrKtbX5veH9zUEl9Y1x6FWxOC5PFCR7J
+         2fJg==
+X-Gm-Message-State: APzg51BpbKAjZIlP5+95Nqo8Ktc6AFe916/y5KFc18jbFje/ubq7ku4M
+        nBNNW7M0T5Dhpv6T1bj9AAzG62qbW0CSbMWCce2Xiw==
+X-Google-Smtp-Source: ANB0VdZXBHu+oRNFpUHom0fMedX1d/RubF6fgjV7MREL5S9z1piAV0NT7fZ2fhh6MHmsY3HZXxKPfA5Okqi0wZS7+XQ=
+X-Received: by 2002:a02:5f44:: with SMTP id r65-v6mr17662391jab.34.1536569036758;
+ Mon, 10 Sep 2018 01:43:56 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAOesGMi7Q9L4oZkUubKtV-m8XD67MQ05ZFhPA_0Hwky_qVUxfg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a6b:1905:0:0:0:0:0 with HTTP; Mon, 10 Sep 2018 01:43:56
+ -0700 (PDT)
+In-Reply-To: <7e138142-8161-3646-4daf-619995baf395@linaro.org>
+References: <20180907100750.14564-1-brgl@bgdev.pl> <20180907100750.14564-2-brgl@bgdev.pl>
+ <c0b0c411-65f6-62f9-6d6d-2884e5a17250@linaro.org> <CAMRc=MfO01EQAfY4Uu3UwzzvhVOMF7_BpCOPVz2yVXqDgpb0AA@mail.gmail.com>
+ <7e138142-8161-3646-4daf-619995baf395@linaro.org>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Mon, 10 Sep 2018 10:43:56 +0200
+Message-ID: <CAMRc=Mduu4CmLX5DFtJd8NSbzs5g65U9AmM=rbscit0JyQKVAQ@mail.gmail.com>
+Subject: Re: [PATCH v2 01/16] nvmem: remove unused APIs
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Andrew Lunn <andrew@lunn.ch>, Alban Bedel <albeu@free.fr>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        linux-doc <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 09/09/18 02:18, Olof Johansson wrote:
-> Hi,
-> 
-> On Fri, Aug 3, 2018 at 10:53 AM, Jolly Shah <jolly.shah@xilinx.com> wrote:
->> From: Rajan Vaja <rajanv@xilinx.com>
+2018-09-10 10:09 GMT+02:00 Srinivas Kandagatla <srinivas.kandagatla@linaro.org>:
+>
+>
+> On 10/09/18 08:58, Bartosz Golaszewski wrote:
 >>
->> Add ZynqMP firmware IOCTL API to control and configure
->> devices like PLLs, SD, Gem, etc.
+>> 2018-09-10 9:32 GMT+02:00 Srinivas Kandagatla
+>> <srinivas.kandagatla@linaro.org>:
+>>>
+>>>
+>>>
+>>> On 07/09/18 11:07, Bartosz Golaszewski wrote:
+>>>>
+>>>>
+>>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>>
+>>>> Remove all APIs dealing with nvmem_cell_info. There are no users and
+>>>> this part of the subsystem will be reworked.
+>>>>
+>>>> This patch temprarily disables support for non-DT users.
+>>>>
+>>>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>> ---
+>>>>    drivers/nvmem/core.c           | 212
+>>>> ++-------------------------------
+>>>>    include/linux/nvmem-consumer.h |  26 ----
+>>>>    include/linux/nvmem-provider.h |  13 --
+>>>>    3 files changed, 12 insertions(+), 239 deletions(-)
+>>>
+>>>
+>>>
+>>> This looks totally un-necessary, Other patches in this series adds them
+>>> back.. Consider updating these in those respective patches.!
+>>>
 >>
->> Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
->> Signed-off-by: Jolly Shah <jollys@xilinx.com>
-> 
-> This patch worries me somewhat. It's a transparent pass-through ioctl
-> driver. Is there a spec available for what the implemented IOCTLs are?
-> 
-> Should some of them be proper drivers instead of an opaque
-> pass-through like this? Could some of them have stability impact on
-> the platform such that there are security concerns and the list of
-> arguments should somehow be sanitized?
-> 
-> What's the intended usecase anyway? Just a debug tool during
-> development, or something that you expect heavy use of by some
-> userspace middleware?
-> 
+>> While this may not be entirely necessary, it's very useful. There's
+>
+> Yes, thats exactly what am saying if it not necessary please do not do it.
+>
+>> almost nothing common between this API and the new one added later in
+>
+> There is more than 60%-70% of the code reused in new patches, which is
+> unnecessary churn to me!
+>
 
-Thanks for pointing this out. My earlier attempts were ignored[1]
-and I gave up.
+Pretty much the only thing that is reused are the contents of
+nvmem_cell_info_to_nvmem_cell() and even they are placed in a
+different function. Also: this change allows us to add new APIs
+without having to update users at each step only to change them
+afterwards with one of subsequent patches. I would really prefer that
+this stay this way. If there are no users, then there's no breakage
+that would make your point valid.
 
--- 
-Regards,
-Sudeep
+>> this series. Later patches are MUCH cleaner thanks to this removal and
+>> I believe it makes them easier for review.
+>
+> Am not sure about that, it definitely did not help me!
+>
 
-[1] https://lkml.org/lkml/2018/5/10/298
+Why exactly? Aren't clean patches resulting from this removal easier
+to read then if they'd also have to take into account the burden of
+existing code that will be changes anyway later? I really don't see
+why you insist on removing this.
+
+Best regards,
+Bart
+
+> --srini
+>>
+>>
+>> Best regards,
+>> Bart
+>>
+>
