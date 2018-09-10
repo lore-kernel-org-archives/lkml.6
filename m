@@ -3,104 +3,279 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E5FFC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:14:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 078B5C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:14:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4004420866
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:14:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4004420866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id 9DA0A204FD
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:14:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DA0A204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728001AbeIJOHL (ORCPT
+        id S1728046AbeIJOHz convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 10:07:11 -0400
-Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:48420 "EHLO
-        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726081AbeIJOHL (ORCPT
+        Mon, 10 Sep 2018 10:07:55 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:55206 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726081AbeIJOHz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 10:07:11 -0400
-Received: from [192.168.2.10] ([212.251.195.8])
-        by smtp-cloud7.xs4all.net with ESMTPA
-        id zIGdf1IMSw2L8zIGgfJUft; Mon, 10 Sep 2018 11:14:06 +0200
-Subject: Re: [PATCH 0/2] Document memory-to-memory video codec interfaces
-To:     Tomasz Figa <tfiga@chromium.org>, linux-media@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Pawel Osciak <posciak@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
-        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
-        jtp.park@samsung.com, Philipp Zabel <p.zabel@pengutronix.de>,
-        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= 
-        <tiffany.lin@mediatek.com>,
-        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?= 
-        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
-        nicolas@ndufresne.ca,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Dave Stevenson <dave.stevenson@raspberrypi.org>,
-        ezequiel@collabora.com
-References: <20180724140621.59624-1-tfiga@chromium.org>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <bed0d45d-d5c0-d2dc-03d7-eedf99246182@xs4all.nl>
-Date:   Mon, 10 Sep 2018 11:13:59 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Mon, 10 Sep 2018 10:07:55 -0400
+Received: from 79.184.255.178.ipv4.supernova.orange.pl (79.184.255.178) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.123)
+ id 80fcedb844ad18f9; Mon, 10 Sep 2018 11:14:47 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
+        mingo@redhat.com, dietmar.eggemann@arm.com,
+        morten.rasmussen@arm.com, chris.redpath@arm.com,
+        patrick.bellasi@arm.com, valentin.schneider@arm.com,
+        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
+        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
+        smuckle@google.com, adharmap@codeaurora.org,
+        skannan@codeaurora.org, pkondeti@codeaurora.org,
+        juri.lelli@redhat.com, edubezval@gmail.com,
+        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
+        javi.merino@kernel.org
+Subject: Re: [PATCH v6 00/14] Energy Aware Scheduling
+Date:   Mon, 10 Sep 2018 11:12:11 +0200
+Message-ID: <2338896.lUgtDMVfv7@aspire.rjw.lan>
+In-Reply-To: <20180820094420.26590-1-quentin.perret@arm.com>
+References: <20180820094420.26590-1-quentin.perret@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180724140621.59624-1-tfiga@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4wfO7Po06B+pNkxnZnTT52T1RpE3JIQs+lVtVxvLV2psyw5PQHmTvSeQWGkyuGzCYhGObLhpbwNRM1h+S8T+RI1Se3Xy/lwv+ypiiDR+WsYiuhdsL3bCDl
- yXyWgle8NXfFauNPYY8WZXlsSHt4KSXz5evFrM5X/0wUC6IsGDj3JJBbCv2kcFrHL1xlQvp6RhDE7UvcU0AhxV84DmONLxWE6g4PLjDT8k0c+mbNQlX8nVWN
- iHEHJ7dQCn3S/iKFrUgP4DqCoMHXZ4cWsxFV98m8Kvaq+GHZ/pIHQArzA6xnv3DEENgb53uVRLoFvLSlGmY6f2GvWZblivsUDcFRRcE479ZzYHHAH+T1OewE
- rLuvxRcx79Va9lfXqlaa9IK86y5gIUH0BhKwOk7QizpiQ73CyqQr1OrdCgPL1mo29sePU5Tm50wrnUpeO2wfXwD1bA0+Jh9VgyUhs/4FGSRhqhILPOCSC7AO
- oybpn+dZuAvd8Kzpk3pkM4nGjGTCfcDAuDwMWmTqx8ZzVz7Uj5DUtv1kZ/Sf2LmDnBv8az4en6hhTjhHC2vi4HqvQIkBaJy5hAorhBu0Q/09yXFDwArejSMV
- gh/QOQLMyF9vuI+SJ2u7L81iqQHplCQn6h7f9NzjTHSxD/vQCVY0phHfH8yippUbQyjcpLo6E+g5DEoNU2i834Uapi2Pj4RTQ2B4ViYMFQEKnnUrko9eWfWa
- iANhEBZGzCnhG3xhzoy8h9VyxGg+N22LYePI8v5Pq3phgm9FWIV8MvNJksUmbhsQ57ETeipN3GjsTRFESJDD2ARuC6Yea/et0hXr1xAb2DBMxzRQwKuu3Euf
- YcGKpkMJ5AI+9NChPA31shLbUbjPAwpH9FzsnHvy
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tomasz,
-
-On 07/24/2018 04:06 PM, Tomasz Figa wrote:
-> This series attempts to add the documentation of what was discussed
-> during Media Workshops at LinuxCon Europe 2012 in Barcelona and then
-> later Embedded Linux Conference Europe 2014 in Düsseldorf and then
-> eventually written down by Pawel Osciak and tweaked a bit by Chrome OS
-> video team (but mostly in a cosmetic way or making the document more
-> precise), during the several years of Chrome OS using the APIs in
-> production.
+On Monday, August 20, 2018 11:44:06 AM CEST Quentin Perret wrote:
+> This patch series introduces Energy Aware Scheduling (EAS) for CFS tasks
+> on platforms with asymmetric CPU topologies (e.g. Arm big.LITTLE).
 > 
-> Note that most, if not all, of the API is already implemented in
-> existing mainline drivers, such as s5p-mfc or mtk-vcodec. Intention of
-> this series is just to formalize what we already have.
+> For more details about the ideas behind it and the overall design,
+> please refer to the cover letter of version 5 [1].
 > 
-> It is an initial conversion from Google Docs to RST, so formatting is
-> likely to need some further polishing. It is also the first time for me
-> to create such long RST documention. I could not find any other instance
-> of similar userspace sequence specifications among our Media documents,
-> so I mostly followed what was there in the source. Feel free to suggest
-> a better format.
 > 
-> Much of credits should go to Pawel Osciak, for writing most of the
-> original text of the initial RFC.
+> 1. Version History
+> ------------------
+> 
+> Changes v5[1]->v6:
+> - Rebased on Peter’s sched/core branch (that includes Morten's misfit
+>   patches [2] and the automatic detection of SD_ASYM_CPUCAPACITY [3])
+> - Removed patch 13/14 (not needed with the automatic flag detection)
+> - Added patch creating a dependency between sugov and EAS
+> - Renamed frequency domains to performance domains to avoid creating too
+>   deep assumptions in the code about the HW
+> - Renamed the sd_ea shortcut sd_asym_cpucapacity
+> - Added comment to explain why new tasks are not accounted when
+>   detecting the 'overutilized' flag
+> - Added comment explaining why forkees don’t go in
+>   find_energy_efficient_cpu()
+> 
+> Changes v4[4]->v5:
+> - Removed the RCU protection of the EM tables and the associated
+>   need for em_rescale_cpu_capacity().
+> - Factorized schedutil’s PELT aggregation function with EAS
+> - Improved comments/doc in the EM framework
+> - Added check on the uarch of CPUs in one fd in the EM framework
+> - Reduced CONFIG_ENERGY_MODEL ifdefery in kernel/sched/topology.c
+> - Cleaned-up update_sg_lb_stats parameters
+> - Improved comments in compute_energy() to explain the multi-rd
+>   scenarios
+> 
+> Changes v3[5]->v4:
+> - Replaced spinlock in EM framework by smp_store_release/READ_ONCE
+> - Fixed missing locks to protect rcu_assign_pointer in EM framework
+> - Fixed capacity calculation in EM framework on 32 bits system
+> - Fixed compilation issue for CONFIG_ENERGY_MODEL=n
+> - Removed cpumask from struct em_freq_domain, now dynamically allocated
+> - Power costs of the EM are specified in milliwatts
+> - Added example of CPUFreq driver modification
+> - Added doc/comments in the EM framework and better commit header
+> - Fixed integration issue with util_est in cpu_util_next()
+> - Changed scheduler topology code to have one freq. dom. list per rd
+> - Split sched topology patch in smaller patches
+> - Added doc/comments explaining the heuristic in the wake-up path
+> - Changed energy threshold for migration to from 1.5% to 6%
+> 
+> Changes v2[6]->v3:
+> - Removed the PM_OPP dependency by implementing a new EM framework
+> - Modified the scheduler topology code to take references on the EM data
+>   structures
+> - Simplified the overutilization mechanism into a system-wide flag
+> - Reworked the integration in the wake-up path using the sd_ea shortcut
+> - Rebased on tip/sched/core (247f2f6f3c70 "sched/core: Don't schedule
+>   threads on pre-empted vCPUs")
+> 
+> Changes v1[7]->v2:
+> - Reworked interface between fair.c and energy.[ch] (Remove #ifdef
+>   CONFIG_PM_OPP from energy.c) (Greg KH)
+> - Fixed licence & header issue in energy.[ch] (Greg KH)
+> - Reordered EAS path in select_task_rq_fair() (Joel)
+> - Avoid prev_cpu if not allowed in select_task_rq_fair() (Morten/Joel)
+> - Refactored compute_energy() (Patrick)
+> - Account for RT/IRQ pressure in task_fits() (Patrick)
+> - Use UTIL_EST and DL utilization during OPP estimation (Patrick/Juri)
+> - Optimize selection of CPU candidates in the energy-aware wake-up path
+> - Rebased on top of tip/sched/core (commit b720342849fe “sched/core:
+>   Update Preempt_notifier_key to modern API”)
+> 
+> 
+> 2. Test results
+> ---------------
+> 
+> Two fundamentally different tests were executed. Firstly the energy test
+> case shows the impact on energy consumption this patch-set has using a
+> synthetic set of tasks. Secondly the performance test case provides the
+> conventional hackbench metric numbers.
+> 
+> The tests run on two arm64 big.LITTLE platforms: Hikey960 (4xA73 +
+> 4xA53) and Juno r0 (2xA57 + 4xA53).
+> 
+> Base kernel is tip/sched/core (4.18-rc5), with some Hikey960 and Juno
+> specific patches, the SD_ASYM_CPUCAPACITY flag set at DIE sched domain
+> level for arm64 and schedutil as cpufreq governor [8].
+> 
+> 2.1 Energy test case
+> 
+> 10 iterations of between 10 and 50 periodic rt-app tasks (16ms period,
+> 5% duty-cycle) for 30 seconds with energy measurement. Unit is Joules.
+> The goal is to save energy, so lower is better.
+> 
+> 2.1.1 Hikey960
+> 
+> Energy is measured with an ACME Cape on an instrumented board. Numbers
+> include consumption of big and little CPUs, LPDDR memory, GPU and most
+> of the other small components on the board. They do not include
+> consumption of the radio chip (turned-off anyway) and external
+> connectors.
+> 
+> +----------+-----------------+-------------------------+
+> |          | Without patches | With patches            |
+> +----------+--------+--------+------------------+------+
+> | Tasks nb |  Mean  | RSD*   | Mean             | RSD* |
+> +----------+--------+--------+------------------+------+
+> |       10 |  34.33 |   4.8% |  30.51 (-11.13%) | 6.4% |
+> |       20 |  52.84 |   1.9% |  44.15 (-16.45%) | 2.0% |
+> |       30 |  66.20 |   1.8% |  60.14  (-9.15%) | 4.8% |
+> |       40 |  90.83 |   2.5% |  86.91  (-4.32%) | 2.7% |
+> |       50 | 136.76 |   4.6% | 108.90 (-20.37%) | 4.7% |
+> +----------+--------+--------+------------------+------+
+> 
+> 2.1.2 Juno r0
+> 
+> Energy is measured with the onboard energy meter. Numbers include
+> consumption of big and little CPUs.
+> 
+> +----------+-----------------+------------------------+
+> |          | Without patches | With patches           |
+> +----------+--------+--------+-----------------+------+
+> | Tasks nb |  Mean  | RSD*   | Mean            | RSD* |
+> +----------+--------+--------+-----------------+------+
+> |       10 |  11.48 |   3.2% |  8.09 (-29.53%) | 3.1% |
+> |       20 |  20.84 |   3.4% | 14.38 (-31.00%) | 1.1% |
+> |       30 |  32.94 |   3.2% | 23.97 (-27.23%) | 1.0% |
+> |       40 |  46.05 |   0.5% | 37.82 (-17.87%) | 6.2% |
+> |       50 |  57.25 |   0.5% | 55.30 ( -3.41%) | 0.5% |
+> +----------+--------+--------+-----------------+------+
+> 
+> 
+> 2.2 Performance test case
+> 
+> 30 iterations of perf bench sched messaging --pipe --thread --group G
+> --loop L with G=[1 2 4 8] and L=50000 (Hikey960)/16000 (Juno r0).
+> 
+> 2.2.1 Hikey960
+> 
+> The impact of thermal capping was mitigated thanks to a heatsink, a
+> fan, and a 30 sec delay between two successive executions. IPA is
+> disabled to reduce the stddev.
+> 
+> +----------------+-----------------+------------------------+
+> |                | Without patches | With patches           |
+> +--------+-------+---------+-------+----------------+-------+
+> | Groups | Tasks | Mean    | RSD*  | Mean           | RSD*  |
+> +--------+-------+---------+-------+----------------+-------+
+> |      1 |    40 |    8.04 | 0.88% |  8.22 (+2.31%) | 1.76% |
+> |      2 |    80 |   14.78 | 0.67% | 14.83 (+0.35%) | 0.59% |
+> |      4 |   160 |   30.92 | 0.57% | 30.95 (+0.09%) | 0.51% |
+> |      8 |   320 |   65.54 | 0.32% | 65.57 (+0.04%) | 0.46% |
+> +--------+-------+---------+-------+----------------+-------+
+> 
+> 2.2.2 Juno r0
+> 
+> +----------------+-----------------+-----------------------+
+> |                | Without patches | With patches          |
+> +--------+-------+---------+-------+---------------+-------+
+> | Groups | Tasks | Mean    | RSD*  | Mean          | RSD*  |
+> +--------+-------+---------+-------+---------------+-------+
+> |      1 |    40 |    7.74 | 0.13% |  7.82 (0.01%) | 0.12% |
+> |      2 |    80 |   14.27 | 0.15% | 14.27 (0.00%) | 0.14% |
+> |      4 |   160 |   27.07 | 0.35% | 26.96 (0.00%) | 0.18% |
+> |      8 |   320 |   55.14 | 1.81% | 55.21 (0.00%) | 1.29% |
+> +--------+-------+---------+-------+---------------+-------+
+> 
+> *RSD: Relative Standard Deviation (std dev / mean)
+> 
+> 
+> [1] https://marc.info/?l=linux-pm&m=153243513908731&w=2
+> [2] https://marc.info/?l=linux-kernel&m=153069968022982&w=2
+> [3] https://marc.info/?l=linux-kernel&m=153209362826476&w=2
+> [4] https://marc.info/?l=linux-kernel&m=153018606728533&w=2
+> [5] https://marc.info/?l=linux-kernel&m=152691273111941&w=2
+> [6] https://marc.info/?l=linux-kernel&m=152302902427143&w=2
+> [7] https://marc.info/?l=linux-kernel&m=152153905805048&w=2
+> [8] http://www.linux-arm.org/git?p=linux-qp.git;a=shortlog;h=refs/heads/upstream/eas_v6
+> 
+> Morten Rasmussen (1):
+>   sched: Add over-utilization/tipping point indicator
+> 
+> Quentin Perret (13):
+>   sched: Relocate arch_scale_cpu_capacity
+>   sched/cpufreq: Factor out utilization to frequency mapping
+>   PM: Introduce an Energy Model management framework
+>   PM / EM: Expose the Energy Model in sysfs
+>   sched/topology: Reference the Energy Model of CPUs when available
+>   sched/topology: Lowest CPU asymmetry sched_domain level pointer
+>   sched/topology: Introduce sched_energy_present static key
+>   sched/fair: Clean-up update_sg_lb_stats parameters
+>   sched/cpufreq: Refactor the utilization aggregation method
+>   sched/fair: Introduce an energy estimation helper function
+>   sched/fair: Select an energy-efficient CPU on task wake-up
+>   sched/topology: Make Energy Aware Scheduling depend on schedutil
+>   OPTIONAL: cpufreq: dt: Register an Energy Model
+> 
+>  drivers/cpufreq/cpufreq-dt.c     |  45 ++++-
+>  drivers/cpufreq/cpufreq.c        |   4 +
+>  include/linux/cpufreq.h          |   1 +
+>  include/linux/energy_model.h     | 162 +++++++++++++++++
+>  include/linux/sched/cpufreq.h    |   6 +
+>  include/linux/sched/topology.h   |  19 ++
+>  kernel/power/Kconfig             |  15 ++
+>  kernel/power/Makefile            |   2 +
+>  kernel/power/energy_model.c      | 289 +++++++++++++++++++++++++++++
+>  kernel/sched/cpufreq_schedutil.c | 136 ++++++++++----
+>  kernel/sched/fair.c              | 301 ++++++++++++++++++++++++++++---
+>  kernel/sched/sched.h             |  65 ++++---
+>  kernel/sched/topology.c          | 231 +++++++++++++++++++++++-
+>  13 files changed, 1195 insertions(+), 81 deletions(-)
+>  create mode 100644 include/linux/energy_model.h
+>  create mode 100644 kernel/power/energy_model.c
 
-I'm adding this here as a result of an irc discussion, since it applies
-to both encoders and decoders:
+I have looked at all of the patches in the series now and I don't really
+have any major objections from the cpufreq (and generally PM) perspective.
 
-How to handle non-square pixel aspect ratios?
+There are some points of concern here and there, but they are mostly details
+and things I would do differently, but as a whole this looks mostly OK to me.
 
-Decoders would have to report it through VIDIOC_CROPCAP, so this needs
-to be documented when the application should call this, but I don't
-think we can provide this information today for encoders.
+I will reply to the individual patches where there are issues in my view.
 
-Regards,
+Thanks,
+Rafael
 
-	Hans
+
