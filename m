@@ -2,166 +2,127 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48568C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:45:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF146C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:46:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1BD520645
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:45:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1BD520645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 85CEF20645
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:46:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85CEF20645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728664AbeIJTjx (ORCPT
+        id S1728697AbeIJTlN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 15:39:53 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:51738 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727744AbeIJTjx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 15:39:53 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1fzNRN-0006sB-B1; Mon, 10 Sep 2018 14:45:25 +0000
-Date:   Mon, 10 Sep 2018 15:45:25 +0100
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC][PATCH 8/8] really consolidate INIT_C_CC definitions
-Message-ID: <20180910144525.GL19965@ZenIV.linux.org.uk>
-References: <20180910044937.GJ19965@ZenIV.linux.org.uk>
- <20180910045227.9895-1-viro@ZenIV.linux.org.uk>
- <20180910045227.9895-8-viro@ZenIV.linux.org.uk>
- <CA+55aFyzNWJJfHRMiEF8=Nto=O=jF6iuFTQEzEqF7rr6v_j8oQ@mail.gmail.com>
+        Mon, 10 Sep 2018 15:41:13 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:8109 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727744AbeIJTlN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 15:41:13 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 4289q13fr7z9ttC8;
+        Mon, 10 Sep 2018 16:46:37 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id rxG_HcX9c2DI; Mon, 10 Sep 2018 16:46:37 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 4289q1360Pz9ttBp;
+        Mon, 10 Sep 2018 16:46:37 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 840098B7B7;
+        Mon, 10 Sep 2018 16:46:46 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id OfUJIAZLR9pY; Mon, 10 Sep 2018 16:46:46 +0200 (CEST)
+Received: from pc16082vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 24B8F8B7B5;
+        Mon, 10 Sep 2018 16:46:46 +0200 (CEST)
+To:     akpm@linux-foundation.org, linux-mm@kvack.org,
+        aneesh.kumar@linux.vnet.ibm.com,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev@lists.ozlabs.org
+Cc:     LKML <linux-kernel@vger.kernel.org>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: How to handle PTE tables with non contiguous entries ?
+Message-ID: <ddc3bb56-4da0-c093-256f-185d4a612b5c@c-s.fr>
+Date:   Mon, 10 Sep 2018 14:34:37 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFyzNWJJfHRMiEF8=Nto=O=jF6iuFTQEzEqF7rr6v_j8oQ@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 10, 2018 at 03:33:45AM -1000, Linus Torvalds wrote:
-> On Sun, Sep 9, 2018 at 6:52 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> >  */
-> > +#ifndef INIT_C_CC_VDISCARD
-> > +#define INIT_C_CC_VDISCARD 'O'-0x40
-> > +#endif
-> 
-> Just change everybody to do the same, nobody cares about VDISCARD.
-> 
-> We can change the value of VDISCARD because it doesn't actually have
-> anything connected to it, so don't worry about "we used to have odd
-> different values for it".
+Hi,
 
-Point...  The following added and pushed:
+I'm having a hard time figuring out the best way to handle the following 
+situation:
 
-commit 96202dddde4673cfd686b9812e5ab0790f907cd0
-Author: Al Viro <viro@zeniv.linux.org.uk>
-Date:   Mon Sep 10 10:42:59 2018 -0400
+On the powerpc8xx, handling 16k size pages requires to have page tables 
+with 4 identical entries.
 
-    ... and switch alpha/ppc/sparc to ^O for discard
-    
-    it's
-            1) common for all other architectures
-            2) historical default for that thing and
-            3) ignored by the tty layer anyway.
-    
-    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Initially I was thinking about handling this by simply modifying 
+pte_index() which changing pte_t type in order to have one entry every 
+16 bytes, then replicate the PTE value at *ptep, *ptep+1,*ptep+2 and 
+*ptep+3 both in set_pte_at() and pte_update().
 
-diff --git a/arch/alpha/include/asm/termios_internal.h b/arch/alpha/include/asm/termios_internal.h
-index 07d5c1a6cdf6..c73cc96f96a3 100644
---- a/arch/alpha/include/asm/termios_internal.h
-+++ b/arch/alpha/include/asm/termios_internal.h
-@@ -2,8 +2,6 @@
- #ifndef _ALPHA_TERMIOS_H
- #define _ALPHA_TERMIOS_H
- 
--#define INIT_C_CC_VDISCARD 'U'-0x40
--
- /*
-  * Translate a "termio" structure into a "termios". Ugh.
-  */
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index b1402b1f1685..db0b6eebbfa5 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -223,7 +223,6 @@ config PPC
- 	select HAVE_VIRT_CPU_ACCOUNTING
- 	select HAVE_IRQ_TIME_ACCOUNTING
- 	select HAVE_RSEQ
--	select HAS_TERMIOS_INTERNAL
- 	select IOMMU_HELPER			if PPC64
- 	select IRQ_DOMAIN
- 	select IRQ_FORCED_THREADING
-diff --git a/arch/powerpc/include/asm/termios_internal.h b/arch/powerpc/include/asm/termios_internal.h
-deleted file mode 100644
-index 116b138ea232..000000000000
---- a/arch/powerpc/include/asm/termios_internal.h
-+++ /dev/null
-@@ -1,17 +0,0 @@
--/*
-- * Liberally adapted from alpha/termios.h.  In particular, the c_cc[]
-- * fields have been reordered so that termio & termios share the
-- * common subset in the same order (for brain dead programs that don't
-- * know or care about the differences).
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * as published by the Free Software Foundation; either version
-- * 2 of the License, or (at your option) any later version.
-- */
--#ifndef _ASM_POWERPC_TERMIOS_H
--#define _ASM_POWERPC_TERMIOS_H
--
--#define INIT_C_CC_VDISCARD 'U'-0x40
--
--#endif	/* _ASM_POWERPC_TERMIOS_H */
-diff --git a/arch/sparc/include/asm/termios_internal.h b/arch/sparc/include/asm/termios_internal.h
-index 1649a0cecda9..9d14a4bc40cf 100644
---- a/arch/sparc/include/asm/termios_internal.h
-+++ b/arch/sparc/include/asm/termios_internal.h
-@@ -13,8 +13,6 @@
- #define _VMIN	4
- #define _VTIME	5
- 
--#define INIT_C_CC_VDISCARD 'U'-0x40
--
- /*
-  * Translate a "termios" structure into a "termio". Ugh.
-  *
-diff --git a/include/linux/termios_internal.h b/include/linux/termios_internal.h
-index 549715b18d22..f0bc26812548 100644
---- a/include/linux/termios_internal.h
-+++ b/include/linux/termios_internal.h
-@@ -11,14 +11,9 @@
- /*	intr=^C		quit=^\		erase=del	kill=^U
- 	eof=^D		vtime=\0	vmin=\1		sxtc=\0
- 	start=^Q	stop=^S		susp=^Z		eol=\0
--	reprint=^R	discard=^U	werase=^W	lnext=^V
-+	reprint=^R	discard=^O	werase=^W	lnext=^V
- 	eol2=\0
--	... except that discard is actually ^O on most of them.
- */
--#ifndef INIT_C_CC_VDISCARD
--#define INIT_C_CC_VDISCARD 'O'-0x40
--#endif
--
- #ifdef VDSUSP
- #define INIT_C_CC_VDSUSP_EXTRA [VDSUSP] = 'Y'-0x40,
- #else
-@@ -36,7 +31,7 @@
- 	[VSTOP] = 'S'-0x40,	\
- 	[VSUSP] = 'Z'-0x40,	\
- 	[VREPRINT] = 'R'-0x40,	\
--	[VDISCARD] = INIT_C_CC_VDISCARD,	\
-+	[VDISCARD] = 'O'-0x40,	\
- 	[VWERASE] = 'W'-0x40,	\
- 	[VLNEXT] = 'V'-0x40,	\
- 	INIT_C_CC_VDSUSP_EXTRA	\
+However, this doesn't work because many many places in the mm core part 
+of the kernel use loops on ptep with single ptep++ increment.
+
+Therefore did it with the following hack:
+
+  /* PTE level */
++#if defined(CONFIG_PPC_8xx) && defined(CONFIG_PPC_16K_PAGES)
++typedef struct { pte_basic_t pte, pte1, pte2, pte3; } pte_t;
++#else
+  typedef struct { pte_basic_t pte; } pte_t;
++#endif
+
+@@ -181,7 +192,13 @@ static inline unsigned long pte_update(pte_t *p,
+         : "cc" );
+  #else /* PTE_ATOMIC_UPDATES */
+         unsigned long old = pte_val(*p);
+-       *p = __pte((old & ~clr) | set);
++       unsigned long new = (old & ~clr) | set;
++
++#if defined(CONFIG_PPC_8xx) && defined(CONFIG_PPC_16K_PAGES)
++       p->pte = p->pte1 = p->pte2 = p->pte3 = new;
++#else
++       *p = __pte(new);
++#endif
+  #endif /* !PTE_ATOMIC_UPDATES */
+
+  #ifdef CONFIG_44x
+
+
+@@ -161,7 +161,11 @@ static inline void __set_pte_at(struct mm_struct 
+*mm, unsigned long addr,
+         /* Anything else just stores the PTE normally. That covers all 
+64-bit
+          * cases, and 32-bit non-hash with 32-bit PTEs.
+          */
++#if defined(CONFIG_PPC_8xx) && defined(CONFIG_PPC_16K_PAGES)
++       ptep->pte = ptep->pte1 = ptep->pte2 = ptep->pte3 = pte_val(pte);
++#else
+         *ptep = pte;
++#endif
+
+
+
+But I'm not too happy with it as it means pte_t is not a single type 
+anymore so passing it from one function to the other is quite heavy.
+
+
+Would someone have an idea of an elegent way to handle that ?
+
+Thanks
+Christophe
