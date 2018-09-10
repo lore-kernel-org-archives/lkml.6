@@ -2,107 +2,93 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6FBAC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 20:49:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 645EDC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 20:51:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7356420865
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 20:49:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0475820865
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 20:51:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VgtqcP1w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7356420865
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZY8SwrvY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0475820865
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726722AbeIKBpG (ORCPT
+        id S1726811AbeIKBrf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 21:45:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51042 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726150AbeIKBpF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 21:45:05 -0400
-Received: from mail-qt0-f169.google.com (mail-qt0-f169.google.com [209.85.216.169])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7796620865;
-        Mon, 10 Sep 2018 20:49:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536612553;
-        bh=qXybzrn47r2UwyUE/7E1D73V+iIG0bGVkgw9Jn9KH88=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=VgtqcP1wPYW11FbZIbig7wepKD4wAd+vxUeJH9XU8N3QvLuu+CgPPMhg3/OEIhHA6
-         dqyI9WaGtXkpEnKXr74YOEwLT5LOBIC+YKH1Q6aMRJ7sDL8PJ+0Z1TDmZplimG+i5s
-         8XxurTik/b2YpxDZe5hosw/MOmH/Q0wNzWiWecOw=
-Received: by mail-qt0-f169.google.com with SMTP id l42-v6so590886qtf.13;
-        Mon, 10 Sep 2018 13:49:13 -0700 (PDT)
-X-Gm-Message-State: APzg51DDXg+ZXeCIIkT4zpnqyqy7d/6wpej6zcdEm+Yb+VLpfj+/s7NZ
-        XE9yT/HDG2ozL4sRvRgJrjw6slzrEtqQYnjE/g==
-X-Google-Smtp-Source: ANB0VdZvBcqr7DHVc8tHGdSvjDxprKgGHvPlC10mb1bkQ9eIkHiYagj8VoksLLlcSJS7eoHJcUdseItgaOwwpRHdOI8=
-X-Received: by 2002:a0c:e9ce:: with SMTP id q14-v6mr16313165qvo.106.1536612552531;
- Mon, 10 Sep 2018 13:49:12 -0700 (PDT)
+        Mon, 10 Sep 2018 21:47:35 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52408 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726150AbeIKBre (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 21:47:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=C/S3lSy57XdmdpUF/iuHiCVDGIGh0yrj0WRy3BamSao=; b=ZY8SwrvYMYh99U413m2UkWstB
+        +WCPe41m24+aUpzZadZoZWsmKQQNppSaXycwhvxTaFKZeFALD8G6xC+lGqB9xIxbXRXxOvLWLGmlx
+        4knE2HHEinp2z8QneFh/oTXJmxAhCIKFMYeD/f/T09zQWbGGlOMDdE958GuAQrl9b52bJuPEygIWV
+        knhEoc1Fl7n9y0sYxSppRNrBD6a+ZY8J1njZ2f7ApDY2zQ7WXyrbdeATjiFE58znHD+NjdzhxYOs1
+        1yITgY5f07ozSggl+76lHZvehFvN+6o5Kd1xvEs0gUaO5aWKgxDR7i2AvdFgrWN+z9/GSvcE7MJji
+        nrMsytcHg==;
+Received: from dvhart by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fzT9p-0004BW-0U; Mon, 10 Sep 2018 20:51:41 +0000
+Date:   Mon, 10 Sep 2018 13:51:39 -0700
+From:   Darren Hart <dvhart@infradead.org>
+To:     Mario Limonciello <mario.limonciello@dell.com>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        platform-driver-x86@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] platform/x86: dell-smbios-wmi: Correct a memory leak
+Message-ID: <20180910205139.GC5659@wrath>
+References: <1536602513-13861-1-git-send-email-mario.limonciello@dell.com>
 MIME-Version: 1.0
-References: <20180905193738.19325-1-robh@kernel.org> <20180905193738.19325-9-robh@kernel.org>
- <8b227f8c-f351-18da-b55d-e8979281f510@xilinx.com>
-In-Reply-To: <8b227f8c-f351-18da-b55d-e8979281f510@xilinx.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Mon, 10 Sep 2018 15:49:01 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqKWy8dmfF2zCAsEVkDdFM14niKtapqnR_K45Kr3-mZhqQ@mail.gmail.com>
-Message-ID: <CAL_JsqKWy8dmfF2zCAsEVkDdFM14niKtapqnR_K45Kr3-mZhqQ@mail.gmail.com>
-Subject: Re: [PATCH 08/21] microblaze: get cpu node with of_get_cpu_node
-To:     Michal Simek <michal.simek@xilinx.com>
-Cc:     devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1536602513-13861-1-git-send-email-mario.limonciello@dell.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 10, 2018 at 9:56 AM Michal Simek <michal.simek@xilinx.com> wrote:
->
-> On 5.9.2018 21:37, Rob Herring wrote:
-> > "device_type" use is deprecated for FDT though it has continued to be used
-> > for nodes like cpu nodes. Use of_get_cpu_node() instead which works using
-> > node names by default. This will allow the eventually removal of cpu
-> > device_type properties.
-> >
-> > Also, fix a leaked reference by adding a missing of_node_put.
-> >
-> > Cc: Michal Simek <monstr@monstr.eu>
-> > Signed-off-by: Rob Herring <robh@kernel.org>
-> > ---
-> > Please ack and I will take via the DT tree. This is dependent on the
-> > first 2 patches.
->
-> I have tested it and it is align with the spec and all dtses generated
-> before 2015 will work without any issue.
-> In 2015 new device tree generator was introduced and it is not adding
-> reg property to cpu node which is required by this change.
-> This will be fixed but that means that all generated dtses from 2015 are
-> affected.
+On Mon, Sep 10, 2018 at 01:01:52PM -0500, Mario Limonciello wrote:
+> ACPI buffers were being allocated but never freed.
+> 
+> Reported-by: Pinzhen Xu <pinzhen.xu@intel.com>
+> Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
+> Cc: stable@vger.kernel.org
 
-Patch 2 was supposed to handle that case. However, it does expect that
-there should be an #address-cells equal to 0 in that case. Is that not
-a valid assumption?
+Thanks Mario and Pinzhen, both queued. That's an easy one to miss, the usage not
+being particularly obvious.
 
-> That's why will be great if you can also change that pr_err message to
-> mentioned to also check reg property to give users a chance to fix it
-> properly. Error log below.
+> ---
+>  drivers/platform/x86/dell-smbios-wmi.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/platform/x86/dell-smbios-wmi.c b/drivers/platform/x86/dell-smbios-wmi.c
+> index 88afe56..cf2229e 100644
+> --- a/drivers/platform/x86/dell-smbios-wmi.c
+> +++ b/drivers/platform/x86/dell-smbios-wmi.c
+> @@ -78,6 +78,7 @@ static int run_smbios_call(struct wmi_device *wdev)
+>  	dev_dbg(&wdev->dev, "result: [%08x,%08x,%08x,%08x]\n",
+>  		priv->buf->std.output[0], priv->buf->std.output[1],
+>  		priv->buf->std.output[2], priv->buf->std.output[3]);
+> +	kfree(output.pointer);
+>  
+>  	return 0;
+>  }
+> -- 
+> 2.7.4
+> 
+> 
 
-I don't think breaking users is good.
-
-I could make this a find by path (/cpus/cpu) instead or just drop it
-for microblaze. It doesn't really affect my plans for removing
-device_node.type ptr.
-
-Rob
-
-
-> Anyway here is my
-> Tested-by: Michal Simek <michal.simek@xilinx.com>
->
-> Thanks,
-> Michal
+-- 
+Darren Hart
+VMware Open Source Technology Center
