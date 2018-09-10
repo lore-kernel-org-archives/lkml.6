@@ -2,126 +2,129 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9F88C4321E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 20:06:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6204FC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 20:07:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73DE720658
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 20:06:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73DE720658
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 2505F20658
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 20:07:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2505F20658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728808AbeIKBCi (ORCPT
+        id S1728861AbeIKBDe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 21:02:38 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:40499 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727709AbeIKBCi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 21:02:38 -0400
-Received: by mail-oi0-f66.google.com with SMTP id l202-v6so42672132oig.7;
-        Mon, 10 Sep 2018 13:06:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Ox1tNDQlT0zHgXKL0oY/nhejzZ/RkcQzbonEu9+KPks=;
-        b=gN9uwcO4GvWvNc1ebOQxOSqI+IYxjJyBxpFDmn6Se5Djf2anUXEbB2yfcWGuhBkcFF
-         aaPNebvmSnh99cbmjKl+uONkHFRJv83SJcaZ9Ry4Q5WAQ/QVaDKAx+1MWmhqkDR3HoKJ
-         qmcRF52GiL5oomTE2/tIxa4A5ISntnUgwoeKk/L8E4C7egBeN1KyieTcRyzHcW9QYiTY
-         YjnDsFD8WBl08BPnCr1QMCRZLkwimlhCb0xez+dHaVAQPrQxQQuFFyMB8BlYtDjGWGh5
-         MBI1jJCNp04swbhFKMg7S3K+Ppp2XbrDz4F71vp1+EW60iudaEzZYmGV4LhAVGibrAgq
-         Qs7A==
-X-Gm-Message-State: APzg51CFv3pgU8+tE8RUYPnHC75jNbAsgjAqJZKfUEZJrxOY7mytmFSv
-        vDau202W0ctq1/7BGV8NLw==
-X-Google-Smtp-Source: ANB0VdbHGo8BdU/HuZWllceQH+7CgcWCCET3VQCRRsGE/tnlLFJ3BxRW82hVjfgX7hSKLtL9WiQjBA==
-X-Received: by 2002:aca:6087:: with SMTP id u129-v6mr21631119oib.99.1536610014243;
-        Mon, 10 Sep 2018 13:06:54 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id q63-v6sm18647429oia.54.2018.09.10.13.06.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 10 Sep 2018 13:06:53 -0700 (PDT)
-Date:   Mon, 10 Sep 2018 15:06:53 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     lee.jones@linaro.org, broonie@kernel.org, mark.rutland@arm.com,
-        lgirdwood@gmail.com, bgoswami@codeaurora.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        vkoul@kernel.org, alsa-devel@alsa-project.org
-Subject: Re: [PATCH v3 10/13] ASoC: dt-bindings: Add WCD9335 MBHC specific
- properties
-Message-ID: <20180910200652.GA20896@bogus>
-References: <20180904102500.30318-1-srinivas.kandagatla@linaro.org>
- <20180904102500.30318-11-srinivas.kandagatla@linaro.org>
+        Mon, 10 Sep 2018 21:03:34 -0400
+Received: from mga03.intel.com ([134.134.136.65]:28332 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727709AbeIKBDe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 21:03:34 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2018 13:07:49 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,356,1531810800"; 
+   d="scan'208";a="89268918"
+Received: from ray.jf.intel.com (HELO [10.7.201.22]) ([10.7.201.22])
+  by orsmga001.jf.intel.com with ESMTP; 10 Sep 2018 13:07:38 -0700
+Subject: Re: [RFC][PATCH 1/8] x86/mm: clarify hardware vs. software
+ "error_code"
+To:     Andy Lutomirski <luto@amacapital.net>
+References: <20180907194852.3C351B82@viggo.jf.intel.com>
+ <20180907194854.74729D71@viggo.jf.intel.com>
+ <561334F6-9C13-424A-95ED-D377CE48DA46@amacapital.net>
+Cc:     linux-kernel@vger.kernel.org, sean.j.christopherson@intel.com,
+        peterz@infradead.org, tglx@linutronix.de, x86@kernel.org,
+        luto@kernel.org
+From:   Dave Hansen <dave.hansen@linux.intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <6f75823d-ce8b-d483-6046-4efbe20d0410@linux.intel.com>
+Date:   Mon, 10 Sep 2018 13:07:38 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180904102500.30318-11-srinivas.kandagatla@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <561334F6-9C13-424A-95ED-D377CE48DA46@amacapital.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 04, 2018 at 11:24:57AM +0100, Srinivas Kandagatla wrote:
-> This patch add new bindings required to support MBHC
-> (Multi Button Headset Control) block in the codec.
-> This block is used for jack insert/removal detection,
-> headset type detection and 8 button press/release events.
-> 
-> All these properties are very much specific to board.
-> 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
->  .../bindings/sound/qcom,wcd9335.txt           | 20 +++++++++++++++++++
->  1 file changed, 20 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/sound/qcom,wcd9335.txt b/Documentation/devicetree/bindings/sound/qcom,wcd9335.txt
-> index 5d6ea66a863f..4d56c3ca9fa8 100644
-> --- a/Documentation/devicetree/bindings/sound/qcom,wcd9335.txt
-> +++ b/Documentation/devicetree/bindings/sound/qcom,wcd9335.txt
-> @@ -55,6 +55,26 @@ Required properties with SLIMbus Interface:
->  	Value type: <string>
->  	Definition: Must contain "mclk", "mclk2" and "slimbus" strings.
->  
-> +- qcom,mbhc-vthreshold:
+On 09/07/2018 03:48 PM, Andy Lutomirski wrote:
+>> 
+>> For part of the page fault handler, "error_code" does exactly
+>> match PFEC.  But, during later parts, it diverges and starts to
+>> mean something a bit different.
+>> 
+>> Give it two names for its two jobs.
+> How hard would it be to just remove sw_error_code instead?  It seems
+> like it adds little value and much confusion.
 
-Needs unit suffix.
+I think it would be really nice to have hw_error_code stand by itself
+and be limited in scope to just __do_page_fault() and then have
+FAULT_FLAG_* for everything else.
 
-> +	Usage: Optional, only required if headset button support required.
-> +	Value type: <u32 array>
-> +	Definition: Must contain an array of 8 threshold voltages in mV for
-> +		 8 buttons detection on headset.
-> +
-> +- qcom,hphl-jack-type-normally-open:
-> +	Usage: Optional, only required if headset button support required.
+But, I was a little scared off of that.  For one, I think we fill in
+signal info with error_code, which makes it nominally part of the ABI.
+So, I wanted to muck with it as little as possible in this set.
 
-It's not required if the pin is NC, right?
+But, if we just said that
+1. hw_error_code goes out to userspace, always, and
+2. We drive all kernel behavior off of FAULT_FLAG_*, not error_code,
+   I think we can get away with it.
 
-> +	Value type: <boolean>
-> +	Definition: present if hphl pin on jack is a NO (Normally Open).
-> +		If not specified, then its assumed that hphl pin on jack
-> +		is NC (Normally Closed).
+> I’m also unconvinced that the warning is terribly useful. We’re going
+> to oops when this happens anyway.
 
-Is the not specified case the more common case? If not, it should be.
-
-> +
-> +- qcom,gnd-jack-type-normally-open:
-> +	Usage: Optional, only required if headset button support required.
-
-Same here.
-
-> +	Value type: <boolean>
-> +	Definition: present if gnd pin on jack is NO (Normally Open).
-> +		 If not specified, then its assumed that gnd pin on
-> +		 jack is NC  (Normally Closed).
-> +
->  - vdd-buck-supply:
->  	Usage: required
->  	Value type: <phandle>
-> -- 
-> 2.18.0
-> 
+One thing I wanted to get out of the warning was the contents of
+hw_error_code before we go screwing with it.  I also don't mind a nice,
+clarifying warning showing up just before an oops.  Maybe it could be a
+pr_warn/err() instead of a full warning?
