@@ -2,163 +2,93 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 568F1C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 08:57:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BA9BC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 08:58:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4FBE20865
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 08:57:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5545020865
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 08:58:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="kmt+dXZp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4FBE20865
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SkDPTcHl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5545020865
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727710AbeIJNuh (ORCPT
+        id S1727801AbeIJNvL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 09:50:37 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:37517 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726148AbeIJNuh (ORCPT
+        Mon, 10 Sep 2018 09:51:11 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:37871 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726148AbeIJNvL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 09:50:37 -0400
-Received: by mail-io0-f196.google.com with SMTP id v14-v6so25608iob.4
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 01:57:36 -0700 (PDT)
+        Mon, 10 Sep 2018 09:51:11 -0400
+Received: by mail-lf1-f65.google.com with SMTP id j8-v6so16759758lfb.4
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 01:58:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        d=linaro.org; s=google;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=rrfeNYp+2eIrdw1VqVxMpvx/wDqLws+CBQwiZXUyasA=;
-        b=kmt+dXZpsjYEEX4juMoDRsw1CNACjd2J+CdRXG6dwwcjHVlfoogo3dGVpLLaxx7SBP
-         7A3MORTsQrXHwIanXrUiNpwUk6zBhRQChDHJxYYDbteqU5zvwbH6kJ/baFZZfW+BqnRR
-         idCA1DUpYalmjTvhQ0qbJW0VRC+hYelapQW2RgN2wDnwnZ4YMTd6YF5PL+oc1F0+Gboc
-         FdT7a/79jiSIBsWs4qRDfyXHacZhlzSfWV+EAOwI2LLT48f+6EgyhqD6+sa8LNKiL2NX
-         xVuaJjIPMCNAhZQ038Yoni9sh9Pc/pxHDeh52xNRbZ9cCUEHYQtMLDZ1jzAwtNFKfoFI
-         l/fA==
+        bh=WcKozNf/E/SqeBTKAgm33oNv/Y5p9ukod/O5JDKoYDY=;
+        b=SkDPTcHlXuiu1oU7tB8VZ3314ULuOCXx3tktqslNA6x/OXgk86fm16/SQpppXnW3XK
+         TwncQpm5DbTzZ+iQjOQj1zMXzVS/uokoLrM5/d1CDtVSBM5RrC4Lt73x+S9rPP6mVIob
+         ilgpV2o1P/qXUtmNZNNVle2i68+KtXbCDhOG4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=rrfeNYp+2eIrdw1VqVxMpvx/wDqLws+CBQwiZXUyasA=;
-        b=f5ePCElvNc5ebv0PlwDEbBH9G0y618p8/xPk3fmirBFF0RlyeMLB0ToTyOybqIASIN
-         WizRPOEFSMnebJnOPT+FobFr/hTO4cBYFjpFVIiRAY/88I4QPIJrdvNat1fruE+RNy67
-         rwBVlsnM7dUSRLHZAnD0Jzd0G/MmG4ZExiMLgupDxQ1Hkutv8mwiNlNQwyCJVMv1E3jy
-         BY+n6zGwnJxXK2t0mhGbtkmDtkdgJn2VmWG9KWPmqQxlhz1IOR7a4Kb10xjqaMc1B1lr
-         Ga1GZvR33RwWAgCANOVMVkKm+uqatUjHC0EnAaWty+aVBOSv5OPX6ym3vaxIAtpeJn37
-         6Tmw==
-X-Gm-Message-State: APzg51BBPv8plixYZz+VhX952RnXJ89z0mB5yQsqtKhu9y1M5OyKOa8+
-        6nvt37CB80Bpmeh6BvYebR7JUghNdcCjvFYR9KUU5w==
-X-Google-Smtp-Source: ANB0VdaV0Da4OiuNE6LaN30HGHPrvUncehCV/yccTtIuMrSY/OXDxVInl4s3JYWC6IRikvnibaaWcT+1l0hq1VoFqhc=
-X-Received: by 2002:a5e:c10b:: with SMTP id v11-v6mr15665548iol.262.1536569856155;
- Mon, 10 Sep 2018 01:57:36 -0700 (PDT)
+        bh=WcKozNf/E/SqeBTKAgm33oNv/Y5p9ukod/O5JDKoYDY=;
+        b=KsO+HsdAdGVyLkIDjaY09fM8gfgYiNrdVX7i9eieXChgr6kyZzTLQ+56nWAitnanz2
+         aUqH13Fw3nWnexmWUpkmlBRcJNykgm7D+LQcFTlPCRTKjwm4Mr4SjyUHlDx6g67NDyN1
+         RKaSViBagws6dJHKu89OrxYr3OpcmsL2Gq/mA096gnMgvgTKiup9BbwThAQ8IgLGpqiW
+         +P0uMWGcrRD8IyIWWQ5RN6pZYGOzC09DQGEEWemELS3FWCf/2hMjmh3dJCf6rtQ2IQMx
+         qMo+z+u+ASJrYqDiPRIOWjJp47zZm2A38rXq/EhvPVXeT4GcUeAXSbVeupTLJJCXttEZ
+         iAxQ==
+X-Gm-Message-State: APzg51D03tgnQhWvSUpj9Rw+Gqezxuiy9L5gL/cfCdrhM54/dyVlK8sY
+        acVWSucpeLWuD5zWpKFLFDr+k+taqMcqR8z4MnAK5A==
+X-Google-Smtp-Source: ANB0Vda4a104nmzyMfuX9gjnUCXVscTonxpl12m9e6kfHSR7mb5Sv1j265qXIVgGEZfjfvhzDbGeCPXN7j+xdSllNII=
+X-Received: by 2002:a19:4e4e:: with SMTP id c75-v6mr11663297lfb.116.1536569889295;
+ Mon, 10 Sep 2018 01:58:09 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a4f:1505:0:0:0:0:0 with HTTP; Mon, 10 Sep 2018 01:56:55
+Received: by 2002:a19:118f:0:0:0:0:0 with HTTP; Mon, 10 Sep 2018 01:57:28
  -0700 (PDT)
-In-Reply-To: <20180816084104.434-1-jian-hong@endlessm.com>
-References: <20180816084104.434-1-jian-hong@endlessm.com>
-From:   Jian-Hong Pan <jian-hong@endlessm.com>
-Date:   Mon, 10 Sep 2018 16:56:55 +0800
-Message-ID: <CAPpJ_eeK68jvMQ02hR2i+eP8Xo9YyWWUGYqG7e6dsWP=XTTCyQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] platform/x86: asus-wmi: Simplify the keyboard
- brightness updating process
-To:     Corentin Chary <corentin.chary@gmail.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        acpi4asus-user@lists.sourceforge.net,
-        platform-driver-x86@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>
-Cc:     Jian-Hong Pan <jian-hong@endlessm.com>
+In-Reply-To: <CAHqM-Qgy7zPjrnNm0Xdyz_F_BYbSPgDfQrkv0tGv_rB1G7tSXg@mail.gmail.com>
+References: <CAHqM-Qgy7zPjrnNm0Xdyz_F_BYbSPgDfQrkv0tGv_rB1G7tSXg@mail.gmail.com>
+From:   Victor Chong <victor.chong@linaro.org>
+Date:   Mon, 10 Sep 2018 17:57:28 +0900
+Message-ID: <CAHqM-QgH3d3Fz=P-_Gj_ZJODK1YOxT49G=qhzAnM=g2HAYqoow@mail.gmail.com>
+Subject: Fwd: [PATCH] tee: optee: log message if dynamic shm is enabled
+To:     Jens Wiklander <jens.wiklander@linaro.org>
+Cc:     tee-dev@lists.linaro.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-08-16 16:41 GMT+08:00 Jian-Hong Pan <jian-hong@endlessm.com>:
-> The original asus-wmi queues a work which calls the ACPI/WMI methods to
-> update the keyboard LED brightness.  Similar drivers - acer-wmi,
-> dell-wmi-led just call the ACPI/WMI methods directly without workqueues.
->
-> This patch simplifies the keyboard brightness updating process which
-> calls the kbd_led_update function directly without workqueue in
-> asus-wmi.
->
-> Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
-> ---
->  drivers/platform/x86/asus-wmi.c | 14 ++++----------
->  1 file changed, 4 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-> index 34dcc1aac4ea..d3d500851a7a 100644
-> --- a/drivers/platform/x86/asus-wmi.c
-> +++ b/drivers/platform/x86/asus-wmi.c
-> @@ -239,7 +239,6 @@ struct asus_wmi {
->         int lightbar_led_wk;
->         struct workqueue_struct *led_workqueue;
->         struct work_struct tpd_led_work;
-> -       struct work_struct kbd_led_work;
->         struct work_struct wlan_led_work;
->         struct work_struct lightbar_led_work;
->
-> @@ -456,12 +455,9 @@ static enum led_brightness tpd_led_get(struct led_classdev *led_cdev)
->         return read_tpd_led_state(asus);
->  }
->
-> -static void kbd_led_update(struct work_struct *work)
-> +static void kbd_led_update(struct asus_wmi *asus)
->  {
->         int ctrl_param = 0;
-> -       struct asus_wmi *asus;
-> -
-> -       asus = container_of(work, struct asus_wmi, kbd_led_work);
->
->         /*
->          * bits 0-2: level
-> @@ -516,7 +512,7 @@ static void do_kbd_led_set(struct led_classdev *led_cdev, int value)
->                 value = 0;
->
->         asus->kbd_led_wk = value;
-> -       queue_work(asus->led_workqueue, &asus->kbd_led_work);
-> +       kbd_led_update(asus);
->  }
->
->  static void kbd_led_set(struct led_classdev *led_cdev,
-> @@ -671,8 +667,6 @@ static int asus_wmi_led_init(struct asus_wmi *asus)
->
->         led_val = kbd_led_read(asus, NULL, NULL);
->         if (led_val >= 0) {
-> -               INIT_WORK(&asus->kbd_led_work, kbd_led_update);
-> -
->                 asus->kbd_led_wk = led_val;
->                 asus->kbd_led.name = "asus::kbd_backlight";
->                 asus->kbd_led.flags = LED_BRIGHT_HW_CHANGED;
-> @@ -2314,7 +2308,7 @@ static int asus_hotk_resume(struct device *device)
->         struct asus_wmi *asus = dev_get_drvdata(device);
->
->         if (!IS_ERR_OR_NULL(asus->kbd_led.dev))
-> -               queue_work(asus->led_workqueue, &asus->kbd_led_work);
-> +               kbd_led_update(asus);
->
->         return 0;
->  }
-> @@ -2350,7 +2344,7 @@ static int asus_hotk_restore(struct device *device)
->                 rfkill_set_sw_state(asus->uwb.rfkill, bl);
->         }
->         if (!IS_ERR_OR_NULL(asus->kbd_led.dev))
-> -               queue_work(asus->led_workqueue, &asus->kbd_led_work);
-> +               kbd_led_update(asus);
->
->         return 0;
->  }
-> --
-> 2.11.0
->
+Suggested-by: Jerome Forissier <jerome.forissier@linaro.org>
+Signed-off-by: Victor Chong <victor.chong@linaro.org>
+Reviewed-by: Jerome Forissier <jerome.forissier@linaro.org>
+---
+ drivers/tee/optee/core.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Just gentle ping.  Any comment for this patch?
+diff --git a/drivers/tee/optee/core.c b/drivers/tee/optee/core.c
+index e1aafe842d66..cca5c091e55a 100644
+--- a/drivers/tee/optee/core.c
++++ b/drivers/tee/optee/core.c
+@@ -631,6 +631,9 @@ static struct optee *optee_probe(struct device_node *np)
 
-Regards,
-Jian-Hong Pan
+        optee_enable_shm_cache(optee);
+
++       if (optee->sec_caps & OPTEE_SMC_SEC_CAP_DYNAMIC_SHM)
++               pr_info("dynamic shared memory is enabled\n");
++
+        pr_info("initialized driver\n");
+        return optee;
+ err:
+--
+2.17.1
