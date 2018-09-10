@@ -2,81 +2,89 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E332C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 17:23:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AA60C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 17:23:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 535AB2086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 17:23:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 535AB2086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 505B120645
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 17:23:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 505B120645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728763AbeIJWSG (ORCPT
+        id S1728798AbeIJWSo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 18:18:06 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:34953 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727016AbeIJWSF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 18:18:05 -0400
-Received: by mail-ed1-f66.google.com with SMTP id y20-v6so17146606edq.2;
-        Mon, 10 Sep 2018 10:22:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/S8eh6nbUdBmX22WpVCsOjA71p1izO3dP3PmAS42w04=;
-        b=Ob0KSSBD+NlnzSoBBnOIn2Mnki0L4H+eMfq6M9HbluBaqFJS2evOdKE7hK+WHVHu4/
-         uc61hShEsYCriajKsydOFrfayWyOanoH4oO4+e+4jmCmxyDbB/0koSR3+tpCp5xJMA3X
-         wwFh/zQ62VjbiRAX5jNFe53Acrk/7CTJiIO5ipzmue9ASpgs1qYuK7YWJWi5huDEFi6o
-         X1Jc5wEIzbnqJ5aNseoNdewSSWGhYh5iovr8S0VJ9JQVTZITPQ6oMe3CRTTsC/QUkXpL
-         hPsNdrfzr6t6j/DLXN8B57IpG3h/pSblvLGgBp/OhYO+EPBLnY6hTnpvKVFnZ43dbJWN
-         sQxg==
-X-Gm-Message-State: APzg51D3NjE2Oh4aHAf+hiPCz4GbhfjGCJBiS0esoS6DCxre3guzncYu
-        2tOUBPxeyL2h6aqjG9MZrVc=
-X-Google-Smtp-Source: ANB0VdYXdK7YLPJsH6EBfuqAeDsBdgczPrkYFrAoWt2M/j6RzK1mETHsDMM0B2TbojrizvIybysOTQ==
-X-Received: by 2002:a50:a0a6:: with SMTP id 35-v6mr24751850edo.280.1536600177900;
-        Mon, 10 Sep 2018 10:22:57 -0700 (PDT)
-Received: from kozik-lap (xdsl-188-155-58-14.adslplus.ch. [188.155.58.14])
-        by smtp.googlemail.com with ESMTPSA id s6-v6sm9989578edm.38.2018.09.10.10.22.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 10 Sep 2018 10:22:57 -0700 (PDT)
-Date:   Mon, 10 Sep 2018 19:22:55 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Cedric Roux <sed@free.fr>
-Cc:     kgene@kernel.org, linux@armlinux.org.uk,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] ARM: s3c24xx: Correct SD card write protect
- detection on Mini2440
-Message-ID: <20180910172255.yeqe4d263vj7n6ge@kozik-lap>
-References: <20180907215446.15160-1-sed@free.fr>
- <20180907215446.15160-2-sed@free.fr>
+        Mon, 10 Sep 2018 18:18:44 -0400
+Received: from mga04.intel.com ([192.55.52.120]:50166 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727764AbeIJWSo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 18:18:44 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2018 10:23:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,356,1531810800"; 
+   d="scan'208";a="68929856"
+Received: from tstruk-mobl1.jf.intel.com ([10.24.8.238])
+  by fmsmga007.fm.intel.com with ESMTP; 10 Sep 2018 10:23:14 -0700
+Subject: Re: [PATCH v5 0/2] tpm: add support for nonblocking operation
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     flihp@twobit.us, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <153419236870.8189.15489652816512817246.stgit@tstruk-mobl1.jf.intel.com>
+ <20180831085711.GC12908@linux.intel.com>
+ <20180831085825.GD12908@linux.intel.com>
+From:   Tadeusz Struk <tadeusz.struk@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tadeusz.struk@intel.com; prefer-encrypt=mutual; keydata=
+ xsDiBEiLICMRBADteQacQxypsuFvAw6IwYzbD8pgQi+kLYBcqfGgVAUN/cO+sLl6u1lVdaDB
+ fhAArdbV9lpoqcWnmhQFTb4A+W569EpydBr6nuatWkEB+fmmx8YoUtuZfXt7v+1l1rc09kaW
+ LY+TkwQkvFCeuvdasgmBLnmRWymEGWi1E12hUgTw/wCgtK24geC7XkiuANMv0gpr+raOgQMD
+ /2yJZ0SeXQApWyTRaeIYN8GgYHZTWuBp/ofN+viEkhrDxahcaGPP5B/Nv6VS1+M0e5m8OzHj
+ qPUbgfyOeJcslC5aoZdqqqzVWVLaA/+Jy+O+6T3k3R/IryVVATldBlwnGFDhET0mKQsd15zt
+ cIdQBBbfSFR5VlugZuWV5q442IpPA/4g7nen9FFPxh45Te8D54hAsOCywjm6xUE0UJGYHeJ/
+ MXCPtuXfVCbYcOxZVH7kUS2Vtk5d3bF40IE2WnVq1ZScNANF4ZjikxYhYGfNWX3HXak1gSoj
+ UrY87rMSjPIAry4L0BoIx2qgL/k4iV/3QcXL4t5wosU0iw++suf1zGGcKM0gVGFkZXVzeiBT
+ dHJ1ayA8dHN0cnVrQGdtYWlsLmNvbT7CYwQTEQIAIwIbAwYLCQgHAwIEFQIIAwQWAgMBAh4B
+ AheABQJQTjJTAhkBAAoJEDFswfskq9xyqvcAoI2nsaUCX8ZGbu+Jhq+++qlBFJ2rAJ983RoO
+ R2ofHhn3g3Qi4K34tw0l087BTQRauzUlARAAqkWRL/InEPnoGMg/gw/CRaDBaIBgMsvIcghI
+ 7xevIzpleXt6jKHghSBooH+zaT7qi4u2gkgPn4odsER3Rm94XgrZJgoqls6EpKMWpJNGP4HT
+ eYgykhfsZOLX8ijUbjTM/Sm/dZVo6aYoBL2+ciJwyl+Zt3Mp6un3/GWu6cA9005V50pRqO7j
+ PTlVCHi2bedcEEf5DDsYJv/3Oz8/4LpSf6BL6BltjeZVa2y03dTMmD031JTH+OuyJm1yh72Z
+ HWxhlYNXOv6uFJJVr+paQjrAsBVIYKhK24bD+uGJxLm8AN9i7/Si+2YeSsXvKUhk9mIoFBnU
+ VFo63cziRTcpRu/kXgDAbujwN88qytEcvhEZHS6B9vdws+lhTpolEjkLCkz0Y59z4Fs9srKy
+ QkRN+wtdiLgrwyDW3ryAKxcDmOumGWebDxpaOI/pBhrlS93HmDlvj7JmgTUU4a/NhwI3dXh5
+ pn8FZzZyVXe3Kc3bu5T3UAC7uztinsAvCJQS6jGZWrXmXkqYkaLXQOw61eInWjr01zE/zDbE
+ mdJPM0+va/gtZx9TtGxr4PpjbqswqCiubLDZXZHh5uqArPv/i+E8aXIsNSTN6Rrqs1j9YgDN
+ ALksibv6+tXH3sOlCUgjuZgJH3+s/mnaAtiV2rZ/WlH15d6nd0uiDSZrKhlR+g4NHMh1ztEA
+ EQEAAcJPBBgRAgAPBQJauzUlAhsMBQkJZgGAAAoJEDFswfskq9xyfv8AoI8aPrJCoM0h5WOP
+ kKxMmPEPHzUNAJ9jBBYXhX1CWg+IhI7i/fLlI0vwCA==
+Message-ID: <67bab063-e24d-461c-dacb-5c9458ef9784@intel.com>
+Date:   Mon, 10 Sep 2018 10:23:14 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <20180831085825.GD12908@linux.intel.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180907215446.15160-2-sed@free.fr>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 07, 2018 at 11:54:46PM +0200, Cedric Roux wrote:
-> The mini2440 computer uses "active high" to signal that the "write protect"
-> of the inserted MMC is set. The current code uses the opposite, leading to
-> a wrong detection of write protection. The solution is simply to use
-> ".wprotect_invert = 1" in the description of the MMC.
-> 
-> Signed-off-by: Cedric Roux <sed@free.fr>
-> ---
->  arch/arm/mach-s3c24xx/mach-mini2440.c | 9 +++++----
+On 08/31/2018 01:58 AM, Jarkko Sakkinen wrote:
+> Just the change to the commit message. Mislooked patchwork, the typo was
+> in my response :-) I'll do recheck for 2/2. Check those comments before
+> v6 if there is anything else.
 
-Thanks, applied.
-
-Best regards,
-Krzysztof
-
+Hi,
+I have done the changes you requested and ran the "checkpatch.pl --strict"
+on it and it says that "no obvious style problems and is ready for submission".
+Thanks,
+-- 
+Tadeusz
