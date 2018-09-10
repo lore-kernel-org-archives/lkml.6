@@ -1,214 +1,126 @@
 Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.0 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B304C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:18:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52794C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:18:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2D24204FD
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:18:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 065C0204FD
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 09:18:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="deGHDywP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2D24204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bf/JzGRl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 065C0204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727734AbeIJOL1 (ORCPT
+        id S1727876AbeIJOLv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 10:11:27 -0400
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:36179 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726081AbeIJOL1 (ORCPT
+        Mon, 10 Sep 2018 10:11:51 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:39438 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726081AbeIJOLv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 10:11:27 -0400
-Received: by mail-ua1-f65.google.com with SMTP id c12-v6so16746652uan.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 02:18:21 -0700 (PDT)
+        Mon, 10 Sep 2018 10:11:51 -0400
+Received: by mail-wm0-f68.google.com with SMTP id q8-v6so20649007wmq.4
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 02:18:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=FuMqfpnvLhxKCKWSq2fBZtPk/7CMI83/kLbbSbOaVqI=;
-        b=deGHDywPwbqwrMC/fY5weYL3xmvCRJq4v/E0QnAttkr2SlHbktSJnzc3BkjPtlvFjL
-         NqxUK8ZDQyuE2lr6VKx6/IWPUjtS2O+1gqFsT2LVutA3MQlgIQYr2M1HcKqFrxB2yAqT
-         HgN90fPFbVNxAG0I6v+d8Z0TcQGogoUiSHTc/di4t2P5RtSBU8WvqU07iz7Uq/GKN42m
-         lrt4icucHskky4LL5h4XesJ8vrMw4P4ROGAuMwxsnRFpPht5iZs7grV19a5GTvWJKf71
-         u0jm5XVZkGgG9pVhS3Ji/FMTNizEKhoY8PuLv+RySp87zocLWph7mCyJiV654oYuRc9s
-         6NFA==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=w0LCplrOhHERZ5DUzeh8Jos8NhRlJcNRnyd5+44KLXo=;
+        b=Bf/JzGRld5FoONQkY8E3hRlfl3k+WUrrWn+aD25NFxE8vE/CZaRR9mMZ4t8pTa+EZT
+         WPdVHornK1BeCh83CHX/dZZ11zIK4XDWwsJ2YKR2zPe4ctvv2TQ020VAKOSF4/DoSvbd
+         rSGFHO9M16idy0lM1ck2Wkkqr8Nx0MZ/3UEq3XC5RcNkqmGwjEKssRp5/joVRPalu/CM
+         nbP8L/46v4exVoODmVH79L9I7L0dERaEl2dArfHxc2zCp52RTaXAFmzN+Fbs+JTYoO2R
+         KKxOVLFY2vzJd1t6Djqk4Zg7ZlUCEcFIMKjlC24ZmpxVlYIiplJknsNDSwmPZ02+QhPE
+         lmdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=FuMqfpnvLhxKCKWSq2fBZtPk/7CMI83/kLbbSbOaVqI=;
-        b=QZ+COyNpYY2g/T41VTQmSTpTw2l9P9um3xDA04UEaFunQ9QirnYy4n7+pknk4v7Xql
-         YacZ18xQ+H9LKCqyY1DlJrgntJo3WWSHOMUOyOTrJimtxOIZa1AqhFOwQbYYvUjnEFWn
-         wgUlQd8lVa6jJfViBInvZ3Swb4DYwBK+JKXEp0oPohPdJSeNcikRHFWGcXwy+5c6tSwa
-         HUUPel8Uby4Rpd8TFLRB/IYO9xK9eMku6tXcr3fIsezhXCS5minQsEfm2ql4PY+n/BIT
-         Wq/EFrbw+rYRNwt5spfrjAG7yDOEFsodJ+XZeS6GB7G4/rWFCNgeYLNedhf6AoqRJkrQ
-         iTag==
-X-Gm-Message-State: APzg51BS2OvKH4m1H5NGwFwEOhz4f0q6Q7NcB1KuXDiukZ7yOUxSmkol
-        wUiNbrjd97+zQSJsho8dgAHmx/MeM1bmGdfYvEtW+Gp16Og=
-X-Google-Smtp-Source: ANB0VdYMNwpXNiLOVIU5RCzngFa8Gxr/HPEecTLiO55RsOoQDGnhy1UJ5d58Q6kTBYzQB/Rb5oLF2050pzPoHDJlHf8=
-X-Received: by 2002:a67:e907:: with SMTP id c7-v6mr6388999vso.88.1536571101298;
- Mon, 10 Sep 2018 02:18:21 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=w0LCplrOhHERZ5DUzeh8Jos8NhRlJcNRnyd5+44KLXo=;
+        b=Wqez6nYHjVFI+FsAePfFWdThBeuVuoKwPO37megHQT5IqJB6rnI80BkCaJ3TEKM6Aa
+         yNk77084TtG4Jum9ubfxQ8p2dLCxz6ztgE9J6BqdsxihXQtPFLUnWNdipP0Hs8Wd7pVG
+         uNM7OzEZFUfhdLEYcH+u6K2o4B4a4bcbeGb0aGIYSO9AUMBCMEjTNp9ujktoXQNYKl10
+         IFpHkqfEYUGUmFMrOay2s4hKleWRTnVfnfAXPlA01DUkd+Z93+uoHOeKjykQpMMkVcch
+         Zjl2Szfwfh5WtV7FsyGK0UUrMNPRs+HapRPZHrh9oGcaZ429LRW7sUoWD3FKZB8A45R9
+         bAbA==
+X-Gm-Message-State: APzg51AwNPwtKlu8OcpedRX/al+bzBf8nVhq22i2G4+yeLwrd3o4vccu
+        NPdlZrS1tUsW58Uzq9F8Mgw=
+X-Google-Smtp-Source: ANB0VdaOJWeuN+urL1vvmmUAmhzVH40o7bovlwmkok3CZqS6gNtK0xZ1T7STUSLdZrmZZqqbRiwsSQ==
+X-Received: by 2002:a1c:c3:: with SMTP id 186-v6mr46510wma.126.1536571124367;
+        Mon, 10 Sep 2018 02:18:44 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id j66-v6sm20637400wrj.28.2018.09.10.02.18.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 10 Sep 2018 02:18:43 -0700 (PDT)
+Date:   Mon, 10 Sep 2018 11:18:41 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v8 0/3]: perf: reduce data loss when profiling highly
+ parallel CPU bound workloads
+Message-ID: <20180910091841.GA4664@gmail.com>
+References: <e1144f9d-b231-e42c-d698-4db0e62b71ff@linux.intel.com>
 MIME-Version: 1.0
-References: <CAKYFi-4a=H+vT+vo5s6mpKXAv+0W0pyTj1WtEr6xfjoFVFmtJQ@mail.gmail.com>
-In-Reply-To: <CAKYFi-4a=H+vT+vo5s6mpKXAv+0W0pyTj1WtEr6xfjoFVFmtJQ@mail.gmail.com>
-From:   Marcus Linsner <constantoverride@gmail.com>
-Date:   Mon, 10 Sep 2018 11:17:42 +0200
-Message-ID: <CAKYFi-7H66SvwxpbZLSXankOTQ9LfCyUnL5_+hA6tpJYkJOZ8A@mail.gmail.com>
-Subject: Re: Howto prevent kernel from evicting code pages ever? (to avoid
- disk thrashing when about to run out of RAM)
-To:     linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e1144f9d-b231-e42c-d698-4db0e62b71ff@linux.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 22, 2018 at 11:25 AM Marcus Linsner
-<constantoverride@gmail.com> wrote:
->
-> Hi. How to make the kernel keep(lock?) all code pages in RAM so that
-> kswapd0 won't evict them when the system is under low memory
-> conditions ?
->
-> The purpose of this is to prevent the kernel from causing lots of disk
-> reads(effectively freezing the whole system) when about to run out of
-> RAM, even when there is no swap enabled, but well before(in real time
-> minutes) OOM-killer triggers to kill the offending process (eg. ld)!
->
-> I can replicate this consistently with 4G (and 12G) max RAM inside a
-> Qubes OS R4.0 AppVM running Fedora 28 while trying to compile Firefox.
-> The disk thrashing (continuous 192+MiB/sec reads) occurs well before
-> the OOM-killer triggers to kill 'ld' (or 'rustc') process and
-> everything is frozen for (real time) minutes. I've also encountered
-> this on bare metal myself, if it matters at all.
->
-> I tried to ask this question on SO here:
-> https://stackoverflow.com/q/51927528/10239615
-> but maybe I have better luck on this mailing list where the kernel experts are.
->
 
-This is what I got working so far, to prevent the disk thrashing
-(constant re-reading of active executable pages from disk) that would
-otherwise freeze the OS before running Out Of Memory:
+* Alexey Budankov <alexey.budankov@linux.intel.com> wrote:
 
-the following patch can also be seen here:
-https://github.com/constantoverride/qubes-linux-kernel/blob/devel-4.18/patches.addon/le9d.patch
+> 
+> Currently in record mode the tool implements trace writing serially. 
+> The algorithm loops over mapped per-cpu data buffers and stores 
+> ready data chunks into a trace file using write() system call.
+> 
+> At some circumstances the kernel may lack free space in a buffer 
+> because the other buffer's half is not yet written to disk due to 
+> some other buffer's data writing by the tool at the moment.
+> 
+> Thus serial trace writing implementation may cause the kernel 
+> to loose profiling data and that is what observed when profiling 
+> highly parallel CPU bound workloads on machines with big number 
+> of cores.
 
-revision 3
-preliminary patch to avoid disk thrashing (constant reading) under
-memory pressure before OOM-killer triggers
-more info: https://gist.github.com/constantoverride/84eba764f487049ed642eb2111a20830
+Yay! I saw this frequently on a 120-CPU box (hw is broken now).
 
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 32699b2..7636498 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -208,7 +208,7 @@ enum lru_list {
+> Data loss metrics is the ratio lost_time/elapsed_time where 
+> lost_time is the sum of time intervals containing PERF_RECORD_LOST 
+> records and elapsed_time is the elapsed application run time 
+> under profiling.
+> 
+> Applying asynchronous trace streaming thru Posix AIO API
+> (http://man7.org/linux/man-pages/man7/aio.7.html) 
+> lowers data loss metrics value providing 2x improvement -
+> lowering 98% loss to almost 0%.
 
- #define for_each_lru(lru) for (lru = 0; lru < NR_LRU_LISTS; lru++)
+Hm, instead of AIO why don't we use explicit threads instead? I think Posix AIO will fall back 
+to threads anyway when there's no kernel AIO support (which there probably isn't for perf 
+events).
 
--#define for_each_evictable_lru(lru) for (lru = 0; lru <=
-LRU_ACTIVE_FILE; lru++)
-+#define for_each_evictable_lru(lru) for (lru = 0; lru <=
-LRU_INACTIVE_FILE; lru++)
+Per-CPU threading the record session would have so many other advantages as well (scalability, 
+etc.).
 
- static inline int is_file_lru(enum lru_list lru)
- {
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 03822f8..1f3ffb5 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -2086,9 +2086,9 @@ static unsigned long shrink_list(enum lr
-                  struct scan_control *sc)
- {
-     if (is_active_lru(lru)) {
--        if (inactive_list_is_low(lruvec, is_file_lru(lru),
--                     memcg, sc, true))
--            shrink_active_list(nr_to_scan, lruvec, sc, lru);
-+        //if (inactive_list_is_low(lruvec, is_file_lru(lru),
-+        //             memcg, sc, true))
-+        //    shrink_active_list(nr_to_scan, lruvec, sc, lru);
-         return 0;
-     }
+Jiri did per-CPU recording patches a couple of months ago, not sure how usable they are at the 
+moment?
 
-@@ -2234,7 +2234,7 @@ static void get_scan_count(struct lruvec
-*lruvec, struct mem_cgroup *memcg,
+Thanks,
 
-     anon  = lruvec_lru_size(lruvec, LRU_ACTIVE_ANON, MAX_NR_ZONES) +
-         lruvec_lru_size(lruvec, LRU_INACTIVE_ANON, MAX_NR_ZONES);
--    file  = lruvec_lru_size(lruvec, LRU_ACTIVE_FILE, MAX_NR_ZONES) +
-+    file  = //lruvec_lru_size(lruvec, LRU_ACTIVE_FILE, MAX_NR_ZONES) +
-         lruvec_lru_size(lruvec, LRU_INACTIVE_FILE, MAX_NR_ZONES);
-
-     spin_lock_irq(&pgdat->lru_lock);
-@@ -2345,7 +2345,7 @@ static void shrink_node_memcg(struct pglist_data
-*pgdat, struct mem_cgroup *memc
-              sc->priority == DEF_PRIORITY);
-
-     blk_start_plug(&plug);
--    while (nr[LRU_INACTIVE_ANON] || nr[LRU_ACTIVE_FILE] ||
-+    while (nr[LRU_INACTIVE_ANON] || //nr[LRU_ACTIVE_FILE] ||
-                     nr[LRU_INACTIVE_FILE]) {
-         unsigned long nr_anon, nr_file, percentage;
-         unsigned long nr_scanned;
-@@ -2372,7 +2372,8 @@ static void shrink_node_memcg(struct pglist_data
-*pgdat, struct mem_cgroup *memc
-          * stop reclaiming one LRU and reduce the amount scanning
-          * proportional to the original scan target.
-          */
--        nr_file = nr[LRU_INACTIVE_FILE] + nr[LRU_ACTIVE_FILE];
-+        nr_file = nr[LRU_INACTIVE_FILE] //+ nr[LRU_ACTIVE_FILE]
-+            ;
-         nr_anon = nr[LRU_INACTIVE_ANON] + nr[LRU_ACTIVE_ANON];
-
-         /*
-@@ -2391,7 +2392,8 @@ static void shrink_node_memcg(struct pglist_data
-*pgdat, struct mem_cgroup *memc
-             percentage = nr_anon * 100 / scan_target;
-         } else {
-             unsigned long scan_target = targets[LRU_INACTIVE_FILE] +
--                        targets[LRU_ACTIVE_FILE] + 1;
-+                        //targets[LRU_ACTIVE_FILE] +
-+                        1;
-             lru = LRU_FILE;
-             percentage = nr_file * 100 / scan_target;
-         }
-@@ -2409,10 +2411,12 @@ static void shrink_node_memcg(struct pgl
-         nr[lru] = targets[lru] * (100 - percentage) / 100;
-         nr[lru] -= min(nr[lru], nr_scanned);
-
-+        if (LRU_FILE != lru) { //avoid this block for LRU_ACTIVE_FILE
-         lru += LRU_ACTIVE;
-         nr_scanned = targets[lru] - nr[lru];
-         nr[lru] = targets[lru] * (100 - percentage) / 100;
-         nr[lru] -= min(nr[lru], nr_scanned);
-+        }
-
-         scan_adjusted = true;
-}
-
-
-Tested on kernel 4.18.5 under Qubes OS, in both dom0 and VMs. It gets
-rid of the disk thrashing that would otherwise seemingly-permanently
-freeze a qube (VM) with continous disk reading (seen from dom0 via
-sudo iotop). With the above, it only freezes for at most 1 second
-before OOM-killer triggers and restores the RAM by killing some
-process.
-
-If anyone has a better idea, please let me know. I am hoping someone
-knowledgeable can step in :)
-
-I tried to find a way to also keep Inactive file pages in RAM, just
-for tests(!) but couldn't figure out how (I'm not a programmer).
-So, keeping just the Active file pages, seem good enough for now, even
-though I can clearly see (via vm.block_dump=1) that there are still
-some pages that are being re-read during high memory pressure, but
-they for some reason don't cause any(or much) disk thrashing.
-
-Cheers!
+	Ingo
