@@ -2,105 +2,83 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AC23C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:29:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FC65C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:29:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32F0C2087E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:29:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32F0C2087E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 081EB206BB
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 13:29:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Q+PpD0bS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 081EB206BB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728734AbeIJSXT (ORCPT
+        id S1728756AbeIJSXg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 14:23:19 -0400
-Received: from mga03.intel.com ([134.134.136.65]:49951 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727970AbeIJSXT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 14:23:19 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2018 06:29:12 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,355,1531810800"; 
-   d="scan'208";a="255948354"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.20])
-  by orsmga005.jf.intel.com with ESMTP; 10 Sep 2018 06:29:12 -0700
-Message-ID: <1536586152.11460.40.camel@intel.com>
-Subject: Re: [PATCH v6 5/5] x86/kvm: Avoid dynamic allocation of pvclock
- data when SEV is active
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Brijesh Singh <brijesh.singh@amd.com>, Borislav Petkov <bp@suse.de>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?UTF-8?Q?Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
-Date:   Mon, 10 Sep 2018 06:29:12 -0700
-In-Reply-To: <026d5ca5-7b77-de6c-477e-ff39f0291ac0@amd.com>
-References: <1536343050-18532-1-git-send-email-brijesh.singh@amd.com>
-         <1536343050-18532-6-git-send-email-brijesh.singh@amd.com>
-         <20180910122727.GE21815@zn.tnic>
-         <026d5ca5-7b77-de6c-477e-ff39f0291ac0@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 10 Sep 2018 14:23:36 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:36420 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728676AbeIJSXg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 14:23:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=VZr/UyMWRYLbTdkoJ79e3mgwsj3F7jrjxjYlqgd0Vtw=; b=Q+PpD0bSQwiVnId9hUdD3PRcv
+        Zbb96Ffd4fe2ljAb6CbdJ6iswNX7W/jzhkFPXAjVRPYNxoDvfPDRRLdaDR6LhDwcoUZQDqD+32SZF
+        wOSMSFrFHQLMvrMsINqyEGS7BRp9FgopmOwxuSM5B+nBLdtHhiOHpxfHWiB4LU3UQBV4adfvULAkY
+        ETV8u0XKI2WlOaLZsXrhmXI2JTIuT5wKPStib1v3azK6hSC6X121aJgqL6oULH57pjU/864WuVKus
+        CocCDgbIrfwIGMO82M8RtHe1O9L1h7wotKBjdtbKi28Cq6BwJt0MXuNPYuVq5eX9IDUCNNd6wBiof
+        ccYiE+CmQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fzMFo-0001qx-Ij; Mon, 10 Sep 2018 13:29:24 +0000
+Date:   Mon, 10 Sep 2018 06:29:24 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Anup Patel <anup@brainfault.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Atish Patra <atish.patra@wdc.com>,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Palmer Dabbelt <palmer@dabbelt.com>
+Subject: Re: [PATCH v2 3/5] irqchip: RISC-V Local Interrupt Controller Driver
+Message-ID: <20180910132924.GA6987@infradead.org>
+References: <20180906123651.28500-1-anup@brainfault.org>
+ <20180906123651.28500-4-anup@brainfault.org>
+ <20180906140628.GA10580@infradead.org>
+ <alpine.DEB.2.21.1809081241310.1402@nanos.tec.linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1809081241310.1402@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-09-10 at 08:15 -0500, Brijesh Singh wrote:
+On Sat, Sep 08, 2018 at 12:46:35PM +0200, Thomas Gleixner wrote:
+> On Thu, 6 Sep 2018, Christoph Hellwig wrote:
 > 
-> On 9/10/18 7:27 AM, Borislav Petkov wrote:
-> > 
-> > On Fri, Sep 07, 2018 at 12:57:30PM -0500, Brijesh Singh wrote:
-> > > 
-> > > diff --git a/arch/x86/kernel/kvmclock.c b/arch/x86/kernel/kvmclock.c
-> > > index 376fd3a..6086b56 100644
-> > > --- a/arch/x86/kernel/kvmclock.c
-> > > +++ b/arch/x86/kernel/kvmclock.c
-> > > @@ -65,6 +65,15 @@ static struct pvclock_vsyscall_time_info
-> > >  static struct pvclock_wall_clock wall_clock __decrypted;
-> > >  static DEFINE_PER_CPU(struct pvclock_vsyscall_time_info *, hv_clock_per_cpu);
-> > >  
-> > > +#ifdef CONFIG_AMD_MEM_ENCRYPT
-> > > +/*
-> > > + * The auxiliary array will be used when SEV is active. In non-SEV case,
-> > > + * it will be freed by free_decrypted_mem().
-> > > + */
-> > > +static struct pvclock_vsyscall_time_info
-> > > +			hv_clock_aux[NR_CPUS] __decrypted_aux;
-> > Hmm, so worst case that's 64 4K pages:
-> > 
-> > (8192*32)/4096 = 64 4K pages.
-> We can minimize the worst case memory usage. The number of VCPUs
-> supported by KVM maybe less than NR_CPUS. e.g Currently KVM_MAX_VCPUS is
-> set to 288
-
-KVM_MAX_VCPUS is a property of the host, whereas this code runs in the
-guest, e.g. KVM_MAX_VCPUS could be 2048 in the host for all we know.
-
-> (288 * 64)/4096 = 4 4K pages.
+> > Just as before:  NAK to entirely pointless abstractions.  Please stop
+> > beating the dead horse.
 > 
-> (pvclock_vsyscall_time_info is cache aligned so it will be 64 bytes)
+> I disagree. These interrupts very well fit into the percpu interupt
+> mechanics and that allows them to be handled by all the generic mechanisms
+> as any other interrupt.
 
-Ah, I was wondering why my calculations were always different than
-yours.  I was looking at struct pvclock_vcpu_time_info, which is 32
-bytes.
+Just a few weeks ago you said the contrary:
 
-> #if NR_CPUS > KVM_MAX_VCPUS
-> #define HV_AUX_ARRAY_SIZE  KVM_MAX_VCPUS
-> #else
-> #define HV_AUX_ARRAY_SIZE NR_CPUS
-> #endif
-> 
-> static struct pvclock_vsyscall_time_info
->                         hv_clock_aux[HV_AUX_ARRAY_SIZE] __decrypted_aux;
-
+http://lists.infradead.org/pipermail/linux-riscv/2018-August/000943.html
