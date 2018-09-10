@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C470CC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:23:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DF21C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:24:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8585C20833
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:23:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8585C20833
+	by mail.kernel.org (Postfix) with ESMTP id B2EF720833
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 14:24:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2EF720833
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728668AbeIJTRW (ORCPT
+        id S1728540AbeIJTS2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 15:17:22 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:41808 "EHLO mail.bootlin.com"
+        Mon, 10 Sep 2018 15:18:28 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:41909 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728110AbeIJTRW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 15:17:22 -0400
+        id S1728110AbeIJTS1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Sep 2018 15:18:27 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 50299208B9; Mon, 10 Sep 2018 16:23:01 +0200 (CEST)
+        id 340B4207B0; Mon, 10 Sep 2018 16:24:06 +0200 (CEST)
 Received: from localhost (AAubervilliers-681-1-30-219.w90-88.abo.wanadoo.fr [90.88.15.219])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 0D847208A4;
-        Mon, 10 Sep 2018 16:22:51 +0200 (CEST)
-Date:   Mon, 10 Sep 2018 16:22:50 +0200
+        by mail.bootlin.com (Postfix) with ESMTPSA id E47252074F;
+        Mon, 10 Sep 2018 16:23:55 +0200 (CEST)
+Date:   Mon, 10 Sep 2018 16:23:54 +0200
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
 To:     Icenowy Zheng <icenowy@aosc.io>
 Cc:     Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
@@ -35,16 +35,16 @@ Cc:     Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
         dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 1/5] dt-bindings: sun4i-drm: drop second PLL from A64
- HDMI PHY binding
-Message-ID: <20180910142250.he54s4pm436qyshs@flea>
+Subject: Re: [PATCH 5/5] ARM: sun8i: dts: drop A64 HDMI PHY fallback
+ compatible from R40 DT
+Message-ID: <20180910142354.5ldexkvnan6ohz4x@flea>
 References: <20180907072234.48282-1-icenowy@aosc.io>
- <20180907072234.48282-2-icenowy@aosc.io>
+ <20180907072234.48282-6-icenowy@aosc.io>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ats4uxpwvt5bttal"
+        protocol="application/pgp-signature"; boundary="25znzmfo6omd7fkm"
 Content-Disposition: inline
-In-Reply-To: <20180907072234.48282-2-icenowy@aosc.io>
+In-Reply-To: <20180907072234.48282-6-icenowy@aosc.io>
 User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -52,36 +52,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---ats4uxpwvt5bttal
+--25znzmfo6omd7fkm
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 07, 2018 at 03:22:30PM +0800, Icenowy Zheng wrote:
-> By experiments it seems that the A64 HDMI PHY is not able to use the
-> second video PLL as the clock parent.
+On Fri, Sep 07, 2018 at 03:22:34PM +0800, Icenowy Zheng wrote:
+> The R40 HDMI PHY seems to be different to the A64 one, the A64 one
+> has no input mux, but the R40 one has.
 >=20
-> Drop pll-1 from the device tree binding of A64 HDMI PHY.
+> Drop the A64 fallback compatible from the HDMI PHY node in R40 DT.
 >=20
 > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 > ---
->  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 1 -
->  1 file changed, 1 deletion(-)
+>  arch/arm/boot/dts/sun8i-r40.dtsi | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 >=20
-> diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.tx=
-t b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> index f8773ecb7525..62034039cee1 100644
-> --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> @@ -114,7 +114,6 @@ Required properties:
+> diff --git a/arch/arm/boot/dts/sun8i-r40.dtsi b/arch/arm/boot/dts/sun8i-r=
+40.dtsi
+> index ffd9f00f74a4..5f547c161baf 100644
+> --- a/arch/arm/boot/dts/sun8i-r40.dtsi
+> +++ b/arch/arm/boot/dts/sun8i-r40.dtsi
+> @@ -800,8 +800,7 @@
+>  		};
 > =20
->  H3 and A64 HDMI PHY require additional clocks:
->    - pll-0: parent of phy clock
-> -  - pll-1: second possible phy clock parent (A64 only)
+>  		hdmi_phy: hdmi-phy@1ef0000 {
+> -			compatible =3D "allwinner,sun8i-r40-hdmi-phy",
+> -				     "allwinner,sun50i-a64-hdmi-phy";
+> +			compatible =3D "allwinner,sun8i-r40-hdmi-phy";
 
-You shouldn't need to do this. The DT is about the hardware. The fact
-that we haven't figured out how to use it is quite irrelevant, and can
-change in the future, unlike this binding.
+If you could use the A64 phy before, you can still use it now.
 
 Maxime
 
@@ -90,24 +90,24 @@ Maxime Ripard, Bootlin
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---ats4uxpwvt5bttal
+--25znzmfo6omd7fkm
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluWfjkACgkQ0rTAlCFN
-r3Q74xAAjAa1HuH2fzpYeWb5biy+x0ryFWJ9JAiCK6EzpZpEmTLehp0OiOYN/o8A
-SJCGj7w6rGb03c7n0Avj8jVmLvNSy3QDezl9mNyvTkQnH10rYAOccdlgYw6IY8iv
-YdrDptgtVrVSmccpJDR0L8XYtrjCGnKr+tyWJNBczdxPD6ZAIBzHwI/gllbSFNs6
-dCK8wFN1EEoyYtHeCrkd5Nis4rGLTcKL4ZpNi25aP+xgro4JOR0yAvDyl1yfQFra
-GQtAj0YPaQnJ1BsP9MH57oJ/KyOYi19FX7GlfzdQMqIgonHHffYOWlX+GVrxlOKT
-n56t4v9iDtcMBy+vn+lFdDtfzbAZ9lPKsoQLMHFHtjOw1V7JeNYySSGPSlVQU1Ku
-rmZjM2mS5ZDnFwg1R922pzPMy1W+sg7hxW5q851rU6tlsz0ZPHT26YkhsZjejcDP
-YFjQSAbMUVmQM5f7OP+LYYP18roVCBENRTIqp8ETcikaBNeGDjKY1DKXXyVGLxHL
-8imO/2WC0oYlFyTbkat3Qu/Wc952Ddc4Y0uGS049sxazFIYK2zWLrTQFvVnJU2nc
-SxTcievim0KbdDwzS7mIfN5f9zlA8fgVUzT1Ln4hJIX5ehG4fpcWGpYMawyBJ9fi
-75AP4BamEDdFNHthv8wAoZajHrQVp2dLmK76Jgz8/RlxjQmZyXc=
-=vbta
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluWfnoACgkQ0rTAlCFN
+r3QMGg/+JNcdN0iDoL7IleXz8P7+l/i0IpRNNF5lRSWudciBbnAPIecC9ZG6Ly3f
+pbH0l9Py6hxZo8v042S6VRklPYINbbncb0TIyLASx2HreGIBQE1OTKxbCnpbqgcX
+46nr4IKIWLOyoBA6ALbimfyD/yy+xEaVmSz4nntmeDPEZOGl0feo4vISZ9aY5NPx
+B5iPXPR5xjfV5XfKjdeMrGd5uTi+DJ9WCXIOvWaMz6sC9Ixi8JcUyU1trjz/VLRD
+CVIsHyzpxDuMniOPYBnWd2OiRZKWkuaZ9WTh+bRPyyfVHZf9Ic5Y7NXPa5W6qvFN
+jJEtOyW2KS9arujySir1IvvqPFntV09S/AmrZMVK4Vlz/Ytwrth20apT3ZT0lMiD
+j2uYHTBnX+YzUfJSaGle+mA55mw/P14vzNVTUeY4gvF+UXgMtdOAS9Tgkfb4Hzak
+mq+YRkFhYGopNWOYjZpgCawzrJM3OfqG645fyZdHGufTfr6rfcxDnPLm5Q+yHLNH
+OB9zUCnfBZEl53sjmbZWP1bCirFAzAEiyHT1AVVqzK8e/310HaUua+KtRIQrFMc5
+MFQHCcbBtjkfLaxDTda3GimPO77btaMelp5nDE+zm017fo1Lr9Rd9mU7hsKfiUFv
+xxz1DwgkJ/kcJT/pEf1inN+BK+87GM6fwxBfheGpQ8cMET6Dgk8=
+=QZDp
 -----END PGP SIGNATURE-----
 
---ats4uxpwvt5bttal--
+--25znzmfo6omd7fkm--
