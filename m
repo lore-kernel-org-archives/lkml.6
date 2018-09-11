@@ -2,302 +2,87 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B85A5C4646A
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 22:10:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69DEEC04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 22:13:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 454BF2087F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 22:10:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="120kHR6Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 454BF2087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 123D32087F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 22:13:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 123D32087F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728318AbeILDLV (ORCPT
+        id S1728245AbeILDOk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 23:11:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46852 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727796AbeILDLV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 23:11:21 -0400
-Received: from localhost (unknown [104.132.1.88])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 455C220866;
-        Tue, 11 Sep 2018 22:09:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536703799;
-        bh=J60I/VCINHhiZISwfIte2VHfUr50qLSGOrPTOewuQfU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=120kHR6Qkiv8SbEEomSjkB9dEvivP1dBxUq3K0yEf03RdURR8CphoE4sMHIfplKLe
-         jd5Nh6j0OyUgbq1mMr/T8lun/88nbj9KJO+KhuagMHdZ6bhtIHJMHZTUoHRQZkfNZ0
-         dN72U++C8gG4fze6hyfJon4csJnDmzM/2m9KZXXg=
-Date:   Tue, 11 Sep 2018 15:09:58 -0700
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Chao Yu <chao@kernel.org>
-Cc:     Sahitya Tummala <stummala@codeaurora.org>,
-        Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: add new idle interval timing for
- discard and gc paths
-Message-ID: <20180911220958.GC55456@jaegeuk-macbookpro.roam.corp.google.com>
-References: <1536551252-24256-1-git-send-email-stummala@codeaurora.org>
- <5d74d46b-8141-f048-9c0a-459c82b2c449@kernel.org>
+        Tue, 11 Sep 2018 23:14:40 -0400
+Received: from ipmail06.adl2.internode.on.net ([150.101.137.129]:35913 "EHLO
+        ipmail06.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727796AbeILDOk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 23:14:40 -0400
+Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
+  by ipmail06.adl2.internode.on.net with ESMTP; 12 Sep 2018 07:43:16 +0930
+Received: from dave by dastard with local (Exim 4.80)
+        (envelope-from <david@fromorbit.com>)
+        id 1fzquJ-0003ul-E5; Wed, 12 Sep 2018 08:13:15 +1000
+Date:   Wed, 12 Sep 2018 08:13:15 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-doc@vger.kernel.org, "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jan Kara <jack@suse.cz>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Larry Woodman <lwoodman@redhat.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "Wangkai (Kevin C)" <wangkai86@huawei.com>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [PATCH v3 4/4] fs/dcache: Eliminate branches in
+ nr_dentry_negative accounting
+Message-ID: <20180911221315.GH5631@dastard>
+References: <1536693506-11949-1-git-send-email-longman@redhat.com>
+ <1536693506-11949-5-git-send-email-longman@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5d74d46b-8141-f048-9c0a-459c82b2c449@kernel.org>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+In-Reply-To: <1536693506-11949-5-git-send-email-longman@redhat.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/11, Chao Yu wrote:
-> On 2018/9/10 11:47, Sahitya Tummala wrote:
-> > This helps to control the frequency of submission of discard and
-> > GC requests independently, based on the need. The sleep timing of
-> > GC thread is now aligned with this idle time when the dev is busy,
-> > to avoid unnecessary periodic wakeups.
-> > 
-> > Suggested-by: Chao Yu <yuchao0@huawei.com>
-> > Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-> > ---
-> > v2:
-> > -fix __issue_discard_cmd_orderly() path
-> > 
-> >  Documentation/ABI/testing/sysfs-fs-f2fs | 17 ++++++++++++++++-
-> >  fs/f2fs/f2fs.h                          | 31 +++++++++++++++++++++++++++----
-> >  fs/f2fs/gc.c                            |  6 ++++--
-> >  fs/f2fs/segment.c                       | 16 ++++++----------
-> >  fs/f2fs/super.c                         |  2 ++
-> >  fs/f2fs/sysfs.c                         |  5 +++++
-> >  6 files changed, 60 insertions(+), 17 deletions(-)
-> > 
-> > diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-> > index 94a24ae..3ac4177 100644
-> > --- a/Documentation/ABI/testing/sysfs-fs-f2fs
-> > +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-> > @@ -121,7 +121,22 @@ What:		/sys/fs/f2fs/<disk>/idle_interval
-> >  Date:		January 2016
-> >  Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
-> >  Description:
-> > -		 Controls the idle timing.
-> > +		 Controls the idle timing for all paths other than
-> > +		 discard and gc path.
-> > +
-> > +What:		/sys/fs/f2fs/<disk>/discard_idle_interval
-> > +Date:		September 2018
-> > +Contact:	"Chao Yu" <yuchao0@huawei.com>
-> > +Contact:	"Sahitya Tummala" <stummala@codeaurora.org>
-> > +Description:
-> > +		 Controls the idle timing for discard path.
-> > +
-> > +What:		/sys/fs/f2fs/<disk>/gc_idle_interval
-> > +Date:		September 2018
-> > +Contact:	"Chao Yu" <yuchao0@huawei.com>
-> > +Contact:	"Sahitya Tummala" <stummala@codeaurora.org>
-> > +Description:
-> > +		 Controls the idle timing for gc path.
-> >  
-> >  What:		/sys/fs/f2fs/<disk>/iostat_enable
-> >  Date:		August 2017
-> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> > index abf9256..6070681 100644
-> > --- a/fs/f2fs/f2fs.h
-> > +++ b/fs/f2fs/f2fs.h
-> > @@ -1093,6 +1093,8 @@ enum {
-> >  enum {
-> >  	CP_TIME,
-> >  	REQ_TIME,
-> > +	DISCARD_TIME,
-> > +	GC_TIME,
-> >  	MAX_TIME,
-> >  };
-> >  
-> > @@ -1347,14 +1349,35 @@ static inline void f2fs_update_time(struct f2fs_sb_info *sbi, int type)
-> >  	sbi->last_time[type] = jiffies;
-> >  }
-> >  
-> > -static inline bool f2fs_time_over(struct f2fs_sb_info *sbi, int type)
-> > +static inline bool f2fs_time_over_cp(struct f2fs_sb_info *sbi)
-
-I don't see why we need this separately.
-
-> > +{
-> > +	unsigned long interval = sbi->interval_time[CP_TIME] * HZ;
-> > +
-> > +	return time_after(jiffies, sbi->last_time[CP_TIME] + interval);
-> > +}
-> > +
-> > +static inline bool f2fs_time_over_req(struct f2fs_sb_info *sbi, int type)
-> > +{
-> > +	unsigned long interval = sbi->interval_time[type] * HZ;
-> > +
-> > +	return time_after(jiffies, sbi->last_time[REQ_TIME] + interval);
-> > +}
-> > +
-> > +static inline unsigned int f2fs_get_wait_time(struct f2fs_sb_info *sbi,
-> > +						int type)
-
-f2fs_time_to_wait()?
-
-> >  {
-> >  	unsigned long interval = sbi->interval_time[type] * HZ;
-> > +	unsigned int wait_ms = 0;
-> > +	long delta;
-> > +
-> > +	delta = (sbi->last_time[REQ_TIME] + interval) - jiffies;
-> > +	if (delta > 0)
-> > +		wait_ms = jiffies_to_msecs(delta);
-> >  
-> > -	return time_after(jiffies, sbi->last_time[type] + interval);
-> > +	return wait_ms;
-> >  }
-> >  
-> > -static inline bool is_idle(struct f2fs_sb_info *sbi)
-> > +static inline bool is_idle(struct f2fs_sb_info *sbi, int type)
-> >  {
-> >  	struct block_device *bdev = sbi->sb->s_bdev;
-> >  	struct request_queue *q = bdev_get_queue(bdev);
-> > @@ -1363,7 +1386,7 @@ static inline bool is_idle(struct f2fs_sb_info *sbi)
-> >  	if (rl->count[BLK_RW_SYNC] || rl->count[BLK_RW_ASYNC])
-> >  		return false;
-> >  
-> > -	return f2fs_time_over(sbi, REQ_TIME);
-> > +	return f2fs_time_over_req(sbi, type);
-> >  }
-> >  
-> >  /*
-> > diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> > index 5c8d004..c0bafea 100644
-> > --- a/fs/f2fs/gc.c
-> > +++ b/fs/f2fs/gc.c
-> > @@ -83,8 +83,10 @@ static int gc_thread_func(void *data)
-> >  		if (!mutex_trylock(&sbi->gc_mutex))
-> >  			goto next;
-> >  
-> > -		if (!is_idle(sbi)) {
-> > -			increase_sleep_time(gc_th, &wait_ms);
-> > +		if (!is_idle(sbi, GC_TIME)) {
-> > +			wait_ms = f2fs_get_wait_time(sbi, GC_TIME);
+On Tue, Sep 11, 2018 at 03:18:26PM -0400, Waiman Long wrote:
+> Because the accounting of nr_dentry_negative depends on whether a dentry
+> is a negative one or not, branch instructions are introduced to handle
+> the accounting conditionally. That may potentially slow down the task
+> by a noticeable amount if that introduces sizeable amount of additional
+> branch mispredictions.
 > 
-> It seems this patch changes the method of increasing wait_ms here, if device is
-> busy, we may wake up GC thread earlier than before, not sure we should do this.
-> 
-> To Jaegeuk, how do you think of this?
+> To avoid that, the accounting code is now modified to use conditional
+> move instructions instead, if supported by the architecture.
 
-Yes, please let us discuss this in another patch.
+I think this is a case of over-optimisation. It makes the code
+harder to read for extremely marginal benefit, and if we ever need
+to add any more code for negative dentries in these paths the first
+thing we'll have to do is revert this change.
 
-> 
-> Thanks,
-> 
-> > +			if (!wait_ms)
-> > +				increase_sleep_time(gc_th, &wait_ms);
-> >  			mutex_unlock(&sbi->gc_mutex);
-> >  			goto next;
-> >  		}
-> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> > index c5024f8..2d15733 100644
-> > --- a/fs/f2fs/segment.c
-> > +++ b/fs/f2fs/segment.c
-> > @@ -511,7 +511,7 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
-> >  	else
-> >  		f2fs_build_free_nids(sbi, false, false);
-> >  
-> > -	if (!is_idle(sbi) &&
-> > +	if (!is_idle(sbi, REQ_TIME) &&
-> >  		(!excess_dirty_nats(sbi) && !excess_dirty_nodes(sbi)))
-> >  		return;
-> >  
-> > @@ -521,7 +521,7 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
-> >  			excess_prefree_segs(sbi) ||
-> >  			excess_dirty_nats(sbi) ||
-> >  			excess_dirty_nodes(sbi) ||
-> > -			f2fs_time_over(sbi, CP_TIME)) {
-> > +			f2fs_time_over_cp(sbi)) {
-> >  		if (test_opt(sbi, DATA_FLUSH)) {
-> >  			struct blk_plug plug;
-> >  
-> > @@ -1311,7 +1311,7 @@ static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
-> >  		if (dc->state != D_PREP)
-> >  			goto next;
-> >  
-> > -		if (dpolicy->io_aware && !is_idle(sbi)) {
-> > +		if (dpolicy->io_aware && !is_idle(sbi, DISCARD_TIME)) {
-> >  			io_interrupted = true;
-> >  			break;
-> >  		}
-> > @@ -1371,7 +1371,7 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
-> >  			f2fs_bug_on(sbi, dc->state != D_PREP);
-> >  
-> >  			if (dpolicy->io_aware && i < dpolicy->io_aware_gran &&
-> > -								!is_idle(sbi)) {
-> > +						!is_idle(sbi, DISCARD_TIME)) {
-> >  				io_interrupted = true;
-> >  				break;
-> >  			}
-> > @@ -1564,8 +1564,6 @@ static int issue_discard_thread(void *data)
-> >  	struct discard_policy dpolicy;
-> >  	unsigned int wait_ms = DEF_MIN_DISCARD_ISSUE_TIME;
-> >  	int issued;
-> > -	unsigned long interval = sbi->interval_time[REQ_TIME] * HZ;
-> > -	long delta;
-> >  
-> >  	set_freezable();
-> >  
-> > @@ -1602,10 +1600,8 @@ static int issue_discard_thread(void *data)
-> >  			__wait_all_discard_cmd(sbi, &dpolicy);
-> >  			wait_ms = dpolicy.min_interval;
-> >  		} else if (issued == -1){
-> > -			delta = (sbi->last_time[REQ_TIME] + interval) - jiffies;
-> > -			if (delta > 0)
-> > -				wait_ms = jiffies_to_msecs(delta);
-> > -			else
-> > +			wait_ms = f2fs_get_wait_time(sbi, DISCARD_TIME);
-> > +			if (!wait_ms)
-> >  				wait_ms = dpolicy.mid_interval;
-> >  		} else {
-> >  			wait_ms = dpolicy.max_interval;
-> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> > index 896b885..1706f45 100644
-> > --- a/fs/f2fs/super.c
-> > +++ b/fs/f2fs/super.c
-> > @@ -2423,6 +2423,8 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
-> >  	sbi->dir_level = DEF_DIR_LEVEL;
-> >  	sbi->interval_time[CP_TIME] = DEF_CP_INTERVAL;
-> >  	sbi->interval_time[REQ_TIME] = DEF_IDLE_INTERVAL;
-> > +	sbi->interval_time[DISCARD_TIME] = DEF_IDLE_INTERVAL;
-> > +	sbi->interval_time[GC_TIME] = DEF_IDLE_INTERVAL;
-> >  	clear_sbi_flag(sbi, SBI_NEED_FSCK);
-> >  
-> >  	for (i = 0; i < NR_COUNT_TYPE; i++)
-> > diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-> > index 81c0e53..0afe99c 100644
-> > --- a/fs/f2fs/sysfs.c
-> > +++ b/fs/f2fs/sysfs.c
-> > @@ -407,6 +407,9 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
-> >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, dir_level, dir_level);
-> >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, cp_interval, interval_time[CP_TIME]);
-> >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, idle_interval, interval_time[REQ_TIME]);
-> > +F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, discard_idle_interval,
-> > +					interval_time[DISCARD_TIME]);
-> > +F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_idle_interval, interval_time[GC_TIME]);
-> >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, iostat_enable, iostat_enable);
-> >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, readdir_ra, readdir_ra);
-> >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_pin_file_thresh, gc_pin_file_threshold);
-> > @@ -460,6 +463,8 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
-> >  	ATTR_LIST(dirty_nats_ratio),
-> >  	ATTR_LIST(cp_interval),
-> >  	ATTR_LIST(idle_interval),
-> > +	ATTR_LIST(discard_idle_interval),
-> > +	ATTR_LIST(gc_idle_interval),
-> >  	ATTR_LIST(iostat_enable),
-> >  	ATTR_LIST(readdir_ra),
-> >  	ATTR_LIST(gc_pin_file_thresh),
-> > 
+Unless you have numbers demonstrating that it's a clear performance
+improvement, then NACK for this patch.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
