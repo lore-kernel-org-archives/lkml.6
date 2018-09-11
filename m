@@ -2,215 +2,112 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA95BC43143
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 01:00:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08359C46469
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 01:00:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 669652086A
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 01:00:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B300420839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 01:00:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="MfmVbIa9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 669652086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mNGd3xFe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B300420839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726670AbeIKF5B (ORCPT
+        id S1726734AbeIKF5H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 01:57:01 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:43496 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726143AbeIKF5A (ORCPT
+        Tue, 11 Sep 2018 01:57:07 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:34200 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726570AbeIKF5B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 01:57:00 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8B0xxnK077547;
-        Tue, 11 Sep 2018 01:00:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=p1afmEd8/tPqlTNMZIkHsm5+Y4w1VDdGqw9tYwO1YbM=;
- b=MfmVbIa9FDvmDf90G0SzRodDhj46UW5c5w3fwmSapXN0FNOooe0U0SG10AUylxX4sB2A
- 30o3Fsn7Z2vMF6hF5cP4nde0+DZtczlOg9h6mvK12fB5v52b4b8IsGtgFXMbpZuBeqxE
- BPiBh0UNidC0UXAelzvyR4zl79H6uOqFq2lH6MDRVg1IzqK6NNyYHxn3l/zpxDmWsJB9
- elAcVjYCaWgQWq40nYYtdT2Qr+UaWCrE135gnAQnXuMA+qIsiFtcUZhGkKclpSoMbFkj
- DryN8jGtrRDpyuC30oZADxiEXl6lU9uSQfJ3K7Wx6YV32tvsTQNFX2kelYgPZvr+7AFD fQ== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2130.oracle.com with ESMTP id 2mc5ut94eh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 Sep 2018 01:00:02 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w8B101cX029692
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 Sep 2018 01:00:02 GMT
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w8B1018I026802;
-        Tue, 11 Sep 2018 01:00:01 GMT
-Received: from localhost.localdomain (/73.143.71.164)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 10 Sep 2018 18:00:01 -0700
-From:   Daniel Jordan <daniel.m.jordan@oracle.com>
-To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        cgroups@vger.kernel.org
-Cc:     aaron.lu@intel.com, ak@linux.intel.com, akpm@linux-foundation.org,
-        dave.dice@oracle.com, dave.hansen@linux.intel.com,
-        hannes@cmpxchg.org, levyossi@icloud.com,
-        ldufour@linux.vnet.ibm.com, mgorman@techsingularity.net,
-        mhocko@kernel.org, Pavel.Tatashin@microsoft.com,
-        steven.sistare@oracle.com, tim.c.chen@intel.com,
-        vdavydov.dev@gmail.com, ying.huang@intel.com
-Subject: [RFC PATCH v2 7/8] mm: introduce smp_list_splice to prepare for concurrent LRU adds
-Date:   Mon, 10 Sep 2018 20:59:48 -0400
-Message-Id: <20180911005949.5635-4-daniel.m.jordan@oracle.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180911004240.4758-1-daniel.m.jordan@oracle.com>
-References: <20180911004240.4758-1-daniel.m.jordan@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9012 signatures=668708
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809110009
+        Tue, 11 Sep 2018 01:57:01 -0400
+Received: by mail-oi0-f67.google.com with SMTP id 13-v6so44097468ois.1;
+        Mon, 10 Sep 2018 18:00:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=F/Ujmlt8E/VVdfTBhg3WWtj8otY/h1MAxTTeNdLwcoo=;
+        b=mNGd3xFe9RnHw0mgiTexji1wEGMMEIz3Yl+FIgGUe5sFxNy1/hX8o2R7MpLgHOp7/B
+         IIZYp+x1M/bqdXoRW27/ahqSGVOsWQtOS/WtqP/ycfCFMg9g6GOUqOLr7vKTZ50FfR16
+         Sn7HdL/jlLjH+AdlRT8J3WIGiU5B85rDNWJtLXnN9FnXp92oL2LNYuBFkGfw4K6QrMqK
+         RWir2PpLCb3ltV3iv7qKcj1RRiSDaLrNT1pcUkL0Gj1/afOgBAyFxn7poSe9/sSEpzS5
+         R6zwFq0vlqUrsHbsjfLjXA4VHifglkKAVv7TNluNmJ1xGX2aKo1mvoimOnoYquE45v6Y
+         e4DA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=F/Ujmlt8E/VVdfTBhg3WWtj8otY/h1MAxTTeNdLwcoo=;
+        b=b/SIfx7JK9aVW2gH/DwZzcG9dWP0KJ7vwrrcfRlm/BdtsgUagqwfRUx2UYr+E5RWWh
+         0byFm2hRObeYog4CvGr40yT2IozDXR+u9qlnFE9yGuxkerACNfBBHkCV++PI2QUbuvj9
+         LfV9MX1lkAKq5K2Cg6qIQzhfL9jur8dxW220qCzLxXZ59EC+pglKHVyvCMaMkNBWLbuG
+         6FQwv2IQMNAFeux5tcx9YUCBhCBh1XRLMhcfpkpJXPsxok3yFl3ytIWHRcdNve0mm0Dg
+         pnt3PHUJ5nC6uBF8zw4YbFVSEma6n4nUJqPlVqRNOULKqdE46C9okAwv5GBwXj/XOBtx
+         w2Jg==
+X-Gm-Message-State: APzg51Abq6X38kuucAv4hufxQQWSt2/iObnAT3a7LIj/L0Os6NiAMx8r
+        zTajk245p2CgWHB+TQU+/8fGplI1cOTwJxVZO7E=
+X-Google-Smtp-Source: ANB0VdZovHyiRno7dP14jlBujDCt/6mgqTHY0Rx+mrGNxtUPBfkXHesn4Y5Eks2XcRkBZfB/KSzxcUsTrFtAKsV8ZHg=
+X-Received: by 2002:aca:e643:: with SMTP id d64-v6mr25782882oih.81.1536627619919;
+ Mon, 10 Sep 2018 18:00:19 -0700 (PDT)
+MIME-Version: 1.0
+References: <1536406766-27021-1-git-send-email-zhongjiang@huawei.com>
+In-Reply-To: <1536406766-27021-1-git-send-email-zhongjiang@huawei.com>
+From:   Junhui Tang <tang.junhui.linux@gmail.com>
+Date:   Tue, 11 Sep 2018 08:59:52 +0800
+Message-ID: <CA+NNRhEo-qryWzGoVbUtQVSbOhbTTwVuzAA7DYmTOcVN8oYehQ@mail.gmail.com>
+Subject: Re: [PATCH] bcache: remove unnecessary null poiner check in cache_set_free
+To:     zhongjiang@huawei.com
+Cc:     colyli@suse.de, Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that we splice a local list onto the LRU, prepare for multiple tasks
-doing this concurrently by adding a variant of the kernel's list
-splicing API, list_splice, that's designed to work with multiple tasks.
-
-Although there is naturally less parallelism to be gained from locking
-the LRU head this way, the main benefit of doing this is to allow
-removals to happen concurrently.  The way lru_lock is today, an add
-needlessly blocks removal of any page but the first in the LRU.
-
-For now, hold lru_lock as writer to serialize the adds to ensure the
-function is correct for a single thread at a time.
-
-Yosef Lev came up with this algorithm.
-
-Suggested-by: Yosef Lev <levyossi@icloud.com>
-Signed-off-by: Daniel Jordan <daniel.m.jordan@oracle.com>
----
- include/linux/list.h |  1 +
- lib/list.c           | 60 ++++++++++++++++++++++++++++++++++++++------
- mm/swap.c            |  3 ++-
- 3 files changed, 56 insertions(+), 8 deletions(-)
-
-diff --git a/include/linux/list.h b/include/linux/list.h
-index bb80fe9b48cf..6d964ea44f1a 100644
---- a/include/linux/list.h
-+++ b/include/linux/list.h
-@@ -48,6 +48,7 @@ static inline bool __list_del_entry_valid(struct list_head *entry)
- #endif
- 
- extern void smp_list_del(struct list_head *entry);
-+extern void smp_list_splice(struct list_head *list, struct list_head *head);
- 
- /*
-  * Insert a new entry between two known consecutive entries.
-diff --git a/lib/list.c b/lib/list.c
-index 22188fc0316d..d6a834ef1543 100644
---- a/lib/list.c
-+++ b/lib/list.c
-@@ -10,17 +10,18 @@
- #include <linux/prefetch.h>
- 
- /*
-- * smp_list_del is a variant of list_del that allows concurrent list removals
-- * under certain assumptions.  The idea is to get away from overly coarse
-- * synchronization, such as using a lock to guard an entire list, which
-- * serializes all operations even though those operations might be happening on
-- * disjoint parts.
-+ * smp_list_del and smp_list_splice are variants of list_del and list_splice,
-+ * respectively, that allow concurrent list operations under certain
-+ * assumptions.  The idea is to get away from overly coarse synchronization,
-+ * such as using a lock to guard an entire list, which serializes all
-+ * operations even though those operations might be happening on disjoint
-+ * parts.
-  *
-  * If you want to use other functions from the list API concurrently,
-  * additional synchronization may be necessary.  For example, you could use a
-  * rwlock as a two-mode lock, where readers use the lock in shared mode and are
-- * allowed to call smp_list_del concurrently, and writers use the lock in
-- * exclusive mode and are allowed to use all list operations.
-+ * allowed to call smp_list_* functions concurrently, and writers use the lock
-+ * in exclusive mode and are allowed to use all list operations.
-  */
- 
- /**
-@@ -156,3 +157,48 @@ void smp_list_del(struct list_head *entry)
- 	entry->next = LIST_POISON1;
- 	entry->prev = LIST_POISON2;
- }
-+
-+/**
-+ * smp_list_splice - thread-safe splice of two lists
-+ * @list: the new list to add
-+ * @head: the place to add it in the first list
-+ *
-+ * Safely handles concurrent smp_list_splice operations onto the same list head
-+ * and concurrent smp_list_del operations of any list entry except @head.
-+ * Assumes that @head cannot be removed.
-+ */
-+void smp_list_splice(struct list_head *list, struct list_head *head)
-+{
-+	struct list_head *first = list->next;
-+	struct list_head *last = list->prev;
-+	struct list_head *succ;
-+
-+	/*
-+	 * Lock the front of @head by replacing its next pointer with NULL.
-+	 * Should another thread be adding to the front, wait until it's done.
-+	 */
-+	succ = READ_ONCE(head->next);
-+	while (succ == NULL || cmpxchg(&head->next, succ, NULL) != succ) {
-+		cpu_relax();
-+		succ = READ_ONCE(head->next);
-+	}
-+
-+	first->prev = head;
-+	last->next = succ;
-+
-+	/*
-+	 * It is safe to write to succ, head's successor, because locking head
-+	 * prevents succ from being removed in smp_list_del.
-+	 */
-+	succ->prev = last;
-+
-+	/*
-+	 * Pairs with the implied full barrier before the cmpxchg above.
-+	 * Ensures the write that unlocks the head is seen last to avoid list
-+	 * corruption.
-+	 */
-+	smp_wmb();
-+
-+	/* Simultaneously complete the splice and unlock the head node. */
-+	WRITE_ONCE(head->next, first);
-+}
-diff --git a/mm/swap.c b/mm/swap.c
-index 07b951727a11..fe3098c09815 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -35,6 +35,7 @@
- #include <linux/hugetlb.h>
- #include <linux/page_idle.h>
- #include <linux/mmzone.h>
-+#include <linux/list.h>
- 
- #include "internal.h"
- 
-@@ -1019,7 +1020,7 @@ void __pagevec_lru_add(struct pagevec *pvec)
- 			pgdat = splice->pgdat;
- 			write_lock_irqsave(&pgdat->lru_lock, flags);
- 		}
--		list_splice(&splice->list, splice->lru);
-+		smp_list_splice(&splice->list, splice->lru);
- 	}
- 
- 	while (!list_empty(&singletons)) {
--- 
-2.18.0
-
+This patch is NOT OK to me=EF=BC=8Cmaybe many cache in a  cache_set, and so=
+me
+cache are not registered yet, so ca is possible NULL.
+zhong jiang <zhongjiang@huawei.com> =E4=BA=8E2018=E5=B9=B49=E6=9C=888=E6=97=
+=A5=E5=91=A8=E5=85=AD =E4=B8=8B=E5=8D=887:52=E5=86=99=E9=81=93=EF=BC=9A
+>
+> The iterator in for_each_cache is never null, therefore, remove
+> the redundant null pointer check.
+>
+> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+> ---
+>  drivers/md/bcache/super.c | 11 +++++------
+>  1 file changed, 5 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+> index 94c756c..2d26f9e 100644
+> --- a/drivers/md/bcache/super.c
+> +++ b/drivers/md/bcache/super.c
+> @@ -1513,12 +1513,11 @@ static void cache_set_free(struct closure *cl)
+>         bch_btree_cache_free(c);
+>         bch_journal_free(c);
+>
+> -       for_each_cache(ca, c, i)
+> -               if (ca) {
+> -                       ca->set =3D NULL;
+> -                       c->cache[ca->sb.nr_this_dev] =3D NULL;
+> -                       kobject_put(&ca->kobj);
+> -               }
+> +       for_each_cache(ca, c, i) {
+> +               ca->set =3D NULL;
+> +               c->cache[ca->sb.nr_this_dev] =3D NULL;
+> +               kobject_put(&ca->kobj);
+> +       }
+>
+>         bch_bset_sort_state_free(&c->sort);
+>         free_pages((unsigned long) c->uuids, ilog2(bucket_pages(c)));
+> --
+> 1.7.12.4
+>
