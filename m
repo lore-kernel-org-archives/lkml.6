@@ -6,78 +6,114 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25F64C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 21:28:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A884C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 21:29:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3FDB20891
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 21:28:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D81B820880
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 21:29:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="syU059gx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3FDB20891
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="aBsc7rlK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D81B820880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728159AbeILCaE (ORCPT
+        id S1728180AbeILCah (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 22:30:04 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:41959 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726870AbeILCaD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 22:30:03 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 812ea928;
-        Tue, 11 Sep 2018 21:12:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=D4xiGxYwdhH1fOaYfXmSkBxnFLk=; b=syU059
-        gx4LvIYSTk8LTcedOc4e5D+RepCRzAX3NEY3TECVYAUqx4xRMcnyjsiK3JyDQK6Y
-        ukbUQgZ1THOx1T5oGzw9vVxWpEnrkT9ys/Z/pKiEsAIwLThYlL7j4v3kxll8dtwY
-        aN8uxhorjFlv0j8A1+872z/Y+AFbCNQOQ/pLczBKpfYrK9LdEyR8URYdp2Wd5V64
-        OcDaoSET3PtgDIgE1QskVE8XR1N69xnJ+4Elvj+Y1vv8bQ/BUcbzk4diXI4Hj8Ui
-        MZwg2mSDkxpYpzbFzAfhs1E0YYmoe6Zpbf4bmnMTTgqnEg9++Py04apQoKLc7KIi
-        PyPVRj9/mRtBQuzQ==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id c84887e1 (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
-        Tue, 11 Sep 2018 21:12:06 +0000 (UTC)
-Received: by mail-oi0-f53.google.com with SMTP id 13-v6so50261187ois.1;
-        Tue, 11 Sep 2018 14:28:49 -0700 (PDT)
-X-Gm-Message-State: APzg51CUffYjCHMpMeVtURbfuvWvrkA5iANLdCtF+u2uKeBg3Xcu7OCc
-        9dwdkwDkzo6/wiwI9Sd2dyGl/PR3Az8oP29/MIg=
-X-Google-Smtp-Source: ANB0VdYvEl8ly6+iQbMJBINccic1iwmiou/STp5VF9SWmMZvEWTydPByi/aVoZGL0jnmpX3sbhWGEhZheFI5sC7PKNk=
-X-Received: by 2002:aca:310b:: with SMTP id x11-v6mr29210530oix.74.1536701328189;
- Tue, 11 Sep 2018 14:28:48 -0700 (PDT)
+        Tue, 11 Sep 2018 22:30:37 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:46506 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728088AbeILCah (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 22:30:37 -0400
+Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id A252E992;
+        Tue, 11 Sep 2018 23:29:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1536701363;
+        bh=qW9HWvevWV5F6NlH/0K2Oajlw9gYktfTXNp4VcaFqQQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=aBsc7rlKXeo3jKf5XlYDWyMgUaoV5QEBih8IUaqxb49Ee0PcINNbDp5thRWQPaos5
+         qqt85i9cUcH6XZr78yCFmU9B/J0qWhfPqTn2jCUdu1wEpgD7jwN9Qlwa6g6PiT0/+c
+         zknxgzh+8TRcrafCVXA5msDVgOKupOTVs/1AFgdc=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        David Airlie <airlied@linux.ie>,
+        "Andrew F. Davis" <afd@ti.com>, Sebastian Reichel <sre@kernel.org>,
+        Benoit Parrot <bparrot@ti.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH -next] drm/omap: remove set but not used variable 'frame_height'
+Date:   Wed, 12 Sep 2018 00:29:34 +0300
+Message-ID: <30141949.h7u3WbzelH@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <1536667253-5792-1-git-send-email-yuehaibing@huawei.com>
+References: <1536667253-5792-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
-References: <20180911010838.8818-1-Jason@zx2c4.com> <20180911010838.8818-6-Jason@zx2c4.com>
- <alpine.DEB.2.21.1809111021250.5110@nanos.tec.linutronix.de>
- <CAEX_ruFFWsW897DuFEbz9+6av02bMwDgiA9GxV+=SBtyKG7LJw@mail.gmail.com>
- <alpine.DEB.2.21.1809111106420.5110@nanos.tec.linutronix.de>
- <CAHmME9qPk7iOVspOJOhN0M+C=v+i6GNq9XkDnXXJ=puoFV0Gfg@mail.gmail.com> <alpine.DEB.2.21.1809112322060.1427@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1809112322060.1427@nanos.tec.linutronix.de>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Tue, 11 Sep 2018 15:28:35 -0600
-X-Gmail-Original-Message-ID: <CAHmME9rr=OtFTmNWPdSY2OtRkSvCPpkq_HuS3LO1dL4n96rzOQ@mail.gmail.com>
-Message-ID: <CAHmME9rr=OtFTmNWPdSY2OtRkSvCPpkq_HuS3LO1dL4n96rzOQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 05/17] zinc: ChaCha20 x86_64 implementation
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Samuel Neves <sneves@dei.uc.pt>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
-        Andy Polyakov <appro@openssl.org>, mingo@redhat.com,
-        X86 ML <x86@kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 11, 2018 at 3:27 PM Thomas Gleixner <tglx@linutronix.de> wrote:
-> Na, all good. I'm fine with the answer and reviewing that ASM maze is way
-> over my limited crypto knowledge anyway. I definitely would enjoy
-> refreshing the math behind it, but that surely would be way outside of your
-> envisioned time frame for getting this merged :)
+Hi YueHaibing,
 
-Well, if you're at LPC, we can nerd out a bit on some crypto math if
-you want. :-P
+Thank you for the patch.
+
+On Tuesday, 11 September 2018 15:00:53 EEST YueHaibing wrote:
+> Fixes gcc '-Wunused-but-set-variable' warning:
+> 
+> drivers/gpu/drm/omapdrm/dss/dispc.c: In function 'dispc_ovl_setup_common':
+> drivers/gpu/drm/omapdrm/dss/dispc.c:2627:19: warning:
+>  variable 'frame_height' set but not used [-Wunused-but-set-variable]
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+I expect Tomi to pick this patch up, but I've also applied it to my tree to 
+make sure it won't get lost.
+
+> ---
+>  drivers/gpu/drm/omapdrm/dss/dispc.c | 9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/omapdrm/dss/dispc.c
+> b/drivers/gpu/drm/omapdrm/dss/dispc.c index e61a959..7c23f23 100644
+> --- a/drivers/gpu/drm/omapdrm/dss/dispc.c
+> +++ b/drivers/gpu/drm/omapdrm/dss/dispc.c
+> @@ -2624,7 +2624,7 @@ static int dispc_ovl_setup_common(struct dispc_device
+> *dispc, unsigned int offset0, offset1;
+>  	s32 row_inc;
+>  	s32 pix_inc;
+> -	u16 frame_width, frame_height;
+> +	u16 frame_width;
+>  	unsigned int field_offset = 0;
+>  	u16 in_height = height;
+>  	u16 in_width = width;
+> @@ -2714,13 +2714,10 @@ static int dispc_ovl_setup_common(struct
+> dispc_device *dispc, row_inc = 0;
+>  	pix_inc = 0;
+> 
+> -	if (plane == OMAP_DSS_WB) {
+> +	if (plane == OMAP_DSS_WB)
+>  		frame_width = out_width;
+> -		frame_height = out_height;
+> -	} else {
+> +	else
+>  		frame_width = in_width;
+> -		frame_height = height;
+> -	}
+> 
+>  	calc_offset(screen_width, frame_width,
+>  			fourcc, fieldmode, field_offset,
+
+-- 
+Regards,
+
+Laurent Pinchart
+
+
+
