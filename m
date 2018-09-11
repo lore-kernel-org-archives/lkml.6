@@ -2,126 +2,100 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 610BFC6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 16:24:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F391C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 16:26:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16AF120866
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 16:24:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16AF120866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 66A97206B8
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 16:26:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66A97206B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727652AbeIKVYt (ORCPT
+        id S1727656AbeIKV0d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 17:24:49 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41778 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726622AbeIKVYt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 17:24:49 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8BGOImh044419
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 12:24:45 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2mefvs3uwv-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 12:24:45 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Tue, 11 Sep 2018 17:24:43 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 11 Sep 2018 17:24:39 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8BGOcEs65601560
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 11 Sep 2018 16:24:38 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 82A1E5205F;
-        Tue, 11 Sep 2018 19:24:27 +0100 (BST)
-Received: from rapoport-lnx (unknown [9.148.206.72])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id A932D52057;
-        Tue, 11 Sep 2018 19:24:26 +0100 (BST)
-Date:   Tue, 11 Sep 2018 19:24:35 +0300
-From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     Michal Hocko <mhocko@suse.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/3] docs/core-api: add memory allocation guide
-References: <1534517236-16762-1-git-send-email-rppt@linux.vnet.ibm.com>
+        Tue, 11 Sep 2018 17:26:33 -0400
+Received: from foss.arm.com ([217.140.101.70]:46366 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726943AbeIKV0d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 17:26:33 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DDA5318A;
+        Tue, 11 Sep 2018 09:26:29 -0700 (PDT)
+Received: from e110439-lin (e110439-lin.Emea.Arm.com [10.4.12.126])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1B1B33F703;
+        Tue, 11 Sep 2018 09:26:26 -0700 (PDT)
+Date:   Tue, 11 Sep 2018 17:26:24 +0100
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Tejun Heo <tj@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v4 08/16] sched/core: uclamp: propagate parent clamps
+Message-ID: <20180911162624.GB1413@e110439-lin>
+References: <20180828135324.21976-1-patrick.bellasi@arm.com>
+ <20180828135324.21976-9-patrick.bellasi@arm.com>
+ <20180911151819.GH1100574@devbig004.ftw2.facebook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1534517236-16762-1-git-send-email-rppt@linux.vnet.ibm.com>
+In-Reply-To: <20180911151819.GH1100574@devbig004.ftw2.facebook.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18091116-0028-0000-0000-000002F7C68E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18091116-0029-0000-0000-000023B16206
-Message-Id: <20180911162435.GC30245@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-11_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=946 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809110163
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ping?
+On 11-Sep 08:18, Tejun Heo wrote:
+> Hello, Patrick.
 
-On Fri, Aug 17, 2018 at 05:47:13PM +0300, Mike Rapoport wrote:
-> Hi,
-> 
-> As Vlastimil mentioned at [1], it would be nice to have some guide about
-> memory allocation. This set adds such guide that summarizes the "best
-> practices". 
-> 
-> The changes from the RFC include additions and corrections from Michal and
-> Randy. I've also added markup to cross-reference the kernel-doc
-> documentation.
-> 
-> I've split the patch into three to separate labels addition to the exiting
-> files from the new contents.
-> 
-> Note that the second patch depends on the mm docs update [2] that Andrew
-> took to the -mm tree.
-> 
-> v2 -> v3:
->   * s/HW/hardware
-> 
-> [1] https://www.spinics.net/lists/netfilter-devel/msg55542.html
-> [2] https://lkml.org/lkml/2018/7/26/684
-> 
-> Mike Rapoport (3):
->   docs: core-api/gfp_mask-from-fs-io: add a label for cross-referencing
->   docs: core-api/mm-api: add a lable for GFP flags section
->   docs: core-api: add memory allocation guide
-> 
->  Documentation/core-api/gfp_mask-from-fs-io.rst |   2 +
->  Documentation/core-api/index.rst               |   1 +
->  Documentation/core-api/memory-allocation.rst   | 124 +++++++++++++++++++++++++
->  Documentation/core-api/mm-api.rst              |   2 +
->  4 files changed, 129 insertions(+)
->  create mode 100644 Documentation/core-api/memory-allocation.rst
-> 
-> -- 
-> 2.7.4
-> 
+Hi Tejun,
+
+> Can we first concentrate on getting in the non-cgroup part first?
+
+That's the reason why I've reordered (as per your request) the series
+to have all the core and non-cgroup related bits at the beginning.
+
+There are a couple of patches at the end of this series which can be
+anticipated but, apart from those, the cgroup code is very well
+self-contained within patches 7-12.
+
+> The feature has to make sense without cgroup too
+
+Indeed, this is what I worked on since you pointed out in v1 that
+there must be a meaningful non-cgroup API and that's what we have
+since v2.
+
+> and I think it'd be a lot easier to discuss cgroup details once the
+> scheduler core side is settled.
+
+IMHO, developing the cgroup interface on top of the core bits is quite
+important to ensure that we have effective data structures and
+implementation which can satisfy both worlds.
+
+My question is: IF the scheduler maintainers are going to be happy
+with the overall design for the core bits, are you happy to start the
+review of the cgroups bits before the core ones are (eventually) merged?
+
+Cheers,
+Patrick
 
 -- 
-Sincerely yours,
-Mike.
+#include <best/regards.h>
 
+Patrick Bellasi
