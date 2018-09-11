@@ -2,122 +2,109 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70AA9C43143
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 02:59:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0757C43143
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 03:07:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D67B20881
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 02:59:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ujSCQ2WL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D67B20881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 84D1B2075A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 03:07:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84D1B2075A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726510AbeIKH4D (ORCPT
+        id S1726587AbeIKIEE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 03:56:03 -0400
-Received: from ozlabs.org ([203.11.71.1]:53183 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726251AbeIKH4D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 03:56:03 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 428V421yDWz9s7T;
-        Tue, 11 Sep 2018 12:58:58 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1536634738;
-        bh=/sF7r7ZJYtHEJjA54D5ClHmzjuC28CJmXk/tdzPMbHg=;
-        h=Date:From:To:Cc:Subject:From;
-        b=ujSCQ2WLZ+1lXXZDfQK/knyVcln43ymoyZPwa6AU9diwx6Dh271rF85kNmY1FhPst
-         x/oX14xXlOFoqfSpmlmdZ83O7ikAL0KcE/M/m+C18YoC55aQmkElssVoC5Mx2pesNw
-         YdQDn5GU8/AsDRwswKaDXm/T24YdJP+x78gl/j0n5q8odq2OXJ5yWCqqUnLOGAI8pW
-         9xvWal1SzLtBGXizFj0UTWmbS1+PNiJ3K6caHeR1t4DeXhCHdlhwaJYfV5SJcRrLzD
-         +0196o9q6soFfpfUZnrlmGVluFiVvv3RZrJC/2UyEwMiKh/nBgtf9JrY7dIhWhVVU9
-         Vq79oDur+mH/g==
-Date:   Tue, 11 Sep 2018 12:58:57 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Greg KH <greg@kroah.com>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Radu Pirea <radu.pirea@microchip.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>
-Subject: linux-next: build failure after merge of the tty tree
-Message-ID: <20180911125857.5e5c34f4@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/foV0iHJk4HzcDLCu3i1sJD="; protocol="application/pgp-signature"
+        Tue, 11 Sep 2018 04:04:04 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51423 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726256AbeIKIEE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 04:04:04 -0400
+Received: from [2a02:8011:400e:2:aa26:2157:ccdc:cbdb] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fzZ0x-0007mG-N5; Tue, 11 Sep 2018 04:06:55 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fzZ0s-0005s1-Gz; Tue, 11 Sep 2018 04:06:50 +0100
+Message-ID: <7cfcd0da8aba77488feb7403055596d434772545.camel@decadent.org.uk>
+Subject: Compiler flags for libapi and libtraceevent
+From:   Ben Hutchings <ben@decadent.org.uk>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+Date:   Tue, 11 Sep 2018 04:06:46 +0100
+Content-Type: multipart/signed; micalg="pgp-sha512";
+        protocol="application/pgp-signature"; boundary="=-4oMiTsT6BZuMrZ1PTedp"
+User-Agent: Evolution 3.29.92-1 
+Mime-Version: 1.0
+X-SA-Exim-Connect-IP: 2a02:8011:400e:2:aa26:2157:ccdc:cbdb
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/foV0iHJk4HzcDLCu3i1sJD=
-Content-Type: text/plain; charset=US-ASCII
+
+--=-4oMiTsT6BZuMrZ1PTedp
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+I noticed that tools/lib/api/Makefile has these conditional
+assignments, similar to tools/perf/Makefile.config:
 
-After merging the tty tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+ifeq ($(DEBUG),0)
+ifeq ($(CC_NO_CLANG), 0)
+  CFLAGS +=3D -O3
+else
+  CFLAGS +=3D -O6
+endif
+endif
 
-drivers/mfd/at91-usart.c:51:34: error: array type has incomplete element ty=
-pe 'struct of_device_id'
- static const struct of_device_id at91_usart_mode_of_match[] =3D {
-                                  ^~~~~~~~~~~~~~~~~~~~~~~~
-drivers/mfd/at91-usart.c:52:4: error: field name not in record or union ini=
-tializer
-  { .compatible =3D "atmel,at91rm9200-usart" },
-    ^
-drivers/mfd/at91-usart.c:52:4: note: (near initialization for 'at91_usart_m=
-ode_of_match')
-drivers/mfd/at91-usart.c:53:4: error: field name not in record or union ini=
-tializer
-  { .compatible =3D "atmel,at91sam9260-usart" },
-    ^
-drivers/mfd/at91-usart.c:53:4: note: (near initialization for 'at91_usart_m=
-ode_of_match')
-drivers/mfd/at91-usart.c:51:34: warning: 'at91_usart_mode_of_match' defined=
- but not used [-Wunused-variable]
- static const struct of_device_id at91_usart_mode_of_match[] =3D {
-                                  ^~~~~~~~~~~~~~~~~~~~~~~~
+ifeq ($(DEBUG),0)
+  CFLAGS +=3D -D_FORTIFY_SOURCE
+endif
 
-Caused by commit
+But it doesn't set DEBUG to 0 by default, and nothing under tools/perf
+exports its value of CFLAGS or DEBUG.
 
-  7d3aa342cef7 ("mfd: at91-usart: Add MFD driver for USART")
+tools/lib/traceevent/Makefile doesn't seem to have any logic to enable
+optimisation or Fortify.
 
-Forgot to include <linux/mod_devicetable.h>?
+Shouldn't these libraries both have optimisations and Fortify turned on
+by default, like perf itself?
 
-I used the version of the tty tree from next-20180910 for today.
-
-
+Ben.
 
 --=20
-Cheers,
-Stephen Rothwell
+Ben Hutchings
+Computers are not intelligent.	They only think they are.
 
---Sig_/foV0iHJk4HzcDLCu3i1sJD=
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+
+--=-4oMiTsT6BZuMrZ1PTedp
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluXL3EACgkQAVBC80lX
-0Gy2YAgAgxXwbxfVK8DH4mWYZxJxwtGqwFh3ThCeR12IRkYr6NYT3IjfkpUimcS3
-hYQ2tBG+FG2o4Q/i3UZUTOTdIKJqkT6d+PjrlpyrshRhfk6EU4J76mJ0CmYLcs1y
-Yd6zPeRP+pPt6J788KmcQv/BfsQupMoB2OwvqbkZWWu7DUIDKCnwY81seRCCeze7
-kiu+V5GPGf0bPDix003i8hsgM4XpDQbUjdQ5/t+vBxy5iZ4mPVKcW5MY8QTybetc
-5q+Jl3nHoZ93Vf7xkLuLbULUgzinbdDvVE3m5aA2TsYCrZXGqsA3bmnlB8AcoohZ
-3M7ZifxgenTYd6+fgE/6mkDtqTBOuw==
-=zqln
+iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAluXMUYACgkQ57/I7JWG
+EQke4Q/+Jh8sXjinf7fvHvNlOgneNVepaFU8wOPITbngE8ndhkZL4n03yAoipFKQ
+5pq/Lp8U+4Qsv4jEdPavEweNWiD10bQ3hubgql8ZQO7Q/vSFpI3gOQVY6LjoLkbc
+vv3MCUcoow4jP2DYvrOKzqOqzbWx1NWQ1mtD5WBO1O8PKa2g3B5/LNMlS5qE0YyH
+GNPG2p2T+P7ngbQZT1Z2Z4Dfr5iTb/Mep+MroRKZIgMr+MLlDbGcUEcDOJ6mNsBH
+JKk3d6FLKxc+7+GmpCC0GrNsk1fLanLGbhQByMPzVWrwDb//XPtVSXfen9YMiq6a
+XdJd3CmETtLgdMCYwjq+dahJ09AkN3OE7Qr/7lIxfoKw+OzcmzaJfchIhXdYuB9u
+syngDHjGS5iKiGdYkhWlge8oB0EHqyyVD2evqVI5Q6u6y2zxxibCxfBhq588Ody4
+We5ZV0jq27W9ROIteXzzw7Y/ILTt1ii2vRVEOa6aZFGCrJXbeTeCf0c9IKG2KZYX
+H5CxAzA0KsnTXGM38RrWUFQvPzLyfHB2AjWloUPdxE/P9IeyBCuFVzahMcbpTaGc
+s4rtE68y7tZwoCUPyBddi5o8DROlWkH0KsT725XmOAEdmYoejvPG5JoH9GBo1DfZ
+Cp9o/p4pbUBGPGetHw9CxmtTdkl8Uf0+EudVEPbdatoahgpeFjM=
+=hOCK
 -----END PGP SIGNATURE-----
 
---Sig_/foV0iHJk4HzcDLCu3i1sJD=--
+--=-4oMiTsT6BZuMrZ1PTedp--
