@@ -6,95 +6,115 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDA4FC04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 10:02:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BCA2C6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 10:03:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA8AE20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 10:02:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA8AE20866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 33D8F20866
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 10:03:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33D8F20866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726876AbeIKPBA (ORCPT
+        id S1726912AbeIKPCP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 11:01:00 -0400
-Received: from foss.arm.com ([217.140.101.70]:40928 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726612AbeIKPBA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 11:01:00 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9A97518A;
-        Tue, 11 Sep 2018 03:02:25 -0700 (PDT)
-Received: from e107155-lin (e107155-lin.emea.arm.com [10.4.12.116])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 61AC83F557;
-        Tue, 11 Sep 2018 03:02:22 -0700 (PDT)
-Date:   Tue, 11 Sep 2018 11:02:13 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Jolly Shah <JOLLYS@xilinx.com>
-Cc:     Olof Johansson <olof@lixom.net>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>,
-        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michal Simek <michals@xilinx.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Rajan Vaja <RAJANV@xilinx.com>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        DTML <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v11 03/11] firmware: xilinx: Add zynqmp IOCTL API for
- device control
-Message-ID: <20180911100213.GA29599@e107155-lin>
-References: <1533318808-10781-1-git-send-email-jollys@xilinx.com>
- <1533318808-10781-4-git-send-email-jollys@xilinx.com>
- <CAOesGMi7Q9L4oZkUubKtV-m8XD67MQ05ZFhPA_0Hwky_qVUxfg@mail.gmail.com>
- <CY1PR02MB2138BF2252E1CE2C1747A78AB8050@CY1PR02MB2138.namprd02.prod.outlook.com>
+        Tue, 11 Sep 2018 11:02:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33518 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726554AbeIKPCP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 11:02:15 -0400
+Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 471C6D33;
+        Tue, 11 Sep 2018 10:03:39 +0000 (UTC)
+Date:   Tue, 11 Sep 2018 12:03:36 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Nicolas Ferre <nicolas.ferre@microchip.com>
+Cc:     Lee Jones <lee.jones@linaro.org>,
+        Radu Pirea <radu.pirea@microchip.com>, broonie@kernel.org,
+        alexandre.belloni@bootlin.com, richard.genoud@gmail.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-serial@vger.kernel.org
+Subject: Re: [GIT PULL] Immutable branch between MFD, SPI and TTY due for the
+ v4.20 merge window
+Message-ID: <20180911100336.GA3822@kroah.com>
+References: <20180713164736.26028-1-radu.pirea@microchip.com>
+ <20180910151803.GX28860@dell>
+ <20180911084548.GC4185@dell>
+ <20180911090132.GB25161@kroah.com>
+ <20180911094430.GG4185@dell>
+ <743b5545-e942-b6f4-4ce6-8e10950a05fc@microchip.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CY1PR02MB2138BF2252E1CE2C1747A78AB8050@CY1PR02MB2138.namprd02.prod.outlook.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <743b5545-e942-b6f4-4ce6-8e10950a05fc@microchip.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 10, 2018 at 07:17:45PM +0000, Jolly Shah wrote:
-> Hi All,
+On Tue, Sep 11, 2018 at 11:56:49AM +0200, Nicolas Ferre wrote:
+> On 11/09/2018 at 11:44, Lee Jones wrote:
+> > On Tue, 11 Sep 2018, Greg KH wrote:
+> > 
+> > > On Tue, Sep 11, 2018 at 09:45:48AM +0100, Lee Jones wrote:
+> > > > On Mon, 10 Sep 2018, Lee Jones wrote:
+> > > > 
+> > > > > Enjoy!
+> > > > > 
+> > > > > The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
+> > > > > 
+> > > > >    Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
+> > > > > 
+> > > > > are available in the Git repository at:
+> > > > > 
+> > > > >    git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git tags/ib-mfd-spi-tty-v4.20
+> > > > > 
+> > > > > for you to fetch changes up to c24d25317a7c6bb3053d4c193b3cf57d1e9a3e4b:
+> > > > > 
+> > > > >    tty/serial: atmel: Change the driver to work under at91-usart MFD (2018-09-10 16:12:43 +0100)
+> > > > > 
+> > > > > ----------------------------------------------------------------
+> > > > > Immutable branch between MFD, SPI and TTY due for the v4.20 merge window
+> > > > 
+> > > > Due to a comedy of errors, I'm voiding this pull-request.
+> > > 
+> > > Um, I can't do that as my tree can not be rebased :(
+> > 
+> > Oh dear. :(
+> > 
+> > > I can take follow-on patches, so I will go apply the patch posted so
+> > > that my tree builds again.  I recommend you just apply it as well.
+> > 
+> > What a pickle.  As per my last email, it looks as though this set was
+> > applied under false pretences.  The MFD patch which was carrying my
+> > Ack was doing so incorrectly.  The author mistakenly applied it to the
+> > wrong patch.  After re-review (actually initial review) I wish to NACK
+> > the implementation.
 > 
-> Adding more clarification on top of what Michal said:
-> Here ioctl is not a system ioctl and just a eemi API like other interface
-> APIs. It cannot be called from userspace.
+> What? We discussed this to the bone!
+> 
+> Radu followed all the recommendations, collected all the feedback from major
+> subsystems SPI and USART, resent the series again.
+> 
+> It was then forgotten. Wrong series was finally applied (which could trigger
+> 0-day reports, I warn you)... and now we are discussing about the
+> implementation of *v2* (we're at v12)!
+> 
+> > My suggestion would be to sit tight, rather than do anything rash and
+> > see how this plays out.  After which we can fix your tree.
+> 
+> Come on, Greg's tree is fixed now. We can catch-up with v11..v12 changes
+> with patches and cleanup the mess together.
+> 
+> Just one misalignment with one patch merged for v4.19-rc1, fixed the same
+> day, cannot generate such a reaction after months of development.
 
-I get that these are not system ioctl and you keep assuming that the issue
-raised here is related to that. *NO*, the main issue is the way this so
-called EEMI ioctl interface is exposing the users low level accessors
-without much abstraction. IMO, it defeats the idea of having EEMI interface
-altogether. There's abstraction but the level is not right. Anyways, this
-gets worse with read/write debugfs interface you want to add.
+I agree, my tree is now fixed, no harm done.  Just apply the same patch
+to whomever also pulled it into their trees and all is good.
 
-> Only Linux drivers can use this
-> API for defined ioctl operations. This API is meant for any platform
-> specific operations which needs to be managed by firmware. Firmware will
-> always validate the request for action being performed.
+thanks,
 
-> Debugfs interface is just for debugging during development. We can remove
-> debugfs support for ioctl API if you suggest.
-
-Yes please. I did suggest to remove them long back. You did only for the
-clock module but retained it in the core EEMI ioctl. But if you remove
-the debugfs, do you have any users of these ioctl in the series ? I
-couldn't find one, but if that's the case, drop this patch. I see only
-valid users for clock APIs in this series.
-
---
-Regards,
-Sudeep
+greg k-h
