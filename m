@@ -2,229 +2,152 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D77DBC6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:15:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0698C6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:16:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9051E2086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:15:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9051E2086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 7FCA220865
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:16:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FCA220865
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726906AbeIKONn (ORCPT
+        id S1726933AbeIKOOf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 10:13:43 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:33558 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726587AbeIKONn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 10:13:43 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id FJOxBibI4Vkj; Tue, 11 Sep 2018 11:15:17 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BC6F600329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bc6:f600:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1CA661EC02D1;
-        Tue, 11 Sep 2018 11:15:17 +0200 (CEST)
-Date:   Tue, 11 Sep 2018 11:15:10 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Juergen Gross <jgross@suse.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        virtualization@lists.linux-foundation.org
-Subject: [PATCH v2] x86/paravirt: Cleanup native_patch()
-Message-ID: <20180911091510.GA12094@zn.tnic>
-References: <20180907104917.12502-1-bp@alien8.de>
- <20180907105112.GD12849@zn.tnic>
- <20180907201050.GF12849@zn.tnic>
- <65bb69fa-855f-9efc-19ba-c0fab69f468c@suse.com>
- <20180908152800.GA8286@zn.tnic>
- <229941d4-c152-89fb-eb75-fcfa5f265ad4@suse.com>
- <20180910070108.GA21406@zn.tnic>
- <dfe856d6-a4db-b406-ef18-dba3b6b8c342@suse.com>
+        Tue, 11 Sep 2018 10:14:35 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33022 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726572AbeIKOOf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 10:14:35 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 4ADEEAFB5;
+        Tue, 11 Sep 2018 09:16:09 +0000 (UTC)
+Date:   Tue, 11 Sep 2018 11:16:08 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Pasha Tatashin <Pavel.Tatashin@microsoft.com>
+Cc:     "zaslonko@linux.ibm.com" <zaslonko@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        "osalvador@suse.de" <osalvador@suse.de>,
+        "gerald.schaefer@de.ibm.com" <gerald.schaefer@de.ibm.com>
+Subject: Re: [PATCH] memory_hotplug: fix the panic when memory end is not on
+ the section boundary
+Message-ID: <20180911091608.GQ10951@dhcp22.suse.cz>
+References: <20180910123527.71209-1-zaslonko@linux.ibm.com>
+ <20180910131754.GG10951@dhcp22.suse.cz>
+ <e8d75768-9122-332b-3b16-cad032aeb27f@microsoft.com>
+ <20180910135959.GI10951@dhcp22.suse.cz>
+ <CAGM2reZuGAPmfO8x0TnHnqHci_Hsga3-CfM9+udJs=gUQCw-1g@mail.gmail.com>
+ <20180910141946.GJ10951@dhcp22.suse.cz>
+ <CAGM2reZ5OD9SRW8j9iaQAk9jpr86pF2NqpBjv-dxH+1vJZs0=g@mail.gmail.com>
+ <20180910144152.GL10951@dhcp22.suse.cz>
+ <abf84f61-82f3-e3d5-2e6e-82a11cb5dcf5@microsoft.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <dfe856d6-a4db-b406-ef18-dba3b6b8c342@suse.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <abf84f61-82f3-e3d5-2e6e-82a11cb5dcf5@microsoft.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When CONFIG_PARAVIRT_SPINLOCKS=n, it fires
+On Mon 10-09-18 15:26:55, Pavel Tatashin wrote:
+> 
+> 
+> On 9/10/18 10:41 AM, Michal Hocko wrote:
+> > On Mon 10-09-18 14:32:16, Pavel Tatashin wrote:
+> >> On Mon, Sep 10, 2018 at 10:19 AM Michal Hocko <mhocko@kernel.org> wrote:
+> >>>
+> >>> On Mon 10-09-18 14:11:45, Pavel Tatashin wrote:
+> >>>> Hi Michal,
+> >>>>
+> >>>> It is tricky, but probably can be done. Either change
+> >>>> memmap_init_zone() or its caller to also cover the ends and starts of
+> >>>> unaligned sections to initialize and reserve pages.
+> >>>>
+> >>>> The same thing would also need to be done in deferred_init_memmap() to
+> >>>> cover the deferred init case.
+> >>>
+> >>> Well, I am not sure TBH. I have to think about that much more. Maybe it
+> >>> would be much more simple to make sure that we will never add incomplete
+> >>> memblocks and simply refuse them during the discovery. At least for now.
+> >>
+> >> On x86 memblocks can be upto 2G on machines with over 64G of RAM.
+> > 
+> > sorry I meant pageblock_nr_pages rather than memblocks.
+> 
+> OK. This sound reasonable, but, to be honest I am not sure how to
+> achieve this yet, I need to think more about this. In theory, if we have
+> sparse memory model, it makes sense to enforce memory alignment to
+> section sizes, sounds a lot safer.
 
-  arch/x86/kernel/paravirt_patch_64.c: In function ‘native_patch’:
-  arch/x86/kernel/paravirt_patch_64.c:89:1: warning: label ‘patch_site’ defined but not used [-Wunused-label]
-   patch_site:
-
-but those labels can simply be removed by directly calling the
-respective functions there.
-
-Get rid of local variables too, while at it. Also, simplify function
-flow for better readability.
-
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: x86@kernel.org
-Cc: virtualization@lists.linux-foundation.org
----
-
-Here it is, rebased ontop of rc3+tip/master.
-
-
- arch/x86/kernel/paravirt_patch_32.c | 44 ++++++++++-----------------
- arch/x86/kernel/paravirt_patch_64.c | 46 +++++++++++------------------
- 2 files changed, 33 insertions(+), 57 deletions(-)
-
-diff --git a/arch/x86/kernel/paravirt_patch_32.c b/arch/x86/kernel/paravirt_patch_32.c
-index d460cbcabcfe..6368c22fa1fa 100644
---- a/arch/x86/kernel/paravirt_patch_32.c
-+++ b/arch/x86/kernel/paravirt_patch_32.c
-@@ -34,14 +34,10 @@ extern bool pv_is_native_vcpu_is_preempted(void);
+Memory hotplug is sparsemem only. You do not have to think about other
+memory models fortunately.
  
- unsigned native_patch(u8 type, void *ibuf, unsigned long addr, unsigned len)
- {
--	const unsigned char *start, *end;
--	unsigned ret;
--
- #define PATCH_SITE(ops, x)					\
--		case PARAVIRT_PATCH(ops.x):			\
--			start = start_##ops##_##x;		\
--			end = end_##ops##_##x;			\
--			goto patch_site
-+	case PARAVIRT_PATCH(ops.x):				\
-+		return paravirt_patch_insns(ibuf, len, start_##ops##_##x, end_##ops##_##x)
-+
- 	switch (type) {
- #ifdef CONFIG_PARAVIRT_XXL
- 		PATCH_SITE(irq, irq_disable);
-@@ -54,32 +50,24 @@ unsigned native_patch(u8 type, void *ibuf, unsigned long addr, unsigned len)
- 		PATCH_SITE(mmu, write_cr3);
- #endif
- #if defined(CONFIG_PARAVIRT_SPINLOCKS)
--		case PARAVIRT_PATCH(lock.queued_spin_unlock):
--			if (pv_is_native_spin_unlock()) {
--				start = start_lock_queued_spin_unlock;
--				end   = end_lock_queued_spin_unlock;
--				goto patch_site;
--			}
--			goto patch_default;
-+	case PARAVIRT_PATCH(lock.queued_spin_unlock):
-+		if (pv_is_native_spin_unlock())
-+			return paravirt_patch_insns(ibuf, len,
-+						    start_lock_queued_spin_unlock,
-+						    end_lock_queued_spin_unlock);
-+		break;
- 
--		case PARAVIRT_PATCH(lock.vcpu_is_preempted):
--			if (pv_is_native_vcpu_is_preempted()) {
--				start = start_lock_vcpu_is_preempted;
--				end   = end_lock_vcpu_is_preempted;
--				goto patch_site;
--			}
--			goto patch_default;
-+	case PARAVIRT_PATCH(lock.vcpu_is_preempted):
-+		if (pv_is_native_vcpu_is_preempted())
-+			return paravirt_patch_insns(ibuf, len,
-+						    start_lock_vcpu_is_preempted,
-+						    end_lock_vcpu_is_preempted);
-+		break;
- #endif
- 
- 	default:
--patch_default: __maybe_unused
--		ret = paravirt_patch_default(type, ibuf, addr, len);
--		break;
--
--patch_site:
--		ret = paravirt_patch_insns(ibuf, len, start, end);
- 		break;
- 	}
- #undef PATCH_SITE
--	return ret;
-+	return paravirt_patch_default(type, ibuf, addr, len);
- }
-diff --git a/arch/x86/kernel/paravirt_patch_64.c b/arch/x86/kernel/paravirt_patch_64.c
-index 5ad5bcda9dc6..7ca9cb726f4d 100644
---- a/arch/x86/kernel/paravirt_patch_64.c
-+++ b/arch/x86/kernel/paravirt_patch_64.c
-@@ -42,15 +42,11 @@ extern bool pv_is_native_vcpu_is_preempted(void);
- 
- unsigned native_patch(u8 type, void *ibuf, unsigned long addr, unsigned len)
- {
--	const unsigned char *start, *end;
--	unsigned ret;
--
- #define PATCH_SITE(ops, x)					\
--		case PARAVIRT_PATCH(ops.x):			\
--			start = start_##ops##_##x;		\
--			end = end_##ops##_##x;			\
--			goto patch_site
--	switch(type) {
-+	case PARAVIRT_PATCH(ops.x):				\
-+		return paravirt_patch_insns(ibuf, len, start_##ops##_##x, end_##ops##_##x)
-+
-+	switch (type) {
- #ifdef CONFIG_PARAVIRT_XXL
- 		PATCH_SITE(irq, restore_fl);
- 		PATCH_SITE(irq, save_fl);
-@@ -64,32 +60,24 @@ unsigned native_patch(u8 type, void *ibuf, unsigned long addr, unsigned len)
- 		PATCH_SITE(mmu, write_cr3);
- #endif
- #if defined(CONFIG_PARAVIRT_SPINLOCKS)
--		case PARAVIRT_PATCH(lock.queued_spin_unlock):
--			if (pv_is_native_spin_unlock()) {
--				start = start_lock_queued_spin_unlock;
--				end   = end_lock_queued_spin_unlock;
--				goto patch_site;
--			}
--			goto patch_default;
-+	case PARAVIRT_PATCH(lock.queued_spin_unlock):
-+		if (pv_is_native_spin_unlock())
-+			return paravirt_patch_insns(ibuf, len,
-+						    start_lock_queued_spin_unlock,
-+						    end_lock_queued_spin_unlock);
-+		break;
- 
--		case PARAVIRT_PATCH(lock.vcpu_is_preempted):
--			if (pv_is_native_vcpu_is_preempted()) {
--				start = start_lock_vcpu_is_preempted;
--				end   = end_lock_vcpu_is_preempted;
--				goto patch_site;
--			}
--			goto patch_default;
-+	case PARAVIRT_PATCH(lock.vcpu_is_preempted):
-+		if (pv_is_native_vcpu_is_preempted())
-+			return paravirt_patch_insns(ibuf, len,
-+						    start_lock_vcpu_is_preempted,
-+						    end_lock_vcpu_is_preempted);
-+		break;
- #endif
- 
- 	default:
--patch_default: __maybe_unused
--		ret = paravirt_patch_default(type, ibuf, addr, len);
--		break;
--
--patch_site:
--		ret = paravirt_patch_insns(ibuf, len, start, end);
- 		break;
- 	}
- #undef PATCH_SITE
--	return ret;
-+	return paravirt_patch_default(type, ibuf, addr, len);
- }
+> >> Also, memory size is way to easy too change via qemu arguments when VM
+> >> starts. If we simply disable unaligned trailing memblocks, I am sure
+> >> we would get tons of noise of missing memory.
+> >>
+> >> I think, adding check_hotplug_memory_range() would work to fix the
+> >> immediate problem. But, we do need to figure out  a better solution.
+> >>
+> >> memblock design is based on archaic assumption that hotplug units are
+> >> physical dimms. VMs and hypervisors changed all of that, and we can
+> >> have much finer hotplug requests on machines with huge DIMMs. Yet, we
+> >> do not want to pollute sysfs with millions of tiny memory devices. I
+> >> am not sure what a long term proper solution for this problem should
+> >> be, but I see that linux hotplug/hotremove subsystems must be
+> >> redesigned based on the new requirements.
+> > 
+> > Not an easy task though. Anyway, sparse memory modely is highly based on
+> > memory sections so it makes some sense to have hotplug section based as
+> > well. Memblocks as a higher logical unit on top of that is kinda hack.
+> > The userspace API has never been properly thought through I am afraid.
+> 
+> I agree memoryblock is a hack, it fails to do both things it was
+> designed to do:
+> 
+> 1. On bare metal you cannot free a physical dimm of memory using
+> memoryblock granularity because memory devices do not equal to physical
+> dimms. Thus, if for some reason a particular dimm must be
+> remove/replaced, memoryblock does not help us.
+
+agreed
+
+> 2. On machines with hypervisors it fails to provide an adequate
+> granularity to add/remove memory.
+> 
+> We should define a new user interface where memory can be added/removed
+> at a finer granularity: sparse section size, but without a memory
+> devices for each section. We should also provide an optional access to
+> legacy interface where memory devices are exported but each is of
+> section size.
+> 
+> So, when legacy interface is enabled, current way would work:
+> 
+> echo offline > /sys/devices/system/memory/memoryXXX/state
+> 
+> And new interface would allow us to do something like this:
+> 
+> echo offline 256M > /sys/devices/system/node/nodeXXX/memory
+> 
+> With optional start address for offline memory.
+> echo offline [start_pa] size > /sys/devices/system/node/nodeXXX/memory
+> start_pa and size must be section size aligned (128M).
+
+I am not sure what is the expected semantic of the version without
+start_pa.
+
+> It would probably be a good discussion for the next MM Summit how to
+> solve the current memory hotplug interface limitations.
+
+Yes, sounds good to me. In any case let's not pollute this email thread
+with this discussion now.
 -- 
-2.17.0.582.gccdcbd54c
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Michal Hocko
+SUSE Labs
