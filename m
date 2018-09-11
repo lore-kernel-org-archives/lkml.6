@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89303C6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 11:59:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73D61C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 12:02:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3133420833
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 11:59:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA6D520833
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 12:02:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="poT1x2Ka"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3133420833
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MdtbQJum"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA6D520833
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727246AbeIKQ6w (ORCPT
+        id S1727277AbeIKRBP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 12:58:52 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:60142 "EHLO
+        Tue, 11 Sep 2018 13:01:15 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:60180 "EHLO
         merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726563AbeIKQ6w (ORCPT
+        with ESMTP id S1726613AbeIKRBP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 12:58:52 -0400
+        Tue, 11 Sep 2018 13:01:15 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
         References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=fo7y2hfhD496olj7c22vN/Iq8vx+OSXh9VhyM/uSJW8=; b=poT1x2KaBdjCIiaFrNNRUETPp
-        BC29vfMTfS0XUkvCpzEGsfCmEVfI2sdHz4VSZqEYG4fj2l3KWKOG7zCA+KXMzXaRnufQdxKA4G9AO
-        tFMJttoVzF8evg8sqHrcJtgjN6sPklo5O61KWtKzhtZ2KOqVZ4k1XotDp/l2jDhM/C1LA/og5LUes
-        SxVCm6Gvbz2FNni+l8MY8ZAICUGxSzVn49ItAEjQFo4WizK38YBjKZv26AxDzNBBFzQOBnjNHiy3H
-        aVDzjK6aQwPjzCIW3maNqSM1g0VsV8xMW5in2rWuqoG55FLe5D3jhnUBGt7rihh1bCPRav452gOjP
-        q/F5hABfA==;
+         bh=UsD9ORNFpRXXbhAWR383ojqn1eiqaOkl4QYAvrXisUs=; b=MdtbQJumwteHucPI79MKczM7r
+        BUbGxZ8qjih5cuoXBqrkzaNM1ZNzODkImU+D5CryuIBTjhzqdvPSncGgPFoBfQXkg7uwjgv104jEq
+        APFjLOSWe1qEWa20w9WPP4S8jmjIWYYZcjTb8Y7wXuZwSp4K3oxiQYDFyO6/rqxmEDw8hiqCWiP9D
+        VvsNuSG8Z4e4uK3RUm/VgfrHYuzaqMdP7OlS6uBjWuf+KRSOF66Jf/XoBelBINGhB7/ahy35kTcaJ
+        gMkA/eW+1iS0YbSeINgKdbI4kd5A/5O1luMAE3gXzMpyQnlAmKSJ/Ylo0/SBHzT0iCJp1FgZCiVib
+        876rqyUNQ==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
         by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fzhKP-0005kV-JL; Tue, 11 Sep 2018 11:59:34 +0000
+        id 1fzhMh-0005lO-5c; Tue, 11 Sep 2018 12:01:55 +0000
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 446992057F834; Tue, 11 Sep 2018 13:59:32 +0200 (CEST)
-Date:   Tue, 11 Sep 2018 13:59:32 +0200
+        id C32172057F82D; Tue, 11 Sep 2018 14:01:53 +0200 (CEST)
+Date:   Tue, 11 Sep 2018 14:01:53 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     Dmitry Safonov <dima@arista.com>
 Cc:     linux-kernel@vger.kernel.org,
@@ -61,7 +61,7 @@ Cc:     linux-kernel@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.com>
 Subject: Re: [PATCHv3 4/6] tty/lockdep: Add ldisc_sem asserts
-Message-ID: <20180911115932.GA19234@hirez.programming.kicks-ass.net>
+Message-ID: <20180911120153.GB19234@hirez.programming.kicks-ass.net>
 References: <20180911014821.26286-1-dima@arista.com>
  <20180911014821.26286-5-dima@arista.com>
 MIME-Version: 1.0
@@ -74,130 +74,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Subject: tty/ldsem: Convert to regular lockdep annotations
+On Tue, Sep 11, 2018 at 02:48:19AM +0100, Dmitry Safonov wrote:
+> Make sure under CONFIG_LOCKDEP that each change to line discipline
+> is done with held write semaphor.
 
-For some reason ldsem has its own lockdep wrappers, make them go away.
+But you don't do that. You just assert it is held, not for writing.
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- drivers/tty/tty_ldsem.c | 51 ++++++++++++++-----------------------------------
- 1 file changed, 14 insertions(+), 37 deletions(-)
+> Otherwise potential reader will have a good time dereferencing
+> incomplete/uninitialized ldisc.
+> 
+> Exception here is tty_ldisc_open(), as it's called without ldisc_sem
+> locked by tty_init_dev() for the tty->link.
 
-diff --git a/drivers/tty/tty_ldsem.c b/drivers/tty/tty_ldsem.c
-index 0c98d88f795a..60beada5be6c 100644
---- a/drivers/tty/tty_ldsem.c
-+++ b/drivers/tty/tty_ldsem.c
-@@ -34,29 +34,6 @@
- #include <linux/sched/task.h>
- 
- 
--#ifdef CONFIG_DEBUG_LOCK_ALLOC
--# define __acq(l, s, t, r, c, n, i)		\
--				lock_acquire(&(l)->dep_map, s, t, r, c, n, i)
--# define __rel(l, n, i)				\
--				lock_release(&(l)->dep_map, n, i)
--#define lockdep_acquire(l, s, t, i)		__acq(l, s, t, 0, 1, NULL, i)
--#define lockdep_acquire_nest(l, s, t, n, i)	__acq(l, s, t, 0, 1, n, i)
--#define lockdep_acquire_read(l, s, t, i)	__acq(l, s, t, 1, 1, NULL, i)
--#define lockdep_release(l, n, i)		__rel(l, n, i)
--#else
--# define lockdep_acquire(l, s, t, i)		do { } while (0)
--# define lockdep_acquire_nest(l, s, t, n, i)	do { } while (0)
--# define lockdep_acquire_read(l, s, t, i)	do { } while (0)
--# define lockdep_release(l, n, i)		do { } while (0)
--#endif
--
--#ifdef CONFIG_LOCK_STAT
--# define lock_stat(_lock, stat)		lock_##stat(&(_lock)->dep_map, _RET_IP_)
--#else
--# define lock_stat(_lock, stat)		do { } while (0)
--#endif
--
--
- #if BITS_PER_LONG == 64
- # define LDSEM_ACTIVE_MASK	0xffffffffL
- #else
-@@ -310,17 +287,17 @@ static int __ldsem_down_read_nested(struct ld_semaphore *sem,
- {
- 	long count;
- 
--	lockdep_acquire_read(sem, subclass, 0, _RET_IP_);
-+	rwsem_acquire_read(&sem->dep_map, subclass, 0, _RET_IP_);
- 
- 	count = atomic_long_add_return(LDSEM_READ_BIAS, &sem->count);
- 	if (count <= 0) {
--		lock_stat(sem, contended);
-+		lock_contended(&sem->dep_map, _RET_IP_);
- 		if (!down_read_failed(sem, count, timeout)) {
--			lockdep_release(sem, 1, _RET_IP_);
-+			rwsem_release(&sem->dep_map, 1, _RET_IP_);
- 			return 0;
- 		}
- 	}
--	lock_stat(sem, acquired);
-+	lock_acquired(&sem->dep_map, _RET_IP_);
- 	return 1;
- }
- 
-@@ -329,17 +306,17 @@ static int __ldsem_down_write_nested(struct ld_semaphore *sem,
- {
- 	long count;
- 
--	lockdep_acquire(sem, subclass, 0, _RET_IP_);
-+	rwsem_acquire(&sem->dep_map, subclass, 0, _RET_IP_);
- 
- 	count = atomic_long_add_return(LDSEM_WRITE_BIAS, &sem->count);
- 	if ((count & LDSEM_ACTIVE_MASK) != LDSEM_ACTIVE_BIAS) {
--		lock_stat(sem, contended);
-+		lock_contended(&sem->dep_map, _RET_IP_);
- 		if (!down_write_failed(sem, count, timeout)) {
--			lockdep_release(sem, 1, _RET_IP_);
-+			rwsem_release(&sem->dep_map, 1, _RET_IP_);
- 			return 0;
- 		}
- 	}
--	lock_stat(sem, acquired);
-+	lock_acquired(&sem->dep_map, _RET_IP_);
- 	return 1;
- }
- 
-@@ -362,8 +339,8 @@ int ldsem_down_read_trylock(struct ld_semaphore *sem)
- 
- 	while (count >= 0) {
- 		if (atomic_long_try_cmpxchg(&sem->count, &count, count + LDSEM_READ_BIAS)) {
--			lockdep_acquire_read(sem, 0, 1, _RET_IP_);
--			lock_stat(sem, acquired);
-+			rwsem_acquire_read(&sem->dep_map, 0, 1, _RET_IP_);
-+			lock_acquired(&sem->dep_map, _RET_IP_);
- 			return 1;
- 		}
- 	}
-@@ -388,8 +365,8 @@ int ldsem_down_write_trylock(struct ld_semaphore *sem)
- 
- 	while ((count & LDSEM_ACTIVE_MASK) == 0) {
- 		if (atomic_long_try_cmpxchg(&sem->count, &count, count + LDSEM_WRITE_BIAS)) {
--			lockdep_acquire(sem, 0, 1, _RET_IP_);
--			lock_stat(sem, acquired);
-+			rwsem_acquire(&sem->dep_map, 0, 1, _RET_IP_);
-+			lock_acquired(&sem->dep_map, _RET_IP_);
- 			return 1;
- 		}
- 	}
-@@ -403,7 +380,7 @@ void ldsem_up_read(struct ld_semaphore *sem)
- {
- 	long count;
- 
--	lockdep_release(sem, 1, _RET_IP_);
-+	rwsem_release(&sem->dep_map, 1, _RET_IP_);
- 
- 	count = atomic_long_add_return(-LDSEM_READ_BIAS, &sem->count);
- 	if (count < 0 && (count & LDSEM_ACTIVE_MASK) == 0)
-@@ -417,7 +394,7 @@ void ldsem_up_write(struct ld_semaphore *sem)
- {
- 	long count;
- 
--	lockdep_release(sem, 1, _RET_IP_);
-+	rwsem_release(&sem->dep_map, 1, _RET_IP_);
- 
- 	count = atomic_long_add_return(-LDSEM_WRITE_BIAS, &sem->count);
- 	if (count < 0)
+You fail to explain how that is not broken...
+
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Jiri Slaby <jslaby@suse.com>
+> Signed-off-by: Dmitry Safonov <dima@arista.com>
+> ---
+>  drivers/tty/tty_ldisc.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/tty/tty_ldisc.c b/drivers/tty/tty_ldisc.c
+> index fc4c97cae01e..202cb645582f 100644
+> --- a/drivers/tty/tty_ldisc.c
+> +++ b/drivers/tty/tty_ldisc.c
+> @@ -471,6 +471,7 @@ static int tty_ldisc_open(struct tty_struct *tty, struct tty_ldisc *ld)
+>  
+>  static void tty_ldisc_close(struct tty_struct *tty, struct tty_ldisc *ld)
+>  {
+> +	lockdep_assert_held(&tty->ldisc_sem);
+
+Did you want:
+
+	lockdep_assert_held_exclusive(&tty->ldisc_sem);
+
+?
+
+>  	WARN_ON(!test_bit(TTY_LDISC_OPEN, &tty->flags));
+>  	clear_bit(TTY_LDISC_OPEN, &tty->flags);
+>  	if (ld->ops->close)
