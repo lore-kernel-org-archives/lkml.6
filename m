@@ -2,84 +2,120 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7244BC04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 14:12:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBF9CC6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 14:12:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B05820882
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 14:12:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B05820882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 8419720881
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 14:12:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TdhrL5fa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8419720881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727811AbeIKTMX (ORCPT
+        id S1727870AbeIKTM0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 15:12:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43802 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727332AbeIKTMX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 15:12:23 -0400
-Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BFF0BD6D;
-        Tue, 11 Sep 2018 14:12:51 +0000 (UTC)
-Date:   Tue, 11 Sep 2018 16:12:49 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Radu Pirea <radu_nicolae.pirea@upb.ro>, robh+dt@kernel.org,
-        mark.rutland@arm.com, nicolas.ferre@microchip.com,
-        alexandre.belloni@bootlin.com, broonie@kernel.org, jslaby@suse.com,
-        richard.genoud@gmail.com, davem@davemloft.net,
-        mchehab+samsung@kernel.org, akpm@linux-foundation.org,
-        arnd@arndb.de, devicetree@vger.kernel.org,
+        Tue, 11 Sep 2018 15:12:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58100 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727332AbeIKTMZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 15:12:25 -0400
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 316F42087F;
+        Tue, 11 Sep 2018 14:12:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1536675174;
+        bh=gTe1iMOPu593mM02rGdDf4ypmzYMtTDYtv17nmGUKe4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=TdhrL5fa7Wo6zU5D7QIm3715WUymd4gx8F0JdyMFwgOA16zZO9LExfmGP3MZqfK52
+         qtg7FT2Ku6Mh5kzgwoa1Qaqp0nAV/Ty+B3RwbHq2GyZfYPjrVz7vcu+LkynXSWh+GP
+         pxt6cmfsdA2YGvxGX1p5T1QEVLXAwWW68Hu3JV3c=
+Date:   Tue, 11 Sep 2018 23:12:51 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Russell King <linux@armlinux.org.uk>
+Cc:     Nicolas Pitre <nicolas.pitre@linaro.org>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-spi@vger.kernel.org
-Subject: Re: [GIT PULL v2] Immutable branch between MFD, SPI and TTY due for
- the v4.20 merge window
-Message-ID: <20180911141249.GA19639@kroah.com>
-References: <20180904111310.4049-1-radu_nicolae.pirea@upb.ro>
- <20180911111850.GJ4185@dell>
- <20180911140400.GB18410@kroah.com>
- <20180911140733.GU4185@dell>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180911140733.GU4185@dell>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH] ARM: linker script: GCOV kernel may refers data in
+ __exit
+Message-Id: <20180911231251.ee101eec63dceceed8243ad5@kernel.org>
+In-Reply-To: <153580549235.10130.1495077983569784123.stgit@devbox>
+References: <20180901185017.0a81bc3e61f5d021664f13f3@kernel.org>
+        <153580549235.10130.1495077983569784123.stgit@devbox>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 11, 2018 at 03:07:33PM +0100, Lee Jones wrote:
-> On Tue, 11 Sep 2018, Greg KH wrote:
-> 
-> > On Tue, Sep 11, 2018 at 12:18:50PM +0100, Lee Jones wrote:
-> > > [In case you missed it]
-> > > 
-> > > This new pull-request contains the following changes since v1:
-> > > 
-> > >  - Uplift the submission version from v11 to v12
-> > >  - Include fix for build breakage due to missing Device Tree include file
-> > > 
-> > > Since it is based on the original pull-request, it can be pulled
-> > > in either directly on top of it or as a pull in its own right.
-> > > 
-> > > The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
-> > > 
-> > >   Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
-> > > 
-> > > are available in the Git repository at:
-> > > 
-> > >   git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git tags/ib-mfd-spi-tty-v4.20-1
-> > 
-> > Ok, let's try this again, I've dropped that other patch and taken this
-> > branch into my tree.
-> 
-> What happened to not rebasing? :D
+Hi,
 
-Turned out I hadn't pushed to my immutable branch yet, we got lucky :)
+Please drop it, since Peter's patch fixes this problem better way.
 
+https://lkml.org/lkml/2018/9/6/403
+
+Thank you,
+
+On Sat,  1 Sep 2018 21:38:13 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
+
+> GCOV kernel embeds counters in the kernel for each line
+> and a part of that embed in __exit text. So we need to
+> keep the __exit text if CONFIG_GCOV_KERNEL=y.
+> 
+> Without this patch, if we discards __exit text (e.g.
+> disables CONFIG_GENERIC_BUG, CONFIG_JUMP_LABEL and
+> CONFIG_SMP_ON_UP) but enables CONFIG_GCOV_PROFILE_FTRACE,
+> ld will error like below on ARM.
+> 
+> `.text.exit' referenced in section `.ARM.exidx.text.exit' of
+> kernel/trace/trace_clock.o: defined in discarded section `.text.exit'
+> of kernel/trace/trace_clock.o
+> 
+> To fix this issue, we keep __exit when CONFIG_GCOV_KERNEL=y.
+> 
+> The reason why not depending CONFIG_GCOV_PROFILE_X, is
+> that the Documentation/dev-tools/gcov.rst says that the
+> developer can enable gcov profile on a file or a directory
+> by customizing Makefile, and that will only depend on
+> CONFIG_GCOV_KERNEL.
+> 
+> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> Reported-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  arch/arm/kernel/vmlinux.lds.h |    3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/kernel/vmlinux.lds.h b/arch/arm/kernel/vmlinux.lds.h
+> index ae5fdff18406..baaacee9f5ce 100644
+> --- a/arch/arm/kernel/vmlinux.lds.h
+> +++ b/arch/arm/kernel/vmlinux.lds.h
+> @@ -9,7 +9,8 @@
+>  #endif
+>  
+>  #if (defined(CONFIG_SMP_ON_UP) && !defined(CONFIG_DEBUG_SPINLOCK)) || \
+> -	defined(CONFIG_GENERIC_BUG) || defined(CONFIG_JUMP_LABEL)
+> +	defined(CONFIG_GENERIC_BUG) || defined(CONFIG_JUMP_LABEL) || \
+> +	defined(CONFIG_GCOV_KERNEL)
+>  #define ARM_EXIT_KEEP(x)	x
+>  #define ARM_EXIT_DISCARD(x)
+>  #else
+> 
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
