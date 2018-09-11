@@ -2,155 +2,99 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDB57C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 12:16:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA2A5C6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 12:16:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1EB42086A
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 12:16:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1EB42086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 58F612088F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 12:16:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58F612088F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727805AbeIKRPN (ORCPT
+        id S1727832AbeIKRPn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 13:15:13 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42890 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727768AbeIKRPN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 13:15:13 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6C6307A9;
-        Tue, 11 Sep 2018 05:16:08 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CAB743F71F;
-        Tue, 11 Sep 2018 05:16:04 -0700 (PDT)
-Date:   Tue, 11 Sep 2018 13:16:02 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Dmitry Safonov <dima@arista.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Daniel Axtens <dja@axtens.net>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Michael Neuling <mikey@neuling.org>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        Nathan March <nathan@gt.net>,
-        Pasi =?utf-8?B?S8Okcmtrw6RpbmVu?= <pasik@iki.fi>,
-        Peter Hurley <peter@hurleysoftware.com>,
-        "Rong, Chen" <rong.a.chen@intel.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Tan Xiaojun <tanxiaojun@huawei.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        stable@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, Jiri Slaby <jslaby@suse.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        syzbot+3aa9784721dfb90e984d@syzkaller.appspotmail.com
-Subject: Re: [PATCHv3 0/6] tty: Hold write ldisc sem in tty_reopen()
-Message-ID: <20180911121602.bskg32oqkluhwdbg@lakrids.cambridge.arm.com>
-References: <20180911014821.26286-1-dima@arista.com>
+        Tue, 11 Sep 2018 13:15:43 -0400
+Received: from mga07.intel.com ([134.134.136.100]:8089 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727768AbeIKRPn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 13:15:43 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Sep 2018 05:16:38 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,360,1531810800"; 
+   d="scan'208";a="90706911"
+Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
+  by orsmga002.jf.intel.com with SMTP; 11 Sep 2018 05:16:35 -0700
+Received: by stinkbox (sSMTP sendmail emulation); Tue, 11 Sep 2018 15:16:35 +0300
+Date:   Tue, 11 Sep 2018 15:16:35 +0300
+From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Dou Liyang <douly.fnst@cn.fujitsu.com>,
+        Pavel Tatashin <pasha.tatashin@microsoft.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH] Revert "x86/tsc: Consolidate init code"
+Message-ID: <20180911121635.GX5565@intel.com>
+References: <20180910121925.27682-1-ville.syrjala@linux.intel.com>
+ <alpine.DEB.2.21.1809101443290.1292@nanos.tec.linutronix.de>
+ <20180910140710.GR5565@intel.com>
+ <alpine.DEB.2.21.1809101816320.1419@nanos.tec.linutronix.de>
+ <20180910164631.GV5565@intel.com>
+ <alpine.DEB.2.21.1809101857510.1419@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20180911014821.26286-1-dima@arista.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <alpine.DEB.2.21.1809101857510.1419@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 11, 2018 at 02:48:15AM +0100, Dmitry Safonov wrote:
-> Hi all,
-
-Hi,
-
-> Three fixes that worth to have in the @stable, as we've hit them on v4.9
-> stable.
+On Mon, Sep 10, 2018 at 07:02:43PM +0200, Thomas Gleixner wrote:
+> On Mon, 10 Sep 2018, Ville Syrjälä wrote:
+> > On Mon, Sep 10, 2018 at 06:23:49PM +0200, Thomas Gleixner wrote:
+> > > 1) My workflow makes things tagged as BUG and REGRESSION urgent
+> > >    automatically while [PATCH] just is queued to the normal pile of
+> > >    backlog, i.e. at the end. It just sprang into my eyes by chance, but in
+> > >    general you might just get the contrary of what you are looking for.
+> > 
+> > Ah. Might be nice to document that somewhere. I might have to type up
+> > that git-regression tool for myself, because I'm lazy.
 > 
-> And for linux-next - adding lockdep asserts for line discipline changing
-> code, verifying that write ldisc sem will be held forthwith.
+> Well, it's probably different between maintainers, but it's common practice
+> to have '[REGRESION] sub/sys got fubarred' in the subject.
 > 
-> The last patch is optional and probably, timeout can be dropped for
-> read_lock(). I'll do it if everyone agrees.
+> > > 2) A proper bug report with proper information (it's documented what should
+> > >    be provided), is way more worth than a patch with a mostly useless
+> > >    change log, which forces me to ask for the proper information instead of
+> > >    having it right away.
+> > 
+> > I do agree that not having to ask for more information would be nice,
+> > but hard to generalize because every subsystem needs different things.
+> > 
+> > In this case you asked for the dmesg, which isn't even mentioned in
+> > Documentation/admin-guide/reporting-bugs.rst as far as I can see.
+> > So I'm not quite sure which documentation you're referring to here.
 > 
-> Rong Chen, could you kindly re-run this version to see if the lockup
-> from v1 still happens? I wasn't able to reproduce it..
+> I didn't look, but I expected dmesg to be part of it and a lot of people
+> provide it as well as the start point of their bisection. Again, I had to
+> do a shot into the dark and ask you whether it's fixed in -rc3. bisect
+> start would have told me.
+> 
+> So again. That revert patch habit does not make my life easier at all.
 
-These patches seem to fix issues I've been seeing on arm64 for a while
-but hadn't managed to track down.
+OK. I'll keep that in mind and try to stick REGRESSION format in the
+future.
 
-For patches 1, 3, and 5, feel free to add:
-
-Tested-by: Mark Rutland <mark.rutland@arm.com>
-
-On vanilla v4.19-rc2, the below reproducer would fire in seconds,
-whereas with those patches applied, I have not seen issues after 10s of
-minutes of testing.
-
-Thanks,
-Mark.
-
-Syzkaller hit 'KASAN: user-memory-access Write in n_tty_set_termios' bug.
-
-IPv6: ADDRCONF(NETDEV_UP): veth0: link is not ready
-ipV6: ADDRCONF(NETDEV_UP): veth1: link is not ready
-IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
-IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
-==================================================================
-BUG: KASAN: user-memory-access in memset include/linux/string.h:330 [inline]
-BUG: KASAN: user-memory-access in bitmap_zero include/linux/bitmap.h:216 [inline]
-BUG: KASAN: user-memory-access in n_tty_set_termios+0xe4/0xd08 drivers/tty/n_tty.c:1784
-Write of size 512 at addr 0000000000001060 by task syz-executor0/3007
-
-CPU: 1 PID: 3007 Comm: syz-executor0 Not tainted 4.19.0-rc2-dirty #4
-Hardware name: linux,dummy-virt (DT)
-Call trace:
- dump_backtrace+0x0/0x340 arch/arm64/include/asm/ptrace.h:270
- show_stack+0x20/0x30 arch/arm64/kernel/traps.c:152
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0xec/0x150 lib/dump_stack.c:113
- kasan_report_error mm/kasan/report.c:352 [inline]
- kasan_report+0x228/0x360 mm/kasan/report.c:412
- check_memory_region_inline mm/kasan/kasan.c:253 [inline]
- check_memory_region+0x114/0x1c8 mm/kasan/kasan.c:267
- memset+0x2c/0x50 mm/kasan/kasan.c:285
- memset include/linux/string.h:330 [inline]
- bitmap_zero include/linux/bitmap.h:216 [inline]
- n_tty_set_termios+0xe4/0xd08 drivers/tty/n_tty.c:1784
- tty_set_termios+0x538/0x760 drivers/tty/tty_ioctl.c:341
- set_termios+0x348/0x968 drivers/tty/tty_ioctl.c:414
- tty_mode_ioctl+0x8f0/0xc60 drivers/tty/tty_ioctl.c:779
- n_tty_ioctl_helper+0x6c/0x390 drivers/tty/tty_ioctl.c:940
- n_tty_ioctl+0x6c/0x490 drivers/tty/n_tty.c:2450
- tty_ioctl+0x610/0x19a8 drivers/tty/tty_io.c:2655
- vfs_ioctl fs/ioctl.c:46 [inline]
- file_ioctl fs/ioctl.c:501 [inline]
- do_vfs_ioctl+0x1bc/0x1618 fs/ioctl.c:685
- ksys_ioctl+0xbc/0x108 fs/ioctl.c:702
- __do_sys_ioctl fs/ioctl.c:709 [inline]
- __se_sys_ioctl fs/ioctl.c:707 [inline]
- __arm64_sys_ioctl+0x6c/0xa0 fs/ioctl.c:707
- __invoke_syscall arch/arm64/kernel/syscall.c:36 [inline]
- invoke_syscall arch/arm64/kernel/syscall.c:48 [inline]
- el0_svc_common+0x150/0x288 arch/arm64/kernel/syscall.c:84
- el0_svc_handler+0x54/0xf0 arch/arm64/kernel/syscall.c:130
- el0_svc+0x8/0xc arch/arm64/kernel/entry.S:917
-==================================================================
-
-
-Syzkaller reproducer:
-# {Threaded:true Collide:true Repeat:true RepeatTimes:0 Procs:1 Sandbox:none Fault:false FaultCall:-1 FaultNth:0 EnableTun:true UseTmpDir:true EnableCgroups:true EnableNetdev:true ResetNet:true HandleSegv:true Repro:false Trace:false}
-r0 = openat$ptmx(0xffffffffffffff9c, &(0x7f0000000000)='/dev/ptmx\x00', 0x0, 0x0)
-ioctl$TIOCGPTPEER(r0, 0x40045431, 0x6e0000)
-r1 = syz_open_pts(r0, 0x0)
-ioctl$TCXONC(r1, 0x5437, 0x0)
-ioctl$TIOCGSOFTCAR(r0, 0x5419, &(0x7f00000000c0))
-r2 = semget(0x0, 0x1, 0x1a)
-semctl$IPC_INFO(r2, 0x0, 0x3, &(0x7f0000000100)=""/166)
-syz_open_pts(r0, 0x2)
-ioctl$TCSETAW(r0, 0x5407, &(0x7f0000000080))
-
+-- 
+Ville Syrjälä
+Intel
