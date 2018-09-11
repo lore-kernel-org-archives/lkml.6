@@ -2,129 +2,90 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D604BC04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 06:50:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFB38C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 06:51:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C4A32087F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 06:50:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C4A32087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 7831020865
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 06:51:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7831020865
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727774AbeIKLsH (ORCPT
+        id S1727790AbeIKLth convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 07:48:07 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39352 "EHLO mx1.redhat.com"
+        Tue, 11 Sep 2018 07:49:37 -0400
+Received: from szxga03-in.huawei.com ([45.249.212.189]:6036 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726483AbeIKLsG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 07:48:06 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EFB6040776F0;
-        Tue, 11 Sep 2018 06:50:15 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-66.ams2.redhat.com [10.36.116.66])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 536DC2156889;
-        Tue, 11 Sep 2018 06:50:15 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 8B55E16E08; Tue, 11 Sep 2018 08:50:14 +0200 (CEST)
-Date:   Tue, 11 Sep 2018 08:50:14 +0200
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Shuah Khan <shuah@kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK" 
-        <linux-media@vger.kernel.org>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK" 
-        <linaro-mm-sig@lists.linaro.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>, linux-api@vger.kernel.org
-Subject: Re: [PATCH v7] Add udmabuf misc device
-Message-ID: <20180911065014.vo6qp6hkb7cjftdc@sirius.home.kraxel.org>
-References: <20180827093444.23623-1-kraxel@redhat.com>
- <21053714.0Xa7F2u2PE@avalon>
+        id S1726683AbeIKLth (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 07:49:37 -0400
+Received: from DGGEMM404-HUB.china.huawei.com (unknown [172.30.72.57])
+        by Forcepoint Email with ESMTP id 61CA1DFFDB9DE;
+        Tue, 11 Sep 2018 14:51:43 +0800 (CST)
+Received: from DGGEMM507-MBS.china.huawei.com ([169.254.3.21]) by
+ DGGEMM404-HUB.china.huawei.com ([10.3.20.212]) with mapi id 14.03.0399.000;
+ Tue, 11 Sep 2018 14:51:43 +0800
+From:   Nixiaoming <nixiaoming@huawei.com>
+To:     Eric Paris <eparis@parisplace.org>,
+        "rlove@rlove.org" <rlove@rlove.org>,
+        "john@johnmccutchan.com" <john@johnmccutchan.com>,
+        "amir73il@gmail.com" <amir73il@gmail.com>,
+        "jack@suse.cz" <jack@suse.cz>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Is it possible to add pid and comm members to the event structure
+ to increase the display of user and thread information?
+Thread-Topic: Is it possible to add pid and comm members to the event
+ structure to increase the display of user and thread information?
+Thread-Index: AdRJmkzwtMeGnSbeRVCa8sLtVjSk6w==
+Date:   Tue, 11 Sep 2018 06:51:43 +0000
+Message-ID: <E490CD805F7529488761C40FD9D26EF12A7A1814@dggemm507-mbs.china.huawei.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.57.88.168]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <21053714.0Xa7F2u2PE@avalon>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 11 Sep 2018 06:50:16 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 11 Sep 2018 06:50:16 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'kraxel@redhat.com' RCPT:''
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  Hi,
+Inotify api cannot display information about users and processes.
+That is, you can only know that the file event is generated, but you don't know who triggered the event, which is not conducive to fault location.
+Is it possible to add pid and comm members to the event structure to increase the display of user and thread information?
 
-> > +#define UDMABUF_CREATE       _IOW('u', 0x42, struct udmabuf_create)
-> 
-> Why do you start at 0x42 if you reserve the 0x40-0x4f range ?
-
-No particular strong reason, just that using 42 was less boring than
-starting with 0x40.
-
-> > +#define UDMABUF_CREATE_LIST  _IOW('u', 0x43, struct udmabuf_create_list)
-> 
-> Where's the documentation ? :-)
-
-Isn't it simple enough?
-
-But, well, yes, I guess I can add some kerneldoc comments.
-
-> > +static int udmabuf_vm_fault(struct vm_fault *vmf)
-> > +{
-> > +	struct vm_area_struct *vma = vmf->vma;
-> > +	struct udmabuf *ubuf = vma->vm_private_data;
-> > +
-> > +	if (WARN_ON(vmf->pgoff >= ubuf->pagecount))
-> > +		return VM_FAULT_SIGBUS;
-> 
-> Just curious, when do you expect this to happen ?
-
-It should not.  If it actually happens it would be a bug somewhere,
-thats why the WARN_ON.
-
-> > +	struct udmabuf *ubuf;
-
-> > +	ubuf = kzalloc(sizeof(struct udmabuf), GFP_KERNEL);
-> 
-> sizeof(*ubuf)
-
-Why?  Should not make a difference ...
-
-> > +		memfd = fget(list[i].memfd);
-> > +		if (!memfd)
-> > +			goto err_put_pages;
-> > +		if (!shmem_mapping(file_inode(memfd)->i_mapping))
-> > +			goto err_put_pages;
-> > +		seals = memfd_fcntl(memfd, F_GET_SEALS, 0);
-> > +		if (seals == -EINVAL ||
-> > +		    (seals & SEALS_WANTED) != SEALS_WANTED ||
-> > +		    (seals & SEALS_DENIED) != 0)
-> > +			goto err_put_pages;
-> 
-> All these conditions will return -EINVAL. I'm not familiar with the memfd API, 
-> should some error conditions return a different error code to make them 
-> distinguishable by userspace ?
-
-Hmm, I guess EBADFD would be reasonable in case the file handle isn't a
-memfd.  Other suggestions?
-
-I'll prepare a fixup patch series addressing most of the other
-review comments.
-
-cheers,
-  Gerd
+Example:
+diff --git a/fs/notify/inotify/inotify.h b/fs/notify/inotify/inotify.h
+index 7e4578d..be91844 100644
+--- a/fs/notify/inotify/inotify.h
++++ b/fs/notify/inotify/inotify.h
+@@ -7,6 +7,8 @@ struct inotify_event_info {
+        struct fsnotify_event fse;
+        int wd;
+        u32 sync_cookie;
++ int pid;
++ char comm[TASK_COMM_LEN];
+        int name_len;
+        char name[];
+ };
+diff --git a/fs/notify/inotify/inotify_fsnotify.c b/fs/notify/inotify/inotify_fsnotify.c
+index f4184b4..f7ad298 100644
+--- a/fs/notify/inotify/inotify_fsnotify.c
++++ b/fs/notify/inotify/inotify_fsnotify.c
+@@ -117,6 +117,8 @@ int inotify_handle_event(struct fsnotify_group *group,
+        fsnotify_init_event(fsn_event, inode, mask);
+        event->wd = i_mark->wd;
+        event->sync_cookie = cookie;
++ event->pid = current->pid;
++ strncpy(event->comm, current->comm, TASK_COMM_LEN);
+        event->name_len = len;
+        if (len)
+                strcpy(event->name, file_name);
 
