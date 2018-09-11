@@ -2,78 +2,142 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2549C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 21:02:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B85EC04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 21:03:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 703E62086A
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 21:02:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 703E62086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sipsolutions.net
+	by mail.kernel.org (Postfix) with ESMTP id D150720839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 21:03:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D150720839
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727853AbeILCDS (ORCPT
+        id S1727834AbeILCEx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 22:03:18 -0400
-Received: from s3.sipsolutions.net ([144.76.43.62]:48138 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727645AbeILCDS (ORCPT
+        Tue, 11 Sep 2018 22:04:53 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:40901 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726870AbeILCEx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 22:03:18 -0400
-Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.91)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1fzpnV-0005L8-Vv; Tue, 11 Sep 2018 23:02:10 +0200
-Message-ID: <1536699720.3224.152.camel@sipsolutions.net>
-Subject: Re: 4.19-rc[23] iwlwifi: BUG in swiotlb
-From:   Johannes Berg <johannes@sipsolutions.net>
-To:     Randy Dunlap <rdunlap@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        linuxwifi@intel.com
-Date:   Tue, 11 Sep 2018 23:02:00 +0200
-In-Reply-To: <8bea4cfc-4b16-7c7c-3e9a-5b6684b47345@infradead.org>
-References: <0c5e53e5-2afa-8d38-0b48-272c670c4bc5@infradead.org>
-         <1536651177.3224.106.camel@sipsolutions.net>
-         <8bea4cfc-4b16-7c7c-3e9a-5b6684b47345@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 11 Sep 2018 22:04:53 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 30A2280569; Tue, 11 Sep 2018 23:03:45 +0200 (CEST)
+Date:   Tue, 11 Sep 2018 23:03:44 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
+        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org,
+        lee.jones@linaro.org, dmurphy@ti.com
+Subject: [PATCH 2/3] mfd: ti-lmu: use managed resource for everything
+Message-ID: <20180911210344.GB32497@amd>
+References: <20180911210133.GA32497@amd>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="hHWLQfXTYDoKhP50"
+Content-Disposition: inline
+In-Reply-To: <20180911210133.GA32497@amd>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-09-11 at 13:57 -0700, Randy Dunlap wrote:
 
-> I can't be sure.  I've been having problems booting this laptop for a few
-> weeks now but haven't tracked it down yet.
+--hHWLQfXTYDoKhP50
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ok.
+This replaces all remaining unmanaged resources with device
+managed ones, so that the remove function is no longer needed.
+This makes the code slightly shorter and fixes two problems:
+   =20
+ 1. The hardware is disabled after the child devices have
+    been removed. Previously there was a potential race
+    condition.
+ 2. The hardware is disabled when mfd_add_devices fails
+    during probe.
+   =20
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Signed-off-by: Pavel Machek <pavel@ucw.cz>
 
-> The wireless NIC is Condor Peak:
-> 
-> 04:00.0 Network controller: Intel Corporation Centrino Wireless-N 1000 [Condor Peak]
+diff --git a/drivers/mfd/ti-lmu.c b/drivers/mfd/ti-lmu.c
+index e14cb9f..2ee09d0 100644
+--- a/drivers/mfd/ti-lmu.c
++++ b/drivers/mfd/ti-lmu.c
+@@ -47,8 +47,9 @@ static int ti_lmu_enable_hw(struct ti_lmu *lmu, enum ti_l=
+mu_id id)
+ 	return 0;
+ }
+=20
+-static void ti_lmu_disable_hw(struct ti_lmu *lmu)
++static void ti_lmu_disable_hw(void *data)
+ {
++	struct ti_lmu *lmu =3D data;
+ 	if (lmu->en_gpio)
+ 		gpiod_set_value(lmu->en_gpio, 0);
+ }
+@@ -205,6 +206,10 @@ static int ti_lmu_probe(struct i2c_client *cl, const s=
+truct i2c_device_id *id)
+ 	if (ret)
+ 		return ret;
+=20
++	ret =3D devm_add_action_or_reset(dev, ti_lmu_disable_hw, lmu);
++	if (ret)
++		return ret;
++
+ 	/*
+ 	 * Fault circuit(open/short) can be detected by ti-lmu-fault-monitor.
+ 	 * After fault detection is done, some devices should re-initialize
+@@ -214,17 +219,8 @@ static int ti_lmu_probe(struct i2c_client *cl, const s=
+truct i2c_device_id *id)
+=20
+ 	i2c_set_clientdata(cl, lmu);
+=20
+-	return mfd_add_devices(lmu->dev, 0, data->cells,
+-			       data->num_cells, NULL, 0, NULL);
+-}
+-
+-static int ti_lmu_remove(struct i2c_client *cl)
+-{
+-	struct ti_lmu *lmu =3D i2c_get_clientdata(cl);
+-
+-	ti_lmu_disable_hw(lmu);
+-	mfd_remove_devices(lmu->dev);
+-	return 0;
++	return devm_mfd_add_devices(lmu->dev, 0, data->cells,
++				    data->num_cells, NULL, 0, NULL);
+ }
+=20
+ static const struct i2c_device_id ti_lmu_ids[] =3D {
+@@ -240,7 +236,6 @@ MODULE_DEVICE_TABLE(i2c, ti_lmu_ids);
+=20
+ static struct i2c_driver ti_lmu_driver =3D {
+ 	.probe =3D ti_lmu_probe,
+-	.remove =3D ti_lmu_remove,
+ 	.driver =3D {
+ 		.name =3D "ti-lmu",
+ 		.of_match_table =3D ti_lmu_of_match,
 
-Wow, that's old. I should have one somewhere, but we haven't worked on
-this NIC in many years. We've touched the driver, of course, but the
-configuration for this wouldn't have changed.
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-> sigh.  I can reproduce it without the patch:
-> 
-> > https://p.sipsolutions.net/aa0dccd7a60fe176.txt
-> 
-> but with that patch, it just hangs after about 25 seconds of booting
-> (slow hard drive, not SSD).
-> 
-> I'll try some other ways.
+--hHWLQfXTYDoKhP50
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Hmm. That makes me think you have some corruption going on, rather than
-something really being set to 0, because otherwise you should've seen
-the warning at least?
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-johannes
+iEYEARECAAYFAluYLbAACgkQMOfwapXb+vKMAQCfR+GVYzamvf2F0vghbkpm7URy
+BcgAnRUykwzhF6Um2FGgMV4D0r0WVQ4U
+=iER6
+-----END PGP SIGNATURE-----
+
+--hHWLQfXTYDoKhP50--
