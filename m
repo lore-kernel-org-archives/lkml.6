@@ -3,41 +3,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E3D2C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:27:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37C52C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:27:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFFEC20865
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:27:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFFEC20865
+	by mail.kernel.org (Postfix) with ESMTP id DCF6420865
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:27:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCF6420865
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727825AbeIKMZd (ORCPT
+        id S1727949AbeIKMZg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 08:25:33 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:4488 "EHLO
+        Tue, 11 Sep 2018 08:25:36 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:9507 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727384AbeIKMZc (ORCPT
+        by vger.kernel.org with ESMTP id S1726811AbeIKMZe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 08:25:32 -0400
+        Tue, 11 Sep 2018 08:25:34 -0400
 Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8B7OVEh032029;
-        Tue, 11 Sep 2018 09:27:07 +0200
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8B7OJCx031677;
+        Tue, 11 Sep 2018 09:27:10 +0200
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2me96f825p-1
+        by mx07-00178001.pphosted.com with ESMTP id 2me96f8260-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 11 Sep 2018 09:27:07 +0200
+        Tue, 11 Sep 2018 09:27:10 +0200
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id CE5733F;
-        Tue, 11 Sep 2018 07:27:06 +0000 (GMT)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 1C2AA3F;
+        Tue, 11 Sep 2018 07:27:10 +0000 (GMT)
 Received: from Webmail-eu.st.com (sfhdag5node2.st.com [10.75.127.14])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A15801E3B;
-        Tue, 11 Sep 2018 07:27:06 +0000 (GMT)
-Received: from localhost (10.75.127.46) by SFHDAG5NODE2.st.com (10.75.127.14)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 11 Sep 2018 09:27:06
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id F34991E06;
+        Tue, 11 Sep 2018 07:27:09 +0000 (GMT)
+Received: from localhost (10.75.127.44) by SFHDAG5NODE2.st.com (10.75.127.14)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 11 Sep 2018 09:27:09
  +0200
 From:   Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
 To:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
@@ -49,16 +49,16 @@ To:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>
 CC:     Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-Subject: [PATCH v1 3/7] dt-bindings: stm32-mdma: Add DMA/MDMA chaining support bindings
-Date:   Tue, 11 Sep 2018 09:26:56 +0200
-Message-ID: <1536650820-16076-4-git-send-email-pierre-yves.mordret@st.com>
+Subject: [PATCH v1 7/7] dmaengine: stm32-mdma: enable descriptor_reuse
+Date:   Tue, 11 Sep 2018 09:27:00 +0200
+Message-ID: <1536650820-16076-8-git-send-email-pierre-yves.mordret@st.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1536650820-16076-1-git-send-email-pierre-yves.mordret@st.com>
 References: <1536650820-16076-1-git-send-email-pierre-yves.mordret@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG5NODE1.st.com (10.75.127.13) To SFHDAG5NODE2.st.com
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG5NODE3.st.com (10.75.127.15) To SFHDAG5NODE2.st.com
  (10.75.127.14)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-11_03:,,
  signatures=0
@@ -67,8 +67,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds the description of the 2 properties needed to support M2M
-transfer triggered by STM32 DMA when his transfer is complete.
+enable reuse to spare descriptors creation on critical UC.
 
 Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
 ---
@@ -77,71 +76,22 @@ Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
        * Initial
 ---
 ---
- .../devicetree/bindings/dma/stm32-mdma.txt         | 22 +++++++++++++---------
- 1 file changed, 13 insertions(+), 9 deletions(-)
+ drivers/dma/stm32-mdma.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/dma/stm32-mdma.txt b/Documentation/devicetree/bindings/dma/stm32-mdma.txt
-index d18772d..1810f87 100644
---- a/Documentation/devicetree/bindings/dma/stm32-mdma.txt
-+++ b/Documentation/devicetree/bindings/dma/stm32-mdma.txt
-@@ -10,7 +10,7 @@ Required properties:
- - interrupts: Should contain the MDMA interrupt.
- - clocks: Should contain the input clock of the DMA instance.
- - resets: Reference to a reset controller asserting the DMA controller.
--- #dma-cells : Must be <5>. See DMA client paragraph for more details.
-+- #dma-cells : Must be <6>. See DMA client paragraph for more details.
- 
- Optional properties:
- - dma-channels: Number of DMA channels supported by the controller.
-@@ -26,7 +26,7 @@ Example:
- 		interrupts = <122>;
- 		clocks = <&timer_clk>;
- 		resets = <&rcc 992>;
--		#dma-cells = <5>;
-+		#dma-cells = <6>;
- 		dma-channels = <16>;
- 		dma-requests = <32>;
- 		st,ahb-addr-masks = <0x20000000>, <0x00000000>;
-@@ -35,8 +35,8 @@ Example:
- * DMA client
- 
- DMA clients connected to the STM32 MDMA controller must use the format
--described in the dma.txt file, using a five-cell specifier for each channel:
--a phandle to the MDMA controller plus the following five integer cells:
-+described in the dma.txt file, using a six-cell specifier for each channel:
-+a phandle to the MDMA controller plus the following six integer cells:
- 
- 1. The request line number
- 2. The priority level
-@@ -76,19 +76,23 @@ a phandle to the MDMA controller plus the following five integer cells:
-    if no HW ack signal is used by the MDMA client
- 5. A 32bit mask specifying the value to be written to acknowledge the request
-    if no HW ack signal is used by the MDMA client
-+6. A bitfield value specifying if the MDMA client wants to generate M2M
-+   transfer with HW trigger (1) or not (0). This bitfield should be only
-+   enabled for M2M transfer triggered by STM32 DMA client. The memory devices
-+   involved in this kind of transfer are SRAM and DDR.
- 
- Example:
- 
- 	i2c4: i2c@5c002000 {
- 		compatible = "st,stm32f7-i2c";
- 		reg = <0x5c002000 0x400>;
--		interrupts = <95>,
--			     <96>;
--		clocks = <&timer_clk>;
-+		interrupts = <GIC_SPI 95 IRQ_TYPE_NONE>,
-+			     <GIC_SPI 96 IRQ_TYPE_NONE>;
-+		clocks = <&clk_hsi>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		dmas = <&mdma1 36 0x0 0x40008 0x0 0x0>,
--		       <&mdma1 37 0x0 0x40002 0x0 0x0>;
-+		dmas = <&mdma1 36 0x0 0x40008 0x0 0x0 0>,
-+		       <&mdma1 37 0x0 0x40002 0x0 0x0 0>;
- 		dma-names = "rx", "tx";
- 		status = "disabled";
- 	};
+diff --git a/drivers/dma/stm32-mdma.c b/drivers/dma/stm32-mdma.c
+index 6b6e63b..80a17dd 100644
+--- a/drivers/dma/stm32-mdma.c
++++ b/drivers/dma/stm32-mdma.c
+@@ -1715,6 +1715,8 @@ static int stm32_mdma_probe(struct platform_device *pdev)
+ 	dd->device_resume = stm32_mdma_resume;
+ 	dd->device_terminate_all = stm32_mdma_terminate_all;
+ 	dd->device_synchronize = stm32_mdma_synchronize;
++	dd->descriptor_reuse = true;
++
+ 	dd->src_addr_widths = BIT(DMA_SLAVE_BUSWIDTH_1_BYTE) |
+ 		BIT(DMA_SLAVE_BUSWIDTH_2_BYTES) |
+ 		BIT(DMA_SLAVE_BUSWIDTH_4_BYTES) |
 -- 
 2.7.4
 
