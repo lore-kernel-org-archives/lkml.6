@@ -2,75 +2,65 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 014DFC04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:15:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C29DEC6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:16:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E77E2086A
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:15:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GrdIsKYq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E77E2086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7FC20206BB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:16:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FC20206BB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726992AbeILBQn (ORCPT
+        id S1727403AbeILBRZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 21:16:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37082 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726720AbeILBQn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 21:16:43 -0400
-Received: from localhost (unknown [104.132.1.88])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Tue, 11 Sep 2018 21:17:25 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58486 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726720AbeILBRZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 21:17:25 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E0D0206BB;
-        Tue, 11 Sep 2018 20:15:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536696948;
-        bh=WDNJNMqOMHEupZD0ltx3TP7I15uhoAoSsQdJ+Psp6Vg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=GrdIsKYqAA71lykXSDnXCVKyqoLWLpoRyJd6zzlU/wd9VmqLvmIrDRNSrISZdTcRZ
-         z5HZKe3PFWucaXVzrlfsL/UP+ki+TpPz7IbsBk2OEVigWa1uRYnNIkrUDRpu8I33Bl
-         btr9Uup7rfMIS7eZLK4iDX7Kg+1nKjTKQ6MyGRUc=
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Cc:     Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: fix quota info to adjust recovered data
-Date:   Tue, 11 Sep 2018 13:15:46 -0700
-Message-Id: <20180911201546.56566-1-jaegeuk@kernel.org>
-X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
+        by mx1.redhat.com (Postfix) with ESMTPS id 868BA7DAC2;
+        Tue, 11 Sep 2018 20:16:29 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8C6B32166BA3;
+        Tue, 11 Sep 2018 20:16:27 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CACT4Y+ajxhUaRg+XSuqQZN8rD96S820yMTWx2GpRVRb9Maz50g@mail.gmail.com>
+References: <CACT4Y+ajxhUaRg+XSuqQZN8rD96S820yMTWx2GpRVRb9Maz50g@mail.gmail.com> <0000000000006082bd05752f92bb@google.com> <29979.1536223287@warthog.procyon.org.uk>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     dhowells@redhat.com,
+        syzbot <syzbot+762a577f56cfb1574647@syzkaller.appspotmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Levin, Alexander" <alexander.levin@verizon.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux@dominikbrodowski.net,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        nikolaus.voss@loewensteinmedical.de,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Subject: Re: linux-next boot error (2)
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <23631.1536696987.1@warthog.procyon.org.uk>
+Date:   Tue, 11 Sep 2018 21:16:27 +0100
+Message-ID: <23632.1536696987@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 11 Sep 2018 20:16:29 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 11 Sep 2018 20:16:29 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-fsck.f2fs is able to recover the quota structure, since roll-forward recovery
-can recover it based on previous user information.
+Andrei Vagin spotted a missing change to apparmor:
+apparmor_fs_context_parse_param() needs to return -ENOPARAM, not 0.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/recovery.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 95511ed11a22..1fde86a2107e 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -675,6 +675,9 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
- 
- 	need_writecp = true;
- 
-+	/* quota is not fully updated due to the lack of user information. */
-+	set_sbi_flag(sbi, SBI_NEED_FSCK);
-+
- 	/* step #2: recover data */
- 	err = recover_data(sbi, &inode_list, &dir_list);
- 	if (!err)
--- 
-2.17.0.441.gb46fe60e1d-goog
-
+David
