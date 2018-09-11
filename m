@@ -2,120 +2,95 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EADB4C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 13:02:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9831FC6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 13:04:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2D2E2086A
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 13:02:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dell.com header.i=@dell.com header.b="RtCUR3u/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2D2E2086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=dell.com
+	by mail.kernel.org (Postfix) with ESMTP id 418F520866
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 13:04:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 418F520866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727875AbeIKSBk (ORCPT
+        id S1727973AbeIKSDV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 14:01:40 -0400
-Received: from esa3.dell-outbound.iphmx.com ([68.232.153.94]:52010 "EHLO
-        esa3.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727578AbeIKSBj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 14:01:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=dell.com; i=@dell.com; q=dns/txt; s=smtpout;
-  t=1536670940; x=1568206940;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=9hqP4k+C2Xrla8TdvfwleG1A2HdmJByQ/ujB7rU70Yw=;
-  b=RtCUR3u/CktRPHgGPx+AcDVhuUcVOh8Sfk69H+PbWqcrBM/wmLRFkawQ
-   NeQCe9uNgKOhqPodweLqG+uI4uw6YAZQVhogUw5W6Av7l4ob2ZozCKNCL
-   +GyJceuBDkeDM82KLKOWuEZYCFlVDpAFBiwQ4UoPjaR8BzwVhLVs7+J1g
-   w=;
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2E/AACpvJdbhyWd50NcGQEBAQEBAQE?=
- =?us-ascii?q?BAQEBAQcBAQEBAYUgEigKi3tfjU2BdpQ+gXoLhGwChCw0GAECAQECAQECAQE?=
- =?us-ascii?q?CEAEBAQoLCQgpL4I1IoJiAQEBBBIoPwwEAgEIEQQBAQEeCQdGCQgCBA4FCBq?=
- =?us-ascii?q?Cf4ICmmGJVwEBAYIbigSMfIESgxKFS4ULApwIBwKPeh+OcJNmAgQCBAUCFIF?=
- =?us-ascii?q?Cgg5wgzyCJQ4JjhdvAYx8gR0BAQ?=
-X-IPAS-Result: =?us-ascii?q?A2E/AACpvJdbhyWd50NcGQEBAQEBAQEBAQEBAQcBAQEBA?=
- =?us-ascii?q?YUgEigKi3tfjU2BdpQ+gXoLhGwChCw0GAECAQECAQECAQECEAEBAQoLCQgpL?=
- =?us-ascii?q?4I1IoJiAQEBBBIoPwwEAgEIEQQBAQEeCQdGCQgCBA4FCBqCf4ICmmGJVwEBA?=
- =?us-ascii?q?YIbigSMfIESgxKFS4ULApwIBwKPeh+OcJNmAgQCBAUCFIFCgg5wgzyCJQ4Jj?=
- =?us-ascii?q?hdvAYx8gR0BAQ?=
-Received: from mx0b-00154901.pphosted.com (HELO mx0a-00154901.pphosted.com) ([67.231.157.37])
-  by esa3.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 11 Sep 2018 08:02:04 -0500
-Received: from pps.filterd (m0089484.ppops.net [127.0.0.1])
-        by mx0b-00154901.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8BCwDDk033359
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 09:02:06 -0400
-Received: from esa4.dell-outbound2.iphmx.com (esa4.dell-outbound2.iphmx.com [68.232.154.98])
-        by mx0b-00154901.pphosted.com with ESMTP id 2me8cpt1ne-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL)
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 09:02:06 -0400
-From:   <Mario.Limonciello@dell.com>
-Received: from ausxipps301.us.dell.com ([143.166.148.223])
-  by esa4.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 11 Sep 2018 19:02:03 +0600
-X-LoopCount0: from 10.166.132.152
-X-IronPort-AV: E=Sophos;i="5.53,360,1531803600"; 
-   d="scan'208";a="228140250"
-To:     <mika.westerberg@linux.intel.com>
-CC:     <whitequark@whitequark.org>, <heikki.krogerus@linux.intel.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: RE: USB type-C altmode support for UCSI
-Thread-Topic: USB type-C altmode support for UCSI
-Thread-Index: AQHURRvNkCnRMgofNUaEjdqM0tpgmqThs/fggABa34CAAu/ZgIAE9GIwgAE7TID//+Z/QA==
-Date:   Tue, 11 Sep 2018 13:02:00 +0000
-Message-ID: <fd00612c1bb94f69820be2b1f1e171f9@ausx13mpc120.AMER.DELL.COM>
-References: <1e8398f2c1790890f40b69f12e2934e3@whitequark.org>
- <20180903140623.GD15112@kuha.fi.intel.com>
- <28522bb57c5d8f49416b9174b19b1625@whitequark.org>
- <20180905132429.GB25121@kuha.fi.intel.com>
- <4df3faaee8904d81bf7737b5f2daaff5@ausx13mpc120.AMER.DELL.COM>
- <a2f79cc4d9a0aab4a832de31b7ddc52d@whitequark.org>
- <3a666f66d6e342e2971b800caae7c889@whitequark.org>
- <3b76178ca0de4990a38362cfd4836fdc@ausx13mpc120.AMER.DELL.COM>
- <20180911093239.GW14465@lahna.fi.intel.com>
-In-Reply-To: <20180911093239.GW14465@lahna.fi.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.18.86]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 11 Sep 2018 14:03:21 -0400
+Received: from smtp17.cstnet.cn ([159.226.251.17]:44204 "EHLO cstnet.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727287AbeIKSDU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 14:03:20 -0400
+Received: from [172.20.20.131] (unknown [182.150.46.145])
+        by APP-09 (Coremail) with SMTP id swCowAC3uIAuvZdbxzXsCA--.8649S2;
+        Tue, 11 Sep 2018 21:03:43 +0800 (CST)
+From:   Pu Wen <puwen@hygon.cn>
+Subject: Re: [PATCH v6 08/16] x86/apic: Add Hygon Dhyana support to APIC
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, thomas.lendacky@amd.com, pbonzini@redhat.com,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+References: <cover.1536550549.git.puwen@hygon.cn>
+ <4f03e734faa5b2b69b0947a156bea29cddcc95ce.1536550550.git.puwen@hygon.cn>
+ <20180911101454.GE12094@zn.tnic>
+Message-ID: <b8055a18-2002-13b2-3438-7fbb38149837@hygon.cn>
+Date:   Tue, 11 Sep 2018 21:03:41 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-11_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 lowpriorityscore=0
- mlxlogscore=719 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809110134
+In-Reply-To: <20180911101454.GE12094@zn.tnic>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: swCowAC3uIAuvZdbxzXsCA--.8649S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrKF4rKF1DZw1DJw1xZry7Wrg_yoW3ZrcEgF
+        yDCr1DG3yqqay8Zr48GF45Gw43Gan09FW0ya43JF13CFnxArn0ga1fKw4vvryrWayftw42
+        yr4rta9Yvw1a9jkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUbckYjsxI4VWkCwAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I
+        6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
+        8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0
+        cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z2
+        80aVCY1x0267AKxVW8JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
+        w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r4UJVWxJr
+        1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21l
+        42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJV
+        WUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAK
+        I48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r
+        4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF
+        0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07j1_M3UUUUU=
+X-Originating-IP: [182.150.46.145]
+X-CM-SenderInfo: psxzv046klw03qof0z/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Mika Westerberg [mailto:mika.westerberg@linux.intel.com]
-> Sent: Tuesday, September 11, 2018 4:33 AM
-> To: Limonciello, Mario
-> Cc: whitequark@whitequark.org; heikki.krogerus@linux.intel.com; linux-
-> kernel@vger.kernel.org
-> Subject: Re: USB type-C altmode support for UCSI
->=20
-> On Mon, Sep 10, 2018 at 09:25:48PM +0000, Mario.Limonciello@dell.com wrot=
-e:
-> > Also they had said it would be interesting to know if anything newer su=
-ffers
-> > this same fault (such as XPS 9370 or Precision 5530).
->=20
-> I tried 9370 and it detects the adapter correctly. IIRC I did the same
-> for 5530 and it worked as well.
+On 2018/9/11 18:14, Borislav Petkov wrote:
+>> @@ -1211,9 +1216,11 @@ void __init sync_Arb_IDs(void)
+>>   {
+>>   	/*
+>>   	 * Unsupported on P4 - see Intel Dev. Manual Vol. 3, Ch. 8.6.1 And not
+>> -	 * needed on AMD.
+>> +	 * needed on AMD or Hygon.
+>>   	 */
+>> -	if (modern_apic() || boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
+>> +	if (modern_apic() ||
+>> +	    boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||
+>> +	    boot_cpu_data.x86_vendor == X86_VENDOR_HYGON)
+> 
+> This change is not needed, after the above hunk in modern_apic(), right?
 
-Thanks for confirming that.  Hopefully the same change can be ported to PD =
-controller
-firmware then on other models, I'll inquire.
+Yes, you are right. Since the Hygon Dhyana CPU always uses modern APIC,
+so the function modern_apic will always return true for Hygon Dhyana.
+I will remove this change in next version of patch.
+
+> 
+> With it removed:
+> 
+> Reviewed-by: Borislav Petkov <bp@suse.de>
+
+-- 
+Regards,
+Pu Wen
+
