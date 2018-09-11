@@ -2,126 +2,142 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4661EC04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 12:11:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46BA1C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 12:11:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3A8320833
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 12:11:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3A8320833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id DA18820833
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 12:11:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="b6zlLZrm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA18820833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727164AbeIKRKr (ORCPT
+        id S1727626AbeIKRKw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 13:10:47 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60790 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726612AbeIKRKr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 13:10:47 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 076C0AFC4;
-        Tue, 11 Sep 2018 12:11:42 +0000 (UTC)
-Date:   Tue, 11 Sep 2018 14:11:41 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com, Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>
-Subject: Re: [PATCH RFC] mm: don't raise MEMCG_OOM event due to failed
- high-order allocation
-Message-ID: <20180911121141.GS10951@dhcp22.suse.cz>
-References: <20180910215622.4428-1-guro@fb.com>
+        Tue, 11 Sep 2018 13:10:52 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:43786 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726612AbeIKRKv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 13:10:51 -0400
+Received: by mail-ed1-f65.google.com with SMTP id z27-v6so19040958edb.10
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 05:11:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=chNh33E14PeeuEFZ0HCvg8b1xy178fueSIQoA1swfzk=;
+        b=b6zlLZrmJRRA+2JH1Dn+66U6G8WdH8PM+ey7WCFQNBt/cFbLwwp9Qrys0xf3VzmBIK
+         n2uyxKXwf5n7If8jfcrnlF4KWuJx1UVqDm+Er2CF+u6XSR61g9MmwKVzc2paY7NR7xWf
+         xkYvEloFDdG2RCcCXoRpykYEdT2xzrtxJwrFQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=chNh33E14PeeuEFZ0HCvg8b1xy178fueSIQoA1swfzk=;
+        b=dD0PfuS7x9/6IiIvO3pKI1qwrMc1D0V0q1qxUzOMGDW2sa2+Yf4BqJFSCAwtdazHtB
+         E4E4u+tjndtbd0/XELksWPEuPgM6e85nLEoEj8Ky0eX9BCLgtjLVgmU8eyhrMnfvzXRZ
+         6i45FDdc55MvozM9W3ZpEBsFRHiqPwIkUAqACYQnSg+d9t1yBl95vCDwvhNgC0f9oiOh
+         /g4/3Zm0X929fv+3h5hHNqnUj+3v7SknSBCH1zp5ndczYNIWtPFcDVIgv7BBu5qccnDR
+         5CAiLpY2mo4NzfbQ2frfLiinJrKHp9egIWyuDwSwNkHHA986fI2DVtieTNBsnxeCTC61
+         biDQ==
+X-Gm-Message-State: APzg51BowE3EI3g/q4NRL0vUUaa0Bx3ZD9yRRH8V6S6ufwc7XGaJT8KK
+        E3pOoLBW2YD9Vl6F+mFdaip5Ew==
+X-Google-Smtp-Source: ANB0VdZC9/9+KW/GXv9WqXlnQ4sIAsn8HYMb3CteiPi1mnL4cyNh79uodTN2r/WZCUl6kV3yzYtpVA==
+X-Received: by 2002:a50:91da:: with SMTP id h26-v6mr28071585eda.87.1536667907448;
+        Tue, 11 Sep 2018 05:11:47 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id l16-v6sm9702165edb.41.2018.09.11.05.11.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 11 Sep 2018 05:11:46 -0700 (PDT)
+Date:   Tue, 11 Sep 2018 14:11:43 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Joe Perches <joe@perches.com>,
+        Meng Xu <mengxu.gatech@gmail.com>,
+        Nicolas Pitre <nicolas.pitre@linaro.org>,
+        Thomas Meyer <thomas@m3y3r.de>,
+        Mike Frysinger <vapier@chromium.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Thierry Reding <treding@nvidia.com>,
+        David Lechner <david@lechnology.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Daniel Vetter <daniel.vetter@intel.com>
+Subject: Re: [PATCH 2/4] vt: Remove vc_panic_force_write
+Message-ID: <20180911121143.GJ19774@phenom.ffwll.local>
+Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>, Joe Perches <joe@perches.com>,
+        Meng Xu <mengxu.gatech@gmail.com>,
+        Nicolas Pitre <nicolas.pitre@linaro.org>,
+        Thomas Meyer <thomas@m3y3r.de>,
+        Mike Frysinger <vapier@chromium.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Thierry Reding <treding@nvidia.com>,
+        David Lechner <david@lechnology.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Daniel Vetter <daniel.vetter@intel.com>
+References: <20180822085405.10787-1-daniel.vetter@ffwll.ch>
+ <20180822085405.10787-2-daniel.vetter@ffwll.ch>
+ <20180822085919.GA32014@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180910215622.4428-1-guro@fb.com>
+In-Reply-To: <20180822085919.GA32014@kroah.com>
+X-Operating-System: Linux phenom 4.14.0-3-amd64 
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 10-09-18 14:56:22, Roman Gushchin wrote:
-> The memcg OOM killer is never invoked due to a failed high-order
-> allocation, however the MEMCG_OOM event can be easily raised.
+On Wed, Aug 22, 2018 at 10:59:19AM +0200, Greg Kroah-Hartman wrote:
+> On Wed, Aug 22, 2018 at 10:54:03AM +0200, Daniel Vetter wrote:
+> > It was only used by the panic support in fbcon, which is now gone.
+> > Remove this now dead code too.
+> > 
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Cc: Kees Cook <keescook@chromium.org>
+> > Cc: Joe Perches <joe@perches.com>
+> > Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+> > Cc: Meng Xu <mengxu.gatech@gmail.com>
+> > Cc: Nicolas Pitre <nicolas.pitre@linaro.org>
+> > Cc: Thomas Meyer <thomas@m3y3r.de>
+> > Cc: Mike Frysinger <vapier@chromium.org>
+> > Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> > Cc: Hans de Goede <hdegoede@redhat.com>
+> > Cc: Thierry Reding <treding@nvidia.com>
+> > Cc: David Lechner <david@lechnology.com>
+> > Cc: Philippe Ombredanne <pombredanne@nexb.com>
+> > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > Cc: Kate Stewart <kstewart@linuxfoundation.org>
+> > Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+> > ---
 > 
-> Under some memory pressure it can happen easily because of a
-> concurrent allocation. Let's look at try_charge(). Even if we were
-> able to reclaim enough memory, this check can fail due to a race
-> with another allocation:
-> 
->     if (mem_cgroup_margin(mem_over_limit) >= nr_pages)
->         goto retry;
-> 
-> For regular pages the following condition will save us from triggering
-> the OOM:
-> 
->    if (nr_reclaimed && nr_pages <= (1 << PAGE_ALLOC_COSTLY_ORDER))
->        goto retry;
-> 
-> But for high-order allocation this condition will intentionally fail.
-> The reason behind is that we'll likely fall to regular pages anyway,
-> so it's ok and even preferred to return ENOMEM.
-> 
-> In this case the idea of raising the MEMCG_OOM event looks dubious.
+> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Why is this a problem though? IIRC this event was deliberately placed
-outside of the oom path because we wanted to count allocation failures
-and this is also documented that way
-
-          oom
-                The number of time the cgroup's memory usage was
-                reached the limit and allocation was about to fail.
-
-                Depending on context result could be invocation of OOM
-                killer and retrying allocation or failing a
-
-One could argue that we do not apply the same logic to GFP_NOWAIT
-requests but in general I would like to see a good reason to change
-the behavior and if it is really the right thing to do then we need to
-update the documentation as well.
-
-> Fix this by moving MEMCG_OOM raising to  mem_cgroup_oom() after
-> allocation order check, so that the event won't be raised for high
-> order allocations.
-> 
-> Signed-off-by: Roman Gushchin <guro@fb.com>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
-> ---
->  mm/memcontrol.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index fcec9b39e2a3..103ca3c31c04 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -1669,6 +1669,8 @@ static enum oom_status mem_cgroup_oom(struct mem_cgroup *memcg, gfp_t mask, int
->  	if (order > PAGE_ALLOC_COSTLY_ORDER)
->  		return OOM_SKIPPED;
->  
-> +	memcg_memory_event(memcg, MEMCG_OOM);
-> +
->  	/*
->  	 * We are in the middle of the charge context here, so we
->  	 * don't want to block when potentially sitting on a callstack
-> @@ -2250,8 +2252,6 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
->  	if (fatal_signal_pending(current))
->  		goto force;
->  
-> -	memcg_memory_event(mem_over_limit, MEMCG_OOM);
-> -
->  	/*
->  	 * keep retrying as long as the memcg oom killer is able to make
->  	 * a forward progress or bypass the charge if the oom killer
-> -- 
-> 2.17.1
-
+Queued for 4.20/5.0 in drm-misc-next together with the other patches in
+this series.
 -- 
-Michal Hocko
-SUSE Labs
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
