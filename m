@@ -2,95 +2,104 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9831FC6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 13:04:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5923C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 13:09:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 418F520866
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 13:04:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 418F520866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
+	by mail.kernel.org (Postfix) with ESMTP id 8B8BA20866
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 13:09:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MEm2tptB";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="B/Nmeenz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B8BA20866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727973AbeIKSDV (ORCPT
+        id S1727534AbeIKSIS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 14:03:21 -0400
-Received: from smtp17.cstnet.cn ([159.226.251.17]:44204 "EHLO cstnet.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727287AbeIKSDU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 14:03:20 -0400
-Received: from [172.20.20.131] (unknown [182.150.46.145])
-        by APP-09 (Coremail) with SMTP id swCowAC3uIAuvZdbxzXsCA--.8649S2;
-        Tue, 11 Sep 2018 21:03:43 +0800 (CST)
-From:   Pu Wen <puwen@hygon.cn>
-Subject: Re: [PATCH v6 08/16] x86/apic: Add Hygon Dhyana support to APIC
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, thomas.lendacky@amd.com, pbonzini@redhat.com,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
-References: <cover.1536550549.git.puwen@hygon.cn>
- <4f03e734faa5b2b69b0947a156bea29cddcc95ce.1536550550.git.puwen@hygon.cn>
- <20180911101454.GE12094@zn.tnic>
-Message-ID: <b8055a18-2002-13b2-3438-7fbb38149837@hygon.cn>
-Date:   Tue, 11 Sep 2018 21:03:41 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 11 Sep 2018 14:08:18 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:39368 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726689AbeIKSIS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 14:08:18 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 14C43609A1; Tue, 11 Sep 2018 13:09:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1536671342;
+        bh=5kdkKMj+1JAIxNHow0D00mlne6A6xuDtMS7nIKVlbBM=;
+        h=Date:From:To:Cc:Subject:From;
+        b=MEm2tptBJFlKfHovYdYDZGP2b2QITvIQGIXbPUlgecmTwVo0a+AcDjn0oxbQ+nijO
+         qh7vzIqt7JedqiScNpl7D8mB+W/xrELvrP+iUmxgudUO0O1Yla4rt2mLwnmZW+1VRT
+         htsDTvVgaE+JrQSqnbEb2QHBTndsgzZAy1XkPOzw=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id B30286092A;
+        Tue, 11 Sep 2018 13:09:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1536671341;
+        bh=5kdkKMj+1JAIxNHow0D00mlne6A6xuDtMS7nIKVlbBM=;
+        h=Date:From:To:Cc:Subject:From;
+        b=B/NmeenzIV7iPq6H4mb3Mn67tLBjym2cnkdPvlPESUJGKXl+PsqBnkx2NfqV8x9uz
+         L4HmU3Pp++Mz6WPv2h4OCVHBWpFGKMs1CtW9pcs4bNZFbcDNQxUe2ba2fdbS0LOl5m
+         /qQOsJddKCRW0HuUEk8tVoIbyv6ANa4J/PWj6E2U=
 MIME-Version: 1.0
-In-Reply-To: <20180911101454.GE12094@zn.tnic>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: swCowAC3uIAuvZdbxzXsCA--.8649S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrKF4rKF1DZw1DJw1xZry7Wrg_yoW3ZrcEgF
-        yDCr1DG3yqqay8Zr48GF45Gw43Gan09FW0ya43JF13CFnxArn0ga1fKw4vvryrWayftw42
-        yr4rta9Yvw1a9jkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUbckYjsxI4VWkCwAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I
-        6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
-        8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0
-        cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z2
-        80aVCY1x0267AKxVW8JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
-        w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r4UJVWxJr
-        1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21l
-        42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJV
-        WUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAK
-        I48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r
-        4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF
-        0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07j1_M3UUUUU=
-X-Originating-IP: [182.150.46.145]
-X-CM-SenderInfo: psxzv046klw03qof0z/
+Date:   Tue, 11 Sep 2018 06:09:01 -0700
+From:   Sodagudi Prasad <psodagud@codeaurora.org>
+To:     bp@alien8.de, mchehab@kernel.org, linux-edac@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: EDAC polling
+Message-ID: <ed6869d5d90e03c52ad2b8577f7f5772@codeaurora.org>
+X-Sender: psodagud@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/9/11 18:14, Borislav Petkov wrote:
->> @@ -1211,9 +1216,11 @@ void __init sync_Arb_IDs(void)
->>   {
->>   	/*
->>   	 * Unsupported on P4 - see Intel Dev. Manual Vol. 3, Ch. 8.6.1 And not
->> -	 * needed on AMD.
->> +	 * needed on AMD or Hygon.
->>   	 */
->> -	if (modern_apic() || boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
->> +	if (modern_apic() ||
->> +	    boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||
->> +	    boot_cpu_data.x86_vendor == X86_VENDOR_HYGON)
-> 
-> This change is not needed, after the above hunk in modern_apic(), right?
 
-Yes, you are right. Since the Hygon Dhyana CPU always uses modern APIC,
-so the function modern_apic will always return true for Hygon Dhyana.
-I will remove this change in next version of patch.
+Hi All,
 
-> 
-> With it removed:
-> 
-> Reviewed-by: Borislav Petkov <bp@suse.de>
+While adding edac_device control info using edac_device_add_device(), 
+changed the poll_msec at client driver level.
+For example -.
+https://source.codeaurora.org/quic/la/kernel/msm-4.9/tree/drivers/edac/qcom_llcc_edac.c?h=msm-4.9#n385
+
+
+I see that client driver request is not considered and always default 
+value(1 second) is considered. During the initialization
+edac_device_workq_setup sets poll_msed to 1 second.
+
+int edac_device_add_device(struct edac_device_ctl_info *edac_dev)
+{
+...
+...
+         /* If there IS a check routine, then we are running POLLED */
+         if (edac_dev->edac_check != NULL) {
+                 /* This instance is NOW RUNNING */
+                 edac_dev->op_state = OP_RUNNING_POLL;
+
+                 /*
+                  * enable workq processing on this instance,
+                  * default = 1000 msec
+                  */
+                 edac_device_workq_setup(edac_dev, 1000);
+         } else {
+                 edac_dev->op_state = OP_RUNNING_INTERRUPT;
+         }
+
+
+May I know why client edev_ctl->poll_msec settings is not considered?
+
+
+-Thanks, Prasad
 
 -- 
-Regards,
-Pu Wen
-
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
+Forum,
+Linux Foundation Collaborative Project
