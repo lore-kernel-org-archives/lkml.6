@@ -2,102 +2,148 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37D0AC04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 04:40:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18E64C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 04:44:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B568C20865
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 04:40:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A897D20865
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 04:44:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="XrJrX6CP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B568C20865
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="dXsiEzoz";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CAfR1HE0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A897D20865
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726722AbeIKJiP (ORCPT
+        id S1726746AbeIKJly (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 05:38:15 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:51532 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726426AbeIKJiP (ORCPT
+        Tue, 11 Sep 2018 05:41:54 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:35672 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726426AbeIKJlx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 05:38:15 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8B4d2HV024986;
-        Tue, 11 Sep 2018 04:40:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=K6584tUf+jiABk6HMltVlfFhB3coE6drQg86b335fJI=;
- b=XrJrX6CP21VJhQY7XkKVKJlCmqqtKp7cYy7eSeLkLdryCvQm0x04KKru5k/DKX1j1EBe
- pK8HVxn6BCO3ineXlIZXQedB6j6rt6wrVgWYkDQcvIeJLOumPjgio9fYMkxep3kkxjh6
- t8ktqwqMw5WrpE4dkhaT5v+/BX+qhUwdRiUUcUSjc4BzXny6XXOLO7exShmLxnWZDN21
- Fli4+EZ8N0r9QcDP8hdrfgmvjLkqKJFmBsNvJuarH/ykOzL9ARQFzbGaPDElP8fGqJu6
- yxGTRF6G+Ka5zznKzQE9g0qNd3RL6aw98kWU1RLYkylzPpAvNHBaH0tougqwiS464RLe zg== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2130.oracle.com with ESMTP id 2mc5ut9kt5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 Sep 2018 04:40:43 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w8B4ebgL017952
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 Sep 2018 04:40:38 GMT
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w8B4ebUV015253;
-        Tue, 11 Sep 2018 04:40:37 GMT
-Received: from [10.182.70.180] (/10.182.70.180)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 10 Sep 2018 21:40:36 -0700
-Subject: Re: [PATCH] percpu-refcount: relax limit on percpu_ref_reinit()
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-block@vger.kernel.org
-References: <20180909125824.9150-1-ming.lei@redhat.com>
- <d4fb5fcc-305e-b3a7-0124-9c7b75042f01@oracle.com>
- <20180910161135.GA27430@ming.t460p>
- <e91ee38e-3ea2-a003-2aac-8a8cc5c8f04a@oracle.com>
- <20180911040323.GC30977@ming.t460p>
-From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <771fa1eb-85d3-2ff2-6070-207874da85b6@oracle.com>
-Date:   Tue, 11 Sep 2018 12:40:36 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180911040323.GC30977@ming.t460p>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9012 signatures=668708
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=488
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809110051
+        Tue, 11 Sep 2018 05:41:53 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 1B43E60998; Tue, 11 Sep 2018 04:44:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1536641068;
+        bh=9TaJT/jh32MNAfbqU6Iwa704Nc/844JyOTeJMp1o+bM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=dXsiEzozfdWuDQfASbGP2VXNksc+Qy7U+RlFfO6qISoxOCb5Qt2euKZpmUwlu1uqp
+         zpGhoAtSA0NLcb7/PES7IELmNlCX3nMZ6rwX2hPwzYvfBKQFE4M28OpVmCjyiG7rAB
+         5wU01Q7PR9fAZIgazm4t/EqsRYpT0nc//Fl4l69A=
+Received: from CANG02.ap.qualcomm.com (unknown [180.166.53.21])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: cang@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 13CE660818;
+        Tue, 11 Sep 2018 04:44:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1536641067;
+        bh=9TaJT/jh32MNAfbqU6Iwa704Nc/844JyOTeJMp1o+bM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=CAfR1HE0wPaI2Bt/86pb8UmsiWpyt/QOwenxrqSXLhOxr0v3upLfVnOAzWF2jK2kc
+         eYfwCoS811pQO+e8FsW9IvGw4gXZkvzGIy9DzHgzRo971fL9t+453g5h3rnISBBr6Z
+         2TaoPg23VcykO4J1KBqWFH68gJSr25WfYYLXx6Dg=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 13CE660818
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cang@codeaurora.org
+From:   Can Guo <cang@codeaurora.org>
+To:     subhashj@codeaurora.org, asutoshd@codeaurora.org,
+        vivek.gautam@codeaurora.org, evgreen@chromium.org,
+        rnayak@codeaurora.org, vinholikatti@gmail.com,
+        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
+Cc:     linux-scsi@vger.kernel.org, Can Guo <cang@codeaurora.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Manu Gautam <mgautam@codeaurora.org>,
+        Sasha Levin <alexander.levin@microsoft.com>,
+        linux-kernel@vger.kernel.org (open list:GENERIC PHY FRAMEWORK)
+Subject: [PATCH v9 1/7] phy: Update PHY power control sequence
+Date:   Tue, 11 Sep 2018 12:37:05 +0800
+Message-Id: <20180911044418.15960-1-cang@codeaurora.org>
+X-Mailer: git-send-email 2.15.0.windows.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ming
+All PHYs should be powered on before register configuration starts. And
+only PCIe PHYs need an extra power control before deasserts reset state.
 
-On 09/11/2018 12:03 PM, Ming Lei wrote:
-> After the refcount is switched to atomic mode, the whole counting is
-> done on the atomic part. Then if the refcount need to switch to percpu mode
-> again, all percpu part of the counter is re-initialized as zero simply. This
-> is invariant with/without this patch.
+Signed-off-by: Can Guo <cang@codeaurora.org>
+Reviewed-by: Manu Gautam <mgautam@codeaurora.org>
+Reviewed-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+Reviewed-by: Evan Green <evgreen@chromium.org>
+---
+ drivers/phy/qualcomm/phy-qcom-qmp.c | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
-Does the "whole counting" here means ?
+diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.c b/drivers/phy/qualcomm/phy-qcom-qmp.c
+index 97ef942..ccb8578 100644
+--- a/drivers/phy/qualcomm/phy-qcom-qmp.c
++++ b/drivers/phy/qualcomm/phy-qcom-qmp.c
+@@ -935,10 +935,12 @@ static void qcom_qmp_phy_configure(void __iomem *base,
+ 	}
+ }
+ 
+-static int qcom_qmp_phy_com_init(struct qcom_qmp *qmp)
++static int qcom_qmp_phy_com_init(struct qmp_phy *qphy)
+ {
++	struct qcom_qmp *qmp = qphy->qmp;
+ 	const struct qmp_phy_cfg *cfg = qmp->cfg;
+ 	void __iomem *serdes = qmp->serdes;
++	void __iomem *pcs = qphy->pcs;
+ 	void __iomem *dp_com = qmp->dp_com;
+ 	int ret, i;
+ 
+@@ -979,10 +981,6 @@ static int qcom_qmp_phy_com_init(struct qcom_qmp *qmp)
+ 		goto err_rst;
+ 	}
+ 
+-	if (cfg->has_phy_com_ctrl)
+-		qphy_setbits(serdes, cfg->regs[QPHY_COM_POWER_DOWN_CONTROL],
+-			     SW_PWRDN);
+-
+ 	if (cfg->has_phy_dp_com_ctrl) {
+ 		qphy_setbits(dp_com, QPHY_V3_DP_COM_POWER_DOWN_CTRL,
+ 			     SW_PWRDN);
+@@ -1000,6 +998,12 @@ static int qcom_qmp_phy_com_init(struct qcom_qmp *qmp)
+ 			     SW_USB3PHY_RESET_MUX | SW_USB3PHY_RESET);
+ 	}
+ 
++	if (cfg->has_phy_com_ctrl)
++		qphy_setbits(serdes, cfg->regs[QPHY_COM_POWER_DOWN_CONTROL],
++			     SW_PWRDN);
++	else
++		qphy_setbits(pcs, QPHY_POWER_DOWN_CONTROL, cfg->pwrdn_ctrl);
++
+ 	/* Serdes configuration */
+ 	qcom_qmp_phy_configure(serdes, cfg->regs, cfg->serdes_tbl,
+ 			       cfg->serdes_tbl_num);
+@@ -1090,7 +1094,7 @@ static int qcom_qmp_phy_init(struct phy *phy)
+ 
+ 	dev_vdbg(qmp->dev, "Initializing QMP phy\n");
+ 
+-	ret = qcom_qmp_phy_com_init(qmp);
++	ret = qcom_qmp_phy_com_init(qphy);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -1127,7 +1131,8 @@ static int qcom_qmp_phy_init(struct phy *phy)
+ 	 * Pull out PHY from POWER DOWN state.
+ 	 * This is active low enable signal to power-down PHY.
+ 	 */
+-	qphy_setbits(pcs, QPHY_POWER_DOWN_CONTROL, cfg->pwrdn_ctrl);
++	if(cfg->type == PHY_TYPE_PCIE)
++		qphy_setbits(pcs, QPHY_POWER_DOWN_CONTROL, cfg->pwrdn_ctrl);
+ 
+ 	if (cfg->has_pwrdn_delay)
+ 		usleep_range(cfg->pwrdn_delay_min, cfg->pwrdn_delay_max);
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
-(long)(sum (every cpu's refcounter)) + atomic refcounter
-
-and when switch to atomic mode, there could be value left in atomic refcounter.
-then the unsigned long percpu refcounter cound be decreased from 0.
-	
-From another angle, one request could be ended on a different cpu from the one where
-it is issued.
-
-Thanks
-Jianchao
