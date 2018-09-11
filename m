@@ -7,70 +7,56 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4233C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 19:36:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13AEEC04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 19:38:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 678B4206BB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 19:36:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7931F206BB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 19:38:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="R3dRCsST"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 678B4206BB
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="I0S6bnz8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7931F206BB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728127AbeILAhN (ORCPT
+        id S1727702AbeILAjA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 20:37:13 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:51608 "EHLO
+        Tue, 11 Sep 2018 20:39:00 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:52704 "EHLO
         aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726713AbeILAhM (ORCPT
+        with ESMTP id S1726689AbeILAjA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 20:37:12 -0400
+        Tue, 11 Sep 2018 20:39:00 -0400
 Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8BJYXuQ044987;
-        Tue, 11 Sep 2018 19:36:00 GMT
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8BJYPLm044916;
+        Tue, 11 Sep 2018 19:38:07 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
  references : from : message-id : date : mime-version : in-reply-to :
  content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=MiN6fZQABftP/Zfpz4YddAislRcHdJxQnnnMi9t/tyY=;
- b=R3dRCsSTa8yKHX/BHw+gMpoGvpsbTWvxQvbVlyLF8ComcofCEIrGFbuIO4uwbcKOLIA4
- ILEdPeiglGzCq8CQBhGrWQBvwCSWjNt6BI4niEjswH13YiE3DOUcp306WvVBNt8p9DGY
- G3+HB+Oj1PEY4ozoNNLVM/6P1j/xzj30+4NQ4IPxaPkqEf5j9tHSMlXAImEayrkQkL47
- 0F0ShMqOqDoo5ZfM7k0OfZhcMMyXxa3mAFN31HvKlbP37KP5n23k9C77ej8aMQAisz5+
- 4idZ/RJuGas6c9hGd6um95ykOAq3qJVHSR+CcnZQZ/dcJebdawh0gRksQ1ZUTdbkT4JQ Bw== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by aserp2120.oracle.com with ESMTP id 2mc6cpp96p-1
+ bh=bbZx+UwPqSLRdiWiREoOUU9XfdP3VaxOjl6CKeJQ7sQ=;
+ b=I0S6bnz8wORyxs5zgR57AJ/icuMjHbErAa7bC4oRYcNqSqia5lNugcTzUSjYO1GBr3Em
+ 2RCGYdfTRtUtYlr4BFEBC7BiNneIU8T/6SookEcXdvWr2IlH0DKvzjiJS6vvBZ/0vLTG
+ ZC7rhI3tpOSfmDNfTxftdqxTFfHBQEC7QtdLWK2Id1cODKdC0uJcX7LZILW6iN/wT4WB
+ /DaFzZJnvqr1PFkT4PE+T62kjW1C3O/FP4H1Anyys2FLLGJDmg01lPMhjXkfJtRzHODf
+ 7Boan+47m790+G7Le3p/sxG1v1U9fAGb0L3vztgN96PH8c68gNSmbxGgX6CQPZXqsSDn nQ== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2120.oracle.com with ESMTP id 2mc6cpp9h7-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 Sep 2018 19:36:00 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w8BJZw5E015645
+        Tue, 11 Sep 2018 19:38:07 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w8BJc6c5010140
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 Sep 2018 19:35:59 GMT
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w8BJZwb3010579;
-        Tue, 11 Sep 2018 19:35:58 GMT
+        Tue, 11 Sep 2018 19:38:06 GMT
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w8BJc4Wk008680;
+        Tue, 11 Sep 2018 19:38:04 GMT
 Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 11 Sep 2018 12:35:57 -0700
-Subject: Re: [PATCH v3] xen/balloon: add runtime control for scrubbing
- ballooned out pages
-To:     =?UTF-8?Q?Marek_Marczykowski-G=c3=b3recki?= 
-        <marmarek@invisiblethingslab.com>, xen-devel@lists.xenproject.org
-Cc:     Jonathan Corbet <corbet@lwn.net>, Juergen Gross <jgross@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Thymo van Beers <thymovanbeers@gmail.com>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
-References: <5B92A01D02000078001E67CE@prv1-mh.provo.novell.com>
- <20180907164912.21075-1-marmarek@invisiblethingslab.com>
+        with ESMTP ; Tue, 11 Sep 2018 12:38:04 -0700
+Subject: Re: [PATCH v4] xen: avoid crash in disable_hotplug_cpu
+To:     Olaf Hering <olaf@aepfle.de>, xen-devel@lists.xenproject.org
+Cc:     Juergen Gross <jgross@suse.com>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20180907143135.29608-1-olaf@aepfle.de>
 From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
@@ -116,14 +102,14 @@ Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
  Fm5PY8YtX576DchSP6qJC57/eAAe/9ztZdVAdesQwGb9hZHJc75B+VNm4xrh/PJO6c1THqdQ
  19WVJ+7rDx3PhVncGlbAOiiiE3NOFPJ1OQYxPKtpBUukAlOTnkKE6QcA4zckFepUkfmBV1wM
  Jg6OxFYd01z+a+oL
-Message-ID: <a7e4153b-4998-342f-af85-c84a5f4d9e0b@oracle.com>
-Date:   Tue, 11 Sep 2018 15:37:19 -0400
+Message-ID: <58466174-b1a4-c5db-2e53-46c7f7a82f57@oracle.com>
+Date:   Tue, 11 Sep 2018 15:39:37 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <20180907164912.21075-1-marmarek@invisiblethingslab.com>
+In-Reply-To: <20180907143135.29608-1-olaf@aepfle.de>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9013 signatures=668708
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
@@ -135,29 +121,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/7/18 12:49 PM, Marek Marczykowski-Górecki wrote:
-> Scrubbing pages on initial balloon down can take some time, especially
-> in nested virtualization case (nested EPT is slow). When HVM/PVH guest is
-> started with memory= significantly lower than maxmem=, all the extra
-> pages will be scrubbed before returning to Xen. But since most of them
-> weren't used at all at that point, Xen needs to populate them first
-> (from populate-on-demand pool). In nested virt case (Xen inside KVM)
-> this slows down the guest boot by 15-30s with just 1.5GB needed to be
-> returned to Xen.
+On 9/7/18 10:31 AM, Olaf Hering wrote:
+> The command 'xl vcpu-set 0 0', issued in dom0, will crash dom0:
 >
-> Add runtime parameter to enable/disable it, to allow initially disabling
-> scrubbing, then enable it back during boot (for example in initramfs).
-> Such usage relies on assumption that a) most pages ballooned out during
-> initial boot weren't used at all, and b) even if they were, very few
-> secrets are in the guest at that time (before any serious userspace
-> kicks in).
-> Convert CONFIG_XEN_SCRUB_PAGES to CONFIG_XEN_SCRUB_PAGES_DEFAULT (also
-> enabled by default), controlling default value for the new runtime
-> switch.
+> BUG: unable to handle kernel NULL pointer dereference at 00000000000002d8
+> PGD 0 P4D 0
+> Oops: 0000 [#1] PREEMPT SMP NOPTI
+> CPU: 7 PID: 65 Comm: xenwatch Not tainted 4.19.0-rc2-1.ga9462db-default #1 openSUSE Tumbleweed (unreleased)
+> Hardware name: Intel Corporation S5520UR/S5520UR, BIOS S5500.86B.01.00.0050.050620101605 05/06/2010
+> RIP: e030:device_offline+0x9/0xb0
+> Code: 77 24 00 e9 ce fe ff ff 48 8b 13 e9 68 ff ff ff 48 8b 13 e9 29 ff ff ff 48 8b 13 e9 ea fe ff ff 90 66 66 66 66 90 41 54 55 53 <f6> 87 d8 02 00 00 01 0f 85 88 00 00 00 48 c7 c2 20 09 60 81 31 f6
+> RSP: e02b:ffffc90040f27e80 EFLAGS: 00010203
+> RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+> RDX: ffff8801f3800000 RSI: ffffc90040f27e70 RDI: 0000000000000000
+> RBP: 0000000000000000 R08: ffffffff820e47b3 R09: 0000000000000000
+> R10: 0000000000007ff0 R11: 0000000000000000 R12: ffffffff822e6d30
+> R13: dead000000000200 R14: dead000000000100 R15: ffffffff8158b4e0
+> FS:  00007ffa595158c0(0000) GS:ffff8801f39c0000(0000) knlGS:0000000000000000
+> CS:  e033 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00000000000002d8 CR3: 00000001d9602000 CR4: 0000000000002660
+> Call Trace:
+>  handle_vcpu_hotplug_event+0xb5/0xc0
+>  xenwatch_thread+0x80/0x140
+>  ? wait_woken+0x80/0x80
+>  kthread+0x112/0x130
+>  ? kthread_create_worker_on_cpu+0x40/0x40
+>  ret_from_fork+0x3a/0x50
 >
-> Signed-off-by: Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
+> This happens because handle_vcpu_hotplug_event is called twice. In the
+> first iteration cpu_present is still true, in the second iteration
+> cpu_present is false which causes get_cpu_device to return NULL.
+> In case of cpu#0, cpu_online is apparently always true.
+>
+> Fix this crash by checking if the cpu can be hotplugged, which is false
+> for a cpu that was just removed.
+>
+> Also check if the cpu was actually offlined by device_remove, otherwise
+> leave the cpu_present state as it is.
+>
+> Rearrange to code to do all work with device_hotplug_lock held.
+>
+> Signed-off-by: Olaf Hering <olaf@aepfle.de>
 
 
-Applied to for-linux-4.19b.
+Applied to for-linus-4.19b
 
 -boris
+
