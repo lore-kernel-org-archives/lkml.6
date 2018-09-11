@@ -3,134 +3,98 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA0B8C43143
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 03:53:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44557C43143
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 03:53:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77FFA206B8
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 03:53:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7DD4206B8
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 03:53:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lLxro/gg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77FFA206B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="fW5qPGaD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7DD4206B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726804AbeIKIuO (ORCPT
+        id S1726945AbeIKIvJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 04:50:14 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:40480 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726301AbeIKIuO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 04:50:14 -0400
-Received: by mail-yw1-f66.google.com with SMTP id z143-v6so8691875ywa.7
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 20:52:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=istT2wjiviuI+NO1FLzN8hLHTX87ry+/t9zxJtjij/g=;
-        b=lLxro/ggYoreTi13tEvZUS0ISldrHlz6oGCtKE9O/uQSs8kMLFsZxKiWhtGdZIzCoN
-         /xFa1UMsSuSO8s5e9lx3PnR/cIFfdQZ86q9UMhP64Hz/2s33IbL+cuMTfmDJG0u8ybUv
-         z4LiREeJgfEddL6f7Aq0e9e1bANehMdwPUaOg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=istT2wjiviuI+NO1FLzN8hLHTX87ry+/t9zxJtjij/g=;
-        b=K+rurct9hkzDKIAmAzrIt6OoNG3/ks4gfwrP076kKXBOJsyITTXd5xQ3B0cH/LfN9J
-         mOArCUEv4ENFyZCU8d2rC19QTTnMosi0G62OYBL9wyQ/OS3N9lmuPG4kx6BdkgWrLdyZ
-         E/T0jr8+hUCI0iUBqrPHJwqqir292SsavjoBRJ0C6lkYI/3UV0PbqB5oypXUuzRWeILY
-         QVbQ1LcnjsHaGkjlZXzUxiHFZWJS7Qdt1uJjbxB3EIKwdf56e9T7m6U56Jf+PpeRaQ97
-         5C4ZAlUKOXfaee97/j1ERMOg13gdEA+P4rrl2NsR1wnNxVS+aYzOc+E6yv24VS2BYON4
-         Ll1A==
-X-Gm-Message-State: APzg51C5jJ9nfs+P0/C8VSrfpRzvWIUYxWpNMMTBA7rR7CySkOJwyw/w
-        gcA8zmn5JV+cAQy2XxSQh0Rs5e7CfPhplA==
-X-Google-Smtp-Source: ANB0VdZjkOyE83mLXWFo5ZG3JmoH+pMd2qI6u9dcduajUxMzE/QW5yGr97q9xeqPy68NSTlRdFzdOQ==
-X-Received: by 2002:a81:3856:: with SMTP id f83-v6mr11286260ywa.81.1536637976954;
-        Mon, 10 Sep 2018 20:52:56 -0700 (PDT)
-Received: from mail-yw1-f54.google.com (mail-yw1-f54.google.com. [209.85.161.54])
-        by smtp.gmail.com with ESMTPSA id r84-v6sm8680031ywe.10.2018.09.10.20.52.55
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Sep 2018 20:52:55 -0700 (PDT)
-Received: by mail-yw1-f54.google.com with SMTP id x83-v6so8705557ywd.4
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 20:52:55 -0700 (PDT)
-X-Received: by 2002:a0d:fdc4:: with SMTP id n187-v6mr11862280ywf.443.1536637974787;
- Mon, 10 Sep 2018 20:52:54 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180724140621.59624-1-tfiga@chromium.org> <bed0d45d-d5c0-d2dc-03d7-eedf99246182@xs4all.nl>
-In-Reply-To: <bed0d45d-d5c0-d2dc-03d7-eedf99246182@xs4all.nl>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Tue, 11 Sep 2018 12:52:43 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5C3pMyVBokWs4QS-O3jckFXY-7eG-ayD357v8TDyU5zTA@mail.gmail.com>
-Message-ID: <CAAFQd5C3pMyVBokWs4QS-O3jckFXY-7eG-ayD357v8TDyU5zTA@mail.gmail.com>
-Subject: Re: [PATCH 0/2] Document memory-to-memory video codec interfaces
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Tue, 11 Sep 2018 04:51:09 -0400
+Received: from ozlabs.org ([203.11.71.1]:48203 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726305AbeIKIvJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 04:51:09 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 428WHK2KHjz9s4s;
+        Tue, 11 Sep 2018 13:53:48 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1536638030;
+        bh=U7hm81LaUaRsiFBGgJZJKRJFO+l+BCvVJ9bLnjhYi6Y=;
+        h=Date:From:To:Cc:Subject:From;
+        b=fW5qPGaD88j9ihPXkj+9HB54r+cDJCEnIVZXvWydL4K0NJTqg8fLUVKYxHLD24xlR
+         Z/WhKSpZfYPphQ93AItp5EVKcr8K+44aF17nrcMz5huo2PmN4CC5KnhejeThRU87Ev
+         h4ffQlbTjIIiYK4qzZpYa8jY7Ly9I/gZ0iHwf7JRVH/CGmJD3AaYPoOh69Q0GeaqKS
+         m+BnunEVZtTMVIK4fzEvTJDsTYnbLX2qooOyPAlecuwe7h4c6Xo93+X2hzlvJofqPr
+         p+Nx39K8bpn6GRpONy7nrkAy8JNUyi/izvZCqeqcEv4VwSsBkX+PUQ3C7p4CqsafuV
+         u+jnDJ61+4fsw==
+Date:   Tue, 11 Sep 2018 13:53:47 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Pawel Osciak <posciak@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
-        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
-        jtp.park@samsung.com, Philipp Zabel <p.zabel@pengutronix.de>,
-        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= 
-        <tiffany.lin@mediatek.com>,
-        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?= 
-        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
-        nicolas@ndufresne.ca,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dave.stevenson@raspberrypi.org,
-        Ezequiel Garcia <ezequiel@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Andy Lutomirski <luto@kernel.org>
+Subject: linux-next: build warning after merge of the tip tree
+Message-ID: <20180911135347.0af423f0@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/PdVK_xcHAtsPUE5Is.0h_F="; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 10, 2018 at 6:14 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
->
-> Hi Tomasz,
->
-> On 07/24/2018 04:06 PM, Tomasz Figa wrote:
-> > This series attempts to add the documentation of what was discussed
-> > during Media Workshops at LinuxCon Europe 2012 in Barcelona and then
-> > later Embedded Linux Conference Europe 2014 in D=C3=BCsseldorf and then
-> > eventually written down by Pawel Osciak and tweaked a bit by Chrome OS
-> > video team (but mostly in a cosmetic way or making the document more
-> > precise), during the several years of Chrome OS using the APIs in
-> > production.
-> >
-> > Note that most, if not all, of the API is already implemented in
-> > existing mainline drivers, such as s5p-mfc or mtk-vcodec. Intention of
-> > this series is just to formalize what we already have.
-> >
-> > It is an initial conversion from Google Docs to RST, so formatting is
-> > likely to need some further polishing. It is also the first time for me
-> > to create such long RST documention. I could not find any other instanc=
-e
-> > of similar userspace sequence specifications among our Media documents,
-> > so I mostly followed what was there in the source. Feel free to suggest
-> > a better format.
-> >
-> > Much of credits should go to Pawel Osciak, for writing most of the
-> > original text of the initial RFC.
->
-> I'm adding this here as a result of an irc discussion, since it applies
-> to both encoders and decoders:
->
-> How to handle non-square pixel aspect ratios?
->
-> Decoders would have to report it through VIDIOC_CROPCAP, so this needs
-> to be documented when the application should call this, but I don't
-> think we can provide this information today for encoders.
+--Sig_/PdVK_xcHAtsPUE5Is.0h_F=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for heads up. Will document that VIDIOC_CROPCAP needs to return it.
+Hi all,
 
-Best regards,
-Tomasz
+After merging the tip tree, today's linux-next build (x86_64 allnoconfig)
+produced this warning:
+
+arch/x86/kernel/cpu/common.c: In function 'syscall_init':
+arch/x86/kernel/cpu/common.c:1534:6: warning: unused variable 'cpu' [-Wunus=
+ed-variable]
+  int cpu =3D smp_processor_id();
+      ^~~
+
+Introduced by commit
+
+  86635715ee42 ("x86/pti/64: Remove the SYSCALL64 entry trampoline")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/PdVK_xcHAtsPUE5Is.0h_F=
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluXPEsACgkQAVBC80lX
+0Gyv4wf6A9EUl1isf2tWoyRA+rpUyU35DDMG861H8dApxf0Hw4WevT7GIzyfNb07
+6Sv17/6uXD6wxrP0xPe4L7hZGRDfE3NqTZaCzlaXJaJ5xnXlLhbrdKYoEOdLe7vy
+qwrRcGO9sdMx68Y/ksPQf0ADocNDc59HQWlCp1d7OXPTJ6Xtwg/3THnYjpd2FPQV
+7c1hKvMSUi88GpUQwt7HhtpQ2WLIH1DxP9WuL0xic8I0dFaNH92JErbeh2ugycVs
+bK/SFj8EDUGaMleNwtOTuOEJyPTorNLoFBciJ3IBHhYszeOCDXriNLlnMM6YBfK3
+h7g01nAH5soEwQ2141heyv8V/nIcZA==
+=av4c
+-----END PGP SIGNATURE-----
+
+--Sig_/PdVK_xcHAtsPUE5Is.0h_F=--
