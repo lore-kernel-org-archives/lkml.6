@@ -2,81 +2,137 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BE8AC6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 13:31:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41806C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 13:32:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34A7C20833
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 13:31:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF8E320833
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 13:32:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="hNR2ILSE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34A7C20833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=verge.net.au
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="fR9FiIxJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF8E320833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727784AbeIKSa4 (ORCPT
+        id S1727788AbeIKSbV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 14:30:56 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:52413 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726761AbeIKSaz (ORCPT
+        Tue, 11 Sep 2018 14:31:21 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:36757 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726983AbeIKSbV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 14:30:55 -0400
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 532EE25AD76;
-        Tue, 11 Sep 2018 23:31:33 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1536672693; bh=XygwwBZ6mVxD0BgtBY5v0hfEPbKJiBYrjeO27CGNHH0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hNR2ILSE8QJK1211bxo8/fOnLTm5vpxUSrDvM39EZevf0ikIAJ7QHPpLd70FYpEBa
-         HjQnXVvGXsCbuWso3tlw7pHQ+7CYwQgNsqXTHSiCq923TwE4076CTkMNSTOVE77KON
-         qOtVftkygwAfK4CgffeE9IZEIUjt7zyQClIGgVqc=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 55C659403ED; Tue, 11 Sep 2018 15:31:31 +0200 (CEST)
-Date:   Tue, 11 Sep 2018 15:31:31 +0200
-From:   Simon Horman <horms@verge.net.au>
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-can@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] dt-bindings: can: rcar_can: Add r8a774a1 support
-Message-ID: <20180911133130.4uofs7xskc2canjr@verge.net.au>
-References: <1536576195-11520-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1536576195-11520-3-git-send-email-fabrizio.castro@bp.renesas.com>
+        Tue, 11 Sep 2018 14:31:21 -0400
+Received: by mail-ed1-f65.google.com with SMTP id f4-v6so19257644edq.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 06:32:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=U2Nles02vh1w6gDMUV777ZN+CNqTB72XeCufts8A4rc=;
+        b=fR9FiIxJlMHHnbxAXxfgRn4gv9m4Z/c6XC5lLqLxYI26m1RsMhTT/1hIU5CXhIZW9c
+         uQFJStrrfNA/Ia70/E0mWF3uk7DWm7PAbu0YHmKUlPGz6du4egNSAVRXF2ttEHSWabyq
+         y0TjZfpsrlcwy125a//DqQT4LbbzfBheNLqsc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=U2Nles02vh1w6gDMUV777ZN+CNqTB72XeCufts8A4rc=;
+        b=kqP0H4bTQCG0QQgLG7suuwi4iIkiBaxS/q9aI1DFXknTEMgAQ+yN1kBbjYYbUJefpD
+         BUCwvPZmuwaYMOEMLXaCkcAZ/lzeKVlRL+gmPNtG3nJUXqJGcAsO/q8hKb/Dtk4OfAw2
+         Subw3LIK5/MQnfxKavYWqepE4kT/Np/32tEQNpoTyBpgC2zMmPzG8jU1uuCjC7a4vPWc
+         9KjT41bWcqD+utrjGKlDRyKNpu74Lvmt2ohcQ+20gFw1o7Kkz/5VRjqFsxsW+SPRO1vW
+         vTbFaEAUCDYepoBcZeQqUaLl1lM2NxuLDp3Zjkij0xkPYBYS+WegVDKEuO+j3i86JOiU
+         GMpQ==
+X-Gm-Message-State: APzg51AIiZJK7xe7Fy1Vj+a0VcUFJG2HV11jNSzkOYryekEwzO2uxxCr
+        zTtPYlz8wJdMFukCbWWCvywCYmS3la61tA==
+X-Google-Smtp-Source: ANB0VdZZ0xBg4Vxiyok6alvUQrS4U0pCRXJ3ybGhkUxfhmvIGgX8e5fOfCTErAA7yuM23Usq5HqttQ==
+X-Received: by 2002:a50:adaa:: with SMTP id a39-v6mr28108924edd.194.1536672719352;
+        Tue, 11 Sep 2018 06:31:59 -0700 (PDT)
+Received: from andrea (85.100.broadband17.iol.cz. [109.80.100.85])
+        by smtp.gmail.com with ESMTPSA id d56-v6sm9764408edb.7.2018.09.11.06.31.57
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 11 Sep 2018 06:31:58 -0700 (PDT)
+Date:   Tue, 11 Sep 2018 15:31:51 +0200
+From:   Andrea Parri <andrea.parri@amarulasolutions.com>
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     Patrick Bellasi <patrick.bellasi@arm.com>, peterz@infradead.org,
+        rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
+        mingo@redhat.com, dietmar.eggemann@arm.com,
+        morten.rasmussen@arm.com, chris.redpath@arm.com,
+        valentin.schneider@arm.com, vincent.guittot@linaro.org,
+        thara.gopinath@linaro.org, viresh.kumar@linaro.org,
+        tkjos@google.com, joel@joelfernandes.org, smuckle@google.com,
+        adharmap@codeaurora.org, skannan@codeaurora.org,
+        pkondeti@codeaurora.org, juri.lelli@redhat.com,
+        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
+        currojerez@riseup.net, javi.merino@kernel.org
+Subject: Re: [PATCH v6 03/14] PM: Introduce an Energy Model management
+ framework
+Message-ID: <20180911133151.GA29426@andrea>
+References: <20180820094420.26590-1-quentin.perret@arm.com>
+ <20180820094420.26590-4-quentin.perret@arm.com>
+ <20180829100435.GP2960@e110439-lin>
+ <20180829132811.iacfltcos6kfgp7e@queper01-lin>
+ <20180911093456.GA27352@andrea>
+ <20180911123248.mjcaxrycfdelypo2@queper01-lin>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1536576195-11520-3-git-send-email-fabrizio.castro@bp.renesas.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180911123248.mjcaxrycfdelypo2@queper01-lin>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 10, 2018 at 11:43:14AM +0100, Fabrizio Castro wrote:
-> Document RZ/G2M (r8a774a1) SoC specific bindings.
+On Tue, Sep 11, 2018 at 01:32:50PM +0100, Quentin Perret wrote:
+> Hi Andrea,
 > 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Chris Paterson <Chris.Paterson2@renesas.com>
-> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-> ---
-> v1->v2:
-> * dropped "renesas,rzg-gen2-can" and fixed "clocks" property description
->   as per Geert's comments.
+> On Tuesday 11 Sep 2018 at 11:34:56 (+0200), Andrea Parri wrote:
+> > FYI, the directory "tools/memory-model/" provides an "automated
+> > memory-barriers.txt": in short, you encode your "memory ordering
+> > questions" into "litmus tests" to be passed to the tool/simulator;
+> > the tool will then answer with "Yes/No" (plus other information).
+> > 
+> > Some preparation is required to set up and learn how to use the
+> > LKMM tools, but once there, I expect them to be more "efficient"
+> > than reading memory-barriers.txt... ;-)
+> 
+> Thanks for pointing this out, I'll have a look.
+> 
+> > Please don't hesitate
+> > to contact me/the LKMM maintainers if you need help with this.
+> 
+> And thanks for that too.
+> 
+> > You'd need some info in order to write down a _well-formed litmus
+> > test, e.g., matching barrier/synchronization and interested memory
+> > accesses on the reader side (IAC, the replacement "store-release
+> > -> store-once+smp_wmb" discussed above is suspicious...).
+> 
+> Regarding the disccusion above, I was actually planning on removing the
+> smp_wmb entirely and rely on WRITE_ONCE + mutex_{un}lock here. Do you
+> see something obviously wrong with that ?
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+As said in IRC: nothing I can currently see.
 
+
+> 
+> I guess the LKMM tools should give me the yes/no answer I want, but if
+> that's a no, I'd also like to understand why ... :-)
+
+That answer would be a little bit more involved ... ;-)  The file
+Documentation/explanation.txt within the above mentioned directory
+could be a good starting point; skimming through litmus-tests/ and
+Documentation/recipes.txt could also provide some hints.
+
+  Andrea
+
+
+> 
+> Thanks,
+> Quentin
