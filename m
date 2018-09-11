@@ -2,456 +2,329 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F234C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 16:40:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2AC8C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 16:41:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A4CF20839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 16:40:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A4CF20839
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 2F6ED2087F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 16:41:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="or0OfgYB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F6ED2087F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727753AbeIKVkp (ORCPT
+        id S1727851AbeIKVlt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 17:40:45 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38386 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727002AbeIKVko (ORCPT
+        Tue, 11 Sep 2018 17:41:49 -0400
+Received: from sonic304-27.consmr.mail.ne1.yahoo.com ([66.163.191.153]:36608
+        "EHLO sonic304-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727002AbeIKVlr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 17:40:44 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8BGdhVE046948
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 12:40:36 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mehd1040s-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 12:40:36 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ldufour@linux.vnet.ibm.com>;
-        Tue, 11 Sep 2018 17:40:33 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 11 Sep 2018 17:40:28 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8BGeRf766388160
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 11 Sep 2018 16:40:27 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 46DE7A405B;
-        Tue, 11 Sep 2018 19:40:16 +0100 (BST)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 793AFA404D;
-        Tue, 11 Sep 2018 19:40:15 +0100 (BST)
-Received: from [9.101.4.33] (unknown [9.101.4.33])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 11 Sep 2018 19:40:15 +0100 (BST)
-Subject: Re: [RFC PATCH v2 2/8] mm: make zone_reclaim_stat updates thread-safe
-To:     Daniel Jordan <daniel.m.jordan@oracle.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
-Cc:     aaron.lu@intel.com, ak@linux.intel.com, akpm@linux-foundation.org,
-        dave.dice@oracle.com, dave.hansen@linux.intel.com,
-        hannes@cmpxchg.org, levyossi@icloud.com,
-        mgorman@techsingularity.net, mhocko@kernel.org,
-        Pavel.Tatashin@microsoft.com, steven.sistare@oracle.com,
-        tim.c.chen@intel.com, vdavydov.dev@gmail.com, ying.huang@intel.com
-References: <20180911004240.4758-1-daniel.m.jordan@oracle.com>
- <20180911004240.4758-3-daniel.m.jordan@oracle.com>
-From:   Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Date:   Tue, 11 Sep 2018 18:40:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Tue, 11 Sep 2018 17:41:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1536684099; bh=JRp04NDfqBc6dzgHOds8dWHSwGv3gnGCwykLrhfMtq8=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=or0OfgYBEKVXc/uy2zuUOGEQ3PYDcVaC5fwIWDMu4p3NV6nLRZaLle/OcEbC9MYEPSjZ5/iAahhUSMzlORqIEANCpD0sxQliF+Hya5JX9SGrN6kWStuTcO7IBU/HUjBQOScjmvQqrt5fIx2JJeMu8cfviPzZjCxCi8spN8iZPhivVFIpNVIDm+rZd2ITe0QOaxkxxmGhkOqZhOV1hCDrL5D5L9JCHUdoTpCoN3VKKF+xjIaQd9AoIK4fGv8YSFbKo2t5bbBhUShBL+NZGgMNoLZUQ4i1RUCPhp9VudIoh3t99e1TacOssoSAdLgbQVGtexW9AKio1CozTANjp+a1yA==
+X-YMail-OSG: XR25d9kVM1mvZl5xv5SfxJw7LUG503IiSTPmkB5mti3sV7bT1vDVegOF_HxsvNS
+ U2NgDzzuOkg5P6RUZIxLt2s2TNYWsye6U8IVyDsOkkKry_a.AZsN3Z6_FjLhTX3ft9xXjJp..OmG
+ ZJVfDJJhca_EfK7Ou8fvvq2wNWmJsu1TN9B8ZEpRdwlU_82BXull0.6CHD2HAeLHFiZxZiWn6hxX
+ atCoXR65KkLb7tSxTu6zmdsJYkKoYOIM9MFdiSYkM7ksO9iQcJpaN1FK6EJY73wouIduK6UbbHzv
+ 2WQO4JTHOaSoy60aU5ZUSf1UtRf7b9r45Yu9EpGuQTETUBPn9MSEHSu5WziUF8k4g1kLWyVZU3G.
+ THSIgmLLZozF0y1TRXsjj3kpGXjdfFHOiL9q6NfI6Z5QUzhOM8oY2CsV_oaNCDcRmF5sgxpoKGlJ
+ Y7h3Qc4OB0Tv8kU6PtL3JE_zV2VEuxAQ.YQyHKzgDW1scyS9YzcLEJV.93KKkjxR4L3n0Dec5E8T
+ Nf6KL2zZx8H31zApG1ssnggO9DwDuLzNrLKrJWijpvRDp8IkFl3ZaWuscQKZNP8p.7ZzGdBAJjys
+ ssbc9Jtj45..LLEWk8GQuIS0MF1Czh0Effnb5ELv.kgMnyMsjIieu9polyOyPgtelImS8SVjY_QG
+ qZukj16IIIWTe0FRAIWbIeDuHLv9V6C4U8VKr5HTxkffV1C.SxlADcSc.bv9cnlhJoEvvGhBP6Id
+ g1_Sb52IytwkXtxzxZyG4U_s8_TGkbIZmdasCpwNzHCiFX4yelXT.J96Z67JAsrj13Vl5LWp4HOz
+ .CL9TrGFnR974KOI5o30Bb.HN8g3av4IUPRlUNCHlRQ8tePipK47t96vOPck3.OccDzto0gS8l4s
+ JFruQcl5GWIHG1hNnkljLJKbSs2Zeqb_mZaMbnpW02B1RUQaDuBR7Uz0knIjUJpPAntjxl8nVnkJ
+ mJgKK30KH7eu7.PgmBiU1RiK_jzQbRrU7Xl7YZFZQX9_l7lFEWUxA9k9PI1pa.v3gymPVqblx1NL
+ kGVsnoOP.Q.ErmM4tCPKxxQ--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ne1.yahoo.com with HTTP; Tue, 11 Sep 2018 16:41:39 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.102]) ([67.169.65.224])
+          by smtp426.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID f55e078a0b8b642caa1831ba3afc4dc8;
+          Tue, 11 Sep 2018 16:41:36 +0000 (UTC)
+Subject: [PATCH 01/10] procfs: add smack subdir to attrs
+To:     LSM <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        LKLM <linux-kernel@vger.kernel.org>,
+        SE Linux <selinux@tycho.nsa.gov>,
+        John Johansen <john.johansen@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>
+Cc:     "Schaufler, Casey" <casey.schaufler@intel.com>
+References: <cbf848ae-a1ac-c5ab-f23b-bc9217fceebe@schaufler-ca.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <c43599b8-20f6-0cc6-28d7-abff4c0d0a0d@schaufler-ca.com>
+Date:   Tue, 11 Sep 2018 09:41:32 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180911004240.4758-3-daniel.m.jordan@oracle.com>
+In-Reply-To: <cbf848ae-a1ac-c5ab-f23b-bc9217fceebe@schaufler-ca.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18091116-0012-0000-0000-000002A743A8
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18091116-0013-0000-0000-000020DB8178
-Message-Id: <fe814c4f-f049-9b7f-0f4c-7238f159f144@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-11_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809110165
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/09/2018 02:42, Daniel Jordan wrote:
-> lru_lock needs to be held to update the zone_reclaim_stat statistics.
-> Similar to the previous patch, this requirement again arises fairly
-> naturally because callers are holding lru_lock already.
-> 
-> In preparation for allowing concurrent adds and removes from the LRU,
-> however, make concurrent updates to these statistics safe without
-> lru_lock.  The lock continues to be held until later in the series, when
-> it is replaced with a rwlock that also disables preemption, maintaining
-> the assumption in the comment above __update_page_reclaim_stat, which is
-> introduced here.
-> 
-> Use a combination of per-cpu counters and atomics.
-> 
-> Signed-off-by: Daniel Jordan <daniel.m.jordan@oracle.com>
-> ---
->  include/linux/mmzone.h | 50 ++++++++++++++++++++++++++++++++++++++++++
->  init/main.c            |  1 +
->  mm/memcontrol.c        | 20 ++++++++---------
->  mm/memory_hotplug.c    |  1 +
->  mm/mmzone.c            | 14 ++++++++++++
->  mm/swap.c              | 14 ++++++++----
->  mm/vmscan.c            | 42 ++++++++++++++++++++---------------
->  7 files changed, 110 insertions(+), 32 deletions(-)
-> 
-> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-> index 32699b2dc52a..6d4c23a3069d 100644
-> --- a/include/linux/mmzone.h
-> +++ b/include/linux/mmzone.h
-> @@ -229,6 +229,12 @@ struct zone_reclaim_stat {
->  	 *
->  	 * The anon LRU stats live in [0], file LRU stats in [1]
->  	 */
-> +	atomic_long_t		recent_rotated[2];
-> +	atomic_long_t		recent_scanned[2];
+Back in 2007 I made what turned out to be a rather serious
+mistake in the implementation of the Smack security module.
+The SELinux module used an interface in /proc to manipulate
+the security context on processes. Rather than use a similar
+interface, I used the same interface. The AppArmor team did
+likewise. Now /proc/.../attr/current will tell you the
+security "context" of the process, but it will be different
+depending on the security module you're using.
 
-It might be better to use a slightly different name for these fields to
-distinguish them from the ones in the zone_reclaim_stat_cpu structure.
+This patch provides a subdirectory in /proc/.../attr for
+Smack. Smack user space can use the "current" file in
+this subdirectory and never have to worry about getting
+SELinux attributes by mistake. Programs that use the
+old interface will continue to work (or fail, as the case
+may be) as before.
 
-> +};
-> +
-> +/* These spill into the counters in struct zone_reclaim_stat beyond a cutoff. */
-> +struct zone_reclaim_stat_cpu {
->  	unsigned long		recent_rotated[2];
->  	unsigned long		recent_scanned[2];
->  };
-> @@ -236,6 +242,7 @@ struct zone_reclaim_stat {
->  struct lruvec {
->  	struct list_head		lists[NR_LRU_LISTS];
->  	struct zone_reclaim_stat	reclaim_stat;
-> +	struct zone_reclaim_stat_cpu __percpu *reclaim_stat_cpu;
->  	/* Evictions & activations on the inactive file list */
->  	atomic_long_t			inactive_age;
->  	/* Refaults at the time of last reclaim cycle */
-> @@ -245,6 +252,47 @@ struct lruvec {
->  #endif
->  };
-> 
-> +#define	RECLAIM_STAT_BATCH	32U	/* From SWAP_CLUSTER_MAX */
-> +
-> +/*
-> + * Callers of the below three functions that update reclaim stats must hold
-> + * lru_lock and have preemption disabled.  Use percpu counters that spill into
-> + * atomics to allow concurrent updates when multiple readers hold lru_lock.
-> + */
-> +
-> +static inline void __update_page_reclaim_stat(unsigned long count,
-> +					      unsigned long *percpu_stat,
-> +					      atomic_long_t *stat)
-> +{
-> +	unsigned long val = *percpu_stat + count;
-> +
-> +	if (unlikely(val > RECLAIM_STAT_BATCH)) {
-> +		atomic_long_add(val, stat);
-> +		val = 0;
-> +	}
-> +	*percpu_stat = val;
-> +}
-> +
-> +static inline void update_reclaim_stat_scanned(struct lruvec *lruvec, int file,
-> +					       unsigned long count)
-> +{
-> +	struct zone_reclaim_stat_cpu __percpu *percpu_stat =
-> +					 this_cpu_ptr(lruvec->reclaim_stat_cpu);
-> +
-> +	__update_page_reclaim_stat(count, &percpu_stat->recent_scanned[file],
-> +				   &lruvec->reclaim_stat.recent_scanned[file]);
-> +}
-> +
-> +static inline void update_reclaim_stat_rotated(struct lruvec *lruvec, int file,
-> +					       unsigned long count)
-> +{
-> +	struct zone_reclaim_stat_cpu __percpu *percpu_stat =
-> +					 this_cpu_ptr(lruvec->reclaim_stat_cpu);
-> +
-> +	__update_page_reclaim_stat(count, &percpu_stat->recent_rotated[file],
-> +				   &lruvec->reclaim_stat.recent_rotated[file]);
-> +}
-> +
->  /* Mask used at gathering information at once (see memcontrol.c) */
->  #define LRU_ALL_FILE (BIT(LRU_INACTIVE_FILE) | BIT(LRU_ACTIVE_FILE))
->  #define LRU_ALL_ANON (BIT(LRU_INACTIVE_ANON) | BIT(LRU_ACTIVE_ANON))
-> @@ -795,6 +843,8 @@ extern void init_currently_empty_zone(struct zone *zone, unsigned long start_pfn
->  				     unsigned long size);
-> 
->  extern void lruvec_init(struct lruvec *lruvec);
-> +extern void lruvec_init_late(struct lruvec *lruvec);
-> +extern void lruvecs_init_late(void);
-> 
->  static inline struct pglist_data *lruvec_pgdat(struct lruvec *lruvec)
->  {
-> diff --git a/init/main.c b/init/main.c
-> index 3b4ada11ed52..80ad02fe99de 100644
-> --- a/init/main.c
-> +++ b/init/main.c
-> @@ -526,6 +526,7 @@ static void __init mm_init(void)
->  	init_espfix_bsp();
->  	/* Should be run after espfix64 is set up. */
->  	pti_init();
-> +	lruvecs_init_late();
->  }
-> 
->  asmlinkage __visible void __init start_kernel(void)
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 5463ad160e10..f7f9682482cd 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -3152,22 +3152,22 @@ static int memcg_stat_show(struct seq_file *m, void *v)
->  		pg_data_t *pgdat;
->  		struct mem_cgroup_per_node *mz;
->  		struct zone_reclaim_stat *rstat;
-> -		unsigned long recent_rotated[2] = {0, 0};
-> -		unsigned long recent_scanned[2] = {0, 0};
-> +		unsigned long rota[2] = {0, 0};
-> +		unsigned long scan[2] = {0, 0};
-> 
->  		for_each_online_pgdat(pgdat) {
->  			mz = mem_cgroup_nodeinfo(memcg, pgdat->node_id);
->  			rstat = &mz->lruvec.reclaim_stat;
-> 
-> -			recent_rotated[0] += rstat->recent_rotated[0];
-> -			recent_rotated[1] += rstat->recent_rotated[1];
-> -			recent_scanned[0] += rstat->recent_scanned[0];
-> -			recent_scanned[1] += rstat->recent_scanned[1];
-> +			rota[0] += atomic_long_read(&rstat->recent_rotated[0]);
-> +			rota[1] += atomic_long_read(&rstat->recent_rotated[1]);
-> +			scan[0] += atomic_long_read(&rstat->recent_scanned[0]);
-> +			scan[1] += atomic_long_read(&rstat->recent_scanned[1]);
->  		}
-> -		seq_printf(m, "recent_rotated_anon %lu\n", recent_rotated[0]);
-> -		seq_printf(m, "recent_rotated_file %lu\n", recent_rotated[1]);
-> -		seq_printf(m, "recent_scanned_anon %lu\n", recent_scanned[0]);
-> -		seq_printf(m, "recent_scanned_file %lu\n", recent_scanned[1]);
-> +		seq_printf(m, "recent_rotated_anon %lu\n", rota[0]);
-> +		seq_printf(m, "recent_rotated_file %lu\n", rota[1]);
-> +		seq_printf(m, "recent_scanned_anon %lu\n", scan[0]);
-> +		seq_printf(m, "recent_scanned_file %lu\n", scan[1]);
->  	}
->  #endif
-> 
-> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-> index 25982467800b..d3ebb11c3f9f 100644
-> --- a/mm/memory_hotplug.c
-> +++ b/mm/memory_hotplug.c
-> @@ -1009,6 +1009,7 @@ static pg_data_t __ref *hotadd_new_pgdat(int nid, u64 start)
->  	/* init node's zones as empty zones, we don't have any present pages.*/
->  	free_area_init_node(nid, zones_size, start_pfn, zholes_size);
->  	pgdat->per_cpu_nodestats = alloc_percpu(struct per_cpu_nodestat);
-> +	lruvec_init_late(node_lruvec(pgdat));
-> 
->  	/*
->  	 * The node we allocated has no zone fallback lists. For avoiding
-> diff --git a/mm/mmzone.c b/mm/mmzone.c
-> index 4686fdc23bb9..090cd4f7effb 100644
-> --- a/mm/mmzone.c
-> +++ b/mm/mmzone.c
-> @@ -9,6 +9,7 @@
->  #include <linux/stddef.h>
->  #include <linux/mm.h>
->  #include <linux/mmzone.h>
-> +#include <linux/percpu.h>
-> 
->  struct pglist_data *first_online_pgdat(void)
->  {
-> @@ -96,6 +97,19 @@ void lruvec_init(struct lruvec *lruvec)
->  		INIT_LIST_HEAD(&lruvec->lists[lru]);
->  }
-> 
-> +void lruvec_init_late(struct lruvec *lruvec)
-> +{
-> +	lruvec->reclaim_stat_cpu = alloc_percpu(struct zone_reclaim_stat_cpu);
-> +}
-> +
-> +void lruvecs_init_late(void)
-> +{
-> +	pg_data_t *pgdat;
-> +
-> +	for_each_online_pgdat(pgdat)
-> +		lruvec_init_late(node_lruvec(pgdat));
-> +}
-> +
->  #if defined(CONFIG_NUMA_BALANCING) && !defined(LAST_CPUPID_NOT_IN_PAGE_FLAGS)
->  int page_cpupid_xchg_last(struct page *page, int cpupid)
->  {
-> diff --git a/mm/swap.c b/mm/swap.c
-> index 3dd518832096..219c234d632f 100644
-> --- a/mm/swap.c
-> +++ b/mm/swap.c
-> @@ -34,6 +34,7 @@
->  #include <linux/uio.h>
->  #include <linux/hugetlb.h>
->  #include <linux/page_idle.h>
-> +#include <linux/mmzone.h>
-> 
->  #include "internal.h"
-> 
-> @@ -260,14 +261,19 @@ void rotate_reclaimable_page(struct page *page)
->  	}
->  }
-> 
-> +/*
-> + * Updates page reclaim statistics using per-cpu counters that spill into
-> + * atomics above a threshold.
-> + *
-> + * Assumes that the caller has disabled preemption.  IRQs may be enabled
-> + * because this function is not called from irq context.
-> + */
->  static void update_page_reclaim_stat(struct lruvec *lruvec,
->  				     int file, int rotated)
->  {
-> -	struct zone_reclaim_stat *reclaim_stat = &lruvec->reclaim_stat;
-> -
-> -	reclaim_stat->recent_scanned[file]++;
-> +	update_reclaim_stat_scanned(lruvec, file, 1);
->  	if (rotated)
-> -		reclaim_stat->recent_rotated[file]++;
-> +		update_reclaim_stat_rotated(lruvec, file, 1);
->  }
-> 
->  static void __activate_page(struct page *page, struct lruvec *lruvec,
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index 9270a4370d54..730b6d0c6c61 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -1655,7 +1655,6 @@ static int too_many_isolated(struct pglist_data *pgdat, int file,
->  static noinline_for_stack void
->  putback_inactive_pages(struct lruvec *lruvec, struct list_head *page_list)
->  {
-> -	struct zone_reclaim_stat *reclaim_stat = &lruvec->reclaim_stat;
->  	struct pglist_data *pgdat = lruvec_pgdat(lruvec);
->  	LIST_HEAD(pages_to_free);
-> 
-> @@ -1684,7 +1683,7 @@ putback_inactive_pages(struct lruvec *lruvec, struct list_head *page_list)
->  		if (is_active_lru(lru)) {
->  			int file = is_file_lru(lru);
->  			int numpages = hpage_nr_pages(page);
-> -			reclaim_stat->recent_rotated[file] += numpages;
-> +			update_reclaim_stat_rotated(lruvec, file, numpages);
->  		}
->  		if (put_page_testzero(page)) {
->  			__ClearPageLRU(page);
-> @@ -1736,7 +1735,6 @@ shrink_inactive_list(unsigned long nr_to_scan, struct lruvec *lruvec,
->  	isolate_mode_t isolate_mode = 0;
->  	int file = is_file_lru(lru);
->  	struct pglist_data *pgdat = lruvec_pgdat(lruvec);
-> -	struct zone_reclaim_stat *reclaim_stat = &lruvec->reclaim_stat;
->  	bool stalled = false;
-> 
->  	while (unlikely(too_many_isolated(pgdat, file, sc))) {
-> @@ -1763,7 +1761,7 @@ shrink_inactive_list(unsigned long nr_to_scan, struct lruvec *lruvec,
->  				     &nr_scanned, sc, isolate_mode, lru);
-> 
->  	__mod_node_page_state(pgdat, NR_ISOLATED_ANON + file, nr_taken);
-> -	reclaim_stat->recent_scanned[file] += nr_taken;
-> +	update_reclaim_stat_scanned(lruvec, file, nr_taken);
-> 
->  	if (current_is_kswapd()) {
->  		if (global_reclaim(sc))
-> @@ -1914,7 +1912,6 @@ static void shrink_active_list(unsigned long nr_to_scan,
->  	LIST_HEAD(l_active);
->  	LIST_HEAD(l_inactive);
->  	struct page *page;
-> -	struct zone_reclaim_stat *reclaim_stat = &lruvec->reclaim_stat;
->  	unsigned nr_deactivate, nr_activate;
->  	unsigned nr_rotated = 0;
->  	isolate_mode_t isolate_mode = 0;
-> @@ -1932,7 +1929,7 @@ static void shrink_active_list(unsigned long nr_to_scan,
->  				     &nr_scanned, sc, isolate_mode, lru);
-> 
->  	__mod_node_page_state(pgdat, NR_ISOLATED_ANON + file, nr_taken);
-> -	reclaim_stat->recent_scanned[file] += nr_taken;
-> +	update_reclaim_stat_scanned(lruvec, file, nr_taken);
-> 
->  	__count_vm_events(PGREFILL, nr_scanned);
->  	count_memcg_events(lruvec_memcg(lruvec), PGREFILL, nr_scanned);
-> @@ -1989,7 +1986,7 @@ static void shrink_active_list(unsigned long nr_to_scan,
->  	 * helps balance scan pressure between file and anonymous pages in
->  	 * get_scan_count.
->  	 */
-> -	reclaim_stat->recent_rotated[file] += nr_rotated;
-> +	update_reclaim_stat_rotated(lruvec, file, nr_rotated);
-> 
->  	nr_activate = move_active_pages_to_lru(lruvec, &l_active, &l_hold, lru);
->  	nr_deactivate = move_active_pages_to_lru(lruvec, &l_inactive, &l_hold, lru - LRU_ACTIVE);
-> @@ -2116,7 +2113,7 @@ static void get_scan_count(struct lruvec *lruvec, struct mem_cgroup *memcg,
->  			   unsigned long *lru_pages)
->  {
->  	int swappiness = mem_cgroup_swappiness(memcg);
-> -	struct zone_reclaim_stat *reclaim_stat = &lruvec->reclaim_stat;
-> +	struct zone_reclaim_stat *rstat = &lruvec->reclaim_stat;
->  	u64 fraction[2];
->  	u64 denominator = 0;	/* gcc */
->  	struct pglist_data *pgdat = lruvec_pgdat(lruvec);
-> @@ -2125,6 +2122,7 @@ static void get_scan_count(struct lruvec *lruvec, struct mem_cgroup *memcg,
->  	unsigned long anon, file;
->  	unsigned long ap, fp;
->  	enum lru_list lru;
-> +	long recent_scanned[2], recent_rotated[2];
-> 
->  	/* If we have no swap space, do not bother scanning anon pages. */
->  	if (!sc->may_swap || mem_cgroup_get_nr_swap_pages(memcg) <= 0) {
-> @@ -2238,14 +2236,22 @@ static void get_scan_count(struct lruvec *lruvec, struct mem_cgroup *memcg,
->  		lruvec_lru_size(lruvec, LRU_INACTIVE_FILE, MAX_NR_ZONES);
-> 
->  	spin_lock_irq(&pgdat->lru_lock);
-> -	if (unlikely(reclaim_stat->recent_scanned[0] > anon / 4)) {
-> -		reclaim_stat->recent_scanned[0] /= 2;
-> -		reclaim_stat->recent_rotated[0] /= 2;
-> +	recent_scanned[0] = atomic_long_read(&rstat->recent_scanned[0]);
-> +	recent_rotated[0] = atomic_long_read(&rstat->recent_rotated[0]);
-> +	if (unlikely(recent_scanned[0] > anon / 4)) {
-> +		recent_scanned[0] /= 2;
-> +		recent_rotated[0] /= 2;
-> +		atomic_long_set(&rstat->recent_scanned[0], recent_scanned[0]);
-> +		atomic_long_set(&rstat->recent_rotated[0], recent_rotated[0]);
->  	}
-> 
-> -	if (unlikely(reclaim_stat->recent_scanned[1] > file / 4)) {
-> -		reclaim_stat->recent_scanned[1] /= 2;
-> -		reclaim_stat->recent_rotated[1] /= 2;
-> +	recent_scanned[1] = atomic_long_read(&rstat->recent_scanned[1]);
-> +	recent_rotated[1] = atomic_long_read(&rstat->recent_rotated[1]);
-> +	if (unlikely(recent_scanned[1] > file / 4)) {
-> +		recent_scanned[1] /= 2;
-> +		recent_rotated[1] /= 2;
-> +		atomic_long_set(&rstat->recent_scanned[1], recent_scanned[1]);
-> +		atomic_long_set(&rstat->recent_rotated[1], recent_rotated[1]);
->  	}
-> 
->  	/*
-> @@ -2253,11 +2259,11 @@ static void get_scan_count(struct lruvec *lruvec, struct mem_cgroup *memcg,
->  	 * proportional to the fraction of recently scanned pages on
->  	 * each list that were recently referenced and in active use.
->  	 */
-> -	ap = anon_prio * (reclaim_stat->recent_scanned[0] + 1);
-> -	ap /= reclaim_stat->recent_rotated[0] + 1;
-> +	ap = anon_prio * (recent_scanned[0] + 1);
-> +	ap /= recent_rotated[0] + 1;
-> 
-> -	fp = file_prio * (reclaim_stat->recent_scanned[1] + 1);
-> -	fp /= reclaim_stat->recent_rotated[1] + 1;
-> +	fp = file_prio * (recent_scanned[1] + 1);
-> +	fp /= recent_rotated[1] + 1;
->  	spin_unlock_irq(&pgdat->lru_lock);
-> 
->  	fraction[0] = ap;
-> 
+The proposed S.A.R.A security module is dependent on
+the mechanism to create its own attr subdirectory.
+
+The original implementation is by Kees Cook.
+
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+---
+ Documentation/admin-guide/LSM/index.rst | 13 +++--
+ fs/proc/base.c                          | 64 +++++++++++++++++++++----
+ fs/proc/internal.h                      |  1 +
+ include/linux/security.h                | 15 ++++--
+ security/security.c                     | 24 ++++++++--
+ 5 files changed, 96 insertions(+), 21 deletions(-)
+
+diff --git a/Documentation/admin-guide/LSM/index.rst b/Documentation/admin-guide/LSM/index.rst
+index c980dfe9abf1..9842e21afd4a 100644
+--- a/Documentation/admin-guide/LSM/index.rst
++++ b/Documentation/admin-guide/LSM/index.rst
+@@ -17,9 +17,8 @@ MAC extensions, other extensions can be built using the LSM to provide
+ specific changes to system operation when these tweaks are not available
+ in the core functionality of Linux itself.
+ 
+-Without a specific LSM built into the kernel, the default LSM will be the
+-Linux capabilities system. Most LSMs choose to extend the capabilities
+-system, building their checks on top of the defined capability hooks.
++The Linux capabilities modules will always be included. This may be
++followed by any number of "minor" modules and at most one "major" module.
+ For more details on capabilities, see ``capabilities(7)`` in the Linux
+ man-pages project.
+ 
+@@ -30,6 +29,14 @@ order in which checks are made. The capability module will always
+ be first, followed by any "minor" modules (e.g. Yama) and then
+ the one "major" module (e.g. SELinux) if there is one configured.
+ 
++Process attributes associated with "major" security modules should
++be accessed and maintained using the special files in ``/proc/.../attr``.
++A security module may maintain a module specific subdirectory there,
++named after the module. ``/proc/.../attr/smack`` is provided by the Smack
++security module and contains all its special files. The files directly
++in ``/proc/.../attr`` remain as legacy interfaces for modules that provide
++subdirectories.
++
+ .. toctree::
+    :maxdepth: 1
+ 
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index ccf86f16d9f0..bd2dd85310fe 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -140,9 +140,13 @@ struct pid_entry {
+ #define REG(NAME, MODE, fops)				\
+ 	NOD(NAME, (S_IFREG|(MODE)), NULL, &fops, {})
+ #define ONE(NAME, MODE, show)				\
+-	NOD(NAME, (S_IFREG|(MODE)), 			\
++	NOD(NAME, (S_IFREG|(MODE)),			\
+ 		NULL, &proc_single_file_operations,	\
+ 		{ .proc_show = show } )
++#define ATTR(LSM, NAME, MODE)				\
++	NOD(NAME, (S_IFREG|(MODE)),			\
++		NULL, &proc_pid_attr_operations,	\
++		{ .lsm = LSM })
+ 
+ /*
+  * Count the number of hardlinks for the pid_entry table, excluding the .
+@@ -2503,7 +2507,7 @@ static ssize_t proc_pid_attr_read(struct file * file, char __user * buf,
+ 	if (!task)
+ 		return -ESRCH;
+ 
+-	length = security_getprocattr(task,
++	length = security_getprocattr(task, PROC_I(inode)->op.lsm,
+ 				      (char*)file->f_path.dentry->d_name.name,
+ 				      &p);
+ 	put_task_struct(task);
+@@ -2552,7 +2556,9 @@ static ssize_t proc_pid_attr_write(struct file * file, const char __user * buf,
+ 	if (rv < 0)
+ 		goto out_free;
+ 
+-	rv = security_setprocattr(file->f_path.dentry->d_name.name, page, count);
++	rv = security_setprocattr(PROC_I(inode)->op.lsm,
++				  file->f_path.dentry->d_name.name, page,
++				  count);
+ 	mutex_unlock(&current->signal->cred_guard_mutex);
+ out_free:
+ 	kfree(page);
+@@ -2566,13 +2572,53 @@ static const struct file_operations proc_pid_attr_operations = {
+ 	.llseek		= generic_file_llseek,
+ };
+ 
++#define LSM_DIR_OPS(LSM) \
++static int proc_##LSM##_attr_dir_iterate(struct file *filp, \
++			     struct dir_context *ctx) \
++{ \
++	return proc_pident_readdir(filp, ctx, \
++				   LSM##_attr_dir_stuff, \
++				   ARRAY_SIZE(LSM##_attr_dir_stuff)); \
++} \
++\
++static const struct file_operations proc_##LSM##_attr_dir_ops = { \
++	.read		= generic_read_dir, \
++	.iterate	= proc_##LSM##_attr_dir_iterate, \
++	.llseek		= default_llseek, \
++}; \
++\
++static struct dentry *proc_##LSM##_attr_dir_lookup(struct inode *dir, \
++				struct dentry *dentry, unsigned int flags) \
++{ \
++	return proc_pident_lookup(dir, dentry, \
++				  LSM##_attr_dir_stuff, \
++				  ARRAY_SIZE(LSM##_attr_dir_stuff)); \
++} \
++\
++static const struct inode_operations proc_##LSM##_attr_dir_inode_ops = { \
++	.lookup		= proc_##LSM##_attr_dir_lookup, \
++	.getattr	= pid_getattr, \
++	.setattr	= proc_setattr, \
++}
++
++#ifdef CONFIG_SECURITY_SMACK
++static const struct pid_entry smack_attr_dir_stuff[] = {
++	ATTR("smack", "current",	0666),
++};
++LSM_DIR_OPS(smack);
++#endif
++
+ static const struct pid_entry attr_dir_stuff[] = {
+-	REG("current",    S_IRUGO|S_IWUGO, proc_pid_attr_operations),
+-	REG("prev",       S_IRUGO,	   proc_pid_attr_operations),
+-	REG("exec",       S_IRUGO|S_IWUGO, proc_pid_attr_operations),
+-	REG("fscreate",   S_IRUGO|S_IWUGO, proc_pid_attr_operations),
+-	REG("keycreate",  S_IRUGO|S_IWUGO, proc_pid_attr_operations),
+-	REG("sockcreate", S_IRUGO|S_IWUGO, proc_pid_attr_operations),
++	ATTR(NULL, "current",		0666),
++	ATTR(NULL, "prev",		0444),
++	ATTR(NULL, "exec",		0666),
++	ATTR(NULL, "fscreate",		0666),
++	ATTR(NULL, "keycreate",		0666),
++	ATTR(NULL, "sockcreate",	0666),
++#ifdef CONFIG_SECURITY_SMACK
++	DIR("smack",			0555,
++	    proc_smack_attr_dir_inode_ops, proc_smack_attr_dir_ops),
++#endif
+ };
+ 
+ static int proc_attr_dir_readdir(struct file *file, struct dir_context *ctx)
+diff --git a/fs/proc/internal.h b/fs/proc/internal.h
+index 5185d7f6a51e..d4f9989063d0 100644
+--- a/fs/proc/internal.h
++++ b/fs/proc/internal.h
+@@ -81,6 +81,7 @@ union proc_op {
+ 	int (*proc_show)(struct seq_file *m,
+ 		struct pid_namespace *ns, struct pid *pid,
+ 		struct task_struct *task);
++	const char *lsm;
+ };
+ 
+ struct proc_inode {
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 75f4156c84d7..418de5d20ffb 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -390,8 +390,10 @@ int security_sem_semctl(struct kern_ipc_perm *sma, int cmd);
+ int security_sem_semop(struct kern_ipc_perm *sma, struct sembuf *sops,
+ 			unsigned nsops, int alter);
+ void security_d_instantiate(struct dentry *dentry, struct inode *inode);
+-int security_getprocattr(struct task_struct *p, char *name, char **value);
+-int security_setprocattr(const char *name, void *value, size_t size);
++int security_getprocattr(struct task_struct *p, const char *lsm, char *name,
++			 char **value);
++int security_setprocattr(const char *lsm, const char *name, void *value,
++			 size_t size);
+ int security_netlink_send(struct sock *sk, struct sk_buff *skb);
+ int security_ismaclabel(const char *name);
+ int security_secid_to_secctx(u32 secid, char **secdata, u32 *seclen);
+@@ -1139,15 +1141,18 @@ static inline int security_sem_semop(struct kern_ipc_perm *sma,
+ 	return 0;
+ }
+ 
+-static inline void security_d_instantiate(struct dentry *dentry, struct inode *inode)
++static inline void security_d_instantiate(struct dentry *dentry,
++					  struct inode *inode)
+ { }
+ 
+-static inline int security_getprocattr(struct task_struct *p, char *name, char **value)
++static inline int security_getprocattr(struct task_struct *p, const char *lsm,
++				       char *name, char **value)
+ {
+ 	return -EINVAL;
+ }
+ 
+-static inline int security_setprocattr(char *name, void *value, size_t size)
++static inline int security_setprocattr(const char *lsm, char *name,
++				       void *value, size_t size)
+ {
+ 	return -EINVAL;
+ }
+diff --git a/security/security.c b/security/security.c
+index 736e78da1ab9..3dfe75d0d373 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1288,14 +1288,30 @@ void security_d_instantiate(struct dentry *dentry, struct inode *inode)
+ }
+ EXPORT_SYMBOL(security_d_instantiate);
+ 
+-int security_getprocattr(struct task_struct *p, char *name, char **value)
++int security_getprocattr(struct task_struct *p, const char *lsm, char *name,
++				char **value)
+ {
+-	return call_int_hook(getprocattr, -EINVAL, p, name, value);
++	struct security_hook_list *hp;
++
++	hlist_for_each_entry(hp, &security_hook_heads.getprocattr, list) {
++		if (lsm != NULL && strcmp(lsm, hp->lsm))
++			continue;
++		return hp->hook.getprocattr(p, name, value);
++	}
++	return -EINVAL;
+ }
+ 
+-int security_setprocattr(const char *name, void *value, size_t size)
++int security_setprocattr(const char *lsm, const char *name, void *value,
++			 size_t size)
+ {
+-	return call_int_hook(setprocattr, -EINVAL, name, value, size);
++	struct security_hook_list *hp;
++
++	hlist_for_each_entry(hp, &security_hook_heads.setprocattr, list) {
++		if (lsm != NULL && strcmp(lsm, hp->lsm))
++			continue;
++		return hp->hook.setprocattr(name, value, size);
++	}
++	return -EINVAL;
+ }
+ 
+ int security_netlink_send(struct sock *sk, struct sk_buff *skb)
+-- 
+2.17.1
+
 
