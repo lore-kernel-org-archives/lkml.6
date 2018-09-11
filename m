@@ -2,137 +2,123 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24375C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:41:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B41FC04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:41:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B728A2087F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:41:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B553B20839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:41:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="jYaLz6xs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B728A2087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fmbxLk4S";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MoMmplSg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B553B20839
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727010AbeIKOkK (ORCPT
+        id S1727391AbeIKOkM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 10:40:10 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:34276 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726564AbeIKOkK (ORCPT
+        Tue, 11 Sep 2018 10:40:12 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:55022 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726587AbeIKOkL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 10:40:10 -0400
-Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 79E3A57;
-        Tue, 11 Sep 2018 11:41:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1536658898;
-        bh=gr7kutQU4G6xdneXm8vizAHjLSFd0rjug3YQMYxIq4M=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jYaLz6xswfkYmzbvDLIEOYfHtOGODG3qCNCfiFlzFiIMcLFDaKMOaeFPfpqYvCEgQ
-         WcqVUS10iEIyEVbh0ePM2O3KzKY+F5RzeNGqD7gEw24jwvpabz4ovaFzScsjbWPpRr
-         OFy6PLdF6be9acwfKEYv4Rogqnq7y0n1I/nO54Ck=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Gerd Hoffmann <kraxel@redhat.com>
-Cc:     dri-devel@lists.freedesktop.org,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK" 
-        <linux-media@vger.kernel.org>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK" 
-        <linaro-mm-sig@lists.linaro.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 07/10] udmabuf: rework limits
-Date:   Tue, 11 Sep 2018 12:41:51 +0300
-Message-ID: <17673718.7xXiEhCCr5@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20180911065921.23818-8-kraxel@redhat.com>
-References: <20180911065921.23818-1-kraxel@redhat.com> <20180911065921.23818-8-kraxel@redhat.com>
+        Tue, 11 Sep 2018 10:40:11 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 6A9576034D; Tue, 11 Sep 2018 09:41:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1536658900;
+        bh=GahCwrQBAg1XMUeIE0IMTIbbzy6eeFYneAxbGHpBIps=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=fmbxLk4ShQXRAyD1981cYPK9c4J8hykEQz0w7RFAOxqgLtkFoUCQ6GzC0OlZW0Uge
+         6nsWgxgPHH4Fb4v97kb0hUaPqyKt1yVcbftv11gQKR9QdVeieslC4sye/BQjymXp+K
+         KM7IUwmVm2oNkY0ceLPpj7JvNfOqZZtFAL8fX7TI=
+Received: from [10.79.128.64] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id DE2746034D;
+        Tue, 11 Sep 2018 09:41:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1536658899;
+        bh=GahCwrQBAg1XMUeIE0IMTIbbzy6eeFYneAxbGHpBIps=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=MoMmplSgR36DR+d+jPBAisI7R+lEEzZWiZ1xICHnL5Xa1zsEGRJbvDfXVmxvkXhOV
+         LWNYygwsQB+T/6VcCbSMbEikvKg4sQt1bZ7XC6P2vYcjnQvQmk8QFDzgSaLSSCdNhv
+         oq1mAWEwCVR9bkIfETHGZVHjT+Gkz3/1hb06s9IU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DE2746034D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
+Subject: Re: [PATCH v4 3/4] drivers: edac: Add EDAC driver support for QCOM
+ SoCs
+To:     vnkgutta@codeaurora.org
+Cc:     Borislav Petkov <bp@alien8.de>, evgreen@chromium.org,
+        robh@kernel.org, mchehab@kernel.org, linux-edac@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, tsoni@codeaurora.org,
+        ckadabi@codeaurora.org, rishabhb@codeaurora.org,
+        swboyd@chromium.org, bjorn.andersson@linaro.org
+References: <1536103345-1919-1-git-send-email-vnkgutta@codeaurora.org>
+ <1536103345-1919-4-git-send-email-vnkgutta@codeaurora.org>
+ <105f8339-61bc-072e-0498-ed44470a5fb8@codeaurora.org>
+ <5d8f92b480e1b53e7e04da965d44f7ea@codeaurora.org>
+ <b35f111c-0464-dcee-c970-4821f741694b@codeaurora.org>
+ <b5d9a1dc741e09db6d4044f4d82f83d9@codeaurora.org>
+From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Message-ID: <a8fff11e-5821-f191-ed2e-ec99fadcb5e6@codeaurora.org>
+Date:   Tue, 11 Sep 2018 15:11:30 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <b5d9a1dc741e09db6d4044f4d82f83d9@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gerd,
-
-Thank you for the patch.
-
-On Tuesday, 11 September 2018 09:59:18 EEST Gerd Hoffmann wrote:
-> Create variable for the list length limit.  Serves as documentation,
-> also allows to make it a module parameter if needed.
+On 9/11/2018 4:15 AM, vnkgutta@codeaurora.org wrote:
+> On 2018-09-06 22:02, Sai Prakash Ranjan wrote:
+>> On 9/7/2018 4:01 AM, vnkgutta@codeaurora.org wrote:
+>>> On 2018-09-06 05:38, Sai Prakash Ranjan wrote:
+>>>> On 9/5/2018 4:52 AM, Venkata Narendra Kumar Gutta wrote:
+>>>>> +static const struct of_device_id qcom_llcc_edac_match_table[] = {
+>>>>> +    { .compatible = "qcom,llcc-edac" },
+>>>>> +    { },
+>>>>> +};
+>>>>> +
+>>>>>
+>>>> Hi Venkata,
+>>>>
+>>>> Devicetree binding for llcc is updated, but what about this compatible?
+>>>
+>>> Does it need documentation too? I was not sure if I should add 
+>>> documentation for this or not!
+>>>
+>>
+>> It does not require a separate binding, what I meant was to add this
+>> compatible in the llcc binding itself, maybe as a subnode if it is
+>> correct.
 > 
-> Also add a total size limit.
+> Hi,
 > 
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-> ---
->  drivers/dma-buf/udmabuf.c | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
+> We aren't really using this of_device_id structure, as this driver is 
+> being registered from LLCC through
+> platform_register_device_data(...). This structure initialization is 
+> just dead code as this driver won't be probed based on the DT entries.
 > 
-> diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
-> index 0cf7e85585..cb99a7886a 100644
-> --- a/drivers/dma-buf/udmabuf.c
-> +++ b/drivers/dma-buf/udmabuf.c
-> @@ -12,6 +12,9 @@
->  #include <linux/shmem_fs.h>
->  #include <linux/udmabuf.h>
+> Hence removing this compatible property and the corresponding struct in 
+> the next patchset.
 > 
-> +static int list_limit = 1024;  /* udmabuf_create_list->count limit */
-> +static int size_limit_mb = 64; /* total dmabuf size, in megabytes  */
+> So, this doesn't need an extra binding/documentation.
 
-static const int maybe ? Or size_t for the size limit and unsigned int for the 
-limit on the number of entries, as they can't be negative ?
+Ok. Now that you have removed the compatible, it should be fine.
 
-Why those specific values ?
-
->  struct udmabuf {
->  	pgoff_t pagecount;
->  	struct page **pages;
-> @@ -123,7 +126,7 @@ static long udmabuf_create(struct const
-> udmabuf_create_list *head, struct file *memfd = NULL;
->  	struct udmabuf *ubuf;
->  	struct dma_buf *buf;
-> -	pgoff_t pgoff, pgcnt, pgidx, pgbuf;
-> +	pgoff_t pgoff, pgcnt, pgidx, pgbuf, pglimit;
->  	struct page *page;
->  	int seals, ret = -EINVAL;
->  	u32 i, flags;
-> @@ -132,12 +135,15 @@ static long udmabuf_create(struct const
-> udmabuf_create_list *head, if (!ubuf)
->  		return -ENOMEM;
-> 
-> +	pglimit = (size_limit_mb * 1024 * 1024) >> PAGE_SHIFT;
->  	for (i = 0; i < head->count; i++) {
->  		if (!IS_ALIGNED(list[i].offset, PAGE_SIZE))
->  			goto err_free_ubuf;
->  		if (!IS_ALIGNED(list[i].size, PAGE_SIZE))
->  			goto err_free_ubuf;
->  		ubuf->pagecount += list[i].size >> PAGE_SHIFT;
-> +		if (ubuf->pagecount > pglimit)
-> +			goto err_free_ubuf;
->  	}
->  	ubuf->pages = kmalloc_array(ubuf->pagecount, sizeof(struct page *),
->  				    GFP_KERNEL);
-> @@ -227,7 +233,7 @@ static long udmabuf_ioctl_create_list(struct file *filp,
-> unsigned long arg)
-> 
->  	if (copy_from_user(&head, (void __user *)arg, sizeof(head)))
->  		return -EFAULT;
-> -	if (head.count > 1024)
-> +	if (head.count > list_limit)
->  		return -EINVAL;
->  	lsize = sizeof(struct udmabuf_create_item) * head.count;
->  	list = memdup_user((void __user *)(arg + sizeof(head)), lsize);
-
-
--- 
-Regards,
-
-Laurent Pinchart
-
-
-
+Thanks
