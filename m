@@ -2,109 +2,85 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23A8BC6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 10:18:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B101C6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 10:19:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE5DE20839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 10:18:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE5DE20839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id BF57F2086A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 10:19:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rgaZvY+Y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF57F2086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727648AbeIKPQY (ORCPT
+        id S1727838AbeIKPRs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 11:16:24 -0400
-Received: from foss.arm.com ([217.140.101.70]:41208 "EHLO foss.arm.com"
+        Tue, 11 Sep 2018 11:17:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51870 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726836AbeIKPQW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 11:16:22 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 209BEED1;
-        Tue, 11 Sep 2018 03:17:44 -0700 (PDT)
-Received: from en101.Emea.Arm.com (en101.emea.arm.com [10.4.13.23])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 79E653F557;
-        Tue, 11 Sep 2018 03:17:42 -0700 (PDT)
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, robh@kernel.org,
-        frowand.list@gmail.com, devicetree@vger.kernel.org,
-        mathieu.poirier@linaro.org, arm@kernel.org, sudeep.holla@arm.com,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH 01/11] Documentation: dts: Update coresight binding examples
-Date:   Tue, 11 Sep 2018 11:17:02 +0100
-Message-Id: <1536661032-30481-2-git-send-email-suzuki.poulose@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1536661032-30481-1-git-send-email-suzuki.poulose@arm.com>
-References: <1536661032-30481-1-git-send-email-suzuki.poulose@arm.com>
+        id S1726563AbeIKPRs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 11:17:48 -0400
+Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F7F520839;
+        Tue, 11 Sep 2018 10:19:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1536661149;
+        bh=Vek34F+hQT8KcWbpUgGFC8O0ntZuyrIKsOKrbCxBYXM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=rgaZvY+Ynh6zDjwkNes/L9evmYQ+/IauEWS2mmOkroP4oDTtXgobymjJwMPDU+pIY
+         K2lPofQnIR/R+yYAA3T8yw5E4MevKv9zavaAT7bNyRstsVIUisza0yEm1OC9PZdMOy
+         /yr0lJcDJ0vgYhrd6HbYi8tEc3pbtk4mdjmu93B4=
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Ingo Molnar <mingo@redhat.com>
+Cc:     "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH -tip v2 0/5] kprobes: Remove BUG_ON from kprobes
+Date:   Tue, 11 Sep 2018 19:18:43 +0900
+Message-Id: <153666112297.21306.4621579144717171778.stgit@devbox>
+X-Mailer: git-send-email 2.13.6
+User-Agent: StGit/0.17.1-dirty
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While we updated the coresight DT bindings, some of the
-new examples were not updated due to the order in which they
-were merged. Let us update all the missed out ones to the
-new bindings to avoid confusion.
+Hi,
 
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Frank Rowand <frowand.list@gmail.com>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Here are v2 patches to remove BUG_ON from kprobes.
+
+Since BUG_ON() kills the machine, it must not be used
+for debugging or assertion. These patches remove
+meaningless BUG_ON or replace it with return errors.
+
+In this version, I updated 5/5 to use WARN_ON_ONCE()
+for unusual case, according to Ingo's comment.
+
+Thank you,
+
 ---
- Documentation/devicetree/bindings/arm/coresight.txt | 20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/coresight.txt b/Documentation/devicetree/bindings/arm/coresight.txt
-index f39d2c6..3b689e0 100644
---- a/Documentation/devicetree/bindings/arm/coresight.txt
-+++ b/Documentation/devicetree/bindings/arm/coresight.txt
-@@ -147,7 +147,7 @@ Example:
- 
- 		clocks = <&oscclk6a>;
- 		clock-names = "apb_pclk";
--		ports {
-+		in-ports {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 
-@@ -159,10 +159,15 @@ Example:
- 					remote-endpoint = <&replicator2_out_port0>;
- 				};
- 			};
-+		};
-+
-+		out-ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
- 
- 			/* CATU link represented by output port */
--			port@1 {
--				reg = <1>;
-+			port@0 {
-+				reg = <0>;
- 				etr_out_port: endpoint {
- 					remote-endpoint = <&catu_in_port>;
- 				};
-@@ -310,10 +315,11 @@ Example:
- 		clock-names = "apb_pclk";
- 
- 		interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
--		port {
--			catu_in_port: endpoint {
--				slave-mode;
--				remote-endpoint = <&etr_out_port>;
-+		in-ports {
-+			port {
-+				catu_in_port: endpoint {
-+					remote-endpoint = <&etr_out_port>;
-+				};
- 			};
- 		};
- 	};
--- 
-2.7.4
+Masami Hiramatsu (5):
+      kprobes: Remove meaningless BUG_ON from disarming process
+      kprobes: Remove meaningless BUG_ON from add_new_kprobe
+      kprobes: Remove meaningless BUG_ON from reuse_unused_kprobe
+      kprobes: Return error if fail to reuse kprobe instead of BUG_ON
+      kprobes: Don't call BUG_ON if there is a kprobe in use on free list
 
+
+ kernel/kprobes.c |   39 +++++++++++++++++++++++++++------------
+ 1 file changed, 27 insertions(+), 12 deletions(-)
+
+--
+Masami Hiramatsu (Linaro) <mhiramat@kernel.org>
