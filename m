@@ -2,90 +2,117 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FB69C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 19:29:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC6D4C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 19:31:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6A24206BB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 19:29:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="a7A2mEo7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6A24206BB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 8A86E206BB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 19:31:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A86E206BB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727679AbeILAaY (ORCPT
+        id S1727842AbeILAcj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 20:30:24 -0400
-Received: from ozlabs.org ([203.11.71.1]:49103 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726689AbeILAaX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 20:30:23 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 428w34341Qz9s3Z;
-        Wed, 12 Sep 2018 05:29:36 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1536694176;
-        bh=rn8U4iWAEZRo0AV+eWZNy/cuKVPbwmwC6URYmoEOK2A=;
-        h=Date:From:To:Cc:Subject:From;
-        b=a7A2mEo7W916oNBnvWKgKYwN5DifygyqWdi4xK40GeGdfRsiKr2jqz1+9TWtwxkQs
-         09vJ5LSi1110YetgqB/sBbec6ie8SToeW7eqn9Lg6u/cVC+8R8pJMzlOvRczSwev6y
-         GCYMxCZToPHtIHdq3y62kHOFWKUX8NovYE8BUVqBlX+V1/WvzGoThvqGCNCPPIaeed
-         EV1amY6sF1+dMfQgdK4xXLBhq+Ao88E0/jDcDJoAoEm7JllHOSv1lJkHBfULA2KhLM
-         ZxRPmzUHeBOXicbBodtr4cU0+G6kysmolekyGt0HvWYpKEN4bs+j/jt4VAyJsFCfp5
-         zrQ3S66pYtxLw==
-Date:   Wed, 12 Sep 2018 05:29:30 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the v4l-dvb-fixes
- tree
-Message-ID: <20180912052930.65ef6c2c@canb.auug.org.au>
+        Tue, 11 Sep 2018 20:32:39 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:50074 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1726689AbeILAcj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 20:32:39 -0400
+Received: (qmail 5674 invoked by uid 2102); 11 Sep 2018 15:31:53 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 11 Sep 2018 15:31:53 -0400
+Date:   Tue, 11 Sep 2018 15:31:53 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+cc:     Daniel Lustig <dlustig@nvidia.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        <linux-arch@vger.kernel.org>, <mingo@kernel.org>,
+        <peterz@infradead.org>, <boqun.feng@gmail.com>,
+        <npiggin@gmail.com>, <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>, <akiyks@gmail.com>,
+        Palmer Dabbelt <palmer@sifive.com>
+Subject: Re: [PATCH RFC LKMM 1/7] tools/memory-model: Add extra ordering for
+ locks and remove it for ordinary release/acquire
+In-Reply-To: <20180908095848.GA6272@andrea>
+Message-ID: <Pine.LNX.4.44L0.1809111455420.1461-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/QZ3wOrCqkDuMd_xbrX02kZa"; protocol="application/pgp-signature"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/QZ3wOrCqkDuMd_xbrX02kZa
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, 12 Jul 2018, Paul E. McKenney wrote:
 
-Hi Mauro,
+> > > Take for instance the pattern where RCU relies on RCsc locks, this is an
+> > > entirely simple and straight forward use of locks, yet completely fails
+> > > on this subtle point.
+> > 
+> > Do you happen to remember exactly where in the kernel source this 
+> > occurs?
+> 
+> Look for the uses of raw_spin_lock_irq_rcu_node() and friends in
+> kernel/rcu and include/linux/*rcu*, along with the explanation in
+> Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.html
 
-Commit
+I just now started looking at this for the first time, and I was struck
+by the sloppy thinking displayed in the very first paragraph of the
+HTML document!  For example, consider the third sentence:
 
-  3b03999136b1 ("media: i2c: mt9v111: Fix v4l2-ctrl error handling")
+	Similarly, any code that happens before the beginning of a 
+	given RCU grace period is guaranteed to see the effects of all
+	accesses following the end of that grace period that are within
+	RCU read-side critical sections.
 
-is missing a Signed-off-by from its committer.
+Is RCU now a time machine?  :-)
 
---=20
-Cheers,
-Stephen Rothwell
+I think what you meant to write in the second and third sentences was 
+something more like this:
 
---Sig_/QZ3wOrCqkDuMd_xbrX02kZa
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+	Any code in an RCU critical section that extends beyond the 
+	end of a given RCU grace period is guaranteed to see the 
+	effects of all accesses which were visible to the grace 
+	period's CPU before the start of the grace period.  Similarly, 
+	any code that follows an RCU grace period (on the grace 
+	period's CPU) is guaranteed to see the effects of all accesses 
+	which were visible to an RCU critical section that began
+	before the start of the grace period.
 
------BEGIN PGP SIGNATURE-----
+Also, the document doesn't seem to explain how Tree RCU relies on the
+lock-ordering guarantees of raw_spin_lock_rcu_node() and friends.  It
+_says_ that these guarantees are used, but not how or where.  (Unless I 
+missed something; I didn't read the document all that carefully.)
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluYF5oACgkQAVBC80lX
-0Gwo+wgAhh97C5S7MFWxvF2AAKysBLbwf5xemuD48ltJjxlernL66irh8/l4Xa4l
-gag3WjARZ/SwWj0DLiydKEbmiNoQ59bTzRxnnlqPfluQSJ8aQG3Q6ADYpfrCW1Bt
-DNYDIuE9XAbovaEemrU7WwTX9p+vS/QoB1SW2isTp1B2eNkRmxkpwODpInzGOLYE
-25KIukhXXNn5PV6qL9Tc9Zazj1oVQkJp4U8HGUu0c9IIf2oUfd/nqRL7nmYdHpX8
-dtjG1osS5bNkz5sN6ME7ccjuYKQRWQlk/b8xSib0Gx6KRFrjnilwouVMWDBKOXQD
-HKhyqQj2FATORtYw16l62p1sSowEwg==
-=sEc6
------END PGP SIGNATURE-----
+In any case, you should bear in mind that the lock ordering provided by
+Peter's raw_spin_lock_rcu_node() and friends is not the same as what we
+have been discussing for the LKMM:
 
---Sig_/QZ3wOrCqkDuMd_xbrX02kZa--
+	Peter's routines are meant for the case where you release
+	one lock and then acquire another (for example, locks in 
+	two different levels of the RCU tree).
+
+	The LKMM patch applies only to cases where one CPU releases
+	a lock and then that CPU or another acquires the _same_ lock 
+	again.
+
+As another difference, the litmus test given near the start of the
+"Tree RCU Grace Period Memory Ordering Building Blocks" section would
+not be forbidden by the LKMM, even with RCtso locks, if it didn't use
+raw_spin_lock_rcu_node().  This is because the litmus test is forbidden
+only when locks are RCsc, which is what raw_spin_lock_rcu_node()  
+provides.
+
+So I don't see how the RCU code can be held up as an example either for
+or against requiring locks to be RCtso.
+
+Alan
+
