@@ -1,4 +1,4 @@
-Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -6,109 +6,105 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB651C43143
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 23:55:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85797C43143
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 00:01:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BF1120866
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 23:55:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BF1120866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 35BD720866
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 00:01:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35BD720866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726407AbeIKEwU (ORCPT
+        id S1726353AbeIKE5a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 00:52:20 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:36092 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725945AbeIKEwU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 00:52:20 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1fzW22-0002GJ-UQ; Mon, 10 Sep 2018 23:55:51 +0000
-Date:   Tue, 11 Sep 2018 00:55:50 +0100
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     linux-kernel@vger.kernel.org
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [WTF?] extremely old dead code
-Message-ID: <20180910235550.GN19965@ZenIV.linux.org.uk>
+        Tue, 11 Sep 2018 00:57:30 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54242 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725945AbeIKE5a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 00:57:30 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9442040216EA;
+        Tue, 11 Sep 2018 00:01:00 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-21.pek2.redhat.com [10.72.8.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7125310CD62C;
+        Tue, 11 Sep 2018 00:00:55 +0000 (UTC)
+Date:   Tue, 11 Sep 2018 08:00:50 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Tejun Heo <tj@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Jianchao Wang <jianchao.w.wang@oracle.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-block@vger.kernel.org
+Subject: Re: [PATCH] percpu-refcount: relax limit on percpu_ref_reinit()
+Message-ID: <20180911000049.GB30977@ming.t460p>
+References: <20180909125824.9150-1-ming.lei@redhat.com>
+ <20180910164920.GE1100574@devbig004.ftw2.facebook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20180910164920.GE1100574@devbig004.ftw2.facebook.com>
 User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 11 Sep 2018 00:01:00 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 11 Sep 2018 00:01:00 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ming.lei@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-	Folks, please tell me that I'm misreading the history
-here...
+Hi Tejun,
 
-0.97:
-kernel/chr_dev/tty_ioctl.c:tty_ioctl():
-+               case FIONBIO:
-+                       if (arg)
-+                               file->f_flags |= O_NONBLOCK;
-+                       else
-+                               file->f_flags &= ~O_NONBLOCK;
-+                       return 0;
+On Mon, Sep 10, 2018 at 09:49:20AM -0700, Tejun Heo wrote:
+> Hello, Ming.
+> 
+> On Sun, Sep 09, 2018 at 08:58:24PM +0800, Ming Lei wrote:
+> > @@ -196,15 +197,6 @@ static void __percpu_ref_switch_to_percpu(struct percpu_ref *ref)
+> >  
+> >  	atomic_long_add(PERCPU_COUNT_BIAS, &ref->count);
+> >  
+> > -	/*
+> > -	 * Restore per-cpu operation.  smp_store_release() is paired
+> > -	 * with READ_ONCE() in __ref_is_percpu() and guarantees that the
+> > -	 * zeroing is visible to all percpu accesses which can see the
+> > -	 * following __PERCPU_REF_ATOMIC clearing.
+> > -	 */
+> 
+> So, while the location of percpu counter resetting moved, the pairing
+> of store_release and READ_ONCE is still required to ensure that the
+> clearing is visible before the switching to percpu mode becomes
+> effective.  Can you please rephrase and keep the above comment?
 
-0.98.2:
-fs/ioctl.c:sys_ioctl():
-+               case FIONBIO:
-+                       on = get_fs_long((unsigned long *) arg);
-+                       if (on)
-+                               filp->f_flags |= O_NONBLOCK;
-+                       else
-+                               filp->f_flags &= ~O_NONBLOCK;
-+                       return 0;
+OK, will do it in V2.
 
-Note that the call of ->f_op->ioctl() is in default: in the same switch,
-i.e. unreachable with cmd == FIONBIO.
+> 
+> > -	for_each_possible_cpu(cpu)
+> > -		*per_cpu_ptr(percpu_count, cpu) = 0;
+> > -
+> >  	smp_store_release(&ref->percpu_count_ptr,
+> >  			  ref->percpu_count_ptr & ~__PERCPU_REF_ATOMIC);
+> >  }
+> ...
+> > @@ -357,10 +349,11 @@ EXPORT_SYMBOL_GPL(percpu_ref_kill_and_confirm);
+> >  void percpu_ref_reinit(struct percpu_ref *ref)
+> >  {
+> >  	unsigned long flags;
+> > +	unsigned long __percpu *percpu_count;
+> >  
+> >  	spin_lock_irqsave(&percpu_ref_switch_lock, flags);
+> >  
+> > -	WARN_ON_ONCE(!percpu_ref_is_zero(ref));
+> > +	WARN_ON_ONCE(__ref_is_percpu(ref, &percpu_count));
+> 
+> Can you elaborate this part?  This doesn't seem required for the
+> described change.  Why is it part of the patch?
 
-0.98.3:
-kernel/chr_dev/tty_ioctl.c:tty_ioctl():
-                case FIONBIO:
-+                       arg = get_fs_long((unsigned long *) arg);
-                        if (arg)
-                                file->f_flags |= O_NONBLOCK;
-                        else
-wasn't that dead code by that point?
+The motivation of this patch is to avoid the above warning and allow
+the ref to switch back to percpu mode without dropping to zero.
 
-0.99.13k: kernel/chr_dev/tty_ioctl.c moves to drivers/char/tty_ioctl.c,
-tty_ioctl() essentially unchanged.
+That is why the check has to be changed to the above way.
 
-1.1.13: tty_ioctl() moves from drivers/char/tty_ioctl.c to
-drivers/char/tty_io.c, leaving some bits behind (as n_tty_ioctl()).
-FIONBIO handling is among the moved parts.
 
-1.3.4: in tty_ioctl()
-                case FIONBIO:
--                       retval = verify_area(VERIFY_READ, (void *) arg, sizeof(long));
-+                       retval = verify_area(VERIFY_READ, (void *) arg, sizeof(int));
-
-1.3.28: same change happens in sys_ioctl().
-
-2.1.4: handling moved to helper (fionbio())
-
-In 2006: Alan writes a nice description of fionbio()
-+/**
-+ *     fionbio         -       non blocking ioctl
-+ *     @file: file to set blocking value
-+ *     @p: user parameter
-+ *
-+ *     Historical tty interfaces had a blocking control ioctl before
-+ *     the generic functionality existed. This piece of history is preserved
-+ *     in the expected tty API of posix OS's.
-+ *
-+ *     Locking: none, the open fle handle ensures it won't go away.
-+ */
-"generic functionality" bit refers to fcntl(2) (F_SETFL)
-
-In 2010: the whole thing is moved to drivers/tty/tty_io.c
-
-Hadn't that sucker been dead code since 0.98.2?  What am I missing here?
-Note that this thing had quite a few functionality changes over those
-years; had they even been tested?
-
-Confused and hoping to be told "Al, you're an idiot, here's an obvious way
-for that thing to be reached"...
+Thanks,
+Ming
