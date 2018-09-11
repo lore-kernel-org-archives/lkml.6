@@ -2,119 +2,95 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71BE4C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 08:54:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58439C6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 08:55:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E91D20839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 08:54:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E91D20839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 070CB20839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 08:55:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 070CB20839
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726734AbeIKNw0 (ORCPT
+        id S1726862AbeIKNyI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 09:52:26 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:40052 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726476AbeIKNw0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 09:52:26 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 4EED220799; Tue, 11 Sep 2018 10:54:06 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-30-219.w90-88.abo.wanadoo.fr [90.88.15.219])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 1E42F2072B;
-        Tue, 11 Sep 2018 10:53:56 +0200 (CEST)
-Date:   Tue, 11 Sep 2018 10:53:55 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Paul Kocialkowski <contact@paulk.fr>
-Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devel@driverdev.osuosl.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-sunxi@googlegroups.com, Randy Li <ayaka@soulik.info>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: Re: [PATCH v9 0/9] Cedrus driver for the Allwinner Video Engine,
- using media requests
-Message-ID: <20180911085355.bmd6gm24tkuxzdst@flea>
-References: <20180906222442.14825-1-contact@paulk.fr>
+        Tue, 11 Sep 2018 09:54:08 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:35140 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726476AbeIKNyI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 09:54:08 -0400
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
+   d="scan'208";a="44771282"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 11 Sep 2018 16:55:46 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id F31644B6AE13;
+        Tue, 11 Sep 2018 16:55:47 +0800 (CST)
+Received: from localhost.localdomain (10.167.225.56) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Tue, 11 Sep 2018 16:55:52 +0800
+Date:   Tue, 11 Sep 2018 16:55:25 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     kbuild test robot <fengguang.wu@intel.com>
+CC:     <kbuild-all@01.org>, <tglx@linutronix.de>, <mingo@redhat.com>,
+        <hpa@zytor.com>, <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <keescook@chromium.org>, <bhe@redhat.com>,
+        <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>,
+        <douly.fnst@cn.fujitsu.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        <linux-efi@vger.kernel.org>, <linux-acpi@vger.kernel.org>
+Subject: Re: [RFC PATCH] x86/boot: get_acpi_srat_table() can be static
+Message-ID: <20180911085525.GF8519@localhost.localdomain>
+References: <20180910124015.18073-2-fanc.fnst@cn.fujitsu.com>
+ <20180911085226.GA25670@athens>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="tnxohcee4xz5pskx"
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20180906222442.14825-1-contact@paulk.fr>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20180911085226.GA25670@athens>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: F31644B6AE13.ABDAD
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Sep 11, 2018 at 04:52:26PM +0800, kbuild test robot wrote:
+>
+>Fixes: cc1a4e2a5474 ("x86/boot: Add acpitb.c to parse acpi tables")
+>Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
+>---
+> acpitb.c |    2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+>diff --git a/arch/x86/boot/compressed/acpitb.c b/arch/x86/boot/compressed/acpitb.c
+>index 66c5154..4ddd732 100644
+>--- a/arch/x86/boot/compressed/acpitb.c
+>+++ b/arch/x86/boot/compressed/acpitb.c
+>@@ -279,7 +279,7 @@ static acpi_physical_address get_rsdp_addr(void)
+> 	return pa;
+> }
+> 
+>-struct acpi_table_header *get_acpi_srat_table(void)
+>+static struct acpi_table_header *get_acpi_srat_table(void)
 
---tnxohcee4xz5pskx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Good catch, will add it.
 
-On Fri, Sep 07, 2018 at 12:24:33AM +0200, Paul Kocialkowski wrote:
-> This is the ninth iteration of the updated Cedrus driver,
-> that supports the Video Engine found on most Allwinner SoCs, starting
-> with the A10. It was tested on the A13, A20, A33 and H3.
->=20
-> The initial version of this driver[0] was originally written and
-> submitted by Florent Revest using a previous version of the request API
-> that is necessary to provide coherency between controls and the buffers
-> they apply to.
->=20
-> The driver was adapted to use the latest version of the media request
-> API[1], as submitted by Hans Verkuil. Media request API support is a
-> hard requirement for the Cedrus driver.
->=20
-> The driver itself currently only supports MPEG2 and more codecs will be
-> added eventually. The default output frame format provided by the Video
-> Engine is a multi-planar tiled YUV format (based on NV12). A specific
-> format is introduced in the V4L2 API to describe it. Starting with the
-> A33, the Video Engine can also output untiled YUV formats.
+Thanks,
+Chao Fan
 
-Applied the DTS patches, thanks!
-Maxime
+> {
+> 	char *args = (char *)get_cmd_line_ptr();
+> 	acpi_physical_address acpi_table;
+>
+>
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
 
---tnxohcee4xz5pskx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluXgqIACgkQ0rTAlCFN
-r3Q/EQ//YzqVxVgpNeUPQC1aIPWbTOZVHtAIK14Z7UNUq5c1sAFqnF7Sn7r71jWq
-xQ5ePAc+sqtrt6E+v8vJTHmsYTrtjzxXwNGOckz4WNA6nQB1HKhpPeLt5jk1V4PX
-kjWZmd+VwFIQkVjWkGPJGQJpqcCVsuhLzqD7cejC6EpRsCLphht2wykN2AWXHPRc
-jNh8t8k7paH7Yk4VuJ7FJRGD1oy4pKe0N3F+jrMAsXQQkHbbPKS2BmUap26AV5Z1
-Q2NzHYKVXDK8SFDHi7/vL2vytpu6IWRskEheHbC3rpsJDE7KRATmixZ0TYT1BXhC
-ExQCv9rt43oButgkNcKCQO+RJh8FDPtFzlY5bzzWqDNiGOW7I7O+mG7kGGVimyYO
-WHI0YS+5JlAU2t3d9RH54sCLFuqzDecZMgobgDdPJceQ0IeEPFcFOP1H97UK7pyg
-FrLZwOWS7GBJpWcrpytfqxS9IGuKoCLC+x0EoeeFw2QCF4/xgrJoYS1uroLCltmo
-2dNnZZqnsb+o7jQjH52iadi7lNODJ83GWrTrW190/UphBY0PoFLXPtTzio5bR6vh
-P9JQ82whhzqSXZmDAj2rxxxKYH7esLwBie/yq0rolkA8cBo8zgnF3ZvtgnudJnqm
-ZezU0ndsJNvWXkfHBw4+LPJ18n8bU5WpQKEwV2X/YJl2uaa9TcQ=
-=Z4X/
------END PGP SIGNATURE-----
-
---tnxohcee4xz5pskx--
