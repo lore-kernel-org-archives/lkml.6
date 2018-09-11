@@ -2,63 +2,97 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9508FC04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:18:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18364C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:19:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 382312086A
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:18:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 382312086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id B66222086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:19:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B66222086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726897AbeIKOQ4 (ORCPT
+        id S1726943AbeIKOSB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 10:16:56 -0400
-Received: from verein.lst.de ([213.95.11.211]:41823 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726563AbeIKOQz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 10:16:55 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id B91A568C8A; Tue, 11 Sep 2018 11:22:54 +0200 (CEST)
-Date:   Tue, 11 Sep 2018 11:22:54 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Kashyap Desai <kashyap.desai@broadcom.com>,
-        Ming Lei <tom.leiming@gmail.com>,
-        Sumit Saxena <sumit.saxena@broadcom.com>,
-        Ming Lei <ming.lei@redhat.com>, Christoph Hellwig <hch@lst.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Shivasharan Srikanteshwara 
-        <shivasharan.srikanteshwara@broadcom.com>,
-        linux-block <linux-block@vger.kernel.org>
-Subject: Re: Affinity managed interrupts vs non-managed interrupts
-Message-ID: <20180911092254.GB10330@lst.de>
-References: <eccc46e12890a1d033d9003837012502@mail.gmail.com> <20180829084618.GA24765@ming.t460p> <300d6fef733ca76ced581f8c6304bac6@mail.gmail.com> <CACVXFVM7nGxpyq0_jfshgBOTx5B+PuCDmN43SfPTCkENJRLpMg@mail.gmail.com> <615d78004495aebc53807156d04d988c@mail.gmail.com> <alpine.DEB.2.21.1808312207390.1349@nanos.tec.linutronix.de> <486f94a563d63c4779498fe8829a546c@mail.gmail.com> <alpine.DEB.2.21.1809010020520.1349@nanos.tec.linutronix.de>
+        Tue, 11 Sep 2018 10:18:01 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:11684 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726564AbeIKOSB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 10:18:01 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id CF70AC7377410;
+        Tue, 11 Sep 2018 17:19:30 +0800 (CST)
+Received: from [127.0.0.1] (10.177.29.68) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.399.0; Tue, 11 Sep 2018
+ 17:19:28 +0800
+Message-ID: <5B97889F.3020303@huawei.com>
+Date:   Tue, 11 Sep 2018 17:19:27 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1809010020520.1349@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+CC:     <davem@davemloft.net>, <edumazet@google.com>,
+        <kuznet@ms2.inr.ac.ru>, <yoshfuji@linux-ipv6.org>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] net: ipv4: Use BUG_ON directly instead of a if condition
+ followed by BUG
+References: <1536590282-23899-1-git-send-email-zhongjiang@huawei.com> <a000b5a4-2907-70f9-70ed-7e1c6a797876@cogentembedded.com> <5B9783ED.4080908@huawei.com> <e1b9c36c-5459-a68e-e6fd-cca038e31d5f@cogentembedded.com>
+In-Reply-To: <e1b9c36c-5459-a68e-e6fd-cca038e31d5f@cogentembedded.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.68]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 01, 2018 at 12:48:46AM +0200, Thomas Gleixner wrote:
-> > We want some changes in current API which can allow us to  pass flags
-> > (like *local numa affinity*) and cpu-msix mapping are from local numa node
-> > + effective cpu are spread across local numa node.
-> 
-> What you really want is to split the vector space for your device into two
-> blocks. One for the regular per cpu queues and the other (16 or how many
-> ever) which are managed separately, i.e. spread out evenly. That needs some
-> extensions to the core allocation/management code, but that shouldn't be a
-> huge problem.
+On 2018/9/11 17:11, Sergei Shtylyov wrote:
+> On 9/11/2018 11:59 AM, zhong jiang wrote:
+>
+>>>> The if condition can be removed if we use BUG_ON directly.
+>>>> The issule is detected with the help of Coccinelle.
+>>>
+>>>    Issue?
+>>>
+>>>>
+>>>> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+>>>> ---
+>>>>    net/ipv4/tcp_input.c | 8 ++++----
+>>>>    1 file changed, 4 insertions(+), 4 deletions(-)
+>>>>
+>>>> diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
+>>>> index 62508a2..893bde3 100644
+>>>> --- a/net/ipv4/tcp_input.c
+>>>> +++ b/net/ipv4/tcp_input.c
+>>>> @@ -4934,8 +4934,8 @@ void tcp_rbtree_insert(struct rb_root *root, struct sk_buff *skb)
+>>>>                BUG_ON(offset < 0);
+>>>>                if (size > 0) {
+>>>>                    size = min(copy, size);
+>>>> -                if (skb_copy_bits(skb, offset, skb_put(nskb, size), size))
+>>>> -                    BUG();
+>>>> +                BUG(skb_copy_bits(skb, offset,
+>>>
+>>>     You said BUG_ON()?
+>>   Yep. Do you think that it is worthing to do
+>
+>    I think BUG() doesn't take parameters, BUG_ON() does. Have you tried to build the kernel with your patch at all?
+>
+ I know that the patch should be BUG_ON instead of BUG. This is my mistake.  I just want to know that it is worthing to do so.
+ 
 
-Note that there are some other uses cases for multiple sets of affinity
-managed irqs.  Various network devices insist on having separate TX vs
-RX interrupts for example.
+ Thanks,
+ zhong jiang
+>>   Thanks,
+>> zhong jiang
+> [...]
+>
+> MBR, Sergei
+>
+>
+>
+
+
