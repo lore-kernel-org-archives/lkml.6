@@ -2,141 +2,130 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C84FC6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:33:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9B5EC6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:34:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA5AD2086A
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:33:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6018920865
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:34:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xXljdJYg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA5AD2086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="TwOhGWZi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6018920865
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727046AbeIKMbR (ORCPT
+        id S1727287AbeIKMcm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 08:31:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36414 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726301AbeIKMbQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 08:31:16 -0400
-Received: from localhost (unknown [171.76.126.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 595F920865;
-        Tue, 11 Sep 2018 07:33:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536651197;
-        bh=K1wSlWlDzYIAo+WlWPvgl8ucz73NNrMO40tBF6H8bLI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xXljdJYgDFYDza8FrbMPcvh2r+HJXHU3ptZKpJrl5lScl7u1MlGMnHciwE5v4wNHf
-         babitXhY4Vvz/5p0bPRxND5yRoNkhpwKg/UbA5FBbmFPwj+cYUgmTllHISY6ClvwuO
-         6Il7v6SARN0hhhP4dvmPRefsfaNwi3FCTp6r6e54=
-Date:   Tue, 11 Sep 2018 13:03:07 +0530
-From:   Vinod <vkoul@kernel.org>
-To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc:     dan.j.williams@intel.com, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org, lars@metafoo.de, radheys@xilinx.com
-Subject: Re: [PATCH v2 1/2] dmaengine: Add metadata_ops for
- dma_async_tx_descriptor
-Message-ID: <20180911073307.GK2634@vkoul-mobl>
-References: <20180830121910.16005-1-peter.ujfalusi@ti.com>
- <20180830121910.16005-2-peter.ujfalusi@ti.com>
+        Tue, 11 Sep 2018 08:32:42 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:45719 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726353AbeIKMcm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 08:32:42 -0400
+Received: by mail-ed1-f68.google.com with SMTP id p52-v6so18407511eda.12
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 00:34:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=GQoWPqbfqOFb0F1rWXeI46EOiKsH46LnXSKEVSaW3Oo=;
+        b=TwOhGWZijh92DhqY6h5dNEzNJ4fFNHtuoas3NxA3tJqQuHj32O6bKgL3eabcOqTAD9
+         uwCQM1hvtihHFN5caK1U+8UOQyFDZ4J3apiTdasf/GY3MVpzX0oh0YFbmuA9dzv312DM
+         kbFiEbkCs10KVOAXWtKOB9PLXMi3r9EGiXZC0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=GQoWPqbfqOFb0F1rWXeI46EOiKsH46LnXSKEVSaW3Oo=;
+        b=P6Ups7fqqjxz8wEKJZGwdhpbifXnDQwfz9w1a6yFh05KE0IHxGiiokQs0ihVWOk3WC
+         6HIssWDpL7LAyKRKyKYM5vM/XYm2LUogpOk2odp/tHVW+7u0faERqj6EXhsMME8ZI8Go
+         4CYGngmgrTJo2YuBDW/+t13uDQQV9+OPEPzjplnPSo/Kk+oSMZYcjgeq1AZkKCTgnVH8
+         15DDMXzrOfQQ2IiddGCNts8zvWV2uKBHXqq+dMAXfnr+OG+9A74Utlsr6iYSUkqlf0eJ
+         Wal0SwHKOChyC0V3d3Vh5MO8yrU+9HDZsJg9y6jhSuQb6KzB+LKpIoQAZK4lqKoYaegG
+         I72Q==
+X-Gm-Message-State: APzg51D7GieS3J/I6LqVYxdvJsZiPkS6oxFA/5LI4ffiMLBmxojxxSVA
+        PYhHxNzkHvEpJukP1w+xZSXw1Q==
+X-Google-Smtp-Source: ANB0VdZUQaLUTZMZNebE2Uo32SHbObAHHWFhv1oPv+DXZsdgWmyX+L165iYyPwNT6vlfWJoj03nhPA==
+X-Received: by 2002:a50:a38a:: with SMTP id s10-v6mr25598214edb.99.1536651281557;
+        Tue, 11 Sep 2018 00:34:41 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id w20-v6sm18874627edc.12.2018.09.11.00.34.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 11 Sep 2018 00:34:40 -0700 (PDT)
+Date:   Tue, 11 Sep 2018 09:34:39 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH -next] drm: Remove set but not used variable 'config'
+Message-ID: <20180911073438.GG19774@phenom.ffwll.local>
+Mail-Followup-To: YueHaibing <yuehaibing@huawei.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+References: <1536646814-186429-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180830121910.16005-2-peter.ujfalusi@ti.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1536646814-186429-1-git-send-email-yuehaibing@huawei.com>
+X-Operating-System: Linux phenom 4.14.0-3-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30-08-18, 15:19, Peter Ujfalusi wrote:
-> The metadata is best described as side band data or parameters traveling
-> alongside the data DMAd by the DMA engine. It is data
-> which is understood by the peripheral and the peripheral driver only, the
-> DMA engine see it only as data block and it is not interpreting it in any
-> way.
+On Tue, Sep 11, 2018 at 06:20:14AM +0000, YueHaibing wrote:
+> Fixes gcc '-Wunused-but-set-variable' warning:
 > 
-> The metadata can be different per descriptor as it is a parameter for the
-> data being transferred.
+> drivers/gpu/drm/drm_plane.c: In function 'drm_mode_getplane_res':
+> drivers/gpu/drm/drm_plane.c:475:26: warning:
+>  variable 'config' set but not used [-Wunused-but-set-variable]
 > 
-> If the DMA supports per descriptor metadata it can implement the attach,
-> get_ptr/set_len callbacks.
-> 
-> Client drivers must only use either attach or get_ptr/set_len to avoid
-> misconfiguration.
-> 
-> Client driver can check if a given metadata mode is supported by the
-> channel during probe time with
-> dmaengine_is_metadata_mode_supported(chan, DESC_METADATA_CLIENT);
-> dmaengine_is_metadata_mode_supported(chan, DESC_METADATA_ENGINE);
-> 
-> and based on this information can use either mode.
-> 
-> Wrappers are also added for the metadata_ops.
-> 
-> To be used in DESC_METADATA_CLIENT mode:
-> dmaengine_desc_attach_metadata()
-> 
-> To be used in DESC_METADATA_ENGINE mode:
-> dmaengine_desc_get_metadata_ptr()
-> dmaengine_desc_set_metadata_len()
-> 
-> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-> ---
->  drivers/dma/dmaengine.c   |  73 ++++++++++++++++++++++++++
->  include/linux/dmaengine.h | 108 ++++++++++++++++++++++++++++++++++++++
->  2 files changed, 181 insertions(+)
-> 
-> diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
-> index f1a441ab395d..53bd1eae23f2 100644
-> --- a/drivers/dma/dmaengine.c
-> +++ b/drivers/dma/dmaengine.c
-> @@ -1306,6 +1306,79 @@ void dma_async_tx_descriptor_init(struct dma_async_tx_descriptor *tx,
->  }
->  EXPORT_SYMBOL(dma_async_tx_descriptor_init);
->  
-> +static inline int desc_check_and_set_metadata_mode(
-> +	struct dma_async_tx_descriptor *desc, enum dma_desc_metadata_mode mode)
-> +{
-> +	/* Make sure that the metadata mode is not mixed */
-> +	if (!desc->desc_metadata_mode) {
-> +		if (dmaengine_is_metadata_mode_supported(desc->chan, mode))
-> +			desc->desc_metadata_mode = mode;
-> +		else
-> +			return -ENOTSUPP;
-> +	} else if (desc->desc_metadata_mode != mode) {
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +int dmaengine_desc_attach_metadata(struct dma_async_tx_descriptor *desc,
-> +				   void *data, size_t len)
-> +{
-> +	int ret;
-> +
-> +	if (!desc)
-> +		return -EINVAL;
-> +
-> +	ret = desc_check_and_set_metadata_mode(desc, DESC_METADATA_CLIENT);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (!desc->metadata_ops || !desc->metadata_ops->attach)
-> +		return -ENOTSUPP;
-> +
-> +	return desc->metadata_ops->attach(desc, data, len);
-> +}
-> +EXPORT_SYMBOL(dmaengine_desc_attach_metadata);
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-EXPORT_SYMBOL_GPL ?
+Applied, thanks.
+-Daniel
+> ---
+>  drivers/gpu/drm/drm_plane.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_plane.c b/drivers/gpu/drm/drm_plane.c
+> index 36bf3fe..4a72c68 100644
+> --- a/drivers/gpu/drm/drm_plane.c
+> +++ b/drivers/gpu/drm/drm_plane.c
+> @@ -472,7 +472,6 @@ int drm_mode_getplane_res(struct drm_device *dev, void *data,
+>  			  struct drm_file *file_priv)
+>  {
+>  	struct drm_mode_get_plane_res *plane_resp = data;
+> -	struct drm_mode_config *config;
+>  	struct drm_plane *plane;
+>  	uint32_t __user *plane_ptr;
+>  	int count = 0;
+> @@ -480,7 +479,6 @@ int drm_mode_getplane_res(struct drm_device *dev, void *data,
+>  	if (!drm_core_check_feature(dev, DRIVER_MODESET))
+>  		return -EINVAL;
+>  
+> -	config = &dev->mode_config;
+>  	plane_ptr = u64_to_user_ptr(plane_resp->plane_id_ptr);
+>  
+>  	/*
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
 -- 
-~Vinod
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
