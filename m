@@ -6,96 +6,90 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88B51C6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:13:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B9CAC6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:14:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A60F20839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:13:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A60F20839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id E245F20839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:14:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E245F20839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727044AbeILBOa (ORCPT
+        id S1727246AbeILBPZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 21:14:30 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:38172 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726720AbeILBO3 (ORCPT
+        Tue, 11 Sep 2018 21:15:25 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:51793 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726720AbeILBPZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 21:14:29 -0400
-Received: by mail-qk1-f193.google.com with SMTP id g197-v6so17640096qke.5;
-        Tue, 11 Sep 2018 13:13:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=x1GBRmA4/IEKBFZdUX8kqXiwNtIxV8BkEEJ+V4/1vEc=;
-        b=rRjS/uj271mkRuucVLr+Em3G4uExBlshSxqjilK7g3QXUoJpx8UrMCqUVXAZFevFmA
-         ucwlrrMh1yA/CbwlPeTdfIjVSsyNx1BFeuoWUTXAoXj1xviKEB37NIjKXZxJKU5wvVKp
-         3neBnYawiOphPL1VurvXFO1AksyP7zI0oDMaRN24Rz30BAZCJ7e7L7TIw1r40arNXEVP
-         9ldPq1g8hB2whbbpk5NIkUOGswIc7UtkyrUbKFiRXh+Yo4lK7Q97yGETxaUr1vANglgJ
-         C0iUF2gGYLb9FGU7jQGFnk4YrqPB2glNvidN9A+eYSwT5c7I7XYn5ft8nchZDp5n5nJJ
-         Pgxg==
-X-Gm-Message-State: APzg51CpNKmP1GyRR15K8YdjK2PNOLVcMPaBPUsfiemyaqhLV3dBqLLg
-        FJUZVrEE1IbdO8UQkMc9RDBFfN9TwQz7YgeQTW0=
-X-Google-Smtp-Source: ANB0VdaMIGJdWo5+c0069mKGguh3xQU+tFq895aB5DmGOA50IiFAxs/09+/HLdCVfH+95EyOgWQIUQ5URRgvKREiyio=
-X-Received: by 2002:a37:7347:: with SMTP id o68-v6mr85655qkc.291.1536696814333;
- Tue, 11 Sep 2018 13:13:34 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180908142837.2819693-1-arnd@arndb.de> <20180908142837.2819693-11-arnd@arndb.de>
- <20180909043746.GF19965@ZenIV.linux.org.uk> <CAK8P3a0evhaJGL_XdUjQhJDGyAh01UjLFkKx-Cq21htXmFsY2A@mail.gmail.com>
-In-Reply-To: <CAK8P3a0evhaJGL_XdUjQhJDGyAh01UjLFkKx-Cq21htXmFsY2A@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 11 Sep 2018 22:13:18 +0200
-Message-ID: <CAK8P3a0nrNUpcYZiV7T14HXPfoiR4LyMM6E+8fP6AWgRMgDpxA@mail.gmail.com>
-Subject: Re: [PATCH 11/11] compat_ioctl: move tape handling into drivers
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     David Miller <davem@davemloft.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>, osst@riede.org,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Kai.Makisara@kolumbus.fi,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        IDE-ML <linux-ide@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        osst-users@lists.sourceforge.net,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>
+        Tue, 11 Sep 2018 21:15:25 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126] helo=xylophone)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1fzp3L-0001sr-Ft; Tue, 11 Sep 2018 21:14:27 +0100
+Message-ID: <1536696866.3024.151.camel@codethink.co.uk>
+Subject: Re: [PATCH 4.4 51/79] bnxt_en: Fix for system hang if request_irq
+ fails
+From:   Ben Hutchings <ben.hutchings@codethink.co.uk>
+To:     Vikas Gupta <vikas.gupta@broadcom.com>,
+        Michael Chan <michael.chan@broadcom.com>
+Cc:     stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Date:   Tue, 11 Sep 2018 21:14:26 +0100
+In-Reply-To: <20180823074922.442947994@linuxfoundation.org>
+References: <20180823074918.641878835@linuxfoundation.org>
+         <20180823074922.442947994@linuxfoundation.org>
+Organization: Codethink Ltd.
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 11, 2018 at 5:36 PM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Sun, Sep 9, 2018 at 6:38 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> > On Sat, Sep 08, 2018 at 04:28:17PM +0200, Arnd Bergmann wrote:
-> > > MTIOCPOS and MTIOCGET are incompatible between 32-bit and 64-bit user
-> > > space, and traditionally have been translated in fs/compat_ioctl.c.
-> > >
-> > > To get rid of that translation handler, move a corresponding
-> > > implementation into each of the four drivers implementing those commands.
-> > >
-> > > The interesting part of that is now in a new linux/mtio.h header that
-> > > wraps the existing uapi/linux/mtio.h header and provides an abstraction
-> > > to let drivers handle both cases easily.
-> >
-> > Ugh...  Frankly, this bool compat passed all way down looks wrong.
-> > I can live with that; the question is whether block folks will be
-> > OK with that thing...
->
-> I have tried to come up with an alternative, but couldn't really find anything
-> that is less ugly. Since nobody else complained, I'll resend this version
-> along with the other patches.
+On Thu, 2018-08-23 at 09:53 +0200, Greg Kroah-Hartman wrote:
+> 4.4-stable review patch.  If anyone has any objections, please let me know.
+> 
+> ------------------
+> 
+> From: Vikas Gupta <vikas.gupta@broadcom.com>
+> 
+> [ Upstream commit c58387ab1614f6d7fb9e244f214b61e7631421fc ]
+> 
+> Fix bug in the error code path when bnxt_request_irq() returns failure.
+> bnxt_disable_napi() should not be called in this error path because
+> NAPI has not been enabled yet.
+[...]
+> --- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+> +++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+> @@ -4591,7 +4591,7 @@ static int __bnxt_open_nic(struct bnxt *
+>  		rc = bnxt_request_irq(bp);
+>  		if (rc) {
+>  			netdev_err(bp->dev, "bnxt_request_irq err: %x\n", rc);
+> -			goto open_err;
+> +			goto open_err_irq;
+>  		}
+>  	}
+>  
+> @@ -4629,6 +4629,8 @@ static int __bnxt_open_nic(struct bnxt *
+>  
+>  open_err:
+>  	bnxt_disable_napi(bp);
+> +
+> +open_err_irq:
+>  	bnxt_del_napi(bp);
 
-Actually, there was one idea that Deepa mentioned for another subsystem
-with a similar issue: instead of passing down the fact that we come from
-a compat syscall through multiple function calls, the lowest ones
-(put_user_mtpos, put_user_mtget) could call in_compat_syscall().
+Shouldn't this added statement be conditional on irq_re_init?
 
-Would you prefer that?
+Ben.
 
-      Arnd
+>  
+>  open_err_free_mem:
+
+-- 
+Ben Hutchings, Software Developer                         Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
