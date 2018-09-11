@@ -2,121 +2,121 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5ED8C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:11:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75F78C6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:12:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 805E220854
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:11:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="hF6BsDz0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 805E220854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
+	by mail.kernel.org (Postfix) with ESMTP id 2DFBF20854
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:12:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DFBF20854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727183AbeIKOKM (ORCPT
+        id S1726950AbeIKOLI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 10:10:12 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:44755 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726572AbeIKOKL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 10:10:11 -0400
-Received: by mail-lj1-f195.google.com with SMTP id q127-v6so20227906ljq.11
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 02:11:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=+hRAOXX/4WlwteZOPt1nnGT9PlqvrgoiHbGp2lkPGBo=;
-        b=hF6BsDz0OX5HjWlIZ0RgtL1Dqwe0+mn+crKjZcsw0RpFrqczGvogSK3OL8CzBbCIuC
-         /O4da5nzxwGpw4aHBLyMqIJ+nqLGXZQUXvHNn3SJ731jxRx5QUoLyJBhzOMSv6TMViiz
-         jrqp8sJTAgrYPTeeP1aNo1uYoBQk/qq0vB3jxgKr3ck942EKGg71aKlqLoI9gni6y7WG
-         zVZ5lgi5e378PpnKIbShRvTBcDHLguyFLbotMLdDEgWa96yIlI8ujm8v8sHpOoKUNuD4
-         jS18IdY7BNbxc11QVmqFgvpYE1100DPAIWsFc+0ymBdMVULixI+oBLDxZyHb/5Nrvzji
-         U+OA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+hRAOXX/4WlwteZOPt1nnGT9PlqvrgoiHbGp2lkPGBo=;
-        b=YINoAMfjbb5pgZsWa2GlinEoaSlfTCjjiFAZi3Qs04nVliiLpnw9KesgsIB4JX6GjG
-         acM/wTX+pRFSDWvvUwUrwjWD9LodnWxUfHKrUKr75t2hn5ylyAVzA/lsk5Kp5+Q6uIM7
-         k1Yb1BHrvSzCjkli9jRLwLMANoqmUJx8Zdu5xJUnDVaVeIAoYVBsNoIg3SrAEVIEUvkS
-         c32wNLgMeYtJ9IRRegtdwl4Cq6spTzBrB83wtTDMB7P8OxhPh/BoRp1I2m6+HXIujBsO
-         Q7ZZ1x+SxAHrpEizsRNdOiX2Khd0JzpBRxmr+1MrOpGxa2OebsFyhGRZ/88SL9TYfv6K
-         Hzmw==
-X-Gm-Message-State: APzg51CAnInmgNSdSBAxE+O/IjLXYgR0ycGqhX05dF/LbfEXb5tNHeov
-        1G2IPMd/4vSiD5ZgBh9MYCM/Rb1fVzk=
-X-Google-Smtp-Source: ANB0VdbgLEIBMpC4mrvGLsLHqorah0L3x/TThH58loOG5xdgqQkbg3wB2LFm+6I/hbEnqoaTpaKJOA==
-X-Received: by 2002:a2e:9b59:: with SMTP id o25-v6mr8312076ljj.132.1536657106467;
-        Tue, 11 Sep 2018 02:11:46 -0700 (PDT)
-Received: from [192.168.0.126] ([31.173.81.2])
-        by smtp.gmail.com with ESMTPSA id 13-v6sm3170484lfy.87.2018.09.11.02.11.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Sep 2018 02:11:45 -0700 (PDT)
-Subject: Re: [PATCH] net: ipv4: Use BUG_ON directly instead of a if condition
- followed by BUG
-To:     zhong jiang <zhongjiang@huawei.com>
-Cc:     davem@davemloft.net, edumazet@google.com, kuznet@ms2.inr.ac.ru,
-        yoshfuji@linux-ipv6.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1536590282-23899-1-git-send-email-zhongjiang@huawei.com>
- <a000b5a4-2907-70f9-70ed-7e1c6a797876@cogentembedded.com>
- <5B9783ED.4080908@huawei.com>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <e1b9c36c-5459-a68e-e6fd-cca038e31d5f@cogentembedded.com>
-Date:   Tue, 11 Sep 2018 12:11:45 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 11 Sep 2018 10:11:08 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:40929 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726645AbeIKOLI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 10:11:08 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id B869B20703; Tue, 11 Sep 2018 11:12:43 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-30-219.w90-88.abo.wanadoo.fr [90.88.15.219])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 8412E2000E;
+        Tue, 11 Sep 2018 11:12:33 +0200 (CEST)
+Date:   Tue, 11 Sep 2018 11:12:32 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Philipp Rossak <embed3d@gmail.com>, lee.jones@linaro.org,
+        mark.rutland@arm.com, wens@csie.org, linux@armlinux.org.uk,
+        jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net, eugen.hristev@microchip.com,
+        rdunlap@infradead.org, vilhelm.gray@gmail.com,
+        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
+        geert+renesas@glider.be, lukas@wunner.de, icenowy@aosc.io,
+        arnd@arndb.de, broonie@kernel.org, arnaud.pouliquen@st.com,
+        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3 14/30] dt-bindings: update the Allwinner GPADC device
+ tree binding for H3 & A83T
+Message-ID: <20180911091232.2ozypemfam5kayef@flea>
+References: <20180830154518.29507-1-embed3d@gmail.com>
+ <20180830154518.29507-15-embed3d@gmail.com>
+ <20180831084854.q2uh63pw5vprqlzt@flea>
+ <20180910194424.GA21461@bogus>
 MIME-Version: 1.0
-In-Reply-To: <5B9783ED.4080908@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ttcwp2nzxxraldfm"
+Content-Disposition: inline
+In-Reply-To: <20180910194424.GA21461@bogus>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/11/2018 11:59 AM, zhong jiang wrote:
 
->>> The if condition can be removed if we use BUG_ON directly.
->>> The issule is detected with the help of Coccinelle.
->>
->>    Issue?
->>
->>>
->>> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
->>> ---
->>>    net/ipv4/tcp_input.c | 8 ++++----
->>>    1 file changed, 4 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
->>> index 62508a2..893bde3 100644
->>> --- a/net/ipv4/tcp_input.c
->>> +++ b/net/ipv4/tcp_input.c
->>> @@ -4934,8 +4934,8 @@ void tcp_rbtree_insert(struct rb_root *root, struct sk_buff *skb)
->>>                BUG_ON(offset < 0);
->>>                if (size > 0) {
->>>                    size = min(copy, size);
->>> -                if (skb_copy_bits(skb, offset, skb_put(nskb, size), size))
->>> -                    BUG();
->>> +                BUG(skb_copy_bits(skb, offset,
->>
->>     You said BUG_ON()?
->   Yep. Do you think that it is worthing to do
+--ttcwp2nzxxraldfm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-    I think BUG() doesn't take parameters, BUG_ON() does. Have you tried to 
-build the kernel with your patch at all?
+On Mon, Sep 10, 2018 at 02:44:24PM -0500, Rob Herring wrote:
+> On Fri, Aug 31, 2018 at 10:48:54AM +0200, Maxime Ripard wrote:
+> > On Thu, Aug 30, 2018 at 05:45:02PM +0200, Philipp Rossak wrote:
+> > > Allwinner H3 features a thermal sensor like the one in A33, but has i=
+ts
+> > > register re-arranged, the clock divider moved to CCU (originally the
+> > > clock divider is in ADC) and added a pair of bus clock and reset.
+> > >=20
+> > > Allwinner A83T features a thermal sensor similar to the H3, the ths c=
+lock,
+> > > the bus clock and the reset was removed from the CCU. The THS in A83T
+> > > has a clock that is directly connected and runs with 24 MHz.
+> > >=20
+> > > Update the binding document to cover H3 and A83T.
+> > >=20
+> > > Signed-off-by: Philipp Rossak <embed3d@gmail.com>
+> >=20
+> > You probably want to have a look at:
+> > https://www.spinics.net/lists/arm-kernel/msg670167.html
+>=20
+> Well, which is it? An ADC or thermal sensor?
 
->   Thanks,
-> zhong jiang
-[...]
+It's both actually. This IP used to be called GPADC, and had a thermal
+sensor + some ADC channels. The design evolved across several
+generations of SoCs to drop the ADC channels and be used only to have
+thermal sensors.
 
-MBR, Sergei
+Maxime
 
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--ttcwp2nzxxraldfm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluXhv8ACgkQ0rTAlCFN
+r3RlLRAAhGrKBGOaPU36B9oHrqrOOdRRxLiK2BhzFdgWj8CadI2C62PxhwyTtyCZ
+O0Qbiuu3UEQdvK2ymSWeRR3sGEpdbNF0M9A44WMWn3+r9EchrryDNwpPHYQtE3N1
+eN3XFVOY4kEfVhwGrKLBPjECUoTORj8UAd1LUSkfubSqH26T77YZujRg5KHzDXmY
+leV5rs8/WfXLKJzcAiIqjDQaP/K71kEizka8Xdqt7nOn2hsr1oV/y1xxuPlsKPHv
+/ULINf1+EqR1u/a36WGICvdpMpgM4flKbp7cZEWIOIdKcoI7q23Szi5+3y129LdT
+0KOTGS+ywJxUTIHtduBs7gV0zOq4RCnqPjweXk5yOjjn8baF3OSHiv4m6zEJ9Wpt
+xB1HKbmcRdMyi5ttzAxkqWv4dowJywkkSD8K4OviRoixe944tFXW9o1GBogWosER
+i3wuMgj6A+HK5qDRZHmJMw+/W5UprUPxpzjNqNv8/ge09W4AB6mqLZ8HCgE/5OI8
+61XGlcNKcww/1l259vSgbD94I0ITrnrdcXmSuTOaHFwJLN0F8/cE5fIG7QCaeyeI
+7OfEefWqhLFpWLQYtqAZnF8dQaHmN+1X2//IBhWdMbLxOfyBGkHEB9jl3mgh8Wgz
++pQ40R+mn+TrqHCi6xu2Sn11dfz6j4DNWAlEMpTMyauE+THkuuk=
+=AUym
+-----END PGP SIGNATURE-----
+
+--ttcwp2nzxxraldfm--
