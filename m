@@ -2,122 +2,189 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15EBCC6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 18:39:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DEE0C6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 18:40:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFC5320865
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 18:39:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F19A20865
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 18:40:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="L1PO4N6o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFC5320865
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YFLpc0gD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F19A20865
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727673AbeIKXju (ORCPT
+        id S1727988AbeIKXkm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 19:39:50 -0400
-Received: from mail-yb1-f201.google.com ([209.85.219.201]:35963 "EHLO
-        mail-yb1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726622AbeIKXju (ORCPT
+        Tue, 11 Sep 2018 19:40:42 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41217 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726622AbeIKXkl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 19:39:50 -0400
-Received: by mail-yb1-f201.google.com with SMTP id e126-v6so12547577ybb.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 11:39:15 -0700 (PDT)
+        Tue, 11 Sep 2018 19:40:41 -0400
+Received: by mail-wr1-f67.google.com with SMTP id z96-v6so27105944wrb.8
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 11:40:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=jA8N4ToyH/y2/88nkwU8HeWL5jyBjgd+FrQpYzLpCG4=;
-        b=L1PO4N6ooNOgTvZDAdWAuNyyDsoblSHhK44AZ84grrtK7ZUc35zWEScq3nvNJ3HqvX
-         dYfbeyzdTHclaXYRO828eHYuduHpmT0gpoFEX1dDSk4uv4TzrXj6yslinsQjoAl2No+9
-         SG6ww/U7Z9zZVBbm4VhGFspKtkRUxBank/U/Mqns/onxbPxR7piJOf0xMlsp3Q81zRb7
-         iPIIb67tfDEZp0T44r+09m6lhqUEVSd924sUzFOkHycjlGWqW26b97y9YmrVUfc6BeJ1
-         +FodHTElVbIqBPvPunU4zjRU+KgLXWRPEjZM3/cI1r5B33aH1TekP+1BzdB0vBbjkUo0
-         Hksg==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=gureRstNY7VTac+7CHIf9Hm4XHEshoHo5g8X48ZBOOM=;
+        b=YFLpc0gD4fRUHLoAT8GnlNWJwaXueHmJJtTe3oifmhr3JBVeR7wXF0Z01FL31YKN23
+         4He6+zL/KcdVVFiuzeQWBu/pvRgjM5JG0sprCyAAqQ84drhHW86lXDutka8LaYMRIE3B
+         5deRFIv5U4R59eyGTRv9Ye1sRVu9OqpXQj2B0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=jA8N4ToyH/y2/88nkwU8HeWL5jyBjgd+FrQpYzLpCG4=;
-        b=i/KdeovqjWtJVCunCFvTpnaVyEOZqROYXTXpcFktKa8jNqwd+UpLZ95W/HxOYOTlBC
-         1B80TNruCbsNjUYkCcgGGv9oR7qOWJYmjwzCugXJmyOOTfFW2eigAIZqg25vdHiZVEnP
-         K/XcNMJe5OwYsOhpAYKOW/jcRiO9P6E30VB05IsbK0PJ4pWXPsfuuQOiTUdq0CFs3+nI
-         7EH1F0EQfRHn3P60SDL4UezjEVZoo7uePbOI1aQSGuWPBOa3WubJntMfJ8mcEIKxjDKx
-         +Z4WKHjtLv+edzIG0c1d3490HHkanJl2W1+hXKXbNR5ZVsUNG4uAtFZUjQnIC4mXCJGs
-         YDyg==
-X-Gm-Message-State: APzg51BAvP+ussP8wxVOoseZF9lbIoyws63kZ6rDzDzjwdKza5rHCJS/
-        U+zsylVeQqqYAl2Ub1awRrQNt3HHeQ==
-X-Google-Smtp-Source: ANB0VdZt81L8knkX5ivKEG+jBo1aTCuv7/Fo6l//lISTiooXyr0DBppat66yH/HipA+4PfcNyxT4TFNH6A==
-X-Received: by 2002:a25:a08f:: with SMTP id y15-v6mr5758025ybh.28.1536691154741;
- Tue, 11 Sep 2018 11:39:14 -0700 (PDT)
-Date:   Tue, 11 Sep 2018 20:39:09 +0200
-Message-Id: <20180911183909.233413-1-jannh@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.19.0.rc2.392.g5ba43deb5a-goog
-Subject: [PATCH] proc: restrict kernel stack dumps to root
-From:   Jann Horn <jannh@google.com>
-To:     Alexey Dobriyan <adobriyan@gmail.com>, jannh@google.com
-Cc:     Ken Chen <kenchen@google.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Andy Lutomirski <luto@amacapital.net>, security@kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=gureRstNY7VTac+7CHIf9Hm4XHEshoHo5g8X48ZBOOM=;
+        b=dmzRQOmOe9tNQzVlCC+zGn7/rq2eclAXA9qHwDiJp41fuPqfjOO3SCShyT7APwsWcg
+         3z6FnDa2jDnrkNotEZr9zqS65wehu1YMUjDucl4rQbJ3RnpnLpnRJ/QIhyOGmNzqade2
+         lyyDeIXpRPJi2p/9BHokW0V8gqdCA2CbjSywGDsL220s7MHVQQNOF2z3AUbIwmONQsRY
+         4TtfniDGiN9FijsuI+HVJT6x1kKik5QYNyGoaUB5cM5ePoykcsD28aZQ6I/dk8c+wJX8
+         2F3LswJfOVVFFufeq5Dor9rAvrCCecjU2FWsPD89x9nmGD7fmrgoe78iWbWtxpROjQRg
+         qF5A==
+X-Gm-Message-State: APzg51Dbm9RjqrduW4vmbMY/j2I70A/q9ThuUhcNJ2PkgsVeUGLass4j
+        wUyLegkOfa2TKHwH69YGeMhU7w==
+X-Google-Smtp-Source: ANB0VdZB/hmGfKpwrNIkRxysicOh5DsWUQWNdxzd+9ueCISLNPhQdlsItxpwnmq9u3hyr+zTz1Akmw==
+X-Received: by 2002:adf:9101:: with SMTP id j1-v6mr19515318wrj.3.1536691204574;
+        Tue, 11 Sep 2018 11:40:04 -0700 (PDT)
+Received: from dell ([2.27.167.7])
+        by smtp.gmail.com with ESMTPSA id z4-v6sm15707550wrt.89.2018.09.11.11.40.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 11 Sep 2018 11:40:03 -0700 (PDT)
+Date:   Tue, 11 Sep 2018 19:39:30 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        radu_nicolae.pirea@upb.ro, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Mark Brown <broonie@kernel.org>, Jiri Slaby <jslaby@suse.com>,
+        Richard Genoud <richard.genoud@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>
+Subject: Re: [PATCH v12 0/6] Driver for at91 usart in spi mode
+Message-ID: <20180911181838.GI4185@dell>
+References: <20180904111310.4049-1-radu_nicolae.pirea@upb.ro>
+ <20180911093356.GE4185@dell>
+ <20180911093917.GL2494@piout.net>
+ <CAMuHMdXH8gNjKGOHGFc+K03U2zsVCSN7G_Q4wtepQr859nRQKg@mail.gmail.com>
+ <20180911153621.GP2494@piout.net>
+ <CAMuHMdV+=EgAYogwNHbY=RExkGox_+YSeHV6pJtQb6g6PzD-CQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdV+=EgAYogwNHbY=RExkGox_+YSeHV6pJtQb6g6PzD-CQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Restrict the ability to inspect kernel stacks of arbitrary tasks to root
-in order to prevent a local attacker from exploiting racy stack unwinding
-to leak kernel task stack contents.
-See the added comment for a longer rationale.
+On Tue, 11 Sep 2018, Geert Uytterhoeven wrote:
 
-There don't seem to be any users of this userspace API that can't
-gracefully bail out if reading from the file fails. Therefore, I believe
-that this change is unlikely to break things.
-In the case that this patch does end up needing a revert, the next-best
-solution might be to fake a single-entry stack based on wchan.
+> On Tue, Sep 11, 2018 at 5:36 PM Alexandre Belloni
+> <alexandre.belloni@bootlin.com> wrote:
+> > On 11/09/2018 16:59:09+0200, Geert Uytterhoeven wrote:
+> > > On Tue, Sep 11, 2018 at 11:40 AM Alexandre Belloni
+> > > <alexandre.belloni@bootlin.com> wrote:
+> > > > On 11/09/2018 10:33:56+0100, Lee Jones wrote:
+> > > > > On Tue, 04 Sep 2018, Radu Pirea wrote:
+> > > > > > Radu Pirea (6):
+> > > > > >   MAINTAINERS: add at91 usart mfd driver
+> > > > > >   dt-bindings: add binding for atmel-usart in SPI mode
+> > > > > >   mfd: at91-usart: added mfd driver for usart
+> > > > > >   MAINTAINERS: add at91 usart spi driver
+> > > > > >   spi: at91-usart: add driver for at91-usart as spi
+> > > > > >   tty/serial: atmel: change the driver to work under at91-usart mfd
+> > > > > >
+> > > > > >  .../bindings/{serial => mfd}/atmel-usart.txt  |  25 +-
+> > > > > >  MAINTAINERS                                   |  16 +
+> > > > > >  drivers/mfd/Kconfig                           |   9 +
+> > > > > >  drivers/mfd/Makefile                          |   1 +
+> > > > > >  drivers/mfd/at91-usart.c                      |  71 +++
+> > > > > >  drivers/spi/Kconfig                           |   8 +
+> > > > > >  drivers/spi/Makefile                          |   1 +
+> > > > > >  drivers/spi/spi-at91-usart.c                  | 432 ++++++++++++++++++
+> > > > > >  drivers/tty/serial/Kconfig                    |   1 +
+> > > > > >  drivers/tty/serial/atmel_serial.c             |  42 +-
+> > > > > >  include/dt-bindings/mfd/at91-usart.h          |  17 +
+> > > > > >  11 files changed, 606 insertions(+), 17 deletions(-)
+> > > > > >  rename Documentation/devicetree/bindings/{serial => mfd}/atmel-usart.txt (76%)
+> > > > > >  create mode 100644 drivers/mfd/at91-usart.c
+> > > > > >  create mode 100644 drivers/spi/spi-at91-usart.c
+> > > > > >  create mode 100644 include/dt-bindings/mfd/at91-usart.h
+> > > > >
+> > > > > Seeing as this patch-set has caused some issues this morning, I took
+> > > > > the liberty to peruse back into its history to figure out where things
+> > > > > started to go wrong.  I also re-reviewed the MFD driver - and I'm glad
+> > > > > I did!
+> > > > >
+> > > > > My Acked-by has been attached to the MFD portion since v5, which is
+> > > > > why the code hasn't caught my eye before today.  I reviewed the
+> > > > > relocation of the *binding document* (serial => mfd with no changes)
+> > > > > in v4 and nothing else.  It appears as though you mistakenly added it
+> > > > > to the *MFD driver* instead.  This explains my confusion in v10 when I
+> > > > > told you I'd already reviewed the binding document.
+> > > > >
+> > > > > As I said, I have re-reviewed the MFD driver and I'm afraid to say
+> > > > > that I do not like what I see.  Besides the missing header file and
+> > > > > the whitespace tabbing errors, I do not agree with the implementation.
+> > > > > Using MFD as a shim to hack around driver selection is not a valid
+> > > > > use-case.
+> > > > >
+> > > > > What's stopping you from just using the compatible string directly to
+> > > > > select which driver you need to probe?
+> > > > >
+> > > >
+> > > > Then you'd have multiple compatible strings for the same IP which is a
+> > > > big no-no.
+> > >
+> > > It's still the same hardware device, isn't?
+> > > What if the SPI or UART slave is not on-board, but on an expansion board?
+> > > Then the SoC-specific .dtsi has no idea what mode should be used.
+> > >
+> > > Hence shouldn't the software derive the hardware mode from the full
+> > > hardware description in DT? If that's impossible (I didn't look into detail
+> > > whether an SPI bus can easily be distinguished from a UART bus), perhaps
+> > > a mode property should be added?
+> >
+> > Yes, this is exactly what is done:
+> >
+> > https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git/tree/drivers/mfd/at91-usart.c?h=ib-mfd-spi-tty-4.20-1#n33
+> 
+> OK.
+> 
+> I guess the main "hackish" part is that the mfd_cell uses of_compatible,
+> which thus requires having additional compatible values?
+> 
+> I think those can just be removed. AFAICS, the SPI and serial drivers already
+> match against the "at91_usart_spi" resp. "atmel_usart_serial" platform device
+> names?
 
-Fixes: 2ec220e27f50 ("proc: add /proc/*/stack")
-Cc: stable@vger.kernel.org
-Signed-off-by: Jann Horn <jannh@google.com>
----
- fs/proc/base.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+The hackish part of this driver is that it's using MFD for something
+which is clearly not an MFD.  It's a USART device.  Nothing more,
+nothing less.
 
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index ccf86f16d9f0..7e9f07bf260d 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -407,6 +407,20 @@ static int proc_pid_stack(struct seq_file *m, struct pid_namespace *ns,
- 	unsigned long *entries;
- 	int err;
- 
-+	/*
-+	 * The ability to racily run the kernel stack unwinder on a running task
-+	 * and then observe the unwinder output is scary; while it is useful for
-+	 * debugging kernel issues, it can also allow an attacker to leak kernel
-+	 * stack contents.
-+	 * Doing this in a manner that is at least safe from races would require
-+	 * some work to ensure that the remote task can not be scheduled; and
-+	 * even then, this would still expose the unwinder as local attack
-+	 * surface.
-+	 * Therefore, this interface is restricted to root.
-+	 */
-+	if (!file_ns_capable(m->file, &init_user_ns, CAP_SYS_ADMIN))
-+		return -EACCES;
-+
- 	entries = kmalloc_array(MAX_STACK_TRACE_DEPTH, sizeof(*entries),
- 				GFP_KERNEL);
- 	if (!entries)
+Does anyone have the datasheet to hand?
+
 -- 
-2.19.0.rc2.392.g5ba43deb5a-goog
-
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
