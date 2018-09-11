@@ -6,78 +6,72 @@ X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57C59C6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 18:13:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03D53C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 18:14:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 102CF2086A
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 18:13:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0F942086A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 18:14:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z7jWnn/n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 102CF2086A
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ICgznb2t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0F942086A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728118AbeIKXNl (ORCPT
+        id S1727819AbeIKXO1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 19:13:41 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:44736 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726622AbeIKXNl (ORCPT
+        Tue, 11 Sep 2018 19:14:27 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:35331 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726980AbeIKXO1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 19:13:41 -0400
-Received: by mail-wr1-f67.google.com with SMTP id v16-v6so26988236wro.11
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 11:13:11 -0700 (PDT)
+        Tue, 11 Sep 2018 19:14:27 -0400
+Received: by mail-wm0-f68.google.com with SMTP id o18-v6so1990578wmc.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 11:13:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=6pPwj8rPJ6t6AlwF/h8Fq3qHeE9Ol8btlbNbUcs1vWY=;
-        b=Z7jWnn/nBe96C+8oLiCgxZuBvvclmOrr9mxupogI6p1udzJiBEdVcKPjhpn5UAPHun
-         OqpuP09oDALFVvASp4PoT7Cj28/en5J6Dhju3snS9uWxqIvm9bLVnco+kHb/zRWClAN7
-         FaQx+7HZ4bA4qvB/ToO3aDPD+ZA6XfuTDInKw=
+        bh=69Br73VfIbLfSqByNNrBpiad3Ksx0mXRg10i0W+PENE=;
+        b=ICgznb2tpORrHuPogBEvPJ5XYYcYNDa2UoamHca2DbdfcgqT9ewI9sQbT5+Ff6mNFx
+         nkDAGQstflKuub0WkIF5xm7lDewcg9YqR98WKOtcBwW23dhBOluLJECrBKSwE0oeKt77
+         QTeCFk5PIbIpDOBYN0l+K6yXAgllmIX3zzxOI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=6pPwj8rPJ6t6AlwF/h8Fq3qHeE9Ol8btlbNbUcs1vWY=;
-        b=PXS59xhuHd7kyoL1kh3N6FUUbDa1Oc6O9AddwJjODpxgAcpDH/eAyVNKJ6EA9mXjMT
-         RZu2+3rNVZWPjW1sJkfv+tTFf9q1js0YH2fGvVf03Fl3SY9NOKme/eIVVj06M6rVgYt3
-         CUHGfO4E7JMZGe+RqDlVnqgy4obTeFiLB93z+lVKYGQR7pv62WXbO82qCJWwyYqO96zR
-         T3gBhZTq5qW4RrGpMq7tgX93efD3ASSVTAIO/Xm/5xcwEvQ//vIBQj8qnB2h9EwnS//L
-         LKQ1RMs3ktnm+6DJWEItTWN2h0Ki6E/ognZrLfhO0N00r9P2SRcrN9BFfM8X54fMcuN7
-         7jAg==
-X-Gm-Message-State: APzg51D+bhYQvvOyG/atcUIye8MACgxc5dCl6y3Rb18+rsCa9QBtLxVA
-        fk4qcVI0moAKpDr0VyLiB3fOtg==
-X-Google-Smtp-Source: ANB0VdalTDQ09vi87y2/0TpSRywieOS7ciZYSti4dlziWl6Ek6NaF0E1+3a/lW1zd3GPAkZH85ZM5w==
-X-Received: by 2002:adf:f24e:: with SMTP id b14-v6mr18055826wrp.184.1536689590884;
-        Tue, 11 Sep 2018 11:13:10 -0700 (PDT)
+        bh=69Br73VfIbLfSqByNNrBpiad3Ksx0mXRg10i0W+PENE=;
+        b=pYnY51qvwdI1N1RIE0MdGj0n6AIXDTy/hnRMHl09NPPfbi2p6ESe4nwiBNk14rDu1/
+         O/X4QLdf0UYJJstEmteCRgRTC0IGZZHJALHb2L3WouRMKjESq1Wo5rGO1NM6j8aQDiQF
+         xl25XygNRE4t1Mx1ykkXp8NJLC1HTOYgeJDCYZqB+n/nGGIBbRG55VVVZ1EuAM1ZR9l4
+         FK/DKCHZkUadIrYPXeO+W+Cy9AFN/B6dbluPTv10USu453csLzsjRrZOkrfO41QjnoyU
+         XNh3bQU4IMUY17pYArJhCC5MENUHk/1R/qsChaGq4RKTx2x8WoTGy0sbrrXSwiBh3wEw
+         Vvug==
+X-Gm-Message-State: APzg51CFiJiq86CSW7gD+7u0q2DhTk7fDh27qFDAumxhfM0zNGNwtuIj
+        5zgyNdtO9JtnvTP3UR6s4yC6fA==
+X-Google-Smtp-Source: ANB0VdZpL8QEoOD9jW1nlSmNPZH3/XF77+oGJCo7WJoY8VldC0GbiUSBxiYFBNwR4ssqN+ItV5Momg==
+X-Received: by 2002:a1c:a507:: with SMTP id o7-v6mr2294364wme.45.1536689636976;
+        Tue, 11 Sep 2018 11:13:56 -0700 (PDT)
 Received: from dell ([89.238.177.251])
-        by smtp.gmail.com with ESMTPSA id i125-v6sm2808678wmd.23.2018.09.11.11.13.08
+        by smtp.gmail.com with ESMTPSA id j66-v6sm26606115wrj.28.2018.09.11.11.13.55
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Sep 2018 11:13:09 -0700 (PDT)
-Date:   Tue, 11 Sep 2018 19:13:05 +0100
+        Tue, 11 Sep 2018 11:13:56 -0700 (PDT)
+Date:   Tue, 11 Sep 2018 19:13:53 +0100
 From:   Lee Jones <lee.jones@linaro.org>
 To:     Dan Murphy <dmurphy@ti.com>
-Cc:     Pavel Machek <pavel@ucw.cz>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
-        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org
-Subject: Re: [PATCH] mfd: ti-lmu: constify mfd_cell tables
-Message-ID: <20180911181305.GF4185@dell>
-References: <20180829093108.GB22065@amd>
- <20180907093954.GA26364@amd>
- <e10bdc74-8138-055e-c829-7befbc7161b4@ti.com>
- <20180911155355.GD4185@dell>
- <a74f7980-08bf-5ef0-106b-1e3f4e90b0e6@ti.com>
- <e8423cfb-2a23-1332-955f-6af5b0ddaecd@ti.com>
+Cc:     robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-leds@vger.kernel.org
+Subject: Re: [PATCH v7 2/6] mfd: ti-lmu: Remove support for LM3697
+Message-ID: <20180911181353.GG4185@dell>
+References: <20180911170825.17789-1-dmurphy@ti.com>
+ <20180911170825.17789-3-dmurphy@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <e8423cfb-2a23-1332-955f-6af5b0ddaecd@ti.com>
+In-Reply-To: <20180911170825.17789-3-dmurphy@ti.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -86,49 +80,22 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Tue, 11 Sep 2018, Dan Murphy wrote:
 
-> Lee
+> Remove support for the LM3697 from the ti-lmu
+> driver in favor of a dedicated LED driver.
 > 
-> On 09/11/2018 12:08 PM, Dan Murphy wrote:
-> > Lee
-> > 
-> > On 09/11/2018 10:57 AM, Lee Jones wrote:
-> >> On Fri, 07 Sep 2018, Dan Murphy wrote:
-> >>
-> >>> Pavel
-> >>>
-> >>> On 09/07/2018 04:39 AM, Pavel Machek wrote:
-> >>>> On Wed 2018-08-29 11:31:08, Pavel Machek wrote:
-> >>>>> From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-> >>>>>
-> >>>>> mfd: ti-lmu: constify mfd_cell tables
-> >>>>>     
-> >>>>> Add const attribute to all mfd_cell structures.
-> >>>>>     
-> >>>>> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-> >>>>> Signed-off-by: Pavel Machek <pavel@ucw.cz>
-> >>>>
-> >>>> Lee, I guess this is for you to apply. Any news there?
-> >>>>
-> >>>> There are more patches ready,
-> >>>
-> >>> As I stated in another email thread.  I don't see the need for this level of LMU framework.
-> >>>
-> >>> Here is the reference thread
-> >>>
-> >>> https://lore.kernel.org/patchwork/patch/982550/
-> >>
-> >> This driver has been present for 1.5 years.
-> >>
-> >> Is that a NACK for *this* patch or are you hijacking? :)
-> >>
-> > 
-> > Its a NACK for adding this.  I am pushing a new series for the LM3697 and will end up
-> > sending LED drivers for the non-MFD devices contained within. I will try to match the
-> > feature set the best I can.
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> ---
 > 
-> Sorry it is a NACK for adding the backlight series.  This patch is fine.
+> v7 - New change for the series based on the comments in https://lore.kernel.org/patchwork/patch/982550/
+> 
+>  drivers/mfd/Kconfig                 |  2 +-
+>  drivers/mfd/ti-lmu.c                | 17 -----------
+>  include/linux/mfd/ti-lmu-register.h | 44 -----------------------------
+>  include/linux/mfd/ti-lmu.h          |  1 -
+>  4 files changed, 1 insertion(+), 63 deletions(-)
 
-Ack, thanks for confirming.
+For my own reference:
+  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 
 -- 
 Lee Jones [李琼斯]
