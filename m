@@ -2,87 +2,114 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7031C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 13:48:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8D5BC04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 13:48:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E9BF2086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 13:48:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6975020880
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 13:48:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gu6cwiZn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E9BF2086E
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VkqyTVsL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6975020880
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727804AbeIKSro (ORCPT
+        id S1727841AbeIKSsF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 14:47:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55092 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726622AbeIKSrn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 14:47:43 -0400
-Received: from localhost (173-25-171-118.client.mchsi.com [173.25.171.118])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B060220866;
-        Tue, 11 Sep 2018 13:48:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536673698;
-        bh=YCOmQuyxzPfiD/yVsxHvh1GA0RaEDS8Mo0FGsYTcfgg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gu6cwiZnKSmlXz1CwUNvdU+vDE6LnBdLWH1dkZfZkUIz9KwN7nOil9Y7/EjnundIm
-         iL90cQjYAq3f8MujwGkLZK2UL2f58LMeWfmeQiLl8gBOMuVeoFIICA2TsU7/fv5Q65
-         bxwkpBSHeZjVrdud84DHeLwK0roN6w9AdcgV8l3Q=
-Date:   Tue, 11 Sep 2018 08:48:17 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Joao Pinto <Joao.Pinto@synopsys.com>
-Cc:     bhelgaas@google.com, lorenzo.pieralisi@arm.com,
-        gustavo.pimentel@synopsys.com, jingoohan1@gmail.com,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: designware: Change maintainer to Gustavo Pimentel
-Message-ID: <20180911134817.GE250890@bhelgaas-glaptop.roam.corp.google.com>
-References: <aa29f3f8dbae3a2c8523ddfd74d11505600bc47f.1536659938.git.jpinto@synopsys.com>
+        Tue, 11 Sep 2018 14:48:05 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:38585 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726622AbeIKSsE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 14:48:04 -0400
+Received: by mail-yw1-f68.google.com with SMTP id n21-v6so9219562ywh.5;
+        Tue, 11 Sep 2018 06:48:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=n+RgB6svcO4h1dI5nJr0LiCHnWFHoVGx2wIvkfeP5T0=;
+        b=VkqyTVsLu4w+7A3y5i/AbEqldui/kozADb7qL3n5CX0eThMnC5+948ChZS6GMte/U5
+         ++6VxVHDNY1cR18dcYITMtRomhfYywen97mF1tGQeUYCg4iNLCgZEKfTYOJiNiiEsV99
+         5hnO99zqzWC1wOzB0MMKiX4ojwyFuivmvmRUzPw14k8qAX4jMPD1aA1t1Np8iIebp4oI
+         VO0sBn5ip7CnTraj6bO41+6550v00W+qcsGtzbW/7wPkFmXWssL/zc+QWtj+Dn7FzDDx
+         4mMxes0l4GYtT4GIVlabF93NZXHE8wAjS2gjXiGjoeEQtZ+vQ6IcFQFi8PVAcW8cqJp1
+         EwiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=n+RgB6svcO4h1dI5nJr0LiCHnWFHoVGx2wIvkfeP5T0=;
+        b=SnI03qHoM851pWbp2ebcpqFZ4llrjM0ghbEq14+zbp5IEa/zYnCL5AT8IHI8JhPCAg
+         pqB99XajAcEe8GVTMP8TPkXf0xfkThfIojXC5eVDbbybt8Z0iWnlOtVZ+a/GXc3EdzFK
+         aPEbX84ivsI4VIXlakxKy1sn1iuYkgm3TdgMPy4idT4NwOorNY/9ehTWeBfuz/6t3bbB
+         P1ov7enVNBkxw3bmNT0dJgGEbKa+8ORkDdKL+9sJOaIFovJ7BPyaoT5bqD9DQS8uIgv1
+         FzgsrQiyBcAhE4NVYuKulS+xFiiiBETpyP2S67kmiCtlXVM8OoX3uN1dZfakArOEEXcy
+         FH1A==
+X-Gm-Message-State: APzg51BaAEPeK+QIqpe96bLUnXF+SzA+EZnnSJ2xqvqs4Btu2KvWgSws
+        b1lj6hzNGU/00jU0xC240Ok=
+X-Google-Smtp-Source: ANB0VdZDMuB18E1FPkPkNNdTTuXKdvjWAzUUokoAXy66tZoJ4FS+Tr4ewwgdr01hvoR85AZ0871VMA==
+X-Received: by 2002:a81:2a0a:: with SMTP id q10-v6mr12746841ywq.159.1536673718698;
+        Tue, 11 Sep 2018 06:48:38 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:200::1:6304])
+        by smtp.gmail.com with ESMTPSA id o193-v6sm7977941ywd.84.2018.09.11.06.48.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Sep 2018 06:48:37 -0700 (PDT)
+Date:   Tue, 11 Sep 2018 06:48:36 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Jianchao Wang <jianchao.w.wang@oracle.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-block@vger.kernel.org
+Subject: Re: [PATCH] percpu-refcount: relax limit on percpu_ref_reinit()
+Message-ID: <20180911134836.GG1100574@devbig004.ftw2.facebook.com>
+References: <20180909125824.9150-1-ming.lei@redhat.com>
+ <20180910164920.GE1100574@devbig004.ftw2.facebook.com>
+ <20180911000049.GB30977@ming.t460p>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aa29f3f8dbae3a2c8523ddfd74d11505600bc47f.1536659938.git.jpinto@synopsys.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180911000049.GB30977@ming.t460p>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 11, 2018 at 01:06:30PM +0100, Joao Pinto wrote:
-> Currently I am managing the Synopsys drivers & tools team (full-time) and so I
-> am passing the pcie-designware maintenance to Gustavo.
-> 
-> Signed-off-by: Joao Pinto <jpinto@synopsys.com>
-> CC: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-> CC: Jingoo Han <jingoohan1@gmail.com>
+Hello, Ming.
 
-Applied to for-linus for v4.19, thanks!
+On Tue, Sep 11, 2018 at 08:00:50AM +0800, Ming Lei wrote:
+> > > @@ -357,10 +349,11 @@ EXPORT_SYMBOL_GPL(percpu_ref_kill_and_confirm);
+> > >  void percpu_ref_reinit(struct percpu_ref *ref)
+> > >  {
+> > >  	unsigned long flags;
+> > > +	unsigned long __percpu *percpu_count;
+> > >  
+> > >  	spin_lock_irqsave(&percpu_ref_switch_lock, flags);
+> > >  
+> > > -	WARN_ON_ONCE(!percpu_ref_is_zero(ref));
+> > > +	WARN_ON_ONCE(__ref_is_percpu(ref, &percpu_count));
+> > 
+> > Can you elaborate this part?  This doesn't seem required for the
+> > described change.  Why is it part of the patch?
+> 
+> The motivation of this patch is to avoid the above warning and allow
+> the ref to switch back to percpu mode without dropping to zero.
+> 
+> That is why the check has to be changed to the above way.
 
-> ---
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index a5b256b..e5e8984 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -11153,7 +11153,7 @@ F:	drivers/pci/controller/dwc/pci-exynos.c
->  
->  PCI DRIVER FOR SYNOPSYS DESIGNWARE
->  M:	Jingoo Han <jingoohan1@gmail.com>
-> -M:	Joao Pinto <Joao.Pinto@synopsys.com>
-> +M:	Gustavo Pimentel <gustavo.pimentel@synopsys.com>
->  L:	linux-pci@vger.kernel.org
->  S:	Maintained
->  F:	Documentation/devicetree/bindings/pci/designware-pcie.txt
-> -- 
-> 2.9.3
-> 
-> 
+So, this part seems wrong.  The function is called percpu_ref_reinit()
+- the refcnt is expected to be in its initial state with just the base
+ref once this function returns.  If you're removing the restriction on
+when this can be called, you should also make sure that the function
+actually enforces the target state.  Also, this is a separate logical
+change, please put it in a separate patch.
+
+Thanks.
+
+-- 
+tejun
