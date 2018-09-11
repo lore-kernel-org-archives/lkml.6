@@ -2,117 +2,141 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 965D8C43143
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 02:19:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD052C43143
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 02:23:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF79020839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 02:19:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF79020839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+	by mail.kernel.org (Postfix) with ESMTP id 548CA20865
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 02:23:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 548CA20865
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726622AbeIKHQg convert rfc822-to-8bit (ORCPT
+        id S1726504AbeIKHUN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 03:16:36 -0400
-Received: from cmccmta3.chinamobile.com ([221.176.66.81]:43622 "EHLO
-        cmccmta3.chinamobile.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726182AbeIKHQg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 03:16:36 -0400
-Received: from spf.mail.chinamobile.com (unknown[172.16.121.19]) by rmmx-syy-dmz-app09-12009 (RichMail) with SMTP id 2ee95b97263582c-6837c; Tue, 11 Sep 2018 10:19:33 +0800 (CST)
-X-RM-TRANSID: 2ee95b97263582c-6837c
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG: 00000000
-Received: from [172.16.200.163] (unknown[112.25.154.148])
-        by rmsmtp-syy-appsvr10-12010 (RichMail) with SMTP id 2eea5b97263374e-044ee;
-        Tue, 11 Sep 2018 10:19:33 +0800 (CST)
-X-RM-TRANSID: 2eea5b97263374e-044ee
-Content-Type: text/plain; charset=gb2312
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [PATCH] ip6_gre: simplify gre header parsing in ip6gre_err
-From:   Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
-In-Reply-To: <20180910173640.117bf42f@redhat.com>
-Date:   Tue, 11 Sep 2018 10:19:31 +0800
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8BIT
-Message-Id: <F6F07B41-345D-4416-B9C7-D5509715D33F@cmss.chinamobile.com>
-References: <1536567909-25089-1-git-send-email-yanhaishuang@cmss.chinamobile.com>
- <20180910173640.117bf42f@redhat.com>
-To:     Jiri Benc <jbenc@redhat.com>
-X-Mailer: Apple Mail (2.3273)
+        Tue, 11 Sep 2018 03:20:13 -0400
+Received: from mga03.intel.com ([134.134.136.65]:19669 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726251AbeIKHUN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 03:20:13 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2018 19:23:17 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,358,1531810800"; 
+   d="scan'208";a="71940852"
+Received: from bee.sh.intel.com (HELO lkp-server01) ([10.239.97.14])
+  by orsmga007.jf.intel.com with ESMTP; 10 Sep 2018 19:23:01 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1fzYKT-000GkO-22; Tue, 11 Sep 2018 10:23:01 +0800
+Date:   Tue, 11 Sep 2018 10:22:02 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Peter Wu <peter@lekensteyn.nl>
+Cc:     kbuild-all@01.org, Dave Airlie <airlied@redhat.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        virtualization@lists.linux-foundation.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] qxl: refactor to use drm_fb_helper_fbdev_setup
+Message-ID: <201809111052.rIhvlMzJ%fengguang.wu@intel.com>
+References: <20180910132156.23201-1-peter@lekensteyn.nl>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180910132156.23201-1-peter@lekensteyn.nl>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Peter,
+
+Thank you for the patch! Perhaps something to improve:
+
+[auto build test WARNING on linus/master]
+[also build test WARNING on v4.19-rc3 next-20180910]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+
+url:    https://github.com/0day-ci/linux/commits/Peter-Wu/qxl-refactor-to-use-drm_fb_helper_fbdev_setup/20180911-071413
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
 
 
-> On 2018年9月10日, at 下午11:36, Jiri Benc <jbenc@redhat.com> wrote:
-> 
-> On Mon, 10 Sep 2018 16:25:09 +0800, Haishuang Yan wrote:
->> +	if (gre_parse_header(skb, &tpi, &csum_err, htons(ETH_P_IPV6),
->> +			     offset) < 0) {
->> +		if (!csum_err)		/* ignore csum errors. */
->> +			return;
->> 	}
-> 
-> gre_parse_header stops parsing when csum_err is encountered. Which
-> means tpi.key is undefined...
-> 
->> 
->> -	if (!pskb_may_pull(skb, offset + grehlen))
->> -		return;
->> 	ipv6h = (const struct ipv6hdr *)skb->data;
->> -	greh = (const struct gre_base_hdr *)(skb->data + offset);
->> -	key = key_off ? *(__be32 *)(skb->data + key_off) : 0;
->> -
->> 	t = ip6gre_tunnel_lookup(skb->dev, &ipv6h->daddr, &ipv6h->saddr,
->> -				 key, greh->protocol);
->> +				 tpi.key, tpi.proto);
-> 
-> ...and can't be used here.
-> 
-> Jiri
-> 
+sparse warnings: (new ones prefixed by >>)
 
-You are right. Thanks for reviewing. So the same problem also arise in ipgre_err code:
+   drivers/gpu/drm/qxl/qxl_drv.c:144:9: sparse: undefined identifier 'qxl_fbdev_set_suspend'
+   drivers/gpu/drm/qxl/qxl_drv.c:181:9: sparse: undefined identifier 'qxl_fbdev_set_suspend'
+>> drivers/gpu/drm/qxl/qxl_drv.c:144:30: sparse: call with no type!
+   drivers/gpu/drm/qxl/qxl_drv.c:181:30: sparse: call with no type!
+   drivers/gpu/drm/qxl/qxl_drv.c: In function 'qxl_drm_freeze':
+   drivers/gpu/drm/qxl/qxl_drv.c:144:2: error: implicit declaration of function 'qxl_fbdev_set_suspend'; did you mean 'fb_set_suspend'? [-Werror=implicit-function-declaration]
+     qxl_fbdev_set_suspend(qdev, 1);
+     ^~~~~~~~~~~~~~~~~~~~~
+     fb_set_suspend
+   cc1: some warnings being treated as errors
+--
+>> drivers/gpu/drm/qxl/qxl_fb.c:166:21: sparse: incorrect type in assignment (different address spaces) @@    expected char const *data @@    got char [noderchar const *data @@
+   drivers/gpu/drm/qxl/qxl_fb.c:166:21:    expected char const *data
+   drivers/gpu/drm/qxl/qxl_fb.c:166:21:    got char [noderef] <asn:2>*
+   include/linux/overflow.h:251:13: sparse: undefined identifier '__builtin_mul_overflow'
+   include/linux/overflow.h:251:13: sparse: incorrect type in conditional
+   include/linux/overflow.h:251:13:    got void
+   include/linux/overflow.h:251:13: sparse: call with no type!
 
-   187         iph = (const struct iphdr *)(icmp_hdr(skb) + 1);
-   188         t = ip_tunnel_lookup(itn, skb->dev->ifindex, tpi->flags,
-   189                              iph->daddr, iph->saddr, tpi->key);
+vim +166 drivers/gpu/drm/qxl/qxl_fb.c
 
-Since csum_err may not be used outside, how about refactoring gre_parse_header function like this:
+   130	
+   131	/*
+   132	 * FIXME
+   133	 * It should not be necessary to have a special dirty() callback for fbdev.
+   134	 */
+   135	static int qxlfb_framebuffer_dirty(struct drm_framebuffer *fb,
+   136					   struct drm_file *file_priv,
+   137					   unsigned flags, unsigned color,
+   138					   struct drm_clip_rect *clips,
+   139					   unsigned num_clips)
+   140	{
+   141		struct qxl_device *qdev = fb->dev->dev_private;
+   142		struct fb_info *info = qdev->fb_helper.fbdev;
+   143		struct qxl_fb_image qxl_fb_image;
+   144		struct fb_image *image = &qxl_fb_image.fb_image;
+   145	
+   146		/* TODO: hard coding 32 bpp */
+   147		int stride = fb->pitches[0];
+   148	
+   149		/*
+   150		 * we are using a shadow draw buffer, at qdev->surface0_shadow
+   151		 */
+   152		image->dx = clips->x1;
+   153		image->dy = clips->y1;
+   154		image->width = clips->x2 - clips->x1;
+   155		image->height = clips->y2 - clips->y1;
+   156		image->fg_color = 0xffffffff; /* unused, just to avoid uninitialized
+   157						 warnings */
+   158		image->bg_color = 0;
+   159		image->depth = 32;	     /* TODO: take from somewhere? */
+   160		image->cmap.start = 0;
+   161		image->cmap.len = 0;
+   162		image->cmap.red = NULL;
+   163		image->cmap.green = NULL;
+   164		image->cmap.blue = NULL;
+   165		image->cmap.transp = NULL;
+ > 166		image->data = info->screen_base + (clips->x1 * 4) + (stride * clips->y1);
+   167	
+   168		qxl_fb_image_init(&qxl_fb_image, qdev, info, NULL);
+   169		qxl_draw_opaque_fb(&qxl_fb_image, stride);
+   170	
+   171		return 0;
+   172	}
+   173	
 
---- a/net/ipv4/gre_demux.c
-+++ b/net/ipv4/gre_demux.c
-@@ -86,7 +86,7 @@ int gre_parse_header(struct sk_buff *skb, struct tnl_ptk_info *tpi,
-
-        options = (__be32 *)(greh + 1);
-        if (greh->flags & GRE_CSUM) {
--               if (skb_checksum_simple_validate(skb)) {
-+               if (csum_err && skb_checksum_simple_validate(skb)) {
-                        *csum_err = true;
-                        return -EINVAL;
-                }
-
-And in gre_err function, we can call gre_parse_header(skb, &tpi, NULL, **) like this:
-
---- a/net/ipv4/ip_gre.c
-+++ b/net/ipv4/ip_gre.c
-@@ -234,11 +234,9 @@ static void gre_err(struct sk_buff *skb, u32 info)
-        struct tnl_ptk_info tpi;
-        bool csum_err = false;
-
--       if (gre_parse_header(skb, &tpi, &csum_err, htons(ETH_P_IP),
--                            iph->ihl * 4) < 0) {
--               if (!csum_err)          /* ignore csum errors. */
-+       if (gre_parse_header(skb, &tpi, NULL, htons(ETH_P_IP),
-+                            iph->ihl * 4) < 0)
-                        return;
--       }
-
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
