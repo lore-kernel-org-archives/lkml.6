@@ -2,108 +2,84 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45F3FC04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 06:36:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36F67C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 06:39:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAEAC20645
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 06:36:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BpvGhEVi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAEAC20645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id DFEF520645
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 06:39:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFEF520645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726932AbeIKLeX (ORCPT
+        id S1727009AbeIKLhe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 07:34:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47112 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726429AbeIKLeW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 07:34:22 -0400
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1033020645;
-        Tue, 11 Sep 2018 06:36:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536647796;
-        bh=+RBLHjh3NWEnWVfoMOo2cDRXxVM5zu/NeXDa4HIGUtE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=BpvGhEViyJJbLCMNAoG6QzUj/z5E/pTlXpxzy3XrAadG7nwD4S6uoh0oITVKHJbnH
-         44k7jgA0Lx6Fd2GHliROed74tufCIEs0YWtvHIi0XvcDXwBs5+QTixDvA0deHkrqTL
-         jczZkA8LD9gOH0JMH8qOWG/uhzI0LoRbRLwqq2Qs=
-Date:   Tue, 11 Sep 2018 15:36:32 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -tip 5/5] kprobes: Don't call BUG_ON if there is a
- kprobe in use on free list
-Message-Id: <20180911153632.c58041dc77dde51806730f2e@kernel.org>
-In-Reply-To: <20180910122356.GA70908@gmail.com>
-References: <153484425558.5385.1484910606397784412.stgit@devbox>
-        <153484439807.5385.8446592533176849097.stgit@devbox>
-        <20180910122356.GA70908@gmail.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Tue, 11 Sep 2018 07:37:34 -0400
+Received: from smtp17.cstnet.cn ([159.226.251.17]:45214 "EHLO cstnet.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726562AbeIKLhe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 07:37:34 -0400
+Received: from [172.20.20.131] (unknown [182.150.46.145])
+        by APP-09 (Coremail) with SMTP id swCowAAHDpInY5dbFM_TCA--.9790S2;
+        Tue, 11 Sep 2018 14:39:36 +0800 (CST)
+From:   Pu Wen <puwen@hygon.cn>
+Subject: Re: [PATCH v6 03/16] x86/cpu/mtrr: Support TOP_MEM2 and get MTRR
+ number
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, thomas.lendacky@amd.com, pbonzini@redhat.com,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+References: <cover.1536550549.git.puwen@hygon.cn>
+ <cdfcd79e88e0acf254347159673355eec00a1d37.1536550550.git.puwen@hygon.cn>
+ <20180910180613.GE4386@zn.tnic>
+Message-ID: <da680b5b-be9d-64c3-35f1-72f8ab02fc7d@hygon.cn>
+Date:   Tue, 11 Sep 2018 14:39:34 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180910180613.GE4386@zn.tnic>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: swCowAAHDpInY5dbFM_TCA--.9790S2
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+        VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYO7k0a2IF6w1UM7kC6x804xWl14x267AK
+        xVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGw
+        A2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r1j
+        6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Jr
+        0_Gr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv
+        0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUAVWUtwAv7VC2z2
+        80aVAFwI0_Cr0_Gr1UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI
+        62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
+        0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWU
+        tVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcV
+        CY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Wr1j6rW3Jr1lIxAIcVC2z280
+        aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43
+        ZEXa7IU1CPfJUUUUU==
+X-Originating-IP: [182.150.46.145]
+X-CM-SenderInfo: psxzv046klw03qof0z/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 10 Sep 2018 14:23:56 +0200
-Ingo Molnar <mingo@kernel.org> wrote:
-
+On 2018/9/11 2:06, Borislav Petkov wrote:
+> On Mon, Sep 10, 2018 at 09:16:03PM +0800, Pu Wen wrote:
+>> The Hygon Dhyana CPU have a special magic MSR way to force WB for
 > 
-> * Masami Hiramatsu <mhiramat@kernel.org> wrote:
+>  From the last review round:
 > 
-> > Instead of calling BUG_ON, if we find a kprobe in use on free kprobe
-> > list, just remove it from the list and keep it on kprobe hash list
-> > as same as other in-use kprobes.
-> > 
-> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> > ---
-> >  kernel/kprobes.c |    8 +++++++-
-> >  1 file changed, 7 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-> > index 63c342e5e6c3..e3420364b415 100644
-> > --- a/kernel/kprobes.c
-> > +++ b/kernel/kprobes.c
-> > @@ -546,8 +546,14 @@ static void do_free_cleaned_kprobes(void)
-> >  	struct optimized_kprobe *op, *tmp;
-> >  
-> >  	list_for_each_entry_safe(op, tmp, &freeing_list, list) {
-> > -		BUG_ON(!kprobe_unused(&op->kp));
-> >  		list_del_init(&op->list);
-> > +		if (!kprobe_unused(&op->kp)) {
-> > +			/*
-> > +			 * This must not happen, but if there is a kprobe
-> > +			 * still in use, keep it on kprobes hash list.
-> > +			 */
-> > +			continue;
+> Also, it is "The ... CPU has a special..."
 > 
-> If this is an 'impossible' code path then I think it would make sense to add a WARN_ON_ONCE() 
-> here.
+> Please take your time and incorporate *all* review feedback - no need to
+> *rush* a new revision out and drop review feedback.
 
-I agree. This means something goes wrong. That is enough reason to warn user.
-
-Thank you!
-
-> 
-> Thanks,
-> 
-> 	Ingo
-
+Sorry for not taking much care of the usage between singular and plural.
+Will fix those typos.
 
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Regards,
+Pu Wen
+
