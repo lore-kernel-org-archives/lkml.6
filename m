@@ -2,228 +2,121 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD1B0C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 14:06:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3EADC04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 14:07:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FD9D20839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 14:06:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FD9D20839
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 88B1120839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 14:07:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="eJ2hLQSg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88B1120839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727693AbeIKTGC (ORCPT
+        id S1727774AbeIKTHH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 15:06:02 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57292 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726670AbeIKTGC (ORCPT
+        Tue, 11 Sep 2018 15:07:07 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:50315 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726985AbeIKTHH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 15:06:02 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8BE4Krf087302
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 10:06:30 -0400
-Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2medw54246-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 10:06:30 -0400
-Received: from localhost
-        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zaslonko@linux.vnet.ibm.com>;
-        Tue, 11 Sep 2018 08:06:27 -0600
-Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
-        by e36.co.us.ibm.com (192.168.1.136) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 11 Sep 2018 08:06:25 -0600
-Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
-        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8BE6Og141484348
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 11 Sep 2018 07:06:24 -0700
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3C4E4136053;
-        Tue, 11 Sep 2018 08:06:24 -0600 (MDT)
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AB48C136051;
-        Tue, 11 Sep 2018 08:06:22 -0600 (MDT)
-Received: from [9.152.99.211] (unknown [9.152.99.211])
-        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTPS;
-        Tue, 11 Sep 2018 08:06:22 -0600 (MDT)
-Subject: Re: [PATCH] memory_hotplug: fix the panic when memory end is not on
- the section boundary
-To:     Michal Hocko <mhocko@kernel.org>,
-        Mikhail Zaslonko <zaslonko@linux.ibm.com>
-Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Pavel.Tatashin@microsoft.com,
-        osalvador@suse.de, gerald.schaefer@de.ibm.com
-References: <20180910123527.71209-1-zaslonko@linux.ibm.com>
- <20180910131754.GG10951@dhcp22.suse.cz>
-From:   Zaslonko Mikhail <zaslonko@linux.vnet.ibm.com>
-Date:   Tue, 11 Sep 2018 16:06:23 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 11 Sep 2018 15:07:07 -0400
+Received: by mail-wm0-f66.google.com with SMTP id s12-v6so1165340wmc.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 07:07:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=PDOV5RNjUSk9jfwBKAajmu3EIyurQT4z6wtGZF18l+I=;
+        b=eJ2hLQSg6OD60AJYiX7svlh1/h2nq15lDN5pVsC71uUIAKooZ0dtBN7icMot3JyUhw
+         0hrG2DMSndRJTLGsb06NIVx/hRyAFemdMTh0RETdeLZsZRHeHxL79uYdCn+kAkPQih5s
+         YuL79ZZE7Y1pBYdL2LmIpe9VZFOCeFhJbvcaI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=PDOV5RNjUSk9jfwBKAajmu3EIyurQT4z6wtGZF18l+I=;
+        b=skxE6+WPuAXXt4ZSmzPrEdOJI6pCLw6rejQJSjRNsx+SvGM75CAsu/xPT6erc3Yi1I
+         djjsWJ8zAiV/4Yh0MFKZ7wguKcUzxxRSltoVaY4fM+/GdEAO+IGdVPq51Ge6OsaIP5vm
+         Nn3G/BcnFFUbf2/7PzWrDEsTGFjIzltCYnYdrsKuD95TqJPeGUaFxjjaxDGTuYG6fKlu
+         xT6pwAlkH8B2gVeFycZn3p3lz/5B7r95qD3FPuvnl4ciLR4AaVpOXpZ1QJd/MuzQFAou
+         /HW9zEyOITPqCmsO1WRWJErtCuV8NodcyeWJM7NsDKu5hF7nQ8Y8ouFO7rwyNHIEu7ix
+         da9Q==
+X-Gm-Message-State: APzg51CmeEeK6wAq8xO/bQG0oSyJSG/v7+1oy9RCFHlAaoR4d/PszNbv
+        kbPA8RUpY9nCGJOpwgoXJhVVjA==
+X-Google-Smtp-Source: ANB0VdYNbKMrJm0y/IYCaJw//u7Q6EBpZZnga+GidOo8uHyDXAtW77OzCWqMXGVqOLCh3C7n/ImIJQ==
+X-Received: by 2002:a1c:c642:: with SMTP id w63-v6mr1422586wmf.3.1536674856381;
+        Tue, 11 Sep 2018 07:07:36 -0700 (PDT)
+Received: from dell ([2.27.167.7])
+        by smtp.gmail.com with ESMTPSA id b124-v6sm1302819wmg.47.2018.09.11.07.07.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 11 Sep 2018 07:07:35 -0700 (PDT)
+Date:   Tue, 11 Sep 2018 15:07:33 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Radu Pirea <radu_nicolae.pirea@upb.ro>, robh+dt@kernel.org,
+        mark.rutland@arm.com, nicolas.ferre@microchip.com,
+        alexandre.belloni@bootlin.com, broonie@kernel.org, jslaby@suse.com,
+        richard.genoud@gmail.com, davem@davemloft.net,
+        mchehab+samsung@kernel.org, akpm@linux-foundation.org,
+        arnd@arndb.de, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-spi@vger.kernel.org
+Subject: Re: [GIT PULL v2] Immutable branch between MFD, SPI and TTY due for
+ the v4.20 merge window
+Message-ID: <20180911140733.GU4185@dell>
+References: <20180904111310.4049-1-radu_nicolae.pirea@upb.ro>
+ <20180911111850.GJ4185@dell>
+ <20180911140400.GB18410@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <20180910131754.GG10951@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18091114-0020-0000-0000-00000E62682A
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009703; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01086779; UDB=6.00561133; IPR=6.00866791;
- MB=3.00023231; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-11 14:06:27
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18091114-0021-0000-0000-000062FD2808
-Message-Id: <04b427ad-df4e-67bd-2942-2a7a2cccf1aa@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-11_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809110145
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180911140400.GB18410@kroah.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 11 Sep 2018, Greg KH wrote:
 
+> On Tue, Sep 11, 2018 at 12:18:50PM +0100, Lee Jones wrote:
+> > [In case you missed it]
+> > 
+> > This new pull-request contains the following changes since v1:
+> > 
+> >  - Uplift the submission version from v11 to v12
+> >  - Include fix for build breakage due to missing Device Tree include file
+> > 
+> > Since it is based on the original pull-request, it can be pulled
+> > in either directly on top of it or as a pull in its own right.
+> > 
+> > The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
+> > 
+> >   Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
+> > 
+> > are available in the Git repository at:
+> > 
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git tags/ib-mfd-spi-tty-v4.20-1
+> 
+> Ok, let's try this again, I've dropped that other patch and taken this
+> branch into my tree.
 
-On 10.09.2018 15:17, Michal Hocko wrote:
-> [Cc Pavel]
->
-> On Mon 10-09-18 14:35:27, Mikhail Zaslonko wrote:
->> If memory end is not aligned with the linux memory section boundary, such
->> a section is only partly initialized. This may lead to VM_BUG_ON due to
->> uninitialized struct pages access from is_mem_section_removable() or
->> test_pages_in_a_zone() function.
->>
->> Here is one of the panic examples:
->>   CONFIG_DEBUG_VM_PGFLAGS=y
->>   kernel parameter mem=3075M
-> OK, so the last memory section is not full and we have a partial memory
-> block right?
+What happened to not rebasing? :D
 
-Right. In my example above, I define 3075M (3Gig + 3Meg) of base memory 
-in the
-kernel parameters. As a result we end up with the last memory block 
-having only
-3 megabytes initialized. The initialization takes place within
-memmap_init_zone(unsigned long size, ...) function called from
-free_area_init_core() with the size = zone->spanned_pages. Thus, only three
-megabytes of the last memory block are initialized (till the end of the zone
-Normal). And with the page poisoning introduced by Pavel we fail on such a
-memory block processing in memory_hotplug code (no actual memory hotplug
-is involved here).
+> Hopefully this all works well :)
 
->
->>   page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
-> OK, this means that the struct page is not fully initialized. Do you
-> have a specific place which has triggered this assert?
+Me too. :)
 
-This assert is triggered in page_to_nid() function when it is called for
-uninitialized page. I found two places where that can happen:
-1) is_pageblock_removable_nolock() - direct call
-2) test_pages_in_a_zone() - via page_zone() call
-
->
->>   ------------[ cut here ]------------
->>   Call Trace:
->>   ([<000000000039b8a4>] is_mem_section_removable+0xcc/0x1c0)
->>    [<00000000009558ba>] show_mem_removable+0xda/0xe0
->>    [<00000000009325fc>] dev_attr_show+0x3c/0x80
->>    [<000000000047e7ea>] sysfs_kf_seq_show+0xda/0x160
->>    [<00000000003fc4e0>] seq_read+0x208/0x4c8
->>    [<00000000003cb80e>] __vfs_read+0x46/0x180
->>    [<00000000003cb9ce>] vfs_read+0x86/0x148
->>    [<00000000003cc06a>] ksys_read+0x62/0xc0
->>    [<0000000000c001c0>] system_call+0xdc/0x2d8
->>
->> This fix checks if the page lies within the zone boundaries before
->> accessing the struct page data. The check is added to both functions.
->> Actually similar check has already been present in
->> is_pageblock_removable_nolock() function but only after the struct page
->> is accessed.
->>
-> Well, I am afraid this is not the proper solution. We are relying on the
-> full pageblock worth of initialized struct pages at many other place. We
-> used to do that in the past because we have initialized the full
-> section but this has been changed recently. Pavel, do you have any ideas
-> how to deal with this partial mem sections now?
-
-I think this is not related to the recent changes of memory 
-initialization. If
-you mean deferred init case, the problem exists even without
-CONFIG_DEFERRED_STRUCT_PAGE_INIT kernel option.
-
->> Signed-off-by: Mikhail Zaslonko <zaslonko@linux.ibm.com>
->> Reviewed-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
->> Cc: <stable@vger.kernel.org>
->> ---
->>   mm/memory_hotplug.c | 20 +++++++++++---------
->>   1 file changed, 11 insertions(+), 9 deletions(-)
->>
->> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
->> index 9eea6e809a4e..8e20e8fcc3b0 100644
->> --- a/mm/memory_hotplug.c
->> +++ b/mm/memory_hotplug.c
->> @@ -1229,9 +1229,8 @@ static struct page *next_active_pageblock(struct page *page)
->>   	return page + pageblock_nr_pages;
->>   }
->>   
->> -static bool is_pageblock_removable_nolock(struct page *page)
->> +static bool is_pageblock_removable_nolock(struct page *page, struct zone **zone)
->>   {
->> -	struct zone *zone;
->>   	unsigned long pfn;
->>   
->>   	/*
->> @@ -1241,15 +1240,14 @@ static bool is_pageblock_removable_nolock(struct page *page)
->>   	 * We have to take care about the node as well. If the node is offline
->>   	 * its NODE_DATA will be NULL - see page_zone.
->>   	 */
->> -	if (!node_online(page_to_nid(page)))
->> -		return false;
->> -
->> -	zone = page_zone(page);
->>   	pfn = page_to_pfn(page);
->> -	if (!zone_spans_pfn(zone, pfn))
->> +	if (*zone && !zone_spans_pfn(*zone, pfn))
->>   		return false;
->> +	if (!node_online(page_to_nid(page)))
->> +		return false;
->> +	*zone = page_zone(page);
->>   
->> -	return !has_unmovable_pages(zone, page, 0, MIGRATE_MOVABLE, true);
->> +	return !has_unmovable_pages(*zone, page, 0, MIGRATE_MOVABLE, true);
->>   }
->>   
->>   /* Checks if this range of memory is likely to be hot-removable. */
->> @@ -1257,10 +1255,11 @@ bool is_mem_section_removable(unsigned long start_pfn, unsigned long nr_pages)
->>   {
->>   	struct page *page = pfn_to_page(start_pfn);
->>   	struct page *end_page = page + nr_pages;
->> +	struct zone *zone = NULL;
->>   
->>   	/* Check the starting page of each pageblock within the range */
->>   	for (; page < end_page; page = next_active_pageblock(page)) {
->> -		if (!is_pageblock_removable_nolock(page))
->> +		if (!is_pageblock_removable_nolock(page, &zone))
->>   			return false;
->>   		cond_resched();
->>   	}
->> @@ -1296,6 +1295,9 @@ int test_pages_in_a_zone(unsigned long start_pfn, unsigned long end_pfn,
->>   				i++;
->>   			if (i == MAX_ORDER_NR_PAGES || pfn + i >= end_pfn)
->>   				continue;
->> +			/* Check if we got outside of the zone */
->> +			if (zone && !zone_spans_pfn(zone, pfn))
->> +				return 0;
->>   			page = pfn_to_page(pfn + i);
->>   			if (zone && page_zone(page) != zone)
->>   				return 0;
->> -- 
->> 2.16.4
-
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
