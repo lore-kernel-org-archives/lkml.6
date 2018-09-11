@@ -2,126 +2,107 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14922C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:33:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25E0DC6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:33:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C355D20839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:33:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="voBqe/xe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C355D20839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
+	by mail.kernel.org (Postfix) with ESMTP id DE93020839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:33:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE93020839
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727030AbeIKObb (ORCPT
+        id S1727152AbeIKOb4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 10:31:31 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:37475 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726670AbeIKObb (ORCPT
+        Tue, 11 Sep 2018 10:31:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47392 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726670AbeIKOb4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 10:31:31 -0400
-Received: by mail-lf1-f67.google.com with SMTP id j8-v6so19757556lfb.4
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 02:33:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=0CqYcvNpE16qWp6cyTlBFDC525iQJL/z/iPpsZsoLnU=;
-        b=voBqe/xeMSMqQWr1lYdewUzYWyrXWEUafoHvsXy+MYwMtmUdis0BWHKHzcYKCTBGMN
-         mGjVVIHa+hQDcsrrXW3N1r9hWwn27648SCxzMkuEd7a+idYJgfD0cfNgrmE6ZmzXo3BA
-         YU8lJRe5cjd0DrZVbzFUXJEiWcUKQMcGz7VZVZuQYI7u7wmym4mfUn2z1yN1Dwr3zTwe
-         AWi7s8ySUHeGAquL8nS/1z7KWFjvgB8Mb2+bBQppVzPeLrZ71ucSbCIDjWEKlsRZ37zF
-         I00Na0+3xmJPHMe+FhhPuB2Pcyg6W4plEOu8AnUvnpbI2rO4wdjAMY3T8KWj0/h+Fcd5
-         NAcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=0CqYcvNpE16qWp6cyTlBFDC525iQJL/z/iPpsZsoLnU=;
-        b=iCwXBFLInY25J36Yp7Hdx+UyfUbCh6Ku2OkpvQ48QgnnVPXipYmCvmNftx8+UqAZOZ
-         Iv56yNgL1SpY17bEVnGTnQQkto3MTmHBBn3OwzcKGMDHlWQFhyAWgBAv5yiHOuMa1Khq
-         C/HwpXGhuDsmYsUiLd4xBTiQ00Obnee3GDK67jxPphPyGjOGe5kbHBuCmt8qk2R4k0tG
-         Ae+GSunye9PUTIF7FxXAZ9JjWo0Orr1bA6Uc38bJNozDZKjXcfY7y2sPktNva2KTmanQ
-         ZGbczJU+LWcHNBbYvYn6wV123dW0Y2wQeQuQzPUcU/SUjadrGkrEGRU5QtXzvd+2CN3q
-         wkzw==
-X-Gm-Message-State: APzg51BM503/Y7r4z141W71+H/ZaO1xWZmHsWxuvL7JTbxCKbsZnTA6Y
-        wmC6IrdwhvuEoEJbJ/jffnMrQvOcgno=
-X-Google-Smtp-Source: ANB0VdbLdg8UMxzfVd6nqtYZDg9ezo6XSH6ZtdiM1KKfanJSFOyeV9zA8plAMBRubVR8zx6mlhPmrA==
-X-Received: by 2002:a19:cc08:: with SMTP id c8-v6mr15761672lfg.145.1536658380729;
-        Tue, 11 Sep 2018 02:33:00 -0700 (PDT)
-Received: from [192.168.0.126] ([31.173.81.2])
-        by smtp.gmail.com with ESMTPSA id u2-v6sm3205691ljg.55.2018.09.11.02.32.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Sep 2018 02:32:59 -0700 (PDT)
-Subject: Re: [PATCH] net: ipv4: Use BUG_ON directly instead of a if condition
- followed by BUG
-To:     zhong jiang <zhongjiang@huawei.com>
-Cc:     davem@davemloft.net, edumazet@google.com, kuznet@ms2.inr.ac.ru,
-        yoshfuji@linux-ipv6.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1536590282-23899-1-git-send-email-zhongjiang@huawei.com>
- <a000b5a4-2907-70f9-70ed-7e1c6a797876@cogentembedded.com>
- <5B9783ED.4080908@huawei.com>
- <e1b9c36c-5459-a68e-e6fd-cca038e31d5f@cogentembedded.com>
- <5B97889F.3020303@huawei.com>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <6a9ff302-c86c-cd9e-7432-2de38d148678@cogentembedded.com>
-Date:   Tue, 11 Sep 2018 12:33:00 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 11 Sep 2018 10:31:56 -0400
+Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 14C8EEDF;
+        Tue, 11 Sep 2018 09:33:26 +0000 (UTC)
+Date:   Tue, 11 Sep 2018 11:33:24 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        James Wang <jnwang@suse.com>,
+        Borislav Petkov <bpetkov@suse.de>, linux-kernel@vger.kernel.org
+Subject: Re: [REGRESSION] Errors at reboot after 722e5f2b1eec
+Message-ID: <20180911093324.GB10436@kroah.com>
+References: <s5hk1ns1m8n.wl-tiwai@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <5B97889F.3020303@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <s5hk1ns1m8n.wl-tiwai@suse.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/11/2018 12:19 PM, zhong jiang wrote:
+On Tue, Sep 11, 2018 at 10:17:44AM +0200, Takashi Iwai wrote:
+> [ seems like my previous post didn't go out properly; if you have
+>   already received it, please discard this one ]
 
->>>>> The if condition can be removed if we use BUG_ON directly.
->>>>> The issule is detected with the help of Coccinelle.
->>>>
->>>>     Issue?
->>>>
->>>>>
->>>>> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
->>>>> ---
->>>>>     net/ipv4/tcp_input.c | 8 ++++----
->>>>>     1 file changed, 4 insertions(+), 4 deletions(-)
->>>>>
->>>>> diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
->>>>> index 62508a2..893bde3 100644
->>>>> --- a/net/ipv4/tcp_input.c
->>>>> +++ b/net/ipv4/tcp_input.c
->>>>> @@ -4934,8 +4934,8 @@ void tcp_rbtree_insert(struct rb_root *root, struct sk_buff *skb)
->>>>>                 BUG_ON(offset < 0);
->>>>>                 if (size > 0) {
->>>>>                     size = min(copy, size);
->>>>> -                if (skb_copy_bits(skb, offset, skb_put(nskb, size), size))
->>>>> -                    BUG();
->>>>> +                BUG(skb_copy_bits(skb, offset,
->>>>
->>>>      You said BUG_ON()?
->>>    Yep. Do you think that it is worthing to do
->>
->>     I think BUG() doesn't take parameters, BUG_ON() does. Have you tried to build the kernel with your patch at all?
->>
->   I know that the patch should be BUG_ON instead of BUG. This is my mistake.  I just want to know that it is worthing to do so.
+Sorry, I got it, it's just in my large queue :(
 
-    Yes, probably.
+> Hi Rafael, Greg,
+> 
+> James Wang reported on SUSE bugzilla that his machine spews many
+> AMD-Vi errors at reboot like:
+> 
+> [  154.907879] systemd-shutdown[1]: Detaching loop devices.
+> [  154.954583] kvm: exiting hardware virtualization
+> [  154.999953] usb 5-2: USB disconnect, device number 2
+> [  155.025278] ohci-pci 0000:00:12.1: AMD-Vi: Event logged [IO_PAGE_FAULT domain=0x0006 address=0x0000000000000080 flags=0x0020]
+> [  155.081360] ohci-pci 0000:00:12.1: AMD-Vi: Event logged [IO_PAGE_FAULT domain=0x0006 address=0x0000000000000080 flags=0x0020]
+> [  155.136778] ohci-pci 0000:00:12.1: AMD-Vi: Event logged [IO_PAGE_FAULT domain=0x0006 address=0x0000000000000080 flags=0x0020]
+> [  155.191772] ohci-pci 0000:00:12.1: AMD-Vi: Event logged [IO_PAGE_FAULT domain=0x0006 address=0x0000000000000080 flags=0x0020]
+> [  155.247055] ohci-pci 0000:00:12.1: AMD-Vi: Event logged [IO_PAGE_FAULT domain=0x0006 address=0x0000000000000080 flags=0x0020]
+> [  155.302614] ohci-pci 0000:00:12.1: AMD-Vi: Event logged [IO_PAGE_FAULT domain=0x0006 address=0x0000000000000080 flags=0x0020]
+> [  155.358996] ohci-pci 0000:00:12.1: AMD-Vi: Event logged [IO_PAGE_FAULT domain=0x0006 address=0x0000000000000080 flags=0x0020]
+> [  155.392155] usb 4-2: new full-speed USB device number 2 using ohci-pci
+> [  155.413752] ohci-pci 0000:00:12.1: AMD-Vi: Event logged [IO_PAGE_FAULT domain=0x0006 address=0x0000000000000080 flags=0x0020]
+> [  155.413762] ohci-pci 0000:00:12.1: AMD-Vi: Event logged [IO_PAGE_FAULT domain=0x0006 address=0x0000000000000080 flags=0x0020]
+> [  155.560307] ohci-pci 0000:00:12.1: AMD-Vi: Event logged [IO_PAGE_FAULT domain=0x0006 address=0x0000000000000080 flags=0x0020]
+> [  155.616039] AMD-Vi: Event logged [IO_PAGE_FAULT device=00:12.1 domain=0x0006 address=0x0000000000000080 flags=0x0020]
+> [  155.667843] AMD-Vi: Event logged [IO_PAGE_FAULT device=00:12.1 domain=0x0006 address=0x0000000000000080 flags=0x0020]
+> [  155.719497] AMD-Vi: Event logged [IO_PAGE_FAULT device=00:12.1 domain=0x0006 address=0x0000000000000080 flags=0x0020]
+> [  155.772697] AMD-Vi: Event logged [IO_PAGE_FAULT device=00:12.1 domain=0x0006 address=0x0000000000000080 flags=0x0020]
+> [  155.823919] AMD-Vi: Event logged [IO_PAGE_FAULT device=00:12.1 domain=0x0006 address=0x0000000000000080 flags=0x0020]
+> [  155.875490] AMD-Vi: Event logged [IO_PAGE_FAULT device=00:12.1 domain=0x0006 address=0x0000000000000080 flags=0x0020]
+> [  155.927258] AMD-Vi: Event logged [IO_PAGE_FAULT device=00:12.1 domain=0x0006 address=0x0000000000000080 flags=0x0020]
+> [  155.979318] AMD-Vi: Event logged [IO_PAGE_FAULT device=00:12.1 domain=0x0006 address=0x0000000000000080 flags=0x0020]
+> [  156.031813] AMD-Vi: Event logged [IO_PAGE_FAULT device=00:12.1 domain=0x0006 address=0x0000000000000080 flags=0x0020]
+> [  156.084293] AMD-Vi: Event logged [IO_PAGE_FAULT device=00:12.1 domain=0x0006 address=0x0000000000000080 flags=0x0020]
+> [  156.272157] reboot: Restarting system
+> [  156.290316] reboot: machine restart
+> 
+> And, James bisected and spotted that it's introduced by the commit
+> 722e5f2b1eec ("driver core: Partially revert "driver core: correct
+> device's shutdown order"").  Reverting the commit fixes the problem.
+> 
+> He mentioned about Uncorrectable Machine Check Exception seen at
+> shutdown, too, where it doesn't appear after the revert.  (Though,
+> it's not sure whether it's really relevant.)
+> 
+> The errors are clearly related with the USB device (a KVM device,
+> IIRC), and the errors are not seen if the USB device is disconnected.
+> 
+> We experienced this at first with SLE15 kernel (4.12 with backports),
+> but later the same issue was confirmed on 4.18.y and 4.19-rc2.  Also,
+> it's confirmed that revert works on the upstream kernels, too.
+> 
+> Does this hit your radar?
 
->   Thanks,
->   zhong jiang
-[...]
+Ugh, no, I haven't heard of this before, Rafael?
 
-MBR, Sergei
+So the need for the revert fixes some machines, but others need the
+patch, this isn't going to be fun :(
 
+greg k-h
