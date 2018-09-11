@@ -2,119 +2,106 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0579C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:01:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C307C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:02:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C5B920839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:01:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WQjm4Glb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C5B920839
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C160920839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:02:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C160920839
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kaod.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726866AbeILBCl (ORCPT
+        id S1727150AbeILBDL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 21:02:41 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:52760 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726720AbeILBCl (ORCPT
+        Tue, 11 Sep 2018 21:03:11 -0400
+Received: from 13.mo5.mail-out.ovh.net ([87.98.182.191]:44539 "EHLO
+        13.mo5.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726720AbeILBDL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 21:02:41 -0400
-Received: by mail-it0-f67.google.com with SMTP id h3-v6so3251078ita.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 13:01:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tY3hAzyua46qM88cex1j7mbhN+b7279JkNfKSpk0DNY=;
-        b=WQjm4Glb3dQsPSMKm2ZxaOnwTnTlyfFHqp8jAxmASn1Je/4kL/YESZnji8OpgHlZCz
-         yILX4x/TXbNj8WY/I+A0znXW7OfDsZUF57ZXQcAgqSNDxzlT3QfIs2QhDr7MopU61e93
-         UshdwxEY3oSkj45W/N8GtbBZoAEvt2USWP3Psir1ZDORO40wPZouzWfULu8xbq41G2YW
-         16+1Q4pqBrxMs5SnLo85ryPcb9pjti/ABpozEQ0oObDoYKWqYtpt9o9XA2Dn0nYwBQlC
-         34ubpM3OnKMbbRpRETlwSnFJX9e75DrygHUaw7yseagGXI6X9Tp8JsFKUFQo4iox7e9h
-         qbPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tY3hAzyua46qM88cex1j7mbhN+b7279JkNfKSpk0DNY=;
-        b=V/IFhZbdQlFkOEuV1Jyocif7Er3giQD3WoTBAnXA0sAhGeFyLNIlHsioF3Zn9F3aMI
-         EWZYm7qGuQcEheMCU6iAMBW/X6ZqjjSwExfbbxws/zY3g2ztai5PsufM4GwWCcEU7o65
-         63p2r84J+vePBMoctiGKC+qQJDAnYlSPb9JMMxMiAzINrEDoYRyGnCDDlQUa/+wayK8R
-         kJBLKi6AJMKLZkIIL4Rr7QZ1bAdda0Of2JDxLCtXlVOBKnJNxhOCnuiSRu4eoBH4mpJH
-         cAgHWz/7hd+Zk1DIOGFk9Cud5fXmiUvrMXiGjW1D0NoT8YJEpmjweQ3w49losZGQlrs6
-         Xu9A==
-X-Gm-Message-State: APzg51ChsmFAncIKf2IMy7S4MJguxljFiVCdJrYD3wUq50KxLrpPI8jv
-        qAuMpRIk/kY0bweCZQfmzeYbVSRGdu/Xy9NTuFo=
-X-Google-Smtp-Source: ANB0VdYYVqw2AMFeABWfzp4ic9piWnh2O/44z0VIoYN6rH7/L2883hmSoLCeKjRSIP1R7uKjVHhNGSpQNGjgnHDffYE=
-X-Received: by 2002:a24:ed84:: with SMTP id r126-v6mr3276827ith.58.1536696108998;
- Tue, 11 Sep 2018 13:01:48 -0700 (PDT)
+        Tue, 11 Sep 2018 21:03:11 -0400
+X-Greylist: delayed 4216 seconds by postgrey-1.27 at vger.kernel.org; Tue, 11 Sep 2018 21:03:10 EDT
+Received: from player716.ha.ovh.net (unknown [10.109.160.232])
+        by mo5.mail-out.ovh.net (Postfix) with ESMTP id D03981EAAAF
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 20:45:34 +0200 (CEST)
+Received: from zorba.kaod.org (LFbn-1-10605-110.w90-89.abo.wanadoo.fr [90.89.196.110])
+        (Authenticated sender: postmaster@kaod.org)
+        by player716.ha.ovh.net (Postfix) with ESMTPSA id B640F56008E;
+        Tue, 11 Sep 2018 20:45:23 +0200 (CEST)
+Subject: Re: [PATCH i2c-next v6] i2c: aspeed: Handle master/slave combined irq
+ events properly
+To:     Guenter Roeck <linux@roeck-us.net>,
+        Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Cc:     linux-aspeed@lists.ozlabs.org,
+        James Feist <james.feist@linux.intel.com>,
+        openbmc@lists.ozlabs.org,
+        Brendan Higgins <brendanhiggins@google.com>,
+        linux-kernel@vger.kernel.org,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Vernon Mauery <vernon.mauery@linux.intel.com>,
+        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org
+References: <20180823225731.19063-1-jae.hyun.yoo@linux.intel.com>
+ <20180911183734.GA21976@roeck-us.net>
+From:   =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>
+Message-ID: <e16aadd4-09ee-19bf-f7ea-10dc1e491112@kaod.org>
+Date:   Tue, 11 Sep 2018 20:45:23 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180910232615.4068.29155.stgit@localhost.localdomain>
- <20180910234341.4068.26882.stgit@localhost.localdomain> <CAPcyv4j301Ma8D65oMzFo9-jVdwKGHzOVHb=7u9XaxACR5RAhg@mail.gmail.com>
-In-Reply-To: <CAPcyv4j301Ma8D65oMzFo9-jVdwKGHzOVHb=7u9XaxACR5RAhg@mail.gmail.com>
-From:   Alexander Duyck <alexander.duyck@gmail.com>
-Date:   Tue, 11 Sep 2018 13:01:37 -0700
-Message-ID: <CAKgT0UddVdf=+SnfeZ2hL=a47YkjOa+r96xnghP8r1fQZ_1Ycw@mail.gmail.com>
-Subject: Re: [PATCH 1/4] mm: Provide kernel parameter to allow disabling page
- init poisoning
-To:     dan.j.williams@intel.com
-Cc:     linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        linux-nvdimm@lists.01.org, pavel.tatashin@microsoft.com,
-        Michal Hocko <mhocko@suse.com>, dave.jiang@intel.com,
-        Ingo Molnar <mingo@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>, jglisse@redhat.com,
-        Andrew Morton <akpm@linux-foundation.org>, logang@deltatee.com,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180911183734.GA21976@roeck-us.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Ovh-Tracer-Id: 958703773954706420
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtjedrjedvgddufedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddm
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 11, 2018 at 9:50 AM Dan Williams <dan.j.williams@intel.com> wrote:
->
-> On Mon, Sep 10, 2018 at 4:43 PM, Alexander Duyck
-> <alexander.duyck@gmail.com> wrote:
-> > From: Alexander Duyck <alexander.h.duyck@intel.com>
-> >
-> > On systems with a large amount of memory it can take a significant amount
-> > of time to initialize all of the page structs with the PAGE_POISON_PATTERN
-> > value. I have seen it take over 2 minutes to initialize a system with
-> > over 12GB of RAM.
-> >
-> > In order to work around the issue I had to disable CONFIG_DEBUG_VM and then
-> > the boot time returned to something much more reasonable as the
-> > arch_add_memory call completed in milliseconds versus seconds. However in
-> > doing that I had to disable all of the other VM debugging on the system.
-> >
-> > In order to work around a kernel that might have CONFIG_DEBUG_VM enabled on
-> > a system that has a large amount of memory I have added a new kernel
-> > parameter named "page_init_poison" that can be set to "off" in order to
-> > disable it.
->
-> In anticipation of potentially more DEBUG_VM options wanting runtime
-> control I'd propose creating a new "vm_debug=" option for this modeled
-> after "slub_debug=" along with a CONFIG_DEBUG_VM_ON to turn on all
-> options.
->
-> That way there is more differentiation for debug cases like this that
-> have significant performance impact when enabled.
->
-> CONFIG_DEBUG_VM leaves optional debug capabilities disabled by default
-> unless CONFIG_DEBUG_VM_ON is also set.
+On 09/11/2018 08:37 PM, Guenter Roeck wrote:
+> Hi,
+> 
+> On Thu, Aug 23, 2018 at 03:57:31PM -0700, Jae Hyun Yoo wrote:
+>> In most of cases, interrupt bits are set one by one but there are
+>> also a lot of other cases that Aspeed I2C IP sends multiple
+>> interrupt bits with combining master and slave events using a
+>> single interrupt call. It happens much more in multi-master
+>> environment than single-master. For an example, when master is
+>> waiting for a NORMAL_STOP interrupt in its MASTER_STOP state,
+>> SLAVE_MATCH and RX_DONE interrupts could come along with the
+>> NORMAL_STOP in case of an another master immediately sends data
+>> just after acquiring the bus. In this case, the NORMAL_STOP
+>> interrupt should be handled by master_irq and the SLAVE_MATCH and
+>> RX_DONE interrupts should be handled by slave_irq. This commit
+>> modifies irq hadling logic to handle the master/slave combined
+>> events properly.
+>>
+>> Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+>> Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
+> 
+> This patch causes a boot stall when booting witherspoon-bmc with
+> qemu v3.0, and all i2c device probes fail with error -110 (timeout).
+> Bisect log is attached for reference.
+> 
+> With the same kernel configuration (aspeed_g5_defconfig),
+> ast2500-evb and romulus-bmc are still able to boot.
+> palmetto-bmc with aspeed_g4_defconfig also appears to work.
+> 
+> Is this a problem with qemu ? Should I drop the qemu test
+> for witherspoon-bmc starting with the next kernel release ?
 
-Based on earlier discussions I would assume that CONFIG_DEBUG_VM would
-imply CONFIG_DEBUG_VM_ON anyway since we don't want most of these
-disabled by default.
+The QEMU model for the Aspeed I2C controller does not support 
+slave mode or DMA registers. That might be the issue. 
 
-In my mind we should be looking at a selective "vm_debug_disable="
-instead of something that would be turning on features.
+I will check what this patch does when I have sometime. 
 
-- Alex
+Thanks, 
+
+
+C.
