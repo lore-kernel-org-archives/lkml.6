@@ -2,119 +2,116 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40D5EC04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 16:20:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3314AC6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 16:21:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF74320866
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 16:20:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="uhU5HvW8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF74320866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTP id BE57F20866
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 16:21:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE57F20866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727384AbeIKVU3 (ORCPT
+        id S1727644AbeIKVVt convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 17:20:29 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:54265 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726811AbeIKVU3 (ORCPT
+        Tue, 11 Sep 2018 17:21:49 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:42018 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726811AbeIKVVt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 17:20:29 -0400
-Received: by mail-it0-f67.google.com with SMTP id p79-v6so2292415itp.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 09:20:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=rJoAZ34MO8hHkyTQ3M1qWaZoZjgVCMt/UUK/nLRY8B8=;
-        b=uhU5HvW8Ks5PcIhw0gMGgi0UcYf76LdVQ2jXM+YnkwRHHFF1GV4i+rRflDZ2J9D/GV
-         Q7nRDAFE///GCctyL1fANkhKed/NQC+J0jOpzoltRFEoYm6Jo3g4k+4wsZEGitaNgmNZ
-         +17EJ4aj/HPc8atFsCIrVtBpSROT9pSQMIekeQYzQbNr+zPGsNYL1o7JM5x/aR/X7x36
-         btk/ZQQSlJW9poNYMVD/Ej0w7hyRSsrG/9trwsi467kMAw7I3Zyixc8xeijyetcpWx0m
-         Aq17IHL8fHNfzcyiv8RRYIkyNqJthGx1TebEu4/hfaWnIvRPL9QmFiBOWJFAfz+kYT3E
-         EAng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=rJoAZ34MO8hHkyTQ3M1qWaZoZjgVCMt/UUK/nLRY8B8=;
-        b=PJ5oYBPD+tt86M/Q7rJbHIClEtQQAxwSjT3BDJ96k3mDv4OSKndmUEdm7V8GDnoid6
-         pqVJ6+PV/P0+O49AV7h8TzSSSfYv5V56vm9NpFG83kdpnTCS3Z7s/kirZMV3YkABGeO9
-         ECMcWu7Q2LoMehR9xHRNxvSaq8cumB1wUwX/GXFyzccbzozQLpJvYXA2OzkoU/2GoBES
-         Cmqa8MKM3lOrxpzsttrvDiWxE0aS4Y8fXoUS3NcUPCzwSu2S0Eg300lCqHBxC2RO1tja
-         6WAHNDRcir/6IB8JVvb8Uf80Z7yT67e1DX9qeVNv7amA4WdIXA57G7LEj7xt997mk57q
-         5OKg==
-X-Gm-Message-State: APzg51DO/aW0F9rbM0i4jiN3jQAUPHISf4fLXp3r0StEAEC6Dd24ihEG
-        vFu8cGn61wXBcrUWnsuvOkfWmWCykUk=
-X-Google-Smtp-Source: ANB0VdZ+X+pZQQricPybbSPsP0CBTC18m7DxfPiH/RKw3fNnM/dAI9ueRclQFzfiRaZnZehXXS76mA==
-X-Received: by 2002:a24:27d5:: with SMTP id g204-v6mr2331446ita.47.1536682826143;
-        Tue, 11 Sep 2018 09:20:26 -0700 (PDT)
-Received: from [192.168.1.212] (107.191.0.22.static.utbb.net. [107.191.0.22])
-        by smtp.gmail.com with ESMTPSA id i2-v6sm5904082ioh.80.2018.09.11.09.20.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Sep 2018 09:20:24 -0700 (PDT)
-Subject: Re: [REGRESSION] bfq probe failed on 4.19-rc3
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     Paolo Valente <paolo.valente@linaro.org>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <s5ha7ooxbps.wl-tiwai@suse.de>
- <8b5a7dc9-2dc1-16ee-4b05-a72eb6680c77@kernel.dk>
- <s5h7ejsnhds.wl-tiwai@suse.de> <s5hy3c8j9g9.wl-tiwai@suse.de>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <7fcd013b-b87a-a603-d010-02d70d6e559d@kernel.dk>
-Date:   Tue, 11 Sep 2018 10:20:23 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 11 Sep 2018 17:21:49 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1fzlQ6-0000rq-TB; Tue, 11 Sep 2018 18:21:42 +0200
+Date:   Tue, 11 Sep 2018 18:21:42 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        tglx@linutronix.de, Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>
+Subject: Re: [PATCH] rcu: Use cpus_read_lock() while looking at
+ cpu_online_mask
+Message-ID: <20180911162142.cc3vgook2gctus4c@linutronix.de>
+References: <20180910135615.tr3cvipwbhq6xug4@linutronix.de>
+ <20180911160532.GJ4225@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <s5hy3c8j9g9.wl-tiwai@suse.de>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180911160532.GJ4225@linux.vnet.ibm.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/11/18 10:16 AM, Takashi Iwai wrote:
-> On Tue, 11 Sep 2018 18:11:43 +0200,
-> Takashi Iwai wrote:
->>
->> On Tue, 11 Sep 2018 18:09:44 +0200,
->> Jens Axboe wrote:
->>>
->>> On 9/11/18 10:03 AM, Takashi Iwai wrote:
->>>> Hi,
->>>>
->>>> I noticed that bfq doesn't appear in the I/O scheduler list on
->>>> 4.19-rc3.  It seems that blkcg_policy_register() at the beginning of
->>>> bfq_init() returns -ENOSPC, hence the probe aborts silently.
->>>>
->>>> Is this already addressed?
->>>
->>> Haven't heard about this one before. What kernel did you last use that
->>> worked?
->>
->> IIRC, 4.18 worked fine.  Let me see whether I have a backup...
+On 2018-09-11 09:05:32 [-0700], Paul E. McKenney wrote:
+> On Mon, Sep 10, 2018 at 03:56:16PM +0200, Sebastian Andrzej Siewior wrote:
+> > It was possible that sync_rcu_exp_select_cpus() enqueued something on
+> > CPU0 while CPU0 was offline. Such a work item wouldn't be processed
+> > until CPU0 gets back online. This problem was addressed in commit
+> > fcc6354365015 ("rcu: Make expedited GPs handle CPU 0 being offline"). I
+> > don't think the issue fully addressed.
+> > 
+> > Assume grplo = 0 and grphi = 7 and sync_rcu_exp_select_cpus() is invoked
+> > on CPU1. The preempt_disable() section on CPU1 won't ensure that CPU0
+> > remains online between looking at cpu_online_mask and invoking
+> > queue_work_on() on CPU1.
+> > 
+> > Use cpus_read_lock() to ensure that `cpu' is not going down between
+> > looking at cpu_online_mask at invoking queue_work_on() and waiting for
+> > its completion. It is added around the loop + flush_work() which is
+> > similar to work_on_cpu_safe() (and we can have multiple jobs running on
+> > NUMA systems).
 > 
-> Confirmed that 4.18 worked.  It's also with CONFIG_IOSCHED_BFQ=y and
-> CONFIG_BFQ_GROUP_IOSCHED=y.
-> 
-> And, 4.19-rc3 with CONFIG_BFQ_GROUP_IOSCHED=n seems working, too (as
-> expected from the error above).
-> 
-> 
-> (BTW I'll have to leave from this machine now.  For any further
->  inquiry, I'll check tomorrow, sorry.)
+> Is this experimental or theoretical?
 
-Very odd. Maybe try without CONFIG_BLK_CGROUP_IOLATENCY being set?
-I'll try and reproduce it here.
+theoretical. I saw that hunk on RT and I can't have queue_work() within
+a preempt_disable() section here.
 
--- 
-Jens Axboe
+> If theoretical, the counter-theory
+> is that the stop-machine processing prevents any of the cpu_online_mask
+> bits from changing, though, yes, we would like to get rid of the
+> stop-machine processing.  So either way, yes, the current state could
+> use some improvement.
+> 
+> But one problem with the patch below is that sync_rcu_exp_select_cpus()
+> can be called while the cpu_hotplug_lock is write-held.  Or is that
+> somehow OK these days?  
 
+depends. Is it okay to wait until the write-lock is dropped? If it is,
+then it is okay. If not…
+
+> Assuming not, how about the (untested) patch
+> below?
+
+Doesn't work for me because it is still within the preempt-disable
+section :/.
+Would it work to use WORK_CPU_UNBOUND? As far as I understand it, the
+CPU number does not matter, you just want to spread it across multiple
+CPUs in the NUMA case.
+
+> 							Thanx, Paul
+> 
+> commit 5214cbbfe6a5d6b92c76c4e411a049fe57245d4a
+> Author: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> Date:   Tue Sep 11 08:57:48 2018 -0700
+> 
+>     rcu: Stop expedited grace periods from relying on stop-machine
+>     
+>     The CPU-selection code in sync_rcu_exp_select_cpus() disables preemption
+>     to prevent the cpu_online_mask from changing.  However, this relies on
+>     the stop-machine mechanism in the CPU-hotplug offline code, which is not
+>     desirable (it would be good to someday remove the stop-machine mechanism).
+
+not that I tested it, but I still don't understand how a
+preempt_disable() section on CPU1 can ensure that CPU3 won't go down. Is
+there some code that invokes stop_cpus() for each CPU or so?
+
+Sebastian
