@@ -2,92 +2,122 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38267C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:20:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67BF2C6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:22:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDDFC20870
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:20:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="ZwpqqKlN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDDFC20870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
+	by mail.kernel.org (Postfix) with ESMTP id 20BE420854
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:22:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20BE420854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727685AbeIKMSi (ORCPT
+        id S1727734AbeIKMUL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 08:18:38 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:41150 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726840AbeIKMSh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 08:18:37 -0400
-Received: by mail-oi0-f68.google.com with SMTP id k12-v6so45246596oiw.8
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 00:20:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=3o4b3xlkT8qc40LF58gNWPpvPlnMI3lYGqx5rpDtc6s=;
-        b=ZwpqqKlNpiSTDN1c8qAjsqE6uD+hV0R/ICpLZBPwknPBTjVG2a8VUMknIubefw1B4U
-         n+6BNXvSJZkpvA6WuTTlbXWzUdffc5PTd3iO/DDc4Qxg+/LELOkUsOA8UevW7Y/hafBa
-         UioN42SxBhtZ+zb0hEOsPob24dKnf9sXoTHJA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=3o4b3xlkT8qc40LF58gNWPpvPlnMI3lYGqx5rpDtc6s=;
-        b=ajYJ/dpuTG9dx5GdmzYtkf0MOXaLT2ZQ01nmXKmkcsiHvkCevyVqbuQ5S4v0qg6EQK
-         SvOaoAENs9+q/PXSz3FGEcWZIHKwbWfMgrX4tHUhbBfoHf637VXcZN+xpCiURvVVOAlx
-         D0WRbJ6d/HhWtNfUaqgV8+KJW8N6EUjL5wsoc7mfOzfNmnhcOjOVXC+ne35IurISrM+6
-         QmJm0H/qiOg3Fj2Rt9ZHfV2JN2g28qCBL2LUo+JUP1sOKYtNgjHoTIzI2tSuyI8ptqj7
-         NWRNSRLWdCJN3WxZWOXTsrTPPizsEGXiVheYnczvmB0OXG5Z5orkxhcQKs8Vbvq371PQ
-         59ZA==
-X-Gm-Message-State: APzg51ArtFEDvmybR0XLmAKjreizA502LV+6RoavYhZpH4UMDoor9yAu
-        /JfpeIps0KRrC4PQOWnSUmkaFW44jspQ7d8h/ybflA==
-X-Google-Smtp-Source: ANB0VdabYd328xk90WUoZf+a6w1J2Wm3gLy3H2p3Lx3fo6kGB37rMfHoNgg9k4O0GLZ1QwSxQDKPNTlzLEjoFVrrJ64=
-X-Received: by 2002:aca:aa8d:: with SMTP id t135-v6mr23477131oie.218.1536650441463;
- Tue, 11 Sep 2018 00:20:41 -0700 (PDT)
+        Tue, 11 Sep 2018 08:20:11 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47626 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726840AbeIKMUK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 08:20:10 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3CC4980825A9;
+        Tue, 11 Sep 2018 07:22:14 +0000 (UTC)
+Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 09D14101041E;
+        Tue, 11 Sep 2018 07:22:12 +0000 (UTC)
+Date:   Tue, 11 Sep 2018 15:22:09 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     tglx@linutronix.de, hpa@zytor.com, thgarnie@google.com,
+        kirill.shutemov@linux.intel.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: Re: [PATCH v2 1/3] x86/mm/KASLR: Fix the wrong calculation of kalsr
+ region initial size
+Message-ID: <20180911072209.GV1740@192.168.1.3>
+References: <20180909124946.17988-1-bhe@redhat.com>
+ <20180910061839.GA90334@gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a9d:24a3:0:0:0:0:0 with HTTP; Tue, 11 Sep 2018 00:20:40
- -0700 (PDT)
-X-Originating-IP: [212.96.48.140]
-In-Reply-To: <20180911063335.GA3315@infradead.org>
-References: <000000000000cbb35d05757f7a3a@google.com> <20180910165317.GA3237@infradead.org>
- <CAJfpeguWqJgU8EfjvOtsBYRbbY2J7Ck2oNUcLNS8my9g2eNZfA@mail.gmail.com> <20180911063335.GA3315@infradead.org>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 11 Sep 2018 09:20:40 +0200
-Message-ID: <CAJfpegtS8QMfhNMFV3i6GycqmXsLNYXvKjRm3wG79PFuF1VvuA@mail.gmail.com>
-Subject: Re: possible deadlock in aio_poll
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     syzbot <syzbot+5b1df0420c523b45a953@syzkaller.appspotmail.com>,
-        bcrl <bcrl@kvack.org>, linux-aio <linux-aio@kvack.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180910061839.GA90334@gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 11 Sep 2018 07:22:14 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 11 Sep 2018 07:22:14 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 11, 2018 at 8:33 AM, Christoph Hellwig <hch@infradead.org> wrote:
-> On Mon, Sep 10, 2018 at 08:14:20PM +0200, Miklos Szeredi wrote:
->> Why do pollable waitqueues need to disable interrupts generally?
->
-> Any waitqueue needs to disable interrupts for consistency.  We
-> always use spin_lock_irqsave in __wake_up_common_lock() for example.
+On 09/10/18 at 08:18am, Ingo Molnar wrote:
+> 
+> * Baoquan He <bhe@redhat.com> wrote:
+> 
+> > In memory KASLR, __PHYSICAL_MASK_SHIFT is taken to calculate the
+> > initial size of the direct mapping region. This is right in the
+> > old code where __PHYSICAL_MASK_SHIFT was equal to MAX_PHYSMEM_BITS,
+> > 46bit, and only 4-level mode was supported.
+>......
+>  - what does 'memory KASLR' mean? All KASLR deals with memory.
 
-There are the _locked (non _irq) variants that do not.
+Thanks for your reviewing. I have updated patch log according to your
+comments. For this one, Thomas Garnier calls it memory section KASLR, to
+differentiate with kernel text KASLR. I would like to call it memory region
+KASLR, is it OK?
 
-And poll/select/etc don't impose non-interuptibility on wakeups
-either.  So it looks like it's just aio that has weird spin lock
-dependencies that forces this requirement on a waitq used in ->poll().
+Paste the updated patch here.
 
-Thanks,
-Miklos
+
+From df0df638a24aafeee6862f184769c4fb96f29afb Mon Sep 17 00:00:00 2001
+From: Baoquan He <bhe@redhat.com>
+Date: Fri, 29 Jun 2018 09:43:28 +0800
+Subject: [PATCH] x86/mm/KASLR: Fix the wrong calculation of memory region
+ initial size
+
+In memory region KASLR, __PHYSICAL_MASK_SHIFT is taken to calculate
+the initial size of the direct mapping region. This is correct in
+the old code where __PHYSICAL_MASK_SHIFT was equal to MAX_PHYSMEM_BITS,
+46 bits, and only 4-level mode was supported.
+
+Later, in commit:
+b83ce5ee91471d ("x86/mm/64: Make __PHYSICAL_MASK_SHIFT always 52"),
+__PHYSICAL_MASK_SHIFT was changed to be always 52 bits, no matter it's
+5-level or 4-level. This is wrong for 4-level paging. Then when we
+adapt physical memory region size based on available memory, it
+will overflow if the amount of system RAM and the padding is bigger
+than 64 TB.
+
+In fact, here MAX_PHYSMEM_BITS should be used instead. Fix it by
+replacing __PHYSICAL_MASK_SHIFT with MAX_PHYSMEM_BITS.
+
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Reviewed-by: Thomas Garnier <thgarnie@google.com>
+Signed-off-by: Baoquan He <bhe@redhat.com>
+---
+ arch/x86/mm/kaslr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
+index 61db77b0eda9..0988971069c9 100644
+--- a/arch/x86/mm/kaslr.c
++++ b/arch/x86/mm/kaslr.c
+@@ -93,7 +93,7 @@ void __init kernel_randomize_memory(void)
+ 	if (!kaslr_memory_enabled())
+ 		return;
+ 
+-	kaslr_regions[0].size_tb = 1 << (__PHYSICAL_MASK_SHIFT - TB_SHIFT);
++	kaslr_regions[0].size_tb = 1 << (MAX_PHYSMEM_BITS - TB_SHIFT);
+ 	kaslr_regions[1].size_tb = VMALLOC_SIZE_TB;
+ 
+ 	/*
+-- 
+2.13.6
+
+
+
