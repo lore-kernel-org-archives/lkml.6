@@ -2,105 +2,185 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 275F4C6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 14:13:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97F38C6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 14:14:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF14C20880
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 14:13:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Q3gDY39m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF14C20880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 4B53F2087F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 14:14:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B53F2087F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727997AbeIKTNG (ORCPT
+        id S1727986AbeIKTNz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 15:13:06 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:60404 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727010AbeIKTNG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 15:13:06 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8BE4Ssr143720;
-        Tue, 11 Sep 2018 14:13:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=lmGimO6mmUFDrITB/4MbPtLU/wF3eZKfQkeqvIlBCoQ=;
- b=Q3gDY39mrqC1zNf9Y9QMzXpJo3wGLT+n2qYXS2oELf4WPYZXpb08EsYySKYZlfB6tdfe
- KBv9gMW6kEXdtXGdUo8NcMQlvuUsT+ukNeGF5YUI3+sAj1Q2tZEpkAThQZ+WnGoLedPL
- kYg1n2fWwzqsQeDYPoHrxI6pbPruO1Ala8EXCNh9TvXnB6OdNHD+znsaTd/Tu4d4QHEZ
- Sx/HLq8gaiLHxqBhubEVh0jWI18rY+qFFE9XCd6aTopm69br/ekwMljcY5V6WISaW++5
- jhsm/ff/eEPlTuK2RiyeLW1bhSv/0Bx1KPH0T5YZoOSEOd18EzgWE+8CcDW/5lFoeSKL oQ== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2120.oracle.com with ESMTP id 2mc6cpmfxm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 Sep 2018 14:13:31 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w8BEDPFf026013
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 Sep 2018 14:13:25 GMT
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w8BEDPtZ027774;
-        Tue, 11 Sep 2018 14:13:25 GMT
-Received: from [10.191.3.83] (/10.191.3.83)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 11 Sep 2018 07:13:25 -0700
-Subject: Re: [PATCH] percpu-refcount: relax limit on percpu_ref_reinit()
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Ming Lei <ming.lei@redhat.com>, linux-kernel@vger.kernel.org,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-block@vger.kernel.org
-References: <20180909125824.9150-1-ming.lei@redhat.com>
- <d4fb5fcc-305e-b3a7-0124-9c7b75042f01@oracle.com>
- <20180910161135.GA27430@ming.t460p>
- <e91ee38e-3ea2-a003-2aac-8a8cc5c8f04a@oracle.com>
- <20180911040323.GC30977@ming.t460p>
- <771fa1eb-85d3-2ff2-6070-207874da85b6@oracle.com>
- <20180911134404.GF1100574@devbig004.ftw2.facebook.com>
-From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <e18c28d9-24dd-3048-a5e0-e3ed96643706@oracle.com>
-Date:   Tue, 11 Sep 2018 22:13:23 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Tue, 11 Sep 2018 15:13:55 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44384 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726761AbeIKTNy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 15:13:54 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C1EE818A;
+        Tue, 11 Sep 2018 07:14:23 -0700 (PDT)
+Received: from [10.4.13.85] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EDB1E3F614;
+        Tue, 11 Sep 2018 07:14:21 -0700 (PDT)
+Subject: Re: [RFC PATCH v2] irqchip/gic-v3: Add quirk for msm8996 secured
+ registers
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     sudeep.holla@arm.com, tglx@linutronix.de, jason@lakedaemon.net,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        rnayak@codeaurora.org, sboyd@kernel.org,
+        bjorn.andersson@linaro.org, nicolas.dechesne@linaro.org,
+        Craig Tatlor <ctatlor97@gmail.com>
+References: <20180904140538.16602-1-srinivas.kandagatla@linaro.org>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <69043397-9b99-27f6-82d7-69ba29a8ae22@arm.com>
+Date:   Tue, 11 Sep 2018 15:14:20 +0100
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180911134404.GF1100574@devbig004.ftw2.facebook.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180904140538.16602-1-srinivas.kandagatla@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9012 signatures=668708
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=630
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809110145
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi tejun
-
-On 09/11/2018 09:44 PM, Tejun Heo wrote:
-> Hello,
+On 04/09/18 15:05, Srinivas Kandagatla wrote:
+> Access to GICR_WAKER is restricted on msm8996 SoC in Hypervisor.
+> Its been more than 2 years of wait for this to be fixed, which has
+> no hopes to be fixed. This change was introduced for the "lead device"
+> on msm8996 platform. It looks like all publicly available msm8996
+> devices have this implementation.
 > 
-> On Tue, Sep 11, 2018 at 12:40:36PM +0800, jianchao.wang wrote:
->> (long)(sum (every cpu's refcounter)) + atomic refcounter
->>
->> and when switch to atomic mode, there could be value left in atomic refcounter.
->> then the unsigned long percpu refcounter cound be decreased from 0.
+> So add a quirk to not access this register on msm8996.
 > 
-> It can always do that.  Imagine a task getting a ref on one cpu,
-> migrating and putting it on another.  The only thing which matters is
-> that the sum of everything adds upto what it should be.
+> With this quirk MSM8996 can at least boot out of mainline,
+> which can help community to work with boards based on MSM8996.
+> 
+> Without this patch Qualcomm DB820c board reboots when GICR_WAKER
+> is accessed.
+> 
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+> Hi Marc,
+> 
+> There is no errata associated with this quirk, so I could not add
+> any entries into Documentation/arm64/silicon-errata.txt Or add
+> any number to the quirk description.
+
+Well, we still need something. Specially given that this seems to affect 
+more than just the piece of HW you mention (see Craig's follow-up). This 
+is quite important, given that the IIDR stuff doesn't seem to work at 
+all (see below).
+
+> 
+> Changes since v1:
+> - renamed gic_v3 references to gic
+> - added full mask for iidr register match
+> 
+> thanks,
+> srini
+> 
+>   drivers/irqchip/irq-gic-v3.c | 29 ++++++++++++++++++++++++++++-
+>   1 file changed, 28 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+> index d5912f1ec884..406d4a44c887 100644
+> --- a/drivers/irqchip/irq-gic-v3.c
+> +++ b/drivers/irqchip/irq-gic-v3.c
+> @@ -41,6 +41,8 @@
+>   
+>   #include "irq-gic-common.h"
+>   
+> +#define FLAGS_WORKAROUND_GICR_WAKER_MSM8996	(1ULL << 0)
+> +
+>   struct redist_region {
+>   	void __iomem		*redist_base;
+>   	phys_addr_t		phys_base;
+> @@ -55,6 +57,7 @@ struct gic_chip_data {
+>   	struct irq_domain	*domain;
+>   	u64			redist_stride;
+>   	u32			nr_redist_regions;
+> +	u64			flags;
+>   	bool			has_rss;
+>   	unsigned int		irq_nr;
+>   	struct partition_desc	*ppi_descs[16];
+> @@ -139,6 +142,9 @@ static void gic_enable_redist(bool enable)
+>   	u32 count = 1000000;	/* 1s! */
+>   	u32 val;
+>   
+> +	if (gic_data.flags & FLAGS_WORKAROUND_GICR_WAKER_MSM8996)
+> +		return;
+> +
+>   	rbase = gic_data_rdist_rd_base();
+>   
+>   	val = readl_relaxed(rbase + GICR_WAKER);
+> @@ -1068,13 +1074,31 @@ static const struct irq_domain_ops partition_domain_ops = {
+>   	.select = gic_irq_domain_select,
+>   };
+>   
+> +static bool __maybe_unused gic_enable_quirk_msm8996(void *data)
+> +{
+> +	struct gic_chip_data *d = data;
+> +
+> +	d->flags |= FLAGS_WORKAROUND_GICR_WAKER_MSM8996;
+> +
+> +	return true;
+> +}
+> +
+> +static const struct gic_quirk gic_quirks[] = {
+> +	{
+> +		.desc	= "GICv3: Qualcomm MSM8996 skip GICR_WAKER Read/Write",
+> +		.iidr	= 0x00001070,	/* MSM8996 */
+
+I just realized that this is the exact same ID as QDF2400, which is a 
+perfectly functional platform. So on top of being fairly broken, the 
+firmware also hijacks the ID of another implementation. I don't know if 
+I should laugh or cry. Needless to say, I'm not going to willingly break 
+a perfectly working platform.
+
+> +		.mask	= 0xffffffff,
+> +		.init	= gic_enable_quirk_msm8996,
+> +	},
+> +};
+> +
+>   static int __init gic_init_bases(void __iomem *dist_base,
+>   				 struct redist_region *rdist_regs,
+>   				 u32 nr_redist_regions,
+>   				 u64 redist_stride,
+>   				 struct fwnode_handle *handle)
+>   {
+> -	u32 typer;
+> +	u32 typer, iidr;
+>   	int gic_irqs;
+>   	int err;
+>   
+> @@ -1130,6 +1154,9 @@ static int __init gic_init_bases(void __iomem *dist_base,
+>   	if (IS_ENABLED(CONFIG_ARM_GIC_V3_ITS) && gic_dist_supports_lpis())
+>   		its_init(handle, &gic_data.rdists, gic_data.domain);
+>   
+> +	iidr = readl_relaxed(dist_base + GICD_IIDR);
+> +	gic_enable_quirks(iidr, gic_quirks, &gic_data);
+> +
+>   	gic_smp_init();
+>   	gic_dist_init();
+>   	gic_cpu_init();
 > 
 
-Thanks for your kindly response.
-I have got the point here.
+Given the above, I'm not taking this patch any time soon. Please 
+consider alternative methods such as a different (non-)compatible string 
+to flag affected implementations.
 
-Thanks
-Jianchao
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
