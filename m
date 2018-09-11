@@ -2,199 +2,119 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACFB3C6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:29:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CC19C6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:29:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 639F420839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:29:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 639F420839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id E905820839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:29:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="o210RpPD";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DByO+rkG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E905820839
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727001AbeIKO1r (ORCPT
+        id S1727122AbeIKO2D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 10:27:47 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:41327 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726572AbeIKO1r (ORCPT
+        Tue, 11 Sep 2018 10:28:03 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:45080 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726678AbeIKO2C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 10:27:47 -0400
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1fzeyy-00021S-2B; Tue, 11 Sep 2018 11:29:16 +0200
-Date:   Tue, 11 Sep 2018 11:29:16 +0200
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: [ANNOUNCE] v4.18.7-rt5
-Message-ID: <20180911092915.jdody6z6oufck75a@linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-User-Agent: NeoMutt/20180716
+        Tue, 11 Sep 2018 10:28:02 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 108CC609A1; Tue, 11 Sep 2018 09:29:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1536658175;
+        bh=OoRYiez0Ts7XmH7Dz9+CGoLOGADJA4HEL/KMhw9/xvM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=o210RpPDq5XoxjCCVRnEOC4M1X8zeVC9DKgWqP3ikuHcPkgFrWVF+Sz5tJ7Zp8JR5
+         Twp31+HTJqwK/d7DYuTwpHUKoGiGWa+GVZsHl/DjbAvsBazWoeJrQGMWMT49Mjoj32
+         qci1H38yKMq9YbaBgGFuNLeXnw9/OkKtFhmIBZjg=
+Received: from rohkumar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rohitkr@codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D5116607EB;
+        Tue, 11 Sep 2018 09:29:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1536658174;
+        bh=OoRYiez0Ts7XmH7Dz9+CGoLOGADJA4HEL/KMhw9/xvM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=DByO+rkGvXtdBMUZFUsNAN6+6iMZN8C96z9xjVx9FP/HXAlOnFIg/lBZwabsWF/R8
+         8LIUBWxoNuWPJ7txwQ3qUPjajwNXshMeyXIw6BCzTLs5kqLk6DNk5HRIfPgeBA0AoS
+         RKcUxJzkELbB0ctbm/XXzyv1emElk2lYigZdnWVw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D5116607EB
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rohitkr@codeaurora.org
+From:   Rohit kumar <rohitkr@codeaurora.org>
+To:     plai@codeaurora.org, bgoswami@codeaurora.org, lgirdwood@gmail.com,
+        broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        rohkumar@qti.qualcomm.com
+Cc:     Rohit kumar <rohitkr@codeaurora.org>
+Subject: [PATCH v2] ASoC: Fix UBSAN warning at snd_soc_get/put_volsw_sx()
+Date:   Tue, 11 Sep 2018 14:59:21 +0530
+Message-Id: <1536658161-31656-1-git-send-email-rohitkr@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear RT folks!
+In functions snd_soc_get_volsw_sx() or snd_soc_put_volsw_sx(),
+if the result of (min + max) is negative, then fls() returns
+signed integer with value as 32. This leads to signed integer
+overflow as complete operation is considered as signed integer.
 
-I'm pleased to announce the v4.18.7-rt5 patch set. 
+UBSAN: Undefined behaviour in sound/soc/soc-ops.c:382:50
+signed integer overflow:
+-2147483648 - 1 cannot be represented in type 'int'
+Call trace:
+[<ffffff852f746fe4>] __dump_stack lib/dump_stack.c:15 [inline]
+[<ffffff852f746fe4>] dump_stack+0xec/0x158 lib/dump_stack.c:51
+[<ffffff852f7b5f3c>] ubsan_epilogue+0x18/0x50 lib/ubsan.c:164
+[<ffffff852f7b6840>] handle_overflow+0xf8/0x130 lib/ubsan.c:195
+[<ffffff852f7b68f0>] __ubsan_handle_sub_overflow+0x34/0x44 lib/ubsan.c:211
+[<ffffff85307971a0>] snd_soc_get_volsw_sx+0x1a8/0x1f8 sound/soc/soc-ops.c:382
 
-Changes since v4.18.7-rt4:
+Typecast the operation to unsigned int to fix the issue.
 
-  - Avoid a memory allocation with disabled interrupts in the "cached
-    device tree" code
+Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
+---
+Changes since v1:
+    Addressed comments given by Takashi.
 
-  - Avoid queuing a work item with disabled preemption in the "srcu"
-    code.
+ sound/soc/soc-ops.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-  - The simple-work queue code used a constant shifted by zero. This is
-    reported by smack as an error because it should have been a plain
-    number (in function it is used). Reported by Dan Carpenter.
+diff --git a/sound/soc/soc-ops.c b/sound/soc/soc-ops.c
+index 592efb3..f4dc3d4 100644
+--- a/sound/soc/soc-ops.c
++++ b/sound/soc/soc-ops.c
+@@ -373,7 +373,7 @@ int snd_soc_get_volsw_sx(struct snd_kcontrol *kcontrol,
+ 	unsigned int rshift = mc->rshift;
+ 	int max = mc->max;
+ 	int min = mc->min;
+-	unsigned int mask = (1 << (fls(min + max) - 1)) - 1;
++	unsigned int mask = (1U << (fls(min + max) - 1)) - 1;
+ 	unsigned int val;
+ 	int ret;
+ 
+@@ -418,7 +418,7 @@ int snd_soc_put_volsw_sx(struct snd_kcontrol *kcontrol,
+ 	unsigned int rshift = mc->rshift;
+ 	int max = mc->max;
+ 	int min = mc->min;
+-	unsigned int mask = (1 << (fls(min + max) - 1)) - 1;
++	unsigned int mask = (1U << (fls(min + max) - 1)) - 1;
+ 	int err = 0;
+ 	unsigned int val, val_mask, val2 = 0;
+ 
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.,
+is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
 
-Known issues
-     - A warning triggered in "rcu_note_context_switch" originated from
-       SyS_timer_gettime(). The issue was always there, it is now
-       visible. Reported by Grygorii Strashko and Daniel Wagner.
-
-The delta patch against v4.18.7-rt4 is appended below and can be found here:
- 
-     https://cdn.kernel.org/pub/linux/kernel/projects/rt/4.18/incr/patch-4.18.7-rt4-rt5.patch.xz
-
-You can get this release via the git tree at:
-
-    git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git v4.18.7-rt5
-
-The RT patch against v4.18.7 can be found here:
-
-    https://cdn.kernel.org/pub/linux/kernel/projects/rt/4.18/older/patch-4.18.7-rt5.patch.xz
-
-The split quilt queue is available at:
-
-    https://cdn.kernel.org/pub/linux/kernel/projects/rt/4.18/older/patches-4.18.7-rt5.tar.xz
-
-Sebastian
-
-diff --git a/drivers/of/base.c b/drivers/of/base.c
-index 466e3c8582f0f..7394d9dcc2a1b 100644
---- a/drivers/of/base.c
-+++ b/drivers/of/base.c
-@@ -108,43 +108,49 @@ void of_populate_phandle_cache(void)
- 	u32 cache_entries;
- 	struct device_node *np;
- 	u32 phandles = 0;
-+	struct device_node **shadow;
- 
- 	raw_spin_lock_irqsave(&devtree_lock, flags);
--
--	kfree(phandle_cache);
-+	shadow = phandle_cache;
- 	phandle_cache = NULL;
- 
- 	for_each_of_allnodes(np)
- 		if (np->phandle && np->phandle != OF_PHANDLE_ILLEGAL)
- 			phandles++;
- 
-+	raw_spin_unlock_irqrestore(&devtree_lock, flags);
-+
- 	cache_entries = roundup_pow_of_two(phandles);
- 	phandle_cache_mask = cache_entries - 1;
- 
--	phandle_cache = kcalloc(cache_entries, sizeof(*phandle_cache),
--				GFP_ATOMIC);
--	if (!phandle_cache)
--		goto out;
-+	kfree(shadow);
-+	shadow = kcalloc(cache_entries, sizeof(*phandle_cache), GFP_KERNEL);
-+
-+	if (!shadow)
-+		return;
-+	raw_spin_lock_irqsave(&devtree_lock, flags);
-+	phandle_cache = shadow;
- 
- 	for_each_of_allnodes(np)
- 		if (np->phandle && np->phandle != OF_PHANDLE_ILLEGAL)
- 			phandle_cache[np->phandle & phandle_cache_mask] = np;
- 
--out:
- 	raw_spin_unlock_irqrestore(&devtree_lock, flags);
- }
- 
- int of_free_phandle_cache(void)
- {
- 	unsigned long flags;
-+	struct device_node **shadow;
- 
- 	raw_spin_lock_irqsave(&devtree_lock, flags);
- 
--	kfree(phandle_cache);
-+	shadow = phandle_cache;
- 	phandle_cache = NULL;
- 
- 	raw_spin_unlock_irqrestore(&devtree_lock, flags);
- 
-+	kfree(shadow);
- 	return 0;
- }
- #if !defined(CONFIG_MODULES)
-diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
-index 01b6ddeb4f050..a104cf91e6b90 100644
---- a/kernel/rcu/tree_exp.h
-+++ b/kernel/rcu/tree_exp.h
-@@ -479,6 +479,7 @@ static void sync_rcu_exp_select_cpus(struct rcu_state *rsp,
- 	sync_exp_reset_tree(rsp);
- 	trace_rcu_exp_grace_period(rsp->name, rcu_exp_gp_seq_endval(rsp), TPS("select"));
- 
-+	cpus_read_lock();
- 	/* Schedule work for each leaf rcu_node structure. */
- 	rcu_for_each_leaf_node(rsp, rnp) {
- 		rnp->exp_need_flush = false;
-@@ -493,13 +494,11 @@ static void sync_rcu_exp_select_cpus(struct rcu_state *rsp,
- 			continue;
- 		}
- 		INIT_WORK(&rnp->rew.rew_work, sync_rcu_exp_select_node_cpus);
--		preempt_disable();
- 		cpu = cpumask_next(rnp->grplo - 1, cpu_online_mask);
- 		/* If all offline, queue the work on an unbound CPU. */
- 		if (unlikely(cpu > rnp->grphi))
- 			cpu = WORK_CPU_UNBOUND;
- 		queue_work_on(cpu, rcu_par_gp_wq, &rnp->rew.rew_work);
--		preempt_enable();
- 		rnp->exp_need_flush = true;
- 	}
- 
-@@ -507,6 +506,7 @@ static void sync_rcu_exp_select_cpus(struct rcu_state *rsp,
- 	rcu_for_each_leaf_node(rsp, rnp)
- 		if (rnp->exp_need_flush)
- 			flush_work(&rnp->rew.rew_work);
-+	cpus_read_unlock();
- }
- 
- static void synchronize_sched_expedited_wait(struct rcu_state *rsp)
-diff --git a/kernel/sched/swork.c b/kernel/sched/swork.c
-index 1950f40ca7258..5559c22f664cf 100644
---- a/kernel/sched/swork.c
-+++ b/kernel/sched/swork.c
-@@ -12,7 +12,7 @@
- #include <linux/spinlock.h>
- #include <linux/export.h>
- 
--#define SWORK_EVENT_PENDING     (1 << 0)
-+#define SWORK_EVENT_PENDING     1
- 
- static DEFINE_MUTEX(worker_mutex);
- static struct sworker *glob_worker;
-diff --git a/localversion-rt b/localversion-rt
-index ad3da1bcab7e8..0efe7ba1930e1 100644
---- a/localversion-rt
-+++ b/localversion-rt
-@@ -1 +1 @@
---rt4
-+-rt5
