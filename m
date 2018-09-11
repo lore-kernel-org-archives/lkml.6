@@ -2,252 +2,136 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9E7DC04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:47:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFE11C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:55:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EB46206B7
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:47:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EB46206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=opteya.com
+	by mail.kernel.org (Postfix) with ESMTP id 5C0B8206B7
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:55:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C0B8206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727403AbeILBsi (ORCPT
+        id S1727409AbeILB4L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 21:48:38 -0400
-Received: from ou.quest-ce.net ([195.154.187.82]:43351 "EHLO ou.quest-ce.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726862AbeILBsh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 21:48:37 -0400
-Received: from [2a01:e35:2e9f:6cb0:857c:11e6:3194:d53d] (helo=test.quest-ce.net)
-        by ou.quest-ce.net with esmtpsa (TLS1.1:RSA_AES_256_CBC_SHA1:256)
-        (Exim 4.80)
-        (envelope-from <ydroneaud@opteya.com>)
-        id 1fzpZ8-000FMY-9v; Tue, 11 Sep 2018 22:47:21 +0200
-Message-ID: <e739a3e6de0e9d9c86ae98c6b5cc3710a1fcb40d.camel@opteya.com>
-From:   Yann Droneaud <ydroneaud@opteya.com>
-To:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org
-Cc:     "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        David Airlie <airlied@linux.ie>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK" 
-        <linaro-mm-sig@lists.linaro.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK" 
-        <linux-media@vger.kernel.org>, Shuah Khan <shuah@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-api@vger.kernel.org
-Date:   Tue, 11 Sep 2018 22:47:17 +0200
-In-Reply-To: <20180827093444.23623-1-kraxel@redhat.com>
-References: <20180827093444.23623-1-kraxel@redhat.com>
-Organization: OPTEYA
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a01:e35:2e9f:6cb0:857c:11e6:3194:d53d
-X-SA-Exim-Mail-From: ydroneaud@opteya.com
-Subject: Re: [v7] Add udmabuf misc device
-X-SA-Exim-Version: 4.2.1 (built Mon, 26 Dec 2011 16:24:06 +0000)
-X-SA-Exim-Scanned: Yes (on ou.quest-ce.net)
+        Tue, 11 Sep 2018 21:56:11 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:40715 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726850AbeILB4L (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 21:56:11 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 7F37C80693; Tue, 11 Sep 2018 22:55:05 +0200 (CEST)
+Date:   Tue, 11 Sep 2018 22:55:05 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org
+Subject: Re: [PATCH v6 1/2] dt-bindings: leds: Add bindings for lm3697 driver
+Message-ID: <20180911205504.GA31219@amd>
+References: <20180906135005.6718-1-dmurphy@ti.com>
+ <20180906211617.GB16899@amd>
+ <b8ac9d52-f16d-5fc4-0e9a-9246b9f984c5@ti.com>
+ <20180907133228.GA16297@amd>
+ <70f7506c-6a3d-3830-59a4-a246dc6163f7@ti.com>
+ <226b8770-7041-39a4-5a06-6002a7c1225f@gmail.com>
+ <20a814ce-a4c5-0649-6677-6b85a5fd2321@ti.com>
+ <59561e0f-e3b9-7898-a300-90b198ad14e6@gmail.com>
+ <20d9ea9e-bbb8-2240-97cc-615e3fbcef8c@ti.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="J/dobhs11T7y2rNN"
+Content-Disposition: inline
+In-Reply-To: <20d9ea9e-bbb8-2240-97cc-615e3fbcef8c@ti.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-Le lundi 27 août 2018 à 11:34 +0200, Gerd Hoffmann a écrit :
-> A driver to let userspace turn memfd regions into dma-bufs.
-> 
-> Use case:  Allows qemu create dmabufs for the vga framebuffer or
-> virtio-gpu ressources.  Then they can be passed around to display
-> those guest things on the host.  To spice client for classic full
-> framebuffer display, and hopefully some day to wayland server for
-> seamless guest window display.
-> 
-> qemu test branch:
->   https://git.kraxel.org/cgit/qemu/log/?h=sirius/udmabuf
-> 
-> Cc: David Airlie <airlied@linux.ie>
-> Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: Daniel Vetter <daniel@ffwll.ch>
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-> Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-> ---
->  Documentation/ioctl/ioctl-number.txt              |   1 +
->  include/uapi/linux/udmabuf.h                      |  33 +++
->  drivers/dma-buf/udmabuf.c                         | 287
-> ++++++++++++++++++++++
->  tools/testing/selftests/drivers/dma-buf/udmabuf.c |  96 ++++++++
->  MAINTAINERS                                       |  16 ++
->  drivers/dma-buf/Kconfig                           |   8 +
->  drivers/dma-buf/Makefile                          |   1 +
->  tools/testing/selftests/drivers/dma-buf/Makefile  |   5 +
->  8 files changed, 447 insertions(+)
->  create mode 100644 include/uapi/linux/udmabuf.h
->  create mode 100644 drivers/dma-buf/udmabuf.c
->  create mode 100644 tools/testing/selftests/drivers/dma-buf/udmabuf.c
->  create mode 100644 tools/testing/selftests/drivers/dma-buf/Makefile
-> 
-> diff --git a/include/uapi/linux/udmabuf.h
-> b/include/uapi/linux/udmabuf.h
-> new file mode 100644
-> index 0000000000..46b6532ed8
-> --- /dev/null
-> +++ b/include/uapi/linux/udmabuf.h
-> @@ -0,0 +1,33 @@
-> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-> +#ifndef _UAPI_LINUX_UDMABUF_H
-> +#define _UAPI_LINUX_UDMABUF_H
-> +
-> +#include <linux/types.h>
-> +#include <linux/ioctl.h>
-> +
-> +#define UDMABUF_FLAGS_CLOEXEC	0x01
-> +
-> +struct udmabuf_create {
-> +	__u32 memfd;
-> +	__u32 flags;
-> +	__u64 offset;
-> +	__u64 size;
-> +};
-> +
-> +struct udmabuf_create_item {
-> +	__u32 memfd;
-> +	__u32 __pad;
-> +	__u64 offset;
-> +	__u64 size;
-> +};
-> +
-> +struct udmabuf_create_list {
-> +	__u32 flags;
-> +	__u32 count;
-> +	struct udmabuf_create_item list[];
-> +};
-> +
-> +#define UDMABUF_CREATE       _IOW('u', 0x42, struct udmabuf_create)
-> +#define UDMABUF_CREATE_LIST  _IOW('u', 0x43, struct
-> udmabuf_create_list)
-> +
-> +#endif /* _UAPI_LINUX_UDMABUF_H */
-> diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
-> new file mode 100644
-> index 0000000000..8e24204526
-> --- /dev/null
-> +++ b/drivers/dma-buf/udmabuf.c
-> +static long udmabuf_create(struct udmabuf_create_list *head,
-> +			   struct udmabuf_create_item *list)
-> +{
-> +	DEFINE_DMA_BUF_EXPORT_INFO(exp_info);
-> +	struct file *memfd = NULL;
-> +	struct udmabuf *ubuf;
-> +	struct dma_buf *buf;
-> +	pgoff_t pgoff, pgcnt, pgidx, pgbuf;
-> +	struct page *page;
-> +	int seals, ret = -EINVAL;
-> +	u32 i, flags;
-> +
-> +	ubuf = kzalloc(sizeof(struct udmabuf), GFP_KERNEL);
-> +	if (!ubuf)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < head->count; i++) {
+--J/dobhs11T7y2rNN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-You need to check .__pad for unsupported value:
+Hi!
 
-                if (list[i].__pad) {
-                        ret = -EINVAL;
-                        goto err_free_ubuf;
-                }
+> >>>>>> And I think Jacek pointed out that the bindings references in this=
+ bindings
+> >>>>>> don't even exist.
+> >>>>>>
+> >>>>>> I am thinking we need to deprecate this MFD driver and consolidate=
+ these drivers
+> >>>>>> in the LED directory as we indicated before.  I did not find any t=
+i-lmu support
+> >>>>>> code.
+> >>>>>>
+> >>>>>> ti-lmu common core code and then the LED children appending the fe=
+ature differentiation.
+> >>>>>
+> >>>>>> Need some maintainer weigh in here.
+> >>>>>
+> >>>>> Hehe. I'm maintnainer. Fun.
+> >>>>
+> >>>> I know.  I want to see if there was any other opinion.  Especially f=
+or the LED driver.
+> >>>>
+> >>> [...]
+> >>>
+> >>> I have a question - is this lm3697 LED controller a cell of some MFD
+> >>> device? Or is it a self-contained chip?
+> >>>
+> >>
+> >> This is a self contained chip.  And the LM3697 only function is a LED =
+driver.
+> >> It does not have any other special functions like the LM363X drivers f=
+or GPIO and Regulator support.
+> >=20
+> > This is an argument for merging it as a standalone LED class driver
+> > then. It is even more justifiable, taking into account uncertainties
+> > related to the proper way of adding the support for it to the existing
+> > MFD driver, whereas the code reuse would be the only advantage of having
+> > thus support in MFD subsystem.
+>=20
+> Does the argument carry over to the other devices?
 
-> +		if (!IS_ALIGNED(list[i].offset, PAGE_SIZE))
-> +			goto err_free_ubuf;
-> +		if (!IS_ALIGNED(list[i].size, PAGE_SIZE))
-> +			goto err_free_ubuf;
-> +		ubuf->pagecount += list[i].size >> PAGE_SHIFT;
-> +	}
-> +	ubuf->pages = kmalloc_array(ubuf->pagecount, sizeof(struct page
-> *),
-> +				    GFP_KERNEL);
-> +	if (!ubuf->pages) {
-> +		ret = -ENOMEM;
-> +		goto err_free_ubuf;
-> +	}
-> +
-> +	pgbuf = 0;
-> +	for (i = 0; i < head->count; i++) {
-> +		memfd = fget(list[i].memfd);
-> +		if (!memfd)
-> +			goto err_put_pages;
-> +		if (!shmem_mapping(file_inode(memfd)->i_mapping))
-> +			goto err_put_pages;
-> +		seals = memfd_fcntl(memfd, F_GET_SEALS, 0);
-> +		if (seals == -EINVAL ||
-> +		    (seals & SEALS_WANTED) != SEALS_WANTED ||
-> +		    (seals & SEALS_DENIED) != 0)
-> +			goto err_put_pages;
-> +		pgoff = list[i].offset >> PAGE_SHIFT;
-> +		pgcnt = list[i].size   >> PAGE_SHIFT;
-> +		for (pgidx = 0; pgidx < pgcnt; pgidx++) {
-> +			page = shmem_read_mapping_page(
-> +				file_inode(memfd)->i_mapping, pgoff +
-> pgidx);
-> +			if (IS_ERR(page)) {
-> +				ret = PTR_ERR(page);
-> +				goto err_put_pages;
-> +			}
-> +			ubuf->pages[pgbuf++] = page;
-> +		}
-> +		fput(memfd);
-> +	}
-> +	memfd = NULL;
-> +
-> +	exp_info.ops  = &udmabuf_ops;
-> +	exp_info.size = ubuf->pagecount << PAGE_SHIFT;
-> +	exp_info.priv = ubuf;
-> +
-> +	buf = dma_buf_export(&exp_info);
-> +	if (IS_ERR(buf)) {
-> +		ret = PTR_ERR(buf);
-> +		goto err_put_pages;
-> +	}
-> +
-> +	flags = 0;
+We really need something reasonable, that works for stand-alone LEDs,
+and also works for LEDs that are part of MFD when the hardware is similar.
 
-You need to check .flags for unsupported value:
+> Like the LM3632 (part of the ti-lmu) has flash and torch and no other spe=
+cial functions
+> so it would look like the lm3601x family with different register mappings.
+>=20
+> The LM3631 seems to also be just a LED driver with no extra functionality
+>=20
+> I could go buy an EVM and put together a driver for that device as well u=
+sing the lm3601x as
+> reference.
 
-        if (head->flags & ~UDMABUF_FLAGS_CLOEXEC)
-                 return -EINVAL;
+I do have hardware with lm3532. I can test patches, and I guess I can
+port driver easily if it is obvious how to do that.
 
-(at the beginning of the function, of course).
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-> +	if (head->flags & UDMABUF_FLAGS_CLOEXEC)
-> +		flags |= O_CLOEXEC;
-> +	return dma_buf_fd(buf, flags);
-> +
-> +err_put_pages:
-> +	while (pgbuf > 0)
-> +		put_page(ubuf->pages[--pgbuf]);
-> +err_free_ubuf:
-> +	fput(memfd);
-> +	kfree(ubuf->pages);
-> +	kfree(ubuf);
-> +	return ret;
-> +}
-> +
+--J/dobhs11T7y2rNN
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Regards
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
--- 
-Yann Droneaud
-OPTEYA
+iEYEARECAAYFAluYK6gACgkQMOfwapXb+vJeLQCfWQ7anjcBVUXTC+aWZLaKUAsg
+hEQAnjWTxChz1TwWcNQSsImAE80flgsJ
+=El4Z
+-----END PGP SIGNATURE-----
 
-
+--J/dobhs11T7y2rNN--
