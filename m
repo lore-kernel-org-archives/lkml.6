@@ -2,115 +2,127 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AD8DC04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 19:32:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A0F6C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 19:33:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C8C2206BB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 19:32:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13938206BB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 19:33:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="nqujDIUu";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="o8pB3392"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C8C2206BB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RNOifkup"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13938206BB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728059AbeILAd1 (ORCPT
+        id S1728145AbeILAeC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 20:33:27 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:53244 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726725AbeILAd0 (ORCPT
+        Tue, 11 Sep 2018 20:34:02 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:39867 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726810AbeILAeC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 20:33:26 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 40FA8607C6; Tue, 11 Sep 2018 19:32:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536694358;
-        bh=iN843eDPY2wSQrCsjtacWkwVYAC3Eh44Pu1soY5v+V4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=nqujDIUu/5XewpNInHKiwqqpI3ReginRBupVJQHo6GrmO14rnS3laYL0Ec92jfxgg
-         GXVHRD1ILs/xbgNe0OB/xBj7UkF01et3qBbysQIPgd6ypQ45yBn2z+3CVGWTwU+yeX
-         nuLTDaZAsEVu2XRJ09Or2rT9FQcCcGi8cae+yKg8=
-Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1A18760721;
-        Tue, 11 Sep 2018 19:32:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536694357;
-        bh=iN843eDPY2wSQrCsjtacWkwVYAC3Eh44Pu1soY5v+V4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=o8pB3392Mep5g4NYLO6X/vE7EBSg84k5RvQ7IVXpVmbzNm6zoxF8w1D7CFgQb3DI1
-         i6KPX8hnXp8eCdGGzYPlQ2lWyi87SMQNTMYEX0AzCQEWhAgCwJTzh9b00b7ard/oqg
-         403NIIRyUasnmMiOUrEz0FLUfvbzPeaj4470B85A=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1A18760721
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-To:     rjw@rjwysocki.net, linux-acpi@vger.kernel.org,
-        jeremy.linton@arm.com
-Cc:     linux-kernel@vger.kernel.org, vkilari@codeaurora.org,
-        Jeffrey Hugo <jhugo@codeaurora.org>
-Subject: [PATCH] ACPI/PPTT: Handle architecturally unknown cache types
-Date:   Tue, 11 Sep 2018 13:32:14 -0600
-Message-Id: <1536694334-5811-1-git-send-email-jhugo@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Tue, 11 Sep 2018 20:34:02 -0400
+Received: by mail-yw1-f67.google.com with SMTP id m62-v6so9680134ywd.6
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 12:33:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=syNwMSHRGJ6VqGWZ3VZd14w7801JFjU1YHYZQIEq/yk=;
+        b=RNOifkupAAPnG+1bw7bC5lqLXlW4BrDOR9rgI6aip24Jp3Js4QA7xn2N9QWtJv5sF7
+         b7SC74ogLUjqknuJFfH+1w7BZGh146JvVQCiTrWKSr0nAvpnnuEzaHS0DBmmYjhcGKFG
+         DzrM6i+Aock58y+mVKUDjzulVeaJc4NBrbYI8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=syNwMSHRGJ6VqGWZ3VZd14w7801JFjU1YHYZQIEq/yk=;
+        b=JrhnqSw7jn+Jn1J+Jvgi+RLmXOMV8WESFQ288DebX2SEnlvu3io8WAw4dVUsjrxXBT
+         5IPYFz++13FWKg5GmN8ed7XiXx31SR2776fZrhHbxAGpUrT0oT1zQghPvx2C+Zlvvyah
+         7gjXVDDslXEYUSFU7UdQep5Q0/DNK7zNgwpFrk/kggXS9nlhpknfUASR7A3beCrOTVV0
+         x07b/QZcuLqsBj6B6svubLKrKOS35cHhHobKiOLeg/tAAEJEhwINiZcovJ/LDEuockPV
+         BrdVDiK0GICZRwVvAPlzpwGJIoNLM2BUVShw18ZPAOtBOMhk7a8W2JVl4X6X9A5pSxrk
+         DiFw==
+X-Gm-Message-State: APzg51BUGoQilKRgkgG2ddWsGrisO0bFP1bh1UlMeZ03Axg4c6tqwvGF
+        3M8W0X5B4X5cdQy3ytEx10KfhCJssgQ=
+X-Google-Smtp-Source: ANB0VdaOzD/YFvYyWH+MifM5atjjZIYtYbrLvlaKP9SNcV2ubZ5Qy4h24KfBe4+f9KXdIKFg83vuxw==
+X-Received: by 2002:a81:d40c:: with SMTP id z12-v6mr13439824ywi.388.1536694395166;
+        Tue, 11 Sep 2018 12:33:15 -0700 (PDT)
+Received: from mail-yw1-f41.google.com (mail-yw1-f41.google.com. [209.85.161.41])
+        by smtp.gmail.com with ESMTPSA id m82-v6sm8379538ywc.29.2018.09.11.12.33.13
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Sep 2018 12:33:13 -0700 (PDT)
+Received: by mail-yw1-f41.google.com with SMTP id j131-v6so9658515ywc.13
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 12:33:13 -0700 (PDT)
+X-Received: by 2002:a0d:db10:: with SMTP id d16-v6mr13866974ywe.124.1536694393155;
+ Tue, 11 Sep 2018 12:33:13 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a25:5f04:0:0:0:0:0 with HTTP; Tue, 11 Sep 2018 12:33:12
+ -0700 (PDT)
+In-Reply-To: <20180911192226.3620-3-labbott@redhat.com>
+References: <20180911192226.3620-1-labbott@redhat.com> <20180911192226.3620-3-labbott@redhat.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 11 Sep 2018 12:33:12 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jKT88hPBcgj_mbxA5sREQQYBYkdKMkn-WFAUa+=TNUeaw@mail.gmail.com>
+Message-ID: <CAGXu5jKT88hPBcgj_mbxA5sREQQYBYkdKMkn-WFAUa+=TNUeaw@mail.gmail.com>
+Subject: Re: [PATCHv2 2/2] scsi: ibmvscsis: Ensure partition name is properly
+ NUL terminated
+To:     Laura Abbott <labbott@redhat.com>
+Cc:     "Bryant G. Ly" <bryantly@linux.vnet.ibm.com>,
+        Michael Cyr <mikecyr@linux.vnet.ibm.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org,
+        target-devel <target-devel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The type of a cache might not be specified by architectural mechanisms (ie
-system registers), but its type might be specified in the PPTT.  In this
-case, following the PPTT specification, we should identify the cache as
-the type specified by PPTT.
+On Tue, Sep 11, 2018 at 12:22 PM, Laura Abbott <labbott@redhat.com> wrote:
+>
+> While reviewing another part of the code, Kees noticed that the
+> strncpy of the partition name might not always be NUL terminated. Switch
+> to using strscpy which does this safely.
+>
+> Reported-by: Kees Cook <keescook@chromium.org>
+> Signed-off-by: Laura Abbott <labbott@redhat.com>
 
-This fixes the following lscpu issue where only the cache type sysfs file
-is missing which results in no output providing a poor user experience in
-the above system configuration-
-lscpu: cannot open /sys/devices/system/cpu/cpu0/cache/index3/type: No such
-file or directory
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
-Fixes: 2bd00bcd73e5 (ACPI/PPTT: Add Processor Properties Topology Table parsing)
-Reported-by: Vijaya Kumar K <vkilari@codeaurora.org>
-Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
----
- drivers/acpi/pptt.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+-Kees
 
-diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
-index d1e26cb..3c6db09 100644
---- a/drivers/acpi/pptt.c
-+++ b/drivers/acpi/pptt.c
-@@ -401,6 +401,21 @@ static void update_cache_properties(struct cacheinfo *this_leaf,
- 			break;
- 		}
- 	}
-+	if ((this_leaf->type == CACHE_TYPE_NOCACHE) &&
-+	    (found_cache->flags & ACPI_PPTT_CACHE_TYPE_VALID)) {
-+		switch (found_cache->attributes & ACPI_PPTT_MASK_CACHE_TYPE) {
-+		case ACPI_PPTT_CACHE_TYPE_DATA:
-+			this_leaf->type = CACHE_TYPE_DATA;
-+			break;
-+		case ACPI_PPTT_CACHE_TYPE_INSTR:
-+			this_leaf->type = CACHE_TYPE_INST;
-+			break;
-+		case ACPI_PPTT_CACHE_TYPE_UNIFIED:
-+		case ACPI_PPTT_CACHE_TYPE_UNIFIED_ALT:
-+			this_leaf->type = CACHE_TYPE_UNIFIED;
-+			break;
-+		}
-+	}
- 	/*
- 	 * If the above flags are valid, and the cache type is NOCACHE
- 	 * update the cache type as well.
+> ---
+> v2: Switch to strscpy instead of just strlcpy
+> ---
+>  drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c b/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
+> index b3a029ad07cd..f42a619198c4 100644
+> --- a/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
+> +++ b/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
+> @@ -3477,7 +3477,7 @@ static int ibmvscsis_probe(struct vio_dev *vdev,
+>         snprintf(vscsi->eye, sizeof(vscsi->eye), "VSCSI %s", vdev->name);
+>
+>         vscsi->dds.unit_id = vdev->unit_address;
+> -       strncpy(vscsi->dds.partition_name, partition_name,
+> +       strscpy(vscsi->dds.partition_name, partition_name,
+>                 sizeof(vscsi->dds.partition_name));
+>         vscsi->dds.partition_num = partition_number;
+>
+> --
+> 2.17.1
+>
+
+
+
 -- 
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
-
+Kees Cook
+Pixel Security
