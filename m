@@ -2,100 +2,95 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B353BC6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 14:56:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 032F4C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 14:56:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68F0D20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 14:56:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68F0D20866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B9B9620866
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 14:56:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9B9620866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727411AbeIKTzt (ORCPT
+        id S1728031AbeIKT4I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 15:55:49 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:45745 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726622AbeIKTzt (ORCPT
+        Tue, 11 Sep 2018 15:56:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:32906 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726622AbeIKT4I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 15:55:49 -0400
-Received: by mail-oi0-f68.google.com with SMTP id t68-v6so47658556oie.12;
-        Tue, 11 Sep 2018 07:56:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=k7AVLB9lcI+ZZD5i6K8Uly97g4wcFneJFRswawwZ9dg=;
-        b=e7BVDETcA/5CViShXQmHJ/E7O1ugYFfEDm1GDMvCS3sAiIAfftMF+LKKCBozKiaDQG
-         ap/h+moFPR6aa7caTxJpzNBCogyjQ9dQjsEHLrIhMow7HYleG/nQEfcQQ0wBRd4xwNJ3
-         6cMwX8sd07NN+uqGlymlAJgNZK+SmkJI81BKQq0SU1UGA+PEXi5nUrm8RokGdqk+QuD6
-         tOwfMLOLCiF8psR3AQULp49aluGKfBFfkmwRwtPDWTeKdkut4g3z2ltxYPsEFgNbMd7f
-         fUiXXehKDu0QP5zsCzDnhsvz5z8xIckEuEbpc6R0BwC1zuvurNktA8JEwU8J92mlm7MW
-         +mhw==
-X-Gm-Message-State: APzg51Bvdfarce51lj666IxmCeSbliXkhWsDywogqfkKYI94pKgJmf5K
-        t6+PwmkY49pOYlDv/v2NYA==
-X-Google-Smtp-Source: ANB0Vdam+KYhDtUJcxE7V2VJgyYBvneS/1C9LEiN1IHEI41ChePLC/2doH0nmRQhzuy0FpcJY5kr2A==
-X-Received: by 2002:a54:448b:: with SMTP id v11-v6mr29223241oiv.208.1536677769415;
-        Tue, 11 Sep 2018 07:56:09 -0700 (PDT)
-Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id y85-v6sm16403991oie.25.2018.09.11.07.56.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Sep 2018 07:56:08 -0700 (PDT)
-From:   Rob Herring <robh@kernel.org>
-To:     Finn Thain <fthain@telegraphics.com.au>,
-        Stan Johnson <userm57@yahoo.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, stable@vger.kernel.org
-Subject: [PATCH] of: fix phandle cache creation for DTs with no phandles
-Date:   Tue, 11 Sep 2018 09:56:07 -0500
-Message-Id: <20180911145607.6009-1-robh@kernel.org>
-X-Mailer: git-send-email 2.17.1
+        Tue, 11 Sep 2018 15:56:08 -0400
+Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0061FEDB;
+        Tue, 11 Sep 2018 14:56:26 +0000 (UTC)
+Date:   Tue, 11 Sep 2018 16:56:24 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andy Lutomirski <luto@kernel.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>
+Subject: Re: [PATCH net-next v3 02/17] zinc: introduce minimal cryptography
+ library
+Message-ID: <20180911145624.GA21635@kroah.com>
+References: <20180911010838.8818-1-Jason@zx2c4.com>
+ <20180911010838.8818-3-Jason@zx2c4.com>
+ <CAKv+Gu9nSeo4PFVrtjtqGQ32eqyxUp3xVCczZfu+dhFz5yLM0A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKv+Gu9nSeo4PFVrtjtqGQ32eqyxUp3xVCczZfu+dhFz5yLM0A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With commit 0b3ce78e90fc ("of: cache phandle nodes to reduce cost of
-of_find_node_by_phandle()"), a G3 PowerMac fails to boot. The root cause
-is the DT for this system has no phandle properties when booted with
-BootX. of_populate_phandle_cache() does not handle the case of no
-phandles correctly. The problem is roundup_pow_of_two() for 0 is
-undefined. The implementation subtracts 1 underflowing and then things
-are in the weeds.
+On Tue, Sep 11, 2018 at 12:08:56PM +0200, Ard Biesheuvel wrote:
+> > As Zinc is simply library code, its config options are un-menued, with
+> > the exception of CONFIG_ZINC_DEBUG, which enables various selftests and
+> > BUG_ONs.
+> >
+> 
+> In spite of the wall of text, you fail to point out exactly why the
+> existing AEAD API in unsuitable, and why fixing it is not an option.
+> 
+> As I pointed out in a previous version, I don't think we need a
+> separate crypto API/library in the kernel, and I don't think you have
+> convinced anyone else yet either.
 
-Fixes: 0b3ce78e90fc ("of: cache phandle nodes to reduce cost of of_find_node_by_phandle()")
-Cc: stable@vger.kernel.org # 4.17+
-Reported-by: Finn Thain <fthain@telegraphics.com.au>
-Tested-by: Stan Johnson <userm57@yahoo.com>
-Cc: Frank Rowand <frowand.list@gmail.com>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Signed-off-by: Rob Herring <robh@kernel.org>
----
-Here's a formal patch of what Stan tested. Will send to Linus this week.
+Um, then why do people keep sprinkling new crypto/hash code all around
+the kernel tree?  It's because what we have as a crypto api is complex
+and is hard to use for many in-kernel users.
 
-Rob
+Something like this new interface (zinc) is a much "saner" api for
+writing kernel code that has to interact with crypto/hash primitives.
 
- drivers/of/base.c | 3 +++
- 1 file changed, 3 insertions(+)
+I see no reason why the existing crypto code can be redone to use the
+zinc crypto primitives over time, making there only be one main location
+for the crypto algorithms.  But to do it the other way around is pretty
+much impossible given the complexities in the existing api that has been
+created over time.
 
-diff --git a/drivers/of/base.c b/drivers/of/base.c
-index a055cd1ef96d..17ae594b7014 100644
---- a/drivers/of/base.c
-+++ b/drivers/of/base.c
-@@ -140,6 +140,9 @@ void of_populate_phandle_cache(void)
- 		if (np->phandle && np->phandle != OF_PHANDLE_ILLEGAL)
- 			phandles++;
- 
-+	if (!phandles)
-+		goto out;
-+
- 	cache_entries = roundup_pow_of_two(phandles);
- 	phandle_cache_mask = cache_entries - 1;
- 
--- 
-2.17.1
+Not to say that the existing api is not a viable one, but ugh, really?
+You have to admit it is a pain to try to use in any "normal" type of
+"here's a bytestream, go give me a hash" type of method, right?
 
+Also there is the added benefit that the crypto primitives here have
+been audited by a number of people (so Jason stated), and they are
+written in a way that the crypto community can more easily interact and
+contribute to.  Which is _way_ better than what we have today.
+
+So this gets my "stamp of approval" for whatever it is worth :)
+
+thanks,
+
+greg k-h
