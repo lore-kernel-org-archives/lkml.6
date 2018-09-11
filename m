@@ -6,102 +6,91 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C307C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:02:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A89AC6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:02:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C160920839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:02:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C160920839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kaod.org
+	by mail.kernel.org (Postfix) with ESMTP id 4EE3A20839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:02:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EE3A20839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727150AbeILBDL (ORCPT
+        id S1727596AbeILBDk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 21:03:11 -0400
-Received: from 13.mo5.mail-out.ovh.net ([87.98.182.191]:44539 "EHLO
-        13.mo5.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726720AbeILBDL (ORCPT
+        Tue, 11 Sep 2018 21:03:40 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:51637 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726720AbeILBDk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 21:03:11 -0400
-X-Greylist: delayed 4216 seconds by postgrey-1.27 at vger.kernel.org; Tue, 11 Sep 2018 21:03:10 EDT
-Received: from player716.ha.ovh.net (unknown [10.109.160.232])
-        by mo5.mail-out.ovh.net (Postfix) with ESMTP id D03981EAAAF
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 20:45:34 +0200 (CEST)
-Received: from zorba.kaod.org (LFbn-1-10605-110.w90-89.abo.wanadoo.fr [90.89.196.110])
-        (Authenticated sender: postmaster@kaod.org)
-        by player716.ha.ovh.net (Postfix) with ESMTPSA id B640F56008E;
-        Tue, 11 Sep 2018 20:45:23 +0200 (CEST)
-Subject: Re: [PATCH i2c-next v6] i2c: aspeed: Handle master/slave combined irq
- events properly
-To:     Guenter Roeck <linux@roeck-us.net>,
-        Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Cc:     linux-aspeed@lists.ozlabs.org,
-        James Feist <james.feist@linux.intel.com>,
-        openbmc@lists.ozlabs.org,
-        Brendan Higgins <brendanhiggins@google.com>,
-        linux-kernel@vger.kernel.org,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Vernon Mauery <vernon.mauery@linux.intel.com>,
-        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org
-References: <20180823225731.19063-1-jae.hyun.yoo@linux.intel.com>
- <20180911183734.GA21976@roeck-us.net>
-From:   =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>
-Message-ID: <e16aadd4-09ee-19bf-f7ea-10dc1e491112@kaod.org>
-Date:   Tue, 11 Sep 2018 20:45:23 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180911183734.GA21976@roeck-us.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Ovh-Tracer-Id: 958703773954706420
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtjedrjedvgddufedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddm
+        Tue, 11 Sep 2018 21:03:40 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126] helo=xylophone)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1fzos0-0001fA-25; Tue, 11 Sep 2018 21:02:44 +0100
+Message-ID: <1536696163.3024.146.camel@codethink.co.uk>
+Subject: Re: [PATCH 4.4 47/79] ieee802154: at86rf230: switch from BUG_ON()
+ to WARN_ON() on problem
+From:   Ben Hutchings <ben.hutchings@codethink.co.uk>
+To:     Stefan Schmidt <stefan@datenfreihafen.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>
+Date:   Tue, 11 Sep 2018 21:02:43 +0100
+In-Reply-To: <20180823074922.172707485@linuxfoundation.org>
+References: <20180823074918.641878835@linuxfoundation.org>
+         <20180823074922.172707485@linuxfoundation.org>
+Organization: Codethink Ltd.
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/11/2018 08:37 PM, Guenter Roeck wrote:
-> Hi,
+On Thu, 2018-08-23 at 09:53 +0200, Greg Kroah-Hartman wrote:
+> 4.4-stable review patch.  If anyone has any objections, please let me know.
 > 
-> On Thu, Aug 23, 2018 at 03:57:31PM -0700, Jae Hyun Yoo wrote:
->> In most of cases, interrupt bits are set one by one but there are
->> also a lot of other cases that Aspeed I2C IP sends multiple
->> interrupt bits with combining master and slave events using a
->> single interrupt call. It happens much more in multi-master
->> environment than single-master. For an example, when master is
->> waiting for a NORMAL_STOP interrupt in its MASTER_STOP state,
->> SLAVE_MATCH and RX_DONE interrupts could come along with the
->> NORMAL_STOP in case of an another master immediately sends data
->> just after acquiring the bus. In this case, the NORMAL_STOP
->> interrupt should be handled by master_irq and the SLAVE_MATCH and
->> RX_DONE interrupts should be handled by slave_irq. This commit
->> modifies irq hadling logic to handle the master/slave combined
->> events properly.
->>
->> Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
->> Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
+> ------------------
 > 
-> This patch causes a boot stall when booting witherspoon-bmc with
-> qemu v3.0, and all i2c device probes fail with error -110 (timeout).
-> Bisect log is attached for reference.
+> From: Stefan Schmidt <stefan@datenfreihafen.org>
 > 
-> With the same kernel configuration (aspeed_g5_defconfig),
-> ast2500-evb and romulus-bmc are still able to boot.
-> palmetto-bmc with aspeed_g4_defconfig also appears to work.
+> [ Upstream commit 20f330452ad8814f2289a589baf65e21270879a7 ]
 > 
-> Is this a problem with qemu ? Should I drop the qemu test
-> for witherspoon-bmc starting with the next kernel release ?
+> The check is valid but it does not warrant to crash the kernel. A
+> WARN_ON() is good enough here.
+> Found by checkpatch.
 
-The QEMU model for the Aspeed I2C controller does not support 
-slave mode or DMA registers. That might be the issue. 
+If the BUG/WARN fires, the very next statement is going to cause an
+oops.  So this doesn't fix anything.
 
-I will check what this patch does when I have sometime. 
+Either it's OK for a null pointer to be a fatal error, in which case
+the WARN can be removed, or that shouldn't be a fatal error, in which
+case the following assignment needs to be conditional.
 
-Thanks, 
+Ben.
 
+> Signed-off-by: Stefan Schmidt <stefan@datenfreihafen.org>
+> Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+>  drivers/net/ieee802154/at86rf230.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> --- a/drivers/net/ieee802154/at86rf230.c
+> +++ b/drivers/net/ieee802154/at86rf230.c
+> @@ -932,7 +932,7 @@ at86rf230_xmit(struct ieee802154_hw *hw,
+>  static int
+>  at86rf230_ed(struct ieee802154_hw *hw, u8 *level)
+>  {
+> -	BUG_ON(!level);
+> +	WARN_ON(!level);
+>  	*level = 0xbe;
+>  	return 0;
+>  }
 
-C.
+-- 
+Ben Hutchings, Software Developer                         Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
