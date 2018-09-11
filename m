@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 709E2C4646A
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:58:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CD0EC4646A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:58:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 258E7206B7
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:58:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 258E7206B7
+	by mail.kernel.org (Postfix) with ESMTP id DAADF206B7
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:58:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAADF206B7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728015AbeILB7s (ORCPT
+        id S1727996AbeILB7r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 21:59:48 -0400
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:47493 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726850AbeILB7o (ORCPT
+        Tue, 11 Sep 2018 21:59:47 -0400
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:50938 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727828AbeILB7q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 21:59:44 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01422;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0T8Sg6Yy_1536699501;
+        Tue, 11 Sep 2018 21:59:46 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01353;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0T8Sg6Yy_1536699501;
 Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T8Sg6Yy_1536699501)
           by smtp.aliyun-inc.com(127.0.0.1);
           Wed, 12 Sep 2018 04:58:29 +0800
@@ -33,47 +33,51 @@ To:     mhocko@kernel.org, willy@infradead.org, ldufour@linux.vnet.ibm.com,
         oleg@redhat.com, srikar@linux.vnet.ibm.com
 Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [RFC v9 PATCH 0/4] mm: zap pages with read mmap_sem in munmap for large mapping
-Date:   Wed, 12 Sep 2018 04:58:09 +0800
-Message-Id: <1536699493-69195-1-git-send-email-yang.shi@linux.alibaba.com>
+Subject: [RFC v9 PATCH 2/4] mm: mmap: zap pages with read mmap_sem in munmap
+Date:   Wed, 12 Sep 2018 04:58:11 +0800
+Message-Id: <1536699493-69195-3-git-send-email-yang.shi@linux.alibaba.com>
 X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1536699493-69195-1-git-send-email-yang.shi@linux.alibaba.com>
+References: <1536699493-69195-1-git-send-email-yang.shi@linux.alibaba.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+When running some mmap/munmap scalability tests with large memory (i.e.
+> 300GB), the below hung task issue may happen occasionally.
 
-Background:
-Recently, when we ran some vm scalability tests on machines with large memory,
-we ran into a couple of mmap_sem scalability issues when unmapping large memory
-space, please refer to https://lkml.org/lkml/2017/12/14/733 and
-https://lkml.org/lkml/2018/2/20/576.
+INFO: task ps:14018 blocked for more than 120 seconds.
+       Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
+ "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
+message.
+ ps              D    0 14018      1 0x00000004
+  ffff885582f84000 ffff885e8682f000 ffff880972943000 ffff885ebf499bc0
+  ffff8828ee120000 ffffc900349bfca8 ffffffff817154d0 0000000000000040
+  00ffffff812f872a ffff885ebf499bc0 024000d000948300 ffff880972943000
+ Call Trace:
+  [<ffffffff817154d0>] ? __schedule+0x250/0x730
+  [<ffffffff817159e6>] schedule+0x36/0x80
+  [<ffffffff81718560>] rwsem_down_read_failed+0xf0/0x150
+  [<ffffffff81390a28>] call_rwsem_down_read_failed+0x18/0x30
+  [<ffffffff81717db0>] down_read+0x20/0x40
+  [<ffffffff812b9439>] proc_pid_cmdline_read+0xd9/0x4e0
+  [<ffffffff81253c95>] ? do_filp_open+0xa5/0x100
+  [<ffffffff81241d87>] __vfs_read+0x37/0x150
+  [<ffffffff812f824b>] ? security_file_permission+0x9b/0xc0
+  [<ffffffff81242266>] vfs_read+0x96/0x130
+  [<ffffffff812437b5>] SyS_read+0x55/0xc0
+  [<ffffffff8171a6da>] entry_SYSCALL_64_fastpath+0x1a/0xc5
 
+It is because munmap holds mmap_sem exclusively from very beginning to
+all the way down to the end, and doesn't release it in the middle. When
+unmapping large mapping, it may take long time (take ~18 seconds to
+unmap 320GB mapping with every single page mapped on an idle machine).
 
-History:
-Then akpm suggested to unmap large mapping section by section and drop mmap_sem
-at a time to mitigate it (see https://lkml.org/lkml/2018/3/6/784).
-
-V1 patch series was submitted to the mailing list per Andrew's suggestion
-(see https://lkml.org/lkml/2018/3/20/786). Then I received a lot great feedback
-and suggestions.
-
-Then this topic was discussed on LSFMM summit 2018. In the summit, Michal Hocko
-suggested (also in the v1 patches review) to try "two phases" approach. Zapping
-pages with read mmap_sem, then doing via cleanup with write mmap_sem (for
-discussion detail, see https://lwn.net/Articles/753269/)
-
-
-Approach:
-Zapping pages is the most time consuming part, according to the suggestion from
-Michal Hocko [1], zapping pages can be done with holding read mmap_sem, like
-what MADV_DONTNEED does. Then re-acquire write mmap_sem to cleanup vmas.
-
-But, we can't call MADV_DONTNEED directly, since there are two major drawbacks:
-  * The unexpected state from PF if it wins the race in the middle of munmap.
-    It may return zero page, instead of the content or SIGSEGV.
-  * Can't handle VM_LOCKED | VM_HUGETLB | VM_PFNMAP and uprobe mappings, which
-    is a showstopper from akpm
+Zapping pages is the most time consuming part, according to the
+suggestion from Michal Hocko [1], zapping pages can be done with holding
+read mmap_sem, like what MADV_DONTNEED does. Then re-acquire write
+mmap_sem to cleanup vmas.
 
 But, some part may need write mmap_sem, for example, vma splitting. So,
 the design is as follows:
@@ -127,107 +131,158 @@ afraid we would have to redesign them. mremap might be called on very
 large area depending on the usecases, the optimization to it will be
 considered in the future.
 
+With the patches, exclusive mmap_sem hold time when munmap a 80GB
+address space on a machine with 32 cores of E5-2680 @ 2.70GHz dropped to
+us level from second.
 
-Changelog
-v8 -> v9:
-* Uprobe developer (Oleg Nesterov and Srikar Dronamraju) helped to confirm it is
-  fine to have a false-positive MMF_RECALC_UPROBES. So, unmapping uprobe areas
-  doesn't have to be handled by regular path and we can drop the uprobe related
-  patch. Thanks Oleg and Srikar.
-* Dave hansen helped to confirm mpx unmap has to be called under write mmap_sem,
-  but it has not to be after unmap_region(). So move arch_unmap() before
-  downgrade_write(). The other user of arch_unmap() is PowerPC, which just set
-  mm->context.vdso_base, so it sounds fine for this change too. Thanks Dave.
-* The above two resolved the concerns from Vlastimil for v8.
-
-v7 -> v8:
-* Added Acked-by from Vlastimil for patch 1/5. Thanks.
-* Fixed the wrong "evolution" direction. Converted VM_HUGETLB and VM_PFNMAP
-  mapping use the optimized path in separate patches respectively for safe and
-  bisectable sake per Michal's suggestion.
-* Extracted has_uprobes() helper from uprobes_munmap() to check if mm or vmas
-  have uprobes, which could save some cycles instead of calling
-  vma_has_uprobes() directly for some cases. Per Vlastimil's suggestion.
-* Keep unmapping uprobes area using regular do_munmap() since it might update
-  mm flags, that might be not safe with read mmap_sem even though vmas have
-  been detached.
-* Fixed some comments from Willy.
-
-v6 -> v7:
-* Rename some helper functions per Michal and Vlastimil's comments.
-* Refactor munmap_lookup_vma() to return the pointer of start vma per Michal's
-  suggestion.
-* Rephrase some commit log for patch 2/4 per Michal's comments.
-* Deal with special mappings (VM_HUGETLB | VM_PFNMAP | uprobes) with regular
-  do_munmap() in a separate patch per Michal's suggestion.
-* Bring the patch which makes vma_has_uprobes() non-static back since it is
-  needed to check if a vma has uprobes or not.
-
-v5 -> v6:
-* Fixed the comments from Kirill and Laurent
-* Added Laurent's reviewed-by to patch 1/2. Thanks.
-
-v4 -> v5:
-* Detach vmas before zapping pages so that we don't have to use VM_DEAD to mark
-  a being unmapping vma since they have been detached from rbtree when zapping
-  pages. Per Kirill
-* Eliminate VM_DEAD stuff
-* With this change we don't have to re-acquire write mmap_sem to do cleanup.
-  So, we could eliminate a potential race window
-* Eliminate PUD_SIZE check, and extend this optimization to all size
-
-v3 -> v4:
-* Extend check_stable_address_space to check VM_DEAD as Michal suggested
-* Deal with vm_flags update of VM_LOCKED | VM_HUGETLB | VM_PFNMAP and uprobe
-  mappings with exclusive lock held. The actual unmapping is still done with read
-  mmap_sem to solve akpm's concern
-* Clean up vmas with calling do_munmap to prevent from race condition by not
-  carrying vmas as Kirill suggested
-* Extracted more common code
-* Solved some code cleanup comments from akpm
-* Dropped uprobe and arch specific code, now all the changes are mm only
-* Still keep PUD_SIZE threshold, if everyone thinks it is better to extend to all
-  sizes or smaller size, will remove it
-* Make this optimization 64 bit only explicitly per akpm's suggestion
-
-v2 -> v3:
-* Refactor do_munmap code to extract the common part per Peter's sugestion
-* Introduced VM_DEAD flag per Michal's suggestion. Just handled VM_DEAD in
-  x86's page fault handler for the time being. Other architectures will be covered
-  once the patch series is reviewed
-* Now lookup vma (find and split) and set VM_DEAD flag with write mmap_sem, then
-  zap mapping with read mmap_sem, then clean up pgtables and vmas with write
-  mmap_sem per Peter's suggestion
-
-v1 -> v2:
-* Re-implemented the code per the discussion on LSFMM summit
-
-
-Regression and performance data:
-Did the below regression test with setting thresh to 4K manually in the code:
-  * Full LTP
-  * Trinity (munmap/all vm syscalls)
-  * Stress-ng: mmap/mmapfork/mmapfixed/mmapaddr/mmapmany/vm
-  * mm-tests: kernbench, phpbench, sysbench-mariadb, will-it-scale
-  * vm-scalability
-
-With the patches, exclusive mmap_sem hold time when munmap a 80GB address
-space on a machine with 32 cores of E5-2680 @ 2.70GHz dropped to us level
-from second.
-
-munmap_test-15002 [008]   594.380138: funcgraph_entry: |  vm_munmap_zap_rlock() {
-munmap_test-15002 [008]   594.380146: funcgraph_entry:      !2485684 us |    unmap_region();
-munmap_test-15002 [008]   596.865836: funcgraph_exit:       !2485692 us |  }
+munmap_test-15002 [008]   594.380138: funcgraph_entry: |
+vm_munmap_zap_rlock() {
+munmap_test-15002 [008]   594.380146: funcgraph_entry:      !2485684 us
+|    unmap_region();
+munmap_test-15002 [008]   596.865836: funcgraph_exit:       !2485692 us
+|  }
 
 Here the excution time of unmap_region() is used to evaluate the time of
 holding read mmap_sem, then the remaining time is used with holding
 exclusive lock.
 
-Yang Shi (4):
-      mm: refactor do_munmap() to extract the common part
-      mm: mmap: zap pages with read mmap_sem in munmap
-      mm: unmap VM_HUGETLB mappings with optimized path
-      mm: unmap VM_PFNMAP mappings with optimized path
+[1] https://lwn.net/Articles/753269/
 
- mm/mmap.c | 190 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++---------------
- 1 file changed, 156 insertions(+), 34 deletions(-)
+Suggested-by: Michal Hocko <mhocko@kernel.org>
+Suggested-by: Kirill A. Shutemov <kirill@shutemov.name>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+---
+ mm/mmap.c | 97 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 95 insertions(+), 2 deletions(-)
+
+diff --git a/mm/mmap.c b/mm/mmap.c
+index b7092b4..937d2f2 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -2769,6 +2769,89 @@ static inline void munlock_vmas(struct vm_area_struct *vma,
+ 	}
+ }
+ 
++/*
++ * Zap pages with read mmap_sem held
++ *
++ * uf is the list for userfaultfd
++ */
++static int do_munmap_zap_rlock(struct mm_struct *mm, unsigned long start,
++			       size_t len, struct list_head *uf)
++{
++	unsigned long end;
++	struct vm_area_struct *start_vma, *prev, *vma;
++	int ret = 0;
++
++	if (!addr_ok(start, len))
++		return -EINVAL;
++
++	len = PAGE_ALIGN(len);
++
++	end = start + len;
++
++	/*
++	 * Need write mmap_sem to split vmas and detach vmas
++	 * splitting vma up-front to save PITA to clean if it is failed
++	 */
++	if (down_write_killable(&mm->mmap_sem))
++		return -EINTR;
++
++	start_vma = munmap_lookup_vma(mm, start, end);
++	if (!start_vma)
++		goto out;
++	if (IS_ERR(start_vma)) {
++		ret = PTR_ERR(start_vma);
++		goto out;
++	}
++
++	prev = start_vma->vm_prev;
++
++	if (unlikely(uf)) {
++		ret = userfaultfd_unmap_prep(start_vma, start, end, uf);
++		if (ret)
++			goto out;
++	}
++
++	/*
++	 * Unmapping vmas, which have VM_HUGETLB or VM_PFNMAP
++	 * need get done with write mmap_sem held since they may update
++	 * vm_flags. Deal with such mappings with regular do_munmap() call.
++	 */
++	for (vma = start_vma; vma && vma->vm_start < end; vma = vma->vm_next) {
++		if (vma->vm_flags & (VM_HUGETLB | VM_PFNMAP))
++			goto regular_path;
++	}
++
++	/* Handle mlocked vmas */
++	if (mm->locked_vm)
++		munlock_vmas(start_vma, end);
++
++	/* Detach vmas from rbtree */
++	detach_vmas_to_be_unmapped(mm, start_vma, prev, end);
++
++	/*
++	 * mpx unmap need to be handled with write mmap_sem. It is safe to
++	 * deal with it before unmap_region().
++	 */
++	arch_unmap(mm, start_vma, start, end);
++
++	downgrade_write(&mm->mmap_sem);
++
++	/* Zap mappings with read mmap_sem */
++	unmap_region(mm, start_vma, prev, start, end);
++
++	remove_vma_list(mm, start_vma);
++	up_read(&mm->mmap_sem);
++
++	return 0;
++
++regular_path:
++	ret = do_munmap(mm, start, len, uf);
++
++out:
++	up_write(&mm->mmap_sem);
++	return ret;
++}
++
+ /* Munmap is split into 2 main parts -- this part which finds
+  * what needs doing, and the areas themselves, which do the
+  * work.  This now handles partial unmappings.
+@@ -2830,6 +2913,17 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
+ 	return 0;
+ }
+ 
++static int vm_munmap_zap_rlock(unsigned long start, size_t len)
++{
++	int ret;
++	struct mm_struct *mm = current->mm;
++	LIST_HEAD(uf);
++
++	ret = do_munmap_zap_rlock(mm, start, len, &uf);
++	userfaultfd_unmap_complete(mm, &uf);
++	return ret;
++}
++
+ int vm_munmap(unsigned long start, size_t len)
+ {
+ 	int ret;
+@@ -2849,10 +2943,9 @@ int vm_munmap(unsigned long start, size_t len)
+ SYSCALL_DEFINE2(munmap, unsigned long, addr, size_t, len)
+ {
+ 	profile_munmap(addr);
+-	return vm_munmap(addr, len);
++	return vm_munmap_zap_rlock(addr, len);
+ }
+ 
+-
+ /*
+  * Emulation of deprecated remap_file_pages() syscall.
+  */
+-- 
+1.8.3.1
+
