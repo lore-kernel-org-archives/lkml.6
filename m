@@ -2,159 +2,94 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64181C6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:11:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7CC7C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:11:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04A302086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:11:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04A302086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id 6D8E520854
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:11:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D8E520854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726935AbeIKOJs (ORCPT
+        id S1727051AbeIKOJt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 10:09:48 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:57856 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726547AbeIKOJr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 10:09:47 -0400
-Received: from 79.184.255.178.ipv4.supernova.orange.pl (79.184.255.178) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.123)
- id 2575bc69e993733d; Tue, 11 Sep 2018 11:11:23 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Daniel Drake <drake@endlessm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Cc:     Peter Wu <peter@lekensteyn.nl>, linux-pci@vger.kernel.org,
-        Linux Upstreaming Team <linux@endlessm.com>,
-        nouveau@lists.freedesktop.org, Linux PM <linux-pm@vger.kernel.org>,
-        kherbst@redhat.com,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Jon Derrick <jonathan.derrick@intel.com>,
-        Thomas Martitz <kugel@rockbox.org>, davem@davemloft.net,
-        hkallweit1@gmail.com, netdev@vger.kernel.org, nic_swsd@realtek.com,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] PCI: Reprogram bridge prefetch registers on resume
-Date:   Tue, 11 Sep 2018 11:08:46 +0200
-Message-ID: <1580466.UG53E7BAC6@aspire.rjw.lan>
-In-Reply-To: <CAD8Lp46eDaSF3fNQgYL=3vCXJ5VpV-JkYEu-YTtuh+w4rMU-5w@mail.gmail.com>
-References: <20180907053614.6540-1-drake@endlessm.com> <20180907150515.GA28739@al> <CAD8Lp46eDaSF3fNQgYL=3vCXJ5VpV-JkYEu-YTtuh+w4rMU-5w@mail.gmail.com>
+        Tue, 11 Sep 2018 10:09:49 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60242 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726739AbeIKOJt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 10:09:49 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C426AAF8A;
+        Tue, 11 Sep 2018 09:11:24 +0000 (UTC)
+Date:   Tue, 11 Sep 2018 11:11:24 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Shuah Khan <shuah@kernel.org>
+Cc:     Will Deacon <will.deacon@arm.com>, catalin.marinas@arm.com,
+        sudeep.holla@arm.com, ganapatrao.kulkarni@cavium.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: add NUMA emulation support
+Message-ID: <20180911091124.GP10951@dhcp22.suse.cz>
+References: <20180828174011.GE20375@arm.com>
+ <a58ad11f-3c22-ed7f-a0cd-938aabc4adaf@kernel.org>
+ <20180829110802.GD10349@dhcp22.suse.cz>
+ <f041ba95-03e6-4a7d-c324-870b45a2f648@kernel.org>
+ <20180905064252.GW14951@dhcp22.suse.cz>
+ <c1b58f13-6190-20e9-7e4f-b8bc2b9d5f80@kernel.org>
+ <20180907083452.GC19621@dhcp22.suse.cz>
+ <e46e715c-f115-f054-eeb2-3cecbcd1192d@kernel.org>
+ <20180910134845.GH10951@dhcp22.suse.cz>
+ <4d7beb50-f778-507a-4c3c-f6de92f8cfb9@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4d7beb50-f778-507a-4c3c-f6de92f8cfb9@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday, September 11, 2018 5:35:13 AM CEST Daniel Drake wrote:
-> I have created https://bugzilla.kernel.org/show_bug.cgi?id=201069 to
-> archive the research done so far.
+On Mon 10-09-18 20:02:05, Shuah Khan wrote:
+> Hi Michal,
 > 
-> On Fri, Sep 7, 2018 at 11:05 PM, Peter Wu <peter@lekensteyn.nl> wrote:
-> > Windows 10 unconditionally rewrites these registers (BAR, I/O Base +
-> > Limit, Memory Base + Limit, etc. from top to bottom), see annotations:
-> > https://www.spinics.net/lists/linux-pci/msg75856.html
-> >
-> > Linux has a generic "restore" operation that works backwards from the
-> > end of the PCI config space to the beginning, see
-> > pci_restore_config_space. Do you have a dmesg where you see the
-> > "restoring config space at offset" messages?
+> On 09/10/2018 07:48 AM, Michal Hocko wrote:
+> > On Fri 07-09-18 16:30:59, Shuah Khan wrote:
+> >> On 09/07/2018 02:34 AM, Michal Hocko wrote:
+> >>> On Thu 06-09-18 15:53:34, Shuah Khan wrote:
+> [....]
+> >>
+> >> In addition to isolation, being able to reserve a block instead is one of the
+> >> issues I am looking to address. Unfortunately memory cgroups won't address that
+> >> issue.
+> > 
+> > Could you be more specific why you need reservations other than
+> > isolation.
+> > 
 > 
-> Interesting, I had not spotted this code. The logs for the affected
-> bridge on Asus X542UQ:
+> Taking automotive as a specific example, there are two classes of applications:
+> 1. critical applications that must run
+> 2. Infotainment and misc. user-space.
 > 
->  0000:00:1c.0: restoring config space at offset 0x3c (was 0x100,
-> writing 0x1001ff)
->  0000:00:1c.0: restoring config space at offset 0x24 (was 0x10001,
-> writing 0xe1f1d001)
->  0000:00:1c.0: restoring config space at offset 0x20 (was 0x0, writing
-> 0xef00ee00)
->  0000:00:1c.0: restoring config space at offset 0xc (was 0x810000,
-> writing 0x810010)
->  0000:00:1c.0: restoring config space at offset 0x4 (was 0x100007,
-> writing 0x100407)
+> In this case, being able to reserve a block of memory for critical applications
+> will ensure the memory is available for them. If a critical application has to
+> restart and/or when an on-demand critical application starts, it might not be able
+> to allocate memory if it is not reserved.
 > 
-> So it didn't restore 0x28 (the magic register) and also register 0x2c
-> (prefetch limit upper 32 bits) because their values were already 0 on
-> resume.
+> When a flat system has multiple memory blocks, with NUMA emulation in conjunction with
+> cpusets, one or more block can be reserved for critical applications configuring a set
+> of cpus and one of more memory nodes for them.
 > 
-> https://bugzilla.kernel.org/show_bug.cgi?id=116851#c23 has an
-> assertion that Intel recognises this issue and calls for all those
-> registers to be restored on resume.
-> 
-> I propose for Linux 4.19 we apply a minimally intrusive change that
-> "forcibly" restores dword registers 0x24, 0x28 and 0x2c for PCI
-> bridges (regardless of their current value), while retaining the
-> existing restore order (high to low) over all registers and doing the
-> read-then-maybe-write thing for all of the other regs (per current
-> behaviour).
+> Memory cgroups will not support such reservation. Hope this helps explain the use-case
+> I am trying to address with this patch.
 
-I agree here.  It would be good to cover this gap and possibly backport
-the fix to "stable".
-
-> Then we also consider swiftly applying a followup patch implementing a
-> more thorough approach and we give it some time in linux-next before
-> releasing in Linux 4.20 which does something more thorough. I think
-> perhaps more discussion is needed there, or at least some more input
-> from Bjorn. Seems like we have 3 approaches to consider:
-> 
-> 1. Peter Wu suggests following what windows does. Windows appears to
-> start with low registers and works its way upwards, which means it
-> writes BAR addresses, I/O base, etc, before writing prefetch
-> registers. It skips over read-only and write-to-clear registers and
-> also only writes some of the registers at the very end - like the
-> command register.
-> 
-> To be thorough here we would probably also have to study and copy what
-> Windows does for non-bridge devices (not sure how many device classes
-> we would want to study here?). Also it is a bit risky in that Bjorn
-> has pointed out that Linux's earlier approach with a high level of
-> similarity here (restore registers in ascending order, regardless of
-> their current value) caused a laptop to hang on resume.
-> 
-> 
-> 2. Bjorn suggested tweaking the existing code to always write the
-> saved value even when the hardware has that same value. The
-> read-maybe-write logic was introduced to avoid a laptop hang, but at
-> that time we were restoring registers in ascending order, now we are
-> descending it might be worth giving this another try.
-
-I agree with Bjorn here.
-
-> 3. Do nothing else beyond the minimal change that I propose for v4.19?
-> Looking a bit more into git history this seems to be a sensitive and
-> problematic area, more changes might mean more trouble. For example
-> right now pci_restore_config_space() does:
->         pci_restore_config_space_range(pdev, 10, 15, 0, 0);
->         /* Restore BARs before the command register. */
->         pci_restore_config_space_range(pdev, 4, 9, 10, 0);
->         pci_restore_config_space_range(pdev, 0, 3, 0, 0);
-> but pci_restore_config_space_range() already goes in descending order,
-> so the above is already equivalent to the code in the "else" path that
-> follows:
->         pci_restore_config_space_range(pdev, 0, 15, 0, 0);
-> 
-> and if you look at the history behind this "mixup" there's stuff that
-> goes back to 2012 like commit a6cb9ee7cabe ("PCI: Retry BARs
-> restoration for Type 0 headers only") which was fixing up another
-> problematic commit in this area, etc.
-
-So let's first fix what's known broken and see how this goes IMO.
-
-On top of that and later, try to make the changes suggested by Bjorn and see
-how far we can get with that.
-
-Having done that, revisit and see if there still are any problems to address
-in this area.
-
-Thanks,
-Rafael
-
+OK, that is more clear. I still believe that you either have to have a
+very good control over memory allocations or a good luck to not see
+unexpected kernel allocations in your reserved memory which might easily
+break guarantees you would like to accomplish.
+-- 
+Michal Hocko
+SUSE Labs
