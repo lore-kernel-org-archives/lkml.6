@@ -2,100 +2,80 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA993C6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 14:34:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56723C6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 14:34:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 526D32086A
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 14:34:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vgim0BdM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 526D32086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 1A1572086A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 14:34:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A1572086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727820AbeIKTeF (ORCPT
+        id S1727972AbeIKTe0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 15:34:05 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:39885 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726761AbeIKTeE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 15:34:04 -0400
-Received: by mail-io0-f194.google.com with SMTP id l7-v6so3723223iok.6;
-        Tue, 11 Sep 2018 07:34:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6kRI0bGnXFrJnydiZGXfMepAyhXINLy2lIXbQ2mJCcU=;
-        b=Vgim0BdM0yaWxWtcEAZqLdyiH8JYuY+2MsqwM6bFBnyL94PDoxkRZd+uXDXaEFwcFC
-         M+QLFsmeJYc8C9Q3XAQCohZeT+q+x//Di6rOKPa+rF+KidXe4MQp8fNy+tI6UL0YEKYg
-         hQQH/XDGHL917orkIt5YnfMW7hpOaUMWVuqwbeWtMN3xg4vjMP1Y+bwMn1mTDH2I0+qA
-         XCcyDhpCbpA68L1Yb0CKol1pnqpbS//I3HqjkGDUbqHk9yNIFiCWybpx6LYdIb/Jutnk
-         zyVSz4JczM7F42Y6jh/yaMi6Iztlq4qlUCW/G2t7ycuF6oGbred/U2DpF0KzVsiNnWvG
-         +rmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6kRI0bGnXFrJnydiZGXfMepAyhXINLy2lIXbQ2mJCcU=;
-        b=OykGiRyCBTvB7cVA4Co706Z4JpiL+37+Pk0q0aJG//rOaavD4sLnQxmo+x7JBzMj5r
-         7Gt47pefVzzm2ByWnmnQRIK19OCO4igh45+LrVjE7QqokSXcNocq+hxoO/FICr39sXdZ
-         kmpjOBo7XnewfLVwGAW6UAfxVRMJwG4zu/Yi0ayCC5irAac4iON7Z98WT52dCulaceiF
-         j+ZxwhmcdMS7S7kZ7cgSYK2s3kFTerxcZ4ELhCV9wgFckOFYaf+Mk6XzWNGfL4+rhxdH
-         Sa6rULadTIji39memHkOPdEPQRtC5LrYbFxUWRBqMhBltz59tbSIh2PR0gOjaI658hag
-         QyAw==
-X-Gm-Message-State: APzg51DJXrFz9KgQGTeH9c7Ajwq2TdacgtXt+ZMPDfDuPrDCmovqUrSd
-        VFp6jd794LXt1s5ZkIErzTdrH6yCjlEzHvdc4Ts=
-X-Google-Smtp-Source: ANB0VdYzmFfxYVun5IHZ2jFkhHP/1WKRLGdQdrSF44XcH8JStMixzAj16lr0NJOhRQtu9gEBQDa38oDtQEHkFmlhVU8=
-X-Received: by 2002:a6b:d819:: with SMTP id y25-v6mr22553982iob.247.1536676469513;
- Tue, 11 Sep 2018 07:34:29 -0700 (PDT)
+        Tue, 11 Sep 2018 15:34:26 -0400
+Received: from mga05.intel.com ([192.55.52.43]:2764 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726761AbeIKTe0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 15:34:26 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Sep 2018 07:34:51 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,360,1531810800"; 
+   d="scan'208";a="89051317"
+Received: from kuha.fi.intel.com ([10.237.72.189])
+  by fmsmga001.fm.intel.com with SMTP; 11 Sep 2018 07:34:47 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 11 Sep 2018 17:34:46 +0300
+Date:   Tue, 11 Sep 2018 17:34:46 +0300
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Hans de Goede <hdegoede@redhat.com>, Li Jun <jun.li@nxp.com>,
+        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, support.opensource@diasemi.com
+Subject: Re: [PATCH v2 1/3] dt-bindings: connector: Add support for USB-PD
+ PPS APDOs to bindings
+Message-ID: <20180911143446.GC22723@kuha.fi.intel.com>
+References: <cover.1536580772.git.Adam.Thomson.Opensource@diasemi.com>
+ <b98c58ca3681d18f44359431a1ccec2fa34023d1.1536580772.git.Adam.Thomson.Opensource@diasemi.com>
 MIME-Version: 1.0
-References: <20180908125754.1947-1-kristian.evensen@gmail.com>
- <20180910103022.GR1089@localhost> <CAKfDRXiVbE3-eteTCZjEqyR0LaLMpN8t4P_ihzHPChse9=FxmQ@mail.gmail.com>
- <8ce10eef-f332-a1c0-e16e-fb1c2055131a@gmail.com>
-In-Reply-To: <8ce10eef-f332-a1c0-e16e-fb1c2055131a@gmail.com>
-From:   Kristian Evensen <kristian.evensen@gmail.com>
-Date:   Tue, 11 Sep 2018 16:34:18 +0200
-Message-ID: <CAKfDRXgTL6L27JLbbOLLsXd9KK8vBtVCjrTNpv6R_MYCJoZqPg@mail.gmail.com>
-Subject: Re: [PATCH] option: Improve Quectel EP06 detection
-To:     Lars Melin <larsm17@gmail.com>
-Cc:     Johan Hovold <johan@kernel.org>, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b98c58ca3681d18f44359431a1ccec2fa34023d1.1536580772.git.Adam.Thomson.Opensource@diasemi.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 11, 2018 at 4:00 PM Lars Melin <larsm17@gmail.com> wrote:
-> This also becomes a mess for the qmi-wwan driver which has the rmnet/qmi
-> interface hardcoded to 4 so that driver will also need a workaround.
-> Quectel seems to have completely missed the reason why usb id's should
-> be unique and not reused  for a different product or a different
-> interface layout, there is already a workaround in qmi-wwan for their
-> previous EC-20 card...
+Hi Adam,
 
-A patch has already been submitted to work around the issue in qmi driver.
+On Mon, Sep 10, 2018 at 01:24:26PM +0100, Adam Thomson wrote:
+> Add support for PPS APDOs to connector bindings so a port controller
+> can specify support for PPS, as per existing FIXED/BATT/VAR PDOs.
+> 
+> Signed-off-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-> My opinion is that the option and qmi-wwan drivers should support EP06
-> in the factory delivery configuration and not in a configuration the
-> user has selected with a Quectel proprietary AT cmd.
-> Can you give some good reason for disabling an interface instead of
-> letting it stay but not use it if you don't need it?
+I've applied this patch to my tree:
+https://github.com/krohei/linux/commit/adae44a671f47e94d6aa0fba8fb51b78d40c505d
 
-Yes. I am working with two boards, one based on MT7621 and the other
-on MT7623, and I would like to connect two EP06-modems to these
-boards. However, the USB-controller used on these SoCs has a (very)
-limited number of USB endpoints. With the default configuration, there
-are only enough endpoints for one EP06-modem to work properly. By
-disabling diag, there are enough endpoints for both modems to work
-correctly.
+I will resend it to Greg together with all the other Type-C patches
+that are ready next week after v4.19-rc4 unless Greg has picked it
+himself before that.
 
-BR,
-Kristian
+
+Thanks,
+
+-- 
+heikki
