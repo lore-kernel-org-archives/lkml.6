@@ -2,112 +2,62 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 088F4C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:43:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6D8AC04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:44:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6D0320866
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:43:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WjMmdMTo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6D0320866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 7A3AB2086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:44:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A3AB2086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727246AbeIKUne (ORCPT
+        id S1727651AbeIKUn7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 16:43:34 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:36863 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726670AbeIKUnd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 16:43:33 -0400
-Received: by mail-wr1-f67.google.com with SMTP id e1-v6so17503380wrt.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 08:43:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=xjbuaZlOAtzXSHM/rXc7srrzXgEnVzGz3HK5KoAcxkE=;
-        b=WjMmdMToLmIyUnD1AR64hsm+hQV+xNE/Fd58bQoZ8nzEdjRm6JuwVc4eqR+f/4Hwjs
-         Y/7Huoy4EoxAq2AsvipUEuDKfNwcm9+TJcrnxFZcbCJ6dx4faqqfMUpvUTNgzSTgYIdO
-         DvIfe+d0reKtNGFBTrYkmeAyi0nBPgIYsVUsc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=xjbuaZlOAtzXSHM/rXc7srrzXgEnVzGz3HK5KoAcxkE=;
-        b=FNCilzatsSXIaMwgLnB3+Tpuy3C1U+Uh3UjBNp5yue90m/zbncg3wOJGHs1z+A/ASU
-         NgXjGGYco2z4Oyanv3WYx7oJt4aVWButmtfnESYAhHP25/FBnAonYVFbWo1jvP6dmAp9
-         LsQTe05wzmI2BUwCgYzGIMHn1CK3vjqhUlUH+SmjbJtDRE+CyjynhjrFIjWQVEttwHMW
-         RJkUHW3LYVuZxL/s4kSeTn9dcJ5EgLbR1w/wNWTlvVM/KkCpbWtfsdesKtDSM5eOssLK
-         tHUm0olhcP/+Ah4lcHxeg8SL7dkmHKBgRxFe8Hph65rakVL999ZirCBVzFezucCrpAx+
-         hIVw==
-X-Gm-Message-State: APzg51CsvnCccBdDeiyuwqqGYiFAZ0N24B5t2qikI5VwmFqzpT1PKZ1K
-        I2G5n317sw7IUHbyg4uporT6cg==
-X-Google-Smtp-Source: ANB0Vda6uIZU0Zn/IAArdUbbipJS7G9sm2v1QDes3iOYkEjsff47A3gh5NdUD9tjNgTxYe7sOYaZKQ==
-X-Received: by 2002:adf:9c12:: with SMTP id f18-v6mr20141800wrc.93.1536680620094;
-        Tue, 11 Sep 2018 08:43:40 -0700 (PDT)
-Received: from dell ([2.27.167.7])
-        by smtp.gmail.com with ESMTPSA id u4-v6sm12807569wro.47.2018.09.11.08.43.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Sep 2018 08:43:39 -0700 (PDT)
-Date:   Tue, 11 Sep 2018 16:43:37 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: [GIT PULL] Immutable branch between MFD and RTC due for the v4.20
- merge window
-Message-ID: <20180911154337.GB4185@dell>
-References: <20180909204858.4257-1-alexandre.belloni@bootlin.com>
+        Tue, 11 Sep 2018 16:43:59 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47720 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726670AbeIKUn7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 16:43:59 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7C74CAED3;
+        Tue, 11 Sep 2018 15:44:05 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 04FFBDAD9B; Tue, 11 Sep 2018 17:44:04 +0200 (CEST)
+Date:   Tue, 11 Sep 2018 17:44:04 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     zhong jiang <zhongjiang@huawei.com>
+Cc:     clm@fb.com, jbacik@fb.com, dsterba@suse.com,
+        lufq.fnst@cn.fujitsu.com, suy.fnst@cn.fujitsu.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] btrfs/extent_map: Remove unneeded variable "ret"
+Message-ID: <20180911154404.GD2154@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, zhong jiang <zhongjiang@huawei.com>,
+        clm@fb.com, jbacik@fb.com, dsterba@suse.com,
+        lufq.fnst@cn.fujitsu.com, suy.fnst@cn.fujitsu.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1533474287-15049-1-git-send-email-zhongjiang@huawei.com>
+ <5B7E9B1C.40404@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180909204858.4257-1-alexandre.belloni@bootlin.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <5B7E9B1C.40404@huawei.com>
+User-Agent: Mutt/1.5.23.1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Lee,
+On Thu, Aug 23, 2018 at 07:31:40PM +0800, zhong jiang wrote:
+> Hi,  dsterba
 > 
-> If that is ok with you, I would like to take this patch through the RTC
-> tree. So I can have a follow up patch removing rtc_device_register().
+> Can you pick up the patch? Thanks
 
-Your wish is my command!
-
-The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
-
-  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-rtc-v4.20
-
-for you to fetch changes up to 9612f8f503804d2fd2f63aa6ba1e58bba4612d96:
-
-  mfd: menelaus: Fix possible race condition and leak (2018-09-11 16:40:21 +0100)
-
-----------------------------------------------------------------
-Immutable branch between MFD and RTC due for the v4.20 merge window
-
-----------------------------------------------------------------
-Alexandre Belloni (1):
-      mfd: menelaus: Fix possible race condition and leak
-
- drivers/mfd/menelaus.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Please send one patch per changed function with relevant changelog that
+the return value is not used and that no callees could potentially
+return an error that would need to be passed.
