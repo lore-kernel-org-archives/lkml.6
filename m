@@ -5,125 +5,82 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 857AFC6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 17:55:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F34FC6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 17:56:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2943A2087F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 17:55:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2943A2087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E682A2086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 17:55:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E682A2086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwn.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728226AbeIKWz6 (ORCPT
+        id S1728254AbeIKW4X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 18:55:58 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:33548 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726782AbeIKWz6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 18:55:58 -0400
-Received: by mail-qk1-f196.google.com with SMTP id z78-v6so17338509qka.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 10:55:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=eX40pw1gYlsecW+rcTLM1uBV+HJDFWvSB2IJl6ogqDA=;
-        b=oKPtb1LtuHmEpyefmfEWRwVC/qYE5ATZffKHdsc29nVTmIr7r5QzaAeHyOIihox68V
-         sIzPvdp2jbA2CKGD7ksV8QiCBu35U4eEZMPbT+PYj2pYaPAoWkrhyptr0hbHYazCfKVM
-         T2fp/2ShqFQsCvPHsI7srYbnf97jghS43myBRUplG46cbLN6v6s1C/CZ8MjGi/8BJk64
-         6FkvrI9VwTUFtO2HxkeqftzIA22zvYUCYWgoyZ+qafQD/zlkomQ+XymwRXDqPv27SwoC
-         Ehmzj/jhQ74NOsFN+ZgFzM4TXlDezR7o8zN8hl6yK/u7BEPF2Ad9HNodO9SO/mJQz7Xg
-         HNIw==
-X-Gm-Message-State: APzg51CabiVSyDctN+dlXWyc1M2s8Ae5C3+MtrKbo64MyqWrrDQ+3pTs
-        U2SmwDFREOjuNGXSOLrvZVidsA==
-X-Google-Smtp-Source: ANB0VdblKEU5LqVYJmsvOWiA9W/eMN7xhITcZBIIrRvPIg2ZdmZ79asxrgbb30QA6l/GHJs5g8Hdew==
-X-Received: by 2002:a37:5e03:: with SMTP id s3-v6mr20083773qkb.339.1536688532909;
-        Tue, 11 Sep 2018 10:55:32 -0700 (PDT)
-Received: from ?IPv6:2601:602:9802:a8dc::42c3? ([2601:602:9802:a8dc::42c3])
-        by smtp.gmail.com with ESMTPSA id 63-v6sm10873965qkm.0.2018.09.11.10.55.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Sep 2018 10:55:31 -0700 (PDT)
-Subject: Re: [PATCH] scsi: ibmvscsis: Fix a stringop-overflow warning
-To:     "Bryant G. Ly" <bryantly@linux.ibm.com>,
-        Kees Cook <keescook@chromium.org>
-Cc:     "Bryant G. Ly" <bryantly@linux.vnet.ibm.com>,
-        Michael Cyr <mikecyr@linux.vnet.ibm.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org,
-        target-devel <target-devel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Prarit Bhargava <prarit@redhat.com>
-References: <20180910223723.25357-1-labbott@redhat.com>
- <CAGXu5j+-RNeEr+FUc6maamvzYpY7W0VJ-yYGDHnFTuNPeOUMFw@mail.gmail.com>
- <36c9adee-fbe8-f58d-e407-bbd57fdb1959@linux.ibm.com>
-From:   Laura Abbott <labbott@redhat.com>
-Message-ID: <c62a8355-fa40-26dc-5353-68e6e65d8e3a@redhat.com>
-Date:   Tue, 11 Sep 2018 10:55:29 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 11 Sep 2018 18:56:23 -0400
+Received: from ms.lwn.net ([45.79.88.28]:51544 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727044AbeIKW4X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 18:56:23 -0400
+Received: from localhost.localdomain (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id 4306772A;
+        Tue, 11 Sep 2018 17:55:57 +0000 (UTC)
+Date:   Tue, 11 Sep 2018 11:55:55 -0600
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc:     Michal Hocko <mhocko@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] docs: core-api: add memory allocation guide
+Message-ID: <20180911115555.5fce5631@lwn.net>
+In-Reply-To: <1534517236-16762-4-git-send-email-rppt@linux.vnet.ibm.com>
+References: <1534517236-16762-1-git-send-email-rppt@linux.vnet.ibm.com>
+        <1534517236-16762-4-git-send-email-rppt@linux.vnet.ibm.com>
+Organization: LWN.net
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <36c9adee-fbe8-f58d-e407-bbd57fdb1959@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/11/2018 07:34 AM, Bryant G. Ly wrote:
-> On 9/10/18 6:30 PM, Kees Cook wrote:
-> 
->> On Mon, Sep 10, 2018 at 3:37 PM, Laura Abbott <labbott@redhat.com> wrote:
->>> There's currently a warning about string overflow with strncat:
->>>
->>> drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c: In function 'ibmvscsis_probe':
->>> drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c:3479:2: error: 'strncat' specified
->>> bound 64 equals destination size [-Werror=stringop-overflow=]
->>>    strncat(vscsi->eye, vdev->name, MAX_EYE);
->>>    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->>>
->>> Switch to using strlcat which correctly accounts for lengths that
->>> are equal to the destination buffer.
->>>
->>> Signed-off-by: Laura Abbott <labbott@redhat.com>
->>> ---
->>>   drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c | 2 +-
->>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c b/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
->>> index fac377320158..53d344d8dc43 100644
->>> --- a/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
->>> +++ b/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
->>> @@ -3475,7 +3475,7 @@ static int ibmvscsis_probe(struct vio_dev *vdev,
->>>                  vscsi->dds.window[REMOTE].liobn);
->>>
->>>          strcpy(vscsi->eye, "VSCSI ");
->>> -       strncat(vscsi->eye, vdev->name, MAX_EYE);
->>> +       strlcat(vscsi->eye, vdev->name, MAX_EYE);
->> Can this just get switched to snprintf() instead?
->>
->> snprintf(vscsi->eye, sizeof(vscsi->eye), "VSCSI%s", vdev->name);
-> 
-> Either works for me.
-> 
+Sorry for being so slow to get to this...it fell into a dark crack in my
+rickety email folder hierarchy.  I do have one question...
 
-I'll switch to the snprintf since that's cleaner.
+On Fri, 17 Aug 2018 17:47:16 +0300
+Mike Rapoport <rppt@linux.vnet.ibm.com> wrote:
 
->>
->>>          vscsi->dds.unit_id = vdev->unit_address;
->>>          strncpy(vscsi->dds.partition_name, partition_name,
->> And does this strncpy need a NUL-termination and/or trailing padding?
->>
-> Yes, good catch, it does need NUL-termination.
-> 
+> +    ``GFP_HIGHUSER_MOVABLE`` does not require that allocated memory
+> +    will be directly accessible by the kernel or the hardware and
+> +    implies that the data is movable.
+> +
+> +    ``GFP_HIGHUSER`` means that the allocated memory is not movable,
+> +    but it is not required to be directly accessible by the kernel or
+> +    the hardware. An example may be a hardware allocation that maps
+> +    data directly into userspace but has no addressing limitations.
+> +
+> +    ``GFP_USER`` means that the allocated memory is not movable and it
+> +    must be directly accessible by the kernel or the hardware. It is
+> +    typically used by hardware for buffers that are mapped to
+> +    userspace (e.g. graphics) that hardware still must DMA to.
 
-I can send that cleanup in a second patch.
+I realize that this is copied from elsewhere, but still...as I understand
+it, the "HIGH" part means that the allocation can be satisfied from high
+memory, nothing more.  So...it's irrelevant on 64-bit machines to start
+with, right?  And it has nothing to do with DMA, I would think.  That would
+be handled by the DMA infrastructure and, perhaps, the DMA* zones.  Right?
 
-> -Bryant
-> 
-> 
+I ask because high memory is an artifact of how things are laid out on
+32-bit systems; hardware can often DMA quite easily into memory that the
+kernel sees as "high".  So, to me, this description seems kind of
+confusing; I wouldn't mention hardware at all.  But maybe I'm missing
+something?
 
+Thanks,
+
+jon
