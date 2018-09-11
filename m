@@ -2,228 +2,150 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B602BC04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:50:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92A5FC04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:53:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62A7A20839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:50:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3314620854
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:53:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZTSFedjx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62A7A20839
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ws6fbGVh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3314620854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727534AbeIKUuf (ORCPT
+        id S1727047AbeIKUxa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 16:50:35 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48554 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726622AbeIKUue (ORCPT
+        Tue, 11 Sep 2018 16:53:30 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:34890 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726622AbeIKUx3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 16:50:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
-        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=FQhiEaUekKz3pIVpeA8tu3rWgZpWAnL048XX8I9qHFg=; b=ZTSFedjxD4wD1YuoGIaltHOwC
-        SyKyRKqxoZHpPMlFGg5AWraHYV6shGWc2TATxTVk+BTFzrQykMzYsi2K8k3SEPJVFFGZVd5Rn2sKi
-        JATzWYqxMG02LgTkPvYsk2iW0QQ3V99IF8znwLaqqvgqSnmD644tDNptb9KbVNNwt1xvXtws+YZQV
-        j61MP8whYEzTTdZf92gCRt8Vrpuj6NLENItvmGRLf7jxyLz0YDEBqK1zW+rwms7OVR84LyWscRy9z
-        ot+Y1Ud8IfLtEHJRdNFQSti4c/huDB8BHaU6vFIK7TJVQHrblsLOEAB/M2Q5FlH4z0BeH0mQ2JRwc
-        4/dq+/XKA==;
-Received: from 177.17.246.211.dynamic.adsl.gvt.net.br ([177.17.246.211] helo=coco.lan)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fzkw2-0007NU-MH; Tue, 11 Sep 2018 15:50:39 +0000
-Date:   Tue, 11 Sep 2018 12:50:31 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Paul Kocialkowski <contact@paulk.fr>
-Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devel@driverdev.osuosl.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-sunxi@googlegroups.com, Randy Li <ayaka@soulik.info>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: Re: [PATCH v9 5/9] media: platform: Add Cedrus VPU decoder driver
-Message-ID: <20180911124625.6759e429@coco.lan>
-In-Reply-To: <20180906222442.14825-6-contact@paulk.fr>
-References: <20180906222442.14825-1-contact@paulk.fr>
-        <20180906222442.14825-6-contact@paulk.fr>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Tue, 11 Sep 2018 16:53:29 -0400
+Received: by mail-oi0-f68.google.com with SMTP id m11-v6so48160669oic.2;
+        Tue, 11 Sep 2018 08:53:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=SUJwUdB718TUwbffEbG0O28sgGrTIZx3GCmKlXl98NA=;
+        b=Ws6fbGVhbSGDnCzmEk0nxci0IOp42tLi2r/TUupprZEO65HdHvGqKBTxSzG00QU6o+
+         7utiuwxI2TN+s1PYzTVsGopZ0bWTWAJJe0Y5RT3hC5+1vxg1/WNO1m7YQZkG3QreK+ra
+         SUhIRfprEeTC39MEEzNM/vddTUDXZYuFEF1Jt8wW3kNbpp1LjItkjB/eSCk3tuCjTRrG
+         +0w9/Ak7zwY4lInNwiiH6C09d86sa/6BxcGZ/TFdPVhIgW0Q0HAbiWpAAsI+nXS1R9XG
+         ni4+WIivVzifiUhlNG8Qt6rUI1r/uf2Iq1f/mxifZQ4G16hSlqSqDg3jd5YoJgx7frEU
+         7hqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=SUJwUdB718TUwbffEbG0O28sgGrTIZx3GCmKlXl98NA=;
+        b=BhUWEGR+b1im8EYDe21pP+4DmFfO7ULg9MTAK3NqU0hsV0KkV4CHrU/Mv7OEZ7dRHB
+         oi10F86VIWUnSjwe/VUhNwmLnR9JLu5Gir47af+8Pm1u4Bq7G0RoLRwCHF+sxoLJfB4W
+         C9TepxmQ/EtH4puAkSyebnJ9IR+Hegvk908g48VqLvBQKUaNZ29XLks+TccJO83G/sxJ
+         uIm1mIU0ce6cJr76hrqmMSkmqMIfgg68IhHR7jPw2GxDa9yk7oYt+rS+OV2S7FJrkbf1
+         2JA8gzQ7DnKNVgnT31pYrr/gbvOE4rtHCJQH+RrW4HA+TcqdN/V1LaC+KFdL02qBfphJ
+         5CeA==
+X-Gm-Message-State: APzg51BRrKVD7lsv2aquMG95RdgbcVrHtrMGvPMvOk2J17GXZd0Bunzx
+        VEQt3CtCAt5ZuqlmhN8ixD+qJbsj
+X-Google-Smtp-Source: ANB0VdYod27ios6GD+aYeRvH47ZRfqkKTSiFc5c3ftevMKQQudbjQFIfy6lYrALNyYyXetqocTc8Dw==
+X-Received: by 2002:aca:438b:: with SMTP id q133-v6mr26759637oia.234.1536681214245;
+        Tue, 11 Sep 2018 08:53:34 -0700 (PDT)
+Received: from [192.168.0.113] (47-208-214-43.trckcmtc01.res.dyn.suddenlink.net. [47.208.214.43])
+        by smtp.gmail.com with ESMTPSA id 207-v6sm28672869oie.14.2018.09.11.08.53.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Sep 2018 08:53:33 -0700 (PDT)
+Subject: Re: v4.17 regression: PowerMac G3 won't boot, was Re: [PATCH v5 1/3]
+ of: cache phandle nodes to reduce cost of of_find_node_by_phandle()
+To:     Rob Herring <robh@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Finn Thain <fthain@telegraphics.com.au>,
+        Stan Johnson <userm57@yahoo.com>
+Cc:     Chintan Pandya <cpandya@codeaurora.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+References: <1520208889-3908-1-git-send-email-frowand.list@gmail.com>
+ <1520208889-3908-2-git-send-email-frowand.list@gmail.com>
+ <alpine.LNX.2.21.1808301025480.73@nippy.intranet>
+ <0ad5dbfd-08f3-b97d-34b9-70fc9a729921@gmail.com>
+ <d9e53e48794c2eade19309b73febd492e3c5eeeb.camel@kernel.crashing.org>
+ <7427daf6570d519e6793eb96d2fbaa52714b0cd7.camel@kernel.crashing.org>
+ <20180910125320.GA17028@bogus>
+From:   Frank Rowand <frowand.list@gmail.com>
+Message-ID: <5af64ee6-c7c4-29db-9aa4-c40e35e241fc@gmail.com>
+Date:   Tue, 11 Sep 2018 08:53:30 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180910125320.GA17028@bogus>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Message-ID: <20180911155031.ZIxF3ezeGCw1wncdyIr36xAvV_rf2aIKtoEYg4e9Nbk@z>
 
-Em Fri,  7 Sep 2018 00:24:38 +0200
-Paul Kocialkowski <contact@paulk.fr> escreveu:
-
-> From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+On 09/10/18 05:53, Rob Herring wrote:
+> On Sun, Sep 09, 2018 at 07:04:25PM +0200, Benjamin Herrenschmidt wrote:
+>> On Fri, 2018-08-31 at 14:58 +1000, Benjamin Herrenschmidt wrote:
+>>>
+>>>> A long shot, but something to consider, is that I failed to cover the
+>>>> cases of dynamic devicetree updates (removing nodes that contain a
+>>>> phandle) in ways other than overlays.  Michael Ellerman has reported
+>>>> such a problem for powerpc/mobility with of_detach_node().  A patch to
+>>>> fix that is one of the tasks I need to complete.
+>>>
+>>> The only thing I can think of is booting via the BootX bootloader on
+>>> those ancient macs results in a DT with no phandles. I didn't see an
+>>> obvious reason why that would cause that patch to break though.
+>>
+>> Guys, we still don't have a fix for this one on its way upstream...
+>>
+>> My test patch just creates phandle properties for all nodes, that was
+>> not intended as a fix, more a way to check if the problem was related
+>> to the lack of phandles.
+>>
+>> I don't actually know why the new code causes things to fail when
+>> phandles are absent. This needs to be looked at.
+>>
+>> I'm travelling at the moment and generally caught up with other things,
+>> I haven't had a chance to dig, so just a heads up. I don't intend to
+>> submit my patch since it's just a band aid. We need to figure out what
+>> the actual problem is.
 > 
-> This introduces the Cedrus VPU driver that supports the VPU found in
-> Allwinner SoCs, also known as Video Engine. It is implemented through
-> a V4L2 M2M decoder device and a media device (used for media requests).
-> So far, it only supports MPEG-2 decoding.
+> Can you try this patch (w/o Ben's patch). I think the problem is if 
+> there are no phandles, then roundup_pow_of_two is passed 0 which is 
+> documented as undefined result.
 > 
-> Since this VPU is stateless, synchronization with media requests is
-> required in order to ensure consistency between frame headers that
-> contain metadata about the frame to process and the raw slice data that
-> is used to generate the frame.
+> Though, if a DT has no properties with phandles, then why are we doing a 
+> lookup in the first place?
 > 
-> This driver was made possible thanks to the long-standing effort
-> carried out by the linux-sunxi community in the interest of reverse
-> engineering, documenting and implementing support for the Allwinner VPU.
 > 
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> 8<----------------------------------------------------------------------
+> 
+> diff --git a/drivers/of/base.c b/drivers/of/base.c
+> index 9095b8290150..74eaedd5b860 100644
+> --- a/drivers/of/base.c
+> +++ b/drivers/of/base.c
+> @@ -140,6 +140,9 @@ void of_populate_phandle_cache(void)
+>  		if (np->phandle && np->phandle != OF_PHANDLE_ILLEGAL)
+>  			phandles++;
+>  
+> +	if (!phandles)
+> +		goto out;
+> +
+>  	cache_entries = roundup_pow_of_two(phandles);
+>  	phandle_cache_mask = cache_entries - 1;
+>  
+> 
 
-There are several checkpatch issues here. Ok, some can be
-ignored, but there are at least some of them that sounds relevant.
+Thanks Rob!  That fix makes sense, and the test results look
+promising.
 
-Please address them.
-
-In particular, see https://lkml.org/lkml/2017/11/21/384.
-
-Also, for new drivers, please use --strict parameter on checkpatch,
-as it will give more insights about possible bad coding styles.
-
-This is what checkpatch currently complains:
-
-
-CHECK: Comparison to NULL could be written "ctx->ctrls[i]"
-#214: FILE: drivers/staging/media/sunxi/cedrus/cedrus.c:51:
-+	for (i = 0; ctx->ctrls[i] != NULL; i++)
-
-CHECK: Alignment should match open parenthesis
-#304: FILE: drivers/staging/media/sunxi/cedrus/cedrus.c:141:
-+		ctrl_test = v4l2_ctrl_request_hdl_ctrl_find(hdl,
-+			cedrus_controls[i].id);
-
-CHECK: Alignment should match open parenthesis
-#468: FILE: drivers/staging/media/sunxi/cedrus/cedrus.c:305:
-+	ret = v4l2_m2m_register_media_controller(dev->m2m_dev,
-+			vfd, MEDIA_ENT_F_PROC_VIDEO_DECODER);
-
-CHECK: Avoid using bool structure members because of possible alignment issues - see: https://lkml.org/lkml/2017/11/21/384
-#638: FILE: drivers/staging/media/sunxi/cedrus/cedrus.h:47:
-+	bool			required;
-
-WARNING: line over 80 characters
-#744: FILE: drivers/staging/media/sunxi/cedrus/cedrus.h:153:
-+static inline struct cedrus_buffer *vb2_v4l2_to_cedrus_buffer(const struct vb2_v4l2_buffer *p)
-
-WARNING: line over 80 characters
-#749: FILE: drivers/staging/media/sunxi/cedrus/cedrus.h:158:
-+static inline struct cedrus_buffer *vb2_to_cedrus_buffer(const struct vb2_buffer *p)
-
-CHECK: Alignment should match open parenthesis
-#809: FILE: drivers/staging/media/sunxi/cedrus/cedrus_dec.c:47:
-+		run.mpeg2.slice_params = cedrus_find_control_data(ctx,
-+			V4L2_CID_MPEG_VIDEO_MPEG2_SLICE_PARAMS);
-
-CHECK: Alignment should match open parenthesis
-#811: FILE: drivers/staging/media/sunxi/cedrus/cedrus_dec.c:49:
-+		run.mpeg2.quantization = cedrus_find_control_data(ctx,
-+			V4L2_CID_MPEG_VIDEO_MPEG2_QUANTIZATION);
-
-WARNING: line over 80 characters
-#1368: FILE: drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c:133:
-+	reg |= VE_DEC_MPEG_MP12HDR_INTRA_DC_PRECISION(picture->intra_dc_precision);
-
-WARNING: line over 80 characters
-#1369: FILE: drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c:134:
-+	reg |= VE_DEC_MPEG_MP12HDR_INTRA_PICTURE_STRUCTURE(picture->picture_structure);
-
-WARNING: line over 80 characters
-#1371: FILE: drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c:136:
-+	reg |= VE_DEC_MPEG_MP12HDR_FRAME_PRED_FRAME_DCT(picture->frame_pred_frame_dct);
-
-WARNING: line over 80 characters
-#1372: FILE: drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c:137:
-+	reg |= VE_DEC_MPEG_MP12HDR_CONCEALMENT_MOTION_VECTORS(picture->concealment_motion_vectors);
-
-WARNING: line over 80 characters
-#1395: FILE: drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c:160:
-+	fwd_luma_addr = cedrus_dst_buf_addr(ctx, slice_params->forward_ref_index, 0);
-
-WARNING: line over 80 characters
-#1396: FILE: drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c:161:
-+	fwd_chroma_addr = cedrus_dst_buf_addr(ctx, slice_params->forward_ref_index, 1);
-
-WARNING: line over 80 characters
-#1401: FILE: drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c:166:
-+	bwd_luma_addr = cedrus_dst_buf_addr(ctx, slice_params->backward_ref_index, 0);
-
-WARNING: line over 80 characters
-#1402: FILE: drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c:167:
-+	bwd_chroma_addr = cedrus_dst_buf_addr(ctx, slice_params->backward_ref_index, 1);
-
-WARNING: line over 80 characters
-#1417: FILE: drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c:182:
-+	cedrus_write(dev, VE_DEC_MPEG_VLD_OFFSET, slice_params->data_bit_offset);
-
-CHECK: Macro argument reuse 'x' - possible side-effects?
-#1552: FILE: drivers/staging/media/sunxi/cedrus/cedrus_regs.h:74:
-+#define VE_DEC_MPEG_MP12HDR_F_CODE_MASK(x, y) \
-+	GENMASK(VE_DEC_MPEG_MP12HDR_F_CODE_SHIFT(x, y) + 3, \
-+		VE_DEC_MPEG_MP12HDR_F_CODE_SHIFT(x, y))
-
-CHECK: Macro argument reuse 'y' - possible side-effects?
-#1552: FILE: drivers/staging/media/sunxi/cedrus/cedrus_regs.h:74:
-+#define VE_DEC_MPEG_MP12HDR_F_CODE_MASK(x, y) \
-+	GENMASK(VE_DEC_MPEG_MP12HDR_F_CODE_SHIFT(x, y) + 3, \
-+		VE_DEC_MPEG_MP12HDR_F_CODE_SHIFT(x, y))
-
-CHECK: Macro argument reuse 'x' - possible side-effects?
-#1555: FILE: drivers/staging/media/sunxi/cedrus/cedrus_regs.h:77:
-+#define VE_DEC_MPEG_MP12HDR_F_CODE(x, y, v) \
-+	(((v) << VE_DEC_MPEG_MP12HDR_F_CODE_SHIFT(x, y)) & \
-+	 VE_DEC_MPEG_MP12HDR_F_CODE_MASK(x, y))
-
-CHECK: Macro argument reuse 'y' - possible side-effects?
-#1555: FILE: drivers/staging/media/sunxi/cedrus/cedrus_regs.h:77:
-+#define VE_DEC_MPEG_MP12HDR_F_CODE(x, y, v) \
-+	(((v) << VE_DEC_MPEG_MP12HDR_F_CODE_SHIFT(x, y)) & \
-+	 VE_DEC_MPEG_MP12HDR_F_CODE_MASK(x, y))
-
-CHECK: Macro argument reuse 'a' - possible side-effects?
-#1685: FILE: drivers/staging/media/sunxi/cedrus/cedrus_regs.h:207:
-+#define VE_DEC_MPEG_VLD_ADDR_BASE(a) \
-+	(((a) & GENMASK(27, 4)) | (((a) >> 28) & GENMASK(3, 0)))
-
-CHECK: Comparison to NULL could be written "fmt"
-#1805: FILE: drivers/staging/media/sunxi/cedrus/cedrus_video.c:88:
-+	return fmt != NULL;
-
-CHECK: Please use a blank line after function/struct/union/enum declarations
-#2214: FILE: drivers/staging/media/sunxi/cedrus/cedrus_video.c:497:
-+}
-+static struct vb2_ops cedrus_qops = {
-
-total: 0 errors, 11 warnings, 13 checks, 2139 lines checked
-
-
-Thanks,
-Mauro
+Reviewed-by: Frank Rowand <frank.rowand@sony.com>
