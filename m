@@ -2,96 +2,92 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0982EC04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 14:47:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C49CC04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 14:47:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3B1F2086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 14:47:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA2902086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 14:47:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="idQE5E07"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3B1F2086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="LqvtNC8v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA2902086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728040AbeIKTrS (ORCPT
+        id S1728067AbeIKTrZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 15:47:18 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:34033 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726761AbeIKTrS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 15:47:18 -0400
-Received: by mail-lf1-f66.google.com with SMTP id c29-v6so20606066lfj.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 07:47:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=a3Vyahz+VIMu+dF4LMSmK9oGOhC1B5OQP882WjBX+Ww=;
-        b=idQE5E07bR4cDtSN+ZuJYE9SDJUUSS3ikdT4NID+tYYwBi8jmGjtOGo+ZFBS7euNmg
-         ulYbrxoiRAn4X7/Fvz4YNjRlbD2DrHeFHvT/rp+FUgn01J9freqm1Ufzs9QYt1+E4VMM
-         KGOSDa8ML5xir2BfID6Nia692rP3382WByfK0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=a3Vyahz+VIMu+dF4LMSmK9oGOhC1B5OQP882WjBX+Ww=;
-        b=hVS4sOEDEnwOnrhVjrx1lPiszHgdHe0CYqXr/Qxd/1okrKeJf7ofGlfU6iDiLZGx1T
-         iXvMiDNMeG+M57k91nkxeDoP1rWHP7b4WA/WOmhvXMTypJebMx+oVwZe6M/PI00XPxop
-         LNU7InU+ZLQeaaiC9MSJVuClC/Jdb9edGzCefCD8qpKheqlIBf7eh/0UXQy7lhXHmoz4
-         WQ4vjzIelRp+izmYm77ADRovGPx3Eyjp63crsUTCFC8jgoUIr4ubfniEVvnfzstfc0CB
-         JhUIGmsa8bEx8eyWlQdx1RxmYV2kOks8gmg5IywniXhgaxsOF4rUSWMbmLhAbvnHziqV
-         saMQ==
-X-Gm-Message-State: APzg51DI0oE3zjFmNrPwQ6ddJDdedwHKCad5FJBwGRTKuFWvymXrGzgF
-        dgruYC7G9b0UT7V9JajceeuIZJ1qfS3US/3XYT/Dig==
-X-Google-Smtp-Source: ANB0VdYgz7OtgMn4OE7DsvEdMAM1n2RdW0uaDf4g5OJ+IdbyJAa+efscdkZHrln5QaPj2pF6RHNT7co0H2JzI3BNGX0=
-X-Received: by 2002:a19:ef18:: with SMTP id n24-v6mr16484865lfh.36.1536677258055;
- Tue, 11 Sep 2018 07:47:38 -0700 (PDT)
-MIME-Version: 1.0
-References: <1536655641-26192-1-git-send-email-suzuki.poulose@arm.com> <20180911103509.GA770@e107155-lin>
-In-Reply-To: <20180911103509.GA770@e107155-lin>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Tue, 11 Sep 2018 08:47:27 -0600
-Message-ID: <CANLsYkzaHsi=V+GZaJ+hdzDODT-BRHU42fPJ1Vu-aX726E=grA@mail.gmail.com>
-Subject: Re: [PATCH] dts: juno: Enable coresight tmc scatter gather in ETR
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     "Suzuki K. Poulose" <suzuki.poulose@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        coresight@lists.linaro.org, Robert Walker <robert.walker@arm.com>,
-        devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        Mike Leach <mike.leach@linaro.org>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 11 Sep 2018 15:47:25 -0400
+Received: from m12-13.163.com ([220.181.12.13]:33929 "EHLO m12-13.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726761AbeIKTrZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 15:47:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id; bh=HJtsXsi2QZvVyVn6GB
+        NAfDJF1SqPVzzBIW5pabVn9lA=; b=LqvtNC8vqA1guIlY/ccnmwA5CjDSqYr8eP
+        E0If3kyywy3zLWRcNKgNrHEp+g6VrB7QYH+S5uAl5RIO9Vd3Hcm1YNAzOM1E1zHb
+        5MdEQcmMFjlG4jR5FXKuEIAiW8ZoKce0U5e3WVOszHmt483vheKYC3TUbe39SbaO
+        7/y4WhewY=
+Received: from localhost (unknown [183.134.187.192])
+        by smtp9 (Coremail) with SMTP id DcCowAAHZVln1ZdbFG_OJA--.24665S5;
+        Tue, 11 Sep 2018 22:47:04 +0800 (CST)
+From:   jun qian <hangdianqj@163.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Kees Cook <keescook@chromium.org>, Allen <allen.lkml@gmail.com>
+Cc:     Randy Dunlap <rdunlap@infradead.org>, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jun qian <hangdianqj@163.com>
+Subject: [PATCH] mmc: mxcmmc: replace spin_lock_irqsave with spin_lock in ISR
+Date:   Tue, 11 Sep 2018 07:47:01 -0700
+Message-Id: <20180911144701.53383-1-hangdianqj@163.com>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID: DcCowAAHZVln1ZdbFG_OJA--.24665S5
+X-Coremail-Antispam: 1Uf129KBjvdXoW7Jr1rAF4xAFWUJr4kAF4DCFg_yoWkCFX_ur
+        W5Wr97Ww45JryjgF10kw4fCa4jyw4DXw1fKF4xtFWSyrZag3W3Z34xZ3s8J34UuF4rCFZ3
+        Cr1YyFWrG342kjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUbnqXJUUUUU==
+X-Originating-IP: [183.134.187.192]
+X-CM-SenderInfo: pkdqwvpldq1yi6rwjhhfrp/xtbBiAi+R1aDzhwSAgAAsu
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 11 Sep 2018 at 04:35, Sudeep Holla <sudeep.holla@arm.com> wrote:
->
-> On 11/09/18 09:47, Suzuki K Poulose wrote:
-> > We do not enable scatter-gather mode in the TMC-ETR by default
-> > to prevent malfunctioning of systems where the ETR may not be
-> > properly connected to the memory subsystem to allow for simultaneous
-> > READ/WRITE transactions when used in SG mode. Instead we whitelist
-> > the platforms where we know that it is safe to use the mode.
-> >
-> > All revisions of Juno have a proper ETR connection and hence
-> > white list them.
-> >
->
-> Applied conditionally, this conflicts with the patch Mathieu has in his
-> branch. He needs to drop that so that I can take both of them via ARM SoC.
+As you are already in ISR, it is unnecessary to call spin_lock_irqsave.
 
-As I communicated yesterday, I've already dropped that patch from my tree.
+Signed-off-by: jun qian <hangdianqj@163.com>
+---
+ drivers/mmc/host/mxcmmc.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
->
-> --
-> Regards,
-> Sudeep
+diff --git a/drivers/mmc/host/mxcmmc.c b/drivers/mmc/host/mxcmmc.c
+index de4e6e5bf304..4d17032d15ee 100644
+--- a/drivers/mmc/host/mxcmmc.c
++++ b/drivers/mmc/host/mxcmmc.c
+@@ -728,7 +728,6 @@ static void mxcmci_cmd_done(struct mxcmci_host *host, unsigned int stat)
+ static irqreturn_t mxcmci_irq(int irq, void *devid)
+ {
+ 	struct mxcmci_host *host = devid;
+-	unsigned long flags;
+ 	bool sdio_irq;
+ 	u32 stat;
+ 
+@@ -740,9 +739,9 @@ static irqreturn_t mxcmci_irq(int irq, void *devid)
+ 
+ 	dev_dbg(mmc_dev(host->mmc), "%s: 0x%08x\n", __func__, stat);
+ 
+-	spin_lock_irqsave(&host->lock, flags);
++	spin_lock(&host->lock);
+ 	sdio_irq = (stat & STATUS_SDIO_INT_ACTIVE) && host->use_sdio;
+-	spin_unlock_irqrestore(&host->lock, flags);
++	spin_unlock(&host->lock);
+ 
+ 	if (mxcmci_use_dma(host) && (stat & (STATUS_WRITE_OP_DONE)))
+ 		mxcmci_writel(host, STATUS_WRITE_OP_DONE, MMC_REG_STATUS);
+-- 
+2.17.1
+
+
+
