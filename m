@@ -2,155 +2,118 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07423C6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 05:39:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D129FC6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 05:41:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF270206BB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 05:39:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF270206BB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 234B520854
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 05:41:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nLWej1bg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 234B520854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726989AbeIKKh2 (ORCPT
+        id S1726840AbeIKKjK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 06:37:28 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:4571 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726274AbeIKKh1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 06:37:27 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 428YdT0ntPz9ttCL;
-        Tue, 11 Sep 2018 07:39:41 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id WlPdTWhjFUxP; Tue, 11 Sep 2018 07:39:41 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 428YdT085bz9ttCK;
-        Tue, 11 Sep 2018 07:39:41 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 3D46D8B7D4;
-        Tue, 11 Sep 2018 07:39:51 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id fqHVkAw-QaqP; Tue, 11 Sep 2018 07:39:51 +0200 (CEST)
-Received: from PO15451 (unknown [192.168.232.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id B43838B79F;
-        Tue, 11 Sep 2018 07:39:50 +0200 (CEST)
-Subject: Re: How to handle PTE tables with non contiguous entries ?
-To:     Nicholas Piggin <npiggin@gmail.com>
-Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
-        aneesh.kumar@linux.vnet.ibm.com,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>
-References: <ddc3bb56-4da0-c093-256f-185d4a612b5c@c-s.fr>
- <20180911070645.239aef8a@roar.ozlabs.ibm.com>
-From:   Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <dd0076e4-1a40-b14a-6f2f-82cc2d7c494d@c-s.fr>
-Date:   Tue, 11 Sep 2018 07:39:50 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 11 Sep 2018 06:39:10 -0400
+Received: from mail-pg1-f173.google.com ([209.85.215.173]:41358 "EHLO
+        mail-pg1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726274AbeIKKjK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 06:39:10 -0400
+Received: by mail-pg1-f173.google.com with SMTP id s15-v6so11651242pgv.8;
+        Mon, 10 Sep 2018 22:41:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=lWNX0+9g0p0SQsBRlm5zPRffGGsTTVk7JxlEp7OQ3JQ=;
+        b=nLWej1bgtEVhw12Ik8cEl/ywaSJowNJG9IWI9lQvQLDRs47xLOd48fpl5t5JCZNMK1
+         ZPSndQQ9f5uuOXBcszh5AvHHEN6JyDu8suJCIpSF9HeYzMB5+HeJYezLLXNbp4iyZ4QX
+         iJ59+WkyP70+AtOvbrTwDw0pqAiH7RpE61cRhYUHf1/3gg150l7hnzi83WCpQpX45DUm
+         nYEJ4oj8T+87Ultp7hEA/po4FWnLrhIoCvrd8uwCuJr6UcNrPjxozaxGjUp1MNXWtJVd
+         xrCJVzB/QnMkztiOrH2aSPbe+/R5bTn7HVtm4X9EHlhJe59NsRvP/3q8LXhHxBhW/Pme
+         AJ1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=lWNX0+9g0p0SQsBRlm5zPRffGGsTTVk7JxlEp7OQ3JQ=;
+        b=IBEZpEb7fUQYWJqmNREbZV7dKsJCCLVeAegKwgdyBkZlTU+VE7UQWK3yHose/Szg0Y
+         M/lnlb4H7fEQtPhsYzdyPWsl5cseh1OWmwIdufo1SQUBNrFXtNJhXhKt4aH0TULqADNU
+         m71j3TInikss8MuL6gsc+VNDEg7jUaev/78BnDUih8IieUCKfg5eU5dlGgrzW/96Czvs
+         5SQbXr0VRUNaZ+rZal5koVP74YybJrgf2FtBTz1F91lqGnerbDe3dRiJ6+bRT63DYeT/
+         za2IwvatT6p1UY3lYizwSQx80z9ltpeFBUZ3Ho5bzcbVMwblvJETXpxY9+FNOEMhLmXE
+         zvVA==
+X-Gm-Message-State: APzg51DCBo/1QwdXPIke5ZSO+OXObt7DkWw+edPNO9Q5wgnz9+Lm/Lam
+        kX2Hor8Svxm9/Cn28aeZ0Dg=
+X-Google-Smtp-Source: ANB0VdbxQ43h8Vii//ReyeHjYNB5mK/icBmw2JSkwyb3kJHRc6oey5PlGA5H+hXw99rbruwWLWYIyg==
+X-Received: by 2002:a63:e70e:: with SMTP id b14-v6mr26243956pgi.68.1536644494740;
+        Mon, 10 Sep 2018 22:41:34 -0700 (PDT)
+Received: from localhost ([39.7.19.225])
+        by smtp.gmail.com with ESMTPSA id x2-v6sm31396515pfi.166.2018.09.10.22.41.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 10 Sep 2018 22:41:33 -0700 (PDT)
+Date:   Tue, 11 Sep 2018 14:41:29 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Dmitry Safonov <dima@arista.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Daniel Axtens <dja@axtens.net>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Michael Neuling <mikey@neuling.org>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        Nathan March <nathan@gt.net>,
+        Pasi =?iso-8859-1?Q?K=E4rkk=E4inen?= <pasik@iki.fi>,
+        Peter Hurley <peter@hurleysoftware.com>,
+        "Rong, Chen" <rong.a.chen@intel.com>,
+        Tan Xiaojun <tanxiaojun@huawei.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        stable@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Subject: Re: [PATCHv3 2/6] tty/ldsem: Update waiter->task before waking up
+ reader
+Message-ID: <20180911054129.GC4065@jagdpanzerIV>
+References: <20180911014821.26286-1-dima@arista.com>
+ <20180911014821.26286-3-dima@arista.com>
+ <20180911050449.GB4065@jagdpanzerIV>
 MIME-Version: 1.0
-In-Reply-To: <20180911070645.239aef8a@roar.ozlabs.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180911050449.GB4065@jagdpanzerIV>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Le 10/09/2018 à 23:06, Nicholas Piggin a écrit :
-> On Mon, 10 Sep 2018 14:34:37 +0000
-> Christophe Leroy <christophe.leroy@c-s.fr> wrote:
+On (09/11/18 14:04), Sergey Senozhatsky wrote:
+> >  	for (;;) {
+> >  		set_current_state(TASK_UNINTERRUPTIBLE);
 > 
->> Hi,
->>
->> I'm having a hard time figuring out the best way to handle the following
->> situation:
->>
->> On the powerpc8xx, handling 16k size pages requires to have page tables
->> with 4 identical entries.
->>
->> Initially I was thinking about handling this by simply modifying
->> pte_index() which changing pte_t type in order to have one entry every
->> 16 bytes, then replicate the PTE value at *ptep, *ptep+1,*ptep+2 and
->> *ptep+3 both in set_pte_at() and pte_update().
->>
->> However, this doesn't work because many many places in the mm core part
->> of the kernel use loops on ptep with single ptep++ increment.
->>
->> Therefore did it with the following hack:
->>
->>    /* PTE level */
->> +#if defined(CONFIG_PPC_8xx) && defined(CONFIG_PPC_16K_PAGES)
->> +typedef struct { pte_basic_t pte, pte1, pte2, pte3; } pte_t;
->> +#else
->>    typedef struct { pte_basic_t pte; } pte_t;
->> +#endif
->>
->> @@ -181,7 +192,13 @@ static inline unsigned long pte_update(pte_t *p,
->>           : "cc" );
->>    #else /* PTE_ATOMIC_UPDATES */
->>           unsigned long old = pte_val(*p);
->> -       *p = __pte((old & ~clr) | set);
->> +       unsigned long new = (old & ~clr) | set;
->> +
->> +#if defined(CONFIG_PPC_8xx) && defined(CONFIG_PPC_16K_PAGES)
->> +       p->pte = p->pte1 = p->pte2 = p->pte3 = new;
->> +#else
->> +       *p = __pte(new);
->> +#endif
->>    #endif /* !PTE_ATOMIC_UPDATES */
->>
->>    #ifdef CONFIG_44x
->>
->>
->> @@ -161,7 +161,11 @@ static inline void __set_pte_at(struct mm_struct
->> *mm, unsigned long addr,
->>           /* Anything else just stores the PTE normally. That covers all
->> 64-bit
->>            * cases, and 32-bit non-hash with 32-bit PTEs.
->>            */
->> +#if defined(CONFIG_PPC_8xx) && defined(CONFIG_PPC_16K_PAGES)
->> +       ptep->pte = ptep->pte1 = ptep->pte2 = ptep->pte3 = pte_val(pte);
->> +#else
->>           *ptep = pte;
->> +#endif
->>
->>
->>
->> But I'm not too happy with it as it means pte_t is not a single type
->> anymore so passing it from one function to the other is quite heavy.
->>
->>
->> Would someone have an idea of an elegent way to handle that ?
+> I think that set_current_state() also executes memory barrier. Just
+> because it accesses task state.
 > 
-> I can't think of anything better. Do we pass pte by value to a lot of
-> non inlined functions? Possible to inline the important ones?
+> > -		if (!waiter.task)
+> > +		if (!READ_ONCE(waiter.task))
+> >  			break;
+> >  		if (!timeout)
+> >  			break;
 
-Good question, I need to check that.
+This READ_ONCE(waiter.task) looks interesting. Maybe could be moved
+to a loop condition
 
-> 
-> Other option, try to get an iterator like pte = pte_next(pte) into core
-> code.
+	while (!READ_ONCE(waiter.task)) {
+		...
+	}
 
-Yes I've been thinking about that, but it looks like a huge job to 
-identify all places, as some drivers are also playing with it.
-I'm not sure it is only to find all 'pte++' and 'ptep++', I fear there 
-might be places with more unexpected names.
-
-Thanks
-Christophe
-
-> 
-> Thanks,
-> Nick
-> 
+	-ss
