@@ -2,91 +2,93 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2F90C6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:37:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E3B9C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:39:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6841A20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:37:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6841A20866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 421D820866
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:39:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="CghbByFS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 421D820866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727819AbeIKUgy (ORCPT
+        id S1727332AbeIKUix (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 16:36:54 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:41327 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726863AbeIKUgy (ORCPT
+        Tue, 11 Sep 2018 16:38:53 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40303 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726896AbeIKUix (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 16:36:54 -0400
-Received: by mail-qk1-f196.google.com with SMTP id h138-v6so17013120qke.8;
-        Tue, 11 Sep 2018 08:37:03 -0700 (PDT)
+        Tue, 11 Sep 2018 16:38:53 -0400
+Received: by mail-pg1-f193.google.com with SMTP id l63-v6so12455662pga.7
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 08:39:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Ob5BRhp5wcGH7FAFFwf5FJfV2+4Ssan30hOv8Hcvxu8=;
+        b=CghbByFS/4vROeoHHLNy3IeNr+oYwkWjoQa+m1iC35Y4lAq8JVC+NnrawC/7ki8gIp
+         XfN75/sED82u/ThYE1yG8kr4vZrINpnytmqMgFzdtH5CaCOrU3mNBEAHzzObmYGhcaTE
+         6SWn6nqXbVfqgxVnOMJXIC7W+lckgtlonWIEi885vegcz5USlRiaDe65AU70uhX61GOc
+         2t70K6gfFVF+39xXGXjR/mSf4YBIw3EdLU/2ddW0cGJUhYwlA5jKFhQq0fLIuIZA+/pp
+         U6YonSPADPvBl7F4b9QY9rgD+KyTHM6TEveDrdc0VI6LOaxtXgLqyqM2zJavN74tqgaW
+         RJqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KgI/SnWVjnJB8GyOZXASjRNs9jm3sq4MEmurlkF8b1Y=;
-        b=YVDnJKXJ9bxG0TGWH+M4y9agd3n9NTFWkZjlZoMsSVDLH8t2Bmrkd6IAZyrtTP1ZyV
-         yg3YMOb/CuW17++3OA6ID/AMl+VObiTUoJtEQYFbyU3etVOgmCmDNg9dAtWjdLSOQrmV
-         Y0sF0GrlQ/t9/L9jEozQUP4oFjpdjMEMoEeglylhTrBT51Bmfl5uRc6ij8B0WN8oF/05
-         FK4ntlOzJAagELNJAhbZn0MAqF1UgQxFC+WWNSgdyEP5tyXG//lYE5IfMiP8/NfcHn68
-         o8YF2xTFfZaX9c+GpnTHwWV+xO+QgZYqn1qY6kFDxtkkn6ixwURAQKVHyrKWyxfvX/5K
-         LIew==
-X-Gm-Message-State: APzg51BrkzLxK1pS5uuT47nE/qoyt/lAf8IMb3l9ac2+6YzbJ+Pk4RS7
-        ywlxV9s/ePqhE44HJnHRFkz5aaUBKsNjQ9l3Ns8=
-X-Google-Smtp-Source: ANB0VdbxpxcyWLaB7jQgG2T+2uu73BS+mkCYemrW7xbuifguTjcHs7f2bz/cp8RypTGx5XlU2vaHB+IJgzz0Y8MQNEQ=
-X-Received: by 2002:a37:7347:: with SMTP id o68-v6mr19800907qkc.291.1536680222718;
- Tue, 11 Sep 2018 08:37:02 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Ob5BRhp5wcGH7FAFFwf5FJfV2+4Ssan30hOv8Hcvxu8=;
+        b=lxHfnGjk2Pc5BU0HVaExnpnfM+JI59shgHIFHmozF2oPdOBabtbi5+kQCX+y/nRONh
+         Hobdi818RSvfvg6cT9QKiRPqgNRiqVqQlVx7Cmvx+KbbE2YAeHMD/R9Fg/6KMj+MA4RT
+         2+cnnNjn68yTzRPtRpwWRGLyfVL0KKX4eBdj8IbZHsRuExRCUnGDOhMBSaX6goNXI0wG
+         YU9zaYEIquc4NYyJmTxLT7GMnholA8OC8JU+jLx7RPrVekjJzeS4Hj8oOMWSJ/WqG4s4
+         pfW3b0fvE1M1YnIM9a1QJ1e9XCA5JJNVqckmKHmX5UHpxY6rwStWQn2uFA3uASehuyYt
+         HPWw==
+X-Gm-Message-State: APzg51DuPBoGn6c0PnqxTOKRl2ri7Ifn5bPClZ+2U/HX2nhiGNnMKGDL
+        sivfHNYbCrEZ2zPdPFC2EjGwcw==
+X-Google-Smtp-Source: ANB0Vdb/dKG46tQdqj+0XhIu5y9APwwLkZhX/dIEIJU279rwPql9AoilUZ6n2bS1YjLPev0GGLG45g==
+X-Received: by 2002:a62:49d5:: with SMTP id r82-v6mr30081091pfi.245.1536680342101;
+        Tue, 11 Sep 2018 08:39:02 -0700 (PDT)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id r17-v6sm44305499pgu.83.2018.09.11.08.39.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 11 Sep 2018 08:39:01 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1fzkkm-0004l3-RX; Tue, 11 Sep 2018 09:39:00 -0600
+Date:   Tue, 11 Sep 2018 09:39:00 -0600
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     zhong jiang <zhongjiang@huawei.com>
+Cc:     dledford@redhat.com, benve@cisco.com, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] infiniband: remove redundant condition check before
+ debugfs_remove
+Message-ID: <20180911153900.GA18253@ziepe.ca>
+References: <1536414571-32675-1-git-send-email-zhongjiang@huawei.com>
 MIME-Version: 1.0
-References: <20180908142837.2819693-1-arnd@arndb.de> <20180908142837.2819693-11-arnd@arndb.de>
- <20180909043746.GF19965@ZenIV.linux.org.uk>
-In-Reply-To: <20180909043746.GF19965@ZenIV.linux.org.uk>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 11 Sep 2018 17:36:46 +0200
-Message-ID: <CAK8P3a0evhaJGL_XdUjQhJDGyAh01UjLFkKx-Cq21htXmFsY2A@mail.gmail.com>
-Subject: Re: [PATCH 11/11] compat_ioctl: move tape handling into drivers
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     David Miller <davem@davemloft.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>, osst@riede.org,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Kai.Makisara@kolumbus.fi,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        IDE-ML <linux-ide@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        osst-users@lists.sourceforge.net,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1536414571-32675-1-git-send-email-zhongjiang@huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 9, 2018 at 6:38 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Sat, Sep 08, 2018 at 04:28:17PM +0200, Arnd Bergmann wrote:
-> > MTIOCPOS and MTIOCGET are incompatible between 32-bit and 64-bit user
-> > space, and traditionally have been translated in fs/compat_ioctl.c.
-> >
-> > To get rid of that translation handler, move a corresponding
-> > implementation into each of the four drivers implementing those commands.
-> >
-> > The interesting part of that is now in a new linux/mtio.h header that
-> > wraps the existing uapi/linux/mtio.h header and provides an abstraction
-> > to let drivers handle both cases easily.
->
-> Ugh...  Frankly, this bool compat passed all way down looks wrong.
-> I can live with that; the question is whether block folks will be
-> OK with that thing...
+On Sat, Sep 08, 2018 at 09:49:31PM +0800, zhong jiang wrote:
+> debugfs_remove has taken the IS_ERR_OR_NULL into account. Just
+> remove the unnecessary condition.
+> 
+> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+> ---
+>  drivers/infiniband/hw/usnic/usnic_debugfs.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 
-I have tried to come up with an alternative, but couldn't really find anything
-that is less ugly. Since nobody else complained, I'll resend this version
-along with the other patches.
+Applied to for-next, thanks
 
-       Arnd
+Jason
