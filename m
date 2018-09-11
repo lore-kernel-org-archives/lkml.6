@@ -2,110 +2,113 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0191CC04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 21:40:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10F05C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 21:43:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABAAD206B7
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 21:40:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABAAD206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id A1BE1206B7
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 21:43:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QJX78q9z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1BE1206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728095AbeILClb (ORCPT
+        id S1728021AbeILCpG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 22:41:31 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:33573 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726870AbeILClb (ORCPT
+        Tue, 11 Sep 2018 22:45:06 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:50349 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727649AbeILCpF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 22:41:31 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8BLdst52389069
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 11 Sep 2018 14:39:54 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8BLdsvg2389066;
-        Tue, 11 Sep 2018 14:39:54 -0700
-Date:   Tue, 11 Sep 2018 14:39:54 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Boris Ostrovsky <tipbot@zytor.com>
-Message-ID: <tip-6a92b11169a65b3f8cc512c75a252cbd0d096ba0@git.kernel.org>
-Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org, hpa@zytor.com,
-        tglx@linutronix.de, andy@strugglers.net, boris.ostrovsky@oracle.com
-Reply-To: mingo@kernel.org, linux-kernel@vger.kernel.org,
-          boris.ostrovsky@oracle.com, andy@strugglers.net, hpa@zytor.com,
-          tglx@linutronix.de
-In-Reply-To: <20180911195538.23289-1-boris.ostrovsky@oracle.com>
-References: <20180911195538.23289-1-boris.ostrovsky@oracle.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/EISA: Don't probe EISA bus for Xen PV guests
-Git-Commit-ID: 6a92b11169a65b3f8cc512c75a252cbd0d096ba0
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Tue, 11 Sep 2018 22:45:05 -0400
+Received: by mail-wm0-f67.google.com with SMTP id s12-v6so202467wmc.0;
+        Tue, 11 Sep 2018 14:43:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=JM0R5+gVjcypQAjDUwg1l1B5eVwb7FNurOGLrcF74h4=;
+        b=QJX78q9z2lSXrtM+OQL2xLhPmn0EWcH1aaIcjVlpRkGGxP7k4xy9Gqe4rt4atuWRQO
+         H0058xXhyPeIaeQORmOcaYpkEa9in2HjhRy0vQRN2qtzSq/QUhujCmYdI8Y6elDZIvMr
+         K74yr+vm5UMPeAtkFX+rdCf8W5o88YfKwqrjoGlpTtfNz9x5rbCR7z2wKM42BGMemAkx
+         GZZ4ErH7IF07gct2vTnwOjsjwvZYC/ef8BFPu+kcpG9oP3CffO3CQnBSbfo0FMIwNxfy
+         V6QSqmm+i5Q2fCQVW2k3RQPHpUl7O29/BICSVARGE8BolpkOJSjmc9Gcdc35QXIHp3Dq
+         J9kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=JM0R5+gVjcypQAjDUwg1l1B5eVwb7FNurOGLrcF74h4=;
+        b=WASaJPzqZnl4RmLFqGZ5d3v3/ejG3JWASuFAlyCCzoBgmAE8aIDFOV09wjwCxI/n1r
+         D+L3V3/6YGxD9G/h87oXS3EXWyrHoTrJ4c4wTNGpcmid3NxcvyxT+IqtINMXCNdwOvNL
+         28mwGSjzBAsEWAUbQrYpydU3+KEdQl90EDs1sSO2Le2cBdLsMgP6JVn9KPOeQnse0hwM
+         F+BT6pxfriSNJtnsi/btMfP5F49Omqy28bCYOYUAfR6/KfsAiIEDIhQXRDyhZJ3vHP4I
+         g1K/tiE0G7fQa9H6Mv9Dcc2TmKnhMoMdva0nhn0r1XHc30++hEIDIciXtlFXaGThvrZ8
+         v/OA==
+X-Gm-Message-State: APzg51DZR31IycoyzSu+2OMxX4AEpGfWgJAnUi1wt8gVqUqV2kwyYFDX
+        ZAFndLmxDCscOFnZY3gJ4FU=
+X-Google-Smtp-Source: ANB0VdZovxB65LsXDSFiGwU8ku+3RKBbpKzQOVpTMuWLUqfdTJzBqyMSYnnF8uiQauMRCAADxCRQlA==
+X-Received: by 2002:a1c:68f:: with SMTP id 137-v6mr2704110wmg.82.1536702228105;
+        Tue, 11 Sep 2018 14:43:48 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id c9-v6sm18496967wrt.77.2018.09.11.14.43.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Sep 2018 14:43:47 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] pata_atiixp: Remove unnecessary parentheses
+Date:   Tue, 11 Sep 2018 14:43:38 -0700
+Message-Id: <20180911214338.1109-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  6a92b11169a65b3f8cc512c75a252cbd0d096ba0
-Gitweb:     https://git.kernel.org/tip/6a92b11169a65b3f8cc512c75a252cbd0d096ba0
-Author:     Boris Ostrovsky <boris.ostrovsky@oracle.com>
-AuthorDate: Tue, 11 Sep 2018 15:55:38 -0400
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Tue, 11 Sep 2018 23:36:50 +0200
+Clang warns when more than one set of parentheses is used for a
+single conditional statement:
 
-x86/EISA: Don't probe EISA bus for Xen PV guests
+drivers/ata/pata_atiixp.c:282:19: warning: equality comparison with
+extraneous parentheses [-Wparentheses-equality]
+        if((pdev->device == PCI_DEVICE_ID_ATI_IXP600_IDE))
+            ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/ata/pata_atiixp.c:282:19: note: remove extraneous parentheses
+around the comparison to silence this warning
+        if((pdev->device == PCI_DEVICE_ID_ATI_IXP600_IDE))
+           ~             ^                              ~
+drivers/ata/pata_atiixp.c:282:19: note: use '=' to turn this equality
+comparison into an assignment
+        if((pdev->device == PCI_DEVICE_ID_ATI_IXP600_IDE))
+                         ^~
+                         =
+1 warning generated.
 
-For unprivileged Xen PV guests this is normal memory and ioremap will
-not be able to properly map it.
-
-While at it, since ioremap may return NULL, add a test for pointer's
-validity.
-
-Reported-by: Andy Smith <andy@strugglers.net>
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: hpa@zytor.com
-Cc: xen-devel@lists.xenproject.org
-Cc: jgross@suse.com
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180911195538.23289-1-boris.ostrovsky@oracle.com
-
+Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
- arch/x86/kernel/eisa.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/ata/pata_atiixp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/eisa.c b/arch/x86/kernel/eisa.c
-index f260e452e4f8..e8c8c5d78dbd 100644
---- a/arch/x86/kernel/eisa.c
-+++ b/arch/x86/kernel/eisa.c
-@@ -7,11 +7,17 @@
- #include <linux/eisa.h>
- #include <linux/io.h>
+diff --git a/drivers/ata/pata_atiixp.c b/drivers/ata/pata_atiixp.c
+index 4d49fd3c927b..843bb200a1ee 100644
+--- a/drivers/ata/pata_atiixp.c
++++ b/drivers/ata/pata_atiixp.c
+@@ -279,7 +279,7 @@ static int atiixp_init_one(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	const struct ata_port_info *ppi[] = { &info, &info };
  
-+#include <xen/xen.h>
-+
- static __init int eisa_bus_probe(void)
- {
--	void __iomem *p = ioremap(0x0FFFD9, 4);
-+	void __iomem *p;
-+
-+	if (xen_pv_domain() && !xen_initial_domain())
-+		return 0;
+ 	/* SB600 doesn't have secondary port wired */
+-	if((pdev->device == PCI_DEVICE_ID_ATI_IXP600_IDE))
++	if (pdev->device == PCI_DEVICE_ID_ATI_IXP600_IDE)
+ 		ppi[1] = &ata_dummy_port_info;
  
--	if (readl(p) == 'E' + ('I'<<8) + ('S'<<16) + ('A'<<24))
-+	p = ioremap(0x0FFFD9, 4);
-+	if (p && readl(p) == 'E' + ('I' << 8) + ('S' << 16) + ('A' << 24))
- 		EISA_bus = 1;
- 	iounmap(p);
- 	return 0;
+ 	return ata_pci_bmdma_init_one(pdev, ppi, &atiixp_sht, NULL,
+-- 
+2.18.0
+
