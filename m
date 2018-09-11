@@ -2,100 +2,159 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82784C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:09:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64181C6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:11:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A6392086A
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:09:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TRduqyJt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A6392086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 04A302086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:11:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04A302086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727009AbeIKOII (ORCPT
+        id S1726935AbeIKOJs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 10:08:08 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:35369 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726546AbeIKOII (ORCPT
+        Tue, 11 Sep 2018 10:09:48 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:57856 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726547AbeIKOJr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 10:08:08 -0400
-Received: by mail-lj1-f194.google.com with SMTP id p10-v6so20240824ljg.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 02:09:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=vdVlnUzJtm5pEstycq/Rk8rhXbVcRAJrU61obM0wfUM=;
-        b=TRduqyJtihJlzTpcyN5ZkrXo8hFswui56Grlv8nxzxaCLxGTD+XX6MCyOMi+qmPUM7
-         RZVXRGv6aDZpj2QXo7vx+E9Dq9SLnMi42F0RN6f8CytUbHQqz8x9cA+TH0CJJ88MXjQa
-         tIsWdwWNMusj8NkhK0nlsVmnpCjKmGaublIds=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=vdVlnUzJtm5pEstycq/Rk8rhXbVcRAJrU61obM0wfUM=;
-        b=Mqc6o0IsPb231O+28DY5ALDyfOa3uZp4FtR+0RvZaJI3TubmjtIDiTgACikRS8iExT
-         v9EbvuG+EOHeVVzUO4eZbghqDtNoARVcXiI1L9txuD/33nvu44M2mXc5KXZnOyN4fpAp
-         bVE6W13uNcmlJwPYPsPvWR9e5iE62C9bxKmk+/1aecffr0hOOP0Hstl2anFtk804k86N
-         9GtWrAZBO+MsoryeXJizyIscRFqvFBKdaZayCdWcW57X5HluZ8M7sLlNM+XV3vco8XGo
-         gsO/aBZFDvOVCNk8kGfjwnOAs8WyzY83gb0/tMvfGRdJroMiLzjwqKpE5M/LZj4CPFoH
-         2NHQ==
-X-Gm-Message-State: APzg51CuoqtAYXCKRn8nsR5Fqp5lcD0ay42wZClIELkHz/GxeI3I2toG
-        3zJM1RQFfn3s8PmYtUQ/EVoiyXUQkF72Pwet0QDZBQ==
-X-Google-Smtp-Source: ANB0VdZNY50GCIqW6dnF5NRxOOocgptwY95M0sysWZa7O54ywYQuJT9GiqbNhwOkoPfUW6bpYZMuZO6tnrfCsH/F4wA=
-X-Received: by 2002:a2e:934d:: with SMTP id m13-v6mr1002360ljh.45.1536656983685;
- Tue, 11 Sep 2018 02:09:43 -0700 (PDT)
+        Tue, 11 Sep 2018 10:09:47 -0400
+Received: from 79.184.255.178.ipv4.supernova.orange.pl (79.184.255.178) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.123)
+ id 2575bc69e993733d; Tue, 11 Sep 2018 11:11:23 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Daniel Drake <drake@endlessm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Cc:     Peter Wu <peter@lekensteyn.nl>, linux-pci@vger.kernel.org,
+        Linux Upstreaming Team <linux@endlessm.com>,
+        nouveau@lists.freedesktop.org, Linux PM <linux-pm@vger.kernel.org>,
+        kherbst@redhat.com,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Jon Derrick <jonathan.derrick@intel.com>,
+        Thomas Martitz <kugel@rockbox.org>, davem@davemloft.net,
+        hkallweit1@gmail.com, netdev@vger.kernel.org, nic_swsd@realtek.com,
+        Linux Kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] PCI: Reprogram bridge prefetch registers on resume
+Date:   Tue, 11 Sep 2018 11:08:46 +0200
+Message-ID: <1580466.UG53E7BAC6@aspire.rjw.lan>
+In-Reply-To: <CAD8Lp46eDaSF3fNQgYL=3vCXJ5VpV-JkYEu-YTtuh+w4rMU-5w@mail.gmail.com>
+References: <20180907053614.6540-1-drake@endlessm.com> <20180907150515.GA28739@al> <CAD8Lp46eDaSF3fNQgYL=3vCXJ5VpV-JkYEu-YTtuh+w4rMU-5w@mail.gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a19:118f:0:0:0:0:0 with HTTP; Tue, 11 Sep 2018 02:09:02
- -0700 (PDT)
-From:   Victor Chong <victor.chong@linaro.org>
-Date:   Tue, 11 Sep 2018 18:09:02 +0900
-Message-ID: <CAHqM-Qjr+5T1pMatJ=5MSsJvzaRqPybt_2TtyzHPwLnt=WjCEA@mail.gmail.com>
-Subject: [PATCH v2] tee: optee: log message if dynamic shm is enabled
-To:     Jens Wiklander <jens.wiklander@linaro.org>
-Cc:     tee-dev@lists.linaro.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When dynamic shared memory support is enabled in the OP-TEE Trusted
-OS, it doesn't mean that the driver supports it, which can confuse
-users during debugging. Log a message when dynamic shared memory is
-enabled in the driver, to let users know for sure.
+On Tuesday, September 11, 2018 5:35:13 AM CEST Daniel Drake wrote:
+> I have created https://bugzilla.kernel.org/show_bug.cgi?id=201069 to
+> archive the research done so far.
+> 
+> On Fri, Sep 7, 2018 at 11:05 PM, Peter Wu <peter@lekensteyn.nl> wrote:
+> > Windows 10 unconditionally rewrites these registers (BAR, I/O Base +
+> > Limit, Memory Base + Limit, etc. from top to bottom), see annotations:
+> > https://www.spinics.net/lists/linux-pci/msg75856.html
+> >
+> > Linux has a generic "restore" operation that works backwards from the
+> > end of the PCI config space to the beginning, see
+> > pci_restore_config_space. Do you have a dmesg where you see the
+> > "restoring config space at offset" messages?
+> 
+> Interesting, I had not spotted this code. The logs for the affected
+> bridge on Asus X542UQ:
+> 
+>  0000:00:1c.0: restoring config space at offset 0x3c (was 0x100,
+> writing 0x1001ff)
+>  0000:00:1c.0: restoring config space at offset 0x24 (was 0x10001,
+> writing 0xe1f1d001)
+>  0000:00:1c.0: restoring config space at offset 0x20 (was 0x0, writing
+> 0xef00ee00)
+>  0000:00:1c.0: restoring config space at offset 0xc (was 0x810000,
+> writing 0x810010)
+>  0000:00:1c.0: restoring config space at offset 0x4 (was 0x100007,
+> writing 0x100407)
+> 
+> So it didn't restore 0x28 (the magic register) and also register 0x2c
+> (prefetch limit upper 32 bits) because their values were already 0 on
+> resume.
+> 
+> https://bugzilla.kernel.org/show_bug.cgi?id=116851#c23 has an
+> assertion that Intel recognises this issue and calls for all those
+> registers to be restored on resume.
+> 
+> I propose for Linux 4.19 we apply a minimally intrusive change that
+> "forcibly" restores dword registers 0x24, 0x28 and 0x2c for PCI
+> bridges (regardless of their current value), while retaining the
+> existing restore order (high to low) over all registers and doing the
+> read-then-maybe-write thing for all of the other regs (per current
+> behaviour).
 
-Suggested-by: Jerome Forissier <jerome.forissier@linaro.org>
-Signed-off-by: Victor Chong <victor.chong@linaro.org>
-Reviewed-by: Jerome Forissier <jerome.forissier@linaro.org>
----
+I agree here.  It would be good to cover this gap and possibly backport
+the fix to "stable".
 
-v2:
-* Added patch description
+> Then we also consider swiftly applying a followup patch implementing a
+> more thorough approach and we give it some time in linux-next before
+> releasing in Linux 4.20 which does something more thorough. I think
+> perhaps more discussion is needed there, or at least some more input
+> from Bjorn. Seems like we have 3 approaches to consider:
+> 
+> 1. Peter Wu suggests following what windows does. Windows appears to
+> start with low registers and works its way upwards, which means it
+> writes BAR addresses, I/O base, etc, before writing prefetch
+> registers. It skips over read-only and write-to-clear registers and
+> also only writes some of the registers at the very end - like the
+> command register.
+> 
+> To be thorough here we would probably also have to study and copy what
+> Windows does for non-bridge devices (not sure how many device classes
+> we would want to study here?). Also it is a bit risky in that Bjorn
+> has pointed out that Linux's earlier approach with a high level of
+> similarity here (restore registers in ascending order, regardless of
+> their current value) caused a laptop to hang on resume.
+> 
+> 
+> 2. Bjorn suggested tweaking the existing code to always write the
+> saved value even when the hardware has that same value. The
+> read-maybe-write logic was introduced to avoid a laptop hang, but at
+> that time we were restoring registers in ascending order, now we are
+> descending it might be worth giving this another try.
 
-[v1] lore.kernel.org/patchwork/patch/983949/
+I agree with Bjorn here.
 
- drivers/tee/optee/core.c | 3 +++
- 1 file changed, 3 insertions(+)
+> 3. Do nothing else beyond the minimal change that I propose for v4.19?
+> Looking a bit more into git history this seems to be a sensitive and
+> problematic area, more changes might mean more trouble. For example
+> right now pci_restore_config_space() does:
+>         pci_restore_config_space_range(pdev, 10, 15, 0, 0);
+>         /* Restore BARs before the command register. */
+>         pci_restore_config_space_range(pdev, 4, 9, 10, 0);
+>         pci_restore_config_space_range(pdev, 0, 3, 0, 0);
+> but pci_restore_config_space_range() already goes in descending order,
+> so the above is already equivalent to the code in the "else" path that
+> follows:
+>         pci_restore_config_space_range(pdev, 0, 15, 0, 0);
+> 
+> and if you look at the history behind this "mixup" there's stuff that
+> goes back to 2012 like commit a6cb9ee7cabe ("PCI: Retry BARs
+> restoration for Type 0 headers only") which was fixing up another
+> problematic commit in this area, etc.
 
-diff --git a/drivers/tee/optee/core.c b/drivers/tee/optee/core.c
-index e1aafe842d66..cca5c091e55a 100644
---- a/drivers/tee/optee/core.c
-+++ b/drivers/tee/optee/core.c
-@@ -631,6 +631,9 @@ static struct optee *optee_probe(struct device_node *np)
+So let's first fix what's known broken and see how this goes IMO.
 
-        optee_enable_shm_cache(optee);
+On top of that and later, try to make the changes suggested by Bjorn and see
+how far we can get with that.
 
-+       if (optee->sec_caps & OPTEE_SMC_SEC_CAP_DYNAMIC_SHM)
-+               pr_info("dynamic shared memory is enabled\n");
-+
-        pr_info("initialized driver\n");
-        return optee;
- err:
---
-2.17.1
+Having done that, revisit and see if there still are any problems to address
+in this area.
+
+Thanks,
+Rafael
+
