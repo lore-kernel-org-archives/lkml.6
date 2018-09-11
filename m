@@ -2,85 +2,65 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B8ECC04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:04:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA732C6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:06:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D998B206BB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:04:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D998B206BB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 57C0120839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:06:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57C0120839
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727616AbeIKMCp (ORCPT
+        id S1727650AbeIKME1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 08:02:45 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38346 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726455AbeIKMCp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 08:02:45 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0BD2EAEC6;
-        Tue, 11 Sep 2018 07:04:51 +0000 (UTC)
-From:   Juergen Gross <jgross@suse.com>
-To:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        xen-devel@lists.xenproject.org
-Cc:     davem@davemloft.net, boris.ostrovsky@oracle.com,
-        Juergen Gross <jgross@suse.com>, stable@vger.kernel.org
-Subject: [PATCH] xen/netfront: don't bug in case of too many frags
-Date:   Tue, 11 Sep 2018 09:04:48 +0200
-Message-Id: <20180911070448.3958-1-jgross@suse.com>
-X-Mailer: git-send-email 2.16.4
+        Tue, 11 Sep 2018 08:04:27 -0400
+Received: from verein.lst.de ([213.95.11.211]:41259 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726325AbeIKME1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 08:04:27 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 0DDEF68BF4; Tue, 11 Sep 2018 09:10:56 +0200 (CEST)
+Date:   Tue, 11 Sep 2018 09:10:55 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org,
+        Stephen Bates <sbates@raithlin.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Subject: Re: [PATCH v5 07/13] block: Add PCI P2P flag for request queue and
+ check support for requests
+Message-ID: <20180911071055.GA6609@lst.de>
+References: <20180905201152.GA1893@lst.de> <eb42fb94-9da6-955b-8524-0a0f5ac4bd19@deltatee.com> <2a3394bd-5f13-4818-43f4-dfc61f501e05@kernel.dk> <e3ef26e6-6c8d-25b8-fa64-14594a51263c@deltatee.com> <3af4d1d4-da07-c0a6-8464-9ddc1378f2f4@kernel.dk> <f9e660cd-b597-bb6e-56a2-82fe71cb3649@deltatee.com> <34d9b2f7-9e6d-4a0a-77e5-ec0e99610f5c@kernel.dk> <c41c802c-9235-5383-2dfa-af9c1553f11b@deltatee.com> <20180910164144.GA24591@lst.de> <fc4f14ae-9490-f901-a60c-2bd1522ef137@deltatee.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fc4f14ae-9490-f901-a60c-2bd1522ef137@deltatee.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 57f230ab04d291 ("xen/netfront: raise max number of slots in
-xennet_get_responses()") raised the max number of allowed slots by one.
-This seems to be problematic in some configurations with netback using
-a larger MAX_SKB_FRAGS value (e.g. old Linux kernel with MAX_SKB_FRAGS
-defined as 18 instead of nowadays 17).
+On Mon, Sep 10, 2018 at 12:11:01PM -0600, Logan Gunthorpe wrote:
+> > I just saw you added that "helper" in your tree.  Please don't, it is
+> > a negative value add as it doesn't help anything with the checking.
+> 
+> Alright, so what's the consensus then? Just have a check in
+> nvmet_bdev_execute_rw() to add REQ_NOMERGE when appropriate?
 
-Instead of BUG_ON() in this case just fall back to retransmission.
-
-Fixes: 57f230ab04d291 ("xen/netfront: raise max number of slots in xennet_get_responses()")
-Cc: stable@vger.kernel.org
-Signed-off-by: Juergen Gross <jgross@suse.com>
----
- drivers/net/xen-netfront.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/xen-netfront.c b/drivers/net/xen-netfront.c
-index 9407acbd19a9..f17f602e6171 100644
---- a/drivers/net/xen-netfront.c
-+++ b/drivers/net/xen-netfront.c
-@@ -908,7 +908,11 @@ static RING_IDX xennet_fill_frags(struct netfront_queue *queue,
- 			BUG_ON(pull_to <= skb_headlen(skb));
- 			__pskb_pull_tail(skb, pull_to - skb_headlen(skb));
- 		}
--		BUG_ON(skb_shinfo(skb)->nr_frags >= MAX_SKB_FRAGS);
-+		if (unlikely(skb_shinfo(skb)->nr_frags >= MAX_SKB_FRAGS)) {
-+			queue->rx.rsp_cons = ++cons;
-+			kfree_skb(nskb);
-+			return ~0U;
-+		}
- 
- 		skb_add_rx_frag(skb, skb_shinfo(skb)->nr_frags,
- 				skb_frag_page(nfrag),
-@@ -1045,6 +1049,8 @@ static int xennet_poll(struct napi_struct *napi, int budget)
- 		skb->len += rx->status;
- 
- 		i = xennet_fill_frags(queue, skb, &tmpq);
-+		if (unlikely(i == ~0U))
-+			goto err;
- 
- 		if (rx->flags & XEN_NETRXF_csum_blank)
- 			skb->ip_summed = CHECKSUM_PARTIAL;
--- 
-2.16.4
-
+Yes.
