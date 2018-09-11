@@ -4,133 +4,127 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75AF2C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:34:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98751C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:35:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17B5020839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:34:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CD9220839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:35:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MnCTFfKi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17B5020839
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="OSSDbh3p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CD9220839
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727384AbeIKOc3 (ORCPT
+        id S1727006AbeIKOdd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 10:32:29 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:33851 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726670AbeIKOc3 (ORCPT
+        Tue, 11 Sep 2018 10:33:33 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:37070 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726569AbeIKOdd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 10:32:29 -0400
-Received: by mail-wr1-f68.google.com with SMTP id g33-v6so25075199wrd.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 02:34:00 -0700 (PDT)
+        Tue, 11 Sep 2018 10:33:33 -0400
+Received: by mail-ed1-f67.google.com with SMTP id a20-v6so18708725edd.4
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 02:35:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=amarulasolutions.com; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=2sK79dQY5jgBb+luqTUqyaZCQIxZDCHZVfzIFMbfYQ4=;
-        b=MnCTFfKij+zu/cRbuLkdVzB+NYcg0hSowSfRvYTZWAObtJ1zAe3xM88+tUfkQB187g
-         O/0F1Ptmrc3bWb+qV1cYziIGK2dRwO+8ZjBu3PZoFiRTiSPfgOU2VVjEoiZzBLCKkoLz
-         5PNslPpGXlUg82KE0/HgFKEKOtbV+coUZeHl4=
+         :content-disposition:in-reply-to:user-agent;
+        bh=mxIiK9oZkBFPnxjb/Wh9/HRumnuxC2N69y1qwK1GLf0=;
+        b=OSSDbh3p3oi10hDsfZk/1vFWNYuQaPnHka9+AqSVJKcZvlUBIabhF+GeQyBCNGrYrq
+         /+99gI7Bew0nw+BP7VXQEVbZgtAQgb8kcakX+NR9zJzOz89EPb3LuByrTbXl1KkIlwC5
+         FOwBc07B31TrgOPgtDy6B8R5lgbNPULR/ZcbA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=2sK79dQY5jgBb+luqTUqyaZCQIxZDCHZVfzIFMbfYQ4=;
-        b=VYbJVQx5QdxB/44oXQ4mD+WkI8E/62UxaNgIoUEra3phQ+5GStZ1IZhdhT03ALc47N
-         tAzlXjNE0r/H4UdsONnZ3X71oRqxOXxVzMCp6zOoB7aYAgh1FU3bZt4l/x4MUJS3au+D
-         jy2YuhysG6BiecIm/3C5CltzSOfrLMojoYcUINZ+gkfZLSXjIB9jjPFt61mMPl/r+zGa
-         THDKIlC91udI8z4A9goNuzqZ7Xe+sJnRsFqhSRUBBrClnpnOLE+r7NaTTPJxTgcmpRCq
-         9KUrLIUO4sZIUokziE4l5a9VwBXxm4Xk5Go2d4Ayp/BwLIkwkVyLmnJwxKiNuvKDyolz
-         +b5w==
-X-Gm-Message-State: APzg51DGWjVse0Qa7/8Cg3As9Vn5H5IPACdKN5heik1rWI2JQgaFtTQE
-        9AcFfhvgku3VkWTNIfsnWFopSw==
-X-Google-Smtp-Source: ANB0VdYMBWgBSxU4VW5Q6ZWIpxt0XD3PAc3Of3qiVKc/KM6px/Dbi1LH1EPUHVz1vNEdfP9d1JEXAQ==
-X-Received: by 2002:a1c:bd89:: with SMTP id n131-v6mr727964wmf.97.1536658439637;
-        Tue, 11 Sep 2018 02:33:59 -0700 (PDT)
-Received: from dell ([2.27.167.7])
-        by smtp.gmail.com with ESMTPSA id m68-v6sm934453wmb.10.2018.09.11.02.33.58
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mxIiK9oZkBFPnxjb/Wh9/HRumnuxC2N69y1qwK1GLf0=;
+        b=HM7ZsHLE5Vp+LcG2BBAEltsGhum8tjaGHXYhgfxLU+nYt/bJuVb2991RGg7zmDhtMd
+         G26pkW0bjJ4yRxaRyxV2XzFY4w/HDSdTX3ORVJHeQlqr8ziGykdDc6AyNKwjhIi4VILj
+         bosLHqbqMDEJFGr71ZYsDx00wunuE57JbaApL+M9pQnSl3qdYvYRH79kbhpqzdS9Z0B/
+         PRiDQlqxlgVgMEp+0whT3Kmkz69TGySGe2PUttUtEFujoSiGVTS6kdf0Q772D0q/2VlV
+         xz9j0RG1oBCXTkFaYLpwMqjy4G1z0cyQhP3rlWba+zVUcWIbsC4em0TL/ImGZMMGK2d3
+         m+nw==
+X-Gm-Message-State: APzg51CJ7gSLb5JRaphwKsHoL5Lh3im9w7pQIuVCRZgzvWk5tvL26h3v
+        L+Tth6OaBfDp32XakRoBcSqHLA==
+X-Google-Smtp-Source: ANB0VdZU/HCpNP8sYP4eGg3AAkEiwSTEXSAcGU+54bN4oFr93HrUTyxkCsp5XsKWNPWqLsXwObd2Vg==
+X-Received: by 2002:a50:af03:: with SMTP id g3-v6mr28514971edd.220.1536658503239;
+        Tue, 11 Sep 2018 02:35:03 -0700 (PDT)
+Received: from andrea (85.100.broadband17.iol.cz. [109.80.100.85])
+        by smtp.gmail.com with ESMTPSA id p28-v6sm13963903eda.85.2018.09.11.02.35.01
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Sep 2018 02:33:58 -0700 (PDT)
-Date:   Tue, 11 Sep 2018 10:33:56 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Radu Pirea <radu_nicolae.pirea@upb.ro>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-        gregkh@linuxfoundation.org, broonie@kernel.org, jslaby@suse.com,
-        richard.genoud@gmail.com, davem@davemloft.net,
-        mchehab+samsung@kernel.org, akpm@linux-foundation.org,
-        arnd@arndb.de, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-spi@vger.kernel.org
-Subject: Re: [PATCH v12 0/6] Driver for at91 usart in spi mode
-Message-ID: <20180911093356.GE4185@dell>
-References: <20180904111310.4049-1-radu_nicolae.pirea@upb.ro>
+        Tue, 11 Sep 2018 02:35:02 -0700 (PDT)
+Date:   Tue, 11 Sep 2018 11:34:56 +0200
+From:   Andrea Parri <andrea.parri@amarulasolutions.com>
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     Patrick Bellasi <patrick.bellasi@arm.com>, peterz@infradead.org,
+        rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
+        mingo@redhat.com, dietmar.eggemann@arm.com,
+        morten.rasmussen@arm.com, chris.redpath@arm.com,
+        valentin.schneider@arm.com, vincent.guittot@linaro.org,
+        thara.gopinath@linaro.org, viresh.kumar@linaro.org,
+        tkjos@google.com, joel@joelfernandes.org, smuckle@google.com,
+        adharmap@codeaurora.org, skannan@codeaurora.org,
+        pkondeti@codeaurora.org, juri.lelli@redhat.com,
+        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
+        currojerez@riseup.net, javi.merino@kernel.org
+Subject: Re: [PATCH v6 03/14] PM: Introduce an Energy Model management
+ framework
+Message-ID: <20180911093456.GA27352@andrea>
+References: <20180820094420.26590-1-quentin.perret@arm.com>
+ <20180820094420.26590-4-quentin.perret@arm.com>
+ <20180829100435.GP2960@e110439-lin>
+ <20180829132811.iacfltcos6kfgp7e@queper01-lin>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180904111310.4049-1-radu_nicolae.pirea@upb.ro>
+In-Reply-To: <20180829132811.iacfltcos6kfgp7e@queper01-lin>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 04 Sep 2018, Radu Pirea wrote:
-> Radu Pirea (6):
->   MAINTAINERS: add at91 usart mfd driver
->   dt-bindings: add binding for atmel-usart in SPI mode
->   mfd: at91-usart: added mfd driver for usart
->   MAINTAINERS: add at91 usart spi driver
->   spi: at91-usart: add driver for at91-usart as spi
->   tty/serial: atmel: change the driver to work under at91-usart mfd
+Hi Quentin,
+
+> > 1. use of a single memory barrier
+> > 
+> >    Since we are already em_pd_mutex protected, i.e. there cannot be a
+> >    concurrent writers, we can use one single memory barrier after the
+> >    loop, i.e.
+> > 
+> >         for_each_cpu(cpu, span)
+> >                 WRITE_ONCE()
+> >         smp_wmb()
+> > 
+> >    which should be just enough to ensure that all other CPUs will see
+> >    the pointer set once we release the mutex
 > 
->  .../bindings/{serial => mfd}/atmel-usart.txt  |  25 +-
->  MAINTAINERS                                   |  16 +
->  drivers/mfd/Kconfig                           |   9 +
->  drivers/mfd/Makefile                          |   1 +
->  drivers/mfd/at91-usart.c                      |  71 +++
->  drivers/spi/Kconfig                           |   8 +
->  drivers/spi/Makefile                          |   1 +
->  drivers/spi/spi-at91-usart.c                  | 432 ++++++++++++++++++
->  drivers/tty/serial/Kconfig                    |   1 +
->  drivers/tty/serial/atmel_serial.c             |  42 +-
->  include/dt-bindings/mfd/at91-usart.h          |  17 +
->  11 files changed, 606 insertions(+), 17 deletions(-)
->  rename Documentation/devicetree/bindings/{serial => mfd}/atmel-usart.txt (76%)
->  create mode 100644 drivers/mfd/at91-usart.c
->  create mode 100644 drivers/spi/spi-at91-usart.c
->  create mode 100644 include/dt-bindings/mfd/at91-usart.h
+> Right, I'm actually wondering if the memory barrier is needed at all ...
+> The mutex lock()/unlock() should already ensure the ordering I want no ?
+> 
+> WRITE_ONCE() should prevent load/store tearing with concurrent em_cpu_get(),
+> and the release/acquire semantics of mutex lock/unlock should be enough to
+> serialize the memory accesses of concurrent em_register_perf_domain() calls
+> properly ...
+> 
+> Hmm, let me read memory-barriers.txt again.
 
-Seeing as this patch-set has caused some issues this morning, I took
-the liberty to peruse back into its history to figure out where things
-started to go wrong.  I also re-reviewed the MFD driver - and I'm glad
-I did!
+FYI, the directory "tools/memory-model/" provides an "automated
+memory-barriers.txt": in short, you encode your "memory ordering
+questions" into "litmus tests" to be passed to the tool/simulator;
+the tool will then answer with "Yes/No" (plus other information).
 
-My Acked-by has been attached to the MFD portion since v5, which is
-why the code hasn't caught my eye before today.  I reviewed the
-relocation of the *binding document* (serial => mfd with no changes)
-in v4 and nothing else.  It appears as though you mistakenly added it
-to the *MFD driver* instead.  This explains my confusion in v10 when I
-told you I'd already reviewed the binding document.
+Some preparation is required to set up and learn how to use the
+LKMM tools, but once there, I expect them to be more "efficient"
+than reading memory-barriers.txt... ;-)  Please don't hesitate
+to contact me/the LKMM maintainers if you need help with this.
 
-As I said, I have re-reviewed the MFD driver and I'm afraid to say
-that I do not like what I see.  Besides the missing header file and
-the whitespace tabbing errors, I do not agree with the implementation.
-Using MFD as a shim to hack around driver selection is not a valid
-use-case.
+You'd need some info in order to write down a _well-formed litmus
+test, e.g., matching barrier/synchronization and interested memory
+accesses on the reader side (IAC, the replacement "store-release
+-> store-once+smp_wmb" discussed above is suspicious...).
 
-What's stopping you from just using the compatible string directly to
-select which driver you need to probe?
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+  Andrea
