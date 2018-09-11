@@ -2,189 +2,302 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A0F9C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 22:09:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B85A5C4646A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 22:10:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F113620880
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 22:09:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F113620880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
+	by mail.kernel.org (Postfix) with ESMTP id 454BF2087F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 22:10:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="120kHR6Q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 454BF2087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728315AbeILDKX (ORCPT
+        id S1728318AbeILDLV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 23:10:23 -0400
-Received: from ipmail06.adl2.internode.on.net ([150.101.137.129]:7464 "EHLO
-        ipmail06.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727796AbeILDKX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 23:10:23 -0400
-Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
-  by ipmail06.adl2.internode.on.net with ESMTP; 12 Sep 2018 07:38:58 +0930
-Received: from dave by dastard with local (Exim 4.80)
-        (envelope-from <david@fromorbit.com>)
-        id 1fzqq9-0003uG-HK; Wed, 12 Sep 2018 08:08:57 +1000
-Date:   Wed, 12 Sep 2018 08:08:57 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-doc@vger.kernel.org, "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Larry Woodman <lwoodman@redhat.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Wangkai (Kevin C)" <wangkai86@huawei.com>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [PATCH v3 3/4] fs/dcache: Track & report number of negative
- dentries
-Message-ID: <20180911220857.GG5631@dastard>
-References: <1536693506-11949-1-git-send-email-longman@redhat.com>
- <1536693506-11949-4-git-send-email-longman@redhat.com>
+        Tue, 11 Sep 2018 23:11:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46852 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727796AbeILDLV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 23:11:21 -0400
+Received: from localhost (unknown [104.132.1.88])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 455C220866;
+        Tue, 11 Sep 2018 22:09:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1536703799;
+        bh=J60I/VCINHhiZISwfIte2VHfUr50qLSGOrPTOewuQfU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=120kHR6Qkiv8SbEEomSjkB9dEvivP1dBxUq3K0yEf03RdURR8CphoE4sMHIfplKLe
+         jd5Nh6j0OyUgbq1mMr/T8lun/88nbj9KJO+KhuagMHdZ6bhtIHJMHZTUoHRQZkfNZ0
+         dN72U++C8gG4fze6hyfJon4csJnDmzM/2m9KZXXg=
+Date:   Tue, 11 Sep 2018 15:09:58 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <chao@kernel.org>
+Cc:     Sahitya Tummala <stummala@codeaurora.org>,
+        Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: add new idle interval timing for
+ discard and gc paths
+Message-ID: <20180911220958.GC55456@jaegeuk-macbookpro.roam.corp.google.com>
+References: <1536551252-24256-1-git-send-email-stummala@codeaurora.org>
+ <5d74d46b-8141-f048-9c0a-459c82b2c449@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1536693506-11949-4-git-send-email-longman@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <5d74d46b-8141-f048-9c0a-459c82b2c449@kernel.org>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 11, 2018 at 03:18:25PM -0400, Waiman Long wrote:
-> The current dentry number tracking code doesn't distinguish between
-> positive & negative dentries. It just reports the total number of
-> dentries in the LRU lists.
+On 09/11, Chao Yu wrote:
+> On 2018/9/10 11:47, Sahitya Tummala wrote:
+> > This helps to control the frequency of submission of discard and
+> > GC requests independently, based on the need. The sleep timing of
+> > GC thread is now aligned with this idle time when the dev is busy,
+> > to avoid unnecessary periodic wakeups.
+> > 
+> > Suggested-by: Chao Yu <yuchao0@huawei.com>
+> > Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+> > ---
+> > v2:
+> > -fix __issue_discard_cmd_orderly() path
+> > 
+> >  Documentation/ABI/testing/sysfs-fs-f2fs | 17 ++++++++++++++++-
+> >  fs/f2fs/f2fs.h                          | 31 +++++++++++++++++++++++++++----
+> >  fs/f2fs/gc.c                            |  6 ++++--
+> >  fs/f2fs/segment.c                       | 16 ++++++----------
+> >  fs/f2fs/super.c                         |  2 ++
+> >  fs/f2fs/sysfs.c                         |  5 +++++
+> >  6 files changed, 60 insertions(+), 17 deletions(-)
+> > 
+> > diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+> > index 94a24ae..3ac4177 100644
+> > --- a/Documentation/ABI/testing/sysfs-fs-f2fs
+> > +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+> > @@ -121,7 +121,22 @@ What:		/sys/fs/f2fs/<disk>/idle_interval
+> >  Date:		January 2016
+> >  Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
+> >  Description:
+> > -		 Controls the idle timing.
+> > +		 Controls the idle timing for all paths other than
+> > +		 discard and gc path.
+> > +
+> > +What:		/sys/fs/f2fs/<disk>/discard_idle_interval
+> > +Date:		September 2018
+> > +Contact:	"Chao Yu" <yuchao0@huawei.com>
+> > +Contact:	"Sahitya Tummala" <stummala@codeaurora.org>
+> > +Description:
+> > +		 Controls the idle timing for discard path.
+> > +
+> > +What:		/sys/fs/f2fs/<disk>/gc_idle_interval
+> > +Date:		September 2018
+> > +Contact:	"Chao Yu" <yuchao0@huawei.com>
+> > +Contact:	"Sahitya Tummala" <stummala@codeaurora.org>
+> > +Description:
+> > +		 Controls the idle timing for gc path.
+> >  
+> >  What:		/sys/fs/f2fs/<disk>/iostat_enable
+> >  Date:		August 2017
+> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > index abf9256..6070681 100644
+> > --- a/fs/f2fs/f2fs.h
+> > +++ b/fs/f2fs/f2fs.h
+> > @@ -1093,6 +1093,8 @@ enum {
+> >  enum {
+> >  	CP_TIME,
+> >  	REQ_TIME,
+> > +	DISCARD_TIME,
+> > +	GC_TIME,
+> >  	MAX_TIME,
+> >  };
+> >  
+> > @@ -1347,14 +1349,35 @@ static inline void f2fs_update_time(struct f2fs_sb_info *sbi, int type)
+> >  	sbi->last_time[type] = jiffies;
+> >  }
+> >  
+> > -static inline bool f2fs_time_over(struct f2fs_sb_info *sbi, int type)
+> > +static inline bool f2fs_time_over_cp(struct f2fs_sb_info *sbi)
+
+I don't see why we need this separately.
+
+> > +{
+> > +	unsigned long interval = sbi->interval_time[CP_TIME] * HZ;
+> > +
+> > +	return time_after(jiffies, sbi->last_time[CP_TIME] + interval);
+> > +}
+> > +
+> > +static inline bool f2fs_time_over_req(struct f2fs_sb_info *sbi, int type)
+> > +{
+> > +	unsigned long interval = sbi->interval_time[type] * HZ;
+> > +
+> > +	return time_after(jiffies, sbi->last_time[REQ_TIME] + interval);
+> > +}
+> > +
+> > +static inline unsigned int f2fs_get_wait_time(struct f2fs_sb_info *sbi,
+> > +						int type)
+
+f2fs_time_to_wait()?
+
+> >  {
+> >  	unsigned long interval = sbi->interval_time[type] * HZ;
+> > +	unsigned int wait_ms = 0;
+> > +	long delta;
+> > +
+> > +	delta = (sbi->last_time[REQ_TIME] + interval) - jiffies;
+> > +	if (delta > 0)
+> > +		wait_ms = jiffies_to_msecs(delta);
+> >  
+> > -	return time_after(jiffies, sbi->last_time[type] + interval);
+> > +	return wait_ms;
+> >  }
+> >  
+> > -static inline bool is_idle(struct f2fs_sb_info *sbi)
+> > +static inline bool is_idle(struct f2fs_sb_info *sbi, int type)
+> >  {
+> >  	struct block_device *bdev = sbi->sb->s_bdev;
+> >  	struct request_queue *q = bdev_get_queue(bdev);
+> > @@ -1363,7 +1386,7 @@ static inline bool is_idle(struct f2fs_sb_info *sbi)
+> >  	if (rl->count[BLK_RW_SYNC] || rl->count[BLK_RW_ASYNC])
+> >  		return false;
+> >  
+> > -	return f2fs_time_over(sbi, REQ_TIME);
+> > +	return f2fs_time_over_req(sbi, type);
+> >  }
+> >  
+> >  /*
+> > diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> > index 5c8d004..c0bafea 100644
+> > --- a/fs/f2fs/gc.c
+> > +++ b/fs/f2fs/gc.c
+> > @@ -83,8 +83,10 @@ static int gc_thread_func(void *data)
+> >  		if (!mutex_trylock(&sbi->gc_mutex))
+> >  			goto next;
+> >  
+> > -		if (!is_idle(sbi)) {
+> > -			increase_sleep_time(gc_th, &wait_ms);
+> > +		if (!is_idle(sbi, GC_TIME)) {
+> > +			wait_ms = f2fs_get_wait_time(sbi, GC_TIME);
 > 
-> As excessive number of negative dentries can have an impact on system
-> performance, it will be wise to track the number of positive and
-> negative dentries separately.
+> It seems this patch changes the method of increasing wait_ms here, if device is
+> busy, we may wake up GC thread earlier than before, not sure we should do this.
 > 
-> This patch adds tracking for the total number of negative dentries
-> in the system LRU lists and reports it in the 7th field in the
+> To Jaegeuk, how do you think of this?
 
-Not the 7th field anymore.
+Yes, please let us discuss this in another patch.
 
-> /proc/sys/fs/dentry-state file. The number, however, does not include
-> negative dentries that are in flight but not in the LRU yet as well
-> as those in the shrinker lists.
 > 
-> The number of positive dentries in the LRU lists can be roughly found
-> by subtracting the number of negative dentries from the unused count.
+> Thanks,
 > 
-> Matthew Wilcox had confirmed that since the introduction of the
-> dentry_stat structure in 2.1.60, the dummy array was there, probably for
-> future extension. They were not replacements of pre-existing fields. So
-> no sane applications that read the value of /proc/sys/fs/dentry-state
-> will do dummy thing if the last 2 fields of the sysctl parameter are
-> not zero. IOW, it will be safe to use one of the dummy array entry for
-> negative dentry count.
-> 
-> Signed-off-by: Waiman Long <longman@redhat.com>
-....
-> ---
->  Documentation/sysctl/fs.txt | 26 ++++++++++++++++----------
->  fs/dcache.c                 | 31 +++++++++++++++++++++++++++++++
->  include/linux/dcache.h      |  7 ++++---
->  3 files changed, 51 insertions(+), 13 deletions(-)
-> 
-> diff --git a/Documentation/sysctl/fs.txt b/Documentation/sysctl/fs.txt
-> index 819caf8..3b4f441 100644
-> --- a/Documentation/sysctl/fs.txt
-> +++ b/Documentation/sysctl/fs.txt
-> @@ -56,26 +56,32 @@ of any kernel data structures.
->  
->  dentry-state:
->  
-> -From linux/fs/dentry.c:
-> +From linux/include/linux/dcache.h:
->  --------------------------------------------------------------
-> -struct {
-> +struct dentry_stat_t dentry_stat {
->          int nr_dentry;
->          int nr_unused;
->          int age_limit;         /* age in seconds */
->          int want_pages;        /* pages requested by system */
-> -        int dummy[2];
-> -} dentry_stat = {0, 0, 45, 0,};
-> --------------------------------------------------------------- 
-> -
-> -Dentries are dynamically allocated and deallocated, and
-> -nr_dentry seems to be 0 all the time. Hence it's safe to
-> -assume that only nr_unused, age_limit and want_pages are
-> -used. Nr_unused seems to be exactly what its name says.
-> +        int nr_negative;       /* # of unused negative dentries */
-> +        int dummy;	       /* Reserved */
-
-/* reserved for future use */
-
-....
-> @@ -331,6 +343,8 @@ static inline void __d_clear_type_and_inode(struct dentry *dentry)
->  	flags &= ~(DCACHE_ENTRY_TYPE | DCACHE_FALLTHRU);
->  	WRITE_ONCE(dentry->d_flags, flags);
->  	dentry->d_inode = NULL;
-> +	if (dentry->d_flags & DCACHE_LRU_LIST)
-> +		this_cpu_inc(nr_dentry_negative);
->  }
->  
->  static void dentry_free(struct dentry *dentry)
-> @@ -385,6 +399,10 @@ static void dentry_unlink_inode(struct dentry * dentry)
->   * The per-cpu "nr_dentry_unused" counters are updated with
->   * the DCACHE_LRU_LIST bit.
->   *
-> + * The per-cpu "nr_dentry_negative" counters are only updated
-> + * when deleted or added to the per-superblock LRU list, not
-> + * on the shrink list.
-
-This tells us what the code is doing, but it doesn't explain why
-a different accounting method to nr_dentry_unused was chosen. What
-constraints require the accounting to be done this way rather than
-just mirror the unused dentry accounting?
-
-> @@ -1836,6 +1862,11 @@ static void __d_instantiate(struct dentry *dentry, struct inode *inode)
->  	WARN_ON(d_in_lookup(dentry));
->  
->  	spin_lock(&dentry->d_lock);
-> +	/*
-> +	 * Decrement negative dentry count if it was in the LRU list.
-> +	 */
-> +	if (dentry->d_flags & DCACHE_LRU_LIST)
-> +		this_cpu_dec(nr_dentry_negative);
->  	hlist_add_head(&dentry->d_u.d_alias, &inode->i_dentry);
->  	raw_write_seqcount_begin(&dentry->d_seq);
->  	__d_set_inode_and_type(dentry, inode, add_flags);
-> diff --git a/include/linux/dcache.h b/include/linux/dcache.h
-> index ef4b70f..73ff9f0 100644
-> --- a/include/linux/dcache.h
-> +++ b/include/linux/dcache.h
-> @@ -62,9 +62,10 @@ struct qstr {
->  struct dentry_stat_t {
->  	long nr_dentry;
->  	long nr_unused;
-> -	long age_limit;          /* age in seconds */
-> -	long want_pages;         /* pages requested by system */
-> -	long dummy[2];
-> +	long age_limit;		/* age in seconds */
-> +	long want_pages;	/* pages requested by system */
-> +	long nr_negative;	/* # of unused negative dentries */
-> +	long dummy;		/* Reserved */
-
-/* reserved for future use */
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+> > +			if (!wait_ms)
+> > +				increase_sleep_time(gc_th, &wait_ms);
+> >  			mutex_unlock(&sbi->gc_mutex);
+> >  			goto next;
+> >  		}
+> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> > index c5024f8..2d15733 100644
+> > --- a/fs/f2fs/segment.c
+> > +++ b/fs/f2fs/segment.c
+> > @@ -511,7 +511,7 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
+> >  	else
+> >  		f2fs_build_free_nids(sbi, false, false);
+> >  
+> > -	if (!is_idle(sbi) &&
+> > +	if (!is_idle(sbi, REQ_TIME) &&
+> >  		(!excess_dirty_nats(sbi) && !excess_dirty_nodes(sbi)))
+> >  		return;
+> >  
+> > @@ -521,7 +521,7 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
+> >  			excess_prefree_segs(sbi) ||
+> >  			excess_dirty_nats(sbi) ||
+> >  			excess_dirty_nodes(sbi) ||
+> > -			f2fs_time_over(sbi, CP_TIME)) {
+> > +			f2fs_time_over_cp(sbi)) {
+> >  		if (test_opt(sbi, DATA_FLUSH)) {
+> >  			struct blk_plug plug;
+> >  
+> > @@ -1311,7 +1311,7 @@ static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
+> >  		if (dc->state != D_PREP)
+> >  			goto next;
+> >  
+> > -		if (dpolicy->io_aware && !is_idle(sbi)) {
+> > +		if (dpolicy->io_aware && !is_idle(sbi, DISCARD_TIME)) {
+> >  			io_interrupted = true;
+> >  			break;
+> >  		}
+> > @@ -1371,7 +1371,7 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+> >  			f2fs_bug_on(sbi, dc->state != D_PREP);
+> >  
+> >  			if (dpolicy->io_aware && i < dpolicy->io_aware_gran &&
+> > -								!is_idle(sbi)) {
+> > +						!is_idle(sbi, DISCARD_TIME)) {
+> >  				io_interrupted = true;
+> >  				break;
+> >  			}
+> > @@ -1564,8 +1564,6 @@ static int issue_discard_thread(void *data)
+> >  	struct discard_policy dpolicy;
+> >  	unsigned int wait_ms = DEF_MIN_DISCARD_ISSUE_TIME;
+> >  	int issued;
+> > -	unsigned long interval = sbi->interval_time[REQ_TIME] * HZ;
+> > -	long delta;
+> >  
+> >  	set_freezable();
+> >  
+> > @@ -1602,10 +1600,8 @@ static int issue_discard_thread(void *data)
+> >  			__wait_all_discard_cmd(sbi, &dpolicy);
+> >  			wait_ms = dpolicy.min_interval;
+> >  		} else if (issued == -1){
+> > -			delta = (sbi->last_time[REQ_TIME] + interval) - jiffies;
+> > -			if (delta > 0)
+> > -				wait_ms = jiffies_to_msecs(delta);
+> > -			else
+> > +			wait_ms = f2fs_get_wait_time(sbi, DISCARD_TIME);
+> > +			if (!wait_ms)
+> >  				wait_ms = dpolicy.mid_interval;
+> >  		} else {
+> >  			wait_ms = dpolicy.max_interval;
+> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> > index 896b885..1706f45 100644
+> > --- a/fs/f2fs/super.c
+> > +++ b/fs/f2fs/super.c
+> > @@ -2423,6 +2423,8 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
+> >  	sbi->dir_level = DEF_DIR_LEVEL;
+> >  	sbi->interval_time[CP_TIME] = DEF_CP_INTERVAL;
+> >  	sbi->interval_time[REQ_TIME] = DEF_IDLE_INTERVAL;
+> > +	sbi->interval_time[DISCARD_TIME] = DEF_IDLE_INTERVAL;
+> > +	sbi->interval_time[GC_TIME] = DEF_IDLE_INTERVAL;
+> >  	clear_sbi_flag(sbi, SBI_NEED_FSCK);
+> >  
+> >  	for (i = 0; i < NR_COUNT_TYPE; i++)
+> > diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+> > index 81c0e53..0afe99c 100644
+> > --- a/fs/f2fs/sysfs.c
+> > +++ b/fs/f2fs/sysfs.c
+> > @@ -407,6 +407,9 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
+> >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, dir_level, dir_level);
+> >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, cp_interval, interval_time[CP_TIME]);
+> >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, idle_interval, interval_time[REQ_TIME]);
+> > +F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, discard_idle_interval,
+> > +					interval_time[DISCARD_TIME]);
+> > +F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_idle_interval, interval_time[GC_TIME]);
+> >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, iostat_enable, iostat_enable);
+> >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, readdir_ra, readdir_ra);
+> >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_pin_file_thresh, gc_pin_file_threshold);
+> > @@ -460,6 +463,8 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
+> >  	ATTR_LIST(dirty_nats_ratio),
+> >  	ATTR_LIST(cp_interval),
+> >  	ATTR_LIST(idle_interval),
+> > +	ATTR_LIST(discard_idle_interval),
+> > +	ATTR_LIST(gc_idle_interval),
+> >  	ATTR_LIST(iostat_enable),
+> >  	ATTR_LIST(readdir_ra),
+> >  	ATTR_LIST(gc_pin_file_thresh),
+> > 
