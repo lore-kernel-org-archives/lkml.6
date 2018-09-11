@@ -2,110 +2,107 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA5F0C6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 08:51:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4BFCC04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 08:51:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 718862086A
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 08:51:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 718862086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 9BDE32086A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 08:51:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dT8k08kx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BDE32086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726945AbeIKNte (ORCPT
+        id S1727358AbeIKNtt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 09:49:34 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56496 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726529AbeIKNte (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 09:49:34 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 00DAFAF5C;
-        Tue, 11 Sep 2018 08:51:13 +0000 (UTC)
-Subject: Re: [PATCH] mm, thp: relax __GFP_THISNODE for MADV_HUGEPAGE mappings
-To:     David Rientjes <rientjes@google.com>,
-        Michal Hocko <mhocko@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Zi Yan <zi.yan@cs.rutgers.edu>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Stefan Priebe <s.priebe@profihost.ag>
-References: <20180907130550.11885-1-mhocko@kernel.org>
- <alpine.DEB.2.21.1809101253080.177111@chino.kir.corp.google.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <21336327-2465-ba55-e721-4e48f782dff1@suse.cz>
-Date:   Tue, 11 Sep 2018 10:51:12 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 11 Sep 2018 09:49:49 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:47100 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726519AbeIKNtt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 09:49:49 -0400
+Received: by mail-wr1-f66.google.com with SMTP id a108-v6so24724429wrc.13
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 01:51:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=3JkOBshBkPnoGU3ZFnX2CBww7ePskOJ06sVlq7xA4Tw=;
+        b=dT8k08kxcwNMy0ZRYi6QZ2EX4BreGVEQk8yT5DTSfeAX93gr8kc9mmBawbJvJr8cS0
+         Uu+ssPOL4OuY58NY+xvQiE9OCAGBV6R66Q3AYNhL/xctBq0+9lzydF0IgOwZ2orro5U7
+         ZnU5CbytsjVtpQHUWGqzXKC5xelgjcMt9VTkg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=3JkOBshBkPnoGU3ZFnX2CBww7ePskOJ06sVlq7xA4Tw=;
+        b=crzeyi2jJyfPCoRZAWj5QBaK8JKpjp06tpzeMnAjSWcySz5WXhjku2mnbHxsaGtj8B
+         uMxiSpd3MKOzwvCVMSLc/+OiNSzU8HtEg+IL2sZBNauMQtf6bO5a9+sBdH9eiK9W43LL
+         dWVbzGKSU3akxc7bbasLjKfBMm5ePZ4YjljIYUd8oW9KISKfmesk62bMfGHWaU2A9iy0
+         fPR45ul7xw2fsEw4bHZz/Fs8JXN4yW0DZWCho5d669agGGHeD4rLdB9vf7iIa5aWYgdd
+         9tj19qgUP7JA6jViRutGsTa+/zQfuuE206liHPxcTSQfAspOymVV3luswIJcZrBS16nb
+         wFRA==
+X-Gm-Message-State: APzg51D6wDnwYejCKBVXhz26NU36VZHICMcjCDF5ZK67aowOj4CntklQ
+        Ahi/G+bqBTEasuLrVvpFUrznPg==
+X-Google-Smtp-Source: ANB0VdbYvL77SxwsPdijp0dxGfpHmAJ6bFqfRc8AzBTaXTQUvHVh+Oloo2gj54X/0+A363Xp5bcFoQ==
+X-Received: by 2002:a1c:a94d:: with SMTP id s74-v6mr596784wme.39.1536655889961;
+        Tue, 11 Sep 2018 01:51:29 -0700 (PDT)
+Received: from dell ([2.27.167.7])
+        by smtp.gmail.com with ESMTPSA id s24-v6sm324458wmc.7.2018.09.11.01.51.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 11 Sep 2018 01:51:29 -0700 (PDT)
+Date:   Tue, 11 Sep 2018 09:51:27 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Radu Nicolae Pirea <pirea.radu@gmail.com>
+Cc:     Radu Pirea <radu.pirea@microchip.com>, broonie@kernel.org,
+        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+        richard.genoud@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        gregkh@linuxfoundation.org, linux-spi@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [GIT PULL] Immutable branch between MFD, SPI and TTY due for the
+ v4.20 merge window
+Message-ID: <20180911085127.GD4185@dell>
+References: <20180713164736.26028-1-radu.pirea@microchip.com>
+ <20180910151803.GX28860@dell>
+ <bd9104b702feec556ed01311e9efcb96790131d0.camel@upb.ro>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1809101253080.177111@chino.kir.corp.google.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <bd9104b702feec556ed01311e9efcb96790131d0.camel@upb.ro>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/10/2018 10:08 PM, David Rientjes wrote:
-> When Andrea brought this up, I suggested that the full solution would be a 
-> MPOL_F_HUGEPAGE flag that could define thp allocation policy -- the added 
+On Tue, 11 Sep 2018, Radu Nicolae Pirea wrote:
 
-Can you elaborate on the semantics of this? You mean that a given vma
-could now have two mempolicies, where one would be for hugepages only?
-That's likely much more easy to suggest than to implement, with all uapi
-consequences...
-
-> benefit is that we could replace the thp "defrag" mode default by setting 
-> this as part of default_policy.  Right now, MADV_HUGEPAGE users are 
-> concerned about (1) getting thp when system-wide it is not default and (2) 
-> additional fault latency when direct compaction is not default.  They are 
-> not anticipating the degradation of remote access latency, so overloading 
-> the meaning of the mode is probably not a good idea.
+> Hi Lee,
 > 
+> Thank you for taking the patch series, but you didn't take the latest
+> version(v12) :)
 
+Both were marked for merging in my inbox, and since I am working
+though my (300+) post-vacation emails chronologically v11 was handled
+first.
+
+It appears as though there is an issue in the way 'struct
+of_device_id' was declared too.  The header file in which it was
+declared used to be included by proxy, however a separation has
+recently been made causing build errors.
+
+I will fix both issues and re-submit the PR.
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
