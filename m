@@ -2,193 +2,538 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CACBC04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 13:39:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB0E8C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 13:40:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 186792086A
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 13:39:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="Kp7odDSw";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="DdAEbEgY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 186792086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	by mail.kernel.org (Postfix) with ESMTP id 2EAFD2086A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 13:40:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EAFD2086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727724AbeIKSim (ORCPT
+        id S1727751AbeIKSjo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 14:38:42 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:57154 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726622AbeIKSil (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 14:38:41 -0400
-Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
-        by m0001303.ppops.net (8.16.0.22/8.16.0.22) with SMTP id w8BDbrnY013667;
-        Tue, 11 Sep 2018 06:38:59 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=NoyiQyKNoDsaBnr0GQ9ETKQXj0iJKPHWlbLZ+asYUeE=;
- b=Kp7odDSwq5VQUc9Biac8M0aChGbg0igC4tRPAu2GVLxi6QPWkaVu7aWGG4wOVRMENWxF
- JieZuez76YnadihHj1JG2flVTnM5Hb5kO9vH/7oWnX7vooUL6/PPJrKxdxAKt3giVFcl
- 2aH3RN2fk0wWz2mUU5VU/gKO4OPsUJf0r5E= 
-Received: from maileast.thefacebook.com ([199.201.65.23])
-        by m0001303.ppops.net with ESMTP id 2medxeg4rr-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 11 Sep 2018 06:38:59 -0700
-Received: from NAM03-BY2-obe.outbound.protection.outlook.com (192.168.183.28)
- by o365-in.thefacebook.com (192.168.177.29) with Microsoft SMTP Server (TLS)
- id 14.3.361.1; Tue, 11 Sep 2018 09:38:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NoyiQyKNoDsaBnr0GQ9ETKQXj0iJKPHWlbLZ+asYUeE=;
- b=DdAEbEgYWYKKQsRBF26adJ3601xB1m2xDSg/Mfb3e9JOZzjMbySkqMHpVeEhn7/Lc7M0PKJIbi5nYLLaJyMJy0TFrDJ8hwevWPibaS1nBiKJOpAtZoKbNh43eusx8btnjBwz7zBPS8GaAys8zonT9ILD0hXsPrK2SV+y0vPykzI=
-Received: from MWHPR15MB1165.namprd15.prod.outlook.com (10.175.2.19) by
- MWHPR15MB1885.namprd15.prod.outlook.com (10.174.98.23) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1122.17; Tue, 11 Sep 2018 13:38:49 +0000
-Received: from MWHPR15MB1165.namprd15.prod.outlook.com
- ([fe80::9082:c167:38a9:9705]) by MWHPR15MB1165.namprd15.prod.outlook.com
- ([fe80::9082:c167:38a9:9705%7]) with mapi id 15.20.1122.019; Tue, 11 Sep 2018
- 13:38:49 +0000
-From:   Song Liu <songliubraving@fb.com>
-To:     Jiri Olsa <jolsa@redhat.com>
-CC:     lkml <linux-kernel@vger.kernel.org>,
-        "lkp@intel.com" <lkp@intel.com>, Kernel Team <Kernel-team@fb.com>,
-        Tejun Heo <tj@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: Re: [PATCH v2 1/1] perf: Sharing PMU counters across compatible
- events
-Thread-Topic: [PATCH v2 1/1] perf: Sharing PMU counters across compatible
- events
-Thread-Index: AQHUNLn8qZjSey4G2E+jv0Hfl0L1PaTYf94AgAA7f4CAEJgQgIAB7KgA
-Date:   Tue, 11 Sep 2018 13:38:49 +0000
-Message-ID: <F3425547-3F28-44F3-8328-1CAB0FD12A96@fb.com>
-References: <20180815170313.455943-1-songliubraving@fb.com>
- <20180815170313.455943-2-songliubraving@fb.com>
- <20180830151810.GB23723@krava> <2199C5F6-31A9-46F1-8656-F63087F2C67C@fb.com>
- <20180910081531.GC31644@krava>
-In-Reply-To: <20180910081531.GC31644@krava>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3445.9.1)
-x-originating-ip: [2620:10d:c090:180::1:e80a]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR15MB1885;20:mk8L/cf/60uQ80lDXfzSI0iNh5h0svTP8cWv/LBBSkbcC9txdb4oVOwV93GZy9sQRgnN7r+9njeX5n4pd64mrD3DGWHTCDPQF5GfnphdfvvnS33SWGqdTqbIU3XLfP9TrRHfjCoBITmqrH5WXMiBUw8oZM5ml7nSqT2aPpGVz5w=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 9c4ddea7-0175-4596-ce65-08d617ebe7cf
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR15MB1885;
-x-ms-traffictypediagnostic: MWHPR15MB1885:
-x-microsoft-antispam-prvs: <MWHPR15MB1885E745333C49EAD71A29E5B3040@MWHPR15MB1885.namprd15.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(823301075)(10201501046)(3002001)(3231311)(11241501184)(944501410)(52105095)(93006095)(93001095)(149027)(150027)(6041310)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(201708071742011)(7699050);SRVR:MWHPR15MB1885;BCL:0;PCL:0;RULEID:;SRVR:MWHPR15MB1885;
-x-forefront-prvs: 0792DBEAD0
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(346002)(366004)(136003)(39860400002)(199004)(189003)(54906003)(2906002)(478600001)(97736004)(316002)(186003)(76176011)(83716003)(93886005)(57306001)(82746002)(99286004)(256004)(106356001)(4326008)(36756003)(105586002)(25786009)(68736007)(14454004)(6506007)(5660300001)(53546011)(33656002)(2900100001)(6916009)(102836004)(6246003)(81156014)(81166006)(6512007)(53936002)(8936002)(8676002)(11346002)(476003)(2616005)(6436002)(7736002)(305945005)(229853002)(5250100002)(446003)(486006)(46003)(6116002)(50226002)(6486002)(86362001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1885;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: VX/bJkMgxRatJiVLMSayuGtvVqWIOSW0gd6BByw/lsP4CB2hxEFj5RGm3EqqnwQ+4QmteAeOns7RR77SH7SCTQJvacR313vv69NfL5KO9gTw/qvKQp7lsXSPuUpbjb7SfNrNji+nzuDBfiYbmxoi5SKpmwri+9wh1XPPaMXGMpy3REbGbuvHzGyTB+WMty8maqIGiiJdFY6B/qVSd/7IaNlwk4C9YQQ5sCpNAWZACiwgxXB04JB/GD/gueNdHYZBCypB6Q3EI8u6rMqorOkxihWxojETpzD35+NxRZNb9X5BOmAoSEXRBHnnlUxVXfvm0zsl/+dxCnrCKTDYZZJeY/zE45LuqfMF01m/yXRMkHI=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2058A8806ED38144A2C143E8E6A9BE1A@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Tue, 11 Sep 2018 14:39:44 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:41536 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726622AbeIKSjo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 14:39:44 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1B8C783F3F;
+        Tue, 11 Sep 2018 13:40:22 +0000 (UTC)
+Received: from redhat.com (ovpn-116-140.phx2.redhat.com [10.3.116.140])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D5DDD10EF222;
+        Tue, 11 Sep 2018 13:40:15 +0000 (UTC)
+Date:   Tue, 11 Sep 2018 09:40:14 -0400
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Kenneth Lee <liguozhu@hisilicon.com>
+Cc:     Kenneth Lee <nek.in.cn@gmail.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>, kvm@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Zaibo Xu <xuzaibo@huawei.com>, linux-doc@vger.kernel.org,
+        Sanjay Kumar <sanjay.k.kumar@intel.com>,
+        Hao Fang <fanghao11@huawei.com>, linux-kernel@vger.kernel.org,
+        linuxarm@huawei.com, iommu@lists.linux-foundation.org,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org, Zhou Wang <wangzhou1@hisilicon.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Joerg Roedel <joro@8bytes.org>,
+        linux-accelerators@lists.ozlabs.org,
+        Lu Baolu <baolu.lu@linux.intel.com>
+Subject: Re: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
+Message-ID: <20180911134013.GA3932@redhat.com>
+References: <20180904101509.62314b67@t450s.home>
+ <20180906094532.GG230707@Turing-Arch-b>
+ <20180906133133.GA3830@redhat.com>
+ <20180907040138.GI230707@Turing-Arch-b>
+ <20180907165303.GA3519@redhat.com>
+ <20180910032809.GJ230707@Turing-Arch-b>
+ <20180910145423.GA3488@redhat.com>
+ <20180911024209.GK230707@Turing-Arch-b>
+ <20180911033358.GA4730@redhat.com>
+ <20180911064043.GA207969@Turing-Arch-b>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9c4ddea7-0175-4596-ce65-08d617ebe7cf
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Sep 2018 13:38:49.0850
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1885
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-11_07:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180911064043.GA207969@Turing-Arch-b>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 11 Sep 2018 13:40:22 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Sep 11, 2018 at 02:40:43PM +0800, Kenneth Lee wrote:
+> On Mon, Sep 10, 2018 at 11:33:59PM -0400, Jerome Glisse wrote:
+> > On Tue, Sep 11, 2018 at 10:42:09AM +0800, Kenneth Lee wrote:
+> > > On Mon, Sep 10, 2018 at 10:54:23AM -0400, Jerome Glisse wrote:
+> > > > On Mon, Sep 10, 2018 at 11:28:09AM +0800, Kenneth Lee wrote:
+> > > > > On Fri, Sep 07, 2018 at 12:53:06PM -0400, Jerome Glisse wrote:
+> > > > > > On Fri, Sep 07, 2018 at 12:01:38PM +0800, Kenneth Lee wrote:
+> > > > > > > On Thu, Sep 06, 2018 at 09:31:33AM -0400, Jerome Glisse wrote:
+> > > > > > > > On Thu, Sep 06, 2018 at 05:45:32PM +0800, Kenneth Lee wrote:
+> > > > > > > > > On Tue, Sep 04, 2018 at 10:15:09AM -0600, Alex Williamson wrote:
+> > > > > > > > > > On Tue, 4 Sep 2018 11:00:19 -0400 Jerome Glisse <jglisse@redhat.com> wrote:
+> > > > > > > > > > > On Mon, Sep 03, 2018 at 08:51:57AM +0800, Kenneth Lee wrote:
+> > > > 
+> > > > [...]
+> > > > 
+> > > > > > > I took a look at i915_gem_execbuffer_ioctl(). It seems it "copy_from_user" the
+> > > > > > > user memory to the kernel. That is not what we need. What we try to get is: the
+> > > > > > > user application do something on its data, and push it away to the accelerator,
+> > > > > > > and says: "I'm tied, it is your turn to do the job...". Then the accelerator has
+> > > > > > > the memory, referring any portion of it with the same VAs of the application,
+> > > > > > > even the VAs are stored inside the memory itself.
+> > > > > > 
+> > > > > > You were not looking at right place see drivers/gpu/drm/i915/i915_gem_userptr.c
+> > > > > > It does GUP and create GEM object AFAICR you can wrap that GEM object into a
+> > > > > > dma buffer object.
+> > > > > > 
+> > > > > 
+> > > > > Thank you for directing me to this implementation. It is interesting:).
+> > > > > 
+> > > > > But it is not yet solve my problem. If I understand it right, the userptr in
+> > > > > i915 do the following:
+> > > > > 
+> > > > > 1. The user process sets a user pointer with size to the kernel via ioctl.
+> > > > > 2. The kernel wraps it as a dma-buf and keeps the process's mm for further
+> > > > >    reference.
+> > > > > 3. The user pages are allocated, GUPed or DMA mapped to the device. So the data
+> > > > >    can be shared between the user space and the hardware.
+> > > > > 
+> > > > > But my scenario is: 
+> > > > > 
+> > > > > 1. The user process has some data in the user space, pointed by a pointer, say
+> > > > >    ptr1. And within the memory, there may be some other pointers, let's say one
+> > > > >    of them is ptr2.
+> > > > > 2. Now I need to assign ptr1 *directly* to the hardware MMIO space. And the
+> > > > >    hardware must refer ptr1 and ptr2 *directly* for data.
+> > > > > 
+> > > > > Userptr lets the hardware and process share the same memory space. But I need
+> > > > > them to share the same *address space*. So IOMMU is a MUST for WarpDrive,
+> > > > > NOIOMMU mode, as Jean said, is just for verifying some of the procedure is OK.
+> > > > 
+> > > > So to be 100% clear should we _ignore_ the non SVA/SVM case ?
+> > > > If so then wait for necessary SVA/SVM to land and do warp drive
+> > > > without non SVA/SVM path.
+> > > > 
+> > > 
+> > > I think we should clear the concept of SVA/SVM here. As my understanding, Share
+> > > Virtual Address/Memory means: any virtual address in a process can be used by
+> > > device at the same time. This requires IOMMU device to support PASID. And
+> > > optionally, it requires the feature of page-fault-from-device.
+> > 
+> > Yes we agree on what SVA/SVM is. There is a one gotcha thought, access
+> > to range that are MMIO map ie CPU page table pointing to IO memory, IIRC
+> > it is undefined what happens on some platform for a device trying to
+> > access those using SVA/SVM.
+> > 
+> > 
+> > > But before the feature is settled down, IOMMU can be used immediately in the
+> > > current kernel. That make it possible to assign ONE process's virtual addresses
+> > > to the device's IOMMU page table with GUP. This make WarpDrive work well for one
+> > > process.
+> > 
+> > UH ? How ? You want to GUP _every_ single valid address in the process
+> > and map it to the device ? How do you handle new vma, page being replace
+> > (despite GUP because of things that utimately calls zap pte) ...
+> > 
+> > Again here you said that the device must be able to access _any_ valid
+> > pointer. With GUP this is insane.
+> > 
+> > So i am assuming this is not what you want to do without SVA/SVM ie with
+> > GUP you have a different programming model, one in which the userspace
+> > must first bind _range_ of memory to the device and get a DMA address
+> > for the range.
+> > 
+> > Again, GUP range of process address space to map it to a device so that
+> > userspace can use the device on the mapped range is something that do
+> > exist in various places in the kernel.
+> > 
+> 
+> Yes same as your expectation, in WarpDrive, we use the concept of "sharing" to
+> do so. If some memory is going to be shared among process and devices, we use
+> wd_share_mem(queue, ptr, size) to share those memory. When the queue is working
+> in this mode, the point is valid in those memory segments. The wd_share_mem call
+> vfio dma map syscall which will do GUP. 
+> 
+> If SVA/SVM is enabled, user space can set SHARE_ALL flags to the queue. Then
+> wd_share_mem() is not necessary.
+> 
+> This is really not popular when we started the work on WarpDrive. The GUP
+> document said it should be put within the scope of mm_sem is locked. Because GUP
+> simply increase the page refcount, not keep the mapping between the page and the
+> vma. We keep our work together with VFIO to make sure the problem can be solved
+> in one deal.
+
+The problem can not be solved in one deal, you can not maintain vaddr
+pointing to same page after a fork() this can not be solve without the
+use of mmu notifier and device dma mapping invalidation ! So being part
+of VFIO will not help you there.
+
+AFAIK VFIO is fine with the way it is as QEMU do not fork() once it
+is running a guest and thus the COW that would invalidate vaddr to
+physical page assumption is not broken. So i doubt VFIO folks have
+any incentive to go down the mmu notifier path and invalidate device
+mapping. They also have the replay thing that probably handle some
+of fork cases by trusting user space program to do it. In your case
+you can not trust the user space program.
+
+In your case AFAICT i do not see any warning or gotcha so the following
+scenario is broken (in non SVA/SVM):
+    1) program setup the device (open container, mdev, setup queue, ...)
+    2) program map some range of its address space wih VFIO_IOMMU_MAP_DMA
+    3) program start using the device using map setup in 2)
+    ...
+    4) program fork()
+    5) parent trigger COW inside the range setup in 2)
+
+    At this point it is the child process that can write to the page that
+    are access by the device (which was map by the parent in 2)). The
+    parent can no longer access that memory from the CPU.
+
+There is just no sane way to fix this beside invalidating device mapping
+on fork (and you can not rely on userspace to do so) and thus stopping
+the device on fork (SVA/SVM case do not have any issue here).
+
+> And now we have GUP-longterm and many accounting work in VFIO, we don't want to
+> do that again.
+
+GUP-longterm does not solve any GUP problem, it just block people to
+do GUP on DAX backed vma to avoid pining persistent memory as it is
+a nightmare to handle in the block device driver and file system code.
+
+The accounting is the rt limit thing and is litteraly 10 lines of
+code so i would not see that as hard to replicate.
 
 
-> On Sep 10, 2018, at 1:15 AM, Jiri Olsa <jolsa@redhat.com> wrote:
->=20
-> On Thu, Aug 30, 2018 at 06:51:07PM +0000, Song Liu wrote:
->>=20
->>=20
->>> On Aug 30, 2018, at 8:18 AM, Jiri Olsa <jolsa@redhat.com> wrote:
->>>=20
->>> On Wed, Aug 15, 2018 at 10:03:13AM -0700, Song Liu wrote:
->>>=20
->>> SNIP
->>>=20
->>>> @@ -6100,7 +6333,7 @@ static void perf_output_read_group(struct perf_o=
-utput_handle *handle,
->>>>=20
->>>> 		if ((sub !=3D event) &&
->>>> 		    (sub->state =3D=3D PERF_EVENT_STATE_ACTIVE))
->>>> -			sub->pmu->read(sub);
->>>> +			event_pmu_read(sub);
->>>>=20
->>>> 		values[n++] =3D perf_event_count(sub);
->>>> 		if (read_format & PERF_FORMAT_ID)
->>>> @@ -9109,7 +9342,7 @@ static enum hrtimer_restart perf_swevent_hrtimer=
-(struct hrtimer *hrtimer)
->>>> 	if (event->state !=3D PERF_EVENT_STATE_ACTIVE)
->>>> 		return HRTIMER_NORESTART;
->>>>=20
->>>> -	event->pmu->read(event);
->>>> +	event_pmu_read(event);
->>>>=20
->>>> 	perf_sample_data_init(&data, 0, event->hw.last_period);
->>>> 	regs =3D get_irq_regs();
->>>> @@ -10504,6 +10737,14 @@ SYSCALL_DEFINE5(perf_event_open,
->>>> 		goto err_cred;
->>>> 	}
->>>>=20
->>>> +	if (perf_event_can_share(event)) {
->>>> +		event->tmp_master =3D perf_event_alloc(&event->attr, cpu,
->>>> +						     task, NULL, NULL,
->>>> +						     NULL, NULL, -1);
->>>=20
->>> can't get around this.. I understand the need, but AFAICS you allocate
->>> the whole 'struct perf_event', just because there's count field in it
->>> otherwise the 'struct hw_perf_event' should be enough to carry all that=
-'s
->>> needed to read hw event
->>>=20
->>> would it be better to move the count to 'struct hw_perf_event' and use
->>> that instead? assuming I'm not missing anything..
->>>=20
->>> jirka
->>=20
->> I am trying to make the master event function the same as a real event,=
-=20
->> while keep dup events as followers. This avoids "switching master" in=20
->> earlier versions (and Tejun's RFC).=20
->=20
-> yep, I understand.. still, it seems too much to allocate
-> the whole 'struct perf_even't just to get separated 'count'
-> variable
+> > > Now We are talking about SVA and PASID, just to make sure WarpDrive can benefit
+> > > from the feature in the future. It dose not means WarpDrive is useless before
+> > > that. And it works for our Zip and RSA accelerators in physical world.
+> > 
+> > Just not with random process address ...
+> > 
+> > > > If you still want non SVA/SVM path what you want to do only works
+> > > > if both ptr1 and ptr2 are in a range that is DMA mapped to the
+> > > > device (moreover you need DMA address to match process address
+> > > > which is not an easy feat).
+> > > > 
+> > > > Now even if you only want SVA/SVM, i do not see what is the point
+> > > > of doing this inside VFIO. AMD GPU driver does not and there would
+> > > > be no benefit for them to be there. Well a AMD VFIO mdev device
+> > > > driver for QEMU guest might be useful but they have SVIO IIRC.
+> > > > 
+> > > > For SVA/SVM your usage model is:
+> > > > 
+> > > > Setup:
+> > > >     - user space create a warp drive context for the process
+> > > >     - user space create a device specific context for the process
+> > > >     - user space create a user space command queue for the device
+> > > >     - user space bind command queue
+> > > > 
+> > > >     At this point the kernel driver has bound the process address
+> > > >     space to the device with a command queue and userspace
+> > > > 
+> > > > Usage:
+> > > >     - user space schedule work and call appropriate flush/update
+> > > >       ioctl from time to time. Might be optional depends on the
+> > > >       hardware, but probably a good idea to enforce so that kernel
+> > > >       can unbind the command queue to bind another process command
+> > > >       queue.
+> > > >     ...
+> > > > 
+> > > > Cleanup:
+> > > >     - user space unbind command queue
+> > > >     - user space destroy device specific context
+> > > >     - user space destroy warp drive context
+> > > >     All the above can be implicit when closing the device file.
+> > > > 
+> > > > So again in the above model i do not see anywhere something from
+> > > > VFIO that would benefit this model.
+> > > > 
+> > > 
+> > > Let me show you how the model will be if I use VFIO:
+> > > 
+> > > Setup (Kernel part)
+> > > 	- Kernel driver do every as usual to serve the other functionality, NIC
+> > > 	  can still be registered to netdev, encryptor can still be registered
+> > > 	  to crypto...
+> > > 	- At the same time, the driver can devote some of its hardware resource
+> > > 	  and register them as a mdev creator to the VFIO framework. This just
+> > > 	  need limited change to the VFIO type1 driver.
+> > 
+> > In the above VFIO does not help you one bit ... you can do that with
+> > as much code with new common device as front end.
+> > 
+> > > Setup (User space)
+> > > 	- System administrator create mdev via the mdev creator interface.
+> > > 	- Following VFIO setup routine, user space open the mdev's group, there is
+> > > 	  only one group for one device.
+> > > 	- Without PASID support, you don't need to do anything. With PASID, bind
+> > > 	  the PASID to the device via VFIO interface.
+> > > 	- Get the device from the group via VFIO interface and mmap it the user
+> > > 	  space for device's MMIO access (for the queue).
+> > > 	- Map whatever memory you need to share with the device with VFIO
+> > > 	  interface.
+> > > 	- (opt) Add more devices into the container if you want to share the
+> > > 	  same address space with them
+> > 
+> > So all VFIO buys you here is boiler plate code that does insert_pfn()
+> > to handle MMIO mapping. Which is just couple hundred lines of boiler
+> > plate code.
+> > 
+> 
+> No. With VFIO, I don't need to:
+> 
+> 1. GUP and accounting for RLIMIT_MEMLOCK
 
-In theory, we only need separated counters. However, in practice, there
-are other variables we need to handle for a switch_master operation.=20
-For example, we need make sure event->state is always set properly. So=20
-this optimization is not easy to implement. How about we optimize it=20
-after this patch gets in?=20
+That's 10 line of code ...
 
-Thanks,
-Song
+> 2. Keep all GUP pages for releasing (VFIO uses the rb_tree to do so)
+
+GUP pages are not part of rb_tree and what you want to do can be done
+in few lines of code here is pseudo code:
+
+warp_dma_map_range(ulong vaddr, ulong npages)
+{
+    struct page *pages = kvzalloc(npages);
+
+    for (i = 0; i < npages; ++i, vaddr += PAGE_SIZE) {
+        GUP(vaddr, &pages[i]);
+        iommu_map(vaddr, page_to_pfn(pages[i]));
+    }
+    kvfree(pages);
+}
+
+warp_dma_unmap_range(ulong vaddr, ulong npages)
+{
+    for (i = 0; i < npages; ++i, vaddr += PAGE_SIZE) {
+        unsigned long pfn;
+
+        pfn = iommu_iova_to_phys(vaddr);
+        iommu_unmap(vaddr);
+        put_page(pfn_to_page(page)); /* set dirty if mapped write */
+    }
+}
+
+Add locking, error handling, dirtying and comments and you are barely
+looking at couple hundred lines of code. You do not need any of the
+complexity of VFIO as you do not have the same requirements. Namely
+VFIO have to keep track of iova and physical mapping for things like
+migration (migrating guest between host) and few others very
+virtualization centric requirements.
 
 
+> 2. Handle the PASID on SMMU (ARM's IOMMU) myself.
 
+Existing driver do that with 20 lines of with comments and error
+handling (see kfd_iommu_bind_process_to_device() for instance) i
+doubt you need much more than that.
+
+
+> 3. Multiple devices menagement (VFIO uses container to manage this)
+
+All the vfio_group* stuff ? OK that's boiler plate code, note that
+hard to replicate thought.
+
+> And even as a boiler plate, it is valueable, the memory thing is sensitive
+> interface to user space, it can easily become a security problem. If I can
+> achieve my target within the scope of VFIO, why not? At lease it has been
+> proved to be safe for the time being.
+
+The thing is being part of VFIO impose things on you, things that you
+do not need. Like one device per group (maybe it is you imposing this,
+i am loosing track here). Or the complex dma mapping tracking ...
+
+
+> > > Cleanup:
+> > > 	- User space close the group file handler
+> > > 	- There will be a problem to let the other process know the mdev is
+> > > 	  freed to be used again. My RFCv1 choose a file handler solution. Alex
+> > > 	  dose not like it. But it is not a big problem. We can always have a
+> > > 	  scheduler process to manage the state of the mdev or even we can
+> > > 	  switch back to the RFCv1 solution without too much effort if we like
+> > > 	  in the future.
+> > 
+> > If you were outside VFIO you would have more freedom on how to do that.
+> > For instance process opening the device file can be placed on queue and
+> > first one in the queue get to use the device until it closes/release the
+> > device. Then next one in queue get the device ...
+> 
+> Yes. I do like the file handle solution. But I hope the solution become mature
+> as soon as possible. Many of our products, and as I know include some of our
+> partners, are waiting for a long term solution as direction. If I rely on some
+> unmature solution, they may choose some deviated, customized solution. That will
+> be much harmful. Compare to this, the freedom is not so important...
+
+I do not see how being part of VFIO protect you from people doing crazy
+thing to their kernel ... Time to market being key in this world, i doubt
+that being part of VFIO would make anyone think twice before taking a
+shortcut.
+
+I have seen horrible things on that front and only players like Google
+can impose a minimum level of sanity.
+
+
+> > > Except for the minimum update to the type1 driver and use sdmdev to manage the
+> > > interrupt sharing, I don't need any extra code to gain the address sharing
+> > > capability. And the capability will be strengthen along with the upgrade of VFIO.
+> > > 
+> > > > 
+> > > > > > > And I don't understand why I should avoid to use VFIO? As Alex said, VFIO is the
+> > > > > > > user driver framework. And I need exactly a user driver interface. Why should I
+> > > > > > > invent another wheel? It has most of stuff I need:
+> > > > > > > 
+> > > > > > > 1. Connecting multiple devices to the same application space
+> > > > > > > 2. Pinning and DMA from the application space to the whole set of device
+> > > > > > > 3. Managing hardware resource by device
+> > > > > > > 
+> > > > > > > We just need the last step: make sure multiple applications and the kernel can
+> > > > > > > share the same IOMMU. Then why shouldn't we use VFIO?
+> > > > > > 
+> > > > > > Because tons of other drivers already do all of the above outside VFIO. Many
+> > > > > > driver have a sizeable userspace side to them (anything with ioctl do) so they
+> > > > > > can be construded as userspace driver too.
+> > > > > > 
+> > > > > 
+> > > > > Ignoring if there are *tons* of drivers are doing that;), even I do the same as
+> > > > > i915 and solve the address space problem. And if I don't need to with VFIO, why
+> > > > > should I spend so much effort to do it again?
+> > > > 
+> > > > Because you do not need any code from VFIO, nor do you need to reinvent
+> > > > things. If non SVA/SVM matters to you then use dma buffer. If not then
+> > > > i do not see anything in VFIO that you need.
+> > > > 
+> > > 
+> > > As I have explain, if I don't use VFIO, at lease I have to do all that has been
+> > > done in i915 or even more than that.
+> > 
+> > So beside the MMIO mmap() handling and dma mapping of range of user space
+> > address space (again all very boiler plate code duplicated accross the
+> > kernel several time in different forms). You do not gain anything being
+> > inside VFIO right ?
+> > 
+> 
+> As I said, rb-tree for gup, rlimit accounting, cooperation on SMMU, and mature
+> user interface are our concern.
+> > 
+> > > > > > So there is no reasons to do that under VFIO. Especialy as in your example
+> > > > > > it is not a real user space device driver, the userspace portion only knows
+> > > > > > about writting command into command buffer AFAICT.
+> > > > > > 
+> > > > > > VFIO is for real userspace driver where interrupt, configurations, ... ie
+> > > > > > all the driver is handled in userspace. This means that the userspace have
+> > > > > > to be trusted as it could program the device to do DMA to anywhere (if
+> > > > > > IOMMU is disabled at boot which is still the default configuration in the
+> > > > > > kernel).
+> > > > > > 
+> > > > > 
+> > > > > But as Alex explained, VFIO is not simply used by VM. So it need not to have all
+> > > > > stuffs as a driver in host system. And I do need to share the user space as DMA
+> > > > > buffer to the hardware. And I can get it with just a little update, then it can
+> > > > > service me perfectly. I don't understand why I should choose a long route.
+> > > > 
+> > > > Again this is not the long route i do not see anything in VFIO that
+> > > > benefit you in the SVA/SVM case. A basic character device driver can
+> > > > do that.
+> > > > 
+> > > > 
+> > > > > > So i do not see any reasons to do anything you want inside VFIO. All you
+> > > > > > want to do can be done outside as easily. Moreover it would be better if
+> > > > > > you define clearly each scenario because from where i sit it looks like
+> > > > > > you are opening the door wide open to userspace to DMA anywhere when IOMMU
+> > > > > > is disabled.
+> > > > > > 
+> > > > > > When IOMMU is disabled you can _not_ expose command queue to userspace
+> > > > > > unless your device has its own page table and all commands are relative
+> > > > > > to that page table and the device page table is populated by kernel driver
+> > > > > > in secure way (ie by checking that what is populated can be access).
+> > > > > > 
+> > > > > > I do not believe your example device to have such page table nor do i see
+> > > > > > a fallback path when IOMMU is disabled that force user to do ioctl for
+> > > > > > each commands.
+> > > > > > 
+> > > > > > Yes i understand that you target SVA/SVM but still you claim to support
+> > > > > > non SVA/SVM. The point is that userspace can not be trusted if you want
+> > > > > > to have random program use your device. I am pretty sure that all user
+> > > > > > of VFIO are trusted process (like QEMU).
+> > > > > > 
+> > > > > > 
+> > > > > > Finaly i am convince that the IOMMU grouping stuff related to VFIO is
+> > > > > > useless for your usecase. I really do not see the point of that, it
+> > > > > > does complicate things for you for no reasons AFAICT.
+> > > > > 
+> > > > > Indeed, I don't like the group thing. I believe VFIO's maintains would not like
+> > > > > it very much either;). But the problem is, the group reflects to the same
+> > > > > IOMMU(unit), which may shared with other devices.  It is a security problem. I
+> > > > > cannot ignore it. I have to take it into account event I don't use VFIO.
+> > > > 
+> > > > To me it seems you are making a policy decission in kernel space ie
+> > > > wether the device should be isolated in its own group or not is a
+> > > > decission that is up to the sys admin or something in userspace.
+> > > > Right now existing user of SVA/SVM don't (at least AFAICT).
+> > > > 
+> > > > Do we really want to force such isolation ?
+> > > > 
+> > > 
+> > > But it is not my decision, that how the iommu subsystem is designed. Personally
+> > > I don't like it at all, because all our hardwares have their own stream id
+> > > (device id). I don't need the group concept at all. But the iommu subsystem
+> > > assume some devices may share the name device ID to a single IOMMU.
+> > 
+> > My question was do you really want to force group isolation for the
+> > device ? Existing SVA/SVM capable driver do not force that, they let
+> > the userspace decide this (sysadm, distributions, ...). Being part of
+> > VFIO (in the way you do, likely ways to avoid this inside VFIO too)
+> > force this decision ie make a policy decision without userspace having
+> > anything to say about it.
+
+You still do not answer my question, do you really want to force group
+isolation for device in your framework ? Which is a policy decision from
+my POV and thus belong to userspace and should not be enforce by kernel.
+
+
+> > The IOMMU group thing as always been doubt full to me, it is advertise
+> > as allowing to share resources (ie IOMMU page table) between devices.
+> > But this assume that all device driver in the group have some way of
+> > communicating with each other to share common DMA address that point
+> > to memory devices care. I believe only VFIO does that and probably
+> > only when use by QEMU.
+> > 
+> > 
+> > Anyway my question is:
+> > 
+> > Is it that much useful to be inside VFIO (to avoid few hundred lines
+> > of boiler plate code) given that it forces you into a model (group
+> > isolation) that so far have never been the prefered way for all
+> > existing device driver that already do what you want to achieve ?
+> > 
+> 
+> You mean to say I create another framework and copy most of the code from VFIO?
+> It is hard to believe the mainline kernel will take my code. So how about let me
+> try the VFIO way first and try that if it won't work? ;)
+
+There is no trying, this is the kernel, once you expose something to
+userspace you have to keep supporting it forever ... There is no, hey
+let's add this new framework and see how it goes and removing it few
+kernel version latter ...
+
+That is why i am being pedantic :) on making sure there is good reasons
+to do what you do inside VFIO. I do believe that we want a common frame-
+work like the one you are proposing but i do not believe it should be
+part of VFIO given the baggages it comes with and that are not relevant
+to the use cases for this kind of devices.
+
+Cheers,
+Jérôme
