@@ -2,261 +2,141 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 619A3C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 18:42:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CFEEC6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 18:42:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0692A2087F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 18:42:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a/nroMDz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0692A2087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 4751120865
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 18:42:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4751120865
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hpe.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728395AbeIKXme (ORCPT
+        id S1728415AbeIKXmi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 19:42:34 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:42509 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728310AbeIKXmc (ORCPT
+        Tue, 11 Sep 2018 19:42:38 -0400
+Received: from g2t2354.austin.hpe.com ([15.233.44.27]:57660 "EHLO
+        g2t2354.austin.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727865AbeIKXmh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 19:42:32 -0400
-Received: by mail-yw1-f66.google.com with SMTP id n207-v6so9606480ywn.9;
-        Tue, 11 Sep 2018 11:41:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=t00huGWlCQMYRW7qCaQabcFxN7tdJkCV+CAUTXuBTX8=;
-        b=a/nroMDzIaeWZrVAWHgkzg/D4eri6/NtzkrEjTak/uFrZpTKBXscexN5rewvhhabUs
-         yLWEyQwZNQlTsoqlHPYqTzCdRftTp3MxZyPpu5T2nVcw8uVWvyBkV0vhMg06dGJGVkng
-         oWazU7eAy37gNHFVFRQn2usO/kNxmK07tyurKxxvxBjDZHg90GhKhoon3Re+dTnjigk4
-         70dbUwXNdjV+/YfwbMZHs23ami0vb72NL7sAFiUyaE3pUEFdoVGDinB/faSFi97zMav6
-         NI44hUsrLdS+FACYwn76Nf0klus7P/8+Sohb9XaTkci0mmDSPkH2Wu2oDR456Qa6uwNh
-         i66A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=t00huGWlCQMYRW7qCaQabcFxN7tdJkCV+CAUTXuBTX8=;
-        b=ejXpcCyWK0SOiv20zK4Fl+rPQ4na/CkppKpuSa5B7cyRjooKEu6m0FLOzwWY6ol+lL
-         14o0uTVCPvldyEDqF6fliasE+DNK4QAY+PdMpiDUL7ANEikYhHG91Ar1+/DyRLgsXCdq
-         bCLdjIxDj2uGQ08LEnjeBAUWyrRzWPuO05scvAfLrCCkEWBsGKIrpHCAK0jqhl516gKM
-         KW5eSrTabNu5bFVNshKdFJf6ncaJd3PCampgtHugG0M7S15FBcuDUi9yRhA4goRByBCO
-         DfIgqzxyJphoCJurtwtiWBLxPPa28okFHSm/MmAswkCHVCYqFaSjBDyhY64P8HkU9X+Z
-         W9CQ==
-X-Gm-Message-State: APzg51CUDcShE8oG+phJBwHKwuW3jTBDFAkWYusia0m8pH717i2rY4Gg
-        O7S374+g891QCL9RiCuZQEGW0yaEe+4=
-X-Google-Smtp-Source: ANB0VdYhRWOAgvBQco6mE+/yPdP+qlqR6yZgfHqMfPwg0pprC8RYc47hWIH79IFrdZHHY+fbCC5+Qw==
-X-Received: by 2002:a0d:d945:: with SMTP id b66-v6mr13123868ywe.493.1536691316507;
-        Tue, 11 Sep 2018 11:41:56 -0700 (PDT)
-Received: from dennisz-mbp.thefacebook.com ([199.201.65.129])
-        by smtp.gmail.com with ESMTPSA id i123-v6sm7902875ywe.14.2018.09.11.11.41.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Sep 2018 11:41:55 -0700 (PDT)
-From:   Dennis Zhou <dennisszhou@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Josef Bacik <josef@toxicpanda.com>
-Cc:     kernel-team@fb.com, linux-block@vger.kernel.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>
-Subject: [PATCH 11/12] blkcg: change blkg reference counting to use percpu_ref
-Date:   Tue, 11 Sep 2018 14:41:36 -0400
-Message-Id: <20180911184137.35897-12-dennisszhou@gmail.com>
-X-Mailer: git-send-email 2.13.5
-In-Reply-To: <20180911184137.35897-1-dennisszhou@gmail.com>
-References: <20180911184137.35897-1-dennisszhou@gmail.com>
+        Tue, 11 Sep 2018 19:42:37 -0400
+Received: from G9W8454.americas.hpqcorp.net (exchangepmrr1.us.hpecorp.net [16.216.161.4])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by g2t2354.austin.hpe.com (Postfix) with ESMTPS id 16D8A83;
+        Tue, 11 Sep 2018 18:42:00 +0000 (UTC)
+Received: from G9W8455.americas.hpqcorp.net (2002:10d8:a15e::10d8:a15e) by
+ G9W8454.americas.hpqcorp.net (2002:10d8:a104::10d8:a104) with Microsoft SMTP
+ Server (TLS) id 15.0.1367.3; Tue, 11 Sep 2018 18:41:28 +0000
+Received: from NAM04-BN3-obe.outbound.protection.outlook.com (15.241.52.11) by
+ G9W8455.americas.hpqcorp.net (16.216.161.94) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3 via Frontend Transport; Tue, 11 Sep 2018 18:41:28 +0000
+Received: from AT5PR8401MB1121.NAMPRD84.PROD.OUTLOOK.COM (10.169.8.22) by
+ AT5PR8401MB0323.NAMPRD84.PROD.OUTLOOK.COM (10.169.2.137) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1122.16; Tue, 11 Sep 2018 18:41:26 +0000
+Received: from AT5PR8401MB1121.NAMPRD84.PROD.OUTLOOK.COM
+ ([fe80::ac4f:ac06:14f9:d283]) by AT5PR8401MB1121.NAMPRD84.PROD.OUTLOOK.COM
+ ([fe80::ac4f:ac06:14f9:d283%2]) with mapi id 15.20.1122.020; Tue, 11 Sep 2018
+ 18:41:26 +0000
+From:   "Kani, Toshi" <toshi.kani@hpe.com>
+To:     "dan.j.williams@intel.com" <dan.j.williams@intel.com>
+CC:     "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        "jack@suse.cz" <jack@suse.cz>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "tytso@mit.edu" <tytso@mit.edu>
+Subject: Re: [PATCH 2/2] ext4, dax: set ext4_dax_aops for dax files
+Thread-Topic: [PATCH 2/2] ext4, dax: set ext4_dax_aops for dax files
+Thread-Index: AQHUSej7Q67hDcpgxEKY4HwO3VbK/6TrYvcAgAABigA=
+Date:   Tue, 11 Sep 2018 18:41:26 +0000
+Message-ID: <b26a520cba402f129314eabef78d2c2a2da4a1b0.camel@hpe.com>
+References: <20180911154246.6844-1-toshi.kani@hpe.com>
+         <20180911154246.6844-3-toshi.kani@hpe.com>
+         <CAPcyv4iEZ7q0MV7n-_eovrJw_U9S3=pkY_nYwtw1jSBS7vPqCQ@mail.gmail.com>
+In-Reply-To: <CAPcyv4iEZ7q0MV7n-_eovrJw_U9S3=pkY_nYwtw1jSBS7vPqCQ@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=toshi.kani@hpe.com; 
+x-originating-ip: [15.219.163.8]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AT5PR8401MB0323;6:zc2VcSOlid5rxB5kf4ucHvf1Kjsr4sIZfE/6oDubNZyWPFDh/8YD1zwMDZ64J0GEuLDew3506rYNpG420XkjMXK2j34dvnNc+Xmn+w53v8rabegSdf0fq+NqpKn8K3cw6ccAA0IJYPc7zqgAJlVzLLLLRWVZcp8j0WyJHZ4KssxWqICtdUnWfVy+9chxHe0nDtqZDRZv8cU2EEpTM3k0lE7RM9/OkshuS+zoRwgkfjYNKN4RRQwNCMRXTCLi9UUtsPB6Z5louhxPUdsLB7DhAihjLGV4MhH65pFsbJjhAMkGt/kBzrhGygERURHBpstiGRt7Tj6Mcsr5LicyBZVUk4x63L+5JHJpwlyAh2tIjDizMRVKqsQOH/SmWZnKaotqxljB9LalcFZllV851YJPsRQgYhgBWDWJOahPNjUOYNA//FP7KaNukpraL1O7VSt5ZeQIxH6MB1vF+2Eyug1sOQ==;5:bK/AC3Jc4F2QOqAR3kDDxnZXXwqBXVdQfwavAfhTQBDQDwYSTEiZqihjPcR5JvpIqNATNZDGAz3gDOYNrx2RHSMKsbKkYnt3gyuAVoYqIXL3xzoXxvWFVx08X3I4E9V7OAy40Wjv2GAM3EoLo3cm1mPcimmxfvnC+Up8Li/EUsk=;7:Mh/J+sb4pz8wc4KqVpgEuE2SSKyImEvNhbLeHSRcSLQMWyDq1NS8oEaCUP/JNaSE3CypMpFnjlRFDuDoa6D+x4BpmhyMEETBRcG7BIQ+HH4LIsiFoSDgAQF/yBnw9x98oyK2HpuJEe7sQHj4y1+aDFXCG3Xg/xlKi+nK7bKlI8/TlZzpioJrQDicpWXl6AZeUXc2bdJtpCpNii/PzbpLjG1NyVm5urjFmL3h9WxsJ81vqDLdqTQ5h98wM8wiRvhK
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: ef105cd9-a403-4dff-3165-08d618162e27
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AT5PR8401MB0323;
+x-ms-traffictypediagnostic: AT5PR8401MB0323:
+x-microsoft-antispam-prvs: <AT5PR8401MB03237E799ED0538359D2A3C882040@AT5PR8401MB0323.NAMPRD84.PROD.OUTLOOK.COM>
+x-exchange-antispam-report-test: UriScan:(227479698468861)(9452136761055)(240460790083961)(222181515654134)(228905959029699);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231311)(944501410)(52105095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699050);SRVR:AT5PR8401MB0323;BCL:0;PCL:0;RULEID:;SRVR:AT5PR8401MB0323;
+x-forefront-prvs: 0792DBEAD0
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39860400002)(136003)(376002)(366004)(396003)(189003)(199004)(53546011)(6506007)(478600001)(14454004)(5640700003)(53936002)(68736007)(81156014)(6512007)(81166006)(76176011)(8936002)(476003)(446003)(11346002)(8676002)(2616005)(14444005)(6916009)(2900100001)(486006)(102836004)(99286004)(256004)(86362001)(575784001)(26005)(186003)(106356001)(5660300001)(25786009)(2351001)(4326008)(118296001)(305945005)(7736002)(316002)(2501003)(105586002)(66066001)(6246003)(3846002)(54906003)(6116002)(5250100002)(229853002)(6486002)(97736004)(6436002)(2906002)(36756003);DIR:OUT;SFP:1102;SCL:1;SRVR:AT5PR8401MB0323;H:AT5PR8401MB1121.NAMPRD84.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: hpe.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: ySy/jV2CuPaMbNj8w+8GzxgI0stSdaSEP/NKTjL7rGsrQIa7RRkhXsiN0QKVKUpYh3Kbd/F2O7XVGowyyFsfY3HNJqmZGsvrjmQ637xK78KjJP40YCzjDwOzgnk7Uokp3MGnaVW21EgBMe6nJpDa5DZGjB4XC+p2Tu687T5TLH9JVjcRDGmTTlLEwGDn+SCaeEn1S+C22q190VlCnO4DtQ4kfDvx0lNjjyyjl9b+kv3vGd6iog5Jm2YZjHAPLkNwvwBTzj+9gkrHPmHB/LJ6p9nPdbkZvAIGlkU01QBnizM99qGCS42lDzg+E8duA1z5LcWKndmMuxP2XV2lN4EW6Xs8mOU63BuQxcGer9XgphY=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <EFF6AD399147714C9686656AC13320F4@NAMPRD84.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: ef105cd9-a403-4dff-3165-08d618162e27
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Sep 2018 18:41:26.1681
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 105b2061-b669-4b31-92ac-24d304d195dc
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AT5PR8401MB0323
+X-OriginatorOrg: hpe.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>
-
-Now that every bio is associated with a blkg, this puts the use of
-blkg_get, blkg_try_get, and blkg_put on the hot path. This switches over
-the refcnt in blkg to use percpu_ref.
-
-Signed-off-by: Dennis Zhou <dennisszhou@gmail.com>
-Acked-by: Tejun Heo <tj@kernel.org>
----
- block/blk-cgroup.c         | 64 +++++++++++++++++++++++---------------
- include/linux/blk-cgroup.h | 15 +++------
- 2 files changed, 44 insertions(+), 35 deletions(-)
-
-diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
-index e9e3a955f61a..ab3676e1e15e 100644
---- a/block/blk-cgroup.c
-+++ b/block/blk-cgroup.c
-@@ -84,6 +84,37 @@ static void blkg_free(struct blkcg_gq *blkg)
- 	kfree(blkg);
- }
- 
-+static void __blkg_release(struct rcu_head *rcu)
-+{
-+	struct blkcg_gq *blkg = container_of(rcu, struct blkcg_gq, rcu_head);
-+
-+	percpu_ref_exit(&blkg->refcnt);
-+
-+	/* release the blkcg and parent blkg refs this blkg has been holding */
-+	css_put(&blkg->blkcg->css);
-+	if (blkg->parent)
-+		blkg_put(blkg->parent);
-+
-+	wb_congested_put(blkg->wb_congested);
-+
-+	blkg_free(blkg);
-+}
-+
-+/*
-+ * A group is RCU protected, but having an rcu lock does not mean that one
-+ * can access all the fields of blkg and assume these are valid.  For
-+ * example, don't try to follow throtl_data and request queue links.
-+ *
-+ * Having a reference to blkg under an rcu allows accesses to only values
-+ * local to groups like group stats and group rate limits.
-+ */
-+static void blkg_release(struct percpu_ref *ref)
-+{
-+	struct blkcg_gq *blkg = container_of(ref, struct blkcg_gq, refcnt);
-+
-+	call_rcu(&blkg->rcu_head, __blkg_release);
-+}
-+
- /**
-  * blkg_alloc - allocate a blkg
-  * @blkcg: block cgroup the new blkg is associated with
-@@ -110,7 +141,6 @@ static struct blkcg_gq *blkg_alloc(struct blkcg *blkcg, struct request_queue *q,
- 	blkg->q = q;
- 	INIT_LIST_HEAD(&blkg->q_node);
- 	blkg->blkcg = blkcg;
--	atomic_set(&blkg->refcnt, 1);
- 
- 	/* root blkg uses @q->root_rl, init rl only for !root blkgs */
- 	if (blkcg != &blkcg_root) {
-@@ -217,6 +247,11 @@ static struct blkcg_gq *blkg_create(struct blkcg *blkcg,
- 		blkg_get(blkg->parent);
- 	}
- 
-+	ret = percpu_ref_init(&blkg->refcnt, blkg_release, 0,
-+			      GFP_NOWAIT | __GFP_NOWARN);
-+	if (ret)
-+		goto err_cancel_ref;
-+
- 	/* invoke per-policy init */
- 	for (i = 0; i < BLKCG_MAX_POLS; i++) {
- 		struct blkcg_policy *pol = blkcg_policy[i];
-@@ -249,6 +284,8 @@ static struct blkcg_gq *blkg_create(struct blkcg *blkcg,
- 	blkg_put(blkg);
- 	return ERR_PTR(ret);
- 
-+err_cancel_ref:
-+	percpu_ref_exit(&blkg->refcnt);
- err_put_congested:
- 	wb_congested_put(wb_congested);
- err_put_css:
-@@ -387,7 +424,7 @@ static void blkg_destroy(struct blkcg_gq *blkg)
- 	 * Put the reference taken at the time of creation so that when all
- 	 * queues are gone, group can be destroyed.
- 	 */
--	blkg_put(blkg);
-+	percpu_ref_kill(&blkg->refcnt);
- }
- 
- /**
-@@ -414,29 +451,6 @@ static void blkg_destroy_all(struct request_queue *q)
- 	q->root_rl.blkg = NULL;
- }
- 
--/*
-- * A group is RCU protected, but having an rcu lock does not mean that one
-- * can access all the fields of blkg and assume these are valid.  For
-- * example, don't try to follow throtl_data and request queue links.
-- *
-- * Having a reference to blkg under an rcu allows accesses to only values
-- * local to groups like group stats and group rate limits.
-- */
--void __blkg_release_rcu(struct rcu_head *rcu_head)
--{
--	struct blkcg_gq *blkg = container_of(rcu_head, struct blkcg_gq, rcu_head);
--
--	/* release the blkcg and parent blkg refs this blkg has been holding */
--	css_put(&blkg->blkcg->css);
--	if (blkg->parent)
--		blkg_put(blkg->parent);
--
--	wb_congested_put(blkg->wb_congested);
--
--	blkg_free(blkg);
--}
--EXPORT_SYMBOL_GPL(__blkg_release_rcu);
--
- /*
-  * The next function used by blk_queue_for_each_rl().  It's a bit tricky
-  * because the root blkg uses @q->root_rl instead of its own rl.
-diff --git a/include/linux/blk-cgroup.h b/include/linux/blk-cgroup.h
-index d2f7f1b00fcf..7ff5d8ba8c7a 100644
---- a/include/linux/blk-cgroup.h
-+++ b/include/linux/blk-cgroup.h
-@@ -126,7 +126,7 @@ struct blkcg_gq {
- 	struct request_list		rl;
- 
- 	/* reference count */
--	atomic_t			refcnt;
-+	struct percpu_ref		refcnt;
- 
- 	/* is this blkg online? protected by both blkcg and q locks */
- 	bool				online;
-@@ -490,8 +490,7 @@ static inline int blkg_path(struct blkcg_gq *blkg, char *buf, int buflen)
-  */
- static inline void blkg_get(struct blkcg_gq *blkg)
- {
--	WARN_ON_ONCE(atomic_read(&blkg->refcnt) <= 0);
--	atomic_inc(&blkg->refcnt);
-+	percpu_ref_get(&blkg->refcnt);
- }
- 
- /**
-@@ -503,7 +502,7 @@ static inline void blkg_get(struct blkcg_gq *blkg)
-  */
- static inline struct blkcg_gq *blkg_try_get(struct blkcg_gq *blkg)
- {
--	if (atomic_inc_not_zero(&blkg->refcnt))
-+	if (percpu_ref_tryget(&blkg->refcnt))
- 		return blkg;
- 	return NULL;
- }
-@@ -517,23 +516,19 @@ static inline struct blkcg_gq *blkg_try_get(struct blkcg_gq *blkg)
-  */
- static inline struct blkcg_gq *blkg_try_get_closest(struct blkcg_gq *blkg)
- {
--	while (!atomic_inc_not_zero(&blkg->refcnt))
-+	while (!percpu_ref_tryget(&blkg->refcnt))
- 		blkg = blkg->parent;
- 
- 	return blkg;
- }
- 
--void __blkg_release_rcu(struct rcu_head *rcu);
--
- /**
-  * blkg_put - put a blkg reference
-  * @blkg: blkg to put
-  */
- static inline void blkg_put(struct blkcg_gq *blkg)
- {
--	WARN_ON_ONCE(atomic_read(&blkg->refcnt) <= 0);
--	if (atomic_dec_and_test(&blkg->refcnt))
--		call_rcu(&blkg->rcu_head, __blkg_release_rcu);
-+	percpu_ref_put(&blkg->refcnt);
- }
- 
- /**
--- 
-2.17.1
-
+T24gVHVlLCAyMDE4LTA5LTExIGF0IDExOjE1IC0wNzAwLCBEYW4gV2lsbGlhbXMgd3JvdGU6DQo+
+IE9uIFR1ZSwgU2VwIDExLCAyMDE4IGF0IDg6NDIgQU0sIFRvc2hpIEthbmkgPHRvc2hpLmthbmlA
+aHBlLmNvbT4gd3JvdGU6DQo+ID4gU3luYyBzeXNjYWxsIHRvIGFuIGV4aXN0aW5nIERBWCBmaWxl
+IG5lZWRzIHRvIGZsdXNoIHByb2Nlc3NvciBjYWNoZSwNCj4gPiBidXQgaXQgZG9lcyBub3QgY3Vy
+cmVudGx5LiAgVGhpcyBpcyBiZWNhdXNlICdleHQ0X2RhX2FvcHMnIGlzIHNldCB0bw0KPiA+IGFk
+ZHJlc3Nfc3BhY2Vfb3BlcmF0aW9ucyBvZiBleGlzdGluZyBEQVggZmlsZXMsIGluc3RlYWQgb2Yg
+J2V4dDRfZGF4X2FvcHMnLA0KPiA+IHNpbmNlIFNfREFYIGZsYWcgaXMgc2V0IGFmdGVyIGV4dDRf
+c2V0X2FvcHMoKSBpbiB0aGUgb3BlbiBwYXRoLg0KPiA+IA0KPiA+ICAgTmV3IGZpbGUNCj4gPiAg
+IC0tLS0tLS0tDQo+ID4gICBsb29rdXBfb3Blbg0KPiA+ICAgICBleHQ0X2NyZWF0ZQ0KPiA+ICAg
+ICAgIF9fZXh0NF9uZXdfaW5vZGUNCj4gPiAgICAgICAgIGV4dDRfc2V0X2lub2RlX2ZsYWdzICAg
+Ly8gU2V0IFNfREFYIGZsYWcNCj4gPiAgICAgICBleHQ0X3NldF9hb3BzICAgICAgICAgICAgLy8g
+U2V0IGFvcHMgdG8gZXh0NF9kYXhfYW9wcw0KPiA+IA0KPiA+ICAgRXhpc3RpbmcgZmlsZQ0KPiA+
+ICAgLS0tLS0tLS0tLS0tLQ0KPiA+ICAgbG9va3VwX29wZW4NCj4gPiAgICAgZXh0NF9sb29rdXAN
+Cj4gPiAgICAgICBleHQ0X2lnZXQNCj4gPiAgICAgICAgIGV4dDRfc2V0X2FvcHMgICAgICAgICAg
+Ly8gU2V0IGFvcHMgdG8gZXh0NF9kYV9hb3BzDQo+ID4gICAgICAgICBleHQ0X3NldF9pbm9kZV9m
+bGFncyAgIC8vIFNldCBTX0RBWCBmbGFnDQo+ID4gDQo+ID4gQ2hhbmdlIGV4dDRfaWdldCgpIHRv
+IGNhbGwgZXh0NF9zZXRfaW5vZGVfZmxhZ3MoKSBiZWZvcmUgZXh0NF9zZXRfYW9wcygpLg0KPiA+
+IA0KPiA+IEZpeGVzOiA1ZjA2NjNiYjRhNjRmNTg4ZjBhMmRkNmQxYmU2OGQ0MGY5YWYwMDg2DQo+
+IA0KPiBTYW1lIGZvcm1hdCBuaXQ6DQo+IA0KPiBGaXhlczogNWYwNjYzYmI0YTY0ICgiZXh0NCwg
+ZGF4OiBpbnRyb2R1Y2UgZXh0NF9kYXhfYW9wcyIpDQo+IENjOiA8c3RhYmxlQHZnZXIua2VybmVs
+Lm9yZz4NCg0KV2lsbCBkby4NCg0KPiA+IFNpZ25lZC1vZmYtYnk6IFRvc2hpIEthbmkgPHRvc2hp
+LmthbmlAaHBlLmNvbT4NCj4gPiBDYzogSmFuIEthcmEgPGphY2tAc3VzZS5jej4NCj4gPiBDYzog
+RGFuIFdpbGxpYW1zIDxkYW4uai53aWxsaWFtc0BpbnRlbC5jb20+DQo+ID4gQ2M6ICJUaGVvZG9y
+ZSBUcydvIiA8dHl0c29AbWl0LmVkdT4NCj4gPiBDYzogQW5kcmVhcyBEaWxnZXIgPGFkaWxnZXIu
+a2VybmVsQGRpbGdlci5jYT4NCj4gPiAtLS0NCj4gPiAgZnMvZXh0NC9pbm9kZS5jIHwgICAgMyAr
+Ky0NCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQ0K
+PiA+IA0KPiA+IGRpZmYgLS1naXQgYS9mcy9leHQ0L2lub2RlLmMgYi9mcy9leHQ0L2lub2RlLmMN
+Cj4gPiBpbmRleCA3NzVjZDliNGFmNTUuLjkzY2JiYjg1OWM0MCAxMDA2NDQNCj4gPiAtLS0gYS9m
+cy9leHQ0L2lub2RlLmMNCj4gPiArKysgYi9mcy9leHQ0L2lub2RlLmMNCj4gPiBAQCAtNDk5OCw2
+ICs0OTk4LDggQEAgc3RydWN0IGlub2RlICpleHQ0X2lnZXQoc3RydWN0IHN1cGVyX2Jsb2NrICpz
+YiwgdW5zaWduZWQgbG9uZyBpbm8pDQo+ID4gICAgICAgICBpZiAocmV0KQ0KPiA+ICAgICAgICAg
+ICAgICAgICBnb3RvIGJhZF9pbm9kZTsNCj4gPiANCj4gPiArICAgICAgIGV4dDRfc2V0X2lub2Rl
+X2ZsYWdzKGlub2RlKTsNCj4gPiArDQo+IA0KPiBIbW0sIGRvZXMgdGhpcyBoYXZlIHVuaW50ZW5k
+ZWQgYmVoYXZpb3IgY2hhbmdlcz8NCj4gDQo+IEkgbm90aWNlIHRoYXQgdGhlcmUgYXJlIHNvbWUg
+Y2hlY2tzIGZvciBmbGFncyAiSVNfQVBQRU5EKGlub2RlKSB8fA0KPiBJU19JTU1VVEFCTEUoaW5v
+ZGUpIiAqYmVmb3JlKiB0aGUgY2FsbCB0byBleHQ0X3NldF9pbm9kZV9mbGFncygpLiBJDQo+IGRp
+ZG4ndCBsb29rIHRvbyBtdWNoIGRlZXBlciBhdCB3aGV0aGVyIHRob3NlIGNoZWNrcyBhcmUgYm9n
+dXMsIGJ1dCBpdA0KPiB3b3VsZCBzZWVtIHNhZmVyIHRvIGRvIHNvbWV0aGluZyBsaWtlIHRoaXMg
+Zm9yIGEgbG93ZXIgcmlzayBmaXguDQo+IA0KPiBUaG91Z2h0cz8NCg0KR29vZCBjYXRjaCEgIEFn
+cmVlZC4NCg0KVGhhbmtzIQ0KLVRvc2hpDQoNCg==
