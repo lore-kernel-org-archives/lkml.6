@@ -2,96 +2,74 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F55FC04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:06:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69CCFC6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:06:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBA5020892
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:06:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="q866NSoJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBA5020892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
+	by mail.kernel.org (Postfix) with ESMTP id 26DDD20645
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:06:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26DDD20645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728042AbeILBGi (ORCPT
+        id S1728221AbeILBHJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 21:06:38 -0400
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:52883 "EHLO
-        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727985AbeILBGh (ORCPT
+        Tue, 11 Sep 2018 21:07:09 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:51695 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726800AbeILBHJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 21:06:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1536696345; x=1568232345;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references;
-  bh=jQTZ23SgNKhmVMpyXw8suw05ppQjTGFZ9dEM3MSqxbk=;
-  b=q866NSoJ7bFeFuVZF27K3QR7IuOqbMOzWrATqSu2Lso7Vv+nlym5V06b
-   uVTATHQPv5+tTUODi3PwyDahxcQsMW4VGzPqI4G/zLg432SjhrmkraBeM
-   KxdOlaynbYwj90o/dXueRCkQqxaiQ7vp+jxQDpKZMYSuZqIA1SIl/uWtN
-   faJqzkE4mm97DpE8RITC7hvxzLZn6MnObhNoP+9bbbuje16WpvT3+yOvT
-   EU2j+eyonxJodH8UcR1x2b25BXIPvhzXtmzgxYoQBkMTLVMgzoUXvDpnx
-   blAW2XcB2E74x8ifZrZAo3vBU2GcIzO+Hef2/REd+H7HDPnh705gS0vZm
-   g==;
-X-IronPort-AV: E=Sophos;i="5.53,361,1531756800"; 
-   d="scan'208";a="193728839"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 12 Sep 2018 04:05:43 +0800
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP; 11 Sep 2018 12:52:17 -0700
-Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
-  by uls-op-cesaip02.wdc.com with ESMTP; 11 Sep 2018 13:05:44 -0700
-From:   Atish Patra <atish.patra@wdc.com>
-To:     palmer@sifive.com, linux-riscv@lists.infradead.org
-Cc:     mark.rutland@arm.com, hch@infradead.org, anup@brainfault.org,
-        atish.patra@wdc.com, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, Damien.LeMoal@wdc.com,
-        marc.zyngier@arm.com, jeremy.linton@arm.com,
-        gregkh@linuxfoundation.org, jason@lakedaemon.net,
-        catalin.marinas@arm.com, dmitriy@oss-tech.org,
-        ard.biesheuvel@linaro.org
-Subject: [PATCH v4 10/12] RISC-V: User WRITE_ONCE instead of direct access
-Date:   Tue, 11 Sep 2018 13:05:37 -0700
-Message-Id: <1536696339-15204-11-git-send-email-atish.patra@wdc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1536696339-15204-1-git-send-email-atish.patra@wdc.com>
-References: <1536696339-15204-1-git-send-email-atish.patra@wdc.com>
+        Tue, 11 Sep 2018 21:07:09 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126] helo=xylophone)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1fzovN-0001j9-VY; Tue, 11 Sep 2018 21:06:14 +0100
+Message-ID: <1536696373.3024.148.camel@codethink.co.uk>
+Subject: Re: [PATCH 4.4 48/79] ieee802154: at86rf230: use __func__ macro for
+ debug messages
+From:   Ben Hutchings <ben.hutchings@codethink.co.uk>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Cc:     stable@vger.kernel.org, Stefan Schmidt <stefan@datenfreihafen.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Date:   Tue, 11 Sep 2018 21:06:13 +0100
+In-Reply-To: <20180823074922.245271192@linuxfoundation.org>
+References: <20180823074918.641878835@linuxfoundation.org>
+         <20180823074922.245271192@linuxfoundation.org>
+Organization: Codethink Ltd.
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The secondary harts spin on couple of per cpu variables until both of
-these are non-zero so it's not necessary to have any ordering here.
-However, WRITE_ONCE should be used to avoid tearing.
+On Thu, 2018-08-23 at 09:53 +0200, Greg Kroah-Hartman wrote:
+> 4.4-stable review patch.  If anyone has any objections, please let me know.
+> 
+> ------------------
+> 
+> From: Stefan Schmidt <stefan@datenfreihafen.org>
+> 
+> [ Upstream commit 8a81388ec27c4c0adbdecd20e67bb5f411ab46b2 ]
+> 
+> Instead of having the function name hard-coded (it might change and we
+> forgot to update them in the debug output) we can use __func__ instead
+> and also shorter the line so we do not need to break it. Also fix an
+> extra blank line while being here.
+> Found by checkpatch.
+[...]
 
-Signed-off-by: Atish Patra <atish.patra@wdc.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
----
- arch/riscv/kernel/smpboot.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+This is a perfectly good fix for upstream, but really not important
+enough for stable.  Sasha, please retrain your patch selector.
 
-diff --git a/arch/riscv/kernel/smpboot.c b/arch/riscv/kernel/smpboot.c
-index 17e74831..1e478615 100644
---- a/arch/riscv/kernel/smpboot.c
-+++ b/arch/riscv/kernel/smpboot.c
-@@ -81,8 +81,9 @@ int __cpu_up(unsigned int cpu, struct task_struct *tidle)
- 	 * the spinning harts that they can continue the boot process.
- 	 */
- 	smp_mb();
--	__cpu_up_stack_pointer[cpu] = task_stack_page(tidle) + THREAD_SIZE;
--	__cpu_up_task_pointer[cpu] = tidle;
-+	WRITE_ONCE(__cpu_up_stack_pointer[cpu],
-+		  task_stack_page(tidle) + THREAD_SIZE);
-+	WRITE_ONCE(__cpu_up_task_pointer[cpu], tidle);
- 
- 	while (!cpu_online(cpu))
- 		cpu_relax();
+Ben.
+
 -- 
-2.7.4
-
+Ben Hutchings, Software Developer                         Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
