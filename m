@@ -2,130 +2,101 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A56DC6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 12:54:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10844C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 12:55:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C162E20833
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 12:54:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C162E20833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id BB232206B8
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 12:55:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB232206B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727685AbeIKRxm (ORCPT
+        id S1727703AbeIKRyt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 13:53:42 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:57198 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726761AbeIKRxl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 13:53:41 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 8A41A8067B; Tue, 11 Sep 2018 14:54:28 +0200 (CEST)
-Date:   Tue, 11 Sep 2018 14:54:28 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Sebastian Reichel <sre@kernel.org>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, tony@atomide.com, nekit1000@gmail.com,
-        mpartap@gmx.net, merlijn@wizzup.org
-Subject: Re: omap4: support for manually updated display
-Message-ID: <20180911125428.GA24639@amd>
-References: <20180830090456.GA17277@amd>
- <797c13fa-7a5b-a809-7dd0-14b01a3046be@ti.com>
- <3205865.8O8aibZXye@avalon>
- <20180910212820.ygr3japdw6td2qvm@earth.universe>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="ZPt4rx8FFjLCG7dd"
-Content-Disposition: inline
-In-Reply-To: <20180910212820.ygr3japdw6td2qvm@earth.universe>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Tue, 11 Sep 2018 13:54:49 -0400
+Received: from shell.v3.sk ([90.176.6.54]:42149 "EHLO shell.v3.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726761AbeIKRyt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 13:54:49 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 3B85EAFA96;
+        Tue, 11 Sep 2018 14:55:33 +0200 (CEST)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id U7UTuDDiBQS6; Tue, 11 Sep 2018 14:55:30 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id D1751AFAD7;
+        Tue, 11 Sep 2018 14:55:29 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id O7CY8V4ycJEF; Tue, 11 Sep 2018 14:55:29 +0200 (CEST)
+Received: from belphegor (nat-pool-brq-t.redhat.com [213.175.37.10])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id F3BD0AFA96;
+        Tue, 11 Sep 2018 14:55:28 +0200 (CEST)
+Message-ID: <4892b137e9ba100fea7d9d9c7d401d81f33271a7.camel@v3.sk>
+Subject: Re: [PATCH] DT: marvell,mmp2: add MMC controllers
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Eric Miao <eric.y.miao@gmail.com>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Date:   Tue, 11 Sep 2018 14:55:27 +0200
+In-Reply-To: <CAL_JsqJ=9M9LxKjWQ7f3ARUkp_54BxCuRdJ-=JVNBefVswroew@mail.gmail.com>
+References: <20180910120243.163979-1-lkundrak@v3.sk>
+         <CAL_JsqJ=9M9LxKjWQ7f3ARUkp_54BxCuRdJ-=JVNBefVswroew@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 2018-09-10 at 10:14 -0500, Rob Herring wrote:
+> On Mon, Sep 10, 2018 at 7:02 AM Lubomir Rintel <lkundrak@v3.sk>
+> wrote:
+> > 
+> > There's apparently four of them on a MMP2.
+> > 
+> > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> > ---
+> >  arch/arm/boot/dts/mmp2.dtsi | 40
+> > +++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 40 insertions(+)
+> > 
+> > diff --git a/arch/arm/boot/dts/mmp2.dtsi
+> > b/arch/arm/boot/dts/mmp2.dtsi
+> > index 766bbb8495b6..51d4a2d70db9 100644
+> > --- a/arch/arm/boot/dts/mmp2.dtsi
+> > +++ b/arch/arm/boot/dts/mmp2.dtsi
+> > @@ -18,6 +18,10 @@
+> >                 serial3 = &uart4;
+> >                 i2c0 = &twsi1;
+> >                 i2c1 = &twsi2;
+> > +               sdhci0 = &mmc1;
+> > +               sdhci1 = &mmc2;
+> > +               sdhci2 = &mmc3;
+> > +               sdhci3 = &mmc4;
+> 
+> Please drop this. MMC nodes don't need an alias and if they did,
+> "sdhci" wouldn't be the name.
 
---ZPt4rx8FFjLCG7dd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Will do. I essentially just cargo-culted this, because I had no idea
+which devices need aliases. How do I decide whether an alias is needed?
 
-Hi!
+> 
+> Rob
 
-> > > A large omapdrm change set from Laurent was merged into drm-next, and
-> > > I'm certain they conflict with this series. Laurent also has continued
-> > > that work, and while those new patches haven't been sent for review y=
-et,
-> > > I fear they'll also conflict with these.
-> > >=20
-> > > So in the minimum, a rebase on top of drm-next is needed.
-> > >=20
-> > > I also continue to be very worried that adding DSI support to omapdrm=
- at
-> > > this stage will be a huge extra burden for Laurent's work.
-> > >=20
-> > > We should transform the panel-dsi-cm.c towards the common DRM model.
-> > > With a quick look, there seems to be a driver for Samsung's S6E63J0X03
-> > > panel. So possibly all the DSI features are there in the DRM framewor=
-k,
-> > > but someone needs to check that and start working on panel-dsi-cm.c so
-> > > that it's ready when we finally switch to the DRM model.
-> > >=20
-> > > In my opinion, which I've also expressed before, the above work is mu=
-ch
-> > > easier to do by first changing the omapdrm to DRM model, without any =
-DSI
-> > > displays, and then add the DSI command mode support. But if people
-> > > insist on adding the DSI support already now, I would appreciate the
-> > > same people working on the DSI support so that Laurent doesn't have to
-> > > do it all.
-> >=20
-> > I want to make it clear that I don't want to claim any privilege in get=
-ting=20
-> > patches merged first. I am however worried that, without an easy way to=
- test=20
-> > DSI support, and without enough time to focus on it, I would break what=
-ever=20
-> > would be merged now in future reworks. I would thus like to find out ho=
-w to=20
-> > collaborate on this task, hopefully to move towards usage of drm_bridge=
- and=20
-> > drm_panel for DSI-based pipelines.
->=20
-> I'm currently quite busy and barely find enough time to do my work
-> as power-supply subsystem maintainer, but I already started to
-> rebase the series. I agree, that it would be very nice to move towards
-> usage of common DRM framework(s), but it's also nice to see which
-> patch breaks DSI ;)
+Thank you,
+Lubo
 
-I was thinking of doing rebase myself... so if you need some help, or
-run out of a time and will need someone to finish it, let me know.
-
-Best regards,
-								Pavel
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---ZPt4rx8FFjLCG7dd
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAluXuwMACgkQMOfwapXb+vKHOQCeK83aOj+SVN05+v8miJMvHAwh
-dPcAniPZ+WTaohAIH+bW/823V7bkwKiZ
-=PuAf
------END PGP SIGNATURE-----
-
---ZPt4rx8FFjLCG7dd--
