@@ -2,127 +2,96 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3721C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:52:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E49B2C6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:53:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87B2A20839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:52:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87B2A20839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
+	by mail.kernel.org (Postfix) with ESMTP id ED34C2086A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:53:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=aepfle.de header.i=@aepfle.de header.b="NKJ1LZ3k"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED34C2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aepfle.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726912AbeIKMuo (ORCPT
+        id S1727596AbeIKMvN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 08:50:44 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:9661 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726398AbeIKMuo (ORCPT
+        Tue, 11 Sep 2018 08:51:13 -0400
+Received: from mo4-p00-ob.smtp.rzone.de ([85.215.255.22]:16179 "EHLO
+        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726554AbeIKMvM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 08:50:44 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
-   d="scan'208";a="44767963"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 11 Sep 2018 15:52:37 +0800
-Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id B77884B6EC99;
-        Tue, 11 Sep 2018 15:52:38 +0800 (CST)
-Received: from localhost.localdomain (10.167.225.56) by
- G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 11 Sep 2018 15:52:42 +0800
-Date:   Tue, 11 Sep 2018 15:52:16 +0800
-From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-CC:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>, <bhe@redhat.com>,
-        <indou.takao@jp.fujitsu.com>, Cao jin <caoj.fnst@cn.fujitsu.com>,
-        Dou Liyang <douly.fnst@cn.fujitsu.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        <linux-efi@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
-Subject: Re: [PATCH v6 1/3] x86/boot: Add acpitb.c to parse acpi tables
-Message-ID: <20180911075215.GD8519@localhost.localdomain>
-References: <20180910124015.18073-1-fanc.fnst@cn.fujitsu.com>
- <20180910124015.18073-2-fanc.fnst@cn.fujitsu.com>
- <CAJZ5v0gep7Q4w+yOvgfOUG8rU12tYEw3qtDKCoZN2=b8-=-fjw@mail.gmail.com>
- <20180911012754.GC8519@localhost.localdomain>
- <CAJZ5v0i5UcV3mngTNdGyefobDOKVOGcSG3Tuz=7-PhQWjyyhmA@mail.gmail.com>
+        Tue, 11 Sep 2018 08:51:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1536652387;
+        s=strato-dkim-0002; d=aepfle.de;
+        h=References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=VN5K/D5hf+7rTG12AsLJ6RBBD+9zNkeHfyaEnNLObcU=;
+        b=NKJ1LZ3kWayefxC3kDVg05hFw9VtKVZ4x9hOZLKejJzacjRFNTCaZrtwKSgHHt65i9
+        QSVyC/6E6w9t6YAMmMGu7jQUmObGFyAAyYkyjTsh2kX1azzA7MuY/BewQpjubZvyQ6dZ
+        Ly0CCPkucMiPO42C8f92EokWqroe7jetEPlNOytkOUrxUz9nzoK+7q0yhfA2hRghbogw
+        0IuS/GpTFM9WASfjNEECSHOIFtzlBa/FTIofoGSq2TPhObSFMZUSd2Tnv9UBlG4pCIdt
+        niyZR4JWjYQgPA0c6PX3zkwdY3845OK17m+xkao6XJuzmNlD+Lbbovc7h32aML8MUdgw
+        fWoA==
+X-RZG-AUTH: ":P2EQZWCpfu+qG7CngxMFH1J+3q8wa/QED/SSGq+wjGiUC4oc0Nr2ihluivIFRoeSV8ZanCUTzXkL91T4E0V3TMz5ObAI+PLPmQ=="
+X-RZG-CLASS-ID: mo00
+Received: from sender
+        by smtp.strato.de (RZmta 44.0 AUTH)
+        with ESMTPSA id L0862bu8B7r6PR4
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Tue, 11 Sep 2018 09:53:06 +0200 (CEST)
+Date:   Tue, 11 Sep 2018 09:52:58 +0200
+From:   Olaf Hering <olaf@aepfle.de>
+To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc:     xen-devel@lists.xenproject.org, Juergen Gross <jgross@suse.com>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4] xen: avoid crash in disable_hotplug_cpu
+Message-ID: <20180911095258.5ed9e9b7.olaf@aepfle.de>
+In-Reply-To: <4f623671-e1aa-1804-449c-a26b0c4b9ce9@oracle.com>
+References: <20180907143135.29608-1-olaf@aepfle.de>
+        <4f623671-e1aa-1804-449c-a26b0c4b9ce9@oracle.com>
+X-Mailer: Claws Mail 3.16.1 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0i5UcV3mngTNdGyefobDOKVOGcSG3Tuz=7-PhQWjyyhmA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: B77884B6EC99.AD437
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ boundary="Sig_/CPClJ/MMcjkzZUX9ZJc226I"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 11, 2018 at 09:41:36AM +0200, Rafael J. Wysocki wrote:
->On Tue, Sep 11, 2018 at 3:28 AM Chao Fan <fanc.fnst@cn.fujitsu.com> wrote:
->>
->> On Mon, Sep 10, 2018 at 10:13:49PM +0200, Rafael J. Wysocki wrote:
->> >On Mon, Sep 10, 2018 at 2:41 PM Chao Fan <fanc.fnst@cn.fujitsu.com> wrote:
->> >>
->> >> Imitate the ACPI code of parsing ACPI tables to dig and read ACPI
->> >> tables.
->> >
->> >Why?
->>
->> Sorry for that, I have sent the cover letter to you.
->
->Thanks, but please add the explanation here too.
+--Sig_/CPClJ/MMcjkzZUX9ZJc226I
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-OK, I will add more.
+Am Fri, 7 Sep 2018 12:56:37 -0400
+schrieb Boris Ostrovsky <boris.ostrovsky@oracle.com>:
 
->
->> >
->> >> Since some operations are not needed here,
->> >
->> >What operations?
->>
->> Such as some operations related to the map between physical address
->> and virtual address. Here in compressed period, use physical address
->> directely.
->
->This information also needs to go into the changelog of the patch.
+> I was hoping you'd respond to my question about warning.
 
-Sorry for that.
+It looks like CONFIG_BOOTPARAM_HOTPLUG_CPU0=3Dy is the reason for the warni=
+ng.
+As J=C3=BCrgen suggested in another mail, Xen should probably disable hotpl=
+ugging
+for cpu#0 in the generic setup code. Then cpu_is_hotpluggable(cpu) would
+do the right thing.
 
->
->> >
->> >> functions are simplified. Functions will be used to dig SRAT tables to get
->> >> information of memory, so that KASLR can the memory in immovable node.
->> >
->> >So do you want to parse SRAT only or do something in addition to that?
->>
->> Only read and get memory information, won't change SRAT.
->> So ACPI code will not be changed.
->
->I meant whether or not SRAT is the only table you need to look into.
->If so, that also needs to be said in the patch changelog.
+Do you want me to merge that extra change into this patch?
 
-Yes, you are right, here only SRAT table is needed.
+Olaf
 
-Thanks,
-Chao Fan
+--Sig_/CPClJ/MMcjkzZUX9ZJc226I
+Content-Type: application/pgp-signature
+Content-Description: Digitale Signatur von OpenPGP
 
->
->Thanks,
->Rafael
->
->
+-----BEGIN PGP SIGNATURE-----
 
+iF0EARECAB0WIQSkRyP6Rn//f03pRUBdQqD6ppg2fgUCW5d0WgAKCRBdQqD6ppg2
+flNNAKCxtgFIZPAviAgZkf3DXwrkLC/2EQCg751qjqAtbIv/pXtyiEZ23CD7CA8=
+=J0Xp
+-----END PGP SIGNATURE-----
 
+--Sig_/CPClJ/MMcjkzZUX9ZJc226I--
