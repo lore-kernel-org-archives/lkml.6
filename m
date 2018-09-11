@@ -2,140 +2,91 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35032C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 17:59:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49320C6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 17:59:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA74C2086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 17:59:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03A56206B8
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 17:59:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="hZTs+WDl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA74C2086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Ww+MAYjj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03A56206B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728404AbeIKW7q (ORCPT
+        id S1728421AbeIKW7t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 18:59:46 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:44433 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728385AbeIKW7q (ORCPT
+        Tue, 11 Sep 2018 18:59:49 -0400
+Received: from mail-io0-f172.google.com ([209.85.223.172]:38419 "EHLO
+        mail-io0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728407AbeIKW7s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 18:59:46 -0400
-Received: by mail-oi0-f66.google.com with SMTP id l82-v6so48915742oih.11
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 10:59:20 -0700 (PDT)
+        Tue, 11 Sep 2018 18:59:48 -0400
+Received: by mail-io0-f172.google.com with SMTP id y3-v6so4312439ioc.5;
+        Tue, 11 Sep 2018 10:59:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=zpbR4x/mj0fwbzLHsBkJtWNApIh0JB2XSHny7nLhpsM=;
-        b=hZTs+WDlQf6OwFfIqkrUUpw2moOvpyBQ26FFkv46MkmEN6RCQB5cp8URxNB8PkIaQ9
-         WdfCVWVSsXdmEnet+GyOtP3N5zo/uwTt2pD+4Rph0WSp7bfAfSkLJn+pCkqAYgM2dU/A
-         xDOSLXOlcV97Nnh1q+DISjLLxJOyhFy4oNillHUE1o2Vpp1R3AS8pKc+I9pVxaVvdsFl
-         Kd27fB4PHcl6mBdftpzyPAVbQ42GCHxqc7QaNUPES9Lut6mJqWNCvMB3Cwo3y8hFKWF5
-         KMVenqd2AehAlKZLNmQNuwcfLEiOXyopjB7FGl+O5kkWYx3OYgaHu84Lka5yJvbmYSsF
-         Nkiw==
+        bh=aXWSbhZWmG8MF6e/+/Bywee7w0TaSTNEl4Ors3bkiGo=;
+        b=Ww+MAYjjANKpSPms1RB+Hstf58cpop/uIDx0itmjMUCJ1SivPOo5agQfWQb+ZhlvdU
+         kBl0G10crzZ/ir21aQW6lFnT8uW74f4hvPtK2qTww61mDT7hAR+kTTgdtFuiCUt+8/2O
+         GU2aL+iFw63yXlEDcS5aNR47pQbaIEzzcN/rM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=zpbR4x/mj0fwbzLHsBkJtWNApIh0JB2XSHny7nLhpsM=;
-        b=Jr/wvaal27oFu2PXPzAX82yYjUNDtPr8ISET8QXhhhnBHt4gqOPXtO4jq3XjB42bNX
-         L9SkvrGV7tCtiYuRIpLTSjwnYLDTGhSjfFxUo2PG+kYOdk+mS6eYsuH7x6Ka0t7xCsYx
-         Iqp+10geRowxgDQNngtPqta7PCaLOoNRKmoXkEq/kP+/YkOzxRn7Bzso3iSrC0n1GcSQ
-         T8pzeSmpZhviHMVzsCTegWYe9yQzY+iNsSd7573hPuCyC6L7ZuHSdxTsX/ee4d64qz+e
-         +3t5Y9p9NHnGwxB3UTpocWkMPqR71lmF+UUP599nvRbx5KdYcIczLIbebVvy1UBvWZm+
-         rlxQ==
-X-Gm-Message-State: APzg51ChT7GaU1JSdpHezp8ix7oWA/Ulrpb9NTP7+1I7axxBmhExAshO
-        23Z0xOotQ3lkWyBltWlYvGQcXDgxJYgL1BUPKTMUGQ==
-X-Google-Smtp-Source: ANB0VdZpQC+r5H2pt1jDhCo4sQGuSrOCc0xqUtCcwQX1ozV2Q2/tJZcSviZ4GfAeY4TcxR7bua6D0s59mykYVcGUvDA=
-X-Received: by 2002:aca:4507:: with SMTP id s7-v6mr26990094oia.200.1536688759824;
- Tue, 11 Sep 2018 10:59:19 -0700 (PDT)
+        bh=aXWSbhZWmG8MF6e/+/Bywee7w0TaSTNEl4Ors3bkiGo=;
+        b=n30Lqh+OBO2lt+OxWB0xoArme9yz4eGXVk0EbzuKAJQBJQRJXb1ya9mVFU8HHfB2gK
+         qTkuUWHbzrRoqIof//Ol8wJA6SPeXL4g6zPcrd/TsTqndnM6zxttpxAt3MFxuUv+CvOa
+         tbbuGrszP7EundHjaEBEzkW0bqedxXGC6CV3c8dP6/WqsL8b+7+LjlObhehr8eharjIY
+         gskrxzY0adUVBKPTbXi4CiWSf0qbaVO0jWnfBEMZOGL4BRG2lWWVos8EUoh00Y76mUl7
+         8+W9PT1wGNGcYarUmzwIcS5xKIF8l+WBdp5zazku2KhBbzTyDuGwz4JP/ZbVlNApnIK5
+         Ld/w==
+X-Gm-Message-State: APzg51A/0KjaCnMnLI3xDoJggvWGlups+k2BUie6JYpU4ZeRTY2wyuYE
+        ZFIfhnT23jHA72rw2XqybvMEVxs/oLIgjze3W+M=
+X-Google-Smtp-Source: ANB0Vdbxy4IDvnNRujJdPBUIA2Mx72l0r3/8qx8x/sXU7ha3wBdLGuFT9Rv5nGqRktmvENhNuNuxwD6QQlkYCH8fRCE=
+X-Received: by 2002:a6b:f609:: with SMTP id n9-v6mr23859079ioh.259.1536688761671;
+ Tue, 11 Sep 2018 10:59:21 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a4a:8e85:0:0:0:0:0 with HTTP; Tue, 11 Sep 2018 10:59:19
- -0700 (PDT)
-In-Reply-To: <20180911154246.6844-2-toshi.kani@hpe.com>
-References: <20180911154246.6844-1-toshi.kani@hpe.com> <20180911154246.6844-2-toshi.kani@hpe.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 11 Sep 2018 10:59:19 -0700
-Message-ID: <CAPcyv4j0zF+OjqPywkmZLgGiSjNdH_9SwpXjS=92bqT9OXZ_MQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] ext4, dax: update dax check to skip journal inode
-To:     Toshi Kani <toshi.kani@hpe.com>
-Cc:     Jan Kara <jack@suse.cz>, "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180910215659.GA17966@roeck-us.net> <D213F8BC-5C8E-44A2-810F-918B915F0804@amacapital.net>
+ <877118e5-beee-4551-28d3-79e7aa52f74e@roeck-us.net> <90A7FF2E-F186-49CF-A028-CDE317BE13E1@amacapital.net>
+ <20180911174158.7qu6f4vfnfzqqrcf@suse.de>
+In-Reply-To: <20180911174158.7qu6f4vfnfzqqrcf@suse.de>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 11 Sep 2018 07:59:10 -1000
+Message-ID: <CA+55aFzZ2rBWPrYOSozf44HNDhPPm94GCnsVDwCtnTOJbvombQ@mail.gmail.com>
+Subject: Re: Random crashes with i386 and efi boots
+To:     Joerg Roedel <jroedel@suse.de>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Michal Hocko <mhocko@suse.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 11, 2018 at 8:42 AM, Toshi Kani <toshi.kani@hpe.com> wrote:
-> Ext4 mount path calls ext4_iget() to obtain the journal inode.  This
-> inode does not support DAX, and 'ext4_da_aops' needs to be set.  It
-> currently works for the DAX mount case because ext4_iget() always set
-> 'ext4_da_aops' to any regular files.
+On Tue, Sep 11, 2018 at 7:42 AM Joerg Roedel <jroedel@suse.de> wrote:
 >
->   ext4_fill_super
->     ext4_load_journal
->       ext4_get_journal_inode
->         ext4_iget
->
-> In preparation to fix ext4_iget() to set 'ext4_dax_aops' for DAX files,
-> update ext4_should_use_dax() to return false for the journal inode.
->
-> Fixes: 5f0663bb4a64f588f0a2dd6d1be68d40f9af0086
+> So I am in favor of changing the order in efi_call_phys_epilog() too.
 
-Just a minor format recommendation:
+Yeah, the only reason the order was changed was that it seemed more
+logical to use the new cr3 to load the GDT. But that was clearly
+wrong.
 
-Fixes: 5f0663bb4a64 ("ext4, dax: introduce ext4_dax_aops")
-Cc: <stable@vger.kernel.org>
+So ack on just changing the order, and my bad for suggesting the
+change in the first place.
 
-> Signed-off-by: Toshi Kani <toshi.kani@hpe.com>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: "Theodore Ts'o" <tytso@mit.edu>
-> Cc: Andreas Dilger <adilger.kernel@dilger.ca>
-> ---
->  fs/ext4/ext4_jbd2.h |    8 ++++++++
->  fs/ext4/inode.c     |    2 ++
->  2 files changed, 10 insertions(+)
->
-> diff --git a/fs/ext4/ext4_jbd2.h b/fs/ext4/ext4_jbd2.h
-> index 15b6dd733780..9847dc980a0d 100644
-> --- a/fs/ext4/ext4_jbd2.h
-> +++ b/fs/ext4/ext4_jbd2.h
-> @@ -437,6 +437,14 @@ static inline int ext4_should_writeback_data(struct inode *inode)
->         return ext4_inode_journal_mode(inode) & EXT4_INODE_WRITEBACK_DATA_MODE;
->  }
->
-> +static inline int ext4_is_journal_inode(struct inode *inode)
-> +{
-> +       struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
-> +       unsigned int journal_inum = le32_to_cpu(sbi->s_es->s_journal_inum);
-> +
-> +       return journal_inum && (journal_inum == inode->i_ino);
-> +}
-> +
->  /*
->   * This function controls whether or not we should try to go down the
->   * dioread_nolock code paths, which makes it safe to avoid taking
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index d0dd585add6a..775cd9b4af55 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -4686,6 +4686,8 @@ static bool ext4_should_use_dax(struct inode *inode)
->                 return false;
->         if (ext4_should_journal_data(inode))
->                 return false;
-> +       if (ext4_is_journal_inode(inode))
-> +               return false;
-
-This looks good to me.
-
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+            Linus
