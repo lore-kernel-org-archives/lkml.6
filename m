@@ -2,160 +2,102 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74224C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 04:37:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37D0AC04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 04:40:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26DDA206B8
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 04:37:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26DDA206B8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id B568C20865
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 04:40:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="XrJrX6CP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B568C20865
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726645AbeIKJe0 (ORCPT
+        id S1726722AbeIKJiP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 05:34:26 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:54781 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726438AbeIKJe0 (ORCPT
+        Tue, 11 Sep 2018 05:38:15 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:51532 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726426AbeIKJiP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 05:34:26 -0400
-Received: from soja.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:13da])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <o.rempel@pengutronix.de>)
-        id 1fzaPs-0007YI-Qa; Tue, 11 Sep 2018 06:36:44 +0200
-Subject: Re: [PATCH v9 3/6] kernel/reboot.c: export pm_power_off_prepare
-To:     Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        yibin.gong@nxp.com, Michael Turquette <mturquette@baylibre.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-imx@nxp.com,
-        kernel@pengutronix.de, "A.s. Dong" <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20180802103425.3053-1-o.rempel@pengutronix.de>
- <20180802103425.3053-4-o.rempel@pengutronix.de>
- <20180802104443.GH9117@sirena.org.uk>
- <94d48ecb-7302-c7ed-e815-730be0426a04@pengutronix.de>
- <20180802113552.GJ9117@sirena.org.uk> <20180827014815.GD29208@dragon>
- <20180906101516.GA5360@sirena.org.uk> <20180909020021.GA18838@dragon>
- <20180910151926.GA10889@sirena.org.uk> <20180911015320.GA25790@dragon>
-From:   Oleksij Rempel <o.rempel@pengutronix.de>
-Message-ID: <134a7f76-6e0b-1a9f-26da-f01adaac44e6@pengutronix.de>
-Date:   Tue, 11 Sep 2018 06:36:35 +0200
+        Tue, 11 Sep 2018 05:38:15 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8B4d2HV024986;
+        Tue, 11 Sep 2018 04:40:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=K6584tUf+jiABk6HMltVlfFhB3coE6drQg86b335fJI=;
+ b=XrJrX6CP21VJhQY7XkKVKJlCmqqtKp7cYy7eSeLkLdryCvQm0x04KKru5k/DKX1j1EBe
+ pK8HVxn6BCO3ineXlIZXQedB6j6rt6wrVgWYkDQcvIeJLOumPjgio9fYMkxep3kkxjh6
+ t8ktqwqMw5WrpE4dkhaT5v+/BX+qhUwdRiUUcUSjc4BzXny6XXOLO7exShmLxnWZDN21
+ Fli4+EZ8N0r9QcDP8hdrfgmvjLkqKJFmBsNvJuarH/ykOzL9ARQFzbGaPDElP8fGqJu6
+ yxGTRF6G+Ka5zznKzQE9g0qNd3RL6aw98kWU1RLYkylzPpAvNHBaH0tougqwiS464RLe zg== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2130.oracle.com with ESMTP id 2mc5ut9kt5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 11 Sep 2018 04:40:43 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w8B4ebgL017952
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 11 Sep 2018 04:40:38 GMT
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w8B4ebUV015253;
+        Tue, 11 Sep 2018 04:40:37 GMT
+Received: from [10.182.70.180] (/10.182.70.180)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 10 Sep 2018 21:40:36 -0700
+Subject: Re: [PATCH] percpu-refcount: relax limit on percpu_ref_reinit()
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-block@vger.kernel.org
+References: <20180909125824.9150-1-ming.lei@redhat.com>
+ <d4fb5fcc-305e-b3a7-0124-9c7b75042f01@oracle.com>
+ <20180910161135.GA27430@ming.t460p>
+ <e91ee38e-3ea2-a003-2aac-8a8cc5c8f04a@oracle.com>
+ <20180911040323.GC30977@ming.t460p>
+From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
+Message-ID: <771fa1eb-85d3-2ff2-6070-207874da85b6@oracle.com>
+Date:   Tue, 11 Sep 2018 12:40:36 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180911015320.GA25790@dragon>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="GH2qLEd1bdYflvrsNcftbP536dqJJG2Gz"
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:13da
-X-SA-Exim-Mail-From: o.rempel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20180911040323.GC30977@ming.t460p>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9012 signatures=668708
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=488
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1809110051
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---GH2qLEd1bdYflvrsNcftbP536dqJJG2Gz
-Content-Type: multipart/mixed; boundary="IQQAtMcNgGktm5ZFih1gXwZeXumOAOaYC";
- protected-headers="v1"
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
- yibin.gong@nxp.com, Michael Turquette <mturquette@baylibre.com>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
- Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
- linux-imx@nxp.com, kernel@pengutronix.de, "A.s. Dong"
- <aisheng.dong@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>,
- Russell King <linux@armlinux.org.uk>,
- Andrew Morton <akpm@linux-foundation.org>,
- Leonard Crestez <leonard.crestez@nxp.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Message-ID: <134a7f76-6e0b-1a9f-26da-f01adaac44e6@pengutronix.de>
-Subject: Re: [PATCH v9 3/6] kernel/reboot.c: export pm_power_off_prepare
-References: <20180802103425.3053-1-o.rempel@pengutronix.de>
- <20180802103425.3053-4-o.rempel@pengutronix.de>
- <20180802104443.GH9117@sirena.org.uk>
- <94d48ecb-7302-c7ed-e815-730be0426a04@pengutronix.de>
- <20180802113552.GJ9117@sirena.org.uk> <20180827014815.GD29208@dragon>
- <20180906101516.GA5360@sirena.org.uk> <20180909020021.GA18838@dragon>
- <20180910151926.GA10889@sirena.org.uk> <20180911015320.GA25790@dragon>
-In-Reply-To: <20180911015320.GA25790@dragon>
+Hi Ming
 
---IQQAtMcNgGktm5ZFih1gXwZeXumOAOaYC
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+On 09/11/2018 12:03 PM, Ming Lei wrote:
+> After the refcount is switched to atomic mode, the whole counting is
+> done on the atomic part. Then if the refcount need to switch to percpu mode
+> again, all percpu part of the counter is re-initialized as zero simply. This
+> is invariant with/without this patch.
 
-Hi Shawn,
+Does the "whole counting" here means ?
 
-On 11.09.2018 03:53, Shawn Guo wrote:
-> On Mon, Sep 10, 2018 at 04:19:26PM +0100, Mark Brown wrote:
->> On Sun, Sep 09, 2018 at 10:00:23AM +0800, Shawn Guo wrote:
->>> On Thu, Sep 06, 2018 at 11:15:17AM +0100, Mark Brown wrote:
->>
->>>> I was expecting to get a pull request with the precursor patches in =
-it -
->>>> the regulator driver seems to get a moderate amount of development s=
-o
->>>> there's a reasonable risk of conflicts.
->>
->>> What about you create a stable topic branch for regulator patches and=
- I
->>> pull it into IMX tree?
->>
->> Sure, I can send a pull request back but the first two patches in the
->> series are ARM ones - are you OK with me just applying them and sendin=
-g
->> them in the pull request or do you want to apply them first?
->=20
-> I just took another look at the series.  It seems that there is no
-> build-time dependency between regulator and platform patches.  So I
-> think we can handle the series like:
->=20
->  - You apply patch #3, #4 and #5 on regulator tree;
->  - I apply the reset on IMX tree.
->=20
-> There shouldn't be any build or run time regression on either tree, and=
+(long)(sum (every cpu's refcounter)) + atomic refcounter
 
-> the feature that the series adds will be available when both trees get
-> merged together on -next or Linus tree.
->=20
-> @Oleksij Is my understanding above correct?
+and when switch to atomic mode, there could be value left in atomic refcounter.
+then the unsigned long percpu refcounter cound be decreased from 0.
+	
+From another angle, one request could be ended on a different cpu from the one where
+it is issued.
 
-Yes.
-
-
---IQQAtMcNgGktm5ZFih1gXwZeXumOAOaYC--
-
---GH2qLEd1bdYflvrsNcftbP536dqJJG2Gz
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAluXRlMACgkQdQOiSHVI
-77Sxowf8CjP6jDa4tEdi8nba/CtB4vRe2TXeKy4l+9nZNtPn8Bl4PrUC8sOZN0Pa
-GlXjWmDPrDBjJ/qV8AMwa0HhK4xvIHIDsM8NMRL7CRIYc9bmBw9AnJty9xgS3UAQ
-aYJfQbFx93cz/N3cXCR/ATt50YRPESprtwf8RQBcfNhMX6Fldco3oDfJsmoQBY4l
-LZZ5dezGMr1tQGIr/1FfoOUIUUVWrMHU8BfTiJXC+BtENiUITcDwjnUUAb/CcmFU
-kiulVUndoahTflqBnO1abaElmbePbKVXd+CHC++3uHDTl8ZY8zSpV6DazAjepmua
-57gabHI6prwAB6hDLmRmi0Mr4DMfmQ==
-=6PNd
------END PGP SIGNATURE-----
-
---GH2qLEd1bdYflvrsNcftbP536dqJJG2Gz--
+Thanks
+Jianchao
