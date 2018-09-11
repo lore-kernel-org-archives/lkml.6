@@ -2,108 +2,170 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1180C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:33:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C236C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:33:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F82620866
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:33:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AF8720866
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:33:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="YP5b8TeC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F82620866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UP/SMae7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AF8720866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727051AbeIKUdH (ORCPT
+        id S1727618AbeIKUdQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 16:33:07 -0400
-Received: from smtprelay4.synopsys.com ([198.182.47.9]:57546 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726800AbeIKUdG (ORCPT
+        Tue, 11 Sep 2018 16:33:16 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:35404 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726933AbeIKUdP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 16:33:06 -0400
-Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id B18A024E217A;
-        Tue, 11 Sep 2018 08:33:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1536679997; bh=qry1n0gonA1AI/i3uMnFc79qyBzXGKoYhpHcK0JsLh0=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=YP5b8TeC1HdzjrgFF72U9UTheMrZztg3RixIFHJFvEQwNGESj7/8A8HTN9PN4lUca
-         WguOgzuZabuZru8suARmndwZwY1a9QwH0xXV7vS4ZKLnxkggGAQMqMTBHi1nR1S7Lj
-         za70wR3sqaQ0mKJXKutQpgJdyVZGCBetMVjyCWToMpfbHxLFYHVFJHXDdKBgfbN9oK
-         9e8AmkewByMYP0oSw9Svu8EkPLELLzGdN3qePdOHC593x0TiZ0v5pfQIQ68k5UHRfk
-         eSUebf6kE+2JD0BoBhNoR7GQekx8oAc9k127Z/StqqqLjQkjvDOIOviR+RYT/T/bDX
-         /o2iI7AfbbVoA==
-Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
-        by mailhost.synopsys.com (Postfix) with ESMTP id BA4275727;
-        Tue, 11 Sep 2018 08:33:15 -0700 (PDT)
-Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
- us01wehtc1.internal.synopsys.com (10.12.239.231) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Tue, 11 Sep 2018 08:33:15 -0700
-Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
- by DE02WEHTCB.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Tue,
- 11 Sep 2018 17:33:12 +0200
-From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-To:     "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        "etnaviv@lists.freedesktop.org" <etnaviv@lists.freedesktop.org>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>
-CC:     "hch@lst.de" <hch@lst.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "christian.gmeiner@gmail.com" <christian.gmeiner@gmail.com>,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-        "Alexey Brodkin" <Alexey.Brodkin@synopsys.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux+etnaviv@armlinux.org.uk" <linux+etnaviv@armlinux.org.uk>
-Subject: Re: [PATCH] etnaviv: setup missing dma_mask
-Thread-Topic: [PATCH] etnaviv: setup missing dma_mask
-Thread-Index: AQHUOv/Kx28ev3LVKUWyWWo2jTZoNqTrMfeA
-Date:   Tue, 11 Sep 2018 15:33:12 +0000
-Message-ID: <1536679991.5041.23.camel@synopsys.com>
-References: <20180823163839.14824-1-Eugeniy.Paltsev@synopsys.com>
-In-Reply-To: <20180823163839.14824-1-Eugeniy.Paltsev@synopsys.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.121.3.37]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <AEC6C436A060A74EAAD0013B9AE0BBDC@internal.synopsys.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        Tue, 11 Sep 2018 16:33:15 -0400
+Received: by mail-pg1-f194.google.com with SMTP id 7-v6so12464476pgf.2;
+        Tue, 11 Sep 2018 08:33:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=hO4ptVjqIF1H9wiW4ryILDVrxT+zLd5nC2KssR2sleo=;
+        b=UP/SMae7S3TFJRvj6TvJUdn4+S/aooaaM2eXYL1gv6KySwFu8urLn7mXos0z5U8POx
+         aZdSHhXKOTgwc1GUAIzq/laroPasOrdIQEx6bkW68G5i5DkbMs+VVBp9n9zxwMI5LKQB
+         0qmAM4QDzQBMiSIKjB6xIFGmBDz0Tz4CyeDHKnwR62EBzySk47RoDsx2ikvOgzNbpuce
+         QKCwhw89MmPqKpK2zGvEHj/c+gvR78X83evYgYSsnHDTfDVacHfPNptkt4X91OjwLvJ+
+         UyLQTFfodBtFb8TJ5qu7kdFyjHLZ3LN5nyvLBQ1nqXPcIUvobOsxlabjqOf/UFC8jYc9
+         dWoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=hO4ptVjqIF1H9wiW4ryILDVrxT+zLd5nC2KssR2sleo=;
+        b=qPZ92sBzzC2/03mBPxlyP/iNSodI+B/eh6Xyxy2/EZYnkoYfYHZ6cwoEVg+76TcykY
+         c228aRkZDom1W1O+fBlsnVAaOM+XyV7VmCHjKsepxLvHbNFi6AU1rbTA5rqr8Yi2nYPQ
+         +pwBBBSIGT044i1nEzWM5HF9pvx9Qqm6pCZZY7vBW3bYvfxrNyuhD5ipAVnf1ILKy5Ga
+         WgQHbMDcdXgRu9Rs9E3qD4aXkm39+N8uS9MWwgkIPC6veUhmBMk8oHbg1N3JQH6h8p29
+         Dxot9BB5lVLBldnLvk1vhon6HHTpIFkxU9O/sG+yILPUUu5hQLjGham0AACrg8i+l8Qb
+         Ufqg==
+X-Gm-Message-State: APzg51CmYf0yL3foNuy791LNztqde4B9CwiHE2wrgR+u9OzPdGM3VnQw
+        wdkbdOHAvFj2dqU4n+y1hAg=
+X-Google-Smtp-Source: ANB0VdaCQgdyJOkcf/5SNv9orn8fZthmYXLrQhll7csl6/1AY3LBBOCuIJXImy/yAfcmr6MTIQcVNQ==
+X-Received: by 2002:a63:115f:: with SMTP id 31-v6mr28945614pgr.53.1536680005761;
+        Tue, 11 Sep 2018 08:33:25 -0700 (PDT)
+Received: from [192.168.84.35] (148.98.198.104.bc.googleusercontent.com. [104.198.98.148])
+        by smtp.gmail.com with ESMTPSA id y69-v6sm37886650pfd.36.2018.09.11.08.33.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Sep 2018 08:33:24 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v3] usb: typec: get the vbus source and charge values from the devicetree
+From:   Guenter Roeck <groeck7@gmail.com>
+X-Mailer: iPhone Mail (15G77)
+In-Reply-To: <20180911145931.32441-1-angus@akkea.ca>
+Date:   Tue, 11 Sep 2018 08:33:22 -0700
+Cc:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <8A418EC6-62A4-4354-8928-7693696409D1@gmail.com>
+References: <20180906192644.24587-1-angus@akkea.ca> <20180911145931.32441-1-angus@akkea.ca>
+To:     "Angus Ainslie (Purism)" <angus@akkea.ca>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgTHVjYXMsDQoNCk1heWJlIHlvdSBoYXZlIGFueSBjb21tZW50cyBvciByZW1hcmtzIGFib3V0
-IHRoaXMgcGF0Y2g/IEFuZCBpZiB5b3UgZG9uJ3QgY291bGQgeW91IHBsZWFzZSBhcHBseSBpdC4N
-Cg0KVGhhbmtzIQ0KDQpPbiBUaHUsIDIwMTgtMDgtMjMgYXQgMTk6MzggKzAzMDAsIEV1Z2VuaXkg
-UGFsdHNldiB3cm90ZToNCj4gQXMgZm9yIHRvZGF5IGV0bmF2aXYgZGV2aWNlIGRvZXNuJ3Qgc2V0
-dXAgZG1hX21hc2suDQo+IFRoZSBldG5hdml2IGRldmljZSBpcyBhIHZpcnR1YWwgZGV2aWNlIG5v
-dCByZXByZXNlbnRlZCBpbiBEVA0KPiBzbyBtaXNzaW5nIGRtYV9tYXNrIGlzbid0IHNldHVwIGJ5
-IGdlbmVyaWMgcGxhZm9ybSBjb2RlDQo+IChieSBvZl9kbWFfY29uZmlndXJlIGZ1bmN0aW9uKS4N
-Cj4gDQo+IE1pc3NpbmcgZG1hX21hc2sgY2F1c2VzIGZhaWxzIGluIHNvbWUgZG1hIGNhY2hlIG9w
-cyBmdW5jdGlvbnMuDQo+IEZvciBleGFtcGxlIGl0IGNhdXNlcyBmYWlscyBvbiBtYXBfKiBvcGVy
-YXRpb25zIGluIGdlbmVyaWMNCj4gZG1hX25vbmNvaGVyZW50X29wcyBhbmQgZG1hX2RpcmVjdF9v
-cHMuDQo+IA0KPiBXZSBmYWNlZCB3aXRoIHRoaXMgYmVoYXZpb3VyIGFmdGVyIHN3aXRjaGluZyBB
-UkMgdG8gZ2VuZXJpYw0KPiBkbWFfbm9uY29oZXJlbnQgY2FjaGUgb3BzIHVzaW5nLg0KPiANCj4g
-U28gZml4IHRoaXMgYnkgc2V0dGluZyBkbWFfbWFzayB2aWEgZG1hX2NvZXJjZV9tYXNrX2FuZF9j
-b2hlcmVudCgpDQo+IA0KPiBSZXZpZXdlZC1ieTogQ2hyaXN0b3BoIEhlbGx3aWcgPGhjaEBsc3Qu
-ZGU+DQo+IFNpZ25lZC1vZmYtYnk6IEV1Z2VuaXkgUGFsdHNldiA8RXVnZW5peS5QYWx0c2V2QHN5
-bm9wc3lzLmNvbT4NCj4gLS0tDQo+ICBkcml2ZXJzL2dwdS9kcm0vZXRuYXZpdi9ldG5hdml2X2Ry
-di5jIHwgMiArLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9u
-KC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V0bmF2aXYvZXRuYXZpdl9k
-cnYuYyBiL2RyaXZlcnMvZ3B1L2RybS9ldG5hdml2L2V0bmF2aXZfZHJ2LmMNCj4gaW5kZXggNTQw
-YjU5ZmI0MTAzLi42OWQ4MDkzN2UwMjEgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9l
-dG5hdml2L2V0bmF2aXZfZHJ2LmMNCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V0bmF2aXYvZXRu
-YXZpdl9kcnYuYw0KPiBAQCAtNTkzLDcgKzU5Myw3IEBAIHN0YXRpYyBpbnQgZXRuYXZpdl9wZGV2
-X3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+ICAJc3RydWN0IGRldmljZSAq
-ZGV2ID0gJnBkZXYtPmRldjsNCj4gIAlzdHJ1Y3QgY29tcG9uZW50X21hdGNoICptYXRjaCA9IE5V
-TEw7DQo+ICANCj4gLQlkbWFfc2V0X2NvaGVyZW50X21hc2soJnBkZXYtPmRldiwgRE1BX0JJVF9N
-QVNLKDMyKSk7DQo+ICsJZG1hX2NvZXJjZV9tYXNrX2FuZF9jb2hlcmVudCgmcGRldi0+ZGV2LCBE
-TUFfQklUX01BU0soMzIpKTsNCj4gIA0KPiAgCWlmICghZGV2LT5wbGF0Zm9ybV9kYXRhKSB7DQo+
-ICAJCXN0cnVjdCBkZXZpY2Vfbm9kZSAqY29yZV9ub2RlOw0KLS0gDQogRXVnZW5peSBQYWx0c2V2
+I cant put my finger on it but this seems wrong. As i said both src and sink=
+ should never be true at the same time. I also din=E2=80=99t understand why t=
+urning off src should power off your board. Ultimately my concern is that we=
+ may be just painting over the real problem, and that would be really bad to=
+ do with dt properties.
+
+Note that sending to groeck7@ makes it hard for me to see your emails and to=
+ reply. Using linux@roeck-us.net would be much better.
+
+Guenter
+
+Sent from my iPhone
+
+> On Sep 11, 2018, at 7:59 AM, Angus Ainslie (Purism) <angus@akkea.ca> wrote=
+:
+>=20
+> If the board is being powered by USB disabling the source and sink
+> can remove power from the board. Allow the source and sink to be
+> initallized based on devicetree values.
+>=20
+> Changed since V2:
+>=20
+> Change the devicetree documentation.
+> Change the devicetree property names.
+>=20
+> Changed since V1:
+>=20
+> use devicetree values instead of hardcoded initialization.
+>=20
+> Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
+> ---
+> .../devicetree/bindings/usb/typec-tcpci.txt        |  6 ++++++
+> drivers/usb/typec/tcpm.c                           | 14 +++++++++++---
+> 2 files changed, 17 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/usb/typec-tcpci.txt b/Docum=
+entation/devicetree/bindings/usb/typec-tcpci.txt
+> index 0dd1469e7318..b07418ae6482 100644
+> --- a/Documentation/devicetree/bindings/usb/typec-tcpci.txt
+> +++ b/Documentation/devicetree/bindings/usb/typec-tcpci.txt
+> @@ -15,6 +15,12 @@ Required sub-node:
+>   of connector node are specified in
+>   Documentation/devicetree/bindings/connector/usb-connector.txt
+>=20
+> +Optional properties for usb-c-connector sub-node:
+> +- init-vbus-source: set the initalization value for vbus-source to true.
+> +  If this property is not present the initial value will be false.
+> +- init-vbus-sink: set the initalization value for vbus-sink to true.
+> +  If this property is not present the initial value will be false.
+> +
+> Example:
+>=20
+> ptn5110@50 {
+> diff --git a/drivers/usb/typec/tcpm.c b/drivers/usb/typec/tcpm.c
+> index ca7bedb46f7f..10c14ece3858 100644
+> --- a/drivers/usb/typec/tcpm.c
+> +++ b/drivers/usb/typec/tcpm.c
+> @@ -2462,9 +2462,7 @@ static int tcpm_init_vbus(struct tcpm_port *port)
+> {
+>    int ret;
+>=20
+> -    ret =3D port->tcpc->set_vbus(port->tcpc, false, false);
+> -    port->vbus_source =3D false;
+> -    port->vbus_charge =3D false;
+> +    ret =3D port->tcpc->set_vbus(port->tcpc, port->vbus_source, port->vbu=
+s_charge);
+>    return ret;
+> }
+>=20
+> @@ -4266,6 +4264,16 @@ static int tcpm_fw_get_caps(struct tcpm_port *port,=
+
+>        return -EINVAL;
+>    port->port_type =3D port->typec_caps.type;
+>=20
+> +    if (fwnode_property_present(fwnode, "init-vbus-source"))
+> +        port->vbus_source =3D true;
+> +    else
+> +        port->vbus_source =3D false;
+> +
+> +    if (fwnode_property_present(fwnode, "init-vbus-sink"))
+> +            port->vbus_charge =3D true;
+> +    else
+> +            port->vbus_charge =3D false;
+> +
+>    if (port->port_type =3D=3D TYPEC_PORT_SNK)
+>        goto sink;
+>=20
+> --=20
+> 2.17.1
+>=20
