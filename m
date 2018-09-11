@@ -2,111 +2,131 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 666FAC04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 06:02:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52ACFC04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 06:03:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0688820854
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 06:02:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="k+TATX9h"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0688820854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0631B20854
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 06:03:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0631B20854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726587AbeIKK7w (ORCPT
+        id S1726839AbeIKLBD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 06:59:52 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:43288 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726353AbeIKK7v (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 06:59:51 -0400
-Received: by mail-oi0-f66.google.com with SMTP id b15-v6so44931507oib.10
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 23:02:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=ZyFHSP1NmOjx8jUQRfdGgK1zMkFpUqXcebv0Mgsx+Yc=;
-        b=k+TATX9h4LNO6kR5jQ5VQQ4uJP/X+mEcSbSGWiSxuP0fSqVlK4UKZ31DB8VOidZAtG
-         aXARfooomdtfSvG5BrGS7YqUI5cqckVoRFDYIBXrAA0fLNvhsdm1AGY4+StQ3SLwPOZk
-         ruZ0zp2j/o8VS/5tkObq+Z15wJCbuuYMKiCWasNqbyukRDKywYDZKLpJWh6AZRQgmdYN
-         9vDaXez6ISdeDRE+m7nwK9WS4gXwV7HEqUCtjNLBitMCUoSzFQ7T5Upt9SrBlSDWoswM
-         6J5Q8eQStQmx4iUefz5SqGaDMbUnPDBVnWPVgm3n4x0IGpBj/RyHcUewx8HzJSvv9K5E
-         18rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=ZyFHSP1NmOjx8jUQRfdGgK1zMkFpUqXcebv0Mgsx+Yc=;
-        b=SGRak3bMs8Nt077gQ4LIr6SfohlrhEDHJaqzfXMhe8Vzz4MwwzYW4m3kWabettbQwy
-         9ZSLgzbkDQUpPs/CDbIdO1ePJXk1WES2lKMyOd0+jjcJghfsve+mE7+3HHLeZxAXYXIO
-         gSKEF4zUNnrFxgYnOuubSAe4SiWv8hzp4P85hiknE/8X4fu54oV8t+WyT3k2yvnJVKRU
-         YeK833N52ok4/GcunXHPs9xsk5Y5VesH34OSGdzA99VkXxDQ3ZEJHY9G3B96j/g/jKpK
-         gTlv8h49jSYflbxmzm+cCfLFZWsTGim+PHw+OsiZHx96AdDdU4iuYmRd3mDeqhBmAai5
-         H6Og==
-X-Gm-Message-State: APzg51Djh9/CcxGtMouojLsu+vGoCN9C7ZXRQtxKbXgKDl3uOscRZjaZ
-        kDJstE3JEGJ1nch9y8TjVm0YmRSMhctqnTsgIt1xXA==
-X-Google-Smtp-Source: ANB0VdYaaDkJ/qleZQ1moZQ5SKAD1qN6sK/sSgakKHlWbob80blBmOdrKRMdaCukOOx3LLCkkny2xZcyZOs6bzE+jTw=
-X-Received: by 2002:a54:4d9d:: with SMTP id y29-v6mr26445059oix.273.1536645732390;
- Mon, 10 Sep 2018 23:02:12 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a4a:8e85:0:0:0:0:0 with HTTP; Mon, 10 Sep 2018 23:02:11
- -0700 (PDT)
-In-Reply-To: <499a3093-3781-7a8a-abd0-8b240db11dce@intel.com>
-References: <20180731143246.16915-1-stefanha@redhat.com> <499a3093-3781-7a8a-abd0-8b240db11dce@intel.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 10 Sep 2018 23:02:11 -0700
-Message-ID: <CAPcyv4iPCwRCun_w+dE7P86KUC73f6G++sSUS4BFzBzDcsBOpw@mail.gmail.com>
-Subject: Re: [PATCH] device-dax: avoid hang on error before devm_memremap_pages()
-To:     Dave Jiang <dave.jiang@intel.com>
-Cc:     Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 11 Sep 2018 07:01:03 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58740 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726617AbeIKLBD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 07:01:03 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 04036B0A3;
+        Tue, 11 Sep 2018 06:03:22 +0000 (UTC)
+Date:   Tue, 11 Sep 2018 08:03:21 +0200
+Message-ID: <s5hd0tk3712.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     "Yu Zhao" <yuzhao@google.com>
+Cc:     "Mark Brown" <broonie@kernel.org>, <alsa-devel@alsa-project.org>,
+        "Guneshwor Singh" <guneshwor.o.singh@intel.com>,
+        "Naveen Manohar" <naveen.m@intel.com>,
+        "Pankaj Bharadiya" <pankaj.laxminarayan.bharadiya@intel.com>,
+        "Rakesh Ughreja" <rakesh.a.ughreja@intel.com>,
+        "Sanyog Kale" <sanyog.r.kale@intel.com>,
+        "Sriram Periyasamy" <sriramx.periyasamy@intel.com>,
+        "Liam Girdwood" <liam.r.girdwood@linux.intel.com>,
+        "Pierre-Louis Bossart" <pierre-louis.bossart@linux.intel.com>,
+        "Jie Yang" <yang.jie@linux.intel.com>,
+        "Jaroslav Kysela" <perex@perex.cz>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/3] Revert "ASoC: Intel: Skylake: Acquire irq after RIRB allocation"
+In-Reply-To: <20180910211718.200802-1-yuzhao@google.com>
+References: <20180910211718.200802-1-yuzhao@google.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 5:26 PM, Dave Jiang <dave.jiang@intel.com> wrote:
->
->
-> On 7/31/2018 7:32 AM, Stefan Hajnoczi wrote:
->>
->> dax_pmem_percpu_exit() waits for dax_pmem_percpu_release() to invoke the
->> dax_pmem->cmp completion.  Unfortunately this approach to cleaning up
->> the percpu_ref only works after devm_memremap_pages() was successful.
->>
->> If devm_add_action_or_reset() or devm_memremap_pages() fails,
->> dax_pmem_percpu_release() is not invoked.  Therefore
->> dax_pmem_percpu_exit() hangs waiting for the completion:
->>
->>    rc = devm_add_action_or_reset(dev, dax_pmem_percpu_exit,
->>                                 &dax_pmem->ref);
->>    if (rc)
->>         return rc;
->>
->>    dax_pmem->pgmap.ref = &dax_pmem->ref;
->>    addr = devm_memremap_pages(dev, &dax_pmem->pgmap);
->>
->> Avoid the hang by calling percpu_ref_exit() in the error paths instead
->> of going through dax_pmem_percpu_exit().
->>
->> Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
->
->
-> Applied
->
+On Mon, 10 Sep 2018 23:17:18 +0200,
+Yu Zhao wrote:
+> 
+> This reverts commit 12eeeb4f4733bbc4481d01df35933fc15beb8b19.
+> 
+> The patch doesn't fix accessing memory with null pointer in
+> skl_interrupt().
+> 
+> There are two problems: 1) skl_init_chip() is called twice, before
+> and after dma buffer is allocate. The first call sets bus->chip_init
+> which prevents the second from initializing bus->corb.buf and
+> rirb.buf from bus->rb.area. 2) snd_hdac_bus_init_chip() enables
+> interrupt before snd_hdac_bus_init_cmd_io() initializing dma buffers.
+> There is a small window which skl_interrupt() can be called if irq
+> has been acquired. If so, it crashes when using null dma buffer
+> pointers.
+> 
+> Will fix the problems in the following patches. Also attaching the
+> crash for future reference.
+> 
+> [   16.949148] general protection fault: 0000 [#1] PREEMPT SMP KASAN PTI
+> [   16.950829] gsmi: Log Shutdown Reason 0x03
+> [   16.950830] Modules linked in: uvcvideo(+) videobuf2_vmalloc snd_soc_skl(+) videobuf2_memops videobuf2_v4l2 videobuf2_core snd_soc_skl_ipc snd_soc_sst_ipc snd_soc_sst_dsp snd_soc_acpi snd_hda_ext_core snd_hda_core snd_soc_max98357a acpi_als snd_soc_da7219 lzo lzo_compress zram snd_seq_dummy snd_seq snd_seq_device bridge stp llc ipt_MASQUERADE nf_nat_masquerade_ipv4 xt_mark fuse cfg80211 iio_trig_sysfs cros_ec_sensors cros_ec_sensors_ring cros_ec_sensors_core industrialio_triggered_buffer kfifo_buf industrialio smsc95xx usbnet mii joydev
+> [   16.950874] CPU: 0 PID: 1083 Comm: chrome Not tainted 4.14.64 #14
+> [   16.950875] Hardware name: Google Yorp/Yorp, BIOS Google_Yorp.10985.0.2018_08_20_1648 08/17/2018
+> [   16.950878] task: ffff88015b1c2b80 task.stack: ffff880155f30000
+> [   16.950887] RIP: 0010:snd_hdac_bus_update_rirb+0x19b/0x4cf [snd_hda_core]
+> [   16.950889] RSP: 0000:ffff88015c807c08 EFLAGS: 00010003
+> [   16.950891] RAX: 0000000000000101 RBX: 000000000000080c RCX: 1ffff10026822185
+> [   16.950893] RDX: dffffc0000000000 RSI: ffff88015b1c2b80 RDI: ffffc90000514058
+> [   16.950894] RBP: ffff88015c807c68 R08: 0000000000000000 R09: 0000000000000000
+> [   16.950895] R10: 0000000000000000 R11: ffffffffc043074f R12: 0000000000000800
+> [   16.950897] R13: 0000000000000001 R14: 0000000000000002 R15: 1ffff10026822119
+> [   16.950899] FS:  00007d85924cc740(0000) GS:ffff88015c800000(0000) knlGS:0000000000000000
+> [   16.950900] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   16.950902] CR2: 000058a54df16038 CR3: 00000001551c0000 CR4: 00000000003406f0
+> [   16.950903] Call Trace:
+> [   16.950906]  <IRQ>
+> [   16.950918]  skl_interrupt+0x19e/0x2d6 [snd_soc_skl]
+> [   16.950926]  ? dma_supported+0xb5/0xb5 [snd_soc_skl]
+> [   16.950933]  __handle_irq_event_percpu+0x27a/0x6c8
+> [   16.950937]  ? __irq_wake_thread+0x1d1/0x1d1
+> [   16.950942]  ? __do_softirq+0x57a/0x69e
+> [   16.950944]  handle_irq_event_percpu+0x95/0x1ba
+> [   16.950948]  ? _raw_spin_unlock+0x65/0xdc
+> [   16.950951]  ? __handle_irq_event_percpu+0x6c8/0x6c8
+> [   16.950953]  ? _raw_spin_unlock+0x65/0xdc
+> [   16.950957]  ? time_cpufreq_notifier+0x483/0x483
+> [   16.950959]  handle_irq_event+0x89/0x123
+> [   16.950962]  handle_fasteoi_irq+0x16f/0x425
+> [   16.950965]  handle_irq+0x1fe/0x28e
+> [   16.950969]  do_IRQ+0x6e/0x12e
+> [   16.950972]  common_interrupt+0x7a/0x7a
+> [   16.950974]  </IRQ>
+> [   16.950976] RIP: 0033:0x58097f61a5c0
+> [   16.950978] RSP: 002b:00007ffe95c971a8 EFLAGS: 00000206 ORIG_RAX: ffffffffffffffbc
+> [   16.950980] RAX: 000058097f61a5c0 RBX: 00000e4ac5220560 RCX: 0000000000004e10
+> [   16.950982] RDX: 000058098563df20 RSI: 00007ffe95c97250 RDI: 00000e4ac5220500
+> [   16.950983] RBP: 00007ffe95c97410 R08: 0000000000000000 R09: 00007ffe95c97250
+> [   16.950984] R10: 0000000000000000 R11: 0000000000000000 R12: 00000e4ac5220560
+> [   16.950986] R13: 00000e4ac5220560 R14: 00000e4ac47c9650 R15: 0000580987646350
+> [   16.950988] Code: 74 12 48 89 df e8 eb 2d 8e cd 48 ba 00 00 00 00 00 fc ff df 4c 8b 23 44 89 f0 83 c8 01 0f b7 c0 49 8d 1c 84 48 89 d8 48 c1 e8 03 <8a> 04 10 84 c0 0f 85 da 01 00 00 44 8b 3b 41 0f b7 c6 49 8d 1c
+> [   16.951031] RIP: snd_hdac_bus_update_rirb+0x19b/0x4cf [snd_hda_core] RSP: ffff88015c807c08
+> [   16.951036] ---[ end trace 58bf9ece1775bc92 ]---
+> [   16.956871] Kernel panic - not syncing: Fatal exception in interrupt
+> [   16.956888] Kernel Offset: 0xc800000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
 
-A similar problem exists in other devm_memremap_pages() users. I had a
-more comprehensive fix in-flight that I will rebase on top of this
-change.
+Please try to rip off uninteresting hex values and other stuff there.
 
-    https://lore.kernel.org/patchwork/patch/961576/
+> Signed-off-by: Yu Zhao <yuzhao@google.com>
+
+Put Fixes tag.
+
+
+thanks,
+
+Takashi
