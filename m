@@ -2,112 +2,85 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6EE9C6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:07:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BEE3C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:09:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70E6520839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:07:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15D0220839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:09:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ss0yHK29"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70E6520839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="SszYo6uq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15D0220839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727645AbeIKUHY (ORCPT
+        id S1727560AbeIKUJP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 16:07:24 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:39886 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726829AbeIKUHX (ORCPT
+        Tue, 11 Sep 2018 16:09:15 -0400
+Received: from smtprelay.synopsys.com ([198.182.60.111]:56898 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726622AbeIKUJP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 16:07:23 -0400
-Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id B3966992;
-        Tue, 11 Sep 2018 17:07:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1536678460;
-        bh=ElOR03VVahj/1SMYwOHmmor0N7QxRzJEU3IYjuGvhUU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ss0yHK29R6HeWtwkdQHNXMM8VHrSY8MvOkvZcIRij0pLJs8+ZfQ5178SokeMdPAY6
-         szOq8udEoc5JOygTE+x101Zpa0xXHKwGDOOzhV2rYi/eMBeOLXvLcsEBDvhiwUFO6I
-         WmRppXdqTOk0j272V67P6Znxm2oNKQsfqbQuJNPo=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Gerd Hoffmann <kraxel@redhat.com>
-Cc:     dri-devel@lists.freedesktop.org, daniel@ffwll.ch,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK" 
-        <linux-media@vger.kernel.org>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK" 
-        <linaro-mm-sig@lists.linaro.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 12/13] udmabuf: use sizeof(variable) instead of sizeof(type)
-Date:   Tue, 11 Sep 2018 18:07:52 +0300
-Message-ID: <12710794.bZoXGNj3NF@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20180911134216.9760-13-kraxel@redhat.com>
-References: <20180911134216.9760-1-kraxel@redhat.com> <20180911134216.9760-13-kraxel@redhat.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Tue, 11 Sep 2018 16:09:15 -0400
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id D86CF10C1206;
+        Tue, 11 Sep 2018 08:09:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1536678572; bh=B1Yp+Fn9sk/lH8XlHw5qCW/mIZmO/y5sFNKuQHW6Zz8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=SszYo6uqX3olNJNJgRKW8oNsyidn61JIMyi4o0orJAnIQKbdGxKYv4jkVcjNwex7h
+         4zKV5oYyGTtH1kUZkA8Kk3fR1vmqHPOpFXtrU9k7IImuZmT4A9upBJO4PBgQvr9Fiz
+         PvSF2JvEorTw7jX65oBkifUDWxtha5N0d51ax7O9/JwuXj3F+aU2hLi6+M/gYRPLiW
+         O1WMGEhr4nW1wFWZbX74wrzyGu05pkP2piEd/EaXWUfIgsGQYAI6m6HsFKR8WZpUET
+         +c//nWVwkT4b7tAyT1tI47K8fZM1rhpmZUmlCwysKkCxy9yRQDUeotQpN/5E6g6Ot+
+         9Q/vWWPUozj6A==
+Received: from paltsev-e7480.internal.synopsys.com (paltsev-e7480.internal.synopsys.com [10.121.3.37])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 545293A79;
+        Tue, 11 Sep 2018 08:09:28 -0700 (PDT)
+From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+To:     linux-snps-arc@lists.infradead.org, linux-gpio@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Subject: [PATCH v3 0/2] GPIO: add single-register GPIO via CREG driver
+Date:   Tue, 11 Sep 2018 18:09:23 +0300
+Message-Id: <20180911150925.19460-1-Eugeniy.Paltsev@synopsys.com>
+X-Mailer: git-send-email 2.14.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gerd,
+Add single-register MMIO GPIO driver for complex cases where
+only several fields in register belong to GPIO lines and each GPIO
+line owns a field with different length and on/off value.
 
-Thank you for the patch.
+Such CREG GPIOs are used in Synopsys AXS10x and HSDK boards.
 
-On Tuesday, 11 September 2018 16:42:15 EEST Gerd Hoffmann wrote:
-> Reported-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Changes v2->v3:
+ * Move parameters into a lookup table instead of device tree.
+ * Use the ngpios attribute for instead of snps,ngpios.
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Eugeniy Paltsev (2):
+  GPIO: add single-register GPIO via CREG driver
+  dt-bindings: Document the Synopsys GPIO via CREG bindings
 
-> ---
->  drivers/dma-buf/udmabuf.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
-> index 7a4fd2194d..92af9b5300 100644
-> --- a/drivers/dma-buf/udmabuf.c
-> +++ b/drivers/dma-buf/udmabuf.c
-> @@ -128,7 +128,7 @@ static long udmabuf_create(const struct
-> udmabuf_create_list *head, int seals, ret = -EINVAL;
->  	u32 i, flags;
-> 
-> -	ubuf = kzalloc(sizeof(struct udmabuf), GFP_KERNEL);
-> +	ubuf = kzalloc(sizeof(*ubuf), GFP_KERNEL);
->  	if (!ubuf)
->  		return -ENOMEM;
-> 
-> @@ -142,7 +142,7 @@ static long udmabuf_create(const struct
-> udmabuf_create_list *head, if (ubuf->pagecount > pglimit)
->  			goto err;
->  	}
-> -	ubuf->pages = kmalloc_array(ubuf->pagecount, sizeof(struct page *),
-> +	ubuf->pages = kmalloc_array(ubuf->pagecount, sizeof(*ubuf->pages),
->  				    GFP_KERNEL);
->  	if (!ubuf->pages) {
->  		ret = -ENOMEM;
-> @@ -211,7 +211,7 @@ static long udmabuf_ioctl_create(struct file *filp,
-> unsigned long arg) struct udmabuf_create_item list;
-> 
->  	if (copy_from_user(&create, (void __user *)arg,
-> -			   sizeof(struct udmabuf_create)))
-> +			   sizeof(create)))
->  		return -EFAULT;
-> 
->  	head.flags  = create.flags;
+ .../devicetree/bindings/gpio/snps,creg-gpio.txt    |  18 ++
+ MAINTAINERS                                        |   6 +
+ drivers/gpio/Kconfig                               |  10 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-creg-snps.c                      | 212 +++++++++++++++++++++
+ 5 files changed, 247 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/snps,creg-gpio.txt
+ create mode 100644 drivers/gpio/gpio-creg-snps.c
 
 -- 
-Regards,
-
-Laurent Pinchart
-
-
+2.14.4
 
