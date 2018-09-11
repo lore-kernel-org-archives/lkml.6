@@ -2,597 +2,347 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8691C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:53:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9715EC6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:54:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57EFE20839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:53:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57EFE20839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lichtvoll.de
+	by mail.kernel.org (Postfix) with ESMTP id 2EDEE2086A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:54:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N6ldtxWh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EDEE2086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727711AbeIKMvQ convert rfc822-to-8bit (ORCPT
+        id S1727748AbeIKMwI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 08:51:16 -0400
-Received: from mondschein.lichtvoll.de ([194.150.191.11]:37237 "EHLO
-        mail.lichtvoll.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726554AbeIKMvQ (ORCPT
+        Tue, 11 Sep 2018 08:52:08 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:34079 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726482AbeIKMwI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 08:51:16 -0400
-Authentication-Results: auth=pass smtp.auth=martin smtp.mailfrom=martin@lichtvoll.de
-Received: from 127.0.0.1 (localhost [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mail.lichtvoll.de (Postfix) with ESMTPSA id 673A93A8B6D;
-        Tue, 11 Sep 2018 09:53:08 +0200 (CEST)
-From:   Martin Steigerwald <martin@lichtvoll.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Rafael Wysocki <rafael@kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [REGRESSION 4.19-rc2] sometimes hangs with black screen when resuming from suspend or hibernation (was: Re: Linux 4.19-rc2)
-Date:   Tue, 11 Sep 2018 09:53:02 +0200
-Message-ID: <20222492.cP35YpYkb6@merkaba>
-In-Reply-To: <CA+55aFyG0GbDfoghEhAmKBPcZCiPu6CCpPRz9GwjCzLuP_Vv5Q@mail.gmail.com>
-References: <CA+55aFyG0GbDfoghEhAmKBPcZCiPu6CCpPRz9GwjCzLuP_Vv5Q@mail.gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 11 Sep 2018 08:52:08 -0400
+Received: by mail-pg1-f193.google.com with SMTP id d19-v6so11842116pgv.1;
+        Tue, 11 Sep 2018 00:54:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=daecxY1YM1tr4S+ALNgPViSDYb4Mv3yN/61GYTSlGKQ=;
+        b=N6ldtxWh/gfYwgFMU65drOMmppIZh13hyNq2VgdEV02NNwq/f0DSUgu2G0XEjhp0IZ
+         JpU6PA/mvennzMFIy5Aw5b3o0Hp9UzDwbTr8FPcUa4WvciTY+o3DJWxSRbHCaQQfZ+Gr
+         zb1XhFI3tXVm6qgEp9IU9YEPcNdTHV1/+j+GHGxpSlfIWVfmhgwcrkc9NB/GamgNFDdd
+         SWKYM1uLQ3kBWoQT2p4nnQ4egt8kt8PY2O47SQzMa0F0UNi/qD14m1ABCkDSnyfSm8t1
+         xVg8D4bLleWySu0+89fkqWteEie1V4feHJGKbngmb72Os3cmZtjQZjXk28KX1B8HIxmb
+         ow/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=daecxY1YM1tr4S+ALNgPViSDYb4Mv3yN/61GYTSlGKQ=;
+        b=FShId+ZijByaR49Hs/ozzRcv2HbxM8i1CocQgJZc7BErI+qeBzsNoxzXCM5egycRRM
+         hh7jubm06pe8OgluZiG5ah/Tce6Fv5aekKGAh7kNoDRWKDv0tWBhZlutb1aRUfvTsKX7
+         zzbj+jJTY2KgxkZB6fPOnM/XiAt7qDGm5/XGxWk6tpNBCs8RZhc1vSY6nB+kXewUrXGP
+         tHxf1k5thtWbyf435LvJx/XJNGCGSSc96BTUNg48gdEgFhgwNBPqw1sc/fXpqlPuE72Z
+         n6tM4OUBg4/d0rDpL4ChEP8Q6iTU6zOC97hkLg8ulOKLW6krbLshlj1em6IpTgH3F4Mb
+         X63g==
+X-Gm-Message-State: APzg51B8aGkMEP1+G/AfWXAavdtT6e2hb8IoYLzHbu2eM/1aetIDm/9z
+        w/0+gUW91YCa1UxtC1A4WQI=
+X-Google-Smtp-Source: ANB0VdaBX1Zve09Jb+71oMITwW7KUxZbVEQT1akQTco4+k+FySQmSyZoDZks6bJucSI9cLInwyWbFA==
+X-Received: by 2002:a62:848e:: with SMTP id k136-v6mr27885621pfd.231.1536652443408;
+        Tue, 11 Sep 2018 00:54:03 -0700 (PDT)
+Received: from localhost (104.176.229.35.bc.googleusercontent.com. [35.229.176.104])
+        by smtp.gmail.com with ESMTPSA id u11-v6sm29825008pfd.117.2018.09.11.00.54.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 11 Sep 2018 00:54:02 -0700 (PDT)
+From:   Song Qiang <songqiang1304521@gmail.com>
+X-Google-Original-From: Song Qiang <songqiang.1304521@gmail.com>
+To:     jic23@kernel.org
+Cc:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+        andriy.shevchenko@linux.intel.com, matt.ranostay@konsulko.com,
+        ak@it-klinger.de, himanshujha199640@gmail.com,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Song Qiang <songqiang.1304521@gmail.com>
+Subject: [PATCH v2] iio: proximity: Add driver support for ST's VL53L0X ToF ranging sensor.
+Date:   Tue, 11 Sep 2018 15:53:57 +0800
+Message-Id: <20180911075357.8187-1-songqiang.1304521@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi.
+This driver was originally written by ST in 2016 as a misc input device
+driver, and hasn't been maintained for a long time. I grabbed some code
+from it's API and reformed it into a iio proximity device driver.
+This version of driver uses i2c bus to talk to the sensor and
+polling for measuring completes, so no irq line is needed.
+This version of driver supports only one-shot mode, and it can be
+tested with reading from
+/sys/bus/iio/devices/iio:deviceX/in_distance_raw
 
-Linus Torvalds - 02.09.18, 23:45:
-> As usual, the rc2 release is pretty small. People are taking a
+Signed-off-by: Song Qiang <songqiang.1304521@gmail.com>
+---
+ .../bindings/iio/proximity/vl53l0x.txt        |  12 ++
+ drivers/iio/proximity/Kconfig                 |  11 +
+ drivers/iio/proximity/Makefile                |   2 +
+ drivers/iio/proximity/vl53l0x-i2c.c           | 196 ++++++++++++++++++
+ 4 files changed, 221 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/proximity/vl53l0x.txt
+ create mode 100644 drivers/iio/proximity/vl53l0x-i2c.c
 
-With 4.19-rc2 this ThinkPad T520 with i5 Sandybrdige sometimes hangs 
-with black screen when resuming from suspend or hibernation.  With 
-4.18.1 it did not. Of course there have been userspace related updates 
-that could be related.
-
-I currently have no time to dig into this and on this production laptop 
-I generally do not do bisects between major kernel releases. So 
-currently I only answer questions that do not require much time to 
-answer.
-
-For now I switched back to 4.18. If that is stable – and thus likely no 
-userspace component is related –, I go with 4.19-rc3 or whatever is most 
-recent version to see if the issue has been fixed already.
-
-% inxi -z -b -G 
-System:    Host: […] Kernel: 4.18.1-tp520-btrfstrim x86_64 bits: 64 
-Desktop: KDE Plasma 5.13.5 
-           Distro: Debian GNU/Linux buster/sid 
-Machine:   Type: Laptop System: LENOVO product: 42433WG v: ThinkPad T520 
-serial: <filter> 
-           Mobo: LENOVO model: 42433WG serial: <filter> UEFI [Legacy]: 
-LENOVO v: 8AET69WW (1.49 ) 
-           date: 06/14/2018 
-[…]
-CPU:       Dual Core: Intel Core i5-2520M type: MT MCP speed: 2990 MHz 
-min/max: 800/3200 MHz 
-Graphics:  Device-1: Intel 2nd Generation Core Processor Family 
-Integrated Graphics driver: i915 v: kernel 
-           Display: x11 server: X.Org 1.20.1 driver: modesetting 
-resolution: 1920x1080~60Hz 
-           OpenGL: renderer: Mesa DRI Intel Sandybridge Mobile v: 3.3 
-Mesa 18.1.7 
-[…]
-Info:      Processes: 322 Uptime: 16m Memory: 15.45 GiB used: 3.12 GiB 
-(20.2%) Shell: zsh inxi: 3.0.22 
-
-Thanks,
-Martin
-
-> breather after the merge window, and it takes a bit of time for bug
-> reports to start coming in and get identified.  Plus people were
-> probably still on vacation (particularly Europe), and some people were
-> at Open Source Summit NA last week too. Having a calm week was good.
-> 
-> Regardless of the reason, it's pretty quiet/ The bulk of it is drivers
-> (network and gpu stand out), with the rest being a random collection
-> all over (arch/x86 and generic networking stands out, but there's
-> misc stuff all over).
-> 
-> Go out and test.
-> 
->              Linus
-> 
-> ---
-> 
-> Adrian Hunter (1):
->       mmc: block: Fix unsupported parallel dispatch of requests
-> 
-> Ahmad Fatoum (1):
->       net: macb: Fix regression breaking non-MDIO fixed-link PHYs
-> 
-> Akshu Agrawal (1):
->       clk: x86: Set default parent to 48Mhz
-> 
-> Andi Kleen (2):
->       x86/spectre: Add missing family 6 check to microcode check
->       x86/speculation/l1tf: Increase l1tf memory limit for Nehalem+
-> 
-> Andrey Grodzovsky (1):
->       drm/amdgpu: Fix page fault and kasan warning on pci device
-> remove.
-> 
-> Andy Lutomirski (1):
->       x86/nmi: Fix NMI uaccess race against CR3 switching
-> 
-> Anirudh Venkataramanan (5):
->       ice: Fix multiple static analyser warnings
->       ice: Cleanup magic number
->       ice: Fix bugs in control queue processing
->       ice: Fix a few null pointer dereference issues
->       ice: Trivial formatting fixes
-> 
-> Anson Huang (1):
->       thermal: of-thermal: disable passive polling when thermal zone
-> is disabled
-> 
-> Anssi Hannula (1):
->       net: macb: do not disable MDIO bus at open/close time
-> 
-> Ard Biesheuvel (3):
->       crypto: arm64/sm4-ce - check for the right CPU feature bit
->       crypto: arm64/aes-gcm-ce - fix scatterwalk API violation
->       powerpc: disable support for relative ksymtab references
-> 
-> Arnd Bergmann (1):
->       net_sched: fix unused variable warning in stmmac
-> 
-> Ben Hutchings (1):
->       x86: Allow generating user-space headers without a compiler
-> 
-> Bo Chen (2):
->       e1000: check on netif_running() before calling e1000_up()
->       e1000: ensure to free old tx/rx rings in set_ringparam()
-> 
-> Brett Creeley (1):
->       ice: Set VLAN flags correctly
-> 
-> Bruce Allan (3):
->       ice: Remove unnecessary node owner check
->       ice: Update to interrupts enabled in OICR
->       ice: Change struct members from bool to u8
-> 
-> Chaitanya Kulkarni (1):
->       nvmet: free workqueue object if module init fails
-> 
-> Chengguang Xu (1):
->       block: remove unnecessary condition check
-> 
-> Chris Wilson (2):
->       drm/i915: Stop holding a ref to the ppgtt from each vma
->       drm/i915/audio: Hook up component bindings even if displays are
-> disabled
-> 
-> Christian König (3):
->       drm/amdgpu: fix VM clearing for the root PD
->       drm/amdgpu: fix preamble handling
->       drm/amdgpu: fix holding mn_lock while allocating memory
-> 
-> Colin Ian King (2):
->       qed: fix spelling mistake "comparsion" -> "comparison"
->       x86/xen: remove redundant variable save_pud
-> 
-> Cong Wang (10):
->       net_sched: improve and refactor tcf_action_put_many()
->       net_sched: remove unnecessary ops->delete()
->       net_sched: remove unused parameter for tcf_action_delete()
->       net_sched: remove unused tcf_idr_check()
->       net_sched: remove list_head from tc_action
->       net_sched: remove unused tcfa_capab
->       Revert "net: sched: act_ife: disable bh when taking
-> ife_mod_lock" act_ife: move tcfa_lock down to where necessary
->       act_ife: fix a potential deadlock
->       addrconf: reduce unnecessary atomic allocations
-> 
-> Dan Carpenter (3):
->       PM / clk: signedness bug in of_pm_clk_add_clks()
->       hwmon: (adt7475) Potential error pointer dereferences
->       hwmon: (adt7475) Make adt7475_read_word() return errors
-> 
-> Daniel Borkmann (3):
->       bpf, sockmap: fix sock_hash_alloc and reject zero-sized keys
->       bpf, sockmap: fix sock hash count in alloc_sock_hash_elem
->       bpf: use per htab salt for bucket hash
-> 
-> Dave Watson (1):
->       crypto: aesni - Use unaligned loads from gcm_context_data
-> 
-> David Ahern (1):
->       net/ipv6: Put lwtstate when destroying fib6_info
-> 
-> Emily Deng (2):
->       amdgpu: fix multi-process hang issue
->       drm/amdgpu: Need to set moved to true when evict bo
-> 
-> Eric Dumazet (1):
->       ipv4: tcp: send zero IPID for RST and ACK sent in SYN-RECV and
-> TIME-WAIT state
-> 
-> Eric Sandeen (1):
->       isofs: reject hardware sector size > 2048 bytes
-> 
-> Fabio Estevam (9):
->       thermal: qoriq: Use devm_thermal_zone_of_sensor_register()
->       thermal: qoriq: Simplify the 'site' variable assignment
->       thermal: qoriq: Switch to SPDX identifier
->       ARM: dts: imx28-evk: Move regulators outside simple-bus
->       ARM: dts: imx28-evk: Convert to the new display bindings
->       ARM: dts: imx23-evk: Move regulators outside simple-bus
->       ARM: dts: imx23-evk: Convert to the new display bindings
->       ARM: mxs_defconfig: Select CONFIG_DRM_PANEL_SEIKO_43WVF1G
->       ARM: imx_v6_v7_defconfig: Select CONFIG_DRM_PANEL_SEIKO_43WVF1G
-> 
-> Fabrizio Castro (1):
->       dt-bindings: watchdog: renesas-wdt: Document r8a774a1 support
-> 
-> Felix Kuehling (1):
->       drm/amdgpu: Adjust the VM size based on system memory size v2
-> 
-> Finn Thain (1):
->       m68k/mac: Use correct PMU response format
-> 
-> Fredrik Schön (1):
->       drm/i915: Increase LSPCON timeout
-> 
-> Ganesh Goudar (1):
->       crypto: chtls - fix null dereference chtls_free_uld()
-> 
-> Geert Uytterhoeven (2):
->       Revert "net: stmmac: fix build failure due to missing COMMON_CLK
-> dependency"
->       mtd: rawnand: docg4: Remove wrong __init annotations
-> 
-> Gustavo A. R. Silva (3):
->       Bluetooth: mediatek: Fix memory leak
->       hwmon: (nct6775) Fix potential Spectre v1
->       clk: npcm7xx: fix memory allocation
-> 
-> Haishuang Yan (1):
->       ip6_vti: fix a null pointer deference when destroy vti6 tunnel
-> 
-> Hangbin Liu (1):
->       net/ipv6: init ip6 anycast rt->dst.input as ip6_input
-> 
-> Hans de Goede (2):
->       Bluetooth: Make BT_HCIUART_RTL configuration option depend on
-> ACPI i2c: designware: Re-init controllers with pm_disabled set on
-> resume
-> 
-> Horia Geantă (3):
->       crypto: caam/jr - fix descriptor DMA unmapping
->       crypto: caam/qi - fix error path in xts setkey
->       crypto: caam - fix DMA mapping direction for RSA forms 2 & 3
-> 
-> Huazhong Tan (6):
->       net: hns: fix length and page_offset overflow when
-> CONFIG_ARM64_64K_PAGES net: hns: modify variable type in
-> hns_nic_reuse_page
->       net: hns: fix skb->truesize underestimation
->       net: hns: use eth_get_headlen interface instead of
-> hns_nic_get_headlen net: hns3: fix page_offset overflow when
-> CONFIG_ARM64_64K_PAGES net: hns3: modify variable type in
-> hns3_nic_reuse_page
-> 
-> Ido Schimmel (1):
->       mlxsw: spectrum_switchdev: Do not leak RIFs when removing bridge
-> 
-> Jacob Keller (3):
->       ice: Report stats for allocated queues via ethtool stats
->       ice: Use order_base_2 to calculate higher power of 2
->       i40e: fix condition of WARN_ONCE for stat strings
-> 
-> James Morse (1):
->       arm64: mm: always enable CONFIG_HOLES_IN_ZONE
-> 
-> James Smart (1):
->       nvme-fcloop: Fix dropped LS's to removed target port
-> 
-> Jan Kara (3):
->       fsnotify: fix false positive warning on inode delete
->       udf: Remove dead code from udf_find_fileset()
->       udf: Fix mounting of Win7 created UDF filesystems
-> 
-> Jan Kundrát (1):
->       i2c: algos: bit: make the error messages grepable
-> 
-> Jann Horn (2):
->       x86/entry/64: Wipe KASAN stack shadow before
-> rewind_stack_do_exit() x86/dumpstack: Don't dump kernel memory based
-> on usermode RIP
-> 
-> Jason Wang (1):
->       vhost: correctly check the iova range when waking virtqueue
-> 
-> Jens Axboe (4):
->       Fix up libata MAINTAINERS entry
->       blk-wbt: abstract out end IO completion handler
->       blk-wbt: improve waking of tasks
->       blk-wbt: remove dead code
-> 
-> Jeremy Cline (2):
->       fs/quota: Replace XQM_MAXQUOTAS usage with MAXQUOTAS
->       fs/quota: Fix spectre gadget in do_quotactl
-> 
-> Jesse Brandeburg (1):
->       ice: Fix potential return of uninitialized value
-> 
-> Jesus Sanchez-Palencia (1):
->       igb: Use an advanced ctx descriptor for launchtime
-> 
-> Jia-Ju Bai (3):
->       igb: Replace GFP_ATOMIC with GFP_KERNEL in igb_sw_init()
->       igb: Replace mdelay() with msleep() in
-> igb_integrated_phy_loopback() ixgbe: Replace GFP_ATOMIC with
-> GFP_KERNEL
-> 
-> Jiri Kosina (1):
->       x86/alternatives: Lockdep-enforce text_mutex in text_poke*()
-> 
-> Joe Jin (1):
->       xen: export device state to sysfs
-> 
-> Joerg Roedel (1):
->       x86/efi: Load fixmap GDT in efi_call_phys_epilog()
-> 
-> Johan Hovold (1):
->       of: add helper to lookup compatible child node
-> 
-> John Fastabend (2):
->       tls: possible hang when do_tcp_sendpages hits sndbuf is full
-> case bpf: sockmap: write_space events need to be passed to TCP
-> handler
-> 
-> John Pittman (1):
->       block: bsg: move atomic_t ref_count variable to refcount API
-> 
-> Juergen Gross (7):
->       x86/xen: don't write ptes directly in 32-bit PV guests
->       xen/blkback: don't keep persistent grants too long
->       xen/blkfront: cleanup stale persistent grants
->       xen/blkfront: reorder tests in xlblk_init()
->       xen/blkback: move persistent grants flags to bool
->       xen/blkback: remove unused pers_gnts_lock from struct
-> xen_blkif_ring x86/pae: use 64 bit atomic xchg function in
-> native_ptep_get_and_clear
-> 
-> Julien Grall (1):
->       Documentation/arm64/sve: Couple of improvements and typos
-> 
-> Kai-Heng Feng (1):
->       r8152: disable RX aggregation on new Dell TB16 dock
-> 
-> Keerthy (1):
->       arm: dts: am4372: setup rtc as system-power-controller
-> 
-> Kees Cook (1):
->       net: sched: Fix memory exposure from short TCA_U32_SEL
-> 
-> Kevin Yang (3):
->       tcp_bbr: add bbr_check_probe_rtt_done() helper
->       tcp_bbr: in restart from idle, see if we should exit PROBE_RTT
->       tcp_bbr: apply PROBE_RTT cwnd cap even if acked==0
-> 
-> Kuninori Morimoto (2):
->       thermal: rcar_thermal: convert to SPDX identifiers
->       thermal: rcar_gen3_thermal: convert to SPDX identifiers
-> 
-> Leonard Crestez (1):
->       Revert "ARM: dts: imx7d: Invert legacy PCI irq mapping"
-> 
-> Linus Torvalds (1):
->       Linux 4.19-rc2
-> 
-> Linus Walleij (2):
->       ata: ftide010: Add a quirk for SQ201
->       ARM: defconfig: Update the ARM Versatile defconfig
-> 
-> Lothar Felten (1):
->       hwmon: (ina2xx) fix sysfs shunt resistor read access
-> 
-> Ludovic Desroches (2):
->       mmc: atmel-mci: fix bad logic of sg_copy_{from,to}_buffer
-> conversion mmc: android-goldfish: fix bad logic of
-> sg_copy_{from,to}_buffer conversion
-> 
-> Manish Chopra (1):
->       qlge: Fix netdev features configuration.
-> 
-> Marc Zyngier (2):
->       arm/arm64: smccc-1.1: Make return values unsigned long
->       arm/arm64: smccc-1.1: Handle function result as parameters
-> 
-> Martyna Szapar (1):
->       i40e: Fix for Tx timeouts when interface is brought up if DCB is
-> enabled
-> 
-> Masahiro Yamada (3):
->       mtd: rawnand: denali: do not pass zero maxchips to nand_scan()
->       x86/build: Remove jump label quirk for GCC older than 4.5.2
->       objtool: Remove workaround for unreachable warnings from old GCC
-> 
-> Michal Wnukowski (1):
->       nvme-pci: add a memory barrier to
-> nvme_dbbuf_update_and_check_event
-> 
-> Mika Westerberg (1):
->       i2c: i801: Allow ACPI AML access I/O ports not reserved for
-> SMBus
-> 
-> Mukesh Ojha (2):
->       notifier: Remove notifier header file wherever not used
->       cpu/hotplug: Remove skip_onerr field from cpuhp_step structure
-> 
-> Neeraj Dantu (1):
->       ARM: dts: Fix file permission for am335x-osd3358-sm-red.dts
-> 
-> Nick Desaulniers (1):
->       x86/irqflags: Mark native_restore_fl extern inline
-> 
-> Nikolas Nyby (1):
->       x86/Kconfig: Fix trivial typo
-> 
-> Nishanth Menon (1):
->       arm64: defconfig: Enable TI's AM6 SoC platform
-> 
-> Ondrej Mosnacek (1):
->       crypto: vmx - Fix sleep-in-atomic bugs
-> 
-> Palmer Dabbelt (2):
->       dt-bindings: riscv,cpu-intc: Cleanups from a missed review
->       RISC-V: Use a less ugly workaround for unused variable warnings
-> 
-> Pavel Machek (1):
->       ARM: dts: omap4-droid4: fix vibrations on Droid 4
-> 
-> Prashant Bhole (1):
->       xsk: fix return value of xdp_umem_assign_dev()
-> 
-> Preethi Banala (1):
->       ice: Clean control queues only when they are initialized
-> 
-> Quentin Monnet (1):
->       tools: bpftool: return from do_event_pipe() on bad arguments
-> 
-> Rafael J. Wysocki (1):
->       cpuidle: menu: Retain tick when shallow state is selected
-> 
-> Randy Dunlap (1):
->       x86/pti: Fix section mismatch warning/error
-> 
-> Rex Zhu (6):
->       drm/amd/display: Fix bug use wrong pp interface
->       drm/amdgpu: Enable/disable gfx PG feature in rlc safe mode
->       drm/amdgpu: Fix vce initialize failed on Kaveri/Mullins
->       drm/amdgpu: Update power state at the end of smu hw_init.
->       drm/amdgpu: Power on uvd block when hw_fini
->       drm/amdgpu: Remove duplicated power source update
-> 
-> Rob Herring (2):
->       of: add node name compare helper functions
->       of: Add device_type access helper functions
-> 
-> Rodrigo Vivi (1):
->       drm/i915: Free write_buf that we allocated with kzalloc.
-> 
-> Samuel Mendoza-Jonas (1):
->       net/ncsi: Fixup .dumpit message flags and ID check in Netlink
-> handler
-> 
-> Samuel Neves (1):
->       x86/vdso: Fix lsl operand order
-> 
-> Scott Bauer (1):
->       cdrom: Fix info leak/OOB read in cdrom_ioctl_drive_status
-> 
-> Sebastian Basierski (1):
->       ixgbe: fix driver behaviour after issuing VFLR
-> 
-> Sergei Shtylyov (2):
->       mmc: renesas_sdhi_internal_dmac: fix #define RST_RESERVED_BITS
->       mmc: renesas_sdhi_internal_dmac: mask DMAC interrupts
-> 
-> SivapiriyanKumarasamy (1):
->       drm/amd/display: Fix memory leak caused by missed
-> dc_sink_release
-> 
-> Souptick Joarder (1):
->       drm/mediatek: Convert drm_atomic_helper_suspend/resume()
-> 
-> Srikanth Jampala (1):
->       crypto: cavium/nitrox - fix for command corruption in queue full
-> case with backlog submissions.
-> 
-> Stephen Hemminger (1):
->       hv_netvsc: ignore devices that are not PCI
-> 
-> Stephen Rothwell (1):
->       disable stringop truncation warnings for now
-> 
-> Stu Hsieh (14):
->       drm/mediatek: add connection from RDMA0 to DPI1
->       drm/mediatek: add connection from RDMA0 to DSI1
->       drm/mediatek: add connection from RDMA1 to DSI0
->       drm/mediatek: add connection from RDMA2 to DSI0
->       drm/mediatek: add memory mode and layer_config for RDMA
->       drm/mediatek: add RGB color format support for RDMA
->       drm/mediatek: add the comment about color format setting for OVL
-> drm/mediatek: add YUYV/UYVY color format support for RDMA
-> drm/mediatek: add function to get layer number for component
-> drm/mediatek: add function to return OVL layer number
->       drm/mediatek: add function to return RDMA layer number
->       drm/mediatek: use layer_nr function to get layer number to init
-> plane drm/mediatek: update some variable name from ovl to comp
-> drm/mediatek: fix connection from RDMA2 to DSI1
-> 
-> Thomas Zimmermann (1):
->       drm/mediatek: Replace drm_dev_unref with drm_dev_put
-> 
-> Tobias Klauser (1):
->       nios2: kconfig: remove duplicate DEBUG_STACK_USAGE symbol
-> defintions
-> 
-> Toke Høiland-Jørgensen (1):
->       sch_cake: Fix TC filter flow override and expand it to hosts as
-> well
-> 
-> Tomer Tayar (4):
->       qed: Wait for ready indication before rereading the shmem
->       qed: Wait for MCP halt and resume commands to take place
->       qed: Prevent a possible deadlock during driver load and unload
->       qed: Avoid sending mailbox commands when MFW is not responsive
-> 
-> Tony Lindgren (5):
->       ARM: OMAP2+: Fix null hwmod for ti-sysc debug
->       ARM: OMAP2+: Fix module address for modules using mpu_rt_idx
->       bus: ti-sysc: Fix module register ioremap for larger offsets
->       bus: ti-sysc: Fix no_console_suspend handling
->       ARM: dts: omap4-droid4: Fix emmc errors seen on some devices
-> 
-> Tony Luck (1):
->       x86/mce: Fix set_mce_nospec() to avoid #GP fault
-> 
-> Tony Nguyen (1):
->       ixgbe: Prevent unsupported configurations with XDP
-> 
-> Uros Bizjak (1):
->       x86/asm: Use CC_SET()/CC_OUT() in __gen_sigismember()
-> 
-> Ville Syrjälä (1):
->       drm/i915: Fix glk/cnl display w/a #1175
-> 
-> Vincent Whitchurch (1):
->       watchdog: Mark watchdog touch functions as notrace
-> 
-> Will Deacon (1):
->       riscv: tlb: Provide definition of tlb_flush() before including
-> tlb.h
-> 
-> Wolfram Sang (4):
->       net: ethernet: renesas: use SPDX identifier for Renesas drivers
->       i2c: refactor function to release a DMA safe buffer
->       i2c: sh_mobile: define start_ch() void as it only returns 0
-> anyhow i2c: sh_mobile: fix leak when using DMA bounce buffer
-> 
-> Yue Haibing (3):
->       rhashtable: remove duplicated include from rhashtable.c
->       sch_cake: Remove unused including <linux/version.h>
->       rds: tcp: remove duplicated include from tcp.c
-> 
-> YueHaibing (1):
->       ixgb: use dma_zalloc_coherent instead of allocator/memset
-
-
+diff --git a/Documentation/devicetree/bindings/iio/proximity/vl53l0x.txt b/Documentation/devicetree/bindings/iio/proximity/vl53l0x.txt
+new file mode 100644
+index 000000000000..64b69442f08e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/proximity/vl53l0x.txt
+@@ -0,0 +1,12 @@
++ST's VL53L0X ToF ranging sensor
++
++Required properties:
++	- compatible: must be "st,vl53l0x-i2c"
++	- reg: i2c address where to find the device
++
++Example:
++
++vl53l0x@29 {
++	compatible = "st,vl53l0x-i2c";
++	reg = <0x29>;
++};
+diff --git a/drivers/iio/proximity/Kconfig b/drivers/iio/proximity/Kconfig
+index f726f9427602..5f421cbd37f3 100644
+--- a/drivers/iio/proximity/Kconfig
++++ b/drivers/iio/proximity/Kconfig
+@@ -79,4 +79,15 @@ config SRF08
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called srf08.
+ 
++config VL53L0X_I2C
++	tristate "STMicroelectronics VL53L0X ToF ranger sensor (I2C)"
++	depends on I2C
++	help
++	  Say Y here to build a driver for STMicroelectronics VL53L0X
++	  ToF ranger sensors with i2c interface.
++	  This driver can be used to measure the distance of objects.
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called vl53l0x-i2c.
++
+ endmenu
+diff --git a/drivers/iio/proximity/Makefile b/drivers/iio/proximity/Makefile
+index 4f4ed45e87ef..dedfb5bf3475 100644
+--- a/drivers/iio/proximity/Makefile
++++ b/drivers/iio/proximity/Makefile
+@@ -10,3 +10,5 @@ obj-$(CONFIG_RFD77402)		+= rfd77402.o
+ obj-$(CONFIG_SRF04)		+= srf04.o
+ obj-$(CONFIG_SRF08)		+= srf08.o
+ obj-$(CONFIG_SX9500)		+= sx9500.o
++obj-$(CONFIG_VL53L0X_I2C)	+= vl53l0x-i2c.o
++
+diff --git a/drivers/iio/proximity/vl53l0x-i2c.c b/drivers/iio/proximity/vl53l0x-i2c.c
+new file mode 100644
+index 000000000000..4eac40353494
+--- /dev/null
++++ b/drivers/iio/proximity/vl53l0x-i2c.c
+@@ -0,0 +1,196 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ *  Support for ST's VL53L0X FlightSense ToF Ranger Sensor on a i2c bus.
++ *
++ *  Copyright (C) 2018 Song Qiang <songqiang.1304521@gmail.com>
++ *
++ */
++
++#include <linux/delay.h>
++#include <linux/i2c.h>
++#include <linux/iio/iio.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/slab.h>
++
++#define VL53L0X_DRV_NAME				"vl53l0x-i2c"
++
++#define VL_REG_SYSRANGE_START				0x00
++#define VL_REG_SYSRANGE_MODE_MASK			GENMASK(3, 0)
++#define VL_REG_SYSRANGE_MODE_START_STOP			BIT(0)
++#define VL_REG_SYSRANGE_MODE_SINGLESHOT			0x00
++#define VL_REG_SYSRANGE_MODE_BACKTOBACK			BIT(1)
++#define VL_REG_SYSRANGE_MODE_TIMED			BIT(2)
++#define VL_REG_SYSRANGE_MODE_HISTOGRAM			BIT(3)
++
++#define VL_REG_SYS_SEQUENCE_CFG				BIT(0)
++#define VL_REG_SYS_RANGE_CFG				0x09
++#define VL_REG_SYS_INTERMEASUREMENT_PERIOD		BIT(2)
++
++#define VL_REG_SYS_INT_CFG_GPIO				0x0A
++#define VL_REG_SYS_INT_GPIO_DISABLED			0x00
++#define VL_REG_SYS_INT_GPIO_LEVEL_LOW			BIT(0)
++#define VL_REG_SYS_INT_GPIO_LEVEL_HIGH			BIT(1)
++#define VL_REG_SYS_INT_GPIO_NEW_SAMPLE_READY		BIT(2)
++#define VL_REG_SYS_INT_GPIO_OUT_OF_WINDOW		0x03
++#define VL_REG_GPIO_HV_MUX_ACTIVE_HIGH			0x84
++#define VL_REG_SYS_INT_CLEAR				0x0B
++
++#define VL_REG_RESULT_INT_STATUS			0x13
++#define VL_REG_RESULT_RANGE_STATUS			0x14
++#define VL_REG_RESULT_RANGE_SATTUS_COMPLETE		BIT(0)
++
++#define VL_REG_I2C_SLAVE_DEVICE_ADDRESS			0x8a
++
++#define VL_REG_IDENTIFICATION_MODEL_ID			0xc0
++#define VL_REG_IDENTIFICATION_REVISION_ID		0xc2
++
++struct vl53l0x_data {
++	struct i2c_client *client;
++	struct iio_dev *indio_dev;
++};
++
++static int vl53l0x_read_proximity(struct vl53l0x_data *data,
++				  const struct iio_chan_spec *chan,
++				  int *val)
++{
++	u8 write_command = VL_REG_RESULT_RANGE_STATUS;
++	struct i2c_client *client = data->client;
++	unsigned int tries = 20;
++	struct i2c_msg msg[2];
++	u8 buffer[12];
++	int ret;
++
++	ret = i2c_smbus_write_byte_data(data->client,
++					VL_REG_SYSRANGE_START, 1);
++	if (ret < 0)
++		return ret;
++
++	do {
++		ret = i2c_smbus_read_byte_data(data->client,
++					       VL_REG_RESULT_RANGE_STATUS);
++		if (ret < 0)
++			return ret;
++
++		if (ret & VL_REG_RESULT_RANGE_SATTUS_COMPLETE)
++			break;
++
++		usleep_range(1000, 5000);
++	} while (tries--);
++	if (!tries)
++		return -ETIMEDOUT;
++
++	msg[0].addr = client->addr;
++	msg[0].buf = &write_command;
++	msg[0].len = 1;
++	msg[0].flags = client->flags | I2C_M_STOP;
++
++	msg[1].addr = client->addr;
++	msg[1].buf = buffer;
++	msg[1].len = 12;
++	msg[1].flags = client->flags | I2C_M_RD;
++
++	ret = i2c_transfer(client->adapter, msg, 2);
++	if (ret < 0)
++		return ret;
++	else if (ret != 2)
++		dev_err(&data->client->dev, "vl53l0x: consecutively read error. ");
++
++	*val = __le16_to_cpu((buffer[10] << 8) + buffer[11]);
++
++	return 0;
++}
++
++static const struct iio_chan_spec vl53l0x_channels[] = {
++	{
++		.type = IIO_DISTANCE,
++		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW)
++	},
++	IIO_CHAN_SOFT_TIMESTAMP(1),
++};
++
++static int vl53l0x_read_raw(struct iio_dev *indio_dev,
++			    const struct iio_chan_spec *chan,
++			    int *val, int *val2, long mask)
++{
++	struct vl53l0x_data *data = iio_priv(indio_dev);
++	int ret;
++
++	if (chan->type != IIO_DISTANCE) {
++		dev_err(&data->client->dev, "vl53l0x: iio type error");
++		return -EINVAL;
++	}
++
++	switch (mask) {
++	case IIO_CHAN_INFO_RAW:
++		ret = iio_device_claim_direct_mode(indio_dev);
++		if (ret)
++			return ret;
++		ret = vl53l0x_read_proximity(data, chan, val);
++		if (ret < 0)
++			dev_err(&data->client->dev,
++				"vl53l0x: raw value read error with %d", ret);
++
++		ret = IIO_VAL_INT;
++		iio_device_release_direct_mode(indio_dev);
++		return ret;
++	default:
++		dev_err(&data->client->dev, "vl53l0x: IIO_CHAN_* not recognzed.");
++		return -EINVAL;
++	}
++}
++
++static const struct iio_info vl53l0x_info = {
++	.read_raw = vl53l0x_read_raw,
++};
++
++static int vl53l0x_probe(struct i2c_client *client)
++{
++	struct vl53l0x_data *data;
++	struct iio_dev *indio_dev;
++	int ret;
++
++	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*data));
++	if (!indio_dev)
++		return -ENOMEM;
++
++	data = iio_priv(indio_dev);
++	data->client = client;
++	data->indio_dev = indio_dev;
++	i2c_set_clientdata(client, indio_dev);
++
++	if (!i2c_check_functionality(client->adapter,
++				     I2C_FUNC_SMBUS_BYTE_DATA | I2C_FUNC_I2C))
++		return -EOPNOTSUPP;
++
++	indio_dev->dev.parent = &client->dev;
++	indio_dev->name = VL53L0X_DRV_NAME;
++	indio_dev->info = &vl53l0x_info;
++	indio_dev->channels = vl53l0x_channels;
++	indio_dev->num_channels = ARRAY_SIZE(vl53l0x_channels);
++	indio_dev->modes = INDIO_DIRECT_MODE;
++
++	ret = devm_iio_device_register(&client->dev, indio_dev);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
++static const struct of_device_id st_vl53l0x_dt_match[] = {
++	{ .compatible = "st,vl53l0x-i2c", },
++	{ }
++};
++
++static struct i2c_driver vl53l0x_driver = {
++	.driver = {
++		.name = VL53L0X_DRV_NAME,
++		.of_match_table = st_vl53l0x_dt_match,
++	},
++	.probe_new = vl53l0x_probe,
++};
++module_i2c_driver(vl53l0x_driver);
++
++MODULE_AUTHOR("Song Qiang <songqiang.1304521@gmail.com>");
++MODULE_DESCRIPTION("ST vl53l0x ToF ranging sensor");
++MODULE_LICENSE("GPL");
 -- 
-Martin
-
+2.17.1
 
