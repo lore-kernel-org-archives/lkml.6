@@ -2,109 +2,429 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97233C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 10:30:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 644B7C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 10:31:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DAD0206B8
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 10:30:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HB3nic18"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DAD0206B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 07BDA206B8
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 10:31:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07BDA206B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726859AbeIKP3F (ORCPT
+        id S1726989AbeIKP3u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 11:29:05 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:41117 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726548AbeIKP3F (ORCPT
+        Tue, 11 Sep 2018 11:29:50 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:61682 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726548AbeIKP3u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 11:29:05 -0400
-Received: by mail-wr1-f68.google.com with SMTP id z96-v6so25417264wrb.8;
-        Tue, 11 Sep 2018 03:30:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=5lSTW4jcr/kBKZh3YwlioaRIkS5eLsudiGIVatyzQqo=;
-        b=HB3nic18lNktcpSSx1zLp+1PZZj7pmNK72+Fo6NwEOxHYGOiiCFPuQHjx0RJKRMyWq
-         h1dtRGqvKQgghqMhPTsuBpx4sNWtmgdAvILoojEW1oLjpduQZSBLa7cU3gD1WpM5XGZk
-         hGeLminriGWHfO79iIo1iMC/ftormRSAJh1j8070GnZfeiJ2JgmZSNxt4GsAUkfIHSbd
-         3C6obzDuEZsXEbOY0m82n+G+UcejMGV+Ly/Kxhdn8Ag3g/pRjioGRqYCwk18gYmBx6Yx
-         bhVMCor8hJQu2mzJgkdPL+UTjhA7flT/8zl/S988AYtDszmQ62UTladkXifMJTpn2e+2
-         ZNEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=5lSTW4jcr/kBKZh3YwlioaRIkS5eLsudiGIVatyzQqo=;
-        b=NCxMTiwBgKLrGtXI6GGrcDObNSMnvYRlO8ibu4YSuBQURJOS0pXQHOFnABsnYNGaSV
-         vJTwmt6mNm+2RSPvvaHLrmvtIUPY/D/xc4XgF+WzAxVD52LFDGzTe6FaXXFm4uVYPRjz
-         75hRB/7LhPeYN3BmhNt8m2sY0+T+LQGI2Hk3A4n/FgH66MZnBysSBKn3+pDwA2XXvCkc
-         WDK7tczkswG0RQ8jgYFM3V6gRfOBCnwn5V6ew/tBhYLhdEm3boTUnxA5b+e7D006aHAT
-         CtFKy9oBaWwg7ABd6XkmC4UhDpnWnXDcOfqzrPh3X+HZSFUDdiotMrK5qMYhORYllW3F
-         st7Q==
-X-Gm-Message-State: APzg51DGw3pcFOuFkoWkIo5Udjres1wUBUNCLuEuBnR954E1dF04MBjY
-        D6hMghVWk8R3qjpsrhStetWYFJC+
-X-Google-Smtp-Source: ANB0VdYQLReZWjzoBlWqXKYIFYPIbY/d20iOmMr1IGZowKmoJsKlDmWPBKTRGL3jpbuo1k88T5HAjA==
-X-Received: by 2002:a1c:1a48:: with SMTP id a69-v6mr889949wma.43.1536661821196;
-        Tue, 11 Sep 2018 03:30:21 -0700 (PDT)
-Received: from [192.168.8.147] (144.21.90.92.rev.sfr.net. [92.90.21.144])
-        by smtp.gmail.com with ESMTPSA id 139-v6sm1152580wmp.4.2018.09.11.03.30.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Sep 2018 03:30:20 -0700 (PDT)
-Subject: Re: [PATCH RESEND net-next] docs: net: Convert tcp.txt to RST format
-To:     "Tobin C. Harding" <me@tobin.cc>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180911071324.11199-1-me@tobin.cc>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <7f50abcd-f2fa-c043-9e5b-8e5ca89c52a1@gmail.com>
-Date:   Tue, 11 Sep 2018 03:30:19 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 11 Sep 2018 11:29:50 -0400
+Received: from 79.184.255.178.ipv4.supernova.orange.pl (79.184.255.178) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.123)
+ id 73e82e004964f8fc; Tue, 11 Sep 2018 12:31:02 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc:     lenb@kernel.org, viresh.kumar@linaro.org,
+        mgorman@techsingularity.net, currojerez@riseup.net,
+        ggherdovich@suse.cz, peterz@infradead.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        eero.t.tamminen@intel.com, Francisco Jerez <currojerez@riseup.net>
+Subject: Re: [PATCH] cpufreq: intel_pstate: Optimize IO boost in non HWP mode
+Date:   Tue, 11 Sep 2018 12:28:25 +0200
+Message-ID: <1783237.28dopVS44t@aspire.rjw.lan>
+In-Reply-To: <20180831172851.79812-1-srinivas.pandruvada@linux.intel.com>
+References: <20180831172851.79812-1-srinivas.pandruvada@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180911071324.11199-1-me@tobin.cc>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Friday, August 31, 2018 7:28:51 PM CEST Srinivas Pandruvada wrote:
+> The io_boost mechanism, when scheduler update util callback indicates wake
+> from IO was intended for short term boost to improve disk IO performance.
+> But once i915 graphics driver changed to io-schedule_timeout() from
+> schedule_timeout() during waiting for response from GPU, this caused
+> constant IO boost, causing intel_pstate to constantly boost to turbo.
+> This has bad side effect on TDP limited Atom platforms. The following two
+> links shows the boost and frequency plot for GPU Test called
+> triangle_benchmark.
+> https://bugzilla.kernel.org/attachment.cgi?id=278091
+> https://bugzilla.kernel.org/attachment.cgi?id=278093
+> This type of behavior was observed with many graphics tests and regular
+> use of such platforms with graphical interface.
+> 
+> The fix in this patch is to optimize the io boost by:
+> - Limit the maximum boost to base frequency on TDP limited Atom platforms
+> and max limit as 1 core turbo for the rest of the non-HWP platforms (same
+> as the current algorithm).
+> - Multilevel gradual boost: Start with increment = half of max boost and
+> increase to max on the subsequent IO wakes.
+> - Once max is reached and subsequent IO wakes don't cause boost for TDP
+> limited Atom platforms, with assumption that the target CPU already built
+> up enough load to run at higher P-state and the use of average frequency
+> in the current algorithm will also help not to reduce drastically. For
+> other platforms this is not limited similar to the current algorithm.
+> 
+> With this fix the resultant plots show the reduced average frequency and
+> also causes upto 10% improvement in some graphics tests on Atom (Broxton)
+> platform.
+> https://bugzilla.kernel.org/attachment.cgi?id=278095
+> https://bugzilla.kernel.org/attachment.cgi?id=278097
+> 
+> As per testing Eero Tamminen, the results are comparable to the patchset
+> https://patchwork.kernel.org/patch/10312259/
+> But he has to watch results for several days to check trend.
+> 
+> Since here boost is getting limited to turbo and non turbo, we need some
+> ways to adjust the fractions corresponding to max non turbo as well. It
+> is much easier to use the actual P-state limits for boost instead of
+> fractions. So here P-state io boost limit is applied on top of the
+> P-state limit calculated via current algorithm by removing current
+> io_wait boost calculation using fractions.
+> 
+> Since we prefer to use common algorithm for all processor platforms, this
+> change was tested on other client and sever platforms as well. All results
+> were within the margin of errors. Results:
+> https://bugzilla.kernel.org/attachment.cgi?id=278149
+> 
+> To identify TDP limited platforms a new callback boost_limited() is
+> added, which will set a per cpudata field called iowait_boost_limited to
+> 1. Currently this is set for Atom platforms only.
+> 
+> Tested-by: Eero Tamminen <eero.t.tamminen@intel.com>
+> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 
+Let me say I would do this differently in a couple of ways.
 
-On 09/11/2018 12:13 AM, Tobin C. Harding wrote:
-> Restructured text is the kernel documentation format of choice now.
-> Some text from tcp.txt is out of date, specifically the function
-> tcp_write() does not appear to be in the tree anymore.  Also the
-> following data members have been removed
+First off, the patch makes at least two different changes in one go which
+I don't quite agree with: it changes the way iowait boost works for everybody
+and introduces differences betwee Atom and Core.  Doing them both in one
+patch is quite questionable IMO.
+
+It is not particularly clear that the iowait boost mechanism on non-Atom
+needs to be changed at all and if so, then why.  Yes, you have results showing
+that the change doesn't regress the other systems, but since we are going to
+distinguish between Atom and non-Atom anyway, why change the others?
+
+Also, it is not particularly clear to me if there's any benefit from doing
+the iowait boosting on Atoms at all.  Wouldn't it be better to restrict
+the iowait boosting to Core CPUs only and just leave Atoms alone?
+
+On top of that, I don't quite like the new code organization, but let me
+comment on the details below.
+
+> ---
+>  drivers/cpufreq/intel_pstate.c | 112 +++++++++++++++++++++++++++------
+>  1 file changed, 92 insertions(+), 20 deletions(-)
 > 
-> 	  sk->tcp_pend_event
-> 	  sk->transmit_queue
-> 	  sk->transmit_new
-> 	  sk->transmit_end
-> 	  sk->tcp_last_tx_ack
-> 	  sk->tcp_dup_ack
-> 
-> Remove section 'How the new TCP output machine [nyi] works'.  This
-> leaves only a single section so we can name the document with that
-> section heading now.
-> 
-> Convert tcp.txt to RST format.  Add GPLv2 SPDX tag.
-> 
-> Signed-off-by: Tobin C. Harding <me@tobin.cc>
+> diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
+> index 1f2ce2f57842..15d9d5483d85 100644
+> --- a/drivers/cpufreq/intel_pstate.c
+> +++ b/drivers/cpufreq/intel_pstate.c
+> @@ -195,7 +195,11 @@ struct global_params {
+>   * @policy:		CPUFreq policy value
+>   * @update_util:	CPUFreq utility callback information
+>   * @update_util_set:	CPUFreq utility callback is set
+> - * @iowait_boost:	iowait-related boost fraction
+> + * @iowait_boost:	iowait-related boost P-state
+> + * @iowait_boost_active: iowait boost processing is active
+> + * @iowait_boost_max:	Max boost P-state to apply
+> + * @iowait_boost_increment: increment to last boost P-state
+
+I don't think you need this field.  It just takes space for almost no
+speed benefit.
+
+> + * @owait_boost_limited: If set give up boost, once reach max boost state
+
+This field doesn't appear to be necessary too.  The value of iowait_boost_max
+depends on it, but it looks like using iowait_boost_max alone should be
+sufficient.
+
+>   * @last_update:	Time of the last update.
+>   * @pstate:		Stores P state limits for this CPU
+>   * @vid:		Stores VID limits for this CPU
+> @@ -254,6 +258,10 @@ struct cpudata {
+>  	bool valid_pss_table;
+>  #endif
+>  	unsigned int iowait_boost;
+> +	unsigned int iowait_boost_active;
+> +	int iowait_boost_max;
+> +	int iowait_boost_increment;
+> +	int iowait_boost_limited;
+>  	s16 epp_powersave;
+>  	s16 epp_policy;
+>  	s16 epp_default;
+> @@ -276,6 +284,7 @@ static struct cpudata **all_cpu_data;
+>   * @get_scaling:	Callback to get frequency scaling factor
+>   * @get_val:		Callback to convert P state to actual MSR write value
+>   * @get_vid:		Callback to get VID data for Atom platforms
+> + * @boost_limited:	Callback to get max boost P-state, when applicable
+>   *
+>   * Core and Atom CPU models have different way to get P State limits. This
+>   * structure is used to store those callbacks.
+> @@ -289,6 +298,7 @@ struct pstate_funcs {
+>  	int (*get_aperf_mperf_shift)(void);
+>  	u64 (*get_val)(struct cpudata*, int pstate);
+>  	void (*get_vid)(struct cpudata *);
+> +	void (*boost_limited)(struct cpudata *cpudata);
+>  };
+>  
+>  static struct pstate_funcs pstate_funcs __read_mostly;
+> @@ -1251,6 +1261,11 @@ static void atom_get_vid(struct cpudata *cpudata)
+>  	cpudata->vid.turbo = value & 0x7f;
+>  }
+>  
+> +static void atom_client_boost_limited(struct cpudata *cpudata)
+> +{
+> +	cpudata->iowait_boost_limited = 1;
+> +}
+
+Adding a new callback just for this is a bit excessive IMO.
+
+> +
+>  static int core_get_min_pstate(void)
+>  {
+>  	u64 value;
+> @@ -1441,6 +1456,19 @@ static void intel_pstate_get_cpu_pstates(struct cpudata *cpu)
+>  		pstate_funcs.get_vid(cpu);
+>  
+>  	intel_pstate_set_min_pstate(cpu);
+> +
+> +	if (pstate_funcs.boost_limited)
+> +		pstate_funcs.boost_limited(cpu);
+
+And here the new callback is invoked just to set the new flag and this is
+the only place the new flag is checked (apart from the check below that looks
+redundant to me) and the only effect of it is the different value of
+cpu->iowait_boost_max.
+
+I really think this could be done in a more straightforward way. :-)
+
+> +
+> +	if (cpu->iowait_boost_limited)
+> +		cpu->iowait_boost_max = cpu->pstate.max_pstate;
+> +	else
+> +		cpu->iowait_boost_max = cpu->pstate.turbo_pstate;
+> +
+> +	cpu->iowait_boost_increment = (cpu->iowait_boost_max - cpu->pstate.min_pstate) >> 1;
+
+This is a very simple and fast computation and you can do it when necessary
+(so long as both iowait_boost_max and pstate.min_pstate reside in the same cache
+line).
+
+> +	pr_debug("iowait_boost_limited: %d max_limit: %d increment %d\n",
+> +		 cpu->iowait_boost_limited, cpu->iowait_boost_max,
+> +		 cpu->iowait_boost_increment);
+>  }
+>  
+>  /*
+> @@ -1616,18 +1644,12 @@ static inline int32_t get_avg_pstate(struct cpudata *cpu)
+>  static inline int32_t get_target_pstate(struct cpudata *cpu)
+>  {
+>  	struct sample *sample = &cpu->sample;
+> -	int32_t busy_frac, boost;
+> +	int32_t busy_frac;
+>  	int target, avg_pstate;
+>  
+>  	busy_frac = div_fp(sample->mperf << cpu->aperf_mperf_shift,
+>  			   sample->tsc);
+>  
+> -	boost = cpu->iowait_boost;
+> -	cpu->iowait_boost >>= 1;
+> -
+> -	if (busy_frac < boost)
+> -		busy_frac = boost;
+> -
+>  	sample->busy_scaled = busy_frac * 100;
+>  
+>  	target = global.no_turbo || global.turbo_disabled ?
+> @@ -1670,6 +1692,27 @@ static void intel_pstate_update_pstate(struct cpudata *cpu, int pstate)
+>  	wrmsrl(MSR_IA32_PERF_CTL, pstate_funcs.get_val(cpu, pstate));
+>  }
+>  
+> +static int intel_pstate_adjust_for_io(struct cpudata *cpu, int target_pstate)
+> +{
+> +	if (!cpu->iowait_boost_active)
+> +		return target_pstate;
+> +
+> +	cpu->iowait_boost_active = 0;
+> +
+> +	if (!cpu->iowait_boost)
+> +		cpu->iowait_boost = cpu->pstate.min_pstate;
+> +
+> +	cpu->iowait_boost += cpu->iowait_boost_increment;
+> +
+> +	if (cpu->iowait_boost > cpu->iowait_boost_max)
+> +		cpu->iowait_boost = cpu->iowait_boost_max;
+> +
+> +	if (cpu->iowait_boost > target_pstate)
+> +		return cpu->iowait_boost;
+> +
+> +	return target_pstate;
+> +}
+> +
+>  static void intel_pstate_adjust_pstate(struct cpudata *cpu)
+>  {
+>  	int from = cpu->pstate.current_pstate;
+> @@ -1679,6 +1722,7 @@ static void intel_pstate_adjust_pstate(struct cpudata *cpu)
+>  	update_turbo_state();
+>  
+>  	target_pstate = get_target_pstate(cpu);
+> +	target_pstate = intel_pstate_adjust_for_io(cpu, target_pstate);
+>  	target_pstate = intel_pstate_prepare_request(cpu, target_pstate);
+>  	trace_cpu_frequency(target_pstate * cpu->pstate.scaling, cpu->cpu);
+>  	intel_pstate_update_pstate(cpu, target_pstate);
+> @@ -1692,7 +1736,7 @@ static void intel_pstate_adjust_pstate(struct cpudata *cpu)
+>  		sample->aperf,
+>  		sample->tsc,
+>  		get_avg_frequency(cpu),
+> -		fp_toint(cpu->iowait_boost * 100));
+> +		cpu->iowait_boost);
+
+This implicitly changes the definition of the tracepoint.
+
+>  }
+>  
+>  static void intel_pstate_update_util(struct update_util_data *data, u64 time,
+> @@ -1701,27 +1745,42 @@ static void intel_pstate_update_util(struct update_util_data *data, u64 time,
+>  	struct cpudata *cpu = container_of(data, struct cpudata, update_util);
+>  	u64 delta_ns;
+>  
+> +	cpu->sched_flags |= flags;
+> +
+>  	/* Don't allow remote callbacks */
+>  	if (smp_processor_id() != cpu->cpu)
+>  		return;
+>  
+> -	if (flags & SCHED_CPUFREQ_IOWAIT) {
+> -		cpu->iowait_boost = int_tofp(1);
+> -		cpu->last_update = time;
+> +	if (cpu->sched_flags & SCHED_CPUFREQ_IOWAIT) {
+> +		cpu->sched_flags &= ~SCHED_CPUFREQ_IOWAIT;
+> +
+> +		if (cpu->iowait_boost_limited && cpu->iowait_boost >= cpu->iowait_boost_max)
+
+Isn't the iowait_boost_limited check redundant here?  Why do you want to skip
+only in that case?
+
+> +			goto skip_ioboost;
+> +
+>  		/*
+> -		 * The last time the busy was 100% so P-state was max anyway
+> -		 * so avoid overhead of computation.
+> +		 * Set iowait_boost flag and update time. Since IO WAIT flag
+> +		 * is set all the time, we can't just conclude that there is
+> +		 * some IO bound activity is scheduled on this CPU with just
+> +		 * one occurrence. If we receive at least two in two
+> +		 * consecutive ticks, then we treat as a boost trigger.
+>  		 */
+> -		if (fp_toint(cpu->sample.busy_scaled) == 100)
+> -			return;
+> +		if (cpu->iowait_boost || time_before64(time, cpu->last_io_update + 2 * TICK_NSEC)) {
+
+It took me quite a bit of time to figure out what was going on here. :-)
+
+It might be clearer to treat the "iowait_boost in progress" and "start
+iowait boosting" conditions as different and move some code from
+intel_psate_adjust_for_io() to here with that in mind.
+
+> +			cpu->iowait_boost_active = 1;
+> +			cpu->last_io_update = time;
+> +			cpu->last_update = time;
+> +			goto set_pstate;
+> +		}
+>  
+> -		goto set_pstate;
+> +		cpu->last_io_update = time;
+>  	} else if (cpu->iowait_boost) {
+>  		/* Clear iowait_boost if the CPU may have been idle. */
+>  		delta_ns = time - cpu->last_update;
+> -		if (delta_ns > TICK_NSEC)
+> +		if (delta_ns > TICK_NSEC) {
+> +			cpu->iowait_boost_active = 0;
+>  			cpu->iowait_boost = 0;
+> +		}
+>  	}
+> +skip_ioboost:
+>  	cpu->last_update = time;
+>  	delta_ns = time - cpu->sample.time;
+>  	if ((s64)delta_ns < INTEL_PSTATE_SAMPLING_INTERVAL)
+> @@ -1749,6 +1808,7 @@ static const struct pstate_funcs silvermont_funcs = {
+>  	.get_val = atom_get_val,
+>  	.get_scaling = silvermont_get_scaling,
+>  	.get_vid = atom_get_vid,
+> +	.boost_limited = atom_client_boost_limited,
+>  };
+
+So as I said before, IMO this is unnecessarily convoluted.
+
+I would introduce a struct cpu_model_data defined like this:
+
+struct cpu_model_data {
+    const struct pstate_funcs funcs;
+	 unsigned int iowait_boost_limited:1;
+};
+
+and redo the populating of intel_pstate_cpu_ids[] accordingly.  That would
+be more lines of code, but easier to follow IMO.
+
+>  static const struct pstate_funcs airmont_funcs = {
+> @@ -1759,6 +1819,7 @@ static const struct pstate_funcs airmont_funcs = {
+>  	.get_val = atom_get_val,
+>  	.get_scaling = airmont_get_scaling,
+>  	.get_vid = atom_get_vid,
+> +	.boost_limited = atom_client_boost_limited,
+>  };
+>  
+>  static const struct pstate_funcs knl_funcs = {
+> @@ -1771,6 +1832,16 @@ static const struct pstate_funcs knl_funcs = {
+>  	.get_val = core_get_val,
+>  };
 >
+> +static struct pstate_funcs atom_core_funcs = {
 
-I dunno, this 'doc' is probably useless and should be deleted.
+Missing const?
+
+And this whole struct looks like a waste of space.
+
+> +	.get_max = core_get_max_pstate,
+> +	.get_max_physical = core_get_max_pstate_physical,
+> +	.get_min = core_get_min_pstate,
+> +	.get_turbo = core_get_turbo_pstate,
+> +	.get_scaling = core_get_scaling,
+> +	.get_val = core_get_val,
+> +	.boost_limited = atom_client_boost_limited,
+> +};
+> +
+>  #define ICPU(model, policy) \
+>  	{ X86_VENDOR_INTEL, 6, model, X86_FEATURE_APERFMPERF,\
+>  			(unsigned long)&policy }
+> @@ -1794,8 +1865,8 @@ static const struct x86_cpu_id intel_pstate_cpu_ids[] = {
+>  	ICPU(INTEL_FAM6_BROADWELL_XEON_D,	core_funcs),
+>  	ICPU(INTEL_FAM6_XEON_PHI_KNL,		knl_funcs),
+>  	ICPU(INTEL_FAM6_XEON_PHI_KNM,		knl_funcs),
+> -	ICPU(INTEL_FAM6_ATOM_GOLDMONT,		core_funcs),
+> -	ICPU(INTEL_FAM6_ATOM_GEMINI_LAKE,       core_funcs),
+> +	ICPU(INTEL_FAM6_ATOM_GOLDMONT,		atom_core_funcs),
+> +	ICPU(INTEL_FAM6_ATOM_GEMINI_LAKE,	atom_core_funcs),
+>  	ICPU(INTEL_FAM6_SKYLAKE_X,		core_funcs),
+>  #ifdef INTEL_FAM6_ICELAKE_X
+>  	ICPU(INTEL_FAM6_ICELAKE_X,		core_funcs),
+> @@ -2390,6 +2461,7 @@ static void __init copy_cpu_funcs(struct pstate_funcs *funcs)
+>  	pstate_funcs.get_val   = funcs->get_val;
+>  	pstate_funcs.get_vid   = funcs->get_vid;
+>  	pstate_funcs.get_aperf_mperf_shift = funcs->get_aperf_mperf_shift;
+> +	pstate_funcs.boost_limited = funcs->boost_limited;
+>  }
+>  
+>  #ifdef CONFIG_ACPI
+> 
 
 
