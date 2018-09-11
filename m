@@ -2,97 +2,106 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84106C6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:46:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D60C3C6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:47:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DC6420854
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:46:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DC6420854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
+	by mail.kernel.org (Postfix) with ESMTP id 8C50F20854
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:47:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="RGJOdaj0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C50F20854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726792AbeIKOo6 (ORCPT
+        id S1726932AbeIKOpt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 10:44:58 -0400
-Received: from mail-out.m-online.net ([212.18.0.9]:36943 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726554AbeIKOo6 (ORCPT
+        Tue, 11 Sep 2018 10:45:49 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:34682 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726587AbeIKOps (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 10:44:58 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 428g685NcMz1qx9R;
-        Tue, 11 Sep 2018 11:46:24 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 428g684psZz1qr2j;
-        Tue, 11 Sep 2018 11:46:24 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id VHDoBf_0hp0J; Tue, 11 Sep 2018 11:46:24 +0200 (CEST)
-X-Auth-Info: Vvg1GofJbf0dOClN1N/qOig/xkf7Y0VDnERSmm7/tHI=
-Received: from [IPv6:::1] (unknown [195.140.253.167])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Tue, 11 Sep 2018 11:46:23 +0200 (CEST)
-Subject: Re: [RFC] reset: make reset controller driver initialize early
-To:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Dinh Nguyen <dinguyen@kernel.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>
-References: <9854fd68-14e3-aed3-ca35-8e259baa0348@kernel.org>
- <1536654660.3453.1.camel@pengutronix.de>
-From:   Marek Vasut <marex@denx.de>
-Message-ID: <a4943a9d-9f24-a413-47ce-02b488bc6453@denx.de>
-Date:   Tue, 11 Sep 2018 11:46:23 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <1536654660.3453.1.camel@pengutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 11 Sep 2018 10:45:48 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8B9i5Cc077834;
+        Tue, 11 Sep 2018 09:46:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
+ bh=9sPvlDWW4+BhuKBU0IOqNs0JfS8TAaHhtKbQ/Kc9LYY=;
+ b=RGJOdaj0f+gJuQzo3wKV6z6HSkMu6uPysKuQ/QbO/8HGM6sb7lGaAm++3Y9eCpUd+bYK
+ TmAkulYtY1CSsya+w1dlZiZrxxI/1blNh5AnmBRrG5b0sWjz9U9ZDwQ51P9yB4NHAaDs
+ nqxTlBMQRcaLkEKxNvDCzoPqGEppsWaAFKd2lxE0KgzJiJjvYfjSjjxEID4Zq7G0/1Ss
+ Oli6676+fTSnEyoC6OUkMX+qic5PPfa8Ac502dpdTNaxvBUuBjtQD86B8YVNaOOiFNba
+ JF2RfAHCn3pvShVRh6cf5agmItVYtbSwfVO0hXPBA6xiC0OTwTGx8ARErB+m7K5qeGbh yQ== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2130.oracle.com with ESMTP id 2mc5utb1dy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 11 Sep 2018 09:46:59 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w8B9kw3r026983
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 11 Sep 2018 09:46:58 GMT
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w8B9kvIm003977;
+        Tue, 11 Sep 2018 09:46:57 GMT
+Received: from will-ThinkCentre-M910s.cn.oracle.com (/10.182.70.254)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 11 Sep 2018 02:46:54 -0700
+From:   Jianchao Wang <jianchao.w.wang@oracle.com>
+To:     axboe@kernel.dk, ming.lei@redhat.com, bart.vanassche@wdc.com,
+        sagi@grimberg.me, keith.busch@intel.com, hch@lst.de
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org
+Subject: [PATCH 3/4] nvme-pci: unquiesce queues after update nr_hw_queues
+Date:   Tue, 11 Sep 2018 17:48:13 +0800
+Message-Id: <1536659294-2321-4-git-send-email-jianchao.w.wang@oracle.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1536659294-2321-1-git-send-email-jianchao.w.wang@oracle.com>
+References: <1536659294-2321-1-git-send-email-jianchao.w.wang@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9012 signatures=668708
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=993
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1809110102
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/11/2018 10:31 AM, Philipp Zabel wrote:
-> Hi Dinh,
+updating nr_hw_queues uses bio retrieving to drain the queues, it
+requires the queues to be quiesced to prevent requests from being
+issued to dying hw queue, so we cannot unquiesce the queues before
+that.
 
-Hi all,
+Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+---
+ drivers/nvme/host/pci.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-> On Mon, 2018-09-10 at 14:59 -0500, Dinh Nguyen wrote:
->> Hi Philipp,
->>
->> I need to make the reset controller on the SoCFPGA platform initialize
->> early.
-> 
-> What does early mean in this context?
-
-Means before timer, since timer needs to be un-reset by Linux before it
-can be used.
-
->> I have one solution which is similar to what reset-sunxi is
->> doing, making the "altr,rst-mgr" initialize early in a separate
->> reset-socfpga.c but using the reset-simple operations.
-> 
-> That's what I would have gone for as well.
-> 
->> I'm guessing SoCFPGA may not be the only platform that needs the reset
->> driver early, would it make sense to have a solution in reset-simple
->> that is capable of an early init?
-> 
-> I suppose you could share sunxi_reset_init if you pass it a struct
-> reset_simple_devdata as an argument.
-> 
-> regards
-> Philipp
-> 
-
-
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index d668682..9e60edf 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -2327,11 +2327,13 @@ static void nvme_reset_work(struct work_struct *work)
+ 		nvme_remove_namespaces(&dev->ctrl);
+ 		new_state = NVME_CTRL_ADMIN_ONLY;
+ 	} else {
+-		nvme_start_queues(&dev->ctrl);
+-		nvme_wait_freeze(&dev->ctrl);
++
+ 		/* hit this only when allocate tagset fails */
+ 		if (nvme_dev_add(dev))
+ 			new_state = NVME_CTRL_ADMIN_ONLY;
++
++		nvme_start_queues(&dev->ctrl);
++		nvme_wait_freeze(&dev->ctrl);
+ 		nvme_unfreeze(&dev->ctrl);
+ 	}
+ 
 -- 
-Best regards,
-Marek Vasut
+2.7.4
+
