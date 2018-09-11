@@ -1,283 +1,159 @@
 Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Level: *
+X-Spam-Status: No, score=1.0 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A333C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:56:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97204C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:59:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBB9520839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:56:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBB9520839
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 301F320854
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:59:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l2MS9KyA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 301F320854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727658AbeIKMyF (ORCPT
+        id S1726713AbeIKM54 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 08:54:05 -0400
-Received: from mga18.intel.com ([134.134.136.126]:5796 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726522AbeIKMyF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 08:54:05 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Sep 2018 00:55:59 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,359,1531810800"; 
-   d="gz'50?scan'50,208,50";a="82524393"
-Received: from bee.sh.intel.com (HELO lkp-server01) ([10.239.97.14])
-  by orsmga003.jf.intel.com with ESMTP; 11 Sep 2018 00:54:55 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1fzdVd-0009RW-ES; Tue, 11 Sep 2018 15:54:53 +0800
-Date:   Tue, 11 Sep 2018 15:54:29 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Alexander Duyck <alexander.duyck@gmail.com>
-Cc:     kbuild-all@01.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        pavel.tatashin@microsoft.com, mhocko@suse.com,
-        dave.jiang@intel.com, mingo@kernel.org, dave.hansen@intel.com,
-        jglisse@redhat.com, akpm@linux-foundation.org, logang@deltatee.com,
-        dan.j.williams@intel.com, kirill.shutemov@linux.intel.com
-Subject: Re: [PATCH 3/4] mm: Defer ZONE_DEVICE page initialization to the
- point where we init pgmap
-Message-ID: <201809111526.rtKfFYhJ%fengguang.wu@intel.com>
-References: <20180910234354.4068.65260.stgit@localhost.localdomain>
+        Tue, 11 Sep 2018 08:57:56 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:38120 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726563AbeIKM54 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 08:57:56 -0400
+Received: by mail-wm0-f67.google.com with SMTP id t25-v6so317961wmi.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 00:59:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=hzDMpX9TKVM2IaIssiLXo1iQdMhmfk7pHedfjBNqboQ=;
+        b=l2MS9KyANvxEWqU0hOB+hRzTKbFybGXOvIg+3y0QpAVf9DlhEx8RfCY7WHSA1qsqyM
+         XJgSyOjwjvP9xQVZeQGfKWWRCzHSRLoicWJ/UlSp+QXbHG4m4re79BjTfClUZGX2+PCT
+         rK0WyReeH/9XGTumDq3XrfwCGs1C7cupkIF5/xul3coLa/RNsi6WWcaKOdN4QW2j9TNn
+         0Ll1P6cmmbvd7uR6v/7X9N2Pt4wrlarmawLFeBLb3lbDIbxDVJZrenLPdnZUpK4SJ4Ww
+         M23889udYhCyFrrEXZyOBiGaKFI4mJut4h0JmPNsd+sEd7Eb9wISPZMr5p+Lf/u50oQ9
+         +06A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=hzDMpX9TKVM2IaIssiLXo1iQdMhmfk7pHedfjBNqboQ=;
+        b=Dt1UmnWbIuL6yMlLF/iTjd/C6OhiCULRWLuuGiqDHmQEspiyC4sG5TGt/zpNgPq5xo
+         2uSq0ZsQ4k1n+CW0/hwWRX39dPMY6Fx1/oCcprofPI0S2oQ+stlfOtQF533JOTyUtGv1
+         aLwXc38EVV98A47XzxgchQeZqS1CRCHT9+36u9quOMy1DNoRaM1IcHTajz2bEcrHX0zw
+         6YHY5QAi4lnbyZ13jWAMZpkzzi3ZAOVca3YIS18W7cWS5BouxJelObP9N6741w9vYA0X
+         RCSmixHMJhf5SojxWG+RuFKL5YliuXRJ/s+clrJ9Xo1IxtWQYrm+1HY3o6snm821Pz6l
+         R9jg==
+X-Gm-Message-State: APzg51CGzcf1cjCIooZIwo4pvE3XL5TfWLSnmDELXjst3dEJwpNFyVTF
+        CDT9hdZa0bsBwAHSSD6L4co=
+X-Google-Smtp-Source: ANB0VdY1wvXZYRY3IpgXd3ux+BZkXrjaU0uI0yA+ugl9fMq6ep7B5U7FZHM5LIFg7Z/MLgL6AehtLw==
+X-Received: by 2002:a1c:85cb:: with SMTP id h194-v6mr449492wmd.54.1536652788913;
+        Tue, 11 Sep 2018 00:59:48 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id g7-v6sm15511397wrw.30.2018.09.11.00.59.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 11 Sep 2018 00:59:48 -0700 (PDT)
+Date:   Tue, 11 Sep 2018 09:59:46 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Baoquan He <bhe@redhat.com>
+Cc:     tglx@linutronix.de, hpa@zytor.com, thgarnie@google.com,
+        kirill.shutemov@linux.intel.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v2 2/3] x86/mm/KASLR: Calculate the actual size of
+ vmemmap region
+Message-ID: <20180911075946.GA97454@gmail.com>
+References: <20180909124946.17988-1-bhe@redhat.com>
+ <20180909124946.17988-2-bhe@redhat.com>
+ <20180910061151.GA85199@gmail.com>
+ <20180911073057.GW1740@192.168.1.3>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="2fHTh5uZTiUOsy+g"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180910234354.4068.65260.stgit@localhost.localdomain>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180911073057.GW1740@192.168.1.3>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---2fHTh5uZTiUOsy+g
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+* Baoquan He <bhe@redhat.com> wrote:
 
-Hi Alexander,
+>  /*
+> + * Memory regions randomized by KASLR (except modules that use a separate
+> + * logic earlier during boot). Currently they are the physical memory
+> + * mapping, vmalloc and vmemmap regions, are ordered based on virtual
+> + * addresses. The order is kept after randomization.
+> + *
+> + * @base: points to various global variables used by the MM to get the
+> + * virtual base address of the above regions, which base addresses can
+> + * thus be modified by the very early KASLR code to dynamically shape
+> + * the virtual memory layout of these kernel memory regions on a per
+> + * bootup basis.
+> + *
+> + * @size_tb: size in TB of each memory region. Thereinto, the size of
+> + * the physical memory mapping region is variable, calculated according
+> + * to the actual size of system RAM in order to save more space for
+> + * randomization. The rest are fixed values related to paging mode.
+>   */
+>  static __initdata struct kaslr_memory_region {
+>  	unsigned long *base;
 
-Thank you for the patch! Yet something to improve:
+LGTM mostly, except the @size_tb field, see my comments further below.
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v4.19-rc3]
-[cannot apply to next-20180910]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+Here's an edited version:
 
-url:    https://github.com/0day-ci/linux/commits/Alexander-Duyck/Address-issues-slowing-persistent-memory-initialization/20180911-144536
-config: openrisc-or1ksim_defconfig (attached as .config)
-compiler: or1k-linux-gcc (GCC) 6.0.0 20160327 (experimental)
-reproduce:
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # save the attached .config to linux build tree
-        make.cross ARCH=openrisc 
+/*
+ * 'struct kasl_memory_region' entries represent continuous chunks of
+ * kernel virtual memory regions, to be randomized by KASLR.
+ *
+ * ( The exception is the module space virtual memory window which
+ *   uses separate logic earlier during bootup. )
+ *
+ * Currently there are three such regions: the physical memory mapping,
+ * vmalloc and vmemmap regions.
+ *
+ * The array below has the entries ordered based on virtual addresses.
+ * The order is kept after randomization, i.e. the randomized
+ * virtual addresses of these regions are still ascending.
+ *
+ * Here are the fields:
+ *
+ * @base: points to a global variable used by the MM to get the
+ * virtual base address of any of the above regions. This allows the
+ * early KASLR code to modify these base addresses early during bootup,
+ * on a per bootup basis, without the MM code even being aware of whether
+ * it got changed and to what value.
+ *
+ * When KASLR is active then the MM code makes sure that for each region
+ * there's such a single, dynamic, global base address 'unsigned long'
+ * variable available for the KASLR code to point to and modify directly:
+ *
+ *       { &page_offset_base, 0 },
+ *       { &vmalloc_base,     0 },
+ *       { &vmemmap_base,     1 },
+ *
+ * @size_tb: size in TB of each memory region. Thereinto, the size of
+ * the physical memory mapping region is variable, calculated according
+ * to the actual size of system RAM in order to save more space for
+ * randomization. The rest are fixed values related to paging mode.
+ */
 
-All errors (new ones prefixed by >>):
+The role of @size_tb is still murky to me. What is it telling us?
+Maximum virtual memory range to randomize into? Why does this depend
+on system RAM at all - aren't these all virtual addresses in a 64-bit
+(well, 48-bit or 56-bit) address ranges?
 
-   mm/page_alloc.c: In function 'memmap_init_zone':
->> mm/page_alloc.c:5566:21: error: 'ZONE_DEVICE' undeclared (first use in this function)
-     } else if (zone == ZONE_DEVICE) {
-                        ^~~~~~~~~~~
-   mm/page_alloc.c:5566:21: note: each undeclared identifier is reported only once for each function it appears in
+I could read the code to figure this out, but the comment should already
+explain this and it doesn't.
 
-vim +/ZONE_DEVICE +5566 mm/page_alloc.c
+Thanks,
 
-  5551	
-  5552		if (highest_memmap_pfn < end_pfn - 1)
-  5553			highest_memmap_pfn = end_pfn - 1;
-  5554	
-  5555		/*
-  5556		 * Honor reservation requested by the driver for this ZONE_DEVICE
-  5557		 * memory. We limit the total number of pages to initialize to just
-  5558		 * those that might contain the memory mapping. We will defer the
-  5559		 * ZONE_DEVICE page initialization until after we have released
-  5560		 * the hotplug lock.
-  5561		 */
-  5562		if (altmap && start_pfn == altmap->base_pfn) {
-  5563			start_pfn += altmap->reserve;
-  5564			end_pfn = altmap->base_pfn +
-  5565				  vmem_altmap_offset(altmap);
-> 5566		} else if (zone == ZONE_DEVICE) {
-  5567			end_pfn = start_pfn;
-  5568		}
-  5569	
-  5570		for (pfn = start_pfn; pfn < end_pfn; pfn++) {
-  5571			/*
-  5572			 * There can be holes in boot-time mem_map[]s handed to this
-  5573			 * function.  They do not exist on hotplugged memory.
-  5574			 */
-  5575			if (context != MEMMAP_EARLY)
-  5576				goto not_early;
-  5577	
-  5578			if (!early_pfn_valid(pfn))
-  5579				continue;
-  5580			if (!early_pfn_in_nid(pfn, nid))
-  5581				continue;
-  5582			if (!update_defer_init(pgdat, pfn, end_pfn, &nr_initialised))
-  5583				break;
-  5584	
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
-
---2fHTh5uZTiUOsy+g
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
-
-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
-eFSjBBAqBEFEtRuS/38O+cBuiHMAAA==
-
---2fHTh5uZTiUOsy+g--
+	Ingo
