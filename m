@@ -2,130 +2,160 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA6CBC04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 04:30:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74224C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 04:37:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 429E1206B8
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 04:30:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Rc/m6pTC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 429E1206B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 26DDA206B8
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 04:37:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26DDA206B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726798AbeIKJ2P (ORCPT
+        id S1726645AbeIKJe0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 05:28:15 -0400
-Received: from mail-yw1-f51.google.com ([209.85.161.51]:38296 "EHLO
-        mail-yw1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726532AbeIKJ2P (ORCPT
+        Tue, 11 Sep 2018 05:34:26 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:54781 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726438AbeIKJe0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 05:28:15 -0400
-Received: by mail-yw1-f51.google.com with SMTP id n21-v6so8720636ywh.5
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 21:30:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Q8FU+9bVL81svFCXr9TaqXSMHt6I9+JgGyYzUNGGyAk=;
-        b=Rc/m6pTCvoVBSN1m1VwUzUb2MgOmgNaGIZJ+BGiIls/UtzfyLk+e35beSP/9oPI8+9
-         /zv+VnFNeVFAnLy1+rYdWW8dyE5GvPX33oJOF9D50atiw+RvDUvq3vEOFeCf0qjL6GSi
-         EZX4emm6Pu6uR8uhB09AwKPAiaDAvh14iXeL8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Q8FU+9bVL81svFCXr9TaqXSMHt6I9+JgGyYzUNGGyAk=;
-        b=AjcUz0YJNejRpEdlvhDJ0oH20i7vV7iPWvIgHptnmx332o5px346/Dd+NMZ8bPJPn4
-         dMr45382YarXKc5crBjeMBzmacvvmhp6upblhPujxrQmx5YVT74+p5XDb2kdPpF+5Sa/
-         EIfXmc/12erljTX4D12YFkLuWGK/x6ZJpVR+ShGW6Nw/eOYJrpRslo2OxR/acoF3UMeo
-         /rO9xqhNgoWUzqxMpbuN9vtjdcsRz8mnIroSAUyacEoVgK97D23h7+b1amwCksHbu2ZH
-         me4hS6cLbRnX+J/maVCxo4MgvXgWRkid5H4Vp2ZzJSetRCafDYshxPcYRbFt5s1whZa1
-         lrzg==
-X-Gm-Message-State: APzg51AsfaH0v15uvYOFrqYL6ZODZ777pniU8PzMV6uiO/VfKG/SXVUh
-        9Fm1//NJD3v3GunoInj617alyflgRG8=
-X-Google-Smtp-Source: ANB0VdZLMRhR81TgYOoZO9oaoSynJYG8nr+7C8m2OKjp7liEEn5hVLONInyqM+DtIHcMdIqv7zOgog==
-X-Received: by 2002:a81:3b4c:: with SMTP id i73-v6mr12000258ywa.121.1536640252378;
-        Mon, 10 Sep 2018 21:30:52 -0700 (PDT)
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com. [209.85.219.171])
-        by smtp.gmail.com with ESMTPSA id y188-v6sm6147641ywe.2.2018.09.10.21.30.50
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Sep 2018 21:30:51 -0700 (PDT)
-Received: by mail-yb1-f171.google.com with SMTP id y20-v6so8832891ybi.13
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 21:30:50 -0700 (PDT)
-X-Received: by 2002:a25:e5c3:: with SMTP id c186-v6mr11534244ybh.209.1536640250362;
- Mon, 10 Sep 2018 21:30:50 -0700 (PDT)
+        Tue, 11 Sep 2018 05:34:26 -0400
+Received: from soja.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:13da])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <o.rempel@pengutronix.de>)
+        id 1fzaPs-0007YI-Qa; Tue, 11 Sep 2018 06:36:44 +0200
+Subject: Re: [PATCH v9 3/6] kernel/reboot.c: export pm_power_off_prepare
+To:     Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+        yibin.gong@nxp.com, Michael Turquette <mturquette@baylibre.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-imx@nxp.com,
+        kernel@pengutronix.de, "A.s. Dong" <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20180802103425.3053-1-o.rempel@pengutronix.de>
+ <20180802103425.3053-4-o.rempel@pengutronix.de>
+ <20180802104443.GH9117@sirena.org.uk>
+ <94d48ecb-7302-c7ed-e815-730be0426a04@pengutronix.de>
+ <20180802113552.GJ9117@sirena.org.uk> <20180827014815.GD29208@dragon>
+ <20180906101516.GA5360@sirena.org.uk> <20180909020021.GA18838@dragon>
+ <20180910151926.GA10889@sirena.org.uk> <20180911015320.GA25790@dragon>
+From:   Oleksij Rempel <o.rempel@pengutronix.de>
+Message-ID: <134a7f76-6e0b-1a9f-26da-f01adaac44e6@pengutronix.de>
+Date:   Tue, 11 Sep 2018 06:36:35 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a25:5f04:0:0:0:0:0 with HTTP; Mon, 10 Sep 2018 21:30:49
- -0700 (PDT)
-In-Reply-To: <20180910174355.GA27312@redhat.com>
-References: <20180910122907.GA23963@redhat.com> <CAGXu5jKYVAfWkd3WTM4EkVHWGoUY9BtSGKMLb1RAKhUfgCVxfA@mail.gmail.com>
- <CAGXu5jJ+aiJWL0G0Zpq2Df4ADEmpSBZHSTaUkzJiNbgg+B6x2Q@mail.gmail.com>
- <20180910172109.GB27005@redhat.com> <20180910174355.GA27312@redhat.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 10 Sep 2018 21:30:49 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jKwJx6mLV8=Z313kkZzqhikyoKwnRTQsd5X+U_gMkuS_w@mail.gmail.com>
-Message-ID: <CAGXu5jKwJx6mLV8=Z313kkZzqhikyoKwnRTQsd5X+U_gMkuS_w@mail.gmail.com>
-Subject: Re: get_arg_page() && ptr_size accounting
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Rik van Riel <riel@redhat.com>, Michal Hocko <mhocko@suse.com>,
-        Stanislav Kozina <skozina@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180911015320.GA25790@dragon>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="GH2qLEd1bdYflvrsNcftbP536dqJJG2Gz"
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:13da
+X-SA-Exim-Mail-From: o.rempel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 10, 2018 at 10:43 AM, Oleg Nesterov <oleg@redhat.com> wrote:
-> On 09/10, Oleg Nesterov wrote:
->>
->> On 09/10, Kees Cook wrote:
->> >
->> > On Mon, Sep 10, 2018 at 9:41 AM, Kees Cook <keescook@chromium.org> wrote:
->> > > On Mon, Sep 10, 2018 at 5:29 AM, Oleg Nesterov <oleg@redhat.com> wrote:
->> > >> Hi Kees,
->> > >>
->> > >> I was thinking about backporting the commit 98da7d08850fb8bde
->> > >> ("fs/exec.c: account for argv/envp pointers"), but I am not sure
->> > >> I understand it...
->> >
->> > BTW, if you backport that, please get the rest associated with the
->> > various Stack Clash related weaknesses:
->>
->> may be...
->>
->> > da029c11e6b1 exec: Limit arg stack to at most 75% of _STK_LIM
->>
->> and I have to admit that I do not understand this patch at all, the
->> changelog explains nothing.
->>
->> Could you explain what this patch actually prevents from? Especially
->> now that we have stack_guard_gap?
->
-> forgot to mention...
->
-> with this patch
->
->         #define MAX_ARG_STRINGS 0x7FFFFFFF
->
-> doesn't match the reality. perhaps something like below makes sense just
-> to make it clear, but this is cosmetic.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--GH2qLEd1bdYflvrsNcftbP536dqJJG2Gz
+Content-Type: multipart/mixed; boundary="IQQAtMcNgGktm5ZFih1gXwZeXumOAOaYC";
+ protected-headers="v1"
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+ yibin.gong@nxp.com, Michael Turquette <mturquette@baylibre.com>,
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+ Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+ linux-imx@nxp.com, kernel@pengutronix.de, "A.s. Dong"
+ <aisheng.dong@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>,
+ Russell King <linux@armlinux.org.uk>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Leonard Crestez <leonard.crestez@nxp.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Message-ID: <134a7f76-6e0b-1a9f-26da-f01adaac44e6@pengutronix.de>
+Subject: Re: [PATCH v9 3/6] kernel/reboot.c: export pm_power_off_prepare
+References: <20180802103425.3053-1-o.rempel@pengutronix.de>
+ <20180802103425.3053-4-o.rempel@pengutronix.de>
+ <20180802104443.GH9117@sirena.org.uk>
+ <94d48ecb-7302-c7ed-e815-730be0426a04@pengutronix.de>
+ <20180802113552.GJ9117@sirena.org.uk> <20180827014815.GD29208@dragon>
+ <20180906101516.GA5360@sirena.org.uk> <20180909020021.GA18838@dragon>
+ <20180910151926.GA10889@sirena.org.uk> <20180911015320.GA25790@dragon>
+In-Reply-To: <20180911015320.GA25790@dragon>
 
-Part of the discussion from back then was basically "we don't have
-hard-coded limits so programs need to check dynamically themselves".
+--IQQAtMcNgGktm5ZFih1gXwZeXumOAOaYC
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-I'd prefer to leave it all well enough alone since I don't want to
-introduce regressions here in the face of the many many Stack Clash
-style weaknesses.
+Hi Shawn,
 
--Kees
+On 11.09.2018 03:53, Shawn Guo wrote:
+> On Mon, Sep 10, 2018 at 04:19:26PM +0100, Mark Brown wrote:
+>> On Sun, Sep 09, 2018 at 10:00:23AM +0800, Shawn Guo wrote:
+>>> On Thu, Sep 06, 2018 at 11:15:17AM +0100, Mark Brown wrote:
+>>
+>>>> I was expecting to get a pull request with the precursor patches in =
+it -
+>>>> the regulator driver seems to get a moderate amount of development s=
+o
+>>>> there's a reasonable risk of conflicts.
+>>
+>>> What about you create a stable topic branch for regulator patches and=
+ I
+>>> pull it into IMX tree?
+>>
+>> Sure, I can send a pull request back but the first two patches in the
+>> series are ARM ones - are you OK with me just applying them and sendin=
+g
+>> them in the pull request or do you want to apply them first?
+>=20
+> I just took another look at the series.  It seems that there is no
+> build-time dependency between regulator and platform patches.  So I
+> think we can handle the series like:
+>=20
+>  - You apply patch #3, #4 and #5 on regulator tree;
+>  - I apply the reset on IMX tree.
+>=20
+> There shouldn't be any build or run time regression on either tree, and=
 
--- 
-Kees Cook
-Pixel Security
+> the feature that the series adds will be available when both trees get
+> merged together on -next or Linus tree.
+>=20
+> @Oleksij Is my understanding above correct?
+
+Yes.
+
+
+--IQQAtMcNgGktm5ZFih1gXwZeXumOAOaYC--
+
+--GH2qLEd1bdYflvrsNcftbP536dqJJG2Gz
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAluXRlMACgkQdQOiSHVI
+77Sxowf8CjP6jDa4tEdi8nba/CtB4vRe2TXeKy4l+9nZNtPn8Bl4PrUC8sOZN0Pa
+GlXjWmDPrDBjJ/qV8AMwa0HhK4xvIHIDsM8NMRL7CRIYc9bmBw9AnJty9xgS3UAQ
+aYJfQbFx93cz/N3cXCR/ATt50YRPESprtwf8RQBcfNhMX6Fldco3oDfJsmoQBY4l
+LZZ5dezGMr1tQGIr/1FfoOUIUUVWrMHU8BfTiJXC+BtENiUITcDwjnUUAb/CcmFU
+kiulVUndoahTflqBnO1abaElmbePbKVXd+CHC++3uHDTl8ZY8zSpV6DazAjepmua
+57gabHI6prwAB6hDLmRmi0Mr4DMfmQ==
+=6PNd
+-----END PGP SIGNATURE-----
+
+--GH2qLEd1bdYflvrsNcftbP536dqJJG2Gz--
