@@ -2,72 +2,82 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B247DC6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 06:33:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD754C6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 06:33:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A51320645
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 06:33:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ODv27x2s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A51320645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 9B5CF2086A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 06:33:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B5CF2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727161AbeIKLbY (ORCPT
+        id S1727626AbeIKLb1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 07:31:24 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34752 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726429AbeIKLbY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 07:31:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=7A8dWqZJ1JVbq+EWXqvi0esbNRltwavXgahwOc+/Lnk=; b=ODv27x2sCP/xvtDR0X1lwjzrW
-        foTUtHbk2BmyeVRjSWev4Rb78ia0/U7ouEDaO2suZTVfjv7xMkln3Dg3/OOllonzyg3KQ7GjMq00W
-        Oejg5070PcMgZtCEaknarqlnrXvp2IokjbRxeTCxLH7EeE51fiXe5vumGimabkJBMzDUwv03LLa8H
-        y2Z7Cyz9bQyA2Plk4cz//kZajnu8MoD00Ab9S7cxf4uaAnJL6c10+wTdGt2nR1GwFQf6w5EobePcB
-        yZW5sTNk8utliqNPdc3XPrl8bycSP51+RUQCXMrLzvtE5ceSeapPC65xT2is1yP2nhYzdYnRpj2tK
-        El/13zfng==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fzcEy-0002Ut-3m; Tue, 11 Sep 2018 06:33:36 +0000
-Date:   Mon, 10 Sep 2018 23:33:35 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        syzbot <syzbot+5b1df0420c523b45a953@syzkaller.appspotmail.com>,
-        bcrl <bcrl@kvack.org>, linux-aio <linux-aio@kvack.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: possible deadlock in aio_poll
-Message-ID: <20180911063335.GA3315@infradead.org>
-References: <000000000000cbb35d05757f7a3a@google.com>
- <20180910165317.GA3237@infradead.org>
- <CAJfpeguWqJgU8EfjvOtsBYRbbY2J7Ck2oNUcLNS8my9g2eNZfA@mail.gmail.com>
+        Tue, 11 Sep 2018 07:31:27 -0400
+Received: from smtp17.cstnet.cn ([159.226.251.17]:40311 "EHLO cstnet.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726429AbeIKLb1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 07:31:27 -0400
+Received: from [172.20.20.131] (unknown [182.150.46.145])
+        by APP-09 (Coremail) with SMTP id swCowAAHDYWxYZdb5lPTCA--.9038S2;
+        Tue, 11 Sep 2018 14:33:22 +0800 (CST)
+From:   Pu Wen <puwen@hygon.cn>
+Subject: Re: [PATCH v6 01/16] x86/cpu: Create Hygon Dhyana architecture
+ support file
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, thomas.lendacky@amd.com, pbonzini@redhat.com,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+References: <cover.1536550549.git.puwen@hygon.cn>
+ <d99e831f739308221798c9939efc6e6fc1648e0c.1536550550.git.puwen@hygon.cn>
+ <20180910163821.GD4386@zn.tnic>
+Message-ID: <258a65ec-177e-fdc8-3f40-c5b748a6f0d1@hygon.cn>
+Date:   Tue, 11 Sep 2018 14:33:20 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpeguWqJgU8EfjvOtsBYRbbY2J7Ck2oNUcLNS8my9g2eNZfA@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20180910163821.GD4386@zn.tnic>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: swCowAAHDYWxYZdb5lPTCA--.9038S2
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+        VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYY7k0a2IF6w4xM7kC6x804xWl14x267AK
+        xVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGw
+        A2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r1j
+        6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r1j6r4UM28EF7xvwVC2z280aVAFwI0_Jr
+        0_Gr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv
+        0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUAVWUtwAv7VC2z2
+        80aVAFwI0_Cr0_Gr1UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI
+        62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
+        0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWU
+        tVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcV
+        CY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv
+        67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyT
+        uYvjxUzBMNUUUUU
+X-Originating-IP: [182.150.46.145]
+X-CM-SenderInfo: psxzv046klw03qof0z/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 10, 2018 at 08:14:20PM +0200, Miklos Szeredi wrote:
-> Why do pollable waitqueues need to disable interrupts generally?
+On 2018/9/11 0:38, Borislav Petkov wrote:
+> That sentence is not needed for the same reason as above.
+> 
+>> And select CPU_SUP_AMD
+>> to solve the dependency issues in kernel.
+> 
+> No, this should say: "Since Dhyana uses AMD functionality to a large
+> degree, select CPU_SUP_AMD which provides that functionality."
 
-Any waitqueue needs to disable interrupts for consistency.  We
-always use spin_lock_irqsave in __wake_up_common_lock() for example.
+Thanks for the detailed correction. Will improve the description and
+remove unneeded sentences in next version of patch.
+
+-- 
+Regards,
+Pu Wen
+
