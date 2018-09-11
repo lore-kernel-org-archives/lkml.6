@@ -2,153 +2,145 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDAC8C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:27:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10398C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:29:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C434206BB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:27:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C434206BB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id A25CB206BB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:29:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="H+A8g4LH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A25CB206BB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727669AbeILB2J (ORCPT
+        id S1727693AbeILBaC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 21:28:09 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:45082 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726792AbeILB2J (ORCPT
+        Tue, 11 Sep 2018 21:30:02 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:41204 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726762AbeILBaC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 21:28:09 -0400
-Received: by mail-qt0-f196.google.com with SMTP id g44-v6so29684506qtb.12;
-        Tue, 11 Sep 2018 13:27:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dgeeq6W8xAt+ZmUnHosLhoVGkPL4xjBuBswxTdHIBY8=;
-        b=KqQqO7jpfruuchi/HFOn6mqhc8rbX4Am3/qgxpjoh7esL5SoPpHyWMn43NXbAV4OUs
-         BAF3graa89PRiqy5JYPrvqphSiQNxgLDz5pKh6pSA6ceYPGF2WPQjqtFOvdAKDizUJBJ
-         UsV+KeIO0mue4Cq6qUO7ctJnXpn4ZF2q+64GLGn7N+aeBoqLbNncrn5BpjvvW44YlcvL
-         A28TU947vHmREi5IS1pdvKpvnlC64dkXEa24JkxSEMRJ7dOhy2ZUbmmoNIEqzZantl/V
-         X8pIyQqW+++GElmfaDxCiU3gK0P/8wZGCqP8TD7WgAg5jbRMqwwAwpJ35Mr/s8Blr+zb
-         xvFA==
-X-Gm-Message-State: APzg51AUn4DT7b2LxjZ+q8b8Us6+Wu6dNGi/NAHL4opEKW4OCwDiatJg
-        WOYhC7MBMBVRe8AaPPCcC8NBk34uzWvvU3Dygog=
-X-Google-Smtp-Source: ANB0VdZ8TSPLR3XG0LA9QrpV3t2AkO1JQG9H3KsumXMxZ4oNflfE9CRqVTehgHSP30lFHIY3S8EyCPy0vklyJOfHDPo=
-X-Received: by 2002:ac8:6959:: with SMTP id n25-v6mr21918669qtr.9.1536697630765;
- Tue, 11 Sep 2018 13:27:10 -0700 (PDT)
+        Tue, 11 Sep 2018 21:30:02 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8BKOOFT040770;
+        Tue, 11 Sep 2018 20:28:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=56BP58q3ce4GT6QJyVmANsO+ky5RseXd276dsf7ttko=;
+ b=H+A8g4LHgRBFhajcHKVeyN3HinpRGNCPpmQhGX13IkzT9QzoHftDRtXT0m1frhd//F+q
+ ouqEE3DO6wdY1lzL3gOQCX4P37Bf7/4vlmpTwxfg/gsReRRV9FWRHe+yKIFrrTQunhy3
+ 4b8CUT6TxrCeZikXHwi2TKglgoXB/8/dw/VEdjGTzM3AyT/Bkvc/QCJ/vcYftnpXUAam
+ 46bVU+3Ba2Q+bqLbAREsqANpCK1yDMl2PcPM5ehQIBe9VmLRhwYSmO9KDEtV2A0c3h/d
+ O3J2l3EOm5HXWNY2RXzR2s6Vq+p41rAMXRVosauYvlNvzbk9qe76cvv/F9jsTjeRvJeJ IQ== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2mc72qpf7j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 11 Sep 2018 20:28:40 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w8BKSdAA001553
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 11 Sep 2018 20:28:39 GMT
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w8BKScvh001103;
+        Tue, 11 Sep 2018 20:28:38 GMT
+Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 11 Sep 2018 13:28:38 -0700
+Subject: Re: [PATCH] x86/EISA: Don't probe EISA bus for Xen PV guests
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        jgross@suse.com, andy@strugglers.net,
+        stable <stable@vger.kernel.org>
+References: <20180911195538.23289-1-boris.ostrovsky@oracle.com>
+ <alpine.DEB.2.21.1809112218580.1427@nanos.tec.linutronix.de>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <340bfde6-6cf8-ce15-2327-7484abd351e0@oracle.com>
+Date:   Tue, 11 Sep 2018 16:30:11 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-References: <20180908142837.2819693-1-arnd@arndb.de> <20180908142837.2819693-6-arnd@arndb.de>
- <20180909041114.GD19965@ZenIV.linux.org.uk>
-In-Reply-To: <20180909041114.GD19965@ZenIV.linux.org.uk>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 11 Sep 2018 22:26:54 +0200
-Message-ID: <CAK8P3a0+0=P7BDm08iqMWCbB295E8Q0Nwxvj65DNjoF4BqgYQQ@mail.gmail.com>
-Subject: Re: [PATCH 06/11] compat_ioctl: remove /dev/random commands
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     "Theodore Ts'o" <tytso@mit.edu>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <alpine.DEB.2.21.1809112218580.1427@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9013 signatures=668708
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1809110200
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 9, 2018 at 6:12 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
+On 9/11/18 4:20 PM, Thomas Gleixner wrote:
+> On Tue, 11 Sep 2018, Boris Ostrovsky wrote:
 >
-> On Sat, Sep 08, 2018 at 04:28:12PM +0200, Arnd Bergmann wrote:
-> > These are all handled by the random driver, so instead of listing
-> > each ioctl, we can just use the same function to deal with both
-> > native and compat commands.
+>> For unprivileged Xen PV guests this is normal memory and ioremap will
+>> not be able to properly map it.
+>>
+>> While at it, since ioremap may return NULL, add a test for pointer's
+>> validity.
+> I assume this goes back to very dead kernels, so that should go with a Cc
+> stable, right?
 >
-> Umm...  I don't think it's right -
->
-> >       .unlocked_ioctl = random_ioctl,
-> > +     .compat_ioctl = random_ioctl,
->
->
-> ->compat_ioctl() gets called in
->                         error = f.file->f_op->compat_ioctl(f.file, cmd, arg);
-> so you do *NOT* get compat_ptr() for those - they have to do it on their
-> own.  It's not hard to provide a proper compat_ioctl() instance for that
-> one, but this is not it.  What you need in drivers/char/random.c part of
-> that one is something like
 
-Looping in some s390 folks.
 
-As you suggested in another reply, I had a look at what other drivers
-do the same thing and have only pointer arguments. I created a
-patch to move them all over to using a new helper function that
-adds the compat_ptr(), and arrived at
+Yes, I forgot to add those (and now I did), thanks for pointing this out.
 
- drivers/android/binder.c                    | 2 +-
- drivers/crypto/qat/qat_common/adf_ctl_drv.c | 2 +-
- drivers/dma-buf/dma-buf.c                   | 4 +---
- drivers/dma-buf/sw_sync.c                   | 2 +-
- drivers/dma-buf/sync_file.c                 | 2 +-
- drivers/gpu/drm/amd/amdkfd/kfd_chardev.c    | 2 +-
- drivers/hid/hidraw.c                        | 4 +---
- drivers/iio/industrialio-core.c             | 2 +-
- drivers/infiniband/core/uverbs_main.c       | 4 ++--
- drivers/media/rc/lirc_dev.c                 | 4 +---
- drivers/mfd/cros_ec_dev.c                   | 4 +---
- drivers/misc/vmw_vmci/vmci_host.c           | 2 +-
- drivers/nvdimm/bus.c                        | 4 ++--
- drivers/nvme/host/core.c                    | 6 +++---
- drivers/pci/switch/switchtec.c              | 2 +-
- drivers/platform/x86/wmi.c                  | 2 +-
- drivers/rpmsg/rpmsg_char.c                  | 4 ++--
- drivers/s390/char/sclp_ctl.c                | 8 ++------
- drivers/s390/char/vmcp.c                    | 2 ++----
- drivers/s390/cio/chsc_sch.c                 | 8 ++------
- drivers/sbus/char/display7seg.c             | 2 +-
- drivers/sbus/char/envctrl.c                 | 4 +---
- drivers/scsi/3w-xxxx.c                      | 4 +---
- drivers/scsi/cxlflash/main.c                | 2 +-
- drivers/scsi/esas2r/esas2r_main.c           | 2 +-
- drivers/scsi/pmcraid.c                      | 4 +---
- drivers/staging/android/ion/ion.c           | 4 +---
- drivers/staging/vme/devices/vme_user.c      | 2 +-
- drivers/tee/tee_core.c                      | 2 +-
- drivers/usb/class/cdc-wdm.c                 | 2 +-
- drivers/usb/class/usbtmc.c                  | 4 +---
- drivers/video/fbdev/ps3fb.c                 | 2 +-
- drivers/video/fbdev/sis/sis_main.c          | 4 +---
- drivers/virt/fsl_hypervisor.c               | 2 +-
- fs/btrfs/super.c                            | 2 +-
- fs/ceph/dir.c                               | 2 +-
- fs/ceph/file.c                              | 2 +-
- fs/fuse/dev.c                               | 2 +-
- fs/notify/fanotify/fanotify_user.c          | 2 +-
- fs/userfaultfd.c                            | 2 +-
- net/rfkill/core.c                           | 2 +-
- 41 files changed, 48 insertions(+), 76 deletions(-)
+It has to go at least all the way back to 4.13 since before
+f7eaf6e00fd58 ("x86/boot: Move EISA setup to a separate file"), just by
+luck, early_ioremap() worked for the guests.
 
-Out of those, there are only a few that may get used on s390,
-in particular at most infiniband/uverbs, nvme, nvdimm,
-btrfs, ceph, fuse, fanotify and userfaultfd.
-[Note: there are three s390 drivers in the list, which use
-a different method: they check in_compat_syscall() from
-a shared handler to decide whether to do compat_ptr().
 
-According to my memory from when I last worked on this,
-the compat_ptr() is mainly a safeguard for legacy binaries
-that got created with ancient C compilers (or compilers for
-something other than C)  and might leave the high bit set
-in a pointer, but modern C compilers (gcc-3+) won't ever
-do that.
-
-You are probably right about /dev/random, which could be
-used in lots of weird code, but I wonder to what degree we
-need to worry about it for the rest.
-
-       Arnd
+-boris
