@@ -6,66 +6,66 @@ X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79A7EC6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 17:28:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D37BDC04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 17:28:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36EB320880
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 17:28:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 830222087F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 17:28:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sweptlaser-com.20150623.gappssmtp.com header.i=@sweptlaser-com.20150623.gappssmtp.com header.b="LIDOxq4J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36EB320880
+	dkim=pass (2048-bit key) header.d=sweptlaser-com.20150623.gappssmtp.com header.i=@sweptlaser-com.20150623.gappssmtp.com header.b="OfA3G7ZD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 830222087F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sweptlaser.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728151AbeIKW3G (ORCPT
+        id S1728185AbeIKW3J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 18:29:06 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:34778 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726943AbeIKW3E (ORCPT
+        Tue, 11 Sep 2018 18:29:09 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:37536 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728138AbeIKW3H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 18:29:04 -0400
-Received: by mail-io0-f193.google.com with SMTP id c22-v6so4245184iob.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 10:28:45 -0700 (PDT)
+        Tue, 11 Sep 2018 18:29:07 -0400
+Received: by mail-it0-f66.google.com with SMTP id h20-v6so2589936itf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 10:28:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=sweptlaser-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=p/YCCUj556IEYCbXa9GPHpGuHvo/AoBIzM3sGHhK1I8=;
-        b=LIDOxq4J9vshXRiLTG1uMplYZg/hrmLrvRolfT0lpytZB9rJMBAAnUktas+i7ldg92
-         Z3ygnX9DHsRYQXLoILwHjtAVEqgZtHPtiCjD7X3TlHToKH2gMtFuwj7sYxv01u40Fr+v
-         lvZhHi+ryWTwNwxGWM/OotOUa5eQo5ihZvpVaQF8jYuYXq6G5a9uUZrfnswV3pfrJcco
-         KrV/uoHtZchSI3+YphDQR9OSPXbPaz5BcXTyBuCJ9jM3OMa6G/02vxkRD7Xcj7in3/iz
-         Tf0hfQ+v65a9hg4hI/GoB1RLQPwQmFQDwjapoKb+ov8P6ypf7nwRfQSiV+WA4RdeHbMg
-         7nPA==
+        bh=IBFOnR0DcWOXzA6mr94JtkFvvU6IkJIdr+f4e1kKDTs=;
+        b=OfA3G7ZDLRHA01OPaDMEuVxzBRQS8NGUhjVHq7+Wr6Q2z1yyLBwCQrrxXHj0MPWxNd
+         IpeAsTbgZNDh/DVflgVlcNw5vUSrpzWAwji7o7gYYzOrBaXPbam0tU9OU1S6UyCkxakq
+         hceV5A5AjRa0GLYzOibEHI/Di2zgQAV8BOSsJ+UxBIPnh4I0JTlbyecA6klh/tAWybMs
+         2+YKP/bYaMv3ejUdsrB4MnmaJvQfAnO001PrDFe7rNobZl4dQZVSGc4fGqWO0n7txuVX
+         Fk23cryBZqnmjCJOhoj5vBLrLe/ybwC//gfggNx9KqUOiGDyP73+KKolk6Tl6qhQ+rtG
+         7pAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=p/YCCUj556IEYCbXa9GPHpGuHvo/AoBIzM3sGHhK1I8=;
-        b=Iyq0wDDGWv4wlCuUXbKpRaz6H5DdDVyW7apYGHFBNdoSTHUr2ytiNu43MjgDgM7XDs
-         Nnhsw4s6uxwtOAnVc5rstSEX0AuQPbTQhPlfUMw4TjIeOKBtQRxtNMGRcnW9wcyktpHj
-         ydvNf3KFR/nqf04hXSsuE/K9tiFa0TwnJVY5nuJtPalzhL65n3JJTJ9QEmD53U6jVY3M
-         uraJHAFVHUJVsS3fqNcq26YtH6D8SvFwNkgLItbhdat/7jbEZxHbZfg2DUeMTJFhUN0J
-         jQcdvIW0y3BX/w/QrqqoobtcOuUqa7velE9a9LLwdmhOtwL5CDm8aV36dRT+b7dJPg2o
-         DSAg==
-X-Gm-Message-State: APzg51BBnhdkivkLaDWP+VcvSVc7ispFu2D99/bUdt5Oyx/NiC1vlTan
-        7A4bQjsl1EPcSR82+1bBW9s7rzTSP7w=
-X-Google-Smtp-Source: ANB0VdZ9lM6xL4/QEd4l4vw9hVwhcvqhM3K6X2rlx1BEoX0Ny4G2jMToOAOdKhGRe8I9GVlSgxHiQQ==
-X-Received: by 2002:a6b:3a55:: with SMTP id h82-v6mr22005653ioa.76.1536686924536;
-        Tue, 11 Sep 2018 10:28:44 -0700 (PDT)
+        bh=IBFOnR0DcWOXzA6mr94JtkFvvU6IkJIdr+f4e1kKDTs=;
+        b=o1QFwz5oWpG5iMcqg9FVqhbx2Rhv96OcPotibIE3vRMOWE0vM/1XfFRbAKFlA4AFYk
+         8NdxB9drTyoTfE5x3vm5G/NXXeb5P3ufDGGW1QfNc794HF9yi9rmUoJC6bJ5mQJTeka4
+         0pzn0WjUUgN6LasEMJbsLSnKVl4rlYKp7iSnjYEm77XKwzXaHLAnRj/ZPtiBuOHE7s3k
+         kdBMj0PJDuN1BTqzp6sscFk2yIsKwdXwj7E5iyz3OlioK1KlGLbQsvHxn8aAXDcWayu+
+         WzGQoyc27WSxJQuVG7Q8QASdFZ0p00s/xL5g666US5VR9aSXPZ9toU8piZR36KcsaagQ
+         AcNg==
+X-Gm-Message-State: APzg51CeuPzUeNKlLjU1/cHY0TLqvuaqO/mRRas3jljYxHRkOFYeEjcl
+        DWB5ikCcYyBU0G9PYFGwG1JTiA==
+X-Google-Smtp-Source: ANB0VdYVvyBf2Q+4eDr8aFCtXTANLLhRIBA/l8v83psWsijC7nWy2/bhjzv99GfJkNrr7P7RaKxsug==
+X-Received: by 2002:a24:1049:: with SMTP id 70-v6mr2373408ity.115.1536686926447;
+        Tue, 11 Sep 2018 10:28:46 -0700 (PDT)
 Received: from yngvi.hq.sweptlaser.com ([63.147.146.226])
-        by smtp.googlemail.com with ESMTPSA id g198-v6sm5050261itg.4.2018.09.11.10.28.42
+        by smtp.googlemail.com with ESMTPSA id g198-v6sm5050261itg.4.2018.09.11.10.28.44
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Sep 2018 10:28:43 -0700 (PDT)
+        Tue, 11 Sep 2018 10:28:45 -0700 (PDT)
 From:   Jeremy Gebben <jgebben@sweptlaser.com>
 To:     Alessandro Zummo <a.zummo@towertech.it>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Wim Van Sebroeck <wim@linux-watchdog.org>,
         Guenter Roeck <linux@roeck-us.net>, linux-rtc@vger.kernel.org
 Cc:     linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] rtc: abx80x: use a 'priv' struct for client data
-Date:   Tue, 11 Sep 2018 11:28:25 -0600
-Message-Id: <20180911172826.7195-2-jgebben@sweptlaser.com>
+Subject: [PATCH 2/2] rtc: abx80x: add basic watchdog support
+Date:   Tue, 11 Sep 2018 11:28:26 -0600
+Message-Id: <20180911172826.7195-3-jgebben@sweptlaser.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180911172826.7195-1-jgebben@sweptlaser.com>
 References: <20180911172826.7195-1-jgebben@sweptlaser.com>
@@ -74,82 +74,209 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This will allow additional data to be tracked, for future
-improvements.
+The abx804 and abx805 chips have support for a simple watchdog
+function that can trigger an external reset.
 
 Signed-off-by: Jeremy Gebben <jgebben@sweptlaser.com>
 ---
- drivers/rtc/rtc-abx80x.c | 27 +++++++++++++++++++--------
- 1 file changed, 19 insertions(+), 8 deletions(-)
+ drivers/rtc/Kconfig      |   1 +
+ drivers/rtc/rtc-abx80x.c | 116 +++++++++++++++++++++++++++++++++++++--
+ 2 files changed, 113 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
+index 7d7be60a2413..bcb0e9eda781 100644
+--- a/drivers/rtc/Kconfig
++++ b/drivers/rtc/Kconfig
+@@ -187,6 +187,7 @@ config RTC_DRV_ABB5ZES3
+ 
+ config RTC_DRV_ABX80X
+ 	tristate "Abracon ABx80x"
++	select WATCHDOG_CORE if WATCHDOG
+ 	help
+ 	  If you say yes here you get support for Abracon AB080X and AB180X
+ 	  families of ultra-low-power  battery- and capacitor-backed real-time
 diff --git a/drivers/rtc/rtc-abx80x.c b/drivers/rtc/rtc-abx80x.c
-index 2cefa67a1132..9d49054a0a4a 100644
+index 9d49054a0a4a..d8e94edcb0ba 100644
 --- a/drivers/rtc/rtc-abx80x.c
 +++ b/drivers/rtc/rtc-abx80x.c
-@@ -94,6 +94,11 @@ static struct abx80x_cap abx80x_caps[] = {
+@@ -17,6 +17,7 @@
+ #include <linux/i2c.h>
+ #include <linux/module.h>
+ #include <linux/rtc.h>
++#include <linux/watchdog.h>
+ 
+ #define ABX8XX_REG_HTH		0x00
+ #define ABX8XX_REG_SC		0x01
+@@ -37,6 +38,7 @@
+ 
+ #define ABX8XX_REG_STATUS	0x0f
+ #define ABX8XX_STATUS_AF	BIT(2)
++#define ABX8XX_STATUS_WDT	BIT(6)
+ 
+ #define ABX8XX_REG_CTRL1	0x10
+ #define ABX8XX_CTRL_WRITE	BIT(0)
+@@ -61,6 +63,14 @@
+ #define ABX8XX_OSS_OF		BIT(1)
+ #define ABX8XX_OSS_OMODE	BIT(4)
+ 
++#define ABX8XX_REG_WDT		0x1b
++#define ABX8XX_WDT_WDS		BIT(7)
++#define ABX8XX_WDT_BMB_MASK	0x7c
++#define ABX8XX_WDT_BMB_SHIFT	2
++#define ABX8XX_WDT_MAX_TIME	(ABX8XX_WDT_BMB_MASK >> ABX8XX_WDT_BMB_SHIFT)
++#define ABX8XX_WDT_WRB_MASK	0x03
++#define ABX8XX_WDT_WRB_1HZ	0x02
++
+ #define ABX8XX_REG_CFG_KEY	0x1f
+ #define ABX8XX_CFG_KEY_OSC	0xa1
+ #define ABX8XX_CFG_KEY_MISC	0x9d
+@@ -80,23 +90,25 @@ enum abx80x_chip {AB0801, AB0803, AB0804, AB0805,
+ struct abx80x_cap {
+ 	u16 pn;
+ 	bool has_tc;
++	bool has_wdog;
+ };
+ 
+ static struct abx80x_cap abx80x_caps[] = {
+ 	[AB0801] = {.pn = 0x0801},
+ 	[AB0803] = {.pn = 0x0803},
+-	[AB0804] = {.pn = 0x0804, .has_tc = true},
+-	[AB0805] = {.pn = 0x0805, .has_tc = true},
++	[AB0804] = {.pn = 0x0804, .has_tc = true, .has_wdog = true},
++	[AB0805] = {.pn = 0x0805, .has_tc = true, .has_wdog = true},
+ 	[AB1801] = {.pn = 0x1801},
+ 	[AB1803] = {.pn = 0x1803},
+-	[AB1804] = {.pn = 0x1804, .has_tc = true},
+-	[AB1805] = {.pn = 0x1805, .has_tc = true},
++	[AB1804] = {.pn = 0x1804, .has_tc = true, .has_wdog = true},
++	[AB1805] = {.pn = 0x1805, .has_tc = true, .has_wdog = true},
  	[ABX80X] = {.pn = 0}
  };
  
-+struct abx80x_priv {
-+	struct rtc_device *rtc;
-+	struct i2c_client *client;
+ struct abx80x_priv {
+ 	struct rtc_device *rtc;
+ 	struct i2c_client *client;
++	struct watchdog_device wdog;
+ };
+ 
+ static int abx80x_is_rc_mode(struct i2c_client *client)
+@@ -234,6 +246,13 @@ static irqreturn_t abx80x_handle_irq(int irq, void *dev_id)
+ 	if (status & ABX8XX_STATUS_AF)
+ 		rtc_update_irq(rtc, 1, RTC_AF | RTC_IRQF);
+ 
++	/*
++	 * It is unclear if we'll get an interrupt before the external
++	 * reset kicks in.
++	 */
++	if (status & ABX8XX_STATUS_WDT)
++		dev_alert(&client->dev, "watchdog timeout interrupt.\n");
++
+ 	i2c_smbus_write_byte_data(client, ABX8XX_REG_STATUS, 0);
+ 
+ 	return IRQ_HANDLED;
+@@ -535,6 +554,89 @@ static void rtc_calib_remove_sysfs_group(void *_dev)
+ 	sysfs_remove_group(&dev->kobj, &rtc_calib_attr_group);
+ }
+ 
++#ifdef CONFIG_WATCHDOG
++
++static inline u8 timeout_bits(unsigned int timeout)
++{
++	return ((timeout << ABX8XX_WDT_BMB_SHIFT) & ABX8XX_WDT_BMB_MASK) |
++		 ABX8XX_WDT_WRB_1HZ;
++}
++
++static int __abx80x_wdog_set_timeout(struct watchdog_device *wdog,
++				     unsigned int timeout)
++{
++	struct abx80x_priv *priv = watchdog_get_drvdata(wdog);
++	u8 val = ABX8XX_WDT_WDS | timeout_bits(timeout);
++
++	/*
++	 * Writing any timeout to the WDT register resets the watchdog timer.
++	 * Writing 0 disables it.
++	 */
++	return i2c_smbus_write_byte_data(priv->client, ABX8XX_REG_WDT, val);
++}
++
++static int abx80x_wdog_set_timeout(struct watchdog_device *wdog,
++				   unsigned int new_timeout)
++{
++	int err = 0;
++
++	if (watchdog_hw_running(wdog))
++		err = __abx80x_wdog_set_timeout(wdog, new_timeout);
++
++	if (err == 0)
++		wdog->timeout = new_timeout;
++
++	return err;
++}
++
++static int abx80x_wdog_ping(struct watchdog_device *wdog)
++{
++	return __abx80x_wdog_set_timeout(wdog, wdog->timeout);
++}
++
++static int abx80x_wdog_start(struct watchdog_device *wdog)
++{
++	return __abx80x_wdog_set_timeout(wdog, wdog->timeout);
++}
++
++static int abx80x_wdog_stop(struct watchdog_device *wdog)
++{
++	return __abx80x_wdog_set_timeout(wdog, 0);
++}
++
++static const struct watchdog_info abx80x_wdog_info = {
++	.identity = "abx80x watchdog",
++	.options = WDIOF_KEEPALIVEPING | WDIOF_SETTIMEOUT | WDIOF_MAGICCLOSE,
 +};
 +
- static int abx80x_is_rc_mode(struct i2c_client *client)
- {
- 	int flags = 0;
-@@ -218,7 +223,8 @@ static int abx80x_rtc_set_time(struct device *dev, struct rtc_time *tm)
- static irqreturn_t abx80x_handle_irq(int irq, void *dev_id)
- {
- 	struct i2c_client *client = dev_id;
--	struct rtc_device *rtc = i2c_get_clientdata(client);
-+	struct abx80x_priv *priv = i2c_get_clientdata(client);
-+	struct rtc_device *rtc = priv->rtc;
- 	int status;
- 
- 	status = i2c_smbus_read_byte_data(client, ABX8XX_REG_STATUS);
-@@ -533,7 +539,7 @@ static int abx80x_probe(struct i2c_client *client,
++static const struct watchdog_ops abx80x_wdog_ops = {
++	.owner = THIS_MODULE,
++	.start = abx80x_wdog_start,
++	.stop = abx80x_wdog_stop,
++	.ping = abx80x_wdog_ping,
++	.set_timeout = abx80x_wdog_set_timeout,
++};
++
++static int abx80x_setup_watchdog(struct abx80x_priv *priv)
++{
++	priv->wdog.parent = &priv->client->dev;
++	priv->wdog.ops = &abx80x_wdog_ops;
++	priv->wdog.info = &abx80x_wdog_info;
++	priv->wdog.min_timeout = 1;
++	priv->wdog.max_timeout = ABX8XX_WDT_MAX_TIME;
++	priv->wdog.timeout = ABX8XX_WDT_MAX_TIME;
++
++	watchdog_set_drvdata(&priv->wdog, priv);
++
++	return devm_watchdog_register_device(&priv->client->dev, &priv->wdog);
++}
++#else
++static int abx80x_setup_watchdog(struct abx80x_priv *priv)
++{
++	return 0;
++}
++#endif
++
+ static int abx80x_probe(struct i2c_client *client,
  			const struct i2c_device_id *id)
  {
- 	struct device_node *np = client->dev.of_node;
--	struct rtc_device *rtc;
-+	struct abx80x_priv *priv;
- 	int i, data, err, trickle_cfg = -EINVAL;
- 	char buf[7];
- 	unsigned int part = id->driver_data;
-@@ -610,13 +616,18 @@ static int abx80x_probe(struct i2c_client *client,
- 	if (err)
- 		return err;
+@@ -629,6 +731,12 @@ static int abx80x_probe(struct i2c_client *client,
  
--	rtc = devm_rtc_allocate_device(&client->dev);
--	if (IS_ERR(rtc))
--		return PTR_ERR(rtc);
-+	priv = devm_kzalloc(&client->dev, sizeof(*priv), GFP_KERNEL);
-+	if (priv == NULL)
-+		return -ENOMEM;
+ 	i2c_set_clientdata(client, priv);
+ 
++	if (abx80x_caps[part].has_wdog) {
++		err = abx80x_setup_watchdog(priv);
++		if (err)
++			return err;
++	}
 +
-+	priv->rtc = devm_rtc_allocate_device(&client->dev);
-+	if (IS_ERR(priv->rtc))
-+		return PTR_ERR(priv->rtc);
- 
--	rtc->ops = &abx80x_rtc_ops;
-+	priv->rtc->ops = &abx80x_rtc_ops;
-+	priv->client = client;
- 
--	i2c_set_clientdata(client, rtc);
-+	i2c_set_clientdata(client, priv);
- 
  	if (client->irq > 0) {
  		dev_info(&client->dev, "IRQ %d supplied\n", client->irq);
-@@ -649,7 +660,7 @@ static int abx80x_probe(struct i2c_client *client,
- 		return err;
- 	}
- 
--	err = rtc_register_device(rtc);
-+	err = rtc_register_device(priv->rtc);
- 
- 	return err;
- }
+ 		err = devm_request_threaded_irq(&client->dev, client->irq, NULL,
 -- 
 2.17.1
 
