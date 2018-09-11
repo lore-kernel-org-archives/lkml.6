@@ -2,195 +2,117 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8694C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:31:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A95A2C6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:31:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F1AC20865
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:31:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F1AC20865
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 5F14D20865
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:31:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F14D20865
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726819AbeIKM3A (ORCPT
+        id S1726992AbeIKM3n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 08:29:00 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52548 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726325AbeIKM3A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 08:29:00 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DAFC2401DEAF;
-        Tue, 11 Sep 2018 07:31:00 +0000 (UTC)
-Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 220472027EA4;
-        Tue, 11 Sep 2018 07:30:59 +0000 (UTC)
-Date:   Tue, 11 Sep 2018 15:30:57 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     tglx@linutronix.de, hpa@zytor.com, thgarnie@google.com,
-        kirill.shutemov@linux.intel.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH v2 2/3] x86/mm/KASLR: Calculate the actual size of
- vmemmap region
-Message-ID: <20180911073057.GW1740@192.168.1.3>
-References: <20180909124946.17988-1-bhe@redhat.com>
- <20180909124946.17988-2-bhe@redhat.com>
- <20180910061151.GA85199@gmail.com>
+        Tue, 11 Sep 2018 08:29:43 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:57411 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726301AbeIKM3n (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 08:29:43 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8B7TPNb029826;
+        Tue, 11 Sep 2018 09:31:17 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2me62r1020-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 11 Sep 2018 09:31:17 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6274434;
+        Tue, 11 Sep 2018 07:31:17 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag5node2.st.com [10.75.127.14])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3EBEC241B;
+        Tue, 11 Sep 2018 07:31:17 +0000 (GMT)
+Received: from localhost (10.75.127.44) by SFHDAG5NODE2.st.com (10.75.127.14)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 11 Sep 2018 09:31:16
+ +0200
+From:   Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+To:     Dan Williams <dan.j.williams@intel.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        <dmaengine@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+Subject: [PATCH v1 1/1] dmaengine: stm32-dma: check whether length is aligned on FIFO threshold
+Date:   Tue, 11 Sep 2018 09:31:16 +0200
+Message-ID: <1536651076-17005-1-git-send-email-pierre-yves.mordret@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180910061151.GA85199@gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 11 Sep 2018 07:31:00 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 11 Sep 2018 07:31:00 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG3NODE3.st.com (10.75.127.9) To SFHDAG5NODE2.st.com
+ (10.75.127.14)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-11_03:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/10/18 at 08:11am, Ingo Molnar wrote:
-> 
-> * Baoquan He <bhe@redhat.com> wrote:
-> 
-> > @@ -108,6 +109,14 @@ void __init kernel_randomize_memory(void)
-> >  	if (memory_tb < kaslr_regions[0].size_tb)
-> >  		kaslr_regions[0].size_tb = memory_tb;
-> >  
-> > +	/*
-> > +	 * Calculate how many TB vmemmap region needs, and align to
-> > +	 * 1TB boundary.
-> > +	 * */
-> 
-> Yeah, so that's not the standard comment style ...
+When a period length is not multiple of FIFO some data may be stuck
+within FIFO.
 
-Sorry for this, Will change. Thanks.
+Burst/FIFO Threshold/Period or buffer length check has to be hardened
 
-About clean up you suggested, I have made two patches and paste them at
-below. Please help check if it's OK. Thanks a lot.
+In any case DMA will grant any request from client but will degraded
+any parameters whether awkward.
 
-> So I get the part where the 'base' pointer is essentially pointers to various global variables 
-> used by the MM to get the virtual base address of the kernel, vmalloc and vmemmap areas from, 
-> which base addresses can thus be modified by the very early KASLR code to dynamically shape the 
-> virtual memory layout of these kernel memory areas on a per bootup basis.
-> 
-> (BTW., that would be a great piece of information to add for the uninitiated. It's not like 
-> it's obvious!)
-> 
-> But what does 'size_tb' do? Nothing explains it and your patch doesn't make it clearer either. 
-> Also, get_padding() looks like an unnecessary layer of obfuscation:
-
-Yes, I agree. Have made an patch according to your suggestion, paste
-it here:
-
-From c74b1e49eaa0e00335adbbb7e2d5df6d60518d4f Mon Sep 17 00:00:00 2001
-From: Baoquan He <bhe@redhat.com>
-Date: Tue, 11 Sep 2018 14:34:26 +0800
-Subject: [PATCH] x86/mm/KASLR: Add code comments to explain fields of struct
- kaslr_memory_region
-
-Signed-off-by: Baoquan He <bhe@redhat.com>
-Suggested-by: Ingo Molnar <mingo@kernel.org>
-
+Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
 ---
- arch/x86/mm/kaslr.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
-
-diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
-index 91053cee7648..402984d8d729 100644
---- a/arch/x86/mm/kaslr.c
-+++ b/arch/x86/mm/kaslr.c
-@@ -41,9 +41,21 @@
- static const unsigned long vaddr_end = CPU_ENTRY_AREA_BASE;
- 
- /*
-- * Memory regions randomized by KASLR (except modules that use a separate logic
-- * earlier during boot). The list is ordered based on virtual addresses. This
-- * order is kept after randomization.
-+ * Memory regions randomized by KASLR (except modules that use a separate
-+ * logic earlier during boot). Currently they are the physical memory
-+ * mapping, vmalloc and vmemmap regions, are ordered based on virtual
-+ * addresses. The order is kept after randomization.
-+ *
-+ * @base: points to various global variables used by the MM to get the
-+ * virtual base address of the above regions, which base addresses can
-+ * thus be modified by the very early KASLR code to dynamically shape
-+ * the virtual memory layout of these kernel memory regions on a per
-+ * bootup basis.
-+ *
-+ * @size_tb: size in TB of each memory region. Thereinto, the size of
-+ * the physical memory mapping region is variable, calculated according
-+ * to the actual size of system RAM in order to save more space for
-+ * randomization. The rest are fixed values related to paging mode.
-  */
- static __initdata struct kaslr_memory_region {
- 	unsigned long *base;
-
-> /* Get size in bytes used by the memory region */
-> static inline unsigned long get_padding(struct kaslr_memory_region *region)
-> {
->         return (region->size_tb << TB_SHIFT);
-> }
-
-Yes, we can open code get_padding() as the following patch.
-
-From e4cababd630af06085cb79a0bae9c00acd5272c0 Mon Sep 17 00:00:00 2001
-From: Baoquan He <bhe@redhat.com>
-Date: Tue, 11 Sep 2018 14:39:38 +0800
-Subject: [PATCH] x86/mm/KASLR: Open code unnecessary function get_padding
-
-It's used only twice and we do bit shifts in the parent function
-anyway so it's not like it's hiding some uninteresting detail.
-
-Signed-off-by: Baoquan He <bhe@redhat.com>
-Suggested-by: Ingo Molnar <mingo@kernel.org>
+  Version history:
+    v1:
+       * Initial
 ---
- arch/x86/mm/kaslr.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+---
+ drivers/dma/stm32-dma.c | 20 ++++++--------------
+ 1 file changed, 6 insertions(+), 14 deletions(-)
 
-diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
-index 9774b6e39f63..91053cee7648 100644
---- a/arch/x86/mm/kaslr.c
-+++ b/arch/x86/mm/kaslr.c
-@@ -54,12 +54,6 @@ static __initdata struct kaslr_memory_region {
- 	{ &vmemmap_base, 0 },
- };
+diff --git a/drivers/dma/stm32-dma.c b/drivers/dma/stm32-dma.c
+index 379e8d5..4903a40 100644
+--- a/drivers/dma/stm32-dma.c
++++ b/drivers/dma/stm32-dma.c
+@@ -308,20 +308,12 @@ static bool stm32_dma_fifo_threshold_is_allowed(u32 burst, u32 threshold,
  
--/* Get size in bytes used by the memory region */
--static inline unsigned long get_padding(struct kaslr_memory_region *region)
--{
--	return (region->size_tb << TB_SHIFT);
--}
--
- /*
-  * Apply no randomization if KASLR was disabled at boot or if KASAN
-  * is enabled. KASAN shadow mappings rely on regions being PGD aligned.
-@@ -120,7 +114,7 @@ void __init kernel_randomize_memory(void)
- 	/* Calculate entropy available between regions */
- 	remain_entropy = vaddr_end - vaddr_start;
- 	for (i = 0; i < ARRAY_SIZE(kaslr_regions); i++)
--		remain_entropy -= get_padding(&kaslr_regions[i]);
-+		remain_entropy -= kaslr_regions[i].size_tb << TB_SHIFT;
+ static bool stm32_dma_is_burst_possible(u32 buf_len, u32 threshold)
+ {
+-	switch (threshold) {
+-	case STM32_DMA_FIFO_THRESHOLD_FULL:
+-		if (buf_len >= STM32_DMA_MAX_BURST)
+-			return true;
+-		else
+-			return false;
+-	case STM32_DMA_FIFO_THRESHOLD_HALFFULL:
+-		if (buf_len >= STM32_DMA_MAX_BURST / 2)
+-			return true;
+-		else
+-			return false;
+-	default:
+-		return false;
+-	}
++	/*
++	 * Buffer or period length has to be aligned on FIFO depth.
++	 * Otherwise bytes may be stuck within FIFO at buffer or period
++	 * length.
++	 */
++	return ((buf_len % ((threshold + 1) * 4)) == 0);
+ }
  
- 	prandom_seed_state(&rand_state, kaslr_get_random_long("Memory"));
- 
-@@ -144,7 +138,7 @@ void __init kernel_randomize_memory(void)
- 		 * Jump the region and add a minimum padding based on
- 		 * randomization alignment.
- 		 */
--		vaddr += get_padding(&kaslr_regions[i]);
-+		vaddr += kaslr_regions[i].size_tb << TB_SHIFT;
- 		if (pgtable_l5_enabled())
- 			vaddr = round_up(vaddr + 1, P4D_SIZE);
- 		else
+ static u32 stm32_dma_get_best_burst(u32 buf_len, u32 max_burst, u32 threshold,
 -- 
-2.13.6
+2.7.4
 
