@@ -2,175 +2,185 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EC7DC6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:01:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 422ABC04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:03:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D26320854
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:01:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="ra4GRLFQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D26320854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
+	by mail.kernel.org (Postfix) with ESMTP id E4CE52086A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:03:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4CE52086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726992AbeIKOAR (ORCPT
+        id S1726804AbeIKOBu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 10:00:17 -0400
-Received: from mail-eopbgr720042.outbound.protection.outlook.com ([40.107.72.42]:41770
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
+        Tue, 11 Sep 2018 10:01:50 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58700 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726522AbeIKOAR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 10:00:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RvL5F+ShxVGi1Kabeqfml0iihQNHOJuL1NHskdU8S/Q=;
- b=ra4GRLFQgy1tz5r0jlHuVo0Ag+97+n04ck2OmdV9p9Dv8cX3MDgXv0Rs/O5Ab9sRPOkbTLKGirhjxCywhxUkh75I1l4lDzz9iDk8mKY1IKDPXYmGSXIMKYHtt0CVmJgHHawBFTF0Zu+n6V4msHTBNPcoX4qD1sg46q2SyEgHQII=
-Received: from BYAPR07MB4709.namprd07.prod.outlook.com (52.135.204.159) by
- BYAPR07MB4565.namprd07.prod.outlook.com (52.135.225.150) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1122.15; Tue, 11 Sep 2018 09:01:14 +0000
-Received: from BYAPR07MB4709.namprd07.prod.outlook.com
- ([fe80::1592:3509:da97:4964]) by BYAPR07MB4709.namprd07.prod.outlook.com
- ([fe80::1592:3509:da97:4964%4]) with mapi id 15.20.1122.019; Tue, 11 Sep 2018
- 09:01:13 +0000
-From:   Pawel Laszczak <pawell@cadence.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Felipe Balbi <balbi@kernel.org>
-CC:     "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Lukasz Tyrala <ltyrala@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>
-Subject: RE: [PATCH 02/31] usb: usbssp: Added some decoding functions.
-Thread-Topic: [PATCH 02/31] usb: usbssp: Added some decoding functions.
-Thread-Index: AQHUH4o2wQdXJVn0ykOBksNGn6z7ZaTqJmQAgADAuYCAACgpgIAAAtuA
-Date:   Tue, 11 Sep 2018 09:01:13 +0000
-Message-ID: <BYAPR07MB4709D6250C7CD0941E39272BDD040@BYAPR07MB4709.namprd07.prod.outlook.com>
-References: <1532023084-28083-1-git-send-email-pawell@cadence.com>
- <1532023084-28083-3-git-send-email-pawell@cadence.com>
- <20180910181856.GB6019@kroah.com> <87in3c1t50.fsf@linux.intel.com>
- <20180911081227.GB8963@kroah.com>
-In-Reply-To: <20180911081227.GB8963@kroah.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNccGF3ZWxsXGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctM2Q1OGQyMjAtYjVhMS0xMWU4LTg3MjEtMWM0ZDcwMWRmYmE0XGFtZS10ZXN0XDNkNThkMjIxLWI1YTEtMTFlOC04NzIxLTFjNGQ3MDFkZmJhNGJvZHkudHh0IiBzej0iMjUzMyIgdD0iMTMxODExMzAwODAwMDg2MjE2IiBoPSJsUGpHQVh0akhUbHdBVmRRVHJqa2s2M0pjdFU9IiBpZD0iIiBibD0iMCIgYm89IjEiLz48L21ldGE+
-x-dg-rorf: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=pawell@cadence.com; 
-x-originating-ip: [185.217.253.59]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR07MB4565;20:pC92ZJWKco7bfIBWdvBpox4/8HvAbwStqST/dy6hoIkOeXUPFXKMKHgzI8SYrpnAWiQaWN+C9f7MjWB0+PtU7V4hDcLgO8zZyFKSeLQsu/BZdp6kntMaHHZAmH+t14XiYA0MsyZZo13kL/XrAI4dvdmo7QCCMFUP7fDOEImGJ7R+aMnIuxtrKfSmC/7egdY15Dy0fU6wpNwIV4WUzLVuFc+xKIWwWT3H5KjUSrhqLMD0QtyyJY2gpk6qNLof0yQ9
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(396003)(136003)(376002)(346002)(366004)(39860400002)(36092001)(69224002)(199004)(189003)(54906003)(53936002)(55016002)(7696005)(186003)(6436002)(102836004)(9686003)(97736004)(76176011)(486006)(14444005)(14454004)(6506007)(8936002)(5660300001)(81166006)(81156014)(256004)(11346002)(446003)(476003)(68736007)(478600001)(6116002)(8676002)(4326008)(3846002)(25786009)(7736002)(74316002)(305945005)(86362001)(33656002)(5250100002)(2900100001)(93886005)(107886003)(6246003)(105586002)(99286004)(106356001)(2906002)(110136005)(229853002)(66066001)(316002)(26005);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR07MB4565;H:BYAPR07MB4709.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-office365-filtering-correlation-id: 93bce29b-f1c3-49ab-f1c4-08d617c52053
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR07MB4565;
-x-ms-traffictypediagnostic: BYAPR07MB4565:
-x-microsoft-antispam-prvs: <BYAPR07MB4565E7233EFF4A2E679752A8DD040@BYAPR07MB4565.namprd07.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(72806322054110);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(10201501046)(3231311)(944501410)(52105095)(149027)(150027)(6041310)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699050);SRVR:BYAPR07MB4565;BCL:0;PCL:0;RULEID:;SRVR:BYAPR07MB4565;
-x-forefront-prvs: 0792DBEAD0
-received-spf: None (protection.outlook.com: cadence.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: acwNrIay60w1Uf5cT9jluKiNspCFWLvzhk/uVw+7A01BJOLeha9WwCL9VSV7C+eCK/A+n9HjF2P/68Hfhh42Z2MBvnIx9f+GUuC1NgmrM298JBBrtce5TwZwrv7uZCqsj/C6oN8QJrmVFTJSkASPMfHSoXCQ6o9Vnu2s4rPPGM291cXM+yCo1laERZHkXqyBrAWaNbeQwGyx1dbsejeOxq13gQ2VcjYOEmdGlXNT0+126rgyEiM34MfsppGFKYworuQyMJzMd4NFkN7Zm3ebP9xiDD08Y6p5Dtf8ot7g/4e3CvkvWVIlZaODn4n6VazA8VWIUp0rrCOp85tz4k2IG8JSYUK1CRa5pbfL/E1O8sk=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1726522AbeIKOBu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 10:01:50 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0257EAF87;
+        Tue, 11 Sep 2018 09:03:26 +0000 (UTC)
+Subject: Re: [PATCH] mm, thp: relax __GFP_THISNODE for MADV_HUGEPAGE mappings
+To:     Stefan Priebe - Profihost AG <s.priebe@profihost.ag>,
+        Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Andrea Arcangeli <aarcange@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>
+References: <20180907130550.11885-1-mhocko@kernel.org>
+ <f7ed71c1-d599-5257-fd8f-041eb24d9f29@profihost.ag>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <186d4fd2-546b-d193-448f-52662931a0b9@suse.cz>
+Date:   Tue, 11 Sep 2018 11:03:26 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 93bce29b-f1c3-49ab-f1c4-08d617c52053
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Sep 2018 09:01:13.5997
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR07MB4565
+In-Reply-To: <f7ed71c1-d599-5257-fd8f-041eb24d9f29@profihost.ag>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HI, All=20
-=20
-Please stop review of this series. It's a pity of your time.=20
+On 09/08/2018 08:52 PM, Stefan Priebe - Profihost AG wrote:
+> Hello,
+> 
+> whlie using this path i got another stall - which i never saw under
+> kernel 4.4. Here is the trace:
+> [305111.932698] INFO: task ksmtuned:1399 blocked for more than 120 seconds.
+> [305111.933612]       Tainted: G                   4.12.0+105-ph #1
+> [305111.934456] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+> disables this message.
+> [305111.935323] ksmtuned        D    0  1399      1 0x00080000
+> [305111.936207] Call Trace:
+> [305111.937118]  ? __schedule+0x3bc/0x830
+> [305111.937991]  schedule+0x32/0x80
+> [305111.938837]  schedule_preempt_disabled+0xa/0x10
+> [305111.939687]  __mutex_lock.isra.4+0x287/0x4c0
 
-Probably the design of USBSSP device controller will be significantly chang=
-ed and simplified, so=20
-I will have to create new driver.=20
+Hmm so is this waiting on mutex_lock(&ksm_thread_mutex)? Who's holding it?
 
-The planed change include:=20
-   - simplification and change registers map
-   - removing command queue=20
-   -  simplification  in input/output endpoint context
-   - and other.
+Looking at your original report [1] I see more tasks waiting on a semaphore:
 
+[245654.463746] INFO: task pvestatd:3175 blocked for more than 120 seconds.
+[245654.464730] Tainted: G W 4.12.0+98-ph <a
+href="/view.php?id=1" title="[geschlossen] Integration Ramdisk"
+class="resolved">0000001</a>
+[245654.465666] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+disables this message.
+[245654.466591] pvestatd D 0 3175 1 0x00080000
+[245654.467495] Call Trace:
+[245654.468413] ? __schedule+0x3bc/0x830
+[245654.469283] schedule+0x32/0x80
+[245654.470108] rwsem_down_read_failed+0x121/0x170
+[245654.470918] ? call_rwsem_down_read_failed+0x14/0x30
+[245654.471729] ? alloc_pages_current+0x91/0x140
+[245654.472530] call_rwsem_down_read_failed+0x14/0x30
+[245654.473316] down_read+0x13/0x30
+[245654.474064] proc_pid_cmdline_read+0xae/0x3f0
 
-It was not my decision. Thanks for all  your comments.
-I will take them into account in new driver.=20
+- probably down_read(&mm->mmap_sem);
 
-Cheers,
-Pawell
+[245654.485537] INFO: task service:86643 blocked for more than 120 seconds.
+[245654.486015] Tainted: G W 4.12.0+98-ph <a
+href="/view.php?id=1" title="[geschlossen] Integration Ramdisk"
+class="resolved">0000001</a>
+[245654.486502] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+disables this message.
+[245654.486960] service D 0 86643 1 0x00080000
+[245654.487423] Call Trace:
+[245654.487865] ? __schedule+0x3bc/0x830
+[245654.488286] schedule+0x32/0x80
+[245654.488763] rwsem_down_read_failed+0x121/0x170
+[245654.489200] ? __handle_mm_fault+0xd67/0x1060
+[245654.489668] ? call_rwsem_down_read_failed+0x14/0x30
+[245654.490088] call_rwsem_down_read_failed+0x14/0x30
+[245654.490538] down_read+0x13/0x30
+[245654.490964] __do_page_fault+0x32b/0x430
+[245654.491389] ? get_vtime_delta+0x13/0xb0
+[245654.491835] do_page_fault+0x2a/0x70
+[245654.492253] ? page_fault+0x65/0x80
+[245654.492703] page_fault+0x7b/0x80
 
+- page fault, so another mmap_sem for read
 
+[245654.496050] INFO: task safe_timer:86651 blocked for more than 120
+seconds.
+[245654.496466] Tainted: G W 4.12.0+98-ph <a
+href="/view.php?id=1" title="[geschlossen] Integration Ramdisk"
+class="resolved">0000001</a>
+[245654.496916] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+disables this message.
+[245654.497336] safe_timer D 0 86651 1 0x00080000
+[245654.497790] Call Trace:
+[245654.498211] ? __schedule+0x3bc/0x830
+[245654.498646] schedule+0x32/0x80
+[245654.499074] rwsem_down_read_failed+0x121/0x170
+[245654.499501] ? call_rwsem_down_read_failed+0x14/0x30
+[245654.499959] call_rwsem_down_read_failed+0x14/0x30
+[245654.500381] down_read+0x13/0x30
+[245654.500851] __do_page_fault+0x32b/0x430
+[245654.501285] ? get_vtime_delta+0x13/0xb0
+[245654.501722] do_page_fault+0x2a/0x70
+[245654.502163] ? page_fault+0x65/0x80
+[245654.502600] page_fault+0x7b/0x80
 
+- ditto
 
->On Tue, Sep 11, 2018 at 08:48:43AM +0300, Felipe Balbi wrote:
->>
->> Hi,
->>
->> Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
->> > On Thu, Jul 19, 2018 at 06:57:35PM +0100, Pawel Laszczak wrote:
->> >> This patch add additional functions that converts some fields to stri=
-ng.
->> >>
->> >> For example function usbssp_trb_comp_code_string take completion
->> >> code value and return string describing completion code.
->> >>
->> >> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
->> >> ---
->> >>  drivers/usb/usbssp/gadget.h | 580 ++++++++++++++++++++++++++++++++++=
-++
->> >>  1 file changed, 580 insertions(+)
->> >>
->> >> diff --git a/drivers/usb/usbssp/gadget.h b/drivers/usb/usbssp/gadget.=
-h
->> >> index 49e7271187cc..b5c17603af78 100644
->> >> --- a/drivers/usb/usbssp/gadget.h
->> >> +++ b/drivers/usb/usbssp/gadget.h
->> >> @@ -930,6 +930,73 @@ struct usbssp_transfer_event {
->> >>  #define COMP_UNDEFINED_ERROR			33
->> >>  #define COMP_INVALID_STREAM_ID_ERROR		34
->> >>
->> >> +static inline const char *usbssp_trb_comp_code_string(u8 status)
->> >
->> > <snip>
->> >
->> >
->> > You have _giant_ inline functions here, why?
->> >
->> > Please just put this all in a .c file and let the linker properly hand=
-le
->> > things.  You do not want to duplicate all of these crazy strings all
->> > over the place where ever you call these functions.
->> >
->> > And I am guessing this is only for some sort of "debugging" mode?  If
->> > so, shouldn't there be a way to not even build this in?  Some systems
->> > are very space constrained...
->>
->> many of them seem to be a straight copy from xhci.
->
->Which doesn't mean it's a great model to copy :)
->
->Let's learn from our past mistakes, having had to try to slim down a
->kernel for a limited memory system is a chore that no one should have to
->manually hack up the source tree just to accomplish it.
->
->thanks,
->
->greg k-h
+But those are different tasks that the one that was stalling allocation
+while holding mmap_sem for write.
+
+So I'm not sure what's going on, but maybe the reclaim is also stalled
+due to waiting on some locks, and is thus victim of something else?
+
+[1] https://lists.opensuse.org/opensuse-kernel/2018-08/msg00012.html
