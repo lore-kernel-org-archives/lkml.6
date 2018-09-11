@@ -2,99 +2,78 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 865B8C43143
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 02:02:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44C30C43143
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 02:05:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B8C720854
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 02:02:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B8C720854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E10A62086A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 02:05:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E10A62086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726554AbeIKG7O (ORCPT
+        id S1726480AbeIKHCg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 02:59:14 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:58820 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726194AbeIKG7N (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 02:59:13 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mailout.easymail.ca (Postfix) with ESMTP id 261A4C0894;
-        Tue, 11 Sep 2018 02:02:21 +0000 (UTC)
-Received: from mailout.easymail.ca ([127.0.0.1])
-        by localhost (emo01-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id M7CMylfw2hou; Tue, 11 Sep 2018 02:02:21 +0000 (UTC)
-Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mailout.easymail.ca (Postfix) with ESMTPSA id 972A1C067C;
-        Tue, 11 Sep 2018 02:02:06 +0000 (UTC)
-Subject: Re: [PATCH] arm64: add NUMA emulation support
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Will Deacon <will.deacon@arm.com>, catalin.marinas@arm.com,
-        sudeep.holla@arm.com, ganapatrao.kulkarni@cavium.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Shuah Khan <shuah@kernel.org>
-References: <20180824230559.32336-1-shuah@kernel.org>
- <20180828174011.GE20375@arm.com>
- <a58ad11f-3c22-ed7f-a0cd-938aabc4adaf@kernel.org>
- <20180829110802.GD10349@dhcp22.suse.cz>
- <f041ba95-03e6-4a7d-c324-870b45a2f648@kernel.org>
- <20180905064252.GW14951@dhcp22.suse.cz>
- <c1b58f13-6190-20e9-7e4f-b8bc2b9d5f80@kernel.org>
- <20180907083452.GC19621@dhcp22.suse.cz>
- <e46e715c-f115-f054-eeb2-3cecbcd1192d@kernel.org>
- <20180910134845.GH10951@dhcp22.suse.cz>
-From:   Shuah Khan <shuah@kernel.org>
-Message-ID: <4d7beb50-f778-507a-4c3c-f6de92f8cfb9@kernel.org>
-Date:   Mon, 10 Sep 2018 20:02:05 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180910134845.GH10951@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Tue, 11 Sep 2018 03:02:36 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:11682 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726251AbeIKHCg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 03:02:36 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id A48A4609E7820;
+        Tue, 11 Sep 2018 10:05:40 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
+ 14.3.399.0; Tue, 11 Sep 2018 10:05:32 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        David Airlie <airlied@linux.ie>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+CC:     YueHaibing <yuehaibing@huawei.com>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] drm/omap: dss: Use PTR_ERR_OR_ZERO in hdmi_audio_register()
+Date:   Tue, 11 Sep 2018 02:15:37 +0000
+Message-ID: <1536632137-50787-1-git-send-email-yuehaibing@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michal,
+Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
 
-On 09/10/2018 07:48 AM, Michal Hocko wrote:
-> On Fri 07-09-18 16:30:59, Shuah Khan wrote:
->> On 09/07/2018 02:34 AM, Michal Hocko wrote:
->>> On Thu 06-09-18 15:53:34, Shuah Khan wrote:
-[....]
->>
->> In addition to isolation, being able to reserve a block instead is one of the
->> issues I am looking to address. Unfortunately memory cgroups won't address that
->> issue.
-> 
-> Could you be more specific why you need reservations other than
-> isolation.
-> 
+Generated by: scripts/coccinelle/api/ptr_ret.cocci
 
-Taking automotive as a specific example, there are two classes of applications:
-1. critical applications that must run
-2. Infotainment and misc. user-space.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/omapdrm/dss/hdmi4.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-In this case, being able to reserve a block of memory for critical applications
-will ensure the memory is available for them. If a critical application has to
-restart and/or when an on-demand critical application starts, it might not be able
-to allocate memory if it is not reserved.
+diff --git a/drivers/gpu/drm/omapdrm/dss/hdmi4.c b/drivers/gpu/drm/omapdrm/dss/hdmi4.c
+index cf6230e..e35a8ee6 100644
+--- a/drivers/gpu/drm/omapdrm/dss/hdmi4.c
++++ b/drivers/gpu/drm/omapdrm/dss/hdmi4.c
+@@ -617,10 +617,7 @@ static int hdmi_audio_register(struct omap_hdmi *hdmi)
+ 		&hdmi->pdev->dev, "omap-hdmi-audio", PLATFORM_DEVID_AUTO,
+ 		&pdata, sizeof(pdata));
+ 
+-	if (IS_ERR(hdmi->audio_pdev))
+-		return PTR_ERR(hdmi->audio_pdev);
+-
+-	return 0;
++	return PTR_ERR_OR_ZERO(hdmi->audio_pdev);
+ }
+ 
+ /* -----------------------------------------------------------------------------
 
-When a flat system has multiple memory blocks, with NUMA emulation in conjunction with
-cpusets, one or more block can be reserved for critical applications configuring a set
-of cpus and one of more memory nodes for them.
-
-Memory cgroups will not support such reservation. Hope this helps explain the use-case
-I am trying to address with this patch.
-
-thanks,
--- Shuah
