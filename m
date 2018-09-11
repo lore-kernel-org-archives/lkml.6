@@ -2,78 +2,166 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C57CECDFC0
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:58:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4971C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 21:01:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC48F206B7
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:58:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC48F206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
+	by mail.kernel.org (Postfix) with ESMTP id 8E55C20839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 21:01:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E55C20839
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728046AbeILB7y (ORCPT
+        id S1727735AbeILCCm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 21:59:54 -0400
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:43576 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726850AbeILB7x (ORCPT
+        Tue, 11 Sep 2018 22:02:42 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:40846 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726850AbeILCCm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 21:59:53 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01451;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0T8Sg6Yy_1536699501;
-Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T8Sg6Yy_1536699501)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 12 Sep 2018 04:58:30 +0800
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-To:     mhocko@kernel.org, willy@infradead.org, ldufour@linux.vnet.ibm.com,
-        vbabka@suse.cz, akpm@linux-foundation.org, dave.hansen@intel.com,
-        oleg@redhat.com, srikar@linux.vnet.ibm.com
-Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [RFC v9 PATCH 3/4] mm: unmap VM_HUGETLB mappings with optimized path
-Date:   Wed, 12 Sep 2018 04:58:12 +0800
-Message-Id: <1536699493-69195-4-git-send-email-yang.shi@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1536699493-69195-1-git-send-email-yang.shi@linux.alibaba.com>
-References: <1536699493-69195-1-git-send-email-yang.shi@linux.alibaba.com>
+        Tue, 11 Sep 2018 22:02:42 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id C0BF880693; Tue, 11 Sep 2018 23:01:33 +0200 (CEST)
+Date:   Tue, 11 Sep 2018 23:01:33 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
+        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org,
+        lee.jones@linaro.org, dmurphy@ti.com
+Subject: [PATCH 1/3] mfd: ti-lmu: switch to gpiod
+Message-ID: <20180911210133.GA32497@amd>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="MGYHOYXEY6WxJCY8"
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When unmapping VM_HUGETLB mappings, vm flags need to be updated. Since
-the vmas have been detached, so it sounds safe to update vm flags with
-read mmap_sem.
 
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
----
- mm/mmap.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+--MGYHOYXEY6WxJCY8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 937d2f2..086f8b5 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -2812,12 +2812,12 @@ static int do_munmap_zap_rlock(struct mm_struct *mm, unsigned long start,
- 	}
- 
- 	/*
--	 * Unmapping vmas, which have VM_HUGETLB or VM_PFNMAP
-+	 * Unmapping vmas, which have VM_PFNMAP
- 	 * need get done with write mmap_sem held since they may update
- 	 * vm_flags. Deal with such mappings with regular do_munmap() call.
- 	 */
- 	for (vma = start_vma; vma && vma->vm_start < end; vma = vma->vm_next) {
--		if (vma->vm_flags & (VM_HUGETLB | VM_PFNMAP))
-+		if (vma->vm_flags & VM_PFNMAP)
- 			goto regular_path;
- 	}
- 
--- 
-1.8.3.1
+Use new descriptor based API instead of the legacy one.
+   =20
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Signed-off-by: Pavel Machek <pavel@ucw.cz>
 
+diff --git a/drivers/mfd/ti-lmu.c b/drivers/mfd/ti-lmu.c
+index 990437e..e14cb9f 100644
+--- a/drivers/mfd/ti-lmu.c
++++ b/drivers/mfd/ti-lmu.c
+@@ -12,7 +12,7 @@
+=20
+ #include <linux/delay.h>
+ #include <linux/err.h>
+-#include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/i2c.h>
+ #include <linux/kernel.h>
+ #include <linux/mfd/core.h>
+@@ -21,7 +21,6 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+-#include <linux/of_gpio.h>
+ #include <linux/slab.h>
+=20
+ struct ti_lmu_data {
+@@ -32,17 +31,8 @@ struct ti_lmu_data {
+=20
+ static int ti_lmu_enable_hw(struct ti_lmu *lmu, enum ti_lmu_id id)
+ {
+-	int ret;
+-
+-	if (gpio_is_valid(lmu->en_gpio)) {
+-		ret =3D devm_gpio_request_one(lmu->dev, lmu->en_gpio,
+-					    GPIOF_OUT_INIT_HIGH, "lmu_hwen");
+-		if (ret) {
+-			dev_err(lmu->dev, "Can not request enable GPIO: %d\n",
+-				ret);
+-			return ret;
+-		}
+-	}
++	if (lmu->en_gpio)
++		gpiod_set_value(lmu->en_gpio, 1);
+=20
+ 	/* Delay about 1ms after HW enable pin control */
+ 	usleep_range(1000, 1500);
+@@ -59,8 +49,8 @@ static int ti_lmu_enable_hw(struct ti_lmu *lmu, enum ti_l=
+mu_id id)
+=20
+ static void ti_lmu_disable_hw(struct ti_lmu *lmu)
+ {
+-	if (gpio_is_valid(lmu->en_gpio))
+-		gpio_set_value(lmu->en_gpio, 0);
++	if (lmu->en_gpio)
++		gpiod_set_value(lmu->en_gpio, 0);
+ }
+=20
+ static const struct mfd_cell lm3532_devices[] =3D {
+@@ -204,7 +194,13 @@ static int ti_lmu_probe(struct i2c_client *cl, const s=
+truct i2c_device_id *id)
+ 		return PTR_ERR(lmu->regmap);
+=20
+ 	/* HW enable pin control and additional power up sequence if required */
+-	lmu->en_gpio =3D of_get_named_gpio(dev->of_node, "enable-gpios", 0);
++	lmu->en_gpio =3D devm_gpiod_get_optional(dev, "enable", GPIOD_OUT_HIGH);
++	if (IS_ERR(lmu->en_gpio)) {
++		ret =3D PTR_ERR(lmu->en_gpio);
++		dev_err(dev, "Can not request enable GPIO: %d\n", ret);
++		return ret;
++	}
++
+ 	ret =3D ti_lmu_enable_hw(lmu, id->driver_data);
+ 	if (ret)
+ 		return ret;
+diff --git a/include/linux/mfd/ti-lmu.h b/include/linux/mfd/ti-lmu.h
+index 09d5f30..1ef51ed 100644
+--- a/include/linux/mfd/ti-lmu.h
++++ b/include/linux/mfd/ti-lmu.h
+@@ -16,6 +16,7 @@
+ #include <linux/gpio.h>
+ #include <linux/notifier.h>
+ #include <linux/regmap.h>
++#include <linux/gpio/consumer.h>
+=20
+ /* Notifier event */
+ #define LMU_EVENT_MONITOR_DONE		0x01
+@@ -81,7 +82,7 @@ enum lm363x_regulator_id {
+ struct ti_lmu {
+ 	struct device *dev;
+ 	struct regmap *regmap;
+-	int en_gpio;
++	struct gpio_desc *en_gpio;
+ 	struct blocking_notifier_head notifier;
+ };
+ #endif
+
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--MGYHOYXEY6WxJCY8
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAluYLS0ACgkQMOfwapXb+vIovgCeMkAxgrYAKaZV9q1gU/ltyL7c
+vQUAoKLIV8M7xKcSi3BcxDGzvfzxOx0O
+=oZvi
+-----END PGP SIGNATURE-----
+
+--MGYHOYXEY6WxJCY8--
