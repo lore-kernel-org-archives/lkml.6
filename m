@@ -2,99 +2,120 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA2A5C6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 12:16:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75470C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 12:19:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58F612088F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 12:16:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58F612088F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 157E52086A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 12:19:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IgEW+H5n"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 157E52086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727832AbeIKRPn (ORCPT
+        id S1727675AbeIKRSd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 13:15:43 -0400
-Received: from mga07.intel.com ([134.134.136.100]:8089 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727768AbeIKRPn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 13:15:43 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Sep 2018 05:16:38 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,360,1531810800"; 
-   d="scan'208";a="90706911"
-Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
-  by orsmga002.jf.intel.com with SMTP; 11 Sep 2018 05:16:35 -0700
-Received: by stinkbox (sSMTP sendmail emulation); Tue, 11 Sep 2018 15:16:35 +0300
-Date:   Tue, 11 Sep 2018 15:16:35 +0300
-From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Dou Liyang <douly.fnst@cn.fujitsu.com>,
-        Pavel Tatashin <pasha.tatashin@microsoft.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH] Revert "x86/tsc: Consolidate init code"
-Message-ID: <20180911121635.GX5565@intel.com>
-References: <20180910121925.27682-1-ville.syrjala@linux.intel.com>
- <alpine.DEB.2.21.1809101443290.1292@nanos.tec.linutronix.de>
- <20180910140710.GR5565@intel.com>
- <alpine.DEB.2.21.1809101816320.1419@nanos.tec.linutronix.de>
- <20180910164631.GV5565@intel.com>
- <alpine.DEB.2.21.1809101857510.1419@nanos.tec.linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <alpine.DEB.2.21.1809101857510.1419@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Tue, 11 Sep 2018 13:18:33 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:39136 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726678AbeIKRSc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 13:18:32 -0400
+Received: by mail-lj1-f195.google.com with SMTP id l15-v6so20621888lji.6;
+        Tue, 11 Sep 2018 05:19:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=agjyomkAqshVEbDPthw3qbDe1WUb/0nPMK0VQqTwFJE=;
+        b=IgEW+H5n6Yr1atqP3PmFBOCIUAOWGl0aZUJqIjjkwDTbwmJf2Oe9sjKUSZRjmY3V98
+         4Ya1IXjzdtfrryrBGYuD6r3XUL1w/L2ClPUSpW6JtLN/np6CIIbjO6QsnEzQMZ2IUIGh
+         OHuVEzxWGDT8e6OfMhY9z01bVe424XPjRs6dwimwGBOo5Y58Wbw2Jon4Xh19Z+uIHaCS
+         s+gjyYdNyDZW3TenXp1bDYLyjH0e0C/U1nA6xJ6lOYhCpeQzGnkaBwnwl2q5V8HBaQ7M
+         hjq0r2YM4YS+Ept+qTJ21yYmfQu2f/LExhM+LwTe4rs3PZnNFND+jC4UA+BeB+gQkze0
+         peMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=agjyomkAqshVEbDPthw3qbDe1WUb/0nPMK0VQqTwFJE=;
+        b=TXFIiL5rK9sQ0UhA4WYE88zfADdj3zy6iVdqkOl6YbYy42/XjvWg+khnoUipWnx6iQ
+         6pppkltt6VCDGQ/j+s9C/rKf6xpLf1uReB0lekdSw0PmZPl2REQqRIWol0WeSYAuhtxC
+         XOE92xvMFgluny7vgJh3bKMgYVklxgTbG9FlcQiYrlx9VriVrRIRuJeuyvuD4y1qa3Mj
+         JDYsr/AqQUCzAG00BxyNysgKq+0KRj2Ahr+cdkcDbXEoitLhTZYV1VRydokWtCYx2z8/
+         Zt7fHvRF+STYqqOLAGZAru2Qh3uqeBZ6h5q308VgctY0RLBxoKFOQ0uH7PeP1RkEMTk2
+         7TPQ==
+X-Gm-Message-State: APzg51CbUW2c9iGU7gtbCo89gyw1XsLKNQm+zh1R4NECo5xX4CxTNkbC
+        EAHO3EKsUDuWdmMua50MG84=
+X-Google-Smtp-Source: ANB0VdZhgtbeyolY6+u2aW0ZG9kqCFkf7hcU9X3b/uhWoTyZmyA16ZP/gLhOdkrHylqXpQ2PDOnH5A==
+X-Received: by 2002:a2e:750d:: with SMTP id q13-v6mr14821696ljc.148.1536668365861;
+        Tue, 11 Sep 2018 05:19:25 -0700 (PDT)
+Received: from Mort.jumbo.freeair (drqv51zl1s10p1948tk-4.rev.dnainternet.fi. [2001:14bb:73:639a:d135:7d7c:caf7:1c82])
+        by smtp.gmail.com with ESMTPSA id f9-v6sm3296925ljf.9.2018.09.11.05.19.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Sep 2018 05:19:24 -0700 (PDT)
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     igor.stoppa@gmail.com, Igor Stoppa <igor.stoppa@huawei.com>,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] asm-generic: bug: unify hints for BUG_ON()
+Date:   Tue, 11 Sep 2018 15:19:15 +0300
+Message-Id: <20180911121915.30236-1-igor.stoppa@huawei.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 10, 2018 at 07:02:43PM +0200, Thomas Gleixner wrote:
-> On Mon, 10 Sep 2018, Ville Syrjälä wrote:
-> > On Mon, Sep 10, 2018 at 06:23:49PM +0200, Thomas Gleixner wrote:
-> > > 1) My workflow makes things tagged as BUG and REGRESSION urgent
-> > >    automatically while [PATCH] just is queued to the normal pile of
-> > >    backlog, i.e. at the end. It just sprang into my eyes by chance, but in
-> > >    general you might just get the contrary of what you are looking for.
-> > 
-> > Ah. Might be nice to document that somewhere. I might have to type up
-> > that git-regression tool for myself, because I'm lazy.
-> 
-> Well, it's probably different between maintainers, but it's common practice
-> to have '[REGRESION] sub/sys got fubarred' in the subject.
-> 
-> > > 2) A proper bug report with proper information (it's documented what should
-> > >    be provided), is way more worth than a patch with a mostly useless
-> > >    change log, which forces me to ask for the proper information instead of
-> > >    having it right away.
-> > 
-> > I do agree that not having to ask for more information would be nice,
-> > but hard to generalize because every subsystem needs different things.
-> > 
-> > In this case you asked for the dmesg, which isn't even mentioned in
-> > Documentation/admin-guide/reporting-bugs.rst as far as I can see.
-> > So I'm not quite sure which documentation you're referring to here.
-> 
-> I didn't look, but I expected dmesg to be part of it and a lot of people
-> provide it as well as the start point of their bisection. Again, I had to
-> do a shot into the dark and ask you whether it's fixed in -rc3. bisect
-> start would have told me.
-> 
-> So again. That revert patch habit does not make my life easier at all.
+If BUG_ON() is used instead of BUG(), it means that probably the
+preferred outcome is to not BUG(), therefore the condition tested should
+be unlikely().
 
-OK. I'll keep that in mind and try to stick REGRESSION format in the
-future.
+However, when CONFIG_PROFILE_ANNOTATED_BRANCHES is enabled, the hint is
+disabled, to avoid generating false-positive warnings caused by
+-Wmaybe-uninitialized.
 
+Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arch@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ include/asm-generic/bug.h | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/include/asm-generic/bug.h b/include/asm-generic/bug.h
+index 20561a60db9c..b91273c36baf 100644
+--- a/include/asm-generic/bug.h
++++ b/include/asm-generic/bug.h
+@@ -58,8 +58,12 @@ struct bug_entry {
+ #endif
+ 
+ #ifndef HAVE_ARCH_BUG_ON
++#ifdef CONFIG_PROFILE_ANNOTATED_BRANCHES
++#define BUG_ON(condition) do { if (condition) BUG(); } while (0)
++#else
+ #define BUG_ON(condition) do { if (unlikely(condition)) BUG(); } while (0)
+ #endif
++#endif
+ 
+ #ifdef __WARN_FLAGS
+ #define __WARN_TAINT(taint)		__WARN_FLAGS(BUGFLAG_TAINT(taint))
+@@ -183,7 +187,11 @@ void __warn(const char *file, int line, void *caller, unsigned taint,
+ #endif
+ 
+ #ifndef HAVE_ARCH_BUG_ON
++#ifdef CONFIG_PROFILE_ANNOTATED_BRANCHES
+ #define BUG_ON(condition) do { if (condition) BUG(); } while (0)
++#else
++#define BUG_ON(condition) do { if (unlikely(condition)) BUG(); } while (0)
++#endif
+ #endif
+ 
+ #ifndef HAVE_ARCH_WARN_ON
 -- 
-Ville Syrjälä
-Intel
+2.17.1
+
