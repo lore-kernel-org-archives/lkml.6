@@ -2,146 +2,130 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02C6EC04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 12:53:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A56DC6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 12:54:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A44820833
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 12:53:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="ghEsHE6o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A44820833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
+	by mail.kernel.org (Postfix) with ESMTP id C162E20833
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 12:54:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C162E20833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727535AbeIKRxA (ORCPT
+        id S1727685AbeIKRxm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 13:53:00 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:46545 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726761AbeIKRxA (ORCPT
+        Tue, 11 Sep 2018 13:53:42 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:57198 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726761AbeIKRxl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 13:53:00 -0400
-Received: by mail-ed1-f65.google.com with SMTP id k14-v6so19125884edr.13
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 05:53:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=googlenew;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=+JH9R72BpdbC+YFzP6QfB2OWaJNzQfdimLRrJZhUgl0=;
-        b=ghEsHE6oAVGUoeCrs6NcT3YFoFECdNhyv3qN53HNmZrSklq4cAO9Yo23rcaiKaZSgZ
-         HpgJbEfkJ6nWX9gLOw8l567kEoUq3/JWl2WQXVBsYn+ub3EYinX8JsG6sPznzfXCG13g
-         CuGJ6sh99KKoLEWd9v2viyaImc5dIGIM6j3b6LPe69f3CDR0BGWdpG3DX58rxnqc4wU7
-         CYntKBLYJPY3bVXdCyciDhVLd8JaXz852CursQxxI5u/q3TsrhaMzE6DYV/lbKj84udx
-         6GAN6qWy5PAmewEb1LVg3jIRskgcbqqMV0VGey4rZhwlmQVKP0a4qwMbX+JtkzMuqGRd
-         keFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=+JH9R72BpdbC+YFzP6QfB2OWaJNzQfdimLRrJZhUgl0=;
-        b=gyn4VX0Z94YwxnU91J6liGhR4rbh43MXhsV1K4uUSRksiMP/gJdW83xgy0h4amDK/B
-         ShIIbt7mnAPmDy+fnK9L7FuBvUt5ZSbIxcySUA3qEVO5pbdweiJdCCYw4FP3Te6u4S8W
-         VHvej4NgHs3SGpcCK1btEj84QZwT3q9m5U8eLDRwaAoqtzu03KDqq4eFWhN5bI+N1naV
-         M5mbFYzZbPWRs/II36mltLCPNRr5vUoBSYLfwEO6hkAuUkcrI9wJv98w9+6apPL6dVNC
-         ni1/ia7FtMayR1dmdJfSQUGX7d9d41ZnyRibyTam7b97DK9YC5EPrdNiw3qIDcsg0CuM
-         phwA==
-X-Gm-Message-State: APzg51Btg2I77cyfsOpEw7eyVFYahauUi08iEG3SCiOV05zZyvrEuhn9
-        /p8ndqas6xFeG7mkWcbs5R6rVg==
-X-Google-Smtp-Source: ANB0VdaPbWjeNvdtyQ8qVbA+N+PSvnPeXoQODG4s54aRXySuOQxkGPcVAoK4vcjNK6FC0vQgTQbFIw==
-X-Received: by 2002:a50:8b65:: with SMTP id l92-v6mr28516377edl.44.1536670426784;
-        Tue, 11 Sep 2018 05:53:46 -0700 (PDT)
-Received: from dhcp.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id x32-v6sm13445908eda.81.2018.09.11.05.53.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Sep 2018 05:53:46 -0700 (PDT)
-Message-ID: <1536670424.2710.22.camel@arista.com>
-Subject: Re: [PATCHv3 4/6] tty/lockdep: Add ldisc_sem asserts
-From:   Dmitry Safonov <dima@arista.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Daniel Axtens <dja@axtens.net>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Michael Neuling <mikey@neuling.org>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        Nathan March <nathan@gt.net>,
-        Pasi =?ISO-8859-1?Q?K=E4rkk=E4inen?= <pasik@iki.fi>,
-        Peter Hurley <peter@hurleysoftware.com>,
-        "Rong, Chen" <rong.a.chen@intel.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Tan Xiaojun <tanxiaojun@huawei.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Date:   Tue, 11 Sep 2018 13:53:44 +0100
-In-Reply-To: <20180911120153.GB19234@hirez.programming.kicks-ass.net>
-References: <20180911014821.26286-1-dima@arista.com>
-         <20180911014821.26286-5-dima@arista.com>
-         <20180911120153.GB19234@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.24.6 (3.24.6-1.fc26) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 11 Sep 2018 13:53:41 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 8A41A8067B; Tue, 11 Sep 2018 14:54:28 +0200 (CEST)
+Date:   Tue, 11 Sep 2018 14:54:28 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Sebastian Reichel <sre@kernel.org>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, tony@atomide.com, nekit1000@gmail.com,
+        mpartap@gmx.net, merlijn@wizzup.org
+Subject: Re: omap4: support for manually updated display
+Message-ID: <20180911125428.GA24639@amd>
+References: <20180830090456.GA17277@amd>
+ <797c13fa-7a5b-a809-7dd0-14b01a3046be@ti.com>
+ <3205865.8O8aibZXye@avalon>
+ <20180910212820.ygr3japdw6td2qvm@earth.universe>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="ZPt4rx8FFjLCG7dd"
+Content-Disposition: inline
+In-Reply-To: <20180910212820.ygr3japdw6td2qvm@earth.universe>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-09-11 at 14:01 +0200, Peter Zijlstra wrote:
-> On Tue, Sep 11, 2018 at 02:48:19AM +0100, Dmitry Safonov wrote:
-> > Make sure under CONFIG_LOCKDEP that each change to line discipline
-> > is done with held write semaphor.
-> 
-> But you don't do that. You just assert it is held, not for writing.
-> 
-> > Otherwise potential reader will have a good time dereferencing
-> > incomplete/uninitialized ldisc.
-> > 
-> > Exception here is tty_ldisc_open(), as it's called without
-> > ldisc_sem
-> > locked by tty_init_dev() for the tty->link.
-> 
-> You fail to explain how that is not broken...
 
-I'll add the explanation to the next version.
+--ZPt4rx8FFjLCG7dd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Cc: Jiri Slaby <jslaby@suse.com>
-> > Signed-off-by: Dmitry Safonov <dima@arista.com>
-> > ---
-> >  drivers/tty/tty_ldisc.c | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> > 
-> > diff --git a/drivers/tty/tty_ldisc.c b/drivers/tty/tty_ldisc.c
-> > index fc4c97cae01e..202cb645582f 100644
-> > --- a/drivers/tty/tty_ldisc.c
-> > +++ b/drivers/tty/tty_ldisc.c
-> > @@ -471,6 +471,7 @@ static int tty_ldisc_open(struct tty_struct
-> > *tty, struct tty_ldisc *ld)
-> >  
-> >  static void tty_ldisc_close(struct tty_struct *tty, struct
-> > tty_ldisc *ld)
-> >  {
-> > +	lockdep_assert_held(&tty->ldisc_sem);
-> 
-> Did you want:
-> 
-> 	lockdep_assert_held_exclusive(&tty->ldisc_sem);
-> 
-> ?
+Hi!
 
-Oh, yes, thanks.
+> > > A large omapdrm change set from Laurent was merged into drm-next, and
+> > > I'm certain they conflict with this series. Laurent also has continued
+> > > that work, and while those new patches haven't been sent for review y=
+et,
+> > > I fear they'll also conflict with these.
+> > >=20
+> > > So in the minimum, a rebase on top of drm-next is needed.
+> > >=20
+> > > I also continue to be very worried that adding DSI support to omapdrm=
+ at
+> > > this stage will be a huge extra burden for Laurent's work.
+> > >=20
+> > > We should transform the panel-dsi-cm.c towards the common DRM model.
+> > > With a quick look, there seems to be a driver for Samsung's S6E63J0X03
+> > > panel. So possibly all the DSI features are there in the DRM framewor=
+k,
+> > > but someone needs to check that and start working on panel-dsi-cm.c so
+> > > that it's ready when we finally switch to the DRM model.
+> > >=20
+> > > In my opinion, which I've also expressed before, the above work is mu=
+ch
+> > > easier to do by first changing the omapdrm to DRM model, without any =
+DSI
+> > > displays, and then add the DSI command mode support. But if people
+> > > insist on adding the DSI support already now, I would appreciate the
+> > > same people working on the DSI support so that Laurent doesn't have to
+> > > do it all.
+> >=20
+> > I want to make it clear that I don't want to claim any privilege in get=
+ting=20
+> > patches merged first. I am however worried that, without an easy way to=
+ test=20
+> > DSI support, and without enough time to focus on it, I would break what=
+ever=20
+> > would be merged now in future reworks. I would thus like to find out ho=
+w to=20
+> > collaborate on this task, hopefully to move towards usage of drm_bridge=
+ and=20
+> > drm_panel for DSI-based pipelines.
+>=20
+> I'm currently quite busy and barely find enough time to do my work
+> as power-supply subsystem maintainer, but I already started to
+> rebase the series. I agree, that it would be very nice to move towards
+> usage of common DRM framework(s), but it's also nice to see which
+> patch breaks DSI ;)
 
-> 
-> >  	WARN_ON(!test_bit(TTY_LDISC_OPEN, &tty->flags));
-> >  	clear_bit(TTY_LDISC_OPEN, &tty->flags);
-> >  	if (ld->ops->close)
+I was thinking of doing rebase myself... so if you need some help, or
+run out of a time and will need someone to finish it, let me know.
 
--- 
-Thanks,
-             Dmitry
+Best regards,
+								Pavel
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--ZPt4rx8FFjLCG7dd
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAluXuwMACgkQMOfwapXb+vKHOQCeK83aOj+SVN05+v8miJMvHAwh
+dPcAniPZ+WTaohAIH+bW/823V7bkwKiZ
+=PuAf
+-----END PGP SIGNATURE-----
+
+--ZPt4rx8FFjLCG7dd--
