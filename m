@@ -2,545 +2,99 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF249C6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:24:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DA4CC04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:25:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B2A12086A
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:24:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBEF820890
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:25:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XfAZn+UN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B2A12086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="EDZKHo1r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBEF820890
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727277AbeIKUYg (ORCPT
+        id S1727473AbeIKUZG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 16:24:36 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54626 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726800AbeIKUYf (ORCPT
+        Tue, 11 Sep 2018 16:25:06 -0400
+Received: from smtprelay2.synopsys.com ([198.182.60.111]:57482 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726800AbeIKUZG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 16:24:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
-        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ekqIfI1rjzFxMIXsfANJRyiUrtkPVbCG2Xkv41JkkE4=; b=XfAZn+UNOybI6euz2dHMBlmoF
-        EMxoyrP5lCFnRPp7FmhJlIo0mSBct1IR7481McRGWOFNihZ1RR2nAYUv1e/f4MQy4X+XeN7+s293D
-        TQaaX9wSR3uXhPvNkIvRKdpuksi0h467njvLsST3yaup7s5QJ16xucvaOS6E/LOjP54yUm+ymppMj
-        DtojHCSc4OiRPSYQk6cpE/Mu5/dx3+5kbB5qg1t+p1dljaKeza00wDtf8ZlWzPRUd5nVGaSjLUvRo
-        iS8F5I+Tu9Pr8DxgSGcHWptxNaX6Z2z7xBdxUAau28bXWKo84j//IzXPUPt9lwxgJprUE/U6eCuwT
-        cvURiSs+w==;
-Received: from 177.17.246.211.dynamic.adsl.gvt.net.br ([177.17.246.211] helo=coco.lan)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fzkX0-0002sK-Nm; Tue, 11 Sep 2018 15:24:47 +0000
-Date:   Tue, 11 Sep 2018 12:24:39 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Paul Kocialkowski <contact@paulk.fr>
-Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devel@driverdev.osuosl.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-sunxi@googlegroups.com, Randy Li <ayaka@soulik.info>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: Re: [PATCH v9 5/9] media: platform: Add Cedrus VPU decoder driver
-Message-ID: <20180911122349.7d448fcf@coco.lan>
-In-Reply-To: <20180906222442.14825-6-contact@paulk.fr>
-References: <20180906222442.14825-1-contact@paulk.fr>
-        <20180906222442.14825-6-contact@paulk.fr>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Tue, 11 Sep 2018 16:25:06 -0400
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id B497410C11FC;
+        Tue, 11 Sep 2018 08:25:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1536679519; bh=Q8j/ymc+XmgEPv+ZkHhnsvjz+yVkOVirP8AIcWzHK+0=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+        b=EDZKHo1rWUuYQCIYmERZnPCtiXZQ1yorgpjxSP57VZrK7FxmBZKjhpiPb9b86arqL
+         p8rXePrRkuihtEzQDWPJMfXiAKsGN4A1nkMlF4DAFyFevdTTvgOZbXguY08/uhepjp
+         M6Or14N/Pb8pTbP2fQmHKdS2vYU2OHmO0ovy5hz2Dbxe+3QuBWdQtHC0kfgtEG+FII
+         DN7xHpKDb+9tIEnxEjZKxxOtIBhHFNfULMBwxxLuSMK3H0zusspSOwGz207MwF2/0j
+         Q1ScC61F9JoxdpNrTTbBvFB89iNrvtY9eSFIcOLlEHSmS6gm0tkXUQpfGSsz2bmlCZ
+         coe8bvE/MNjTw==
+Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 854A63372;
+        Tue, 11 Sep 2018 08:25:13 -0700 (PDT)
+Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
+ US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Tue, 11 Sep 2018 08:25:05 -0700
+Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
+ by DE02WEHTCB.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Tue,
+ 11 Sep 2018 17:25:03 +0200
+From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+To:     "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Alexey Brodkin" <Alexey.Brodkin@synopsys.com>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>
+Subject: Re: [PATCH] ARC: HSDK: improve reset driver
+Thread-Topic: [PATCH] ARC: HSDK: improve reset driver
+Thread-Index: AQHUPhOUaZSCotcop0yU3vqnzO0KH6TrKYkA
+Date:   Tue, 11 Sep 2018 15:25:02 +0000
+Message-ID: <1536679502.5041.21.camel@synopsys.com>
+References: <20180827143803.28178-1-Eugeniy.Paltsev@synopsys.com>
+In-Reply-To: <20180827143803.28178-1-Eugeniy.Paltsev@synopsys.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.121.3.37]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <4EC5BDC439683F4A87B7FA63D2FAC791@internal.synopsys.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri,  7 Sep 2018 00:24:38 +0200
-Paul Kocialkowski <contact@paulk.fr> escreveu:
-
-> From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> 
-> This introduces the Cedrus VPU driver that supports the VPU found in
-> Allwinner SoCs, also known as Video Engine. It is implemented through
-> a V4L2 M2M decoder device and a media device (used for media requests).
-> So far, it only supports MPEG-2 decoding.
-> 
-> Since this VPU is stateless, synchronization with media requests is
-> required in order to ensure consistency between frame headers that
-> contain metadata about the frame to process and the raw slice data that
-> is used to generate the frame.
-> 
-> This driver was made possible thanks to the long-standing effort
-> carried out by the linux-sunxi community in the interest of reverse
-> engineering, documenting and implementing support for the Allwinner VPU.
-> 
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> ---
->  MAINTAINERS                                   |   7 +
->  drivers/staging/media/Kconfig                 |   2 +
->  drivers/staging/media/Makefile                |   1 +
->  drivers/staging/media/sunxi/Kconfig           |  15 +
->  drivers/staging/media/sunxi/Makefile          |   1 +
->  drivers/staging/media/sunxi/cedrus/Kconfig    |  14 +
->  drivers/staging/media/sunxi/cedrus/Makefile   |   3 +
->  drivers/staging/media/sunxi/cedrus/cedrus.c   | 422 ++++++++++++++
->  drivers/staging/media/sunxi/cedrus/cedrus.h   | 165 ++++++
->  .../staging/media/sunxi/cedrus/cedrus_dec.c   |  70 +++
->  .../staging/media/sunxi/cedrus/cedrus_dec.h   |  27 +
->  .../staging/media/sunxi/cedrus/cedrus_hw.c    | 322 +++++++++++
->  .../staging/media/sunxi/cedrus/cedrus_hw.h    |  30 +
->  .../staging/media/sunxi/cedrus/cedrus_mpeg2.c | 237 ++++++++
->  .../staging/media/sunxi/cedrus/cedrus_regs.h  | 233 ++++++++
->  .../staging/media/sunxi/cedrus/cedrus_video.c | 544 ++++++++++++++++++
->  .../staging/media/sunxi/cedrus/cedrus_video.h |  30 +
->  17 files changed, 2123 insertions(+)
->  create mode 100644 drivers/staging/media/sunxi/Kconfig
->  create mode 100644 drivers/staging/media/sunxi/Makefile
->  create mode 100644 drivers/staging/media/sunxi/cedrus/Kconfig
->  create mode 100644 drivers/staging/media/sunxi/cedrus/Makefile
->  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus.c
->  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus.h
->  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_dec.c
->  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_dec.h
->  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_hw.c
->  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_hw.h
->  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c
->  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_regs.h
->  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_video.c
->  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_video.h
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index a5b256b25905..6d69f3ad1aa9 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -663,6 +663,13 @@ L:	linux-crypto@vger.kernel.org
->  S:	Maintained
->  F:	drivers/crypto/sunxi-ss/
->  
-> +ALLWINNER VPU DRIVER
-> +M:	Maxime Ripard <maxime.ripard@bootlin.com>
-> +M:	Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> +L:	linux-media@vger.kernel.org
-> +S:	Maintained
-> +F:	drivers/staging/media/sunxi/cedrus/
-> +
->  ALPHA PORT
->  M:	Richard Henderson <rth@twiddle.net>
->  M:	Ivan Kokshaysky <ink@jurassic.park.msu.ru>
-> diff --git a/drivers/staging/media/Kconfig b/drivers/staging/media/Kconfig
-> index db5cf67047ad..b3620a8f2d9f 100644
-> --- a/drivers/staging/media/Kconfig
-> +++ b/drivers/staging/media/Kconfig
-> @@ -31,6 +31,8 @@ source "drivers/staging/media/mt9t031/Kconfig"
->  
->  source "drivers/staging/media/omap4iss/Kconfig"
->  
-> +source "drivers/staging/media/sunxi/Kconfig"
-> +
->  source "drivers/staging/media/tegra-vde/Kconfig"
->  
->  source "drivers/staging/media/zoran/Kconfig"
-> diff --git a/drivers/staging/media/Makefile b/drivers/staging/media/Makefile
-> index 503fbe47fa58..42948f805548 100644
-> --- a/drivers/staging/media/Makefile
-> +++ b/drivers/staging/media/Makefile
-> @@ -5,5 +5,6 @@ obj-$(CONFIG_SOC_CAMERA_IMX074)	+= imx074/
->  obj-$(CONFIG_SOC_CAMERA_MT9T031)	+= mt9t031/
->  obj-$(CONFIG_VIDEO_DM365_VPFE)	+= davinci_vpfe/
->  obj-$(CONFIG_VIDEO_OMAP4)	+= omap4iss/
-> +obj-$(CONFIG_VIDEO_SUNXI)	+= sunxi/
->  obj-$(CONFIG_TEGRA_VDE)		+= tegra-vde/
->  obj-$(CONFIG_VIDEO_ZORAN)	+= zoran/
-> diff --git a/drivers/staging/media/sunxi/Kconfig b/drivers/staging/media/sunxi/Kconfig
-> new file mode 100644
-> index 000000000000..c78d92240ceb
-> --- /dev/null
-> +++ b/drivers/staging/media/sunxi/Kconfig
-> @@ -0,0 +1,15 @@
-> +config VIDEO_SUNXI
-> +	bool "Allwinner sunXi family Video Devices"
-> +	depends on ARCH_SUNXI || COMPILE_TEST
-> +	help
-> +	  If you have an Allwinner SoC based on the sunXi family, say Y.
-> +
-> +	  Note that this option doesn't include new drivers in the
-> +	  kernel: saying N will just cause Kconfig to skip all the
-> +	  questions about Allwinner media devices.
-> +
-> +if VIDEO_SUNXI
-> +
-> +source "drivers/staging/media/sunxi/cedrus/Kconfig"
-> +
-> +endif
-> diff --git a/drivers/staging/media/sunxi/Makefile b/drivers/staging/media/sunxi/Makefile
-> new file mode 100644
-> index 000000000000..cee2846c3ecf
-> --- /dev/null
-> +++ b/drivers/staging/media/sunxi/Makefile
-> @@ -0,0 +1 @@
-> +obj-$(CONFIG_VIDEO_SUNXI_CEDRUS)	+= cedrus/
-> diff --git a/drivers/staging/media/sunxi/cedrus/Kconfig b/drivers/staging/media/sunxi/cedrus/Kconfig
-> new file mode 100644
-> index 000000000000..afd7d7ee0388
-> --- /dev/null
-> +++ b/drivers/staging/media/sunxi/cedrus/Kconfig
-> @@ -0,0 +1,14 @@
-> +config VIDEO_SUNXI_CEDRUS
-> +	tristate "Allwinner Cedrus VPU driver"
-> +	depends on VIDEO_DEV && VIDEO_V4L2 && MEDIA_CONTROLLER
-> +	depends on HAS_DMA
-> +	depends on OF
-> +	select VIDEOBUF2_DMA_CONTIG
-> +	select MEDIA_REQUEST_API
-> +	select V4L2_MEM2MEM_DEV
-> +	help
-> +	  Support for the VPU found in Allwinner SoCs, also known as the Cedar
-> +	  video engine.
-> +
-> +	  To compile this driver as a module, choose M here: the module
-> +	  will be called sunxi-cedrus.
-> diff --git a/drivers/staging/media/sunxi/cedrus/Makefile b/drivers/staging/media/sunxi/cedrus/Makefile
-> new file mode 100644
-> index 000000000000..e9dc68b7bcb6
-> --- /dev/null
-> +++ b/drivers/staging/media/sunxi/cedrus/Makefile
-> @@ -0,0 +1,3 @@
-> +obj-$(CONFIG_VIDEO_SUNXI_CEDRUS) += sunxi-cedrus.o
-> +
-> +sunxi-cedrus-y = cedrus.o cedrus_video.o cedrus_hw.o cedrus_dec.o cedrus_mpeg2.o
-> diff --git a/drivers/staging/media/sunxi/cedrus/cedrus.c b/drivers/staging/media/sunxi/cedrus/cedrus.c
-> new file mode 100644
-> index 000000000000..09ab1b732c31
-> --- /dev/null
-> +++ b/drivers/staging/media/sunxi/cedrus/cedrus.c
-> @@ -0,0 +1,422 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Cedrus VPU driver
-> + *
-> + * Copyright (C) 2016 Florent Revest <florent.revest@free-electrons.com>
-> + * Copyright (C) 2018 Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> + * Copyright (C) 2018 Bootlin
-> + *
-> + * Based on the vim2m driver, that is:
-> + *
-> + * Copyright (c) 2009-2010 Samsung Electronics Co., Ltd.
-> + * Pawel Osciak, <pawel@osciak.com>
-> + * Marek Szyprowski, <m.szyprowski@samsung.com>
-> + */
-> +
-> +#include <linux/platform_device.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +
-> +#include <media/v4l2-device.h>
-> +#include <media/v4l2-ioctl.h>
-> +#include <media/v4l2-ctrls.h>
-> +#include <media/v4l2-mem2mem.h>
-> +
-> +#include "cedrus.h"
-> +#include "cedrus_video.h"
-> +#include "cedrus_dec.h"
-> +#include "cedrus_hw.h"
-> +
-> +static const struct cedrus_control cedrus_controls[] = {
-> +	{
-> +		.id		= V4L2_CID_MPEG_VIDEO_MPEG2_SLICE_PARAMS,
-> +		.elem_size	= sizeof(struct v4l2_ctrl_mpeg2_slice_params),
-> +		.codec		= CEDRUS_CODEC_MPEG2,
-> +		.required	= true,
-> +	},
-> +	{
-> +		.id		= V4L2_CID_MPEG_VIDEO_MPEG2_QUANTIZATION,
-> +		.elem_size	= sizeof(struct v4l2_ctrl_mpeg2_quantization),
-> +		.codec		= CEDRUS_CODEC_MPEG2,
-> +		.required	= false,
-> +	},
-> +};
-> +
-> +#define CEDRUS_CONTROLS_COUNT	ARRAY_SIZE(cedrus_controls)
-> +
-> +void *cedrus_find_control_data(struct cedrus_ctx *ctx, u32 id)
-> +{
-> +	unsigned int i;
-> +
-> +	for (i = 0; ctx->ctrls[i] != NULL; i++)
-> +		if (ctx->ctrls[i]->id == id)
-> +			return ctx->ctrls[i]->p_cur.p;
-> +
-> +	return NULL;
-> +}
-> +
-> +static int cedrus_init_ctrls(struct cedrus_dev *dev, struct cedrus_ctx *ctx)
-> +{
-> +	struct v4l2_ctrl_handler *hdl = &ctx->hdl;
-> +	struct v4l2_ctrl *ctrl;
-> +	unsigned int ctrl_size;
-> +	unsigned int i;
-> +
-> +	v4l2_ctrl_handler_init(hdl, CEDRUS_CONTROLS_COUNT);
-> +	if (hdl->error) {
-> +		v4l2_err(&dev->v4l2_dev,
-> +			 "Failed to initialize control handler\n");
-> +		return hdl->error;
-> +	}
-> +
-> +	ctrl_size = sizeof(ctrl) * CEDRUS_CONTROLS_COUNT + 1;
-> +
-> +	ctx->ctrls = kzalloc(ctrl_size, GFP_KERNEL);
-> +	memset(ctx->ctrls, 0, ctrl_size);
-> +
-> +	for (i = 0; i < CEDRUS_CONTROLS_COUNT; i++) {
-> +		struct v4l2_ctrl_config cfg = { 0 };
-> +
-> +		cfg.elem_size = cedrus_controls[i].elem_size;
-> +		cfg.id = cedrus_controls[i].id;
-> +
-> +		ctrl = v4l2_ctrl_new_custom(hdl, &cfg, NULL);
-> +		if (hdl->error) {
-> +			v4l2_err(&dev->v4l2_dev,
-> +				 "Failed to create new custom control\n");
-> +
-> +			v4l2_ctrl_handler_free(hdl);
-> +			kfree(ctx->ctrls);
-> +			return hdl->error;
-> +		}
-> +
-> +		ctx->ctrls[i] = ctrl;
-> +	}
-> +
-> +	ctx->fh.ctrl_handler = hdl;
-> +	v4l2_ctrl_handler_setup(hdl);
-> +
-> +	return 0;
-> +}
-> +
-> +static int cedrus_request_validate(struct media_request *req)
-> +{
-> +	struct media_request_object *obj;
-> +	struct v4l2_ctrl_handler *parent_hdl, *hdl;
-> +	struct cedrus_ctx *ctx = NULL;
-> +	struct v4l2_ctrl *ctrl_test;
-> +	unsigned int i;
-> +
-> +	if (vb2_request_buffer_cnt(req) != 1)
-> +		return -ENOENT;
-> +
-> +	list_for_each_entry(obj, &req->objects, list) {
-> +		struct vb2_buffer *vb;
-> +
-> +		if (vb2_request_object_is_buffer(obj)) {
-> +			vb = container_of(obj, struct vb2_buffer, req_obj);
-> +			ctx = vb2_get_drv_priv(vb->vb2_queue);
-> +
-> +			break;
-> +		}
-> +	}
-> +
-> +	if (!ctx)
-> +		return -ENOENT;
-> +
-> +	parent_hdl = &ctx->hdl;
-> +
-> +	hdl = v4l2_ctrl_request_hdl_find(req, parent_hdl);
-> +	if (!hdl) {
-> +		v4l2_err(&ctx->dev->v4l2_dev, "Missing codec control(s)\n");
-> +		return -ENOENT;
-> +	}
-> +
-> +	for (i = 0; i < CEDRUS_CONTROLS_COUNT; i++) {
-> +		if (cedrus_controls[i].codec != ctx->current_codec ||
-> +		    !cedrus_controls[i].required)
-> +			continue;
-> +
-> +		ctrl_test = v4l2_ctrl_request_hdl_ctrl_find(hdl,
-> +			cedrus_controls[i].id);
-> +		if (!ctrl_test) {
-> +			v4l2_err(&ctx->dev->v4l2_dev,
-> +				 "Missing required codec control\n");
-> +			return -ENOENT;
-> +		}
-> +	}
-> +
-> +	v4l2_ctrl_request_hdl_put(hdl);
-> +
-> +	return vb2_request_validate(req);
-> +}
-> +
-> +static int cedrus_open(struct file *file)
-> +{
-> +	struct cedrus_dev *dev = video_drvdata(file);
-> +	struct cedrus_ctx *ctx = NULL;
-> +	int ret;
-> +
-> +	if (mutex_lock_interruptible(&dev->dev_mutex))
-> +		return -ERESTARTSYS;
-> +
-> +	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
-> +	if (!ctx) {
-> +		mutex_unlock(&dev->dev_mutex);
-> +		return -ENOMEM;
-> +	}
-> +
-> +	v4l2_fh_init(&ctx->fh, video_devdata(file));
-> +	file->private_data = &ctx->fh;
-> +	ctx->dev = dev;
-> +
-> +	ret = cedrus_init_ctrls(dev, ctx);
-> +	if (ret)
-> +		goto err_free;
-> +
-> +	ctx->fh.m2m_ctx = v4l2_m2m_ctx_init(dev->m2m_dev, ctx,
-> +					    &cedrus_queue_init);
-> +	if (IS_ERR(ctx->fh.m2m_ctx)) {
-> +		ret = PTR_ERR(ctx->fh.m2m_ctx);
-> +		goto err_ctrls;
-> +	}
-> +
-> +	v4l2_fh_add(&ctx->fh);
-> +
-> +	mutex_unlock(&dev->dev_mutex);
-> +
-> +	return 0;
-> +
-> +err_ctrls:
-> +	v4l2_ctrl_handler_free(&ctx->hdl);
-> +err_free:
-> +	kfree(ctx);
-> +	mutex_unlock(&dev->dev_mutex);
-> +
-> +	return ret;
-> +}
-> +
-> +static int cedrus_release(struct file *file)
-> +{
-> +	struct cedrus_dev *dev = video_drvdata(file);
-> +	struct cedrus_ctx *ctx = container_of(file->private_data,
-> +					      struct cedrus_ctx, fh);
-> +
-> +	mutex_lock(&dev->dev_mutex);
-> +
-> +	v4l2_fh_del(&ctx->fh);
-> +	v4l2_m2m_ctx_release(ctx->fh.m2m_ctx);
-> +
-> +	v4l2_ctrl_handler_free(&ctx->hdl);
-> +	kfree(ctx->ctrls);
-> +
-> +	v4l2_fh_exit(&ctx->fh);
-> +
-> +	kfree(ctx);
-> +
-> +	mutex_unlock(&dev->dev_mutex);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct v4l2_file_operations cedrus_fops = {
-> +	.owner		= THIS_MODULE,
-> +	.open		= cedrus_open,
-> +	.release	= cedrus_release,
-> +	.poll		= v4l2_m2m_fop_poll,
-> +	.unlocked_ioctl	= video_ioctl2,
-> +	.mmap		= v4l2_m2m_fop_mmap,
-> +};
-> +
-> +static const struct video_device cedrus_video_device = {
-> +	.name		= CEDRUS_NAME,
-> +	.vfl_dir	= VFL_DIR_M2M,
-> +	.fops		= &cedrus_fops,
-> +	.ioctl_ops	= &cedrus_ioctl_ops,
-> +	.minor		= -1,
-> +	.release	= video_device_release_empty,
-> +	.device_caps	= V4L2_CAP_VIDEO_M2M | V4L2_CAP_STREAMING,
-> +};
-> +
-> +static const struct v4l2_m2m_ops cedrus_m2m_ops = {
-> +	.device_run	= cedrus_device_run,
-> +};
-> +
-> +static const struct media_device_ops cedrus_m2m_media_ops = {
-> +	.req_validate	= cedrus_request_validate,
-> +	.req_queue	= vb2_m2m_request_queue,
-> +};
-> +
-> +static int cedrus_probe(struct platform_device *pdev)
-> +{
-> +	struct cedrus_dev *dev;
-> +	struct video_device *vfd;
-> +	int ret;
-> +
-> +	dev = devm_kzalloc(&pdev->dev, sizeof(*dev), GFP_KERNEL);
-> +	if (!dev)
-> +		return -ENOMEM;
-> +
-> +	dev->vfd = cedrus_video_device;
-> +	dev->dev = &pdev->dev;
-> +	dev->pdev = pdev;
-> +
-> +	ret = cedrus_hw_probe(dev);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "Failed to probe hardware\n");
-> +		return ret;
-> +	}
-> +
-> +	dev->dec_ops[CEDRUS_CODEC_MPEG2] = &cedrus_dec_ops_mpeg2;
-> +
-> +	mutex_init(&dev->dev_mutex);
-> +	spin_lock_init(&dev->irq_lock);
-> +
-> +	ret = v4l2_device_register(&pdev->dev, &dev->v4l2_dev);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "Failed to register V4L2 device\n");
-> +		return ret;
-> +	}
-> +
-> +	vfd = &dev->vfd;
-> +	vfd->lock = &dev->dev_mutex;
-> +	vfd->v4l2_dev = &dev->v4l2_dev;
-> +
-> +	snprintf(vfd->name, sizeof(vfd->name), "%s", cedrus_video_device.name);
-> +	video_set_drvdata(vfd, dev);
-> +
-> +	dev->m2m_dev = v4l2_m2m_init(&cedrus_m2m_ops);
-> +	if (IS_ERR(dev->m2m_dev)) {
-> +		v4l2_err(&dev->v4l2_dev,
-> +			 "Failed to initialize V4L2 M2M device\n");
-> +		ret = PTR_ERR(dev->m2m_dev);
-> +
-> +		goto err_video;
-> +	}
-> +
-> +	dev->mdev.dev = &pdev->dev;
-> +	strlcpy(dev->mdev.model, CEDRUS_NAME, sizeof(dev->mdev.model));
-
-This is a minor issue: we're getting rid of strlcpy upstream.
-
-So, please send a followup patch replacing all occurrences of strcpy,
-strncpy and strlcpy with strscpy().
-
-The syntax is the same as strlcpy().
-
-Thanks,
-Mauro
+SGkgUGhpbGlwcCwNCg0KTWF5YmUgeW91IGhhdmUgYW55IGNvbW1lbnRzIG9yIHJlbWFya3MgYWJv
+dXQgdGhpcyBwYXRjaD8gQW5kIGlmIHlvdSBkb24ndCBjb3VsZCB5b3UgcGxlYXNlIGFwcGx5IGl0
+Lg0KVGhhbmtzIQ0KDQpPbiBNb24sIDIwMTgtMDgtMjcgYXQgMTc6MzggKzAzMDAsIEV1Z2VuaXkg
+UGFsdHNldiB3cm90ZToNCj4gQXMgZm9yIHRvZGF5IEhTREsgcmVzZXQgZHJpdmVyIGltcGxlbWVu
+dHMgb25seQ0KPiAucmVzZXQoKSBjYWxsYmFjay4NCj4gDQo+IEluIGNhc2Ugb2YgZHJpdmVyIHdo
+aWNoIGltcGxlbWVudHMgb25lIG9mIHN0YW5kYXJkDQo+IHJlc2V0IGNvbnRyb2xsZXIgdXNhZ2Ug
+cGF0dGVybg0KPiAoY2FsbCAqX2RlYXNzZXJ0KCkgaW4gcHJvYmUoKSwgY2FsbCAqX2Fzc2VydCgp
+IGluIHJlbW92ZSgpKQ0KPiB0aGF0IGxlYWRzIHRvIGlub3BlcmFiaWxpdHkgb2YgdGhpcyByZXNl
+dCBkcml2ZXIuDQo+IA0KPiBJbXByb3ZlIEhTREsgcmVzZXQgZHJpdmVyIGJ5IGNhbGxpbmcgLnJl
+c2V0KCkgY2FsbGJhY2sgaW5zaWRlIG9mDQo+IC5hc3NlcnQoKS8uZGVhc3NlcnQoKSBjYWxsYmFj
+a3MgdG8gYXZvaWQgZWFjaCByZXNldCBjb250cm9sbGVyDQo+IHVzZXIgYWRhcHRhdGlvbiBmb3Ig
+d29yayB3aXRoIGJvdGggcmVzZXQgbWV0aG9kcw0KPiAocmVzZXQoKSBhbmQgLmFzc2VydCgpLy5k
+ZWFzc2VydCgpIHBhaXIpDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBFdWdlbml5IFBhbHRzZXYgPEV1
+Z2VuaXkuUGFsdHNldkBzeW5vcHN5cy5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9yZXNldC9yZXNl
+dC1oc2RrLmMgfCAyICsrDQo+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspDQo+IA0K
+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9yZXNldC9yZXNldC1oc2RrLmMgYi9kcml2ZXJzL3Jlc2V0
+L3Jlc2V0LWhzZGsuYw0KPiBpbmRleCA4YmNlMzkxYzY5NDMuLjFmZDkxZGY5MTM0MyAxMDA2NDQN
+Cj4gLS0tIGEvZHJpdmVycy9yZXNldC9yZXNldC1oc2RrLmMNCj4gKysrIGIvZHJpdmVycy9yZXNl
+dC9yZXNldC1oc2RrLmMNCj4gQEAgLTg2LDYgKzg2LDggQEAgc3RhdGljIGludCBoc2RrX3Jlc2V0
+X3Jlc2V0KHN0cnVjdCByZXNldF9jb250cm9sbGVyX2RldiAqcmNkZXYsDQo+ICANCj4gIHN0YXRp
+YyBjb25zdCBzdHJ1Y3QgcmVzZXRfY29udHJvbF9vcHMgaHNka19yZXNldF9vcHMgPSB7DQo+ICAJ
+LnJlc2V0CT0gaHNka19yZXNldF9yZXNldCwNCj4gKwkuYXNzZXJ0ID0gaHNka19yZXNldF9yZXNl
+dCwNCj4gKwkuZGVhc3NlcnQgPSBoc2RrX3Jlc2V0X3Jlc2V0LA0KPiAgfTsNCj4gIA0KPiAgc3Rh
+dGljIGludCBoc2RrX3Jlc2V0X3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQot
+LSANCiBFdWdlbml5IFBhbHRzZXY=
