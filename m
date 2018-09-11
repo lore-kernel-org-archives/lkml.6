@@ -2,99 +2,228 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DCE8C6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:50:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B602BC04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:50:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4A9320839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:50:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62A7A20839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:50:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DcFJhXJb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4A9320839
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZTSFedjx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62A7A20839
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727153AbeIKUt4 (ORCPT
+        id S1727534AbeIKUuf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 16:49:56 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:40271 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726775AbeIKUt4 (ORCPT
+        Tue, 11 Sep 2018 16:50:35 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:48554 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726622AbeIKUue (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 16:49:56 -0400
-Received: by mail-yw1-f67.google.com with SMTP id z143-v6so9388142ywa.7;
-        Tue, 11 Sep 2018 08:50:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=QTr3k7vV1353pdP7gQSS+TOpEeZOWjtIdRjApHX3V+s=;
-        b=DcFJhXJbUJngS24vRbKHrKORepVFSKJuJDEJJ7IOeS/jOxh2vHXKGBbH60b4rb/JPs
-         nLy0u1c1E3ww2X0Vkpt1FPQ6aMyNZnuH1LifyeWt0Am5/12oDaHJHXZD11xj3m2Re5ZG
-         xGdFf7GUFMHhO+Bltdmicsj7/XZWrfKbBM4zIPndoGsS2OHa4ZuAMUgXbm1Nxc5qy8Sv
-         vtqiNBsWbQvymzDfxNv248yUhSUXfoQABiKVUjC6qROKjPbIKIsdsfUf6k6cBe6OJlTg
-         HpJ5ROCMpCn9sawFEhPdzCpVRG5WYW9b1m+gR1MWuXY+GEzlygjNdToAdp6WW8AccQlM
-         aPoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QTr3k7vV1353pdP7gQSS+TOpEeZOWjtIdRjApHX3V+s=;
-        b=TTpVZAIkmmz32J8hOGQttg6bjEaX99esPY2ASm9Ii+PQw+6lrAhcgy2BEyMbFYhIMS
-         PtmDCBa4df0h0+mFv8CszYeG984TAya9PzOZMz7qZ6myyzhbkOUlfqgehZ58n01xJIX3
-         LcTapQqvsbMKgMzCcRQnGmbsJZgbBR9SzpIC1ecvVeaKByKc//e1bhKpezCBsvqPj17v
-         0dQfG1JjkX0NcP37n70pfuUc2cF9L+yoEyug+W1keD5Dtj0Q4BavEgppc0f4jLD83Dsb
-         u2q5rihtBz4Jozcio8dpiKzPbfHytJwr1ThGh4uObzuk1lONmjBlBVSgDqggKqmN2JRA
-         iQAA==
-X-Gm-Message-State: APzg51DiBLSBz2eWBME+se//R3yrjg+PtcC5Wj+Qn/76H0+MkJ9lxZ44
-        NqrbIgeEwOnrJouREnT+opg=
-X-Google-Smtp-Source: ANB0VdZqAUAWS00hylrZ4wbAt4zHj4p28tdLTtcehrch9gu16ceCG8E2gZxibd3bethP6yPLE+eR2g==
-X-Received: by 2002:a81:4dd6:: with SMTP id a205-v6mr12848185ywb.289.1536681001804;
-        Tue, 11 Sep 2018 08:50:01 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:200::1:6304])
-        by smtp.gmail.com with ESMTPSA id d21-v6sm8463964ywb.16.2018.09.11.08.50.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Sep 2018 08:50:01 -0700 (PDT)
-Date:   Tue, 11 Sep 2018 08:49:59 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Jianchao Wang <jianchao.w.wang@oracle.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-block@vger.kernel.org
-Subject: Re: [PATCH] percpu-refcount: relax limit on percpu_ref_reinit()
-Message-ID: <20180911154959.GI1100574@devbig004.ftw2.facebook.com>
-References: <20180909125824.9150-1-ming.lei@redhat.com>
- <20180910164920.GE1100574@devbig004.ftw2.facebook.com>
- <20180911000049.GB30977@ming.t460p>
- <20180911134836.GG1100574@devbig004.ftw2.facebook.com>
- <20180911154540.GA10082@ming.t460p>
+        Tue, 11 Sep 2018 16:50:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
+        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=FQhiEaUekKz3pIVpeA8tu3rWgZpWAnL048XX8I9qHFg=; b=ZTSFedjxD4wD1YuoGIaltHOwC
+        SyKyRKqxoZHpPMlFGg5AWraHYV6shGWc2TATxTVk+BTFzrQykMzYsi2K8k3SEPJVFFGZVd5Rn2sKi
+        JATzWYqxMG02LgTkPvYsk2iW0QQ3V99IF8znwLaqqvgqSnmD644tDNptb9KbVNNwt1xvXtws+YZQV
+        j61MP8whYEzTTdZf92gCRt8Vrpuj6NLENItvmGRLf7jxyLz0YDEBqK1zW+rwms7OVR84LyWscRy9z
+        ot+Y1Ud8IfLtEHJRdNFQSti4c/huDB8BHaU6vFIK7TJVQHrblsLOEAB/M2Q5FlH4z0BeH0mQ2JRwc
+        4/dq+/XKA==;
+Received: from 177.17.246.211.dynamic.adsl.gvt.net.br ([177.17.246.211] helo=coco.lan)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fzkw2-0007NU-MH; Tue, 11 Sep 2018 15:50:39 +0000
+Date:   Tue, 11 Sep 2018 12:50:31 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Paul Kocialkowski <contact@paulk.fr>
+Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devel@driverdev.osuosl.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-sunxi@googlegroups.com, Randy Li <ayaka@soulik.info>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject: Re: [PATCH v9 5/9] media: platform: Add Cedrus VPU decoder driver
+Message-ID: <20180911124625.6759e429@coco.lan>
+In-Reply-To: <20180906222442.14825-6-contact@paulk.fr>
+References: <20180906222442.14825-1-contact@paulk.fr>
+        <20180906222442.14825-6-contact@paulk.fr>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180911154540.GA10082@ming.t460p>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Message-ID: <20180911155031.ZIxF3ezeGCw1wncdyIr36xAvV_rf2aIKtoEYg4e9Nbk@z>
 
-On Tue, Sep 11, 2018 at 11:45:41PM +0800, Ming Lei wrote:
-> > So, this part seems wrong.  The function is called percpu_ref_reinit()
-> > - the refcnt is expected to be in its initial state with just the base
-> > ref once this function returns.  If you're removing the restriction on
+Em Fri,  7 Sep 2018 00:24:38 +0200
+Paul Kocialkowski <contact@paulk.fr> escreveu:
+
+> From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 > 
-> But the comment says that 'Re-initialize @ref so that it's in the same
-> state as when it finished', and this invariant isn't changed with this
-> patch.
+> This introduces the Cedrus VPU driver that supports the VPU found in
+> Allwinner SoCs, also known as Video Engine. It is implemented through
+> a V4L2 M2M decoder device and a media device (used for media requests).
+> So far, it only supports MPEG-2 decoding.
+> 
+> Since this VPU is stateless, synchronization with media requests is
+> required in order to ensure consistency between frame headers that
+> contain metadata about the frame to process and the raw slice data that
+> is used to generate the frame.
+> 
+> This driver was made possible thanks to the long-standing effort
+> carried out by the linux-sunxi community in the interest of reverse
+> engineering, documenting and implementing support for the Allwinner VPU.
+> 
+> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
-The comment goes "when perpcu_ref_init() finished".  The function is
-called re _init_.  It should put the ref in the initial state, right?
+There are several checkpatch issues here. Ok, some can be
+ignored, but there are at least some of them that sounds relevant.
 
-Thanks.
+Please address them.
 
--- 
-tejun
+In particular, see https://lkml.org/lkml/2017/11/21/384.
+
+Also, for new drivers, please use --strict parameter on checkpatch,
+as it will give more insights about possible bad coding styles.
+
+This is what checkpatch currently complains:
+
+
+CHECK: Comparison to NULL could be written "ctx->ctrls[i]"
+#214: FILE: drivers/staging/media/sunxi/cedrus/cedrus.c:51:
++	for (i = 0; ctx->ctrls[i] != NULL; i++)
+
+CHECK: Alignment should match open parenthesis
+#304: FILE: drivers/staging/media/sunxi/cedrus/cedrus.c:141:
++		ctrl_test = v4l2_ctrl_request_hdl_ctrl_find(hdl,
++			cedrus_controls[i].id);
+
+CHECK: Alignment should match open parenthesis
+#468: FILE: drivers/staging/media/sunxi/cedrus/cedrus.c:305:
++	ret = v4l2_m2m_register_media_controller(dev->m2m_dev,
++			vfd, MEDIA_ENT_F_PROC_VIDEO_DECODER);
+
+CHECK: Avoid using bool structure members because of possible alignment issues - see: https://lkml.org/lkml/2017/11/21/384
+#638: FILE: drivers/staging/media/sunxi/cedrus/cedrus.h:47:
++	bool			required;
+
+WARNING: line over 80 characters
+#744: FILE: drivers/staging/media/sunxi/cedrus/cedrus.h:153:
++static inline struct cedrus_buffer *vb2_v4l2_to_cedrus_buffer(const struct vb2_v4l2_buffer *p)
+
+WARNING: line over 80 characters
+#749: FILE: drivers/staging/media/sunxi/cedrus/cedrus.h:158:
++static inline struct cedrus_buffer *vb2_to_cedrus_buffer(const struct vb2_buffer *p)
+
+CHECK: Alignment should match open parenthesis
+#809: FILE: drivers/staging/media/sunxi/cedrus/cedrus_dec.c:47:
++		run.mpeg2.slice_params = cedrus_find_control_data(ctx,
++			V4L2_CID_MPEG_VIDEO_MPEG2_SLICE_PARAMS);
+
+CHECK: Alignment should match open parenthesis
+#811: FILE: drivers/staging/media/sunxi/cedrus/cedrus_dec.c:49:
++		run.mpeg2.quantization = cedrus_find_control_data(ctx,
++			V4L2_CID_MPEG_VIDEO_MPEG2_QUANTIZATION);
+
+WARNING: line over 80 characters
+#1368: FILE: drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c:133:
++	reg |= VE_DEC_MPEG_MP12HDR_INTRA_DC_PRECISION(picture->intra_dc_precision);
+
+WARNING: line over 80 characters
+#1369: FILE: drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c:134:
++	reg |= VE_DEC_MPEG_MP12HDR_INTRA_PICTURE_STRUCTURE(picture->picture_structure);
+
+WARNING: line over 80 characters
+#1371: FILE: drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c:136:
++	reg |= VE_DEC_MPEG_MP12HDR_FRAME_PRED_FRAME_DCT(picture->frame_pred_frame_dct);
+
+WARNING: line over 80 characters
+#1372: FILE: drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c:137:
++	reg |= VE_DEC_MPEG_MP12HDR_CONCEALMENT_MOTION_VECTORS(picture->concealment_motion_vectors);
+
+WARNING: line over 80 characters
+#1395: FILE: drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c:160:
++	fwd_luma_addr = cedrus_dst_buf_addr(ctx, slice_params->forward_ref_index, 0);
+
+WARNING: line over 80 characters
+#1396: FILE: drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c:161:
++	fwd_chroma_addr = cedrus_dst_buf_addr(ctx, slice_params->forward_ref_index, 1);
+
+WARNING: line over 80 characters
+#1401: FILE: drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c:166:
++	bwd_luma_addr = cedrus_dst_buf_addr(ctx, slice_params->backward_ref_index, 0);
+
+WARNING: line over 80 characters
+#1402: FILE: drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c:167:
++	bwd_chroma_addr = cedrus_dst_buf_addr(ctx, slice_params->backward_ref_index, 1);
+
+WARNING: line over 80 characters
+#1417: FILE: drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c:182:
++	cedrus_write(dev, VE_DEC_MPEG_VLD_OFFSET, slice_params->data_bit_offset);
+
+CHECK: Macro argument reuse 'x' - possible side-effects?
+#1552: FILE: drivers/staging/media/sunxi/cedrus/cedrus_regs.h:74:
++#define VE_DEC_MPEG_MP12HDR_F_CODE_MASK(x, y) \
++	GENMASK(VE_DEC_MPEG_MP12HDR_F_CODE_SHIFT(x, y) + 3, \
++		VE_DEC_MPEG_MP12HDR_F_CODE_SHIFT(x, y))
+
+CHECK: Macro argument reuse 'y' - possible side-effects?
+#1552: FILE: drivers/staging/media/sunxi/cedrus/cedrus_regs.h:74:
++#define VE_DEC_MPEG_MP12HDR_F_CODE_MASK(x, y) \
++	GENMASK(VE_DEC_MPEG_MP12HDR_F_CODE_SHIFT(x, y) + 3, \
++		VE_DEC_MPEG_MP12HDR_F_CODE_SHIFT(x, y))
+
+CHECK: Macro argument reuse 'x' - possible side-effects?
+#1555: FILE: drivers/staging/media/sunxi/cedrus/cedrus_regs.h:77:
++#define VE_DEC_MPEG_MP12HDR_F_CODE(x, y, v) \
++	(((v) << VE_DEC_MPEG_MP12HDR_F_CODE_SHIFT(x, y)) & \
++	 VE_DEC_MPEG_MP12HDR_F_CODE_MASK(x, y))
+
+CHECK: Macro argument reuse 'y' - possible side-effects?
+#1555: FILE: drivers/staging/media/sunxi/cedrus/cedrus_regs.h:77:
++#define VE_DEC_MPEG_MP12HDR_F_CODE(x, y, v) \
++	(((v) << VE_DEC_MPEG_MP12HDR_F_CODE_SHIFT(x, y)) & \
++	 VE_DEC_MPEG_MP12HDR_F_CODE_MASK(x, y))
+
+CHECK: Macro argument reuse 'a' - possible side-effects?
+#1685: FILE: drivers/staging/media/sunxi/cedrus/cedrus_regs.h:207:
++#define VE_DEC_MPEG_VLD_ADDR_BASE(a) \
++	(((a) & GENMASK(27, 4)) | (((a) >> 28) & GENMASK(3, 0)))
+
+CHECK: Comparison to NULL could be written "fmt"
+#1805: FILE: drivers/staging/media/sunxi/cedrus/cedrus_video.c:88:
++	return fmt != NULL;
+
+CHECK: Please use a blank line after function/struct/union/enum declarations
+#2214: FILE: drivers/staging/media/sunxi/cedrus/cedrus_video.c:497:
++}
++static struct vb2_ops cedrus_qops = {
+
+total: 0 errors, 11 warnings, 13 checks, 2139 lines checked
+
+
+Thanks,
+Mauro
