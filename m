@@ -2,298 +2,114 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D2FDECDFC2
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 19:16:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0335C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 19:18:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10B882086A
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 19:16:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10B882086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 84E1F20839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 19:18:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84E1F20839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728014AbeILARB (ORCPT
+        id S1727990AbeILATS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 20:17:01 -0400
-Received: from mga05.intel.com ([192.55.52.43]:35217 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726775AbeILARB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 20:17:01 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Sep 2018 12:16:17 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,361,1531810800"; 
-   d="scan'208";a="72154311"
-Received: from sai-dev-mach.sc.intel.com ([143.183.140.52])
-  by orsmga007.jf.intel.com with ESMTP; 11 Sep 2018 12:16:17 -0700
-From:   Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-To:     linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org
-Cc:     Sai Praneeth <sai.praneeth.prakhya@intel.com>,
-        Al Stone <astone@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Tue, 11 Sep 2018 20:19:18 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:32902 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726775AbeILATS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 20:19:18 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 398754023ECB;
+        Tue, 11 Sep 2018 19:18:34 +0000 (UTC)
+Received: from llong.com (ovpn-123-172.rdu2.redhat.com [10.10.123.172])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CE3EE2166BA3;
+        Tue, 11 Sep 2018 19:18:30 +0000 (UTC)
+From:   Waiman Long <longman@redhat.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-doc@vger.kernel.org,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jan Kara <jack@suse.cz>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Ingo Molnar <mingo@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH V6 2/2] x86/efi: Add efi page fault handler to recover from page faults caused by the firmware
-Date:   Tue, 11 Sep 2018 12:15:22 -0700
-Message-Id: <1536693322-8335-3-git-send-email-sai.praneeth.prakhya@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1536693322-8335-1-git-send-email-sai.praneeth.prakhya@intel.com>
-References: <1536693322-8335-1-git-send-email-sai.praneeth.prakhya@intel.com>
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Larry Woodman <lwoodman@redhat.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "Wangkai (Kevin C)" <wangkai86@huawei.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Waiman Long <longman@redhat.com>
+Subject: [PATCH v3 0/4] fs/dcache: Track # of negative dentries
+Date:   Tue, 11 Sep 2018 15:18:22 -0400
+Message-Id: <1536693506-11949-1-git-send-email-longman@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 11 Sep 2018 19:18:34 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 11 Sep 2018 19:18:34 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
+ v2->v3:
+  - With confirmation that the dummy array in dentry_stat structure
+    was never a replacement of a previously used field, patch 3 is now
+    reverted back to use one of dummy field as the negative dentry count
+    instead of adding a new field.
 
-As per the UEFI specification, after the call to ExitBootServices(),
-accesses by the firmware to any memory regions except
-EFI_RUNTIME_SERVICES_<CODE/DATA> regions is considered illegal. A buggy
-firmware could trigger these illegal accesses when an efi runtime
-service is invoked and if this happens when the kernel is up and
-running, the kernel hangs.
+ v1->v2:
+  - Clarify what the new nr_dentry_negative per-cpu counter is tracking
+    and open-code the increment and decrement as suggested by Dave Chinner.
+  - Append the new nr_dentry_negative count as the 7th element of dentry-state
+    instead of replacing one of the dummy entries.
+  - Remove patch "fs/dcache: Make negative dentries easier to be
+    reclaimed" for now as I need more time to think about what
+    to do with it.
+  - Add 2 more patches to address issues found while reviewing the
+    dentry code.
+  - Add another patch to change the conditional branch of
+    nr_dentry_negative accounting to conditional move so as to reduce
+    the performance impact of the accounting code.
 
-Kernel hangs because the memory region requested by the firmware isn't
-mapped in efi_pgd, which causes a page fault in ring 0 and the kernel
-fails to handle it, leading to die(). To save kernel from hanging, add
-an efi specific page fault handler which recovers from such faults by
-1. If the efi runtime service is efi_reset_system(), reboot the machine
-   through BIOS.
-2. If the efi runtime service is _not_ efi_reset_system(), then, freeze
-   efi_rts_wq and schedule a new process.
+This patchset addresses 2 issues found in the dentry code and adds a
+new nr_dentry_negative per-cpu counter to track the total number of
+negative dentries in all the LRU lists.
 
-The efi page fault handler offers us two advantages:
-1. Recovers from potential hangs that could be caused by buggy firmware.
-2. Shout loud that the firmware is buggy and hence is not a kernel bug.
+Patch 1 fixes a bug in the accounting of nr_dentry_unused in
+shrink_dcache_sb().
 
-Tested-by: Bhupesh Sharma <bhsharma@redhat.com>
-Suggested-by: Matt Fleming <matt@codeblueprint.co.uk>
-Based-on-code-from: Ricardo Neri <ricardo.neri@intel.com>
-Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Cc: Al Stone <astone@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Bhupesh Sharma <bhsharma@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
----
- arch/x86/include/asm/efi.h              |  1 +
- arch/x86/mm/fault.c                     |  9 ++++
- arch/x86/platform/efi/quirks.c          | 78 +++++++++++++++++++++++++++++++++
- drivers/firmware/efi/runtime-wrappers.c |  8 ++++
- include/linux/efi.h                     |  8 +++-
- 5 files changed, 103 insertions(+), 1 deletion(-)
+Patch 2 removes the ____cacheline_aligned_in_smp tag from super_block
+LRU lists.
 
-diff --git a/arch/x86/include/asm/efi.h b/arch/x86/include/asm/efi.h
-index cec5fae23eb3..eea40d52ca78 100644
---- a/arch/x86/include/asm/efi.h
-+++ b/arch/x86/include/asm/efi.h
-@@ -140,6 +140,7 @@ extern void __init efi_apply_memmap_quirks(void);
- extern int __init efi_reuse_config(u64 tables, int nr_tables);
- extern void efi_delete_dummy_variable(void);
- extern void efi_switch_mm(struct mm_struct *mm);
-+extern void efi_recover_from_page_fault(unsigned long phys_addr);
- 
- struct efi_setup_data {
- 	u64 fw_vendor;
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 2aafa6ab6103..fd636c82d3c1 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -16,6 +16,7 @@
- #include <linux/prefetch.h>		/* prefetchw			*/
- #include <linux/context_tracking.h>	/* exception_enter(), ...	*/
- #include <linux/uaccess.h>		/* faulthandler_disabled()	*/
-+#include <linux/efi.h>			/* efi_recover_from_page_fault()*/
- 
- #include <asm/cpufeature.h>		/* boot_cpu_has, ...		*/
- #include <asm/traps.h>			/* dotraplinkage, ...		*/
-@@ -24,6 +25,7 @@
- #include <asm/vsyscall.h>		/* emulate_vsyscall		*/
- #include <asm/vm86.h>			/* struct vm86			*/
- #include <asm/mmu_context.h>		/* vma_pkey()			*/
-+#include <asm/efi.h>			/* efi_recover_from_page_fault()*/
- 
- #define CREATE_TRACE_POINTS
- #include <asm/trace/exceptions.h>
-@@ -790,6 +792,13 @@ no_context(struct pt_regs *regs, unsigned long error_code,
- 		return;
- 
- 	/*
-+	 * Buggy firmware could access regions which might page fault, try to
-+	 * recover from such faults.
-+	 */
-+	if (IS_ENABLED(CONFIG_EFI))
-+		efi_recover_from_page_fault(address);
-+
-+	/*
- 	 * Oops. The kernel tried to access some bad page. We'll have to
- 	 * terminate things with extreme prejudice:
- 	 */
-diff --git a/arch/x86/platform/efi/quirks.c b/arch/x86/platform/efi/quirks.c
-index 844d31cb8a0c..669babcaf245 100644
---- a/arch/x86/platform/efi/quirks.c
-+++ b/arch/x86/platform/efi/quirks.c
-@@ -16,6 +16,7 @@
- #include <asm/efi.h>
- #include <asm/uv/uv.h>
- #include <asm/cpu_device_id.h>
-+#include <asm/reboot.h>
- 
- #define EFI_MIN_RESERVE 5120
- 
-@@ -654,3 +655,80 @@ int efi_capsule_setup_info(struct capsule_info *cap_info, void *kbuff,
- }
- 
- #endif
-+
-+/*
-+ * If any access by any efi runtime service causes a page fault, then,
-+ * 1. If it's efi_reset_system(), reboot through BIOS.
-+ * 2. If any other efi runtime service, then
-+ *    a. Return error status to the efi caller process.
-+ *    b. Disable EFI Runtime Services forever and
-+ *    c. Freeze efi_rts_wq and schedule new process.
-+ *
-+ * @return: Returns, if the page fault is not handled. This function
-+ * will never return if the page fault is handled successfully.
-+ */
-+void efi_recover_from_page_fault(unsigned long phys_addr)
-+{
-+	if (!IS_ENABLED(CONFIG_X86_64))
-+		return;
-+
-+	/*
-+	 * Make sure that an efi runtime service caused the page fault.
-+	 * "efi_mm" cannot be used to check if the page fault had occurred
-+	 * in the firmware context because efi=old_map doesn't use efi_pgd.
-+	 */
-+	if (efi_rts_work.efi_rts_id == NONE)
-+		return;
-+
-+	/*
-+	 * Address range 0x0000 - 0x0fff is always mapped in the efi_pgd, so
-+	 * page faulting on these addresses isn't expected.
-+	 */
-+	if (phys_addr >= 0x0000 && phys_addr <= 0x0fff)
-+		return;
-+
-+	/*
-+	 * Print stack trace as it might be useful to know which EFI Runtime
-+	 * Service is buggy.
-+	 */
-+	WARN(1, FW_BUG "Page fault caused by firmware at PA: 0x%lx\n",
-+	     phys_addr);
-+
-+	/*
-+	 * Buggy efi_reset_system() is handled differently from other EFI
-+	 * Runtime Services as it doesn't use efi_rts_wq. Although,
-+	 * native_machine_emergency_restart() says that machine_real_restart()
-+	 * could fail, it's better not to compilcate this fault handler
-+	 * because this case occurs *very* rarely and hence could be improved
-+	 * on a need by basis.
-+	 */
-+	if (efi_rts_work.efi_rts_id == RESET_SYSTEM) {
-+		pr_info("efi_reset_system() buggy! Reboot through BIOS\n");
-+		machine_real_restart(MRR_BIOS);
-+		return;
-+	}
-+
-+	/*
-+	 * Before calling EFI Runtime Service, the kernel has switched the
-+	 * calling process to efi_mm. Hence, switch back to task_mm.
-+	 */
-+	arch_efi_call_virt_teardown();
-+
-+	/* Signal error status to the efi caller process */
-+	efi_rts_work.status = EFI_ABORTED;
-+	complete(&efi_rts_work.efi_rts_comp);
-+
-+	clear_bit(EFI_RUNTIME_SERVICES, &efi.flags);
-+	pr_info("Froze efi_rts_wq and disabled EFI Runtime Services\n");
-+
-+	/*
-+	 * Call schedule() in an infinite loop, so that any spurious wake ups
-+	 * will never run efi_rts_wq again.
-+	 */
-+	for (;;) {
-+		set_current_state(TASK_IDLE);
-+		schedule();
-+	}
-+
-+	return;
-+}
-diff --git a/drivers/firmware/efi/runtime-wrappers.c b/drivers/firmware/efi/runtime-wrappers.c
-index b18b2d864c2c..7455277a3b65 100644
---- a/drivers/firmware/efi/runtime-wrappers.c
-+++ b/drivers/firmware/efi/runtime-wrappers.c
-@@ -61,6 +61,11 @@ struct efi_runtime_work efi_rts_work;
- ({									\
- 	efi_rts_work.status = EFI_ABORTED;				\
- 									\
-+	if (!efi_enabled(EFI_RUNTIME_SERVICES)) {			\
-+		pr_info("Aborting! EFI Runtime Services disabled\n");	\
-+		goto exit;						\
-+	}								\
-+									\
- 	init_completion(&efi_rts_work.efi_rts_comp);			\
- 	INIT_WORK_ONSTACK(&efi_rts_work.work, efi_call_rts);		\
- 	efi_rts_work.arg1 = _arg1;					\
-@@ -79,6 +84,8 @@ struct efi_runtime_work efi_rts_work;
- 	else								\
- 		pr_err("Failed to queue work to efi_rts_wq.\n");	\
- 									\
-+exit:									\
-+	efi_rts_work.efi_rts_id = NONE;					\
- 	efi_rts_work.status;						\
- })
- 
-@@ -393,6 +400,7 @@ static void virt_efi_reset_system(int reset_type,
- 			"could not get exclusive access to the firmware\n");
- 		return;
- 	}
-+	efi_rts_work.efi_rts_id = RESET_SYSTEM;
- 	__efi_call_virt(reset_system, reset_type, status, data_size, data);
- 	up(&efi_runtime_lock);
- }
-diff --git a/include/linux/efi.h b/include/linux/efi.h
-index 855992b15269..dea9e7bb5208 100644
---- a/include/linux/efi.h
-+++ b/include/linux/efi.h
-@@ -1659,8 +1659,13 @@ struct linux_efi_tpm_eventlog {
- 
- extern int efi_tpm_eventlog_init(void);
- 
--/* efi_runtime_service() function identifiers */
-+/*
-+ * efi_runtime_service() function identifiers.
-+ * "NONE" is used by efi_recover_from_page_fault() to check if the page
-+ * fault happened while executing an efi runtime service.
-+ */
- enum efi_rts_ids {
-+	NONE,
- 	GET_TIME,
- 	SET_TIME,
- 	GET_WAKEUP_TIME,
-@@ -1670,6 +1675,7 @@ enum efi_rts_ids {
- 	SET_VARIABLE,
- 	QUERY_VARIABLE_INFO,
- 	GET_NEXT_HIGH_MONO_COUNT,
-+	RESET_SYSTEM,
- 	UPDATE_CAPSULE,
- 	QUERY_CAPSULE_CAPS,
- };
+Patch 3 adds the new nr_dentry_negative per-cpu counter.
+
+Patch 4 removes conditional branches in nr_dentry_negative accounting
+code.
+
+Various filesystem related tests were run and no statistically
+significant changes in performance was observed.
+
+Waiman Long (4):
+  fs/dcache: Fix incorrect nr_dentry_unused accounting in
+    shrink_dcache_sb()
+  fs: Don't need to put list_lru into its own cacheline
+  fs/dcache: Track & report number of negative dentries
+  fs/dcache: Eliminate branches in nr_dentry_negative accounting
+
+ Documentation/sysctl/fs.txt | 26 +++++++++++++---------
+ fs/dcache.c                 | 54 ++++++++++++++++++++++++++++++++++++++++-----
+ include/linux/dcache.h      |  7 +++---
+ include/linux/fs.h          |  9 ++++----
+ 4 files changed, 74 insertions(+), 22 deletions(-)
+
 -- 
-2.7.4
+1.8.3.1
 
