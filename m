@@ -1,52 +1,51 @@
 Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBDA9C6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 16:42:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11154C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 16:42:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85A2520880
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 16:42:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B96BD20881
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 16:42:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="NOQLHU2W"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85A2520880
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="toYH8YvY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B96BD20881
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728131AbeIKVmO (ORCPT
+        id S1728174AbeIKVmS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 17:42:14 -0400
-Received: from sonic304-27.consmr.mail.ne1.yahoo.com ([66.163.191.153]:44294
+        Tue, 11 Sep 2018 17:42:18 -0400
+Received: from sonic304-27.consmr.mail.ne1.yahoo.com ([66.163.191.153]:33840
         "EHLO sonic304-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728111AbeIKVmM (ORCPT
+        by vger.kernel.org with ESMTP id S1727044AbeIKVmS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 17:42:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1536684124; bh=4ClzVXf1c1vpYtXQSRli2QiS1/B1yPxp/XJLpx83RE4=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=NOQLHU2WEBVGd+KCIdBFuayYNSCLu+XTn9qEt735RL789OIiAHNfySu7yZrEAdGe3OVms54e2Lc1BSdS536uCvdM2pvueoV0UOxaRlIYg0iVcB+nU3/ngkhIlNUQa7Hy1Y67I0gD6HiVOci3Vh4qFBs3UTNrTCL3WZyqHNzqNCw9EBNSKte020XmIikkqW7hMChS7FUk2J15AAi33gvKB1mxLpCWX7hgWpqbMr0IIbQxhyuuxchwZivxhGT3bYzVCOmrXVsGYYiMVAf4KJM/v+zg93AEqfpYNOL9i40MpgRUxoqmK7Q4GEer5CX/UOrZKPEJurjrTorJ9VePDx1mag==
-X-YMail-OSG: 6ZDxm_0VM1koAFi1MIitN0syDJYKOHQjoEBj8xwz7BqTDz7LZlQBNNfr5TC3iyl
- I7EViKe8ulHTTBwDsjFFtBenJ0Ebr8lGHA33UBKVZRhLYoc5H5iqb.dMJHUvKup8JvxTJlZ0MsGx
- vCcOB96dj9TYamQuN2aZ1tIO60ewN1r3qDFaoBG6.1byoGFqo5NiFufPITazp3ISeB6JXmTFXVwE
- ZoJqhUqhNKdISy870gvMxeN_8SL5fbT3J3884WinIfuZVw.egFUhWitljZF1nna2CC5cevZvLcds
- k3dYX4CPDJLkTHdQhrAE8DLjTSnw0mIkhp8IPQEjXZpvQyLDTBTuNYQNciGAHP9T8S88SWqMUFr5
- edhhT.NMF63y5DYp.5fduj2c5uoDIlQ.lUeSCgYdg6IzmyfHcUmaDl4ZHkG_XoAh_ew2_gfLpVz.
- AtVBZZLJBzUDsVeklQYsSjxqiasbaXJntQ4ke4ZG6quG2J2UwpyovU9wA2GjSvTSXFOiIViw5qac
- ZFlFT.UwksTqeCtuGxzi5Fyd67khNh4a1qoRk1IAgTeNfTMte26IPFvG1ysJXoUmMaAAYR.NBsGt
- RV6xemUByGDwv4oTlJ_f3_Y_qEGTHoY1dQeASPfKdKqDcfPh0tDjQeXiORku9hbyvpUMYmPU9bq.
- s1K8lRpTMQAFPg8Bo7UwwbTmtc4AxiR38ccfII394ITosOfoLd0JRBANBfNfvvH7RGmUkqBcgxrO
- X_HFL05IAs9xEF5dADzzpuW64o4XXy_tJ_UGwi3yQ.etfHtNKpXWckPCOfwgUQLDFw5Xpm6IXprk
- Va9zDmRxlVQL.dGduRp68yqEZx55bUJdFjZdzGEQQeaZG4spXqTfjgLnoGE4.n0aqBAR0kPyBxvK
- Cfphi8lfiG8xR3LjkS6IBtK8i2i.KeLVnHfJCRHK93yX8leI8ar0BNJTXEa3ylE93PVVVmisoL89
- nt3iY8wgwTnJGLznmWUck9yB37Yed5t7.dUyZC9UdGoXosFFdTlKvAZuCRyDkkPtOJWqx11fw6ut
- ShS6rfinXqeyEI0e729ygTYWP_Gy8FiAnQ9KQ
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ne1.yahoo.com with HTTP; Tue, 11 Sep 2018 16:42:04 +0000
+        Tue, 11 Sep 2018 17:42:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1536684129; bh=lICyCWulOZ4Jep4XyvkhNDAi/ddudeTeAtoyTXRT+6o=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=toYH8YvYi5gQYtYuBy8qSa1XeIsXFTDOslPonfsZRz9YNweDsycTfUuoTsR0YT0IX9H5Hr7CMT5CtVcCZ/6zAxVB1mEVQS53tubajltfbRKxAzh+1xF0ouvYymevz0heOMfqeOUElaqivRzhYhfP+8qcIkhIHIbgSnKW4F0sXdL5a+g82A3cNHZiQ/LkfoLoWyT2vT/LIZb/EMlVYJqPs7NyDv9C6a0EKpLzdeyVr11bFONQJ1NH40oqX465DqiZQSMTtlqdXeijnziplt4hGcXAP0GoZqf1LvKirocatIkVFMg9pyFa0FNrQggpniWJUW3YjPIx0Ee4UHQRVliLtg==
+X-YMail-OSG: o8_QGGUVM1mb7PyDtRRM2Fwroe9qzYLBDjW4d.jUHzr4XDPsw84dpXBRFVMWgMK
+ QgvfqHlJA8QjkpRXxbk_sxyors1MRUwru8kGNtF0winaQGhLVbysopFnA2T3eWZhTjQUarCOlcZq
+ ADehaosnjD8D8_JiIrtePOfnIfoXlQJBW6hMwyz2ZQrAN_uKocTmw0ET7a6uNeiVvgbmiE9JxPHM
+ 3QjKcRdZQPPMFWMDcWXuREAhAUKhpLclB.5mAy3ALU.5EsEEFhX3wp05bEBRnG.Xw6MMBDJTqb18
+ 3H4peKF_sSr0nCZyf6zuqGKlrmw06KzlRkmzl7FTCEAhEnIQpqyXBdMwd1L93Gv1HuM4wuJFZn.C
+ ZietRf17PP_AET2K01nMhify6r5Ly5eUuyDoN6FGAlMwrsDvQY1IHdwk22Ly.HNZvdv2inHv8yK7
+ oeZhFTSPZcGIS9SBtWxSjrzyFnn3oJUw7IwpDpvPFQXcYVltRbqLcsShowo9HClB_G5gUeHBxoUW
+ pF5W0G_2WjBVZSL4kUev_WOLSQK03ot8KYA9wjb25f_Akh73kWEL_nOAE0nphJLhxmbNBCoR.3SW
+ swEyM.RcNVtQAVtpS6EMbWqm3t6XqDmyPM95lvdhzFWz9z_EjhE.u2FqT67c4myUxUamzYcKGBho
+ 0kQKPVOq84qCoC.e2v6XZplnm.8COAlobbXpm87hzS25pud9PGiN9VIRfPvLc.yYMOjURKzRwW25
+ xPvuXHwxmVD7zpHKjludXGA7cn75A.LptmhKACEydSpnzudrorK_uGvVRVL4rf2y0dQhE2QbyfUt
+ 8ptEDyI9huZ.8kJk8g_dtIS7uK1_yOc0eEWg13xhqCVfGYrDWBFL6uwwvzZ9jOp3LMIXsHMgjb6_
+ tylhtvh5tJR35wFY.xyHVOixQep7gAHFp65KpN.FAw_Emae9FN9ev3V6A7BtNr0DK8N4AeLpRpEy
+ y8vJPDg2nloVa0C4yY0uedRRu9Q.wDcUCjld_dzlhguiLQj0g39w5TyRxjwDDuXig_sNjPhci1i0
+ 4BMHfIlOMLSHX0qkK.KaW_DIDvusu3s0coU6MLQ--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ne1.yahoo.com with HTTP; Tue, 11 Sep 2018 16:42:09 +0000
 Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.102]) ([67.169.65.224])
-          by smtp415.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID fa9305f2bb603b002ee5198a503b0a13;
-          Tue, 11 Sep 2018 16:42:01 +0000 (UTC)
-Subject: [PATCH 05/10] SELinux: Abstract use of file security blob
+          by smtp401.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID fd7ec437b937cec6fc58432a9a969757;
+          Tue, 11 Sep 2018 16:42:08 +0000 (UTC)
+Subject: [PATCH 07/10] SELinux: Abstract use of inode security blob
 To:     LSM <linux-security-module@vger.kernel.org>,
         James Morris <jmorris@namei.org>,
         LKLM <linux-kernel@vger.kernel.org>,
@@ -61,8 +60,8 @@ To:     LSM <linux-security-module@vger.kernel.org>,
 Cc:     "Schaufler, Casey" <casey.schaufler@intel.com>
 References: <cbf848ae-a1ac-c5ab-f23b-bc9217fceebe@schaufler-ca.com>
 From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <65bccad6-5669-9f4a-a645-35e0da301817@schaufler-ca.com>
-Date:   Tue, 11 Sep 2018 09:41:58 -0700
+Message-ID: <1aa12afc-2e1e-2e89-d422-a471990e0367@schaufler-ca.com>
+Date:   Tue, 11 Sep 2018 09:42:04 -0700
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
@@ -75,114 +74,173 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Don't use the file->f_security pointer directly.
+Don't use the inode->i_security pointer directly.
 Provide a helper function that provides the security blob pointer.
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- security/selinux/hooks.c          | 18 +++++++++---------
- security/selinux/include/objsec.h |  5 +++++
- 2 files changed, 14 insertions(+), 9 deletions(-)
+ security/selinux/hooks.c          | 26 +++++++++++++-------------
+ security/selinux/include/objsec.h |  6 ++++++
+ security/selinux/selinuxfs.c      |  4 ++--
+ 3 files changed, 21 insertions(+), 15 deletions(-)
 
 diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 9b49698754a7..94b3123c237b 100644
+index 3468b4592036..2720fe3ebf5f 100644
 --- a/security/selinux/hooks.c
 +++ b/security/selinux/hooks.c
-@@ -397,7 +397,7 @@ static int file_alloc_security(struct file *file)
+@@ -276,7 +276,7 @@ static int __inode_security_revalidate(struct inode *inode,
+ 				       struct dentry *dentry,
+ 				       bool may_sleep)
+ {
+-	struct inode_security_struct *isec = inode->i_security;
++	struct inode_security_struct *isec = selinux_inode(inode);
  
- static void file_free_security(struct file *file)
- {
--	struct file_security_struct *fsec = file->f_security;
-+	struct file_security_struct *fsec = selinux_file(file);
- 	file->f_security = NULL;
- 	kmem_cache_free(file_security_cache, fsec);
- }
-@@ -1880,7 +1880,7 @@ static int file_has_perm(const struct cred *cred,
- 			 struct file *file,
- 			 u32 av)
- {
--	struct file_security_struct *fsec = file->f_security;
-+	struct file_security_struct *fsec = selinux_file(file);
- 	struct inode *inode = file_inode(file);
- 	struct common_audit_data ad;
- 	u32 sid = cred_sid(cred);
-@@ -2224,7 +2224,7 @@ static int selinux_binder_transfer_file(struct task_struct *from,
- 					struct file *file)
- {
- 	u32 sid = task_sid(to);
--	struct file_security_struct *fsec = file->f_security;
-+	struct file_security_struct *fsec = selinux_file(file);
- 	struct dentry *dentry = file->f_path.dentry;
- 	struct inode_security_struct *isec;
- 	struct common_audit_data ad;
-@@ -3536,7 +3536,7 @@ static int selinux_revalidate_file_permission(struct file *file, int mask)
- static int selinux_file_permission(struct file *file, int mask)
- {
- 	struct inode *inode = file_inode(file);
--	struct file_security_struct *fsec = file->f_security;
-+	struct file_security_struct *fsec = selinux_file(file);
- 	struct inode_security_struct *isec;
- 	u32 sid = current_sid();
+ 	might_sleep_if(may_sleep);
  
-@@ -3571,7 +3571,7 @@ static int ioctl_has_perm(const struct cred *cred, struct file *file,
- 		u32 requested, u16 cmd)
- {
- 	struct common_audit_data ad;
--	struct file_security_struct *fsec = file->f_security;
-+	struct file_security_struct *fsec = selinux_file(file);
- 	struct inode *inode = file_inode(file);
- 	struct inode_security_struct *isec;
- 	struct lsm_ioctlop_audit ioctl;
-@@ -3823,7 +3823,7 @@ static void selinux_file_set_fowner(struct file *file)
- {
- 	struct file_security_struct *fsec;
+@@ -297,7 +297,7 @@ static int __inode_security_revalidate(struct inode *inode,
  
--	fsec = file->f_security;
-+	fsec = selinux_file(file);
- 	fsec->fown_sid = current_sid();
+ static struct inode_security_struct *inode_security_novalidate(struct inode *inode)
+ {
+-	return inode->i_security;
++	return selinux_inode(inode);
  }
  
-@@ -3838,7 +3838,7 @@ static int selinux_file_send_sigiotask(struct task_struct *tsk,
- 	/* struct fown_struct is never outside the context of a struct file */
- 	file = container_of(fown, struct file, f_owner);
+ static struct inode_security_struct *inode_security_rcu(struct inode *inode, bool rcu)
+@@ -307,7 +307,7 @@ static struct inode_security_struct *inode_security_rcu(struct inode *inode, boo
+ 	error = __inode_security_revalidate(inode, NULL, !rcu);
+ 	if (error)
+ 		return ERR_PTR(error);
+-	return inode->i_security;
++	return selinux_inode(inode);
+ }
  
--	fsec = file->f_security;
-+	fsec = selinux_file(file);
+ /*
+@@ -316,14 +316,14 @@ static struct inode_security_struct *inode_security_rcu(struct inode *inode, boo
+ static struct inode_security_struct *inode_security(struct inode *inode)
+ {
+ 	__inode_security_revalidate(inode, NULL, true);
+-	return inode->i_security;
++	return selinux_inode(inode);
+ }
  
- 	if (!signum)
- 		perm = signal_to_av(SIGIO); /* as per send_sigio_to_task */
-@@ -3862,7 +3862,7 @@ static int selinux_file_open(struct file *file)
- 	struct file_security_struct *fsec;
- 	struct inode_security_struct *isec;
+ static struct inode_security_struct *backing_inode_security_novalidate(struct dentry *dentry)
+ {
+ 	struct inode *inode = d_backing_inode(dentry);
  
--	fsec = file->f_security;
-+	fsec = selinux_file(file);
- 	isec = inode_security(file_inode(file));
+-	return inode->i_security;
++	return selinux_inode(inode);
+ }
+ 
+ /*
+@@ -334,7 +334,7 @@ static struct inode_security_struct *backing_inode_security(struct dentry *dentr
+ 	struct inode *inode = d_backing_inode(dentry);
+ 
+ 	__inode_security_revalidate(inode, dentry, true);
+-	return inode->i_security;
++	return selinux_inode(inode);
+ }
+ 
+ static void inode_free_rcu(struct rcu_head *head)
+@@ -347,7 +347,7 @@ static void inode_free_rcu(struct rcu_head *head)
+ 
+ static void inode_free_security(struct inode *inode)
+ {
+-	struct inode_security_struct *isec = inode->i_security;
++	struct inode_security_struct *isec = selinux_inode(inode);
+ 	struct superblock_security_struct *sbsec = inode->i_sb->s_security;
+ 
  	/*
- 	 * Save inode label and policy sequence number
-@@ -4002,7 +4002,7 @@ static int selinux_kernel_module_from_file(struct file *file)
- 	ad.type = LSM_AUDIT_DATA_FILE;
- 	ad.u.file = file;
+@@ -1501,7 +1501,7 @@ static int selinux_genfs_get_sid(struct dentry *dentry,
+ static int inode_doinit_with_dentry(struct inode *inode, struct dentry *opt_dentry)
+ {
+ 	struct superblock_security_struct *sbsec = NULL;
+-	struct inode_security_struct *isec = inode->i_security;
++	struct inode_security_struct *isec = selinux_inode(inode);
+ 	u32 task_sid, sid = 0;
+ 	u16 sclass;
+ 	struct dentry *dentry;
+@@ -1801,7 +1801,7 @@ static int inode_has_perm(const struct cred *cred,
+ 		return 0;
  
--	fsec = file->f_security;
-+	fsec = selinux_file(file);
- 	if (sid != fsec->sid) {
- 		rc = avc_has_perm(&selinux_state,
- 				  sid, fsec->sid, SECCLASS_FD, FD__USE, &ad);
+ 	sid = cred_sid(cred);
+-	isec = inode->i_security;
++	isec = selinux_inode(inode);
+ 
+ 	return avc_has_perm(&selinux_state,
+ 			    sid, isec->sid, isec->sclass, perms, adp);
+@@ -3029,7 +3029,7 @@ static int selinux_inode_init_security(struct inode *inode, struct inode *dir,
+ 
+ 	/* Possibly defer initialization to selinux_complete_init. */
+ 	if (sbsec->flags & SE_SBINITIALIZED) {
+-		struct inode_security_struct *isec = inode->i_security;
++		struct inode_security_struct *isec = selinux_inode(inode);
+ 		isec->sclass = inode_mode_to_security_class(inode->i_mode);
+ 		isec->sid = newsid;
+ 		isec->initialized = LABEL_INITIALIZED;
+@@ -3129,7 +3129,7 @@ static noinline int audit_inode_permission(struct inode *inode,
+ 					   unsigned flags)
+ {
+ 	struct common_audit_data ad;
+-	struct inode_security_struct *isec = inode->i_security;
++	struct inode_security_struct *isec = selinux_inode(inode);
+ 	int rc;
+ 
+ 	ad.type = LSM_AUDIT_DATA_INODE;
+@@ -4150,7 +4150,7 @@ static int selinux_task_kill(struct task_struct *p, struct siginfo *info,
+ static void selinux_task_to_inode(struct task_struct *p,
+ 				  struct inode *inode)
+ {
+-	struct inode_security_struct *isec = inode->i_security;
++	struct inode_security_struct *isec = selinux_inode(inode);
+ 	u32 sid = task_sid(p);
+ 
+ 	spin_lock(&isec->lock);
+@@ -6529,7 +6529,7 @@ static void selinux_release_secctx(char *secdata, u32 seclen)
+ 
+ static void selinux_inode_invalidate_secctx(struct inode *inode)
+ {
+-	struct inode_security_struct *isec = inode->i_security;
++	struct inode_security_struct *isec = selinux_inode(inode);
+ 
+ 	spin_lock(&isec->lock);
+ 	isec->initialized = LABEL_INVALID;
 diff --git a/security/selinux/include/objsec.h b/security/selinux/include/objsec.h
-index db1c7000ada3..2586fbc7e38c 100644
+index 2586fbc7e38c..3304a1ee58a4 100644
 --- a/security/selinux/include/objsec.h
 +++ b/security/selinux/include/objsec.h
-@@ -167,4 +167,9 @@ static inline struct task_security_struct *selinux_cred(const struct cred *cred)
- 	return cred->security;
+@@ -172,4 +172,10 @@ static inline struct file_security_struct *selinux_file(const struct file *file)
+ 	return file->f_security;
  }
  
-+static inline struct file_security_struct *selinux_file(const struct file *file)
++static inline struct inode_security_struct *selinux_inode(
++						const struct inode *inode)
 +{
-+	return file->f_security;
++	return inode->i_security;
 +}
 +
  #endif /* _SELINUX_OBJSEC_H_ */
+diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
+index b5665bdc29fc..cc434e45eaae 100644
+--- a/security/selinux/selinuxfs.c
++++ b/security/selinux/selinuxfs.c
+@@ -1379,7 +1379,7 @@ static int sel_make_bools(struct selinux_fs_info *fsi)
+ 			goto out;
+ 		}
+ 
+-		isec = (struct inode_security_struct *)inode->i_security;
++		isec = selinux_inode(inode);
+ 		ret = security_genfs_sid(fsi->state, "selinuxfs", page,
+ 					 SECCLASS_FILE, &sid);
+ 		if (ret) {
+@@ -1954,7 +1954,7 @@ static int sel_fill_super(struct super_block *sb, void *data, int silent)
+ 	}
+ 
+ 	inode->i_ino = ++fsi->last_ino;
+-	isec = (struct inode_security_struct *)inode->i_security;
++	isec = selinux_inode(inode);
+ 	isec->sid = SECINITSID_DEVNULL;
+ 	isec->sclass = SECCLASS_CHR_FILE;
+ 	isec->initialized = LABEL_INITIALIZED;
 -- 
 2.17.1
 
