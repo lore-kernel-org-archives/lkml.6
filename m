@@ -2,93 +2,123 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06463C6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 12:03:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B25FEC04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 12:03:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1A5C20833
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 12:03:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JIlvb+Kl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1A5C20833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 6635A2086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 12:03:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6635A2086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727645AbeIKRCQ (ORCPT
+        id S1727728AbeIKRCy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 13:02:16 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:60216 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726613AbeIKRCQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 13:02:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=yfJhim6pRD+xTnTPDZSwfKgny7CkKGpMGh9jvDzSbjU=; b=JIlvb+Kl4TrruRCRaPeaB7Isg
-        BcwZwxZpk7hBGsY+UrBit0cFes9zkC2pQ0/UqEqvj1EidcBhUsPDWGOpr0Jxp4Tc6qA7epnj7AM43
-        xsEziErFepgh9PSeMh25ZLXgBwDzLB89uCKjHw8ml7qIrz4d79SJDOlEPTPlLJNq+coLFOir3xYNx
-        Q97ba9a+Xxq8/jVv/7GDFiRgTXufTOFGoqr5J/G0beZe2BKg/Nm2plVOlL1R8RpFfqJ8oXERqnDs1
-        F1MDsoSc+nqm10VHZeypd8F6UKTnR2iBZhVfQhVi9Z8tAYEjOIHsHIpUA71SB9aNS034VsLjJi+sW
-        EIyumHomQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fzhNj-0005lq-MZ; Tue, 11 Sep 2018 12:02:59 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 763E22057F82D; Tue, 11 Sep 2018 14:02:58 +0200 (CEST)
-Date:   Tue, 11 Sep 2018 14:02:58 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Dmitry Safonov <dima@arista.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Daniel Axtens <dja@axtens.net>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Michael Neuling <mikey@neuling.org>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        Nathan March <nathan@gt.net>,
-        Pasi =?iso-8859-1?Q?K=E4rkk=E4inen?= <pasik@iki.fi>,
-        Peter Hurley <peter@hurleysoftware.com>,
-        "Rong, Chen" <rong.a.chen@intel.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Tan Xiaojun <tanxiaojun@huawei.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Subject: Re: [PATCHv3 6/6] tty/ldsem: Decrement wait_readers on timeouted
- down_read()
-Message-ID: <20180911120258.GC19234@hirez.programming.kicks-ass.net>
-References: <20180911014821.26286-1-dima@arista.com>
- <20180911014821.26286-7-dima@arista.com>
+        Tue, 11 Sep 2018 13:02:54 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59434 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726678AbeIKRCx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 13:02:53 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7C435400738B;
+        Tue, 11 Sep 2018 12:03:51 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-66.ams2.redhat.com [10.36.116.66])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C16D4111AF29;
+        Tue, 11 Sep 2018 12:03:50 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id 16EBF16E28; Tue, 11 Sep 2018 14:03:50 +0200 (CEST)
+Date:   Tue, 11 Sep 2018 14:03:50 +0200
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Shuah Khan <shuah@kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" 
+        <linux-media@vger.kernel.org>,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK" 
+        <linaro-mm-sig@lists.linaro.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, linux-api@vger.kernel.org
+Subject: Re: [PATCH v7] Add udmabuf misc device
+Message-ID: <20180911120350.qtacdf2otwzuywv2@sirius.home.kraxel.org>
+References: <20180827093444.23623-1-kraxel@redhat.com>
+ <21053714.0Xa7F2u2PE@avalon>
+ <20180911065014.vo6qp6hkb7cjftdc@sirius.home.kraxel.org>
+ <18750721.r4B5nx0M26@avalon>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180911014821.26286-7-dima@arista.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <18750721.r4B5nx0M26@avalon>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 11 Sep 2018 12:03:51 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 11 Sep 2018 12:03:51 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'kraxel@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 11, 2018 at 02:48:21AM +0100, Dmitry Safonov wrote:
-> It seems like when ldsem_down_read() fails with timeout, it misses
-> update for sem->wait_readers. By that reason, when writer finally
-> releases write end of the semaphore __ldsem_wake_readers() does adjust
-> sem->count with wrong value:
-> sem->wait_readers * (LDSEM_ACTIVE_BIAS - LDSEM_WAIT_BIAS)
+> > >> +	if (WARN_ON(vmf->pgoff >= ubuf->pagecount))
+> > >> +		return VM_FAULT_SIGBUS;
+> > > 
+> > > Just curious, when do you expect this to happen ?
+> > 
+> > It should not.  If it actually happens it would be a bug somewhere,
+> > thats why the WARN_ON.
 > 
-> I.e, if update comes with 1 missed wait_readers decrement, sem->count
-> will be 0x100000001 which means that there is active reader and it'll
-> make any further writer to fail in acquiring the semaphore.
-> 
-> It looks like, this is a dead-code, because ldsem_down_read() is never
-> called with timeout different than MAX_SCHEDULE_TIMEOUT, so it might be
-> worth to delete timeout parameter and error path fall-back..
+> But you seem to consider that this condition that should never happen still 
+> has a high enough chance of happening that it's worth a WARN_ON(). I was 
+> wondering why this one in particular, and not other conditions that also can't 
+> happen and are not checked through the code. 
 
-You might want to think about ditching that ldsem thing entirely, and
-use a regular rwsem ?
+Added it while writing the code, to get any coding mistake I make
+flagged right away instead of things exploding later on.
+
+I can drop it.
+
+> > >> +	ubuf = kzalloc(sizeof(struct udmabuf), GFP_KERNEL);
+> > > 
+> > > sizeof(*ubuf)
+> > 
+> > Why?  Should not make a difference ...
+> 
+> Because the day we replace
+> 
+> 	struct udmabuf *ubuf;
+> 
+> with
+> 
+> 	struct udmabuf_ext *ubuf;
+> 
+> and forget to change the next line, we'll introduce a bug. That's why 
+> sizeof(variable) is preferred over sizeof(type). Another reason is that I can 
+> easily see that
+> 
+> 	ubuf = kzalloc(sizeof(*ubuf), GFP_KERNEL);
+> 
+> is correct, while using sizeof(type) requires me to go and look up the 
+> declaration of the variable.
+
+So it simplifies review, ok, will change it.
+
+BTW: Maybe the kernel should pick up a neat trick from glib:
+
+g_new0() is a macro which takes the type instead of the size as first
+argument, and it casts the return value to that type.  So the compiler
+will throw warnings in case of a mismatch.  That'll work better than
+depending purely on the coder being careful and review catching the
+remaining issues.
+
+cheers,
+  Gerd
+
