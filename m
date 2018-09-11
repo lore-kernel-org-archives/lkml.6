@@ -6,212 +6,84 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA2F5C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:09:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B757C6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:09:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BDD120854
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:09:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BDD120854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id 2FA3420854
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:09:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FA3420854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726754AbeIKOHc (ORCPT
+        id S1726866AbeIKOHw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 10:07:32 -0400
-Received: from lb1-smtp-cloud8.xs4all.net ([194.109.24.21]:55116 "EHLO
-        lb1-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726546AbeIKOHc (ORCPT
+        Tue, 11 Sep 2018 10:07:52 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:41300 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726554AbeIKOHw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 10:07:32 -0400
-Received: from [IPv6:2001:420:44c1:2579:b9e5:7489:b855:62dc] ([IPv6:2001:420:44c1:2579:b9e5:7489:b855:62dc])
-        by smtp-cloud8.xs4all.net with ESMTPA
-        id zefPfIXQFxO9BzefTfOMWU; Tue, 11 Sep 2018 11:09:07 +0200
-Subject: Re: [RFC PATCH] media: docs-rst: Document m2m stateless video decoder
- interface
-To:     Alexandre Courbot <acourbot@chromium.org>
-Cc:     Tomasz Figa <tfiga@chromium.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Pawel Osciak <posciak@chromium.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20180831074743.235010-1-acourbot@chromium.org>
- <b8a80df8-fd07-6820-3021-670c360ff306@xs4all.nl>
- <38b32d24-6957-4bee-9168-b3afbfcae083@xs4all.nl>
- <a5c47693-4d66-1afc-9053-45bbbbef9d7c@xs4all.nl>
- <CAPBb6MXrEPz7Z60zUp-m4pWUB7t9p1iFSqqp9s4Gjqj9i3v4sA@mail.gmail.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <01f1723c-8fd0-8f34-0862-624d2bbf51e3@xs4all.nl>
-Date:   Tue, 11 Sep 2018 11:09:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Tue, 11 Sep 2018 10:07:52 -0400
+Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fzefe-0001im-98; Tue, 11 Sep 2018 11:09:18 +0200
+Date:   Tue, 11 Sep 2018 11:09:17 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Samuel Neves <sneves@dei.uc.pt>
+cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        davem@davemloft.net,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
+        Andy Polyakov <appro@openssl.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Subject: Re: [PATCH net-next v3 05/17] zinc: ChaCha20 x86_64 implementation
+In-Reply-To: <CAEX_ruFFWsW897DuFEbz9+6av02bMwDgiA9GxV+=SBtyKG7LJw@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1809111106420.5110@nanos.tec.linutronix.de>
+References: <20180911010838.8818-1-Jason@zx2c4.com> <20180911010838.8818-6-Jason@zx2c4.com> <alpine.DEB.2.21.1809111021250.5110@nanos.tec.linutronix.de> <CAEX_ruFFWsW897DuFEbz9+6av02bMwDgiA9GxV+=SBtyKG7LJw@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <CAPBb6MXrEPz7Z60zUp-m4pWUB7t9p1iFSqqp9s4Gjqj9i3v4sA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfJN2DI0ZS8PKhnAZ44k3uUh/9tbKog/QB491L2uA3CVRxNYIB99Y+MS25YFKQaABgJ7O7CIa1tBx5pcUNDtjgbD8PoPKgZt75eUxLTf6HUEpiw5yEUOs
- mPaj+0s4gGnT49sUpC1i4Aqh9kw+LzWWIJ30eRE/sX+35QKFhwztDqRBTW8uyEgPETZqRVxZ4tJwni0lyEVj6DcmyAgw2mu2QYUCe7/7rv2XT07W8PICndhQ
- MYT7dFzq8oGav6U6z5aMh8iidQrw+25ok0jXvpvEBA84fUGeBEetzpYGDmcnlmmFj56yh5Mw/x0HUZjUhfPPpKLCGHW6hlccifm/V3PXcJF8tHeSS18VtHQy
- Si6sy/m/xns79mc/BnDhI6yP2ZLDeELIwquAfijHIUHKtwB1sGabirZE7mwXelCuhcAKxLzhdMFV6QZnADDqaUP39vqUfaufwbGZMME42iHEGR7OBnTo98tq
- 8FOVJgGfx2KQAquLa+gU2GYF5ynKKjCcTyMY3w==
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/11/18 10:40, Alexandre Courbot wrote:
-> On Mon, Sep 10, 2018 at 9:49 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
->>
->> On 09/10/2018 01:57 PM, Hans Verkuil wrote:
->>> On 09/10/2018 01:25 PM, Hans Verkuil wrote:
->>>>> +
->>>>> +Decoding
->>>>> +========
->>>>> +
->>>>> +For each frame, the client is responsible for submitting a request to which the
->>>>> +following is attached:
->>>>> +
->>>>> +* Exactly one frame worth of encoded data in a buffer submitted to the
->>>>> +  ``OUTPUT`` queue,
->>>>> +* All the controls relevant to the format being decoded (see below for details).
->>>>> +
->>>>> +``CAPTURE`` buffers must not be part of the request, but must be queued
->>>>> +independently. The driver will pick one of the queued ``CAPTURE`` buffers and
->>>>> +decode the frame into it. Although the client has no control over which
->>>>> +``CAPTURE`` buffer will be used with a given ``OUTPUT`` buffer, it is guaranteed
->>>>> +that ``CAPTURE`` buffers will be returned in decode order (i.e. the same order
->>>>> +as ``OUTPUT`` buffers were submitted), so it is trivial to associate a dequeued
->>>>> +``CAPTURE`` buffer to its originating request and ``OUTPUT`` buffer.
->>>>> +
->>>>> +If the request is submitted without an ``OUTPUT`` buffer or if one of the
->>>>> +required controls are missing, then :c:func:`MEDIA_REQUEST_IOC_QUEUE` will return
->>>>> +``-EINVAL``.
->>>>
->>>> Not entirely true: if buffers are missing, then ENOENT is returned. Missing required
->>>> controls or more than one OUTPUT buffer will result in EINVAL. This per the latest
->>>> Request API changes.
->>>>
->>>>  Decoding errors are signaled by the ``CAPTURE`` buffers being
->>>>> +dequeued carrying the ``V4L2_BUF_FLAG_ERROR`` flag.
->>>>
->>>> Add here that if the reference frame had an error, then all other frames that refer
->>>> to it should also set the ERROR flag. It is up to userspace to decide whether or
->>>> not to drop them (part of the frame might still be valid).
->>>>
->>>> I am not sure whether this should be documented, but there are some additional
->>>> restrictions w.r.t. reference frames:
->>>>
->>>> Since decoders need access to the decoded reference frames there are some corner
->>>> cases that need to be checked:
->>>>
->>>> 1) V4L2_MEMORY_USERPTR cannot be used for the capture queue: the driver does not
->>>>    know when a malloced but dequeued buffer is freed, so the reference frame
->>>>    could suddenly be gone.
->>>>
->>>> 2) V4L2_MEMORY_DMABUF can be used, but drivers should check that the dma buffer is
->>>>    still available AND increase the dmabuf refcount while it is used by the HW.
->>>>
->>>> 3) What to do if userspace has requeued a buffer containing a reference frame,
->>>>    and you want to decode a B/P-frame that refers to that buffer? We need to
->>>>    check against that: I think that when you queue a capture buffer whose index
->>>>    is used in a pending request as a reference frame, than that should fail with
->>>>    an error. And trying to queue a request referring to a buffer that has been
->>>>    requeued should also fail.
->>>>
->>>> We might need to add some support for this in v4l2-mem2mem.c or vb2.
->>>>
->>>> We will have similar (but not quite identical) issues with stateless encoders.
->>>
->>> Related to this is the question whether buffer indices that are used to refer
->>> to reference frames should refer to the capture or output queue.
->>>
->>> Using capture indices works if you never queue more than one request at a time:
->>> you know exactly what the capture buffer index is of the decoded I-frame, and
->>> you can use that in the following requests.
->>>
->>> But if multiple requests are queued, then you don't necessarily know to which
->>> capture buffer an I-frame will be decoded, so then you can't provide this index
->>> to following B/P-frames. This puts restrictions on userspace: you can only
->>> queue B/P-frames once you have decoded the I-frame. This might be perfectly
->>> acceptable, though.
+On Tue, 11 Sep 2018, Samuel Neves wrote:
+
+> On Tue, Sep 11, 2018 at 9:22 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
+> > On Mon, 10 Sep 2018, Jason A. Donenfeld wrote:
+> >>  lib/zinc/Makefile                        |    4 +
+> >>  lib/zinc/chacha20/chacha20-x86_64-glue.h |  102 +
+> >>  lib/zinc/chacha20/chacha20-x86_64.S      | 2632 ++++++++++++++++++++++
+> >
+> > Just a stupid question. What's the rationale of putting that into lib/zinc
+> > instead of having it in arch/x86/crypto?
+> >
 > 
-> IIUC at the moment we are indeed using CAPTURE buffer indexes, e.g:
-> 
-> .. flat-table:: struct v4l2_ctrl_mpeg2_slice_params
->   ..
->       - ``backward_ref_index``
->       - Index for the V4L2 buffer to use as backward reference, used
-> with
->        B-coded and P-coded frames.
-> 
-> So I wonder how is the user-space currently exercising Cedrus doing
-> here? Waiting for each frame used as a reference to be dequeued?
+> This is covered on the 02/17 commit message, whose relevant paragraph follows:
 
-No, the assumption is (if I understand correctly) that userspace won't
-touch the memory of the dequeued reference buffer so HW can just point
-to it.
+Well, being only cc'ed on only half of the patches does not really help.
 
-Paul, please correct me if I am wrong.
+> > It also organizes the implementations in a simple, straight-forward,
+> > and direct manner, making it enjoyable and intuitive to work on.
+> > Rather than moving optimized assembly implementations into arch/, it
+> > keeps them all together in lib/zinc/, making it simple and obvious to
+> > compare and contrast what's happening. This is, notably, exactly what
+> > the lib/raid6/ tree does, and that seems to work out rather well. It's
+> > also the pattern of most successful crypto libraries. The architecture-
+> > specific glue-code is made a part of each translation unit, rather than
+> > being in a separate one, so that generic and architecture-optimized code
+> > are combined at compile-time, and incompatibility branches compiled out by
+> > the optimizer.
 
-What does chromeOS do?
+Fair enough.
 
-The cedrus approach sounds reasonable, although it should be documented
-that userspace shouldn't modify the data in a reference frame.
 
-> 
->>>
->>> Using output buffer indices will work (the driver will know to which capture
->>> buffer index the I-frames mapped), but it requires that the output buffer that
->>> contained a reference frame isn't requeued, since that means that the driver
->>> will lose this mapping. I think this will make things too confusing, though.
->>>
->>> A third option is that you don't refer to reference frames by buffer index,
->>> but instead by some other counter (sequence counter, perhaps?).
->>
->> Definitely not sequence number, since it has the same problem as buffer index.
->>
->> This could be a value relative to the frame you are trying to decode: i.e. 'use
->> the capture buffer from X frames ago'. This makes it index independent and is
->> still easy to keep track of inside the driver and application.
-> 
-> Sounds like that would work, although the driver would need to
-> maintain a history of processed frames indexes. We will still need to
-> make sure that frames referenced have not been re-queued in the
-> meantime.
-
-Definitely, but that is all internal administration. Although I think
-we would want to have some helper code for this.
-
-After thinking about this some more I rather like this. This makes it
-independent of buffer index numbers.
-
-An alternative approach would be that the applications specifies a cookie
-(u32) value to an output buffer which is then copied to the corresponding
-capture buffer. That cookie is then used to refer to reference frames.
-
-Basically userspace gives names to buffers.
-
-The problem is that there really is no space left in v4l2_buffer, unless we
-decide to turn the timecode field into a union with a 'u32 cookie' and add
-a COOKIE buffer flag. Nobody is using the timecode, so that should be possible.
-
-But if we go there, then perhaps we should just bite the bullet and create
-a struct v4l2_ext_buffer that is clean:
-
-https://git.linuxtv.org/hverkuil/media_tree.git/commit/?h=v4l2-buffer&id=a95549df06d9900f3559afdbb9da06bd4b22d1f3
-
-> Drivers (or the to-be-designed codec framework?) will also need to be
-> handle the case where user-space did not allocate enough buffers to
-> hold all the reference frames and the frame to be decoded...
-
-Is that a driver problem? That sounds more like something that userspace
-has to handle. The driver just has to check that the referenced buffers
-have not been requeued by userspace and return an error if they have.
-
-It's a stateless codec, so if the driver detects a crappy state, then
-what can it do but return an error? Not the driver's problem.
-
-Regards,
-
-	Hans
