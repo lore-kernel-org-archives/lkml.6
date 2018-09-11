@@ -2,362 +2,141 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EA91C6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 05:20:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13998C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 05:23:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E455220833
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 05:20:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E455220833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 967BD20833
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 05:23:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="jiz29T/X"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 967BD20833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726992AbeIKKSX (ORCPT
+        id S1727010AbeIKKUo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 06:18:23 -0400
-Received: from mga12.intel.com ([192.55.52.136]:20080 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726426AbeIKKSX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 06:18:23 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2018 22:20:44 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,359,1531810800"; 
-   d="scan'208";a="256153640"
-Received: from bee.sh.intel.com (HELO lkp-server01) ([10.239.97.14])
-  by orsmga005.jf.intel.com with ESMTP; 10 Sep 2018 22:20:23 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1fzb67-000FOK-8W; Tue, 11 Sep 2018 13:20:23 +0800
-Date:   Tue, 11 Sep 2018 13:20:04 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>
-Cc:     kbuild-all@01.org, Herbert Xu <herbert@gondor.apana.org.au>,
-        Stuart Yoder <stuyoder@gmail.com>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Li Yang <leoyang.li@nxp.com>, Roy Pledge <roy.pledge@nxp.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 07/11] crypto: caam/qi2 - add DPAA2-CAAM driver
-Message-ID: <201809111311.rqCiSh3E%fengguang.wu@intel.com>
-References: <20180910171550.5659-8-horia.geanta@nxp.com>
+        Tue, 11 Sep 2018 06:20:44 -0400
+Received: from mail-sn1nam02on0075.outbound.protection.outlook.com ([104.47.36.75]:43492
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726525AbeIKKUo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 06:20:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zvMZ4I5fDyFWFrWkDmnNKWbcPDm/uzUdy4uYcM1Sdoc=;
+ b=jiz29T/XHciXYgsbTiCv8osnD2dPilNcqZB2AuA7sHbqXshBxqEOc9oX9BMknsyTX80JrY0hpzvf6r56s+EGyy4AVQTXB2PvKOSONWSsTfZq+jy2n2GkWfM13UHR9G/0kdve00qQmMiujxFY4Xuvou4d3VHcxUkEG1myitvlCT0=
+Received: from MWHPR02MB2623.namprd02.prod.outlook.com (10.168.206.9) by
+ MWHPR02MB2336.namprd02.prod.outlook.com (10.168.244.14) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1122.17; Tue, 11 Sep 2018 05:23:09 +0000
+Received: from MWHPR02MB2623.namprd02.prod.outlook.com
+ ([fe80::948a:706d:2ec5:4b6f]) by MWHPR02MB2623.namprd02.prod.outlook.com
+ ([fe80::948a:706d:2ec5:4b6f%7]) with mapi id 15.20.1122.019; Tue, 11 Sep 2018
+ 05:23:09 +0000
+From:   Naga Sureshkumar Relli <nagasure@xilinx.com>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+CC:     "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>,
+        "absahu@codeaurora.org" <absahu@codeaurora.org>,
+        "peterpandong@micron.com" <peterpandong@micron.com>,
+        "frieder.schrempf@exceet.de" <frieder.schrempf@exceet.de>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michal Simek <michals@xilinx.com>,
+        "nagasureshkumarrelli@gmail.com" <nagasureshkumarrelli@gmail.com>
+Subject: RE: [LINUX PATCH v10 2/2] mtd: rawnand: arasan: Add support for
+ Arasan NAND Flash Controller
+Thread-Topic: [LINUX PATCH v10 2/2] mtd: rawnand: arasan: Add support for
+ Arasan NAND Flash Controller
+Thread-Index: AQHUNiz7bKojXyawJ0eL/lrCUsemM6TI3JSAgCHUiIA=
+Date:   Tue, 11 Sep 2018 05:23:09 +0000
+Message-ID: <MWHPR02MB2623A761C40745AD4AE2A295AF040@MWHPR02MB2623.namprd02.prod.outlook.com>
+References: <1534511964-20342-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
+        <1534511964-20342-3-git-send-email-naga.sureshkumar.relli@xilinx.com>
+ <20180820184013.57fd7b5c@bbrezillon>
+In-Reply-To: <20180820184013.57fd7b5c@bbrezillon>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+x-originating-ip: [149.199.50.133]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR02MB2336;6:AbR7BiutiSgiA/Qr4Fsdw/yKu2bwoFBDYsYM8KCggm27FA21PFC7yEzdM+k91UZiieKqJA9sY9RVIZlrgTm/oBaXpm/3cVzjwC5SAi5HwHWTFGfeWXGPNz8GBhJj0xt5NKCvA0l6yCOK7PB5tKaV3RnKjH80ajfkeUWoRqMdtDaqloX7yPRfTs7ropdw4eyRNo9GxPI35dBSSY+e9rps9iqYOihz/HW0wzj9ALv0yOgvoUV6XK+9lO/BxMQnsZN8gzhi4z3F8d8e2hWVgO9aqLI70Ob2xgmTMHrEG6yIAR762ZH8xN6q+XNnZ4uGWmRuOCQSrZLWC/HQKbwzGJHnp6BhOCnoMlAGJM6AeJy8ZQUMlLxjC4eDRnpH0dxl1Hz5/h6i2saLh+sMHLR87SyF3WYcBg8w46pw1Endf7epaBIyIGJ2QSx6UINhzHqgz1m3tMiRyfjq58dd8eUZJea5aA==;5:DHl9ffQT0YmXDerlhX992sr1zoje9xWThutEef7nR1WdTb5ZzoP9VHr4EliH0cYpsvjLDLFN3RD1zNmGzfAKhJxNLd29rEfnLKo+lgUINcQQh3eCHZ68nyjUzKRJXFjzjk9HKlmRYH+42OdmRHj+PQ2Js24SZX+gzKDICzIo6L4=;7:JiZ1Pcx0OmeJPhMOej8ybDKs2pVafOsuEjY6t6vTtcIE308zIOzYtToF7jJpPAe7y5+GgwNovY5HzyMjk1yqTo3FlAQnUg84c0JyfXmaOx6Ut4S8aczmMT8V9Z1/5GyXBJ3EPHjMzDxUZ0IDX2O/4ubRLoF12S05mFN8Qqj0vwGu530rnwrJr68LgX/lUf/oHNnLQKz0/W3GJSzccxTftYmMBjX4MuJsA18i7fhyr0Th9zGqdKsag6j0lLFHPvoj
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(136003)(39860400002)(376002)(366004)(346002)(396003)(13464003)(189003)(199004)(6436002)(99286004)(7416002)(53546011)(7696005)(6346003)(106356001)(102836004)(8936002)(86362001)(6506007)(81156014)(446003)(11346002)(105586002)(6916009)(478600001)(476003)(186003)(486006)(81166006)(26005)(76176011)(39060400002)(316002)(74316002)(4326008)(305945005)(25786009)(6246003)(68736007)(33656002)(66066001)(14454004)(217873002)(54906003)(7736002)(14444005)(256004)(5660300001)(9686003)(2900100001)(53936002)(6116002)(3846002)(2906002)(97736004)(55016002)(8676002)(5250100002)(229853002);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR02MB2336;H:MWHPR02MB2623.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-office365-filtering-correlation-id: 4477e4b6-306a-413a-5715-08d617a6a945
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:MWHPR02MB2336;
+x-ms-traffictypediagnostic: MWHPR02MB2336:
+x-microsoft-antispam-prvs: <MWHPR02MB233648F7DA37F0E4B7A214CFAF040@MWHPR02MB2336.namprd02.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(85827821059158)(258649278758335)(192813158149592)(34377916053724)(7411616537696);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823301075)(93006095)(93001095)(10201501046)(3002001)(3231344)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(201708071742011)(7699050);SRVR:MWHPR02MB2336;BCL:0;PCL:0;RULEID:;SRVR:MWHPR02MB2336;
+x-forefront-prvs: 0792DBEAD0
+received-spf: None (protection.outlook.com: xilinx.com does not designate
+ permitted sender hosts)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=nagasure@xilinx.com; 
+x-microsoft-antispam-message-info: SVo5CcKR//fny73mBefGAHnxli1I22EezRuX3ll5qwu3k1weAQ5nYKXFzzpU0LjpRFZyp9BqJloAbh5Ee+JjW5rUDjeWtWK+aeysdmGeTEuEjxtzgVj55AJmp/MLTb5+dacuSwO3Jryn5fStNlCSpKH/AjDsCpT62WtXoBF/EOfaMW6TsYiyDAiQfwula/bad5k5/2Z+r5YiivAAxt7xHM1NMYsMzucLU+MZgZl9aWBHZ9PhCoUpHW3VOVqkcny6tmyUCsCL+OQaWHZt94t4qqRpot6+yWzbHk57mar+xPSTCustbh8hxm/NIChRWTB0QcdgObAKhWlg+5/tcrjyoIEf1SkSZPuiuRuwhLtmMPQ=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180910171550.5659-8-horia.geanta@nxp.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4477e4b6-306a-413a-5715-08d617a6a945
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Sep 2018 05:23:09.0938
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR02MB2336
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Horia,
+Hi Boris,
 
-I love your patch! Perhaps something to improve:
+> -----Original Message-----
+> From: Boris Brezillon [mailto:boris.brezillon@bootlin.com]
+> Sent: Monday, August 20, 2018 10:10 PM
+> To: Naga Sureshkumar Relli <nagasure@xilinx.com>
+> Cc: miquel.raynal@bootlin.com; richard@nod.at; dwmw2@infradead.org;
+> computersforpeace@gmail.com; marek.vasut@gmail.com; kyungmin.park@samsung=
+.com;
+> absahu@codeaurora.org; peterpandong@micron.com; frieder.schrempf@exceet.d=
+e; linux-
+> mtd@lists.infradead.org; linux-kernel@vger.kernel.org; Michal Simek <mich=
+als@xilinx.com>;
+> nagasureshkumarrelli@gmail.com
+> Subject: Re: [LINUX PATCH v10 2/2] mtd: rawnand: arasan: Add support for =
+Arasan NAND
+> Flash Controller
+>=20
+> Hi Naga,
+>=20
+> On Fri, 17 Aug 2018 18:49:24 +0530
+> Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com> wrote:
+>=20
+>=20
+> I haven't finished reviewing the driver but there are still a bunch of th=
+ings that look strange, for
+> instance, your ->read/write_page() implementation looks suspicious. Let's=
+ discuss that before
+> you send a new version.
+Could you please review the remaining stuff?
+I have the changes ready with me which will address all your comments given=
+ to this series.
 
-[auto build test WARNING on cryptodev/master]
-[also build test WARNING on v4.19-rc3 next-20180910]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Horia-Geant/crypto-caam-add-DPAA2-DPSECI-driver/20180911-055735
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git master
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
-
-
-sparse warnings: (new ones prefixed by >>)
-
->> drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __le32unsigned int @@
-   drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-   drivers/crypto/caam/regs.h:95:1:    got restricted __le32 [usertype] <noident>
->> drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __be32unsigned int @@
-   drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-   drivers/crypto/caam/regs.h:95:1:    got restricted __be32 [usertype] <noident>
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __le32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __le32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __le32unsigned int @@
-   drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-   drivers/crypto/caam/regs.h:95:1:    got restricted __le32 [usertype] <noident>
->> drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __be32unsigned int @@
-   drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-   drivers/crypto/caam/regs.h:95:1:    got restricted __be32 [usertype] <noident>
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __le32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __le32unsigned int @@
-   drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-   drivers/crypto/caam/regs.h:95:1:    got restricted __le32 [usertype] <noident>
->> drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __be32unsigned int @@
-   drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-   drivers/crypto/caam/regs.h:95:1:    got restricted __be32 [usertype] <noident>
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __le32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __le32unsigned int @@
-   drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-   drivers/crypto/caam/regs.h:95:1:    got restricted __le32 [usertype] <noident>
->> drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __be32unsigned int @@
-   drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-   drivers/crypto/caam/regs.h:95:1:    got restricted __be32 [usertype] <noident>
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __le32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __le32unsigned int @@
-   drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-   drivers/crypto/caam/regs.h:95:1:    got restricted __le32 [usertype] <noident>
->> drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __be32unsigned int @@
-   drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-   drivers/crypto/caam/regs.h:95:1:    got restricted __be32 [usertype] <noident>
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __le32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __le32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __le32unsigned int @@
-   drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-   drivers/crypto/caam/regs.h:95:1:    got restricted __le32 [usertype] <noident>
->> drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __be32unsigned int @@
-   drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-   drivers/crypto/caam/regs.h:95:1:    got restricted __be32 [usertype] <noident>
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __le32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __le32unsigned int @@
-   drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-   drivers/crypto/caam/regs.h:95:1:    got restricted __le32 [usertype] <noident>
->> drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __be32unsigned int @@
-   drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-   drivers/crypto/caam/regs.h:95:1:    got restricted __be32 [usertype] <noident>
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __le32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __le32unsigned int @@
-   drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-   drivers/crypto/caam/regs.h:95:1:    got restricted __le32 [usertype] <noident>
->> drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __be32unsigned int @@
-   drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-   drivers/crypto/caam/regs.h:95:1:    got restricted __be32 [usertype] <noident>
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __le32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __le32unsigned int @@
-   drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-   drivers/crypto/caam/regs.h:95:1:    got restricted __le32 [usertype] <noident>
->> drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __be32unsigned int @@
-   drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-   drivers/crypto/caam/regs.h:95:1:    got restricted __be32 [usertype] <noident>
->> drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __le32unsigned int @@
-   drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-   drivers/crypto/caam/regs.h:95:1:    got restricted __le32 [usertype] <noident>
->> drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __be32unsigned int @@
-   drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-   drivers/crypto/caam/regs.h:95:1:    got restricted __be32 [usertype] <noident>
->> drivers/crypto/caam/regs.h:96:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned long long @@    got restricted unsigned long long @@
-   drivers/crypto/caam/regs.h:96:1:    expected unsigned long long
-   drivers/crypto/caam/regs.h:96:1:    got restricted __le64 [usertype] <noident>
->> drivers/crypto/caam/regs.h:96:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned long long @@    got restricted unsigned long long @@
-   drivers/crypto/caam/regs.h:96:1:    expected unsigned long long
-   drivers/crypto/caam/regs.h:96:1:    got restricted __be64 [usertype] <noident>
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __le32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:95:1: sparse: too many warnings
---
->> drivers/crypto/caam/caamalg_qi2.c:83:6: sparse: symbol 'dpaa2_caam_iova_to_virt' was not declared. Should it be static?
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __le32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __le32unsigned int @@
-   drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-   drivers/crypto/caam/regs.h:95:1:    got restricted __le32 [usertype] <noident>
->> drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __be32unsigned int @@
-   drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-   drivers/crypto/caam/regs.h:95:1:    got restricted __be32 [usertype] <noident>
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __le32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __le32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __le32unsigned int @@
-   drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-   drivers/crypto/caam/regs.h:95:1:    got restricted __le32 [usertype] <noident>
->> drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __be32unsigned int @@
-   drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-   drivers/crypto/caam/regs.h:95:1:    got restricted __be32 [usertype] <noident>
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __le32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __le32unsigned int @@
-   drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-   drivers/crypto/caam/regs.h:95:1:    got restricted __le32 [usertype] <noident>
->> drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __be32unsigned int @@
-   drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-   drivers/crypto/caam/regs.h:95:1:    got restricted __be32 [usertype] <noident>
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __le32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __le32unsigned int @@
-   drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-   drivers/crypto/caam/regs.h:95:1:    got restricted __le32 [usertype] <noident>
->> drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __be32unsigned int @@
-   drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-   drivers/crypto/caam/regs.h:95:1:    got restricted __be32 [usertype] <noident>
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __le32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __le32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __le32unsigned int @@
-   drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-   drivers/crypto/caam/regs.h:95:1:    got restricted __le32 [usertype] <noident>
->> drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __be32unsigned int @@
-   drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-   drivers/crypto/caam/regs.h:95:1:    got restricted __be32 [usertype] <noident>
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __le32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __le32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __le32unsigned int @@
-   drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-   drivers/crypto/caam/regs.h:95:1:    got restricted __le32 [usertype] <noident>
->> drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __be32unsigned int @@
-   drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-   drivers/crypto/caam/regs.h:95:1:    got restricted __be32 [usertype] <noident>
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __le32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __le32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __le32unsigned int @@
-   drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-   drivers/crypto/caam/regs.h:95:1:    got restricted __le32 [usertype] <noident>
->> drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __be32unsigned int @@
-   drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-   drivers/crypto/caam/regs.h:95:1:    got restricted __be32 [usertype] <noident>
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __le32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
->> drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
-   drivers/crypto/caam/regs.h:92:1: sparse: too many warnings
-   drivers/crypto/caam/caamalg_qi2.c:288:13: warning: 'split_key_sh_done' defined but not used [-Wunused-function]
-    static void split_key_sh_done(void *cbk_ctx, u32 err)
-                ^~~~~~~~~~~~~~~~~
-
-Please review and possibly fold the followup patch.
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+Thanks,
+Naga Sureshkumar Relli
