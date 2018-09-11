@@ -4,45 +4,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD711C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 11:44:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37C53C6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 11:45:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67FF920839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 11:44:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E12DD206B8
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 11:45:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HbST/1CF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67FF920839
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="n7yrdpyH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E12DD206B8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726863AbeIKQnw (ORCPT
+        id S1727127AbeIKQoK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 12:43:52 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:59994 "EHLO
+        Tue, 11 Sep 2018 12:44:10 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:60008 "EHLO
         merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726554AbeIKQnw (ORCPT
+        with ESMTP id S1726554AbeIKQoK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 12:43:52 -0400
+        Tue, 11 Sep 2018 12:44:10 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
         References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=YyviicP+lTpBCPn/WgAStSGu/SbAo4yVeTel1oh4zLI=; b=HbST/1CFOQ3I9Ifcj0cDPUO2z
-        6bGp1TLfmK8nmtJUw1OA9NMsksbtiUE/mxORwFenquCGkWmIZG7IPPFuJMJRIRrhvcwOQ5VxEKg0Z
-        CEf5i/yPuau8IAuHf9t0LMnqL99ioaGp8NHCI0wnaiBP9YnGt7de0zrtm+0RtEfKvxxxyN7UJiUkD
-        BvuqtSovjn97DOWonDp0H65tfdoeeZgY4n6qbSueyAS31+8lmQVMSzW94G7EigwuG2si+Cdz33aZa
-        hHOGVErR/Seks74uE+JcRbpYzFXusugA4zhwFlUGNPbBWJuXArSSC3LjYmiq6XDS3bu0yjCumhogs
-        WPP5L1rSg==;
+         bh=MuqbG7Cp35VmQ2+8TXUo1YBv9AuKwUiF8MlWXlnRfb8=; b=n7yrdpyHVHiuHvYOITwaUT3xL
+        dUp0Pf/Z4Caz90qvfk6G9q0mAyQd9o2L863AJp3i7ft16MF/MJHFncQfmV9yF0R55GXRXS/uUTTGd
+        s5e0Qoe8acErT+ipfcQC/+B46Zp1lXt3UhwGlVl0BUE11YJEV8dok9vSwdg0ga+movYEXNbXtEgjg
+        GG+g2mSq5JUczCi8iEU9KzPK8YhGgGSQaFEUuywFsh6FLMAwpNiyNv+K596mpQk7BpZNHrY+JL5ab
+        mNSy69j4RfE9p8ovbLCjblN9KeN4RAp+rGZUgCyT+rXzNFpGhFGYvcdGnb8zQuIlsXVjGtVeZk5QO
+        BxExXLrXw==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
         by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fzh5q-0005gP-PT; Tue, 11 Sep 2018 11:44:30 +0000
+        id 1fzh5N-0005gB-K6; Tue, 11 Sep 2018 11:44:02 +0000
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 934692057F833; Tue, 11 Sep 2018 13:44:29 +0200 (CEST)
-Date:   Tue, 11 Sep 2018 13:44:29 +0200
+        id 3DB9D2057F833; Tue, 11 Sep 2018 13:43:59 +0200 (CEST)
+Date:   Tue, 11 Sep 2018 13:43:59 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
 Cc:     Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org,
@@ -63,40 +63,55 @@ Cc:     Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 Subject: Re: [PATCHv3 2/6] tty/ldsem: Update waiter->task before waking up
  reader
-Message-ID: <20180911114429.GT24106@hirez.programming.kicks-ass.net>
+Message-ID: <20180911114359.GS24106@hirez.programming.kicks-ass.net>
 References: <20180911014821.26286-1-dima@arista.com>
  <20180911014821.26286-3-dima@arista.com>
  <20180911050449.GB4065@jagdpanzerIV>
- <20180911054129.GC4065@jagdpanzerIV>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180911054129.GC4065@jagdpanzerIV>
+In-Reply-To: <20180911050449.GB4065@jagdpanzerIV>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 11, 2018 at 02:41:29PM +0900, Sergey Senozhatsky wrote:
-> On (09/11/18 14:04), Sergey Senozhatsky wrote:
-> > >  	for (;;) {
-> > >  		set_current_state(TASK_UNINTERRUPTIBLE);
+On Tue, Sep 11, 2018 at 02:04:49PM +0900, Sergey Senozhatsky wrote:
+> On (09/11/18 02:48), Dmitry Safonov wrote:
+> > There is a couple of reports about lockup in ldsem_down_read() without
+> > anyone holding write end of ldisc semaphore:
+> > lkml.kernel.org/r/<20171121132855.ajdv4k6swzhvktl6@wfg-t540p.sh.intel.com>
+> > lkml.kernel.org/r/<20180907045041.GF1110@shao2-debian>
 > > 
-> > I think that set_current_state() also executes memory barrier. Just
-> > because it accesses task state.
-> > 
-> > > -		if (!waiter.task)
-> > > +		if (!READ_ONCE(waiter.task))
-> > >  			break;
-> > >  		if (!timeout)
-> > >  			break;
+> > They all looked like a missed wake up.
+> > I wasn't lucky enough to reproduce it, but it seems like reader on
+> > another CPU can miss waiter->task update and schedule again, resulting
+> > in indefinite (MAX_SCHEDULE_TIMEOUT) sleep.
 > 
-> This READ_ONCE(waiter.task) looks interesting. Maybe could be moved
-> to a loop condition
+> Certainly, something suspicious is going on.
 > 
-> 	while (!READ_ONCE(waiter.task)) {
-> 		...
-> 	}
+> > @@ -118,6 +118,8 @@ static void __ldsem_wake_readers(struct ld_semaphore *sem)
+> >  		tsk = waiter->task;
+> >  		smp_mb();
+> >  		waiter->task = NULL;
+> > +		/* Make sure down_read_failed() will see !waiter->task update */
+> > +		smp_wmb();
+> >  		wake_up_process(tsk);
+> 
+> Hmm. I think wake_up_process() executes a full memory barrier, because
+> it accesses task state.
+> 
+> >  		put_task_struct(tsk);
+> >  	}
+> > @@ -217,7 +219,7 @@ down_read_failed(struct ld_semaphore *sem, long count, long timeout)
+> >  	for (;;) {
+> >  		set_current_state(TASK_UNINTERRUPTIBLE);
+> 
+> I think that set_current_state() also executes memory barrier. Just
+> because it accesses task state.
 
-No, it must be after set_current_state(). See that same comment.
+In both cases, the rationale, 'because it accesses task state' is
+utterly wrong.
+
+The reasoning can be found in the comment near set_current_state().
