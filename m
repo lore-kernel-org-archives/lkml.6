@@ -6,495 +6,283 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A08FC6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 17:15:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B43EDC04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 17:15:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E63E420892
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 17:15:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E63E420892
+	by mail.kernel.org (Postfix) with ESMTP id 64B782086A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 17:15:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64B782086A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728345AbeIKWPR (ORCPT
+        id S1728362AbeIKWPZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 18:15:17 -0400
-Received: from mga02.intel.com ([134.134.136.20]:31120 "EHLO mga02.intel.com"
+        Tue, 11 Sep 2018 18:15:25 -0400
+Received: from mga02.intel.com ([134.134.136.20]:31116 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728298AbeIKWPR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 18:15:17 -0400
+        id S1728299AbeIKWPQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 18:15:16 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Sep 2018 10:14:58 -0700
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Sep 2018 10:15:00 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,361,1531810800"; 
-   d="scan'208";a="79642217"
-Received: from rchatre-s.jf.intel.com ([10.54.70.76])
-  by FMSMGA003.fm.intel.com with ESMTP; 11 Sep 2018 10:14:58 -0700
-From:   Reinette Chatre <reinette.chatre@intel.com>
-To:     tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
-        peterz@infradead.org, mingo@redhat.com, acme@kernel.org
-Cc:     gavin.hindman@intel.com, jithu.joseph@intel.com,
-        dave.hansen@intel.com, hpa@zytor.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Reinette Chatre <reinette.chatre@intel.com>
-Subject: [PATCH V3 5/6] x86/intel_rdt: Use perf infrastructure for measurements
-Date:   Tue, 11 Sep 2018 10:14:36 -0700
-Message-Id: <e49f32d40c53839c31e1376f11059539afd08f23.1536685533.git.reinette.chatre@intel.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <cover.1536685533.git.reinette.chatre@intel.com>
-References: <cover.1536685533.git.reinette.chatre@intel.com>
-In-Reply-To: <cover.1536685533.git.reinette.chatre@intel.com>
-References: <cover.1536685533.git.reinette.chatre@intel.com>
+   d="scan'208";a="262579658"
+Received: from chenyu-desktop.sh.intel.com ([10.239.160.116])
+  by fmsmga006.fm.intel.com with ESMTP; 11 Sep 2018 10:14:56 -0700
+From:   Chen Yu <yu.c.chen@intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Pavel Machek <pavel@ucw.cz>, Rui Zhang <rui.zhang@intel.com>,
+        Chen Yu <yu.chen.surf@gmail.com>,
+        Zhimin Gu <kookoo.gu@intel.com>,
+        Len Brown <len.brown@intel.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, linux-pm@vger.kernel.org
+Subject: [PATCH 4/4][v2] x86, hibernate: Backport several fixes from 64bits to 32bits hibernation
+Date:   Wed, 12 Sep 2018 01:21:00 +0800
+Message-Id: <6c1b31e24b78b0366c7ca9fa6ac75bdb463d8fc0.1536685746.git.yu.c.chen@intel.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <cover.1536685746.git.yu.c.chen@intel.com>
+References: <cover.1536685746.git.yu.c.chen@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The success of a cache pseudo-locked region is measured using
-performance monitoring events that are programmed directly at the time
-the user requests a measurement.
+From: Zhimin Gu <kookoo.gu@intel.com>
 
-Modifying the performance event registers directly is not appropriate
-since it circumvents the in-kernel perf infrastructure that exists to
-manage these resources and provide resource arbitration to the
-performance monitoring hardware.
+Currently there are mainly three bugs in 32bits system when doing
+hibernation:
+1. The page copy code is not running in safe page, which might
+   cause hang during resume.
+2. There's no text mapping for the final jump address
+   of the original kernel, which might cause the system jumping
+   into illegal address and causes system hang during resume.
+3. The restore kernel switches to its own kernel page table(swapper_pg_dir)
+   rather than the original kernel page table after all the pages
+   been copied back, which might cause invalid virtual-physical
+   mapping issue during resume.
 
-The cache pseudo-locking measurements are modified to use the in-kernel
-perf infrastructure. Performance events are created and validated with
-the appropriate perf API. The performance counters are still read as
-directly as possible to avoid the additional cache hits. This is
-done safely by first ensuring with the perf API that the counters have
-been programmed correctly and only accessing the counters in an
-interrupt disabled section where they are not able to be moved.
+To solve these problems:
 
-As part of the transition to the in-kernel perf infrastructure the L2
-and L3 measurements are split into two separate measurements that can
-be triggered independently. This separation prevents additional cache
-misses incurred during the extra testing code used to decide if a
-L2 and/or L3 measurement should be made.
+1. Copy the code core_restore_code to a safe page, to avoid the instruction
+   code been overwritten when image kernel pages are being copied.
+2. Set up temporary text mapping for the image kernel's jump address,
+   so that after all the pages have been copied back, the system could
+   jump to this address.
+3. Switch to the original kernel page table during resume.
 
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+Furthermore, MD5 hash check for e820 map is also backported from 64bits
+system.
+
+Acked-by: Chen Yu <yu.c.chen@intel.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Zhimin Gu <kookoo.gu@intel.com>
 ---
- Documentation/x86/intel_rdt_ui.txt          |  22 +-
- arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c | 295 ++++++++++++--------
- 2 files changed, 194 insertions(+), 123 deletions(-)
+ arch/x86/Kconfig                  |  2 +-
+ arch/x86/include/asm/suspend_32.h |  4 +++
+ arch/x86/power/hibernate.c        |  2 --
+ arch/x86/power/hibernate_32.c     | 37 +++++++++++++++++++++++
+ arch/x86/power/hibernate_asm_32.S | 49 +++++++++++++++++++++++++------
+ 5 files changed, 82 insertions(+), 12 deletions(-)
 
-diff --git a/Documentation/x86/intel_rdt_ui.txt b/Documentation/x86/intel_rdt_ui.txt
-index f662d3c530e5..52b10945ff75 100644
---- a/Documentation/x86/intel_rdt_ui.txt
-+++ b/Documentation/x86/intel_rdt_ui.txt
-@@ -520,18 +520,24 @@ the pseudo-locked region:
- 2) Cache hit and miss measurements using model specific precision counters if
-    available. Depending on the levels of cache on the system the pseudo_lock_l2
-    and pseudo_lock_l3 tracepoints are available.
--   WARNING: triggering this  measurement uses from two (for just L2
--   measurements) to four (for L2 and L3 measurements) precision counters on
--   the system, if any other measurements are in progress the counters and
--   their corresponding event registers will be clobbered.
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 1a0be022f91d..e8de5de1057f 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -2422,7 +2422,7 @@ menu "Power management and ACPI options"
  
- When a pseudo-locked region is created a new debugfs directory is created for
- it in debugfs as /sys/kernel/debug/resctrl/<newdir>. A single
- write-only file, pseudo_lock_measure, is present in this directory. The
--measurement on the pseudo-locked region depends on the number, 1 or 2,
--written to this debugfs file. Since the measurements are recorded with the
--tracing infrastructure the relevant tracepoints need to be enabled before the
--measurement is triggered.
-+measurement of the pseudo-locked region depends on the number written to this
-+debugfs file:
-+1 -  writing "1" to the pseudo_lock_measure file will trigger the latency
-+     measurement captured in the pseudo_lock_mem_latency tracepoint. See
-+     example below.
-+2 -  writing "2" to the pseudo_lock_measure file will trigger the L2 cache
-+     residency (cache hits and misses) measurement captured in the
-+     pseudo_lock_l2 tracepoint. See example below.
-+3 -  writing "3" to the pseudo_lock_measure file will trigger the L3 cache
-+     residency (cache hits and misses) measurement captured in the
-+     pseudo_lock_l3 tracepoint.
+ config ARCH_HIBERNATION_HEADER
+ 	def_bool y
+-	depends on X86_64 && HIBERNATION
++	depends on HIBERNATION
+ 
+ source "kernel/power/Kconfig"
+ 
+diff --git a/arch/x86/include/asm/suspend_32.h b/arch/x86/include/asm/suspend_32.h
+index 8be6afb58471..fdbd9d7b7bca 100644
+--- a/arch/x86/include/asm/suspend_32.h
++++ b/arch/x86/include/asm/suspend_32.h
+@@ -32,4 +32,8 @@ struct saved_context {
+ 	unsigned long return_address;
+ } __attribute__((packed));
+ 
++/* routines for saving/restoring kernel state */
++extern char core_restore_code[];
++extern char restore_registers[];
 +
-+All measurements are recorded with the tracing infrastructure. This requires
-+the relevant tracepoints to be enabled before the measurement is triggered.
- 
- Example of latency debugging interface:
- In this example a pseudo-locked region named "newlock" was created. Here is
-diff --git a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-index 2191623f1f27..5a294fe080d7 100644
---- a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-@@ -26,6 +26,7 @@
- #include <asm/intel_rdt_sched.h>
- #include <asm/perf_event.h>
- 
-+#include "../../events/perf_event.h" /* For X86_CONFIG() */
- #include "intel_rdt.h"
- 
- #define CREATE_TRACE_POINTS
-@@ -106,16 +107,6 @@ static u64 get_prefetch_disable_bits(void)
- 	return 0;
+ #endif /* _ASM_X86_SUSPEND_32_H */
+diff --git a/arch/x86/power/hibernate.c b/arch/x86/power/hibernate.c
+index 6aeac4d3c9df..d719d156114b 100644
+--- a/arch/x86/power/hibernate.c
++++ b/arch/x86/power/hibernate.c
+@@ -69,7 +69,6 @@ int pfn_is_nosave(unsigned long pfn)
+ 	return pfn >= nosave_begin_pfn && pfn < nosave_end_pfn;
  }
  
--/*
-- * Helper to write 64bit value to MSR without tracing. Used when
-- * use of the cache should be restricted and use of registers used
-- * for local variables avoided.
-- */
--static inline void pseudo_wrmsrl_notrace(unsigned int msr, u64 val)
--{
--	__wrmsr(msr, (u32)(val & 0xffffffffULL), (u32)(val >> 32));
--}
--
- /**
-  * pseudo_lock_minor_get - Obtain available minor number
-  * @minor: Pointer to where new minor number will be stored
-@@ -924,7 +915,7 @@ static int measure_cycles_lat_fn(void *_plr)
-  * The actual configuration of the event is set right before use in order
-  * to use the X86_CONFIG macro.
-  */
--static struct perf_event_attr __attribute__((unused)) perf_miss_attr = {
-+static struct perf_event_attr perf_miss_attr = {
- 	.type		= PERF_TYPE_RAW,
- 	.size		= sizeof(struct perf_event_attr),
- 	.pinned		= 1,
-@@ -932,7 +923,7 @@ static struct perf_event_attr __attribute__((unused)) perf_miss_attr = {
- 	.exclude_user	= 1,
- };
- 
--static struct perf_event_attr __attribute__((unused)) perf_hit_attr = {
-+static struct perf_event_attr perf_hit_attr = {
- 	.type		= PERF_TYPE_RAW,
- 	.size		= sizeof(struct perf_event_attr),
- 	.pinned		= 1,
-@@ -940,139 +931,206 @@ static struct perf_event_attr __attribute__((unused)) perf_hit_attr = {
- 	.exclude_user	= 1,
- };
- 
--static int measure_cycles_perf_fn(void *_plr)
-+struct residency_counts {
-+	u64 miss_before, hits_before;
-+	u64 miss_after,  hits_after;
-+};
-+
-+static int measure_residency_fn(struct perf_event_attr *miss_attr,
-+				struct perf_event_attr *hit_attr,
-+				struct pseudo_lock_region *plr,
-+				struct residency_counts *counts)
+-#ifdef CONFIG_X86_64
+ static int relocate_restore_code(void)
  {
--	unsigned long long l3_hits = 0, l3_miss = 0;
--	u64 l3_hit_bits = 0, l3_miss_bits = 0;
--	struct pseudo_lock_region *plr = _plr;
--	unsigned long long l2_hits, l2_miss;
--	u64 l2_hit_bits, l2_miss_bits;
-+	u64 hits_before = 0, hits_after = 0, miss_before = 0, miss_after = 0;
-+	struct perf_event *miss_event, *hit_event;
-+	int hit_pmcnum, miss_pmcnum;
- 	unsigned int line_size;
- 	unsigned int size;
- 	unsigned long i;
- 	void *mem_r;
-+	u64 tmp;
+ 	pgd_t *pgd;
+@@ -262,4 +261,3 @@ int arch_hibernation_header_restore(void *addr)
  
--	/*
--	 * Non-architectural event for the Goldmont Microarchitecture
--	 * from Intel x86 Architecture Software Developer Manual (SDM):
--	 * MEM_LOAD_UOPS_RETIRED D1H (event number)
--	 * Umask values:
--	 *     L1_HIT   01H
--	 *     L2_HIT   02H
--	 *     L1_MISS  08H
--	 *     L2_MISS  10H
--	 *
--	 * On Broadwell Microarchitecture the MEM_LOAD_UOPS_RETIRED event
--	 * has two "no fix" errata associated with it: BDM35 and BDM100. On
--	 * this platform we use the following events instead:
--	 *  L2_RQSTS 24H (Documented in https://download.01.org/perfmon/BDW/)
--	 *       REFERENCES FFH
--	 *       MISS       3FH
--	 *  LONGEST_LAT_CACHE 2EH (Documented in SDM)
--	 *       REFERENCE 4FH
--	 *       MISS      41H
--	 */
-+	miss_event = perf_event_create_kernel_counter(miss_attr, plr->cpu,
-+						      NULL, NULL, NULL);
-+	if (IS_ERR(miss_event))
-+		goto out;
-+
-+	hit_event = perf_event_create_kernel_counter(hit_attr, plr->cpu,
-+						     NULL, NULL, NULL);
-+	if (IS_ERR(hit_event))
-+		goto out_miss;
+ 	return 0;
+ }
+-#endif
+diff --git a/arch/x86/power/hibernate_32.c b/arch/x86/power/hibernate_32.c
+index e0e7b9aea22a..d692700047bf 100644
+--- a/arch/x86/power/hibernate_32.c
++++ b/arch/x86/power/hibernate_32.c
+@@ -135,6 +135,32 @@ static inline void resume_init_first_level_page_table(pgd_t *pg_dir)
+ #endif
+ }
  
-+	local_irq_disable();
- 	/*
--	 * Start by setting flags for IA32_PERFEVTSELx:
--	 *     OS  (Operating system mode)  0x2
--	 *     INT (APIC interrupt enable)  0x10
--	 *     EN  (Enable counter)         0x40
--	 *
--	 * Then add the Umask value and event number to select performance
--	 * event.
-+	 * Check any possible error state of events used by performing
-+	 * one local read.
- 	 */
--
--	switch (boot_cpu_data.x86_model) {
--	case INTEL_FAM6_ATOM_GOLDMONT:
--	case INTEL_FAM6_ATOM_GEMINI_LAKE:
--		l2_hit_bits = (0x52ULL << 16) | (0x2 << 8) | 0xd1;
--		l2_miss_bits = (0x52ULL << 16) | (0x10 << 8) | 0xd1;
--		break;
--	case INTEL_FAM6_BROADWELL_X:
--		/* On BDW the l2_hit_bits count references, not hits */
--		l2_hit_bits = (0x52ULL << 16) | (0xff << 8) | 0x24;
--		l2_miss_bits = (0x52ULL << 16) | (0x3f << 8) | 0x24;
--		/* On BDW the l3_hit_bits count references, not hits */
--		l3_hit_bits = (0x52ULL << 16) | (0x4f << 8) | 0x2e;
--		l3_miss_bits = (0x52ULL << 16) | (0x41 << 8) | 0x2e;
--		break;
--	default:
--		goto out;
-+	if (perf_event_read_local(miss_event, &tmp, NULL, NULL)) {
-+		local_irq_enable();
-+		goto out_hit;
-+	}
-+	if (perf_event_read_local(hit_event, &tmp, NULL, NULL)) {
-+		local_irq_enable();
-+		goto out_hit;
- 	}
- 
--	local_irq_disable();
- 	/*
- 	 * Disable hardware prefetchers.
- 	 */
- 	wrmsr(MSR_MISC_FEATURE_CONTROL, prefetch_disable_bits, 0x0);
--	/* Disable events and reset counters */
--	pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0, 0x0);
--	pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0 + 1, 0x0);
--	pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_PERFCTR0, 0x0);
--	pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_PERFCTR0 + 1, 0x0);
--	if (l3_hit_bits > 0) {
--		pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0 + 2, 0x0);
--		pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0 + 3, 0x0);
--		pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_PERFCTR0 + 2, 0x0);
--		pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_PERFCTR0 + 3, 0x0);
--	}
--	/* Set and enable the L2 counters */
-+
-+	/* Initialize rest of local variables */
-+	/*
-+	 * Performance event has been validated right before this with
-+	 * interrupts disabled - it is thus safe to read the counter index.
-+	 */
-+	miss_pmcnum = perf_rdpmc_index(miss_event);
-+	hit_pmcnum = perf_rdpmc_index(hit_event);
-+	line_size = READ_ONCE(plr->line_size);
- 	mem_r = READ_ONCE(plr->kmem);
- 	size = READ_ONCE(plr->size);
--	line_size = READ_ONCE(plr->line_size);
--	pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0, l2_hit_bits);
--	pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0 + 1, l2_miss_bits);
--	if (l3_hit_bits > 0) {
--		pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0 + 2,
--				      l3_hit_bits);
--		pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0 + 3,
--				      l3_miss_bits);
--	}
-+
-+	/*
-+	 * Read counter variables twice - first to load the instructions
-+	 * used in L1 cache, second to capture accurate value that does not
-+	 * include cache misses incurred because of instruction loads.
-+	 */
-+	rdpmcl(hit_pmcnum, hits_before);
-+	rdpmcl(miss_pmcnum, miss_before);
-+	/*
-+	 * From SDM: Performing back-to-back fast reads are not guaranteed
-+	 * to be monotonic.
-+	 * Use LFENCE to ensure all previous instructions are retired
-+	 * before proceeding.
-+	 */
-+	rmb();
-+	rdpmcl(hit_pmcnum, hits_before);
-+	rdpmcl(miss_pmcnum, miss_before);
-+	/*
-+	 * Use LFENCE to ensure all previous instructions are retired
-+	 * before proceeding.
-+	 */
-+	rmb();
- 	for (i = 0; i < size; i += line_size) {
-+		/*
-+		 * Add a barrier to prevent speculative execution of this
-+		 * loop reading beyond the end of the buffer.
-+		 */
-+		rmb();
- 		asm volatile("mov (%0,%1,1), %%eax\n\t"
- 			     :
- 			     : "r" (mem_r), "r" (i)
- 			     : "%eax", "memory");
- 	}
- 	/*
--	 * Call wrmsr directly (no tracing) to not influence
--	 * the cache access counters as they are disabled.
-+	 * Use LFENCE to ensure all previous instructions are retired
-+	 * before proceeding.
- 	 */
--	pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0,
--			      l2_hit_bits & ~(0x40ULL << 16));
--	pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0 + 1,
--			      l2_miss_bits & ~(0x40ULL << 16));
--	if (l3_hit_bits > 0) {
--		pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0 + 2,
--				      l3_hit_bits & ~(0x40ULL << 16));
--		pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0 + 3,
--				      l3_miss_bits & ~(0x40ULL << 16));
--	}
--	l2_hits = native_read_pmc(0);
--	l2_miss = native_read_pmc(1);
--	if (l3_hit_bits > 0) {
--		l3_hits = native_read_pmc(2);
--		l3_miss = native_read_pmc(3);
--	}
-+	rmb();
-+	rdpmcl(hit_pmcnum, hits_after);
-+	rdpmcl(miss_pmcnum, miss_after);
-+	/*
-+	 * Use LFENCE to ensure all previous instructions are retired
-+	 * before proceeding.
-+	 */
-+	rmb();
-+	/* Re-enable hardware prefetchers */
- 	wrmsr(MSR_MISC_FEATURE_CONTROL, 0x0, 0x0);
- 	local_irq_enable();
-+out_hit:
-+	perf_event_release_kernel(hit_event);
-+out_miss:
-+	perf_event_release_kernel(miss_event);
-+out:
-+	counts->miss_before = miss_before;
-+	counts->hits_before = hits_before;
-+	counts->miss_after  = miss_after;
-+	counts->hits_after  = hits_after;
-+	return 0;
-+}
-+
-+static int measure_l2_residency(void *_plr)
++static int set_up_temporary_text_mapping(pgd_t *pgd_base)
 +{
-+	struct pseudo_lock_region *plr = _plr;
-+	struct residency_counts counts = {0};
++	pgd_t *pgd;
++	pmd_t *pmd;
++	pte_t *pte;
 +
- 	/*
--	 * On BDW we count references and misses, need to adjust. Sometimes
--	 * the "hits" counter is a bit more than the references, for
--	 * example, x references but x + 1 hits. To not report invalid
--	 * hit values in this case we treat that as misses eaqual to
--	 * references.
-+	 * Non-architectural event for the Goldmont Microarchitecture
-+	 * from Intel x86 Architecture Software Developer Manual (SDM):
-+	 * MEM_LOAD_UOPS_RETIRED D1H (event number)
-+	 * Umask values:
-+	 *     L2_HIT   02H
-+	 *     L2_MISS  10H
- 	 */
--	if (boot_cpu_data.x86_model == INTEL_FAM6_BROADWELL_X)
--		l2_hits -= (l2_miss > l2_hits ? l2_hits : l2_miss);
--	trace_pseudo_lock_l2(l2_hits, l2_miss);
--	if (l3_hit_bits > 0) {
--		if (boot_cpu_data.x86_model == INTEL_FAM6_BROADWELL_X)
--			l3_hits -= (l3_miss > l3_hits ? l3_hits : l3_miss);
--		trace_pseudo_lock_l3(l3_hits, l3_miss);
-+	switch (boot_cpu_data.x86_model) {
-+	case INTEL_FAM6_ATOM_GOLDMONT:
-+	case INTEL_FAM6_ATOM_GEMINI_LAKE:
-+		perf_miss_attr.config = X86_CONFIG(.event = 0xd1,
-+						   .umask = 0x10);
-+		perf_hit_attr.config = X86_CONFIG(.event = 0xd1,
-+						  .umask = 0x2);
-+		break;
-+	default:
-+		goto out;
- 	}
- 
-+	measure_residency_fn(&perf_miss_attr, &perf_hit_attr, plr, &counts);
++	pgd = pgd_base + pgd_index(restore_jump_address);
 +
-+	trace_pseudo_lock_l2(counts.hits_after - counts.hits_before,
-+			     counts.miss_after - counts.miss_before);
-+out:
-+	plr->thread_done = 1;
-+	wake_up_interruptible(&plr->lock_thread_wq);
-+	return 0;
-+}
++	pmd = resume_one_md_table_init(pgd);
++	if (!pmd)
++		return -ENOMEM;
 +
-+static int measure_l3_residency(void *_plr)
-+{
-+	struct pseudo_lock_region *plr = _plr;
-+	struct residency_counts counts = {0};
-+
-+	/*
-+	 * On Broadwell Microarchitecture the MEM_LOAD_UOPS_RETIRED event
-+	 * has two "no fix" errata associated with it: BDM35 and BDM100. On
-+	 * this platform the following events are used instead:
-+	 * LONGEST_LAT_CACHE 2EH (Documented in SDM)
-+	 *       REFERENCE 4FH
-+	 *       MISS      41H
-+	 */
-+
-+	switch (boot_cpu_data.x86_model) {
-+	case INTEL_FAM6_BROADWELL_X:
-+		/* On BDW the hit event counts references, not hits */
-+		perf_hit_attr.config = X86_CONFIG(.event = 0x2e,
-+						  .umask = 0x4f);
-+		perf_miss_attr.config = X86_CONFIG(.event = 0x2e,
-+						   .umask = 0x41);
-+		break;
-+	default:
-+		goto out;
-+	}
-+
-+	measure_residency_fn(&perf_miss_attr, &perf_hit_attr, plr, &counts);
-+
-+	counts.miss_after -= counts.miss_before;
-+	if (boot_cpu_data.x86_model == INTEL_FAM6_BROADWELL_X) {
-+		/*
-+		 * On BDW references and misses are counted, need to adjust.
-+		 * Sometimes the "hits" counter is a bit more than the
-+		 * references, for example, x references but x + 1 hits.
-+		 * To not report invalid hit values in this case we treat
-+		 * that as misses equal to references.
-+		 */
-+		/* First compute the number of cache references measured */
-+		counts.hits_after -= counts.hits_before;
-+		/* Next convert references to cache hits */
-+		counts.hits_after -= counts.miss_after > counts.hits_after ?
-+					counts.hits_after : counts.miss_after;
++	if (boot_cpu_has(X86_FEATURE_PSE)) {
++		set_pmd(pmd + pmd_index(restore_jump_address),
++		__pmd((jump_address_phys & PMD_MASK) | pgprot_val(PAGE_KERNEL_LARGE_EXEC)));
 +	} else {
-+		counts.hits_after -= counts.hits_before;
++		pte = resume_one_page_table_init(pmd);
++		if (!pte)
++			return -ENOMEM;
++		set_pte(pte + pte_index(restore_jump_address),
++		__pte((jump_address_phys & PAGE_MASK) | pgprot_val(PAGE_KERNEL_EXEC)));
 +	}
 +
-+	trace_pseudo_lock_l3(counts.hits_after, counts.miss_after);
- out:
- 	plr->thread_done = 1;
- 	wake_up_interruptible(&plr->lock_thread_wq);
-@@ -1111,13 +1169,20 @@ static int pseudo_lock_measure_cycles(struct rdtgroup *rdtgrp, int sel)
- 		goto out;
- 	}
- 
-+	plr->cpu = cpu;
++	return 0;
++}
 +
- 	if (sel == 1)
- 		thread = kthread_create_on_node(measure_cycles_lat_fn, plr,
- 						cpu_to_node(cpu),
- 						"pseudo_lock_measure/%u",
- 						cpu);
- 	else if (sel == 2)
--		thread = kthread_create_on_node(measure_cycles_perf_fn, plr,
-+		thread = kthread_create_on_node(measure_l2_residency, plr,
-+						cpu_to_node(cpu),
-+						"pseudo_lock_measure/%u",
-+						cpu);
-+	else if (sel == 3)
-+		thread = kthread_create_on_node(measure_l3_residency, plr,
- 						cpu_to_node(cpu),
- 						"pseudo_lock_measure/%u",
- 						cpu);
+ asmlinkage int swsusp_arch_resume(void)
+ {
+ 	int error;
+@@ -144,10 +170,21 @@ asmlinkage int swsusp_arch_resume(void)
+ 		return -ENOMEM;
+ 
+ 	resume_init_first_level_page_table(resume_pg_dir);
++
++	error = set_up_temporary_text_mapping(resume_pg_dir);
++	if (error)
++		return error;
++
+ 	error = resume_physical_mapping_init(resume_pg_dir);
+ 	if (error)
+ 		return error;
+ 
++	temp_pgt = __pa(resume_pg_dir);
++
++	error = relocate_restore_code();
++	if (error)
++		return error;
++
+ 	/* We have got enough memory and from now on we cannot recover */
+ 	restore_image();
+ 	return 0;
+diff --git a/arch/x86/power/hibernate_asm_32.S b/arch/x86/power/hibernate_asm_32.S
+index 6e56815e13a0..a53b4a41e09a 100644
+--- a/arch/x86/power/hibernate_asm_32.S
++++ b/arch/x86/power/hibernate_asm_32.S
+@@ -24,21 +24,40 @@ ENTRY(swsusp_arch_suspend)
+ 	pushfl
+ 	popl saved_context_eflags
+ 
++	/* save cr3 */
++	movl	%cr3, %eax
++	movl	%eax, restore_cr3
++
+ 	call swsusp_save
+ 	ret
++ENDPROC(swsusp_arch_suspend)
+ 
+ ENTRY(restore_image)
+-	movl	mmu_cr4_features, %ecx
+-	movl	resume_pg_dir, %eax
+-	subl	$__PAGE_OFFSET, %eax
++	/* prepare to jump to the image kernel */
++	movl	restore_jump_address, %ebx
++	movl	restore_cr3, %ebp
++
++	movl	mmu_cr4_features, %edx
++
++	/* jump to relocated restore code */
++	movl	relocated_restore_code, %eax
++	jmpl	*%eax
++
++	/* code below has been relocated to a safe page */
++ENTRY(core_restore_code)
++	movl	temp_pgt, %eax
+ 	movl	%eax, %cr3
+ 
++	/* flush TLB */
++	movl	%edx, %ecx
+ 	jecxz	1f	# cr4 Pentium and higher, skip if zero
+ 	andl	$~(X86_CR4_PGE), %ecx
+ 	movl	%ecx, %cr4;  # turn off PGE
+ 	movl	%cr3, %eax;  # flush TLB
+ 	movl	%eax, %cr3
++	movl	%edx, %cr4;  # turn PGE back on
+ 1:
++	/* prepare to copy image data to their original locations */
+ 	movl	restore_pblist, %edx
+ 	.p2align 4,,7
+ 
+@@ -49,7 +68,7 @@ copy_loop:
+ 	movl	pbe_address(%edx), %esi
+ 	movl	pbe_orig_address(%edx), %edi
+ 
+-	movl	$1024, %ecx
++	movl	$(PAGE_SIZE >> 2), %ecx
+ 	rep
+ 	movsl
+ 
+@@ -58,13 +77,22 @@ copy_loop:
+ 	.p2align 4,,7
+ 
+ done:
++	jmpl	*%ebx
++	.align PAGE_SIZE
++
++ENTRY(restore_registers)
+ 	/* go back to the original page tables */
+-	movl	$swapper_pg_dir, %eax
+-	subl	$__PAGE_OFFSET, %eax
+-	movl	%eax, %cr3
+-	movl	mmu_cr4_features, %ecx
++	movl	%ebp, %cr3
++
++	/* flush TLB */
++	movl	mmu_cr4_features, %edx
++	movl	%edx, %ecx
+ 	jecxz	1f	# cr4 Pentium and higher, skip if zero
+-	movl	%ecx, %cr4;  # turn PGE back on
++	andl	$~(X86_CR4_PGE), %ecx
++	movl	%ecx, %cr4;  # turn off PGE
++	movl	%cr3, %ecx;  # flush TLB
++	movl	%ecx, %cr3;
++	movl	%edx, %cr4;  # turn PGE back on
+ 1:
+ 
+ 	movl saved_context_esp, %esp
+@@ -82,4 +110,7 @@ done:
+ 
+ 	xorl	%eax, %eax
+ 
++	movl	%eax, in_suspend
++
+ 	ret
++ENDPROC(restore_registers)
 -- 
-2.17.0
+2.17.1
 
