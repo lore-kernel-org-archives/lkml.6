@@ -2,105 +2,127 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5BB5C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 08:32:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFFF8C6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 08:34:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BD3920839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 08:32:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BD3920839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id 6110220839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 08:34:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6110220839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726829AbeIKNai (ORCPT
+        id S1726613AbeIKNcf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 09:30:38 -0400
-Received: from esa4.microchip.iphmx.com ([68.232.154.123]:1376 "EHLO
-        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726458AbeIKNah (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 09:30:37 -0400
-X-IronPort-AV: E=Sophos;i="5.53,359,1531810800"; 
-   d="scan'208";a="19314445"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 11 Sep 2018 01:32:23 -0700
-Received: from [10.159.245.112] (10.10.76.4) by chn-sv-exch07.mchp-main.com
- (10.10.76.108) with Microsoft SMTP Server id 14.3.352.0; Tue, 11 Sep 2018
- 01:32:23 -0700
-Subject: Re: linux-next: build failure after merge of the tty tree
-To:     Lee Jones <lee.jones@linaro.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Greg KH <greg@kroah.com>
-CC:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Radu Pirea <radu.pirea@microchip.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Rob Herring <robh@kernel.org>
-References: <20180911125857.5e5c34f4@canb.auug.org.au>
- <20180911082534.GA4185@dell>
-From:   Nicolas Ferre <nicolas.ferre@microchip.com>
-Organization: microchip
-Message-ID: <84bafe76-741e-7dc1-d985-62027f4f634a@microchip.com>
-Date:   Tue, 11 Sep 2018 10:32:21 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 11 Sep 2018 09:32:35 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41902 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726387AbeIKNcf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 09:32:35 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DA3294070493;
+        Tue, 11 Sep 2018 08:34:19 +0000 (UTC)
+Received: from krava (ovpn-204-174.brq.redhat.com [10.40.204.174])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 4A51D202322A;
+        Tue, 11 Sep 2018 08:34:18 +0000 (UTC)
+Date:   Tue, 11 Sep 2018 10:34:17 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v8 0/3]: perf: reduce data loss when profiling highly
+ parallel CPU bound workloads
+Message-ID: <20180911083417.GA22188@krava>
+References: <e1144f9d-b231-e42c-d698-4db0e62b71ff@linux.intel.com>
+ <20180910091841.GA4664@gmail.com>
+ <2c5d4b01-0eb8-f97e-6a70-44be7961d7f8@linux.intel.com>
+ <20180910120643.GA4217@gmail.com>
+ <1ad36918-ddd0-aa3c-c52e-e4e419409dd4@linux.intel.com>
+ <20180911063512.GA130116@gmail.com>
+ <74e64322-1f79-d072-cc0e-8d1d09d4ab89@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180911082534.GA4185@dell>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <74e64322-1f79-d072-cc0e-8d1d09d4ab89@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 11 Sep 2018 08:34:19 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 11 Sep 2018 08:34:19 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/09/2018 at 10:25, Lee Jones wrote:
-> On Tue, 11 Sep 2018, Stephen Rothwell wrote:
+On Tue, Sep 11, 2018 at 11:16:45AM +0300, Alexey Budankov wrote:
 > 
->> Hi Greg,
->>
->> After merging the tty tree, today's linux-next build (arm
->> multi_v7_defconfig) failed like this:
->>
->> drivers/mfd/at91-usart.c:51:34: error: array type has incomplete element type 'struct of_device_id'
->>   static const struct of_device_id at91_usart_mode_of_match[] = {
->>                                    ^~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/mfd/at91-usart.c:52:4: error: field name not in record or union initializer
->>    { .compatible = "atmel,at91rm9200-usart" },
->>      ^
->> drivers/mfd/at91-usart.c:52:4: note: (near initialization for 'at91_usart_mode_of_match')
->> drivers/mfd/at91-usart.c:53:4: error: field name not in record or union initializer
->>    { .compatible = "atmel,at91sam9260-usart" },
->>      ^
->> drivers/mfd/at91-usart.c:53:4: note: (near initialization for 'at91_usart_mode_of_match')
->> drivers/mfd/at91-usart.c:51:34: warning: 'at91_usart_mode_of_match' defined but not used [-Wunused-variable]
->>   static const struct of_device_id at91_usart_mode_of_match[] = {
->>                                    ^~~~~~~~~~~~~~~~~~~~~~~~
->>
->> Caused by commit
->>
->>    7d3aa342cef7 ("mfd: at91-usart: Add MFD driver for USART")
->>
->> Forgot to include <linux/mod_devicetable.h>?
+> Hi Ingo,
 > 
-> Looks like a missing Device Tree header <linux/of.h>.
+> On 11.09.2018 9:35, Ingo Molnar wrote:
+> > 
+> > * Alexey Budankov <alexey.budankov@linux.intel.com> wrote:
+> > 
+> >> It may sound too optimistic but glibc API is expected to be backward compatible 
+> >> and for POSIX AIO API part too. Internal implementation also tends to evolve to 
+> >> better option overtime, more probably basing on modern kernel capabilities 
+> >> mentioned here: http://man7.org/linux/man-pages/man2/io_submit.2.html
+> > 
+> > I'm not talking about compatibility, and I'm not just talking about glibc, perf works under 
+> > other libcs as well - and let me phrase it in another way: basic event handling, threading, 
+> > scheduling internals should be a *core competency* of a tracing/profiling tool.
 > 
-> Will chase this today and follow up with another PR.
+> Well, the requirement of independence from some specific libc implementation 
+> as well as *core competency* design approach clarify a lot. Thanks!
+> 
+> > 
+> > I.e. we might end up using the exact same per event fd thread pool design that glibc uses 
+> > currently. Or not. Having that internal and open coded to perf, like Jiri has started 
+> > implementing it, allows people to experiment with it.
+> 
+> My point here is that following some standardized programming models and APIs 
+> (like POSIX) in the tool code, even if the tool itself provides internal open 
+> coded implementation for the APIs, would simplify experimenting with the tool 
+> as well as lower barriers for new comers. Perf project could benefit from that.
+> 
+> > 
+> > This isn't some GUI toolkit, this is at the essence of perf, and we are not very good on large 
+> > systems right now, and I think the design should be open-coded threading, not relying on an 
+> > (perf-)external AIO library to get it right.
+> > 
+> > The glibc thread pool implementation of POSIX AIO is basically a fall-back 
+> > implementation, for the case where there's no native KAIO interface to rely on.
+> > 
+> >> Well, explicit threading in the tool for AIO, in the simplest case, means 
+> >> incorporating some POSIX API implementation into the tool, avoiding 
+> >> code reuse in the first place. That tends to be error prone and costly.
+> > 
+> > It's a core competency, we better do it right and not outsource it.
+> 
+> Yep, makes sense.
 
-Hi all,
+on the other hand, we are already trying to tie this up under perf_mmap
+object, which is what the threaded patchset operates on.. so I'm quite
+confident that with little effort we could make those 2 things live next
+to each other and let the user to decide which one to take and compare
 
-Actually it is due to the missing of  <linux/mod_devicetable.h> as 
-Stephen suggested. It is due to the patch ac3167257b9f ("headers: 
-separate linux/mod_devicetable.h from linux/platform_device.h") merged 
-in v4.19-rc1.
+possibilities would be like: (not sure yet the last one makes sense, but still..)
 
-because linux/platform_device.h was included by linux/mfd/core.h that is 
-present in this driver. This is why the issue was not identified beforehand.
+  # perf record --threads=...  ...
+  # perf record --aio ...
+  # perf record --threads=... --aio ...
 
-I'm building a tiny patch to address this right now.
+how about that?
 
-Thanks for your help. Best regards,
--- 
-Nicolas Ferre
+I just rebased the thread patchset, will make some tests (it's been few months,
+so it needs some kicking/checking) and post it out hopefuly this week
+
+jirka
