@@ -2,90 +2,97 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2D7CC04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 05:49:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28745C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 05:53:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FBB820854
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 05:49:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FBB820854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6B4A320854
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 05:53:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B4A320854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726511AbeIKKqx (ORCPT
+        id S1726554AbeIKKug (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 06:46:53 -0400
-Received: from mga18.intel.com ([134.134.136.126]:57939 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726301AbeIKKqx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 06:46:53 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2018 22:49:16 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,359,1531810800"; 
-   d="scan'208";a="88930395"
-Received: from pipin.fi.intel.com (HELO localhost) ([10.237.72.128])
-  by fmsmga001.fm.intel.com with ESMTP; 10 Sep 2018 22:48:44 -0700
-From:   Felipe Balbi <balbi@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pawel Laszczak <pawell@cadence.com>
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ltyrala@cadence.com, adouglas@cadence.com
-Subject: Re: [PATCH 02/31] usb: usbssp: Added some decoding functions.
-In-Reply-To: <20180910181856.GB6019@kroah.com>
-References: <1532023084-28083-1-git-send-email-pawell@cadence.com> <1532023084-28083-3-git-send-email-pawell@cadence.com> <20180910181856.GB6019@kroah.com>
-Date:   Tue, 11 Sep 2018 08:48:43 +0300
-Message-ID: <87in3c1t50.fsf@linux.intel.com>
+        Tue, 11 Sep 2018 06:50:36 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:48696 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726301AbeIKKug (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 06:50:36 -0400
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1fzbbM-0003xh-Py; Tue, 11 Sep 2018 13:52:40 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1fzbbC-00062p-8P; Tue, 11 Sep 2018 13:52:30 +0800
+Date:   Tue, 11 Sep 2018 13:52:30 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Eric Biggers <ebiggers@google.com>,
+        Gilad Ben-Yossef <gilad@benyossef.com>,
+        Alexander Stein <alexander.stein@systec-electronic.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Arnaud Ebalard <arno@natisbad.org>,
+        Corentin Labbe <clabbe.montjoie@gmail.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Christian Lamparter <chunkeey@gmail.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 2/4] crypto: skcipher - Enforce non-ASYNC for on-stack
+ requests
+Message-ID: <20180911055230.iiiq2uu5gczlwjon@gondor.apana.org.au>
+References: <20180906225854.40989-1-keescook@chromium.org>
+ <20180906225854.40989-3-keescook@chromium.org>
+ <20180907034242.zhm4dglzkldhvh3x@gondor.apana.org.au>
+ <CAKv+Gu9kHpBTKjQKA3W4Q424FeY+Zq4srq2-r0MxjfCNKHT_5A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKv+Gu9kHpBTKjQKA3W4Q424FeY+Zq4srq2-r0MxjfCNKHT_5A@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Sep 07, 2018 at 08:56:23AM +0200, Ard Biesheuvel wrote:
+>
+> OK, so given that all SKCIPHER_REQUEST_ON_STACK occurrences are
+> updated in this series anyway, perhaps we should add
+> skcipher_[en|de]crypt_onstack() flavors that encapsulate the
+> additional check? Only question is how to enforce at compile time that
+> those are used instead of the ordinary ones when using a stack
+> allocated request. Would you mind using some macro foo here involving
+> __builtin_types_compatible_p() ?
 
-Hi,
+Something like a completely new type which in reality is just a
+wrapper around skcipher:
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
-> On Thu, Jul 19, 2018 at 06:57:35PM +0100, Pawel Laszczak wrote:
->> This patch add additional functions that converts some fields to string.
->> 
->> For example function usbssp_trb_comp_code_string take completion
->> code value and return string describing completion code.
->> 
->> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
->> ---
->>  drivers/usb/usbssp/gadget.h | 580 ++++++++++++++++++++++++++++++++++++
->>  1 file changed, 580 insertions(+)
->> 
->> diff --git a/drivers/usb/usbssp/gadget.h b/drivers/usb/usbssp/gadget.h
->> index 49e7271187cc..b5c17603af78 100644
->> --- a/drivers/usb/usbssp/gadget.h
->> +++ b/drivers/usb/usbssp/gadget.h
->> @@ -930,6 +930,73 @@ struct usbssp_transfer_event {
->>  #define COMP_UNDEFINED_ERROR			33
->>  #define COMP_INVALID_STREAM_ID_ERROR		34
->>  
->> +static inline const char *usbssp_trb_comp_code_string(u8 status)
->
-> <snip>
->
->
-> You have _giant_ inline functions here, why?
->
-> Please just put this all in a .c file and let the linker properly handle
-> things.  You do not want to duplicate all of these crazy strings all
-> over the place where ever you call these functions.
->
-> And I am guessing this is only for some sort of "debugging" mode?  If
-> so, shouldn't there be a way to not even build this in?  Some systems
-> are very space constrained...
+	struct crypto_sync_skcipher {
+		struct crypto_skcipher base;
+	} tfm;
 
-many of them seem to be a straight copy from xhci.
+	tfm = crypto_alloc_sync_skcipher(...);
 
+	crypto_sync_skcipher_encrypt(...)
+	crypto_sync_skcipher_decrypt(...)
+
+These functions would just be trivial inline functions around their
+crypto_skcipher counterparts.
+
+Cheers,
 -- 
-balbi
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
