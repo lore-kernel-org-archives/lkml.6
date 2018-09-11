@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13FA6C4646A
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:44:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80991C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:44:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C293F206BB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:44:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C293F206BB
+	by mail.kernel.org (Postfix) with ESMTP id 41D5220839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:44:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41D5220839
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=triplefau.lt
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727754AbeILBpG (ORCPT
+        id S1727789AbeILBpH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 21:45:06 -0400
-Received: from mslow2.mail.gandi.net ([217.70.178.242]:42364 "EHLO
+        Tue, 11 Sep 2018 21:45:07 -0400
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:42400 "EHLO
         mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726836AbeILBpF (ORCPT
+        with ESMTP id S1726829AbeILBpG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 21:45:05 -0400
+        Tue, 11 Sep 2018 21:45:06 -0400
 Received: from relay1-d.mail.gandi.net (unknown [217.70.183.193])
-        by mslow2.mail.gandi.net (Postfix) with ESMTP id 2B0373A7F47
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 22:17:45 +0200 (CEST)
+        by mslow2.mail.gandi.net (Postfix) with ESMTP id 9F75B3A19E1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 22:18:28 +0200 (CEST)
 X-Originating-IP: 88.190.179.123
 Received: from localhost (unknown [88.190.179.123])
         (Authenticated sender: repk@triplefau.lt)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id E3325240003;
-        Tue, 11 Sep 2018 20:17:42 +0000 (UTC)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id E40E7240009;
+        Tue, 11 Sep 2018 20:18:26 +0000 (UTC)
 From:   Remi Pommarel <repk@triplefau.lt>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org
@@ -38,9 +38,9 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Kees Cook <keescook@chromium.org>,
         Elie Roudninski <xademax@gmail.com>,
         Remi Pommarel <repk@triplefau.lt>
-Subject: [PATCH 1/4] drivers/tty/vt/keyboard.c: refactor getting/setting a keymap entry
-Date:   Tue, 11 Sep 2018 22:23:56 +0200
-Message-Id: <3ee65938bc6bcab7c0dc6bf3dd55f7bff41406eb.1536695071.git.repk@triplefau.lt>
+Subject: [PATCH 3/4] drivers/tty/vt/keyboard.c: Make key_down[] bitmap input dependent
+Date:   Tue, 11 Sep 2018 22:23:58 +0200
+Message-Id: <45a4a8e3123730bf900ea921baf153ff0c899dd5.1536695071.git.repk@triplefau.lt>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <cover.1536695070.git.repk@triplefau.lt>
 References: <cover.1536695070.git.repk@triplefau.lt>
@@ -49,255 +49,126 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to ease the addition of the ability of an input to use a
-different key configuration (keycode to keysym map), the operations of
-getting and setting an entry in a key map is moved in respective
-functions.
+A kbd_handle input can have a specific keyboard config that makes
+keycode to keysym mapping array different from another one. Because
+key_down[] bitmap stores currently pressed key as keycode, it should be
+associated with an input keymap in order to retrieve the associated
+keysym.
+
+Allocating this array in each input allows to retrieve its associated
+keymap.
 
 Signed-off-by: Remi Pommarel <repk@triplefau.lt>
 Tested-by: Elie Roudninski <xademax@gmail.com>
 ---
- drivers/tty/vt/keyboard.c | 201 ++++++++++++++++++++++----------------
- 1 file changed, 118 insertions(+), 83 deletions(-)
+ drivers/tty/vt/keyboard.c | 46 +++++++++++++++++++++++++++------------
+ 1 file changed, 32 insertions(+), 14 deletions(-)
 
 diff --git a/drivers/tty/vt/keyboard.c b/drivers/tty/vt/keyboard.c
-index 88312c6c92cc..89fabb8ae04e 100644
+index 4f09331ad5c3..7272e1828838 100644
 --- a/drivers/tty/vt/keyboard.c
 +++ b/drivers/tty/vt/keyboard.c
-@@ -1874,115 +1874,150 @@ int vt_do_kbkeycode_ioctl(int cmd, struct kbkeycode __user *user_kbkc,
- 	return kc;
+@@ -122,6 +122,7 @@ struct kbd_handle {
+ 	struct kref ref;
+ 	struct kbd_conf *conf;
+ 	struct input_handle handle;
++	unsigned long key_down[BITS_TO_LONGS(KEY_CNT)];/* keyboard key bitmap */
+ };
+ #define hdl_to_kbd_handle(h) (container_of(h, struct kbd_handle, handle))
+ 
+@@ -140,7 +141,6 @@ static const int NR_TYPES = ARRAY_SIZE(max_vals);
+ static struct input_handler kbd_handler;
+ static DEFINE_SPINLOCK(kbd_event_lock);
+ static DEFINE_SPINLOCK(led_lock);
+-static unsigned long key_down[BITS_TO_LONGS(KEY_CNT)];	/* keyboard key bitmap */
+ static unsigned char shift_down[NR_SHIFT];		/* shift state counters.. */
+ static bool dead_key_next;
+ static int npadch = -1;					/* -1 or number assembled on pad */
+@@ -378,20 +378,18 @@ static void to_utf8(struct vc_data *vc, uint c)
+ 
+ /*
+  * Called after returning from RAW mode or when changing consoles - recompute
+- * shift_down[] and shift_state from key_down[] maybe called when keymap is
+- * undefined, so that shiftkey release is seen. The caller must hold the
+- * kbd_event_lock.
++ * shift_down[] and shift_state from each input's key_down[] maybe called when
++ * keymap is undefined, so that shiftkey release is seen. The caller must hold
++ * the kbd_event_lock.
+  */
+ 
+-static void do_compute_shiftstate(void)
++static int do_compute_input_shiftstate(struct input_handle *handle, void *data)
+ {
++	struct kbd_handle *kh = hdl_to_kbd_handle(handle);
+ 	unsigned int k, sym, val;
+ 
+-	shift_state = 0;
+-	memset(shift_down, 0, sizeof(shift_down));
+-
+-	for_each_set_bit(k, key_down, min(NR_KEYS, KEY_CNT)) {
+-		sym = U(key_maps[0][k]);
++	for_each_set_bit(k, kh->key_down, min(NR_KEYS, KEY_CNT)) {
++		sym = U(kh->conf->maps[0][k]);
+ 		if (KTYP(sym) != KT_SHIFT && KTYP(sym) != KT_SLOCK)
+ 			continue;
+ 
+@@ -402,6 +400,15 @@ static void do_compute_shiftstate(void)
+ 		shift_down[val]++;
+ 		shift_state |= BIT(val);
+ 	}
++	return 0;
++}
++
++static void do_compute_shiftstate(void)
++{
++	shift_state = 0;
++	memset(shift_down, 0, sizeof(shift_down));
++	input_handler_for_each_handle(&kbd_handler, NULL,
++			do_compute_input_shiftstate);
  }
  
--#define i (tmp.kb_index)
--#define s (tmp.kb_table)
--#define v (tmp.kb_value)
-+#define i (kbe->kb_index)
-+#define s (kbe->kb_table)
-+#define v (kbe->kb_value)
- 
--int vt_do_kdsk_ioctl(int cmd, struct kbentry __user *user_kbe, int perm,
--						int console)
-+/*
-+ * Get a keysym value from a key map
-+ *
-+ * @kb: Virtual console structure
-+ * @kmaps: Key map array
-+ * @kbe : Entry to find in key map
-+ */
-+static ushort __kdsk_getent(struct kbd_struct const *kb, ushort **kmaps,
-+		struct kbentry const *kbe)
- {
--	struct kbd_struct *kb = kbd_table + console;
--	struct kbentry tmp;
--	ushort *key_map, *new_map, val, ov;
-+	ushort *key_map, val;
- 	unsigned long flags;
- 
--	if (copy_from_user(&tmp, user_kbe, sizeof(struct kbentry)))
--		return -EFAULT;
-+	/* Ensure another thread doesn't free it under us */
-+	spin_lock_irqsave(&kbd_event_lock, flags);
-+	key_map = kmaps[s];
-+	if (key_map) {
-+		val = U(key_map[i]);
-+		if (kb->kbdmode != VC_UNICODE && KTYP(val) >= NR_TYPES)
-+			val = K_HOLE;
-+	} else
-+		val = (i ? K_HOLE : K_NOSUCHMAP);
-+	spin_unlock_irqrestore(&kbd_event_lock, flags);
- 
--	if (!capable(CAP_SYS_TTY_CONFIG))
--		perm = 0;
-+	return val;
-+}
- 
--	switch (cmd) {
--	case KDGKBENT:
--		/* Ensure another thread doesn't free it under us */
-+/*
-+ * Set a keysym value in a key map
-+ *
-+ * @kb: Virtual console structure
-+ * @kmaps: Key map array
-+ * @kbe : Entry to set in key map
-+ */
-+static int __kdsk_setent(struct kbd_struct const *kb, ushort **kmaps,
-+		struct kbentry const *kbe)
-+{
-+	ushort *key_map, *new_map, ov;
-+	unsigned long flags;
-+
-+	if (!i && v == K_NOSUCHMAP) {
- 		spin_lock_irqsave(&kbd_event_lock, flags);
--		key_map = key_maps[s];
--		if (key_map) {
--		    val = U(key_map[i]);
--		    if (kb->kbdmode != VC_UNICODE && KTYP(val) >= NR_TYPES)
--			val = K_HOLE;
--		} else
--		    val = (i ? K_HOLE : K_NOSUCHMAP);
--		spin_unlock_irqrestore(&kbd_event_lock, flags);
--		return put_user(val, &user_kbe->kb_value);
--	case KDSKBENT:
--		if (!perm)
--			return -EPERM;
--		if (!i && v == K_NOSUCHMAP) {
--			spin_lock_irqsave(&kbd_event_lock, flags);
--			/* deallocate map */
--			key_map = key_maps[s];
--			if (s && key_map) {
--			    key_maps[s] = NULL;
--			    if (key_map[0] == U(K_ALLOCATED)) {
--					kfree(key_map);
--					keymap_count--;
--			    }
-+		/* deallocate map */
-+		key_map = kmaps[s];
-+		if (s && key_map) {
-+			kmaps[s] = NULL;
-+			if (key_map[0] == U(K_ALLOCATED)) {
-+				kfree(key_map);
-+				keymap_count--;
- 			}
--			spin_unlock_irqrestore(&kbd_event_lock, flags);
--			break;
- 		}
-+		spin_unlock_irqrestore(&kbd_event_lock, flags);
-+		return 0;
-+	}
- 
--		if (KTYP(v) < NR_TYPES) {
--		    if (KVAL(v) > max_vals[KTYP(v)])
--				return -EINVAL;
--		} else
--		    if (kb->kbdmode != VC_UNICODE)
--				return -EINVAL;
-+	if (KTYP(v) < NR_TYPES) {
-+		if (KVAL(v) > max_vals[KTYP(v)])
-+			return -EINVAL;
-+	} else if (kb->kbdmode != VC_UNICODE)
-+		return -EINVAL;
- 
--		/* ++Geert: non-PC keyboards may generate keycode zero */
-+	/* ++Geert: non-PC keyboards may generate keycode zero */
- #if !defined(__mc68000__) && !defined(__powerpc__)
--		/* assignment to entry 0 only tests validity of args */
--		if (!i)
--			break;
-+	/* assignment to entry 0 only tests validity of args */
-+	if (!i)
-+		return 0;
+ /* We still have to export this method to vt.c */
+@@ -1278,6 +1285,17 @@ static int sparc_l1_a_state;
+ extern void sun_do_break(void);
  #endif
  
--		new_map = kmalloc(sizeof(plain_map), GFP_KERNEL);
--		if (!new_map)
--			return -ENOMEM;
--		spin_lock_irqsave(&kbd_event_lock, flags);
--		key_map = key_maps[s];
--		if (key_map == NULL) {
--			int j;
--
--			if (keymap_count >= MAX_NR_OF_USER_KEYMAPS &&
--			    !capable(CAP_SYS_RESOURCE)) {
--				spin_unlock_irqrestore(&kbd_event_lock, flags);
--				kfree(new_map);
--				return -EPERM;
--			}
--			key_maps[s] = new_map;
--			key_map = new_map;
--			key_map[0] = U(K_ALLOCATED);
--			for (j = 1; j < NR_KEYS; j++)
--				key_map[j] = U(K_HOLE);
--			keymap_count++;
--		} else
--			kfree(new_map);
-+	new_map = kmalloc(sizeof(plain_map), GFP_KERNEL);
-+	if (!new_map)
-+		return -ENOMEM;
-+	spin_lock_irqsave(&kbd_event_lock, flags);
-+	key_map = kmaps[s];
-+	if (key_map == NULL) {
-+		int j;
- 
--		ov = U(key_map[i]);
--		if (v == ov)
--			goto out;
--		/*
--		 * Attention Key.
--		 */
--		if (((ov == K_SAK) || (v == K_SAK)) && !capable(CAP_SYS_ADMIN)) {
-+		if (keymap_count >= MAX_NR_OF_USER_KEYMAPS &&
-+				!capable(CAP_SYS_RESOURCE)) {
- 			spin_unlock_irqrestore(&kbd_event_lock, flags);
-+			kfree(new_map);
- 			return -EPERM;
- 		}
--		key_map[i] = U(v);
--		if (!s && (KTYP(ov) == KT_SHIFT || KTYP(v) == KT_SHIFT))
--			do_compute_shiftstate();
--out:
-+		kmaps[s] = new_map;
-+		key_map = new_map;
-+		key_map[0] = U(K_ALLOCATED);
-+		for (j = 1; j < NR_KEYS; j++)
-+			key_map[j] = U(K_HOLE);
-+		keymap_count++;
-+	} else
-+		kfree(new_map);
-+
-+	ov = U(key_map[i]);
-+	if (v == ov)
-+		goto out;
-+	/*
-+	 * Attention Key.
-+	 */
-+	if (((ov == K_SAK) || (v == K_SAK)) && !capable(CAP_SYS_ADMIN)) {
- 		spin_unlock_irqrestore(&kbd_event_lock, flags);
--		break;
-+		return -EPERM;
- 	}
-+	key_map[i] = U(v);
-+	if (!s && (KTYP(ov) == KT_SHIFT || KTYP(v) == KT_SHIFT))
-+		do_compute_shiftstate();
-+out:
-+	spin_unlock_irqrestore(&kbd_event_lock, flags);
- 	return 0;
- }
- #undef i
- #undef s
- #undef v
- 
-+int vt_do_kdsk_ioctl(int cmd, struct kbentry __user *user_kbe, int perm,
-+						int console)
++static int is_alt_down(struct input_handle *handle, void *data)
 +{
-+	struct kbd_struct *kb = kbd_table + console;
-+	struct kbentry tmp;
-+	ushort val;
-+	int ret = 0;
++	struct kbd_handle *kh = hdl_to_kbd_handle(handle);
 +
-+	if (copy_from_user(&tmp, user_kbe, sizeof(struct kbentry)))
-+		return -EFAULT;
++	if (test_bit(KEY_LEFTALT, kh->key_down) ||
++			test_bit(KEY_RIGHTALT, kh->key_down))
++		return 1;
 +
-+	if (!capable(CAP_SYS_TTY_CONFIG))
-+		perm = 0;
-+
-+	switch (cmd) {
-+	case KDGKBENT:
-+		val = __kdsk_getent(kb, key_maps, &tmp);
-+		ret = put_user(val, &user_kbe->kb_value);
-+		break;
-+	case KDSKBENT:
-+		if (!perm)
-+			return -EPERM;
-+		ret = __kdsk_setent(kb, key_maps, &tmp);
-+		break;
-+	}
-+	return ret;
++	return 0;
 +}
 +
- /* FIXME: This one needs untangling and locking */
- int vt_do_kdgkb_ioctl(int cmd, struct kbsentry __user *user_kdgkb, int perm)
+ static int emulate_raw(struct vc_data *vc, unsigned int keycode,
+ 		       unsigned char up_flag)
  {
+@@ -1308,8 +1326,8 @@ static int emulate_raw(struct vc_data *vc, unsigned int keycode,
+ 		 * pressing PrtSc/SysRq alone, but simply 0x54
+ 		 * when pressing Alt+PrtSc/SysRq.
+ 		 */
+-		if (test_bit(KEY_LEFTALT, key_down) ||
+-		    test_bit(KEY_RIGHTALT, key_down)) {
++		if (input_handler_for_each_handle(&kbd_handler, NULL,
++					is_alt_down)) {
+ 			put_queue(vc, 0x54 | up_flag);
+ 		} else {
+ 			put_queue(vc, 0xe0);
+@@ -1424,9 +1442,9 @@ static void kbd_keycode(struct kbd_handle *kh, unsigned int keycode, int down,
+ 	}
+ 
+ 	if (down)
+-		set_bit(keycode, key_down);
++		set_bit(keycode, kh->key_down);
+ 	else
+-		clear_bit(keycode, key_down);
++		clear_bit(keycode, kh->key_down);
+ 
+ 	if (rep &&
+ 	    (!vc_kbd_mode(kbd, VC_REPEAT) ||
 -- 
 2.18.0
 
