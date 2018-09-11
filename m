@@ -2,94 +2,75 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B9CAC6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:14:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 014DFC04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:15:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E245F20839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:14:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E245F20839
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id 9E77E2086A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:15:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GrdIsKYq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E77E2086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727246AbeILBPZ (ORCPT
+        id S1726992AbeILBQn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 21:15:25 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:51793 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726720AbeILBPZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 21:15:25 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126] helo=xylophone)
-        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1fzp3L-0001sr-Ft; Tue, 11 Sep 2018 21:14:27 +0100
-Message-ID: <1536696866.3024.151.camel@codethink.co.uk>
-Subject: Re: [PATCH 4.4 51/79] bnxt_en: Fix for system hang if request_irq
- fails
-From:   Ben Hutchings <ben.hutchings@codethink.co.uk>
-To:     Vikas Gupta <vikas.gupta@broadcom.com>,
-        Michael Chan <michael.chan@broadcom.com>
-Cc:     stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Date:   Tue, 11 Sep 2018 21:14:26 +0100
-In-Reply-To: <20180823074922.442947994@linuxfoundation.org>
-References: <20180823074918.641878835@linuxfoundation.org>
-         <20180823074922.442947994@linuxfoundation.org>
-Organization: Codethink Ltd.
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 11 Sep 2018 21:16:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37082 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726720AbeILBQn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 21:16:43 -0400
+Received: from localhost (unknown [104.132.1.88])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E0D0206BB;
+        Tue, 11 Sep 2018 20:15:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1536696948;
+        bh=WDNJNMqOMHEupZD0ltx3TP7I15uhoAoSsQdJ+Psp6Vg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=GrdIsKYqAA71lykXSDnXCVKyqoLWLpoRyJd6zzlU/wd9VmqLvmIrDRNSrISZdTcRZ
+         z5HZKe3PFWucaXVzrlfsL/UP+ki+TpPz7IbsBk2OEVigWa1uRYnNIkrUDRpu8I33Bl
+         btr9Uup7rfMIS7eZLK4iDX7Kg+1nKjTKQ6MyGRUc=
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Cc:     Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: fix quota info to adjust recovered data
+Date:   Tue, 11 Sep 2018 13:15:46 -0700
+Message-Id: <20180911201546.56566-1-jaegeuk@kernel.org>
+X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-08-23 at 09:53 +0200, Greg Kroah-Hartman wrote:
-> 4.4-stable review patch.  If anyone has any objections, please let me know.
-> 
-> ------------------
-> 
-> From: Vikas Gupta <vikas.gupta@broadcom.com>
-> 
-> [ Upstream commit c58387ab1614f6d7fb9e244f214b61e7631421fc ]
-> 
-> Fix bug in the error code path when bnxt_request_irq() returns failure.
-> bnxt_disable_napi() should not be called in this error path because
-> NAPI has not been enabled yet.
-[...]
-> --- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-> +++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-> @@ -4591,7 +4591,7 @@ static int __bnxt_open_nic(struct bnxt *
->  		rc = bnxt_request_irq(bp);
->  		if (rc) {
->  			netdev_err(bp->dev, "bnxt_request_irq err: %x\n", rc);
-> -			goto open_err;
-> +			goto open_err_irq;
->  		}
->  	}
->  
-> @@ -4629,6 +4629,8 @@ static int __bnxt_open_nic(struct bnxt *
->  
->  open_err:
->  	bnxt_disable_napi(bp);
-> +
-> +open_err_irq:
->  	bnxt_del_napi(bp);
+fsck.f2fs is able to recover the quota structure, since roll-forward recovery
+can recover it based on previous user information.
 
-Shouldn't this added statement be conditional on irq_re_init?
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/recovery.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Ben.
-
->  
->  open_err_free_mem:
-
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 95511ed11a22..1fde86a2107e 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -675,6 +675,9 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
+ 
+ 	need_writecp = true;
+ 
++	/* quota is not fully updated due to the lack of user information. */
++	set_sbi_flag(sbi, SBI_NEED_FSCK);
++
+ 	/* step #2: recover data */
+ 	err = recover_data(sbi, &inode_list, &dir_list);
+ 	if (!err)
 -- 
-Ben Hutchings, Software Developer                         Codethink Ltd
-https://www.codethink.co.uk/                 Dale House, 35 Dale Street
-                                     Manchester, M1 2HF, United Kingdom
+2.17.0.441.gb46fe60e1d-goog
+
