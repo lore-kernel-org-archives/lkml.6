@@ -1,148 +1,187 @@
 Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.0 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6028DECDFC0
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:26:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6821AC04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:28:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 161E620865
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:26:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F143820839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:28:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SrNg/AC5";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SrNg/AC5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 161E620865
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KGw0vHKp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F143820839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726912AbeIKOZF (ORCPT
+        id S1726818AbeIKO1C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 10:25:05 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:44420 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726569AbeIKOZE (ORCPT
+        Tue, 11 Sep 2018 10:27:02 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:40513 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726569AbeIKO1B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 10:25:04 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id D08E9609BD; Tue, 11 Sep 2018 09:26:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536657997;
-        bh=je+ux1fNPM0rDNJIXO6MU0PLVknQA2juJxQKvdOojWQ=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=SrNg/AC5tSxxtHDuYxW+R1PeJMJ0GGulqwSwNc+6Zqcozct0+fOnytmZBm4oOkxYS
-         2e6F42XnpO4lfh4g8CkzeFiIPJVbMnbfNd7D2+udVLq8VGE2Ei67ojTfTk6qEbfNtM
-         Boz297B/7+8z3fm6VTbqqAw5DvJ77RM8dOArLofs=
-Received: from [10.204.110.203] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rohitkr@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D9526607EB;
-        Tue, 11 Sep 2018 09:26:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536657997;
-        bh=je+ux1fNPM0rDNJIXO6MU0PLVknQA2juJxQKvdOojWQ=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=SrNg/AC5tSxxtHDuYxW+R1PeJMJ0GGulqwSwNc+6Zqcozct0+fOnytmZBm4oOkxYS
-         2e6F42XnpO4lfh4g8CkzeFiIPJVbMnbfNd7D2+udVLq8VGE2Ei67ojTfTk6qEbfNtM
-         Boz297B/7+8z3fm6VTbqqAw5DvJ77RM8dOArLofs=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D9526607EB
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rohitkr@codeaurora.org
-Subject: Re: [alsa-devel] [PATCH] ASoC: Fix UBSAN warning at
- snd_soc_get/put_volsw_sx()
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     rohkumar@qti.qualcomm.com, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, lgirdwood@gmail.com,
-        broonie@kernel.org
-References: <1536600836-12153-1-git-send-email-rohitkr@codeaurora.org>
- <s5hzhwp2oqd.wl-tiwai@suse.de>
-From:   Rohit Kumar <rohitkr@codeaurora.org>
-Message-ID: <3ac92f3a-059f-3513-4942-23eb41222490@codeaurora.org>
-Date:   Tue, 11 Sep 2018 14:56:32 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 11 Sep 2018 10:27:01 -0400
+Received: by mail-wr1-f65.google.com with SMTP id n2-v6so25003419wrw.7
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 02:28:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=1njNPne0Rl28S91VcycHBzGbWXnYOUQMXUJBEVmGpfM=;
+        b=KGw0vHKpdWPY1b/Y5Ymc4hkZk5Dgmo2welewj8LRbT/9+Da9PLv4B6WK+vfsxvPJCV
+         wRmKSqHcJG+EDfwHWIkdxLbEddpx92c/ioOxwalCRRlfOHDPslVJW6ofBZu1X3eshifQ
+         sfuZ0Jn3fhag8xnS+8TpkAWSqepUGBoDP1sYoozGTq/C1IZhPfl0IM25xOFbKelfY1fE
+         7lNzQRTT6EuduGmN9YnYlcxdKcYPNRzhuB8Y3jVrSiYzU+TUvvKvQYPlPzNsbtlv+iku
+         /qGQXrjIWzWV2GVR+3UoXcTRXPYDmYNmGGdiIXq3TH4NqgCTWXX+PaQy0MVjIBzGiIok
+         JFSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1njNPne0Rl28S91VcycHBzGbWXnYOUQMXUJBEVmGpfM=;
+        b=OiD9AQOdm9OEVI9pWLm+EJGkB25eaq73C7pbjnuhENDouyEBxExTao3mqFPEHe9mFp
+         cgvdW/T4ddvqlLvNMIp5b9nxavyggbmDSkAkuRvC3YKTzsbOTyMiFeFFBsNuLiDDVwPL
+         TKXmRcppCekHNzJYGKEQ2PjClZE6F4Pzl03+vzkRToi1h/HDIC2RZ0Bqfp3aSsOYNZIZ
+         bqqMhH/BaJzHM1S5pvezoDdsd5OOlxWF88sNbIQYdO0xOeQJSUZqWEPks82Fa0mWsiNH
+         zDc1CWNSHWJTDNVv/7wYsl5Z5eiw7Hae4WBAt0NhKjG6JQWDrWKGI6O7Sk7lUtpG9bK5
+         Mz0A==
+X-Gm-Message-State: APzg51BAKj+jJI5GYp2KbehdCL+BR3PgFOVUnLpns1lkChfaXWtkc7Ze
+        PDwBYg7Y8eh3kMAGjseS3L8=
+X-Google-Smtp-Source: ANB0VdYbeukGy7vWfkkxjy+xf6AM6+cWaKNxwOFncATjjWMopH8gU1tBA9mEq9X/x513cSWSbkgiAw==
+X-Received: by 2002:a1c:8893:: with SMTP id k141-v6mr747086wmd.36.1536658112337;
+        Tue, 11 Sep 2018 02:28:32 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id l7-v6sm22615940wrt.67.2018.09.11.02.28.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 11 Sep 2018 02:28:31 -0700 (PDT)
+Date:   Tue, 11 Sep 2018 11:28:29 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Baoquan He <bhe@redhat.com>
+Cc:     tglx@linutronix.de, hpa@zytor.com, thgarnie@google.com,
+        kirill.shutemov@linux.intel.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v2 2/3] x86/mm/KASLR: Calculate the actual size of
+ vmemmap region
+Message-ID: <20180911092829.GA9079@gmail.com>
+References: <20180909124946.17988-1-bhe@redhat.com>
+ <20180909124946.17988-2-bhe@redhat.com>
+ <20180910061151.GA85199@gmail.com>
+ <20180911073057.GW1740@192.168.1.3>
+ <20180911075946.GA97454@gmail.com>
+ <20180911081811.GY1740@192.168.1.3>
 MIME-Version: 1.0
-In-Reply-To: <s5hzhwp2oqd.wl-tiwai@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180911081811.GY1740@192.168.1.3>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks Takashi for reviewing.
 
+* Baoquan He <bhe@redhat.com> wrote:
 
-On 9/10/2018 11:56 PM, Takashi Iwai wrote:
-> On Mon, 10 Sep 2018 19:33:56 +0200,
-> Rohit kumar wrote:
->> In functions snd_soc_get_volsw_sx() or snd_soc_put_volsw_sx(),
->> if the result of (min + max) is negative, then fls() returns
->> signed integer with value as 32. This leads to signed integer
->> overflow as complete operation is considered as signed integer.
->>
->> UBSAN: Undefined behaviour in sound/soc/soc-ops.c:382:50
->> signed integer overflow:
->> -2147483648 - 1 cannot be represented in type 'int'
->> Call trace:
->> [<ffffff852f746fe4>] __dump_stack lib/dump_stack.c:15 [inline]
->> [<ffffff852f746fe4>] dump_stack+0xec/0x158 lib/dump_stack.c:51
->> [<ffffff852f7b5f3c>] ubsan_epilogue+0x18/0x50 lib/ubsan.c:164
->> [<ffffff852f7b6840>] handle_overflow+0xf8/0x130 lib/ubsan.c:195
->> [<ffffff852f7b68f0>] __ubsan_handle_sub_overflow+0x34/0x44 lib/ubsan.c:211
->> [<ffffff85307971a0>] snd_soc_get_volsw_sx+0x1a8/0x1f8 sound/soc/soc-ops.c:382
->>
->> Typecast the operation to unsigned int to fix the issue.
->>
->> Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
->> ---
->>   sound/soc/soc-ops.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/sound/soc/soc-ops.c b/sound/soc/soc-ops.c
->> index 592efb3..f8e3190 100644
->> --- a/sound/soc/soc-ops.c
->> +++ b/sound/soc/soc-ops.c
->> @@ -373,7 +373,7 @@ int snd_soc_get_volsw_sx(struct snd_kcontrol *kcontrol,
->>   	unsigned int rshift = mc->rshift;
->>   	int max = mc->max;
->>   	int min = mc->min;
->> -	unsigned int mask = (1 << (fls(min + max) - 1)) - 1;
->> +	unsigned int mask = ((unsigned int)(1 << (fls(min + max) - 1)) - 1);
-> Cat it be simpler like below instead?
-> 	unsigned int mask = (1U << (fls(min + max) - 1)) - 1;
+> On 09/11/18 at 09:59am, Ingo Molnar wrote:
+> > 
+> > * Baoquan He <bhe@redhat.com> wrote:
+> > 
+> > >  /*
+> > > + * Memory regions randomized by KASLR (except modules that use a separate
+> > > + * logic earlier during boot). Currently they are the physical memory
+> > > + * mapping, vmalloc and vmemmap regions, are ordered based on virtual
+> > > + * addresses. The order is kept after randomization.
+> > > + *
+> > > + * @base: points to various global variables used by the MM to get the
+> > > + * virtual base address of the above regions, which base addresses can
+> > > + * thus be modified by the very early KASLR code to dynamically shape
+> > > + * the virtual memory layout of these kernel memory regions on a per
+> > > + * bootup basis.
+> > > + *
+> > > + * @size_tb: size in TB of each memory region. Thereinto, the size of
+> > > + * the physical memory mapping region is variable, calculated according
+> > > + * to the actual size of system RAM in order to save more space for
+> > > + * randomization. The rest are fixed values related to paging mode.
+> > >   */
+> > >  static __initdata struct kaslr_memory_region {
+> > >  	unsigned long *base;
+> > 
+> > LGTM mostly, except the @size_tb field, see my comments further below.
+> > 
+> > Here's an edited version:
+> > 
+> > /*
+> >  * 'struct kasl_memory_region' entries represent continuous chunks of
+> >  * kernel virtual memory regions, to be randomized by KASLR.
+> >  *
+> >  * ( The exception is the module space virtual memory window which
+> >  *   uses separate logic earlier during bootup. )
+> >  *
+> >  * Currently there are three such regions: the physical memory mapping,
+> >  * vmalloc and vmemmap regions.
+> >  *
+> >  * The array below has the entries ordered based on virtual addresses.
+> >  * The order is kept after randomization, i.e. the randomized
+> >  * virtual addresses of these regions are still ascending.
+> >  *
+> >  * Here are the fields:
+> >  *
+> >  * @base: points to a global variable used by the MM to get the
+> >  * virtual base address of any of the above regions. This allows the
+> >  * early KASLR code to modify these base addresses early during bootup,
+> >  * on a per bootup basis, without the MM code even being aware of whether
+> >  * it got changed and to what value.
+> >  *
+> >  * When KASLR is active then the MM code makes sure that for each region
+> >  * there's such a single, dynamic, global base address 'unsigned long'
+> >  * variable available for the KASLR code to point to and modify directly:
+> 
+> >  *
+> >  *       { &page_offset_base, 0 },
+> >  *       { &vmalloc_base,     0 },
+> >  *       { &vmemmap_base,     1 },
+> >  *
+> >  * @size_tb: size in TB of each memory region. Thereinto, the size of
+> >  * the physical memory mapping region is variable, calculated according
+> >  * to the actual size of system RAM in order to save more space for
+> >  * randomization. The rest are fixed values related to paging mode.
+> >  */
+> > 
+> > The role of @size_tb is still murky to me. What is it telling us?
+> > Maximum virtual memory range to randomize into? Why does this depend
+> > on system RAM at all - aren't these all virtual addresses in a 64-bit
+> > (well, 48-bit or 56-bit) address ranges?
+> 
+> * @size_tb: size in TB of each memory region. Thereinto, the size of
+> * the physical memory mapping region is variable, calculated according
+> * to the actual size of system RAM. Since most of systems own RAM memory
+> * which is much less than 64 TB which is reserved for mapping the maximum
+> * physical memory in 4-level paging mode, not to mention 5-level. The
+> * left space can be saved to enhance randomness.
+> * 
+> How about this?
 
-Yes, let me just update it.
->
-> thanks,
->
-> Takashi
->
->>   	unsigned int val;
->>   	int ret;
->>   
->> @@ -418,7 +418,7 @@ int snd_soc_put_volsw_sx(struct snd_kcontrol *kcontrol,
->>   	unsigned int rshift = mc->rshift;
->>   	int max = mc->max;
->>   	int min = mc->min;
->> -	unsigned int mask = (1 << (fls(min + max) - 1)) - 1;
->> +	unsigned int mask = ((unsigned int)(1 << (fls(min + max) - 1)) - 1);
->>   	int err = 0;
->>   	unsigned int val, val_mask, val2 = 0;
->>   
->> -- 
->> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.,
->> is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
->>
->>
-> _______________________________________________
-> Alsa-devel mailing list
-> Alsa-devel@alsa-project.org
-> http://mailman.alsa-project.org/mailman/listinfo/alsa-devel
+Yeah, so proper context is still missing, this paragraph appears to assume from the reader a 
+whole lot of prior knowledge, and this is one of the top comments in kaslr.c so there's nowhere 
+else to go read about the background.
+
+For example what is the range of randomization of each region? Assuming the static, 
+non-randomized description in Documentation/x86/x86_64/mm.txt is correct, in what way does 
+KASLR modify that layout?
+
+All of this is very opaque and not explained very well anywhere that I could find. We need to 
+generate a proper description ASAP.
+
+> And please forgive my poor english.
+
+No problem, I can prettify it afterwards, but the information is not there yet to prettify. :)
+
 Thanks,
-Rohit
 
+	Ingo
