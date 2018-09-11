@@ -2,93 +2,107 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 403C6C6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 18:15:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9473FC6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 18:16:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0210720866
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 18:15:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0210720866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4BE042086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 18:16:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BE042086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728186AbeIKXQK (ORCPT
+        id S1728136AbeIKXRH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 19:16:10 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:37177 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727332AbeIKXQK (ORCPT
+        Tue, 11 Sep 2018 19:17:07 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:50474 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727332AbeIKXRG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 19:16:10 -0400
-Received: by mail-qt0-f195.google.com with SMTP id n6-v6so29241520qtl.4
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 11:15:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=A743d/wM/mljAAT/I+NbjlnB3etN4k5o3DxXuJzTTUQ=;
-        b=Ree7eCVaO/XanyN5IrEZQb/nJ/bE6SKi1KB+UnGu3FE38CN/wEorFYcp57I2sbH1Mr
-         6EBF/+DM+ALFnxRuXv1RIQfYaqjNaxJd7A5Gc6ijl9C/9mQeXlnVuknwzS0FLnJLHHHX
-         1DMunoWiKspl+V8jD+AWjyV/XwMBqASlN+RrHpaZXGGXhs+0Fi6YJPqpfOq6Ct3zHF8s
-         y7ELPsXNl8N5nZzwqzCXCLw+f7+oYjqVcCCaVrWqxc8Z+bj4Aa1TcaZFS+uZi95m73yt
-         Mz0U15tXReQCmlF2yGJmmao2RLHB7I3gWDqMYRW1lQnTYQuLTFCKZvT1CnH+y+Ln3yGs
-         LwoA==
-X-Gm-Message-State: APzg51BeznCXhJQtdN/ncgxm2DNZuoWGqZpuEJyutQip+/spaZGSkCNI
-        A/9Yvr8epRPTCHtizceXdSgILA==
-X-Google-Smtp-Source: ANB0Vdb9SlfG9zUHSdFAP1ap5tuZtyLlfp3M7yI8IJu07ifMJZmn+WiT8b1fy96mFOvpFqYMPpPc4Q==
-X-Received: by 2002:a0c:c969:: with SMTP id v38-v6mr19726328qvj.192.1536689740060;
-        Tue, 11 Sep 2018 11:15:40 -0700 (PDT)
-Received: from labbott-redhat.redhat.com ([2601:602:9802:a8dc::42c3])
-        by smtp.gmail.com with ESMTPSA id 62-v6sm11813115qkx.66.2018.09.11.11.15.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Sep 2018 11:15:38 -0700 (PDT)
-From:   Laura Abbott <labbott@redhat.com>
-To:     "Bryant G. Ly" <bryantly@linux.vnet.ibm.com>,
-        Michael Cyr <mikecyr@linux.vnet.ibm.com>,
-        Kees Cook <keescook@chromium.org>
-Cc:     Laura Abbott <labbott@redhat.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: ibmvscsis: Ensure partition name is properly NUL terminated
-Date:   Tue, 11 Sep 2018 11:15:34 -0700
-Message-Id: <20180911181534.18553-1-labbott@redhat.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 11 Sep 2018 19:17:06 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126] helo=xylophone)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1fznDA-0008HY-GA; Tue, 11 Sep 2018 19:16:28 +0100
+Message-ID: <1536689787.3024.130.camel@codethink.co.uk>
+Subject: Re: [PATCH 4.4 105/124] xen-netfront: wait xenbus state change when
+ load module manually
+From:   Ben Hutchings <ben.hutchings@codethink.co.uk>
+To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Xiao Liang <xiliang@redhat.com>
+Cc:     stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Juergen Gross <jgross@suse.com>
+Date:   Tue, 11 Sep 2018 19:16:27 +0100
+In-Reply-To: <b783c784-1bb0-32ad-07ad-a05b06a928d9@oracle.com>
+References: <20180804082702.434482435@linuxfoundation.org>
+         <20180804082706.393252081@linuxfoundation.org>
+         <1536279682.3024.95.camel@codethink.co.uk>
+         <b783c784-1bb0-32ad-07ad-a05b06a928d9@oracle.com>
+Organization: Codethink Ltd.
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While reviewing another part of the code, Kees noticed that the
-strncpy of the partition name might not always be NUL terminated. Switch
-to using strlcpy which does this safely.
+On Fri, 2018-09-07 at 13:27 -0400, Boris Ostrovsky wrote:
+> On 09/06/2018 08:21 PM, Ben Hutchings wrote:
+> > On Sat, 2018-08-04 at 11:01 +0200, Greg Kroah-Hartman wrote:
+> > > 4.4-stable review patch.  If anyone has any objections, please let me know.
+> > > 
+> > > ------------------
+> > > 
+> > > From: Xiao Liang <xiliang@redhat.com>
+> > > 
+> > > [ Upstream commit 822fb18a82abaf4ee7058793d95d340f5dab7bfc ]
+> > > 
+> > > When loading module manually, after call xenbus_switch_state to initializes
+> > > the state of the netfront device, the driver state did not change so fast
+> > > that may lead no dev created in latest kernel. This patch adds wait to make
+> > > sure xenbus knows the driver is not in closed/unknown state.
+> > 
+> > [...]
+> > > --- a/drivers/net/xen-netfront.c
+> > > +++ b/drivers/net/xen-netfront.c
+> > > @@ -86,6 +86,7 @@ struct netfront_cb {
+> > >  /* IRQ name is queue name with "-tx" or "-rx" appended */
+> > >  #define IRQ_NAME_SIZE (QUEUE_NAME_SIZE + 3)
+> > >  
+> > > +static DECLARE_WAIT_QUEUE_HEAD(module_load_q);
+> > >  static DECLARE_WAIT_QUEUE_HEAD(module_unload_q);
+> > >  
+> > >  struct netfront_stats {
+> > > @@ -1335,6 +1336,11 @@ static struct net_device *xennet_create_
+> > >  	netif_carrier_off(netdev);
+> > >  
+> > >  	xenbus_switch_state(dev, XenbusStateInitialising);
+> > > +	wait_event(module_load_q,
+> > > +			   xenbus_read_driver_state(dev->otherend) !=
+> > > +			   XenbusStateClosed &&
+> > > +			   xenbus_read_driver_state(dev->otherend) !=
+> > > +			   XenbusStateUnknown);
+> > >  	return netdev;
+> > >  
+> > >   exit:
+> > 
+> > This won't work; it will hang.  Something (maybe netback_changed()?)
+> > needs to wake up tasks on the module_load_q.
+> 
+> 
+> https://lkml.org/lkml/2018/9/7/691
 
-Reported-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Laura Abbott <labbott@redhat.com>
----
-I realized looking at this that I probably should have made
-this and my previous patch a series given this has context depending on
-the other patch. I can resend if the scsi maintainers want.
----
- drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks.
 
-diff --git a/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c b/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
-index 9305440a00a1..1217bf2a28db 100644
---- a/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
-+++ b/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
-@@ -3477,7 +3477,7 @@ static int ibmvscsis_probe(struct vio_dev *vdev,
- 	snprintf(vscsi->eye, sizeof(vscsi->eye), "VSCSI%s", vdev->name);
- 
- 	vscsi->dds.unit_id = vdev->unit_address;
--	strncpy(vscsi->dds.partition_name, partition_name,
-+	strlcpy(vscsi->dds.partition_name, partition_name,
- 		sizeof(vscsi->dds.partition_name));
- 	vscsi->dds.partition_num = partition_number;
- 
+Ben.
+
 -- 
-2.17.1
-
+Ben Hutchings, Software Developer                         Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
