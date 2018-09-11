@@ -2,215 +2,136 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42FE9C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 22:54:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E881AC04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 22:56:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6E1920880
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 22:54:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 867DE2087F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 22:56:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OOBSjyEP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6E1920880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Gz6GJY+p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 867DE2087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728117AbeILD4P (ORCPT
+        id S1728010AbeILD6G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 23:56:15 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:53040 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727300AbeILD4P (ORCPT
+        Tue, 11 Sep 2018 23:58:06 -0400
+Received: from mail-yb1-f202.google.com ([209.85.219.202]:40473 "EHLO
+        mail-yb1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726885AbeILD6G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 23:56:15 -0400
-Received: by mail-wm0-f68.google.com with SMTP id y139-v6so308189wmc.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 15:54:45 -0700 (PDT)
+        Tue, 11 Sep 2018 23:58:06 -0400
+Received: by mail-yb1-f202.google.com with SMTP id a16-v6so1517332ybl.7
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 15:56:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=7ejCgxl5rHwWC9txaQzPthbyxNcqjkzBxogfONpxEOc=;
-        b=OOBSjyEPhUpt3QmNTbPlHCs5zQl8umiQg7JLwpIoeQvS0TFbwHh7yb4UlDHC0ONQwT
-         0Ocb/fkPzJhlWjhk828lK29wfMIJiVeN5DjJ1phHSuxtJ6RrRAXFDcbaaAuuou6ERLkA
-         GOzBCWGEkf9iXm+rxP76zPscDCcgpODNwmAGE=
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=nIVzj8vLIevKw27+IX4HLod5KBJg4dlwXT/e9v6B4v4=;
+        b=Gz6GJY+pNQlMhygLj4LnsG2nqUCs2kUNOpAxKKbhBEKmZo0v6ycmmaXeYGiaGVp5yY
+         rBk1fKIAIv8gB3Q8MLi0BpBNt27xX1iQNFjfHm2/iq8NOhR/ICAdqWaRykbefJXzGOKf
+         SVOWiu7wm+k1oAc57JdkIT//bKfLrT8RZ2AbehNMQK0SpX3Qk27I+vlf10p1nIp2toAm
+         +0k9xvdqeEagHTVDzlhklTJEtkKSbkY3J0JUV4wZwV2Ho8dSMeOiMl4JHl9pjvzMaRco
+         ylUwZ6U5BRuwxXc9L/N/VyDBGJkhPYmrAriQg2jVGK8/ZS6I6A1S0CSE3tS8szJGE1OD
+         TNog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=7ejCgxl5rHwWC9txaQzPthbyxNcqjkzBxogfONpxEOc=;
-        b=kLCS7ABec+/PX8dqvsKkHX0jRHk/NIFuQbU+CIZ9naa6F0opyISkJtv2/iO4PXHXNh
-         5/UMBvKmtcPCrvtLgfiDhKdlh3cDMvb3tIQJfN+VULyMbCV5hoU0Gz2EvB65NigRRYP9
-         V658kSIVd7aek5IHqWQT1h1tEsV97sxIZzY7AgZi5tjJzeftHk7JxjhnLygsEj+pn4Xr
-         +wHORFd7tFCggAMXqg741sxbIyx5vQvLh/eTleS7jOU1IMVoQHEbsCUyhTdlBi0qOjPz
-         6yRys+iySR/zktCj3ZmKMzAkR6qYr2F3FyOtESQ1xqw1TRwop8PxuaYnHSIR+hj1dOyT
-         Q2tA==
-X-Gm-Message-State: APzg51AxHzGspZGsSFkAlUTEypSO5Z7fFmdTyF8UPnemlGZQWahjDsQG
-        +0+UqKo6mQJPLhnBpGOyJgKxIw==
-X-Google-Smtp-Source: ANB0Vdbm8JIZHAYsKNYUX/P0aiyaxoZTCej3OeQb9vv9DRdS6zj4TOZoWpwaJsg+4LpnRE3au5W/gw==
-X-Received: by 2002:a1c:68f:: with SMTP id 137-v6mr2838676wmg.82.1536706484407;
-        Tue, 11 Sep 2018 15:54:44 -0700 (PDT)
-Received: from dell ([89.238.177.251])
-        by smtp.gmail.com with ESMTPSA id b124-v6sm2311430wmg.47.2018.09.11.15.54.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Sep 2018 15:54:43 -0700 (PDT)
-Date:   Tue, 11 Sep 2018 23:54:40 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        radu_nicolae.pirea@upb.ro, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Mark Brown <broonie@kernel.org>, Jiri Slaby <jslaby@suse.com>,
-        Richard Genoud <richard.genoud@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>
-Subject: Re: [PATCH v12 0/6] Driver for at91 usart in spi mode
-Message-ID: <20180911225440.GL4185@dell>
-References: <20180904111310.4049-1-radu_nicolae.pirea@upb.ro>
- <20180911093356.GE4185@dell>
- <20180911093917.GL2494@piout.net>
- <CAMuHMdXH8gNjKGOHGFc+K03U2zsVCSN7G_Q4wtepQr859nRQKg@mail.gmail.com>
- <20180911153621.GP2494@piout.net>
- <CAMuHMdV+=EgAYogwNHbY=RExkGox_+YSeHV6pJtQb6g6PzD-CQ@mail.gmail.com>
- <20180911181838.GI4185@dell>
- <20180911185839.GA25212@piout.net>
- <20180911224418.GK4185@dell>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180911224418.GK4185@dell>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=nIVzj8vLIevKw27+IX4HLod5KBJg4dlwXT/e9v6B4v4=;
+        b=SdYFcN3TS7j2zjw4jEqeqvXy2NLhjL8WgvLeUy/keMLEjIgSU2Nim0fwEQgaF4Gv+B
+         jPwtg4IY0nsv4reld40mMfkijC5kRkfXveBbcTpZZb0N0ATLe7FyN3KTpOMgnnL45nKO
+         G73pjpCeaVnr1xD1KwVEFbtXY5dQ9Hnk5CMpuC28r0iCPiswwAELyKZuYBzhUxmI4N26
+         MXFwmgLfuKkIxKSmWTtcRWM4P8JUyrnbmVBU4sy1OvhuA11xVP6cSxskM4tNxzLQMfWX
+         +O/RKXoip38Ij0pupH+PD5g7grcAFWxXimVl3s1/gdj+RktDfwZUQxNB21glTxDojv45
+         qh/Q==
+X-Gm-Message-State: APzg51Cs1KyZGGesoDi0ojypd52DxAyQK4SgoOj/wgxVaMH5zTUyUtPd
+        qY10JwYC39I3bBNK6yyI7PalZFrDksMy
+X-Google-Smtp-Source: ANB0VdYAWgH1q/eSRvThpfjcTOPiJYNLWxlIuXxolbS5agN8VqFmVULipE8/9DPxopN6b3AxNSC0R+eeV8SB
+X-Received: by 2002:a81:1789:: with SMTP id 131-v6mr7921111ywx.218.1536706596194;
+ Tue, 11 Sep 2018 15:56:36 -0700 (PDT)
+Date:   Tue, 11 Sep 2018 15:56:30 -0700
+Message-Id: <20180911225630.124502-1-venture@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.19.0.rc2.392.g5ba43deb5a-goog
+Subject: [PATCH v2] ipmi: looped device detection
+From:   Patrick Venture <venture@google.com>
+To:     venture@google.com, minyard@acm.org, arnd@arndb.de,
+        gregkh@linuxfoundation.org
+Cc:     openipmi-developer@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 11 Sep 2018, Lee Jones wrote:
+Try to get the device ID repeatedly during initialization before giving up.
+The BMC isn't always responsive, and this allows it to be slightly flaky
+during early boot.
 
-> On Tue, 11 Sep 2018, Alexandre Belloni wrote:
-> 
-> > On 11/09/2018 19:39:30+0100, Lee Jones wrote:
-> > > On Tue, 11 Sep 2018, Geert Uytterhoeven wrote:
-> > > 
-> > > > On Tue, Sep 11, 2018 at 5:36 PM Alexandre Belloni
-> > > > <alexandre.belloni@bootlin.com> wrote:
-> > > > > On 11/09/2018 16:59:09+0200, Geert Uytterhoeven wrote:
-> > > > > > On Tue, Sep 11, 2018 at 11:40 AM Alexandre Belloni
-> > > > > > <alexandre.belloni@bootlin.com> wrote:
-> > > > > > > On 11/09/2018 10:33:56+0100, Lee Jones wrote:
-> > > > > > > > On Tue, 04 Sep 2018, Radu Pirea wrote:
-> > > > > > > > > Radu Pirea (6):
-> > > > > > > > >   MAINTAINERS: add at91 usart mfd driver
-> > > > > > > > >   dt-bindings: add binding for atmel-usart in SPI mode
-> > > > > > > > >   mfd: at91-usart: added mfd driver for usart
-> > > > > > > > >   MAINTAINERS: add at91 usart spi driver
-> > > > > > > > >   spi: at91-usart: add driver for at91-usart as spi
-> > > > > > > > >   tty/serial: atmel: change the driver to work under at91-usart mfd
-> > > > > > > > >
-> > > > > > > > >  .../bindings/{serial => mfd}/atmel-usart.txt  |  25 +-
-> > > > > > > > >  MAINTAINERS                                   |  16 +
-> > > > > > > > >  drivers/mfd/Kconfig                           |   9 +
-> > > > > > > > >  drivers/mfd/Makefile                          |   1 +
-> > > > > > > > >  drivers/mfd/at91-usart.c                      |  71 +++
-> > > > > > > > >  drivers/spi/Kconfig                           |   8 +
-> > > > > > > > >  drivers/spi/Makefile                          |   1 +
-> > > > > > > > >  drivers/spi/spi-at91-usart.c                  | 432 ++++++++++++++++++
-> > > > > > > > >  drivers/tty/serial/Kconfig                    |   1 +
-> > > > > > > > >  drivers/tty/serial/atmel_serial.c             |  42 +-
-> > > > > > > > >  include/dt-bindings/mfd/at91-usart.h          |  17 +
-> > > > > > > > >  11 files changed, 606 insertions(+), 17 deletions(-)
-> > > > > > > > >  rename Documentation/devicetree/bindings/{serial => mfd}/atmel-usart.txt (76%)
-> > > > > > > > >  create mode 100644 drivers/mfd/at91-usart.c
-> > > > > > > > >  create mode 100644 drivers/spi/spi-at91-usart.c
-> > > > > > > > >  create mode 100644 include/dt-bindings/mfd/at91-usart.h
-> > > > > > > >
-> > > > > > > > Seeing as this patch-set has caused some issues this morning, I took
-> > > > > > > > the liberty to peruse back into its history to figure out where things
-> > > > > > > > started to go wrong.  I also re-reviewed the MFD driver - and I'm glad
-> > > > > > > > I did!
-> > > > > > > >
-> > > > > > > > My Acked-by has been attached to the MFD portion since v5, which is
-> > > > > > > > why the code hasn't caught my eye before today.  I reviewed the
-> > > > > > > > relocation of the *binding document* (serial => mfd with no changes)
-> > > > > > > > in v4 and nothing else.  It appears as though you mistakenly added it
-> > > > > > > > to the *MFD driver* instead.  This explains my confusion in v10 when I
-> > > > > > > > told you I'd already reviewed the binding document.
-> > > > > > > >
-> > > > > > > > As I said, I have re-reviewed the MFD driver and I'm afraid to say
-> > > > > > > > that I do not like what I see.  Besides the missing header file and
-> > > > > > > > the whitespace tabbing errors, I do not agree with the implementation.
-> > > > > > > > Using MFD as a shim to hack around driver selection is not a valid
-> > > > > > > > use-case.
-> > > > > > > >
-> > > > > > > > What's stopping you from just using the compatible string directly to
-> > > > > > > > select which driver you need to probe?
-> > > > > > > >
-> > > > > > >
-> > > > > > > Then you'd have multiple compatible strings for the same IP which is a
-> > > > > > > big no-no.
-> > > > > >
-> > > > > > It's still the same hardware device, isn't?
-> > > > > > What if the SPI or UART slave is not on-board, but on an expansion board?
-> > > > > > Then the SoC-specific .dtsi has no idea what mode should be used.
-> > > > > >
-> > > > > > Hence shouldn't the software derive the hardware mode from the full
-> > > > > > hardware description in DT? If that's impossible (I didn't look into detail
-> > > > > > whether an SPI bus can easily be distinguished from a UART bus), perhaps
-> > > > > > a mode property should be added?
-> > > > >
-> > > > > Yes, this is exactly what is done:
-> > > > >
-> > > > > https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git/tree/drivers/mfd/at91-usart.c?h=ib-mfd-spi-tty-4.20-1#n33
-> > > > 
-> > > > OK.
-> > > > 
-> > > > I guess the main "hackish" part is that the mfd_cell uses of_compatible,
-> > > > which thus requires having additional compatible values?
-> > > > 
-> > > > I think those can just be removed. AFAICS, the SPI and serial drivers already
-> > > > match against the "at91_usart_spi" resp. "atmel_usart_serial" platform device
-> > > > names?
-> > > 
-> > > The hackish part of this driver is that it's using MFD for something
-> > > which is clearly not an MFD.  It's a USART device.  Nothing more,
-> > > nothing less.
-> > > 
-> > > Does anyone have the datasheet to hand?
-> > > 
-> > 
-> > It is not a simple usart, it is either a usart or a full blown SPI
-> > controller with registers changing layout depending on the selected
-> > mode. Otherwise, I'm not sure how you would get a USART to do SPI.
-> 
-> Make up your mind.  Either the IP is different, or it's not. ;)
-> 
-> > Datasheet here:
-> 
-> Great.  Thank you.
-> 
-> > http://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-6438-32-bit-ARM926-Embedded-Microprocessor-SAM9G45_Datasheet.pdf
-> > 
-> > USART doc starting p572, registers p621.
+Tested: Installed on a system with the BMC software disabled
+such that it was non-responsive.  The driver correctly detected this
+and gave up as expected.  Then I re-enabled the BMC software unloaded
+and reloaded the driver and it was detected properly.
 
-After looking at the datasheet, I don't see any reason why one of the
-two drivers can't be selected using different compatible strings.
+Signed-off-by: Patrick Venture <venture@google.com>
+---
+v2:
+ - removed extra variable that was set but not used.
+---
+ drivers/char/ipmi/ipmi_si_intf.c | 23 ++++++++++++++++++++++-
+ 1 file changed, 22 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/char/ipmi/ipmi_si_intf.c b/drivers/char/ipmi/ipmi_si_intf.c
+index 90ec010bffbd..5fed96897fe8 100644
+--- a/drivers/char/ipmi/ipmi_si_intf.c
++++ b/drivers/char/ipmi/ipmi_si_intf.c
+@@ -1918,11 +1918,13 @@ int ipmi_si_add_smi(struct si_sm_io *io)
+  * held, primarily to keep smi_num consistent, we only one to do these
+  * one at a time.
+  */
++#define GET_DEVICE_ID_ATTEMPTS	5
+ static int try_smi_init(struct smi_info *new_smi)
+ {
+ 	int rv = 0;
+ 	int i;
+ 	char *init_name = NULL;
++	unsigned long sleep_rm;
+ 
+ 	pr_info(PFX "Trying %s-specified %s state machine at %s address 0x%lx, slave address 0x%x, irq %d\n",
+ 		ipmi_addr_src_to_str(new_smi->io.addr_source),
+@@ -2003,7 +2005,26 @@ static int try_smi_init(struct smi_info *new_smi)
+ 	 * Attempt a get device id command.  If it fails, we probably
+ 	 * don't have a BMC here.
+ 	 */
+-	rv = try_get_dev_id(new_smi);
++	for (i = 0; i < GET_DEVICE_ID_ATTEMPTS; i++) {
++		pr_info(PFX "Attempting to read BMC device ID\n");
++		rv = try_get_dev_id(new_smi);
++		/* If it succeeded, stop trying */
++		if (!rv)
++			break;
++
++		/* Sleep for ~0.25s before trying again instead of hammering
++		 * the BMC.
++		 */
++		sleep_rm = msleep_interruptible(250);
++		if (sleep_rm != 0) {
++			pr_info(PFX "Find BMC interrupted\n");
++			rv = -EINTR;
++			goto out_err;
++		}
++	}
++
++	/* If we exited the loop above and rv is non-zero we ran out of tries.
++	 */
+ 	if (rv) {
+ 		if (new_smi->io.addr_source)
+ 			dev_err(new_smi->io.dev,
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.19.0.rc2.392.g5ba43deb5a-goog
+
