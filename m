@@ -6,72 +6,71 @@ X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC482C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:09:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D89C4C6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:09:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9336B20883
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:09:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9147D20880
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:09:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="gUf27dsX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9336B20883
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="V7P4jhth"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9147D20880
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727973AbeIKUJg (ORCPT
+        id S1728048AbeIKUJj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 16:09:36 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:54906 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727784AbeIKUJf (ORCPT
+        Tue, 11 Sep 2018 16:09:39 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:53322 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727983AbeIKUJj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 16:09:35 -0400
-Received: by mail-wm0-f66.google.com with SMTP id c14-v6so1378105wmb.4
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 08:09:51 -0700 (PDT)
+        Tue, 11 Sep 2018 16:09:39 -0400
+Received: by mail-wm0-f68.google.com with SMTP id b19-v6so1387691wme.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 08:09:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=RQsmsBThB2HiU5fFcpahoK7bzxzFBRhYwA17fSoM3ek=;
-        b=gUf27dsXjAYLpxM1GZxVYU3eUPCPi2/IZH79WgCwxr9dDwOzZgDB8CSNxDBSkDwVOB
-         aMD4+EdBkQE15DW2e8XVOBm/i+TLDMmKLshmWoYiBF9N/hzcPRnYWcfhdDbe77ZpuYni
-         MXp99gh82WxqGz5yo9bZpXTOuAwkV98ISO+BcdhsmPOlDB1ige68JyQacJwDJWVwa34l
-         Q3n47jgx5b1tCnKjZ65DfPNxWEe4+z6TXs5xOs8CVACc/FyqBn90zTXHzUPfdG4kp0Iv
-         RTxHwRsaIvHDWMY4KfWoRRqx3HiGLmEjHwWrAc0kGe/l2sRjZ+dV8pEE4HjgL3HDulSR
-         YEVA==
+        bh=sZPZEGbp7HHSQQCHt6FtGOwst0ToGi0wo91bOzTXYgs=;
+        b=V7P4jhthk/JfKsoItKz9N4nAIIIiq//iKeAsN0oxjGj+WyhSfsqo2+C/rFgH9TD0pL
+         b1Rq7j1kPOTztUo4BWpPl/j2383JHa4gZspafvUN46yciRrKrWmBce7sZyeEw2EwEgJc
+         XHDMTzCeoHqjUwpqPLp9pLFHY9YiKUorXx1O2Nlfk+nCg2RkYTRzHOUN8U1TquYsqV04
+         1OgmMduZ/kymLOEPQw29vRm/8uTmyQ6eQNnasd9eQV3Y7xjboTq8tdC0D1NXbqr863Gj
+         Dq+VIk5TiRbjS8dsFUmt//yHh4hRnlvPNO51M5xP3b7QsB6un01q/o7LlVFmqczUXq/k
+         GDtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=RQsmsBThB2HiU5fFcpahoK7bzxzFBRhYwA17fSoM3ek=;
-        b=XS6KRqMYSKy8S2YjTqdJPBRzRiCSwlkeuDBxN8FPRj4fH31yfWeRHFf+uUq5cQzero
-         GNwe3U3ebn+afgUoPMzNO7Yz8LLxiqkFNGf8vpqjEoKce0H0MJZEb8vtDOdS7AFESqTn
-         1rynCzZjl4qjzHSP8SCBItldGFEp48L5UYinLYOr+5G1gRL80wjQkS2uwHaBIAxJFYNE
-         4glTGokzSyLtjxwhuGDoCDn15UQeLExBrrRIifvkfhkuFzdtGSJAt6hE3+YLyTUmjuXC
-         p3WyN1NqEZhXZwrkYP3EdLcj6cTulcQ8dEAyGxgY5iU/Gz6BufLbkAfkgl6fNc8szrql
-         jHUQ==
-X-Gm-Message-State: APzg51AnfmcXwxheB81qvkG3RJNXwl2SikveSlu0sG5rAsJHQB/wPy5W
-        riFBM5GYg/olKijHt7Tt2CTLoQ==
-X-Google-Smtp-Source: ANB0VdYC7MgsxMraS7WhRVD2IRn7/34YNhwNBTrWFN6gQZjmqVyM14HM4jmRDUqezyCpLkSyaAgMEw==
-X-Received: by 2002:a1c:7fc6:: with SMTP id a189-v6mr1559911wmd.42.1536678590563;
-        Tue, 11 Sep 2018 08:09:50 -0700 (PDT)
+        bh=sZPZEGbp7HHSQQCHt6FtGOwst0ToGi0wo91bOzTXYgs=;
+        b=ma5vwfSwRJa0fSr8GKSsOZYrowGTqOhL6roZSSB+sLbCYy1h1877CLFXYfvkttIH95
+         Oy+HbNc2ahjHQSaznEYDEsNcrZSiHS6nAQc906EqtByKWDG1kJ7wXTqj6vuM/p813N7R
+         2gm3JyLqKzLZl4nu9L32/ZcxTNJ+jPUG2QdaTtE1eBXy3hFPc10iOFsoycPUA99+Nivz
+         Pr0+eO1DYFX2CDPyv9zz9vWKXuLnhFF7q/L4DUZ/IE2BSWWWqYXQQyfzcAHWdW2bRQuj
+         4xi4AH8jTcmqXslkebGqpCAxFPa7PWTZ2zdJRpR7e04QRsyHi2Dpt/gPBA3H+EeRN6no
+         +YIw==
+X-Gm-Message-State: APzg51AHQLqIOK7jeVUpQ4g/t8KZHbto2aaPjiu2Uf6+fmTmpHSoLwGV
+        Jz66oCHnfkxkVXSd4gibqBvvjg==
+X-Google-Smtp-Source: ANB0VdacCmsaDo7Mtznw5MR3VpXxAsDyoyaBQUtiQ4nW4BRkaADlvSFzoHUy2UEGFgrAlFOKAC0o6g==
+X-Received: by 2002:a1c:908b:: with SMTP id s133-v6mr1558179wmd.69.1536678594544;
+        Tue, 11 Sep 2018 08:09:54 -0700 (PDT)
 Received: from localhost.localdomain (81-67-76-113.rev.numericable.fr. [81.67.76.113])
-        by smtp.gmail.com with ESMTPSA id x65-v6sm618625wmg.39.2018.09.11.08.09.48
+        by smtp.gmail.com with ESMTPSA id x65-v6sm618625wmg.39.2018.09.11.08.09.53
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Sep 2018 08:09:49 -0700 (PDT)
+        Tue, 11 Sep 2018 08:09:53 -0700 (PDT)
 From:   Maxime Jourdan <mjourdan@baylibre.com>
 To:     Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc:     Maxime Jourdan <mjourdan@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
         Hans Verkuil <hans.verkuil@cisco.com>,
         Kevin Hilman <khilman@baylibre.com>,
         Jerome Brunet <jbrunet@baylibre.com>,
         Neil Armstrong <narmstrong@baylibre.com>,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         linux-amlogic@lists.infradead.org
-Subject: [PATCH v2 1/3] dt-bindings: media: add Amlogic Video Decoder Bindings
-Date:   Tue, 11 Sep 2018 17:09:36 +0200
-Message-Id: <20180911150938.3844-2-mjourdan@baylibre.com>
+Subject: [PATCH v2 3/3] MAINTAINERS: Add meson video decoder
+Date:   Tue, 11 Sep 2018 17:09:38 +0200
+Message-Id: <20180911150938.3844-4-mjourdan@baylibre.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180911150938.3844-1-mjourdan@baylibre.com>
 References: <20180911150938.3844-1-mjourdan@baylibre.com>
@@ -80,91 +79,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add documentation for the meson vdec dts node.
+Add an entry for the meson video decoder for amlogic SoCs.
 
 Signed-off-by: Maxime Jourdan <mjourdan@baylibre.com>
 ---
- .../bindings/media/amlogic,vdec.txt           | 71 +++++++++++++++++++
- 1 file changed, 71 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/amlogic,vdec.txt
+ MAINTAINERS | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/media/amlogic,vdec.txt b/Documentation/devicetree/bindings/media/amlogic,vdec.txt
-new file mode 100644
-index 000000000000..aabdd01bcf32
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/amlogic,vdec.txt
-@@ -0,0 +1,71 @@
-+Amlogic Video Decoder
-+================================
+diff --git a/MAINTAINERS b/MAINTAINERS
+index d870cb57c887..ee086fcff146 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9491,6 +9491,14 @@ F:	drivers/media/platform/meson/ao-cec.c
+ F:	Documentation/devicetree/bindings/media/meson-ao-cec.txt
+ T:	git git://linuxtv.org/media_tree.git
+ 
++MESON VIDEO DECODER DRIVER FOR AMLOGIC SOCS
++M:	Maxime Jourdan <mjourdan@baylibre.com>
++L:	linux-media@lists.freedesktop.org
++L:	linux-amlogic@lists.infradead.org
++S:	Supported
++F:	drivers/media/platform/meson/vdec/
++T:	git git://linuxtv.org/media_tree.git
 +
-+The video decoding IP lies within the DOS memory region,
-+except for the hardware bitstream parser that makes use of an undocumented
-+region.
-+
-+It makes use of the following blocks:
-+
-+- ESPARSER is a bitstream parser that outputs to a VIFIFO. Further VDEC blocks
-+then feed from this VIFIFO.
-+- VDEC_1 can decode MPEG-1, MPEG-2, MPEG-4 part 2, MJPEG, H.263, H.264, VC-1.
-+- VDEC_HEVC can decode HEVC and VP9.
-+
-+Both VDEC_1 and VDEC_HEVC share the "vdec" IRQ and as such cannot run
-+concurrently.
-+
-+Device Tree Bindings:
-+---------------------
-+
-+VDEC: Video Decoder
-+--------------------------
-+
-+Required properties:
-+- compatible: value should be different for each SoC family as :
-+	- GXBB (S905) : "amlogic,gxbb-vdec"
-+	- GXL (S905X, S905D) : "amlogic,gxl-vdec"
-+	- GXM (S912) : "amlogic,gxm-vdec"
-+- reg: base address and size of he following memory-mapped regions :
-+	- dos
-+	- esparser
-+- reg-names: should contain the names of the previous memory regions
-+- interrupts: should contain the following IRQs:
-+	- vdec
-+	- esparser
-+- interrupt-names: should contain the names of the previous interrupts
-+- amlogic,ao-sysctrl: should point to the AOBUS sysctrl node
-+- amlogic,canvas: should point to a canvas provider node
-+- clocks: should contain the following clocks :
-+	- dos_parser
-+	- dos
-+	- vdec_1
-+	- vdec_hevc
-+- clock-names: should contain the names of the previous clocks
-+- resets: should contain the parser reset
-+- reset-names: should be "esparser"
-+
-+Example:
-+
-+vdec: video-decoder@c8820000 {
-+	compatible = "amlogic,gxbb-vdec";
-+	reg = <0x0 0xc8820000 0x0 0x10000>,
-+	      <0x0 0xc110a580 0x0 0xe4>;
-+	reg-names = "dos", "esparser";
-+
-+	interrupts = <GIC_SPI 44 IRQ_TYPE_EDGE_RISING>,
-+		     <GIC_SPI 32 IRQ_TYPE_EDGE_RISING>;
-+	interrupt-names = "vdec", "esparser";
-+
-+	amlogic,ao-sysctrl = <&sysctrl_AO>;
-+	amlogic,canvas = <&canvas>;
-+
-+	clocks = <&clkc CLKID_DOS_PARSER>,
-+		 <&clkc CLKID_DOS>,
-+		 <&clkc CLKID_VDEC_1>,
-+		 <&clkc CLKID_VDEC_HEVC>;
-+	clock-names = "dos_parser", "dos", "vdec_1", "vdec_hevc";
-+
-+	resets = <&reset RESET_PARSER>;
-+	reset-names = "esparser";
-+};
+ MICROBLAZE ARCHITECTURE
+ M:	Michal Simek <monstr@monstr.eu>
+ W:	http://www.monstr.eu/fdt/
 -- 
 2.18.0
 
