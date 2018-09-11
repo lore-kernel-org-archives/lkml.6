@@ -2,82 +2,264 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73CB6C6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:25:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBDA1C6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:27:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 363B020645
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:25:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 363B020645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 8D9F82087F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:27:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D9F82087F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727679AbeIKUZX (ORCPT
+        id S1727616AbeIKU1e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 16:25:23 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33392 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726800AbeIKUZW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 16:25:22 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0EB1281A8073;
-        Tue, 11 Sep 2018 15:25:35 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.34.27.30])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 327B32156889;
-        Tue, 11 Sep 2018 15:25:32 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Tue, 11 Sep 2018 17:25:34 +0200 (CEST)
-Date:   Tue, 11 Sep 2018 17:25:31 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Rik van Riel <riel@redhat.com>, Michal Hocko <mhocko@suse.com>,
-        Stanislav Kozina <skozina@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: get_arg_page() && ptr_size accounting
-Message-ID: <20180911152531.GA9450@redhat.com>
-References: <20180910122907.GA23963@redhat.com>
- <CAGXu5jKYVAfWkd3WTM4EkVHWGoUY9BtSGKMLb1RAKhUfgCVxfA@mail.gmail.com>
- <CAGXu5jJ+aiJWL0G0Zpq2Df4ADEmpSBZHSTaUkzJiNbgg+B6x2Q@mail.gmail.com>
- <20180910172109.GB27005@redhat.com>
- <CAGXu5jL_a5B6w39Vb3S07-Epu4JGPTB5N6A75ERVOryvNeA7ZA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGXu5jL_a5B6w39Vb3S07-Epu4JGPTB5N6A75ERVOryvNeA7ZA@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 11 Sep 2018 15:25:35 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 11 Sep 2018 15:25:35 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'oleg@redhat.com' RCPT:''
+        Tue, 11 Sep 2018 16:27:34 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:54543 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726840AbeIKU1d (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 16:27:33 -0400
+Received: from stefan-Vostro-260.fritz.box ([109.104.52.203]) by
+ mrelayeu.kundenserver.de (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis)
+ id 1MKbTo-1gIMp40u1k-00KzVy; Tue, 11 Sep 2018 17:27:38 +0200
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+To:     "David S. Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Michael Heimpold <michael.heimpold@i2se.com>
+Subject: [PATCH RFC] net: qca_spi: Introduce write register verification
+Date:   Tue, 11 Sep 2018 17:26:47 +0200
+Message-Id: <1536679607-20422-1-git-send-email-stefan.wahren@i2se.com>
+X-Mailer: git-send-email 2.7.4
+X-Provags-ID: V03:K1:a4aZ76U/Dy5CLJuPZgxKe9KWE9Kpl15hv83py8l7gopqtQaHcd1
+ Xpxr5CJmCFAGO9cbXyKxG7M7yuVb/mKn5lQeNGOt3zdrkavJkjduP8wpXRqjyp6gLF/GP0B
+ 8K/lCvea4LjqgSHC3birc4VrHa1ZXDLHunMnrBHWK33LNms8NajYZmfZp+w8VyjEtyVZhji
+ NgPzgu+j8Z/wBddChAaLg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:3ZchTU0GB3Q=:kAHJ2t3u30Jeu5TijHJvE3
+ FzCr5v+N7kHVKWi06iHiHbHemoiMGqnBCa+PezsxwOm2Pi1zWfstHRYhAmik3+pvU81CjFPwH
+ g02oqrYovjJo84I9YZPSAbBSbpRpp05KAwDeo4Wz+4k5+sz4NFzP3P3+tF6ZBnhEuIsvXkwe0
+ GH0kYv923d/G1GoK+NrVWOSjerm13uWAv9m77OCyPMkSaixGsyFJUNF8G19qS56W4gZdHitBY
+ sRNZfabtdkk6YqTkR/WSAKdJkEix+jmqGTOSUHvfyYT+39wGfiP/DzhKrnTfpFookhVL69lYx
+ qMLL9XkS5kHMKT6oagZd1oRyW37xrOVCb3znpl3AOwKYgOSHNLYHoJEKDebYw0J8sBAHXbSAy
+ jBxwXJW9hTABitOqKc6FAqvQwYgeZ6AMSUlDey6g2fHpXjRQELk/Nfr/j8MPiepKBswSsEPkr
+ caOP0Si6ga54pvPY32Bk9CyK2pgz8Q2FIbMPi4oRsvNfvZ1PRXtHQ/lFMfKMg7OOR8K5/vy9p
+ tgvRHqqnG3uaSxB7zdtjCWa4KFYXQ2mRjbTgDnL8EA4+j9DMnnubB52CeYooZMyAko6Hl8GRL
+ xq/uD+Ufmo6ls68txsOf1C+tg6iX0WinDmW4jAxdEkMfirLidJL3Bsavr7RXlo653q7BnJcbA
+ CzXTjtY5sLEUrKlC9Iu5nrXj1gRGg0Oox0LWCYBEbCbgNMirO7bcjv4VM7bPzGu69bpw=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/10, Kees Cook wrote:
->
-> On Mon, Sep 10, 2018 at 10:21 AM, Oleg Nesterov <oleg@redhat.com> wrote:
->
-> > Could you explain what this patch actually prevents from? Especially
-> > now that we have stack_guard_gap?
->
-> One of the many Stack Clash abuses was that it was possible to jump
-> over the stack gap with outrageous environment variables that got
-> expanded in stupid ways by, IIRC, glibc or the dynamic linker. The
-> point here was to be defensive in the face of future weaknesses, and
-> try to be robust in the face of crazy execs but workable under normal
-> (but large) execs.
+The SPI protocol for the QCA7000 doesn't have any fault detection.
+In order to increase the drivers reliability in noisy environments,
+we could implement a write verification inspired by the enc28j60.
+This should avoid situations were the driver wrongly assumes the
+receive interrupt is enabled and miss all incoming packets.
 
-IOW, unlimited arg size makes many interesting attacks possible.
+This function is disabled per default and can be controlled via module
+parameter wr_verify.
 
-This is clear, I was confused because I thought this patch fixes some
-particular problem not explained in the changelog.
+Signed-off-by: Michael Heimpold <michael.heimpold@i2se.com>
+Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+---
+ drivers/net/ethernet/qualcomm/qca_7k.c    | 34 +++++++++++++++++++++++++++++--
+ drivers/net/ethernet/qualcomm/qca_7k.h    |  2 +-
+ drivers/net/ethernet/qualcomm/qca_debug.c |  1 +
+ drivers/net/ethernet/qualcomm/qca_spi.c   | 28 ++++++++++++++++++-------
+ drivers/net/ethernet/qualcomm/qca_spi.h   |  1 +
+ 5 files changed, 56 insertions(+), 10 deletions(-)
 
-Thanks,
+Hi,
+this patch requires "net: qca_spi: Fix race condition in spi transfers"
+to be applied.
 
-Oleg.
+Stefan
+
+diff --git a/drivers/net/ethernet/qualcomm/qca_7k.c b/drivers/net/ethernet/qualcomm/qca_7k.c
+index 6c8543f..4292c89 100644
+--- a/drivers/net/ethernet/qualcomm/qca_7k.c
++++ b/drivers/net/ethernet/qualcomm/qca_7k.c
+@@ -81,8 +81,8 @@ qcaspi_read_register(struct qcaspi *qca, u16 reg, u16 *result)
+ 	return ret;
+ }
+ 
+-int
+-qcaspi_write_register(struct qcaspi *qca, u16 reg, u16 value)
++static int
++__qcaspi_write_register(struct qcaspi *qca, u16 reg, u16 value)
+ {
+ 	__be16 tx_data[2];
+ 	struct spi_transfer transfer[2];
+@@ -117,3 +117,33 @@ qcaspi_write_register(struct qcaspi *qca, u16 reg, u16 value)
+ 
+ 	return ret;
+ }
++
++int
++qcaspi_write_register(struct qcaspi *qca, u16 reg, u16 value, int retry)
++{
++	int ret, i = 0;
++	u16 confirmed;
++
++	do {
++		ret = __qcaspi_write_register(qca, reg, value);
++		if (ret)
++			return ret;
++
++		if (!retry)
++			return 0;
++
++		ret = qcaspi_read_register(qca, reg, &confirmed);
++		if (ret)
++			return ret;
++
++		ret = confirmed != value;
++		if (!ret)
++			return 0;
++
++		i++;
++		qca->stats.write_verify_failed++;
++
++	} while (i <= retry);
++
++	return ret;
++}
+diff --git a/drivers/net/ethernet/qualcomm/qca_7k.h b/drivers/net/ethernet/qualcomm/qca_7k.h
+index 27124c2..356de8e 100644
+--- a/drivers/net/ethernet/qualcomm/qca_7k.h
++++ b/drivers/net/ethernet/qualcomm/qca_7k.h
+@@ -66,6 +66,6 @@
+ 
+ void qcaspi_spi_error(struct qcaspi *qca);
+ int qcaspi_read_register(struct qcaspi *qca, u16 reg, u16 *result);
+-int qcaspi_write_register(struct qcaspi *qca, u16 reg, u16 value);
++int qcaspi_write_register(struct qcaspi *qca, u16 reg, u16 value, int retry);
+ 
+ #endif /* _QCA_7K_H */
+diff --git a/drivers/net/ethernet/qualcomm/qca_debug.c b/drivers/net/ethernet/qualcomm/qca_debug.c
+index 51d89c8..a9f1bc0 100644
+--- a/drivers/net/ethernet/qualcomm/qca_debug.c
++++ b/drivers/net/ethernet/qualcomm/qca_debug.c
+@@ -60,6 +60,7 @@ static const char qcaspi_gstrings_stats[][ETH_GSTRING_LEN] = {
+ 	"Write buffer misses",
+ 	"Transmit ring full",
+ 	"SPI errors",
++	"Write verify errors",
+ };
+ 
+ #ifdef CONFIG_DEBUG_FS
+diff --git a/drivers/net/ethernet/qualcomm/qca_spi.c b/drivers/net/ethernet/qualcomm/qca_spi.c
+index 66b775d..d531050 100644
+--- a/drivers/net/ethernet/qualcomm/qca_spi.c
++++ b/drivers/net/ethernet/qualcomm/qca_spi.c
+@@ -69,6 +69,12 @@ static int qcaspi_pluggable = QCASPI_PLUGGABLE_MIN;
+ module_param(qcaspi_pluggable, int, 0);
+ MODULE_PARM_DESC(qcaspi_pluggable, "Pluggable SPI connection (yes/no).");
+ 
++#define QCASPI_WRITE_VERIFY_MIN 0
++#define QCASPI_WRITE_VERIFY_MAX 3
++static int wr_verify = QCASPI_WRITE_VERIFY_MIN;
++module_param(wr_verify, int, 0);
++MODULE_PARM_DESC(wr_verify, "SPI register write verify trails. Use 0-3.");
++
+ #define QCASPI_TX_TIMEOUT (1 * HZ)
+ #define QCASPI_QCA7K_REBOOT_TIME_MS 1000
+ 
+@@ -77,7 +83,7 @@ start_spi_intr_handling(struct qcaspi *qca, u16 *intr_cause)
+ {
+ 	*intr_cause = 0;
+ 
+-	qcaspi_write_register(qca, SPI_REG_INTR_ENABLE, 0);
++	qcaspi_write_register(qca, SPI_REG_INTR_ENABLE, 0, wr_verify);
+ 	qcaspi_read_register(qca, SPI_REG_INTR_CAUSE, intr_cause);
+ 	netdev_dbg(qca->net_dev, "interrupts: 0x%04x\n", *intr_cause);
+ }
+@@ -90,8 +96,8 @@ end_spi_intr_handling(struct qcaspi *qca, u16 intr_cause)
+ 			   SPI_INT_RDBUF_ERR |
+ 			   SPI_INT_WRBUF_ERR);
+ 
+-	qcaspi_write_register(qca, SPI_REG_INTR_CAUSE, intr_cause);
+-	qcaspi_write_register(qca, SPI_REG_INTR_ENABLE, intr_enable);
++	qcaspi_write_register(qca, SPI_REG_INTR_CAUSE, intr_cause, 0);
++	qcaspi_write_register(qca, SPI_REG_INTR_ENABLE, intr_enable, wr_verify);
+ 	netdev_dbg(qca->net_dev, "acking int: 0x%04x\n", intr_cause);
+ }
+ 
+@@ -239,7 +245,7 @@ qcaspi_tx_frame(struct qcaspi *qca, struct sk_buff *skb)
+ 
+ 	len = skb->len;
+ 
+-	qcaspi_write_register(qca, SPI_REG_BFR_SIZE, len);
++	qcaspi_write_register(qca, SPI_REG_BFR_SIZE, len, wr_verify);
+ 	if (qca->legacy_mode)
+ 		qcaspi_tx_cmd(qca, QCA7K_SPI_WRITE | QCA7K_SPI_EXTERNAL);
+ 
+@@ -345,6 +351,7 @@ qcaspi_receive(struct qcaspi *qca)
+ 
+ 	/* Read the packet size. */
+ 	qcaspi_read_register(qca, SPI_REG_RDBUF_BYTE_AVA, &available);
++
+ 	netdev_dbg(net_dev, "qcaspi_receive: SPI_REG_RDBUF_BYTE_AVA: Value: %08x\n",
+ 		   available);
+ 
+@@ -353,7 +360,7 @@ qcaspi_receive(struct qcaspi *qca)
+ 		return -1;
+ 	}
+ 
+-	qcaspi_write_register(qca, SPI_REG_BFR_SIZE, available);
++	qcaspi_write_register(qca, SPI_REG_BFR_SIZE, available, wr_verify);
+ 
+ 	if (qca->legacy_mode)
+ 		qcaspi_tx_cmd(qca, QCA7K_SPI_READ | QCA7K_SPI_EXTERNAL);
+@@ -524,7 +531,7 @@ qcaspi_qca7k_sync(struct qcaspi *qca, int event)
+ 		netdev_dbg(qca->net_dev, "sync: resetting device.\n");
+ 		qcaspi_read_register(qca, SPI_REG_SPI_CONFIG, &spi_config);
+ 		spi_config |= QCASPI_SLAVE_RESET_BIT;
+-		qcaspi_write_register(qca, SPI_REG_SPI_CONFIG, spi_config);
++		qcaspi_write_register(qca, SPI_REG_SPI_CONFIG, spi_config, 0);
+ 
+ 		qca->sync = QCASPI_SYNC_RESET;
+ 		qca->stats.trig_reset++;
+@@ -684,7 +691,7 @@ qcaspi_netdev_close(struct net_device *dev)
+ 
+ 	netif_stop_queue(dev);
+ 
+-	qcaspi_write_register(qca, SPI_REG_INTR_ENABLE, 0);
++	qcaspi_write_register(qca, SPI_REG_INTR_ENABLE, 0, wr_verify);
+ 	free_irq(qca->spi_dev->irq, qca);
+ 
+ 	kthread_stop(qca->spi_thread);
+@@ -904,6 +911,13 @@ qca_spi_probe(struct spi_device *spi)
+ 		return -EINVAL;
+ 	}
+ 
++	if (wr_verify < QCASPI_WRITE_VERIFY_MIN ||
++	    wr_verify > QCASPI_WRITE_VERIFY_MAX) {
++		dev_err(&spi->dev, "Invalid write verify: %d\n",
++			wr_verify);
++		return -EINVAL;
++	}
++
+ 	dev_info(&spi->dev, "ver=%s, clkspeed=%d, burst_len=%d, pluggable=%d\n",
+ 		 QCASPI_DRV_VERSION,
+ 		 qcaspi_clkspeed,
+diff --git a/drivers/net/ethernet/qualcomm/qca_spi.h b/drivers/net/ethernet/qualcomm/qca_spi.h
+index fc0e987..2d2c497 100644
+--- a/drivers/net/ethernet/qualcomm/qca_spi.h
++++ b/drivers/net/ethernet/qualcomm/qca_spi.h
+@@ -73,6 +73,7 @@ struct qcaspi_stats {
+ 	u64 write_buf_miss;
+ 	u64 ring_full;
+ 	u64 spi_err;
++	u64 write_verify_failed;
+ };
+ 
+ struct qcaspi {
+-- 
+2.7.4
 
