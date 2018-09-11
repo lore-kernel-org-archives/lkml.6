@@ -6,45 +6,46 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28CABC6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 06:19:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43CF3C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 06:20:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AD33206BB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 06:19:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AD33206BB
+	by mail.kernel.org (Postfix) with ESMTP id E9E2C2086A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 06:20:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9E2C2086A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727403AbeIKLRe (ORCPT
+        id S1727600AbeIKLSI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 07:17:34 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:38061 "EHLO
+        Tue, 11 Sep 2018 07:18:08 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:34241 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726332AbeIKLRe (ORCPT
+        with ESMTP id S1726332AbeIKLSH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 07:17:34 -0400
+        Tue, 11 Sep 2018 07:18:07 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8B6JW3m2135543
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8B6K5qI2135587
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 10 Sep 2018 23:19:32 -0700
+        Mon, 10 Sep 2018 23:20:05 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8B6JVnM2135540;
-        Mon, 10 Sep 2018 23:19:31 -0700
-Date:   Mon, 10 Sep 2018 23:19:31 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8B6K5dr2135584;
+        Mon, 10 Sep 2018 23:20:05 -0700
+Date:   Mon, 10 Sep 2018 23:20:05 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for He Zhe <tipbot@zytor.com>
-Message-ID: <tip-b1e3a25f5879017fc50ca17f03118b26a19df49a@git.kernel.org>
-Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        zhe.he@windriver.com, torvalds@linux-foundation.org,
-        peterz@infradead.org, mingo@kernel.org, hpa@zytor.com
-Reply-To: peterz@infradead.org, hpa@zytor.com, mingo@kernel.org,
-          tglx@linutronix.de, zhe.he@windriver.com,
-          torvalds@linux-foundation.org, linux-kernel@vger.kernel.org
-In-Reply-To: <1534260823-87917-2-git-send-email-zhe.he@windriver.com>
-References: <1534260823-87917-2-git-send-email-zhe.he@windriver.com>
+From:   tip-bot for Zubin Mithra <tipbot@zytor.com>
+Message-ID: <tip-2766d2ee960c52adc415931130dd6910158dd04d@git.kernel.org>
+Cc:     zsm@chromium.org, keescook@chromium.org, tglx@linutronix.de,
+        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        mingo@kernel.org, peterz@infradead.org, hpa@zytor.com
+Reply-To: hpa@zytor.com, peterz@infradead.org, mingo@kernel.org,
+          linux-kernel@vger.kernel.org, tglx@linutronix.de,
+          torvalds@linux-foundation.org, zsm@chromium.org,
+          keescook@chromium.org
+In-Reply-To: <20180810154314.96710-1-zsm@chromium.org>
+References: <20180810154314.96710-1-zsm@chromium.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/boot] x86/corruption-check: Use pr_*() instead of printk()
-Git-Commit-ID: b1e3a25f5879017fc50ca17f03118b26a19df49a
+Subject: [tip:perf/core] perf/x86: Add __ro_after_init annotations
+Git-Commit-ID: 2766d2ee960c52adc415931130dd6910158dd04d
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -58,81 +59,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  b1e3a25f5879017fc50ca17f03118b26a19df49a
-Gitweb:     https://git.kernel.org/tip/b1e3a25f5879017fc50ca17f03118b26a19df49a
-Author:     He Zhe <zhe.he@windriver.com>
-AuthorDate: Tue, 14 Aug 2018 23:33:43 +0800
+Commit-ID:  2766d2ee960c52adc415931130dd6910158dd04d
+Gitweb:     https://git.kernel.org/tip/2766d2ee960c52adc415931130dd6910158dd04d
+Author:     Zubin Mithra <zsm@chromium.org>
+AuthorDate: Fri, 10 Aug 2018 08:43:14 -0700
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 10 Sep 2018 14:47:33 +0200
+CommitDate: Mon, 10 Sep 2018 14:55:36 +0200
 
-x86/corruption-check: Use pr_*() instead of printk()
+perf/x86: Add __ro_after_init annotations
 
-pr_*() is the preferred style.
+x86_pmu_{format,events,attr,caps}_group is written to in
+init_hw_perf_events and not modified after. This makes them suitable
+candidates for annotating as __ro_after_init.
 
-Signed-off-by: He Zhe <zhe.he@windriver.com>
+Signed-off-by: Zubin Mithra <zsm@chromium.org>
+Reviewed-by: Kees Cook <keescook@chromium.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: gregkh@linuxfoundation.org
-Cc: kstewart@linuxfoundation.org
-Cc: pombredanne@nexb.com
-Link: http://lkml.kernel.org/r/1534260823-87917-2-git-send-email-zhe.he@windriver.com
-[ Moved all console output into a single line. ]
+Cc: acme@kernel.org
+Cc: alexander.shishkin@linux.intel.com
+Cc: groeck@chromium.org
+Link: http://lkml.kernel.org/r/20180810154314.96710-1-zsm@chromium.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/kernel/check.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ arch/x86/events/core.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/kernel/check.c b/arch/x86/kernel/check.c
-index cc8258a5378b..1979a76bfadd 100644
---- a/arch/x86/kernel/check.c
-+++ b/arch/x86/kernel/check.c
-@@ -1,4 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
-+
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-+
- #include <linux/init.h>
- #include <linux/sched.h>
- #include <linux/kthread.h>
-@@ -41,6 +44,7 @@ static __init int set_corruption_check(char *arg)
- 		return ret;
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index dfb2f7c0d019..7a6fb9b2bec5 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -1584,7 +1584,7 @@ static void __init pmu_check_apic(void)
  
- 	memory_corruption_check = val;
-+
- 	return 0;
- }
- early_param("memory_corruption_check", set_corruption_check);
-@@ -128,7 +132,7 @@ void __init setup_bios_corruption_check(void)
- 	}
- 
- 	if (num_scan_areas)
--		printk(KERN_INFO "Scanning %d areas for low memory corruption\n", num_scan_areas);
-+		pr_info("Scanning %d areas for low memory corruption\n", num_scan_areas);
  }
  
+-static struct attribute_group x86_pmu_format_group = {
++static struct attribute_group x86_pmu_format_group __ro_after_init = {
+ 	.name = "format",
+ 	.attrs = NULL,
+ };
+@@ -1715,7 +1715,7 @@ static struct attribute *events_attr[] = {
+ 	NULL,
+ };
  
-@@ -147,8 +151,7 @@ void check_for_bios_corruption(void)
- 		for (; size; addr++, size -= sizeof(unsigned long)) {
- 			if (!*addr)
- 				continue;
--			printk(KERN_ERR "Corrupted low memory at %p (%lx phys) = %08lx\n",
--			       addr, __pa(addr), *addr);
-+			pr_err("Corrupted low memory at %p (%lx phys) = %08lx\n", addr, __pa(addr), *addr);
- 			corruption = 1;
- 			*addr = 0;
- 		}
-@@ -172,11 +175,11 @@ static int start_periodic_check_for_corruption(void)
- 	if (!num_scan_areas || !memory_corruption_check || corruption_check_period == 0)
- 		return 0;
+-static struct attribute_group x86_pmu_events_group = {
++static struct attribute_group x86_pmu_events_group __ro_after_init = {
+ 	.name = "events",
+ 	.attrs = events_attr,
+ };
+@@ -2230,7 +2230,7 @@ static struct attribute *x86_pmu_attrs[] = {
+ 	NULL,
+ };
  
--	printk(KERN_INFO "Scanning for low memory corruption every %d seconds\n",
--	       corruption_check_period);
-+	pr_info("Scanning for low memory corruption every %d seconds\n", corruption_check_period);
+-static struct attribute_group x86_pmu_attr_group = {
++static struct attribute_group x86_pmu_attr_group __ro_after_init = {
+ 	.attrs = x86_pmu_attrs,
+ };
  
- 	/* First time we run the checks right away */
- 	schedule_delayed_work(&bios_check_work, 0);
-+
- 	return 0;
- }
- device_initcall(start_periodic_check_for_corruption);
+@@ -2248,7 +2248,7 @@ static struct attribute *x86_pmu_caps_attrs[] = {
+ 	NULL
+ };
+ 
+-static struct attribute_group x86_pmu_caps_group = {
++static struct attribute_group x86_pmu_caps_group __ro_after_init = {
+ 	.name = "caps",
+ 	.attrs = x86_pmu_caps_attrs,
+ };
