@@ -2,139 +2,126 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCFA9C4646A
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 23:38:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BF00C4646A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 23:39:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AECB20880
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 23:38:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qiNC0jg6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AECB20880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id AD21F20880
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 23:39:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD21F20880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726686AbeILEjg (ORCPT
+        id S1726842AbeILElL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 00:39:36 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:40394 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726075AbeILEjg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 00:39:36 -0400
-Received: by mail-pf1-f195.google.com with SMTP id s13-v6so27831pfi.7
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 16:38:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zdighdpCK8l3g23G1LnqfpjUHeJsbRGl3KVCVAsOO1s=;
-        b=qiNC0jg6QL6IaB5DyGB434k0Eaa6vKbTuMslWV8nnnsbXtu2DrbnXwIwUCtOxSyKke
-         kEKNvsCbJBWNhsVzeV4qHPlTWWVL9cpwCDcONjLYNjZrG+mR5Yhji3paGLmg+nLzPaBV
-         sHjQsXddN5q+yOt6F8RDgoVdGiiIK2xpBJnSHEEyadROlpnx0BoDCNOl5p8HkZPZzhbg
-         NFy1Q6QdTgPz3XnT1DCipnOuy/6JqXCRlB8ktfSylN06aPoKxjTGqGYHqSF7cbRHMFHr
-         lJxk6hi3AR947Dt/+04H9IkrJfD5z7B5O6DVldwS6W5hhn2GnwgozxsyPwrqUx01fSDu
-         p/Ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zdighdpCK8l3g23G1LnqfpjUHeJsbRGl3KVCVAsOO1s=;
-        b=C9NvH6X7IJRmfkmWJpUz3mTq5qRDucFP7k2bFUEBHZcpNQXe9kOr9x/15v7JDsntj9
-         kfv3+HVdz91W84CfhtCyu3CqJ1JwUyu8WHraLnJcewaTzgQj5VbWa6Cc81VS44OZuC/+
-         pM8rmfxFdDy0iW+lqudamKimPkUCdNm882NIWHgqIfX9c/EsHU/REr/mHArUxTA8Jvgv
-         1gB7CPVsTYBCV9ORlRcdCsnNfbglqg3IGqUx0314xcPhvNd8uAJNiQsj+caqRU/k7qQq
-         DphPZK5gjStI+LTzDcxhq9Z4A+8afcA90y6+jutWoDvYkC2lCApGiJ+d4PBQE05EmQJg
-         pTjg==
-X-Gm-Message-State: APzg51BHmoBDeVkjYYqGmfP309XLrRXvHkF+omsVKePcGo757x9QZnpv
-        owVwUk9GjlbiwR4eS/9zQ0V2ke//DmmUeOOtN5+0LQ==
-X-Google-Smtp-Source: ANB0VdaWrUyy6IUGHywR6mIu3glomjFrPcf930wxVFbC2+1V7OKElfuiu+bPgwdSWO8w+4VT6cKNG4TxBUR5yUY9V7I=
-X-Received: by 2002:aa7:800f:: with SMTP id j15-v6mr32086995pfi.174.1536709079791;
- Tue, 11 Sep 2018 16:37:59 -0700 (PDT)
+        Wed, 12 Sep 2018 00:41:11 -0400
+Received: from sauhun.de ([88.99.104.3]:56254 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726075AbeILElL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 00:41:11 -0400
+Received: from localhost (i577B9DAC.versanet.de [87.123.157.172])
+        by pokefinder.org (Postfix) with ESMTPSA id CCEEA2CF608;
+        Wed, 12 Sep 2018 01:39:33 +0200 (CEST)
+Date:   Wed, 12 Sep 2018 01:39:33 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        iommu@lists.linux-foundation.org,
+        linux-renesas-soc@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 0/2] dma-mapping: introduce helper for setting
+ dma_parms
+Message-ID: <20180911233933.GA1402@kunai>
+References: <20180911163050.28072-1-wsa+renesas@sang-engineering.com>
+ <a9478a05-5908-e693-7eeb-3673b2facda7@arm.com>
 MIME-Version: 1.0
-References: <20180911230533.31873-1-natechancellor@gmail.com>
-In-Reply-To: <20180911230533.31873-1-natechancellor@gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Tue, 11 Sep 2018 16:37:48 -0700
-Message-ID: <CAKwvOd=KaX4+3J4WGOcWBAfhHEyytXKKCLHFdCuDAr5McQ-g=g@mail.gmail.com>
-Subject: Re: [PATCH] dmaengine: xilinx_dma: Fix __aligned attribute on zynqmp_dma_desc_ll
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     dan.j.williams@intel.com, vkoul@kernel.org,
-        appana.durga.rao@xilinx.com, dmaengine@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="lrZ03NoBR/3+SXJZ"
+Content-Disposition: inline
+In-Reply-To: <a9478a05-5908-e693-7eeb-3673b2facda7@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 11, 2018 at 4:06 PM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> Clang warns:
->
-> drivers/dma/xilinx/zynqmp_dma.c:166:4: warning: attribute 'aligned' is
-> ignored, place it after "struct" to apply attribute to type declaration
-> [-Wignored-attributes]
-> }; __aligned(64)
->    ^
-> ./include/linux/compiler_types.h:200:38: note: expanded from macro
-> '__aligned'
-> #define __aligned(x)            __attribute__((aligned(x)))
->                                                ^
-> 1 warning generated.
->
-> Place __aligned before the semicolon.
->
-> Fixes: b0cc417c1637 ("dmaengine: Add Xilinx zynqmp dma engine driver support")
-> Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
->  drivers/dma/xilinx/zynqmp_dma.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/dma/xilinx/zynqmp_dma.c b/drivers/dma/xilinx/zynqmp_dma.c
-> index c74a88b65039..dc19d67cb8c1 100644
-> --- a/drivers/dma/xilinx/zynqmp_dma.c
-> +++ b/drivers/dma/xilinx/zynqmp_dma.c
-> @@ -163,7 +163,7 @@ struct zynqmp_dma_desc_ll {
->         u32 ctrl;
->         u64 nxtdscraddr;
->         u64 rsvd;
-> -}; __aligned(64)
-> +} __aligned(64);
 
-Thanks for this patch Nathan.  Thinking more about this...the integer
-passed to __attribute__((aligned(x))) should be in terms of bytes.  64
-bytes seems kind of high.  Maybe they meant 64 *bits* thus 8 *bytes*
-which already the default alignment of the struct:
-https://godbolt.org/z/7vW6E3
+--lrZ03NoBR/3+SXJZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-In which case, the correct fix is to remove the `__aligned(64);`
-outright.  Since that doesn't change anything (thanks to clang's
-helpful -Wignored-attributes), such a patch would be "No Functional
-Change" (does not change the status quo).  Still, it might be good for
-the maintainer to remark if 64 *byte* alignment was intentional (I
-would think not, but I don't have the datasheet for this piece of
-hardware in front of me; never say never) before sending such a patch.
+Hi Robin,
 
-If the 64 *byte* (512 bit) alignment was intentional (again, which I
-doubt), then this patch is good to go, but that would then be a
-functional change and should be tested by someone with hardware.
+> > 	od =3D devm_kzalloc(&pdev->dev, sizeof(*od), GFP_KERNEL);
+> > 	if (!od)
+> > 		return -ENOMEM;
+> >=20
+> > 	pdev->dev.dma_parms =3D &od->dma_parms;
+> > 	dma_set_max_seg_size(&pdev->dev, 0x3FFFFFFF);
+> >=20
+> > And that's all about handling dma_parms. So, on unbind, the memory for
+> > 'od' gets freed and dma_params is a dangling pointer.
+>=20
+> That's the typical case - the dma_parms structure is simply embedded in s=
+ome
+> other private data which tends to have the appropriate lifetime anyway. I
+> can't see that the dangling pointer is an issue when it's set
+> unconditionally on probe and valid until remove, because anyone
+> dereferencing dev->dma_parms when dev has no driver bound is doing someth=
+ing
+> very very wrong anyway. I suppose we could zero it in
+> __device_release_driver() for good measure though - shame we've found
+> something dma_deconfigure() could have been useful for just after we kill=
+ed
+> it ;)
 
+I see. Yes, I was aware that the misuse of this dangling pointer is
+somewhat academical. Yet, it was easy to fix and clearing this pointer
+is good programming practice, I'd say. I agree that clearing the pointer
+in __device_release_driver is a good option, too, if documentation about
+its expected life cycle (=3D=3D get's cleared on unbind) is clear about
+that. Probably that life cycle confusion led to the more complicated
+code in the exynos_drm driver. I will look into all of that tomorrow.
 
->
->  /**
->   * struct zynqmp_dma_desc_sw - Per Transaction structure
-> --
-> 2.18.0
->
+> Note that ultimately we'd like to have a single structure to hold all the
+> masks and other gubbins (per the very original intent of dma_parms), so
+
+I was wondering about that, yes.
+
+> there's a fair chance of this getting fundamentally rejigged at some point
+> anyway.
+
+Makes sense. Yet, as this change is gonna be small, I think it's still
+nice to have.
+
+Thanks for the input!
+
+   Wolfram
 
 
--- 
-Thanks,
-~Nick Desaulniers
+--lrZ03NoBR/3+SXJZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAluYUjAACgkQFA3kzBSg
+KbYMPg//Zfi+Hz+7x50SPmdAwCyPvJ+GIPolfb9bnY4HJd2+bTBp4dHh8c0NDkxT
+HzIqv8AEjMuO+WqsnBqQGHxHD0tWif5t2JHgcrxplRGSh/Ten/PcFtb0tngLLxu+
+NaYBEvLW2TjXqoyoNuJ8NXXo3p9+Y+anN5iTnN1u+hLPezNlf+ksQZGJbNcWpsnU
+ZQr3Of/2wmsOtamRhJvdZ0N8ywqXZrxGqPaQzrEYnY0kX4CcVWfLC0GjOQ5qq60+
+acWYcPoXp0qBAV1KNGaIaqyCdPxwG6D6wafbh47wF9YdlZ7qXe7nrkXwbBEg6teE
+cmf0norWDL1pqriwtXO9s/PBY7HMbzfSpSQtrPzHlgaVIaaOqDfWMepi1UaAjiKJ
+Y/EO9AC+QdT/CYOhV4nMWqGkUacjmgxFmTQkiHaUVvbYEk9SWl3hxjT2Z/U3ah5b
+QJZu5KFvXpZLjEOawHhHhiLzw4DA7Uuq5rmG8UqRisYhtSOGJv+LmOuiICSI0SQL
+rtEIEl6HNWtssBRbwRY49fmsFZ8cvcZn+dtk28bX4PIItA82OtPY1/b+uwlMiVdp
+PpPPtLMcfpb7klzmVfTlziw2k9I/NCtrrx+NrDILL2PLAf39TQb6aHmobAKk9Y35
+C0f/YanJSh/ELEjRxpRZp0dAHDrZ28DdKcabrLtnNSVYbIOlFEs=
+=5tYY
+-----END PGP SIGNATURE-----
+
+--lrZ03NoBR/3+SXJZ--
