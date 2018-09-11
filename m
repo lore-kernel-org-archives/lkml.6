@@ -2,112 +2,160 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B536C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 08:34:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDEFDC04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 08:35:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35C682086A
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 08:34:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CB3820839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 08:35:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Vx2WdvKZ";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hOWp0wJQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35C682086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eZZ3adUh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CB3820839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726810AbeIKNcr (ORCPT
+        id S1726811AbeIKNd1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 09:32:47 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:36628 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726532AbeIKNcq (ORCPT
+        Tue, 11 Sep 2018 09:33:27 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:37468 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726488AbeIKNd1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 09:32:46 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 3036660912; Tue, 11 Sep 2018 08:34:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536654872;
-        bh=I+yOhxMqQ9lDLN/lPOttFRUvW8BpJCnjSlsvPt1RE0o=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Vx2WdvKZgwJNH8/C7RiBKhw7klFaBUskyZsnDppkJPuNfNfXT0wZPnX+LcM3BADHw
-         onwMQ6Xnz2i/34AeEYCpqK1eDQ4t4IOdT7+a+4JBsYeulMELJf4zee4FPbShx7LEcZ
-         PedQlvwrqqrMnxitG+aGSpg7G/ujq91Jb/G5lLf0=
-Received: from mail-qt0-f173.google.com (mail-qt0-f173.google.com [209.85.216.173])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 88D1260912;
-        Tue, 11 Sep 2018 08:34:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536654870;
-        bh=I+yOhxMqQ9lDLN/lPOttFRUvW8BpJCnjSlsvPt1RE0o=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=hOWp0wJQqgqY8dAu9B5JTpsRIHEcjyFgN2YE0H4Af4xFNojjly3DVh4mvS40iJ7cP
-         ZszvUd2vkLvc+93piZSAnq5bG1cOfdlBguood9e/f7mqSCShJJy5mqBhaMSACuD/BP
-         +g+3YFsjLr0ElANMJwHITRiI8VngYIHW1cgQf+9U=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 88D1260912
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-Received: by mail-qt0-f173.google.com with SMTP id h4-v6so27330309qtj.7;
-        Tue, 11 Sep 2018 01:34:30 -0700 (PDT)
-X-Gm-Message-State: APzg51DQgCHKr2MCnvO7BoAAqwx8lOGa7j58MebOqwIH24jfrd7GM9N4
-        oDEtv8O/t24Nqg7+tnTVWhZAbt6UnFkHRPkwJOI=
-X-Google-Smtp-Source: ANB0VdalKJS8ihHVfEOywsldBzDUk2WbGTiod7Ttag5HUA7ps17U98fhoaenPdCcL39l2lGITorPAYnKaFjRcA6ZYL0=
-X-Received: by 2002:a0c:ada8:: with SMTP id w37-v6mr17778859qvc.107.1536654869752;
- Tue, 11 Sep 2018 01:34:29 -0700 (PDT)
+        Tue, 11 Sep 2018 09:33:27 -0400
+Received: by mail-lf1-f65.google.com with SMTP id j8-v6so19646901lfb.4
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 01:35:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FSgQ29apxDvxDfzBW5zOf4qJlOnC5PActXTf3yCVU0o=;
+        b=eZZ3adUhKKtqpkYkn+f/sNQwYmR8IKbgjiq4ce24QWCBcfu7XUmDs6KkMM/ltOKOGI
+         UNsoPX4HiiOWMakXlkyYKelYlDnsaNM/My5JgDkqaGDWm+VF8bul1pWFt2mA/yJbzK+6
+         1TVwc8h087zYDMaNLuwgYZ1YbhGldthnvpxtViNFpZJbn7YrZUi/wyJvg6SibBT0Zj/x
+         DCBnZP/yQQcJ/LONyIvlmirHoUMXFN17S0oVXcqNxRez7IbEXONCU42zSPiU0LifHotm
+         BPmKen2yD/Usl5juC9kjwSats5ND17V8/U6fvW64w59GmtFvMDzqXeMMnyqraHq+hDaC
+         RX/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FSgQ29apxDvxDfzBW5zOf4qJlOnC5PActXTf3yCVU0o=;
+        b=ZACen1GM+ir1HIVnYOVzwacBTEu+kKbrYSPAcu5h2xwBi3pCFlLsoHd9rImA5M8pOo
+         r/jeyR8VtbhvWSUqfn2SqH209iOf1nqvR1V4MMO77tAPcD6N2J/fEsNKgYsbcT0haFzG
+         sgoTvcoc4YMKv/xpOM3PHdrqNWYbv1cXmVq+HHmNwQxFgKQDh/hSFOqaRI8sOi3fBboT
+         Hk7stHEGN+kf62W6DyhOBr1RSj0H4gj2f2OprTRA926V0RMNwrcGGqxQXU4dcRQGjYBS
+         c3lBkVhSYRUI22GMvdn5v/jSW1ZkfYN48Siv9+ZXOr1x5U+d3KtYTR7/x3u4cWghUSWr
+         zlcw==
+X-Gm-Message-State: APzg51BqfsQfAhSNoNZD8KavvaRJsQY5nVmXXLSE8n7o4YqFwZXO14E1
+        ibNOtJXQlFCKI9huvjXN64wrrCvoOwqT/WIlN0g=
+X-Google-Smtp-Source: ANB0Vdb0tGvjv3I4sYB1skVsnS6CMBPGZMsN88KuuCimiROFHFwFfgVBdM4JbU64tE6KvDCDVixJlMTmM9UEDeAUfGo=
+X-Received: by 2002:a19:124d:: with SMTP id h74-v6mr14671533lfi.107.1536654911055;
+ Tue, 11 Sep 2018 01:35:11 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180830144541.17740-1-vivek.gautam@codeaurora.org>
- <20180830144541.17740-5-vivek.gautam@codeaurora.org> <20180910180224.GA22566@bogus>
-In-Reply-To: <20180910180224.GA22566@bogus>
-From:   Vivek Gautam <vivek.gautam@codeaurora.org>
-Date:   Tue, 11 Sep 2018 14:04:19 +0530
-X-Gmail-Original-Message-ID: <CAFp+6iHxe2bRY57ZhpOKbXuR9E9+9JtMhuO-PazRPTsiSZDnQg@mail.gmail.com>
-Message-ID: <CAFp+6iHxe2bRY57ZhpOKbXuR9E9+9JtMhuO-PazRPTsiSZDnQg@mail.gmail.com>
-Subject: Re: [PATCH v16 4/5] dt-bindings: arm-smmu: Add bindings for qcom,smmu-v2
-To:     Rob Herring <robh@kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, alex.williamson@redhat.com,
-        Linux PM <linux-pm@vger.kernel.org>, sboyd@kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Will Deacon <will.deacon@arm.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-        "robh+dt" <robh+dt@kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        Robin Murphy <robin.murphy@arm.com>
+References: <20180806144900.GA13925@jordon-HP-15-Notebook-PC>
+In-Reply-To: <20180806144900.GA13925@jordon-HP-15-Notebook-PC>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Tue, 11 Sep 2018 14:04:57 +0530
+Message-ID: <CAFqt6zYWehpkSNf7LHFXFaY1s-aAdXg=OV0C9Hr8j9fS-P3OCw@mail.gmail.com>
+Subject: Re: [PATCH] gpu/drm/hisilicon: Convert drm_atomic_helper_suspend/resume()
+To:     xinliang <z.liuxinliang@hisilicon.com>,
+        Zou Rongrong <zourongrong@gmail.com>,
+        kong.kongxinwei@hisilicon.com, puck.chen@hisilicon.com,
+        airlied@linux.ie, Ajit Linux <ajitn.linux@gmail.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Brajeswar Ghosh <brajeswar.linux@gmail.com>,
+        Sabyasachi Gupta <sabyasachi.linux@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 10, 2018 at 11:32 PM Rob Herring <robh@kernel.org> wrote:
+On Mon, Aug 6, 2018 at 8:16 PM Souptick Joarder <jrdr.linux@gmail.com> wrote:
 >
-> On Thu, 30 Aug 2018 20:15:40 +0530, Vivek Gautam wrote:
-> > Add bindings doc for Qcom's smmu-v2 implementation.
-> >
-> > Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> > Reviewed-by: Tomasz Figa <tfiga@chromium.org>
-> > Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> > ---
-> >  .../devicetree/bindings/iommu/arm,smmu.txt         | 39 ++++++++++++++++++++++
-> >  1 file changed, 39 insertions(+)
-> >
+> convert drm_atomic_helper_suspend/resume() to use
+> drm_mode_config_helper_suspend/resume().
 >
-> Reviewed-by: Rob Herring <robh@kernel.org>
+> Fixed one sparse warning by making hibmc_drm_interrupt
+> static.
+>
+> Signed-off-by: Ajit Negi <ajitn.linux@gmail.com>
+> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> Reviewed-by: Xinliang Liu <z.liuxinliang@hisilicon.com>
 
-Thanks Rob.
+Can we get this patch in queue for 4.20 ??
 
-Best regards
-Vivek
-
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+> ---
+> v2: remove ret variable from both suspend and resume.
+>     remove suspend_state from hibmc_drm_private struct.
+>
+>  drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c | 20 +++-----------------
+>  drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h |  1 -
+>  2 files changed, 3 insertions(+), 18 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+> index d4f6f1f..ee24480 100644
+> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+> @@ -37,7 +37,7 @@
+>         .llseek         = no_llseek,
+>  };
+>
+> -irqreturn_t hibmc_drm_interrupt(int irq, void *arg)
+> +static irqreturn_t hibmc_drm_interrupt(int irq, void *arg)
+>  {
+>         struct drm_device *dev = (struct drm_device *)arg;
+>         struct hibmc_drm_private *priv =
+> @@ -74,30 +74,16 @@ static int __maybe_unused hibmc_pm_suspend(struct device *dev)
+>  {
+>         struct pci_dev *pdev = to_pci_dev(dev);
+>         struct drm_device *drm_dev = pci_get_drvdata(pdev);
+> -       struct hibmc_drm_private *priv = drm_dev->dev_private;
+> -
+> -       drm_kms_helper_poll_disable(drm_dev);
+> -       priv->suspend_state = drm_atomic_helper_suspend(drm_dev);
+> -       if (IS_ERR(priv->suspend_state)) {
+> -               DRM_ERROR("drm_atomic_helper_suspend failed: %ld\n",
+> -                         PTR_ERR(priv->suspend_state));
+> -               drm_kms_helper_poll_enable(drm_dev);
+> -               return PTR_ERR(priv->suspend_state);
+> -       }
+>
+> -       return 0;
+> +       return drm_mode_config_helper_suspend(drm_dev);
+>  }
+>
+>  static int  __maybe_unused hibmc_pm_resume(struct device *dev)
+>  {
+>         struct pci_dev *pdev = to_pci_dev(dev);
+>         struct drm_device *drm_dev = pci_get_drvdata(pdev);
+> -       struct hibmc_drm_private *priv = drm_dev->dev_private;
+>
+> -       drm_atomic_helper_resume(drm_dev, priv->suspend_state);
+> -       drm_kms_helper_poll_enable(drm_dev);
+> -
+> -       return 0;
+> +       return drm_mode_config_helper_resume(drm_dev);
+>  }
+>
+>  static const struct dev_pm_ops hibmc_pm_ops = {
+> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
+> index e195521..45c25a4 100644
+> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
+> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
+> @@ -47,7 +47,6 @@ struct hibmc_drm_private {
+>         /* drm */
+>         struct drm_device  *dev;
+>         bool mode_config_initialized;
+> -       struct drm_atomic_state *suspend_state;
+>
+>         /* ttm */
+>         struct drm_global_reference mem_global_ref;
+> --
+> 1.9.1
+>
