@@ -2,94 +2,95 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37EF4C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 16:34:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4BF7C6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 16:36:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA93E20839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 16:34:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA93E20839
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4C21820839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 16:36:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N3pp5vX7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C21820839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727772AbeIKVfB (ORCPT
+        id S1727793AbeIKVgE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 17:35:01 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52198 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726775AbeIKVfB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 17:35:01 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8674D40216E5;
-        Tue, 11 Sep 2018 16:34:55 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-22.pek2.redhat.com [10.72.8.22])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E7ACE2142F21;
-        Tue, 11 Sep 2018 16:34:49 +0000 (UTC)
-Date:   Wed, 12 Sep 2018 00:34:44 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Tejun Heo <tj@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Jianchao Wang <jianchao.w.wang@oracle.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-block@vger.kernel.org
-Subject: Re: [PATCH] percpu-refcount: relax limit on percpu_ref_reinit()
-Message-ID: <20180911163443.GD10082@ming.t460p>
-References: <20180909125824.9150-1-ming.lei@redhat.com>
- <20180910164920.GE1100574@devbig004.ftw2.facebook.com>
- <20180911000049.GB30977@ming.t460p>
- <20180911134836.GG1100574@devbig004.ftw2.facebook.com>
- <20180911154540.GA10082@ming.t460p>
- <20180911154959.GI1100574@devbig004.ftw2.facebook.com>
- <20180911160532.GB10082@ming.t460p>
- <20180911163032.GA2966370@devbig004.ftw2.facebook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180911163032.GA2966370@devbig004.ftw2.facebook.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 11 Sep 2018 16:34:55 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 11 Sep 2018 16:34:55 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ming.lei@redhat.com' RCPT:''
+        Tue, 11 Sep 2018 17:36:04 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:46010 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726622AbeIKVgD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 17:36:03 -0400
+Received: by mail-pg1-f195.google.com with SMTP id x26-v6so12529805pge.12
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 09:35:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=HHF6FLSHgN9FMxwBT7+K1PcnegjZXTDgC90CToQjQSU=;
+        b=N3pp5vX7WD76T0V1R6d6pVQEsV8x72pZPPOUpzbdHBZODdC2CbC+LyejIILb6raVnc
+         CyBizmctGb8R0dEcdv2II6P12Zba5VVYYT7C5WKwQKMHMb3QXo3xQp2bNvX2d0RPCYS/
+         a9kWPaqXoKmZsIg/TdNV9DlrCWj3uJlI+DmP2O/JJo4eNUCTqy6M6IhddhzHfCbu9UYV
+         2YzbRIYW4hFwttBEFtprIkAnBmI1In4XFhDrqCHYFPrY1eHDS/NQYEulN78ib2xiHwYp
+         K156wlzrYKl12MWatjP0nxRwVadvK2dpEnL0q/bt00V55nquboqoieLnZH4+xcBb6Uqp
+         A4VQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=HHF6FLSHgN9FMxwBT7+K1PcnegjZXTDgC90CToQjQSU=;
+        b=tdgfJdO2HL1Lct9BOqQ2Ha8g+Atuhgte92CwJgvOrNU/Id1w5tXLLPhC7gs6Vn0x7t
+         uvZB76JU4yu/WY7sRN0ZWmyrk4F9RY3ZMExS8vGIbNI3GbA6zbawWJ5zJMzGQmMfnBFB
+         f/WEBqRpmngP501CL80U0KjiTEj/U/lgDXS+hOh/Tsf8/zEC/Cf9vRVrMCGw4QP5Zm3X
+         ahPGwNiizj6uH26x1BrLiadf5DwEBLsxP+6ls1fpVyLDDvNQcXUiDG0o9hxVwlBvOpIh
+         QiMXyDrUyUFSbFhaX8fb9yPuR2CRK2wjZ6YKSkYGBiYvMoUvfZZ5rQt9bLcOeNbzLJ7H
+         anhA==
+X-Gm-Message-State: APzg51C9itAy+jFr2M6qtX90iJVm91PVCsh1FEPMg6aBB3y4BcKeXtG7
+        4XJQRsxWsE+bm1fPd7tKr2kG7zZLos8=
+X-Google-Smtp-Source: ANB0VdYsmU7hk8H0SYATxML4rHcecLa4Ii4fauk8Bs/Y/gWSK3Xw6nnGOFWVrbWWBvhvuBU00rBEYg==
+X-Received: by 2002:a62:9f4c:: with SMTP id g73-v6mr30591185pfe.142.1536683757638;
+        Tue, 11 Sep 2018 09:35:57 -0700 (PDT)
+Received: from localhost.localdomain ([103.224.155.47])
+        by smtp.googlemail.com with ESMTPSA id f87-v6sm51482627pfh.168.2018.09.11.09.35.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Sep 2018 09:35:56 -0700 (PDT)
+From:   Jagdish Tirumala <t.jag587@gmail.com>
+To:     tern@rowland.harvard.edu, gregkh@linuxfoundation.org
+Cc:     usb-storage@lists.one-eyed-alien.net, linux-kernel@vger.kernel.org,
+        Jagdish Tirumala <t.jag587@gmail.com>
+Subject: [PATCH] USB: STORAGE: ISD200 Fixed error space required in for loop
+Date:   Tue, 11 Sep 2018 09:35:00 -0700
+Message-Id: <20180911163500.2737-1-t.jag587@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 11, 2018 at 09:30:32AM -0700, Tejun Heo wrote:
-> On Wed, Sep 12, 2018 at 12:05:33AM +0800, Ming Lei wrote:
-> > On Tue, Sep 11, 2018 at 08:49:59AM -0700, Tejun Heo wrote:
-> > > On Tue, Sep 11, 2018 at 11:45:41PM +0800, Ming Lei wrote:
-> > > > > So, this part seems wrong.  The function is called percpu_ref_reinit()
-> > > > > - the refcnt is expected to be in its initial state with just the base
-> > > > > ref once this function returns.  If you're removing the restriction on
-> > > > 
-> > > > But the comment says that 'Re-initialize @ref so that it's in the same
-> > > > state as when it finished', and this invariant isn't changed with this
-> > > > patch.
-> > > 
-> > > The comment goes "when perpcu_ref_init() finished".  The function is
-> > > called re _init_.  It should put the ref in the initial state, right?
-> > 
-> > OK, I am fine to keep the behaviour for this API, will introduce a new helper
-> > for NVMe.
-> 
-> Why aren't switch_to_atomic/percpu enough?
+Fixed errors spaces required around the for loop '=' , ';' and '<'
+in drivers/usb/storage/isd200.c
 
-The blk-mq's use case is this _reinit is done on one refcount which was
-killed via percpu_ref_kill(), so the DEAD flag has to be cleared.
+Signed-off-by: Jagdish Tirumala <t.jag587@gmail.com>
+---
+ drivers/usb/storage/isd200.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> > However, it is doable to switch to percpu mode from atomic mode when it
-> > doesn't drop to zero, looks like sort of perpcu_ref_reinit(inherit_old_refcount).
-> 
-> Isn't that way more contorted than just switching operating modes?
+diff --git a/drivers/usb/storage/isd200.c b/drivers/usb/storage/isd200.c
+index f5e4500d9970..2b474d60b4db 100644
+--- a/drivers/usb/storage/isd200.c
++++ b/drivers/usb/storage/isd200.c
+@@ -1153,7 +1153,7 @@ static int isd200_get_inquiry_data( struct us_data *us )
+ 				/* Fill in vendor identification fields */
+ 				src = (__be16 *)&id[ATA_ID_PROD];
+ 				dest = (__u16*)info->InquiryData.VendorId;
+-				for (i=0;i<4;i++)
++				for (i = 0; i < 4; i++)
+ 					dest[i] = be16_to_cpu(src[i]);
+ 
+ 				src = (__be16 *)&id[ATA_ID_PROD + 8/2];
+-- 
+2.17.1
 
-As explained above.
-
-Thanks,
-Ming
