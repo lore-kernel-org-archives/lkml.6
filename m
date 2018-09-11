@@ -2,71 +2,123 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2488C6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 12:06:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1191EC6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 12:08:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A40D020833
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 12:06:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A40D020833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id B641520833
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 12:08:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B641520833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727679AbeIKRF5 (ORCPT
+        id S1727721AbeIKRHM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 13:05:57 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:11685 "EHLO huawei.com"
+        Tue, 11 Sep 2018 13:07:12 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54044 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726612AbeIKRF5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 13:05:57 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 06EDF8E7D36F1;
-        Tue, 11 Sep 2018 20:06:52 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.399.0; Tue, 11 Sep 2018 20:06:48 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-To:     <airlied@linux.ie>, <tomi.valkeinen@ti.com>
-CC:     <sre@kernel.org>, <laurent.pinchart@ideasonboard.com>,
-        <afd@ti.com>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] drm/omap: Use ERR_CAST directly instead of RR_PTR(PTR_ERR())
-Date:   Tue, 11 Sep 2018 19:54:35 +0800
-Message-ID: <1536666875-11252-1-git-send-email-zhongjiang@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
+        id S1726612AbeIKRHL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 13:07:11 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1CEF887916;
+        Tue, 11 Sep 2018 12:08:08 +0000 (UTC)
+Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id ECF0B10CD65D;
+        Tue, 11 Sep 2018 12:08:06 +0000 (UTC)
+Date:   Tue, 11 Sep 2018 20:08:03 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     tglx@linutronix.de, hpa@zytor.com, thgarnie@google.com,
+        kirill.shutemov@linux.intel.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v2 2/3] x86/mm/KASLR: Calculate the actual size of
+ vmemmap region
+Message-ID: <20180911120803.GZ1740@192.168.1.3>
+References: <20180909124946.17988-1-bhe@redhat.com>
+ <20180909124946.17988-2-bhe@redhat.com>
+ <20180910061151.GA85199@gmail.com>
+ <20180911073057.GW1740@192.168.1.3>
+ <20180911075946.GA97454@gmail.com>
+ <20180911081811.GY1740@192.168.1.3>
+ <20180911092829.GA9079@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180911092829.GA9079@gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 11 Sep 2018 12:08:08 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 11 Sep 2018 12:08:08 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We prefer to use ERR_CAST to do so.
-The issue is detected with the help of Coccinelle.
+On 09/11/18 at 11:28am, Ingo Molnar wrote:
+> Yeah, so proper context is still missing, this paragraph appears to assume from the reader a 
+> whole lot of prior knowledge, and this is one of the top comments in kaslr.c so there's nowhere 
+> else to go read about the background.
+> 
+> For example what is the range of randomization of each region? Assuming the static, 
+> non-randomized description in Documentation/x86/x86_64/mm.txt is correct, in what way does 
+> KASLR modify that layout?
+> 
+> All of this is very opaque and not explained very well anywhere that I could find. We need to 
+> generate a proper description ASAP.
 
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
----
- drivers/gpu/drm/omapdrm/dss/dss.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+OK, let me try to give an context with my understanding. And copy the
+static layout of memory regions at below for reference.
 
-diff --git a/drivers/gpu/drm/omapdrm/dss/dss.c b/drivers/gpu/drm/omapdrm/dss/dss.c
-index cb80dda..1fc46b2 100644
---- a/drivers/gpu/drm/omapdrm/dss/dss.c
-+++ b/drivers/gpu/drm/omapdrm/dss/dss.c
-@@ -956,7 +956,7 @@ struct dss_debugfs_entry *
- 				&dss_debug_fops);
- 	if (IS_ERR(d)) {
- 		kfree(entry);
--		return ERR_PTR(PTR_ERR(d));
-+		return ERR_CAST(d);
- 	}
- 
- 	entry->dentry = d;
--- 
-1.7.12.4
+Here, Documentation/x86/x86_64/mm.txt is correct, and it's the
+guideline for us to manipulate the layout of kernel memory regions.
+Originally the starting address of each region is aligned to 512GB
+so that they are all mapped at the 0-th entry of PGD table in 4-level
+page mapping. Since we are so rich to have 120 TB virtual address space,
+they are aligned at 1 TB actually. So randomness comes from three parts
+mainly:
 
+1) The direct mapping region for physical memory. 64 TB are reserved to
+cover the maximum physical memory support. However, most of systems only
+have much less RAM memory than 64 TB, even much less than 1 TB most of
+time. We can take the superfluous to join the randomization. This is
+often the biggest part.
+
+2) The hole between memory regions, even though they are only 1 TB.
+
+3) KASAN region takes up 16 TB, while it won't take effect when KASLR is
+enabled. This is another big part. 
+
+With this superfluous address space as well as changing the starting address
+of each memory region to be PUD level, namely 1 GB aligned, we can have
+thousands of candidate position to locate those three memory regions.
+
+Above is for 4-level paging mode . As for 5-level, since the virtual
+address space is too big, Kirill makes the starting address of regions
+P4D aligned, namely 512 GB.
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ffff880000000000 - ffffc7ffffffffff (=64 TB) direct mapping of all phys. memory                                                                   
+136T - 200T = 64TB
+ffffc80000000000 - ffffc8ffffffffff (=40 bits) hole
+200T - 201T = 1TB
+ffffc90000000000 - ffffe8ffffffffff (=45 bits) vmalloc/ioremap space
+201T - 233T = 32TB
+ffffe90000000000 - ffffe9ffffffffff (=40 bits) hole
+233T - 234T = 1TB
+ffffea0000000000 - ffffeaffffffffff (=40 bits) virtual memory map (1TB)
+234T - 235T = 1TB
+... unused hole ...
+ffffec0000000000 - fffffbffffffffff (=44 bits) kasan shadow memory (16TB)
+236T - 252T = 16TB
+... unused hole ...
+
+Thanks
+Baoquan
