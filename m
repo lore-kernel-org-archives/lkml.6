@@ -2,194 +2,118 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 328C0C6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 11:19:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77B75C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 11:23:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4AB620833
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 11:19:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="j18luMTy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4AB620833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
+	by mail.kernel.org (Postfix) with ESMTP id 1FFC920833
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 11:23:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FFC920833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727033AbeIKQSM (ORCPT
+        id S1726980AbeIKQWt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 12:18:12 -0400
-Received: from m12-18.163.com ([220.181.12.18]:60846 "EHLO m12-18.163.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726601AbeIKQSL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 12:18:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=Subject:From:Message-ID:Date:MIME-Version; bh=5l4q6
-        dytCDXg8DgZ90+MSZBX3Wn4E5laJqCvUaIeMQI=; b=j18luMTy+hg/hyqDuJWTH
-        neMZg5xEOyDhI7ejJha1NfM5wQp1BhKa6H4oCLzALwEXFIlcZavZskx2fou2L++w
-        hdNl+ux+W1ek/4f8gA+E15wvaz4e2V7ZLf7Vl49VzazlVsQZoJTzq37gvl9bXex+
-        q5bCXm91t91tx+BJsH/7cc=
-Received: from [166.111.71.58] (unknown [166.111.71.58])
-        by smtp14 (Coremail) with SMTP id EsCowAAncCCOpJdbZRitSw--.10141S2;
-        Tue, 11 Sep 2018 19:18:38 +0800 (CST)
-Subject: Re: [PATCH] pci: dwc: pcie_designware: Fix a sleep-in-atomic-context
- bug in dw_pcie_prog_outbound_atu
-To:     Gustavo Pimentel <Gustavo.Pimentel@synopsys.com>,
-        Jia-Ju Bai <baijiaju1990@gmail.com>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>
-Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20180902033811.26858-1-baijiaju1990@gmail.com>
- <a21f3cc1-d593-edf7-19d1-3917cf5d5c98@synopsys.com>
-From:   Jia-Ju Bai <baijiaju1990@163.com>
-Message-ID: <ba4cc984-48c7-f940-f1ea-903113ace1d2@163.com>
-Date:   Tue, 11 Sep 2018 19:18:38 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Tue, 11 Sep 2018 12:22:49 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:56594 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726713AbeIKQWt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 12:22:49 -0400
+Received: from 79.184.255.178.ipv4.supernova.orange.pl (79.184.255.178) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.123)
+ id 3fcb82902d0195dd; Tue, 11 Sep 2018 13:23:54 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Francisco Jerez <currojerez@riseup.net>
+Cc:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Eero Tamminen <eero.t.tamminen@intel.com>, lenb@kernel.org,
+        viresh.kumar@linaro.org, mgorman@techsingularity.net,
+        ggherdovich@suse.cz, peterz@infradead.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: intel_pstate: Optimize IO boost in non HWP mode
+Date:   Tue, 11 Sep 2018 13:21:17 +0200
+Message-ID: <23293649.J1qzPCXian@aspire.rjw.lan>
+In-Reply-To: <87in3j9s07.fsf@riseup.net>
+References: <20180831172851.79812-1-srinivas.pandruvada@linux.intel.com> <8c56f28c2cc11de37fa3517348559eb040894702.camel@linux.intel.com> <87in3j9s07.fsf@riseup.net>
 MIME-Version: 1.0
-In-Reply-To: <a21f3cc1-d593-edf7-19d1-3917cf5d5c98@synopsys.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-CM-TRANSID: EsCowAAncCCOpJdbZRitSw--.10141S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxKF4rCryUJw1xuw43GrW3KFg_yoW7XryrpF
-        W5JFWSya48JFs0vayava4rZry5JanrAFWUGr4Sgas7WF17ZFy7K3WkJay3tr12qr4jqr12
-        krWrt3Z3GF15A3JanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07beyCXUUUUU=
-X-Originating-IP: [166.111.71.58]
-X-CM-SenderInfo: xedlyx5dmximizq6il2tof0z/1tbiYw6+elaD0mCpBAAAsj
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thursday, September 6, 2018 6:20:08 AM CEST Francisco Jerez wrote:
+> 
+> --==-=-=
+> Content-Type: multipart/mixed; boundary="=-=-="
+> 
+> --=-=-=
+> Content-Type: text/plain; charset=utf-8
+> Content-Disposition: inline
+> Content-Transfer-Encoding: quoted-printable
+> 
+> Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com> writes:
+> 
+> > [...]
+> >
+> >> > >=20
+> >> > > This patch causes a number of statistically significant
+> >> > > regressions
+> >> > > (with significance of 1%) on the two systems I've tested it
+> >> > > on.  On
+> >> > > my
+> >> >=20
+> >> > Sure. These patches are targeted to Atom clients where some of
+> >> > these
+> >> > server like workload may have some minor regression on few watts
+> >> > TDP
+> >> > parts.
+> >>=20
+> >> Neither the 36% regression of fs-mark, the 21% regression of sqlite,
+> >> nor
+> >> the 10% regression of warsaw qualify as small.  And most of the test
+> >> cases on the list of regressions aren't exclusively server-like, if
+> >> at
+> >> all.  Warsaw, gtkperf, jxrendermark and lightsmark are all graphics
+> >> benchmarks -- Latency is as important if not more for interactive
+> >> workloads than it is for server workloads.  In the case of a conflict
+> >> like the one we're dealing with right now between optimizing for
+> >> throughput (e.g. for the maximum number of requests per second) and
+> >> optimizing for latency (e.g. for the minimum request duration), you
+> >> are
+> >> more likely to be concerned about the former than about the latter in
+> >> a
+> >> server setup.
+> >
+> > Eero,
+> > Please add your test results here.
+> >
+> > No matter which algorithm you do, there will be variations. So you have
+> > to look at the platforms which you are targeting. For this platform=20
+> > number one item is use of less turbo and hope you know why?
+> 
+> Unfortunately the current controller uses turbo frequently on Atoms for
+> TDP-limited graphics workloads regardless of IOWAIT boosting.  IOWAIT
+> boosting simply exacerbated the pre-existing energy efficiency problem.
 
+My current understanding of the issue at hand is that using IOWAIT boosting
+on Atoms is a regression relative to the previous behavior.  That is what
+Srinivas is trying to address here AFAICS.
 
-On 2018/9/11 16:40, Gustavo Pimentel wrote:
-> Hi Jia,
->
-> On 02/09/2018 04:38, Jia-Ju Bai wrote:
->> The driver may sleep with holding a spinlock and in an interupt handler.
->>
->> The function call paths (from bottom to top) in Linux-4.16 are:
->>
->> [FUNC] usleep_range
->> drivers/pci/dwc/pcie-designware.c, 181:
->> 	usleep_range in dw_pcie_prog_outbound_atu
->> drivers/pci/dwc/pcie-designware-host.c, 479:
->> 	dw_pcie_prog_outbound_atu in dw_pcie_rd_other_conf
->> drivers/pci/dwc/pcie-designware-host.c, 561:
->> 	dw_pcie_rd_other_conf in dw_pcie_rd_conf
->> drivers/pci/access.c, 66:
->> 	[FUNC_PTR]dw_pcie_rd_conf in pci_bus_read_config_word
->> drivers/pci/access.c, 918:
->> 	pci_bus_read_config_word in pci_read_config_word
->> drivers/block/umem.c, 630:
->> 	pci_read_config_word in mm_interrupt (interrupt handler)
->>
->> [FUNC] usleep_range
->> drivers/pci/dwc/pcie-designware.c, 181:
->> 	usleep_range in dw_pcie_prog_outbound_atu
->> drivers/pci/dwc/pcie-designware-host.c, 479:
->> 	dw_pcie_prog_outbound_atu in dw_pcie_rd_other_conf
->> drivers/pci/dwc/pcie-designware-host.c, 561:
->> 	dw_pcie_rd_other_conf in dw_pcie_rd_conf
->> drivers/pci/access.c, 66:
->> 	[FUNC_PTR]dw_pcie_rd_conf in pci_bus_read_config_word
->> drivers/pci/access.c, 918:
->> 	pci_bus_read_config_word in pci_read_config_word
->> drivers/ata/pata_efar.c, 115:
->> 	pci_read_config_word in efar_set_piomode
->> drivers/ata/pata_efar.c, 113:
->> 	_raw_spin_lock_irqsave in efar_set_piomod
->>
->> [FUNC] usleep_range
->> drivers/pci/dwc/pcie-designware.c, 181:
->> 	usleep_range in dw_pcie_prog_outbound_atu
->> drivers/pci/dwc/pcie-designware-host.c, 479:
->> 	dw_pcie_prog_outbound_atu in dw_pcie_rd_other_conf
->> drivers/pci/dwc/pcie-designware-host.c, 561:
->> 	dw_pcie_rd_other_conf in dw_pcie_rd_conf
->> drivers/pci/access.c, 66:
->> 	[FUNC_PTR]dw_pcie_rd_conf in pci_bus_read_config_word
->> drivers/pci/access.c, 918:
->> 	pci_bus_read_config_word in pci_read_config_word
->> drivers/block/mtip32xx/mtip32xx.c, 158:
->> 	pci_read_config_word in mtip_check_surprise_removal
->> drivers/block/mtip32xx/mtip32xx.c, 843:
->> 	mtip_check_surprise_removal in mtip_handle_irq
->> drivers/block/mtip32xx/mtip32xx.c, 879:
->> 	mtip_handle_irq in mtip_irq_handler (interrupt handler)
->>
->> [FUNC] usleep_range
->> drivers/pci/dwc/pcie-designware.c, 181:
->> 	usleep_range in dw_pcie_prog_outbound_atu
->> drivers/pci/dwc/pcie-designware-host.c, 479:
->> 	dw_pcie_prog_outbound_atu in dw_pcie_rd_other_conf
->> drivers/pci/dwc/pcie-designware-host.c, 561:
->> 	dw_pcie_rd_other_conf in dw_pcie_rd_conf
->> drivers/pci/access.c, 66:
->> 	[FUNC_PTR]dw_pcie_rd_conf in pci_bus_read_config_word
->> drivers/pci/access.c, 918:
->> 	pci_bus_read_config_word in pci_read_config_word
->> drivers/gpu/vga/vgaarb.c, 645:
->> 	pci_read_config_word in vga_arbiter_add_pci_device
->> drivers/gpu/vga/vgaarb.c, 629:
->> 	_raw_spin_lock_irqsave in vga_arbiter_add_pci_device
->>
->> [FUNC] usleep_range
->> drivers/pci/dwc/pcie-designware.c, 181:
->> 	usleep_range in dw_pcie_prog_outbound_atu
->> drivers/pci/dwc/pcie-designware-host.c, 479:
->> 	dw_pcie_prog_outbound_atu in dw_pcie_rd_other_conf
->> drivers/pci/dwc/pcie-designware-host.c, 561:
->> 	dw_pcie_rd_other_conf in dw_pcie_rd_conf
->> drivers/pci/access.c, 66:
->> 	[FUNC_PTR]dw_pcie_rd_conf in pci_bus_read_config_word
->> drivers/pci/access.c, 918:
->> 	pci_bus_read_config_word in pci_read_config_word
->> drivers/pci/ats.c, 139:
->> 	pci_read_config_word in pci_ats_queue_depth
->> drivers/iommu/intel-iommu.c, 1519:
->> 	pci_ats_queue_depth in iommu_enable_dev_iotlb
->> drivers/iommu/intel-iommu.c, 5295:
->> 	iommu_enable_dev_iotlb in intel_iommu_enable_pasid
->> drivers/iommu/intel-iommu.c, 5241:
->> 	_raw_spin_lock_irqsave in intel_iommu_enable_pasid
->>
->> To fix this bug, usleep_range() is replaced with udelay().
->>
->> This bug is found by my static analysis tool DSAC.
->>
->> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
->> ---
->>   drivers/pci/controller/dwc/pcie-designware.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
->> index 778c4f76a884..7f50f7e51543 100644
->> --- a/drivers/pci/controller/dwc/pcie-designware.c
->> +++ b/drivers/pci/controller/dwc/pcie-designware.c
->> @@ -135,7 +135,7 @@ static void dw_pcie_prog_outbound_atu_unroll(struct dw_pcie *pci, int index,
->>   		if (val & PCIE_ATU_ENABLE)
->>   			return;
->>   
->> -		usleep_range(LINK_WAIT_IATU_MIN, LINK_WAIT_IATU_MAX);
->> +		udelay(LINK_WAIT_IATU_MAX);
-> You might use the mdelay instead of udelay, however this fix and others were
-> already made on patch on [1]
->
-> [1] https://lkml.org/lkml/2018/9/10/284
->
+Now, you seem to be saying that the overall behavior is suboptimal and the
+IOWAIT boosting doesn't matter that much, so some deeper changes are needed
+anyway.  That may be the case, but if there is a meaningful regression, we
+should first get back to the point where it is not present and then to take
+care of the more general problems.
 
-Okay, that is good.
+So, I'd like to understand how much of a problem the IOWAIT boosting really is
+in the first place.  If it is significant enough, let's address it first, this
+way or another, and move on to the other problems subsequently.
 
-
-Best wishes,
-Jia-Ju Bai
+Thanks,
+Rafael
 
