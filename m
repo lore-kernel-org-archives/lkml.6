@@ -2,140 +2,166 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96589C6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:40:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EB7BC6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:40:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4448E20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:40:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEC5C20866
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:40:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="z7dB9g6A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4448E20866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lMenHu3t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEC5C20866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727865AbeIKUkP (ORCPT
+        id S1727969AbeIKUkU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 16:40:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54732 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726981AbeIKUkO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 16:40:14 -0400
-Received: from mail-qt0-f180.google.com (mail-qt0-f180.google.com [209.85.216.180])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 27FE220896;
-        Tue, 11 Sep 2018 15:40:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536680421;
-        bh=nUdRa2GZMl/vIJ/aXz//ZUz1Z56ZGs5/inYrg4Jpmmw=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=z7dB9g6AqF2Rh+QcRCQV6tR/bYmWjldPmKQqYoEMxEUH6DRMVws5oVR937OAOVzIN
-         398Kvm38gF8t5tKptnoFJhBbmNjh5BT1ltIralrQIy2wtHYULusdFiidghY+pRcY3y
-         VprQf8QksU4JQY6UpmIqM9zJkQVyzXmKQNENJPYo=
-Received: by mail-qt0-f180.google.com with SMTP id o15-v6so28673579qtk.6;
-        Tue, 11 Sep 2018 08:40:21 -0700 (PDT)
-X-Gm-Message-State: APzg51DcEnUuRKL2pt5lDLdf/jJw/ndI0yR5EKQeP6RQFAombVfAm5gQ
-        SQQwttDAu1/v5WGa/eT13bJrm3RpJ8fHfccgfg==
-X-Google-Smtp-Source: ANB0VdbI4+2Kwc4KDe+gT15iLXZI7ixWvkk3Tr9ih69wHGm7FZfAaUX1VsiXmx93SKLNypQ7Untbz/TiuQLE4FQ554Q=
-X-Received: by 2002:a0c:d5d3:: with SMTP id h19-v6mr19244034qvi.218.1536680420205;
- Tue, 11 Sep 2018 08:40:20 -0700 (PDT)
+        Tue, 11 Sep 2018 16:40:20 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34322 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726775AbeIKUkU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 16:40:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=/WrK8WaLuQ+Pr5ivwkLZduRbTVOex06t6GKmaIySDCM=; b=lMenHu3tXjJsUoSZt97lMwqcX
+        IOPtHY52RwhgT8Y7ew7di3fbFhGZ+mw6e4G5qF+s8DQvvYCmc2Gcd+YsqgtNQNnOcfSo6DLaGmHtH
+        b9DnBSSCppymDWKlB7PFgaSbvBFBSJxIo68it3rhFLUviT4Uvv1jonAQSLXilT+kmZYAnym/6jZiL
+        b3Y3/xTP6pm+IOoW6Ku7QMFCNIkXDRhYQeOGT4Yl0nZ+3clPhWiKkd4NN3zPxiaNJ04cqSE4BqssE
+        JlaFLKIlXvLzK41g4bwLH7Scgrnei1cgIwaUxoH/mAoFlKflznoBXXTPw+ZgveT3iEiPS5ArnSNbS
+        /OmDl84IA==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fzkmB-0001pn-Kq; Tue, 11 Sep 2018 15:40:27 +0000
+Subject: Re: [PATCH v2 13/13] udmabuf: add documentation
+To:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org
+Cc:     laurent.pinchart@ideasonboard.com, daniel@ffwll.ch,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" 
+        <linux-media@vger.kernel.org>,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK" 
+        <linaro-mm-sig@lists.linaro.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20180911134216.9760-1-kraxel@redhat.com>
+ <20180911134216.9760-14-kraxel@redhat.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <ae4524da-abdb-e5b5-7658-3a0e9a6a071e@infradead.org>
+Date:   Tue, 11 Sep 2018 08:40:26 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-References: <20180910150403.19476-1-robh@kernel.org> <20180910150403.19476-7-robh@kernel.org>
-In-Reply-To: <20180910150403.19476-7-robh@kernel.org>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 11 Sep 2018 10:40:07 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+=VbdcVLiwXbOA5d+R2YY6=2Pw2bQpci-jj-JvereD1A@mail.gmail.com>
-Message-ID: <CAL_Jsq+=VbdcVLiwXbOA5d+R2YY6=2Pw2bQpci-jj-JvereD1A@mail.gmail.com>
-Subject: Re: [PATCH v3 6/9] kbuild: consolidate Devicetree dtb build rules
-To:     devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Michal Simek <monstr@monstr.eu>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        arcml <linux-snps-arc@lists.infradead.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:H8/300 ARCHITECTURE" 
-        <uclinux-h8-devel@lists.sourceforge.jp>,
-        Linux-MIPS <linux-mips@linux-mips.org>,
-        nios2-dev@lists.rocketboards.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-xtensa@linux-xtensa.org, Will Deacon <will.deacon@arm.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Ley Foon Tan <ley.foon.tan@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180911134216.9760-14-kraxel@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 10, 2018 at 10:04 AM Rob Herring <robh@kernel.org> wrote:
->
-> There is nothing arch specific about building dtb files other than their
-> location under /arch/*/boot/dts/. Keeping each arch aligned is a pain.
-> The dependencies and supported targets are all slightly different.
-> Also, a cross-compiler for each arch is needed, but really the host
-> compiler preprocessor is perfectly fine for building dtbs. Move the
-> build rules to a common location and remove the arch specific ones. This
-> is done in a single step to avoid warnings about overriding rules.
->
-> The build dependencies had been a mixture of 'scripts' and/or 'prepare'.
-> These pull in several dependencies some of which need a target compiler
-> (specifically devicetable-offsets.h) and aren't needed to build dtbs.
-> All that is really needed is dtc, so adjust the dependencies to only be
-> dtc.
->
-> This change enables support 'dtbs_install' on some arches which were
-> missing the target.
+On 9/11/18 6:42 AM, Gerd Hoffmann wrote:
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> ---
+>  include/uapi/linux/udmabuf.h         | 50 +++++++++++++++++++++++++++++++++---
+>  Documentation/driver-api/dma-buf.rst |  8 ++++++
+>  2 files changed, 55 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/uapi/linux/udmabuf.h b/include/uapi/linux/udmabuf.h
+> index 46b6532ed8..f30b37cb5c 100644
+> --- a/include/uapi/linux/udmabuf.h
+> +++ b/include/uapi/linux/udmabuf.h
+> @@ -5,8 +5,38 @@
+>  #include <linux/types.h>
+>  #include <linux/ioctl.h>
+>  
+> +/**
+> + * DOC: udmabuf
+> + *
+> + * udmabuf is a device driver which allows userspace create dmabufs.
 
-[...]
+                                                        to create
 
-> @@ -1215,6 +1215,33 @@ kselftest-merge:
->                 $(srctree)/tools/testing/selftests/*/config
->         +$(Q)$(MAKE) -f $(srctree)/Makefile olddefconfig
->
-> +# ---------------------------------------------------------------------------
-> +# Devicetree files
+> + * The memory used for these dmabufs must be backed by memfd.  The
+> + * memfd must have F_SEAL_SHRINK and it must not have F_SEAL_WRITE.
+> + *
+> + * The driver has two ioctls, one to create a dmabuf from a single
+> + * memory block and one to create a dmabuf from a list of memory
+> + * blocks.
+> + *
+> + * UDMABUF_CREATE - _IOW('u', 0x42, udmabuf_create)
+> + *
+> + * UDMABUF_CREATE_LIST - _IOW('u', 0x43, udmabuf_create_list)
+> + */
 > +
-> +ifneq ($(wildcard $(srctree)/arch/$(SRCARCH)/boot/dts/),)
-> +dtstree := arch/$(SRCARCH)/boot/dts
-> +endif
+> +#define UDMABUF_CREATE       _IOW('u', 0x42, struct udmabuf_create)
+> +#define UDMABUF_CREATE_LIST  _IOW('u', 0x43, struct udmabuf_create_list)
 > +
-> +ifdef CONFIG_OF_EARLY_FLATTREE
+>  #define UDMABUF_FLAGS_CLOEXEC	0x01
+>  
+> +/**
+> + * struct udmabuf_create - create a dmabuf from a single memory block.
+> + *
+> + * @memfd: The file handle.
+> + * @offset: Start of the buffer (from memfd start).
+> + * Must be page aligned.
+> + * @size: Size of the buffer.  Must be rounded to page size.
 
-This can be true when dtstree is unset. So this line should be this
-instead to fix the 0-day reported error:
+      @flags: ???
 
-ifneq ($(dtstree),)
+> + *
+> + * flags:
+> + * UDMABUF_FLAGS_CLOEXEC: set CLOEXEC flag for the dmabuf.
+> + */
+>  struct udmabuf_create {
+>  	__u32 memfd;
+>  	__u32 flags;
+> @@ -14,6 +44,14 @@ struct udmabuf_create {
+>  	__u64 size;
+>  };
+>  
+> +/**
+> + * struct udmabuf_create_item - one memory block list item.
+> + *
+> + * @memfd: The file handle.
+> + * @offset: Start of the buffer (from memfd start).
+> + * Must be page aligned.
+> + * @size: Size of the buffer.  Must be rounded to page size.
+> + */
+>  struct udmabuf_create_item {
+>  	__u32 memfd;
+>  	__u32 __pad;
+> @@ -21,13 +59,19 @@ struct udmabuf_create_item {
+>  	__u64 size;
+>  };
+>  
+> +/**
+> + * struct udmabuf_create_list - create a dmabuf from a memory block list.
+> + *
+> + * @count: The number of list elements.
+> + * @list: The memory block list
+> + *
+> + * flags:
 
-> +
-> +%.dtb : scripts_dtc
-> +       $(Q)$(MAKE) $(build)=$(dtstree) $(dtstree)/$@
-> +
-> +PHONY += dtbs dtbs_install
-> +dtbs: scripts_dtc
-> +       $(Q)$(MAKE) $(build)=$(dtstree)
-> +
-> +dtbs_install: dtbs
-> +       $(Q)$(MAKE) $(dtbinst)=$(dtstree)
-> +
-> +all: dtbs
-> +
-> +endif
+      @flags:
+
+> + * UDMABUF_FLAGS_CLOEXEC: set CLOEXEC flag for the dmabuf.
+> + */
+>  struct udmabuf_create_list {
+>  	__u32 flags;
+>  	__u32 count;
+>  	struct udmabuf_create_item list[];
+>  };
+
+
+thanks.
+-- 
+~Randy
