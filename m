@@ -2,126 +2,368 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E270CC04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 16:02:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E558AC6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 16:03:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 822D220890
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 16:02:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B8F02086A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 16:03:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YDr9wjH5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 822D220890
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R4njimNq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B8F02086A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727611AbeIKVCo (ORCPT
+        id S1727669AbeIKVDJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 17:02:44 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:33151 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726689AbeIKVCo (ORCPT
+        Tue, 11 Sep 2018 17:03:09 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:33974 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726782AbeIKVDJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 17:02:44 -0400
-Received: by mail-oi0-f66.google.com with SMTP id 8-v6so48223177oip.0;
-        Tue, 11 Sep 2018 09:02:47 -0700 (PDT)
+        Tue, 11 Sep 2018 17:03:09 -0400
+Received: by mail-pl1-f196.google.com with SMTP id f6-v6so11555316plo.1;
+        Tue, 11 Sep 2018 09:03:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Z8un5poNynW9nk3OSiZNF95fwbQEXI2dh5fivhzcI6Q=;
-        b=YDr9wjH5/EbyJlwpN6A0MoE8FmX1m+GQQZ5kFnbHuYpGOYu2SCRCIaB/mLoa8pcOKu
-         TEMz52lGR+PrH0eopfLUOlWNJ3h1LSAL83F9mKcvKlpK14Y47Ks6iOIw/3zvskxB7GhK
-         0F05ZMHikzH/3GZ5+qQZGCCInpJRvrAz8z8IYDy/63qTSe8NjilTHtWgi3CbWES5Tyd1
-         E961Pw7E3cJfUeNAn+FunrMAkZseMiCag6/NDtqi7ZaUmpQnlNqy+AQ76UOIepqNclOU
-         QtGVCYJKKbz8OrU/NbAvtm5Bhar/kJf1Rqcj+3aBcCjaiH4Tai3d89bzopcBrmCEZu0t
-         0RMg==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=S/Puq6XE+c7GNrpVtL+7J3llOXtwZlMcF5S7amaVaOw=;
+        b=R4njimNqG9ldyh76GxErg5O1ui6seLa4YnyYDolJ5YvE3UoPrFZKGG4RKp3u52PbNg
+         aTjkfHO/2JS4SH6W/y+xRFX+iFyOs+xyXma5mVPCtOsFMzKI17y0clBWBPTSQQXFDjr8
+         9ZpjHUiZAJP0vE4aPm/aJdO7t7lQHLrNHfbZPtW5ZCy7GthMANsjQcltfD1hJ39hXHfs
+         JU2kwVZsXXR2JCc/P8zduOBIrsFS3gk9ztHuhzrcjS2TkKlMMs22fo90ILMb1hLCBCQZ
+         aGjo8ReOHhExwe01srynxOr8ZRoYV05KDMvmQrlN4gzCAD1y9ZmQNcnHtMX6poeuZ94I
+         MpyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Z8un5poNynW9nk3OSiZNF95fwbQEXI2dh5fivhzcI6Q=;
-        b=C0710ethZdgtrTHiZFnzQJU9Ii9wGwZYqsJ4gFNvmPxhERTuMg5ZsVo8sP3A/mupaW
-         O52eyERxANN6c77Mej6gjaI4gODwL0koF2S8ZsY+mSXDG+eXDI1DZ1irSI/iJrwMlG0J
-         MeSRuQihSMiybWnDnA07YNV/yvZMhmVoDATaVApBQX4CBLr5XHiRQ2g3NHfUMm9RjIT6
-         WfxzMU7fx6EKiI5QJyE9uLlAtqMUMRsn0l21DSZHZEBE7kfbG5VmYZqBb/3u/dcTxbs6
-         YU3GT/HXBe67GKriG26gjmue0sr9EMMGcHeeER7f7v2wln1zuOu4NqonyuyPT/jTbX6S
-         smKg==
-X-Gm-Message-State: APzg51DtXBdJzVO51ULoKhqIdQwbPfy6FJZG0I/LRMgnwu4sL1Lmee5f
-        joHXvG8+1u+yy4DTxjVpsDA=
-X-Google-Smtp-Source: ANB0VdayuHq3KlJ20PsPbIh+JmU8m7wtjxeQyXo9Kvr2LwrPd2WS7cd3Ft2TJll1gcDH2NFy6bKFtQ==
-X-Received: by 2002:aca:305:: with SMTP id 5-v6mr25393388oid.84.1536681766593;
-        Tue, 11 Sep 2018 09:02:46 -0700 (PDT)
-Received: from [192.168.0.113] (47-208-214-43.trckcmtc01.res.dyn.suddenlink.net. [47.208.214.43])
-        by smtp.gmail.com with ESMTPSA id q124-v6sm19932760oif.8.2018.09.11.09.02.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Sep 2018 09:02:46 -0700 (PDT)
-Subject: Re: [PATCH] of: fix phandle cache creation for DTs with no phandles
-To:     Rob Herring <robh@kernel.org>,
-        Finn Thain <fthain@telegraphics.com.au>,
-        Stan Johnson <userm57@yahoo.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, stable@vger.kernel.org
-References: <20180911145607.6009-1-robh@kernel.org>
-From:   Frank Rowand <frowand.list@gmail.com>
-Message-ID: <0ecd44b5-3faa-6b30-d47f-dd06efbcadd6@gmail.com>
-Date:   Tue, 11 Sep 2018 09:02:43 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=S/Puq6XE+c7GNrpVtL+7J3llOXtwZlMcF5S7amaVaOw=;
+        b=iZJHe+ulwFcDhC73yC4KU4a29vD8MqcFqaqsCvgnbKv8JRztAXPge5V2U9QPnEc62d
+         zXe87AWmUqXcSRPGckfkQp/pe8SHby7yuBlu17O7B5Z2m2q73XwqIoKpHV9pUAPJciM1
+         NrRQjNVQDj/R45kE1c4VEoJ7X17uH/trrBv+DKhYzluKlPjJLO/kNt2bjirDjnVtuIvR
+         Vm4OW0J1DEW2P+0KL+aDZTy3LBPlJCzLlELzmF6lxK4tql7420/5sGVmwjy25BCwcHF1
+         2KkclHCw92a+4YyI9gnK76bXdKhePzJrv1v9aRV4FRt3oudu4BqAREu5r9t3a0oCAeYb
+         vi7A==
+X-Gm-Message-State: APzg51CWas5sngF5l2tsIPXbvaMRoTc2rUK2Gw5tHuIvOlsuH3/rx0Hi
+        KSXtGJeNRw2dNZmdFwAlGt4=
+X-Google-Smtp-Source: ANB0VdYFg0dk79DpnldDg6JEptBHlGwexzkUtYSIMRm+mQH5m1xjfgz1oLD+X8XxA152LmwNi5Vbtg==
+X-Received: by 2002:a17:902:710c:: with SMTP id a12-v6mr28436970pll.310.1536681791078;
+        Tue, 11 Sep 2018 09:03:11 -0700 (PDT)
+Received: from himanshu-Vostro-3559 ([103.233.116.134])
+        by smtp.gmail.com with ESMTPSA id o34-v6sm24641381pgm.44.2018.09.11.09.03.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 11 Sep 2018 09:03:10 -0700 (PDT)
+Date:   Tue, 11 Sep 2018 21:33:00 +0530
+From:   Himanshu Jha <himanshujha199640@gmail.com>
+To:     Song Qiang <songqiang1304521@gmail.com>
+Cc:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net, andriy.shevchenko@linux.intel.com,
+        matt.ranostay@konsulko.com, ak@it-klinger.de,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Song Qiang <songqiang.1304521@gmail.com>
+Subject: Re: [PATCH v2] iio: proximity: Add driver support for ST's VL53L0X
+ ToF ranging sensor.
+Message-ID: <20180911160300.GA9212@himanshu-Vostro-3559>
+References: <20180911075357.8187-1-songqiang.1304521@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180911145607.6009-1-robh@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180911075357.8187-1-songqiang.1304521@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/11/18 07:56, Rob Herring wrote:
-> With commit 0b3ce78e90fc ("of: cache phandle nodes to reduce cost of
-> of_find_node_by_phandle()"), a G3 PowerMac fails to boot. The root cause
-> is the DT for this system has no phandle properties when booted with
-> BootX. of_populate_phandle_cache() does not handle the case of no
-> phandles correctly. The problem is roundup_pow_of_two() for 0 is
-> undefined. The implementation subtracts 1 underflowing and then things
-> are in the weeds.
+Hi Song,
+
+On Tue, Sep 11, 2018 at 03:53:57PM +0800, Song Qiang wrote:
+> This driver was originally written by ST in 2016 as a misc input device
+> driver, and hasn't been maintained for a long time. I grabbed some code
+> from it's API and reformed it into a iio proximity device driver.
+> This version of driver uses i2c bus to talk to the sensor and
+> polling for measuring completes, so no irq line is needed.
+> This version of driver supports only one-shot mode, and it can be
+> tested with reading from
+> /sys/bus/iio/devices/iio:deviceX/in_distance_raw
 > 
-> Fixes: 0b3ce78e90fc ("of: cache phandle nodes to reduce cost of of_find_node_by_phandle()")
-> Cc: stable@vger.kernel.org # 4.17+
-> Reported-by: Finn Thain <fthain@telegraphics.com.au>
-> Tested-by: Stan Johnson <userm57@yahoo.com>
-> Cc: Frank Rowand <frowand.list@gmail.com>
-> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> Signed-off-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Song Qiang <songqiang.1304521@gmail.com>
 > ---
-> Here's a formal patch of what Stan tested. Will send to Linus this week.
+>  .../bindings/iio/proximity/vl53l0x.txt        |  12 ++
+>  drivers/iio/proximity/Kconfig                 |  11 +
+>  drivers/iio/proximity/Makefile                |   2 +
+>  drivers/iio/proximity/vl53l0x-i2c.c           | 196 ++++++++++++++++++
+>  4 files changed, 221 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/proximity/vl53l0x.txt
+>  create mode 100644 drivers/iio/proximity/vl53l0x-i2c.c
 > 
-> Rob
-> 
->  drivers/of/base.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/of/base.c b/drivers/of/base.c
-> index a055cd1ef96d..17ae594b7014 100644
-> --- a/drivers/of/base.c
-> +++ b/drivers/of/base.c
-> @@ -140,6 +140,9 @@ void of_populate_phandle_cache(void)
->  		if (np->phandle && np->phandle != OF_PHANDLE_ILLEGAL)
->  			phandles++;
->  
-> +	if (!phandles)
-> +		goto out;
+> diff --git a/Documentation/devicetree/bindings/iio/proximity/vl53l0x.txt b/Documentation/devicetree/bindings/iio/proximity/vl53l0x.txt
+> new file mode 100644
+> index 000000000000..64b69442f08e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/proximity/vl53l0x.txt
+> @@ -0,0 +1,12 @@
+> +ST's VL53L0X ToF ranging sensor
 > +
->  	cache_entries = roundup_pow_of_two(phandles);
->  	phandle_cache_mask = cache_entries - 1;
+> +Required properties:
+> +	- compatible: must be "st,vl53l0x-i2c"
+> +	- reg: i2c address where to find the device
+> +
+> +Example:
+> +
+> +vl53l0x@29 {
+> +	compatible = "st,vl53l0x-i2c";
+> +	reg = <0x29>;
+> +};
+> diff --git a/drivers/iio/proximity/Kconfig b/drivers/iio/proximity/Kconfig
+> index f726f9427602..5f421cbd37f3 100644
+> --- a/drivers/iio/proximity/Kconfig
+> +++ b/drivers/iio/proximity/Kconfig
+> @@ -79,4 +79,15 @@ config SRF08
+>  	  To compile this driver as a module, choose M here: the
+>  	  module will be called srf08.
 >  
-> 
+> +config VL53L0X_I2C
+> +	tristate "STMicroelectronics VL53L0X ToF ranger sensor (I2C)"
+> +	depends on I2C
+> +	help
+> +	  Say Y here to build a driver for STMicroelectronics VL53L0X
+> +	  ToF ranger sensors with i2c interface.
+> +	  This driver can be used to measure the distance of objects.
+> +
+> +	  To compile this driver as a module, choose M here: the
+> +	  module will be called vl53l0x-i2c.
+> +
+>  endmenu
+> diff --git a/drivers/iio/proximity/Makefile b/drivers/iio/proximity/Makefile
+> index 4f4ed45e87ef..dedfb5bf3475 100644
+> --- a/drivers/iio/proximity/Makefile
+> +++ b/drivers/iio/proximity/Makefile
+> @@ -10,3 +10,5 @@ obj-$(CONFIG_RFD77402)		+= rfd77402.o
+>  obj-$(CONFIG_SRF04)		+= srf04.o
+>  obj-$(CONFIG_SRF08)		+= srf08.o
+>  obj-$(CONFIG_SX9500)		+= sx9500.o
+> +obj-$(CONFIG_VL53L0X_I2C)	+= vl53l0x-i2c.o
+> +
+> diff --git a/drivers/iio/proximity/vl53l0x-i2c.c b/drivers/iio/proximity/vl53l0x-i2c.c
+> new file mode 100644
+> index 000000000000..4eac40353494
+> --- /dev/null
+> +++ b/drivers/iio/proximity/vl53l0x-i2c.c
+> @@ -0,0 +1,196 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + *  Support for ST's VL53L0X FlightSense ToF Ranger Sensor on a i2c bus.
+> + *
+> + *  Copyright (C) 2018 Song Qiang <songqiang.1304521@gmail.com>
+> + *
 
+Andy suggested to remove this emty line and not ST copyright.
 
-Reviewed-by: Frank Rowand <frank.rowand@sony.com>
+So, be careful or .... "Better Call Saul" ;)
+
+> +
+> +#include <linux/delay.h>
+> +#include <linux/i2c.h>
+> +#include <linux/iio/iio.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/slab.h>
+> +
+> +#define VL53L0X_DRV_NAME				"vl53l0x-i2c"
+> +
+> +#define VL_REG_SYSRANGE_START				0x00
+> +#define VL_REG_SYSRANGE_MODE_MASK			GENMASK(3, 0)
+> +#define VL_REG_SYSRANGE_MODE_START_STOP			BIT(0)
+> +#define VL_REG_SYSRANGE_MODE_SINGLESHOT			0x00
+> +#define VL_REG_SYSRANGE_MODE_BACKTOBACK			BIT(1)
+> +#define VL_REG_SYSRANGE_MODE_TIMED			BIT(2)
+> +#define VL_REG_SYSRANGE_MODE_HISTOGRAM			BIT(3)
+> +
+> +#define VL_REG_SYS_SEQUENCE_CFG				BIT(0)
+> +#define VL_REG_SYS_RANGE_CFG				0x09
+> +#define VL_REG_SYS_INTERMEASUREMENT_PERIOD		BIT(2)
+> +
+> +#define VL_REG_SYS_INT_CFG_GPIO				0x0A
+> +#define VL_REG_SYS_INT_GPIO_DISABLED			0x00
+> +#define VL_REG_SYS_INT_GPIO_LEVEL_LOW			BIT(0)
+> +#define VL_REG_SYS_INT_GPIO_LEVEL_HIGH			BIT(1)
+> +#define VL_REG_SYS_INT_GPIO_NEW_SAMPLE_READY		BIT(2)
+> +#define VL_REG_SYS_INT_GPIO_OUT_OF_WINDOW		0x03
+> +#define VL_REG_GPIO_HV_MUX_ACTIVE_HIGH			0x84
+> +#define VL_REG_SYS_INT_CLEAR				0x0B
+> +
+> +#define VL_REG_RESULT_INT_STATUS			0x13
+> +#define VL_REG_RESULT_RANGE_STATUS			0x14
+> +#define VL_REG_RESULT_RANGE_SATTUS_COMPLETE		BIT(0)
+> +
+> +#define VL_REG_I2C_SLAVE_DEVICE_ADDRESS			0x8a
+> +
+> +#define VL_REG_IDENTIFICATION_MODEL_ID			0xc0
+> +#define VL_REG_IDENTIFICATION_REVISION_ID		0xc2
+> +
+> +struct vl53l0x_data {
+> +	struct i2c_client *client;
+> +	struct iio_dev *indio_dev;
+
+This is not required in this private struct.
+Not sure though...
+
+> +};
+> +
+> +static int vl53l0x_read_proximity(struct vl53l0x_data *data,
+> +				  const struct iio_chan_spec *chan,
+> +				  int *val)
+> +{
+> +	u8 write_command = VL_REG_RESULT_RANGE_STATUS;
+> +	struct i2c_client *client = data->client;
+> +	unsigned int tries = 20;
+> +	struct i2c_msg msg[2];
+> +	u8 buffer[12];
+> +	int ret;
+> +
+> +	ret = i2c_smbus_write_byte_data(data->client,
+> +					VL_REG_SYSRANGE_START, 1);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	do {
+> +		ret = i2c_smbus_read_byte_data(data->client,
+> +					       VL_REG_RESULT_RANGE_STATUS);
+> +		if (ret < 0)
+> +			return ret;
+> +
+> +		if (ret & VL_REG_RESULT_RANGE_SATTUS_COMPLETE)
+> +			break;
+> +
+> +		usleep_range(1000, 5000);
+> +	} while (tries--);
+> +	if (!tries)
+> +		return -ETIMEDOUT;
+> +
+> +	msg[0].addr = client->addr;
+> +	msg[0].buf = &write_command;
+> +	msg[0].len = 1;
+> +	msg[0].flags = client->flags | I2C_M_STOP;
+> +
+> +	msg[1].addr = client->addr;
+> +	msg[1].buf = buffer;
+> +	msg[1].len = 12;
+> +	msg[1].flags = client->flags | I2C_M_RD;
+> +
+> +	ret = i2c_transfer(client->adapter, msg, 2);
+> +	if (ret < 0)
+> +		return ret;
+> +	else if (ret != 2)
+> +		dev_err(&data->client->dev, "vl53l0x: consecutively read error. ");
+> +
+> +	*val = __le16_to_cpu((buffer[10] << 8) + buffer[11]);
+
+IIRC  __le/be _* shouldn't be directly used and instead use
+le16_to_cpu(). Let it decide the byte order unwrapping to
+be done.
+
+> +	return 0;
+> +}
+> +
+> +static const struct iio_chan_spec vl53l0x_channels[] = {
+> +	{
+> +		.type = IIO_DISTANCE,
+> +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW)
+> +	},
+> +	IIO_CHAN_SOFT_TIMESTAMP(1),
+> +};
+> +
+> +static int vl53l0x_read_raw(struct iio_dev *indio_dev,
+> +			    const struct iio_chan_spec *chan,
+> +			    int *val, int *val2, long mask)
+> +{
+> +	struct vl53l0x_data *data = iio_priv(indio_dev);
+> +	int ret;
+> +
+> +	if (chan->type != IIO_DISTANCE) {
+> +		dev_err(&data->client->dev, "vl53l0x: iio type error");
+> +		return -EINVAL;
+> +	}
+> +
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_RAW:
+> +		ret = iio_device_claim_direct_mode(indio_dev);
+
+You don't have any other buffer/trigger support for now and I believe
+there is no need to claim direct mode.
+
+> +		if (ret)
+> +			return ret;
+> +		ret = vl53l0x_read_proximity(data, chan, val);
+> +		if (ret < 0)
+> +			dev_err(&data->client->dev,
+> +				"vl53l0x: raw value read error with %d", ret);
+> +
+> +		ret = IIO_VAL_INT;
+> +		iio_device_release_direct_mode(indio_dev);
+> +		return ret;
+> +	default:
+> +		dev_err(&data->client->dev, "vl53l0x: IIO_CHAN_* not recognzed.");
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+> +static const struct iio_info vl53l0x_info = {
+> +	.read_raw = vl53l0x_read_raw,
+> +};
+> +
+> +static int vl53l0x_probe(struct i2c_client *client)
+> +{
+> +	struct vl53l0x_data *data;
+> +	struct iio_dev *indio_dev;
+> +	int ret;
+> +
+> +	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*data));
+> +	if (!indio_dev)
+> +		return -ENOMEM;
+> +
+> +	data = iio_priv(indio_dev);
+> +	data->client = client;
+> +	data->indio_dev = indio_dev;
+
+Is this required ?
+
+> +	i2c_set_clientdata(client, indio_dev);
+> +
+> +	if (!i2c_check_functionality(client->adapter,
+> +				     I2C_FUNC_SMBUS_BYTE_DATA | I2C_FUNC_I2C))
+> +		return -EOPNOTSUPP;
+> +
+> +	indio_dev->dev.parent = &client->dev;
+> +	indio_dev->name = VL53L0X_DRV_NAME;
+> +	indio_dev->info = &vl53l0x_info;
+> +	indio_dev->channels = vl53l0x_channels;
+> +	indio_dev->num_channels = ARRAY_SIZE(vl53l0x_channels);
+> +	indio_dev->modes = INDIO_DIRECT_MODE;
+> +
+> +	ret = devm_iio_device_register(&client->dev, indio_dev);
+
+	return devm_iio_device_register(&client->dev, indio_dev);
+
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+> +}
+
+Do you have the sensor and are these patches tested ?
+Just curious!
+
+Thanks
+-- 
+Himanshu Jha
+Undergraduate Student
+Department of Electronics & Communication
+Guru Tegh Bahadur Institute of Technology
