@@ -2,108 +2,176 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32112C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 23:01:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65907C4646A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 23:02:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D17B020865
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 23:01:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13F4520865
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 23:02:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="g1usjAYK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D17B020865
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AeZ6e66b"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13F4520865
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726286AbeILECx (ORCPT
+        id S1726533AbeILEDf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 00:02:53 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:39025 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725740AbeILECw (ORCPT
+        Wed, 12 Sep 2018 00:03:35 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:46528 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725738AbeILEDf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 00:02:52 -0400
-Received: by mail-pf1-f194.google.com with SMTP id j8-v6so12947444pff.6
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 16:01:22 -0700 (PDT)
+        Wed, 12 Sep 2018 00:03:35 -0400
+Received: by mail-pl1-f193.google.com with SMTP id t19-v6so12009312ply.13
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 16:02:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=YrSYa/2yjcAWd2Sa2WXRg1IT45FqYdZx2smgKFAAn+U=;
-        b=g1usjAYKckwytxvPf7k+WplL8BDCFvRXfYdc95RvBz4ocYWJVFf8pruXWvgKwuq7E3
-         mzDF2w9RD7OohLhEmTK2fM1++jOXKx5bhgOYyBgrBNh0LWANY4eRWYtf05G1A01gb7Ab
-         e3eSa0NOb96EIClvwXs8znW6RjmndYFzzPn49bbDO7mHaKFm0szr++oHIc5c71hHsjJd
-         MAiQ7NEPLyfC8zev9zihfos/9E2HzWU0o0KUbbyTzSd//y8T23mhS7nRdN61PXUiOxEV
-         jkxPfq4bgcpeMQ1EOoQ+Gj/qXyr6uAhZqnoJYmXXONZmOPOC4jcGa4Mv8LYjnYNROgQG
-         Q6Lg==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=6jvIH1/RpXbUD3Cd0einF5JG9jeA+nElx1adpF6R5Ro=;
+        b=AeZ6e66buNGXS5xsU32gM2R2Gq9xOKVKhgL5X/SK00hyiAjTbFYGrwd81TH4tVuy/N
+         bgAioOtgcGGABnR04QJ10Z/rhx/w1006x1KjEoaDdP9t29gT5hJu4PDT3WQMThVwrstj
+         ahl5go7cz9GBFxn/KeHhlnsmjP8rwDpiaC9a8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=YrSYa/2yjcAWd2Sa2WXRg1IT45FqYdZx2smgKFAAn+U=;
-        b=CckofcR10eLg1i9WGgztI6iGN0Mo10IOpYDM/yY5J8vGgrMnYu6jXmF+bPhyN/cTnB
-         uBPyeGs2kc27xZgyiMuzpOk4FIMCvp3s3LlY5qvzfhiP9OfylEx7FSVUFwOtvH7WlhQe
-         sGhaJN7G1OcJBp40TASGIy1Mfx6qJW429atgkbn04BSxWJaLsLtMQX1GYK0jAEYBqQYt
-         ZSUPMC7bVrhpjT1bKfmkEx6PH6vjfKLauzJLDaxqzAW+6mQl3Tx+M+XvDx7OicRLn6u/
-         y3yHDYG1e8j0MomTZL7VzAgeg9kSvT3Q0uGwUwxGkkAzTYI6eBse2R9jVfKbWRm5CgEW
-         IEoQ==
-X-Gm-Message-State: APzg51D6O3/Tsf/UyueOrXmanz6T8pcFipeYqJ2itXfc9o3i2tDqjup/
-        nD16KoRIk+k0FlOPHIvNKsYimQ==
-X-Google-Smtp-Source: ANB0VdbYjpyYlrTIaszypMmlA8sUN+Hfj2sV1ddfUqlkYtpv7WJ8q1+hP8G7ss0wRf7BAcn1E0JUCg==
-X-Received: by 2002:a63:d150:: with SMTP id c16-v6mr30865254pgj.188.1536706882058;
-        Tue, 11 Sep 2018 16:01:22 -0700 (PDT)
-Received: from ?IPv6:2601:646:c200:7429:c031:82db:734e:842e? ([2601:646:c200:7429:c031:82db:734e:842e])
-        by smtp.gmail.com with ESMTPSA id y128-v6sm28800152pfb.56.2018.09.11.16.01.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Sep 2018 16:01:20 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH net-next v3 02/17] zinc: introduce minimal cryptography library
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (15G77)
-In-Reply-To: <CAHmME9q+mqT+vtM1FdBvf8=nAFu=u+wN48sOxqLcFthxYVn7NQ@mail.gmail.com>
-Date:   Tue, 11 Sep 2018 16:01:19 -0700
-Cc:     Eric Biggers <ebiggers@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <2E01FBB6-030A-40AB-8BEE-F8F271A57568@amacapital.net>
-References: <20180911010838.8818-1-Jason@zx2c4.com> <20180911010838.8818-3-Jason@zx2c4.com> <CAKv+Gu9nSeo4PFVrtjtqGQ32eqyxUp3xVCczZfu+dhFz5yLM0A@mail.gmail.com> <20180911145624.GA21635@kroah.com> <20180911214737.GA81235@gmail.com> <49BAF465-B3DC-4155-BFF9-DB6C386C1878@amacapital.net> <CAHmME9q+mqT+vtM1FdBvf8=nAFu=u+wN48sOxqLcFthxYVn7NQ@mail.gmail.com>
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6jvIH1/RpXbUD3Cd0einF5JG9jeA+nElx1adpF6R5Ro=;
+        b=WDnagUSkkDtUIx2IGA4+Lk4KXpGGhOEp35BhEr2Nybbg3VwSEoB+BAa/AZZOnGf9If
+         DNtwQ+3uNVqtsYKOeMs7l1t59IA2fLj+7LdOYS+4nnH0vgbMiogNKzIkmGKyhX3m4iUD
+         M+vz0y02+DY0lTF2sYSMTnMAF4+22oDWk/huXO0VcpCtwO1B+Nip2O6/N/VNriFLWXhG
+         scZZxVyi1oOAm0CQQ1/42lgXaVJZVToaO1NsS91YeF003SusxXE8E04t95XeFaS6h5SX
+         yEvuQVmtKXM6a9EVljUF01INUbJ5O4y1vip/cxDpTob/aux1xmCP54aXxzySw5jMbAHn
+         z71A==
+X-Gm-Message-State: APzg51AxP7Gz8EbarQEz6Azk2AGe/ksRxSX2uvUTeOQyMvynQ0IwsDoz
+        6RHX7qPcnTrtorTmN/NSExQ1pg==
+X-Google-Smtp-Source: ANB0VdbacWXx+saxVrVpqV7amqLruUnkuzKy5Z8WtZKSqvpGjbIkNAHU1Q39VKdaPVxXgUmUzSfbBA==
+X-Received: by 2002:a17:902:c7:: with SMTP id a65-v6mr29168836pla.264.1536706924809;
+        Tue, 11 Sep 2018 16:02:04 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
+        by smtp.gmail.com with ESMTPSA id d6-v6sm42332620pgt.66.2018.09.11.16.02.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 11 Sep 2018 16:02:04 -0700 (PDT)
+Date:   Tue, 11 Sep 2018 16:02:03 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Raju P L S S S N <rplsssn@codeaurora.org>
+Cc:     andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, sboyd@kernel.org,
+        evgreen@chromium.org, dianders@chromium.org, ilina@codeaurora.org
+Subject: Re: [PATCH v2 3/6] drivers: qcom: rpmh: disallow active requests in
+ solver mode
+Message-ID: <20180911230203.GI22824@google.com>
+References: <1532685889-31345-1-git-send-email-rplsssn@codeaurora.org>
+ <1532685889-31345-4-git-send-email-rplsssn@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1532685889-31345-4-git-send-email-rplsssn@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Raju/Lina,
 
+On Fri, Jul 27, 2018 at 03:34:46PM +0530, Raju P L S S S N wrote:
+> From: Lina Iyer <ilina@codeaurora.org>
+> 
+> Controllers may be in 'solver' state, where they could be in autonomous
+> mode executing low power modes for their hardware and as such are not
+> available for sending active votes. Device driver may notify RPMH API
+> that the controller is in solver mode and when in such mode, disallow
+> requests from platform drivers for state change using the RSC.
+> 
+> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+> Signed-off-by: Raju P.L.S.S.S.N <rplsssn@codeaurora.org>
+> ---
+>  drivers/soc/qcom/rpmh-internal.h |  2 ++
+>  drivers/soc/qcom/rpmh.c          | 59 ++++++++++++++++++++++++++++++++++++++++
+>  include/soc/qcom/rpmh.h          |  5 ++++
+>  3 files changed, 66 insertions(+)
+> 
+> diff --git a/drivers/soc/qcom/rpmh-internal.h b/drivers/soc/qcom/rpmh-internal.h
+> index 4ff43bf..6cd2f78 100644
+> --- a/drivers/soc/qcom/rpmh-internal.h
+> +++ b/drivers/soc/qcom/rpmh-internal.h
+> @@ -72,12 +72,14 @@ struct rpmh_request {
+>   * @cache_lock: synchronize access to the cache data
+>   * @dirty: was the cache updated since flush
+>   * @batch_cache: Cache sleep and wake requests sent as batch
+> + * @in_solver_mode: Controller is busy in solver mode
+>   */
+>  struct rpmh_ctrlr {
+>  	struct list_head cache;
+>  	spinlock_t cache_lock;
+>  	bool dirty;
+>  	struct list_head batch_cache;
+> +	bool in_solver_mode;
+>  };
+>  
+>  /**
+> diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
+> index 2382276..0d276fd 100644
+> --- a/drivers/soc/qcom/rpmh.c
+> +++ b/drivers/soc/qcom/rpmh.c
+> @@ -5,6 +5,7 @@
+>  
+>  #include <linux/atomic.h>
+>  #include <linux/bug.h>
+> +#include <linux/delay.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/jiffies.h>
+>  #include <linux/kernel.h>
+> @@ -75,6 +76,50 @@ static struct rpmh_ctrlr *get_rpmh_ctrlr(const struct device *dev)
+>  	return &drv->client;
+>  }
+>  
+> +static int check_ctrlr_state(struct rpmh_ctrlr *ctrlr, enum rpmh_state state)
+> +{
+> +	unsigned long flags;
+> +	int ret = 0;
+> +
+> +	/* Do not allow setting active votes when in solver mode */
+> +	spin_lock_irqsave(&ctrlr->cache_lock, flags);
+> +	if (ctrlr->in_solver_mode && state == RPMH_ACTIVE_ONLY_STATE)
+> +		ret = -EBUSY;
+> +	spin_unlock_irqrestore(&ctrlr->cache_lock, flags);
+> +
+> +	return ret;
+> +}
+> +
+> +/**
+> + * rpmh_mode_solver_set: Indicate that the RSC controller hardware has
+> + * been configured to be in solver mode
+> + *
+> + * @dev: the device making the request
+> + * @enable: Boolean value indicating if the controller is in solver mode.
+> + *
+> + * When solver mode is enabled, passthru API will not be able to send wake
+> + * votes, just awake and active votes.
+> + */
+> +int rpmh_mode_solver_set(const struct device *dev, bool enable)
+> +{
+> +	struct rpmh_ctrlr *ctrlr = get_rpmh_ctrlr(dev);
+> +	unsigned long flags;
+> +
+> +	for (;;) {
+> +		spin_lock_irqsave(&ctrlr->cache_lock, flags);
+> +		if (rpmh_rsc_ctrlr_is_idle(ctrlr_to_drv(ctrlr))) {
+> +			ctrlr->in_solver_mode = enable;
 
-> On Sep 11, 2018, at 3:18 PM, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
->=20
->> On Tue, Sep 11, 2018 at 4:16 PM Andy Lutomirski <luto@amacapital.net> wro=
-te:
->> Jason, can you do one of these conversions as an example?
->=20
-> My preference is really to leave that to a different patch series. But
-> if you think I *must*, then I shall.
->=20
->=20
+As commented on '[v2,1/6] drivers: qcom: rpmh-rsc: return if the
+controller is idle', this seems potentially
+racy. _is_idle() could report the controller as idle, even though some
+TCSes are in use (after _is_idle() visited them).
 
-I think Ard=E2=80=99s point is valid: in the long run we don=E2=80=99t want t=
-wo competing software implementations of each primitive. It clearly *should*=
- be possible to make crypto API call into zinc for synchronous software oper=
-ations, but a demonstration of how this actually works and that there isn=E2=
-=80=99t some change to zinc to make it would well would be in order, I think=
-.
-
-IMO the right approach is do one conversion right away and save the rest for=
- later.=
+Additional locking may be needed or a comment if this situation should
+never happen on a sane system (I don't know enough about RPMh and its
+clients to judge if this is the case).
