@@ -2,118 +2,115 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77B75C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 11:23:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33109C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 11:25:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FFC920833
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 11:23:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FFC920833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id D187B20833
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 11:25:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=javigon-com.20150623.gappssmtp.com header.i=@javigon-com.20150623.gappssmtp.com header.b="Sq37eSTr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D187B20833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=javigon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726980AbeIKQWt (ORCPT
+        id S1727161AbeIKQYD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 12:22:49 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:56594 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726713AbeIKQWt (ORCPT
+        Tue, 11 Sep 2018 12:24:03 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:38669 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726713AbeIKQYD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 12:22:49 -0400
-Received: from 79.184.255.178.ipv4.supernova.orange.pl (79.184.255.178) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.123)
- id 3fcb82902d0195dd; Tue, 11 Sep 2018 13:23:54 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Francisco Jerez <currojerez@riseup.net>
-Cc:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Eero Tamminen <eero.t.tamminen@intel.com>, lenb@kernel.org,
-        viresh.kumar@linaro.org, mgorman@techsingularity.net,
-        ggherdovich@suse.cz, peterz@infradead.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cpufreq: intel_pstate: Optimize IO boost in non HWP mode
-Date:   Tue, 11 Sep 2018 13:21:17 +0200
-Message-ID: <23293649.J1qzPCXian@aspire.rjw.lan>
-In-Reply-To: <87in3j9s07.fsf@riseup.net>
-References: <20180831172851.79812-1-srinivas.pandruvada@linux.intel.com> <8c56f28c2cc11de37fa3517348559eb040894702.camel@linux.intel.com> <87in3j9s07.fsf@riseup.net>
+        Tue, 11 Sep 2018 12:24:03 -0400
+Received: by mail-ed1-f65.google.com with SMTP id h33-v6so18930206edb.5
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 04:25:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=javigon-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1pnS1XDdseMU+8bNpUPTr6AbfkXzhvcMmEQrjy2K4DE=;
+        b=Sq37eSTrAVzuziqoL4bWAF7gNCQBusw33r/dFbrVudHfwGoTj6cteFFuL8t8S+wwsA
+         dMlg5DqrNBSyeG3aoulJZJ/nWo04HEaSwsM/rBXulbeTBQYKNOarZdE7gZF3RnqwC/Yt
+         wzHxNLePLLlzb5mia7DqDyzVY+e5xlDx0xNV0BPhSJOwPsGD3QPSW9gcTovgizCwBU0j
+         L6DoTNO6/LvNZhrvEip6+++pS3Kajeas1CT9cFzQSq3iMdAFaoarpzgRHCVURot8+205
+         jhLQAHIHAnp+qsFHcYQI7TzF+FqY7xy+ghSpTLJWktb9IWc4hZizrsD/Y7vKcja7nk9M
+         DRnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1pnS1XDdseMU+8bNpUPTr6AbfkXzhvcMmEQrjy2K4DE=;
+        b=RlhUhzrnTyijgCTcJDv18zpsOXhdjJUNQu5iosr5VFx6sawqwRR08N8nQ0hIyqxePY
+         zlecjYJaY6EKCMgI7M2k3dae3gR92Nic7SljNQZPx39Urp2J9Yl9N+WWyeHGmV3I/kgl
+         0XfMrut5MUnmtwIt5JWr5l9oF5w4BJ5o27WxMkmPMnNe0cGEDWxtp7caJTUn4A8jGnnq
+         uLQj8zDThDL8hTyT3lAJEwxG4IhZWur5zu517OR/fAxNfnzzz07lFIpln13dWaxMzD5h
+         BEVcAJzxesvBZXnSkiLb6AjDg+r+a2EMquvDdDRB2Vl7vsHT0XXko0jMGkU0wjxQta8A
+         JDjA==
+X-Gm-Message-State: APzg51CiNz5dZAvIOAtU4x/BCK2OdN5CC/wr4oEB9+L2lz/MhUffDHUc
+        1ZReHJz5oG3FQrfhkYCHRlvFSg==
+X-Google-Smtp-Source: ANB0VdZquD02wbLju64IUbnUVPRnSSiPHgEOKxxNoa96CWbj4XqohzpPGFhCi2nsDYmpqKfgnH8yBA==
+X-Received: by 2002:a50:f10d:: with SMTP id w13-v6mr29236895edl.0.1536665109159;
+        Tue, 11 Sep 2018 04:25:09 -0700 (PDT)
+Received: from ch-wrk-javier.cnexlabs.com (6164211-cl69.boa.fiberby.dk. [193.106.164.211])
+        by smtp.gmail.com with ESMTPSA id e38-v6sm10941351eda.74.2018.09.11.04.25.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 11 Sep 2018 04:25:08 -0700 (PDT)
+From:   "=?UTF-8?q?Javier=20Gonz=C3=A1lez?=" <javier@javigon.com>
+X-Google-Original-From: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
+To:     mb@lightnvm.io
+Cc:     axboe@kernel.dk, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
+Subject: [V5 PATCH 0/3] lightnvm: pblk: take write semaphore on metadata
+Date:   Tue, 11 Sep 2018 13:24:48 +0200
+Message-Id: <1536665091-12641-1-git-send-email-javier@cnexlabs.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday, September 6, 2018 6:20:08 AM CEST Francisco Jerez wrote:
-> 
-> --==-=-=
-> Content-Type: multipart/mixed; boundary="=-=-="
-> 
-> --=-=-=
-> Content-Type: text/plain; charset=utf-8
-> Content-Disposition: inline
-> Content-Transfer-Encoding: quoted-printable
-> 
-> Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com> writes:
-> 
-> > [...]
-> >
-> >> > >=20
-> >> > > This patch causes a number of statistically significant
-> >> > > regressions
-> >> > > (with significance of 1%) on the two systems I've tested it
-> >> > > on.  On
-> >> > > my
-> >> >=20
-> >> > Sure. These patches are targeted to Atom clients where some of
-> >> > these
-> >> > server like workload may have some minor regression on few watts
-> >> > TDP
-> >> > parts.
-> >>=20
-> >> Neither the 36% regression of fs-mark, the 21% regression of sqlite,
-> >> nor
-> >> the 10% regression of warsaw qualify as small.  And most of the test
-> >> cases on the list of regressions aren't exclusively server-like, if
-> >> at
-> >> all.  Warsaw, gtkperf, jxrendermark and lightsmark are all graphics
-> >> benchmarks -- Latency is as important if not more for interactive
-> >> workloads than it is for server workloads.  In the case of a conflict
-> >> like the one we're dealing with right now between optimizing for
-> >> throughput (e.g. for the maximum number of requests per second) and
-> >> optimizing for latency (e.g. for the minimum request duration), you
-> >> are
-> >> more likely to be concerned about the former than about the latter in
-> >> a
-> >> server setup.
-> >
-> > Eero,
-> > Please add your test results here.
-> >
-> > No matter which algorithm you do, there will be variations. So you have
-> > to look at the platforms which you are targeting. For this platform=20
-> > number one item is use of less turbo and hope you know why?
-> 
-> Unfortunately the current controller uses turbo frequently on Atoms for
-> TDP-limited graphics workloads regardless of IOWAIT boosting.  IOWAIT
-> boosting simply exacerbated the pre-existing energy efficiency problem.
+# Changes since V4:
+ - Rebase on top of Matias' core
+ - Reorder patches to avoid in-patchset changes
 
-My current understanding of the issue at hand is that using IOWAIT boosting
-on Atoms is a regression relative to the previous behavior.  That is what
-Srinivas is trying to address here AFAICS.
+# Changes since V3:
+ - Encapsulate rqd dma allocations to reduce code replication (by Matias)
 
-Now, you seem to be saying that the overall behavior is suboptimal and the
-IOWAIT boosting doesn't matter that much, so some deeper changes are needed
-anyway.  That may be the case, but if there is a meaningful regression, we
-should first get back to the point where it is not present and then to take
-care of the more general problems.
+# Changes since V2:
+ - Split the original patch between the metadata refactoring and the
+   semaphore logic. This simplifies the write path, where the semaphore
+   is taken.
 
-So, I'd like to understand how much of a problem the IOWAIT boosting really is
-in the first place.  If it is significant enough, let's address it first, this
-way or another, and move on to the other problems subsequently.
+# Changes singe V1:
+    - Fix double I/O on the read path (by Matias)
+    - Improve commit message (by Jens)
+
+This patchset refactors the metadata separate write and read paths,
+which simplifies how the semaphore is taken for writes.
 
 Thanks,
-Rafael
+Javier
+
+Javier González (3):
+  lightnvm: encapsule rqd dma allocations
+  lightnvm: pblk: refactor metadata paths
+  lightnvm: pblk: take write semaphore on metadata
+
+ drivers/lightnvm/pblk-core.c     | 376 ++++++++++++++++++++-------------------
+ drivers/lightnvm/pblk-gc.c       |   2 +-
+ drivers/lightnvm/pblk-read.c     |  31 ++--
+ drivers/lightnvm/pblk-recovery.c |  34 ++--
+ drivers/lightnvm/pblk-write.c    |  15 +-
+ drivers/lightnvm/pblk.h          |   7 +-
+ 6 files changed, 222 insertions(+), 243 deletions(-)
+
+-- 
+2.7.4
 
