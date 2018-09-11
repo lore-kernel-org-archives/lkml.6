@@ -2,80 +2,113 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6E2FC04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 16:48:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01933C6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 16:49:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 908A82086A
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 16:48:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 908A82086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id AE69B2086A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 16:49:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="d12NN2WX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE69B2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727989AbeIKVsU (ORCPT
+        id S1728031AbeIKVtT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 17:48:20 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36202 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726689AbeIKVsU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 17:48:20 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 44B3F8011309;
-        Tue, 11 Sep 2018 16:48:11 +0000 (UTC)
-Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E984B2027EA4;
-        Tue, 11 Sep 2018 16:48:10 +0000 (UTC)
-From:   Jeff Moyer <jmoyer@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
+        Tue, 11 Sep 2018 17:49:19 -0400
+Received: from mail-io0-f171.google.com ([209.85.223.171]:42062 "EHLO
+        mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726689AbeIKVtS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 17:49:18 -0400
+Received: by mail-io0-f171.google.com with SMTP id n18-v6so4101507ioa.9
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 09:49:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=kgMvqsSYNFt5t2b/PRteCZfR0wIyyy6iKFyV92u+J1A=;
+        b=d12NN2WXz0/a/te+7AwkyN1906Wq4HzzyVAxMH4gVDHVmdUk/O2NsQSYJpacaOiRjo
+         ZzNUh+WyQOz+kQ1CLQMPQby9kEpK42zm1G8weFPePytU0VxJJhhTb4TRe9WCf834XFjo
+         aBXQp6ECv1hvmKOqJj2ivxa/s5/wQJ75uacDBuYv8uVXa3ff1tBq33z94Go4C6QAX4ll
+         2xGcURhdhNVfqelWdqmQ0AjHmcAx6vMT4I6nFL8/ZR3iUejRgMKc6P/8Q3O8faKyV6mO
+         sSWqkPtgr8ltpNqAoxgvWgnNsUNp0hMkkTLAT9XE1KGCplEzKSWlEVAtOE9StNREkdE9
+         8BlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=kgMvqsSYNFt5t2b/PRteCZfR0wIyyy6iKFyV92u+J1A=;
+        b=Q2dSNbdoXQ4dz9C9LJ7rrq/e+Lyk6GI8lcZE98xwX9/aJIVNXDxMxir7jJxeBqDREd
+         CvlM6RZfq4SgdUAQUh1WIHt+a1H1RWPTmaa8TJbpSD88BWwQz2/hqn3TGzdyHRahPULz
+         +XBpxV/EKtJmZG+h3XrePmU0daqEKRdXUIbFlZodC/nFM8ZbBTkUnG7ptKjDeF5pNDbm
+         7mFewQRva4X1RVngpQRgMbPraq0f7Kex3XPaLq7Dqp9wJsYEJqr61E3oXoW3adE3/YjA
+         zSByJ5+DduT16KGp47p7yUzVIf3H8nBgQtj5QraE0OwQl0VcrunwUByn+PBTWdcxoPAF
+         Fk6g==
+X-Gm-Message-State: APzg51AEiAth1U2huaMxQrWtOt1XmV8beSKJsEXypM1cpe2jaPLqzfKG
+        ehPCk6+9I7OW/FvyTXTlZ5TqyA5rcZQ=
+X-Google-Smtp-Source: ANB0VdYUjw4a0vNnTp9D7piYBmJF8eutEt22I5tkfyv4KP4SSQCcoWKcEUjWoquQ2177UjDfyW+ELw==
+X-Received: by 2002:a6b:ac45:: with SMTP id v66-v6mr23576053ioe.66.1536684548232;
+        Tue, 11 Sep 2018 09:49:08 -0700 (PDT)
+Received: from [192.168.1.212] (107.191.0.22.static.utbb.net. [107.191.0.22])
+        by smtp.gmail.com with ESMTPSA id 14-v6sm688234itu.20.2018.09.11.09.49.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Sep 2018 09:49:06 -0700 (PDT)
+Subject: Re: [REGRESSION] bfq probe failed on 4.19-rc3
+To:     Jeff Moyer <jmoyer@redhat.com>
 Cc:     Takashi Iwai <tiwai@suse.de>,
         Paolo Valente <paolo.valente@linaro.org>,
         linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [REGRESSION] bfq probe failed on 4.19-rc3
 References: <s5ha7ooxbps.wl-tiwai@suse.de>
-        <8b5a7dc9-2dc1-16ee-4b05-a72eb6680c77@kernel.dk>
-X-PGP-KeyID: 1F78E1B4
-X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
-X-PCLoadLetter: What the f**k does that mean?
-Date:   Tue, 11 Sep 2018 12:48:10 -0400
-In-Reply-To: <8b5a7dc9-2dc1-16ee-4b05-a72eb6680c77@kernel.dk> (Jens Axboe's
-        message of "Tue, 11 Sep 2018 10:09:44 -0600")
-Message-ID: <x49a7ooj7zp.fsf@segfault.boston.devel.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.3 (gnu/linux)
+ <8b5a7dc9-2dc1-16ee-4b05-a72eb6680c77@kernel.dk>
+ <x49a7ooj7zp.fsf@segfault.boston.devel.redhat.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <bd71494f-4595-7586-4c46-000f2b2029aa@kernel.dk>
+Date:   Tue, 11 Sep 2018 10:49:05 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 11 Sep 2018 16:48:11 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 11 Sep 2018 16:48:11 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jmoyer@redhat.com' RCPT:''
+In-Reply-To: <x49a7ooj7zp.fsf@segfault.boston.devel.redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jens Axboe <axboe@kernel.dk> writes:
+On 9/11/18 10:48 AM, Jeff Moyer wrote:
+> Jens Axboe <axboe@kernel.dk> writes:
+> 
+>> On 9/11/18 10:03 AM, Takashi Iwai wrote:
+>>> Hi,
+>>>
+>>> I noticed that bfq doesn't appear in the I/O scheduler list on
+>>> 4.19-rc3.  It seems that blkcg_policy_register() at the beginning of
+>>> bfq_init() returns -ENOSPC, hence the probe aborts silently.
+>>>
+>>> Is this already addressed?
+>>
+>> Haven't heard about this one before. What kernel did you last use that
+>> worked?
+> 
+> I'm guessing you just need to update the maximum number of policies:
+> 
+> /*
+>  * Maximum number of blkcg policies allowed to be registered concurrently.
+>  * Defined here to simplify include dependency.
+>  */
+> #define BLKCG_MAX_POLS          3
 
-> On 9/11/18 10:03 AM, Takashi Iwai wrote:
->> Hi,
->> 
->> I noticed that bfq doesn't appear in the I/O scheduler list on
->> 4.19-rc3.  It seems that blkcg_policy_register() at the beginning of
->> bfq_init() returns -ENOSPC, hence the probe aborts silently.
->> 
->> Is this already addressed?
->
-> Haven't heard about this one before. What kernel did you last use that
-> worked?
+That is my guess too, hence the suggestion to try and disable the
+iolatency policy. Just tried here without, and it works, rebooting
+with to verify that we're running out of policy slots.
 
-I'm guessing you just need to update the maximum number of policies:
+-- 
+Jens Axboe
 
-/*
- * Maximum number of blkcg policies allowed to be registered concurrently.
- * Defined here to simplify include dependency.
- */
-#define BLKCG_MAX_POLS          3
-
--Jeff
