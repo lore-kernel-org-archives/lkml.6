@@ -2,264 +2,185 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBDA1C6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:27:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35B76C6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:27:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D9F82087F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:27:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D9F82087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
+	by mail.kernel.org (Postfix) with ESMTP id CEE2F2087F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:27:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="TcDvfcZm";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="D0B5ikda"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEE2F2087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727616AbeIKU1e (ORCPT
+        id S1727702AbeIKU1i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 16:27:34 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:54543 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726840AbeIKU1d (ORCPT
+        Tue, 11 Sep 2018 16:27:38 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:46540 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726840AbeIKU1h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 16:27:33 -0400
-Received: from stefan-Vostro-260.fritz.box ([109.104.52.203]) by
- mrelayeu.kundenserver.de (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis)
- id 1MKbTo-1gIMp40u1k-00KzVy; Tue, 11 Sep 2018 17:27:38 +0200
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-To:     "David S. Miller" <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Michael Heimpold <michael.heimpold@i2se.com>
-Subject: [PATCH RFC] net: qca_spi: Introduce write register verification
-Date:   Tue, 11 Sep 2018 17:26:47 +0200
-Message-Id: <1536679607-20422-1-git-send-email-stefan.wahren@i2se.com>
-X-Mailer: git-send-email 2.7.4
-X-Provags-ID: V03:K1:a4aZ76U/Dy5CLJuPZgxKe9KWE9Kpl15hv83py8l7gopqtQaHcd1
- Xpxr5CJmCFAGO9cbXyKxG7M7yuVb/mKn5lQeNGOt3zdrkavJkjduP8wpXRqjyp6gLF/GP0B
- 8K/lCvea4LjqgSHC3birc4VrHa1ZXDLHunMnrBHWK33LNms8NajYZmfZp+w8VyjEtyVZhji
- NgPzgu+j8Z/wBddChAaLg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:3ZchTU0GB3Q=:kAHJ2t3u30Jeu5TijHJvE3
- FzCr5v+N7kHVKWi06iHiHbHemoiMGqnBCa+PezsxwOm2Pi1zWfstHRYhAmik3+pvU81CjFPwH
- g02oqrYovjJo84I9YZPSAbBSbpRpp05KAwDeo4Wz+4k5+sz4NFzP3P3+tF6ZBnhEuIsvXkwe0
- GH0kYv923d/G1GoK+NrVWOSjerm13uWAv9m77OCyPMkSaixGsyFJUNF8G19qS56W4gZdHitBY
- sRNZfabtdkk6YqTkR/WSAKdJkEix+jmqGTOSUHvfyYT+39wGfiP/DzhKrnTfpFookhVL69lYx
- qMLL9XkS5kHMKT6oagZd1oRyW37xrOVCb3znpl3AOwKYgOSHNLYHoJEKDebYw0J8sBAHXbSAy
- jBxwXJW9hTABitOqKc6FAqvQwYgeZ6AMSUlDey6g2fHpXjRQELk/Nfr/j8MPiepKBswSsEPkr
- caOP0Si6ga54pvPY32Bk9CyK2pgz8Q2FIbMPi4oRsvNfvZ1PRXtHQ/lFMfKMg7OOR8K5/vy9p
- tgvRHqqnG3uaSxB7zdtjCWa4KFYXQ2mRjbTgDnL8EA4+j9DMnnubB52CeYooZMyAko6Hl8GRL
- xq/uD+Ufmo6ls68txsOf1C+tg6iX0WinDmW4jAxdEkMfirLidJL3Bsavr7RXlo653q7BnJcbA
- CzXTjtY5sLEUrKlC9Iu5nrXj1gRGg0Oox0LWCYBEbCbgNMirO7bcjv4VM7bPzGu69bpw=
+        Tue, 11 Sep 2018 16:27:37 -0400
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8BFILdf013936;
+        Tue, 11 Sep 2018 08:27:44 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=facebook; bh=oTWPIq65rrEIlgb5QGRpB+HdEgp8iqM3suqU2J8Uip8=;
+ b=TcDvfcZmprJ6AzUlBsqgGj+m2bnw7ukkjUoR7Q5+3hwVXE9FH33ajkR0Ib7IFKK8Y5TO
+ 0fbiA6hXgV/VnFHZuy3sOhaRLn0hav/M9X53BcfsTNxNIAfngdENA6Fv3CxDiVcX8t83
+ 7bmfLubatiegNc2WgrUUaieLgEjORlB52ko= 
+Received: from maileast.thefacebook.com ([199.201.65.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2mee9hrc1u-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 11 Sep 2018 08:27:44 -0700
+Received: from NAM03-CO1-obe.outbound.protection.outlook.com (192.168.183.28)
+ by o365-in.thefacebook.com (192.168.177.25) with Microsoft SMTP Server (TLS)
+ id 14.3.361.1; Tue, 11 Sep 2018 11:27:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oTWPIq65rrEIlgb5QGRpB+HdEgp8iqM3suqU2J8Uip8=;
+ b=D0B5ikdaGYdDpYwdXYqVjsQWF7/nXfbYwvAQbyd2qCGZVWsfuKB8UfHtVifruMu2qPtms1g7sIgzYgfWvfT7ec5mcDcETqPX59+9xnH7Ux8p4Uk8zzHfr/iciVvMKxFS71F0sNQNyGmddkxhoFAJb/AePRxTw8OulLUrdfR2WWw=
+Received: from tower.DHCP.thefacebook.com (2620:10d:c090:200::7:f329) by
+ BLUPR15MB0162.namprd15.prod.outlook.com (2a01:111:e400:5249::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1122.16; Tue, 11 Sep
+ 2018 15:27:38 +0000
+Date:   Tue, 11 Sep 2018 08:27:30 -0700
+From:   Roman Gushchin <guro@fb.com>
+To:     Michal Hocko <mhocko@kernel.org>
+CC:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-team@fb.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>
+Subject: Re: [PATCH RFC] mm: don't raise MEMCG_OOM event due to failed
+ high-order allocation
+Message-ID: <20180911152725.GA28828@tower.DHCP.thefacebook.com>
+References: <20180910215622.4428-1-guro@fb.com>
+ <20180911121141.GS10951@dhcp22.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180911121141.GS10951@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [2620:10d:c090:200::7:f329]
+X-ClientProxiedBy: MWHPR08CA0057.namprd08.prod.outlook.com
+ (2603:10b6:300:c0::31) To BLUPR15MB0162.namprd15.prod.outlook.com
+ (2a01:111:e400:5249::12)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: dca0e7db-f37f-4457-d228-08d617fb1c40
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BLUPR15MB0162;
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR15MB0162;3:59AI/9IyzFrtGqHUFEZk6xR/zgmDtRwS6pi4ycTg0kL6O10/ppazyhw3eyEjzrZDJB8JpoTeLz2WTHNskKvb3FbB+Vvxo2+185b9HTcVQzJt4Hih1XpMeDtvALc9p4P8Z8c8nH+8Gw+zLu6WTEd1Imu//GJuAJrmGfgwFkuLs8XrH845omnv3IEMP11U8TTnXNAaQgFvD6CkxxxVoaKTORf0lC8IuN39vFOCKoGdOF0sBB4xFmdZqW/0eKpvFvUk;25:X+XD+fqAzU8ufFbnGnPjnymJ/GCD0SVsjMZ07R+pA1Yq8vrpoiuhL2YAv72vd/gAkC4G5ticg0EOifNLkkGnzVCkDkIkFEhcjlf2XQBu2LNVNZFFTvZAm1TeWAxTxdzu9wcLd2pNiz7fBILo2Gf0TMosHDsG0WH+Lto9SdxKk/0IAo7GMb0IrFv4otLdROKja1M7ZATJQkIy2wHoK24x/aZnbLUUrbRZ8bekwXFWQsFmXQcRMPGWzNab6zTkNfxUsMkgOJ5UvXYOjyN5zv+ntC0MMn9yzt/3TgfGccgAvDiGM9gfjNq2GgVaS1QZTbk94QfQdzRGBrlhyLy04pG+Lg==;31:Dt59BP0sapKN1WIEGsUGdgvYAOFREVF8vFVIVMOrb9bZQQZwu4k8ssGG6bQVgd/ZKOOnG7wOmzfddwlrLDzpejOWC0WWNPmFyBN4iKhN3uX2C+Q3L5fAkGKxhVPjKEsQmtGVm76sLoqjoetlQJWP6CpuKrTapOMOrzpmLCEQW/DAno4MJPxIm0ddNE5PrZKQGBlMytDfQhowRN6wsvRI4vx9+nO5uaNNC8yRMqgxbgk=
+X-MS-TrafficTypeDiagnostic: BLUPR15MB0162:
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR15MB0162;20:nTTr8q3SLhE1SZAD4+XfhSpIS9/j0xLIiP21dNXUke5CWfjIdT5jxWFDK3hTXyXVJ+b2lrB0rgDfkaZeWMuBIS6SG1p49yNorGhm9lHH/a7rSoPo3PlMXlpDxm31kV5sqqHMvM6xyRl44417uAzVDTpALrPMToqXkKNl4lhCcg6G93itE40i8nrdRhlwkfPT83dowViEjYSQ6MaOxNR7vXg55XZkAJs2BzVKiX1vsrdpw57F/XOUhp7BBOUmfoG0pZjauNtoVUXtMCYUhMDBw0jyMjyR92T2/EDgT/qwZjs8WSGOmsvqHKp8UQSJK/9ai7nyJP+awM0u/BF3aC8y7rKhg1EDTCGXwiCc8ZuhdFz8TINNRSq6R2Ho5zRwAoVBmWPVCl9w2+K5jVx56Tj3V3WelnseCWQxUK3kgivIyKci7IK7xX5jCecjNeFkorgh2hZO3y02nG/lCde5SsmDs5hyIg+3V1xN0q/thrioTGTBLDR/W9ig7pztXo60gIjU;4:PuzTE+eBS4SX2aYzQiVchpg3N064hHKZIMk26dWwI6h1TgwXXO2mNTm+C5QJeziBZDBtBMglMiUbsvvmLiw6BXIJF6yxC/gk0CHHGoQfha+A9scTnU/+z0kPtJmpqtHr7RTZ/v/XvczEXgxWBQNTgaU/xWGnoWkec8buGKL4jB+VoVwr6UcEvmB/wt6Cb91i+0CqLzJIPl9nxuKZqLCn6Wz/dJlp8Sw3u3txTjelPIOOEWR5+5jN0fszNPbjvpLAwtXytdxLPNLGpR0RaeMIlA==
+X-Microsoft-Antispam-PRVS: <BLUPR15MB0162F52039CB37382617992CBE040@BLUPR15MB0162.namprd15.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823301075)(10201501046)(93006095)(93001095)(3002001)(3231344)(11241501184)(944501410)(52105095)(149027)(150027)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699050);SRVR:BLUPR15MB0162;BCL:0;PCL:0;RULEID:;SRVR:BLUPR15MB0162;
+X-Forefront-PRVS: 0792DBEAD0
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(376002)(346002)(366004)(136003)(39860400002)(52314003)(199004)(189003)(25786009)(52116002)(7696005)(52396003)(39060400002)(76176011)(4326008)(6916009)(8936002)(6116002)(478600001)(46003)(5660300001)(305945005)(16526019)(86362001)(229853002)(186003)(6246003)(68736007)(6666003)(14444005)(16586007)(316002)(53936002)(9686003)(106356001)(386003)(105586002)(55016002)(2906002)(58126008)(47776003)(6506007)(33656002)(476003)(8676002)(486006)(54906003)(446003)(97736004)(7736002)(81166006)(11346002)(1076002)(81156014)(23726003)(50466002)(18370500001)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:BLUPR15MB0162;H:tower.DHCP.thefacebook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BLUPR15MB0162;23:71q98dcbGyaW9fnLPjYnOfOeSYa4wSMdrnQ7NipYD?=
+ =?us-ascii?Q?uAFc9ohoIOqkWjDnVnbbHdfUu4NeJqc9WK1zAbHbV98y1B8HTs8qrWMUtKsP?=
+ =?us-ascii?Q?n+dpf+UydZV7URgsMq/SA8Kwm0Z4PPShaDXeQCPFpfDV4P3XhYbh6bR/kzoW?=
+ =?us-ascii?Q?GC3XQpTBV2nbB1ZNDHXTMYTslzkfpPN0pAi1Go0S8yM2Cncr3uyTucygk51D?=
+ =?us-ascii?Q?A30ek2cmBhDhY+ty7ipKU4wIqHFiY02iMxYQgQbncIRU7/6fDZuXDQ0FpDfZ?=
+ =?us-ascii?Q?6t/o/exQYRL0m+M48wbN9gNi9syIYR5aRxaUCtkBsa7Pd1OfGpVkyTo3Vi+Q?=
+ =?us-ascii?Q?3gAlNVfSWQwFD8dAEHBq8QYKPcmWsZ9bYBMd/MTYwbDfRTI0wmJY7xrmSSp0?=
+ =?us-ascii?Q?SyYlxPXYh5I54klD++XeE6/qrkxQmZpIfhtJWg4Th6E+aA1NHujovsRYZAW5?=
+ =?us-ascii?Q?i/5vRYG3tEtxQd/AE8kWpk+vZFJ37b+0FuFPlXEGTQHosxCyNXI5HIKiewLi?=
+ =?us-ascii?Q?ZUjqYeDoArummFLlnFJkQsYGVJ1pyJriASehK5l9+xNbDKSYJeN/zK938PY1?=
+ =?us-ascii?Q?VtV9luK84+QY7fpGJb4GxrWMPVekob1TrPfTm3KXMf+7Q3v16A1MBVOLptyi?=
+ =?us-ascii?Q?xHe4gqVt76gutIsxh0OYSudyvAfmUIK9N5JJkeo7FoYl92iSsqTbTq9uyaL7?=
+ =?us-ascii?Q?CEdg2mKY5QxGEGovHn2dwaeZ+BOiyTIIvC4J+bIUCX7xQXr9wsZ2lF3A6LIf?=
+ =?us-ascii?Q?B2YJKHYG5NF1BwVfkgM/DEP2Uha7WixRz/6iHU5Gcx5CpVlp/pdi1ZESojJI?=
+ =?us-ascii?Q?zGh+xmxszq0r7T1tWi2kptNuscSSfRJXHXnqW31sZJqaQPKGxX6+bhf79Fqm?=
+ =?us-ascii?Q?JE30/QWS5ju0dBDo4KLNQ1mrbjmuT2QumtxM1AcX7oZNt/vUqJQ6vTZLn85n?=
+ =?us-ascii?Q?puc/WEconLb3PD4Y1FXzLtzHOFMDD/pjVU6Ahh9DDt22nT/X+rcaJbEcHODm?=
+ =?us-ascii?Q?EZUu0rmpuKPkdntHoGjEgjW0TAGD3qeEiVl+wE6Apnrw7laCnVv1karhF0Hg?=
+ =?us-ascii?Q?GsaDy4keVG9DIv7O9UP94m+kq1aMllRBbUD/PgdfKZsU3RFTh14L003SWFbr?=
+ =?us-ascii?Q?GNH5hBYZeyblQL8iorWK2EKnrnvey2+2rXUY3jfFkW32boTkpQsNjTDjfP1+?=
+ =?us-ascii?Q?phBOTCTnEuyVDZJKA+NaaPNke65wvaFjmuSWL5v9BIKqQmYoJ+9/w/DJ1hOI?=
+ =?us-ascii?Q?a6jA0wQQU0Or8hGZ796POca6Ww2ebPIfG6v4OCvPlLK2vc4xo6MCksHK02NV?=
+ =?us-ascii?Q?/o1wd9FQ4lN6LmTPWxALgg=3D?=
+X-Microsoft-Antispam-Message-Info: Ryv0tgo/kkSqKMXB3Ll7niU63bHpwj/es2JAD8hK0lI53zzPnb3VHeRgxTLQlkn0oCMmSzpYDHHyaThSvMESYOrpsqFeQbX+81KtpVlsALx6zesUMZ1TWMuTG1lccIjudpPWc0sNPtik8VplNXjpTsrr2kUvlqhzwxJ9zSKzFiFMuPfrxZM6V4pC/vJT4Y/gk3PbIZ6uUXx2ByK8O2TOvkQ1o4wxUEyr8tCszvbOOKIsoiZkvpP1y0kufucj5zrYrIKvfx/v2pgGV3n2+l0bZ0nr1yP5X5u1tRyQWaVqioZUZkGV4SYItOaW5eo+anpCMuPRUsMU76wF8K/VMkdtizTeE87RMY+t2RtymFwX18w=
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR15MB0162;6:qiC6CmhpqIUhZTCRI2ldQu3KsETyoigrGbKDdKXLbuZR6N4GiBDaQo6NrZBo+8paDV0pwk6ShDWhTEoOaenLQST6+FOGj/QeQKwNw0bzzrR9oNsCT/lw2jpxQBFNNiS5iGZrjbkxSybC1fcy/f4SY3tMtSKEqsYFmabR8u0xf3hasQL+V1ODpEzVqUGqnmvtEVbKtbzH4wSDkppEx0yKmHzG8OnOnhGNAcLyJixuw7sdrutcDZE0+GeFUjL01X4Tocy193rcwiBy3rFY8Imh+rfHPLh2sjPWpDlhVeSTrqvk2+RC/k3c6r2L4YhjzERdef1G9FWkrA7GLu6vl17Ths6MzB9dGbgzfBkwqthQEu8j5R/OsMDSToB57kC/7G81KKqI1yjrpDuw0ShH+8E0lFX/cDLNtIvROXb9LfkEvqbXMNtRykqoTkuUDbqdXv2NPRByP/laBlxxq6V0nuMLyg==;5:SvhiqW1uAqxCj5b0aRdsO9C+K4AcC1vTgk//p4c6ObdDp14lmZIgq8NFRIiKd5R4q8y+5yPF5nwQ1vvQraLIMfwa+KHk+RKcSLLYdWCnqu96vM5dtkhfGp3FihNLdL3wZLJbrrO2VKQPZeNjPU5jVT0STspBw1ZykFrNLwg+jv4=;7:q+wWhTyeZF/Vjet6w+5x92khVKhDTU9LY+/wby9M1bDiaqJ33gzxcZdM8gjljrODBchl8U2HOm2D48mSjsoSxwWKbQ27Hj2jc6iOp2Ts8CInuCJaNxYHkTyKSf91LOkiPk38deFXrhOADmA+C1cCToAfbHSjfEMDgd1db+UDypCJqrydeIlAb7dmwRXNbpvBlu5V/jjDz/8rsh/RkL+1M5Wj2B5+7C4xmEhTxpm1u95nPpxudrG9+NEI9gRaxzxd
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR15MB0162;20:iqmZzsZ4mnlEExopFxijiHB/NJ1kWiWi7g5vrgbzWCO51RmnJplvXGI168FxYcFDkL9P5+FGrP+apqOg76aQV49zBVBx/hsPVrefItDM2XKwTEiS0FwoO53XbpVE46SUyh5PJRoL/pPbv9XFFl46riRexOEyLinnjdJB7GteNV0=
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2018 15:27:38.9306 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: dca0e7db-f37f-4457-d228-08d617fb1c40
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLUPR15MB0162
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-11_08:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The SPI protocol for the QCA7000 doesn't have any fault detection.
-In order to increase the drivers reliability in noisy environments,
-we could implement a write verification inspired by the enc28j60.
-This should avoid situations were the driver wrongly assumes the
-receive interrupt is enabled and miss all incoming packets.
+On Tue, Sep 11, 2018 at 02:11:41PM +0200, Michal Hocko wrote:
+> On Mon 10-09-18 14:56:22, Roman Gushchin wrote:
+> > The memcg OOM killer is never invoked due to a failed high-order
+> > allocation, however the MEMCG_OOM event can be easily raised.
+> > 
+> > Under some memory pressure it can happen easily because of a
+> > concurrent allocation. Let's look at try_charge(). Even if we were
+> > able to reclaim enough memory, this check can fail due to a race
+> > with another allocation:
+> > 
+> >     if (mem_cgroup_margin(mem_over_limit) >= nr_pages)
+> >         goto retry;
+> > 
+> > For regular pages the following condition will save us from triggering
+> > the OOM:
+> > 
+> >    if (nr_reclaimed && nr_pages <= (1 << PAGE_ALLOC_COSTLY_ORDER))
+> >        goto retry;
+> > 
+> > But for high-order allocation this condition will intentionally fail.
+> > The reason behind is that we'll likely fall to regular pages anyway,
+> > so it's ok and even preferred to return ENOMEM.
+> > 
+> > In this case the idea of raising the MEMCG_OOM event looks dubious.
+> 
+> Why is this a problem though? IIRC this event was deliberately placed
+> outside of the oom path because we wanted to count allocation failures
+> and this is also documented that way
+> 
+>           oom
+>                 The number of time the cgroup's memory usage was
+>                 reached the limit and allocation was about to fail.
+> 
+>                 Depending on context result could be invocation of OOM
+>                 killer and retrying allocation or failing a
+> 
+> One could argue that we do not apply the same logic to GFP_NOWAIT
+> requests but in general I would like to see a good reason to change
+> the behavior and if it is really the right thing to do then we need to
+> update the documentation as well.
 
-This function is disabled per default and can be controlled via module
-parameter wr_verify.
+Right, the current behavior matches the documentation, because the description
+of the event is broad enough. My point is that the current behavior is not
+useful in my corner case.
 
-Signed-off-by: Michael Heimpold <michael.heimpold@i2se.com>
-Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
----
- drivers/net/ethernet/qualcomm/qca_7k.c    | 34 +++++++++++++++++++++++++++++--
- drivers/net/ethernet/qualcomm/qca_7k.h    |  2 +-
- drivers/net/ethernet/qualcomm/qca_debug.c |  1 +
- drivers/net/ethernet/qualcomm/qca_spi.c   | 28 ++++++++++++++++++-------
- drivers/net/ethernet/qualcomm/qca_spi.h   |  1 +
- 5 files changed, 56 insertions(+), 10 deletions(-)
+Let me explain my case in details: I've got a report about sporadic memcg oom
+kills on some hosts with plenty of pagecache and low memory pressure.
+You'll probably agree, that raising OOM signal in this case looks strange.
 
-Hi,
-this patch requires "net: qca_spi: Fix race condition in spi transfers"
-to be applied.
+It's natural for cgroup memory usage to be around memory.max border, and
+I've explained in the commit message how an attempt to charge a high-order
+allocation can fail in this case, even if there no real memory pressure
+in the cgroup.
 
-Stefan
-
-diff --git a/drivers/net/ethernet/qualcomm/qca_7k.c b/drivers/net/ethernet/qualcomm/qca_7k.c
-index 6c8543f..4292c89 100644
---- a/drivers/net/ethernet/qualcomm/qca_7k.c
-+++ b/drivers/net/ethernet/qualcomm/qca_7k.c
-@@ -81,8 +81,8 @@ qcaspi_read_register(struct qcaspi *qca, u16 reg, u16 *result)
- 	return ret;
- }
- 
--int
--qcaspi_write_register(struct qcaspi *qca, u16 reg, u16 value)
-+static int
-+__qcaspi_write_register(struct qcaspi *qca, u16 reg, u16 value)
- {
- 	__be16 tx_data[2];
- 	struct spi_transfer transfer[2];
-@@ -117,3 +117,33 @@ qcaspi_write_register(struct qcaspi *qca, u16 reg, u16 value)
- 
- 	return ret;
- }
-+
-+int
-+qcaspi_write_register(struct qcaspi *qca, u16 reg, u16 value, int retry)
-+{
-+	int ret, i = 0;
-+	u16 confirmed;
-+
-+	do {
-+		ret = __qcaspi_write_register(qca, reg, value);
-+		if (ret)
-+			return ret;
-+
-+		if (!retry)
-+			return 0;
-+
-+		ret = qcaspi_read_register(qca, reg, &confirmed);
-+		if (ret)
-+			return ret;
-+
-+		ret = confirmed != value;
-+		if (!ret)
-+			return 0;
-+
-+		i++;
-+		qca->stats.write_verify_failed++;
-+
-+	} while (i <= retry);
-+
-+	return ret;
-+}
-diff --git a/drivers/net/ethernet/qualcomm/qca_7k.h b/drivers/net/ethernet/qualcomm/qca_7k.h
-index 27124c2..356de8e 100644
---- a/drivers/net/ethernet/qualcomm/qca_7k.h
-+++ b/drivers/net/ethernet/qualcomm/qca_7k.h
-@@ -66,6 +66,6 @@
- 
- void qcaspi_spi_error(struct qcaspi *qca);
- int qcaspi_read_register(struct qcaspi *qca, u16 reg, u16 *result);
--int qcaspi_write_register(struct qcaspi *qca, u16 reg, u16 value);
-+int qcaspi_write_register(struct qcaspi *qca, u16 reg, u16 value, int retry);
- 
- #endif /* _QCA_7K_H */
-diff --git a/drivers/net/ethernet/qualcomm/qca_debug.c b/drivers/net/ethernet/qualcomm/qca_debug.c
-index 51d89c8..a9f1bc0 100644
---- a/drivers/net/ethernet/qualcomm/qca_debug.c
-+++ b/drivers/net/ethernet/qualcomm/qca_debug.c
-@@ -60,6 +60,7 @@ static const char qcaspi_gstrings_stats[][ETH_GSTRING_LEN] = {
- 	"Write buffer misses",
- 	"Transmit ring full",
- 	"SPI errors",
-+	"Write verify errors",
- };
- 
- #ifdef CONFIG_DEBUG_FS
-diff --git a/drivers/net/ethernet/qualcomm/qca_spi.c b/drivers/net/ethernet/qualcomm/qca_spi.c
-index 66b775d..d531050 100644
---- a/drivers/net/ethernet/qualcomm/qca_spi.c
-+++ b/drivers/net/ethernet/qualcomm/qca_spi.c
-@@ -69,6 +69,12 @@ static int qcaspi_pluggable = QCASPI_PLUGGABLE_MIN;
- module_param(qcaspi_pluggable, int, 0);
- MODULE_PARM_DESC(qcaspi_pluggable, "Pluggable SPI connection (yes/no).");
- 
-+#define QCASPI_WRITE_VERIFY_MIN 0
-+#define QCASPI_WRITE_VERIFY_MAX 3
-+static int wr_verify = QCASPI_WRITE_VERIFY_MIN;
-+module_param(wr_verify, int, 0);
-+MODULE_PARM_DESC(wr_verify, "SPI register write verify trails. Use 0-3.");
-+
- #define QCASPI_TX_TIMEOUT (1 * HZ)
- #define QCASPI_QCA7K_REBOOT_TIME_MS 1000
- 
-@@ -77,7 +83,7 @@ start_spi_intr_handling(struct qcaspi *qca, u16 *intr_cause)
- {
- 	*intr_cause = 0;
- 
--	qcaspi_write_register(qca, SPI_REG_INTR_ENABLE, 0);
-+	qcaspi_write_register(qca, SPI_REG_INTR_ENABLE, 0, wr_verify);
- 	qcaspi_read_register(qca, SPI_REG_INTR_CAUSE, intr_cause);
- 	netdev_dbg(qca->net_dev, "interrupts: 0x%04x\n", *intr_cause);
- }
-@@ -90,8 +96,8 @@ end_spi_intr_handling(struct qcaspi *qca, u16 intr_cause)
- 			   SPI_INT_RDBUF_ERR |
- 			   SPI_INT_WRBUF_ERR);
- 
--	qcaspi_write_register(qca, SPI_REG_INTR_CAUSE, intr_cause);
--	qcaspi_write_register(qca, SPI_REG_INTR_ENABLE, intr_enable);
-+	qcaspi_write_register(qca, SPI_REG_INTR_CAUSE, intr_cause, 0);
-+	qcaspi_write_register(qca, SPI_REG_INTR_ENABLE, intr_enable, wr_verify);
- 	netdev_dbg(qca->net_dev, "acking int: 0x%04x\n", intr_cause);
- }
- 
-@@ -239,7 +245,7 @@ qcaspi_tx_frame(struct qcaspi *qca, struct sk_buff *skb)
- 
- 	len = skb->len;
- 
--	qcaspi_write_register(qca, SPI_REG_BFR_SIZE, len);
-+	qcaspi_write_register(qca, SPI_REG_BFR_SIZE, len, wr_verify);
- 	if (qca->legacy_mode)
- 		qcaspi_tx_cmd(qca, QCA7K_SPI_WRITE | QCA7K_SPI_EXTERNAL);
- 
-@@ -345,6 +351,7 @@ qcaspi_receive(struct qcaspi *qca)
- 
- 	/* Read the packet size. */
- 	qcaspi_read_register(qca, SPI_REG_RDBUF_BYTE_AVA, &available);
-+
- 	netdev_dbg(net_dev, "qcaspi_receive: SPI_REG_RDBUF_BYTE_AVA: Value: %08x\n",
- 		   available);
- 
-@@ -353,7 +360,7 @@ qcaspi_receive(struct qcaspi *qca)
- 		return -1;
- 	}
- 
--	qcaspi_write_register(qca, SPI_REG_BFR_SIZE, available);
-+	qcaspi_write_register(qca, SPI_REG_BFR_SIZE, available, wr_verify);
- 
- 	if (qca->legacy_mode)
- 		qcaspi_tx_cmd(qca, QCA7K_SPI_READ | QCA7K_SPI_EXTERNAL);
-@@ -524,7 +531,7 @@ qcaspi_qca7k_sync(struct qcaspi *qca, int event)
- 		netdev_dbg(qca->net_dev, "sync: resetting device.\n");
- 		qcaspi_read_register(qca, SPI_REG_SPI_CONFIG, &spi_config);
- 		spi_config |= QCASPI_SLAVE_RESET_BIT;
--		qcaspi_write_register(qca, SPI_REG_SPI_CONFIG, spi_config);
-+		qcaspi_write_register(qca, SPI_REG_SPI_CONFIG, spi_config, 0);
- 
- 		qca->sync = QCASPI_SYNC_RESET;
- 		qca->stats.trig_reset++;
-@@ -684,7 +691,7 @@ qcaspi_netdev_close(struct net_device *dev)
- 
- 	netif_stop_queue(dev);
- 
--	qcaspi_write_register(qca, SPI_REG_INTR_ENABLE, 0);
-+	qcaspi_write_register(qca, SPI_REG_INTR_ENABLE, 0, wr_verify);
- 	free_irq(qca->spi_dev->irq, qca);
- 
- 	kthread_stop(qca->spi_thread);
-@@ -904,6 +911,13 @@ qca_spi_probe(struct spi_device *spi)
- 		return -EINVAL;
- 	}
- 
-+	if (wr_verify < QCASPI_WRITE_VERIFY_MIN ||
-+	    wr_verify > QCASPI_WRITE_VERIFY_MAX) {
-+		dev_err(&spi->dev, "Invalid write verify: %d\n",
-+			wr_verify);
-+		return -EINVAL;
-+	}
-+
- 	dev_info(&spi->dev, "ver=%s, clkspeed=%d, burst_len=%d, pluggable=%d\n",
- 		 QCASPI_DRV_VERSION,
- 		 qcaspi_clkspeed,
-diff --git a/drivers/net/ethernet/qualcomm/qca_spi.h b/drivers/net/ethernet/qualcomm/qca_spi.h
-index fc0e987..2d2c497 100644
---- a/drivers/net/ethernet/qualcomm/qca_spi.h
-+++ b/drivers/net/ethernet/qualcomm/qca_spi.h
-@@ -73,6 +73,7 @@ struct qcaspi_stats {
- 	u64 write_buf_miss;
- 	u64 ring_full;
- 	u64 spi_err;
-+	u64 write_verify_failed;
- };
- 
- struct qcaspi {
--- 
-2.7.4
-
+Thanks!
