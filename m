@@ -2,114 +2,118 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97514C4646A
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 22:26:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE947C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 22:35:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35BC720865
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 22:26:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C8F02086A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 22:35:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="yfSi0H+g";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="nClL6Bmm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35BC720865
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tobin.cc
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="RA7naYm8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C8F02086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727798AbeILD11 (ORCPT
+        id S1727656AbeILDgc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 23:27:27 -0400
-Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:58079 "EHLO
-        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726885AbeILD11 (ORCPT
+        Tue, 11 Sep 2018 23:36:32 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:42706 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727047AbeILDgb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 23:27:27 -0400
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.west.internal (Postfix) with ESMTP id BBA30405;
-        Tue, 11 Sep 2018 18:26:01 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Tue, 11 Sep 2018 18:26:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=cc
-        :content-type:date:from:in-reply-to:message-id:mime-version
-        :references:subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=EX9fz+jznYzp6OjyJa09OmG/gL8Tu2NLPviA3H5ND9g=; b=yfSi0H+g
-        XnO3NnpnNlWPwFNPixbktkqBaSnrvp0zcSTSksVcyL1u5J1L6pfYSibHxobXFueh
-        sJfyEre2kL3I+zqdad6OeUHpxRXKO39YA2ti0EPHyluFUXlE23OLhPQWjdi1DdZI
-        b4EQUfHwQe6mno+2VFv6NET3tr9F0XJxmcQt+sMKYelBy83GA7OkuJrIzmsbCMYL
-        LkeJ9B+zn65B3msiJ8t3Wcu/Z9ZlvHRhzBq9cvaesbIDSxorHBfZ2tirPNzxRGOg
-        2Q9UX5Y3Z5t3AMDYoFD+K/zQLWIkx0FTofoFuxM3wNbSFFKkZEV2g0PL10kwr/7z
-        L4S9B9pCdwwNYg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-sender
-        :x-me-sender:x-sasl-enc; s=fm3; bh=EX9fz+jznYzp6OjyJa09OmG/gL8Tu
-        2NLPviA3H5ND9g=; b=nClL6Bmmooj/K44VLzNkI+BarJO8FEIDGmJBBzi7k1VOl
-        P3lMK1bde2oFd/z7AEHzS+XOaK2mbcfcFdgU1agDVTrJcF7bi1VXCIpncaM3WjmD
-        7WYw1cE+IrIsPW0ZI12qNqcaPPlMWf2hXgeOf+Tg9yzhqfTtR0o7GI7aKSHkwMRW
-        VVqjGUX3Otamcn17Y3Xiss9seU1j6PteCTAKYBHVJlo3WzdzejexBlQvLlfMzvnP
-        nLXobr4PILOWDdX7RVB4fVDzdGYdM6WeZ7piXxeaXZKigxXo23aff1I9c3RkUDwl
-        m9QarPmt6sAsE9pXXYi4XPK5lTJvPuEMJhPELNQ5Q==
-X-ME-Proxy: <xmx:-UCYW13G1iB1lqE6zkk2swzRkv-5wwEQniRP7SJN0Si9TuirmDj1cg>
-    <xmx:-UCYW8T5rqlSb1n9pCEha9C0NeAA6EFz71Uoe0COX0gy-24xt7ZRAQ>
-    <xmx:-UCYW3u5cNTV5qDAkr3N8Vspi9BVhuNei_kGhMjMBCYsHyKIKdcVhQ>
-    <xmx:-UCYWxb5zUtbOKKWvGxoJldugx_qXgaP6Z-idHcG0GyD0_7NiFhQgw>
-    <xmx:-UCYW8u9XKaEt9HrIo-2JZAkCojYBermPUfJQtqzoju4LdqPMgiLiA>
-    <xmx:-UCYW2r20vB4FCC7vpxVtjkD0T5Ht-v6pGBkuhr_G-l7HFCjbBD7Mg>
-X-ME-Sender: <xms:-UCYW_h47mV11aohVH7eHm0Hr_WHKmSqK0HVJkuhVYN7Q-HPTnQCXg>
-Received: from localhost (ppp121-44-246-110.bras2.syd2.internode.on.net [121.44.246.110])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 999F3102A0;
-        Tue, 11 Sep 2018 18:25:59 -0400 (EDT)
-Date:   Wed, 12 Sep 2018 08:25:55 +1000
-From:   "Tobin C. Harding" <me@tobin.cc>
-To:     Eric Dumazet <eric.dumazet@gmail.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND net-next] docs: net: Convert tcp.txt to RST format
-Message-ID: <20180911222555.GD3854@eros>
-References: <20180911071324.11199-1-me@tobin.cc>
- <7f50abcd-f2fa-c043-9e5b-8e5ca89c52a1@gmail.com>
+        Tue, 11 Sep 2018 23:36:31 -0400
+Received: by mail-oi0-f65.google.com with SMTP id v198-v6so32735162oif.9
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 15:35:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=kv3XhMMmx7rFVxnOKJEZ8pDEIg1ExIxoLsHSho0w5mk=;
+        b=RA7naYm8BAzyDE+u5GEw46OtrvTW4luklLqwyUJpv6/S6+rcy4LQkPgyvh71tyXoQX
+         QoPXtablKOVeov9qvnvUILX5Fyz320xdTg0mc9wvy0qU037H73YEV/QHD9jrE+4G9Mtb
+         7RuBlsQLhHohDVe97pWMpPdrPr6t2zXsyTmh61Q7ZI9tfhX/RlJfgzUvQOMxnA/fmYYP
+         1X1PdpHn133WnDavT9PsMJdXj1hsMVp0k+zIjxrY+Nh/36ybrCOMRXAQbjOS07oF2SPz
+         ZTh/m6SYK31kc1d2uo55DFNvxXpHuLDpjqL6TzF1YmT3ocvtC9WCfLMTflH7XQDi/rhS
+         TXiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=kv3XhMMmx7rFVxnOKJEZ8pDEIg1ExIxoLsHSho0w5mk=;
+        b=Jma4Kf+boEynSIK0CURozFTZGjbxeqr3mERx3qoBNwf1PRhktJ38w3spGZ9aETZMNI
+         MGEJFP2X3/mMa2VT+lXzvbS7hLsU2MDcIw2tblf+QXV5hXA+pvFlR9YfTHhxuU1AykxE
+         d0Vz2QWPEGhACxmqU+3+GYKY+b8HozW+jRW3To5mej08lAbWxctQFsdXQHiIWxQeRHPK
+         Gz3/RqX3TwKpT2gLrw/6fSPy1z8HX/fQd2PTpDqYV7Fjz5an1OsHAuSAi/ZVl9h6Y7vx
+         bGGIvrOZcc+gbVEu3ZDhtdOwPlAlScW7GQ6owH7zl6AnaRZCZxxQWJK90T47u2NOOyi6
+         P4Ag==
+X-Gm-Message-State: APzg51AmVDsrJ4Gt8WoDvqRkeBSL2SNmL4OnYb5O03koJDygkdgk4Pto
+        vRDumhlCT2XbhA3owiDWXachy72d3pj2NVKJz2xWHB4QekA=
+X-Google-Smtp-Source: ANB0VdZaUHqJ4lA+9ml9Oy8g8UGn+GqDGF8vF8c7Iv/dgjDXDlWtkwPODQQC20UbB3q7yZHlLliMpifcFHbFkMRQdcU=
+X-Received: by 2002:aca:5905:: with SMTP id n5-v6mr32431005oib.232.1536705304781;
+ Tue, 11 Sep 2018 15:35:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7f50abcd-f2fa-c043-9e5b-8e5ca89c52a1@gmail.com>
-X-Mailer: Mutt 1.9.4 (2018-02-28)
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Received: by 2002:a4a:8e85:0:0:0:0:0 with HTTP; Tue, 11 Sep 2018 15:35:04
+ -0700 (PDT)
+In-Reply-To: <20180910234354.4068.65260.stgit@localhost.localdomain>
+References: <20180910232615.4068.29155.stgit@localhost.localdomain> <20180910234354.4068.65260.stgit@localhost.localdomain>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Tue, 11 Sep 2018 15:35:04 -0700
+Message-ID: <CAPcyv4ja7=eUbwwJZhreexa9_7JyJotQwObrQm=nCEcgcfbWyw@mail.gmail.com>
+Subject: Re: [PATCH 3/4] mm: Defer ZONE_DEVICE page initialization to the
+ point where we init pgmap
+To:     Alexander Duyck <alexander.duyck@gmail.com>
+Cc:     Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        pavel.tatashin@microsoft.com, Michal Hocko <mhocko@suse.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 11, 2018 at 03:30:19AM -0700, Eric Dumazet wrote:
-> 
-> 
-> On 09/11/2018 12:13 AM, Tobin C. Harding wrote:
-> > Restructured text is the kernel documentation format of choice now.
-> > Some text from tcp.txt is out of date, specifically the function
-> > tcp_write() does not appear to be in the tree anymore.  Also the
-> > following data members have been removed
-> > 
-> > 	  sk->tcp_pend_event
-> > 	  sk->transmit_queue
-> > 	  sk->transmit_new
-> > 	  sk->transmit_end
-> > 	  sk->tcp_last_tx_ack
-> > 	  sk->tcp_dup_ack
-> > 
-> > Remove section 'How the new TCP output machine [nyi] works'.  This
-> > leaves only a single section so we can name the document with that
-> > section heading now.
-> > 
-> > Convert tcp.txt to RST format.  Add GPLv2 SPDX tag.
-> > 
-> > Signed-off-by: Tobin C. Harding <me@tobin.cc>
-> >
-> 
-> I dunno, this 'doc' is probably useless and should be deleted.
+On Mon, Sep 10, 2018 at 4:43 PM, Alexander Duyck
+<alexander.duyck@gmail.com> wrote:
+>
+> From: Alexander Duyck <alexander.h.duyck@intel.com>
+>
+> The ZONE_DEVICE pages were being initialized in two locations. One was with
+> the memory_hotplug lock held and another was outside of that lock. The
+> problem with this is that it was nearly doubling the memory initialization
+> time. Instead of doing this twice, once while holding a global lock and
+> once without, I am opting to defer the initialization to the one outside of
+> the lock. This allows us to avoid serializing the overhead for memory init
+> and we can instead focus on per-node init times.
+>
+> One issue I encountered is that devm_memremap_pages and
+> hmm_devmmem_pages_create were initializing only the pgmap field the same
+> way. One wasn't initializing hmm_data, and the other was initializing it to
+> a poison value. Since this is something that is exposed to the driver in
+> the case of hmm I am opting for a third option and just initializing
+> hmm_data to 0 since this is going to be exposed to unknown third party
+> drivers.
+>
+> Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
+> ---
+>  include/linux/mm.h |    2 +
+>  kernel/memremap.c  |   24 +++++---------
+>  mm/hmm.c           |   12 ++++---
+>  mm/page_alloc.c    |   89 +++++++++++++++++++++++++++++++++++++++++++++++++++-
 
-Cool! The best type of patch - line removal only.  I'll put it in.
-
-thanks,
-Tobin.
+Hmm, why mm/page_alloc.c and not kernel/memremap.c for this new
+helper? I think that would address the kbuild reports and keeps all
+the devm_memremap_pages / ZONE_DEVICE special casing centralized. I
+also think it makes sense to move memremap.c to mm/ rather than
+kernel/ especially since commit 5981690ddb8f "memremap: split
+devm_memremap_pages() and memremap() infrastructure". Arguably, that
+commit should have went ahead with the directory move.
