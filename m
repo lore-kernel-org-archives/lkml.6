@@ -2,173 +2,112 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT,USER_IN_DEF_DKIM_WL autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80991C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:44:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4706C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:45:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41D5220839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:44:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41D5220839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=triplefau.lt
+	by mail.kernel.org (Postfix) with ESMTP id 7B802206B7
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:45:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Quws+qHY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B802206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727789AbeILBpH (ORCPT
+        id S1727755AbeILBqD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 21:45:07 -0400
-Received: from mslow2.mail.gandi.net ([217.70.178.242]:42400 "EHLO
-        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726829AbeILBpG (ORCPT
+        Tue, 11 Sep 2018 21:46:03 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:55818 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726870AbeILBqC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 21:45:06 -0400
-Received: from relay1-d.mail.gandi.net (unknown [217.70.183.193])
-        by mslow2.mail.gandi.net (Postfix) with ESMTP id 9F75B3A19E1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 22:18:28 +0200 (CEST)
-X-Originating-IP: 88.190.179.123
-Received: from localhost (unknown [88.190.179.123])
-        (Authenticated sender: repk@triplefau.lt)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id E40E7240009;
-        Tue, 11 Sep 2018 20:18:26 +0000 (UTC)
-From:   Remi Pommarel <repk@triplefau.lt>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        Elie Roudninski <xademax@gmail.com>,
-        Remi Pommarel <repk@triplefau.lt>
-Subject: [PATCH 3/4] drivers/tty/vt/keyboard.c: Make key_down[] bitmap input dependent
-Date:   Tue, 11 Sep 2018 22:23:58 +0200
-Message-Id: <45a4a8e3123730bf900ea921baf153ff0c899dd5.1536695071.git.repk@triplefau.lt>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <cover.1536695070.git.repk@triplefau.lt>
-References: <cover.1536695070.git.repk@triplefau.lt>
+        Tue, 11 Sep 2018 21:46:02 -0400
+Received: by mail-it0-f68.google.com with SMTP id d10-v6so76140itj.5
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 13:45:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ybhHlz6fUea5FCwSml+iCw8bY99WIf9EqxxM0rytOmM=;
+        b=Quws+qHYJtcXaPGvldNABypRdEuopny2hoxyjRmNxgF96uyUOxkmO1YVE3618dnrKM
+         a7DMaGJbYFskOlCH/2fm+vhxRNx7S9kElnmKG+gxvVdTsiy9mxFlRFCY+0/uqYC8NeFr
+         oI3HI/AtQk6CIv3JnKqifsTiRl6xMuTBnQwzgq2ms8YktlWLfUKCDhaDsvEcBdDumnaG
+         lSKWCPxayuXrm33zsujC2JAFMlYMe7mBLuOXn9cJfcbtvC5M8Rqh9ZtMK9R901yZn2RJ
+         FtS7vrtPj1oe8KdOevTjz/qJMYhXVUnQmb+PGU8Ni7taoJeBehTspmD+X6eagJxpF0/u
+         N6EQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ybhHlz6fUea5FCwSml+iCw8bY99WIf9EqxxM0rytOmM=;
+        b=dJGQoS5y6fSaJZyA161pCWhCZf+O7ON7Jhyme4CrYivYd3JGg2Eb4MB+5Xz4eJLS42
+         SABKCBDW+N1eOWZV5OXTLtqDVJUy4F2iwSvgaq2D2ep4WLTU9/uEcWe073SeTWGqDN1+
+         B2vKNz/VbOU3riagaV5LoY6fwcjJfS0y98iKC51yRC/UG3ffsPCG2KMmzM3MXRK3JbNe
+         bg4g6WqkZDpCtQkyy2848FY1B++k/0k+sChnKfTFQv00SetHGvSBHJG9nO2P8B7lt+Cq
+         zJWA1APW0MHJpwdcoQsnpey0sU+2RplU5hCHDPEFRACoiY6gBkbZpWbzfYkvE4PfMhIx
+         FpCQ==
+X-Gm-Message-State: APzg51DOYE04xDanNvKETDICtQeVIQhoV2A7X6S9DRG7u/cng3Q7IMab
+        gEK55FKu4NOgMDwFXrovELKgag==
+X-Google-Smtp-Source: ANB0VdYJf4VlVf6x01nztVZcI/XALprgvwhPBb6FI0YsEWHh4zHNAQnFYOXUtoCJdajBBC3lIKr5aw==
+X-Received: by 2002:a24:bdc5:: with SMTP id x188-v6mr3093741ite.37.1536698699865;
+        Tue, 11 Sep 2018 13:44:59 -0700 (PDT)
+Received: from google.com ([2620:15c:183:0:a0c3:519e:9276:fc96])
+        by smtp.gmail.com with ESMTPSA id f24-v6sm6416223ioc.52.2018.09.11.13.44.58
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 11 Sep 2018 13:44:58 -0700 (PDT)
+Date:   Tue, 11 Sep 2018 14:44:56 -0600
+From:   Yu Zhao <yuzhao@google.com>
+To:     Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.de>
+Cc:     alsa-devel@alsa-project.org,
+        Guneshwor Singh <guneshwor.o.singh@intel.com>,
+        Naveen Manohar <naveen.m@intel.com>,
+        Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>,
+        Rakesh Ughreja <rakesh.a.ughreja@intel.com>,
+        Sanyog Kale <sanyog.r.kale@intel.com>,
+        Sriram Periyasamy <sriramx.periyasamy@intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        Jaroslav Kysela <perex@perex.cz>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] Revert "ASoC: Intel: Skylake: Acquire irq after RIRB
+ allocation"
+Message-ID: <20180911204456.GA18086@google.com>
+References: <20180910211718.200802-1-yuzhao@google.com>
+ <s5hd0tk3712.wl-tiwai@suse.de>
+ <20180911163636.GC10123@sirena.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180911163636.GC10123@sirena.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A kbd_handle input can have a specific keyboard config that makes
-keycode to keysym mapping array different from another one. Because
-key_down[] bitmap stores currently pressed key as keycode, it should be
-associated with an input keymap in order to retrieve the associated
-keysym.
+On Tue, Sep 11, 2018 at 05:36:36PM +0100, Mark Brown wrote:
+> On Tue, Sep 11, 2018 at 08:03:21AM +0200, Takashi Iwai wrote:
+> > Yu Zhao wrote:
+> 
+> > > Will fix the problems in the following patches. Also attaching the
+> > > crash for future reference.
+> 
+> > > [   16.950887] RIP: 0010:snd_hdac_bus_update_rirb+0x19b/0x4cf [snd_hda_core]
+> > > [   16.950889] RSP: 0000:ffff88015c807c08 EFLAGS: 00010003
+> > > [   16.950891] RAX: 0000000000000101 RBX: 000000000000080c RCX: 1ffff10026822185
+> 
+> > Please try to rip off uninteresting hex values and other stuff there.
+> 
+> Right:
+> 
+> Please think hard before including complete backtraces in upstream
+> reports, they are very large and contain almost no useful information
+> relative to their size so often obscure the relevant content in your
+> message. If part of the backtrace is usefully illustrative then it's
+> usually better to pull out the relevant sections.
 
-Allocating this array in each input allows to retrieve its associated
-keymap.
-
-Signed-off-by: Remi Pommarel <repk@triplefau.lt>
-Tested-by: Elie Roudninski <xademax@gmail.com>
----
- drivers/tty/vt/keyboard.c | 46 +++++++++++++++++++++++++++------------
- 1 file changed, 32 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/tty/vt/keyboard.c b/drivers/tty/vt/keyboard.c
-index 4f09331ad5c3..7272e1828838 100644
---- a/drivers/tty/vt/keyboard.c
-+++ b/drivers/tty/vt/keyboard.c
-@@ -122,6 +122,7 @@ struct kbd_handle {
- 	struct kref ref;
- 	struct kbd_conf *conf;
- 	struct input_handle handle;
-+	unsigned long key_down[BITS_TO_LONGS(KEY_CNT)];/* keyboard key bitmap */
- };
- #define hdl_to_kbd_handle(h) (container_of(h, struct kbd_handle, handle))
- 
-@@ -140,7 +141,6 @@ static const int NR_TYPES = ARRAY_SIZE(max_vals);
- static struct input_handler kbd_handler;
- static DEFINE_SPINLOCK(kbd_event_lock);
- static DEFINE_SPINLOCK(led_lock);
--static unsigned long key_down[BITS_TO_LONGS(KEY_CNT)];	/* keyboard key bitmap */
- static unsigned char shift_down[NR_SHIFT];		/* shift state counters.. */
- static bool dead_key_next;
- static int npadch = -1;					/* -1 or number assembled on pad */
-@@ -378,20 +378,18 @@ static void to_utf8(struct vc_data *vc, uint c)
- 
- /*
-  * Called after returning from RAW mode or when changing consoles - recompute
-- * shift_down[] and shift_state from key_down[] maybe called when keymap is
-- * undefined, so that shiftkey release is seen. The caller must hold the
-- * kbd_event_lock.
-+ * shift_down[] and shift_state from each input's key_down[] maybe called when
-+ * keymap is undefined, so that shiftkey release is seen. The caller must hold
-+ * the kbd_event_lock.
-  */
- 
--static void do_compute_shiftstate(void)
-+static int do_compute_input_shiftstate(struct input_handle *handle, void *data)
- {
-+	struct kbd_handle *kh = hdl_to_kbd_handle(handle);
- 	unsigned int k, sym, val;
- 
--	shift_state = 0;
--	memset(shift_down, 0, sizeof(shift_down));
--
--	for_each_set_bit(k, key_down, min(NR_KEYS, KEY_CNT)) {
--		sym = U(key_maps[0][k]);
-+	for_each_set_bit(k, kh->key_down, min(NR_KEYS, KEY_CNT)) {
-+		sym = U(kh->conf->maps[0][k]);
- 		if (KTYP(sym) != KT_SHIFT && KTYP(sym) != KT_SLOCK)
- 			continue;
- 
-@@ -402,6 +400,15 @@ static void do_compute_shiftstate(void)
- 		shift_down[val]++;
- 		shift_state |= BIT(val);
- 	}
-+	return 0;
-+}
-+
-+static void do_compute_shiftstate(void)
-+{
-+	shift_state = 0;
-+	memset(shift_down, 0, sizeof(shift_down));
-+	input_handler_for_each_handle(&kbd_handler, NULL,
-+			do_compute_input_shiftstate);
- }
- 
- /* We still have to export this method to vt.c */
-@@ -1278,6 +1285,17 @@ static int sparc_l1_a_state;
- extern void sun_do_break(void);
- #endif
- 
-+static int is_alt_down(struct input_handle *handle, void *data)
-+{
-+	struct kbd_handle *kh = hdl_to_kbd_handle(handle);
-+
-+	if (test_bit(KEY_LEFTALT, kh->key_down) ||
-+			test_bit(KEY_RIGHTALT, kh->key_down))
-+		return 1;
-+
-+	return 0;
-+}
-+
- static int emulate_raw(struct vc_data *vc, unsigned int keycode,
- 		       unsigned char up_flag)
- {
-@@ -1308,8 +1326,8 @@ static int emulate_raw(struct vc_data *vc, unsigned int keycode,
- 		 * pressing PrtSc/SysRq alone, but simply 0x54
- 		 * when pressing Alt+PrtSc/SysRq.
- 		 */
--		if (test_bit(KEY_LEFTALT, key_down) ||
--		    test_bit(KEY_RIGHTALT, key_down)) {
-+		if (input_handler_for_each_handle(&kbd_handler, NULL,
-+					is_alt_down)) {
- 			put_queue(vc, 0x54 | up_flag);
- 		} else {
- 			put_queue(vc, 0xe0);
-@@ -1424,9 +1442,9 @@ static void kbd_keycode(struct kbd_handle *kh, unsigned int keycode, int down,
- 	}
- 
- 	if (down)
--		set_bit(keycode, key_down);
-+		set_bit(keycode, kh->key_down);
- 	else
--		clear_bit(keycode, key_down);
-+		clear_bit(keycode, kh->key_down);
- 
- 	if (rep &&
- 	    (!vc_kbd_mode(kbd, VC_REPEAT) ||
--- 
-2.18.0
-
+Thanks, will do in v2.
