@@ -2,166 +2,78 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4971C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 21:01:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2549C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 21:02:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E55C20839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 21:01:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E55C20839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 703E62086A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 21:02:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 703E62086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sipsolutions.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727735AbeILCCm (ORCPT
+        id S1727853AbeILCDS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 22:02:42 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:40846 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726850AbeILCCm (ORCPT
+        Tue, 11 Sep 2018 22:03:18 -0400
+Received: from s3.sipsolutions.net ([144.76.43.62]:48138 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727645AbeILCDS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 22:02:42 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id C0BF880693; Tue, 11 Sep 2018 23:01:33 +0200 (CEST)
-Date:   Tue, 11 Sep 2018 23:01:33 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
-        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org,
-        lee.jones@linaro.org, dmurphy@ti.com
-Subject: [PATCH 1/3] mfd: ti-lmu: switch to gpiod
-Message-ID: <20180911210133.GA32497@amd>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="MGYHOYXEY6WxJCY8"
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Tue, 11 Sep 2018 22:03:18 -0400
+Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.91)
+        (envelope-from <johannes@sipsolutions.net>)
+        id 1fzpnV-0005L8-Vv; Tue, 11 Sep 2018 23:02:10 +0200
+Message-ID: <1536699720.3224.152.camel@sipsolutions.net>
+Subject: Re: 4.19-rc[23] iwlwifi: BUG in swiotlb
+From:   Johannes Berg <johannes@sipsolutions.net>
+To:     Randy Dunlap <rdunlap@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        linuxwifi@intel.com
+Date:   Tue, 11 Sep 2018 23:02:00 +0200
+In-Reply-To: <8bea4cfc-4b16-7c7c-3e9a-5b6684b47345@infradead.org>
+References: <0c5e53e5-2afa-8d38-0b48-272c670c4bc5@infradead.org>
+         <1536651177.3224.106.camel@sipsolutions.net>
+         <8bea4cfc-4b16-7c7c-3e9a-5b6684b47345@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 2018-09-11 at 13:57 -0700, Randy Dunlap wrote:
 
---MGYHOYXEY6WxJCY8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> I can't be sure.  I've been having problems booting this laptop for a few
+> weeks now but haven't tracked it down yet.
 
-Use new descriptor based API instead of the legacy one.
-   =20
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Signed-off-by: Pavel Machek <pavel@ucw.cz>
+Ok.
 
-diff --git a/drivers/mfd/ti-lmu.c b/drivers/mfd/ti-lmu.c
-index 990437e..e14cb9f 100644
---- a/drivers/mfd/ti-lmu.c
-+++ b/drivers/mfd/ti-lmu.c
-@@ -12,7 +12,7 @@
-=20
- #include <linux/delay.h>
- #include <linux/err.h>
--#include <linux/gpio.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/i2c.h>
- #include <linux/kernel.h>
- #include <linux/mfd/core.h>
-@@ -21,7 +21,6 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
--#include <linux/of_gpio.h>
- #include <linux/slab.h>
-=20
- struct ti_lmu_data {
-@@ -32,17 +31,8 @@ struct ti_lmu_data {
-=20
- static int ti_lmu_enable_hw(struct ti_lmu *lmu, enum ti_lmu_id id)
- {
--	int ret;
--
--	if (gpio_is_valid(lmu->en_gpio)) {
--		ret =3D devm_gpio_request_one(lmu->dev, lmu->en_gpio,
--					    GPIOF_OUT_INIT_HIGH, "lmu_hwen");
--		if (ret) {
--			dev_err(lmu->dev, "Can not request enable GPIO: %d\n",
--				ret);
--			return ret;
--		}
--	}
-+	if (lmu->en_gpio)
-+		gpiod_set_value(lmu->en_gpio, 1);
-=20
- 	/* Delay about 1ms after HW enable pin control */
- 	usleep_range(1000, 1500);
-@@ -59,8 +49,8 @@ static int ti_lmu_enable_hw(struct ti_lmu *lmu, enum ti_l=
-mu_id id)
-=20
- static void ti_lmu_disable_hw(struct ti_lmu *lmu)
- {
--	if (gpio_is_valid(lmu->en_gpio))
--		gpio_set_value(lmu->en_gpio, 0);
-+	if (lmu->en_gpio)
-+		gpiod_set_value(lmu->en_gpio, 0);
- }
-=20
- static const struct mfd_cell lm3532_devices[] =3D {
-@@ -204,7 +194,13 @@ static int ti_lmu_probe(struct i2c_client *cl, const s=
-truct i2c_device_id *id)
- 		return PTR_ERR(lmu->regmap);
-=20
- 	/* HW enable pin control and additional power up sequence if required */
--	lmu->en_gpio =3D of_get_named_gpio(dev->of_node, "enable-gpios", 0);
-+	lmu->en_gpio =3D devm_gpiod_get_optional(dev, "enable", GPIOD_OUT_HIGH);
-+	if (IS_ERR(lmu->en_gpio)) {
-+		ret =3D PTR_ERR(lmu->en_gpio);
-+		dev_err(dev, "Can not request enable GPIO: %d\n", ret);
-+		return ret;
-+	}
-+
- 	ret =3D ti_lmu_enable_hw(lmu, id->driver_data);
- 	if (ret)
- 		return ret;
-diff --git a/include/linux/mfd/ti-lmu.h b/include/linux/mfd/ti-lmu.h
-index 09d5f30..1ef51ed 100644
---- a/include/linux/mfd/ti-lmu.h
-+++ b/include/linux/mfd/ti-lmu.h
-@@ -16,6 +16,7 @@
- #include <linux/gpio.h>
- #include <linux/notifier.h>
- #include <linux/regmap.h>
-+#include <linux/gpio/consumer.h>
-=20
- /* Notifier event */
- #define LMU_EVENT_MONITOR_DONE		0x01
-@@ -81,7 +82,7 @@ enum lm363x_regulator_id {
- struct ti_lmu {
- 	struct device *dev;
- 	struct regmap *regmap;
--	int en_gpio;
-+	struct gpio_desc *en_gpio;
- 	struct blocking_notifier_head notifier;
- };
- #endif
+> The wireless NIC is Condor Peak:
+> 
+> 04:00.0 Network controller: Intel Corporation Centrino Wireless-N 1000 [Condor Peak]
 
+Wow, that's old. I should have one somewhere, but we haven't worked on
+this NIC in many years. We've touched the driver, of course, but the
+configuration for this wouldn't have changed.
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+> sigh.  I can reproduce it without the patch:
+> 
+> > https://p.sipsolutions.net/aa0dccd7a60fe176.txt
+> 
+> but with that patch, it just hangs after about 25 seconds of booting
+> (slow hard drive, not SSD).
+> 
+> I'll try some other ways.
 
---MGYHOYXEY6WxJCY8
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Hmm. That makes me think you have some corruption going on, rather than
+something really being set to 0, because otherwise you should've seen
+the warning at least?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAluYLS0ACgkQMOfwapXb+vIovgCeMkAxgrYAKaZV9q1gU/ltyL7c
-vQUAoKLIV8M7xKcSi3BcxDGzvfzxOx0O
-=oZvi
------END PGP SIGNATURE-----
-
---MGYHOYXEY6WxJCY8--
+johannes
