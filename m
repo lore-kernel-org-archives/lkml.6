@@ -6,58 +6,92 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6D8AC04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:44:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C206C6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:45:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A3AB2086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:44:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A3AB2086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id A2D7120839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:45:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2D7120839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727651AbeIKUn7 (ORCPT
+        id S1727034AbeIKUpr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 16:43:59 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47720 "EHLO mx1.suse.de"
+        Tue, 11 Sep 2018 16:45:47 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50430 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726670AbeIKUn7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 16:43:59 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7C74CAED3;
-        Tue, 11 Sep 2018 15:44:05 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 04FFBDAD9B; Tue, 11 Sep 2018 17:44:04 +0200 (CEST)
-Date:   Tue, 11 Sep 2018 17:44:04 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     zhong jiang <zhongjiang@huawei.com>
-Cc:     clm@fb.com, jbacik@fb.com, dsterba@suse.com,
-        lufq.fnst@cn.fujitsu.com, suy.fnst@cn.fujitsu.com,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] btrfs/extent_map: Remove unneeded variable "ret"
-Message-ID: <20180911154404.GD2154@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, zhong jiang <zhongjiang@huawei.com>,
-        clm@fb.com, jbacik@fb.com, dsterba@suse.com,
-        lufq.fnst@cn.fujitsu.com, suy.fnst@cn.fujitsu.com,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1533474287-15049-1-git-send-email-zhongjiang@huawei.com>
- <5B7E9B1C.40404@huawei.com>
+        id S1726622AbeIKUpq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 16:45:46 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 140CF401EF2E;
+        Tue, 11 Sep 2018 15:45:53 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-22.pek2.redhat.com [10.72.8.22])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 639A82157F49;
+        Tue, 11 Sep 2018 15:45:46 +0000 (UTC)
+Date:   Tue, 11 Sep 2018 23:45:41 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Tejun Heo <tj@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Jianchao Wang <jianchao.w.wang@oracle.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-block@vger.kernel.org
+Subject: Re: [PATCH] percpu-refcount: relax limit on percpu_ref_reinit()
+Message-ID: <20180911154540.GA10082@ming.t460p>
+References: <20180909125824.9150-1-ming.lei@redhat.com>
+ <20180910164920.GE1100574@devbig004.ftw2.facebook.com>
+ <20180911000049.GB30977@ming.t460p>
+ <20180911134836.GG1100574@devbig004.ftw2.facebook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5B7E9B1C.40404@huawei.com>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+In-Reply-To: <20180911134836.GG1100574@devbig004.ftw2.facebook.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 11 Sep 2018 15:45:53 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 11 Sep 2018 15:45:53 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ming.lei@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 23, 2018 at 07:31:40PM +0800, zhong jiang wrote:
-> Hi,  dsterba
+On Tue, Sep 11, 2018 at 06:48:36AM -0700, Tejun Heo wrote:
+> Hello, Ming.
 > 
-> Can you pick up the patch? Thanks
+> On Tue, Sep 11, 2018 at 08:00:50AM +0800, Ming Lei wrote:
+> > > > @@ -357,10 +349,11 @@ EXPORT_SYMBOL_GPL(percpu_ref_kill_and_confirm);
+> > > >  void percpu_ref_reinit(struct percpu_ref *ref)
+> > > >  {
+> > > >  	unsigned long flags;
+> > > > +	unsigned long __percpu *percpu_count;
+> > > >  
+> > > >  	spin_lock_irqsave(&percpu_ref_switch_lock, flags);
+> > > >  
+> > > > -	WARN_ON_ONCE(!percpu_ref_is_zero(ref));
+> > > > +	WARN_ON_ONCE(__ref_is_percpu(ref, &percpu_count));
+> > > 
+> > > Can you elaborate this part?  This doesn't seem required for the
+> > > described change.  Why is it part of the patch?
+> > 
+> > The motivation of this patch is to avoid the above warning and allow
+> > the ref to switch back to percpu mode without dropping to zero.
+> > 
+> > That is why the check has to be changed to the above way.
+> 
+> So, this part seems wrong.  The function is called percpu_ref_reinit()
+> - the refcnt is expected to be in its initial state with just the base
+> ref once this function returns.  If you're removing the restriction on
 
-Please send one patch per changed function with relevant changelog that
-the return value is not used and that no callees could potentially
-return an error that would need to be passed.
+But the comment says that 'Re-initialize @ref so that it's in the same
+state as when it finished', and this invariant isn't changed with this
+patch.
+
+> when this can be called, you should also make sure that the function
+> actually enforces the target state.  Also, this is a separate logical
+> change, please put it in a separate patch.
+
+OK, will do it in V2.
+
+Thanks,
+Ming
