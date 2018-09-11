@@ -2,113 +2,77 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10F05C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 21:43:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24C89C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 21:46:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1BE1206B7
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 21:43:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QJX78q9z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1BE1206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id BF8FC2086A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 21:46:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF8FC2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728021AbeILCpG (ORCPT
+        id S1728161AbeILCre (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 22:45:06 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:50349 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727649AbeILCpF (ORCPT
+        Tue, 11 Sep 2018 22:47:34 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:42486 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727775AbeILCre (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 22:45:05 -0400
-Received: by mail-wm0-f67.google.com with SMTP id s12-v6so202467wmc.0;
-        Tue, 11 Sep 2018 14:43:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=JM0R5+gVjcypQAjDUwg1l1B5eVwb7FNurOGLrcF74h4=;
-        b=QJX78q9z2lSXrtM+OQL2xLhPmn0EWcH1aaIcjVlpRkGGxP7k4xy9Gqe4rt4atuWRQO
-         H0058xXhyPeIaeQORmOcaYpkEa9in2HjhRy0vQRN2qtzSq/QUhujCmYdI8Y6elDZIvMr
-         K74yr+vm5UMPeAtkFX+rdCf8W5o88YfKwqrjoGlpTtfNz9x5rbCR7z2wKM42BGMemAkx
-         GZZ4ErH7IF07gct2vTnwOjsjwvZYC/ef8BFPu+kcpG9oP3CffO3CQnBSbfo0FMIwNxfy
-         V6QSqmm+i5Q2fCQVW2k3RQPHpUl7O29/BICSVARGE8BolpkOJSjmc9Gcdc35QXIHp3Dq
-         J9kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=JM0R5+gVjcypQAjDUwg1l1B5eVwb7FNurOGLrcF74h4=;
-        b=WASaJPzqZnl4RmLFqGZ5d3v3/ejG3JWASuFAlyCCzoBgmAE8aIDFOV09wjwCxI/n1r
-         D+L3V3/6YGxD9G/h87oXS3EXWyrHoTrJ4c4wTNGpcmid3NxcvyxT+IqtINMXCNdwOvNL
-         28mwGSjzBAsEWAUbQrYpydU3+KEdQl90EDs1sSO2Le2cBdLsMgP6JVn9KPOeQnse0hwM
-         F+BT6pxfriSNJtnsi/btMfP5F49Omqy28bCYOYUAfR6/KfsAiIEDIhQXRDyhZJ3vHP4I
-         g1K/tiE0G7fQa9H6Mv9Dcc2TmKnhMoMdva0nhn0r1XHc30++hEIDIciXtlFXaGThvrZ8
-         v/OA==
-X-Gm-Message-State: APzg51DZR31IycoyzSu+2OMxX4AEpGfWgJAnUi1wt8gVqUqV2kwyYFDX
-        ZAFndLmxDCscOFnZY3gJ4FU=
-X-Google-Smtp-Source: ANB0VdZovxB65LsXDSFiGwU8ku+3RKBbpKzQOVpTMuWLUqfdTJzBqyMSYnnF8uiQauMRCAADxCRQlA==
-X-Received: by 2002:a1c:68f:: with SMTP id 137-v6mr2704110wmg.82.1536702228105;
-        Tue, 11 Sep 2018 14:43:48 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id c9-v6sm18496967wrt.77.2018.09.11.14.43.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Sep 2018 14:43:47 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] pata_atiixp: Remove unnecessary parentheses
-Date:   Tue, 11 Sep 2018 14:43:38 -0700
-Message-Id: <20180911214338.1109-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.18.0
+        Tue, 11 Sep 2018 22:47:34 -0400
+Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fzqTz-0006ZI-8v; Tue, 11 Sep 2018 23:46:03 +0200
+Date:   Tue, 11 Sep 2018 23:46:02 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Tim Chen <tim.c.chen@linux.intel.com>
+cc:     Jiri Kosina <jikos@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Woodhouse, David" <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v5 2/2] x86/speculation: Enable cross-hyperthread spectre
+ v2 STIBP mitigation
+In-Reply-To: <alpine.DEB.2.21.1809112315320.1427@nanos.tec.linutronix.de>
+Message-ID: <alpine.DEB.2.21.1809112344050.1427@nanos.tec.linutronix.de>
+References: <nycvar.YFH.7.76.1809101119280.15880@cbobk.fhfr.pm> <nycvar.YFH.7.76.1809101123520.15880@cbobk.fhfr.pm> <alpine.DEB.2.21.1809101158080.1402@nanos.tec.linutronix.de> <nycvar.YFH.7.76.1809101259520.15880@cbobk.fhfr.pm> <nycvar.YFH.7.76.1809101343370.15880@cbobk.fhfr.pm>
+ <f0fcbcd9-4619-391e-3c1b-34d06b00de50@linux.intel.com> <alpine.DEB.2.21.1809112315320.1427@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns when more than one set of parentheses is used for a
-single conditional statement:
+On Tue, 11 Sep 2018, Thomas Gleixner wrote:
 
-drivers/ata/pata_atiixp.c:282:19: warning: equality comparison with
-extraneous parentheses [-Wparentheses-equality]
-        if((pdev->device == PCI_DEVICE_ID_ATI_IXP600_IDE))
-            ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/ata/pata_atiixp.c:282:19: note: remove extraneous parentheses
-around the comparison to silence this warning
-        if((pdev->device == PCI_DEVICE_ID_ATI_IXP600_IDE))
-           ~             ^                              ~
-drivers/ata/pata_atiixp.c:282:19: note: use '=' to turn this equality
-comparison into an assignment
-        if((pdev->device == PCI_DEVICE_ID_ATI_IXP600_IDE))
-                         ^~
-                         =
-1 warning generated.
+> On Tue, 11 Sep 2018, Tim Chen wrote:
+> > On 09/10/2018 04:46 AM, Jiri Kosina wrote:
+> > > Nah, IBPB is actuall there, sorry. So I'll add reporting of STIBP + fixup 
+> > > the missing reporting of RSB_CTXSW for v6.
+> > > 
+> > 
+> > I anticipate that STIBP could affect workloads with a lot of indirect
+> > branches (see previous discussion with Andrea).  We should have a 
+> > knob for people to opt in or opt out of STIBP.
+> 
+> Feel free to send a patch to that effect.
 
-Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- drivers/ata/pata_atiixp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Along with a proper explanation why it makes sense to disable this
+particular piece separate from the rest of the V2 mitigations. You surely
+can come up with a rationale based on facts rather than on anticipations.
 
-diff --git a/drivers/ata/pata_atiixp.c b/drivers/ata/pata_atiixp.c
-index 4d49fd3c927b..843bb200a1ee 100644
---- a/drivers/ata/pata_atiixp.c
-+++ b/drivers/ata/pata_atiixp.c
-@@ -279,7 +279,7 @@ static int atiixp_init_one(struct pci_dev *pdev, const struct pci_device_id *id)
- 	const struct ata_port_info *ppi[] = { &info, &info };
- 
- 	/* SB600 doesn't have secondary port wired */
--	if((pdev->device == PCI_DEVICE_ID_ATI_IXP600_IDE))
-+	if (pdev->device == PCI_DEVICE_ID_ATI_IXP600_IDE)
- 		ppi[1] = &ata_dummy_port_info;
- 
- 	return ata_pci_bmdma_init_one(pdev, ppi, &atiixp_sht, NULL,
--- 
-2.18.0
+Thanks,
 
+	tglx
