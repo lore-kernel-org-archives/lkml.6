@@ -2,68 +2,106 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D5E4C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:47:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9406C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:49:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BE5A20839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:47:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BE5A20839
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id A0BF320882
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:49:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0BF320882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726730AbeIKMpl (ORCPT
+        id S1726811AbeIKMrS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 08:45:41 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45822 "EHLO mx1.redhat.com"
+        Tue, 11 Sep 2018 08:47:18 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46034 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726480AbeIKMpk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 08:45:40 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9530387916;
-        Tue, 11 Sep 2018 07:47:37 +0000 (UTC)
-Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A7C8D2022EEE;
-        Tue, 11 Sep 2018 07:47:36 +0000 (UTC)
-Date:   Tue, 11 Sep 2018 15:47:33 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@01.org, tglx@linutronix.de, mingo@kernel.org,
-        hpa@zytor.com, thgarnie@google.com,
-        kirill.shutemov@linux.intel.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] mm: Add build time sanity chcek for struct page
- size
-Message-ID: <20180911074733.GX1740@192.168.1.3>
-References: <20180909124946.17988-3-bhe@redhat.com>
- <201809102133.gzaxoHWf%fengguang.wu@intel.com>
+        id S1726482AbeIKMrS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 08:47:18 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 9B661AEF8;
+        Tue, 11 Sep 2018 07:49:13 +0000 (UTC)
+Date:   Tue, 11 Sep 2018 09:49:12 +0200 (CEST)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+cc:     linux-kernel@vger.kernel.org
+Subject: [GIT PULL] HID fixes
+Message-ID: <nycvar.YFH.7.76.1809110944350.15880@cbobk.fhfr.pm>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201809102133.gzaxoHWf%fengguang.wu@intel.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 11 Sep 2018 07:47:37 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 11 Sep 2018 07:47:37 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/10/18 at 09:41pm, kbuild test robot wrote:
->    include/linux/build_bug.h:69:2: note: in expansion of macro 'BUILD_BUG_ON_MSG'
->      BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
->      ^~~~~~~~~~~~~~~~
-> >> mm/page_alloc.c:6852:2: note: in expansion of macro 'BUILD_BUG_ON'
->      BUILD_BUG_ON(sizeof(struct page) < min(SZ_1K, PAGE_SIZE/4));
->      ^~~~~~~~~~~~
+Linus,
 
-Thanks, below code can mute the compiling warning. Will update and
-repost.
+please pull from
 
-+       BUILD_BUG_ON(sizeof(struct page) > min((size_t)SZ_1K, PAGE_SIZE));
+  git://git.kernel.org/pub/scm/linux/kernel/git/jikos/hid.git for-linus
+
+to receive fixes for HID subsystem; highlights:
+
+=====
+- functional regression fix for sensor-hub driver from Hans de Goede
+- stop doing device reset for i2c-hid devices, which unbreaks some of them 
+  (and is in line with the specification), from Kai-Heng Feng
+- error handling fix for hid-core from Gustavo A. R. Silva
+- functional regression fix for some Elan panels from Benjamin Tissoires
+- a few new device ID additions and misc small fixes
+=====
+
+Thanks.
+
+----------------------------------------------------------------
+AceLan Kao (1):
+      HID: i2c-hid: Fix flooded incomplete report after S3 on Rayd touchscreen
+
+Andreas Bosch (1):
+      HID: intel-ish-hid: Enable Sunrise Point-H ish driver
+
+Benjamin Tissoires (2):
+      HID: multitouch: fix Elan panels with 2 input modes declaration
+      HID: core: fix grouping by application
+
+Gustavo A. R. Silva (1):
+      HID: core: fix NULL pointer dereference
+
+Hans de Goede (1):
+      HID: sensor-hub: Restore fixup for Lenovo ThinkPad Helix 2 sensor hub report
+
+Harry Mallon (1):
+      HID: hid-saitek: Add device ID for RAT 7 Contagion
+
+Kai-Heng Feng (1):
+      HID: i2c-hid: Don't reset device upon system resume
+
+Sean O'Brien (1):
+      HID: add support for Apple Magic Keyboards
+
+Stefan Agner (2):
+      HID: input: fix leaking custom input node name
+      HID: core: fix memory leak on probe
+
+ drivers/hid/hid-apple.c                 |  9 ++++++++-
+ drivers/hid/hid-core.c                  |  5 ++++-
+ drivers/hid/hid-ids.h                   |  6 +++---
+ drivers/hid/hid-input.c                 |  5 +++--
+ drivers/hid/hid-multitouch.c            | 19 +++++++++++++++++--
+ drivers/hid/hid-saitek.c                |  2 ++
+ drivers/hid/hid-sensor-hub.c            | 23 +++++++++++++++++++++++
+ drivers/hid/i2c-hid/i2c-hid.c           | 11 +++++++----
+ drivers/hid/intel-ish-hid/ipc/hw-ish.h  |  1 +
+ drivers/hid/intel-ish-hid/ipc/pci-ish.c |  1 +
+ include/linux/hid.h                     |  1 +
+ 11 files changed, 70 insertions(+), 13 deletions(-)
+
+-- 
+Jiri Kosina
+SUSE Labs
+
