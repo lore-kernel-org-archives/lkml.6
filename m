@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A642AECDFC0
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 05:36:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5D8CC04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 05:36:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53DB0206BB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 05:36:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53DB0206BB
+	by mail.kernel.org (Postfix) with ESMTP id 749A720870
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 05:36:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 749A720870
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727673AbeIKKeN (ORCPT
+        id S1727703AbeIKKeP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 06:34:13 -0400
-Received: from mga17.intel.com ([192.55.52.151]:62537 "EHLO mga17.intel.com"
+        Tue, 11 Sep 2018 06:34:15 -0400
+Received: from mga17.intel.com ([192.55.52.151]:62545 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726426AbeIKKeM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 06:34:12 -0400
+        id S1726426AbeIKKeO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 06:34:14 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2018 22:36:31 -0700
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2018 22:36:40 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,359,1531810800"; 
-   d="scan'208";a="262426329"
+   d="scan'208";a="262426338"
 Received: from aaronlu.sh.intel.com ([10.239.159.44])
-  by fmsmga006.fm.intel.com with ESMTP; 10 Sep 2018 22:36:28 -0700
+  by fmsmga006.fm.intel.com with ESMTP; 10 Sep 2018 22:36:37 -0700
 From:   Aaron Lu <aaron.lu@intel.com>
 To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
@@ -43,9 +43,9 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Tariq Toukan <tariqt@mellanox.com>,
         Yosef Lev <levyossi@icloud.com>,
         Jesper Dangaard Brouer <brouer@redhat.com>
-Subject: [RFC PATCH 4/9] mm: convert zone lock from spinlock to rwlock
-Date:   Tue, 11 Sep 2018 13:36:11 +0800
-Message-Id: <20180911053616.6894-5-aaron.lu@intel.com>
+Subject: [RFC PATCH 7/9] mm: use read_lock for free path
+Date:   Tue, 11 Sep 2018 13:36:14 +0800
+Message-Id: <20180911053616.6894-8-aaron.lu@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180911053616.6894-1-aaron.lu@intel.com>
 References: <20180911053616.6894-1-aaron.lu@intel.com>
@@ -54,515 +54,281 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch converts zone lock from spinlock to rwlock and always
-take the lock in write mode so there is no functionality change.
+Daniel Jordan's patch has made it possible for multiple threads to
+operate on a global list with smp_list_del() at any position and
+smp_list_add/splice() at head position concurrently without taking
+any lock.
 
-This is a preparation for free path to take the lock in read mode
-to make free path work concurrently.
+This patch makes use of this technique on free list.
+To make this happen, add_to_buddy_tail() is removed since only
+adding to list head is safe with smp_list_del() so only
+add_to_buddy() is used.
 
-compact_trylock and compact_unlock_should_abort are taken from
-Daniel Jordan's patch.
+Once free path can run concurrently, it is possible for multiple
+threads to free pages at the same time. If 2 pages being freed are
+buddy, they can miss the oppotunity to be merged.
+
+For this reason, introduce range locks to protect merge operation
+that makes sure inside one range, only one merge can happen and a
+page's Buddy status is properly set inside the lock. The range is
+selected as an order of (MAX_ORDER-1) pages since merge can't
+exceed that order.
 
 Signed-off-by: Aaron Lu <aaron.lu@intel.com>
 ---
- include/linux/mmzone.h |  2 +-
- mm/compaction.c        | 90 +++++++++++++++++++++---------------------
- mm/hugetlb.c           |  8 ++--
- mm/page_alloc.c        | 52 ++++++++++++------------
- mm/page_isolation.c    | 12 +++---
- mm/vmstat.c            |  4 +-
- 6 files changed, 85 insertions(+), 83 deletions(-)
+ include/linux/list.h   |  1 +
+ include/linux/mmzone.h |  3 ++
+ lib/list.c             | 23 ++++++++++
+ mm/page_alloc.c        | 95 +++++++++++++++++++++++-------------------
+ 4 files changed, 78 insertions(+), 44 deletions(-)
 
+diff --git a/include/linux/list.h b/include/linux/list.h
+index 5f203fb55939..608e40f6489e 100644
+--- a/include/linux/list.h
++++ b/include/linux/list.h
+@@ -49,6 +49,7 @@ static inline bool __list_del_entry_valid(struct list_head *entry)
+ 
+ extern void smp_list_del(struct list_head *entry);
+ extern void smp_list_splice(struct list_head *list, struct list_head *head);
++extern void smp_list_add(struct list_head *entry, struct list_head *head);
+ 
+ /*
+  * Insert a new entry between two known consecutive entries.
 diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 1e22d96734e0..84cfa56e2d19 100644
+index e66b8c63d5d1..0ea52e9bb610 100644
 --- a/include/linux/mmzone.h
 +++ b/include/linux/mmzone.h
-@@ -465,7 +465,7 @@ struct zone {
- 	unsigned long		flags;
- 
+@@ -467,6 +467,9 @@ struct zone {
  	/* Primarily protects free_area */
--	spinlock_t		lock;
-+	rwlock_t		lock;
+ 	rwlock_t		lock;
  
++	/* Protects merge operation for a range of order=(MAX_ORDER-1) pages */
++	spinlock_t		*range_locks;
++
  	/* Write-intensive fields used by compaction and vmstats. */
  	ZONE_PADDING(_pad2_)
-diff --git a/mm/compaction.c b/mm/compaction.c
-index faca45ebe62d..6ecf74d8e287 100644
---- a/mm/compaction.c
-+++ b/mm/compaction.c
-@@ -347,20 +347,20 @@ static inline void update_pageblock_skip(struct compact_control *cc,
-  * Returns true if the lock is held
-  * Returns false if the lock is not held and compaction should abort
-  */
--static bool compact_trylock_irqsave(spinlock_t *lock, unsigned long *flags,
--						struct compact_control *cc)
--{
--	if (cc->mode == MIGRATE_ASYNC) {
--		if (!spin_trylock_irqsave(lock, *flags)) {
--			cc->contended = true;
--			return false;
--		}
--	} else {
--		spin_lock_irqsave(lock, *flags);
--	}
--
--	return true;
--}
-+#define compact_trylock(lock, flags, cc, lockf, trylockf)		       \
-+({									       \
-+	bool __ret = true;						       \
-+	if ((cc)->mode == MIGRATE_ASYNC) {				       \
-+		if (!trylockf((lock), *(flags))) {			       \
-+			(cc)->contended = true;				       \
-+			__ret = false;					       \
-+		}							       \
-+	} else {							       \
-+		lockf((lock), *(flags));				       \
-+	}								       \
-+									       \
-+	__ret;								       \
-+})
  
- /*
-  * Compaction requires the taking of some coarse locks that are potentially
-@@ -377,29 +377,29 @@ static bool compact_trylock_irqsave(spinlock_t *lock, unsigned long *flags,
-  * Returns false when compaction can continue (sync compaction might have
-  *		scheduled)
-  */
--static bool compact_unlock_should_abort(spinlock_t *lock,
--		unsigned long flags, bool *locked, struct compact_control *cc)
--{
--	if (*locked) {
--		spin_unlock_irqrestore(lock, flags);
--		*locked = false;
--	}
--
--	if (fatal_signal_pending(current)) {
--		cc->contended = true;
--		return true;
--	}
--
--	if (need_resched()) {
--		if (cc->mode == MIGRATE_ASYNC) {
--			cc->contended = true;
--			return true;
--		}
--		cond_resched();
--	}
--
--	return false;
--}
-+#define compact_unlock_should_abort(lock, flags, locked, cc, unlockf)	       \
-+({									       \
-+	bool __ret = false;						       \
-+									       \
-+	if (*(locked)) {						       \
-+		unlockf((lock), (flags));				       \
-+		*(locked) = false;					       \
-+	}								       \
-+									       \
-+	if (fatal_signal_pending(current)) {				       \
-+		(cc)->contended = true;					       \
-+		__ret = true;						       \
-+	} else if (need_resched()) {					       \
-+		if ((cc)->mode == MIGRATE_ASYNC) {			       \
-+			(cc)->contended = true;				       \
-+			__ret = true;					       \
-+		} else {						       \
-+			cond_resched();					       \
-+		}							       \
-+	}								       \
-+									       \
-+	__ret;								       \
-+})
- 
- /*
-  * Aside from avoiding lock contention, compaction also periodically checks
-@@ -457,7 +457,7 @@ static unsigned long isolate_freepages_block(struct compact_control *cc,
- 		 */
- 		if (!(blockpfn % SWAP_CLUSTER_MAX)
- 		    && compact_unlock_should_abort(&cc->zone->lock, flags,
--								&locked, cc))
-+					&locked, cc, write_unlock_irqrestore))
- 			break;
- 
- 		nr_scanned++;
-@@ -502,8 +502,9 @@ static unsigned long isolate_freepages_block(struct compact_control *cc,
- 			 * spin on the lock and we acquire the lock as late as
- 			 * possible.
- 			 */
--			locked = compact_trylock_irqsave(&cc->zone->lock,
--								&flags, cc);
-+			locked = compact_trylock(&cc->zone->lock, &flags, cc,
-+						 write_lock_irqsave,
-+						 write_trylock_irqsave);
- 			if (!locked)
- 				break;
- 
-@@ -541,7 +542,7 @@ static unsigned long isolate_freepages_block(struct compact_control *cc,
- 	}
- 
- 	if (locked)
--		spin_unlock_irqrestore(&cc->zone->lock, flags);
-+		write_unlock_irqrestore(&cc->zone->lock, flags);
- 
- 	/*
- 	 * There is a tiny chance that we have read bogus compound_order(),
-@@ -758,7 +759,7 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
- 		 */
- 		if (!(low_pfn % SWAP_CLUSTER_MAX)
- 		    && compact_unlock_should_abort(zone_lru_lock(zone), flags,
--								&locked, cc))
-+					&locked, cc, spin_unlock_irqrestore))
- 			break;
- 
- 		if (!pfn_valid_within(low_pfn))
-@@ -847,8 +848,9 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
- 
- 		/* If we already hold the lock, we can skip some rechecking */
- 		if (!locked) {
--			locked = compact_trylock_irqsave(zone_lru_lock(zone),
--								&flags, cc);
-+			locked = compact_trylock(zone_lru_lock(zone), &flags, cc,
-+						 spin_lock_irqsave,
-+						 spin_trylock_irqsave);
- 			if (!locked)
- 				break;
- 
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 3c21775f196b..18fde0139f4a 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -1113,7 +1113,7 @@ static struct page *alloc_gigantic_page(struct hstate *h, gfp_t gfp_mask,
- 
- 	zonelist = node_zonelist(nid, gfp_mask);
- 	for_each_zone_zonelist_nodemask(zone, z, zonelist, gfp_zone(gfp_mask), nodemask) {
--		spin_lock_irqsave(&zone->lock, flags);
-+		write_lock_irqsave(&zone->lock, flags);
- 
- 		pfn = ALIGN(zone->zone_start_pfn, nr_pages);
- 		while (zone_spans_last_pfn(zone, pfn, nr_pages)) {
-@@ -1125,16 +1125,16 @@ static struct page *alloc_gigantic_page(struct hstate *h, gfp_t gfp_mask,
- 				 * spinning on this lock, it may win the race
- 				 * and cause alloc_contig_range() to fail...
- 				 */
--				spin_unlock_irqrestore(&zone->lock, flags);
-+				write_unlock_irqrestore(&zone->lock, flags);
- 				ret = __alloc_gigantic_page(pfn, nr_pages, gfp_mask);
- 				if (!ret)
- 					return pfn_to_page(pfn);
--				spin_lock_irqsave(&zone->lock, flags);
-+				write_lock_irqsave(&zone->lock, flags);
- 			}
- 			pfn += nr_pages;
- 		}
- 
--		spin_unlock_irqrestore(&zone->lock, flags);
-+		write_unlock_irqrestore(&zone->lock, flags);
- 	}
- 
- 	return NULL;
+diff --git a/lib/list.c b/lib/list.c
+index 104faa144abf..3ecf62b88c86 100644
+--- a/lib/list.c
++++ b/lib/list.c
+@@ -202,3 +202,26 @@ void smp_list_splice(struct list_head *list, struct list_head *head)
+ 	/* Simultaneously complete the splice and unlock the head node. */
+ 	WRITE_ONCE(head->next, first);
+ }
++
++void smp_list_add(struct list_head *entry, struct list_head *head)
++{
++	struct list_head *succ;
++
++	/*
++	 * Lock the front of @head by replacing its next pointer with NULL.
++	 * Should another thread be adding to the front, wait until it's done.
++	 */
++	succ = READ_ONCE(head->next);
++	while (succ == NULL || cmpxchg(&head->next, succ, NULL) != succ) {
++		cpu_relax();
++		succ = READ_ONCE(head->next);
++	}
++
++	entry->next = succ;
++	entry->prev = head;
++	succ->prev = entry;
++
++	smp_wmb();
++
++	WRITE_ONCE(head->next, entry);
++}
 diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 05e983f42316..38e39ccdd6d9 100644
+index dff3edc60d71..5f5cc671bcf7 100644
 --- a/mm/page_alloc.c
 +++ b/mm/page_alloc.c
-@@ -1133,7 +1133,7 @@ static void free_pcppages_bulk(struct zone *zone, int count,
+@@ -339,6 +339,17 @@ static inline bool update_defer_init(pg_data_t *pgdat,
+ }
+ #endif
+ 
++/* Return a pointer to the spinblock for a pageblock this page belongs to */
++static inline spinlock_t *get_range_lock(struct page *page)
++{
++	struct zone *zone = page_zone(page);
++	unsigned long zone_start_pfn = zone->zone_start_pfn;
++	unsigned long range = (page_to_pfn(page) - zone_start_pfn) >>
++								(MAX_ORDER - 1);
++
++	return &zone->range_locks[range];
++}
++
+ /* Return a pointer to the bitmap storing bits affecting a block of pages */
+ static inline unsigned long *get_pageblock_bitmap(struct page *page,
+ 							unsigned long pfn)
+@@ -697,25 +708,12 @@ static inline void set_page_order(struct page *page, unsigned int order)
+ 	__SetPageBuddy(page);
+ }
+ 
+-static inline void add_to_buddy_common(struct page *page, struct zone *zone,
+-					unsigned int order)
++static inline void add_to_buddy(struct page *page, struct zone *zone,
++				unsigned int order, int mt)
+ {
+ 	set_page_order(page, order);
+ 	atomic_long_inc(&zone->free_area[order].nr_free);
+-}
+-
+-static inline void add_to_buddy_head(struct page *page, struct zone *zone,
+-					unsigned int order, int mt)
+-{
+-	add_to_buddy_common(page, zone, order);
+-	list_add(&page->lru, &zone->free_area[order].free_list[mt]);
+-}
+-
+-static inline void add_to_buddy_tail(struct page *page, struct zone *zone,
+-					unsigned int order, int mt)
+-{
+-	add_to_buddy_common(page, zone, order);
+-	list_add_tail(&page->lru, &zone->free_area[order].free_list[mt]);
++	smp_list_add(&page->lru, &zone->free_area[order].free_list[mt]);
+ }
+ 
+ static inline void rmv_page_order(struct page *page)
+@@ -724,12 +722,25 @@ static inline void rmv_page_order(struct page *page)
+ 	set_page_private(page, 0);
+ }
+ 
++static inline void remove_from_buddy_common(struct page *page,
++				struct zone *zone, unsigned int order)
++{
++	atomic_long_dec(&zone->free_area[order].nr_free);
++	rmv_page_order(page);
++}
++
+ static inline void remove_from_buddy(struct page *page, struct zone *zone,
+ 					unsigned int order)
+ {
+ 	list_del(&page->lru);
+-	atomic_long_dec(&zone->free_area[order].nr_free);
+-	rmv_page_order(page);
++	remove_from_buddy_common(page, zone, order);
++}
++
++static inline void remove_from_buddy_concurrent(struct page *page,
++				struct zone *zone, unsigned int order)
++{
++	smp_list_del(&page->lru);
++	remove_from_buddy_common(page, zone, order);
+ }
+ 
+ /*
+@@ -806,6 +817,7 @@ static inline void __free_one_page(struct page *page,
+ 	unsigned long uninitialized_var(buddy_pfn);
+ 	struct page *buddy;
+ 	unsigned int max_order;
++	spinlock_t *range_lock;
+ 
+ 	max_order = min_t(unsigned int, MAX_ORDER, pageblock_order + 1);
+ 
+@@ -819,6 +831,8 @@ static inline void __free_one_page(struct page *page,
+ 	VM_BUG_ON_PAGE(pfn & ((1 << order) - 1), page);
+ 	VM_BUG_ON_PAGE(bad_range(zone, page), page);
+ 
++	range_lock = get_range_lock(page);
++	spin_lock(range_lock);
+ continue_merging:
+ 	while (order < max_order - 1) {
+ 		buddy_pfn = __find_buddy_pfn(pfn, order);
+@@ -835,7 +849,7 @@ static inline void __free_one_page(struct page *page,
+ 		if (page_is_guard(buddy))
+ 			clear_page_guard(zone, buddy, order, migratetype);
+ 		else
+-			remove_from_buddy(buddy, zone, order);
++			remove_from_buddy_concurrent(buddy, zone, order);
+ 		combined_pfn = buddy_pfn & pfn;
+ 		page = page + (combined_pfn - pfn);
+ 		pfn = combined_pfn;
+@@ -867,28 +881,8 @@ static inline void __free_one_page(struct page *page,
+ 	}
+ 
+ done_merging:
+-	/*
+-	 * If this is not the largest possible page, check if the buddy
+-	 * of the next-highest order is free. If it is, it's possible
+-	 * that pages are being freed that will coalesce soon. In case,
+-	 * that is happening, add the free page to the tail of the list
+-	 * so it's less likely to be used soon and more likely to be merged
+-	 * as a higher order page
+-	 */
+-	if ((order < MAX_ORDER-2) && pfn_valid_within(buddy_pfn)) {
+-		struct page *higher_page, *higher_buddy;
+-		combined_pfn = buddy_pfn & pfn;
+-		higher_page = page + (combined_pfn - pfn);
+-		buddy_pfn = __find_buddy_pfn(combined_pfn, order + 1);
+-		higher_buddy = higher_page + (buddy_pfn - combined_pfn);
+-		if (pfn_valid_within(buddy_pfn) &&
+-		    page_is_buddy(higher_page, higher_buddy, order + 1)) {
+-			add_to_buddy_tail(page, zone, order, migratetype);
+-			return;
+-		}
+-	}
+-
+-	add_to_buddy_head(page, zone, order, migratetype);
++	add_to_buddy(page, zone, order, migratetype);
++	spin_unlock(range_lock);
+ }
+ 
+ /*
+@@ -1154,7 +1148,7 @@ static void free_pcppages_bulk(struct zone *zone, int count,
  		} while (--count && --batch_free && !list_empty(list));
  	}
  
--	spin_lock(&zone->lock);
-+	write_lock(&zone->lock);
+-	write_lock(&zone->lock);
++	read_lock(&zone->lock);
  	isolated_pageblocks = has_isolate_pageblock(zone);
  
  	/*
-@@ -1151,7 +1151,7 @@ static void free_pcppages_bulk(struct zone *zone, int count,
+@@ -1172,7 +1166,7 @@ static void free_pcppages_bulk(struct zone *zone, int count,
  		__free_one_page(page, page_to_pfn(page), zone, 0, mt);
  		trace_mm_page_pcpu_drain(page, 0, mt);
  	}
--	spin_unlock(&zone->lock);
-+	write_unlock(&zone->lock);
+-	write_unlock(&zone->lock);
++	read_unlock(&zone->lock);
  }
  
  static void free_one_page(struct zone *zone,
-@@ -1159,13 +1159,13 @@ static void free_one_page(struct zone *zone,
- 				unsigned int order,
- 				int migratetype)
- {
--	spin_lock(&zone->lock);
-+	write_lock(&zone->lock);
- 	if (unlikely(has_isolate_pageblock(zone) ||
- 		is_migrate_isolate(migratetype))) {
- 		migratetype = get_pfnblock_migratetype(page, pfn);
+@@ -1826,7 +1820,7 @@ static inline void expand(struct zone *zone, struct page *page,
+ 		if (set_page_guard(zone, &page[size], high, migratetype))
+ 			continue;
+ 
+-		add_to_buddy_head(&page[size], zone, high, migratetype);
++		add_to_buddy(&page[size], zone, high, migratetype);
  	}
- 	__free_one_page(page, pfn, zone, order, migratetype);
--	spin_unlock(&zone->lock);
-+	write_unlock(&zone->lock);
  }
  
- static void __meminit __init_single_page(struct page *page, unsigned long pfn,
-@@ -2251,7 +2251,7 @@ static void reserve_highatomic_pageblock(struct page *page, struct zone *zone,
- 	if (zone->nr_reserved_highatomic >= max_managed)
- 		return;
- 
--	spin_lock_irqsave(&zone->lock, flags);
-+	write_lock_irqsave(&zone->lock, flags);
- 
- 	/* Recheck the nr_reserved_highatomic limit under the lock */
- 	if (zone->nr_reserved_highatomic >= max_managed)
-@@ -2267,7 +2267,7 @@ static void reserve_highatomic_pageblock(struct page *page, struct zone *zone,
- 	}
- 
- out_unlock:
--	spin_unlock_irqrestore(&zone->lock, flags);
-+	write_unlock_irqrestore(&zone->lock, flags);
+@@ -6286,6 +6280,18 @@ void __ref free_area_init_core_hotplug(int nid)
  }
+ #endif
  
++static void __init setup_range_locks(struct zone *zone)
++{
++	unsigned long nr = (zone->spanned_pages >> (MAX_ORDER - 1)) + 1;
++	unsigned long size = nr * sizeof(spinlock_t);
++	unsigned long i;
++
++	zone->range_locks = memblock_virt_alloc_node_nopanic(size,
++						zone->zone_pgdat->node_id);
++	for (i = 0; i < nr; i++)
++		spin_lock_init(&zone->range_locks[i]);
++}
++
  /*
-@@ -2300,7 +2300,7 @@ static bool unreserve_highatomic_pageblock(const struct alloc_context *ac,
- 					pageblock_nr_pages)
- 			continue;
- 
--		spin_lock_irqsave(&zone->lock, flags);
-+		write_lock_irqsave(&zone->lock, flags);
- 		for (order = 0; order < MAX_ORDER; order++) {
- 			struct free_area *area = &(zone->free_area[order]);
- 
-@@ -2343,11 +2343,11 @@ static bool unreserve_highatomic_pageblock(const struct alloc_context *ac,
- 			ret = move_freepages_block(zone, page, ac->migratetype,
- 									NULL);
- 			if (ret) {
--				spin_unlock_irqrestore(&zone->lock, flags);
-+				write_unlock_irqrestore(&zone->lock, flags);
- 				return ret;
- 			}
- 		}
--		spin_unlock_irqrestore(&zone->lock, flags);
-+		write_unlock_irqrestore(&zone->lock, flags);
- 	}
- 
- 	return false;
-@@ -2465,7 +2465,7 @@ static int rmqueue_bulk(struct zone *zone, unsigned int order,
- {
- 	int i, alloced = 0;
- 
--	spin_lock(&zone->lock);
-+	write_lock(&zone->lock);
- 	for (i = 0; i < count; ++i) {
- 		struct page *page = __rmqueue(zone, order, migratetype);
- 		if (unlikely(page == NULL))
-@@ -2498,7 +2498,7 @@ static int rmqueue_bulk(struct zone *zone, unsigned int order,
- 	 * pages added to the pcp list.
- 	 */
- 	__mod_zone_page_state(zone, NR_FREE_PAGES, -(i << order));
--	spin_unlock(&zone->lock);
-+	write_unlock(&zone->lock);
- 	return alloced;
- }
- 
-@@ -2687,7 +2687,7 @@ void mark_free_pages(struct zone *zone)
- 	if (zone_is_empty(zone))
- 		return;
- 
--	spin_lock_irqsave(&zone->lock, flags);
-+	write_lock_irqsave(&zone->lock, flags);
- 
- 	max_zone_pfn = zone_end_pfn(zone);
- 	for (pfn = zone->zone_start_pfn; pfn < max_zone_pfn; pfn++)
-@@ -2721,7 +2721,7 @@ void mark_free_pages(struct zone *zone)
- 			}
- 		}
- 	}
--	spin_unlock_irqrestore(&zone->lock, flags);
-+	write_unlock_irqrestore(&zone->lock, flags);
- }
- #endif /* CONFIG_PM */
- 
-@@ -2990,7 +2990,7 @@ struct page *rmqueue(struct zone *preferred_zone,
- 	 * allocate greater than order-1 page units with __GFP_NOFAIL.
- 	 */
- 	WARN_ON_ONCE((gfp_flags & __GFP_NOFAIL) && (order > 1));
--	spin_lock_irqsave(&zone->lock, flags);
-+	write_lock_irqsave(&zone->lock, flags);
- 
- 	do {
- 		page = NULL;
-@@ -3002,7 +3002,7 @@ struct page *rmqueue(struct zone *preferred_zone,
- 		if (!page)
- 			page = __rmqueue(zone, order, migratetype);
- 	} while (page && check_new_pages(page, order));
--	spin_unlock(&zone->lock);
-+	write_unlock(&zone->lock);
- 	if (!page)
- 		goto failed;
- 	__mod_zone_freepage_state(zone, -(1 << order),
-@@ -5009,7 +5009,7 @@ void show_free_areas(unsigned int filter, nodemask_t *nodemask)
- 		show_node(zone);
- 		printk(KERN_CONT "%s: ", zone->name);
- 
--		spin_lock_irqsave(&zone->lock, flags);
-+		write_lock_irqsave(&zone->lock, flags);
- 		for (order = 0; order < MAX_ORDER; order++) {
- 			struct free_area *area = &zone->free_area[order];
- 			int type;
-@@ -5023,7 +5023,7 @@ void show_free_areas(unsigned int filter, nodemask_t *nodemask)
- 					types[order] |= 1 << type;
- 			}
- 		}
--		spin_unlock_irqrestore(&zone->lock, flags);
-+		write_unlock_irqrestore(&zone->lock, flags);
- 		for (order = 0; order < MAX_ORDER; order++) {
- 			printk(KERN_CONT "%lu*%lukB ",
- 			       nr[order], K(1UL) << order);
-@@ -6247,7 +6247,7 @@ static void __meminit zone_init_internals(struct zone *zone, enum zone_type idx,
- 	zone_set_nid(zone, nid);
- 	zone->name = zone_names[idx];
- 	zone->zone_pgdat = NODE_DATA(nid);
--	spin_lock_init(&zone->lock);
-+	rwlock_init(&zone->lock);
- 	zone_seqlock_init(zone);
- 	zone_pcp_init(zone);
- }
-@@ -7239,7 +7239,7 @@ static void __setup_per_zone_wmarks(void)
- 	for_each_zone(zone) {
- 		u64 tmp;
- 
--		spin_lock_irqsave(&zone->lock, flags);
-+		write_lock_irqsave(&zone->lock, flags);
- 		tmp = (u64)pages_min * zone->managed_pages;
- 		do_div(tmp, lowmem_pages);
- 		if (is_highmem(zone)) {
-@@ -7277,7 +7277,7 @@ static void __setup_per_zone_wmarks(void)
- 		zone->watermark[WMARK_LOW]  = min_wmark_pages(zone) + tmp;
- 		zone->watermark[WMARK_HIGH] = min_wmark_pages(zone) + tmp * 2;
- 
--		spin_unlock_irqrestore(&zone->lock, flags);
-+		write_unlock_irqrestore(&zone->lock, flags);
- 	}
- 
- 	/* update totalreserve_pages */
-@@ -8041,7 +8041,7 @@ __offline_isolated_pages(unsigned long start_pfn, unsigned long end_pfn)
- 		return;
- 	offline_mem_sections(pfn, end_pfn);
- 	zone = page_zone(pfn_to_page(pfn));
--	spin_lock_irqsave(&zone->lock, flags);
-+	write_lock_irqsave(&zone->lock, flags);
- 	pfn = start_pfn;
- 	while (pfn < end_pfn) {
- 		if (!pfn_valid(pfn)) {
-@@ -8073,7 +8073,7 @@ __offline_isolated_pages(unsigned long start_pfn, unsigned long end_pfn)
- 			SetPageReserved((page+i));
- 		pfn += (1 << order);
- 	}
--	spin_unlock_irqrestore(&zone->lock, flags);
-+	write_unlock_irqrestore(&zone->lock, flags);
- }
- #endif
- 
-@@ -8084,14 +8084,14 @@ bool is_free_buddy_page(struct page *page)
- 	unsigned long flags;
- 	unsigned int order;
- 
--	spin_lock_irqsave(&zone->lock, flags);
-+	write_lock_irqsave(&zone->lock, flags);
- 	for (order = 0; order < MAX_ORDER; order++) {
- 		struct page *page_head = page - (pfn & ((1 << order) - 1));
- 
- 		if (PageBuddy(page_head) && page_order(page_head) >= order)
- 			break;
- 	}
--	spin_unlock_irqrestore(&zone->lock, flags);
-+	write_unlock_irqrestore(&zone->lock, flags);
- 
- 	return order < MAX_ORDER;
- }
-@@ -8110,7 +8110,7 @@ bool set_hwpoison_free_buddy_page(struct page *page)
- 	unsigned int order;
- 	bool hwpoisoned = false;
- 
--	spin_lock_irqsave(&zone->lock, flags);
-+	write_lock_irqsave(&zone->lock, flags);
- 	for (order = 0; order < MAX_ORDER; order++) {
- 		struct page *page_head = page - (pfn & ((1 << order) - 1));
- 
-@@ -8120,7 +8120,7 @@ bool set_hwpoison_free_buddy_page(struct page *page)
- 			break;
- 		}
- 	}
--	spin_unlock_irqrestore(&zone->lock, flags);
-+	write_unlock_irqrestore(&zone->lock, flags);
- 
- 	return hwpoisoned;
- }
-diff --git a/mm/page_isolation.c b/mm/page_isolation.c
-index 43e085608846..5c99fc2a1616 100644
---- a/mm/page_isolation.c
-+++ b/mm/page_isolation.c
-@@ -26,7 +26,7 @@ static int set_migratetype_isolate(struct page *page, int migratetype,
- 
- 	zone = page_zone(page);
- 
--	spin_lock_irqsave(&zone->lock, flags);
-+	write_lock_irqsave(&zone->lock, flags);
- 
- 	/*
- 	 * We assume the caller intended to SET migrate type to isolate.
-@@ -82,7 +82,7 @@ static int set_migratetype_isolate(struct page *page, int migratetype,
- 		__mod_zone_freepage_state(zone, -nr_pages, mt);
- 	}
- 
--	spin_unlock_irqrestore(&zone->lock, flags);
-+	write_unlock_irqrestore(&zone->lock, flags);
- 	if (!ret)
- 		drain_all_pages(zone);
- 	return ret;
-@@ -98,7 +98,7 @@ static void unset_migratetype_isolate(struct page *page, unsigned migratetype)
- 	struct page *buddy;
- 
- 	zone = page_zone(page);
--	spin_lock_irqsave(&zone->lock, flags);
-+	write_lock_irqsave(&zone->lock, flags);
- 	if (!is_migrate_isolate_page(page))
- 		goto out;
- 
-@@ -137,7 +137,7 @@ static void unset_migratetype_isolate(struct page *page, unsigned migratetype)
- 	set_pageblock_migratetype(page, migratetype);
- 	zone->nr_isolate_pageblock--;
- out:
--	spin_unlock_irqrestore(&zone->lock, flags);
-+	write_unlock_irqrestore(&zone->lock, flags);
- 	if (isolated_page) {
- 		post_alloc_hook(page, order, __GFP_MOVABLE);
- 		__free_pages(page, order);
-@@ -299,10 +299,10 @@ int test_pages_isolated(unsigned long start_pfn, unsigned long end_pfn,
- 		return -EBUSY;
- 	/* Check all pages are free or marked as ISOLATED */
- 	zone = page_zone(page);
--	spin_lock_irqsave(&zone->lock, flags);
-+	write_lock_irqsave(&zone->lock, flags);
- 	pfn = __test_page_isolated_in_pageblock(start_pfn, end_pfn,
- 						skip_hwpoisoned_pages);
--	spin_unlock_irqrestore(&zone->lock, flags);
-+	write_unlock_irqrestore(&zone->lock, flags);
- 
- 	trace_test_pages_isolated(start_pfn, end_pfn, pfn);
- 
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index 8ba0870ecddd..06d79271a8ae 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1337,10 +1337,10 @@ static void walk_zones_in_node(struct seq_file *m, pg_data_t *pgdat,
- 			continue;
- 
- 		if (!nolock)
--			spin_lock_irqsave(&zone->lock, flags);
-+			write_lock_irqsave(&zone->lock, flags);
- 		print(m, pgdat, zone);
- 		if (!nolock)
--			spin_unlock_irqrestore(&zone->lock, flags);
-+			write_unlock_irqrestore(&zone->lock, flags);
+  * Set up the zone data structures:
+  *   - mark all pages reserved
+@@ -6357,6 +6363,7 @@ static void __init free_area_init_core(struct pglist_data *pgdat)
+ 		setup_usemap(pgdat, zone, zone_start_pfn, size);
+ 		init_currently_empty_zone(zone, zone_start_pfn, size);
+ 		memmap_init(size, nid, j, zone_start_pfn);
++		setup_range_locks(zone);
  	}
  }
- #endif
+ 
 -- 
 2.17.1
 
