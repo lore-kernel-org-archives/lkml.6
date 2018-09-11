@@ -2,121 +2,68 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_LOCAL_DIGITS,
-	FROM_LOCAL_HEX,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEAC7C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:44:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D5E4C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:47:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 920EC20839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:44:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="kM6zKE8G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 920EC20839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
+	by mail.kernel.org (Postfix) with ESMTP id 0BE5A20839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:47:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BE5A20839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727788AbeIKMm5 (ORCPT
+        id S1726730AbeIKMpl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 08:42:57 -0400
-Received: from m50-132.163.com ([123.125.50.132]:48909 "EHLO m50-132.163.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726353AbeIKMm4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 08:42:56 -0400
-X-Greylist: delayed 925 seconds by postgrey-1.27 at vger.kernel.org; Tue, 11 Sep 2018 08:42:46 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=72QmMu4gLD0A6PNoTI
-        wnn4sPfub86CGJxhsSyY+Z7Tg=; b=kM6zKE8GvpmlPOA0srT4LQUncBweugmGnI
-        zUS/eqL/QYc+Y8OmvFuNZNOfzKgXTvgaW2o7Uag/Cs+/b+C5IW8PRzzwhDjNpqel
-        PNIPf6ja6j+TRfEN9mOXG9mFBNa1KcumvJzN7SeohB5v8t66HRkYB0HCrjw7xUJP
-        nmRZ4eli8=
-Received: from lx-virtual-machine.localdomain (unknown [111.207.250.32])
-        by smtp2 (Coremail) with SMTP id DNGowAA3qZnRbpdbw0EIAA--.91S3;
-        Tue, 11 Sep 2018 15:29:21 +0800 (CST)
-From:   My Name <18650033736@163.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Xin Lin <18650033736@163.com>
-Subject: [PATCH] kernel: prevent submission of creds with higher privileges inside container
-Date:   Tue, 11 Sep 2018 15:29:19 +0800
-Message-Id: <1536650959-5057-1-git-send-email-18650033736@163.com>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID: DNGowAA3qZnRbpdbw0EIAA--.91S3
-X-Coremail-Antispam: 1Uf129KBjvJXoW7uFWxAr45Xw13Gry7WryDKFg_yoW8Kw18pF
-        sIkFyDGws8J3W7tws7Wr4YvFWrZw4fJry2gas5Kw4ayws2ka48u34v93W5GFnxArW7KayU
-        KFW5GrsIgr98Z3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UnTmDUUUUU=
-X-Originating-IP: [111.207.250.32]
-X-CM-SenderInfo: rprylkyqqtjlmtwbiqqrwthudrp/1tbiyhW+flQG-28F2QAAsB
+        Tue, 11 Sep 2018 08:45:41 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45822 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726480AbeIKMpk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 08:45:40 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9530387916;
+        Tue, 11 Sep 2018 07:47:37 +0000 (UTC)
+Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A7C8D2022EEE;
+        Tue, 11 Sep 2018 07:47:36 +0000 (UTC)
+Date:   Tue, 11 Sep 2018 15:47:33 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     kbuild test robot <lkp@intel.com>
+Cc:     kbuild-all@01.org, tglx@linutronix.de, mingo@kernel.org,
+        hpa@zytor.com, thgarnie@google.com,
+        kirill.shutemov@linux.intel.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] mm: Add build time sanity chcek for struct page
+ size
+Message-ID: <20180911074733.GX1740@192.168.1.3>
+References: <20180909124946.17988-3-bhe@redhat.com>
+ <201809102133.gzaxoHWf%fengguang.wu@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201809102133.gzaxoHWf%fengguang.wu@intel.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 11 Sep 2018 07:47:37 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 11 Sep 2018 07:47:37 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xin Lin <18650033736@163.com>
+On 09/10/18 at 09:41pm, kbuild test robot wrote:
+>    include/linux/build_bug.h:69:2: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+>      BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
+>      ^~~~~~~~~~~~~~~~
+> >> mm/page_alloc.c:6852:2: note: in expansion of macro 'BUILD_BUG_ON'
+>      BUILD_BUG_ON(sizeof(struct page) < min(SZ_1K, PAGE_SIZE/4));
+>      ^~~~~~~~~~~~
 
-Adversaries often attack the Linux kernel via using 
-commit_creds(prepare_kernel_cred(0)) to submit ROOT
-credential for the purpose of privilege escalation.
-For processes inside the Linux container, the above
-approach also works, because the container and the
-host share the same Linux kernel. Therefore, we en-
-force a check in commit_creds() before updating the
-cred of the caller process. If the process is insi-
-de a container (judging from the Namespace ID) and
-try to submit credentials with higher privileges t-
-han current (judging from the uid, gid, and cap_bset
-in the new cred), we will stop the modification. We
-consider that if the namespace ID of the process is
-different from the init Namespace ID (enumed in /i-
-nclude/linux/proc_ns.h), the process is inside a c-
-ontainer. And if the uid/gid in the new cred is sm-
-aller or the cap_bset (capability bounding set) in
-the new cred is larger, it may be a privilege esca-
-lation operation.
+Thanks, below code can mute the compiling warning. Will update and
+repost.
 
-Signed-off-by: Xin Lin <18650033736@163.com>
----
- kernel/cred.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
-
-diff --git a/kernel/cred.c b/kernel/cred.c
-index ecf0365..b6d4fb23 100644
---- a/kernel/cred.c
-+++ b/kernel/cred.c
-@@ -19,6 +19,11 @@
- #include <linux/security.h>
- #include <linux/binfmts.h>
- #include <linux/cn_proc.h>
-+#include <linux/proc_ns.h>
-+#include <linux/ipc_namespace.h>
-+#include "../fs/mount.h"
-+#include <linux/capability.h>
-+#include <linux/cgroup.h>
- 
- #if 0
- #define kdebug(FMT, ...)						\
-@@ -425,6 +430,18 @@ int commit_creds(struct cred *new)
- 	struct task_struct *task = current;
- 	const struct cred *old = task->real_cred;
- 
-+	if (task->nsproxy->uts_ns->ns.inum != PROC_UTS_INIT_INO ||
-+	task->nsproxy->ipc_ns->ns.inum != PROC_IPC_INIT_INO ||
-+	task->nsproxy->mnt_ns->ns.inum != 0xF0000000U ||
-+	task->nsproxy->pid_ns_for_children->ns.inum != PROC_PID_INIT_INO ||
-+	task->nsproxy->net_ns->ns.inum != 0xF0000075U ||
-+	old->user_ns->ns.inum != PROC_USER_INIT_INO ||
-+	task->nsproxy->cgroup_ns->ns.inum != PROC_CGROUP_INIT_INO) {
-+		if (new->uid.val < old->uid.val || new->gid.val < old->gid.val
-+		|| new->cap_bset.cap[0] > old->cap_bset.cap[0])
-+			return 0;
-+	}
-+
- 	kdebug("commit_creds(%p{%d,%d})", new,
- 	       atomic_read(&new->usage),
- 	       read_cred_subscribers(new));
--- 
-2.7.4
-
-
++       BUILD_BUG_ON(sizeof(struct page) > min((size_t)SZ_1K, PAGE_SIZE));
