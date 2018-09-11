@@ -2,95 +2,138 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB088C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 10:17:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08FA4C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 10:17:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 998832088E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 10:17:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 998832088E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lichtvoll.de
+	by mail.kernel.org (Postfix) with ESMTP id BE36120839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 10:17:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE36120839
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727300AbeIKPPu convert rfc822-to-8bit (ORCPT
+        id S1727578AbeIKPQU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 11:15:50 -0400
-Received: from mondschein.lichtvoll.de ([194.150.191.11]:60905 "EHLO
-        mail.lichtvoll.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726554AbeIKPPu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 11:15:50 -0400
-Authentication-Results: auth=pass smtp.auth=martin smtp.mailfrom=martin@lichtvoll.de
-Received: from 127.0.0.1 (localhost [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mail.lichtvoll.de (Postfix) with ESMTPSA id 9ECE73A8D1A;
-        Tue, 11 Sep 2018 12:17:10 +0200 (CEST)
-From:   Martin Steigerwald <martin@lichtvoll.de>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Intel Gfx Mailing List <intel-gfx@freedesktop.org>,
-        Thorsten Leemhuis <regressions@leemhuis.info>
-Subject: Re: [REGRESSION 4.19-rc2] sometimes hangs with black screen when resuming from suspend or hibernation (was: Re: Linux 4.19-rc2)
-Date:   Tue, 11 Sep 2018 12:17:05 +0200
-Message-ID: <3346308.cXARZRajoW@merkaba>
-In-Reply-To: <CAJZ5v0i3gH4H6Su5MPWA3DA_i4mvHEqfw3y=rr0XOpZi5bbqhA@mail.gmail.com>
-References: <CA+55aFyG0GbDfoghEhAmKBPcZCiPu6CCpPRz9GwjCzLuP_Vv5Q@mail.gmail.com> <20222492.cP35YpYkb6@merkaba> <CAJZ5v0i3gH4H6Su5MPWA3DA_i4mvHEqfw3y=rr0XOpZi5bbqhA@mail.gmail.com>
+        Tue, 11 Sep 2018 11:16:20 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41180 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726836AbeIKPQU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 11:16:20 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3DD2718A;
+        Tue, 11 Sep 2018 03:17:42 -0700 (PDT)
+Received: from en101.Emea.Arm.com (en101.emea.arm.com [10.4.13.23])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id F3EE83F557;
+        Tue, 11 Sep 2018 03:17:37 -0700 (PDT)
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, robh@kernel.org,
+        frowand.list@gmail.com, devicetree@vger.kernel.org,
+        mathieu.poirier@linaro.org, arm@kernel.org, sudeep.holla@arm.com,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        David Brown <david.brown@linaro.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "Ivan T . Ivanov" <ivan.ivanov@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-omap@vger.kernel.org, lipengcheng8@huawei.com,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        orsonzhai@gmail.com,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Wei Xu <xuwei5@hisilicon.com>, zhang.lyra@gmail.com
+Subject: [PATCH 00/11] dts: Update coresight device tree bindings
+Date:   Tue, 11 Sep 2018 11:17:01 +0100
+Message-Id: <1536661032-30481-1-git-send-email-suzuki.poulose@arm.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cc´d Intel Gfx mailing list, in case somebody there knows something:
+Coresight DT bindings have been updated to obey the DTS rules
+for label/address matching for graph nodes. The changes are in
+coresight/next tree scheduled for v4.20. This series updates the
+in kernel dts to match the new bindings along with updating a couple
+of new examples (e.,g CATU) in the Documentation (which were missed
+as they were still in flight when we created the series).
 
-Cc´d Thorsten for regression tracking… forgot initially. Can also open 
-bug report at a later time but so far I cannot provide many details 
-about the issue.
+Please note that this should not be pulled for v4.19, which I assume
+is a safe assumption. But please do pull it for v4.20.
+The dt updates for the Juno boards were sent earlier with the original
+DT update series and has been queued for v4.20.
 
-Rafael J. Wysocki - 11.09.18, 10:17:
-> On Tue, Sep 11, 2018 at 10:01 AM Martin Steigerwald 
-<martin@lichtvoll.de> wrote:
-> > Hi.
-> > 
-> > Linus Torvalds - 02.09.18, 23:45:
-> > > As usual, the rc2 release is pretty small. People are taking a
-> > 
-> > With 4.19-rc2 this ThinkPad T520 with i5 Sandybrdige sometimes hangs
-> > with black screen when resuming from suspend or hibernation.  With
-> > 4.18.1 it did not. Of course there have been userspace related
-> > updates that could be related.
-> > 
-> > I currently have no time to dig into this and on this production
-> > laptop I generally do not do bisects between major kernel releases.
-> > So currently I only answer questions that do not require much time
-> > to answer.
-> > 
-> > For now I switched back to 4.18. If that is stable – and thus likely
-> > no userspace component is related –, I go with 4.19-rc3 or whatever
-> > is most recent version to see if the issue has been fixed already.
-> 
-> There were almost no general changes related to system-wide PM between
-> 4.18 and current, so I would suspect one of the device drivers or the
-> x86 core.  It also may be something like CPU online/offline, however.
+Applies on coresight/next (which is based on v4.19) and should apply
+cleanly on v4.19-rc3.
 
-I see. I wondered about intel-gfx driver already. Of course it could 
-also be something else.
 
-I forgot to mention: The mouse pointer was visible, but the screen 
-remained black. That may again point away from Intel gfx driver. There 
-has been a MESA update in between in userspace.
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Andy Gross <andy.gross@linaro.org>
+Cc: Benoît Cousson <bcousson@baylibre.com>
+Cc: David Brown <david.brown@linaro.org>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Frank Rowand <frowand.list@gmail.com>
+Cc: Ivan T. Ivanov <ivan.ivanov@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-omap@vger.kernel.org
+Cc: lipengcheng8@huawei.com
+Cc: Liviu Dudau <liviu.dudau@arm.com>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
+Cc: orsonzhai@gmail.com
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Tony Lindgren <tony@atomide.com>
+Cc: Wei Xu <xuwei5@hisilicon.com>
+Cc: xuwei5@hisilicon.com
+Cc: zhang.lyra@gmail.com
+Cc: arm@kernel.org
 
-Currently running 4.18.7 to make sure it is no userspace issue.
+Suzuki K Poulose (11):
+  Documentation: dts: Update coresight binding examples
+  dts: hisilicon: Update coresight bindings for hardware ports
+  dts: spreadtrum: Update coresight bindings for hardware ports
+  dts: qcom: Update coresight bindings for hardware ports
+  dts: arm: hisilicon: Update coresight bindings for hardware ports
+  dts: arm: imx7{d,s}: Update coresight binding for hardware ports
+  dts: arm: omap: Update coresight bindings for hardware ports
+  dts: arm: qcom: Update coresight bindings for hardware ports
+  dts: sama5d2: Update coresight bindings for hardware ports
+  dts: ste-dbx5x0: Update coresight bindings for hardware port
+  dts: tc2: Update coresight bindings for hardware ports
 
-Thanks,
+ .../devicetree/bindings/arm/coresight.txt          |  20 +-
+ arch/arm/boot/dts/hip04.dtsi                       | 322 ++++++++++++---------
+ arch/arm/boot/dts/imx7d.dtsi                       |  11 +-
+ arch/arm/boot/dts/imx7s.dtsi                       |  78 +++--
+ arch/arm/boot/dts/omap3-beagle-xm.dts              |  17 +-
+ arch/arm/boot/dts/omap3-beagle.dts                 |  17 +-
+ arch/arm/boot/dts/qcom-apq8064.dtsi                |  75 +++--
+ arch/arm/boot/dts/qcom-msm8974.dtsi                | 108 ++++---
+ arch/arm/boot/dts/sama5d2.dtsi                     |  17 +-
+ arch/arm/boot/dts/ste-dbx5x0.dtsi                  |  61 ++--
+ arch/arm/boot/dts/vexpress-v2p-ca15_a7.dts         |  90 +++---
+ .../arm64/boot/dts/hisilicon/hi6220-coresight.dtsi | 147 ++++++----
+ arch/arm64/boot/dts/qcom/msm8916.dtsi              |  98 ++++---
+ arch/arm64/boot/dts/sprd/sc9836.dtsi               |  74 +++--
+ arch/arm64/boot/dts/sprd/sc9860.dtsi               | 183 +++++++-----
+ 15 files changed, 780 insertions(+), 538 deletions(-)
+
 -- 
-Martin
-
+2.7.4
 
