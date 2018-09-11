@@ -1,83 +1,123 @@
 Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.0 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD754C6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 06:33:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00523C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 06:35:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B5CF2086A
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 06:33:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B5CF2086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
+	by mail.kernel.org (Postfix) with ESMTP id 9E51320645
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 06:35:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s8Ir3cio"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E51320645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727626AbeIKLb1 (ORCPT
+        id S1727652AbeIKLdD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 07:31:27 -0400
-Received: from smtp17.cstnet.cn ([159.226.251.17]:40311 "EHLO cstnet.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726429AbeIKLb1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 07:31:27 -0400
-Received: from [172.20.20.131] (unknown [182.150.46.145])
-        by APP-09 (Coremail) with SMTP id swCowAAHDYWxYZdb5lPTCA--.9038S2;
-        Tue, 11 Sep 2018 14:33:22 +0800 (CST)
-From:   Pu Wen <puwen@hygon.cn>
-Subject: Re: [PATCH v6 01/16] x86/cpu: Create Hygon Dhyana architecture
- support file
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, thomas.lendacky@amd.com, pbonzini@redhat.com,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
-References: <cover.1536550549.git.puwen@hygon.cn>
- <d99e831f739308221798c9939efc6e6fc1648e0c.1536550550.git.puwen@hygon.cn>
- <20180910163821.GD4386@zn.tnic>
-Message-ID: <258a65ec-177e-fdc8-3f40-c5b748a6f0d1@hygon.cn>
-Date:   Tue, 11 Sep 2018 14:33:20 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 11 Sep 2018 07:33:03 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:43973 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726492AbeIKLdD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 07:33:03 -0400
+Received: by mail-wr1-f68.google.com with SMTP id k5-v6so24304188wre.10
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Sep 2018 23:35:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=s4n91sRXbu+9tfXiStf63pSCNYHPIctDfUjc0aY4PpI=;
+        b=s8Ir3cioLmgW6yiEk+Ir3OWFyyI3juwPWcSgfzxoOKsV2Tvk2LqNsDqlf5tQx2L6g2
+         OnxAZDjcPv7PvWHapWBlTjSm3pNYXok8Efmjbzo8hOG+I+diBSYfbseNE1w2Nf3YTZ9W
+         bEhFHsJjIVnb7mOMimlb1K0W2Wdt60ume0LoTCD3zxeQnWf/xKpvFHcRCPoXcUMsMS2l
+         tnmDKf/0YfYByZ89CNDm+a66r9aiHZVc5c4WokevJIqyDZ6/+ImhBL480nw/eVSPs7S9
+         dnsX++ZVmVJ8LoGixRrAZ/t8xBhB62qJLo/gmzzqgaIeG6gj7S/QHh8DY0b7LKENNvCV
+         gGbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=s4n91sRXbu+9tfXiStf63pSCNYHPIctDfUjc0aY4PpI=;
+        b=cr2jqW981UFau63SdbON8FIc5EboY2qY9iHRoHMU/WO6QNfNOc/ZPNQV67X9iHeFRw
+         Q3crraMVBFxbBJNhrnzHtzNTxHLYdJaGJ/Rc3cy0OUmDxRynxyqzLIENo3YWk5ttyWoe
+         hzD6UuoIfawvZeK1YY+DIyufH1V02lUAnpl5SxFpq991BI+zmGFx0fTrlESlX84g0qaK
+         65ye5fdd5tqWQdtOOLX3ngy/k1KtHNGoJZN61FZOB1XpT1uG+mKNK7Zs3TZ2PBlaO9WZ
+         HTINf1PWWbr+b9W4ymV1YA8vG99Cp1Y/2cZByeP1S6gHmv9BJrZA9z2GfgLynnA2nz2G
+         gA+A==
+X-Gm-Message-State: APzg51CU5XhZKVbWWFVn+CgArw3XpVk4pK2mEej4VmSs9R5oTgju5uM9
+        7nWTp6G59Bx8mU5iOpeA8O4=
+X-Google-Smtp-Source: ANB0VdY8eRWxVLRtc95C7xCONtZQVEfx40KMr9khjiGrI6CqzvdIGg3lxW+Eo/q0zMDBNldIbDMnTw==
+X-Received: by 2002:adf:ba12:: with SMTP id o18-v6mr17241409wrg.249.1536647715101;
+        Mon, 10 Sep 2018 23:35:15 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id y184-v6sm101921wmg.17.2018.09.10.23.35.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 10 Sep 2018 23:35:14 -0700 (PDT)
+Date:   Tue, 11 Sep 2018 08:35:12 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v8 0/3]: perf: reduce data loss when profiling highly
+ parallel CPU bound workloads
+Message-ID: <20180911063512.GA130116@gmail.com>
+References: <e1144f9d-b231-e42c-d698-4db0e62b71ff@linux.intel.com>
+ <20180910091841.GA4664@gmail.com>
+ <2c5d4b01-0eb8-f97e-6a70-44be7961d7f8@linux.intel.com>
+ <20180910120643.GA4217@gmail.com>
+ <1ad36918-ddd0-aa3c-c52e-e4e419409dd4@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180910163821.GD4386@zn.tnic>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: swCowAAHDYWxYZdb5lPTCA--.9038S2
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-        VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYY7k0a2IF6w4xM7kC6x804xWl14x267AK
-        xVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGw
-        A2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r1j
-        6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r1j6r4UM28EF7xvwVC2z280aVAFwI0_Jr
-        0_Gr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv
-        0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUAVWUtwAv7VC2z2
-        80aVAFwI0_Cr0_Gr1UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI
-        62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
-        0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWU
-        tVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcV
-        CY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv
-        67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyT
-        uYvjxUzBMNUUUUU
-X-Originating-IP: [182.150.46.145]
-X-CM-SenderInfo: psxzv046klw03qof0z/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1ad36918-ddd0-aa3c-c52e-e4e419409dd4@linux.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/9/11 0:38, Borislav Petkov wrote:
-> That sentence is not needed for the same reason as above.
-> 
->> And select CPU_SUP_AMD
->> to solve the dependency issues in kernel.
-> 
-> No, this should say: "Since Dhyana uses AMD functionality to a large
-> degree, select CPU_SUP_AMD which provides that functionality."
 
-Thanks for the detailed correction. Will improve the description and
-remove unneeded sentences in next version of patch.
+* Alexey Budankov <alexey.budankov@linux.intel.com> wrote:
 
--- 
-Regards,
-Pu Wen
+> It may sound too optimistic but glibc API is expected to be backward compatible 
+> and for POSIX AIO API part too. Internal implementation also tends to evolve to 
+> better option overtime, more probably basing on modern kernel capabilities 
+> mentioned here: http://man7.org/linux/man-pages/man2/io_submit.2.html
 
+I'm not talking about compatibility, and I'm not just talking about glibc, perf works under 
+other libcs as well - and let me phrase it in another way: basic event handling, threading, 
+scheduling internals should be a *core competency* of a tracing/profiling tool.
+
+I.e. we might end up using the exact same per event fd thread pool design that glibc uses 
+currently. Or not. Having that internal and open coded to perf, like Jiri has started 
+implementing it, allows people to experiment with it.
+
+This isn't some GUI toolkit, this is at the essence of perf, and we are not very good on large 
+systems right now, and I think the design should be open-coded threading, not relying on an 
+(perf-)external AIO library to get it right.
+
+The glibc thread pool implementation of POSIX AIO is basically a fall-back 
+implementation, for the case where there's no native KAIO interface to rely on.
+
+> Well, explicit threading in the tool for AIO, in the simplest case, means 
+> incorporating some POSIX API implementation into the tool, avoiding 
+> code reuse in the first place. That tends to be error prone and costly.
+
+It's a core competency, we better do it right and not outsource it.
+
+Please take a look at Jiri's patches (once he re-posts them), I think it's a very good 
+starting point.
+
+Thanks,
+
+	Ingo
