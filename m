@@ -2,189 +2,170 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DEE0C6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 18:40:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61306C6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 18:41:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F19A20865
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 18:40:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB19020892
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 18:41:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YFLpc0gD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F19A20865
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="q4qNmhHm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB19020892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727988AbeIKXkm (ORCPT
+        id S1727991AbeIKXmS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 19:40:42 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41217 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726622AbeIKXkl (ORCPT
+        Tue, 11 Sep 2018 19:42:18 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:33050 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726863AbeIKXmS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 19:40:41 -0400
-Received: by mail-wr1-f67.google.com with SMTP id z96-v6so27105944wrb.8
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 11:40:05 -0700 (PDT)
+        Tue, 11 Sep 2018 19:42:18 -0400
+Received: by mail-yw1-f66.google.com with SMTP id x67-v6so9623580ywg.0;
+        Tue, 11 Sep 2018 11:41:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=gureRstNY7VTac+7CHIf9Hm4XHEshoHo5g8X48ZBOOM=;
-        b=YFLpc0gD4fRUHLoAT8GnlNWJwaXueHmJJtTe3oifmhr3JBVeR7wXF0Z01FL31YKN23
-         4He6+zL/KcdVVFiuzeQWBu/pvRgjM5JG0sprCyAAqQ84drhHW86lXDutka8LaYMRIE3B
-         5deRFIv5U4R59eyGTRv9Ye1sRVu9OqpXQj2B0=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=cthYTusIC3F998o2sCwn6eTrZTeOg4eiNVFHG8JI0Cc=;
+        b=q4qNmhHmABvQHh0IXaG7j8Y/PpyIbXvW5MvlQ+NHEVXSl8vcA0U8Z4oQcKZhvsMNEO
+         tszNZlb9s5JioNo665WuaWwpooSrBXerR2KH3Hl7DJbHg+IkCf0vD2BBcy2kCJDMuiH/
+         hkjfyAWY9ealYB/5Nmc9ZEmoP47/uw8TLRDEO9uQGau6Vyppq53JTQvzOjojhfdbXklP
+         uc8wbdKp9APwqXamhzeEg94zAI2NwL8JCeU4EpS3tsAPm3aPEup64J3MRe2zR8zJpigU
+         6obWzEvQbJGXAT9Hdyh9C3z/4LWXI88UmdQFkH7Ofz0oaO6FZdmrPA6ambGBRxhJzwpX
+         jL1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=gureRstNY7VTac+7CHIf9Hm4XHEshoHo5g8X48ZBOOM=;
-        b=dmzRQOmOe9tNQzVlCC+zGn7/rq2eclAXA9qHwDiJp41fuPqfjOO3SCShyT7APwsWcg
-         3z6FnDa2jDnrkNotEZr9zqS65wehu1YMUjDucl4rQbJ3RnpnLpnRJ/QIhyOGmNzqade2
-         lyyDeIXpRPJi2p/9BHokW0V8gqdCA2CbjSywGDsL220s7MHVQQNOF2z3AUbIwmONQsRY
-         4TtfniDGiN9FijsuI+HVJT6x1kKik5QYNyGoaUB5cM5ePoykcsD28aZQ6I/dk8c+wJX8
-         2F3LswJfOVVFFufeq5Dor9rAvrCCecjU2FWsPD89x9nmGD7fmrgoe78iWbWtxpROjQRg
-         qF5A==
-X-Gm-Message-State: APzg51Dbm9RjqrduW4vmbMY/j2I70A/q9ThuUhcNJ2PkgsVeUGLass4j
-        wUyLegkOfa2TKHwH69YGeMhU7w==
-X-Google-Smtp-Source: ANB0VdZB/hmGfKpwrNIkRxysicOh5DsWUQWNdxzd+9ueCISLNPhQdlsItxpwnmq9u3hyr+zTz1Akmw==
-X-Received: by 2002:adf:9101:: with SMTP id j1-v6mr19515318wrj.3.1536691204574;
-        Tue, 11 Sep 2018 11:40:04 -0700 (PDT)
-Received: from dell ([2.27.167.7])
-        by smtp.gmail.com with ESMTPSA id z4-v6sm15707550wrt.89.2018.09.11.11.40.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Sep 2018 11:40:03 -0700 (PDT)
-Date:   Tue, 11 Sep 2018 19:39:30 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        radu_nicolae.pirea@upb.ro, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Mark Brown <broonie@kernel.org>, Jiri Slaby <jslaby@suse.com>,
-        Richard Genoud <richard.genoud@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>
-Subject: Re: [PATCH v12 0/6] Driver for at91 usart in spi mode
-Message-ID: <20180911181838.GI4185@dell>
-References: <20180904111310.4049-1-radu_nicolae.pirea@upb.ro>
- <20180911093356.GE4185@dell>
- <20180911093917.GL2494@piout.net>
- <CAMuHMdXH8gNjKGOHGFc+K03U2zsVCSN7G_Q4wtepQr859nRQKg@mail.gmail.com>
- <20180911153621.GP2494@piout.net>
- <CAMuHMdV+=EgAYogwNHbY=RExkGox_+YSeHV6pJtQb6g6PzD-CQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdV+=EgAYogwNHbY=RExkGox_+YSeHV6pJtQb6g6PzD-CQ@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=cthYTusIC3F998o2sCwn6eTrZTeOg4eiNVFHG8JI0Cc=;
+        b=qDSzohtXxWo8Yn+9/4lCNG7BoaIF8WM4oIZHh2a8V3RxGUYA5fAhUH/l5/MsFMphOz
+         uVIKWEh7X9ajfI6Bx8Zz1bjCCXTqeK3W69xPE3uCnzCir0HH8VhrC2z2riT5wN2wUEmp
+         FrEq2vt9L//MYXFTxHy+VMOKwSsmIlyRqtXPV0mf2+3MK6GwP645HvP08Mg3flbg288e
+         De8JYqPQWRrT2NHgX5+aZtts+3rkils6IBLh+x02g7M6iGR94FhsHh7OZp8et0e/9Tq7
+         ewxlF/EghyVoRSwlSLSATTV7X5CLR/LJu99q89nVR0ZWnvKxQMFs6w3UY3bLbbs81YbX
+         AnLg==
+X-Gm-Message-State: APzg51DMMcaZ19LA3ABi6xCmlCu+l0QutAxb7cJqCCLZ0evyqBWmsyEv
+        GGErJW9nf1lRXDrR/uU5ZEA=
+X-Google-Smtp-Source: ANB0VdZbaupFbRWpMVw8pHZKotHg5yKHKsQaLOHf+4Jw2jMdUaItIt4CjJ2vvx+oy6RALPNC/O5f0g==
+X-Received: by 2002:a81:717:: with SMTP id 23-v6mr11492850ywh.290.1536691302061;
+        Tue, 11 Sep 2018 11:41:42 -0700 (PDT)
+Received: from dennisz-mbp.thefacebook.com ([199.201.65.129])
+        by smtp.gmail.com with ESMTPSA id i123-v6sm7902875ywe.14.2018.09.11.11.41.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Sep 2018 11:41:40 -0700 (PDT)
+From:   Dennis Zhou <dennisszhou@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Josef Bacik <josef@toxicpanda.com>
+Cc:     kernel-team@fb.com, linux-block@vger.kernel.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dennis Zhou <dennisszhou@gmail.com>
+Subject: [PATCH v3 00/12] block: always associate blkg and refcount cleanup
+Date:   Tue, 11 Sep 2018 14:41:25 -0400
+Message-Id: <20180911184137.35897-1-dennisszhou@gmail.com>
+X-Mailer: git-send-email 2.13.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 11 Sep 2018, Geert Uytterhoeven wrote:
+Hi everyone,
 
-> On Tue, Sep 11, 2018 at 5:36 PM Alexandre Belloni
-> <alexandre.belloni@bootlin.com> wrote:
-> > On 11/09/2018 16:59:09+0200, Geert Uytterhoeven wrote:
-> > > On Tue, Sep 11, 2018 at 11:40 AM Alexandre Belloni
-> > > <alexandre.belloni@bootlin.com> wrote:
-> > > > On 11/09/2018 10:33:56+0100, Lee Jones wrote:
-> > > > > On Tue, 04 Sep 2018, Radu Pirea wrote:
-> > > > > > Radu Pirea (6):
-> > > > > >   MAINTAINERS: add at91 usart mfd driver
-> > > > > >   dt-bindings: add binding for atmel-usart in SPI mode
-> > > > > >   mfd: at91-usart: added mfd driver for usart
-> > > > > >   MAINTAINERS: add at91 usart spi driver
-> > > > > >   spi: at91-usart: add driver for at91-usart as spi
-> > > > > >   tty/serial: atmel: change the driver to work under at91-usart mfd
-> > > > > >
-> > > > > >  .../bindings/{serial => mfd}/atmel-usart.txt  |  25 +-
-> > > > > >  MAINTAINERS                                   |  16 +
-> > > > > >  drivers/mfd/Kconfig                           |   9 +
-> > > > > >  drivers/mfd/Makefile                          |   1 +
-> > > > > >  drivers/mfd/at91-usart.c                      |  71 +++
-> > > > > >  drivers/spi/Kconfig                           |   8 +
-> > > > > >  drivers/spi/Makefile                          |   1 +
-> > > > > >  drivers/spi/spi-at91-usart.c                  | 432 ++++++++++++++++++
-> > > > > >  drivers/tty/serial/Kconfig                    |   1 +
-> > > > > >  drivers/tty/serial/atmel_serial.c             |  42 +-
-> > > > > >  include/dt-bindings/mfd/at91-usart.h          |  17 +
-> > > > > >  11 files changed, 606 insertions(+), 17 deletions(-)
-> > > > > >  rename Documentation/devicetree/bindings/{serial => mfd}/atmel-usart.txt (76%)
-> > > > > >  create mode 100644 drivers/mfd/at91-usart.c
-> > > > > >  create mode 100644 drivers/spi/spi-at91-usart.c
-> > > > > >  create mode 100644 include/dt-bindings/mfd/at91-usart.h
-> > > > >
-> > > > > Seeing as this patch-set has caused some issues this morning, I took
-> > > > > the liberty to peruse back into its history to figure out where things
-> > > > > started to go wrong.  I also re-reviewed the MFD driver - and I'm glad
-> > > > > I did!
-> > > > >
-> > > > > My Acked-by has been attached to the MFD portion since v5, which is
-> > > > > why the code hasn't caught my eye before today.  I reviewed the
-> > > > > relocation of the *binding document* (serial => mfd with no changes)
-> > > > > in v4 and nothing else.  It appears as though you mistakenly added it
-> > > > > to the *MFD driver* instead.  This explains my confusion in v10 when I
-> > > > > told you I'd already reviewed the binding document.
-> > > > >
-> > > > > As I said, I have re-reviewed the MFD driver and I'm afraid to say
-> > > > > that I do not like what I see.  Besides the missing header file and
-> > > > > the whitespace tabbing errors, I do not agree with the implementation.
-> > > > > Using MFD as a shim to hack around driver selection is not a valid
-> > > > > use-case.
-> > > > >
-> > > > > What's stopping you from just using the compatible string directly to
-> > > > > select which driver you need to probe?
-> > > > >
-> > > >
-> > > > Then you'd have multiple compatible strings for the same IP which is a
-> > > > big no-no.
-> > >
-> > > It's still the same hardware device, isn't?
-> > > What if the SPI or UART slave is not on-board, but on an expansion board?
-> > > Then the SoC-specific .dtsi has no idea what mode should be used.
-> > >
-> > > Hence shouldn't the software derive the hardware mode from the full
-> > > hardware description in DT? If that's impossible (I didn't look into detail
-> > > whether an SPI bus can easily be distinguished from a UART bus), perhaps
-> > > a mode property should be added?
-> >
-> > Yes, this is exactly what is done:
-> >
-> > https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git/tree/drivers/mfd/at91-usart.c?h=ib-mfd-spi-tty-4.20-1#n33
-> 
-> OK.
-> 
-> I guess the main "hackish" part is that the mfd_cell uses of_compatible,
-> which thus requires having additional compatible values?
-> 
-> I think those can just be removed. AFAICS, the SPI and serial drivers already
-> match against the "at91_usart_spi" resp. "atmel_usart_serial" platform device
-> names?
+v3: a few minor fixes.
+  0003: Updated the comment to bio_associate_blkg to reflect closest
+        association.
+        Removed a return branch in __bio_lookup_create.
+  0009: Removed an unnecessary rcu_read_(un)lock pair.
+  0010: Fixed blkg null pointer... blkg->blkcg => blkcg.
 
-The hackish part of this driver is that it's using MFD for something
-which is clearly not an MFD.  It's a USART device.  Nothing more,
-nothing less.
+This is rebased onto axboe#for-4.20/block 902d53914f64.
 
-Does anyone have the datasheet to hand?
+From v2 below (updated):
+------
+This is a followup to the patch series I sent out earlier [1] containing
+the middle two points:
+  1. always associate a bio with a blkg
+  2. remove the extra css ref held by bios and utilize the blkg ref
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+The major difference with v2 is that error handling on blkg creation
+and association failure is handled more gracefully. Rather than having
+the complex logic to fallback to root, failures walk up the blkg tree.
+This seems more natural and less prone to error with the many possible
+failure scenarios.
+
+Additionally, there are fixes for kbuild errors and some key details
+overlooked by me in the first series that were pointed out in review.
+
+Modified from the first patchset:
+First, both blk-throttle and blk-iolatency rely on blkg association
+to enable their policies. Rather than each policy (and future policies)
+implement this logic independently, this consolidates it such that
+all bios are tagged with a blkg.
+
+Second, with the addition of always having a blkg reference, the blkcg
+can now be referenced through it rather than maintaining an additional
+pointer and reference. So let's clean this up.
+
+[1] https://lore.kernel.org/lkml/20180831015356.69796-1-dennisszhou@gmail.com/T
+
+This patchset contains the following 12 patches:
+  0001-blkcg-fix-ref-count-issue-with-bio_blkcg-using-task_.patch
+  0002-blkcg-update-blkg_lookup_create-to-do-locking.patch
+  0003-blkcg-convert-blkg_lookup_create-to-find-closest-blk.patch
+  0004-blkcg-always-associate-a-bio-with-a-blkg.patch
+  0005-blkcg-consolidate-bio_issue_init-to-be-a-part-of-cor.patch
+  0006-blkcg-associate-a-blkg-for-pages-being-evicted-by-sw.patch
+  0007-blkcg-associate-writeback-bios-with-a-blkg.patch
+  0008-blkcg-remove-bio-bi_css-and-instead-use-bio-bi_blkg.patch
+  0009-blkcg-remove-additional-reference-to-the-css.patch
+  0010-blkcg-cleanup-and-make-blk_get_rl-use-blkg_lookup_cr.patch
+  0011-blkcg-change-blkg-reference-counting-to-use-percpu_r.patch
+  0012-blkcg-rename-blkg_try_get-to-blkg_tryget.patch
+
+This patchset is on top of axboe#for-4.20/block 902d53914f64.
+
+diffstats below:
+
+Dennis Zhou (Facebook) (12):
+  blkcg: fix ref count issue with bio_blkcg using task_css
+  blkcg: update blkg_lookup_create to do locking
+  blkcg: convert blkg_lookup_create to find closest blkg
+  blkcg: always associate a bio with a blkg
+  blkcg: consolidate bio_issue_init to be a part of core
+  blkcg: associate a blkg for pages being evicted by swap
+  blkcg: associate writeback bios with a blkg
+  blkcg: remove bio->bi_css and instead use bio->bi_blkg
+  blkcg: remove additional reference to the css
+  blkcg: cleanup and make blk_get_rl use blkg_lookup_create
+  blkcg: change blkg reference counting to use percpu_ref
+  blkcg: rename blkg_try_get to blkg_tryget
+
+ Documentation/admin-guide/cgroup-v2.rst |   8 +-
+ block/bfq-cgroup.c                      |   4 +-
+ block/bfq-iosched.c                     |   2 +-
+ block/bio.c                             | 158 ++++++++++++++++--------
+ block/blk-cgroup.c                      | 123 ++++++++++++------
+ block/blk-iolatency.c                   |  26 +---
+ block/blk-throttle.c                    |  13 +-
+ block/bounce.c                          |   4 +-
+ block/cfq-iosched.c                     |   4 +-
+ drivers/block/loop.c                    |   5 +-
+ drivers/md/raid0.c                      |   2 +-
+ fs/buffer.c                             |  10 +-
+ fs/ext4/page-io.c                       |   2 +-
+ include/linux/bio.h                     |  23 ++--
+ include/linux/blk-cgroup.h              | 145 +++++++++++++++-------
+ include/linux/blk_types.h               |   1 -
+ include/linux/cgroup.h                  |   2 +
+ include/linux/writeback.h               |   5 +-
+ kernel/cgroup/cgroup.c                  |  48 +++++--
+ kernel/trace/blktrace.c                 |   4 +-
+ mm/page_io.c                            |   2 +-
+ 21 files changed, 381 insertions(+), 210 deletions(-)
+
+Thanks,
+Dennis
