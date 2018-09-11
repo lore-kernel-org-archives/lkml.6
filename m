@@ -2,78 +2,74 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EED1BC04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:28:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08B74C6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:30:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1DED20865
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:28:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1DED20865
+	by mail.kernel.org (Postfix) with ESMTP id A742D2086A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 07:30:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ebTtlnHi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A742D2086A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727409AbeIKM0y (ORCPT
+        id S1726935AbeIKM2A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 08:26:54 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:34106 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726325AbeIKM0x (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 08:26:53 -0400
-Received: by mail-oi0-f66.google.com with SMTP id 13-v6so45410284ois.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 00:28:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1IqzoYlci59ghZH2l9OfnFGuta9lFisMgOXdXkE1dhE=;
-        b=ACRss7YWFlRcgXIosSk5NETd8FBUDFgyJ9545sfYpHVaWDKeD69q4Xp1PyKQAYM4G3
-         4CSgJDBU5YLgJmKwc4kZaK4D+VJIRmT8YdL3sUf/NgWJU1iAPvXxlMGVIcCgRiC/iJJl
-         dKhlLmMMe6yJVlbwFfFt4vkqRN3X/GTOOh8Z/wLG6/7beko9rvRlvkiD6esn77CUdOhk
-         SUVu6jSz8ZxEjsIfxKQ56NZN2SwV9Ogcfn1deZW1aSkDLYjZeHxbvUl5Jm8KyfUShF5P
-         GP8HM8mP6g/PLvDcfXvheF86qcuqW4AGyXN7LARyJGBI6rS3D8GgUxZFJkzs52C2PYPX
-         qmbA==
-X-Gm-Message-State: APzg51DXPGl8c2rH/G6hq5NS+HiIGYpLeCPUCPFsli+Fhoq/89/8l/j5
-        MUkx807jQjQFWWsAdswUlMAFnq+Q1McYvBnkZ4coAw==
-X-Google-Smtp-Source: ANB0VdapBxK0a545p9q0c+Ygmdbey6FCYesE84M5Xl2h0n2Q27/P1N5q72J8ZilEJb+Yvio/UZOAhG4JhOMceHKgQM8=
-X-Received: by 2002:aca:ef0a:: with SMTP id n10-v6mr26684285oih.326.1536650935606;
- Tue, 11 Sep 2018 00:28:55 -0700 (PDT)
+        Tue, 11 Sep 2018 08:28:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34854 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726325AbeIKM2A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 08:28:00 -0400
+Received: from localhost (unknown [171.76.126.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D6AA20865;
+        Tue, 11 Sep 2018 07:30:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1536651002;
+        bh=2ADZAPA+oOEOKQA5tW1u/Y95m+EabwiGs8TtKaRMAeU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ebTtlnHiECsYWtz8LVq4xtXzjNXCdKi6CeuDCB6k0PzyryReOAccPFAnJ33z5jN1n
+         4U/4ObxrF8TYDAyTeJhZ6HWPhlapfVonDNoX7aK5m70nKvzlCk4GpzMA9QRWnyPaqU
+         GEhcRwFPurz19DrzgmJpgmoPpUdB+u/8dVbTiV2E=
+Date:   Tue, 11 Sep 2018 12:59:52 +0530
+From:   Vinod <vkoul@kernel.org>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>, od@zcrc.me,
+        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org
+Subject: Re: [PATCH v5 00/18] JZ4780 DMA patchset v5
+Message-ID: <20180911072952.GJ2634@vkoul-mobl>
+References: <20180829213300.22829-1-paul@crapouillou.net>
 MIME-Version: 1.0
-References: <20180910124015.18073-1-fanc.fnst@cn.fujitsu.com> <20180911011331.GB8519@localhost.localdomain>
-In-Reply-To: <20180911011331.GB8519@localhost.localdomain>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 11 Sep 2018 09:28:44 +0200
-Message-ID: <CAJZ5v0g2SaGJLFM=Gb3Qr2JzGV_KiNW3xq3xP342YnNWkym=EQ@mail.gmail.com>
-Subject: Re: [PATCH v6 0/3] x86/boot/KASLR: Parse ACPI table and limit kaslr
- in immovable memory.
-To:     fanc.fnst@cn.fujitsu.com
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>, bhe@redhat.com,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        indou.takao@jp.fujitsu.com, Cao jin <caoj.fnst@cn.fujitsu.com>,
-        Dou Liyang <douly.fnst@cn.fujitsu.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180829213300.22829-1-paul@crapouillou.net>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 11, 2018 at 3:13 AM Chao Fan <fanc.fnst@cn.fujitsu.com> wrote:
->
-> sorry, the cover letter forwand to rafael.
+On 29-08-18, 23:32, Paul Cercueil wrote:
+> Hi Vinod,
+> 
+> This is the V5 of my Ingenic JZ4780 DMA patchset.
 
-Thanks, but the relevant information still needs to go to the
-changelog of the patch adding the extra ACPI tables parsing code.
-Your cover letter will not be there in the git log.
+Applied all, thanks
 
-I also would suggest to CC the entire series to linux-acpi along with
-the cover letter.
+> 
+> - Patch [01/18] dropped the "doc:" in the patch title;
+> - Patches [11/18] and [12/18] now use the GENMASK() macro.
+> - The rest is untouched.
+> 
+> Thanks,
+> -Paul Cercueil
 
-Thanks,
-Rafael
+-- 
+~Vinod
