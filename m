@@ -6,60 +6,59 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75C83C6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:17:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9508FC04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:18:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36D2B20865
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:17:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36D2B20865
+	by mail.kernel.org (Postfix) with ESMTP id 382312086A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:18:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 382312086A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726859AbeIKOP2 (ORCPT
+        id S1726897AbeIKOQ4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 10:15:28 -0400
-Received: from verein.lst.de ([213.95.11.211]:41809 "EHLO newverein.lst.de"
+        Tue, 11 Sep 2018 10:16:56 -0400
+Received: from verein.lst.de ([213.95.11.211]:41823 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726572AbeIKOP1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 10:15:27 -0400
+        id S1726563AbeIKOQz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 10:16:55 -0400
 Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 8504C68C8A; Tue, 11 Sep 2018 11:21:26 +0200 (CEST)
-Date:   Tue, 11 Sep 2018 11:21:26 +0200
+        id B91A568C8A; Tue, 11 Sep 2018 11:22:54 +0200 (CEST)
+Date:   Tue, 11 Sep 2018 11:22:54 +0200
 From:   Christoph Hellwig <hch@lst.de>
-To:     Sumit Saxena <sumit.saxena@broadcom.com>
-Cc:     Ming Lei <ming.lei@redhat.com>, tglx@linutronix.de, hch@lst.de,
-        linux-kernel@vger.kernel.org,
-        Kashyap Desai <kashyap.desai@broadcom.com>,
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Kashyap Desai <kashyap.desai@broadcom.com>,
+        Ming Lei <tom.leiming@gmail.com>,
+        Sumit Saxena <sumit.saxena@broadcom.com>,
+        Ming Lei <ming.lei@redhat.com>, Christoph Hellwig <hch@lst.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Shivasharan Srikanteshwara 
-        <shivasharan.srikanteshwara@broadcom.com>
+        <shivasharan.srikanteshwara@broadcom.com>,
+        linux-block <linux-block@vger.kernel.org>
 Subject: Re: Affinity managed interrupts vs non-managed interrupts
-Message-ID: <20180911092126.GA10330@lst.de>
-References: <eccc46e12890a1d033d9003837012502@mail.gmail.com> <20180829084618.GA24765@ming.t460p> <300d6fef733ca76ced581f8c6304bac6@mail.gmail.com>
+Message-ID: <20180911092254.GB10330@lst.de>
+References: <eccc46e12890a1d033d9003837012502@mail.gmail.com> <20180829084618.GA24765@ming.t460p> <300d6fef733ca76ced581f8c6304bac6@mail.gmail.com> <CACVXFVM7nGxpyq0_jfshgBOTx5B+PuCDmN43SfPTCkENJRLpMg@mail.gmail.com> <615d78004495aebc53807156d04d988c@mail.gmail.com> <alpine.DEB.2.21.1808312207390.1349@nanos.tec.linutronix.de> <486f94a563d63c4779498fe8829a546c@mail.gmail.com> <alpine.DEB.2.21.1809010020520.1349@nanos.tec.linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <300d6fef733ca76ced581f8c6304bac6@mail.gmail.com>
+In-Reply-To: <alpine.DEB.2.21.1809010020520.1349@nanos.tec.linutronix.de>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 29, 2018 at 04:16:23PM +0530, Sumit Saxena wrote:
-> > Could you explain a bit what the specific use case the extra 16 vectors
-> is?
-> We are trying to avoid the penalty due to one interrupt per IO completion
-> and decided to coalesce interrupts on these extra 16 reply queues.
-> For regular 72 reply queues, we will not coalesce interrupts as for low IO
-> workload, interrupt coalescing may take more time due to less IO
-> completions.
-> In IO submission path, driver will decide which set of reply queues
-> (either extra 16 reply queues or regular 72 reply queues) to be picked
-> based on IO workload.
+On Sat, Sep 01, 2018 at 12:48:46AM +0200, Thomas Gleixner wrote:
+> > We want some changes in current API which can allow us to  pass flags
+> > (like *local numa affinity*) and cpu-msix mapping are from local numa node
+> > + effective cpu are spread across local numa node.
+> 
+> What you really want is to split the vector space for your device into two
+> blocks. One for the regular per cpu queues and the other (16 or how many
+> ever) which are managed separately, i.e. spread out evenly. That needs some
+> extensions to the core allocation/management code, but that shouldn't be a
+> huge problem.
 
-The point I don't get here is why you need separate reply queues for
-the interrupt coalesce setting.  Shouldn't this just be a flag at
-submission time that indicates the amount of coalescing that should
-happen?
-
-What is the benefit of having different completion queues?
+Note that there are some other uses cases for multiple sets of affinity
+managed irqs.  Various network devices insist on having separate TX vs
+RX interrupts for example.
