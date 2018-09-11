@@ -6,89 +6,104 @@ X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E3B9C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:39:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 408A6C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:40:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 421D820866
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:39:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF2E920866
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:40:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="CghbByFS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 421D820866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RYtcDXgm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF2E920866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727332AbeIKUix (ORCPT
+        id S1727647AbeIKUju (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 16:38:53 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:40303 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726896AbeIKUix (ORCPT
+        Tue, 11 Sep 2018 16:39:50 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:38366 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726981AbeIKUju (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 16:38:53 -0400
-Received: by mail-pg1-f193.google.com with SMTP id l63-v6so12455662pga.7
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 08:39:02 -0700 (PDT)
+        Tue, 11 Sep 2018 16:39:50 -0400
+Received: by mail-wm0-f65.google.com with SMTP id t25-v6so1486153wmi.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 08:39:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
+        d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Ob5BRhp5wcGH7FAFFwf5FJfV2+4Ssan30hOv8Hcvxu8=;
-        b=CghbByFS/4vROeoHHLNy3IeNr+oYwkWjoQa+m1iC35Y4lAq8JVC+NnrawC/7ki8gIp
-         XfN75/sED82u/ThYE1yG8kr4vZrINpnytmqMgFzdtH5CaCOrU3mNBEAHzzObmYGhcaTE
-         6SWn6nqXbVfqgxVnOMJXIC7W+lckgtlonWIEi885vegcz5USlRiaDe65AU70uhX61GOc
-         2t70K6gfFVF+39xXGXjR/mSf4YBIw3EdLU/2ddW0cGJUhYwlA5jKFhQq0fLIuIZA+/pp
-         U6YonSPADPvBl7F4b9QY9rgD+KyTHM6TEveDrdc0VI6LOaxtXgLqyqM2zJavN74tqgaW
-         RJqA==
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=CF5qbw9eZsnasOLCjjka9UXFyeunsSf0JZhEtSP86F8=;
+        b=RYtcDXgmJ0/0OFhIz55LaJSZKGxcM7CCKEeAyHxRo+pOc1pkfEA7OuzUQ9kiqLuK78
+         N2/OCRdqT3GsLof5HDkyhONwD31t6Fbh+ztlxjP/wEqOVSyZ3M4iTZy6SgH6gVdPbREl
+         hTm/vRkRU1LON5ZFJc4uryhU5PwM/npK7VLNc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Ob5BRhp5wcGH7FAFFwf5FJfV2+4Ssan30hOv8Hcvxu8=;
-        b=lxHfnGjk2Pc5BU0HVaExnpnfM+JI59shgHIFHmozF2oPdOBabtbi5+kQCX+y/nRONh
-         Hobdi818RSvfvg6cT9QKiRPqgNRiqVqQlVx7Cmvx+KbbE2YAeHMD/R9Fg/6KMj+MA4RT
-         2+cnnNjn68yTzRPtRpwWRGLyfVL0KKX4eBdj8IbZHsRuExRCUnGDOhMBSaX6goNXI0wG
-         YU9zaYEIquc4NYyJmTxLT7GMnholA8OC8JU+jLx7RPrVekjJzeS4Hj8oOMWSJ/WqG4s4
-         pfW3b0fvE1M1YnIM9a1QJ1e9XCA5JJNVqckmKHmX5UHpxY6rwStWQn2uFA3uASehuyYt
-         HPWw==
-X-Gm-Message-State: APzg51DuPBoGn6c0PnqxTOKRl2ri7Ifn5bPClZ+2U/HX2nhiGNnMKGDL
-        sivfHNYbCrEZ2zPdPFC2EjGwcw==
-X-Google-Smtp-Source: ANB0Vdb/dKG46tQdqj+0XhIu5y9APwwLkZhX/dIEIJU279rwPql9AoilUZ6n2bS1YjLPev0GGLG45g==
-X-Received: by 2002:a62:49d5:: with SMTP id r82-v6mr30081091pfi.245.1536680342101;
-        Tue, 11 Sep 2018 08:39:02 -0700 (PDT)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id r17-v6sm44305499pgu.83.2018.09.11.08.39.01
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=CF5qbw9eZsnasOLCjjka9UXFyeunsSf0JZhEtSP86F8=;
+        b=cRVBwKTanR3aOAW8aoueZlgdbVjWYLtm2YjJvfaKiLQjOCDtL4G4t0L0PfUr9dtm/x
+         btfBIJEYqAI1luxa5OKX1MhxNUNrSuMo1+IOMGeKwrHO9KOeJfu1J/0ES6/q79exmTNb
+         jdZIRMaHkC9UbVJRLe10yaYcVD4mkH6CChl/wJ+Kd0GAYfcJEuBBu9QrS8cA+IhGdyPY
+         YNjHjvLFIJR3qsvUykbzII3k2wFOV/gO1z1QMXM8uTuhoEH9eVaGBrgGDyQzKu9/Xwfq
+         TKP5NlZaJ6D9YkSpaHYoO+XQ3VeOefDPrMEECA1CuDw/mijnHK9e/jC+UEf80mLK3WAz
+         HeOg==
+X-Gm-Message-State: APzg51Ds6jIXlhfCy9Sbvo0HxirDHOWB8sdcpl/iyQLqCXuM6qg3b2yP
+        0sNPasLLWQY2GoNUlol/uxkgFA==
+X-Google-Smtp-Source: ANB0VdZgUAUhBzRQ214xxrwm70exGaou+Z/sMwh7SW+8uRZONiH1zT44CGmufZ09ndXgu3XmOKXQlg==
+X-Received: by 2002:a1c:9cd3:: with SMTP id f202-v6mr1747289wme.148.1536680397246;
+        Tue, 11 Sep 2018 08:39:57 -0700 (PDT)
+Received: from dell ([2.27.167.7])
+        by smtp.gmail.com with ESMTPSA id s205-v6sm1773721wmf.42.2018.09.11.08.39.55
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Sep 2018 08:39:01 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1fzkkm-0004l3-RX; Tue, 11 Sep 2018 09:39:00 -0600
-Date:   Tue, 11 Sep 2018 09:39:00 -0600
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     zhong jiang <zhongjiang@huawei.com>
-Cc:     dledford@redhat.com, benve@cisco.com, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] infiniband: remove redundant condition check before
- debugfs_remove
-Message-ID: <20180911153900.GA18253@ziepe.ca>
-References: <1536414571-32675-1-git-send-email-zhongjiang@huawei.com>
+        Tue, 11 Sep 2018 08:39:56 -0700 (PDT)
+Date:   Tue, 11 Sep 2018 16:39:54 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH] mfd: menelaus: fix possible race condition and leak
+Message-ID: <20180911153954.GA4185@dell>
+References: <20180909204858.4257-1-alexandre.belloni@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1536414571-32675-1-git-send-email-zhongjiang@huawei.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180909204858.4257-1-alexandre.belloni@bootlin.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 08, 2018 at 09:49:31PM +0800, zhong jiang wrote:
-> debugfs_remove has taken the IS_ERR_OR_NULL into account. Just
-> remove the unnecessary condition.
+On Sun, 09 Sep 2018, Alexandre Belloni wrote:
+
+> The IRQ work is added before the struct rtc is allocated and registered,
+> but this struct is used in the IRQ handler. This may lead to a NULL pointer
+> dereference.
 > 
-> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+> Switch to devm_rtc_allocate_device/rtc_register_device to allocate the rtc
+> before calling menelaus_add_irq_work.
+> 
+> Also, this solves a possible leak as the RTC is never released.
+> 
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 > ---
->  drivers/infiniband/hw/usnic/usnic_debugfs.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> Lee,
+> 
+> If that is ok with you, I would like to take this patch through the RTC
+> tree. So I can have a follow up patch removing rtc_device_register().
+> 
+> Thanks
+> 
+>  drivers/mfd/menelaus.c | 13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
 
-Applied to for-next, thanks
+Applied, thanks.
 
-Jason
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
