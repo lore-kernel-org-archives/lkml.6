@@ -2,200 +2,142 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AE3BC04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 08:43:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CBC9C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 08:43:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E445C20882
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 08:43:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2753420865
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 08:43:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="kuYQF8V5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E445C20882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YrOjZdtJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2753420865
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726691AbeIKNld (ORCPT
+        id S1726769AbeIKNmG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 09:41:33 -0400
-Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:43872 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726488AbeIKNlc (ORCPT
+        Tue, 11 Sep 2018 09:42:06 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:34692 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726476AbeIKNmG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 09:41:32 -0400
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 9257C24E204C;
-        Tue, 11 Sep 2018 01:43:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1536655396; bh=ZuGLnWRSGnnMXa7CuOJXAWAylDoIpxdIpDx4Q6Ehztc=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
-        b=kuYQF8V5M7tEy+tEB9fq1PFqv6xO+orSYjIzs/5Sjm5tbfid5rtU4016JLeklSDbc
-         8Hb9pqTXkBWEEswSkwgKqs0v2hrWLt58hdA8NOtaPEBBNFkJW5591tFatCbGQpJT0H
-         ystVHj63CQN2vt/bp8hqCQdbRNfZSSF0jMeDqp0rXl9sv/qIYTcwHd0x86uCoaLNGn
-         pt7p51XuWsmoAKDR/ZLzIzucHDDoWGLCZj8sDmCY/L1G5p66zJtEeKMz2E8+7agHj9
-         7tJQ6dQWfHJL3ux5wAXgTz0eBDeIwJrksoIV3nPKt39wYclGFM8R7wQ9TZci1LTH08
-         0+QEDaWnzmCrw==
-Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 6838A3262;
-        Tue, 11 Sep 2018 01:43:16 -0700 (PDT)
-Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
- US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Tue, 11 Sep 2018 01:43:16 -0700
-Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
- DE02WEHTCA.internal.synopsys.com (10.225.19.92) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Tue, 11 Sep 2018 10:43:14 +0200
-Received: from [10.107.25.102] (10.107.25.102) by
- DE02WEHTCB.internal.synopsys.com (10.225.19.80) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Tue, 11 Sep 2018 10:43:13 +0200
-Subject: Re: [PATCH] pci: dwc: pcie_designware: Fix a sleep-in-atomic-context
- bug in dw_pcie_prog_outbound_atu
-To:     Jia-Ju Bai <baijiaju1990@gmail.com>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>
-CC:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20180902033811.26858-1-baijiaju1990@gmail.com>
-From:   Gustavo Pimentel <Gustavo.Pimentel@synopsys.com>
-Message-ID: <a21f3cc1-d593-edf7-19d1-3917cf5d5c98@synopsys.com>
-Date:   Tue, 11 Sep 2018 09:40:12 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 11 Sep 2018 09:42:06 -0400
+Received: by mail-wr1-f65.google.com with SMTP id g33-v6so24739348wrd.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 01:43:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=tjuDZfWEahVddVKqWWQaVEO+bLwzCSuXCpsNiNthUao=;
+        b=YrOjZdtJFMVqcmoSVEDcBYgxT03D0gxXDEPIv8euapFychXmUYF9XFtsjA4Gxjc7jj
+         JqugKCDqxZl6lbA3f0cJENQfPDsKFPRSP7vNLGH1oHcmoMnvazbtsgLt+5g5eQcHaugP
+         elbROTHJbQsTT7IAceft2R7SXsA3PygjvoQSs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=tjuDZfWEahVddVKqWWQaVEO+bLwzCSuXCpsNiNthUao=;
+        b=UPwexVTLnZt1RwV4oMxGJ+QccfaqDb/YZbsG91D4rDcHCl6j8o7AjBXhJKg4SP5jAs
+         0NTcRJ4WPHlJ/YUqS5uJJ1eGv9Z28jh15XbS0EJvul2zdjCsLIlECdlyaC/Iuo+6IPVu
+         9gC+1ztq0loDoaMBmNNAaa+73RXEQERan3wDyLo9EP8DVHvW/AfkGZ2O6JRy5uj4Bhz1
+         dbAUE+9Bq+YAZT6HAbnjGvcIi2Xrjh1YS4Rzw6FEfrAPP1BfIKtm22xxFdun7dtkg/El
+         mi2mCk0e5jWqLGD8qCe5vGmicuLHQS0e/C59B/BnI07dISaiL78oaw5vIta+nBj58KhR
+         5ryg==
+X-Gm-Message-State: APzg51AnU1tGZR4CoozcLjNIgREPWz79eiWoYQhGWgSFp/REiZA/8vY+
+        9I2DQxbNnCp4xrJsl7NtDAZdGw==
+X-Google-Smtp-Source: ANB0VdZ+LpbaGeDqfhRD3K3+4r5BN/QnbrRMciewVbQqVDdiCgTdD9l//2f77jN8TVxMXam3nrRESg==
+X-Received: by 2002:a5d:4d52:: with SMTP id a18-v6mr18249796wru.40.1536655428889;
+        Tue, 11 Sep 2018 01:43:48 -0700 (PDT)
+Received: from dell ([2.27.167.7])
+        by smtp.gmail.com with ESMTPSA id x24-v6sm33287328wrd.13.2018.09.11.01.43.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 11 Sep 2018 01:43:48 -0700 (PDT)
+Date:   Tue, 11 Sep 2018 09:43:46 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Nicolas Ferre <nicolas.ferre@microchip.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Radu Pirea <radu.pirea@microchip.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Rob Herring <robh@kernel.org>
+Subject: Re: linux-next: build failure after merge of the tty tree
+Message-ID: <20180911084346.GB4185@dell>
+References: <20180911125857.5e5c34f4@canb.auug.org.au>
+ <20180911082534.GA4185@dell>
+ <84bafe76-741e-7dc1-d985-62027f4f634a@microchip.com>
 MIME-Version: 1.0
-In-Reply-To: <20180902033811.26858-1-baijiaju1990@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.107.25.102]
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <84bafe76-741e-7dc1-d985-62027f4f634a@microchip.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jia,
+On Tue, 11 Sep 2018, Nicolas Ferre wrote:
 
-On 02/09/2018 04:38, Jia-Ju Bai wrote:
-> The driver may sleep with holding a spinlock and in an interupt handler.
+> On 11/09/2018 at 10:25, Lee Jones wrote:
+> > On Tue, 11 Sep 2018, Stephen Rothwell wrote:
+> > 
+> > > Hi Greg,
+> > > 
+> > > After merging the tty tree, today's linux-next build (arm
+> > > multi_v7_defconfig) failed like this:
+> > > 
+> > > drivers/mfd/at91-usart.c:51:34: error: array type has incomplete element type 'struct of_device_id'
+> > >   static const struct of_device_id at91_usart_mode_of_match[] = {
+> > >                                    ^~~~~~~~~~~~~~~~~~~~~~~~
+> > > drivers/mfd/at91-usart.c:52:4: error: field name not in record or union initializer
+> > >    { .compatible = "atmel,at91rm9200-usart" },
+> > >      ^
+> > > drivers/mfd/at91-usart.c:52:4: note: (near initialization for 'at91_usart_mode_of_match')
+> > > drivers/mfd/at91-usart.c:53:4: error: field name not in record or union initializer
+> > >    { .compatible = "atmel,at91sam9260-usart" },
+> > >      ^
+> > > drivers/mfd/at91-usart.c:53:4: note: (near initialization for 'at91_usart_mode_of_match')
+> > > drivers/mfd/at91-usart.c:51:34: warning: 'at91_usart_mode_of_match' defined but not used [-Wunused-variable]
+> > >   static const struct of_device_id at91_usart_mode_of_match[] = {
+> > >                                    ^~~~~~~~~~~~~~~~~~~~~~~~
+> > > 
+> > > Caused by commit
+> > > 
+> > >    7d3aa342cef7 ("mfd: at91-usart: Add MFD driver for USART")
+> > > 
+> > > Forgot to include <linux/mod_devicetable.h>?
+> > 
+> > Looks like a missing Device Tree header <linux/of.h>.
+> > 
+> > Will chase this today and follow up with another PR.
 > 
-> The function call paths (from bottom to top) in Linux-4.16 are:
+> Hi all,
 > 
-> [FUNC] usleep_range
-> drivers/pci/dwc/pcie-designware.c, 181: 
-> 	usleep_range in dw_pcie_prog_outbound_atu
-> drivers/pci/dwc/pcie-designware-host.c, 479: 
-> 	dw_pcie_prog_outbound_atu in dw_pcie_rd_other_conf
-> drivers/pci/dwc/pcie-designware-host.c, 561: 
-> 	dw_pcie_rd_other_conf in dw_pcie_rd_conf
-> drivers/pci/access.c, 66: 
-> 	[FUNC_PTR]dw_pcie_rd_conf in pci_bus_read_config_word
-> drivers/pci/access.c, 918: 
-> 	pci_bus_read_config_word in pci_read_config_word
-> drivers/block/umem.c, 630: 
-> 	pci_read_config_word in mm_interrupt (interrupt handler)
-> 
-> [FUNC] usleep_range
-> drivers/pci/dwc/pcie-designware.c, 181: 
-> 	usleep_range in dw_pcie_prog_outbound_atu
-> drivers/pci/dwc/pcie-designware-host.c, 479: 
-> 	dw_pcie_prog_outbound_atu in dw_pcie_rd_other_conf
-> drivers/pci/dwc/pcie-designware-host.c, 561: 
-> 	dw_pcie_rd_other_conf in dw_pcie_rd_conf
-> drivers/pci/access.c, 66: 
-> 	[FUNC_PTR]dw_pcie_rd_conf in pci_bus_read_config_word
-> drivers/pci/access.c, 918: 
-> 	pci_bus_read_config_word in pci_read_config_word
-> drivers/ata/pata_efar.c, 115: 
-> 	pci_read_config_word in efar_set_piomode
-> drivers/ata/pata_efar.c, 113: 
-> 	_raw_spin_lock_irqsave in efar_set_piomod
-> 
-> [FUNC] usleep_range
-> drivers/pci/dwc/pcie-designware.c, 181: 
-> 	usleep_range in dw_pcie_prog_outbound_atu
-> drivers/pci/dwc/pcie-designware-host.c, 479: 
-> 	dw_pcie_prog_outbound_atu in dw_pcie_rd_other_conf
-> drivers/pci/dwc/pcie-designware-host.c, 561: 
-> 	dw_pcie_rd_other_conf in dw_pcie_rd_conf
-> drivers/pci/access.c, 66: 
-> 	[FUNC_PTR]dw_pcie_rd_conf in pci_bus_read_config_word
-> drivers/pci/access.c, 918: 
-> 	pci_bus_read_config_word in pci_read_config_word
-> drivers/block/mtip32xx/mtip32xx.c, 158: 
-> 	pci_read_config_word in mtip_check_surprise_removal
-> drivers/block/mtip32xx/mtip32xx.c, 843: 
-> 	mtip_check_surprise_removal in mtip_handle_irq
-> drivers/block/mtip32xx/mtip32xx.c, 879: 
-> 	mtip_handle_irq in mtip_irq_handler (interrupt handler)
-> 
-> [FUNC] usleep_range
-> drivers/pci/dwc/pcie-designware.c, 181: 
-> 	usleep_range in dw_pcie_prog_outbound_atu
-> drivers/pci/dwc/pcie-designware-host.c, 479: 
-> 	dw_pcie_prog_outbound_atu in dw_pcie_rd_other_conf
-> drivers/pci/dwc/pcie-designware-host.c, 561: 
-> 	dw_pcie_rd_other_conf in dw_pcie_rd_conf
-> drivers/pci/access.c, 66: 
-> 	[FUNC_PTR]dw_pcie_rd_conf in pci_bus_read_config_word
-> drivers/pci/access.c, 918: 
-> 	pci_bus_read_config_word in pci_read_config_word
-> drivers/gpu/vga/vgaarb.c, 645: 
-> 	pci_read_config_word in vga_arbiter_add_pci_device
-> drivers/gpu/vga/vgaarb.c, 629: 
-> 	_raw_spin_lock_irqsave in vga_arbiter_add_pci_device
-> 
-> [FUNC] usleep_range
-> drivers/pci/dwc/pcie-designware.c, 181: 
-> 	usleep_range in dw_pcie_prog_outbound_atu
-> drivers/pci/dwc/pcie-designware-host.c, 479: 
-> 	dw_pcie_prog_outbound_atu in dw_pcie_rd_other_conf
-> drivers/pci/dwc/pcie-designware-host.c, 561: 
-> 	dw_pcie_rd_other_conf in dw_pcie_rd_conf
-> drivers/pci/access.c, 66: 
-> 	[FUNC_PTR]dw_pcie_rd_conf in pci_bus_read_config_word
-> drivers/pci/access.c, 918: 
-> 	pci_bus_read_config_word in pci_read_config_word
-> drivers/pci/ats.c, 139: 
-> 	pci_read_config_word in pci_ats_queue_depth
-> drivers/iommu/intel-iommu.c, 1519: 
-> 	pci_ats_queue_depth in iommu_enable_dev_iotlb
-> drivers/iommu/intel-iommu.c, 5295: 
-> 	iommu_enable_dev_iotlb in intel_iommu_enable_pasid
-> drivers/iommu/intel-iommu.c, 5241: 
-> 	_raw_spin_lock_irqsave in intel_iommu_enable_pasid
-> 
-> To fix this bug, usleep_range() is replaced with udelay().
-> 
-> This bug is found by my static analysis tool DSAC.
-> 
-> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-> ---
->  drivers/pci/controller/dwc/pcie-designware.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-> index 778c4f76a884..7f50f7e51543 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware.c
-> @@ -135,7 +135,7 @@ static void dw_pcie_prog_outbound_atu_unroll(struct dw_pcie *pci, int index,
->  		if (val & PCIE_ATU_ENABLE)
->  			return;
->  
-> -		usleep_range(LINK_WAIT_IATU_MIN, LINK_WAIT_IATU_MAX);
-> +		udelay(LINK_WAIT_IATU_MAX);
+> Actually it is due to the missing of  <linux/mod_devicetable.h> as Stephen
+> suggested. It is due to the patch ac3167257b9f ("headers: separate
+> linux/mod_devicetable.h from linux/platform_device.h") merged in v4.19-rc1.
 
-You might use the mdelay instead of udelay, however this fix and others were
-already made on patch on [1]
+Since this set uses Device Tree, it really should include the of.h.
 
-[1] https://lkml.org/lkml/2018/9/10/284
+This solves the issue reported above.
 
-Regards,
-Gustavo
+I will fix-up and re-send the pull-request.
 
->  	}
->  	dev_err(pci->dev, "Outbound iATU is not being enabled\n");
->  }
+> because linux/platform_device.h was included by linux/mfd/core.h that is
+> present in this driver. This is why the issue was not identified beforehand.
 > 
+> I'm building a tiny patch to address this right now.
+> 
+> Thanks for your help. Best regards,
 
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
