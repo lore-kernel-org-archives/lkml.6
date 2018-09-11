@@ -2,139 +2,112 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7514C6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 18:22:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CDA7C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 18:23:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CF0A20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 18:22:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDB682086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 18:23:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jdRm+DfE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CF0A20866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="F7rC61w4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDB682086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728219AbeIKXWu (ORCPT
+        id S1728221AbeIKXYM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 19:22:50 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:44389 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726818AbeIKXWt (ORCPT
+        Tue, 11 Sep 2018 19:24:12 -0400
+Received: from mail-ed1-f49.google.com ([209.85.208.49]:41146 "EHLO
+        mail-ed1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727007AbeIKXYM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 19:22:49 -0400
-Received: by mail-pf1-f194.google.com with SMTP id k21-v6so12622476pff.11;
-        Tue, 11 Sep 2018 11:22:18 -0700 (PDT)
+        Tue, 11 Sep 2018 19:24:12 -0400
+Received: by mail-ed1-f49.google.com with SMTP id f38-v6so19975853edd.8
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 11:23:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=CRHC2tW1MQsd8iJifE1lmuhOkbWJdHdtx/M/CTrek7Q=;
-        b=jdRm+DfEewdJ8y0HbKZHK3e2mRCn+VZ0I5ynX9CmVdSIAnSPGH8PBth64Z77hats8L
-         pCJy6f9wcIB4Vk8SBnIaOmO/o1fWD+A08cgH8HFN6aMdnKPHCemdOy2irKaxVk6b0WXN
-         868INtME4hC8ivuFMaENq7KV7iIL2YYC1zk2+iqyh25yR6JAV3J0MsOvAl7JpBe/aUcO
-         NXcpLmXiw9gobZjehiLNRC/ILUJDVG9YenFFD/COH4yhMrAEmPLVKP6wHD3Eeawj8lh/
-         AIz8RU20A0V4MPwv6WhS4aFCeO645ONlj1Q2vvfrmTZqlnAJSF4otqFo96gHY3H2U0t4
-         osXQ==
+        d=arista.com; s=googlenew;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=5931aHJ0SiTio5MsKfcYNyT3U/UPc5zo3OJiAvM50Wc=;
+        b=F7rC61w43ZpA8t/XxwarunPvBwThI3vo6CoVHcPpmMbJ5arKeVpjRi1CKMsIiq31wG
+         WCKD86G19rc+7QcEnelFI2pGpCNifK7EKQvDYctg+rrgq98eyVdxXh2chq9BJg/9zKo5
+         +7imP7c2y8FQ/FouWeD6GdpcSdq0xD5Mbt9yQXETA0X52lKnlIacklZWWI4FkwUrX7JS
+         SxUk0Me8zqkfZ6BqGBua2o681zvOoLHXcj4IG61kFNQA3HWKTiKLm18XBpPF5T0T29Yd
+         6/Lh4ks8pY1qN8Z12QhlvrpkCTGmSvpzgbMWs+t//zeoo5iurfyqBA7TwBhigMu+UAgb
+         NhCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=CRHC2tW1MQsd8iJifE1lmuhOkbWJdHdtx/M/CTrek7Q=;
-        b=Zo1amz/kEH5P6kpl3NfcMxfdCS48Gzq/iqyhaWB6WS2ytP6y8q7FOvyz7khltlrulW
-         mFL6O8OIBxQfVQ+HB9BwBv3H/E8laW7aVEjG9hVMq6plcrawUwS5GvbKWr8VkJwzrsku
-         X5phXhMD11PgOU29jgeiFtrfROTGD3VcI4jmmrPa/xpzTEG8TaYB4lCLrJFlWYzDRcbY
-         WoNKT/wxNNbOgezPiylgvAyiI1vgy/S2BT9j0QDW9ZpAKJ5/8RJnyLQy3jreze78sCXE
-         Xe0xjoQbAap1hQac7/ya9Q9Jx8A/unQo35POb6g+9IU1Lz4ZZSJpODychvNNlm+tgbRu
-         vCww==
-X-Gm-Message-State: APzg51Cy+7Y8G1T8VzkcgBVixhZrG+1DozVK/WNaMaA11QGA2FmXDTFu
-        ROKiQcO1+2lftl5um/9634c=
-X-Google-Smtp-Source: ANB0VdaOFXX9+Y+ayWccsfJURqGP+RyhJwiMzm0B1L2R2dpn/RpKzxEmDpb02OryX5bmYGknYeIWqA==
-X-Received: by 2002:a63:481:: with SMTP id 123-v6mr30293808pge.129.1536690138491;
-        Tue, 11 Sep 2018 11:22:18 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id n79-v6sm48123770pfh.2.2018.09.11.11.22.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Sep 2018 11:22:17 -0700 (PDT)
-Date:   Tue, 11 Sep 2018 11:22:16 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Joerg Roedel <jroedel@suse.de>, linux-kernel@vger.kernel.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Michal Hocko <mhocko@suse.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Pavel Machek <pavel@ucw.cz>, linux-efi@vger.kernel.org,
-        x86@kernel.org
-Subject: Re: Random crashes with i386 and efi boots
-Message-ID: <20180911182216.GA21160@roeck-us.net>
-References: <20180910215659.GA17966@roeck-us.net>
- <D213F8BC-5C8E-44A2-810F-918B915F0804@amacapital.net>
- <877118e5-beee-4551-28d3-79e7aa52f74e@roeck-us.net>
- <90A7FF2E-F186-49CF-A028-CDE317BE13E1@amacapital.net>
- <20180911174158.7qu6f4vfnfzqqrcf@suse.de>
- <51FDF5AF-2FE8-4817-9A5C-8CE4A8BC23AB@amacapital.net>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=5931aHJ0SiTio5MsKfcYNyT3U/UPc5zo3OJiAvM50Wc=;
+        b=frGqoe7i3QvmglHkbPJo+/2pyM8TL2qbseemxw29CV5WWn86lkzDUwh3m4/chOUFaD
+         VsNl4F34hgKw5Spn4Z/Z4A+rjv5WOl8izzT40AISWoMkmr+BDO1XwyhHy7DswD+6GZRe
+         JbBocXOeWtzSdHD5xG6OCmtbllv1RFAqbRJR08JO2eyfqPZH9Kg9DCjIaqYHk7thVPy6
+         VMJ1guC1Vyvl5CNWsT9ANAQuFvNwpgoSBbBh7z5og7hG78PAW3pmY4FISmBgOIWWiVF4
+         e7oyEew7VZJxplXaKJ7YTWIaXcLorpa4/6wO8pcyaIkG+uMvjdtEy63dvuuaZxvYwLU8
+         jq/w==
+X-Gm-Message-State: APzg51CTTtXiEwh/Jjp5HZSYKEL+e8nUbJ99Gxd2vW1VLrt7iS49yjKB
+        IPzO+VFNQBZQZwbEi3HksX+TAFSBWeviZb6UTCuvow==
+X-Google-Smtp-Source: ANB0VdYR0/j40UCkr0Vl7U+q8wrsaTuim2GuM9TnN0I/0FOsfJUOav5ecfsq3s44r+33MlnI3eXSJSk8se0at6fewyg=
+X-Received: by 2002:a50:a186:: with SMTP id 6-v6mr30461746edk.12.1536690218997;
+ Tue, 11 Sep 2018 11:23:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <51FDF5AF-2FE8-4817-9A5C-8CE4A8BC23AB@amacapital.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Received: by 2002:a50:955c:0:0:0:0:0 with HTTP; Tue, 11 Sep 2018 11:23:18
+ -0700 (PDT)
+In-Reply-To: <20180911111217.3e3679c5@xeon-e3>
+References: <20180911180406.31283-1-vasilykh@arista.com> <20180911111217.3e3679c5@xeon-e3>
+From:   Vasiliy Khoruzhick <vasilykh@arista.com>
+Date:   Tue, 11 Sep 2018 11:23:18 -0700
+Message-ID: <CAL0zPMPx3B+TXvHTzAW+RcgO6a6jPN47zS8E6nA4+2cRzFM+Tg@mail.gmail.com>
+Subject: Re: [PATCH v2] neighbour: confirm neigh entries when ARP packet is received
+To:     Stephen Hemminger <stephen@networkplumber.org>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Roopa Prabhu <roopa@cumulusnetworks.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Jim Westfall <jwestfall@surrealistic.net>,
+        Wolfgang Bumiller <w.bumiller@proxmox.com>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ihar Hrachyshka <ihrachys@redhat.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 11, 2018 at 11:05:25AM -0700, Andy Lutomirski wrote:
-> 
-> 
-> > On Sep 11, 2018, at 10:41 AM, Joerg Roedel <jroedel@suse.de> wrote:
-> > 
-> > On Tue, Sep 11, 2018 at 09:36:51AM -0700, Andy Lutomirski wrote:
-> >>>   save_pgd = efi_call_phys_prolog();
-> >>>   local_irq_save(flags);
-> >>>   status = efi_call_phys(...);
-> >>>       local_irq_restore(flags);
-> >>> 
-> >>>       efi_call_phys_epilog(save_pgd);
-> >>> 
-> >>> So, yes, interrupts are very much enabled.
-> >> 
-> >> Does fixing that solve the problem?  It seems more robust.
-> > 
-> > The problem is still that in efi_call_phys_prolog() we load the gdt with
-> > its physical address, and when we reload the %cr3 in _epilog from
-> > initial_page_table to swapper_pg_dir again the gdt is no longer mapped.
-> > Blocking interrupts is more robust, but we can't block NMIs that way
-> > that would also trigger the issue, no?
-> > 
-> > So I am in favor of changing the order in efi_call_phys_epilog() too.
-> > 
-> 
-> I’m rather confused here.  We’re loading CR3 with page tables that don’t have the fixmap mapped?  With interrupts on?  And we expect it to work?  This is *nuts*.
-> 
-> There are IMO only three sane fixes here:
-> 
-> 1. Load the fixmap, cpu_entry_area, etc into the EFI page table.  Drop the GDT reload entirely.
-> 
-> 2. Do this whole virtual map dance earlier so we don’t have IRQs and NMIs and such. Maybe while we’re still using the initial page table?
-> 
-> 3. Just identity map all the EFI regions. Make EFI page tables that literally map them at their physical addresses *and* map the entire kernel, just like we do for normal user mms.
-> 
-> Sure, as a stopgap, turning off IRQs and applying Guenter’s patch seems okay, but this code is not okay.
+On Tue, Sep 11, 2018 at 11:12 AM, Stephen Hemminger
+<stephen@networkplumber.org> wrote:
+> On Tue, 11 Sep 2018 11:04:06 -0700
+> Vasily Khoruzhick <vasilykh@arista.com> wrote:
+>
+>> diff --git a/net/core/neighbour.c b/net/core/neighbour.c
+>> index aa19d86937af..56a554597db5 100644
+>> --- a/net/core/neighbour.c
+>> +++ b/net/core/neighbour.c
+>> @@ -1180,6 +1180,12 @@ int neigh_update(struct neighbour *neigh, const u8 *lladdr, u8 new,
+>>               lladdr = neigh->ha;
+>>       }
+>>
+>> +     /* Update confirmed timestamp for neighbour entry after we
+>> +      * received ARP packet even if it doesn't change IP to MAC binding.
+>> +      */
+>> +     if (new & NUD_CONNECTED)
+>> +             neigh->confirmed = jiffies;
+>
+> You might want to do:
+>         if ((new & NUD_CONNECTED) && neigh->confirmed != jiffies)
+>                 neigh->confirmed = jiffies;
+>
+> This avoid poisoning the cacheline with unnecessary write.
 
-I submitted a patch with the diff I suggested above; it seems to be the
-least invasive solution and addresses the immediate problem.
+Sorry for duplicate - this time in plain text, so it should get
+through lkml filter:
 
-I am way out of league regarding the other suggested changes. I'll be happy
-to test the code if someone is willing to rearrange the code accordingly,
-but I don't think it would make sense to even try doing it myself.
-
-Thanks,
-Guenter
+I don't think that it's performance-critical path, so this
+optimization is unnecessary
+and it doesn't improve code readability.
