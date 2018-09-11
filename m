@@ -2,87 +2,111 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.4 required=3.0 tests=DATE_IN_PAST_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DEF4C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 21:05:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 692D0C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 21:05:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17A3220839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 21:05:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17A3220839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 2833920839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 21:05:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2833920839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727795AbeILCGX (ORCPT
+        id S1727942AbeILCGn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 22:06:23 -0400
-Received: from smtprelay0194.hostedemail.com ([216.40.44.194]:38301 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726870AbeILCGX (ORCPT
+        Tue, 11 Sep 2018 22:06:43 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:52314 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726870AbeILCGn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 22:06:23 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 372F4100E86C3;
-        Tue, 11 Sep 2018 21:05:16 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: crack73_84d81cde84109
-X-Filterd-Recvd-Size: 2254
-Received: from XPS-9350 (unknown [172.56.6.146])
-        (Authenticated sender: joe@perches.com)
-        by omf09.hostedemail.com (Postfix) with ESMTPA;
-        Tue, 11 Sep 2018 21:05:12 +0000 (UTC)
-Message-ID: <7a842c452d57684377eb3fb50984d130d7dc0401.camel@perches.com>
-Subject: Re: [PATCH] staging: rtl8188eu: change array type to u8
-From:   Joe Perches <joe@perches.com>
-To:     Michael Straube <straube.linux@gmail.com>,
-        gregkh@linuxfoundation.org
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20180910203805.10342-1-straube.linux@gmail.com>
-References: <20180910203805.10342-1-straube.linux@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-Date:   Tue, 11 Sep 2018 04:23:22 -0700
+        Tue, 11 Sep 2018 22:06:43 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126] helo=xylophone)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1fzpqm-0002jn-UN; Tue, 11 Sep 2018 22:05:33 +0100
+Message-ID: <1536699932.3024.161.camel@codethink.co.uk>
+Subject: Re: [PATCH 4.4 51/79] bnxt_en: Fix for system hang if request_irq
+ fails
+From:   Ben Hutchings <ben.hutchings@codethink.co.uk>
+To:     Michael Chan <michael.chan@broadcom.com>
+Cc:     Vikas Gupta <vikas.gupta@broadcom.com>, stable@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Date:   Tue, 11 Sep 2018 22:05:32 +0100
+In-Reply-To: <CACKFLinHTVrapMyU=OLcb+MS0RFxS69eHfRjirYvB2mi8Pkf0A@mail.gmail.com>
+References: <20180823074918.641878835@linuxfoundation.org>
+         <20180823074922.442947994@linuxfoundation.org>
+         <1536696866.3024.151.camel@codethink.co.uk>
+         <CACKFLinHTVrapMyU=OLcb+MS0RFxS69eHfRjirYvB2mi8Pkf0A@mail.gmail.com>
+Organization: Codethink Ltd.
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
 Mime-Version: 1.0
-X-Mailer: Evolution 3.28.1-2 
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-09-10 at 22:38 +0200, Michael Straube wrote:
-> The the last two parameters of write_cam() have type u8.
-> Change the type of the passed arrays from unsigned char to u8.
-> Clears a line over 80 characters checkpatch warning.
+On Tue, 2018-09-11 at 13:58 -0700, Michael Chan wrote:
+> On Tue, Sep 11, 2018 at 1:14 PM, Ben Hutchings
+> <ben.hutchings@codethink.co.uk> wrote:
+> > On Thu, 2018-08-23 at 09:53 +0200, Greg Kroah-Hartman wrote:
+> > > 4.4-stable review patch.  If anyone has any objections, please
+> > > let me know.
+> > > 
+> > > ------------------
+> > > 
+> > > From: Vikas Gupta <vikas.gupta@broadcom.com>
+> > > 
+> > > [ Upstream commit c58387ab1614f6d7fb9e244f214b61e7631421fc ]
+> > > 
+> > > Fix bug in the error code path when bnxt_request_irq() returns
+> > > failure.
+> > > bnxt_disable_napi() should not be called in this error path
+> > > because
+> > > NAPI has not been enabled yet.
+> > 
+> > [...]
+> > > --- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+> > > +++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+> > > @@ -4591,7 +4591,7 @@ static int __bnxt_open_nic(struct bnxt *
+> > >               rc = bnxt_request_irq(bp);
+> > >               if (rc) {
+> > >                       netdev_err(bp->dev, "bnxt_request_irq err:
+> > > %x\n", rc);
+> > > -                     goto open_err;
+> > > +                     goto open_err_irq;
+> > >               }
+> > >       }
+> > > 
+> > > @@ -4629,6 +4629,8 @@ static int __bnxt_open_nic(struct bnxt *
+> > > 
+> > >  open_err:
+> > >       bnxt_disable_napi(bp);
+> > > +
+> > > +open_err_irq:
+> > >       bnxt_del_napi(bp);
+> > 
+> > Shouldn't this added statement be conditional on irq_re_init?
+> > 
 > 
-> Signed-off-by: Michael Straube <straube.linux@gmail.com>
-> ---
->  drivers/staging/rtl8188eu/core/rtw_wlan_util.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+> Unconditional call is more correct, because when open fails, we clean
+> up everything, including the NAPI that was added just now or during a
+> previous call.
 > 
-> diff --git a/drivers/staging/rtl8188eu/core/rtw_wlan_util.c b/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
-> index 3e0801858737..fb496ab5a862 100644
-> --- a/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
-> +++ b/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
-> @@ -454,9 +454,9 @@ void write_cam(struct adapter *padapter, u8 entry, u16 ctrl, u8 *mac, u8 *key)
->  
->  void clear_cam_entry(struct adapter *padapter, u8 entry)
->  {
-> -	unsigned char null_sta[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-> -	unsigned char null_key[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-> -				    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-> +	u8 null_sta[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-> +	u8 null_key[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-> +			 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+> In other words, the NAPI struct is always valid here whether
+> irq_re_init is true or not.  And we always delete it if open fails.
 
-static const
+OK, I see.
 
-could also be written
+Ben.
 
-	static const u8 null_sta[ETH_ALEN] = {};
-	static const u8 null_key[16] = {};
-
->  
->  	write_cam(padapter, entry, 0, null_sta, null_key);
->  }
+-- 
+Ben Hutchings, Software Developer                         Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
