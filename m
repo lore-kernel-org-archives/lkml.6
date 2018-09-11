@@ -2,103 +2,96 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3129DC04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 14:47:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0982EC04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 14:47:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA0222086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 14:47:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3B1F2086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 14:47:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Ehl90/NR";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ST0cbSDd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA0222086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="idQE5E07"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3B1F2086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728008AbeIKTrO (ORCPT
+        id S1728040AbeIKTrS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 15:47:14 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:34376 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726761AbeIKTrO (ORCPT
+        Tue, 11 Sep 2018 15:47:18 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:34033 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726761AbeIKTrS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 15:47:14 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 7A83A608C9; Tue, 11 Sep 2018 14:47:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536677256;
-        bh=+kNXtvsawg9K8Z6Z8LiWplEOyGJdei6vUQkoW1STWnk=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=Ehl90/NRGETtlwaNTF8XbTRfn68R4ewz5R/SPAYyrVgJDnaLNSbBokWoPfBG7na0c
-         zhmtL5vYF2Gb51yWU3vDI4XPnrqRB7prFn8NkjyWELjQHer0cL8ou4vnZkqWY3D3nI
-         xV0AbwTXLOiZfp4tXYqzn+ZZuhgXNaZ01kjeHodw=
-Received: from x230.qca.qualcomm.com (85-76-111-141-nat.elisa-mobile.fi [85.76.111.141])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3CE9360452;
-        Tue, 11 Sep 2018 14:47:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536677255;
-        bh=+kNXtvsawg9K8Z6Z8LiWplEOyGJdei6vUQkoW1STWnk=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=ST0cbSDd8QjydIH0O6eXRLafcnhB9F2hrlkc7njvZUJjd4LT4IwyqDKYH0xSvt/ex
-         IihW8pEjRdatJCQw3yYlYUL15JqNOLnJ4rmg1MrJ6Nus/tjr09L6LCCqDzeP6tk17T
-         F+F/p65ZFFTjr4fUGKd5NFCyLsNs8LsuNSuItkaQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3CE9360452
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Brian Norris <briannorris@chromium.org>
-Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-wireless@vger.kernel.org, Zhi Chen <zhichen@codeaurora.org>,
-        ath10k@lists.infradead.org
-Subject: Re: [for -stable] commit "c82919888064 ath10k: fix scan crash due to incorrect length calculation"
-References: <20180906213620.GA72542@ban.mtv.corp.google.com>
-Date:   Tue, 11 Sep 2018 17:47:31 +0300
-In-Reply-To: <20180906213620.GA72542@ban.mtv.corp.google.com> (Brian Norris's
-        message of "Thu, 6 Sep 2018 14:36:22 -0700")
-Message-ID: <87lg88t7jw.fsf@codeaurora.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Tue, 11 Sep 2018 15:47:18 -0400
+Received: by mail-lf1-f66.google.com with SMTP id c29-v6so20606066lfj.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 07:47:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=a3Vyahz+VIMu+dF4LMSmK9oGOhC1B5OQP882WjBX+Ww=;
+        b=idQE5E07bR4cDtSN+ZuJYE9SDJUUSS3ikdT4NID+tYYwBi8jmGjtOGo+ZFBS7euNmg
+         ulYbrxoiRAn4X7/Fvz4YNjRlbD2DrHeFHvT/rp+FUgn01J9freqm1Ufzs9QYt1+E4VMM
+         KGOSDa8ML5xir2BfID6Nia692rP3382WByfK0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=a3Vyahz+VIMu+dF4LMSmK9oGOhC1B5OQP882WjBX+Ww=;
+        b=hVS4sOEDEnwOnrhVjrx1lPiszHgdHe0CYqXr/Qxd/1okrKeJf7ofGlfU6iDiLZGx1T
+         iXvMiDNMeG+M57k91nkxeDoP1rWHP7b4WA/WOmhvXMTypJebMx+oVwZe6M/PI00XPxop
+         LNU7InU+ZLQeaaiC9MSJVuClC/Jdb9edGzCefCD8qpKheqlIBf7eh/0UXQy7lhXHmoz4
+         WQ4vjzIelRp+izmYm77ADRovGPx3Eyjp63crsUTCFC8jgoUIr4ubfniEVvnfzstfc0CB
+         JhUIGmsa8bEx8eyWlQdx1RxmYV2kOks8gmg5IywniXhgaxsOF4rUSWMbmLhAbvnHziqV
+         saMQ==
+X-Gm-Message-State: APzg51DI0oE3zjFmNrPwQ6ddJDdedwHKCad5FJBwGRTKuFWvymXrGzgF
+        dgruYC7G9b0UT7V9JajceeuIZJ1qfS3US/3XYT/Dig==
+X-Google-Smtp-Source: ANB0VdYgz7OtgMn4OE7DsvEdMAM1n2RdW0uaDf4g5OJ+IdbyJAa+efscdkZHrln5QaPj2pF6RHNT7co0H2JzI3BNGX0=
+X-Received: by 2002:a19:ef18:: with SMTP id n24-v6mr16484865lfh.36.1536677258055;
+ Tue, 11 Sep 2018 07:47:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <1536655641-26192-1-git-send-email-suzuki.poulose@arm.com> <20180911103509.GA770@e107155-lin>
+In-Reply-To: <20180911103509.GA770@e107155-lin>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Tue, 11 Sep 2018 08:47:27 -0600
+Message-ID: <CANLsYkzaHsi=V+GZaJ+hdzDODT-BRHU42fPJ1Vu-aX726E=grA@mail.gmail.com>
+Subject: Re: [PATCH] dts: juno: Enable coresight tmc scatter gather in ETR
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     "Suzuki K. Poulose" <suzuki.poulose@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        coresight@lists.linaro.org, Robert Walker <robert.walker@arm.com>,
+        devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
+        Mike Leach <mike.leach@linaro.org>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Brian Norris <briannorris@chromium.org> writes:
+On Tue, 11 Sep 2018 at 04:35, Sudeep Holla <sudeep.holla@arm.com> wrote:
+>
+> On 11/09/18 09:47, Suzuki K Poulose wrote:
+> > We do not enable scatter-gather mode in the TMC-ETR by default
+> > to prevent malfunctioning of systems where the ETR may not be
+> > properly connected to the memory subsystem to allow for simultaneous
+> > READ/WRITE transactions when used in SG mode. Instead we whitelist
+> > the platforms where we know that it is safe to use the mode.
+> >
+> > All revisions of Juno have a proper ETR connection and hence
+> > white list them.
+> >
+>
+> Applied conditionally, this conflicts with the patch Mathieu has in his
+> branch. He needs to drop that so that I can take both of them via ARM SoC.
 
-> Hi Greg / stable maintainer(s),
->
-> IIUC, this commit is a good candidate for -stable. I just hit the bug on
-> 4.14, because of new vendor firmware that noticed the mismatched length
-> (an internal "assert"), but it seems like this is equally problematic
-> from the kernel side for as long as this code existed [1]:
->
-> commit c8291988806407e02a01b4b15b4504eafbcc04e0
-> Author: Zhi Chen <zhichen@codeaurora.org>
-> Date:   Mon Jun 18 17:00:39 2018 +0300
->
->     ath10k: fix scan crash due to incorrect length calculation
->
-> Thanks,
-> Brian
->
-> [1] I guess that would be:
->
-> Fixes: ca996ec56608 ("ath10k: implement wmi-tlv backend")
->
-> which was in v4.0.
+As I communicated yesterday, I've already dropped that patch from my tree.
 
-FWIW:
-
-Acked-by: Kalle Valo <kvalo@codeaurora.org>
-
-Thanks Brian!
-
--- 
-Kalle Valo
+>
+> --
+> Regards,
+> Sudeep
