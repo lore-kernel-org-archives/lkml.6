@@ -2,109 +2,219 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT,USER_IN_DEF_DKIM_WL
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36937C4646A
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:58:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 579EBC04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:58:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1F32206B7
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:58:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZC6FR9F3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1F32206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 17AD92086A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:58:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17AD92086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727809AbeILB7e (ORCPT
+        id S1727860AbeILB7n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 21:59:34 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:39177 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726850AbeILB7e (ORCPT
+        Tue, 11 Sep 2018 21:59:43 -0400
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:47949 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727825AbeILB7n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 21:59:34 -0400
-Received: by mail-io0-f196.google.com with SMTP id l7-v6so4752200iok.6
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 13:58:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=2ykk3hzudbtvt9XvgwFOwS/kR2W14+9osgiEVDfXUjQ=;
-        b=ZC6FR9F3vXuyGWxyuR0mBkAg41IHQ3cN4dBehwSstI1wlc6w98lE8psCVQmy3Qus9X
-         qcHOFxxzN6+oCbsN1NtY+SuGhSYvvx9PUzOV3gbxzwmBleKi7mweDi3uiVRfsbczskBk
-         fsNvXXByRkXJBpD1qAqn/kc/hisDal/8fGjmG73aqbHN4PT1NriT8z0fv10v+Sj7DEQC
-         bzqhh681Yim8fevxWKuxS+2uPV+1WB8KN78KsL0fDRikecH0hF/pmJ6l5CLqplHMH37y
-         BFOhY9mXkR/VmX1C/ouEaIgNI+X1fQSeimq9zx0pThy3kQvoctLNbGWUDqDTcJN1eElI
-         q03A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2ykk3hzudbtvt9XvgwFOwS/kR2W14+9osgiEVDfXUjQ=;
-        b=e+dwZL4Fcqv7jLluExDhSetHpU8Oo1ttyOUpiZAuoFxng1GQGvQB61pE1HiOdJ9qpt
-         UFIs28z8HHMtH/iUzZ90OBDWIeCjCeVg7Za0MEBcTZbbjvFY/7wrL4IL9Bh3EZYylFTI
-         zetbVTuUMG6jxwlB+SS0zrZOXvLP43FrgySNVnuJ9pgax9byaBy5HhIMcSfRg+aHziWt
-         a/m8jClXGDkOgXQdsr2jKY7TZjpa4eQrJxHxcXX/6lWxh9E/0mGt5ji7vm4VKYqLDq7k
-         moM060bjmsVs8r5aWUyjw8Ny7hV49zWeqnqQTE+5i5b+bOs5VPlGlWcDkHdi5VoCfRfD
-         +OXg==
-X-Gm-Message-State: APzg51Dk1L5uz83iq3dxYeilRwBaInc899fIuEdoG/75gGvZ58U5t/a8
-        tJQbkJF2uOhaBA89zCGkkhxnUg==
-X-Google-Smtp-Source: ANB0VdYcS493MYFC3EWFcVl65F+8QzpCtp+lWfPDDcCGV6j/IBadajwAsbQffKc5UzFMFbbPCUGj0g==
-X-Received: by 2002:a6b:9e91:: with SMTP id h139-v6mr23140225ioe.185.1536699508760;
-        Tue, 11 Sep 2018 13:58:28 -0700 (PDT)
-Received: from google.com ([2620:15c:183:0:a0c3:519e:9276:fc96])
-        by smtp.gmail.com with ESMTPSA id d63-v6sm1561055itd.33.2018.09.11.13.58.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Sep 2018 13:58:27 -0700 (PDT)
-Date:   Tue, 11 Sep 2018 14:58:25 -0600
-From:   Yu Zhao <yuzhao@google.com>
-To:     Takashi Iwai <tiwai@suse.de>, Vinod Koul <vkoul@kernel.org>
-Cc:     Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
-        Rakesh Ughreja <rakesh.a.ughreja@intel.com>,
-        Jaroslav Kysela <perex@perex.cz>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] sound: enable interrupt after dma buffer
- initialization
-Message-ID: <20180911205825.GB18086@google.com>
-References: <20180910211718.200802-1-yuzhao@google.com>
- <20180910212150.202655-1-yuzhao@google.com>
- <s5hbm9436va.wl-tiwai@suse.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <s5hbm9436va.wl-tiwai@suse.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 11 Sep 2018 21:59:43 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0T8Sg6Yy_1536699501;
+Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T8Sg6Yy_1536699501)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 12 Sep 2018 04:58:29 +0800
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+To:     mhocko@kernel.org, willy@infradead.org, ldufour@linux.vnet.ibm.com,
+        vbabka@suse.cz, akpm@linux-foundation.org, dave.hansen@intel.com,
+        oleg@redhat.com, srikar@linux.vnet.ibm.com
+Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [RFC v9 PATCH 1/4] mm: refactor do_munmap() to extract the common part
+Date:   Wed, 12 Sep 2018 04:58:10 +0800
+Message-Id: <1536699493-69195-2-git-send-email-yang.shi@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1536699493-69195-1-git-send-email-yang.shi@linux.alibaba.com>
+References: <1536699493-69195-1-git-send-email-yang.shi@linux.alibaba.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 11, 2018 at 08:06:49AM +0200, Takashi Iwai wrote:
-> On Mon, 10 Sep 2018 23:21:50 +0200,
-> Yu Zhao wrote:
-> > 
-> > In snd_hdac_bus_init_chip(), we enable interrupt before
-> > snd_hdac_bus_init_cmd_io() initializing dma buffers. If irq has
-> > been acquired and irq handler uses the dma buffer, kernel may crash
-> > when interrupt comes in.
-> > 
-> > Fix the problem by postponing enabling irq after dma buffer
-> > initialization. And warn once on null dma buffer pointer during the
-> > initialization.
-> > 
-> > Signed-off-by: Yu Zhao <yuzhao@google.com>
-> 
-> Looks good to me.
-> 
-> Reviewed-by: Takashi Iwai <tiwai@suse.de>
-> 
-> 
-> BTW, the reason why this hasn't been hit on the legacy HD-audio driver
-> is that we allocate usually with MSI, so the irq is isolated.
-> 
-> Any reason that Intel SKL driver doesn't use MST?
+Introduces three new helper functions:
+  * addr_ok()
+  * munmap_lookup_vma()
+  * munlock_vmas()
 
-This I'm not sure. Vinod might have answer to it, according to
-https://patchwork.kernel.org/patch/6375831/#13796611
+They will be used by do_munmap() and the new do_munmap with zapping
+large mapping early in the later patch.
+
+There is no functional change, just code refactor.
+
+Reviewed-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+---
+ mm/mmap.c | 106 +++++++++++++++++++++++++++++++++++++++++++-------------------
+ 1 file changed, 74 insertions(+), 32 deletions(-)
+
+diff --git a/mm/mmap.c b/mm/mmap.c
+index 5f2b2b1..b7092b4 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -2682,35 +2682,42 @@ int split_vma(struct mm_struct *mm, struct vm_area_struct *vma,
+ 	return __split_vma(mm, vma, addr, new_below);
+ }
+ 
+-/* Munmap is split into 2 main parts -- this part which finds
+- * what needs doing, and the areas themselves, which do the
+- * work.  This now handles partial unmappings.
+- * Jeremy Fitzhardinge <jeremy@goop.org>
+- */
+-int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
+-	      struct list_head *uf)
++static inline bool addr_ok(unsigned long start, size_t len)
+ {
+-	unsigned long end;
+-	struct vm_area_struct *vma, *prev, *last;
+-
+ 	if ((offset_in_page(start)) || start > TASK_SIZE || len > TASK_SIZE-start)
+-		return -EINVAL;
++		return false;
+ 
+-	len = PAGE_ALIGN(len);
+-	if (len == 0)
+-		return -EINVAL;
++	if (PAGE_ALIGN(len) == 0)
++		return false;
++
++	return true;
++}
++
++/*
++ * munmap_lookup_vma: find the first overlap vma and split overlap vmas.
++ * @mm: mm_struct
++ * @start: start address
++ * @end: end address
++ *
++ * Return: %NULL if no VMA overlaps this range.  An ERR_PTR if an
++ * overlapping VMA could not be split.  Otherwise a pointer to the first
++ * VMA which overlaps the range.
++ */
++static struct vm_area_struct *munmap_lookup_vma(struct mm_struct *mm,
++			unsigned long start, unsigned long end)
++{
++	struct vm_area_struct *vma, *prev, *last;
+ 
+ 	/* Find the first overlapping VMA */
+ 	vma = find_vma(mm, start);
+ 	if (!vma)
+-		return 0;
+-	prev = vma->vm_prev;
+-	/* we have  start < vma->vm_end  */
++		return NULL;
+ 
++	/* we have start < vma->vm_end  */
+ 	/* if it doesn't overlap, we have nothing.. */
+-	end = start + len;
+ 	if (vma->vm_start >= end)
+-		return 0;
++		return NULL;
++	prev = vma->vm_prev;
+ 
+ 	/*
+ 	 * If we need to split any vma, do it now to save pain later.
+@@ -2728,11 +2735,11 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
+ 		 * its limit temporarily, to help free resources as expected.
+ 		 */
+ 		if (end < vma->vm_end && mm->map_count >= sysctl_max_map_count)
+-			return -ENOMEM;
++			return ERR_PTR(-ENOMEM);
+ 
+ 		error = __split_vma(mm, vma, start, 0);
+ 		if (error)
+-			return error;
++			return ERR_PTR(error);
+ 		prev = vma;
+ 	}
+ 
+@@ -2741,10 +2748,53 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
+ 	if (last && end > last->vm_start) {
+ 		int error = __split_vma(mm, last, end, 1);
+ 		if (error)
+-			return error;
++			return ERR_PTR(error);
+ 	}
+ 	vma = prev ? prev->vm_next : mm->mmap;
+ 
++	return vma;
++}
++
++static inline void munlock_vmas(struct vm_area_struct *vma,
++				unsigned long end)
++{
++	struct mm_struct *mm = vma->vm_mm;
++
++	while (vma && vma->vm_start < end) {
++		if (vma->vm_flags & VM_LOCKED) {
++			mm->locked_vm -= vma_pages(vma);
++			munlock_vma_pages_all(vma);
++		}
++		vma = vma->vm_next;
++	}
++}
++
++/* Munmap is split into 2 main parts -- this part which finds
++ * what needs doing, and the areas themselves, which do the
++ * work.  This now handles partial unmappings.
++ * Jeremy Fitzhardinge <jeremy@goop.org>
++ */
++int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
++	      struct list_head *uf)
++{
++	unsigned long end;
++	struct vm_area_struct *vma, *prev;
++
++	if (!addr_ok(start, len))
++		return -EINVAL;
++
++	len = PAGE_ALIGN(len);
++
++	end = start + len;
++
++	vma = munmap_lookup_vma(mm, start, end);
++	if (!vma)
++		return 0;
++	if (IS_ERR(vma))
++		return PTR_ERR(vma);
++
++	prev = vma->vm_prev;
++
+ 	if (unlikely(uf)) {
+ 		/*
+ 		 * If userfaultfd_unmap_prep returns an error the vmas
+@@ -2763,16 +2813,8 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
+ 	/*
+ 	 * unlock any mlock()ed ranges before detaching vmas
+ 	 */
+-	if (mm->locked_vm) {
+-		struct vm_area_struct *tmp = vma;
+-		while (tmp && tmp->vm_start < end) {
+-			if (tmp->vm_flags & VM_LOCKED) {
+-				mm->locked_vm -= vma_pages(tmp);
+-				munlock_vma_pages_all(tmp);
+-			}
+-			tmp = tmp->vm_next;
+-		}
+-	}
++	if (mm->locked_vm)
++		munlock_vmas(vma, end);
+ 
+ 	/*
+ 	 * Remove the vma's, and unmap the actual pages
+-- 
+1.8.3.1
+
