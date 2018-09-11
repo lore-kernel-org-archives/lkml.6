@@ -4,106 +4,159 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F56DC4646A
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 21:50:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11977C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 21:50:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2032A20880
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 21:50:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6C6A20880
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 21:50:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RqwO5FYj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2032A20880
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="d2K1kFp0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6C6A20880
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728242AbeILCvQ (ORCPT
+        id S1728264AbeILCvS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 22:51:16 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:38286 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727734AbeILCvQ (ORCPT
+        Tue, 11 Sep 2018 22:51:18 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:37372 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727734AbeILCvR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 22:51:16 -0400
-Received: by mail-io0-f193.google.com with SMTP id y3-v6so4852863ioc.5
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 14:49:58 -0700 (PDT)
+        Tue, 11 Sep 2018 22:51:17 -0400
+Received: by mail-it0-f66.google.com with SMTP id h20-v6so347006itf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 14:50:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=fgna4PdGFwEoKN458QoB7zhkmwlBKa1IPSt362SyF6Y=;
-        b=RqwO5FYja9IlyZeCgo4q5mEr3Af83zfN4CSqW8+d49u51mGkZ81MaUtz6ZlCYkzo36
-         U42ZIvdjLbl/Kylx5/k5a8R10e3l3rFuuJ3/W5RpLbCXZ0l+rHICpEVK3kl69sq/Jk0I
-         /6GlKUAL2XJysTXr7w9jsbs2ZQRcTEJlgGZwY=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=ndon8OHIl6m5sRiniUkX7B9EbcN5ooYPsC8th1bX5sM=;
+        b=d2K1kFp09lizW8A4V55ef6PUvzrTLFRWgzs8A6b7l1rYrlhTqaREKXv0vW90d19/Tj
+         MgoaUKJksszvePD4w0Sb1TVfjr8nn7hc3fHEkS6y4N83R0L257Js7SbQZaUwkkHRBt+F
+         zvhbtc3lmfpHHEjL1vr2hmQfgNifAA5P0V90g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=fgna4PdGFwEoKN458QoB7zhkmwlBKa1IPSt362SyF6Y=;
-        b=qYQyvnNnCDgjtiPOrX/QWdRa5+NSkofG+6cWooV7RGg0CBQPAxTqNZjbmjJ6hrAAAv
-         EuLeyBFLJuIuf0KMUQ4PED2MA2S+bRbkE7lVGQvEbAn8T4XuJxuBaJhttVxXWCJK5maD
-         EEpS2yO2ns0lhYIpNt02G89FLNQkgPAZfZ1kpCd78QzIjqWVxcSPiN79kPl5I3ED17PS
-         piBNTXbqD3nJ7MjMd1j3CBvxeDx4yJruRKGCC7/PYivwXTQPBNACxxd/gPJANegugZVX
-         H1nK5LCMW471uNFYCmyDbHdlUdodrCBpv5dnsuwGHxUiSReo/LfXfdAQt18Kv/LsBl5x
-         NfTw==
-X-Gm-Message-State: APzg51C3x9JG2mUEOmxOMLdiN08UsCZaXR0GZgplPkeR4ZmAsgZ2dRHs
-        Tm2C2qjGuWhbNc8CJLCyYNTMvQ==
-X-Google-Smtp-Source: ANB0VdZj9DaZqs4k/oUe0QDlUYQ8Q5qgrWAJKX6K//+wHrn+SF+9xnYZ742YZTOv04LMexkJJIrNKw==
-X-Received: by 2002:a6b:ac03:: with SMTP id v3-v6mr22664374ioe.71.1536702598558;
-        Tue, 11 Sep 2018 14:49:58 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=ndon8OHIl6m5sRiniUkX7B9EbcN5ooYPsC8th1bX5sM=;
+        b=AKNzCRmydCFbxEbJlHuRgKp4RxDEwRKj/6PJK1jCox0AJLCSNH2O7oxvll8x68wuRx
+         d+gNq79JCmqIjsQJSdma27/lC4npWqLA6T2E2WF87Ko3p4967DWx6oj4lvWXdjxGKvPI
+         ZBTXR0o+deFfjTrvgOq8GVHxXGlgP5JhhwRKGXtIeci2/PqcIhzGqsjNxac/ZI2CHASe
+         beO/22MSQSjYpqgPAuenCb4+2KZA8j0oyZ7VS2G4B5RSUwPpqF2Ft0pdD9N9D+7uimPV
+         A3S9aMPSeGz07UnBSTSKuZk4q6yqfUgFwfQhF8rHSZam4ifQCvCbDD3NUSra1LiW8ekp
+         BDwA==
+X-Gm-Message-State: APzg51C6nKTurTs3K9z6ZocL99DTXUx/7P32BaSsSGe3ujZ+cZ6BQss/
+        8c4ox+oNlHhpLe/BeolTBrU7WA==
+X-Google-Smtp-Source: ANB0VdZ66amUIb9ElbYyIK/4PAX1YO5Q08JozT21JbpnC4bjNZmhRQzpzjfN2q37i1xAVVMypYuoJw==
+X-Received: by 2002:a24:2f0e:: with SMTP id j14-v6mr3337355itj.120.1536702600493;
+        Tue, 11 Sep 2018 14:50:00 -0700 (PDT)
 Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id c3-v6sm1102172itd.8.2018.09.11.14.49.56
+        by smtp.gmail.com with ESMTPSA id c3-v6sm1102172itd.8.2018.09.11.14.49.58
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 11 Sep 2018 14:49:57 -0700 (PDT)
+        Tue, 11 Sep 2018 14:49:59 -0700 (PDT)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     alexander.shishkin@linux.intel.com, suzuki.poulose@arm.com,
         gregkh@linuxfoundation.org, kim.phillips@arm.com,
         leo.yan@linaro.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/5] coresight: Output debug messages only in sysFS mode
-Date:   Tue, 11 Sep 2018 15:49:50 -0600
-Message-Id: <1536702595-9999-1-git-send-email-mathieu.poirier@linaro.org>
+Subject: [PATCH 1/5] coresight: Make path enable/disable aware of operation mode
+Date:   Tue, 11 Sep 2018 15:49:51 -0600
+Message-Id: <1536702595-9999-2-git-send-email-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1536702595-9999-1-git-send-email-mathieu.poirier@linaro.org>
+References: <1536702595-9999-1-git-send-email-mathieu.poirier@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Status messages related to the establishment of paths between source and
-sinks are not useful outside of a debugging environment and clogs the log
-files needlessly.  They also trigger the lockdep mechanic when operating
-from perf since they call output functions during process context switch.
+Make functions that enable and disable a path aware of the mode,
+i.e sysFS or perf, they are being operated from.  That way said
+mode can be communicated to device specific operations in order
+to control how verbose they can be.
 
-This patch is fixing the problem by allowing debugging information to be
-emitted only when operating from sysFS.  This doesn't change the 
-debugging capability of the system since 1) everything that is done from
-perf is built on top of the sysFS mode and 2) debugging output is
-completely useless under perf.
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+---
+ drivers/hwtracing/coresight/coresight-etm-perf.c | 4 ++--
+ drivers/hwtracing/coresight/coresight-priv.h     | 2 +-
+ drivers/hwtracing/coresight/coresight.c          | 8 ++++----
+ 3 files changed, 7 insertions(+), 7 deletions(-)
 
-Regards,
-Mathieu 
-
-Mathieu Poirier (5):
-  coresight: Make path enable/disable aware of operation mode
-  coresight: Make link components aware of operation mode
-  coresight: Make sink disable functions aware of operation mode
-  coresight: Define macro to replace dev_dbg() boiler plate code
-  coresight: Allow drivers to be verbose only in sysFS mode
-
- .../coresight/coresight-dynamic-replicator.c       |  8 +++----
- drivers/hwtracing/coresight/coresight-etb10.c      |  8 +++----
- drivers/hwtracing/coresight/coresight-etm-perf.c   |  4 ++--
- drivers/hwtracing/coresight/coresight-etm3x.c      |  7 ++++--
- drivers/hwtracing/coresight/coresight-etm4x.c      |  8 +++++--
- drivers/hwtracing/coresight/coresight-funnel.c     | 10 ++++----
- drivers/hwtracing/coresight/coresight-priv.h       |  9 +++++++-
- drivers/hwtracing/coresight/coresight-replicator.c |  8 +++----
- drivers/hwtracing/coresight/coresight-stm.c        |  2 +-
- drivers/hwtracing/coresight/coresight-tmc-etf.c    | 14 +++++------
- drivers/hwtracing/coresight/coresight-tmc-etr.c    |  4 ++--
- drivers/hwtracing/coresight/coresight-tpiu.c       |  6 ++---
- drivers/hwtracing/coresight/coresight.c            | 27 +++++++++++-----------
- include/linux/coresight.h                          |  8 ++++---
- 14 files changed, 71 insertions(+), 52 deletions(-)
-
+diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
+index abe8249b893b..92affdcf2467 100644
+--- a/drivers/hwtracing/coresight/coresight-etm-perf.c
++++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
+@@ -304,7 +304,7 @@ static void etm_event_start(struct perf_event *event, int flags)
+ 	return;
+ 
+ fail_disable_path:
+-	coresight_disable_path(path);
++	coresight_disable_path(path, CS_MODE_PERF);
+ fail_end_stop:
+ 	perf_aux_output_flag(handle, PERF_AUX_FLAG_TRUNCATED);
+ 	perf_aux_output_end(handle, 0);
+@@ -356,7 +356,7 @@ static void etm_event_stop(struct perf_event *event, int mode)
+ 	}
+ 
+ 	/* Disabling the path make its elements available to other sessions */
+-	coresight_disable_path(path);
++	coresight_disable_path(path, CS_MODE_PERF);
+ }
+ 
+ static int etm_event_add(struct perf_event *event, int mode)
+diff --git a/drivers/hwtracing/coresight/coresight-priv.h b/drivers/hwtracing/coresight/coresight-priv.h
+index c11da5564a67..acfe67646a05 100644
+--- a/drivers/hwtracing/coresight/coresight-priv.h
++++ b/drivers/hwtracing/coresight/coresight-priv.h
+@@ -136,7 +136,7 @@ static inline void coresight_write_reg_pair(void __iomem *addr, u64 val,
+ 		writel_relaxed((u32)(val >> 32), addr + hi_offset);
+ }
+ 
+-void coresight_disable_path(struct list_head *path);
++void coresight_disable_path(struct list_head *path, u32 mode);
+ int coresight_enable_path(struct list_head *path, u32 mode, void *sink_data);
+ struct coresight_device *coresight_get_sink(struct list_head *path);
+ struct coresight_device *coresight_get_enabled_sink(bool reset);
+diff --git a/drivers/hwtracing/coresight/coresight.c b/drivers/hwtracing/coresight/coresight.c
+index e73ca6af4765..118b435f0887 100644
+--- a/drivers/hwtracing/coresight/coresight.c
++++ b/drivers/hwtracing/coresight/coresight.c
+@@ -277,7 +277,7 @@ static bool coresight_disable_source(struct coresight_device *csdev)
+ 	return !csdev->enable;
+ }
+ 
+-void coresight_disable_path(struct list_head *path)
++void coresight_disable_path(struct list_head *path, u32 mode)
+ {
+ 	u32 type;
+ 	struct coresight_node *nd;
+@@ -369,7 +369,7 @@ int coresight_enable_path(struct list_head *path, u32 mode, void *sink_data)
+ out:
+ 	return ret;
+ err:
+-	coresight_disable_path(path);
++	coresight_disable_path(path, mode);
+ 	goto out;
+ }
+ 
+@@ -677,7 +677,7 @@ int coresight_enable(struct coresight_device *csdev)
+ 	return ret;
+ 
+ err_source:
+-	coresight_disable_path(path);
++	coresight_disable_path(path, CS_MODE_SYSFS);
+ 
+ err_path:
+ 	coresight_release_path(path);
+@@ -714,7 +714,7 @@ void coresight_disable(struct coresight_device *csdev)
+ 		break;
+ 	}
+ 
+-	coresight_disable_path(path);
++	coresight_disable_path(path, CS_MODE_SYSFS);
+ 	coresight_release_path(path);
+ 
+ out:
 -- 
 2.7.4
 
