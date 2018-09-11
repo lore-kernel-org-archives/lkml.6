@@ -2,120 +2,112 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B62EAC6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 16:50:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7153C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 16:51:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66A372086A
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 16:50:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66A372086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 5F05D20839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 16:51:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="GPQn9khJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F05D20839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727873AbeIKVuX (ORCPT
+        id S1728048AbeIKVvJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 17:50:23 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46694 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726622AbeIKVuX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 17:50:23 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1C0F97A9;
-        Tue, 11 Sep 2018 09:50:14 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E1AD23F703;
-        Tue, 11 Sep 2018 09:50:13 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 7B0C81AE3231; Tue, 11 Sep 2018 17:50:30 +0100 (BST)
-Date:   Tue, 11 Sep 2018 17:50:30 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Shuah Khan <shuah@kernel.org>
-Cc:     Michal Hocko <mhocko@kernel.org>, catalin.marinas@arm.com,
-        sudeep.holla@arm.com, ganapatrao.kulkarni@cavium.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: add NUMA emulation support
-Message-ID: <20180911165029.GA15022@arm.com>
-References: <20180829110802.GD10349@dhcp22.suse.cz>
- <f041ba95-03e6-4a7d-c324-870b45a2f648@kernel.org>
- <20180905064252.GW14951@dhcp22.suse.cz>
- <c1b58f13-6190-20e9-7e4f-b8bc2b9d5f80@kernel.org>
- <20180907083452.GC19621@dhcp22.suse.cz>
- <e46e715c-f115-f054-eeb2-3cecbcd1192d@kernel.org>
- <20180910134845.GH10951@dhcp22.suse.cz>
- <4d7beb50-f778-507a-4c3c-f6de92f8cfb9@kernel.org>
- <20180911091124.GP10951@dhcp22.suse.cz>
- <86aad702-9f42-c572-a8f1-74983cd1bf33@kernel.org>
+        Tue, 11 Sep 2018 17:51:09 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:37728 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727164AbeIKVvI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 17:51:08 -0400
+Received: by mail-oi0-f66.google.com with SMTP id p84-v6so48508189oic.4
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 09:50:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=lNj2SyibD2/ZFnLTJC7LDZoFwwKQA0POEalo9I1Io9U=;
+        b=GPQn9khJsjfrDJGAnVbxcuxKwrFyYXG2d/aAYh6/S8Iaxt4Ws1i/E6da3gvSM0fCsY
+         FsNiJhxmQySNLMwVBgDrfkbFJSzBNf7g37MvV/eIkQ0GvyLYg7mml4Hvp+Uv8df2DJkg
+         fSg/axfsrneP99SD5xybI0vtG7sNatA35mjskE1mK7J4g/qvrBJC7TXlimln/9wsxgSY
+         Hua68AqTOo0Afu6QXqL1i0aH/BVIiB1R+i6gcgoj2EtD6WHrjGaQeRCnZ6O/2JS984IS
+         CcvA60AjWHtR8eVxxWar/f78mXNNs+2gqcmTdgt5j7ibyoZ27hh4jMERFG3oVbcyz+87
+         4FoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=lNj2SyibD2/ZFnLTJC7LDZoFwwKQA0POEalo9I1Io9U=;
+        b=n1WgJF07tf8YsmsXBIo1MI6gjqQl8a+dhvx8Z4xRSCeciwguylaCfd/3z04SguRnFR
+         j/saodeCCQjpDGfZz1gPVMsT/tegwn68NoHktAmHcXRfbZTdEOUGTHFkqz31t0HeHSep
+         Joufu0lXFlAUFamgnFuIbDK9tu5QUQf8A3rEcduyLJEzcjLoJ79mE4RsJGC6xu8UGk/q
+         vBk0vdlkGb64oT5rbXoBiDhz0rYEHpWolfOjd3wDRnc3sGkvMBdo00spgAqGxDm0YrXR
+         k6ZNokQHiOM1RuDN/HjMSUQ1HioHLBn6LZyc5e7zQEbdB4t6UHHmmV1ZH/W5NksKYJTL
+         IzZg==
+X-Gm-Message-State: APzg51DzlbF1hO0sSJuXSXfxaocw9uBRh0/XM8ViDxXJD8oW6I8TX4Uy
+        JSypBazD/2YuOFNDgIY2s0yNQjAFrEjPIBYZ4XpImQ==
+X-Google-Smtp-Source: ANB0VdbVL5CyKKPikkjnj7j+ybebrKpP2fMO3epvevW7SUDkWuE5LulDX/Gzl0SNljrMCoai8mX7FJE3PZK1q48E7UE=
+X-Received: by 2002:aca:4914:: with SMTP id w20-v6mr30209869oia.5.1536684658387;
+ Tue, 11 Sep 2018 09:50:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <86aad702-9f42-c572-a8f1-74983cd1bf33@kernel.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Received: by 2002:a4a:8e85:0:0:0:0:0 with HTTP; Tue, 11 Sep 2018 09:50:57
+ -0700 (PDT)
+In-Reply-To: <20180910234341.4068.26882.stgit@localhost.localdomain>
+References: <20180910232615.4068.29155.stgit@localhost.localdomain> <20180910234341.4068.26882.stgit@localhost.localdomain>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Tue, 11 Sep 2018 09:50:57 -0700
+Message-ID: <CAPcyv4j301Ma8D65oMzFo9-jVdwKGHzOVHb=7u9XaxACR5RAhg@mail.gmail.com>
+Subject: Re: [PATCH 1/4] mm: Provide kernel parameter to allow disabling page
+ init poisoning
+To:     Alexander Duyck <alexander.duyck@gmail.com>
+Cc:     Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        pavel.tatashin@microsoft.com, Michal Hocko <mhocko@suse.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 11, 2018 at 09:27:49AM -0600, Shuah Khan wrote:
-> On 09/11/2018 03:11 AM, Michal Hocko wrote:
-> > On Mon 10-09-18 20:02:05, Shuah Khan wrote:
-> >> Hi Michal,
-> >>
-> >> On 09/10/2018 07:48 AM, Michal Hocko wrote:
-> >>> On Fri 07-09-18 16:30:59, Shuah Khan wrote:
-> >>>> On 09/07/2018 02:34 AM, Michal Hocko wrote:
-> >>>>> On Thu 06-09-18 15:53:34, Shuah Khan wrote:
-> >> [....]
-> >>>>
-> >>>> In addition to isolation, being able to reserve a block instead is one of the
-> >>>> issues I am looking to address. Unfortunately memory cgroups won't address that
-> >>>> issue.
-> >>>
-> >>> Could you be more specific why you need reservations other than
-> >>> isolation.
-> >>>
-> >>
-> >> Taking automotive as a specific example, there are two classes of applications:
-> >> 1. critical applications that must run
-> >> 2. Infotainment and misc. user-space.
-> >>
-> >> In this case, being able to reserve a block of memory for critical applications
-> >> will ensure the memory is available for them. If a critical application has to
-> >> restart and/or when an on-demand critical application starts, it might not be able
-> >> to allocate memory if it is not reserved.
-> >>
-> >> When a flat system has multiple memory blocks, with NUMA emulation in conjunction with
-> >> cpusets, one or more block can be reserved for critical applications configuring a set
-> >> of cpus and one of more memory nodes for them.
-> >>
-> >> Memory cgroups will not support such reservation. Hope this helps explain the use-case
-> >> I am trying to address with this patch.
-> > 
-> > OK, that is more clear. I still believe that you either have to have a
-> > very good control over memory allocations or a good luck to not see
-> > unexpected kernel allocations in your reserved memory which might easily
-> > break guarantees you would like to accomplish.
-> > 
-> 
-> Thanks. Right. I am with you on the possibility that root cgroup can eat into
-> the reserved memory. However, with this solution I proposed, there is a guarantee
-> that the cpuset cgroup that is configured for non-critical Infotainment and misc.
-> user-space application will not be able to allocate from the reserved memory node.
-> 
-> I am hoping the proposed patch will allow critical apps. reserving memory with the
-> exception that root cgroup and kernel can still allocate from it when needed. Perhaps
-> cpuset exclusive logic could be extended to look for non-exclusive memory nodes first
-> if it doesn't already do that. This is inline with the current cpuset approach is that
-> the critical kernel allocations aren't starved to ensure memory reservations.
-> 
-> If you don't think this solution isn't ideal/good, do you have other suggestions
-> for solving the problem? If not would it be okay to start with what I proposed and
-> build on top of as needed?
+On Mon, Sep 10, 2018 at 4:43 PM, Alexander Duyck
+<alexander.duyck@gmail.com> wrote:
+> From: Alexander Duyck <alexander.h.duyck@intel.com>
+>
+> On systems with a large amount of memory it can take a significant amount
+> of time to initialize all of the page structs with the PAGE_POISON_PATTERN
+> value. I have seen it take over 2 minutes to initialize a system with
+> over 12GB of RAM.
+>
+> In order to work around the issue I had to disable CONFIG_DEBUG_VM and then
+> the boot time returned to something much more reasonable as the
+> arch_add_memory call completed in milliseconds versus seconds. However in
+> doing that I had to disable all of the other VM debugging on the system.
+>
+> In order to work around a kernel that might have CONFIG_DEBUG_VM enabled on
+> a system that has a large amount of memory I have added a new kernel
+> parameter named "page_init_poison" that can be set to "off" in order to
+> disable it.
 
-I still don't understand why this can't be achieved by faking up some NUMA
-entries in the firmware table and just using the existing NUMA code that we
-have.
+In anticipation of potentially more DEBUG_VM options wanting runtime
+control I'd propose creating a new "vm_debug=" option for this modeled
+after "slub_debug=" along with a CONFIG_DEBUG_VM_ON to turn on all
+options.
 
-Will
+That way there is more differentiation for debug cases like this that
+have significant performance impact when enabled.
+
+CONFIG_DEBUG_VM leaves optional debug capabilities disabled by default
+unless CONFIG_DEBUG_VM_ON is also set.
