@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 448E9C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 05:36:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C77AC6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 05:36:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 080BC206BB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 05:36:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 080BC206BB
+	by mail.kernel.org (Postfix) with ESMTP id 40A972086A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 05:36:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40A972086A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727461AbeIKKeC (ORCPT
+        id S1727650AbeIKKeL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 06:34:02 -0400
-Received: from mga17.intel.com ([192.55.52.151]:62537 "EHLO mga17.intel.com"
+        Tue, 11 Sep 2018 06:34:11 -0400
+Received: from mga17.intel.com ([192.55.52.151]:62541 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726426AbeIKKeC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 06:34:02 -0400
+        id S1727491AbeIKKeL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 06:34:11 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2018 22:36:28 -0700
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2018 22:36:37 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,359,1531810800"; 
-   d="scan'208";a="262426326"
+   d="scan'208";a="262426337"
 Received: from aaronlu.sh.intel.com ([10.239.159.44])
-  by fmsmga006.fm.intel.com with ESMTP; 10 Sep 2018 22:36:26 -0700
+  by fmsmga006.fm.intel.com with ESMTP; 10 Sep 2018 22:36:34 -0700
 From:   Aaron Lu <aaron.lu@intel.com>
 To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
@@ -43,9 +43,9 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Tariq Toukan <tariqt@mellanox.com>,
         Yosef Lev <levyossi@icloud.com>,
         Jesper Dangaard Brouer <brouer@redhat.com>
-Subject: [RFC PATCH 3/9] mm: introduce smp_list_splice to prepare for concurrent LRU adds
-Date:   Tue, 11 Sep 2018 13:36:10 +0800
-Message-Id: <20180911053616.6894-4-aaron.lu@intel.com>
+Subject: [RFC PATCH 6/9] use atomic for free_area[order].nr_free
+Date:   Tue, 11 Sep 2018 13:36:13 +0800
+Message-Id: <20180911053616.6894-7-aaron.lu@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180911053616.6894-1-aaron.lu@intel.com>
 References: <20180911053616.6894-1-aaron.lu@intel.com>
@@ -54,121 +54,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Jordan <daniel.m.jordan@oracle.com>
+Since we will make free path run concurrently, free_area[].nr_free has
+to be atomic.
 
-Now that we splice a local list onto the LRU, prepare for multiple tasks
-doing this concurrently by adding a variant of the kernel's list
-splicing API, list_splice, that's designed to work with multiple tasks.
-
-Although there is naturally less parallelism to be gained from locking
-the LRU head this way, the main benefit of doing this is to allow
-removals to happen concurrently.  The way lru_lock is today, an add
-needlessly blocks removal of any page but the first in the LRU.
-
-For now, hold lru_lock as writer to serialize the adds to ensure the
-function is correct for a single thread at a time.
-
-Yosef Lev came up with this algorithm.
-
-[aaronlu: drop LRU related code, keep only list related code]
-Suggested-by: Yosef Lev <levyossi@icloud.com>
-Signed-off-by: Daniel Jordan <daniel.m.jordan@oracle.com>
+Signed-off-by: Aaron Lu <aaron.lu@intel.com>
 ---
- include/linux/list.h |  1 +
- lib/list.c           | 60 ++++++++++++++++++++++++++++++++++++++------
- 2 files changed, 54 insertions(+), 7 deletions(-)
+ include/linux/mmzone.h |  2 +-
+ mm/page_alloc.c        | 12 ++++++------
+ mm/vmstat.c            |  4 ++--
+ 3 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/include/linux/list.h b/include/linux/list.h
-index 0fd9c87dd14b..5f203fb55939 100644
---- a/include/linux/list.h
-+++ b/include/linux/list.h
-@@ -48,6 +48,7 @@ static inline bool __list_del_entry_valid(struct list_head *entry)
- #endif
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 84cfa56e2d19..e66b8c63d5d1 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -95,7 +95,7 @@ extern int page_group_by_mobility_disabled;
  
- extern void smp_list_del(struct list_head *entry);
-+extern void smp_list_splice(struct list_head *list, struct list_head *head);
+ struct free_area {
+ 	struct list_head	free_list[MIGRATE_TYPES];
+-	unsigned long		nr_free;
++	atomic_long_t		nr_free;
+ };
  
- /*
-  * Insert a new entry between two known consecutive entries.
-diff --git a/lib/list.c b/lib/list.c
-index 4d0949ea1a09..104faa144abf 100644
---- a/lib/list.c
-+++ b/lib/list.c
-@@ -10,17 +10,18 @@
- #include <linux/prefetch.h>
- 
- /*
-- * smp_list_del is a variant of list_del that allows concurrent list removals
-- * under certain assumptions.  The idea is to get away from overly coarse
-- * synchronization, such as using a lock to guard an entire list, which
-- * serializes all operations even though those operations might be happening on
-- * disjoint parts.
-+ * smp_list_del and smp_list_splice are variants of list_del and list_splice,
-+ * respectively, that allow concurrent list operations under certain
-+ * assumptions.  The idea is to get away from overly coarse synchronization,
-+ * such as using a lock to guard an entire list, which serializes all
-+ * operations even though those operations might be happening on disjoint
-+ * parts.
-  *
-  * If you want to use other functions from the list API concurrently,
-  * additional synchronization may be necessary.  For example, you could use a
-  * rwlock as a two-mode lock, where readers use the lock in shared mode and are
-- * allowed to call smp_list_del concurrently, and writers use the lock in
-- * exclusive mode and are allowed to use all list operations.
-+ * allowed to call smp_list_* functions concurrently, and writers use the lock
-+ * in exclusive mode and are allowed to use all list operations.
-  */
- 
- /**
-@@ -156,3 +157,48 @@ void smp_list_del(struct list_head *entry)
- 	entry->next = LIST_POISON1;
- 	entry->prev = LIST_POISON2;
+ struct pglist_data;
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index d0b954783f1d..dff3edc60d71 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -701,7 +701,7 @@ static inline void add_to_buddy_common(struct page *page, struct zone *zone,
+ 					unsigned int order)
+ {
+ 	set_page_order(page, order);
+-	zone->free_area[order].nr_free++;
++	atomic_long_inc(&zone->free_area[order].nr_free);
  }
-+
-+/**
-+ * smp_list_splice - thread-safe splice of two lists
-+ * @list: the new list to add
-+ * @head: the place to add it in the first list
-+ *
-+ * Safely handles concurrent smp_list_splice operations onto the same list head
-+ * and concurrent smp_list_del operations of any list entry except @head.
-+ * Assumes that @head cannot be removed.
-+ */
-+void smp_list_splice(struct list_head *list, struct list_head *head)
-+{
-+	struct list_head *first = list->next;
-+	struct list_head *last = list->prev;
-+	struct list_head *succ;
-+
-+	/*
-+	 * Lock the front of @head by replacing its next pointer with NULL.
-+	 * Should another thread be adding to the front, wait until it's done.
-+	 */
-+	succ = READ_ONCE(head->next);
-+	while (succ == NULL || cmpxchg(&head->next, succ, NULL) != succ) {
-+		cpu_relax();
-+		succ = READ_ONCE(head->next);
-+	}
-+
-+	first->prev = head;
-+	last->next = succ;
-+
-+	/*
-+	 * It is safe to write to succ, head's successor, because locking head
-+	 * prevents succ from being removed in smp_list_del.
-+	 */
-+	succ->prev = last;
-+
-+	/*
-+	 * Pairs with the implied full barrier before the cmpxchg above.
-+	 * Ensures the write that unlocks the head is seen last to avoid list
-+	 * corruption.
-+	 */
-+	smp_wmb();
-+
-+	/* Simultaneously complete the splice and unlock the head node. */
-+	WRITE_ONCE(head->next, first);
-+}
+ 
+ static inline void add_to_buddy_head(struct page *page, struct zone *zone,
+@@ -728,7 +728,7 @@ static inline void remove_from_buddy(struct page *page, struct zone *zone,
+ 					unsigned int order)
+ {
+ 	list_del(&page->lru);
+-	zone->free_area[order].nr_free--;
++	atomic_long_dec(&zone->free_area[order].nr_free);
+ 	rmv_page_order(page);
+ }
+ 
+@@ -2225,7 +2225,7 @@ int find_suitable_fallback(struct free_area *area, unsigned int order,
+ 	int i;
+ 	int fallback_mt;
+ 
+-	if (area->nr_free == 0)
++	if (atomic_long_read(&area->nr_free) == 0)
+ 		return -1;
+ 
+ 	*can_steal = false;
+@@ -3178,7 +3178,7 @@ bool __zone_watermark_ok(struct zone *z, unsigned int order, unsigned long mark,
+ 		struct free_area *area = &z->free_area[o];
+ 		int mt;
+ 
+-		if (!area->nr_free)
++		if (atomic_long_read(&area->nr_free) == 0)
+ 			continue;
+ 
+ 		for (mt = 0; mt < MIGRATE_PCPTYPES; mt++) {
+@@ -5029,7 +5029,7 @@ void show_free_areas(unsigned int filter, nodemask_t *nodemask)
+ 			struct free_area *area = &zone->free_area[order];
+ 			int type;
+ 
+-			nr[order] = area->nr_free;
++			nr[order] = atomic_long_read(&area->nr_free);
+ 			total += nr[order] << order;
+ 
+ 			types[order] = 0;
+@@ -5562,7 +5562,7 @@ static void __meminit zone_init_free_lists(struct zone *zone)
+ 	unsigned int order, t;
+ 	for_each_migratetype_order(order, t) {
+ 		INIT_LIST_HEAD(&zone->free_area[order].free_list[t]);
+-		zone->free_area[order].nr_free = 0;
++		atomic_long_set(&zone->free_area[order].nr_free, 0);
+ 	}
+ }
+ 
+diff --git a/mm/vmstat.c b/mm/vmstat.c
+index 06d79271a8ae..c1985550bb9f 100644
+--- a/mm/vmstat.c
++++ b/mm/vmstat.c
+@@ -1030,7 +1030,7 @@ static void fill_contig_page_info(struct zone *zone,
+ 		unsigned long blocks;
+ 
+ 		/* Count number of free blocks */
+-		blocks = zone->free_area[order].nr_free;
++		blocks = atomic_long_read(&zone->free_area[order].nr_free);
+ 		info->free_blocks_total += blocks;
+ 
+ 		/* Count free base pages */
+@@ -1353,7 +1353,7 @@ static void frag_show_print(struct seq_file *m, pg_data_t *pgdat,
+ 
+ 	seq_printf(m, "Node %d, zone %8s ", pgdat->node_id, zone->name);
+ 	for (order = 0; order < MAX_ORDER; ++order)
+-		seq_printf(m, "%6lu ", zone->free_area[order].nr_free);
++		seq_printf(m, "%6lu ", atomic_long_read(&zone->free_area[order].nr_free));
+ 	seq_putc(m, '\n');
+ }
+ 
 -- 
 2.17.1
 
