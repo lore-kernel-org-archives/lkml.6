@@ -2,105 +2,99 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 586F6C6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:48:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DCE8C6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:50:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10A5420839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:48:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4A9320839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 15:50:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BFCrgXQ4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10A5420839
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DcFJhXJb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4A9320839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727716AbeIKUsH (ORCPT
+        id S1727153AbeIKUt4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 16:48:07 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:33671 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727652AbeIKUsH (ORCPT
+        Tue, 11 Sep 2018 16:49:56 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:40271 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726775AbeIKUt4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 16:48:07 -0400
-Received: by mail-wm0-f66.google.com with SMTP id r1-v6so8145093wmh.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 08:48:13 -0700 (PDT)
+        Tue, 11 Sep 2018 16:49:56 -0400
+Received: by mail-yw1-f67.google.com with SMTP id z143-v6so9388142ywa.7;
+        Tue, 11 Sep 2018 08:50:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=sIne01WFO5xnZEEWzdA5Aldn0ENy8kSUCNoy5aGMhao=;
-        b=BFCrgXQ4HA1Bt+7AjC96XEgqiaGaD9v8ERS/22Qf4E/cnQcnPfPbvBUnSn6ZXxaR+U
-         K0j5NrJv6rs7DbqCl4tcUcpTntgYeshk6/t8z/qYY3oKES1BERv789OQKSIA9H/I+3aJ
-         sH5glWXq31szKezNwo0WRy8I5UamxUPuVUSIs=
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=QTr3k7vV1353pdP7gQSS+TOpEeZOWjtIdRjApHX3V+s=;
+        b=DcFJhXJbUJngS24vRbKHrKORepVFSKJuJDEJJ7IOeS/jOxh2vHXKGBbH60b4rb/JPs
+         nLy0u1c1E3ww2X0Vkpt1FPQ6aMyNZnuH1LifyeWt0Am5/12oDaHJHXZD11xj3m2Re5ZG
+         xGdFf7GUFMHhO+Bltdmicsj7/XZWrfKbBM4zIPndoGsS2OHa4ZuAMUgXbm1Nxc5qy8Sv
+         vtqiNBsWbQvymzDfxNv248yUhSUXfoQABiKVUjC6qROKjPbIKIsdsfUf6k6cBe6OJlTg
+         HpJ5ROCMpCn9sawFEhPdzCpVRG5WYW9b1m+gR1MWuXY+GEzlygjNdToAdp6WW8AccQlM
+         aPoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=sIne01WFO5xnZEEWzdA5Aldn0ENy8kSUCNoy5aGMhao=;
-        b=QiSPbojKJ2PAZSPX49/bCGqH+AWQBGcm7PdA174V2LelgExej+jM8tEDR4l2zYErh/
-         8k2zZTzj0fFgWyjx4YlQ2Gk884Kp0c+k9PqhFi1hKfmCd/VYQmJ2wLPfgo5gb01OpE5e
-         hl2dmg21fgD7XpdI2jZDZ2I+VRE2yd/6pwwj62P4sKA8nqloxJJ7gXZidMdCaQpydZZ8
-         0tX/zossVVhFFqfeass9lF+K3k0dyb9C6/uwNGP5Qy7auBrxGKbwRah6uRFTVYTdns/y
-         ZqJdock5u0lvaykDArPVh9OjQXL4gXFxc3k1rXiURak8iYgOXPbMR4oxjaCpuqpYJ9Cn
-         m/SA==
-X-Gm-Message-State: APzg51AeBsKaN4FSh75371ONJEB3Hr5grg1PF4Xi+vujBBFH73T34/51
-        3OHzwK5FqFrkrUIu6eeoBPy1Hw==
-X-Google-Smtp-Source: ANB0VdbXBT2w/vAeFOazE0TbUmhILwn1nBUN10ykzR0EmlRa4qY5GqTX7CY+GVLOk6BiuVX6EABDxg==
-X-Received: by 2002:a1c:b54b:: with SMTP id e72-v6mr1750660wmf.117.1536680892247;
-        Tue, 11 Sep 2018 08:48:12 -0700 (PDT)
-Received: from dell ([2.27.167.7])
-        by smtp.gmail.com with ESMTPSA id m68-v6sm2312187wmb.10.2018.09.11.08.48.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Sep 2018 08:48:11 -0700 (PDT)
-Date:   Tue, 11 Sep 2018 16:48:09 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        Roger Quadros <rogerq@ti.com>
-Subject: Re: [PATCH] mfd: omap-usb-host: Fix dts probe of children
-Message-ID: <20180911154809.GC4185@dell>
-References: <20180425142922.128233-1-tony@atomide.com>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=QTr3k7vV1353pdP7gQSS+TOpEeZOWjtIdRjApHX3V+s=;
+        b=TTpVZAIkmmz32J8hOGQttg6bjEaX99esPY2ASm9Ii+PQw+6lrAhcgy2BEyMbFYhIMS
+         PtmDCBa4df0h0+mFv8CszYeG984TAya9PzOZMz7qZ6myyzhbkOUlfqgehZ58n01xJIX3
+         LcTapQqvsbMKgMzCcRQnGmbsJZgbBR9SzpIC1ecvVeaKByKc//e1bhKpezCBsvqPj17v
+         0dQfG1JjkX0NcP37n70pfuUc2cF9L+yoEyug+W1keD5Dtj0Q4BavEgppc0f4jLD83Dsb
+         u2q5rihtBz4Jozcio8dpiKzPbfHytJwr1ThGh4uObzuk1lONmjBlBVSgDqggKqmN2JRA
+         iQAA==
+X-Gm-Message-State: APzg51DiBLSBz2eWBME+se//R3yrjg+PtcC5Wj+Qn/76H0+MkJ9lxZ44
+        NqrbIgeEwOnrJouREnT+opg=
+X-Google-Smtp-Source: ANB0VdZqAUAWS00hylrZ4wbAt4zHj4p28tdLTtcehrch9gu16ceCG8E2gZxibd3bethP6yPLE+eR2g==
+X-Received: by 2002:a81:4dd6:: with SMTP id a205-v6mr12848185ywb.289.1536681001804;
+        Tue, 11 Sep 2018 08:50:01 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:200::1:6304])
+        by smtp.gmail.com with ESMTPSA id d21-v6sm8463964ywb.16.2018.09.11.08.50.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Sep 2018 08:50:01 -0700 (PDT)
+Date:   Tue, 11 Sep 2018 08:49:59 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Jianchao Wang <jianchao.w.wang@oracle.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-block@vger.kernel.org
+Subject: Re: [PATCH] percpu-refcount: relax limit on percpu_ref_reinit()
+Message-ID: <20180911154959.GI1100574@devbig004.ftw2.facebook.com>
+References: <20180909125824.9150-1-ming.lei@redhat.com>
+ <20180910164920.GE1100574@devbig004.ftw2.facebook.com>
+ <20180911000049.GB30977@ming.t460p>
+ <20180911134836.GG1100574@devbig004.ftw2.facebook.com>
+ <20180911154540.GA10082@ming.t460p>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180425142922.128233-1-tony@atomide.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180911154540.GA10082@ming.t460p>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 25 Apr 2018, Tony Lindgren wrote:
+On Tue, Sep 11, 2018 at 11:45:41PM +0800, Ming Lei wrote:
+> > So, this part seems wrong.  The function is called percpu_ref_reinit()
+> > - the refcnt is expected to be in its initial state with just the base
+> > ref once this function returns.  If you're removing the restriction on
+> 
+> But the comment says that 'Re-initialize @ref so that it's in the same
+> state as when it finished', and this invariant isn't changed with this
+> patch.
 
-> It currently only works if the parent bus uses "simple-bus". We
-> currently try to probe children with non-existing compatible values.
-> And we're missing .probe.
-> 
-> I noticed this while testing devices configured to probe using ti-sysc
-> interconnect target module driver. For that we also may want to rebind
-> the driver, so let's remove __init and __exit.
-> 
-> Cc: Roger Quadros <rogerq@ti.com>
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
-> ---
-> 
-> This is OK to wait for v4.18 merge window as the related dts node has
-> not yet been updated to probe via ti-sysc interconnect target driver.
-> 
-> ---
->  drivers/mfd/omap-usb-host.c | 11 ++++++-----
->  1 file changed, 6 insertions(+), 5 deletions(-)
+The comment goes "when perpcu_ref_init() finished".  The function is
+called re _init_.  It should put the ref in the initial state, right?
 
-Applied, thanks.
+Thanks.
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+tejun
