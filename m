@@ -2,117 +2,115 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC6D4C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 19:31:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AD8DC04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 19:32:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A86E206BB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 19:31:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A86E206BB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
+	by mail.kernel.org (Postfix) with ESMTP id 1C8C2206BB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 19:32:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="nqujDIUu";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="o8pB3392"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C8C2206BB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727842AbeILAcj (ORCPT
+        id S1728059AbeILAd1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 20:32:39 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:50074 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1726689AbeILAcj (ORCPT
+        Tue, 11 Sep 2018 20:33:27 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:53244 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726725AbeILAd0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 20:32:39 -0400
-Received: (qmail 5674 invoked by uid 2102); 11 Sep 2018 15:31:53 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 11 Sep 2018 15:31:53 -0400
-Date:   Tue, 11 Sep 2018 15:31:53 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-cc:     Daniel Lustig <dlustig@nvidia.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>,
-        <linux-arch@vger.kernel.org>, <mingo@kernel.org>,
-        <peterz@infradead.org>, <boqun.feng@gmail.com>,
-        <npiggin@gmail.com>, <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>, <akiyks@gmail.com>,
-        Palmer Dabbelt <palmer@sifive.com>
-Subject: Re: [PATCH RFC LKMM 1/7] tools/memory-model: Add extra ordering for
- locks and remove it for ordinary release/acquire
-In-Reply-To: <20180908095848.GA6272@andrea>
-Message-ID: <Pine.LNX.4.44L0.1809111455420.1461-100000@iolanthe.rowland.org>
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+        Tue, 11 Sep 2018 20:33:26 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 40FA8607C6; Tue, 11 Sep 2018 19:32:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1536694358;
+        bh=iN843eDPY2wSQrCsjtacWkwVYAC3Eh44Pu1soY5v+V4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=nqujDIUu/5XewpNInHKiwqqpI3ReginRBupVJQHo6GrmO14rnS3laYL0Ec92jfxgg
+         GXVHRD1ILs/xbgNe0OB/xBj7UkF01et3qBbysQIPgd6ypQ45yBn2z+3CVGWTwU+yeX
+         nuLTDaZAsEVu2XRJ09Or2rT9FQcCcGi8cae+yKg8=
+Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1A18760721;
+        Tue, 11 Sep 2018 19:32:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1536694357;
+        bh=iN843eDPY2wSQrCsjtacWkwVYAC3Eh44Pu1soY5v+V4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=o8pB3392Mep5g4NYLO6X/vE7EBSg84k5RvQ7IVXpVmbzNm6zoxF8w1D7CFgQb3DI1
+         i6KPX8hnXp8eCdGGzYPlQ2lWyi87SMQNTMYEX0AzCQEWhAgCwJTzh9b00b7ard/oqg
+         403NIIRyUasnmMiOUrEz0FLUfvbzPeaj4470B85A=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1A18760721
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+To:     rjw@rjwysocki.net, linux-acpi@vger.kernel.org,
+        jeremy.linton@arm.com
+Cc:     linux-kernel@vger.kernel.org, vkilari@codeaurora.org,
+        Jeffrey Hugo <jhugo@codeaurora.org>
+Subject: [PATCH] ACPI/PPTT: Handle architecturally unknown cache types
+Date:   Tue, 11 Sep 2018 13:32:14 -0600
+Message-Id: <1536694334-5811-1-git-send-email-jhugo@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 12 Jul 2018, Paul E. McKenney wrote:
+The type of a cache might not be specified by architectural mechanisms (ie
+system registers), but its type might be specified in the PPTT.  In this
+case, following the PPTT specification, we should identify the cache as
+the type specified by PPTT.
 
-> > > Take for instance the pattern where RCU relies on RCsc locks, this is an
-> > > entirely simple and straight forward use of locks, yet completely fails
-> > > on this subtle point.
-> > 
-> > Do you happen to remember exactly where in the kernel source this 
-> > occurs?
-> 
-> Look for the uses of raw_spin_lock_irq_rcu_node() and friends in
-> kernel/rcu and include/linux/*rcu*, along with the explanation in
-> Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.html
+This fixes the following lscpu issue where only the cache type sysfs file
+is missing which results in no output providing a poor user experience in
+the above system configuration-
+lscpu: cannot open /sys/devices/system/cpu/cpu0/cache/index3/type: No such
+file or directory
 
-I just now started looking at this for the first time, and I was struck
-by the sloppy thinking displayed in the very first paragraph of the
-HTML document!  For example, consider the third sentence:
+Fixes: 2bd00bcd73e5 (ACPI/PPTT: Add Processor Properties Topology Table parsing)
+Reported-by: Vijaya Kumar K <vkilari@codeaurora.org>
+Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+---
+ drivers/acpi/pptt.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-	Similarly, any code that happens before the beginning of a 
-	given RCU grace period is guaranteed to see the effects of all
-	accesses following the end of that grace period that are within
-	RCU read-side critical sections.
-
-Is RCU now a time machine?  :-)
-
-I think what you meant to write in the second and third sentences was 
-something more like this:
-
-	Any code in an RCU critical section that extends beyond the 
-	end of a given RCU grace period is guaranteed to see the 
-	effects of all accesses which were visible to the grace 
-	period's CPU before the start of the grace period.  Similarly, 
-	any code that follows an RCU grace period (on the grace 
-	period's CPU) is guaranteed to see the effects of all accesses 
-	which were visible to an RCU critical section that began
-	before the start of the grace period.
-
-Also, the document doesn't seem to explain how Tree RCU relies on the
-lock-ordering guarantees of raw_spin_lock_rcu_node() and friends.  It
-_says_ that these guarantees are used, but not how or where.  (Unless I 
-missed something; I didn't read the document all that carefully.)
-
-In any case, you should bear in mind that the lock ordering provided by
-Peter's raw_spin_lock_rcu_node() and friends is not the same as what we
-have been discussing for the LKMM:
-
-	Peter's routines are meant for the case where you release
-	one lock and then acquire another (for example, locks in 
-	two different levels of the RCU tree).
-
-	The LKMM patch applies only to cases where one CPU releases
-	a lock and then that CPU or another acquires the _same_ lock 
-	again.
-
-As another difference, the litmus test given near the start of the
-"Tree RCU Grace Period Memory Ordering Building Blocks" section would
-not be forbidden by the LKMM, even with RCtso locks, if it didn't use
-raw_spin_lock_rcu_node().  This is because the litmus test is forbidden
-only when locks are RCsc, which is what raw_spin_lock_rcu_node()  
-provides.
-
-So I don't see how the RCU code can be held up as an example either for
-or against requiring locks to be RCtso.
-
-Alan
+diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
+index d1e26cb..3c6db09 100644
+--- a/drivers/acpi/pptt.c
++++ b/drivers/acpi/pptt.c
+@@ -401,6 +401,21 @@ static void update_cache_properties(struct cacheinfo *this_leaf,
+ 			break;
+ 		}
+ 	}
++	if ((this_leaf->type == CACHE_TYPE_NOCACHE) &&
++	    (found_cache->flags & ACPI_PPTT_CACHE_TYPE_VALID)) {
++		switch (found_cache->attributes & ACPI_PPTT_MASK_CACHE_TYPE) {
++		case ACPI_PPTT_CACHE_TYPE_DATA:
++			this_leaf->type = CACHE_TYPE_DATA;
++			break;
++		case ACPI_PPTT_CACHE_TYPE_INSTR:
++			this_leaf->type = CACHE_TYPE_INST;
++			break;
++		case ACPI_PPTT_CACHE_TYPE_UNIFIED:
++		case ACPI_PPTT_CACHE_TYPE_UNIFIED_ALT:
++			this_leaf->type = CACHE_TYPE_UNIFIED;
++			break;
++		}
++	}
+ 	/*
+ 	 * If the above flags are valid, and the cache type is NOCACHE
+ 	 * update the cache type as well.
+-- 
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
 
