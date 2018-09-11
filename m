@@ -2,107 +2,127 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4BFCC04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 08:51:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D1A1C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 08:52:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BDE32086A
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 08:51:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCCCA2086A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 08:52:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dT8k08kx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BDE32086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="BSVfNSOo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCCCA2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727358AbeIKNtt (ORCPT
+        id S1726943AbeIKNuW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 09:49:49 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:47100 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726519AbeIKNtt (ORCPT
+        Tue, 11 Sep 2018 09:50:22 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:46745 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726564AbeIKNuV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 09:49:49 -0400
-Received: by mail-wr1-f66.google.com with SMTP id a108-v6so24724429wrc.13
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 01:51:30 -0700 (PDT)
+        Tue, 11 Sep 2018 09:50:21 -0400
+Received: by mail-lj1-f195.google.com with SMTP id 203-v6so20162971ljj.13
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 01:52:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=3JkOBshBkPnoGU3ZFnX2CBww7ePskOJ06sVlq7xA4Tw=;
-        b=dT8k08kxcwNMy0ZRYi6QZ2EX4BreGVEQk8yT5DTSfeAX93gr8kc9mmBawbJvJr8cS0
-         Uu+ssPOL4OuY58NY+xvQiE9OCAGBV6R66Q3AYNhL/xctBq0+9lzydF0IgOwZ2orro5U7
-         ZnU5CbytsjVtpQHUWGqzXKC5xelgjcMt9VTkg=
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=D/du7rdVPX4SEeCObez1WJf1uKijQfbjcN5X8AigYMM=;
+        b=BSVfNSOozYmUqZDSlezzDrMks9HsyCD844/FlG0Ky0WCEpu+rkpFRX1jIcXb3R+FeJ
+         luHrbm5tP5wSVEapeuwSX7ar+sSkP2DhlIE9NwgZmtJ0jH2erCSUhx00GhoJI7Y7cppR
+         nsgaXkfAp+37xzxdvqyoIX2O0+zk2p7tHvqHC16+PH27DIhbR0CUPbBRxm0JL+y3O0nL
+         8z3rnX+IXsvbAS9JnhOWDrHlzQnUoGruUYSawIJfuVYhvKz6vXoW0Uzn3/QKtUy2DkYl
+         hbCHz+pIQzNjCCTCQYkzV9hq93AhXYtR9UEWt3lbSSPXTbz4iEKZPR+uueKKxLEn65U4
+         xQbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=3JkOBshBkPnoGU3ZFnX2CBww7ePskOJ06sVlq7xA4Tw=;
-        b=crzeyi2jJyfPCoRZAWj5QBaK8JKpjp06tpzeMnAjSWcySz5WXhjku2mnbHxsaGtj8B
-         uMxiSpd3MKOzwvCVMSLc/+OiNSzU8HtEg+IL2sZBNauMQtf6bO5a9+sBdH9eiK9W43LL
-         dWVbzGKSU3akxc7bbasLjKfBMm5ePZ4YjljIYUd8oW9KISKfmesk62bMfGHWaU2A9iy0
-         fPR45ul7xw2fsEw4bHZz/Fs8JXN4yW0DZWCho5d669agGGHeD4rLdB9vf7iIa5aWYgdd
-         9tj19qgUP7JA6jViRutGsTa+/zQfuuE206liHPxcTSQfAspOymVV3luswIJcZrBS16nb
-         wFRA==
-X-Gm-Message-State: APzg51D6wDnwYejCKBVXhz26NU36VZHICMcjCDF5ZK67aowOj4CntklQ
-        Ahi/G+bqBTEasuLrVvpFUrznPg==
-X-Google-Smtp-Source: ANB0VdbYvL77SxwsPdijp0dxGfpHmAJ6bFqfRc8AzBTaXTQUvHVh+Oloo2gj54X/0+A363Xp5bcFoQ==
-X-Received: by 2002:a1c:a94d:: with SMTP id s74-v6mr596784wme.39.1536655889961;
-        Tue, 11 Sep 2018 01:51:29 -0700 (PDT)
-Received: from dell ([2.27.167.7])
-        by smtp.gmail.com with ESMTPSA id s24-v6sm324458wmc.7.2018.09.11.01.51.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Sep 2018 01:51:29 -0700 (PDT)
-Date:   Tue, 11 Sep 2018 09:51:27 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Radu Nicolae Pirea <pirea.radu@gmail.com>
-Cc:     Radu Pirea <radu.pirea@microchip.com>, broonie@kernel.org,
-        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-        richard.genoud@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        gregkh@linuxfoundation.org, linux-spi@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: Re: [GIT PULL] Immutable branch between MFD, SPI and TTY due for the
- v4.20 merge window
-Message-ID: <20180911085127.GD4185@dell>
-References: <20180713164736.26028-1-radu.pirea@microchip.com>
- <20180910151803.GX28860@dell>
- <bd9104b702feec556ed01311e9efcb96790131d0.camel@upb.ro>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=D/du7rdVPX4SEeCObez1WJf1uKijQfbjcN5X8AigYMM=;
+        b=KKo/bpPfrLY8PhRRbUqEjT1nEn6eYa4iWP+ZFJm0lb4cmN1zGVR3zr3YDu94Z70eb9
+         hZZzil0Zn5A7mkGumKy56VmYsG68r8oK5Ol2SWjr7+l1dwLwOERJHe41+9HOyD6cjcAd
+         7XuZHd5OsXCsNzOuPwCqod78wUYluUSP8zRkgpWezkf1kkcrsv05TsVPn/dxpofelNb3
+         eWCodBNCZLAZ2/Hr2QjOgiEL7PYYmJZu1Wl7D3oE1SoHruXCPD+ztwZbk8JpOMPbBso4
+         VfIEKH15mMUDuNoS09GOLPcN/0tmNPiG36NApPv/9JKvzI93XCQSfvd3BD1YUGrf+/nE
+         UUQQ==
+X-Gm-Message-State: APzg51BtLfAZZvnohPwfHn4QZkMrxJj9QRTqu672eXgSOTmYIzW+w5SB
+        UZVBPe9OZZuKxnjC9Zyk4OJsJW+YLHA=
+X-Google-Smtp-Source: ANB0VdaxGxBCLS+k2rUBrOBaAWmkpv6prcrzRkLYVFSDkQDnKWKkHJdcDXdl9dBHX93eKNWp6U11jQ==
+X-Received: by 2002:a2e:9c82:: with SMTP id x2-v6mr2749864lji.131.1536655921102;
+        Tue, 11 Sep 2018 01:52:01 -0700 (PDT)
+Received: from [192.168.0.126] ([31.173.81.2])
+        by smtp.gmail.com with ESMTPSA id n22-v6sm3123188lfh.59.2018.09.11.01.51.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Sep 2018 01:51:59 -0700 (PDT)
+Subject: Re: [PATCH] net: ipv4: Use BUG_ON directly instead of a if condition
+ followed by BUG
+To:     zhong jiang <zhongjiang@huawei.com>, davem@davemloft.net,
+        edumazet@google.com
+Cc:     kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1536590282-23899-1-git-send-email-zhongjiang@huawei.com>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <a000b5a4-2907-70f9-70ed-7e1c6a797876@cogentembedded.com>
+Date:   Tue, 11 Sep 2018 11:51:59 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <bd9104b702feec556ed01311e9efcb96790131d0.camel@upb.ro>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1536590282-23899-1-git-send-email-zhongjiang@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 11 Sep 2018, Radu Nicolae Pirea wrote:
+On 9/10/2018 5:38 PM, zhong jiang wrote:
 
-> Hi Lee,
+> The if condition can be removed if we use BUG_ON directly.
+> The issule is detected with the help of Coccinelle.
+
+   Issue?
+
 > 
-> Thank you for taking the patch series, but you didn't take the latest
-> version(v12) :)
+> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+> ---
+>   net/ipv4/tcp_input.c | 8 ++++----
+>   1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
+> index 62508a2..893bde3 100644
+> --- a/net/ipv4/tcp_input.c
+> +++ b/net/ipv4/tcp_input.c
+> @@ -4934,8 +4934,8 @@ void tcp_rbtree_insert(struct rb_root *root, struct sk_buff *skb)
+>   			BUG_ON(offset < 0);
+>   			if (size > 0) {
+>   				size = min(copy, size);
+> -				if (skb_copy_bits(skb, offset, skb_put(nskb, size), size))
+> -					BUG();
+> +				BUG(skb_copy_bits(skb, offset,
 
-Both were marked for merging in my inbox, and since I am working
-though my (300+) post-vacation emails chronologically v11 was handled
-first.
+    You said BUG_ON()?
 
-It appears as though there is an issue in the way 'struct
-of_device_id' was declared too.  The header file in which it was
-declared used to be included by proxy, however a separation has
-recently been made causing build errors.
+> +						  skb_put(nskb, size), size));
+>   				TCP_SKB_CB(nskb)->end_seq += size;
+>   				copy -= size;
+>   				start += size;
+> @@ -5327,8 +5327,8 @@ static void tcp_urg(struct sock *sk, struct sk_buff *skb, const struct tcphdr *t
+>   		/* Is the urgent pointer pointing into this packet? */
+>   		if (ptr < skb->len) {
+>   			u8 tmp;
+> -			if (skb_copy_bits(skb, ptr, &tmp, 1))
+> -				BUG();
+> +
+> +			BUG(skb_copy_bits(skb, ptr, &tmp, 1));
 
-I will fix both issues and re-submit the PR.
+    Likewise.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+[...]
+
+MBR, Sergei
