@@ -2,171 +2,133 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D6EFC6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:05:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7279CC04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:05:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47B7620645
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:05:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47B7620645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 28D1C20645
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:05:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="SRtJnMAy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28D1C20645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727051AbeILBGZ (ORCPT
+        id S1727685AbeILBGd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 21:06:25 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:39496 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726798AbeILBGZ (ORCPT
+        Tue, 11 Sep 2018 21:06:33 -0400
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:52878 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726754AbeILBGd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 21:06:25 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 87E6480682; Tue, 11 Sep 2018 22:05:30 +0200 (CEST)
-Date:   Tue, 11 Sep 2018 22:05:30 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Dan Murphy <dmurphy@ti.com>
-Cc:     robh+dt@kernel.org, jacek.anaszewski@gmail.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lee.jones@linaro.org, linux-omap@vger.kernel.org,
-        linux-leds@vger.kernel.org
-Subject: Re: [PATCH v7 1/6] dt-bindings: ti-lmu: Remove LM3697
-Message-ID: <20180911200530.GA28290@amd>
-References: <20180911170825.17789-1-dmurphy@ti.com>
- <20180911170825.17789-2-dmurphy@ti.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="jI8keyz6grp/JLjh"
-Content-Disposition: inline
-In-Reply-To: <20180911170825.17789-2-dmurphy@ti.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Tue, 11 Sep 2018 21:06:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1536696340; x=1568232340;
+  h=from:to:cc:subject:date:message-id;
+  bh=ZLogkIlkfLLZrpZWANuoPB7Me8QHxPVvVo+WbqnGtis=;
+  b=SRtJnMAySDRLTHNPGSQl2VbfNxnEZFloVKucka42fEpwazLek5bKOirc
+   +R0EpEJiuYzdhDAkoBuN4s2H9WmTNExn5cJty3Bxl/UX375V3Dpeb2Oyb
+   9QfQ5ggI7lvd9yctDnI7lZW9HFn/XsFfIcTDHLE0GP8sLe77e9wSdEuD7
+   Izvj+vPUM1bTOmVPfXRNiFZ4SRe4fLt5PCZ9+D78qCYUpNWNPBahWUpDf
+   Mpz5HBwbLiHrYpBkON9pgMX1CVXS3iFdHz5XyesgNQUZqc+q0G6+NuvR4
+   IVwbZGtzmxgXACTamuoOTCjrfWYfAM8TQKWCTh5F0QFblBWmYOb33N+56
+   g==;
+X-IronPort-AV: E=Sophos;i="5.53,361,1531756800"; 
+   d="scan'208";a="193728817"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 12 Sep 2018 04:05:40 +0800
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP; 11 Sep 2018 12:52:14 -0700
+Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
+  by uls-op-cesaip02.wdc.com with ESMTP; 11 Sep 2018 13:05:40 -0700
+From:   Atish Patra <atish.patra@wdc.com>
+To:     palmer@sifive.com, linux-riscv@lists.infradead.org
+Cc:     mark.rutland@arm.com, hch@infradead.org, anup@brainfault.org,
+        atish.patra@wdc.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, Damien.LeMoal@wdc.com,
+        marc.zyngier@arm.com, jeremy.linton@arm.com,
+        gregkh@linuxfoundation.org, jason@lakedaemon.net,
+        catalin.marinas@arm.com, dmitriy@oss-tech.org,
+        ard.biesheuvel@linaro.org
+Subject: [PATCH v4 00/12] SMP cleanup and new features
+Date:   Tue, 11 Sep 2018 13:05:27 -0700
+Message-Id: <1536696339-15204-1-git-send-email-atish.patra@wdc.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patch series has updated the assorted cleanup series by palmer.
+The original cleanup patch series can be found here.
+http://lists.infradead.org/pipermail/linux-riscv/2018-August/001232.html
 
---jI8keyz6grp/JLjh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It also implemented decoupling linux logical cpu ids from hardware cpu id.
+Some of the work has been inspired from ARM64.
+Tested on QEMU & HighFive Unleashed board with/without SMP enabled.
 
-On Tue 2018-09-11 12:08:20, Dan Murphy wrote:
-> Remove support for the LM3697 LED device
-> from the ti-lmu.  The LM3697 will be supported
-> via a stand alone LED driver.
->=20
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+Both the patch series have been combined to avoid conflicts as a lot
+of common code is changed in both the series. I have mostly addressed
+review comments and fixed checkpatch errors from palmer's series.
 
-I'd really like to see better explanation here.
+v1->v2:
 
-We have existing binding, for lm3697 and similar devices. With this
-series, different binding is introduced, without documented reason.
+1. Dropped cpu_ops patch.
+2. Moved back IRQ cause definitions to irq.h
+3. Keep boot cpu hart id and assign zero as the cpu id for boot cpu.
+4. Renamed cpu id and hart id correctly.
 
-That's bad.
+v2-v3:
 
-Now, maybe you are right and the hardware should be handled by
-drivers/leds, not drivers/mfd. But we should have solution for all the
-similar chips, and that still does not mean we have to modify the
-binding. (But maybe we want to move it to different
-directory). Bindings are supposed to describe hardware, not mirror
-structure of our drivers.
+1. Added cleanup patches from palmer.
+2. Moved the hotplug related functions to it's own file.
+3. Updated stub functions as per coding guidelines.
+4. Renamed __cpu_logical_map to a more coherent name.
 
-Unless there's something fatally wrong with the binding... but in such
-case we'd like to know what is wrong.
+v3-v4:
 
-[And yes, I recognize current situation is ... not ideal and I'm
-willing to help. But I'm not sure this is step in right direction.]
+1. Addressed minor typos in commit text and code.
+2. Included Anup's do_IRQ patch.
+3. Dropped cpu hotplug patch. As there are some concerns
+   about approach, I will submit it separately.
 
-Thanks,
-								Pavel
+Anup Patel (1):
+  RISC-V: No need to pass scause as arg to do_IRQ()
 
+Atish Patra (4):
+  RISC-V: Disable preemption before enabling interrupts
+  RISC-V: User WRITE_ONCE instead of direct access
+  RISC-V: Add logical CPU indexing for RISC-V
+  RISC-V: Use Linux logical cpu number instead of hartid
 
-> ---
->=20
-> v7 - New change for the series based on the comments in https://lore.kern=
-el.org/patchwork/patch/982550/
->=20
->  .../devicetree/bindings/mfd/ti-lmu.txt        | 26 +------------------
->  1 file changed, 1 insertion(+), 25 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/mfd/ti-lmu.txt b/Documenta=
-tion/devicetree/bindings/mfd/ti-lmu.txt
-> index c885cf89b8ce..920f910be4e9 100644
-> --- a/Documentation/devicetree/bindings/mfd/ti-lmu.txt
-> +++ b/Documentation/devicetree/bindings/mfd/ti-lmu.txt
-> @@ -9,7 +9,6 @@ TI LMU driver supports lighting devices below.
->    LM3632       Backlight and regulator
->    LM3633       Backlight, LED and fault monitor
->    LM3695       Backlight
-> -  LM3697       Backlight and fault monitor
-> =20
->  Required properties:
->    - compatible: Should be one of:
-> @@ -18,11 +17,10 @@ Required properties:
->                  "ti,lm3632"
->                  "ti,lm3633"
->                  "ti,lm3695"
-> -                "ti,lm3697"
->    - reg: I2C slave address.
->           0x11 for LM3632
->           0x29 for LM3631
-> -         0x36 for LM3633, LM3697
-> +         0x36 for LM3633
->           0x38 for LM3532
->           0x63 for LM3695
-> =20
-> @@ -38,7 +36,6 @@ Optional nodes:
->      Required properties:
->        - compatible: Should be one of:
->                      "ti,lm3633-fault-monitor"
-> -                    "ti,lm3697-fault-monitor"
->    - leds: LED properties for LM3633. Please refer to [2].
->    - regulators: Regulator properties for LM3631 and LM3632.
->                  Please refer to [3].
-> @@ -220,24 +217,3 @@ lm3695@63 {
->  		};
->  	};
->  };
-> -
-> -lm3697@36 {
-> -	compatible =3D "ti,lm3697";
-> -	reg =3D <0x36>;
-> -
-> -	enable-gpios =3D <&pioC 2 GPIO_ACTIVE_HIGH>;
-> -
-> -	backlight {
-> -		compatible =3D "ti,lm3697-backlight";
-> -
-> -		lcd {
-> -			led-sources =3D <0 1 2>;
-> -			ramp-up-msec =3D <200>;
-> -			ramp-down-msec =3D <200>;
-> -		};
-> -	};
-> -
-> -	fault-monitor {
-> -		compatible =3D "ti,lm3697-fault-monitor";
-> -	};
-> -};
+Palmer Dabbelt (7):
+  RISC-V: Don't set cacheinfo.{physical_line_partition,attributes}
+  RISC-V: Filter ISA and MMU values in cpuinfo
+  RISC-V: Comment on the TLB flush in smp_callin()
+  RISC-V: Provide a cleaner raw_smp_processor_id()
+  RISC-V: Rename riscv_of_processor_hart to riscv_of_processor_hartid
+  RISC-V: Rename im_okay_therefore_i_am to found_boot_cpu
+  RISC-V: Use mmgrab()
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+ arch/riscv/include/asm/processor.h |  2 +-
+ arch/riscv/include/asm/smp.h       | 38 ++++++++++++-----
+ arch/riscv/include/asm/tlbflush.h  | 16 ++++++--
+ arch/riscv/kernel/cacheinfo.c      |  7 ----
+ arch/riscv/kernel/cpu.c            | 83 ++++++++++++++++++++++++++++++++------
+ arch/riscv/kernel/entry.S          |  1 -
+ arch/riscv/kernel/head.S           |  4 +-
+ arch/riscv/kernel/irq.c            |  4 +-
+ arch/riscv/kernel/setup.c          | 10 +++++
+ arch/riscv/kernel/smp.c            | 43 +++++++++++++++-----
+ arch/riscv/kernel/smpboot.c        | 46 ++++++++++++++-------
+ drivers/clocksource/riscv_timer.c  | 12 ++++--
+ drivers/irqchip/irq-sifive-plic.c  | 10 +++--
+ 13 files changed, 207 insertions(+), 69 deletions(-)
 
---jI8keyz6grp/JLjh
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+-- 
+2.7.4
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAluYIAkACgkQMOfwapXb+vI/kwCgklNdw75sHM8TzsqLH+gB/QiO
-vy0An0jMgCsNY1QirPhPpG7kVE2eUIdO
-=d2K0
------END PGP SIGNATURE-----
-
---jI8keyz6grp/JLjh--
