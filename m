@@ -2,113 +2,118 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B873C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 17:14:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9BB7C6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 17:14:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD98D2086A
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 17:14:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD98D2086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 83E4220880
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 17:14:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83E4220880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728163AbeIKWOw (ORCPT
+        id S1728190AbeIKWO4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 18:14:52 -0400
-Received: from mga09.intel.com ([134.134.136.24]:19786 "EHLO mga09.intel.com"
+        Tue, 11 Sep 2018 18:14:56 -0400
+Received: from foss.arm.com ([217.140.101.70]:46982 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726943AbeIKWOw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728122AbeIKWOw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 11 Sep 2018 18:14:52 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Sep 2018 10:14:36 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,361,1531810800"; 
-   d="scan'208";a="262579603"
-Received: from chenyu-desktop.sh.intel.com ([10.239.160.116])
-  by fmsmga006.fm.intel.com with ESMTP; 11 Sep 2018 10:14:32 -0700
-From:   Chen Yu <yu.c.chen@intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Pavel Machek <pavel@ucw.cz>, Rui Zhang <rui.zhang@intel.com>,
-        Chen Yu <yu.chen.surf@gmail.com>,
-        Zhimin Gu <kookoo.gu@intel.com>,
-        Len Brown <len.brown@intel.com>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, linux-pm@vger.kernel.org,
-        Chen Yu <yu.c.chen@intel.com>
-Subject: [PATCH 2/4][v2] PM / hibernate: Check the success of generating md5 digest before hibernation
-Date:   Wed, 12 Sep 2018 01:20:36 +0800
-Message-Id: <afb1c18493fa3fb891a37752161e9f73a46fc2df.1536685746.git.yu.c.chen@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1536685746.git.yu.c.chen@intel.com>
-References: <cover.1536685746.git.yu.c.chen@intel.com>
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CAAB37A9;
+        Tue, 11 Sep 2018 10:14:36 -0700 (PDT)
+Received: from [10.37.8.51] (unknown [10.37.8.51])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0C3D23F703;
+        Tue, 11 Sep 2018 10:14:33 -0700 (PDT)
+Subject: Re: [PATCH 11/11] dts: tc2: Update coresight bindings for hardware
+ ports
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        robh@kernel.org, frowand.list@gmail.com,
+        devicetree@vger.kernel.org, mathieu.poirier@linaro.org,
+        arm@kernel.org, Liviu Dudau <liviu.dudau@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+References: <1536661032-30481-1-git-send-email-suzuki.poulose@arm.com>
+ <1536661032-30481-12-git-send-email-suzuki.poulose@arm.com>
+ <20180911170113.GA27663@e107155-lin>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <fbde78a0-6487-7bdb-d02b-4fbf556f536e@arm.com>
+Date:   Tue, 11 Sep 2018 18:15:27 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180911170113.GA27663@e107155-lin>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently if get_e820_md5() fails, then it will hibernate nevertheless.
-Actually the error code should be propagated to upper caller so that
-the hibernation could be aware of the result and terminates the process
-if md5 digest fails.
+On 09/11/2018 06:01 PM, Sudeep Holla wrote:
+> On Tue, Sep 11, 2018 at 11:17:12AM +0100, Suzuki K Poulose wrote:
+>> Switch to the new coresight bindings
+>>
+> 
+> I still see the below warnings:
+> 
+> vexpress-v2p-ca15_a7.dtb: Warning (graph_child_address):
+> 	/replicator/in-ports: graph node has single child node 'port@0',
+> 	#address-cells/#size-cells are not necessary
+> vexpress-v2p-ca15_a7.dtb: Warning (graph_child_address):
+> 	/funnel@20040000/out-ports: graph node has single child node 'port@0',
+> 	#address-cells/#size-cells are not necessary
+> 
+> I need the below patch to fix them, let me know if it looks OK, I can
+> amend and apply.
 
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Signed-off-by: Chen Yu <yu.c.chen@intel.com>
----
- arch/x86/power/hibernate_64.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+Thanks for reporting. I purposefully added the "address-cells" and 
+followed the format everywhere in the series thinking that, that is
+indeed the formal way of doing it, rather than having implicit port
+numbers. I can send an updated series fixing it everywhere.
 
-diff --git a/arch/x86/power/hibernate_64.c b/arch/x86/power/hibernate_64.c
-index f8e3b668d20b..dc12dc57889e 100644
---- a/arch/x86/power/hibernate_64.c
-+++ b/arch/x86/power/hibernate_64.c
-@@ -265,9 +265,9 @@ static int get_e820_md5(struct e820_table *table, void *buf)
- 	return ret;
- }
- 
--static void hibernation_e820_save(void *buf)
-+static int hibernation_e820_save(void *buf)
- {
--	get_e820_md5(e820_table_firmware, buf);
-+	return get_e820_md5(e820_table_firmware, buf);
- }
- 
- static bool hibernation_e820_mismatch(void *buf)
-@@ -287,8 +287,9 @@ static bool hibernation_e820_mismatch(void *buf)
- 	return memcmp(result, buf, MD5_DIGEST_SIZE) ? true : false;
- }
- #else
--static void hibernation_e820_save(void *buf)
-+static int hibernation_e820_save(void *buf)
- {
-+	return 0;
- }
- 
- static bool hibernation_e820_mismatch(void *buf)
-@@ -306,6 +307,7 @@ static bool hibernation_e820_mismatch(void *buf)
- int arch_hibernation_header_save(void *addr, unsigned int max_size)
- {
- 	struct restore_data_record *rdr = addr;
-+	int ret = -EINVAL;
- 
- 	if (max_size < sizeof(struct restore_data_record))
- 		return -EOVERFLOW;
-@@ -333,7 +335,9 @@ int arch_hibernation_header_save(void *addr, unsigned int max_size)
- 
- 	rdr->magic = RESTORE_MAGIC;
- 
--	hibernation_e820_save(rdr->e820_digest);
-+	ret = hibernation_e820_save(rdr->e820_digest);
-+	if (ret)
-+		return ret;
- 
- 	return 0;
- }
--- 
-2.17.1
+Regards
+Suzuki
+
+
+> 
+> Regards,
+> Sudeep
+> 
+> -->8
+> 
+> diff --git a/arch/arm/boot/dts/vexpress-v2p-ca15_a7.dts b/arch/arm/boot/dts/vexpress-v2p-ca15_a7.dts
+> index 3a5090616bc6..8b926c30ccd1 100644
+> --- a/arch/arm/boot/dts/vexpress-v2p-ca15_a7.dts
+> +++ b/arch/arm/boot/dts/vexpress-v2p-ca15_a7.dts
+> @@ -443,11 +443,7 @@
+>   		};
+>   
+>   		in-ports {
+> -			#address-cells = <1>;
+> -			#size-cells = <0>;
+> -
+> -			port@0 {
+> -				reg = <0>;
+> +			port {
+>   				replicator_in_port0: endpoint {
+>   					remote-endpoint = <&funnel_out_port0>;
+>   				};
+> @@ -462,11 +458,7 @@
+>   		clocks = <&oscclk6a>;
+>   		clock-names = "apb_pclk";
+>   		out-ports {
+> -			#address-cells = <1>;
+> -			#size-cells = <0>;
+> -
+> -			port@0 {
+> -				reg = <0>;
+> +			port {
+>   				funnel_out_port0: endpoint {
+>   					remote-endpoint =
+>   						<&replicator_in_port0>;
+> 
 
