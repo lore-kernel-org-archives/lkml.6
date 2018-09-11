@@ -2,152 +2,102 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBA64C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 17:28:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 651DCC04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 17:28:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 641462086A
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 17:28:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 641462086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1834B20880
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 17:28:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=sweptlaser-com.20150623.gappssmtp.com header.i=@sweptlaser-com.20150623.gappssmtp.com header.b="SFqsd5to"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1834B20880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sweptlaser.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727881AbeIKW2o (ORCPT
+        id S1728082AbeIKW3C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 18:28:44 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:45451 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726943AbeIKW2o (ORCPT
+        Tue, 11 Sep 2018 18:29:02 -0400
+Received: from mail-io0-f171.google.com ([209.85.223.171]:33655 "EHLO
+        mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726943AbeIKW3C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 18:28:44 -0400
-Received: by mail-qt0-f194.google.com with SMTP id g44-v6so29047148qtb.12
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 10:28:24 -0700 (PDT)
+        Tue, 11 Sep 2018 18:29:02 -0400
+Received: by mail-io0-f171.google.com with SMTP id r196-v6so4254854iod.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 10:28:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sweptlaser-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=1hMAetTvqeBYjwET2Anap9K95Oq0TPxHr+OlGr1r7U4=;
+        b=SFqsd5toXr2j4s/Ffj0a8ou2QOPFIf2H5ujmyIosjMW50CKPXrwsh5EqEB1n3nZXPc
+         +HuoSE0T5b3UyaVXmrSyvic90xfTF104ThGomx/cWfjnhtJKLJt9fevav5Lj7F70aPQ6
+         ii3SPnoRaFnrL4w9Xoa5IxX78ts8WWdyqj9qcWYAA1X5v8assZy9RK+0LBxxHNmAVzHt
+         p/DYeWIT4ApfJB1JwNgDZ/kUaduiHt9o2YMf4IBEmOJUO1i4XBlD16f46UCrjXe/XAWL
+         J+FJuLR347J32xdTPmvuUPO6tO0Qino7QmlZs+9X0G8rlQREzxD2f7yKDPvNT8WC6r+p
+         0dZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=aOL5qmgeiuDuN0JS8Zgz+3H3T6uZdosMbUhAIM4NdZM=;
-        b=gEpsEOuUsEyVD9CX0RKwqxvbWHZh2v2NSBU/Wy+CETal+te8TNxZZqYjeUIti9ja+p
-         XXHx9qJAxkOJpVUEYIj0hdPxEIEUILxzPaaPQGHpiTX177qIttMGoOwhi4erpX0qiGPt
-         mSiT/iDZYgo1AUWRptXf/Zrqz6pggAzJRcYjBbE1C3zIhfteSc6HEdZn38DZcMHh/lLv
-         HBWP/2x8P3lnqR/ueMQ4XZ4ZI2MZOemMrAk7QCVAO0UPoISNS69MYTtcSAT0hdQt7E/E
-         zde67QL2qE/BWuUvvoT/AtRtoKWq1CK5ACINzChgTE463uxXuTZFi1T9FWb7yX2g+WDu
-         STbw==
-X-Gm-Message-State: APzg51CYXEf5z5HbfvSwL+eYvvXGqxPl3pAljyiEq7CNrOasyBuvIDbV
-        lhOYQWqc2c4HmmSn2QkOfWggrFjW27w=
-X-Google-Smtp-Source: ANB0VdbazMPxne4NjWlyBd81w7x2XJdDLMdcxxgIRjU/cJG4Rk7D8u/BBW0p4m1HMwqH0k1Abb/E7A==
-X-Received: by 2002:a0c:c503:: with SMTP id x3-v6mr19123088qvi.82.1536686903730;
-        Tue, 11 Sep 2018 10:28:23 -0700 (PDT)
-Received: from ?IPv6:2601:602:9802:a8dc::42c3? ([2601:602:9802:a8dc::42c3])
-        by smtp.gmail.com with ESMTPSA id n8-v6sm10463841qte.25.2018.09.11.10.28.21
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=1hMAetTvqeBYjwET2Anap9K95Oq0TPxHr+OlGr1r7U4=;
+        b=EOzVIoInomBvPLvjj7yayfdxU8ZZHEkEgyVoDfNafZH9bAxLZjM6RhNWU+/OKIUCE7
+         Z1azivEYNHGnrciMhkaNtFmd6R6ow1csufPwoGHpTkJ9s//KsABq+L36xqdLRdF/iQ74
+         iFVqY/vi53j8uvxEoTFmrQOFLI+hQdCO7zMroA8i8qKpQUqS1Dg9GkvT4N8H+ZyjJMYs
+         SiGSBfO1eP9P+9sVBVqqe6DN8/hw9IXI/RnURqIN0FgV0te5V/TZ1kG9zWT0a6zi13U2
+         WvYlp3a++qNKKGsr6aj1OpdAtXOt5A18VSaXPfe9EIWyGMVlCM7RhioQxlQuSo2fd+rx
+         rjqA==
+X-Gm-Message-State: APzg51DsBp7vfUsc68tjC+FeS6jkpBkYpLBBKv74D2ItX00fnBP+tWOD
+        HyN3fq2B/Prl793wILqIrqcZ/g==
+X-Google-Smtp-Source: ANB0Vda2Wt0Usunmjxea1kMAb7WhV7/JyFTfyCBLe1TmbI3QuZO6kOVqWYsBYXfFsnA5iss0p8aZgA==
+X-Received: by 2002:a6b:c042:: with SMTP id q63-v6mr21366526iof.261.1536686922595;
+        Tue, 11 Sep 2018 10:28:42 -0700 (PDT)
+Received: from yngvi.hq.sweptlaser.com ([63.147.146.226])
+        by smtp.googlemail.com with ESMTPSA id g198-v6sm5050261itg.4.2018.09.11.10.28.40
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Sep 2018 10:28:22 -0700 (PDT)
-Subject: Re: [PATCH] misc: kgdbts: Fix restrict error
-To:     Daniel Thompson <daniel.thompson@linaro.org>
-Cc:     Jason Wessel <jason.wessel@windriver.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        kgdb-bugreport@lists.sourceforge.net, linux-kernel@vger.kernel.org
-References: <20180910230456.9220-1-labbott@redhat.com>
- <20180911091940.roriqov64ayk7mfs@holly.lan>
-From:   Laura Abbott <labbott@redhat.com>
-Message-ID: <8d149627-6550-4a5c-b136-6acdb713b724@redhat.com>
-Date:   Tue, 11 Sep 2018 10:28:20 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180911091940.roriqov64ayk7mfs@holly.lan>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Tue, 11 Sep 2018 10:28:41 -0700 (PDT)
+From:   Jeremy Gebben <jgebben@sweptlaser.com>
+To:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>, linux-rtc@vger.kernel.org
+Cc:     linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] rtc: abx80x: add basic watchdog support
+Date:   Tue, 11 Sep 2018 11:28:24 -0600
+Message-Id: <20180911172826.7195-1-jgebben@sweptlaser.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/11/2018 02:19 AM, Daniel Thompson wrote:
-> On Mon, Sep 10, 2018 at 04:04:56PM -0700, Laura Abbott wrote:
->> kgdbts current fails when compiled with restrict:
->>
->> drivers/misc/kgdbts.c: In function ‘configure_kgdbts’:
->> drivers/misc/kgdbts.c:1070:2: error: ‘strcpy’ source argument is the same as destination [-Werror=restrict]
->>    strcpy(config, opt);
->>    ^~~~~~~~~~~~~~~~~~~
->>
->> As the error says, config is being used in both the source and destination.
->> Refactor the code to only do the copy when needed.
->>
->> Signed-off-by: Laura Abbott <labbott@redhat.com>
->> ---
->>   drivers/misc/kgdbts.c | 21 +++++++++++----------
->>   1 file changed, 11 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/misc/kgdbts.c b/drivers/misc/kgdbts.c
->> index 6193270e7b3d..4447ad68ea39 100644
->> --- a/drivers/misc/kgdbts.c
->> +++ b/drivers/misc/kgdbts.c
->> @@ -1061,20 +1061,23 @@ static void kgdbts_run_tests(void)
->>   	configured = 0;
->>   }
->>   
->> -static int kgdbts_option_setup(char *opt)
->> +static void kgdbts_set_verbose(void)
->>   {
->> -	if (strlen(opt) >= MAX_CONFIG_LEN) {
->> -		printk(KERN_ERR "kgdbts: config string too long\n");
->> -		return -ENOSPC;
->> -	}
->> -	strcpy(config, opt);
->> -
->>   	verbose = 0;
->>   	if (strstr(config, "V1"))
->>   		verbose = 1;
->>   	if (strstr(config, "V2"))
->>   		verbose = 2;
->> +}
->>   
->> +static int kgdbts_option_setup(char *opt)
->> +{
->> +	if (strlen(opt) >= MAX_CONFIG_LEN) {
->> +		printk(KERN_ERR "kgdbts: config string too long\n");
->> +		return -ENOSPC;
->> +	}
->> +	strcpy(config, opt);
->> +	kgdbts_set_verbose();
-> 
-> I know this is honouring the existing code paths but I think
-> kgdbts_set_verbose() is redundant here. Directly setting up verbose from
-> kgdbts_run_tests() where the rest of the config string is parsed should
-> be sufficient.
-> 
-> Having said that I don't want to bounce perfectly correct fixes just
-> because they could have done more. Do you want to send a v2 or prefer me
-> to put further clean up on my TODO list?
-> 
-> 
+This patch series adds watchdog support for abracon RTC chips which
+include basic watchdog functionality.
 
-I'll go ahead and send a v2
+Thank you for reviewing.
 
-> Daniel.
-> 
->>   	return 0;
->>   }
->>   
->> @@ -1086,9 +1089,7 @@ static int configure_kgdbts(void)
->>   
->>   	if (!strlen(config) || isspace(config[0]))
->>   		goto noconfig;
->> -	err = kgdbts_option_setup(config);
->> -	if (err)
->> -		goto noconfig;
->> +	kgdbts_set_verbose();
->>   
->>   	final_ack = 0;
->>   	run_plant_and_detach_test(1);
->> -- 
->> 2.17.1
->>
+Changes in v3 (all in patch 2):
+* fix CONFIG_WATCHDOG dependency again (hopefully correctly this time)
+* don't start hardware when set_timeout is called
+* remove unneeded WDOG_HW_RUNNING bit changes
+* fix abx80x_setup_watchdog()
+* fix formatting of multiline splits
+ 
+Changes in v2:
+* split out priv structure into a separate patch
+* remove new Kconfig option
+* fix CONFIG_WATCHDOG dependency
+* fix WDT interrupt message
+
+
+Jeremy Gebben (2):
+  rtc: abx80x: use a 'priv' struct for client data
+  rtc: abx80x: add basic watchdog support
+
+ drivers/rtc/Kconfig      |   1 +
+ drivers/rtc/rtc-abx80x.c | 143 +++++++++++++++++++++++++++++++++++----
+ 2 files changed, 132 insertions(+), 12 deletions(-)
+
+-- 
+2.17.1
 
