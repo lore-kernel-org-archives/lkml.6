@@ -2,147 +2,90 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FD52C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 18:28:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E82FC04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 18:30:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 565CE20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 18:28:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C878C20865
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 18:30:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GLlOXV3v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 565CE20866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="fkme21kW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C878C20865
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728266AbeIKX2f (ORCPT
+        id S1728097AbeIKXaw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 19:28:35 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:45957 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727651AbeIKX2f (ORCPT
+        Tue, 11 Sep 2018 19:30:52 -0400
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:47038 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727007AbeIKXaw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 19:28:35 -0400
-Received: by mail-yb1-f194.google.com with SMTP id h22-v6so9696850ybg.12
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 11:28:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=jwfWkWmpfW9WAkv75dkfHVh5Hv1PHIDlWrSKJ83saZY=;
-        b=GLlOXV3vG6Ki0iIazzD06RynJeGpbmK6iscrH/sOSUYbculupiq5w53QdEVA0M0ddd
-         hxRrCZtS9/F4aEUeIa6EVpYfoNN9DM+adKgxUd9R+oiO8qcSd089FZueywqRbXrdLQt8
-         lEFZ8Rzd+/Hh9wyo9witZvCk+20ZTJnHe6uMc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=jwfWkWmpfW9WAkv75dkfHVh5Hv1PHIDlWrSKJ83saZY=;
-        b=LXjo4NZ0hr+4U8XVEZWz/DX+jVGDedNhnruiqtdsDVPNL3GDy3EO6CgrHXtwgk6EF4
-         Ciq2HOjSn5RPcMubvPDOHVcfHFoRUkgHAdKyEkeX5a0mcdo/R+A2PqTLBb/LdiYZspQP
-         ob854y4FkUsMnVSIaedFa6YvC4qjMQRX6AIOoCEeTWi07EnomV7Sdgh/tyH7vfDsagL8
-         IZt1JMVXP5hQQK81U+0/HSQsAPPuaDuaC+uZg8LH7E7IYxjIEuYdTmoRwCDiu1DotZ/Z
-         y1NLVBWPAE53x9AwB0tsh2qlqFi6rA1kKH8WeUiFuUFQmYStc+84a82daz/3SuvkepJh
-         bV+A==
-X-Gm-Message-State: APzg51A1JN+KjKa2CoALKYAOwV2dXQrQETNtkoTDWNI0VBAaX7+2XDGo
-        pbMembyeZwT9eqZer0cAUSh/EpKaYjw=
-X-Google-Smtp-Source: ANB0VdbImf6KoGpPjtQvKTtvAIfYAqWFFIfbTkGpBgLLXYjDyTEfdR2FYWk8bHnAKOmQbiDTLsGTYA==
-X-Received: by 2002:a25:2542:: with SMTP id l63-v6mr9782999ybl.126.1536690481645;
-        Tue, 11 Sep 2018 11:28:01 -0700 (PDT)
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
-        by smtp.gmail.com with ESMTPSA id j6-v6sm6830166ywe.107.2018.09.11.11.28.00
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Sep 2018 11:28:00 -0700 (PDT)
-Received: by mail-yb1-f177.google.com with SMTP id l16-v6so9704219ybk.11
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 11:28:00 -0700 (PDT)
-X-Received: by 2002:a25:19c3:: with SMTP id 186-v6mr13195705ybz.410.1536690479668;
- Tue, 11 Sep 2018 11:27:59 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a25:5f04:0:0:0:0:0 with HTTP; Tue, 11 Sep 2018 11:27:58
- -0700 (PDT)
-In-Reply-To: <CAGXu5j+R_VLzKxwtqu7yR=vwRBSZNhcjjMtz8OgWRh48Gwisww@mail.gmail.com>
-References: <20180911180542.7778-1-labbott@redhat.com> <CAGXu5j+R_VLzKxwtqu7yR=vwRBSZNhcjjMtz8OgWRh48Gwisww@mail.gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 11 Sep 2018 11:27:58 -0700
-X-Gmail-Original-Message-ID: <CAGXu5j+hL2RhKgF5nyncc6uettPOyD=Je6zOf6NxvFO+pR4dsg@mail.gmail.com>
-Message-ID: <CAGXu5j+hL2RhKgF5nyncc6uettPOyD=Je6zOf6NxvFO+pR4dsg@mail.gmail.com>
-Subject: Re: [PATCHv2] scsi: ibmvscsis: Fix a stringop-overflow warning
-To:     Laura Abbott <labbott@redhat.com>
-Cc:     "Bryant G. Ly" <bryantly@linux.vnet.ibm.com>,
-        Michael Cyr <mikecyr@linux.vnet.ibm.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org,
-        target-devel <target-devel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Prarit Bhargava <prarit@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 11 Sep 2018 19:30:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1536690619; x=1568226619;
+  h=from:to:cc:subject:date:message-id;
+  bh=Lbt92zuZLscvpMeLYQK26pQ6esQna28Q4vKhJ3Hn2os=;
+  b=fkme21kWUhmGYuqLb6OTpPqct0xPnx5bsXaqiXwVWqwJepCFHgV8O2H1
+   eyXNi9L6w1WIJRsl8hRYl/KCHof34Kqbe5Mg0wjxpdMjIjUoAZ427cYbM
+   yCyWn/xx9pQFwIb7Hs/vYsPwTdp9y884TgRLnghkDI4HiQWcVWOFL7xhx
+   YAqFxZT9b7u1hm1QWVanVtvigUjLKF/d+9X0iVxXiCUN0tSScIsndGnjH
+   L0gZfXX2vI7OeFENtbUdiTiitT4LEi7+86D+CCIO6KT9CCx/StzJVxKAD
+   tlwHyz1YjiRfXkjA7BwK8MDneAJ/t4TP3yhJ1I6XAalLDmONWLOAZF9KQ
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.53,361,1531756800"; 
+   d="scan'208";a="193724045"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 12 Sep 2018 02:30:18 +0800
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep01.wdc.com with ESMTP; 11 Sep 2018 11:16:52 -0700
+Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
+  by uls-op-cesaip01.wdc.com with ESMTP; 11 Sep 2018 11:30:19 -0700
+From:   Atish Patra <atish.patra@wdc.com>
+To:     palmer@sifive.com, linux-riscv@lists.infradead.org
+Cc:     hch@infradead.org, anup@brainfault.org, atish.patra@wdc.com,
+        linux-kernel@vger.kernel.org, Damien.LeMoal@wdc.com,
+        terpstra@sifive.com
+Subject: [PATCH] RISCV: Fix end PFN for low memory
+Date:   Tue, 11 Sep 2018 11:30:18 -0700
+Message-Id: <1536690618-9157-1-git-send-email-atish.patra@wdc.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 11, 2018 at 11:24 AM, Kees Cook <keescook@chromium.org> wrote:
-> On Tue, Sep 11, 2018 at 11:05 AM, Laura Abbott <labbott@redhat.com> wrote:
->>
->> There's currently a warning about string overflow with strncat:
->>
->> drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c: In function 'ibmvscsis_probe':
->> drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c:3479:2: error: 'strncat' specified
->> bound 64 equals destination size [-Werror=stringop-overflow=]
->>   strncat(vscsi->eye, vdev->name, MAX_EYE);
->>   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->>
->> Switch to a single snprintf instead of a strcpy + strcat to handle this
->> cleanly.
->>
->> Signed-off-by: Laura Abbott <labbott@redhat.com>
->
-> Reviewed-by: Kees Cook <keescook@chromium.org>
->
-> -Kees
->
->> ---
->> v2: Swtich to using snprintf per suggestion of Kees
->> ---
->>  drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c | 3 +--
->>  1 file changed, 1 insertion(+), 2 deletions(-)
->>
->> diff --git a/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c b/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
->> index fac377320158..9305440a00a1 100644
->> --- a/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
->> +++ b/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
->> @@ -3474,8 +3474,7 @@ static int ibmvscsis_probe(struct vio_dev *vdev,
->>                 vscsi->dds.window[LOCAL].liobn,
->>                 vscsi->dds.window[REMOTE].liobn);
->>
->> -       strcpy(vscsi->eye, "VSCSI ");
->> -       strncat(vscsi->eye, vdev->name, MAX_EYE);
->> +       snprintf(vscsi->eye, sizeof(vscsi->eye), "VSCSI%s", vdev->name);
+Use memblock_end_of_DRAM which provides correct last low memory
+PFN. Without that, DMA32 region becomes empty resulting in zero
+pages being allocated for DMA32.
 
-Eek. No, I take it back: Nick Desaulniers has better eyes than me and
-pointed out that there should be a space after VSCSI.
+This patch is based on earlier patch from palmer which never
+merged into 4.19. I just edited the commit text to make more
+sense.
 
--Kees
+Signed-off-by: Atish Patra <atish.patra@wdc.com>
+Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
+---
+ arch/riscv/kernel/setup.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->>
->>         vscsi->dds.unit_id = vdev->unit_address;
->>         strncpy(vscsi->dds.partition_name, partition_name,
->> --
->> 2.17.1
->>
->
->
->
-> --
-> Kees Cook
-> Pixel Security
-
-
-
+diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
+index db20dc63..a192bf8a 100644
+--- a/arch/riscv/kernel/setup.c
++++ b/arch/riscv/kernel/setup.c
+@@ -193,7 +193,7 @@ static void __init setup_bootmem(void)
+ 	BUG_ON(mem_size == 0);
+ 
+ 	set_max_mapnr(PFN_DOWN(mem_size));
+-	max_low_pfn = pfn_base + PFN_DOWN(mem_size);
++	max_low_pfn = memblock_end_of_DRAM();
+ 
+ #ifdef CONFIG_BLK_DEV_INITRD
+ 	setup_initrd();
 -- 
-Kees Cook
-Pixel Security
+2.7.4
+
