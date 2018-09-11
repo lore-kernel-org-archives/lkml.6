@@ -2,134 +2,80 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B99CEC6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 13:52:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3650C6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 13:53:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A8E92086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 13:52:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A8E92086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 75DC22086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 13:53:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75DC22086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727786AbeIKSv6 (ORCPT
+        id S1727833AbeIKSwy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 14:51:58 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50666 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727384AbeIKSv6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 14:51:58 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Tue, 11 Sep 2018 14:52:54 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:43876 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726983AbeIKSwy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 14:52:54 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id o2vLaCbP6y2M; Tue, 11 Sep 2018 15:53:27 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BC6F600329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bc6:f600:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 159C24075166;
-        Tue, 11 Sep 2018 13:52:31 +0000 (UTC)
-Received: from llong.remote.csb (ovpn-123-172.rdu2.redhat.com [10.10.123.172])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 097F82156889;
-        Tue, 11 Sep 2018 13:52:25 +0000 (UTC)
-Subject: Re: Plumbers 2018 - Performance and Scalability Microconference
-To:     Daniel Jordan <daniel.m.jordan@oracle.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        linux-kernel@vger.kernel.org,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Aaron Lu <aaron.lu@intel.com>, alex.kogan@oracle.com,
-        akpm@linux-foundation.org, boqun.feng@gmail.com, brouer@redhat.com,
-        dave.dice@oracle.com, Dhaval Giani <dhaval.giani@oracle.com>,
-        ktkhai@virtuozzo.com, ldufour@linux.vnet.ibm.com,
-        Pavel.Tatashin@microsoft.com, paulmck@linux.vnet.ibm.com,
-        shady.issa@oracle.com, tariqt@mellanox.com, tglx@linutronix.de,
-        tim.c.chen@intel.com, vbabka@suse.cz, yang.shi@linux.alibaba.com,
-        shy828301@gmail.com, Huang Ying <ying.huang@intel.com>,
-        subhra.mazumdar@oracle.com,
-        Steven Sistare <steven.sistare@oracle.com>, jwadams@google.com,
-        ashwinch@google.com, sqazi@google.com,
-        Shakeel Butt <shakeelb@google.com>, walken@google.com,
-        rientjes@google.com, junaids@google.com,
-        Neha Agarwal <nehaagarwal@google.com>
-References: <1dc80ff6-f53f-ae89-be29-3408bf7d69cc@oracle.com>
- <35c2c79f-efbe-f6b2-43a6-52da82145638@nvidia.com>
- <55b44432-ade5-f090-bfe7-ea20f3e87285@redhat.com>
- <20180910172011.GB3902@linux-r8p5>
- <78fa0507-4789-415b-5b9c-18e3fcefebab@nvidia.com>
- <3db2b742-9e09-a934-e4ef-c87465e6715a@oracle.com>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <82f06ae8-5a3f-283f-5ad3-e6ab2f42dbc6@redhat.com>
-Date:   Tue, 11 Sep 2018 09:52:25 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2527B1EC0181;
+        Tue, 11 Sep 2018 15:53:27 +0200 (CEST)
+Date:   Tue, 11 Sep 2018 15:53:25 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Brijesh Singh <brijesh.singh@amd.com>
+Cc:     linux-crypto@vger.kernel.org, thomas.lendacky@amd.com,
+        Gary Hook <Gary.Hook@amd.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH crypto-2.6] crypto: ccp: add timeout support in the SEV
+ command
+Message-ID: <20180911135325.GI12094@zn.tnic>
+References: <1534367485-4386-1-git-send-email-brijesh.singh@amd.com>
+ <1534367485-4386-2-git-send-email-brijesh.singh@amd.com>
+ <20180904081151.GC32615@zn.tnic>
+ <e327fa7f-2d4d-2181-c3f4-607faf16c9b5@amd.com>
 MIME-Version: 1.0
-In-Reply-To: <3db2b742-9e09-a934-e4ef-c87465e6715a@oracle.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 11 Sep 2018 13:52:31 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 11 Sep 2018 13:52:31 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
+Content-Disposition: inline
+In-Reply-To: <e327fa7f-2d4d-2181-c3f4-607faf16c9b5@amd.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/10/2018 08:29 PM, Daniel Jordan wrote:
-> On 9/10/18 1:34 PM, John Hubbard wrote:
->> On 9/10/18 10:20 AM, Davidlohr Bueso wrote:
->>> On Mon, 10 Sep 2018, Waiman Long wrote:
->>>> On 09/08/2018 12:13 AM, John Hubbard wrote:
->> [...]
->>>>> It's also interesting that there are two main huge page systems
->>>>> (THP and Hugetlbfs), and I sometimes
->>>>> wonder the obvious thing to wonder: are these sufficiently
->>>>> different to warrant remaining separate,
->>>>> long-term?  Yes, I realize they're quite different in some ways,
->>>>> but still, one wonders. :)
->>>>
->>>> One major difference between hugetlbfs and THP is that the former
->>>> has to
->>>> be explicitly managed by the applications that use it whereas the
->>>> latter
->>>> is done automatically without the applications being aware that THP is
->>>> being used at all. Performance wise, THP may or may not increase
->>>> application performance depending on the exact memory access pattern,
->>>> though the chance is usually higher that an application will benefit
->>>> than suffer from it.
->>>>
->>>> If an application know what it is doing, using hughtblfs can boost
->>>> performance more than it can ever achieved by THP. Many large
->>>> enterprise
->>>> applications, like Oracle DB, are using hugetlbfs and explicitly
->>>> disable
->>>> THP. So unless THP can improve its performance to a level that is
->>>> comparable to hugetlbfs, I won't see the later going away.
->>>
->>> Yep, there are a few non-trivial workloads out there that flat out
->>> discourage
->>> thp, ie: redis to avoid latency issues.
->>>
->>
->> Yes, the need for guaranteed, available-now huge pages in some cases is
->> understood. That's not the quite same as saying that there have to be
->> two different
->> subsystems, though. Nor does it even necessarily imply that the pool
->> has to be
->> reserved in the same way as hugetlbfs does it...exactly.
->>
->> So I'm wondering if THP behavior can be made to mimic hugetlbfs
->> enough (perhaps
->> another option, in addition to "always, never, madvise") that we
->> could just use
->> THP in all cases. But the "transparent" could become a sliding scale
->> that could
->> go all the way down to "opaque" (hugetlbfs behavior).
->
-> Leaving the interface aside, the idea that we could deduplicate
-> redundant parts of the hugetlbfs and THP implementations, without
-> user-visible change, seems promising.
+On Mon, Sep 10, 2018 at 02:06:57PM -0500, Brijesh Singh wrote:
+> Nothing prevent user from supplying a bogus number. The main question
+> is, clamp with what number ?
 
-That I think it is good idea if it can be done.
+So you definitely want to forbid too large timeouts - that wouldn't make
+any sense anyway. And too small either, because a too small timeout
+would make a potentially functioning fw broken.
 
-Thanks,
-Longman
+> IMO, if user is overriding the default timeout number then its possible
+> that user is dealing with a buggy firmware which does not work with
+> default timeout and silently clamping the value will not help them.
 
+No one said "silently" - you simply say:
+
+	"Correcting PSP	"Correcting PSP probe timeout to X seconds."
+
+when loading the driver so that the user is aware that the value she
+entered might not be an optimal one.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
