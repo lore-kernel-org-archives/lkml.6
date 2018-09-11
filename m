@@ -2,87 +2,101 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FACAC04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 23:51:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3B43C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 23:51:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D941E2087F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 23:51:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AC7A20865
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 23:51:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tDSmY9HX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D941E2087F
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KgH3HA9u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AC7A20865
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728198AbeILEwx (ORCPT
+        id S1728231AbeILExc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 00:52:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43610 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726138AbeILEwx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 00:52:53 -0400
-Received: from [192.168.0.101] (unknown [49.77.238.12])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A2EC220865;
-        Tue, 11 Sep 2018 23:51:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536709874;
-        bh=U1drtpxKWwPkfzdZNsdnPBErJKydUNbb5eCM4cDIBbY=;
-        h=Subject:To:References:From:Date:In-Reply-To:From;
-        b=tDSmY9HXwLGxz/wrD+y/PYWtB1ujRhsL1AHVriL4ZbMZaIXebfVpPXIyA1EwY4G9p
-         Ij9K1j+PT2mIhsudw9GUVxx7QD46OdzK5tV5w8dGx5a1RwRnv/AtnF7ffJS/gSXvw5
-         3UJCIctmSp2eHCk8ck7Rlgtw3Mf0WJ2TX5cGiA5s=
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix quota info to adjust recovered data
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-References: <20180911201546.56566-1-jaegeuk@kernel.org>
-From:   Chao Yu <chao@kernel.org>
-Message-ID: <7aa2e6f3-a4b2-dfdd-6205-f19c4bc952e6@kernel.org>
-Date:   Wed, 12 Sep 2018 07:51:10 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 12 Sep 2018 00:53:32 -0400
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:42942 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725936AbeILExc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 00:53:32 -0400
+Received: by mail-yb1-f196.google.com with SMTP id j8-v6so51498ybg.9;
+        Tue, 11 Sep 2018 16:51:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=0rCgQO6XgVZi1lpxhVm/fJTejrvktbRjuN4qfvXFmE8=;
+        b=KgH3HA9uLhe3ncZ8+5SZsBNQ2wsOOVyiPczLdlZrTEXRPHf4MIo0MHmd/8r46F6l0h
+         GALy4DIRIkt+Fo3aj/yXMK+Hz/ZhZeX41Ue1eW2cDPfOO56221tHQ+Gzcpv7/zbvz+zz
+         BuKpEoKA401kJNliLsVNszgpTumHJ/1JkB+IvAmetq1MPAtFGRi5ji24daYVmMo9SVBt
+         wpUzN4SDvNN3qSPh+nmJE3veuWOUDovR0L5k26EdJGIqCMf7w4s+hK6XYdwJHy9fBBXk
+         BhRs9rftICDTIEC/QXO83TXBxURUgTCUCHfRhBJ0CjFy7aNN47XEysIHj42BLzE8e0Za
+         WkjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=0rCgQO6XgVZi1lpxhVm/fJTejrvktbRjuN4qfvXFmE8=;
+        b=PS1ct00cBLgOeY4hsbBWLrWVYFS46Pe36P8n+dpJG6svYWz/dow5t39Npc3Uzm2v4k
+         fZDfEomCB4m74dJXMUeT0qik1Ravvm7VhthJ3c9J8N/twPJZ4K/20bYR0SZNQPk1FDvA
+         boarg6tSKcL+gAopmF7nujfhBQu0xZ2tv60kNJc/yyogocyDlPdEwqOIqUEXeR2HQIOl
+         sSxRIjTcVXWE0qHtUIMTDftB4ifH9yTOVjcamPR0KAOWsxod4GXSGDUjrTwJien6qAVw
+         nvkKRu/9fbkURkzFnLYIDnrXjMM8JIrTEPN1zTLAGGVCIDCVZNg+uGvEosRxNxDWjPJc
+         GLkg==
+X-Gm-Message-State: APzg51CSQrzv5Oz9rh2cRo/r5OCR8GoJydYHAuaArAukw+ZQWF7tOgfj
+        OxhGC3VvWe0SUjUcknYc31M=
+X-Google-Smtp-Source: ANB0VdYyziE43hXL1LEY3TlIkx2/bqSd5fKAV8cK/S8yXApQlM+Gcz6CHcIR1CQpX9so6UDPMFC9gg==
+X-Received: by 2002:a81:7852:: with SMTP id t79-v6mr13813666ywc.329.1536709912991;
+        Tue, 11 Sep 2018 16:51:52 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:200::1:6304])
+        by smtp.gmail.com with ESMTPSA id z193-v6sm7705397ywd.90.2018.09.11.16.51.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Sep 2018 16:51:52 -0700 (PDT)
+Date:   Tue, 11 Sep 2018 16:51:50 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     Dennis Zhou <dennisszhou@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
+        Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com,
+        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/12] blkcg: remove additional reference to the css
+Message-ID: <20180911235150.GD2966370@devbig004.ftw2.facebook.com>
+References: <20180911184137.35897-1-dennisszhou@gmail.com>
+ <20180911184137.35897-10-dennisszhou@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180911201546.56566-1-jaegeuk@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180911184137.35897-10-dennisszhou@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/9/12 4:15, Jaegeuk Kim wrote:
-> fsck.f2fs is able to recover the quota structure, since roll-forward recovery
-> can recover it based on previous user information.
-
-I didn't get it, both fsck and kernel recover quota file based all inodes'
-uid/gid/prjid, if {x}id didn't change, wouldn't those two recovery result be the
-same?
-
-Thanks,
-
+On Tue, Sep 11, 2018 at 02:41:34PM -0400, Dennis Zhou wrote:
+> From: "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>
 > 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/recovery.c | 3 +++
->  1 file changed, 3 insertions(+)
+> The previous patch in this series removed carrying around a pointer to
+> the css in blkg. However, the blkg association logic still relied on
+> taking a reference on the css to ensure we wouldn't fail in getting a
+> reference for the blkg.
 > 
-> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-> index 95511ed11a22..1fde86a2107e 100644
-> --- a/fs/f2fs/recovery.c
-> +++ b/fs/f2fs/recovery.c
-> @@ -675,6 +675,9 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
->  
->  	need_writecp = true;
->  
-> +	/* quota is not fully updated due to the lack of user information. */
-> +	set_sbi_flag(sbi, SBI_NEED_FSCK);
-> +
->  	/* step #2: recover data */
->  	err = recover_data(sbi, &inode_list, &dir_list);
->  	if (!err)
+> Here the implicit dependency on the css is removed. The association
+> continues to rely on the tryget logic walking up the blkg tree. This
+> streamlines the three ways that association can happen: normal, swap,
+> and writeback.
 > 
+> Signed-off-by: Dennis Zhou <dennisszhou@gmail.com>
+
+Acked-by: Tejun Heo <tj@kernel.org>
+
+Thanks.
+
+-- 
+tejun
