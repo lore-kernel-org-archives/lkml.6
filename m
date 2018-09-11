@@ -2,113 +2,120 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01933C6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 16:49:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B62EAC6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 16:50:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE69B2086A
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 16:49:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="d12NN2WX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE69B2086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTP id 66A372086A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 16:50:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66A372086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728031AbeIKVtT (ORCPT
+        id S1727873AbeIKVuX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 17:49:19 -0400
-Received: from mail-io0-f171.google.com ([209.85.223.171]:42062 "EHLO
-        mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726689AbeIKVtS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 17:49:18 -0400
-Received: by mail-io0-f171.google.com with SMTP id n18-v6so4101507ioa.9
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 09:49:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=kgMvqsSYNFt5t2b/PRteCZfR0wIyyy6iKFyV92u+J1A=;
-        b=d12NN2WXz0/a/te+7AwkyN1906Wq4HzzyVAxMH4gVDHVmdUk/O2NsQSYJpacaOiRjo
-         ZzNUh+WyQOz+kQ1CLQMPQby9kEpK42zm1G8weFPePytU0VxJJhhTb4TRe9WCf834XFjo
-         aBXQp6ECv1hvmKOqJj2ivxa/s5/wQJ75uacDBuYv8uVXa3ff1tBq33z94Go4C6QAX4ll
-         2xGcURhdhNVfqelWdqmQ0AjHmcAx6vMT4I6nFL8/ZR3iUejRgMKc6P/8Q3O8faKyV6mO
-         sSWqkPtgr8ltpNqAoxgvWgnNsUNp0hMkkTLAT9XE1KGCplEzKSWlEVAtOE9StNREkdE9
-         8BlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=kgMvqsSYNFt5t2b/PRteCZfR0wIyyy6iKFyV92u+J1A=;
-        b=Q2dSNbdoXQ4dz9C9LJ7rrq/e+Lyk6GI8lcZE98xwX9/aJIVNXDxMxir7jJxeBqDREd
-         CvlM6RZfq4SgdUAQUh1WIHt+a1H1RWPTmaa8TJbpSD88BWwQz2/hqn3TGzdyHRahPULz
-         +XBpxV/EKtJmZG+h3XrePmU0daqEKRdXUIbFlZodC/nFM8ZbBTkUnG7ptKjDeF5pNDbm
-         7mFewQRva4X1RVngpQRgMbPraq0f7Kex3XPaLq7Dqp9wJsYEJqr61E3oXoW3adE3/YjA
-         zSByJ5+DduT16KGp47p7yUzVIf3H8nBgQtj5QraE0OwQl0VcrunwUByn+PBTWdcxoPAF
-         Fk6g==
-X-Gm-Message-State: APzg51AEiAth1U2huaMxQrWtOt1XmV8beSKJsEXypM1cpe2jaPLqzfKG
-        ehPCk6+9I7OW/FvyTXTlZ5TqyA5rcZQ=
-X-Google-Smtp-Source: ANB0VdYUjw4a0vNnTp9D7piYBmJF8eutEt22I5tkfyv4KP4SSQCcoWKcEUjWoquQ2177UjDfyW+ELw==
-X-Received: by 2002:a6b:ac45:: with SMTP id v66-v6mr23576053ioe.66.1536684548232;
-        Tue, 11 Sep 2018 09:49:08 -0700 (PDT)
-Received: from [192.168.1.212] (107.191.0.22.static.utbb.net. [107.191.0.22])
-        by smtp.gmail.com with ESMTPSA id 14-v6sm688234itu.20.2018.09.11.09.49.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Sep 2018 09:49:06 -0700 (PDT)
-Subject: Re: [REGRESSION] bfq probe failed on 4.19-rc3
-To:     Jeff Moyer <jmoyer@redhat.com>
-Cc:     Takashi Iwai <tiwai@suse.de>,
-        Paolo Valente <paolo.valente@linaro.org>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <s5ha7ooxbps.wl-tiwai@suse.de>
- <8b5a7dc9-2dc1-16ee-4b05-a72eb6680c77@kernel.dk>
- <x49a7ooj7zp.fsf@segfault.boston.devel.redhat.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <bd71494f-4595-7586-4c46-000f2b2029aa@kernel.dk>
-Date:   Tue, 11 Sep 2018 10:49:05 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 11 Sep 2018 17:50:23 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46694 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726622AbeIKVuX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 17:50:23 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1C0F97A9;
+        Tue, 11 Sep 2018 09:50:14 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E1AD23F703;
+        Tue, 11 Sep 2018 09:50:13 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 7B0C81AE3231; Tue, 11 Sep 2018 17:50:30 +0100 (BST)
+Date:   Tue, 11 Sep 2018 17:50:30 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Shuah Khan <shuah@kernel.org>
+Cc:     Michal Hocko <mhocko@kernel.org>, catalin.marinas@arm.com,
+        sudeep.holla@arm.com, ganapatrao.kulkarni@cavium.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: add NUMA emulation support
+Message-ID: <20180911165029.GA15022@arm.com>
+References: <20180829110802.GD10349@dhcp22.suse.cz>
+ <f041ba95-03e6-4a7d-c324-870b45a2f648@kernel.org>
+ <20180905064252.GW14951@dhcp22.suse.cz>
+ <c1b58f13-6190-20e9-7e4f-b8bc2b9d5f80@kernel.org>
+ <20180907083452.GC19621@dhcp22.suse.cz>
+ <e46e715c-f115-f054-eeb2-3cecbcd1192d@kernel.org>
+ <20180910134845.GH10951@dhcp22.suse.cz>
+ <4d7beb50-f778-507a-4c3c-f6de92f8cfb9@kernel.org>
+ <20180911091124.GP10951@dhcp22.suse.cz>
+ <86aad702-9f42-c572-a8f1-74983cd1bf33@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <x49a7ooj7zp.fsf@segfault.boston.devel.redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <86aad702-9f42-c572-a8f1-74983cd1bf33@kernel.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/11/18 10:48 AM, Jeff Moyer wrote:
-> Jens Axboe <axboe@kernel.dk> writes:
+On Tue, Sep 11, 2018 at 09:27:49AM -0600, Shuah Khan wrote:
+> On 09/11/2018 03:11 AM, Michal Hocko wrote:
+> > On Mon 10-09-18 20:02:05, Shuah Khan wrote:
+> >> Hi Michal,
+> >>
+> >> On 09/10/2018 07:48 AM, Michal Hocko wrote:
+> >>> On Fri 07-09-18 16:30:59, Shuah Khan wrote:
+> >>>> On 09/07/2018 02:34 AM, Michal Hocko wrote:
+> >>>>> On Thu 06-09-18 15:53:34, Shuah Khan wrote:
+> >> [....]
+> >>>>
+> >>>> In addition to isolation, being able to reserve a block instead is one of the
+> >>>> issues I am looking to address. Unfortunately memory cgroups won't address that
+> >>>> issue.
+> >>>
+> >>> Could you be more specific why you need reservations other than
+> >>> isolation.
+> >>>
+> >>
+> >> Taking automotive as a specific example, there are two classes of applications:
+> >> 1. critical applications that must run
+> >> 2. Infotainment and misc. user-space.
+> >>
+> >> In this case, being able to reserve a block of memory for critical applications
+> >> will ensure the memory is available for them. If a critical application has to
+> >> restart and/or when an on-demand critical application starts, it might not be able
+> >> to allocate memory if it is not reserved.
+> >>
+> >> When a flat system has multiple memory blocks, with NUMA emulation in conjunction with
+> >> cpusets, one or more block can be reserved for critical applications configuring a set
+> >> of cpus and one of more memory nodes for them.
+> >>
+> >> Memory cgroups will not support such reservation. Hope this helps explain the use-case
+> >> I am trying to address with this patch.
+> > 
+> > OK, that is more clear. I still believe that you either have to have a
+> > very good control over memory allocations or a good luck to not see
+> > unexpected kernel allocations in your reserved memory which might easily
+> > break guarantees you would like to accomplish.
+> > 
 > 
->> On 9/11/18 10:03 AM, Takashi Iwai wrote:
->>> Hi,
->>>
->>> I noticed that bfq doesn't appear in the I/O scheduler list on
->>> 4.19-rc3.  It seems that blkcg_policy_register() at the beginning of
->>> bfq_init() returns -ENOSPC, hence the probe aborts silently.
->>>
->>> Is this already addressed?
->>
->> Haven't heard about this one before. What kernel did you last use that
->> worked?
+> Thanks. Right. I am with you on the possibility that root cgroup can eat into
+> the reserved memory. However, with this solution I proposed, there is a guarantee
+> that the cpuset cgroup that is configured for non-critical Infotainment and misc.
+> user-space application will not be able to allocate from the reserved memory node.
 > 
-> I'm guessing you just need to update the maximum number of policies:
+> I am hoping the proposed patch will allow critical apps. reserving memory with the
+> exception that root cgroup and kernel can still allocate from it when needed. Perhaps
+> cpuset exclusive logic could be extended to look for non-exclusive memory nodes first
+> if it doesn't already do that. This is inline with the current cpuset approach is that
+> the critical kernel allocations aren't starved to ensure memory reservations.
 > 
-> /*
->  * Maximum number of blkcg policies allowed to be registered concurrently.
->  * Defined here to simplify include dependency.
->  */
-> #define BLKCG_MAX_POLS          3
+> If you don't think this solution isn't ideal/good, do you have other suggestions
+> for solving the problem? If not would it be okay to start with what I proposed and
+> build on top of as needed?
 
-That is my guess too, hence the suggestion to try and disable the
-iolatency policy. Just tried here without, and it works, rebooting
-with to verify that we're running out of policy slots.
+I still don't understand why this can't be achieved by faking up some NUMA
+entries in the firmware table and just using the existing NUMA code that we
+have.
 
--- 
-Jens Axboe
-
+Will
