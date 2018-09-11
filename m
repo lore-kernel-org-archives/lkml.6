@@ -2,681 +2,182 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A90A2C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 11:29:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8B24C6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 11:30:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E9F820833
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 11:29:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5968F2086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 11:30:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=javigon-com.20150623.gappssmtp.com header.i=@javigon-com.20150623.gappssmtp.com header.b="RXs8CvTa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E9F820833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=javigon.com
+	dkim=pass (1024-bit key) header.d=cnexlabs.onmicrosoft.com header.i=@cnexlabs.onmicrosoft.com header.b="BsE5bk0/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5968F2086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cnexlabs.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727579AbeIKQ2T (ORCPT
+        id S1727002AbeIKQ3W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 12:28:19 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:45735 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727051AbeIKQ2T (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 12:28:19 -0400
-Received: by mail-ed1-f68.google.com with SMTP id p52-v6so18923276eda.12
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 04:29:23 -0700 (PDT)
+        Tue, 11 Sep 2018 12:29:22 -0400
+Received: from mail-co1nam03on0050.outbound.protection.outlook.com ([104.47.40.50]:60544
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726563AbeIKQ3W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 12:29:22 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=javigon-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=+lKj8jLkHCDd0FB/prE8uhSUPJM4jmvvN1UYEbzt/m4=;
-        b=RXs8CvTaq1+9MuIeKnSRK02Wb8N7E7Ffk2l7fIiARSafxKXd12KrXDxhNa0aE9CM+i
-         Hax7KRzhFO7Fsm9OAAP3LijnyQvpjpj04eLP53d5omWmBeGVofNLdbxYnAo0jxwiRncQ
-         YAwRBvuRmptvOGwTq6Tn+81qiS5a/E9jEPeZxIwLWwM/eN615p4SaRcOFpRDTH9B+3lQ
-         KQEw66uQb0Rg3LaIbywPoaYnNeiDEm5OVevAIOKxVlKHuQ04vbhtoMlIbDbbURPM92dC
-         IEKSEV0kUBvTkumGz0Kxoapp6TpGYPaUSW/5o0ibmIMYskrlhStmBSmIjW4PUxhocsjG
-         69nQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=+lKj8jLkHCDd0FB/prE8uhSUPJM4jmvvN1UYEbzt/m4=;
-        b=mDpumlxe+EVqCfF6Jh7zKSOX0HDfCIbW0x5HN/g4XgFDSikU57eJ5DwSsbeL0Ubq9I
-         7zAG93Pwt0uVV6fyVazOnwdJtJkcnUqmHOEv43vsag8qFc2pTi44iGkYl/5XQsrE3jLW
-         qEhX0AAbUXRypjVxQdr+ZMtdrnIf+zcNhqRYbkSs0dIlmNcof9pwEIRX+c4kwuFtrcbE
-         ddLREo1JJ364Wuno01K3eH20ASMFcmYm3gY7X3z3BEljLCgKLOmO3i/w6PjdALBlBqqS
-         Ar6m4sE6oF+Wag9bcHKMcY0dh6CxJt+AhuwR3UFCg0yHzpCSbpuEtoCyJQxvxFQfaQq5
-         YErA==
-X-Gm-Message-State: APzg51DUzV+glNLfHxB2g6WF3FzFwiYVVvWpKmGB+an4t6+LL6Obf/cq
-        h6xKGJhffrzSrMLebYsyrM4tbQ==
-X-Google-Smtp-Source: ANB0VdZn0y3TuWwz7SvYgEL2L2uFu/W1unlbTZzEYiICUr13bhek+bWqXTEHsWHeli2Fq3NIN4zywQ==
-X-Received: by 2002:a50:8f66:: with SMTP id 93-v6mr28379750edy.248.1536665362112;
-        Tue, 11 Sep 2018 04:29:22 -0700 (PDT)
-Received: from ch-wrk-javier.cnexlabs.com (6164211-cl69.boa.fiberby.dk. [193.106.164.211])
-        by smtp.gmail.com with ESMTPSA id r11-v6sm8690216edh.32.2018.09.11.04.29.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 11 Sep 2018 04:29:21 -0700 (PDT)
-From:   "=?UTF-8?q?Javier=20Gonz=C3=A1lez?=" <javier@javigon.com>
-X-Google-Original-From: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
-To:     mb@lightnvm.io
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
-Subject: [PATCH] lightnvm: pblk: recover open lines on 2.0 devices
-Date:   Tue, 11 Sep 2018 13:29:14 +0200
-Message-Id: <1536665354-13493-2-git-send-email-javier@cnexlabs.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1536665354-13493-1-git-send-email-javier@cnexlabs.com>
-References: <1536665354-13493-1-git-send-email-javier@cnexlabs.com>
+ d=cnexlabs.onmicrosoft.com; s=selector1-cnexlabs-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=r0dCDeYuxSocy8YNw7vYAKCZkILm3nk60Wfrv+YfACU=;
+ b=BsE5bk0/pN4T6w3vMiFSmQgLHhPXawQzP7C46JMo9fze91d+bGy8E85BuHi9AAY5zh8mlqnzOwlX1cauo6TsiNy1XvoVkNgnb8TSfseO2tptTIkZgMFZwtx3MfnhEgKxTGqiLJiIu2xm7KYW7/g1t9vI9OMYID+8HKFBypyhsyM=
+Received: from CO2PR06MB538.namprd06.prod.outlook.com (10.141.199.23) by
+ CO2PR06MB523.namprd06.prod.outlook.com (10.141.198.150) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1101.14; Tue, 11 Sep 2018 11:30:25 +0000
+Received: from CO2PR06MB538.namprd06.prod.outlook.com
+ ([fe80::2131:a303:c149:1150]) by CO2PR06MB538.namprd06.prod.outlook.com
+ ([fe80::2131:a303:c149:1150%3]) with mapi id 15.20.1101.016; Tue, 11 Sep 2018
+ 11:30:23 +0000
+From:   Javier Gonzalez <javier@cnexlabs.com>
+To:     Javier Gonzalez <javier@cnexlabs.com>
+CC:     =?utf-8?B?TWF0aWFzIEJqw7hybGluZw==?= <mb@lightnvm.io>,
+        "Konopko, Igor J" <igor.j.konopko@intel.com>,
+        "marcin.dziegielewski@intel.com" <marcin.dziegielewski@intel.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/3] lightnvm: do no update csecs and sos on 1.2
+Thread-Topic: [PATCH 2/3] lightnvm: do no update csecs and sos on 1.2
+Thread-Index: AQHUP4BwZTm1hVjhZEOpHx2Evg7pOqTkrA2AgAYt2ACAACy+AA==
+Date:   Tue, 11 Sep 2018 11:30:23 +0000
+Message-ID: <9C271B60-C421-4C9B-99B6-C30B65494095@cnexlabs.com>
+References: <1535537370-10729-1-git-send-email-javier@cnexlabs.com>
+ <1535537370-10729-3-git-send-email-javier@cnexlabs.com>
+ <4ac29eb8-65bf-f733-d196-80c5bb41876c@lightnvm.io>
+ <7493E737-A7F5-4F86-A91D-8BA01755714D@cnexlabs.com>
+In-Reply-To: <7493E737-A7F5-4F86-A91D-8BA01755714D@cnexlabs.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=javier@cnexlabs.com; 
+x-originating-ip: [193.106.164.211]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CO2PR06MB523;6:zf3m3CoIdVLlsfKzpbBlRm/NNuwe92O7bS2hfGoynyusKGVvWwPQQuCLMNHsnlSPxR02WCM4579K9aXqyy1aB3L3K5y8koYFRSuGvP7vYLQ2N/hpN/HGe+wSq9ShsK0DE9LS8eOXksuay3lt3ZYUGZiHYTL8XBj0wgPwfMj58OIlT7AP8xUEwTOdltG9j3cMP6rVs8AYqG+Bux42hRkM8A3MPtjbjLPA8qJXkZz+jLsMEsKuPvWXAFgC/MghY5S4ZUIJkriaspfMkEegRR9qyAMpCKA49+6z7ZExtnZBLKgb4PJoBy97K7yr4mnBgdDt41Zo4py8+KpnUZ1fogKRjquNv3GCR5fjZXsZJ3A+mmA/2A5GY4uDHAPRafX3lLLQy/A3MhBQzfM2+JYdMMzE1s7LegzMYlQklIDcw0s0HPfJ2OEWJrOfLpF3aCc1xFpNWQKonw2n5HuSmZpBWg/MoQ==;5:MgstyzOT2iUmleVghG5QUF8iAQZJlqZ9gFwVLxORxb1UFyW7+xe/iLfSJi26HYaTgOyZqoYLzt64hqrWtm0WVHDgNv8SXTT/EAXUw6QTqapcRlLzaj58QivR0Zxg8dZ0A3E4g/Lu0J4LiL7B1dOx/L404z3z4PoJ4cKtITDL5mY=;7:pAgNWek2hqb+/Y3GdN+eJrDz7Knkoenlrru2nmrNSyVKsfhsRihdg6FYmrKLhWtm3O4Yq3lhmuIYJa0PJqLiYWYWnohDozQ8w4KQNAAoQ910LnFK9DJrZIg8+zvGFGQ50XkjADN/Nh/Br7YAP/JEnyRx4zfqbNon78KKjvh4D5L5fXpCaF5vgeau/fWOD8a/on0R9IrhFrAvkS5P1srkp15F0iN6+VH9wu6uZ5pQcBhBtC/14ba+4phlO11djW+c
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(346002)(376002)(366004)(136003)(39840400004)(396003)(189003)(199004)(6246003)(229853002)(6506007)(476003)(86362001)(26005)(4326008)(5660300001)(8936002)(68736007)(6200100001)(305945005)(82746002)(7736002)(15650500001)(102836004)(97736004)(66066001)(53546011)(2616005)(486006)(446003)(36756003)(6862004)(478600001)(99936001)(11346002)(25786009)(14454004)(316002)(54906003)(2900100001)(5250100002)(106356001)(105586002)(99286004)(33656002)(83716003)(93886005)(256004)(37006003)(14444005)(6436002)(6486002)(81166006)(6512007)(2906002)(81156014)(76176011)(3846002)(8676002)(53936002)(6116002);DIR:OUT;SFP:1101;SCL:1;SRVR:CO2PR06MB523;H:CO2PR06MB538.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-office365-filtering-correlation-id: e68759d2-bc4e-412e-cac5-08d617d9f70f
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(5600074)(711020)(2017052603328)(7153060)(49563074)(7193020);SRVR:CO2PR06MB523;
+x-ms-traffictypediagnostic: CO2PR06MB523:
+x-microsoft-antispam-prvs: <CO2PR06MB52346396E05E77A4CA0F86EBA040@CO2PR06MB523.namprd06.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(102415395)(6040522)(2401047)(5005006)(8121501046)(823301075)(3231311)(944501410)(52105095)(10201501046)(3002001)(93006095)(93001095)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201708071742011)(7699050);SRVR:CO2PR06MB523;BCL:0;PCL:0;RULEID:;SRVR:CO2PR06MB523;
+x-forefront-prvs: 0792DBEAD0
+received-spf: None (protection.outlook.com: cnexlabs.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: xtKprlzaDEOEwXys1/bFNa9Bwh+Dom6DNcNEy6K0uM6iQJzhzU9d0OOaM7iFqA+y37ZGJupXG3+QipDPSDSk6LICrrX/pXfquLdJjbBsMhI3YZH0PH0/sDy+NOwYhdrj2hOT6DcURqv6dro269Wmjz8nUDGF7rgDhAirAj+Fi1qmS0kaf6v6U+WHjdgaVD2P9h3AkcuWbg1SX8eHhB8FCzy+GceszYkwV7hkIrAkDo6JZVfscimGSy3VoWm0IB/ctlJGQUXG3rO3JDiol2Zi/FsHE54ambDQOPmoxMmWZxM2xcNAAVzqC3ch4cDe595FyXYWcrpAop63HRY6cd7cCjKC9c0gsvRRgENthDcXPxs=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: multipart/signed;
+        boundary="Apple-Mail=_95538BEF-79E2-490F-B1AA-9EEF19F4197B";
+        protocol="application/pgp-signature";
+        micalg=pgp-sha512
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: cnexlabs.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e68759d2-bc4e-412e-cac5-08d617d9f70f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Sep 2018 11:30:23.0485
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: e40dfc2e-c6c1-463a-a598-38602b2c3cff
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO2PR06MB523
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the OCSSD 2.0 spec, each chunk reports its write pointer. This means
-that pblk does not need to scan open lines to find the write pointer,
-but instead, it can retrieve it directly (and verify it).
+--Apple-Mail=_95538BEF-79E2-490F-B1AA-9EEF19F4197B
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=utf-8
 
-This patch uses the write pointer on open lines to (i) recover the line
-up until the last written lba and (ii) reconstruct the map bitmap and
-rest of line metadata so that the line can be used for new data.
+> On 11 Sep 2018, at 10.50, Javier Gonzalez <javier@cnexlabs.com> wrote:
+>=20
+>> On 7 Sep 2018, at 12.28, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
+>>=20
+>> On 08/29/2018 12:09 PM, Javier Gonz=C3=A1lez wrote:
+>>> In the OCSSD 2.0 spec., the sector and metadata sizes are reported =
+though
+>>> the standard nvme identify command. Thus, the lightnvm subsystem =
+needs
+>>> to update this information on the geometry structure on bootup.
+>>> Since 1.2 devices report these values on the OCSSD geometry =
+identify,
+>>> avoid this update is it is unnecessary and can also corrupt the =
+geometry
+>>> if the devices does not report the nvme sizes correctly (which is =
+not
+>>> required by the OCSSD 1.2 spec either) >
+>>> Signed-off-by: Javier Gonz=C3=A1lez <javier@cnexlabs.com>
+>>> ---
+>>> drivers/nvme/host/lightnvm.c | 3 +++
+>>> 1 file changed, 3 insertions(+)
+>>> diff --git a/drivers/nvme/host/lightnvm.c =
+b/drivers/nvme/host/lightnvm.c
+>>> index 5bfa354c5dd5..33ed09f8410e 100644
+>>> --- a/drivers/nvme/host/lightnvm.c
+>>> +++ b/drivers/nvme/host/lightnvm.c
+>>> @@ -980,6 +980,9 @@ void nvme_nvm_update_nvm_info(struct nvme_ns =
+*ns)
+>>> 	struct nvm_dev *ndev =3D ns->ndev;
+>>> 	struct nvm_geo *geo =3D &ndev->geo;
+>>> +	if (geo->version =3D=3D NVM_OCSSD_SPEC_12)
+>>> +		return;
+>>=20
+>> The lba format sizes are not explicit in 2.0 either. For a conforming =
+drive, it should implement the NVM Command Set and expose the LBA format =
+correctly. Although, I do get your incentive, and if it is okay with =
+you, I'll reword the commit message to this and apply it?:
+>>=20
+>> "1.2 devices exposes their data and metadata size through the =
+separate
+>> identify command. Make sure that the NVMe LBA format does not =
+override
+>> these values."
+>=20
+> Sounds good. I'll resend either way as I rebased on top of =
+for-4.20/core
+> - you can change the commit as you think it suits.
 
-Since the 1.2 path in lightnvm core has been re-implemented to populate
-the chunk structure and thus recover the write pointer on
-initialization, this patch removes 1.2 specific recovery, as the 2.0
-path can be reused.
+Since Igor will send a patch for the OOB, can you pick this up
+separately? No changes needed after rebase.
 
-Signed-off-by: Javier González <javier@cnexlabs.com>
----
- drivers/lightnvm/pblk-recovery.c | 406 ++++++++++++---------------------------
- 1 file changed, 124 insertions(+), 282 deletions(-)
+Thanks,
+Javier
 
-diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
-index 6c57eb00a7f1..fccf65bc70b3 100644
---- a/drivers/lightnvm/pblk-recovery.c
-+++ b/drivers/lightnvm/pblk-recovery.c
-@@ -86,15 +86,39 @@ static int pblk_recov_l2p_from_emeta(struct pblk *pblk, struct pblk_line *line)
- 	return 0;
- }
- 
--static int pblk_calc_sec_in_line(struct pblk *pblk, struct pblk_line *line)
-+static void pblk_update_line_wp(struct pblk *pblk, struct pblk_line *line,
-+				u64 written_secs)
-+{
-+	int i;
-+
-+	for (i = 0; i < written_secs; i += pblk->min_write_pgs)
-+		pblk_alloc_page(pblk, line, pblk->min_write_pgs);
-+}
-+
-+static u64 pblk_sec_in_open_line(struct pblk *pblk, struct pblk_line *line)
- {
--	struct nvm_tgt_dev *dev = pblk->dev;
--	struct nvm_geo *geo = &dev->geo;
- 	struct pblk_line_meta *lm = &pblk->lm;
- 	int nr_bb = bitmap_weight(line->blk_bitmap, lm->blk_per_line);
-+	u64 written_secs = 0;
-+	int valid_chunks = 0;
-+	int i;
- 
--	return lm->sec_per_line - lm->smeta_sec - lm->emeta_sec[0] -
--				nr_bb * geo->clba;
-+	for (i = 0; i < lm->blk_per_line; i++) {
-+		struct nvm_chk_meta *chunk = &line->chks[i];
-+
-+		if (chunk->state & NVM_CHK_ST_OFFLINE)
-+			continue;
-+
-+		written_secs += chunk->wp;
-+		valid_chunks++;
-+	}
-+
-+	if (lm->blk_per_line - nr_bb != valid_chunks)
-+		pblk_err(pblk, "recovery line %d is bad\n", line->id);
-+
-+	pblk_update_line_wp(pblk, line, written_secs - lm->smeta_sec);
-+
-+	return written_secs;
- }
- 
- struct pblk_recov_alloc {
-@@ -106,115 +130,6 @@ struct pblk_recov_alloc {
- 	dma_addr_t dma_meta_list;
- };
- 
--static int pblk_recov_read_oob(struct pblk *pblk, struct pblk_line *line,
--			       struct pblk_recov_alloc p, u64 r_ptr)
--{
--	struct nvm_tgt_dev *dev = pblk->dev;
--	struct nvm_geo *geo = &dev->geo;
--	struct ppa_addr *ppa_list;
--	struct pblk_sec_meta *meta_list;
--	struct nvm_rq *rqd;
--	struct bio *bio;
--	void *data;
--	dma_addr_t dma_ppa_list, dma_meta_list;
--	u64 r_ptr_int;
--	int left_ppas;
--	int rq_ppas, rq_len;
--	int i, j;
--	int ret = 0;
--
--	ppa_list = p.ppa_list;
--	meta_list = p.meta_list;
--	rqd = p.rqd;
--	data = p.data;
--	dma_ppa_list = p.dma_ppa_list;
--	dma_meta_list = p.dma_meta_list;
--
--	left_ppas = line->cur_sec - r_ptr;
--	if (!left_ppas)
--		return 0;
--
--	r_ptr_int = r_ptr;
--
--next_read_rq:
--	memset(rqd, 0, pblk_g_rq_size);
--
--	rq_ppas = pblk_calc_secs(pblk, left_ppas, 0);
--	if (!rq_ppas)
--		rq_ppas = pblk->min_write_pgs;
--	rq_len = rq_ppas * geo->csecs;
--
--	bio = bio_map_kern(dev->q, data, rq_len, GFP_KERNEL);
--	if (IS_ERR(bio))
--		return PTR_ERR(bio);
--
--	bio->bi_iter.bi_sector = 0; /* internal bio */
--	bio_set_op_attrs(bio, REQ_OP_READ, 0);
--
--	rqd->bio = bio;
--	rqd->opcode = NVM_OP_PREAD;
--	rqd->meta_list = meta_list;
--	rqd->nr_ppas = rq_ppas;
--	rqd->ppa_list = ppa_list;
--	rqd->dma_ppa_list = dma_ppa_list;
--	rqd->dma_meta_list = dma_meta_list;
--
--	if (pblk_io_aligned(pblk, rq_ppas))
--		rqd->is_seq = 1;
--
--	ppa_list = nvm_rq_to_ppa_list(rqd);
--
--	for (i = 0; i < rqd->nr_ppas; ) {
--		struct ppa_addr ppa;
--		int pos;
--
--		ppa = addr_to_gen_ppa(pblk, r_ptr_int, line->id);
--		pos = pblk_ppa_to_pos(geo, ppa);
--
--		while (test_bit(pos, line->blk_bitmap)) {
--			r_ptr_int += pblk->min_write_pgs;
--			ppa = addr_to_gen_ppa(pblk, r_ptr_int, line->id);
--			pos = pblk_ppa_to_pos(geo, ppa);
--		}
--
--		for (j = 0; j < pblk->min_write_pgs; j++, i++, r_ptr_int++)
--			ppa_list[i] =
--				addr_to_gen_ppa(pblk, r_ptr_int, line->id);
--	}
--
--	/* If read fails, more padding is needed */
--	ret = pblk_submit_io_sync(pblk, rqd);
--	if (ret) {
--		pblk_err(pblk, "I/O submission failed: %d\n", ret);
--		return ret;
--	}
--
--	atomic_dec(&pblk->inflight_io);
--
--	/* At this point, the read should not fail. If it does, it is a problem
--	 * we cannot recover from here. Need FTL log.
--	 */
--	if (rqd->error && rqd->error != NVM_RSP_WARN_HIGHECC) {
--		pblk_err(pblk, "L2P recovery failed (%d)\n", rqd->error);
--		return -EINTR;
--	}
--
--	for (i = 0; i < rqd->nr_ppas; i++) {
--		u64 lba = le64_to_cpu(meta_list[i].lba);
--
--		if (lba == ADDR_EMPTY || lba > pblk->rl.nr_secs)
--			continue;
--
--		pblk_update_map(pblk, lba, ppa_list[i]);
--	}
--
--	left_ppas -= rq_ppas;
--	if (left_ppas > 0)
--		goto next_read_rq;
--
--	return 0;
--}
--
- static void pblk_recov_complete(struct kref *ref)
- {
- 	struct pblk_pad_rq *pad_rq = container_of(ref, struct pblk_pad_rq, ref);
-@@ -236,8 +151,9 @@ static void pblk_end_io_recov(struct nvm_rq *rqd)
- 	kref_put(&pad_rq->ref, pblk_recov_complete);
- }
- 
--static int pblk_recov_pad_oob(struct pblk *pblk, struct pblk_line *line,
--			      int left_ppas)
-+/* pad line using line bitmap.  */
-+static int pblk_recov_pad_line(struct pblk *pblk, struct pblk_line *line,
-+			       int left_ppas)
- {
- 	struct nvm_tgt_dev *dev = pblk->dev;
- 	struct nvm_geo *geo = &dev->geo;
-@@ -379,143 +295,42 @@ static int pblk_pad_distance(struct pblk *pblk, struct pblk_line *line)
- 	return (distance > line->left_msecs) ? line->left_msecs : distance;
- }
- 
--/* When this function is called, it means that not all upper pages have been
-- * written in a page that contains valid data. In order to recover this data, we
-- * first find the write pointer on the device, then we pad all necessary
-- * sectors, and finally attempt to read the valid data
-- */
--static int pblk_recov_scan_all_oob(struct pblk *pblk, struct pblk_line *line,
--				   struct pblk_recov_alloc p)
-+static int pblk_line_wp_is_unbalanced(struct pblk *pblk,
-+				      struct pblk_line *line)
- {
- 	struct nvm_tgt_dev *dev = pblk->dev;
- 	struct nvm_geo *geo = &dev->geo;
--	struct ppa_addr *ppa_list;
--	struct pblk_sec_meta *meta_list;
--	struct nvm_rq *rqd;
--	struct bio *bio;
--	void *data;
--	dma_addr_t dma_ppa_list, dma_meta_list;
--	u64 w_ptr = 0, r_ptr;
--	int rq_ppas, rq_len;
--	int i, j;
--	int ret = 0;
--	int rec_round;
--	int left_ppas = pblk_calc_sec_in_line(pblk, line) - line->cur_sec;
--
--	ppa_list = p.ppa_list;
--	meta_list = p.meta_list;
--	rqd = p.rqd;
--	data = p.data;
--	dma_ppa_list = p.dma_ppa_list;
--	dma_meta_list = p.dma_meta_list;
--
--	/* we could recover up until the line write pointer */
--	r_ptr = line->cur_sec;
--	rec_round = 0;
--
--next_rq:
--	memset(rqd, 0, pblk_g_rq_size);
--
--	rq_ppas = pblk_calc_secs(pblk, left_ppas, 0);
--	if (!rq_ppas)
--		rq_ppas = pblk->min_write_pgs;
--	rq_len = rq_ppas * geo->csecs;
--
--	bio = bio_map_kern(dev->q, data, rq_len, GFP_KERNEL);
--	if (IS_ERR(bio))
--		return PTR_ERR(bio);
--
--	bio->bi_iter.bi_sector = 0; /* internal bio */
--	bio_set_op_attrs(bio, REQ_OP_READ, 0);
--
--	rqd->bio = bio;
--	rqd->opcode = NVM_OP_PREAD;
--	rqd->meta_list = meta_list;
--	rqd->nr_ppas = rq_ppas;
--	rqd->ppa_list = ppa_list;
--	rqd->dma_ppa_list = dma_ppa_list;
--	rqd->dma_meta_list = dma_meta_list;
--
--	if (pblk_io_aligned(pblk, rq_ppas))
--		rqd->is_seq = 1;
--
--	for (i = 0; i < rqd->nr_ppas; ) {
--		struct ppa_addr ppa;
--		int pos;
--
--		w_ptr = pblk_alloc_page(pblk, line, pblk->min_write_pgs);
--		ppa = addr_to_gen_ppa(pblk, w_ptr, line->id);
-+	struct pblk_line_meta *lm = &pblk->lm;
-+	struct pblk_lun *rlun;
-+	struct nvm_chk_meta *chunk;
-+	struct ppa_addr ppa;
-+	u64 line_wp;
-+	int pos, i;
-+
-+	rlun = &pblk->luns[0];
-+	ppa = rlun->bppa;
-+	pos = pblk_ppa_to_pos(geo, ppa);
-+	chunk = &line->chks[pos];
-+
-+	line_wp = chunk->wp;
-+
-+	for (i = 1; i < lm->blk_per_line; i++) {
-+		rlun = &pblk->luns[i];
-+		ppa = rlun->bppa;
- 		pos = pblk_ppa_to_pos(geo, ppa);
-+		chunk = &line->chks[pos];
- 
--		while (test_bit(pos, line->blk_bitmap)) {
--			w_ptr += pblk->min_write_pgs;
--			ppa = addr_to_gen_ppa(pblk, w_ptr, line->id);
--			pos = pblk_ppa_to_pos(geo, ppa);
--		}
--
--		for (j = 0; j < pblk->min_write_pgs; j++, i++, w_ptr++)
--			rqd->ppa_list[i] =
--				addr_to_gen_ppa(pblk, w_ptr, line->id);
--	}
--
--	ret = pblk_submit_io_sync(pblk, rqd);
--	if (ret) {
--		pblk_err(pblk, "I/O submission failed: %d\n", ret);
--		return ret;
-+		if (chunk->wp > line_wp)
-+			return 1;
-+		else if (chunk->wp < line_wp)
-+			line_wp = chunk->wp;
- 	}
- 
--	atomic_dec(&pblk->inflight_io);
--
--	/* This should not happen since the read failed during normal recovery,
--	 * but the media works funny sometimes...
--	 */
--	if (!rec_round++ && !rqd->error) {
--		rec_round = 0;
--		for (i = 0; i < rqd->nr_ppas; i++, r_ptr++) {
--			u64 lba = le64_to_cpu(meta_list[i].lba);
--
--			if (lba == ADDR_EMPTY || lba > pblk->rl.nr_secs)
--				continue;
--
--			pblk_update_map(pblk, lba, rqd->ppa_list[i]);
--		}
--	}
--
--	/* Reached the end of the written line */
--	if (rqd->error == NVM_RSP_ERR_EMPTYPAGE) {
--		int pad_secs, nr_error_bits, bit;
--		int ret;
--
--		bit = find_first_bit((void *)&rqd->ppa_status, rqd->nr_ppas);
--		nr_error_bits = rqd->nr_ppas - bit;
--
--		/* Roll back failed sectors */
--		line->cur_sec -= nr_error_bits;
--		line->left_msecs += nr_error_bits;
--		bitmap_clear(line->map_bitmap, line->cur_sec, nr_error_bits);
--
--		pad_secs = pblk_pad_distance(pblk, line);
--
--		ret = pblk_recov_pad_oob(pblk, line, pad_secs);
--		if (ret)
--			pblk_err(pblk, "OOB padding failed (err:%d)\n", ret);
--
--		ret = pblk_recov_read_oob(pblk, line, p, r_ptr);
--		if (ret)
--			pblk_err(pblk, "OOB read failed (err:%d)\n", ret);
--
--		left_ppas = 0;
--	}
--
--	left_ppas -= rq_ppas;
--	if (left_ppas > 0)
--		goto next_rq;
--
--	return ret;
-+	return 0;
- }
- 
- static int pblk_recov_scan_oob(struct pblk *pblk, struct pblk_line *line,
--			       struct pblk_recov_alloc p, int *done)
-+			       struct pblk_recov_alloc p)
- {
- 	struct nvm_tgt_dev *dev = pblk->dev;
- 	struct nvm_geo *geo = &dev->geo;
-@@ -525,11 +340,16 @@ static int pblk_recov_scan_oob(struct pblk *pblk, struct pblk_line *line,
- 	struct bio *bio;
- 	void *data;
- 	dma_addr_t dma_ppa_list, dma_meta_list;
--	u64 paddr;
-+	__le64 *lba_list;
-+	u64 paddr = 0;
-+	bool padded = false;
- 	int rq_ppas, rq_len;
- 	int i, j;
--	int ret = 0;
--	int left_ppas = pblk_calc_sec_in_line(pblk, line);
-+	int ret;
-+	u64 left_ppas = pblk_sec_in_open_line(pblk, line);
-+
-+	if (pblk_line_wp_is_unbalanced(pblk, line))
-+		pblk_warn(pblk, "recovering unbalanced line (%d)\n", line->id);
- 
- 	ppa_list = p.ppa_list;
- 	meta_list = p.meta_list;
-@@ -538,7 +358,7 @@ static int pblk_recov_scan_oob(struct pblk *pblk, struct pblk_line *line,
- 	dma_ppa_list = p.dma_ppa_list;
- 	dma_meta_list = p.dma_meta_list;
- 
--	*done = 1;
-+	lba_list = emeta_to_lbas(pblk, line->emeta->buf);
- 
- next_rq:
- 	memset(rqd, 0, pblk_g_rq_size);
-@@ -566,11 +386,11 @@ static int pblk_recov_scan_oob(struct pblk *pblk, struct pblk_line *line,
- 	if (pblk_io_aligned(pblk, rq_ppas))
- 		rqd->is_seq = 1;
- 
-+retry_rq:
- 	for (i = 0; i < rqd->nr_ppas; ) {
- 		struct ppa_addr ppa;
- 		int pos;
- 
--		paddr = pblk_alloc_page(pblk, line, pblk->min_write_pgs);
- 		ppa = addr_to_gen_ppa(pblk, paddr, line->id);
- 		pos = pblk_ppa_to_pos(geo, ppa);
- 
-@@ -580,9 +400,9 @@ static int pblk_recov_scan_oob(struct pblk *pblk, struct pblk_line *line,
- 			pos = pblk_ppa_to_pos(geo, ppa);
- 		}
- 
--		for (j = 0; j < pblk->min_write_pgs; j++, i++, paddr++)
-+		for (j = 0; j < pblk->min_write_pgs; j++, i++)
- 			rqd->ppa_list[i] =
--				addr_to_gen_ppa(pblk, paddr, line->id);
-+				addr_to_gen_ppa(pblk, paddr + j, line->id);
- 	}
- 
- 	ret = pblk_submit_io_sync(pblk, rqd);
-@@ -594,31 +414,33 @@ static int pblk_recov_scan_oob(struct pblk *pblk, struct pblk_line *line,
- 
- 	atomic_dec(&pblk->inflight_io);
- 
--	/* Reached the end of the written line */
-+	/* If a read fails, do a best effort by padding the line and retrying */
- 	if (rqd->error) {
--		int nr_error_bits, bit;
-+		int pad_distance, ret;
- 
--		bit = find_first_bit((void *)&rqd->ppa_status, rqd->nr_ppas);
--		nr_error_bits = rqd->nr_ppas - bit;
-+		if (padded) {
-+			pblk_log_read_err(pblk, rqd);
-+			return -EINTR;
-+		}
- 
--		/* Roll back failed sectors */
--		line->cur_sec -= nr_error_bits;
--		line->left_msecs += nr_error_bits;
--		bitmap_clear(line->map_bitmap, line->cur_sec, nr_error_bits);
-+		pad_distance = pblk_pad_distance(pblk, line);
-+		ret = pblk_recov_pad_line(pblk, line, pad_distance);
-+		if (ret)
-+			return ret;
- 
--		left_ppas = 0;
--		rqd->nr_ppas = bit;
--
--		if (rqd->error != NVM_RSP_ERR_EMPTYPAGE)
--			*done = 0;
-+		padded = true;
-+		goto retry_rq;
- 	}
- 
- 	for (i = 0; i < rqd->nr_ppas; i++) {
- 		u64 lba = le64_to_cpu(meta_list[i].lba);
- 
-+		lba_list[paddr++] = cpu_to_le64(lba);
-+
- 		if (lba == ADDR_EMPTY || lba > pblk->rl.nr_secs)
- 			continue;
- 
-+		line->nr_valid_lbas++;
- 		pblk_update_map(pblk, lba, rqd->ppa_list[i]);
- 	}
- 
-@@ -626,7 +448,11 @@ static int pblk_recov_scan_oob(struct pblk *pblk, struct pblk_line *line,
- 	if (left_ppas > 0)
- 		goto next_rq;
- 
--	return ret;
-+#ifdef CONFIG_NVM_PBLK_DEBUG
-+	WARN_ON(padded && !pblk_line_is_full(line));
-+#endif
-+
-+	return 0;
- }
- 
- /* Scan line for lbas on out of bound area */
-@@ -640,7 +466,7 @@ static int pblk_recov_l2p_from_oob(struct pblk *pblk, struct pblk_line *line)
- 	struct pblk_recov_alloc p;
- 	void *data;
- 	dma_addr_t dma_ppa_list, dma_meta_list;
--	int done, ret = 0;
-+	int ret = 0;
- 
- 	meta_list = nvm_dev_dma_alloc(dev->parent, GFP_KERNEL, &dma_meta_list);
- 	if (!meta_list)
-@@ -655,7 +481,8 @@ static int pblk_recov_l2p_from_oob(struct pblk *pblk, struct pblk_line *line)
- 		goto free_meta_list;
- 	}
- 
--	rqd = pblk_alloc_rqd(pblk, PBLK_READ);
-+	rqd = mempool_alloc(&pblk->r_rq_pool, GFP_KERNEL);
-+	memset(rqd, 0, pblk_g_rq_size);
- 
- 	p.ppa_list = ppa_list;
- 	p.meta_list = meta_list;
-@@ -664,24 +491,17 @@ static int pblk_recov_l2p_from_oob(struct pblk *pblk, struct pblk_line *line)
- 	p.dma_ppa_list = dma_ppa_list;
- 	p.dma_meta_list = dma_meta_list;
- 
--	ret = pblk_recov_scan_oob(pblk, line, p, &done);
-+	ret = pblk_recov_scan_oob(pblk, line, p);
- 	if (ret) {
--		pblk_err(pblk, "could not recover L2P from OOB\n");
-+		pblk_err(pblk, "could not recover L2P form OOB\n");
- 		goto out;
- 	}
- 
--	if (!done) {
--		ret = pblk_recov_scan_all_oob(pblk, line, p);
--		if (ret) {
--			pblk_err(pblk, "could not recover L2P from OOB\n");
--			goto out;
--		}
--	}
--
- 	if (pblk_line_is_full(line))
- 		pblk_line_recov_close(pblk, line);
- 
- out:
-+	mempool_free(rqd, &pblk->r_rq_pool);
- 	kfree(data);
- free_meta_list:
- 	nvm_dev_dma_free(dev->parent, meta_list, dma_meta_list);
-@@ -770,7 +590,7 @@ static void pblk_recov_wa_counters(struct pblk *pblk,
- }
- 
- static int pblk_line_was_written(struct pblk_line *line,
--			    struct pblk *pblk)
-+				 struct pblk *pblk)
- {
- 
- 	struct pblk_line_meta *lm = &pblk->lm;
-@@ -796,6 +616,18 @@ static int pblk_line_was_written(struct pblk_line *line,
- 	return 1;
- }
- 
-+static bool pblk_line_is_open(struct pblk *pblk, struct pblk_line *line)
-+{
-+	struct pblk_line_meta *lm = &pblk->lm;
-+	int i;
-+
-+	for (i = 0; i < lm->blk_per_line; i++)
-+		if (line->chks[i].state & NVM_CHK_ST_OPEN)
-+			return true;
-+
-+	return false;
-+}
-+
- struct pblk_line *pblk_recov_l2p(struct pblk *pblk)
- {
- 	struct pblk_line_meta *lm = &pblk->lm;
-@@ -906,6 +738,11 @@ struct pblk_line *pblk_recov_l2p(struct pblk *pblk)
- 		line->emeta = emeta;
- 		memset(line->emeta->buf, 0, lm->emeta_len[0]);
- 
-+		if (pblk_line_is_open(pblk, line)) {
-+			pblk_recov_l2p_from_oob(pblk, line);
-+			goto next;
-+		}
-+
- 		if (pblk_line_emeta_read(pblk, line, line->emeta->buf)) {
- 			pblk_recov_l2p_from_oob(pblk, line);
- 			goto next;
-@@ -944,15 +781,20 @@ struct pblk_line *pblk_recov_l2p(struct pblk *pblk)
- 			line->smeta = NULL;
- 			line->emeta = NULL;
- 		} else {
--			if (open_lines > 1)
--				pblk_err(pblk, "failed to recover L2P\n");
-+			spin_lock(&line->lock);
-+			line->state = PBLK_LINESTATE_OPEN;
-+			spin_unlock(&line->lock);
-+
-+			line->emeta->mem = 0;
-+			atomic_set(&line->emeta->sync, 0);
- 
- 			trace_pblk_line_state(pblk_disk_name(pblk), line->id,
- 					line->state);
- 
--			open_lines++;
--			line->meta_line = meta_line;
- 			data_line = line;
-+			line->meta_line = meta_line;
-+
-+			open_lines++;
- 		}
- 	}
- 
-@@ -1000,7 +842,7 @@ int pblk_recov_pad(struct pblk *pblk)
- 	left_msecs = line->left_msecs;
- 	spin_unlock(&l_mg->free_lock);
- 
--	ret = pblk_recov_pad_oob(pblk, line, left_msecs);
-+	ret = pblk_recov_pad_line(pblk, line, left_msecs);
- 	if (ret) {
- 		pblk_err(pblk, "tear down padding failed (%d)\n", ret);
- 		return ret;
--- 
-2.7.4
+--Apple-Mail=_95538BEF-79E2-490F-B1AA-9EEF19F4197B
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE+ws7Qq+qZPG1bJoyIX4xUKFRnnQFAluXp0wACgkQIX4xUKFR
+nnQ8MBAAzhUR+BsO/PngkgG4zefDhQVmdxqD9o8fkJTWQ7lkhREHhhrXIrzDc0b1
+BBASza3GFUL2frk0/vpLAhOHAbX/d0q8TgEriOiJRzdscusXBlvIiLE2oRht318p
+x4FY+GrN9n5ZLWBooT7mjsfFK0zgHPZB8Q9s57MmbpIDR//EAbd7Fxha5qZY9Hxk
+Q+VP/64xeK5dGD978FYlVdU20q6C/IxQuWBNyRwtq2Zu8jYAbIfYvdo3hc17LMtK
+ZLLAmuvmiWOgux51CFDfpfKzVSNdHk1IOqFKjVu9yIqONCrrNWeWew6sLlI2Lw32
+U4i44MHW80Kge9Xq7r4Cwd+V1EGyAVE4a63okWixAOHWP7a+DimDfteKit/1Itd8
+ZzKq3VJnyVF1cDCejGI5/tp0U1fjVed9R/AuvSo/4/sZdW1pz/y23V+MQufQQqod
+dnlBoHzOzBVdsRbMmjDUezLx46WyFmSDvJJ9jsc1chANyeGY5LKmMUtRJ/lq+7Hj
+Wj2G80lXTTk/fpMbrAaDca+XsTvjHPqr4HctGn2Ppc/FUct31em8ZTMoXh7snnDY
+SUgZItM2b2sYq9dRDHKEOsN+hFjfDYQpbc+8WRaVMJil7EBGSZvy1PJvOsyKozz0
+tnTIFTIg1bIw7hnlSaLviW4f08DL6GUJp9t3rPp2ts7OXjfwDZ8=
+=J81c
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_95538BEF-79E2-490F-B1AA-9EEF19F4197B--
