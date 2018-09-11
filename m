@@ -2,110 +2,119 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94B0BC04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 19:55:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0579C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:01:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 376EB20865
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 19:55:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C5B920839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:01:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="AQ9Q4pLU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 376EB20865
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WQjm4Glb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C5B920839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726993AbeILA4W (ORCPT
+        id S1726866AbeILBCl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 20:56:22 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:52502 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726713AbeILA4W (ORCPT
+        Tue, 11 Sep 2018 21:02:41 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:52760 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726720AbeILBCl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 20:56:22 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8BJmqqV034405;
-        Tue, 11 Sep 2018 19:54:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2018-07-02;
- bh=yIwNgiKIZVqMhXkKWE4vmAFplcPMQ8sJVGtYgxV8ctA=;
- b=AQ9Q4pLU39ZpptEZFYEZ8nfW1jszgnQvn08DQHWbSsf9Pj0y3SRzcWQ4jRsoaISTy353
- 6K92WMDy7cbUagMvd3uvOwZvGRxSH4nZJgJfDEd5Uq17zfmDwaw2STURbBp39xpdDQIM
- P9aP6Lyl0NUUmmu0Sd0za+U3e2d7Nk7wBL7bOnCMbqllrYzFI1PCJK5VKYXFSyJns5gt
- PLS6l9OLXcK/dvolVS5fygjon6s4NIwj/7p3RWocjrM5XfOeTVORESkXZeOENq9Bjx8p
- STZ805DiK8NTkm2MpGOn+g6fEscNuiRNMM163/dR2ioocy8zo9rFbHQh7QN9iklp8EPq 1Q== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2130.oracle.com with ESMTP id 2mc5utee7h-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 Sep 2018 19:54:51 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w8BJsoaC031893
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 Sep 2018 19:54:50 GMT
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w8BJsnK9022788;
-        Tue, 11 Sep 2018 19:54:49 GMT
-Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 11 Sep 2018 12:54:49 -0700
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-To:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org, jgross@suse.com,
-        andy@strugglers.net, Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Subject: [PATCH] x86/EISA: Don't probe EISA bus for Xen PV guests
-Date:   Tue, 11 Sep 2018 15:55:38 -0400
-Message-Id: <20180911195538.23289-1-boris.ostrovsky@oracle.com>
-X-Mailer: git-send-email 2.17.1
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9013 signatures=668708
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=661
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809110195
+        Tue, 11 Sep 2018 21:02:41 -0400
+Received: by mail-it0-f67.google.com with SMTP id h3-v6so3251078ita.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 13:01:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tY3hAzyua46qM88cex1j7mbhN+b7279JkNfKSpk0DNY=;
+        b=WQjm4Glb3dQsPSMKm2ZxaOnwTnTlyfFHqp8jAxmASn1Je/4kL/YESZnji8OpgHlZCz
+         yILX4x/TXbNj8WY/I+A0znXW7OfDsZUF57ZXQcAgqSNDxzlT3QfIs2QhDr7MopU61e93
+         UshdwxEY3oSkj45W/N8GtbBZoAEvt2USWP3Psir1ZDORO40wPZouzWfULu8xbq41G2YW
+         16+1Q4pqBrxMs5SnLo85ryPcb9pjti/ABpozEQ0oObDoYKWqYtpt9o9XA2Dn0nYwBQlC
+         34ubpM3OnKMbbRpRETlwSnFJX9e75DrygHUaw7yseagGXI6X9Tp8JsFKUFQo4iox7e9h
+         qbPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tY3hAzyua46qM88cex1j7mbhN+b7279JkNfKSpk0DNY=;
+        b=V/IFhZbdQlFkOEuV1Jyocif7Er3giQD3WoTBAnXA0sAhGeFyLNIlHsioF3Zn9F3aMI
+         EWZYm7qGuQcEheMCU6iAMBW/X6ZqjjSwExfbbxws/zY3g2ztai5PsufM4GwWCcEU7o65
+         63p2r84J+vePBMoctiGKC+qQJDAnYlSPb9JMMxMiAzINrEDoYRyGnCDDlQUa/+wayK8R
+         kJBLKi6AJMKLZkIIL4Rr7QZ1bAdda0Of2JDxLCtXlVOBKnJNxhOCnuiSRu4eoBH4mpJH
+         cAgHWz/7hd+Zk1DIOGFk9Cud5fXmiUvrMXiGjW1D0NoT8YJEpmjweQ3w49losZGQlrs6
+         Xu9A==
+X-Gm-Message-State: APzg51ChsmFAncIKf2IMy7S4MJguxljFiVCdJrYD3wUq50KxLrpPI8jv
+        qAuMpRIk/kY0bweCZQfmzeYbVSRGdu/Xy9NTuFo=
+X-Google-Smtp-Source: ANB0VdYYVqw2AMFeABWfzp4ic9piWnh2O/44z0VIoYN6rH7/L2883hmSoLCeKjRSIP1R7uKjVHhNGSpQNGjgnHDffYE=
+X-Received: by 2002:a24:ed84:: with SMTP id r126-v6mr3276827ith.58.1536696108998;
+ Tue, 11 Sep 2018 13:01:48 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180910232615.4068.29155.stgit@localhost.localdomain>
+ <20180910234341.4068.26882.stgit@localhost.localdomain> <CAPcyv4j301Ma8D65oMzFo9-jVdwKGHzOVHb=7u9XaxACR5RAhg@mail.gmail.com>
+In-Reply-To: <CAPcyv4j301Ma8D65oMzFo9-jVdwKGHzOVHb=7u9XaxACR5RAhg@mail.gmail.com>
+From:   Alexander Duyck <alexander.duyck@gmail.com>
+Date:   Tue, 11 Sep 2018 13:01:37 -0700
+Message-ID: <CAKgT0UddVdf=+SnfeZ2hL=a47YkjOa+r96xnghP8r1fQZ_1Ycw@mail.gmail.com>
+Subject: Re: [PATCH 1/4] mm: Provide kernel parameter to allow disabling page
+ init poisoning
+To:     dan.j.williams@intel.com
+Cc:     linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        linux-nvdimm@lists.01.org, pavel.tatashin@microsoft.com,
+        Michal Hocko <mhocko@suse.com>, dave.jiang@intel.com,
+        Ingo Molnar <mingo@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>, jglisse@redhat.com,
+        Andrew Morton <akpm@linux-foundation.org>, logang@deltatee.com,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For unprivileged Xen PV guests this is normal memory and ioremap will
-not be able to properly map it.
+On Tue, Sep 11, 2018 at 9:50 AM Dan Williams <dan.j.williams@intel.com> wrote:
+>
+> On Mon, Sep 10, 2018 at 4:43 PM, Alexander Duyck
+> <alexander.duyck@gmail.com> wrote:
+> > From: Alexander Duyck <alexander.h.duyck@intel.com>
+> >
+> > On systems with a large amount of memory it can take a significant amount
+> > of time to initialize all of the page structs with the PAGE_POISON_PATTERN
+> > value. I have seen it take over 2 minutes to initialize a system with
+> > over 12GB of RAM.
+> >
+> > In order to work around the issue I had to disable CONFIG_DEBUG_VM and then
+> > the boot time returned to something much more reasonable as the
+> > arch_add_memory call completed in milliseconds versus seconds. However in
+> > doing that I had to disable all of the other VM debugging on the system.
+> >
+> > In order to work around a kernel that might have CONFIG_DEBUG_VM enabled on
+> > a system that has a large amount of memory I have added a new kernel
+> > parameter named "page_init_poison" that can be set to "off" in order to
+> > disable it.
+>
+> In anticipation of potentially more DEBUG_VM options wanting runtime
+> control I'd propose creating a new "vm_debug=" option for this modeled
+> after "slub_debug=" along with a CONFIG_DEBUG_VM_ON to turn on all
+> options.
+>
+> That way there is more differentiation for debug cases like this that
+> have significant performance impact when enabled.
+>
+> CONFIG_DEBUG_VM leaves optional debug capabilities disabled by default
+> unless CONFIG_DEBUG_VM_ON is also set.
 
-While at it, since ioremap may return NULL, add a test for pointer's
-validity.
+Based on earlier discussions I would assume that CONFIG_DEBUG_VM would
+imply CONFIG_DEBUG_VM_ON anyway since we don't want most of these
+disabled by default.
 
-Reported-by: Andy Smith <andy@strugglers.net>
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
----
- arch/x86/kernel/eisa.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+In my mind we should be looking at a selective "vm_debug_disable="
+instead of something that would be turning on features.
 
-diff --git a/arch/x86/kernel/eisa.c b/arch/x86/kernel/eisa.c
-index f260e452e4f8..fcf3de1712c8 100644
---- a/arch/x86/kernel/eisa.c
-+++ b/arch/x86/kernel/eisa.c
-@@ -7,11 +7,17 @@
- #include <linux/eisa.h>
- #include <linux/io.h>
- 
-+#include <xen/xen.h>
-+
- static __init int eisa_bus_probe(void)
- {
--	void __iomem *p = ioremap(0x0FFFD9, 4);
-+	void __iomem *p;
-+
-+	if (xen_pv_domain() && !xen_initial_domain())
-+		return 0;
- 
--	if (readl(p) == 'E' + ('I'<<8) + ('S'<<16) + ('A'<<24))
-+	p = ioremap(0x0FFFD9, 4);
-+	if (p && readl(p) == 'E' + ('I'<<8) + ('S'<<16) + ('A'<<24))
- 		EISA_bus = 1;
- 	iounmap(p);
- 	return 0;
--- 
-2.17.1
-
+- Alex
