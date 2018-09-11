@@ -2,95 +2,100 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49406C6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 14:54:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B353BC6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 14:56:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E83902086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 14:54:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="PdekQRhr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E83902086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
+	by mail.kernel.org (Postfix) with ESMTP id 68F0D20866
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 14:56:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68F0D20866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728017AbeIKTye (ORCPT
+        id S1727411AbeIKTzt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 15:54:34 -0400
-Received: from m12-15.163.com ([220.181.12.15]:38899 "EHLO m12-15.163.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726622AbeIKTye (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 15:54:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=IT2fj+Ts6vAYZSMAC4
-        J7058Hi64sfKtjDNC9p+i7Smw=; b=PdekQRhrLwlUW7CW35mWU3XVbMcBxHSefz
-        PpuQxAMgUHmG50yvRSkltCDPpWKJxIOuICRYTJPCvAJhriveEnKduNbTGyZW0UEC
-        Z66tqVFe6Eeq8AClkPtIovQkW3E6cqQWChFnR4kzIawUfJnnRxCDRkvWsRG4AGwG
-        WzfOPCA4M=
-Received: from localhost (unknown [183.134.187.192])
-        by smtp11 (Coremail) with SMTP id D8CowAC3Nco315dbQ+qNGw--.31967S5;
-        Tue, 11 Sep 2018 22:54:49 +0800 (CST)
-From:   jun qian <hangdianqj@163.com>
-To:     Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jun qian <hangdianqj@163.com>
-Subject: [PATCH] i2c: i2c-tegra: replace spin_lock_irqsave with spin_lock in ISR
-Date:   Tue, 11 Sep 2018 07:54:46 -0700
-Message-Id: <20180911145446.53621-1-hangdianqj@163.com>
+        Tue, 11 Sep 2018 15:55:49 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:45745 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726622AbeIKTzt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 15:55:49 -0400
+Received: by mail-oi0-f68.google.com with SMTP id t68-v6so47658556oie.12;
+        Tue, 11 Sep 2018 07:56:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=k7AVLB9lcI+ZZD5i6K8Uly97g4wcFneJFRswawwZ9dg=;
+        b=e7BVDETcA/5CViShXQmHJ/E7O1ugYFfEDm1GDMvCS3sAiIAfftMF+LKKCBozKiaDQG
+         ap/h+moFPR6aa7caTxJpzNBCogyjQ9dQjsEHLrIhMow7HYleG/nQEfcQQ0wBRd4xwNJ3
+         6cMwX8sd07NN+uqGlymlAJgNZK+SmkJI81BKQq0SU1UGA+PEXi5nUrm8RokGdqk+QuD6
+         tOwfMLOLCiF8psR3AQULp49aluGKfBFfkmwRwtPDWTeKdkut4g3z2ltxYPsEFgNbMd7f
+         fUiXXehKDu0QP5zsCzDnhsvz5z8xIckEuEbpc6R0BwC1zuvurNktA8JEwU8J92mlm7MW
+         +mhw==
+X-Gm-Message-State: APzg51Bvdfarce51lj666IxmCeSbliXkhWsDywogqfkKYI94pKgJmf5K
+        t6+PwmkY49pOYlDv/v2NYA==
+X-Google-Smtp-Source: ANB0Vdam+KYhDtUJcxE7V2VJgyYBvneS/1C9LEiN1IHEI41ChePLC/2doH0nmRQhzuy0FpcJY5kr2A==
+X-Received: by 2002:a54:448b:: with SMTP id v11-v6mr29223241oiv.208.1536677769415;
+        Tue, 11 Sep 2018 07:56:09 -0700 (PDT)
+Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.googlemail.com with ESMTPSA id y85-v6sm16403991oie.25.2018.09.11.07.56.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Sep 2018 07:56:08 -0700 (PDT)
+From:   Rob Herring <robh@kernel.org>
+To:     Finn Thain <fthain@telegraphics.com.au>,
+        Stan Johnson <userm57@yahoo.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, stable@vger.kernel.org
+Subject: [PATCH] of: fix phandle cache creation for DTs with no phandles
+Date:   Tue, 11 Sep 2018 09:56:07 -0500
+Message-Id: <20180911145607.6009-1-robh@kernel.org>
 X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID: D8CowAC3Nco315dbQ+qNGw--.31967S5
-X-Coremail-Antispam: 1Uf129KBjvdXoW7Jr1rAF4xAFWUKr17CryfWFg_yoWkKFX_tw
-        4Uu3srZF1jywn8Ar17JryfZryjgFnYgr1xWrZ2yasIk34jq3WDJF4DZryfCrWUX3ZFka1a
-        q34q9F1xursxtjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUbeOJ5UUUUU==
-X-Originating-IP: [183.134.187.192]
-X-CM-SenderInfo: pkdqwvpldq1yi6rwjhhfrp/1tbiJxm+R1XloCtc8AAAsQ
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As you are already in ISR, it is unnecessary to call spin_lock_irqsave.
+With commit 0b3ce78e90fc ("of: cache phandle nodes to reduce cost of
+of_find_node_by_phandle()"), a G3 PowerMac fails to boot. The root cause
+is the DT for this system has no phandle properties when booted with
+BootX. of_populate_phandle_cache() does not handle the case of no
+phandles correctly. The problem is roundup_pow_of_two() for 0 is
+undefined. The implementation subtracts 1 underflowing and then things
+are in the weeds.
 
-Signed-off-by: jun qian <hangdianqj@163.com>
+Fixes: 0b3ce78e90fc ("of: cache phandle nodes to reduce cost of of_find_node_by_phandle()")
+Cc: stable@vger.kernel.org # 4.17+
+Reported-by: Finn Thain <fthain@telegraphics.com.au>
+Tested-by: Stan Johnson <userm57@yahoo.com>
+Cc: Frank Rowand <frowand.list@gmail.com>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- drivers/i2c/busses/i2c-tegra.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Here's a formal patch of what Stan tested. Will send to Linus this week.
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 60c8561fbe65..59f31d3a508f 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -608,11 +608,10 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- 	u32 status;
- 	const u32 status_err = I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST;
- 	struct tegra_i2c_dev *i2c_dev = dev_id;
--	unsigned long flags;
+Rob
+
+ drivers/of/base.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/of/base.c b/drivers/of/base.c
+index a055cd1ef96d..17ae594b7014 100644
+--- a/drivers/of/base.c
++++ b/drivers/of/base.c
+@@ -140,6 +140,9 @@ void of_populate_phandle_cache(void)
+ 		if (np->phandle && np->phandle != OF_PHANDLE_ILLEGAL)
+ 			phandles++;
  
- 	status = i2c_readl(i2c_dev, I2C_INT_STATUS);
- 
--	spin_lock_irqsave(&i2c_dev->xfer_lock, flags);
-+	spin_lock(&i2c_dev->xfer_lock);
- 	if (status == 0) {
- 		dev_warn(i2c_dev->dev, "irq status 0 %08x %08x %08x\n",
- 			 i2c_readl(i2c_dev, I2C_PACKET_TRANSFER_STATUS),
-@@ -670,7 +669,7 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- 
- 	complete(&i2c_dev->msg_complete);
- done:
--	spin_unlock_irqrestore(&i2c_dev->xfer_lock, flags);
-+	spin_unlock(&i2c_dev->xfer_lock);
- 	return IRQ_HANDLED;
- }
++	if (!phandles)
++		goto out;
++
+ 	cache_entries = roundup_pow_of_two(phandles);
+ 	phandle_cache_mask = cache_entries - 1;
  
 -- 
 2.17.1
-
-
 
