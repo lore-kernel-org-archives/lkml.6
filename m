@@ -2,136 +2,113 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFE11C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:55:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78E4AC04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:56:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C0B8206B7
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:55:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C0B8206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 2C143206B7
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:56:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C143206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727409AbeILB4L (ORCPT
+        id S1727666AbeILB5O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 21:56:11 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:40715 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726850AbeILB4L (ORCPT
+        Tue, 11 Sep 2018 21:57:14 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:42411 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726850AbeILB5O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 21:56:11 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 7F37C80693; Tue, 11 Sep 2018 22:55:05 +0200 (CEST)
-Date:   Tue, 11 Sep 2018 22:55:05 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Dan Murphy <dmurphy@ti.com>
-Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org
-Subject: Re: [PATCH v6 1/2] dt-bindings: leds: Add bindings for lm3697 driver
-Message-ID: <20180911205504.GA31219@amd>
-References: <20180906135005.6718-1-dmurphy@ti.com>
- <20180906211617.GB16899@amd>
- <b8ac9d52-f16d-5fc4-0e9a-9246b9f984c5@ti.com>
- <20180907133228.GA16297@amd>
- <70f7506c-6a3d-3830-59a4-a246dc6163f7@ti.com>
- <226b8770-7041-39a4-5a06-6002a7c1225f@gmail.com>
- <20a814ce-a4c5-0649-6677-6b85a5fd2321@ti.com>
- <59561e0f-e3b9-7898-a300-90b198ad14e6@gmail.com>
- <20d9ea9e-bbb8-2240-97cc-615e3fbcef8c@ti.com>
+        Tue, 11 Sep 2018 21:57:14 -0400
+Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fzphd-0005jP-Pc; Tue, 11 Sep 2018 22:56:06 +0200
+Date:   Tue, 11 Sep 2018 22:56:05 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     =?ISO-8859-15?Q?Ville_Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+cc:     LKML <linux-kernel@vger.kernel.org>,
+        Dou Liyang <douly.fnst@cn.fujitsu.com>,
+        Pasha Tatashin <Pavel.Tatashin@microsoft.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH] Revert "x86/tsc: Consolidate init code"
+In-Reply-To: <20180911121548.GW5565@intel.com>
+Message-ID: <alpine.DEB.2.21.1809112227520.1427@nanos.tec.linutronix.de>
+References: <20180910121925.27682-1-ville.syrjala@linux.intel.com> <alpine.DEB.2.21.1809101443290.1292@nanos.tec.linutronix.de> <20180910140710.GR5565@intel.com> <alpine.DEB.2.21.1809101846160.1419@nanos.tec.linutronix.de> <20180911121548.GW5565@intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="J/dobhs11T7y2rNN"
-Content-Disposition: inline
-In-Reply-To: <20d9ea9e-bbb8-2240-97cc-615e3fbcef8c@ti.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: multipart/mixed; BOUNDARY="8323329-931252212-1536698711=:1427"
+Content-ID: <alpine.DEB.2.21.1809112245240.1427@nanos.tec.linutronix.de>
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
---J/dobhs11T7y2rNN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+--8323329-931252212-1536698711=:1427
+Content-Type: text/plain; CHARSET=ISO-8859-15
+Content-Transfer-Encoding: 8BIT
+Content-ID: <alpine.DEB.2.21.1809112245241.1427@nanos.tec.linutronix.de>
 
-Hi!
+On Tue, 11 Sep 2018, Ville Syrjälä wrote:
 
-> >>>>>> And I think Jacek pointed out that the bindings references in this=
- bindings
-> >>>>>> don't even exist.
-> >>>>>>
-> >>>>>> I am thinking we need to deprecate this MFD driver and consolidate=
- these drivers
-> >>>>>> in the LED directory as we indicated before.  I did not find any t=
-i-lmu support
-> >>>>>> code.
-> >>>>>>
-> >>>>>> ti-lmu common core code and then the LED children appending the fe=
-ature differentiation.
-> >>>>>
-> >>>>>> Need some maintainer weigh in here.
-> >>>>>
-> >>>>> Hehe. I'm maintnainer. Fun.
-> >>>>
-> >>>> I know.  I want to see if there was any other opinion.  Especially f=
-or the LED driver.
-> >>>>
-> >>> [...]
-> >>>
-> >>> I have a question - is this lm3697 LED controller a cell of some MFD
-> >>> device? Or is it a self-contained chip?
-> >>>
-> >>
-> >> This is a self contained chip.  And the LM3697 only function is a LED =
-driver.
-> >> It does not have any other special functions like the LM363X drivers f=
-or GPIO and Regulator support.
-> >=20
-> > This is an argument for merging it as a standalone LED class driver
-> > then. It is even more justifiable, taking into account uncertainties
-> > related to the proper way of adding the support for it to the existing
-> > MFD driver, whereas the code reuse would be the only advantage of having
-> > thus support in MFD subsystem.
->=20
-> Does the argument carry over to the other devices?
+> On Mon, Sep 10, 2018 at 06:53:54PM +0200, Thomas Gleixner wrote:
+> > On Mon, 10 Sep 2018, Ville Syrjälä wrote:
+> > 
+> > Good: 1718674.70 BogoMIPS (lpj=2863311530)
+> > Bad:   859455.59 BogoMIPS (lpj=1431852151)
+> > 
+> > while both kernels agree on the CPU frequency of 996MHz. This pretty much
+> > smells like the 32bit LPJ conversion bug which got fixed in rc3. Does the
+> > problem persist with rc3?
+> 
+> Indeed looks to be fixed by commit 17f6bac22493 ("x86/tsc:
+> Prevent result truncation on 32bit").
 
-We really need something reasonable, that works for stand-alone LEDs,
-and also works for LEDs that are part of MFD when the hardware is similar.
+Not a surprise. That was pretty clear when I looked at dmesg because
+bogomips were very bogus for both variants.
 
-> Like the LM3632 (part of the ti-lmu) has flash and torch and no other spe=
-cial functions
-> so it would look like the lm3601x family with different register mappings.
->=20
-> The LM3631 seems to also be just a LED driver with no extra functionality
->=20
-> I could go buy an EVM and put together a driver for that device as well u=
-sing the lm3601x as
-> reference.
+So can you now understand why I prefer a proper bug/regression report with
+as much information as possible over a revert patch which lacks a proper
+explanation and does not even fix the underlying issue at all?
 
-I do have hardware with lm3532. I can test patches, and I guess I can
-port driver easily if it is obvious how to do that.
+Reverting that patch as you can see from bogus mips solves exactly
+nothing. It's pure chance that it booted.
 
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+You could have spared my and your time by
 
---J/dobhs11T7y2rNN
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+    1) checking whether the problem persist in the latest upstream -rc
+       first
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+    2) Providing useful information upfront
 
-iEYEARECAAYFAluYK6gACgkQMOfwapXb+vJeLQCfWQ7anjcBVUXTC+aWZLaKUAsg
-hEQAnjWTxChz1TwWcNQSsImAE80flgsJ
-=El4Z
------END PGP SIGNATURE-----
+I don't care much about your time and how you think what's the best way to
+get a discussion started, but I care very much about my time being wasted
+for pointless discsussions which can be avoided more or less completely.
 
---J/dobhs11T7y2rNN--
+> I suppose we just got very lucky with older kernels.
+
+The problem got initialy introduced with
+
+  commit dd759d93f4dd ("x86/timers: Add simple udelay calibration")
+
+but this was not fatal because it only affected the very early boot and was
+fixed up by the correct LPJ calculation in tsc_init() before any serious
+user was affected. I'll whip up a fix for the affected stable kernels
+nevertheless.
+
+Thanks
+
+	tglx
+
+
+--8323329-931252212-1536698711=:1427--
