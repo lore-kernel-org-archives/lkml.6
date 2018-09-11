@@ -2,253 +2,154 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 172B2C6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:30:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5406C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:30:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B597A206BB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:30:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B597A206BB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cs.rutgers.edu
+	by mail.kernel.org (Postfix) with ESMTP id 5B89C206BB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 20:30:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="u+D8p3dr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B89C206BB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727798AbeILBbF (ORCPT
+        id S1727838AbeILBbV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 21:31:05 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:38746 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726919AbeILBbE (ORCPT
+        Tue, 11 Sep 2018 21:31:21 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:36685 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726919AbeILBbV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 21:31:04 -0400
-Received: by mail-qk1-f193.google.com with SMTP id g197-v6so17673019qke.5
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 13:30:05 -0700 (PDT)
+        Tue, 11 Sep 2018 21:31:21 -0400
+Received: by mail-pf1-f194.google.com with SMTP id b11-v6so12796744pfo.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 13:30:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=F3b2Y2VOZLc0zkSH/gVvM1BNKvbXgSMpAi485ZWbFCg=;
+        b=u+D8p3dreBsh6tRRbJ+j4SiGKOuHXk/r88jp6LUeZHmhVqGsw9p3DeRCbmeokPK+qv
+         vvpYfkLTkedgl8G7xsmVfpjCbS1LuGtRRnxPzxrXSy/HBBx6jIoCuvo/DdzQUSfopjkQ
+         AQbpBWrmA7zpt3lnMCTvKzbRMUx9p7Udmf9QMfbGf8Q4LE5fz4UH0xbtb3DRIu1M+jR5
+         j0i1e+iyKmXChgxoXhl4nrb32sQVtfyZgiKHAO9te4e1Hl7Cq3xeEdxfWV7q55OeEKDw
+         4Xwpl8saEFO3/7LKpQHSuKkPrOtaTRnhMnn81VdoWSC6ZkaRl7iR33KlFcAsSbucXV49
+         9Mkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version;
-        bh=ZOiOVW+WRXQQPvJ2AXAeozLyu+i/hMzyvRG++JH6Tv0=;
-        b=LfCL1ujyKm3yjxE5avb3KA/vI9p+SNdzjk5L0Tnxw5GkgTrk3L4nyhTmttjQ6Q0muj
-         b/bi7wnYLL5f9aq12baH9sO7mE5T2W16x8H56mI0kplVaTgysDrcyFwbohCHqdtRaUO4
-         e/cX6gXqFHBtJaqjQpa0tUfHWEd/XoK+2yXavbtG6oaytDDn//HWvXS6+xhmSJYUXVEl
-         fTR93wORJJWdxyuVj8n2fhGlYpPUNJpLe5lg4xnmEpLekP8h/QUgbD75PrPhY11hAO7E
-         R6sOndV92ejInI9K0EMfYBL3UGV6RJ1sc3OpI2KDDX5xWDuXASuf7eSbKPBIMoGLPy/c
-         xuJA==
-X-Gm-Message-State: APzg51Drv33ovO8S30qRQ7LTO8QcyNX2Im939Ml1lHi3KzGECmAhZgfP
-        oYwic487/bvLNrOMcdMLBcGc/Q==
-X-Google-Smtp-Source: ANB0Vda1aYVaVDQWedm+EXRsfzjQPEIPXD9bJeDcflyCWrKO+CTSVze5PzArhrAvcuy6Vn7DVtiSUA==
-X-Received: by 2002:a37:642:: with SMTP id 63-v6mr19849206qkg.11.1536697805167;
-        Tue, 11 Sep 2018 13:30:05 -0700 (PDT)
-Received: from [192.168.1.153] (pool-108-53-39-217.nwrknj.fios.verizon.net. [108.53.39.217])
-        by smtp.gmail.com with ESMTPSA id q18-v6sm11756531qtk.57.2018.09.11.13.30.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Sep 2018 13:30:03 -0700 (PDT)
-From:   "Zi Yan" <zi.yan@cs.rutgers.edu>
-To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc:     "Andrew Morton" <akpm@linux-foundation.org>,
-        "Vegard Nossum" <vegard.nossum@gmail.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        "Naoya Horiguchi" <n-horiguchi@ah.jp.nec.com>,
-        "Vlastimil Babka" <vbabka@suse.cz>,
-        "Andrea Arcangeli" <aarcange@redhat.com>
-Subject: Re: [PATCH] mm, thp: Fix mlocking THP page with migration enabled
-Date:   Tue, 11 Sep 2018 16:30:02 -0400
-X-Mailer: MailMate (1.12r5523)
-Message-ID: <5E196C27-3D56-4D76-B361-0665CB3790BF@cs.rutgers.edu>
-In-Reply-To: <20180911103403.38086-1-kirill.shutemov@linux.intel.com>
-References: <20180911103403.38086-1-kirill.shutemov@linux.intel.com>
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=F3b2Y2VOZLc0zkSH/gVvM1BNKvbXgSMpAi485ZWbFCg=;
+        b=m85Yh5DQEPwH596t1Ekn74apWhzjeOS6Yr3nt+hJcKwEcJNtJu8VWPOE9LCWPThU97
+         D+bR75Xlt1M5EYon1FUiqmZ8gqc/sCvvVDDib3sNqv24HXHikIW6Bt8KaYWPvNZmbpK9
+         45IRhFYeE1cTKN+7ctDbC+qDKxGUoXKhNJcKK0ZlTQBG1hggymaGyP0EU9GfZlrXOCSW
+         7wr3CR/JJo2xj9sPP3s989L9yDGHGwS4IQSQhFvOMhsQAgWNvjtEi9wRPszG7EoGVNel
+         og1umDDM5bRuJjjO6AKp3NU4qhjk7l5W0lsmwe8MG9JTSXHweSKBOv59h7JxcGgJchvS
+         TKzw==
+X-Gm-Message-State: APzg51Du9fFxabSindatXsBmcqrAZOnOQIvdzECzPwEItEdtFw82B+cz
+        Tji7Wl6WAUfcBhCGgLK6FOQM+g==
+X-Google-Smtp-Source: ANB0VdYY4qzyCaPBKD8MO14su80DzXBizv25tvg7TgtwL/P1qMcUhm14DkrDofIKEeKCqrtgQ0UlsQ==
+X-Received: by 2002:a65:66d4:: with SMTP id c20-v6mr30050241pgw.55.1536697821915;
+        Tue, 11 Sep 2018 13:30:21 -0700 (PDT)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id 185-v6sm39516784pge.82.2018.09.11.13.30.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 11 Sep 2018 13:30:21 -0700 (PDT)
+Date:   Tue, 11 Sep 2018 13:30:20 -0700 (PDT)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Michal Hocko <mhocko@kernel.org>
+cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stefan Priebe <s.priebe@profihost.ag>
+Subject: Re: [PATCH] mm, thp: relax __GFP_THISNODE for MADV_HUGEPAGE
+ mappings
+In-Reply-To: <20180911115613.GR10951@dhcp22.suse.cz>
+Message-ID: <alpine.DEB.2.21.1809111319060.189563@chino.kir.corp.google.com>
+References: <20180907130550.11885-1-mhocko@kernel.org> <alpine.DEB.2.21.1809101253080.177111@chino.kir.corp.google.com> <20180911115613.GR10951@dhcp22.suse.cz>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: multipart/signed;
- boundary="=_MailMate_F56E6C2A-13C4-4D7A-96AB-E3BCB22C8184_=";
- micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 3156 and 4880).
+On Tue, 11 Sep 2018, Michal Hocko wrote:
 
---=_MailMate_F56E6C2A-13C4-4D7A-96AB-E3BCB22C8184_=
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+> > That's not entirely true, the remote access latency for remote thp on all 
+> > of our platforms is greater than local small pages, this is especially 
+> > true for remote thp that is allocated intersocket and must be accessed 
+> > through the interconnect.
+> > 
+> > Our users of MADV_HUGEPAGE are ok with assuming the burden of increased 
+> > allocation latency, but certainly not remote access latency.  There are 
+> > users who remap their text segment onto transparent hugepages are fine 
+> > with startup delay if they are access all of their text from local thp.  
+> > Remote thp would be a significant performance degradation.
+> 
+> Well, it seems that expectations differ for users. It seems that kvm
+> users do not really agree with your interpretation.
+> 
 
-Hi Kirill,
+If kvm is happy to allocate hugepages remotely, at least on a subset of 
+platforms where it doesn't incur such a high remote access latency, then 
+we probably shouldn't be adding lumping that together with the current 
+semantics of MADV_HUGEPAGE.  Otherwise, we risk it becoming a dumping 
+ground where current users may regress because they would be much more 
+willing to fault local pages of the native page size and lose the ability 
+to require that absent using mbind() -- and in that case they would be 
+affected by the policy decision of native page sizes as well.
 
-On 11 Sep 2018, at 6:34, Kirill A. Shutemov wrote:
+> > When Andrea brought this up, I suggested that the full solution would be a 
+> > MPOL_F_HUGEPAGE flag that could define thp allocation policy -- the added 
+> > benefit is that we could replace the thp "defrag" mode default by setting 
+> > this as part of default_policy.  Right now, MADV_HUGEPAGE users are 
+> > concerned about (1) getting thp when system-wide it is not default and (2) 
+> > additional fault latency when direct compaction is not default.  They are 
+> > not anticipating the degradation of remote access latency, so overloading 
+> > the meaning of the mode is probably not a good idea.
+> 
+> hugepage specific MPOL flags sounds like yet another step into even more
+> cluttered API and semantic, I am afraid. Why should this be any
+> different from regular page allocations? You are getting off-node memory
+> once your local node is full. You have to use an explicit binding to
+> disallow that. THP should be similar in that regards. Once you have said
+> that you _really_ want THP then you are closer to what we do for regular
+> pages IMHO.
+> 
 
-> A transparent huge page is represented by a single entry on an LRU list=
-=2E
-> Therefore, we can only make unevictable an entire compound page, not
-> individual subpages.
->
-> If a user tries to mlock() part of a huge page, we want the rest of the=
+Saying that we really want THP isn't an all-or-nothing decision.  We 
+certainly want to try hard to fault hugepages locally especially at task 
+startup when remapping our .text segment to thp, and MADV_HUGEPAGE works 
+very well for that.  Remote hugepages would be a regression that we now 
+have no way to avoid because the kernel doesn't provide for it, if we were 
+to remove __GFP_THISNODE that this patch introduces.
 
-> page to be reclaimable.
->
-> We handle this by keeping PTE-mapped huge pages on normal LRU lists: th=
-e
-> PMD on border of VM_LOCKED VMA will be split into PTE table.
->
-> Introduction of THP migration breaks the rules around mlocking THP
-> pages. If we had a single PMD mapping of the page in mlocked VMA, the
-> page will get mlocked, regardless of PTE mappings of the page.
->
-> For tmpfs/shmem it's easy to fix by checking PageDoubleMap() in
-> remove_migration_pmd().
->
-> Anon THP pages can only be shared between processes via fork(). Mlocked=
+On Broadwell, for example, we find 7% slower access to remote hugepages 
+than local native pages.  On Naples, that becomes worse: 14% slower access 
+latency for intrasocket hugepages compared to local native pages and 39% 
+slower for intersocket.
 
-> page can only be shared if parent mlocked it before forking, otherwise
-> CoW will be triggered on mlock().
->
-> For Anon-THP, we can fix the issue by munlocking the page on removing P=
-TE
-> migration entry for the page. PTEs for the page will always come after
-> mlocked PMD: rmap walks VMAs from oldest to newest.
->
-> Test-case:
->
-> 	#include <unistd.h>
-> 	#include <sys/mman.h>
-> 	#include <sys/wait.h>
-> 	#include <linux/mempolicy.h>
-> 	#include <numaif.h>
->
-> 	int main(void)
-> 	{
-> 	        unsigned long nodemask =3D 4;
-> 	        void *addr;
->
-> 		addr =3D mmap((void *)0x20000000UL, 2UL << 20, PROT_READ | PROT_WRITE=
-,
-> 			MAP_PRIVATE | MAP_ANONYMOUS | MAP_LOCKED, -1, 0);
->
-> 	        if (fork()) {
-> 			wait(NULL);
-> 			return 0;
-> 	        }
->
-> 	        mlock(addr, 4UL << 10);
-> 	        mbind(addr, 2UL << 20, MPOL_PREFERRED | MPOL_F_RELATIVE_NODES,=
+> I do realize that this is a gray zone because nobody bothered to define
+> the semantic since the MADV_HUGEPAGE has been introduced (a826e422420b4
+> is exceptionaly short of information). So we are left with more or less
+> undefined behavior and define it properly now. As we can see this might
+> regress in some workloads but I strongly suspect that an explicit
+> binding sounds more logical approach than a thp specific mpol mode. If
+> anything this should be a more generic memory policy basically saying
+> that a zone/node reclaim mode should be enabled for the particular
+> allocation.
 
-> 	                &nodemask, 4, MPOL_MF_MOVE | MPOL_MF_MOVE_ALL);
->
-> 	        return 0;
-> 	}
->
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Reported-by: Vegard Nossum <vegard.nossum@gmail.com>
-> Fixes: 616b8371539a ("mm: thp: enable thp migration in generic path")
-> Cc: <stable@vger.kernel.org> [v4.14+]
-> Cc: Zi Yan <zi.yan@cs.rutgers.edu>
-> Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Andrea Arcangeli <aarcange@redhat.com>
-> ---
->  mm/huge_memory.c | 2 +-
->  mm/migrate.c     | 3 +++
->  2 files changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 533f9b00147d..00704060b7f7 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -2931,7 +2931,7 @@ void remove_migration_pmd(struct page_vma_mapped_=
-walk *pvmw, struct page *new)
->  	else
->  		page_add_file_rmap(new, true);
->  	set_pmd_at(mm, mmun_start, pvmw->pmd, pmde);
-> -	if (vma->vm_flags & VM_LOCKED)
-> +	if ((vma->vm_flags & VM_LOCKED) && !PageDoubleMap(new))
->  		mlock_vma_page(new);
->  	update_mmu_cache_pmd(vma, address, pvmw->pmd);
->  }
-> diff --git a/mm/migrate.c b/mm/migrate.c
-> index d6a2e89b086a..01dad96b25b5 100644
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -275,6 +275,9 @@ static bool remove_migration_pte(struct page *page,=
- struct vm_area_struct *vma,
->  		if (vma->vm_flags & VM_LOCKED && !PageTransCompound(new))
->  			mlock_vma_page(new);
->
-> +		if (PageTransCompound(new) && PageMlocked(page))
-> +			clear_page_mlock(page);
-> +
->  		/* No need to invalidate - it was non-present before */
->  		update_mmu_cache(vma, pvmw.address, pvmw.pte);
->  	}
-> -- =
-
-> 2.18.0
-
-Thanks for your patch. It fixes the mlock problem demonstrated by your te=
-st program.
-
-I want to understand the Anon THP part of the problem more clearly. For A=
-non THPs,
-you said, PTEs for the page will always come after mlocked PMD. I just wo=
-nder that if
-a process forks a child1 which forks its own child2 and the child1 mlocks=
- a subpage causing
-split_pmd_page() and migrates its PTE-mapped THP, will the kernel see the=
- sequence of PMD-mapped THP,
-PTE-mapped THP, and PMD-mapped THP while walking VMAs? Will the second PM=
-D-mapped THP
-reset the mlock on the page?
-
-In addition, I also discover that PageDoubleMap is not set for double map=
-ped Anon THPs after migration,
-the following patch fixes it. Do you want me to send it separately or you=
- can merge it
-with your patch?
-
-diff --git a/mm/rmap.c b/mm/rmap.c
-index eb477809a5c0..defe8fc265e3 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -1121,6 +1121,16 @@ void do_page_add_anon_rmap(struct page *page,
-                 */
-                if (compound)
-                        __inc_node_page_state(page, NR_ANON_THPS);
-+               else {
-+                       if (PageTransCompound(page) && compound_mapcount(=
-page) > 0) {
-+                               struct page *head =3D compound_head(page)=
-;
-+                               int i;
-+
-+                               SetPageDoubleMap(head);
-+                               for (i =3D 0; i < HPAGE_PMD_NR; i++)
-+                                       atomic_inc(&head[i]._mapcount);
-+                       }
-+               }
-                __mod_node_page_state(page_pgdat(page), NR_ANON_MAPPED, n=
-r);
-        }
-        if (unlikely(PageKsm(page)))
-
-=E2=80=94
-Best Regards,
-Yan Zi
-
---=_MailMate_F56E6C2A-13C4-4D7A-96AB-E3BCB22C8184_=
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename=signature.asc
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQFKBAEBCgA0FiEEOXBxLIohamfZUwd5QYsvEZxOpswFAluYJcoWHHppLnlhbkBj
-cy5ydXRnZXJzLmVkdQAKCRBBiy8RnE6mzBKSB/9rtfp7XzaFZe4W1J/lzjPZvoy2
-xisHmr4+5FNTaEfdiev9t4e/TYtpHr/1IgCtn59dzwXUtQnsEFF0fWLvGqTgJP5/
-6KULctGIlJfzHTBxWckD4Jz7aqFuRe9L2abMqr2zlegAdpDsGQGLKZhm7oQ7Pq+Q
-1MVM6GNizdJfyRpIrdaq3pfrYk0emj07K6d+WwGR+VKSbiMMIDWK/GqPwOL8pCCv
-zFpl6aTeZKda5TS4nXsF5pHCrVb4Ig2Cpgeoo5AiKOFTSxlhf7oDHUK4SG96TQxe
-XgX33CllJX7kKRxpMvJEorH/tCAXxWVqE7KCj0XYpeJr7mhd4CK/njSpK4wn
-=9ZTQ
------END PGP SIGNATURE-----
-
---=_MailMate_F56E6C2A-13C4-4D7A-96AB-E3BCB22C8184_=--
+This would be quite a serious regression with no way to actually define 
+that we want local hugepages but allow fallback to remote native pages if 
+we cannot allocate local native pages.  So rather than causing userspace 
+to regress and give them no alternative, I would suggest either hugepage 
+specific mempolicies or another madvise mode to allow remotely allocated 
+hugepages.
