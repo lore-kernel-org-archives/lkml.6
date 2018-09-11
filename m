@@ -2,146 +2,194 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84755C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 11:18:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 328C0C6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 11:19:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E4E020833
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 11:18:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4AB620833
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 11:19:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QLOhg8DW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E4E020833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="j18luMTy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4AB620833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726909AbeIKQRr (ORCPT
+        id S1727033AbeIKQSM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 12:17:47 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:36808 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726601AbeIKQRr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 12:17:47 -0400
-Received: by mail-wr1-f66.google.com with SMTP id e1-v6so16573373wrt.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 04:18:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=kg6khZMy1SS5Il9Uizl2rRk6qdc5rQUkaBlFUx0xCFw=;
-        b=QLOhg8DWjNTwU+i3XqIzbcQKJfXWbZq2uCddD1Z7rmCjG1mll/9/LTpiWx6J009e9L
-         4TmtDSvxAVMeJHceWJJv/sONpSuflTX3hTkvIaD2uFOtP444fe4NiOF6LHR+rbE9n02d
-         EnMkAYnaO+B0aInhR91FX2BXwwSLOU0Baue1o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=kg6khZMy1SS5Il9Uizl2rRk6qdc5rQUkaBlFUx0xCFw=;
-        b=sZzVYafyA4zlDHJ8M1ak4jgKdAQQItQhNS45Bs9ADRBomnfQaGqHjP/mNQSN7P2Zl2
-         VcFESXA5pOrCMZJA7qIU6ZxlWSAQ0xuj/SQvC5N0vMxbh4rHv+GEm/Son3W/mP9+BYIr
-         1lsDIhq9ZvTu6vDMYLSWty8BSzD/pzdT9M0BngXvOJmVUxfx/vTD9zH4O619eLKTqna4
-         2APWxVgln9Sl0oEzPASPImcz9G26lAM+A2cgqg3Z2a3ZCx5DcabbqGB5g4RIy8WNGn2V
-         0bqhV3iDcW2sGUjVeHl+/JdWfmWfy+EqLRFWpc7+std3+DHwX6X02VgGWH8bqUDoYPTr
-         zASw==
-X-Gm-Message-State: APzg51DZHxbK9wVIW7QRz6XQg7jq3DwM6cmD5K222U7LHmV9whuuBeMt
-        XDmZgP07ZDxHJHMXxgDnzkyT8w==
-X-Google-Smtp-Source: ANB0VdZ7AG+cmi5DrFjODjxzpo2MC/kR79L9JyMNZKW6YziNnMGHDvSfITLUWjK6TSwJ4hjB5v3R4g==
-X-Received: by 2002:a5d:4401:: with SMTP id z1-v6mr19417485wrq.227.1536664733529;
-        Tue, 11 Sep 2018 04:18:53 -0700 (PDT)
-Received: from dell ([2.27.167.7])
-        by smtp.gmail.com with ESMTPSA id l10-v6sm17353951wre.0.2018.09.11.04.18.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Sep 2018 04:18:52 -0700 (PDT)
-Date:   Tue, 11 Sep 2018 12:18:50 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Radu Pirea <radu_nicolae.pirea@upb.ro>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-        gregkh@linuxfoundation.org, broonie@kernel.org, jslaby@suse.com,
-        richard.genoud@gmail.com, davem@davemloft.net,
-        mchehab+samsung@kernel.org, akpm@linux-foundation.org,
-        arnd@arndb.de, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-spi@vger.kernel.org
-Subject: [GIT PULL v2] Immutable branch between MFD, SPI and TTY due for the
- v4.20 merge window
-Message-ID: <20180911111850.GJ4185@dell>
-References: <20180904111310.4049-1-radu_nicolae.pirea@upb.ro>
+        Tue, 11 Sep 2018 12:18:12 -0400
+Received: from m12-18.163.com ([220.181.12.18]:60846 "EHLO m12-18.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726601AbeIKQSL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 12:18:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=Subject:From:Message-ID:Date:MIME-Version; bh=5l4q6
+        dytCDXg8DgZ90+MSZBX3Wn4E5laJqCvUaIeMQI=; b=j18luMTy+hg/hyqDuJWTH
+        neMZg5xEOyDhI7ejJha1NfM5wQp1BhKa6H4oCLzALwEXFIlcZavZskx2fou2L++w
+        hdNl+ux+W1ek/4f8gA+E15wvaz4e2V7ZLf7Vl49VzazlVsQZoJTzq37gvl9bXex+
+        q5bCXm91t91tx+BJsH/7cc=
+Received: from [166.111.71.58] (unknown [166.111.71.58])
+        by smtp14 (Coremail) with SMTP id EsCowAAncCCOpJdbZRitSw--.10141S2;
+        Tue, 11 Sep 2018 19:18:38 +0800 (CST)
+Subject: Re: [PATCH] pci: dwc: pcie_designware: Fix a sleep-in-atomic-context
+ bug in dw_pcie_prog_outbound_atu
+To:     Gustavo Pimentel <Gustavo.Pimentel@synopsys.com>,
+        Jia-Ju Bai <baijiaju1990@gmail.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>
+Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20180902033811.26858-1-baijiaju1990@gmail.com>
+ <a21f3cc1-d593-edf7-19d1-3917cf5d5c98@synopsys.com>
+From:   Jia-Ju Bai <baijiaju1990@163.com>
+Message-ID: <ba4cc984-48c7-f940-f1ea-903113ace1d2@163.com>
+Date:   Tue, 11 Sep 2018 19:18:38 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180904111310.4049-1-radu_nicolae.pirea@upb.ro>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <a21f3cc1-d593-edf7-19d1-3917cf5d5c98@synopsys.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-CM-TRANSID: EsCowAAncCCOpJdbZRitSw--.10141S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxKF4rCryUJw1xuw43GrW3KFg_yoW7XryrpF
+        W5JFWSya48JFs0vayava4rZry5JanrAFWUGr4Sgas7WF17ZFy7K3WkJay3tr12qr4jqr12
+        krWrt3Z3GF15A3JanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07beyCXUUUUU=
+X-Originating-IP: [166.111.71.58]
+X-CM-SenderInfo: xedlyx5dmximizq6il2tof0z/1tbiYw6+elaD0mCpBAAAsj
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[In case you missed it]
 
-This new pull-request contains the following changes since v1:
 
- - Uplift the submission version from v11 to v12
- - Include fix for build breakage due to missing Device Tree include file
+On 2018/9/11 16:40, Gustavo Pimentel wrote:
+> Hi Jia,
+>
+> On 02/09/2018 04:38, Jia-Ju Bai wrote:
+>> The driver may sleep with holding a spinlock and in an interupt handler.
+>>
+>> The function call paths (from bottom to top) in Linux-4.16 are:
+>>
+>> [FUNC] usleep_range
+>> drivers/pci/dwc/pcie-designware.c, 181:
+>> 	usleep_range in dw_pcie_prog_outbound_atu
+>> drivers/pci/dwc/pcie-designware-host.c, 479:
+>> 	dw_pcie_prog_outbound_atu in dw_pcie_rd_other_conf
+>> drivers/pci/dwc/pcie-designware-host.c, 561:
+>> 	dw_pcie_rd_other_conf in dw_pcie_rd_conf
+>> drivers/pci/access.c, 66:
+>> 	[FUNC_PTR]dw_pcie_rd_conf in pci_bus_read_config_word
+>> drivers/pci/access.c, 918:
+>> 	pci_bus_read_config_word in pci_read_config_word
+>> drivers/block/umem.c, 630:
+>> 	pci_read_config_word in mm_interrupt (interrupt handler)
+>>
+>> [FUNC] usleep_range
+>> drivers/pci/dwc/pcie-designware.c, 181:
+>> 	usleep_range in dw_pcie_prog_outbound_atu
+>> drivers/pci/dwc/pcie-designware-host.c, 479:
+>> 	dw_pcie_prog_outbound_atu in dw_pcie_rd_other_conf
+>> drivers/pci/dwc/pcie-designware-host.c, 561:
+>> 	dw_pcie_rd_other_conf in dw_pcie_rd_conf
+>> drivers/pci/access.c, 66:
+>> 	[FUNC_PTR]dw_pcie_rd_conf in pci_bus_read_config_word
+>> drivers/pci/access.c, 918:
+>> 	pci_bus_read_config_word in pci_read_config_word
+>> drivers/ata/pata_efar.c, 115:
+>> 	pci_read_config_word in efar_set_piomode
+>> drivers/ata/pata_efar.c, 113:
+>> 	_raw_spin_lock_irqsave in efar_set_piomod
+>>
+>> [FUNC] usleep_range
+>> drivers/pci/dwc/pcie-designware.c, 181:
+>> 	usleep_range in dw_pcie_prog_outbound_atu
+>> drivers/pci/dwc/pcie-designware-host.c, 479:
+>> 	dw_pcie_prog_outbound_atu in dw_pcie_rd_other_conf
+>> drivers/pci/dwc/pcie-designware-host.c, 561:
+>> 	dw_pcie_rd_other_conf in dw_pcie_rd_conf
+>> drivers/pci/access.c, 66:
+>> 	[FUNC_PTR]dw_pcie_rd_conf in pci_bus_read_config_word
+>> drivers/pci/access.c, 918:
+>> 	pci_bus_read_config_word in pci_read_config_word
+>> drivers/block/mtip32xx/mtip32xx.c, 158:
+>> 	pci_read_config_word in mtip_check_surprise_removal
+>> drivers/block/mtip32xx/mtip32xx.c, 843:
+>> 	mtip_check_surprise_removal in mtip_handle_irq
+>> drivers/block/mtip32xx/mtip32xx.c, 879:
+>> 	mtip_handle_irq in mtip_irq_handler (interrupt handler)
+>>
+>> [FUNC] usleep_range
+>> drivers/pci/dwc/pcie-designware.c, 181:
+>> 	usleep_range in dw_pcie_prog_outbound_atu
+>> drivers/pci/dwc/pcie-designware-host.c, 479:
+>> 	dw_pcie_prog_outbound_atu in dw_pcie_rd_other_conf
+>> drivers/pci/dwc/pcie-designware-host.c, 561:
+>> 	dw_pcie_rd_other_conf in dw_pcie_rd_conf
+>> drivers/pci/access.c, 66:
+>> 	[FUNC_PTR]dw_pcie_rd_conf in pci_bus_read_config_word
+>> drivers/pci/access.c, 918:
+>> 	pci_bus_read_config_word in pci_read_config_word
+>> drivers/gpu/vga/vgaarb.c, 645:
+>> 	pci_read_config_word in vga_arbiter_add_pci_device
+>> drivers/gpu/vga/vgaarb.c, 629:
+>> 	_raw_spin_lock_irqsave in vga_arbiter_add_pci_device
+>>
+>> [FUNC] usleep_range
+>> drivers/pci/dwc/pcie-designware.c, 181:
+>> 	usleep_range in dw_pcie_prog_outbound_atu
+>> drivers/pci/dwc/pcie-designware-host.c, 479:
+>> 	dw_pcie_prog_outbound_atu in dw_pcie_rd_other_conf
+>> drivers/pci/dwc/pcie-designware-host.c, 561:
+>> 	dw_pcie_rd_other_conf in dw_pcie_rd_conf
+>> drivers/pci/access.c, 66:
+>> 	[FUNC_PTR]dw_pcie_rd_conf in pci_bus_read_config_word
+>> drivers/pci/access.c, 918:
+>> 	pci_bus_read_config_word in pci_read_config_word
+>> drivers/pci/ats.c, 139:
+>> 	pci_read_config_word in pci_ats_queue_depth
+>> drivers/iommu/intel-iommu.c, 1519:
+>> 	pci_ats_queue_depth in iommu_enable_dev_iotlb
+>> drivers/iommu/intel-iommu.c, 5295:
+>> 	iommu_enable_dev_iotlb in intel_iommu_enable_pasid
+>> drivers/iommu/intel-iommu.c, 5241:
+>> 	_raw_spin_lock_irqsave in intel_iommu_enable_pasid
+>>
+>> To fix this bug, usleep_range() is replaced with udelay().
+>>
+>> This bug is found by my static analysis tool DSAC.
+>>
+>> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+>> ---
+>>   drivers/pci/controller/dwc/pcie-designware.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
+>> index 778c4f76a884..7f50f7e51543 100644
+>> --- a/drivers/pci/controller/dwc/pcie-designware.c
+>> +++ b/drivers/pci/controller/dwc/pcie-designware.c
+>> @@ -135,7 +135,7 @@ static void dw_pcie_prog_outbound_atu_unroll(struct dw_pcie *pci, int index,
+>>   		if (val & PCIE_ATU_ENABLE)
+>>   			return;
+>>   
+>> -		usleep_range(LINK_WAIT_IATU_MIN, LINK_WAIT_IATU_MAX);
+>> +		udelay(LINK_WAIT_IATU_MAX);
+> You might use the mdelay instead of udelay, however this fix and others were
+> already made on patch on [1]
+>
+> [1] https://lkml.org/lkml/2018/9/10/284
+>
 
-Since it is based on the original pull-request, it can be pulled
-in either directly on top of it or as a pull in its own right.
+Okay, that is good.
 
-The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
 
-  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
+Best wishes,
+Jia-Ju Bai
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git tags/ib-mfd-spi-tty-v4.20-1
-
-for you to fetch changes up to 65b80dfffeabd4eb253b93d07eadde4d89c18511:
-
-  mfd: at91-usart: Include Device Tree header (2018-09-11 11:44:56 +0100)
-
-----------------------------------------------------------------
-Immutable branch between MFD, SPI and TTY due for the v4.20 merge window (v2)
-
-----------------------------------------------------------------
-Lee Jones (4):
-      dt-bindings: mfd: atmel-usart: Correct interrupts property to include IRQ number
-      MAINTAINERS: Change Radu's email address
-      spi: at91-usart: Make local functions static
-      mfd: at91-usart: Include Device Tree header
-
-Radu Pirea (6):
-      MAINTAINERS: Add AT91 USART MFD entry
-      dt-bindings: Add binding for atmel-usart in SPI mode
-      mfd: at91-usart: Add MFD driver for USART
-      MAINTAINERS: Add AT91 USART SPI entry
-      spi: at91-usart: Add driver for at91-usart as SPI
-      tty/serial: atmel: Change the driver to work under at91-usart MFD
-
- .../bindings/{serial => mfd}/atmel-usart.txt       |  25 +-
- MAINTAINERS                                        |  16 +
- drivers/mfd/Kconfig                                |   9 +
- drivers/mfd/Makefile                               |   1 +
- drivers/mfd/at91-usart.c                           |  72 ++++
- drivers/spi/Kconfig                                |   8 +
- drivers/spi/Makefile                               |   1 +
- drivers/spi/spi-at91-usart.c                       | 432 +++++++++++++++++++++
- drivers/tty/serial/Kconfig                         |   1 +
- drivers/tty/serial/atmel_serial.c                  |  42 +-
- include/dt-bindings/mfd/at91-usart.h               |  17 +
- 11 files changed, 607 insertions(+), 17 deletions(-)
- rename Documentation/devicetree/bindings/{serial => mfd}/atmel-usart.txt (76%)
- create mode 100644 drivers/mfd/at91-usart.c
- create mode 100644 drivers/spi/spi-at91-usart.c
- create mode 100644 include/dt-bindings/mfd/at91-usart.h
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
