@@ -2,104 +2,163 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFAE0C6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:48:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DC84C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:50:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 835CD20854
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:48:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C289120854
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:50:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PEu+0uY7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 835CD20854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="AuyVNe2R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C289120854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727596AbeIKOqx (ORCPT
+        id S1726819AbeIKOtV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 10:46:53 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:43593 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726559AbeIKOqx (ORCPT
+        Tue, 11 Sep 2018 10:49:21 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:34374 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726554AbeIKOtV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 10:46:53 -0400
-Received: by mail-pg1-f196.google.com with SMTP id v66-v6so11960465pgb.10;
-        Tue, 11 Sep 2018 02:48:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=z/FvY28wIs+g/+qtMYzrRtNCxGp6YIuGvttNUQH69Dg=;
-        b=PEu+0uY7y0cq0Cu3aPqw1055Br+bvnuZcIFrKjn7vQqHVaVklm+JdbPfB3zHDip1hX
-         6bz3W2Pr1Vo7lMh+/QZwS3Lha5gUZqVn7en+1Ho+TGyc017s8RdCrPKk/U92eIGUpf/Y
-         lm3eFMh799YIS3abZWcoSmBO5Cv9h04uIFKVYKYkYoRM88AhrXHsLh3a9/PpbR5LeV3z
-         adoWH9BYSwugmdCNTHpeMHuvn/0H0vEfEAhH+qDsRXUZ8bcJKfDoQ+EkuWd3CLh1DnRL
-         zyYcG4xzpG2BOgf/PHCw52jPyFu+USyKUhSwwsrs88oHqXHMse/mGWeYtTSqGDjbNAt6
-         EJAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=z/FvY28wIs+g/+qtMYzrRtNCxGp6YIuGvttNUQH69Dg=;
-        b=k9CmOPo7z8RB76ti1Q+M+H5SXZ9GW/GLZh4cF3gUTIEBIVgbC6LQcUWeyuqZp9X280
-         BgSmHvN84PQ186M0pwdE/BdG81L8sIjeH/IJqXrIaG+Xopa5R3RtgbvUs0Fo9E3xJ5in
-         fRpy5KXdrRg9u35j403a56eEYhHoddeNHOef3vpw9HH2gyuZ10iKB6RYJjuM0tDirIkN
-         WsrDShb4isisV1lXFtJSx3fEBPCI9QhQ6YYNxELxCfOuxiUWawzPNQSp0sEpAI4KW26s
-         q1DQvraD0Tds2oz0vUG3MgKPkuRFZWqXADKfMhM/70aSyK5VimDD+t+/tRxtpVnQlv6c
-         krQw==
-X-Gm-Message-State: APzg51CpnwwgK8OC9kKXwRA3cLm3kaUuPlhB3GvqwvR3asWyA6jvL5Qe
-        3tdn3ZRhgi2ZytyW6oLAARQ=
-X-Google-Smtp-Source: ANB0Vdb2VnRCbpFG/t2DTl6JiH9C0er37xjzWupOtGWR/SFsuU6R8Sw7o1lPhouk6Wf+/YRe2JSx/Q==
-X-Received: by 2002:a62:1544:: with SMTP id 65-v6mr28339417pfv.178.1536659301216;
-        Tue, 11 Sep 2018 02:48:21 -0700 (PDT)
-Received: from masabert (150-66-115-91m5.mineo.jp. [150.66.115.91])
-        by smtp.gmail.com with ESMTPSA id i25-v6sm37013134pfi.150.2018.09.11.02.48.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Sep 2018 02:48:20 -0700 (PDT)
-Received: by masabert (Postfix, from userid 1000)
-        id 8DD20200B62; Tue, 11 Sep 2018 18:48:13 +0900 (JST)
-From:   Masanari Iida <standby24x7@gmail.com>
-To:     qla2xxx-upstream@qlogic.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, linux-kernel@vger.kernel.org,
-        himanshu.madhani@cavium.com, giridhar.malavali@cavium.com,
-        linux-scsi@vger.kernel.org
-Cc:     Masanari Iida <standby24x7@gmail.com>
-Subject: [PATCH] scsi: qla2xxx: Fix comment in MODULE_PARM_DESC in qla2xxx
-Date:   Tue, 11 Sep 2018 18:48:11 +0900
-Message-Id: <20180911094811.12681-1-standby24x7@gmail.com>
-X-Mailer: git-send-email 2.19.0
+        Tue, 11 Sep 2018 10:49:21 -0400
+Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id D54E857;
+        Tue, 11 Sep 2018 11:50:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1536659446;
+        bh=YxmogvtaUd7WCtiePQepeH/K4t2uX7oCGYhcGAYiITs=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=AuyVNe2RH7V8Bkc74c9QULTAMNJlB0dbCTxgh5cs9gT7J+Z3JSIqJAU/FuutpIQF9
+         Dz8EcWmq2SJidgDu/LgJTLRRCP3LDMv8U0YMlmLVhQDh9ymk4IzQ8cKrW+dDNWDDUT
+         IC9DcitFC3cb9iLE2BoypzgWEIoyWGk8foNwM2KI=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Gerd Hoffmann <kraxel@redhat.com>
+Cc:     dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Shuah Khan <shuah@kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" 
+        <linux-media@vger.kernel.org>,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK" 
+        <linaro-mm-sig@lists.linaro.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, linux-api@vger.kernel.org
+Subject: Re: [PATCH v7] Add udmabuf misc device
+Date:   Tue, 11 Sep 2018 12:50:58 +0300
+Message-ID: <18750721.r4B5nx0M26@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20180911065014.vo6qp6hkb7cjftdc@sirius.home.kraxel.org>
+References: <20180827093444.23623-1-kraxel@redhat.com> <21053714.0Xa7F2u2PE@avalon> <20180911065014.vo6qp6hkb7cjftdc@sirius.home.kraxel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Default value of ql2xasynctmfenable for qla2xxx driver was
-set to 1 in commit 043dc1d7e8501.
-But comment in MODULE_PARAM_DESC was not modified.
+Hi Gerd,
 
-Signed-off-by: Masanari Iida <standby24x7@gmail.com>
----
- drivers/scsi/qla2xxx/qla_os.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Tuesday, 11 September 2018 09:50:14 EEST Gerd Hoffmann wrote:
+>   Hi,
+> 
+> >> +#define UDMABUF_CREATE       _IOW('u', 0x42, struct udmabuf_create)
+> > 
+> > Why do you start at 0x42 if you reserve the 0x40-0x4f range ?
+> 
+> No particular strong reason, just that using 42 was less boring than
+> starting with 0x40.
+> 
+> >> +#define UDMABUF_CREATE_LIST  _IOW('u', 0x43, struct
+> >> udmabuf_create_list)
+> > 
+> > Where's the documentation ? :-)
+> 
+> Isn't it simple enough?
 
-diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
-index 42b8f0d3e580..fe5404be73c5 100644
---- a/drivers/scsi/qla2xxx/qla_os.c
-+++ b/drivers/scsi/qla2xxx/qla_os.c
-@@ -204,7 +204,7 @@ int ql2xasynctmfenable = 1;
- module_param(ql2xasynctmfenable, int, S_IRUGO);
- MODULE_PARM_DESC(ql2xasynctmfenable,
- 		"Enables issue of TM IOCBs asynchronously via IOCB mechanism"
--		"Default is 0 - Issue TM IOCBs via mailbox mechanism.");
-+		"Default is 1 - Issue TM IOCBs via mailbox mechanism.");
- 
- int ql2xdontresethba;
- module_param(ql2xdontresethba, int, S_IRUGO|S_IWUSR);
+No kernel UAPI is simple enough to get away without documenting it.
+
+> But, well, yes, I guess I can add some kerneldoc comments.
+> 
+> >> +static int udmabuf_vm_fault(struct vm_fault *vmf)
+> >> +{
+> >> +	struct vm_area_struct *vma = vmf->vma;
+> >> +	struct udmabuf *ubuf = vma->vm_private_data;
+> >> +
+> >> +	if (WARN_ON(vmf->pgoff >= ubuf->pagecount))
+> >> +		return VM_FAULT_SIGBUS;
+> > 
+> > Just curious, when do you expect this to happen ?
+> 
+> It should not.  If it actually happens it would be a bug somewhere,
+> thats why the WARN_ON.
+
+But you seem to consider that this condition that should never happen still 
+has a high enough chance of happening that it's worth a WARN_ON(). I was 
+wondering why this one in particular, and not other conditions that also can't 
+happen and are not checked through the code. 
+
+> >> +	struct udmabuf *ubuf;
+> >> 
+> >> +	ubuf = kzalloc(sizeof(struct udmabuf), GFP_KERNEL);
+> > 
+> > sizeof(*ubuf)
+> 
+> Why?  Should not make a difference ...
+
+Because the day we replace
+
+	struct udmabuf *ubuf;
+
+with
+
+	struct udmabuf_ext *ubuf;
+
+and forget to change the next line, we'll introduce a bug. That's why 
+sizeof(variable) is preferred over sizeof(type). Another reason is that I can 
+easily see that
+
+	ubuf = kzalloc(sizeof(*ubuf), GFP_KERNEL);
+
+is correct, while using sizeof(type) requires me to go and look up the 
+declaration of the variable.
+
+> >> +		memfd = fget(list[i].memfd);
+> >> +		if (!memfd)
+> >> +			goto err_put_pages;
+> >> +		if (!shmem_mapping(file_inode(memfd)->i_mapping))
+> >> +			goto err_put_pages;
+> >> +		seals = memfd_fcntl(memfd, F_GET_SEALS, 0);
+> >> +		if (seals == -EINVAL ||
+> >> +		    (seals & SEALS_WANTED) != SEALS_WANTED ||
+> >> +		    (seals & SEALS_DENIED) != 0)
+> >> +			goto err_put_pages;
+> > 
+> > All these conditions will return -EINVAL. I'm not familiar with the memfd
+> > API, should some error conditions return a different error code to make
+> > them distinguishable by userspace ?
+> 
+> Hmm, I guess EBADFD would be reasonable in case the file handle isn't a
+> memfd.  Other suggestions?
+
+I'll let others comment on this as I don't feel qualified to pick proper error 
+codes, not being familiar with the memfd API.
+
+> I'll prepare a fixup patch series addressing most of the other
+> review comments.
+
 -- 
-2.19.0
+Regards,
+
+Laurent Pinchart
+
+
 
