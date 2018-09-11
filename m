@@ -2,87 +2,96 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DEA9C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 10:22:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C60C6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 10:23:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED3C220839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 10:22:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=netronome-com.20150623.gappssmtp.com header.i=@netronome-com.20150623.gappssmtp.com header.b="irz+aeFS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED3C220839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=netronome.com
+	by mail.kernel.org (Postfix) with ESMTP id E71FB2086A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 10:23:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E71FB2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727676AbeIKPVF (ORCPT
+        id S1727611AbeIKPWN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 11:21:05 -0400
-Received: from mail-pl1-f179.google.com ([209.85.214.179]:34016 "EHLO
-        mail-pl1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726836AbeIKPVF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 11:21:05 -0400
-Received: by mail-pl1-f179.google.com with SMTP id f6-v6so11142301plo.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 03:22:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=EcVEZAd6SQJ+7kozSlrC/pCYC0vKrTJoaq2bACPsyrU=;
-        b=irz+aeFSeS/11MkjefwJihennwDP9h8MqcIh2MllaBInb40gTkcu33Z9gwcT8L+gkC
-         cqVS1qp5TEj388q+nSgCZgWFJobXOFnjaINXO83onqLnphSyQHs/9n3YFgFKsumtcHVJ
-         ClEh0DlXS/W5huiK+4ij/jURDNb1uB2TqChggRkMCLK0XPFfR07cYZO9rmW+aPq3+itY
-         RqsciJ+QSsavJAUHAYebBxjZrDDfE8b+F47ffipf9XcPCuTippo1HqspXDaybEGoGZL2
-         w/fBfnL9DA52qxCuPUTeuLLzWV4DelYd9aNhGv+3lAAKbOMcBGRPsnXd06OMTc057kvy
-         kh2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=EcVEZAd6SQJ+7kozSlrC/pCYC0vKrTJoaq2bACPsyrU=;
-        b=IzCRKWittfiu+Sam7+vLh6r4BfbfQ58na2cHCboRGaeqAehWJiZMX2d33tT5qAEasY
-         Kd5QACri9EuyzTU/1Y2hXGwespf5TiJoqWUZF3GMqvD/3ER1vRHLMoYXkInhMnqsYC5Q
-         MGuYW5WDXNhkV6bIt5s2DXQrX829zbSDqsVGl6J43C4DTvW1ROtyQPsUWj9kW6/Z8PZK
-         4DzniAcsujgqyg+AxzsQPF6qSxGcHndiRu7+Q/V9f6Ow5LoY4/p9uGAzm5+xJwWmFjmY
-         EwNKMX4A0G1ZAM4Upj6WNEaRydXGHpAPPb/X36lKC32eQMAF64vvpGV6FJY+XvHuQROQ
-         q/xQ==
-X-Gm-Message-State: APzg51BnMsxram8M0Ht1JFP/cQ4Rj8oHDC39aaVF7BqhGkfZHLUT/A+D
-        9esFmpR5E46pfHgIL1Skq6D2mA==
-X-Google-Smtp-Source: ANB0Vda8eShAeDRIVfrpnvb5hui1HDcFmmTTl+kDZMQpTAqk2SqyoYHTFOeXgKs8BBQFLzyg10fpAQ==
-X-Received: by 2002:a17:902:a5c5:: with SMTP id t5-v6mr26142773plq.6.1536661345414;
-        Tue, 11 Sep 2018 03:22:25 -0700 (PDT)
-Received: from cakuba (89-66-82-92.dynamic.chello.pl. [89.66.82.92])
-        by smtp.gmail.com with ESMTPSA id 9-v6sm30975734pfc.20.2018.09.11.03.22.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Sep 2018 03:22:25 -0700 (PDT)
-Date:   Tue, 11 Sep 2018 12:22:18 +0200
-From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Daniel Borkmann <daniel@iogearbox.net>,
-        Thomas Richter <tmricht@linux.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.ibm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Networking Development Mailing List 
-        <netdev@vger.kernel.org>
-Subject: Re: libbpf build broken on musl libc (Alpine Linux)
-Message-ID: <20180911122218.0d2eb3f9@cakuba>
-In-Reply-To: <20180910172903.GB15516@kernel.org>
-References: <20180910172903.GB15516@kernel.org>
-Organization: Netronome Systems, Ltd.
+        Tue, 11 Sep 2018 11:22:13 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41572 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726720AbeIKPWN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 11:22:13 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3D6B418A;
+        Tue, 11 Sep 2018 03:23:33 -0700 (PDT)
+Received: from [10.1.215.19] (unknown [10.1.215.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0856E3F557;
+        Tue, 11 Sep 2018 03:23:31 -0700 (PDT)
+Subject: Re: [PATCH 1/4] arm-nommu: don't define arch_teardown_dma_ops
+To:     Christoph Hellwig <hch@lst.de>, iommu@lists.linux-foundation.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+References: <20180827084711.23407-1-hch@lst.de>
+ <20180827084711.23407-2-hch@lst.de>
+From:   Vladimir Murzin <vladimir.murzin@arm.com>
+Message-ID: <8ae006ad-0aff-bab3-2c16-be1696d58b5f@arm.com>
+Date:   Tue, 11 Sep 2018 11:23:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180827084711.23407-2-hch@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 10 Sep 2018 14:29:03 -0300, Arnaldo Carvalho de Melo wrote:
-> After lunch I'll work on a patch to fix this, 
+On 27/08/18 09:47, Christoph Hellwig wrote:
+> We can just use the default implementation.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  arch/arm/include/asm/dma-mapping.h | 2 ++
+>  arch/arm/mm/dma-mapping-nommu.c    | 4 ----
+>  2 files changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/arm/include/asm/dma-mapping.h b/arch/arm/include/asm/dma-mapping.h
+> index 8436f6ade57d..965b7c846ecb 100644
+> --- a/arch/arm/include/asm/dma-mapping.h
+> +++ b/arch/arm/include/asm/dma-mapping.h
+> @@ -100,8 +100,10 @@ static inline unsigned long dma_max_pfn(struct device *dev)
+>  extern void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
+>  			       const struct iommu_ops *iommu, bool coherent);
+>  
+> +#ifdef CONFIG_MMU
+>  #define arch_teardown_dma_ops arch_teardown_dma_ops
+>  extern void arch_teardown_dma_ops(struct device *dev);
+> +#endif
+>  
+>  /* do not use this function in a driver */
+>  static inline bool is_device_dma_coherent(struct device *dev)
+> diff --git a/arch/arm/mm/dma-mapping-nommu.c b/arch/arm/mm/dma-mapping-nommu.c
+> index f448a0663b10..aa7aba302e76 100644
+> --- a/arch/arm/mm/dma-mapping-nommu.c
+> +++ b/arch/arm/mm/dma-mapping-nommu.c
+> @@ -237,7 +237,3 @@ void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
+>  
+>  	set_dma_ops(dev, dma_ops);
+>  }
+> -
+> -void arch_teardown_dma_ops(struct device *dev)
+> -{
+> -}
+> 
 
-Hi Arnaldo!
+FWIW:
 
-Any luck?
+Reviewed-by: Vladimir Murzin <vladimir.murzin@arm.com>
+
+Thanks
+Vladimir
