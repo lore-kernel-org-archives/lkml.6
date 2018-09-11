@@ -2,205 +2,126 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A226C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 12:08:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4661EC04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 12:11:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 438AE20833
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 12:08:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=javigon-com.20150623.gappssmtp.com header.i=@javigon-com.20150623.gappssmtp.com header.b="tCVILVZC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 438AE20833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=javigon.com
+	by mail.kernel.org (Postfix) with ESMTP id E3A8320833
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 12:11:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3A8320833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727723AbeIKRHr (ORCPT
+        id S1727164AbeIKRKr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 13:07:47 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:37161 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726612AbeIKRHr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 13:07:47 -0400
-Received: by mail-ed1-f68.google.com with SMTP id a20-v6so19047107edd.4
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 05:08:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=javigon-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=MrXQnSirJ4NJmgGLaFMerZuCqF7pw7ztJcA9jNm9mc0=;
-        b=tCVILVZCHj3rnts48MyJjcrsokzhyUGOnkv1APxVFNeRDzej9WhT94OPYxGw1AmNk0
-         chb4XxM11duEV2AdUwhYIhK81jC2rJ5TvgHMgN9UUNjGiAQeaJT9nco7rIAPTQY6s8Tf
-         hSisBlD9TieYfi1GnfBRXx9MzRv89xqk6pJd0UzjYJ3CR7IC81DAyCLPlTSTYtw4+lVT
-         dNVBOsTkvfcEtBbejq7kumYaMStU7Q46bRSyXngnyX58Jr8Ccbx82Tyxh+RYv79cTEhy
-         TnQEbsS+eQzzQvZMbYon0zFJokYY00wvl3iaQZEuTBRjfveuP4u86ZPcfOrluml0jTge
-         LSCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=MrXQnSirJ4NJmgGLaFMerZuCqF7pw7ztJcA9jNm9mc0=;
-        b=m9IWjDPR8GU9U9YlN1waC8JHYTZucjAV5qO5fPKFzspCDdjKV9G1SSVZ37OieB6EKN
-         +geD6uuU/cLrB8c3uidlmI5fY/e9GoLVrNYY1r15hYNTkXwmMymUR5CH57d0bb/Ztdhx
-         LDA59w7fkyN5+Qo622GBhwY8DcAll4sLCy73Hxdynf6PGxaxe8TEJdUmRuGy6E7WABMK
-         gnasFWBIHg9cYbWs4Df5ZWf1mo+QYeRuxNFSt8OSyS2Q5RqdxX5CzVUBoIJSclajijEJ
-         T56D9ckKgFsgZpQbBJzX3ar714xrTkhgazvkBxAeStDL4rxjNY/pHdnZzT/DoQ5Ikjyx
-         fZmg==
-X-Gm-Message-State: APzg51BU07Xr8uubZ7PKKydYGw+ad1s8hnDaV6x8P+l/bTD+RX4OGCp1
-        K4XSHKOP9hHImC6liBzQeLpu7w==
-X-Google-Smtp-Source: ANB0VdZuQPfhVsWFLfC/sjyrPND7J6hoqFKIDYRYEVhESP8KjCPqxfdzLxEIcnJi2PI9gvJ6wIYI3Q==
-X-Received: by 2002:a50:8e09:: with SMTP id 9-v6mr27793868edw.101.1536667723063;
-        Tue, 11 Sep 2018 05:08:43 -0700 (PDT)
-Received: from ch-wrk-javier.cnexlabs.com (6164211-cl69.boa.fiberby.dk. [193.106.164.211])
-        by smtp.gmail.com with ESMTPSA id h24-v6sm12309417edb.43.2018.09.11.05.08.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 11 Sep 2018 05:08:42 -0700 (PDT)
-From:   "=?UTF-8?q?Javier=20Gonz=C3=A1lez?=" <javier@javigon.com>
-X-Google-Original-From: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
-To:     mb@lightnvm.io
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
-Subject: [PATCH] lightnvm: pblk: add SPDX license tag
-Date:   Tue, 11 Sep 2018 14:08:36 +0200
-Message-Id: <1536667716-23004-1-git-send-email-javier@cnexlabs.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 11 Sep 2018 13:10:47 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60790 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726612AbeIKRKr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 13:10:47 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 076C0AFC4;
+        Tue, 11 Sep 2018 12:11:42 +0000 (UTC)
+Date:   Tue, 11 Sep 2018 14:11:41 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Roman Gushchin <guro@fb.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com, Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>
+Subject: Re: [PATCH RFC] mm: don't raise MEMCG_OOM event due to failed
+ high-order allocation
+Message-ID: <20180911121141.GS10951@dhcp22.suse.cz>
+References: <20180910215622.4428-1-guro@fb.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180910215622.4428-1-guro@fb.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add GLP-2.0 SPDX license tag to all pblk files
+On Mon 10-09-18 14:56:22, Roman Gushchin wrote:
+> The memcg OOM killer is never invoked due to a failed high-order
+> allocation, however the MEMCG_OOM event can be easily raised.
+> 
+> Under some memory pressure it can happen easily because of a
+> concurrent allocation. Let's look at try_charge(). Even if we were
+> able to reclaim enough memory, this check can fail due to a race
+> with another allocation:
+> 
+>     if (mem_cgroup_margin(mem_over_limit) >= nr_pages)
+>         goto retry;
+> 
+> For regular pages the following condition will save us from triggering
+> the OOM:
+> 
+>    if (nr_reclaimed && nr_pages <= (1 << PAGE_ALLOC_COSTLY_ORDER))
+>        goto retry;
+> 
+> But for high-order allocation this condition will intentionally fail.
+> The reason behind is that we'll likely fall to regular pages anyway,
+> so it's ok and even preferred to return ENOMEM.
+> 
+> In this case the idea of raising the MEMCG_OOM event looks dubious.
 
-Signed-off-by: Javier González <javier@cnexlabs.com>
----
- drivers/lightnvm/pblk-cache.c    | 1 +
- drivers/lightnvm/pblk-core.c     | 1 +
- drivers/lightnvm/pblk-gc.c       | 1 +
- drivers/lightnvm/pblk-init.c     | 1 +
- drivers/lightnvm/pblk-map.c      | 1 +
- drivers/lightnvm/pblk-rb.c       | 1 +
- drivers/lightnvm/pblk-read.c     | 1 +
- drivers/lightnvm/pblk-recovery.c | 1 +
- drivers/lightnvm/pblk-rl.c       | 1 +
- drivers/lightnvm/pblk-sysfs.c    | 1 +
- drivers/lightnvm/pblk-write.c    | 1 +
- drivers/lightnvm/pblk.h          | 1 +
- 12 files changed, 12 insertions(+)
+Why is this a problem though? IIRC this event was deliberately placed
+outside of the oom path because we wanted to count allocation failures
+and this is also documented that way
 
-diff --git a/drivers/lightnvm/pblk-cache.c b/drivers/lightnvm/pblk-cache.c
-index 77d811962818..74b912ee3c05 100644
---- a/drivers/lightnvm/pblk-cache.c
-+++ b/drivers/lightnvm/pblk-cache.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (C) 2016 CNEX Labs
-  * Initial release: Javier Gonzalez <javier@cnexlabs.com>
-diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
-index 80f0ec756672..a23e965d32fc 100644
---- a/drivers/lightnvm/pblk-core.c
-+++ b/drivers/lightnvm/pblk-core.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (C) 2016 CNEX Labs
-  * Initial release: Javier Gonzalez <javier@cnexlabs.com>
-diff --git a/drivers/lightnvm/pblk-gc.c b/drivers/lightnvm/pblk-gc.c
-index e05d06bd5b83..2fa118c8eb71 100644
---- a/drivers/lightnvm/pblk-gc.c
-+++ b/drivers/lightnvm/pblk-gc.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (C) 2016 CNEX Labs
-  * Initial release: Javier Gonzalez <javier@cnexlabs.com>
-diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
-index 532ee0834dad..caed18fabd35 100644
---- a/drivers/lightnvm/pblk-init.c
-+++ b/drivers/lightnvm/pblk-init.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (C) 2015 IT University of Copenhagen (rrpc.c)
-  * Copyright (C) 2016 CNEX Labs
-diff --git a/drivers/lightnvm/pblk-map.c b/drivers/lightnvm/pblk-map.c
-index 070ed53eca07..2f7ce572b29e 100644
---- a/drivers/lightnvm/pblk-map.c
-+++ b/drivers/lightnvm/pblk-map.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (C) 2016 CNEX Labs
-  * Initial release: Javier Gonzalez <javier@cnexlabs.com>
-diff --git a/drivers/lightnvm/pblk-rb.c b/drivers/lightnvm/pblk-rb.c
-index a7648e12f54f..c26eab2ba8bd 100644
---- a/drivers/lightnvm/pblk-rb.c
-+++ b/drivers/lightnvm/pblk-rb.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (C) 2016 CNEX Labs
-  * Initial release: Javier Gonzalez <javier@cnexlabs.com>
-diff --git a/drivers/lightnvm/pblk-read.c b/drivers/lightnvm/pblk-read.c
-index aa345a4045aa..16294701a748 100644
---- a/drivers/lightnvm/pblk-read.c
-+++ b/drivers/lightnvm/pblk-read.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (C) 2016 CNEX Labs
-  * Initial release: Javier Gonzalez <javier@cnexlabs.com>
-diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
-index 09015fd8e0f2..c562e1fad243 100644
---- a/drivers/lightnvm/pblk-recovery.c
-+++ b/drivers/lightnvm/pblk-recovery.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (C) 2016 CNEX Labs
-  * Initial: Javier Gonzalez <javier@cnexlabs.com>
-diff --git a/drivers/lightnvm/pblk-rl.c b/drivers/lightnvm/pblk-rl.c
-index a32790f7b7fc..db55a1c89997 100644
---- a/drivers/lightnvm/pblk-rl.c
-+++ b/drivers/lightnvm/pblk-rl.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (C) 2016 CNEX Labs
-  * Initial release: Javier Gonzalez <javier@cnexlabs.com>
-diff --git a/drivers/lightnvm/pblk-sysfs.c b/drivers/lightnvm/pblk-sysfs.c
-index e56eeeeb914e..cba83ac43e62 100644
---- a/drivers/lightnvm/pblk-sysfs.c
-+++ b/drivers/lightnvm/pblk-sysfs.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (C) 2016 CNEX Labs
-  * Initial release: Javier Gonzalez <javier@cnexlabs.com>
-diff --git a/drivers/lightnvm/pblk-write.c b/drivers/lightnvm/pblk-write.c
-index a276f25d3931..277abc8633f7 100644
---- a/drivers/lightnvm/pblk-write.c
-+++ b/drivers/lightnvm/pblk-write.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (C) 2016 CNEX Labs
-  * Initial release: Javier Gonzalez <javier@cnexlabs.com>
-diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
-index 5e4cec453a43..127ee99c3efc 100644
---- a/drivers/lightnvm/pblk.h
-+++ b/drivers/lightnvm/pblk.h
-@@ -1,3 +1,4 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright (C) 2015 IT University of Copenhagen (rrpc.h)
-  * Copyright (C) 2016 CNEX Labs
+          oom
+                The number of time the cgroup's memory usage was
+                reached the limit and allocation was about to fail.
+
+                Depending on context result could be invocation of OOM
+                killer and retrying allocation or failing a
+
+One could argue that we do not apply the same logic to GFP_NOWAIT
+requests but in general I would like to see a good reason to change
+the behavior and if it is really the right thing to do then we need to
+update the documentation as well.
+
+> Fix this by moving MEMCG_OOM raising to  mem_cgroup_oom() after
+> allocation order check, so that the event won't be raised for high
+> order allocations.
+> 
+> Signed-off-by: Roman Gushchin <guro@fb.com>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Michal Hocko <mhocko@kernel.org>
+> Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
+> ---
+>  mm/memcontrol.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index fcec9b39e2a3..103ca3c31c04 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -1669,6 +1669,8 @@ static enum oom_status mem_cgroup_oom(struct mem_cgroup *memcg, gfp_t mask, int
+>  	if (order > PAGE_ALLOC_COSTLY_ORDER)
+>  		return OOM_SKIPPED;
+>  
+> +	memcg_memory_event(memcg, MEMCG_OOM);
+> +
+>  	/*
+>  	 * We are in the middle of the charge context here, so we
+>  	 * don't want to block when potentially sitting on a callstack
+> @@ -2250,8 +2252,6 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
+>  	if (fatal_signal_pending(current))
+>  		goto force;
+>  
+> -	memcg_memory_event(mem_over_limit, MEMCG_OOM);
+> -
+>  	/*
+>  	 * keep retrying as long as the memcg oom killer is able to make
+>  	 * a forward progress or bypass the charge if the oom killer
+> -- 
+> 2.17.1
+
 -- 
-2.7.4
-
+Michal Hocko
+SUSE Labs
