@@ -2,144 +2,198 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0E25C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 10:04:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 418B5C6778D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 10:05:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAF0620867
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 10:04:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDF3220866
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 10:05:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="Ct/Leyvx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAF0620867
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="T3/Hoetl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDF3220866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727047AbeIKPCu (ORCPT
+        id S1726829AbeIKPEc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 11:02:50 -0400
-Received: from smtprelay2.synopsys.com ([198.182.60.111]:47404 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726554AbeIKPCu (ORCPT
+        Tue, 11 Sep 2018 11:04:32 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:33540 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726563AbeIKPEc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 11:02:50 -0400
-Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id F34E310C080C;
-        Tue, 11 Sep 2018 03:04:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1536660255; bh=8fGwDrxVf9cn5Ac6fZh+V0iy+YTI0GLALSQYoo/AvSU=;
-        h=From:Subject:To:CC:References:Date:In-Reply-To:From;
-        b=Ct/LeyvxnOFy7VgyjdpAvsuGTbSv7DZ8NZu6JkvXl30bKnwks9iLwcsXhiqagPv1L
-         qo+1BtWZjo6K9MsiFZM9a+m0vllP/vw/B/574YXwvevfT7kX5tHmwr75N4SoAXsBVF
-         3n0K3JUZGJdMNSm7fYhfivvoA2Wss7TAWlunDZUpw6HP9O+v9xRsv0eNh4NQhxaenV
-         hg6lwNlRv+ONrB+6tdKx9d04W7K5XfG1vEvoHS4AxFeiJkivOWKLMZO4nSl83YGV6d
-         7mXl3shzvAwOGaBAuDb/r9HNs1glQv3wkmWZHuSlMmHJldzh9FddT/wdtZEQKqecK6
-         kMaMQFaSZ/9jw==
-Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 9F3FB3594;
-        Tue, 11 Sep 2018 03:04:12 -0700 (PDT)
-Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
- us01wehtc1.internal.synopsys.com (10.12.239.231) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Tue, 11 Sep 2018 03:04:12 -0700
-Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
- DE02WEHTCB.internal.synopsys.com (10.225.19.94) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Tue, 11 Sep 2018 12:04:11 +0200
-Received: from [10.0.2.15] (10.107.25.91) by DE02WEHTCA.internal.synopsys.com
- (10.225.19.80) with Microsoft SMTP Server (TLS) id 14.3.361.1; Tue, 11 Sep
- 2018 12:04:10 +0200
-From:   vitor <Vitor.Soares@synopsys.com>
-Subject: Re: [PATCH v7 01/10] i3c: Add core I3C infrastructure
-To:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Wolfram Sang <wsa@the-dreams.de>, <linux-i2c@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>
-CC:     Jonathan Corbet <corbet@lwn.net>, <linux-doc@vger.kernel.org>,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        "Alicja Jurasik-Urbaniak" <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        "Rafal Ciepiela" <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        "Kumar Gala" <galak@codeaurora.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Vitor Soares <Vitor.Soares@synopsys.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>,
-        <linux-gpio@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>,
-        Przemyslaw Gaj <pgaj@cadence.com>,
-        Peter Rosin <peda@axentia.se>,
-        Mike Shettel <mshettel@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>
-References: <20180905154108.20770-1-boris.brezillon@bootlin.com>
- <20180905154108.20770-2-boris.brezillon@bootlin.com>
-Message-ID: <aa29faa0-237c-3875-64da-b93a1e87ccff@synopsys.com>
-Date:   Tue, 11 Sep 2018 11:04:07 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 11 Sep 2018 11:04:32 -0400
+Received: by mail-it0-f67.google.com with SMTP id j198-v6so8486871ita.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 03:05:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=AEvYVSj8VgyrmXoxNRvMkOz78B2Fm8X5If4+UdZGxS4=;
+        b=T3/HoetlctL0qZ2alZc+y2nDE6C6rzdpDwh1b72hJ0kumd7RCcsWzj35l+cdTYcoL0
+         XQfJNGrupPyr4bJr8MJZZyax3VrwzNFYtpGD9/8XOcB13MH1Pc9Z6P/7J9oQ651Qoyf6
+         MpTRXtv7kqkyU9ZJEEHEzYikpTNMf9QwNrwzk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=AEvYVSj8VgyrmXoxNRvMkOz78B2Fm8X5If4+UdZGxS4=;
+        b=Ql3mPkzfijG+wm1GVcgEKq3Ir9H67uFukHm4oaHwvUbRWuo/gTnQ9cf5E+VCPDUlCP
+         qbKT4jN4KABsWw3WULRHQW91AQHOdMkS/JJlh9U9N1SuY0Iap7vB4KmHuNA/XpFl7v7t
+         hFrWu19a8Kl7SBuT2cL/sGIUjywAgVa/2eaoba0/JdjjQnfD1Y/nThTOnf8TIXGQo+3M
+         603Q7FlaCLgKQeGNiv+ZibJl6jqEgcO5z8UMX1NbibaON2Eyixgslr4APgWnEBwp79YY
+         wF83mkW/jqp1VKxW5DiK9C6S0RgSbZNSt/c4ekihvOFRzY+yFH+eyUf4fZSBCRCKVkQr
+         iTvg==
+X-Gm-Message-State: APzg51Bg67N0+U7BRC5uTED3FJ3sL+V3AJnqPHzxPXJ8SqdO/lw6NB/H
+        WaxO/kwE5nBk8vLDMVdzrLTJioAdRsZXOTj80pgxUg==
+X-Google-Smtp-Source: ANB0VdaTCgGHd92XnUbO2WXP0PTCxRhnfKXLkkOFmwARAK3cDEelUVtHBhxVa1qWGfZzBohPW6fa8SxsFFO3dRHtsPE=
+X-Received: by 2002:a02:10c6:: with SMTP id 189-v6mr22417696jay.54.1536660356568;
+ Tue, 11 Sep 2018 03:05:56 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180905154108.20770-2-boris.brezillon@bootlin.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [10.107.25.91]
+Received: by 2002:a4f:bf05:0:0:0:0:0 with HTTP; Tue, 11 Sep 2018 03:05:55
+ -0700 (PDT)
+X-Originating-IP: [2a02:168:569e:0:3106:d637:d723:e855]
+In-Reply-To: <18750721.r4B5nx0M26@avalon>
+References: <20180827093444.23623-1-kraxel@redhat.com> <21053714.0Xa7F2u2PE@avalon>
+ <20180911065014.vo6qp6hkb7cjftdc@sirius.home.kraxel.org> <18750721.r4B5nx0M26@avalon>
+From:   Daniel Vetter <daniel@ffwll.ch>
+Date:   Tue, 11 Sep 2018 12:05:55 +0200
+X-Google-Sender-Auth: PL_rPXak95JCfD_2v68fhamPvJM
+Message-ID: <CAKMK7uFviQPhsehfps0=gyA=bT72uQn1avzN7RXWE-OyRdb9aQ@mail.gmail.com>
+Subject: Re: [PATCH v7] Add udmabuf misc device
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Gerd Hoffmann <kraxel@redhat.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        David Airlie <airlied@linux.ie>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Shuah Khan <shuah@kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" 
+        <linux-media@vger.kernel.org>,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK" 
+        <linaro-mm-sig@lists.linaro.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        "open list:ABI/API" <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Sep 11, 2018 at 11:50 AM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> Hi Gerd,
+>
+> On Tuesday, 11 September 2018 09:50:14 EEST Gerd Hoffmann wrote:
+>>   Hi,
+>>
+>> >> +#define UDMABUF_CREATE       _IOW('u', 0x42, struct udmabuf_create)
+>> >
+>> > Why do you start at 0x42 if you reserve the 0x40-0x4f range ?
+>>
+>> No particular strong reason, just that using 42 was less boring than
+>> starting with 0x40.
+>>
+>> >> +#define UDMABUF_CREATE_LIST  _IOW('u', 0x43, struct
+>> >> udmabuf_create_list)
+>> >
+>> > Where's the documentation ? :-)
+>>
+>> Isn't it simple enough?
+>
+> No kernel UAPI is simple enough to get away without documenting it.
 
-Hi Boris,
+Simplest option would be to throw a bit of kerneldoc into the uapi
+header, add Documentation/driver-api/dma-buf.rst.
+-Daniel
 
-On 05-09-2018 16:40, Boris Brezillon wrote:
-> +i3c_master_register_new_i3c_devs(struct i3c_master_controller *master)
-> +{
-> +	struct i3c_dev_desc *desc;
-> +	int ret;
-> +
-> +	if (!master->init_done)
-> +		return;
-> +
-If you have a hot-join and call i3c_master_do_daa this function will 
-return without create the i3c_device.
-
-> +	i3c_bus_for_each_i3cdev(master->bus, desc) {
-> +		if (desc->dev || !desc->info.dyn_addr || desc == master->this)
-> +			continue;
-> +
-> +		desc->dev = kzalloc(sizeof(*desc->dev), GFP_KERNEL);
-> +		if (!desc->dev)
-> +			continue;
-> +
-> +		desc->dev->bus = master->bus;
-> +		desc->dev->desc = desc;
-> +		desc->dev->dev.parent = &master->bus->dev;
-> +		desc->dev->dev.type = &i3c_device_type;
-> +		desc->dev->dev.bus = &i3c_bus_type;
-> +		desc->dev->dev.release = i3c_device_release;
-> +		dev_set_name(&desc->dev->dev, "%d-%llx", master->bus->id,
-> +			     desc->info.pid);
-> +
-> +		if (desc->boardinfo)
-> +			desc->dev->dev.of_node = desc->boardinfo->of_node;
-> +
-> +		ret = device_register(&desc->dev->dev);
-> +		if (ret)
-> +			dev_err(master->parent,
-> +				"Failed to add I3C device (err = %d)\n", ret);
-> +	}
-> +}
+>
+>> But, well, yes, I guess I can add some kerneldoc comments.
+>>
+>> >> +static int udmabuf_vm_fault(struct vm_fault *vmf)
+>> >> +{
+>> >> +  struct vm_area_struct *vma = vmf->vma;
+>> >> +  struct udmabuf *ubuf = vma->vm_private_data;
+>> >> +
+>> >> +  if (WARN_ON(vmf->pgoff >= ubuf->pagecount))
+>> >> +          return VM_FAULT_SIGBUS;
+>> >
+>> > Just curious, when do you expect this to happen ?
+>>
+>> It should not.  If it actually happens it would be a bug somewhere,
+>> thats why the WARN_ON.
+>
+> But you seem to consider that this condition that should never happen still
+> has a high enough chance of happening that it's worth a WARN_ON(). I was
+> wondering why this one in particular, and not other conditions that also can't
+> happen and are not checked through the code.
+>
+>> >> +  struct udmabuf *ubuf;
+>> >>
+>> >> +  ubuf = kzalloc(sizeof(struct udmabuf), GFP_KERNEL);
+>> >
+>> > sizeof(*ubuf)
+>>
+>> Why?  Should not make a difference ...
+>
+> Because the day we replace
+>
+>         struct udmabuf *ubuf;
+>
+> with
+>
+>         struct udmabuf_ext *ubuf;
+>
+> and forget to change the next line, we'll introduce a bug. That's why
+> sizeof(variable) is preferred over sizeof(type). Another reason is that I can
+> easily see that
+>
+>         ubuf = kzalloc(sizeof(*ubuf), GFP_KERNEL);
+>
+> is correct, while using sizeof(type) requires me to go and look up the
+> declaration of the variable.
+>
+>> >> +          memfd = fget(list[i].memfd);
+>> >> +          if (!memfd)
+>> >> +                  goto err_put_pages;
+>> >> +          if (!shmem_mapping(file_inode(memfd)->i_mapping))
+>> >> +                  goto err_put_pages;
+>> >> +          seals = memfd_fcntl(memfd, F_GET_SEALS, 0);
+>> >> +          if (seals == -EINVAL ||
+>> >> +              (seals & SEALS_WANTED) != SEALS_WANTED ||
+>> >> +              (seals & SEALS_DENIED) != 0)
+>> >> +                  goto err_put_pages;
+>> >
+>> > All these conditions will return -EINVAL. I'm not familiar with the memfd
+>> > API, should some error conditions return a different error code to make
+>> > them distinguishable by userspace ?
+>>
+>> Hmm, I guess EBADFD would be reasonable in case the file handle isn't a
+>> memfd.  Other suggestions?
+>
+> I'll let others comment on this as I don't feel qualified to pick proper error
+> codes, not being familiar with the memfd API.
+>
+>> I'll prepare a fixup patch series addressing most of the other
+>> review comments.
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
+>
+>
 >
 
-Best regards,
-Vitor Soares
+
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
