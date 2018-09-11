@@ -3,42 +3,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF62AC46469
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 01:14:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9230CC43143
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 01:16:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 802BD20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 01:14:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 802BD20866
+	by mail.kernel.org (Postfix) with ESMTP id 331B420866
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 01:16:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 331B420866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726780AbeIKGKs (ORCPT
+        id S1726462AbeIKGNb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 02:10:48 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:48293 "EHLO huawei.com"
+        Tue, 11 Sep 2018 02:13:31 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:11681 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726244AbeIKGKs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 02:10:48 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 646C035D51841;
-        Tue, 11 Sep 2018 09:14:01 +0800 (CST)
-Received: from [127.0.0.1] (10.177.29.68) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.399.0; Tue, 11 Sep 2018
- 09:14:00 +0800
-Message-ID: <5B9716D6.8020307@huawei.com>
-Date:   Tue, 11 Sep 2018 09:13:58 +0800
+        id S1726143AbeIKGNb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 02:13:31 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 737E86482D61;
+        Tue, 11 Sep 2018 09:16:45 +0800 (CST)
+Received: from [127.0.0.1] (10.177.29.68) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.399.0; Tue, 11 Sep 2018
+ 09:16:43 +0800
+Message-ID: <5B97177A.6010301@huawei.com>
+Date:   Tue, 11 Sep 2018 09:16:42 +0800
 From:   zhong jiang <zhongjiang@huawei.com>
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
 MIME-Version: 1.0
-To:     Mark Brown <broonie@kernel.org>
-CC:     <tiwai@suse.com>, <perex@perex.cz>, <lgirdwood@gmail.com>,
-        <bgoswami@codeaurora.org>, <plai@codeaurora.org>,
-        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] sound: q6core: Use kmemdup to replace kzalloc + memcpy
-References: <1536395780-18725-1-git-send-email-zhongjiang@huawei.com> <1536395780-18725-2-git-send-email-zhongjiang@huawei.com> <20180910141928.GI5856@sirena.org.uk>
-In-Reply-To: <20180910141928.GI5856@sirena.org.uk>
+To:     Jonathan Cameron <jic23@kernel.org>
+CC:     Himanshu Jha <himanshujha199640@gmail.com>, <knaack.h@gmx.de>,
+        <lars@metafoo.de>, <pmeerw@pmeerw.net>,
+        <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] iio: remove unnecessary condition judgment in am2315_trigger_handler
+References: <1536404256-25189-1-git-send-email-zhongjiang@huawei.com> <20180908122913.GA4445@himanshu-Vostro-3559> <20180908151751.20e7396f@archlinux> <5B967653.1030007@huawei.com>
+In-Reply-To: <5B967653.1030007@huawei.com>
 Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.177.29.68]
@@ -48,17 +49,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/9/10 22:19, Mark Brown wrote:
-> On Sat, Sep 08, 2018 at 04:36:19PM +0800, zhong jiang wrote:
->> kmemdup has implemented the function that kzalloc() + memcpy() will
->> do. and we prefer to use the kmemdup rather than the open coded implementation.
-> Please submit patches using subject lines reflecting the style for the
-> subsystem.  This makes it easier for people to identify relevant
-> patches.  Look at what existing commits in the area you're changing are
-> doing and make sure your subject lines visually resemble what they're
-> doing.
-I will notice this next time.  Thanks
+On 2018/9/10 21:49, zhong jiang wrote:
+> On 2018/9/8 22:17, Jonathan Cameron wrote:
+>> On Sat, 8 Sep 2018 17:59:13 +0530
+>> Himanshu Jha <himanshujha199640@gmail.com> wrote:
+>>
+>>> On Sat, Sep 08, 2018 at 06:57:36PM +0800, zhong jiang wrote:
+>>>> The iterator in for_each_set_bit is never null, therefore, remove
+>>>> the redundant conditional judgment.
+>>>>
+>>>> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+>>>> ---
+>>>>  drivers/iio/humidity/am2315.c | 3 +--
+>>>>  1 file changed, 1 insertion(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/drivers/iio/humidity/am2315.c b/drivers/iio/humidity/am2315.c
+>>>> index 7d8669d..dc12e37 100644
+>>>> --- a/drivers/iio/humidity/am2315.c
+>>>> +++ b/drivers/iio/humidity/am2315.c
+>>>> @@ -176,8 +176,7 @@ static irqreturn_t am2315_trigger_handler(int irq, void *p)
+>>>>  		i = 0;
+>>>>  		for_each_set_bit(bit, indio_dev->active_scan_mask,
+>>>>  				 indio_dev->masklength) {
+>>>> -			data->buffer[i] = (bit ? sensor_data.temp_data :
+>>>> -						 sensor_data.hum_data);
+>>>> +			data->buffer[i] = sensor_data.temp_data;  
+>>> No, this seems wrong!
+>>>
+>>> We have buffer support to either take both readings(temp & humid)
+>>> simultaneously, or only single channel using specified scan mask.
+>> Key think is that bit most definitely can be 0 if the 0th bit is set.
+>> This isn't a null check at all.
+>>
+>> I'm curious, was this a by inspection case or did some script throw
+>> this one up?
+>  Hi,  Jonathan
+>
+>  bit is a iterator that find the non-zero bit in indio_dev->active_scan_mask. if  all bit is
+>  zero ,  it should return the masklength.
+ That's my stupid fault.   The patch is totally wrong.:-(
 
-Sincerely,
+Thanks,
 zhong jiang
+>  Yep.  I find the issue with the help of Coccinelle.
+>
+>  Thanks
+> zhong jiang
+>> Thanks,
+>>
+>> Jonathan
+>>
+>>> Patch title should be:
+>>>
+>>> "iio: humidity: am2315: .... .. "
+>>>
+>>>
+>>> Thanks
+>> .
+>>
+>
+>
+> .
+>
+
 
