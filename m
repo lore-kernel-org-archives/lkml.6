@@ -2,124 +2,143 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E3C1C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 21:49:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59A09C4646A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 21:49:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D903F20881
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 21:49:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C77620880
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 21:49:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mNBcAUSE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D903F20881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OndiZfuB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C77620880
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728137AbeILCu5 (ORCPT
+        id S1728200AbeILCvB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 22:50:57 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:40540 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727775AbeILCu5 (ORCPT
+        Tue, 11 Sep 2018 22:51:01 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:46948 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727762AbeILCu7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 22:50:57 -0400
-Received: by mail-pl1-f194.google.com with SMTP id s17-v6so11927407plp.7
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 14:49:40 -0700 (PDT)
+        Tue, 11 Sep 2018 22:50:59 -0400
+Received: by mail-ed1-f67.google.com with SMTP id k14-v6so122930edr.13
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 14:49:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mWi9SnShPRZpy1FMbV9GuTCF8B+/y5r/+9MkkEb6uks=;
-        b=mNBcAUSERMEOQ8nFPVTJkrHifjrzwCn2G4eScTTfR4iH/Mixiy18a+9foF643iFsCi
-         PUUeF8o8GBD4/ZbWaiUi2hkM6TERQ5p1t5ytMnaB/Ikw76GoohuZPI+PQzXvTf3wnoYN
-         6ABAoyftMLLs/9OfOmfqtJwxYfEQ0er0eTbT+BbbMboPDR3TzNZMce313YHadq8xyidM
-         c6TDwjkHv7dtZPpQVbiZqpQt91K7VHuO97xPTcyQsn/Yo96PSJW6Nvf43thL5fiHoi4w
-         xCIcWv/4IFXSbT0cpiaGdO4EcTcW2PBtD4+64TFkmdBQnLGajukaJZySArPX9Eswd9Cb
-         ZviQ==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/eM7wUlB4sL80j9P9LLyszeZYNd1+UL3qDbNM5QoD64=;
+        b=OndiZfuBE2NORncF/J4H6IAULj7+9tHZzdQ8ixv2S22Y3Ymmq6/UcOaGfVWD5kvEXq
+         h5I4hZCPlgbLvuS6mI40jxyXfmTnkhqKJt/MKMKcpyKNXsun30AjS3gg6MxlL55gtjq+
+         yVs9PEZQA9A4iJ0BJtMJGeFxaTf/zQgcstal5lL3Y/cNqBqDZCmNMyuNXcPZ8Xul7PKI
+         sOHvGjV5pe01mgIi/0s8UoSTPw3mGMOynkQKY9IG3fgYS+Mu4cc0a1Wnj1RIr5Rw0c66
+         CBEkqVusaRVCq1yizW7srB9JW99wZH04wCe/n8JAD1Y6NC9NEHcA0vaU8Fw298j8LMaR
+         VHvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mWi9SnShPRZpy1FMbV9GuTCF8B+/y5r/+9MkkEb6uks=;
-        b=M9pXQ4ucnFR33g0dDUq4mJJcuhoo6KkZd5sLQYt+DAjqucda2R0VEIJeSSHnXh2ffe
-         eZ0QnmmBUEksi2FkrpjCZ1IKCuIblTLp3+ypcwOiJ1fVsrsVzM5nE0nv/+tk61reQZAf
-         OiUJLnMgY7sNmXLMLZbH4NPhBK4zfF2VwsqsfNJPDOlS7Jig6P9YzEJl50AFEpB2Q3ac
-         9h9Uww0ZbbwFrCGMkOTcraZ4XNHPdpzgfNIPlN062fhNvEnu43rJou96QXAjgH3jKNuZ
-         5nPg8mKzanFvn4Q9zS6PCCEzADVJaare7WtY8AJNxv4YsoUsptN/T16mxEmHH7E7Vvaw
-         1Shg==
-X-Gm-Message-State: APzg51CpbdyEhN1y5mk7Qf4JlhdivSdK45HWnXQk0MAJj/M2ctwpHgbg
-        YUdK5PEWnvZLHAaW3zy+mP6uvPhdPsssyvbJQOw1tQ==
-X-Google-Smtp-Source: ANB0VdbSWY1RUpl5C79v+EM7wDDR30Tni5B8HstCzifOp6FF0UfoSCG/lZfLRaCslqNbWEJVF/bonLYseETpvmEfszc=
-X-Received: by 2002:a17:902:b7c3:: with SMTP id v3-v6mr29261901plz.238.1536702579353;
- Tue, 11 Sep 2018 14:49:39 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/eM7wUlB4sL80j9P9LLyszeZYNd1+UL3qDbNM5QoD64=;
+        b=mZRvBxF25a1sDDuuAkfJzEgWjPOizlfMfRonST+r0RFD6IumHX108NMPs2JttFb/lC
+         mcq8sirYCGtbXIW5zIXqBIA7j2NIFHRswShADOi3FbzrxCcsAHOKKmsuXjrQx1qPzDhd
+         kA7YMY8idP+hBkjVCAUEsHf4S45z9nqrRmWUIUIiqABxlRYhYyrUgcYwwaYWhhhpdBdg
+         waR2eo/FN9VMna45IvLwjABWVMajQpigbiJDeLZEobXvLf59+w79WWCwrKmD5D4kF+OW
+         6TlU1g/9yiNap8wv/aI5AjrmsodTzj3ZOPK1ibfW07dHTBa58NolLCXmx0HVbT3Uy5yj
+         fB4g==
+X-Gm-Message-State: APzg51CXWoD9CdLxmJbzuIHoQHrKpN3Ps2iN2fH05G6GxgbBPdytGo7G
+        tqMMTqJ7xkx2BQozPZaPm7M=
+X-Google-Smtp-Source: ANB0VdaVCk1m38YftprAgn/iK1cTwY3TOK6FQibBkXn6zH/Pr5XX0EIfbePtAYgSi4bf3B+ylZBEkA==
+X-Received: by 2002:a50:98c1:: with SMTP id j59-v6mr30789193edb.212.1536702581290;
+        Tue, 11 Sep 2018 14:49:41 -0700 (PDT)
+Received: from xux707-tw ([109.78.225.224])
+        by smtp.gmail.com with ESMTPSA id z19-v6sm15621979edd.77.2018.09.11.14.49.39
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 11 Sep 2018 14:49:40 -0700 (PDT)
+Date:   Tue, 11 Sep 2018 22:49:56 +0100
+From:   John Whitmore <johnfwhitmore@gmail.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org
+Subject: Re: [PATCH 20/20] staging:rtl8192u: Rename OWN - Style
+Message-ID: <20180911214955.GE31239@xux707-tw>
+References: <20180831230250.16810-1-johnfwhitmore@gmail.com>
+ <20180831230250.16810-21-johnfwhitmore@gmail.com>
+ <20180910150927.GC25530@kroah.com>
 MIME-Version: 1.0
-References: <20180911214338.1109-1-natechancellor@gmail.com>
-In-Reply-To: <20180911214338.1109-1-natechancellor@gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Tue, 11 Sep 2018 14:49:28 -0700
-Message-ID: <CAKwvOdmnF=jizgd5Trmm3HA3QhkxqmdBp0mVt03vTaeP3pXX9Q@mail.gmail.com>
-Subject: Re: [PATCH] pata_atiixp: Remove unnecessary parentheses
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     b.zolnierkie@samsung.com, axboe@kernel.dk,
-        linux-ide@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180910150927.GC25530@kroah.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 11, 2018 at 2:43 PM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> Clang warns when more than one set of parentheses is used for a
-> single conditional statement:
->
-> drivers/ata/pata_atiixp.c:282:19: warning: equality comparison with
-> extraneous parentheses [-Wparentheses-equality]
->         if((pdev->device == PCI_DEVICE_ID_ATI_IXP600_IDE))
->             ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> drivers/ata/pata_atiixp.c:282:19: note: remove extraneous parentheses
-> around the comparison to silence this warning
->         if((pdev->device == PCI_DEVICE_ID_ATI_IXP600_IDE))
->            ~             ^                              ~
-> drivers/ata/pata_atiixp.c:282:19: note: use '=' to turn this equality
-> comparison into an assignment
->         if((pdev->device == PCI_DEVICE_ID_ATI_IXP600_IDE))
->                          ^~
->                          =
+On Mon, Sep 10, 2018 at 05:09:27PM +0200, Greg KH wrote:
+> On Sat, Sep 01, 2018 at 12:02:50AM +0100, John Whitmore wrote:
+> > Rename the member variable 'OWN' to 'own', this is to comply with the
+> > coding standard, where variables are named in lowercase.
+> > 
+> > This is a simple coding style change which should have no impact on
+> > runtime code execution.
+> > 
+> > Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
+> > ---
+> >  drivers/staging/rtl8192u/r8192U.h      | 2 +-
+> >  drivers/staging/rtl8192u/r8192U_core.c | 2 +-
+> >  2 files changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/staging/rtl8192u/r8192U.h b/drivers/staging/rtl8192u/r8192U.h
+> > index 68e82b32a88e..f963b664e221 100644
+> > --- a/drivers/staging/rtl8192u/r8192U.h
+> > +++ b/drivers/staging/rtl8192u/r8192U.h
+> > @@ -165,7 +165,7 @@ struct tx_desc_819x_usb {
+> >  	u8	last_seg:1;
+> >  	u8	first_seg:1;
+> >  	u8	linip:1;
+> > -	u8	OWN:1;
+> > +	u8	own:1;
+> >  
+> >  	/* DWORD 1 */
+> >  	u8	TxFWInfoSize;
+> > diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
+> > index 911d0214b48a..4d0f70ec31ac 100644
+> > --- a/drivers/staging/rtl8192u/r8192U_core.c
+> > +++ b/drivers/staging/rtl8192u/r8192U_core.c
+> > @@ -1558,7 +1558,7 @@ short rtl8192_tx(struct net_device *dev, struct sk_buff *skb)
+> >  	/* DWORD 0 */
+> >  	tx_desc->first_seg = 1;
+> >  	tx_desc->last_seg = 1;
+> > -	tx_desc->OWN = 1;
+> > +	tx_desc->own = 1;
+> 
+> Is this another case of a variable being set once and then never used?
+> 
+> If so, just delete it.
+> 
+> thanks,
+> 
+> greg k-h
 
-Yeah, I don't think assignment and conditional checking was implied here.
-Thanks for the simple fix.
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+em, I wasn't sure because that variable's a memeber of the sk_buff * passed
+into the funtion. That function should be static to the file and is only
+called from function rtl8192_hard_start_xmit() but that's a function
+pointer which is sort of exported:
 
-> 1 warning generated.
->
-> Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
->  drivers/ata/pata_atiixp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/ata/pata_atiixp.c b/drivers/ata/pata_atiixp.c
-> index 4d49fd3c927b..843bb200a1ee 100644
-> --- a/drivers/ata/pata_atiixp.c
-> +++ b/drivers/ata/pata_atiixp.c
-> @@ -279,7 +279,7 @@ static int atiixp_init_one(struct pci_dev *pdev, const struct pci_device_id *id)
->         const struct ata_port_info *ppi[] = { &info, &info };
->
->         /* SB600 doesn't have secondary port wired */
-> -       if((pdev->device == PCI_DEVICE_ID_ATI_IXP600_IDE))
-> +       if (pdev->device == PCI_DEVICE_ID_ATI_IXP600_IDE)
->                 ppi[1] = &ata_dummy_port_info;
->
->         return ata_pci_bmdma_init_one(pdev, ppi, &atiixp_sht, NULL,
-> --
-> 2.18.0
->
+        priv->ieee80211->softmac_hard_start_xmit = rtl8192_hard_start_xmit;
 
+Having said that the 'OWN' member is part of the private data:
 
--- 
-Thanks,
-~Nick Desaulniers
+	struct tx_desc_819x_usb *tx_desc = (struct tx_desc_819x_usb *)skb->data;
+
+Like I say I wasn't sure so played it safe. I guess it's private data so nobody
+outside the driver should be messing with that data, and I'm not sure how
+public that function is.
+
+I'll read some, ponder a bit and have another go.
+
+jwhitmore
