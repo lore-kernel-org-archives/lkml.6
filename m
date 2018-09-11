@@ -2,105 +2,65 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF2C3C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 12:40:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 377F4C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 12:41:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B7AC20839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 12:40:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Rb1XNfG8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B7AC20839
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id E70152086A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 12:41:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E70152086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sony.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727859AbeIKRjm (ORCPT
+        id S1727824AbeIKRkQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 13:39:42 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:34042 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727508AbeIKRjm (ORCPT
+        Tue, 11 Sep 2018 13:40:16 -0400
+Received: from seldsegrel01.sonyericsson.com ([37.139.156.29]:7541 "EHLO
+        SELDSEGREL01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727125AbeIKRkP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 13:39:42 -0400
-Received: by mail-wm0-f68.google.com with SMTP id j25-v6so7717820wmc.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 05:40:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=CPtzFACY4su4BfPig6c8W/3c4FETASJAdffNr4W/0oI=;
-        b=Rb1XNfG81Bm5xsNkb6ZufAPXrewfxh52PUdcouWKGxnWiQm3/MIVGDuPYPRUZPCWTV
-         4AZt1d9HpG7/lgh22n6KCb+NK/n5QBj0Dxoq3ssTzHaR+sM1dLVqQ2k5K/o/fZyfGrAU
-         zA+AjWuKJdUrzH1WYl7lUCBD0j0GBigLe/VbM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=CPtzFACY4su4BfPig6c8W/3c4FETASJAdffNr4W/0oI=;
-        b=nvwQ5hDT9NMrTyYtBDxuO6s4/rRBlQloZXHdXBJ8B/nT7RNN7AczW711l127y7uxB0
-         RPiAkiK8L0ePsbPo0Qpkzw52jInkBukLqCIUZ5I/nIyKMebyPlbnmvJTy41hUvRLP89S
-         mUXS/+DMIC5jQqfyHAqZJ2tVXCrLsJpMhsYvaJ/V5vICgrbR1rLd6tKzJg7EEsPwPHpO
-         Tp39PVnktB3C5PA75oPPnQJOmxmSNO67a6+WhEdSuQxfk0K4h28/bIL83KZdciLP4L7S
-         28SiZMcxk59+VjGZ3USgwg3DOlhvssUaKg/noSG8uBm8zL+zSzVu5YSao4AkBb+TR3GU
-         FMoQ==
-X-Gm-Message-State: APzg51C9RhbFcPDQTA5f5HWlWN96N8PcfuzncZmBl34BIY9nnt4rzTMO
-        VYFnlWfL6S0v4qhYsud+YfhbjA==
-X-Google-Smtp-Source: ANB0VdY4jRuS4FFGjtlMth3mEQ/2DOWQPaBz5s9PaTlWCvMEkUoLfNtRJtd48EQnXYPyOuAFatbscQ==
-X-Received: by 2002:a1c:4904:: with SMTP id w4-v6mr1346603wma.0.1536669632280;
-        Tue, 11 Sep 2018 05:40:32 -0700 (PDT)
-Received: from dell ([2.27.167.7])
-        by smtp.gmail.com with ESMTPSA id p89-v6sm30411133wrc.97.2018.09.11.05.40.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Sep 2018 05:40:31 -0700 (PDT)
-Date:   Tue, 11 Sep 2018 13:40:29 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, lgirdwood@gmail.com,
-        broonie@kernel.org, mazziesaccount@gmail.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com
-Subject: Re: [PATCH 1/8] regulator: bd71837: Disable voltage monitoring for
- LDO3/4
-Message-ID: <20180911124029.GO4185@dell>
-References: <cover.1535545377.git.matti.vaittinen@fi.rohmeurope.com>
- <cad2e7baeb7af2d6efbc6afba831b0513087d832.1535545377.git.matti.vaittinen@fi.rohmeurope.com>
+        Tue, 11 Sep 2018 13:40:15 -0400
+Subject: Re: [PATCH RFC] mm: don't raise MEMCG_OOM event due to failed
+ high-order allocation
+To:     Michal Hocko <mhocko@kernel.org>, Roman Gushchin <guro@fb.com>
+CC:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-team@fb.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>
+References: <20180910215622.4428-1-guro@fb.com>
+ <20180911121141.GS10951@dhcp22.suse.cz>
+From:   peter enderborg <peter.enderborg@sony.com>
+Message-ID: <0ea4cdbd-dc3f-1b66-8a5f-8d67ab0e2bc9@sony.com>
+Date:   Tue, 11 Sep 2018 14:41:04 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cad2e7baeb7af2d6efbc6afba831b0513087d832.1535545377.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180911121141.GS10951@dhcp22.suse.cz>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 29 Aug 2018, Matti Vaittinen wrote:
+On 09/11/2018 02:11 PM, Michal Hocko wrote:
+> Why is this a problem though? IIRC this event was deliberately placed
+> outside of the oom path because we wanted to count allocation failures
+> and this is also documented that way
+>
+>           oom
+>                 The number of time the cgroup's memory usage was
+>                 reached the limit and allocation was about to fail.
+>
+>                 Depending on context result could be invocation of OOM
+>                 killer and retrying allocation or failing a
+>
+> One could argue that we do not apply the same logic to GFP_NOWAIT
+> requests but in general I would like to see a good reason to change
+> the behavior and if it is really the right thing to do then we need to
+> update the documentation as well.
+>
 
-> There is a HW quirk in BD71837. The shutdown sequence timings for
-> bucks/LDOs which are enabled via register interface are changed.
-> At PMIC poweroff the voltage for BUCK6/7 is cut immediately at the
-> beginning of shut-down sequence. This causes LDO5/6 voltage
-> monitoring to detect under voltage and force PMIC to emergency
-> state instead of poweroff. Disable voltage monitoring for LDO5 and
-> LDO6 at probe to avoid this.
-> 
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> ---
->  drivers/regulator/bd71837-regulator.c | 19 +++++++++++++++++++
-
->  include/linux/mfd/rohm-bd718x7.h      | 33 ++++++++++++++++++++++++++++++---
-
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Why not introduce a MEMCG_ALLOC_FAIL in to memcg_memory_event?
