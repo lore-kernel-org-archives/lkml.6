@@ -2,95 +2,106 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58439C6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 08:55:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84989C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 08:59:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 070CB20839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 08:55:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 070CB20839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
+	by mail.kernel.org (Postfix) with ESMTP id 174712086A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 08:59:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 174712086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726862AbeIKNyI (ORCPT
+        id S1726675AbeIKN5x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 09:54:08 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:35140 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726476AbeIKNyI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 09:54:08 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
-   d="scan'208";a="44771282"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 11 Sep 2018 16:55:46 +0800
-Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id F31644B6AE13;
-        Tue, 11 Sep 2018 16:55:47 +0800 (CST)
-Received: from localhost.localdomain (10.167.225.56) by
- G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 11 Sep 2018 16:55:52 +0800
-Date:   Tue, 11 Sep 2018 16:55:25 +0800
-From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
-To:     kbuild test robot <fengguang.wu@intel.com>
-CC:     <kbuild-all@01.org>, <tglx@linutronix.de>, <mingo@redhat.com>,
-        <hpa@zytor.com>, <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <keescook@chromium.org>, <bhe@redhat.com>,
-        <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>,
-        <douly.fnst@cn.fujitsu.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        <linux-efi@vger.kernel.org>, <linux-acpi@vger.kernel.org>
-Subject: Re: [RFC PATCH] x86/boot: get_acpi_srat_table() can be static
-Message-ID: <20180911085525.GF8519@localhost.localdomain>
-References: <20180910124015.18073-2-fanc.fnst@cn.fujitsu.com>
- <20180911085226.GA25670@athens>
+        Tue, 11 Sep 2018 09:57:53 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:40923 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726488AbeIKN5w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 09:57:52 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 896C75D99C99E;
+        Tue, 11 Sep 2018 16:59:29 +0800 (CST)
+Received: from [127.0.0.1] (10.177.29.68) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.399.0; Tue, 11 Sep 2018
+ 16:59:26 +0800
+Message-ID: <5B9783ED.4080908@huawei.com>
+Date:   Tue, 11 Sep 2018 16:59:25 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20180911085226.GA25670@athens>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: F31644B6AE13.ABDAD
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+CC:     <davem@davemloft.net>, <edumazet@google.com>,
+        <kuznet@ms2.inr.ac.ru>, <yoshfuji@linux-ipv6.org>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] net: ipv4: Use BUG_ON directly instead of a if condition
+ followed by BUG
+References: <1536590282-23899-1-git-send-email-zhongjiang@huawei.com> <a000b5a4-2907-70f9-70ed-7e1c6a797876@cogentembedded.com>
+In-Reply-To: <a000b5a4-2907-70f9-70ed-7e1c6a797876@cogentembedded.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.68]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 11, 2018 at 04:52:26PM +0800, kbuild test robot wrote:
+On 2018/9/11 16:51, Sergei Shtylyov wrote:
+> On 9/10/2018 5:38 PM, zhong jiang wrote:
 >
->Fixes: cc1a4e2a5474 ("x86/boot: Add acpitb.c to parse acpi tables")
->Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
->---
-> acpitb.c |    2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
+>> The if condition can be removed if we use BUG_ON directly.
+>> The issule is detected with the help of Coccinelle.
 >
->diff --git a/arch/x86/boot/compressed/acpitb.c b/arch/x86/boot/compressed/acpitb.c
->index 66c5154..4ddd732 100644
->--- a/arch/x86/boot/compressed/acpitb.c
->+++ b/arch/x86/boot/compressed/acpitb.c
->@@ -279,7 +279,7 @@ static acpi_physical_address get_rsdp_addr(void)
-> 	return pa;
-> }
-> 
->-struct acpi_table_header *get_acpi_srat_table(void)
->+static struct acpi_table_header *get_acpi_srat_table(void)
-
-Good catch, will add it.
-
-Thanks,
-Chao Fan
-
-> {
-> 	char *args = (char *)get_cmd_line_ptr();
-> 	acpi_physical_address acpi_table;
+>   Issue?
 >
+>>
+>> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+>> ---
+>>   net/ipv4/tcp_input.c | 8 ++++----
+>>   1 file changed, 4 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
+>> index 62508a2..893bde3 100644
+>> --- a/net/ipv4/tcp_input.c
+>> +++ b/net/ipv4/tcp_input.c
+>> @@ -4934,8 +4934,8 @@ void tcp_rbtree_insert(struct rb_root *root, struct sk_buff *skb)
+>>               BUG_ON(offset < 0);
+>>               if (size > 0) {
+>>                   size = min(copy, size);
+>> -                if (skb_copy_bits(skb, offset, skb_put(nskb, size), size))
+>> -                    BUG();
+>> +                BUG(skb_copy_bits(skb, offset,
+>
+>    You said BUG_ON()?
+ Yep. Do you think that it is worthing to do
+
+ Thanks,
+zhong jiang
+>
+>> +                          skb_put(nskb, size), size));
+>>                   TCP_SKB_CB(nskb)->end_seq += size;
+>>                   copy -= size;
+>>                   start += size;
+>> @@ -5327,8 +5327,8 @@ static void tcp_urg(struct sock *sk, struct sk_buff *skb, const struct tcphdr *t
+>>           /* Is the urgent pointer pointing into this packet? */
+>>           if (ptr < skb->len) {
+>>               u8 tmp;
+>> -            if (skb_copy_bits(skb, ptr, &tmp, 1))
+>> -                BUG();
+>> +
+>> +            BUG(skb_copy_bits(skb, ptr, &tmp, 1));
+>
+>    Likewise.
+>
+> [...]
+>
+> MBR, Sergei
+>
+> .
 >
 
 
