@@ -2,114 +2,147 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34FEEC04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:26:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6028DECDFC0
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:26:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC47620870
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:26:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC47620870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 161E620865
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:26:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SrNg/AC5";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SrNg/AC5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 161E620865
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726811AbeIKOYy (ORCPT
+        id S1726912AbeIKOZF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 10:24:54 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49000 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726563AbeIKOYy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 10:24:54 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Tue, 11 Sep 2018 10:25:05 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:44420 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726569AbeIKOZE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 10:25:04 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id D08E9609BD; Tue, 11 Sep 2018 09:26:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1536657997;
+        bh=je+ux1fNPM0rDNJIXO6MU0PLVknQA2juJxQKvdOojWQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=SrNg/AC5tSxxtHDuYxW+R1PeJMJ0GGulqwSwNc+6Zqcozct0+fOnytmZBm4oOkxYS
+         2e6F42XnpO4lfh4g8CkzeFiIPJVbMnbfNd7D2+udVLq8VGE2Ei67ojTfTk6qEbfNtM
+         Boz297B/7+8z3fm6VTbqqAw5DvJ77RM8dOArLofs=
+Received: from [10.204.110.203] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5194D83207;
-        Tue, 11 Sep 2018 09:26:26 +0000 (UTC)
-Received: from [10.36.117.221] (ovpn-117-221.ams2.redhat.com [10.36.117.221])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 14EDAB279A;
-        Tue, 11 Sep 2018 09:26:22 +0000 (UTC)
-Subject: Re: [PATCH v6 5/5] x86/kvm: Avoid dynamic allocation of pvclock data
- when SEV is active
-To:     Borislav Petkov <bp@suse.de>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-References: <1536343050-18532-1-git-send-email-brijesh.singh@amd.com>
- <1536343050-18532-6-git-send-email-brijesh.singh@amd.com>
- <20180910122727.GE21815@zn.tnic>
- <026d5ca5-7b77-de6c-477e-ff39f0291ac0@amd.com>
- <1536586152.11460.40.camel@intel.com>
- <097eb5f5-2cd9-8b08-32c5-d90c8e0cbb6d@amd.com>
- <1536593297.11460.72.camel@intel.com>
- <11618b8b-4d1f-9307-35f0-3c0f0fc856ca@amd.com>
- <20180910164851.GC20286@zn.tnic>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <3b8b4c9c-b0f6-1e08-3d26-0e146cd7189e@redhat.com>
-Date:   Tue, 11 Sep 2018 11:26:21 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        (Authenticated sender: rohitkr@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D9526607EB;
+        Tue, 11 Sep 2018 09:26:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1536657997;
+        bh=je+ux1fNPM0rDNJIXO6MU0PLVknQA2juJxQKvdOojWQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=SrNg/AC5tSxxtHDuYxW+R1PeJMJ0GGulqwSwNc+6Zqcozct0+fOnytmZBm4oOkxYS
+         2e6F42XnpO4lfh4g8CkzeFiIPJVbMnbfNd7D2+udVLq8VGE2Ei67ojTfTk6qEbfNtM
+         Boz297B/7+8z3fm6VTbqqAw5DvJ77RM8dOArLofs=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D9526607EB
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rohitkr@codeaurora.org
+Subject: Re: [alsa-devel] [PATCH] ASoC: Fix UBSAN warning at
+ snd_soc_get/put_volsw_sx()
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     rohkumar@qti.qualcomm.com, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, lgirdwood@gmail.com,
+        broonie@kernel.org
+References: <1536600836-12153-1-git-send-email-rohitkr@codeaurora.org>
+ <s5hzhwp2oqd.wl-tiwai@suse.de>
+From:   Rohit Kumar <rohitkr@codeaurora.org>
+Message-ID: <3ac92f3a-059f-3513-4942-23eb41222490@codeaurora.org>
+Date:   Tue, 11 Sep 2018 14:56:32 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180910164851.GC20286@zn.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <s5hzhwp2oqd.wl-tiwai@suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 11 Sep 2018 09:26:26 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 11 Sep 2018 09:26:26 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/09/2018 18:48, Borislav Petkov wrote:
-> 
-> so *maybe* - and I pretty much have no clue about virt - but just
-> *maybe*, that kvmclock thing can be shared by all CPUs in a *guest*
-> then. As in: the guest should see stable clocks which are the same
-> regardless from which vCPU they're read and so on...
+Thanks Takashi for reviewing.
 
-Usually the kvmclock structs are all the same, but there is support for
-old machines with inconsistent TSCs (across different sockets typically).
 
-Paolo
+On 9/10/2018 11:56 PM, Takashi Iwai wrote:
+> On Mon, 10 Sep 2018 19:33:56 +0200,
+> Rohit kumar wrote:
+>> In functions snd_soc_get_volsw_sx() or snd_soc_put_volsw_sx(),
+>> if the result of (min + max) is negative, then fls() returns
+>> signed integer with value as 32. This leads to signed integer
+>> overflow as complete operation is considered as signed integer.
+>>
+>> UBSAN: Undefined behaviour in sound/soc/soc-ops.c:382:50
+>> signed integer overflow:
+>> -2147483648 - 1 cannot be represented in type 'int'
+>> Call trace:
+>> [<ffffff852f746fe4>] __dump_stack lib/dump_stack.c:15 [inline]
+>> [<ffffff852f746fe4>] dump_stack+0xec/0x158 lib/dump_stack.c:51
+>> [<ffffff852f7b5f3c>] ubsan_epilogue+0x18/0x50 lib/ubsan.c:164
+>> [<ffffff852f7b6840>] handle_overflow+0xf8/0x130 lib/ubsan.c:195
+>> [<ffffff852f7b68f0>] __ubsan_handle_sub_overflow+0x34/0x44 lib/ubsan.c:211
+>> [<ffffff85307971a0>] snd_soc_get_volsw_sx+0x1a8/0x1f8 sound/soc/soc-ops.c:382
+>>
+>> Typecast the operation to unsigned int to fix the issue.
+>>
+>> Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
+>> ---
+>>   sound/soc/soc-ops.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/sound/soc/soc-ops.c b/sound/soc/soc-ops.c
+>> index 592efb3..f8e3190 100644
+>> --- a/sound/soc/soc-ops.c
+>> +++ b/sound/soc/soc-ops.c
+>> @@ -373,7 +373,7 @@ int snd_soc_get_volsw_sx(struct snd_kcontrol *kcontrol,
+>>   	unsigned int rshift = mc->rshift;
+>>   	int max = mc->max;
+>>   	int min = mc->min;
+>> -	unsigned int mask = (1 << (fls(min + max) - 1)) - 1;
+>> +	unsigned int mask = ((unsigned int)(1 << (fls(min + max) - 1)) - 1);
+> Cat it be simpler like below instead?
+> 	unsigned int mask = (1U << (fls(min + max) - 1)) - 1;
+
+Yes, let me just update it.
+>
+> thanks,
+>
+> Takashi
+>
+>>   	unsigned int val;
+>>   	int ret;
+>>   
+>> @@ -418,7 +418,7 @@ int snd_soc_put_volsw_sx(struct snd_kcontrol *kcontrol,
+>>   	unsigned int rshift = mc->rshift;
+>>   	int max = mc->max;
+>>   	int min = mc->min;
+>> -	unsigned int mask = (1 << (fls(min + max) - 1)) - 1;
+>> +	unsigned int mask = ((unsigned int)(1 << (fls(min + max) - 1)) - 1);
+>>   	int err = 0;
+>>   	unsigned int val, val_mask, val2 = 0;
+>>   
+>> -- 
+>> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.,
+>> is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+>>
+>>
+> _______________________________________________
+> Alsa-devel mailing list
+> Alsa-devel@alsa-project.org
+> http://mailman.alsa-project.org/mailman/listinfo/alsa-devel
+Thanks,
+Rohit
+
