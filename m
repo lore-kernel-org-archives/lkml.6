@@ -6,62 +6,62 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11977C04ABB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 21:50:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A29CC4646A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 21:50:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6C6A20880
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 21:50:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2949220880
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 21:50:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="d2K1kFp0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6C6A20880
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OstrpvlO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2949220880
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728264AbeILCvS (ORCPT
+        id S1728286AbeILCvV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 22:51:18 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:37372 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727734AbeILCvR (ORCPT
+        Tue, 11 Sep 2018 22:51:21 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:41956 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727734AbeILCvU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 22:51:17 -0400
-Received: by mail-it0-f66.google.com with SMTP id h20-v6so347006itf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 14:50:00 -0700 (PDT)
+        Tue, 11 Sep 2018 22:51:20 -0400
+Received: by mail-io0-f194.google.com with SMTP id q4-v6so4846130iob.8
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 14:50:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ndon8OHIl6m5sRiniUkX7B9EbcN5ooYPsC8th1bX5sM=;
-        b=d2K1kFp09lizW8A4V55ef6PUvzrTLFRWgzs8A6b7l1rYrlhTqaREKXv0vW90d19/Tj
-         MgoaUKJksszvePD4w0Sb1TVfjr8nn7hc3fHEkS6y4N83R0L257Js7SbQZaUwkkHRBt+F
-         zvhbtc3lmfpHHEjL1vr2hmQfgNifAA5P0V90g=
+        bh=nE54tmiDsnKsQusmU2kfw+Wu31P7rt65tLwJCDG9RhE=;
+        b=OstrpvlOZh00NoAWFSuVHHq9Q+vpuKiDeGtbGDGYi/Kugb6pGffEpallajzSyDfbGi
+         zPYtWuNo4uy4zaE2VSjGl90u1OneBnqfiZr8TkFxHz1VjpKEXDdHMKXZgyJMpD2JH1NP
+         eDxMqGh8/tQUjfWmlK0wV4d0myiY6362dF89o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=ndon8OHIl6m5sRiniUkX7B9EbcN5ooYPsC8th1bX5sM=;
-        b=AKNzCRmydCFbxEbJlHuRgKp4RxDEwRKj/6PJK1jCox0AJLCSNH2O7oxvll8x68wuRx
-         d+gNq79JCmqIjsQJSdma27/lC4npWqLA6T2E2WF87Ko3p4967DWx6oj4lvWXdjxGKvPI
-         ZBTXR0o+deFfjTrvgOq8GVHxXGlgP5JhhwRKGXtIeci2/PqcIhzGqsjNxac/ZI2CHASe
-         beO/22MSQSjYpqgPAuenCb4+2KZA8j0oyZ7VS2G4B5RSUwPpqF2Ft0pdD9N9D+7uimPV
-         A3S9aMPSeGz07UnBSTSKuZk4q6yqfUgFwfQhF8rHSZam4ifQCvCbDD3NUSra1LiW8ekp
-         BDwA==
-X-Gm-Message-State: APzg51C6nKTurTs3K9z6ZocL99DTXUx/7P32BaSsSGe3ujZ+cZ6BQss/
-        8c4ox+oNlHhpLe/BeolTBrU7WA==
-X-Google-Smtp-Source: ANB0VdZ66amUIb9ElbYyIK/4PAX1YO5Q08JozT21JbpnC4bjNZmhRQzpzjfN2q37i1xAVVMypYuoJw==
-X-Received: by 2002:a24:2f0e:: with SMTP id j14-v6mr3337355itj.120.1536702600493;
-        Tue, 11 Sep 2018 14:50:00 -0700 (PDT)
+        bh=nE54tmiDsnKsQusmU2kfw+Wu31P7rt65tLwJCDG9RhE=;
+        b=YjKykcD9ANYUmDsK60r2PM9oQVHcg0RalldNTkFb16OwJu0lu29DmRV6Y7Dom9haNg
+         Z5UrrP2XYXbiBd/0s8IBHQ92tMwZE4LdTmd5dvTiFnEzyLWxbl5UpmNmPQNZSYlXLVzJ
+         Q0Lj4RTEPZ5qrZA7f6lJZnlCuHKkAydgnftu0cD5eyqZABgojMpvy20P+lHWFCJocqMg
+         YrNEsG1CBOMf1arZuEyK0Gx9RiMYDHlWSGd+h3CjPX60IhcaMXMNJiMmc4X2QOE+hRJG
+         KmjdnbeVk3VJOCZpozhvG+ts7plhOfusx2O+bhGdJmUZezYVQ9hnqU9tZtAgsueykurb
+         GABw==
+X-Gm-Message-State: APzg51BDcpYkHoGs3uAbwdCmdq73+GNSOaycU5RwUATzidvQSbWFcdDQ
+        bjiHP9rOp4XlzSgBejuBRnKQ3A==
+X-Google-Smtp-Source: ANB0VdYnJKFGhASZnoHx/6JlTIwVNuHvmVdXqUq3WB/FQZud5e5AqPH9WxTpILU4/svfvZG21ky/cQ==
+X-Received: by 2002:a6b:7308:: with SMTP id e8-v6mr6622475ioh.57.1536702602424;
+        Tue, 11 Sep 2018 14:50:02 -0700 (PDT)
 Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id c3-v6sm1102172itd.8.2018.09.11.14.49.58
+        by smtp.gmail.com with ESMTPSA id c3-v6sm1102172itd.8.2018.09.11.14.50.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 11 Sep 2018 14:49:59 -0700 (PDT)
+        Tue, 11 Sep 2018 14:50:01 -0700 (PDT)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     alexander.shishkin@linux.intel.com, suzuki.poulose@arm.com,
         gregkh@linuxfoundation.org, kim.phillips@arm.com,
         leo.yan@linaro.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/5] coresight: Make path enable/disable aware of operation mode
-Date:   Tue, 11 Sep 2018 15:49:51 -0600
-Message-Id: <1536702595-9999-2-git-send-email-mathieu.poirier@linaro.org>
+Subject: [PATCH 2/5] coresight: Make link components aware of operation mode
+Date:   Tue, 11 Sep 2018 15:49:52 -0600
+Message-Id: <1536702595-9999-3-git-send-email-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1536702595-9999-1-git-send-email-mathieu.poirier@linaro.org>
 References: <1536702595-9999-1-git-send-email-mathieu.poirier@linaro.org>
@@ -70,93 +70,184 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make functions that enable and disable a path aware of the mode,
-i.e sysFS or perf, they are being operated from.  That way said
-mode can be communicated to device specific operations in order
-to control how verbose they can be.
+Following what has been done for source and sinks, make link
+devices aware of the mode they are being operated from so that
+their verbosity can be controlled.
 
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- drivers/hwtracing/coresight/coresight-etm-perf.c | 4 ++--
- drivers/hwtracing/coresight/coresight-priv.h     | 2 +-
- drivers/hwtracing/coresight/coresight.c          | 8 ++++----
- 3 files changed, 7 insertions(+), 7 deletions(-)
+ drivers/hwtracing/coresight/coresight-dynamic-replicator.c |  4 ++--
+ drivers/hwtracing/coresight/coresight-funnel.c             |  4 ++--
+ drivers/hwtracing/coresight/coresight-replicator.c         |  4 ++--
+ drivers/hwtracing/coresight/coresight-tmc-etf.c            |  4 ++--
+ drivers/hwtracing/coresight/coresight.c                    | 13 +++++++------
+ include/linux/coresight.h                                  |  6 ++++--
+ 6 files changed, 19 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
-index abe8249b893b..92affdcf2467 100644
---- a/drivers/hwtracing/coresight/coresight-etm-perf.c
-+++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
-@@ -304,7 +304,7 @@ static void etm_event_start(struct perf_event *event, int flags)
- 	return;
+diff --git a/drivers/hwtracing/coresight/coresight-dynamic-replicator.c b/drivers/hwtracing/coresight/coresight-dynamic-replicator.c
+index ebb80438f6a5..de2c197886c6 100644
+--- a/drivers/hwtracing/coresight/coresight-dynamic-replicator.c
++++ b/drivers/hwtracing/coresight/coresight-dynamic-replicator.c
+@@ -35,7 +35,7 @@ struct replicator_state {
+ };
  
- fail_disable_path:
--	coresight_disable_path(path);
-+	coresight_disable_path(path, CS_MODE_PERF);
- fail_end_stop:
- 	perf_aux_output_flag(handle, PERF_AUX_FLAG_TRUNCATED);
- 	perf_aux_output_end(handle, 0);
-@@ -356,7 +356,7 @@ static void etm_event_stop(struct perf_event *event, int mode)
- 	}
+ static int replicator_enable(struct coresight_device *csdev, int inport,
+-			      int outport)
++			      int outport, u32 mode)
+ {
+ 	struct replicator_state *drvdata = dev_get_drvdata(csdev->dev.parent);
  
- 	/* Disabling the path make its elements available to other sessions */
--	coresight_disable_path(path);
-+	coresight_disable_path(path, CS_MODE_PERF);
+@@ -61,7 +61,7 @@ static int replicator_enable(struct coresight_device *csdev, int inport,
  }
  
- static int etm_event_add(struct perf_event *event, int mode)
-diff --git a/drivers/hwtracing/coresight/coresight-priv.h b/drivers/hwtracing/coresight/coresight-priv.h
-index c11da5564a67..acfe67646a05 100644
---- a/drivers/hwtracing/coresight/coresight-priv.h
-+++ b/drivers/hwtracing/coresight/coresight-priv.h
-@@ -136,7 +136,7 @@ static inline void coresight_write_reg_pair(void __iomem *addr, u64 val,
- 		writel_relaxed((u32)(val >> 32), addr + hi_offset);
+ static void replicator_disable(struct coresight_device *csdev, int inport,
+-				int outport)
++				int outport, u32 mode)
+ {
+ 	struct replicator_state *drvdata = dev_get_drvdata(csdev->dev.parent);
+ 
+diff --git a/drivers/hwtracing/coresight/coresight-funnel.c b/drivers/hwtracing/coresight/coresight-funnel.c
+index ee7a30bf9480..c1c9f5fccc4b 100644
+--- a/drivers/hwtracing/coresight/coresight-funnel.c
++++ b/drivers/hwtracing/coresight/coresight-funnel.c
+@@ -59,7 +59,7 @@ static void funnel_enable_hw(struct funnel_drvdata *drvdata, int port)
  }
  
--void coresight_disable_path(struct list_head *path);
-+void coresight_disable_path(struct list_head *path, u32 mode);
- int coresight_enable_path(struct list_head *path, u32 mode, void *sink_data);
- struct coresight_device *coresight_get_sink(struct list_head *path);
- struct coresight_device *coresight_get_enabled_sink(bool reset);
+ static int funnel_enable(struct coresight_device *csdev, int inport,
+-			 int outport)
++			 int outport, u32 mode)
+ {
+ 	struct funnel_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+ 
+@@ -83,7 +83,7 @@ static void funnel_disable_hw(struct funnel_drvdata *drvdata, int inport)
+ }
+ 
+ static void funnel_disable(struct coresight_device *csdev, int inport,
+-			   int outport)
++			   int outport, u32 mode)
+ {
+ 	struct funnel_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+ 
+diff --git a/drivers/hwtracing/coresight/coresight-replicator.c b/drivers/hwtracing/coresight/coresight-replicator.c
+index feac98315471..0b749302c066 100644
+--- a/drivers/hwtracing/coresight/coresight-replicator.c
++++ b/drivers/hwtracing/coresight/coresight-replicator.c
+@@ -31,7 +31,7 @@ struct replicator_drvdata {
+ };
+ 
+ static int replicator_enable(struct coresight_device *csdev, int inport,
+-			     int outport)
++			     int outport, u32 mode)
+ {
+ 	struct replicator_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+ 
+@@ -40,7 +40,7 @@ static int replicator_enable(struct coresight_device *csdev, int inport,
+ }
+ 
+ static void replicator_disable(struct coresight_device *csdev, int inport,
+-			       int outport)
++			       int outport, u32 mode)
+ {
+ 	struct replicator_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+ 
+diff --git a/drivers/hwtracing/coresight/coresight-tmc-etf.c b/drivers/hwtracing/coresight/coresight-tmc-etf.c
+index 4156c95ce1bb..28b3ff830597 100644
+--- a/drivers/hwtracing/coresight/coresight-tmc-etf.c
++++ b/drivers/hwtracing/coresight/coresight-tmc-etf.c
+@@ -269,7 +269,7 @@ static void tmc_disable_etf_sink(struct coresight_device *csdev)
+ }
+ 
+ static int tmc_enable_etf_link(struct coresight_device *csdev,
+-			       int inport, int outport)
++			       int inport, int outport, u32 mode)
+ {
+ 	unsigned long flags;
+ 	struct tmc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+@@ -289,7 +289,7 @@ static int tmc_enable_etf_link(struct coresight_device *csdev,
+ }
+ 
+ static void tmc_disable_etf_link(struct coresight_device *csdev,
+-				 int inport, int outport)
++				 int inport, int outport, u32 mode)
+ {
+ 	unsigned long flags;
+ 	struct tmc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
 diff --git a/drivers/hwtracing/coresight/coresight.c b/drivers/hwtracing/coresight/coresight.c
-index e73ca6af4765..118b435f0887 100644
+index 118b435f0887..edfb7f8d2f0b 100644
 --- a/drivers/hwtracing/coresight/coresight.c
 +++ b/drivers/hwtracing/coresight/coresight.c
-@@ -277,7 +277,7 @@ static bool coresight_disable_source(struct coresight_device *csdev)
- 	return !csdev->enable;
- }
+@@ -161,7 +161,7 @@ static void coresight_disable_sink(struct coresight_device *csdev)
  
--void coresight_disable_path(struct list_head *path)
-+void coresight_disable_path(struct list_head *path, u32 mode)
+ static int coresight_enable_link(struct coresight_device *csdev,
+ 				 struct coresight_device *parent,
+-				 struct coresight_device *child)
++				 struct coresight_device *child, u32 mode)
  {
- 	u32 type;
- 	struct coresight_node *nd;
-@@ -369,7 +369,7 @@ int coresight_enable_path(struct list_head *path, u32 mode, void *sink_data)
- out:
- 	return ret;
- err:
--	coresight_disable_path(path);
-+	coresight_disable_path(path, mode);
- 	goto out;
- }
+ 	int ret;
+ 	int link_subtype;
+@@ -186,7 +186,8 @@ static int coresight_enable_link(struct coresight_device *csdev,
  
-@@ -677,7 +677,7 @@ int coresight_enable(struct coresight_device *csdev)
- 	return ret;
+ 	if (atomic_inc_return(&csdev->refcnt[refport]) == 1) {
+ 		if (link_ops(csdev)->enable) {
+-			ret = link_ops(csdev)->enable(csdev, inport, outport);
++			ret = link_ops(csdev)->enable(csdev, inport,
++						      outport, mode);
+ 			if (ret)
+ 				return ret;
+ 		}
+@@ -199,7 +200,7 @@ static int coresight_enable_link(struct coresight_device *csdev,
  
- err_source:
--	coresight_disable_path(path);
-+	coresight_disable_path(path, CS_MODE_SYSFS);
+ static void coresight_disable_link(struct coresight_device *csdev,
+ 				   struct coresight_device *parent,
+-				   struct coresight_device *child)
++				   struct coresight_device *child, u32 mode)
+ {
+ 	int i, nr_conns;
+ 	int link_subtype;
+@@ -225,7 +226,7 @@ static void coresight_disable_link(struct coresight_device *csdev,
  
- err_path:
- 	coresight_release_path(path);
-@@ -714,7 +714,7 @@ void coresight_disable(struct coresight_device *csdev)
- 		break;
+ 	if (atomic_dec_return(&csdev->refcnt[refport]) == 0) {
+ 		if (link_ops(csdev)->disable)
+-			link_ops(csdev)->disable(csdev, inport, outport);
++			link_ops(csdev)->disable(csdev, inport, outport, mode);
  	}
  
--	coresight_disable_path(path);
-+	coresight_disable_path(path, CS_MODE_SYSFS);
- 	coresight_release_path(path);
+ 	for (i = 0; i < nr_conns; i++)
+@@ -308,7 +309,7 @@ void coresight_disable_path(struct list_head *path, u32 mode)
+ 		case CORESIGHT_DEV_TYPE_LINK:
+ 			parent = list_prev_entry(nd, link)->csdev;
+ 			child = list_next_entry(nd, link)->csdev;
+-			coresight_disable_link(csdev, parent, child);
++			coresight_disable_link(csdev, parent, child, mode);
+ 			break;
+ 		default:
+ 			break;
+@@ -357,7 +358,7 @@ int coresight_enable_path(struct list_head *path, u32 mode, void *sink_data)
+ 		case CORESIGHT_DEV_TYPE_LINK:
+ 			parent = list_prev_entry(nd, link)->csdev;
+ 			child = list_next_entry(nd, link)->csdev;
+-			ret = coresight_enable_link(csdev, parent, child);
++			ret = coresight_enable_link(csdev, parent, child, mode);
+ 			if (ret)
+ 				goto err;
+ 			break;
+diff --git a/include/linux/coresight.h b/include/linux/coresight.h
+index 53535821dc25..8fc6f1e82c17 100644
+--- a/include/linux/coresight.h
++++ b/include/linux/coresight.h
+@@ -205,8 +205,10 @@ struct coresight_ops_sink {
+  * @disable:	disables flow between iport and oport.
+  */
+ struct coresight_ops_link {
+-	int (*enable)(struct coresight_device *csdev, int iport, int oport);
+-	void (*disable)(struct coresight_device *csdev, int iport, int oport);
++	int (*enable)(struct coresight_device *csdev,
++		      int iport, int oport, u32 mode);
++	void (*disable)(struct coresight_device *csdev,
++			int iport, int oport, u32 mode);
+ };
  
- out:
+ /**
 -- 
 2.7.4
 
