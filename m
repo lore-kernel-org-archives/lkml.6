@@ -2,88 +2,73 @@ Return-Path: <SRS0=LZPJ=LZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B757C6778D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:09:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42A61C04ABB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:09:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FA3420854
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:09:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FA3420854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 0811E2086A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Sep 2018 09:09:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0811E2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726866AbeIKOHw (ORCPT
+        id S1726945AbeIKOHy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Sep 2018 10:07:52 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:41300 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726554AbeIKOHw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Sep 2018 10:07:52 -0400
-Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fzefe-0001im-98; Tue, 11 Sep 2018 11:09:18 +0200
-Date:   Tue, 11 Sep 2018 11:09:17 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Samuel Neves <sneves@dei.uc.pt>
-cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        davem@davemloft.net,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
-        Andy Polyakov <appro@openssl.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Subject: Re: [PATCH net-next v3 05/17] zinc: ChaCha20 x86_64 implementation
-In-Reply-To: <CAEX_ruFFWsW897DuFEbz9+6av02bMwDgiA9GxV+=SBtyKG7LJw@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1809111106420.5110@nanos.tec.linutronix.de>
-References: <20180911010838.8818-1-Jason@zx2c4.com> <20180911010838.8818-6-Jason@zx2c4.com> <alpine.DEB.2.21.1809111021250.5110@nanos.tec.linutronix.de> <CAEX_ruFFWsW897DuFEbz9+6av02bMwDgiA9GxV+=SBtyKG7LJw@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 11 Sep 2018 10:07:54 -0400
+Received: from verein.lst.de ([213.95.11.211]:41780 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726554AbeIKOHx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Sep 2018 10:07:53 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 3C85768C8A; Tue, 11 Sep 2018 11:13:54 +0200 (CEST)
+Date:   Tue, 11 Sep 2018 11:13:54 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Dou Liyang <dou_liyang@163.com>,
+        Kashyap Desai <kashyap.desai@broadcom.com>,
+        Ming Lei <tom.leiming@gmail.com>,
+        Sumit Saxena <sumit.saxena@broadcom.com>,
+        Ming Lei <ming.lei@redhat.com>, Christoph Hellwig <hch@lst.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Shivasharan Srikanteshwara 
+        <shivasharan.srikanteshwara@broadcom.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        Dou Liyang <douly.fnst@cn.fujitsu.com>
+Subject: Re: Affinity managed interrupts vs non-managed interrupts
+Message-ID: <20180911091354.GA9898@lst.de>
+References: <602cee6381b9f435a938bbaf852d07f9@mail.gmail.com> <alpine.DEB.2.21.1809021357000.1349@nanos.tec.linutronix.de> <66256272c020be186becdd7a3f049302@mail.gmail.com> <alpine.DEB.2.21.1809031719460.1383@nanos.tec.linutronix.de> <dd1c5df55aa99cf4a37bcc58e77e840a@mail.gmail.com> <f436fa6a-b865-fadb-4f77-44309ff84405@163.com> <c0f779f1d5ef131c39f9397f97d453e8@mail.gmail.com> <alpine.DEB.2.21.1809051235180.1416@nanos.tec.linutronix.de> <d2a6f7cf-31df-de17-82e3-eccb9cc73ed8@163.com> <alpine.DEB.2.21.1809061244151.1570@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1809061244151.1570@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 11 Sep 2018, Samuel Neves wrote:
-
-> On Tue, Sep 11, 2018 at 9:22 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> > On Mon, 10 Sep 2018, Jason A. Donenfeld wrote:
-> >>  lib/zinc/Makefile                        |    4 +
-> >>  lib/zinc/chacha20/chacha20-x86_64-glue.h |  102 +
-> >>  lib/zinc/chacha20/chacha20-x86_64.S      | 2632 ++++++++++++++++++++++
-> >
-> > Just a stupid question. What's the rationale of putting that into lib/zinc
-> > instead of having it in arch/x86/crypto?
-> >
+On Thu, Sep 06, 2018 at 01:46:46PM +0200, Thomas Gleixner wrote:
+> There are a few things we need to clarify upfront:
 > 
-> This is covered on the 02/17 commit message, whose relevant paragraph follows:
+> Right now the pre and post vectors are marked managed and their
+> affinity mask is set to the irq default affinity mask.
+> 
+> The default affinity mask is by default ALL cpus, but it can be tweaked
+> both on the kernel command line and via proc.
+> 
+> If that mask is only a subset of CPUs and all of them go offline
+> then these vectors are shutdown in managed mode.
+> 
+> That means we need to set the affinity mask of the pre and post vectors to
+> possible mask, but that doesn't make much sense either, unless there is a
+> reason to have them marked managed.
+> 
+> I think the right solution for these pre/post vectors is to _NOT_ mark
+> them managed and leave them as regular interrupts which can be affinity
+> controlled and also can move freely on hotplug.
 
-Well, being only cc'ed on only half of the patches does not really help.
-
-> > It also organizes the implementations in a simple, straight-forward,
-> > and direct manner, making it enjoyable and intuitive to work on.
-> > Rather than moving optimized assembly implementations into arch/, it
-> > keeps them all together in lib/zinc/, making it simple and obvious to
-> > compare and contrast what's happening. This is, notably, exactly what
-> > the lib/raid6/ tree does, and that seems to work out rather well. It's
-> > also the pattern of most successful crypto libraries. The architecture-
-> > specific glue-code is made a part of each translation unit, rather than
-> > being in a separate one, so that generic and architecture-optimized code
-> > are combined at compile-time, and incompatibility branches compiled out by
-> > the optimizer.
-
-Fair enough.
-
-
+Yes, agreed.  Marking the pre/post vector as managed was a mistake
+(and I don't think it even was intentional, at least on my part).
