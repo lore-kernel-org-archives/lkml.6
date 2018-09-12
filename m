@@ -6,99 +6,57 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14028C4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 06:52:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D92BFC4646A
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 06:52:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B23120833
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 06:52:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B23120833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 925A720833
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 06:52:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 925A720833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726842AbeILLz1 (ORCPT
+        id S1727231AbeILLzb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 07:55:27 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:51735 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725958AbeILLz1 (ORCPT
+        Wed, 12 Sep 2018 07:55:31 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:57494 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbeILLza (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 07:55:27 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8C6pr0l2538536
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 11 Sep 2018 23:51:53 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8C6prvi2538533;
-        Tue, 11 Sep 2018 23:51:53 -0700
-Date:   Tue, 11 Sep 2018 23:51:53 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Masami Hiramatsu <tipbot@zytor.com>
-Message-ID: <tip-d0555fc78fdba5646a460e83bd2d8249c539bb89@git.kernel.org>
-Cc:     hpa@zytor.com, torvalds@linux-foundation.org, davem@davemloft.net,
-        naveen.n.rao@linux.vnet.ibm.com, mhiramat@kernel.org,
-        tglx@linutronix.de, anil.s.keshavamurthy@intel.com,
-        linux-kernel@vger.kernel.org, mingo@kernel.org,
-        peterz@infradead.org
-Reply-To: peterz@infradead.org, mingo@kernel.org,
-          linux-kernel@vger.kernel.org, anil.s.keshavamurthy@intel.com,
-          tglx@linutronix.de, mhiramat@kernel.org,
-          naveen.n.rao@linux.vnet.ibm.com, davem@davemloft.net,
-          torvalds@linux-foundation.org, hpa@zytor.com
-In-Reply-To: <153666115463.21306.8799008438116029806.stgit@devbox>
-References: <153666115463.21306.8799008438116029806.stgit@devbox>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] kprobes: Remove pointless BUG_ON() from disarming
- process
-Git-Commit-ID: d0555fc78fdba5646a460e83bd2d8249c539bb89
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Wed, 12 Sep 2018 07:55:30 -0400
+Received: from localhost (74-93-104-98-Washington.hfc.comcastbusiness.net [74.93.104.98])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id DFE8112DE57F3;
+        Tue, 11 Sep 2018 23:52:24 -0700 (PDT)
+Date:   Tue, 11 Sep 2018 23:52:24 -0700 (PDT)
+Message-Id: <20180911.235224.2201624901055776324.davem@davemloft.net>
+To:     yanhaishuang@cmss.chinamobile.com
+Cc:     kuznet@ms2.inr.ac.ru, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, u9012063@gmail.com
+Subject: Re: [PATCH 1/2] erspan: return PACKET_REJECT when the appropriate
+ tunnel is not found
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <1536589188-27550-1-git-send-email-yanhaishuang@cmss.chinamobile.com>
+References: <1536589188-27550-1-git-send-email-yanhaishuang@cmss.chinamobile.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 11 Sep 2018 23:52:25 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  d0555fc78fdba5646a460e83bd2d8249c539bb89
-Gitweb:     https://git.kernel.org/tip/d0555fc78fdba5646a460e83bd2d8249c539bb89
-Author:     Masami Hiramatsu <mhiramat@kernel.org>
-AuthorDate: Tue, 11 Sep 2018 19:19:14 +0900
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Wed, 12 Sep 2018 08:01:15 +0200
+From: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
+Date: Mon, 10 Sep 2018 22:19:47 +0800
 
-kprobes: Remove pointless BUG_ON() from disarming process
+> If erspan tunnel hasn't been established, we'd better send icmp port
+> unreachable message after receive erspan packets.
+> 
+> Fixes: 84e54fe0a5ea ("gre: introduce native tunnel support for ERSPAN")
+> Cc: William Tu <u9012063@gmail.com>
+> Signed-off-by: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
 
-All aggr_probes at this line are already disarmed by
-disable_kprobe() or checked by kprobe_disarmed().
-
-So this BUG_ON() is pointless, remove it.
-
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
-Cc: David S . Miller <davem@davemloft.net>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Naveen N . Rao <naveen.n.rao@linux.vnet.ibm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/153666115463.21306.8799008438116029806.stgit@devbox
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- kernel/kprobes.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-index ab257be4d924..d1edd8d5641e 100644
---- a/kernel/kprobes.c
-+++ b/kernel/kprobes.c
-@@ -1704,7 +1704,6 @@ noclean:
- 	return 0;
- 
- disarmed:
--	BUG_ON(!kprobe_disarmed(ap));
- 	hlist_del_rcu(&ap->hlist);
- 	return 0;
- }
+Applied and queued up for -stable.
