@@ -2,185 +2,93 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54647C4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 12:08:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E515CC46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 12:11:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8B7C20839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 12:08:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6AAE620882
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 12:11:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="FGwMIR5D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8B7C20839
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="euwN3kfZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AAE620882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726782AbeILRNK (ORCPT
+        id S1726912AbeILRPy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 13:13:10 -0400
-Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:59642 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726359AbeILRNK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 13:13:10 -0400
-Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id A48A724E0F5D;
-        Wed, 12 Sep 2018 05:08:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1536754135; bh=ThBM0TeqoJzzGvOYoUKpqZ+Yte9WV+4Nn5Sk0ZgOlQU=;
-        h=From:To:CC:Subject:Date:From;
-        b=FGwMIR5DY5d/m7ZyZPw7LjV8oPFCrThVsfUOjHyiOBWfJ3Nj0IrIwte2gjuHxtyE0
-         hpBxnASzmhgJYmQiemsDLDhQ/Tyby9zROBl8Ecxtk0JDnRR5DDXq3OHJdykqHdoWba
-         /g4t2EH0hYDitV8pDB0IdzlNuFZ9GNhJt4n4NmiZLF7vBGj+Gc/hcMBcam0kH6Lx+D
-         +0jE6BigQAlJIovWD1zr7mwTT++1pb0fiHYkXnWoXAfqVfoyPkZcbuZHxa0zFXfPBP
-         rnfzBa7BMg0lzCU0dTD0KrPXWVWTHDz1eC2ZISW1RzexNUKglB0CGJsDZAq7DNMeah
-         W5cz3nHq4aJgw==
-Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
-        by mailhost.synopsys.com (Postfix) with ESMTP id B49193B5D;
-        Wed, 12 Sep 2018 05:08:52 -0700 (PDT)
-Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
- US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Wed, 12 Sep 2018 05:08:42 -0700
-Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
- by DE02WEHTCB.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Wed,
- 12 Sep 2018 14:08:41 +0200
-From:   Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-To:     "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>
-CC:     "keescook@chromium.org" <keescook@chromium.org>,
-        "linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>
-Subject: defconfig fails if CROSS_COMPILE is set while cross-gcc is not
- avaialble
-Thread-Topic: defconfig fails if CROSS_COMPILE is set while cross-gcc is not
- avaialble
-Thread-Index: AQHUSpFXS1S71sJSu0SpMEzLuj4Mhw==
-Date:   Wed, 12 Sep 2018 12:08:40 +0000
-Message-ID: <0854f35e92c95e552721dc6a46f4ee2bc4020bc1.camel@synopsys.com>
-Accept-Language: en-US, ru-RU
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.121.8.87]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <FC6D131905B9584B98F6B5560EBC3DC2@internal.synopsys.com>
-Content-Transfer-Encoding: base64
+        Wed, 12 Sep 2018 13:15:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41876 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726359AbeILRPx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 13:15:53 -0400
+Received: from localhost (173-25-171-118.client.mchsi.com [173.25.171.118])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA67420880;
+        Wed, 12 Sep 2018 12:11:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1536754299;
+        bh=sFyCER0vomW13wXrQLzcNO6KztzE+QZNWK0rZSSJhR0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=euwN3kfZv3QHJ53RCw/ZUlr32jkbokP9PuNopWZvU5yXK8NBGWYPhOQ+elE2xDLiP
+         t1zs5FH63+K+jDCg9dqxQAU+xCqc8CYzPkxJYM8pHNMgFWubi58jL8HUusHN8dpuqW
+         2iBAupLPLWNQsAjfska9NK+jh6fRlyPkOz0uvgvk=
+Date:   Wed, 12 Sep 2018 07:11:37 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Joshua Abraham <j.abraham1776@gmail.com>
+Cc:     bhelgaas@google.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] drivers: pci: remove set but unused variable
+Message-ID: <20180912121137.GE118330@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180912023908.GA5549@josh-ThinkPad-T460s>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180912023908.GA5549@josh-ThinkPad-T460s>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGVsbG8gTWFzYWhpcm8tc2FuLA0KDQpTdGFydGluZyBmcm9tIGtlcm5lbCB2NC4xNyBpdCBpcyBu
-byBsb25nZXIgcG9zc2libGUgdG8gaW5zdGFsbCBrZXJuZWwgaGVhZGVycw0KZm9yIEFSQyBhcmNo
-aXRlY3R1cmUgaWYgdGhlcmUncyBubyBjcm9zcy10b29sY2hhaW4gaW4gUEFUSC4NCg0KTm90ZSBp
-bnN0YWxsYXRpb24gb2YgaGVhZGVycyBpcyBqdXN0IG9uZSBvZiB1c2UtY2FzZXMgd2hlbiB3ZSBt
-aWdodCBub3QNCmhhdmUgY3Jvc3MtdG9vbHMgYXZhaWxhYmxlIGJ1dCBzdGlsbCB3YW50IHRvIHJ1
-biAibWFrZSB4eHhfZGVmY29uZmlnIi4NCkkuZS4gdGhlIHByb2JsZW0gaXMgIm1ha2UgeHh4X2Rl
-ZmNvbmZpZyIgd2l0aCBubyBjcm9zcy10b29sY2hhaW4uDQoNClRoYXQncyB3aGF0IEkgc2VlOg0K
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0+OC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-DQouL3NjcmlwdHMvZ2NjLXZlcnNpb24uc2g6IGxpbmUgMjY6IGFyYy1saW51eC1nY2M6IGNvbW1h
-bmQgbm90IGZvdW5kDQouL3NjcmlwdHMvZ2NjLXZlcnNpb24uc2g6IGxpbmUgMjc6IGFyYy1saW51
-eC1nY2M6IGNvbW1hbmQgbm90IGZvdW5kDQouL3NjcmlwdHMvZ2NjLXZlcnNpb24uc2g6IGxpbmUg
-MjY6IGFyYy1saW51eC1nY2M6IGNvbW1hbmQgbm90IGZvdW5kDQouL3NjcmlwdHMvZ2NjLXZlcnNp
-b24uc2g6IGxpbmUgMjc6IGFyYy1saW51eC1nY2M6IGNvbW1hbmQgbm90IGZvdW5kDQptYWtlOiBh
-cmMtbGludXgtZ2NjOiBDb21tYW5kIG5vdCBmb3VuZA0KL2Jpbi9zaDogYXJjLWxpbnV4LWdjYzog
-Y29tbWFuZCBub3QgZm91bmQNCi9iaW4vc2g6IGFyYy1saW51eC1nY2M6IGNvbW1hbmQgbm90IGZv
-dW5kDQoqKiogRGVmYXVsdCBjb25maWd1cmF0aW9uIGlzIGJhc2VkIG9uICduc2ltXzcwMF9kZWZj
-b25maWcnDQouL3NjcmlwdHMvZ2NjLXZlcnNpb24uc2g6IGxpbmUgMjY6IGFyYy1saW51eC1nY2M6
-IGNvbW1hbmQgbm90IGZvdW5kDQouL3NjcmlwdHMvZ2NjLXZlcnNpb24uc2g6IGxpbmUgMjc6IGFy
-Yy1saW51eC1nY2M6IGNvbW1hbmQgbm90IGZvdW5kDQouL3NjcmlwdHMvZ2NjLXZlcnNpb24uc2g6
-IGxpbmUgMjk6IGFyYy1saW51eC1nY2M6IGNvbW1hbmQgbm90IGZvdW5kDQouL3NjcmlwdHMvZ2Nj
-LXZlcnNpb24uc2g6IGxpbmUgMjY6IGFyYy1saW51eC1nY2M6IGNvbW1hbmQgbm90IGZvdW5kDQou
-L3NjcmlwdHMvZ2NjLXZlcnNpb24uc2g6IGxpbmUgMjc6IGFyYy1saW51eC1nY2M6IGNvbW1hbmQg
-bm90IGZvdW5kDQouL3NjcmlwdHMvZ2NjLXZlcnNpb24uc2g6IGxpbmUgMjk6IGFyYy1saW51eC1n
-Y2M6IGNvbW1hbmQgbm90IGZvdW5kDQppbml0L0tjb25maWc6MTc6IHN5bnRheCBlcnJvcg0KaW5p
-dC9LY29uZmlnOjE2OiBpbnZhbGlkIG9wdGlvbg0KLi9zY3JpcHRzL2NsYW5nLXZlcnNpb24uc2g6
-IGxpbmUgMTU6IGFyYy1saW51eC1nY2M6IGNvbW1hbmQgbm90IGZvdW5kDQouL3NjcmlwdHMvZ2Nj
-LXBsdWdpbi5zaDogbGluZSAxMTogYXJjLWxpbnV4LWdjYzogY29tbWFuZCBub3QgZm91bmQNCm1h
-a2VbMV06ICoqKiBbc2NyaXB0cy9rY29uZmlnL01ha2VmaWxlOjkxOiBkZWZjb25maWddIEVycm9y
-IDENCm1ha2U6ICoqKiBbTWFrZWZpbGU6NTMxOiBkZWZjb25maWddIEVycm9yIDINCi0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tPjgtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KDQpUaGF0
-IGRvZXNuJ3QgaGFwcGVuIGZvciBBUk0gYW5kIG90aGVyIGFyY2hlcyBzaW1wbHkgYmVjYXVzZSBm
-b3IgQVJDDQp3ZSBkZWZpbmUgQ1JPU1NfQ09NUElMRSBpZiBpdCBpcyBub3Qgc2V0IGJ5IHVzZXIs
-IHNlZToNCmh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3Rv
-cnZhbGRzL2xpbnV4LmdpdC90cmVlL2FyY2gvYXJjL01ha2VmaWxlI245DQoNClN0aWxsIGlmIENS
-T1NTX0NPTVBJTEUgaXMgc2V0IGJlZm9yZSBleGVjdXRpb24gb2YgIm1ha2UgZGVmY29uZmlnIg0K
-dGhlbiB0aGUgc2FtZSBwcm9ibGVtIGhhcHBlbnMgZm9yIG90aGVycy4NCg0KSSB3YXMgYWJsZSB0
-byBmaW5kIGEgc2VyaWVzIG9mIGNvbW1pdHMgd2hpY2ggY2F1c2UgdGhpcyBwcm9ibGVtLA0KaGVy
-ZSB0aGV5IGFyZToNCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tPjgtLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLQ0KNTlmNTM4NTViYWJmIC0gZ2NjLXBsdWdpbnM6IHRlc3QgcGx1Z2luIHN1
-cHBvcnQgaW4gS2NvbmZpZyBhbmQgY2xlYW4gdXAgTWFrZWZpbGUNCjQ2OWNiNzM3NmMwNiAtIGtj
-b25maWc6IGFkZCBDQ19JU19DTEFORyBhbmQgQ0xBTkdfVkVSU0lPTg0KYTQzNTM4OTg5ODBjIC0g
-a2NvbmZpZzogYWRkIENDX0lTX0dDQyBhbmQgR0NDX1ZFUlNJT04NCi0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tPjgtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KDQpXaGF0IGhhcHBlbiBp
-cyAiJChDQykiIGlzIHBhc3NlZCBhcyBhbiBhcmd1bWVudCBhbmQgaW4gaXRzIHR1cm4gQ0MgaXMN
-CiIkKENST1NTX0NPTVBJTEUpZ2NjIiwgc2VlOg0KaHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIv
-c2NtL2xpbnV4L2tlcm5lbC9naXQvdG9ydmFsZHMvbGludXguZ2l0L3RyZWUvTWFrZWZpbGUjbjM4
-NQ0KDQoNClNvIGlmIEkgc3Vic3RpdHV0ZSAiQ0MiIHdpdGggIkhPU1RDQyIgaW4gYSBjb3VwbGUg
-b2YgcGxhY2VzIChzZWUgYmVsb3cpDQp0aGUgcHJvYmxlbSBnb2VzIGF3YXkuIEJ1dCBJJ20gbm90
-IHJlYWxseSBzdXJlIGlmIHdoYXQgSSBkbyBpcyBjb3JyZWN0Lg0KSS5lLiB3aGVuIHdlJ3JlIGlu
-dGVyZXN0ZWQgaW4gQ0MgZm9yIHRhcmdldCBhbmQgd2hlbiBvbmx5IGhvc3QgQ0MgaXMgb2YNCm91
-ciBpbnRlcmVzdC4NCg0KV291bGQgYmUgaW50ZXJlc3RpbmcgdG8ga25vdyB5b3VyIG9waW5pb24g
-aGVyZS4NCg0KLUFsZXhleQ0KDQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LT44LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQpkaWZmIC0t
-Z2l0IGEvYXJjaC9LY29uZmlnIGIvYXJjaC9LY29uZmlnDQppbmRleCBkMWYyZWQ0NjJhYzguLjUz
-YzhjNzk5NGU2YiAxMDA2NDQNCi0tLSBhL2FyY2gvS2NvbmZpZw0KKysrIGIvYXJjaC9LY29uZmln
-DQpAQCAtNDEyLDcgKzQxMiw3IEBAIHByZWZlcnJlZC1wbHVnaW4taG9zdGNjIDo9ICQoaWYtc3Vj
-Y2VzcyxbICQoZ2NjLXZlcnNpb24pIC1nZSA0MDgwMCBdLCQoSE9TVENYWCksDQogDQogY29uZmln
-IFBMVUdJTl9IT1NUQ0MNCiAgICAgICAgc3RyaW5nDQotICAgICAgIGRlZmF1bHQgIiQoc2hlbGws
-JChzcmN0cmVlKS9zY3JpcHRzL2djYy1wbHVnaW4uc2ggIiQocHJlZmVycmVkLXBsdWdpbi1ob3N0
-Y2MpIiAiJChIT1NUQ1hYKSIgIiQoQ0MpIikiDQorICAgICAgIGRlZmF1bHQgIiQoc2hlbGwsJChz
-cmN0cmVlKS9zY3JpcHRzL2djYy1wbHVnaW4uc2ggIiQocHJlZmVycmVkLXBsdWdpbi1ob3N0Y2Mp
-IiAiJChIT1NUQ1hYKSIgIiQoSE9TVENDKSIpIg0KICAgICAgICBoZWxwDQogICAgICAgICAgSG9z
-dCBjb21waWxlciB1c2VkIHRvIGJ1aWxkIEdDQyBwbHVnaW5zLiAgVGhpcyBjYW4gYmUgJChIT1NU
-Q1hYKSwNCiAgICAgICAgICAkKEhPU1RDQyksIG9yIGEgbnVsbCBzdHJpbmcgaWYgR0NDIHBsdWdp
-biBpcyB1bnN1cHBvcnRlZC4NCmRpZmYgLS1naXQgYS9pbml0L0tjb25maWcgYi9pbml0L0tjb25m
-aWcNCmluZGV4IDJhNDg4MzJmZDQwZS4uYTAwOTRkZGI4MjQ0IDEwMDY0NA0KLS0tIGEvaW5pdC9L
-Y29uZmlnDQorKysgYi9pbml0L0tjb25maWcNCkBAIC0xMyw3ICsxMyw3IEBAIGNvbmZpZyBDQ19J
-U19HQ0MNCiANCiBjb25maWcgR0NDX1ZFUlNJT04NCiAgICAgICAgaW50DQotICAgICAgIGRlZmF1
-bHQgJChzaGVsbCwkKHNyY3RyZWUpL3NjcmlwdHMvZ2NjLXZlcnNpb24uc2ggLXAgJChDQykgfCBz
-ZWQgJ3MvXjAqLy8nKSBpZiBDQ19JU19HQ0MNCisgICAgICAgZGVmYXVsdCAkKHNoZWxsLCQoc3Jj
-dHJlZSkvc2NyaXB0cy9nY2MtdmVyc2lvbi5zaCAtcCAkKEhPU1RDQykgfCBzZWQgJ3MvXjAqLy8n
-KSBpZiBDQ19JU19HQ0MNCiAgICAgICAgZGVmYXVsdCAwDQogDQogY29uZmlnIENDX0lTX0NMQU5H
-DQpAQCAtMjEsNyArMjEsNyBAQCBjb25maWcgQ0NfSVNfQ0xBTkcNCiANCiBjb25maWcgQ0xBTkdf
-VkVSU0lPTg0KICAgICAgICBpbnQNCi0gICAgICAgZGVmYXVsdCAkKHNoZWxsLCQoc3JjdHJlZSkv
-c2NyaXB0cy9jbGFuZy12ZXJzaW9uLnNoICQoQ0MpKQ0KKyAgICAgICBkZWZhdWx0ICQoc2hlbGws
-JChzcmN0cmVlKS9zY3JpcHRzL2NsYW5nLXZlcnNpb24uc2ggJChIT1NUQ0MpKQ0KIA0KIGNvbmZp
-ZyBDT05TVFJVQ1RPUlMNCiAgICAgICAgYm9vbA0KZGlmZiAtLWdpdCBhL3NjcmlwdHMvS2J1aWxk
-LmluY2x1ZGUgYi9zY3JpcHRzL0tidWlsZC5pbmNsdWRlDQppbmRleCA4NjMyMWYwNjQ2MWUuLjY4
-NGNkNjQ1ZWViMSAxMDA2NDQNCi0tLSBhL3NjcmlwdHMvS2J1aWxkLmluY2x1ZGUNCisrKyBiL3Nj
-cmlwdHMvS2J1aWxkLmluY2x1ZGUNCkBAIC0xMDksNyArMTA5LDcgQEAgYXMtaW5zdHIgPSAkKGNh
-bGwgdHJ5LXJ1bixcDQogICAgICAgIHByaW50ZiAiJWJcbiIgIiQoMSkiIHwgJChDQykgJChLQlVJ
-TERfQUZMQUdTKSAtYyAteCBhc3NlbWJsZXIgLW8gIiQkVE1QIiAtLCQoMiksJCgzKSkNCiANCiAj
-IF9fY2Mtb3B0aW9uDQotIyBVc2FnZTogTVlfQ0ZMQUdTICs9ICQoY2FsbCBfX2NjLW9wdGlvbiwk
-KENDKSwkKE1ZX0NGTEFHUyksLW1hcmNoPXdpbmNoaXAtYzYsLW1hcmNoPWk1ODYpDQorIyBVc2Fn
-ZTogTVlfQ0ZMQUdTICs9ICQoY2FsbCBfX2NjLW9wdGlvbiwkKEhPU1RDQyksJChNWV9DRkxBR1Mp
-LC1tYXJjaD13aW5jaGlwLWM2LC1tYXJjaD1pNTg2KQ0KIF9fY2Mtb3B0aW9uID0gJChjYWxsIHRy
-eS1ydW4sXA0KICAgICAgICAkKDEpIC1XZXJyb3IgJCgyKSAkKDMpIC1jIC14IGMgL2Rldi9udWxs
-IC1vICIkJFRNUCIsJCgzKSwkKDQpKQ0KIA0KQEAgLTE0MywxMSArMTQzLDExIEBAIGNjLWRpc2Fi
-bGUtd2FybmluZyA9ICQoY2FsbCB0cnktcnVuLFwNCiBjYy1uYW1lID0gJChzaGVsbCAkKENDKSAt
-diAyPiYxIHwgZ3JlcCAtcSAiY2xhbmcgdmVyc2lvbiIgJiYgZWNobyBjbGFuZyB8fCBlY2hvIGdj
-YykNCiANCiAjIGNjLXZlcnNpb24NCi1jYy12ZXJzaW9uID0gJChzaGVsbCAkKENPTkZJR19TSEVM
-TCkgJChzcmN0cmVlKS9zY3JpcHRzL2djYy12ZXJzaW9uLnNoICQoQ0MpKQ0KK2NjLXZlcnNpb24g
-PSAkKHNoZWxsICQoQ09ORklHX1NIRUxMKSAkKHNyY3RyZWUpL3NjcmlwdHMvZ2NjLXZlcnNpb24u
-c2ggJChIT1NUQ0MpKQ0KIA0KICMgY2MtZnVsbHZlcnNpb24NCiBjYy1mdWxsdmVyc2lvbiA9ICQo
-c2hlbGwgJChDT05GSUdfU0hFTEwpIFwNCi0gICAgICAgJChzcmN0cmVlKS9zY3JpcHRzL2djYy12
-ZXJzaW9uLnNoIC1wICQoQ0MpKQ0KKyAgICAgICAkKHNyY3RyZWUpL3NjcmlwdHMvZ2NjLXZlcnNp
-b24uc2ggLXAgJChIT1NUQ0MpKQ0KIA0KICMgY2MtaWZ2ZXJzaW9uDQogIyBVc2FnZTogIEVYVFJB
-X0NGTEFHUyArPSAkKGNhbGwgY2MtaWZ2ZXJzaW9uLCAtbHQsIDA0MDIsIC1PMSkNCmRpZmYgLS1n
-aXQgYS9zY3JpcHRzL0tjb25maWcuaW5jbHVkZSBiL3NjcmlwdHMvS2NvbmZpZy5pbmNsdWRlDQpp
-bmRleCBkYWQ1NTgzNDUxYWYuLjNiMjhiZjk0Y2IyNCAxMDA2NDQNCi0tLSBhL3NjcmlwdHMvS2Nv
-bmZpZy5pbmNsdWRlDQorKysgYi9zY3JpcHRzL0tjb25maWcuaW5jbHVkZQ0KQEAgLTI3LDQgKzI3
-LDQgQEAgY2Mtb3B0aW9uID0gJChzdWNjZXNzLCQoQ0MpIC1XZXJyb3IgJCgxKSAtRSAteCBjIC9k
-ZXYvbnVsbCAtbyAvZGV2L251bGwpDQogbGQtb3B0aW9uID0gJChzdWNjZXNzLCQoTEQpIC12ICQo
-MSkpDQogDQogIyBnY2MgdmVyc2lvbiBpbmNsdWRpbmcgcGF0Y2ggbGV2ZWwNCi1nY2MtdmVyc2lv
-biA6PSAkKHNoZWxsLCQoc3JjdHJlZSkvc2NyaXB0cy9nY2MtdmVyc2lvbi5zaCAtcCAkKENDKSB8
-IHNlZCAncy9eMCovLycpDQorZ2NjLXZlcnNpb24gOj0gJChzaGVsbCwkKHNyY3RyZWUpL3Njcmlw
-dHMvZ2NjLXZlcnNpb24uc2ggLXAgJChIT1NUQ0MpIHwgc2VkICdzL14wKi8vJykNCi0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tPjgtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0NCg==
+On Tue, Sep 11, 2018 at 04:39:08PM -1000, Joshua Abraham wrote:
+> This patch removes a set but unused variable in quirks.c.
+> 
+> Fixes warning:
+> variable ‘mmio_sys_info’ set but not used [-Wunused-but-set-variable]
+> 
+> Signed-off-by: Joshua Abraham <j.abraham1776@gmail.com>
+
+Applied to pci/misc for v4.20, thanks!
+
+> ---
+>  drivers/pci/quirks.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+> index ef7143a274e0..690a3b71aa1f 100644
+> --- a/drivers/pci/quirks.c
+> +++ b/drivers/pci/quirks.c
+> @@ -4993,7 +4993,6 @@ static void quirk_switchtec_ntb_dma_alias(struct pci_dev *pdev)
+>  	void __iomem *mmio;
+>  	struct ntb_info_regs __iomem *mmio_ntb;
+>  	struct ntb_ctrl_regs __iomem *mmio_ctrl;
+> -	struct sys_info_regs __iomem *mmio_sys_info;
+>  	u64 partition_map;
+>  	u8 partition;
+>  	int pp;
+> @@ -5014,7 +5013,6 @@ static void quirk_switchtec_ntb_dma_alias(struct pci_dev *pdev)
+>  
+>  	mmio_ntb = mmio + SWITCHTEC_GAS_NTB_OFFSET;
+>  	mmio_ctrl = (void __iomem *) mmio_ntb + SWITCHTEC_NTB_REG_CTRL_OFFSET;
+> -	mmio_sys_info = mmio + SWITCHTEC_GAS_SYS_INFO_OFFSET;
+>  
+>  	partition = ioread8(&mmio_ntb->partition_id);
+>  
+> -- 
+> 2.17.1
+> 
