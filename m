@@ -2,136 +2,170 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7415C07520
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 22:02:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C25FC070C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 22:10:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 756E92133F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 22:02:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83B6A213A2
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 22:10:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="wD0iz80w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 756E92133F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UMrPruuW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83B6A213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728068AbeIMDJ1 (ORCPT
+        id S1727807AbeIMDQf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 23:09:27 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:35494 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726575AbeIMDJ1 (ORCPT
+        Wed, 12 Sep 2018 23:16:35 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:45289 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726800AbeIMDQf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 23:09:27 -0400
-Received: by mail-oi0-f66.google.com with SMTP id m11-v6so6912051oic.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 15:02:57 -0700 (PDT)
+        Wed, 12 Sep 2018 23:16:35 -0400
+Received: by mail-oi0-f68.google.com with SMTP id t68-v6so6851728oie.12
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 15:10:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=or5SJx6rQudOsf9JcAvzAs0Mtqt3Vh+6b1ypOUavq4E=;
-        b=wD0iz80wRGstvqjnsP9Q9RshsNUCt4y2WKwzsMnfU+fxx2GoGY1G4E72FQjO7K92qb
-         JYPRc/sVmITViqTUos9DVsxrHZcPDOykLcUie19ta2lh+c/zafmMZAqY9/WaAZ3HZ4G6
-         ZxfN7W+U1d8HNWlM5IVq/1xOt+5MKSa2qsJgmDAWPjBGip+G+vmKILyB1nqyAyoLg1zV
-         2SD7aI+tLg4Vdqu9jEM05tCycgDXUDEgKYpEM18jNuPA2vP1gjvRa/BfxohXjl6H566y
-         +lY7arLo8L7ArVS6TCj/zS7PgkkZZLu/OjIavz+AUJ/XX2f1mErUeIbEYXg05kbj3PWM
-         CTJA==
+        d=gmail.com; s=20161025;
+        h=sender:reply-to:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=QESi1UteUokq+ONHv0sotXQTVrOR0tVq8nDZHp4kHzw=;
+        b=UMrPruuW+xi9v7EmFDUYc6rj9eYXyjZO31ZJV+o2sO6TZoRLPYcL0ItieuLLpxHVUZ
+         sdSqEcy7I/B37cllTSyiDJ6H8MGSIOUu+x7PHK0+8kYgA+N5YK1PJD1JL7HeZ65L97o6
+         u0IkaROHMCz+jg4oBqH1MSGKAnZfer9l1ien0edikhXZIo1kMcnkDMnCIIAQBRnF9m5S
+         mphcSrxYgT/FlrNJQe84WXzlFr6gGmce9Km0LxYRt0gPjG5MpmsEDcgmWt2YjNLIaPvB
+         se6vl4RKuIr98i711gfLxgTXn4a2FcNoMXTxAhAw+KsXBASjtaeoHzCAVzmfrfab8Rut
+         +qRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=or5SJx6rQudOsf9JcAvzAs0Mtqt3Vh+6b1ypOUavq4E=;
-        b=Wc3NPLy1HJw6Ufzef0gXbiYmXg/yMX8LhfYvWpUavPnwBx0eZOKLvVgw7jcRd+5fdp
-         LWxkOG4NQ0aaAHa1oG26M9EB5yVZEHnmHh+0moa53fk+ZQhdtg8a+R3UEKkxzGejbDSu
-         +tqUilpSnJ/vxU1aIg670Sk6UcyrU8SPFB7ut+0aeRB0LLpMNe9DcBz521ZFOAZNogMG
-         mG2GbuC7qw3o/VD5bqntXFe2aOnkVpvs9ihqWtYo5dWgDvce1bFw+c/r4RDYmBoTRuo/
-         QTscdqBFNXIZD/toIjunqGNxuHTNGPuX9NNtAs+znBBgM8ozX8jON5Ktt9vH3BRJqbNf
-         jdAg==
-X-Gm-Message-State: APzg51D9OdvXX6x9oxCGROk2COYN7zlK0rZm+yGWUw+hhRI3oP/VbGji
-        7gg3bfMENAU4qDXI+C58c+VzY8VQnDoxopVQWFMXKQ==
-X-Google-Smtp-Source: ANB0VdYkT58b1Ek0gBpRFnCuWZVmwhySRevff+kVcGF1J2i0Trjk8FCRQ0mtmwxvlGD/Zitl0FhRTwKpDMur3jFo+7o=
-X-Received: by 2002:aca:4083:: with SMTP id n125-v6mr3953132oia.167.1536789776903;
- Wed, 12 Sep 2018 15:02:56 -0700 (PDT)
+        h=x-gm-message-state:sender:reply-to:subject:to:cc:references:from
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-transfer-encoding:content-language;
+        bh=QESi1UteUokq+ONHv0sotXQTVrOR0tVq8nDZHp4kHzw=;
+        b=KNULckw+FyreUpyb2vwil+C1HnbbtUGUp4XlKMbej+yCzoN+uZrgqRDsIARPvzf3Az
+         D8v2rQE9e5kUZ9tZg1a+zAVwI9FJvZGUeZ7WwbjbcKw5Vm2l6IulO2XAdkRWkDa5VXIb
+         BLq8FiUJ7RBLLeIO+Uw5CgFB6TneOBjC0GJpaAVQKk4tCvV8+g6qg7UQhauSCD8sOekV
+         3jc5HSZUpdIkZGL4LanqyxTXfAckYTtOvMymAFkCU14xiE/FKCoSONtTkMO3MAYLuDNB
+         mH375rUvKlPnbZy4ZI9eCibu7IsfAX3R48PSWvGACSlWV7wj8+vwK2LroS1ch2vtlHPX
+         FuAg==
+X-Gm-Message-State: APzg51BhpKDakM8tibamrbXcjj1DVsDCsF3gs103oZMGcb70+YuMRly7
+        mB3NnbRl5tMLKG72lzqUa018/0E=
+X-Google-Smtp-Source: ANB0Vdby4L7IeNi+IAI7l9i3Bz46RA+l4NKFX5Lzoh/VvKdIQn72JnRjoyZ7J5kCWuMz48dsFhZ0qQ==
+X-Received: by 2002:aca:4083:: with SMTP id n125-v6mr3978356oia.167.1536790203288;
+        Wed, 12 Sep 2018 15:10:03 -0700 (PDT)
+Received: from serve.minyard.net ([47.184.170.128])
+        by smtp.gmail.com with ESMTPSA id q124-v6sm1363878oif.8.2018.09.12.15.10.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Sep 2018 15:10:02 -0700 (PDT)
+Received: from [10.22.11.145] (50-233-148-155-static.hfc.comcastbusiness.net [50.233.148.155])
+        by serve.minyard.net (Postfix) with ESMTPSA id 627648F8;
+        Wed, 12 Sep 2018 17:10:00 -0500 (CDT)
+Reply-To: minyard@acm.org
+Subject: Re: [PATCH v2] ipmi: looped device detection
+To:     Patrick Venture <venture@google.com>, arnd@arndb.de,
+        gregkh@linuxfoundation.org
+Cc:     openipmi-developer@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org
+References: <20180911225630.124502-1-venture@google.com>
+From:   Corey Minyard <minyard@acm.org>
+Message-ID: <585d1c3a-6121-c20d-f6d6-7567595cd1af@acm.org>
+Date:   Wed, 12 Sep 2018 17:09:58 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a4a:8e85:0:0:0:0:0 with HTTP; Wed, 12 Sep 2018 15:02:56
- -0700 (PDT)
-In-Reply-To: <20180912215759.GA3000@kroah.com>
-References: <153617950046.33664.13445188581267552601.stgit@djiang5-desk3.ch.intel.com>
- <20180912074850.GA362@kroah.com> <CAPcyv4j9CooFiUpJnQvp2tP26u_Sys4AP4JmGtNBZf5R5ug8xg@mail.gmail.com>
- <20180912215759.GA3000@kroah.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 12 Sep 2018 15:02:56 -0700
-Message-ID: <CAPcyv4ju1v1fw2KQdq_xEToUjgqzTuVf+LPbksMgp+vUOtD_8w@mail.gmail.com>
-Subject: Re: [PATCH] uio: fix is_source param for check_copy_size() in copy_to_iter_mcsafe()
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Dave Jiang <dave.jiang@intel.com>,
-        Vishal L Verma <vishal.l.verma@intel.com>,
-        "Du, Fan" <fan.du@intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180911225630.124502-1-venture@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 2:57 PM, Greg KH <gregkh@linuxfoundation.org> wrote:
-> On Wed, Sep 12, 2018 at 02:51:53PM -0700, Dan Williams wrote:
->> On Wed, Sep 12, 2018 at 12:48 AM, Greg KH <gregkh@linuxfoundation.org> wrote:
->> > On Wed, Sep 05, 2018 at 01:31:40PM -0700, Dave Jiang wrote:
->> >> copy_to_iter_mcsafe() is passing in the is_source parameter as "false"
->> >> to check_copy_size(). This is different than what copy_to_iter() does.
->> >> Also, the addr parameter passed to check_copy_size() is the source so
->> >> therefore we should be passing in "true" instead.
->> >>
->> >> Fixes: 8780356ef630 ("x86/asm/memcpy_mcsafe: Define copy_to_iter_mcsafe()")
->> >> Cc: Fan Du <fan.du@intel.com>
->> >> Reported-by: Wenwei Tao <wenwei.tww@alibaba-inc.com>
->> >> Signed-off-by: Dave Jiang <dave.jiang@intel.com>
->> >> Reviewed-by: Vishal Verma <vishal.l.verma@intel.com>
->> >> Cc: stable <stable@vger.kernel.org>
->> >> ---
->> >>  include/linux/uio.h |    2 +-
->> >
->> > I am not the maintainer of this file, sorry, please work with the -mm
->> > developers for this.
->>
->> Likely this is get_maintainer.pl's fault:
->>
->> $ ./scripts/get_maintainer.pl  -f include/linux/uio.h
->> Greg Kroah-Hartman <gregkh@linuxfoundation.org> (maintainer:USERSPACE I/O (UIO))
->> linux-kernel@vger.kernel.org (open list)
->>
->> Maybe a MAINTAINERS update like the following is warranted, because I
->> don't think -mm developers are right either, Al seems to be authority
->> on iov_iter apis:
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index d870cb57c887..0018e19b4d8e 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -15344,13 +15344,18 @@ F:    arch/x86/um/
->>  F:     fs/hostfs/
->>  F:     fs/hppfs/
->>
->> +USERSPACE ACCESS (uaccess, copy_{to,from}_iter)
->> +M:     Alexander Viro <viro@zeniv.linux.org.uk>
->> +S:     Maintained
->> +F:     include/linux/uio*.h
->> +F:     lib/iov_iter.c
->> +
->>  USERSPACE I/O (UIO)
->>  M:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->>  S:     Maintained
->>  T:     git git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git
->>  F:     Documentation/driver-api/uio-howto.rst
->>  F:     drivers/uio/
->> -F:     include/linux/uio*.h
+On 09/11/2018 05:56 PM, Patrick Venture wrote:
+> Try to get the device ID repeatedly during initialization before giving up.
+> The BMC isn't always responsive, and this allows it to be slightly flaky
+> during early boot.
 >
-> Don't drop that line, uio_driver.h is what it should just say, right?
->
+> Tested: Installed on a system with the BMC software disabled
+> such that it was non-responsive.  The driver correctly detected this
+> and gave up as expected.  Then I re-enabled the BMC software unloaded
+> and reloaded the driver and it was detected properly.
 
-Ah, yep, I missed that. Thanks.
+The patch looks fine, but I wonder if this is something that is really 
+valuable.
+I have wondered about this before.
+
+The question is: If the BMC is unavailable, what are the chances of it 
+becoming
+available by the time you do 5 attempts?  I would guess that is a pretty 
+small
+chance, which is why I haven't done this already.
+
+You could have something that re-tested periodically, but there are so many
+systems with IPMI specified in ACPI or SMBIOS that is wrong, and it would
+try forever.  Also not really a good thing.
+
+So I've left it to reload the driver or use the hotmod interface.
+
+-corey
+
+> Signed-off-by: Patrick Venture <venture@google.com>
+> ---
+> v2:
+>   - removed extra variable that was set but not used.
+> ---
+>   drivers/char/ipmi/ipmi_si_intf.c | 23 ++++++++++++++++++++++-
+>   1 file changed, 22 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/char/ipmi/ipmi_si_intf.c b/drivers/char/ipmi/ipmi_si_intf.c
+> index 90ec010bffbd..5fed96897fe8 100644
+> --- a/drivers/char/ipmi/ipmi_si_intf.c
+> +++ b/drivers/char/ipmi/ipmi_si_intf.c
+> @@ -1918,11 +1918,13 @@ int ipmi_si_add_smi(struct si_sm_io *io)
+>    * held, primarily to keep smi_num consistent, we only one to do these
+>    * one at a time.
+>    */
+> +#define GET_DEVICE_ID_ATTEMPTS	5
+>   static int try_smi_init(struct smi_info *new_smi)
+>   {
+>   	int rv = 0;
+>   	int i;
+>   	char *init_name = NULL;
+> +	unsigned long sleep_rm;
+>   
+>   	pr_info(PFX "Trying %s-specified %s state machine at %s address 0x%lx, slave address 0x%x, irq %d\n",
+>   		ipmi_addr_src_to_str(new_smi->io.addr_source),
+> @@ -2003,7 +2005,26 @@ static int try_smi_init(struct smi_info *new_smi)
+>   	 * Attempt a get device id command.  If it fails, we probably
+>   	 * don't have a BMC here.
+>   	 */
+> -	rv = try_get_dev_id(new_smi);
+> +	for (i = 0; i < GET_DEVICE_ID_ATTEMPTS; i++) {
+> +		pr_info(PFX "Attempting to read BMC device ID\n");
+> +		rv = try_get_dev_id(new_smi);
+> +		/* If it succeeded, stop trying */
+> +		if (!rv)
+> +			break;
+> +
+> +		/* Sleep for ~0.25s before trying again instead of hammering
+> +		 * the BMC.
+> +		 */
+> +		sleep_rm = msleep_interruptible(250);
+> +		if (sleep_rm != 0) {
+> +			pr_info(PFX "Find BMC interrupted\n");
+> +			rv = -EINTR;
+> +			goto out_err;
+> +		}
+> +	}
+> +
+> +	/* If we exited the loop above and rv is non-zero we ran out of tries.
+> +	 */
+>   	if (rv) {
+>   		if (new_smi->io.addr_source)
+>   			dev_err(new_smi->io.dev,
+
+
