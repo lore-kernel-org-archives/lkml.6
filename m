@@ -2,201 +2,165 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE041C46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 10:25:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAA00C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 10:26:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C4E52088E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 10:25:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="mzh450CX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C4E52088E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+	by mail.kernel.org (Postfix) with ESMTP id A38A920866
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 10:26:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A38A920866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727804AbeILP2z (ORCPT
+        id S1728050AbeILP3z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 11:28:55 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:43770 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726552AbeILP2z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 11:28:55 -0400
-Received: by mail-wr1-f67.google.com with SMTP id k5-v6so1423718wre.10
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 03:25:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=q8xalLbf3CxPj39DOk0PKZGvlQU6d43iaIbjyORJs5M=;
-        b=mzh450CXyQ+qpAfmXaDBqYM7AJZ1Rf40jyi1oZEm87MEwVDWyW9um35ni057rgLtL8
-         DIXq0PoXDsOudYAZp3O3BV9iExpV/JK52TY91kJJeLpDi2nfGW6ZEWWhpabvOKGqkwlI
-         VThd5vA2mxqb2ct1YJuRT3zCucW0mbZMAR65PrlQl5jocJ6gYdsv/lrNPo/u9gk6dyTM
-         WREjux3J+2CsBpUncV6L6nRS117TZ9/LUk+CVAwOrFPkXxcNrbyYru+oawsQpNOHzeSb
-         Iq3kTW3Mz/WLzca5bYH+M8g3oF4ntCzbeuYnhqFxRaw35b7wroF3jl2rhokWGApiDv0t
-         DTdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=q8xalLbf3CxPj39DOk0PKZGvlQU6d43iaIbjyORJs5M=;
-        b=tkkoOCsyI8xnBlnnVXIeXqWRXdwUsFdfSolnZ9qqtWO4n6f/83M4YrWOLBCQV5E2bV
-         reDXb5t5OXBg6g7XFg4OBkpI9yLqTY0AxPwlWomq0eHtZE634bCtZUB83eIWyVqEh58T
-         8sGFueQephv/tFlYtUi1IvERfcAWKnCG9FTvTY6bYIPvZVtWipOCBiTSQcfW7uKV6SVx
-         A20C/8DNLFlWTwqWxFEmBXjbL2/f+LUr98MeqcSDzHVE7jXjCa7I7BgDotxJfY0LABSF
-         LclHtVeOhJ3ZQoe5SPWnH7mCR7ET2rt7vqHBAvNwmtcfY1ublKeMqa1KNlFL74jejait
-         Ux4Q==
-X-Gm-Message-State: APzg51CXaHMQpcfUmk5LMuk3w1N3guQkme5O1kuveqPVNo3xuhat9Ht0
-        LkXUlrTzoCdpo9LxEBga2czbXg==
-X-Google-Smtp-Source: ANB0VdbdZq51B2TEAs5jgqQ27FqZ315XLz0r87183c54DP5P/g9Fn55Zn89H8ZdTDrVazsaBHzptsw==
-X-Received: by 2002:adf:b456:: with SMTP id v22-v6mr919571wrd.187.1536747900319;
-        Wed, 12 Sep 2018 03:25:00 -0700 (PDT)
-Received: from kshutemo-mobl1.localdomain (mm-129-246-122-178.brest.dynamic.pppoe.byfly.by. [178.122.246.129])
-        by smtp.gmail.com with ESMTPSA id s10-v6sm525330wrw.35.2018.09.12.03.24.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Sep 2018 03:24:59 -0700 (PDT)
-Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
-        id 3B426300DB6; Wed, 12 Sep 2018 13:24:58 +0300 (+03)
-Date:   Wed, 12 Sep 2018 13:24:58 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     "Aneesh Kumar K.V" <aneeshkumar.opensource@gmail.com>
-Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vegard Nossum <vegard.nossum@gmail.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Zi Yan <zi.yan@cs.rutgers.edu>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrea Arcangeli <aarcange@redhat.com>
-Subject: Re: [PATCH] mm, thp: Fix mlocking THP page with migration enabled
-Message-ID: <20180912102457.deuqtyx2b67zfi7u@kshutemo-mobl1>
-References: <20180911103403.38086-1-kirill.shutemov@linux.intel.com>
- <6fcb5b5b-43fa-f1d0-ce78-37fb51b46a75@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6fcb5b5b-43fa-f1d0-ce78-37fb51b46a75@linux.ibm.com>
-User-Agent: NeoMutt/20180716
+        Wed, 12 Sep 2018 11:29:55 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57002 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727611AbeILP3z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 11:29:55 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1F1481684;
+        Wed, 12 Sep 2018 03:26:02 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E55DB3F614;
+        Wed, 12 Sep 2018 03:26:01 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id B42871AE3411; Wed, 12 Sep 2018 11:26:18 +0100 (BST)
+From:   Will Deacon <will.deacon@arm.com>
+To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Cc:     cpandya@codeaurora.org, toshi.kani@hpe.com, tglx@linutronix.de,
+        mhocko@suse.com, akpm@linux-foundation.org,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 4/5] lib/ioremap: Ensure phys_addr actually corresponds to a physical address
+Date:   Wed, 12 Sep 2018 11:26:13 +0100
+Message-Id: <1536747974-25875-5-git-send-email-will.deacon@arm.com>
+X-Mailer: git-send-email 2.1.4
+In-Reply-To: <1536747974-25875-1-git-send-email-will.deacon@arm.com>
+References: <1536747974-25875-1-git-send-email-will.deacon@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 03:28:24PM +0530, Aneesh Kumar K.V wrote:
-> On 9/11/18 4:04 PM, Kirill A. Shutemov wrote:
-> > A transparent huge page is represented by a single entry on an LRU list.
-> > Therefore, we can only make unevictable an entire compound page, not
-> > individual subpages.
-> > 
-> > If a user tries to mlock() part of a huge page, we want the rest of the
-> > page to be reclaimable.
-> > 
-> > We handle this by keeping PTE-mapped huge pages on normal LRU lists: the
-> > PMD on border of VM_LOCKED VMA will be split into PTE table.
-> > 
-> > Introduction of THP migration breaks the rules around mlocking THP
-> > pages. If we had a single PMD mapping of the page in mlocked VMA, the
-> > page will get mlocked, regardless of PTE mappings of the page.
-> > 
-> > For tmpfs/shmem it's easy to fix by checking PageDoubleMap() in
-> > remove_migration_pmd().
-> > 
-> > Anon THP pages can only be shared between processes via fork(). Mlocked
-> > page can only be shared if parent mlocked it before forking, otherwise
-> > CoW will be triggered on mlock().
-> > 
-> > For Anon-THP, we can fix the issue by munlocking the page on removing PTE
-> > migration entry for the page. PTEs for the page will always come after
-> > mlocked PMD: rmap walks VMAs from oldest to newest.
-> > 
-> > Test-case:
-> > 
-> > 	#include <unistd.h>
-> > 	#include <sys/mman.h>
-> > 	#include <sys/wait.h>
-> > 	#include <linux/mempolicy.h>
-> > 	#include <numaif.h>
-> > 
-> > 	int main(void)
-> > 	{
-> > 	        unsigned long nodemask = 4;
-> > 	        void *addr;
-> > 
-> > 		addr = mmap((void *)0x20000000UL, 2UL << 20, PROT_READ | PROT_WRITE,
-> > 			MAP_PRIVATE | MAP_ANONYMOUS | MAP_LOCKED, -1, 0);
-> > 
-> > 	        if (fork()) {
-> > 			wait(NULL);
-> > 			return 0;
-> > 	        }
-> > 
-> > 	        mlock(addr, 4UL << 10);
-> > 	        mbind(addr, 2UL << 20, MPOL_PREFERRED | MPOL_F_RELATIVE_NODES,
-> > 	                &nodemask, 4, MPOL_MF_MOVE | MPOL_MF_MOVE_ALL);
-> > 
-> > 	        return 0;
-> > 	}
-> > 
-> > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> > Reported-by: Vegard Nossum <vegard.nossum@gmail.com>
-> > Fixes: 616b8371539a ("mm: thp: enable thp migration in generic path")
-> > Cc: <stable@vger.kernel.org> [v4.14+]
-> > Cc: Zi Yan <zi.yan@cs.rutgers.edu>
-> > Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-> > Cc: Vlastimil Babka <vbabka@suse.cz>
-> > Cc: Andrea Arcangeli <aarcange@redhat.com>
-> > ---
-> >   mm/huge_memory.c | 2 +-
-> >   mm/migrate.c     | 3 +++
-> >   2 files changed, 4 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> > index 533f9b00147d..00704060b7f7 100644
-> > --- a/mm/huge_memory.c
-> > +++ b/mm/huge_memory.c
-> > @@ -2931,7 +2931,7 @@ void remove_migration_pmd(struct page_vma_mapped_walk *pvmw, struct page *new)
-> >   	else
-> >   		page_add_file_rmap(new, true);
-> >   	set_pmd_at(mm, mmun_start, pvmw->pmd, pmde);
-> > -	if (vma->vm_flags & VM_LOCKED)
-> > +	if ((vma->vm_flags & VM_LOCKED) && !PageDoubleMap(new))
-> >   		mlock_vma_page(new);
-> >   	update_mmu_cache_pmd(vma, address, pvmw->pmd);
-> >   }
-> > diff --git a/mm/migrate.c b/mm/migrate.c
-> > index d6a2e89b086a..01dad96b25b5 100644
-> > --- a/mm/migrate.c
-> > +++ b/mm/migrate.c
-> > @@ -275,6 +275,9 @@ static bool remove_migration_pte(struct page *page, struct vm_area_struct *vma,
-> >   		if (vma->vm_flags & VM_LOCKED && !PageTransCompound(new))
-> >   			mlock_vma_page(new);
-> > +		if (PageTransCompound(new) && PageMlocked(page))
-> > +			clear_page_mlock(page);
-> > +
-> 
-> Can you explain this more? I am confused by the usage of 'new' and 'page'
-> there.
+The current ioremap() code uses a phys_addr variable at each level of
+page table, which is confusingly offset by subtracting the base virtual
+address being mapped so that adding the current virtual address back on
+when iterating through the page table entries gives back the corresponding
+physical address.
 
-'new' is the PTE subpage of 'page'. clear_page_mlock() wants to see head
-page.
+This is fairly confusing and results in all users of phys_addr having to
+add the current virtual address back on. Instead, this patch just updates
+phys_addr when iterating over the page table entries, ensuring that it's
+always up-to-date and doesn't require explicit offsetting.
 
-I guess we can rewrite it more clearly:
+Cc: Chintan Pandya <cpandya@codeaurora.org>
+Cc: Toshi Kani <toshi.kani@hpe.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+---
+ lib/ioremap.c | 28 ++++++++++++----------------
+ 1 file changed, 12 insertions(+), 16 deletions(-)
 
-+		if (PageTransHuge(page) && PageMlocked(page))
-+			clear_page_mlock(page);
-+
-
-> I guess the idea is if we are removing the migration pte at level 4
-> table, and if we found the backing page compound don't mark the page
-> Mlocked?
-
-We has to clear mlock, not only don't mark it as such.
-remove_migration_pmd() for other VMA may mark it as mlock and we want to
-revert it on the first PTE mapping of the page.
-
+diff --git a/lib/ioremap.c b/lib/ioremap.c
+index 6c72764af19c..fc834a59c90c 100644
+--- a/lib/ioremap.c
++++ b/lib/ioremap.c
+@@ -101,19 +101,18 @@ static inline int ioremap_pmd_range(pud_t *pud, unsigned long addr,
+ 	pmd_t *pmd;
+ 	unsigned long next;
+ 
+-	phys_addr -= addr;
+ 	pmd = pmd_alloc(&init_mm, pud, addr);
+ 	if (!pmd)
+ 		return -ENOMEM;
+ 	do {
+ 		next = pmd_addr_end(addr, end);
+ 
+-		if (ioremap_try_huge_pmd(pmd, addr, next, phys_addr + addr, prot))
++		if (ioremap_try_huge_pmd(pmd, addr, next, phys_addr, prot))
+ 			continue;
+ 
+-		if (ioremap_pte_range(pmd, addr, next, phys_addr + addr, prot))
++		if (ioremap_pte_range(pmd, addr, next, phys_addr, prot))
+ 			return -ENOMEM;
+-	} while (pmd++, addr = next, addr != end);
++	} while (pmd++, addr = next, phys_addr += PMD_SIZE, addr != end);
+ 	return 0;
+ }
+ 
+@@ -142,19 +141,18 @@ static inline int ioremap_pud_range(p4d_t *p4d, unsigned long addr,
+ 	pud_t *pud;
+ 	unsigned long next;
+ 
+-	phys_addr -= addr;
+ 	pud = pud_alloc(&init_mm, p4d, addr);
+ 	if (!pud)
+ 		return -ENOMEM;
+ 	do {
+ 		next = pud_addr_end(addr, end);
+ 
+-		if (ioremap_try_huge_pud(pud, addr, next, phys_addr + addr, prot))
++		if (ioremap_try_huge_pud(pud, addr, next, phys_addr, prot))
+ 			continue;
+ 
+-		if (ioremap_pmd_range(pud, addr, next, phys_addr + addr, prot))
++		if (ioremap_pmd_range(pud, addr, next, phys_addr, prot))
+ 			return -ENOMEM;
+-	} while (pud++, addr = next, addr != end);
++	} while (pud++, addr = next, phys_addr += PUD_SIZE, addr != end);
+ 	return 0;
+ }
+ 
+@@ -164,7 +162,6 @@ static inline int ioremap_p4d_range(pgd_t *pgd, unsigned long addr,
+ 	p4d_t *p4d;
+ 	unsigned long next;
+ 
+-	phys_addr -= addr;
+ 	p4d = p4d_alloc(&init_mm, pgd, addr);
+ 	if (!p4d)
+ 		return -ENOMEM;
+@@ -173,14 +170,14 @@ static inline int ioremap_p4d_range(pgd_t *pgd, unsigned long addr,
+ 
+ 		if (ioremap_p4d_enabled() &&
+ 		    ((next - addr) == P4D_SIZE) &&
+-		    IS_ALIGNED(phys_addr + addr, P4D_SIZE)) {
+-			if (p4d_set_huge(p4d, phys_addr + addr, prot))
++		    IS_ALIGNED(phys_addr, P4D_SIZE)) {
++			if (p4d_set_huge(p4d, phys_addr, prot))
+ 				continue;
+ 		}
+ 
+-		if (ioremap_pud_range(p4d, addr, next, phys_addr + addr, prot))
++		if (ioremap_pud_range(p4d, addr, next, phys_addr, prot))
+ 			return -ENOMEM;
+-	} while (p4d++, addr = next, addr != end);
++	} while (p4d++, addr = next, phys_addr += P4D_SIZE, addr != end);
+ 	return 0;
+ }
+ 
+@@ -196,14 +193,13 @@ int ioremap_page_range(unsigned long addr,
+ 	BUG_ON(addr >= end);
+ 
+ 	start = addr;
+-	phys_addr -= addr;
+ 	pgd = pgd_offset_k(addr);
+ 	do {
+ 		next = pgd_addr_end(addr, end);
+-		err = ioremap_p4d_range(pgd, addr, next, phys_addr+addr, prot);
++		err = ioremap_p4d_range(pgd, addr, next, phys_addr, prot);
+ 		if (err)
+ 			break;
+-	} while (pgd++, addr = next, addr != end);
++	} while (pgd++, addr = next, phys_addr += PGDIR_SIZE, addr != end);
+ 
+ 	flush_cache_vmap(start, end);
+ 
 -- 
- Kirill A. Shutemov
+2.1.4
+
