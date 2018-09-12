@@ -2,128 +2,194 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D66A3C4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:06:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35930C4646A
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:09:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E37520839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:06:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E37520839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
+	by mail.kernel.org (Postfix) with ESMTP id 7A97220839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:09:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QRGOLGrd";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="OVAALX3P"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A97220839
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727711AbeILTLT convert rfc822-to-8bit (ORCPT
+        id S1727739AbeILTOK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 15:11:19 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:58620 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726644AbeILTLT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 15:11:19 -0400
-Received: from wd0180.dip.tu-dresden.de ([141.76.108.180] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1g05ml-0006Wx-I3; Wed, 12 Sep 2018 16:06:27 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     Ezequiel Garcia <ezequiel@collabora.com>, robh+dt@kernel.org,
-        vicencb@gmail.com, shawn.lin@rock-chips.com,
-        enric.balletbo@collabora.com, pbrobinson@gmail.com, tom@vamrs.com,
-        dev@vamrs.com, stephen@vamrs.com, amit.kucheria@linaro.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] arm64: dts: rockchip: Split out common nodes for Rock960 based boards
-Date:   Wed, 12 Sep 2018 16:05:28 +0200
-Message-ID: <2062942.2GzzSlpOsc@phil>
-In-Reply-To: <20180912082244.GA16509@Mani-XPS-13-9360>
-References: <20180911023031.4892-1-manivannan.sadhasivam@linaro.org> <11137562.zz0kzkSHxt@diego> <20180912082244.GA16509@Mani-XPS-13-9360>
+        Wed, 12 Sep 2018 15:14:10 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:34362 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726642AbeILTOJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 15:14:09 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id E1F076083E; Wed, 12 Sep 2018 14:09:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1536761367;
+        bh=DRIe1HTR507OMAPE4kLMiDMFdZSRXxQIgeXau95325A=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=QRGOLGrd/o8nWcmPxLgNcoVLrY/Io+6AvbHaF59ynEJsIspOeGzh91LPoC0XqaAYn
+         TAFNX2LLJWpzlftyH/bab8kOzmLNOi62gvZvvjG7UvJb1mK7631Xy955Bf3eJfNwHv
+         83p5M7m3D6hJf5ygbqLVnX0SMtCr3uKljNbOXFRE=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 6D8136029D;
+        Wed, 12 Sep 2018 14:09:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1536761366;
+        bh=DRIe1HTR507OMAPE4kLMiDMFdZSRXxQIgeXau95325A=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=OVAALX3PX8/loDE1tre6Tk8lbDLX0lOukjrbreJo5eg/UNrVzWIdNWvSp62yhv8qn
+         ikrkbglNmuX7lMrB8UQgxf5CqYn8vgOSYSKi+LdNY1K5eICQMCHgAJHQ63+/8DILz4
+         xX7+qRtKyMjw367ZSmrHNVigCOaLLTE4gnHtflj0=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 12 Sep 2018 19:39:26 +0530
+From:   Arun KS <arunks@codeaurora.org>
+To:     Balbir Singh <bsingharora@gmail.com>
+Cc:     Michal Hocko <mhocko@kernel.org>, akpm@linux-foundation.org,
+        dan.j.williams@intel.com, vbabka@suse.cz,
+        pasha.tatashin@oracle.com, iamjoonsoo.kim@lge.com,
+        osalvador@suse.de, malat@debian.org, gregkh@linuxfoundation.org,
+        yasu.isimatu@gmail.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, arunks.linux@gmail.com,
+        vinmenon@codeaurora.org, getarunks@gmail.com
+Subject: Re: [RFC] memory_hotplug: Free pages as pageblock_order
+In-Reply-To: <20180912125743.GB8537@350D>
+References: <1536744405-16752-1-git-send-email-arunks@codeaurora.org>
+ <20180912103853.GC10951@dhcp22.suse.cz> <20180912125743.GB8537@350D>
+Message-ID: <4b2f53342b68535b5635a3e46783163a@codeaurora.org>
+X-Sender: arunks@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Mittwoch, 12. September 2018, 10:22:44 CEST schrieb Manivannan Sadhasivam:
-> On Wed, Sep 12, 2018 at 09:26:12AM +0200, Heiko Stübner wrote:
-> > Am Mittwoch, 12. September 2018, 05:12:48 CEST schrieb Manivannan Sadhasivam:
-> > > Hi Ezequiel,
-> > > 
-> > > On Tue, Sep 11, 2018 at 04:40:29PM -0300, Ezequiel Garcia wrote:
-> > > > On Tue, 2018-09-11 at 08:00 +0530, Manivannan Sadhasivam wrote:
-> > > > > Since the same family members of Rock960 boards (Rock960 and Ficus)
-> > > > > share the same configuration, split out the common nodes into a common
-> > > > > dtsi file for reducing code duplication. The board specific nodes for
-> > > > > Ficus boards are then placed in corresponding board DTS file.
-> > > > 
-> > > > I think it should be possible to move the common USB nodes to the dtsi
-> > > > file, and keep the board-specific (phy-supply property) in the dts files:
-> > > > 
-> > > > &u2phy0_host {
-> > > > 
-> > > >         phy-supply = <&vcc5v0_host>;
-> > > > 
-> > > > };
-> > > > 
-> > > > &u2phy1_host {
-> > > > 
-> > > >         phy-supply = <&vcc5v0_host>;
-> > > > 
-> > > > };
-> > > 
-> > > We can do that but my intention was to entirely partition the nodes
-> > > which are not common. So that it would be less confusing when someone
-> > > looks at it (please correct me if I'm wrong).
-> > 
-> > The supply is actually named the same on both boards, so you could move
-> > all the usb-nodes to the main dtsi, including the reference to vcc5v0_host
-> > which would then get defined itself in the two board dts.
-> > 
-> > Then again, seeing that the vcc5v0_host also only differs in the actually
-> > used gpio another option would be to move the whole regulator node
-> > to the dtsi and just define the gpio properties in the board dts files.
-> >
-> 
-> Hmm, if that's the preferred option then I guess this applies to pcie
-> nodes also. At the end, usb and pcie nodes will be shrinked to below in
-> board dts:
-> 
-> &pinctrl {
->         pcie {
->                 pcie_drv: pcie-drv {
->                         rockchip,pins =
->                                 <2 RK_PA5 RK_FUNC_GPIO &pcfg_pull_none>;
->                         };
->         };
-> 
->         usb2 {
->                 host_vbus_drv: host-vbus-drv {
->                         rockchip,pins =
->                                 <4 RK_PD1 RK_FUNC_GPIO &pcfg_pull_none>;
->                 };
->         };
-> };
-> 
-> &pcie0 {
->         ep-gpios = <&gpio2 RK_PA2 GPIO_ACTIVE_HIGH>;
->         status = "okay";
-> };
-> 
-> &vcc3v3_pcie {
->         gpio = <&gpio2 5 GPIO_ACTIVE_HIGH>;
-> };
-> 
-> &vcc5v0_host {
->         gpio = <&gpio4 25 GPIO_ACTIVE_HIGH>;
-> };
+Hello Michal and Balbir,
 
-yep, ideally we could go that way. It's way easier to determine the
-actual differences between boards that way as well.
+Thanks for reviewing.
 
+On 2018-09-12 18:27, Balbir Singh wrote:
+> On Wed, Sep 12, 2018 at 12:38:53PM +0200, Michal Hocko wrote:
+>> On Wed 12-09-18 14:56:45, Arun KS wrote:
+>> > When free pages are done with pageblock_order, time spend on
+>> > coalescing pages by buddy allocator can be reduced. With
+>> > section size of 256MB, hot add latency of a single section
+>> > shows improvement from 50-60 ms to less than 1 ms, hence
+>> > improving the hot add latency by 60%.
+>> 
+>> Where does the improvement come from? You are still doing the same
+>> amount of work except that the number of callbacks is lower. Is this 
+>> the
+>> real source of 60% improvement?
+>> 
+> 
+> It looks like only the first page of the pageblock is initialized, is
+> some of the cost amortized in terms of doing one initialization for
+> the page with order (order) and then relying on split_page and helpers
+> to do the rest? Of course the number of callbacks reduce by a 
+> significant
+> number as well.
+Currently, order zero pages are freed one by one, they goes to pcp list 
+and later when pcp->count >= pcp->high, kernel calls __free_one_page() 
+in a loop. __free_one_page() tries to merge these pages to create bigger 
+order page.
 
-Heiko
+But when we free with higher order page(pageblock_order), this merging 
+is not done. AFAIU, this is the reason for improvement in hot add 
+latency.
 
+> 
+> 
+>> >
+>> > If this looks okey, I'll modify users of set_online_page_callback
+>> > and resend clean patch.
+>> 
+>> [...]
+>> 
+>> > +static int generic_online_pages(struct page *page, unsigned int order);
+>> > +static online_pages_callback_t online_pages_callback = generic_online_pages;
+>> > +
+>> > +static int generic_online_pages(struct page *page, unsigned int order)
+>> > +{
+>> > +	unsigned long nr_pages = 1 << order;
+>> > +	struct page *p = page;
+>> > +	unsigned int loop;
+>> > +
+>> > +	for (loop = 0 ; loop < nr_pages ; loop++, p++) {
+>> > +		__ClearPageReserved(p);
+>> > +		set_page_count(p, 0);
+>> > +	}
+>> > +	adjust_managed_page_count(page, nr_pages);
+>> > +	init_page_count(page);
+>> > +	__free_pages(page, order);
+>> > +
+>> > +	return 0;
+>> > +}
+>> > +
+>> > +static int online_pages_blocks(unsigned long start_pfn, unsigned long nr_pages)
+>> > +{
+>> > +	unsigned long pages_per_block = (1 << pageblock_order);
+>> > +	unsigned long nr_pageblocks = nr_pages / pages_per_block;
+>> > +//	unsigned long rem_pages = nr_pages % pages_per_block;
+>> > +	int i, ret, onlined_pages = 0;
+>> > +	struct page *page;
+>> > +
+>> > +	for (i = 0 ; i < nr_pageblocks ; i++) {
+>> > +		page = pfn_to_page(start_pfn + (i * pages_per_block));
+>> > +		ret = (*online_pages_callback)(page, pageblock_order);
+>> > +		if (!ret)
+>> > +			onlined_pages += pages_per_block;
+>> > +		else if (ret > 0)
+>> > +			onlined_pages += ret;
+>> > +	}
+>> 
+>> Could you explain why does the pages_per_block step makes any sense? 
+>> Why
+>> don't you simply apply handle the full nr_pages worth of memory range
+>> instead?
+Yes. We can move the this loop to generic_online_pages and do 
+__free_pages() of pageblock_order.
 
+>> 
+>> > +/*
+>> > +	if (rem_pages)
+>> > +		onlined_pages += online_page_single(start_pfn + i, rem_pages);
+>> > +*/
+> 
+> Do we expect no rem_pages with this patch?
+I ll remove this code, in assumption that section size will be always 
+multiple of pageblock_order.
+
+Regards,
+Arun
+> 
+>> > +
+>> > +	return onlined_pages;
+>> > +}
+>> > +
+>> >  static int online_pages_range(unsigned long start_pfn, unsigned long nr_pages,
+>> >  			void *arg)
+>> >  {
+>> > -	unsigned long i;
+>> >  	unsigned long onlined_pages = *(unsigned long *)arg;
+>> > -	struct page *page;
+>> >
+>> >  	if (PageReserved(pfn_to_page(start_pfn)))
+>> > -		for (i = 0; i < nr_pages; i++) {
+>> > -			page = pfn_to_page(start_pfn + i);
+>> > -			(*online_page_callback)(page);
+>> > -			onlined_pages++;
+>> > -		}
+>> > +		onlined_pages = online_pages_blocks(start_pfn, nr_pages);
+>> >
+>> >  	online_mem_sections(start_pfn, start_pfn + nr_pages);
+> 
+> 
+> Balbir Singh.
