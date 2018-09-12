@@ -2,67 +2,169 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BD5CC46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:38:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42A0EC4646A
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:41:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFF33206B6
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:38:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFF33206B6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D706B206B8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:41:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ursulin-net.20150623.gappssmtp.com header.i=@ursulin-net.20150623.gappssmtp.com header.b="JerLaMZW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D706B206B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727774AbeILNmR (ORCPT
+        id S1727651AbeILNpO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 09:42:17 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59590 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726624AbeILNmR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 09:42:17 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 94CB18011309;
-        Wed, 12 Sep 2018 08:38:47 +0000 (UTC)
-Received: from ws.net.home (ovpn-117-57.ams2.redhat.com [10.36.117.57])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6D3D0FA984;
-        Wed, 12 Sep 2018 08:38:46 +0000 (UTC)
-Date:   Wed, 12 Sep 2018 10:38:44 +0200
-From:   Karel Zak <kzak@redhat.com>
-To:     Eugene Korenevsky <ekorenevsky@gmail.com>,
-        Davidlohr Bueso <dave@stgolabs.net>, linux-efi@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: Re: [PATCH v2] efi: take size of partition entry from GPT header
-Message-ID: <20180912083844.iegei2kobcz4b7ag@ws.net.home>
-References: <20180911161527.GA30689@vnote>
+        Wed, 12 Sep 2018 09:45:14 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:41262 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726502AbeILNpO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 09:45:14 -0400
+Received: by mail-wr1-f68.google.com with SMTP id z96-v6so1078493wrb.8
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 01:41:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ursulin-net.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=C/0tqtyKIui3gTmlZeuRN7hzV31E1/YS3e/kooZohyc=;
+        b=JerLaMZWvrU2U/Q5x3DSsZUj1rnC2ilkNEuSFaTlWa5rM8Vs3onW5Cp+nxdPrnLZGZ
+         IWcNFBILN/B/Kkdje+Rod6dJ5H2B4rrEb2XJ+jSQ0UgDKKfcQM+X4dkmdS19Fm3/80+R
+         O0NUCP7N5g7pQUH2d/0slJMjz9aje47P7DqH/V5aEqCZ+8Kcotpxh4BbL8KkvJfZ4DI3
+         vCcudbGeANgjBne3A/YrX1SaAl7AALapEDYzmV03tM+N5vJ+5TwNPLzRCFlyZL8/0oRl
+         +5/BMJbOw5ohCCQmHst2lsmfAOgYnvKm+FIvTxeNzXaA2aB8+9yzr/B28IAHsTUumvRX
+         gj+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=C/0tqtyKIui3gTmlZeuRN7hzV31E1/YS3e/kooZohyc=;
+        b=rVKOpqbyQZXuImh0vwUa08a4qJtKPxovLHYWb0L1myPJr7n+/CxxgEYW6AfpVab1Ac
+         s305CTXyWkVwRQn5XzOMv2tUvMqM6kZ5PXsTgj9lfKW+osb6f0bYIHYNrN/VOAMcHXMA
+         6xpSEbkktspQ4tB9N0ySTmyVDGrHUwY/UZVYt9GgyzYiEXGg7uoKzQl7VbIO5/8lp9P9
+         wLHZVKGgsFHLskxKtz+4eYrQxkFaRqIqruTaKl6JtIiPCTyeR0ZERDciP3Pfe7wkw20c
+         s/psx+tZzPsPEnu66hjDxz4ZGA72lLed20iTGe3Yc8wtoaawi4Xtn8h1b4QyqhxZroFQ
+         /k3g==
+X-Gm-Message-State: APzg51ALzL88xkuZXMuXoYXJq2kFIFjcmZFSNVnWazqBr1coEqNiPhB4
+        ua++mmU+eyF0+/t8+zDE8KdAKg==
+X-Google-Smtp-Source: ANB0Vdbj14UA8+edIK+yYsun1bNR/z5VwLCuUhAY7rB3d8o5SQ54PYyvpxp5k9HJUJKAo0M4AG3vyA==
+X-Received: by 2002:a5d:4089:: with SMTP id o9-v6mr659113wrp.133.1536741702471;
+        Wed, 12 Sep 2018 01:41:42 -0700 (PDT)
+Received: from [192.168.0.197] ([95.144.165.37])
+        by smtp.googlemail.com with ESMTPSA id h10-v6sm644903wmf.44.2018.09.12.01.41.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Sep 2018 01:41:41 -0700 (PDT)
+Subject: Re: [RFC 0/4] perf: Per PMU access controls (paranoid setting)
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Cc:     Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        Andi Kleen <ak@linux.intel.com>, x86@kernel.org
+References: <20180626153642.5587-1-tvrtko.ursulin@linux.intel.com>
+ <27559444-ca88-2c04-c85c-613116e9e51f@linux.intel.com>
+From:   Tvrtko Ursulin <tursulin@ursulin.net>
+Message-ID: <3361d8e1-50a0-2404-78cb-b83ca345b565@ursulin.net>
+Date:   Wed, 12 Sep 2018 09:41:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180911161527.GA30689@vnote>
-User-Agent: NeoMutt/20170912-66-504cd9
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 12 Sep 2018 08:38:47 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 12 Sep 2018 08:38:47 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'kzak@redhat.com' RCPT:''
+In-Reply-To: <27559444-ca88-2c04-c85c-613116e9e51f@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 11, 2018 at 07:15:27PM +0300, Eugene Korenevsky wrote:
-> +static gpt_entry *get_gpt_entry(gpt_header *gpt_hdr, gpt_entry *ptes, u32 index)
-> +{
-> +	return (gpt_entry *)((u8 *)ptes + gpt->sizeof_partition_entry * index);
 
-I guess header use LE, so you need:
+On 12/09/18 07:52, Alexey Budankov wrote:
+> 
+> Hi,
+> 
+> Is there any plans or may be even progress on that so far?
 
-               le32_to_cpu(gpt_hdr->sizeof_partition_entry)
+It's hanging in the back of my mind. AFAIR after last round there was a 
+build failure or two to fix on more exotic (to me) hardware, and Jiri 
+Olsa provided a tools/perf snippet supporting the feature.
 
-    Karel
+But essentially I haven't done any work on it since due not seeing the 
+route to upstream. :( In other words, will someone review it and will 
+that r-b make it have a chance of getting into some tree. If I had a 
+clear statement from someone with authority in these aspects I would 
+progress it, but otherwise it felt like it's not going anywhere.
 
--- 
- Karel Zak  <kzak@redhat.com>
- http://karelzak.blogspot.com
+Regards,
+
+Tvrtko
+
+
+> Thanks,
+> Alexey
+> 
+> On 26.06.2018 18:36, Tvrtko Ursulin wrote:
+>> From: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
+>>
+>> For situations where sysadmins might want to allow different level of
+>> access control for different PMUs, we start creating per-PMU
+>> perf_event_paranoid controls in sysfs.
+>>
+>> These work in equivalent fashion as the existing perf_event_paranoid
+>> sysctl, which now becomes the parent control for each PMU.
+>>
+>> On PMU registration the global/parent value will be inherited by each PMU,
+>> as it will be propagated to all registered PMUs when the sysctl is
+>> updated.
+>>
+>> At any later point individual PMU access controls, located in
+>> <sysfs>/device/<pmu-name>/perf_event_paranoid, can be adjusted to achieve
+>> fine grained access control.
+>>
+>> Discussion from previous posting:
+>> https://lkml.org/lkml/2018/5/21/156
+>>
+>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>> Cc: Peter Zijlstra <peterz@infradead.org>
+>> Cc: Ingo Molnar <mingo@redhat.com>
+>> Cc: "H. Peter Anvin" <hpa@zytor.com>
+>> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+>> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+>> Cc: Jiri Olsa <jolsa@redhat.com>
+>> Cc: Namhyung Kim <namhyung@kernel.org>
+>> Cc: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
+>> Cc: Andi Kleen <ak@linux.intel.com>
+>> Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
+>> Cc: linux-kernel@vger.kernel.org
+>> Cc: x86@kernel.org
+>>
+>> Tvrtko Ursulin (4):
+>>    perf: Move some access checks later in perf_event_open
+>>    perf: Pass pmu pointer to perf_paranoid_* helpers
+>>    perf: Allow per PMU access control
+>>    perf Documentation: Document the per PMU perf_event_paranoid interface
+>>
+>>   .../sysfs-bus-event_source-devices-events     |  14 +++
+>>   arch/powerpc/perf/core-book3s.c               |   2 +-
+>>   arch/x86/events/intel/bts.c                   |   2 +-
+>>   arch/x86/events/intel/core.c                  |   2 +-
+>>   arch/x86/events/intel/p4.c                    |   2 +-
+>>   include/linux/perf_event.h                    |  18 ++-
+>>   kernel/events/core.c                          | 104 +++++++++++++++---
+>>   kernel/sysctl.c                               |   4 +-
+>>   kernel/trace/trace_event_perf.c               |   6 +-
+>>   9 files changed, 123 insertions(+), 31 deletions(-)
+>>
+> 
