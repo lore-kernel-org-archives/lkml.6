@@ -2,175 +2,134 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAA09C6778D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:48:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A7BEC6778D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:49:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E4D920882
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:48:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04FA32088E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:49:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="JUkqHfD6";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="WoEftxTL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E4D920882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="stfBKjXJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04FA32088E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728122AbeILTxQ (ORCPT
+        id S1728143AbeILTyK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 15:53:16 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:58120 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726819AbeILTxQ (ORCPT
+        Wed, 12 Sep 2018 15:54:10 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:43398 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726819AbeILTyK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 15:53:16 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 1AA1C60AFF; Wed, 12 Sep 2018 14:48:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536763705;
-        bh=3IdmViWb+lpItkHGNUpX0/6DFbQ0HGkxyMS68jlD5nw=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=JUkqHfD6o/EgAq8UTbi3X5SWk+8EeIxyuBPx3aKJlF09cpmV6AD+W4bmMWdnSHhbz
-         6x5I1IfQKb+OF6okXKp8fqOTrakmzICtXWoGU2DSp5Ie9+l2VjvcHq+2lQS/5ZZ6Uc
-         vqvLD7IphUbFuwybIIqHC22SQvIJYTEpFmFmItDM=
-Received: from [10.226.60.81] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 545D8609D1;
-        Wed, 12 Sep 2018 14:48:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536763703;
-        bh=3IdmViWb+lpItkHGNUpX0/6DFbQ0HGkxyMS68jlD5nw=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=WoEftxTL2R9n7PpBTy0rjSu9Ry5omxQddvGydQ+hZhWBrr610yXEGULAU5XXfiq6w
-         +B5GJFnmwuknnqkfxmI/awuaY1BaV1t10E9DU5wLtgjOkNcGRPms5/s41TMD1InwHS
-         l+WxhoiCosgWlyn6+udsbKT9BC6rAtHeJitbKDkY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 545D8609D1
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-Subject: Re: [PATCH] ACPI/PPTT: Handle architecturally unknown cache types
-To:     Sudeep Holla <sudeep.holla@arm.com>,
-        Jeremy Linton <jeremy.linton@arm.com>, rjw@rjwysocki.net,
-        linux-acpi@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, vkilari@codeaurora.org
-References: <1536694334-5811-1-git-send-email-jhugo@codeaurora.org>
- <f62f22a6-2dd8-f254-dbaf-b9e224099afd@arm.com>
- <e74f2208-ac0d-6c45-8ddb-5b77d6a42fef@codeaurora.org>
- <f8dc2958-a7c7-a633-3a06-97fed7c3510b@arm.com>
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-Message-ID: <337ef641-e645-137a-3d7f-d457264d94d5@codeaurora.org>
-Date:   Wed, 12 Sep 2018 08:48:21 -0600
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 12 Sep 2018 15:54:10 -0400
+Received: by mail-io1-f68.google.com with SMTP id y10-v6so376241ioa.10
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 07:49:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YyR9uM0oo0QzcqQCTSGpk1bUh7snJwEjrzVg8A5vW1c=;
+        b=stfBKjXJMt+JsW6jtuRmOwrwemXtktO2KXfA6zm7eHpnTcar/TY3Bof3SHt87V5Xt6
+         RtuakD98BkD/c4uPlupvyOoL81B+HnDRIi8qJIXRC9Ca507ttLa9hrwE/Bh6u3mBKoql
+         29jLLJiDsK9tQq/IhDxBAEaBZfYSrqzUN7czfpgkGf5RCbPZ7Vt11Nn2ByJ1LlmESHNH
+         LEnkXQAJeauAR0VIfWumeJLFdm8esrPJc2mvWkY2QE6W4gQeq2WgQPka3Fs3Jk6Ojevw
+         ObC4ugVZZxNf8JYE+So2jjFmE154PNzF6tTovuGiW8S6+WEhFx0xu9/jyoTvD+E9PO4F
+         WwEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YyR9uM0oo0QzcqQCTSGpk1bUh7snJwEjrzVg8A5vW1c=;
+        b=ct9p5BngQi6JJl1zvA0xL4OJTJAYiWeg4Y8sXABar7RrlqnXZ2oKkmqqBcsq+paRHA
+         G8QZw1k66jxQDCnIlRUVKKnOQ2500escyt9WCh3HjhMpfgwHuvDRt6v8yACenDo8X7us
+         kwMuMIbftuCI/laiPejNnLxmTg+0NwEtCsQ2QyPUvdH2iZQ5ydLsuv1YrjbGMV924qhS
+         wYkEY357Xfse5eW1pux78db1ciD09FLdeJpRA7wZ3WpDjO3f40/MNrWSE93vcX34fW6t
+         9r5FCxDdL4zGnJQy09W87f5CdJWq4iSxtGJUoKwzO0F3ovZGCZ1dwqOKuslgKURZdzQ7
+         WTJw==
+X-Gm-Message-State: APzg51AhJDE0M1xrTSx3KjTUh8nRwINgMcOWIhpYqBYONiT/52yH+QXu
+        KQLHrri3JmtZqGs/np0p2yM7fO5xCx7IXo/J1N4=
+X-Google-Smtp-Source: ANB0Vdb/DiGIS6bCrJCVUojzEj7M0uZfAz3BoGj3tG2p+eMVwQFgxkghSH0Z50b1DnJo1hc4kvqXWyE3S8yYA+ZvKTg=
+X-Received: by 2002:a5e:dd41:: with SMTP id u1-v6mr1980050iop.200.1536763758887;
+ Wed, 12 Sep 2018 07:49:18 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <f8dc2958-a7c7-a633-3a06-97fed7c3510b@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20180910232615.4068.29155.stgit@localhost.localdomain>
+ <20180910234341.4068.26882.stgit@localhost.localdomain> <20180912141053.GL10951@dhcp22.suse.cz>
+In-Reply-To: <20180912141053.GL10951@dhcp22.suse.cz>
+From:   Alexander Duyck <alexander.duyck@gmail.com>
+Date:   Wed, 12 Sep 2018 07:49:06 -0700
+Message-ID: <CAKgT0UdvhV7U5Zniq=KskXz2QsRP8C7ctr5=ZtJwYAVpBT-RHw@mail.gmail.com>
+Subject: Re: [PATCH 1/4] mm: Provide kernel parameter to allow disabling page
+ init poisoning
+To:     mhocko@kernel.org
+Cc:     linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        linux-nvdimm@lists.01.org, pavel.tatashin@microsoft.com,
+        dave.jiang@intel.com, Ingo Molnar <mingo@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>, jglisse@redhat.com,
+        Andrew Morton <akpm@linux-foundation.org>, logang@deltatee.com,
+        dan.j.williams@intel.com,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/12/2018 4:49 AM, Sudeep Holla wrote:
-> 
-> 
-> On 11/09/18 21:38, Jeffrey Hugo wrote:
->> On 9/11/2018 2:16 PM, Jeremy Linton wrote:
->>> Hi Jeffrey,
->>>
->>> (+Sudeep)
->>>
-> 
-> [..]
-> 
->>>
->>> If you look at the next line of code following this comment its going
->>> to update the cache type for fully populated PPTT nodes. Although with
->>> the suggested change its only going to activate if someone completely
->>> fills out the node and fails to set the valid flag on the cache type.
->>
->> Yes, however that case doesn't apply to the scenario we are concerned
->> about, doesn't seem to be fully following the PPTT spec, and seems odd
->> that Linux just assumes that a "fully specified" cache is unified.
->>
-> 
-> Agreed, but adding code that will never get used is also not so good.
-> Do you have systems where this is needed ?
+On Wed, Sep 12, 2018 at 7:10 AM Michal Hocko <mhocko@kernel.org> wrote:
+>
+> On Mon 10-09-18 16:43:41, Alexander Duyck wrote:
+> > From: Alexander Duyck <alexander.h.duyck@intel.com>
+> >
+> > On systems with a large amount of memory it can take a significant amount
+> > of time to initialize all of the page structs with the PAGE_POISON_PATTERN
+> > value. I have seen it take over 2 minutes to initialize a system with
+> > over 12GB of RAM.
+> >
+> > In order to work around the issue I had to disable CONFIG_DEBUG_VM and then
+> > the boot time returned to something much more reasonable as the
+> > arch_add_memory call completed in milliseconds versus seconds. However in
+> > doing that I had to disable all of the other VM debugging on the system.
+> >
+> > In order to work around a kernel that might have CONFIG_DEBUG_VM enabled on
+> > a system that has a large amount of memory I have added a new kernel
+> > parameter named "page_init_poison" that can be set to "off" in order to
+> > disable it.
+>
+> I am still not convinced that this all is worth the additional code. It
+> is much better than a new config option for sure. If we really want this
+> though then I suggest that the parameter handler should note the
+> disabled state (when CONFIG_DEBUG_VM is on) to the kernel log. I would
+> also make it explicit who might want to do that in the parameter
+> description.
 
-Yes.
+Anything specific in terms of the kernel log message we are looking
+for? I'll probably just go with "Page struct poisoning disabled by
+kernel command line option 'page_init_poison'" or something along
+those lines.
 
-> 
->>> What I suspect is happening in the reported case is that the nodes in
->>> the PPTT table are missing fields we consider to be important. Since
->>> that data isn't being filled out anywhere else, so we leave the cache
->>> type alone too. This has the effect of hiding sysfs nodes with
->>> incomplete information.
->>>
->>> Also, the lack of the DATA/INST fields is based on the assumption that
->>> the only nodes which need their type field updated are outside of the
->>> CPU core itself so they are pretty much guaranteed to be UNIFIED. Are
->>> you hitting this case?
->>>
->>
->> Yes.  Without this change, we hit the lscpu error in the commit message,
->> and get zero output about the system.  We don't even get information
->> about the caches which are architecturally specified or how many cpus
->> are present.  With this change, we get what we expect out of lscpu (and
->> also lstopo) including the cache(s) which are not architecturally
->> specified.
->>
-> 
-> lscpu and lstopo are so broken. They just assume everything on CPU0.
-> If you hotplug them out, you start seeing issues. So reading and file
-> that doesn't exist and then bail out on other essential info though they
-> are present, hmmm ...
+> > +     page_init_poison=       [KNL] Boot-time parameter changing the
+> > +                     state of poisoning of page structures during early
+> > +                     boot. Used to verify page metadata is not accessed
+> > +                     prior to initialization. Available with
+> > +                     CONFIG_DEBUG_VM=y.
+> > +                     off: turn off poisoning
+> > +                     on: turn on poisoning (default)
+> > +
+>
+> what about the following wording or something along those lines
+>
+> Boot-time parameter to control struct page poisoning which is a
+> debugging feature to catch unitialized struct page access. This option
+> is available only for CONFIG_DEBUG_VM=y and it affects boot time
+> (especially on large systems). If there are no poisoning bugs reported
+> on the particular system and workload it should be safe to disable it to
+> speed up the boot time.
 
-lscpu/lstopo being broken seems orthogonal to me.
-The kernel is not providing the type file because the kernel thinks the 
-type is NOCACHE, despite PPTT providing a type.  In an ideal world, I 
-think the kernel should be fixed (this change), and any deficiencies or 
-bad assumptions in lscpu/lstopo should also be fixed.
+That works for me. I will update it for the next release.
 
-> 
->> I guess I still don't understand why its important for PPTT to list, for
->> example, the sets/ways of a cache in all scenarios.  In the case of a
->> "transparent" cache (implementation defined as not reported per section
->> D3.4.2 of the ARM ARM where the cache cannot be managed by SW), there
->> may not be valid values for sets/ways.  I would argue its better to not
->> report that information, rather than provide bogus information just to
->> make Linux happy, which may break other OSes and provide means for which
->> a user to hang themselves.
->>
-> 
-> While I agree presenting wrong info is not good, but one of the reasons
-> the cache info is present is to provide those info for some applications
-> to do optimization based on that(I am told so and not sure if just type
-> and size will be good enough) and you seem to agree with that below.
+Thanks.
 
-Yes, but if its not entirely clear, on my system, we have the 
-information but its not being presented.  This change fixes that.  I'm 
-willing to discuss an alternative fix, but to ignore the issue is not 
-viable in my opinion.
-
-What do we need to move forward here?
-
-> 
->> However, in the case of a transparent cache, the size/type/level/write
->> policy/etc (whatever the firmware provider deems relevant) might be
->> valuable information for the OS to make scheduling decisions, and is
->> certainly valuable for user space utilities for cross-machine/data
->> center level job scheduling.
->>
-> 
-
-
--- 
-Jeffrey Hugo
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
-Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+- Alex
