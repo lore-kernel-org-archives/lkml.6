@@ -2,155 +2,218 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MIME_QP_LONG_LINE,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 339CAC6778D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:20:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3F51C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:20:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6DEA20880
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:20:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AE5D20880
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:20:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="hG6thmDl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6DEA20880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mailbox.org
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="vNr0mSCl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AE5D20880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727384AbeILUZT (ORCPT
+        id S1727473AbeILUZu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 16:25:19 -0400
-Received: from mx2.mailbox.org ([80.241.60.215]:48836 "EHLO mx2.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726640AbeILUZT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 16:25:19 -0400
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx2.mailbox.org (Postfix) with ESMTPS id 32ED5419BB
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 17:20:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mailbox.org; h=
-        content-type:content-type:mime-version:date:date:message-id
-        :subject:subject:from:from:received; s=mail20150812; t=
-        1536765617; bh=fipLrZI3lkzzaQQtm8ZCATwn/aDtzx+Dq7QruVsYyeo=; b=h
-        G6thmDlRd8HGjA+lqo2DoV5yYpmyaf6pRYaqnSqzGjWS/6Pk2+YeT0RfdQUSHI9O
-        fgHALywXYt40iqAu9Jy/DyxRu578xXnZ9OSj4UiClmJaiGplhtgDNVtbdJgoOlBZ
-        IpM3BVbmRElDMXFDaLTkIP1p1g5moayKnC+YWeS+KOfweEFidoonSOpIElPFbj/R
-        xvrQOx0UWOrMKZeTFzzd0w9I9S+Y+PsX/y15rNYu3lVASehxnyNISLGl8YGW08R+
-        U0SqutFwegO0hBV6HWgJ1S2DVh5lyJimUM9mmArJVYZdMfMD0Eqhta12wjmao0lQ
-        3pMxehvHIbafnnhFhB6ew==
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by hefe.heinlein-support.de (hefe.heinlein-support.de [91.198.250.172]) (amavisd-new, port 10030)
-        with ESMTP id zKg7cg7gP9pM for <linux-kernel@vger.kernel.org>;
-        Wed, 12 Sep 2018 17:20:17 +0200 (CEST)
-To:     linux-kernel@vger.kernel.org
-From:   Jack Henschel <jackdev@mailbox.org>
-Subject: Custom PMI Handler
-Openpgp: preference=signencrypt
-Autocrypt: addr=jackdev@mailbox.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <4d1c3f6a-f0e5-2494-1ef7-a6383eb9fcb0@mailbox.org>
-Date:   Wed, 12 Sep 2018 17:20:16 +0200
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
- protocol="application/pgp-signature";
- boundary="pWc7q1j8p4MLSWPVLSxh6fkQ15bm1RhvA"
+        Wed, 12 Sep 2018 16:25:50 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:44879 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726640AbeILUZu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 16:25:50 -0400
+Received: by mail-pf1-f195.google.com with SMTP id k21-v6so1165711pff.11
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 08:20:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=WmLrXk+E+zE56CjuEPdDv8xIv1SWae8ROpdOG1IWbgI=;
+        b=vNr0mSCl5aok/ExmleNx/HLCmE/2BNUI08zVli+S0k7QRECY6+RlsDx84Gs1YID5f/
+         v6N2Yetq0IakzBabNkZ54SO8I658enOgb7BqTzOLCx33GKMOfJqfWkObw46PQmW8QdHY
+         x7pb3vI5xuUpmkIJ5vh5+Vah+cdzMcgMPhrl13Q2an58G4xFVVOek5Iob2tXnpcBTNhY
+         GLjSel1bP+W/2urQvL9w8RgHxQv0j8ImP8tRZ0bQXfKRUDuhvOgTUQtXjZfzwHyUzlgK
+         yxeQPVnx7GY8phyDHl7xCAEa/dKB5lttN0ocpfyMh1LUg7bhbdwqgvVydtktQuqzjrIN
+         2NlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=WmLrXk+E+zE56CjuEPdDv8xIv1SWae8ROpdOG1IWbgI=;
+        b=dcG3vR4m1awjQkMv3QQ+vLwQAiNVDfvqBPKshhUPErTFNKQH8Inh/D+AXB1vbE/AMK
+         YpK42yF4sUWKwrU3GEs76QeJoppzxPYbes1Ifvm1lgpmJC/3YpcS2IBPAakMv9+mSllp
+         biVIurhO2JQzEx3LuWMBfyCe7n+RPesF8b9dcMV29SGB487LaXgqafSf0o3qIBf+vXSU
+         98zRP5mbSicKS5tOQt2/j+qw8+ZNwcs2PoayqA+owa0yGMcj6q40bD4TbFdc/rC+T2/W
+         O0kwZLs9kUyHMzdNgwGsQGdm0o0+X2SkKpTqChAh0G/5z/a1ED4DRDU3oI8natEUOfoi
+         w5AQ==
+X-Gm-Message-State: APzg51CpKMcuMpZ1jCk7hqt/lt5+yAbTUyIioOwaqIsbqzNcwR1hALwX
+        KcMOZkppPcSx5cTUm//CCWHtNA==
+X-Google-Smtp-Source: ANB0VdYMQcZ5J6G2+JnZTtshlmp8ERQTFcARi3alP60VlFBpG6ba2YpSIvaExlLz/9+zsqE3tjLQcQ==
+X-Received: by 2002:a63:8b44:: with SMTP id j65-v6mr2917464pge.325.1536765650228;
+        Wed, 12 Sep 2018 08:20:50 -0700 (PDT)
+Received: from ?IPv6:2601:646:c200:7429:9592:4a20:451a:68da? ([2601:646:c200:7429:9592:4a20:451a:68da])
+        by smtp.gmail.com with ESMTPSA id v23-v6sm2471089pfm.80.2018.09.12.08.20.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Sep 2018 08:20:49 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [RFC PATCH 04/10] x86/fpu: eager switch PKRU state
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (15G77)
+In-Reply-To: <20180912133353.20595-5-bigeasy@linutronix.de>
+Date:   Wed, 12 Sep 2018 08:20:48 -0700
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?utf-8?Q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rik van Riel <riel@surriel.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <181B4EB8-9FEB-415C-8069-192FB8A5B418@amacapital.net>
+References: <20180912133353.20595-1-bigeasy@linutronix.de> <20180912133353.20595-5-bigeasy@linutronix.de>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---pWc7q1j8p4MLSWPVLSxh6fkQ15bm1RhvA
-Content-Type: multipart/mixed; boundary="bDAyWkKdow2t87aKS8Fihyy2EGG20qG9N";
- protected-headers="v1"
-From: Jack Henschel <jackdev@mailbox.org>
-To: linux-kernel@vger.kernel.org
-Message-ID: <4d1c3f6a-f0e5-2494-1ef7-a6383eb9fcb0@mailbox.org>
-Subject: Custom PMI Handler
-
---bDAyWkKdow2t87aKS8Fihyy2EGG20qG9N
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: quoted-printable
-
-Hi there,
-
-is it possible to register a custom interrupt handler for a NMI/PMI
-Interrupt?
-
-In particular, I want to catch the Intel PT interrupt (generated by the
-PMU and sent over the LAPIC) in a kernel module. Is such a thing possible=
-?
-
-Regards,
-Jack
 
 
---bDAyWkKdow2t87aKS8Fihyy2EGG20qG9N--
+> On Sep 12, 2018, at 6:33 AM, Sebastian Andrzej Siewior <bigeasy@linutronix=
+.de> wrote:
+>=20
+> From: Rik van Riel <riel@surriel.com>
+>=20
+> While most of a task's FPU state is only needed in user space,
+> the protection keys need to be in place immediately after a
+> context switch.
+>=20
+> The reason is that any accesses to userspace memory while running
+> in kernel mode also need to abide by the memory permissions
+> specified in the protection keys.
+>=20
+> The pkru info is put in its own cache line in the fpu struct because
+> that cache line is accessed anyway at context switch time, and the
+> location of the pkru info in the xsave buffer changes depending on
+> what other FPU registers are in use if the CPU uses compressed xsave
+> state (on by default).
+>=20
+> The initial state of pkru is zeroed out automatically by fpstate_init.
+>=20
+> Signed-off-by: Rik van Riel <riel@surriel.com>
+> [bigeasy: load PKRU state only if we also load FPU content]
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> ---
+> arch/x86/include/asm/fpu/internal.h | 11 +++++++++--
+> arch/x86/include/asm/fpu/types.h    | 10 ++++++++++
+> arch/x86/include/asm/pgtable.h      |  6 +-----
+> arch/x86/mm/pkeys.c                 | 14 ++++++++++++++
+> 4 files changed, 34 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fp=
+u/internal.h
+> index 16c4077ffc945..57bd1576e033d 100644
+> --- a/arch/x86/include/asm/fpu/internal.h
+> +++ b/arch/x86/include/asm/fpu/internal.h
+> @@ -573,8 +573,15 @@ static inline void switch_fpu_finish(struct fpu *new_=
+fpu, int cpu)
+>    bool preload =3D static_cpu_has(X86_FEATURE_FPU) &&
+>               new_fpu->initialized;
+>=20
+> -    if (preload)
+> -        __fpregs_load_activate(new_fpu, cpu);
+> +    if (!preload)
+> +        return;
+> +
+> +    __fpregs_load_activate(new_fpu, cpu);
+> +    /* Protection keys need to be in place right at context switch time. *=
+/
+> +    if (boot_cpu_has(X86_FEATURE_OSPKE)) {
+> +        if (new_fpu->pkru !=3D __read_pkru())
+> +            __write_pkru(new_fpu->pkru);
+> +    }
+> }
+>=20
+> /*
+> diff --git a/arch/x86/include/asm/fpu/types.h b/arch/x86/include/asm/fpu/t=
+ypes.h
+> index 202c53918ecfa..6fa58d37938d2 100644
+> --- a/arch/x86/include/asm/fpu/types.h
+> +++ b/arch/x86/include/asm/fpu/types.h
+> @@ -293,6 +293,16 @@ struct fpu {
+>     */
+>    unsigned int            last_cpu;
+>=20
+> +    /*
+> +     * Protection key bits. These also live inside fpu.state.xsave,
+> +     * but the location varies if the CPU uses the compressed format
+> +     * for XSAVE(OPT).
+> +     *
+> +     * The protection key needs to be switched out immediately at context=
 
---pWc7q1j8p4MLSWPVLSxh6fkQ15bm1RhvA
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+> +     * switch time, so it is in place for things like copy_to_user.
+> +     */
+> +    unsigned int            pkru;
+> +
+>    /*
+>     * @initialized:
+>     *
+> diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable=
+.h
+> index 690c0307afed0..cc36f91011ad7 100644
+> --- a/arch/x86/include/asm/pgtable.h
+> +++ b/arch/x86/include/asm/pgtable.h
+> @@ -132,11 +132,7 @@ static inline u32 read_pkru(void)
+>    return 0;
+> }
+>=20
+> -static inline void write_pkru(u32 pkru)
+> -{
+> -    if (boot_cpu_has(X86_FEATURE_OSPKE))
+> -        __write_pkru(pkru);
+> -}
+> +extern void write_pkru(u32 pkru);
+>=20
+> static inline int pte_young(pte_t pte)
+> {
+> diff --git a/arch/x86/mm/pkeys.c b/arch/x86/mm/pkeys.c
+> index 6e98e0a7c9231..c7a7b6bd64009 100644
+> --- a/arch/x86/mm/pkeys.c
+> +++ b/arch/x86/mm/pkeys.c
+> @@ -18,6 +18,20 @@
+>=20
+> #include <asm/cpufeature.h>             /* boot_cpu_has, ...            */=
 
------BEGIN PGP SIGNATURE-----
+> #include <asm/mmu_context.h>            /* vma_pkey()                   */=
 
-iQIzBAEBCgAdFiEE5SNfW5QVort2C78YV5HQ+s4K8DwFAluZLrAACgkQV5HQ+s4K
-8DwjKw/+Ibqe+oEQL14yexFjKIC0JtyGhjT3iGDvWV7O/YI1itv0ldz9d/NmELd0
-/+8c2+gsj3kRU1+9zvgiu4kgBgmKoBnONVs/jK8salZAD4W+zEUsnuG5LHe7WbpT
-dfyKkmJxeZQB/LxY2Prn1nD2D2qKHeUxxlUwdIXGPwGMLFa3zBOeXyB1g/kRYx+h
-DjLJbv9oEuSftAipY+YLQy+fKuZCxpfo6oTo7Bo4FeTi40JML0vr3pJc9tVqpBQA
-GyvnPAZCsz8agxQjGpEvaV6ERVgldO1kQTmUJseMgTKw7KW+K1CwNrF1GhydgclV
-J31RgbE8VyVPfWJ5aZPvyEJoUrv2Wdw+XLCQsEjZCTqihwCyG6QBu3A2wOVA40yF
-GZW8PlqRFwDEp+Lc13aF+M+0ujg58+GhX8ixIANZ73NpGB89GAVYyH17Kkl2JSI+
-e+ucsWfxCgov1bre9riSSj5ouf1jm7qjm7nJMBjTAeWaYmXmO5RxJTOXN8xIQNE3
-Zl6wPqyMtD00qq/37TTgXPiYwE52QFeyr73GmvIskalarLpeCLqQmcVNVEw90bKZ
-PkNNcFeocfckJpXZZ0sxjb0b5B7hOIaiWAR42S4wX/HnOz60xkBNbyPfVRfppJam
-UnsFj9PR16UUEZwUgl3UmCIok71xWjxhEUNKOY2+jOBCrICRZiU=
-=KurI
------END PGP SIGNATURE-----
+> +#include <asm/fpu/internal.h>
+> +
+> +void write_pkru(u32 pkru)
+> +{
+> +    if (!boot_cpu_has(X86_FEATURE_OSPKE))
+> +        return;
+> +
+> +    current->thread.fpu.pkru =3D pkru;
+> +
 
---pWc7q1j8p4MLSWPVLSxh6fkQ15bm1RhvA--
+I thought that the offset of PKRU in the xstate was fixed after boot.
+
+Anyway, as written, this needs a lockdep assertion that we=E2=80=99re not pr=
+eemptible, an explicit preempt_disable(), or a comment explaining why it=E2=80=
+=99s okay if we get preempted in this function.
+
+> +    __fpregs_changes_begin();
+> +    __fpregs_load_activate(&current->thread.fpu, smp_processor_id());
+> +    __write_pkru(pkru);
+> +    __fpregs_changes_end();
+> +}
+>=20
+> int __execute_only_pkey(struct mm_struct *mm)
+> {
+> --=20
+> 2.19.0
+>=20
