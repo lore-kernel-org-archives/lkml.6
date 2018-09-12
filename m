@@ -2,123 +2,168 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C6C4C070C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 20:40:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10B5BC070C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 20:42:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF0C62146F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 20:40:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vfcP4di0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF0C62146F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id A15DB2146F
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 20:41:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A15DB2146F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728234AbeIMBqr (ORCPT
+        id S1728320AbeIMBsM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 21:46:47 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:42219 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726239AbeIMBqr (ORCPT
+        Wed, 12 Sep 2018 21:48:12 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:43373 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726239AbeIMBsM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 21:46:47 -0400
-Received: by mail-pg1-f194.google.com with SMTP id y4-v6so1629712pgp.9
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 13:40:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=IBNNNg4MizNDFcrdAYwzK4XLVozLQ+0zgqPf9zoim8I=;
-        b=vfcP4di0YmpH6QP5Gw7WPqtLqJtejtQsmzkTKvdV6gxBN/XZOFL+5+feikBhN9GTW7
-         +lL54OdTtWIdB4lcEWrD2TKv1TGxhwvILx0mY5yXChAMw1ySJqp7oyJ91T/H5p84KwbS
-         XlICTuTvgxE3jNx/MEWUQoHP7Vqm/KDzh2DT2CT1v6Db3NufWuBF+I5KFR5ChiEqlVdP
-         uyVJowjFJQSAykRTLGyGD26iEjtQiAZ1LE0QPfQgf/XwGsoazJ7RyY6B+nJzxFgdfm7w
-         wQX2/s1+Wg9Rb0GOge9DPZaUsD4o1O/U6t2BtgZ4CDZXmr715bQlA6n1FK6Cx0PSi1GC
-         yExg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=IBNNNg4MizNDFcrdAYwzK4XLVozLQ+0zgqPf9zoim8I=;
-        b=CD7IUm9dCZr1r6WkJjR9sd2G0VVvbWC4pXZZR9doc3YvrwalT+6TEyPclDABvoIJ0/
-         iOTQ3E3plmR23Yo1AnNGsdaJkSlihDFeO4MuFK4Rc7zAh0SFwA+YuqwRc105FyhDsFKm
-         lK2GQ7Vx6X3QtTz6bPCN3pYRF6iX4fDtF550sngtHunRjhiP//lnGCRvbU76WbOtddFi
-         NvtUEEffu6/PtF7NesgC0qG1nmVxt3Sod/T0k9bN7bGqbqBUa3JKMAyHdfTnA3GvGo0P
-         rBQ/z+CfawPmvY2BbKWipRTGoZSZ+m1qKPWUkE4HQpd7wIb9ujcGaXNLyB5swR3DuLIK
-         au6Q==
-X-Gm-Message-State: APzg51B2T1PKNF/R1iD+dc7e82jCdyaPa4KUYdplec64doHkWaPrfN3j
-        ZwJpLQqRjM0j5vI8uCCPD+ZsQg==
-X-Google-Smtp-Source: ANB0VdbeYLFO8sKE8l0XPMflx27xbtA0iBcmFoZitjuTrQQxYcJtWZcFid0I8R6YjXBeUaE0MlQOsg==
-X-Received: by 2002:a63:f309:: with SMTP id l9-v6mr3923726pgh.369.1536784831786;
-        Wed, 12 Sep 2018 13:40:31 -0700 (PDT)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id g7-v6sm2740930pfi.175.2018.09.12.13.40.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Sep 2018 13:40:30 -0700 (PDT)
-Date:   Wed, 12 Sep 2018 13:40:27 -0700 (PDT)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Michal Hocko <mhocko@kernel.org>
-cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Zi Yan <zi.yan@cs.rutgers.edu>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stefan Priebe <s.priebe@profihost.ag>
-Subject: Re: [PATCH] mm, thp: relax __GFP_THISNODE for MADV_HUGEPAGE
- mappings
-In-Reply-To: <20180912120504.GE10951@dhcp22.suse.cz>
-Message-ID: <alpine.DEB.2.21.1809121336310.47609@chino.kir.corp.google.com>
-References: <20180907130550.11885-1-mhocko@kernel.org> <alpine.DEB.2.21.1809101253080.177111@chino.kir.corp.google.com> <20180911115613.GR10951@dhcp22.suse.cz> <alpine.DEB.2.21.1809111319060.189563@chino.kir.corp.google.com>
- <20180912120504.GE10951@dhcp22.suse.cz>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 12 Sep 2018 21:48:12 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 4075E806C7; Wed, 12 Sep 2018 22:41:55 +0200 (CEST)
+Date:   Wed, 12 Sep 2018 22:41:56 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Baolin Wang <baolin.wang@linaro.org>, rteysseyre@gmail.com,
+        broonie@kernel.org, linus.walleij@linaro.org,
+        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 1/2] leds: core: Introduce LED pattern trigger
+Message-ID: <20180912204156.GA15541@amd>
+References: <5a502ec29251c019ddad8f3314ab45fc0f6feaf7.1536027873.git.baolin.wang@linaro.org>
+ <20180908050208.GY2523@minitux>
+ <20180910211935.GA4697@amd>
+ <dd1f8dd2-d577-ab12-e67a-7ed71459055a@gmail.com>
+ <20180912191820.GA27704@amd>
+ <a82e3d9c-1df8-9e73-7371-613ad550693d@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="5mCyUwZo2JvN/JJP"
+Content-Disposition: inline
+In-Reply-To: <a82e3d9c-1df8-9e73-7371-613ad550693d@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 12 Sep 2018, Michal Hocko wrote:
 
-> > Saying that we really want THP isn't an all-or-nothing decision.  We 
-> > certainly want to try hard to fault hugepages locally especially at task 
-> > startup when remapping our .text segment to thp, and MADV_HUGEPAGE works 
-> > very well for that.  Remote hugepages would be a regression that we now 
-> > have no way to avoid because the kernel doesn't provide for it, if we were 
-> > to remove __GFP_THISNODE that this patch introduces.
-> 
-> Why cannot you use mempolicy to bind to local nodes if you really care
-> about the locality?
-> 
+--5mCyUwZo2JvN/JJP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Because we do not want to oom kill, we want to fallback first to local 
-native pages and then to remote native pages.  That's the order of least 
-to greatest latency, we do not want to work hard to allocate a remote 
-hugepage when a local native page is faster.  This seems pretty straight 
-forward.
+Hi!
 
-> From what you have said so far it sounds like you would like to have
-> something like the zone/node reclaim mode fine grained for a specific
-> mapping. If we really want to support something like that then it should
-> be a generic policy rather than THP specific thing IMHO.
-> 
-> As I've said it is hard to come up with a solution that would satisfy
-> everybody but considering that the existing reports are seeing this a
-> regression and cosindering their NUMA requirements are not so strict as
-> yours I would tend to think that stronger NUMA requirements should be
-> expressed explicitly rather than implicit effect of a madvise flag. We
-> do have APIs for that.
+> >>> No, we are not back to full circle.
+> >>>
+> >>> Or at least we should not be.
+> >>>
+> >>> Yes, hw_pattern can have some limitation pattern does not, but if you
+> >>> take values from hw_pattern file and put them into pattern file, you
+> >>> should get the same pattern (with more power being consumed). And that
+> >>> property is kind of important for me, because it should keep the ABI
+> >>> reasonable.
+> >>
+> >> If you looked at what we agreed on with Baolin, you'd realize
+> >> that this property is in no way preserved.
+> >> This is what the whole story is about - we're introducing hw_pattern
+> >> because of difficulties in describing breathing pattern by a series
+> >> of [brightness delta_t] tuples.
+> >>
+> >> And Bjorn presented another example. I'm inclined to leave the
+> >> definition of hw_pattern semantics to the LED class drivers,
+> >> and allow them to create related sysfs files.
+> >=20
+> > Please lets not do that.
+> >=20
+> > We already have drivers that do that and it is complete
+> > nightmare. Some take binary code for the tiny CPU driving the LED.
+> >=20
+> > What exactly is the problem? [brightness delta_t] can describe
+>=20
+> You wrote:
+>=20
+> <quote>
+> Yes, hw_pattern can have some limitation pattern does not, but if you
+> take values from hw_pattern file and put them into pattern file, you
+> should get the same pattern (with more power being consumed).
+> </quote>
+>=20
+> The problem is that we decided to introduce hw_pattern to
+> to take away from drivers a responsibility for translating
+> a series of tuples, approximating the brightness curve,
+> to the values that can be written to the hardware registers.
+>=20
+> Because this is what would need to be done to check if hw can support
+> given series of tuples and activate it. Actually with this approach
+> we wouldn't need hw_pattern at all, since pattern alone would do.
+> But implementation thereof is what we could call a nightmare.
+>=20
+> What follows, your claim from the quotation is inaccurate:
+> values from hw_pattern written to the pattern file will not
+> produce the same pattern, at least in case of what was proposed
+> in [0] for drivers/leds/leds-sc27xx-bltc.c.
 
-Every process on every platform we have would need to define this explicit 
-mempolicy for users of libraries that remap text segments because changing 
-the allocation behavior of thp out from under them would cause very 
-noticeable performance regressions.  I don't know of any platform where 
-remote hugepages is preferred over local native pages.  If they exist, it 
-sounds resaonable to introduce a stronger variant of MADV_HUGEPAGE that 
-defines exactly what you want rather than causing it to become a dumping 
-ground and userspace regressions.
+That sounds easy, see below.
+
+> > anything single LED can do in finite time. You are right, that
+> > [brightness delta_t] sequence may get rather long, and it may be hard
+> > to turn that sequence into parameters. Are there any _interesting_
+> > sequences hardware can do but [brightness delta_t] can not store
+> > reasonably?
+>=20
+> Please propose the implementation of pattern_set for
+> drivers/leds/leds-sc27xx-bltc.c breathing pattern, that will
+> setup breathing mode basing on the values from tuples.
+>=20
+> Use Baolin's patch [0] for a reference of what hardware expects.
+>=20
+> [0] https://lore.kernel.org/patchwork/patch/984246/
+
+Yep, so we change documentation to require
+
+0 rise_duration brightness high_duration brightness fall_duration 0 low_dur=
+ation"
+
+=2E..and we are done; at least as long as user writes expected pattern
+to the file.
+
+I'd actually like to see this at begining of function:
+    if (pattern[0].brightness !=3D 0)
+        return -EINVAL;
+    if (pattern[2].brightness !=3D 0)
+        return -EINVAL;
+    if (pattern[3].brightness !=3D 0)
+        return -EINVAL;
+    if (pattern[1].brightness !=3D pattern[2].brightness)
+        return -EINVAL;
+
+=2E.so if user writes something unexpected, he gets the error back.
+
+What am I missing?
+
+Thanks,
+									Pavel   =20
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--5mCyUwZo2JvN/JJP
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAluZehQACgkQMOfwapXb+vKiPgCfTofT1+7e7qBdm6jFdMVMITUx
+nvoAn2cHlCQj2u+k/NTwlB+9xRx9GRsA
+=4/Z0
+-----END PGP SIGNATURE-----
+
+--5mCyUwZo2JvN/JJP--
