@@ -2,98 +2,112 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8F1AC4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 04:05:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B20C3C4646A
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 04:10:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E2EB20882
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 04:05:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52F5320839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 04:10:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="a9ezvdls"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E2EB20882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fNBGhOL7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52F5320839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726111AbeILJHk (ORCPT
+        id S1726176AbeILJMk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 05:07:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47418 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725737AbeILJHk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 05:07:40 -0400
-Received: from localhost (unknown [171.76.126.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9A04320839;
-        Wed, 12 Sep 2018 04:05:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536725106;
-        bh=xm/iYCXRL/GBgk6nOhAZAVyMDKqwjffY6ub9MFxuizs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=a9ezvdlspVCnr9Nm3e58aQcZIHb7b6kVeCBvaihjltWt2mClevfbFIVZabACAvFSl
-         0lhNKd+pq7m6EZR7BkZIkIxUX3IeBrGYeelvFv/1t9XGrlPYM8NTxBTGHBWgj9sT+S
-         3LnBClH0gJeDab/ea4Y/MOFKJ5GniiVi3SSbuYBU=
-Date:   Wed, 12 Sep 2018 09:34:56 +0530
-From:   Vinod <vkoul@kernel.org>
-To:     Yu Zhao <yuzhao@google.com>
-Cc:     Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@kernel.org>,
-        alsa-devel@alsa-project.org,
-        Rakesh Ughreja <rakesh.a.ughreja@intel.com>,
-        Jaroslav Kysela <perex@perex.cz>, linux-kernel@vger.kernel.org,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>
-Subject: Re: [PATCH 2/3] sound: enable interrupt after dma buffer
- initialization
-Message-ID: <20180912040456.GD2766@vkoul-mobl>
-References: <20180910211718.200802-1-yuzhao@google.com>
- <20180910212150.202655-1-yuzhao@google.com>
- <s5hbm9436va.wl-tiwai@suse.de>
- <20180911205825.GB18086@google.com>
+        Wed, 12 Sep 2018 05:12:40 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:59438 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725798AbeILJMk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 05:12:40 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w8C49kRM072583;
+        Tue, 11 Sep 2018 23:09:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1536725386;
+        bh=jFevDdF1nZ5Rzh5sKTMcs3+L65qk9w3tYNIBWwVsgPo=;
+        h=From:To:CC:Subject:Date;
+        b=fNBGhOL7wE11BVEs7sEBWkt1wk/iGTvmwdqrlRxSN0WZDaVzEIfpKJ+STlFRaPcVf
+         oRK6fMlAK7GhtiiKXNwRqscdtEZH0yfXAtt8UZA4SUaX/XRXN72HxQgVvyTiK8Mjbb
+         vd3RumFyQMRE5AMuFEXMjw2oQ5xqBknlwcGeqSC0=
+Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8C49kBM002231;
+        Tue, 11 Sep 2018 23:09:46 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 11
+ Sep 2018 23:09:45 -0500
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Tue, 11 Sep 2018 23:09:45 -0500
+Received: from ula0393675.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8C49hf8007037;
+        Tue, 11 Sep 2018 23:09:43 -0500
+From:   Keerthy <j-keerthy@ti.com>
+To:     <mark.rutland@arm.com>, <robh+dt@kernel.org>
+CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <j-keerthy@ti.com>,
+        <t-kristo@ti.com>, <tony@atomide.com>
+Subject: [PATCH] dt-bindings: power: Introduce suspend states supported properties
+Date:   Wed, 12 Sep 2018 09:39:32 +0530
+Message-ID: <1536725372-29174-1-git-send-email-j-keerthy@ti.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180911205825.GB18086@google.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11-09-18, 14:58, Yu Zhao wrote:
-> On Tue, Sep 11, 2018 at 08:06:49AM +0200, Takashi Iwai wrote:
-> > On Mon, 10 Sep 2018 23:21:50 +0200,
-> > Yu Zhao wrote:
-> > > 
-> > > In snd_hdac_bus_init_chip(), we enable interrupt before
-> > > snd_hdac_bus_init_cmd_io() initializing dma buffers. If irq has
-> > > been acquired and irq handler uses the dma buffer, kernel may crash
-> > > when interrupt comes in.
-> > > 
-> > > Fix the problem by postponing enabling irq after dma buffer
-> > > initialization. And warn once on null dma buffer pointer during the
-> > > initialization.
-> > > 
-> > > Signed-off-by: Yu Zhao <yuzhao@google.com>
-> > 
-> > Looks good to me.
-> > 
-> > Reviewed-by: Takashi Iwai <tiwai@suse.de>
-> > 
-> > 
-> > BTW, the reason why this hasn't been hit on the legacy HD-audio driver
-> > is that we allocate usually with MSI, so the irq is isolated.
-> > 
-> > Any reason that Intel SKL driver doesn't use MST?
-> 
-> This I'm not sure. Vinod might have answer to it, according to
-> https://patchwork.kernel.org/patch/6375831/#13796611
+Introuduce linux generic suspend states supported properties.
+It is convenient for the generic suspend path to have
+the knowledge of the suspend states supported based on the
+device tree properties based on which it can either be suspended
+or safely bailed out of suspend if none of the suspend states
+are supported.
 
-IIRC (seemed quite some time back) we faced issues with using MSI on SKL
-and didnt try afterwards. If Intel folks can try it and check. Pierre is
-out, maybe Liam can help..?
+Signed-off-by: Keerthy <j-keerthy@ti.com>
+---
+ .../devicetree/bindings/power/power-states.txt     | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/power/power-states.txt
 
+diff --git a/Documentation/devicetree/bindings/power/power-states.txt b/Documentation/devicetree/bindings/power/power-states.txt
+new file mode 100644
+index 0000000..bb80b36
+--- /dev/null
++++ b/Documentation/devicetree/bindings/power/power-states.txt
+@@ -0,0 +1,22 @@
++* Generic system suspend states support
++
++Most platforms support multiple suspend states. Define system
++suspend states so that one can target appropriate low power
++states based on the SoC capabilities.
++
++linux,suspend-to-memory-supported
++
++Upon suspend to memory the system context is saved to primary memory.
++All the clocks for all the peripherals including CPU are gated.
++
++linux,suspend-power-off-supported
++
++In this case in additon to the clocks all the voltage resources are
++turned off except the ones needed to keep the primary memory
++and a wake up source that can trigger a wakeup event.
++
++linux,suspend-to-disk-supported
++
++Upon suspend to disk that system context is saved to secondary memory.
++All the clocks for all the peripherals including CPU are gated. Even
++the primary memory is turned off.
 -- 
-~Vinod
+1.9.1
+
