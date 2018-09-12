@@ -2,568 +2,158 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53265ECDFC1
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:13:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1860C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:13:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05B8E20866
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:13:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05B8E20866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id A810020880
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:13:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A810020880
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728055AbeILORM (ORCPT
+        id S1728096AbeILORQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 10:17:12 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55802 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726901AbeILORM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 10:17:12 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8430015BF;
-        Wed, 12 Sep 2018 02:13:34 -0700 (PDT)
-Received: from queper01-lin.local (queper01-lin.emea.arm.com [10.4.13.27])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 48DED3F703;
-        Wed, 12 Sep 2018 02:13:30 -0700 (PDT)
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     peterz@infradead.org, rjw@rjwysocki.net,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, mingo@redhat.com,
-        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
-        chris.redpath@arm.com, patrick.bellasi@arm.com,
-        valentin.schneider@arm.com, vincent.guittot@linaro.org,
-        thara.gopinath@linaro.org, viresh.kumar@linaro.org,
-        tkjos@google.com, joel@joelfernandes.org, smuckle@google.com,
-        adharmap@codeaurora.org, skannan@codeaurora.org,
-        pkondeti@codeaurora.org, juri.lelli@redhat.com,
-        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
-        currojerez@riseup.net, javi.merino@kernel.org,
-        quentin.perret@arm.com
-Subject: [PATCH v7 03/14] PM: Introduce an Energy Model management framework
-Date:   Wed, 12 Sep 2018 10:12:58 +0100
-Message-Id: <20180912091309.7551-4-quentin.perret@arm.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180912091309.7551-1-quentin.perret@arm.com>
-References: <20180912091309.7551-1-quentin.perret@arm.com>
+        Wed, 12 Sep 2018 10:17:16 -0400
+Received: from mail-wm0-f54.google.com ([74.125.82.54]:54017 "EHLO
+        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726901AbeILORP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 10:17:15 -0400
+Received: by mail-wm0-f54.google.com with SMTP id b19-v6so1525322wme.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 02:13:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=bhKQo4X70prIt+UwUKyzKvZK31h5vf1Jdj+alb5cndc=;
+        b=F7iVkCLq8YCqMuQREZ80wz/FbKsH69zBK0abNpNRLPXp1l0CVUSxOB6CVPj6iLog6f
+         ybRArRdPbOLht8gcdK5UsUol/2xDD8vUbxwNjE17A8/mleGqCSO9Bffz+Ol+WC3PfDx2
+         FSzed9YRsVOmd3v/+oqCrieYotH9v3pMdF1FlpdJbCql8FARD5yi77/+CFwP8MOm0Kus
+         EnKs5j09a5OFNocNhQ7y29lhSWN7GhwnQNR8prB3veSUoYHBzOnfOwUGiiSnd9uHYsei
+         8GddMLTOWdkmtzbrjsn4ytoml/Ua8uujOc4OZ3VxJVvL2FHrNY8hJPBcaxD9e7IjwK2w
+         JW3A==
+X-Gm-Message-State: APzg51Bb+36VToOz1Voa8T8bvjz38napHL0ghoV8WLr8APf0ZyfGn9uG
+        K/ezlF2Dgt9rc5AqLutbX42f2Q==
+X-Google-Smtp-Source: ANB0VdbnElk0Lzs3bnclkR02VyaFFcGiFio88t6g5oPBB4LDHeL9lT5bI2VU5SjzzbbGXnNO2LveAA==
+X-Received: by 2002:a1c:f913:: with SMTP id x19-v6mr985849wmh.63.1536743616568;
+        Wed, 12 Sep 2018 02:13:36 -0700 (PDT)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id 34-v6sm872316wra.20.2018.09.12.02.13.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Sep 2018 02:13:35 -0700 (PDT)
+Subject: Re: [REGRESSION] boot-screen override by "34db50e55656 efifb: Copy
+ the ACPI BGRT"
+To:     David Herrmann <dh.herrmann@gmail.com>
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fbdev@vger.kernel.org, linux-efi@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+References: <CGME20180903132353epcas4p373e876f1b52dbed6df7bd3acc73fcdf4@epcas4p3.samsung.com>
+ <CANq1E4QwNg0VuAZZtatOTXspv7Y-z_HSa-9CHzK2Y28CGK8W4Q@mail.gmail.com>
+ <1982440.Fn0LzJ7a3l@amdc3058>
+ <dc7f08d7-77fc-92ca-b6ec-f9d5a8f24cf3@redhat.com>
+ <CANq1E4TiMSY=udGJWZoDzMhdsRjC==QCRFPO+Oja7KoyBX-6fg@mail.gmail.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <9e9e269d-6ac7-7826-ecd5-acc164025429@redhat.com>
+Date:   Wed, 12 Sep 2018 11:13:35 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <CANq1E4TiMSY=udGJWZoDzMhdsRjC==QCRFPO+Oja7KoyBX-6fg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Several subsystems in the kernel (task scheduler and/or thermal at the
-time of writing) can benefit from knowing about the energy consumed by
-CPUs. Yet, this information can come from different sources (DT or
-firmware for example), in different formats, hence making it hard to
-exploit without a standard API.
+Hi,
 
-As an attempt to address this, introduce a centralized Energy Model
-(EM) management framework which aggregates the power values provided
-by drivers into a table for each performance domain in the system. The
-power cost tables are made available to interested clients (e.g. task
-scheduler or thermal) via platform-agnostic APIs. The overall design
-is represented by the diagram below (focused on Arm-related drivers as
-an example, but applicable to any architecture):
+On 03-09-18 17:11, David Herrmann wrote:
+> Hey
+> 
+> On Mon, Sep 3, 2018 at 4:47 PM Hans de Goede <hdegoede@redhat.com> wrote:
+>>
+>> Hi,
+>>
+>> On 03-09-18 16:16, Bartlomiej Zolnierkiewicz wrote:
+>>>
+>>> Hi,
+>>>
+>>> On Monday, September 03, 2018 03:23:38 PM David Herrmann wrote:
+>>>> Hey
+>>>>
+>>>> Since this commit:
+>>>>
+>>>>       34db50e55656 efifb: Copy the ACPI BGRT
+>>>>
+>>>> the kernel will override boot-splashs unasked. This breaks the
+>>>> graphical boot-process on our setups. In particular, we have a setup
+>>>> where an efi-boot-entry draws the early boot-splash on-screen, then
+>>>> hands-over to the linux-kernel + initrd. The boot-splash daemon in the
+>>>> initrd then takes over control of possible animations.
+>>>>
+>>>> With the mentioned commit compiled in, the kernel will redraw the
+>>>> firmware logo on screen at a random time without any way to intervene.
+>>>
+>>> You have CONFIG_FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER=y (the deferred
+>>> console takeover support introduced in v4,19-rc1). I assume that this
+>>> is intended?
+>>>
+>>>> What is the intention of this commit? Why is the kernel re-drawing the
+>>>> firmware logo unasked? If someone during the boot-process draws
+>>>> content on the screen, I would prefer if the kernel does not clear
+>>>> that on driver load.
+>>>
+>>> +/*
+>>> + * If fbcon deffered console takeover is configured, the intent is for the
+>>> + * framebuffer to show the boot graphics (e.g. vendor logo) until there is some
+>>> + * (error) message to display. But the boot graphics may have been destroyed by
+>>> + * e.g. option ROM output, detect this and restore the boot graphics.
+>>> + */
+>>> +#if defined CONFIG_FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER && \
+>>> +    defined CONFIG_ACPI_BGRT
+>>> ...
+>>> +static void efifb_show_boot_graphics(struct fb_info *info)
+>>> ...
+>>> +#else
+>>> +static inline void efifb_show_boot_graphics(struct fb_info *info) {}
+>>> +#endif
+>>>
+>>>> Can we either provide an option to disable this feature, or revert the commit?
+>>>
+>>> Hans?
+>>
+>> We use the ACPI bgrt extension to get the logo to draw and then
+>> draw it since some devices rely on the OS to draw it and otherwise we
+>> just end up with a blackscreen when doing silent / flickerfree boot.
+>>
+>> Ideally you would be able to get your vendor to put the logo in firmware
+>> in the ACPI bgrt extension, then you also do not need to play any tricks
+>> with an EFI binary drawing your own logo. But I can understand if you don't
+>> have control over this, so you need to do this with the EFI binary trick.
+>>
+>> I can also understand that you want to use deferred console takeover
+>> in a setup like yours to avoid fbcon messing up what is on the display
+>> during boot, that is exactly what it is for. So I think a reasonable
+>> approach here is to add a kernel commandline option, say:
+>>
+>> video=efifb:nobgrt
+>>
+>> David, would that work for you?
+> 
+> That would be perfect!
 
-     +---------------+  +-----------------+  +-------------+
-     | Thermal (IPA) |  | Scheduler (EAS) |  |    Other    |
-     +---------------+  +-----------------+  +-------------+
-             |                   | em_pd_energy()   |
-             |                   | em_cpu_get()     |
-             +-----------+       |         +--------+
-                         |       |         |
-                         v       v         v
-                      +---------------------+
-                      |                     |
-                      |    Energy Model     |
-                      |                     |
-                      |     Framework       |
-                      |                     |
-                      +---------------------+
-                         ^       ^       ^
-                         |       |       | em_register_perf_domain()
-              +----------+       |       +---------+
-              |                  |                 |
-      +---------------+  +---------------+  +--------------+
-      |  cpufreq-dt   |  |   arm_scmi    |  |    Other     |
-      +---------------+  +---------------+  +--------------+
-              ^                  ^                 ^
-              |                  |                 |
-      +--------------+   +---------------+  +--------------+
-      | Device Tree  |   |   Firmware    |  |      ?       |
-      +--------------+   +---------------+  +--------------+
+Ok, I just send out a patch for this with you in the Cc.
 
-Drivers (typically, but not limited to, CPUFreq drivers) can register
-data in the EM framework using the em_register_perf_domain() API. The
-calling driver must provide a callback function with a standardized
-signature that will be used by the EM framework to build the power
-cost tables of the performance domain. This design should offer a lot of
-flexibility to calling drivers which are free of reading information
-from any location and to use any technique to compute power costs.
-Moreover, the capacity states registered by drivers in the EM framework
-are not required to match real performance states of the target. This
-is particularly important on targets where the performance states are
-not known by the OS.
+Sorry for taking a bit long to write the patch.
 
-The power cost coefficients managed by the EM framework are specified in
-milli-watts. Although the two potential users of those coefficients (IPA
-and EAS) only need relative correctness, IPA specifically needs to
-compare the power of CPUs with the power of other components (GPUs, for
-example), which are still expressed in absolute terms in their
-respective subsystems. Hence, specifying the power of CPUs in
-milli-watts should help transitioning IPA to using the EM framework
-without introducing new problems by keeping units comparable across
-sub-systems.
-On the longer term, the EM of other devices than CPUs could also be
-managed by the EM framework, which would enable to remove the absolute
-unit. However, this is not absolutely required as a first step, so this
-extension of the EM framework is left for later.
+Regards,
 
-On the client side, the EM framework offers APIs to access the power
-cost tables of a CPU (em_cpu_get()), and to estimate the energy
-consumed by the CPUs of a performance domain (em_pd_energy()). Clients
-such as the task scheduler can then use these APIs to access the shared
-data structures holding the Energy Model of CPUs.
-
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Signed-off-by: Quentin Perret <quentin.perret@arm.com>
----
- include/linux/energy_model.h | 185 +++++++++++++++++++++++++++++++++
- kernel/power/Kconfig         |  15 +++
- kernel/power/Makefile        |   2 +
- kernel/power/energy_model.c  | 195 +++++++++++++++++++++++++++++++++++
- 4 files changed, 397 insertions(+)
- create mode 100644 include/linux/energy_model.h
- create mode 100644 kernel/power/energy_model.c
-
-diff --git a/include/linux/energy_model.h b/include/linux/energy_model.h
-new file mode 100644
-index 000000000000..a472076f9c80
---- /dev/null
-+++ b/include/linux/energy_model.h
-@@ -0,0 +1,185 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_ENERGY_MODEL_H
-+#define _LINUX_ENERGY_MODEL_H
-+#include <linux/cpumask.h>
-+#include <linux/jump_label.h>
-+#include <linux/kobject.h>
-+#include <linux/rcupdate.h>
-+#include <linux/sched/cpufreq.h>
-+#include <linux/sched/topology.h>
-+#include <linux/types.h>
-+
-+#ifdef CONFIG_ENERGY_MODEL
-+/**
-+ * em_cap_state - Capacity state of a performance domain
-+ * @frequency:	The CPU frequency in KHz, for consistency with CPUFreq
-+ * @power:	The power consumed by 1 CPU at this level, in milli-watts
-+ * @cost:	The cost coefficient associated with this level, used during
-+ *		energy calculation. Equal to: power * max_frequency / frequency
-+ */
-+struct em_cap_state {
-+	unsigned long frequency;
-+	unsigned long power;
-+	unsigned long cost;
-+};
-+
-+/**
-+ * em_perf_domain - Performance domain
-+ * @table:		List of capacity states, in ascending order
-+ * @nr_cap_states:	Number of capacity states
-+ * @cpus:		Cpumask covering the CPUs of the domain
-+ *
-+ * A "performance domain" represents a group of CPUs whose performance is
-+ * scaled together. All CPUs of a performance domain must have the same
-+ * micro-architecture. Performance domains often have a 1-to-1 mapping with
-+ * CPUFreq policies.
-+ */
-+struct em_perf_domain {
-+	struct em_cap_state *table;
-+	int nr_cap_states;
-+	unsigned long cpus[0];
-+};
-+
-+#define EM_CPU_MAX_POWER 0xFFFF
-+
-+struct em_data_callback {
-+	/**
-+	 * active_power() - Provide power at the next capacity state of a CPU
-+	 * @power	: Active power at the capacity state in mW (modified)
-+	 * @freq	: Frequency at the capacity state in kHz (modified)
-+	 * @cpu		: CPU for which we do this operation
-+	 *
-+	 * active_power() must find the lowest capacity state of 'cpu' above
-+	 * 'freq' and update 'power' and 'freq' to the matching active power
-+	 * and frequency.
-+	 *
-+	 * The power is the one of a single CPU in the domain, expressed in
-+	 * milli-watts. It is expected to fit in the [0, EM_CPU_MAX_POWER]
-+	 * range.
-+	 *
-+	 * Return 0 on success.
-+	 */
-+	int (*active_power)(unsigned long *power, unsigned long *freq, int cpu);
-+};
-+#define EM_DATA_CB(_active_power_cb) { .active_power = &_active_power_cb }
-+
-+struct em_perf_domain *em_cpu_get(int cpu);
-+int em_register_perf_domain(cpumask_t *span, unsigned int nr_states,
-+						struct em_data_callback *cb);
-+
-+/**
-+ * em_pd_energy() - Estimates the energy consumed by the CPUs of a perf. domain
-+ * @pd		: performance domain for which energy has to be estimated
-+ * @max_util	: highest utilization among CPUs of the domain
-+ * @sum_util	: sum of the utilization of all CPUs in the domain
-+ *
-+ * Return: the sum of the energy consumed by the CPUs of the domain assuming
-+ * a capacity state satisfying the max utilization of the domain.
-+ */
-+static inline unsigned long em_pd_energy(struct em_perf_domain *pd,
-+				unsigned long max_util, unsigned long sum_util)
-+{
-+	unsigned long freq, scale_cpu;
-+	struct em_cap_state *cs;
-+	int i, cpu;
-+
-+	/*
-+	 * In order to predict the capacity state, map the utilization of the
-+	 * most utilized CPU of the performance domain to a requested frequency,
-+	 * like schedutil.
-+	 */
-+	cpu = cpumask_first(to_cpumask(pd->cpus));
-+	scale_cpu = arch_scale_cpu_capacity(NULL, cpu);
-+	cs = &pd->table[pd->nr_cap_states - 1];
-+	freq = map_util_freq(max_util, cs->frequency, scale_cpu);
-+
-+	/*
-+	 * Find the lowest capacity state of the Energy Model above the
-+	 * requested frequency.
-+	 */
-+	for (i = 0; i < pd->nr_cap_states; i++) {
-+		cs = &pd->table[i];
-+		if (cs->frequency >= freq)
-+			break;
-+	}
-+
-+	/*
-+	 * The capacity of a CPU in the domain at that capacity state (cs)
-+	 * can be computed as:
-+	 *
-+	 *             cs->freq * scale_cpu
-+	 *   cs->cap = --------------------                          (1)
-+	 *                 cpu_max_freq
-+	 *
-+	 * So, the energy consumed by this CPU at that capacity state is:
-+	 *
-+	 *             cs->power * cpu_util
-+	 *   cpu_nrg = --------------------                          (2)
-+	 *                   cs->cap
-+	 *
-+	 * since 'cpu_util / cs->cap' represents its percentage of busy time.
-+	 *
-+	 *   NOTE: Although the result of this computation actually is in
-+	 *         units of power, it can be manipulated as an energy value
-+	 *         over a scheduling period, since it is assumed to be
-+	 *         constant during that interval.
-+	 *
-+	 * By injecting (1) in (2), 'cpu_nrg' can be re-expressed as a product
-+	 * of two terms:
-+	 *
-+	 *             cs->power * cpu_max_freq   cpu_util
-+	 *   cpu_nrg = ------------------------ * ---------          (3)
-+	 *                    cs->freq            scale_cpu
-+	 *
-+	 * The first term is static, and is stored in the em_cap_state struct
-+	 * as 'cs->cost'.
-+	 *
-+	 * Since all CPUs of the domain have the same micro-architecture, they
-+	 * share the same 'cs->cost', and the same CPU capacity. Hence, the
-+	 * total energy of the domain (which is the simple sum of the energy of
-+	 * all of its CPUs) can be factorized as:
-+	 *
-+	 *            cs->cost * \Sum cpu_util
-+	 *   pd_nrg = ------------------------                       (4)
-+	 *                  scale_cpu
-+	 */
-+	return cs->cost * sum_util / scale_cpu;
-+}
-+
-+/**
-+ * em_pd_nr_cap_states() - Get the number of capacity states of a perf. domain
-+ * @pd		: performance domain for which this must be done
-+ *
-+ * Return: the number of capacity states in the performance domain table
-+ */
-+static inline int em_pd_nr_cap_states(struct em_perf_domain *pd)
-+{
-+	return pd->nr_cap_states;
-+}
-+
-+#else
-+struct em_perf_domain {};
-+struct em_data_callback {};
-+#define EM_DATA_CB(_active_power_cb) { }
-+
-+static inline int em_register_perf_domain(cpumask_t *span,
-+			unsigned int nr_states, struct em_data_callback *cb)
-+{
-+	return -EINVAL;
-+}
-+static inline struct em_perf_domain *em_cpu_get(int cpu)
-+{
-+	return NULL;
-+}
-+static inline unsigned long em_pd_energy(struct em_perf_domain *pd,
-+			unsigned long max_util, unsigned long sum_util)
-+{
-+	return 0;
-+}
-+static inline int em_pd_nr_cap_states(struct em_perf_domain *pd)
-+{
-+	return 0;
-+}
-+#endif
-+
-+#endif
-diff --git a/kernel/power/Kconfig b/kernel/power/Kconfig
-index e880ca22c5a5..6f6db452dc7d 100644
---- a/kernel/power/Kconfig
-+++ b/kernel/power/Kconfig
-@@ -297,3 +297,18 @@ config PM_GENERIC_DOMAINS_OF
- 
- config CPU_PM
- 	bool
-+
-+config ENERGY_MODEL
-+	bool "Energy Model for CPUs"
-+	depends on SMP
-+	depends on CPU_FREQ
-+	default n
-+	help
-+	  Several subsystems (thermal and/or the task scheduler for example)
-+	  can leverage information about the energy consumed by CPUs to make
-+	  smarter decisions. This config option enables the framework from
-+	  which subsystems can access the energy models.
-+
-+	  The exact usage of the energy model is subsystem-dependent.
-+
-+	  If in doubt, say N.
-diff --git a/kernel/power/Makefile b/kernel/power/Makefile
-index a3f79f0eef36..e7e47d9be1e5 100644
---- a/kernel/power/Makefile
-+++ b/kernel/power/Makefile
-@@ -15,3 +15,5 @@ obj-$(CONFIG_PM_AUTOSLEEP)	+= autosleep.o
- obj-$(CONFIG_PM_WAKELOCKS)	+= wakelock.o
- 
- obj-$(CONFIG_MAGIC_SYSRQ)	+= poweroff.o
-+
-+obj-$(CONFIG_ENERGY_MODEL)	+= energy_model.o
-diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
-new file mode 100644
-index 000000000000..d77cd295f3e9
---- /dev/null
-+++ b/kernel/power/energy_model.c
-@@ -0,0 +1,195 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Energy Model of CPUs
-+ *
-+ * Copyright (c) 2018, Arm ltd.
-+ * Written by: Quentin Perret, Arm ltd.
-+ */
-+
-+#define pr_fmt(fmt) "energy_model: " fmt
-+
-+#include <linux/cpu.h>
-+#include <linux/cpumask.h>
-+#include <linux/energy_model.h>
-+#include <linux/sched/topology.h>
-+#include <linux/slab.h>
-+
-+/* Mapping of each CPU to the performance domain to which it belongs. */
-+static DEFINE_PER_CPU(struct em_perf_domain *, em_data);
-+
-+/*
-+ * Mutex serializing the registrations of performance domains and letting
-+ * callbacks defined by drivers sleep.
-+ */
-+static DEFINE_MUTEX(em_pd_mutex);
-+
-+static struct em_perf_domain *em_create_pd(cpumask_t *span, int nr_states,
-+						struct em_data_callback *cb)
-+{
-+	unsigned long opp_eff, prev_opp_eff = ULONG_MAX;
-+	unsigned long power, freq, prev_freq = 0;
-+	int i, ret, cpu = cpumask_first(span);
-+	struct em_cap_state *table;
-+	struct em_perf_domain *pd;
-+	u64 fmax;
-+
-+	if (!cb->active_power)
-+		return NULL;
-+
-+	pd = kzalloc(sizeof(*pd) + cpumask_size(), GFP_KERNEL);
-+	if (!pd)
-+		return NULL;
-+
-+	table = kcalloc(nr_states, sizeof(*table), GFP_KERNEL);
-+	if (!table)
-+		goto free_pd;
-+
-+	/* Build the list of capacity states for this performance domain */
-+	for (i = 0, freq = 0; i < nr_states; i++, freq++) {
-+		/*
-+		 * active_power() is a driver callback which ceils 'freq' to
-+		 * lowest capacity state of 'cpu' above 'freq' and updates
-+		 * 'power' and 'freq' accordingly.
-+		 */
-+		ret = cb->active_power(&power, &freq, cpu);
-+		if (ret) {
-+			pr_err("pd%d: invalid cap. state: %d\n", cpu, ret);
-+			goto free_cs_table;
-+		}
-+
-+		/*
-+		 * We expect the driver callback to increase the frequency for
-+		 * higher capacity states.
-+		 */
-+		if (freq <= prev_freq) {
-+			pr_err("pd%d: non-increasing freq: %lu\n", cpu, freq);
-+			goto free_cs_table;
-+		}
-+
-+		/*
-+		 * The power returned by active_state() is expected to be
-+		 * positive, in milli-watts and to fit into 16 bits.
-+		 */
-+		if (!power || power > EM_CPU_MAX_POWER) {
-+			pr_err("pd%d: invalid power: %lu\n", cpu, power);
-+			goto free_cs_table;
-+		}
-+
-+		table[i].power = power;
-+		table[i].frequency = prev_freq = freq;
-+
-+		/*
-+		 * The hertz/watts efficiency ratio should decrease as the
-+		 * frequency grows on sane platforms. But this isn't always
-+		 * true in practice so warn the user if a higher OPP is more
-+		 * power efficient than a lower one.
-+		 */
-+		opp_eff = freq / power;
-+		if (opp_eff >= prev_opp_eff)
-+			pr_warn("pd%d: hertz/watts ratio non-monotonically decreasing: OPP%d >= OPP%d\n",
-+					cpu, i, i - 1);
-+		prev_opp_eff = opp_eff;
-+	}
-+
-+	/* Compute the cost of each capacity_state. */
-+	fmax = (u64) table[nr_states - 1].frequency;
-+	for (i = 0; i < nr_states; i++) {
-+		table[i].cost = div64_u64(fmax * table[i].power,
-+					  table[i].frequency);
-+	}
-+
-+	pd->table = table;
-+	pd->nr_cap_states = nr_states;
-+	cpumask_copy(to_cpumask(pd->cpus), span);
-+
-+	return pd;
-+
-+free_cs_table:
-+	kfree(table);
-+free_pd:
-+	kfree(pd);
-+
-+	return NULL;
-+}
-+
-+/**
-+ * em_cpu_get() - Return the performance domain for a CPU
-+ * @cpu : CPU to find the performance domain for
-+ *
-+ * Return: the performance domain to which 'cpu' belongs, or NULL if it doesn't
-+ * exist.
-+ */
-+struct em_perf_domain *em_cpu_get(int cpu)
-+{
-+	return READ_ONCE(per_cpu(em_data, cpu));
-+}
-+EXPORT_SYMBOL_GPL(em_cpu_get);
-+
-+/**
-+ * em_register_perf_domain() - Register the Energy Model of a performance domain
-+ * @span	: Mask of CPUs in the performance domain
-+ * @nr_states	: Number of capacity states to register
-+ * @cb		: Callback functions providing the data of the Energy Model
-+ *
-+ * Create Energy Model tables for a performance domain using the callbacks
-+ * defined in cb.
-+ *
-+ * If multiple clients register the same performance domain, all but the first
-+ * registration will be ignored.
-+ *
-+ * Return 0 on success
-+ */
-+int em_register_perf_domain(cpumask_t *span, unsigned int nr_states,
-+						struct em_data_callback *cb)
-+{
-+	unsigned long cap, prev_cap = 0;
-+	struct em_perf_domain *pd;
-+	int cpu, ret = 0;
-+
-+	if (!span || !nr_states || !cb)
-+		return -EINVAL;
-+
-+	/*
-+	 * Use a mutex to serialize the registration of performance domains and
-+	 * let the driver-defined callback functions sleep.
-+	 */
-+	mutex_lock(&em_pd_mutex);
-+
-+	for_each_cpu(cpu, span) {
-+		/* Make sure we don't register again an existing domain. */
-+		if (READ_ONCE(per_cpu(em_data, cpu))) {
-+			ret = -EEXIST;
-+			goto unlock;
-+		}
-+
-+		/*
-+		 * All CPUs of a domain must have the same micro-architecture
-+		 * since they all share the same table.
-+		 */
-+		cap = arch_scale_cpu_capacity(NULL, cpu);
-+		if (prev_cap && prev_cap != cap) {
-+			pr_err("CPUs of %*pbl must have the same capacity\n",
-+							cpumask_pr_args(span));
-+			ret = -EINVAL;
-+			goto unlock;
-+		}
-+		prev_cap = cap;
-+	}
-+
-+	/* Create the performance domain and add it to the Energy Model. */
-+	pd = em_create_pd(span, nr_states, cb);
-+	if (!pd) {
-+		ret = -EINVAL;
-+		goto unlock;
-+	}
-+
-+	for_each_cpu(cpu, span)
-+		WRITE_ONCE(per_cpu(em_data, cpu), pd);
-+
-+	pr_debug("Created perf domain %*pbl\n", cpumask_pr_args(span));
-+unlock:
-+	mutex_unlock(&em_pd_mutex);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(em_register_perf_domain);
--- 
-2.18.0
+Hans
 
