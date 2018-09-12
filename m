@@ -2,128 +2,151 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05C2DC4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 10:50:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84AE7C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 10:52:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77889206BB
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 10:50:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77889206BB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 2BB4920854
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 10:52:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BB4920854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727854AbeILPx5 (ORCPT
+        id S1727968AbeILP4Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 11:53:57 -0400
-Received: from foss.arm.com ([217.140.101.70]:57488 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727047AbeILPx5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 11:53:57 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E555C7A9;
-        Wed, 12 Sep 2018 03:49:57 -0700 (PDT)
-Received: from [10.4.12.116] (e107155-lin.emea.arm.com [10.4.12.116])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 706DA3F614;
-        Wed, 12 Sep 2018 03:49:56 -0700 (PDT)
-Cc:     Sudeep Holla <sudeep.holla@arm.com>, linux-kernel@vger.kernel.org,
-        vkilari@codeaurora.org
-Subject: Re: [PATCH] ACPI/PPTT: Handle architecturally unknown cache types
-To:     Jeffrey Hugo <jhugo@codeaurora.org>,
-        Jeremy Linton <jeremy.linton@arm.com>, rjw@rjwysocki.net,
-        linux-acpi@vger.kernel.org
-References: <1536694334-5811-1-git-send-email-jhugo@codeaurora.org>
- <f62f22a6-2dd8-f254-dbaf-b9e224099afd@arm.com>
- <e74f2208-ac0d-6c45-8ddb-5b77d6a42fef@codeaurora.org>
-From:   Sudeep Holla <sudeep.holla@arm.com>
-Organization: ARM
-Message-ID: <f8dc2958-a7c7-a633-3a06-97fed7c3510b@arm.com>
-Date:   Wed, 12 Sep 2018 11:49:55 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 12 Sep 2018 11:56:16 -0400
+Received: from outbound-smtp12.blacknight.com ([46.22.139.17]:44537 "EHLO
+        outbound-smtp12.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727047AbeILP4Q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 11:56:16 -0400
+Received: from mail.blacknight.com (pemlinmail04.blacknight.ie [81.17.254.17])
+        by outbound-smtp12.blacknight.com (Postfix) with ESMTPS id BE3861C25AA
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 11:52:13 +0100 (IST)
+Received: (qmail 11735 invoked from network); 12 Sep 2018 10:52:13 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.229.88])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 12 Sep 2018 10:52:13 -0000
+Date:   Wed, 12 Sep 2018 11:52:12 +0100
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/4] sched/numa: Do not move imbalanced load purely on
+ the basis of an idle CPU
+Message-ID: <20180912105211.GI1719@techsingularity.net>
+References: <20180907101139.20760-1-mgorman@techsingularity.net>
+ <20180907101139.20760-5-mgorman@techsingularity.net>
+ <20180907113309.GU24106@hirez.programming.kicks-ass.net>
+ <20180907123739.GE1719@techsingularity.net>
+ <20180910094147.GH1719@techsingularity.net>
+ <20180912065410.GA5352@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <e74f2208-ac0d-6c45-8ddb-5b77d6a42fef@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <20180912065410.GA5352@linux.vnet.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 11/09/18 21:38, Jeffrey Hugo wrote:
-> On 9/11/2018 2:16 PM, Jeremy Linton wrote:
->> Hi Jeffrey,
->>
->> (+Sudeep)
->>
-
-[..]
-
->>
->> If you look at the next line of code following this comment its going
->> to update the cache type for fully populated PPTT nodes. Although with
->> the suggested change its only going to activate if someone completely
->> fills out the node and fails to set the valid flag on the cache type. 
+On Wed, Sep 12, 2018 at 12:24:10PM +0530, Srikar Dronamraju wrote:
+> > > > Srikar's patch here:
+> > > > 
+> > > >   http://lkml.kernel.org/r/1533276841-16341-4-git-send-email-srikar@linux.vnet.ibm.com
+> > > > 
+> > > > Also frobs this condition, but in a less radical way. Does that yield
+> > > > similar results?
+> > > 
+> > > I can check. I do wonder of course if the less radical approach just means
+> > > that automatic NUMA balancing and the load balancer simply disagree about
+> > > placement at a different time. It'll take a few days to have an answer as
+> > > the battery of workloads to check this take ages.
+> > > 
+> > 
+> > Tests completed over the weekend and I've found that the performance of
+> > both patches are very similar for two machines (both 2 socket) running a
+> > variety of workloads. Hence, I'm not worried about which patch gets picked
+> > up. However, I would prefer my own on the grounds that the additional
+> > complexity does not appear to get us anything. Of course, that changes if
+> > Srikar's tests on his larger ppc64 machines show the more complex approach
+> > is justified.
+> > 
 > 
-> Yes, however that case doesn't apply to the scenario we are concerned
-> about, doesn't seem to be fully following the PPTT spec, and seems odd
-> that Linux just assumes that a "fully specified" cache is unified.
+> Running SPECJbb2005. Higher bops are better.
 > 
-
-Agreed, but adding code that will never get used is also not so good.
-Do you have systems where this is needed ?
-
->> What I suspect is happening in the reported case is that the nodes in
->> the PPTT table are missing fields we consider to be important. Since
->> that data isn't being filled out anywhere else, so we leave the cache
->> type alone too. This has the effect of hiding sysfs nodes with
->> incomplete information.
->>
->> Also, the lack of the DATA/INST fields is based on the assumption that
->> the only nodes which need their type field updated are outside of the
->> CPU core itself so they are pretty much guaranteed to be UNIFIED. Are
->> you hitting this case?
->>
-> 
-> Yes.  Without this change, we hit the lscpu error in the commit message,
-> and get zero output about the system.  We don't even get information
-> about the caches which are architecturally specified or how many cpus
-> are present.  With this change, we get what we expect out of lscpu (and
-> also lstopo) including the cache(s) which are not architecturally
-> specified.
+> Kernel A = 4.18+ 13 sched patches part of v4.19-rc1.
+> Kernel B = Kernel A + 6 patches (http://lore.kernel.org/lkml/1533276841-16341-1-git-send-email-srikar@linux.vnet.ibm.com)
+> Kernel C = Kernel B - (Avoid task migration for small numa improvement) i.e
+> 	http://lore.kernel.org/lkml/1533276841-16341-4-git-send-email-srikar@linux.vnet.ibm.com
+> 	+ 2 patches from Mel
+> 	(Do not move imbalanced load purely)
+> 	http://lore.kernel.org/lkml/20180907101139.20760-5-mgorman@techsingularity.net
+> 	(Stop comparing tasks for NUMA placement)
+> 	http://lore.kernel.org/lkml/20180907101139.20760-4-mgorman@techsingularity.net
 > 
 
-lscpu and lstopo are so broken. They just assume everything on CPU0.
-If you hotplug them out, you start seeing issues. So reading and file
-that doesn't exist and then bail out on other essential info though they
-are present, hmmm ...
+We ended up comparing different things. I started with 4.19-rc1 with
+patches 1-3 from my series. I then compared my patch "Do not move
+imbalanced load" with just yours so there was one point of variability.
+You compared one patch of yours against two of mine so we ended up
+looking at different things. That aside;
 
-> I guess I still don't understand why its important for PPTT to list, for
-> example, the sets/ways of a cache in all scenarios.  In the case of a
-> "transparent" cache (implementation defined as not reported per section
-> D3.4.2 of the ARM ARM where the cache cannot be managed by SW), there
-> may not be valid values for sets/ways.  I would argue its better to not
-> report that information, rather than provide bogus information just to
-> make Linux happy, which may break other OSes and provide means for which
-> a user to hang themselves.
+> 2 node x86 Haswell
 > 
-
-While I agree presenting wrong info is not good, but one of the reasons
-the cache info is present is to provide those info for some applications
-to do optimization based on that(I am told so and not sure if just type
-and size will be good enough) and you seem to agree with that below.
-
-> However, in the case of a transparent cache, the size/type/level/write
-> policy/etc (whatever the firmware provider deems relevant) might be
-> valuable information for the OS to make scheduling decisions, and is
-> certainly valuable for user space utilities for cross-machine/data
-> center level job scheduling.
+> v4.18 or 94710cac0ef4
+> JVMS  Prev    Current  %Change
+> 4     203769
+> 1     316734
 > 
+> Kernel A
+> JVMS  Prev    Current  %Change
+> 4     203769  209790   2.95482
+> 1     316734  312377   -1.3756
+> 
+> Kernel B
+> JVMS  Prev    Current  %Change
+> 4     209790  202059   -3.68511
+> 1     312377  326987   4.67704
+> 
+> Kernel C
+> JVMS  Prev    Current  %Change
+> 4     202059  200681   -0.681979
+> 1     326987  316715   -3.14141
+
+Overall, this is actually not that promising. With Kernel B, we lose
+almost as much as we gain depending on the thread count but the data
+presented is very limited.
+
+I can correlate though that the Haswll results make some sense. The
+baseline here is my patch and it's comparing against yours
+
+2 socket Haswell machine
+1 JVM -- 1-3.5% gain -- http://www.skynet.ie/~mel/postings/numab-20180912/global-dhp__jvm-specjbb2005-single/marvin5/
+2 JVM -- 1-6.3% gain -- http://www.skynet.ie/~mel/postings/numab-20180912/global-dhp__jvm-specjbb2005-multi/marvin5/
+
+Results are similarly good for Broadwell. But it's not universal. It's
+both good and bad with specjbb2015 depending on the CPU family. For
+example, on Haswell with one JVM per load I see a 5% gain with your
+patch and with Broadwell, I see an 8% loss.
+
+For tbench, yours was a marginal loss, autonuma benchmark was a win on
+one machine, a loss on another. hackbench showed both gains and losses.
+All the results I had were marginal which is why I was not convinced the
+complexity was justified.
+
+Your ppc64 figures look a bit more convincing and while I'm disappointed
+that you did not make a like-like comparison, I'm happy enough to go with
+your version. I can re-evaluate "Stop comparing tasks for NUMA placement"
+on its own later as well as the fast-migrate patches.
+
+Thanks Srikar.
 
 -- 
-Regards,
-Sudeep
+Mel Gorman
+SUSE Labs
