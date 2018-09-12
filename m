@@ -5,126 +5,85 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F858C4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:29:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86587C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:30:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C850320882
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:29:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C850320882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3D07720880
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:30:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D07720880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727611AbeILTdu (ORCPT
+        id S1727735AbeILTfG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 15:33:50 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35562 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726672AbeILTdt (ORCPT
+        Wed, 12 Sep 2018 15:35:06 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:44111 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726672AbeILTfG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 15:33:49 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8CEOHPP136829
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 10:29:03 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mf3fu3nw9-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 10:29:03 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <gerald.schaefer@de.ibm.com>;
-        Wed, 12 Sep 2018 15:29:01 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 12 Sep 2018 15:28:59 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8CESwFX55509200
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 12 Sep 2018 14:28:58 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0BEFD5204F;
-        Wed, 12 Sep 2018 17:28:47 +0100 (BST)
-Received: from thinkpad (unknown [9.152.212.168])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id C52875204E;
-        Wed, 12 Sep 2018 17:28:46 +0100 (BST)
-Date:   Wed, 12 Sep 2018 16:28:56 +0200
-From:   Gerald Schaefer <gerald.schaefer@de.ibm.com>
-To:     Pasha Tatashin <Pavel.Tatashin@microsoft.com>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        "zaslonko@linux.ibm.com" <zaslonko@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        "osalvador@suse.de" <osalvador@suse.de>
-Subject: Re: [PATCH] memory_hotplug: fix the panic when memory end is not on
- the section boundary
-In-Reply-To: <abf84f61-82f3-e3d5-2e6e-82a11cb5dcf5@microsoft.com>
-References: <20180910123527.71209-1-zaslonko@linux.ibm.com>
-        <20180910131754.GG10951@dhcp22.suse.cz>
-        <e8d75768-9122-332b-3b16-cad032aeb27f@microsoft.com>
-        <20180910135959.GI10951@dhcp22.suse.cz>
-        <CAGM2reZuGAPmfO8x0TnHnqHci_Hsga3-CfM9+udJs=gUQCw-1g@mail.gmail.com>
-        <20180910141946.GJ10951@dhcp22.suse.cz>
-        <CAGM2reZ5OD9SRW8j9iaQAk9jpr86pF2NqpBjv-dxH+1vJZs0=g@mail.gmail.com>
-        <20180910144152.GL10951@dhcp22.suse.cz>
-        <abf84f61-82f3-e3d5-2e6e-82a11cb5dcf5@microsoft.com>
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        Wed, 12 Sep 2018 15:35:06 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1g069Q-00025P-Dp; Wed, 12 Sep 2018 16:29:52 +0200
+Date:   Wed, 12 Sep 2018 16:29:52 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Florian Weimer <fweimer@redhat.com>
+cc:     Andy Lutomirski <luto@kernel.org>,
+        Matt Rickard <matt@softrans.com.au>,
+        Stephen Boyd <sboyd@kernel.org>,
+        John Stultz <john.stultz@linaro.org>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] x86/vdso: Handle clock_gettime(CLOCK_TAI) in vDSO
+In-Reply-To: <59403142-1073-3926-65dd-ac55ead357b9@redhat.com>
+Message-ID: <alpine.DEB.2.21.1809121623430.9957@nanos.tec.linutronix.de>
+References: <20180901015935.CCF0B18E20A9@virtux64.softrans.com.au> <CALCETrU4PzskO9pE6G4EkXNRRX3Mu7Vvjv1P8XgrfRMdgGDZSg@mail.gmail.com> <alpine.DEB.2.21.1809092159440.1402@nanos.tec.linutronix.de> <dde36e93-a21b-6223-8ffc-6dd11f687d38@redhat.com>
+ <alpine.DEB.2.21.1809121616040.9957@nanos.tec.linutronix.de> <59403142-1073-3926-65dd-ac55ead357b9@redhat.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-x-cbid: 18091214-0012-0000-0000-000002A7C2EC
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18091214-0013-0000-0000-000020DC0532
-Message-Id: <20180912162856.697038a8@thinkpad>
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-12_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=752 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809120149
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 10 Sep 2018 15:26:55 +0000
-Pasha Tatashin <Pavel.Tatashin@microsoft.com> wrote:
+On Wed, 12 Sep 2018, Florian Weimer wrote:
+> On 09/12/2018 04:17 PM, Thomas Gleixner wrote:
+> > On Wed, 12 Sep 2018, Florian Weimer wrote:
+> > > Does this mean glibc can keep using a single vDSO entrypoint, the one we
+> > > have today?
+> > 
+> > We have no intention to change that.
+> 
+> Okay, I was wondering because Andy seemed to have proposed just that.
+> 
+> > But we surely could provide separate entry points as an extra to avoid a
+> > bunch of conditionals.
+> 
+> We could adjust to that, but the benefit would be long-term because it's an
+> ABI change for glibc, and they tend to take a long time to propagate.
+> 
+> But I must say that clock_gettime is an odd place to start.  I would have
+> expected any of the type-polymorphic multiplexer interfaces (fcntl, ioctl,
+> ptrace, futex) to be a more natural starting point. 8-)
 
-> 
-> I agree memoryblock is a hack, it fails to do both things it was
-> designed to do:
-> 
-> 1. On bare metal you cannot free a physical dimm of memory using
-> memoryblock granularity because memory devices do not equal to physical
-> dimms. Thus, if for some reason a particular dimm must be
-> remove/replaced, memoryblock does not help us.
-> 
-> 2. On machines with hypervisors it fails to provide an adequate
-> granularity to add/remove memory.
-> 
-> We should define a new user interface where memory can be added/removed
-> at a finer granularity: sparse section size, but without a memory
-> devices for each section. We should also provide an optional access to
-> legacy interface where memory devices are exported but each is of
-> section size.
-> 
-> So, when legacy interface is enabled, current way would work:
-> 
-> echo offline > /sys/devices/system/memory/memoryXXX/state
-> 
-> And new interface would allow us to do something like this:
-> 
-> echo offline 256M > /sys/devices/system/node/nodeXXX/memory
-> 
-> With optional start address for offline memory.
-> echo offline [start_pa] size > /sys/devices/system/node/nodeXXX/memory
-> start_pa and size must be section size aligned (128M).
-> 
-> It would probably be a good discussion for the next MM Summit how to
-> solve the current memory hotplug interface limitations.
+Well, the starting point of this was to provide clock_tai support in the
+vdso. clock_gettime() in the vdso vs. the real syscall is a factor of 10 in
+speed. clock_gettime() is a pretty hot function in some workloads.
 
-Please keep lsmem/chmem from util-linux in mind, when changing the
-memory hotplug user interface.
+Andy then noticed that some conditionals could be avoided entirely by using
+a different entry point and offered one along with a 10% speedup. We don't
+have to go there, we can.
+
+The multiplexer interfaces need much more surgery and talking about futex,
+we'd need to sit down with quite some people and identify the things they
+actually care about before just splitting it up and keeping the existing
+overloaded trainwreck the same.
+
+Thanks,
+
+	tglx
+
+
 
