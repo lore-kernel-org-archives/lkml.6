@@ -2,175 +2,251 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DD58C4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 07:52:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C74D2C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 07:52:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DBE220882
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 07:52:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DBE220882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=interlog.com
+	by mail.kernel.org (Postfix) with ESMTP id 7AC8F20882
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 07:52:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AC8F20882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728331AbeILMz7 (ORCPT
+        id S1728351AbeILM4C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 08:55:59 -0400
-Received: from smtp.infotech.no ([82.134.31.41]:43364 "EHLO smtp.infotech.no"
+        Wed, 12 Sep 2018 08:56:02 -0400
+Received: from mga03.intel.com ([134.134.136.65]:5978 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726970AbeILMz6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 08:55:58 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smtp.infotech.no (Postfix) with ESMTP id 2D7B520423B;
-        Wed, 12 Sep 2018 09:52:37 +0200 (CEST)
-X-Virus-Scanned: by amavisd-new-2.6.6 (20110518) (Debian) at infotech.no
-Received: from smtp.infotech.no ([127.0.0.1])
-        by localhost (smtp.infotech.no [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id NBhtFxBbNAOJ; Wed, 12 Sep 2018 09:52:34 +0200 (CEST)
-Received: from [192.168.48.23] (host-45-58-207-169.dyn.295.ca [45.58.207.169])
-        by smtp.infotech.no (Postfix) with ESMTPA id 9DFBF20418A;
-        Wed, 12 Sep 2018 09:52:33 +0200 (CEST)
-Reply-To: dgilbert@interlog.com
-To:     SCSI development list <linux-scsi@vger.kernel.org>
-Cc:     Martin Pitt <mpitt@debian.org>,
-        David Sommerseth <davids@redhat.com>,
-        Hannes Reinecke <hare@suse.de>,
-        Ritesh Raj Sarraf <rrs@researchut.com>,
-        "Robin H. Johnson" <robbat2@gentoo.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-From:   Douglas Gilbert <dgilbert@interlog.com>
-Subject: [Announce] sg3_utils-1.43 available
-Message-ID: <41f0edec-9ff6-607c-5423-bab120ca964b@interlog.com>
-Date:   Wed, 12 Sep 2018 03:52:32 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726862AbeILM4B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 08:56:01 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Sep 2018 00:52:42 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,363,1531810800"; 
+   d="scan'208";a="72537400"
+Received: from btwcube1.sh.intel.com (HELO debian) ([10.67.104.194])
+  by orsmga008.jf.intel.com with ESMTP; 12 Sep 2018 00:52:40 -0700
+Date:   Wed, 12 Sep 2018 15:51:40 +0800
+From:   Tiwei Bie <tiwei.bie@intel.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     jasowang@redhat.com, virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        virtio-dev@lists.oasis-open.org, wexu@redhat.com,
+        jfreimann@redhat.com
+Subject: Re: [PATCH net-next v2 2/5] virtio_ring: support creating packed ring
+Message-ID: <20180912075140.GA22545@debian>
+References: <20180711022711.7090-1-tiwei.bie@intel.com>
+ <20180711022711.7090-3-tiwei.bie@intel.com>
+ <20180907095208-mutt-send-email-mst@kernel.org>
+ <20180910022837.GA11822@debian>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180910022837.GA11822@debian>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-sg3_utils is a package of command line utilities for sending
-SCSI commands to storage devices. It some contexts it can
-send some ATA and NVMe commands. The package targets the Linux
-4, 3, 2.6 and 2.4 kernel series. It has ports to FreeBSD, Android,
-Solaris, and Windows (cygwin and MinGW).
+On Mon, Sep 10, 2018 at 10:28:37AM +0800, Tiwei Bie wrote:
+> On Fri, Sep 07, 2018 at 10:03:24AM -0400, Michael S. Tsirkin wrote:
+> > On Wed, Jul 11, 2018 at 10:27:08AM +0800, Tiwei Bie wrote:
+> > > This commit introduces the support for creating packed ring.
+> > > All split ring specific functions are added _split suffix.
+> > > Some necessary stubs for packed ring are also added.
+> > > 
+> > > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
+> > 
+[...]
+> > > +
+> > > +/*
+> > > + * The layout for the packed ring is a continuous chunk of memory
+> > > + * which looks like this.
+> > > + *
+> > > + * struct vring_packed {
+> > > + *	// The actual descriptors (16 bytes each)
+> > > + *	struct vring_packed_desc desc[num];
+> > > + *
+> > > + *	// Padding to the next align boundary.
+> > > + *	char pad[];
+> > > + *
+> > > + *	// Driver Event Suppression
+> > > + *	struct vring_packed_desc_event driver;
+> > > + *
+> > > + *	// Device Event Suppression
+> > > + *	struct vring_packed_desc_event device;
+> > > + * };
+> > > + */
+> > 
+> > Why not just allocate event structures separately?
+> > Is it a win to have them share a cache line for some reason?
 
-For an overview of sg3_utils and downloads see this page:
-     http://sg.danny.cz/sg/sg3_utils.html
-The sg_ses utility (for enclosure devices) is discussed at:
-     http://sg.danny.cz/sg/sg_ses.html
-A full changelog can be found at:
-     http://sg.danny.cz/sg/p/sg3_utils.ChangeLog
+Users may call vring_new_virtqueue() with preallocated
+memory to setup the ring, e.g.:
+
+https://github.com/torvalds/linux/blob/11da3a7f84f1/drivers/s390/virtio/virtio_ccw.c#L513-L522
+https://github.com/torvalds/linux/blob/11da3a7f84f1/drivers/misc/mic/vop/vop_main.c#L306-L307
+
+Below is the corresponding definition in split ring:
+
+https://github.com/oasis-tcs/virtio-spec/blob/89dd55f5e606/split-ring.tex#L64-L78
+
+If my understanding is correct, this is just for legacy
+interfaces, and we won't define layout in packed ring
+and don't need to support vring_new_virtqueue() in packed
+ring. Is it correct? Thanks!
 
 
-Changelog summary for sg3_utils-1.43 [20180911 rev 789] since
-version 1.42 [20160217]
 
-   New utilities
-     - sg_bg_ctl: send Background control command (sbc4r08)
-     - sg_seek: send SEEK(10) or PRE-FETCH(10 or 16)
-     - sg_stream_ctl: send STREAM CONTROL or GET STREAM STATUS
-     - sg_write_x: send either WRITE(n), ORWRITE(n), WRITE ATOMIC(n),
-       WRITE SAME(n), WRITE SCATTERED(n) or WRITE STREAM(n); where 'n'
-       is 16 or 32 which is the length of the cdb
-
-   New general options:
-     - --dry-run option added to utilities that would otherwise modify
-       user data and potentially take a long time. Utilties that the
-       --dry-run option has been added to: sg_dd, sg_format, sgm_dd,
-       sgp_dd, sg_sanitize, sg_ses_microcode, sg_unmap, sg_write_buffer
-       and sg_write_x
-     - --timeout=SECS option for extending the default command OS
-       timeout added to: sg_compare_and_write, sg_format, sg_raw,
-       sg_sanitize, sg_senddiag, sg_sync, sg_unmap, sg_write_buffer,
-       sg_write_same, sg_write_verify, and sg_write_x
-
-   Take input from file rather than SCSI device
-     The number of 'decoding' utilities that can take input from a file
-     rather than a SCSI device has been expanded. This allows data to be
-     collected as hex or binary files and later analysed. Utilities
-     that have this facility are: sg_inq, sg_logs, sg_read_attr, sg_ses
-     and sg_vpd. The sdparm utility, in its own package, decodes mode
-     pages (and VPD pages) now has this facility while the sg_modes
-     utility does not.
-
-   NVMe support
-     NVMe have chosen to use the SES-3 standard with the addition
-     of the NVME-MI SES Send and Receive admin commands. Rather than
-     modify sg_ses, the underlying library has a small SNTL used when
-     the given device is a NVMe device. sg_ses (and sg_ses_microcode)
-     can now be used with a NVMe enclosure. sg_inq decodes part of
-     the NVME Identify controller and namespace response. sg_raw can
-     issue NVMe admin commands and sg_senddiag can issue SES Send and
-     Receive admin commands.
-
-   Page align many heap allocations
-     Both NVMe and certain FreeBSD pass-through calls require page
-     alignment. So many (but not all) malloc() calls have been replaced
-     by sg_memalign() which is a front for posix_memalign() if it is
-     available. Typically the default page size (often 4096 (bytes)) is
-     used for alignment.
-
-   Individual utility additions
-     - rescan-scsi-bus.sh: harden code, install by default
-       - add --ignore-rev to ignore revision change
-     - sg_dd: add --verbose option; allow multiple short options (e.g. -dvv)
-     - sgp_dd: pthread_cancel() has issues in C++ (and the Android
-       multi-threaded library doesn't supply it) so use pthread_kill()
-     - add --dry-run and --verbose options
-     - sg_decode sense: add --cdb and --err=ES options
-     - sg_format: add --quick option to skip reconsideration time
-       - extend --wait timeout to 40 hours for disk sizes > 4 TB
-     - sg_get_lba_status: add --report-type= option (sbc4r12)
-       - add support for 32 byte cdb variant (sbc4r14)
-       - add support for --element-id= and --scan-len= options (sbc4r14)
-       - decode response's RTP and two more provisioning statuses and the
-         additional status (sbc4r12); decode completion condition (sbc4r14)
-     - sg_inq: fix potential unbounded loop in --export
-       - add --only to stop standard inquiry decoding also doing a serial
-         number vpd page (0x80) fetch
-       - with NVMe --only restricts to a single Identify controller command
-       - add --long which decodes more of the NVMe Identify cmd responses
-     - sg_inq+sg_vpd: update Extended inquiry data vpd page (spc5r09,
-       spc5r17 and 17-142r5)
-       - add --force option to bypass checking Supported VPD Pages page and
-         fetch requested page directly
-     - sg_logs: add --vendor=VP and '--pdt=DT' options
-     - sg_modes: add Out of band management control mpage
-       - accept acronym for mode page
-     - sg_opcode: add '--enumerate' and '--pdt=' options; support CDLP
-       (command duration limit page) and MLU (Multiple Logical Units)
-     - sg_persist: add --maxlen-LEN option, LEN defaults to decimal, similar
-       to --alloc-length= which takes hex; add Replace Lost Reservation
-       Capable (RLR_C) bit in Report Capabilities (spc4r36)
-     - sg_raw: add --cmdfile=CF option, CF in hex unless --raw option also
-       given; this and other tweaks facilitate sending 64 byte NVMe admin
-       commands to be sent
-       - add --enumerate option to decode command name from cdb
-     - sg_rdac: add sanity checks for -f=lun value
-     - sg_rep_zones: expand --help option information
-     - sg_reset_wp add --count=ZC option, zbc2r01b
-     - sg_sat_identify: expand to take --len=32
-     - sg_ses: handle 2 bit EIIOE field in aes dpage
-       - add --quiet option to suppress messages
-       - allow multiple --clear=, --get= and --set= options
-       - allow individual index ranges (e.g. --index=3-5)
-       - allow --index=IIA with -ee to enumerate only fields belonging to
-         element type IIA
-     - sg_ses_microcode: add -ealsd option (exit after last send diagnostic)
-     - sg_timestamp: add '--no-timestamp', '--elapsed' and '--hex' options
-     - sg_turs: add --low option to force low level sg_pt interface use
-     - sg_unmap: add --all=ST,RN[,LA] option to unmap large contiguous
-       segments of a disk/ssd
-     - sg_vpd: 3 party copy VPD page improvements
-       - fully implement Device constituents VPD page
-     - sg_wr_mode: add --rtd option for RTD bit
-     - sg_zone: add --sequentialize, --count=ZC options, zbc2r01b
-
-Doug Gilbert
+> 
+> Will do that.
+> 
+> > 
+> > > +static inline void vring_init_packed(struct vring_packed *vr, unsigned int num,
+> > > +				     void *p, unsigned long align)
+> > > +{
+> > > +	vr->num = num;
+> > > +	vr->desc = p;
+> > > +	vr->driver = (void *)ALIGN(((uintptr_t)p +
+> > > +		sizeof(struct vring_packed_desc) * num), align);
+> > > +	vr->device = vr->driver + 1;
+> > > +}
+> > 
+> > What's all this about alignment? Where does it come from?
+> 
+> It comes from the `vring_align` parameter of vring_create_virtqueue()
+> and vring_new_virtqueue():
+> 
+> https://github.com/torvalds/linux/blob/a49a9dcce802/drivers/virtio/virtio_ring.c#L1061
+> https://github.com/torvalds/linux/blob/a49a9dcce802/drivers/virtio/virtio_ring.c#L1123
+> 
+> Should I just ignore it in packed ring?
+> 
+> CCW defined this:
+> 
+> #define KVM_VIRTIO_CCW_RING_ALIGN 4096
+> 
+> I'm not familiar with CCW. Currently, in this patch set, packed ring
+> isn't enabled on CCW dues to some legacy accessors are not implemented
+> in packed ring yet.
+> 
+> > 
+> > > +
+> > > +static inline unsigned vring_size_packed(unsigned int num, unsigned long align)
+> > > +{
+> > > +	return ((sizeof(struct vring_packed_desc) * num + align - 1)
+> > > +		& ~(align - 1)) + sizeof(struct vring_packed_desc_event) * 2;
+> > > +}
+> [...]
+> > > @@ -1129,10 +1388,17 @@ struct virtqueue *vring_new_virtqueue(unsigned int index,
+> > >  				      void (*callback)(struct virtqueue *vq),
+> > >  				      const char *name)
+> > >  {
+> > > -	struct vring vring;
+> > > -	vring_init(&vring, num, pages, vring_align);
+> > > -	return __vring_new_virtqueue(index, vring, vdev, weak_barriers, context,
+> > > -				     notify, callback, name);
+> > > +	union vring_union vring;
+> > > +	bool packed;
+> > > +
+> > > +	packed = virtio_has_feature(vdev, VIRTIO_F_RING_PACKED);
+> > > +	if (packed)
+> > > +		vring_init_packed(&vring.vring_packed, num, pages, vring_align);
+> > > +	else
+> > > +		vring_init(&vring.vring_split, num, pages, vring_align);
+> > 
+> > 
+> > vring_init in the UAPI header is more or less a bug.
+> > I'd just stop using it, keep it around for legacy userspace.
+> 
+> Got it. I'd like to do that. Thanks.
+> 
+> > 
+> > > +
+> > > +	return __vring_new_virtqueue(index, vring, packed, vdev, weak_barriers,
+> > > +				     context, notify, callback, name);
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(vring_new_virtqueue);
+> > >  
+> > > @@ -1142,7 +1408,9 @@ void vring_del_virtqueue(struct virtqueue *_vq)
+> > >  
+> > >  	if (vq->we_own_ring) {
+> > >  		vring_free_queue(vq->vq.vdev, vq->queue_size_in_bytes,
+> > > -				 vq->vring.desc, vq->queue_dma_addr);
+> > > +				 vq->packed ? (void *)vq->vring_packed.desc :
+> > > +					      (void *)vq->vring.desc,
+> > > +				 vq->queue_dma_addr);
+> > >  	}
+> > >  	list_del(&_vq->list);
+> > >  	kfree(vq);
+> > > @@ -1184,7 +1452,7 @@ unsigned int virtqueue_get_vring_size(struct virtqueue *_vq)
+> > >  
+> > >  	struct vring_virtqueue *vq = to_vvq(_vq);
+> > >  
+> > > -	return vq->vring.num;
+> > > +	return vq->packed ? vq->vring_packed.num : vq->vring.num;
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(virtqueue_get_vring_size);
+> > >  
+> > > @@ -1227,6 +1495,10 @@ dma_addr_t virtqueue_get_avail_addr(struct virtqueue *_vq)
+> > >  
+> > >  	BUG_ON(!vq->we_own_ring);
+> > >  
+> > > +	if (vq->packed)
+> > > +		return vq->queue_dma_addr + ((char *)vq->vring_packed.driver -
+> > > +				(char *)vq->vring_packed.desc);
+> > > +
+> > >  	return vq->queue_dma_addr +
+> > >  		((char *)vq->vring.avail - (char *)vq->vring.desc);
+> > >  }
+> > > @@ -1238,11 +1510,16 @@ dma_addr_t virtqueue_get_used_addr(struct virtqueue *_vq)
+> > >  
+> > >  	BUG_ON(!vq->we_own_ring);
+> > >  
+> > > +	if (vq->packed)
+> > > +		return vq->queue_dma_addr + ((char *)vq->vring_packed.device -
+> > > +				(char *)vq->vring_packed.desc);
+> > > +
+> > >  	return vq->queue_dma_addr +
+> > >  		((char *)vq->vring.used - (char *)vq->vring.desc);
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(virtqueue_get_used_addr);
+> > >  
+> > > +/* Only available for split ring */
+> > >  const struct vring *virtqueue_get_vring(struct virtqueue *vq)
+> > >  {
+> > >  	return &to_vvq(vq)->vring;
+> > > diff --git a/include/linux/virtio_ring.h b/include/linux/virtio_ring.h
+> > > index fab02133a919..992142b35f55 100644
+> > > --- a/include/linux/virtio_ring.h
+> > > +++ b/include/linux/virtio_ring.h
+> > > @@ -60,6 +60,11 @@ static inline void virtio_store_mb(bool weak_barriers,
+> > >  struct virtio_device;
+> > >  struct virtqueue;
+> > >  
+> > > +union vring_union {
+> > > +	struct vring vring_split;
+> > > +	struct vring_packed vring_packed;
+> > > +};
+> > > +
+> > >  /*
+> > >   * Creates a virtqueue and allocates the descriptor ring.  If
+> > >   * may_reduce_num is set, then this may allocate a smaller ring than
+> > > @@ -79,7 +84,8 @@ struct virtqueue *vring_create_virtqueue(unsigned int index,
+> > >  
+> > >  /* Creates a virtqueue with a custom layout. */
+> > >  struct virtqueue *__vring_new_virtqueue(unsigned int index,
+> > > -					struct vring vring,
+> > > +					union vring_union vring,
+> > > +					bool packed,
+> > >  					struct virtio_device *vdev,
+> > >  					bool weak_barriers,
+> > >  					bool ctx,
+> > > -- 
+> > > 2.18.0
