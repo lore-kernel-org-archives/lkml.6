@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98037C4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 06:33:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADE3DC46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 06:33:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DB8620866
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 06:33:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DB8620866
+	by mail.kernel.org (Postfix) with ESMTP id 670E120866
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 06:33:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 670E120866
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727611AbeILLgV (ORCPT
+        id S1727657AbeILLgW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 07:36:21 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60794 "EHLO mx1.redhat.com"
+        Wed, 12 Sep 2018 07:36:22 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56568 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725910AbeILLgV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726862AbeILLgV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 12 Sep 2018 07:36:21 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9C915402333A;
-        Wed, 12 Sep 2018 06:33:19 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 232AA804B4DB;
+        Wed, 12 Sep 2018 06:33:20 +0000 (UTC)
 Received: from sirius.home.kraxel.org (ovpn-116-66.ams2.redhat.com [10.36.116.66])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7998410EE6D4;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 83EED2156899;
         Wed, 12 Sep 2018 06:33:17 +0000 (UTC)
 Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id D61B49B1B; Wed, 12 Sep 2018 08:33:16 +0200 (CEST)
+        id F34089B1C; Wed, 12 Sep 2018 08:33:16 +0200 (CEST)
 From:   Gerd Hoffmann <kraxel@redhat.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     laurent.pinchart@ideasonboard.com, daniel@ffwll.ch,
@@ -40,38 +40,39 @@ Cc:     laurent.pinchart@ideasonboard.com, daniel@ffwll.ch,
         linux-media@vger.kernel.org (open list:DMA BUFFER SHARING FRAMEWORK),
         linaro-mm-sig@lists.linaro.org (moderated list:DMA BUFFER SHARING
         FRAMEWORK), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3 2/3] udmabuf: check that __pad is zero
-Date:   Wed, 12 Sep 2018 08:33:15 +0200
-Message-Id: <20180912063316.21047-3-kraxel@redhat.com>
+Subject: [PATCH v3 3/3] udmabuf: check that flags has no unsupported bits set
+Date:   Wed, 12 Sep 2018 08:33:16 +0200
+Message-Id: <20180912063316.21047-4-kraxel@redhat.com>
 In-Reply-To: <20180912063316.21047-1-kraxel@redhat.com>
 References: <20180912063316.21047-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 12 Sep 2018 06:33:19 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 12 Sep 2018 06:33:19 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'kraxel@redhat.com' RCPT:''
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 12 Sep 2018 06:33:20 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 12 Sep 2018 06:33:20 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'kraxel@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reported-by: Yann Droneaud <ydroneaud@opteya.com>
 Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Reported-by: Yann Droneaud <ydroneaud@opteya.com>
 ---
- drivers/dma-buf/udmabuf.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/dma-buf/udmabuf.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
-index 9edabce0b8..964beadd11 100644
+index 964beadd11..acd97670c5 100644
 --- a/drivers/dma-buf/udmabuf.c
 +++ b/drivers/dma-buf/udmabuf.c
-@@ -134,6 +134,8 @@ static long udmabuf_create(const struct udmabuf_create_list *head,
+@@ -128,6 +128,9 @@ static long udmabuf_create(const struct udmabuf_create_list *head,
+ 	int seals, ret = -EINVAL;
+ 	u32 i, flags;
  
- 	pglimit = (size_limit_mb * 1024 * 1024) >> PAGE_SHIFT;
- 	for (i = 0; i < head->count; i++) {
-+		if (list[i].__pad)
-+			goto err;
- 		if (!IS_ALIGNED(list[i].offset, PAGE_SIZE))
- 			goto err;
- 		if (!IS_ALIGNED(list[i].size, PAGE_SIZE))
++	if (head->flags & ~UDMABUF_FLAGS_CLOEXEC)
++		return -EINVAL;
++
+ 	ubuf = kzalloc(sizeof(*ubuf), GFP_KERNEL);
+ 	if (!ubuf)
+ 		return -ENOMEM;
 -- 
 2.9.3
 
