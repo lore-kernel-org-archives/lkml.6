@@ -2,31 +2,31 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44495C6778D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:54:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EFB7C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:54:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B43620839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:54:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B43620839
+	by mail.kernel.org (Postfix) with ESMTP id 4281020839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:54:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4281020839
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728522AbeILT7D (ORCPT
+        id S1728534AbeILT7S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 15:59:03 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:48863 "EHLO
+        Wed, 12 Sep 2018 15:59:18 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:37291 "EHLO
         smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728405AbeILT7D (ORCPT
+        by vger.kernel.org with ESMTP id S1727965AbeILT6z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 15:59:03 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.7697765|0.7895079;BR=01201311R151S35ruler400_34042_170704;CH=green;FP=3160884396513129943|1|1|11|0|-1|-1|-1;HT=e01e01454;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=15;RT=15;SR=0;TI=SMTPD_---.Cpx3-So_1536764015;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.Cpx3-So_1536764015)
-          by smtp.aliyun-inc.com(10.147.41.178);
-          Wed, 12 Sep 2018 22:53:36 +0800
+        Wed, 12 Sep 2018 15:58:55 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.2198|-1;CH=blue;FP=7430821995823838641|2|2|12|0|-1|-1|-1;HT=e02c03306;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=15;RT=15;SR=0;TI=SMTPD_---.Cpx.ayM_1536764005;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.Cpx.ayM_1536764005)
+          by smtp.aliyun-inc.com(10.147.41.187);
+          Wed, 12 Sep 2018 22:53:25 +0800
 From:   Guo Ren <ren_guo@c-sky.com>
 To:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
         tglx@linutronix.de, daniel.lezcano@linaro.org,
@@ -35,9 +35,9 @@ To:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
 Cc:     c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
         thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org, ren_guo@c-sky.com,
         green.hu@gmail.com
-Subject: [PATCH V4 27/27] dt-bindings: Add vendor prefix for csky
-Date:   Wed, 12 Sep 2018 22:52:09 +0800
-Message-Id: <21c4e62bed6dcb4ff8ee860fb53de69a0adb1cce.1536758961.git.ren_guo@c-sky.com>
+Subject: [PATCH V4 22/27] dt-bindings: interrupt-controller: C-SKY SMP intc
+Date:   Wed, 12 Sep 2018 22:52:04 +0800
+Message-Id: <edc5f67f157532bf002120b54bf75117a4d249a7.1536758961.git.ren_guo@c-sky.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <93e8b592e429c156ad4d4ca5d85ef48fd0ab8b70.1536758961.git.ren_guo@c-sky.com>
 References: <93e8b592e429c156ad4d4ca5d85ef48fd0ab8b70.1536758961.git.ren_guo@c-sky.com>
@@ -50,21 +50,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Guo Ren <ren_guo@c-sky.com>
 ---
- Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
- 1 file changed, 1 insertion(+)
+ .../bindings/interrupt-controller/csky,mpintc.txt  | 40 ++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-index 7cad066..335f9e0 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-@@ -81,6 +81,7 @@ cosmic	Cosmic Circuits
- crane	Crane Connectivity Solutions
- creative	Creative Technology Ltd
- crystalfontz	Crystalfontz America, Inc.
-+csky	Hangzhou C-SKY Microsystems Co., Ltd
- cubietech	Cubietech, Ltd.
- cypress	Cypress Semiconductor Corporation
- cznic	CZ.NIC, z.s.p.o.
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt b/Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt
+new file mode 100644
+index 0000000..49d1658
+--- /dev/null
++++ b/Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt
+@@ -0,0 +1,40 @@
++===========================================
++C-SKY Multi-processors Interrupt Controller
++===========================================
++
++C-SKY Multi-processors Interrupt Controller is designed for ck807/ck810/ck860
++SMP soc, and it also could be used in non-SMP system.
++
++Interrupt number definition:
++
++  0-15  : software irq, and we use 15 as our IPI_IRQ.
++ 16-31  : private  irq, and we use 16 as the co-processor timer.
++ 31-1024: common irq for soc ip.
++
++=============================
++intc node bindings definition
++=============================
++
++	Description: Describes SMP interrupt controller
++
++	PROPERTIES
++
++        - compatible
++		Usage: required
++                Value type: <string>
++                Definition: must be "csky,mpintc"
++        - interrupt-cells
++                Usage: required
++                Value type: <u32>
++                Definition: must be <1>
++        - interrupt-controller:
++                Usage: required
++
++Examples:
++---------
++
++	intc: interrupt-controller {
++		compatible = "csky,mpintc";
++		#interrupt-cells = <1>;
++		interrupt-controller;
++	};
 -- 
 2.7.4
 
