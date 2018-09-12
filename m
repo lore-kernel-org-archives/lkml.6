@@ -6,125 +6,108 @@ X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC6F4C4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:41:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B8C9C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:42:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64D38206B8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:41:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39BE0206B8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:42:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MAEn5N8v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64D38206B8
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="baCKQRKd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39BE0206B8
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727780AbeILNpU (ORCPT
+        id S1727824AbeILNq0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 09:45:20 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:37072 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726502AbeILNpS (ORCPT
+        Wed, 12 Sep 2018 09:46:26 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:37114 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727623AbeILNq0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 09:45:18 -0400
-Received: by mail-wr1-f67.google.com with SMTP id u12-v6so1085517wrr.4
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 01:41:47 -0700 (PDT)
+        Wed, 12 Sep 2018 09:46:26 -0400
+Received: by mail-wm0-f68.google.com with SMTP id n11-v6so1411570wmc.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 01:42:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=cdzXHeIFeBzs41NLH9B+3flVQODuHYwCbb1mrqSVS24=;
-        b=MAEn5N8vJSJMOKNGUDQ/fuHs11uLucbW91K2SVIr9q8XUpIAVgLy59kwJ+h8y+UYSp
-         oadZpD9yQdFmkLuePLivBd2JWe7JZTseG+MQprowtXVilF8Co4pYrucn5Bfj5JumkM/B
-         bbpcoiNW8ra98W1dbSBsqFANVUJjp8ot0CXd4=
+        bh=dBJlzXSsI8ACekgiub8iu0SGNPn/dqoS4S7wlPf3OPQ=;
+        b=baCKQRKdVc+m5y3FqaR19rgB+6P9Oscc6XBfXp63DSNITZOd5VRoppaoueHJv47gq+
+         hlMW3dCW855zG9zLsBdGgr1DEzLRdrsBXOOiFDROPLt2J/D/BsbRCIXeLclk+7E1Scx2
+         MmxjDtyYMkPWdteOt9pcEf1faFs2wW6fvjYAA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=cdzXHeIFeBzs41NLH9B+3flVQODuHYwCbb1mrqSVS24=;
-        b=dqTT9tHehMWAVDl6Q2JmNJ0cnljiRnstPOTJbVI+WdBnXOekeZjj0uRPZqMHjsmKNx
-         cIpd1iIjuqyQ24fH0vLFB6YG0rrZ3x3EHHmFEbXV8nj8KIJC1FTuKp0Curl5RGANRkKL
-         rCWLlyHHjmKV+bKmL000e8x2mzhio2kl5nSZqaQJQMfhgSGV7K2YLGik126E+2ArEq3K
-         6saWnO8b1VyrILvqqM4qu4tucpgbTKr3Z/GvJw7dt1AueR/OkRUulJaOQ6lpqfilcsmO
-         buyBlgfj3+Nf3Xy9nH9K/IAgUSb+Za/PW7gocLmguHBMz9D1hDq2g8QIlscDShZ9eBNZ
-         p2bw==
-X-Gm-Message-State: APzg51AfnAx8BfvqhfiIn/sd0TEoWJ1MX3UkvvUE+JsZFNVaVu2kIDr5
-        BJV+saSrxMO8ic5+oA0pKOhxZw==
-X-Google-Smtp-Source: ANB0Vdax+omjCwocb9QLLLD2chwLGGz2+TmwM6YsEob3OIPPdHerUT+iIruFJV8fDiZ1roEs60iScg==
-X-Received: by 2002:adf:f1cc:: with SMTP id z12-v6mr654025wro.214.1536741706618;
-        Wed, 12 Sep 2018 01:41:46 -0700 (PDT)
+        bh=dBJlzXSsI8ACekgiub8iu0SGNPn/dqoS4S7wlPf3OPQ=;
+        b=SEcVVY1DAbOhLGDgJGNb5Ig8hbkYgnTO/LhyQfJIJbXG3qozMhRXBwZhCGd31tTIZy
+         SCWuSc0OzMCmZJqFhWlhbCopHrDpJ5Q5akl3MeQegnGtkF1+8NEp+5y7qUrMHkIo9Gzu
+         WFG9lJC9MeqSgzpZviHYYVx5M04PyX+8eLwIdz2tAZjVxfjZ3LOUn2glArB2piPlScUP
+         1vlrhkyw3bz1C3j79CRoaEr80NVznwlHJw7wZToA5aTkshc5a+j1ttSRfz7nRuP3wRiW
+         GkXmwmvO2Lz0NziEIE/7WgWDS1sUcrj46w/h/+M6TG8L33ok+m3VaSOjeLFajcZ6o/ze
+         MpfQ==
+X-Gm-Message-State: APzg51DBDQknoM4bET0bgBqWNctoAMmBaEw6xTFH9D2QJ0XX41Ois1EP
+        BK+GKDPRwFq+NQU3qhIsbF7wbg==
+X-Google-Smtp-Source: ANB0VdbV772B6phfMHmGgNcgcwkhAomw6B9k+oJriIqMH3q2Zia04dnnx56aH9tmRbOT8XrD8kslkA==
+X-Received: by 2002:a1c:208c:: with SMTP id g134-v6mr855519wmg.144.1536741774496;
+        Wed, 12 Sep 2018 01:42:54 -0700 (PDT)
 Received: from dell ([89.238.177.251])
-        by smtp.gmail.com with ESMTPSA id 94-v6sm657763wrc.10.2018.09.12.01.41.44
+        by smtp.gmail.com with ESMTPSA id m68-v6sm1573980wmb.10.2018.09.12.01.42.53
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Sep 2018 01:41:45 -0700 (PDT)
-Date:   Wed, 12 Sep 2018 09:41:43 +0100
+        Wed, 12 Sep 2018 01:42:53 -0700 (PDT)
+Date:   Wed, 12 Sep 2018 09:42:51 +0100
 From:   Lee Jones <lee.jones@linaro.org>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        radu_nicolae.pirea@upb.ro, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Mark Brown <broonie@kernel.org>, Jiri Slaby <jslaby@suse.com>,
-        Richard Genoud <richard.genoud@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>
-Subject: Re: [PATCH v12 0/6] Driver for at91 usart in spi mode
-Message-ID: <20180912084143.GN4185@dell>
-References: <20180911093356.GE4185@dell>
- <20180911093917.GL2494@piout.net>
- <CAMuHMdXH8gNjKGOHGFc+K03U2zsVCSN7G_Q4wtepQr859nRQKg@mail.gmail.com>
- <20180911153621.GP2494@piout.net>
- <CAMuHMdV+=EgAYogwNHbY=RExkGox_+YSeHV6pJtQb6g6PzD-CQ@mail.gmail.com>
- <20180911181838.GI4185@dell>
- <20180911185839.GA25212@piout.net>
- <20180911224418.GK4185@dell>
- <20180911225440.GL4185@dell>
- <20180912073355.GB2557@piout.net>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, lgirdwood@gmail.com,
+        broonie@kernel.org, mazziesaccount@gmail.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com
+Subject: Re: [PATCH 1/8] regulator: bd71837: Disable voltage monitoring for
+ LDO3/4
+Message-ID: <20180912084251.GO4185@dell>
+References: <cover.1535545377.git.matti.vaittinen@fi.rohmeurope.com>
+ <cad2e7baeb7af2d6efbc6afba831b0513087d832.1535545377.git.matti.vaittinen@fi.rohmeurope.com>
+ <20180911124029.GO4185@dell>
+ <20180912074745.GD2381@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180912073355.GB2557@piout.net>
+In-Reply-To: <20180912074745.GD2381@localhost.localdomain>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 12 Sep 2018, Alexandre Belloni wrote:
+On Wed, 12 Sep 2018, Matti Vaittinen wrote:
 
-> On 11/09/2018 23:54:40+0100, Lee Jones wrote:
-> > > > http://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-6438-32-bit-ARM926-Embedded-Microprocessor-SAM9G45_Datasheet.pdf
-> > > > 
-> > > > USART doc starting p572, registers p621.
+> On Tue, Sep 11, 2018 at 01:40:29PM +0100, Lee Jones wrote:
+> > On Wed, 29 Aug 2018, Matti Vaittinen wrote:
 > > 
-> > After looking at the datasheet, I don't see any reason why one of the
-> > two drivers can't be selected using different compatible strings.
+> > > There is a HW quirk in BD71837. The shutdown sequence timings for
+> > > bucks/LDOs which are enabled via register interface are changed.
+> > > At PMIC poweroff the voltage for BUCK6/7 is cut immediately at the
+> > > beginning of shut-down sequence. This causes LDO5/6 voltage
+> > > monitoring to detect under voltage and force PMIC to emergency
+> > > state instead of poweroff. Disable voltage monitoring for LDO5 and
+> > > LDO6 at probe to avoid this.
+> > > 
+> > > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> > > ---
+> > >  drivers/regulator/bd71837-regulator.c | 19 +++++++++++++++++++
+> > 
+> > >  include/linux/mfd/rohm-bd718x7.h      | 33 ++++++++++++++++++++++++++++++---
+> > 
+> > For my own reference:
+> >   Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 > 
-> Because there is only one IP and we don't use the device tree to selecet
-> linux specific drivers.
+> I m not sure if it is relevant but I think this was already applied to
+> Mark's regulator tree.
 
-We do it all the time.  There are loads of MFDs (def: same IP, with
-different functions) which have separate compatibles for their various
-functions.  If you wish this IP to operate as an SPI controller, it
-should have an SPI compatible, if you wish it to operate as a U(S)ART,
-then it should have a UART compatible.  It's what we do for most of
-the other MFDs in the kernel.
-
-> If you are not happy having that in MFD, I guess we can move it out
-> somewhere else.
-
-My issue isn't pertaining to where the hack lives, it's that there is
-a hack in the first place.
+Where is Mark's acceptance email?
 
 -- 
 Lee Jones [李琼斯]
