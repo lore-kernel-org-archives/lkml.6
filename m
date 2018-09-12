@@ -2,115 +2,279 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B8C9C46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:42:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD93EC46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:43:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39BE0206B8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:42:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="baCKQRKd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39BE0206B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 6FF37206B8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:43:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FF37206B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727824AbeILNq0 (ORCPT
+        id S1727860AbeILNqd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 09:46:26 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:37114 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727623AbeILNq0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 09:46:26 -0400
-Received: by mail-wm0-f68.google.com with SMTP id n11-v6so1411570wmc.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 01:42:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=dBJlzXSsI8ACekgiub8iu0SGNPn/dqoS4S7wlPf3OPQ=;
-        b=baCKQRKdVc+m5y3FqaR19rgB+6P9Oscc6XBfXp63DSNITZOd5VRoppaoueHJv47gq+
-         hlMW3dCW855zG9zLsBdGgr1DEzLRdrsBXOOiFDROPLt2J/D/BsbRCIXeLclk+7E1Scx2
-         MmxjDtyYMkPWdteOt9pcEf1faFs2wW6fvjYAA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=dBJlzXSsI8ACekgiub8iu0SGNPn/dqoS4S7wlPf3OPQ=;
-        b=SEcVVY1DAbOhLGDgJGNb5Ig8hbkYgnTO/LhyQfJIJbXG3qozMhRXBwZhCGd31tTIZy
-         SCWuSc0OzMCmZJqFhWlhbCopHrDpJ5Q5akl3MeQegnGtkF1+8NEp+5y7qUrMHkIo9Gzu
-         WFG9lJC9MeqSgzpZviHYYVx5M04PyX+8eLwIdz2tAZjVxfjZ3LOUn2glArB2piPlScUP
-         1vlrhkyw3bz1C3j79CRoaEr80NVznwlHJw7wZToA5aTkshc5a+j1ttSRfz7nRuP3wRiW
-         GkXmwmvO2Lz0NziEIE/7WgWDS1sUcrj46w/h/+M6TG8L33ok+m3VaSOjeLFajcZ6o/ze
-         MpfQ==
-X-Gm-Message-State: APzg51DBDQknoM4bET0bgBqWNctoAMmBaEw6xTFH9D2QJ0XX41Ois1EP
-        BK+GKDPRwFq+NQU3qhIsbF7wbg==
-X-Google-Smtp-Source: ANB0VdbV772B6phfMHmGgNcgcwkhAomw6B9k+oJriIqMH3q2Zia04dnnx56aH9tmRbOT8XrD8kslkA==
-X-Received: by 2002:a1c:208c:: with SMTP id g134-v6mr855519wmg.144.1536741774496;
-        Wed, 12 Sep 2018 01:42:54 -0700 (PDT)
-Received: from dell ([89.238.177.251])
-        by smtp.gmail.com with ESMTPSA id m68-v6sm1573980wmb.10.2018.09.12.01.42.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Sep 2018 01:42:53 -0700 (PDT)
-Date:   Wed, 12 Sep 2018 09:42:51 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, lgirdwood@gmail.com,
-        broonie@kernel.org, mazziesaccount@gmail.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com
-Subject: Re: [PATCH 1/8] regulator: bd71837: Disable voltage monitoring for
- LDO3/4
-Message-ID: <20180912084251.GO4185@dell>
-References: <cover.1535545377.git.matti.vaittinen@fi.rohmeurope.com>
- <cad2e7baeb7af2d6efbc6afba831b0513087d832.1535545377.git.matti.vaittinen@fi.rohmeurope.com>
- <20180911124029.GO4185@dell>
- <20180912074745.GD2381@localhost.localdomain>
+        Wed, 12 Sep 2018 09:46:33 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:45465 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726901AbeILNqd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 09:46:33 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id B32CC207B3; Wed, 12 Sep 2018 10:43:00 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-30-219.w90-88.abo.wanadoo.fr [90.88.15.219])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 304B3203DC;
+        Wed, 12 Sep 2018 10:42:43 +0200 (CEST)
+Date:   Wed, 12 Sep 2018 10:42:42 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        Krzysztof Witos <kwitos@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>
+Subject: Re: [PATCH 02/10] phy: Add configuration interface
+Message-ID: <20180912084242.skxbwbgluakakyg6@flea>
+References: <cover.ee6158898d563fcc01d45c9652501180bccff0f0.1536138624.git-series.maxime.ripard@bootlin.com>
+ <a739a2d623c3e60373a73e1ec206c2aa35c4a742.1536138624.git-series.maxime.ripard@bootlin.com>
+ <1ed01c1f-76d5-fa96-572b-9bfd269ad11b@ti.com>
+ <20180906145622.kwxvkcuerbeqsj6b@flea>
+ <1a169fad-72b7-fac0-1254-cac5d8304740@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="75jzlrr25g64gdfy"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180912074745.GD2381@localhost.localdomain>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1a169fad-72b7-fac0-1254-cac5d8304740@ti.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 12 Sep 2018, Matti Vaittinen wrote:
 
-> On Tue, Sep 11, 2018 at 01:40:29PM +0100, Lee Jones wrote:
-> > On Wed, 29 Aug 2018, Matti Vaittinen wrote:
-> > 
-> > > There is a HW quirk in BD71837. The shutdown sequence timings for
-> > > bucks/LDOs which are enabled via register interface are changed.
-> > > At PMIC poweroff the voltage for BUCK6/7 is cut immediately at the
-> > > beginning of shut-down sequence. This causes LDO5/6 voltage
-> > > monitoring to detect under voltage and force PMIC to emergency
-> > > state instead of poweroff. Disable voltage monitoring for LDO5 and
-> > > LDO6 at probe to avoid this.
-> > > 
-> > > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> > > ---
-> > >  drivers/regulator/bd71837-regulator.c | 19 +++++++++++++++++++
-> > 
-> > >  include/linux/mfd/rohm-bd718x7.h      | 33 ++++++++++++++++++++++++++++++---
-> > 
-> > For my own reference:
-> >   Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-> 
-> I m not sure if it is relevant but I think this was already applied to
-> Mark's regulator tree.
+--75jzlrr25g64gdfy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Where is Mark's acceptance email?
+Hi!
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+On Wed, Sep 12, 2018 at 01:12:31PM +0530, Kishon Vijay Abraham I wrote:
+> On Thursday 06 September 2018 08:26 PM, Maxime Ripard wrote:
+> > Hi Kishon,
+> >=20
+> > On Thu, Sep 06, 2018 at 02:57:58PM +0530, Kishon Vijay Abraham I wrote:
+> >> On Wednesday 05 September 2018 02:46 PM, Maxime Ripard wrote:
+> >>> The phy framework is only allowing to configure the power state of th=
+e PHY
+> >>> using the init and power_on hooks, and their power_off and exit
+> >>> counterparts.
+> >>>
+> >>> While it works for most, simple, PHYs supported so far, some more adv=
+anced
+> >>> PHYs need some configuration depending on runtime parameters. These P=
+HYs
+> >>> have been supported by a number of means already, often by using ad-h=
+oc
+> >>> drivers in their consumer drivers.
+> >>>
+> >>> That doesn't work too well however, when a consumer device needs to d=
+eal
+> >>> multiple PHYs, or when multiple consumers need to deal with the same =
+PHY (a
+> >>> DSI driver and a CSI driver for example).
+> >>>
+> >>> So we'll add a new interface, through two funtions, phy_validate and
+> >>> phy_configure. The first one will allow to check that a current
+> >>> configuration, for a given mode, is applicable. It will also allow th=
+e PHY
+> >>> driver to tune the settings given as parameters as it sees fit.
+> >>>
+> >>> phy_configure will actually apply that configuration in the phy itsel=
+f.
+> >>>
+> >>> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> >>> ---
+> >>>  drivers/phy/phy-core.c  | 62 +++++++++++++++++++++++++++++++++++++++=
++++-
+> >>>  include/linux/phy/phy.h | 42 ++++++++++++++++++++++++++++-
+> >>>  2 files changed, 104 insertions(+)
+> >>>
+> >>> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+> >>> index 35fd38c5a4a1..6eaf655e370f 100644
+> >>> --- a/drivers/phy/phy-core.c
+> >>> +++ b/drivers/phy/phy-core.c
+> >>> @@ -408,6 +408,68 @@ int phy_calibrate(struct phy *phy)
+> >>>  EXPORT_SYMBOL_GPL(phy_calibrate);
+> >>> =20
+> >>>  /**
+> >>> + * phy_configure() - Changes the phy parameters
+> >>> + * @phy: the phy returned by phy_get()
+> >>> + * @mode: phy_mode the configuration is applicable to.
+> >>
+> >> mode should be used if the same PHY can be configured in multiple mode=
+s. But
+> >> with phy_set_mode() and phy_calibrate() we could achieve the same.
+> >=20
+> > So you would change the prototype to have a configuration applying
+> > only to the current mode set previously through set_mode?
+>=20
+> yeah.
+> With phy_configure, if the PHY is not in @mode, it should return an error=
+? Or
+> will it set the PHY to @mode and apply the configuration in @opts?
+
+I wanted to have it return an error either if it was configured in
+another mode or if the mode was unsupported yes.
+
+> > Can we have PHY that operate in multiple modes at the same time?
+>=20
+> Not at the same time. But the same PHY can operate in multiple modes (For
+> example we have PHYs that can be used either with PCIe or USB3)
+
+Ok, that makes sense. I guess we could rely on phy_set_mode then if
+you prefer.
+
+> >>> + * @opts: New configuration to apply
+> >>
+> >> Should these configuration come from the consumer driver?
+> >=20
+> > Yes
+>=20
+> How does the consumer driver get these configurations? Is it from user sp=
+ace or
+> dt associated with consumer device.
+
+It really depends on multiple factors (and I guess on what mode the
+PHY is actually supposed to support), but in the case covered by this
+serie, the info mostly come from multiple places:
+  - The resolutions supported by the panel
+  - The resolutions supported by the phy consumer (and its
+    integration, for things like the clock rates it can output)
+  - The resolutions and timings supported by the phy itself (once
+    again, the integration is mostly involved here since it really
+    only depends on which clock rates can be achieved)
+  - The timings boundaries that the specification has
+  - The resolution selected by the user
+
+So we'd have that information coming from multiple places: the
+userspace would select the resolution, drivers would be able to filter
+out unsupported resolutions, and the DT will provide the integration
+details to help them do so.
+
+But I guess from an API standpoint, it really is expected to be
+assembled by the phy consumer driver.
+
+> >>> +/**
+> >>> + * phy_validate() - Checks the phy parameters
+> >>> + * @phy: the phy returned by phy_get()
+> >>> + * @mode: phy_mode the configuration is applicable to.
+> >>> + * @opts: Configuration to check
+> >>> + *
+> >>> + * Used to check that the current set of parameters can be handled by
+> >>> + * the phy. Implementations are free to tune the parameters passed as
+> >>> + * arguments if needed by some implementation detail or
+> >>> + * constraints. It will not change any actual configuration of the
+> >>> + * PHY, so calling it as many times as deemed fit will have no side
+> >>> + * effect.
+> >>> + *
+> >>> + * Returns: 0 if successful, an negative error code otherwise
+> >>> + */
+> >>> +int phy_validate(struct phy *phy, enum phy_mode mode,
+> >>> +		  union phy_configure_opts *opts)
+> >>
+> >> IIUC the consumer driver will pass configuration options (or PHY param=
+eters)
+> >> which will be validated by the PHY driver and in some cases the PHY dr=
+iver can
+> >> modify the configuration options? And these modified configuration opt=
+ions will
+> >> again be given to phy_configure?
+> >>
+> >> Looks like it's a round about way of doing the same thing.
+> >=20
+> > Not really. The validate callback allows to check whether a particular
+> > configuration would work, and try to negotiate a set of configurations
+> > that both the consumer and the PHY could work with.
+>=20
+> Maybe the PHY should provide the list of supported features to the consum=
+er
+> driver and the consumer should select a supported feature?
+
+It's not really about the features it supports, but the boundaries it
+might have on those features. For example, the same phy integrated in
+two different SoCs will probably have some limit on the clock rate it
+can output because of the phy design itself, but also because of the
+clock that is fed into that phy, and that will be different from one
+SoC to the other.
+
+This integration will prevent us to use some clock rates on the first
+SoC, while the second one would be totally fine with it.
+
+Obviously, the consumer driver shouldn't care about the phy
+integration details, especially since some of those consumer drivers
+need to interact with multiple phy designs (or the same phy design can
+be used by multiple consumers).
+
+So knowing that a feature is supported is really not enough.
+
+With MIPI-DPHY at least, the API is generic enough so that another
+mode where the features would make sense could implement a feature
+flag if that makes sense.
+
+> > For example, DRM requires this to filter out display modes (ie,
+> > resolutions) that wouldn't be achievable by the PHY so that it's never
+>=20
+> Can't the consumer driver just tell the required resolution to the PHY an=
+d PHY
+> figuring out all the parameters for the resolution or an error if that
+> resolution cannot be supported?
+
+Not really either. With MIPI D-PHY, the phy is fed a clock that is
+generated by the phy consumer, which might or might not be an exact
+fit for the resolution. There's so many resolutions that in most case,
+the clock factors don't allow you to have a perfect match. And
+obviously, this imprecision should be taken into account by the PHY as
+well.
+
+And then, there's also the matter than due to design constraints, some
+consumers would have fixed timings that are not at the spec default
+value, but still within the acceptable range. We need to communicate
+that to the PHY.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--75jzlrr25g64gdfy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluY0YEACgkQ0rTAlCFN
+r3SzBA//ei3mPaT1Kmv1XdB/Am2Eb1+iOqeH+YlVD7rplb7GC6r2pDHYQvvrZHjN
+b9qgaIDaox6d+N7NzqLzOqJf+OCx+RyoPvDptj8qgW5OGGIchXjrV/d8k9wekEV0
+uKmuNp14ujwhDGcqwWKk+EwLn5F0+rXw+8P6irACTT9nvlNyKR0d26qprPMvuNqA
+nmL6JfdyN/6jKZidcYLF8VrgfXkTJ0/YKdiuZ7uflNL2uu2dzWOBOYIrWsRUsfYi
+bSuRfbAHHwIJweomaWqh/zEpxAnhc3sRDDgKHZol6d2BW1B2EOyhpK3YGlMa4TQf
+1Fya0ulK4sVaQ7BejVqoNYw10wzwecmCREhZD75yiYwraXrjh3+Q3POC0NCkVAr3
+1IyeGjG0kKl4bnc4sA9GdiAgpbvgEaPIwOvvjUuAIzEG7UzROv7II2YxWdt17GDw
+eJrScm8TC9Tz86Bk2e6ZdxXk4T5yBMMZX4LHz+Xrfg3kRXYeM+92ic+3STphi4uI
+pZGrQPbevMF/W6tdtG0uEXGuNG+jnA7KWzRaW3z9BOcFaW4fN0bPwKtsgpK2ru8q
+FpPsiSwY3NIeEJlnU8AsU95W0cDYvkajpzH0tzAq/P3Jc8Xw47JDqWCQY1RpHrye
+hSDU9unBaKuSicZ4VLJPg0rMxc1dEPsBks0JahDnw3STOU5XQzk=
+=Kduc
+-----END PGP SIGNATURE-----
+
+--75jzlrr25g64gdfy--
