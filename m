@@ -2,97 +2,111 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22BD5C46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:47:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30292C4646A
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:48:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB3E220880
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:47:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qReiIYQ8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB3E220880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id CC66820866
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:48:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC66820866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726816AbeILOuo (ORCPT
+        id S1726842AbeILOwb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 10:50:44 -0400
-Received: from mail-qt0-f182.google.com ([209.85.216.182]:38132 "EHLO
-        mail-qt0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726537AbeILOuo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 10:50:44 -0400
-Received: by mail-qt0-f182.google.com with SMTP id x7-v6so1154111qtk.5;
-        Wed, 12 Sep 2018 02:46:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=cksJPg08EOXv6uzJNb2eGqIgCg7663s9WIT5ti70YBk=;
-        b=qReiIYQ8ZaqN2CXmG+xY0ravvvY6lE3MSGMBc1daV3friLlpznrV2YkTXjbkLnodD7
-         P8xSa9N+ImqzrbPWPfvziQA2J5iBWqLPHqBCr1uyhwGP2nkrMQISpF6G4MsWzTn6VWTK
-         IS48KDwj21ICPnakHdq5yyeLJEypFYZc6hd21cOrxJDHUyY56i7e8fvPP4f0LWCvYUpQ
-         pSOkygKR0qBLHGzMIlLjkw8VQh1KfNGgdPdEyQzQncN9Gc0apDz0wccUshjTc/lZwQGb
-         SPOvES1sUZZr9G4p1lAXdiZLYaWdnSBFLM7GxAuBOYj+JIxqwGlOTddLACouoXwJfNnK
-         Ex+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=cksJPg08EOXv6uzJNb2eGqIgCg7663s9WIT5ti70YBk=;
-        b=W2JqsZpk3CV2b6+cAeTJPrZLOW8OpzcS1Ny+qRNZQlWSq61u6DeVkU4f1I53YG5ici
-         RUXKwpdMuN7xdObDRHSqJRpd36teX8IFuI8T3l2RbwwMXBI1bfqkZoXTSM25RF/98tNG
-         p44N0y5I0Lcsl5trl1DIC0Cg9FYPOWTCkIohpTd1dItoVtk92iRGG181HuUPFjXGD9x3
-         x/2XHTzrhWAkjEzdnzWdRV1CjTehC2QVMkh8VZLO2dBefOPBr8JKwDRvTM7PTrXpQ82N
-         N0JPZLTwaivFGS1SpvGsOwbceB4cNd8+LOPW+t1vaKjhgdYmmKmUEE1+ti0A5hAFkLHy
-         z96A==
-X-Gm-Message-State: APzg51BLJwxmOB8I4fOgvskuBqQiCBENmLS48uLCEo4DGuheHBylSlQc
-        pvyqyS5owPFUjvsYAmlav5+bmv6Te6paGT8vjg==
-X-Google-Smtp-Source: ANB0Vdba/VsM9uaNP6tjUHFtqiJ1rtMKTJPLBr8cNnKnWF3+Ig6icCdsV6wcTn24cCeOo6Uj1QTEI4wDUNoczigrgR8=
-X-Received: by 2002:a67:3c13:: with SMTP id j19-v6mr403467vsa.104.1536745618867;
- Wed, 12 Sep 2018 02:46:58 -0700 (PDT)
+        Wed, 12 Sep 2018 10:52:31 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56514 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726537AbeILOwa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 10:52:30 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 812DA7A9;
+        Wed, 12 Sep 2018 02:48:45 -0700 (PDT)
+Received: from [10.37.12.49] (unknown [10.37.12.49])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 04DED3F703;
+        Wed, 12 Sep 2018 02:48:43 -0700 (PDT)
+Subject: Re: [Xen-devel] [PATCH] drivers/block/xen-blkback/common.h: use
+ DIV_ROUND_UP instead of reimplementing its function
+To:     =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>
+Cc:     Jan Beulich <JBeulich@suse.com>, Jens Axboe <axboe@kernel.dk>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        xen-devel <xen-devel@lists.xenproject.org>,
+        zhong jiang <zhongjiang@huawei.com>
+References: <1536731100-56054-1-git-send-email-zhongjiang@huawei.com>
+ <5B98CAE202000078001E79CC@prv1-mh.provo.novell.com>
+ <20180912091350.6wuvt2jkvzg6wruo@mac.bytemobile.com>
+ <20180912091639.oynlvdo6pghnqfvt@mac.bytemobile.com>
+From:   Julien Grall <julien.grall@arm.com>
+Message-ID: <364bad2c-708e-6406-7b52-7bfef9d5dbe1@arm.com>
+Date:   Wed, 12 Sep 2018 10:48:42 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <CALjTZvb4hOY_Hew-jEUtpyhkGbmh4Tgb0doPC6EaGtz_rMGt7A@mail.gmail.com>
- <ed2459210f8043999f1197e8c063601d@SOC-EX01V.e01.socionext.com>
-In-Reply-To: <ed2459210f8043999f1197e8c063601d@SOC-EX01V.e01.socionext.com>
-From:   Rui Salvaterra <rsalvaterra@gmail.com>
-Date:   Wed, 12 Sep 2018 10:46:47 +0100
-Message-ID: <CALjTZvYRkhbazB4BAMF-cmmDS4rKtGqH=+CkNmFaaRDUg+zHJg@mail.gmail.com>
-Subject: Re: 4.19-rc3: bindeb-pkg target is failing on ppc64
-To:     yamada.masahiro@socionext.com
-Cc:     michal.lkml@markovi.net, ben@decadent.org.uk,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20180912091639.oynlvdo6pghnqfvt@mac.bytemobile.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 12 Sep 2018 at 10:32, <yamada.masahiro@socionext.com> wrote:
->
-> Hi, Rui,
->
->
->
-> Could you cater to =E2=80=98git bisect=E2=80=99 ?
->
->
->
-> Thanks
->
->
->
->
->
-> Greetings! I'm having trouble building the kernel on my ppc64 machine (Po=
-wer Mac G5) running Debian Sid. The make bindeb-pkg target is failing ever =
-since 4.19-rc1. Is this a known issue? If not, let me know if you need anyt=
-hing else in order to help debug this. Thanks in advance!
+Hi,
 
-Hi! I never did a git bisection before, but I'll try that and get back
-to you. Thanks!
+On 09/12/2018 10:16 AM, Roger Pau Monné wrote:
+> On Wed, Sep 12, 2018 at 11:13:50AM +0200, Roger Pau Monné wrote:
+>> Adding Julien how did the work to support XEN_PAGE_SIZE != PAGE_SIZE.
+>>
+>> On Wed, Sep 12, 2018 at 02:14:26AM -0600, Jan Beulich wrote:
+>>>>>> On 12.09.18 at 07:45, <zhongjiang@huawei.com> wrote:
+>>>> --- a/drivers/block/xen-blkback/common.h
+>>>> +++ b/drivers/block/xen-blkback/common.h
+>>>> @@ -65,7 +65,7 @@
+>>>>   	(XEN_PAGES_PER_INDIRECT_FRAME / XEN_PAGES_PER_SEGMENT)
+>>>>   
+>>>>   #define MAX_INDIRECT_PAGES \
+>>>> -	((MAX_INDIRECT_SEGMENTS + SEGS_PER_INDIRECT_FRAME - 1)/SEGS_PER_INDIRECT_FRAME)
+>>>> +		DIV_ROUND_UP(MAX_INDIRECT_SEGMENTS, SEGS_PER_INDIRECT_FRAME)
+>>>>   #define INDIRECT_PAGES(_segs) DIV_ROUND_UP(_segs, XEN_PAGES_PER_INDIRECT_FRAME)
+>>>
+>>> My first reaction was to suggest
+>>>
+>>> #define MAX_INDIRECT_PAGES INDIRECT_PAGES(MAX_INDIRECT_SEGMENTS)
+>>>
+>>> but that wouldn't match what's there currently (note the two different
+>>> divisors). I can't really decide whether that's just unfortunate naming
+>>> of the two macros, or an actual bug.
+>>
+>> I think there's indeed a bug here.
+>>
+>> AFAICT, MAX_INDIRECT_PAGES should use XEN_PAGES_PER_INDIRECT_FRAME and
+>> then it could be changed as Jan suggested.
+
+The problem is SEGS_PER_INDIRECT_FRAME has been miscalculated. So I 
+think it would be fine to use XEN_PAGES_PER_INDIRECT_FRAME in 
+MAX_INDIRECT_PAGES.
+
+However the naming for XEN_PAGES_PER_INDIRECT_FRAME is misnamed. We 
+return number of a for segments per indirect frame. So I would rename to 
+SEGS_PER_INDIRECT_FRAME.
+
+>>
+>> Current MAX_INDIRECT_PAGES is misnamed and should instead be
+>> MAX_INDIRECT_SEGS (which on x86 is exactly the same because PAGE_SIZE
+>> == XEN_PAGE_SIZE).
+
+Looking at the usage:
+
+j = min(MAX_INDIRECT_PAGES, INDIRECT_PAGES(nr_segments))
+
+Where j is used as the number of grant ref. So I don't think the 
+variable is misnamed here.
+
+Cheers,
+
+-- 
+Julien Grall
