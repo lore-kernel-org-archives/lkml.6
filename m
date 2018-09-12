@@ -2,317 +2,217 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF154C46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 12:20:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A41CC46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 12:20:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0DE420839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 12:20:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0DE420839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 05B6F20839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 12:20:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aOKTVol0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05B6F20839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727277AbeILRYo convert rfc822-to-8bit (ORCPT
+        id S1727616AbeILRYv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 13:24:44 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:35944 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726491AbeILRYo (ORCPT
+        Wed, 12 Sep 2018 13:24:51 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:43000 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726491AbeILRYv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 13:24:44 -0400
-Received: by mail-ed1-f68.google.com with SMTP id f4-v6so1605353edq.3;
-        Wed, 12 Sep 2018 05:20:26 -0700 (PDT)
+        Wed, 12 Sep 2018 13:24:51 -0400
+Received: by mail-pf1-f195.google.com with SMTP id l9-v6so927585pff.9
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 05:20:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=bx4U/efRCYPj+DbdOzjjJdclFU9QHreZRHqNGwFsXYo=;
+        b=aOKTVol0aNYDGorMvHx76vyO9F4TLnwdZDHsRbYWfpRpohp7Doxc19nkiX1YxN1pz7
+         lxjutPNS52mXRP7iCt63N9qOEAjoymEEC7QtG8AyhYhjNufbPsS1PFyEyA0y+aUN/Tpn
+         ECT9cM5lQWE4d0QORuyaxL4AS2HDdgAAytPZg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=xJMV5CS8CQ+clIdKxJJms7c9G3SDY/Xjh6xYSYgDwFE=;
-        b=lh1kKfQuE8Ejpu5MfLaruOUWulAXBWxIGWKHHY8J8a1zPe4oJgPjSNGCMdGoGKHgJ3
-         Ka2UdkcCJeI2Kl4swW/lLdScNH+etyZ5MP/a22AP29Fs+Sl+95bDYHVmA5BmNgKxD/Ok
-         MePeecEaZO5VbCOBNGNuBhZq9LdJimH8AlERWjIXLK8GpB1aS8P7ez1AbuoBZxoqtfEe
-         66+WB7ttM1wK+zA2PJAB8466F1Zrk4P2AcX+ddgguiVd7vehI5HWvuhmDjUeK9Jc/Ht3
-         ql0jc/iiWSilcbuZ9Y9bU0fOpmXTE77uztDAiLzS7HdMMHATHoy0KXQ3MS0HdhS2F2qc
-         FfQg==
-X-Gm-Message-State: APzg51BVZAhiitnNN72WtWENoN9h/n/7Z/uKH3QCVexAKXEu9M9RKkvT
-        FM014KGaciZMo/+w0J/ftyaEXIzXtEo=
-X-Google-Smtp-Source: ANB0VdaR0k9XfRPWeJv03LPj/0S5e5MfggRD2iD1tHtplWqVbx+C1P2JWOKgIcE4L2kY5y1HRwgQ4w==
-X-Received: by 2002:a50:95a8:: with SMTP id w37-v6mr2531872eda.33.1536754825008;
-        Wed, 12 Sep 2018 05:20:25 -0700 (PDT)
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com. [209.85.221.52])
-        by smtp.gmail.com with ESMTPSA id f7-v6sm723439edd.6.2018.09.12.05.20.23
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=bx4U/efRCYPj+DbdOzjjJdclFU9QHreZRHqNGwFsXYo=;
+        b=ApfedvRsl8zV4Gfimz/XAzsDEvqWHgfbeBnJYIC0yWWW7J4hPswipjXe6tZ4AeL1KR
+         AXyG6vSJRiW3jNvHuWtkHXUPFD2cqTF5qyuxhOUAS65BJ/fVlqqQ1hTxxjx669LzWY1N
+         15f92xo6z300MZHGobmAlrKLzGy/InBV0yIxok6AgUbUXQWU3RL8jH3ockMK3GoHUnxV
+         nBnLi4T6KuBXbr0aytKZLFBaC4Q5w0TrqXJ+dmbV8G9+kBpGENkyuwnV41uG0sDHPeri
+         kx+f8TjddIBF84Su2M5nr5DkAPvTLUS6RcKwOrAZ1NZErVzg0Bo7AsftGMAfFj1oEfFd
+         xbKg==
+X-Gm-Message-State: APzg51BdvmhXjXOU9JTaANXsJBL7op9bCLsgu0SOwwPXtHC0lWLE9mGU
+        9zw0QEJJhZpvSVCqRG64cs5ZLzJF0Rs=
+X-Google-Smtp-Source: ANB0VdbzZre5W7iirO5Q2EETc5JhQEOlKFJgpaWjRoIwJTu9j/wWglMWjhujryKSQKdZhghBTfvxiA==
+X-Received: by 2002:a65:62d8:: with SMTP id m24-v6mr1950853pgv.307.1536754833576;
+        Wed, 12 Sep 2018 05:20:33 -0700 (PDT)
+Received: from cychiang-z840.tpe.corp.google.com ([2401:fa00:1:b:e688:dfd2:a1a7:2956])
+        by smtp.gmail.com with ESMTPSA id t9-v6sm1729038pgi.87.2018.09.12.05.20.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Sep 2018 05:20:24 -0700 (PDT)
-Received: by mail-wr1-f52.google.com with SMTP id k5-v6so1799033wre.10;
-        Wed, 12 Sep 2018 05:20:23 -0700 (PDT)
-X-Received: by 2002:adf:d245:: with SMTP id o5-v6mr1353566wri.91.1536754823034;
- Wed, 12 Sep 2018 05:20:23 -0700 (PDT)
+        Wed, 12 Sep 2018 05:20:32 -0700 (PDT)
+From:   Cheng-Yi Chiang <cychiang@chromium.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Mark Brown <broonie@kernel.org>, ryans.lee@maximintegrated.com,
+        alsa-devel@alsa-project.org, dgreid@chromium.org,
+        Cheng-Yi Chiang <cychiang@chromium.org>
+Subject: [PATCH 2/2] ASoC: max98927: Add reset-gpio support
+Date:   Wed, 12 Sep 2018 20:19:55 +0800
+Message-Id: <20180912121955.33048-2-cychiang@chromium.org>
+X-Mailer: git-send-email 2.19.0.rc2.392.g5ba43deb5a-goog
+In-Reply-To: <20180912121955.33048-1-cychiang@chromium.org>
+References: <20180912121955.33048-1-cychiang@chromium.org>
 MIME-Version: 1.0
-References: <20180902072643.4917-1-jernej.skrabec@siol.net>
- <20180902072643.4917-9-jernej.skrabec@siol.net> <CAGb2v66y1iVDknM0uQKbHQFoWn7RveTky8jZO=_2iDqL=bJd-w@mail.gmail.com>
- <1677668.BePkXd9qNa@jernej-laptop>
-In-Reply-To: <1677668.BePkXd9qNa@jernej-laptop>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Wed, 12 Sep 2018 20:20:08 +0800
-X-Gmail-Original-Message-ID: <CAGb2v66kojjjM4f_tO9NwzkCzD3LMM2eiq+PJ6Bk=1Rra=UnYg@mail.gmail.com>
-Message-ID: <CAGb2v66kojjjM4f_tO9NwzkCzD3LMM2eiq+PJ6Bk=1Rra=UnYg@mail.gmail.com>
-Subject: Re: [PATCH 08/27] clk: sunxi-ng: Add support for H6 DE3 clocks
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Icenowy Zheng <icenowy@aosc.io>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 5, 2018 at 1:46 AM Jernej Škrabec <jernej.skrabec@siol.net> wrote:
->
-> Dne torek, 04. september 2018 ob 11:04:21 CEST je Chen-Yu Tsai napisal(a):
-> > On Sun, Sep 2, 2018 at 3:27 PM Jernej Skrabec <jernej.skrabec@siol.net>
-> wrote:
-> > > Support for mixer0, mixer1, writeback and rotation units is added.
-> > >
-> > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> > > ---
-> > >
-> > >  drivers/clk/sunxi-ng/ccu-sun8i-de2.c | 65 ++++++++++++++++++++++++++++
-> > >  drivers/clk/sunxi-ng/ccu-sun8i-de2.h |  1 +
-> > >  2 files changed, 66 insertions(+)
-> > >
-> > > diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-> > > b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c index bae5ee67a797..4535c1c27d27
-> > > 100644
-> > > --- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-> > > +++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-> > > @@ -31,6 +31,8 @@ static SUNXI_CCU_GATE(bus_mixer1_clk, "bus-mixer1",
-> > > "bus-de",>
-> > >                       0x04, BIT(1), 0);
-> > >
-> > >  static SUNXI_CCU_GATE(bus_wb_clk,      "bus-wb",       "bus-de",
-> > >
-> > >                       0x04, BIT(2), 0);
-> > >
-> > > +static SUNXI_CCU_GATE(bus_rot_clk,     "bus-rot",      "bus-de",
-> > > +                     0x04, BIT(3), 0);
-> > >
-> > >  static SUNXI_CCU_GATE(mixer0_clk,      "mixer0",       "mixer0-div",
-> > >
-> > >                       0x00, BIT(0), CLK_SET_RATE_PARENT);
-> > >
-> > > @@ -38,6 +40,8 @@ static SUNXI_CCU_GATE(mixer1_clk,     "mixer1",
-> > > "mixer1-div",>
-> > >                       0x00, BIT(1), CLK_SET_RATE_PARENT);
-> > >
-> > >  static SUNXI_CCU_GATE(wb_clk,          "wb",           "wb-div",
-> > >
-> > >                       0x00, BIT(2), CLK_SET_RATE_PARENT);
-> > >
-> > > +static SUNXI_CCU_GATE(rot_clk,         "rot",          "rot-div",
-> > > +                     0x00, BIT(3), CLK_SET_RATE_PARENT);
-> > >
-> > >  static SUNXI_CCU_M(mixer0_div_clk, "mixer0-div", "de", 0x0c, 0, 4,
-> > >
-> > >                    CLK_SET_RATE_PARENT);
-> > >
-> > > @@ -45,6 +49,8 @@ static SUNXI_CCU_M(mixer1_div_clk, "mixer1-div", "de",
-> > > 0x0c, 4, 4,>
-> > >                    CLK_SET_RATE_PARENT);
-> > >
-> > >  static SUNXI_CCU_M(wb_div_clk, "wb-div", "de", 0x0c, 8, 4,
-> > >
-> > >                    CLK_SET_RATE_PARENT);
-> > >
-> > > +static SUNXI_CCU_M(rot_div_clk, "rot-div", "de", 0x0c, 0x0c, 4,
-> > > +                  CLK_SET_RATE_PARENT);
-> > >
-> > >  static SUNXI_CCU_M(mixer0_div_a83_clk, "mixer0-div", "pll-de", 0x0c, 0,
-> > >  4,
-> > >
-> > >                    CLK_SET_RATE_PARENT);
-> > >
-> > > @@ -53,6 +59,24 @@ static SUNXI_CCU_M(mixer1_div_a83_clk, "mixer1-div",
-> > > "pll-de", 0x0c, 4, 4,>
-> > >  static SUNXI_CCU_M(wb_div_a83_clk, "wb-div", "pll-de", 0x0c, 8, 4,
-> > >
-> > >                    CLK_SET_RATE_PARENT);
-> > >
-> > > +static struct ccu_common *sun50i_h6_de3_clks[] = {
-> > > +       &mixer0_clk.common,
-> > > +       &mixer1_clk.common,
-> > > +       &wb_clk.common,
-> > > +
-> > > +       &bus_mixer0_clk.common,
-> > > +       &bus_mixer1_clk.common,
-> > > +       &bus_wb_clk.common,
-> > > +
-> > > +       &mixer0_div_clk.common,
-> > > +       &mixer1_div_clk.common,
-> > > +       &wb_div_clk.common,
-> > > +
-> > > +       &bus_rot_clk.common,
-> > > +       &rot_clk.common,
-> > > +       &rot_div_clk.common,
-> > > +};
-> > > +
-> > >
-> > >  static struct ccu_common *sun8i_a83t_de2_clks[] = {
-> > >
-> > >         &mixer0_clk.common,
-> > >         &mixer1_clk.common,
-> > >
-> > > @@ -92,6 +116,26 @@ static struct ccu_common *sun8i_v3s_de2_clks[] = {
-> > >
-> > >         &wb_div_clk.common,
-> > >
-> > >  };
-> > >
-> > > +static struct clk_hw_onecell_data sun50i_h6_de3_hw_clks = {
-> > > +       .hws    = {
-> > > +               [CLK_MIXER0]            = &mixer0_clk.common.hw,
-> > > +               [CLK_MIXER1]            = &mixer1_clk.common.hw,
-> > > +               [CLK_WB]                = &wb_clk.common.hw,
-> > > +               [CLK_ROT]               = &rot_clk.common.hw,
-> > > +
-> > > +               [CLK_BUS_MIXER0]        = &bus_mixer0_clk.common.hw,
-> > > +               [CLK_BUS_MIXER1]        = &bus_mixer1_clk.common.hw,
-> > > +               [CLK_BUS_WB]            = &bus_wb_clk.common.hw,
-> > > +               [CLK_BUS_ROT]           = &bus_rot_clk.common.hw,
-> > > +
-> > > +               [CLK_MIXER0_DIV]        = &mixer0_div_clk.common.hw,
-> > > +               [CLK_MIXER1_DIV]        = &mixer1_div_clk.common.hw,
-> > > +               [CLK_WB_DIV]            = &wb_div_clk.common.hw,
-> > > +               [CLK_ROT_DIV]           = &rot_div_clk.common.hw,
-> > > +       },
-> > > +       .num    = 12,
-> >
-> > It's best not to openly code these. It is error prone, like having
-> > an index beyond .num, which then never gets registered.
-> >
-> > Instead, please update CLK_NUMBERS and use that instead. sunxi_ccu_probe()
-> > can handle holes in .hws.
->
-> I'm not sure this will work. All newly introduced indices are at the end, so
-> other arrays will still have same length (hole at the end). You will just
-> claim that arrays are larger than they really are, which means bad things.
->
-> But I take any other suggestion. I really can't think of better solution.
+Toggle reset line in max98927_i2c_probe.
+Use a list to store max98927 instances so we do not toggle reset line
+again if more than one instances share the same reset line.
 
-Then maybe have macros for both cases instead?
-CLK_NUMBER_WITH_ROT / CLK_NUMBER_WITHOUT_ROT?
+Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
+---
+ sound/soc/codecs/max98927.c | 78 +++++++++++++++++++++++++++++++++++++++++++++
+ sound/soc/codecs/max98927.h |  2 ++
+ 2 files changed, 80 insertions(+)
 
-ChenYu
+diff --git a/sound/soc/codecs/max98927.c b/sound/soc/codecs/max98927.c
+index 941712058a8f5..789b27cdfd9e0 100644
+--- a/sound/soc/codecs/max98927.c
++++ b/sound/soc/codecs/max98927.c
+@@ -11,6 +11,7 @@
+  */
+ 
+ #include <linux/acpi.h>
++#include <linux/delay.h>
+ #include <linux/i2c.h>
+ #include <linux/module.h>
+ #include <linux/regmap.h>
+@@ -24,6 +25,11 @@
+ #include <sound/tlv.h>
+ #include "max98927.h"
+ 
++#define MAX98927_MIN_RESET_US 1
++#define MAX98927_RELEASE_RESET_DELAY_US 500
++
++static LIST_HEAD(reset_list);
++
+ static struct reg_default max98927_reg[] = {
+ 	{MAX98927_R0001_INT_RAW1,  0x00},
+ 	{MAX98927_R0002_INT_RAW2,  0x00},
+@@ -877,6 +883,54 @@ static void max98927_slot_config(struct i2c_client *i2c,
+ 		max98927->i_l_slot = 1;
+ }
+ 
++static int max98927_i2c_toggle_reset(struct device *dev,
++				     struct max98927_priv *max98927)
++{
++	/*
++	 * If we do not have reset gpio, assume platform firmware
++	 * controls the regulator and toggles it for us.
++	 */
++	if (!max98927->reset_gpio)
++		return 0;
++
++	gpiod_set_value_cansleep(max98927->reset_gpio, 1);
++
++	/*
++	 * We need to wait a bit before we are allowed to release reset GPIO.
++	 */
++	usleep_range(MAX98927_MIN_RESET_US, MAX98927_MIN_RESET_US + 5);
++
++	gpiod_set_value_cansleep(max98927->reset_gpio, 0);
++
++	/*
++	 * We need to wait a bit before I2C communication is available.
++	 */
++	usleep_range(MAX98927_RELEASE_RESET_DELAY_US,
++		     MAX98927_RELEASE_RESET_DELAY_US + 5);
++
++	/*
++	 * Release reset GPIO because we are not going to use it.
++	 */
++	devm_gpiod_put(dev, max98927->reset_gpio);
++
++	return 0;
++}
++
++static bool max98927_is_first_to_reset(struct max98927_priv *max98927)
++{
++	struct max98927_priv *p;
++
++	if (!max98927->reset_gpio)
++		return false;
++
++	list_for_each_entry(p, &reset_list, list) {
++		if (max98927->reset_gpio == p->reset_gpio)
++			return false;
++	}
++
++	return true;
++}
++
+ static int max98927_i2c_probe(struct i2c_client *i2c,
+ 	const struct i2c_device_id *id)
+ {
+@@ -904,6 +958,28 @@ static int max98927_i2c_probe(struct i2c_client *i2c,
+ 	} else
+ 		max98927->interleave_mode = 0;
+ 
++	/* Gets optional GPIO for reset line. */
++	max98927->reset_gpio = devm_gpiod_get_optional(
++			&i2c->dev, "reset", GPIOD_OUT_LOW);
++	if (IS_ERR(max98927->reset_gpio)) {
++		ret = PTR_ERR(max98927->reset_gpio);
++		dev_err(&i2c->dev, "error getting reset gpio: %d\n", ret);
++		return ret;
++	}
++
++	/*
++	 * Only toggle reset line for the first instance when the
++	 * reset line is shared among instances. For example,
++	 * left and right amplifier share the same reset line, and
++	 * we should only toggle the reset line once.
++	 */
++	if (max98927_is_first_to_reset(max98927)) {
++		dev_info(&i2c->dev, "%s: toggle reset line\n", __func__);
++		ret = max98927_i2c_toggle_reset(&i2c->dev, max98927);
++		if (ret)
++			return ret;
++	}
++
+ 	/* regmap initialization */
+ 	max98927->regmap
+ 		= devm_regmap_init_i2c(i2c, &max98927_regmap);
+@@ -934,6 +1010,8 @@ static int max98927_i2c_probe(struct i2c_client *i2c,
+ 	if (ret < 0)
+ 		dev_err(&i2c->dev, "Failed to register component: %d\n", ret);
+ 
++	list_add(&max98927->list, &reset_list);
++
+ 	return ret;
+ }
+ 
+diff --git a/sound/soc/codecs/max98927.h b/sound/soc/codecs/max98927.h
+index 538992a238b28..d48f61f6c3ba5 100644
+--- a/sound/soc/codecs/max98927.h
++++ b/sound/soc/codecs/max98927.h
+@@ -275,5 +275,7 @@ struct max98927_priv {
+ 	unsigned int master;
+ 	unsigned int digital_gain;
+ 	bool tdm_mode;
++	struct gpio_desc *reset_gpio;
++	struct list_head list;
+ };
+ #endif
+-- 
+2.16.4
 
-> Best regards,
-> Jernej
->
-> >
-> > On the other hand, it can't handle holes in the ccu_reset_map. Hope we
-> > never have to deal with such an instance.
-> >
-> > ChenYu
-> >
-> > > +};
-> > > +
-> > >
-> > >  static struct clk_hw_onecell_data sun8i_a83t_de2_hw_clks = {
-> > >
-> > >         .hws    = {
-> > >
-> > >                 [CLK_MIXER0]            = &mixer0_clk.common.hw,
-> > >
-> > > @@ -156,6 +200,13 @@ static struct ccu_reset_map sun50i_a64_de2_resets[] =
-> > > {>
-> > >         [RST_WB]        = { 0x08, BIT(2) },
-> > >
-> > >  };
-> > >
-> > > +static struct ccu_reset_map sun50i_h6_de3_resets[] = {
-> > > +       [RST_MIXER0]    = { 0x08, BIT(0) },
-> > > +       [RST_MIXER1]    = { 0x08, BIT(1) },
-> > > +       [RST_WB]        = { 0x08, BIT(2) },
-> > > +       [RST_ROT]       = { 0x08, BIT(3) },
-> > > +};
-> > > +
-> > >
-> > >  static const struct sunxi_ccu_desc sun8i_a83t_de2_clk_desc = {
-> > >
-> > >         .ccu_clks       = sun8i_a83t_de2_clks,
-> > >         .num_ccu_clks   = ARRAY_SIZE(sun8i_a83t_de2_clks),
-> > >
-> > > @@ -186,6 +237,16 @@ static const struct sunxi_ccu_desc
-> > > sun50i_a64_de2_clk_desc = {>
-> > >         .num_resets     = ARRAY_SIZE(sun50i_a64_de2_resets),
-> > >
-> > >  };
-> > >
-> > > +static const struct sunxi_ccu_desc sun50i_h6_de3_clk_desc = {
-> > > +       .ccu_clks       = sun50i_h6_de3_clks,
-> > > +       .num_ccu_clks   = ARRAY_SIZE(sun50i_h6_de3_clks),
-> > > +
-> > > +       .hw_clks        = &sun50i_h6_de3_hw_clks,
-> > > +
-> > > +       .resets         = sun50i_h6_de3_resets,
-> > > +       .num_resets     = ARRAY_SIZE(sun50i_h6_de3_resets),
-> > > +};
-> > > +
-> > >
-> > >  static const struct sunxi_ccu_desc sun8i_v3s_de2_clk_desc = {
-> > >
-> > >         .ccu_clks       = sun8i_v3s_de2_clks,
-> > >         .num_ccu_clks   = ARRAY_SIZE(sun8i_v3s_de2_clks),
-> > >
-> > > @@ -296,6 +357,10 @@ static const struct of_device_id sunxi_de2_clk_ids[]
-> > > = {>
-> > >                 .compatible = "allwinner,sun50i-h5-de2-clk",
-> > >                 .data = &sun50i_a64_de2_clk_desc,
-> > >
-> > >         },
-> > >
-> > > +       {
-> > > +               .compatible = "allwinner,sun50i-h6-de3-clk",
-> > > +               .data = &sun50i_h6_de3_clk_desc,
-> > > +       },
-> > >
-> > >         { }
-> > >
-> > >  };
-> > >
-> > > diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.h
-> > > b/drivers/clk/sunxi-ng/ccu-sun8i-de2.h index 530c006e0ae9..27bd88539f42
-> > > 100644
-> > > --- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.h
-> > > +++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.h
-> > > @@ -22,6 +22,7 @@
-> > >
-> > >  #define CLK_MIXER0_DIV 3
-> > >  #define CLK_MIXER1_DIV 4
-> > >  #define CLK_WB_DIV     5
-> > >
-> > > +#define CLK_ROT_DIV    11
-> > >
-> > >  #define CLK_NUMBER     (CLK_WB + 1)
-> > >
-> > > --
-> > > 2.18.0
->
->
->
->
