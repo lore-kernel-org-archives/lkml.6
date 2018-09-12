@@ -2,115 +2,124 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB81BC6778D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:43:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F770C6778D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:44:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FDC420882
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:43:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FDC420882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 37D0C20833
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:44:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37D0C20833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728014AbeILVst (ORCPT
+        id S1728042AbeILVt3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 17:48:49 -0400
-Received: from mga14.intel.com ([192.55.52.115]:46556 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726854AbeILVst (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 17:48:49 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Sep 2018 09:43:28 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,365,1531810800"; 
-   d="scan'208";a="232317488"
-Received: from ray.jf.intel.com (HELO [10.7.201.139]) ([10.7.201.139])
-  by orsmga004.jf.intel.com with ESMTP; 12 Sep 2018 09:43:28 -0700
-Subject: Re: [PATCH 1/4] mm: Provide kernel parameter to allow disabling page
- init poisoning
-To:     Alexander Duyck <alexander.duyck@gmail.com>, mhocko@kernel.org,
-        pavel.tatashin@microsoft.com, dan.j.williams@intel.com
-References: <20180910232615.4068.29155.stgit@localhost.localdomain>
- <20180910234341.4068.26882.stgit@localhost.localdomain>
- <20180912141053.GL10951@dhcp22.suse.cz>
- <CAKgT0UdvhV7U5Zniq=KskXz2QsRP8C7ctr5=ZtJwYAVpBT-RHw@mail.gmail.com>
- <841e8101-40db-9ff2-f688-5f175d91fc31@intel.com>
- <CAKgT0UeKnaY4XebOmtGozbjEJN4k3cwyhdBLPPJLc677-QU+Sw@mail.gmail.com>
-Cc:     linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        linux-nvdimm@lists.01.org, dave.jiang@intel.com,
-        Ingo Molnar <mingo@kernel.org>, jglisse@redhat.com,
-        Andrew Morton <akpm@linux-foundation.org>, logang@deltatee.com,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <68ccf46e-8c1e-c796-df35-afb5b295d6ea@intel.com>
-Date:   Wed, 12 Sep 2018 09:43:27 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 12 Sep 2018 17:49:29 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53962 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726842AbeILVt2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 17:49:28 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8DC2087916;
+        Wed, 12 Sep 2018 16:33:59 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.34.27.30])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 809562157F49;
+        Wed, 12 Sep 2018 16:33:58 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Wed, 12 Sep 2018 18:33:59 +0200 (CEST)
+Date:   Wed, 12 Sep 2018 18:33:57 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] hung_task: change check_hung_uninterruptible_tasks() to
+ use for_each_process_thread_break/continue
+Message-ID: <20180912163357.GB18748@redhat.com>
+References: <20180912163312.GA18739@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <CAKgT0UeKnaY4XebOmtGozbjEJN4k3cwyhdBLPPJLc677-QU+Sw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180912163312.GA18739@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 12 Sep 2018 16:33:59 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 12 Sep 2018 16:33:59 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'oleg@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/12/2018 09:36 AM, Alexander Duyck wrote:
->>         vm_debug =      [KNL] Available with CONFIG_DEBUG_VM=y.
->>                         May slow down boot speed, especially on larger-
->>                         memory systems when enabled.
->>                         off: turn off all runtime VM debug features
->>                         all: turn on all debug features (default)
-> This would introduce a significant amount of code change if we do it
-> as a parameter that has control over everything.
+Change check_hung_uninterruptible_tasks() to use the new helpers and remove
+the "can_cont" logic from rcu_lock_break().
 
-Sure, but don't do that now.  Just put page poisoning under it now.
+We could add for_each_process_thread_break/continue right into rcu_lock_break()
+but see the next patch.
+
+Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+---
+ kernel/hung_task.c | 25 +++++++++----------------
+ 1 file changed, 9 insertions(+), 16 deletions(-)
+
+diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+index b9132d1..13af558 100644
+--- a/kernel/hung_task.c
++++ b/kernel/hung_task.c
+@@ -148,20 +148,11 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+  * For preemptible RCU it is sufficient to call rcu_read_unlock in order
+  * to exit the grace period. For classic RCU, a reschedule is required.
+  */
+-static bool rcu_lock_break(struct task_struct *g, struct task_struct *t)
++static void rcu_lock_break(void)
+ {
+-	bool can_cont;
+-
+-	get_task_struct(g);
+-	get_task_struct(t);
+ 	rcu_read_unlock();
+ 	cond_resched();
+ 	rcu_read_lock();
+-	can_cont = pid_alive(g) && pid_alive(t);
+-	put_task_struct(t);
+-	put_task_struct(g);
+-
+-	return can_cont;
+ }
+ 
+ /*
+@@ -185,16 +176,18 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
+ 	hung_task_show_lock = false;
+ 	rcu_read_lock();
+ 	for_each_process_thread(g, t) {
+-		if (!max_count--)
++		/* use "==" to skip the TASK_KILLABLE tasks waiting on NFS */
++		if (t->state == TASK_UNINTERRUPTIBLE)
++			check_hung_task(t, timeout);
++
++		if (!--max_count)
+ 			goto unlock;
+ 		if (!--batch_count) {
+ 			batch_count = HUNG_TASK_BATCHING;
+-			if (!rcu_lock_break(g, t))
+-				goto unlock;
++			for_each_process_thread_break(g, t);
++			rcu_lock_break();
++			for_each_process_thread_continue(&g, &t);
+ 		}
+-		/* use "==" to skip the TASK_KILLABLE tasks waiting on NFS */
+-		if (t->state == TASK_UNINTERRUPTIBLE)
+-			check_hung_task(t, timeout);
+ 	}
+  unlock:
+ 	rcu_read_unlock();
+-- 
+2.5.0
+
+
