@@ -2,164 +2,150 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3D9EC4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:22:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BE77C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:26:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 428A520880
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:22:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GzY6r6Kc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 428A520880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id C445A20890
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:26:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C445A20890
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kaod.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727287AbeILN0W (ORCPT
+        id S1727659AbeILN3w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 09:26:22 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:42308 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726502AbeILN0W (ORCPT
+        Wed, 12 Sep 2018 09:29:52 -0400
+Received: from 11.mo6.mail-out.ovh.net ([188.165.38.119]:58600 "EHLO
+        11.mo6.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726442AbeILN3w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 09:26:22 -0400
-Received: by mail-pl1-f196.google.com with SMTP id g23-v6so610044plq.9
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 01:22:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=Li9H4PXXXUFCs2Dp4CKXup9iVBZotEacx/bMF23WtQ4=;
-        b=GzY6r6Kc5qFAy8cdjH4Ni+gi3LP5ph8o1D+zLCYK6kJj5h/gSNuEehx537Eg4DjQVX
-         1BW3qY4j1gHq9q9+03fZHCtJ4rULCjGtZ9KR+EQqd1PQl8LOohOFbZzHVSIZZVVdPPcE
-         6tJ8nkdxRJWmDRPlMAHGIfuNExLoUergruUus=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=Li9H4PXXXUFCs2Dp4CKXup9iVBZotEacx/bMF23WtQ4=;
-        b=qRjlGFO3xbq3hJ5OsPTzGcbGF1wuo5PJZVboCVXRJoPr8038giYLAbKyJpzC0+V28y
-         wi/DTD/9euiyFwUKsf2YK1sysmHyi4QDCbmcyU0vNZHghUlzfE1/rGsEj4EuUNEg1yDN
-         rS4mAMh2T9SUujQV8h6+Mww71tKl2AdUtkUS5aQcYnE94FrwOE2d4w0p1msIxtg4pjjV
-         GaGZP/L6Cx5ATNstpd/47qF66uW0CrZeBqKbz3NhXdyErtU9HW0TdgIqz/cRsoKkn7+H
-         CKLiX0//lhCm3BmTMa2StwaVWQdUUjq1slgOusFez5ST3dRPFolxI4D+fzdbGAbga6UI
-         uKOg==
-X-Gm-Message-State: APzg51CK3g3iW2xOiXRGmDJtAdl97LKDo7SZEEs9INL66oSo+Ron1e/g
-        TkFyCA96hHsL3kwF2ICa3XL3owin/A==
-X-Google-Smtp-Source: ANB0VdZk8iWME1gGGRQSjh76l4uXV5IKp96uxNEf3BvErlA7VgN2blbBvKqPggNLBls8yy2hqLtkRA==
-X-Received: by 2002:a17:902:1a9:: with SMTP id b38-v6mr856012plb.89.1536740576444;
-        Wed, 12 Sep 2018 01:22:56 -0700 (PDT)
-Received: from Mani-XPS-13-9360 ([2409:4072:89e:33f6:c566:c752:9b3c:11bf])
-        by smtp.gmail.com with ESMTPSA id d19-v6sm1732474pfe.42.2018.09.12.01.22.47
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Sep 2018 01:22:55 -0700 (PDT)
-Date:   Wed, 12 Sep 2018 13:52:44 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc:     Ezequiel Garcia <ezequiel@collabora.com>, robh+dt@kernel.org,
-        vicencb@gmail.com, shawn.lin@rock-chips.com,
-        enric.balletbo@collabora.com, pbrobinson@gmail.com, tom@vamrs.com,
-        dev@vamrs.com, stephen@vamrs.com, amit.kucheria@linaro.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] arm64: dts: rockchip: Split out common nodes for
- Rock960 based boards
-Message-ID: <20180912082244.GA16509@Mani-XPS-13-9360>
-References: <20180911023031.4892-1-manivannan.sadhasivam@linaro.org>
- <9e1868684ed851dfa19300ac2e648cfea7bf3eb9.camel@collabora.com>
- <20180912031248.GA4880@Mani-XPS-13-9360>
- <11137562.zz0kzkSHxt@diego>
+        Wed, 12 Sep 2018 09:29:52 -0400
+X-Greylist: delayed 7829 seconds by postgrey-1.27 at vger.kernel.org; Wed, 12 Sep 2018 09:29:51 EDT
+Received: from player726.ha.ovh.net (unknown [10.109.143.220])
+        by mo6.mail-out.ovh.net (Postfix) with ESMTP id DADAB17C9CC
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 07:57:36 +0200 (CEST)
+Received: from zorba.kaod.org (LFbn-1-10605-110.w90-89.abo.wanadoo.fr [90.89.196.110])
+        (Authenticated sender: postmaster@kaod.org)
+        by player726.ha.ovh.net (Postfix) with ESMTPSA id 5AAAA2A0098;
+        Wed, 12 Sep 2018 07:57:24 +0200 (CEST)
+Subject: Re: [PATCH i2c-next v6] i2c: aspeed: Handle master/slave combined irq
+ events properly
+To:     Guenter Roeck <linux@roeck-us.net>, Joel Stanley <joel@jms.id.au>
+Cc:     Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
+        linux-aspeed@lists.ozlabs.org,
+        Vernon Mauery <vernon.mauery@linux.intel.com>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jarkko.nikula@linux.intel.com,
+        James Feist <james.feist@linux.intel.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-i2c@vger.kernel.org
+References: <20180823225731.19063-1-jae.hyun.yoo@linux.intel.com>
+ <20180911183734.GA21976@roeck-us.net>
+ <1f34fe8c-69ef-5f2d-25dc-d5f6037cc558@linux.intel.com>
+ <20180911204107.GA26017@roeck-us.net>
+ <e5135af4-9105-214f-5de2-65cc03804222@linux.intel.com>
+ <CACPK8Xdv3aP_zOHAL0WMgwvkpBHAUesU7OdhW==jgvXjRmt-Zw@mail.gmail.com>
+ <20180911233302.GA18799@roeck-us.net>
+From:   =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>
+Message-ID: <f184e209-cb4b-55d4-e520-ae2cc9f0d963@kaod.org>
+Date:   Wed, 12 Sep 2018 07:57:24 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <20180911233302.GA18799@roeck-us.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <11137562.zz0kzkSHxt@diego>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Ovh-Tracer-Id: 12308337782753168372
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtjedrjeefgdduuddtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddm
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 09:26:12AM +0200, Heiko Stübner wrote:
-> Am Mittwoch, 12. September 2018, 05:12:48 CEST schrieb Manivannan Sadhasivam:
-> > Hi Ezequiel,
-> > 
-> > On Tue, Sep 11, 2018 at 04:40:29PM -0300, Ezequiel Garcia wrote:
-> > > On Tue, 2018-09-11 at 08:00 +0530, Manivannan Sadhasivam wrote:
-> > > > Since the same family members of Rock960 boards (Rock960 and Ficus)
-> > > > share the same configuration, split out the common nodes into a common
-> > > > dtsi file for reducing code duplication. The board specific nodes for
-> > > > Ficus boards are then placed in corresponding board DTS file.
-> > > 
-> > > I think it should be possible to move the common USB nodes to the dtsi
-> > > file, and keep the board-specific (phy-supply property) in the dts files:
-> > > 
-> > > &u2phy0_host {
-> > > 
-> > >         phy-supply = <&vcc5v0_host>;
-> > > 
-> > > };
-> > > 
-> > > &u2phy1_host {
-> > > 
-> > >         phy-supply = <&vcc5v0_host>;
-> > > 
-> > > };
-> > 
-> > We can do that but my intention was to entirely partition the nodes
-> > which are not common. So that it would be less confusing when someone
-> > looks at it (please correct me if I'm wrong).
+On 09/12/2018 01:33 AM, Guenter Roeck wrote:
+> On Wed, Sep 12, 2018 at 08:23:29AM +0930, Joel Stanley wrote:
+>> On Wed, 12 Sep 2018 at 07:48, Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com> wrote:
+>>>
+>>> On 9/11/2018 1:41 PM, Guenter Roeck wrote:
+>>>> On Tue, Sep 11, 2018 at 01:30:41PM -0700, Jae Hyun Yoo wrote:
+>>
+>>>>> I checked this patch again but it doesn't have any change that could
+>>>>> affect to the probing flow. I'll debug the issue on qemu 3.0 environment
+>>>>> and will share if I find something.
+>>>>>
+>>>> The problem may be that qemu and the new code disagree how interrupts
+>>>> should be generated and handled, and the new code does not handle the
+>>>> interrupts it receives from the simulated hardware. This will result
+>>>> in i2c device probe failure, which in turn can cause all kinds of
+>>>> problems.
+>>>>
+>>>
+>>> Yes, that makes sense. Looks like it should be reverted until the issue
+>>> is fixed. Will submit a patch to revert it.
+>>
+>> Let's not rush. The qemu model was written in order to allow us to
+>> test the kernel code, and was validated by the kernel driver we have.
+>> We've had situations in the past (with the i2c driver in fact) where a
+>> change in the driver required an update of the model to be more
+>> accurate.
+>>
+>> I suggest we wait until Cedric has a chance to look at the issue
+>> before reverting the patch.
+>>
 > 
-> The supply is actually named the same on both boards, so you could move
-> all the usb-nodes to the main dtsi, including the reference to vcc5v0_host
-> which would then get defined itself in the two board dts.
-> 
-> Then again, seeing that the vcc5v0_host also only differs in the actually
-> used gpio another option would be to move the whole regulator node
-> to the dtsi and just define the gpio properties in the board dts files.
->
+> Looking into the patch, clearing the interrupt status at the end of an
+> interrupt handler is always suspicious and tends to result in race
 
-Hmm, if that's the preferred option then I guess this applies to pcie
-nodes also. At the end, usb and pcie nodes will be shrinked to below in
-board dts:
+yes. That happened in the past with the I2C aspeed driver. I can not find
+the thread anymore but we had to move up the ack of the interrupts. 
 
-&pinctrl {
-        pcie {
-                pcie_drv: pcie-drv {
-                        rockchip,pins =
-                                <2 RK_PA5 RK_FUNC_GPIO &pcfg_pull_none>;
-                        };
-        };
+QEMU tends to be much faster to fire interrupts than real HW.
 
-        usb2 {
-                host_vbus_drv: host-vbus-drv {
-                        rockchip,pins =
-                                <4 RK_PD1 RK_FUNC_GPIO &pcfg_pull_none>;
-                };
-        };
-};
 
-&pcie0 {
-        ep-gpios = <&gpio2 RK_PA2 GPIO_ACTIVE_HIGH>;
-        status = "okay";
-};
+> conditions (because additional interrupts may have arrived while handling
+> the existing interrupts, or because interrupt handling itself may trigger
+> another interrupt). With that in mind, the following patch fixes the
+> problem for me.
 
-&vcc3v3_pcie {
-        gpio = <&gpio2 5 GPIO_ACTIVE_HIGH>;
-};
-
-&vcc5v0_host {
-        gpio = <&gpio4 25 GPIO_ACTIVE_HIGH>;
-};
+Acked-by: CÃ©dric Le Goater <clg@kaod.org>
 
 Thanks,
-Mani
 
+C.
+
+> Guenter
 > 
-> Heiko
+> ---
 > 
+> diff --git a/drivers/i2c/busses/i2c-aspeed.c b/drivers/i2c/busses/i2c-aspeed.c
+> index c258c4d9a4c0..c488e6950b7c 100644
+> --- a/drivers/i2c/busses/i2c-aspeed.c
+> +++ b/drivers/i2c/busses/i2c-aspeed.c
+> @@ -552,6 +552,8 @@ static irqreturn_t aspeed_i2c_bus_irq(int irq, void *dev_id)
+>  
+>  	spin_lock(&bus->lock);
+>  	irq_received = readl(bus->base + ASPEED_I2C_INTR_STS_REG);
+> +	/* Ack all interrupt bits. */
+> +	writel(irq_received, bus->base + ASPEED_I2C_INTR_STS_REG);
+>  	irq_remaining = irq_received;
+>  
+>  #if IS_ENABLED(CONFIG_I2C_SLAVE)
+> @@ -584,8 +586,6 @@ static irqreturn_t aspeed_i2c_bus_irq(int irq, void *dev_id)
+>  			"irq handled != irq. expected 0x%08x, but was 0x%08x\n",
+>  			irq_received, irq_handled);
+>  
+> -	/* Ack all interrupt bits. */
+> -	writel(irq_received, bus->base + ASPEED_I2C_INTR_STS_REG);
+>  	spin_unlock(&bus->lock);
+>  	return irq_remaining ? IRQ_NONE : IRQ_HANDLED;
+>  }
 > 
+
