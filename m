@@ -5,30 +5,30 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3591FC46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 17:36:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2619C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 17:36:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E60EE20854
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 17:36:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E60EE20854
+	by mail.kernel.org (Postfix) with ESMTP id 966362087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 17:36:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 966362087F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728037AbeILWli (ORCPT
+        id S1727942AbeILWl2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 18:41:38 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47916 "EHLO mx1.redhat.com"
+        Wed, 12 Sep 2018 18:41:28 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51592 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727651AbeILWl2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727010AbeILWl2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 12 Sep 2018 18:41:28 -0400
 Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0E2B0804B4DB;
-        Wed, 12 Sep 2018 17:35:55 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id D63B2402243B;
+        Wed, 12 Sep 2018 17:35:53 +0000 (UTC)
 Received: from llong.com (dhcp-17-55.bos.redhat.com [10.18.17.55])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 78F742156899;
-        Wed, 12 Sep 2018 17:35:54 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B994A2166BA2;
+        Wed, 12 Sep 2018 17:35:50 +0000 (UTC)
 From:   Waiman Long <longman@redhat.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Jonathan Corbet <corbet@lwn.net>,
@@ -48,54 +48,70 @@ Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         "Wangkai (Kevin C)" <wangkai86@huawei.com>,
         Michal Hocko <mhocko@kernel.org>,
         Waiman Long <longman@redhat.com>
-Subject: [PATCH v4 2/3] fs: Don't need to put list_lru into its own cacheline
-Date:   Wed, 12 Sep 2018 13:35:41 -0400
-Message-Id: <1536773742-32687-3-git-send-email-longman@redhat.com>
-In-Reply-To: <1536773742-32687-1-git-send-email-longman@redhat.com>
-References: <1536773742-32687-1-git-send-email-longman@redhat.com>
+Subject: [PATCH v4 0/3] fs/dcache: Track # of negative dentries
+Date:   Wed, 12 Sep 2018 13:35:39 -0400
+Message-Id: <1536773742-32687-1-git-send-email-longman@redhat.com>
 X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 12 Sep 2018 17:35:55 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 12 Sep 2018 17:35:55 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 12 Sep 2018 17:35:54 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 12 Sep 2018 17:35:54 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The list_lru structure is essentially just a pointer to a table of
-per-node LRU lists. Even if CONFIG_MEMCG_KMEM is defined, the list
-field is just used for LRU list registration and shrinker_id is set
-at initialization. Those fields won't need to be touched that often.
+ v3->v4:
+  - Drop patch 4 as it is just a minor optimization.
+  - Add a cc:stable tag to patch 1.
+  - Clean up some comments in patch 3.
 
-So there is no point to make the list_lru structures to sit in their
-own cachelines.
+ v2->v3:
+  - With confirmation that the dummy array in dentry_stat structure
+    was never a replacement of a previously used field, patch 3 is now
+    reverted back to use one of dummy field as the negative dentry count
+    instead of adding a new field.
 
-Signed-off-by: Waiman Long <longman@redhat.com>
-Reviewed-by: Dave Chinner <dchinner@redhat.com>
----
- include/linux/fs.h | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ v1->v2:
+  - Clarify what the new nr_dentry_negative per-cpu counter is tracking
+    and open-code the increment and decrement as suggested by Dave Chinner.
+  - Append the new nr_dentry_negative count as the 7th element of dentry-state
+    instead of replacing one of the dummy entries.
+  - Remove patch "fs/dcache: Make negative dentries easier to be
+    reclaimed" for now as I need more time to think about what
+    to do with it.
+  - Add 2 more patches to address issues found while reviewing the
+    dentry code.
+  - Add another patch to change the conditional branch of
+    nr_dentry_negative accounting to conditional move so as to reduce
+    the performance impact of the accounting code.
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 3332270..fd4cd8a 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1443,11 +1443,12 @@ struct super_block {
- 	struct user_namespace *s_user_ns;
- 
- 	/*
--	 * Keep the lru lists last in the structure so they always sit on their
--	 * own individual cachelines.
-+	 * The list_lru structure is essentially just a pointer to a table
-+	 * of per-node lru lists, each of which has its own spinlock.
-+	 * There is no need to put them into separate cachelines.
- 	 */
--	struct list_lru		s_dentry_lru ____cacheline_aligned_in_smp;
--	struct list_lru		s_inode_lru ____cacheline_aligned_in_smp;
-+	struct list_lru		s_dentry_lru;
-+	struct list_lru		s_inode_lru;
- 	struct rcu_head		rcu;
- 	struct work_struct	destroy_work;
- 
+This patchset addresses 2 issues found in the dentry code and adds a
+new nr_dentry_negative per-cpu counter to track the total number of
+negative dentries in all the LRU lists.
+
+Patch 1 fixes a bug in the accounting of nr_dentry_unused in
+shrink_dcache_sb().
+
+Patch 2 removes the ____cacheline_aligned_in_smp tag from super_block
+LRU lists.
+
+Patch 3 adds the new nr_dentry_negative per-cpu counter.
+
+Various filesystem related tests were run and no statistically
+significant changes in performance outside of the possible noise range
+was observed.
+
+Waiman Long (3):
+  fs/dcache: Fix incorrect nr_dentry_unused accounting in
+    shrink_dcache_sb()
+  fs: Don't need to put list_lru into its own cacheline
+  fs/dcache: Track & report number of negative dentries
+
+ Documentation/sysctl/fs.txt | 26 ++++++++++++++++----------
+ fs/dcache.c                 | 38 +++++++++++++++++++++++++++++++++-----
+ include/linux/dcache.h      |  7 ++++---
+ include/linux/fs.h          |  9 +++++----
+ 4 files changed, 58 insertions(+), 22 deletions(-)
+
 -- 
 1.8.3.1
 
