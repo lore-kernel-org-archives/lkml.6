@@ -2,125 +2,111 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66611C46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 13:29:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D545DC46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 13:30:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BD9620882
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 13:29:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83DD420854
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 13:30:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=poorly.run header.i=@poorly.run header.b="E+bsULlF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BD9620882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=poorly.run
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="vih8bRpW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83DD420854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727790AbeILSdx (ORCPT
+        id S1727649AbeILSfI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 14:33:53 -0400
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:38203 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726359AbeILSdx (ORCPT
+        Wed, 12 Sep 2018 14:35:08 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:37896 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726754AbeILSfH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 14:33:53 -0400
-Received: by mail-yb1-f196.google.com with SMTP id e18-v6so1412314ybq.5
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 06:29:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=poorly.run; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=J8qZ/GohhHiQXBXKWRb+V0ItqCEdEnCXKUH/PNVulEg=;
-        b=E+bsULlF8HisALMcGqGa8kXkUuLfW0/K3SueTIkGj/+j3cd553ENBWA3fCxpCPC1/I
-         RojW2cFeXZz9phuFA2YtTsM3qHSPEIOK1EiiXiFZa/7LleMTNXoG0hLKGvy5yPeemsKF
-         H2Ake6z274ejL6YG06gQ5XItDxvq9FnLrr0DLNQg7sgQSd0VtU1slRoxI4KVN2zPlxni
-         s2s3iG9r4JPjWYwDzoB+DjANNKx+/Iq1f1az+oRYp+Zc0/vhDQrimHz/kKLk7/kAYzZG
-         eet/T7VSRmE/09FdFO7k6dQPcbWH+PauoQMrx3wthJBAPrvLjgN2GL8n3dFtkpzR8pFx
-         auRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=J8qZ/GohhHiQXBXKWRb+V0ItqCEdEnCXKUH/PNVulEg=;
-        b=orL56bDpzWcCKmBOT9WNwpROVrhyJGIyBJFp4+E+Q7hFUH/4/nmW9kcyb5JPPhTaTF
-         jlR3QtkNtoy9ui4S/siQhSeFWXF1b9b8qbEcUtfi73LwOB89/OBHumw3fZvcAGcmxCzL
-         VNuZUOTOn4oi5JKMft8vq+GYJQrcjsp/01klCuuUpkprGKrJBAL2/cGT54x2VBVKwZ1y
-         ZjEVeI7sJy84jIcmL27JjRPBOe6gYoMlMJu74GPpdS/tkwCHTT0e3Sr6Znpm4MGjkWb1
-         5L97WOUpbmJKMe0rn+YF45w0//rhRj7C2yigupE56blp/WD73Tc7s+ozjZufwqRwq4tT
-         Svaw==
-X-Gm-Message-State: APzg51B3c7KqrKWpczp6nG8WgT98judAR7aLIMYrsJVENbkLHcnNNQaI
-        +tMoGOFLqT/tIsVzTVETtv5/9w==
-X-Google-Smtp-Source: ANB0VdZ7oxSn/f/2O8p3eabhcJ+LJE+B9Xrmixs1N7qw8zDQmVCacXAUr4F5Vm91jizqsH8N9xLy+w==
-X-Received: by 2002:a5b:2c1:: with SMTP id h1-v6mr881468ybp.476.1536758961501;
-        Wed, 12 Sep 2018 06:29:21 -0700 (PDT)
-Received: from localhost ([2620:0:1013:11:ad55:b1db:adfe:3b9f])
-        by smtp.gmail.com with ESMTPSA id r84-v6sm323645ywe.10.2018.09.12.06.29.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Sep 2018 06:29:21 -0700 (PDT)
-Date:   Wed, 12 Sep 2018 09:29:20 -0400
-From:   Sean Paul <sean@poorly.run>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH -next] drm/fb-helper: Remove set but not used variable
- 'connector_funcs'
-Message-ID: <20180912132920.GJ188300@art_vandelay>
-References: <1536722130-108819-1-git-send-email-yuehaibing@huawei.com>
+        Wed, 12 Sep 2018 14:35:07 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8CDT9Pq041219;
+        Wed, 12 Sep 2018 13:29:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=NMVqQB9SiIeRZTH2H/BUYZ35VOohkeIZGngJMh06Exc=;
+ b=vih8bRpWLpgDKKX1qtMNYHMoMNlZZUJ6i+bE0+XCYhGttTyOqyV2Hf8tk1NcgrTtz84f
+ zRaSoKLVUgHVj3+NUBBeUjYSN4AXQb6U6LlyhUssLHX/moRSb+z8K1TLBrX4YQc4FyyR
+ KtYTQkF2qQZzFmc0zT0gat8V8h+PnbsrDw6jZcl6/s9trgqX7EoI4i8NlrXoQrgwmY9g
+ sM/xYj4s9xGZsXszDYAUkIbCGN6l6r3amd8CxKwzUIe3gq/4HUs3VYA7iYqS7JiO+Yju
+ mPRXpQE3xbEF1xauoG1rrikQEpaIGvf/cfQMBonclGDt8yk6PHmet16nZrTvjZ3EDQMx 0w== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2130.oracle.com with ESMTP id 2mc5utj52w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 12 Sep 2018 13:29:57 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w8CDTuV2030419
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 12 Sep 2018 13:29:56 GMT
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w8CDTrpv014011;
+        Wed, 12 Sep 2018 13:29:53 GMT
+Received: from [10.152.34.32] (/10.152.34.32)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 12 Sep 2018 06:29:52 -0700
+Subject: Re: [RFC PATCH v2 1/8] mm, memcontrol.c: make memcg lru stats
+ thread-safe without lru_lock
+To:     Laurent Dufour <ldufour@linux.vnet.ibm.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
+Cc:     aaron.lu@intel.com, ak@linux.intel.com, akpm@linux-foundation.org,
+        dave.dice@oracle.com, dave.hansen@linux.intel.com,
+        hannes@cmpxchg.org, levyossi@icloud.com,
+        mgorman@techsingularity.net, mhocko@kernel.org,
+        Pavel.Tatashin@microsoft.com, steven.sistare@oracle.com,
+        tim.c.chen@intel.com, vdavydov.dev@gmail.com, ying.huang@intel.com,
+        daniel.m.jordan@oracle.com
+References: <20180911004240.4758-1-daniel.m.jordan@oracle.com>
+ <20180911004240.4758-2-daniel.m.jordan@oracle.com>
+ <e62ef1a0-9518-5a16-df5b-86977b4e8881@linux.vnet.ibm.com>
+From:   Daniel Jordan <daniel.m.jordan@oracle.com>
+Message-ID: <a81f27b1-00c0-53ac-4d0b-241effdca9a6@oracle.com>
+Date:   Wed, 12 Sep 2018 09:28:58 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1536722130-108819-1-git-send-email-yuehaibing@huawei.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <e62ef1a0-9518-5a16-df5b-86977b4e8881@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9013 signatures=668708
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1809120140
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 03:15:30AM +0000, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
+On 9/11/18 12:32 PM, Laurent Dufour wrote:
+> On 11/09/2018 02:42, Daniel Jordan wrote:
+>> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+>> index d99b71bc2c66..6377dc76dc41 100644
+>> --- a/include/linux/memcontrol.h
+>> +++ b/include/linux/memcontrol.h
+>> @@ -99,7 +99,8 @@ struct mem_cgroup_reclaim_iter {
+>>   };
+>>
+>>   struct lruvec_stat {
+>> -	long count[NR_VM_NODE_STAT_ITEMS];
+>> +	long node[NR_VM_NODE_STAT_ITEMS];
+>> +	long lru_zone_size[MAX_NR_ZONES][NR_LRU_LISTS];
 > 
-> drivers/gpu/drm/drm_fb_helper.c: In function 'drm_pick_crtcs':
-> drivers/gpu/drm/drm_fb_helper.c:2373:43: warning:
->  variable 'connector_funcs' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> It might be better to use different name for the lru_zone_size field to
+> distinguish it from the one in the mem_cgroup_per_node structure.
 
-Thanks for your patch, applied to -misc-fixes
+Yes, not very grep-friendly.  I'll change it to this:
 
-Sean
+struct lruvec_stat {
+	long node_stat_cpu[NR_VM_NODE_STAT_ITEMS];
+	long lru_zone_size_cpu[MAX_NR_ZONES][NR_LRU_LISTS];
+};
 
-> ---
->  drivers/gpu/drm/drm_fb_helper.c | 3 ---
->  1 file changed, 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
-> index 73cf10a..16e3a59 100644
-> --- a/drivers/gpu/drm/drm_fb_helper.c
-> +++ b/drivers/gpu/drm/drm_fb_helper.c
-> @@ -2370,7 +2370,6 @@ static int drm_pick_crtcs(struct drm_fb_helper *fb_helper,
->  {
->  	int c, o;
->  	struct drm_connector *connector;
-> -	const struct drm_connector_helper_funcs *connector_funcs;
->  	int my_score, best_score, score;
->  	struct drm_fb_helper_crtc **crtcs, *crtc;
->  	struct drm_fb_helper_connector *fb_helper_conn;
-> @@ -2399,8 +2398,6 @@ static int drm_pick_crtcs(struct drm_fb_helper *fb_helper,
->  	if (drm_has_preferred_mode(fb_helper_conn, width, height))
->  		my_score++;
->  
-> -	connector_funcs = connector->helper_private;
-> -
->  	/*
->  	 * select a crtc for this connector and then attempt to configure
->  	 * remaining connectors
-> 
-> 
-> 
-
--- 
-Sean Paul, Software Engineer, Google / Chromium OS
+So the fields are named like the corresponding fields in the mem_cgroup_per_node structure, plus _cpu.  And I'm certainly open to other ideas.
