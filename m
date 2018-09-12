@@ -6,215 +6,121 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0430EC6778D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:47:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4484EC46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:48:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92E6E20833
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:47:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECCB720833
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:47:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="M05H5R2W";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="W+Yplae+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92E6E20833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="C8ZMdAFa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECCB720833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727841AbeILVwy (ORCPT
+        id S1728013AbeILVxS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 17:52:54 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39360 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727278AbeILVwy (ORCPT
+        Wed, 12 Sep 2018 17:53:18 -0400
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:1265 "EHLO
+        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727122AbeILVxS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 17:52:54 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 37DD6606AC; Wed, 12 Sep 2018 16:47:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536770851;
-        bh=YMmpXTSh/d4awGyY5iPadg4/lp3MS8RbUcT7OLNjdzk=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=M05H5R2WBQRvI05ehbWl60gNQ7tKVKb0oIkXWs8Ybt/n1MUiMLqjmnkqON3lJbI5G
-         qp4WwdzEuDQNaAxyjZU/RfEOpcXkOzkOrfRs6GKXybCVMb5/wEIgUC6NWnEvg8EJg/
-         ciM/z0a1a7JXaWdC1Fn4FByOiCnDvfXnVTezelzo=
-Received: from [192.168.100.6] (unknown [183.83.160.233])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rohitkr@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0E2C5600ED;
-        Wed, 12 Sep 2018 16:47:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536770850;
-        bh=YMmpXTSh/d4awGyY5iPadg4/lp3MS8RbUcT7OLNjdzk=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=W+Yplae+rieopH4uRReRC1INPzwx1+4aehYvC4iXnc/H+0q/omziT5HAGCAqNopAS
-         iTFpo7xNRO4Bvc/nVKw/ZFek74mdYEyVzEXGNNftLwFxbF8RtBv++c8gO0SaGXFtBQ
-         Ujgn4wbbjxL9BK41iakvCyZIPncU7gfuwMgVRcG8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0E2C5600ED
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rohitkr@codeaurora.org
-Subject: Re: [alsa-devel] [PATCH 2/2] ASoC: max98927: Add reset-gpio support
-To:     Cheng-Yi Chiang <cychiang@chromium.org>,
-        linux-kernel@vger.kernel.org
-Cc:     alsa-devel@alsa-project.org, Mark Brown <broonie@kernel.org>,
-        dgreid@chromium.org, ryans.lee@maximintegrated.com
-References: <20180912121955.33048-1-cychiang@chromium.org>
- <20180912121955.33048-2-cychiang@chromium.org>
-From:   Rohit Kumar <rohitkr@codeaurora.org>
-Message-ID: <7aa3c049-5ba0-1db3-08c8-510da1cf779d@codeaurora.org>
-Date:   Wed, 12 Sep 2018 22:17:24 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 12 Sep 2018 17:53:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1536770877; x=1568306877;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=4JGLCW49XAc08LPM/hSiqTGjQc1iDV4zirRZMm2v+fU=;
+  b=C8ZMdAFasDvsu8mfPVevqrQktbMA6Ip2iUJafNWcT2Tki1yV8TgVY90U
+   N0vda7asDCJg11hIYfWS+fTmbG+geKV4p+C8BUn5zwEBn+Mmg+GMeiTm8
+   otTPGMhXWTGvjaqovtAYtSCTeNc+Zs6eQx3vCkzt3Qn1zvmjFMYv2ty1O
+   IcwqHUZoEtzWZSR0vl06QC6GTVasMeTcqc6L7lsED2jDF8nhxZ305ifA/
+   SYlt64CjQXeODRRTgSI5bvoQAcgMOKZ+I3KP1xotjbmuEDuOuV4U7+OJU
+   6XRece2QSVn1ePkUOTJf9elJ/WHkc+o9/FbW/mNZ/JHjyZ447NZj6HSXG
+   A==;
+X-IronPort-AV: E=Sophos;i="5.53,365,1531756800"; 
+   d="scan'208";a="93993338"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 13 Sep 2018 00:47:57 +0800
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep02.wdc.com with ESMTP; 12 Sep 2018 09:34:18 -0700
+Received: from 45t6pc2.ad.shared (HELO [10.86.63.194]) ([10.86.63.194])
+  by uls-op-cesaip01.wdc.com with ESMTP; 12 Sep 2018 09:47:56 -0700
+Subject: Re: [PATCH] RISC-V: Show CPU ID and Hart ID separately in
+ /proc/cpuinfo
+To:     Anup Patel <anup@brainfault.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20180912143822.21948-1-anup@brainfault.org>
+From:   Atish Patra <atish.patra@wdc.com>
+Message-ID: <72961c71-c4e4-7990-da64-a7f1613f2e1c@wdc.com>
+Date:   Wed, 12 Sep 2018 09:47:55 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180912121955.33048-2-cychiang@chromium.org>
+In-Reply-To: <20180912143822.21948-1-anup@brainfault.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 9/12/2018 5:49 PM, Cheng-Yi Chiang wrote:
-> Toggle reset line in max98927_i2c_probe.
-> Use a list to store max98927 instances so we do not toggle reset line
-> again if more than one instances share the same reset line.
->
-> Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
-Reviewed-and-tested-by: Rohit kumar <rohitkr@codeaurora.org>
-
+On 9/12/18 7:38 AM, Anup Patel wrote:
+> Currently, /proc/cpuinfo show logical CPU ID as Hart ID which
+> is in-correct. This patch shows CPU ID and Hart ID separately
+> in /proc/cpuinfo using cpuid_to_hardid_map().
+> 
+> With this patch, contents of /proc/cpuinfo looks as follows:
+> cpu	: 0
+> hart	: 1
+> isa	: rv64imafdcsu
+> mmu	: sv48
+> 
+> cpu	: 1
+> hart	: 0
+> isa	: rv64imafdcsu
+> mmu	: sv48
+> 
+> cpu	: 2
+> hart	: 3
+> isa	: rv64imafdcsu
+> mmu	: sv48
+> 
+> cpu	: 3
+> hart	: 2
+> isa	: rv64imafdcsu
+> mmu	: sv48
+> 
+> Signed-off-by: Anup Patel <anup@brainfault.org>
 > ---
->   sound/soc/codecs/max98927.c | 78 +++++++++++++++++++++++++++++++++++++++++++++
->   sound/soc/codecs/max98927.h |  2 ++
->   2 files changed, 80 insertions(+)
->
-> diff --git a/sound/soc/codecs/max98927.c b/sound/soc/codecs/max98927.c
-> index 941712058a8f5..789b27cdfd9e0 100644
-> --- a/sound/soc/codecs/max98927.c
-> +++ b/sound/soc/codecs/max98927.c
-> @@ -11,6 +11,7 @@
->    */
+>   arch/riscv/kernel/cpu.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/riscv/kernel/cpu.c b/arch/riscv/kernel/cpu.c
+> index f0f0ec2737b7..7c1342e242e6 100644
+> --- a/arch/riscv/kernel/cpu.c
+> +++ b/arch/riscv/kernel/cpu.c
+> @@ -87,7 +87,8 @@ static int c_show(struct seq_file *m, void *v)
+>   						   NULL);
+>   	const char *compat, *isa, *mmu;
 >   
->   #include <linux/acpi.h>
-> +#include <linux/delay.h>
->   #include <linux/i2c.h>
->   #include <linux/module.h>
->   #include <linux/regmap.h>
-> @@ -24,6 +25,11 @@
->   #include <sound/tlv.h>
->   #include "max98927.h"
->   
-> +#define MAX98927_MIN_RESET_US 1
-> +#define MAX98927_RELEASE_RESET_DELAY_US 500
-> +
-> +static LIST_HEAD(reset_list);
-> +
->   static struct reg_default max98927_reg[] = {
->   	{MAX98927_R0001_INT_RAW1,  0x00},
->   	{MAX98927_R0002_INT_RAW2,  0x00},
-> @@ -877,6 +883,54 @@ static void max98927_slot_config(struct i2c_client *i2c,
->   		max98927->i_l_slot = 1;
->   }
->   
-> +static int max98927_i2c_toggle_reset(struct device *dev,
-> +				     struct max98927_priv *max98927)
-> +{
-> +	/*
-> +	 * If we do not have reset gpio, assume platform firmware
-> +	 * controls the regulator and toggles it for us.
-> +	 */
-> +	if (!max98927->reset_gpio)
-> +		return 0;
-> +
-> +	gpiod_set_value_cansleep(max98927->reset_gpio, 1);
-> +
-> +	/*
-> +	 * We need to wait a bit before we are allowed to release reset GPIO.
-> +	 */
-> +	usleep_range(MAX98927_MIN_RESET_US, MAX98927_MIN_RESET_US + 5);
-> +
-> +	gpiod_set_value_cansleep(max98927->reset_gpio, 0);
-> +
-> +	/*
-> +	 * We need to wait a bit before I2C communication is available.
-> +	 */
-> +	usleep_range(MAX98927_RELEASE_RESET_DELAY_US,
-> +		     MAX98927_RELEASE_RESET_DELAY_US + 5);
-> +
-> +	/*
-> +	 * Release reset GPIO because we are not going to use it.
-> +	 */
-> +	devm_gpiod_put(dev, max98927->reset_gpio);
-> +
-> +	return 0;
-> +}
-> +
-> +static bool max98927_is_first_to_reset(struct max98927_priv *max98927)
-> +{
-> +	struct max98927_priv *p;
-> +
-> +	if (!max98927->reset_gpio)
-> +		return false;
-> +
-> +	list_for_each_entry(p, &reset_list, list) {
-> +		if (max98927->reset_gpio == p->reset_gpio)
-> +			return false;
-> +	}
-> +
-> +	return true;
-> +}
-> +
->   static int max98927_i2c_probe(struct i2c_client *i2c,
->   	const struct i2c_device_id *id)
->   {
-> @@ -904,6 +958,28 @@ static int max98927_i2c_probe(struct i2c_client *i2c,
->   	} else
->   		max98927->interleave_mode = 0;
->   
-> +	/* Gets optional GPIO for reset line. */
-> +	max98927->reset_gpio = devm_gpiod_get_optional(
-> +			&i2c->dev, "reset", GPIOD_OUT_LOW);
-> +	if (IS_ERR(max98927->reset_gpio)) {
-> +		ret = PTR_ERR(max98927->reset_gpio);
-> +		dev_err(&i2c->dev, "error getting reset gpio: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	/*
-> +	 * Only toggle reset line for the first instance when the
-> +	 * reset line is shared among instances. For example,
-> +	 * left and right amplifier share the same reset line, and
-> +	 * we should only toggle the reset line once.
-> +	 */
-> +	if (max98927_is_first_to_reset(max98927)) {
-> +		dev_info(&i2c->dev, "%s: toggle reset line\n", __func__);
-> +		ret = max98927_i2c_toggle_reset(&i2c->dev, max98927);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
->   	/* regmap initialization */
->   	max98927->regmap
->   		= devm_regmap_init_i2c(i2c, &max98927_regmap);
-> @@ -934,6 +1010,8 @@ static int max98927_i2c_probe(struct i2c_client *i2c,
->   	if (ret < 0)
->   		dev_err(&i2c->dev, "Failed to register component: %d\n", ret);
->   
-> +	list_add(&max98927->list, &reset_list);
-> +
->   	return ret;
->   }
->   
-> diff --git a/sound/soc/codecs/max98927.h b/sound/soc/codecs/max98927.h
-> index 538992a238b28..d48f61f6c3ba5 100644
-> --- a/sound/soc/codecs/max98927.h
-> +++ b/sound/soc/codecs/max98927.h
-> @@ -275,5 +275,7 @@ struct max98927_priv {
->   	unsigned int master;
->   	unsigned int digital_gain;
->   	bool tdm_mode;
-> +	struct gpio_desc *reset_gpio;
-> +	struct list_head list;
->   };
->   #endif
+> -	seq_printf(m, "hart\t: %lu\n", cpu_id);
+> +	seq_printf(m, "cpu\t: %lu\n", cpu_id);
+> +	seq_printf(m, "hart\t: %lu\n", cpuid_to_hardid_map(cpu_id));
+>   	if (!of_property_read_string(node, "riscv,isa", &isa)
+>   	    && isa[0] == 'r'
+>   	    && isa[1] == 'v')
+> 
 
+The extra hart information will not be parsed by lscpu which will make 
+the cpu information inconsistent between lscpu & /proc/cpuinfo.
+
+Should we patch lscpu as well to show correct hart id as well ?
+
+Regards,
+Atish
