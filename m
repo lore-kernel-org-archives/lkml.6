@@ -2,335 +2,119 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC47BC46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 12:45:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1DDBC4646A
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 12:51:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 771EC2088E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 12:45:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 771EC2088E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 3ECD620882
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 12:51:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3ECD620882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727365AbeILRtq (ORCPT
+        id S1727004AbeILR4B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 13:49:46 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58946 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726359AbeILRtq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 13:49:46 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C048540241C0;
-        Wed, 12 Sep 2018 12:45:23 +0000 (UTC)
-Received: from redhat.com (ovpn-121-244.rdu2.redhat.com [10.10.121.244])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 5BBBF10FFE53;
-        Wed, 12 Sep 2018 12:45:20 +0000 (UTC)
-Date:   Wed, 12 Sep 2018 08:45:19 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Tiwei Bie <tiwei.bie@intel.com>
-Cc:     jasowang@redhat.com, virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        virtio-dev@lists.oasis-open.org, wexu@redhat.com,
-        jfreimann@redhat.com
-Subject: Re: [PATCH net-next v2 2/5] virtio_ring: support creating packed ring
-Message-ID: <20180912084118-mutt-send-email-mst@kernel.org>
-References: <20180711022711.7090-1-tiwei.bie@intel.com>
- <20180711022711.7090-3-tiwei.bie@intel.com>
- <20180907095208-mutt-send-email-mst@kernel.org>
- <20180910022837.GA11822@debian>
+        Wed, 12 Sep 2018 13:56:01 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59022 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726359AbeILR4B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 13:56:01 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CC1E780D;
+        Wed, 12 Sep 2018 05:51:38 -0700 (PDT)
+Received: from e110439-lin (e110439-lin.Emea.Arm.com [10.4.12.126])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 098F53F703;
+        Wed, 12 Sep 2018 05:51:35 -0700 (PDT)
+Date:   Wed, 12 Sep 2018 13:51:33 +0100
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>
+Subject: Re: [PATCH v4 08/16] sched/core: uclamp: propagate parent clamps
+Message-ID: <20180912125133.GE1413@e110439-lin>
+References: <20180828135324.21976-1-patrick.bellasi@arm.com>
+ <20180828135324.21976-9-patrick.bellasi@arm.com>
+ <CAJuCfpHaqNzgpbPCAUxsv+E4HL6vSDKem+sFh2njK1e9dX5ONA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180910022837.GA11822@debian>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 12 Sep 2018 12:45:23 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 12 Sep 2018 12:45:23 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
+In-Reply-To: <CAJuCfpHaqNzgpbPCAUxsv+E4HL6vSDKem+sFh2njK1e9dX5ONA@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 10, 2018 at 10:28:37AM +0800, Tiwei Bie wrote:
-> On Fri, Sep 07, 2018 at 10:03:24AM -0400, Michael S. Tsirkin wrote:
-> > On Wed, Jul 11, 2018 at 10:27:08AM +0800, Tiwei Bie wrote:
-> > > This commit introduces the support for creating packed ring.
-> > > All split ring specific functions are added _split suffix.
-> > > Some necessary stubs for packed ring are also added.
-> > > 
-> > > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
-> > 
-> > I'd rather have a patch just renaming split functions, then
-> > add all packed stuff in as a separate patch on top.
-> 
-> Sure, I will do that.
-> 
-> > 
-> > 
-> > > ---
-> > >  drivers/virtio/virtio_ring.c | 801 +++++++++++++++++++++++------------
-> > >  include/linux/virtio_ring.h  |   8 +-
-> > >  2 files changed, 546 insertions(+), 263 deletions(-)
-> > > 
-> > > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> > > index 814b395007b2..c4f8abc7445a 100644
-> > > --- a/drivers/virtio/virtio_ring.c
-> > > +++ b/drivers/virtio/virtio_ring.c
-> > > @@ -60,11 +60,15 @@ struct vring_desc_state {
-> > >  	struct vring_desc *indir_desc;	/* Indirect descriptor, if any. */
-> > >  };
-> > >  
-> > > +struct vring_desc_state_packed {
-> > > +	int next;			/* The next desc state. */
-> > 
-> > So this can go away with IN_ORDER?
-> 
-> Yes. If IN_ORDER is negotiated, next won't be needed anymore.
-> Currently, IN_ORDER isn't included in this patch set, because
-> some changes for split ring are needed to make sure that it
-> will use the descs in the expected order. After that,
-> optimizations can be done for both of split ring and packed
-> ring respectively.
-> 
-> > 
-> > > +};
-> > > +
-> > >  struct vring_virtqueue {
-> > >  	struct virtqueue vq;
-> > >  
-> > > -	/* Actual memory layout for this queue */
-> > > -	struct vring vring;
-> > > +	/* Is this a packed ring? */
-> > > +	bool packed;
-> > >  
-> > >  	/* Can we use weak barriers? */
-> > >  	bool weak_barriers;
-> > > @@ -86,11 +90,39 @@ struct vring_virtqueue {
-> > >  	/* Last used index we've seen. */
-> > >  	u16 last_used_idx;
-> > >  
-> > > -	/* Last written value to avail->flags */
-> > > -	u16 avail_flags_shadow;
-> > > +	union {
-> > > +		/* Available for split ring */
-> > > +		struct {
-> > > +			/* Actual memory layout for this queue. */
-> > > +			struct vring vring;
-> > >  
-> > > -	/* Last written value to avail->idx in guest byte order */
-> > > -	u16 avail_idx_shadow;
-> > > +			/* Last written value to avail->flags */
-> > > +			u16 avail_flags_shadow;
-> > > +
-> > > +			/* Last written value to avail->idx in
-> > > +			 * guest byte order. */
-> > > +			u16 avail_idx_shadow;
-> > > +		};
-> > 
-> > Name this field split so it's easier to detect misuse of e.g.
-> > packed fields in split code?
-> 
-> Good point, I'll do that.
-> 
-> > 
-> > > +
-> > > +		/* Available for packed ring */
-> > > +		struct {
-> > > +			/* Actual memory layout for this queue. */
-> > > +			struct vring_packed vring_packed;
-> > > +
-> > > +			/* Driver ring wrap counter. */
-> > > +			bool avail_wrap_counter;
-> > > +
-> > > +			/* Device ring wrap counter. */
-> > > +			bool used_wrap_counter;
-> > > +
-> > > +			/* Index of the next avail descriptor. */
-> > > +			u16 next_avail_idx;
-> > > +
-> > > +			/* Last written value to driver->flags in
-> > > +			 * guest byte order. */
-> > > +			u16 event_flags_shadow;
-> > > +		};
-> > > +	};
-> [...]
-> > > +
-> > > +/*
-> > > + * The layout for the packed ring is a continuous chunk of memory
-> > > + * which looks like this.
-> > > + *
-> > > + * struct vring_packed {
-> > > + *	// The actual descriptors (16 bytes each)
-> > > + *	struct vring_packed_desc desc[num];
-> > > + *
-> > > + *	// Padding to the next align boundary.
-> > > + *	char pad[];
-> > > + *
-> > > + *	// Driver Event Suppression
-> > > + *	struct vring_packed_desc_event driver;
-> > > + *
-> > > + *	// Device Event Suppression
-> > > + *	struct vring_packed_desc_event device;
-> > > + * };
-> > > + */
-> > 
-> > Why not just allocate event structures separately?
-> > Is it a win to have them share a cache line for some reason?
-> 
-> Will do that.
-> 
-> > 
-> > > +static inline void vring_init_packed(struct vring_packed *vr, unsigned int num,
-> > > +				     void *p, unsigned long align)
-> > > +{
-> > > +	vr->num = num;
-> > > +	vr->desc = p;
-> > > +	vr->driver = (void *)ALIGN(((uintptr_t)p +
-> > > +		sizeof(struct vring_packed_desc) * num), align);
-> > > +	vr->device = vr->driver + 1;
-> > > +}
-> > 
-> > What's all this about alignment? Where does it come from?
-> 
-> It comes from the `vring_align` parameter of vring_create_virtqueue()
-> and vring_new_virtqueue():
-> 
-> https://github.com/torvalds/linux/blob/a49a9dcce802/drivers/virtio/virtio_ring.c#L1061
-> https://github.com/torvalds/linux/blob/a49a9dcce802/drivers/virtio/virtio_ring.c#L1123
+On 08-Sep 20:02, Suren Baghdasaryan wrote:
+> On Tue, Aug 28, 2018 at 6:53 AM, Patrick Bellasi
+> <patrick.bellasi@arm.com> wrote:
 
-Note the TODO - we just never got to fixing it. It would be great to fix
-this for virtio 1 rings, but if not - at least let's not add this
-stuff for packed rings.
+[...]
 
-> Should I just ignore it in packed ring?
+> > +  cpu.util.min.effective
+> > +        A read-only single value file which exists on non-root cgroups and
+> > +        reports minimum utilization clamp value currently enforced on a task
+> > +        group.
+> > +
+> > +        The actual minimum utilization in the range [0, 1023].
+> > +
+> > +        This value can be lower then cpu.util.min in case a parent cgroup
+> > +        is enforcing a more restrictive clamping on minimum utilization.
 > 
-> CCW defined this:
+> IMHO if cpu.util.min=0 means "no restrictions" on UCLAMP_MIN then
+> calling parent's lower cpu.util.min value "more restrictive clamping"
+> is confusing. I would suggest to rephrase this to smth like "...in
+> case a parent cgroup requires lower cpu.util.min clamping."
+
+Right, it's slightly confusing... still I would like to call out that
+a parent group can enforce something on its children. What about:
+
+   "... a parent cgroup allows only smaller minimum utilization values."
+
+Is that less confusing ?
+
+Otherwise I think your proposal could work too.
+
+[...]
+
+> >  #ifdef CONFIG_UCLAMP_TASK_GROUP
+> > +/**
+> > + * cpu_util_update_hier: propagete effective clamp down the hierarchy
 > 
-> #define KVM_VIRTIO_CCW_RING_ALIGN 4096
+> typo: propagate
+
++1
+
+[...]
+
+> > +                * Skip the whole subtrees if the current effective clamp is
+> > +                * alredy matching the TG's clamp value.
 > 
-> I'm not familiar with CCW. Currently, in this patch set, packed ring
-> isn't enabled on CCW dues to some legacy accessors are not implemented
-> in packed ring yet.
+> typo: already
+
++1
 
 
-Then you need to take steps not to negotiate this feature bit for
-ccw drivers.
+Cheers,
+Patrick
 
-> > 
-> > > +
-> > > +static inline unsigned vring_size_packed(unsigned int num, unsigned long align)
-> > > +{
-> > > +	return ((sizeof(struct vring_packed_desc) * num + align - 1)
-> > > +		& ~(align - 1)) + sizeof(struct vring_packed_desc_event) * 2;
-> > > +}
-> [...]
-> > > @@ -1129,10 +1388,17 @@ struct virtqueue *vring_new_virtqueue(unsigned int index,
-> > >  				      void (*callback)(struct virtqueue *vq),
-> > >  				      const char *name)
-> > >  {
-> > > -	struct vring vring;
-> > > -	vring_init(&vring, num, pages, vring_align);
-> > > -	return __vring_new_virtqueue(index, vring, vdev, weak_barriers, context,
-> > > -				     notify, callback, name);
-> > > +	union vring_union vring;
-> > > +	bool packed;
-> > > +
-> > > +	packed = virtio_has_feature(vdev, VIRTIO_F_RING_PACKED);
-> > > +	if (packed)
-> > > +		vring_init_packed(&vring.vring_packed, num, pages, vring_align);
-> > > +	else
-> > > +		vring_init(&vring.vring_split, num, pages, vring_align);
-> > 
-> > 
-> > vring_init in the UAPI header is more or less a bug.
-> > I'd just stop using it, keep it around for legacy userspace.
-> 
-> Got it. I'd like to do that. Thanks.
-> 
-> > 
-> > > +
-> > > +	return __vring_new_virtqueue(index, vring, packed, vdev, weak_barriers,
-> > > +				     context, notify, callback, name);
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(vring_new_virtqueue);
-> > >  
-> > > @@ -1142,7 +1408,9 @@ void vring_del_virtqueue(struct virtqueue *_vq)
-> > >  
-> > >  	if (vq->we_own_ring) {
-> > >  		vring_free_queue(vq->vq.vdev, vq->queue_size_in_bytes,
-> > > -				 vq->vring.desc, vq->queue_dma_addr);
-> > > +				 vq->packed ? (void *)vq->vring_packed.desc :
-> > > +					      (void *)vq->vring.desc,
-> > > +				 vq->queue_dma_addr);
-> > >  	}
-> > >  	list_del(&_vq->list);
-> > >  	kfree(vq);
-> > > @@ -1184,7 +1452,7 @@ unsigned int virtqueue_get_vring_size(struct virtqueue *_vq)
-> > >  
-> > >  	struct vring_virtqueue *vq = to_vvq(_vq);
-> > >  
-> > > -	return vq->vring.num;
-> > > +	return vq->packed ? vq->vring_packed.num : vq->vring.num;
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(virtqueue_get_vring_size);
-> > >  
-> > > @@ -1227,6 +1495,10 @@ dma_addr_t virtqueue_get_avail_addr(struct virtqueue *_vq)
-> > >  
-> > >  	BUG_ON(!vq->we_own_ring);
-> > >  
-> > > +	if (vq->packed)
-> > > +		return vq->queue_dma_addr + ((char *)vq->vring_packed.driver -
-> > > +				(char *)vq->vring_packed.desc);
-> > > +
-> > >  	return vq->queue_dma_addr +
-> > >  		((char *)vq->vring.avail - (char *)vq->vring.desc);
-> > >  }
-> > > @@ -1238,11 +1510,16 @@ dma_addr_t virtqueue_get_used_addr(struct virtqueue *_vq)
-> > >  
-> > >  	BUG_ON(!vq->we_own_ring);
-> > >  
-> > > +	if (vq->packed)
-> > > +		return vq->queue_dma_addr + ((char *)vq->vring_packed.device -
-> > > +				(char *)vq->vring_packed.desc);
-> > > +
-> > >  	return vq->queue_dma_addr +
-> > >  		((char *)vq->vring.used - (char *)vq->vring.desc);
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(virtqueue_get_used_addr);
-> > >  
-> > > +/* Only available for split ring */
-> > >  const struct vring *virtqueue_get_vring(struct virtqueue *vq)
-> > >  {
-> > >  	return &to_vvq(vq)->vring;
-> > > diff --git a/include/linux/virtio_ring.h b/include/linux/virtio_ring.h
-> > > index fab02133a919..992142b35f55 100644
-> > > --- a/include/linux/virtio_ring.h
-> > > +++ b/include/linux/virtio_ring.h
-> > > @@ -60,6 +60,11 @@ static inline void virtio_store_mb(bool weak_barriers,
-> > >  struct virtio_device;
-> > >  struct virtqueue;
-> > >  
-> > > +union vring_union {
-> > > +	struct vring vring_split;
-> > > +	struct vring_packed vring_packed;
-> > > +};
-> > > +
-> > >  /*
-> > >   * Creates a virtqueue and allocates the descriptor ring.  If
-> > >   * may_reduce_num is set, then this may allocate a smaller ring than
-> > > @@ -79,7 +84,8 @@ struct virtqueue *vring_create_virtqueue(unsigned int index,
-> > >  
-> > >  /* Creates a virtqueue with a custom layout. */
-> > >  struct virtqueue *__vring_new_virtqueue(unsigned int index,
-> > > -					struct vring vring,
-> > > +					union vring_union vring,
-> > > +					bool packed,
-> > >  					struct virtio_device *vdev,
-> > >  					bool weak_barriers,
-> > >  					bool ctx,
-> > > -- 
-> > > 2.18.0
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
