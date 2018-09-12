@@ -6,250 +6,238 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11860C6778D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:16:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 506D5C6778D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:16:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A92E820882
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:16:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A92E820882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 086FF20880
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:16:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 086FF20880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727790AbeILVVu (ORCPT
+        id S1727838AbeILVWC convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 17:21:50 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45720 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726798AbeILVVu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 17:21:50 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0CA4B804B4DB;
-        Wed, 12 Sep 2018 16:16:35 +0000 (UTC)
-Received: from redhat.com (ovpn-121-244.rdu2.redhat.com [10.10.121.244])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A4C5B2156701;
-        Wed, 12 Sep 2018 16:16:32 +0000 (UTC)
-Date:   Wed, 12 Sep 2018 12:16:32 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Tiwei Bie <tiwei.bie@intel.com>
-Cc:     Jason Wang <jasowang@redhat.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        virtio-dev@lists.oasis-open.org, wexu@redhat.com,
-        jfreimann@redhat.com
-Subject: Re: [virtio-dev] Re: [PATCH net-next v2 0/5] virtio: support packed
- ring
-Message-ID: <20180912121457-mutt-send-email-mst@kernel.org>
-References: <20180711022711.7090-1-tiwei.bie@intel.com>
- <20180827170005-mutt-send-email-mst@kernel.org>
- <20180907012225.GA32677@debian>
- <20180907084509-mutt-send-email-mst@kernel.org>
- <20180910030053.GA15645@debian>
- <f5ef0393-cf02-0795-a51a-8783ee300037@redhat.com>
- <20180911053726.GA7472@debian>
+        Wed, 12 Sep 2018 17:22:02 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:41138 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726798AbeILVWC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 17:22:02 -0400
+Received: by mail-ed1-f65.google.com with SMTP id f38-v6so2228669edd.8;
+        Wed, 12 Sep 2018 09:16:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=V9XlV0z7NBmUUXwuqfwjBRL0dE2cartuJgYivnoX3+E=;
+        b=hGiqb/cK2nfcQqeK796DmslulUmpHqQuqNUG1MfwF1wGUKm8MeCjBA/4nQRV6+m+F1
+         FM+LKL+HMdrRKjvb7H2gBN0UP3BkZF+lm5CSthpkifv/NJJCu8zgi40Aj8u1fqy0HS+L
+         ucZSfTORyT0BrJqNyR/c2pik3MvqSP4xoA+rdL/Gp18tdfprrYIjP2DUTAHCBT2owaZp
+         sBDj/Gig7PBrlyCSDtNsh7Mjrsn5jo8WHIRFJJ5LUgKv3E0rrI8tNbuYlg8nRX1LMLpf
+         hnBuhxDfZBhJ2rlbv+SIsZQSfRvTTD3C09Dv8O0HtTsv8zZj+vmWvtZIS4ILEeoQGj1F
+         Pa9w==
+X-Gm-Message-State: APzg51CCbV5oA3FLDvZOgNWkeCWeSjkmQogIwJ4lKpyNUPuYyYrZe/M/
+        +UGCZe9uIVz6s6PXtgR7XQs3jE82tlI=
+X-Google-Smtp-Source: ANB0VdZKk/V7JyMuXy722EKRrLagprPvUQ+R9l4R61LF14sXMgduV4uLdKkJS502ThbnufGfcVgsGw==
+X-Received: by 2002:a50:98a3:: with SMTP id j32-v6mr3633181edb.6.1536769005477;
+        Wed, 12 Sep 2018 09:16:45 -0700 (PDT)
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com. [209.85.221.44])
+        by smtp.gmail.com with ESMTPSA id h24-v6sm802119edb.43.2018.09.12.09.16.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Sep 2018 09:16:44 -0700 (PDT)
+Received: by mail-wr1-f44.google.com with SMTP id z96-v6so2671209wrb.8;
+        Wed, 12 Sep 2018 09:16:43 -0700 (PDT)
+X-Received: by 2002:adf:d84a:: with SMTP id k10-v6mr1933334wrl.26.1536769003578;
+ Wed, 12 Sep 2018 09:16:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180911053726.GA7472@debian>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 12 Sep 2018 16:16:35 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 12 Sep 2018 16:16:35 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
+References: <20180902072643.4917-1-jernej.skrabec@siol.net>
+ <1677668.BePkXd9qNa@jernej-laptop> <CAGb2v66kojjjM4f_tO9NwzkCzD3LMM2eiq+PJ6Bk=1Rra=UnYg@mail.gmail.com>
+ <1702684.jtWEXlagAO@jernej-laptop>
+In-Reply-To: <1702684.jtWEXlagAO@jernej-laptop>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Thu, 13 Sep 2018 00:16:32 +0800
+X-Gmail-Original-Message-ID: <CAGb2v652fPojGYE1nkAeEzFBcWjebi1zSnPGwm7zjPbE7ojD0Q@mail.gmail.com>
+Message-ID: <CAGb2v652fPojGYE1nkAeEzFBcWjebi1zSnPGwm7zjPbE7ojD0Q@mail.gmail.com>
+Subject: Re: [linux-sunxi] Re: [PATCH 08/27] clk: sunxi-ng: Add support for H6
+ DE3 clocks
+To:     Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Icenowy Zheng <icenowy@aosc.io>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 11, 2018 at 01:37:26PM +0800, Tiwei Bie wrote:
-> On Mon, Sep 10, 2018 at 11:33:17AM +0800, Jason Wang wrote:
-> > On 2018年09月10日 11:00, Tiwei Bie wrote:
-> > > On Fri, Sep 07, 2018 at 09:00:49AM -0400, Michael S. Tsirkin wrote:
-> > > > On Fri, Sep 07, 2018 at 09:22:25AM +0800, Tiwei Bie wrote:
-> > > > > On Mon, Aug 27, 2018 at 05:00:40PM +0300, Michael S. Tsirkin wrote:
-> > > > > > Are there still plans to test the performance with vost pmd?
-> > > > > > vhost doesn't seem to show a performance gain ...
-> > > > > > 
-> > > > > I tried some performance tests with vhost PMD. In guest, the
-> > > > > XDP program will return XDP_DROP directly. And in host, testpmd
-> > > > > will do txonly fwd.
-> > > > > 
-> > > > > When burst size is 1 and packet size is 64 in testpmd and
-> > > > > testpmd needs to iterate 5 Tx queues (but only the first two
-> > > > > queues are enabled) to prepare and inject packets, I got ~12%
-> > > > > performance boost (5.7Mpps -> 6.4Mpps). And if the vhost PMD
-> > > > > is faster (e.g. just need to iterate the first two queues to
-> > > > > prepare and inject packets), then I got similar performance
-> > > > > for both rings (~9.9Mpps) (packed ring's performance can be
-> > > > > lower, because it's more complicated in driver.)
-> > > > > 
-> > > > > I think packed ring makes vhost PMD faster, but it doesn't make
-> > > > > the driver faster. In packed ring, the ring is simplified, and
-> > > > > the handling of the ring in vhost (device) is also simplified,
-> > > > > but things are not simplified in driver, e.g. although there is
-> > > > > no desc table in the virtqueue anymore, driver still needs to
-> > > > > maintain a private desc state table (which is still managed as
-> > > > > a list in this patch set) to support the out-of-order desc
-> > > > > processing in vhost (device).
-> > > > > 
-> > > > > I think this patch set is mainly to make the driver have a full
-> > > > > functional support for the packed ring, which makes it possible
-> > > > > to leverage the packed ring feature in vhost (device). But I'm
-> > > > > not sure whether there is any other better idea, I'd like to
-> > > > > hear your thoughts. Thanks!
-> > > > Just this: Jens seems to report a nice gain with virtio and
-> > > > vhost pmd across the board. Try to compare virtio and
-> > > > virtio pmd to see what does pmd do better?
-> > > The virtio PMD (drivers/net/virtio) in DPDK doesn't need to share
-> > > the virtio ring operation code with other drivers and is highly
-> > > optimized for network. E.g. in Rx, the Rx burst function won't
-> > > chain descs. So the ID management for the Rx ring can be quite
-> > > simple and straightforward, we just need to initialize these IDs
-> > > when initializing the ring and don't need to change these IDs
-> > > in data path anymore (the mergable Rx code in that patch set
-> > > assumes the descs will be written back in order, which should be
-> > > fixed. I.e., the ID in the desc should be used to index vq->descx[]).
-> > > The Tx code in that patch set also assumes the descs will be
-> > > written back by device in order, which should be fixed.
-> > 
-> > Yes it is. I think I've pointed it out in some early version of pmd patch.
-> > So I suspect part (or all) of the boost may come from in order feature.
-> > 
-> > > 
-> > > But in kernel virtio driver, the virtio_ring.c is very generic.
-> > > The enqueue (virtqueue_add()) and dequeue (virtqueue_get_buf_ctx())
-> > > functions need to support all the virtio devices and should be
-> > > able to handle all the possible cases that may happen. So although
-> > > the packed ring can be very efficient in some cases, currently
-> > > the room to optimize the performance in kernel's virtio_ring.c
-> > > isn't that much. If we want to take the fully advantage of the
-> > > packed ring's efficiency, we need some further e.g. API changes
-> > > in virtio_ring.c, which shouldn't be part of this patch set.
-> > 
-> > Could you please share more thoughts on this e.g how to improve the API?
-> > Notice since the API is shared by both split ring and packed ring, it may
-> > improve the performance of split ring as well. One can easily imagine a
-> > batching API, but it does not have many real users now, the only case is the
-> > XDP transmission which can accept an array of XDP frames.
-> 
-> I don't have detailed thoughts on this yet. But kernel's
-> virtio_ring.c is quite generic compared with what we did
-> in virtio PMD.
+On Wed, Sep 12, 2018 at 10:55 PM Jernej Škrabec <jernej.skrabec@siol.net> wrote:
+>
+> Dne sreda, 12. september 2018 ob 14:20:08 CEST je Chen-Yu Tsai napisal(a):
+> > On Wed, Sep 5, 2018 at 1:46 AM Jernej Škrabec <jernej.skrabec@siol.net>
+> wrote:
+> > > Dne torek, 04. september 2018 ob 11:04:21 CEST je Chen-Yu Tsai napisal(a):
+> > > > On Sun, Sep 2, 2018 at 3:27 PM Jernej Skrabec <jernej.skrabec@siol.net>
+> > >
+> > > wrote:
+> > > > > Support for mixer0, mixer1, writeback and rotation units is added.
+> > > > >
+> > > > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> > > > > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> > > > > ---
+> > > > >
+> > > > >  drivers/clk/sunxi-ng/ccu-sun8i-de2.c | 65
+> > > > >  ++++++++++++++++++++++++++++
+> > > > >  drivers/clk/sunxi-ng/ccu-sun8i-de2.h |  1 +
+> > > > >  2 files changed, 66 insertions(+)
+> > > > >
+> > > > > diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+> > > > > b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c index
+> > > > > bae5ee67a797..4535c1c27d27
+> > > > > 100644
+> > > > > --- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+> > > > > +++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+> > > > > @@ -31,6 +31,8 @@ static SUNXI_CCU_GATE(bus_mixer1_clk, "bus-mixer1",
+> > > > > "bus-de",>
+> > > > >
+> > > > >                       0x04, BIT(1), 0);
+> > > > >
+> > > > >  static SUNXI_CCU_GATE(bus_wb_clk,      "bus-wb",       "bus-de",
+> > > > >
+> > > > >                       0x04, BIT(2), 0);
+> > > > >
+> > > > > +static SUNXI_CCU_GATE(bus_rot_clk,     "bus-rot",      "bus-de",
+> > > > > +                     0x04, BIT(3), 0);
+> > > > >
+> > > > >  static SUNXI_CCU_GATE(mixer0_clk,      "mixer0",       "mixer0-div",
+> > > > >
+> > > > >                       0x00, BIT(0), CLK_SET_RATE_PARENT);
+> > > > >
+> > > > > @@ -38,6 +40,8 @@ static SUNXI_CCU_GATE(mixer1_clk,     "mixer1",
+> > > > > "mixer1-div",>
+> > > > >
+> > > > >                       0x00, BIT(1), CLK_SET_RATE_PARENT);
+> > > > >
+> > > > >  static SUNXI_CCU_GATE(wb_clk,          "wb",           "wb-div",
+> > > > >
+> > > > >                       0x00, BIT(2), CLK_SET_RATE_PARENT);
+> > > > >
+> > > > > +static SUNXI_CCU_GATE(rot_clk,         "rot",          "rot-div",
+> > > > > +                     0x00, BIT(3), CLK_SET_RATE_PARENT);
+> > > > >
+> > > > >  static SUNXI_CCU_M(mixer0_div_clk, "mixer0-div", "de", 0x0c, 0, 4,
+> > > > >
+> > > > >                    CLK_SET_RATE_PARENT);
+> > > > >
+> > > > > @@ -45,6 +49,8 @@ static SUNXI_CCU_M(mixer1_div_clk, "mixer1-div",
+> > > > > "de",
+> > > > > 0x0c, 4, 4,>
+> > > > >
+> > > > >                    CLK_SET_RATE_PARENT);
+> > > > >
+> > > > >  static SUNXI_CCU_M(wb_div_clk, "wb-div", "de", 0x0c, 8, 4,
+> > > > >
+> > > > >                    CLK_SET_RATE_PARENT);
+> > > > >
+> > > > > +static SUNXI_CCU_M(rot_div_clk, "rot-div", "de", 0x0c, 0x0c, 4,
+> > > > > +                  CLK_SET_RATE_PARENT);
+> > > > >
+> > > > >  static SUNXI_CCU_M(mixer0_div_a83_clk, "mixer0-div", "pll-de", 0x0c,
+> > > > >  0,
+> > > > >  4,
+> > > > >
+> > > > >                    CLK_SET_RATE_PARENT);
+> > > > >
+> > > > > @@ -53,6 +59,24 @@ static SUNXI_CCU_M(mixer1_div_a83_clk,
+> > > > > "mixer1-div",
+> > > > > "pll-de", 0x0c, 4, 4,>
+> > > > >
+> > > > >  static SUNXI_CCU_M(wb_div_a83_clk, "wb-div", "pll-de", 0x0c, 8, 4,
+> > > > >
+> > > > >                    CLK_SET_RATE_PARENT);
+> > > > >
+> > > > > +static struct ccu_common *sun50i_h6_de3_clks[] = {
+> > > > > +       &mixer0_clk.common,
+> > > > > +       &mixer1_clk.common,
+> > > > > +       &wb_clk.common,
+> > > > > +
+> > > > > +       &bus_mixer0_clk.common,
+> > > > > +       &bus_mixer1_clk.common,
+> > > > > +       &bus_wb_clk.common,
+> > > > > +
+> > > > > +       &mixer0_div_clk.common,
+> > > > > +       &mixer1_div_clk.common,
+> > > > > +       &wb_div_clk.common,
+> > > > > +
+> > > > > +       &bus_rot_clk.common,
+> > > > > +       &rot_clk.common,
+> > > > > +       &rot_div_clk.common,
+> > > > > +};
+> > > > > +
+> > > > >
+> > > > >  static struct ccu_common *sun8i_a83t_de2_clks[] = {
+> > > > >
+> > > > >         &mixer0_clk.common,
+> > > > >         &mixer1_clk.common,
+> > > > >
+> > > > > @@ -92,6 +116,26 @@ static struct ccu_common *sun8i_v3s_de2_clks[] = {
+> > > > >
+> > > > >         &wb_div_clk.common,
+> > > > >
+> > > > >  };
+> > > > >
+> > > > > +static struct clk_hw_onecell_data sun50i_h6_de3_hw_clks = {
+> > > > > +       .hws    = {
+> > > > > +               [CLK_MIXER0]            = &mixer0_clk.common.hw,
+> > > > > +               [CLK_MIXER1]            = &mixer1_clk.common.hw,
+> > > > > +               [CLK_WB]                = &wb_clk.common.hw,
+> > > > > +               [CLK_ROT]               = &rot_clk.common.hw,
+> > > > > +
+> > > > > +               [CLK_BUS_MIXER0]        = &bus_mixer0_clk.common.hw,
+> > > > > +               [CLK_BUS_MIXER1]        = &bus_mixer1_clk.common.hw,
+> > > > > +               [CLK_BUS_WB]            = &bus_wb_clk.common.hw,
+> > > > > +               [CLK_BUS_ROT]           = &bus_rot_clk.common.hw,
+> > > > > +
+> > > > > +               [CLK_MIXER0_DIV]        = &mixer0_div_clk.common.hw,
+> > > > > +               [CLK_MIXER1_DIV]        = &mixer1_div_clk.common.hw,
+> > > > > +               [CLK_WB_DIV]            = &wb_div_clk.common.hw,
+> > > > > +               [CLK_ROT_DIV]           = &rot_div_clk.common.hw,
+> > > > > +       },
+> > > > > +       .num    = 12,
+> > > >
+> > > > It's best not to openly code these. It is error prone, like having
+> > > > an index beyond .num, which then never gets registered.
+> > > >
+> > > > Instead, please update CLK_NUMBERS and use that instead.
+> > > > sunxi_ccu_probe()
+> > > > can handle holes in .hws.
+> > >
+> > > I'm not sure this will work. All newly introduced indices are at the end,
+> > > so other arrays will still have same length (hole at the end). You will
+> > > just claim that arrays are larger than they really are, which means bad
+> > > things.
+> > >
+> > > But I take any other suggestion. I really can't think of better solution.
+> >
+> > Then maybe have macros for both cases instead?
+> > CLK_NUMBER_WITH_ROT / CLK_NUMBER_WITHOUT_ROT?
+>
+> That sounds reasonable. Do you want separate patch which renames original
+> macro CLK_NUMBER to CLK_NUMBER_WITHOUT_ROT?
 
-In what way? What are some things that aren't implemented there?
+I don't think that's necessary. Just mention the name change in the changelog,
+and justifying it by the addition of the ROT clocks.
 
-If what you say is true then we should take a careful look
-and not supporting these generic things with packed layout.
-Once we do support them it will be too late and we won't
-be able to get performance back.
-
-
-
-> > 
-> > > So
-> > > I still think this patch set is mainly to make the kernel virtio
-> > > driver to have a full functional support of the packed ring, and
-> > > we can't expect impressive performance boost with it.
-> > 
-> > We can only gain when virtio ring layout is the bottleneck. If there're
-> > bottlenecks elsewhere, we probably won't see any increasing in the numbers.
-> > Vhost-net is an example, and lots of optimizations have proved that virtio
-> > ring is not the main bottleneck for the current codes. I suspect it also the
-> > case of virtio driver. Did perf tell us any interesting things in virtio
-> > driver?
-> > 
-> > Thanks
-> > 
-> > > 
-> > > > 
-> > > > > > On Wed, Jul 11, 2018 at 10:27:06AM +0800, Tiwei Bie wrote:
-> > > > > > > Hello everyone,
-> > > > > > > 
-> > > > > > > This patch set implements packed ring support in virtio driver.
-> > > > > > > 
-> > > > > > > Some functional tests have been done with Jason's
-> > > > > > > packed ring implementation in vhost:
-> > > > > > > 
-> > > > > > > https://lkml.org/lkml/2018/7/3/33
-> > > > > > > 
-> > > > > > > Both of ping and netperf worked as expected.
-> > > > > > > 
-> > > > > > > v1 -> v2:
-> > > > > > > - Use READ_ONCE() to read event off_wrap and flags together (Jason);
-> > > > > > > - Add comments related to ccw (Jason);
-> > > > > > > 
-> > > > > > > RFC (v6) -> v1:
-> > > > > > > - Avoid extra virtio_wmb() in virtqueue_enable_cb_delayed_packed()
-> > > > > > >    when event idx is off (Jason);
-> > > > > > > - Fix bufs calculation in virtqueue_enable_cb_delayed_packed() (Jason);
-> > > > > > > - Test the state of the desc at used_idx instead of last_used_idx
-> > > > > > >    in virtqueue_enable_cb_delayed_packed() (Jason);
-> > > > > > > - Save wrap counter (as part of queue state) in the return value
-> > > > > > >    of virtqueue_enable_cb_prepare_packed();
-> > > > > > > - Refine the packed ring definitions in uapi;
-> > > > > > > - Rebase on the net-next tree;
-> > > > > > > 
-> > > > > > > RFC v5 -> RFC v6:
-> > > > > > > - Avoid tracking addr/len/flags when DMA API isn't used (MST/Jason);
-> > > > > > > - Define wrap counter as bool (Jason);
-> > > > > > > - Use ALIGN() in vring_init_packed() (Jason);
-> > > > > > > - Avoid using pointer to track `next` in detach_buf_packed() (Jason);
-> > > > > > > - Add comments for barriers (Jason);
-> > > > > > > - Don't enable RING_PACKED on ccw for now (noticed by Jason);
-> > > > > > > - Refine the memory barrier in virtqueue_poll();
-> > > > > > > - Add a missing memory barrier in virtqueue_enable_cb_delayed_packed();
-> > > > > > > - Remove the hacks in virtqueue_enable_cb_prepare_packed();
-> > > > > > > 
-> > > > > > > RFC v4 -> RFC v5:
-> > > > > > > - Save DMA addr, etc in desc state (Jason);
-> > > > > > > - Track used wrap counter;
-> > > > > > > 
-> > > > > > > RFC v3 -> RFC v4:
-> > > > > > > - Make ID allocation support out-of-order (Jason);
-> > > > > > > - Various fixes for EVENT_IDX support;
-> > > > > > > 
-> > > > > > > RFC v2 -> RFC v3:
-> > > > > > > - Split into small patches (Jason);
-> > > > > > > - Add helper virtqueue_use_indirect() (Jason);
-> > > > > > > - Just set id for the last descriptor of a list (Jason);
-> > > > > > > - Calculate the prev in virtqueue_add_packed() (Jason);
-> > > > > > > - Fix/improve desc suppression code (Jason/MST);
-> > > > > > > - Refine the code layout for XXX_split/packed and wrappers (MST);
-> > > > > > > - Fix the comments and API in uapi (MST);
-> > > > > > > - Remove the BUG_ON() for indirect (Jason);
-> > > > > > > - Some other refinements and bug fixes;
-> > > > > > > 
-> > > > > > > RFC v1 -> RFC v2:
-> > > > > > > - Add indirect descriptor support - compile test only;
-> > > > > > > - Add event suppression supprt - compile test only;
-> > > > > > > - Move vring_packed_init() out of uapi (Jason, MST);
-> > > > > > > - Merge two loops into one in virtqueue_add_packed() (Jason);
-> > > > > > > - Split vring_unmap_one() for packed ring and split ring (Jason);
-> > > > > > > - Avoid using '%' operator (Jason);
-> > > > > > > - Rename free_head -> next_avail_idx (Jason);
-> > > > > > > - Add comments for virtio_wmb() in virtqueue_add_packed() (Jason);
-> > > > > > > - Some other refinements and bug fixes;
-> > > > > > > 
-> > > > > > > Thanks!
-> > > > > > > 
-> > > > > > > Tiwei Bie (5):
-> > > > > > >    virtio: add packed ring definitions
-> > > > > > >    virtio_ring: support creating packed ring
-> > > > > > >    virtio_ring: add packed ring support
-> > > > > > >    virtio_ring: add event idx support in packed ring
-> > > > > > >    virtio_ring: enable packed ring
-> > > > > > > 
-> > > > > > >   drivers/s390/virtio/virtio_ccw.c   |   14 +
-> > > > > > >   drivers/virtio/virtio_ring.c       | 1365 ++++++++++++++++++++++------
-> > > > > > >   include/linux/virtio_ring.h        |    8 +-
-> > > > > > >   include/uapi/linux/virtio_config.h |    3 +
-> > > > > > >   include/uapi/linux/virtio_ring.h   |   43 +
-> > > > > > >   5 files changed, 1157 insertions(+), 276 deletions(-)
-> > > > > > > 
-> > > > > > > -- 
-> > > > > > > 2.18.0
-> > > > > > ---------------------------------------------------------------------
-> > > > > > To unsubscribe, e-mail: virtio-dev-unsubscribe@lists.oasis-open.org
-> > > > > > For additional commands, e-mail: virtio-dev-help@lists.oasis-open.org
-> > > > > > 
-> > 
+Thanks
