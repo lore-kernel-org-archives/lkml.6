@@ -2,176 +2,284 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32B93C070C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 22:54:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6146FC070C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 22:55:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA91721471
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 22:54:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vVL1/S+3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA91721471
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 0AEB02147A
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 22:55:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AEB02147A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726478AbeIMEA4 (ORCPT
+        id S1726697AbeIMECQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 00:00:56 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:33633 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725751AbeIMEAz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 00:00:55 -0400
-Received: by mail-pf1-f193.google.com with SMTP id d4-v6so1729815pfn.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 15:54:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YIIxVhLA7530dA++L425P9dZD7WsRg0fvSPFQmWAdUQ=;
-        b=vVL1/S+3AmNqk0C4cX0U0Alh0MgaQYOwwiZCsXRlSuI+hUmbZ0cNDgYjgozdWlUhNC
-         Rrl845xDvBwXvEd3ViWdI180Yp1eQu6kgpzPq+bcR6P7tBm+a8TZnyjKKzfgQMAyvlWu
-         8yerNH0JDKaUEYfwsEGcFtxSJBOquAkA6QWfklRepcfd1HdMfjLsWgC6gO/Sxv571vad
-         fqvLLRT6tt4SwhrKh8cU0Sc1MHMOqZPVomYIxnEdxTCeDesQDJVRWAhOXTcgZddysn0L
-         V3m/jsE6uWcGaNWUHxB3LvXzKyDEF60T3tm37TJ21CinhDgH7NybpKyPQq4okv/4aWZj
-         CKgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YIIxVhLA7530dA++L425P9dZD7WsRg0fvSPFQmWAdUQ=;
-        b=SQCC+z49HIt6purPknL3mT2pyXnM2dQ/Vsw0/8dXffL9w8hFszTwVmiurm0/xMs59+
-         9198/gP95mEYGrmY5PxYzaNSvyftITQYus430pj9JyEYaQka/mRWf3v/EaHz7BcaDrWu
-         8A7pfnGY+BGYO1eXlY28Gi73ao2FaVZTW5mVPEXKREQ9L/QyUtKxM/hsfgdcHkzTvnMo
-         QshJuadMq3jkCHaUNdVjYdCC7Yq651z/Q7InlOh64UxaMrezrTD1dFynX7TyQR2MwoOO
-         LcoRhZcCloTvI27hxtzYlcad21ICo75RqmzqPihl0EVsxXqD3JCtXUDd23qOICu2/R2S
-         guTQ==
-X-Gm-Message-State: APzg51CcXfgJ/3y8SISbNq02t9eigt88Kl48T0K2VbpdxYJ+D0gTO+FE
-        tVed7Ugn9leUEgyv0scJrF32jTECMEgO9H/9ezewbg==
-X-Google-Smtp-Source: ANB0VdbYfCfr9AXwYVxX8bSK3ZM/3u8Vq1GT2kuLmvDbR92QDsAEUzEk8nbGaVvshxaVP601IGoecryWuXaNksQctiQ=
-X-Received: by 2002:a63:8543:: with SMTP id u64-v6mr4542139pgd.248.1536792856192;
- Wed, 12 Sep 2018 15:54:16 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180911225630.124502-1-venture@google.com> <585d1c3a-6121-c20d-f6d6-7567595cd1af@acm.org>
-In-Reply-To: <585d1c3a-6121-c20d-f6d6-7567595cd1af@acm.org>
-From:   Patrick Venture <venture@google.com>
-Date:   Wed, 12 Sep 2018 15:54:04 -0700
-Message-ID: <CAO=notzHoqsjuSdEZby0mr3KgtoxtYjdr_X0nM_2zBu0NcOOAA@mail.gmail.com>
-Subject: Re: [PATCH v2] ipmi: looped device detection
-To:     Corey Minyard <minyard@acm.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        openipmi-developer@lists.sourceforge.net,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 13 Sep 2018 00:02:16 -0400
+Received: from mga18.intel.com ([134.134.136.126]:63287 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725751AbeIMECQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 00:02:16 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Sep 2018 15:55:36 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,366,1531810800"; 
+   d="scan'208";a="69545856"
+Received: from rpedgeco-desk5.jf.intel.com ([10.54.75.168])
+  by fmsmga007.fm.intel.com with ESMTP; 12 Sep 2018 15:55:22 -0700
+From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
+To:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        kernel-hardening@lists.openwall.com, daniel@iogearbox.net,
+        jannh@google.com, keescook@chromium.org,
+        alexei.starovoitov@gmail.com
+Cc:     kristen@linux.intel.com, dave.hansen@intel.com,
+        arjan@linux.intel.com, Rick Edgecombe <rick.p.edgecombe@intel.com>
+Subject: [PATCH v5 1/4] vmalloc: Add __vmalloc_node_try_addr function
+Date:   Wed, 12 Sep 2018 15:55:37 -0700
+Message-Id: <1536792940-8294-2-git-send-email-rick.p.edgecombe@intel.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1536792940-8294-1-git-send-email-rick.p.edgecombe@intel.com>
+References: <1536792940-8294-1-git-send-email-rick.p.edgecombe@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 3:10 PM Corey Minyard <minyard@acm.org> wrote:
->
-> On 09/11/2018 05:56 PM, Patrick Venture wrote:
-> > Try to get the device ID repeatedly during initialization before giving up.
-> > The BMC isn't always responsive, and this allows it to be slightly flaky
-> > during early boot.
-> >
-> > Tested: Installed on a system with the BMC software disabled
-> > such that it was non-responsive.  The driver correctly detected this
-> > and gave up as expected.  Then I re-enabled the BMC software unloaded
-> > and reloaded the driver and it was detected properly.
->
-> The patch looks fine, but I wonder if this is something that is really
-> valuable.
-> I have wondered about this before.
->
-> The question is: If the BMC is unavailable, what are the chances of it
-> becoming
-> available by the time you do 5 attempts?  I would guess that is a pretty
-> small
-> chance, which is why I haven't done this already.
+Create __vmalloc_node_try_addr function that tries to allocate at a specific
+address and supports caller specified behavior for whether any lazy purging
+happens if there is a collision.
 
-This patch was actually critical for us to provide a reliable IPMI
-interface.  The version of OpenBMC or the state of the BMC at the
-point the kernel was loading was flaky, so following the example in
-the BIOS source, we just re-try a few times.  We also can hold boot X
-seconds until it's responding, but, this avoided some issues inherent
-with that.
+This new function draws from the __vmalloc_node_range implementation. Attempts
+to merge the two into a single allocator resulted in logic that was difficult
+to follow, so they are left separate.
 
->
-> You could have something that re-tested periodically, but there are so many
-> systems with IPMI specified in ACPI or SMBIOS that is wrong, and it would
-> try forever.  Also not really a good thing.
+Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+---
+ include/linux/vmalloc.h |   3 +
+ mm/vmalloc.c            | 177 +++++++++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 179 insertions(+), 1 deletion(-)
 
-If we did a periodic check, it could check X times, but I felt going
-for a simple solution was ideal -- and this idea was proved out on a
-few platforms.  We have other drivers that are loaded by the kernel
-(not at run-time) and they depend on IPMI, and without this patch they
-would then have a non-trivial probability of failure.
+diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
+index 398e9c9..c7712c8 100644
+--- a/include/linux/vmalloc.h
++++ b/include/linux/vmalloc.h
+@@ -82,6 +82,9 @@ extern void *__vmalloc_node_range(unsigned long size, unsigned long align,
+ 			unsigned long start, unsigned long end, gfp_t gfp_mask,
+ 			pgprot_t prot, unsigned long vm_flags, int node,
+ 			const void *caller);
++extern void *__vmalloc_node_try_addr(unsigned long addr, unsigned long size,
++			gfp_t gfp_mask,	pgprot_t prot, unsigned long vm_flags,
++			int node, int try_purge, const void *caller);
+ #ifndef CONFIG_MMU
+ extern void *__vmalloc_node_flags(unsigned long size, int node, gfp_t flags);
+ static inline void *__vmalloc_node_flags_caller(unsigned long size, int node,
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index a728fc4..1954458 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -1709,6 +1709,181 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+ 	return NULL;
+ }
+ 
++static bool pvm_find_next_prev(unsigned long end,
++			       struct vmap_area **pnext,
++			       struct vmap_area **pprev);
++
++/* Try to allocate a region of KVA of the specified address and size. */
++static struct vmap_area *try_alloc_vmap_area(unsigned long addr,
++				unsigned long size, int node, gfp_t gfp_mask,
++				int try_purge)
++{
++	struct vmap_area *va;
++	struct vmap_area *cur_va = NULL;
++	struct vmap_area *first_before = NULL;
++	int need_purge = 0;
++	int blocked = 0;
++	int purged = 0;
++	unsigned long addr_end;
++
++	WARN_ON(!size);
++	WARN_ON(offset_in_page(size));
++
++	addr_end = addr + size;
++	if (addr > addr_end)
++		return ERR_PTR(-EOVERFLOW);
++
++	might_sleep();
++
++	va = kmalloc_node(sizeof(struct vmap_area),
++			gfp_mask & GFP_RECLAIM_MASK, node);
++	if (unlikely(!va))
++		return ERR_PTR(-ENOMEM);
++
++	/*
++	 * Only scan the relevant parts containing pointers to other objects
++	 * to avoid false negatives.
++	 */
++	kmemleak_scan_area(&va->rb_node, SIZE_MAX, gfp_mask & GFP_RECLAIM_MASK);
++
++retry:
++	spin_lock(&vmap_area_lock);
++
++	pvm_find_next_prev(addr, &cur_va, &first_before);
++
++	if (!cur_va)
++		goto found;
++
++	/*
++	 * If there is no VA that starts before the target address, start the
++	 * check from the closest VA in order to cover the case where the
++	 * allocation overlaps at the end.
++	 */
++	if (first_before && addr < first_before->va_end)
++		cur_va = first_before;
++
++	/* Linearly search through to make sure there is a hole */
++	while (cur_va->va_start < addr_end) {
++		if (cur_va->va_end > addr) {
++			if (cur_va->flags & VM_LAZY_FREE) {
++				need_purge = 1;
++			} else {
++				blocked = 1;
++				break;
++			}
++		}
++
++		if (list_is_last(&cur_va->list, &vmap_area_list))
++			break;
++
++		cur_va = list_next_entry(cur_va, list);
++	}
++
++	/*
++	 * If a non-lazy free va blocks the allocation, or
++	 * we are not supposed to purge, but we need to, the
++	 * allocation fails.
++	 */
++	if (blocked || (need_purge && !try_purge))
++		goto fail;
++
++	if (try_purge && need_purge) {
++		/* if purged once before, give up */
++		if (purged)
++			goto fail;
++
++		/*
++		 * If the va blocking the allocation is set to
++		 * be purged then purge all vmap_areas that are
++		 * set to purged since this will flush the TLBs
++		 * anyway.
++		 */
++		spin_unlock(&vmap_area_lock);
++		purge_vmap_area_lazy();
++		need_purge = 0;
++		purged = 1;
++		goto retry;
++	}
++
++found:
++	va->va_start = addr;
++	va->va_end = addr_end;
++	va->flags = 0;
++	__insert_vmap_area(va);
++	spin_unlock(&vmap_area_lock);
++
++	return va;
++fail:
++	spin_unlock(&vmap_area_lock);
++	kfree(va);
++	if (need_purge && !blocked)
++		return ERR_PTR(-EUCLEAN);
++	return ERR_PTR(-EBUSY);
++}
++
++/**
++ *	__vmalloc_try_addr  -  try to alloc at a specific address
++ *	@addr:		address to try
++ *	@size:		size to try
++ *	@gfp_mask:	flags for the page level allocator
++ *	@prot:		protection mask for the allocated pages
++ *	@vm_flags:	additional vm area flags (e.g. %VM_NO_GUARD)
++ *	@node:		node to use for allocation or NUMA_NO_NODE
++ *	@try_purge:	try to purge if needed to fulfill and allocation
++ *	@caller:	caller's return address
++ *
++ *	Try to allocate at the specific address. If it succeeds the address is
++ *	returned. If it fails an EBUSY ERR_PTR is returned. If try_purge is
++ *	zero, it will return an EUCLEAN ERR_PTR if it could have allocated if it
++ *	was allowed to purge. It may trigger TLB flushes if a purge is needed,
++ *	and try_purge is set.
++ */
++void *__vmalloc_node_try_addr(unsigned long addr, unsigned long size,
++			gfp_t gfp_mask,	pgprot_t prot, unsigned long vm_flags,
++			int node, int try_purge, const void *caller)
++{
++	struct vmap_area *va;
++	struct vm_struct *area;
++	void *alloc_addr;
++	unsigned long real_size = size;
++
++	size = PAGE_ALIGN(size);
++	if (!size || (size >> PAGE_SHIFT) > totalram_pages)
++		return NULL;
++
++	WARN_ON(in_interrupt());
++
++	if (!(vm_flags & VM_NO_GUARD))
++		size += PAGE_SIZE;
++
++	va = try_alloc_vmap_area(addr, size, node, gfp_mask, try_purge);
++	if (IS_ERR(va))
++		goto fail;
++
++	area = kzalloc_node(sizeof(*area), gfp_mask & GFP_RECLAIM_MASK, node);
++	if (unlikely(!area)) {
++		warn_alloc(gfp_mask, NULL, "kmalloc: allocation failure");
++		return ERR_PTR(-ENOMEM);
++	}
++
++	setup_vmalloc_vm(area, va, vm_flags, caller);
++
++	alloc_addr = __vmalloc_area_node(area, gfp_mask, prot, node);
++	if (!alloc_addr) {
++		warn_alloc(gfp_mask, NULL,
++			"vmalloc: allocation failure: %lu bytes", real_size);
++		return ERR_PTR(-ENOMEM);
++	}
++
++	clear_vm_uninitialized_flag(area);
++
++	kmemleak_vmalloc(area, real_size, gfp_mask);
++
++	return alloc_addr;
++fail:
++	return va;
++}
++
+ /**
+  *	__vmalloc_node_range  -  allocate virtually contiguous memory
+  *	@size:		allocation size
+@@ -2355,7 +2530,6 @@ void free_vm_area(struct vm_struct *area)
+ }
+ EXPORT_SYMBOL_GPL(free_vm_area);
+ 
+-#ifdef CONFIG_SMP
+ static struct vmap_area *node_to_va(struct rb_node *n)
+ {
+ 	return rb_entry_safe(n, struct vmap_area, rb_node);
+@@ -2403,6 +2577,7 @@ static bool pvm_find_next_prev(unsigned long end,
+ 	return true;
+ }
+ 
++#ifdef CONFIG_SMP
+ /**
+  * pvm_determine_end - find the highest aligned address between two vmap_areas
+  * @pnext: in/out arg for the next vmap_area
+-- 
+2.7.4
 
->
-> So I've left it to reload the driver or use the hotmod interface.
->
-> -corey
->
-> > Signed-off-by: Patrick Venture <venture@google.com>
-> > ---
-> > v2:
-> >   - removed extra variable that was set but not used.
-> > ---
-> >   drivers/char/ipmi/ipmi_si_intf.c | 23 ++++++++++++++++++++++-
-> >   1 file changed, 22 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/char/ipmi/ipmi_si_intf.c b/drivers/char/ipmi/ipmi_si_intf.c
-> > index 90ec010bffbd..5fed96897fe8 100644
-> > --- a/drivers/char/ipmi/ipmi_si_intf.c
-> > +++ b/drivers/char/ipmi/ipmi_si_intf.c
-> > @@ -1918,11 +1918,13 @@ int ipmi_si_add_smi(struct si_sm_io *io)
-> >    * held, primarily to keep smi_num consistent, we only one to do these
-> >    * one at a time.
-> >    */
-> > +#define GET_DEVICE_ID_ATTEMPTS       5
-> >   static int try_smi_init(struct smi_info *new_smi)
-> >   {
-> >       int rv = 0;
-> >       int i;
-> >       char *init_name = NULL;
-> > +     unsigned long sleep_rm;
-> >
-> >       pr_info(PFX "Trying %s-specified %s state machine at %s address 0x%lx, slave address 0x%x, irq %d\n",
-> >               ipmi_addr_src_to_str(new_smi->io.addr_source),
-> > @@ -2003,7 +2005,26 @@ static int try_smi_init(struct smi_info *new_smi)
-> >        * Attempt a get device id command.  If it fails, we probably
-> >        * don't have a BMC here.
-> >        */
-> > -     rv = try_get_dev_id(new_smi);
-> > +     for (i = 0; i < GET_DEVICE_ID_ATTEMPTS; i++) {
-> > +             pr_info(PFX "Attempting to read BMC device ID\n");
-> > +             rv = try_get_dev_id(new_smi);
-> > +             /* If it succeeded, stop trying */
-> > +             if (!rv)
-> > +                     break;
-> > +
-> > +             /* Sleep for ~0.25s before trying again instead of hammering
-> > +              * the BMC.
-> > +              */
-> > +             sleep_rm = msleep_interruptible(250);
-> > +             if (sleep_rm != 0) {
-> > +                     pr_info(PFX "Find BMC interrupted\n");
-> > +                     rv = -EINTR;
-> > +                     goto out_err;
-> > +             }
-> > +     }
-> > +
-> > +     /* If we exited the loop above and rv is non-zero we ran out of tries.
-> > +      */
-> >       if (rv) {
-> >               if (new_smi->io.addr_source)
-> >                       dev_err(new_smi->io.dev,
->
->
