@@ -2,134 +2,161 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C52AC4167B
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 18:37:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A8FAC4167B
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 18:38:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E1A620882
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 18:37:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E1A620882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id B167220882
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 18:38:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="la2zsDsC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B167220882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728149AbeILXn2 (ORCPT
+        id S1728103AbeILXog (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 19:43:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43886 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727651AbeILXn2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 19:43:28 -0400
-Received: from vmware.local.home (unknown [208.91.3.26])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D82020880;
-        Wed, 12 Sep 2018 18:37:41 +0000 (UTC)
-Date:   Wed, 12 Sep 2018 14:37:38 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Paulo Zanoni <paulo.r.zanoni@intel.com>
-Cc:     linux-kbuild@vger.kernel.org, Vasily Gorbik <gor@linux.ibm.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Ingo Molnar <mingo@redhat.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] tracing/Makefile: fix handling redefinition of
- CC_FLAGS_FTRACE
-Message-ID: <20180912143738.0d6264ce@vmware.local.home>
-In-Reply-To: <20180910175956.22679-1-paulo.r.zanoni@intel.com>
-References: <your-ad-here.call-01536239243-ext-9397@work.hours>
-        <20180910175956.22679-1-paulo.r.zanoni@intel.com>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 12 Sep 2018 19:44:36 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:33946 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727651AbeILXof (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 19:44:35 -0400
+Received: by mail-wm0-f66.google.com with SMTP id j25-v6so11250772wmc.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 11:38:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=42SJ0AhrwIclAOHsJeX1eIUPQkgkAoFcq2kMbakplNc=;
+        b=la2zsDsCoRHnCNwsub3DYhszvqrcF4uE9wh9AGV9K5xRe7dd/2m/ZZ7IQozdj+rglb
+         NJegZZjPsuCIj0rnQFmZPN21mVk+L8r0UMep+DN/KV/xhJqh4EpYWN4QkOzDuGIFvQtx
+         xz00MVoyTdbf046NsUvRl6TAVPVD1xOQWqIQJrd6xdrUV8LPCLN8UHFsZIMztc82drj4
+         2fktuAp3m0cL37grw6CWlGuKUyJ00PM6/HmbFUdu1Pg61ti+UpuIADLeHzeAHmLD9nrV
+         qb/Zm5ixM75RxR/a9p60RUZwG0P4FpfCE35segmqEjFAUEwTECZxuwqGcoxoAoP82ENZ
+         ttHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=42SJ0AhrwIclAOHsJeX1eIUPQkgkAoFcq2kMbakplNc=;
+        b=bSJhTvDej3e9/Mq66GJA2x1DiGxjA4liJoDpchqqa6Qcrhaz90s6Jvi8NQdSLn+N+I
+         nJnOxkPFloFOiHoQzSb/g0NTmJkV3WqY6s7QcohCFyA/8HSSU6yfHCbCNo1ucmAaFuFT
+         sVxUXx60LUDY+CZNYjjgQFCnId8F8tz0S47FGM4MIEiT2qncH8nf99PnYfU5wsBBn2+U
+         5zDbH+pUSZqBr+4k8HGvdIxkZmFhg3CEG2Ms9Hrfl0fYTpTgIBYhKzUWbiMEJStOKpsm
+         2I2qU199OOVHgoAWqVbEa8K7C8tyXWJ7IRNtJYhfuWl0aOWQcxudJjRC8a+pMFu6NkcR
+         xcAg==
+X-Gm-Message-State: APzg51DldRvZReDRP9yqvKusmWVNWrjDTXUZohLcxifjAmXs2MFR5T31
+        yrqmDIAseNYXPQoNzUpp48o=
+X-Google-Smtp-Source: ANB0VdbGFAqRvq8l1Yz2ivyN6OH2KrlvmDqqfFR6X4D4MT9aFvabOvVNvu5v+FVflQhg84yQ5d505A==
+X-Received: by 2002:a1c:a614:: with SMTP id p20-v6mr2652873wme.68.1536777526422;
+        Wed, 12 Sep 2018 11:38:46 -0700 (PDT)
+Received: from flashbox ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id x16-v6sm1405856wro.84.2018.09.12.11.38.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Sep 2018 11:38:45 -0700 (PDT)
+Date:   Wed, 12 Sep 2018 11:38:43 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     alexander.deucher@amd.com, christian.koenig@amd.com,
+        David1.Zhou@amd.com, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Richard Smith <richardsmith@google.com>
+Subject: Re: [PATCH] drm/amdgpu: Add braces to initialize task_info subojects
+Message-ID: <20180912183843.GB30421@flashbox>
+References: <20180912002559.1853-1-natechancellor@gmail.com>
+ <CAKwvOdkMg_1JxVNhKrUM0CZxF6nQo8c5h7t4zu4RP2xEXyQdKQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKwvOdkMg_1JxVNhKrUM0CZxF6nQo8c5h7t4zu4RP2xEXyQdKQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 10 Sep 2018 10:59:56 -0700
-Paulo Zanoni <paulo.r.zanoni@intel.com> wrote:
+On Wed, Sep 12, 2018 at 10:38:30AM -0700, Nick Desaulniers wrote:
+> On Tue, Sep 11, 2018 at 5:26 PM Nathan Chancellor
+> <natechancellor@gmail.com> wrote:
+> >
+> > Clang warns if there are missing braces around a subobject
+> > initializer.
+> >
+> > drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c:1447:41: warning: suggest braces
+> > around initialization of subobject [-Wmissing-braces]
+> >                 struct amdgpu_task_info task_info = { 0 };
+> >                                                       ^
+> >                                                       {}
+> > 1 warning generated.
+> >
+> > drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c:262:41: warning: suggest braces
+> > around initialization of subobject [-Wmissing-braces]
+> >                 struct amdgpu_task_info task_info = { 0 };
+> >                                                       ^
+> >                                                       {}
+> > 1 warning generated.
+> >
+> > Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> > ---
+> >  drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c | 2 +-
+> >  drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c | 2 +-
+> >  2 files changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c b/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
+> > index 9333109b210d..968cc1b8cdff 100644
+> > --- a/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
+> > +++ b/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
+> > @@ -1444,7 +1444,7 @@ static int gmc_v8_0_process_interrupt(struct amdgpu_device *adev,
+> >                 gmc_v8_0_set_fault_enable_default(adev, false);
+> >
+> >         if (printk_ratelimit()) {
+> > -               struct amdgpu_task_info task_info = { 0 };
+> > +               struct amdgpu_task_info task_info = { { 0 } };
+> 
+> Hi Nathan,
+> Thanks for this patch.  I discussed this syntax with our language
+> lawyers.  Turns out, this is not quite correct, as you're now saying
+> "initialize the first subobject to zero, but not the rest of the
+> object."  -Wmissing-field-initializers would highlight this, but it's
+> not part of -Wall.  It would be more correct to zero initialize the
+> full struct, including all of its subobjects with `= {};`.
+> 
 
-> As a Kernel developer, I make heavy use of "make targz-pkg" in order
-> to locally compile and remotely install my development Kernels. The
-> nice feature I rely on is that after a normal "make", "make targz-pkg"
-> only generates the tarball without having to recompile everything.
-> 
-> That was true until commit f28bc3c32c05 ("tracing: Handle
-> CC_FLAGS_FTRACE more accurately"). After it, running "make targz-pkg"
-> after "make" will recompile the whole Kernel tree, making my
-> development workflow much slower.
-> 
-> The Kernel is choosing to recompile everything because it claims the
-> command line has changed. A diff of the .cmd files show a repeated
-> -mfentry in one of the files. That is because "make targz-pkg" calls
-> "make modules_install" and the environment is already populated with
-> the exported variables, CC_FLAGS_FTRACE being one of them. Then,
-> -mfentry gets duplicated because it is not protected behind an ifndef
-> block, like -pg.
-> 
-> To complicate the problem a little bit more, architectures can define
-> their own version CC_FLAGS_FTRACE, so our code not only has to
-> consider recursive Makefiles, but also architecture overrides.
-> 
-> So in this patch we move CC_FLAGFS_FTRACE up and unconditionally
-> define it to -pg. Then we let the architecture Makefiles possibly
-> override it, and finally append the extra options later. This ensures
-> the variable is always fully redefined at each invocation so recursive
-> Makefiles don't keep appending, and hopefully it maintains the
-> intended behavior on how architectures can override the defaults..
-> 
-> Thanks Steven Rostedt and Vasily Gorbik for the help on this
-> regression.
-> 
+Good point, I was debating on which one was correct. There are several
+places in this driver that use the multiple brace + 0 idiom, which is
+why I used this form. I will spin up a v2 with your suggestion, thank
+you for the review!
 
-I'll pull in this patch, but it's always a good idea to also Cc LKML
-(which I added to this email).
+Nathan
 
-I also updated the change log and added Vasily's acked-by.
-
--- Steve
-
-> Fixes: commit f28bc3c32c05 ("tracing: Handle CC_FLAGS_FTRACE more
->  accurately")
-> Cc: Vasily Gorbik <gor@linux.ibm.com>
-> Cc: Michal Marek <michal.lkml@markovi.net>
-> Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
-> Cc: linux-kbuild@vger.kernel.org
-> Signed-off-by: Paulo Zanoni <paulo.r.zanoni@intel.com>
-> ---
->  Makefile | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
+> >
+> >                 amdgpu_vm_get_task_info(adev, entry->pasid, &task_info);
+> >
+> > diff --git a/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c
+> > index 72f8018fa2a8..a781a5027212 100644
+> > --- a/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c
+> > +++ b/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c
+> > @@ -259,7 +259,7 @@ static int gmc_v9_0_process_interrupt(struct amdgpu_device *adev,
+> >         }
+> >
+> >         if (printk_ratelimit()) {
+> > -               struct amdgpu_task_info task_info = { 0 };
+> > +               struct amdgpu_task_info task_info = { { 0 } };
+> >
+> >                 amdgpu_vm_get_task_info(adev, entry->pasid, &task_info);
+> >
+> > --
+> > 2.18.0
+> >
 > 
-> diff --git a/Makefile b/Makefile
-> index 4d5c883a98e5..a5ef6818157a 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -616,6 +616,11 @@ CFLAGS_GCOV	:= -fprofile-arcs -ftest-coverage \
->  	$(call cc-disable-warning,maybe-uninitialized,)
->  export CFLAGS_GCOV
->  
-> +# The arch Makefiles can override CC_FLAGS_FTRACE. We may also append it later.
-> +ifdef CONFIG_FUNCTION_TRACER
-> +  CC_FLAGS_FTRACE := -pg
-> +endif
-> +
->  # The arch Makefile can set ARCH_{CPP,A,C}FLAGS to override the default
->  # values of the respective KBUILD_* variables
->  ARCH_CPPFLAGS :=
-> @@ -755,9 +760,6 @@ KBUILD_CFLAGS 	+= $(call cc-option, -femit-struct-debug-baseonly) \
->  endif
->  
->  ifdef CONFIG_FUNCTION_TRACER
-> -ifndef CC_FLAGS_FTRACE
-> -CC_FLAGS_FTRACE := -pg
-> -endif
->  ifdef CONFIG_FTRACE_MCOUNT_RECORD
->    # gcc 5 supports generating the mcount tables directly
->    ifeq ($(call cc-option-yn,-mrecord-mcount),y)
-
+> 
+> -- 
+> Thanks,
+> ~Nick Desaulniers
