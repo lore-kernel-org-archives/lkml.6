@@ -2,100 +2,151 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03D5EC6778D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:56:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 264C0C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:56:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A364020833
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:56:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF12620833
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:56:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aXSu+hXd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A364020833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MY+67Xgo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF12620833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727786AbeILVBJ (ORCPT
+        id S1727809AbeILVBc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 17:01:09 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:53604 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726673AbeILVBI (ORCPT
+        Wed, 12 Sep 2018 17:01:32 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37465 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726673AbeILVBc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 17:01:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=PxfS/9f6yTpE9ZgTQ8/cv2PwqzOJ4nIbA2ojseAd9Ko=; b=aXSu+hXd0Wz0PgWFph0vSpPFP
-        lEspZmIVHEns4m5xBN5j3mzVBIpq7Ux0FOqt9ZYyKnheX2Ikdqme+nzdilNqksIvMN5bQlhX2avqn
-        30q4wuR6ZmaqPJ7eQengDnum7CX1TJJ8X4qZM7D4Bdczmmz1nxtqHdJuqtDPWwertNsEg3D2+GChA
-        Xxi7IEGEEGjB4K8RxDKfdVICGxQriAHNKm15GDKmVKsjeF8n2PC3H5ipNocpYCHoQB5VJuDtrnc4Z
-        sidkE4o4dhB01SC3ehaDWKa/RG4txaEZDHB+Fstn2ccBsy7le0dlH0d/0Z5h5noyoDWtSspnsFGvK
-        R0ih9M/KQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g07Uj-0000uy-Pv; Wed, 12 Sep 2018 15:55:57 +0000
-Date:   Wed, 12 Sep 2018 08:55:57 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-doc@vger.kernel.org, "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Larry Woodman <lwoodman@redhat.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Wangkai (Kevin C)" <wangkai86@huawei.com>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [PATCH v3 4/4] fs/dcache: Eliminate branches in
- nr_dentry_negative accounting
-Message-ID: <20180912155557.GA18304@bombadil.infradead.org>
-References: <1536693506-11949-1-git-send-email-longman@redhat.com>
- <1536693506-11949-5-git-send-email-longman@redhat.com>
- <20180912023610.GB20056@bombadil.infradead.org>
- <bf7592c3-dc1d-635e-8bb0-717f6e8a54d9@redhat.com>
+        Wed, 12 Sep 2018 17:01:32 -0400
+Received: by mail-wr1-f67.google.com with SMTP id u12-v6so2604615wrr.4
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 08:56:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=Ty0hsPtlDxkVSvhrAb3oFo5WMkAGEZViSsriu4+ocSg=;
+        b=MY+67XgoBOeHRFvdBk9/9zmsIOq7kNvzQZSuszRrWqor4y3wAs26igs6QLQFDlI2iD
+         CVQM2E9ijyuN4d0pkvDiDGAA/eCEQGjwjDcrSC4zIHxpXvcFZ1o4kPPray9ORYYzLK3A
+         FUbZDRAQoQ5FbARr1QOR9wSg+1VLntldQsyNWJ3WKb5Qnr5kLz2cVfqtINM+28UBcTN1
+         8WywZ/P8aLukanx/h8891AOnaq2WE00+I3Gonnh9mus1XLxOTpjQhtnpqis03ClYVP5k
+         ks4LN1pXhGb71XoIXDgbOtGUnfevvnOfP4shnQ10mPDDsV1IbTChGW/tzAktnT0caQCt
+         0JKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=Ty0hsPtlDxkVSvhrAb3oFo5WMkAGEZViSsriu4+ocSg=;
+        b=PLb3+Ra2LQNawxRoQyd+XgtdJ8pXCrdvHeLLpHCXF0J77L3fY24lFlcoxETELG3wHR
+         Vh8NMFmekTuW0Q3X5t/Gu0RTAqrjbEiraGPm8RBFIdNPnWLON+qOs2WyYD3ElGleHDsk
+         b8SMy0U4WAcf12d8CsyU+LUdr+aH9EktEpqGKfL3VM86gBTggkSrBSJkwkGC+BM4QI2m
+         Ee9Iy1CbOYXDaEcHfiqF3c/FP0Y03DBNv+IVN7iYLXUvMDkPJqlOeodbfoFLV76NRNF8
+         VJMIEsKIBddDPDKFVq07iZTC2mEdIiLT+JEHfPsN8eBy0Bski8xey1VC/wUR4VrLQMXN
+         r1/g==
+X-Gm-Message-State: APzg51AaJ/KQtMFVCMtphktuGP2hS0yHmvqObThlg+1FXHna7/+x2jdP
+        PSsB4Shy7T9ydgE2iUPzi+/p/ocz0y/ngVrHQa+HNP9y
+X-Google-Smtp-Source: ANB0VdafG4JUauk9x3zczBHJ/gENPJ6jjG2fNXstnekFqMM7wy5e4XGd6qnt5bi+qPon3W5s3/3KmmRYGYHEGZAZ2vE=
+X-Received: by 2002:adf:f24e:: with SMTP id b14-v6mr1887415wrp.184.1536767782859;
+ Wed, 12 Sep 2018 08:56:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bf7592c3-dc1d-635e-8bb0-717f6e8a54d9@redhat.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Received: by 2002:adf:c710:0:0:0:0:0 with HTTP; Wed, 12 Sep 2018 08:56:22
+ -0700 (PDT)
+In-Reply-To: <20180912125133.GE1413@e110439-lin>
+References: <20180828135324.21976-1-patrick.bellasi@arm.com>
+ <20180828135324.21976-9-patrick.bellasi@arm.com> <CAJuCfpHaqNzgpbPCAUxsv+E4HL6vSDKem+sFh2njK1e9dX5ONA@mail.gmail.com>
+ <20180912125133.GE1413@e110439-lin>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Wed, 12 Sep 2018 08:56:22 -0700
+Message-ID: <CAJuCfpEVEohpfYCaca_NXkfe+5fhrzLE+mux2ffQD0SMG24mCQ@mail.gmail.com>
+Subject: Re: [PATCH v4 08/16] sched/core: uclamp: propagate parent clamps
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 11:49:22AM -0400, Waiman Long wrote:
-> > unless our macrology has got too clever for the compilre to see through
-> > it.  In which case, the right answer is to simplify the percpu code,
-> > not to force the compiler to optimise the code in the way that makes
-> > sense for your current microarchitecture.
-> >
-> I had actually looked at the x86 object file generated to verify that it
-> did use cmove with the patch and use branch without. It is possible that
-> there are other twists to make that happen with the above expression. I
-> will need to run some experiments to figure it out. In the mean time, I
-> am fine with dropping this patch as it is a micro-optimization that
-> doesn't change the behavior at all.
+On Wed, Sep 12, 2018 at 5:51 AM, Patrick Bellasi
+<patrick.bellasi@arm.com> wrote:
+> On 08-Sep 20:02, Suren Baghdasaryan wrote:
+>> On Tue, Aug 28, 2018 at 6:53 AM, Patrick Bellasi
+>> <patrick.bellasi@arm.com> wrote:
+>
+> [...]
+>
+>> > +  cpu.util.min.effective
+>> > +        A read-only single value file which exists on non-root cgroups and
+>> > +        reports minimum utilization clamp value currently enforced on a task
+>> > +        group.
+>> > +
+>> > +        The actual minimum utilization in the range [0, 1023].
+>> > +
+>> > +        This value can be lower then cpu.util.min in case a parent cgroup
+>> > +        is enforcing a more restrictive clamping on minimum utilization.
+>>
+>> IMHO if cpu.util.min=0 means "no restrictions" on UCLAMP_MIN then
+>> calling parent's lower cpu.util.min value "more restrictive clamping"
+>> is confusing. I would suggest to rephrase this to smth like "...in
+>> case a parent cgroup requires lower cpu.util.min clamping."
+>
+> Right, it's slightly confusing... still I would like to call out that
+> a parent group can enforce something on its children. What about:
+>
+>    "... a parent cgroup allows only smaller minimum utilization values."
+>
+> Is that less confusing ?
 
-I don't understand why you included it, to be honest.  But it did get
-me looking at the percpu code to see if it was too clever.  And that
-led to the resubmission of rth's patch from two years ago that I cc'd
-you on earlier.
+SGTM.
 
-With that patch applied, gcc should be able to choose to use the
-cmov if it feels that would be a better optimisation.  It already
-makes one different decision in dcache.o, namely that it uses addq
-$0x1,%gs:0x0(%rip) instead of incq %gs:0x0(%rip).  Apparently this
-performs better on some CPUs.
-
-So I wouldn't spend any more time on this patch.
+>
+> Otherwise I think your proposal could work too.
+>
+> [...]
+>
+>> >  #ifdef CONFIG_UCLAMP_TASK_GROUP
+>> > +/**
+>> > + * cpu_util_update_hier: propagete effective clamp down the hierarchy
+>>
+>> typo: propagate
+>
+> +1
+>
+> [...]
+>
+>> > +                * Skip the whole subtrees if the current effective clamp is
+>> > +                * alredy matching the TG's clamp value.
+>>
+>> typo: already
+>
+> +1
+>
+>
+> Cheers,
+> Patrick
+>
+> --
+> #include <best/regards.h>
+>
+> Patrick Bellasi
