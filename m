@@ -2,116 +2,138 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81A2BC070C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:18:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66864C070C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:18:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32C8020C0A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:18:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32C8020C0A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 26CE22146D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:18:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26CE22146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728187AbeIMAYE (ORCPT
+        id S1728215AbeIMAYU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 20:24:04 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50614 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728014AbeIMAYE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 20:24:04 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3571380401CC;
-        Wed, 12 Sep 2018 19:18:07 +0000 (UTC)
-Received: from ovpn-112-71.rdu2.redhat.com (ovpn-112-71.rdu2.redhat.com [10.10.112.71])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5EF26A9E74;
-        Wed, 12 Sep 2018 19:18:06 +0000 (UTC)
-Message-ID: <f3c647ec7c50ae390fb92861d492e7aa4bef8c6f.camel@redhat.com>
-Subject: Re: [PATCH] option: Improve Quectel EP06 detection
-From:   Dan Williams <dcbw@redhat.com>
-To:     Lars Melin <larsm17@gmail.com>,
-        Kristian Evensen <kristian.evensen@gmail.com>
-Cc:     Johan Hovold <johan@kernel.org>, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 12 Sep 2018 14:18:05 -0500
-In-Reply-To: <f2c15eef-ed8d-12c0-2ba4-3dc068ca9fd4@gmail.com>
-References: <20180908125754.1947-1-kristian.evensen@gmail.com>
-         <20180910103022.GR1089@localhost>
-         <CAKfDRXiVbE3-eteTCZjEqyR0LaLMpN8t4P_ihzHPChse9=FxmQ@mail.gmail.com>
-         <8ce10eef-f332-a1c0-e16e-fb1c2055131a@gmail.com>
-         <CAKfDRXgTL6L27JLbbOLLsXd9KK8vBtVCjrTNpv6R_MYCJoZqPg@mail.gmail.com>
-         <de1b5aa3-d9d6-da49-7e49-553694f5b666@gmail.com>
-         <CAKfDRXi3QdB0qCvqHPFXpxdpiHSJ2WoSqZGgjD3gEzAaPbBPUQ@mail.gmail.com>
-         <f2c15eef-ed8d-12c0-2ba4-3dc068ca9fd4@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 12 Sep 2018 19:18:07 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 12 Sep 2018 19:18:07 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dcbw@redhat.com' RCPT:''
+        Wed, 12 Sep 2018 20:24:20 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:41431 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728014AbeIMAYU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 20:24:20 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id EF418806C7; Wed, 12 Sep 2018 21:18:20 +0200 (CEST)
+Date:   Wed, 12 Sep 2018 21:18:20 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Baolin Wang <baolin.wang@linaro.org>, rteysseyre@gmail.com,
+        broonie@kernel.org, linus.walleij@linaro.org,
+        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 1/2] leds: core: Introduce LED pattern trigger
+Message-ID: <20180912191820.GA27704@amd>
+References: <5a502ec29251c019ddad8f3314ab45fc0f6feaf7.1536027873.git.baolin.wang@linaro.org>
+ <20180908050208.GY2523@minitux>
+ <20180910211935.GA4697@amd>
+ <dd1f8dd2-d577-ab12-e67a-7ed71459055a@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="2fHTh5uZTiUOsy+g"
+Content-Disposition: inline
+In-Reply-To: <dd1f8dd2-d577-ab12-e67a-7ed71459055a@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-09-13 at 01:25 +0700, Lars Melin wrote:
-> On 9/12/2018 23:57, Kristian Evensen wrote:
-> > On Wed, Sep 12, 2018 at 6:32 PM Lars Melin <larsm17@gmail.com>
-> > wrote:
-> > > You have chosen a platform which has limited usb resources and
-> > > want to
-> > > solve that problem by adjusting the device driver?
-> > 
-> > No, you asked for a good reason for why disabling and not just
-> > ignoring an interface makes sense, and I think that supporting
-> > multiple EP06 on platforms with limited endpoints qualifies as a
-> > reason. My motivation behind this patch and modifying the driver,
-> > is
-> > to make the driver work with the different options/combinations
-> > supported by the modem. The platforms I am working on merely
-> > triggered
-> > the error and inspired the change.
-> > 
-> > > Why don't you just unbind those interfaces which you are not
-> > > using and
-> > > which are eating up your usb resources?
-> > 
-> > As far as I know, unbinding interfaces from the driver does not
-> > free
-> > up the memory allocated to the interface by/on the USB controller.
-> > I
-> > also tried, just in case, and the output from lsusb is the same
-> > regardless of bind/unbind.
-> > 
-> > Btw, the patch for the QMI driver has been accepted, since you
-> > mentioned that driver earlier. So the assumption about interface
-> > four
-> > is removed from there.
-> > 
-> > BR,
-> > Kristian
-> > 
-> 
-> That the patch has qmi-wwan patch has been accepted does not change
-> the 
-> fact that you are solving your problems in the wrong end.
-> You are using the OEM re-branding AT cmd to change the interface 
-> composition without changing the vid and pid at the same time, this
-> is a 
-> big donut and the whole reason for why you have submitted patches
-> which 
-> shouldn't be needed.
 
-The fact that the firmware implementation has the ability to change the
-endpoints is unrelated to Kristian's case, and that alone is
-justification for this to be quirked in the driver.  People other than
-Kristian will undoubtedly use the functionality, on platforms less
-limited.
+--2fHTh5uZTiUOsy+g
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Also most Huawei modems have the ability to change their layout and
-configuration just like the EP06 via the U2DIAG and SETPORT commands.
+Hi!
 
-Dan
+> >>> diff --git a/Documentation/ABI/testing/sysfs-class-led-trigger-patter=
+n b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+> >> [..]
+> >>> +What:		/sys/class/leds/<led>/hw_pattern
+> >>> +Date:		September 2018
+> >>> +KernelVersion:	4.20
+> >>> +Description:
+> >>> +		Specify a hardware pattern for the LED, for LED hardware that
+> >>> +		supports autonomously controlling brightness over time, according
+> >>> +		to some preprogrammed hardware patterns.
+> >>> +
+> >>> +		Since different LED hardware can have different semantics of
+> >>> +		hardware patterns, each driver is expected to provide its own
+> >>> +		description for the hardware patterns in their ABI documentation
+> >>> +		file.
+> >>> +
+> >>
+> >> So, after a full circle we're back at drivers with support for hardware
+> >> patterns should have their own ABI for setting that pattern.
+> >>
+> >> The controls for my hardware is:
+> >> * a list of brightness values
+> >> * the rate of the pattern
+> >> * a flag to indicate that the pattern should be played from start
+> >>   to end, end to start or start to end to start
+> >> * a boolean indicating if the pattern should be played once or repeated
+> >>   indefinitely.
+> >=20
+> > No, we are not back to full circle.
+> >=20
+> > Or at least we should not be.
+> >=20
+> > Yes, hw_pattern can have some limitation pattern does not, but if you
+> > take values from hw_pattern file and put them into pattern file, you
+> > should get the same pattern (with more power being consumed). And that
+> > property is kind of important for me, because it should keep the ABI
+> > reasonable.
+>=20
+> If you looked at what we agreed on with Baolin, you'd realize
+> that this property is in no way preserved.
+> This is what the whole story is about - we're introducing hw_pattern
+> because of difficulties in describing breathing pattern by a series
+> of [brightness delta_t] tuples.
+>=20
+> And Bjorn presented another example. I'm inclined to leave the
+> definition of hw_pattern semantics to the LED class drivers,
+> and allow them to create related sysfs files.
+
+Please lets not do that.
+
+We already have drivers that do that and it is complete
+nightmare. Some take binary code for the tiny CPU driving the LED.
+
+What exactly is the problem? [brightness delta_t] can describe
+anything single LED can do in finite time. You are right, that
+[brightness delta_t] sequence may get rather long, and it may be hard
+to turn that sequence into parameters. Are there any _interesting_
+sequences hardware can do but [brightness delta_t] can not store
+reasonably?
+
+Thanks,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--2fHTh5uZTiUOsy+g
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAluZZnwACgkQMOfwapXb+vKk4ACfeuiIz9zul593vxA5PPJRklQ7
+04wAn3mbOGBFjJoVrINshnq/FECRY26v
+=EOK8
+-----END PGP SIGNATURE-----
+
+--2fHTh5uZTiUOsy+g--
