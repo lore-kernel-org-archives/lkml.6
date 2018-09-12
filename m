@@ -2,113 +2,130 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B09FC46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:02:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 627FAC46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:04:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC08520890
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:02:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC08520890
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 0115620833
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:04:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bFVvN3sT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0115620833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728225AbeILUHJ (ORCPT
+        id S1728273AbeILUJa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 16:07:09 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:52626 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727804AbeILUHI (ORCPT
+        Wed, 12 Sep 2018 16:09:30 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:39179 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727804AbeILUJa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 16:07:08 -0400
-Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
- (mreue002 [212.227.15.129]) with ESMTPA (Nemesis) id
- 0MHfXI-1fz0Bb1MVw-003Iuh; Wed, 12 Sep 2018 17:01:47 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     viro@zeniv.linux.org.uk
-Cc:     linux-fsdevel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 01/17] compat_ioctl: add generic_compat_ioctl_ptrarg()
-Date:   Wed, 12 Sep 2018 17:01:02 +0200
-Message-Id: <20180912150142.157913-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.18.0
-X-Provags-ID: V03:K1:wz6vo7KIM91kt111ot1ATETat4nUfGMJb8FLy77lzIOkc5wfyKu
- wZ0kYboXWyxsU5awQ3oUor82AlfAk3f/J5do+S5nfBJ3NEq3BC0adeGjkRg7oKf9xNDEut+
- G3FwLM38ozOo3reZvfH6A0GecwDdx0aFfDjei3/mnJfoAnAYXWrLzMYPVK1RiOrbUWIXLNr
- HK0bIJ/e46ESuPiBdwWoA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:aeLDAMsSyZE=:TVJ+SS9XztZ8PspfoWbgn/
- QNGobgx/T3o6iRMkQ3R0C7VYzxGUQaCkU5TKbbUzzcePfqFWWa/LkJEtrcf0mBBN2sh9GZ6UO
- B9aiG2BtIaOs2ABbhYn9UurSrwk7wF21ZFJSz9Vw6sHR7Vh/nni9/XqVCaFqj3lhNtwIrXIbi
- scBywI3tltnx7LSQ55lcGl3TaKa94zB6Iu8ct08cbFy6wuzvFgWnw+3KF5Hr1/vex8+JEhuYe
- fPO66u961mjnEJLXTfE8e8gCuU0twUPBBp+VP42gRGBzoLI+jo1ge4BcgYdATtwND7qjsfR6G
- xXyJfCbYx/wM9QnOfoOUjC3UcCKe8hwUgpg8eHLCz5ZMxfjhjANZRgGEDL2OlFDNKWcI5gNsx
- uLl/OFqG/+3Fk5DOnFWC9Nnf0fWXJCJnYHRzoJ/Yi51o1RGHIxEyUmgywAmboS4zo7+NLHBMs
- 1uMFkDA4Wh+gRsF8fVMZ9wLNItKcISagcEFdgyaAISXgWPzHGMuMepzUYU1rfongDROfjJqIO
- UqpWXHDWAi4tmqX+0xU/RJNdbX6KxlPiePnRHcSSGsR6wDSKoXB7DrNBuvu38Q6xQzByqzooc
- Oma7aA+m3VDKkLZ8nnTW3ZHZ1dG0uGy2fK0qmMtb5uVzfLBNxH5OJNEy31SX5I9ngKmGSKfMt
- tzcmXYpqgCXAVsOVBqzBA9MhfmifdHfENpWA62tuFN5bgATU5l2YCe/h31cVpmhv0cUY=
+        Wed, 12 Sep 2018 16:09:30 -0400
+Received: by mail-lf1-f67.google.com with SMTP id v77-v6so2000172lfa.6;
+        Wed, 12 Sep 2018 08:04:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=EfmF5rnZsA8UZXxcsYOpARFBCLiQHgR/1Y1491vQUYQ=;
+        b=bFVvN3sT786agduS8FqJdpkQcxxMsiUdiS1ElCP2sOnyQviYNKqR4HyVG1rJNItFxW
+         QMx975k8srG+VnhpqLsYa7nDhAMw+DvR6jfPEsROzFtnSNyKgFsB6kjm6HnJPCnknn0r
+         qim4GcpN7grODDaKyBEdr5jhd2tokdK+LVMWzqqkhzcYnhPM1mkcLwpRLA/3KdvmWe7z
+         hAxR2U0AT2SUwcx1rbh5JWvttlzQ0Rt0lp7VnQLRskskDWPrY/o/pQjk3BS3ynKJ/AMP
+         2khRbuJXKERFoTICQlVsQQngIicsRgNsbRzC4b6XlQUUw6O91a8fmC4By/C7zW+Fo/xY
+         sJoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=EfmF5rnZsA8UZXxcsYOpARFBCLiQHgR/1Y1491vQUYQ=;
+        b=KGmtlzkOuuBi30HrJYTOaM4t7sCfL4QXQG6xrqZOKXGfJ0hoXV/bjKE/lfSjEUoxYo
+         Pe+bhSkwPW6o3f8ZBNEMw06EGxTeO5Vlt0OQGQco2md6LSl9Dt2cDp6zjk6BIYyTt38k
+         8DQTdNXh0I6z1npWxu7LqvmhATGt6RMNAUtVdeCg/jt8qo2yFiVq1b7a+d5/7yVbg6z7
+         scUHyeG+bOLoWiPqu8I3arFt/omMD+pGdYTkO68I9qCD1UE72ON0WOhRKvqpmco4eh7W
+         soyGnOBTs0lE690PN2pEaGKna0+GpBWeaJnTB4NyqJxhYebin5GsxY08OsFOKzJaLUQy
+         gKLQ==
+X-Gm-Message-State: APzg51CFNoQb6jgfoBJz+E0g/wFckMCbk74zyjMV967V/F5XJaWNZsBt
+        RykXELnPUpYpXXkBbf0Xtq51FPjUmII=
+X-Google-Smtp-Source: ANB0VdYB+Dx3XxsvidfYF8iBN+uYfYEtMt/cbQHFhaFGDsyEty/a3x1Lkwndn8yItrRCXi3p7P2Icw==
+X-Received: by 2002:a19:3855:: with SMTP id d21-v6mr1827010lfj.24.1536764672832;
+        Wed, 12 Sep 2018 08:04:32 -0700 (PDT)
+Received: from ?IPv6:2001:14bb:73:639a:d135:7d7c:caf7:1c82? (drqv51zl1s10p1948tk-4.rev.dnainternet.fi. [2001:14bb:73:639a:d135:7d7c:caf7:1c82])
+        by smtp.gmail.com with ESMTPSA id u2-v6sm215769ljg.55.2018.09.12.08.04.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Sep 2018 08:04:32 -0700 (PDT)
+Subject: Re: [PATCH v2] ethernet: hnae: drop adhoc assert() macros
+To:     David Miller <davem@davemloft.net>
+Cc:     igor.stoppa@huawei.com, huangdaode@hisilicon.com,
+        yisen.zhuang@huawei.com, salil.mehta@huawei.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180908150142.27976-1-igor.stoppa@huawei.com>
+ <20180911.230716.1048852895308106303.davem@davemloft.net>
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+Message-ID: <2f439541-154f-1f17-180e-db0d8f95e010@gmail.com>
+Date:   Wed, 12 Sep 2018 18:04:30 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180911.230716.1048852895308106303.davem@davemloft.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Many drivers have ioctl() handlers that are completely compatible
-between 32-bit and 64-bit architectures, except for the argument
-that is passed down from user space and may have to be passed
-through compat_ptr() in order to become a valid 64-bit pointer.
+On 12/09/18 09:07, David Miller wrote:
+> From: Igor Stoppa <igor.stoppa@gmail.com>
+> Date: Sat,  8 Sep 2018 18:01:42 +0300
+> 
+>> Replace assert() with a less misleading test_condition() using WARN()
+>> Drop one check which had bitrotted and didn't compile anymore.
+>>
+>> Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
+> 
+> I'm still kind of not happy about this.
+> 
+> Make the driver use kernel interfaces like WARN_ON_ONCE()
+> etc. directly instead of defining alias CPP macros private to the
+> driver.
+> 
+> If it needs to be conditional upon DEBUG, we have pr_debug() and
+> the likes as well.
 
-Using ".compat_ptr=generic_compat_ioctl_ptrarg" in file operations
-should let us simplify a lot of those drivers to avoid #ifdef
-checks, and convert additional drivers that don't have proper
-compat handling yet.
+WARN_ON_ONCE() will display the error message only once, but from its 
+implementation it looks like it will evaluate the condition anyways, 
+every time, unless the compiler can do some magic and somehow know that 
+the condition was true already onece (/include/asm-generic/bug.h:146)
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- fs/compat_ioctl.c  | 10 ++++++++++
- include/linux/fs.h |  7 +++++++
- 2 files changed, 17 insertions(+)
+pr_debug() otoh, will print or not print, depending on 
+CONFIG_DYNAMIC_DEBUG being set or not (/include/linux/printk.h:399)
 
-diff --git a/fs/compat_ioctl.c b/fs/compat_ioctl.c
-index a9b00942e87d..2d7c7e149083 100644
---- a/fs/compat_ioctl.c
-+++ b/fs/compat_ioctl.c
-@@ -122,6 +122,16 @@
- 	get_user(val, srcptr) || put_user(val, dstptr);	\
- })
- 
-+/* helper function to avoid trivial compat_ioctl() implementations */
-+long generic_compat_ioctl_ptrarg(struct file *file, unsigned int cmd, unsigned long arg)
-+{
-+	if (!file->f_op->unlocked_ioctl)
-+		return -ENOIOCTLCMD;
-+
-+	return file->f_op->unlocked_ioctl(file, cmd, (unsigned long)compat_ptr(arg));
-+}
-+EXPORT_SYMBOL_GPL(generic_compat_ioctl_ptrarg);
-+
- static int do_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- {
- 	int err;
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 33322702c910..18a90aa2dc93 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1643,6 +1643,13 @@ int vfs_mkobj(struct dentry *, umode_t,
- 
- extern long vfs_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
- 
-+#ifdef CONFIG_COMPAT
-+extern long generic_compat_ioctl_ptrarg(struct file *file, unsigned int cmd,
-+					unsigned long arg);
-+#else
-+#define generic_compat_ioctl_ptrarg NULL
-+#endif
-+
- /*
-  * VFS file helper functions.
-  */
--- 
-2.18.0
+but the logic we are trying to clean up here seems a bit different:
 
+if (in_debug_mode && error_condition_is_verified)
+	generate_warning()
+
+Which, I guess, is meant to completely remove *any* test outside of 
+debug mode.
+
+That is why I used the test_condition() macro, instead of using directly 
+WARN_ON_ONCE().  Admittedly, it probably would have been better to 
+depend on CONFIG_DYNAMIC_DEBUG.
+
+Neither using WARN_ON_ONCE(), nor pr_debug() seem to replicate the 
+initial behavior of the code that is currently in the tree, with assert().
+
+How would you suggest that I keep the same behavior, without the helper 
+macro? I am probably missing it, but I do not see some facility that 
+would support the double condition I described above.
+
+--
+thanks, igor
