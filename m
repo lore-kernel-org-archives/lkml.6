@@ -2,115 +2,146 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD87DC46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:06:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B50BC46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:08:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64D9E20880
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:06:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="EPCBpvsd";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="EPCBpvsd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64D9E20880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 4E1F220880
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:08:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E1F220880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727811AbeILVMC (ORCPT
+        id S1727836AbeILVNK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 17:12:02 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:46462 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726673AbeILVMC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 17:12:02 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id E278B60213; Wed, 12 Sep 2018 16:06:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536768410;
-        bh=COg5yNwK9l6WMzDgBUv666+XNSHLD+lUODU21aQrYUM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=EPCBpvsda4LwJnR2PcVXxfrh9PTNj0tZ1vAgge9qgvKrBqlCW5AOZqdJIg4Z0MEdJ
-         QntTx1/ZprOxTkNhKGhvKrAzErd035ogqRA5Y5oHweBwbGn6dnvC2U35ghKgJCJvHK
-         ilnRYoofCej4BlSJ3yjNgBL64lLFznL5D5piStbU=
-Received: from [10.226.60.81] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E728F602A7;
-        Wed, 12 Sep 2018 16:06:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536768410;
-        bh=COg5yNwK9l6WMzDgBUv666+XNSHLD+lUODU21aQrYUM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=EPCBpvsda4LwJnR2PcVXxfrh9PTNj0tZ1vAgge9qgvKrBqlCW5AOZqdJIg4Z0MEdJ
-         QntTx1/ZprOxTkNhKGhvKrAzErd035ogqRA5Y5oHweBwbGn6dnvC2U35ghKgJCJvHK
-         ilnRYoofCej4BlSJ3yjNgBL64lLFznL5D5piStbU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E728F602A7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-Subject: Re: [PATCH] ACPI/PPTT: Handle architecturally unknown cache types
-To:     Jeremy Linton <jeremy.linton@arm.com>, rjw@rjwysocki.net,
-        linux-acpi@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, vkilari@codeaurora.org,
-        Sudeep Holla <sudeep.holla@arm.com>
-References: <1536694334-5811-1-git-send-email-jhugo@codeaurora.org>
- <f62f22a6-2dd8-f254-dbaf-b9e224099afd@arm.com>
- <e74f2208-ac0d-6c45-8ddb-5b77d6a42fef@codeaurora.org>
- <c34452c2-d1e8-19d8-45c1-b48ecf14bbd7@arm.com>
- <98e2e6fa-7256-b5ac-7d2e-42c858c6e57c@codeaurora.org>
- <f553018d-d27a-68e0-93f7-4f7a0497c68a@arm.com>
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-Message-ID: <bc0f43e3-c373-8be1-b1a9-0b10303a8683@codeaurora.org>
-Date:   Wed, 12 Sep 2018 10:06:49 -0600
+        Wed, 12 Sep 2018 17:13:10 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:48807 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726800AbeILVNK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 17:13:10 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 429RWw6xHTz9ttRd;
+        Wed, 12 Sep 2018 18:07:56 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id B3w4De55uYjO; Wed, 12 Sep 2018 18:07:56 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 429RWw6Qcdz9ttBm;
+        Wed, 12 Sep 2018 18:07:56 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id BBA3B8B873;
+        Wed, 12 Sep 2018 18:07:57 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id dXDzQsTs5VXc; Wed, 12 Sep 2018 18:07:57 +0200 (CEST)
+Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 8EC868B871;
+        Wed, 12 Sep 2018 18:07:57 +0200 (CEST)
+Subject: Re: [RFC PATCH v1 00/17] ban the use of _PAGE_XXX flags outside
+ platform specific code
+To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com,
+        aneesh.kumar@linux.vnet.ibm.com
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <cover.1535913369.git.christophe.leroy@c-s.fr>
+ <8736uneylc.fsf@linux.ibm.com>
+From:   Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <fe0afb3c-8b6c-fff1-47ee-4fc25c0bc8a6@c-s.fr>
+Date:   Wed, 12 Sep 2018 18:07:57 +0200
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <f553018d-d27a-68e0-93f7-4f7a0497c68a@arm.com>
+In-Reply-To: <8736uneylc.fsf@linux.ibm.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Language: fr
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/12/2018 9:39 AM, Jeremy Linton wrote:
-> Hi,
+
+
+Le 06/09/2018 à 11:58, Aneesh Kumar K.V a écrit :
+> Christophe Leroy <christophe.leroy@c-s.fr> writes:
 > 
-> 
-> On 09/12/2018 09:41 AM, Jeffrey Hugo wrote:
->> The HW designers have indicated that there is no sane way to provide 
->> sets/ways information to software, even on an informational basis (ie 
->> not for cache maintenance, but for performance optimizations). 
->> Therefore the firmware will not provide this information because it 
->> will be wrong.
+>> Today flags like for instance _PAGE_RW or _PAGE_USER are used through
+>> common parts of code.
+>> Using those directly in common parts of code have proven to lead to
+>> mistakes or misbehaviour, because their use is not always as trivial
+>> as one could think.
 >>
->> So, therefore, we should still be able to tell the user that a cache 
->> exists at the relevant level, and what size it is.  On the concerned 
->> system, we cannot do that currently.
+>> For instance, (flags & _PAGE_USER) == 0 isn't enough to tell
+>> that a page is a kernel page, because some targets are using
+>> _PAGE_PRIVILEDGED and not _PAGE_USER, so the test has to be
+>> (flags & (_PAGE_USER | _PAGE_PRIVILEDGED)) == _PAGE_PRIVILEDGED
+>> This has to (bad) consequences:
+>>
+>>   - All targets must define every bit, even the unsupported ones,
+>>     leading to a lot of useless #define _PAGE_XXX 0
+>>   - If someone forgets to take into account all possible _PAGE_XXX bits
+>>     for the case, we can get unexpected behaviour on some targets.
+>>
+>> This becomes even more complex when we come to using _PAGE_RW.
+>> Testing (flags & _PAGE_RW) is not enough to test whether a page
+>> if writable or not, because:
+>>
+>>   - Some targets have _PAGE_RO instead, which has to be unset to tell
+>>     a page is writable
+>>   - Some targets have _PAGE_R and _PAGE_W, in which case
+>>     _PAGE_RW = _PAGE_R | _PAGE_W
+>>   - Even knowing whether a page is readable is not always trivial because:
+>>     - Some targets requires to check that _PAGE_R is set to ensure page
+>>     is readable
+>>     - Some targets requires to check that _PAGE_NA is not set
+>>     - Some targets requires to check that _PAGE_RO or _PAGE_RW is set
+>>
+>> Etc ....
+>>
+>> In order to work around all those issues and minimise the risks of errors,
+>> this serie aims at removing all use of _PAGE_XXX flags from powerpc code
+>> and always use pte_xxx() and pte_mkxxx() accessors instead. Those accessors
+>> are then defined in target specific parts of the kernel code.
 > 
-> Ok, so set the fields to zero in firmware node, and mark them valid.
+> The series is really good. It also helps in code readability. Few things
+> i am not sure there is a way to reduce the overhead
+> 
+> -		access = _PAGE_EXEC;
+> +		access = pte_val(pte_mkexec(__pte(0)));
+> 
+> Considering we have multiple big endian to little endian coversion there
+> for book3s 64.
+> 
+> Other thing is __ioremap_at where we do
+> 
+> +       pte_t pte = __pte(flags);
+>   
+>          /* Make sure we have the base flags */
+> -       if ((flags & _PAGE_PRESENT) == 0)
+> +       if (!pte_present(pte))
+> 
+> -               err = map_kernel_page(v+i, p+i, flags);
+> +               err = map_kernel_page(v + i, p + i, pte_val(pte));
+> 
 
-Is that what the PPTT spec says to do?
+Finally, for that I now ensure that all base flags are set by the 
+callers and I have removed that hack which adds PAGE_KERNEL flags when 
+_PAGE_PRESENT is not in the handedover flags.
 
-> That logically says that there isn't any set/way information for the 
-> cache (which implies direct mapped).
+> 
+> But otherwise for the series.
+> 
+> Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+> 
 
-Making inferences such as that have gotten folks into trouble when 
-interpreting other specs.  Unfortunately I am not allowed to detail more 
-about this specific system, however implying that the affected cache(s) 
-are direct mapped is incorrect.  Officially, what you have is a cache or 
-multiple caches at certain levels that have a specified size.  You can 
-make no inferences about the exact behavior or implementation of the 
-cache beyond what FW explicitly provides.  I'm not particularly a fan of 
-it, but its what I have to deal with.
+Thanks, I added it to all unchanged patches of the serie. You are 
+welcome to give a feedback on the new ones if you have time.
 
--- 
-Jeffrey Hugo
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
-Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+Christophe
