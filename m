@@ -2,219 +2,137 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18F0DC46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:24:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD9ABC6778D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:25:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A59342088E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:24:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="MJA9QGAi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A59342088E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	by mail.kernel.org (Postfix) with ESMTP id 5273F2087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:25:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5273F2087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727047AbeILU3L (ORCPT
+        id S1727246AbeILUaT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 16:29:11 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:35188 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726839AbeILU3L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 16:29:11 -0400
-Received: by mail-pg1-f193.google.com with SMTP id 7-v6so1243990pgf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 08:24:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=l528uxAgWFSL5tVGTDhS0RKhVSftA2wtAgPpq8U72rU=;
-        b=MJA9QGAiWQZyutSyrxbahF6RDzUacK+elhd03O3vyKgNbPTkejDQGj1lfl9r8t7dnn
-         /c1+h/CX7yV1qV/wdu9/6Qddkn/4KUZroWTQs8qoPoaRFu6lD2Ixdrbtv95NFh7xy7XN
-         N4EknBtbcdP0er1dxuUzBrTpHoDtmV68NNJobV7L5gl7vCRhcF/0I0/WY1aSyfv6ABFj
-         8RqafjDvQliHEkz9m3nwkJPRDroDkHG9YnBCkaDddVrZ2b/U8j9WaSpt9YyzY4YKaoyY
-         EVg4zFqMyS7hfLtj6qVHvKvTt/HSRsCxN2AZSXf8T+2gMlq+KJJQPNpaYOylnKAFPYde
-         1n2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=l528uxAgWFSL5tVGTDhS0RKhVSftA2wtAgPpq8U72rU=;
-        b=tR4WBrxuc5UnAKbqyR7aqTBpO6zKnB7JGmHOiSbHLGG2OX8GUqSkYTrg/IcO1vjQDR
-         hH8EEyKiPsNkvvqzFbXEPYMwI4rfXzRmWWbR50iA2KUoE/Not+LVtlGb1oMOWj5j1u7J
-         HuA8LQS1WGSJCftHEdDfJHOKTxK+g3Yo5hZIEkL8EiRQZ30Y8InoiNDm/ZJutKbayJsO
-         Bv6DrRDk+DARNAihqhkojiNu32z1D8+CRkEgLuN4/C6vm+vmQITbR6guoOJyMdcpQiy0
-         8PxoXH7jSXhQaGizK8vtIUCk5FSZxadpav0XVu3rwNhs2Swk/Zn+VmNgMVEnRqjJkIJq
-         b/iQ==
-X-Gm-Message-State: APzg51CW4PhoOJQAmx83vZgQh1qppNR3+bhAOYhZwC3T55H/PLXcrKXp
-        EBXBAfXLQYr9aWc+AYawTUUmAQ==
-X-Google-Smtp-Source: ANB0VdaW0mCDWoKpY2SAtil5aI7w8y5jxGnwwHnBnjszsREOGJz0CA0TS9fgOcyu/dM+CA289Lhayg==
-X-Received: by 2002:a63:1d3:: with SMTP id 202-v6mr2927103pgb.136.1536765850802;
-        Wed, 12 Sep 2018 08:24:10 -0700 (PDT)
-Received: from ?IPv6:2601:646:c200:7429:9592:4a20:451a:68da? ([2601:646:c200:7429:9592:4a20:451a:68da])
-        by smtp.gmail.com with ESMTPSA id t2-v6sm2563077pfj.7.2018.09.12.08.24.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Sep 2018 08:24:09 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [RFC PATCH 04/10] x86/fpu: eager switch PKRU state
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (15G77)
-In-Reply-To: <8e5b64e4-b3e6-f884-beb6-b7b69ab2d8c1@redhat.com>
-Date:   Wed, 12 Sep 2018 08:24:08 -0700
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        =?utf-8?Q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <3476ED25-96C7-4285-AF1D-7FB82E10FB6C@amacapital.net>
-References: <20180912133353.20595-1-bigeasy@linutronix.de> <20180912133353.20595-5-bigeasy@linutronix.de> <8e5b64e4-b3e6-f884-beb6-b7b69ab2d8c1@redhat.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
+        Wed, 12 Sep 2018 16:30:19 -0400
+Received: from mga11.intel.com ([192.55.52.93]:51474 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726673AbeILUaT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 16:30:19 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Sep 2018 08:25:18 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,365,1531810800"; 
+   d="scan'208";a="72640233"
+Received: from ray.jf.intel.com (HELO [10.7.201.139]) ([10.7.201.139])
+  by orsmga008.jf.intel.com with ESMTP; 12 Sep 2018 08:23:58 -0700
+Subject: Re: [PATCH 1/4] mm: Provide kernel parameter to allow disabling page
+ init poisoning
+To:     Alexander Duyck <alexander.duyck@gmail.com>, mhocko@kernel.org
+References: <20180910232615.4068.29155.stgit@localhost.localdomain>
+ <20180910234341.4068.26882.stgit@localhost.localdomain>
+ <20180912141053.GL10951@dhcp22.suse.cz>
+ <CAKgT0UdvhV7U5Zniq=KskXz2QsRP8C7ctr5=ZtJwYAVpBT-RHw@mail.gmail.com>
+Cc:     linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        linux-nvdimm@lists.01.org, pavel.tatashin@microsoft.com,
+        dave.jiang@intel.com, Ingo Molnar <mingo@kernel.org>,
+        jglisse@redhat.com, Andrew Morton <akpm@linux-foundation.org>,
+        logang@deltatee.com, dan.j.williams@intel.com,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <841e8101-40db-9ff2-f688-5f175d91fc31@intel.com>
+Date:   Wed, 12 Sep 2018 08:23:58 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <CAKgT0UdvhV7U5Zniq=KskXz2QsRP8C7ctr5=ZtJwYAVpBT-RHw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 09/12/2018 07:49 AM, Alexander Duyck wrote:
+>>> +     page_init_poison=       [KNL] Boot-time parameter changing the
+>>> +                     state of poisoning of page structures during early
+>>> +                     boot. Used to verify page metadata is not accessed
+>>> +                     prior to initialization. Available with
+>>> +                     CONFIG_DEBUG_VM=y.
+>>> +                     off: turn off poisoning
+>>> +                     on: turn on poisoning (default)
+>>> +
+>> what about the following wording or something along those lines
+>>
+>> Boot-time parameter to control struct page poisoning which is a
+>> debugging feature to catch unitialized struct page access. This option
+>> is available only for CONFIG_DEBUG_VM=y and it affects boot time
+>> (especially on large systems). If there are no poisoning bugs reported
+>> on the particular system and workload it should be safe to disable it to
+>> speed up the boot time.
+> That works for me. I will update it for the next release.
 
+FWIW, I rather liked Dan's idea of wrapping this under
+vm_debug=<something>.  We've got a zoo of boot options and it's really
+hard to _remember_ what does what.  For this case, we're creating one
+that's only available under a specific debug option and I think it makes
+total sense to name the boot option accordingly.
 
+For now, I think it makes total sense to do vm_debug=all/off.  If, in
+the future, we get more options, we can do things like slab does and do
+vm_debug=P (for Page poison) for this feature specifically.
 
-> On Sep 12, 2018, at 7:18 AM, Paolo Bonzini <pbonzini@redhat.com> wrote:
->=20
->> On 12/09/2018 15:33, Sebastian Andrzej Siewior wrote:
->> From: Rik van Riel <riel@surriel.com>
->>=20
->> While most of a task's FPU state is only needed in user space,
->> the protection keys need to be in place immediately after a
->> context switch.
->>=20
->> The reason is that any accesses to userspace memory while running
->> in kernel mode also need to abide by the memory permissions
->> specified in the protection keys.
->>=20
->> The pkru info is put in its own cache line in the fpu struct because
->> that cache line is accessed anyway at context switch time, and the
->> location of the pkru info in the xsave buffer changes depending on
->> what other FPU registers are in use if the CPU uses compressed xsave
->> state (on by default).
->>=20
->> The initial state of pkru is zeroed out automatically by fpstate_init.
->>=20
->> Signed-off-by: Rik van Riel <riel@surriel.com>
->> [bigeasy: load PKRU state only if we also load FPU content]
->> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
->> ---
->> arch/x86/include/asm/fpu/internal.h | 11 +++++++++--
->> arch/x86/include/asm/fpu/types.h    | 10 ++++++++++
->> arch/x86/include/asm/pgtable.h      |  6 +-----
->> arch/x86/mm/pkeys.c                 | 14 ++++++++++++++
->> 4 files changed, 34 insertions(+), 7 deletions(-)
->>=20
->> diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/f=
-pu/internal.h
->> index 16c4077ffc945..57bd1576e033d 100644
->> --- a/arch/x86/include/asm/fpu/internal.h
->> +++ b/arch/x86/include/asm/fpu/internal.h
->> @@ -573,8 +573,15 @@ static inline void switch_fpu_finish(struct fpu *new=
-_fpu, int cpu)
->>    bool preload =3D static_cpu_has(X86_FEATURE_FPU) &&
->>               new_fpu->initialized;
->>=20
->> -    if (preload)
->> -        __fpregs_load_activate(new_fpu, cpu);
->> +    if (!preload)
->> +        return;
->> +
->> +    __fpregs_load_activate(new_fpu, cpu);
->> +    /* Protection keys need to be in place right at context switch time.=
- */
->> +    if (boot_cpu_has(X86_FEATURE_OSPKE)) {
->> +        if (new_fpu->pkru !=3D __read_pkru())
->> +            __write_pkru(new_fpu->pkru);
->> +    }
->> }
->>=20
->> /*
->> diff --git a/arch/x86/include/asm/fpu/types.h b/arch/x86/include/asm/fpu/=
-types.h
->> index 202c53918ecfa..6fa58d37938d2 100644
->> --- a/arch/x86/include/asm/fpu/types.h
->> +++ b/arch/x86/include/asm/fpu/types.h
->> @@ -293,6 +293,16 @@ struct fpu {
->>     */
->>    unsigned int            last_cpu;
->>=20
->> +    /*
->> +     * Protection key bits. These also live inside fpu.state.xsave,
->> +     * but the location varies if the CPU uses the compressed format
->> +     * for XSAVE(OPT).
->> +     *
->> +     * The protection key needs to be switched out immediately at contex=
-t
->> +     * switch time, so it is in place for things like copy_to_user.
->> +     */
->> +    unsigned int            pkru;
->> +
->>    /*
->>     * @initialized:
->>     *
->> diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtabl=
-e.h
->> index 690c0307afed0..cc36f91011ad7 100644
->> --- a/arch/x86/include/asm/pgtable.h
->> +++ b/arch/x86/include/asm/pgtable.h
->> @@ -132,11 +132,7 @@ static inline u32 read_pkru(void)
->>    return 0;
->> }
->>=20
->> -static inline void write_pkru(u32 pkru)
->> -{
->> -    if (boot_cpu_has(X86_FEATURE_OSPKE))
->> -        __write_pkru(pkru);
->> -}
->> +extern void write_pkru(u32 pkru);
->>=20
->> static inline int pte_young(pte_t pte)
->> {
->> diff --git a/arch/x86/mm/pkeys.c b/arch/x86/mm/pkeys.c
->> index 6e98e0a7c9231..c7a7b6bd64009 100644
->> --- a/arch/x86/mm/pkeys.c
->> +++ b/arch/x86/mm/pkeys.c
->> @@ -18,6 +18,20 @@
->>=20
->> #include <asm/cpufeature.h>             /* boot_cpu_has, ...            *=
-/
->> #include <asm/mmu_context.h>            /* vma_pkey()                   *=
-/
->> +#include <asm/fpu/internal.h>
->> +
->> +void write_pkru(u32 pkru)
->> +{
->> +    if (!boot_cpu_has(X86_FEATURE_OSPKE))
->> +        return;
->> +
->> +    current->thread.fpu.pkru =3D pkru;
->> +
->> +    __fpregs_changes_begin();
->> +    __fpregs_load_activate(&current->thread.fpu, smp_processor_id());
->> +    __write_pkru(pkru);
->> +    __fpregs_changes_end();
->> +}
->>=20
->> int __execute_only_pkey(struct mm_struct *mm)
->> {
->>=20
->=20
-> I think you can go a step further and exclude PKRU state from
-> copy_kernel_to_fpregs altogether; you just use RDPKRU/WRPKRU.  This also
-> means you don't need to call __fpregs_* functions in write_pkru.
->=20
->=20
-
-Except that the signal ABI has PKRU in the xstate. So we=E2=80=99d need to f=
-ake it or do something special for signals.=
+	vm_debug =	[KNL] Available with CONFIG_DEBUG_VM=y.
+			May slow down boot speed, especially on larger-
+			memory systems when enabled.
+			off: turn off all runtime VM debug features
+			all: turn on all debug features (default)
