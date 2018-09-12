@@ -2,109 +2,155 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D620C46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:19:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 339CAC6778D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:20:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B0A22088E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:19:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B0A22088E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id D6DEA20880
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:20:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="hG6thmDl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6DEA20880
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mailbox.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727277AbeILUYY (ORCPT
+        id S1727384AbeILUZT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 16:24:24 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55588 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726640AbeILUYY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 16:24:24 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8CFGpaX013639
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 11:19:24 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2mf47vbfxm-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 11:19:24 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
-        Wed, 12 Sep 2018 16:19:23 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 12 Sep 2018 16:19:19 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8CFJIsR56492094
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 12 Sep 2018 15:19:18 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E0F9B4C04E;
-        Wed, 12 Sep 2018 18:19:09 +0100 (BST)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7131A4C050;
-        Wed, 12 Sep 2018 18:19:08 +0100 (BST)
-Received: from linux.vnet.ibm.com (unknown [9.199.45.134])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with SMTP;
-        Wed, 12 Sep 2018 18:19:08 +0100 (BST)
-Date:   Wed, 12 Sep 2018 20:49:16 +0530
-From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Rik van Riel <riel@surriel.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 5/6] sched/numa: Reset scan rate whenever task moves
- across nodes
-Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-References: <1533276841-16341-1-git-send-email-srikar@linux.vnet.ibm.com>
- <1533276841-16341-6-git-send-email-srikar@linux.vnet.ibm.com>
- <20180910084808.GE48257@gmail.com>
+        Wed, 12 Sep 2018 16:25:19 -0400
+Received: from mx2.mailbox.org ([80.241.60.215]:48836 "EHLO mx2.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726640AbeILUZT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 16:25:19 -0400
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx2.mailbox.org (Postfix) with ESMTPS id 32ED5419BB
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 17:20:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mailbox.org; h=
+        content-type:content-type:mime-version:date:date:message-id
+        :subject:subject:from:from:received; s=mail20150812; t=
+        1536765617; bh=fipLrZI3lkzzaQQtm8ZCATwn/aDtzx+Dq7QruVsYyeo=; b=h
+        G6thmDlRd8HGjA+lqo2DoV5yYpmyaf6pRYaqnSqzGjWS/6Pk2+YeT0RfdQUSHI9O
+        fgHALywXYt40iqAu9Jy/DyxRu578xXnZ9OSj4UiClmJaiGplhtgDNVtbdJgoOlBZ
+        IpM3BVbmRElDMXFDaLTkIP1p1g5moayKnC+YWeS+KOfweEFidoonSOpIElPFbj/R
+        xvrQOx0UWOrMKZeTFzzd0w9I9S+Y+PsX/y15rNYu3lVASehxnyNISLGl8YGW08R+
+        U0SqutFwegO0hBV6HWgJ1S2DVh5lyJimUM9mmArJVYZdMfMD0Eqhta12wjmao0lQ
+        3pMxehvHIbafnnhFhB6ew==
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by hefe.heinlein-support.de (hefe.heinlein-support.de [91.198.250.172]) (amavisd-new, port 10030)
+        with ESMTP id zKg7cg7gP9pM for <linux-kernel@vger.kernel.org>;
+        Wed, 12 Sep 2018 17:20:17 +0200 (CEST)
+To:     linux-kernel@vger.kernel.org
+From:   Jack Henschel <jackdev@mailbox.org>
+Subject: Custom PMI Handler
+Openpgp: preference=signencrypt
+Autocrypt: addr=jackdev@mailbox.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <4d1c3f6a-f0e5-2494-1ef7-a6383eb9fcb0@mailbox.org>
+Date:   Wed, 12 Sep 2018 17:20:16 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <20180910084808.GE48257@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18091215-0028-0000-0000-000002F84E2B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18091215-0029-0000-0000-000023B1EE2B
-Message-Id: <20180912151916.GA15221@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-12_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=894 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809120156
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="pWc7q1j8p4MLSWPVLSxh6fkQ15bm1RhvA"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > +#ifdef CONFIG_NUMA_BALANCING
-> > +	if (!p->mm || (p->flags & PF_EXITING))
-> > +		return;
-> > +
-> > +	if (p->numa_faults) {
-> > +		int src_nid = cpu_to_node(task_cpu(p));
-> > +		int dst_nid = cpu_to_node(new_cpu);
-> > +
-> > +		if (src_nid != dst_nid)
-> > +			p->numa_scan_period = task_scan_start(p);
-> > +	}
-> > +#endif
-> 
-> Please don't add #ifdeffery inside functions, especially not if they do weird flow control like 
-> a 'return' from the middle of a block.
-> 
-> A properly named inline helper would work I suppose.
-> 
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--pWc7q1j8p4MLSWPVLSxh6fkQ15bm1RhvA
+Content-Type: multipart/mixed; boundary="bDAyWkKdow2t87aKS8Fihyy2EGG20qG9N";
+ protected-headers="v1"
+From: Jack Henschel <jackdev@mailbox.org>
+To: linux-kernel@vger.kernel.org
+Message-ID: <4d1c3f6a-f0e5-2494-1ef7-a6383eb9fcb0@mailbox.org>
+Subject: Custom PMI Handler
 
-Okay, will take care.
+--bDAyWkKdow2t87aKS8Fihyy2EGG20qG9N
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: quoted-printable
 
+Hi there,
+
+is it possible to register a custom interrupt handler for a NMI/PMI
+Interrupt?
+
+In particular, I want to catch the Intel PT interrupt (generated by the
+PMU and sent over the LAPIC) in a kernel module. Is such a thing possible=
+?
+
+Regards,
+Jack
+
+
+--bDAyWkKdow2t87aKS8Fihyy2EGG20qG9N--
+
+--pWc7q1j8p4MLSWPVLSxh6fkQ15bm1RhvA
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE5SNfW5QVort2C78YV5HQ+s4K8DwFAluZLrAACgkQV5HQ+s4K
+8DwjKw/+Ibqe+oEQL14yexFjKIC0JtyGhjT3iGDvWV7O/YI1itv0ldz9d/NmELd0
+/+8c2+gsj3kRU1+9zvgiu4kgBgmKoBnONVs/jK8salZAD4W+zEUsnuG5LHe7WbpT
+dfyKkmJxeZQB/LxY2Prn1nD2D2qKHeUxxlUwdIXGPwGMLFa3zBOeXyB1g/kRYx+h
+DjLJbv9oEuSftAipY+YLQy+fKuZCxpfo6oTo7Bo4FeTi40JML0vr3pJc9tVqpBQA
+GyvnPAZCsz8agxQjGpEvaV6ERVgldO1kQTmUJseMgTKw7KW+K1CwNrF1GhydgclV
+J31RgbE8VyVPfWJ5aZPvyEJoUrv2Wdw+XLCQsEjZCTqihwCyG6QBu3A2wOVA40yF
+GZW8PlqRFwDEp+Lc13aF+M+0ujg58+GhX8ixIANZ73NpGB89GAVYyH17Kkl2JSI+
+e+ucsWfxCgov1bre9riSSj5ouf1jm7qjm7nJMBjTAeWaYmXmO5RxJTOXN8xIQNE3
+Zl6wPqyMtD00qq/37TTgXPiYwE52QFeyr73GmvIskalarLpeCLqQmcVNVEw90bKZ
+PkNNcFeocfckJpXZZ0sxjb0b5B7hOIaiWAR42S4wX/HnOz60xkBNbyPfVRfppJam
+UnsFj9PR16UUEZwUgl3UmCIok71xWjxhEUNKOY2+jOBCrICRZiU=
+=KurI
+-----END PGP SIGNATURE-----
+
+--pWc7q1j8p4MLSWPVLSxh6fkQ15bm1RhvA--
