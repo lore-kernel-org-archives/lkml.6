@@ -2,133 +2,135 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A6B4C070C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 21:28:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6337BC070C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 21:29:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50883213A2
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 21:28:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GGQkMj4J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50883213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 279FD2146E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 21:29:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 279FD2146E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728152AbeIMCe5 (ORCPT
+        id S1728215AbeIMCf1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 22:34:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52510 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727010AbeIMCe5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 22:34:57 -0400
-Received: from localhost (unknown [64.22.249.253])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B90C0213A2;
-        Wed, 12 Sep 2018 21:28:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536787712;
-        bh=Mqhv4PxbmqNAMvZbukDHBqdEk8n4YO2bPKeu0nraAek=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GGQkMj4J7CM1MR6avbpDFLID/DI/fH4GSMLdkgHV3ypLw+ii/Jzm43J2Da3MaIJnI
-         YV72O7CLAPoWiWtEATi17tY3vTSU492sn2E/pbYuadHnA4ZPd/Gvq2aCt6BtsTgtsi
-         PsApwWp6St8M4NNnuPunflzuHmRiaUt2sWGrSZQc=
-Date:   Wed, 12 Sep 2018 16:28:32 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Alexandru Gagniuc <mr.nuke.me@gmail.com>
-Cc:     linux-pci@vger.kernel.org, bhelgaas@google.com,
-        keith.busch@intel.com, alex_gagniuc@dellteam.com,
-        austin_bolen@dell.com, shyam_iyer@dell.com, Narendra_K@Dell.com,
-        Stuart_Hayes@Dell.com, lukas@wunner.de,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI/MSI: Don't touch MSI bits when the PCI device is
- disconnected
-Message-ID: <20180912212831.GM118330@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180730212146.31909-1-mr.nuke.me@gmail.com>
+        Wed, 12 Sep 2018 22:35:27 -0400
+Received: from mail-it0-f69.google.com ([209.85.214.69]:44910 "EHLO
+        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727010AbeIMCf1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 22:35:27 -0400
+Received: by mail-it0-f69.google.com with SMTP id b124-v6so5665353itb.9
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 14:29:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=hyySvZzkO3TtLbZYFG/gsgGm8nMmt9+ZoSRQIVUcQXo=;
+        b=DiSwCTy3CYpYh7turCjksSa3Zzeo22n+ePZQ3A0+KY1Ol0NwVxisIkeoDla3Z9tnE9
+         MTbirfgot9R1KBjw+VId17hM8lHK33GJHOcHKDfjA2YRN6Aw89vjvapSSe+StG+Pt/G5
+         NBX9+se/ufCzho/CTTg0gI0YkTi7G757WXlcIFSDE7ogYf87BrajFQ/24zKzkBNRrwNZ
+         YWNeE1BGRRlf/BvXMjrqqGgYhrBqc1bBB7p2RTelABZa1lrk/PqGMvSEzX2lNUHvivvX
+         26MOiTwdl7XnSoEx3fcOSY1wWSpj3qUPRMh3o9RlDLI/p1iX9uvtCbFUD5QrUnQIG4vH
+         HwOg==
+X-Gm-Message-State: APzg51B6noAtzk1mfs4S2opy6WaRci7zITwFTmL38ay/v+hvwcM3ldDe
+        yb8Aq84M5VrqvWqJhySRuOsZOcjHw0zLJnGuiUrYN7TmMBs9
+X-Google-Smtp-Source: ANB0VdZugx7OYv+7wqMElF01cgOz6ZPzVcIZWBIKmr6D3q7FCY5wFydmur85XAlLjh96F4Ff4qMshSmco9s5uVc5rVzN6gd7WYoo
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180730212146.31909-1-mr.nuke.me@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Received: by 2002:a24:f5c1:: with SMTP id k184-v6mr3609160ith.7.1536787742665;
+ Wed, 12 Sep 2018 14:29:02 -0700 (PDT)
+Date:   Wed, 12 Sep 2018 14:29:02 -0700
+In-Reply-To: <0000000000006cd9da0575ac7d9d@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000007f48880575b3478d@google.com>
+Subject: Re: KASAN: use-after-free Read in mqueue_get_tree
+From:   syzbot <syzbot+fef0b74a3bf760a9ee85@syzkaller.appspotmail.com>
+To:     arnd@arndb.de, dbueso@suse.de, dhowells@redhat.com,
+        ebiederm@xmission.com, jhaws@sdl.usu.edu,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 30, 2018 at 04:21:44PM -0500, Alexandru Gagniuc wrote:
-> When a PCI device is gone, we don't want to send IO to it if we can
-> avoid it. We expose functionality via the irq_chip structure. As
-> users of that structure may not know about the underlying PCI device,
-> it's our responsibility to guard against removed devices.
+syzbot has found a reproducer for the following crash on:
 
-I'm pretty ambivalent about pci_dev_is_disconnected() in general, but
-I think I'll take this, given a couple minor changelog clarifications:
+HEAD commit:    7c1b097f27bf Add linux-next specific files for 20180912
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=117a33be400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5980033172920ec0
+dashboard link: https://syzkaller.appspot.com/bug?extid=fef0b74a3bf760a9ee85
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15904f71400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14b37211400000
 
-> irq_write_msi_msg is already guarded. pci_msi_(un)mask_irq are not.
-> Guard them for completeness.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+fef0b74a3bf760a9ee85@syzkaller.appspotmail.com
 
-By the irq_write_msi_msg() guard, I guess you mean this path:
+sshd (5546) used greatest stack depth: 16872 bytes left
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+==================================================================
+BUG: KASAN: use-after-free in mqueue_get_tree+0x2ac/0x2e0 ipc/mqueue.c:362
+Read of size 8 at addr ffff8801d88ce9c8 by task syz-executor123/5567
 
-  pci_msi_domain_write_msg       # irq_chip.irq_write_msi_msg
-    __pci_write_msi_msg
-      if (dev->current_state != PCI_D0 || pci_dev_is_disconnected(dev))
-        /* don't touch */
+CPU: 1 PID: 5567 Comm: syz-executor123 Not tainted  
+4.19.0-rc3-next-20180912+ #72
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1d3/0x2c4 lib/dump_stack.c:113
+  print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+  mqueue_get_tree+0x2ac/0x2e0 ipc/mqueue.c:362
+  vfs_get_tree+0x1cb/0x5c0 fs/super.c:1787
+  mq_create_mount+0xe3/0x190 ipc/mqueue.c:415
+  mq_init_ns+0x15a/0x210 ipc/mqueue.c:1621
+  create_ipc_ns ipc/namespace.c:58 [inline]
+  copy_ipcs+0x3d2/0x580 ipc/namespace.c:84
+  create_new_namespaces+0x376/0x900 kernel/nsproxy.c:87
+  unshare_nsproxy_namespaces+0xc3/0x1f0 kernel/nsproxy.c:206
+  ksys_unshare+0x79c/0x10b0 kernel/fork.c:2535
+  __do_sys_unshare kernel/fork.c:2603 [inline]
+  __se_sys_unshare kernel/fork.c:2601 [inline]
+  __x64_sys_unshare+0x31/0x40 kernel/fork.c:2601
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x44e547
+Code: 00 00 00 b8 63 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 3d a0 fb ff c3  
+66 2e 0f 1f 84 00 00 00 00 00 66 90 b8 10 01 00 00 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 1d a0 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffc80298538 EFLAGS: 00000217 ORIG_RAX: 0000000000000110
+RAX: ffffffffffffffda RBX: 00007ffc80298bc0 RCX: 000000000044e547
+RDX: 0000000000000000 RSI: 00007ffc80298540 RDI: 0000000008000000
+RBP: 585858582e72656c R08: 0000000000000000 R09: 0000000000000018
+R10: 0000000000000000 R11: 0000000000000217 R12: 6c616b7a79732f2e
+R13: 0000000000408a80 R14: 0000000000000000 R15: 0000000000000000
 
-pci_msi_(un)mask_irq() may be irq_chip.irq_mask, .irq_unmask, etc
-pointers.  So these are parallel because they're all irq_chip function
-pointers, but the changelog isn't (yet) parallel because it uses the
-irq_chip pointer name for .irq_write_msi_msg but not for mask/unmask.
+The buggy address belongs to the page:
+page:ffffea0007623380 count:0 mapcount:0 mapping:0000000000000000  
+index:0xffff8801d88ced00
+flags: 0x2fffc0000000000()
+raw: 02fffc0000000000 dead000000000100 dead000000000200 0000000000000000
+raw: ffff8801d88ced00 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
 
-> For example, surprise removal of a PCIe device triggers teardown. This
-> touches the irq_chips ops some point to disable the interrupts. I/O
-> generated here can crash the system on machines with buggy firmware.
-> Not triggering the IO in the first place eliminates the problem.
+Memory state around the buggy address:
+  ffff8801d88ce880: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+  ffff8801d88ce900: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+> ffff8801d88ce980: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+                                               ^
+  ffff8801d88cea00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+  ffff8801d88cea80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+==================================================================
 
-It doesn't eliminate the problem completely because .irq_mask() and
-.irq_unmask() may be called for reasons other than surprise removal,
-and if a surprise removal happens after the pci_dev_is_disconnected()
-check but before the readl(), we will still generate I/O to a device
-that's gone.  I'd be OK if you said it "reduces" the problem.
-
-One reason I'm ambivalent about pci_dev_is_disconnected() is that in
-cases like this, it turns a reproducible problem into a very
-hard-to-reproduce problem, which reduces the likelihood that the buggy
-firmware will be fixed.
-
-Do you have information about known platforms with this buggy firmware
-and the signature of the crash?  If you do, it's always nice to be
-able to connect a patch with the user-visible problem it fixes.
-
-> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-> ---
-> 
-> There's another patch by Lukas Wunner that is needed (not yet published)
-> in order to fully block IO on SURPRISE!!! removal. The existing code only
-> sets the PCI_DEV_DISCONNECTED bit in an unreasonably narrow set of
-> circumstances. Lukas' patch fixes that.
-> 
-> However, this change is otherwise fully independent, and enjoy!
-> 
->  drivers/pci/msi.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c
-> index 4d88afdfc843..5f47b5cb0401 100644
-> --- a/drivers/pci/msi.c
-> +++ b/drivers/pci/msi.c
-> @@ -227,6 +227,9 @@ static void msi_set_mask_bit(struct irq_data *data, u32 flag)
->  {
->  	struct msi_desc *desc = irq_data_get_msi_desc(data);
->  
-> +	if (pci_dev_is_disconnected(msi_desc_to_pci_dev(desc)))
-> +		return;
-> +
->  	if (desc->msi_attrib.is_msix) {
->  		msix_mask_irq(desc, flag);
->  		readl(desc->mask_base);		/* Flush write to device */
-> -- 
-> 2.17.1
-> 
