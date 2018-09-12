@@ -2,186 +2,168 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1786C070C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:21:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE687C070C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:21:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 394D8213A2
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:21:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2KS4r0Nb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 394D8213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 8C28620880
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:21:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C28620880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728287AbeIMA1a (ORCPT
+        id S1728309AbeIMA1m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 20:27:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33200 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728121AbeIMA1a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 20:27:30 -0400
-Received: from jouet.infradead.org (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CAB4320880;
-        Wed, 12 Sep 2018 19:21:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536780092;
-        bh=jY2EEBobq68tm3k8eQHf8RJdjT0vdUUi1OLCQc1zTVY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=2KS4r0NbeBZQqSKNlg/Zi54/77ztZCX83IycDA7C+LapNFPC8JagRGGUd/UwEZWJK
-         OnBeSicSFXP/uItZmb1zNbgNWvrlpRgdXSPeIAurWUmYwk40GuEbjUw70QJcYA0Smf
-         dadx0rAA2Lsxsq31xTdoKmMXARpvRur9ne3XCj7M=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 58436140260; Wed, 12 Sep 2018 16:21:29 -0300 (-03)
-Date:   Wed, 12 Sep 2018 16:21:29 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Alexander Sverdlin <alexander.sverdlin@nokia.com>
-Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
-        linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH] tools: Remove conflicting BITS_PER_LONG define
-Message-ID: <20180912192129.GB13738@kernel.org>
-References: <20180912170232.25258-1-alexander.sverdlin@nokia.com>
- <20180912190107.GA5502@redhat.com>
+        Wed, 12 Sep 2018 20:27:42 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:59713 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728121AbeIMA1l (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 20:27:41 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8CJL4IM2744305
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 12 Sep 2018 12:21:04 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8CJL41T2744300;
+        Wed, 12 Sep 2018 12:21:04 -0700
+Date:   Wed, 12 Sep 2018 12:21:04 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-35x71oei2hdui9u0tarpimbq@git.kernel.org>
+Cc:     wangnan0@huawei.com, namhyung@kernel.org, mingo@kernel.org,
+        davem@davemloft.net, linux-kernel@vger.kernel.org, acme@redhat.com,
+        jolsa@kernel.org, tglx@linutronix.de, adrian.hunter@intel.com,
+        dsahern@gmail.com, hpa@zytor.com, glebfm@altlinux.org,
+        peterz@infradead.org
+Reply-To: adrian.hunter@intel.com, tglx@linutronix.de, dsahern@gmail.com,
+          hpa@zytor.com, glebfm@altlinux.org, peterz@infradead.org,
+          mingo@kernel.org, wangnan0@huawei.com, namhyung@kernel.org,
+          jolsa@kernel.org, acme@redhat.com, davem@davemloft.net,
+          linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] tools headers uapi: Update tools's copy of
+ linux/vhost.h
+Git-Commit-ID: 7f28785c41f4d5635e69c183b3de8ea19093ccef
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20180912190107.GA5502@redhat.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Sep 12, 2018 at 04:01:07PM -0300, Arnaldo Carvalho de Melo escreveu:
-> Em Wed, Sep 12, 2018 at 07:02:32PM +0200, Alexander Sverdlin escreveu:
-> >   CC       .../tools/objtool/builtin-check.o
-> >   ...
-> > In file included from .../tools/arch/x86/include/uapi/asm/bitsperlong.h:11:0,
-> >                  from .../tools/include/asm-generic/bitops/__ffs.h:6,
-> >                  from .../tools/include/asm-generic/bitops.h:16,
-> >                  from .../tools/include/linux/bitops.h:35,
-> >                  from .../tools/include/linux/hashtable.h:13,
-> >                  from elf.h:24,
-> >                  from check.h:22,
-> >                  from builtin-check.c:30:
-> > .../tools/include/asm-generic/bitsperlong.h:8:0: error: "BITS_PER_LONG" redefined [-Werror]
-> >  #define BITS_PER_LONG (__CHAR_BIT__ * __SIZEOF_LONG__)
-> > 
-> > Include <asm/bitsperlong.h> instead as other headers do.
-> 
-> Please try test building all tools in tools/
-> 
-> This broke make -C tools/perf/
+Commit-ID:  7f28785c41f4d5635e69c183b3de8ea19093ccef
+Gitweb:     https://git.kernel.org/tip/7f28785c41f4d5635e69c183b3de8ea19093ccef
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Tue, 11 Sep 2018 13:12:40 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Tue, 11 Sep 2018 13:12:40 -0300
 
-Also, where is the build of objtool failing?
+tools headers uapi: Update tools's copy of linux/vhost.h
 
-[acme@jouet linux]$ git log --oneline -3
-96eddb810b14 (HEAD -> master, torvalds/master) Merge tag 'riscv-for-linus-4.19-rc3' of git://git.kernel.org/pub/scm/linux/kernel/git/palmer/riscv-linux
-aeb5427218a7 Merge tag 'scsi-fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi
-5e335542de83 Merge branch 'for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/jikos/hid
-[acme@jouet linux]$ make -C tools/objtool/
-make: Entering directory '/home/acme/git/linux/tools/objtool'
-make -C /home/acme/git/linux/tools/build CFLAGS= LDFLAGS= fixdep
-make[1]: Entering directory '/home/acme/git/linux/tools/build'
-  HOSTCC   fixdep.o
-  HOSTLD   fixdep-in.o
-  LINK     fixdep
-make[1]: Leaving directory '/home/acme/git/linux/tools/build'
-make -C /home/acme/git/linux/tools/lib/subcmd/ OUTPUT=/home/acme/git/linux/tools/objtool/
-make[1]: Entering directory '/home/acme/git/linux/tools/lib/subcmd'
-make -C /home/acme/git/linux/tools/build CFLAGS= LDFLAGS= /home/acme/git/linux/tools/objtool/fixdep
-  HOSTCC   /home/acme/git/linux/tools/objtool/fixdep.o
-  HOSTLD   /home/acme/git/linux/tools/objtool/fixdep-in.o
-  LINK     /home/acme/git/linux/tools/objtool/fixdep
-  CC       /home/acme/git/linux/tools/objtool/exec-cmd.o
-  CC       /home/acme/git/linux/tools/objtool/help.o
-  CC       /home/acme/git/linux/tools/objtool/pager.o
-  CC       /home/acme/git/linux/tools/objtool/parse-options.o
-  CC       /home/acme/git/linux/tools/objtool/run-command.o
-  CC       /home/acme/git/linux/tools/objtool/sigchain.o
-  CC       /home/acme/git/linux/tools/objtool/subcmd-config.o
-  LD       /home/acme/git/linux/tools/objtool/libsubcmd-in.o
-  AR       /home/acme/git/linux/tools/objtool/libsubcmd.a
-make[1]: Leaving directory '/home/acme/git/linux/tools/lib/subcmd'
-make[1]: Entering directory '/home/acme/git/linux/tools/objtool'
-make[2]: Entering directory '/home/acme/git/linux/tools/objtool'
-  GEN      arch/x86/lib/inat-tables.c
-  CC       arch/x86/decode.o
-  LD       arch/x86/objtool-in.o
-make[2]: Leaving directory '/home/acme/git/linux/tools/objtool'
-  CC       builtin-check.o
-  CC       builtin-orc.o
-  CC       check.o
-  CC       orc_gen.o
-  CC       orc_dump.o
-  CC       elf.o
-  CC       special.o
-  CC       objtool.o
-  CC       libstring.o
-  CC       str_error_r.o
-  LD       objtool-in.o
-make[1]: Leaving directory '/home/acme/git/linux/tools/objtool'
-  LINK     objtool
-make: Leaving directory '/home/acme/git/linux/tools/objtool'
-[acme@jouet linux]$
+To get the changes in:
 
-Now building it without -C:
+	c48300c92ad9 ("vhost: fix VHOST_GET_BACKEND_FEATURES ioctl request definition")
 
-$ make -C tools/clean
-[acme@jouet objtool]$ make
-make -C /home/acme/git/linux/tools/build CFLAGS= LDFLAGS= fixdep
-make[1]: Entering directory '/home/acme/git/linux/tools/build'
-  HOSTCC   fixdep.o
-  HOSTLD   fixdep-in.o
-  LINK     fixdep
-make[1]: Leaving directory '/home/acme/git/linux/tools/build'
-make -C /home/acme/git/linux/tools/lib/subcmd/ OUTPUT=/home/acme/git/linux/tools/objtool/
-make[1]: Entering directory '/home/acme/git/linux/tools/lib/subcmd'
-make -C /home/acme/git/linux/tools/build CFLAGS= LDFLAGS= /home/acme/git/linux/tools/objtool/fixdep
-  HOSTCC   /home/acme/git/linux/tools/objtool/fixdep.o
-  HOSTLD   /home/acme/git/linux/tools/objtool/fixdep-in.o
-  LINK     /home/acme/git/linux/tools/objtool/fixdep
-  CC       /home/acme/git/linux/tools/objtool/exec-cmd.o
-  CC       /home/acme/git/linux/tools/objtool/help.o
-  CC       /home/acme/git/linux/tools/objtool/pager.o
-  CC       /home/acme/git/linux/tools/objtool/parse-options.o
-  CC       /home/acme/git/linux/tools/objtool/run-command.o
-  CC       /home/acme/git/linux/tools/objtool/sigchain.o
-  CC       /home/acme/git/linux/tools/objtool/subcmd-config.o
-  LD       /home/acme/git/linux/tools/objtool/libsubcmd-in.o
-  AR       /home/acme/git/linux/tools/objtool/libsubcmd.a
-make[1]: Leaving directory '/home/acme/git/linux/tools/lib/subcmd'
-make[1]: Entering directory '/home/acme/git/linux/tools/objtool'
-make[2]: Entering directory '/home/acme/git/linux/tools/objtool'
-  GEN      arch/x86/lib/inat-tables.c
-  CC       arch/x86/decode.o
-  LD       arch/x86/objtool-in.o
-make[2]: Leaving directory '/home/acme/git/linux/tools/objtool'
-  CC       builtin-check.o
-  CC       builtin-orc.o
-  CC       check.o
-  CC       orc_gen.o
-  CC       orc_dump.o
-  CC       elf.o
-  CC       special.o
-  CC       objtool.o
-  CC       libstring.o
-  CC       str_error_r.o
-  LD       objtool-in.o
-make[1]: Leaving directory '/home/acme/git/linux/tools/objtool'
-  LINK     objtool
-[acme@jouet objtool]$
+This makes 'perf trace' and other tools in the future using its
+beautifiers in a libbeauty.so library be able to translate these new
+ioctl to strings:
 
+  $ tools/perf/trace/beauty/vhost_virtio_ioctl.sh  > /tmp/after
+  $ diff -u /tmp/before /tmp/after
+  --- /tmp/before	2018-09-11 13:10:57.923038244 -0300
+  +++ /tmp/after	2018-09-11 13:11:20.329012685 -0300
+  @@ -15,6 +15,7 @@
+        [0x22] = "SET_VRING_ERR",
+        [0x23] = "SET_VRING_BUSYLOOP_TIMEOUT",
+        [0x24] = "GET_VRING_BUSYLOOP_TIMEOUT",
+  +     [0x25] = "SET_BACKEND_FEATURES",
+        [0x30] = "NET_SET_BACKEND",
+        [0x40] = "SCSI_SET_ENDPOINT",
+        [0x41] = "SCSI_CLEAR_ENDPOINT",
+  @@ -27,4 +28,5 @@
+   static const char *vhost_virtio_ioctl_read_cmds[] = {
+        [0x00] = "GET_FEATURES",
+        [0x12] = "GET_VRING_BASE",
+  +	[0x26] = "GET_BACKEND_FEATURES",
+  };
+  $
 
-So where is the failure?
+We'll also use this to be able to express syscall filters using symbolic
+these symbolic names, something like:
 
-- Arnaldo
+	# perf trace --all-cpus -e ioctl(cmd=*GET_FEATURES)
+
+This silences the following warning during perf's build:
+
+  Warning: Kernel ABI header at 'tools/include/uapi/linux/vhost.h' differs from latest version at 'include/uapi/linux/vhost.h'
+  diff -u tools/include/uapi/linux/vhost.h include/uapi/linux/vhost.h
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Gleb Fotengauer-Malinovskiy <glebfm@altlinux.org>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-35x71oei2hdui9u0tarpimbq@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/include/uapi/linux/vhost.h | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/tools/include/uapi/linux/vhost.h b/tools/include/uapi/linux/vhost.h
+index c51f8e5cc608..84c3de89696a 100644
+--- a/tools/include/uapi/linux/vhost.h
++++ b/tools/include/uapi/linux/vhost.h
+@@ -65,6 +65,7 @@ struct vhost_iotlb_msg {
+ };
+ 
+ #define VHOST_IOTLB_MSG 0x1
++#define VHOST_IOTLB_MSG_V2 0x2
+ 
+ struct vhost_msg {
+ 	int type;
+@@ -74,6 +75,15 @@ struct vhost_msg {
+ 	};
+ };
+ 
++struct vhost_msg_v2 {
++	__u32 type;
++	__u32 reserved;
++	union {
++		struct vhost_iotlb_msg iotlb;
++		__u8 padding[64];
++	};
++};
++
+ struct vhost_memory_region {
+ 	__u64 guest_phys_addr;
+ 	__u64 memory_size; /* bytes */
+@@ -160,6 +170,14 @@ struct vhost_memory {
+ #define VHOST_GET_VRING_BUSYLOOP_TIMEOUT _IOW(VHOST_VIRTIO, 0x24,	\
+ 					 struct vhost_vring_state)
+ 
++/* Set or get vhost backend capability */
++
++/* Use message type V2 */
++#define VHOST_BACKEND_F_IOTLB_MSG_V2 0x1
++
++#define VHOST_SET_BACKEND_FEATURES _IOW(VHOST_VIRTIO, 0x25, __u64)
++#define VHOST_GET_BACKEND_FEATURES _IOR(VHOST_VIRTIO, 0x26, __u64)
++
+ /* VHOST_NET specific defines */
+ 
+ /* Attach virtio net ring to a raw socket, or tap device.
