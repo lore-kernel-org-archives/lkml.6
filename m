@@ -2,128 +2,109 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEA6BC04ABB
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 00:26:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C81ABC4646A
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 00:27:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78B6820882
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 00:26:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C77F20882
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 00:27:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PP5tYl2j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78B6820882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="m+ZcwxDK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C77F20882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727673AbeILF2Q (ORCPT
+        id S1727773AbeILF2u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 01:28:16 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:52439 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726092AbeILF2Q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 01:28:16 -0400
-Received: by mail-wm0-f67.google.com with SMTP id y139-v6so437365wmc.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 17:26:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=l35jg51nqQT9C8cM5/wk+RzVdJVbP+i8XAe7iDMYtvQ=;
-        b=PP5tYl2jDclIXAOkcFB5MdSS2rktgYSDw3pFKdAFXYyxwMJHo8veyJidfFZJebtI6M
-         c5O+WU4o0L3+6YodJr0e+PlNOwz2EdcpVPAo4wH3GxCwR8oTd/V/26pvLFvQQ62GDA/p
-         7xXWXlovlU7M90Kx19Hf7/ePd7GvABLw4zwXEqsQSGBBPPsecsaK9Tha8KLDypm++Vux
-         DB9Vu7lxjVstnA1RJUHdJHcQgi28p0OeaZnu3rzPBo4waY4/OHJTW0nqvUL77dHlHJyN
-         GD3htzck2oDpPRCComfEobPBqLUk6+Kz1q02xmq1guZJC7My+PZ7gJrRgcP5EfMSo83r
-         WvEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=l35jg51nqQT9C8cM5/wk+RzVdJVbP+i8XAe7iDMYtvQ=;
-        b=Sb1QzOxFoTbRHnX7JlZjwM54cuI9aEs7S57BLt6hwiuXy+0I4JN3LZuJ5y5e97U6Iw
-         voZ6fBU9dIFoRVcJ5Nz3enLxwg3pjd9xEEC5o4Ui6C/vSV27k9DVJTKjFpqmmLRCLJrw
-         bCUsfSxLALTx21YFVSmNhPEJGOP7OYwu3hDKIUBm0N4KG45Uoz/zWJ9ckrmEvMdGJqa8
-         Y/J4uGq75wyxgHSuxXXIL5OBEPbbLJHZJK9RbtfB7hVDhCLDc2XU9opzcQgVgcZm5hgX
-         YSGa9lLivlS0K6bHyKsYyHaqRIb2Es7lJfAGRU/H6YZekyWyDqsjqpGI/C9DbAYXA1AA
-         pMAg==
-X-Gm-Message-State: APzg51DZhS3JD3HyI9mXJge6LtAlw7xbw4hbTQpC/Tp9xhb81Wx/Hn42
-        nY6QyR5t6E6UQgXamkP5AhmGTsSYvM3KSQ==
-X-Google-Smtp-Source: ANB0VdbosIya515p0PsdUnCeKJmfkMHJ1bX4QKaWsg3DsGEnnp9S6ixGoofhQzDklEPgwlrfjVwAwQ==
-X-Received: by 2002:a1c:6854:: with SMTP id d81-v6mr2649235wmc.160.1536711987603;
-        Tue, 11 Sep 2018 17:26:27 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id f132-v6sm1388680wme.24.2018.09.11.17.26.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Sep 2018 17:26:26 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>
-Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] drm/amdgpu: Add braces to initialize task_info subojects
-Date:   Tue, 11 Sep 2018 17:25:59 -0700
-Message-Id: <20180912002559.1853-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.18.0
+        Wed, 12 Sep 2018 01:28:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51604 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726092AbeILF2t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 01:28:49 -0400
+Received: from localhost (unknown [104.132.1.88])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3457B20866;
+        Wed, 12 Sep 2018 00:27:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1536712022;
+        bh=NhiAJndirvsdt/JuZPqMjuTdkkBPWNe7HSIT4nq4xOw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=m+ZcwxDK6ME0XC/P45Fcg4dqBq3uyX5UIV7WQe1vOaa/vbu75IaPDHIAMYej7nBmz
+         Rxerez+pyhEZSvDzD8yNF7BiqoQlQdCEuv+P7+unTXgkzBCJzTxHK2MyipSQr294ml
+         w+xC7r0NFx6GbrmoFltclId/cye8RDqYOAA3uKwg=
+Date:   Tue, 11 Sep 2018 17:27:00 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <chao@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix quota info to adjust recovered data
+Message-ID: <20180912002700.GA69323@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180911201546.56566-1-jaegeuk@kernel.org>
+ <7aa2e6f3-a4b2-dfdd-6205-f19c4bc952e6@kernel.org>
+ <20180912000603.GA67662@jaegeuk-macbookpro.roam.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180912000603.GA67662@jaegeuk-macbookpro.roam.corp.google.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns if there are missing braces around a subobject
-initializer.
+On 09/11, Jaegeuk Kim wrote:
+> On 09/12, Chao Yu wrote:
+> > On 2018/9/12 4:15, Jaegeuk Kim wrote:
+> > > fsck.f2fs is able to recover the quota structure, since roll-forward recovery
+> > > can recover it based on previous user information.
+> > 
+> > I didn't get it, both fsck and kernel recover quota file based all inodes'
+> > uid/gid/prjid, if {x}id didn't change, wouldn't those two recovery result be the
+> > same?
+> 
+> I thought that, but had to add this, since I was encountering quota errors right
+> after getting some files recovered. And, I thought it'd make it more safe to do
+> fsck after roll-forward recovery.
+> 
+> Anyway, let me test again without this patch for a while.
 
-drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c:1447:41: warning: suggest braces
-around initialization of subobject [-Wmissing-braces]
-                struct amdgpu_task_info task_info = { 0 };
-                                                      ^
-                                                      {}
-1 warning generated.
+Hmm, I just got a fsck failure right after some files recovered.
 
-drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c:262:41: warning: suggest braces
-around initialization of subobject [-Wmissing-braces]
-                struct amdgpu_task_info task_info = { 0 };
-                                                      ^
-                                                      {}
-1 warning generated.
-
-Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c | 2 +-
- drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c b/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
-index 9333109b210d..968cc1b8cdff 100644
---- a/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
-@@ -1444,7 +1444,7 @@ static int gmc_v8_0_process_interrupt(struct amdgpu_device *adev,
- 		gmc_v8_0_set_fault_enable_default(adev, false);
- 
- 	if (printk_ratelimit()) {
--		struct amdgpu_task_info task_info = { 0 };
-+		struct amdgpu_task_info task_info = { { 0 } };
- 
- 		amdgpu_vm_get_task_info(adev, entry->pasid, &task_info);
- 
-diff --git a/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c
-index 72f8018fa2a8..a781a5027212 100644
---- a/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c
-@@ -259,7 +259,7 @@ static int gmc_v9_0_process_interrupt(struct amdgpu_device *adev,
- 	}
- 
- 	if (printk_ratelimit()) {
--		struct amdgpu_task_info task_info = { 0 };
-+		struct amdgpu_task_info task_info = { { 0 } };
- 
- 		amdgpu_vm_get_task_info(adev, entry->pasid, &task_info);
- 
--- 
-2.18.0
-
+> 
+> Thanks,
+> 
+> 
+> > 
+> > Thanks,
+> > 
+> > > 
+> > > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > > ---
+> > >  fs/f2fs/recovery.c | 3 +++
+> > >  1 file changed, 3 insertions(+)
+> > > 
+> > > diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+> > > index 95511ed11a22..1fde86a2107e 100644
+> > > --- a/fs/f2fs/recovery.c
+> > > +++ b/fs/f2fs/recovery.c
+> > > @@ -675,6 +675,9 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
+> > >  
+> > >  	need_writecp = true;
+> > >  
+> > > +	/* quota is not fully updated due to the lack of user information. */
+> > > +	set_sbi_flag(sbi, SBI_NEED_FSCK);
+> > > +
+> > >  	/* step #2: recover data */
+> > >  	err = recover_data(sbi, &inode_list, &dir_list);
+> > >  	if (!err)
+> > > 
+> 
+> 
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
