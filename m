@@ -2,132 +2,100 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1E59C46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 17:33:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EF61C6778D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 17:34:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B7152087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 17:33:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A0F920854
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 17:34:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZZWzpNCp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B7152087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="O2BLh53s"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A0F920854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727811AbeILWid (ORCPT
+        id S1727780AbeILWkB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 18:38:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35080 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726862AbeILWic (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 18:38:32 -0400
-Received: from localhost (unknown [146.7.4.73])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C269A20854;
-        Wed, 12 Sep 2018 17:32:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536773580;
-        bh=tg/nK/g30ZEUbWLtL9sqr1WtNkynBI11+flTm2QUTqw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZZWzpNCpNlr46tBqPYfC2tvMTlmwavM573kWbPGp/R6FY16Wd1y3knNh4GxFrqflI
-         f1LZlJhsceVDxaKhesJGFLiclIuNAigmk2cG3LLvzSfpXqyDMr5gQzgUgDOu4uj0lz
-         42P9R2ydDAV6VXh93kTP/CXnrMhNDluErTRY9Dho=
-Date:   Wed, 12 Sep 2018 12:32:58 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc:     bhelgaas@google.com, lorenzo.pieralisi@arm.com,
-        linux-pci@vger.kernel.org, linuxarm@huawei.com,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] pci: Pick up the acpi numa node value if it is
- specified at the device level.
-Message-ID: <20180912173258.GJ118330@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180912152140.3676-1-Jonathan.Cameron@huawei.com>
- <20180912152140.3676-2-Jonathan.Cameron@huawei.com>
+        Wed, 12 Sep 2018 18:40:01 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34910 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727403AbeILWkB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 18:40:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=dX480bcLnCd6kp6XnnY5LIUs706onB0a8fVNc6iO7sA=; b=O2BLh53sHRI09HIrR5QgKsi2/
+        QClFRyXN4eDr38A7RVTuGO0eS/FgFPeiqDaZr140Jl0IsBpS62WilQFBkyftLCrOx5pZAX7sFSJY6
+        m1KNgS9kIu+JTVOhzfy9zJrZvZBCOEtyLpV3mBNb1t0ym+eR9YUTivR6dLctF5TQAou7x6AsAwPjp
+        n7c2khgdZ6b3dnoEhPel8fg99TBEIodKWuLYVcl9oME5P/X8peP5GXO60KM0BYqAG0DOOcM2u9ICc
+        ulEkvU1k+KgZL7DHuT8kW7afR0PkqCjxolgLjUarbDK/Hp+dnnnz82lu1/HFBWe0AFLBmKrWgWo2Y
+        Yi/keeAZg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g0920-00035l-70; Wed, 12 Sep 2018 17:34:24 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id DA4D9202C1A2E; Wed, 12 Sep 2018 19:34:21 +0200 (CEST)
+Date:   Wed, 12 Sep 2018 19:34:21 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v4 03/16] sched/core: uclamp: add CPU's clamp groups
+ accounting
+Message-ID: <20180912173421.GX24082@hirez.programming.kicks-ass.net>
+References: <20180828135324.21976-1-patrick.bellasi@arm.com>
+ <20180828135324.21976-4-patrick.bellasi@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180912152140.3676-2-Jonathan.Cameron@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180828135324.21976-4-patrick.bellasi@arm.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+cc ACPI folks, LKML]
-
-On Wed, Sep 12, 2018 at 04:21:40PM +0100, Jonathan Cameron wrote:
-> The ACPI specification allows you to provide _PXM entries for devices based
-> on their location on a particular bus.  Let us use that if it is provided
-> rather than just assuming it makes sense to put the device into the proximity
-> domain of the root.
-> 
-> An example DSDT entry that will supply this is:
-> 
->   Device (PCI2)
->   {
->     Name (_HID, "PNP0A08") // PCI Express Root Bridge
->     Name (_CID, "PNP0A03") // Compatible PCI Root Bridge
->     Name(_SEG, 2) // Segment of this Root complex
->     Name(_BBN, 0xF8) // Base Bus Number
->     Name(_CCA, 1)
->     Method (_PXM, 0, NotSerialized) {
->       Return(0x00)
->     }
-> 
-> ...
->     Device (BRI0) {
->       Name (_HID, "19E51610")
->       Name (_ADR, 0)
->       Name (_BBN, 0xF9)
->       Device (CAR0) {
->         Name (_HID, "97109912")
->         Name (_ADR, 0)
->         Method (_PXM, 0, NotSerialized) {
->           Return(0x02)
->         }
->       }
->     }
->   }
-> 
-> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-
-Applied with subject:
-
-  ACPI/PCI: Pay attention to device-specific _PXM node values
-
-to pci/enumeration for v4.20, thanks!
-
-> ---
->  drivers/pci/pci-acpi.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
-> index 738e3546abb1..f2f5f0ddd60e 100644
-> --- a/drivers/pci/pci-acpi.c
-> +++ b/drivers/pci/pci-acpi.c
-> @@ -753,10 +753,15 @@ static void pci_acpi_setup(struct device *dev)
->  {
->  	struct pci_dev *pci_dev = to_pci_dev(dev);
->  	struct acpi_device *adev = ACPI_COMPANION(dev);
-> +	int node;
+On Tue, Aug 28, 2018 at 02:53:11PM +0100, Patrick Bellasi wrote:
+> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> index 72df2dc779bc..513608ae4908 100644
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -764,6 +764,50 @@ extern void rto_push_irq_work_func(struct irq_work *work);
+>  #endif
+>  #endif /* CONFIG_SMP */
 >  
->  	if (!adev)
->  		return;
->  
-> +	node = acpi_get_node(adev->handle);
-> +	if (node != NUMA_NO_NODE)
-> +		set_dev_node(dev, node);
-> +	
->  	pci_acpi_optimize_delay(pci_dev, adev->handle);
->  
->  	pci_acpi_add_pm_notifier(adev, pci_dev);
-> -- 
-> 2.18.0
-> 
-> 
+> +#ifdef CONFIG_UCLAMP_TASK
+> +/**
+> + * struct uclamp_group - Utilization clamp Group
+> + * @value: utilization clamp value for tasks on this clamp group
+> + * @tasks: number of RUNNABLE tasks on this clamp group
+> + *
+> + * Keep track of how many tasks are RUNNABLE for a given utilization
+> + * clamp value.
+> + */
+> +struct uclamp_group {
+> +	int value;
+> +	int tasks;
+> +};
+
+We could use bit fields again to compress in 10:22 bits I suppose. 4M
+tasks is quite a lot to have runnable on a single CPU ;-)
