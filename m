@@ -2,196 +2,176 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01A3CC070C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 22:49:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32B93C070C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 22:54:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91F922133F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 22:49:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA91721471
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 22:54:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1RHln0+Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91F922133F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vVL1/S+3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA91721471
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728178AbeIMDzl (ORCPT
+        id S1726478AbeIMEA4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 23:55:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44860 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727803AbeIMDzl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 23:55:41 -0400
-Received: from mail-qt0-f171.google.com (mail-qt0-f171.google.com [209.85.216.171])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD28821476;
-        Wed, 12 Sep 2018 22:49:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536792542;
-        bh=dZed1JfvodCQ+q46LOdYB0CZ2OQj4wjBms2zAAlz3rc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=1RHln0+QB7Ul8w9eWi3e3RPi4UxKZhsIoA3HLYYeZGl5qABggsEbt7aMVFFbM40VN
-         knxSf6IrOEIVD8jXfCVKFxzP+YP86/74hce5ZZFeJLjYUPtA0x+N4zyHo0TlvvV28e
-         cRCKo5Qx/Y9hLHtTwWZrMfVhYprkw5ZFzAkrdvDY=
-Received: by mail-qt0-f171.google.com with SMTP id x7-v6so3621516qtk.5;
-        Wed, 12 Sep 2018 15:49:02 -0700 (PDT)
-X-Gm-Message-State: APzg51A87qKhn8umGX5wUScHz6zTUE0/i1azzKhBgoUnAUpBnfP97d1y
-        TO1DRZlrYgrz8JBk+OIBKpIvRCK5TB/PuTDWJQ==
-X-Google-Smtp-Source: ANB0VdbOnxH03XrbtA6ZEwdd6PWtZGtB7BSL+0rvxrBsbor5/T3hME5mZMnAFv6+zADaIu7iiPlgWo1qL5vTkMZeG0E=
-X-Received: by 2002:a0c:db87:: with SMTP id m7-v6mr3274626qvk.90.1536792541922;
- Wed, 12 Sep 2018 15:49:01 -0700 (PDT)
+        Thu, 13 Sep 2018 00:00:56 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:33633 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725751AbeIMEAz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 00:00:55 -0400
+Received: by mail-pf1-f193.google.com with SMTP id d4-v6so1729815pfn.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 15:54:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YIIxVhLA7530dA++L425P9dZD7WsRg0fvSPFQmWAdUQ=;
+        b=vVL1/S+3AmNqk0C4cX0U0Alh0MgaQYOwwiZCsXRlSuI+hUmbZ0cNDgYjgozdWlUhNC
+         Rrl845xDvBwXvEd3ViWdI180Yp1eQu6kgpzPq+bcR6P7tBm+a8TZnyjKKzfgQMAyvlWu
+         8yerNH0JDKaUEYfwsEGcFtxSJBOquAkA6QWfklRepcfd1HdMfjLsWgC6gO/Sxv571vad
+         fqvLLRT6tt4SwhrKh8cU0Sc1MHMOqZPVomYIxnEdxTCeDesQDJVRWAhOXTcgZddysn0L
+         V3m/jsE6uWcGaNWUHxB3LvXzKyDEF60T3tm37TJ21CinhDgH7NybpKyPQq4okv/4aWZj
+         CKgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YIIxVhLA7530dA++L425P9dZD7WsRg0fvSPFQmWAdUQ=;
+        b=SQCC+z49HIt6purPknL3mT2pyXnM2dQ/Vsw0/8dXffL9w8hFszTwVmiurm0/xMs59+
+         9198/gP95mEYGrmY5PxYzaNSvyftITQYus430pj9JyEYaQka/mRWf3v/EaHz7BcaDrWu
+         8A7pfnGY+BGYO1eXlY28Gi73ao2FaVZTW5mVPEXKREQ9L/QyUtKxM/hsfgdcHkzTvnMo
+         QshJuadMq3jkCHaUNdVjYdCC7Yq651z/Q7InlOh64UxaMrezrTD1dFynX7TyQR2MwoOO
+         LcoRhZcCloTvI27hxtzYlcad21ICo75RqmzqPihl0EVsxXqD3JCtXUDd23qOICu2/R2S
+         guTQ==
+X-Gm-Message-State: APzg51CcXfgJ/3y8SISbNq02t9eigt88Kl48T0K2VbpdxYJ+D0gTO+FE
+        tVed7Ugn9leUEgyv0scJrF32jTECMEgO9H/9ezewbg==
+X-Google-Smtp-Source: ANB0VdbYfCfr9AXwYVxX8bSK3ZM/3u8Vq1GT2kuLmvDbR92QDsAEUzEk8nbGaVvshxaVP601IGoecryWuXaNksQctiQ=
+X-Received: by 2002:a63:8543:: with SMTP id u64-v6mr4542139pgd.248.1536792856192;
+ Wed, 12 Sep 2018 15:54:16 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180828154433.5693-1-robh@kernel.org> <20180828154433.5693-7-robh@kernel.org>
- <20180912121705.010a999d@coco.lan> <CAL_JsqK8B46x8bm_aYggJSPAWrMGZ1rZ58uWCmyiSqA2KZpiFg@mail.gmail.com>
- <20180912180734.37dfafb2@coco.lan>
-In-Reply-To: <20180912180734.37dfafb2@coco.lan>
-From:   Rob Herring <robh@kernel.org>
-Date:   Wed, 12 Sep 2018 17:48:50 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJdr6q00w8YhTsFdZM9k2bAJGDh-ViqFo19VCgJ1SXyug@mail.gmail.com>
-Message-ID: <CAL_JsqJdr6q00w8YhTsFdZM9k2bAJGDh-ViqFo19VCgJ1SXyug@mail.gmail.com>
-Subject: Re: [PATCH v2] staging: Convert to using %pOFn instead of device_node.name
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Joe Perches <joe@perches.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Ian Arkver <ian.arkver.dev@gmail.com>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        devel@driverdev.osuosl.org
+References: <20180911225630.124502-1-venture@google.com> <585d1c3a-6121-c20d-f6d6-7567595cd1af@acm.org>
+In-Reply-To: <585d1c3a-6121-c20d-f6d6-7567595cd1af@acm.org>
+From:   Patrick Venture <venture@google.com>
+Date:   Wed, 12 Sep 2018 15:54:04 -0700
+Message-ID: <CAO=notzHoqsjuSdEZby0mr3KgtoxtYjdr_X0nM_2zBu0NcOOAA@mail.gmail.com>
+Subject: Re: [PATCH v2] ipmi: looped device detection
+To:     Corey Minyard <minyard@acm.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        openipmi-developer@lists.sourceforge.net,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 4:07 PM Mauro Carvalho Chehab
-<mchehab+samsung@kernel.org> wrote:
+On Wed, Sep 12, 2018 at 3:10 PM Corey Minyard <minyard@acm.org> wrote:
 >
-> Em Wed, 12 Sep 2018 15:26:48 -0500
-> Rob Herring <robh@kernel.org> escreveu:
->
-> > +Joe P
+> On 09/11/2018 05:56 PM, Patrick Venture wrote:
+> > Try to get the device ID repeatedly during initialization before giving up.
+> > The BMC isn't always responsive, and this allows it to be slightly flaky
+> > during early boot.
 > >
-> > On Wed, Sep 12, 2018 at 10:17 AM Mauro Carvalho Chehab
-> > <mchehab+samsung@kernel.org> wrote:
-> > >
-> > > Em Tue, 28 Aug 2018 10:44:33 -0500
-> > > Rob Herring <robh@kernel.org> escreveu:
-> > >
-> > > > In preparation to remove the node name pointer from struct device_node,
-> > > > convert printf users to use the %pOFn format specifier.
-> > > >
-> > > > Cc: Steve Longerbeam <slongerbeam@gmail.com>
-> > > > Cc: Philipp Zabel <p.zabel@pengutronix.de>
-> > > > Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> > > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > > Cc: linux-media@vger.kernel.org
-> > > > Cc: devel@driverdev.osuosl.org
-> > > > Signed-off-by: Rob Herring <robh@kernel.org>
-> > > > ---
-> > > > v2:
-> > > > - fix conditional use of node name vs devname for imx
-> > > >
-> > > >  drivers/staging/media/imx/imx-media-dev.c | 15 ++++++++++-----
-> > > >  drivers/staging/media/imx/imx-media-of.c  |  4 ++--
-> > > >  drivers/staging/mt7621-eth/mdio.c         |  4 ++--
-> > >
-> > > It would be better if you had submitted the staging/media stuff
-> > > on a separate patch, as they usually go via the media tree.
+> > Tested: Installed on a system with the BMC software disabled
+> > such that it was non-responsive.  The driver correctly detected this
+> > and gave up as expected.  Then I re-enabled the BMC software unloaded
+> > and reloaded the driver and it was detected properly.
+>
+> The patch looks fine, but I wonder if this is something that is really
+> valuable.
+> I have wondered about this before.
+>
+> The question is: If the BMC is unavailable, what are the chances of it
+> becoming
+> available by the time you do 5 attempts?  I would guess that is a pretty
+> small
+> chance, which is why I haven't done this already.
+
+This patch was actually critical for us to provide a reliable IPMI
+interface.  The version of OpenBMC or the state of the BMC at the
+point the kernel was loading was flaky, so following the example in
+the BIOS source, we just re-try a few times.  We also can hold boot X
+seconds until it's responding, but, this avoided some issues inherent
+with that.
+
+>
+> You could have something that re-tested periodically, but there are so many
+> systems with IPMI specified in ACPI or SMBIOS that is wrong, and it would
+> try forever.  Also not really a good thing.
+
+If we did a periodic check, it could check X times, but I felt going
+for a simple solution was ideal -- and this idea was proved out on a
+few platforms.  We have other drivers that are loaded by the kernel
+(not at run-time) and they depend on IPMI, and without this patch they
+would then have a non-trivial probability of failure.
+
+>
+> So I've left it to reload the driver or use the hotmod interface.
+>
+> -corey
+>
+> > Signed-off-by: Patrick Venture <venture@google.com>
+> > ---
+> > v2:
+> >   - removed extra variable that was set but not used.
+> > ---
+> >   drivers/char/ipmi/ipmi_si_intf.c | 23 ++++++++++++++++++++++-
+> >   1 file changed, 22 insertions(+), 1 deletion(-)
 > >
-> > Sorry, I thought Greg took all of staging.
->
-> No, I usually take media patches on staging. It seems that at least
-> the IIO subsystem does the same:
->
-> IIO SUBSYSTEM AND DRIVERS
-> M:      Jonathan Cameron <jic23@kernel.org>
-> R:      Hartmut Knaack <knaack.h@gmx.de>
-> R:      Lars-Peter Clausen <lars@metafoo.de>
-> R:      Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-> L:      linux-iio@vger.kernel.org
-> T:      git git://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git
-> S:      Maintained
-> F:      Documentation/ABI/testing/configfs-iio*
-> F:      Documentation/ABI/testing/sysfs-bus-iio*
-> F:      Documentation/devicetree/bindings/iio/
-> F:      drivers/iio/
-> F:      drivers/staging/iio/
-> F:      include/linux/iio/
-> F:      tools/iio/
-
-Yes, the information is there, but needs human processing.
-
-> Anyway, as I said before, I don't have any issues if Greg takes
-> this specific patch.
-
-I know. I'm just thinking about how to improve things. Ideally, what
-I'd like is a script that spits out a To list for who applies the
-patch and a Cc list of reviewers.
-
-> > A problem with MAINTAINERS is there is no way to tell who applies
-> > patches for a given path vs. anyone else listed. This frequently
-> > happens when the maintainer organization doesn't match the directory
-> > org. If we distinguished this, then it would be quite easy to see when
-> > you've created a patch that needs to be split to different maintainers
-> > (or an explanation why it isn't). Whatever happened with splitting up
-> > MAINTAINERS? If there was a file for each maintainer tree, then it
-> > would be easier to extract that information.
->
-> Yes, but, on the other hand, get_maintainers.pl would likely
-> take more time to process, if a patch touches multiple subsystems.
->
+> > diff --git a/drivers/char/ipmi/ipmi_si_intf.c b/drivers/char/ipmi/ipmi_si_intf.c
+> > index 90ec010bffbd..5fed96897fe8 100644
+> > --- a/drivers/char/ipmi/ipmi_si_intf.c
+> > +++ b/drivers/char/ipmi/ipmi_si_intf.c
+> > @@ -1918,11 +1918,13 @@ int ipmi_si_add_smi(struct si_sm_io *io)
+> >    * held, primarily to keep smi_num consistent, we only one to do these
+> >    * one at a time.
+> >    */
+> > +#define GET_DEVICE_ID_ATTEMPTS       5
+> >   static int try_smi_init(struct smi_info *new_smi)
+> >   {
+> >       int rv = 0;
+> >       int i;
+> >       char *init_name = NULL;
+> > +     unsigned long sleep_rm;
 > >
-> > Or maybe we just need to be stricter with the 'M' vs. 'R' tag and 'M'
-> > means that is the person who applies the patch. I don't think many
-> > drivers have their own tree and maintainer except for a few big ones.
+> >       pr_info(PFX "Trying %s-specified %s state machine at %s address 0x%lx, slave address 0x%x, irq %d\n",
+> >               ipmi_addr_src_to_str(new_smi->io.addr_source),
+> > @@ -2003,7 +2005,26 @@ static int try_smi_init(struct smi_info *new_smi)
+> >        * Attempt a get device id command.  If it fails, we probably
+> >        * don't have a BMC here.
+> >        */
+> > -     rv = try_get_dev_id(new_smi);
+> > +     for (i = 0; i < GET_DEVICE_ID_ATTEMPTS; i++) {
+> > +             pr_info(PFX "Attempting to read BMC device ID\n");
+> > +             rv = try_get_dev_id(new_smi);
+> > +             /* If it succeeded, stop trying */
+> > +             if (!rv)
+> > +                     break;
+> > +
+> > +             /* Sleep for ~0.25s before trying again instead of hammering
+> > +              * the BMC.
+> > +              */
+> > +             sleep_rm = msleep_interruptible(250);
+> > +             if (sleep_rm != 0) {
+> > +                     pr_info(PFX "Find BMC interrupted\n");
+> > +                     rv = -EINTR;
+> > +                     goto out_err;
+> > +             }
+> > +     }
+> > +
+> > +     /* If we exited the loop above and rv is non-zero we ran out of tries.
+> > +      */
+> >       if (rv) {
+> >               if (new_smi->io.addr_source)
+> >                       dev_err(new_smi->io.dev,
 >
-> Hmm... just getting a random file under staging/media:
 >
->         ./scripts/get_maintainer.pl -f drivers/staging/media/imx/imx-ic.h
->         Steve Longerbeam <slongerbeam@gmail.com> (maintainer:MEDIA DRIVERS FOR FREESCALE IMX)
->         Philipp Zabel <p.zabel@pengutronix.de> (maintainer:MEDIA DRIVERS FOR FREESCALE IMX)
->         Mauro Carvalho Chehab <mchehab@kernel.org> (maintainer:MEDIA INPUT INFRASTRUCTURE (V4L/DVB))
->         Greg Kroah-Hartman <gregkh@linuxfoundation.org> (supporter:STAGING SUBSYSTEM)
->         linux-media@vger.kernel.org (open list:MEDIA DRIVERS FOR FREESCALE IMX)
->         devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM)
->         linux-kernel@vger.kernel.org (open list)
->
-> It seems that the maintainers are already ordered by the tree
-> depth (placing the most relevant results first).
-
-Most relevant in the sense of who reviews and cares about the changes,
-but not to answer who applies this patch. I could say I just need to
-ignore supporters and look at the last maintainer, but then that
-breaks for the case below. I don't think 'maintainer' vs. 'supporter'
-is very well maintained either.
-
-$ scripts/get_maintainer.pl -f drivers/staging/olpc_dcon/
-Jens Frederich <jfrederich@gmail.com> (maintainer:STAGING - OLPC
-SECONDARY DISPLAY CONTROLLER (DCON))
-Daniel Drake <dsd@laptop.org> (maintainer:STAGING - OLPC SECONDARY
-DISPLAY CONTROLLER (DCON))
-Jon Nettleton <jon.nettleton@gmail.com> (maintainer:STAGING - OLPC
-SECONDARY DISPLAY CONTROLLER (DCON))
-Greg Kroah-Hartman <gregkh@linuxfoundation.org> (supporter:STAGING SUBSYSTEM)
-devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM)
-linux-kernel@vger.kernel.org (open list)
-
-Maybe Jon has a tree and applies it. Who knows... You either have to
-know who are "real" maintainers (the ones applying patches) or go look
-at git history to see Greg is the only non-author S-o-B.
-
-> So, both driver maintainers appear first, then me and finally
-> Greg (as supporter).
->
-> Mailing lists are also ordered by relevance: media ML, then staging
-> ML and finally LKML.
-
-Another clue, yes, but something you can script?
-
-Rob
