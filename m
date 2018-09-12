@@ -2,158 +2,227 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1860C46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:13:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DDC2C4646A
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:13:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A810020880
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:13:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A810020880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 057002088E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:13:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 057002088E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728096AbeILORQ (ORCPT
+        id S1728100AbeILORS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 12 Sep 2018 10:17:18 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55832 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728068AbeILORQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 12 Sep 2018 10:17:16 -0400
-Received: from mail-wm0-f54.google.com ([74.125.82.54]:54017 "EHLO
-        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726901AbeILORP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 10:17:15 -0400
-Received: by mail-wm0-f54.google.com with SMTP id b19-v6so1525322wme.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 02:13:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=bhKQo4X70prIt+UwUKyzKvZK31h5vf1Jdj+alb5cndc=;
-        b=F7iVkCLq8YCqMuQREZ80wz/FbKsH69zBK0abNpNRLPXp1l0CVUSxOB6CVPj6iLog6f
-         ybRArRdPbOLht8gcdK5UsUol/2xDD8vUbxwNjE17A8/mleGqCSO9Bffz+Ol+WC3PfDx2
-         FSzed9YRsVOmd3v/+oqCrieYotH9v3pMdF1FlpdJbCql8FARD5yi77/+CFwP8MOm0Kus
-         EnKs5j09a5OFNocNhQ7y29lhSWN7GhwnQNR8prB3veSUoYHBzOnfOwUGiiSnd9uHYsei
-         8GddMLTOWdkmtzbrjsn4ytoml/Ua8uujOc4OZ3VxJVvL2FHrNY8hJPBcaxD9e7IjwK2w
-         JW3A==
-X-Gm-Message-State: APzg51Bb+36VToOz1Voa8T8bvjz38napHL0ghoV8WLr8APf0ZyfGn9uG
-        K/ezlF2Dgt9rc5AqLutbX42f2Q==
-X-Google-Smtp-Source: ANB0VdbnElk0Lzs3bnclkR02VyaFFcGiFio88t6g5oPBB4LDHeL9lT5bI2VU5SjzzbbGXnNO2LveAA==
-X-Received: by 2002:a1c:f913:: with SMTP id x19-v6mr985849wmh.63.1536743616568;
-        Wed, 12 Sep 2018 02:13:36 -0700 (PDT)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id 34-v6sm872316wra.20.2018.09.12.02.13.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Sep 2018 02:13:35 -0700 (PDT)
-Subject: Re: [REGRESSION] boot-screen override by "34db50e55656 efifb: Copy
- the ACPI BGRT"
-To:     David Herrmann <dh.herrmann@gmail.com>
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fbdev@vger.kernel.org, linux-efi@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-References: <CGME20180903132353epcas4p373e876f1b52dbed6df7bd3acc73fcdf4@epcas4p3.samsung.com>
- <CANq1E4QwNg0VuAZZtatOTXspv7Y-z_HSa-9CHzK2Y28CGK8W4Q@mail.gmail.com>
- <1982440.Fn0LzJ7a3l@amdc3058>
- <dc7f08d7-77fc-92ca-b6ec-f9d5a8f24cf3@redhat.com>
- <CANq1E4TiMSY=udGJWZoDzMhdsRjC==QCRFPO+Oja7KoyBX-6fg@mail.gmail.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <9e9e269d-6ac7-7826-ecd5-acc164025429@redhat.com>
-Date:   Wed, 12 Sep 2018 11:13:35 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DA8407A9;
+        Wed, 12 Sep 2018 02:13:38 -0700 (PDT)
+Received: from queper01-lin.local (queper01-lin.emea.arm.com [10.4.13.27])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C2E563F703;
+        Wed, 12 Sep 2018 02:13:34 -0700 (PDT)
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     peterz@infradead.org, rjw@rjwysocki.net,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Cc:     gregkh@linuxfoundation.org, mingo@redhat.com,
+        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
+        chris.redpath@arm.com, patrick.bellasi@arm.com,
+        valentin.schneider@arm.com, vincent.guittot@linaro.org,
+        thara.gopinath@linaro.org, viresh.kumar@linaro.org,
+        tkjos@google.com, joel@joelfernandes.org, smuckle@google.com,
+        adharmap@codeaurora.org, skannan@codeaurora.org,
+        pkondeti@codeaurora.org, juri.lelli@redhat.com,
+        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
+        currojerez@riseup.net, javi.merino@kernel.org,
+        quentin.perret@arm.com
+Subject: [PATCH v7 04/14] PM / EM: Expose the Energy Model in sysfs
+Date:   Wed, 12 Sep 2018 10:12:59 +0100
+Message-Id: <20180912091309.7551-5-quentin.perret@arm.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180912091309.7551-1-quentin.perret@arm.com>
+References: <20180912091309.7551-1-quentin.perret@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <CANq1E4TiMSY=udGJWZoDzMhdsRjC==QCRFPO+Oja7KoyBX-6fg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Expose the Energy Model (read-only) of all performance domains in sysfs
+for convenience. To do so, add a kobject to the CPU subsystem under the
+umbrella of which a kobject for each performance domain is attached.
 
-On 03-09-18 17:11, David Herrmann wrote:
-> Hey
-> 
-> On Mon, Sep 3, 2018 at 4:47 PM Hans de Goede <hdegoede@redhat.com> wrote:
->>
->> Hi,
->>
->> On 03-09-18 16:16, Bartlomiej Zolnierkiewicz wrote:
->>>
->>> Hi,
->>>
->>> On Monday, September 03, 2018 03:23:38 PM David Herrmann wrote:
->>>> Hey
->>>>
->>>> Since this commit:
->>>>
->>>>       34db50e55656 efifb: Copy the ACPI BGRT
->>>>
->>>> the kernel will override boot-splashs unasked. This breaks the
->>>> graphical boot-process on our setups. In particular, we have a setup
->>>> where an efi-boot-entry draws the early boot-splash on-screen, then
->>>> hands-over to the linux-kernel + initrd. The boot-splash daemon in the
->>>> initrd then takes over control of possible animations.
->>>>
->>>> With the mentioned commit compiled in, the kernel will redraw the
->>>> firmware logo on screen at a random time without any way to intervene.
->>>
->>> You have CONFIG_FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER=y (the deferred
->>> console takeover support introduced in v4,19-rc1). I assume that this
->>> is intended?
->>>
->>>> What is the intention of this commit? Why is the kernel re-drawing the
->>>> firmware logo unasked? If someone during the boot-process draws
->>>> content on the screen, I would prefer if the kernel does not clear
->>>> that on driver load.
->>>
->>> +/*
->>> + * If fbcon deffered console takeover is configured, the intent is for the
->>> + * framebuffer to show the boot graphics (e.g. vendor logo) until there is some
->>> + * (error) message to display. But the boot graphics may have been destroyed by
->>> + * e.g. option ROM output, detect this and restore the boot graphics.
->>> + */
->>> +#if defined CONFIG_FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER && \
->>> +    defined CONFIG_ACPI_BGRT
->>> ...
->>> +static void efifb_show_boot_graphics(struct fb_info *info)
->>> ...
->>> +#else
->>> +static inline void efifb_show_boot_graphics(struct fb_info *info) {}
->>> +#endif
->>>
->>>> Can we either provide an option to disable this feature, or revert the commit?
->>>
->>> Hans?
->>
->> We use the ACPI bgrt extension to get the logo to draw and then
->> draw it since some devices rely on the OS to draw it and otherwise we
->> just end up with a blackscreen when doing silent / flickerfree boot.
->>
->> Ideally you would be able to get your vendor to put the logo in firmware
->> in the ACPI bgrt extension, then you also do not need to play any tricks
->> with an EFI binary drawing your own logo. But I can understand if you don't
->> have control over this, so you need to do this with the EFI binary trick.
->>
->> I can also understand that you want to use deferred console takeover
->> in a setup like yours to avoid fbcon messing up what is on the display
->> during boot, that is exactly what it is for. So I think a reasonable
->> approach here is to add a kernel commandline option, say:
->>
->> video=efifb:nobgrt
->>
->> David, would that work for you?
-> 
-> That would be perfect!
+The resulting hierarchy is as follows for a platform with two
+performance domains for example:
 
-Ok, I just send out a patch for this with you in the Cc.
+   /sys/devices/system/cpu/energy_model
+   ├── pd0
+   │   ├── cost
+   │   ├── cpus
+   │   ├── frequency
+   │   └── power
+   └── pd4
+       ├── cost
+       ├── cpus
+       ├── frequency
+       └── power
 
-Sorry for taking a bit long to write the patch.
+In this implementation, the kobject abstraction is only used as a
+convenient way of exposing data to sysfs. However, it could also be
+used in the future to allocate and release performance domains in a more
+dynamic way using reference counting.
 
-Regards,
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Signed-off-by: Quentin Perret <quentin.perret@arm.com>
+---
+ include/linux/energy_model.h |  2 +
+ kernel/power/energy_model.c  | 90 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 92 insertions(+)
 
-Hans
+diff --git a/include/linux/energy_model.h b/include/linux/energy_model.h
+index a472076f9c80..69184f4f4ae0 100644
+--- a/include/linux/energy_model.h
++++ b/include/linux/energy_model.h
+@@ -27,6 +27,7 @@ struct em_cap_state {
+  * em_perf_domain - Performance domain
+  * @table:		List of capacity states, in ascending order
+  * @nr_cap_states:	Number of capacity states
++ * @kobj:		Kobject used to expose the domain in sysfs
+  * @cpus:		Cpumask covering the CPUs of the domain
+  *
+  * A "performance domain" represents a group of CPUs whose performance is
+@@ -37,6 +38,7 @@ struct em_cap_state {
+ struct em_perf_domain {
+ 	struct em_cap_state *table;
+ 	int nr_cap_states;
++	struct kobject kobj;
+ 	unsigned long cpus[0];
+ };
+ 
+diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
+index d77cd295f3e9..2934ebb09e9d 100644
+--- a/kernel/power/energy_model.c
++++ b/kernel/power/energy_model.c
+@@ -23,6 +23,82 @@ static DEFINE_PER_CPU(struct em_perf_domain *, em_data);
+  */
+ static DEFINE_MUTEX(em_pd_mutex);
+ 
++static struct kobject *em_kobject;
++
++/* Getters for the attributes of em_perf_domain objects */
++struct em_pd_attr {
++	struct attribute attr;
++	ssize_t (*show)(struct em_perf_domain *pd, char *buf);
++	ssize_t (*store)(struct em_perf_domain *pd, const char *buf, size_t s);
++};
++
++#define EM_ATTR_LEN 13
++#define show_table_attr(_attr) \
++static ssize_t show_##_attr(struct em_perf_domain *pd, char *buf) \
++{ \
++	ssize_t cnt = 0; \
++	int i; \
++	for (i = 0; i < pd->nr_cap_states; i++) { \
++		if (cnt >= (ssize_t) (PAGE_SIZE / sizeof(char) \
++				      - (EM_ATTR_LEN + 2))) \
++			goto out; \
++		cnt += scnprintf(&buf[cnt], EM_ATTR_LEN + 1, "%lu ", \
++				 pd->table[i]._attr); \
++	} \
++out: \
++	cnt += sprintf(&buf[cnt], "\n"); \
++	return cnt; \
++}
++
++show_table_attr(power);
++show_table_attr(frequency);
++show_table_attr(cost);
++
++static ssize_t show_cpus(struct em_perf_domain *pd, char *buf)
++{
++	return sprintf(buf, "%*pbl\n", cpumask_pr_args(to_cpumask(pd->cpus)));
++}
++
++#define pd_attr(_name) em_pd_##_name##_attr
++#define define_pd_attr(_name) static struct em_pd_attr pd_attr(_name) = \
++		__ATTR(_name, 0444, show_##_name, NULL)
++
++define_pd_attr(power);
++define_pd_attr(frequency);
++define_pd_attr(cost);
++define_pd_attr(cpus);
++
++static struct attribute *em_pd_default_attrs[] = {
++	&pd_attr(power).attr,
++	&pd_attr(frequency).attr,
++	&pd_attr(cost).attr,
++	&pd_attr(cpus).attr,
++	NULL
++};
++
++#define to_pd(k) container_of(k, struct em_perf_domain, kobj)
++#define to_pd_attr(a) container_of(a, struct em_pd_attr, attr)
++
++static ssize_t show(struct kobject *kobj, struct attribute *attr, char *buf)
++{
++	struct em_perf_domain *pd = to_pd(kobj);
++	struct em_pd_attr *pd_attr = to_pd_attr(attr);
++	ssize_t ret;
++
++	ret = pd_attr->show(pd, buf);
++
++	return ret;
++}
++
++static const struct sysfs_ops em_pd_sysfs_ops = {
++	.show	= show,
++};
++
++static struct kobj_type ktype_em_pd = {
++	.sysfs_ops	= &em_pd_sysfs_ops,
++	.default_attrs	= em_pd_default_attrs,
++};
++
+ static struct em_perf_domain *em_create_pd(cpumask_t *span, int nr_states,
+ 						struct em_data_callback *cb)
+ {
+@@ -102,6 +178,11 @@ static struct em_perf_domain *em_create_pd(cpumask_t *span, int nr_states,
+ 	pd->nr_cap_states = nr_states;
+ 	cpumask_copy(to_cpumask(pd->cpus), span);
+ 
++	ret = kobject_init_and_add(&pd->kobj, &ktype_em_pd, em_kobject,
++				   "pd%u", cpu);
++	if (ret)
++		pr_err("pd%d: failed kobject_init_and_add(): %d\n", cpu, ret);
++
+ 	return pd;
+ 
+ free_cs_table:
+@@ -155,6 +236,15 @@ int em_register_perf_domain(cpumask_t *span, unsigned int nr_states,
+ 	 */
+ 	mutex_lock(&em_pd_mutex);
+ 
++	if (!em_kobject) {
++		em_kobject = kobject_create_and_add("energy_model",
++						&cpu_subsys.dev_root->kobj);
++		if (!em_kobject) {
++			ret = -ENODEV;
++			goto unlock;
++		}
++	}
++
+ 	for_each_cpu(cpu, span) {
+ 		/* Make sure we don't register again an existing domain. */
+ 		if (READ_ONCE(per_cpu(em_data, cpu))) {
+-- 
+2.18.0
 
