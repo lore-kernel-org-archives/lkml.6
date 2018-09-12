@@ -2,146 +2,91 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C03B1C6778D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:54:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8397C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:55:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8481220880
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:54:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8481220880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A3B8520880
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:55:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ylf5Z5qp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3B8520880
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728068AbeILWAQ (ORCPT
+        id S1728119AbeILWAv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 18:00:16 -0400
-Received: from mga11.intel.com ([192.55.52.93]:62808 "EHLO mga11.intel.com"
+        Wed, 12 Sep 2018 18:00:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33382 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727051AbeILWAQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 18:00:16 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Sep 2018 09:54:52 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,365,1531810800"; 
-   d="scan'208";a="79921528"
-Received: from yoojae-mobl1.amr.corp.intel.com (HELO [10.7.153.143]) ([10.7.153.143])
-  by FMSMGA003.fm.intel.com with ESMTP; 12 Sep 2018 09:54:51 -0700
-From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Subject: Re: [PATCH i2c-next v6] i2c: aspeed: Handle master/slave combined irq
- events properly
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Joel Stanley <joel@jms.id.au>, linux-aspeed@lists.ozlabs.org,
-        Vernon Mauery <vernon.mauery@linux.intel.com>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-i2c@vger.kernel.org, jarkko.nikula@linux.intel.com,
-        =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        James Feist <james.feist@linux.intel.com>
-References: <20180823225731.19063-1-jae.hyun.yoo@linux.intel.com>
- <20180911183734.GA21976@roeck-us.net>
- <1f34fe8c-69ef-5f2d-25dc-d5f6037cc558@linux.intel.com>
- <20180911204107.GA26017@roeck-us.net>
- <e5135af4-9105-214f-5de2-65cc03804222@linux.intel.com>
- <CACPK8Xdv3aP_zOHAL0WMgwvkpBHAUesU7OdhW==jgvXjRmt-Zw@mail.gmail.com>
- <20180911233302.GA18799@roeck-us.net>
- <5698ca34-14c9-8d05-c4e6-5acf85ff9d14@linux.intel.com>
- <20180912013449.GA12612@roeck-us.net>
-Message-ID: <7fd98646-fb5a-be4d-ce37-84b74e0fa8b3@linux.intel.com>
-Date:   Wed, 12 Sep 2018 09:54:51 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1727051AbeILWAv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 18:00:51 -0400
+Received: from localhost (unknown [146.7.4.73])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 181E1206B6;
+        Wed, 12 Sep 2018 16:55:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1536771327;
+        bh=brKWleqYoSK6gpr7eBJhol9g3Jb29URg7NqcMjhLcig=;
+        h=Subject:From:To:Cc:Date:From;
+        b=ylf5Z5qpkeWaToLwvMVdH0AD/eRUUYVL81xaoeViR62N/PJwDmW1vCA3IW1it/Zj3
+         jc+3UslZq231N0TFzYQJXs+L3MsX5wcHOLhSQwk8WAbEseslYvIEQOB4mB7Lc8t4eu
+         /06G1fn1S+zILMyz2LwgUwkR0uWGDGKYxMOSaVzM=
+Subject: [PATCH] MAINTAINERS: Add PPC contacts for PCI core error handling
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     linux-pci@vger.kernel.org, Russell Currey <ruscur@russell.cc>,
+        linuxppc-dev@lists.ozlabs.org
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 12 Sep 2018 11:55:26 -0500
+Message-ID: <153677132617.23091.12307288405707171077.stgit@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: StGit/0.18
 MIME-Version: 1.0
-In-Reply-To: <20180912013449.GA12612@roeck-us.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/11/2018 6:34 PM, Guenter Roeck wrote:
-> On Tue, Sep 11, 2018 at 04:58:44PM -0700, Jae Hyun Yoo wrote:
->> On 9/11/2018 4:33 PM, Guenter Roeck wrote:
->>> Looking into the patch, clearing the interrupt status at the end of an
->>> interrupt handler is always suspicious and tends to result in race
->>> conditions (because additional interrupts may have arrived while handling
->>> the existing interrupts, or because interrupt handling itself may trigger
->>> another interrupt). With that in mind, the following patch fixes the
->>> problem for me.
->>>
->>> Guenter
->>>
->>> ---
->>>
->>> diff --git a/drivers/i2c/busses/i2c-aspeed.c b/drivers/i2c/busses/i2c-aspeed.c
->>> index c258c4d9a4c0..c488e6950b7c 100644
->>> --- a/drivers/i2c/busses/i2c-aspeed.c
->>> +++ b/drivers/i2c/busses/i2c-aspeed.c
->>> @@ -552,6 +552,8 @@ static irqreturn_t aspeed_i2c_bus_irq(int irq, void *dev_id)
->>>   	spin_lock(&bus->lock);
->>>   	irq_received = readl(bus->base + ASPEED_I2C_INTR_STS_REG);
->>> +	/* Ack all interrupt bits. */
->>> +	writel(irq_received, bus->base + ASPEED_I2C_INTR_STS_REG);
->>>   	irq_remaining = irq_received;
->>>   #if IS_ENABLED(CONFIG_I2C_SLAVE)
->>> @@ -584,8 +586,6 @@ static irqreturn_t aspeed_i2c_bus_irq(int irq, void *dev_id)
->>>   			"irq handled != irq. expected 0x%08x, but was 0x%08x\n",
->>>   			irq_received, irq_handled);
->>> -	/* Ack all interrupt bits. */
->>> -	writel(irq_received, bus->base + ASPEED_I2C_INTR_STS_REG);
->>>   	spin_unlock(&bus->lock);
->>>   	return irq_remaining ? IRQ_NONE : IRQ_HANDLED;
->>>   }
->>>
->>
->> My intention of putting the code at the end of interrupt handler was,
->> to reduce possibility of combined irq calls which is explained in this
->> patch. But YES, I agree with you. It could make a potential race
-> 
-> Hmm, yes, but that doesn't explain why it would make sense to acknowledge
-> the interrupt late. The interrupt ack only means "I am going to handle these
-> interrupts". If additional interrupts arrive while the interrupt handler
-> is active, those will have to be acknowledged separately.
-> 
-> Sure, there is a risk that an interrupt arrives while the handler is
-> running, and that it is handled but not acknowledged. That can happen
-> with pretty much all interrupt handlers, and there are mitigations to
-> limit the impact (for example, read the interrupt status register in
-> a loop until no more interrupts are pending). But acknowledging
-> an interrupt that was possibly not handled is always bad idea.
+From: Bjorn Helgaas <bhelgaas@google.com>
 
-Well, that's generally right but not always. Sometimes that depends on
-hardware and Aspeed I2C is the case.
+The original PCI error recovery functionality was for the powerpc-specific
+IBM EEH feature.  PCIe subsequently added some similar features, including
+AER and DPC, that can be used on any architecture.
 
-This is a description from Aspeed AST2500 datasheet:
-   I2CD10 Interrupt Status Register
-   bit 2 Receive Done Interrupt status
-         S/W needs to clear this status bit to allow next data receiving.
+We want the generic PCI core error handling support to work with all of
+these features.  Driver error recovery callbacks should be independent of
+which feature the platform provides.
 
-It means, driver should hold this bit to prevent transition of hardware
-state machine until the driver handles received data, so the bit should
-be cleared at the end of interrupt handler.
+Add the generic PCI core error recovery files to the powerpc EEH
+MAINTAINERS entry so the powerpc folks will be copied on changes to the
+generic PCI error handling strategy.
 
-Let me share my test result. Your code change works on 100KHz bus speed
-but doesn't work well on 1MHz bus speed. Investigated that interrupt
-handling is fast enough in 100KHz test but in 1MHz, most of data is
-corrupted because the bit is cleared at the beginning of interrupt
-handler so it allows receiving of the next data but the interrupt
-handler isn't fast enough to read the data buffer on time. I checked
-this problem on BMC-ME channel which ME sends lots of IPMB packets to
-BMC at 1MHz speed. You could simply check the data corruption problem on
-the BMC-ME channel.
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+---
+ MAINTAINERS |    4 ++++
+ 1 file changed, 4 insertions(+)
 
-My thought is, the current code is right for real Aspeed I2C hardware.
-It seems that QEMU 3.0 model for witherspoon-bmc doesn't simulate the
-actual Aspeed I2C hardware correctly.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 7e10ba65bfe4..d6699597fd89 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11202,6 +11202,10 @@ PCI ENHANCED ERROR HANDLING (EEH) FOR POWERPC
+ M:	Russell Currey <ruscur@russell.cc>
+ L:	linuxppc-dev@lists.ozlabs.org
+ S:	Supported
++F:	Documentation/PCI/pci-error-recovery.txt
++F:	drivers/pci/pcie/aer.c
++F:	drivers/pci/pcie/dpc.c
++F:	drivers/pci/pcie/err.c
+ F:	Documentation/powerpc/eeh-pci-error-recovery.txt
+ F:	arch/powerpc/kernel/eeh*.c
+ F:	arch/powerpc/platforms/*/eeh*.c
 
-Thanks,
-Jae
