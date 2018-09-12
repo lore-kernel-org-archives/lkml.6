@@ -2,105 +2,116 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23D9CC46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:50:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46814C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:50:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C18CF2088E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:50:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8EBC20890
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:50:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="j3u13uZU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C18CF2088E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="X31X476t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8EBC20890
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727994AbeILVzv (ORCPT
+        id S1728061AbeILVz6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 17:55:51 -0400
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:43071 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726798AbeILVzv (ORCPT
+        Wed, 12 Sep 2018 17:55:58 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:39105 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726798AbeILVz6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 17:55:51 -0400
-Received: by mail-yb1-f193.google.com with SMTP id k5-v6so1966778ybo.10
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 09:50:28 -0700 (PDT)
+        Wed, 12 Sep 2018 17:55:58 -0400
+Received: by mail-oi0-f67.google.com with SMTP id c190-v6so5084391oig.6
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 09:50:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=2+GZ7nhCvCJtMfAnGwLb7t33EjeSQ6FLWypH0GUfebk=;
-        b=j3u13uZUcJ0Eu4Kqh2TUgFz0bgIWqof3zJBkK0cW0A+/SsNM9GMLwUz56whQp2fot6
-         1B44HfpOpcanuVf0ypWVuMXp5QvVZ7J5gENi2GNwM4EyhquyzYQ8S2KMicSWjffF+UnN
-         V3KXSVZGJW4Wmg1x8CjLzF9jCzbkJecc9QnXkyHubz7vqTYcOCtXFs50VxTcskLS+IVC
-         dWyU+C0oyZr9ipJB/tqF3Sm+xfcchxQkhhJnD7yoxkQvnbUrVyZj/7fkZhecz3DqnGEZ
-         aLGxBCo6JDJ4FrSPNakAmTP0kENc4qkXeg4AvLlrB36SAPEhUPvP1YQHI/dEQD9Jir3o
-         0gVw==
+        bh=DIYxv93rRAzXjcu5CZZeSxm9Bznzoy5ezbvq9mlSvLE=;
+        b=X31X476ttYUAQ5o+3jegptzO4RAij1oC48x1E8rKa7BVK2TeQNgdS+I3HuCMlxNzWQ
+         XXm4dL8ISc561rJqUhsG0EpVhHyAmtmRK/YzS+711e+4IT4ND6t2E+o0JUFqOV8nU5O2
+         dEo/6itT8GIPjfgm9KGjCT5GhGFiAZ+ndLvObRZHOMmG63pkKx2qHlFsk9HJ1uLW4Sbs
+         xPIJmn8+8R6kZZNVYxa+V7BPczKG6IRmsvDB06PjORv7jDYI1d5UXmH9vFPASkfTW7H0
+         r0ISFUgsgPWfAg2uC7usVChkNQQYL7tnrOINvAFQXpfddsDR2iL2oH7Ux6VjWQERu6dk
+         SYmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=2+GZ7nhCvCJtMfAnGwLb7t33EjeSQ6FLWypH0GUfebk=;
-        b=d1joqEBew8U+w2iuMgBBowIoxMUUbzT1C327AWAGSOtLvejsU6WynKDh1ZOrU9vUoj
-         iKGcjKbgJt4y6hP7USySKAT0rrblUFnaxuMMxMjy32HPcIzM7iEDTa8DeSSDbi+U0r8U
-         ani3VzCpTS6cOGgn++AeiqSUBMqI841h8587wXbKKp4+2BKflOW3qBknJQ2hYzmHVpUD
-         JBz/+7DN+S1UdFoWlSFz18211Qz9/8JIoSXgF6pMramn4RWBsDB0Omw2Y80iZm0jeN66
-         XJcsZG64fKozRFnN+tUOFFCQW1l/fnf55tSM5W20B5OUkkA7xtfc1ktN5pa+1vzBVicu
-         h0jw==
-X-Gm-Message-State: APzg51CZZZNccg2BIiZLXDiWogP+JOKqI5y4dmYyFCnQ6j7Btb56Gpnk
-        RJuGxUQx+F7KZN4dkMsYXE8RuCqVmfzGM0l2OvEFHA==
-X-Google-Smtp-Source: ANB0VdYzWqo+WKEIJtmWRt2l7SeShs9bGnU4NxxQ2sjuDSowtDeXtoxdK56yjETiZ+dJm/uugDvuQun/U5nw+/O3v/k=
-X-Received: by 2002:a81:e54c:: with SMTP id c12-v6mr1311079ywm.299.1536771027663;
- Wed, 12 Sep 2018 09:50:27 -0700 (PDT)
+        bh=DIYxv93rRAzXjcu5CZZeSxm9Bznzoy5ezbvq9mlSvLE=;
+        b=ToZn3ivQGYE5ZdnJNURUc1FVN2H3s7k91xFnIgPoWGzNAQUNpZj3860uK2haSwY4rX
+         ypZtOolZ7wTCctkw2tRl77eoFVfLdo1yEHlNb5rLkT/jZyK5bW+3OIKygTsKZlMbpkcV
+         8T9J4sU9ObeUDmvyjwNOc9JU+7/1tdZ02HPJvMsytb0b4BjCjqAR0pXrfgAoLqKVGnST
+         fAEQL7/i63PmbyyWvmAYatXCFPho5FLNxFUKt8BZMFlw1bpvqCn9XpmiQdWe4UWajK/4
+         u0eLo5xRmet8tU8vhQK+lzM8cPJrJmSLyfKNN8fY+IgTfuvZ9vhnfiATnTrY7u/dsI+U
+         1lyQ==
+X-Gm-Message-State: APzg51DckZT3r6pSXCyyewrCDtpvqFtLbwQgnnHuAUrUqBCsRNP7RL5H
+        1ZwQ1oUWmvxLkIvQmZEKYP8I++FRDgEUpe1DEQMoYw==
+X-Google-Smtp-Source: ANB0VdZDx+GU2QZxFyPHNVQM35KywDDT51hGVu/hYj2it1okxIe2hHhH5WF52jKvk2rDPalAFDqATkFiaMbRB0RZJA4=
+X-Received: by 2002:aca:ec0d:: with SMTP id k13-v6mr3073695oih.236.1536771034706;
+ Wed, 12 Sep 2018 09:50:34 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180912164510.23444-1-zsm@chromium.org>
-In-Reply-To: <20180912164510.23444-1-zsm@chromium.org>
-From:   Guenter Roeck <groeck@google.com>
-Date:   Wed, 12 Sep 2018 09:50:16 -0700
-Message-ID: <CABXOdTd4iHi5=TJymRyD9c=A+=Lj2E3sFmaUzRpMJGLkk6+ZOA@mail.gmail.com>
-Subject: Re: [PATCH] perf/pt: Annotate pt_cap_group with __ro_after_init
-To:     Zubin Mithra <zsm@chromium.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Kees Cook <keescook@chromium.org>
+Received: by 2002:a4a:8e85:0:0:0:0:0 with HTTP; Wed, 12 Sep 2018 09:50:34
+ -0700 (PDT)
+In-Reply-To: <CAKgT0UdKZVUPBk=rg5kfUuFBpuZQEKPuGw31x5O2nMyuULgi0g@mail.gmail.com>
+References: <20180910232615.4068.29155.stgit@localhost.localdomain>
+ <20180910234354.4068.65260.stgit@localhost.localdomain> <7b96298e-9590-befd-0670-ed0c9fcf53d5@microsoft.com>
+ <CAKgT0UdKZVUPBk=rg5kfUuFBpuZQEKPuGw31x5O2nMyuULgi0g@mail.gmail.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 12 Sep 2018 09:50:34 -0700
+Message-ID: <CAPcyv4gEDwp8Xh4_E8RNBC_OqstwhqxkZOpvYjWd_siB4C=BEQ@mail.gmail.com>
+Subject: Re: [PATCH 3/4] mm: Defer ZONE_DEVICE page initialization to the
+ point where we init pgmap
+To:     Alexander Duyck <alexander.duyck@gmail.com>
+Cc:     Pavel.Tatashin@microsoft.com, linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 9:45 AM Zubin Mithra <zsm@chromium.org> wrote:
+On Wed, Sep 12, 2018 at 8:48 AM, Alexander Duyck
+<alexander.duyck@gmail.com> wrote:
+> On Wed, Sep 12, 2018 at 6:59 AM Pasha Tatashin
+> <Pavel.Tatashin@microsoft.com> wrote:
+>>
+>> Hi Alex,
 >
-> pt_cap_group is written to in pt_pmu_hw_init and not modified after. This makes
-> it a suitable candidate for annotating as __ro_after_init.
+> Hi Pavel,
 >
-> Signed-off-by: Zubin Mithra <zsm@chromium.org>
+>> Please re-base on linux-next,  memmap_init_zone() has been updated there
+>> compared to mainline. You might even find a way to unify some parts of
+>> memmap_init_zone and memmap_init_zone_device as memmap_init_zone() is a
+>> lot simpler now.
+>
+> This patch applied to the linux-next tree with only a little bit of
+> fuzz. It looks like it is mostly due to some code you had added above
+> the function as well. I have updated this patch so that it will apply
+> to both linux and linux-next by just moving the new function to
+> underneath memmap_init_zone instead of above it.
+>
+>> I think __init_single_page() should stay local to page_alloc.c to keep
+>> the inlining optimization.
+>
+> I agree. In addition it will make pulling common init together into
+> one space easier. I would rather not have us create an opportunity for
+> things to further diverge by making it available for anybody to use.
 
-Reviewed-by: Guenter Roeck <groeck@chromium.org>
-
-> ---
->  arch/x86/events/intel/pt.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/x86/events/intel/pt.c b/arch/x86/events/intel/pt.c
-> index 8d016ce5b80d..3a0aa83cbd07 100644
-> --- a/arch/x86/events/intel/pt.c
-> +++ b/arch/x86/events/intel/pt.c
-> @@ -95,7 +95,7 @@ static ssize_t pt_cap_show(struct device *cdev,
->         return snprintf(buf, PAGE_SIZE, "%x\n", pt_cap_get(cap));
->  }
->
-> -static struct attribute_group pt_cap_group = {
-> +static struct attribute_group pt_cap_group __ro_after_init = {
->         .name   = "caps",
->  };
->
-> --
-> 2.18.0.597.ga71716f1ad-goog
->
+I'll buy the inline argument for keeping the new routine in
+page_alloc.c, but I otherwise do not see the divergence danger or
+"making __init_single_page() available for anybody" given the the
+declaration is limited in scope to a mm/ local header file.
