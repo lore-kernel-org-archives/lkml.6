@@ -1,132 +1,252 @@
 Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.0 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81F9EC4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:57:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82935C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:57:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 243102088F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:57:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28DD52088F
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:57:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RpSkkcR8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 243102088F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MzqSGcN3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28DD52088F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727007AbeILPBf (ORCPT
+        id S1727419AbeILPBg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 12 Sep 2018 11:01:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44602 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726359AbeILPBf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 12 Sep 2018 11:01:35 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:52590 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726082AbeILPBe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 11:01:34 -0400
-Received: by mail-wm0-f67.google.com with SMTP id y139-v6so1671039wmc.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 02:57:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=/w+RZ6oitCiPc722zWO6Di1OkqxrJozKz5a6QgXVw8s=;
-        b=RpSkkcR8VDT9cpdAQwgdxHEInJGL87M3ihex2Rj5YfOoCAoYmgasyt0kkNWz8nWUIh
-         r04bqvynegKVrcY9hP6oYhxVCxMMVS02F8ZTL8QBdVu1CZFVINEVtegXWxzbKsHFxXnY
-         j/3wfCe0RIa4etNVOXXdze5OVeEAIgAGhfN3c2mrlh/3xXLigF2U9I4xj6we7XO9i0ZA
-         CC0Tk82l8E0SdVR5q61Noat0OlMSYWbQOuIkAxXyZZUy+lO4TTpw9xywzLs5e2tXsae4
-         rIOjA7tMC8q0ec1mCkMvt4y30aAfodlIuiY+KqZLrH4FhdGGrEHn0MXSm+eXy9+c8Xba
-         a2sA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/w+RZ6oitCiPc722zWO6Di1OkqxrJozKz5a6QgXVw8s=;
-        b=iuemU0P/FkJaBbuurINFylH02ecP9OZBUGxnl0qvuIqUhu/eIUXTcZm7ogP2sm5duZ
-         w4Z8z1VgH1lN2+1nrN2ZhlY0suHdMtdMIWMsw8oG/nwUMTN3gWOVEKnf4kSkZIeav6BD
-         m0E2NqCF89oLdybq+XlH+pqTFvP6l1Bw8uvdFWCLc02V/k0B2Bp50fa0sCCYaahfMTfC
-         qiVwaonpHUQl4HNWbQZ3GVeWSkTs6yLrgrkG629VM8CwAlphfPFVss1G+LGc6holQmXs
-         Cg/3/Ua9jbUpi3LCr6+XMhjO0sooKz0XS1zkR8DOJ5GsAxpOijvr25bgrfXIRyRvL8KC
-         QriA==
-X-Gm-Message-State: APzg51C1TjPgF2jxDi4NT25Mx+lqMJ+YggrPaq3PdmNGzEvCREOBceiI
-        SgEy+P4/8FrMeOa2TpPWwEAo+nWI
-X-Google-Smtp-Source: ANB0VdbMZldqRTyUfJ3loSGOTgMGxFFGUBm0eZvpGyhv+5AsJHKoVcfu+IqYXWuNrPIqZh4LUANR7A==
-X-Received: by 2002:a1c:32c4:: with SMTP id y187-v6mr1053055wmy.31.1536746265522;
-        Wed, 12 Sep 2018 02:57:45 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id x24-v6sm1149643wrd.13.2018.09.12.02.57.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Sep 2018 02:57:44 -0700 (PDT)
-Date:   Wed, 12 Sep 2018 11:57:42 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc:     Mel Gorman <mgorman@techsingularity.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rik van Riel <riel@surriel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/4] sched/numa: Do not move imbalanced load purely on
- the basis of an idle CPU
-Message-ID: <20180912095742.GA3333@gmail.com>
-References: <20180907101139.20760-1-mgorman@techsingularity.net>
- <20180907101139.20760-5-mgorman@techsingularity.net>
- <20180907113309.GU24106@hirez.programming.kicks-ass.net>
- <20180907123739.GE1719@techsingularity.net>
- <20180910094147.GH1719@techsingularity.net>
- <20180912065410.GA5352@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180912065410.GA5352@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 18B3F20854;
+        Wed, 12 Sep 2018 09:57:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1536746267;
+        bh=uvBf8Ct5MT3PSwp3WK4VVDNF+XG/NAtDTt8qAKGqVvA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=MzqSGcN3F0kbT5eoFdnt6WoNuDYP7GjRBWPvJGC3kDP+QVAhZ0pSY3p09ixMms8S2
+         5IR0H1VPwjEnbO39sRV7aJFe2/bgEw4/V5rX91ByycX5ljJe7AsVJi22ZlCXfje6+a
+         wqlI2MSPJGEJDkh2vVFmFigLCbcbgPAWxt7Sd9qg=
+Date:   Wed, 12 Sep 2018 18:57:43 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Shuah Khan <shuah@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 00/28] selftests/ftrace: Improve ftracetest with
+ coverage check
+Message-Id: <20180912185743.b00b0b152abd632e10f04608@kernel.org>
+In-Reply-To: <153563834333.29700.11242968505215651399.stgit@devbox>
+References: <153563834333.29700.11242968505215651399.stgit@devbox>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Shuah,
 
-* Srikar Dronamraju <srikar@linux.vnet.ibm.com> wrote:
+Would you have any comment?
 
-> * Mel Gorman <mgorman@techsingularity.net> [2018-09-10 10:41:47]:
+Thank you,
+
+On Thu, 30 Aug 2018 23:12:24 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
+
+> Hi,
 > 
-> > On Fri, Sep 07, 2018 at 01:37:39PM +0100, Mel Gorman wrote:
-> > > > Srikar's patch here:
-> > > > 
-> > > >   http://lkml.kernel.org/r/1533276841-16341-4-git-send-email-srikar@linux.vnet.ibm.com
-> > > > 
-> > > > Also frobs this condition, but in a less radical way. Does that yield
-> > > > similar results?
-> > > 
-> > > I can check. I do wonder of course if the less radical approach just means
-> > > that automatic NUMA balancing and the load balancer simply disagree about
-> > > placement at a different time. It'll take a few days to have an answer as
-> > > the battery of workloads to check this take ages.
-> > > 
-> > 
-> > Tests completed over the weekend and I've found that the performance of
-> > both patches are very similar for two machines (both 2 socket) running a
-> > variety of workloads. Hence, I'm not worried about which patch gets picked
-> > up. However, I would prefer my own on the grounds that the additional
-> > complexity does not appear to get us anything. Of course, that changes if
-> > Srikar's tests on his larger ppc64 machines show the more complex approach
-> > is justified.
-> > 
+> Here is the 3rd version of the series for improving ftracetest
+> testcase using gcov/lcov. In this version I just fixed some
+> reported issues and dropped some tests which is not needed.
+> I also dropped a testcase for blktrace from this version.
+> It will be discussed separated thread.
 > 
-> Running SPECJbb2005. Higher bops are better.
+> Previous version is here;
 > 
-> Kernel A = 4.18+ 13 sched patches part of v4.19-rc1.
-> Kernel B = Kernel A + 6 patches (http://lore.kernel.org/lkml/1533276841-16341-1-git-send-email-srikar@linux.vnet.ibm.com)
-> Kernel C = Kernel B - (Avoid task migration for small numa improvement) i.e
-> 	http://lore.kernel.org/lkml/1533276841-16341-4-git-send-email-srikar@linux.vnet.ibm.com
-> 	+ 2 patches from Mel
-> 	(Do not move imbalanced load purely)
-> 	http://lore.kernel.org/lkml/20180907101139.20760-5-mgorman@techsingularity.net
-> 	(Stop comparing tasks for NUMA placement)
-> 	http://lore.kernel.org/lkml/20180907101139.20760-4-mgorman@techsingularity.net
+> https://lkml.org/lkml/2018/8/16/393
+> 
+> GCOV_PROFILE_FTRACE has already been merged through tracing
+> tree.
+> 
+> Ftracetest framework improvements:
+>  - Add --stop-fail for detecting failure soon.
+>  - Add --console for interactively debugging a testcase by shell.
+>  - Add testcase-number prefix to logfile for finding log easier.
+>  - Improve general init function
+>  - Add SPDX license identifiers
+>  - Call general init function after all testcases.
+>  - Remove init/cleanup code from all testcase (since general init
+>    function will fixed it up)
+> 
+> Testcase fixes:
+>  - Fix to check $comm availability.
+>  - Make checkbashisms clean
+> 
+> Testcase improvements:
+>  - Use loopback address instead of localhost
+>  - Improve kprobe on module testcase to load/unload module
+>  - Improve kprobe testcase to check log data
+>  - Improve kretprobe testcase to check log data
+>  - Test kprobe-event argument with various bitsize
+>  - Check set_event_pid result
+> 
+> Adding testcases:
+>  - Add kprobe event with $comm argument testcase
+>  - Add kprobe profile testcase
+>  - Add kprobe-event with symbol argument testcase
+>  - Add trace_printk sample module testcase
+>  - Add ringbuffer size changing testcase
+>  - Add function profiling statistics testcase
+>  - Add max stack tracer testcase
+>  - Add function filter on module testcase
+>  - Add trace_pipe testcase
+>  - Add stacktrace ftrace filter command testcase
+>  - Add wakeup tracer testcase
+>  - Add wakeup_rt tracer testcase
+>  - Add ftrace cpumask testcase
+> 
+> TBD:
+> Following testcase improvements are remaining.
+>  - Checking of various supported types (like u8, u64 etc.)
+>    testcases
+> 
+> Tested on x86-64 qemu.
+> 
+> # of passed:  84
+> # of failed:  0
+> # of unresolved:  0
+> # of untested:  0
+> # of unsupported:  0
+> # of xfailed:  0
+> # of undefined(test bug):  0
+> 
+> Thank you,
+> 
+> ---
+> 
+> Masami Hiramatsu (28):
+>       selftests/ftrace: Add --stop-fail hidden option for debug
+>       selftests/ftrace: Add --console hidden option
+>       selftests/ftrace: Add case number prefix to logfile
+>       selftests/ftrace: More initialize features in initialize_ftrace
+>       selftests/ftrace: Add SPDX License Identifier to template
+>       selftests/ftrace: Cleanup ftrace after running test
+>       selftests/ftrace: Remove unneeded per-test init/cleanup ftrace
+>       selftests/ftrace: Fix to test kprobe $comm arg only if available
+>       selftests/ftrace: Fix checkbashisms errors
+>       selftests/ftrace: Use loopback address instead of localhost
+>       selftests/ftrace: Improve kprobe on module testcase to load/unload module
+>       selftests/ftrace: Improve kprobe testcase to check log data
+>       selftests/ftrace: Improve kretprobe testcase to check log data
+>       selftests/ftrace: Test kprobe-event argument with various bitsize
+>       selftests/ftrace: Check set_event_pid result
+>       selftests/ftrace: Add kprobe event with $comm argument testcase
+>       selftests/ftrace: Add kprobe profile testcase
+>       selftests/ftrace: Add kprobe-event with symbol argument test
+>       selftests/ftrace: Add trace_printk sample module test
+>       selftests/ftrace: Add ringbuffer size changing testcase
+>       selftests/ftrace: Add function profiling stat testcase
+>       selftests/ftrace: Add max stack tracer testcase
+>       selftests/ftrace: Add function filter on module testcase
+>       selftests/ftrace: Add trace_pipe testcase
+>       selftests/ftrace: Add stacktrace ftrace filter command testcase
+>       selftests/ftrace: Add wakeup tracer testcase
+>       selftests/ftrace: Add wakeup_rt tracer testcase
+>       selftests/ftrace: Add ftrace cpumask testcase
+> 
+> 
+>  tools/testing/selftests/ftrace/config              |    6 ++
+>  tools/testing/selftests/ftrace/ftracetest          |   32 +++++++++++-
+>  .../ftrace/test.d/00basic/ringbuffer_size.tc       |   22 ++++++++
+>  .../selftests/ftrace/test.d/00basic/trace_pipe.tc  |   16 ++++++
+>  .../selftests/ftrace/test.d/event/event-enable.tc  |   10 ----
+>  .../selftests/ftrace/test.d/event/event-pid.tc     |    8 +--
+>  .../ftrace/test.d/event/subsystem-enable.tc        |   10 ----
+>  .../ftrace/test.d/event/toplevel-enable.tc         |   10 ----
+>  .../selftests/ftrace/test.d/event/trace_printk.tc  |   27 ++++++++++
+>  .../ftrace/test.d/ftrace/fgraph-filter-stack.tc    |    4 --
+>  .../ftrace/test.d/ftrace/fgraph-filter.tc          |    9 ---
+>  .../ftrace/test.d/ftrace/func-filter-pid.tc        |   10 ----
+>  .../ftrace/test.d/ftrace/func-filter-stacktrace.tc |   12 +++++
+>  .../selftests/ftrace/test.d/ftrace/func_cpumask.tc |   42 ++++++++++++++++
+>  .../ftrace/test.d/ftrace/func_event_triggers.tc    |    3 -
+>  .../ftrace/test.d/ftrace/func_mod_trace.tc         |   24 +++++++++
+>  .../ftrace/test.d/ftrace/func_profile_stat.tc      |   22 ++++++++
+>  .../ftrace/test.d/ftrace/func_profiler.tc          |    4 --
+>  .../ftrace/test.d/ftrace/func_set_ftrace_file.tc   |   13 -----
+>  .../ftrace/test.d/ftrace/func_stack_tracer.tc      |   39 +++++++++++++++
+>  .../test.d/ftrace/func_traceonoff_triggers.tc      |   11 ----
+>  tools/testing/selftests/ftrace/test.d/functions    |   11 ++++
+>  .../ftrace/test.d/kprobe/add_and_remove.tc         |    3 -
+>  .../selftests/ftrace/test.d/kprobe/busy_check.tc   |    3 -
+>  .../selftests/ftrace/test.d/kprobe/kprobe_args.tc  |    8 ++-
+>  .../ftrace/test.d/kprobe/kprobe_args_comm.tc       |   17 +++++++
+>  .../ftrace/test.d/kprobe/kprobe_args_string.tc     |    5 --
+>  .../ftrace/test.d/kprobe/kprobe_args_symbol.tc     |   39 +++++++++++++++
+>  .../ftrace/test.d/kprobe/kprobe_args_syntax.tc     |    8 +--
+>  .../ftrace/test.d/kprobe/kprobe_args_type.tc       |   52 ++++++++++++--------
+>  .../ftrace/test.d/kprobe/kprobe_eventname.tc       |    5 --
+>  .../ftrace/test.d/kprobe/kprobe_ftrace.tc          |    9 ---
+>  .../ftrace/test.d/kprobe/kprobe_module.tc          |   36 ++++++++++++--
+>  .../ftrace/test.d/kprobe/kretprobe_args.tc         |    9 ++-
+>  .../ftrace/test.d/kprobe/kretprobe_maxactive.tc    |    4 --
+>  .../ftrace/test.d/kprobe/multiple_kprobes.tc       |    5 --
+>  .../selftests/ftrace/test.d/kprobe/probepoint.tc   |    4 --
+>  .../selftests/ftrace/test.d/kprobe/profile.tc      |   15 ++++++
+>  tools/testing/selftests/ftrace/test.d/template     |    1 
+>  .../selftests/ftrace/test.d/tracer/wakeup.tc       |   25 ++++++++++
+>  .../selftests/ftrace/test.d/tracer/wakeup_rt.tc    |   25 ++++++++++
+>  .../inter-event/trigger-extended-error-support.tc  |   12 -----
+>  .../inter-event/trigger-field-variable-support.tc  |   15 ------
+>  .../trigger-inter-event-combined-hist.tc           |   15 ------
+>  .../inter-event/trigger-multi-actions-accept.tc    |   14 -----
+>  .../inter-event/trigger-onmatch-action-hist.tc     |   16 +-----
+>  .../trigger-onmatch-onmax-action-hist.tc           |   16 +-----
+>  .../inter-event/trigger-onmax-action-hist.tc       |   16 +-----
+>  .../trigger-synthetic-event-createremove.tc        |   12 -----
+>  .../ftrace/test.d/trigger/trigger-eventonoff.tc    |   12 -----
+>  .../ftrace/test.d/trigger/trigger-filter.tc        |   14 -----
+>  .../ftrace/test.d/trigger/trigger-hist-mod.tc      |   12 -----
+>  .../ftrace/test.d/trigger/trigger-hist.tc          |   12 -----
+>  .../ftrace/test.d/trigger/trigger-multihist.tc     |   16 ------
+>  .../ftrace/test.d/trigger/trigger-snapshot.tc      |   12 -----
+>  .../ftrace/test.d/trigger/trigger-stacktrace.tc    |   12 -----
+>  .../test.d/trigger/trigger-trace-marker-hist.tc    |   11 ----
+>  .../trigger/trigger-trace-marker-snapshot.tc       |   16 +-----
+>  .../trigger-trace-marker-synthetic-kernel.tc       |   12 -----
+>  .../trigger/trigger-trace-marker-synthetic.tc      |   12 -----
+>  .../ftrace/test.d/trigger/trigger-traceonoff.tc    |   12 -----
+>  61 files changed, 460 insertions(+), 427 deletions(-)
+>  create mode 100644 tools/testing/selftests/ftrace/test.d/00basic/ringbuffer_size.tc
+>  create mode 100644 tools/testing/selftests/ftrace/test.d/00basic/trace_pipe.tc
+>  create mode 100644 tools/testing/selftests/ftrace/test.d/event/trace_printk.tc
+>  create mode 100644 tools/testing/selftests/ftrace/test.d/ftrace/func-filter-stacktrace.tc
+>  create mode 100644 tools/testing/selftests/ftrace/test.d/ftrace/func_cpumask.tc
+>  create mode 100644 tools/testing/selftests/ftrace/test.d/ftrace/func_mod_trace.tc
+>  create mode 100644 tools/testing/selftests/ftrace/test.d/ftrace/func_profile_stat.tc
+>  create mode 100644 tools/testing/selftests/ftrace/test.d/ftrace/func_stack_tracer.tc
+>  create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_comm.tc
+>  create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_symbol.tc
+>  create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/profile.tc
+>  create mode 100644 tools/testing/selftests/ftrace/test.d/tracer/wakeup.tc
+>  create mode 100644 tools/testing/selftests/ftrace/test.d/tracer/wakeup_rt.tc
+> 
+> --
+> Masami Hiramatsu (Linaro)
 
-We absolutely need the 'best' pre-regression baseline kernel measurements as well - was it 
-vanilla v4.17?
 
-Thanks,
-
-	Ingo
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
