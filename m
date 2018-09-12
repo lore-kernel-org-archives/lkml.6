@@ -3,95 +3,84 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F99EC46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 10:36:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F984C4646A
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 10:37:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEAAD206BB
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 10:36:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEAAD206BB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp
+	by mail.kernel.org (Postfix) with ESMTP id C9D2A206BB
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 10:37:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9D2A206BB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727753AbeILPkO (ORCPT
+        id S1727798AbeILPlf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 11:40:14 -0400
-Received: from mail.parknet.co.jp ([210.171.160.6]:57162 "EHLO
-        mail.parknet.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726855AbeILPkO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 11:40:14 -0400
-Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
-        by mail.parknet.co.jp (Postfix) with ESMTPSA id 3548A15AF4A;
-        Wed, 12 Sep 2018 19:36:17 +0900 (JST)
-Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
-        by ibmpc.myhome.or.jp (8.15.2/8.15.2/Debian-11) with ESMTPS id w8CAaFMI030465
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 12 Sep 2018 19:36:16 +0900
-Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
-        by devron.myhome.or.jp (8.15.2/8.15.2/Debian-11) with ESMTPS id w8CAaFQE010409
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 12 Sep 2018 19:36:15 +0900
-Received: (from hirofumi@localhost)
-        by devron.myhome.or.jp (8.15.2/8.15.2/Submit) id w8CAaFkg010408;
-        Wed, 12 Sep 2018 19:36:15 +0900
-From:   OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-To:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fat: Relax checks for sector size and media type
-References: <20180902131932.11558-1-pali.rohar@gmail.com>
-        <87bm9ft5h5.fsf@mail.parknet.co.jp>
-        <20180903074005.7e3guj24ksq2l44c@pali>
-        <874lf7t3gg.fsf@mail.parknet.co.jp>
-        <20180903080422.ta3clnhr5bobv6il@pali>
-        <87zhwzro1o.fsf@mail.parknet.co.jp>
-        <20180912101750.6slpi3puoww72xsj@pali>
-Date:   Wed, 12 Sep 2018 19:36:15 +0900
-In-Reply-To: <20180912101750.6slpi3puoww72xsj@pali> ("Pali
- =?iso-8859-1?Q?Roh=E1r=22's?= message of
-        "Wed, 12 Sep 2018 12:17:50 +0200")
-Message-ID: <878t47roio.fsf@mail.parknet.co.jp>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.0.50 (gnu/linux)
+        Wed, 12 Sep 2018 11:41:35 -0400
+Received: from foss.arm.com ([217.140.101.70]:57352 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726855AbeILPlf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 11:41:35 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B0A267A9;
+        Wed, 12 Sep 2018 03:37:38 -0700 (PDT)
+Received: from [10.4.12.116] (e107155-lin.emea.arm.com [10.4.12.116])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 700BA3F614;
+        Wed, 12 Sep 2018 03:37:37 -0700 (PDT)
+Cc:     Sudeep Holla <sudeep.holla@arm.com>, linux-kernel@vger.kernel.org,
+        vkilari@codeaurora.org
+Subject: Re: [PATCH] ACPI/PPTT: Handle architecturally unknown cache types
+To:     Jeremy Linton <jeremy.linton@arm.com>,
+        Jeffrey Hugo <jhugo@codeaurora.org>, rjw@rjwysocki.net,
+        linux-acpi@vger.kernel.org
+References: <1536694334-5811-1-git-send-email-jhugo@codeaurora.org>
+ <f62f22a6-2dd8-f254-dbaf-b9e224099afd@arm.com>
+From:   Sudeep Holla <sudeep.holla@arm.com>
+Organization: ARM
+Message-ID: <3eef4199-f99e-2d1d-0d1f-98b30cafb5bf@arm.com>
+Date:   Wed, 12 Sep 2018 11:37:35 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <f62f22a6-2dd8-f254-dbaf-b9e224099afd@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Pali Rohár <pali.rohar@gmail.com> writes:
 
->> If there is real user to use that, I'm ok though (of course, need
->> serious tests). However, FAT would be for exchange data with other
->> devices, and there is "cluster per sector", and spec recommends sector
->> size == device sector size. So I suspect this format is not useful.
->
-> I looked into OpenBSD, FreeBSD and NetBSD source code and there is no
-> explicit upper limit for sector size. Just that sector size must be
-> power of two.
->
-> I have not did tests yet, but you are right that some testing should be
-> done.
->
-> As FAT operates with clusters and cluster size is defined by sector
-> size, then sectors per cluster and sector size defines cluster size. And
-> cluster size itself implies maximal size of FAT filesystem.
->
-> So increasing sector size could be useful to create larger FAT32
-> filesystems as current limit hit by sector size = 512 bytes.
->
-> What do you think, which operating systems should be tested?
 
-Again, I suspect those custom extension (can't read by some uefi or
-windows) is not useful though.
+On 11/09/18 21:16, Jeremy Linton wrote:
+> Hi Jeffrey,
+> 
+> (+Sudeep)
+> 
 
-Testing on kernel that has PAGE_SIZE >= 8192, and setting FAT
-sector_size >= 8192.  After that, it would be safe to remove 4096
-limitation.
+Thanks for looping me in.
 
-Thanks.
+> 
+> If you look at the next line of code following this comment its going to
+> update the cache type for fully populated PPTT nodes. Although with the
+> suggested change its only going to activate if someone completely fills
+> out the node and fails to set the valid flag on the cache type.
+> 
+> What I suspect is happening in the reported case is that the nodes in
+> the PPTT table are missing fields we consider to be important. Since
+> that data isn't being filled out anywhere else, so we leave the cache
+> type alone too. This has the effect of hiding sysfs nodes with
+> incomplete information.
+> 
+> Also, the lack of the DATA/INST fields is based on the assumption that
+> the only nodes which need their type field updated are outside of the
+> CPU core itself so they are pretty much guaranteed to be UNIFIED. Are
+> you hitting this case?
+> 
+
+Completely agree with you.
+
 -- 
-OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Regards,
+Sudeep
