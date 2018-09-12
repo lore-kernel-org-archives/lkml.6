@@ -2,165 +2,125 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EC37C070C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:33:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 017D0C070C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:34:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 602C62146D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:33:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 602C62146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id A2E7A2146D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:34:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="KyYN+OZL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2E7A2146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728248AbeIMAjV (ORCPT
+        id S1728269AbeIMAkX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 20:39:21 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43154 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728031AbeIMAjV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 20:39:21 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C757140241C4;
-        Wed, 12 Sep 2018 19:33:20 +0000 (UTC)
-Received: from krava.redhat.com (ovpn-204-21.brq.redhat.com [10.40.204.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B842A2026D76;
-        Wed, 12 Sep 2018 19:33:18 +0000 (UTC)
-From:   Jiri Olsa <jolsa@kernel.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andi Kleen <andi@firstfloor.org>
-Subject: [PATCH] perf: Prevent recursion in ring buffer
-Date:   Wed, 12 Sep 2018 21:33:17 +0200
-Message-Id: <20180912193317.10339-1-jolsa@kernel.org>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 12 Sep 2018 19:33:20 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 12 Sep 2018 19:33:20 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@kernel.org' RCPT:''
+        Wed, 12 Sep 2018 20:40:23 -0400
+Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:52505 "EHLO
+        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728188AbeIMAkX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 20:40:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1536780862; x=1568316862;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=RN9ouUxYZUXD06iQAIag/DTyVak9c5Sr8d62op1mXOM=;
+  b=KyYN+OZLJ3i1aukD6j1T6Vag+7shftK579cSiX6C7h0eyv8iiO9qfi0E
+   zNiPIWrGynqPC80TcUDR827nYBWR3riSZ6wTtZvpa7dW70AQh41JzjkGK
+   hKl/eage591J72+ZxsW8h3UTtNlxXiNpd2DXAXcyedfVrin+nZvBn8GJY
+   U=;
+X-IronPort-AV: E=Sophos;i="5.53,365,1531785600"; 
+   d="scan'208";a="697368888"
+Received: from iad6-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-1a-af6a10df.us-east-1.amazon.com) ([10.124.125.2])
+  by smtp-border-fw-out-2101.iad2.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 12 Sep 2018 19:34:21 +0000
+Received: from u7588a65da6b65f.ant.amazon.com (iad7-ws-svc-lb50-vlan3.amazon.com [10.0.93.214])
+        by email-inbound-relay-1a-af6a10df.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id w8CJYGnl070387
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=FAIL);
+        Wed, 12 Sep 2018 19:34:19 GMT
+Received: from u7588a65da6b65f.ant.amazon.com (localhost [127.0.0.1])
+        by u7588a65da6b65f.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id w8CJYEio026896;
+        Wed, 12 Sep 2018 21:34:15 +0200
+Subject: Re: [RFC 00/60] Coscheduling for Linux
+To:     Nishanth Aravamudan <naravamudan@digitalocean.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org
+References: <20180907214047.26914-1-jschoenh@amazon.de>
+ <20180912002449.GA21797@breakout>
+From:   "=?UTF-8?Q?Jan_H._Sch=c3=b6nherr?=" <jschoenh@amazon.de>
+Openpgp: preference=signencrypt
+Message-ID: <c41f4e4f-30a1-5a3c-dec6-dc8f1d181c94@amazon.de>
+Date:   Wed, 12 Sep 2018 21:34:14 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180912002449.GA21797@breakout>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some of the scheduling tracepoints allow the perf_tp_event
-code to write to ring buffer under different cpu than the
-code is running on.
+On 09/12/2018 02:24 AM, Nishanth Aravamudan wrote:
+> [ I am not subscribed to LKML, please keep me CC'd on replies ]
+> 
+> I tried a simple test with several VMs (in my initial test, I have 48
+> idle 1-cpu 512-mb VMs and 2 idle 2-cpu, 2-gb VMs) using libvirt, none
+> pinned to any CPUs. When I tried to set all of the top-level libvirt cpu
+> cgroups' to be co-scheduled (/bin/echo 1 >
+> /sys/fs/cgroup/cpu/machine/<VM-x>.libvirt-qemu/cpu.scheduled), the
+> machine hangs. This is using cosched_max_level=1.
+> 
+> There are several moving parts there, so I tried narrowing it down, by
+> only coscheduling one VM, and thing seemed fine:
+> 
+> /sys/fs/cgroup/cpu/machine/<VM-1>.libvirt-qemu# echo 1 > cpu.scheduled 
+> /sys/fs/cgroup/cpu/machine/<VM-1>.libvirt-qemu# cat cpu.scheduled 
+> 1
+> 
+> One thing that is not entirely obvious to me (but might be completely
+> intentional) is that since by default the top-level libvirt cpu cgroups
+> are empty:
+> 
+> /sys/fs/cgroup/cpu/machine/<VM-1>.libvirt-qemu# cat tasks 
+> 
+> the result of this should be a no-op, right? [This becomes relevant
+> below] Specifically, all of the threads of qemu are in sub-cgroups,
+> which do not indicate they are co-scheduling:
+> 
+> /sys/fs/cgroup/cpu/machine/<VM-1>.libvirt-qemu# cat emulator/cpu.scheduled 
+> 0
+> /sys/fs/cgroup/cpu/machine/<VM-1>.libvirt-qemu# cat vcpu0/cpu.scheduled 
+> 0
+> 
 
-This results in corrupted ring buffer data demonstrated in
-following perf commands:
+This setup *should* work. It should be possible to set cpu.scheduled
+independent of the cpu.scheduled values of parent and child task groups.
+Any intermediate regular task group (i.e. cpu.scheduled==0) will still
+contribute the group fairness aspects.
 
-  # perf record -e 'sched:sched_switch,sched:sched_wakeup' perf bench sched messaging
-  # Running 'sched/messaging' benchmark:
-  # 20 sender and receiver processes per group
-  # 10 groups == 400 processes run
+That said, I see a hang, too. It seems to happen, when there is a
+cpu.scheduled!=0 group that is not a direct child of the root task group.
+You seem to have "/sys/fs/cgroup/cpu/machine" as an intermediate group.
+(The case ==0 within !=0 within the root task group works for me.)
 
-       Total time: 0.383 [sec]
-  [ perf record: Woken up 8 times to write data ]
-  0x42b890 [0]: failed to process type: -1765585640
-  [ perf record: Captured and wrote 4.825 MB perf.data (29669 samples) ]
+I'm going to dive into the code.
 
-  # perf report --stdio
-  0x42b890 [0]: failed to process type: -1765585640
+[...]
+> I am happy to do any further debugging I can do, or try patches on top
+> of those posted on the mailing list.
 
-The reason for the corruptions are some of the scheduling tracepoints,
-that have __perf_task dfined and thus allow to store data to another
-cpu ring buffer:
+If you're willing, you can try to get rid of the intermediate "machine"
+cgroup in your setup for the moment. This might tell us, whether we're
+looking at the same issue.
 
-  sched_waking
-  sched_wakeup
-  sched_wakeup_new
-  sched_stat_wait
-  sched_stat_sleep
-  sched_stat_iowait
-  sched_stat_blocked
-
-The perf_tp_event function first store samples for current cpu
-related events defined for tracepoint:
-
-    hlist_for_each_entry_rcu(event, head, hlist_entry)
-      perf_swevent_event(event, count, &data, regs);
-
-And then iterates events of the 'task' and store the sample
-for any task's event that passes tracepoint checks:
-
-  ctx = rcu_dereference(task->perf_event_ctxp[perf_sw_context]);
-
-  list_for_each_entry_rcu(event, &ctx->event_list, event_entry) {
-    if (event->attr.type != PERF_TYPE_TRACEPOINT)
-      continue;
-    if (event->attr.config != entry->type)
-      continue;
-
-    perf_swevent_event(event, count, &data, regs);
-  }
-
-Above code can race with same code running on another cpu,
-ending up with 2 cpus trying to store under the same ring
-buffer, which is not handled at the moment.
-
-This patch adds atomic 'recursion' flag (any cpu could touch
-the ring buffer at any moment), that guards the entry to the
-storage code. It's set in __perf_output_begin function and
-released in perf_output_put_handle. If the flag is set, the
-code increases the lost count and bails out.
-
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- kernel/events/internal.h    | 1 +
- kernel/events/ring_buffer.c | 8 ++++++++
- 2 files changed, 9 insertions(+)
-
-diff --git a/kernel/events/internal.h b/kernel/events/internal.h
-index 6dc725a7e7bc..82599da9723f 100644
---- a/kernel/events/internal.h
-+++ b/kernel/events/internal.h
-@@ -11,6 +11,7 @@
- 
- struct ring_buffer {
- 	atomic_t			refcount;
-+	atomic_t			recursion;
- 	struct rcu_head			rcu_head;
- #ifdef CONFIG_PERF_USE_VMALLOC
- 	struct work_struct		work;
-diff --git a/kernel/events/ring_buffer.c b/kernel/events/ring_buffer.c
-index 4a9937076331..0c976ac414c5 100644
---- a/kernel/events/ring_buffer.c
-+++ b/kernel/events/ring_buffer.c
-@@ -101,6 +101,7 @@ static void perf_output_put_handle(struct perf_output_handle *handle)
- 
- out:
- 	preempt_enable();
-+	atomic_set(&rb->recursion, 0);
- }
- 
- static __always_inline bool
-@@ -145,6 +146,12 @@ __perf_output_begin(struct perf_output_handle *handle,
- 		goto out;
- 	}
- 
-+	if (atomic_cmpxchg(&rb->recursion, 0, 1) != 0) {
-+		if (rb->nr_pages)
-+			local_inc(&rb->lost);
-+		goto out;
-+	}
-+
- 	handle->rb    = rb;
- 	handle->event = event;
- 
-@@ -286,6 +293,7 @@ ring_buffer_init(struct ring_buffer *rb, long watermark, int flags)
- 		rb->overwrite = 1;
- 
- 	atomic_set(&rb->refcount, 1);
-+	atomic_set(&rb->recursion, 0);
- 
- 	INIT_LIST_HEAD(&rb->event_list);
- 	spin_lock_init(&rb->event_lock);
--- 
-2.17.1
-
+Thanks,
+Jan
