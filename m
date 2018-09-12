@@ -7,96 +7,105 @@ X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIM_SIGNED,
 	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43297C070C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 21:10:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67A39C070C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 21:18:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E021220C0A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 21:10:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F8E720C0A
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 21:18:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EiV0tdzT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E021220C0A
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NfgkQeTl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F8E720C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728200AbeIMCQe (ORCPT
+        id S1728024AbeIMCYp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 22:16:34 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:37655 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727007AbeIMCQe (ORCPT
+        Wed, 12 Sep 2018 22:24:45 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:33389 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726675AbeIMCYp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 22:16:34 -0400
-Received: by mail-pf1-f194.google.com with SMTP id h69-v6so1613206pfd.4;
-        Wed, 12 Sep 2018 14:10:14 -0700 (PDT)
+        Wed, 12 Sep 2018 22:24:45 -0400
+Received: by mail-pl1-f195.google.com with SMTP id b30-v6so1585297pla.0;
+        Wed, 12 Sep 2018 14:18:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=lF693kOryfM0lsbwApVjB7ntRHLxj+Pawlf7Vyb2jx8=;
-        b=EiV0tdzT6eo3YjyYx9a2ErPvrOjmzss22Y35Mip6klz8Z3XH/ylzWodvZR8v94wzLz
-         nEUfRFH5LFXev8dr7LVeffm2NcV3JNHFWvCJtNWBoW4kByr9eta0Ww9/E7DQAj+PO41d
-         d+V5+CVIYmMWrN6rixjka7aQVefs5NF14b9eSsjhwEEJ3cb8M5LiMtjU50dhCwUOl0fx
-         LhkOo/vnjHLlH/CJs9ltfPGA4AwrktuWICDHH8nsaLzTlBpx+lBCkFnUDtEB8T9y2tBz
-         ZI70sxP3Dy9mr6ABQoRuX5nqbXRFx0etIGMt/lebDsXBLV0qOjy6Xhr8LiYqq3EeGRCv
-         wDcg==
+        bh=ltvWySZJZcsSoJmZKVg2t9N9EMWs9AIzRuRqRyNi4yM=;
+        b=NfgkQeTlIOTSEku6JxS5TnnolOUlG2N0LFNVCbFlt77/nOkY2JNtKFtCugDPdhYo0G
+         d9hD0/uRes0yDoyJ/28w5SbYjrX9DgEXprZ8warqcxYiNVx9JnETO1JinvM8AXIaUdW7
+         +HctJULLwFgaJ3NtrFR0D4HsZvdEXcyFEw6xihgcn54Px3SvanHRsobdncR3br8IpJj2
+         kYmP95B0RYr07p4Y37WkcF4AYcXKGC871xM/Mdu44fUSHBllGm47HY2OCAd3dkgEERWH
+         0xE/4UW9l8yCgYhE9KlhLj+Z7PcXKCrnIlxgydrBAiMJT6q3QPupLDRlzJlPg6mkmrUt
+         SyqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
          :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lF693kOryfM0lsbwApVjB7ntRHLxj+Pawlf7Vyb2jx8=;
-        b=n5tmAYQ2Fak5o597WcHucwJ6ldDolls+bjLJmjpxvmeNJoumGIqWHc+YslWEAvS2qZ
-         z/fAQn2BxIi1758IEq2lUchAAtHHdd+0qVhNxx9ozycXA6NZxkiHF25gcUUyUXZiM4YP
-         n/dWnepc/gBEjEfgb2F/Vmec5wmoirogbHu1Ead6r+RBd58pYqiSMr4oNVUrCg81B8tG
-         xgcBZIH1QG16Lc3Af4SFlSyS9npuVr2+Hcan9PSuInKWJaljRgg+3273hUhrmdUrlOwV
-         W6SFh7tBv4TcIB1ET9l7AWPotF5VNYXoj6S5u17fwIMeBAaZ5i5ydFsZAVoz7BQsB+aX
-         uHUA==
-X-Gm-Message-State: APzg51CRRDEUA52DEz630qttfYf6/VXtD0ISjPC9sE94SgT2Pe06WGpK
-        sU73aMvJS0zghmONn67psbY=
-X-Google-Smtp-Source: ANB0VdY7CUJhe7FLwWIkBWIeKle55KPMlWbovYMNSZYXfkhR6gnSVjDPL1afJTwDH1r5OEKIQHFEeg==
-X-Received: by 2002:a62:5290:: with SMTP id g138-v6mr4268539pfb.46.1536786613915;
-        Wed, 12 Sep 2018 14:10:13 -0700 (PDT)
+        bh=ltvWySZJZcsSoJmZKVg2t9N9EMWs9AIzRuRqRyNi4yM=;
+        b=cTHiwyDF+x2f78oospOw/IQvgToorywigyggEXo9bS8Gp7TTRYhpeD53FdRalDeODW
+         ebRcs3Z5XsEiNq26YPGZDiHerb+l/NyhgWmQ1v4oQhcyLo16993NTCV8zZ0d4riUf4Xx
+         /ZZidTw00Kr19LuDCdWDeg5JFv4xBWX35tVgDxw+DalM4xY3r3LUv2HC8aXJj4n5Vr7I
+         Vjim+afby0uC6L/pP42PX6IRLMK/k6uP0PaR7vBhjQWxvaZaQthKZarO82rOWmAqsOSt
+         yP4hPZhp7WMHpPnSKWlDAuE6K5bpUgHHoOCWlYubfWYA4ZemtJ/7kATEKec8O9S3oabD
+         VTkg==
+X-Gm-Message-State: APzg51D12lfwfwFe5HElUYqpBVDOF5Jw1S0rEcHd+QNXeoKI7eQOdbN7
+        /fa4Le1979GL6g2+neI2iyJUA/B7
+X-Google-Smtp-Source: ANB0Vdakcq6f9DEBYiMw3C2ZDcCCKf2r1mS9PsUTeIyjtBAwaDUE7g40iKG6qA3p1RAM60Ii2aPxXQ==
+X-Received: by 2002:a17:902:8d8c:: with SMTP id v12-v6mr4123765plo.94.1536787103776;
+        Wed, 12 Sep 2018 14:18:23 -0700 (PDT)
 Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id t21-v6sm3529753pfi.73.2018.09.12.14.10.12
+        by smtp.gmail.com with ESMTPSA id b73-v6sm3411890pfj.93.2018.09.12.14.18.22
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Sep 2018 14:10:12 -0700 (PDT)
-Date:   Wed, 12 Sep 2018 14:10:11 -0700
+        Wed, 12 Sep 2018 14:18:23 -0700 (PDT)
+Date:   Wed, 12 Sep 2018 14:18:22 -0700
 From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Colin King <colin.king@canonical.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] firmware: vpd: fix spelling mistake "partion" ->
- "partition"
-Message-ID: <20180912211011.GA20199@roeck-us.net>
-References: <20180911165858.3015-1-colin.king@canonical.com>
- <50220bc9-326f-7a93-fecb-9b67fbac98b9@roeck-us.net>
- <20180912052448.GA8481@kroah.com>
+To:     Jagdish Tirumala <t.jag587@gmail.com>
+Cc:     wim@linux-watchdog.org, yamada.masahiro@socionext.com,
+        linux-watchdog@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] watchdog: diag288_wdt: pointer location foo * bar should
+ be foo *bar
+Message-ID: <20180912211822.GA12970@roeck-us.net>
+References: <20180912172907.1802-1-t.jag587@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180912052448.GA8481@kroah.com>
+In-Reply-To: <20180912172907.1802-1-t.jag587@gmail.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 07:24:48AM +0200, Greg Kroah-Hartman wrote:
-> On Tue, Sep 11, 2018 at 09:58:48PM -0700, Guenter Roeck wrote:
-> > On 09/11/2018 09:58 AM, Colin King wrote:
-> > > From: Colin Ian King <colin.king@canonical.com>
-> > > 
-> > > Trivial fix to spelling mistake in comment
-> > > 
-> > > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > 
-> > Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-> > 
-> > Interesting - drivers/firmware/google/ does not have a maintainer.
-> > Greg - is it correct to assume that you are the de-facto maintainer ?
+On Wed, Sep 12, 2018 at 10:29:07AM -0700, Jagdish Tirumala wrote:
+> Fix the following checkpatch error:
 > 
-> Yeah, I am :(
+> ERROR: pointer location foo * bar should be foo *bar
+> FILE: drivers/watchdog/diag288_wdt.c:202
 > 
+> Signed-off-by: Jagdish Tirumala <t.jag587@gmail.com>
 
-Hmm .. the :( doesn't sound too happy. Do you think we should have one ?
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-Guenter
+> ---
+>  drivers/watchdog/diag288_wdt.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/watchdog/diag288_wdt.c b/drivers/watchdog/diag288_wdt.c
+> index 806a04a676b7..046333d1beb2 100644
+> --- a/drivers/watchdog/diag288_wdt.c
+> +++ b/drivers/watchdog/diag288_wdt.c
+> @@ -199,7 +199,7 @@ static int wdt_ping(struct watchdog_device *dev)
+>  	return ret;
+>  }
+>  
+> -static int wdt_set_timeout(struct watchdog_device * dev, unsigned int new_to)
+> +static int wdt_set_timeout(struct watchdog_device *dev, unsigned int new_to)
+>  {
+>  	dev->timeout = new_to;
+>  	return wdt_ping(dev);
+> -- 
+> 2.17.1
+> 
