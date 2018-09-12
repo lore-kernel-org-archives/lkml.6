@@ -2,157 +2,117 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B15F0C46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 10:54:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 389A9C4646A
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 10:57:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AB6A20854
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 10:54:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="j46GH7ec"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AB6A20854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id D2A2F20854
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 10:57:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2A2F20854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727998AbeILP6M (ORCPT
+        id S1727987AbeILQBb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 11:58:12 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:38495 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727662AbeILP6L (ORCPT
+        Wed, 12 Sep 2018 12:01:31 -0400
+Received: from outbound-smtp11.blacknight.com ([46.22.139.106]:47093 "EHLO
+        outbound-smtp11.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727644AbeILQBb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 11:58:11 -0400
-Received: by mail-wr1-f67.google.com with SMTP id w11-v6so1530741wrc.5
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 03:54:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=dCZ8O9DZ1ONH2hb7eQPstXDLIl/KhTzzbGzZiXh+87s=;
-        b=j46GH7ecs5ROEDwzGUsGS1cSaVX4COOycu8YO0aRLZHwF/BXQnga++VqyZ1D4EpiXl
-         L+vicJXnY91YMVN8ZzhsMa/2XEMBqhLf/hNs0WtodJWw8oaO4sVtwm12fF+Qi5x0rniy
-         0tsLY6rAfzYwX7Aio0BPOslyozczT2rmhLO5c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=dCZ8O9DZ1ONH2hb7eQPstXDLIl/KhTzzbGzZiXh+87s=;
-        b=OoRW2CeNtpFXiFhqzPXIyhARjKV2WYBGE+Tw1siuIfbZGZXFXlf2/lrEC7nOjduofq
-         QCEgjwBsEBRABKdwNiPw3k7tkHyjITfmGbu/UoiAdMnW3s2Cr1Efa7LC53zRl7gvqzUQ
-         VftvFRV2+jw77R9OX0OmVvnkehzKyvIa3y/kyBfo0zcKpvAPLJ6cU9+ZgXXiFOhMiKcK
-         fzKoLZhIWvu0cCgrW5tdgxr+ddf4QGV5BRKQxeTDABLQyvL/PfNBeXLKi5ytUsHoAQTL
-         WI8kZ5r+KdmW3VFhcaNFKJXqBEeaZnTXT5/War+e1/+sBYtcyQForameZenrW/VhGWF0
-         0bRg==
-X-Gm-Message-State: APzg51D+RErcpA7ORCEcuXtTTHgS4l7NdkejbW8veTpRcxZu/+psnble
-        BJchMTftbcxGuaGWxgZ0OcuOcA==
-X-Google-Smtp-Source: ANB0Vdbi9QA8Cx3M0DEjPpfUzHFBjGMSOKbfgtwBqLjWqB6smekQpHGH62smv3BGJJdwdhTPCbOxXQ==
-X-Received: by 2002:adf:d1c1:: with SMTP id m1-v6mr1147526wri.138.1536749649900;
-        Wed, 12 Sep 2018 03:54:09 -0700 (PDT)
-Received: from dell ([2.27.167.7])
-        by smtp.gmail.com with ESMTPSA id w10-v6sm1110095wrp.31.2018.09.12.03.54.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Sep 2018 03:54:08 -0700 (PDT)
-Date:   Wed, 12 Sep 2018 11:54:07 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        radu_nicolae.pirea@upb.ro, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Mark Brown <broonie@kernel.org>, Jiri Slaby <jslaby@suse.com>,
-        Richard Genoud <richard.genoud@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>
-Subject: Re: [PATCH v12 0/6] Driver for at91 usart in spi mode
-Message-ID: <20180912105407.GR4185@dell>
-References: <CAMuHMdXH8gNjKGOHGFc+K03U2zsVCSN7G_Q4wtepQr859nRQKg@mail.gmail.com>
- <20180911153621.GP2494@piout.net>
- <CAMuHMdV+=EgAYogwNHbY=RExkGox_+YSeHV6pJtQb6g6PzD-CQ@mail.gmail.com>
- <20180911181838.GI4185@dell>
- <20180911185839.GA25212@piout.net>
- <20180911224418.GK4185@dell>
- <20180911225440.GL4185@dell>
- <20180912073355.GB2557@piout.net>
- <20180912084143.GN4185@dell>
- <CAMuHMdWefU0pw=c9TKOa+wGHchpg8JRfE0OnC4+wKDt-qrbH1A@mail.gmail.com>
+        Wed, 12 Sep 2018 12:01:31 -0400
+Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
+        by outbound-smtp11.blacknight.com (Postfix) with ESMTPS id 02EC71C16A1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 11:57:29 +0100 (IST)
+Received: (qmail 7540 invoked from network); 12 Sep 2018 10:57:28 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.229.88])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 12 Sep 2018 10:57:28 -0000
+Date:   Wed, 12 Sep 2018 11:57:27 +0100
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rik van Riel <riel@surriel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/4] sched/numa: Do not move imbalanced load purely on
+ the basis of an idle CPU
+Message-ID: <20180912105727.GJ1719@techsingularity.net>
+References: <20180907101139.20760-1-mgorman@techsingularity.net>
+ <20180907101139.20760-5-mgorman@techsingularity.net>
+ <20180907113309.GU24106@hirez.programming.kicks-ass.net>
+ <20180907123739.GE1719@techsingularity.net>
+ <20180910094147.GH1719@techsingularity.net>
+ <20180912065410.GA5352@linux.vnet.ibm.com>
+ <20180912095742.GA3333@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-15
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdWefU0pw=c9TKOa+wGHchpg8JRfE0OnC4+wKDt-qrbH1A@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180912095742.GA3333@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 12 Sep 2018, Geert Uytterhoeven wrote:
-> On Wed, Sep 12, 2018 at 10:41 AM Lee Jones <lee.jones@linaro.org> wrote:
-> > On Wed, 12 Sep 2018, Alexandre Belloni wrote:
-> > > On 11/09/2018 23:54:40+0100, Lee Jones wrote:
-> > > > > > http://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-6438-32-bit-ARM926-Embedded-Microprocessor-SAM9G45_Datasheet.pdf
-> > > > > >
-> > > > > > USART doc starting p572, registers p621.
-> > > >
-> > > > After looking at the datasheet, I don't see any reason why one of the
-> > > > two drivers can't be selected using different compatible strings.
-> > >
-> > > Because there is only one IP and we don't use the device tree to selecet
-> > > linux specific drivers.
-> >
-> > We do it all the time.  There are loads of MFDs (def: same IP, with
-> > different functions) which have separate compatibles for their various
-> > functions.  If you wish this IP to operate as an SPI controller, it
-> > should have an SPI compatible, if you wish it to operate as a U(S)ART,
-> > then it should have a UART compatible.  It's what we do for most of
-> > the other MFDs in the kernel.
+On Wed, Sep 12, 2018 at 11:57:42AM +0200, Ingo Molnar wrote:
+> > * Mel Gorman <mgorman@techsingularity.net> [2018-09-10 10:41:47]:
+> > 
+> > > On Fri, Sep 07, 2018 at 01:37:39PM +0100, Mel Gorman wrote:
+> > > > > Srikar's patch here:
+> > > > > 
+> > > > >   http://lkml.kernel.org/r/1533276841-16341-4-git-send-email-srikar@linux.vnet.ibm.com
+> > > > > 
+> > > > > Also frobs this condition, but in a less radical way. Does that yield
+> > > > > similar results?
+> > > > 
+> > > > I can check. I do wonder of course if the less radical approach just means
+> > > > that automatic NUMA balancing and the load balancer simply disagree about
+> > > > placement at a different time. It'll take a few days to have an answer as
+> > > > the battery of workloads to check this take ages.
+> > > > 
+> > > 
+> > > Tests completed over the weekend and I've found that the performance of
+> > > both patches are very similar for two machines (both 2 socket) running a
+> > > variety of workloads. Hence, I'm not worried about which patch gets picked
+> > > up. However, I would prefer my own on the grounds that the additional
+> > > complexity does not appear to get us anything. Of course, that changes if
+> > > Srikar's tests on his larger ppc64 machines show the more complex approach
+> > > is justified.
+> > > 
+> > 
+> > Running SPECJbb2005. Higher bops are better.
+> > 
+> > Kernel A = 4.18+ 13 sched patches part of v4.19-rc1.
+> > Kernel B = Kernel A + 6 patches (http://lore.kernel.org/lkml/1533276841-16341-1-git-send-email-srikar@linux.vnet.ibm.com)
+> > Kernel C = Kernel B - (Avoid task migration for small numa improvement) i.e
+> > 	http://lore.kernel.org/lkml/1533276841-16341-4-git-send-email-srikar@linux.vnet.ibm.com
+> > 	+ 2 patches from Mel
+> > 	(Do not move imbalanced load purely)
+> > 	http://lore.kernel.org/lkml/20180907101139.20760-5-mgorman@techsingularity.net
+> > 	(Stop comparing tasks for NUMA placement)
+> > 	http://lore.kernel.org/lkml/20180907101139.20760-4-mgorman@techsingularity.net
 > 
-> There is a big difference: MFD functions are(more or less) independent
-> functions, which can be used at the same time. It makes perfect sense for a
-> single IP block that has both SPI and UART interfaces, that can be used at
-> the same time.
+> We absolutely need the 'best' pre-regression baseline kernel measurements as well - was it 
+> vanilla v4.17?
 > 
-> In this case, there is a single piece of hardware that can perform
-> different functions, but not at the same time. Performing a different
-> function means configuring the hardware for that function, hence using a
-> different driver (from a different subsystem).
 
-Yes, I can see that PoV.
+That will hit a separate problem -- the scheduler patches that prefer
+keeping new children local instead of spreading wide prematurely. The patch
+in question favours communicating tasks (e.g. short-lived communicating
+processes from shell scripts) but hurts loads that prefer spreading early
+(e.g. STREAM). So while a comparison tells us something, it tells us
+relatively little about this series in isolation.
 
-But ... we can't have it both ways.  *Either* it's a true MFD, in
-which case it can/should have 2 separate compatible strings which can
-be specified directly from the DT.  *Or* it's not an MFD.  In the
-latter case, which I think we're all agreeing on (else we'd have 2
-compatible strings), MFD is not the place to handle this (my original
-point).
-
-So ... this is a USART device which can do SPI, right?
-
-My current thinking is that; as this is a USART device first &
-foremost, the USART should be probed in the first instance regardless,
-then if SPI mode is specified it (the USART driver) registers the SPI
-platform driver (as MFD does currently) and exits gracefully, allowing
-the SPI driver to take over.
-
-Spanner in the works: is it physically possible to change the mode at
-run-time?  :s
+The comparison with 4.17 is expected to be resolved by allowing data to
+migrate faster if the load balancer spreads the load without wake-affine
+disagreeing about placement. Patches for that exist but they were confirmed
+to be working correctly on top of and old version of Srikar's series
+based on 4.18. If we get get this series resolved, I can rebase the old
+series and baring any major surprises, that should improve things
+overall while mitigating the STREAM regression against 4.17.
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Mel Gorman
+SUSE Labs
