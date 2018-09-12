@@ -2,110 +2,110 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D8B0C46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:05:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85FE1C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:05:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C31D420880
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:05:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="nDsarqaU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C31D420880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
+	by mail.kernel.org (Postfix) with ESMTP id 498DF20897
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:05:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 498DF20897
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727848AbeILOIk (ORCPT
+        id S1727991AbeILOI7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 10:08:40 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:35508 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727579AbeILOIj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 10:08:39 -0400
-Received: by mail-lf1-f65.google.com with SMTP id q13-v6so1018724lfc.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 02:05:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=SQ4djfH15Y6cvUUbrSQWMhBh8y69o6NwSOK5aJODhx8=;
-        b=nDsarqaUnvAlOFJ3+wZadjB28ZDoANjx++Gnr1bqGR/Cprp0LZUnLEMHuOSwnKoS2q
-         WOF1vn0c7LuruCeGVxC0DvEJhlkA045ybkTtTUbbSrjibzncde4w228w6bOb4aUnjUsq
-         jyUaz7ZXdeEzLqDg/RCqV4sGf/FjViCPKu6PWEL+9zWqBRei1SzNckMtiNBciU0LCoMz
-         Ww4megspXkAwoSwHeIriu4ezLRPczF40Q7Kcy4BtgMlLt+hjCv1SUcSnBwobcnm4Fj1E
-         LasXtCYsPwYOGGM8m2q3zDPP5H0om3lWgsOO53n0IA5nl1h0tntkTacbBqxOUYbashLq
-         Kvng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=SQ4djfH15Y6cvUUbrSQWMhBh8y69o6NwSOK5aJODhx8=;
-        b=mqp9QwNp7fY+cqb9C8JQwRR/hwSNhAKLUVJBQWL6+2ncXBRb96dLAnF7XpXUjSSDGT
-         ZfdqyGq6oZa4H6JHuflu27pqp1cSM2VeSY7wmBvfgfikfG3GLVLrsHm3ldFPybgfYJjM
-         ySHR1TJgxYgGmoXxq5zFOBtsj2O4kfmqKkMp6+3ZADdNyUwHfAgltH+SMmFih+E6A2w6
-         d714KhAcsG3bB2XHOPMeXrp38GR5SGdCWitpFLm54KB3XoD1DW1DzTz1kyszn6X2mkh0
-         nm2OO3iUWZXeTnlXOImQGkxevlfAhh4eqmF/Uv48TvAChYqQh9UkR8VLUQyeq5BcQx/H
-         WW8A==
-X-Gm-Message-State: APzg51CwipLEH0y9ITa21xRlArwl+6Nnl+w3GXW1wjvHymOvt4QLmY1N
-        LBt3IPg8GUYVU01EJ3+gFr/EdyCqsR4=
-X-Google-Smtp-Source: ANB0VdYqb52ob+THJvA0JZr3l6ioArx7Dixn9Uip5r1keRFWveZ9Rdenfr4xH1ivnrWKzfgPTrR8rw==
-X-Received: by 2002:a19:115b:: with SMTP id g88-v6mr724141lfi.57.1536743102330;
-        Wed, 12 Sep 2018 02:05:02 -0700 (PDT)
-Received: from [192.168.0.126] ([31.173.86.47])
-        by smtp.gmail.com with ESMTPSA id e41-v6sm91026lji.37.2018.09.12.02.05.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Sep 2018 02:05:01 -0700 (PDT)
-Subject: Re: [PATCH v2] neighbour: confirm neigh entries when ARP packet is
- received
-To:     Vasily Khoruzhick <vasilykh@arista.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Roopa Prabhu <roopa@cumulusnetworks.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Jim Westfall <jwestfall@surrealistic.net>,
-        Wolfgang Bumiller <w.bumiller@proxmox.com>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ihar Hrachyshka <ihrachys@redhat.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180911180406.31283-1-vasilykh@arista.com>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <11ed0447-bcf9-8590-94bb-1a4b842ee002@cogentembedded.com>
-Date:   Wed, 12 Sep 2018 12:05:00 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 12 Sep 2018 10:08:59 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48644 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727702AbeILOI7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 10:08:59 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5BA13AE78;
+        Wed, 12 Sep 2018 09:05:22 +0000 (UTC)
+Date:   Wed, 12 Sep 2018 11:05:20 +0200 (CEST)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Woodhouse, David" <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>
+cc:     linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: [PATCH v6 0/3] Harden spectrev2 userspace-userspace protection
+In-Reply-To: <nycvar.YFH.7.76.1809101119280.15880@cbobk.fhfr.pm>
+Message-ID: <nycvar.YFH.7.76.1809121055070.15880@cbobk.fhfr.pm>
+References: <nycvar.YFH.7.76.1809101119280.15880@cbobk.fhfr.pm>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20180911180406.31283-1-vasilykh@arista.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello!
+Currently, linux kernel is basically not preventing userspace-userspace 
+spectrev2 attack, because:
 
-On 9/11/2018 9:04 PM, Vasily Khoruzhick wrote:
+- IBPB is basically unused (issued only for tasks that marked themselves 
+  explicitly non-dumpable, which is absolutely negligible minority of all 
+  software out there), therefore cross-process branch buffer posioning 
+  using spectrev2 is possible
 
-> Update 'confirmed' timestamp when ARP packet is received. It shouldn't
-> affect locktime logic and anyway entry can be confirmed by any higher-layer
-> protocol. Thus it makes to sense not to confirm it when ARP packet is
+- STIBP is completely unused, therefore cross-process branch buffer 
+  poisoning using spectrev2 between processess running on two HT siblings 
+  thread s is possible
 
-    "Makes sense" or "makes no sense"?
+This patchset changes IBPB semantics, so that it's now applied whenever 
+context-switching between processess that can't use ptrace() to achieve 
+the same. This admittedly comes with extra overhad on a context switch; 
+systems that don't care about could disable the mitigation using 
+nospectre_v2 boot option.
+The IBPB implementaion is heavily based on original patches by Tim Chen.
 
-> received.
-> 
-> Fixes: 77d7123342 ("neighbour: update neigh timestamps iff update is
-> effective")
-> 
-> Signed-off-by: Vasily Khoruzhick <vasilykh@arista.com>
-[...]
+In addition to that, we unconditionally turn STIBP on so that HT siblings 
+always have separate branch buffers.
 
-MBR, Sergei
+We've been carrying IBPB implementation with the same semantics in our 
+(SUSE) trees since january disclosure; STIBP was more or less ignored up 
+to today.
+
+v1->v2:
+        include IBPB changes
+v2->v3: 
+        fix IBPB 'who can trace who' semantics
+        wire up STIBP flipping to SMT hotplug
+v3->v4:
+	dropped ___ptrace_may_access(), as it's not needed
+	fixed deadlock with LSM/audit/selinux (Andrea Arcangeli)
+	statically patch out the ptrace check if !IBPB
+
+v4->v5:
+	fix MSR writing logic (Thomas Gleixner, Josh Poimboeuf)
+
+v5->v6:
+	propagate X86_FEATURE_RSB_CTXSW setting to sysfs
+	propagate STIBP setting to sysfs (Thomas Gleixner)
+	simplify arch_smt_update() (Thomas Gleixner)
+
+Jiri Kosina (3):
+      x86/speculation: apply IBPB more strictly to avoid cross-process data leak
+      x86/speculation: Enable cross-hyperthread spectre v2 STIBP mitigation
+      x86/speculation: Propagate information about RSB filling mitigation to sysfs
+
+ arch/x86/kernel/cpu/bugs.c | 60 ++++++++++++++++++++++++++++++++++++++++++++++++++++++------
+ arch/x86/mm/tlb.c          | 31 ++++++++++++++++++++-----------
+ include/linux/ptrace.h     |  4 ++++
+ kernel/cpu.c               | 11 ++++++++++-
+ kernel/ptrace.c            | 12 ++++++++----
+ 5 files changed, 96 insertions(+), 22 deletions(-)
+
+-- 
+Jiri Kosina
+SUSE Labs
 
