@@ -6,611 +6,541 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87558C04ABB
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 00:18:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B37FDC04ABB
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 00:18:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 349DE20866
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 00:18:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 349DE20866
+	by mail.kernel.org (Postfix) with ESMTP id 62A6320866
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 00:18:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62A6320866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728222AbeILFUe (ORCPT
+        id S1728225AbeILFUm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 01:20:34 -0400
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:51584 "EHLO
+        Wed, 12 Sep 2018 01:20:42 -0400
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:51514 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728091AbeILFUa (ORCPT
+        with ESMTP id S1726348AbeILFUa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 12 Sep 2018 01:20:30 -0400
 Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id 72CF52A7D5; Tue, 11 Sep 2018 20:18:44 -0400 (EDT)
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
+        id 12E682A7CE; Tue, 11 Sep 2018 20:18:44 -0400 (EDT)
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
 Cc:     <linuxppc-dev@lists.ozlabs.org>, <linux-m68k@lists.linux-m68k.org>,
-        <linux-kernel@vger.kernel.org>
-Message-Id: <714722a42bf6648655408fef2c16bff0ddb0d11f.1536709753.git.fthain@telegraphics.com.au>
+        <linux-kernel@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Message-Id: <7a0748d8cd97964a99879a0b9f1c0243c677c7c3.1536709753.git.fthain@telegraphics.com.au>
 In-Reply-To: <cover.1536709753.git.fthain@telegraphics.com.au>
 References: <cover.1536709753.git.fthain@telegraphics.com.au>
 From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH 7/7] macintosh/via-macii, macintosh/adb-iop: Clean up
- whitespace
+Subject: [PATCH 1/7] macintosh: Use common code to access RTC
 Date:   Tue, 11 Sep 2018 20:18:44 -0400 (EDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
----
- drivers/macintosh/adb-iop.c   |  48 ++++---
- drivers/macintosh/via-macii.c | 286 +++++++++++++++++++++---------------------
- 2 files changed, 174 insertions(+), 160 deletions(-)
+Now that the 68k Mac port has adopted the via-pmu driver, the same RTC
+code can be shared between m68k and powerpc. Replace duplicated code in
+arch/powerpc and arch/m68k with common RTC accessors for Cuda and PMU.
 
-diff --git a/drivers/macintosh/adb-iop.c b/drivers/macintosh/adb-iop.c
-index 3a1e995ecc0e..fca31640e3ef 100644
---- a/drivers/macintosh/adb-iop.c
-+++ b/drivers/macintosh/adb-iop.c
-@@ -20,13 +20,13 @@
- #include <linux/init.h>
- #include <linux/proc_fs.h>
+Drop the problematic WARN_ON which was introduced in commit 22db552b50fa
+("powerpc/powermac: Fix rtc read/write functions").
+
+Tested-by: Stan Johnson <userm57@yahoo.com>
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+---
+This patch has been regression tested on the following Mac models.
+  Centris 660av       (m68k, Cuda)
+  PowerBook 190       (m68k, PMU)
+  Beige G3 PowerMac   (powerpc, Cuda)
+  Pismo G3 PowerBook  (powerpc, PMU)
+  G5 PowerMac         (powerpc64, PMU)
+
+These changes were previously submitted as "[RFC] macintosh: Use common
+code to access RTC", and prior to that as "[PATCH v3 10/12] macintosh:
+Use common code to access RTC", etc.
+
+Changes since RFC:
+- pmac_get_rtc_time() is no longer defined terms of pmac_get_boot_time().
+- The 64-bit temporary variables were replaced with 64-bit casts,
+  consistent with via_read_time() and via_set_rtc_time().
+- Rebased.
+
+Changes since v3:
+- Rearranged some #ifdefs in arch/powerpc/platforms/powermac/time.c so
+  that pmac_set_rtc_time() will return -ENODEV when appropriate.
+- Rebased.
+---
+ arch/m68k/mac/misc.c                   |  75 +++-----------------
+ arch/powerpc/platforms/powermac/time.c | 126 ++++++---------------------------
+ drivers/macintosh/via-cuda.c           |  35 +++++++++
+ drivers/macintosh/via-pmu.c            |  33 +++++++++
+ include/linux/cuda.h                   |   4 ++
+ include/linux/pmu.h                    |   4 ++
+ 6 files changed, 106 insertions(+), 171 deletions(-)
+
+diff --git a/arch/m68k/mac/misc.c b/arch/m68k/mac/misc.c
+index 1b083c500b9a..ebb3b6d169ea 100644
+--- a/arch/m68k/mac/misc.c
++++ b/arch/m68k/mac/misc.c
+@@ -37,35 +37,6 @@
+ static void (*rom_reset)(void);
  
--#include <asm/macintosh.h> 
--#include <asm/macints.h> 
-+#include <asm/macintosh.h>
-+#include <asm/macints.h>
- #include <asm/mac_iop.h>
- #include <asm/mac_oss.h>
- #include <asm/adb_iop.h>
- 
--#include <linux/adb.h> 
-+#include <linux/adb.h>
- 
- /*#define DEBUG_ADB_IOP*/
- 
-@@ -38,9 +38,9 @@ static unsigned char *reply_ptr;
- #endif
- 
- static enum adb_iop_state {
--    idle,
--    sending,
--    awaiting_reply
-+	idle,
-+	sending,
-+	awaiting_reply
- } adb_iop_state;
- 
- static void adb_iop_start(void);
-@@ -66,7 +66,8 @@ static void adb_iop_end_req(struct adb_request *req, int state)
+ #ifdef CONFIG_ADB_CUDA
+-static time64_t cuda_read_time(void)
+-{
+-	struct adb_request req;
+-	time64_t time;
+-
+-	if (cuda_request(&req, NULL, 2, CUDA_PACKET, CUDA_GET_TIME) < 0)
+-		return 0;
+-	while (!req.complete)
+-		cuda_poll();
+-
+-	time = (u32)((req.reply[3] << 24) | (req.reply[4] << 16) |
+-		     (req.reply[5] << 8) | req.reply[6]);
+-
+-	return time - RTC_OFFSET;
+-}
+-
+-static void cuda_write_time(time64_t time)
+-{
+-	struct adb_request req;
+-	u32 data = lower_32_bits(time + RTC_OFFSET);
+-
+-	if (cuda_request(&req, NULL, 6, CUDA_PACKET, CUDA_SET_TIME,
+-			 (data >> 24) & 0xFF, (data >> 16) & 0xFF,
+-			 (data >> 8) & 0xFF, data & 0xFF) < 0)
+-		return;
+-	while (!req.complete)
+-		cuda_poll();
+-}
+-
+ static __u8 cuda_read_pram(int offset)
  {
- 	req->complete = 1;
- 	current_req = req->next;
--	if (req->done) (*req->done)(req);
-+	if (req->done)
-+		(*req->done)(req);
- 	adb_iop_state = state;
- }
+ 	struct adb_request req;
+@@ -91,33 +62,6 @@ static void cuda_write_pram(int offset, __u8 data)
+ #endif /* CONFIG_ADB_CUDA */
  
-@@ -100,7 +101,7 @@ static void adb_iop_complete(struct iop_msg *msg)
- 
- static void adb_iop_listen(struct iop_msg *msg)
+ #ifdef CONFIG_ADB_PMU
+-static time64_t pmu_read_time(void)
+-{
+-	struct adb_request req;
+-	time64_t time;
+-
+-	if (pmu_request(&req, NULL, 1, PMU_READ_RTC) < 0)
+-		return 0;
+-	pmu_wait_complete(&req);
+-
+-	time = (u32)((req.reply[0] << 24) | (req.reply[1] << 16) |
+-		     (req.reply[2] << 8) | req.reply[3]);
+-
+-	return time - RTC_OFFSET;
+-}
+-
+-static void pmu_write_time(time64_t time)
+-{
+-	struct adb_request req;
+-	u32 data = lower_32_bits(time + RTC_OFFSET);
+-
+-	if (pmu_request(&req, NULL, 5, PMU_SET_RTC,
+-			(data >> 24) & 0xFF, (data >> 16) & 0xFF,
+-			(data >> 8) & 0xFF, data & 0xFF) < 0)
+-		return;
+-	pmu_wait_complete(&req);
+-}
+-
+ static __u8 pmu_read_pram(int offset)
  {
--	struct adb_iopmsg *amsg = (struct adb_iopmsg *) msg->message;
-+	struct adb_iopmsg *amsg = (struct adb_iopmsg *)msg->message;
- 	struct adb_request *req;
- 	unsigned long flags;
- #ifdef DEBUG_ADB_IOP
-@@ -113,9 +114,9 @@ static void adb_iop_listen(struct iop_msg *msg)
- 
- #ifdef DEBUG_ADB_IOP
- 	printk("adb_iop_listen %p: rcvd packet, %d bytes: %02X %02X", req,
--		(uint) amsg->count + 2, (uint) amsg->flags, (uint) amsg->cmd);
-+	       (uint)amsg->count + 2, (uint)amsg->flags, (uint)amsg->cmd);
- 	for (i = 0; i < amsg->count; i++)
--		printk(" %02X", (uint) amsg->data[i]);
-+		printk(" %02X", (uint)amsg->data[i]);
- 	printk("\n");
- #endif
- 
-@@ -168,14 +169,15 @@ static void adb_iop_start(void)
- 
- 	/* get the packet to send */
- 	req = current_req;
--	if (!req) return;
-+	if (!req)
-+		return;
- 
- 	local_irq_save(flags);
- 
- #ifdef DEBUG_ADB_IOP
- 	printk("adb_iop_start %p: sending packet, %d bytes:", req, req->nbytes);
--	for (i = 0 ; i < req->nbytes ; i++)
--		printk(" %02X", (uint) req->data[i]);
-+	for (i = 0; i < req->nbytes; i++)
-+		printk(" %02X", (uint)req->data[i]);
- 	printk("\n");
- #endif
- 
-@@ -196,13 +198,14 @@ static void adb_iop_start(void)
- 	/* Now send it. The IOP manager will call adb_iop_complete */
- 	/* when the packet has been sent.                          */
- 
--	iop_send_message(ADB_IOP, ADB_CHAN, req,
--			 sizeof(amsg), (__u8 *) &amsg, adb_iop_complete);
-+	iop_send_message(ADB_IOP, ADB_CHAN, req, sizeof(amsg), (__u8 *)&amsg,
-+			 adb_iop_complete);
- }
- 
- int adb_iop_probe(void)
- {
--	if (!iop_ism_present) return -ENODEV;
-+	if (!iop_ism_present)
-+		return -ENODEV;
- 	return 0;
- }
- 
-@@ -218,10 +221,12 @@ int adb_iop_send_request(struct adb_request *req, int sync)
- 	int err;
- 
- 	err = adb_iop_write(req);
--	if (err) return err;
-+	if (err)
-+		return err;
- 
- 	if (sync) {
--		while (!req->complete) adb_iop_poll();
-+		while (!req->complete)
-+			adb_iop_poll();
- 	}
- 	return 0;
- }
-@@ -251,7 +256,9 @@ static int adb_iop_write(struct adb_request *req)
- 	}
- 
- 	local_irq_restore(flags);
--	if (adb_iop_state == idle) adb_iop_start();
-+
-+	if (adb_iop_state == idle)
-+		adb_iop_start();
- 	return 0;
- }
- 
-@@ -263,7 +270,8 @@ int adb_iop_autopoll(int devs)
- 
- void adb_iop_poll(void)
- {
--	if (adb_iop_state == idle) adb_iop_start();
-+	if (adb_iop_state == idle)
-+		adb_iop_start();
- 	iop_ism_irq_poll(ADB_IOP);
- }
- 
-diff --git a/drivers/macintosh/via-macii.c b/drivers/macintosh/via-macii.c
-index a38f57ba50cb..ac824d7b2dcf 100644
---- a/drivers/macintosh/via-macii.c
-+++ b/drivers/macintosh/via-macii.c
-@@ -12,7 +12,7 @@
-  *
-  * 1999-08-02 (jmt) - Initial rewrite for Unified ADB.
-  * 2000-03-29 Tony Mantler <tonym@mac.linux-m68k.org>
-- * 				- Big overhaul, should actually work now.
-+ *            - Big overhaul, should actually work now.
-  * 2006-12-31 Finn Thain - Another overhaul.
-  *
-  * Suggested reading:
-@@ -23,7 +23,7 @@
-  * Apple's "ADB Analyzer" bus sniffer is invaluable:
-  *   ftp://ftp.apple.com/developer/Tool_Chest/Devices_-_Hardware/Apple_Desktop_Bus/
+ 	struct adb_request req;
+@@ -295,13 +239,17 @@ static time64_t via_read_time(void)
+  * is basically any machine with Mac II-style ADB.
   */
-- 
-+
- #include <stdarg.h>
- #include <linux/types.h>
- #include <linux/errno.h>
-@@ -77,7 +77,7 @@ static volatile unsigned char *via;
- #define ST_ODD		0x20		/* ADB state: odd data byte */
- #define ST_IDLE		0x30		/* ADB state: idle, nothing to send */
  
--static int  macii_init_via(void);
-+static int macii_init_via(void);
- static void macii_start(void);
- static irqreturn_t macii_interrupt(int irq, void *arg);
- static void macii_queue_poll(void);
-@@ -123,7 +123,8 @@ static int autopoll_devs;      /* bits set are device addresses to be polled */
- /* Check for MacII style ADB */
- static int macii_probe(void)
+-static void via_write_time(time64_t time)
++static void via_set_rtc_time(struct rtc_time *tm)
  {
--	if (macintosh_config->adb_type != MAC_ADB_II) return -ENODEV;
-+	if (macintosh_config->adb_type != MAC_ADB_II)
-+		return -ENODEV;
- 
- 	via = via1;
- 
-@@ -136,15 +137,17 @@ int macii_init(void)
- {
- 	unsigned long flags;
- 	int err;
--	
+ 	union {
+ 		__u8 cdata[4];
+ 		__u32 idata;
+ 	} data;
+ 	__u8 temp;
++	time64_t time;
 +
- 	local_irq_save(flags);
--	
-+
- 	err = macii_init_via();
--	if (err) goto out;
-+	if (err)
-+		goto out;
++	time = mktime64(tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday,
++	                tm->tm_hour, tm->tm_min, tm->tm_sec);
  
- 	err = request_irq(IRQ_MAC_ADB, macii_interrupt, 0, "ADB",
- 			  macii_interrupt);
--	if (err) goto out;
-+	if (err)
-+		goto out;
+ 	/* Clear the write protect bit */
  
- 	macii_state = idle;
- out:
-@@ -152,7 +155,7 @@ int macii_init(void)
- 	return err;
+@@ -641,12 +589,12 @@ int mac_hwclk(int op, struct rtc_time *t)
+ #ifdef CONFIG_ADB_CUDA
+ 		case MAC_ADB_EGRET:
+ 		case MAC_ADB_CUDA:
+-			now = cuda_read_time();
++			now = cuda_get_time();
+ 			break;
+ #endif
+ #ifdef CONFIG_ADB_PMU
+ 		case MAC_ADB_PB2:
+-			now = pmu_read_time();
++			now = pmu_get_time();
+ 			break;
+ #endif
+ 		default:
+@@ -665,24 +613,21 @@ int mac_hwclk(int op, struct rtc_time *t)
+ 		         __func__, t->tm_year + 1900, t->tm_mon + 1, t->tm_mday,
+ 		         t->tm_hour, t->tm_min, t->tm_sec);
+ 
+-		now = mktime64(t->tm_year + 1900, t->tm_mon + 1, t->tm_mday,
+-			       t->tm_hour, t->tm_min, t->tm_sec);
+-
+ 		switch (macintosh_config->adb_type) {
+ 		case MAC_ADB_IOP:
+ 		case MAC_ADB_II:
+ 		case MAC_ADB_PB1:
+-			via_write_time(now);
++			via_set_rtc_time(t);
+ 			break;
+ #ifdef CONFIG_ADB_CUDA
+ 		case MAC_ADB_EGRET:
+ 		case MAC_ADB_CUDA:
+-			cuda_write_time(now);
++			cuda_set_rtc_time(t);
+ 			break;
+ #endif
+ #ifdef CONFIG_ADB_PMU
+ 		case MAC_ADB_PB2:
+-			pmu_write_time(now);
++			pmu_set_rtc_time(t);
+ 			break;
+ #endif
+ 		default:
+diff --git a/arch/powerpc/platforms/powermac/time.c b/arch/powerpc/platforms/powermac/time.c
+index f92c1918fb56..f157e3d071f2 100644
+--- a/arch/powerpc/platforms/powermac/time.c
++++ b/arch/powerpc/platforms/powermac/time.c
+@@ -44,13 +44,6 @@
+ #define DBG(x...)
+ #endif
+ 
+-/*
+- * Offset between Unix time (1970-based) and Mac time (1904-based). Cuda and PMU
+- * times wrap in 2040. If we need to handle later times, the read_time functions
+- * need to be changed to interpret wrapped times as post-2040.
+- */
+-#define RTC_OFFSET	2082844800
+-
+ /*
+  * Calibrate the decrementer frequency with the VIA timer 1.
+  */
+@@ -90,98 +83,6 @@ long __init pmac_time_init(void)
+ 	return delta;
  }
  
--/* initialize the hardware */	
-+/* initialize the hardware */
- static int macii_init_via(void)
+-#ifdef CONFIG_ADB_CUDA
+-static time64_t cuda_get_time(void)
+-{
+-	struct adb_request req;
+-	time64_t now;
+-
+-	if (cuda_request(&req, NULL, 2, CUDA_PACKET, CUDA_GET_TIME) < 0)
+-		return 0;
+-	while (!req.complete)
+-		cuda_poll();
+-	if (req.reply_len != 7)
+-		printk(KERN_ERR "cuda_get_time: got %d byte reply\n",
+-		       req.reply_len);
+-	now = (u32)((req.reply[3] << 24) + (req.reply[4] << 16) +
+-		    (req.reply[5] << 8) + req.reply[6]);
+-	/* it's either after year 2040, or the RTC has gone backwards */
+-	WARN_ON(now < RTC_OFFSET);
+-
+-	return now - RTC_OFFSET;
+-}
+-
+-#define cuda_get_rtc_time(tm)	rtc_time64_to_tm(cuda_get_time(), (tm))
+-
+-static int cuda_set_rtc_time(struct rtc_time *tm)
+-{
+-	u32 nowtime;
+-	struct adb_request req;
+-
+-	nowtime = lower_32_bits(rtc_tm_to_time64(tm) + RTC_OFFSET);
+-	if (cuda_request(&req, NULL, 6, CUDA_PACKET, CUDA_SET_TIME,
+-			 nowtime >> 24, nowtime >> 16, nowtime >> 8,
+-			 nowtime) < 0)
+-		return -ENXIO;
+-	while (!req.complete)
+-		cuda_poll();
+-	if ((req.reply_len != 3) && (req.reply_len != 7))
+-		printk(KERN_ERR "cuda_set_rtc_time: got %d byte reply\n",
+-		       req.reply_len);
+-	return 0;
+-}
+-
+-#else
+-#define cuda_get_time()		0
+-#define cuda_get_rtc_time(tm)
+-#define cuda_set_rtc_time(tm)	0
+-#endif
+-
+-#ifdef CONFIG_ADB_PMU
+-static time64_t pmu_get_time(void)
+-{
+-	struct adb_request req;
+-	time64_t now;
+-
+-	if (pmu_request(&req, NULL, 1, PMU_READ_RTC) < 0)
+-		return 0;
+-	pmu_wait_complete(&req);
+-	if (req.reply_len != 4)
+-		printk(KERN_ERR "pmu_get_time: got %d byte reply from PMU\n",
+-		       req.reply_len);
+-	now = (u32)((req.reply[0] << 24) + (req.reply[1] << 16)	+
+-		    (req.reply[2] << 8) + req.reply[3]);
+-
+-	/* it's either after year 2040, or the RTC has gone backwards */
+-	WARN_ON(now < RTC_OFFSET);
+-
+-	return now - RTC_OFFSET;
+-}
+-
+-#define pmu_get_rtc_time(tm)	rtc_time64_to_tm(pmu_get_time(), (tm))
+-
+-static int pmu_set_rtc_time(struct rtc_time *tm)
+-{
+-	u32 nowtime;
+-	struct adb_request req;
+-
+-	nowtime = lower_32_bits(rtc_tm_to_time64(tm) + RTC_OFFSET);
+-	if (pmu_request(&req, NULL, 5, PMU_SET_RTC, nowtime >> 24,
+-			nowtime >> 16, nowtime >> 8, nowtime) < 0)
+-		return -ENXIO;
+-	pmu_wait_complete(&req);
+-	if (req.reply_len != 0)
+-		printk(KERN_ERR "pmu_set_rtc_time: %d byte reply from PMU\n",
+-		       req.reply_len);
+-	return 0;
+-}
+-
+-#else
+-#define pmu_get_time()		0
+-#define pmu_get_rtc_time(tm)
+-#define pmu_set_rtc_time(tm)	0
+-#endif
+-
+ #ifdef CONFIG_PMAC_SMU
+ static time64_t smu_get_time(void)
  {
- 	unsigned char x;
-@@ -162,7 +165,7 @@ static int macii_init_via(void)
- 
- 	/* Set up state: idle */
- 	via[B] |= ST_IDLE;
--	last_status = via[B] & (ST_MASK|CTLR_IRQ);
-+	last_status = via[B] & (ST_MASK | CTLR_IRQ);
- 
- 	/* Shift register on input */
- 	via[ACR] = (via[ACR] & ~SR_CTRL) | SR_EXT;
-@@ -188,7 +191,8 @@ static void macii_queue_poll(void)
- 	int next_device;
- 	static struct adb_request req;
- 
--	if (!autopoll_devs) return;
-+	if (!autopoll_devs)
-+		return;
- 
- 	device_mask = (1 << (((command_byte & 0xF0) >> 4) + 1)) - 1;
- 	if (autopoll_devs & ~device_mask)
-@@ -196,8 +200,7 @@ static void macii_queue_poll(void)
- 	else
- 		next_device = ffs(autopoll_devs) - 1;
- 
--	adb_request(&req, NULL, ADBREQ_NOSEND, 1,
--	            ADB_READREG(next_device, 0));
-+	adb_request(&req, NULL, ADBREQ_NOSEND, 1, ADB_READREG(next_device, 0));
- 
- 	req.sent = 0;
- 	req.complete = 0;
-@@ -237,7 +240,7 @@ static int macii_write(struct adb_request *req)
- 		req->complete = 1;
- 		return -EINVAL;
- 	}
--	
-+
- 	req->next = NULL;
- 	req->sent = 0;
- 	req->complete = 0;
-@@ -251,7 +254,8 @@ static int macii_write(struct adb_request *req)
- 	} else {
- 		current_req = req;
- 		last_req = req;
--		if (macii_state == idle) macii_start();
-+		if (macii_state == idle)
-+			macii_start();
- 	}
- 
- 	local_irq_restore(flags);
-@@ -269,7 +273,8 @@ static int macii_autopoll(int devs)
- 	/* bit 1 == device 1, and so on. */
- 	autopoll_devs = devs & 0xFFFE;
- 
--	if (!autopoll_devs) return 0;
-+	if (!autopoll_devs)
-+		return 0;
- 
- 	local_irq_save(flags);
- 
-@@ -286,7 +291,8 @@ static int macii_autopoll(int devs)
- 	return err;
+@@ -191,11 +92,6 @@ static time64_t smu_get_time(void)
+ 		return 0;
+ 	return rtc_tm_to_time64(&tm);
  }
+-
+-#else
+-#define smu_get_time()			0
+-#define smu_get_rtc_time(tm, spin)
+-#define smu_set_rtc_time(tm, spin)	0
+ #endif
  
--static inline int need_autopoll(void) {
-+static inline int need_autopoll(void)
-+{
- 	/* Was the last command Talk Reg 0
- 	 * and is the target on the autopoll list?
- 	 */
-@@ -306,7 +312,7 @@ static void macii_poll(void)
- static int macii_reset_bus(void)
+ /* Can't be __init, it's called when suspending and resuming */
+@@ -203,12 +99,18 @@ time64_t pmac_get_boot_time(void)
  {
- 	static struct adb_request req;
--	
-+
- 	/* Command = 0, Address = ignored */
- 	adb_request(&req, NULL, ADBREQ_NOSEND, 1, ADB_BUSRESET);
- 	macii_send_request(&req, 1);
-@@ -349,7 +355,7 @@ static void macii_start(void)
-  * to be activity on the ADB bus. The chip will poll to achieve this.
-  *
-  * The basic ADB state machine was left unchanged from the original MacII code
-- * by Alan Cox, which was based on the CUDA driver for PowerMac. 
-+ * by Alan Cox, which was based on the CUDA driver for PowerMac.
-  * The syntax of the ADB status lines is totally different on MacII,
-  * though. MacII uses the states Command -> Even -> Odd -> Even ->...-> Idle
-  * for sending and Idle -> Even -> Odd -> Even ->...-> Idle for receiving.
-@@ -377,147 +383,147 @@ static irqreturn_t macii_interrupt(int irq, void *arg)
+ 	/* Get the time from the RTC, used only at boot time */
+ 	switch (sys_ctrler) {
++#ifdef CONFIG_ADB_CUDA
+ 	case SYS_CTRLER_CUDA:
+ 		return cuda_get_time();
++#endif
++#ifdef CONFIG_ADB_PMU
+ 	case SYS_CTRLER_PMU:
+ 		return pmu_get_time();
++#endif
++#ifdef CONFIG_PMAC_SMU
+ 	case SYS_CTRLER_SMU:
+ 		return smu_get_time();
++#endif
+ 	default:
+ 		return 0;
  	}
- 
- 	last_status = status;
--	status = via[B] & (ST_MASK|CTLR_IRQ);
-+	status = via[B] & (ST_MASK | CTLR_IRQ);
- 
- 	switch (macii_state) {
--		case idle:
--			if (reading_reply) {
--				reply_ptr = current_req->reply;
--			} else {
--				WARN_ON(current_req);
--				reply_ptr = reply_buf;
--			}
-+	case idle:
-+		if (reading_reply) {
-+			reply_ptr = current_req->reply;
-+		} else {
-+			WARN_ON(current_req);
-+			reply_ptr = reply_buf;
-+		}
- 
--			x = via[SR];
-+		x = via[SR];
- 
--			if ((status & CTLR_IRQ) && (x == 0xFF)) {
--				/* Bus timeout without SRQ sequence:
--				 *     data is "FF" while CTLR_IRQ is "H"
--				 */
--				reply_len = 0;
--				srq_asserted = 0;
--				macii_state = read_done;
--			} else {
--				macii_state = reading;
--				*reply_ptr = x;
--				reply_len = 1;
--			}
-+		if ((status & CTLR_IRQ) && (x == 0xFF)) {
-+			/* Bus timeout without SRQ sequence:
-+			 *     data is "FF" while CTLR_IRQ is "H"
-+			 */
-+			reply_len = 0;
-+			srq_asserted = 0;
-+			macii_state = read_done;
-+		} else {
-+			macii_state = reading;
-+			*reply_ptr = x;
-+			reply_len = 1;
-+		}
- 
--			/* set ADB state = even for first data byte */
--			via[B] = (via[B] & ~ST_MASK) | ST_EVEN;
--			break;
-+		/* set ADB state = even for first data byte */
-+		via[B] = (via[B] & ~ST_MASK) | ST_EVEN;
-+		break;
- 
--		case sending:
--			req = current_req;
--			if (data_index >= req->nbytes) {
--				req->sent = 1;
--				macii_state = idle;
--
--				if (req->reply_expected) {
--					reading_reply = 1;
--				} else {
--					req->complete = 1;
--					current_req = req->next;
--					if (req->done) (*req->done)(req);
--
--					if (current_req)
--						macii_start();
--					else
--						if (need_autopoll())
--							macii_autopoll(autopoll_devs);
--				}
-+	case sending:
-+		req = current_req;
-+		if (data_index >= req->nbytes) {
-+			req->sent = 1;
-+			macii_state = idle;
- 
--				if (macii_state == idle) {
--					/* reset to shift in */
--					via[ACR] &= ~SR_OUT;
--					x = via[SR];
--					/* set ADB state idle - might get SRQ */
--					via[B] = (via[B] & ~ST_MASK) | ST_IDLE;
--				}
-+			if (req->reply_expected) {
-+				reading_reply = 1;
- 			} else {
--				via[SR] = req->data[data_index++];
--
--				if ( (via[B] & ST_MASK) == ST_CMD ) {
--					/* just sent the command byte, set to EVEN */
--					via[B] = (via[B] & ~ST_MASK) | ST_EVEN;
--				} else {
--					/* invert state bits, toggle ODD/EVEN */
--					via[B] ^= ST_MASK;
--				}
--			}
--			break;
--
--		case reading:
--			x = via[SR];
--			WARN_ON((status & ST_MASK) == ST_CMD ||
--				(status & ST_MASK) == ST_IDLE);
--
--			/* Bus timeout with SRQ sequence:
--			 *     data is "XX FF"      while CTLR_IRQ is "L L"
--			 * End of packet without SRQ sequence:
--			 *     data is "XX...YY 00" while CTLR_IRQ is "L...H L"
--			 * End of packet SRQ sequence:
--			 *     data is "XX...YY 00" while CTLR_IRQ is "L...L L"
--			 * (where XX is the first response byte and
--			 * YY is the last byte of valid response data.)
--			 */
-+				req->complete = 1;
-+				current_req = req->next;
-+				if (req->done)
-+					(*req->done)(req);
- 
--			srq_asserted = 0;
--			if (!(status & CTLR_IRQ)) {
--				if (x == 0xFF) {
--					if (!(last_status & CTLR_IRQ)) {
--						macii_state = read_done;
--						reply_len = 0;
--						srq_asserted = 1;
--					}
--				} else if (x == 0x00) {
--					macii_state = read_done;
--					if (!(last_status & CTLR_IRQ))
--						srq_asserted = 1;
--				}
-+				if (current_req)
-+					macii_start();
-+				else if (need_autopoll())
-+					macii_autopoll(autopoll_devs);
- 			}
- 
--			if (macii_state == reading &&
--			    reply_len < ARRAY_SIZE(reply_buf)) {
--				reply_ptr++;
--				*reply_ptr = x;
--				reply_len++;
-+			if (macii_state == idle) {
-+				/* reset to shift in */
-+				via[ACR] &= ~SR_OUT;
-+				x = via[SR];
-+				/* set ADB state idle - might get SRQ */
-+				via[B] = (via[B] & ~ST_MASK) | ST_IDLE;
- 			}
-+		} else {
-+			via[SR] = req->data[data_index++];
- 
--			/* invert state bits, toggle ODD/EVEN */
--			via[B] ^= ST_MASK;
--			break;
-+			if ((via[B] & ST_MASK) == ST_CMD) {
-+				/* just sent the command byte, set to EVEN */
-+				via[B] = (via[B] & ~ST_MASK) | ST_EVEN;
-+			} else {
-+				/* invert state bits, toggle ODD/EVEN */
-+				via[B] ^= ST_MASK;
-+			}
-+		}
-+		break;
- 
--		case read_done:
--			x = via[SR];
-+	case reading:
-+		x = via[SR];
-+		WARN_ON((status & ST_MASK) == ST_CMD ||
-+			(status & ST_MASK) == ST_IDLE);
-+
-+		/* Bus timeout with SRQ sequence:
-+		 *     data is "XX FF"      while CTLR_IRQ is "L L"
-+		 * End of packet without SRQ sequence:
-+		 *     data is "XX...YY 00" while CTLR_IRQ is "L...H L"
-+		 * End of packet SRQ sequence:
-+		 *     data is "XX...YY 00" while CTLR_IRQ is "L...L L"
-+		 * (where XX is the first response byte and
-+		 * YY is the last byte of valid response data.)
-+		 */
- 
--			if (reading_reply) {
--				reading_reply = 0;
--				req = current_req;
--				req->reply_len = reply_len;
--				req->complete = 1;
--				current_req = req->next;
--				if (req->done) (*req->done)(req);
--			} else if (reply_len && autopoll_devs)
--				adb_input(reply_buf, reply_len, 0);
-+		srq_asserted = 0;
-+		if (!(status & CTLR_IRQ)) {
-+			if (x == 0xFF) {
-+				if (!(last_status & CTLR_IRQ)) {
-+					macii_state = read_done;
-+					reply_len = 0;
-+					srq_asserted = 1;
-+				}
-+			} else if (x == 0x00) {
-+				macii_state = read_done;
-+				if (!(last_status & CTLR_IRQ))
-+					srq_asserted = 1;
-+			}
-+		}
- 
--			macii_state = idle;
-+		if (macii_state == reading &&
-+		    reply_len < ARRAY_SIZE(reply_buf)) {
-+			reply_ptr++;
-+			*reply_ptr = x;
-+			reply_len++;
-+		}
- 
--			/* SRQ seen before, initiate poll now */
--			if (srq_asserted)
--				macii_queue_poll();
-+		/* invert state bits, toggle ODD/EVEN */
-+		via[B] ^= ST_MASK;
-+		break;
- 
--			if (current_req)
--				macii_start();
--			else
--				if (need_autopoll())
--					macii_autopoll(autopoll_devs);
-+	case read_done:
-+		x = via[SR];
- 
--			if (macii_state == idle)
--				via[B] = (via[B] & ~ST_MASK) | ST_IDLE;
--			break;
-+		if (reading_reply) {
-+			reading_reply = 0;
-+			req = current_req;
-+			req->reply_len = reply_len;
-+			req->complete = 1;
-+			current_req = req->next;
-+			if (req->done)
-+				(*req->done)(req);
-+		} else if (reply_len && autopoll_devs)
-+			adb_input(reply_buf, reply_len, 0);
-+
-+		macii_state = idle;
-+
-+		/* SRQ seen before, initiate poll now */
-+		if (srq_asserted)
-+			macii_queue_poll();
-+
-+		if (current_req)
-+			macii_start();
-+		else if (need_autopoll())
-+			macii_autopoll(autopoll_devs);
-+
-+		if (macii_state == idle)
-+			via[B] = (via[B] & ~ST_MASK) | ST_IDLE;
-+		break;
- 
--		default:
-+	default:
+@@ -218,15 +120,21 @@ void pmac_get_rtc_time(struct rtc_time *tm)
+ {
+ 	/* Get the time from the RTC, used only at boot time */
+ 	switch (sys_ctrler) {
++#ifdef CONFIG_ADB_CUDA
+ 	case SYS_CTRLER_CUDA:
+-		cuda_get_rtc_time(tm);
++		rtc_time64_to_tm(cuda_get_time(), tm);
  		break;
++#endif
++#ifdef CONFIG_ADB_PMU
+ 	case SYS_CTRLER_PMU:
+-		pmu_get_rtc_time(tm);
++		rtc_time64_to_tm(pmu_get_time(), tm);
+ 		break;
++#endif
++#ifdef CONFIG_PMAC_SMU
+ 	case SYS_CTRLER_SMU:
+ 		smu_get_rtc_time(tm, 1);
+ 		break;
++#endif
+ 	default:
+ 		;
  	}
+@@ -235,12 +143,18 @@ void pmac_get_rtc_time(struct rtc_time *tm)
+ int pmac_set_rtc_time(struct rtc_time *tm)
+ {
+ 	switch (sys_ctrler) {
++#ifdef CONFIG_ADB_CUDA
+ 	case SYS_CTRLER_CUDA:
+ 		return cuda_set_rtc_time(tm);
++#endif
++#ifdef CONFIG_ADB_PMU
+ 	case SYS_CTRLER_PMU:
+ 		return pmu_set_rtc_time(tm);
++#endif
++#ifdef CONFIG_PMAC_SMU
+ 	case SYS_CTRLER_SMU:
+ 		return smu_set_rtc_time(tm, 1);
++#endif
+ 	default:
+ 		return -ENODEV;
+ 	}
+diff --git a/drivers/macintosh/via-cuda.c b/drivers/macintosh/via-cuda.c
+index 98dd702eb867..bbec6ac0a966 100644
+--- a/drivers/macintosh/via-cuda.c
++++ b/drivers/macintosh/via-cuda.c
+@@ -766,3 +766,38 @@ cuda_input(unsigned char *buf, int nb)
+ 	               buf, nb, false);
+     }
+ }
++
++/* Offset between Unix time (1970-based) and Mac time (1904-based) */
++#define RTC_OFFSET	2082844800
++
++time64_t cuda_get_time(void)
++{
++	struct adb_request req;
++	u32 now;
++
++	if (cuda_request(&req, NULL, 2, CUDA_PACKET, CUDA_GET_TIME) < 0)
++		return 0;
++	while (!req.complete)
++		cuda_poll();
++	if (req.reply_len != 7)
++		pr_err("%s: got %d byte reply\n", __func__, req.reply_len);
++	now = (req.reply[3] << 24) + (req.reply[4] << 16) +
++	      (req.reply[5] << 8) + req.reply[6];
++	return (time64_t)now - RTC_OFFSET;
++}
++
++int cuda_set_rtc_time(struct rtc_time *tm)
++{
++	u32 now;
++	struct adb_request req;
++
++	now = lower_32_bits(rtc_tm_to_time64(tm) + RTC_OFFSET);
++	if (cuda_request(&req, NULL, 6, CUDA_PACKET, CUDA_SET_TIME,
++	                 now >> 24, now >> 16, now >> 8, now) < 0)
++		return -ENXIO;
++	while (!req.complete)
++		cuda_poll();
++	if ((req.reply_len != 3) && (req.reply_len != 7))
++		pr_err("%s: got %d byte reply\n", __func__, req.reply_len);
++	return 0;
++}
+diff --git a/drivers/macintosh/via-pmu.c b/drivers/macintosh/via-pmu.c
+index d72c450aebe5..60f57e2abf21 100644
+--- a/drivers/macintosh/via-pmu.c
++++ b/drivers/macintosh/via-pmu.c
+@@ -1737,6 +1737,39 @@ pmu_enable_irled(int on)
+ 	pmu_wait_complete(&req);
+ }
  
++/* Offset between Unix time (1970-based) and Mac time (1904-based) */
++#define RTC_OFFSET	2082844800
++
++time64_t pmu_get_time(void)
++{
++	struct adb_request req;
++	u32 now;
++
++	if (pmu_request(&req, NULL, 1, PMU_READ_RTC) < 0)
++		return 0;
++	pmu_wait_complete(&req);
++	if (req.reply_len != 4)
++		pr_err("%s: got %d byte reply\n", __func__, req.reply_len);
++	now = (req.reply[0] << 24) + (req.reply[1] << 16) +
++	      (req.reply[2] << 8) + req.reply[3];
++	return (time64_t)now - RTC_OFFSET;
++}
++
++int pmu_set_rtc_time(struct rtc_time *tm)
++{
++	u32 now;
++	struct adb_request req;
++
++	now = lower_32_bits(rtc_tm_to_time64(tm) + RTC_OFFSET);
++	if (pmu_request(&req, NULL, 5, PMU_SET_RTC,
++	                now >> 24, now >> 16, now >> 8, now) < 0)
++		return -ENXIO;
++	pmu_wait_complete(&req);
++	if (req.reply_len != 0)
++		pr_err("%s: got %d byte reply\n", __func__, req.reply_len);
++	return 0;
++}
++
+ void
+ pmu_restart(void)
+ {
+diff --git a/include/linux/cuda.h b/include/linux/cuda.h
+index 056867f09a01..45bfe9d61271 100644
+--- a/include/linux/cuda.h
++++ b/include/linux/cuda.h
+@@ -8,6 +8,7 @@
+ #ifndef _LINUX_CUDA_H
+ #define _LINUX_CUDA_H
+ 
++#include <linux/rtc.h>
+ #include <uapi/linux/cuda.h>
+ 
+ 
+@@ -16,4 +17,7 @@ extern int cuda_request(struct adb_request *req,
+ 			void (*done)(struct adb_request *), int nbytes, ...);
+ extern void cuda_poll(void);
+ 
++extern time64_t cuda_get_time(void);
++extern int cuda_set_rtc_time(struct rtc_time *tm);
++
+ #endif /* _LINUX_CUDA_H */
+diff --git a/include/linux/pmu.h b/include/linux/pmu.h
+index 9ac8fc60ad49..52453a24a24f 100644
+--- a/include/linux/pmu.h
++++ b/include/linux/pmu.h
+@@ -9,6 +9,7 @@
+ #ifndef _LINUX_PMU_H
+ #define _LINUX_PMU_H
+ 
++#include <linux/rtc.h>
+ #include <uapi/linux/pmu.h>
+ 
+ 
+@@ -36,6 +37,9 @@ static inline void pmu_resume(void)
+ 
+ extern void pmu_enable_irled(int on);
+ 
++extern time64_t pmu_get_time(void);
++extern int pmu_set_rtc_time(struct rtc_time *tm);
++
+ extern void pmu_restart(void);
+ extern void pmu_shutdown(void);
+ extern void pmu_unlock(void);
 -- 
 2.16.4
 
