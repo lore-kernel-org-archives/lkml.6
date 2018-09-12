@@ -2,125 +2,130 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75995C070C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 23:18:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4792C070C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 23:28:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15D952147E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 23:18:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 486612146E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 23:28:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="dsrC98N0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15D952147E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lv57VbzS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 486612146E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727693AbeIMEZI (ORCPT
+        id S1727004AbeIMEer (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 00:25:08 -0400
-Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:7135 "EHLO
-        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726611AbeIMEZI (ORCPT
+        Thu, 13 Sep 2018 00:34:47 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:36507 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726317AbeIMEer (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 00:25:08 -0400
+        Thu, 13 Sep 2018 00:34:47 -0400
+Received: by mail-pg1-f196.google.com with SMTP id d1-v6so1815058pgo.3;
+        Wed, 12 Sep 2018 16:28:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1536794304; x=1568330304;
-  h=from:subject:to:cc:references:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=HlmKVFPFlkeYjVOQE9DPg9Bnik20VNGb0BuUYK1593g=;
-  b=dsrC98N0C7Ed4l5FMfz1w9HJ4oMjNVLyJJoWDH/ZQDjK8l1WiFaXrVrw
-   yQh/IB/GwuYD/Aka8mMA0hCRVaDqMt5zcFgCB1UQ/WWGH3aqUYAcqdOeq
-   yJjc7+Pnfp1qzE/7MdN2mo8CUuPgbI+uny0UMYrQogEinZuDdntd6Zprc
-   Q=;
-X-IronPort-AV: E=Sophos;i="5.53,366,1531785600"; 
-   d="scan'208";a="697388666"
-Received: from iad6-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-1e-97fdccfd.us-east-1.amazon.com) ([10.124.125.2])
-  by smtp-border-fw-out-2101.iad2.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 12 Sep 2018 23:18:22 +0000
-Received: from u7588a65da6b65f.ant.amazon.com (iad7-ws-svc-lb50-vlan3.amazon.com [10.0.93.214])
-        by email-inbound-relay-1e-97fdccfd.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id w8CNIHOx000618
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=FAIL);
-        Wed, 12 Sep 2018 23:18:20 GMT
-Received: from u7588a65da6b65f.ant.amazon.com (localhost [127.0.0.1])
-        by u7588a65da6b65f.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id w8CNIEQn011201;
-        Thu, 13 Sep 2018 01:18:15 +0200
-From:   "=?UTF-8?Q?Jan_H._Sch=c3=b6nherr?=" <jschoenh@amazon.de>
-Subject: [RFC 00/60] Coscheduling for Linux
-To:     Nishanth Aravamudan <naravamudan@digitalocean.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org
-References: <20180907214047.26914-1-jschoenh@amazon.de>
- <20180912002449.GA21797@breakout>
- <c41f4e4f-30a1-5a3c-dec6-dc8f1d181c94@amazon.de>
-Openpgp: preference=signencrypt
-Message-ID: <89b4f0cd-d324-14bd-3991-576de9849e34@amazon.de>
-Date:   Thu, 13 Sep 2018 01:18:14 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <c41f4e4f-30a1-5a3c-dec6-dc8f1d181c94@amazon.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=Vs4YyhejtDKH9r2Qa3CKRSMDHO1yV5loU/P6gGYpzSo=;
+        b=lv57VbzSVKZFygcTmKXv51UHq8t92WUQq1mfOBlUnU9Gb72U1zz0jikIsoWmaBk5FV
+         HUgU1yJtdWWucf+ezD5WeYKUjxhF5+DtC/Nih4WTVNsYVK3kG/ANaNZlRszleJ0kuhGV
+         bGozcSNkq+GXqQ/+1hLvw/rwQwYBEPmYvTTb7BSPGIVvqJgAdLEGkp5xpL+uk3jLDqWy
+         TodCKAoqJJNyU1WwkGoat8bgyJw/nbzv6fQ0XlUra9cZiA0SQQn9vvGuGW2iulQr4Ta6
+         anG/Rv3Mk6qiLQNdhxyp3EIC/vYfFAwKYVvwk5zW5T7IqlB3zE00t9tnEXL0f8vxrcNx
+         2vsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Vs4YyhejtDKH9r2Qa3CKRSMDHO1yV5loU/P6gGYpzSo=;
+        b=npiHYGjLvSMZtDVvXP3w8qR0nGXyRk3XGXEOsUwACmUD7VuBib2j7oLd4Fv9noaf0n
+         s9WEkIxluD6bhh2VJRbBd5pvYNbUTIZf9YL5QEwaH+9rsDLFYdE8YN5n5h439HMdGYyi
+         77ZhWB93wC5z5Olw/zgvFQEt3NBlZKEHVozZJFuBas8vNmvvQqzLcNp1YzYDAkehApQr
+         TUpu05Y4yPBszGUWnULPQKrASSJhfcJpeGoFyTs0zbbM/YNnbeQ33ZstUK7b0drBtUeF
+         InvFZ+HPit3qAsmYGpR7K+obti8BpygPqVWJu4wOZneElM8MX3kA48K229Fj9F2EDwuw
+         IIEQ==
+X-Gm-Message-State: APzg51AIps5g5r2GaYcuxJ56UsY/fB1MN+eIylT2/Yhsu2UpuNoeASeT
+        1cxrAq4xX9APQsf076hpB0rbg6zT
+X-Google-Smtp-Source: ANB0VdZk/4x2cd1VWhNZo7EUUcM2+31H8AsQGlfpKgWTLTLm6QGnYHmU1teOnjLfwP5xcA2ywX5DAA==
+X-Received: by 2002:a62:8913:: with SMTP id v19-v6mr4674738pfd.127.1536794880812;
+        Wed, 12 Sep 2018 16:28:00 -0700 (PDT)
+Received: from tw-172-25-29-37.office.twttr.net ([8.25.197.25])
+        by smtp.gmail.com with ESMTPSA id e26-v6sm2858123pfi.70.2018.09.12.16.27.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Sep 2018 16:28:00 -0700 (PDT)
+From:   Cong Wang <xiyou.wangcong@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-rdma@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Leon Romanovsky <leon@kernel.org>
+Subject: [PATCH] ucma: fix a use-after-free in ucma_resolve_ip()
+Date:   Wed, 12 Sep 2018 16:27:44 -0700
+Message-Id: <20180912232744.12693-1-xiyou.wangcong@gmail.com>
+X-Mailer: git-send-email 2.14.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/12/2018 09:34 PM, Jan H. Schönherr wrote:
-> That said, I see a hang, too. It seems to happen, when there is a
-> cpu.scheduled!=0 group that is not a direct child of the root task group.
-> You seem to have "/sys/fs/cgroup/cpu/machine" as an intermediate group.
-> (The case ==0 within !=0 within the root task group works for me.)
-> 
-> I'm going to dive into the code.
+There is a race condition between ucma_close() and ucma_resolve_ip():
 
-With the patch below (which technically changes patch 55/60), the hang I experienced is gone.
+CPU0				CPU1
+ucma_resolve_ip():		ucma_close():
 
-Please let me know, if it works for you as well.
+ctx = ucma_get_ctx(file, cmd.id);
 
-Regards
-Jan
+        list_for_each_entry_safe(ctx, tmp, &file->ctx_list, list) {
+                mutex_lock(&mut);
+                idr_remove(&ctx_idr, ctx->id);
+                mutex_unlock(&mut);
+		...
+                mutex_lock(&mut);
+                if (!ctx->closing) {
+                        mutex_unlock(&mut);
+                        rdma_destroy_id(ctx->cm_id);
+		...
+                ucma_free_ctx(ctx);
 
+ret = rdma_resolve_addr();
+ucma_put_ctx(ctx);
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 8da2033596ff..2d8b3f9a275f 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -7189,23 +7189,26 @@ pick_next_task_fair(struct rq *rq, struct task_struct *prev, struct rq_flags *rf
- 		while (!(cfs_rq = is_same_group(se, pse))) {
- 			int se_depth = se->depth;
- 			int pse_depth = pse->depth;
-+			bool work = false;
+Before idr_remove(), ucma_get_ctx() could still find the ctx
+and after rdma_destroy_id(), rdma_resolve_addr() may still
+access id_priv pointer. Also, ucma_put_ctx() may use ctx after
+ucma_free_ctx() too.
 
--			if (se_depth <= pse_depth && leader_of(pse) == cpu) {
-+			if (se_depth <= pse_depth && __leader_of(pse) == cpu) {
- 				put_prev_entity(cfs_rq_of(pse), pse);
- 				pse = parent_entity(pse);
-+				work = true;
- 			}
--			if (se_depth >= pse_depth && leader_of(se) == cpu) {
-+			if (se_depth >= pse_depth && __leader_of(se) == cpu) {
- 				set_next_entity(cfs_rq_of(se), se);
- 				se = parent_entity(se);
-+				work = true;
- 			}
--			if (leader_of(pse) != cpu && leader_of(se) != cpu)
-+			if (!work)
- 				break;
- 		}
+ucma_close() should call ucma_put_ctx() too which tests the
+refcnt and waits for the last one releasing it. The similar
+pattern is already used by ucma_destroy_id().
 
--		if (leader_of(pse) == cpu)
--			put_prev_entity(cfs_rq, pse);
--		if (leader_of(se) == cpu)
--			set_next_entity(cfs_rq, se);
-+		if (__leader_of(pse) == cpu)
-+			put_prev_entity(cfs_rq_of(pse), pse);
-+		if (__leader_of(se) == cpu)
-+			set_next_entity(cfs_rq_of(se), se);
- 	}
+Reported-and-tested-by: syzbot+da2591e115d57a9cbb8b@syzkaller.appspotmail.com
+Reported-by: syzbot+cfe3c1e8ef634ba8964b@syzkaller.appspotmail.com
+Cc: Jason Gunthorpe <jgg@mellanox.com>
+Cc: Doug Ledford <dledford@redhat.com>
+Cc: Leon Romanovsky <leon@kernel.org>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+---
+ drivers/infiniband/core/ucma.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
- 	goto done;
+diff --git a/drivers/infiniband/core/ucma.c b/drivers/infiniband/core/ucma.c
+index 5f437d1570fb..21863ddde63e 100644
+--- a/drivers/infiniband/core/ucma.c
++++ b/drivers/infiniband/core/ucma.c
+@@ -1759,6 +1759,8 @@ static int ucma_close(struct inode *inode, struct file *filp)
+ 		mutex_lock(&mut);
+ 		if (!ctx->closing) {
+ 			mutex_unlock(&mut);
++			ucma_put_ctx(ctx);
++			wait_for_completion(&ctx->comp);
+ 			/* rdma_destroy_id ensures that no event handlers are
+ 			 * inflight for that id before releasing it.
+ 			 */
+-- 
+2.14.4
+
