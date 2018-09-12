@@ -2,242 +2,131 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1480C46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:28:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EAACC6778D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:29:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A824C2087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:28:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A824C2087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id DE7212087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:29:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vB2vOVVl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE7212087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727161AbeILUdC (ORCPT
+        id S1727346AbeILUed (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 16:33:02 -0400
-Received: from foss.arm.com ([217.140.101.70]:33732 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726677AbeILUdC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 16:33:02 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8A99C7A9;
-        Wed, 12 Sep 2018 08:28:01 -0700 (PDT)
-Received: from [10.4.12.116] (e107155-lin.emea.arm.com [10.4.12.116])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 51B953F5C0;
-        Wed, 12 Sep 2018 08:28:00 -0700 (PDT)
-Cc:     Sudeep Holla <sudeep.holla@arm.com>, linux-kernel@vger.kernel.org,
-        vkilari@codeaurora.org
-Subject: Re: [PATCH] ACPI/PPTT: Handle architecturally unknown cache types
-To:     Jeffrey Hugo <jhugo@codeaurora.org>,
-        Jeremy Linton <jeremy.linton@arm.com>, rjw@rjwysocki.net,
-        linux-acpi@vger.kernel.org
-References: <1536694334-5811-1-git-send-email-jhugo@codeaurora.org>
- <f62f22a6-2dd8-f254-dbaf-b9e224099afd@arm.com>
- <e74f2208-ac0d-6c45-8ddb-5b77d6a42fef@codeaurora.org>
- <c34452c2-d1e8-19d8-45c1-b48ecf14bbd7@arm.com>
- <98e2e6fa-7256-b5ac-7d2e-42c858c6e57c@codeaurora.org>
-From:   Sudeep Holla <sudeep.holla@arm.com>
-Organization: ARM
-Message-ID: <af280111-5dec-a4e1-7dfd-20f38a9fd8ab@arm.com>
-Date:   Wed, 12 Sep 2018 16:27:58 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 12 Sep 2018 16:34:33 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:39197 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726677AbeILUec (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 16:34:32 -0400
+Received: by mail-oi0-f67.google.com with SMTP id c190-v6so4528557oig.6
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 08:29:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3CeVww6Qg1qE++zB6xtqhvqGC/l8NZBuMcSVzzARCHY=;
+        b=vB2vOVVlOpJ/yKyhu2vaTkeTdgGnJmEBXcZpKR/vWOaY2qY39Tx+nnHdt7ohuX2ydb
+         974I//CuS29P/jHWxmUsBk37sgMNIKhCDKY2wrWlOpiWdenPKqW6KOW7BbtV+KQ24c1R
+         K6W8pTGviB87/ki3lHsP9VfWUveBXoXdJrJjKXuDiPrBlhLOxpbpNqJSW5IsI6I5Q5EL
+         WIhmKZer9mVq6xol4EDGN1LnolI9ZGg+Gb+MHqFInM5HvEHlyIiKhO3HEbxCNZsP4lwC
+         SCO7cQGXAWzXv2fhqQCeVrIkmgwo5euUobL/R3H44muPKOBQVS7DiTiZGkjOqXtjxkcJ
+         tY+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3CeVww6Qg1qE++zB6xtqhvqGC/l8NZBuMcSVzzARCHY=;
+        b=T4UfknRlwqhizJ0vrwBvP/wPi71HILAjfq3w03wNO/70RSoQPgZ+XDM1kVM4zoKEk9
+         QNM8YD7CFf3HUxqTSB4p79O1PX2fX5Lv7bnLpN9YlvdPsEvXy6hKDfy1XlXyYhXOattM
+         4cGlozldyJmkmsFvfYsnTLhWdmsD+yUtqET0JAocsfu/1zmq2niCCjYUdPUpjtB0mbKY
+         oXhA4np/8XfnTFYKzpht/k54vHBTdKPjP71bNy9S1QO3yCHGRj94Qye2Z9WT95NbE8VY
+         aDprEjVmT7CcMXNnBCwidFVaTTWLw9QnXoV8qEia61EJcqs5uda1ZzyGT8qxSw4RhMeW
+         cEnw==
+X-Gm-Message-State: APzg51D5by5tmiKJ+PQO+rqUiK6yQipujVLro0j75HDkXJ7Ui0AoWuM2
+        gIgglmsnVFgyx/LNbY3RK4eWqraHSGraOEPLDilAT6j76nA=
+X-Google-Smtp-Source: ANB0VdYDRggV6ZMP9uzQ3X8L8V2pxAnQr61Ku1qY286hLZn3M+gchUOnBb70kOBlK7wXqHnokA7aOaZOcJtpjRrY02c=
+X-Received: by 2002:aca:dc55:: with SMTP id t82-v6mr2285092oig.159.1536766170592;
+ Wed, 12 Sep 2018 08:29:30 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <98e2e6fa-7256-b5ac-7d2e-42c858c6e57c@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20180911183909.233413-1-jannh@google.com>
+In-Reply-To: <20180911183909.233413-1-jannh@google.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Wed, 12 Sep 2018 17:29:04 +0200
+Message-ID: <CAG48ez03ivLr6w+V911V7pqb1o=kcJw4CLEktcSVVE+=hXXP=w@mail.gmail.com>
+Subject: Re: [PATCH] proc: restrict kernel stack dumps to root
+To:     Alexey Dobriyan <adobriyan@gmail.com>
+Cc:     Ken Chen <kenchen@google.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Andy Lutomirski <luto@amacapital.net>, security@kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
++linux-api, I guess
 
-
-On 12/09/18 15:41, Jeffrey Hugo wrote:
-> On 9/11/2018 3:25 PM, Jeremy Linton wrote:
->> Hi,
->>
->> On 09/11/2018 03:38 PM, Jeffrey Hugo wrote:
->>> On 9/11/2018 2:16 PM, Jeremy Linton wrote:
->>>> Hi Jeffrey,
->>>>
->>>> (+Sudeep)
->>>>
->>>> On 09/11/2018 02:32 PM, Jeffrey Hugo wrote:
->>>>> The type of a cache might not be specified by architectural
->>>>> mechanisms (ie
->>>>> system registers), but its type might be specified in the PPTT.  In
->>>>> this
->>>>> case, following the PPTT specification, we should identify the
->>>>> cache as
->>>>> the type specified by PPTT.
->>>>>
->>>>> This fixes the following lscpu issue where only the cache type
->>>>> sysfs file
->>>>> is missing which results in no output providing a poor user
->>>>> experience in
->>>>> the above system configuration-
->>>>> lscpu: cannot open /sys/devices/system/cpu/cpu0/cache/index3/type:
->>>>> No such
->>>>> file or directory
->>>>>
->>>>> Fixes: 2bd00bcd73e5 (ACPI/PPTT: Add Processor Properties Topology
->>>>> Table parsing)
->>>>> Reported-by: Vijaya Kumar K <vkilari@codeaurora.org>
->>>>> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
->>>>> ---
->>>>>   drivers/acpi/pptt.c | 15 +++++++++++++++
->>>>>   1 file changed, 15 insertions(+)
->>>>>
->>>>> diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
->>>>> index d1e26cb..3c6db09 100644
->>>>> --- a/drivers/acpi/pptt.c
->>>>> +++ b/drivers/acpi/pptt.c
->>>>> @@ -401,6 +401,21 @@ static void update_cache_properties(struct
->>>>> cacheinfo *this_leaf,
->>>>>               break;
->>>>>           }
->>>>>       }
->>>>> +    if ((this_leaf->type == CACHE_TYPE_NOCACHE) &&
->>>>> +        (found_cache->flags & ACPI_PPTT_CACHE_TYPE_VALID)) {
->>>>> +        switch (found_cache->attributes &
->>>>> ACPI_PPTT_MASK_CACHE_TYPE) {
->>>>> +        case ACPI_PPTT_CACHE_TYPE_DATA:
->>>>> +            this_leaf->type = CACHE_TYPE_DATA;
->>>>> +            break;
->>>>> +        case ACPI_PPTT_CACHE_TYPE_INSTR:
->>>>> +            this_leaf->type = CACHE_TYPE_INST;
->>>>> +            break;
->>>>> +        case ACPI_PPTT_CACHE_TYPE_UNIFIED:
->>>>> +        case ACPI_PPTT_CACHE_TYPE_UNIFIED_ALT:
->>>>> +            this_leaf->type = CACHE_TYPE_UNIFIED;
->>>>> +            break;
->>>>> +        }
->>>>> +    }
->>>>>       /*
->>>>>        * If the above flags are valid, and the cache type is NOCACHE
->>>>>        * update the cache type as well.
->>>>>
->>>>
->>>> If you look at the next line of code following this comment its
->>>> going to update the cache type for fully populated PPTT nodes.
->>>> Although with the suggested change its only going to activate if
->>>> someone completely fills out the node and fails to set the valid
->>>> flag on the cache type. 
->>>
->>> Yes, however that case doesn't apply to the scenario we are concerned
->>> about, doesn't seem to be fully following the PPTT spec, and seems
->>> odd that Linux just assumes that a "fully specified" cache is unified.
->>
->> Because, the architecturally specified ones won't be type NOCACHE?
-> 
-> Correct.  However, what if you have a NOCACHE (not architecturally
-> specified), that is fully described in PPTT, as a non-unified cache
-> (data only)?  Unlikely?  Maybe.  Still seem possible though, therefore I
-> feel this assumption is suspect.
-> 
-
-Yes, we have other issues if the architecturally not specified cache is
-not unified irrespective of what PPTT says. So we may need to review and
-see if that assumption is removed everywhere.
-
-Until then why can't a simple change fix the issue you have:
-
--->8
-
-diff --git i/drivers/acpi/pptt.c w/drivers/acpi/pptt.c
-index d1e26cb599bf..f74131201f5e 100644
---- i/drivers/acpi/pptt.c
-+++ w/drivers/acpi/pptt.c
-@@ -406,7 +406,8 @@ static void update_cache_properties(struct cacheinfo
-*this_leaf,
-         * update the cache type as well.
-         */
-        if (this_leaf->type == CACHE_TYPE_NOCACHE &&
--           valid_flags == PPTT_CHECKED_ATTRIBUTES)
-+           (valid_flags == PPTT_CHECKED_ATTRIBUTES ||
-+            found_cache->flags & ACPI_PPTT_CACHE_TYPE_VALID))
-                this_leaf->type = CACHE_TYPE_UNIFIED;
- }
-
-[...]
-
->>>
->>> Yes.  Without this change, we hit the lscpu error in the commit
->>> message, and get zero output about the system.  We don't even get
->>> information about the caches which are architecturally specified or
->>> how many cpus are present.
-
-The above issues is purely lscpu to blame and nothing to do with kernel
-change. If kernel doesn't report level 3 cache info and lscpu fails
-to report level 1/2 cache info and kernel is to blame here ? That's unfair.
-
->>> With this change, we get what we expect
->>> out of lscpu (and also lstopo) including the cache(s) which are not
->>> architecturally specified.
-
-Ofcourse, but we can't attribute that as kernel bug. I agree we should
-not show incorrect info for cache type and that needs to be fixed but
-disagree with lscpu issue as kernel issue. Kernel is not breaking any
-ABI as cacheinfo itself is optional and the absence of it needs to be
-dealt with.
-
->> I'm a bit surprised this changes the behavior of the architecturally
->> specified ones. As I mentioned above, those shouldn't be NOCACHE. We
->> use the level/type as a key for matching a PPTT node to an
->> architecturally described cache. If that is mismatched, something more
->> fundamental is happening. About the only case I can think of that can
->> cause this is if the CLIDR type fields are incorrect.
->>
->> In which case I might suggest we move your switch() for the INST/DATA
->> into the check below that comment.
-> 
-> This change was not intended to impact architecturally specified ones,
-> however I can see how that is the case.  That would be the case if the
-> architecturally specified type is X and PPTT indicates Y.  According to
-> the PPTT spec, the cache should be treated as type Y then (ie the
-> contents of the PPTT override the architectural mechanisms).
-> 
-> I can move my change below the current NOCACHE handling, which would be
-> valid for my scenario, but it seems odd.  If I do that, then the current
-> assumption will take priority.  IE, if a cache is "fully specified" in
-> PPTT, but is NOCACHE, then it will be treated as unified, regardless of
-> what PPTT says (maybe instruction, or data only).
-> 
-
-Yes it should be that way for above mentioned reasons. You need to fix
-other things if you want to support separate data and inst cache for
-architecturally unspecified cache.
-
-
-[...]
-
-> 
-> However, its important that the user be able to "see" it, I'm not a
-> marketing guy, but I assume its going to be listed on the "data sheet".
-> 
-> Therefore, the firmware is providing some information about the cache
-> (via SMBIOS tables and PPTT).
-> 
-> The HW designers have indicated that there is no sane way to provide
-> sets/ways information to software, even on an informational basis (ie
-> not for cache maintenance, but for performance optimizations). Therefore
-> the firmware will not provide this information because it will be wrong.
-> 
-
-Fair enough.
-
-> So, therefore, we should still be able to tell the user that a cache
-> exists at the relevant level, and what size it is.  On the concerned
-> system, we cannot do that currently.
-> 
-
-Again agreed.
-
--- 
-Regards,
-Sudeep
+On Tue, Sep 11, 2018 at 8:39 PM Jann Horn <jannh@google.com> wrote:
+>
+> Restrict the ability to inspect kernel stacks of arbitrary tasks to root
+> in order to prevent a local attacker from exploiting racy stack unwinding
+> to leak kernel task stack contents.
+> See the added comment for a longer rationale.
+>
+> There don't seem to be any users of this userspace API that can't
+> gracefully bail out if reading from the file fails. Therefore, I believe
+> that this change is unlikely to break things.
+> In the case that this patch does end up needing a revert, the next-best
+> solution might be to fake a single-entry stack based on wchan.
+>
+> Fixes: 2ec220e27f50 ("proc: add /proc/*/stack")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Jann Horn <jannh@google.com>
+> ---
+>  fs/proc/base.c | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+>
+> diff --git a/fs/proc/base.c b/fs/proc/base.c
+> index ccf86f16d9f0..7e9f07bf260d 100644
+> --- a/fs/proc/base.c
+> +++ b/fs/proc/base.c
+> @@ -407,6 +407,20 @@ static int proc_pid_stack(struct seq_file *m, struct pid_namespace *ns,
+>         unsigned long *entries;
+>         int err;
+>
+> +       /*
+> +        * The ability to racily run the kernel stack unwinder on a running task
+> +        * and then observe the unwinder output is scary; while it is useful for
+> +        * debugging kernel issues, it can also allow an attacker to leak kernel
+> +        * stack contents.
+> +        * Doing this in a manner that is at least safe from races would require
+> +        * some work to ensure that the remote task can not be scheduled; and
+> +        * even then, this would still expose the unwinder as local attack
+> +        * surface.
+> +        * Therefore, this interface is restricted to root.
+> +        */
+> +       if (!file_ns_capable(m->file, &init_user_ns, CAP_SYS_ADMIN))
+> +               return -EACCES;
+> +
+>         entries = kmalloc_array(MAX_STACK_TRACE_DEPTH, sizeof(*entries),
+>                                 GFP_KERNEL);
+>         if (!entries)
+> --
+> 2.19.0.rc2.392.g5ba43deb5a-goog
+>
