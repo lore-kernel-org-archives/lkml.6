@@ -2,135 +2,127 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,FAKE_REPLY_C,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B605AC46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:58:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C994CC6778D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:58:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64FBD20882
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:58:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HOMEjZdw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64FBD20882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id 7CF8320880
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:58:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CF8320880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728196AbeILWDp (ORCPT
+        id S1728227AbeILWDy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 18:03:45 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:37335 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726521AbeILWDp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 18:03:45 -0400
-Received: by mail-pl1-f196.google.com with SMTP id f1-v6so1268230plt.4
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 09:58:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=IUyrxS9O298mMFj9ZUGbzvXi17JcRSzgBXOWYGhGGIM=;
-        b=HOMEjZdwHDkb8VulHUfiQWoPKGpLV9U32WoXhQrwEpQkAnBJyvdvSJbbkj45MCo37t
-         DDRWN2aBWlgH+Fhgww0rShUwr4Rc6qmJa4hhOifTdoCgdF/Jb/UWfETI7MRyoQXfXxAy
-         2qT5Uqlo/fmkQ0+sQlftdByEtNCgdbIb+lnn0nvm8ot9ZnD4rHASKsZR395FnDh7MIlo
-         e8NuKD65I7BYpdbwiXY9T8BxEg0M28GePxAdlPLetfF23gzvno0tIdAKybSNhY++Z+fi
-         M0rO7XmOML333SXUURNrG/fdhFQy8w8jSYLVjmmd6i06VsCmYfbRkiKr+gGNiX1DeZRg
-         4Krw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=IUyrxS9O298mMFj9ZUGbzvXi17JcRSzgBXOWYGhGGIM=;
-        b=rWWfcgQO8mIYB5jWYWifrDs9dJqBkwkgugpFkHkNATvNgG703jelwmXVo1yww32Q+8
-         5vFyDhFTw4YribLhnX5n+A5Bk6nZzFBeHF2mOk9RLpDn2AI1KQOaI9ehgjf5Ol3DBumO
-         85TZmmM6eWXNBpijqGKPewQEi9HeSsoMa8LXPDoxAcwN4/jwB3I9A6ZsvjWvZkk/OBmp
-         k74rNm4Dw5NlMYEfIwo7KBBqSrncBMiXq8ub1tdQfQ8hGW9Mduazus4MYl/21TpIVqLx
-         6R8qq9BhVrl4/li2bLXmXjAJCp5wKESbvxnhQWcAX/RudVuAzYDcHPq3lSVjQ7aeTDKg
-         S5Lw==
-X-Gm-Message-State: APzg51ClTXhMxeS5AA4EXIXAEVUH+FDjEYJk/QWkCgclPF31dRJB9iaD
-        OGQQBMJw+QnmTbg1YrqGlNU=
-X-Google-Smtp-Source: ANB0VdYPkbmeTM/nNRJnNKu6MvdEc+GnSSHXBF4gP0ApR16bna+y3QaNBBVFOULqVZj81uhpCf1Lmg==
-X-Received: by 2002:a17:902:b902:: with SMTP id bf2-v6mr3330638plb.185.1536771499951;
-        Wed, 12 Sep 2018 09:58:19 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id n9-v6sm3919610pfg.21.2018.09.12.09.58.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Sep 2018 09:58:18 -0700 (PDT)
-Date:   Wed, 12 Sep 2018 09:58:17 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Vineet Gupta <vgupta@synopsys.com>
-Cc:     linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARCv2: build: use mcpu=hs38 iso generic mcpu=archs
-Message-ID: <20180912165817.GA5118@roeck-us.net>
+        Wed, 12 Sep 2018 18:03:54 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36094 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726428AbeILWDy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 18:03:54 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D598F7A9;
+        Wed, 12 Sep 2018 09:58:28 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A5E0F3F557;
+        Wed, 12 Sep 2018 09:58:28 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 91CCE1AE3231; Wed, 12 Sep 2018 17:58:45 +0100 (BST)
+Date:   Wed, 12 Sep 2018 17:58:45 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Nipun Gupta <nipun.gupta@nxp.com>
+Cc:     joro@8bytes.org, robin.murphy@arm.com, robh+dt@kernel.org,
+        robh@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com,
+        gregkh@linuxfoundation.org, laurentiu.tudor@nxp.com,
+        bhelgaas@google.com, hch@lst.de, m.szyprowski@samsung.com,
+        shawnguo@kernel.org, frowand.list@gmail.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org,
+        bharat.bhushan@nxp.com, stuyoder@gmail.com, leoyang.li@nxp.com
+Subject: Re: [PATCH 0/7 v7] Support for fsl-mc bus and its devices in SMMU
+Message-ID: <20180912165845.GD16071@arm.com>
+References: <1536587361-11047-1-git-send-email-nipun.gupta@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1536587361-11047-1-git-send-email-nipun.gupta@nxp.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Nipun,
 
-On Fri, Sep 07, 2018 at 03:13:10PM -0700, Vineet Gupta wrote:
-> helps gcc with better instruction selections such as 64-bit multiply MPYD
+On Mon, Sep 10, 2018 at 07:19:14PM +0530, Nipun Gupta wrote:
+> This patchset defines IOMMU DT binding for fsl-mc bus and adds
+> support in SMMU for fsl-mc bus.
 > 
-> before
-> ------
-> 82c34b58 <sched_clock>:
-> 82c34b58:	ld	r2,[0x83068d00]
-> 82c34b60:	add_s	r2,r2,0x7530
-> 82c34b66:	mov_s	r0,0x989680
-> 82c34b6c:	mpymu	r5,r2,r0
-> 82c34b70:	mpy	r4,r2,r0
-> 82c34b74:	mov_s	r0,r4
-> 82c34b76:	j_s.d	[blink]
-> 82c34b78:	mov_s	r1,r5
-> 82c34b7a:	nop_s
+> These patches
+>   - Define property 'iommu-map' for fsl-mc bus (patch 1)
+>   - Integrates the fsl-mc bus with the SMMU using this
+>     IOMMU binding (patch 2,3,4)
+>   - Adds the dma configuration support for fsl-mc bus (patch 5, 6)
+>   - Updates the fsl-mc device node with iommu/dma related changes (patch 7)
+
+It looks like you have all the Acks in place for this series now, so I
+assume it's going to go via Joerg directly. Is that right?
+
+Will
+
+> Changes in v2:
+>   - use iommu-map property for fsl-mc bus
+>   - rebase over patchset https://patchwork.kernel.org/patch/10317337/
+>     and make corresponding changes for dma configuration of devices on
+>     fsl-mc bus
 > 
-> after
-> ------
-> 82c34b7c <sched_clock>:
-> 82c34b7c:	ld	r0,[0x83064d00]
-> 82c34b84:	add_s	r0,r0,0x7530
-> 82c34b8a:	mpydu	r0,r0,0x989680
-> 82c34b92:	j_s	[blink]
+> Changes in v3:
+>   - move of_map_rid in drivers/of/address.c
 > 
-> Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
-
-This patch causes my arc2 test builds to fail
-
-Building arc:axs103_defconfig ... failed
---------------
-Error log:
-
-standard input}: Assembler messages:
-{standard input}:154: Error: inappropriate arguments for opcode 'st'
-{standard input}:157: Error: Insn j_s has a jump/branch instruction j_s in its delay slot.
-{standard input}:186: Error: inappropriate arguments for opcode 'st'
-make[3]: *** [net/core/dev.o] Error 1
-make[2]: *** [net/core] Error 2
-
-Building arc:nsim_hs_smp_defconfig ... failed
---------------
-Error log:
-{standard input}: Assembler messages:
-{standard input}:218: Error: inappropriate arguments for opcode 'st'
-{standard input}:9329: Error: inappropriate arguments for opcode 'st'
-
-Building arc:vdk_hs38_smp_defconfig ... failed
---------------
-Error log:
-
-{standard input}: Assembler messages:
-{standard input}:9629: Error: inappropriate arguments for opcode 'st'
-{standard input}:9883: Error: inappropriate arguments for opcode 'st'
-
-I use a toolchain based on gcc 7.3.0 and binutils 2.30. What version
-of gcc and binutils do I need for the builds to complete ?
-
-Thanks,
-Guenter
+> Changes in v4:
+>   - move of_map_rid in drivers/of/base.c
+> 
+> Changes in v5:
+>   - break patch 5 in two separate patches (now patch 5/7 and patch 6/7)
+>   - add changelog text in patch 3/7 and patch 5/7
+>   - typo fix
+> 
+> Changes in v6:
+>   - Updated fsl_mc_device_group() API to be more rational
+>   - Added dma-coherent property in the LS2 smmu device node
+>   - Minor fixes in the device-tree documentation
+> 
+> Changes in v7:
+>   - Rebased over linux 4.19
+> 
+> Nipun Gupta (7):
+>   Documentation: fsl-mc: add iommu-map device-tree binding for fsl-mc
+>     bus
+>   iommu/of: make of_pci_map_rid() available for other devices too
+>   iommu/of: support iommu configuration for fsl-mc devices
+>   iommu/arm-smmu: Add support for the fsl-mc bus
+>   bus: fsl-mc: support dma configure for devices on fsl-mc bus
+>   bus: fsl-mc: set coherent dma mask for devices on fsl-mc bus
+>   arm64: dts: ls208xa: comply with the iommu map binding for fsl_mc
+> 
+>  .../devicetree/bindings/misc/fsl,qoriq-mc.txt      |  39 ++++++++
+>  arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi     |   7 +-
+>  drivers/bus/fsl-mc/fsl-mc-bus.c                    |  16 +++-
+>  drivers/iommu/arm-smmu.c                           |   7 ++
+>  drivers/iommu/iommu.c                              |  13 +++
+>  drivers/iommu/of_iommu.c                           |  25 ++++-
+>  drivers/of/base.c                                  | 102 +++++++++++++++++++++
+>  drivers/of/irq.c                                   |   5 +-
+>  drivers/pci/of.c                                   | 101 --------------------
+>  include/linux/fsl/mc.h                             |   8 ++
+>  include/linux/iommu.h                              |   2 +
+>  include/linux/of.h                                 |  11 +++
+>  include/linux/of_pci.h                             |  10 --
+>  13 files changed, 224 insertions(+), 122 deletions(-)
+> 
+> -- 
+> 1.9.1
+> 
