@@ -6,100 +6,117 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D29B9C46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 12:42:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4154BECDFC1
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 12:42:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 854DA20882
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 12:42:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 854DA20882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 049A5206B6
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 12:42:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 049A5206B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727278AbeILRqb (ORCPT
+        id S1727644AbeILRqd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 13:46:31 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:43704 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726672AbeILRqb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 13:46:31 -0400
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1g04TA-0000EE-CJ; Wed, 12 Sep 2018 14:42:08 +0200
-Date:   Wed, 12 Sep 2018 14:42:08 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     LKML <linux-kernel@vger.kernel.org>
-cc:     stable@vger.kernel.org
-Subject: [PATCH stable] x86/tsc: Prevent result truncation on 32 bit
-Message-ID: <alpine.DEB.2.21.1809121439390.9957@nanos.tec.linutronix.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 12 Sep 2018 13:46:33 -0400
+Received: from foss.arm.com ([217.140.101.70]:58816 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726672AbeILRqd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 13:46:33 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 57FED80D;
+        Wed, 12 Sep 2018 05:42:12 -0700 (PDT)
+Received: from [10.4.13.23] (en101.Emea.Arm.com [10.4.13.23])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8C1353F703;
+        Wed, 12 Sep 2018 05:42:10 -0700 (PDT)
+Subject: Re: [PATCH 02/11] dts: hisilicon: Update coresight bindings for
+ hardware ports
+To:     leo.yan@linaro.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        robh@kernel.org, frowand.list@gmail.com,
+        devicetree@vger.kernel.org, mathieu.poirier@linaro.org,
+        arm@kernel.org, sudeep.holla@arm.com, xuwei5@hisilicon.com,
+        lipengcheng8@huawei.com
+References: <1536661032-30481-1-git-send-email-suzuki.poulose@arm.com>
+ <1536661032-30481-3-git-send-email-suzuki.poulose@arm.com>
+ <20180912104735.GC3353@leoy-ThinkPad-X240s>
+From:   Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <22fd3ec6-bde0-87c6-673b-f95a15190bda@arm.com>
+Date:   Wed, 12 Sep 2018 13:42:09 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180912104735.GC3353@leoy-ThinkPad-X240s>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Subject: x86/tsc: Prevent result truncation on 32 bit
-From: Chuanhua Lei <chuanhua.lei@linux.intel.com>
-Date: Thu Sep 6 18:03:23 2018 +0800
+Hi Leo,
 
-From: Chuanhua Lei <chuanhua.lei@linux.intel.com>
+On 12/09/18 11:47, leo.yan@linaro.org wrote:
+> On Tue, Sep 11, 2018 at 11:17:03AM +0100, Suzuki K Poulose wrote:
+>> Switch to updated coresight bindings for hw ports.
+> 
+> As Shawn suggested, please change subject as "arm64: dts: hi6220:
+> ...."
+> 
 
-Commit 17f6bac2249356c795339e03a0742cd79be3cab8 upstream.
+Sure, will do.
 
-Loops per jiffy is calculated by multiplying tsc_khz with 1e3 and then
-dividing it by HZ.
-    
-Both tsc_khz and the temporary variable holding the multiplication result
-are of type unsigned long, so on 32bit the result is truncated to the lower
-32bit.
-    
-Use u64 as type for the temporary variable and cast tsc_khz to it before
-multiplying.
-    
-[ tglx: Backport to stable. Due to massive code changes is the upstream
-  	commit not applicable anymore. The issue has gone unnoticed in
-  	kernels pre 4.19 because the bogus LPJ value gets fixed up in a
-  	later stage of early boot, but it still might cause subtle and hard
-  	to debug issues between these two points. ]
+>> Cc: xuwei5@hisilicon.com
+>> Cc: lipengcheng8@huawei.com
+>> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>> ---
+>>   .../arm64/boot/dts/hisilicon/hi6220-coresight.dtsi | 147 ++++++++++++---------
+>>   1 file changed, 85 insertions(+), 62 deletions(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/hisilicon/hi6220-coresight.dtsi b/arch/arm64/boot/dts/hisilicon/hi6220-coresight.dtsi
+>> index 7afee5d..2202816 100644
+>> --- a/arch/arm64/boot/dts/hisilicon/hi6220-coresight.dtsi
+>> +++ b/arch/arm64/boot/dts/hisilicon/hi6220-coresight.dtsi
+> 
+> [...]
+> 
+>> @@ -302,10 +315,12 @@
+>>   
+>>   			cpu = <&cpu3>;
+>>   
+>> -			port {
+>> -				etm3_out: endpoint {
+>> -					remote-endpoint =
+>> -						<&acpu_funnel_in3>;
+>> +			out-ports {
+>> +				port {
+>> +					etm3_out: endpoint {
+>> +						remote-endpoint =
+>> +							<&acpu_funnel_in3>;
+>> +					};
+>>   				};
+>>   			};
+>>   		};
+>> @@ -319,10 +334,12 @@
+>>   
+>>   			cpu = <&cpu4>;
+>>   
+>> -			port {
+>> +			out-ports {
+>> +				port {
+>>   				etm4_out: endpoint {
+> 
+> Indent?
 
-Fixes: dd759d93f4dd ("x86/timers: Add simple udelay calibration")
-Signed-off-by: Chuanhua Lei <chuanhua.lei@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: yixin.zhu@linux.intel.com
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Len Brown <len.brown@intel.com>
-Cc: Pavel Tatashin <pavel.tatashin@microsoft.com>
-Cc: Rajvi Jingar <rajvi.jingar@intel.com>
-Cc: Dou Liyang <douly.fnst@cn.fujitsu.com>
-Cc: Ville Syrjala <ville.syrjala@linux.intel.com>
-Link: https://lkml.kernel.org/r/1536228203-18701-1-git-send-email-chuanhua.lei@linux.intel.com
+Yes, I have fixed this locally for v2.
 
----
- arch/x86/kernel/tsc.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> After applied this patch and tested on Hikey board; FWIW:
+> 
+> Tested-by: Leo Yan <leo.yan@linaro.org>
 
---- a/arch/x86/kernel/tsc.c
-+++ b/arch/x86/kernel/tsc.c
-@@ -1343,7 +1343,7 @@ device_initcall(init_tsc_clocksource);
- 
- void __init tsc_early_delay_calibrate(void)
- {
--	unsigned long lpj;
-+	u64 lpj;
- 
- 	if (!boot_cpu_has(X86_FEATURE_TSC))
- 		return;
-@@ -1355,7 +1355,7 @@ void __init tsc_early_delay_calibrate(vo
- 	if (!tsc_khz)
- 		return;
- 
--	lpj = tsc_khz * 1000;
-+	lpj = (u64)tsc_khz * 1000;
- 	do_div(lpj, HZ);
- 	loops_per_jiffy = lpj;
- }
+Thanks for the testing !
+
+Cheers
+Suzuki
