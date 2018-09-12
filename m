@@ -2,147 +2,78 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20030C46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:42:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A95B0C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:43:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC6692088E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:42:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DB9820866
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:43:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="KsXuAy7a";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="nPHP/nmx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC6692088E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hc6QxCRl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DB9820866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728127AbeILTrV (ORCPT
+        id S1727987AbeILTsV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 15:47:21 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:53998 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726879AbeILTrU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 15:47:20 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 8F90B609A1; Wed, 12 Sep 2018 14:42:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536763351;
-        bh=mMNCRBxP2jb4BjZi+5VDn0hkkpfgPYK5eSngb/Klr5M=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=KsXuAy7aIb4xNZpORV+918QaBmGzsYDjxYUnaCJ/Ev2grgGIOOPwkfauxMWNi9+fe
-         HdHn1z4LJBObUB1Nwn7s2qM5KroBrhDuip1ggq6GUvNS49NB92/+0JWpOGve8ErseF
-         5BUtwbm4PMsQOUBrFHJ8MBP2UsVS435aG4oHmLv8=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 38E696053B;
-        Wed, 12 Sep 2018 14:42:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536763350;
-        bh=mMNCRBxP2jb4BjZi+5VDn0hkkpfgPYK5eSngb/Klr5M=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=nPHP/nmxkxVmLk+nqzwwBfnad3P2ptdcAAbXovpWesjYA6c4bE03GKNOH+2SfI3TY
-         Qwxf8bV7coIrM36W7/IQklgv1RmEGwHxkBndiLPLlD26FweiW5DzkFeXWjwF6NUU5t
-         sM3y2Z7+9SVG2IYP1XiR73McS6spdJPvBGn65Wmk=
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 12 Sep 2018 20:12:30 +0530
-From:   Arun KS <arunks@codeaurora.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Balbir Singh <bsingharora@gmail.com>, akpm@linux-foundation.org,
-        dan.j.williams@intel.com, vbabka@suse.cz,
-        pasha.tatashin@oracle.com, iamjoonsoo.kim@lge.com,
-        osalvador@suse.de, malat@debian.org, gregkh@linuxfoundation.org,
-        yasu.isimatu@gmail.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, arunks.linux@gmail.com,
-        vinmenon@codeaurora.org
-Subject: Re: [RFC] memory_hotplug: Free pages as pageblock_order
-In-Reply-To: <20180912131724.GH10951@dhcp22.suse.cz>
-References: <1536744405-16752-1-git-send-email-arunks@codeaurora.org>
- <20180912103853.GC10951@dhcp22.suse.cz> <20180912125743.GB8537@350D>
- <20180912131724.GH10951@dhcp22.suse.cz>
-Message-ID: <9d8dfd50046036a7b4e730738940014d@codeaurora.org>
-X-Sender: arunks@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+        Wed, 12 Sep 2018 15:48:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60440 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726819AbeILTsV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 15:48:21 -0400
+Received: from localhost.localdomain (unknown [192.55.54.60])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DF18420866;
+        Wed, 12 Sep 2018 14:43:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1536763412;
+        bh=sdifeuDHj7NfMNDAeXYuTyFu9nuhMBG5rt3w0VDPIyo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=hc6QxCRlI5WIU8OdfCPUQwlnLImikPCXynKv9krMon2UyjuXk79Dy41xHTrGN/DhR
+         Gp7eWgdFVms7ZhSqDPKcVU3xJ8eGf/PZaQ+XxyiUADdgrX9rMbBLsg2+g03XxIzSUH
+         78YAREp9NiwEmuTQ6qtH2USpWs//qYMuK1sicy4A=
+From:   Alan Tull <atull@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Moritz Fischer <mdf@kernel.org>, Alan Tull <atull@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-fpga@vger.kernel.org
+Subject: [PATCH 0/5] fpga: patches for v4.19
+Date:   Wed, 12 Sep 2018 09:43:22 -0500
+Message-Id: <20180912144327.3130-1-atull@kernel.org>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-09-12 18:47, Michal Hocko wrote:
-> On Wed 12-09-18 22:57:43, Balbir Singh wrote:
->> On Wed, Sep 12, 2018 at 12:38:53PM +0200, Michal Hocko wrote:
->> > On Wed 12-09-18 14:56:45, Arun KS wrote:
->> > > When free pages are done with pageblock_order, time spend on
->> > > coalescing pages by buddy allocator can be reduced. With
->> > > section size of 256MB, hot add latency of a single section
->> > > shows improvement from 50-60 ms to less than 1 ms, hence
->> > > improving the hot add latency by 60%.
->> >
->> > Where does the improvement come from? You are still doing the same
->> > amount of work except that the number of callbacks is lower. Is this the
->> > real source of 60% improvement?
->> >
->> 
->> It looks like only the first page of the pageblock is initialized, is
->> some of the cost amortized in terms of doing one initialization for
->> the page with order (order) and then relying on split_page and helpers
->> to do the rest? Of course the number of callbacks reduce by a 
->> significant
->> number as well.
-> 
-> Ohh, I have missed that part. Now when re-reading I can see the reason
-> for the perf improvement. It is most likely the higher order free which
-> ends up being much cheaper. This part makes some sense.
-> 
-> How much is this feasible is another question. Do not forget we have
-> those external providers of the online callback and those would need to
-> be updated as well.
-Sure Michal, I ll look into this.
+Hi Greg,
 
-> 
-> Btw. the normal memmap init code path does the same per-page free as
-> well. If we really want to speed the hotplug path then I guess the init
-> one would see a bigger improvement and those two should be in sync.
-Thanks for pointers, Will look further.
+Please take these five small patches for FPGA.  They
+have been reviewed on the mailing lists and apply cleanly
+on linux-next/master and char-misc-testing.
 
-> 
->> > >
->> > > If this looks okey, I'll modify users of set_online_page_callback
->> > > and resend clean patch.
->> >
->> > [...]
->> >
->> > > +static int generic_online_pages(struct page *page, unsigned int order);
->> > > +static online_pages_callback_t online_pages_callback = generic_online_pages;
->> > > +
->> > > +static int generic_online_pages(struct page *page, unsigned int order)
->> > > +{
->> > > +	unsigned long nr_pages = 1 << order;
->> > > +	struct page *p = page;
->> > > +	unsigned int loop;
->> > > +
->> > > +	for (loop = 0 ; loop < nr_pages ; loop++, p++) {
->> > > +		__ClearPageReserved(p);
->> > > +		set_page_count(p, 0);
-> 
-> btw. you want init_page_count here.
-Do you mean replace set_page_count(p, 0) with init_page_count(page)?
-Because init_page_count is setting the page _refcount to 1
+Thanks,
+Alan
 
-static inline void init_page_count(struct page *page)
-{
-         set_page_count(page, 1);
-}
+Alan Tull (3):
+  fpga: do not access region struct after fpga_region_unregister
+  fpga: bridge: fix obvious function documentation error
+  docs: fpga: document fpga manager flags
 
-I thought in case of higher order pages only the first struct page 
-should have _refcount to 1 before calling __free_pages(). Please correct 
-me if wrong.
+Moritz Fischer (2):
+  fpga: of-fpga-region: Use platform_set_drvdata
+  fpga: dfl-fme-region: Use platform_get_drvdata()
 
-Regards,
-Arun
+ Documentation/driver-api/fpga/fpga-mgr.rst |  5 +++++
+ drivers/fpga/dfl-fme-region.c              |  6 ++++--
+ drivers/fpga/fpga-bridge.c                 |  2 +-
+ drivers/fpga/of-fpga-region.c              |  5 +++--
+ include/linux/fpga/fpga-mgr.h              | 20 ++++++++++++++------
+ 5 files changed, 27 insertions(+), 11 deletions(-)
 
+-- 
+2.7.4
 
