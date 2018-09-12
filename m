@@ -2,129 +2,210 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B485C070C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 21:46:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 799ABC070C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 21:49:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F37742146E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 21:46:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F37742146E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 183E121471
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 21:49:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 183E121471
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727953AbeIMCw0 (ORCPT
+        id S1728068AbeIMC4J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 22:52:26 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47502 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726675AbeIMCw0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 22:52:26 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8AD04B062;
-        Wed, 12 Sep 2018 21:45:57 +0000 (UTC)
-Date:   Wed, 12 Sep 2018 23:45:54 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Tim Chen <tim.c.chen@linux.intel.com>
-cc:     Tom Lendacky <thomas.lendacky@amd.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Woodhouse, David" <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH v5 2/2] x86/speculation: Enable cross-hyperthread spectre
- v2 STIBP mitigation
-In-Reply-To: <d098fa9b-f244-68d2-77f2-e3f5dd30f174@linux.intel.com>
-Message-ID: <nycvar.YFH.7.76.1809122330090.15880@cbobk.fhfr.pm>
-References: <nycvar.YFH.7.76.1809101119280.15880@cbobk.fhfr.pm> <nycvar.YFH.7.76.1809101123520.15880@cbobk.fhfr.pm> <alpine.DEB.2.21.1809101158080.1402@nanos.tec.linutronix.de> <nycvar.YFH.7.76.1809101259520.15880@cbobk.fhfr.pm> <nycvar.YFH.7.76.1809101343370.15880@cbobk.fhfr.pm>
- <f0fcbcd9-4619-391e-3c1b-34d06b00de50@linux.intel.com> <alpine.DEB.2.21.1809112315320.1427@nanos.tec.linutronix.de> <f95c28d6-70f2-3f18-4ab9-c756c7581126@amd.com> <d098fa9b-f244-68d2-77f2-e3f5dd30f174@linux.intel.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        Wed, 12 Sep 2018 22:56:09 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:44798 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726111AbeIMC4J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 22:56:09 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id E5033806CB; Wed, 12 Sep 2018 23:49:38 +0200 (CEST)
+Date:   Wed, 12 Sep 2018 23:49:38 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     robh+dt@kernel.org, jacek.anaszewski@gmail.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        lee.jones@linaro.org, linux-omap@vger.kernel.org,
+        linux-leds@vger.kernel.org
+Subject: Re: [PATCH v7 1/6] dt-bindings: ti-lmu: Remove LM3697
+Message-ID: <20180912214938.GA30654@amd>
+References: <20180911170825.17789-1-dmurphy@ti.com>
+ <20180911170825.17789-2-dmurphy@ti.com>
+ <20180911200530.GA28290@amd>
+ <85ab3bf4-21d4-dda9-a7c8-5ed68f15c611@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="ikeVEW9yuYc//A+q"
+Content-Disposition: inline
+In-Reply-To: <85ab3bf4-21d4-dda9-a7c8-5ed68f15c611@ti.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 12 Sep 2018, Tim Chen wrote:
 
-> I'm working on a patch for choosing the Spectre v2 app to app
-> mitigation option.
-> 
-> Something like the following:
-> 
-> enum spectre_v2_app2app_mitigation {
->         SPECTRE_V2_APP2APP_NONE,
->         SPECTRE_V2_APP2APP_LITE,
->         SPECTRE_V2_APP2APP_IBPB,
->         SPECTRE_V2_APP2APP_STIBP,
->         SPECTRE_V2_APP2APP_STRICT,
-> };
-> 
-> static const char *spectre_v2_app2app_strings[] = {
->         [SPECTRE_V2_APP2APP_NONE]               = "App-App Vulnerable",
->         [SPECTRE_V2_APP2APP_LITE]               = "App-App Mitigation: Protect only non-dumpable process",
->         [SPECTRE_V2_APP2APP_IBPB]               = "App-App Mitigation: Protect app against attack from same cpu",
->         [SPECTRE_V2_APP2APP_STIBP]              = "App-App Mitigation: Protect app against attack from sibling cpu",
->         [SPECTRE_V2_APP2APP_STRICT]             = "App-App Mitigation: Full app to app attack protection",
-> };
-> 
-> So the APP2APP_LITE protection's intention is to turn on STIBP and IBPB for non-dumpable
-> process.  But in my first version I may limit it to IBPB as choosing
-> STIBP based on process characteristics will require some frobbing of
-> the flags as what we've done in SSBD.  That will require more careful
-> work and tests.
-> 
-> The STRICT option will turn STIBP on always and IBPB always on
-> non-ptraceable context switches.
-> 
-> Is this something reasonable?
+--ikeVEW9yuYc//A+q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-It's probably 100% correct, but it's also 100% super-complex at the same 
-time if you ask me.
+Hi!
 
-Try to imagine you're a very advanced senior sysadmin, who has heard that 
-spectre and meltdown existed of course, but figured out that updating to 
-latest kernel/distro vendor update fixes all the security issues (and it 
-actually indeed did).
+> On 09/11/2018 03:05 PM, Pavel Machek wrote:
+> > On Tue 2018-09-11 12:08:20, Dan Murphy wrote:
+> >> Remove support for the LM3697 LED device
+> >> from the ti-lmu.  The LM3697 will be supported
+> >> via a stand alone LED driver.
+> >>
+> >> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> >=20
+> > I'd really like to see better explanation here.
+> >=20
+>=20
+> I will update the commit message but....
+>=20
+> How do I politely explain that the original implementation was wrong for =
+certain devices?
 
-Now, all of a sudden, this new option pops up, and the poor sysadmin has 
-to make a decision again.
+Implementation? Device tree is hardware description.
 
-	"Do you care only about security across non-dumpable process 
-	 boundaries?"
+> How do I politely explain that this binding has information that
+>  does not exist?
 
-	"Scheduled to same CPU at the time of attack? Can you guarantee that this 
-	 is (not) happening?"
+I don't understand this sentence.
 
-	"If the processess can actually ptrace/debug each other, are you okay with 
-	 them attacking each other?"
+> Isn't code and documentation supposed to be pushed in stages
+> together?
 
-	 "Shared HT siblings return target buffer, do you want it or 
-	  not?"
+Device tree is _not_ documentation. And yes, it is normally pushed
+together. But that did not happen here, and bindings are already in.
 
-These are the questions that even an excellent sysadmin might not have 
-qualified answers to so far. Now, all of a sudden, he/her has to make 
-these decisions?
+Bindings are an ABI between bootloader and kernel. They should not be
+changed lightly.=20
 
-I don't think that's how it should work. It all should be digestible by 
-"linux end-users" (where users are also super-advanced sysadmins) easily.
+Here I believe they should be fixed; not deleted.
 
-We currently have "I do care about spectrev2 / I don't care about 
-spectrev2" boot-time switch, and I don't see us going any deeper / more 
-fine-grained without sacrificing clarity and sanity.
+> Unfortunately Milo left TI before he had a chance to finish upstreaming.
 
-Or do you see a way how to do that nicely?
+Well -- I wanted to finish upstreaming. I still have those patches,
+and they still look reasonably well. Better than=20
 
-Thanks,
+> Some issues with the current binding:
+> 1) The documentation referenced in the ti-lmu.txt does not exist but the =
+binding was accepted.
+> [1] ../leds/backlight/ti-lmu-backlight.txt
+> [2] ../leds/leds-lm3633.txt
+> [3] ../regulator/lm363x-regulator.txt
+>=20
+> 2) ramp-up-msec and ramp-down-msec are not explained or defined in this c=
+urrent binding.
+> Looks to be defined in the staged code though.
+>=20
+> 3) The ramp-up-msec and ramp-down-msec are not the right node parameters
+> the code shows ti,ramp-down-ms and ti,ramp-up-ms.  Looking at the clean u=
+p of the binding
+> in the staged commits the binding still does not match the code.
+>=20
+> https://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap.git/com=
+mit/?h=3Ddroid4-pending-v4.19&id=3Dd774c7e447ac911e73a1b3c775e6d89f0422218c
+>
 
--- 
-Jiri Kosina
-SUSE Labs
+Bindings are authoritative. Of course, they can be fixed if really
+neccessary, but normally code should be adapted to the bindings, not
+the other way around.
 
+If slow ramping up/down is something that would be expected in other
+chips, too, ti, prefix is not good idea.
+
+> 4) The ramp rates ranges are incorrect for the LM3697 it should be from 0=
+ -> 117400 ms
+>=20
+> 5) The children compatibles are not defined in this binding but appear to=
+ be removed in the staged code.
+>=20
+> 6) address-cells and size-cells are missing from the binding
+
+Yep, ok, so these should be fixed. Still the bindings should be fixed,
+not removed and started over.
+
+> I am attempting to clean this up for all the dedicated LED drivers.
+> There is a lot of bloat with this driver to support a single LED driver t=
+hat is a single function device.
+>
+
+What about the multi function devices? They should have same binding.
+
+> This ti-lmu driver may be a great thing for the Droid 4 but from a custom=
+ers
+> stand point that just wants to use just 1 of the dedicated LED drivers th=
+is driver is
+> overly complex and possibly hard to add code for differentiation.
+
+The ti-lmu driver sounds like a way to go. We really want single
+driver, even if more complex, than 6 separate ones.
+
+> > We have existing binding, for lm3697 and similar devices. With this
+> > series, different binding is introduced, without documented reason.
+> >=20
+>=20
+> I can update the commit message to indicate that this device is not a MFD
+> device and only is a SFD that needs to be supported by a dedicated
+> driver.
+
+Device bindings are operating systems independend. This is not an argument.
+
+> > Now, maybe you are right and the hardware should be handled by
+> > drivers/leds, not drivers/mfd. But we should have solution for all the
+> > similar chips, and that still does not mean we have to modify the
+> > binding. (But maybe we want to move it to different
+> > directory). Bindings are supposed to describe hardware, not mirror
+> > structure of our drivers.
+>=20
+> But this is not clean to have this device in the MFD bindings directory
+> when the support is in the LEDs directory.
+
+Perhaps location of the binding is wrong. Still not reason to drop it
+and introduce new one.
+
+> >> index c885cf89b8ce..920f910be4e9 100644
+> >> --- a/Documentation/devicetree/bindings/mfd/ti-lmu.txt
+> >> +++ b/Documentation/devicetree/bindings/mfd/ti-lmu.txt
+> >> @@ -9,7 +9,6 @@ TI LMU driver supports lighting devices below.
+> >>    LM3632       Backlight and regulator
+> >>    LM3633       Backlight, LED and fault monitor
+> >>    LM3695       Backlight
+> >> -  LM3697       Backlight and fault monitor
+> >> =20
+> >>  Required properties:
+> >>    - compatible: Should be one of:
+
+You see? Even if your "new" binding has no flaws, "flawed" binding
+still remains in tree, and we still have problems for lm3632, 3633,
+3695. That's why it needs to be fixed, not replaced.
+
+Best regards,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--ikeVEW9yuYc//A+q
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAluZifIACgkQMOfwapXb+vLjqgCgkY672WQ5AXqFcoyUHSAY4VxN
+8nAAni+wU410wF8iIReHojXX9IZcmPoP
+=JyMt
+-----END PGP SIGNATURE-----
+
+--ikeVEW9yuYc//A+q--
