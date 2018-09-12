@@ -6,53 +6,52 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D545DC46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 13:30:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E4C6C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 13:31:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83DD420854
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 13:30:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8B2C20854
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 13:31:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="vih8bRpW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83DD420854
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="nv3XL8Fz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8B2C20854
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727649AbeILSfI (ORCPT
+        id S1727670AbeILSgS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 14:35:08 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:37896 "EHLO
+        Wed, 12 Sep 2018 14:36:18 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:38988 "EHLO
         userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726754AbeILSfH (ORCPT
+        with ESMTP id S1726642AbeILSgS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 14:35:07 -0400
+        Wed, 12 Sep 2018 14:36:18 -0400
 Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8CDT9Pq041219;
-        Wed, 12 Sep 2018 13:29:57 GMT
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8CDTEKi041266;
+        Wed, 12 Sep 2018 13:31:31 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
  references : from : message-id : date : mime-version : in-reply-to :
  content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=NMVqQB9SiIeRZTH2H/BUYZ35VOohkeIZGngJMh06Exc=;
- b=vih8bRpWLpgDKKX1qtMNYHMoMNlZZUJ6i+bE0+XCYhGttTyOqyV2Hf8tk1NcgrTtz84f
- zRaSoKLVUgHVj3+NUBBeUjYSN4AXQb6U6LlyhUssLHX/moRSb+z8K1TLBrX4YQc4FyyR
- KtYTQkF2qQZzFmc0zT0gat8V8h+PnbsrDw6jZcl6/s9trgqX7EoI4i8NlrXoQrgwmY9g
- sM/xYj4s9xGZsXszDYAUkIbCGN6l6r3amd8CxKwzUIe3gq/4HUs3VYA7iYqS7JiO+Yju
- mPRXpQE3xbEF1xauoG1rrikQEpaIGvf/cfQMBonclGDt8yk6PHmet16nZrTvjZ3EDQMx 0w== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2mc5utj52w-1
+ bh=wIQl5Jcc5252bXoEoaBBGvv+myxEy41bsq+Hf3UwZVQ=;
+ b=nv3XL8FzNHlHBdxxvRLLEKbQxGSNyUVkSD+kwXSEqtQl2PChFLtA3z5yDNj7YgwRplS4
+ ZOYmqvhwMDEMtBJvWpEA5J6avN+0ESdWO/l6CSTLMLAqKIykfNo0Gs8TRWgJJ3Wbq9it
+ aKSkSVyqhsfRvAwx603FK5CM8msAS2Cdn8w+KNs73bCKlu1rkXUspYU/4wVzmiardvY+
+ F5gh7gd0hUA9/BFTS9rYOHeSwU9MlCaNhuPtImHx5jSlRywwB8Y2xEHINP8DtVT500LT
+ A+UO9RwppHuHN7rIM7pLN+vR2Xi1dYkIZJww/ogJwfJzC52B+U5B9kQqGjf8G/D78VZO fw== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2130.oracle.com with ESMTP id 2mc5utj5dy-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 12 Sep 2018 13:29:57 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w8CDTuV2030419
+        Wed, 12 Sep 2018 13:31:31 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w8CDVOZv027819
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 12 Sep 2018 13:29:56 GMT
+        Wed, 12 Sep 2018 13:31:25 GMT
 Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w8CDTrpv014011;
-        Wed, 12 Sep 2018 13:29:53 GMT
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w8CDVNiI021059;
+        Wed, 12 Sep 2018 13:31:23 GMT
 Received: from [10.152.34.32] (/10.152.34.32)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 12 Sep 2018 06:29:52 -0700
-Subject: Re: [RFC PATCH v2 1/8] mm, memcontrol.c: make memcg lru stats
- thread-safe without lru_lock
+        with ESMTP ; Wed, 12 Sep 2018 06:31:23 -0700
+Subject: Re: [RFC PATCH v2 2/8] mm: make zone_reclaim_stat updates thread-safe
 To:     Laurent Dufour <ldufour@linux.vnet.ibm.com>, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
 Cc:     aaron.lu@intel.com, ak@linux.intel.com, akpm@linux-foundation.org,
@@ -60,18 +59,17 @@ Cc:     aaron.lu@intel.com, ak@linux.intel.com, akpm@linux-foundation.org,
         hannes@cmpxchg.org, levyossi@icloud.com,
         mgorman@techsingularity.net, mhocko@kernel.org,
         Pavel.Tatashin@microsoft.com, steven.sistare@oracle.com,
-        tim.c.chen@intel.com, vdavydov.dev@gmail.com, ying.huang@intel.com,
-        daniel.m.jordan@oracle.com
+        tim.c.chen@intel.com, vdavydov.dev@gmail.com, ying.huang@intel.com
 References: <20180911004240.4758-1-daniel.m.jordan@oracle.com>
- <20180911004240.4758-2-daniel.m.jordan@oracle.com>
- <e62ef1a0-9518-5a16-df5b-86977b4e8881@linux.vnet.ibm.com>
+ <20180911004240.4758-3-daniel.m.jordan@oracle.com>
+ <fe814c4f-f049-9b7f-0f4c-7238f159f144@linux.vnet.ibm.com>
 From:   Daniel Jordan <daniel.m.jordan@oracle.com>
-Message-ID: <a81f27b1-00c0-53ac-4d0b-241effdca9a6@oracle.com>
-Date:   Wed, 12 Sep 2018 09:28:58 -0400
+Message-ID: <7e0c2fe0-c867-3ea2-83a2-c3bcb35057d7@oracle.com>
+Date:   Wed, 12 Sep 2018 09:30:28 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <e62ef1a0-9518-5a16-df5b-86977b4e8881@linux.vnet.ibm.com>
+In-Reply-To: <fe814c4f-f049-9b7f-0f4c-7238f159f144@linux.vnet.ibm.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -85,28 +83,22 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/11/18 12:32 PM, Laurent Dufour wrote:
+On 9/11/18 12:40 PM, Laurent Dufour wrote:
 > On 11/09/2018 02:42, Daniel Jordan wrote:
->> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
->> index d99b71bc2c66..6377dc76dc41 100644
->> --- a/include/linux/memcontrol.h
->> +++ b/include/linux/memcontrol.h
->> @@ -99,7 +99,8 @@ struct mem_cgroup_reclaim_iter {
->>   };
->>
->>   struct lruvec_stat {
->> -	long count[NR_VM_NODE_STAT_ITEMS];
->> +	long node[NR_VM_NODE_STAT_ITEMS];
->> +	long lru_zone_size[MAX_NR_ZONES][NR_LRU_LISTS];
+>> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+>> index 32699b2dc52a..6d4c23a3069d 100644
+>> --- a/include/linux/mmzone.h
+>> +++ b/include/linux/mmzone.h
+>> @@ -229,6 +229,12 @@ struct zone_reclaim_stat {
+>>   	 *
+>>   	 * The anon LRU stats live in [0], file LRU stats in [1]
+>>   	 */
+>> +	atomic_long_t		recent_rotated[2];
+>> +	atomic_long_t		recent_scanned[2];
 > 
-> It might be better to use different name for the lru_zone_size field to
-> distinguish it from the one in the mem_cgroup_per_node structure.
+> It might be better to use a slightly different name for these fields to
+> distinguish them from the ones in the zone_reclaim_stat_cpu structure.
 
-Yes, not very grep-friendly.  I'll change it to this:
+Sure, these are now named recent_rotated_cpu and recent_scanned_cpu, absent better names.
 
-struct lruvec_stat {
-	long node_stat_cpu[NR_VM_NODE_STAT_ITEMS];
-	long lru_zone_size_cpu[MAX_NR_ZONES][NR_LRU_LISTS];
-};
-
-So the fields are named like the corresponding fields in the mem_cgroup_per_node structure, plus _cpu.  And I'm certainly open to other ideas.
+Thanks for your comments.
