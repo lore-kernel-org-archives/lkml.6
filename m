@@ -2,167 +2,93 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 477FEC4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:14:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAC97C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:16:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1F6F20866
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:14:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1F6F20866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 736D920866
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:16:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 736D920866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728353AbeILOSA (ORCPT
+        id S1727724AbeILOUa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 10:18:00 -0400
-Received: from foss.arm.com ([217.140.101.70]:56130 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728338AbeILOR7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 10:17:59 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 693377A9;
-        Wed, 12 Sep 2018 02:14:22 -0700 (PDT)
-Received: from queper01-lin.local (queper01-lin.emea.arm.com [10.4.13.27])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 51B393F703;
-        Wed, 12 Sep 2018 02:14:18 -0700 (PDT)
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     peterz@infradead.org, rjw@rjwysocki.net,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, mingo@redhat.com,
-        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
-        chris.redpath@arm.com, patrick.bellasi@arm.com,
-        valentin.schneider@arm.com, vincent.guittot@linaro.org,
-        thara.gopinath@linaro.org, viresh.kumar@linaro.org,
-        tkjos@google.com, joel@joelfernandes.org, smuckle@google.com,
-        adharmap@codeaurora.org, skannan@codeaurora.org,
-        pkondeti@codeaurora.org, juri.lelli@redhat.com,
-        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
-        currojerez@riseup.net, javi.merino@kernel.org,
-        quentin.perret@arm.com
-Subject: [PATCH v7 14/14] OPTIONAL: cpufreq: dt: Register an Energy Model
-Date:   Wed, 12 Sep 2018 10:13:09 +0100
-Message-Id: <20180912091309.7551-15-quentin.perret@arm.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180912091309.7551-1-quentin.perret@arm.com>
-References: <20180912091309.7551-1-quentin.perret@arm.com>
+        Wed, 12 Sep 2018 10:20:30 -0400
+Received: from smtp.ctxuk.citrix.com ([185.25.65.24]:2317 "EHLO
+        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726555AbeILOUa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 10:20:30 -0400
+X-IronPort-AV: E=Sophos;i="5.53,364,1531785600"; 
+   d="scan'208";a="78924982"
+Date:   Wed, 12 Sep 2018 11:16:39 +0200
+From:   Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
+To:     Julien Grall <julien.grall@arm.com>
+CC:     Jan Beulich <JBeulich@suse.com>, Jens Axboe <axboe@kernel.dk>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        <linux-kernel@vger.kernel.org>, <linux-block@vger.kernel.org>,
+        xen-devel <xen-devel@lists.xenproject.org>,
+        zhong jiang <zhongjiang@huawei.com>
+Subject: Re: [Xen-devel] [PATCH] drivers/block/xen-blkback/common.h: use
+ DIV_ROUND_UP instead of reimplementing its function
+Message-ID: <20180912091639.oynlvdo6pghnqfvt@mac.bytemobile.com>
+References: <1536731100-56054-1-git-send-email-zhongjiang@huawei.com>
+ <5B98CAE202000078001E79CC@prv1-mh.provo.novell.com>
+ <20180912091350.6wuvt2jkvzg6wruo@mac.bytemobile.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180912091350.6wuvt2jkvzg6wruo@mac.bytemobile.com>
+User-Agent: NeoMutt/20180716
+X-ClientProxiedBy: AMSPEX02CAS01.citrite.net (10.69.22.112) To
+ AMSPEX02CL02.citrite.net (10.69.22.126)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-*******************************************************************
-* This patch illustrates the usage of the newly introduced Energy *
-* Model framework and isn't supposed to be merged as-is.          *
-*******************************************************************
+Sorry, I've failed to add Julien in my previous reply.
 
-The Energy Model framework provides an API to register the active power
-of CPUs. Call this API from the cpufreq-dt driver with an estimation
-of the power as P = C * V^2 * f with C, V, and f respectively the
-capacitance of the CPU and the voltage and frequency of the OPP.
-
-The CPU capacitance is read from the "dynamic-power-coefficient" DT
-binding (originally introduced for thermal/IPA), and the voltage and
-frequency values from PM_OPP.
-
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Quentin Perret <quentin.perret@arm.com>
----
- drivers/cpufreq/cpufreq-dt.c | 48 +++++++++++++++++++++++++++++++++++-
- 1 file changed, 47 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
-index 0a9ebf00be46..15ac9754afa2 100644
---- a/drivers/cpufreq/cpufreq-dt.c
-+++ b/drivers/cpufreq/cpufreq-dt.c
-@@ -16,6 +16,7 @@
- #include <linux/cpu_cooling.h>
- #include <linux/cpufreq.h>
- #include <linux/cpumask.h>
-+#include <linux/energy_model.h>
- #include <linux/err.h>
- #include <linux/module.h>
- #include <linux/of.h>
-@@ -149,8 +150,50 @@ static int resources_available(void)
- 	return 0;
- }
- 
-+static int __maybe_unused of_est_power(unsigned long *mW, unsigned long *KHz,
-+				       int cpu)
-+{
-+	unsigned long mV, Hz, MHz;
-+	struct device *cpu_dev;
-+	struct dev_pm_opp *opp;
-+	struct device_node *np;
-+	u32 cap;
-+	u64 tmp;
-+
-+	cpu_dev = get_cpu_device(cpu);
-+	if (!cpu_dev)
-+		return -ENODEV;
-+
-+	np = of_node_get(cpu_dev->of_node);
-+	if (!np)
-+		return -EINVAL;
-+
-+	if (of_property_read_u32(np, "dynamic-power-coefficient", &cap))
-+		return -EINVAL;
-+
-+	Hz = *KHz * 1000;
-+	opp = dev_pm_opp_find_freq_ceil(cpu_dev, &Hz);
-+	if (IS_ERR(opp))
-+		return -EINVAL;
-+
-+	mV = dev_pm_opp_get_voltage(opp) / 1000;
-+	dev_pm_opp_put(opp);
-+	if (!mV)
-+		return -EINVAL;
-+
-+	MHz = Hz / 1000000;
-+	tmp = (u64)cap * mV * mV * MHz;
-+	do_div(tmp, 1000000000);
-+
-+	*mW = (unsigned long)tmp;
-+	*KHz = Hz / 1000;
-+
-+	return 0;
-+}
-+
- static int cpufreq_init(struct cpufreq_policy *policy)
- {
-+	struct em_data_callback em_cb = EM_DATA_CB(of_est_power);
- 	struct cpufreq_frequency_table *freq_table;
- 	struct opp_table *opp_table = NULL;
- 	struct private_data *priv;
-@@ -159,7 +202,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
- 	unsigned int transition_latency;
- 	bool fallback = false;
- 	const char *name;
--	int ret;
-+	int ret, nr_opp;
- 
- 	cpu_dev = get_cpu_device(policy->cpu);
- 	if (!cpu_dev) {
-@@ -226,6 +269,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
- 		ret = -EPROBE_DEFER;
- 		goto out_free_opp;
- 	}
-+	nr_opp = ret;
- 
- 	if (fallback) {
- 		cpumask_setall(policy->cpus);
-@@ -278,6 +322,8 @@ static int cpufreq_init(struct cpufreq_policy *policy)
- 	policy->cpuinfo.transition_latency = transition_latency;
- 	policy->dvfs_possible_from_any_cpu = true;
- 
-+	em_register_perf_domain(policy->cpus, nr_opp, &em_cb);
-+
- 	return 0;
- 
- out_free_cpufreq_table:
--- 
-2.18.0
-
+On Wed, Sep 12, 2018 at 11:13:50AM +0200, Roger Pau Monné wrote:
+> Adding Julien how did the work to support XEN_PAGE_SIZE != PAGE_SIZE.
+> 
+> On Wed, Sep 12, 2018 at 02:14:26AM -0600, Jan Beulich wrote:
+> > >>> On 12.09.18 at 07:45, <zhongjiang@huawei.com> wrote:
+> > > --- a/drivers/block/xen-blkback/common.h
+> > > +++ b/drivers/block/xen-blkback/common.h
+> > > @@ -65,7 +65,7 @@
+> > >  	(XEN_PAGES_PER_INDIRECT_FRAME / XEN_PAGES_PER_SEGMENT)
+> > >  
+> > >  #define MAX_INDIRECT_PAGES \
+> > > -	((MAX_INDIRECT_SEGMENTS + SEGS_PER_INDIRECT_FRAME - 1)/SEGS_PER_INDIRECT_FRAME)
+> > > +		DIV_ROUND_UP(MAX_INDIRECT_SEGMENTS, SEGS_PER_INDIRECT_FRAME)
+> > >  #define INDIRECT_PAGES(_segs) DIV_ROUND_UP(_segs, XEN_PAGES_PER_INDIRECT_FRAME)
+> > 
+> > My first reaction was to suggest
+> > 
+> > #define MAX_INDIRECT_PAGES INDIRECT_PAGES(MAX_INDIRECT_SEGMENTS)
+> > 
+> > but that wouldn't match what's there currently (note the two different
+> > divisors). I can't really decide whether that's just unfortunate naming
+> > of the two macros, or an actual bug.
+> 
+> I think there's indeed a bug here.
+> 
+> AFAICT, MAX_INDIRECT_PAGES should use XEN_PAGES_PER_INDIRECT_FRAME and
+> then it could be changed as Jan suggested.
+> 
+> Current MAX_INDIRECT_PAGES is misnamed and should instead be
+> MAX_INDIRECT_SEGS (which on x86 is exactly the same because PAGE_SIZE
+> == XEN_PAGE_SIZE).
+> 
+> Roger.
+> 
+> _______________________________________________
+> Xen-devel mailing list
+> Xen-devel@lists.xenproject.org
+> https://lists.xenproject.org/mailman/listinfo/xen-devel
