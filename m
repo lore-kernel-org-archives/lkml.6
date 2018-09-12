@@ -3,120 +3,98 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73087C4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 07:57:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84C8DC4646A
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 07:57:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2229920866
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 07:57:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2229920866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id 4899220866
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 07:57:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4899220866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727673AbeILNAT (ORCPT
+        id S1727754AbeILNAl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 09:00:19 -0400
-Received: from lb2-smtp-cloud8.xs4all.net ([194.109.24.25]:36821 "EHLO
-        lb2-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726358AbeILNAS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 09:00:18 -0400
-Received: from [192.168.2.10] ([212.251.195.8])
-        by smtp-cloud8.xs4all.net with ESMTPA
-        id 0013gUHebxO9B0016gSViE; Wed, 12 Sep 2018 09:56:56 +0200
-Subject: Re: [PATCH v9 5/9] media: platform: Add Cedrus VPU decoder driver
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Paul Kocialkowski <contact@paulk.fr>, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-sunxi@googlegroups.com, Randy Li <ayaka@soulik.info>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-References: <20180906222442.14825-1-contact@paulk.fr>
- <20180906222442.14825-6-contact@paulk.fr> <20180911124625.6759e429@coco.lan>
- <20180912072347.nqw4uu23fykjtz72@flea>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <17cad39d-cc81-164c-58a2-00ea7d1f96b3@xs4all.nl>
-Date:   Wed, 12 Sep 2018 09:56:49 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
-MIME-Version: 1.0
-In-Reply-To: <20180912072347.nqw4uu23fykjtz72@flea>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
+        Wed, 12 Sep 2018 09:00:41 -0400
+Received: from gate.crashing.org ([63.228.1.57]:34476 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726358AbeILNAl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 09:00:41 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w8C7uX1A028872;
+        Wed, 12 Sep 2018 02:56:34 -0500
+Message-ID: <c002018d3765280e135d673f7c731784a90a260d.camel@kernel.crashing.org>
+Subject: Re: [PATCH v5 01/10] dt-bindings: fsi: Add P9 OCC device
+ documentation
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Rob Herring <robh@kernel.org>,
+        Eddie James <eajames@linux.vnet.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        devicetree@vger.kernel.org, jdelvare@suse.com,
+        linux-doc@vger.kernel.org, openbmc@lists.ozlabs.org,
+        gregkh@linuxfoundation.org, mark.rutland@arm.com,
+        linux@roeck-us.net, joel@jms.id.au
+Date:   Wed, 12 Sep 2018 09:56:33 +0200
+In-Reply-To: <20180910181610.GA5907@bogus>
+References: <1535664761-86018-1-git-send-email-eajames@linux.vnet.ibm.com>
+         <1535664761-86018-2-git-send-email-eajames@linux.vnet.ibm.com>
+         <20180910181610.GA5907@bogus>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfD/cbvHkMBLhQ7vWHpaUWn3KEWf7HpSTInwSK1dekr0MthLiWHOHRjYCG8yxJbr4wymJcjJLdd0fc+ulO2742RI2Bj53Fo/LZt5hXTkrVMyt1Eh9MH5s
- XGdmcfXJALXUJvK7mSRliaM36ZtqFr1NbY3CvQE5lM4L81C0+jcRNarMuWy+FF6pFti4BQ0eqUIWgMm5iB/54A+1PtP14KGKEXfCkMW0sA8KsWI1DMzN04eF
- LmrpXD+WRWhwBrCYfOo183v8rTb7vd+EMO9gayvxDB/cyph7hKRFYIi8VP0tjrTOlDrKl9QzTFi2ZtnOB5F9/wkje1c8zxy9ns+XIeimRjUrswGD4fz3zuL2
- 6dRThe8g3Kfj8lcu8haQHomD6iz1H1xHhOjWcsEI+Y3hBG9tKtO0AwUVCmvu9b6lRAwVFNyzv66f9roYSJJuRoeoNNtqPtFX2pRMubOJAGWkmwdjYTGanpNV
- TB93AQ8tNdSZE1kxgdbUgzjaqPbFgz2VUqS5J4AX09d3uxevHrcr4x3Mu+OPF1OHPbiCc0vlw/1b/5LvOWep4Olnum6hBzSxV2z6tW6+zKPa2gUSixcN705z
- h7kzyPfRM6LfhObOGvodEdC6AonIv4tVT/kL+5Wx9NF0D8/EppzGcy3rjHhd39syps1ug8eOzC1mFoRe/F166rjrr/NRfsp3WclSNgeWzqvwCjNxv8DMYveh
- vzJrkq+/Ul2SBkeTP0hbdfsgY66rXlVty0+Klb/a0zUxVbaXVlDkHIF9+fkjiXmQL1qXarQxNCxzvfqRSGrsclmHQtS3UAPXUhaUbap/X0vrk3dy8mZdL2pP
- ETnMrtrc3DjMU+XEWU4hsfEW0DHEzU1HtmLdbReRPZp2Hqtb+5Q77N73u5NP/QJZpkNiTZ/XkYe0kKv9ZWRdLViJToszmYYkC2BX9YDsp45v09u7PMxsTMFl
- 9aQcAZY/AJ6O4cmZz+2rn6eNnuhgVBQQ9gLi2FmveBTMxpp7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/12/2018 09:23 AM, Maxime Ripard wrote:
-> On Tue, Sep 11, 2018 at 12:46:25PM -0300, Mauro Carvalho Chehab wrote:
->> Em Fri,  7 Sep 2018 00:24:38 +0200
->> Paul Kocialkowski <contact@paulk.fr> escreveu:
->>
->>> From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
->>>
->>> This introduces the Cedrus VPU driver that supports the VPU found in
->>> Allwinner SoCs, also known as Video Engine. It is implemented through
->>> a V4L2 M2M decoder device and a media device (used for media requests).
->>> So far, it only supports MPEG-2 decoding.
->>>
->>> Since this VPU is stateless, synchronization with media requests is
->>> required in order to ensure consistency between frame headers that
->>> contain metadata about the frame to process and the raw slice data that
->>> is used to generate the frame.
->>>
->>> This driver was made possible thanks to the long-standing effort
->>> carried out by the linux-sunxi community in the interest of reverse
->>> engineering, documenting and implementing support for the Allwinner VPU.
->>>
->>> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
->>> Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
->>
->> There are several checkpatch issues here. Ok, some can be
->> ignored, but there are at least some of them that sounda relevant.
+On Mon, 2018-09-10 at 13:16 -0500, Rob Herring wrote:
+> On Thu, Aug 30, 2018 at 04:32:32PM -0500, Eddie James wrote:
+> > Document the bindings for the FSI-attached POWER9 On-Chip Controller.
+> > 
+> > Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
+> > ---
+> >  Documentation/devicetree/bindings/fsi/ibm,p9-occ.txt | 15 +++++++++++++++
+> >  1 file changed, 15 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/fsi/ibm,p9-occ.txt
+> > 
+> > diff --git a/Documentation/devicetree/bindings/fsi/ibm,p9-occ.txt b/Documentation/devicetree/bindings/fsi/ibm,p9-occ.txt
+> > new file mode 100644
+> > index 0000000..46372f6
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/fsi/ibm,p9-occ.txt
+> > @@ -0,0 +1,15 @@
+> > +Device-tree bindings for FSI-attached POWER9 On-Chip Controller (OCC)
+> > +---------------------------------------------------------------------
+> > +
+> > +This is the binding for the P9 On-Chip Controller accessed over FSI from a
+> > +service processor. See fsi.txt for details on bindings for FSI slave and CFAM
+> > +nodes.
+> > +
+> > +Required properties:
+> > + - compatible = "ibm,p9-occ"
+> > +
+> > +Examples:
+> > +
+> > +    occ {
 > 
-> Sorry for that. Given that it's intended to be in staging, do you want
-> us to send subsequent patches or the whole serie?
+> FSI slave devices are supposed to have an address according to the 
+> binding doc.
 
-I would actually prefer a v10 with the current follow-up patches merged
-into the main driver. I'm getting kbuild errors for the Kconfig missing
-select and the PHYS_PFN_OFFSET. So let's just spin a v10.
+This isn't the FSI device per-se actually. This is a node below the
+"sbefifo" FSI device. The SBE fifo is the mechanism by which we
+communicate with the OCC. The sbefifo doesn't really define a "bus",
+it's mostly used from userspace directly via /dev/sbefifo* to perform
+various tasks in the chip, but it happens to also provide the in-kernel 
+transport for the OCC commands.
 
-It would help if you post a follow-up patch for the checkpatch changes
-(that's easy to review), then post a v10 with just that and the other
-follow-on patches merged into the driver patch itself, and that's
-what I'll use for the pull request.
+Cheers,
+Ben.
 
-Sorry, I should have seen those checkpatch.pl warnings myself, but I
-discovered that my git hooks didn't use the --strict option with
-checkpatch. I'd have sworn that I had added it in the past, but apparently
-not :-(
+> > +        compatible = "ibm,p9-occ";
+> > +    };
+> > -- 
+> > 1.8.3.1
+> > 
 
-Regards,
-
-	Hans
