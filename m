@@ -2,180 +2,145 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57B27C6778D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:56:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6BFDC6778D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:57:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05F7020833
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:56:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63D7B20833
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:57:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="NoxvxR7e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05F7020833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Sri3OViW";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Sri3OViW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63D7B20833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728015AbeILVB4 (ORCPT
+        id S1728038AbeILVCY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 17:01:56 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:45710 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727865AbeILVBu (ORCPT
+        Wed, 12 Sep 2018 17:02:24 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:54638 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726795AbeILVCY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 17:01:50 -0400
-Received: by mail-pg1-f195.google.com with SMTP id x26-v6so1265159pge.12
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 08:56:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=EMNkJdPwdBpD5xBITzB4iDjL2dq/Im2icV1KK6sTT1c=;
-        b=NoxvxR7eAuvDTalLZRHwo0Pcw4WQHG+TMxP2qAjjjvfLZHyQ6uZzB6ESNiYTWrTpdg
-         K+aJNZZzMpDlPC0q4QaNmQOLpW5XbbcF/DArG33F09wwIxWNxCG5p3ksLpiCp6d2S8Lz
-         b/IhQvUFrxIywkPl9KyGUuBcH11VrOmJUgiBlPbk+1lEBmIfOFFhqhzRW9GGXjqR/8Bw
-         IZOy0hRDUyYs0FsI5mJyWGAXyeI4EdMm0nmkkOJBkeRUAfnZkiU2Q1v0N4NXVqar5aZf
-         dFsIhcXEhnMXmrsPgiSilt1u+sT9/Y/K4ANKH3ZCVJd4O4irK0pks2dRMx40d+gmBNSq
-         cxTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=EMNkJdPwdBpD5xBITzB4iDjL2dq/Im2icV1KK6sTT1c=;
-        b=fPtdeRTF6uJH/+pp0tleOQ5LJWO9BGpt8dsq/NbYje7K2khmVR4/rlbUARI1DDgp0z
-         bU3ZZef+MEUJJI3ev879BxhcyGcSjI3rZ2s+zY7DvGSXadwaovNTxmNmJOPOWlupCc1L
-         5IhlI9NMS23kIOtE+M9a9xxBAR+vUMv0IKcjJyTDKCc+wDwWZIoO+Tlq7euOJ1cHoJaw
-         Ni2e5IJsGhL9Va3Lec8LdnkOt06Kcf9HJeQAr4goxXPnmQuhzGzUycmdJsCpz3NIPneT
-         Xy0StIKQxUgbE2LYN4yxO+WX7w8jAXoD2pU6ixyy28ZUPvK/mtegu1wAFp1C3AUurxVg
-         yZXA==
-X-Gm-Message-State: APzg51BXZuxmE81vWf9QyQxoiyAlieVz8AcZQGVTzO20yvSjSNOyvBQp
-        r7skZLlNTM6ssZ0wlZQ62dUT5Q==
-X-Google-Smtp-Source: ANB0Vdb9g/Gm1pm1I3lrG4BgLhJv4cd9YkSV09pAi5W7gHm1GPsLilz+jfhvSO/13u7JKNWvZsWiPg==
-X-Received: by 2002:a62:9c17:: with SMTP id f23-v6mr3079094pfe.209.1536767801500;
-        Wed, 12 Sep 2018 08:56:41 -0700 (PDT)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id g25-v6sm4396806pfd.23.2018.09.12.08.56.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Sep 2018 08:56:40 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1g07VP-0007Mj-9I; Wed, 12 Sep 2018 09:56:39 -0600
-Date:   Wed, 12 Sep 2018 09:56:39 -0600
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        qat-linux@intel.com, linux-crypto@vger.kernel.org,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linaro-mm-sig@lists.linaro.org, amd-gfx@lists.freedesktop.org,
-        linux-input@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v2 05/17] compat_ioctl: move more drivers to
- generic_compat_ioctl_ptrarg
-Message-ID: <20180912155639.GF5633@ziepe.ca>
-References: <20180912150142.157913-1-arnd@arndb.de>
- <20180912151134.436719-1-arnd@arndb.de>
+        Wed, 12 Sep 2018 17:02:24 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id A0BCA6031A; Wed, 12 Sep 2018 15:57:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1536767835;
+        bh=Dl55jdrfJuZK70jJZ0xffHrBxeRT+2bvmdfocXKtsYM=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Sri3OViWGWB07E13sHiMbpOtAhYgCDwZz24o0wJ5nrzMiFDYSLGw261qwFuy8HiFp
+         fF9/0IaWpGdcA1Yd73oEqal410Qyp658b4ts33MziaGmeVyER/LmItesVoiVEzRGri
+         yVd4L3miC6UWxZD9DZ69pAHbhVVA4/mHOm/vVYk4=
+Received: from [10.226.60.81] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 86E5E602A7;
+        Wed, 12 Sep 2018 15:57:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1536767835;
+        bh=Dl55jdrfJuZK70jJZ0xffHrBxeRT+2bvmdfocXKtsYM=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Sri3OViWGWB07E13sHiMbpOtAhYgCDwZz24o0wJ5nrzMiFDYSLGw261qwFuy8HiFp
+         fF9/0IaWpGdcA1Yd73oEqal410Qyp658b4ts33MziaGmeVyER/LmItesVoiVEzRGri
+         yVd4L3miC6UWxZD9DZ69pAHbhVVA4/mHOm/vVYk4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 86E5E602A7
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+Subject: Re: [PATCH] ACPI/PPTT: Handle architecturally unknown cache types
+To:     Sudeep Holla <sudeep.holla@arm.com>,
+        Jeremy Linton <jeremy.linton@arm.com>, rjw@rjwysocki.net,
+        linux-acpi@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, vkilari@codeaurora.org
+References: <1536694334-5811-1-git-send-email-jhugo@codeaurora.org>
+ <f62f22a6-2dd8-f254-dbaf-b9e224099afd@arm.com>
+ <e74f2208-ac0d-6c45-8ddb-5b77d6a42fef@codeaurora.org>
+ <c34452c2-d1e8-19d8-45c1-b48ecf14bbd7@arm.com>
+ <98e2e6fa-7256-b5ac-7d2e-42c858c6e57c@codeaurora.org>
+ <af280111-5dec-a4e1-7dfd-20f38a9fd8ab@arm.com>
+ <2873c62f-1bf9-5aa0-b3a2-07980ef61d35@arm.com>
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+Message-ID: <c835027a-9e3e-221b-01da-0e1930c4e58f@codeaurora.org>
+Date:   Wed, 12 Sep 2018 09:57:14 -0600
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180912151134.436719-1-arnd@arndb.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <2873c62f-1bf9-5aa0-b3a2-07980ef61d35@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 05:08:52PM +0200, Arnd Bergmann wrote:
-> The .ioctl and .compat_ioctl file operations have the same prototype so
-> they can both point to the same function, which works great almost all
-> the time when all the commands are compatible.
+On 9/12/2018 9:38 AM, Sudeep Holla wrote:
 > 
-> One exception is the s390 architecture, where a compat pointer is only
-> 31 bit wide, and converting it into a 64-bit pointer requires calling
-> compat_ptr(). Most drivers here will ever run in s390, but since we now
-> have a generic helper for it, it's easy enough to use it consistently.
 > 
-> I double-checked all these drivers to ensure that all ioctl arguments
-> are used as pointers or are ignored, but are not interpreted as integer
-> values.
+> On 12/09/18 16:27, Sudeep Holla wrote:
+>>
+>>
+>> On 12/09/18 15:41, Jeffrey Hugo wrote:
 > 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->  drivers/android/binder.c                    | 2 +-
->  drivers/crypto/qat/qat_common/adf_ctl_drv.c | 2 +-
->  drivers/dma-buf/dma-buf.c                   | 4 +---
->  drivers/dma-buf/sw_sync.c                   | 2 +-
->  drivers/dma-buf/sync_file.c                 | 2 +-
->  drivers/gpu/drm/amd/amdkfd/kfd_chardev.c    | 2 +-
->  drivers/hid/hidraw.c                        | 4 +---
->  drivers/iio/industrialio-core.c             | 2 +-
->  drivers/infiniband/core/uverbs_main.c       | 4 ++--
->  drivers/media/rc/lirc_dev.c                 | 4 +---
->  drivers/mfd/cros_ec_dev.c                   | 4 +---
->  drivers/misc/vmw_vmci/vmci_host.c           | 2 +-
->  drivers/nvdimm/bus.c                        | 4 ++--
->  drivers/nvme/host/core.c                    | 2 +-
->  drivers/pci/switch/switchtec.c              | 2 +-
->  drivers/platform/x86/wmi.c                  | 2 +-
->  drivers/rpmsg/rpmsg_char.c                  | 4 ++--
->  drivers/sbus/char/display7seg.c             | 2 +-
->  drivers/sbus/char/envctrl.c                 | 4 +---
->  drivers/scsi/3w-xxxx.c                      | 4 +---
->  drivers/scsi/cxlflash/main.c                | 2 +-
->  drivers/scsi/esas2r/esas2r_main.c           | 2 +-
->  drivers/scsi/pmcraid.c                      | 4 +---
->  drivers/staging/android/ion/ion.c           | 4 +---
->  drivers/staging/vme/devices/vme_user.c      | 2 +-
->  drivers/tee/tee_core.c                      | 2 +-
->  drivers/usb/class/cdc-wdm.c                 | 2 +-
->  drivers/usb/class/usbtmc.c                  | 4 +---
->  drivers/video/fbdev/ps3fb.c                 | 2 +-
->  drivers/virt/fsl_hypervisor.c               | 2 +-
->  fs/btrfs/super.c                            | 2 +-
->  fs/ceph/dir.c                               | 2 +-
->  fs/ceph/file.c                              | 2 +-
->  fs/fuse/dev.c                               | 2 +-
->  fs/notify/fanotify/fanotify_user.c          | 2 +-
->  fs/userfaultfd.c                            | 2 +-
->  net/rfkill/core.c                           | 2 +-
->  37 files changed, 40 insertions(+), 58 deletions(-)
+> [...]
+> 
+>>>
+>>> Correct.  However, what if you have a NOCACHE (not architecturally
+>>> specified), that is fully described in PPTT, as a non-unified cache
+>>> (data only)?  Unlikely?  Maybe.  Still seem possible though, therefore I
+>>> feel this assumption is suspect.
+>>>
+>>
+>> Yes, we have other issues if the architecturally not specified cache is
+>> not unified irrespective of what PPTT says. So we may need to review and
+>> see if that assumption is removed everywhere.
+>>
+>> Until then why can't a simple change fix the issue you have:
+>>
+>> -->8
+>>
+>> diff --git i/drivers/acpi/pptt.c w/drivers/acpi/pptt.c
+>> index d1e26cb599bf..f74131201f5e 100644
+>> --- i/drivers/acpi/pptt.c
+>> +++ w/drivers/acpi/pptt.c
+>> @@ -406,7 +406,8 @@ static void update_cache_properties(struct cacheinfo
+>> *this_leaf,
+>>           * update the cache type as well.
+>>           */
+>>          if (this_leaf->type == CACHE_TYPE_NOCACHE &&
+>> -           valid_flags == PPTT_CHECKED_ATTRIBUTES)
+>> +           (valid_flags == PPTT_CHECKED_ATTRIBUTES ||
+>> +            found_cache->flags & ACPI_PPTT_CACHE_TYPE_VALID))
+> 
+> Looking at this again, if we are supporting just presence of cache type
+> and size(may be), then we can drop the whole valid_flags thing here.
+> 
+>>                  this_leaf->type = CACHE_TYPE_UNIFIED;
+>>   }
+>>
 
-> diff --git a/drivers/infiniband/core/uverbs_main.c b/drivers/infiniband/core/uverbs_main.c
-> index 823beca448e1..f4755c1c9cfa 100644
-> +++ b/drivers/infiniband/core/uverbs_main.c
-> @@ -930,7 +930,7 @@ static const struct file_operations uverbs_fops = {
->  	.release = ib_uverbs_close,
->  	.llseek	 = no_llseek,
->  	.unlocked_ioctl = ib_uverbs_ioctl,
-> -	.compat_ioctl = ib_uverbs_ioctl,
-> +	.compat_ioctl = generic_compat_ioctl_ptrarg,
->  };
->  
->  static const struct file_operations uverbs_mmap_fops = {
-> @@ -941,7 +941,7 @@ static const struct file_operations uverbs_mmap_fops = {
->  	.release = ib_uverbs_close,
->  	.llseek	 = no_llseek,
->  	.unlocked_ioctl = ib_uverbs_ioctl,
-> -	.compat_ioctl = ib_uverbs_ioctl,
-> +	.compat_ioctl = generic_compat_ioctl_ptrarg,
->  };
->  
->  static struct ib_client uverbs_client = {
+Yes, this change fixes my usecase.  I think it invalidates the comment, 
+and really, the comment should probably mention that we assume unified 
+type because there are other issues in supporting architecturally not 
+specified inst/data only caches.
 
-For uverbs:
+Do you want a V2 with this?  If so, do you want the fixes tag removed 
+since you seem to view this as not a bug?
 
-Acked-by: Jason Gunthorpe <jgg@mellanox.com>
+I don't think I clearly understand the purpose of the valid flags, 
+therefore I feel as though I'm not sure if it can be dropped or not.  Is 
+it fair to say that what the valid flags is accomplishing is identifying 
+if we have a sufficient level of information to support this cache?  If 
+not, then should the cacheinfo driver not expose any sysfs information 
+about the cache?
 
-It is very strange, this patch did not appear in the RDMA patchworks,
-I almost missed it  :|
-
-Jason
+-- 
+Jeffrey Hugo
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
+Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
