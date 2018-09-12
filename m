@@ -2,107 +2,170 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2DA4C4167B
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 18:41:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02086C4167B
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 18:44:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A570920882
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 18:41:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F3E82088E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 18:44:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="JlqOurGE";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jkYgncg+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A570920882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kroah.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="peSNWTYQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F3E82088E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728126AbeILXqv (ORCPT
+        id S1728009AbeILXui (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 19:46:51 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:47621 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727809AbeILXqv (ORCPT
+        Wed, 12 Sep 2018 19:50:38 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:46236 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727651AbeILXuh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 19:46:51 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id 05A0021ECD;
-        Wed, 12 Sep 2018 14:41:03 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Wed, 12 Sep 2018 14:41:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-        :content-type:date:from:in-reply-to:message-id:mime-version
-        :references:subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=rWieNYIbNtIzH9LhfJLaGIVejfYtMlwqedJ1Kp1BlD0=; b=JlqOurGE
-        gGaHqzT/QBHM6Qd6yXYdXqNLFjhTnwG79K0am0J0BUFMPoYrUFK3oNim+oyJqpn7
-        5N7voDIGSbQoMQMubDnayAvAt3Xi3yUWn4D1QMssQSjVCCaWFI9qbs1PuljGVvy+
-        HV8zSzZySlTndcJD8gaM86ttnV/5x/dkTNH68bmu5KfybNEMB91TnhClhMkBgWzU
-        R6HN+zXGHUSffh0gxSuJd4YauQJb3SfI2tWcyBIrEt1iEMGGY79CSiiIIFJuH6hN
-        P7wEZ9XzdeSXRQjNa3XtltByusK+shYJwQc3YTGWhnzFRMszKgYQ2O46mbSlcg+m
-        ilWMNc0ha6tOvQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-sender
-        :x-me-sender:x-sasl-enc; s=fm3; bh=rWieNYIbNtIzH9LhfJLaGIVejfYtM
-        lwqedJ1Kp1BlD0=; b=jkYgncg+1SmDxbEdl+uvHImX+LjO8p7VyR+EJSRjFbGbj
-        WZ9Uxi7O77jTw4vynfaTC/pKcCNfL25ZNP9PfhJlesIfhPUnAXmG5/ZzQT0XX+6I
-        fV6OpKSLmBtqWEwrvocDuL0SnxuOmtSGERpJWvk+kUEFIpBgnh7EcCW0+ersJUmh
-        YZeoqYNruMXWGJiBecTv44925ILLgt1vbr6K1mitrB+Xmrfq0dBr1YWvmrRq8v4H
-        3k5e2UQDitqoVkvt8lHVbwHOETIW6gyqQ/wERYGhCk+9wmUzio9hF7++SKpHZA3c
-        WJlpbQNfC6Q5JlVzp5GMOO6PEIoh5cQ4G4hdD3d5w==
-X-ME-Proxy: <xmx:vl2ZW1wLF36Yl2ci5wnspXIdA68rg6W_5Vx4A7E8vOz9HxzIxjkbYw>
-    <xmx:vl2ZW_XdIfcHjD3x62nGYgek-_HmJw-LvI9WOHSiU66tWTFjs63gFg>
-    <xmx:vl2ZW_P6iy5DLTrH3-jp_wgsl8koyPNOzxtC2vM2OMoYsxlnjsxE4w>
-    <xmx:vl2ZW5AmfTXz1f0mShs7s8S2GnyNBNYsfyQQsjZpdWzHI48pZfrWaQ>
-    <xmx:vl2ZW0eJOzdCabCmCuGoYnKQtH47wfKlvBDHCmfsjqMDFWgVG3LwMw>
-    <xmx:vl2ZWxEigUzJ8xFNzzQvN0UFC2oiuEFDPM_Ep0F-BIzqTInQjMGC2A>
-X-ME-Sender: <xms:vl2ZW2ttLOl1SC6x3W76yC-qzfUzq-fbVpjcL_zfIDm6W5KeYzcFKw>
-Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.messagingengine.com (Postfix) with ESMTPA id C09E2102D7;
-        Wed, 12 Sep 2018 14:41:01 -0400 (EDT)
-Date:   Wed, 12 Sep 2018 20:41:00 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
-Subject: Re: [PATCH stable] x86/tsc: Prevent result truncation on 32 bit
-Message-ID: <20180912184100.GC10317@kroah.com>
-References: <alpine.DEB.2.21.1809121439390.9957@nanos.tec.linutronix.de>
+        Wed, 12 Sep 2018 19:50:37 -0400
+Received: by mail-wr1-f67.google.com with SMTP id a108-v6so3088737wrc.13
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 11:44:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HaAWnvEhg5VqRaRUkrmZ77pD5Cyma8aZWARe9JtLxhU=;
+        b=peSNWTYQGZ0UsAymEVWgWTcNEkW6I6afjVpjxnUicpe8GsIoFvQ8HA4pUDYSDqGOe7
+         ARSRHDyPgec9dseiTKu4d6Z27zPpPceG8rzecjbi8O/TkNTqebUBJTLBGmgtyerJXTjk
+         Qd66p3RVS0hdrFs/molK7G+FFEhhtsp1idf8b/NAGOv5UvbpCfeb9PRtOQafaecU1tWH
+         qHMjx0YmYOlAn2oLyuBGrK684lzAFDfUQWuhNcHplnX75pJkDq/ZcIZHkiY4dFFnMspj
+         BlSIEMyVqWrYSAXJbKi7CMnkQs5LEcfgyt4SjHFMEKYITX+w7iIkBosm896lC8pPy0JJ
+         +Rkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HaAWnvEhg5VqRaRUkrmZ77pD5Cyma8aZWARe9JtLxhU=;
+        b=JOJyMge4DQ0e6Kjhn2WUkKClI9oBnGGoVC23aiCtCarXdfK8W7ChOmXZbd+XdiHsbj
+         k5cEdzdEtWS9QYtFOtG3e/mQZD+23OOyo8WHojefis7wZGuClusI+5n9GjBF7naziRa4
+         sZJZWYcJklHGcSKvPEWRV+T5vNojX4UtGBotxY5rmY1s3fAnXQ9T4k0h8JKCESDuqp3B
+         +2G1upFiKhJCI4kOybfk0WEpuDF2jRBesgJQuQVqgo5XhV8w5xtGXHv5D5EyxkxxCtpy
+         q/ky4Cn0O2W7Ag03IZmKPeSGs9O3kuq+L0+NiFUALFYOV9hK0v97lhCHYarzjaeaSMK4
+         kwAQ==
+X-Gm-Message-State: APzg51Dv7XpTe5uxEQApamnIpafW6D4wL0PJbSyLJPJhD8ILVjxOON+S
+        RhqconeTQ0/52jyuUSMVAetoKeBigfOBnE/XsqI=
+X-Google-Smtp-Source: ANB0VdZh4ZVDaYe4ameMVLnV2zaJPjWzpm4q2XrybevryGMBG+mRZXo9cqgsjasJEAMxDEewkpYG+wGXSuOF8OOeGhc=
+X-Received: by 2002:adf:9366:: with SMTP id 93-v6mr2505534wro.60.1536777887786;
+ Wed, 12 Sep 2018 11:44:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1809121439390.9957@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20180912002559.1853-1-natechancellor@gmail.com>
+ <CAKwvOdkMg_1JxVNhKrUM0CZxF6nQo8c5h7t4zu4RP2xEXyQdKQ@mail.gmail.com> <20180912183843.GB30421@flashbox>
+In-Reply-To: <20180912183843.GB30421@flashbox>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Wed, 12 Sep 2018 14:44:34 -0400
+Message-ID: <CADnq5_MHoZXf+16ZqoA-h974-=2Ewk1TwbdiuAs71X6WiuL4GQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu: Add braces to initialize task_info subojects
+To:     natechancellor@gmail.com
+Cc:     ndesaulniers@google.com, Chunming Zhou <David1.Zhou@amd.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>, richardsmith@google.com,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        "Deucher, Alexander" <alexander.deucher@amd.com>,
+        Christian Koenig <christian.koenig@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 02:42:08PM +0200, Thomas Gleixner wrote:
-> Subject: x86/tsc: Prevent result truncation on 32 bit
-> From: Chuanhua Lei <chuanhua.lei@linux.intel.com>
-> Date: Thu Sep 6 18:03:23 2018 +0800
-> 
-> From: Chuanhua Lei <chuanhua.lei@linux.intel.com>
-> 
-> Commit 17f6bac2249356c795339e03a0742cd79be3cab8 upstream.
-> 
-> Loops per jiffy is calculated by multiplying tsc_khz with 1e3 and then
-> dividing it by HZ.
->     
-> Both tsc_khz and the temporary variable holding the multiplication result
-> are of type unsigned long, so on 32bit the result is truncated to the lower
-> 32bit.
->     
-> Use u64 as type for the temporary variable and cast tsc_khz to it before
-> multiplying.
->     
-> [ tglx: Backport to stable. Due to massive code changes is the upstream
->   	commit not applicable anymore. The issue has gone unnoticed in
->   	kernels pre 4.19 because the bogus LPJ value gets fixed up in a
->   	later stage of early boot, but it still might cause subtle and hard
->   	to debug issues between these two points. ]
+On Wed, Sep 12, 2018 at 2:40 PM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
+>
+> On Wed, Sep 12, 2018 at 10:38:30AM -0700, Nick Desaulniers wrote:
+> > On Tue, Sep 11, 2018 at 5:26 PM Nathan Chancellor
+> > <natechancellor@gmail.com> wrote:
+> > >
+> > > Clang warns if there are missing braces around a subobject
+> > > initializer.
+> > >
+> > > drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c:1447:41: warning: suggest braces
+> > > around initialization of subobject [-Wmissing-braces]
+> > >                 struct amdgpu_task_info task_info = { 0 };
+> > >                                                       ^
+> > >                                                       {}
+> > > 1 warning generated.
+> > >
+> > > drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c:262:41: warning: suggest braces
+> > > around initialization of subobject [-Wmissing-braces]
+> > >                 struct amdgpu_task_info task_info = { 0 };
+> > >                                                       ^
+> > >                                                       {}
+> > > 1 warning generated.
+> > >
+> > > Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+> > > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> > > ---
+> > >  drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c | 2 +-
+> > >  drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c | 2 +-
+> > >  2 files changed, 2 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c b/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
+> > > index 9333109b210d..968cc1b8cdff 100644
+> > > --- a/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
+> > > +++ b/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
+> > > @@ -1444,7 +1444,7 @@ static int gmc_v8_0_process_interrupt(struct amdgpu_device *adev,
+> > >                 gmc_v8_0_set_fault_enable_default(adev, false);
+> > >
+> > >         if (printk_ratelimit()) {
+> > > -               struct amdgpu_task_info task_info = { 0 };
+> > > +               struct amdgpu_task_info task_info = { { 0 } };
+> >
+> > Hi Nathan,
+> > Thanks for this patch.  I discussed this syntax with our language
+> > lawyers.  Turns out, this is not quite correct, as you're now saying
+> > "initialize the first subobject to zero, but not the rest of the
+> > object."  -Wmissing-field-initializers would highlight this, but it's
+> > not part of -Wall.  It would be more correct to zero initialize the
+> > full struct, including all of its subobjects with `= {};`.
+> >
+>
+> Good point, I was debating on which one was correct. There are several
+> places in this driver that use the multiple brace + 0 idiom, which is
+> why I used this form. I will spin up a v2 with your suggestion, thank
+> you for the review!
 
-Thanks for the backport, now queued up.
+Feel free to fix up the others as well. The others were only changed
+due to the same warning you sent the patch for.
 
-greg k-h
+Alex
+
+>
+> Nathan
+>
+> > >
+> > >                 amdgpu_vm_get_task_info(adev, entry->pasid, &task_info);
+> > >
+> > > diff --git a/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c
+> > > index 72f8018fa2a8..a781a5027212 100644
+> > > --- a/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c
+> > > +++ b/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c
+> > > @@ -259,7 +259,7 @@ static int gmc_v9_0_process_interrupt(struct amdgpu_device *adev,
+> > >         }
+> > >
+> > >         if (printk_ratelimit()) {
+> > > -               struct amdgpu_task_info task_info = { 0 };
+> > > +               struct amdgpu_task_info task_info = { { 0 } };
+> > >
+> > >                 amdgpu_vm_get_task_info(adev, entry->pasid, &task_info);
+> > >
+> > > --
+> > > 2.18.0
+> > >
+> >
+> >
+> > --
+> > Thanks,
+> > ~Nick Desaulniers
+> _______________________________________________
+> amd-gfx mailing list
+> amd-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
