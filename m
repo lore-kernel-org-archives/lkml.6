@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50596C07520
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:39:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4260DC070C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:40:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEBF62133F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:39:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 933C72133F
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:40:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="qdkubO8s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEBF62133F
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="vxF1mpFh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 933C72133F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728349AbeIMApZ (ORCPT
+        id S1728303AbeIMAqX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 20:45:25 -0400
-Received: from mail-eopbgr690041.outbound.protection.outlook.com ([40.107.69.41]:4000
-        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
+        Wed, 12 Sep 2018 20:46:23 -0400
+Received: from mail-by2nam03on0052.outbound.protection.outlook.com ([104.47.42.52]:26992
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728138AbeIMApX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 20:45:23 -0400
+        id S1728102AbeIMAqX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 20:46:23 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YJzB+KnyFKhLEmWrAsNYQ8EP3hzk/DxRcJ5zh/8+xcg=;
- b=qdkubO8sE65/TPM1WDJTkI2WF24nIO32ajawDOypfRFDLSOlav5HtnUBTdOGRfX8juFSuQA3JAB0OT7+vukA9dgNNP0RszjHEsDELflR7GB6y9zrv72T0Px42gMLsb23hMHTdTDOcdybzV+Cif/hibuBZm/NgJL73ztOPlkNIDI=
-Received: from MWHPR0201CA0100.namprd02.prod.outlook.com
- (2603:10b6:301:75::41) by BYAPR02MB5112.namprd02.prod.outlook.com
- (2603:10b6:a03:70::21) with Microsoft SMTP Server (version=TLS1_2,
+ bh=4N/RXQt4pqBadGTRK/wZH83Q0bP12sILNZCnlWFzEEM=;
+ b=vxF1mpFhBYv2pddu3vCaDk55rFa8lCcuo92jyesM8SpRauP7j0ea12OCF2TBM+5pp7rMxSL1jJefZfI9JztRgVUdEsadk0saYGGfz+c7eajYu8vFm7gqVqvAWGL4uO03rx7kt1BGtaMLEhI3Wtr7hqFxckgtJqfQkFHYStRM+Xg=
+Received: from SN4PR0201CA0050.namprd02.prod.outlook.com
+ (2603:10b6:803:20::12) by BYAPR02MB4472.namprd02.prod.outlook.com
+ (2603:10b6:a03:10::15) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1122.15; Wed, 12 Sep
  2018 19:39:15 +0000
-Received: from BL2NAM02FT047.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e46::206) by MWHPR0201CA0100.outlook.office365.com
- (2603:10b6:301:75::41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1143.15 via Frontend
+Received: from BL2NAM02FT010.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e46::200) by SN4PR0201CA0050.outlook.office365.com
+ (2603:10b6:803:20::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1122.16 via Frontend
  Transport; Wed, 12 Sep 2018 19:39:15 +0000
 Authentication-Results: spf=pass (sender IP is 149.199.60.83)
  smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
@@ -48,31 +48,31 @@ Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
  149.199.60.83 as permitted sender) receiver=protection.outlook.com;
  client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
 Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- BL2NAM02FT047.mail.protection.outlook.com (10.152.77.9) with Microsoft SMTP
+ BL2NAM02FT010.mail.protection.outlook.com (10.152.77.53) with Microsoft SMTP
  Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1143.14
- via Frontend Transport; Wed, 12 Sep 2018 19:39:15 +0000
+ via Frontend Transport; Wed, 12 Sep 2018 19:39:14 +0000
 Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
         by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
         (envelope-from <jolly.shah@xilinx.com>)
-        id 1g0Ayo-0002SA-PJ; Wed, 12 Sep 2018 12:39:14 -0700
+        id 1g0Ayo-0002S9-BJ; Wed, 12 Sep 2018 12:39:14 -0700
 Received: from [127.0.0.1] (helo=localhost)
         by xsj-pvapsmtp01 with smtp (Exim 4.63)
         (envelope-from <jolly.shah@xilinx.com>)
-        id 1g0Ayj-0001JA-La; Wed, 12 Sep 2018 12:39:09 -0700
-Received: from xsj-pvapsmtp01 (mailhost.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id w8CJcwr3003381;
-        Wed, 12 Sep 2018 12:38:58 -0700
+        id 1g0Ayj-0001JA-7l; Wed, 12 Sep 2018 12:39:09 -0700
+Received: from xsj-pvapsmtp01 (xsj-smtp.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id w8CJcwm2003385;
+        Wed, 12 Sep 2018 12:38:59 -0700
 Received: from [172.19.2.91] (helo=xsjjollys50.xilinx.com)
         by xsj-pvapsmtp01 with esmtp (Exim 4.63)
         (envelope-from <jollys@xilinx.com>)
-        id 1g0AyY-0001Go-IY; Wed, 12 Sep 2018 12:38:58 -0700
+        id 1g0AyY-0001Go-OX; Wed, 12 Sep 2018 12:38:58 -0700
 From:   Jolly Shah <jolly.shah@xilinx.com>
 To:     <olof@lixom.net>, <michal.simek@xilinx.com>, <arm@kernel.org>
 CC:     <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, Jolly Shah <jollys@xilinx.com>
-Subject: [PATCH v12 1/6] dt-bindings: firmware: Add bindings for ZynqMP firmware
-Date:   Wed, 12 Sep 2018 12:38:35 -0700
-Message-ID: <1536781120-22794-2-git-send-email-jollys@xilinx.com>
+Subject: [PATCH v12 4/6] firmware: xilinx: Add clock APIs
+Date:   Wed, 12 Sep 2018 12:38:38 -0700
+Message-ID: <1536781120-22794-5-git-send-email-jollys@xilinx.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1536781120-22794-1-git-send-email-jollys@xilinx.com>
 References: <1536781120-22794-1-git-send-email-jollys@xilinx.com>
@@ -81,55 +81,56 @@ X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
 X-TM-AS-User-Approved-Sender: Yes;Yes
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(136003)(376002)(39860400002)(396003)(346002)(2980300002)(438002)(199004)(189003)(54906003)(9786002)(305945005)(5660300001)(16586007)(47776003)(2906002)(50466002)(81166006)(81156014)(106002)(110136005)(316002)(106466001)(356003)(336012)(48376002)(446003)(426003)(77096007)(107886003)(186003)(63266004)(36386004)(4326008)(478600001)(7696005)(486006)(2616005)(72206003)(6666003)(126002)(476003)(8936002)(26005)(8676002)(36756003)(11346002)(2201001)(50226002)(44832011)(76176011)(51416003)(107986001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR02MB5112;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;BL2NAM02FT047;1:g4jRqbCEa1GWugf9ipjoYViOBWtOmOHMh+Inevau7jBV1ESitNL4mf09LNvBFaUDKgsCuu9FV8aTnitQ64mh6B7cutfkUkduo0hjjK/TkrQWieE77TvGZeweUbrCr8aW
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(136003)(39860400002)(346002)(376002)(2980300002)(438002)(189003)(199004)(336012)(305945005)(6666003)(76176011)(8936002)(7696005)(106002)(8676002)(26005)(50466002)(106466001)(51416003)(50226002)(110136005)(54906003)(186003)(47776003)(77096007)(48376002)(63266004)(36386004)(81166006)(36756003)(2906002)(4326008)(316002)(107886003)(81156014)(446003)(16586007)(2616005)(9786002)(5660300001)(476003)(426003)(11346002)(478600001)(44832011)(356003)(72206003)(126002)(486006)(2201001)(14444005)(107986001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR02MB4472;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;BL2NAM02FT010;1:MigewVT5LOozU1wOEuyJrkfH8i3BKIIGw/PNhGuxzDosA6wPAK59QNBTB2J1g+IoJsRSUTs0+xV47T73frzLHUs7L/MJrZxtliLDVXAN1RX29julD82dX/Q5d8Ql9YO6
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 34635373-281a-4893-210c-08d618e76c6c
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4608076)(2017052603328)(7153060);SRVR:BYAPR02MB5112;
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB5112;3:dgr6Her3c4+s3jrH+mfH6g4MGa5GOI0waAnP7FhqwYefZOYKjUpj3I57FHAnICPPQ9xWNg3THIfvr7OuQhvniE87U82ppBxRgqEGsSRb9a31wACxiooS5cZJj7jBJWoB6GiQC8CdRpWQoOkRPbDXhWXrDmhW8IDEekLLR+G61P4iaxseIl6ZLu3PYT8mY3HP2UmeSFm3fIR2WafoEGbp9Odb4qVPd0RGnrq76UtMTaDmPkjOZiuT0Uq142yROS6VwCGtBoIB2sqF+pSvPXRiJ5UzOyk1T6YjVbtlS+mHcNR9wHCgHQ7zsGfFT43AiSoyFuudT0kxphiwMXBeIT+i5PrGaIXUWaEZMSauYTxt8v0=;25:gI1cQ5AOGgLqy2sPMTQ5Q258QRc80eqDFd+TIIp74Lk8xehstIC/yIdGnJA9aC0+4WqnaKn7dg5l8AHdM/Wkr0V6lGG22WDAdT5UoQJ4Lxd9m9kGZQLtGHdWq2igl/blYVwUnN1+CEpJx5ajYuxX5AB+yf3GrPB/aR/76TqM78IT4PdBPq1SOB/wWBFPfeciryFTk56cPmaILBhEdUDTlLhOszgsPNoTuaezTDjdIZh1fHGZUGoNrl0utW18wUaSMNnSsDkCfWif/o/ZgBLkmtcOX72vtX2rQKrOHJvJVhIifPSiLACJF3OyzaWwNwR4uNvV8MefGH8dGt0ctIIXrw==
-X-MS-TrafficTypeDiagnostic: BYAPR02MB5112:
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB5112;31:5/hXjShkXeGaSuuSb3fr9qG+a004KhKoH9WGpUX/EvmxNOJtViNJbR3GQb0qzRhk23kpNlPkZE1USquTM6JeMfirpM0K4rDicyp7Pf9p5jp3jU6RIkS8Jk4AhH3150MD7s19/J0H9uJh9G4dHdQ3fV44x19ux8+ACt1vhyBzpWUPKCSnt8C/MXcmbEl61T9LtR4wGGFXjFruo2p6IID6VeanribawrJBsDPF8jkRQTE=;20:AIn1M3lQiurTDj4a37mpiPhflDv8CBEYTWdokEcMKUK50kNoaFna3geNN+pQNjo/OFr97prQPO8q/epHjDpOIgw031fSa7ybv/QaYtn4aLOBiXQSk5SUU4HgQ9BD/F6STGJHThTcqz3/42LxFjOl6upOQMuXVNo195Rqi5VNHRCZ/f0sh4VyrosIvD3zRjwI/rmCxyWKEYFqAFmUj+msVAY2Pb4/5AWpJzZDE3ecKfAIqu1z64ClUB/+I6qlkDc8qW53SSUqq/0q4zKWgFS//oiR/Xdsx5EmXHFKuGoIjuoTa/ie5nvt7rWV3rFTeDlKW+ttVMKTBiGJ568hMeEWvIu1ZYLfbIlvDCHZfQouitowXUCU9L2mHP9eLS/Q0+QsoF5PTsa6n0TYvDDQymTDhnEHTm/iKVyK18DFqBn79pSOKAMH6VxoznRI5jqWqLfMcIVqFNmR/hp/lKTM1I9wS58YGwWan1YLlIyRvq8lFqWsJRTfXtWLPEoWvKoYTaCR
+X-MS-Office365-Filtering-Correlation-Id: 1e3374f2-44e6-4620-4390-08d618e76c3c
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4608076)(2017052603328)(7153060);SRVR:BYAPR02MB4472;
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4472;3:g77OE/xULxCNdkMspXdvBmHMAH+3QwYiONmGlcSKuL1AgaMYBb/MPPEh85yRit0TIoXTZqbC8+u0zNQR785XCiNANFhzVp5e9NUgdeo96iSLWl9FdpvnnPKtVwfjytJppUXSZGh5rl5kJD1uHe07Mn18xZVtzYaefm80CbyQ+lX3ffIhs3JrriW8+TgifdS9dFQPvdGBQZymr+OHpfemv1AOnLOKu3nip/Hfv2q2pVReEx4IxZlkxD5adk1e7u6cgTGsAMeJyqKDn3J94ralGnmvl8B3uJBzqM8W6AurooCe5ig/Dxs/CdOGc8ObmLR3ZpIhYKoN6d8T45WXiSO4ftwASQzmR50qMp0Ci3AfKuI=;25:8UC7hzt2cwpiy/fMW569L9bJ1i26VnoI6EE0m0LYnoV7L7fDCTB/JXs0tUGxVPl3R3eB5r/GgQuoQbLZjwy+fSmG2ICm5OjbI/ulGFLplfKnWdZ30BpK4TdXJnvI3jOWKz8fgWI/rYmgjyut3SYVmEhDLjJYgi96spzhdGeTdEX4uhc6luKxmtlPBrPTF7/61a6ZtxIc6IQWTM22wfWvt2pG6q0H9+alOewH6r1olyBm6mMEpiCMR0m2Mapn9YZ1yILtFkXTGLJnNINhxCLFkdhhyB6bTbIHvXPa5hOEZXNqwB3MEaislhf07jQZDzD/tqVP0lMY74O6035200Ie3A==
+X-MS-TrafficTypeDiagnostic: BYAPR02MB4472:
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4472;31:k6HDbQR2L5QZc5o9oXblo9GicYL9OyfjOQx6mDMG2TBi4GpeJ93IbvCHA4riUOV1xLXC8mzNYKbgWoBvEbhitjINfUkirvLNO/s2X0kJF9np+0zeEupFTt2FqVMyS1V32pAy4QTzrFpQGwIhbMoDy/1zJIGWfEWXufO6S3UlkHQzXRqP7cgWTeu3GKehd3fhMyXM7oXzD//8xfWes+W2zbNqyv8Rj6DXC8pKctlJ+2I=;20:2EePxveAV1dPn7W3flbEM4pi0onAz07aP3d5oAQL2imFvq5LvUcvif1KXNYh1U/5suqjL61dCsZfA5Zjl0Dmrbr3lHim4WxWWSqOgBRb93b/X8MId0LjUHlwsjz0GULCEXhtuowFPKaxiC39Lkm/HhyVE4D6A6J/aAEjkJZA6FyfRE7Wiz0AlkquVYjaYPA/Ycjw0gdeOF797PN4q0Uz4xpE+JlyjeacJQo09gPZb+VsUEprZqw3bCfWIJu8Xw1Aiv2VKu7RYgL8VmHBQ1T3xLckq4GM8SfOTgCmr99dQK5Bz/Fmtt1guhfjEy44rsLPp63KzG+ObyWpasNAAnYhAkaU11XmeP21tmcESZjEGMzFtB/L7zeS0plawfWPUuSLHSFhLB6QQU/0p91Qixw+Jxdtb7ZKmHhsmHH9hRRxEUaEN0X9pk1c1DrFOnFwuV+8er8ZWx857qrpFnRcJIVOd5qZZrxq9xhO5sn/RgrhokmY8+gihQu9r2Hr7pNO47RF
 X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-Microsoft-Antispam-PRVS: <BYAPR02MB5112510A0A985E28D0EEF097B81B0@BYAPR02MB5112.namprd02.prod.outlook.com>
+X-Microsoft-Antispam-PRVS: <BYAPR02MB4472F8AFF7B0903759FB7231B81B0@BYAPR02MB4472.namprd02.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(192813158149592);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231311)(944501410)(52105095)(93006095)(93004095)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(201708071742011)(7699050);SRVR:BYAPR02MB5112;BCL:0;PCL:0;RULEID:;SRVR:BYAPR02MB5112;
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB5112;4:FSOud1zICseVrCbAfGYrTFfbhtkngCDOpR+jdtZDKDGIKbnQV0si2p3tAenjUZBrZfANIpfsnea//LVL4sIWPaA225ThM3CsEfASWGlZ1og5jRQCYakCPGMG04dZ/wg7GuZgEP75E6Orz0I7nNx0WGGFnsRMjxDtvcuPAVScUDp4/kURPX+FL7K8G4/mmCKMfKMdBAYmTgCa46tt/cP30iO6ks1uskRnxx/qYDvDgmF9aAVpO2X3PaD6/xU1g71eShopZO2xPgt+YWHtITIqImAhYXgUUPKE+a3nC2ZxvFCOo66PMI6JYC8s0tQlOv+F
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93004095)(3002001)(3231311)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(201708071742011)(7699050);SRVR:BYAPR02MB4472;BCL:0;PCL:0;RULEID:;SRVR:BYAPR02MB4472;
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4472;4:Ki3JtH10o5V/7ptzc79H1jFNgwOgNDD1K9kSbPq6uEte8ddBWXJwH9spZKp1Ojf3jCpZ2GB0eEeKqGm+BS/JTVkoeb/YXENNP4OTdeADbf+HP1O7Eh/w2vw6xSpAWCgmj0Y2Iz5G/ctlL+ozfGkyqvzRH/JunKM+k7Aw4RXgiNy4P74lttuLEuQXunUusF7oFazy6fp9otEUF6mU0k0vHBweJ9UP8S5RzrSRrZ6T3un3L1oSvigrxnNESX7MYecWdmvYsLblE4xsZyOYc9d9DvEC1O4C6WvdQ5oh1PGZ6+WOHBzi7tWfnlhYm5beH7yh
 X-Forefront-PRVS: 07935ACF08
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BYAPR02MB5112;23:u1Y/TPxDJbTDlJg1NaizD5boS2OKMEslEbF8nWjNo?=
- =?us-ascii?Q?2qBljdfOLLNhWJ+cXU09GXPm9jGlD5SfT6uG3BULmT6pV/B2hUZQD14bzNvc?=
- =?us-ascii?Q?tHtH6kPXyNVITUkVZH0Dl2J4oxOWdjjE1YIzbdaBl3t79FKyNpJWXWJWNgkX?=
- =?us-ascii?Q?EehAjIw1hJM+XkoryekwE0QAHtaE2yclC3aKdATBf0kTiiq3yW2ISkK5pQre?=
- =?us-ascii?Q?r2DfYQ0A0ew7tU69moMnWJfaSnGXE3JE+MU0pm/eTkFbKzxzmCjMnAgLweul?=
- =?us-ascii?Q?aaG9kJxbkMWdOiVUG9BYGWlMHw0qX4KoV2XxycryjceMBPULoPcautc3yiAu?=
- =?us-ascii?Q?TtLA9mxjYpT3eZ51q0cLbUWPCl3ECoZXejG1tRu6037Y2LpP4/EZVbPUCdzG?=
- =?us-ascii?Q?MRRnPv/LXCgm5Rb20HrurhBQ1g5rBPn7GbrkspX304m8W1e1Cgtwi/hFB9Ie?=
- =?us-ascii?Q?kBjn0Dz3USN4483k5AEfXEs2xNsHWmeqt2UAqJfwuTsEHZuiAZGz3KT3cwh+?=
- =?us-ascii?Q?tfc9+rwVkM7sIE2KRD/l4en/wCy4IxvSBvfs0WKbtDInwTaFptZ5lykylyqp?=
- =?us-ascii?Q?aVYdqBUK5Rrmzy9MnIHjdfXyHZQ7BVoJR3Cvf2D9G6hf87IKFp25eibJZwbZ?=
- =?us-ascii?Q?B1w5FIvndXIC5i1cvEwKOedvkAL0supzONWFykQZrK1QMrWcsAgqHASapePj?=
- =?us-ascii?Q?CgROkjys+ykTtlnD4JiNhBx5ipyKm+6opO/R4JU6GyuHEM6obWNYToFxuioU?=
- =?us-ascii?Q?Q2uOXt26HMjPrM9/E55Ogr6BjqFbEZGu2Yf50Hz+4Jaa1yC1+/Ual61DC6Cw?=
- =?us-ascii?Q?10RBCEGlnKjQtHoFIWAnfMSkwd3d9oqza7b9dNaqKFdZdVwz9A6bfJa330Es?=
- =?us-ascii?Q?BNIlTIXeDu3JvkIbfG6xchIcsYHphKk8n6ar0QnT1jIRyNGCklJYslC89X0Y?=
- =?us-ascii?Q?TkK2h2iO2+luur4mFwDlcixVaGoA9FDsCcJV7LfwfDUwAtEEEDofuGVITeJn?=
- =?us-ascii?Q?SGPeBTf1hgY6TJDRkNdG4nnthWFXccQRA7WSPoqp/XP4jGlucZ5nuDz/cWGC?=
- =?us-ascii?Q?ZpPBwh6NwcnjujqPAP2xr3vNKECobrHVpSJSOzsFZC3yXCvsKCZlH0HzhTAD?=
- =?us-ascii?Q?EzMStvlNr5wwb4nnZgIbLZTCvoj3gploRV4MxhH6yaBkM7mH7YwsQ=3D=3D?=
-X-Microsoft-Antispam-Message-Info: 0+RLDZxAgjx3P3MG7fpHAH99dRxqE7lMSE694MM+2SluBPE8/Mh7JLYCDTAJMFBzzQJn4wYi7I8qJ+Zx2qFk+4aUJXB2h4lXMWn3PLZ+WuHGMnI//ZTWPmu8IBORnqZQaPu2ELFTDL0VJnkIrtC+mum4iXnhNHiSGRoyqHmYePO6G1mjGFVa5VvgJqknKpeXB/wkiTu1Erw4tANr4sR4zTXTSxncbSwHfu5d1SrkuC/qkPbTE8UY1sUh85L++mBxTKaYUs3eDDBbiGIuuPI4iT3k+6HV211/vMsWlwlrGX/WKZb8S9G2ZsBcxhL17cLNy3GzFFKnFA82OQ6ffILFyOD4DLyAnU338LP/ZW9pmME=
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB5112;6:VyEGB2UGiSbYjsoF/CxbK+hTMpA6d48vdS1qpG8kpxIG2R0wpkCcKkzqpG1TEvk5XpL8EpTxx7hTdPBp9xB3UG//DqbNVvW2QAAvJAQVlkvNyZPO2cQu2sSQRk2MpsHh3bs7w/GMai+DSH2uqaLdeykgouOOW1jnjjqx0xXHy7CLeyyMupE54u98XkQdQWjWdX903WBPL5rD+Ii/sAMbQFGELmaFCQ03y8aYYi3ucvjDBKrdLNoHAjATSJtRDp6tR1PshxMMgbIdjkRNP62fYXKCZcvmMm1/ELivqMfUBNaIbcaslTM416iJRLIEYpckCgPOmb/iKuFUvSMAhwLWoZ3iH636mN1hG4jqt22s2pmZDyNE2ERCPVR/PM9aE4FeuC5c/MCvZb4UlmXvnXLi3yHmIcV5GI5CV9LQgYuHwntk03pR+tdYG5Ull9kOnvwR3GA9cAlzXK4JxFMe8xhuGg==;5:trUNAIOKRdQPUdBIyYJMY8tMbwBPtI2qT6jHgBE8ySPhFQBgIBJmT4YO3G605519iw1IuwZPwGg7dMLt6unTobHP/Q6mIlqOElG2mHPADigLQRbeozmog6lH5NxxKwNufQeb46YahjYiH1VEBHjwCvR19evAsAyvCwjm2Tpk5ak=;7:UIGxX2N6/MENo849bdhimfvHJwDzznKfmF3s5Oj0jsX4EUsRBKojCLgyIMX6KwEwCDmu2KlIAFhkwSrHAkYF3yelEiwJ/tTs8Q//9v8WdBc95gBA3M9EO4/8opISCor6sSYAyDGweKcmLs82HbKKXeedklCRgoY7Xg5XQwtifWhjxSJTPV8VD/2dh9VmNaXEXF1wh/R8AWXLWSujR1EWeAoLz5r50c+SUtyAi2lX47vbX18jbjiTKoLASxlsuZ8q
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BYAPR02MB4472;23:fr9ATjmPAbhGuqGhAmj9lBRN1OUX1E0DsUkkYnVc1?=
+ =?us-ascii?Q?cVWNbvRlG0K/yy13hJ3hAJopTRrMyKa7canIs28M7Z50L10bfzA0QQTL3jNL?=
+ =?us-ascii?Q?lnginJoL8FnzQxUJv3NIW+Zo66HugVfHNIws76c0fDphZCKxkRBpyQCSp4IM?=
+ =?us-ascii?Q?Ng9/uyIgROcF5kdfAl13jsKaC5ZBlG88/01R2FONc+UTHQbaVc9K7b0frmKK?=
+ =?us-ascii?Q?j7PHExvIhVMDebojEjR9EjzDwhSIlPplRE+L8ev5h1LBGkLFu7R8KCMBg93e?=
+ =?us-ascii?Q?9Ky4lwnmEg3V5tYeZaQU92Gt38m3S8Qv0JMH/5029y79uZTJeBrhu17BGZv5?=
+ =?us-ascii?Q?S/4gnzyZfDmGdb9daOKf1dn58q4hg1Db5aP79Vv/CxeWtUKFoe20/GGZ42ra?=
+ =?us-ascii?Q?sLoU5zk79H6Yl9v2cKrcOXLdu4BINuBC8VY4TJxwJw0JjG1wXUQEKCn5B+he?=
+ =?us-ascii?Q?WG1pxzQvmt8StAoou+e8fRDp7+gQFqJc/6pbN5ceU2X5HcEXjPkFSuuU2Aij?=
+ =?us-ascii?Q?ylxxMgpqMoord6oll80VnvWb/BI6kBohHpIqP/XCi7Wx2B19+wUXwDr04dRr?=
+ =?us-ascii?Q?SitODDJUbzsGaCuiWFmBDiZD9DV8Q1iAwpSnO0cYHQSlgj09nPOGrlBs/jTT?=
+ =?us-ascii?Q?MlbrnEez+8RvBfBae6Ob6w8PVe6SQdl9j7kuztg6vB5iTbSPS5HiTG7Gjxbu?=
+ =?us-ascii?Q?WQgxcxj7lW3YC0qLYAR/MzvJyqrSJXxIagyEuroBdltOZlMaJcb9OvRUR+NR?=
+ =?us-ascii?Q?3RBmSyFLD53FhNAXSAIoaLzf3Eqlhb2N8h1PT0Z2jfNG0IEYbX1fcEl7hBms?=
+ =?us-ascii?Q?+E67XfKCk+7UvUPffeZfM6PshvU0yPn4iw8HXWbg5CrCMe4k/7WJV74DpQ/k?=
+ =?us-ascii?Q?uA+t/RjqiO58bTItSs3BhWajCPFrZJIaD/ZHa/oP29G0HT330bOPzPxIj1zV?=
+ =?us-ascii?Q?r7B0nWaQ1LOazg2ufOSFmIRruVMs6nniSADTjK056LIL2xvMw8ZSpTzZ9REL?=
+ =?us-ascii?Q?YgDv/hLzZd22uHt1uCZ13GEYAuKytZuTBCtVqWfgCuHx4WqutaarPdERZZku?=
+ =?us-ascii?Q?+nQyBuws85KZ/YMSCN2ppHY8tDGM4Qr+MhRTk9qUNVAd86AWEWGf7MaWmBDn?=
+ =?us-ascii?Q?GwOG4g5v5ubnbfJq1Ox0g8Ly0eMgkuz9x4neDMLaVKzSyRuAMiALKJIk0iBn?=
+ =?us-ascii?Q?LOZtNBZOhQe+aU=3D?=
+X-Microsoft-Antispam-Message-Info: EWp3sRGVAbGyj5ZgonOqWgM16J4qiF228iJ+uRL/CAmy+Oak4su2Dku/7LlCV6ib7TaiKrZJGwEWaJq5xEOcIMGpblqalDsxvAxtZcZu5eZbToS0ow7kR5yFNjrLFB8kb78JGakgWrhuQXsTL26AWFlSNOZxmH3W4iOX/V3bXSYBO+c+7hx4YJnNWcLfcZaImtXe+VF7LDrs/oOwzZ6TfYDcmPNocVazWKnx5uOX/v6L5tQRcnRSID/NUiLaX1euqpX06WLk4afMgdzq4fzPCAhmyKA2R0oBYm0uxcTiEMTizN227Ue3NnQUzNpaZ03TMYPSJouYnc8WWGqH5ycxoR+twFtgu0hn5VVoEkBPgGU=
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4472;6:TS0LgVQPoVZ2PR4WktvwmMBK9pjY1TREdLR0PSHe/8SVyHgKtNPacbTdDVoh9lJ6yrCOkimAz7a40DP2AHnJRWvNKt2zJ3b7evyOKhCdgZUTA9Vzh1Q9qQMpnvSU8kXxdXWw/qRV9+A739WrWcwGVihHxDxtpjMf2kp9JqQMZ35I7VacFEpJS9JI6xO1rFR42UzrvAenZz3oFURC0fZNhlPBKufxQEFBNZfSSDobQ2FAW0J/Z9oUg6ROWl82QyfBAjyNUMiAXSr37+j+UKYCsatFgVRFpQoRZtaj7DdeiCxAi2J/AAZL4xwnTreukL4IX1i4S79b9A3h5uv/SzT/tvXXuZe72a0hsfm4KQYAf+ouV/VylLJkLmmAxuQF5oDYkS4f3Ou31WPwzlVcCmrDKN4uzWeJhF4pLGd55J8X6QvzAo01PBKKR9CnRyowHi5Ts4zdvT1eKMl121NV1eAIZA==;5:vFa+p0PIQU5UZcTJkgSlc/DbYl8f9uV7/8jYT/IfB7GUNsxh3O+bzNrmpTGZ4pxRDHDHymgqljts6BKa80/USWT7Ewl3zCKYSOrSfmfVHyRDgEM2vDK+dniD7ftwf1qk0O87NCsc1XryDsuPrMlil7E7j3Ala+6MfXD0DUNepHo=;7:iUcBdR5gQfgmYYjzPeAto/5p14Pgd2zx4p1EGgr5d2vCr0vxkSrvvrSV6Ii7paiUmWTeg/J+yNjoEggRkdHkbpfZx30cqdLzZnu20o1W+rp5RRXZOzqiKSzIUsUlp0DNPVuqxz4wuxzp+aP0UfpIpnEvyQxHaf+7RtNcvDLx9kYeXJv12tGWPTaQ8YRTl+lVSqlQ3sVhcyROWTBH8PmV8xUTjVnUTV2nNS8GxBK5MpXUGSosQ7JDdRtoWWr/MBpV
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2018 19:39:15.3166
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2018 19:39:14.9092
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 34635373-281a-4893-210c-08d618e76c6c
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1e3374f2-44e6-4620-4390-08d618e76c3c
 X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB5112
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB4472
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -137,54 +138,275 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Rajan Vaja <rajanv@xilinx.com>
 
-Add documentation to describe Xilinx ZynqMP firmware driver
-bindings. Firmware driver provides an interface to firmware
-APIs. Interface APIs can be used by any driver to communicate
-to PMUFW (Platform Management Unit).
+Add clock APIs to control clocks through firmware
+interface.
 
 Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
 Signed-off-by: Jolly Shah <jollys@xilinx.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- .../firmware/xilinx/xlnx,zynqmp-firmware.txt       | 29 ++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
+ drivers/firmware/xilinx/zynqmp.c     | 186 ++++++++++++++++++++++++++++++++++-
+ include/linux/firmware/xlnx-zynqmp.h |  30 ++++++
+ 2 files changed, 214 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt b/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
-new file mode 100644
-index 0000000..1b431d9
---- /dev/null
-+++ b/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
-@@ -0,0 +1,29 @@
-+-----------------------------------------------------------------
-+Device Tree Bindings for the Xilinx Zynq MPSoC Firmware Interface
-+-----------------------------------------------------------------
+diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
+index 2a333c0..697f4fa 100644
+--- a/drivers/firmware/xilinx/zynqmp.c
++++ b/drivers/firmware/xilinx/zynqmp.c
+@@ -250,13 +250,195 @@ static int get_set_conduit_method(struct device_node *np)
+  */
+ static int zynqmp_pm_query_data(struct zynqmp_pm_query_data qdata, u32 *out)
+ {
+-	return zynqmp_pm_invoke_fn(PM_QUERY_DATA, qdata.qid, qdata.arg1,
+-				   qdata.arg2, qdata.arg3, out);
++	int ret;
 +
-+The zynqmp-firmware node describes the interface to platform firmware.
-+ZynqMP has an interface to communicate with secure firmware. Firmware
-+driver provides an interface to firmware APIs. Interface APIs can be
-+used by any driver to communicate to PMUFW(Platform Management Unit).
-+These requests include clock management, pin control, device control,
-+power management service, FPGA service and other platform management
-+services.
++	ret = zynqmp_pm_invoke_fn(PM_QUERY_DATA, qdata.qid, qdata.arg1,
++				  qdata.arg2, qdata.arg3, out);
 +
-+Required properties:
-+ - compatible:	Must contain:	"xlnx,zynqmp-firmware"
-+ - method:	The method of calling the PM-API firmware layer.
-+		Permitted values are:
-+		  - "smc" : SMC #0, following the SMCCC
-+		  - "hvc" : HVC #0, following the SMCCC
++	/*
++	 * For clock name query, all bytes in SMC response are clock name
++	 * characters and return code is always success. For invalid clocks,
++	 * clock name bytes would be zeros.
++	 */
++	return qdata.qid == PM_QID_CLOCK_GET_NAME ? 0 : ret;
++}
 +
-+-------
-+Example
-+-------
++/**
++ * zynqmp_pm_clock_enable() - Enable the clock for given id
++ * @clock_id:	ID of the clock to be enabled
++ *
++ * This function is used by master to enable the clock
++ * including peripherals and PLL clocks.
++ *
++ * Return: Returns status, either success or error+reason
++ */
++static int zynqmp_pm_clock_enable(u32 clock_id)
++{
++	return zynqmp_pm_invoke_fn(PM_CLOCK_ENABLE, clock_id, 0, 0, 0, NULL);
++}
 +
-+firmware {
-+	zynqmp_firmware: zynqmp-firmware {
-+		compatible = "xlnx,zynqmp-firmware";
-+		method = "smc";
-+	};
++/**
++ * zynqmp_pm_clock_disable() - Disable the clock for given id
++ * @clock_id:	ID of the clock to be disable
++ *
++ * This function is used by master to disable the clock
++ * including peripherals and PLL clocks.
++ *
++ * Return: Returns status, either success or error+reason
++ */
++static int zynqmp_pm_clock_disable(u32 clock_id)
++{
++	return zynqmp_pm_invoke_fn(PM_CLOCK_DISABLE, clock_id, 0, 0, 0, NULL);
++}
++
++/**
++ * zynqmp_pm_clock_getstate() - Get the clock state for given id
++ * @clock_id:	ID of the clock to be queried
++ * @state:	1/0 (Enabled/Disabled)
++ *
++ * This function is used by master to get the state of clock
++ * including peripherals and PLL clocks.
++ *
++ * Return: Returns status, either success or error+reason
++ */
++static int zynqmp_pm_clock_getstate(u32 clock_id, u32 *state)
++{
++	u32 ret_payload[PAYLOAD_ARG_CNT];
++	int ret;
++
++	ret = zynqmp_pm_invoke_fn(PM_CLOCK_GETSTATE, clock_id, 0,
++				  0, 0, ret_payload);
++	*state = ret_payload[1];
++
++	return ret;
++}
++
++/**
++ * zynqmp_pm_clock_setdivider() - Set the clock divider for given id
++ * @clock_id:	ID of the clock
++ * @divider:	divider value
++ *
++ * This function is used by master to set divider for any clock
++ * to achieve desired rate.
++ *
++ * Return: Returns status, either success or error+reason
++ */
++static int zynqmp_pm_clock_setdivider(u32 clock_id, u32 divider)
++{
++	return zynqmp_pm_invoke_fn(PM_CLOCK_SETDIVIDER, clock_id, divider,
++				   0, 0, NULL);
++}
++
++/**
++ * zynqmp_pm_clock_getdivider() - Get the clock divider for given id
++ * @clock_id:	ID of the clock
++ * @divider:	divider value
++ *
++ * This function is used by master to get divider values
++ * for any clock.
++ *
++ * Return: Returns status, either success or error+reason
++ */
++static int zynqmp_pm_clock_getdivider(u32 clock_id, u32 *divider)
++{
++	u32 ret_payload[PAYLOAD_ARG_CNT];
++	int ret;
++
++	ret = zynqmp_pm_invoke_fn(PM_CLOCK_GETDIVIDER, clock_id, 0,
++				  0, 0, ret_payload);
++	*divider = ret_payload[1];
++
++	return ret;
++}
++
++/**
++ * zynqmp_pm_clock_setrate() - Set the clock rate for given id
++ * @clock_id:	ID of the clock
++ * @rate:	rate value in hz
++ *
++ * This function is used by master to set rate for any clock.
++ *
++ * Return: Returns status, either success or error+reason
++ */
++static int zynqmp_pm_clock_setrate(u32 clock_id, u64 rate)
++{
++	return zynqmp_pm_invoke_fn(PM_CLOCK_SETRATE, clock_id,
++				   lower_32_bits(rate),
++				   upper_32_bits(rate),
++				   0, NULL);
++}
++
++/**
++ * zynqmp_pm_clock_getrate() - Get the clock rate for given id
++ * @clock_id:	ID of the clock
++ * @rate:	rate value in hz
++ *
++ * This function is used by master to get rate
++ * for any clock.
++ *
++ * Return: Returns status, either success or error+reason
++ */
++static int zynqmp_pm_clock_getrate(u32 clock_id, u64 *rate)
++{
++	u32 ret_payload[PAYLOAD_ARG_CNT];
++	int ret;
++
++	ret = zynqmp_pm_invoke_fn(PM_CLOCK_GETRATE, clock_id, 0,
++				  0, 0, ret_payload);
++	*rate = ((u64)ret_payload[2] << 32) | ret_payload[1];
++
++	return ret;
++}
++
++/**
++ * zynqmp_pm_clock_setparent() - Set the clock parent for given id
++ * @clock_id:	ID of the clock
++ * @parent_id:	parent id
++ *
++ * This function is used by master to set parent for any clock.
++ *
++ * Return: Returns status, either success or error+reason
++ */
++static int zynqmp_pm_clock_setparent(u32 clock_id, u32 parent_id)
++{
++	return zynqmp_pm_invoke_fn(PM_CLOCK_SETPARENT, clock_id,
++				   parent_id, 0, 0, NULL);
++}
++
++/**
++ * zynqmp_pm_clock_getparent() - Get the clock parent for given id
++ * @clock_id:	ID of the clock
++ * @parent_id:	parent id
++ *
++ * This function is used by master to get parent index
++ * for any clock.
++ *
++ * Return: Returns status, either success or error+reason
++ */
++static int zynqmp_pm_clock_getparent(u32 clock_id, u32 *parent_id)
++{
++	u32 ret_payload[PAYLOAD_ARG_CNT];
++	int ret;
++
++	ret = zynqmp_pm_invoke_fn(PM_CLOCK_GETPARENT, clock_id, 0,
++				  0, 0, ret_payload);
++	*parent_id = ret_payload[1];
++
++	return ret;
+ }
+ 
+ static const struct zynqmp_eemi_ops eemi_ops = {
+ 	.get_api_version = zynqmp_pm_get_api_version,
+ 	.query_data = zynqmp_pm_query_data,
++	.clock_enable = zynqmp_pm_clock_enable,
++	.clock_disable = zynqmp_pm_clock_disable,
++	.clock_getstate = zynqmp_pm_clock_getstate,
++	.clock_setdivider = zynqmp_pm_clock_setdivider,
++	.clock_getdivider = zynqmp_pm_clock_getdivider,
++	.clock_setrate = zynqmp_pm_clock_setrate,
++	.clock_getrate = zynqmp_pm_clock_getrate,
++	.clock_setparent = zynqmp_pm_clock_setparent,
++	.clock_getparent = zynqmp_pm_clock_getparent,
+ };
+ 
+ /**
+diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
+index 287f42c..015e130 100644
+--- a/include/linux/firmware/xlnx-zynqmp.h
++++ b/include/linux/firmware/xlnx-zynqmp.h
+@@ -35,6 +35,15 @@
+ enum pm_api_id {
+ 	PM_GET_API_VERSION = 1,
+ 	PM_QUERY_DATA = 35,
++	PM_CLOCK_ENABLE,
++	PM_CLOCK_DISABLE,
++	PM_CLOCK_GETSTATE,
++	PM_CLOCK_SETDIVIDER,
++	PM_CLOCK_GETDIVIDER,
++	PM_CLOCK_SETRATE,
++	PM_CLOCK_GETRATE,
++	PM_CLOCK_SETPARENT,
++	PM_CLOCK_GETPARENT,
+ };
+ 
+ /* PMU-FW return status codes */
+@@ -48,8 +57,20 @@ enum pm_ret_status {
+ 	XST_PM_ABORT_SUSPEND,
+ };
+ 
++enum pm_ioctl_id {
++	IOCTL_SET_PLL_FRAC_MODE = 8,
++	IOCTL_GET_PLL_FRAC_MODE,
++	IOCTL_SET_PLL_FRAC_DATA,
++	IOCTL_GET_PLL_FRAC_DATA,
 +};
++
+ enum pm_query_id {
+ 	PM_QID_INVALID,
++	PM_QID_CLOCK_GET_NAME,
++	PM_QID_CLOCK_GET_TOPOLOGY,
++	PM_QID_CLOCK_GET_FIXEDFACTOR_PARAMS,
++	PM_QID_CLOCK_GET_PARENTS,
++	PM_QID_CLOCK_GET_ATTRIBUTES,
+ };
+ 
+ /**
+@@ -69,6 +90,15 @@ struct zynqmp_pm_query_data {
+ struct zynqmp_eemi_ops {
+ 	int (*get_api_version)(u32 *version);
+ 	int (*query_data)(struct zynqmp_pm_query_data qdata, u32 *out);
++	int (*clock_enable)(u32 clock_id);
++	int (*clock_disable)(u32 clock_id);
++	int (*clock_getstate)(u32 clock_id, u32 *state);
++	int (*clock_setdivider)(u32 clock_id, u32 divider);
++	int (*clock_getdivider)(u32 clock_id, u32 *divider);
++	int (*clock_setrate)(u32 clock_id, u64 rate);
++	int (*clock_getrate)(u32 clock_id, u64 *rate);
++	int (*clock_setparent)(u32 clock_id, u32 parent_id);
++	int (*clock_getparent)(u32 clock_id, u32 *parent_id);
+ };
+ 
+ #if IS_REACHABLE(CONFIG_ARCH_ZYNQMP)
 -- 
 2.7.4
 
