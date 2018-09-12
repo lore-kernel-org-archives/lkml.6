@@ -2,217 +2,186 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B725C4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:18:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BD25C4646A
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:19:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D287120839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:18:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D287120839
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D608320882
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:19:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D608320882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727473AbeILTXd (ORCPT
+        id S1727657AbeILTYM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 15:23:33 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60246 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726537AbeILTXc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 15:23:32 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 323F885783;
-        Wed, 12 Sep 2018 14:18:49 +0000 (UTC)
-Received: from [10.36.118.61] (unknown [10.36.118.61])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 13F1B108786;
-        Wed, 12 Sep 2018 14:18:45 +0000 (UTC)
-Subject: Re: [RFC PATCH 04/10] x86/fpu: eager switch PKRU state
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-kernel@vger.kernel.org
-Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>
-References: <20180912133353.20595-1-bigeasy@linutronix.de>
- <20180912133353.20595-5-bigeasy@linutronix.de>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- xsEhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
- CxXPkIBTvYY+ZPkoTh5xF9oS1jqI8iRLzouzF8yXs3QjQIZ2SfuCxSVwlV65jotcjD2FTN04
- hVopm9llFijNZpVIOGUTqzM4U55sdsCcZUluWM6x4HSOdw5F5Utxfp1wOjD/v92Lrax0hjiX
- DResHSt48q+8FrZzY+AUbkUS+Jm34qjswdrgsC5uxeVcLkBgWLmov2kMaMROT0YmFY6A3m1S
- P/kXmHDXxhe23gKb3dgwxUTpENDBGcfEzrzilWueOeUWiOcWuFOed/C3SyijBx3Av/lbCsHU
- Vx6pMycNTdzU1BuAroB+Y3mNEuW56Yd44jlInzG2UOwt9XjjdKkJZ1g0P9dwptwLEgTEd3Fo
- UdhAQyRXGYO8oROiuh+RZ1lXp6AQ4ZjoyH8WLfTLf5g1EKCTc4C1sy1vQSdzIRu3rBIjAvnC
- tGZADei1IExLqB3uzXKzZ1BZ+Z8hnt2og9hb7H0y8diYfEk2w3R7wEr+Ehk5NQsT2MPI2QBd
- wEv1/Aj1DgUHZAHzG1QN9S8wNWQ6K9DqHZTBnI1hUlkp22zCSHK/6FwUCuYp1zcAEQEAAc0f
- UGFvbG8gQm9uemluaSA8Ym9uemluaUBnbnUub3JnPsLBTQQTAQIAIwUCVEJ7AwIbAwcLCQgH
- AwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEH4VEAzNNmmxNcwOniaZVLsuy1lW/ntYCA0Caz0i
- sHpmecK8aWlvL9wpQCk4GlOX9L1emyYXZPmzIYB0IRqmSzAlZxi+A2qm9XOxs5gJ2xqMEXX5
- FMtUH3kpkWWJeLqe7z0EoQdUI4EG988uv/tdZyqjUn2XJE+K01x7r3MkUSFz/HZKZiCvYuze
- VlS0NTYdUt5jBXualvAwNKfxEkrxeHjxgdFHjYWhjflahY7TNRmuqPM/Lx7wAuyoDjlYNE40
- Z+Kun4/KjMbjgpcF4Nf3PJQR8qXI6p3so2qsSn91tY7DFSJO6v2HwFJkC2jU95wxfNmTEUZc
- znXahYbVOwCDJRuPrE5GKFd/XJU9u5hNtr/uYipHij01WXal2cce1S5mn1/HuM1yo1u8xdHy
- IupCd57EWI948e8BlhpujUCU2tzOb2iYS0kpmJ9/oLVZrOcSZCcCl2P0AaCAsj59z2kwQS9D
- du0WxUs8waso0Qq6tDEHo8yLCOJDzSz4oojTtWe4zsulVnWV+wu70AioemAT8S6JOtlu60C5
- dHgQUD1Tp+ReXpDKXmjbASJx4otvW0qah3o6JaqO79tbDqIvncu3tewwp6c85uZd48JnIOh3
- utBAu684nJakbbvZUGikJfxd887ATQRUQnHuAQgAx4dxXO6/Zun0eVYOnr5GRl76+2UrAAem
- Vv9Yfn2PbDIbxXqLff7oyVJIkw4WdhQIIvvtu5zH24iYjmdfbg8iWpP7NqxUQRUZJEWbx2CR
- wkMHtOmzQiQ2tSLjKh/cHeyFH68xjeLcinR7jXMrHQK+UCEw6jqi1oeZzGvfmxarUmS0uRuf
- fAb589AJW50kkQK9VD/9QC2FJISSUDnRC0PawGSZDXhmvITJMdD4TjYrePYhSY4uuIV02v02
- 8TVAaYbIhxvDY0hUQE4r8ZbGRLn52bEzaIPgl1p/adKfeOUeMReg/CkyzQpmyB1TSk8lDMxQ
- zCYHXAzwnGi8WU9iuE1P0wARAQABwsEzBBgBAgAJBQJUQnHuAhsMAAoJEH4VEAzNNmmxp1EO
- oJy0uZggJm7gZKeJ7iUpeX4eqUtqelUw6gU2daz2hE/jsxsTbC/w5piHmk1H1VWDKEM4bQBT
- uiJ0bfo55SWsUNN+c9hhIX+Y8LEe22izK3w7mRpvGcg+/ZRG4DEMHLP6JVsv5GMpoYwYOmHn
- plOzCXHvmdlW0i6SrMsBDl9rw4AtIa6bRwWLim1lQ6EM3PWifPrWSUPrPcw4OLSwFk0CPqC4
- HYv/7ZnASVkR5EERFF3+6iaaVi5OgBd81F1TCvCX2BEyIDRZLJNvX3TOd5FEN+lIrl26xecz
- 876SvcOb5SL5SKg9/rCBufdPSjojkGFWGziHiFaYhbuI2E+NfWLJtd+ZvWAAV+O0d8vFFSvr
- iy9enJ8kxJwhC0ECbSKFY+W1eTIhMD3aeAKY90drozWEyHhENf4l/V+Ja5vOnW+gCDQkGt2Y
- 1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
- /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
- 53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <8e5b64e4-b3e6-f884-beb6-b7b69ab2d8c1@redhat.com>
-Date:   Wed, 12 Sep 2018 16:18:44 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 12 Sep 2018 15:24:12 -0400
+Received: from foss.arm.com ([217.140.101.70]:60766 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726932AbeILTYM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 15:24:12 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4CD1380D;
+        Wed, 12 Sep 2018 07:19:29 -0700 (PDT)
+Received: from e110439-lin (e110439-lin.Emea.Arm.com [10.4.12.126])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7E1F53F5C0;
+        Wed, 12 Sep 2018 07:19:26 -0700 (PDT)
+Date:   Wed, 12 Sep 2018 15:19:23 +0100
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>
+Subject: Re: [PATCH v4 09/16] sched/core: uclamp: map TG's clamp values into
+ CPU's clamp groups
+Message-ID: <20180912141923.GF1413@e110439-lin>
+References: <20180828135324.21976-1-patrick.bellasi@arm.com>
+ <20180828135324.21976-10-patrick.bellasi@arm.com>
+ <CAJuCfpEbmW0Gr26FSDmtLB5C1gk0M83AYQihLr_Dz=gXY_-+qA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180912133353.20595-5-bigeasy@linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 12 Sep 2018 14:18:49 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 12 Sep 2018 14:18:49 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJuCfpEbmW0Gr26FSDmtLB5C1gk0M83AYQihLr_Dz=gXY_-+qA@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/09/2018 15:33, Sebastian Andrzej Siewior wrote:
-> From: Rik van Riel <riel@surriel.com>
-> 
-> While most of a task's FPU state is only needed in user space,
-> the protection keys need to be in place immediately after a
-> context switch.
-> 
-> The reason is that any accesses to userspace memory while running
-> in kernel mode also need to abide by the memory permissions
-> specified in the protection keys.
-> 
-> The pkru info is put in its own cache line in the fpu struct because
-> that cache line is accessed anyway at context switch time, and the
-> location of the pkru info in the xsave buffer changes depending on
-> what other FPU registers are in use if the CPU uses compressed xsave
-> state (on by default).
-> 
-> The initial state of pkru is zeroed out automatically by fpstate_init.
-> 
-> Signed-off-by: Rik van Riel <riel@surriel.com>
-> [bigeasy: load PKRU state only if we also load FPU content]
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> ---
->  arch/x86/include/asm/fpu/internal.h | 11 +++++++++--
->  arch/x86/include/asm/fpu/types.h    | 10 ++++++++++
->  arch/x86/include/asm/pgtable.h      |  6 +-----
->  arch/x86/mm/pkeys.c                 | 14 ++++++++++++++
->  4 files changed, 34 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
-> index 16c4077ffc945..57bd1576e033d 100644
-> --- a/arch/x86/include/asm/fpu/internal.h
-> +++ b/arch/x86/include/asm/fpu/internal.h
-> @@ -573,8 +573,15 @@ static inline void switch_fpu_finish(struct fpu *new_fpu, int cpu)
->  	bool preload = static_cpu_has(X86_FEATURE_FPU) &&
->  		       new_fpu->initialized;
->  
-> -	if (preload)
-> -		__fpregs_load_activate(new_fpu, cpu);
-> +	if (!preload)
-> +		return;
-> +
-> +	__fpregs_load_activate(new_fpu, cpu);
-> +	/* Protection keys need to be in place right at context switch time. */
-> +	if (boot_cpu_has(X86_FEATURE_OSPKE)) {
-> +		if (new_fpu->pkru != __read_pkru())
-> +			__write_pkru(new_fpu->pkru);
-> +	}
->  }
->  
->  /*
-> diff --git a/arch/x86/include/asm/fpu/types.h b/arch/x86/include/asm/fpu/types.h
-> index 202c53918ecfa..6fa58d37938d2 100644
-> --- a/arch/x86/include/asm/fpu/types.h
-> +++ b/arch/x86/include/asm/fpu/types.h
-> @@ -293,6 +293,16 @@ struct fpu {
->  	 */
->  	unsigned int			last_cpu;
->  
-> +	/*
-> +	 * Protection key bits. These also live inside fpu.state.xsave,
-> +	 * but the location varies if the CPU uses the compressed format
-> +	 * for XSAVE(OPT).
-> +	 *
-> +	 * The protection key needs to be switched out immediately at context
-> +	 * switch time, so it is in place for things like copy_to_user.
-> +	 */
-> +	unsigned int			pkru;
-> +
->  	/*
->  	 * @initialized:
->  	 *
-> diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-> index 690c0307afed0..cc36f91011ad7 100644
-> --- a/arch/x86/include/asm/pgtable.h
-> +++ b/arch/x86/include/asm/pgtable.h
-> @@ -132,11 +132,7 @@ static inline u32 read_pkru(void)
->  	return 0;
->  }
->  
-> -static inline void write_pkru(u32 pkru)
-> -{
-> -	if (boot_cpu_has(X86_FEATURE_OSPKE))
-> -		__write_pkru(pkru);
-> -}
-> +extern void write_pkru(u32 pkru);
->  
->  static inline int pte_young(pte_t pte)
->  {
-> diff --git a/arch/x86/mm/pkeys.c b/arch/x86/mm/pkeys.c
-> index 6e98e0a7c9231..c7a7b6bd64009 100644
-> --- a/arch/x86/mm/pkeys.c
-> +++ b/arch/x86/mm/pkeys.c
-> @@ -18,6 +18,20 @@
->  
->  #include <asm/cpufeature.h>             /* boot_cpu_has, ...            */
->  #include <asm/mmu_context.h>            /* vma_pkey()                   */
-> +#include <asm/fpu/internal.h>
-> +
-> +void write_pkru(u32 pkru)
-> +{
-> +	if (!boot_cpu_has(X86_FEATURE_OSPKE))
-> +		return;
-> +
-> +	current->thread.fpu.pkru = pkru;
-> +
-> +	__fpregs_changes_begin();
-> +	__fpregs_load_activate(&current->thread.fpu, smp_processor_id());
-> +	__write_pkru(pkru);
-> +	__fpregs_changes_end();
-> +}
->  
->  int __execute_only_pkey(struct mm_struct *mm)
->  {
-> 
+On 09-Sep 11:52, Suren Baghdasaryan wrote:
+> On Tue, Aug 28, 2018 at 6:53 AM, Patrick Bellasi
+> <patrick.bellasi@arm.com> wrote:
 
-I think you can go a step further and exclude PKRU state from
-copy_kernel_to_fpregs altogether; you just use RDPKRU/WRPKRU.  This also
-means you don't need to call __fpregs_* functions in write_pkru.
+[...]
 
-Thanks,
+> > +/**
+> > + * release_uclamp_sched_group: release utilization clamp references of a TG
+> 
+> free_uclamp_sched_group
 
-Paolo
++1
+
+> > + * @tg: the task group being removed
+> > + *
+> > + * An empty task group can be removed only when it has no more tasks or child
+> > + * groups. This means that we can also safely release all the reference
+> > + * counting to clamp groups.
+> > + */
+> > +static inline void free_uclamp_sched_group(struct task_group *tg)
+> > +{
+
+[...]
+
+> > @@ -1417,9 +1444,18 @@ static void __init init_uclamp(void)
+> >  #ifdef CONFIG_UCLAMP_TASK_GROUP
+> >                 /* Init root TG's clamp group */
+> >                 uc_se = &root_task_group.uclamp[clamp_id];
+> > +
+> >                 uc_se->effective.value = uclamp_none(clamp_id);
+> > -               uc_se->value = uclamp_none(clamp_id);
+> > -               uc_se->group_id = 0;
+> > +               uc_se->effective.group_id = 0;
+> > +
+> > +               /*
+> > +                * The max utilization is always allowed for both clamps.
+> > +                * This is required to not force a null minimum utiliation on
+> > +                * all child groups.
+> > +                */
+> > +               uc_se->group_id = UCLAMP_NOT_VALID;
+> > +               uclamp_group_get(NULL, clamp_id, 0, uc_se,
+> > +                                uclamp_none(UCLAMP_MAX));
+> 
+> I don't quite get why you are using uclamp_none(UCLAMP_MAX) for both
+> UCLAMP_MIN and UCLAMP_MAX clamps. I assume the comment above is to
+> explain this but I'm still unclear why this is done.
+
+That's maybe a bit tricky to get but, this will not happen since for
+root group tasks we apply the system default values... which however
+are introduced by one of the following patches 11/16.
+
+So, my understanding of the "delegation model" is that for cgroups we
+have to ensure each TG is a "restriction" of its parent. Thus:
+
+     tg::util_min <= tg_parent::util_min
+
+This is required to ensure that a tg_parent can always restrict
+resources on its descendants. I guess that's required to have a sane
+usage of CGroups for VMs where the Host can transparently control its
+Guests.
+
+According to the above rule, and considering that root task group
+cannot be modified, to allow boosting on TG we are forced to set the
+root group with util_min = SCHED_CAPACITY_SCALE.
+
+Moreover, Tejun pointed out that if we need tuning at root TG level,
+it means that we need system wide tunable, which should be available
+also when CGroups are not in use.
+
+That's why on patch:
+
+   [PATCH v4 11/16] sched/core: uclamp: add system default clamps
+   https://lore.kernel.org/lkml/20180828135324.21976-12-patrick.bellasi@arm.com/
+
+we add the concept of system default clamps which are actually
+initialized with util_min=0, i.e. 0% boost by default.
+
+These system default clamp values applies to tasks which are running
+either in the root task group on in an autogroup, which also cannot be
+tuned at run-time, whenever the task has not a task specific clamp
+value specified.
+
+All that considered, the code above is still confusing and I should
+consider moving to patch 11/16 the initialization to UCLAMP_MAX for
+util_min...
+
+> Maybe expand the comment to explain the intention?
+
+... and add there something like:
+
+        /*
+         * The max utilization is always allowed for both clamps.
+         * This satisfies the "delegation model" required by CGroups
+         * v2, where a child task group cannot have more resources then
+         * its father, thus allowing the creation of child groups with
+         * a non null util_min.
+         * For tasks within the root_task_group we will use the system
+         * default clamp values anyway, thus they will not be boosted
+         * to the max utilization by default.
+         */
+
+It this more clear ?
+
+
+> With this I think all TGs will get boosted by default, won't they?
+
+You right, at cgroup creation time we clone parent's clamps... thus,
+all root_task_group's children group will get max boosting at creation
+time. However, since we don't have task within a newly created task
+group, the system management software can still refine the clamps
+before staring to move tasks in there.
+
+Do you think we should initialize root task group childrens
+differently ? I would prefer to avoid special cases if not strictly
+required...
+
+Cheers,
+Patrick
+
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
