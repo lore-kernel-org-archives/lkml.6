@@ -2,226 +2,127 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 386B4C4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 13:27:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49CEDC4646A
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 13:28:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E31D020882
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 13:27:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E31D020882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id DB48F20854
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 13:28:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="Z+uqzcwX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB48F20854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727828AbeILS34 (ORCPT
+        id S1727716AbeILSdC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 14:29:56 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:40494 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727332AbeILS3z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 14:29:55 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07437672|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03308;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=15;RT=15;SR=0;TI=SMTPD_---.CpvdKzK_1536758710;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CpvdKzK_1536758710)
-          by smtp.aliyun-inc.com(10.147.41.158);
-          Wed, 12 Sep 2018 21:25:10 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, daniel.lezcano@linaro.org,
-        jason@lakedaemon.net, arnd@arndb.de, devicetree@vger.kernel.org,
-        andrea.parri@amarulasolutions.com, peterz@infradead.org
-Cc:     c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
-        thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org, ren_guo@c-sky.com,
-        green.hu@gmail.com
-Subject: [PATCH V3 09/27] csky: VDSO and rt_sigreturn
-Date:   Wed, 12 Sep 2018 21:24:43 +0800
-Message-Id: <84b9dbc12dbd64c424d81356bce15bdde4c54eb8.1536757532.git.ren_guo@c-sky.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1536757532.git.ren_guo@c-sky.com>
-References: <cover.1536757532.git.ren_guo@c-sky.com>
-In-Reply-To: <cover.1536757532.git.ren_guo@c-sky.com>
-References: <cover.1536757532.git.ren_guo@c-sky.com>
+        Wed, 12 Sep 2018 14:33:02 -0400
+Received: from mail-co1nam03on0137.outbound.protection.outlook.com ([104.47.40.137]:28056
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726754AbeILSdC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 14:33:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KU/eSnVfcKTXLRN28DRj7KRBjoJ3kfl6Uuw5NsgLNnE=;
+ b=Z+uqzcwXUjo8nZCkJ0CFHXMi3KnnCzxXY9/QyUPtgX9sAskqJD/8jcjLGuiFHA/PQ7TskL276BXFYThDx+Ks6rzRAi76m5lZ+6Cu+7fzHVDsJCNgpQ94Odeh8t9wjPdDsw1nWAtMOEn+RV7Su4EN79ZQG0g4yOORL4rs6TQjuc8=
+Received: from DM5PR21MB0508.namprd21.prod.outlook.com (10.172.91.142) by
+ DM5PR21MB0507.namprd21.prod.outlook.com (10.172.91.141) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1164.6; Wed, 12 Sep 2018 13:28:25 +0000
+Received: from DM5PR21MB0508.namprd21.prod.outlook.com
+ ([fe80::88e6:fdc:1d8e:71f5]) by DM5PR21MB0508.namprd21.prod.outlook.com
+ ([fe80::88e6:fdc:1d8e:71f5%4]) with mapi id 15.20.1164.006; Wed, 12 Sep 2018
+ 13:28:25 +0000
+From:   Pasha Tatashin <Pavel.Tatashin@microsoft.com>
+To:     Alexander Duyck <alexander.duyck@gmail.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>
+CC:     "mhocko@suse.com" <mhocko@suse.com>,
+        "dave.jiang@intel.com" <dave.jiang@intel.com>,
+        "mingo@kernel.org" <mingo@kernel.org>,
+        "dave.hansen@intel.com" <dave.hansen@intel.com>,
+        "jglisse@redhat.com" <jglisse@redhat.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "logang@deltatee.com" <logang@deltatee.com>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCH 2/4] mm: Create non-atomic version of SetPageReserved for
+ init use
+Thread-Topic: [PATCH 2/4] mm: Create non-atomic version of SetPageReserved for
+ init use
+Thread-Index: AQHUSWAihxpsnDr+CU6FWKzflwtDSKTspjUA
+Date:   Wed, 12 Sep 2018 13:28:25 +0000
+Message-ID: <f4f6a343-7be1-4290-802e-7ff96e93bc2a@microsoft.com>
+References: <20180910232615.4068.29155.stgit@localhost.localdomain>
+ <20180910234348.4068.92164.stgit@localhost.localdomain>
+In-Reply-To: <20180910234348.4068.92164.stgit@localhost.localdomain>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [137.117.57.82]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR21MB0507;6:K+V/87lJiYgqwbhkEg05NxgXLk9eLLKg90xttBUNvXIolpHBZ+1qhAzttLmQ9hoRnTw92OY8AfcbYerls6sicaEJhJZJXKNVWhyzN4ai2zCHGzQV/kL1M5HXgdwZP+TUYHEWs0FncvfkQqYK0u+wQu92U1nJS0dMYpuxrIMxwQQp7k2cHxvza1Xyni/2JLU3CSxn1XIbT5ZiKqnEmxmC1SrGhzi9ypWp0KNMYnUu6ajtytI/vy/nx8qmjCXfkBtPTDrZCjk96ZDi+2Y8/MMslIPZa0oX7bK7DVmfh5tyKg6ymr7rlQuN1M0OEzzICKMVly9IPqwvo8BYPNj11TQD5DaEh+0TWLDZWUIbPLQXB+w305T7/vHTgU6RawdqMIGip3o8IZvTGbi716ICtBRS/QKl3khU9fBYKLbXbxQ7FwrwQ9nsn+UxqpNqpF07oRPcmJ6br2OESaM911BWW2fYsg==;5:peJge/dgTkKQuU7JNrlAJ+h3d99/C3cogCZoNndoKxgb5EPhhBiNomyYbIJmreo53sqEREtRhuLxemsPgAOKVxg0zh8/K8PdnQidwnAwt6GR8q1OBiWyWJw+esfZjHlkk23E9srnvPGgvzkQfAROPIRwTRHbhOeegmlhuxkrwRU=;7:9v8vVxL0sVv1hFqjcqRzqOwOfnhZ8ipriQ4yfNIjxMowjls0NguEAbUV7OFsXEIdLcUhLpU56flHwl4Wqo4c/cn7t8wIVkZ8Zo15RYfGjsfJ9wZwi+iwo5hOkFiroRiPNPwUEeh3zqe34JWmkLcFkwA2hNvbo6jMoybeZv6cxa0Q+mYRMcDLliLZ6Ib/qiQd/AqxImEOik1CbTi9ep5cMpzcnYP3jwjkRrui49FDvPHpu3tmfc9HK8Xx7XC3JllX
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: bd8e5998-0cd0-46bd-ff21-08d618b39e74
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:DM5PR21MB0507;
+x-ms-traffictypediagnostic: DM5PR21MB0507:
+x-microsoft-antispam-prvs: <DM5PR21MB0507AF69285D865212DCBCB79D1B0@DM5PR21MB0507.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(209352067349851)(228905959029699);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(93001095)(3231344)(944501410)(52105095)(2018427008)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699050)(76991041);SRVR:DM5PR21MB0507;BCL:0;PCL:0;RULEID:;SRVR:DM5PR21MB0507;
+x-forefront-prvs: 07935ACF08
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(396003)(346002)(376002)(136003)(366004)(199004)(189003)(97736004)(81156014)(10290500003)(81166006)(6512007)(8936002)(186003)(26005)(8676002)(14454004)(2501003)(76176011)(54906003)(110136005)(105586002)(86362001)(316002)(36756003)(478600001)(86612001)(31696002)(2201001)(6486002)(99286004)(72206003)(6436002)(5250100002)(68736007)(31686004)(22452003)(53936002)(229853002)(256004)(5660300001)(305945005)(7736002)(6116002)(6246003)(3846002)(2906002)(39060400002)(25786009)(7416002)(66066001)(102836004)(6506007)(53546011)(10090500001)(6346003)(106356001)(2900100001)(476003)(11346002)(2616005)(446003)(486006)(4326008);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR21MB0507;H:DM5PR21MB0508.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Pavel.Tatashin@microsoft.com; 
+x-microsoft-antispam-message-info: 0lGz627HNURgMzVSc8rovyBuS6PHtmyef9pkA+n1r4im/Q2neZfRlRL1XDSLac8+nYuBKj4XrSuoHECVGN+dPDgNu6PY8Dmv3Tl0M6hxEJZRQC5+9ZPrgJ31AFz2cnIeD32sBLeyzsrVc8paGZAFK7oDGkyd4XbiIc4mE+jDcu+GmYnWIMruK6KuDrsJE7OK93AAa1eDh3b2KyAfOGjYtUbSSy9l20Whz7f2x0JWvtCu5skxRYE8+UWsU699ddZJKMiMJd3QD8GwtwD/dfVeuBD+VQyQrJVq/gcmUC5G0yE5GGJXktVNHMklxkN1BeVM0Fu65BRSgI4gp2BsmOFJV/FmOmHZ4fRKulSO4dr66Fs=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <569B95AED34CEF49BC65C5B37016D013@namprd21.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bd8e5998-0cd0-46bd-ff21-08d618b39e74
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Sep 2018 13:28:25.4582
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR21MB0507
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Guo Ren <ren_guo@c-sky.com>
----
- arch/csky/abiv1/inc/abi/vdso.h | 17 +++++++++
- arch/csky/abiv2/inc/abi/vdso.h | 24 ++++++++++++
- arch/csky/include/asm/vdso.h   | 12 ++++++
- arch/csky/kernel/vdso.c        | 85 ++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 138 insertions(+)
- create mode 100644 arch/csky/abiv1/inc/abi/vdso.h
- create mode 100644 arch/csky/abiv2/inc/abi/vdso.h
- create mode 100644 arch/csky/include/asm/vdso.h
- create mode 100644 arch/csky/kernel/vdso.c
-
-diff --git a/arch/csky/abiv1/inc/abi/vdso.h b/arch/csky/abiv1/inc/abi/vdso.h
-new file mode 100644
-index 0000000..a99f0e4
---- /dev/null
-+++ b/arch/csky/abiv1/inc/abi/vdso.h
-@@ -0,0 +1,17 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
-+#include <linux/uaccess.h>
-+
-+static inline int setup_vdso_page(unsigned short *ptr)
-+{
-+	int err = 0;
-+
-+	/* movi r1, 127 */
-+	err |= __put_user(0x67f1, ptr + 0);
-+	/* addi r1, (139 - 127) */
-+	err |= __put_user(0x20b1, ptr + 1);
-+	/* trap 0 */
-+	err |= __put_user(0x0008, ptr + 2);
-+
-+	return err;
-+}
-diff --git a/arch/csky/abiv2/inc/abi/vdso.h b/arch/csky/abiv2/inc/abi/vdso.h
-new file mode 100644
-index 0000000..2b5f43b
---- /dev/null
-+++ b/arch/csky/abiv2/inc/abi/vdso.h
-@@ -0,0 +1,24 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
-+
-+#ifndef __ABI_CSKY_VDSO_H
-+#define __ABI_CSKY_VDSO_H
-+
-+#include <linux/uaccess.h>
-+
-+static inline int setup_vdso_page(unsigned short *ptr)
-+{
-+	int err = 0;
-+
-+	/* movi r7, 173 */
-+	err |= __put_user(0xea07, ptr);
-+	err |= __put_user(0x008b,      ptr+1);
-+
-+	/* trap 0 */
-+	err |= __put_user(0xc000,   ptr+2);
-+	err |= __put_user(0x2020,   ptr+3);
-+
-+	return err;
-+}
-+
-+#endif /* __ABI_CSKY_STRING_H */
-diff --git a/arch/csky/include/asm/vdso.h b/arch/csky/include/asm/vdso.h
-new file mode 100644
-index 0000000..b275440
---- /dev/null
-+++ b/arch/csky/include/asm/vdso.h
-@@ -0,0 +1,12 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
-+#ifndef __ASM_CSKY_VDSO_H
-+#define __ASM_CSKY_VDSO_H
-+
-+#include <abi/vdso.h>
-+
-+struct csky_vdso {
-+	unsigned short rt_signal_retcode[4];
-+};
-+
-+#endif /* __ASM_CSKY_VDSO_H */
-diff --git a/arch/csky/kernel/vdso.c b/arch/csky/kernel/vdso.c
-new file mode 100644
-index 0000000..55ed68b
---- /dev/null
-+++ b/arch/csky/kernel/vdso.c
-@@ -0,0 +1,85 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
-+
-+#include <linux/kernel.h>
-+#include <linux/err.h>
-+#include <linux/sched.h>
-+#include <linux/mm.h>
-+#include <linux/init.h>
-+#include <linux/binfmts.h>
-+#include <linux/elf.h>
-+#include <linux/vmalloc.h>
-+#include <linux/unistd.h>
-+#include <linux/uaccess.h>
-+
-+#include <asm/vdso.h>
-+#include <asm/cacheflush.h>
-+
-+static struct page *vdso_page;
-+
-+static int __init init_vdso(void)
-+{
-+	struct csky_vdso *vdso;
-+	int err = 0;
-+
-+	vdso_page = alloc_page(GFP_KERNEL);
-+	if (!vdso_page)
-+		panic("Cannot allocate vdso");
-+
-+	vdso = vmap(&vdso_page, 1, 0, PAGE_KERNEL);
-+	if (!vdso)
-+		panic("Cannot map vdso");
-+
-+	clear_page(vdso);
-+
-+	err = setup_vdso_page(vdso->rt_signal_retcode);
-+	if (err) panic("Cannot set signal return code, err: %x.", err);
-+
-+	dcache_wb_range((unsigned long)vdso, (unsigned long)vdso + 16);
-+
-+	vunmap(vdso);
-+
-+	return 0;
-+}
-+subsys_initcall(init_vdso);
-+
-+int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
-+{
-+	int ret;
-+	unsigned long addr;
-+	struct mm_struct *mm = current->mm;
-+
-+	down_write(&mm->mmap_sem);
-+
-+	addr = get_unmapped_area(NULL, STACK_TOP, PAGE_SIZE, 0, 0);
-+	if (IS_ERR_VALUE(addr)) {
-+		ret = addr;
-+		goto up_fail;
-+	}
-+
-+	ret = install_special_mapping(
-+			mm,
-+			addr,
-+			PAGE_SIZE,
-+			VM_READ|VM_EXEC|VM_MAYREAD|VM_MAYWRITE|VM_MAYEXEC,
-+			&vdso_page);
-+	if (ret)
-+		goto up_fail;
-+
-+	mm->context.vdso = (void *)addr;
-+
-+up_fail:
-+	up_write(&mm->mmap_sem);
-+	return ret;
-+}
-+
-+const char *arch_vma_name(struct vm_area_struct *vma)
-+{
-+	if (vma->vm_mm == NULL)
-+		return NULL;
-+
-+	if (vma->vm_start == (long)vma->vm_mm->context.vdso)
-+		return "[vdso]";
-+	else
-+		return NULL;
-+}
--- 
-2.7.4
-
+DQpPbiA5LzEwLzE4IDc6NDMgUE0sIEFsZXhhbmRlciBEdXljayB3cm90ZToNCj4gRnJvbTogQWxl
+eGFuZGVyIER1eWNrIDxhbGV4YW5kZXIuaC5kdXlja0BpbnRlbC5jb20+DQo+IA0KPiBJdCBkb2Vz
+bid0IG1ha2UgbXVjaCBzZW5zZSB0byB1c2UgdGhlIGF0b21pYyBTZXRQYWdlUmVzZXJ2ZWQgYXQg
+aW5pdCB0aW1lDQo+IHdoZW4gd2UgYXJlIHVzaW5nIG1lbXNldCB0byBjbGVhciB0aGUgbWVtb3J5
+IGFuZCBtYW5pcHVsYXRpbmcgdGhlIHBhZ2UNCj4gZmxhZ3MgdmlhIHNpbXBsZSAiJj0iIGFuZCAi
+fD0iIG9wZXJhdGlvbnMgaW4gX19pbml0X3NpbmdsZV9wYWdlLg0KPiANCj4gVGhpcyBwYXRjaCBh
+ZGRzIGEgbm9uLWF0b21pYyB2ZXJzaW9uIF9fU2V0UGFnZVJlc2VydmVkIHRoYXQgY2FuIGJlIHVz
+ZWQNCj4gZHVyaW5nIHBhZ2UgaW5pdCBhbmQgc2hvd3MgYWJvdXQgYSAxMCUgaW1wcm92ZW1lbnQg
+aW4gaW5pdGlhbGl6YXRpb24gdGltZXMNCj4gb24gdGhlIHN5c3RlbXMgSSBoYXZlIGF2YWlsYWJs
+ZSBmb3IgdGVzdGluZy4gT24gdGhvc2Ugc3lzdGVtcyBJIHNhdw0KPiBpbml0aWFsaXphdGlvbiB0
+aW1lcyBkcm9wIGZyb20gYXJvdW5kIDM1IHNlY29uZHMgdG8gYXJvdW5kIDMyIHNlY29uZHMgdG8N
+Cj4gaW5pdGlhbGl6ZSBhIDNUQiBibG9jayBvZiBwZXJzaXN0ZW50IG1lbW9yeS4NCj4gDQo+IEkg
+dHJpZWQgYWRkaW5nIGEgYml0IG9mIGRvY3VtZW50YXRpb24gYmFzZWQgb24gY29tbWl0IDxmMWRk
+MmNkMTNjND4gKCJtbSwNCj4gbWVtb3J5X2hvdHBsdWc6IGRvIG5vdCBhc3NvY2lhdGUgaG90YWRk
+ZWQgbWVtb3J5IHRvIHpvbmVzIHVudGlsIG9ubGluZSIpLg0KPiANCj4gSWRlYWxseSB0aGUgcmVz
+ZXJ2ZWQgZmxhZyBzaG91bGQgYmUgc2V0IGVhcmxpZXIgc2luY2UgdGhlcmUgaXMgYSBicmllZg0K
+PiB3aW5kb3cgd2hlcmUgdGhlIHBhZ2UgaXMgaW5pdGlhbGl6YXRpb24gdmlhIF9faW5pdF9zaW5n
+bGVfcGFnZSBhbmQgd2UgaGF2ZQ0KPiBub3Qgc2V0IHRoZSBQR19SZXNlcnZlZCBmbGFnLiBJJ20g
+bGVhdmluZyB0aGF0IGZvciBhIGZ1dHVyZSBwYXRjaCBzZXQgYXMNCj4gdGhhdCB3aWxsIHJlcXVp
+cmUgYSBtb3JlIHNpZ25pZmljYW50IHJlZmFjdG9yLg0KPiANCj4gQWNrZWQtYnk6IE1pY2hhbCBI
+b2NrbyA8bWhvY2tvQHN1c2UuY29tPg0KPiBTaWduZWQtb2ZmLWJ5OiBBbGV4YW5kZXIgRHV5Y2sg
+PGFsZXhhbmRlci5oLmR1eWNrQGludGVsLmNvbT4NCg0KUmV2aWV3ZWQtYnk6IFBhdmVsIFRhdGFz
+aGluIDxwYXZlbC50YXRhc2hpbkBtaWNyb3NvZnQuY29tPg0KDQpUaGFuayB5b3UsDQpQYXZlbA==
