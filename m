@@ -3,68 +3,65 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BFF5C4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 10:21:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85784C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 10:23:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBD4720866
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 10:21:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 208C220866
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 10:23:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="V6o5smqd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBD4720866
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="QdxsJNlV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 208C220866
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727127AbeILPY7 (ORCPT
+        id S1727413AbeILP1O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 11:24:59 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33272 "EHLO
+        Wed, 12 Sep 2018 11:27:14 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37040 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726552AbeILPY7 (ORCPT
+        with ESMTP id S1726552AbeILP1O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 11:24:59 -0400
+        Wed, 12 Sep 2018 11:27:14 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
         MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=GAnE4sRvEBkW5TyvPTEdSCotL2YJTzz3l+XtHjI63S8=; b=V6o5smqdli6XLH5xE7NJN+b9o
-        bgY5RHFg0dnHgSjMlWC3ZturJQfnvsNtTaIi9fygD+vcXtnV0eaLsb7qr1R6wlECLNiIVJ+1whhNc
-        NACV3Za29v9b5M+xqcyX1fBJ97Tgm/0C+Oy1hokgEY4veRKGddHaqDfg5Rjk++dSXMZBM=;
+         bh=TdN/PfYMdVCxiI6/c/onp5CQXOPsEgvQ1dQFiR0rKaE=; b=QdxsJNlVFUdpODlQZizU7DCXi
+        XkbOnik2ELAd58azQbVwx+S+M4cBzOG1Zi8bpSkNsVSpOOrDYwOj0+bWKLhVQ+Y1QlnHcvzmo685a
+        7a3apRv02RV6ND5IKig+E9XpAcgovVyz4xjYx0/zfvCqRAdlVDVq/yGSBHvf/AC0IxUwM=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1g02Fx-0006XV-2e; Wed, 12 Sep 2018 10:20:21 +0000
+        id 1g02Im-0006Xy-K5; Wed, 12 Sep 2018 10:23:16 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id A45541121C6A; Wed, 12 Sep 2018 11:20:20 +0100 (BST)
-Date:   Wed, 12 Sep 2018 11:20:20 +0100
+        id 56E311121C6A; Wed, 12 Sep 2018 11:23:16 +0100 (BST)
+Date:   Wed, 12 Sep 2018 11:23:16 +0100
 From:   Mark Brown <broonie@kernel.org>
-To:     Yu Zhao <yuzhao@google.com>
-Cc:     Takashi Iwai <tiwai@suse.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Rakesh Ughreja <rakesh.a.ughreja@intel.com>,
-        Guneshwor Singh <guneshwor.o.singh@intel.com>,
-        Naveen Manohar <naveen.m@intel.com>,
-        Sriram Periyasamy <sriramx.periyasamy@intel.com>,
-        Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>,
-        Sanyog Kale <sanyog.r.kale@intel.com>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] Revert "ASoC: Intel: Skylake: Acquire irq after
- RIRB allocation"
-Message-ID: <20180912102020.GB6062@sirena.org.uk>
-References: <20180910211718.200802-1-yuzhao@google.com>
- <20180911211246.31914-1-yuzhao@google.com>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     Lee Jones <lee.jones@linaro.org>, robh+dt@kernel.org,
+        mark.rutland@arm.com, lgirdwood@gmail.com,
+        mazziesaccount@gmail.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, heikki.haikola@fi.rohmeurope.com,
+        mikko.mutanen@fi.rohmeurope.com
+Subject: Re: [PATCH 1/8] regulator: bd71837: Disable voltage monitoring for
+ LDO3/4
+Message-ID: <20180912102316.GC6062@sirena.org.uk>
+References: <cover.1535545377.git.matti.vaittinen@fi.rohmeurope.com>
+ <cad2e7baeb7af2d6efbc6afba831b0513087d832.1535545377.git.matti.vaittinen@fi.rohmeurope.com>
+ <20180911124029.GO4185@dell>
+ <20180912074745.GD2381@localhost.localdomain>
+ <20180912084251.GO4185@dell>
+ <20180912085315.GE2381@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="6sX45UoQRIJXqkqR"
+        protocol="application/pgp-signature"; boundary="yLVHuoLXiP9kZBkt"
 Content-Disposition: inline
-In-Reply-To: <20180911211246.31914-1-yuzhao@google.com>
+In-Reply-To: <20180912085315.GE2381@localhost.localdomain>
 X-Cookie: Place stamp here.
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -73,33 +70,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---6sX45UoQRIJXqkqR
+--yLVHuoLXiP9kZBkt
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 11, 2018 at 03:12:46PM -0600, Yu Zhao wrote:
-> This reverts commit 12eeeb4f4733bbc4481d01df35933fc15beb8b19.
->=20
-> The patch doesn't fix accessing memory with null pointer in
-> skl_interrupt().
+On Wed, Sep 12, 2018 at 11:53:15AM +0300, Matti Vaittinen wrote:
+> On Wed, Sep 12, 2018 at 09:42:51AM +0100, Lee Jones wrote:
+> > On Wed, 12 Sep 2018, Matti Vaittinen wrote:
 
-Please use normal subject lines and so on even for revert patches -
-they're patches just the same as any other.
+> > > I m not sure if it is relevant but I think this was already applied to
+> > > Mark's regulator tree.
 
---6sX45UoQRIJXqkqR
+> > Where is Mark's acceptance email?
+
+> https://lkml.org/lkml/2018/8/29/644
+
+Yeah, sorry about not saying something explict there - IIRC when I
+applied it I knew you were on vacation and it's a stable fix.
+
+--yLVHuoLXiP9kZBkt
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAluY6GMACgkQJNaLcl1U
-h9DGywf8DYNfd/WiS0dCivsUNwaEIUEC+QB9mCA4l5HmfQii3lFaSziKcBqJzbs0
-cQXS+ezZAqOErrH/ZszCv3uwu/FIx8Q9UsTYwrsyBkPydK//hcnpNOtns2y3ZpXO
-5k+8lovzua3TXBtFpyfoLM9eiQaludSHffvI551/I91+2qJhmKCMMhcdNWFuIN+A
-+D5RbPPfGlEibsIJKMV7Vyspw8X9tDGWDapndp2VBjw4/RjO9kqLKvcQkxdwS2Ce
-L78kK4mWKfEu6ZWm0RbbHKTLDIV89VLUeyEQO9iEDCudqW2rU3hAVZcHwIpCNiLc
-FTTl0DSLcnhPCMSRJwQ9xq11nJ8tQg==
-=uAdh
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAluY6RMACgkQJNaLcl1U
+h9DVRQf+NAh/8JhCtcvZmbaYOoX1uJ8x6pdnBv8MBoExgtoPP/Bp4aeZV8DPhA6z
+eEaiuQuFafUTEBdCnoKusdXQxy4aanr/rJW5qG4lEPD/OEtQypeaZoPLw8An7ptE
+42jKcjnpmxf3cKsPKP6DWbNnJBXMwD4pmyFYCx8Ss2HByRLUgH/hmcgx9ag9igrz
+R9yWMmpNouLzOQ2i6xMXWphbRSvo4JNp1FDJnKjtdmIioSECen/8sB8aGNv34M9D
+G1/1fqg0qWbgcIVkJwRTCAJzIAksEIKDZJErgToyGGbWaHDdyOlf1tuItcwKSm2L
+d19/aGJ3sYuokqjZJin4kRBwIlBphg==
+=U4xK
 -----END PGP SIGNATURE-----
 
---6sX45UoQRIJXqkqR--
+--yLVHuoLXiP9kZBkt--
