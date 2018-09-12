@@ -2,162 +2,191 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1923CC4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 05:26:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0482C4646A
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 05:29:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B09E720833
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 05:26:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="2tpfFs1Y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B09E720833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 88E4F20833
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 05:29:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88E4F20833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726839AbeILK3S (ORCPT
+        id S1726810AbeILKbw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 06:29:18 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:37861 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726149AbeILK3S (ORCPT
+        Wed, 12 Sep 2018 06:31:52 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38230 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726073AbeILKbw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 06:29:18 -0400
-Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id w8C5QJe6003121;
-        Wed, 12 Sep 2018 14:26:20 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w8C5QJe6003121
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1536729980;
-        bh=vxwFZNLJCSXqK3vw/FgAkVmwXu0AACz8wEA5VL7EgLQ=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=2tpfFs1Y3kJ6ssdS9US57o5RA1AX5et/Hf/p5pRGEkNc/M2roiDzSkeeVvnNkngMT
-         owJm69hkRK1+3jlemkR2SpNUmU5JVMWRVIF72I8BLpQ1jJjj7Yg4u/eBM3X1wKoi5T
-         APtpzDVMIS8LbzoTlC/nRxlUXC4b38K7ZpDsBV/mangzZ6PtI0pDNEGRp5B7PNF6Zo
-         IeFjHKbNgf6nXnCSMH77xSVEfzeSh9GhUu24vuUw+OezWyYG2IJptnbIf9t9TcYkXw
-         MNvTyBM76zLg67QCb24Uz4TqQ3EvnL+9fi7aNmAkzwdxZmhiFDu4RIdzBaGrQfkSJ7
-         t/pZ/MwPqPhyA==
-X-Nifty-SrcIP: [209.85.222.48]
-Received: by mail-ua1-f48.google.com with SMTP id m26-v6so670386uap.2;
-        Tue, 11 Sep 2018 22:26:19 -0700 (PDT)
-X-Gm-Message-State: APzg51Duw9lO3Sr/5VzyZ/9Gko77If7CQlgtiOMpNN8lEwozvgfArGj4
-        qh+wfQs9PeoZqGrGOxwfNF/Pcm2FZacZa9LqQYk=
-X-Google-Smtp-Source: ANB0VdYMKfGLdIsXixtCVHTnvaN4XOjAATdjpuuwq1aEPJ77cIViVTXrJSIFZJ4WFhYjml9y8762Z/uw9/BBy2W1UZ4=
-X-Received: by 2002:ab0:4f17:: with SMTP id n23-v6mr64735uah.135.1536729978695;
- Tue, 11 Sep 2018 22:26:18 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:ab0:7111:0:0:0:0:0 with HTTP; Tue, 11 Sep 2018 22:25:38
- -0700 (PDT)
-In-Reply-To: <20180912043530.GE2766@vkoul-mobl>
-References: <1535074873-15617-1-git-send-email-yamada.masahiro@socionext.com>
- <1535074873-15617-3-git-send-email-yamada.masahiro@socionext.com>
- <20180911070003.GI2634@vkoul-mobl> <CAK7LNASMhKfQT-Hqv48=HqOPRx3OVMtdNBEe=c7dE-B_5_Nuyw@mail.gmail.com>
- <20180912043530.GE2766@vkoul-mobl>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Wed, 12 Sep 2018 14:25:38 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASFyxMTE_kVzja=bUvbDbT6Moz-nZn3=yBKdTWXEQdjXA@mail.gmail.com>
-Message-ID: <CAK7LNASFyxMTE_kVzja=bUvbDbT6Moz-nZn3=yBKdTWXEQdjXA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] dmaengine: uniphier-mdmac: add UniPhier MIO DMAC driver
-To:     Vinod <vkoul@kernel.org>
-Cc:     "open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM" 
-        <dmaengine@vger.kernel.org>, DTML <devicetree@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        Wed, 12 Sep 2018 06:31:52 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8C5NhIj119549
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 01:29:02 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2meqxw16yy-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 01:29:02 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <schwidefsky@de.ibm.com>;
+        Wed, 12 Sep 2018 06:29:00 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 12 Sep 2018 06:28:57 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8C5Suxd53084372
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 12 Sep 2018 05:28:56 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 43F46A405B;
+        Wed, 12 Sep 2018 08:28:45 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 02E04A4051;
+        Wed, 12 Sep 2018 08:28:45 +0100 (BST)
+Received: from mschwideX1 (unknown [9.145.38.104])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 12 Sep 2018 08:28:44 +0100 (BST)
+Date:   Wed, 12 Sep 2018 07:28:54 +0200
+From:   Martin Schwidefsky <schwidefsky@de.ibm.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, "Theodore Ts'o" <tytso@mit.edu>,
+        gregkh <gregkh@linuxfoundation.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: Re: [PATCH 06/11] compat_ioctl: remove /dev/random commands
+In-Reply-To: <CAK8P3a0+0=P7BDm08iqMWCbB295E8Q0Nwxvj65DNjoF4BqgYQQ@mail.gmail.com>
+References: <20180908142837.2819693-1-arnd@arndb.de>
+        <20180908142837.2819693-6-arnd@arndb.de>
+        <20180909041114.GD19965@ZenIV.linux.org.uk>
+        <CAK8P3a0+0=P7BDm08iqMWCbB295E8Q0Nwxvj65DNjoF4BqgYQQ@mail.gmail.com>
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+X-TM-AS-GCONF: 00
+x-cbid: 18091205-0028-0000-0000-000002F80577
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18091205-0029-0000-0000-000023B1A285
+Message-Id: <20180912072854.13b4c3b8@mschwideX1>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-12_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809120058
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-09-12 13:35 GMT+09:00 Vinod <vkoul@kernel.org>:
-> On 12-09-18, 12:01, Masahiro Yamada wrote:
->> Hi Vinod,
->>
->>
->> 2018-09-11 16:00 GMT+09:00 Vinod <vkoul@kernel.org>:
->> > On 24-08-18, 10:41, Masahiro Yamada wrote:
->> >
->> >> +/* mc->vc.lock must be held by caller */
->> >> +static u32 __uniphier_mdmac_get_residue(struct uniphier_mdmac_desc *md)
->> >> +{
->> >> +     u32 residue = 0;
->> >> +     int i;
->> >> +
->> >> +     for (i = md->sg_cur; i < md->sg_len; i++)
->> >> +             residue += sg_dma_len(&md->sgl[i]);
->> >
->> > so if the descriptor is submitted to hardware, we return the descriptor
->> > length, which is not correct.
->> >
->> > Two cases are required to be handled:
->> > 1. Descriptor is in queue (IMO above logic is fine for that, but it can
->> > be calculated at descriptor submit and looked up here)
->>
->> Where do you want it to be calculated?
->
-> where is it calculated now?
+On Tue, 11 Sep 2018 22:26:54 +0200
+Arnd Bergmann <arnd@arndb.de> wrote:
 
+> On Sun, Sep 9, 2018 at 6:12 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> > On Sat, Sep 08, 2018 at 04:28:12PM +0200, Arnd Bergmann wrote:  
+> > > These are all handled by the random driver, so instead of listing
+> > > each ioctl, we can just use the same function to deal with both
+> > > native and compat commands.  
+> >
+> > Umm...  I don't think it's right -
+> >  
+> > >       .unlocked_ioctl = random_ioctl,
+> > > +     .compat_ioctl = random_ioctl,  
+> >
+> >  
+> > ->compat_ioctl() gets called in  
+> >                         error = f.file->f_op->compat_ioctl(f.file, cmd, arg);
+> > so you do *NOT* get compat_ptr() for those - they have to do it on their
+> > own.  It's not hard to provide a proper compat_ioctl() instance for that
+> > one, but this is not it.  What you need in drivers/char/random.c part of
+> > that one is something like  
+> 
+> Looping in some s390 folks.
+> 
+> As you suggested in another reply, I had a look at what other drivers
+> do the same thing and have only pointer arguments. I created a
+> patch to move them all over to using a new helper function that
+> adds the compat_ptr(), and arrived at
+> 
+>  drivers/android/binder.c                    | 2 +-
+>  drivers/crypto/qat/qat_common/adf_ctl_drv.c | 2 +-
+>  drivers/dma-buf/dma-buf.c                   | 4 +---
+>  drivers/dma-buf/sw_sync.c                   | 2 +-
+>  drivers/dma-buf/sync_file.c                 | 2 +-
+>  drivers/gpu/drm/amd/amdkfd/kfd_chardev.c    | 2 +-
+>  drivers/hid/hidraw.c                        | 4 +---
+>  drivers/iio/industrialio-core.c             | 2 +-
+>  drivers/infiniband/core/uverbs_main.c       | 4 ++--
+>  drivers/media/rc/lirc_dev.c                 | 4 +---
+>  drivers/mfd/cros_ec_dev.c                   | 4 +---
+>  drivers/misc/vmw_vmci/vmci_host.c           | 2 +-
+>  drivers/nvdimm/bus.c                        | 4 ++--
+>  drivers/nvme/host/core.c                    | 6 +++---
+>  drivers/pci/switch/switchtec.c              | 2 +-
+>  drivers/platform/x86/wmi.c                  | 2 +-
+>  drivers/rpmsg/rpmsg_char.c                  | 4 ++--
+>  drivers/s390/char/sclp_ctl.c                | 8 ++------
+>  drivers/s390/char/vmcp.c                    | 2 ++----
+>  drivers/s390/cio/chsc_sch.c                 | 8 ++------
+>  drivers/sbus/char/display7seg.c             | 2 +-
+>  drivers/sbus/char/envctrl.c                 | 4 +---
+>  drivers/scsi/3w-xxxx.c                      | 4 +---
+>  drivers/scsi/cxlflash/main.c                | 2 +-
+>  drivers/scsi/esas2r/esas2r_main.c           | 2 +-
+>  drivers/scsi/pmcraid.c                      | 4 +---
+>  drivers/staging/android/ion/ion.c           | 4 +---
+>  drivers/staging/vme/devices/vme_user.c      | 2 +-
+>  drivers/tee/tee_core.c                      | 2 +-
+>  drivers/usb/class/cdc-wdm.c                 | 2 +-
+>  drivers/usb/class/usbtmc.c                  | 4 +---
+>  drivers/video/fbdev/ps3fb.c                 | 2 +-
+>  drivers/video/fbdev/sis/sis_main.c          | 4 +---
+>  drivers/virt/fsl_hypervisor.c               | 2 +-
+>  fs/btrfs/super.c                            | 2 +-
+>  fs/ceph/dir.c                               | 2 +-
+>  fs/ceph/file.c                              | 2 +-
+>  fs/fuse/dev.c                               | 2 +-
+>  fs/notify/fanotify/fanotify_user.c          | 2 +-
+>  fs/userfaultfd.c                            | 2 +-
+>  net/rfkill/core.c                           | 2 +-
+>  41 files changed, 48 insertions(+), 76 deletions(-)
+> 
+> Out of those, there are only a few that may get used on s390,
+> in particular at most infiniband/uverbs, nvme, nvdimm,
+> btrfs, ceph, fuse, fanotify and userfaultfd.
+> [Note: there are three s390 drivers in the list, which use
+> a different method: they check in_compat_syscall() from
+> a shared handler to decide whether to do compat_ptr().
 
-Please see __uniphier_mdmac_handle().
+Using in_compat_syscall() seems to be a good solution, no?
 
+> According to my memory from when I last worked on this,
+> the compat_ptr() is mainly a safeguard for legacy binaries
+> that got created with ancient C compilers (or compilers for
+> something other than C)  and might leave the high bit set
+> in a pointer, but modern C compilers (gcc-3+) won't ever
+> do that.
 
-It gets the address and size by sg_dma_address(), sg_dma_len()
-just before setting them to the hardware registers.
+And compat_ptr clears the upper 32-bit of the register. If
+the register is loaded to e.g. "lr" or "l" there will be
+junk in the 4 upper bytes.
 
-
-       sg = &md->sgl[md->sg_cur];
-
-       if (md->dir == DMA_MEM_TO_DEV) {
-               src_mode = UNIPHIER_MDMAC_CH_MODE__ADDR_INC;
-               src_addr = sg_dma_address(sg);
-               dest_mode = UNIPHIER_MDMAC_CH_MODE__ADDR_FIXED;
-               dest_addr = 0;
-       } else {
-               src_mode = UNIPHIER_MDMAC_CH_MODE__ADDR_FIXED;
-               src_addr = 0;
-               dest_mode = UNIPHIER_MDMAC_CH_MODE__ADDR_INC;
-               dest_addr = sg_dma_address(sg);
-       }
-
-
-
-
-
-
-
->> This hardware provides only simple registers (address and size)
->> for one-shot transfer instead of descriptors.
->>
->> So, I used sgl as-is because I did not see a good reason
->> to transform sgl to another data structure.
->
->
->> > this seems missing stuff. Where do you do register calculation for the
->> > descriptor and where is slave_config here, how do you know where to
->> > send/receive data form/to (peripheral)
->>
->>
->> This dmac is really simple, and un-flexible.
->>
->> The peripheral address to send/receive data from/to is hard-weird.
->> cfg->{src_addr,dst_addr} is not configurable.
->>
->> Look at __uniphier_mdmac_handle().
->> 'dest_addr' and 'src_addr' must be set to 0 for the peripheral.
->
-> Fair enough, what about other values like addr_width and maxburst?
-
-
-None of them is configurable.
-
-
+> You are probably right about /dev/random, which could be
+> used in lots of weird code, but I wonder to what degree we
+> need to worry about it for the rest.
 
 -- 
-Best Regards
-Masahiro Yamada
+blue skies,
+   Martin.
+
+"Reality continues to ruin my life." - Calvin.
+
