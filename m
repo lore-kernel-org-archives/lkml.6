@@ -6,60 +6,219 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2896C4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 13:04:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54021C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 13:06:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71ADF20882
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 13:04:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71ADF20882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nyt.cloud
+	by mail.kernel.org (Postfix) with ESMTP id 7CE6A206BB
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 13:06:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CE6A206BB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727685AbeILSIj (ORCPT
+        id S1726970AbeILSLB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 14:08:39 -0400
-Received: from smtp.domeneshop.no ([194.63.252.55]:50571 "EHLO
-        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726606AbeILSIj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 14:08:39 -0400
-Received: from cm-84.208.136.53.getinternet.no ([84.208.136.53]:2010)
-        by smtp.domeneshop.no with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.84_2)
-        (envelope-from <email@nyt.cloud>)
-        id 1g04oW-0007mU-GV; Wed, 12 Sep 2018 15:04:12 +0200
-To:     LKML <linux-kernel@vger.kernel.org>,
-        antonio.tajani@europarl.europa.eu
-From:   Email <email@nyt.cloud>
-Subject: Nyt Cloud resonates with EU thinking of ensuring fair profits to
- workmakers.
-Message-ID: <4c0a5421-2ccd-0d3a-00fc-f1ffcdefd1bf@nyt.cloud>
-Date:   Wed, 12 Sep 2018 15:00:34 +0200
-User-Agent: Mozilla/5.0 (Windows NT 5.1; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 12 Sep 2018 14:11:01 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57760 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726359AbeILSLB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 14:11:01 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7972085760;
+        Wed, 12 Sep 2018 13:06:34 +0000 (UTC)
+Received: from redhat.com (ovpn-121-244.rdu2.redhat.com [10.10.121.244])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 052372166BA3;
+        Wed, 12 Sep 2018 13:06:31 +0000 (UTC)
+Date:   Wed, 12 Sep 2018 09:06:31 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Tiwei Bie <tiwei.bie@intel.com>
+Cc:     jasowang@redhat.com, virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        virtio-dev@lists.oasis-open.org, wexu@redhat.com,
+        jfreimann@redhat.com
+Subject: Re: [virtio-dev] Re: [PATCH net-next v2 0/5] virtio: support packed
+ ring
+Message-ID: <20180912085453-mutt-send-email-mst@kernel.org>
+References: <20180711022711.7090-1-tiwei.bie@intel.com>
+ <20180827170005-mutt-send-email-mst@kernel.org>
+ <20180907012225.GA32677@debian>
+ <20180907084509-mutt-send-email-mst@kernel.org>
+ <20180910030053.GA15645@debian>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180910030053.GA15645@debian>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 12 Sep 2018 13:06:34 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 12 Sep 2018 13:06:34 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-https://e24.no/nyheter/eu-vedtok-omstridt-direktiv-om-opphavsrett/24438959
+On Mon, Sep 10, 2018 at 11:00:53AM +0800, Tiwei Bie wrote:
+> On Fri, Sep 07, 2018 at 09:00:49AM -0400, Michael S. Tsirkin wrote:
+> > On Fri, Sep 07, 2018 at 09:22:25AM +0800, Tiwei Bie wrote:
+> > > On Mon, Aug 27, 2018 at 05:00:40PM +0300, Michael S. Tsirkin wrote:
+> > > > Are there still plans to test the performance with vost pmd?
+> > > > vhost doesn't seem to show a performance gain ...
+> > > > 
+> > > 
+> > > I tried some performance tests with vhost PMD. In guest, the
+> > > XDP program will return XDP_DROP directly. And in host, testpmd
+> > > will do txonly fwd.
+> > > 
+> > > When burst size is 1 and packet size is 64 in testpmd and
+> > > testpmd needs to iterate 5 Tx queues (but only the first two
+> > > queues are enabled) to prepare and inject packets, I got ~12%
+> > > performance boost (5.7Mpps -> 6.4Mpps). And if the vhost PMD
+> > > is faster (e.g. just need to iterate the first two queues to
+> > > prepare and inject packets), then I got similar performance
+> > > for both rings (~9.9Mpps) (packed ring's performance can be
+> > > lower, because it's more complicated in driver.)
+> > > 
+> > > I think packed ring makes vhost PMD faster, but it doesn't make
+> > > the driver faster. In packed ring, the ring is simplified, and
+> > > the handling of the ring in vhost (device) is also simplified,
+> > > but things are not simplified in driver, e.g. although there is
+> > > no desc table in the virtqueue anymore, driver still needs to
+> > > maintain a private desc state table (which is still managed as
+> > > a list in this patch set) to support the out-of-order desc
+> > > processing in vhost (device).
+> > > 
+> > > I think this patch set is mainly to make the driver have a full
+> > > functional support for the packed ring, which makes it possible
+> > > to leverage the packed ring feature in vhost (device). But I'm
+> > > not sure whether there is any other better idea, I'd like to
+> > > hear your thoughts. Thanks!
+> > 
+> > Just this: Jens seems to report a nice gain with virtio and
+> > vhost pmd across the board. Try to compare virtio and
+> > virtio pmd to see what does pmd do better?
+> 
+> The virtio PMD (drivers/net/virtio) in DPDK doesn't need to share
+> the virtio ring operation code with other drivers and is highly
+> optimized for network. E.g. in Rx, the Rx burst function won't
+> chain descs.
+> So the ID management for the Rx ring can be quite
+> simple and straightforward, we just need to initialize these IDs
+> when initializing the ring and don't need to change these IDs
+> in data path anymore (the mergable Rx code in that patch set
+> assumes the descs will be written back in order, which should be
+> fixed. I.e., the ID in the desc should be used to index vq->descx[]).
+> The Tx code in that patch set also assumes the descs will be
+> written back by device in order, which should be fixed.
+> 
+> But in kernel virtio driver, the virtio_ring.c is very generic.
+> The enqueue (virtqueue_add()) and dequeue (virtqueue_get_buf_ctx())
+> functions need to support all the virtio devices and should be
+> able to handle all the possible cases that may happen. So although
+> the packed ring can be very efficient in some cases, currently
+> the room to optimize the performance in kernel's virtio_ring.c
+> isn't that much. If we want to take the fully advantage of the
+> packed ring's efficiency, we need some further e.g. API changes
+> in virtio_ring.c, which shouldn't be part of this patch set. So
+> I still think this patch set is mainly to make the kernel virtio
+> driver to have a full functional support of the packed ring, and
+> we can't expect impressive performance boost with it.
 
-Norwegian News today writes of EU, and a copyright directive that 
-ensures workmakers get their profits, from images, audio, art etc.
-
-Indeed the Fair Pay project I started is resonating with this, and we 
-want a full OS.
-
- From Unix, a corporate OS, to GNU is Not Unix, an enthusiast OS, to 
-Ynnyx Ain´t No Trinity, combining both.
-
-https://nyt.cloud/forumdisplay.php?fid=3
-
-Peace!
-Üwe Cærlyn.
+So what are the cases that make things complex?
+Maybe we should drop support for them completely.
 
 
-
+> > 
+> > 
+> > > 
+> > > > 
+> > > > On Wed, Jul 11, 2018 at 10:27:06AM +0800, Tiwei Bie wrote:
+> > > > > Hello everyone,
+> > > > > 
+> > > > > This patch set implements packed ring support in virtio driver.
+> > > > > 
+> > > > > Some functional tests have been done with Jason's
+> > > > > packed ring implementation in vhost:
+> > > > > 
+> > > > > https://lkml.org/lkml/2018/7/3/33
+> > > > > 
+> > > > > Both of ping and netperf worked as expected.
+> > > > > 
+> > > > > v1 -> v2:
+> > > > > - Use READ_ONCE() to read event off_wrap and flags together (Jason);
+> > > > > - Add comments related to ccw (Jason);
+> > > > > 
+> > > > > RFC (v6) -> v1:
+> > > > > - Avoid extra virtio_wmb() in virtqueue_enable_cb_delayed_packed()
+> > > > >   when event idx is off (Jason);
+> > > > > - Fix bufs calculation in virtqueue_enable_cb_delayed_packed() (Jason);
+> > > > > - Test the state of the desc at used_idx instead of last_used_idx
+> > > > >   in virtqueue_enable_cb_delayed_packed() (Jason);
+> > > > > - Save wrap counter (as part of queue state) in the return value
+> > > > >   of virtqueue_enable_cb_prepare_packed();
+> > > > > - Refine the packed ring definitions in uapi;
+> > > > > - Rebase on the net-next tree;
+> > > > > 
+> > > > > RFC v5 -> RFC v6:
+> > > > > - Avoid tracking addr/len/flags when DMA API isn't used (MST/Jason);
+> > > > > - Define wrap counter as bool (Jason);
+> > > > > - Use ALIGN() in vring_init_packed() (Jason);
+> > > > > - Avoid using pointer to track `next` in detach_buf_packed() (Jason);
+> > > > > - Add comments for barriers (Jason);
+> > > > > - Don't enable RING_PACKED on ccw for now (noticed by Jason);
+> > > > > - Refine the memory barrier in virtqueue_poll();
+> > > > > - Add a missing memory barrier in virtqueue_enable_cb_delayed_packed();
+> > > > > - Remove the hacks in virtqueue_enable_cb_prepare_packed();
+> > > > > 
+> > > > > RFC v4 -> RFC v5:
+> > > > > - Save DMA addr, etc in desc state (Jason);
+> > > > > - Track used wrap counter;
+> > > > > 
+> > > > > RFC v3 -> RFC v4:
+> > > > > - Make ID allocation support out-of-order (Jason);
+> > > > > - Various fixes for EVENT_IDX support;
+> > > > > 
+> > > > > RFC v2 -> RFC v3:
+> > > > > - Split into small patches (Jason);
+> > > > > - Add helper virtqueue_use_indirect() (Jason);
+> > > > > - Just set id for the last descriptor of a list (Jason);
+> > > > > - Calculate the prev in virtqueue_add_packed() (Jason);
+> > > > > - Fix/improve desc suppression code (Jason/MST);
+> > > > > - Refine the code layout for XXX_split/packed and wrappers (MST);
+> > > > > - Fix the comments and API in uapi (MST);
+> > > > > - Remove the BUG_ON() for indirect (Jason);
+> > > > > - Some other refinements and bug fixes;
+> > > > > 
+> > > > > RFC v1 -> RFC v2:
+> > > > > - Add indirect descriptor support - compile test only;
+> > > > > - Add event suppression supprt - compile test only;
+> > > > > - Move vring_packed_init() out of uapi (Jason, MST);
+> > > > > - Merge two loops into one in virtqueue_add_packed() (Jason);
+> > > > > - Split vring_unmap_one() for packed ring and split ring (Jason);
+> > > > > - Avoid using '%' operator (Jason);
+> > > > > - Rename free_head -> next_avail_idx (Jason);
+> > > > > - Add comments for virtio_wmb() in virtqueue_add_packed() (Jason);
+> > > > > - Some other refinements and bug fixes;
+> > > > > 
+> > > > > Thanks!
+> > > > > 
+> > > > > Tiwei Bie (5):
+> > > > >   virtio: add packed ring definitions
+> > > > >   virtio_ring: support creating packed ring
+> > > > >   virtio_ring: add packed ring support
+> > > > >   virtio_ring: add event idx support in packed ring
+> > > > >   virtio_ring: enable packed ring
+> > > > > 
+> > > > >  drivers/s390/virtio/virtio_ccw.c   |   14 +
+> > > > >  drivers/virtio/virtio_ring.c       | 1365 ++++++++++++++++++++++------
+> > > > >  include/linux/virtio_ring.h        |    8 +-
+> > > > >  include/uapi/linux/virtio_config.h |    3 +
+> > > > >  include/uapi/linux/virtio_ring.h   |   43 +
+> > > > >  5 files changed, 1157 insertions(+), 276 deletions(-)
+> > > > > 
+> > > > > -- 
+> > > > > 2.18.0
+> > > > 
+> > > > ---------------------------------------------------------------------
+> > > > To unsubscribe, e-mail: virtio-dev-unsubscribe@lists.oasis-open.org
+> > > > For additional commands, e-mail: virtio-dev-help@lists.oasis-open.org
+> > > > 
