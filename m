@@ -2,210 +2,215 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 799ABC070C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 21:49:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EABDC070C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 21:51:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 183E121471
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 21:49:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 183E121471
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 050CE2146E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 21:51:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UL6Og1Bg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 050CE2146E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728068AbeIMC4J (ORCPT
+        id S1728116AbeIMC5n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 22:56:09 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:44798 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726111AbeIMC4J (ORCPT
+        Wed, 12 Sep 2018 22:57:43 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:38507 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727711AbeIMC5n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 22:56:09 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id E5033806CB; Wed, 12 Sep 2018 23:49:38 +0200 (CEST)
-Date:   Wed, 12 Sep 2018 23:49:38 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Dan Murphy <dmurphy@ti.com>
-Cc:     robh+dt@kernel.org, jacek.anaszewski@gmail.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lee.jones@linaro.org, linux-omap@vger.kernel.org,
-        linux-leds@vger.kernel.org
-Subject: Re: [PATCH v7 1/6] dt-bindings: ti-lmu: Remove LM3697
-Message-ID: <20180912214938.GA30654@amd>
-References: <20180911170825.17789-1-dmurphy@ti.com>
- <20180911170825.17789-2-dmurphy@ti.com>
- <20180911200530.GA28290@amd>
- <85ab3bf4-21d4-dda9-a7c8-5ed68f15c611@ti.com>
+        Wed, 12 Sep 2018 22:57:43 -0400
+Received: by mail-pl1-f193.google.com with SMTP id u11-v6so1607017plq.5
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 14:51:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=wLlo4MkG2gzWLef8oEkdDZsivwKYDtYx+sRT2bhIMWg=;
+        b=UL6Og1Bgkm1lnajt+eeVIA0no6oqNynE4QNfA/xHekyKZDHLSe0Qim9OnTqZ+M0ckm
+         7cq8faQ7kiEqWzAgpTS0t/qDTTVGGVL+CQUuAHdPJPyx9GzW5xNXreTdWmseQm/MoaC2
+         OodWKRRrKisp2XkMkE4QYl6g/+Iu9VSo/TEFo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wLlo4MkG2gzWLef8oEkdDZsivwKYDtYx+sRT2bhIMWg=;
+        b=mRVtDv+XJ7QGYBSFRF2+mdUYnYoCz9EMAdOsSt67DBkYVveRteeAzKgc6cao5WmC/1
+         +gwqIXKj2HWvpWroukEMdCb6Oc480bn9W8UzC74kq+dNqdmV2CDExaxAs47dpaiQ/Pb9
+         Y0xJtddAcRYw9qYHdP1hy0MqiBfa7uA9oo4y66tRb2HIMGkIFOJjQz1BSpEGYxJEgUR5
+         C06w9zgBzTru1DRNS1O/FvovDI19n6lr91neeDAgw2esCMqrHMl0wFggYkzxto+Yflng
+         vWk0Io/KDsxzJedSRLtE0nJKQqXhQ/mAF10P9sLTlzw5ugKJQfeAXoLWbRsXEfKeENqV
+         GaGQ==
+X-Gm-Message-State: APzg51APUyNN2p2GVXdt8VeavDZaFg5DVsam84lsSscJQsrBRAYv8OEE
+        NLbnI/K9nW6zlzWe7JOsPD2DSw==
+X-Google-Smtp-Source: ANB0VdYXL0SejTItPJ8oEHEMA7reJ4rVfGVuAu/gAiBV5GKAx1CcPOjEhIVCx8qoEgEm1c3QXNmaAw==
+X-Received: by 2002:a17:902:bd95:: with SMTP id q21-v6mr4283567pls.284.1536789075027;
+        Wed, 12 Sep 2018 14:51:15 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
+        by smtp.gmail.com with ESMTPSA id a15-v6sm3192543pfe.32.2018.09.12.14.51.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Sep 2018 14:51:14 -0700 (PDT)
+Date:   Wed, 12 Sep 2018 14:51:13 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Raju P L S S S N <rplsssn@codeaurora.org>
+Cc:     andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, sboyd@kernel.org,
+        evgreen@chromium.org, dianders@chromium.org, ilina@codeaurora.org
+Subject: Re: [PATCH v2 4/6] drivers: qcom: rpmh-rsc: clear active mode
+ configuration for waketcs
+Message-ID: <20180912215113.GJ22824@google.com>
+References: <1532685889-31345-1-git-send-email-rplsssn@codeaurora.org>
+ <1532685889-31345-5-git-send-email-rplsssn@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="ikeVEW9yuYc//A+q"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <85ab3bf4-21d4-dda9-a7c8-5ed68f15c611@ti.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <1532685889-31345-5-git-send-email-rplsssn@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Jul 27, 2018 at 03:34:47PM +0530, Raju P L S S S N wrote:
+> From: "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
+> 
+> For RSCs that have sleep & wake TCS but no dedicated active TCS, wake
+> TCS can be re-purposed to send active requests. Once the active requests
+> are sent and response is received, the active mode configuration needs
+> to be cleared so that controller can use wake TCS for sending wake
+> requests in 'solver' state while executing low power modes.
+> 
+> Signed-off-by: Raju P.L.S.S.S.N <rplsssn@codeaurora.org>
+> ---
+>  drivers/soc/qcom/rpmh-rsc.c | 77 +++++++++++++++++++++++++++++++--------------
+>  1 file changed, 54 insertions(+), 23 deletions(-)
+> 
+> diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
+> index 42d0041..19616c9 100644
+> --- a/drivers/soc/qcom/rpmh-rsc.c
+> +++ b/drivers/soc/qcom/rpmh-rsc.c
+> @@ -199,6 +199,42 @@ static const struct tcs_request *get_req_from_tcs(struct rsc_drv *drv,
+>  	return NULL;
+>  }
+>  
+> +static void __tcs_trigger(struct rsc_drv *drv, int tcs_id, bool trigger)
+> +{
+> +	u32 enable;
+> +
+> +	/*
+> +	 * HW req: Clear the DRV_CONTROL and enable TCS again
+> +	 * While clearing ensure that the AMC mode trigger is cleared
+> +	 * and then the mode enable is cleared.
+> +	 */
+> +	enable = read_tcs_reg(drv, RSC_DRV_CONTROL, tcs_id, 0);
+> +	enable &= ~TCS_AMC_MODE_TRIGGER;
+> +	write_tcs_reg_sync(drv, RSC_DRV_CONTROL, tcs_id, enable);
+> +	enable &= ~TCS_AMC_MODE_ENABLE;
+> +	write_tcs_reg_sync(drv, RSC_DRV_CONTROL, tcs_id, enable);
+> +
+> +	if (trigger) {
+> +		/* Enable the AMC mode on the TCS and then trigger the TCS */
+> +		enable = TCS_AMC_MODE_ENABLE;
+> +		write_tcs_reg_sync(drv, RSC_DRV_CONTROL, tcs_id, enable);
+> +		enable |= TCS_AMC_MODE_TRIGGER;
+> +		write_tcs_reg_sync(drv, RSC_DRV_CONTROL, tcs_id, enable);
+> +	}
+> +}
+> +
+> +static inline void enable_tcs_irq(struct rsc_drv *drv, int tcs_id, bool enable)
+> +{
+> +	u32 data;
+> +
+> +	data = read_tcs_reg(drv, RSC_DRV_IRQ_ENABLE, 0, 0);
+> +	if (enable)
+> +		data |= BIT(tcs_id);
+> +	else
+> +		data &= ~BIT(tcs_id);
+> +	write_tcs_reg(drv, RSC_DRV_IRQ_ENABLE, 0, data);
+> +}
+> +
+>  /**
+>   * tcs_tx_done: TX Done interrupt handler
+>   */
+> @@ -235,6 +271,21 @@ static irqreturn_t tcs_tx_done(int irq, void *p)
+>  		}
+>  
+>  		trace_rpmh_tx_done(drv, i, req, err);
+> +
+> +		/*
+> +		 * if wake tcs was re-purposed for sending active
+> +		 * votes, clear AMC trigger & enable modes and
+> +		 * disable interrupt for this TCS
+> +		 */
+> +		if (!drv->tcs[ACTIVE_TCS].num_tcs) {
+> +			__tcs_trigger(drv, i, false);
+> +			/*
+> +			 * Disable interrupt for this TCS to avoid being
+> +			 * spammed with interrupts coming when the solver
+> +			 * sends its wake votes.
+> +			 */
+> +			enable_tcs_irq(drv, i, false);
+> +		}
+>  skip:
+>  		/* Reclaim the TCS */
+>  		write_tcs_reg(drv, RSC_DRV_CMD_ENABLE, i, 0);
+> @@ -282,28 +333,6 @@ static void __tcs_buffer_write(struct rsc_drv *drv, int tcs_id, int cmd_id,
+>  	write_tcs_reg(drv, RSC_DRV_CMD_ENABLE, tcs_id, cmd_enable);
+>  }
+>  
+> -static void __tcs_trigger(struct rsc_drv *drv, int tcs_id)
+> -{
+> -	u32 enable;
+> -
+> -	/*
+> -	 * HW req: Clear the DRV_CONTROL and enable TCS again
+> -	 * While clearing ensure that the AMC mode trigger is cleared
+> -	 * and then the mode enable is cleared.
+> -	 */
+> -	enable = read_tcs_reg(drv, RSC_DRV_CONTROL, tcs_id, 0);
+> -	enable &= ~TCS_AMC_MODE_TRIGGER;
+> -	write_tcs_reg_sync(drv, RSC_DRV_CONTROL, tcs_id, enable);
+> -	enable &= ~TCS_AMC_MODE_ENABLE;
+> -	write_tcs_reg_sync(drv, RSC_DRV_CONTROL, tcs_id, enable);
+> -
+> -	/* Enable the AMC mode on the TCS and then trigger the TCS */
+> -	enable = TCS_AMC_MODE_ENABLE;
+> -	write_tcs_reg_sync(drv, RSC_DRV_CONTROL, tcs_id, enable);
+> -	enable |= TCS_AMC_MODE_TRIGGER;
+> -	write_tcs_reg_sync(drv, RSC_DRV_CONTROL, tcs_id, enable);
+> -}
+> -
+>  static int check_for_req_inflight(struct rsc_drv *drv, struct tcs_group *tcs,
+>  				  const struct tcs_request *msg)
+>  {
+> @@ -374,10 +403,12 @@ static int tcs_write(struct rsc_drv *drv, const struct tcs_request *msg)
+>  
+>  	tcs->req[tcs_id - tcs->offset] = msg;
+>  	set_bit(tcs_id, drv->tcs_in_use);
+> +	if (msg->state == RPMH_ACTIVE_ONLY_STATE && tcs->type != ACTIVE_TCS)
+> +		enable_tcs_irq(drv, tcs_id, true);
 
---ikeVEW9yuYc//A+q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+You might want to add a short comment here. In the context of this
+patch it is (relatively) clear that the wake TCS is re-purposed for
+active requests, and the interrupt is disabled by default for
+non-active TCSes. However on it's own this isn't necessarily
+evident without looking through the code.
 
-Hi!
+>  	spin_unlock(&drv->lock);
+>  
+>  	__tcs_buffer_write(drv, tcs_id, 0, msg);
+> -	__tcs_trigger(drv, tcs_id);
+> +	__tcs_trigger(drv, tcs_id, true);
+>  
+>  done_write:
+>  	spin_unlock_irqrestore(&tcs->lock, flags);
 
-> On 09/11/2018 03:05 PM, Pavel Machek wrote:
-> > On Tue 2018-09-11 12:08:20, Dan Murphy wrote:
-> >> Remove support for the LM3697 LED device
-> >> from the ti-lmu.  The LM3697 will be supported
-> >> via a stand alone LED driver.
-> >>
-> >> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> >=20
-> > I'd really like to see better explanation here.
-> >=20
->=20
-> I will update the commit message but....
->=20
-> How do I politely explain that the original implementation was wrong for =
-certain devices?
-
-Implementation? Device tree is hardware description.
-
-> How do I politely explain that this binding has information that
->  does not exist?
-
-I don't understand this sentence.
-
-> Isn't code and documentation supposed to be pushed in stages
-> together?
-
-Device tree is _not_ documentation. And yes, it is normally pushed
-together. But that did not happen here, and bindings are already in.
-
-Bindings are an ABI between bootloader and kernel. They should not be
-changed lightly.=20
-
-Here I believe they should be fixed; not deleted.
-
-> Unfortunately Milo left TI before he had a chance to finish upstreaming.
-
-Well -- I wanted to finish upstreaming. I still have those patches,
-and they still look reasonably well. Better than=20
-
-> Some issues with the current binding:
-> 1) The documentation referenced in the ti-lmu.txt does not exist but the =
-binding was accepted.
-> [1] ../leds/backlight/ti-lmu-backlight.txt
-> [2] ../leds/leds-lm3633.txt
-> [3] ../regulator/lm363x-regulator.txt
->=20
-> 2) ramp-up-msec and ramp-down-msec are not explained or defined in this c=
-urrent binding.
-> Looks to be defined in the staged code though.
->=20
-> 3) The ramp-up-msec and ramp-down-msec are not the right node parameters
-> the code shows ti,ramp-down-ms and ti,ramp-up-ms.  Looking at the clean u=
-p of the binding
-> in the staged commits the binding still does not match the code.
->=20
-> https://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap.git/com=
-mit/?h=3Ddroid4-pending-v4.19&id=3Dd774c7e447ac911e73a1b3c775e6d89f0422218c
->
-
-Bindings are authoritative. Of course, they can be fixed if really
-neccessary, but normally code should be adapted to the bindings, not
-the other way around.
-
-If slow ramping up/down is something that would be expected in other
-chips, too, ti, prefix is not good idea.
-
-> 4) The ramp rates ranges are incorrect for the LM3697 it should be from 0=
- -> 117400 ms
->=20
-> 5) The children compatibles are not defined in this binding but appear to=
- be removed in the staged code.
->=20
-> 6) address-cells and size-cells are missing from the binding
-
-Yep, ok, so these should be fixed. Still the bindings should be fixed,
-not removed and started over.
-
-> I am attempting to clean this up for all the dedicated LED drivers.
-> There is a lot of bloat with this driver to support a single LED driver t=
-hat is a single function device.
->
-
-What about the multi function devices? They should have same binding.
-
-> This ti-lmu driver may be a great thing for the Droid 4 but from a custom=
-ers
-> stand point that just wants to use just 1 of the dedicated LED drivers th=
-is driver is
-> overly complex and possibly hard to add code for differentiation.
-
-The ti-lmu driver sounds like a way to go. We really want single
-driver, even if more complex, than 6 separate ones.
-
-> > We have existing binding, for lm3697 and similar devices. With this
-> > series, different binding is introduced, without documented reason.
-> >=20
->=20
-> I can update the commit message to indicate that this device is not a MFD
-> device and only is a SFD that needs to be supported by a dedicated
-> driver.
-
-Device bindings are operating systems independend. This is not an argument.
-
-> > Now, maybe you are right and the hardware should be handled by
-> > drivers/leds, not drivers/mfd. But we should have solution for all the
-> > similar chips, and that still does not mean we have to modify the
-> > binding. (But maybe we want to move it to different
-> > directory). Bindings are supposed to describe hardware, not mirror
-> > structure of our drivers.
->=20
-> But this is not clean to have this device in the MFD bindings directory
-> when the support is in the LEDs directory.
-
-Perhaps location of the binding is wrong. Still not reason to drop it
-and introduce new one.
-
-> >> index c885cf89b8ce..920f910be4e9 100644
-> >> --- a/Documentation/devicetree/bindings/mfd/ti-lmu.txt
-> >> +++ b/Documentation/devicetree/bindings/mfd/ti-lmu.txt
-> >> @@ -9,7 +9,6 @@ TI LMU driver supports lighting devices below.
-> >>    LM3632       Backlight and regulator
-> >>    LM3633       Backlight, LED and fault monitor
-> >>    LM3695       Backlight
-> >> -  LM3697       Backlight and fault monitor
-> >> =20
-> >>  Required properties:
-> >>    - compatible: Should be one of:
-
-You see? Even if your "new" binding has no flaws, "flawed" binding
-still remains in tree, and we still have problems for lm3632, 3633,
-3695. That's why it needs to be fixed, not replaced.
-
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---ikeVEW9yuYc//A+q
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAluZifIACgkQMOfwapXb+vLjqgCgkY672WQ5AXqFcoyUHSAY4VxN
-8nAAni+wU410wF8iIReHojXX9IZcmPoP
-=JyMt
------END PGP SIGNATURE-----
-
---ikeVEW9yuYc//A+q--
+Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
