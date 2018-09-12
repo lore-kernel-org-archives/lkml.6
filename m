@@ -2,118 +2,158 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1058C46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:31:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A11D1C4646A
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:31:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38DAD20880
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:31:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eVe6mqDA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38DAD20880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6521F20880
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:31:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6521F20880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727838AbeILOev (ORCPT
+        id S1728022AbeILOfZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 10:34:51 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:35931 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727616AbeILOeu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 10:34:50 -0400
-Received: by mail-lj1-f195.google.com with SMTP id v26-v6so1028093ljj.3;
-        Wed, 12 Sep 2018 02:31:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=KLB3khADlyP1siS2rz9dz4kgqScpnDvvcUx3pFZNCek=;
-        b=eVe6mqDArrNAYHZ+4gLmgv/h9SZ7bzh0TPf90cw09+dgqpS3r082BoN4I7tERtiP/Z
-         0TpdvB3hP48nvdw0ehYC+KL4cOI3MIwj3oM0liJDuwhjZIVSAQ8Xu74rC8ouA9REDYGH
-         NOlMazMuEUWh7t1Fh7X/ofJcEFKGseZBsayhwoa32AhrhD3CryQVbba12i9STXktIbGr
-         9IXJkoG/CJBOCIl7GCqFld2/jbll5dU6F7Z3RZzmmo9kHkT8IWlI4Jp7XGweq6fNtid3
-         Mvb+Ojp6UP/fz+7OCUbWG0SjehBxnMTpCh/bd36z26OFqKuCHOA7kX7nHCdJOYapjqdH
-         lB2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KLB3khADlyP1siS2rz9dz4kgqScpnDvvcUx3pFZNCek=;
-        b=pERSu7WWq3yAnMPxkVKzCa24YIrRG7bfJfBPP8xoXuV2BYsXpXf1wmuiEsvCIR6AkP
-         KipL8PSGQb14tuafOeBpIia7cy0dvIPWiCyiIOIPOOK9zB7UAkrV4NCb3A5b2BKl2Oi7
-         G6T72IOzCFI8kn/IywnGeSt8kk+0oMXscPeFDDtflBKQ9t9mLgpjK9Mc9Vg8C3cYecD6
-         pqRKVRokCoGrYFdmuvGb/1c2JKtMByseYES3y/lnHH4lBb8e9ILgAeWWtCCQ+JhR1otm
-         PI033uue2mix+yCL8I/OTGYmmBFw4LYax3PavXrNjPzaYUFkWgKvhcCXhSAsWtZqgU1Z
-         kD0w==
-X-Gm-Message-State: APzg51ACFjra9QUY9sI1tLBQ5kd9in23Z/8MGnVSTPNm6k54dxd2D/g1
-        g5AoYL8hD1U2tKJI4YeQVTg=
-X-Google-Smtp-Source: ANB0Vda4+4CcJ4KNwde29j80zmZ6w6J75R5VB46J5bWbqvsR/Kt7aWCNNrMPZ2+s1xNMcZHQfMyRig==
-X-Received: by 2002:a2e:934d:: with SMTP id m13-v6mr718939ljh.45.1536744667205;
-        Wed, 12 Sep 2018 02:31:07 -0700 (PDT)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id t18-v6sm88851lje.95.2018.09.12.02.31.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Sep 2018 02:31:06 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1g01US-0002Sd-6n; Wed, 12 Sep 2018 11:31:16 +0200
-Date:   Wed, 12 Sep 2018 11:31:16 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     "Tobin C. Harding" <me@tobin.cc>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH 2/3] tty_port: Fix function name and brief desc
-Message-ID: <20180912093116.GC1089@localhost>
-References: <20180912075044.8695-1-me@tobin.cc>
- <20180912075044.8695-3-me@tobin.cc>
+        Wed, 12 Sep 2018 10:35:25 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53098 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727616AbeILOfZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 10:35:25 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 9770FAF3B;
+        Wed, 12 Sep 2018 09:31:41 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id E1B9B1E3613; Wed, 12 Sep 2018 11:31:40 +0200 (CEST)
+Date:   Wed, 12 Sep 2018 11:31:40 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Toshi Kani <toshi.kani@hpe.com>, Jan Kara <jack@suse.cz>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] ext4, dax: set ext4_dax_aops for dax files
+Message-ID: <20180912093140.GB7782@quack2.suse.cz>
+References: <20180911154246.6844-1-toshi.kani@hpe.com>
+ <20180911154246.6844-3-toshi.kani@hpe.com>
+ <CAPcyv4iEZ7q0MV7n-_eovrJw_U9S3=pkY_nYwtw1jSBS7vPqCQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180912075044.8695-3-me@tobin.cc>
+In-Reply-To: <CAPcyv4iEZ7q0MV7n-_eovrJw_U9S3=pkY_nYwtw1jSBS7vPqCQ@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 05:50:43PM +1000, Tobin C. Harding wrote:
-> File contains kernel-doc function comments that are not in the correct
-> style.
+On Tue 11-09-18 11:15:18, Dan Williams wrote:
+> On Tue, Sep 11, 2018 at 8:42 AM, Toshi Kani <toshi.kani@hpe.com> wrote:
+> > Sync syscall to an existing DAX file needs to flush processor cache,
+> > but it does not currently.  This is because 'ext4_da_aops' is set to
+> > address_space_operations of existing DAX files, instead of 'ext4_dax_aops',
+> > since S_DAX flag is set after ext4_set_aops() in the open path.
+> >
+> >   New file
+> >   --------
+> >   lookup_open
+> >     ext4_create
+> >       __ext4_new_inode
+> >         ext4_set_inode_flags   // Set S_DAX flag
+> >       ext4_set_aops            // Set aops to ext4_dax_aops
+> >
+> >   Existing file
+> >   -------------
+> >   lookup_open
+> >     ext4_lookup
+> >       ext4_iget
+> >         ext4_set_aops          // Set aops to ext4_da_aops
+> >         ext4_set_inode_flags   // Set S_DAX flag
+> >
+> > Change ext4_iget() to call ext4_set_inode_flags() before ext4_set_aops().
+> >
+> > Fixes: 5f0663bb4a64f588f0a2dd6d1be68d40f9af0086
 > 
->  - Add '()' to function names
->  - Capitalise brief description and append a full stop.
-
-Cleaning up these comments may not be a bad idea, but I have my doubts
-about this particular item. Many descriptions aren't full sentences and
-still won't be even if you capitalise and slap a full stop there, for
-example:
-
-> - *	tty_port_hangup		-	hangup helper
-> + * tty_port_hangup() - Hangup helper.
-	
-There's no requirement to use full sentences, and the old kernel-doc
-nano doc uses incomplete ones, as do most (?) kernel-doc comments
-throughout the kernel.
-
-I'd just drop this part of the patch. 
-
->  - Use correct spacing for function name / brief description as per the
->    kernel docs (Documentation/doc-guide/kernel-doc.rst)
+> Same format nit:
 > 
-> 	/**
-> 	 * function_name() - Brief description of function.
-> 	 * @arg1: Describe the first argument.
+> Fixes: 5f0663bb4a64 ("ext4, dax: introduce ext4_dax_aops")
+> Cc: <stable@vger.kernel.org>
 > 
->  - Fix spacing for kernel-doc function comments (no tab space after '*').
 > 
-> These changes all touch the same lines so do them in a single patch.
+> > Signed-off-by: Toshi Kani <toshi.kani@hpe.com>
+> > Cc: Jan Kara <jack@suse.cz>
+> > Cc: Dan Williams <dan.j.williams@intel.com>
+> > Cc: "Theodore Ts'o" <tytso@mit.edu>
+> > Cc: Andreas Dilger <adilger.kernel@dilger.ca>
+> > ---
+> >  fs/ext4/inode.c |    3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> > index 775cd9b4af55..93cbbb859c40 100644
+> > --- a/fs/ext4/inode.c
+> > +++ b/fs/ext4/inode.c
+> > @@ -4998,6 +4998,8 @@ struct inode *ext4_iget(struct super_block *sb, unsigned long ino)
+> >         if (ret)
+> >                 goto bad_inode;
+> >
+> > +       ext4_set_inode_flags(inode);
+> > +
 > 
-> Signed-off-by: Tobin C. Harding <me@tobin.cc>
+> Hmm, does this have unintended behavior changes?
+> 
+> I notice that there are some checks for flags "IS_APPEND(inode) ||
+> IS_IMMUTABLE(inode)" *before* the call to ext4_set_inode_flags(). I
+> didn't look too much deeper at whether those checks are bogus, but it
+> would seem safer to do something like this for a lower risk fix.
+> 
+> Thoughts?
 
-Thanks,
-Johan
+Well, safer but it would leave the landmine around for others to hit.
+Toshi, please move the ext4_set_inode_flags() call to be just after the
+assignment:
+
+	ei->i_flags = le32_to_cpu(raw_inode->i_flags);
+
+in ext4_iget(). That way people won't introduce checks for i_flags that can
+never hit... And yes, it fixes also other bugs (mostly in sanity checks
+AFAICS) than the DAX issue.
+
+								Honza
+
+> 
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index d0dd585add6a..1e9ab445c777 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -4999,7 +4999,6 @@ struct inode *ext4_iget(struct super_block *sb,
+> unsigned long ino)
+>         if (S_ISREG(inode->i_mode)) {
+>                 inode->i_op = &ext4_file_inode_operations;
+>                 inode->i_fop = &ext4_file_operations;
+> -               ext4_set_aops(inode);
+>         } else if (S_ISDIR(inode->i_mode)) {
+>                 inode->i_op = &ext4_dir_inode_operations;
+>                 inode->i_fop = &ext4_dir_operations;
+> @@ -5042,6 +5041,12 @@ struct inode *ext4_iget(struct super_block *sb,
+> unsigned long ino)
+>         }
+>         brelse(iloc.bh);
+>         ext4_set_inode_flags(inode);
+> +       /*
+> +        * Now that we have determined whether DAX is enabled, set the
+> +        * proper address spaces operations
+> +        */
+> +       if (S_ISREG(inode->i_mode))
+> +               ext4_set_aops(inode);
+> 
+>         unlock_new_inode(inode);
+>         return inode;
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
