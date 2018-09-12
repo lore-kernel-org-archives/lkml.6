@@ -6,541 +6,310 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B37FDC04ABB
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 00:18:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92CDFC04ABB
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 00:19:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62A6320866
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 00:18:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62A6320866
+	by mail.kernel.org (Postfix) with ESMTP id 4322420882
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 00:19:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4322420882
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728225AbeILFUm (ORCPT
+        id S1728166AbeILFUa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 01:20:42 -0400
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:51514 "EHLO
+        Wed, 12 Sep 2018 01:20:30 -0400
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:51516 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726348AbeILFUa (ORCPT
+        with ESMTP id S1726359AbeILFUa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 12 Sep 2018 01:20:30 -0400
 Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id 12E682A7CE; Tue, 11 Sep 2018 20:18:44 -0400 (EDT)
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
+        id 1F0E12A7D0; Tue, 11 Sep 2018 20:18:44 -0400 (EDT)
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
 Cc:     <linuxppc-dev@lists.ozlabs.org>, <linux-m68k@lists.linux-m68k.org>,
         <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Message-Id: <7a0748d8cd97964a99879a0b9f1c0243c677c7c3.1536709753.git.fthain@telegraphics.com.au>
+        Andreas Schwab <schwab@linux-m68k.org>
+Message-Id: <1dd7bad420f01e3dc9d02c6dc493d8005ff2b5a1.1536709753.git.fthain@telegraphics.com.au>
 In-Reply-To: <cover.1536709753.git.fthain@telegraphics.com.au>
 References: <cover.1536709753.git.fthain@telegraphics.com.au>
 From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH 1/7] macintosh: Use common code to access RTC
+Subject: [PATCH 2/7] macintosh/adb: Rework printk output again
 Date:   Tue, 11 Sep 2018 20:18:44 -0400 (EDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that the 68k Mac port has adopted the via-pmu driver, the same RTC
-code can be shared between m68k and powerpc. Replace duplicated code in
-arch/powerpc and arch/m68k with common RTC accessors for Cuda and PMU.
+Avoid the KERN_CONT problem by avoiding message fragments. The problem
+arises during async ADB bus probing, when ADB messages may get mixed up
+with other messages. See also, commit 4bcc595ccd80 ("printk: reinstate
+KERN_CONT for printing continuation lines").
 
-Drop the problematic WARN_ON which was introduced in commit 22db552b50fa
-("powerpc/powermac: Fix rtc read/write functions").
+Remove a number of printk() continuation lines by logging handler
+changes in adb_try_handler_change() instead.
 
+This patch addresses the problematic use of "\n" at the beginning of
+pr_cont() messages, which got overlooked in commit f2be6295684b
+("macintosh/adb: Properly mark continued kernel messages").
+
+That commit also changed printk(KERN_DEBUG ...) to pr_debug(...), which
+hinders work on low-level ADB driver bugs. Revert that change.
+
+Cc: Andreas Schwab <schwab@linux-m68k.org>
 Tested-by: Stan Johnson <userm57@yahoo.com>
 Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
 ---
-This patch has been regression tested on the following Mac models.
-  Centris 660av       (m68k, Cuda)
-  PowerBook 190       (m68k, PMU)
-  Beige G3 PowerMac   (powerpc, Cuda)
-  Pismo G3 PowerBook  (powerpc, PMU)
-  G5 PowerMac         (powerpc64, PMU)
+ drivers/macintosh/adb.c    |  8 ++++---
+ drivers/macintosh/adbhid.c | 53 ++++++++++++++++++----------------------------
+ 2 files changed, 26 insertions(+), 35 deletions(-)
 
-These changes were previously submitted as "[RFC] macintosh: Use common
-code to access RTC", and prior to that as "[PATCH v3 10/12] macintosh:
-Use common code to access RTC", etc.
-
-Changes since RFC:
-- pmac_get_rtc_time() is no longer defined terms of pmac_get_boot_time().
-- The 64-bit temporary variables were replaced with 64-bit casts,
-  consistent with via_read_time() and via_set_rtc_time().
-- Rebased.
-
-Changes since v3:
-- Rearranged some #ifdefs in arch/powerpc/platforms/powermac/time.c so
-  that pmac_set_rtc_time() will return -ENODEV when appropriate.
-- Rebased.
----
- arch/m68k/mac/misc.c                   |  75 +++-----------------
- arch/powerpc/platforms/powermac/time.c | 126 ++++++---------------------------
- drivers/macintosh/via-cuda.c           |  35 +++++++++
- drivers/macintosh/via-pmu.c            |  33 +++++++++
- include/linux/cuda.h                   |   4 ++
- include/linux/pmu.h                    |   4 ++
- 6 files changed, 106 insertions(+), 171 deletions(-)
-
-diff --git a/arch/m68k/mac/misc.c b/arch/m68k/mac/misc.c
-index 1b083c500b9a..ebb3b6d169ea 100644
---- a/arch/m68k/mac/misc.c
-+++ b/arch/m68k/mac/misc.c
-@@ -37,35 +37,6 @@
- static void (*rom_reset)(void);
+diff --git a/drivers/macintosh/adb.c b/drivers/macintosh/adb.c
+index 76e98f0f7a3e..e49d1f287a17 100644
+--- a/drivers/macintosh/adb.c
++++ b/drivers/macintosh/adb.c
+@@ -203,15 +203,15 @@ static int adb_scan_bus(void)
+ 	}
  
- #ifdef CONFIG_ADB_CUDA
--static time64_t cuda_read_time(void)
--{
--	struct adb_request req;
--	time64_t time;
+ 	/* Now fill in the handler_id field of the adb_handler entries. */
+-	pr_debug("adb devices:\n");
+ 	for (i = 1; i < 16; i++) {
+ 		if (adb_handler[i].original_address == 0)
+ 			continue;
+ 		adb_request(&req, NULL, ADBREQ_SYNC | ADBREQ_REPLY, 1,
+ 			    (i << 4) | 0xf);
+ 		adb_handler[i].handler_id = req.reply[2];
+-		pr_debug(" [%d]: %d %x\n", i, adb_handler[i].original_address,
+-			 adb_handler[i].handler_id);
++		printk(KERN_DEBUG "adb device [%d]: %d 0x%X\n", i,
++		       adb_handler[i].original_address,
++		       adb_handler[i].handler_id);
+ 		devmask |= 1 << i;
+ 	}
+ 	return devmask;
+@@ -579,6 +579,8 @@ adb_try_handler_change(int address, int new_id)
+ 	mutex_lock(&adb_handler_mutex);
+ 	ret = try_handler_change(address, new_id);
+ 	mutex_unlock(&adb_handler_mutex);
++	if (ret)
++		pr_debug("adb handler change: [%d] 0x%X\n", address, new_id);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(adb_try_handler_change);
+diff --git a/drivers/macintosh/adbhid.c b/drivers/macintosh/adbhid.c
+index a261892c03b3..75482eeab2c4 100644
+--- a/drivers/macintosh/adbhid.c
++++ b/drivers/macintosh/adbhid.c
+@@ -757,6 +757,7 @@ adbhid_input_register(int id, int default_id, int original_handler_id,
+ 	struct input_dev *input_dev;
+ 	int err;
+ 	int i;
++	char *keyboard_type;
+ 
+ 	if (adbhid[id]) {
+ 		pr_err("Trying to reregister ADB HID on ID %d\n", id);
+@@ -798,24 +799,23 @@ adbhid_input_register(int id, int default_id, int original_handler_id,
+ 
+ 		memcpy(hid->keycode, adb_to_linux_keycodes, sizeof(adb_to_linux_keycodes));
+ 
+-		pr_info("Detected ADB keyboard, type ");
+ 		switch (original_handler_id) {
+ 		default:
+-			pr_cont("<unknown>.\n");
++			keyboard_type = "<unknown>";
+ 			input_dev->id.version = ADB_KEYBOARD_UNKNOWN;
+ 			break;
+ 
+ 		case 0x01: case 0x02: case 0x03: case 0x06: case 0x08:
+ 		case 0x0C: case 0x10: case 0x18: case 0x1B: case 0x1C:
+ 		case 0xC0: case 0xC3: case 0xC6:
+-			pr_cont("ANSI.\n");
++			keyboard_type = "ANSI";
+ 			input_dev->id.version = ADB_KEYBOARD_ANSI;
+ 			break;
+ 
+ 		case 0x04: case 0x05: case 0x07: case 0x09: case 0x0D:
+ 		case 0x11: case 0x14: case 0x19: case 0x1D: case 0xC1:
+ 		case 0xC4: case 0xC7:
+-			pr_cont("ISO, swapping keys.\n");
++			keyboard_type = "ISO, swapping keys";
+ 			input_dev->id.version = ADB_KEYBOARD_ISO;
+ 			i = hid->keycode[10];
+ 			hid->keycode[10] = hid->keycode[50];
+@@ -824,10 +824,11 @@ adbhid_input_register(int id, int default_id, int original_handler_id,
+ 
+ 		case 0x12: case 0x15: case 0x16: case 0x17: case 0x1A:
+ 		case 0x1E: case 0xC2: case 0xC5: case 0xC8: case 0xC9:
+-			pr_cont("JIS.\n");
++			keyboard_type = "JIS";
+ 			input_dev->id.version = ADB_KEYBOARD_JIS;
+ 			break;
+ 		}
++		pr_info("Detected ADB keyboard, type %s.\n", keyboard_type);
+ 
+ 		for (i = 0; i < 128; i++)
+ 			if (hid->keycode[i])
+@@ -972,16 +973,13 @@ adbhid_probe(void)
+ 		   ->get it to send separate codes for left and right shift,
+ 		   control, option keys */
+ #if 0		/* handler 5 doesn't send separate codes for R modifiers */
+-		if (adb_try_handler_change(id, 5))
+-			printk("ADB keyboard at %d, handler set to 5\n", id);
+-		else
++		if (!adb_try_handler_change(id, 5))
+ #endif
+-		if (adb_try_handler_change(id, 3))
+-			printk("ADB keyboard at %d, handler set to 3\n", id);
+-		else
+-			printk("ADB keyboard at %d, handler 1\n", id);
++		adb_try_handler_change(id, 3);
+ 
+ 		adb_get_infos(id, &default_id, &cur_handler_id);
++		printk(KERN_DEBUG "ADB keyboard at %d has handler 0x%X\n",
++		       id, cur_handler_id);
+ 		reg |= adbhid_input_reregister(id, default_id, org_handler_id,
+ 					       cur_handler_id, 0);
+ 	}
+@@ -999,48 +997,44 @@ adbhid_probe(void)
+ 	for (i = 0; i < mouse_ids.nids; i++) {
+ 		int id = mouse_ids.id[i];
+ 		int mouse_kind;
++		char *desc = "standard";
+ 
+ 		adb_get_infos(id, &default_id, &org_handler_id);
+ 
+ 		if (adb_try_handler_change(id, 4)) {
+-			printk("ADB mouse at %d, handler set to 4", id);
+ 			mouse_kind = ADBMOUSE_EXTENDED;
+ 		}
+ 		else if (adb_try_handler_change(id, 0x2F)) {
+-			printk("ADB mouse at %d, handler set to 0x2F", id);
+ 			mouse_kind = ADBMOUSE_MICROSPEED;
+ 		}
+ 		else if (adb_try_handler_change(id, 0x42)) {
+-			printk("ADB mouse at %d, handler set to 0x42", id);
+ 			mouse_kind = ADBMOUSE_TRACKBALLPRO;
+ 		}
+ 		else if (adb_try_handler_change(id, 0x66)) {
+-			printk("ADB mouse at %d, handler set to 0x66", id);
+ 			mouse_kind = ADBMOUSE_MICROSPEED;
+ 		}
+ 		else if (adb_try_handler_change(id, 0x5F)) {
+-			printk("ADB mouse at %d, handler set to 0x5F", id);
+ 			mouse_kind = ADBMOUSE_MICROSPEED;
+ 		}
+ 		else if (adb_try_handler_change(id, 3)) {
+-			printk("ADB mouse at %d, handler set to 3", id);
+ 			mouse_kind = ADBMOUSE_MS_A3;
+ 		}
+ 		else if (adb_try_handler_change(id, 2)) {
+-			printk("ADB mouse at %d, handler set to 2", id);
+ 			mouse_kind = ADBMOUSE_STANDARD_200;
+ 		}
+ 		else {
+-			printk("ADB mouse at %d, handler 1", id);
+ 			mouse_kind = ADBMOUSE_STANDARD_100;
+ 		}
+ 
+ 		if ((mouse_kind == ADBMOUSE_TRACKBALLPRO)
+ 		    || (mouse_kind == ADBMOUSE_MICROSPEED)) {
++			desc = "Microspeed/MacPoint or compatible";
+ 			init_microspeed(id);
+ 		} else if (mouse_kind == ADBMOUSE_MS_A3) {
++			desc = "Mouse Systems A3 Mouse or compatible";
+ 			init_ms_a3(id);
+ 		} else if (mouse_kind ==  ADBMOUSE_EXTENDED) {
++			desc = "extended";
+ 			/*
+ 			 * Register 1 is usually used for device
+ 			 * identification.  Here, we try to identify
+@@ -1054,32 +1048,36 @@ adbhid_probe(void)
+ 			    (req.reply[1] == 0x9a) && ((req.reply[2] == 0x21)
+ 			    	|| (req.reply[2] == 0x20))) {
+ 				mouse_kind = ADBMOUSE_TRACKBALL;
++				desc = "trackman/mouseman";
+ 				init_trackball(id);
+ 			}
+ 			else if ((req.reply_len >= 4) &&
+ 			    (req.reply[1] == 0x74) && (req.reply[2] == 0x70) &&
+ 			    (req.reply[3] == 0x61) && (req.reply[4] == 0x64)) {
+ 				mouse_kind = ADBMOUSE_TRACKPAD;
++				desc = "trackpad";
+ 				init_trackpad(id);
+ 			}
+ 			else if ((req.reply_len >= 4) &&
+ 			    (req.reply[1] == 0x4b) && (req.reply[2] == 0x4d) &&
+ 			    (req.reply[3] == 0x4c) && (req.reply[4] == 0x31)) {
+ 				mouse_kind = ADBMOUSE_TURBOMOUSE5;
++				desc = "TurboMouse 5";
+ 				init_turbomouse(id);
+ 			}
+ 			else if ((req.reply_len == 9) &&
+ 			    (req.reply[1] == 0x4b) && (req.reply[2] == 0x4f) &&
+ 			    (req.reply[3] == 0x49) && (req.reply[4] == 0x54)) {
+ 				if (adb_try_handler_change(id, 0x42)) {
+-					pr_cont("\nADB MacAlly 2-button mouse at %d, handler set to 0x42", id);
+ 					mouse_kind = ADBMOUSE_MACALLY2;
++					desc = "MacAlly 2-button";
+ 				}
+ 			}
+ 		}
+-		pr_cont("\n");
+ 
+ 		adb_get_infos(id, &default_id, &cur_handler_id);
++		printk(KERN_DEBUG "ADB mouse (%s) at %d has handler 0x%X\n",
++		       desc, id, cur_handler_id);
+ 		reg |= adbhid_input_reregister(id, default_id, org_handler_id,
+ 					       cur_handler_id, mouse_kind);
+ 	}
+@@ -1092,12 +1090,10 @@ init_trackpad(int id)
+ 	struct adb_request req;
+ 	unsigned char r1_buffer[8];
+ 
+-	pr_cont(" (trackpad)");
 -
--	if (cuda_request(&req, NULL, 2, CUDA_PACKET, CUDA_GET_TIME) < 0)
--		return 0;
--	while (!req.complete)
--		cuda_poll();
--
--	time = (u32)((req.reply[3] << 24) | (req.reply[4] << 16) |
--		     (req.reply[5] << 8) | req.reply[6]);
--
--	return time - RTC_OFFSET;
--}
--
--static void cuda_write_time(time64_t time)
--{
--	struct adb_request req;
--	u32 data = lower_32_bits(time + RTC_OFFSET);
--
--	if (cuda_request(&req, NULL, 6, CUDA_PACKET, CUDA_SET_TIME,
--			 (data >> 24) & 0xFF, (data >> 16) & 0xFF,
--			 (data >> 8) & 0xFF, data & 0xFF) < 0)
--		return;
--	while (!req.complete)
--		cuda_poll();
--}
--
- static __u8 cuda_read_pram(int offset)
+ 	adb_request(&req, NULL, ADBREQ_SYNC | ADBREQ_REPLY, 1,
+ 		    ADB_READREG(id,1));
+ 	if (req.reply_len < 8)
+-	    pr_cont("bad length for reg. 1\n");
++		pr_err("%s: bad length for reg. 1\n", __func__);
+ 	else
+ 	{
+ 	    memcpy(r1_buffer, &req.reply[1], 8);
+@@ -1145,8 +1141,6 @@ init_trackball(int id)
  {
  	struct adb_request req;
-@@ -91,33 +62,6 @@ static void cuda_write_pram(int offset, __u8 data)
- #endif /* CONFIG_ADB_CUDA */
  
- #ifdef CONFIG_ADB_PMU
--static time64_t pmu_read_time(void)
--{
--	struct adb_request req;
--	time64_t time;
+-	pr_cont(" (trackman/mouseman)");
 -
--	if (pmu_request(&req, NULL, 1, PMU_READ_RTC) < 0)
--		return 0;
--	pmu_wait_complete(&req);
--
--	time = (u32)((req.reply[0] << 24) | (req.reply[1] << 16) |
--		     (req.reply[2] << 8) | req.reply[3]);
--
--	return time - RTC_OFFSET;
--}
--
--static void pmu_write_time(time64_t time)
--{
--	struct adb_request req;
--	u32 data = lower_32_bits(time + RTC_OFFSET);
--
--	if (pmu_request(&req, NULL, 5, PMU_SET_RTC,
--			(data >> 24) & 0xFF, (data >> 16) & 0xFF,
--			(data >> 8) & 0xFF, data & 0xFF) < 0)
--		return;
--	pmu_wait_complete(&req);
--}
--
- static __u8 pmu_read_pram(int offset)
+ 	adb_request(&req, NULL, ADBREQ_SYNC, 3,
+ 	ADB_WRITEREG(id,1), 00,0x81);
+ 
+@@ -1177,8 +1171,6 @@ init_turbomouse(int id)
  {
  	struct adb_request req;
-@@ -295,13 +239,17 @@ static time64_t via_read_time(void)
-  * is basically any machine with Mac II-style ADB.
-  */
  
--static void via_write_time(time64_t time)
-+static void via_set_rtc_time(struct rtc_time *tm)
+-	pr_cont(" (TurboMouse 5)");
+-
+ 	adb_request(&req, NULL, ADBREQ_SYNC, 1, ADB_FLUSH(id));
+ 
+ 	adb_request(&req, NULL, ADBREQ_SYNC, 1, ADB_FLUSH(3));
+@@ -1213,8 +1205,6 @@ init_microspeed(int id)
  {
- 	union {
- 		__u8 cdata[4];
- 		__u32 idata;
- 	} data;
- 	__u8 temp;
-+	time64_t time;
-+
-+	time = mktime64(tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday,
-+	                tm->tm_hour, tm->tm_min, tm->tm_sec);
+ 	struct adb_request req;
  
- 	/* Clear the write protect bit */
+-	pr_cont(" (Microspeed/MacPoint or compatible)");
+-
+ 	adb_request(&req, NULL, ADBREQ_SYNC, 1, ADB_FLUSH(id));
  
-@@ -641,12 +589,12 @@ int mac_hwclk(int op, struct rtc_time *t)
- #ifdef CONFIG_ADB_CUDA
- 		case MAC_ADB_EGRET:
- 		case MAC_ADB_CUDA:
--			now = cuda_read_time();
-+			now = cuda_get_time();
- 			break;
- #endif
- #ifdef CONFIG_ADB_PMU
- 		case MAC_ADB_PB2:
--			now = pmu_read_time();
-+			now = pmu_get_time();
- 			break;
- #endif
- 		default:
-@@ -665,24 +613,21 @@ int mac_hwclk(int op, struct rtc_time *t)
- 		         __func__, t->tm_year + 1900, t->tm_mon + 1, t->tm_mday,
- 		         t->tm_hour, t->tm_min, t->tm_sec);
- 
--		now = mktime64(t->tm_year + 1900, t->tm_mon + 1, t->tm_mday,
--			       t->tm_hour, t->tm_min, t->tm_sec);
--
- 		switch (macintosh_config->adb_type) {
- 		case MAC_ADB_IOP:
- 		case MAC_ADB_II:
- 		case MAC_ADB_PB1:
--			via_write_time(now);
-+			via_set_rtc_time(t);
- 			break;
- #ifdef CONFIG_ADB_CUDA
- 		case MAC_ADB_EGRET:
- 		case MAC_ADB_CUDA:
--			cuda_write_time(now);
-+			cuda_set_rtc_time(t);
- 			break;
- #endif
- #ifdef CONFIG_ADB_PMU
- 		case MAC_ADB_PB2:
--			pmu_write_time(now);
-+			pmu_set_rtc_time(t);
- 			break;
- #endif
- 		default:
-diff --git a/arch/powerpc/platforms/powermac/time.c b/arch/powerpc/platforms/powermac/time.c
-index f92c1918fb56..f157e3d071f2 100644
---- a/arch/powerpc/platforms/powermac/time.c
-+++ b/arch/powerpc/platforms/powermac/time.c
-@@ -44,13 +44,6 @@
- #define DBG(x...)
- #endif
- 
--/*
-- * Offset between Unix time (1970-based) and Mac time (1904-based). Cuda and PMU
-- * times wrap in 2040. If we need to handle later times, the read_time functions
-- * need to be changed to interpret wrapped times as post-2040.
-- */
--#define RTC_OFFSET	2082844800
--
- /*
-  * Calibrate the decrementer frequency with the VIA timer 1.
-  */
-@@ -90,98 +83,6 @@ long __init pmac_time_init(void)
- 	return delta;
- }
- 
--#ifdef CONFIG_ADB_CUDA
--static time64_t cuda_get_time(void)
--{
--	struct adb_request req;
--	time64_t now;
--
--	if (cuda_request(&req, NULL, 2, CUDA_PACKET, CUDA_GET_TIME) < 0)
--		return 0;
--	while (!req.complete)
--		cuda_poll();
--	if (req.reply_len != 7)
--		printk(KERN_ERR "cuda_get_time: got %d byte reply\n",
--		       req.reply_len);
--	now = (u32)((req.reply[3] << 24) + (req.reply[4] << 16) +
--		    (req.reply[5] << 8) + req.reply[6]);
--	/* it's either after year 2040, or the RTC has gone backwards */
--	WARN_ON(now < RTC_OFFSET);
--
--	return now - RTC_OFFSET;
--}
--
--#define cuda_get_rtc_time(tm)	rtc_time64_to_tm(cuda_get_time(), (tm))
--
--static int cuda_set_rtc_time(struct rtc_time *tm)
--{
--	u32 nowtime;
--	struct adb_request req;
--
--	nowtime = lower_32_bits(rtc_tm_to_time64(tm) + RTC_OFFSET);
--	if (cuda_request(&req, NULL, 6, CUDA_PACKET, CUDA_SET_TIME,
--			 nowtime >> 24, nowtime >> 16, nowtime >> 8,
--			 nowtime) < 0)
--		return -ENXIO;
--	while (!req.complete)
--		cuda_poll();
--	if ((req.reply_len != 3) && (req.reply_len != 7))
--		printk(KERN_ERR "cuda_set_rtc_time: got %d byte reply\n",
--		       req.reply_len);
--	return 0;
--}
--
--#else
--#define cuda_get_time()		0
--#define cuda_get_rtc_time(tm)
--#define cuda_set_rtc_time(tm)	0
--#endif
--
--#ifdef CONFIG_ADB_PMU
--static time64_t pmu_get_time(void)
--{
--	struct adb_request req;
--	time64_t now;
--
--	if (pmu_request(&req, NULL, 1, PMU_READ_RTC) < 0)
--		return 0;
--	pmu_wait_complete(&req);
--	if (req.reply_len != 4)
--		printk(KERN_ERR "pmu_get_time: got %d byte reply from PMU\n",
--		       req.reply_len);
--	now = (u32)((req.reply[0] << 24) + (req.reply[1] << 16)	+
--		    (req.reply[2] << 8) + req.reply[3]);
--
--	/* it's either after year 2040, or the RTC has gone backwards */
--	WARN_ON(now < RTC_OFFSET);
--
--	return now - RTC_OFFSET;
--}
--
--#define pmu_get_rtc_time(tm)	rtc_time64_to_tm(pmu_get_time(), (tm))
--
--static int pmu_set_rtc_time(struct rtc_time *tm)
--{
--	u32 nowtime;
--	struct adb_request req;
--
--	nowtime = lower_32_bits(rtc_tm_to_time64(tm) + RTC_OFFSET);
--	if (pmu_request(&req, NULL, 5, PMU_SET_RTC, nowtime >> 24,
--			nowtime >> 16, nowtime >> 8, nowtime) < 0)
--		return -ENXIO;
--	pmu_wait_complete(&req);
--	if (req.reply_len != 0)
--		printk(KERN_ERR "pmu_set_rtc_time: %d byte reply from PMU\n",
--		       req.reply_len);
--	return 0;
--}
--
--#else
--#define pmu_get_time()		0
--#define pmu_get_rtc_time(tm)
--#define pmu_set_rtc_time(tm)	0
--#endif
--
- #ifdef CONFIG_PMAC_SMU
- static time64_t smu_get_time(void)
+ 	/* This will initialize mice using the Microspeed, MacPoint and
+@@ -1253,7 +1243,6 @@ init_ms_a3(int id)
  {
-@@ -191,11 +92,6 @@ static time64_t smu_get_time(void)
- 		return 0;
- 	return rtc_tm_to_time64(&tm);
- }
--
--#else
--#define smu_get_time()			0
--#define smu_get_rtc_time(tm, spin)
--#define smu_set_rtc_time(tm, spin)	0
- #endif
+ 	struct adb_request req;
  
- /* Can't be __init, it's called when suspending and resuming */
-@@ -203,12 +99,18 @@ time64_t pmac_get_boot_time(void)
- {
- 	/* Get the time from the RTC, used only at boot time */
- 	switch (sys_ctrler) {
-+#ifdef CONFIG_ADB_CUDA
- 	case SYS_CTRLER_CUDA:
- 		return cuda_get_time();
-+#endif
-+#ifdef CONFIG_ADB_PMU
- 	case SYS_CTRLER_PMU:
- 		return pmu_get_time();
-+#endif
-+#ifdef CONFIG_PMAC_SMU
- 	case SYS_CTRLER_SMU:
- 		return smu_get_time();
-+#endif
- 	default:
- 		return 0;
- 	}
-@@ -218,15 +120,21 @@ void pmac_get_rtc_time(struct rtc_time *tm)
- {
- 	/* Get the time from the RTC, used only at boot time */
- 	switch (sys_ctrler) {
-+#ifdef CONFIG_ADB_CUDA
- 	case SYS_CTRLER_CUDA:
--		cuda_get_rtc_time(tm);
-+		rtc_time64_to_tm(cuda_get_time(), tm);
- 		break;
-+#endif
-+#ifdef CONFIG_ADB_PMU
- 	case SYS_CTRLER_PMU:
--		pmu_get_rtc_time(tm);
-+		rtc_time64_to_tm(pmu_get_time(), tm);
- 		break;
-+#endif
-+#ifdef CONFIG_PMAC_SMU
- 	case SYS_CTRLER_SMU:
- 		smu_get_rtc_time(tm, 1);
- 		break;
-+#endif
- 	default:
- 		;
- 	}
-@@ -235,12 +143,18 @@ void pmac_get_rtc_time(struct rtc_time *tm)
- int pmac_set_rtc_time(struct rtc_time *tm)
- {
- 	switch (sys_ctrler) {
-+#ifdef CONFIG_ADB_CUDA
- 	case SYS_CTRLER_CUDA:
- 		return cuda_set_rtc_time(tm);
-+#endif
-+#ifdef CONFIG_ADB_PMU
- 	case SYS_CTRLER_PMU:
- 		return pmu_set_rtc_time(tm);
-+#endif
-+#ifdef CONFIG_PMAC_SMU
- 	case SYS_CTRLER_SMU:
- 		return smu_set_rtc_time(tm, 1);
-+#endif
- 	default:
- 		return -ENODEV;
- 	}
-diff --git a/drivers/macintosh/via-cuda.c b/drivers/macintosh/via-cuda.c
-index 98dd702eb867..bbec6ac0a966 100644
---- a/drivers/macintosh/via-cuda.c
-+++ b/drivers/macintosh/via-cuda.c
-@@ -766,3 +766,38 @@ cuda_input(unsigned char *buf, int nb)
- 	               buf, nb, false);
-     }
- }
-+
-+/* Offset between Unix time (1970-based) and Mac time (1904-based) */
-+#define RTC_OFFSET	2082844800
-+
-+time64_t cuda_get_time(void)
-+{
-+	struct adb_request req;
-+	u32 now;
-+
-+	if (cuda_request(&req, NULL, 2, CUDA_PACKET, CUDA_GET_TIME) < 0)
-+		return 0;
-+	while (!req.complete)
-+		cuda_poll();
-+	if (req.reply_len != 7)
-+		pr_err("%s: got %d byte reply\n", __func__, req.reply_len);
-+	now = (req.reply[3] << 24) + (req.reply[4] << 16) +
-+	      (req.reply[5] << 8) + req.reply[6];
-+	return (time64_t)now - RTC_OFFSET;
-+}
-+
-+int cuda_set_rtc_time(struct rtc_time *tm)
-+{
-+	u32 now;
-+	struct adb_request req;
-+
-+	now = lower_32_bits(rtc_tm_to_time64(tm) + RTC_OFFSET);
-+	if (cuda_request(&req, NULL, 6, CUDA_PACKET, CUDA_SET_TIME,
-+	                 now >> 24, now >> 16, now >> 8, now) < 0)
-+		return -ENXIO;
-+	while (!req.complete)
-+		cuda_poll();
-+	if ((req.reply_len != 3) && (req.reply_len != 7))
-+		pr_err("%s: got %d byte reply\n", __func__, req.reply_len);
-+	return 0;
-+}
-diff --git a/drivers/macintosh/via-pmu.c b/drivers/macintosh/via-pmu.c
-index d72c450aebe5..60f57e2abf21 100644
---- a/drivers/macintosh/via-pmu.c
-+++ b/drivers/macintosh/via-pmu.c
-@@ -1737,6 +1737,39 @@ pmu_enable_irled(int on)
- 	pmu_wait_complete(&req);
- }
- 
-+/* Offset between Unix time (1970-based) and Mac time (1904-based) */
-+#define RTC_OFFSET	2082844800
-+
-+time64_t pmu_get_time(void)
-+{
-+	struct adb_request req;
-+	u32 now;
-+
-+	if (pmu_request(&req, NULL, 1, PMU_READ_RTC) < 0)
-+		return 0;
-+	pmu_wait_complete(&req);
-+	if (req.reply_len != 4)
-+		pr_err("%s: got %d byte reply\n", __func__, req.reply_len);
-+	now = (req.reply[0] << 24) + (req.reply[1] << 16) +
-+	      (req.reply[2] << 8) + req.reply[3];
-+	return (time64_t)now - RTC_OFFSET;
-+}
-+
-+int pmu_set_rtc_time(struct rtc_time *tm)
-+{
-+	u32 now;
-+	struct adb_request req;
-+
-+	now = lower_32_bits(rtc_tm_to_time64(tm) + RTC_OFFSET);
-+	if (pmu_request(&req, NULL, 5, PMU_SET_RTC,
-+	                now >> 24, now >> 16, now >> 8, now) < 0)
-+		return -ENXIO;
-+	pmu_wait_complete(&req);
-+	if (req.reply_len != 0)
-+		pr_err("%s: got %d byte reply\n", __func__, req.reply_len);
-+	return 0;
-+}
-+
- void
- pmu_restart(void)
- {
-diff --git a/include/linux/cuda.h b/include/linux/cuda.h
-index 056867f09a01..45bfe9d61271 100644
---- a/include/linux/cuda.h
-+++ b/include/linux/cuda.h
-@@ -8,6 +8,7 @@
- #ifndef _LINUX_CUDA_H
- #define _LINUX_CUDA_H
- 
-+#include <linux/rtc.h>
- #include <uapi/linux/cuda.h>
- 
- 
-@@ -16,4 +17,7 @@ extern int cuda_request(struct adb_request *req,
- 			void (*done)(struct adb_request *), int nbytes, ...);
- extern void cuda_poll(void);
- 
-+extern time64_t cuda_get_time(void);
-+extern int cuda_set_rtc_time(struct rtc_time *tm);
-+
- #endif /* _LINUX_CUDA_H */
-diff --git a/include/linux/pmu.h b/include/linux/pmu.h
-index 9ac8fc60ad49..52453a24a24f 100644
---- a/include/linux/pmu.h
-+++ b/include/linux/pmu.h
-@@ -9,6 +9,7 @@
- #ifndef _LINUX_PMU_H
- #define _LINUX_PMU_H
- 
-+#include <linux/rtc.h>
- #include <uapi/linux/pmu.h>
- 
- 
-@@ -36,6 +37,9 @@ static inline void pmu_resume(void)
- 
- extern void pmu_enable_irled(int on);
- 
-+extern time64_t pmu_get_time(void);
-+extern int pmu_set_rtc_time(struct rtc_time *tm);
-+
- extern void pmu_restart(void);
- extern void pmu_shutdown(void);
- extern void pmu_unlock(void);
+-	pr_cont(" (Mouse Systems A3 Mouse, or compatible)");
+ 	adb_request(&req, NULL, ADBREQ_SYNC, 3,
+ 	ADB_WRITEREG(id, 0x2),
+ 	    0x00,
 -- 
 2.16.4
 
