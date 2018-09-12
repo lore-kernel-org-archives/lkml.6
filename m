@@ -2,186 +2,142 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A286FC46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:58:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70BA2C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 10:00:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 534AC20854
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:58:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sEjWOW2L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 534AC20854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 1408B20854
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 10:00:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1408B20854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727675AbeILPCR (ORCPT
+        id S1727365AbeILPDw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 11:02:17 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:33897 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726359AbeILPCR (ORCPT
+        Wed, 12 Sep 2018 11:03:52 -0400
+Received: from mail-it0-f69.google.com ([209.85.214.69]:51901 "EHLO
+        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726138AbeILPDv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 11:02:17 -0400
-Received: by mail-pg1-f193.google.com with SMTP id d19-v6so804603pgv.1;
-        Wed, 12 Sep 2018 02:58:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:subject:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=fsyu22oVQUzZyQK/54w8JcJG5zggwSObJYESkgC27CU=;
-        b=sEjWOW2LTlp6Bf2QEd9RhfWH0JVDpEgh9tc9s1qxAvBtDy/9BBXSvNU42y5fa4MEgz
-         0YwpHmYOWUuXWNkbL0dkGx87j7VfFPdFI7Vp0ktDlcGrI+40SJA1yQlDVBEo2IKXVSIt
-         zIl2mny73oqNP/GrDZnEbAXcmTKUQjhz9wsNQpCR4/tTxZ2rM4dsFQ8SxqUgmMU5yqab
-         t3qlA8T5Es/ccFL2+V5ix/84XDydNdtZTWRVvydyiyTTU9bxd6JbD7xznjXg0lXI+7sW
-         P47K8LL6AwsS5+mZKLnxgEsSuYPv67j1z9X7fvk3kBu08mdq34s5H7qumyNfTPqAESJJ
-         mMUg==
+        Wed, 12 Sep 2018 11:03:51 -0400
+Received: by mail-it0-f69.google.com with SMTP id q5-v6so2617239ith.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 03:00:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=fsyu22oVQUzZyQK/54w8JcJG5zggwSObJYESkgC27CU=;
-        b=ELQHnfxbfsmPc/7H33QzmfGIrFMMEXk+L62vTmcuFB60OUp6ZDidphHVdCdyUENHOj
-         N2lnVLMgD6Ap7I8KzDwQGPXW/xmbJY9oipZxb3yr2b2oAgTxaq99Ek0hmjolsx2soRc7
-         Hq6MuAFcRWcQtJtHjmR9ZhewFx8sIsq2I5ruudHeRryEn8ub2hdERgGaXfoQCdgz4dnJ
-         KppniiHGtrdPAJ0Q1sLO5GGrBGcer8O+Q0dNmI4elpDCAC8yTQWvOpQ0XmvNyYP6iLOB
-         S5SaMgT8Hx0QuOgHWiTg8NZle4VjWCWYtFZ45poA85uD+65K59mPnF6q7HSWEagrNRpt
-         P0ew==
-X-Gm-Message-State: APzg51DCw92nZZM7lHV9CcuS3KQvrSVyQjEf4qQQtvhzF8ogWCEl5cJW
-        3lNpLn3Yv+8/4hkElvbi9yg=
-X-Google-Smtp-Source: ANB0VdauMyiMTg1U0hqm/sB7kKY94f86rIzXFKy1ocF1h9VHAHjMvkS8XlXUhM5BcZi3QaoPGiEd2g==
-X-Received: by 2002:a63:5d4b:: with SMTP id o11-v6mr1241066pgm.349.1536746309549;
-        Wed, 12 Sep 2018 02:58:29 -0700 (PDT)
-Received: from [9.124.31.179] ([125.16.236.130])
-        by smtp.gmail.com with ESMTPSA id u184-v6sm2555960pgd.46.2018.09.12.02.58.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Sep 2018 02:58:28 -0700 (PDT)
-From:   "Aneesh Kumar K.V" <aneeshkumar.opensource@gmail.com>
-X-Google-Original-From: "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Subject: Re: [PATCH] mm, thp: Fix mlocking THP page with migration enabled
-To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Vegard Nossum <vegard.nossum@gmail.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Zi Yan <zi.yan@cs.rutgers.edu>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrea Arcangeli <aarcange@redhat.com>
-References: <20180911103403.38086-1-kirill.shutemov@linux.intel.com>
-Message-ID: <6fcb5b5b-43fa-f1d0-ce78-37fb51b46a75@linux.ibm.com>
-Date:   Wed, 12 Sep 2018 15:28:24 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=iFoVK46G1bsEUOnv21aHako/+4Nd9ZSIr2phdnTG05c=;
+        b=ocawVS0XM+OrIusZIeFecgKPltAa13Bh4paWeVHTXAjeKB66K8ZyLpZme/Gv6Z1u5G
+         0x7KuyUPTKc0iM6PNujnNBS4Ze+5H3ze6MjCVbCt8Z6wsSe6lLmckwt+kPJd8QHL6yvE
+         o1OsWI07/XivIq07n/wNm/rUzdq1NYBr98NBVRIfxBY+NeN8uSitSYuFSATawHosOO0f
+         N+k3+l9dtk1/hHirg/g7Wwo8+RFeDy2XXeilDtvKCRnwKXnr/RGctTsuXOULsAAuyBDO
+         WiE8yLhzJ3r8X5VekQwE20STKZxC+vVg6lRBGA0wLWAkf0p1BQSglx7VTpTeFd7LimAz
+         9apg==
+X-Gm-Message-State: APzg51CjzDxyKpMZwTB8nNAAoVZC7WpICrGUrmAccz1rpebA6pdainiD
+        mIzNoDKgIwaOS6wkuKkGDLrQ3SeQ5XYJncz8Ze52/JGYB5M2
+X-Google-Smtp-Source: ANB0VdaUJmy/EP7EFp62vWZAXry/cy+t24+CHQBLlyTVDCO0b16/7JPMwAhnVkYWHCoMDwZQJKGQ2a6CatYa8IuXgvrvAWswbUBz
 MIME-Version: 1.0
-In-Reply-To: <20180911103403.38086-1-kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a02:129c:: with SMTP id 28-v6mr739259jap.10.1536746402644;
+ Wed, 12 Sep 2018 03:00:02 -0700 (PDT)
+Date:   Wed, 12 Sep 2018 03:00:02 -0700
+In-Reply-To: <00000000000006602605752ffa1a@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000708fdd0575a9a74c@google.com>
+Subject: Re: general protection fault in tcp_cleanup_ulp
+From:   syzbot <syzbot+0b3ccd4f62dac2cf3a7d@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, edumazet@google.com, kuznet@ms2.inr.ac.ru,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/11/18 4:04 PM, Kirill A. Shutemov wrote:
-> A transparent huge page is represented by a single entry on an LRU list.
-> Therefore, we can only make unevictable an entire compound page, not
-> individual subpages.
-> 
-> If a user tries to mlock() part of a huge page, we want the rest of the
-> page to be reclaimable.
-> 
-> We handle this by keeping PTE-mapped huge pages on normal LRU lists: the
-> PMD on border of VM_LOCKED VMA will be split into PTE table.
-> 
-> Introduction of THP migration breaks the rules around mlocking THP
-> pages. If we had a single PMD mapping of the page in mlocked VMA, the
-> page will get mlocked, regardless of PTE mappings of the page.
-> 
-> For tmpfs/shmem it's easy to fix by checking PageDoubleMap() in
-> remove_migration_pmd().
-> 
-> Anon THP pages can only be shared between processes via fork(). Mlocked
-> page can only be shared if parent mlocked it before forking, otherwise
-> CoW will be triggered on mlock().
-> 
-> For Anon-THP, we can fix the issue by munlocking the page on removing PTE
-> migration entry for the page. PTEs for the page will always come after
-> mlocked PMD: rmap walks VMAs from oldest to newest.
-> 
-> Test-case:
-> 
-> 	#include <unistd.h>
-> 	#include <sys/mman.h>
-> 	#include <sys/wait.h>
-> 	#include <linux/mempolicy.h>
-> 	#include <numaif.h>
-> 
-> 	int main(void)
-> 	{
-> 	        unsigned long nodemask = 4;
-> 	        void *addr;
-> 
-> 		addr = mmap((void *)0x20000000UL, 2UL << 20, PROT_READ | PROT_WRITE,
-> 			MAP_PRIVATE | MAP_ANONYMOUS | MAP_LOCKED, -1, 0);
-> 
-> 	        if (fork()) {
-> 			wait(NULL);
-> 			return 0;
-> 	        }
-> 
-> 	        mlock(addr, 4UL << 10);
-> 	        mbind(addr, 2UL << 20, MPOL_PREFERRED | MPOL_F_RELATIVE_NODES,
-> 	                &nodemask, 4, MPOL_MF_MOVE | MPOL_MF_MOVE_ALL);
-> 
-> 	        return 0;
-> 	}
-> 
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Reported-by: Vegard Nossum <vegard.nossum@gmail.com>
-> Fixes: 616b8371539a ("mm: thp: enable thp migration in generic path")
-> Cc: <stable@vger.kernel.org> [v4.14+]
-> Cc: Zi Yan <zi.yan@cs.rutgers.edu>
-> Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Andrea Arcangeli <aarcange@redhat.com>
-> ---
->   mm/huge_memory.c | 2 +-
->   mm/migrate.c     | 3 +++
->   2 files changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 533f9b00147d..00704060b7f7 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -2931,7 +2931,7 @@ void remove_migration_pmd(struct page_vma_mapped_walk *pvmw, struct page *new)
->   	else
->   		page_add_file_rmap(new, true);
->   	set_pmd_at(mm, mmun_start, pvmw->pmd, pmde);
-> -	if (vma->vm_flags & VM_LOCKED)
-> +	if ((vma->vm_flags & VM_LOCKED) && !PageDoubleMap(new))
->   		mlock_vma_page(new);
->   	update_mmu_cache_pmd(vma, address, pvmw->pmd);
->   }
-> diff --git a/mm/migrate.c b/mm/migrate.c
-> index d6a2e89b086a..01dad96b25b5 100644
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -275,6 +275,9 @@ static bool remove_migration_pte(struct page *page, struct vm_area_struct *vma,
->   		if (vma->vm_flags & VM_LOCKED && !PageTransCompound(new))
->   			mlock_vma_page(new);
->   
-> +		if (PageTransCompound(new) && PageMlocked(page))
-> +			clear_page_mlock(page);
-> +
+syzbot has found a reproducer for the following crash on:
 
-Can you explain this more? I am confused by the usage of 'new' and 
-'page' there. I guess the idea is if we are removing the migration pte 
-at level 4 table, and if we found the backing page compound don't mark 
-the page Mlocked?
+HEAD commit:    28619527b8a7 Merge git://git.kernel.org/pub/scm/linux/kern..
+git tree:       bpf
+console output: https://syzkaller.appspot.com/x/log.txt?x=127f5b49400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8f59875069d721b6
+dashboard link: https://syzkaller.appspot.com/bug?extid=0b3ccd4f62dac2cf3a7d
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13537269400000
 
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+0b3ccd4f62dac2cf3a7d@syzkaller.appspotmail.com
 
--aneesh
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 18627 Comm: syz-executor0 Not tainted 4.19.0-rc2+ #51
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:tcp_cleanup_ulp+0xbe/0x140 net/ipv4/tcp_ulp.c:131
+Code: 02 00 0f 85 8a 00 00 00 49 8b 9c 24 88 06 00 00 e8 b7 43 ec fa 48 8d  
+7b 38 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 75  
+51 48 8b 7b 38 e8 b3 a2 e0 fa 4c 89 ea 48 b8 00 00
+RSP: 0018:ffff8801b92f76c0 EFLAGS: 00010202
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 1ffff10037e84da6
+RDX: 0000000000000007 RSI: ffffffff86928b79 RDI: 0000000000000038
+RBP: ffff8801b92f76e0 R08: 0000000000000000 R09: ffffed003b5c4732
+R10: ffffed003b5c4732 R11: ffff8801dae23993 R12: ffff8801be338f40
+R13: ffff8801be3395c8 R14: ffffffff81938ae0 R15: ffff8801b92f7800
+FS:  0000000001a06940(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f4d5d4b8db8 CR3: 00000001bc421000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  tcp_v4_destroy_sock+0x161/0x990 net/ipv4/tcp_ipv4.c:1978
+  tcp_v6_destroy_sock+0x15/0x20 net/ipv6/tcp_ipv6.c:1762
+  inet_csk_destroy_sock+0x19f/0x440 net/ipv4/inet_connection_sock.c:835
+  tcp_close+0xba7/0x1300 net/ipv4/tcp.c:2477
+  bpf_tcp_close+0x93c/0x10c0 kernel/bpf/sockmap.c:384
+  inet_release+0x104/0x1f0 net/ipv4/af_inet.c:428
+  inet6_release+0x50/0x70 net/ipv6/af_inet6.c:457
+  __sock_release+0xd7/0x250 net/socket.c:579
+  sock_close+0x19/0x20 net/socket.c:1139
+  __fput+0x385/0xa30 fs/file_table.c:278
+  ____fput+0x15/0x20 fs/file_table.c:309
+  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:193 [inline]
+  exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
+  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x410e91
+Code: 75 14 b8 03 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 34 19 00 00 c3 48  
+83 ec 08 e8 0a fc ff ff 48 89 04 24 b8 03 00 00 00 0f 05 <48> 8b 3c 24 48  
+89 c2 e8 53 fc ff ff 48 89 d0 48 83 c4 08 48 3d 01
+RSP: 002b:00007ffd70bafde0 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
+RAX: 0000000000000000 RBX: 0000000000000006 RCX: 0000000000410e91
+RDX: 0000000000000000 RSI: 0000000000731160 RDI: 0000000000000005
+RBP: 0000000000000000 R08: 0000000000000000 R09: ffffffffffffffff
+R10: 00000000009300a0 R11: 0000000000000293 R12: 0000000000000008
+R13: 00000000000dc3fa R14: 0000000000000875 R15: badc0ffeebadface
+Modules linked in:
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+---[ end trace d9e209a7bdcaec58 ]---
+RIP: 0010:tcp_cleanup_ulp+0xbe/0x140 net/ipv4/tcp_ulp.c:131
+Code: 02 00 0f 85 8a 00 00 00 49 8b 9c 24 88 06 00 00 e8 b7 43 ec fa 48 8d  
+7b 38 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 75  
+51 48 8b 7b 38 e8 b3 a2 e0 fa 4c 89 ea 48 b8 00 00
+RSP: 0018:ffff8801b92f76c0 EFLAGS: 00010202
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 1ffff10037e84da6
+RDX: 0000000000000007 RSI: ffffffff86928b79 RDI: 0000000000000038
+RBP: ffff8801b92f76e0 R08: 0000000000000000 R09: ffffed003b5c4732
+R10: ffffed003b5c4732 R11: ffff8801dae23993 R12: ffff8801be338f40
+R13: ffff8801be3395c8 R14: ffffffff81938ae0 R15: ffff8801b92f7800
+FS:  0000000001a06940(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f4d5d4b8db8 CR3: 00000001bc421000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
