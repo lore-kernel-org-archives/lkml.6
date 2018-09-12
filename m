@@ -2,31 +2,31 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7862DC46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:11:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E14FC6778D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:11:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B28220882
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:11:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B28220882
+	by mail.kernel.org (Postfix) with ESMTP id ECA6820880
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:11:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECA6820880
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728316AbeILVQm (ORCPT
+        id S1728293AbeILVQl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 17:16:42 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:60173 "EHLO mail.bootlin.com"
+        Wed, 12 Sep 2018 17:16:41 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:60137 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728138AbeILVQj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 17:16:39 -0400
+        id S1728090AbeILVQi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 17:16:38 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 33E84208AC; Wed, 12 Sep 2018 18:11:26 +0200 (CEST)
+        id F019820799; Wed, 12 Sep 2018 18:11:24 +0200 (CEST)
 Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 023F52071D;
-        Wed, 12 Sep 2018 18:11:25 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id C05EC2071D;
+        Wed, 12 Sep 2018 18:11:24 +0200 (CEST)
 From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
 To:     Daniel Lezcano <daniel.lezcano@linaro.org>
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
@@ -35,9 +35,9 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH v6 5/7] ARM: at91: Implement clocksource selection
-Date:   Wed, 12 Sep 2018 18:11:20 +0200
-Message-Id: <20180912161122.7717-6-alexandre.belloni@bootlin.com>
+Subject: [PATCH v6 1/7] ARM: at91: add TCB registers definitions
+Date:   Wed, 12 Sep 2018 18:11:16 +0200
+Message-Id: <20180912161122.7717-2-alexandre.belloni@bootlin.com>
 X-Mailer: git-send-email 2.19.0.rc2
 In-Reply-To: <20180912161122.7717-1-alexandre.belloni@bootlin.com>
 References: <20180912161122.7717-1-alexandre.belloni@bootlin.com>
@@ -48,51 +48,206 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow selecting and unselecting the PIT clocksource driver so it doesn't
-have to be compile when unused.
+Add registers and bits definitions for the timer counter blocks found on
+Atmel ARM SoCs.
 
 Tested-by: Alexander Dahl <ada@thorsis.com>
+Tested-by: Andras Szemzo <szemzo.andras@gmail.com>
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- arch/arm/mach-at91/Kconfig | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ include/soc/at91/atmel_tcb.h | 183 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 183 insertions(+)
+ create mode 100644 include/soc/at91/atmel_tcb.h
 
-diff --git a/arch/arm/mach-at91/Kconfig b/arch/arm/mach-at91/Kconfig
-index 903f23c309df..fa493a86e2bb 100644
---- a/arch/arm/mach-at91/Kconfig
-+++ b/arch/arm/mach-at91/Kconfig
-@@ -107,6 +107,31 @@ config SOC_AT91SAM9
- 	    AT91SAM9X35
- 	    AT91SAM9XE
- 
-+comment "Clocksource driver selection"
+diff --git a/include/soc/at91/atmel_tcb.h b/include/soc/at91/atmel_tcb.h
+new file mode 100644
+index 000000000000..657e234b1483
+--- /dev/null
++++ b/include/soc/at91/atmel_tcb.h
+@@ -0,0 +1,183 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Copyright (C) 2018 Microchip */
 +
-+config ATMEL_CLOCKSOURCE_PIT
-+	bool "Periodic Interval Timer (PIT) support"
-+	depends on SOC_AT91SAM9 || SOC_SAMA5
-+	default SOC_AT91SAM9 || SOC_SAMA5
-+	select ATMEL_PIT
-+	help
-+	  Select this to get a clocksource based on the Atmel Periodic Interval
-+	  Timer. It has a relatively low resolution and the TC Block clocksource
-+	  should be preferred.
++#ifndef __SOC_ATMEL_TCB_H
++#define __SOC_ATMEL_TCB_H
 +
-+config ATMEL_CLOCKSOURCE_TCB
-+	bool "Timer Counter Blocks (TCB) support"
-+	depends on SOC_AT91RM9200 || SOC_AT91SAM9 || SOC_SAMA5 || COMPILE_TEST
-+	default SOC_AT91RM9200 || SOC_AT91SAM9 || SOC_SAMA5
-+	depends on !ATMEL_TCLIB
-+	select ATMEL_ARM_TCB_CLKSRC
-+	help
-+	  Select this to get a high precision clocksource based on a
-+	  TC block with a 5+ MHz base clock rate.
-+	  On platforms with 16-bit counters, two timer channels are combined
-+	  to make a single 32-bit timer.
-+	  It can also be used as a clock event device supporting oneshot mode.
++/* Channel registers */
++#define ATMEL_TC_COFFS(c)		((c) * 0x40)
++#define ATMEL_TC_CCR(c)			ATMEL_TC_COFFS(c)
++#define ATMEL_TC_CMR(c)			(ATMEL_TC_COFFS(c) + 0x4)
++#define ATMEL_TC_SMMR(c)		(ATMEL_TC_COFFS(c) + 0x8)
++#define ATMEL_TC_RAB(c)			(ATMEL_TC_COFFS(c) + 0xc)
++#define ATMEL_TC_CV(c)			(ATMEL_TC_COFFS(c) + 0x10)
++#define ATMEL_TC_RA(c)			(ATMEL_TC_COFFS(c) + 0x14)
++#define ATMEL_TC_RB(c)			(ATMEL_TC_COFFS(c) + 0x18)
++#define ATMEL_TC_RC(c)			(ATMEL_TC_COFFS(c) + 0x1c)
++#define ATMEL_TC_SR(c)			(ATMEL_TC_COFFS(c) + 0x20)
++#define ATMEL_TC_IER(c)			(ATMEL_TC_COFFS(c) + 0x24)
++#define ATMEL_TC_IDR(c)			(ATMEL_TC_COFFS(c) + 0x28)
++#define ATMEL_TC_IMR(c)			(ATMEL_TC_COFFS(c) + 0x2c)
++#define ATMEL_TC_EMR(c)			(ATMEL_TC_COFFS(c) + 0x30)
 +
- config HAVE_AT91_UTMI
- 	bool
- 
++/* Block registers */
++#define ATMEL_TC_BCR			0xc0
++#define ATMEL_TC_BMR			0xc4
++#define ATMEL_TC_QIER			0xc8
++#define ATMEL_TC_QIDR			0xcc
++#define ATMEL_TC_QIMR			0xd0
++#define ATMEL_TC_QISR			0xd4
++#define ATMEL_TC_FMR			0xd8
++#define ATMEL_TC_WPMR			0xe4
++
++/* CCR fields */
++#define ATMEL_TC_CCR_CLKEN		BIT(0)
++#define ATMEL_TC_CCR_CLKDIS		BIT(1)
++#define ATMEL_TC_CCR_SWTRG		BIT(2)
++
++/* Common CMR fields */
++#define ATMEL_TC_CMR_TCLKS_MSK		GENMASK(2, 0)
++#define ATMEL_TC_CMR_TCLK(x)		(x)
++#define ATMEL_TC_CMR_XC(x)		((x) + 5)
++#define ATMEL_TC_CMR_CLKI		BIT(3)
++#define ATMEL_TC_CMR_BURST_MSK		GENMASK(5, 4)
++#define ATMEL_TC_CMR_BURST_XC(x)	(((x) + 1) << 4)
++#define ATMEL_TC_CMR_WAVE		BIT(15)
++
++/* Capture mode CMR fields */
++#define ATMEL_TC_CMR_LDBSTOP		BIT(6)
++#define ATMEL_TC_CMR_LDBDIS		BIT(7)
++#define ATMEL_TC_CMR_ETRGEDG_MSK	GENMASK(9, 8)
++#define ATMEL_TC_CMR_ETRGEDG_NONE	(0 << 8)
++#define ATMEL_TC_CMR_ETRGEDG_RISING	(1 << 8)
++#define ATMEL_TC_CMR_ETRGEDG_FALLING	(2 << 8)
++#define ATMEL_TC_CMR_ETRGEDG_BOTH	(3 << 8)
++#define ATMEL_TC_CMR_ABETRG		BIT(10)
++#define ATMEL_TC_CMR_CPCTRG		BIT(14)
++#define ATMEL_TC_CMR_LDRA_MSK		GENMASK(17, 16)
++#define ATMEL_TC_CMR_LDRA_NONE		(0 << 16)
++#define ATMEL_TC_CMR_LDRA_RISING	(1 << 16)
++#define ATMEL_TC_CMR_LDRA_FALLING	(2 << 16)
++#define ATMEL_TC_CMR_LDRA_BOTH		(3 << 16)
++#define ATMEL_TC_CMR_LDRB_MSK		GENMASK(19, 18)
++#define ATMEL_TC_CMR_LDRB_NONE		(0 << 18)
++#define ATMEL_TC_CMR_LDRB_RISING	(1 << 18)
++#define ATMEL_TC_CMR_LDRB_FALLING	(2 << 18)
++#define ATMEL_TC_CMR_LDRB_BOTH		(3 << 18)
++#define ATMEL_TC_CMR_SBSMPLR_MSK	GENMASK(22, 20)
++#define ATMEL_TC_CMR_SBSMPLR(x)		((x) << 20)
++
++/* Waveform mode CMR fields */
++#define ATMEL_TC_CMR_CPCSTOP		BIT(6)
++#define ATMEL_TC_CMR_CPCDIS		BIT(7)
++#define ATMEL_TC_CMR_EEVTEDG_MSK	GENMASK(9, 8)
++#define ATMEL_TC_CMR_EEVTEDG_NONE	(0 << 8)
++#define ATMEL_TC_CMR_EEVTEDG_RISING	(1 << 8)
++#define ATMEL_TC_CMR_EEVTEDG_FALLING	(2 << 8)
++#define ATMEL_TC_CMR_EEVTEDG_BOTH	(3 << 8)
++#define ATMEL_TC_CMR_EEVT_MSK		GENMASK(11, 10)
++#define ATMEL_TC_CMR_EEVT_XC(x)		(((x) + 1) << 10)
++#define ATMEL_TC_CMR_ENETRG		BIT(12)
++#define ATMEL_TC_CMR_WAVESEL_MSK	GENMASK(14, 13)
++#define ATMEL_TC_CMR_WAVESEL_UP		(0 << 13)
++#define ATMEL_TC_CMR_WAVESEL_UPDOWN	(1 << 13)
++#define ATMEL_TC_CMR_WAVESEL_UPRC	(2 << 13)
++#define ATMEL_TC_CMR_WAVESEL_UPDOWNRC	(3 << 13)
++#define ATMEL_TC_CMR_ACPA_MSK		GENMASK(17, 16)
++#define ATMEL_TC_CMR_ACPA(a)		(ATMEL_TC_CMR_ACTION_##a << 16)
++#define ATMEL_TC_CMR_ACPC_MSK		GENMASK(19, 18)
++#define ATMEL_TC_CMR_ACPC(a)		(ATMEL_TC_CMR_ACTION_##a << 18)
++#define ATMEL_TC_CMR_AEEVT_MSK		GENMASK(21, 20)
++#define ATMEL_TC_CMR_AEEVT(a)		(ATMEL_TC_CMR_ACTION_##a << 20)
++#define ATMEL_TC_CMR_ASWTRG_MSK		GENMASK(23, 22)
++#define ATMEL_TC_CMR_ASWTRG(a)		(ATMEL_TC_CMR_ACTION_##a << 22)
++#define ATMEL_TC_CMR_BCPB_MSK		GENMASK(25, 24)
++#define ATMEL_TC_CMR_BCPB(a)		(ATMEL_TC_CMR_ACTION_##a << 24)
++#define ATMEL_TC_CMR_BCPC_MSK		GENMASK(27, 26)
++#define ATMEL_TC_CMR_BCPC(a)		(ATMEL_TC_CMR_ACTION_##a << 26)
++#define ATMEL_TC_CMR_BEEVT_MSK		GENMASK(29, 28)
++#define ATMEL_TC_CMR_BEEVT(a)		(ATMEL_TC_CMR_ACTION_##a << 28)
++#define ATMEL_TC_CMR_BSWTRG_MSK		GENMASK(31, 30)
++#define ATMEL_TC_CMR_BSWTRG(a)		(ATMEL_TC_CMR_ACTION_##a << 30)
++#define ATMEL_TC_CMR_ACTION_NONE	0
++#define ATMEL_TC_CMR_ACTION_SET		1
++#define ATMEL_TC_CMR_ACTION_CLEAR	2
++#define ATMEL_TC_CMR_ACTION_TOGGLE	3
++
++/* SMMR fields */
++#define ATMEL_TC_SMMR_GCEN		BIT(0)
++#define ATMEL_TC_SMMR_DOWN		BIT(1)
++
++/* SR/IER/IDR/IMR fields */
++#define ATMEL_TC_COVFS			BIT(0)
++#define ATMEL_TC_LOVRS			BIT(1)
++#define ATMEL_TC_CPAS			BIT(2)
++#define ATMEL_TC_CPBS			BIT(3)
++#define ATMEL_TC_CPCS			BIT(4)
++#define ATMEL_TC_LDRAS			BIT(5)
++#define ATMEL_TC_LDRBS			BIT(6)
++#define ATMEL_TC_ETRGS			BIT(7)
++#define ATMEL_TC_CLKSTA			BIT(16)
++#define ATMEL_TC_MTIOA			BIT(17)
++#define ATMEL_TC_MTIOB			BIT(18)
++
++/* EMR fields */
++#define ATMEL_TC_EMR_TRIGSRCA_MSK	GENMASK(1, 0)
++#define ATMEL_TC_EMR_TRIGSRCA_TIOA	0
++#define ATMEL_TC_EMR_TRIGSRCA_PWMX	1
++#define ATMEL_TC_EMR_TRIGSRCB_MSK	GENMASK(5, 4)
++#define ATMEL_TC_EMR_TRIGSRCB_TIOB	(0 << 4)
++#define ATMEL_TC_EMR_TRIGSRCB_PWM	(1 << 4)
++#define ATMEL_TC_EMR_NOCLKDIV		BIT(8)
++
++/* BCR fields */
++#define ATMEL_TC_BCR_SYNC		BIT(0)
++
++/* BMR fields */
++#define ATMEL_TC_BMR_TCXC_MSK(c)	GENMASK(((c) * 2) + 1, (c) * 2)
++#define ATMEL_TC_BMR_TCXC(x, c)		((x) << (2 * (c)))
++#define ATMEL_TC_BMR_QDEN		BIT(8)
++#define ATMEL_TC_BMR_POSEN		BIT(9)
++#define ATMEL_TC_BMR_SPEEDEN		BIT(10)
++#define ATMEL_TC_BMR_QDTRANS		BIT(11)
++#define ATMEL_TC_BMR_EDGPHA		BIT(12)
++#define ATMEL_TC_BMR_INVA		BIT(13)
++#define ATMEL_TC_BMR_INVB		BIT(14)
++#define ATMEL_TC_BMR_INVIDX		BIT(15)
++#define ATMEL_TC_BMR_SWAP		BIT(16)
++#define ATMEL_TC_BMR_IDXPHB		BIT(17)
++#define ATMEL_TC_BMR_AUTOC		BIT(18)
++#define ATMEL_TC_MAXFILT_MSK		GENMASK(25, 20)
++#define ATMEL_TC_MAXFILT(x)		(((x) - 1) << 20)
++#define ATMEL_TC_MAXCMP_MSK		GENMASK(29, 26)
++#define ATMEL_TC_MAXCMP(x)		((x) << 26)
++
++/* QEDC fields */
++#define ATMEL_TC_QEDC_IDX		BIT(0)
++#define ATMEL_TC_QEDC_DIRCHG		BIT(1)
++#define ATMEL_TC_QEDC_QERR		BIT(2)
++#define ATMEL_TC_QEDC_MPE		BIT(3)
++#define ATMEL_TC_QEDC_DIR		BIT(8)
++
++/* FMR fields */
++#define ATMEL_TC_FMR_ENCF(x)		BIT(x)
++
++/* WPMR fields */
++#define ATMEL_TC_WPMR_WPKEY		(0x54494d << 8)
++#define ATMEL_TC_WPMR_WPEN		BIT(0)
++
++static const u8 atmel_tc_divisors[5] = { 2, 8, 32, 128, 0, };
++
++static const struct of_device_id atmel_tcb_dt_ids[] = {
++	{
++		.compatible = "atmel,at91rm9200-tcb",
++		.data = (void *)16,
++	}, {
++		.compatible = "atmel,at91sam9x5-tcb",
++		.data = (void *)32,
++	}, {
++		/* sentinel */
++	}
++};
++
++#endif /* __SOC_ATMEL_TCB_H */
 -- 
 2.19.0.rc2
 
