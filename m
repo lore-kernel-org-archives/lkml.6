@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E6F1C07520
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:45:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2CC6C070C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:45:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 568542133F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:45:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 568542133F
+	by mail.kernel.org (Postfix) with ESMTP id 86D162133F
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:45:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86D162133F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728694AbeIMAvQ (ORCPT
+        id S1728712AbeIMAvU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 20:51:16 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53978 "EHLO
+        Wed, 12 Sep 2018 20:51:20 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54688 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728024AbeIMAvO (ORCPT
+        by vger.kernel.org with ESMTP id S1726069AbeIMAvQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 20:51:14 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8CJY4gf100786
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 15:45:10 -0400
+        Wed, 12 Sep 2018 20:51:16 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8CJY7lj011695
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 15:45:12 -0400
 Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mf84hatnp-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mf7bqctk8-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 15:45:10 -0400
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 15:45:12 -0400
 Received: from localhost
         by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <akrowiak@linux.vnet.ibm.com>;
-        Wed, 12 Sep 2018 13:45:09 -0600
-Received: from b03cxnp07028.gho.boulder.ibm.com (9.17.130.15)
+        Wed, 12 Sep 2018 13:45:11 -0600
+Received: from b03cxnp08025.gho.boulder.ibm.com (9.17.130.17)
         by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 12 Sep 2018 13:45:04 -0600
+        Wed, 12 Sep 2018 13:45:08 -0600
 Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
-        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8CJj1Te21954718
+        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8CJj5ow13959212
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 12 Sep 2018 12:45:01 -0700
+        Wed, 12 Sep 2018 12:45:05 -0700
 Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 958DD6A05D;
-        Wed, 12 Sep 2018 13:45:01 -0600 (MDT)
+        by IMSVA (Postfix) with ESMTP id 892066A054;
+        Wed, 12 Sep 2018 13:45:05 -0600 (MDT)
 Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CFD2E6A047;
-        Wed, 12 Sep 2018 13:44:58 -0600 (MDT)
+        by IMSVA (Postfix) with ESMTP id C995B6A051;
+        Wed, 12 Sep 2018 13:45:02 -0600 (MDT)
 Received: from localhost.localdomain (unknown [9.80.213.181])
         by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTPS;
-        Wed, 12 Sep 2018 13:44:58 -0600 (MDT)
+        Wed, 12 Sep 2018 13:45:02 -0600 (MDT)
 From:   Tony Krowiak <akrowiak@linux.vnet.ibm.com>
 To:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
         kvm@vger.kernel.org
@@ -65,20 +65,20 @@ Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
         fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
         akrowiak@linux.vnet.ibm.com, frankja@linux.ibm.com,
         Tony Krowiak <akrowiak@linux.ibm.com>
-Subject: [PATCH v10 24/26] KVM: s390: device attrs to enable/disable AP interpretation
-Date:   Wed, 12 Sep 2018 15:43:14 -0400
+Subject: [PATCH v10 25/26] KVM: s390: CPU model support for AP virtualization
+Date:   Wed, 12 Sep 2018 15:43:15 -0400
 X-Mailer: git-send-email 1.7.1
 In-Reply-To: <1536781396-13601-1-git-send-email-akrowiak@linux.vnet.ibm.com>
 References: <1536781396-13601-1-git-send-email-akrowiak@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18091219-0004-0000-0000-00001488C6C9
+x-cbid: 18091219-0004-0000-0000-00001488C6CF
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009709; HX=3.00000242; KW=3.00000007;
  PH=3.00000004; SC=3.00000266; SDB=6.01087371; UDB=6.00561489; IPR=6.00867384;
- MB=3.00023256; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-12 19:45:07
+ MB=3.00023256; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-12 19:45:10
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18091219-0005-0000-0000-000088C9F0B1
-Message-Id: <1536781396-13601-25-git-send-email-akrowiak@linux.vnet.ibm.com>
+x-cbparentid: 18091219-0005-0000-0000-000088C9F0CB
+Message-Id: <1536781396-13601-26-git-send-email-akrowiak@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-12_10:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -93,138 +93,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tony Krowiak <akrowiak@linux.ibm.com>
 
-Introduces two new VM crypto device attributes (KVM_S390_VM_CRYPTO)
-to enable or disable AP instruction interpretation from userspace
-via the KVM_SET_DEVICE_ATTR ioctl:
+Introduces a new CPU model feature and two CPU model
+facilities to support AP virtualization for KVM guests.
 
-* The KVM_S390_VM_CRYPTO_ENABLE_APIE attribute enables hardware
-  interpretation of AP instructions executed on the guest.
+CPU model feature:
 
-* The KVM_S390_VM_CRYPTO_DISABLE_APIE attribute disables hardware
-  interpretation of AP instructions executed on the guest. In this
-  case the instructions will be intercepted and pass through to
-  the guest.
+The KVM_S390_VM_CPU_FEAT_AP feature indicates that
+AP instructions are available on the guest. This
+feature will be enabled by the kernel only if the AP
+instructions are installed on the linux host. This feature
+must be specifically turned on for the KVM guest from
+userspace to use the VFIO AP device driver for guest
+access to AP devices.
+
+CPU model facilities:
+
+1. AP Query Configuration Information (QCI) facility is installed.
+
+   This is indicated by setting facilities bit 12 for
+   the guest. The kernel will not enable this facility
+   for the guest if it is not set on the host.
+
+   If this facility is not set for the KVM guest, then only
+   APQNs with an APQI less than 16 will be used by a Linux
+   guest regardless of the matrix configuration for the virtual
+   machine. This is a limitation of the Linux AP bus.
+
+2. AP Facilities Test facility (APFT) is installed.
+
+   This is indicated by setting facilities bit 15 for
+   the guest. The kernel will not enable this facility for
+   the guest if it is not set on the host.
+
+   If this facility is not set for the KVM guest, then no
+   AP devices will be available to the guest regardless of
+   the guest's matrix configuration for the virtual
+   machine. This is a limitation of the Linux AP bus.
 
 Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
+Reviewed-by: David Hildenbrand <david@redhat.com>
+Tested-by: Michael Mueller <mimu@linux.ibm.com>
+Tested-by: Farhan Ali <alifm@linux.ibm.com>
+Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
 ---
- arch/s390/include/asm/kvm_host.h |    1 +
- arch/s390/include/uapi/asm/kvm.h |    2 ++
- arch/s390/kvm/kvm-s390.c         |   27 +++++++++++++++++++++++----
- 3 files changed, 26 insertions(+), 4 deletions(-)
+ arch/s390/kvm/kvm-s390.c         |    5 +++++
+ arch/s390/tools/gen_facilities.c |    2 ++
+ 2 files changed, 7 insertions(+), 0 deletions(-)
 
-diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
-index b32bd1b..36d3531 100644
---- a/arch/s390/include/asm/kvm_host.h
-+++ b/arch/s390/include/asm/kvm_host.h
-@@ -719,6 +719,7 @@ struct kvm_s390_crypto {
- 	__u32 crycbd;
- 	__u8 aes_kw;
- 	__u8 dea_kw;
-+	__u8 apie;
- };
- 
- #define APCB0_MASK_SIZE 1
-diff --git a/arch/s390/include/uapi/asm/kvm.h b/arch/s390/include/uapi/asm/kvm.h
-index 8c23afc..a8dbd90 100644
---- a/arch/s390/include/uapi/asm/kvm.h
-+++ b/arch/s390/include/uapi/asm/kvm.h
-@@ -161,6 +161,8 @@ struct kvm_s390_vm_cpu_subfunc {
- #define KVM_S390_VM_CRYPTO_ENABLE_DEA_KW	1
- #define KVM_S390_VM_CRYPTO_DISABLE_AES_KW	2
- #define KVM_S390_VM_CRYPTO_DISABLE_DEA_KW	3
-+#define KVM_S390_VM_CRYPTO_ENABLE_APIE		4
-+#define KVM_S390_VM_CRYPTO_DISABLE_APIE		5
- 
- /* kvm attributes for migration mode */
- #define KVM_S390_VM_MIGRATION_STOP	0
 diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-index 2cdd980..286c2e0 100644
+index 286c2e0..f0b8e2a 100644
 --- a/arch/s390/kvm/kvm-s390.c
 +++ b/arch/s390/kvm/kvm-s390.c
-@@ -856,12 +856,11 @@ void kvm_s390_vcpu_crypto_reset_all(struct kvm *kvm)
+@@ -371,6 +371,11 @@ static void kvm_s390_cpu_feat_init(void)
  
- static int kvm_s390_vm_set_crypto(struct kvm *kvm, struct kvm_device_attr *attr)
- {
--	if (!test_kvm_facility(kvm, 76))
--		return -EINVAL;
--
- 	mutex_lock(&kvm->lock);
- 	switch (attr->attr) {
- 	case KVM_S390_VM_CRYPTO_ENABLE_AES_KW:
-+		if (!test_kvm_facility(kvm, 76))
-+			return -EINVAL;
- 		get_random_bytes(
- 			kvm->arch.crypto.crycb->aes_wrapping_key_mask,
- 			sizeof(kvm->arch.crypto.crycb->aes_wrapping_key_mask));
-@@ -869,6 +868,8 @@ static int kvm_s390_vm_set_crypto(struct kvm *kvm, struct kvm_device_attr *attr)
- 		VM_EVENT(kvm, 3, "%s", "ENABLE: AES keywrapping support");
- 		break;
- 	case KVM_S390_VM_CRYPTO_ENABLE_DEA_KW:
-+		if (!test_kvm_facility(kvm, 76))
-+			return -EINVAL;
- 		get_random_bytes(
- 			kvm->arch.crypto.crycb->dea_wrapping_key_mask,
- 			sizeof(kvm->arch.crypto.crycb->dea_wrapping_key_mask));
-@@ -876,17 +877,31 @@ static int kvm_s390_vm_set_crypto(struct kvm *kvm, struct kvm_device_attr *attr)
- 		VM_EVENT(kvm, 3, "%s", "ENABLE: DEA keywrapping support");
- 		break;
- 	case KVM_S390_VM_CRYPTO_DISABLE_AES_KW:
-+		if (!test_kvm_facility(kvm, 76))
-+			return -EINVAL;
- 		kvm->arch.crypto.aes_kw = 0;
- 		memset(kvm->arch.crypto.crycb->aes_wrapping_key_mask, 0,
- 			sizeof(kvm->arch.crypto.crycb->aes_wrapping_key_mask));
- 		VM_EVENT(kvm, 3, "%s", "DISABLE: AES keywrapping support");
- 		break;
- 	case KVM_S390_VM_CRYPTO_DISABLE_DEA_KW:
-+		if (!test_kvm_facility(kvm, 76))
-+			return -EINVAL;
- 		kvm->arch.crypto.dea_kw = 0;
- 		memset(kvm->arch.crypto.crycb->dea_wrapping_key_mask, 0,
- 			sizeof(kvm->arch.crypto.crycb->dea_wrapping_key_mask));
- 		VM_EVENT(kvm, 3, "%s", "DISABLE: DEA keywrapping support");
- 		break;
-+	case KVM_S390_VM_CRYPTO_ENABLE_APIE:
-+		if (!ap_instructions_available()) {
-+			mutex_unlock(&kvm->lock);
-+			return -EOPNOTSUPP;
-+		}
-+		kvm->arch.crypto.apie = 1;
-+		break;
-+	case KVM_S390_VM_CRYPTO_DISABLE_APIE:
-+		kvm->arch.crypto.apie = 0;
-+		break;
- 	default:
- 		mutex_unlock(&kvm->lock);
- 		return -ENXIO;
-@@ -1493,6 +1508,8 @@ static int kvm_s390_vm_has_attr(struct kvm *kvm, struct kvm_device_attr *attr)
- 		case KVM_S390_VM_CRYPTO_ENABLE_DEA_KW:
- 		case KVM_S390_VM_CRYPTO_DISABLE_AES_KW:
- 		case KVM_S390_VM_CRYPTO_DISABLE_DEA_KW:
-+		case KVM_S390_VM_CRYPTO_ENABLE_APIE:
-+		case KVM_S390_VM_CRYPTO_DISABLE_APIE:
- 			ret = 0;
- 			break;
- 		default:
-@@ -2062,6 +2079,7 @@ static u64 kvm_s390_get_initial_cpuid(void)
- static void kvm_s390_crypto_init(struct kvm *kvm)
- {
- 	kvm->arch.crypto.crycb = &kvm->arch.sie_page2->crycb;
-+	kvm->arch.crypto.apie = 0;
- 	kvm_s390_set_crycb_format(kvm);
+ 	if (MACHINE_HAS_ESOP)
+ 		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_ESOP);
++
++	/* Check if AP instructions installed on host */
++	if (ap_instructions_available())
++		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_AP);
++
+ 	/*
+ 	 * We need SIE support, ESOP (PROT_READ protection for gmap_shadow),
+ 	 * 64bit SCAO (SCA passthrough) and IDTE (for gmap_shadow unshadowing).
+diff --git a/arch/s390/tools/gen_facilities.c b/arch/s390/tools/gen_facilities.c
+index 0c85aed..fd788e0 100644
+--- a/arch/s390/tools/gen_facilities.c
++++ b/arch/s390/tools/gen_facilities.c
+@@ -106,6 +106,8 @@ struct facility_def {
  
- 	if (!test_kvm_facility(kvm, 76))
-@@ -2602,8 +2620,9 @@ static void kvm_s390_vcpu_crypto_setup(struct kvm_vcpu *vcpu)
- 
- 	vcpu->arch.sie_block->crycbd = vcpu->kvm->arch.crypto.crycbd;
- 	vcpu->arch.sie_block->ecb3 &= ~(ECB3_AES | ECB3_DEA);
-+	vcpu->arch.sie_block->eca &= ~ECA_APIE;
- 
--	if (test_kvm_cpu_feat(vcpu->kvm, KVM_S390_VM_CPU_FEAT_AP))
-+	if (vcpu->kvm->arch.crypto.apie)
- 		vcpu->arch.sie_block->eca |= ECA_APIE;
- 
- 	/* Set up protected key support */
+ 		.name = "FACILITIES_KVM_CPUMODEL",
+ 		.bits = (int[]){
++			12, /* AP Query Configuration Information */
++			15, /* AP Facilities Test */
+ 			156, /* etoken facility */
+ 			-1  /* END */
+ 		}
 -- 
 1.7.1
 
