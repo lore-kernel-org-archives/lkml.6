@@ -2,204 +2,192 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81F9CC070C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 22:56:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30130C070C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 22:57:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 217B621473
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 22:56:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 217B621473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id CC6B4213A2
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 22:57:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jDk7jQWH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC6B4213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728287AbeIMEDd (ORCPT
+        id S1728314AbeIMEDk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 00:03:33 -0400
-Received: from mga06.intel.com ([134.134.136.31]:34247 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725751AbeIMEDd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 00:03:33 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Sep 2018 15:56:52 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,366,1531810800"; 
-   d="scan'208";a="79999188"
-Received: from schen9-desk.jf.intel.com (HELO [10.54.74.135]) ([10.54.74.135])
-  by FMSMGA003.fm.intel.com with ESMTP; 12 Sep 2018 15:56:52 -0700
-Subject: Re: [PATCH v5 2/2] x86/speculation: Enable cross-hyperthread spectre
- v2 STIBP mitigation
-To:     Jiri Kosina <jikos@kernel.org>
-Cc:     Tom Lendacky <thomas.lendacky@amd.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Woodhouse, David" <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-References: <nycvar.YFH.7.76.1809101119280.15880@cbobk.fhfr.pm>
- <nycvar.YFH.7.76.1809101123520.15880@cbobk.fhfr.pm>
- <alpine.DEB.2.21.1809101158080.1402@nanos.tec.linutronix.de>
- <nycvar.YFH.7.76.1809101259520.15880@cbobk.fhfr.pm>
- <nycvar.YFH.7.76.1809101343370.15880@cbobk.fhfr.pm>
- <f0fcbcd9-4619-391e-3c1b-34d06b00de50@linux.intel.com>
- <alpine.DEB.2.21.1809112315320.1427@nanos.tec.linutronix.de>
- <f95c28d6-70f2-3f18-4ab9-c756c7581126@amd.com>
- <d098fa9b-f244-68d2-77f2-e3f5dd30f174@linux.intel.com>
- <nycvar.YFH.7.76.1809122330090.15880@cbobk.fhfr.pm>
-From:   Tim Chen <tim.c.chen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <18977608-cf8e-339b-788f-a5e461d22b11@linux.intel.com>
-Date:   Wed, 12 Sep 2018 15:56:51 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.1.0
+        Thu, 13 Sep 2018 00:03:40 -0400
+Received: from mail-io1-f50.google.com ([209.85.166.50]:45484 "EHLO
+        mail-io1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725751AbeIMEDe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 00:03:34 -0400
+Received: by mail-io1-f50.google.com with SMTP id e12-v6so1594409iok.12
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 15:56:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=EgZcEbg59QVjWNxoyROPDrTgEyRAiE/Lf/mQjux6twI=;
+        b=jDk7jQWHq645EknXsspyOA3LfqfE0N1Ka7FnvwHlZw8KbCsACuJ0O8cg7tvhg068d3
+         bRY+Slu5HqbVmXLrcHyc8eepohDPT8pr1mBrR7ZEQan+lfE7FEflq5TyCfD0m5+0KBRH
+         ejSwS0dDgFJYvTeaOnavDN/CUZSYXMCFSv3HE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=EgZcEbg59QVjWNxoyROPDrTgEyRAiE/Lf/mQjux6twI=;
+        b=dzZ0ppBSjpzyEET3Er9klIApk1flFTWZDla8CDaXKvTaNoEAtoZUo/OB6jt7XaX6xO
+         amkdFKhbpn9DURt37NhnmHxWwbt9MLbVoP8k6AXVw4YWLoDzzwnao5sNhGkEtOfrkDyC
+         TAD6u2+bktGOBnS/3uH/D92TczH+ax3p8oywO4Draz0W2G6agmwlg7u+1t+VyXZkDZQr
+         a39BVynMAYctR1nvdITVhNQ4Bnqly6mvMl/nLtXyAu6bQxuMsoVhkgMfEjPBfiZo5uNY
+         w1NeMV0U0T3P4k5g1hKTFVYjrVlMXkJ6ppvoIU5CKZgilVfWA1/xLe+Eup2RsE7Sxhqx
+         k2xQ==
+X-Gm-Message-State: APzg51DnTyp8EMtCUdTaKDvKStMkK6lxCef2mmxLm8Ic8us5nB4/Sjze
+        OTQvQw3o5hVnF3MRfD38hFT2l7mkeahe8AHJXQoBEQ==
+X-Google-Smtp-Source: ANB0VdZ7cWGo87+nD2KnLGp49rsvG5y9zIwEZFs2GQL55ni5lnS5CXQy1K94lnqONi797FZV5+RlfOaAjI3WRKPILQc=
+X-Received: by 2002:a6b:4516:: with SMTP id s22-v6mr4122058ioa.60.1536793014199;
+ Wed, 12 Sep 2018 15:56:54 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <nycvar.YFH.7.76.1809122330090.15880@cbobk.fhfr.pm>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a6b:2848:0:0:0:0:0 with HTTP; Wed, 12 Sep 2018 15:56:53
+ -0700 (PDT)
+In-Reply-To: <CAHmME9rTEFLaYmzFrc719LW2DWS2Ua_vL6by1UXZ9uDvMpbhYw@mail.gmail.com>
+References: <20180911010838.8818-1-Jason@zx2c4.com> <20180911010838.8818-3-Jason@zx2c4.com>
+ <CAKv+Gu9nSeo4PFVrtjtqGQ32eqyxUp3xVCczZfu+dhFz5yLM0A@mail.gmail.com> <CAHmME9rTEFLaYmzFrc719LW2DWS2Ua_vL6by1UXZ9uDvMpbhYw@mail.gmail.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Thu, 13 Sep 2018 00:56:53 +0200
+Message-ID: <CAKv+Gu9RGo9rtGsmwMLZ_=-WSQ_h7har4agXP-2XOKupq-KYtA@mail.gmail.com>
+Subject: Re: [PATCH net-next v3 02/17] zinc: introduce minimal cryptography library
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/12/2018 02:45 PM, Jiri Kosina wrote:
-> On Wed, 12 Sep 2018, Tim Chen wrote:
-> 
->> I'm working on a patch for choosing the Spectre v2 app to app
->> mitigation option.
->>
->> Something like the following:
->>
->> enum spectre_v2_app2app_mitigation {
->>         SPECTRE_V2_APP2APP_NONE,
->>         SPECTRE_V2_APP2APP_LITE,
->>         SPECTRE_V2_APP2APP_IBPB,
->>         SPECTRE_V2_APP2APP_STIBP,
->>         SPECTRE_V2_APP2APP_STRICT,
->> };
->>
->> static const char *spectre_v2_app2app_strings[] = {
->>         [SPECTRE_V2_APP2APP_NONE]               = "App-App Vulnerable",
->>         [SPECTRE_V2_APP2APP_LITE]               = "App-App Mitigation: Protect only non-dumpable process",
->>         [SPECTRE_V2_APP2APP_IBPB]               = "App-App Mitigation: Protect app against attack from same cpu",
->>         [SPECTRE_V2_APP2APP_STIBP]              = "App-App Mitigation: Protect app against attack from sibling cpu",
->>         [SPECTRE_V2_APP2APP_STRICT]             = "App-App Mitigation: Full app to app attack protection",
->> };
->>
->> So the APP2APP_LITE protection's intention is to turn on STIBP and IBPB for non-dumpable
->> process.  But in my first version I may limit it to IBPB as choosing
->> STIBP based on process characteristics will require some frobbing of
->> the flags as what we've done in SSBD.  That will require more careful
->> work and tests.
->>
->> The STRICT option will turn STIBP on always and IBPB always on
->> non-ptraceable context switches.
->>
->> Is this something reasonable?
-> 
-> It's probably 100% correct, but it's also 100% super-complex at the same 
-> time if you ask me.
-> 
-> Try to imagine you're a very advanced senior sysadmin, who has heard that 
-> spectre and meltdown existed of course, but figured out that updating to 
-> latest kernel/distro vendor update fixes all the security issues (and it 
-> actually indeed did).
-> 
-> Now, all of a sudden, this new option pops up, and the poor sysadmin has 
-> to make a decision again.
-> 
-> 	"Do you care only about security across non-dumpable process 
-> 	 boundaries?"
-> 
-> 	"Scheduled to same CPU at the time of attack? Can you guarantee that this 
-> 	 is (not) happening?"
-> 
-> 	"If the processess can actually ptrace/debug each other, are you okay with 
-> 	 them attacking each other?"
-> 
-> 	 "Shared HT siblings return target buffer, do you want it or 
-> 	  not?"
-> 
-> These are the questions that even an excellent sysadmin might not have 
-> qualified answers to so far. Now, all of a sudden, he/her has to make 
-> these decisions?
-> 
-> I don't think that's how it should work. It all should be digestible by 
-> "linux end-users" (where users are also super-advanced sysadmins) easily.
-> 
-> We currently have "I do care about spectrev2 / I don't care about 
-> spectrev2" boot-time switch, and I don't see us going any deeper / more 
-> fine-grained without sacrificing clarity and sanity.
-> 
-> Or do you see a way how to do that nicely?
-> 
+On 11 September 2018 at 23:22, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+> Hello Ard,
+>
+> I realize you've put a lot of good and hard work into the existing
+> crypto API, and that my writing in these commit messages might be a
+> bit too bristly and dismissive of that hard work. So I think in a
+> sense it's understandable that you've responded as such here. But
+> hopefully I can address your concerns. One thing to keep in mind is
+> that Zinc endeavors to provide the basis for simple and direct
+> functions to software algorithms. This is fairly modest goal. Just
+> some functions that do some stuff in software. Around these you'll
+> still be able to have complicated and impressive dynamic dispatch and
+> asynchronous mechanisms such as the present crypto API. Zinc is merely
+> getting the software implementation side done in a very simple and
+> direct way. So I don't think there's a good reason for so much
+> antagonism, despite a perhaps overbearing tone of my commit messages.
+> Rather, I expect that we'll wind up working together on this quite a
+> bit down the line.
+>
 
-How about just these options:
+No worries, it takes more than this to piss me off. I do take pride in
+my work, but I am perfectly aware that I am not a rare talent like
+Andy Polyakov, which is actually why I have worked extensively with
+him in the past to get kernel specific changes to the ARM/arm64 NEON
+code into upstream OpenSSL, so that we could use the upstream code
+unmodified and benefit from upstream review. [1] [2]
 
-static const char *spectre_v2_app2app_strings[] = {
-        [SPECTRE_V2_APP2APP_NONE]               = "App-App Vulnerable",
-        [SPECTRE_V2_APP2APP_LITE]               = "App-App Mitigation: Protect only non-dumpable process",
-        [SPECTRE_V2_APP2APP_STRICT]             = "App-App Mitigation: Full app to app attack protection",
-};
+In this series, you are dumping a huge volume of unannotated,
+generated asm into the kernel which has been modified [by you] to
+[among other things?] adhere to the kernel API (without documenting
+what the changes are exactly). How does that live up to the promise of
+better, peer reviewed code?
 
-Tim
+Then there is the performance claim. We know for instance that the
+OpenSSL ARM NEON code for ChaCha20 is faster on cores that happen to
+possess a micro-architectural property that ALU instructions are
+essentially free when they are interleaved with SIMD instructions. But
+we also know that a) Cortex-A7, which is a relevant target, is not one
+of those cores, and b) that chip designers are not likely to optimize
+for that particular usage pattern so relying on it in generic code is
+unwise in general.
+
+I am also concerned about your claim that all software algorithms will
+be moved into this crypto library. You are not specific about whose
+responsibility it will be that this is going to happen in a timely
+fashion. But more importantly, it is not clear at all how you expect
+this to work for, e.g., h/w instruction based SHAxxx or AES in various
+chaining modes, which should be used only on cores that implement
+those instructions (note that on arm64, we have optional instructions
+for AES, PMULL, SHA1, SHA256, SHA512, SHA3, SM3 and SM4). Are all
+those implementations (only few of which will be used on a certain
+core) going to be part of the monolithic library? What are the APIs
+going to look like for block ciphers, taking chaining modes into
+account?
+
+I'm sure it is rather simple to port the crypto API implementation of
+ChaCha20 to use your library. I am more concerned about how your
+library is going to expand to cover all other software algorithms that
+we currently use in the kernel.
+
+>> In spite of the wall of text, you fail to point out exactly why the
+>> existing AEAD API in unsuitable, and why fixing it is not an option.
+>
+> I thought I had addressed this. Firstly, there's a need for more than
+> just AEAD, but ignoring that, the AEAD API is a big full API that does
+> lots of things, makes allocations, parses descriptors, and so forth.
+> I'm sure this kind of highly-engineered approach will continue to
+> improve over time in that highly engineered direction. Zinc is doing
+> something a bit different: it's providing a series of simple functions
+> for various cryptographic routines. This is a considerably different
+> goal -- perhaps even a complementary one -- to the AEAD API.
+>
+
+I understand how your crypto library is different from the crypto API.
+But the question was why WireGuard cannot make use of the crypto APIs
+AEAD interface. And note that this is an honest question: I know that
+the crypto API is cumbersome to use in general, but it would be very
+helpful to understand where exactly the impedance mismatch is between
+what your code needs and what the crypto API provides.
+
+>> I don't think you have
+>> convinced anyone else yet either.
+>
+> Please only speak for yourself and refrain from rhetoric like this,
+> which is patently false.
+>
+
+Fair enough. You have clearly convinced Greg :-)
+
+>> Please refrain from sending a v4 with just a couple of more tweaks on
+>> top
+>
+> Sorry, no, I'm not going to stop working hard on this because you're
+> wary of a new approach. I will continue to improve the submission
+> until it is mergable, and I do not intend to stop.
+>
+
+Of course. But please respond to all the concerns, not just the low
+hanging fruit. I have already mentioned a couple of times that I
+object to dumping large volumes of generated assembly into the kernel
+tree without any annotation whatsoever, or any documentation about how
+the generated code was hand tweaked before submission. You have not
+responded to that concern yet.
+
+> Anyway, it sounds like this whole thing may have ruffled your feathers
+> a bit. Will you be at Linux Plumbers Conference in November? I'm
+> planning on attending, and perhaps we could find some time there to
+> sit down and talk one on one a bit.
+>
+
+That would be good, yes. I will be there.
+
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=e4e7f10bfc4069925e99cc4b428c3434e30b6c3f
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=7918ecef073fe80eeb399a37d8d48561864eedf1
