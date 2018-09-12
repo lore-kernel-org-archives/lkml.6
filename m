@@ -2,564 +2,786 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9106BC46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:51:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26065C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:52:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F48120882
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:51:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KxElSRgl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F48120882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 9B5692088E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:52:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B5692088E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728055AbeILT4d (ORCPT
+        id S1728180AbeILT5s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 15:56:33 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:35473 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727804AbeILT4d (ORCPT
+        Wed, 12 Sep 2018 15:57:48 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:60450 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727623AbeILT5s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 15:56:33 -0400
-Received: by mail-it0-f66.google.com with SMTP id 139-v6so3423546itf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 07:51:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Z7npAsBeXI0VTdd5M1fwP0Pz+RSCCWp120xNgujlFhc=;
-        b=KxElSRglETVJ13IirAUsXFA1IRoU+nna9h4bAfRaUKeHPwmylH/5v9EteaDo/KkNAQ
-         z2jU1rRYHtNgvTK4C8C/7/QdKvS3IYU4cNIsKxgxIoF2uIrr1etqglfRZ5+Vq7t12MFw
-         4PauH/+zcuyD2XIAUG8BwNQq+yyvtfZg0BNgOI3wMmYRWzbI636msEJYQIh5/cyh2Pis
-         ufCDyVBcVxcx7VcArxmGoTp9BD88gHKrga1HBAxUqBK4+L5DDXVujxrSGm6d3yJ1xyIG
-         /giVxO7bcwwCw98mzk4/MrszJFRKNF3O2oEGsIF6g/bpT6dig5TeL3j2pcLyqOewGcGG
-         g4mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Z7npAsBeXI0VTdd5M1fwP0Pz+RSCCWp120xNgujlFhc=;
-        b=rVFgxc3ctYnu0YpghFSJnYAIixgeNB2KTXJyZNqd+2MuBROLU5U8uvXyeLBzcPCE9x
-         iBdjVO2Zc++MCQRx8ppA2b8U5jScc+PmBWdZYhnUxE7tRzVTMD/3E0uszJDjMuOIAKJ3
-         rDoxt/7gcI9/HZl3TNIkey+yxVRne+My76rpMq0gRh8WLUUmi0JWLdUpLInS688DyheI
-         4U0KxLoluf5EY+lBl0wZoccaxtLyI3Jd8nqJt5zD+TyZxb7t8CxQW5ISo9dmMmalWn2w
-         vpAjpaZW1ivwUlAdsDELurI4DXNaNgGEK7k3fUekWCQNNX0oyYBLzdsJCQWdqEDf9RDE
-         v0Cg==
-X-Gm-Message-State: APzg51CM3wYifbQKL/1M+saMhNIGHB7W8CSnvMYE/zRJl6t23a455e1x
-        OsW9Xrwx8OnAzorC0XzxXkPpNGQhW95IQPPdZ73NRg==
-X-Google-Smtp-Source: ANB0VdZlZ7oju9ANJAWAxRxExYrAAy7tdv/OimSkp8KTG13DduroVmmvyHR1I4SIGfrwnm82XRFQQQOyJUfs2VxCKMw=
-X-Received: by 2002:a24:140f:: with SMTP id 15-v6mr2322005itg.57.1536763900400;
- Wed, 12 Sep 2018 07:51:40 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a02:5942:0:0:0:0:0 with HTTP; Wed, 12 Sep 2018 07:51:19
- -0700 (PDT)
-In-Reply-To: <CACT4Y+baDKvmpKJ4SKoEuZG4ir2xRGscQ7Ro4hkVAX3jwiWnFg@mail.gmail.com>
-References: <cover.1535462971.git.andreyknvl@google.com> <868c9168481ff5103034ac1e37b830d28ed5f4ee.1535462971.git.andreyknvl@google.com>
- <CACT4Y+baDKvmpKJ4SKoEuZG4ir2xRGscQ7Ro4hkVAX3jwiWnFg@mail.gmail.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 12 Sep 2018 16:51:19 +0200
-Message-ID: <CACT4Y+aj-az2g9NF88nTjuWox=jvCNx0J49HHTG-HPdY46HKLg@mail.gmail.com>
-Subject: Re: [PATCH v6 03/18] khwasan: add CONFIG_KASAN_GENERIC and CONFIG_KASAN_HW
-To:     Andrey Konovalov <andreyknvl@google.com>
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Dave Martin <dave.martin@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-sparse@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
-        "open list:KERNEL BUILD + fi..." <linux-kbuild@vger.kernel.org>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Jann Horn <jannh@google.com>,
-        Mark Brand <markbrand@google.com>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Vishwath Mohan <vishwath@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 12 Sep 2018 15:57:48 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07437672|-1;CH=blue;FP=3769680294167451824|1|1|11|0|-1|-1|-1;HT=e01l01425;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=15;RT=15;SR=0;TI=SMTPD_---.CpxLmnL_1536763959;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CpxLmnL_1536763959)
+          by smtp.aliyun-inc.com(10.147.40.200);
+          Wed, 12 Sep 2018 22:52:40 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, daniel.lezcano@linaro.org,
+        jason@lakedaemon.net, arnd@arndb.de, devicetree@vger.kernel.org,
+        andrea.parri@amarulasolutions.com, peterz@infradead.org
+Cc:     c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
+        thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org, ren_guo@c-sky.com,
+        green.hu@gmail.com
+Subject: [PATCH V4 11/27] csky: Atomic operations
+Date:   Wed, 12 Sep 2018 22:51:53 +0800
+Message-Id: <93e8b592e429c156ad4d4ca5d85ef48fd0ab8b70.1536758961.git.ren_guo@c-sky.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1536758961.git.ren_guo@c-sky.com>
+References: <cover.1536758961.git.ren_guo@c-sky.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 4:47 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
-> On Wed, Aug 29, 2018 at 1:35 PM, Andrey Konovalov <andreyknvl@google.com> wrote:
->> This commit splits the current CONFIG_KASAN config option into two:
->> 1. CONFIG_KASAN_GENERIC, that enables the generic software-only KASAN
->>    version (the one that exists now);
->> 2. CONFIG_KASAN_HW, that enables KHWASAN.
->>
->> With CONFIG_KASAN_HW enabled, compiler options are changed to instrument
->> kernel files wiht -fsantize=hwaddress (except the ones for which
->> KASAN_SANITIZE := n is set).
->>
->> Both CONFIG_KASAN_GENERIC and CONFIG_KASAN_HW support both
->> CONFIG_KASAN_INLINE and CONFIG_KASAN_OUTLINE instrumentation modes.
->>
->> This commit also adds empty placeholder (for now) implementation of
->> KHWASAN specific hooks inserted by the compiler and adjusts common hooks
->> implementation to compile correctly with each of the config options.
->>
->> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
->> ---
->>  arch/arm64/Kconfig             |  1 +
->>  include/linux/compiler-clang.h |  3 +-
->>  include/linux/compiler-gcc.h   |  4 ++
->>  include/linux/compiler.h       |  3 +-
->>  include/linux/kasan.h          | 16 +++++--
->>  lib/Kconfig.kasan              | 77 ++++++++++++++++++++++++++--------
->>  mm/kasan/Makefile              |  6 ++-
->>  mm/kasan/kasan.h               |  3 +-
->>  mm/kasan/khwasan.c             | 75 +++++++++++++++++++++++++++++++++
->>  mm/slub.c                      |  2 +-
->>  scripts/Makefile.kasan         | 27 +++++++++++-
->>  11 files changed, 188 insertions(+), 29 deletions(-)
->>  create mode 100644 mm/kasan/khwasan.c
->>
->> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
->> index 29e75b47becd..991564148f54 100644
->> --- a/arch/arm64/Kconfig
->> +++ b/arch/arm64/Kconfig
->> @@ -105,6 +105,7 @@ config ARM64
->>         select HAVE_ARCH_HUGE_VMAP
->>         select HAVE_ARCH_JUMP_LABEL
->>         select HAVE_ARCH_KASAN if !(ARM64_16K_PAGES && ARM64_VA_BITS_48)
->> +       select HAVE_ARCH_KASAN_HW if !(ARM64_16K_PAGES && ARM64_VA_BITS_48)
->>         select HAVE_ARCH_KGDB
->>         select HAVE_ARCH_MMAP_RND_BITS
->>         select HAVE_ARCH_MMAP_RND_COMPAT_BITS if COMPAT
->> diff --git a/include/linux/compiler-clang.h b/include/linux/compiler-clang.h
->> index b1ce500fe8b3..2c258a9d4c67 100644
->> --- a/include/linux/compiler-clang.h
->> +++ b/include/linux/compiler-clang.h
->> @@ -17,11 +17,12 @@
->>  #define KASAN_ABI_VERSION 5
->>
->>  /* emulate gcc's __SANITIZE_ADDRESS__ flag */
->> -#if __has_feature(address_sanitizer)
->> +#if __has_feature(address_sanitizer) || __has_feature(hwaddress_sanitizer)
->>  #define __SANITIZE_ADDRESS__
->>  #endif
->>
->>  #define __no_sanitize_address __attribute__((no_sanitize("address")))
->> +#define __no_sanitize_hwaddress __attribute__((no_sanitize("hwaddress")))
->
-> It seems that it would be better to have just 1 attribute for both types.
-> Currently __no_sanitize_address is used just in a single place. But if
-> it ever used more, people will need to always spell both which looks
-> unnecessary, or, worse will only fix asan but forget about khwasan.
->
-> If we do just:
->
-> #define __no_sanitize_address __attribute__((no_sanitize("address",
-> "hwaddress")))
->
-> Then we don't need any changes in compiler-gcc.h nor in compiler.h,
-> and no chance or forgetting one of them.
->
->>  /*
->>   * Not all versions of clang implement the the type-generic versions
->> diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
->> index 763bbad1e258..a186b55c8c4c 100644
->> --- a/include/linux/compiler-gcc.h
->> +++ b/include/linux/compiler-gcc.h
->> @@ -227,6 +227,10 @@
->>  #define __no_sanitize_address
->>  #endif
->>
->> +#if !defined(__no_sanitize_hwaddress)
->> +#define __no_sanitize_hwaddress        /* gcc doesn't support KHWASAN */
->> +#endif
->> +
->>  /*
->>   * Turn individual warnings and errors on and off locally, depending
->>   * on version.
->> diff --git a/include/linux/compiler.h b/include/linux/compiler.h
->> index 681d866efb1e..3f2ba192d57d 100644
->> --- a/include/linux/compiler.h
->> +++ b/include/linux/compiler.h
->> @@ -195,7 +195,8 @@ void __read_once_size(const volatile void *p, void *res, int size)
->>   *     https://gcc.gnu.org/bugzilla/show_bug.cgi?id=67368
->>   * '__maybe_unused' allows us to avoid defined-but-not-used warnings.
->>   */
->> -# define __no_kasan_or_inline __no_sanitize_address __maybe_unused
->> +# define __no_kasan_or_inline __no_sanitize_address __no_sanitize_hwaddress \
->> +                             __maybe_unused
->>  #else
->>  # define __no_kasan_or_inline __always_inline
->>  #endif
->> diff --git a/include/linux/kasan.h b/include/linux/kasan.h
->> index 54d577ad2181..beb56a26fe9b 100644
->> --- a/include/linux/kasan.h
->> +++ b/include/linux/kasan.h
->> @@ -45,8 +45,6 @@ void kasan_free_pages(struct page *page, unsigned int order);
->>
->>  void kasan_cache_create(struct kmem_cache *cache, unsigned int *size,
->>                         slab_flags_t *flags);
->> -void kasan_cache_shrink(struct kmem_cache *cache);
->> -void kasan_cache_shutdown(struct kmem_cache *cache);
->>
->>  void kasan_poison_slab(struct page *page);
->>  void kasan_unpoison_object_data(struct kmem_cache *cache, void *object);
->> @@ -97,8 +95,6 @@ static inline void kasan_free_pages(struct page *page, unsigned int order) {}
->>  static inline void kasan_cache_create(struct kmem_cache *cache,
->>                                       unsigned int *size,
->>                                       slab_flags_t *flags) {}
->> -static inline void kasan_cache_shrink(struct kmem_cache *cache) {}
->> -static inline void kasan_cache_shutdown(struct kmem_cache *cache) {}
->>
->>  static inline void kasan_poison_slab(struct page *page) {}
->>  static inline void kasan_unpoison_object_data(struct kmem_cache *cache,
->> @@ -152,4 +148,16 @@ static inline size_t kasan_metadata_size(struct kmem_cache *cache) { return 0; }
->>
->>  #endif /* CONFIG_KASAN */
->>
->> +#ifdef CONFIG_KASAN_GENERIC
->> +
->> +void kasan_cache_shrink(struct kmem_cache *cache);
->> +void kasan_cache_shutdown(struct kmem_cache *cache);
->> +
->> +#else /* CONFIG_KASAN_GENERIC */
->> +
->> +static inline void kasan_cache_shrink(struct kmem_cache *cache) {}
->> +static inline void kasan_cache_shutdown(struct kmem_cache *cache) {}
->> +
->> +#endif /* CONFIG_KASAN_GENERIC */
->> +
->>  #endif /* LINUX_KASAN_H */
->> diff --git a/lib/Kconfig.kasan b/lib/Kconfig.kasan
->> index befb127507c0..5a22629f30e7 100644
->> --- a/lib/Kconfig.kasan
->> +++ b/lib/Kconfig.kasan
->> @@ -1,34 +1,75 @@
->>  config HAVE_ARCH_KASAN
->>         bool
->>
->> +config HAVE_ARCH_KASAN_HW
->> +       bool
->> +
->>  if HAVE_ARCH_KASAN
->>
->>  config KASAN
->> -       bool "KASan: runtime memory debugger"
->> +       bool "KASAN: runtime memory debugger"
->> +       help
->> +         Enables KASAN (KernelAddressSANitizer) - runtime memory debugger,
->> +         designed to find out-of-bounds accesses and use-after-free bugs.
->
-> Perhaps also give link to Documentation/dev-tools/kasan.rst while we are here.
->
->> +
->> +choice
->> +       prompt "KASAN mode"
->> +       depends on KASAN
->> +       default KASAN_GENERIC
->> +       help
->> +         KASAN has two modes: KASAN (a classic version, similar to userspace
->
-> In these few sentences we call the old mode with 3 different terms:
-> "generic", "classic" and "KASAN" :)
-> This is somewhat confusing. Let's call it "generic" throughout (here
-> and in the docs patch). "Generic" as in "supported on multiple arch
-> and not-dependent on hardware features". "Classic" makes sense for
-> people who knew KASAN before, but for future readers in won't make
-> sense.
->
->
->> +         ASan, enabled with CONFIG_KASAN_GENERIC) and KHWASAN (a version
->> +         based on pointer tagging, only for arm64, similar to userspace
->> +         HWASan, enabled with CONFIG_KASAN_HW).
->> +
->> +config KASAN_GENERIC
->> +       bool "KASAN: the generic mode"
->>         depends on (SLUB && SYSFS) || (SLAB && !DEBUG_SLAB)
->>         select SLUB_DEBUG if SLUB
->>         select CONSTRUCTORS
->>         select STACKDEPOT
->>         help
->> -         Enables kernel address sanitizer - runtime memory debugger,
->> -         designed to find out-of-bounds accesses and use-after-free bugs.
->> -         This is strictly a debugging feature and it requires a gcc version
->> -         of 4.9.2 or later. Detection of out of bounds accesses to stack or
->> -         global variables requires gcc 5.0 or later.
->> -         This feature consumes about 1/8 of available memory and brings about
->> -         ~x3 performance slowdown.
->> +         Enables the generic mode of KASAN.
->> +         This is strictly a debugging feature and it requires a GCC version
->> +         of 4.9.2 or later. Detection of out-of-bounds accesses to stack or
->> +         global variables requires GCC 5.0 or later.
->> +         This mode consumes about 1/8 of available memory at kernel start
->> +         and introduces an overhead of ~x1.5 for the rest of the allocations.
->> +         The performance slowdown is ~x3.
->>           For better error detection enable CONFIG_STACKTRACE.
->> -         Currently CONFIG_KASAN doesn't work with CONFIG_DEBUG_SLAB
->> +         Currently CONFIG_KASAN_GENERIC doesn't work with CONFIG_DEBUG_SLAB
->>           (the resulting kernel does not boot).
->>
->> +if HAVE_ARCH_KASAN_HW
->
-> This choice looks somewhat weird on non-arm64. It's kinda a choice
-> menu, but one can't really choose anything. Should we put the whole
-> choice under HAVE_ARCH_KASAN_HW, and just select KASAN_GENERIC
-> otherwise? I don't know what't the practice here. Andrey R?
->
->> +config KASAN_HW
->> +       bool "KHWASAN: the hardware assisted mode"
+Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+---
+ arch/csky/include/asm/atomic.h         | 215 +++++++++++++++++++++++++
+ arch/csky/include/asm/cmpxchg.h        |  70 ++++++++
+ arch/csky/include/asm/spinlock.h       | 286 +++++++++++++++++++++++++++++++++
+ arch/csky/include/asm/spinlock_types.h |  35 ++++
+ arch/csky/kernel/atomic.S              |  86 ++++++++++
+ 5 files changed, 692 insertions(+)
+ create mode 100644 arch/csky/include/asm/atomic.h
+ create mode 100644 arch/csky/include/asm/cmpxchg.h
+ create mode 100644 arch/csky/include/asm/spinlock.h
+ create mode 100644 arch/csky/include/asm/spinlock_types.h
+ create mode 100644 arch/csky/kernel/atomic.S
 
-Do we need a hyphen here? hardware-assisted?
+diff --git a/arch/csky/include/asm/atomic.h b/arch/csky/include/asm/atomic.h
+new file mode 100644
+index 0000000..82a124e
+--- /dev/null
++++ b/arch/csky/include/asm/atomic.h
+@@ -0,0 +1,215 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
++
++#ifndef __ASM_CSKY_ATOMIC_H
++#define __ASM_CSKY_ATOMIC_H
++
++#include <linux/version.h>
++#include <asm/cmpxchg.h>
++#include <asm/barrier.h>
++
++#ifdef CONFIG_CPU_HAS_LDSTEX
++
++#define __atomic_add_unless __atomic_add_unless
++static inline int __atomic_add_unless(atomic_t *v, int a, int u)
++{
++	unsigned long tmp, ret;
++
++	smp_mb();
++
++	asm volatile (
++	"1:	ldex.w		%0, (%3) \n"
++	"	mov		%1, %0   \n"
++	"	cmpne		%0, %4   \n"
++	"	bf		2f	 \n"
++	"	add		%0, %2   \n"
++	"	stex.w		%0, (%3) \n"
++	"	bez		%0, 1b   \n"
++	"2:				 \n"
++		: "=&r" (tmp), "=&r" (ret)
++		: "r" (a), "r"(&v->counter), "r"(u)
++		: "memory");
++
++	if (ret != u)
++		smp_mb();
++
++	return ret;
++}
++
++#define ATOMIC_OP(op, c_op)						\
++static inline void atomic_##op(int i, atomic_t *v)			\
++{									\
++	unsigned long tmp;						\
++									\
++	smp_mb();							\
++	asm volatile (							\
++	"1:	ldex.w		%0, (%2) \n"				\
++	"	" #op "		%0, %1   \n"				\
++	"	stex.w		%0, (%2) \n"				\
++	"	bez		%0, 1b   \n"				\
++		: "=&r" (tmp)						\
++		: "r" (i), "r"(&v->counter)				\
++		: "memory");						\
++	smp_mb();							\
++}
++
++#define ATOMIC_OP_RETURN(op, c_op)					\
++static inline int atomic_##op##_return(int i, atomic_t *v)		\
++{									\
++	unsigned long tmp, ret;						\
++									\
++	smp_mb();							\
++	asm volatile (							\
++	"1:	ldex.w		%0, (%3) \n"				\
++	"	" #op "		%0, %2   \n"				\
++	"	mov		%1, %0   \n"				\
++	"	stex.w		%0, (%3) \n"				\
++	"	bez		%0, 1b   \n"				\
++		: "=&r" (tmp), "=&r" (ret)				\
++		: "r" (i), "r"(&v->counter)				\
++		: "memory");						\
++	smp_mb();							\
++									\
++	return ret;							\
++}
++
++#define ATOMIC_FETCH_OP(op, c_op)					\
++static inline int atomic_fetch_##op(int i, atomic_t *v)			\
++{									\
++	unsigned long tmp, ret;						\
++									\
++	smp_mb();							\
++	asm volatile (							\
++	"1:	ldex.w		%0, (%3) \n"				\
++	"	mov		%1, %0   \n"				\
++	"	" #op "		%0, %2   \n"				\
++	"	stex.w		%0, (%3) \n"				\
++	"	bez		%0, 1b   \n"				\
++		: "=&r" (tmp), "=&r" (ret)				\
++		: "r" (i), "r"(&v->counter)				\
++		: "memory");						\
++	smp_mb();							\
++									\
++	return ret;							\
++}
++
++#else /* CONFIG_CPU_HAS_LDSTEX */
++
++#include <linux/irqflags.h>
++
++#define __atomic_add_unless __atomic_add_unless
++static inline int __atomic_add_unless(atomic_t *v, int a, int u)
++{
++	unsigned long tmp, ret, flags;
++
++	raw_local_irq_save(flags);
++
++	asm volatile (
++	"	ldw		%0, (%3) \n"
++	"	mov		%1, %0   \n"
++	"	cmpne		%0, %4   \n"
++	"	bf		2f	 \n"
++	"	add		%0, %2   \n"
++	"	stw		%0, (%3) \n"
++	"2:				 \n"
++		: "=&r" (tmp), "=&r" (ret)
++		: "r" (a), "r"(&v->counter), "r"(u)
++		: "memory");
++
++	raw_local_irq_restore(flags);
++
++	return ret;
++}
++
++#define ATOMIC_OP(op, c_op)						\
++static inline void atomic_##op(int i, atomic_t *v)			\
++{									\
++	unsigned long tmp, flags;					\
++									\
++	raw_local_irq_save(flags);					\
++									\
++	asm volatile (							\
++	"	ldw		%0, (%2) \n"				\
++	"	" #op "		%0, %1   \n"				\
++	"	stw		%0, (%2) \n"				\
++		: "=&r" (tmp)						\
++		: "r" (i), "r"(&v->counter)				\
++		: "memory");						\
++									\
++	raw_local_irq_restore(flags);					\
++}
++
++#define ATOMIC_OP_RETURN(op, c_op)					\
++static inline int atomic_##op##_return(int i, atomic_t *v)		\
++{									\
++	unsigned long tmp, ret, flags;					\
++									\
++	raw_local_irq_save(flags);					\
++									\
++	asm volatile (							\
++	"	ldw		%0, (%3) \n"				\
++	"	" #op "		%0, %2   \n"				\
++	"	stw		%0, (%3) \n"				\
++	"	mov		%1, %0   \n"				\
++		: "=&r" (tmp), "=&r" (ret)				\
++		: "r" (i), "r"(&v->counter)				\
++		: "memory");						\
++									\
++	raw_local_irq_restore(flags);					\
++									\
++	return ret;							\
++}
++
++#define ATOMIC_FETCH_OP(op, c_op)					\
++static inline int atomic_fetch_##op(int i, atomic_t *v)			\
++{									\
++	unsigned long tmp, ret, flags;					\
++									\
++	raw_local_irq_save(flags);					\
++									\
++	asm volatile (							\
++	"	ldw		%0, (%3) \n"				\
++	"	mov		%1, %0   \n"				\
++	"	" #op "		%0, %2   \n"				\
++	"	stw		%0, (%3) \n"				\
++		: "=&r" (tmp), "=&r" (ret)				\
++		: "r" (i), "r"(&v->counter)				\
++		: "memory");						\
++									\
++	raw_local_irq_restore(flags);					\
++									\
++	return ret;							\
++}
++
++#endif /* CONFIG_CPU_HAS_LDSTEX */
++
++#define atomic_add_return atomic_add_return
++ATOMIC_OP_RETURN(add, +)
++#define atomic_sub_return atomic_sub_return
++ATOMIC_OP_RETURN(sub, -)
++
++#define atomic_fetch_add atomic_fetch_add
++ATOMIC_FETCH_OP(add, +)
++#define atomic_fetch_sub atomic_fetch_sub
++ATOMIC_FETCH_OP(sub, -)
++#define atomic_fetch_and atomic_fetch_and
++ATOMIC_FETCH_OP(and, &)
++#define atomic_fetch_or atomic_fetch_or
++ATOMIC_FETCH_OP(or, |)
++#define atomic_fetch_xor atomic_fetch_xor
++ATOMIC_FETCH_OP(xor, ^)
++
++#define atomic_and atomic_and
++ATOMIC_OP(and, &)
++#define atomic_or atomic_or
++ATOMIC_OP(or, |)
++#define atomic_xor atomic_xor
++ATOMIC_OP(xor, ^)
++
++#undef ATOMIC_FETCH_OP
++#undef ATOMIC_OP_RETURN
++#undef ATOMIC_OP
++
++#include <asm-generic/atomic.h>
++
++#endif /* __ASM_CSKY_ATOMIC_H */
+diff --git a/arch/csky/include/asm/cmpxchg.h b/arch/csky/include/asm/cmpxchg.h
+new file mode 100644
+index 0000000..9b63dd7
+--- /dev/null
++++ b/arch/csky/include/asm/cmpxchg.h
+@@ -0,0 +1,70 @@
++#ifndef __ASM_CSKY_CMPXCHG_H
++#define __ASM_CSKY_CMPXCHG_H
++
++#ifdef CONFIG_CPU_HAS_LDSTEX
++#include <linux/bug.h>
++#include <asm/barrier.h>
++
++#define __xchg(new, ptr, size)					\
++({								\
++	__typeof__(ptr) __ptr = (ptr);				\
++	__typeof__(new) __new = (new);				\
++	__typeof__(*(ptr)) __ret;				\
++	unsigned long tmp;					\
++	switch (size) {						\
++	case 4:							\
++		smp_mb();					\
++		asm volatile (					\
++		"1:	ldex.w		%0, (%3) \n"		\
++		"	mov		%1, %2   \n"		\
++		"	stex.w		%1, (%3) \n"		\
++		"	bez		%1, 1b   \n"		\
++			: "=&r" (__ret), "=&r" (tmp)		\
++			: "r" (__new), "r"(__ptr)		\
++			:);					\
++		smp_mb();					\
++		break;						\
++	default:						\
++		BUILD_BUG();					\
++	}							\
++	__ret;							\
++})
++
++#define xchg(ptr, x)	(__xchg((x), (ptr), sizeof(*(ptr))))
++
++#define __cmpxchg(ptr, old, new, size)				\
++({								\
++	__typeof__(ptr) __ptr = (ptr);				\
++	__typeof__(new) __new = (new);				\
++	__typeof__(new) __tmp;					\
++	__typeof__(old) __old = (old);				\
++	__typeof__(*(ptr)) __ret;				\
++	switch (size) {						\
++	case 4:							\
++		smp_mb();					\
++		asm volatile (					\
++		"1:	ldex.w		%0, (%3) \n"		\
++		"	cmpne		%0, %4   \n"		\
++		"	bt		2f       \n"		\
++		"	mov		%1, %2   \n"		\
++		"	stex.w		%1, (%3) \n"		\
++		"	bez		%1, 1b   \n"		\
++		"2:				 \n"		\
++			: "=&r" (__ret), "=&r" (__tmp)		\
++			: "r" (__new), "r"(__ptr), "r"(__old)	\
++			:);					\
++		smp_mb();					\
++		break;						\
++	default:						\
++		BUILD_BUG();					\
++	}							\
++	__ret;							\
++})
++
++#define cmpxchg(ptr, o, n) \
++	(__cmpxchg((ptr), (o), (n), sizeof(*(ptr))))
++#else
++#include <asm-generic/cmpxchg.h>
++#endif
++
++#endif /* __ASM_CSKY_CMPXCHG_H */
+diff --git a/arch/csky/include/asm/spinlock.h b/arch/csky/include/asm/spinlock.h
+new file mode 100644
+index 0000000..f1081bb
+--- /dev/null
++++ b/arch/csky/include/asm/spinlock.h
+@@ -0,0 +1,286 @@
++#ifndef __ASM_CSKY_SPINLOCK_H
++#define __ASM_CSKY_SPINLOCK_H
++
++#include <linux/spinlock_types.h>
++#include <asm/barrier.h>
++
++#ifdef CONFIG_QUEUED_RWLOCKS
++
++/*
++ * Ticket-based spin-locking.
++ */
++static inline void arch_spin_lock(arch_spinlock_t *lock)
++{
++	arch_spinlock_t lockval;
++	u32 ticket_next = 1 << TICKET_NEXT;
++	u32 *p = &lock->lock;
++	u32 tmp;
++
++	smp_mb();
++
++	asm volatile (
++		"1:	ldex.w		%0, (%2) \n"
++		"	mov		%1, %0	 \n"
++		"	add		%0, %3	 \n"
++		"	stex.w		%0, (%2) \n"
++		"	bez		%0, 1b   \n"
++		: "=&r" (tmp), "=&r" (lockval)
++		: "r"(p), "r"(ticket_next)
++		: "cc");
++
++	while (lockval.tickets.next != lockval.tickets.owner) {
++		lockval.tickets.owner = READ_ONCE(lock->tickets.owner);
++	}
++
++	smp_mb();
++}
++
++static inline int arch_spin_trylock(arch_spinlock_t *lock)
++{
++	u32 tmp, contended, res;
++	u32 ticket_next = 1 << TICKET_NEXT;
++	u32 *p = &lock->lock;
++
++	smp_mb();
++
++	do {
++		asm volatile (
++		"	ldex.w		%0, (%3)   \n"
++		"	movi		%2, 1	   \n"
++		"	rotli		%1, %0, 16 \n"
++		"	cmpne		%1, %0     \n"
++		"	bt		1f         \n"
++		"	movi		%2, 0	   \n"
++		"	add		%0, %0, %4 \n"
++		"	stex.w		%0, (%3)   \n"
++		"1:				   \n"
++		: "=&r" (res), "=&r" (tmp), "=&r" (contended)
++		: "r"(p), "r"(ticket_next)
++		: "cc");
++	} while (!res);
++
++	if (!contended)
++		smp_mb();
++
++	return !contended;
++}
++
++static inline void arch_spin_unlock(arch_spinlock_t *lock)
++{
++	smp_mb();
++	lock->tickets.owner++;
++	smp_mb();
++}
++
++static inline int arch_spin_value_unlocked(arch_spinlock_t lock)
++{
++	return lock.tickets.owner == lock.tickets.next;
++}
++
++static inline int arch_spin_is_locked(arch_spinlock_t *lock)
++{
++	return !arch_spin_value_unlocked(READ_ONCE(*lock));
++}
++
++static inline int arch_spin_is_contended(arch_spinlock_t *lock)
++{
++	struct __raw_tickets tickets = READ_ONCE(lock->tickets);
++	return (tickets.next - tickets.owner) > 1;
++}
++#define arch_spin_is_contended	arch_spin_is_contended
++
++#include <asm/qrwlock.h>
++
++/* See include/linux/spinlock.h */
++#define smp_mb__after_spinlock()	smp_mb()
++
++#else /* CONFIG_QUEUED_RWLOCKS */
++
++/*
++ * Test-and-set spin-locking.
++ */
++static inline void arch_spin_lock(arch_spinlock_t *lock)
++{
++	u32 *p = &lock->lock;
++	u32 tmp;
++
++	smp_mb();
++	asm volatile (
++		"1:	ldex.w		%0, (%1) \n"
++		"	bnez		%0, 1b   \n"
++		"	movi		%0, 1    \n"
++		"	stex.w		%0, (%1) \n"
++		"	bez		%0, 1b   \n"
++		: "=&r" (tmp)
++		: "r"(p)
++		: "cc");
++	smp_mb();
++}
++
++static inline void arch_spin_unlock(arch_spinlock_t *lock)
++{
++	u32 *p = &lock->lock;
++	u32 tmp;
++
++	smp_mb();
++	asm volatile (
++		"	movi		%0, 0    \n"
++		"	stw		%0, (%1) \n"
++		: "=&r" (tmp)
++		: "r"(p)
++		: "cc");
++	smp_mb();
++}
++
++static inline int arch_spin_trylock(arch_spinlock_t *lock)
++{
++	u32 *p = &lock->lock;
++	u32 tmp;
++
++	smp_mb();
++	asm volatile (
++		"1:	ldex.w		%0, (%1) \n"
++		"	bnez		%0, 2f   \n"
++		"	movi		%0, 1    \n"
++		"	stex.w		%0, (%1) \n"
++		"	bez		%0, 1b   \n"
++		"	movi		%0, 0    \n"
++		"2:				 \n"
++		: "=&r" (tmp)
++		: "r"(p)
++		: "cc");
++
++	if (!tmp)
++		smp_mb();
++
++	return !tmp;
++}
++
++#define arch_spin_is_locked(x)	(READ_ONCE((x)->lock) != 0)
++
++/*
++ * read lock/unlock/trylock
++ */
++static inline void arch_read_lock(arch_rwlock_t *lock)
++{
++	u32 *p = &lock->lock;
++	u32 tmp;
++
++	smp_mb();
++	asm volatile (
++		"1:	ldex.w		%0, (%1) \n"
++		"	blz		%0, 1b   \n"
++		"	addi		%0, 1    \n"
++		"	stex.w		%0, (%1) \n"
++		"	bez		%0, 1b   \n"
++		: "=&r" (tmp)
++		: "r"(p)
++		: "cc");
++	smp_mb();
++}
++
++static inline void arch_read_unlock(arch_rwlock_t *lock)
++{
++	u32 *p = &lock->lock;
++	u32 tmp;
++
++	smp_mb();
++	asm volatile (
++		"1:	ldex.w		%0, (%1) \n"
++		"	subi		%0, 1    \n"
++		"	stex.w		%0, (%1) \n"
++		"	bez		%0, 1b   \n"
++		: "=&r" (tmp)
++		: "r"(p)
++		: "cc");
++	smp_mb();
++}
++
++static inline int arch_read_trylock(arch_rwlock_t *lock)
++{
++	u32 *p = &lock->lock;
++	u32 tmp;
++
++	smp_mb();
++	asm volatile (
++		"1:	ldex.w		%0, (%1) \n"
++		"	blz		%0, 2f   \n"
++		"	addi		%0, 1    \n"
++		"	stex.w		%0, (%1) \n"
++		"	bez		%0, 1b   \n"
++		"	movi		%0, 0    \n"
++		"2:				 \n"
++		: "=&r" (tmp)
++		: "r"(p)
++		: "cc");
++
++	if (!tmp)
++		smp_mb();
++
++	return !tmp;
++}
++
++/*
++ * write lock/unlock/trylock
++ */
++static inline void arch_write_lock(arch_rwlock_t *lock)
++{
++	u32 *p = &lock->lock;
++	u32 tmp;
++
++	smp_mb();
++	asm volatile (
++		"1:	ldex.w		%0, (%1) \n"
++		"	bnez		%0, 1b   \n"
++		"	subi		%0, 1    \n"
++		"	stex.w		%0, (%1) \n"
++		"	bez		%0, 1b   \n"
++		: "=&r" (tmp)
++		: "r"(p)
++		: "cc");
++	smp_mb();
++}
++
++static inline void arch_write_unlock(arch_rwlock_t *lock)
++{
++	u32 *p = &lock->lock;
++	u32 tmp;
++
++	smp_mb();
++	asm volatile (
++		"1:	ldex.w		%0, (%1) \n"
++		"	movi		%0, 0    \n"
++		"	stex.w		%0, (%1) \n"
++		"	bez		%0, 1b   \n"
++		: "=&r" (tmp)
++		: "r"(p)
++		: "cc");
++	smp_mb();
++}
++
++static inline int arch_write_trylock(arch_rwlock_t *lock)
++{
++	u32 *p = &lock->lock;
++	u32 tmp;
++
++	smp_mb();
++	asm volatile (
++		"1:	ldex.w		%0, (%1) \n"
++		"	bnez		%0, 2f   \n"
++		"	subi		%0, 1    \n"
++		"	stex.w		%0, (%1) \n"
++		"	bez		%0, 1b   \n"
++		"	movi		%0, 0    \n"
++		"2:				 \n"
++		: "=&r" (tmp)
++		: "r"(p)
++		: "cc");
++
++	if (!tmp)
++		smp_mb();
++
++	return !tmp;
++}
++
++#endif /* CONFIG_QUEUED_RWLOCKS */
++#endif /* __ASM_CSKY_SPINLOCK_H */
+diff --git a/arch/csky/include/asm/spinlock_types.h b/arch/csky/include/asm/spinlock_types.h
+new file mode 100644
+index 0000000..7e825c2
+--- /dev/null
++++ b/arch/csky/include/asm/spinlock_types.h
+@@ -0,0 +1,35 @@
++#ifndef __ASM_CSKY_SPINLOCK_TYPES_H
++#define __ASM_CSKY_SPINLOCK_TYPES_H
++
++#ifndef __LINUX_SPINLOCK_TYPES_H
++# error "please don't include this file directly"
++#endif
++
++#define TICKET_NEXT	16
++
++typedef struct {
++	union {
++		u32 lock;
++		struct __raw_tickets {
++			/* little endian */
++			u16 owner;
++			u16 next;
++		} tickets;
++	};
++} arch_spinlock_t;
++
++#define __ARCH_SPIN_LOCK_UNLOCKED	{ { 0 } }
++
++#ifdef CONFIG_QUEUED_RWLOCKS
++#include <asm-generic/qrwlock_types.h>
++
++#else /* CONFIG_NR_CPUS > 2 */
++
++typedef struct {
++	u32 lock;
++} arch_rwlock_t;
++
++#define __ARCH_RW_LOCK_UNLOCKED		{ 0 }
++
++#endif /* CONFIG_QUEUED_RWLOCKS */
++#endif /* __ASM_CSKY_SPINLOCK_TYPES_H */
+diff --git a/arch/csky/kernel/atomic.S b/arch/csky/kernel/atomic.S
+new file mode 100644
+index 0000000..ea71022
+--- /dev/null
++++ b/arch/csky/kernel/atomic.S
+@@ -0,0 +1,86 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
++#include <linux/linkage.h>
++#include <abi/entry.h>
++
++.text
++
++/*
++ * int csky_cmpxchg(int oldval, int newval, int *ptr)
++ *
++ * If *ptr != oldval && return 1,
++ * else *ptr = newval return 0.
++ */
++#ifdef CONFIG_CPU_HAS_LDSTEX
++ENTRY(csky_cmpxchg)
++	USPTOKSP
++	mfcr	a3, epc
++	INCTRAP	a3
++
++	subi    sp, 8
++	stw     a3, (sp, 0)
++	mfcr    a3, epsr
++	stw     a3, (sp, 4)
++
++	psrset	ee
++1:
++	ldex	a3, (a2)
++	cmpne	a0, a3
++	bt16	2f
++	mov	a3, a1
++	stex	a3, (a2)
++	bez	a3, 1b
++2:
++	sync.is
++	mvc	a0
++	ldw	a3, (sp, 0)
++	mtcr	a3, epc
++	ldw     a3, (sp, 4)
++	mtcr	a3, epsr
++	addi	sp, 8
++	KSPTOUSP
++	rte
++END(csky_cmpxchg)
++#else
++ENTRY(csky_cmpxchg)
++	USPTOKSP
++	mfcr	a3, epc
++	INCTRAP	a3
++
++	subi    sp, 8
++	stw     a3, (sp, 0)
++	mfcr    a3, epsr
++	stw     a3, (sp, 4)
++
++	psrset	ee
++1:
++	ldw	a3, (a2)
++	cmpne	a0, a3
++	bt16	3f
++2:
++	stw	a1, (a2)
++3:
++	mvc	a0
++	ldw	a3, (sp, 0)
++	mtcr	a3, epc
++	ldw     a3, (sp, 4)
++	mtcr	a3, epsr
++	addi	sp, 8
++	KSPTOUSP
++	rte
++END(csky_cmpxchg)
++
++/*
++ * Called from tlbmodified exception
++ */
++ENTRY(csky_cmpxchg_fixup)
++	mfcr	a0, epc
++	lrw	a1, 2b
++	cmpne	a1, a0
++	bt	1f
++	subi	a1, (2b - 1b)
++	stw	a1, (sp, LSAVE_PC)
++1:
++	rts
++END(csky_cmpxchg_fixup)
++#endif
+-- 
+2.7.4
 
->> +       depends on (SLUB && SYSFS) || (SLAB && !DEBUG_SLAB)
->> +       select SLUB_DEBUG if SLUB
->> +       select CONSTRUCTORS
->> +       select STACKDEPOT
->> +       help
->> +         Enabled KHWASAN (KASAN mode based on pointer tagging).
->> +         This mode requires Top Byte Ignore support by the CPU and therefore
->> +         only supported for arm64.
->> +         This feature requires clang revision 330044 or later.
->> +         This mode consumes about 1/16 of available memory at kernel start
->> +         and introduces an overhead of ~20% for the rest of the allocations.
->> +         For better error detection enable CONFIG_STACKTRACE.
->> +         Currently CONFIG_KASAN_HW doesn't work with CONFIG_DEBUG_SLAB
->> +         (the resulting kernel does not boot).
->> +
->> +endif
->> +
->> +endchoice
->> +
->>  config KASAN_EXTRA
->> -       bool "KAsan: extra checks"
->> -       depends on KASAN && DEBUG_KERNEL && !COMPILE_TEST
->> +       bool "KASAN: extra checks"
->> +       depends on KASAN_GENERIC && DEBUG_KERNEL && !COMPILE_TEST
->>         help
->> -         This enables further checks in the kernel address sanitizer, for now
->> -         it only includes the address-use-after-scope check that can lead
->> -         to excessive kernel stack usage, frame size warnings and longer
->> -         compile time.
->> +         This enables further checks in KASAN, for now it only includes the
->> +         address-use-after-scope check that can lead to excessive kernel
->> +         stack usage, frame size warnings and longer compile time.
->>           https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81715 has more
->>
->>
->> @@ -53,16 +94,16 @@ config KASAN_INLINE
->>           memory accesses. This is faster than outline (in some workloads
->>           it gives about x2 boost over outline instrumentation), but
->>           make kernel's .text size much bigger.
->> -         This requires a gcc version of 5.0 or later.
->> +         For CONFIG_KASAN_GENERIC this requires GCC 5.0 or later.
->>
->>  endchoice
->>
->>  config TEST_KASAN
->> -       tristate "Module for testing kasan for bug detection"
->> +       tristate "Module for testing KASAN for bug detection"
->>         depends on m && KASAN
->>         help
->>           This is a test module doing various nasty things like
->>           out of bounds accesses, use after free. It is useful for testing
->> -         kernel debugging features like kernel address sanitizer.
->> +         kernel debugging features like KASAN.
->>
->>  endif
->> diff --git a/mm/kasan/Makefile b/mm/kasan/Makefile
->> index a6df14bffb6b..14955add96d3 100644
->> --- a/mm/kasan/Makefile
->> +++ b/mm/kasan/Makefile
->> @@ -2,6 +2,7 @@
->>  KASAN_SANITIZE := n
->>  UBSAN_SANITIZE_common.o := n
->>  UBSAN_SANITIZE_kasan.o := n
->> +UBSAN_SANITIZE_khwasan.o := n
->>  KCOV_INSTRUMENT := n
->>
->>  CFLAGS_REMOVE_kasan.o = -pg
->> @@ -10,5 +11,8 @@ CFLAGS_REMOVE_kasan.o = -pg
->>
->>  CFLAGS_common.o := $(call cc-option, -fno-conserve-stack -fno-stack-protector)
->>  CFLAGS_kasan.o := $(call cc-option, -fno-conserve-stack -fno-stack-protector)
->> +CFLAGS_khwasan.o := $(call cc-option, -fno-conserve-stack -fno-stack-protector)
->>
->> -obj-y := common.o kasan.o report.o kasan_init.o quarantine.o
->> +obj-$(CONFIG_KASAN) := common.o kasan_init.o report.o
->> +obj-$(CONFIG_KASAN_GENERIC) += kasan.o quarantine.o
->> +obj-$(CONFIG_KASAN_HW) += khwasan.o
->> diff --git a/mm/kasan/kasan.h b/mm/kasan/kasan.h
->> index 659463800f10..19b950eaccff 100644
->> --- a/mm/kasan/kasan.h
->> +++ b/mm/kasan/kasan.h
->> @@ -114,7 +114,8 @@ void kasan_report(unsigned long addr, size_t size,
->>                 bool is_write, unsigned long ip);
->>  void kasan_report_invalid_free(void *object, unsigned long ip);
->>
->> -#if defined(CONFIG_SLAB) || defined(CONFIG_SLUB)
->> +#if defined(CONFIG_KASAN_GENERIC) && \
->> +       (defined(CONFIG_SLAB) || defined(CONFIG_SLUB))
->>  void quarantine_put(struct kasan_free_meta *info, struct kmem_cache *cache);
->>  void quarantine_reduce(void);
->>  void quarantine_remove_cache(struct kmem_cache *cache);
->> diff --git a/mm/kasan/khwasan.c b/mm/kasan/khwasan.c
->> new file mode 100644
->> index 000000000000..e2c3a7f7fd1f
->> --- /dev/null
->> +++ b/mm/kasan/khwasan.c
->> @@ -0,0 +1,75 @@
->> +/*
->> + * This file contains core KHWASAN code.
->> + *
->> + * Copyright (c) 2018 Google, Inc.
->> + * Author: Andrey Konovalov <andreyknvl@google.com>
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> + *
->> + */
->> +
->> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
->> +#define DISABLE_BRANCH_PROFILING
->> +
->> +#include <linux/export.h>
->> +#include <linux/interrupt.h>
->> +#include <linux/init.h>
->> +#include <linux/kasan.h>
->> +#include <linux/kernel.h>
->> +#include <linux/kmemleak.h>
->> +#include <linux/linkage.h>
->> +#include <linux/memblock.h>
->> +#include <linux/memory.h>
->> +#include <linux/mm.h>
->> +#include <linux/module.h>
->> +#include <linux/printk.h>
->> +#include <linux/random.h>
->> +#include <linux/sched.h>
->> +#include <linux/sched/task_stack.h>
->> +#include <linux/slab.h>
->> +#include <linux/stacktrace.h>
->> +#include <linux/string.h>
->> +#include <linux/types.h>
->> +#include <linux/vmalloc.h>
->> +#include <linux/bug.h>
->> +
->> +#include "kasan.h"
->> +#include "../slab.h"
->> +
->> +void check_memory_region(unsigned long addr, size_t size, bool write,
->> +                               unsigned long ret_ip)
->> +{
->> +}
->> +
->> +#define DEFINE_HWASAN_LOAD_STORE(size)                                 \
->> +       void __hwasan_load##size##_noabort(unsigned long addr)          \
->> +       {                                                               \
->> +       }                                                               \
->> +       EXPORT_SYMBOL(__hwasan_load##size##_noabort);                   \
->> +       void __hwasan_store##size##_noabort(unsigned long addr)         \
->> +       {                                                               \
->> +       }                                                               \
->> +       EXPORT_SYMBOL(__hwasan_store##size##_noabort)
->> +
->> +DEFINE_HWASAN_LOAD_STORE(1);
->> +DEFINE_HWASAN_LOAD_STORE(2);
->> +DEFINE_HWASAN_LOAD_STORE(4);
->> +DEFINE_HWASAN_LOAD_STORE(8);
->> +DEFINE_HWASAN_LOAD_STORE(16);
->> +
->> +void __hwasan_loadN_noabort(unsigned long addr, unsigned long size)
->> +{
->> +}
->> +EXPORT_SYMBOL(__hwasan_loadN_noabort);
->> +
->> +void __hwasan_storeN_noabort(unsigned long addr, unsigned long size)
->> +{
->> +}
->> +EXPORT_SYMBOL(__hwasan_storeN_noabort);
->> +
->> +void __hwasan_tag_memory(unsigned long addr, u8 tag, unsigned long size)
->> +{
->> +}
->> +EXPORT_SYMBOL(__hwasan_tag_memory);
->> diff --git a/mm/slub.c b/mm/slub.c
->> index 30b9bf777bab..4206e1b616e7 100644
->> --- a/mm/slub.c
->> +++ b/mm/slub.c
->> @@ -2955,7 +2955,7 @@ static __always_inline void slab_free(struct kmem_cache *s, struct page *page,
->>                 do_slab_free(s, page, head, tail, cnt, addr);
->>  }
->>
->> -#ifdef CONFIG_KASAN
->> +#ifdef CONFIG_KASAN_GENERIC
->>  void ___cache_free(struct kmem_cache *cache, void *x, unsigned long addr)
->>  {
->>         do_slab_free(cache, virt_to_head_page(x), x, NULL, 1, addr);
->> diff --git a/scripts/Makefile.kasan b/scripts/Makefile.kasan
->> index 69552a39951d..49c6e056c697 100644
->> --- a/scripts/Makefile.kasan
->> +++ b/scripts/Makefile.kasan
->> @@ -1,5 +1,5 @@
->>  # SPDX-License-Identifier: GPL-2.0
->> -ifdef CONFIG_KASAN
->> +ifdef CONFIG_KASAN_GENERIC
->>  ifdef CONFIG_KASAN_INLINE
->>         call_threshold := 10000
->>  else
->> @@ -42,6 +42,29 @@ ifdef CONFIG_KASAN_EXTRA
->>  CFLAGS_KASAN += $(call cc-option, -fsanitize-address-use-after-scope)
->>  endif
->>
->> -CFLAGS_KASAN_NOSANITIZE := -fno-builtin
->> +endif
->> +
->> +ifdef CONFIG_KASAN_HW
->> +
->> +ifdef CONFIG_KASAN_INLINE
->> +    instrumentation_flags := -mllvm -hwasan-mapping-offset=$(KASAN_SHADOW_OFFSET)
->> +else
->> +    instrumentation_flags := -mllvm -hwasan-instrument-with-calls=1
->> +endif
->>
->> +CFLAGS_KASAN := -fsanitize=kernel-hwaddress \
->> +               -mllvm -hwasan-instrument-stack=0 \
->> +               $(instrumentation_flags)
->> +
->> +ifeq ($(call cc-option, $(CFLAGS_KASAN) -Werror),)
->> +    ifneq ($(CONFIG_COMPILE_TEST),y)
->> +        $(warning Cannot use CONFIG_KASAN_HW: \
->> +            -fsanitize=hwaddress is not supported by compiler)
->> +    endif
->> +endif
->> +
->> +endif
->> +
->> +ifdef CONFIG_KASAN
->> +CFLAGS_KASAN_NOSANITIZE := -fno-builtin
->>  endif
->> --
->> 2.19.0.rc0.228.g281dcd1b4d0-goog
->>
