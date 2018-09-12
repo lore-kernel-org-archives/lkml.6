@@ -2,262 +2,108 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4929C6778D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:12:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5B7DC6778D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:13:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AD3520880
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:12:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AD3520880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 63FC820880
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:13:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tVrIAiWJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63FC820880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728321AbeILVSG (ORCPT
+        id S1727818AbeILVS6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 17:18:06 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:32956 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727004AbeILVSG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 17:18:06 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C0E47401EF07;
-        Wed, 12 Sep 2018 16:12:51 +0000 (UTC)
-Received: from redhat.com (ovpn-121-244.rdu2.redhat.com [10.10.121.244])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 42C3350332;
-        Wed, 12 Sep 2018 16:12:49 +0000 (UTC)
-Date:   Wed, 12 Sep 2018 12:12:48 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Tiwei Bie <tiwei.bie@intel.com>
-Cc:     jasowang@redhat.com, virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        virtio-dev@lists.oasis-open.org, wexu@redhat.com,
-        jfreimann@redhat.com
-Subject: Re: [PATCH net-next v2 2/5] virtio_ring: support creating packed ring
-Message-ID: <20180912120900-mutt-send-email-mst@kernel.org>
-References: <20180711022711.7090-1-tiwei.bie@intel.com>
- <20180711022711.7090-3-tiwei.bie@intel.com>
- <20180907095208-mutt-send-email-mst@kernel.org>
- <20180910022837.GA11822@debian>
- <20180912075140.GA22545@debian>
+        Wed, 12 Sep 2018 17:18:58 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:38394 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726792AbeILVS5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 17:18:57 -0400
+Received: by mail-pf1-f194.google.com with SMTP id x17-v6so1251881pfh.5;
+        Wed, 12 Sep 2018 09:13:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=wA9QZWxEHkE2y540Jw1+PXYb+zEFc4T0fB6sME9gQ8M=;
+        b=tVrIAiWJUDjETXwLEjHlmnFDoHOVxY0S+6LH7Yy5rJ1AWHtMWFwhwMai2FFvZw84Ai
+         bjvvQIPefOeCeP+Sz6RWFShxIaS6eV7TDkT64L9uyKS6gYexmNEZnO4kfRqUJSvAzzq5
+         Xd4JqwzNfFzq5wtM+/J4il4C4wMQJAxP6jMjEyhIecGgRJlcfZ/j+mFvEWfzZmPcWXVB
+         1EpDaw4pBVHHP17wg3fCJpf7kAGHKviq4GRCPMKsL7wJIgEz4XvW+znYMjZCT+JZfJTj
+         hKC0CFj/MpqozTWTfp2rdpDfKe7MGUSImVbHQf1UldoH+Yd4CQQ3G4cX2TILKbq90xo0
+         aWIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wA9QZWxEHkE2y540Jw1+PXYb+zEFc4T0fB6sME9gQ8M=;
+        b=JLAmk5i2GmIJ1jPy7U2FgcSml51A/e+6uhk0zdFdgUVQPyWQ8cWZzJHKbunqF9Umxe
+         vlTfB8bHvKLI5Br/JAm0QO2ZiTIrGXlQ++Ills2IYj7g+nHEdGVZ5YtCHMuer30/rIvJ
+         NYnjWsV2JCzKckN+Wh3Brm8YHbfcCrXh8Sq+OC7V2kerwJDCXTT/8xNj8guYRIhaYrUR
+         KfG3X54pf3xatxo90SazIjJOEUKB+PwK3aMmg+pi9micJhyx2M5pjAFpdSbrj6q8TsTP
+         GwkxcmbimUe9JXAniy0JM2MQvBni09+wrqrlYnbo2ZTzhA2THdIx7cpwnx6socyX8Q3v
+         dvRA==
+X-Gm-Message-State: APzg51A9Yk2aOlg5jSN5gxIcQSpuIzZC3GcKCoQfCcRujf87N9HDLwqO
+        vgd1cLDLoHtwOe6W3MnxSJk=
+X-Google-Smtp-Source: ANB0VdYNjCgxasg3d/GGnqVycIgrOlDjZRqserioliLeW01XuX4T7RxwuSFoIYOInLfEZ6asJwQ3XQ==
+X-Received: by 2002:a65:450a:: with SMTP id n10-v6mr3152296pgq.392.1536768824096;
+        Wed, 12 Sep 2018 09:13:44 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id l127-v6sm3220168pfc.55.2018.09.12.09.13.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Sep 2018 09:13:43 -0700 (PDT)
+Date:   Wed, 12 Sep 2018 09:13:42 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Jagdish Tirumala <t.jag587@gmail.com>
+Cc:     wim@linux-watchdog.org, yamada.masahiro@socionext.com,
+        linux-watchdog@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] WATCHDOG: DIAG288_WDT: Fixed error POINTER_LOCATION
+Message-ID: <20180912161342.GB3300@roeck-us.net>
+References: <20180912155632.8060-1-t.jag587@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180912075140.GA22545@debian>
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 12 Sep 2018 16:12:51 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 12 Sep 2018 16:12:51 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
+In-Reply-To: <20180912155632.8060-1-t.jag587@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 03:51:40PM +0800, Tiwei Bie wrote:
-> On Mon, Sep 10, 2018 at 10:28:37AM +0800, Tiwei Bie wrote:
-> > On Fri, Sep 07, 2018 at 10:03:24AM -0400, Michael S. Tsirkin wrote:
-> > > On Wed, Jul 11, 2018 at 10:27:08AM +0800, Tiwei Bie wrote:
-> > > > This commit introduces the support for creating packed ring.
-> > > > All split ring specific functions are added _split suffix.
-> > > > Some necessary stubs for packed ring are also added.
-> > > > 
-> > > > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
-> > > 
-> [...]
-> > > > +
-> > > > +/*
-> > > > + * The layout for the packed ring is a continuous chunk of memory
-> > > > + * which looks like this.
-> > > > + *
-> > > > + * struct vring_packed {
-> > > > + *	// The actual descriptors (16 bytes each)
-> > > > + *	struct vring_packed_desc desc[num];
-> > > > + *
-> > > > + *	// Padding to the next align boundary.
-> > > > + *	char pad[];
-> > > > + *
-> > > > + *	// Driver Event Suppression
-> > > > + *	struct vring_packed_desc_event driver;
-> > > > + *
-> > > > + *	// Device Event Suppression
-> > > > + *	struct vring_packed_desc_event device;
-> > > > + * };
-> > > > + */
-> > > 
-> > > Why not just allocate event structures separately?
-> > > Is it a win to have them share a cache line for some reason?
+On Wed, Sep 12, 2018 at 08:56:32AM -0700, Jagdish Tirumala wrote:
+> Fixed ERROR:POINTER_LOCATION: "foo * bar" should be "foo *bar" in
+> file drivers/watchdog/diag288_wdt.c
 > 
-> Users may call vring_new_virtqueue() with preallocated
-> memory to setup the ring, e.g.:
-> 
-> https://github.com/torvalds/linux/blob/11da3a7f84f1/drivers/s390/virtio/virtio_ccw.c#L513-L522
-> https://github.com/torvalds/linux/blob/11da3a7f84f1/drivers/misc/mic/vop/vop_main.c#L306-L307
-> 
-> Below is the corresponding definition in split ring:
-> 
-> https://github.com/oasis-tcs/virtio-spec/blob/89dd55f5e606/split-ring.tex#L64-L78
-> 
-> If my understanding is correct, this is just for legacy
-> interfaces, and we won't define layout in packed ring
-> and don't need to support vring_new_virtqueue() in packed
-> ring. Is it correct? Thanks!
 
-mic doesn't support 1.0 yet but ccw does.
+Same as before.
 
-It's probably best to look into converting ccw to
-virtio_create_virtqueue, then you can just fail
-vring_new_virtqueue for packed.
+Guenter
 
-Cornelia, are there any gotchas to look out for?
-
+> Signed-off-by: Jagdish Tirumala <t.jag587@gmail.com>
+> ---
+>  drivers/watchdog/diag288_wdt.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
+> diff --git a/drivers/watchdog/diag288_wdt.c b/drivers/watchdog/diag288_wdt.c
+> index 806a04a676b7..046333d1beb2 100644
+> --- a/drivers/watchdog/diag288_wdt.c
+> +++ b/drivers/watchdog/diag288_wdt.c
+> @@ -199,7 +199,7 @@ static int wdt_ping(struct watchdog_device *dev)
+>  	return ret;
+>  }
+>  
+> -static int wdt_set_timeout(struct watchdog_device * dev, unsigned int new_to)
+> +static int wdt_set_timeout(struct watchdog_device *dev, unsigned int new_to)
+>  {
+>  	dev->timeout = new_to;
+>  	return wdt_ping(dev);
+> -- 
+> 2.17.1
 > 
-> > 
-> > Will do that.
-> > 
-> > > 
-> > > > +static inline void vring_init_packed(struct vring_packed *vr, unsigned int num,
-> > > > +				     void *p, unsigned long align)
-> > > > +{
-> > > > +	vr->num = num;
-> > > > +	vr->desc = p;
-> > > > +	vr->driver = (void *)ALIGN(((uintptr_t)p +
-> > > > +		sizeof(struct vring_packed_desc) * num), align);
-> > > > +	vr->device = vr->driver + 1;
-> > > > +}
-> > > 
-> > > What's all this about alignment? Where does it come from?
-> > 
-> > It comes from the `vring_align` parameter of vring_create_virtqueue()
-> > and vring_new_virtqueue():
-> > 
-> > https://github.com/torvalds/linux/blob/a49a9dcce802/drivers/virtio/virtio_ring.c#L1061
-> > https://github.com/torvalds/linux/blob/a49a9dcce802/drivers/virtio/virtio_ring.c#L1123
-> > 
-> > Should I just ignore it in packed ring?
-> > 
-> > CCW defined this:
-> > 
-> > #define KVM_VIRTIO_CCW_RING_ALIGN 4096
-> > 
-> > I'm not familiar with CCW. Currently, in this patch set, packed ring
-> > isn't enabled on CCW dues to some legacy accessors are not implemented
-> > in packed ring yet.
-> > 
-> > > 
-> > > > +
-> > > > +static inline unsigned vring_size_packed(unsigned int num, unsigned long align)
-> > > > +{
-> > > > +	return ((sizeof(struct vring_packed_desc) * num + align - 1)
-> > > > +		& ~(align - 1)) + sizeof(struct vring_packed_desc_event) * 2;
-> > > > +}
-> > [...]
-> > > > @@ -1129,10 +1388,17 @@ struct virtqueue *vring_new_virtqueue(unsigned int index,
-> > > >  				      void (*callback)(struct virtqueue *vq),
-> > > >  				      const char *name)
-> > > >  {
-> > > > -	struct vring vring;
-> > > > -	vring_init(&vring, num, pages, vring_align);
-> > > > -	return __vring_new_virtqueue(index, vring, vdev, weak_barriers, context,
-> > > > -				     notify, callback, name);
-> > > > +	union vring_union vring;
-> > > > +	bool packed;
-> > > > +
-> > > > +	packed = virtio_has_feature(vdev, VIRTIO_F_RING_PACKED);
-> > > > +	if (packed)
-> > > > +		vring_init_packed(&vring.vring_packed, num, pages, vring_align);
-> > > > +	else
-> > > > +		vring_init(&vring.vring_split, num, pages, vring_align);
-> > > 
-> > > 
-> > > vring_init in the UAPI header is more or less a bug.
-> > > I'd just stop using it, keep it around for legacy userspace.
-> > 
-> > Got it. I'd like to do that. Thanks.
-> > 
-> > > 
-> > > > +
-> > > > +	return __vring_new_virtqueue(index, vring, packed, vdev, weak_barriers,
-> > > > +				     context, notify, callback, name);
-> > > >  }
-> > > >  EXPORT_SYMBOL_GPL(vring_new_virtqueue);
-> > > >  
-> > > > @@ -1142,7 +1408,9 @@ void vring_del_virtqueue(struct virtqueue *_vq)
-> > > >  
-> > > >  	if (vq->we_own_ring) {
-> > > >  		vring_free_queue(vq->vq.vdev, vq->queue_size_in_bytes,
-> > > > -				 vq->vring.desc, vq->queue_dma_addr);
-> > > > +				 vq->packed ? (void *)vq->vring_packed.desc :
-> > > > +					      (void *)vq->vring.desc,
-> > > > +				 vq->queue_dma_addr);
-> > > >  	}
-> > > >  	list_del(&_vq->list);
-> > > >  	kfree(vq);
-> > > > @@ -1184,7 +1452,7 @@ unsigned int virtqueue_get_vring_size(struct virtqueue *_vq)
-> > > >  
-> > > >  	struct vring_virtqueue *vq = to_vvq(_vq);
-> > > >  
-> > > > -	return vq->vring.num;
-> > > > +	return vq->packed ? vq->vring_packed.num : vq->vring.num;
-> > > >  }
-> > > >  EXPORT_SYMBOL_GPL(virtqueue_get_vring_size);
-> > > >  
-> > > > @@ -1227,6 +1495,10 @@ dma_addr_t virtqueue_get_avail_addr(struct virtqueue *_vq)
-> > > >  
-> > > >  	BUG_ON(!vq->we_own_ring);
-> > > >  
-> > > > +	if (vq->packed)
-> > > > +		return vq->queue_dma_addr + ((char *)vq->vring_packed.driver -
-> > > > +				(char *)vq->vring_packed.desc);
-> > > > +
-> > > >  	return vq->queue_dma_addr +
-> > > >  		((char *)vq->vring.avail - (char *)vq->vring.desc);
-> > > >  }
-> > > > @@ -1238,11 +1510,16 @@ dma_addr_t virtqueue_get_used_addr(struct virtqueue *_vq)
-> > > >  
-> > > >  	BUG_ON(!vq->we_own_ring);
-> > > >  
-> > > > +	if (vq->packed)
-> > > > +		return vq->queue_dma_addr + ((char *)vq->vring_packed.device -
-> > > > +				(char *)vq->vring_packed.desc);
-> > > > +
-> > > >  	return vq->queue_dma_addr +
-> > > >  		((char *)vq->vring.used - (char *)vq->vring.desc);
-> > > >  }
-> > > >  EXPORT_SYMBOL_GPL(virtqueue_get_used_addr);
-> > > >  
-> > > > +/* Only available for split ring */
-> > > >  const struct vring *virtqueue_get_vring(struct virtqueue *vq)
-> > > >  {
-> > > >  	return &to_vvq(vq)->vring;
-> > > > diff --git a/include/linux/virtio_ring.h b/include/linux/virtio_ring.h
-> > > > index fab02133a919..992142b35f55 100644
-> > > > --- a/include/linux/virtio_ring.h
-> > > > +++ b/include/linux/virtio_ring.h
-> > > > @@ -60,6 +60,11 @@ static inline void virtio_store_mb(bool weak_barriers,
-> > > >  struct virtio_device;
-> > > >  struct virtqueue;
-> > > >  
-> > > > +union vring_union {
-> > > > +	struct vring vring_split;
-> > > > +	struct vring_packed vring_packed;
-> > > > +};
-> > > > +
-> > > >  /*
-> > > >   * Creates a virtqueue and allocates the descriptor ring.  If
-> > > >   * may_reduce_num is set, then this may allocate a smaller ring than
-> > > > @@ -79,7 +84,8 @@ struct virtqueue *vring_create_virtqueue(unsigned int index,
-> > > >  
-> > > >  /* Creates a virtqueue with a custom layout. */
-> > > >  struct virtqueue *__vring_new_virtqueue(unsigned int index,
-> > > > -					struct vring vring,
-> > > > +					union vring_union vring,
-> > > > +					bool packed,
-> > > >  					struct virtio_device *vdev,
-> > > >  					bool weak_barriers,
-> > > >  					bool ctx,
-> > > > -- 
-> > > > 2.18.0
