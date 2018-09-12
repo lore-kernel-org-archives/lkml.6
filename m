@@ -2,95 +2,77 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 205A8C46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 18:11:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F57EC6778D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 18:13:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7C1820882
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 18:10:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="ciHfx49j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7C1820882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	by mail.kernel.org (Postfix) with ESMTP id B0B7E20882
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 18:13:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0B7E20882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727819AbeILXQi (ORCPT
+        id S1727843AbeILXSy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 19:16:38 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:59191 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726675AbeILXQh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 19:16:37 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 4a288542;
-        Wed, 12 Sep 2018 17:54:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=igtVAF2uD/ncDpDQqQFjvsShAL0=; b=ciHfx4
-        9jNb0M/l8EzlXJ9FOBv3pYAQiUv8LLTbmYyjnT/XkDv3O+iLKbuZ7bMkf5ePBt0G
-        0hH00dWS7UMB3iD4an+VRkRlm3pOaMrJfvJAxySKGf/T32yLqy5SYCqk5nCTNXqx
-        1IACtWej68L3uO2WT9pIDSk8YjPQmuA22qdcbABarJhYk3vtkv/oSVI2HX5Ecv0X
-        mhfu6Qo9DRolbTATV9uogfir2zjsXZMLfKqnw6asxgWQ6VMrDOiKyWF2k8dErcgH
-        cTy8iRv3zmDAZalTXSVunpb1zuc6S9Tu6maFXokiaTLVekB/bMur9Xn0qKc4yJfr
-        45OMc1093DfWHR/w==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 067a8df1 (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
-        Wed, 12 Sep 2018 17:54:05 +0000 (UTC)
-Received: by mail-oi0-f47.google.com with SMTP id m11-v6so5630088oic.2;
-        Wed, 12 Sep 2018 11:10:54 -0700 (PDT)
-X-Gm-Message-State: APzg51CAo8flBVOOlEvMyym/9o+URfyswi77Gm73dxqPLzRmG5hHP15l
-        6b3xWjb858MXKAgNJ8c836hypU7/F95kaus8h7w=
-X-Google-Smtp-Source: ANB0VdY0r9OzSbHGQWusjKOx6E722Ksnx9c4hYMfbyPY8zgbhrqNCevUuLC3dKirJ7vzZledjftje6FEyrGIUeYH/hs=
-X-Received: by 2002:aca:dc82:: with SMTP id t124-v6mr3115948oig.189.1536775853221;
- Wed, 12 Sep 2018 11:10:53 -0700 (PDT)
+        Wed, 12 Sep 2018 19:18:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44974 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726608AbeILXSy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 19:18:54 -0400
+Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 92C28FDA;
+        Wed, 12 Sep 2018 18:13:12 +0000 (UTC)
+Date:   Wed, 12 Sep 2018 20:13:09 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        Frederic Barrat <fbarrat@linux.vnet.ibm.com>,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        Frank Haverkamp <haver@linux.vnet.ibm.com>,
+        "Guilherme G. Piccoli" <gpiccoli@linux.vnet.ibm.com>,
+        Kashyap Desai <kashyap.desai@broadcom.com>,
+        Sumit Saxena <sumit.saxena@broadcom.com>,
+        Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Felipe Balbi <balbi@kernel.org>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, megaraidlinux.pdl@broadcom.com,
+        linux-scsi@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH v2 03/17] compat_ioctl: use correct compat_ptr()
+ translation in drivers
+Message-ID: <20180912181309.GA15031@kroah.com>
+References: <20180912150142.157913-1-arnd@arndb.de>
+ <20180912150142.157913-3-arnd@arndb.de>
 MIME-Version: 1.0
-References: <20180911010838.8818-1-Jason@zx2c4.com> <20180911010838.8818-2-Jason@zx2c4.com>
- <20180912061433.GA8484@ip-172-31-15-78>
-In-Reply-To: <20180912061433.GA8484@ip-172-31-15-78>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Wed, 12 Sep 2018 20:10:41 +0200
-X-Gmail-Original-Message-ID: <CAHmME9pmgu_xWJ0rvdS4RhzwjKPiNdkQ9nc6mqTNeb6A8xT8Eg@mail.gmail.com>
-Message-ID: <CAHmME9pmgu_xWJ0rvdS4RhzwjKPiNdkQ9nc6mqTNeb6A8xT8Eg@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 01/17] asm: simd context helper API
-To:     kevin@guarana.org
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Samuel Neves <sneves@dei.uc.pt>, linux-arch@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180912150142.157913-3-arnd@arndb.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 8:14 AM Kevin Easton <kevin@guarana.org> wrote:
-> Given that it's always supposed to be used like that, mightn't it be
-> better if simd_relax() took a pointer to the context, so the call is
-> just
->
->     simd_relax(&simd_context);
->
-> ?
->
-> The inlining means that there won't actually be a pointer dereference in
-> the emitted code.
->
-> If simd_put() also took a pointer then it could set the context back to
-> HAVE_NO_SIMD as well?
+On Wed, Sep 12, 2018 at 05:01:04PM +0200, Arnd Bergmann wrote:
+> A handful of drivers all have a trivial wrapper around their ioctl
+> handler, but don't call the compat_ptr() conversion function at the
+> moment. In practice this does not matter, since none of them are used
+> on the s390 architecture and for all other architectures, compat_ptr()
+> does not do anything, but using the new generic_compat_ioctl_ptrarg
+> helper makes it more correct in theory, and simplifies the code.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/misc/cxl/flash.c            |  8 +-------
+>  drivers/misc/genwqe/card_dev.c      | 23 +----------------------
+>  drivers/scsi/megaraid/megaraid_mm.c | 28 +---------------------------
+>  drivers/usb/gadget/function/f_fs.c  | 12 +-----------
+>  4 files changed, 4 insertions(+), 67 deletions(-)
 
-That's sort of a neat idea. I guess in this scheme, you'd envision:
+Nice cleanup on this series!
 
-   simd_context_t simd_context;
-
-   simd_get(&simd_context);
-   simd_relax(&simd_context);
-   simd_put(&simd_context);
-
-And this way, if simd_context ever becomes a heavier struct, it can be
-modified in place rather than returned by value from the function. On
-the other hand, it's a little bit more annoying to type and makes it
-harder to do declaration and initialization on the same line.
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
