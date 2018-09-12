@@ -3,222 +3,151 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54021C46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 13:06:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B857BC4646A
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 13:07:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CE6A206BB
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 13:06:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CE6A206BB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 7E2A8206BB
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 13:07:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E2A8206BB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726970AbeILSLB (ORCPT
+        id S1727183AbeILSLq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 14:11:01 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57760 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726359AbeILSLB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 14:11:01 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7972085760;
-        Wed, 12 Sep 2018 13:06:34 +0000 (UTC)
-Received: from redhat.com (ovpn-121-244.rdu2.redhat.com [10.10.121.244])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 052372166BA3;
-        Wed, 12 Sep 2018 13:06:31 +0000 (UTC)
-Date:   Wed, 12 Sep 2018 09:06:31 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Tiwei Bie <tiwei.bie@intel.com>
-Cc:     jasowang@redhat.com, virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        virtio-dev@lists.oasis-open.org, wexu@redhat.com,
-        jfreimann@redhat.com
-Subject: Re: [virtio-dev] Re: [PATCH net-next v2 0/5] virtio: support packed
- ring
-Message-ID: <20180912085453-mutt-send-email-mst@kernel.org>
-References: <20180711022711.7090-1-tiwei.bie@intel.com>
- <20180827170005-mutt-send-email-mst@kernel.org>
- <20180907012225.GA32677@debian>
- <20180907084509-mutt-send-email-mst@kernel.org>
- <20180910030053.GA15645@debian>
+        Wed, 12 Sep 2018 14:11:46 -0400
+Received: from foss.arm.com ([217.140.101.70]:59304 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726712AbeILSLq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 14:11:46 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EA54D80D;
+        Wed, 12 Sep 2018 06:07:19 -0700 (PDT)
+Received: from [10.4.13.92] (e112298-lin.Emea.Arm.com [10.4.13.92])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 49B3E3F703;
+        Wed, 12 Sep 2018 06:07:18 -0700 (PDT)
+Subject: Re: [PATCH v5 06/27] arm64: Delay daif masking for user return
+To:     James Morse <james.morse@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        daniel.thompson@linaro.org, joel@joelfernandes.org,
+        marc.zyngier@arm.com, mark.rutland@arm.com,
+        christoffer.dall@arm.com, catalin.marinas@arm.com,
+        will.deacon@arm.com
+References: <1535471497-38854-1-git-send-email-julien.thierry@arm.com>
+ <1535471497-38854-7-git-send-email-julien.thierry@arm.com>
+ <59fa96d5-6bfa-c3aa-94d6-5941a7576bfa@arm.com>
+From:   Julien Thierry <julien.thierry@arm.com>
+Message-ID: <a206ae6a-e615-96bd-7f9b-90691cd7af8f@arm.com>
+Date:   Wed, 12 Sep 2018 14:07:16 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180910030053.GA15645@debian>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 12 Sep 2018 13:06:34 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 12 Sep 2018 13:06:34 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
+In-Reply-To: <59fa96d5-6bfa-c3aa-94d6-5941a7576bfa@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 10, 2018 at 11:00:53AM +0800, Tiwei Bie wrote:
-> On Fri, Sep 07, 2018 at 09:00:49AM -0400, Michael S. Tsirkin wrote:
-> > On Fri, Sep 07, 2018 at 09:22:25AM +0800, Tiwei Bie wrote:
-> > > On Mon, Aug 27, 2018 at 05:00:40PM +0300, Michael S. Tsirkin wrote:
-> > > > Are there still plans to test the performance with vost pmd?
-> > > > vhost doesn't seem to show a performance gain ...
-> > > > 
-> > > 
-> > > I tried some performance tests with vhost PMD. In guest, the
-> > > XDP program will return XDP_DROP directly. And in host, testpmd
-> > > will do txonly fwd.
-> > > 
-> > > When burst size is 1 and packet size is 64 in testpmd and
-> > > testpmd needs to iterate 5 Tx queues (but only the first two
-> > > queues are enabled) to prepare and inject packets, I got ~12%
-> > > performance boost (5.7Mpps -> 6.4Mpps). And if the vhost PMD
-> > > is faster (e.g. just need to iterate the first two queues to
-> > > prepare and inject packets), then I got similar performance
-> > > for both rings (~9.9Mpps) (packed ring's performance can be
-> > > lower, because it's more complicated in driver.)
-> > > 
-> > > I think packed ring makes vhost PMD faster, but it doesn't make
-> > > the driver faster. In packed ring, the ring is simplified, and
-> > > the handling of the ring in vhost (device) is also simplified,
-> > > but things are not simplified in driver, e.g. although there is
-> > > no desc table in the virtqueue anymore, driver still needs to
-> > > maintain a private desc state table (which is still managed as
-> > > a list in this patch set) to support the out-of-order desc
-> > > processing in vhost (device).
-> > > 
-> > > I think this patch set is mainly to make the driver have a full
-> > > functional support for the packed ring, which makes it possible
-> > > to leverage the packed ring feature in vhost (device). But I'm
-> > > not sure whether there is any other better idea, I'd like to
-> > > hear your thoughts. Thanks!
-> > 
-> > Just this: Jens seems to report a nice gain with virtio and
-> > vhost pmd across the board. Try to compare virtio and
-> > virtio pmd to see what does pmd do better?
+Hi James,
+
+On 12/09/18 11:31, James Morse wrote:
+> Hi Julien,
 > 
-> The virtio PMD (drivers/net/virtio) in DPDK doesn't need to share
-> the virtio ring operation code with other drivers and is highly
-> optimized for network. E.g. in Rx, the Rx burst function won't
-> chain descs.
-> So the ID management for the Rx ring can be quite
-> simple and straightforward, we just need to initialize these IDs
-> when initializing the ring and don't need to change these IDs
-> in data path anymore (the mergable Rx code in that patch set
-> assumes the descs will be written back in order, which should be
-> fixed. I.e., the ID in the desc should be used to index vq->descx[]).
-> The Tx code in that patch set also assumes the descs will be
-> written back by device in order, which should be fixed.
+> On 28/08/18 16:51, Julien Thierry wrote:
+>> Masking daif flags is done very early before returning to EL0.
+>>
+>> Only toggle the interrupt masking while in the vector entry and mask daif
+>> once in kernel_exit.
 > 
-> But in kernel virtio driver, the virtio_ring.c is very generic.
-> The enqueue (virtqueue_add()) and dequeue (virtqueue_get_buf_ctx())
-> functions need to support all the virtio devices and should be
-> able to handle all the possible cases that may happen. So although
-> the packed ring can be very efficient in some cases, currently
-> the room to optimize the performance in kernel's virtio_ring.c
-> isn't that much. If we want to take the fully advantage of the
-> packed ring's efficiency, we need some further e.g. API changes
-> in virtio_ring.c, which shouldn't be part of this patch set. So
-> I still think this patch set is mainly to make the kernel virtio
-> driver to have a full functional support of the packed ring, and
-> we can't expect impressive performance boost with it.
+> I had an earlier version that did this, but it showed up as a performance
+> problem. commit 8d66772e869e ("arm64: Mask all exceptions during kernel_exit")
+> described it as:
+> |    Adding a naked 'disable_daif' to kernel_exit causes a performance problem
+> |    for micro-benchmarks that do no real work, (e.g. calling getpid() in a
+> |    loop). This is because the ret_to_user loop has already masked IRQs so
+> |    that the TIF_WORK_MASK thread flags can't change underneath it, adding
+> |    disable_daif is an additional self-synchronising operation.
+> |
+> |    In the future, the RAS APEI code may need to modify the TIF_WORK_MASK
+> |    flags from an SError, in which case the ret_to_user loop must mask SError
+> |    while it examines the flags.
+> 
+> 
+> We may decide that the benchmark is silly, and we don't care about this. (At the
+> time it was easy enough to work around).
+> 
+> We need regular-IRQs masked when we read the TIF flags, and to stay masked until
+> we return to user-space.
+> I assume you're changing this so that psuedo-NMI are unmasked for EL0 until
+> kernel_exit.
+> 
 
-So what are the cases that make things complex?
-Maybe we should drop support for them completely.
+Yes.
 
+> I'd like to be able to change the TIF flags from the SError handlers for RAS,
+> which means masking SError for do_notify_resume too. (The RAS code that does
+> this doesn't exist today, so you can make this my problem to work out later!)
+> I think we should have psuedo_NMI masked if SError is masked too.
+> 
 
-> > 
-> > 
-> > > 
-> > > > 
-> > > > On Wed, Jul 11, 2018 at 10:27:06AM +0800, Tiwei Bie wrote:
-> > > > > Hello everyone,
-> > > > > 
-> > > > > This patch set implements packed ring support in virtio driver.
-> > > > > 
-> > > > > Some functional tests have been done with Jason's
-> > > > > packed ring implementation in vhost:
-> > > > > 
-> > > > > https://lkml.org/lkml/2018/7/3/33
-> > > > > 
-> > > > > Both of ping and netperf worked as expected.
-> > > > > 
-> > > > > v1 -> v2:
-> > > > > - Use READ_ONCE() to read event off_wrap and flags together (Jason);
-> > > > > - Add comments related to ccw (Jason);
-> > > > > 
-> > > > > RFC (v6) -> v1:
-> > > > > - Avoid extra virtio_wmb() in virtqueue_enable_cb_delayed_packed()
-> > > > >   when event idx is off (Jason);
-> > > > > - Fix bufs calculation in virtqueue_enable_cb_delayed_packed() (Jason);
-> > > > > - Test the state of the desc at used_idx instead of last_used_idx
-> > > > >   in virtqueue_enable_cb_delayed_packed() (Jason);
-> > > > > - Save wrap counter (as part of queue state) in the return value
-> > > > >   of virtqueue_enable_cb_prepare_packed();
-> > > > > - Refine the packed ring definitions in uapi;
-> > > > > - Rebase on the net-next tree;
-> > > > > 
-> > > > > RFC v5 -> RFC v6:
-> > > > > - Avoid tracking addr/len/flags when DMA API isn't used (MST/Jason);
-> > > > > - Define wrap counter as bool (Jason);
-> > > > > - Use ALIGN() in vring_init_packed() (Jason);
-> > > > > - Avoid using pointer to track `next` in detach_buf_packed() (Jason);
-> > > > > - Add comments for barriers (Jason);
-> > > > > - Don't enable RING_PACKED on ccw for now (noticed by Jason);
-> > > > > - Refine the memory barrier in virtqueue_poll();
-> > > > > - Add a missing memory barrier in virtqueue_enable_cb_delayed_packed();
-> > > > > - Remove the hacks in virtqueue_enable_cb_prepare_packed();
-> > > > > 
-> > > > > RFC v4 -> RFC v5:
-> > > > > - Save DMA addr, etc in desc state (Jason);
-> > > > > - Track used wrap counter;
-> > > > > 
-> > > > > RFC v3 -> RFC v4:
-> > > > > - Make ID allocation support out-of-order (Jason);
-> > > > > - Various fixes for EVENT_IDX support;
-> > > > > 
-> > > > > RFC v2 -> RFC v3:
-> > > > > - Split into small patches (Jason);
-> > > > > - Add helper virtqueue_use_indirect() (Jason);
-> > > > > - Just set id for the last descriptor of a list (Jason);
-> > > > > - Calculate the prev in virtqueue_add_packed() (Jason);
-> > > > > - Fix/improve desc suppression code (Jason/MST);
-> > > > > - Refine the code layout for XXX_split/packed and wrappers (MST);
-> > > > > - Fix the comments and API in uapi (MST);
-> > > > > - Remove the BUG_ON() for indirect (Jason);
-> > > > > - Some other refinements and bug fixes;
-> > > > > 
-> > > > > RFC v1 -> RFC v2:
-> > > > > - Add indirect descriptor support - compile test only;
-> > > > > - Add event suppression supprt - compile test only;
-> > > > > - Move vring_packed_init() out of uapi (Jason, MST);
-> > > > > - Merge two loops into one in virtqueue_add_packed() (Jason);
-> > > > > - Split vring_unmap_one() for packed ring and split ring (Jason);
-> > > > > - Avoid using '%' operator (Jason);
-> > > > > - Rename free_head -> next_avail_idx (Jason);
-> > > > > - Add comments for virtio_wmb() in virtqueue_add_packed() (Jason);
-> > > > > - Some other refinements and bug fixes;
-> > > > > 
-> > > > > Thanks!
-> > > > > 
-> > > > > Tiwei Bie (5):
-> > > > >   virtio: add packed ring definitions
-> > > > >   virtio_ring: support creating packed ring
-> > > > >   virtio_ring: add packed ring support
-> > > > >   virtio_ring: add event idx support in packed ring
-> > > > >   virtio_ring: enable packed ring
-> > > > > 
-> > > > >  drivers/s390/virtio/virtio_ccw.c   |   14 +
-> > > > >  drivers/virtio/virtio_ring.c       | 1365 ++++++++++++++++++++++------
-> > > > >  include/linux/virtio_ring.h        |    8 +-
-> > > > >  include/uapi/linux/virtio_config.h |    3 +
-> > > > >  include/uapi/linux/virtio_ring.h   |   43 +
-> > > > >  5 files changed, 1157 insertions(+), 276 deletions(-)
-> > > > > 
-> > > > > -- 
-> > > > > 2.18.0
-> > > > 
-> > > > ---------------------------------------------------------------------
-> > > > To unsubscribe, e-mail: virtio-dev-unsubscribe@lists.oasis-open.org
-> > > > For additional commands, e-mail: virtio-dev-help@lists.oasis-open.org
-> > > > 
+Yes, my intention in the few daif changes was that PseudoNMI would have 
+just a little bit more priority than interrupt:
+
+Debug > Abort > FIQ (not used) > NMI (PMR masked, PSR.I == 0) > IRQ 
+(daif + PMR cleared)
+
+So if at any point I break this just shout. (I did that change because 
+currently el0_error has everything enabled before returning).
+
+> 
+> Is there a strong reason for having psuedo-NMI unmasked during
+> do_notify_resume(), or is it just for having the maximum amount of code exposed?
+> 
+
+As you suspected, this is to have the maximum amount of code exposed to 
+Pseudo-NMIs.
+
+Since it is not a strong requirement for Pseudo-NMI, if the perf issue 
+is more important I can drop the patch for now. Although it would be 
+useful to have other opinions to see what makes the most sense.
+
+Thanks,
+
+> 
+> Thanks,
+> 
+> James
+> 
+>> diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
+>> index 09dbea22..85ce06ac 100644
+>> --- a/arch/arm64/kernel/entry.S
+>> +++ b/arch/arm64/kernel/entry.S
+>> @@ -259,9 +259,9 @@ alternative_else_nop_endif
+>>   	.endm
+>>   
+>>   	.macro	kernel_exit, el
+>> -	.if	\el != 0
+>>   	disable_daif
+>>   
+>> +	.if	\el != 0
+>>   	/* Restore the task's original addr_limit. */
+>>   	ldr	x20, [sp, #S_ORIG_ADDR_LIMIT]
+>>   	str	x20, [tsk, #TSK_TI_ADDR_LIMIT]
+>> @@ -896,7 +896,7 @@ work_pending:
+>>    * "slow" syscall return path.
+>>    */
+>>   ret_to_user:
+>> -	disable_daif
+>> +	disable_irq				// disable interrupts
+>>   	ldr	x1, [tsk, #TSK_TI_FLAGS]
+>>   	and	x2, x1, #_TIF_WORK_MASK
+>>   	cbnz	x2, work_pending
+>>
+> 
+
+-- 
+Julien Thierry
