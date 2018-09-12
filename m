@@ -5,75 +5,197 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8DFCC4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 03:17:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27943C4646A
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 03:18:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C66220882
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 03:17:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C66220882
+	by mail.kernel.org (Postfix) with ESMTP id CF5202088E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 03:18:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF5202088E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728240AbeILIUS (ORCPT
+        id S1728273AbeILIUX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 04:20:18 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44554 "EHLO mx1.redhat.com"
+        Wed, 12 Sep 2018 04:20:23 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40116 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728125AbeILIUR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 04:20:17 -0400
+        id S1728242AbeILIUW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 04:20:22 -0400
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B507640241C0;
-        Wed, 12 Sep 2018 03:17:53 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id DF5D440216F7;
+        Wed, 12 Sep 2018 03:17:57 +0000 (UTC)
 Received: from jason-ThinkPad-T450s.redhat.com (ovpn-12-130.pek2.redhat.com [10.72.12.130])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E227F2027EA4;
-        Wed, 12 Sep 2018 03:17:50 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 973072027EA4;
+        Wed, 12 Sep 2018 03:17:54 +0000 (UTC)
 From:   Jason Wang <jasowang@redhat.com>
 To:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
         mst@redhat.com, jasowang@redhat.com
-Subject: [PATCH net-next V2 07/11] tuntap: move XDP flushing out of tun_do_xdp()
-Date:   Wed, 12 Sep 2018 11:17:05 +0800
-Message-Id: <20180912031709.14112-8-jasowang@redhat.com>
+Subject: [PATCH net-next V2 08/11] tun: switch to new type of msg_control
+Date:   Wed, 12 Sep 2018 11:17:06 +0800
+Message-Id: <20180912031709.14112-9-jasowang@redhat.com>
 In-Reply-To: <20180912031709.14112-1-jasowang@redhat.com>
 References: <20180912031709.14112-1-jasowang@redhat.com>
 X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 12 Sep 2018 03:17:53 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 12 Sep 2018 03:17:53 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jasowang@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 12 Sep 2018 03:17:57 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 12 Sep 2018 03:17:57 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jasowang@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This will allow adding batch flushing on top.
+This patch introduces to a new tun/tap specific msg_control:
+
+#define TUN_MSG_UBUF 1
+#define TUN_MSG_PTR  2
+struct tun_msg_ctl {
+       int type;
+       void *ptr;
+};
+
+This allows us to pass different kinds of msg_control through
+sendmsg(). The first supported type is ubuf (TUN_MSG_UBUF) which will
+be used by the existed vhost_net zerocopy code. The second is XDP
+buff, which allows vhost_net to pass XDP buff to TUN. This could be
+used to implement accepting an array of XDP buffs from vhost_net in
+the following patches.
 
 Signed-off-by: Jason Wang <jasowang@redhat.com>
 ---
- drivers/net/tun.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/tap.c      | 18 ++++++++++++------
+ drivers/net/tun.c      |  6 +++++-
+ drivers/vhost/net.c    |  7 +++++--
+ include/linux/if_tun.h | 14 ++++++++++++++
+ 4 files changed, 36 insertions(+), 9 deletions(-)
 
+diff --git a/drivers/net/tap.c b/drivers/net/tap.c
+index f0f7cd977667..7996ed7cbf18 100644
+--- a/drivers/net/tap.c
++++ b/drivers/net/tap.c
+@@ -619,7 +619,7 @@ static inline struct sk_buff *tap_alloc_skb(struct sock *sk, size_t prepad,
+ #define TAP_RESERVE HH_DATA_OFF(ETH_HLEN)
+ 
+ /* Get packet from user space buffer */
+-static ssize_t tap_get_user(struct tap_queue *q, struct msghdr *m,
++static ssize_t tap_get_user(struct tap_queue *q, void *msg_control,
+ 			    struct iov_iter *from, int noblock)
+ {
+ 	int good_linear = SKB_MAX_HEAD(TAP_RESERVE);
+@@ -663,7 +663,7 @@ static ssize_t tap_get_user(struct tap_queue *q, struct msghdr *m,
+ 	if (unlikely(len < ETH_HLEN))
+ 		goto err;
+ 
+-	if (m && m->msg_control && sock_flag(&q->sk, SOCK_ZEROCOPY)) {
++	if (msg_control && sock_flag(&q->sk, SOCK_ZEROCOPY)) {
+ 		struct iov_iter i;
+ 
+ 		copylen = vnet_hdr.hdr_len ?
+@@ -724,11 +724,11 @@ static ssize_t tap_get_user(struct tap_queue *q, struct msghdr *m,
+ 	tap = rcu_dereference(q->tap);
+ 	/* copy skb_ubuf_info for callback when skb has no error */
+ 	if (zerocopy) {
+-		skb_shinfo(skb)->destructor_arg = m->msg_control;
++		skb_shinfo(skb)->destructor_arg = msg_control;
+ 		skb_shinfo(skb)->tx_flags |= SKBTX_DEV_ZEROCOPY;
+ 		skb_shinfo(skb)->tx_flags |= SKBTX_SHARED_FRAG;
+-	} else if (m && m->msg_control) {
+-		struct ubuf_info *uarg = m->msg_control;
++	} else if (msg_control) {
++		struct ubuf_info *uarg = msg_control;
+ 		uarg->callback(uarg, false);
+ 	}
+ 
+@@ -1150,7 +1150,13 @@ static int tap_sendmsg(struct socket *sock, struct msghdr *m,
+ 		       size_t total_len)
+ {
+ 	struct tap_queue *q = container_of(sock, struct tap_queue, sock);
+-	return tap_get_user(q, m, &m->msg_iter, m->msg_flags & MSG_DONTWAIT);
++	struct tun_msg_ctl *ctl = m->msg_control;
++
++	if (ctl && ctl->type != TUN_MSG_UBUF)
++		return -EINVAL;
++
++	return tap_get_user(q, ctl ? ctl->ptr : NULL, &m->msg_iter,
++			    m->msg_flags & MSG_DONTWAIT);
+ }
+ 
+ static int tap_recvmsg(struct socket *sock, struct msghdr *m,
 diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-index 14fe94098180..3ae539374f6b 100644
+index 3ae539374f6b..89779b58c7ca 100644
 --- a/drivers/net/tun.c
 +++ b/drivers/net/tun.c
-@@ -1660,7 +1660,6 @@ static int tun_xdp_act(struct tun_struct *tun, struct bpf_prog *xdp_prog,
- 	switch (act) {
- 	case XDP_REDIRECT:
- 		err = xdp_do_redirect(tun->dev, xdp, xdp_prog);
--		xdp_do_flush_map();
- 		if (err)
- 			return err;
- 		break;
-@@ -1749,6 +1748,8 @@ static struct sk_buff *tun_build_skb(struct tun_struct *tun,
- 		err = tun_xdp_act(tun, xdp_prog, &xdp, act);
- 		if (err < 0)
- 			goto err_xdp;
-+		if (err == XDP_REDIRECT)
-+			xdp_do_flush_map();
- 		if (err != XDP_PASS)
- 			goto out;
+@@ -2431,11 +2431,15 @@ static int tun_sendmsg(struct socket *sock, struct msghdr *m, size_t total_len)
+ 	int ret;
+ 	struct tun_file *tfile = container_of(sock, struct tun_file, socket);
+ 	struct tun_struct *tun = tun_get(tfile);
++	struct tun_msg_ctl *ctl = m->msg_control;
  
+ 	if (!tun)
+ 		return -EBADFD;
+ 
+-	ret = tun_get_user(tun, tfile, m->msg_control, &m->msg_iter,
++	if (ctl && ctl->type != TUN_MSG_UBUF)
++		return -EINVAL;
++
++	ret = tun_get_user(tun, tfile, ctl ? ctl->ptr : NULL, &m->msg_iter,
+ 			   m->msg_flags & MSG_DONTWAIT,
+ 			   m->msg_flags & MSG_MORE);
+ 	tun_put(tun);
+diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+index 4e656f89cb22..fb01ce6d981c 100644
+--- a/drivers/vhost/net.c
++++ b/drivers/vhost/net.c
+@@ -620,6 +620,7 @@ static void handle_tx_zerocopy(struct vhost_net *net, struct socket *sock)
+ 		.msg_controllen = 0,
+ 		.msg_flags = MSG_DONTWAIT,
+ 	};
++	struct tun_msg_ctl ctl;
+ 	size_t len, total_len = 0;
+ 	int err;
+ 	struct vhost_net_ubuf_ref *uninitialized_var(ubufs);
+@@ -664,8 +665,10 @@ static void handle_tx_zerocopy(struct vhost_net *net, struct socket *sock)
+ 			ubuf->ctx = nvq->ubufs;
+ 			ubuf->desc = nvq->upend_idx;
+ 			refcount_set(&ubuf->refcnt, 1);
+-			msg.msg_control = ubuf;
+-			msg.msg_controllen = sizeof(ubuf);
++			msg.msg_control = &ctl;
++			ctl.type = TUN_MSG_UBUF;
++			ctl.ptr = ubuf;
++			msg.msg_controllen = sizeof(ctl);
+ 			ubufs = nvq->ubufs;
+ 			atomic_inc(&ubufs->refcount);
+ 			nvq->upend_idx = (nvq->upend_idx + 1) % UIO_MAXIOV;
+diff --git a/include/linux/if_tun.h b/include/linux/if_tun.h
+index 3d2996dc7d85..12e3eebf0ce6 100644
+--- a/include/linux/if_tun.h
++++ b/include/linux/if_tun.h
+@@ -16,9 +16,23 @@
+ #define __IF_TUN_H
+ 
+ #include <uapi/linux/if_tun.h>
++#include <uapi/linux/virtio_net.h>
+ 
+ #define TUN_XDP_FLAG 0x1UL
+ 
++#define TUN_MSG_UBUF 1
++#define TUN_MSG_PTR  2
++struct tun_msg_ctl {
++	unsigned short type;
++	unsigned short num;
++	void *ptr;
++};
++
++struct tun_xdp_hdr {
++	int buflen;
++	struct virtio_net_hdr gso;
++};
++
+ #if defined(CONFIG_TUN) || defined(CONFIG_TUN_MODULE)
+ struct socket *tun_get_socket(struct file *);
+ struct ptr_ring *tun_get_tx_ring(struct file *file);
 -- 
 2.17.1
 
