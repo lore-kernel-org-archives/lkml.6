@@ -2,147 +2,196 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DECCCC070C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 22:48:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01A3CC070C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 22:49:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 876922133F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 22:48:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 876922133F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 91F922133F
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 22:49:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1RHln0+Q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91F922133F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728125AbeIMDyl (ORCPT
+        id S1728178AbeIMDzl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 23:54:41 -0400
-Received: from mail-qt0-f173.google.com ([209.85.216.173]:35747 "EHLO
-        mail-qt0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727780AbeIMDyk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 23:54:40 -0400
-Received: by mail-qt0-f173.google.com with SMTP id j7-v6so3642100qtp.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 15:48:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=DhZWKCwcDIRnGqisvI8oCZU7ZEe8XSr9ewbBkRfDdUs=;
-        b=kBodQSJhccTZciU0oNRPtYmoIaHZuFVD3GUn0GHtuHP52UinhdGAz9YQiWok9xmjmb
-         hrpY6+0Ye+3KN0NxPYNqKjcKT3OJ4cqS1SuxH0Fa1wwGtIHI4Mv/WNiDmtVBgWObHHVl
-         eaFwS35N2Y3c0Yi4e3z4dOjFz6o+PWkGV1RFWEzKI1ZabYE36/im65uTeDBD9aAYyg9d
-         8tMDQifqnMBUv1u3ZiFqdtXqY4uqyHPMWMCR50C9J3bwHj5/5eUWlbkH9HzmC7kdr5uB
-         /zwerpVTE5TzlJn2FOGTzf8elKioVHHLDicu6iq4vOnpgLxna3V3P5xjwJQwWaI5YRkk
-         adDA==
-X-Gm-Message-State: APzg51DRpYuuVQK6+OPxsgXYXQs+FfrYP80U1a2/IwcRjF8I9muE1/vC
-        51b1HA3lAwer+wxHrluc359H1w==
-X-Google-Smtp-Source: ANB0VdYMj8xs1ykC1OppO5mZ+slvZ8K547Dp3isFqG+JhibMaeIW12f1nl7HtW8Aop91D+4ySUJPWg==
-X-Received: by 2002:a0c:d2ba:: with SMTP id q55-v6mr3169524qvh.150.1536792481916;
-        Wed, 12 Sep 2018 15:48:01 -0700 (PDT)
-Received: from ?IPv6:2601:602:9802:a8dc::42c3? ([2601:602:9802:a8dc::42c3])
-        by smtp.gmail.com with ESMTPSA id u86-v6sm1483241qkl.93.2018.09.12.15.47.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Sep 2018 15:48:00 -0700 (PDT)
-Subject: Re: [PATCH] proc: restrict kernel stack dumps to root
-To:     Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>
-Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
-        Ken Chen <kenchen@google.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Security Officers <security@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Linux API <linux-api@vger.kernel.org>
-References: <20180911183909.233413-1-jannh@google.com>
- <CAG48ez03ivLr6w+V911V7pqb1o=kcJw4CLEktcSVVE+=hXXP=w@mail.gmail.com>
- <CAGXu5jKBPh+TSCuaitpPdk89hW=ch+QeRsUfE68pLpzLS=z4Jg@mail.gmail.com>
-From:   Laura Abbott <labbott@redhat.com>
-Message-ID: <4ceb318d-9af6-7a78-db6a-cfe9dd8a0823@redhat.com>
-Date:   Wed, 12 Sep 2018 15:47:58 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 12 Sep 2018 23:55:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44860 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727803AbeIMDzl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 23:55:41 -0400
+Received: from mail-qt0-f171.google.com (mail-qt0-f171.google.com [209.85.216.171])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BD28821476;
+        Wed, 12 Sep 2018 22:49:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1536792542;
+        bh=dZed1JfvodCQ+q46LOdYB0CZ2OQj4wjBms2zAAlz3rc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=1RHln0+QB7Ul8w9eWi3e3RPi4UxKZhsIoA3HLYYeZGl5qABggsEbt7aMVFFbM40VN
+         knxSf6IrOEIVD8jXfCVKFxzP+YP86/74hce5ZZFeJLjYUPtA0x+N4zyHo0TlvvV28e
+         cRCKo5Qx/Y9hLHtTwWZrMfVhYprkw5ZFzAkrdvDY=
+Received: by mail-qt0-f171.google.com with SMTP id x7-v6so3621516qtk.5;
+        Wed, 12 Sep 2018 15:49:02 -0700 (PDT)
+X-Gm-Message-State: APzg51A87qKhn8umGX5wUScHz6zTUE0/i1azzKhBgoUnAUpBnfP97d1y
+        TO1DRZlrYgrz8JBk+OIBKpIvRCK5TB/PuTDWJQ==
+X-Google-Smtp-Source: ANB0VdbOnxH03XrbtA6ZEwdd6PWtZGtB7BSL+0rvxrBsbor5/T3hME5mZMnAFv6+zADaIu7iiPlgWo1qL5vTkMZeG0E=
+X-Received: by 2002:a0c:db87:: with SMTP id m7-v6mr3274626qvk.90.1536792541922;
+ Wed, 12 Sep 2018 15:49:01 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5jKBPh+TSCuaitpPdk89hW=ch+QeRsUfE68pLpzLS=z4Jg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180828154433.5693-1-robh@kernel.org> <20180828154433.5693-7-robh@kernel.org>
+ <20180912121705.010a999d@coco.lan> <CAL_JsqK8B46x8bm_aYggJSPAWrMGZ1rZ58uWCmyiSqA2KZpiFg@mail.gmail.com>
+ <20180912180734.37dfafb2@coco.lan>
+In-Reply-To: <20180912180734.37dfafb2@coco.lan>
+From:   Rob Herring <robh@kernel.org>
+Date:   Wed, 12 Sep 2018 17:48:50 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJdr6q00w8YhTsFdZM9k2bAJGDh-ViqFo19VCgJ1SXyug@mail.gmail.com>
+Message-ID: <CAL_JsqJdr6q00w8YhTsFdZM9k2bAJGDh-ViqFo19VCgJ1SXyug@mail.gmail.com>
+Subject: Re: [PATCH v2] staging: Convert to using %pOFn instead of device_node.name
+To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc:     Joe Perches <joe@perches.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Ian Arkver <ian.arkver.dev@gmail.com>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        devel@driverdev.osuosl.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/12/2018 03:27 PM, Kees Cook wrote:
-> On Wed, Sep 12, 2018 at 8:29 AM, Jann Horn <jannh@google.com> wrote:
->> +linux-api, I guess
->>
->> On Tue, Sep 11, 2018 at 8:39 PM Jann Horn <jannh@google.com> wrote:
->>>
->>> Restrict the ability to inspect kernel stacks of arbitrary tasks to root
->>> in order to prevent a local attacker from exploiting racy stack unwinding
->>> to leak kernel task stack contents.
->>> See the added comment for a longer rationale.
->>>
->>> There don't seem to be any users of this userspace API that can't
->>> gracefully bail out if reading from the file fails. Therefore, I believe
->>> that this change is unlikely to break things.
->>> In the case that this patch does end up needing a revert, the next-best
->>> solution might be to fake a single-entry stack based on wchan.
->>>
->>> Fixes: 2ec220e27f50 ("proc: add /proc/*/stack")
->>> Cc: stable@vger.kernel.org
->>> Signed-off-by: Jann Horn <jannh@google.com>
->>> ---
->>>   fs/proc/base.c | 14 ++++++++++++++
->>>   1 file changed, 14 insertions(+)
->>>
->>> diff --git a/fs/proc/base.c b/fs/proc/base.c
->>> index ccf86f16d9f0..7e9f07bf260d 100644
->>> --- a/fs/proc/base.c
->>> +++ b/fs/proc/base.c
->>> @@ -407,6 +407,20 @@ static int proc_pid_stack(struct seq_file *m, struct pid_namespace *ns,
->>>          unsigned long *entries;
->>>          int err;
->>>
->>> +       /*
->>> +        * The ability to racily run the kernel stack unwinder on a running task
->>> +        * and then observe the unwinder output is scary; while it is useful for
->>> +        * debugging kernel issues, it can also allow an attacker to leak kernel
->>> +        * stack contents.
->>> +        * Doing this in a manner that is at least safe from races would require
->>> +        * some work to ensure that the remote task can not be scheduled; and
->>> +        * even then, this would still expose the unwinder as local attack
->>> +        * surface.
->>> +        * Therefore, this interface is restricted to root.
->>> +        */
->>> +       if (!file_ns_capable(m->file, &init_user_ns, CAP_SYS_ADMIN))
->>> +               return -EACCES;
-> 
-> In the past, we've avoided hard errors like this in favor of just
-> censoring the output. Do we want to be more cautious here? (i.e.
-> return 0 or a fuller seq_printf(m, "[<0>] privileged\n"); return 0;)
-> 
+On Wed, Sep 12, 2018 at 4:07 PM Mauro Carvalho Chehab
+<mchehab+samsung@kernel.org> wrote:
+>
+> Em Wed, 12 Sep 2018 15:26:48 -0500
+> Rob Herring <robh@kernel.org> escreveu:
+>
+> > +Joe P
+> >
+> > On Wed, Sep 12, 2018 at 10:17 AM Mauro Carvalho Chehab
+> > <mchehab+samsung@kernel.org> wrote:
+> > >
+> > > Em Tue, 28 Aug 2018 10:44:33 -0500
+> > > Rob Herring <robh@kernel.org> escreveu:
+> > >
+> > > > In preparation to remove the node name pointer from struct device_node,
+> > > > convert printf users to use the %pOFn format specifier.
+> > > >
+> > > > Cc: Steve Longerbeam <slongerbeam@gmail.com>
+> > > > Cc: Philipp Zabel <p.zabel@pengutronix.de>
+> > > > Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> > > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > > Cc: linux-media@vger.kernel.org
+> > > > Cc: devel@driverdev.osuosl.org
+> > > > Signed-off-by: Rob Herring <robh@kernel.org>
+> > > > ---
+> > > > v2:
+> > > > - fix conditional use of node name vs devname for imx
+> > > >
+> > > >  drivers/staging/media/imx/imx-media-dev.c | 15 ++++++++++-----
+> > > >  drivers/staging/media/imx/imx-media-of.c  |  4 ++--
+> > > >  drivers/staging/mt7621-eth/mdio.c         |  4 ++--
+> > >
+> > > It would be better if you had submitted the staging/media stuff
+> > > on a separate patch, as they usually go via the media tree.
+> >
+> > Sorry, I thought Greg took all of staging.
+>
+> No, I usually take media patches on staging. It seems that at least
+> the IIO subsystem does the same:
+>
+> IIO SUBSYSTEM AND DRIVERS
+> M:      Jonathan Cameron <jic23@kernel.org>
+> R:      Hartmut Knaack <knaack.h@gmx.de>
+> R:      Lars-Peter Clausen <lars@metafoo.de>
+> R:      Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+> L:      linux-iio@vger.kernel.org
+> T:      git git://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git
+> S:      Maintained
+> F:      Documentation/ABI/testing/configfs-iio*
+> F:      Documentation/ABI/testing/sysfs-bus-iio*
+> F:      Documentation/devicetree/bindings/iio/
+> F:      drivers/iio/
+> F:      drivers/staging/iio/
+> F:      include/linux/iio/
+> F:      tools/iio/
 
-The -EACCES is a strong hint to run with root privileges which is
-nice from an end user perspective. If we don't want to return an
-actual error, I think the "privileged" message would be okay.
+Yes, the information is there, but needs human processing.
 
-Laura
+> Anyway, as I said before, I don't have any issues if Greg takes
+> this specific patch.
 
->>> +
->>>          entries = kmalloc_array(MAX_STACK_TRACE_DEPTH, sizeof(*entries),
->>>                                  GFP_KERNEL);
->>>          if (!entries)
->>> --
->>> 2.19.0.rc2.392.g5ba43deb5a-goog
->>>
-> 
-> -Kees
-> 
+I know. I'm just thinking about how to improve things. Ideally, what
+I'd like is a script that spits out a To list for who applies the
+patch and a Cc list of reviewers.
 
+> > A problem with MAINTAINERS is there is no way to tell who applies
+> > patches for a given path vs. anyone else listed. This frequently
+> > happens when the maintainer organization doesn't match the directory
+> > org. If we distinguished this, then it would be quite easy to see when
+> > you've created a patch that needs to be split to different maintainers
+> > (or an explanation why it isn't). Whatever happened with splitting up
+> > MAINTAINERS? If there was a file for each maintainer tree, then it
+> > would be easier to extract that information.
+>
+> Yes, but, on the other hand, get_maintainers.pl would likely
+> take more time to process, if a patch touches multiple subsystems.
+>
+> >
+> > Or maybe we just need to be stricter with the 'M' vs. 'R' tag and 'M'
+> > means that is the person who applies the patch. I don't think many
+> > drivers have their own tree and maintainer except for a few big ones.
+>
+> Hmm... just getting a random file under staging/media:
+>
+>         ./scripts/get_maintainer.pl -f drivers/staging/media/imx/imx-ic.h
+>         Steve Longerbeam <slongerbeam@gmail.com> (maintainer:MEDIA DRIVERS FOR FREESCALE IMX)
+>         Philipp Zabel <p.zabel@pengutronix.de> (maintainer:MEDIA DRIVERS FOR FREESCALE IMX)
+>         Mauro Carvalho Chehab <mchehab@kernel.org> (maintainer:MEDIA INPUT INFRASTRUCTURE (V4L/DVB))
+>         Greg Kroah-Hartman <gregkh@linuxfoundation.org> (supporter:STAGING SUBSYSTEM)
+>         linux-media@vger.kernel.org (open list:MEDIA DRIVERS FOR FREESCALE IMX)
+>         devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM)
+>         linux-kernel@vger.kernel.org (open list)
+>
+> It seems that the maintainers are already ordered by the tree
+> depth (placing the most relevant results first).
+
+Most relevant in the sense of who reviews and cares about the changes,
+but not to answer who applies this patch. I could say I just need to
+ignore supporters and look at the last maintainer, but then that
+breaks for the case below. I don't think 'maintainer' vs. 'supporter'
+is very well maintained either.
+
+$ scripts/get_maintainer.pl -f drivers/staging/olpc_dcon/
+Jens Frederich <jfrederich@gmail.com> (maintainer:STAGING - OLPC
+SECONDARY DISPLAY CONTROLLER (DCON))
+Daniel Drake <dsd@laptop.org> (maintainer:STAGING - OLPC SECONDARY
+DISPLAY CONTROLLER (DCON))
+Jon Nettleton <jon.nettleton@gmail.com> (maintainer:STAGING - OLPC
+SECONDARY DISPLAY CONTROLLER (DCON))
+Greg Kroah-Hartman <gregkh@linuxfoundation.org> (supporter:STAGING SUBSYSTEM)
+devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM)
+linux-kernel@vger.kernel.org (open list)
+
+Maybe Jon has a tree and applies it. Who knows... You either have to
+know who are "real" maintainers (the ones applying patches) or go look
+at git history to see Greg is the only non-author S-o-B.
+
+> So, both driver maintainers appear first, then me and finally
+> Greg (as supporter).
+>
+> Mailing lists are also ordered by relevance: media ML, then staging
+> ML and finally LKML.
+
+Another clue, yes, but something you can script?
+
+Rob
