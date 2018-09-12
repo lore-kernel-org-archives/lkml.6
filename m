@@ -4,119 +4,97 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA7D9C4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:29:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4657CC46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:29:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 771F620866
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:29:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F169620866
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:29:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Hkddc2GP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 771F620866
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kwj+Zh/f"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F169620866
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727770AbeILNdO (ORCPT
+        id S1727939AbeILNdS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 09:33:14 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:42860 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726552AbeILNdO (ORCPT
+        Wed, 12 Sep 2018 09:33:18 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:33841 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725948AbeILNdR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 09:33:14 -0400
-Received: by mail-pl1-f196.google.com with SMTP id g23-v6so618259plq.9
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 01:29:47 -0700 (PDT)
+        Wed, 12 Sep 2018 09:33:17 -0400
+Received: by mail-pf1-f194.google.com with SMTP id k19-v6so662431pfi.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 01:29:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=+OmOlv50znc2tgHYJkRyI/UDE2I0tRf5T900X5bNP9A=;
-        b=Hkddc2GPFBgqNXe25RLszXjOCkWhh39MV/uIK+libyf+2PiTX8Tv83xlV8f4KE++hy
-         mFsz5zsPuNv9qaknsyQu2vc9TJxOyqMTv4G0/GuWnFXLEfA1eoZ6HdXgqPeYVcFe6RDG
-         XPsbPBpVtrzcEzID+tjXCuFW2o27bGo7o7W/k=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=uUI5Y3mekTjxrtv6ALknOR0cOq3hMnDP+U5fQNkXcFc=;
+        b=kwj+Zh/fU6acby92dexeKGSe9U2V665kaeTu0q0NJEsEGh77+8KwgM+XVljNEBiztX
+         /N6wopayxojgsKkY/Rp9kcXiYJkzLWHrd44ikCtCUgnhADXuraNAL1THTG1JROrmcrTY
+         cHUGgiqqNQXYebZ5M0iV/DOypWhgIgPXQzxUQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=+OmOlv50znc2tgHYJkRyI/UDE2I0tRf5T900X5bNP9A=;
-        b=QX8T9wcQXCiA9G/vdtpwX6XNRryChPexdKjt8j4SKfPoLopR5i0YkQEGhvzy4AfrUX
-         jygzrG2s3C5TU72QjCnPD/CNTuvVdJs+P4H4gjclY3tIlv6qwgqbcg0TcfcL3huqRxLp
-         jxH3ZO/0XzTnvXFJt8mQU73ZFDkohbO0jO/ckHDcvR103tVxw0ViIVYdLY6OV5QpBG8N
-         xFsgwg8WxYbNOJ6WtQgaSTcwSl4t+NE3Ddr/GvOhnq6tcDvUVvUx8hdGdQq7SWPJLINF
-         0RsEIaiWjAyQgFo4CCmClWl71pxEGZFzg7uV6mPqWRO9sMRGDOX0OzkBhzg9hecxpwmR
-         gFAA==
-X-Gm-Message-State: APzg51CVHvD2/TnBgRlIXSwy7Kz/cykXTOyfesd/m7k6lnwGI9yhn6/S
-        jSUkDYZg8ZlCNzhdIYWFB5+clA==
-X-Google-Smtp-Source: ANB0VdYJqtfBY91TM0dX8B+b/jeNZQIaiOGXRvWI7one9MT1RMiE1cHpQpta7758x7zvDv69r31W7Q==
-X-Received: by 2002:a17:902:aa49:: with SMTP id c9-v6mr855934plr.195.1536740986604;
-        Wed, 12 Sep 2018 01:29:46 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=uUI5Y3mekTjxrtv6ALknOR0cOq3hMnDP+U5fQNkXcFc=;
+        b=tithDDpnzEHax1pXlniO38MK0lh0BokTE1mqSWZ82HUIjNa4aZbaCQH24HrFQTAiyK
+         cCVBJbKcXpFI9ArOlQX0Deg4C/NY8yVGjrC8vp6vKZwqjacMtNYUgDpD1fND1GCnCh0A
+         DQCY2bIDjr4dD11cpADmY74UX+MJon2eJglJeYZZ5Jx65KwZveh3kVAVtoKHbYamDNDd
+         1Q43g7yN8rKM8rKqgLJfOGt+F77YaWJJBYD2eAj5NkLi30OEUg7yu6Fbk6//to9ZUpWp
+         QipW26M37yoILfejek8+NT40fjNS5n8LUumgto5IQsLmMULKTmu51uEP7BURUqXvQrow
+         GEiA==
+X-Gm-Message-State: APzg51C1KWkrQqeZCiifSvtHiEphxKb18EOKthxvYdltBwfv2JKFQ1Wf
+        1yQsTVkXeprwAzILpnSTMVlrBg==
+X-Google-Smtp-Source: ANB0VdZ5el16nuRa+e+C7BsVjl5vQFzn5pedoQH+9aEybk2dPMbmWqxNp7KnVLs2I95oz8ir2kyl9Q==
+X-Received: by 2002:a65:6292:: with SMTP id f18-v6mr877898pgv.85.1536740989727;
+        Wed, 12 Sep 2018 01:29:49 -0700 (PDT)
 Received: from localhost ([122.171.64.45])
-        by smtp.gmail.com with ESMTPSA id w81-v6sm977560pfk.92.2018.09.12.01.29.45
+        by smtp.gmail.com with ESMTPSA id s75-v6sm772624pfd.108.2018.09.12.01.29.48
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Sep 2018 01:29:45 -0700 (PDT)
+        Wed, 12 Sep 2018 01:29:49 -0700 (PDT)
 From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     niklas.cassel@linaro.org, Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Nishanth Menon <nm@ti.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
+To:     niklas.cassel@linaro.org, Viresh Kumar <vireshk@kernel.org>,
+        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Rafael Wysocki <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
         Vincent Guittot <vincent.guittot@linaro.org>,
-        "4.18" <stable@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 00/11] OPP: Don't create multiple OPP tables for devices sharing OPP table
-Date:   Wed, 12 Sep 2018 13:58:39 +0530
-Message-Id: <cover.1536736872.git.viresh.kumar@linaro.org>
+        "4 . 18" <stable@vger.kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH 01/11] OPP: Free OPP table properly on performance state irregularities
+Date:   Wed, 12 Sep 2018 13:58:40 +0530
+Message-Id: <14486fb4c32047983ace6af4f4ffe2366242f3b5.1536736872.git.viresh.kumar@linaro.org>
 X-Mailer: git-send-email 2.18.0.rc1.242.g61856ae69a2c
+In-Reply-To: <cover.1536736872.git.viresh.kumar@linaro.org>
+References: <cover.1536736872.git.viresh.kumar@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+The OPP table was freed, but not the individual OPPs which is done from
+_dev_pm_opp_remove_table(). Fix it by calling _dev_pm_opp_remove_table()
+as well.
 
-Niklas Cassle recently reported some regressions with his Qcom cpufreq
-driver where he was getting some errors while creating the OPPs tables.
+Cc: 4.18 <stable@vger.kernel.org> # v4.18
+Fixes: 3ba98324e81a ("PM / OPP: Get performance state using genpd helper")
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ drivers/opp/of.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-After looking into it I realized that the OPP core incorrectly creates
-multiple OPP tables for the devices even if they are sharing the OPP
-table in DT. This happens when the request comes using different CPU
-devices. For example, dev_pm_opp_set_supported_hw() getting called using
-CPU0 and dev_pm_opp_of_add_table() getting called using CPU1.
-
-This series redesigns the internals of the OPP core to fix that. The
-redesign has simplified the core itself though.
-
-@Niklas: Can you please confirm that this series fixes the issues you
-have reported ? I have already tested it on Hikey960.
-
---
-viresh
-
-Viresh Kumar (11):
-  OPP: Free OPP table properly on performance state irregularities
-  OPP: Protect dev_list with opp_table lock
-  OPP: Pass index to _of_init_opp_table()
-  OPP: Parse OPP table's DT properties from _of_init_opp_table()
-  OPP: Don't take OPP table's kref for static OPPs
-  OPP: Create separate kref for static OPPs list
-  cpufreq: mvebu: Remove OPPs using dev_pm_opp_remove()
-  OPP: Don't remove dynamic OPPs from _dev_pm_opp_remove_table()
-  OPP: Use a single mechanism to free the OPP table
-  OPP: Prevent creating multiple OPP tables for devices sharing OPP
-    nodes
-  OPP: Pass OPP table to _of_add_opp_table_v{1|2}()
-
- drivers/cpufreq/mvebu-cpufreq.c |   9 +-
- drivers/opp/core.c              | 147 ++++++++++++++++---------
- drivers/opp/cpu.c               |  11 +-
- drivers/opp/of.c                | 186 +++++++++++++++++---------------
- drivers/opp/opp.h               |  19 ++--
- include/linux/pm_opp.h          |   6 ++
- 6 files changed, 221 insertions(+), 157 deletions(-)
-
+diff --git a/drivers/opp/of.c b/drivers/opp/of.c
+index 7af0ddec936b..20988c426650 100644
+--- a/drivers/opp/of.c
++++ b/drivers/opp/of.c
+@@ -425,6 +425,7 @@ static int _of_add_opp_table_v2(struct device *dev, struct device_node *opp_np)
+ 		dev_err(dev, "Not all nodes have performance state set (%d: %d)\n",
+ 			count, pstate_count);
+ 		ret = -ENOENT;
++		_dev_pm_opp_remove_table(opp_table, dev, false);
+ 		goto put_opp_table;
+ 	}
+ 
 -- 
 2.18.0.rc1.242.g61856ae69a2c
 
