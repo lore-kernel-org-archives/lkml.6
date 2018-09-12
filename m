@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5666BECDFC0
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 00:44:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60BA0C04ABB
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 00:44:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0206620882
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 00:44:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0206620882
+	by mail.kernel.org (Postfix) with ESMTP id 12EEC20883
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 00:44:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12EEC20883
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728054AbeILFqY (ORCPT
+        id S1728091AbeILFq1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 01:46:24 -0400
-Received: from mga18.intel.com ([134.134.136.126]:49412 "EHLO mga18.intel.com"
+        Wed, 12 Sep 2018 01:46:27 -0400
+Received: from mga02.intel.com ([134.134.136.20]:22578 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725738AbeILFqX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 01:46:23 -0400
+        id S1725738AbeILFqZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 01:46:25 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Sep 2018 17:44:01 -0700
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Sep 2018 17:44:34 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,362,1531810800"; 
-   d="scan'208";a="69283776"
+   d="scan'208";a="69283844"
 Received: from unknown (HELO yhuang-mobile.sh.intel.com) ([10.239.198.87])
-  by fmsmga007.fm.intel.com with ESMTP; 11 Sep 2018 17:43:56 -0700
+  by fmsmga007.fm.intel.com with ESMTP; 11 Sep 2018 17:44:29 -0700
 From:   Huang Ying <ying.huang@intel.com>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
@@ -46,157 +46,189 @@ Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
         Zi Yan <zi.yan@cs.rutgers.edu>,
         Daniel Jordan <daniel.m.jordan@oracle.com>
-Subject: [PATCH -V5 RESEND 00/21] swap: Swapout/swapin THP in one piece
-Date:   Wed, 12 Sep 2018 08:43:53 +0800
-Message-Id: <20180912004414.22583-1-ying.huang@intel.com>
+Subject: [PATCH -V5 RESEND 07/21] swap: Support PMD swap mapping in split_swap_cluster()
+Date:   Wed, 12 Sep 2018 08:44:00 +0800
+Message-Id: <20180912004414.22583-8-ying.huang@intel.com>
 X-Mailer: git-send-email 2.16.4
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180912004414.22583-1-ying.huang@intel.com>
+References: <20180912004414.22583-1-ying.huang@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Andrew, could you help me to check whether the overall design is
-reasonable?
+When splitting a THP in swap cache or failing to allocate a THP when
+swapin a huge swap cluster, the huge swap cluster will be split.  In
+addition to clear the huge flag of the swap cluster, the PMD swap
+mapping count recorded in cluster_count() will be set to 0.  But we
+will not touch PMD swap mappings themselves, because it is hard to
+find them all sometimes.  When the PMD swap mappings are operated
+later, it will be found that the huge swap cluster has been split and
+the PMD swap mappings will be split at that time.
 
-Hi, Hugh, Shaohua, Minchan and Rik, could you help me to review the
-swap part of the patchset?  Especially [02/21], [03/21], [04/21],
-[05/21], [06/21], [07/21], [08/21], [09/21], [10/21], [11/21],
-[12/21], [20/21], [21/21].
+Unless splitting a THP in swap cache (specified via "force"
+parameter), split_swap_cluster() will return -EEXIST if there is
+SWAP_HAS_CACHE flag in swap_map[offset].  Because this indicates there
+is a THP corresponds to this huge swap cluster, and it isn't desired
+to split the THP.
 
-Hi, Andrea and Kirill, could you help me to review the THP part of the
-patchset?  Especially [01/21], [07/21], [09/21], [11/21], [13/21],
-[15/21], [16/21], [17/21], [18/21], [19/21], [20/21].
+When splitting a THP in swap cache, the position to call
+split_swap_cluster() is changed to before unlocking sub-pages.  So
+that all sub-pages will be kept locked from the THP has been split to
+the huge swap cluster is split.  This makes the code much easier to be
+reasoned.
 
-Hi, Johannes and Michal, could you help me to review the cgroup part
-of the patchset?  Especially [14/21].
+Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Shaohua Li <shli@kernel.org>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: Rik van Riel <riel@redhat.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc: Zi Yan <zi.yan@cs.rutgers.edu>
+Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
+---
+ include/linux/swap.h |  6 ++++--
+ mm/huge_memory.c     | 18 ++++++++++------
+ mm/swapfile.c        | 58 +++++++++++++++++++++++++++++++++++++---------------
+ 3 files changed, 57 insertions(+), 25 deletions(-)
 
-And for all, Any comment is welcome!
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index a2a3d85decd9..c0c3b3c077d7 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -616,11 +616,13 @@ static inline swp_entry_t get_swap_page(struct page *page)
+ 
+ #endif /* CONFIG_SWAP */
+ 
++#define SSC_SPLIT_CACHED	0x1
++
+ #ifdef CONFIG_THP_SWAP
+-extern int split_swap_cluster(swp_entry_t entry);
++extern int split_swap_cluster(swp_entry_t entry, unsigned long flags);
+ extern int split_swap_cluster_map(swp_entry_t entry);
+ #else
+-static inline int split_swap_cluster(swp_entry_t entry)
++static inline int split_swap_cluster(swp_entry_t entry, unsigned long flags)
+ {
+ 	return 0;
+ }
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index b8b61a0879f6..64123cefa978 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -2502,6 +2502,17 @@ static void __split_huge_page(struct page *page, struct list_head *list,
+ 
+ 	unfreeze_page(head);
+ 
++	/*
++	 * Split swap cluster before unlocking sub-pages.  So all
++	 * sub-pages will be kept locked from THP has been split to
++	 * swap cluster is split.
++	 */
++	if (PageSwapCache(head)) {
++		swp_entry_t entry = { .val = page_private(head) };
++
++		split_swap_cluster(entry, SSC_SPLIT_CACHED);
++	}
++
+ 	for (i = 0; i < HPAGE_PMD_NR; i++) {
+ 		struct page *subpage = head + i;
+ 		if (subpage == page)
+@@ -2728,12 +2739,7 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
+ 			__dec_node_page_state(page, NR_SHMEM_THPS);
+ 		spin_unlock(&pgdata->split_queue_lock);
+ 		__split_huge_page(page, list, flags);
+-		if (PageSwapCache(head)) {
+-			swp_entry_t entry = { .val = page_private(head) };
+-
+-			ret = split_swap_cluster(entry);
+-		} else
+-			ret = 0;
++		ret = 0;
+ 	} else {
+ 		if (IS_ENABLED(CONFIG_DEBUG_VM) && mapcount) {
+ 			pr_alert("total_mapcount: %u, page_count(): %u\n",
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index 16723b9d971a..ef2b42c199c0 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -1469,23 +1469,6 @@ void put_swap_page(struct page *page, swp_entry_t entry)
+ 	unlock_cluster_or_swap_info(si, ci);
+ }
+ 
+-#ifdef CONFIG_THP_SWAP
+-int split_swap_cluster(swp_entry_t entry)
+-{
+-	struct swap_info_struct *si;
+-	struct swap_cluster_info *ci;
+-	unsigned long offset = swp_offset(entry);
+-
+-	si = _swap_info_get(entry);
+-	if (!si)
+-		return -EBUSY;
+-	ci = lock_cluster(si, offset);
+-	cluster_clear_huge(ci);
+-	unlock_cluster(ci);
+-	return 0;
+-}
+-#endif
+-
+ static int swp_entry_cmp(const void *ent1, const void *ent2)
+ {
+ 	const swp_entry_t *e1 = ent1, *e2 = ent2;
+@@ -4064,6 +4047,47 @@ int split_swap_cluster_map(swp_entry_t entry)
+ 	unlock_cluster(ci);
+ 	return 0;
+ }
++
++/*
++ * We will not try to split all PMD swap mappings to the swap cluster,
++ * because we haven't enough information available for that.  Later,
++ * when the PMD swap mapping is duplicated or swapin, etc, the PMD
++ * swap mapping will be split and fallback to the PTE operations.
++ */
++int split_swap_cluster(swp_entry_t entry, unsigned long flags)
++{
++	struct swap_info_struct *si;
++	struct swap_cluster_info *ci;
++	unsigned long offset = swp_offset(entry);
++	int ret = 0;
++
++	si = get_swap_device(entry);
++	if (!si)
++		return -EINVAL;
++	ci = lock_cluster(si, offset);
++	/* The swap cluster has been split by someone else, we are done */
++	if (!cluster_is_huge(ci))
++		goto out;
++	VM_BUG_ON(!IS_ALIGNED(offset, SWAPFILE_CLUSTER));
++	VM_BUG_ON(cluster_count(ci) < SWAPFILE_CLUSTER);
++	/*
++	 * If not requested, don't split swap cluster that has SWAP_HAS_CACHE
++	 * flag.  When the flag is cleared later, the huge swap cluster will
++	 * be split if there is no PMD swap mapping.
++	 */
++	if (!(flags & SSC_SPLIT_CACHED) &&
++	    si->swap_map[offset] & SWAP_HAS_CACHE) {
++		ret = -EEXIST;
++		goto out;
++	}
++	cluster_set_swapcount(ci, 0);
++	cluster_clear_huge(ci);
++
++out:
++	unlock_cluster(ci);
++	put_swap_device(si);
++	return ret;
++}
+ #endif
+ 
+ static int __init swapfile_init(void)
+-- 
+2.16.4
 
-This patchset is based on the 2018-09-04 head of mmotm/master.
-
-This is the final step of THP (Transparent Huge Page) swap
-optimization.  After the first and second step, the splitting huge
-page is delayed from almost the first step of swapout to after swapout
-has been finished.  In this step, we avoid splitting THP for swapout
-and swapout/swapin the THP in one piece.
-
-We tested the patchset with vm-scalability benchmark swap-w-seq test
-case, with 16 processes.  The test case forks 16 processes.  Each
-process allocates large anonymous memory range, and writes it from
-begin to end for 8 rounds.  The first round will swapout, while the
-remaining rounds will swapin and swapout.  The test is done on a Xeon
-E5 v3 system, the swap device used is a RAM simulated PMEM (persistent
-memory) device.  The test result is as follow,
-
-            base                  optimized
----------------- -------------------------- 
-         %stddev     %change         %stddev
-             \          |                \  
-   1417897 ±  2%    +992.8%   15494673        vm-scalability.throughput
-   1020489 ±  4%   +1091.2%   12156349        vmstat.swap.si
-   1255093 ±  3%    +940.3%   13056114        vmstat.swap.so
-   1259769 ±  7%   +1818.3%   24166779        meminfo.AnonHugePages
-  28021761           -10.7%   25018848 ±  2%  meminfo.AnonPages
-  64080064 ±  4%     -95.6%    2787565 ± 33%  interrupts.CAL:Function_call_interrupts
-     13.91 ±  5%     -13.8        0.10 ± 27%  perf-profile.children.cycles-pp.native_queued_spin_lock_slowpath
-
-Where, the score of benchmark (bytes written per second) improved
-992.8%.  The swapout/swapin throughput improved 1008% (from about
-2.17GB/s to 24.04GB/s).  The performance difference is huge.  In base
-kernel, for the first round of writing, the THP is swapout and split,
-so in the remaining rounds, there is only normal page swapin and
-swapout.  While in optimized kernel, the THP is kept after first
-swapout, so THP swapin and swapout is used in the remaining rounds.
-This shows the key benefit to swapout/swapin THP in one piece, the THP
-will be kept instead of being split.  meminfo information verified
-this, in base kernel only 4.5% of anonymous page are THP during the
-test, while in optimized kernel, that is 96.6%.  The TLB flushing IPI
-(represented as interrupts.CAL:Function_call_interrupts) reduced
-95.6%, while cycles for spinlock reduced from 13.9% to 0.1%.  These
-are performance benefit of THP swapout/swapin too.
-
-Below is the description for all steps of THP swap optimization.
-
-Recently, the performance of the storage devices improved so fast that
-we cannot saturate the disk bandwidth with single logical CPU when do
-page swapping even on a high-end server machine.  Because the
-performance of the storage device improved faster than that of single
-logical CPU.  And it seems that the trend will not change in the near
-future.  On the other hand, the THP becomes more and more popular
-because of increased memory size.  So it becomes necessary to optimize
-THP swap performance.
-
-The advantages to swapout/swapin a THP in one piece include:
-
-- Batch various swap operations for the THP.  Many operations need to
-  be done once per THP instead of per normal page, for example,
-  allocating/freeing the swap space, writing/reading the swap space,
-  flushing TLB, page fault, etc.  This will improve the performance of
-  the THP swap greatly.
-
-- The THP swap space read/write will be large sequential IO (2M on
-  x86_64).  It is particularly helpful for the swapin, which are
-  usually 4k random IO.  This will improve the performance of the THP
-  swap too.
-
-- It will help the memory fragmentation, especially when the THP is
-  heavily used by the applications.  The THP order pages will be free
-  up after THP swapout.
-
-- It will improve the THP utilization on the system with the swap
-  turned on.  Because the speed for khugepaged to collapse the normal
-  pages into the THP is quite slow.  After the THP is split during the
-  swapout, it will take quite long time for the normal pages to
-  collapse back into the THP after being swapin.  The high THP
-  utilization helps the efficiency of the page based memory management
-  too.
-
-There are some concerns regarding THP swapin, mainly because possible
-enlarged read/write IO size (for swapout/swapin) may put more overhead
-on the storage device.  To deal with that, the THP swapin is turned on
-only when necessary.  A new sysfs interface:
-/sys/kernel/mm/transparent_hugepage/swapin_enabled is added to
-configure it.  It uses "always/never/madvise" logic, to be turned on
-globally, turned off globally, or turned on only for VMA with
-MADV_HUGEPAGE, etc.
-GE, etc.
-
-Changelog
----------
-
-v5:
-
-- Rebased on 9/4 HEAD of mmotm/master
-
-- Merged the swap operations implementation for the huge and the
-  normal swap entries when possible
-
-- Added more code comments to improve code readability
-
-- Changed function parameter style to avoid to use Boolean parameter
-  as much as possible
-
-- Fixed a deadlock issue in do_huge_pmd_swap_page(), thanks 0-Day and sparse
-
-v4:
-
-- Rebased on 6/14 HEAD of mmotm/master
-
-- Fixed one build bug and several coding style issues, Thanks Daniel Jordon
-
-v3:
-
-- Rebased on 5/18 HEAD of mmotm/master
-
-- Fixed a build bug, Thanks 0-Day!
-
-v2:
-
-- Fixed several build bugs, Thanks 0-Day!
-
-- Improved documentation as suggested by Randy Dunlap.
-
-- Fixed several bugs in reading huge swap cluster
