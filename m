@@ -2,108 +2,157 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 063B1C070C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 23:11:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09975C070C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 23:13:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B30782146E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 23:11:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9305F2146E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 23:13:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="c46G/2mp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B30782146E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JhCc3ql3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9305F2146E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727803AbeIMERu (ORCPT
+        id S1726792AbeIMEUe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 00:17:50 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:57628 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726589AbeIMERt (ORCPT
+        Thu, 13 Sep 2018 00:20:34 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:37348 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726258AbeIMEUd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 00:17:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Zs9yXh4E72VTbWRc7k7YA9oLVP1vM34WmaYbsPLQbpc=; b=c46G/2mpBNPHveeGFZzQSHg7s
-        bcHpEDu122D0EvTQnVpQKdCMirTKd66KKqUOKTm0STha61LCqYcVnY9tWbQw7E7QUorBEIMkxANq/
-        MK+wf++b5gTL/VO/JvGao1e6voiQmZtB+cC6DjOFJIQ5sCtmW35sAN6uhjhM4ieQeBWos=;
-Received: from n2100.armlinux.org.uk ([2001:4d48:ad52:3201:214:fdff:fe10:4f86]:38876)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1g0EHf-0007F2-IO; Thu, 13 Sep 2018 00:10:55 +0100
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1g0EHc-0000sE-TL; Thu, 13 Sep 2018 00:10:52 +0100
-Date:   Thu, 13 Sep 2018 00:10:51 +0100
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Baruch Siach <baruch@tkos.co.il>
-Cc:     Jan =?iso-8859-1?Q?Kundr=E1t?= <jan.kundrat@cesnet.cz>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Jason Cooper <jason@lakedaemon.net>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [BISECTED] Regression: Solidrun Clearfog Base won't boot since
- "PCI: mvebu: Only remap I/O space if configured"
-Message-ID: <20180912231050.GX30658@n2100.armlinux.org.uk>
-References: <61fdfd69-2bb6-478c-b0d5-69d8744adae3@cesnet.cz>
- <87zhwm4kl6.fsf@tkos.co.il>
+        Thu, 13 Sep 2018 00:20:33 -0400
+Received: by mail-pf1-f194.google.com with SMTP id h69-v6so1741215pfd.4
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 16:13:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=+O0xyODcRdhQFpn8cQrhty2ZyEZa/RQwfHf7NrOScm4=;
+        b=JhCc3ql3Hz4ZgQIlSDFEmv5wLr4uULl4lzv6zbWVo7WhYtg6fLaUr7TJqXWY1iNt/I
+         Z/zz4+colP0NDQQr7KzMQ3y9gFcADWJLNuoRJuoe7VUjXhIKYx8wFq5UmPK3xA4bRuFm
+         8EjC9xhafAMVGO5oJwkS4jPOAkXW51D1g7kPaWAgVLDnkB9T1pLxLT9waEqJQTFc1i5n
+         lKvQA4UOhSk5nuSNUt9MxO5QdI3s39CwWVhtBNAYbpLhgqvMr6LFPVoOSjQJno65MmYd
+         S8gqB0/rt5MFdhFYqtJLkVyocnZ+xuz+SI93W82FtCLeH/wCOLruiKJW7ZQ+ttXXsKe2
+         XjhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=+O0xyODcRdhQFpn8cQrhty2ZyEZa/RQwfHf7NrOScm4=;
+        b=Aloz6PyOgDWsYKq4oZjOinBdA1VgNRbZ+GDwgX4DypLWxjTeEkrTR2+/B3/qpjRWuS
+         pbrX1Lq6ORmxwJCZIu+jlRb6P9ZP6Dy4CH9nZ31DEALhzKf3EABr2LpVDPE2jmaxiVBY
+         mGKVoucxD2P0In+I0lA15RytcphuwxEpUWgGOLJ2PLjZwBjKQZPA9rkNL5YsBDZEfkAX
+         to4W66OFXOmQQpFzTMUyKx447kufbokauDNc1roQqb+1dImP8xVnW5GFDH9eCm/YB49k
+         okiLWK301OgPO09LH5U4HaGBwZd2pTPHOx3hfHiElJHUOVnC1WwPPx2Es1ojijefGPZG
+         gdog==
+X-Gm-Message-State: APzg51D/RYKF7pIhFQX4o77JnJDcBacTNEbrdWrjzzx0PLu/X+Bc0TwK
+        WTGJMe0VDqo3FWKBh4jMPKT/XqPruZ5jy/GdZBijGQ==
+X-Google-Smtp-Source: ANB0VdY77GmJcedAamd4CHedH67fBkKCf0ySd+rjpvidxOlyC5hshOt4G+ps1O3rRFhC/0Rd9/ewRYNmsv9HEdmXyL0=
+X-Received: by 2002:aa7:800f:: with SMTP id j15-v6mr4660744pfi.174.1536794029808;
+ Wed, 12 Sep 2018 16:13:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87zhwm4kl6.fsf@tkos.co.il>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20180912002559.1853-1-natechancellor@gmail.com>
+ <CAKwvOdkMg_1JxVNhKrUM0CZxF6nQo8c5h7t4zu4RP2xEXyQdKQ@mail.gmail.com> <CAGL0aWeYARfArmSJwXemE_QdGeRwnfE-CKh+DaRY8jwEF0SU5w@mail.gmail.com>
+In-Reply-To: <CAGL0aWeYARfArmSJwXemE_QdGeRwnfE-CKh+DaRY8jwEF0SU5w@mail.gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Wed, 12 Sep 2018 16:13:38 -0700
+Message-ID: <CAKwvOdkSy74TKqASdMtWwHKOeAVQn+mEfv0Fi8q+-35dGjXtHA@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu: Add braces to initialize task_info subojects
+To:     Richard Smith <richardsmith@google.com>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        alexander.deucher@amd.com, christian.koenig@amd.com,
+        David1.Zhou@amd.com, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 09:49:41PM +0300, Baruch Siach wrote:
-> I reproduced the same Oops on Clearfog Base without any taint:
-> 
-> [    1.476401] Internal error: Oops - undefined instruction: 0 [#1] SMP ARM
-...
-> [    1.855954] Code: e2844004 e5972000 e3520000 0affffee (e7f001f2)
+On Wed, Sep 12, 2018 at 1:24 PM Richard Smith <richardsmith@google.com> wro=
+te:
+>
+> On Wed, Sep 12, 2018 at 10:38 AM Nick Desaulniers <ndesaulniers@google.co=
+m> wrote:
+>>
+>> On Tue, Sep 11, 2018 at 5:26 PM Nathan Chancellor
+>> <natechancellor@gmail.com> wrote:
+>> >
+>> > Clang warns if there are missing braces around a subobject
+>> > initializer.
+>> >
+>> > drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c:1447:41: warning: suggest braces
+>> > around initialization of subobject [-Wmissing-braces]
+>> >                 struct amdgpu_task_info task_info =3D { 0 };
+>> >                                                       ^
+>> >                                                       {}
+>> > 1 warning generated.
+>> >
+>> > drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c:262:41: warning: suggest braces
+>> > around initialization of subobject [-Wmissing-braces]
+>> >                 struct amdgpu_task_info task_info =3D { 0 };
+>> >                                                       ^
+>> >                                                       {}
+>> > 1 warning generated.
+>> >
+>> > Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+>> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+>> > ---
+>> >  drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c | 2 +-
+>> >  drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c | 2 +-
+>> >  2 files changed, 2 insertions(+), 2 deletions(-)
+>> >
+>> > diff --git a/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c b/drivers/gpu/drm/a=
+md/amdgpu/gmc_v8_0.c
+>> > index 9333109b210d..968cc1b8cdff 100644
+>> > --- a/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
+>> > +++ b/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
+>> > @@ -1444,7 +1444,7 @@ static int gmc_v8_0_process_interrupt(struct amd=
+gpu_device *adev,
+>> >                 gmc_v8_0_set_fault_enable_default(adev, false);
+>> >
+>> >         if (printk_ratelimit()) {
+>> > -               struct amdgpu_task_info task_info =3D { 0 };
+>> > +               struct amdgpu_task_info task_info =3D { { 0 } };
+>>
+>> Hi Nathan,
+>> Thanks for this patch.  I discussed this syntax with our language
+>> lawyers.  Turns out, this is not quite correct, as you're now saying
+>> "initialize the first subobject to zero, but not the rest of the
+>> object."  -Wmissing-field-initializers would highlight this, but it's
+>> not part of -Wall.  It would be more correct to zero initialize the
+>> full struct, including all of its subobjects with `=3D {};`.
+>
+>
+> Sorry, I think I've caused some confusion here.
+>
+> Elements with an omitted initializer get implicitly zero-initialized. In =
+C++, it's idiomatic to write `=3D {}` to perform aggregate zero-initializat=
+ion, but in C, that's invalid because at least one initializer is syntactic=
+ally required within the braces. As a result, `=3D {0}` is an idiomatic way=
+ to perform zero-initialization of an aggregate in C.
 
-That is a BUG().  Please turn on verbose bug reporting to get more
-information about the cause.
+That doesn't seem to be the case:
+https://godbolt.org/z/TZzfo6 shouldn't Clang warn in the case of bar()?
 
-There are two possibilities:
+> Clang intends to suppress the -Wmissing-braces in that case; if the warni=
+ng is still being produced in a recent version of Clang, that's a bug. Howe=
+ver, the warning suppression was added between Clang 5 and Clang 6, so it's=
+ very plausible that the compiler being used here is simply older than the =
+warning fix.
+>
+> (Long story short: the change here seems fine, but should be unnecessary =
+as of Clang 6.)
 
-        BUG_ON(addr >= end);
+The warning was identified from clang-8 ToT synced yesterday.
 
-and
-
-                BUG_ON(!pte_none(*pte));
-
-It's probably the latter - the region is probably already mapped, that
-being the PCI IO region.
-
-The original driver was setup to call pci_ioremap_io() as the very
-last thing - and as the driver is non-removable, we were guaranteed
-to never tear down this mapping (which is sensible, it's published
-to userspace.)
-
-However, the current code calls pci_ioremap_io() much earlier, in
-a path where probe failures can occur.  This breaks pci_ioremap_io()'s
-requirements - it must not be called more than once.  So:
-
-ee1604381a37 ("PCI: mvebu: Only remap I/O space if configured")
-
-is basically incorrect - pci_ioremap_io() needs to move back to a
-place where it is only called in a path which will never fail.
-However, looking at the generic host bits, I'm not sure such a place
-exists in the new effort to make stuff more generic.
-
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 13.8Mbps down 630kbps up
-According to speedtest.net: 13Mbps down 490kbps up
+--=20
+Thanks,
+~Nick Desaulniers
