@@ -6,45 +6,51 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D205C070C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:22:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7049C070C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:22:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D78BF20880
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:22:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D78BF20880
+	by mail.kernel.org (Postfix) with ESMTP id 63FC620880
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:22:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63FC620880
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728317AbeIMA2O (ORCPT
+        id S1728324AbeIMA2r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 20:28:14 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:40595 "EHLO
+        Wed, 12 Sep 2018 20:28:47 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:60001 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728121AbeIMA2O (ORCPT
+        with ESMTP id S1728121AbeIMA2r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 20:28:14 -0400
+        Wed, 12 Sep 2018 20:28:47 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8CJMAFU2744408
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8CJLcPQ2744359
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 12 Sep 2018 12:22:10 -0700
+        Wed, 12 Sep 2018 12:21:38 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8CJMAUH2744405;
-        Wed, 12 Sep 2018 12:22:10 -0700
-Date:   Wed, 12 Sep 2018 12:22:10 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8CJLbJn2744356;
+        Wed, 12 Sep 2018 12:21:37 -0700
+Date:   Wed, 12 Sep 2018 12:21:37 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Adrian Hunter <tipbot@zytor.com>
-Message-ID: <tip-03db8b583d1c3c84963e08e2abf6c79081da5c31@git.kernel.org>
-Cc:     mingo@kernel.org, acme@redhat.com, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, bjorn.topel@intel.com,
-        jolsa@redhat.com, hpa@zytor.com, adrian.hunter@intel.com
-Reply-To: adrian.hunter@intel.com, hpa@zytor.com, jolsa@redhat.com,
-          bjorn.topel@intel.com, mingo@kernel.org, acme@redhat.com,
-          tglx@linutronix.de, linux-kernel@vger.kernel.org
-In-Reply-To: <20180907085116.25782-1-adrian.hunter@intel.com>
-References: <20180907085116.25782-1-adrian.hunter@intel.com>
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-xd9ztioa894zemv8ag8kg64u@git.kernel.org>
+Cc:     jakub.kicinski@netronome.com, daniel@iogearbox.net,
+        stephen@networkplumber.org, dsahern@gmail.com,
+        linux-kernel@vger.kernel.org, jolsa@kernel.org, mingo@kernel.org,
+        namhyung@kernel.org, adrian.hunter@intel.com, hpa@zytor.com,
+        tglx@linutronix.de, wangnan0@huawei.com, acme@redhat.com,
+        nikolay@cumulusnetworks.com, steffen.klassert@secunet.com,
+        davem@davemloft.net
+Reply-To: jakub.kicinski@netronome.com, daniel@iogearbox.net,
+          dsahern@gmail.com, stephen@networkplumber.org, hpa@zytor.com,
+          tglx@linutronix.de, namhyung@kernel.org, adrian.hunter@intel.com,
+          linux-kernel@vger.kernel.org, mingo@kernel.org, jolsa@kernel.org,
+          wangnan0@huawei.com, steffen.klassert@secunet.com,
+          acme@redhat.com, nikolay@cumulusnetworks.com, davem@davemloft.net
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf tools: Fix maps__find_symbol_by_name()
-Git-Commit-ID: 03db8b583d1c3c84963e08e2abf6c79081da5c31
+Subject: [tip:perf/urgent] tools headers uapi: Update tools's copy of
+ linux/if_link.h
+Git-Commit-ID: 5db48a8d01319620d390bf6d9da5410be14f98e3
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -58,67 +64,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  03db8b583d1c3c84963e08e2abf6c79081da5c31
-Gitweb:     https://git.kernel.org/tip/03db8b583d1c3c84963e08e2abf6c79081da5c31
-Author:     Adrian Hunter <adrian.hunter@intel.com>
-AuthorDate: Fri, 7 Sep 2018 11:51:16 +0300
+Commit-ID:  5db48a8d01319620d390bf6d9da5410be14f98e3
+Gitweb:     https://git.kernel.org/tip/5db48a8d01319620d390bf6d9da5410be14f98e3
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Tue, 11 Sep 2018 14:10:52 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Tue, 11 Sep 2018 14:12:51 -0300
+CommitDate: Tue, 11 Sep 2018 14:10:52 -0300
 
-perf tools: Fix maps__find_symbol_by_name()
+tools headers uapi: Update tools's copy of linux/if_link.h
 
-Commit 1c5aae7710bb ("perf machine: Create maps for x86 PTI entry
-trampolines") revealed a problem with maps__find_symbol_by_name() that
-resulted in probes not being found e.g.
+To get the changes in:
 
-	$ sudo perf probe xsk_mmap
-	xsk_mmap is out of .text, skip it.
-	Probe point 'xsk_mmap' not found.
-	   Error: Failed to add events.
+	3e7a50ceb11e ("net: report min and max mtu network device settings")
+	2756f68c3149 ("net: bridge: add support for backup port")
+	a25717d2b604 ("xdp: support simultaneous driver and hw XDP attachment")
+	4f91da26c811 ("xdp: add per mode attributes for attached programs")
+	f203b76d7809 ("xfrm: Add virtual xfrm interfaces")
 
-maps__find_symbol_by_name() can optionally return the map of the found
-symbol. It can get the map wrong because, in fact, the symbol is found
-on the map's dso, not allowing for the possibility that the dso has more
-than one map. Fix by always checking the map contains the symbol.
+Silencing this libbpf build warning:
 
-Reported-by: Björn Töpel <bjorn.topel@intel.com>
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Tested-by: Björn Töpel <bjorn.topel@intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: stable@vger.kernel.org
-Fixes: 1c5aae7710bb ("perf machine: Create maps for x86 PTI entry trampolines")
-Link: http://lkml.kernel.org/r/20180907085116.25782-1-adrian.hunter@intel.com
+	Warning: Kernel ABI header at 'tools/include/uapi/linux/if_link.h' differs from latest version at 'include/uapi/linux/if_link.h'
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Jakub Kicinski <jakub.kicinski@netronome.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+Cc: Steffen Klassert <steffen.klassert@secunet.com>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-xd9ztioa894zemv8ag8kg64u@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/map.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ tools/include/uapi/linux/if_link.h | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
-index 36d0763311ef..6a6929f208b4 100644
---- a/tools/perf/util/map.c
-+++ b/tools/perf/util/map.c
-@@ -576,6 +576,13 @@ struct symbol *map_groups__find_symbol(struct map_groups *mg,
- 	return NULL;
- }
+diff --git a/tools/include/uapi/linux/if_link.h b/tools/include/uapi/linux/if_link.h
+index cf01b6824244..43391e2d1153 100644
+--- a/tools/include/uapi/linux/if_link.h
++++ b/tools/include/uapi/linux/if_link.h
+@@ -164,6 +164,8 @@ enum {
+ 	IFLA_CARRIER_UP_COUNT,
+ 	IFLA_CARRIER_DOWN_COUNT,
+ 	IFLA_NEW_IFINDEX,
++	IFLA_MIN_MTU,
++	IFLA_MAX_MTU,
+ 	__IFLA_MAX
+ };
  
-+static bool map__contains_symbol(struct map *map, struct symbol *sym)
-+{
-+	u64 ip = map->unmap_ip(map, sym->start);
-+
-+	return ip >= map->start && ip < map->end;
-+}
-+
- struct symbol *maps__find_symbol_by_name(struct maps *maps, const char *name,
- 					 struct map **mapp)
- {
-@@ -591,6 +598,10 @@ struct symbol *maps__find_symbol_by_name(struct maps *maps, const char *name,
+@@ -334,6 +336,7 @@ enum {
+ 	IFLA_BRPORT_GROUP_FWD_MASK,
+ 	IFLA_BRPORT_NEIGH_SUPPRESS,
+ 	IFLA_BRPORT_ISOLATED,
++	IFLA_BRPORT_BACKUP_PORT,
+ 	__IFLA_BRPORT_MAX
+ };
+ #define IFLA_BRPORT_MAX (__IFLA_BRPORT_MAX - 1)
+@@ -459,6 +462,16 @@ enum {
  
- 		if (sym == NULL)
- 			continue;
-+		if (!map__contains_symbol(pos, sym)) {
-+			sym = NULL;
-+			continue;
-+		}
- 		if (mapp != NULL)
- 			*mapp = pos;
- 		goto out;
+ #define IFLA_MACSEC_MAX (__IFLA_MACSEC_MAX - 1)
+ 
++/* XFRM section */
++enum {
++	IFLA_XFRM_UNSPEC,
++	IFLA_XFRM_LINK,
++	IFLA_XFRM_IF_ID,
++	__IFLA_XFRM_MAX
++};
++
++#define IFLA_XFRM_MAX (__IFLA_XFRM_MAX - 1)
++
+ enum macsec_validation_type {
+ 	MACSEC_VALIDATE_DISABLED = 0,
+ 	MACSEC_VALIDATE_CHECK = 1,
+@@ -920,6 +933,7 @@ enum {
+ 	XDP_ATTACHED_DRV,
+ 	XDP_ATTACHED_SKB,
+ 	XDP_ATTACHED_HW,
++	XDP_ATTACHED_MULTI,
+ };
+ 
+ enum {
+@@ -928,6 +942,9 @@ enum {
+ 	IFLA_XDP_ATTACHED,
+ 	IFLA_XDP_FLAGS,
+ 	IFLA_XDP_PROG_ID,
++	IFLA_XDP_DRV_PROG_ID,
++	IFLA_XDP_SKB_PROG_ID,
++	IFLA_XDP_HW_PROG_ID,
+ 	__IFLA_XDP_MAX,
+ };
+ 
