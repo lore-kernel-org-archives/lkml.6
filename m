@@ -2,406 +2,148 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02211C04ABB
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 03:18:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04B0CC04ABB
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 03:18:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8EB320882
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 03:18:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8EB320882
+	by mail.kernel.org (Postfix) with ESMTP id B52CE20882
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 03:18:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B52CE20882
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728369AbeILIUh (ORCPT
+        id S1728381AbeILIUj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 04:20:37 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56164 "EHLO mx1.redhat.com"
+        Wed, 12 Sep 2018 04:20:39 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44576 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728242AbeILIUg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 04:20:36 -0400
+        id S1728358AbeILIUi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 04:20:38 -0400
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 18AE1402333A;
-        Wed, 12 Sep 2018 03:18:10 +0000 (UTC)
-Received: from jason-ThinkPad-T450s.redhat.com (ovpn-12-130.pek2.redhat.com [10.72.12.130])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1DF322027EA4;
-        Wed, 12 Sep 2018 03:18:06 +0000 (UTC)
-From:   Jason Wang <jasowang@redhat.com>
-To:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        mst@redhat.com, jasowang@redhat.com
-Subject: [PATCH net-next V2 11/11] vhost_net: batch submitting XDP buffers to underlayer sockets
-Date:   Wed, 12 Sep 2018 11:17:09 +0800
-Message-Id: <20180912031709.14112-12-jasowang@redhat.com>
-In-Reply-To: <20180912031709.14112-1-jasowang@redhat.com>
-References: <20180912031709.14112-1-jasowang@redhat.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id 18F0040241C0;
+        Wed, 12 Sep 2018 03:18:13 +0000 (UTC)
+Received: from localhost (ovpn-8-17.pek2.redhat.com [10.72.8.17])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D8C232027EA4;
+        Wed, 12 Sep 2018 03:18:11 +0000 (UTC)
+Date:   Wed, 12 Sep 2018 11:18:08 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     tglx@linutronix.de, hpa@zytor.com, thgarnie@google.com,
+        kirill.shutemov@linux.intel.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v2 2/3] x86/mm/KASLR: Calculate the actual size of
+ vmemmap region
+Message-ID: <20180912031808.GC1740@192.168.1.3>
+References: <20180909124946.17988-1-bhe@redhat.com>
+ <20180909124946.17988-2-bhe@redhat.com>
+ <20180910061151.GA85199@gmail.com>
+ <20180911073057.GW1740@192.168.1.3>
+ <20180911075946.GA97454@gmail.com>
+ <20180911081811.GY1740@192.168.1.3>
+ <20180911092829.GA9079@gmail.com>
+ <20180911120803.GZ1740@192.168.1.3>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180911120803.GZ1740@192.168.1.3>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 12 Sep 2018 03:18:10 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 12 Sep 2018 03:18:10 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jasowang@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 12 Sep 2018 03:18:13 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 12 Sep 2018 03:18:13 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch implements XDP batching for vhost_net. The idea is first to
-try to do userspace copy and build XDP buff directly in vhost. Instead
-of submitting the packet immediately, vhost_net will batch them in an
-array and submit every 64 (VHOST_NET_BATCH) packets to the under layer
-sockets through msg_control of sendmsg().
+On 09/11/18 at 08:08pm, Baoquan He wrote:
+> On 09/11/18 at 11:28am, Ingo Molnar wrote:
+> > Yeah, so proper context is still missing, this paragraph appears to assume from the reader a 
+> > whole lot of prior knowledge, and this is one of the top comments in kaslr.c so there's nowhere 
+> > else to go read about the background.
+> > 
+> > For example what is the range of randomization of each region? Assuming the static, 
+> > non-randomized description in Documentation/x86/x86_64/mm.txt is correct, in what way does 
+> > KASLR modify that layout?
 
-When XDP is enabled on the TUN/TAP, TUN/TAP can process XDP inside a
-loop without caring GUP thus it can do batch map flushing. When XDP is
-not enabled or not supported, the underlayer socket need to build skb
-and pass it to network core. The batched packet submission allows us
-to do batching like netif_receive_skb_list() in the future.
+Re-read this paragraph, found I missed saying the range for each memory
+region, and in what way KASLR modify the layout.
 
-This saves lots of indirect calls for better cache utilization. For
-the case that we can't so batching e.g when sndbuf is limited or
-packet size is too large, we will go for usual one packet per
-sendmsg() way.
+> > 
+> > All of this is very opaque and not explained very well anywhere that I could find. We need to 
+> > generate a proper description ASAP.
+> 
+> OK, let me try to give an context with my understanding. And copy the
+> static layout of memory regions at below for reference.
+> 
+Here, Documentation/x86/x86_64/mm.txt is correct, and it's the
+guideline for us to manipulate the layout of kernel memory regions.
+Originally the starting address of each region is aligned to 512GB
+so that they are all mapped at the 0-th entry of PGD table in 4-level
+page mapping. Since we are so rich to have 120 TB virtual address space,
+they are aligned at 1 TB actually. So randomness comes from three parts
+mainly:
 
-Doing testpmd on various setups gives us:
+1) The direct mapping region for physical memory. 64 TB are reserved to
+cover the maximum physical memory support. However, most of systems only
+have much less RAM memory than 64 TB, even much less than 1 TB most of
+time. We can take the superfluous to join the randomization. This is
+often the biggest part.
 
-Test                /+pps%
-XDP_DROP on TAP     /+44.8%
-XDP_REDIRECT on TAP /+29%
-macvtap (skb)       /+26%
+2) The hole between memory regions, even though they are only 1 TB.
 
-Netperf tests shows obvious improvements for small packet transmission:
+3) KASAN region takes up 16 TB, while it won't take effect when KASLR is
+enabled. This is another big part. 
 
-size/session/+thu%/+normalize%
-   64/     1/   +2%/    0%
-   64/     2/   +3%/   +1%
-   64/     4/   +7%/   +5%
-   64/     8/   +8%/   +6%
-  256/     1/   +3%/    0%
-  256/     2/  +10%/   +7%
-  256/     4/  +26%/  +22%
-  256/     8/  +27%/  +23%
-  512/     1/   +3%/   +2%
-  512/     2/  +19%/  +14%
-  512/     4/  +43%/  +40%
-  512/     8/  +45%/  +41%
- 1024/     1/   +4%/    0%
- 1024/     2/  +27%/  +21%
- 1024/     4/  +38%/  +73%
- 1024/     8/  +15%/  +24%
- 2048/     1/  +10%/   +7%
- 2048/     2/  +16%/  +12%
- 2048/     4/    0%/   +2%
- 2048/     8/    0%/   +2%
- 4096/     1/  +36%/  +60%
- 4096/     2/  -11%/  -26%
- 4096/     4/    0%/  +14%
- 4096/     8/    0%/   +4%
-16384/     1/   -1%/   +5%
-16384/     2/    0%/   +2%
-16384/     4/    0%/   -3%
-16384/     8/    0%/   +4%
-65535/     1/    0%/  +10%
-65535/     2/    0%/   +8%
-65535/     4/    0%/   +1%
-65535/     8/    0%/   +3%
+As you can see, in these three memory regions, the physical memory
+mapping region has variable size according to the existing system RAM.
+However, the remaining two memory regions have fixed size, vmalloc is 32
+TB, vmemmap is 1 TB.
 
-Signed-off-by: Jason Wang <jasowang@redhat.com>
----
- drivers/vhost/net.c | 174 ++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 161 insertions(+), 13 deletions(-)
+With this superfluous address space as well as changing the starting address
+of each memory region to be PUD level, namely 1 GB aligned, we can have
+thousands of candidate position to locate those three memory regions.
 
-diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-index fb01ce6d981c..dd4e0a301635 100644
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -116,6 +116,8 @@ struct vhost_net_virtqueue {
- 	 * For RX, number of batched heads
- 	 */
- 	int done_idx;
-+	/* Number of XDP frames batched */
-+	int batched_xdp;
- 	/* an array of userspace buffers info */
- 	struct ubuf_info *ubuf_info;
- 	/* Reference counting for outstanding ubufs.
-@@ -123,6 +125,8 @@ struct vhost_net_virtqueue {
- 	struct vhost_net_ubuf_ref *ubufs;
- 	struct ptr_ring *rx_ring;
- 	struct vhost_net_buf rxq;
-+	/* Batched XDP buffs */
-+	struct xdp_buff *xdp;
- };
- 
- struct vhost_net {
-@@ -338,6 +342,11 @@ static bool vhost_sock_zcopy(struct socket *sock)
- 		sock_flag(sock->sk, SOCK_ZEROCOPY);
- }
- 
-+static bool vhost_sock_xdp(struct socket *sock)
-+{
-+	return sock_flag(sock->sk, SOCK_XDP);
-+}
-+
- /* In case of DMA done not in order in lower device driver for some reason.
-  * upend_idx is used to track end of used idx, done_idx is used to track head
-  * of used idx. Once lower device DMA done contiguously, we will signal KVM
-@@ -444,10 +453,37 @@ static void vhost_net_signal_used(struct vhost_net_virtqueue *nvq)
- 	nvq->done_idx = 0;
- }
- 
-+static void vhost_tx_batch(struct vhost_net *net,
-+			   struct vhost_net_virtqueue *nvq,
-+			   struct socket *sock,
-+			   struct msghdr *msghdr)
-+{
-+	struct tun_msg_ctl ctl = {
-+		.type = TUN_MSG_PTR,
-+		.num = nvq->batched_xdp,
-+		.ptr = nvq->xdp,
-+	};
-+	int err;
-+
-+	if (nvq->batched_xdp == 0)
-+		goto signal_used;
-+
-+	msghdr->msg_control = &ctl;
-+	err = sock->ops->sendmsg(sock, msghdr, 0);
-+	if (unlikely(err < 0)) {
-+		vq_err(&nvq->vq, "Fail to batch sending packets\n");
-+		return;
-+	}
-+
-+signal_used:
-+	vhost_net_signal_used(nvq);
-+	nvq->batched_xdp = 0;
-+}
-+
- static int vhost_net_tx_get_vq_desc(struct vhost_net *net,
- 				    struct vhost_net_virtqueue *nvq,
- 				    unsigned int *out_num, unsigned int *in_num,
--				    bool *busyloop_intr)
-+				    struct msghdr *msghdr, bool *busyloop_intr)
- {
- 	struct vhost_virtqueue *vq = &nvq->vq;
- 	unsigned long uninitialized_var(endtime);
-@@ -455,8 +491,9 @@ static int vhost_net_tx_get_vq_desc(struct vhost_net *net,
- 				  out_num, in_num, NULL, NULL);
- 
- 	if (r == vq->num && vq->busyloop_timeout) {
-+		/* Flush batched packets first */
- 		if (!vhost_sock_zcopy(vq->private_data))
--			vhost_net_signal_used(nvq);
-+			vhost_tx_batch(net, nvq, vq->private_data, msghdr);
- 		preempt_disable();
- 		endtime = busy_clock() + vq->busyloop_timeout;
- 		while (vhost_can_busy_poll(endtime)) {
-@@ -512,7 +549,7 @@ static int get_tx_bufs(struct vhost_net *net,
- 	struct vhost_virtqueue *vq = &nvq->vq;
- 	int ret;
- 
--	ret = vhost_net_tx_get_vq_desc(net, nvq, out, in, busyloop_intr);
-+	ret = vhost_net_tx_get_vq_desc(net, nvq, out, in, msg, busyloop_intr);
- 
- 	if (ret < 0 || ret == vq->num)
- 		return ret;
-@@ -540,6 +577,80 @@ static bool tx_can_batch(struct vhost_virtqueue *vq, size_t total_len)
- 	       !vhost_vq_avail_empty(vq->dev, vq);
- }
- 
-+#define VHOST_NET_RX_PAD (NET_IP_ALIGN + NET_SKB_PAD)
-+
-+static int vhost_net_build_xdp(struct vhost_net_virtqueue *nvq,
-+			       struct iov_iter *from)
-+{
-+	struct vhost_virtqueue *vq = &nvq->vq;
-+	struct socket *sock = vq->private_data;
-+	struct page_frag *alloc_frag = &current->task_frag;
-+	struct virtio_net_hdr *gso;
-+	struct xdp_buff *xdp = &nvq->xdp[nvq->batched_xdp];
-+	struct tun_xdp_hdr *hdr;
-+	size_t len = iov_iter_count(from);
-+	int headroom = vhost_sock_xdp(sock) ? XDP_PACKET_HEADROOM : 0;
-+	int buflen = SKB_DATA_ALIGN(sizeof(struct skb_shared_info));
-+	int pad = SKB_DATA_ALIGN(VHOST_NET_RX_PAD + headroom + nvq->sock_hlen);
-+	int sock_hlen = nvq->sock_hlen;
-+	void *buf;
-+	int copied;
-+
-+	if (unlikely(len < nvq->sock_hlen))
-+		return -EFAULT;
-+
-+	if (SKB_DATA_ALIGN(len + pad) +
-+	    SKB_DATA_ALIGN(sizeof(struct skb_shared_info)) > PAGE_SIZE)
-+		return -ENOSPC;
-+
-+	buflen += SKB_DATA_ALIGN(len + pad);
-+	alloc_frag->offset = ALIGN((u64)alloc_frag->offset, SMP_CACHE_BYTES);
-+	if (unlikely(!skb_page_frag_refill(buflen, alloc_frag, GFP_KERNEL)))
-+		return -ENOMEM;
-+
-+	buf = (char *)page_address(alloc_frag->page) + alloc_frag->offset;
-+	copied = copy_page_from_iter(alloc_frag->page,
-+				     alloc_frag->offset +
-+				     offsetof(struct tun_xdp_hdr, gso),
-+				     sock_hlen, from);
-+	if (copied != sock_hlen)
-+		return -EFAULT;
-+
-+	hdr = buf;
-+	gso = &hdr->gso;
-+
-+	if ((gso->flags & VIRTIO_NET_HDR_F_NEEDS_CSUM) &&
-+	    vhost16_to_cpu(vq, gso->csum_start) +
-+	    vhost16_to_cpu(vq, gso->csum_offset) + 2 >
-+	    vhost16_to_cpu(vq, gso->hdr_len)) {
-+		gso->hdr_len = cpu_to_vhost16(vq,
-+			       vhost16_to_cpu(vq, gso->csum_start) +
-+			       vhost16_to_cpu(vq, gso->csum_offset) + 2);
-+
-+		if (vhost16_to_cpu(vq, gso->hdr_len) > len)
-+			return -EINVAL;
-+	}
-+
-+	len -= sock_hlen;
-+	copied = copy_page_from_iter(alloc_frag->page,
-+				     alloc_frag->offset + pad,
-+				     len, from);
-+	if (copied != len)
-+		return -EFAULT;
-+
-+	xdp->data_hard_start = buf;
-+	xdp->data = buf + pad;
-+	xdp->data_end = xdp->data + len;
-+	hdr->buflen = buflen;
-+
-+	get_page(alloc_frag->page);
-+	alloc_frag->offset += buflen;
-+
-+	++nvq->batched_xdp;
-+
-+	return 0;
-+}
-+
- static void handle_tx_copy(struct vhost_net *net, struct socket *sock)
- {
- 	struct vhost_net_virtqueue *nvq = &net->vqs[VHOST_NET_VQ_TX];
-@@ -556,10 +667,14 @@ static void handle_tx_copy(struct vhost_net *net, struct socket *sock)
- 	size_t len, total_len = 0;
- 	int err;
- 	int sent_pkts = 0;
-+	bool sock_can_batch = (sock->sk->sk_sndbuf == INT_MAX);
- 
- 	for (;;) {
- 		bool busyloop_intr = false;
- 
-+		if (nvq->done_idx == VHOST_NET_BATCH)
-+			vhost_tx_batch(net, nvq, sock, &msg);
-+
- 		head = get_tx_bufs(net, nvq, &msg, &out, &in, &len,
- 				   &busyloop_intr);
- 		/* On error, stop handling until the next kick. */
-@@ -577,14 +692,34 @@ static void handle_tx_copy(struct vhost_net *net, struct socket *sock)
- 			break;
- 		}
- 
--		vq->heads[nvq->done_idx].id = cpu_to_vhost32(vq, head);
--		vq->heads[nvq->done_idx].len = 0;
--
- 		total_len += len;
--		if (tx_can_batch(vq, total_len))
--			msg.msg_flags |= MSG_MORE;
--		else
--			msg.msg_flags &= ~MSG_MORE;
-+
-+		/* For simplicity, TX batching is only enabled if
-+		 * sndbuf is unlimited.
-+		 */
-+		if (sock_can_batch) {
-+			err = vhost_net_build_xdp(nvq, &msg.msg_iter);
-+			if (!err) {
-+				goto done;
-+			} else if (unlikely(err != -ENOSPC)) {
-+				vhost_tx_batch(net, nvq, sock, &msg);
-+				vhost_discard_vq_desc(vq, 1);
-+				vhost_net_enable_vq(net, vq);
-+				break;
-+			}
-+
-+			/* We can't build XDP buff, go for single
-+			 * packet path but let's flush batched
-+			 * packets.
-+			 */
-+			vhost_tx_batch(net, nvq, sock, &msg);
-+			msg.msg_control = NULL;
-+		} else {
-+			if (tx_can_batch(vq, total_len))
-+				msg.msg_flags |= MSG_MORE;
-+			else
-+				msg.msg_flags &= ~MSG_MORE;
-+		}
- 
- 		/* TODO: Check specific error and bomb out unless ENOBUFS? */
- 		err = sock->ops->sendmsg(sock, &msg, len);
-@@ -596,15 +731,17 @@ static void handle_tx_copy(struct vhost_net *net, struct socket *sock)
- 		if (err != len)
- 			pr_debug("Truncated TX packet: len %d != %zd\n",
- 				 err, len);
--		if (++nvq->done_idx >= VHOST_NET_BATCH)
--			vhost_net_signal_used(nvq);
-+done:
-+		vq->heads[nvq->done_idx].id = cpu_to_vhost32(vq, head);
-+		vq->heads[nvq->done_idx].len = 0;
-+		++nvq->done_idx;
- 		if (vhost_exceeds_weight(++sent_pkts, total_len)) {
- 			vhost_poll_queue(&vq->poll);
- 			break;
- 		}
- 	}
- 
--	vhost_net_signal_used(nvq);
-+	vhost_tx_batch(net, nvq, sock, &msg);
- }
- 
- static void handle_tx_zerocopy(struct vhost_net *net, struct socket *sock)
-@@ -1081,6 +1218,7 @@ static int vhost_net_open(struct inode *inode, struct file *f)
- 	struct vhost_dev *dev;
- 	struct vhost_virtqueue **vqs;
- 	void **queue;
-+	struct xdp_buff *xdp;
- 	int i;
- 
- 	n = kvmalloc(sizeof *n, GFP_KERNEL | __GFP_RETRY_MAYFAIL);
-@@ -1101,6 +1239,14 @@ static int vhost_net_open(struct inode *inode, struct file *f)
- 	}
- 	n->vqs[VHOST_NET_VQ_RX].rxq.queue = queue;
- 
-+	xdp = kmalloc_array(VHOST_NET_BATCH, sizeof(*xdp), GFP_KERNEL);
-+	if (!xdp) {
-+		kfree(vqs);
-+		kvfree(n);
-+		kfree(queue);
-+	}
-+	n->vqs[VHOST_NET_VQ_TX].xdp = xdp;
-+
- 	dev = &n->dev;
- 	vqs[VHOST_NET_VQ_TX] = &n->vqs[VHOST_NET_VQ_TX].vq;
- 	vqs[VHOST_NET_VQ_RX] = &n->vqs[VHOST_NET_VQ_RX].vq;
-@@ -1111,6 +1257,7 @@ static int vhost_net_open(struct inode *inode, struct file *f)
- 		n->vqs[i].ubuf_info = NULL;
- 		n->vqs[i].upend_idx = 0;
- 		n->vqs[i].done_idx = 0;
-+		n->vqs[i].batched_xdp = 0;
- 		n->vqs[i].vhost_hlen = 0;
- 		n->vqs[i].sock_hlen = 0;
- 		n->vqs[i].rx_ring = NULL;
-@@ -1194,6 +1341,7 @@ static int vhost_net_release(struct inode *inode, struct file *f)
- 	 * since jobs can re-queue themselves. */
- 	vhost_net_flush(n);
- 	kfree(n->vqs[VHOST_NET_VQ_RX].rxq.queue);
-+	kfree(n->vqs[VHOST_NET_VQ_TX].xdp);
- 	kfree(n->dev.vqs);
- 	kvfree(n);
- 	return 0;
--- 
-2.17.1
+Above is for 4-level paging mode . As for 5-level, since the virtual
+address space is too big, Kirill makes the starting address of regions
+P4D aligned, namely 512 GB.
 
+When randomize the layout, their order are kept, still the physical
+memory mapping region is handled fistly, next vmalloc and vmemmap. Let's
+take the physical memory mapping region as example, we limit the
+starting address to be taken from the 1st 1/3 part of the whole
+available virtual address space which is from 0xffff880000000000 to
+0xfffffe0000000000, namely the original starting address of the physical
+memory mapping region to the starting address of cpu_entry_area mapping
+region. Once a random address is chosen for the physical memory mapping,
+we jump over the region and add 1G to begin the next region handling
+with the remaining available space.
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ffff880000000000 - ffffc7ffffffffff (=64 TB) direct mapping of all phys. memory                                                                   
+136T - 200T = 64TB
+ffffc80000000000 - ffffc8ffffffffff (=40 bits) hole
+200T - 201T = 1TB
+ffffc90000000000 - ffffe8ffffffffff (=45 bits) vmalloc/ioremap space
+201T - 233T = 32TB
+ffffe90000000000 - ffffe9ffffffffff (=40 bits) hole
+233T - 234T = 1TB
+ffffea0000000000 - ffffeaffffffffff (=40 bits) virtual memory map (1TB)
+234T - 235T = 1TB
+... unused hole ...
+ffffec0000000000 - fffffbffffffffff (=44 bits) kasan shadow memory (16TB)
+236T - 252T = 16TB
+... unused hole ...
+                                    vaddr_end for KASLR
+fffffe0000000000 - fffffe7fffffffff (=39 bits) cpu_entry_area mapping
+254T - 254T+512G
+
+Thanks
+Baoquan
