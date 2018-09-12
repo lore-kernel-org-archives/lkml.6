@@ -2,110 +2,108 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4372BC070C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 23:10:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 063B1C070C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 23:11:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCC9D2146E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 23:10:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B30782146E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 23:11:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RzfNcAQ1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCC9D2146E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="c46G/2mp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B30782146E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726930AbeIMERN (ORCPT
+        id S1727803AbeIMERu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 00:17:13 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:37889 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726616AbeIMERM (ORCPT
+        Thu, 13 Sep 2018 00:17:50 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:57628 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726589AbeIMERt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 00:17:12 -0400
-Received: by mail-yb1-f194.google.com with SMTP id e18-v6so2506248ybq.5
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 16:10:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=VBpOXpCINY2YeLFfXYjVRFqff0/PcTakTrlP2W3g5fI=;
-        b=RzfNcAQ1ZCDn8oGFMHHI8PQJpvatFpgB5RF8JkT/HruzKLHIpOmIwqSa4ZKDOHGvbq
-         liMEwOHa3+zslDJCOXfJYnaxwlxqhs6kLlhnkT+faRHMlGZmFp+hWZzGjf52hP07+0vH
-         KOzzrn3EKAKyVSX1VfvNjkZRMhBAWvQi5Rz44=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=VBpOXpCINY2YeLFfXYjVRFqff0/PcTakTrlP2W3g5fI=;
-        b=lQ3wG90aQvjjlWpklcbXuOJ/aFLu1+2s1AJ2HQbWMi1niAw1MMhmEA31W8WIt+Y8w6
-         qNq13UK/95D/IYIxdbLBmWbKkaUk1x1V9rghtQD7GM+LAeFmWhp4RKTvbpYC5g0ZSxUn
-         jnri/OAEvKRsBwI2xqMWLF1eOOj2pyDi/52h/nPpgtjknRcKGgoIxG1rC2C9Tp8KIRgL
-         YTAbJXINS0JHPY5v+WU8L0UFd6etYsQyiSfUuQqxOhSQskl1KeSdecIZ63UUEDzbgm0/
-         cLf0j5rTQpu5b81M5pvCArx4eQZ+EVNbrP5q0bRmJACFP74EFqpVfpJlDoMwXN9RxkIJ
-         EYhQ==
-X-Gm-Message-State: APzg51CXUlo+BkVIY0oAqslh5PM4pBL67hbp3mUx74gCV2qnPmugTKoq
-        fZiR/+oEOwrydbQP/4qeNvTdd38B3fA=
-X-Google-Smtp-Source: ANB0VdbBwB8GgYnDSQjqUbYETgah2Oll9zW1r2lUbvoP+Wk1P86LJ1OdSDMqrCBGCHV/zsFBrqBbVA==
-X-Received: by 2002:a25:2183:: with SMTP id h125-v6mr2166019ybh.339.1536793828499;
-        Wed, 12 Sep 2018 16:10:28 -0700 (PDT)
-Received: from mail-yw1-f42.google.com (mail-yw1-f42.google.com. [209.85.161.42])
-        by smtp.gmail.com with ESMTPSA id l3-v6sm588711ywd.98.2018.09.12.16.10.26
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Sep 2018 16:10:27 -0700 (PDT)
-Received: by mail-yw1-f42.google.com with SMTP id y134-v6so410747ywg.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 16:10:26 -0700 (PDT)
-X-Received: by 2002:a81:4e01:: with SMTP id c1-v6mr2229904ywb.237.1536793826425;
- Wed, 12 Sep 2018 16:10:26 -0700 (PDT)
+        Thu, 13 Sep 2018 00:17:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Zs9yXh4E72VTbWRc7k7YA9oLVP1vM34WmaYbsPLQbpc=; b=c46G/2mpBNPHveeGFZzQSHg7s
+        bcHpEDu122D0EvTQnVpQKdCMirTKd66KKqUOKTm0STha61LCqYcVnY9tWbQw7E7QUorBEIMkxANq/
+        MK+wf++b5gTL/VO/JvGao1e6voiQmZtB+cC6DjOFJIQ5sCtmW35sAN6uhjhM4ieQeBWos=;
+Received: from n2100.armlinux.org.uk ([2001:4d48:ad52:3201:214:fdff:fe10:4f86]:38876)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1g0EHf-0007F2-IO; Thu, 13 Sep 2018 00:10:55 +0100
+Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
+        (envelope-from <linux@n2100.armlinux.org.uk>)
+        id 1g0EHc-0000sE-TL; Thu, 13 Sep 2018 00:10:52 +0100
+Date:   Thu, 13 Sep 2018 00:10:51 +0100
+From:   Russell King - ARM Linux <linux@armlinux.org.uk>
+To:     Baruch Siach <baruch@tkos.co.il>
+Cc:     Jan =?iso-8859-1?Q?Kundr=E1t?= <jan.kundrat@cesnet.cz>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Jason Cooper <jason@lakedaemon.net>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [BISECTED] Regression: Solidrun Clearfog Base won't boot since
+ "PCI: mvebu: Only remap I/O space if configured"
+Message-ID: <20180912231050.GX30658@n2100.armlinux.org.uk>
+References: <61fdfd69-2bb6-478c-b0d5-69d8744adae3@cesnet.cz>
+ <87zhwm4kl6.fsf@tkos.co.il>
 MIME-Version: 1.0
-Received: by 2002:a25:5f04:0:0:0:0:0 with HTTP; Wed, 12 Sep 2018 16:10:25
- -0700 (PDT)
-In-Reply-To: <39bcaa18-4c53-f386-5e89-8903a49a3256@schaufler-ca.com>
-References: <cbf848ae-a1ac-c5ab-f23b-bc9217fceebe@schaufler-ca.com> <39bcaa18-4c53-f386-5e89-8903a49a3256@schaufler-ca.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 12 Sep 2018 16:10:25 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jLBwipu9WD41rQvdTjoM=+3gigrA3sp1s1gFv8C_U0nRg@mail.gmail.com>
-Message-ID: <CAGXu5jLBwipu9WD41rQvdTjoM=+3gigrA3sp1s1gFv8C_U0nRg@mail.gmail.com>
-Subject: Re: [PATCH 03/10] SELinux: Abstract use of cred security blob
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     LSM <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        LKLM <linux-kernel@vger.kernel.org>,
-        SE Linux <selinux@tycho.nsa.gov>,
-        John Johansen <john.johansen@canonical.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87zhwm4kl6.fsf@tkos.co.il>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 11, 2018 at 9:41 AM, Casey Schaufler <casey@schaufler-ca.com> wrote:
-> Don't use the cred->security pointer directly.
-> Provide a helper function that provides the security blob pointer.
->
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+On Wed, Sep 12, 2018 at 09:49:41PM +0300, Baruch Siach wrote:
+> I reproduced the same Oops on Clearfog Base without any taint:
+> 
+> [    1.476401] Internal error: Oops - undefined instruction: 0 [#1] SMP ARM
+...
+> [    1.855954] Code: e2844004 e5972000 e3520000 0affffee (e7f001f2)
 
-Like smack, this seems to be largely:
+That is a BUG().  Please turn on verbose bug reporting to get more
+information about the cause.
 
-s/$identifier->security/selinux_cred($identifier)/
-s/current_security()/selinux_cred(current_cred())/
+There are two possibilities:
 
-Is that right? The one __task_cred() use seemed to be fully contained
-under rcu read lock.
+        BUG_ON(addr >= end);
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+and
 
--Kees
+                BUG_ON(!pte_none(*pte));
+
+It's probably the latter - the region is probably already mapped, that
+being the PCI IO region.
+
+The original driver was setup to call pci_ioremap_io() as the very
+last thing - and as the driver is non-removable, we were guaranteed
+to never tear down this mapping (which is sensible, it's published
+to userspace.)
+
+However, the current code calls pci_ioremap_io() much earlier, in
+a path where probe failures can occur.  This breaks pci_ioremap_io()'s
+requirements - it must not be called more than once.  So:
+
+ee1604381a37 ("PCI: mvebu: Only remap I/O space if configured")
+
+is basically incorrect - pci_ioremap_io() needs to move back to a
+place where it is only called in a path which will never fail.
+However, looking at the generic host bits, I'm not sure such a place
+exists in the new effort to make stuff more generic.
 
 -- 
-Kees Cook
-Pixel Security
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 13.8Mbps down 630kbps up
+According to speedtest.net: 13Mbps down 490kbps up
