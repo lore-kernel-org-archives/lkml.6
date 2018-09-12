@@ -2,153 +2,128 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EE2EC07520
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:44:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 943F5C070C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:44:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5CA02133F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:44:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5CA02133F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3E3AF2133F
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:44:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JR/GwVgM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E3AF2133F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728615AbeIMAu4 (ORCPT
+        id S1728629AbeIMAu7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 20:50:56 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36276 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728600AbeIMAuz (ORCPT
+        Wed, 12 Sep 2018 20:50:59 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:36313 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728617AbeIMAu6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 20:50:55 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8CJY3ZU028622
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 15:44:52 -0400
-Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mf8bmj6fn-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 15:44:52 -0400
-Received: from localhost
-        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.vnet.ibm.com>;
-        Wed, 12 Sep 2018 13:44:51 -0600
-Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
-        by e33.co.us.ibm.com (192.168.1.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 12 Sep 2018 13:44:48 -0600
-Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
-        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8CJijQW18481250
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 12 Sep 2018 12:44:45 -0700
-Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 846F66A051;
-        Wed, 12 Sep 2018 13:44:45 -0600 (MDT)
-Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AC2F96A057;
-        Wed, 12 Sep 2018 13:44:42 -0600 (MDT)
-Received: from localhost.localdomain (unknown [9.80.213.181])
-        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTPS;
-        Wed, 12 Sep 2018 13:44:42 -0600 (MDT)
-From:   Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-To:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        akrowiak@linux.vnet.ibm.com, frankja@linux.ibm.com,
-        Pierre Morel <pmorel@linux.ibm.com>,
-        Tony Krowiak <akrowiak@linux.ibm.com>
-Subject: [PATCH v10 20/26] KVM: s390: vsie: allow CRYCB FORMAT-0
-Date:   Wed, 12 Sep 2018 15:43:10 -0400
-X-Mailer: git-send-email 1.7.1
-In-Reply-To: <1536781396-13601-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-References: <1536781396-13601-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18091219-0036-0000-0000-00000A360115
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009709; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01087371; UDB=6.00561488; IPR=6.00867384;
- MB=3.00023256; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-12 19:44:50
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18091219-0037-0000-0000-000048EAD717
-Message-Id: <1536781396-13601-21-git-send-email-akrowiak@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-12_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=923 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809120195
+        Wed, 12 Sep 2018 20:50:58 -0400
+Received: by mail-io1-f67.google.com with SMTP id q5-v6so1234108iop.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 12:44:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=gU0Xw9xYPd7fvW2y/9a178olu/xNhZC6qCabhyWgBjI=;
+        b=JR/GwVgMP3mFwh7UZrSKhsv8er7TnMgCpHwdzKrUCEgec/7EqG1xD9OV6oj5ldcpsB
+         0kvIw1cd1/CFR3omvZM+HhhSIhglH8eZSxbsjhZ2t8Bv2UTgX9nBTzIQ9UKiS8I1ff0j
+         UFZELpM6ngKDi6Q798SUvFyJRDo5ytVsl8NoIEYSB8BgVD5OFS9o6ZHcB2kJkfZsFugm
+         WRi8zNCCv9xTB4nABPcMCNN8iiPqB3rDF9X6SuyvhP6Zj9I3WOUXxZaLaC5Uve4gw74P
+         EHPXX7lpI3zJWLIkJSRGtHoPo1SFr8siVXjYb0gRlt8odwvtW+G7vaebRqN9G7ZwXVcL
+         FvFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=gU0Xw9xYPd7fvW2y/9a178olu/xNhZC6qCabhyWgBjI=;
+        b=I+mx5eMCleK8inEWpTuQ1vBh05abvmV98QY4M8KeiV+Woo1gbraUi43f3k8naOwIMs
+         35KIK3G5e6lz5euoyDXRyQIbmRCLL6SLamloIgHPCe01Oy/eij0eAPpucqiBM1pi2cra
+         PNxWJFSt1psyEnOeL3yPsf9Z95oXVB4hOLTaM2CVD0uflyMqGvrQiMixzwgCSK+Ikf23
+         M7ihy1rFVfFp14427oP65WclKjWD7JOQES+wxi03WCAaD0XeSNNj0GU8ouxW1FXZ6+3s
+         mLnhn7s0EqIVWmRIYS4PsuhucpARHi2uUyKtK7zgblLgE/tLzVZS3hdgXWt0sz7I5XLr
+         MLXQ==
+X-Gm-Message-State: APzg51DERDu9cjm0cvk00LF0JNoGPKtpU9uuGW08GdhtCJJF4DfU5WrZ
+        hvomXT+n/qqBCvsa3a/u+9x8+g==
+X-Google-Smtp-Source: ANB0VdZNV1UllZkGk9aksWZBwrNObr7kYSYGkUZdbzMAN1sBtrKM2MFkrTv9mSzYGMff+KfN2nkVRQ==
+X-Received: by 2002:a6b:b7c7:: with SMTP id h190-v6mr3466844iof.164.1536781495042;
+        Wed, 12 Sep 2018 12:44:55 -0700 (PDT)
+Received: from yuzhao.bld.corp.google.com ([2620:15c:183:0:a0c3:519e:9276:fc96])
+        by smtp.gmail.com with ESMTPSA id a14-v6sm575845ioh.45.2018.09.12.12.44.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Sep 2018 12:44:53 -0700 (PDT)
+From:   Yu Zhao <yuzhao@google.com>
+To:     Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
+Cc:     Jaroslav Kysela <perex@perex.cz>, Vinod Koul <vkoul@kernel.org>,
+        Yu Zhao <yuzhao@google.com>,
+        Rakesh Ughreja <rakesh.a.ughreja@intel.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 2/3] ASoC: enable interrupt after dma buffer initialization
+Date:   Wed, 12 Sep 2018 13:44:41 -0600
+Message-Id: <20180912194441.200564-1-yuzhao@google.com>
+X-Mailer: git-send-email 2.19.0.rc2.392.g5ba43deb5a-goog
+In-Reply-To: <20180912194343.200443-1-yuzhao@google.com>
+References: <20180912194343.200443-1-yuzhao@google.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pierre Morel <pmorel@linux.ibm.com>
+In snd_hdac_bus_init_chip(), we enable interrupt before
+snd_hdac_bus_init_cmd_io() initializing dma buffers. If irq has
+been acquired and irq handler uses the dma buffer, kernel may crash
+when interrupt comes in.
 
-When the host and the guest both use a FORMAT-0 CRYCB,
-we copy the guest's FORMAT-0 APCB to a shadow CRYCB
-for use by vSIE.
+Fix the problem by postponing enabling irq after dma buffer
+initialization. And warn once on null dma buffer pointer during the
+initialization.
 
-Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
-Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+Reviewed-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Yu Zhao <yuzhao@google.com>
 ---
- arch/s390/kvm/vsie.c |   20 +++++++++++++++++---
- 1 files changed, 17 insertions(+), 3 deletions(-)
+ sound/hda/hdac_controller.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/arch/s390/kvm/vsie.c b/arch/s390/kvm/vsie.c
-index 0a26814..67a5536 100644
---- a/arch/s390/kvm/vsie.c
-+++ b/arch/s390/kvm/vsie.c
-@@ -136,7 +136,15 @@ static int prepare_cpuflags(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
- 	return 0;
- }
- 
--/* Copy to APCB FORMAT0 from APCB FORMAT0 */
-+/**
-+ * setup_apcb00 - Copy to APCB FORMAT0 from APCB FORMAT0
-+ * @vcpu: pointer to the virtual CPU
-+ * @apcb_s: pointer to start of apcb in the shadow crycb
-+ * @apcb_o: pointer to start of original apcb in the guest2
-+ * @apcb_h: pointer to start of apcb in the guest1
-+ *
-+ * Returns 0 and -EFAULT on error reading guest apcb
-+ */
- static int setup_apcb00(struct kvm_vcpu *vcpu, unsigned long *apcb_s,
- 			unsigned long apcb_o, unsigned long *apcb_h)
+diff --git a/sound/hda/hdac_controller.c b/sound/hda/hdac_controller.c
+index 560ec0986e1a..11057d9f84ec 100644
+--- a/sound/hda/hdac_controller.c
++++ b/sound/hda/hdac_controller.c
+@@ -40,6 +40,8 @@ static void azx_clear_corbrp(struct hdac_bus *bus)
+  */
+ void snd_hdac_bus_init_cmd_io(struct hdac_bus *bus)
  {
-@@ -209,6 +217,14 @@ static int setup_apcb(struct kvm_vcpu *vcpu, struct kvm_s390_crypto_cb *crycb_s,
- 		return setup_apcb00(vcpu, (unsigned long *) &crycb_s->apcb0,
- 				    (unsigned long) &crycb->apcb0,
- 				    (unsigned long *) &crycb_h->apcb0);
-+	case CRYCB_FORMAT0:
-+		if ((crycb_o & PAGE_MASK) != ((crycb_o + 32) & PAGE_MASK))
-+			return -EACCES;
-+		if (fmt_h != CRYCB_FORMAT0)
-+			return -EINVAL;
-+		return setup_apcb00(vcpu, (unsigned long *) &crycb_s->apcb0,
-+				    (unsigned long) &crycb->apcb0,
-+				    (unsigned long *) &crycb_h->apcb0);
- 	}
- 	return -EINVAL;
- }
-@@ -248,8 +264,6 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
- 	int ret = 0;
++	WARN_ON_ONCE(!bus->rb.area);
++
+ 	spin_lock_irq(&bus->reg_lock);
+ 	/* CORB set up */
+ 	bus->corb.addr = bus->rb.addr;
+@@ -479,13 +481,15 @@ bool snd_hdac_bus_init_chip(struct hdac_bus *bus, bool full_reset)
+ 	/* reset controller */
+ 	azx_reset(bus, full_reset);
  
- 	scb_s->crycbd = 0;
--	if (!(crycbd_o & vcpu->arch.sie_block->crycbd & CRYCB_FORMAT1))
--		return 0;
+-	/* initialize interrupts */
++	/* clear interrupts */
+ 	azx_int_clear(bus);
+-	azx_int_enable(bus);
  
- 	apie_h = vcpu->arch.sie_block->eca & ECA_APIE;
- 	if (!apie_h && !key_msk)
+ 	/* initialize the codec command I/O */
+ 	snd_hdac_bus_init_cmd_io(bus);
+ 
++	/* enable interrupts after CORB/RIRB buffers are initialized above */
++	azx_int_enable(bus);
++
+ 	/* program the position buffer */
+ 	if (bus->use_posbuf && bus->posbuf.addr) {
+ 		snd_hdac_chip_writel(bus, DPLBASE, (u32)bus->posbuf.addr);
 -- 
-1.7.1
+2.19.0.rc2.392.g5ba43deb5a-goog
 
