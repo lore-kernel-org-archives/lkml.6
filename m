@@ -5,80 +5,134 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39B73C6778D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:11:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C456C6778D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:11:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4C3E20880
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:11:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4C3E20880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
+	by mail.kernel.org (Postfix) with ESMTP id 4D46A20880
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:11:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D46A20880
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728048AbeILVQ0 convert rfc822-to-8bit (ORCPT
+        id S1728088AbeILVQf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 17:16:26 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:55019 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726672AbeILVQ0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 17:16:26 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by eu-smtp-1.mimecast.com with ESMTP id
- uk-mta-90-4yHxpl17OkaAEmZvN9gB5w-1; Wed, 12 Sep 2018 17:10:06 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
- (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed,
- 12 Sep 2018 17:12:17 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Wed, 12 Sep 2018 17:12:17 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Arnd Bergmann' <arnd@arndb.de>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
-CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Chengguang Xu <cgxu519@gmx.com>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2 04/17] ceph: fix compat_ioctl for ceph_dir_operations
-Thread-Topic: [PATCH v2 04/17] ceph: fix compat_ioctl for ceph_dir_operations
-Thread-Index: AQHUSqquiaU+csxrX0GJf2dwmCHs0KTs0QpA
-Date:   Wed, 12 Sep 2018 16:12:17 +0000
-Message-ID: <9e5f6ad82a2344c095234b39224605d4@AcuMS.aculab.com>
-References: <20180912150142.157913-1-arnd@arndb.de>
- <20180912150142.157913-4-arnd@arndb.de>
-In-Reply-To: <20180912150142.157913-4-arnd@arndb.de>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
-MIME-Version: 1.0
-X-MC-Unique: 4yHxpl17OkaAEmZvN9gB5w-1
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        Wed, 12 Sep 2018 17:16:35 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45536 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726672AbeILVQe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 17:16:34 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9A0DE804B4DB;
+        Wed, 12 Sep 2018 16:11:21 +0000 (UTC)
+Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 61E72112C243;
+        Wed, 12 Sep 2018 16:11:20 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: [PATCH RFC] kernel/hung_task.c: disable on suspend
+Date:   Wed, 12 Sep 2018 18:11:19 +0200
+Message-Id: <20180912161119.2692-1-vkuznets@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 12 Sep 2018 16:11:21 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 12 Sep 2018 16:11:21 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann
-> Sent: 12 September 2018 16:01
-> 
-> The ceph_ioctl function is used both for files and directories, but only
-> the files support doing that in 32-bit compat mode.
-> 
-> For consistency, add the same compat handler to the dir operations
-> as well.
+It is possible to observe hung_task complaints when system goes to
+suspend-to-idle state:
 
-Have you verified that all the relevant ioctl buffer structures are
-exactly the same for 32bit and 64bit applications?
+ PM: Syncing filesystems ... done.
+ Freezing user space processes ... (elapsed 0.001 seconds) done.
+ OOM killer disabled.
+ Freezing remaining freezable tasks ... (elapsed 0.002 seconds) done.
+ sd 0:0:0:0: [sda] Synchronizing SCSI cache
+ INFO: task bash:1569 blocked for more than 120 seconds.
+       Not tainted 4.19.0-rc3_+ #687
+ "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+ bash            D    0  1569    604 0x00000000
+ Call Trace:
+  ? __schedule+0x1fe/0x7e0
+  schedule+0x28/0x80
+  suspend_devices_and_enter+0x4ac/0x750
+  pm_suspend+0x2c0/0x310
 
-	David
+Register a PM notifier to disable the detector on suspend and re-enable
+back on wakeup.
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+---
+RFC: It really makes me wonder why nobody reported this before, makes
+ me think I'm missing something.
+---
+ kernel/hung_task.c | 26 +++++++++++++++++++++++++-
+ 1 file changed, 25 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+index b9132d1269ef..d75f288c016f 100644
+--- a/kernel/hung_task.c
++++ b/kernel/hung_task.c
+@@ -15,6 +15,7 @@
+ #include <linux/lockdep.h>
+ #include <linux/export.h>
+ #include <linux/sysctl.h>
++#include <linux/suspend.h>
+ #include <linux/utsname.h>
+ #include <linux/sched/signal.h>
+ #include <linux/sched/debug.h>
+@@ -242,6 +243,24 @@ void reset_hung_task_detector(void)
+ }
+ EXPORT_SYMBOL_GPL(reset_hung_task_detector);
+ 
++static bool hung_detector_suspended;
++
++static int hungtask_pm_notify(struct notifier_block *self,
++			      unsigned long action, void *hcpu)
++{
++	switch (action) {
++	case PM_SUSPEND_PREPARE:
++		hung_detector_suspended = true;
++		break;
++	case PM_POST_SUSPEND:
++		hung_detector_suspended = false;
++		break;
++	default:
++		break;
++	}
++	return NOTIFY_OK;
++}
++
+ /*
+  * kthread which checks for tasks stuck in D state
+  */
+@@ -261,7 +280,8 @@ static int watchdog(void *dummy)
+ 		interval = min_t(unsigned long, interval, timeout);
+ 		t = hung_timeout_jiffies(hung_last_checked, interval);
+ 		if (t <= 0) {
+-			if (!atomic_xchg(&reset_hung_task, 0))
++			if (!atomic_xchg(&reset_hung_task, 0) &&
++			    !hung_detector_suspended)
+ 				check_hung_uninterruptible_tasks(timeout);
+ 			hung_last_checked = jiffies;
+ 			continue;
+@@ -275,6 +295,10 @@ static int watchdog(void *dummy)
+ static int __init hung_task_init(void)
+ {
+ 	atomic_notifier_chain_register(&panic_notifier_list, &panic_block);
++
++	/* Disable hung task detector on suspend */
++	pm_notifier(hungtask_pm_notify, 0);
++
+ 	watchdog_task = kthread_run(watchdog, NULL, "khungtaskd");
+ 
+ 	return 0;
+-- 
+2.14.4
 
