@@ -2,439 +2,266 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B005C070C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 23:30:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFDEBC070C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 23:40:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CBCC21473
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 23:30:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="p4X+06qJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CBCC21473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 795172146E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 23:40:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 795172146E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728229AbeIMEhn (ORCPT
+        id S1726433AbeIMErb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 00:37:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59980 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726317AbeIMEhm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 00:37:42 -0400
-Received: from [192.168.0.101] (unknown [49.77.238.12])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D93F2146E;
-        Wed, 12 Sep 2018 23:30:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536795056;
-        bh=VdUB7wQO4dylFhus0qGsNUdQSPD8MY7TuOXqAp2eaFc=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=p4X+06qJKgl0gnIG81hWaqgPk8dCOgmc2DM1LNX6CflepB6cpuJaQGbys/gEisdXn
-         u7Gr91Vt8F0IFJJoHqTC5f3hxNpNXWD9fnPpR+oObjWm8qq04Q/o6s3kcceFPsDRZH
-         13np6r7JFCAdTGOwZG9rTGUbMscDC2rqekx3c9Ow=
-Subject: Re: [PATCH v2] f2fs: submit cached bio to avoid endless PageWriteback
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
-Cc:     linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-References: <20180912055140.30699-1-yuchao0@huawei.com>
- <20180912200332.GC8356@jaegeuk-macbookpro.roam.corp.google.com>
-From:   Chao Yu <chao@kernel.org>
-Message-ID: <c062931a-f4d1-5f5c-d426-51e990e195e8@kernel.org>
-Date:   Thu, 13 Sep 2018 07:30:52 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180912200332.GC8356@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 13 Sep 2018 00:47:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57240 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726080AbeIMErb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 00:47:31 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 960B5C9D;
+        Wed, 12 Sep 2018 23:40:41 +0000 (UTC)
+Date:   Wed, 12 Sep 2018 16:40:39 -0700
+From:   akpm@linux-foundation.org
+To:     broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au,
+        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        mm-commits@vger.kernel.org
+Subject:  mmotm 2018-09-12-16-40 uploaded
+Message-ID: <20180912234039.Xa5RS%akpm@linux-foundation.org>
+User-Agent: s-nail v14.9.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/9/13 4:03, Jaegeuk Kim wrote:
-> On 09/12, Chao Yu wrote:
->> When migrating encrypted block from background GC thread, we only add
->> them into f2fs inner bio cache, but forget to submit the cached bio, it
->> may cause potential deadlock when we are waiting page writebacked, fix
->> it.
->>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->> v2:
->> - cover node path suggested by Jaegeuk.
->>
->>  fs/f2fs/f2fs.h |  4 ++-
->>  fs/f2fs/gc.c   | 72 +++++++++++++++++++++++++++++++++++---------------
->>  fs/f2fs/node.c | 14 +++++++---
->>  3 files changed, 65 insertions(+), 25 deletions(-)
->>
->> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->> index 8c8ce6b8f45a..da60e283ad1b 100644
->> --- a/fs/f2fs/f2fs.h
->> +++ b/fs/f2fs/f2fs.h
->> @@ -523,6 +523,8 @@ enum {
->>  					 */
->>  };
->>  
->> +#define WAIT_WRITEBACK		1	/* indicate page is set dirty in GC */
->> +
->>  #define DEFAULT_RETRY_IO_COUNT	8	/* maximum retry read IO count */
->>  
->>  /* maximum retry quota flush count */
->> @@ -2876,7 +2878,7 @@ struct page *f2fs_new_node_page(struct dnode_of_data *dn, unsigned int ofs);
->>  void f2fs_ra_node_page(struct f2fs_sb_info *sbi, nid_t nid);
->>  struct page *f2fs_get_node_page(struct f2fs_sb_info *sbi, pgoff_t nid);
->>  struct page *f2fs_get_node_page_ra(struct page *parent, int start);
->> -void f2fs_move_node_page(struct page *node_page, int gc_type);
->> +int f2fs_move_node_page(struct page *node_page, int gc_type);
->>  int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
->>  			struct writeback_control *wbc, bool atomic,
->>  			unsigned int *seq_id);
->> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
->> index a4c1a419611d..1ee287b7b94b 100644
->> --- a/fs/f2fs/gc.c
->> +++ b/fs/f2fs/gc.c
->> @@ -461,7 +461,7 @@ static int check_valid_map(struct f2fs_sb_info *sbi,
->>   * On validity, copy that node with cold status, otherwise (invalid node)
->>   * ignore that.
->>   */
->> -static void gc_node_segment(struct f2fs_sb_info *sbi,
->> +static int gc_node_segment(struct f2fs_sb_info *sbi,
->>  		struct f2fs_summary *sum, unsigned int segno, int gc_type)
->>  {
->>  	struct f2fs_summary *entry;
->> @@ -469,6 +469,7 @@ static void gc_node_segment(struct f2fs_sb_info *sbi,
->>  	int off;
->>  	int phase = 0;
->>  	bool fggc = (gc_type == FG_GC);
->> +	int submitted = 0;
->>  
->>  	start_addr = START_BLOCK(sbi, segno);
->>  
->> @@ -482,10 +483,11 @@ static void gc_node_segment(struct f2fs_sb_info *sbi,
->>  		nid_t nid = le32_to_cpu(entry->nid);
->>  		struct page *node_page;
->>  		struct node_info ni;
->> +		int err;
->>  
->>  		/* stop BG_GC if there is not enough free sections. */
->>  		if (gc_type == BG_GC && has_not_enough_free_secs(sbi, 0, 0))
->> -			return;
->> +			return submitted;
->>  
->>  		if (check_valid_map(sbi, segno, off) == 0)
->>  			continue;
->> @@ -522,7 +524,9 @@ static void gc_node_segment(struct f2fs_sb_info *sbi,
->>  			continue;
->>  		}
->>  
->> -		f2fs_move_node_page(node_page, gc_type);
->> +		err = f2fs_move_node_page(node_page, gc_type);
->> +		if (!err)
->> +			submitted++;
->>  		stat_inc_node_blk_count(sbi, 1, gc_type);
->>  	}
->>  
->> @@ -531,6 +535,7 @@ static void gc_node_segment(struct f2fs_sb_info *sbi,
->>  
->>  	if (fggc)
->>  		atomic_dec(&sbi->wb_sync_req[NODE]);
->> +	return submitted;
->>  }
->>  
->>  /*
->> @@ -666,7 +671,7 @@ static int ra_data_block(struct inode *inode, pgoff_t index)
->>   * Move data block via META_MAPPING while keeping locked data page.
->>   * This can be used to move blocks, aka LBAs, directly on disk.
->>   */
->> -static void move_data_block(struct inode *inode, block_t bidx,
->> +static int move_data_block(struct inode *inode, block_t bidx,
->>  				int gc_type, unsigned int segno, int off)
->>  {
->>  	struct f2fs_io_info fio = {
->> @@ -685,25 +690,29 @@ static void move_data_block(struct inode *inode, block_t bidx,
->>  	struct node_info ni;
->>  	struct page *page, *mpage;
->>  	block_t newaddr;
->> -	int err;
->> +	int err = 0;
->>  	bool lfs_mode = test_opt(fio.sbi, LFS);
->>  
->>  	/* do not read out */
->>  	page = f2fs_grab_cache_page(inode->i_mapping, bidx, false);
->>  	if (!page)
->> -		return;
->> +		return -ENOMEM;
->>  
->> -	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
->> +	if (!check_valid_map(F2FS_I_SB(inode), segno, off)) {
->> +		err = -ENOENT;
->>  		goto out;
->> +	}
->>  
->>  	if (f2fs_is_atomic_file(inode)) {
->>  		F2FS_I(inode)->i_gc_failures[GC_FAILURE_ATOMIC]++;
->>  		F2FS_I_SB(inode)->skipped_atomic_files[gc_type]++;
->> +		err = -EAGAIN;
->>  		goto out;
->>  	}
->>  
->>  	if (f2fs_is_pinned_file(inode)) {
->>  		f2fs_pin_file_control(inode, true);
->> +		err = -EAGAIN;
->>  		goto out;
->>  	}
->>  
->> @@ -714,6 +723,7 @@ static void move_data_block(struct inode *inode, block_t bidx,
->>  
->>  	if (unlikely(dn.data_blkaddr == NULL_ADDR)) {
->>  		ClearPageUptodate(page);
->> +		err = -ENOENT;
->>  		goto put_out;
->>  	}
->>  
->> @@ -796,6 +806,7 @@ static void move_data_block(struct inode *inode, block_t bidx,
->>  	fio.new_blkaddr = newaddr;
->>  	f2fs_submit_page_write(&fio);
->>  	if (fio.retry) {
->> +		err = -EAGAIN;
->>  		if (PageWriteback(fio.encrypted_page))
->>  			end_page_writeback(fio.encrypted_page);
->>  		goto put_page_out;
->> @@ -819,36 +830,46 @@ static void move_data_block(struct inode *inode, block_t bidx,
->>  	f2fs_put_dnode(&dn);
->>  out:
->>  	f2fs_put_page(page, 1);
->> +	return err;
->>  }
->>  
->> -static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
->> +static int move_data_page(struct inode *inode, block_t bidx, int gc_type,
->>  							unsigned int segno, int off)
->>  {
->>  	struct page *page;
->> +	int err = 0;
->>  
->>  	page = f2fs_get_lock_data_page(inode, bidx, true);
->>  	if (IS_ERR(page))
->> -		return;
->> +		return PTR_ERR(page);
->>  
->> -	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
->> +	if (!check_valid_map(F2FS_I_SB(inode), segno, off)) {
->> +		err = -ENOENT;
->>  		goto out;
->> +	}
->>  
->>  	if (f2fs_is_atomic_file(inode)) {
->>  		F2FS_I(inode)->i_gc_failures[GC_FAILURE_ATOMIC]++;
->>  		F2FS_I_SB(inode)->skipped_atomic_files[gc_type]++;
->> +		err = -EAGAIN;
->>  		goto out;
->>  	}
->>  	if (f2fs_is_pinned_file(inode)) {
->>  		if (gc_type == FG_GC)
->>  			f2fs_pin_file_control(inode, true);
->> +		err = -EAGAIN;
->>  		goto out;
->>  	}
->>  
->>  	if (gc_type == BG_GC) {
->> -		if (PageWriteback(page))
->> +		if (PageWriteback(page)) {
->> +			err = -EAGAIN;
->>  			goto out;
->> +		}
->>  		set_page_dirty(page);
->>  		set_cold_data(page);
->> +
->> +		err = WAIT_WRITEBACK;
-> 
-> Can we just return 0, and check like this?
-> 
-> 	if (f2fs_post_read_required(inode)) {
-> 		move_data_block(inode, start_bidx, gc_type,
-> 						segno, off);
-> 	} else {
-> 		move_data_page(inode, start_bidx, gc_type,
-> 		err = move_data_page(inode, start_bidx, gc_type,
-> 							segno, off);
-> 
-> 		if (!err && gc_type == FG_GC)
-> 			submitted++;
-> 	}
+The mm-of-the-moment snapshot 2018-09-12-16-40 has been uploaded to
 
-Looks better. :)
+   http://www.ozlabs.org/~akpm/mmotm/
 
-Thanks,
+mmotm-readme.txt says
 
-> 
-> 
->>  	} else {
->>  		struct f2fs_io_info fio = {
->>  			.sbi = F2FS_I_SB(inode),
->> @@ -864,7 +885,6 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
->>  			.io_type = FS_GC_DATA_IO,
->>  		};
->>  		bool is_dirty = PageDirty(page);
->> -		int err;
->>  
->>  retry:
->>  		set_page_dirty(page);
->> @@ -889,6 +909,7 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
->>  	}
->>  out:
->>  	f2fs_put_page(page, 1);
->> +	return err;
->>  }
->>  
->>  /*
->> @@ -898,7 +919,7 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
->>   * If the parent node is not valid or the data block address is different,
->>   * the victim data block is ignored.
->>   */
->> -static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
->> +static int gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
->>  		struct gc_inode_list *gc_list, unsigned int segno, int gc_type)
->>  {
->>  	struct super_block *sb = sbi->sb;
->> @@ -906,6 +927,7 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
->>  	block_t start_addr;
->>  	int off;
->>  	int phase = 0;
->> +	int submitted = 0;
->>  
->>  	start_addr = START_BLOCK(sbi, segno);
->>  
->> @@ -922,7 +944,7 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
->>  
->>  		/* stop BG_GC if there is not enough free sections. */
->>  		if (gc_type == BG_GC && has_not_enough_free_secs(sbi, 0, 0))
->> -			return;
->> +			return submitted;
->>  
->>  		if (check_valid_map(sbi, segno, off) == 0)
->>  			continue;
->> @@ -994,6 +1016,7 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
->>  		if (inode) {
->>  			struct f2fs_inode_info *fi = F2FS_I(inode);
->>  			bool locked = false;
->> +			int err;
->>  
->>  			if (S_ISREG(inode->i_mode)) {
->>  				if (!down_write_trylock(&fi->i_gc_rwsem[READ]))
->> @@ -1013,12 +1036,15 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
->>  			start_bidx = f2fs_start_bidx_of_node(nofs, inode)
->>  								+ ofs_in_node;
->>  			if (f2fs_post_read_required(inode))
->> -				move_data_block(inode, start_bidx, gc_type,
->> -								segno, off);
->> +				err = move_data_block(inode, start_bidx,
->> +							gc_type, segno, off);
->>  			else
->> -				move_data_page(inode, start_bidx, gc_type,
->> +				err = move_data_page(inode, start_bidx, gc_type,
->>  								segno, off);
->>  
->> +			if (!err)
->> +				submitted++;
->> +
->>  			if (locked) {
->>  				up_write(&fi->i_gc_rwsem[WRITE]);
->>  				up_write(&fi->i_gc_rwsem[READ]);
->> @@ -1030,6 +1056,8 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
->>  
->>  	if (++phase < 5)
->>  		goto next_step;
->> +
->> +	return submitted;
->>  }
->>  
->>  static int __get_victim(struct f2fs_sb_info *sbi, unsigned int *victim,
->> @@ -1057,6 +1085,7 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
->>  	int seg_freed = 0;
->>  	unsigned char type = IS_DATASEG(get_seg_entry(sbi, segno)->type) ?
->>  						SUM_TYPE_DATA : SUM_TYPE_NODE;
->> +	int submitted = 0;
->>  
->>  	/* readahead multi ssa blocks those have contiguous address */
->>  	if (sbi->segs_per_sec > 1)
->> @@ -1100,10 +1129,11 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
->>  		 *                                  - lock_page(sum_page)
->>  		 */
->>  		if (type == SUM_TYPE_NODE)
->> -			gc_node_segment(sbi, sum->entries, segno, gc_type);
->> -		else
->> -			gc_data_segment(sbi, sum->entries, gc_list, segno,
->> +			submitted += gc_node_segment(sbi, sum->entries, segno,
->>  								gc_type);
->> +		else
->> +			submitted += gc_data_segment(sbi, sum->entries, gc_list,
->> +							segno, gc_type);
->>  
->>  		stat_inc_seg_count(sbi, type, gc_type);
->>  
->> @@ -1114,7 +1144,7 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
->>  		f2fs_put_page(sum_page, 0);
->>  	}
->>  
->> -	if (gc_type == FG_GC)
->> +	if (submitted)
->>  		f2fs_submit_merged_write(sbi,
->>  				(type == SUM_TYPE_NODE) ? NODE : DATA);
->>  
->> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
->> index fa2381c0bc47..5594765f4a71 100644
->> --- a/fs/f2fs/node.c
->> +++ b/fs/f2fs/node.c
->> @@ -1584,8 +1584,10 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
->>  	return AOP_WRITEPAGE_ACTIVATE;
->>  }
->>  
->> -void f2fs_move_node_page(struct page *node_page, int gc_type)
->> +int f2fs_move_node_page(struct page *node_page, int gc_type)
->>  {
->> +	int err = 0;
->> +
->>  	if (gc_type == FG_GC) {
->>  		struct writeback_control wbc = {
->>  			.sync_mode = WB_SYNC_ALL,
->> @@ -1597,22 +1599,28 @@ void f2fs_move_node_page(struct page *node_page, int gc_type)
->>  		f2fs_wait_on_page_writeback(node_page, NODE, true);
->>  
->>  		f2fs_bug_on(F2FS_P_SB(node_page), PageWriteback(node_page));
->> -		if (!clear_page_dirty_for_io(node_page))
->> +		if (!clear_page_dirty_for_io(node_page)) {
->> +			err = -EAGAIN;
->>  			goto out_page;
->> +		}
->>  
->>  		if (__write_node_page(node_page, false, NULL,
->> -					&wbc, false, FS_GC_NODE_IO, NULL))
->> +					&wbc, false, FS_GC_NODE_IO, NULL)) {
->> +			err = -EAGAIN;
->>  			unlock_page(node_page);
->> +		}
->>  		goto release_page;
->>  	} else {
->>  		/* set page dirty and write it */
->>  		if (!PageWriteback(node_page))
->>  			set_page_dirty(node_page);
->> +		err = WAIT_WRITEBACK;
->>  	}
->>  out_page:
->>  	unlock_page(node_page);
->>  release_page:
->>  	f2fs_put_page(node_page, 0);
->> +	return err;
->>  }
->>  
->>  static int f2fs_write_node_page(struct page *page,
->> -- 
->> 2.18.0.rc1
+README for mm-of-the-moment:
+
+http://www.ozlabs.org/~akpm/mmotm/
+
+This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+more than once a week.
+
+You will need quilt to apply these patches to the latest Linus release (4.x
+or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+http://ozlabs.org/~akpm/mmotm/series
+
+The file broken-out.tar.gz contains two datestamp files: .DATE and
+.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+followed by the base kernel version against which this patch series is to
+be applied.
+
+This tree is partially included in linux-next.  To see which patches are
+included in linux-next, consult the `series' file.  Only the patches
+within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+linux-next.
+
+A git tree which contains the memory management portion of this tree is
+maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+by Michal Hocko.  It contains the patches which are between the
+"#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
+file, http://www.ozlabs.org/~akpm/mmotm/series.
+
+
+A full copy of the full kernel tree with the linux-next and mmotm patches
+already applied is available through git within an hour of the mmotm
+release.  Individual mmotm releases are tagged.  The master branch always
+points to the latest release, so it's constantly rebasing.
+
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
+
+To develop on top of mmotm git:
+
+  $ git remote add mmotm git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+  $ git remote update mmotm
+  $ git checkout -b topic mmotm/master
+  <make changes, commit>
+  $ git send-email mmotm/master.. [...]
+
+To rebase a branch with older patches to a new mmotm release:
+
+  $ git remote update mmotm
+  $ git rebase --onto mmotm/master <topic base> topic
+
+
+
+
+The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
+contains daily snapshots of the -mm tree.  It is updated more frequently
+than mmotm, and is untested.
+
+A git copy of this tree is available at
+
+	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
+
+and use of this tree is similar to
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
+
+
+This mmotm tree contains the following patches against 4.19-rc3:
+(patches marked "*" will be included in linux-next)
+
+  origin.patch
+* mm-migration-fix-migration-of-huge-pmd-shared-pages.patch
+* mm-migration-fix-migration-of-huge-pmd-shared-pages-v7.patch
+* hugetlb-take-pmd-sharing-into-account-when-flushing-tlb-caches.patch
+* fix-crash-on-ocfs2_duplicate_clusters_by_page.patch
+* fix-crash-on-ocfs2_duplicate_clusters_by_page-v5.patch
+* fix-crash-on-ocfs2_duplicate_clusters_by_page-v5-checkpatch-fixes.patch
+* fork-report-pid-exhaustion-correctly.patch
+* mm-disable-deferred-struct-page-for-32-bit-arches.patch
+* proc-kcore-fix-invalid-memory-access-in-multi-page-read-optimization-v3.patch
+* proc-kcore-fix-invalid-memory-access-in-multi-page-read-optimization-v3-fix.patch
+* mm-shmem-correctly-annotate-new-inodes-for-lockdep.patch
+* kernel-remove-duplicated-include-from-sysc.patch
+* mm-slowly-shrink-slabs-with-a-relatively-small-number-of-objects.patch
+* ocfs2-fix-ocfs2-read-block-panic.patch
+* arm-arch-arm-include-asm-pageh-needs-personalityh.patch
+* ocfs2-get-rid-of-ocfs2_is_o2cb_active-function.patch
+* ocfs2-without-quota-support-try-to-avoid-calling-quota-recovery.patch
+* ocfs2-dont-use-iocb-when-eiocbqueued-returns.patch
+* ocfs2-fix-a-misuse-a-of-brelse-after-failing-ocfs2_check_dir_entry.patch
+* ocfs2-dont-put-and-assigning-null-to-bh-allocated-outside.patch
+* ocfs2-dlmglue-clean-up-timestamp-handling.patch
+* fix-dead-lock-caused-by-ocfs2_defrag_extent.patch
+* ocfs2-fix-dead-lock-caused-by-ocfs2_defrag_extent.patch
+* fix-clusters-leak-in-ocfs2_defrag_extent.patch
+* fix-clusters-leak-in-ocfs2_defrag_extent-fix.patch
+* block-restore-proc-partitions-to-not-display-non-partitionable-removable-devices.patch
+* vfs-allow-dedupe-of-user-owned-read-only-files.patch
+* vfs-dedupe-should-return-eperm-if-permission-is-not-granted.patch
+* fs-iomap-change-return-type-to-vm_fault_t.patch
+* xtensa-use-generic-vgah.patch
+  mm.patch
+* mm-slubc-switch-to-bitmap_zalloc.patch
+* mm-rework-memcg-kernel-stack-accounting.patch
+* mm-drain-memcg-stocks-on-css-offlining.patch
+* mm-dont-miss-the-last-page-because-of-round-off-error.patch
+* mm-dont-miss-the-last-page-because-of-round-off-error-fix.patch
+* mmpage_alloc-pf_wq_worker-threads-must-sleep-at-should_reclaim_retry.patch
+* mmpage_alloc-pf_wq_worker-threads-must-sleep-at-should_reclaim_retry-fix.patch
+* xen-gntdev-fix-up-blockable-calls-to-mn_invl_range_start.patch
+* mm-mmu_notifier-be-explicit-about-range-invalition-non-blocking-mode.patch
+* revert-mm-mmu_notifier-annotate-mmu-notifiers-with-blockable-invalidate-callbacks.patch
+* kmemleak-add-module-param-to-print-warnings-to-dmesg.patch
+* swap-use-__try_to_reclaim_swap-in-free_swap_and_cache.patch
+* swap-call-free_swap_slot-in-__swap_entry_free.patch
+* swap-clear-si-swap_map-in-swap_free_cluster.patch
+* mm-page_alloc-clean-up-check_for_memory.patch
+* mm-conveted-to-use-vm_fault_t.patch
+* cramfs-convert-to-use-vmf_insert_mixed-v2.patch
+* mm-remove-vm_insert_mixed.patch
+* mm-introduce-vmf_insert_pfn_prot.patch
+* x86-convert-vdso-to-use-vm_fault_t.patch
+* mm-make-vm_insert_pfn_prot-static.patch
+* mm-remove-references-to-vm_insert_pfn.patch
+* mm-remove-vm_insert_pfn.patch
+* mm-inline-vm_insert_pfn_prot-into-caller.patch
+* mm-convert-__vm_insert_mixed-to-vm_fault_t.patch
+* mm-convert-insert_pfn-to-vm_fault_t.patch
+* hexagon-switch-to-no_bootmem.patch
+* of-ignore-sub-page-memory-regions.patch
+* nios2-use-generic-early_init_dt_add_memory_arch.patch
+* nios2-switch-to-no_bootmem.patch
+* um-setup_physmem-stop-using-global-variables.patch
+* um-switch-to-no_bootmem.patch
+* unicore32-switch-to-no_bootmem.patch
+* alpha-switch-to-no_bootmem.patch
+* userfaultfd-allow-get_mempolicympol_f_nodempol_f_addr-to-trigger-userfaults.patch
+* arm-arm64-introduce-config_have_memblock_pfn_valid.patch
+* mm-page_alloc-remain-memblock_next_valid_pfn-on-arm-arm64.patch
+* mm-page_alloc-reduce-unnecessary-binary-search-in-memblock_next_valid_pfn.patch
+* mm-slab-combine-kmalloc_caches-and-kmalloc_dma_caches.patch
+* mm-slab-slub-introduce-kmalloc-reclaimable-caches.patch
+* dcache-allocate-external-names-from-reclaimable-kmalloc-caches.patch
+* mm-rename-and-change-semantics-of-nr_indirectly_reclaimable_bytes.patch
+* mm-proc-add-kreclaimable-to-proc-meminfo.patch
+* mm-slab-shorten-kmalloc-cache-names-for-large-sizes.patch
+* mm-workingset-dont-drop-refault-information-prematurely.patch
+* mm-workingset-tell-cache-transitions-from-workingset-thrashing.patch
+* delayacct-track-delays-from-thrashing-cache-pages.patch
+* sched-loadavg-consolidate-load_int-load_frac-calc_load.patch
+* sched-loadavg-consolidate-load_int-load_frac-calc_load-fix.patch
+* sched-loadavg-make-calc_load_n-public.patch
+* sched-schedh-make-rq-locking-and-clock-functions-available-in-statsh.patch
+* sched-introduce-this_rq_lock_irq.patch
+* psi-pressure-stall-information-for-cpu-memory-and-io.patch
+* psi-pressure-stall-information-for-cpu-memory-and-io-fix.patch
+* psi-pressure-stall-information-for-cpu-memory-and-io-fix-2.patch
+* psi-pressure-stall-information-for-cpu-memory-and-io-fix-3.patch
+* psi-cgroup-support.patch
+* mm-page_alloc-drop-should_suppress_show_mem.patch
+* z3fold-fix-wrong-handling-of-headless-pages.patch
+* mm-make-memmap_init-a-proper-function.patch
+* mm-calculate-deferred-pages-after-skipping-mirrored-memory.patch
+* mm-calculate-deferred-pages-after-skipping-mirrored-memory-v2.patch
+* mm-calculate-deferred-pages-after-skipping-mirrored-memory-fix.patch
+* mm-move-mirrored-memory-specific-code-outside-of-memmap_init_zone.patch
+* mm-move-mirrored-memory-specific-code-outside-of-memmap_init_zone-v2.patch
+* mm-swap-fix-race-between-swapoff-and-some-swap-operations.patch
+* mm-swap-fix-race-between-swapoff-and-some-swap-operations-v6.patch
+* mm-fix-race-between-swapoff-and-mincore.patch
+* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock.patch
+* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock-fix.patch
+* mm-add-strictlimit-knob-v2.patch
+* mm-dont-expose-page-to-fast-gup-before-its-ready.patch
+* mm-page_owner-align-with-pageblock_nr_pages.patch
+* mm-page_owner-align-with-pageblock_nr-pages.patch
+* syzbot-dump-all-threads-upon-global-oom.patch
+* info-task-hung-in-generic_file_write_iter.patch
+* include-linux-compilerh-add-version-detection-to-asm_volatile_goto.patch
+* treewide-remove-current_text_addr.patch
+* lib-bitmapc-remove-wrong-documentation.patch
+* linux-bitmaph-handle-constant-zero-size-bitmaps-correctly.patch
+* linux-bitmaph-remove-redundant-uses-of-small_const_nbits.patch
+* linux-bitmaph-fix-type-of-nbits-in-bitmap_shift_right.patch
+* linux-bitmaph-relax-comment-on-compile-time-constant-nbits.patch
+* lib-bitmapc-fix-remaining-space-computation-in-bitmap_print_to_pagebuf.patch
+* lib-bitmapc-fix-remaining-space-computation-in-bitmap_print_to_pagebuf-fix.patch
+* lib-bitmapc-fix-remaining-space-computation-in-bitmap_print_to_pagebuf-fix-fix.patch
+* lib-bitmapc-simplify-bitmap_print_to_pagebuf.patch
+* lib-parserc-switch-match_strdup-over-to-use-kmemdup_nul.patch
+* lib-parserc-switch-match_u64int-over-to-use-match_strdup.patch
+* lib-parserc-switch-match_number-over-to-use-match_strdup.patch
+* zlib-remove-fall-through-warnings.patch
+* radix-tree-use-div_round_up-instead-of-reimplementing-its-function.patch
+* lib-sg_pool-remove-unnecessary-null-check-when-free-the-object.patch
+* checkpatch-remove-gcc_binary_constant-warning.patch
+* init-do_mountsc-add-root=partlabel=name-support.patch
+* hfsplus-prevent-btree-data-loss-on-root-split.patch
+* hfsplus-fix-bug-on-bnode-parent-update.patch
+* hfs-prevent-btree-data-loss-on-root-split.patch
+* hfs-fix-bug-on-bnode-parent-update.patch
+* hfsplus-prevent-btree-data-loss-on-enospc.patch
+* hfs-prevent-btree-data-loss-on-enospc.patch
+* reiserfs-propagate-errors-from-fill_with_dentries-properly.patch
+* bfs-add-sanity-check-at-bfs_fill_super.patch
+* ipc-ipcmni-limit-check-for-msgmni-and-shmmni.patch
+* ipc-ipcmni-limit-check-for-semmni.patch
+* ipc-allow-boot-time-extension-of-ipcmni-from-32k-to-8m.patch
+* ipc-allow-boot-time-extension-of-ipcmni-from-32k-to-8m-checkpatch-fixes.patch
+* ipc-conserve-sequence-numbers-in-extended-ipcmni-mode.patch
+  linux-next.patch
+  linux-next-rejects.patch
+  linux-next-git-rejects.patch
+* arch-x86-kernel-cpu-commonc-fix-warning.patch
+* percpu-cleanup-per_cpu_def_attributes-macro.patch
+* vfs-replace-current_kernel_time64-with-ktime-equivalent.patch
+* fix-read-buffer-overflow-in-delta-ipc.patch
+  make-sure-nobodys-leaking-resources.patch
+  releasing-resources-with-children.patch
+  mutex-subsystem-synchro-test-module.patch
+  kernel-forkc-export-kernel_thread-to-modules.patch
+  slab-leaks3-default-y.patch
+  workaround-for-a-pci-restoring-bug.patch
