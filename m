@@ -2,164 +2,161 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44908C46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:32:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DFF0C6778D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:33:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7EE72087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:32:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7EE72087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id D0AC02087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:33:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="dWCfnec8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0AC02087F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727006AbeILUht (ORCPT
+        id S1727660AbeILUiF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 16:37:49 -0400
-Received: from foss.arm.com ([217.140.101.70]:33844 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726642AbeILUht (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 16:37:49 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 31FD57A9;
-        Wed, 12 Sep 2018 08:32:47 -0700 (PDT)
-Received: from [10.4.12.116] (e107155-lin.emea.arm.com [10.4.12.116])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F229A3F5C0;
-        Wed, 12 Sep 2018 08:32:45 -0700 (PDT)
-Cc:     Sudeep Holla <sudeep.holla@arm.com>, linux-kernel@vger.kernel.org,
-        vkilari@codeaurora.org
-Subject: Re: [PATCH] ACPI/PPTT: Handle architecturally unknown cache types
-To:     Jeffrey Hugo <jhugo@codeaurora.org>,
-        Jeremy Linton <jeremy.linton@arm.com>, rjw@rjwysocki.net,
-        linux-acpi@vger.kernel.org
-References: <1536694334-5811-1-git-send-email-jhugo@codeaurora.org>
- <f62f22a6-2dd8-f254-dbaf-b9e224099afd@arm.com>
- <e74f2208-ac0d-6c45-8ddb-5b77d6a42fef@codeaurora.org>
- <f8dc2958-a7c7-a633-3a06-97fed7c3510b@arm.com>
- <337ef641-e645-137a-3d7f-d457264d94d5@codeaurora.org>
-From:   Sudeep Holla <sudeep.holla@arm.com>
-Organization: ARM
-Message-ID: <4b9965d2-efe5-6829-5e72-99b936711163@arm.com>
-Date:   Wed, 12 Sep 2018 16:32:44 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 12 Sep 2018 16:38:05 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:46294 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726642AbeILUiF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 16:38:05 -0400
+Received: by mail-pf1-f194.google.com with SMTP id u24-v6so1179245pfn.13
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 08:33:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Erh9Dg+RiMAiy9HjZnazEgbEJ8PMdQAqsBJo9ckm8uw=;
+        b=dWCfnec8vRFWp7+dIbMTxp8GtdT2tpvy0TfDui//rm1C/yGGBFnkttVGyM189c9Qaf
+         stXcaGCNwjfwwUAathMSVitQbkv4aou0Sqtw6BGOwqF1/J3ovlF8j+/PpQRaWzSgANTc
+         vLL5xZ1Z+K537alUlB4m0NMI/BoCaDWC//g2zWWH9VPFYnB1KSZZWveZ29zb/PZE192p
+         n7CRJuIUTOP9U6tLAhoQzmcvKpeIu0Iv9oUAwKXSzfyJFe393Zi0RHpSm+cvSg8pgnjd
+         GBYoxGhCXAiX9njfBNHrbCUFpFSMgvwVoR5xG33eofVOVJmi2QxiNxNVJ/6GE/jhAx0U
+         5s2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Erh9Dg+RiMAiy9HjZnazEgbEJ8PMdQAqsBJo9ckm8uw=;
+        b=jpUvySIuKTEygSRtd5ve9MvEtdW0GhjpSF02Wd/P5j9S4YmpEb+ZMEfziTG3luBk8+
+         qMbZEl4sib6RezX9iL9+IBMZJyL5HCvjFIZb3IFtDAcux3ef8cUTtnvra2in2d9xMTBY
+         9CvwB2rv3JOclQI53M/6vdFnuQ5GgflEUv/HxMlVRog8/sLgymPX/ivjsGCgDkXxPX5y
+         pzfSrKhvx051aaEw5nUkDt4Gi+R2WWsRhE3becfyvtw655eS1Yq2K5S3WRjSTichqsdi
+         Gk2ueWUYzZCD4I/MFxV8SZ4tV9jKWeyHan637wpOIuP50j9rMOXNYermLCE5gbf3eF0c
+         ycZg==
+X-Gm-Message-State: APzg51AK1FSUStUosTFeQOjwT78EJjUoWwMlaYJI4IGtaZr4A1YqWUqU
+        zDnswwBbStG9F3uWd1V8zqLkvQ==
+X-Google-Smtp-Source: ANB0VdZT1lkh5FeGvBFf8fwQctLBN1Qft1DZQYufg/E8ghAsOu/V7LUwwL8IINJfA6AbNrNNTpuyVQ==
+X-Received: by 2002:a65:50c9:: with SMTP id s9-v6mr2962510pgp.417.1536766382561;
+        Wed, 12 Sep 2018 08:33:02 -0700 (PDT)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id z11-v6sm2133238pff.162.2018.09.12.08.33.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Sep 2018 08:33:01 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1g078W-00072D-GD; Wed, 12 Sep 2018 09:33:00 -0600
+Date:   Wed, 12 Sep 2018 09:33:00 -0600
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Stefan Richter <stefanr@s5r6.in-berlin.de>,
+        Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux1394-devel@lists.sourceforge.net, linux-usb@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-mtd@lists.infradead.org,
+        netdev@vger.kernel.org, devel@driverdev.osuosl.org,
+        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH v2 02/17] compat_ioctl: move drivers to
+ generic_compat_ioctl_ptrarg
+Message-ID: <20180912153300.GE5633@ziepe.ca>
+References: <20180912150142.157913-1-arnd@arndb.de>
+ <20180912150142.157913-2-arnd@arndb.de>
 MIME-Version: 1.0
-In-Reply-To: <337ef641-e645-137a-3d7f-d457264d94d5@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180912150142.157913-2-arnd@arndb.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 12/09/18 15:48, Jeffrey Hugo wrote:
-> On 9/12/2018 4:49 AM, Sudeep Holla wrote:
->>
->>
->> On 11/09/18 21:38, Jeffrey Hugo wrote:
->>> On 9/11/2018 2:16 PM, Jeremy Linton wrote:
->>>> Hi Jeffrey,
->>>>
->>>> (+Sudeep)
->>>>
->>
->> [..]
->>
->>>>
->>>> If you look at the next line of code following this comment its going
->>>> to update the cache type for fully populated PPTT nodes. Although with
->>>> the suggested change its only going to activate if someone completely
->>>> fills out the node and fails to set the valid flag on the cache type.
->>>
->>> Yes, however that case doesn't apply to the scenario we are concerned
->>> about, doesn't seem to be fully following the PPTT spec, and seems odd
->>> that Linux just assumes that a "fully specified" cache is unified.
->>>
->>
->> Agreed, but adding code that will never get used is also not so good.
->> Do you have systems where this is needed ?
+On Wed, Sep 12, 2018 at 05:01:03PM +0200, Arnd Bergmann wrote:
+> Each of these drivers has a copy of the same trivial helper function to
+> convert the pointer argument and then call the native ioctl handler.
 > 
-> Yes.
+> We now have a generic implementation of that, so use it.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>  drivers/char/ppdev.c              | 12 +---------
+>  drivers/char/tpm/tpm_vtpm_proxy.c | 12 +---------
+>  drivers/firewire/core-cdev.c      | 12 +---------
+>  drivers/hid/usbhid/hiddev.c       | 11 +--------
+>  drivers/hwtracing/stm/core.c      | 12 +---------
+>  drivers/misc/mei/main.c           | 22 +----------------
+>  drivers/mtd/ubi/cdev.c            | 36 +++-------------------------
+>  drivers/net/tap.c                 | 12 +---------
+>  drivers/staging/pi433/pi433_if.c  | 12 +---------
+>  drivers/usb/core/devio.c          | 16 +------------
+>  drivers/vfio/vfio.c               | 39 +++----------------------------
+>  drivers/vhost/net.c               | 12 +---------
+>  drivers/vhost/scsi.c              | 12 +---------
+>  drivers/vhost/test.c              | 12 +---------
+>  drivers/vhost/vsock.c             | 12 +---------
+>  fs/fat/file.c                     | 13 +----------
+>  16 files changed, 20 insertions(+), 237 deletions(-)
 > 
 
-Not exactly IMO. I was referring to architecturally not specified
-separate data/inst cache.
+> diff --git a/drivers/char/tpm/tpm_vtpm_proxy.c b/drivers/char/tpm/tpm_vtpm_proxy.c
+> index 87a0ce47f201..a170f5ca7416 100644
+> +++ b/drivers/char/tpm/tpm_vtpm_proxy.c
+> @@ -678,20 +678,10 @@ static long vtpmx_fops_ioctl(struct file *f, unsigned int ioctl,
+>  	}
+>  }
+>  
+> -#ifdef CONFIG_COMPAT
+> -static long vtpmx_fops_compat_ioctl(struct file *f, unsigned int ioctl,
+> -					  unsigned long arg)
+> -{
+> -	return vtpmx_fops_ioctl(f, ioctl, (unsigned long)compat_ptr(arg));
+> -}
+> -#endif
+> -
+>  static const struct file_operations vtpmx_fops = {
+>  	.owner = THIS_MODULE,
+>  	.unlocked_ioctl = vtpmx_fops_ioctl,
+> -#ifdef CONFIG_COMPAT
+> -	.compat_ioctl = vtpmx_fops_compat_ioctl,
+> -#endif
+> +	.compat_ioctl = generic_compat_ioctl_ptrarg,
+>  	.llseek = noop_llseek,
+>  };
 
->>
->>>> What I suspect is happening in the reported case is that the nodes in
->>>> the PPTT table are missing fields we consider to be important. Since
->>>> that data isn't being filled out anywhere else, so we leave the cache
->>>> type alone too. This has the effect of hiding sysfs nodes with
->>>> incomplete information.
->>>>
->>>> Also, the lack of the DATA/INST fields is based on the assumption that
->>>> the only nodes which need their type field updated are outside of the
->>>> CPU core itself so they are pretty much guaranteed to be UNIFIED. Are
->>>> you hitting this case?
->>>>
->>>
->>> Yes.  Without this change, we hit the lscpu error in the commit message,
->>> and get zero output about the system.  We don't even get information
->>> about the caches which are architecturally specified or how many cpus
->>> are present.  With this change, we get what we expect out of lscpu (and
->>> also lstopo) including the cache(s) which are not architecturally
->>> specified.
->>>
->>
->> lscpu and lstopo are so broken. They just assume everything on CPU0.
->> If you hotplug them out, you start seeing issues. So reading and file
->> that doesn't exist and then bail out on other essential info though they
->> are present, hmmm ...
-> 
-> lscpu/lstopo being broken seems orthogonal to me.
+For vtpm:
 
-Agreed.
+Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
 
-> The kernel is not providing the type file because the kernel thinks the
-> type is NOCACHE, despite PPTT providing a type.  In an ideal world, I
-> think the kernel should be fixed (this change), and any deficiencies or
-> bad assumptions in lscpu/lstopo should also be fixed.
-> 
+Arnd, would you consider including a patch as part of/after this
+series to make compat_ioctl in drivers/infiniband/core/uverbs_main.c
+use this as well?  Looks like a bug too?
 
-Again agreed as mentioned in the other mail. I just didn't like the
-attribution of that issue to this kernel bug.
-
->>
->>> I guess I still don't understand why its important for PPTT to list, for
->>> example, the sets/ways of a cache in all scenarios.  In the case of a
->>> "transparent" cache (implementation defined as not reported per section
->>> D3.4.2 of the ARM ARM where the cache cannot be managed by SW), there
->>> may not be valid values for sets/ways.  I would argue its better to not
->>> report that information, rather than provide bogus information just to
->>> make Linux happy, which may break other OSes and provide means for which
->>> a user to hang themselves.
->>>
->>
->> While I agree presenting wrong info is not good, but one of the reasons
->> the cache info is present is to provide those info for some applications
->> to do optimization based on that(I am told so and not sure if just type
->> and size will be good enough) and you seem to agree with that below.
-> 
-> Yes, but if its not entirely clear, on my system, we have the
-> information but its not being presented.  This change fixes that.  I'm
-> willing to discuss an alternative fix, but to ignore the issue is not
-> viable in my opinion.
-> 
-
-Agreed.
-
-> What do we need to move forward here?
-> 
-
-Will the simple change I posted address the issue ? I don't want to give
-an illusion that separate data/inst cache is support for architecturally
-not specified caches. If it needs to be supported, then it needs to be
-fixed correctly everywhere not just here.
-
--- 
-Regards,
-Sudeep
+Thanks,
+Jason
