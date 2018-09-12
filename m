@@ -2,117 +2,176 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63B3FC46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 07:31:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F13FFC4646A
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 07:32:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FE262087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 07:31:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FE262087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 9F85C2087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 07:32:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="ggieu4rx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F85C2087F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727650AbeILMeN (ORCPT
+        id S1727346AbeILMfR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 08:34:13 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:41799 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726673AbeILMeM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 08:34:12 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id B69D720795; Wed, 12 Sep 2018 09:30:57 +0200 (CEST)
-Received: from localhost (unknown [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 89B7420720;
-        Wed, 12 Sep 2018 09:30:57 +0200 (CEST)
-Date:   Wed, 12 Sep 2018 09:30:56 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        radu_nicolae.pirea@upb.ro, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Mark Brown <broonie@kernel.org>, Jiri Slaby <jslaby@suse.com>,
-        Richard Genoud <richard.genoud@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>
-Subject: Re: [PATCH v12 0/6] Driver for at91 usart in spi mode
-Message-ID: <20180912073056.GA2557@piout.net>
-References: <20180904111310.4049-1-radu_nicolae.pirea@upb.ro>
- <20180911093356.GE4185@dell>
- <20180911093917.GL2494@piout.net>
- <CAMuHMdXH8gNjKGOHGFc+K03U2zsVCSN7G_Q4wtepQr859nRQKg@mail.gmail.com>
- <20180911153621.GP2494@piout.net>
- <CAMuHMdV+=EgAYogwNHbY=RExkGox_+YSeHV6pJtQb6g6PzD-CQ@mail.gmail.com>
- <20180911181838.GI4185@dell>
- <CAMuHMdUMt=HJGCDZvJF99=45mecn5AjnTr-tA_LioxWrNKM2ag@mail.gmail.com>
- <20180911224302.GJ4185@dell>
+        Wed, 12 Sep 2018 08:35:17 -0400
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:20643 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726471AbeILMfR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 08:35:17 -0400
+Received: from mail-vk0-f54.google.com (mail-vk0-f54.google.com [209.85.213.54]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id w8C7VuwU006592;
+        Wed, 12 Sep 2018 16:31:57 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w8C7VuwU006592
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1536737517;
+        bh=iuGTnHUZ1xccoynXqnPDL2mn4+ux9yWfkZ6d0sNek2g=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=ggieu4rxhw/5f77dvSZ0lt2hX1iwmFyxhwOrcw8NfXMcPHOYshJFT6rVf1mL3a8Aw
+         x+rHvBzpZ0r09lDhsERc0Osj166x+tJa4lG/npiIdKtmt3DjNYIPaiuikXsT9O5sdf
+         KbAgWZvTufcKzLc1xeuKJ8k7Y5wkBxMmm8AbMNd3sAR3VDAhkdqphWxIlPf1D+dJmn
+         zrRjYmmjL3qxd77dcOPjRzMFMYb8q7joNpPhXpKwd75fR29wbFbsbNZFDbE3t731cV
+         9egGfvHSegvqGqzwvhldhW8CIgjC9RtZJEvX/16IgJmrCDkTOTf2873//7eAzPo4u7
+         ekxArx3lMlH8A==
+X-Nifty-SrcIP: [209.85.213.54]
+Received: by mail-vk0-f54.google.com with SMTP id s17-v6so118106vke.10;
+        Wed, 12 Sep 2018 00:31:57 -0700 (PDT)
+X-Gm-Message-State: APzg51BnTJroIJbwgj+wWIKVh92vVRyd2S/arUQ60/I7MQUgjtJD8JRT
+        IZNZlrCNF5fRBZNCWcibV2KqPJrMifwOZ1BadXY=
+X-Google-Smtp-Source: ANB0VdbXWvxRcQRwy+MOFrt3RVaMzQaiZ5Oz+1qH+H9uItY5LvRgy83R0xDjOgPTMyZK1X95sXcfJ5geDHw7Wcnc/x0=
+X-Received: by 2002:a1f:5c08:: with SMTP id q8-v6mr192929vkb.34.1536737516272;
+ Wed, 12 Sep 2018 00:31:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180911224302.GJ4185@dell>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:ab0:7111:0:0:0:0:0 with HTTP; Wed, 12 Sep 2018 00:31:15
+ -0700 (PDT)
+In-Reply-To: <20180912072657.GF2766@vkoul-mobl>
+References: <1535074873-15617-1-git-send-email-yamada.masahiro@socionext.com>
+ <1535074873-15617-3-git-send-email-yamada.masahiro@socionext.com>
+ <20180911070003.GI2634@vkoul-mobl> <CAK7LNASMhKfQT-Hqv48=HqOPRx3OVMtdNBEe=c7dE-B_5_Nuyw@mail.gmail.com>
+ <20180912043530.GE2766@vkoul-mobl> <CAK7LNASFyxMTE_kVzja=bUvbDbT6Moz-nZn3=yBKdTWXEQdjXA@mail.gmail.com>
+ <20180912072657.GF2766@vkoul-mobl>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 12 Sep 2018 16:31:15 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATSNQBbxQHkbo2zG1G44=urpC_cutu_D126QfDpMg5TNA@mail.gmail.com>
+Message-ID: <CAK7LNATSNQBbxQHkbo2zG1G44=urpC_cutu_D126QfDpMg5TNA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] dmaengine: uniphier-mdmac: add UniPhier MIO DMAC driver
+To:     Vinod <vkoul@kernel.org>
+Cc:     "open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM" 
+        <dmaengine@vger.kernel.org>, DTML <devicetree@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/09/2018 23:43:02+0100, Lee Jones wrote:
-> > I haven't read it, but I believe it's not unlike Renesas SCIF, which is
-> > served by both drivers/tty/serial/sh-sci.c and drivers/spi/spi-sh-sci.c.
-> > But the latter is not used from DT, so we haven't experienced (and solved)
-> > the similar issue yet.
-> > 
-> > Would it work if the UART driver and SPI driver would match against the
-> > same compatible value, but the UART driver would do in its probe()
-> > function:
-> > 
-> >     device_property_read_u32(&pdev->dev, "atmel,usart-mode", &opmode);
-> >     if (opmode != AT91_USART_MODE_SERIAL)
-> >         return ENODEV;
-> > 
-> > while the SPI driver would do:
-> > 
-> >     device_property_read_u32(&pdev->dev, "atmel,usart-mode", &opmode);
-> >     if (opmode != AT91_USART_MODE_SPI)
-> >         return ENODEV;
-> > 
-> > ? No MFD driver involved.
-> 
-> I haven't looked at the code in a while, but if memory serves I
-> believe platform code gives up once it has found its first match, so
-> by doing this, one of the drivers will never be matched/probed.
-> 
-> It's midnight here, so cracking out the datasheet isn't going to
-> happen just now, but it's my current belief that if the IP serves 2
-> very different modes of operation, even if the registers are in a
-> shared space, they could have their own compatible strings in DT.
-> 
-> That is what the MFD driver provides after all.  Why would it be okay
-> to allocate different compatible strings from the MFD, but not in the
-> Device Tree?
-> 
-> It would be the easiest solution.
-> 
-> Has Rob commented on this yet?
-> 
+2018-09-12 16:26 GMT+09:00 Vinod <vkoul@kernel.org>:
+> On 12-09-18, 14:25, Masahiro Yamada wrote:
+>> 2018-09-12 13:35 GMT+09:00 Vinod <vkoul@kernel.org>:
+>> > On 12-09-18, 12:01, Masahiro Yamada wrote:
+>> >> Hi Vinod,
+>> >>
+>> >>
+>> >> 2018-09-11 16:00 GMT+09:00 Vinod <vkoul@kernel.org>:
+>> >> > On 24-08-18, 10:41, Masahiro Yamada wrote:
+>> >> >
+>> >> >> +/* mc->vc.lock must be held by caller */
+>> >> >> +static u32 __uniphier_mdmac_get_residue(struct uniphier_mdmac_desc *md)
+>> >> >> +{
+>> >> >> +     u32 residue = 0;
+>> >> >> +     int i;
+>> >> >> +
+>> >> >> +     for (i = md->sg_cur; i < md->sg_len; i++)
+>> >> >> +             residue += sg_dma_len(&md->sgl[i]);
+>> >> >
+>> >> > so if the descriptor is submitted to hardware, we return the descriptor
+>> >> > length, which is not correct.
+>> >> >
+>> >> > Two cases are required to be handled:
+>> >> > 1. Descriptor is in queue (IMO above logic is fine for that, but it can
+>> >> > be calculated at descriptor submit and looked up here)
+>> >>
+>> >> Where do you want it to be calculated?
+>> >
+>> > where is it calculated now?
+>>
+>>
+>> Please see __uniphier_mdmac_handle().
+>>
+>>
+>> It gets the address and size by sg_dma_address(), sg_dma_len()
+>> just before setting them to the hardware registers.
+>>
+>>
+>>        sg = &md->sgl[md->sg_cur];
+>>
+>>        if (md->dir == DMA_MEM_TO_DEV) {
+>>                src_mode = UNIPHIER_MDMAC_CH_MODE__ADDR_INC;
+>>                src_addr = sg_dma_address(sg);
+>>                dest_mode = UNIPHIER_MDMAC_CH_MODE__ADDR_FIXED;
+>>                dest_addr = 0;
+>>        } else {
+>>                src_mode = UNIPHIER_MDMAC_CH_MODE__ADDR_FIXED;
+>>                src_addr = 0;
+>>                dest_mode = UNIPHIER_MDMAC_CH_MODE__ADDR_INC;
+>>                dest_addr = sg_dma_address(sg);
+>>        }
+>>
+>>
+>>
+>>
+>>
+>>
+>>
+>> >> This hardware provides only simple registers (address and size)
+>> >> for one-shot transfer instead of descriptors.
+>> >>
+>> >> So, I used sgl as-is because I did not see a good reason
+>> >> to transform sgl to another data structure.
+>> >
+>> >
+>> >> > this seems missing stuff. Where do you do register calculation for the
+>> >> > descriptor and where is slave_config here, how do you know where to
+>> >> > send/receive data form/to (peripheral)
+>> >>
+>> >>
+>> >> This dmac is really simple, and un-flexible.
+>> >>
+>> >> The peripheral address to send/receive data from/to is hard-weird.
+>> >> cfg->{src_addr,dst_addr} is not configurable.
+>> >>
+>> >> Look at __uniphier_mdmac_handle().
+>> >> 'dest_addr' and 'src_addr' must be set to 0 for the peripheral.
+>> >
+>> > Fair enough, what about other values like addr_width and maxburst?
+>>
+>>
+>> None of them is configurable.
+>
+> what is configurable here :-)
 
-V4 of the bindings were acked by Rob and you:
-https://patchwork.kernel.org/patch/10428087/
+The physical address of the memory, transfer size, direction
+are configurable, of course.
+But, they are out of scope of device_config hook.
+
+
+> Who are the users of this DMA?
+
+SD/eMMC controllers.
+
 
 
 -- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Best Regards
+Masahiro Yamada
