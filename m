@@ -2,151 +2,115 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ACD6C4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 04:34:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11ED8C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 04:35:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5441E206B6
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 04:34:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAE1320880
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 04:35:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="U8FsUs6B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5441E206B6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Enra9o8u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAE1320880
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726454AbeILJgi (ORCPT
+        id S1726501AbeILJiU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 05:36:38 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:38213 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725738AbeILJgh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 05:36:37 -0400
-Received: by mail-wr1-f65.google.com with SMTP id w11-v6so464345wrc.5
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 21:33:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=s5revAGdcgwwzMsVyObx5m2/n5lDDpzS9zyAF6+/hO4=;
-        b=U8FsUs6B5hvnUlYGvqtbC0wz5oMC7Z0NR6ecUrmRCyQRJLitAUpExrzhiMF6gEJshy
-         BYarh09g3OvkhkvzthjUtxI2X2xF3qJm2cUxrne5nElq1hnTPFighZKsbDEKAnBP5aLr
-         QUIrykU/z808zhbSwA2TBYZR55hbN16YDyY6fVyGyoEBhkS4INw9X5xVRrrY8PV8gTsO
-         9yXZIWl/VAyFBo90UmVnNkwRox03+ZSJm7NmMp1XovmnJ55q5fPEKbDoPwvqZFrEOStU
-         9DVpdlvpZsimk6vVhvnPPxNpbB7KmdgbxAGImAet8g3L9VnNYkC93zRg1QqMKISJB47p
-         Vgpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=s5revAGdcgwwzMsVyObx5m2/n5lDDpzS9zyAF6+/hO4=;
-        b=RNa565ycO1Esx8hRP8ZlZe4qad4ajaBkOif08olXqWXDDEBFAtLBsolyDgl1UwiyPz
-         +WAqE0yElXD6i7rfq/Ts89rvh+4SaRWEl8X7Y3ts/v+n6GelbHhLjvseSi7HvY2vYbXG
-         JysJHbzCvwWMZX6/yPSmJxzwO8io5Ag0lkdPWOYjNljOZGHNlNZCRxvhZpeGkk2T13cW
-         qnrYntkxTSQvTzgEeHSbuJmrhA9h9KZb+C7NEUgxdno+8aD30T1vMfqTAr+Bny21sksr
-         3i46BuapNe2cZXVo5PIqUeBt6xylLI6b4gFEe2nvf845t98OduzJzHuHotUdadWlFLo4
-         tNpQ==
-X-Gm-Message-State: APzg51Bo4qkdYXnB5UXNPSJ8vmmULbuk2FaSb56dDAQvw3AA6Jto+7Cg
-        Qqa1y77Py9Ba2IZyBffUaK+lBtIO4+vhAuEMYGBe7g==
-X-Google-Smtp-Source: ANB0Vdaldu7SryLTsbNmMq+ah5TY62w305xuXDoclsELB0FDWCmcnH50QuAJr1o3Ec5yr5xzlaN2Rmgx0EJ38/IqdvQ=
-X-Received: by 2002:a5d:6550:: with SMTP id z16-v6mr28352wrv.194.1536726837365;
- Tue, 11 Sep 2018 21:33:57 -0700 (PDT)
+        Wed, 12 Sep 2018 05:38:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53224 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725738AbeILJiT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 05:38:19 -0400
+Received: from localhost (unknown [171.76.126.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 66B08206B6;
+        Wed, 12 Sep 2018 04:35:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1536726940;
+        bh=qlSRNh7I87/Zh5D+AEgF5XtMMtu1XdLNhNmUK7gOOK0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Enra9o8u3YIS9CdDHTxMsdC8OdpD0pGmT7G1rebnLBkR1wnZgFYu8h41l3ul+0epF
+         9zloKau4KM8uxs2NkT0hPmOEfQPQ46nuGzA3TBDuQDvmUL/GD3YaFoR9n089mtw5NB
+         P5oWLOuNM6UiI3lip1/VjuN2RYveDIA7TDJu2QqM=
+Date:   Wed, 12 Sep 2018 10:05:30 +0530
+From:   Vinod <vkoul@kernel.org>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     "open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM" 
+        <dmaengine@vger.kernel.org>, DTML <devicetree@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 2/2] dmaengine: uniphier-mdmac: add UniPhier MIO DMAC
+ driver
+Message-ID: <20180912043530.GE2766@vkoul-mobl>
+References: <1535074873-15617-1-git-send-email-yamada.masahiro@socionext.com>
+ <1535074873-15617-3-git-send-email-yamada.masahiro@socionext.com>
+ <20180911070003.GI2634@vkoul-mobl>
+ <CAK7LNASMhKfQT-Hqv48=HqOPRx3OVMtdNBEe=c7dE-B_5_Nuyw@mail.gmail.com>
 MIME-Version: 1.0
-Received: by 2002:adf:9dcb:0:0:0:0:0 with HTTP; Tue, 11 Sep 2018 21:33:56
- -0700 (PDT)
-In-Reply-To: <20180910134659.GA30774@infradead.org>
-References: <20180907124429.31407-1-anup@brainfault.org> <20180910134659.GA30774@infradead.org>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Wed, 12 Sep 2018 10:03:56 +0530
-Message-ID: <CAAhSdy3bGHdCX82r5FDqwRXUZZv-9DZDK9fNGVrxntdOGV36zA@mail.gmail.com>
-Subject: Re: [PATCH] RISC-V: Show IPI stats
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Atish Patra <atish.patra@wdc.com>,
-        linux-riscv@lists.infradead.org,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK7LNASMhKfQT-Hqv48=HqOPRx3OVMtdNBEe=c7dE-B_5_Nuyw@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 10, 2018 at 7:16 PM, Christoph Hellwig <hch@infradead.org> wrote:
-> On Fri, Sep 07, 2018 at 06:14:29PM +0530, Anup Patel wrote:
->> This patch provides arch_show_interrupts() implementation to
->> show IPI stats via /proc/interrupts.
->>
->> Now the contents of /proc/interrupts" will look like below:
->>            CPU0       CPU1       CPU2       CPU3
->>   8:         17          7          6         14  SiFive PLIC   8  virtio0
->>  10:         10         10          9         11  SiFive PLIC  10  ttyS0
->> IPI0:       170        673        251         79  Rescheduling interrupts
->> IPI1:         1         12         27          1  Function call interrupts
->> IPI2:         0          0          0          0  CPU wake-up interrupts
->>
->> Signed-off-by: Anup Patel <anup@brainfault.org>
->
-> Thanks, this looks pretty sensible to me.  Maybe we want to also show
-> timer interrupts if we do this?
+On 12-09-18, 12:01, Masahiro Yamada wrote:
+> Hi Vinod,
+> 
+> 
+> 2018-09-11 16:00 GMT+09:00 Vinod <vkoul@kernel.org>:
+> > On 24-08-18, 10:41, Masahiro Yamada wrote:
+> >
+> >> +/* mc->vc.lock must be held by caller */
+> >> +static u32 __uniphier_mdmac_get_residue(struct uniphier_mdmac_desc *md)
+> >> +{
+> >> +     u32 residue = 0;
+> >> +     int i;
+> >> +
+> >> +     for (i = md->sg_cur; i < md->sg_len; i++)
+> >> +             residue += sg_dma_len(&md->sgl[i]);
+> >
+> > so if the descriptor is submitted to hardware, we return the descriptor
+> > length, which is not correct.
+> >
+> > Two cases are required to be handled:
+> > 1. Descriptor is in queue (IMO above logic is fine for that, but it can
+> > be calculated at descriptor submit and looked up here)
+> 
+> Where do you want it to be calculated?
 
-Let's not include timer stats here until RISCV INTC driver is
-concluded. We can do it as separate patch if required.
+where is it calculated now?
 
->
->> --- a/arch/riscv/kernel/irq.c
->> +++ b/arch/riscv/kernel/irq.c
->> @@ -8,6 +8,7 @@
->>  #include <linux/interrupt.h>
->>  #include <linux/irqchip.h>
->>  #include <linux/irqdomain.h>
->> +#include <linux/seq_file.h>
->>
->>  /*
->>   * Possible interrupt causes:
->> @@ -24,6 +25,14 @@
->>   */
->>  #define INTERRUPT_CAUSE_FLAG (1UL << (__riscv_xlen - 1))
->>
->> +int arch_show_interrupts(struct seq_file *p, int prec)
->> +{
->> +#ifdef CONFIG_SMP
->> +     show_ipi_stats(p, prec);
->> +#endif
->> +     return 0;
->> +}
->
-> If we don't also add timer stats I'd just move arch_show_interrupts
-> to smp.c and make it conditional.  If we don't this split might make
-> more sense.
+> This hardware provides only simple registers (address and size)
+> for one-shot transfer instead of descriptors.
+> 
+> So, I used sgl as-is because I did not see a good reason
+> to transform sgl to another data structure.
 
-I understand you want to avoid #ifdef here. We can do same thing
-by having empty inline function show_ipi_stats() in asm/smp.h for
-!CONFIG_SMP case. This way we can keep arch_show_interrupts()
-in kernel/irq.c which is intuitively correct location for
-arch_show_interrupts().
 
->
->> +static const char *ipi_names[IPI_MAX] = {
->> +     [IPI_RESCHEDULE] = "Rescheduling interrupts",
->> +     [IPI_CALL_FUNC] = "Function call interrupts",
->> +     [IPI_CALL_WAKEUP] = "CPU wake-up interrupts",
->> +};
->
-> No need for the explicit array size.  Also please use a few tabs to
-> align this nicely:
->
-> static const char *ipi_names[] = {
->         [IPI_RESCHEDULE]        = "Rescheduling interrupts",
->         [IPI_CALL_FUNC]         = "Function call interrupts",
->         [IPI_CALL_WAKEUP]       = "CPU wake-up interrupts",
-> };
+> > this seems missing stuff. Where do you do register calculation for the
+> > descriptor and where is slave_config here, how do you know where to
+> > send/receive data form/to (peripheral)
+> 
+> 
+> This dmac is really simple, and un-flexible.
+> 
+> The peripheral address to send/receive data from/to is hard-weird.
+> cfg->{src_addr,dst_addr} is not configurable.
+> 
+> Look at __uniphier_mdmac_handle().
+> 'dest_addr' and 'src_addr' must be set to 0 for the peripheral.
 
-Sure, will do.
-
-Regards,
-Anup
+Fair enough, what about other values like addr_width and maxburst?
+-- 
+~Vinod
