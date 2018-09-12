@@ -2,114 +2,139 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 223DEC04ABB
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 00:34:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7BAFC04ABB
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 00:40:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF20020833
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 00:34:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF20020833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5E78E20839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 00:40:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="MfiW14jM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E78E20839
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727721AbeILFgT (ORCPT
+        id S1727689AbeILFmM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 01:36:19 -0400
-Received: from mga18.intel.com ([134.134.136.126]:48493 "EHLO mga18.intel.com"
+        Wed, 12 Sep 2018 01:42:12 -0400
+Received: from ozlabs.org ([203.11.71.1]:41477 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726092AbeILFgS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 01:36:18 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Sep 2018 17:34:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,362,1531810800"; 
-   d="scan'208";a="87955942"
-Received: from shao2-debian.sh.intel.com (HELO [10.239.13.4]) ([10.239.13.4])
-  by fmsmga004.fm.intel.com with ESMTP; 11 Sep 2018 17:34:28 -0700
-Subject: Re: [LKP] [vfs] fd0002870b: BUG:KASAN:null-ptr-deref_in_n
-To:     David Howells <dhowells@redhat.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>, lkp@01.org,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20180911004752.GG1110@shao2-debian>
- <10338.1536697773@warthog.procyon.org.uk>
-From:   Rong Chen <rong.a.chen@intel.com>
-Message-ID: <0bac086d-13a5-7275-fd08-7e9bfc58f562@intel.com>
-Date:   Wed, 12 Sep 2018 08:34:52 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
+        id S1726454AbeILFmM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 01:42:12 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 4292xX1tVvz9s3Z;
+        Wed, 12 Sep 2018 10:40:15 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1536712819;
+        bh=B1+Nlkk0sBKTMSPSjjVnpuenSurdEHI0Tf9D4PvyqrE=;
+        h=Date:From:To:Cc:Subject:From;
+        b=MfiW14jM4KQhxzmt7mgonEXDaekRwgzb8VCwHVe3PmFGMNVeBd3SVjYw07vTzq0gx
+         aCzyzTV777wMImHK03/c5mVveWl4krwnbLggCU2RzlcgH4Mspur0jxVsjlt705UUlH
+         o4/7YcnAjVz6GX8fzWijP13mWTgXS42OvbrLrHNTf8HqAPvbO/F64SRgboR/u96PmB
+         KQvFu5B3dD/6JrL00JdMUG2z4J9cLEH2ezBbVTacKxyKxJvEFHfE5UlEAvmPr+xIvS
+         hsCkhNmPDMX5svpPCe5W916CV+cqd1o0lEFwMMr4FANbkPJ96ycYudOMdEDknK0V0T
+         CPv7mjLPx+KWw==
+Date:   Wed, 12 Sep 2018 10:39:52 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        DRI <dri-devel@lists.freedesktop.org>,
+        Dave Airlie <airlied@linux.ie>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lucas De Marchi <lucas.demarchi@intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>
+Subject: linux-next: manual merge of the drm-misc tree with the drm tree
+Message-ID: <20180912103952.6f439e71@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <10338.1536697773@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/aZLBaNy0rR/pAyR8cCuc8g/"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Sig_/aZLBaNy0rR/pAyR8cCuc8g/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On 09/12/2018 04:29 AM, David Howells wrote:
-> kernel test robot <rong.a.chen@intel.com> wrote:
->
->> [   18.568403]  nfs_fs_mount+0x901/0x1220
-> I don't suppose you can tell me what file and line number this corresponds to?
-$ faddr2line vmlinux nfs_fs_mount+0x901
-nfs_fs_mount+0x901/0x1218:
-nfs_parse_devname at fs/nfs/super.c:1911
-  (inlined by) nfs_validate_text_mount_data at fs/nfs/super.c:2187
-  (inlined by) nfs_fs_mount at fs/nfs/super.c:2684
+Today's linux-next merge of the drm-misc tree got a conflict in:
 
->
-> Also, can you tell me what the mount parameters were?  I'm not sure how to
-> extract them from the information provided.
-qemu command (you could get from 'bin/lkp qemu -k <bzImage> job-script'):
+  drivers/gpu/drm/i915/intel_display.h
 
-qemu-system-x86_64 -enable-kvm -fsdev 
-local,id=test_dev,path=/home/nfs/.lkp//result/boot/1/vm-kbuild-1G/debian-x86_64-2018-04-03.cgz/x86_64-randconfig-r0-09070102/gcc-6/fd0002870b453c58d0d8c195954f5049bc6675fb/0,security_model=none 
--device virtio-9p-pci,fsdev=test_dev,mount_tag=9p/virtfs_mount -kernel 
-vmlinuz-4.19.0-rc1-00104-gfd00028 -append root=/dev/ram0 user=lkp 
-job=/lkp/jobs/scheduled/vm-kbuild-1G-11/boot-1-debian-x86_64-2018-04-03.cgz-fd0002870b453c58d0d8c195954f5049bc6675fb-20180910-6016-1hqt4et-1.yaml 
-ARCH=x86_64 kconfig=x86_64-randconfig-r0-09070102 
-branch=linux-devel/devel-hourly-2018090623 
-commit=fd0002870b453c58d0d8c195954f5049bc6675fb 
-BOOT_IMAGE=/pkg/linux/x86_64-randconfig-r0-09070102/gcc-6/fd0002870b453c58d0d8c195954f5049bc6675fb/vmlinuz-4.19.0-rc1-00104-gfd00028 
-max_uptime=600 
-RESULT_ROOT=/result/boot/1/vm-kbuild-1G/debian-x86_64-2018-04-03.cgz/x86_64-randconfig-r0-09070102/gcc-6/fd0002870b453c58d0d8c195954f5049bc6675fb/3 
-LKP_LOCAL_RUN=1 debug apic=debug sysrq_always_enabled 
-rcupdate.rcu_cpu_stall_timeout=100 net.ifnames=0 printk.devkmsg=on 
-panic=-1 softlockup_panic=1 nmi_watchdog=panic oops=panic load_ramdisk=2 
-prompt_ramdisk=0 drbd.minor_count=8 systemd.log_level=err 
-ignore_loglevel console=tty0 earlyprintk=ttyS0,115200 
-console=ttyS0,115200 vga=normal rw  ip=dhcp 
-result_service=9p/virtfs_mount -initrd /home/nfs/.lkp/cache/final_initrd 
--smp 2 -m 1024M -no-reboot -watchdog i6300esb -rtc base=localtime 
--device e1000,netdev=net0 -netdev user,id=net0 -display none -monitor 
-null -serial stdio -device virtio-scsi-pci,id=scsi0 -drive 
-file=/tmp/vdisk-nfs/disk-vm-kbuild-1G-11-0,if=none,id=hd0,media=disk,aio=native,cache=none 
--device scsi-hd,bus=scsi0.0,drive=hd0,scsi-id=1,lun=0 -drive 
-file=/tmp/vdisk-nfs/disk-vm-kbuild-1G-11-1,if=none,id=hd1,media=disk,aio=native,cache=none 
--device scsi-hd,bus=scsi0.0,drive=hd1,scsi-id=1,lun=1 -drive 
-file=/tmp/vdisk-nfs/disk-vm-kbuild-1G-11-2,if=none,id=hd2,media=disk,aio=native,cache=none 
--device scsi-hd,bus=scsi0.0,drive=hd2,scsi-id=1,lun=2 -drive 
-file=/tmp/vdisk-nfs/disk-vm-kbuild-1G-11-3,if=none,id=hd3,media=disk,aio=native,cache=none 
--device scsi-hd,bus=scsi0.0,drive=hd3,scsi-id=1,lun=3 -drive 
-file=/tmp/vdisk-nfs/disk-vm-kbuild-1G-11-4,if=none,id=hd4,media=disk,aio=native,cache=none 
--device scsi-hd,bus=scsi0.0,drive=hd4,scsi-id=1,lun=4
+between commit:
 
-Best Regards,
-Rong Chen
+  dce888798d3e ("drm/i915: remove confusing GPIO vs PCH_GPIO")
 
->
-> Thanks,
-> David
-> _______________________________________________
-> LKP mailing list
-> LKP@lists.01.org
-> https://lists.01.org/mailman/listinfo/lkp
+from the drm tree and commit:
 
+  d78aa650670d ("drm: Add drm/drm_util.h header file")
+
+from the drm-misc tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/gpu/drm/i915/intel_display.h
+index e20e6a36a748,809c06ae4c07..000000000000
+--- a/drivers/gpu/drm/i915/intel_display.h
++++ b/drivers/gpu/drm/i915/intel_display.h
+@@@ -25,22 -25,8 +25,24 @@@
+  #ifndef _INTEL_DISPLAY_H_
+  #define _INTEL_DISPLAY_H_
+ =20
++ #include <drm/drm_util.h>
++=20
+ +enum i915_gpio {
+ +	GPIOA,
+ +	GPIOB,
+ +	GPIOC,
+ +	GPIOD,
+ +	GPIOE,
+ +	GPIOF,
+ +	GPIOG,
+ +	GPIOH,
+ +	__GPIOI_UNUSED,
+ +	GPIOJ,
+ +	GPIOK,
+ +	GPIOL,
+ +	GPIOM,
+ +};
+ +
+  enum pipe {
+  	INVALID_PIPE =3D -1,
+ =20
+
+--Sig_/aZLBaNy0rR/pAyR8cCuc8g/
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluYYFgACgkQAVBC80lX
+0Gx2qAf/bYg4cs1wNRFYgpsUBMqOrJdDH6bKlP872uoMvJ+g2a11x/hcqXjPJ4SM
+cPDlZEAqa1k32kg6TZTih2p8R7ShXIRCtCHTNyOdSkuR4KttMHCYgPwod6pxv9ZU
++qUIjKqvh5usL9maRqYRd/fCXjFuUZsgwIfU4d/wY1QnIEzASj4HzqR9VuAr3BcX
+TcVXimY+APoKgLWNLQC2f71Vq5fFKCxakfxCClFEaT81xcDYYgUUQunq6JeJqcB5
+TE+Eboat+to+hX0SFutZ7d6q1hQLrWxh/SFt6NgzPFSMoJX3G8L5rfIYsOocGHta
+sA7u+qyKgp6HUBUKge1rws6RmXMCRA==
+=u2C0
+-----END PGP SIGNATURE-----
+
+--Sig_/aZLBaNy0rR/pAyR8cCuc8g/--
