@@ -2,147 +2,115 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,TVD_SUBJ_WIPE_DEBT,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38669C070C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 23:04:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BCB5C070C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 23:09:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBE3520839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 23:04:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CC912146E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 23:09:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fnw9HbqP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBE3520839
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K8EYQUV6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CC912146E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726821AbeIMEKz (ORCPT
+        id S1726685AbeIMEPu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 00:10:55 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:41009 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726317AbeIMEKz (ORCPT
+        Thu, 13 Sep 2018 00:15:50 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:44094 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725751AbeIMEPu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 00:10:55 -0400
-Received: by mail-yw1-f66.google.com with SMTP id q129-v6so404709ywg.8
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 16:04:14 -0700 (PDT)
+        Thu, 13 Sep 2018 00:15:50 -0400
+Received: by mail-qk1-f193.google.com with SMTP id d131-v6so2178419qke.11
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 16:09:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=v0dNk49w6GoJjdJZlcckWnJ5rrRlUOnIB8Rq/eBShQE=;
-        b=fnw9HbqPNv2cGSON/lerSwrMDQHoFGXzjv8ypWnpvgqDwi7dFMmYYuNM6U6E60F8I5
-         NumGucYw94AYfy66y/DIIsft2f6pCAtYuqd1alNuVRENGyWrIzz8ZerEMsW39mxROCNI
-         xqT5Jnmi5vE8/22/37R+2DEaujOfeKvrtMQyQ=
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :content-transfer-encoding:user-agent;
+        bh=PMBhSsUTwZQfsvYWSUIflvFWLLu4tkrVGV+SyhSri1Y=;
+        b=K8EYQUV6Y4+Mr42NG7nL2JIlVboS6BsvhVX6I9qovcI5n95zUw3jcbGnc8Zz7Exhgg
+         cmfjUgDWkUuc01mxnfMRIAKLRU1OTzLMltgh2quQC/RPa8yjxzDFJGpPQbnfd7GaiSjU
+         vvwYPW+PT00pLh6KGgtz4mRwtkLDi0V5uLwuSnmYEXC7kJIz34YRDCseYzwi/wfBGexj
+         0zkfBcGy3CbpIWvl6NLanynodq4N4UIpvS+H1/NEU3zSAqnECKpxNmswdAsLWwBUtsaB
+         lVMp/98KBHWBT1KFmfRjlAnSNrUOPkWcdrpfB41n4Ij9m4QswX/uRnrFojPEMlqZUxqc
+         jpgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=v0dNk49w6GoJjdJZlcckWnJ5rrRlUOnIB8Rq/eBShQE=;
-        b=g7LRbrvofhHqM7P4sw4ZOWwyyf5vaD8VK0lPxNfYPJARQjoMbTZulMNg6wtoc+uIMW
-         LkgtdzBShQ9x1C0zUFuxd4gEhm1zrhFVT+12IqD+EQqyLM1QaO86uMHdPrQz3FA6x5lb
-         bx/+03QEE1MR5i1SSGmNKUkX2HzVW0DyczBGGNCjYyxQLAbddHitrUbQLcjEqykBq9yx
-         f6qL7Gj1A71TVUPblK44VOda2RSNWkMlt6lMH/g9O1QwQMqmlIGVyOx0j7BYusFQGh8R
-         qOUPm0n4RmGxkwRcBBI/2HipHy/sAc7lzXuDBN/8og29ScyRcsuiAMdlD1NoXr/Etizh
-         fZ9Q==
-X-Gm-Message-State: APzg51CWL/Y/P8BvE+7OSFROTkmSakx1fUk0wpZ3ciqqAYBy05Iija7N
-        Um+OsPEV22m+n+xONUuYmoFJpAGJCTs=
-X-Google-Smtp-Source: ANB0VdYlj2aLNzDWeOAY1Hzx9zOAVhwRgCRuLtDAcYKF3EzdCfjaLvRDCYm0r7ag1lTA026XaOL6ow==
-X-Received: by 2002:a81:1f85:: with SMTP id f127-v6mr2080127ywf.395.1536793452987;
-        Wed, 12 Sep 2018 16:04:12 -0700 (PDT)
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com. [209.85.219.171])
-        by smtp.gmail.com with ESMTPSA id t4-v6sm714136ywa.51.2018.09.12.16.04.11
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:content-transfer-encoding:user-agent;
+        bh=PMBhSsUTwZQfsvYWSUIflvFWLLu4tkrVGV+SyhSri1Y=;
+        b=NZxCDOBLYugYEY3iPkygFuCRM8jeh4QVmocpd9cR/fE4n15u9244oMJPiIxGpd4URT
+         T1wGndbVZpBiHW7Y7btO5RFj8ikhvnZD4zLVLEKnMbrnKFRkUHiN/cuJoxluaVLSFWdF
+         WbFDO7ES2uKjWjJGFqgzAS77JMuyPAt0GKcBZsiuTrfftHadwUaLXrGLXzYjdFzMnbOS
+         9oY3BkXLdfJPV62G0QbdFcwfNCseeY6F6dtSYhcF83mwk33MNVZhhtJJusDCk5s59+d7
+         HUquTxj7tRimFfZWkK8EdMaIS3020YdV4ELUJgX4+D9U/0VyNKNE9rKiROX2iHA9EIyC
+         YqKw==
+X-Gm-Message-State: APzg51CUs9pUG5SDt6a2NIgjJlMmg8PqSMjxA5Ir2KF5DUsBnwYSndpg
+        2BnXhgJ3JXrkSy57+lv1mOww5Qju
+X-Google-Smtp-Source: ANB0VdYC5p+eWj2iQ8Of79dz3/zb2oOEAGjUEVbzLdLf+4wLWcKr1kxoGGNvtQbpaSUCeCKKRnKBMw==
+X-Received: by 2002:a37:c392:: with SMTP id r18-v6mr3290762qkl.56.1536793747455;
+        Wed, 12 Sep 2018 16:09:07 -0700 (PDT)
+Received: from WindFlash ([201.82.148.26])
+        by smtp.gmail.com with ESMTPSA id y47-v6sm1596191qtk.27.2018.09.12.16.09.05
         for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Sep 2018 16:04:11 -0700 (PDT)
-Received: by mail-yb1-f171.google.com with SMTP id y20-v6so2474099ybi.13
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 16:04:11 -0700 (PDT)
-X-Received: by 2002:a25:dd82:: with SMTP id u124-v6mr2107380ybg.171.1536793450959;
- Wed, 12 Sep 2018 16:04:10 -0700 (PDT)
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Sep 2018 16:09:06 -0700 (PDT)
+Date:   Wed, 12 Sep 2018 20:09:02 -0300
+From:   Leonardo =?utf-8?B?QnLDoXM=?= <leobras.c@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Subject: [PATCH] Optimize tests and remove shadowed local variable.
+Message-ID: <20180912230902.GA9625@WindFlash>
 MIME-Version: 1.0
-Received: by 2002:a25:5f04:0:0:0:0:0 with HTTP; Wed, 12 Sep 2018 16:04:10
- -0700 (PDT)
-In-Reply-To: <18c20c50-3ec5-0c85-93ef-58a3dbf3498c@schaufler-ca.com>
-References: <cbf848ae-a1ac-c5ab-f23b-bc9217fceebe@schaufler-ca.com> <18c20c50-3ec5-0c85-93ef-58a3dbf3498c@schaufler-ca.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 12 Sep 2018 16:04:10 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jLZaDxv140w5L48yNLikUs-=JMJ82oDW-sP=4b3tRC_bA@mail.gmail.com>
-Message-ID: <CAGXu5jLZaDxv140w5L48yNLikUs-=JMJ82oDW-sP=4b3tRC_bA@mail.gmail.com>
-Subject: Re: [PATCH 02/10] Smack: Abstract use of cred security blob
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     LSM <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        LKLM <linux-kernel@vger.kernel.org>,
-        SE Linux <selinux@tycho.nsa.gov>,
-        John Johansen <john.johansen@canonical.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 11, 2018 at 9:41 AM, Casey Schaufler <casey@schaufler-ca.com> wrote:
-> Don't use the cred->security pointer directly.
-> Provide a helper function that provides the security blob pointer.
->
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> ---
->  security/smack/smack.h        | 14 +++++++--
->  security/smack/smack_access.c |  4 +--
->  security/smack/smack_lsm.c    | 57 +++++++++++++++++------------------
->  security/smack/smackfs.c      | 18 +++++------
->  4 files changed, 50 insertions(+), 43 deletions(-)
->
-> diff --git a/security/smack/smack.h b/security/smack/smack.h
-> index f7db791fb566..0b55d6a55b26 100644
-> --- a/security/smack/smack.h
-> +++ b/security/smack/smack.h
-> @@ -356,6 +356,11 @@ extern struct list_head smack_onlycap_list;
->  #define SMACK_HASH_SLOTS 16
->  extern struct hlist_head smack_known_hash[SMACK_HASH_SLOTS];
->
-> +static inline struct task_smack *smack_cred(const struct cred *cred)
-> +{
-> +       return cred->security;
-> +}
-> +
->  /*
->   * Is the directory transmuting?
->   */
-> @@ -382,13 +387,16 @@ static inline struct smack_known *smk_of_task(const struct task_smack *tsp)
->         return tsp->smk_task;
->  }
->
-> -static inline struct smack_known *smk_of_task_struct(const struct task_struct *t)
-> +static inline struct smack_known *smk_of_task_struct(
-> +                                               const struct task_struct *t)
->  {
->         struct smack_known *skp;
-> +       const struct cred *cred;
->
->         rcu_read_lock();
-> -       skp = smk_of_task(__task_cred(t)->security);
-> +       cred = __task_cred(t);
->         rcu_read_unlock();
-> +       skp = smk_of_task(smack_cred(cred));
+Removes an unnecessary shadowed local variable (start).
+Optimize test of isdigit:
+- If isalpha returns true, isdigit will return false, so no need to test.
 
-Hm, why is this safe? (i.e. what is pinning the cred?) I would expect
-get_cred()/put_cred() since this is not for "current"? And then what
-controls the skp lifetime?
+Signed-off-by: Leonardo Brás <leobras.c@gmail.com>
+---
+ scripts/asn1_compiler.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Everything else looks to be mechanical replacement, so that's fine.
-Did you use some tooling to do the mechanical replacement or was it
-done by hand?
-
--Kees
-
+diff --git a/scripts/asn1_compiler.c b/scripts/asn1_compiler.c
+index c146020fc783..a0056df4e358 100644
+--- a/scripts/asn1_compiler.c
++++ b/scripts/asn1_compiler.c
+@@ -413,7 +413,7 @@ static void tokenise(char *buffer, char *end)
+ 
+ 			/* Handle string tokens */
+ 			if (isalpha(*p)) {
+-				const char **dir, *start = p;
++				const char **dir;
+ 
+ 				/* Can be a directive, type name or element
+ 				 * name.  Find the end of the name.
+@@ -454,10 +454,10 @@ static void tokenise(char *buffer, char *end)
+ 
+ 				tokens[tix++].token_type = TOKEN_TYPE_NAME;
+ 				continue;
+-			}
+ 
+-			/* Handle numbers */
+-			if (isdigit(*p)) {
++			} else if (isdigit(*p)) {
++				/* Handle numbers */
++
+ 				/* Find the end of the number */
+ 				q = p + 1;
+ 				while (q < nl && (isdigit(*q)))
 -- 
-Kees Cook
-Pixel Security
+2.19.0
+
