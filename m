@@ -2,32 +2,32 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.1 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 075ECC4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:17:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 685ACC4646A
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:17:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE31D2087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:17:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE31D2087F
+	by mail.kernel.org (Postfix) with ESMTP id 2951320880
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:17:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2951320880
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727984AbeILNVE (ORCPT
+        id S1727730AbeILNUz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 09:21:04 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:11691 "EHLO huawei.com"
+        Wed, 12 Sep 2018 09:20:55 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:12100 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726471AbeILNVD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 09:21:03 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 1D756B5CD530B;
-        Wed, 12 Sep 2018 16:17:33 +0800 (CST)
+        id S1725948AbeILNUz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 09:20:55 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id B94CCA3D075FE;
+        Wed, 12 Sep 2018 16:17:27 +0800 (CST)
 Received: from huawei.com (10.175.124.28) by DGGEMS408-HUB.china.huawei.com
  (10.3.19.208) with Microsoft SMTP Server id 14.3.399.0; Wed, 12 Sep 2018
- 16:17:26 +0800
+ 16:17:21 +0800
 From:   Jason Yan <yanaijie@huawei.com>
 To:     <martin.petersen@oracle.com>, <jejb@linux.vnet.ibm.com>
 CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
@@ -37,9 +37,9 @@ CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <chenxiang66@hisilicon.com>, <miaoxie@huawei.com>,
         Jason Yan <yanaijie@huawei.com>,
         Ewan Milne <emilne@redhat.com>, Tomas Henzl <thenzl@redhat.com>
-Subject: [PATCH 5/5] scsi: libsas: fix a race condition when smp task timeout
-Date:   Wed, 12 Sep 2018 16:29:46 +0800
-Message-ID: <20180912082946.34814-6-yanaijie@huawei.com>
+Subject: [PATCH 1/5] scsi: libsas: delete dead code in scsi_transport_sas.c
+Date:   Wed, 12 Sep 2018 16:29:42 +0800
+Message-ID: <20180912082946.34814-2-yanaijie@huawei.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180912082946.34814-1-yanaijie@huawei.com>
 References: <20180912082946.34814-1-yanaijie@huawei.com>
@@ -52,17 +52,8 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the lldd is processing the complete sas task in interrupt and set
-the task stat as SAS_TASK_STATE_DONE, the smp timeout timer is able to
-be triggered at the same time. And smp_task_timedout() will complete the
-task wheter the SAS_TASK_STATE_DONE is set or not. Then the sas task may
-freed before lldd end the interrupt process. Thus a use-after-free will
-happen.
+This code is dead and no clue implies that it will be back again.
 
-Fix this by calling the complete() only when SAS_TASK_STATE_DONE is not
-set. And remove the check of the return value of the del_timer().
-
-Reported-by: chenxiang <chenxiang66@hisilicon.com>
 Signed-off-by: Jason Yan <yanaijie@huawei.com>
 CC: John Garry <john.garry@huawei.com>
 CC: Johannes Thumshirn <jthumshirn@suse.de>
@@ -71,36 +62,31 @@ CC: Christoph Hellwig <hch@lst.de>
 CC: Tomas Henzl <thenzl@redhat.com>
 CC: Dan Williams <dan.j.williams@intel.com>
 CC: Hannes Reinecke <hare@suse.com>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
 ---
- drivers/scsi/libsas/sas_expander.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/scsi/scsi_transport_sas.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/scsi/libsas/sas_expander.c b/drivers/scsi/libsas/sas_expander.c
-index 52222940d398..0d1f72752ca2 100644
---- a/drivers/scsi/libsas/sas_expander.c
-+++ b/drivers/scsi/libsas/sas_expander.c
-@@ -48,17 +48,16 @@ static void smp_task_timedout(struct timer_list *t)
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&task->task_state_lock, flags);
--	if (!(task->task_state_flags & SAS_TASK_STATE_DONE))
-+	if (!(task->task_state_flags & SAS_TASK_STATE_DONE)) {
- 		task->task_state_flags |= SAS_TASK_STATE_ABORTED;
-+		complete(&task->slow_task->completion);
-+	}
- 	spin_unlock_irqrestore(&task->task_state_lock, flags);
--
--	complete(&task->slow_task->completion);
- }
- 
- static void smp_task_done(struct sas_task *task)
- {
--	if (!del_timer(&task->slow_task->timer))
--		return;
-+	del_timer(&task->slow_task->timer);
- 	complete(&task->slow_task->completion);
- }
- 
+diff --git a/drivers/scsi/scsi_transport_sas.c b/drivers/scsi/scsi_transport_sas.c
+index 0cd16e80b019..0a165b2b3e81 100644
+--- a/drivers/scsi/scsi_transport_sas.c
++++ b/drivers/scsi/scsi_transport_sas.c
+@@ -612,7 +612,6 @@ sas_phy_protocol_attr(identify.target_port_protocols,
+ sas_phy_simple_attr(identify.sas_address, sas_address, "0x%016llx\n",
+ 		unsigned long long);
+ sas_phy_simple_attr(identify.phy_identifier, phy_identifier, "%d\n", u8);
+-//sas_phy_simple_attr(port_identifier, port_identifier, "%d\n", int);
+ sas_phy_linkspeed_attr(negotiated_linkrate);
+ sas_phy_linkspeed_attr(minimum_linkrate_hw);
+ sas_phy_linkspeed_rw_attr(minimum_linkrate);
+@@ -1802,7 +1801,6 @@ sas_attach_transport(struct sas_function_template *ft)
+ 	SETUP_PHY_ATTRIBUTE(device_type);
+ 	SETUP_PHY_ATTRIBUTE(sas_address);
+ 	SETUP_PHY_ATTRIBUTE(phy_identifier);
+-	//SETUP_PHY_ATTRIBUTE(port_identifier);
+ 	SETUP_PHY_ATTRIBUTE(negotiated_linkrate);
+ 	SETUP_PHY_ATTRIBUTE(minimum_linkrate_hw);
+ 	SETUP_PHY_ATTRIBUTE_RW(minimum_linkrate);
 -- 
 2.14.4
 
