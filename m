@@ -2,148 +2,172 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04B0CC04ABB
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 03:18:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8034CC04ABB
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 03:21:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B52CE20882
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 03:18:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B52CE20882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 30CCF20882
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 03:21:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30CCF20882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728381AbeILIUj (ORCPT
+        id S1728011AbeILIXw convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 04:20:39 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44576 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728358AbeILIUi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 04:20:38 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 18F0040241C0;
-        Wed, 12 Sep 2018 03:18:13 +0000 (UTC)
-Received: from localhost (ovpn-8-17.pek2.redhat.com [10.72.8.17])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D8C232027EA4;
-        Wed, 12 Sep 2018 03:18:11 +0000 (UTC)
-Date:   Wed, 12 Sep 2018 11:18:08 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     tglx@linutronix.de, hpa@zytor.com, thgarnie@google.com,
-        kirill.shutemov@linux.intel.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH v2 2/3] x86/mm/KASLR: Calculate the actual size of
- vmemmap region
-Message-ID: <20180912031808.GC1740@192.168.1.3>
-References: <20180909124946.17988-1-bhe@redhat.com>
- <20180909124946.17988-2-bhe@redhat.com>
- <20180910061151.GA85199@gmail.com>
- <20180911073057.GW1740@192.168.1.3>
- <20180911075946.GA97454@gmail.com>
- <20180911081811.GY1740@192.168.1.3>
- <20180911092829.GA9079@gmail.com>
- <20180911120803.GZ1740@192.168.1.3>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180911120803.GZ1740@192.168.1.3>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 12 Sep 2018 03:18:13 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 12 Sep 2018 03:18:13 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
+        Wed, 12 Sep 2018 04:23:52 -0400
+Received: from mga14.intel.com ([192.55.52.115]:25778 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726810AbeILIXw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 04:23:52 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Sep 2018 20:21:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,363,1531810800"; 
+   d="scan'208";a="85171602"
+Received: from lftan-mobl.gar.corp.intel.com (HELO ubuntu) ([10.226.248.75])
+  by fmsmga002.fm.intel.com with SMTP; 11 Sep 2018 20:18:31 -0700
+Received: by ubuntu (sSMTP sendmail emulation); Wed, 12 Sep 2018 11:18:22 +0800
+Message-ID: <1536722302.32190.4.camel@intel.com>
+Subject: Re: [PATCH v2 2/9] nios2: build .dtb files in dts directory
+From:   Ley Foon Tan <ley.foon.tan@intel.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        nios2-dev@lists.rocketboards.org
+Date:   Wed, 12 Sep 2018 11:18:22 +0800
+In-Reply-To: <CAL_Jsq+ocQEUsm-JBEeMfnkKRSRO3-UrvA7no+c3Cmp44c0OGg@mail.gmail.com>
+References: <20180905235327.5996-1-robh@kernel.org>
+         <20180905235327.5996-3-robh@kernel.org> <1536286895.6128.4.camel@intel.com>
+         <CAL_Jsq+ocQEUsm-JBEeMfnkKRSRO3-UrvA7no+c3Cmp44c0OGg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.1 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/11/18 at 08:08pm, Baoquan He wrote:
-> On 09/11/18 at 11:28am, Ingo Molnar wrote:
-> > Yeah, so proper context is still missing, this paragraph appears to assume from the reader a 
-> > whole lot of prior knowledge, and this is one of the top comments in kaslr.c so there's nowhere 
-> > else to go read about the background.
+On Fri, 2018-09-07 at 13:09 -0500, Rob Herring wrote:
+> On Thu, Sep 6, 2018 at 9:21 PM Ley Foon Tan <ley.foon.tan@intel.com>
+> wrote:
 > > 
-> > For example what is the range of randomization of each region? Assuming the static, 
-> > non-randomized description in Documentation/x86/x86_64/mm.txt is correct, in what way does 
-> > KASLR modify that layout?
-
-Re-read this paragraph, found I missed saying the range for each memory
-region, and in what way KASLR modify the layout.
-
 > > 
-> > All of this is very opaque and not explained very well anywhere that I could find. We need to 
-> > generate a proper description ASAP.
+> > On Wed, 2018-09-05 at 18:53 -0500, Rob Herring wrote:
+> > > 
+> > > Align nios2 with other architectures which build the dtb files in
+> > > the
+> > > same directory as the dts files. This is also in line with most
+> > > other
+> > > build targets which are located in the same directory as the
+> > > source.
+> > > This move will help enable the 'dtbs' target which builds all the
+> > > dtbs
+> > > regardless of kernel config.
+> > > 
+> > > This transition could break some scripts if they expect dtb files
+> > > in
+> > > the old location.
+> > > 
+> > > Cc: Ley Foon Tan <lftan@altera.com>
+> > > Cc: nios2-dev@lists.rocketboards.org
+> > > Signed-off-by: Rob Herring <robh@kernel.org>
+> > > ---
+> > > Please ack so I can take the whole series via the DT tree.
+> > > 
+> > >  arch/nios2/Makefile          | 4 ++--
+> > >  arch/nios2/boot/Makefile     | 4 ----
+> > >  arch/nios2/boot/dts/Makefile | 1 +
+> > >  3 files changed, 3 insertions(+), 6 deletions(-)
+> > >  create mode 100644 arch/nios2/boot/dts/Makefile
+> > > 
+> > > diff --git a/arch/nios2/Makefile b/arch/nios2/Makefile
+> > > index 8673a79dca9c..50eece1c6adb 100644
+> > > --- a/arch/nios2/Makefile
+> > > +++ b/arch/nios2/Makefile
+> > > @@ -59,10 +59,10 @@ archclean:
+> > >         $(Q)$(MAKE) $(clean)=$(nios2-boot)
+> > > 
+> > >  %.dtb: | scripts
+> > > -       $(Q)$(MAKE) $(build)=$(nios2-boot) $(nios2-boot)/$@
+> > > +       $(Q)$(MAKE) $(build)=$(nios2-boot)/dts $(nios2-
+> > > boot)/dts/$@
+> > > 
+> > >  dtbs:
+> > > -       $(Q)$(MAKE) $(build)=$(nios2-boot) $(nios2-boot)/$@
+> > > +       $(Q)$(MAKE) $(build)=$(nios2-boot)/dts
+> > > 
+> > >  $(BOOT_TARGETS): vmlinux
+> > >         $(Q)$(MAKE) $(build)=$(nios2-boot) $(nios2-boot)/$@
+> > > diff --git a/arch/nios2/boot/Makefile b/arch/nios2/boot/Makefile
+> > > index 2ba23a679732..007586094dde 100644
+> > > --- a/arch/nios2/boot/Makefile
+> > > +++ b/arch/nios2/boot/Makefile
+> > > @@ -47,10 +47,6 @@ obj-$(CONFIG_NIOS2_DTB_SOURCE_BOOL) +=
+> > > linked_dtb.o
+> > > 
+> > >  targets += $(dtb-y)
+> > > 
+> > > -# Rule to build device tree blobs with make command
+> > > -$(obj)/%.dtb: $(src)/dts/%.dts FORCE
+> > > -       $(call if_changed_dep,dtc)
+> > > -
+> > >  $(obj)/dtbs: $(addprefix $(obj)/, $(dtb-y))
+> > > 
+> > >  install:
+> > > diff --git a/arch/nios2/boot/dts/Makefile
+> > > b/arch/nios2/boot/dts/Makefile
+> > > new file mode 100644
+> > > index 000000000000..f66554cd5c45
+> > > --- /dev/null
+> > > +++ b/arch/nios2/boot/dts/Makefile
+> > > @@ -0,0 +1 @@
+> > > +# SPDX-License-Identifier: GPL-2.0
+> > > --
+> > > 2.17.1
+> > > 
+> > Hi Rob
+> > 
+> > I have synced your all-dtbs branch from here: https://git.kernel.or
+> > g/pu
+> > b/scm/linux/kernel/git/robh/linux.git/log/?h=all-dtbs
+> > 
+> > It shows error when compile kernel image and also when "make
+> > dtbs_install".
+> Can you fetch the branch again and try it. I fixed a few dependency
+> issues.
 > 
-> OK, let me try to give an context with my understanding. And copy the
-> static layout of memory regions at below for reference.
+> > 
+> > make dtbs_install
+> > make[1]: *** No rule to make target
+> > 'arch/nios2/boot/dts/arch/nios2/boot/dts/10m50_devboard.dtb',
+> > needed by
+> > 'arch/nios2/boot/dts/arch/nios2/boot/dts/10m50_devboard.dtb.S'.  St
+> > op.
+> What is the value of CONFIG_NIOS2_DTB_SOURCE? As patch 3 notes, it
+> now
+> should not have any path.
 > 
-Here, Documentation/x86/x86_64/mm.txt is correct, and it's the
-guideline for us to manipulate the layout of kernel memory regions.
-Originally the starting address of each region is aligned to 512GB
-so that they are all mapped at the 0-th entry of PGD table in 4-level
-page mapping. Since we are so rich to have 120 TB virtual address space,
-they are aligned at 1 TB actually. So randomness comes from three parts
-mainly:
+> If that's a problem, I could take the basename to strip the path, but
+> then sub directories wouldn't work either.
+> 
+> BTW, next up, I want to consolidate the config variables for built-in 
+> dtbs.
+> 
 
-1) The direct mapping region for physical memory. 64 TB are reserved to
-cover the maximum physical memory support. However, most of systems only
-have much less RAM memory than 64 TB, even much less than 1 TB most of
-time. We can take the superfluous to join the randomization. This is
-often the biggest part.
+Hi Rob
 
-2) The hole between memory regions, even though they are only 1 TB.
+CONFIG_NIOS2_DTB_SOURCE has the relative path to dts file,
+arch/nios2/boot/dts/arch/nios2/boot/dts/10m50_devboard.dts
 
-3) KASAN region takes up 16 TB, while it won't take effect when KASLR is
-enabled. This is another big part. 
-
-As you can see, in these three memory regions, the physical memory
-mapping region has variable size according to the existing system RAM.
-However, the remaining two memory regions have fixed size, vmalloc is 32
-TB, vmemmap is 1 TB.
-
-With this superfluous address space as well as changing the starting address
-of each memory region to be PUD level, namely 1 GB aligned, we can have
-thousands of candidate position to locate those three memory regions.
-
-Above is for 4-level paging mode . As for 5-level, since the virtual
-address space is too big, Kirill makes the starting address of regions
-P4D aligned, namely 512 GB.
-
-When randomize the layout, their order are kept, still the physical
-memory mapping region is handled fistly, next vmalloc and vmemmap. Let's
-take the physical memory mapping region as example, we limit the
-starting address to be taken from the 1st 1/3 part of the whole
-available virtual address space which is from 0xffff880000000000 to
-0xfffffe0000000000, namely the original starting address of the physical
-memory mapping region to the starting address of cpu_entry_area mapping
-region. Once a random address is chosen for the physical memory mapping,
-we jump over the region and add 1G to begin the next region handling
-with the remaining available space.
+Change CONFIG_NIOS2_DTB_SOURCE=10m50_devboard.dtb.S fix the dtb build
+issue.
 
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-ffff880000000000 - ffffc7ffffffffff (=64 TB) direct mapping of all phys. memory                                                                   
-136T - 200T = 64TB
-ffffc80000000000 - ffffc8ffffffffff (=40 bits) hole
-200T - 201T = 1TB
-ffffc90000000000 - ffffe8ffffffffff (=45 bits) vmalloc/ioremap space
-201T - 233T = 32TB
-ffffe90000000000 - ffffe9ffffffffff (=40 bits) hole
-233T - 234T = 1TB
-ffffea0000000000 - ffffeaffffffffff (=40 bits) virtual memory map (1TB)
-234T - 235T = 1TB
-... unused hole ...
-ffffec0000000000 - fffffbffffffffff (=44 bits) kasan shadow memory (16TB)
-236T - 252T = 16TB
-... unused hole ...
-                                    vaddr_end for KASLR
-fffffe0000000000 - fffffe7fffffffff (=39 bits) cpu_entry_area mapping
-254T - 254T+512G
-
-Thanks
-Baoquan
+Regards
+Ley Foon
