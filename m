@@ -6,49 +6,50 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4A09C6778D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:58:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AE0DECDFC1
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:58:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86B5720833
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:58:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86B5720833
+	by mail.kernel.org (Postfix) with ESMTP id 4A19A20833
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:58:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A19A20833
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728324AbeILVDx (ORCPT
+        id S1728345AbeILVDz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 17:03:53 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:57076 "EHLO pegase1.c-s.fr"
+        Wed, 12 Sep 2018 17:03:55 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:1206 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727277AbeILVDv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 17:03:51 -0400
+        id S1726855AbeILVDy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 17:03:54 -0400
 Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 429RKC6HHcz9ttRs;
-        Wed, 12 Sep 2018 17:58:39 +0200 (CEST)
+        by localhost (Postfix) with ESMTP id 429RKG6FD8z9ttBm;
+        Wed, 12 Sep 2018 17:58:42 +0200 (CEST)
 X-Virus-Scanned: Debian amavisd-new at c-s.fr
 Received: from pegase1.c-s.fr ([192.168.12.234])
         by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id AfYiTCM2hv4W; Wed, 12 Sep 2018 17:58:39 +0200 (CEST)
+        with ESMTP id bfEXLeJwftb6; Wed, 12 Sep 2018 17:58:42 +0200 (CEST)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 429RKC5klcz9ttBm;
-        Wed, 12 Sep 2018 17:58:39 +0200 (CEST)
+        by pegase1.c-s.fr (Postfix) with ESMTP id 429RKG5ctRz9ttRw;
+        Wed, 12 Sep 2018 17:58:42 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id BCA3C8B858;
-        Wed, 12 Sep 2018 17:58:39 +0200 (CEST)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 8C2D48B858;
+        Wed, 12 Sep 2018 17:58:42 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
         by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id xn0qgg9pOhcl; Wed, 12 Sep 2018 17:58:39 +0200 (CEST)
+        with ESMTP id CMtylL23OVDF; Wed, 12 Sep 2018 17:58:42 +0200 (CEST)
 Received: from pc16082vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id AA7F38B873;
-        Wed, 12 Sep 2018 17:58:38 +0200 (CEST)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id ADD678B86F;
+        Wed, 12 Sep 2018 17:58:40 +0200 (CEST)
 Received: by pc16082vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 695C971913; Wed, 12 Sep 2018 15:58:38 +0000 (UTC)
-Message-Id: <13f63620e6d21a07b48c85719793f4f0e88c894f.1536692743.git.christophe.leroy@c-s.fr>
+        id 713E371913; Wed, 12 Sep 2018 15:58:40 +0000 (UTC)
+Message-Id: <1e03f5f3033779b6ba3d01feae904ef161d3627c.1536692743.git.christophe.leroy@c-s.fr>
 In-Reply-To: <cover.1536692743.git.christophe.leroy@c-s.fr>
 References: <cover.1536692743.git.christophe.leroy@c-s.fr>
 From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v2 12/24] powerpc/mm: use pte helpers in generic code
+Subject: [PATCH v2 13/24] powerpc/mm: Split dump_pagelinuxtables flag_array
+ table
 To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Dominik Brodowski <linux@dominikbrodowski.net>,
@@ -63,268 +64,543 @@ To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
 Cc:     linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org,
         linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         linuxppc-dev@lists.ozlabs.org, dri-devel@lists.freedesktop.org
-Date:   Wed, 12 Sep 2018 15:58:38 +0000 (UTC)
+Date:   Wed, 12 Sep 2018 15:58:40 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Get rid of platform specific _PAGE_XXXX in powerpc common code and
-use helpers instead.
-
-mm/dump_linuxpagetables.c will be handled separately
+To reduce the complexity of flag_array, and allow the removal of
+default 0 value of non existing flags, lets have one flag_array
+table for each platform family with only the really existing flags.
 
 Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/powerpc/include/asm/book3s/32/pgtable.h |  9 +++------
- arch/powerpc/include/asm/nohash/32/pgtable.h | 12 ++++++++----
- arch/powerpc/include/asm/nohash/pgtable.h    |  3 +--
- arch/powerpc/mm/pgtable.c                    | 19 ++++++-------------
- arch/powerpc/mm/pgtable_32.c                 | 15 ++++++++-------
- arch/powerpc/mm/pgtable_64.c                 | 14 +++++++-------
- arch/powerpc/xmon/xmon.c                     | 12 +++++++-----
- 7 files changed, 40 insertions(+), 44 deletions(-)
+ arch/powerpc/mm/Makefile                        |   7 ++
+ arch/powerpc/mm/dump_linuxpagetables-8xx.c      |  82 +++++++++++++
+ arch/powerpc/mm/dump_linuxpagetables-book3s64.c | 115 ++++++++++++++++++
+ arch/powerpc/mm/dump_linuxpagetables-generic.c  |  82 +++++++++++++
+ arch/powerpc/mm/dump_linuxpagetables.c          | 155 +-----------------------
+ arch/powerpc/mm/dump_linuxpagetables.h          |  19 +++
+ 6 files changed, 307 insertions(+), 153 deletions(-)
+ create mode 100644 arch/powerpc/mm/dump_linuxpagetables-8xx.c
+ create mode 100644 arch/powerpc/mm/dump_linuxpagetables-book3s64.c
+ create mode 100644 arch/powerpc/mm/dump_linuxpagetables-generic.c
+ create mode 100644 arch/powerpc/mm/dump_linuxpagetables.h
 
-diff --git a/arch/powerpc/include/asm/book3s/32/pgtable.h b/arch/powerpc/include/asm/book3s/32/pgtable.h
-index 24ed0f45d92f..d4f2f396af70 100644
---- a/arch/powerpc/include/asm/book3s/32/pgtable.h
-+++ b/arch/powerpc/include/asm/book3s/32/pgtable.h
-@@ -326,17 +326,14 @@ static inline bool pte_ci(pte_t pte)
- #define pte_access_permitted pte_access_permitted
- static inline bool pte_access_permitted(pte_t pte, bool write)
- {
--	unsigned long pteval = pte_val(pte);
- 	/*
- 	 * A read-only access is controlled by _PAGE_USER bit.
- 	 * We have _PAGE_READ set for WRITE and EXECUTE
- 	 */
--	unsigned long need_pte_bits = _PAGE_PRESENT | _PAGE_USER;
+diff --git a/arch/powerpc/mm/Makefile b/arch/powerpc/mm/Makefile
+index cdf6a9960046..3c844bdd16c4 100644
+--- a/arch/powerpc/mm/Makefile
++++ b/arch/powerpc/mm/Makefile
+@@ -43,5 +43,12 @@ obj-$(CONFIG_HIGHMEM)		+= highmem.o
+ obj-$(CONFIG_PPC_COPRO_BASE)	+= copro_fault.o
+ obj-$(CONFIG_SPAPR_TCE_IOMMU)	+= mmu_context_iommu.o
+ obj-$(CONFIG_PPC_PTDUMP)	+= dump_linuxpagetables.o
++ifdef CONFIG_PPC_PTDUMP
++obj-$(CONFIG_4xx)		+= dump_linuxpagetables-generic.o
++obj-$(CONFIG_PPC_8xx)		+= dump_linuxpagetables-8xx.o
++obj-$(CONFIG_PPC_BOOK3E_MMU)	+= dump_linuxpagetables-generic.o
++obj-$(CONFIG_PPC_BOOK3S_32)	+= dump_linuxpagetables-generic.o
++obj-$(CONFIG_PPC_BOOK3S_64)	+= dump_linuxpagetables-book3s64.o
++endif
+ obj-$(CONFIG_PPC_HTDUMP)	+= dump_hashpagetable.o
+ obj-$(CONFIG_PPC_MEM_KEYS)	+= pkeys.o
+diff --git a/arch/powerpc/mm/dump_linuxpagetables-8xx.c b/arch/powerpc/mm/dump_linuxpagetables-8xx.c
+new file mode 100644
+index 000000000000..33f52a97975b
+--- /dev/null
++++ b/arch/powerpc/mm/dump_linuxpagetables-8xx.c
+@@ -0,0 +1,82 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * From split of dump_linuxpagetables.c
++ * Copyright 2016, Rashmica Gupta, IBM Corp.
++ *
++ */
++#include <linux/kernel.h>
++#include <asm/pgtable.h>
++
++#include "dump_linuxpagetables.h"
++
++static const struct flag_info flag_array[] = {
++	{
++		.mask	= _PAGE_PRIVILEGED,
++		.val	= 0,
++		.set	= "user",
++		.clear	= "    ",
++	}, {
++		.mask	= _PAGE_RO | _PAGE_NA,
++		.val	= 0,
++		.set	= "rw",
++	}, {
++		.mask	= _PAGE_RO | _PAGE_NA,
++		.val	= _PAGE_RO,
++		.set	= "r ",
++	}, {
++		.mask	= _PAGE_RO | _PAGE_NA,
++		.val	= _PAGE_NA,
++		.set	= "  ",
++	}, {
++		.mask	= _PAGE_EXEC,
++		.val	= _PAGE_EXEC,
++		.set	= " X ",
++		.clear	= "   ",
++	}, {
++		.mask	= _PAGE_PRESENT,
++		.val	= _PAGE_PRESENT,
++		.set	= "present",
++		.clear	= "       ",
++	}, {
++		.mask	= _PAGE_GUARDED,
++		.val	= _PAGE_GUARDED,
++		.set	= "guarded",
++		.clear	= "       ",
++	}, {
++		.mask	= _PAGE_DIRTY,
++		.val	= _PAGE_DIRTY,
++		.set	= "dirty",
++		.clear	= "     ",
++	}, {
++		.mask	= _PAGE_ACCESSED,
++		.val	= _PAGE_ACCESSED,
++		.set	= "accessed",
++		.clear	= "        ",
++	}, {
++		.mask	= _PAGE_NO_CACHE,
++		.val	= _PAGE_NO_CACHE,
++		.set	= "no cache",
++		.clear	= "        ",
++	}, {
++		.mask	= _PAGE_SPECIAL,
++		.val	= _PAGE_SPECIAL,
++		.set	= "special",
++	}
++};
++
++struct pgtable_level pg_level[5] = {
++	{
++	}, { /* pgd */
++		.flag	= flag_array,
++		.num	= ARRAY_SIZE(flag_array),
++	}, { /* pud */
++		.flag	= flag_array,
++		.num	= ARRAY_SIZE(flag_array),
++	}, { /* pmd */
++		.flag	= flag_array,
++		.num	= ARRAY_SIZE(flag_array),
++	}, { /* pte */
++		.flag	= flag_array,
++		.num	= ARRAY_SIZE(flag_array),
++	},
++};
+diff --git a/arch/powerpc/mm/dump_linuxpagetables-book3s64.c b/arch/powerpc/mm/dump_linuxpagetables-book3s64.c
+new file mode 100644
+index 000000000000..a637e612b205
+--- /dev/null
++++ b/arch/powerpc/mm/dump_linuxpagetables-book3s64.c
+@@ -0,0 +1,115 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * From split of dump_linuxpagetables.c
++ * Copyright 2016, Rashmica Gupta, IBM Corp.
++ *
++ */
++#include <linux/kernel.h>
++#include <asm/pgtable.h>
++
++#include "dump_linuxpagetables.h"
++
++static const struct flag_info flag_array[] = {
++	{
++		.mask	= _PAGE_PRIVILEGED,
++		.val	= 0,
++		.set	= "user",
++		.clear	= "    ",
++	}, {
++		.mask	= _PAGE_READ,
++		.val	= _PAGE_READ,
++		.set	= "r",
++		.clear	= " ",
++	}, {
++		.mask	= _PAGE_WRITE,
++		.val	= _PAGE_WRITE,
++		.set	= "w",
++		.clear	= " ",
++	}, {
++		.mask	= _PAGE_EXEC,
++		.val	= _PAGE_EXEC,
++		.set	= " X ",
++		.clear	= "   ",
++	}, {
++		.mask	= _PAGE_PTE,
++		.val	= _PAGE_PTE,
++		.set	= "pte",
++		.clear	= "   ",
++	}, {
++		.mask	= _PAGE_PRESENT,
++		.val	= _PAGE_PRESENT,
++		.set	= "present",
++		.clear	= "       ",
++	}, {
++		.mask	= H_PAGE_HASHPTE,
++		.val	= H_PAGE_HASHPTE,
++		.set	= "hpte",
++		.clear	= "    ",
++	}, {
++		.mask	= _PAGE_DIRTY,
++		.val	= _PAGE_DIRTY,
++		.set	= "dirty",
++		.clear	= "     ",
++	}, {
++		.mask	= _PAGE_ACCESSED,
++		.val	= _PAGE_ACCESSED,
++		.set	= "accessed",
++		.clear	= "        ",
++	}, {
++		.mask	= _PAGE_NON_IDEMPOTENT,
++		.val	= _PAGE_NON_IDEMPOTENT,
++		.set	= "non-idempotent",
++		.clear	= "              ",
++	}, {
++		.mask	= _PAGE_TOLERANT,
++		.val	= _PAGE_TOLERANT,
++		.set	= "tolerant",
++		.clear	= "        ",
++	}, {
++		.mask	= H_PAGE_BUSY,
++		.val	= H_PAGE_BUSY,
++		.set	= "busy",
++	}, {
++#ifdef CONFIG_PPC_64K_PAGES
++		.mask	= H_PAGE_COMBO,
++		.val	= H_PAGE_COMBO,
++		.set	= "combo",
++	}, {
++		.mask	= H_PAGE_4K_PFN,
++		.val	= H_PAGE_4K_PFN,
++		.set	= "4K_pfn",
++	}, {
++#else /* CONFIG_PPC_64K_PAGES */
++		.mask	= H_PAGE_F_GIX,
++		.val	= H_PAGE_F_GIX,
++		.set	= "f_gix",
++		.is_val	= true,
++		.shift	= H_PAGE_F_GIX_SHIFT,
++	}, {
++		.mask	= H_PAGE_F_SECOND,
++		.val	= H_PAGE_F_SECOND,
++		.set	= "f_second",
++	}, {
++#endif /* CONFIG_PPC_64K_PAGES */
++		.mask	= _PAGE_SPECIAL,
++		.val	= _PAGE_SPECIAL,
++		.set	= "special",
++	}
++};
++
++struct pgtable_level pg_level[5] = {
++	{
++	}, { /* pgd */
++		.flag	= flag_array,
++		.num	= ARRAY_SIZE(flag_array),
++	}, { /* pud */
++		.flag	= flag_array,
++		.num	= ARRAY_SIZE(flag_array),
++	}, { /* pmd */
++		.flag	= flag_array,
++		.num	= ARRAY_SIZE(flag_array),
++	}, { /* pte */
++		.flag	= flag_array,
++		.num	= ARRAY_SIZE(flag_array),
++	},
++};
+diff --git a/arch/powerpc/mm/dump_linuxpagetables-generic.c b/arch/powerpc/mm/dump_linuxpagetables-generic.c
+new file mode 100644
+index 000000000000..1e3829ec1348
+--- /dev/null
++++ b/arch/powerpc/mm/dump_linuxpagetables-generic.c
+@@ -0,0 +1,82 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * From split of dump_linuxpagetables.c
++ * Copyright 2016, Rashmica Gupta, IBM Corp.
++ *
++ */
++#include <linux/kernel.h>
++#include <asm/pgtable.h>
++
++#include "dump_linuxpagetables.h"
++
++static const struct flag_info flag_array[] = {
++	{
++		.mask	= _PAGE_USER,
++		.val	= _PAGE_USER,
++		.set	= "user",
++		.clear	= "    ",
++	}, {
++		.mask	= _PAGE_RW,
++		.val	= _PAGE_RW,
++		.set	= "rw",
++		.clear	= "r ",
++	}, {
++#ifndef CONFIG_PPC_BOOK3S_32
++		.mask	= _PAGE_EXEC,
++		.val	= _PAGE_EXEC,
++		.set	= " X ",
++		.clear	= "   ",
++	}, {
++#endif
++		.mask	= _PAGE_PRESENT,
++		.val	= _PAGE_PRESENT,
++		.set	= "present",
++		.clear	= "       ",
++	}, {
++		.mask	= _PAGE_GUARDED,
++		.val	= _PAGE_GUARDED,
++		.set	= "guarded",
++		.clear	= "       ",
++	}, {
++		.mask	= _PAGE_DIRTY,
++		.val	= _PAGE_DIRTY,
++		.set	= "dirty",
++		.clear	= "     ",
++	}, {
++		.mask	= _PAGE_ACCESSED,
++		.val	= _PAGE_ACCESSED,
++		.set	= "accessed",
++		.clear	= "        ",
++	}, {
++		.mask	= _PAGE_WRITETHRU,
++		.val	= _PAGE_WRITETHRU,
++		.set	= "write through",
++		.clear	= "             ",
++	}, {
++		.mask	= _PAGE_NO_CACHE,
++		.val	= _PAGE_NO_CACHE,
++		.set	= "no cache",
++		.clear	= "        ",
++	}, {
++		.mask	= _PAGE_SPECIAL,
++		.val	= _PAGE_SPECIAL,
++		.set	= "special",
++	}
++};
++
++struct pgtable_level pg_level[5] = {
++	{
++	}, { /* pgd */
++		.flag	= flag_array,
++		.num	= ARRAY_SIZE(flag_array),
++	}, { /* pud */
++		.flag	= flag_array,
++		.num	= ARRAY_SIZE(flag_array),
++	}, { /* pmd */
++		.flag	= flag_array,
++		.num	= ARRAY_SIZE(flag_array),
++	}, { /* pte */
++		.flag	= flag_array,
++		.num	= ARRAY_SIZE(flag_array),
++	},
++};
+diff --git a/arch/powerpc/mm/dump_linuxpagetables.c b/arch/powerpc/mm/dump_linuxpagetables.c
+index 876e2a3c79f2..e60aa6d7456d 100644
+--- a/arch/powerpc/mm/dump_linuxpagetables.c
++++ b/arch/powerpc/mm/dump_linuxpagetables.c
+@@ -27,6 +27,8 @@
+ #include <asm/page.h>
+ #include <asm/pgalloc.h>
+ 
++#include "dump_linuxpagetables.h"
++
+ #ifdef CONFIG_PPC32
+ #define KERN_VIRT_START	0
+ #endif
+@@ -101,159 +103,6 @@ static struct addr_marker address_markers[] = {
+ 	{ -1,	NULL },
+ };
+ 
+-struct flag_info {
+-	u64		mask;
+-	u64		val;
+-	const char	*set;
+-	const char	*clear;
+-	bool		is_val;
+-	int		shift;
+-};
 -
--	if (write)
--		need_pte_bits |= _PAGE_WRITE;
-+	if (!pte_present(pte) || !pte_user(pte) || !pte_read(pte))
-+		return false;
- 
--	if ((pteval & need_pte_bits) != need_pte_bits)
-+	if (write && !pte_write(pte))
- 		return false;
- 
- 	return true;
-diff --git a/arch/powerpc/include/asm/nohash/32/pgtable.h b/arch/powerpc/include/asm/nohash/32/pgtable.h
-index 6fecfd7854f5..a4156da4a7a4 100644
---- a/arch/powerpc/include/asm/nohash/32/pgtable.h
-+++ b/arch/powerpc/include/asm/nohash/32/pgtable.h
-@@ -277,7 +277,10 @@ static inline pte_t ptep_get_and_clear(struct mm_struct *mm, unsigned long addr,
- static inline void ptep_set_wrprotect(struct mm_struct *mm, unsigned long addr,
- 				      pte_t *ptep)
- {
--	pte_update(ptep, (_PAGE_RW | _PAGE_HWWRITE), _PAGE_RO);
-+	unsigned long clr = ~pte_val(pte_wrprotect(__pte(~0)));
-+	unsigned long set = pte_val(pte_wrprotect(__pte(0)));
-+
-+	pte_update(ptep, clr, set);
- }
- static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
- 					   unsigned long addr, pte_t *ptep)
-@@ -291,9 +294,10 @@ static inline void __ptep_set_access_flags(struct vm_area_struct *vma,
- 					   unsigned long address,
- 					   int psize)
- {
--	unsigned long set = pte_val(entry) &
--		(_PAGE_DIRTY | _PAGE_ACCESSED | _PAGE_RW | _PAGE_EXEC);
--	unsigned long clr = ~pte_val(entry) & (_PAGE_RO | _PAGE_NA);
-+	pte_t pte_set = pte_mkyoung(pte_mkdirty(pte_mkwrite(pte_mkexec(__pte(0)))));
-+	pte_t pte_clr = pte_mkyoung(pte_mkdirty(pte_mkwrite(pte_mkexec(__pte(~0)))));
-+	unsigned long set = pte_val(entry) & pte_val(pte_set);
-+	unsigned long clr = ~pte_val(entry) & ~pte_val(pte_clr);
- 
- 	pte_update(ptep, clr, set);
- 
-diff --git a/arch/powerpc/include/asm/nohash/pgtable.h b/arch/powerpc/include/asm/nohash/pgtable.h
-index f87cf446b01d..92def7088054 100644
---- a/arch/powerpc/include/asm/nohash/pgtable.h
-+++ b/arch/powerpc/include/asm/nohash/pgtable.h
-@@ -32,8 +32,7 @@ static inline pgprot_t pte_pgprot(pte_t pte)	{ return __pgprot(pte_val(pte) & PA
-  */
- static inline int pte_protnone(pte_t pte)
- {
--	return (pte_val(pte) &
--		(_PAGE_PRESENT | _PAGE_USER)) == _PAGE_PRESENT;
-+	return pte_present(pte) && !pte_user(pte);
- }
- 
- static inline int pmd_protnone(pmd_t pmd)
-diff --git a/arch/powerpc/mm/pgtable.c b/arch/powerpc/mm/pgtable.c
-index 4f788f3762a9..8558f01ed5c8 100644
---- a/arch/powerpc/mm/pgtable.c
-+++ b/arch/powerpc/mm/pgtable.c
-@@ -44,20 +44,13 @@ static inline int is_exec_fault(void)
- static inline int pte_looks_normal(pte_t pte)
- {
- 
--#if defined(CONFIG_PPC_BOOK3S_64)
--	if ((pte_val(pte) & (_PAGE_PRESENT | _PAGE_SPECIAL)) == _PAGE_PRESENT) {
-+	if (pte_present(pte) && !pte_special(pte)) {
- 		if (pte_ci(pte))
- 			return 0;
- 		if (pte_user(pte))
- 			return 1;
- 	}
- 	return 0;
--#else
--	return (pte_val(pte) &
--		(_PAGE_PRESENT | _PAGE_SPECIAL | _PAGE_NO_CACHE | _PAGE_USER |
--		 _PAGE_PRIVILEGED)) ==
--		(_PAGE_PRESENT | _PAGE_USER);
+-static const struct flag_info flag_array[] = {
+-	{
+-		.mask	= _PAGE_USER | _PAGE_PRIVILEGED,
+-		.val	= _PAGE_USER,
+-		.set	= "user",
+-		.clear	= "    ",
+-	}, {
+-		.mask	= _PAGE_RW | _PAGE_RO | _PAGE_NA,
+-		.val	= _PAGE_RW,
+-		.set	= "rw",
+-	}, {
+-		.mask	= _PAGE_RW | _PAGE_RO | _PAGE_NA,
+-		.val	= _PAGE_RO,
+-		.set	= "ro",
+-	}, {
+-#if _PAGE_NA != 0
+-		.mask	= _PAGE_RW | _PAGE_RO | _PAGE_NA,
+-		.val	= _PAGE_RO,
+-		.set	= "na",
+-	}, {
 -#endif
- }
- 
- static struct page *maybe_pte_to_page(pte_t pte)
-@@ -117,7 +110,7 @@ static pte_t set_pte_filter(pte_t pte)
- 	struct page *pg;
- 
- 	/* No exec permission in the first place, move on */
--	if (!(pte_val(pte) & _PAGE_EXEC) || !pte_looks_normal(pte))
-+	if (!pte_exec(pte) || !pte_looks_normal(pte))
- 		return pte;
- 
- 	/* If you set _PAGE_EXEC on weird pages you're on your own */
-@@ -137,7 +130,7 @@ static pte_t set_pte_filter(pte_t pte)
- 	}
- 
- 	/* Else, we filter out _PAGE_EXEC */
--	return __pte(pte_val(pte) & ~_PAGE_EXEC);
-+	return pte_exprotect(pte);
- }
- 
- static pte_t set_access_flags_filter(pte_t pte, struct vm_area_struct *vma,
-@@ -150,7 +143,7 @@ static pte_t set_access_flags_filter(pte_t pte, struct vm_area_struct *vma,
- 	 * if necessary. Also if _PAGE_EXEC is already set, same deal,
- 	 * we just bail out
- 	 */
--	if (dirty || (pte_val(pte) & _PAGE_EXEC) || !is_exec_fault())
-+	if (dirty || pte_exec(pte) || !is_exec_fault())
- 		return pte;
- 
- #ifdef CONFIG_DEBUG_VM
-@@ -176,7 +169,7 @@ static pte_t set_access_flags_filter(pte_t pte, struct vm_area_struct *vma,
- 	set_bit(PG_arch_1, &pg->flags);
- 
-  bail:
--	return __pte(pte_val(pte) | _PAGE_EXEC);
-+	return pte_mkexec(pte);
- }
- 
- #endif /* CONFIG_PPC_BOOK3S */
-@@ -195,7 +188,7 @@ void set_pte_at(struct mm_struct *mm, unsigned long addr, pte_t *ptep,
- 	VM_WARN_ON(pte_present(*ptep) && !pte_protnone(*ptep));
- 
- 	/* Add the pte bit when trying to set a pte */
--	pte = __pte(pte_val(pte) | _PAGE_PTE);
-+	pte = pte_mkpte(pte);
- 
- 	/* Note: mm->context.id might not yet have been assigned as
- 	 * this context might not have been activated yet when this
-diff --git a/arch/powerpc/mm/pgtable_32.c b/arch/powerpc/mm/pgtable_32.c
-index 01f348938328..5877f5aa8f5d 100644
---- a/arch/powerpc/mm/pgtable_32.c
-+++ b/arch/powerpc/mm/pgtable_32.c
-@@ -112,15 +112,17 @@ EXPORT_SYMBOL(ioremap_coherent);
- void __iomem *
- ioremap_prot(phys_addr_t addr, unsigned long size, unsigned long flags)
+-		.mask	= _PAGE_EXEC,
+-		.val	= _PAGE_EXEC,
+-		.set	= " X ",
+-		.clear	= "   ",
+-	}, {
+-		.mask	= _PAGE_PTE,
+-		.val	= _PAGE_PTE,
+-		.set	= "pte",
+-		.clear	= "   ",
+-	}, {
+-		.mask	= _PAGE_PRESENT,
+-		.val	= _PAGE_PRESENT,
+-		.set	= "present",
+-		.clear	= "       ",
+-	}, {
+-#ifdef CONFIG_PPC_BOOK3S_64
+-		.mask	= H_PAGE_HASHPTE,
+-		.val	= H_PAGE_HASHPTE,
+-#else
+-		.mask	= _PAGE_HASHPTE,
+-		.val	= _PAGE_HASHPTE,
+-#endif
+-		.set	= "hpte",
+-		.clear	= "    ",
+-	}, {
+-#ifndef CONFIG_PPC_BOOK3S_64
+-		.mask	= _PAGE_GUARDED,
+-		.val	= _PAGE_GUARDED,
+-		.set	= "guarded",
+-		.clear	= "       ",
+-	}, {
+-#endif
+-		.mask	= _PAGE_DIRTY,
+-		.val	= _PAGE_DIRTY,
+-		.set	= "dirty",
+-		.clear	= "     ",
+-	}, {
+-		.mask	= _PAGE_ACCESSED,
+-		.val	= _PAGE_ACCESSED,
+-		.set	= "accessed",
+-		.clear	= "        ",
+-	}, {
+-#ifndef CONFIG_PPC_BOOK3S_64
+-		.mask	= _PAGE_WRITETHRU,
+-		.val	= _PAGE_WRITETHRU,
+-		.set	= "write through",
+-		.clear	= "             ",
+-	}, {
+-#endif
+-#ifndef CONFIG_PPC_BOOK3S_64
+-		.mask	= _PAGE_NO_CACHE,
+-		.val	= _PAGE_NO_CACHE,
+-		.set	= "no cache",
+-		.clear	= "        ",
+-	}, {
+-#else
+-		.mask	= _PAGE_NON_IDEMPOTENT,
+-		.val	= _PAGE_NON_IDEMPOTENT,
+-		.set	= "non-idempotent",
+-		.clear	= "              ",
+-	}, {
+-		.mask	= _PAGE_TOLERANT,
+-		.val	= _PAGE_TOLERANT,
+-		.set	= "tolerant",
+-		.clear	= "        ",
+-	}, {
+-#endif
+-#ifdef CONFIG_PPC_BOOK3S_64
+-		.mask	= H_PAGE_BUSY,
+-		.val	= H_PAGE_BUSY,
+-		.set	= "busy",
+-	}, {
+-#ifdef CONFIG_PPC_64K_PAGES
+-		.mask	= H_PAGE_COMBO,
+-		.val	= H_PAGE_COMBO,
+-		.set	= "combo",
+-	}, {
+-		.mask	= H_PAGE_4K_PFN,
+-		.val	= H_PAGE_4K_PFN,
+-		.set	= "4K_pfn",
+-	}, {
+-#else /* CONFIG_PPC_64K_PAGES */
+-		.mask	= H_PAGE_F_GIX,
+-		.val	= H_PAGE_F_GIX,
+-		.set	= "f_gix",
+-		.is_val	= true,
+-		.shift	= H_PAGE_F_GIX_SHIFT,
+-	}, {
+-		.mask	= H_PAGE_F_SECOND,
+-		.val	= H_PAGE_F_SECOND,
+-		.set	= "f_second",
+-	}, {
+-#endif /* CONFIG_PPC_64K_PAGES */
+-#endif
+-		.mask	= _PAGE_SPECIAL,
+-		.val	= _PAGE_SPECIAL,
+-		.set	= "special",
+-	}
+-};
+-
+-struct pgtable_level {
+-	const struct flag_info *flag;
+-	size_t num;
+-	u64 mask;
+-};
+-
+-static struct pgtable_level pg_level[] = {
+-	{
+-	}, { /* pgd */
+-		.flag	= flag_array,
+-		.num	= ARRAY_SIZE(flag_array),
+-	}, { /* pud */
+-		.flag	= flag_array,
+-		.num	= ARRAY_SIZE(flag_array),
+-	}, { /* pmd */
+-		.flag	= flag_array,
+-		.num	= ARRAY_SIZE(flag_array),
+-	}, { /* pte */
+-		.flag	= flag_array,
+-		.num	= ARRAY_SIZE(flag_array),
+-	},
+-};
+-
+ static void dump_flag_info(struct pg_state *st, const struct flag_info
+ 		*flag, u64 pte, int num)
  {
-+	pte_t pte = __pte(flags);
+diff --git a/arch/powerpc/mm/dump_linuxpagetables.h b/arch/powerpc/mm/dump_linuxpagetables.h
+new file mode 100644
+index 000000000000..5d513636de73
+--- /dev/null
++++ b/arch/powerpc/mm/dump_linuxpagetables.h
+@@ -0,0 +1,19 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#include <linux/types.h>
 +
- 	/* writeable implies dirty for kernel addresses */
--	if ((flags & (_PAGE_RW | _PAGE_RO)) != _PAGE_RO)
--		flags |= _PAGE_DIRTY | _PAGE_HWWRITE;
-+	if (pte_write(pte))
-+		pte = pte_mkdirty(pte);
- 
- 	/* we don't want to let _PAGE_USER and _PAGE_EXEC leak out */
--	flags &= ~(_PAGE_USER | _PAGE_EXEC);
--	flags |= _PAGE_PRIVILEGED;
-+	pte = pte_exprotect(pte);
-+	pte = pte_mkprivileged(pte);
- 
--	return __ioremap_caller(addr, size, __pgprot(flags), __builtin_return_address(0));
-+	return __ioremap_caller(addr, size, pte_pgprot(pte), __builtin_return_address(0));
- }
- EXPORT_SYMBOL(ioremap_prot);
- 
-@@ -235,8 +237,7 @@ int map_kernel_page(unsigned long va, phys_addr_t pa, pgprot_t prot)
- 		/* The PTE should never be already set nor present in the
- 		 * hash table
- 		 */
--		BUG_ON((pte_val(*pg) & (_PAGE_PRESENT | _PAGE_HASHPTE)) &&
--		       pgprot_val(prot));
-+		BUG_ON((pte_present(*pg) | pte_hashpte(*pg)) && pgprot_val(prot));
- 		set_pte_at(&init_mm, va, pg, pfn_pte(pa >> PAGE_SHIFT, prot));
- 	}
- 	smp_wmb();
-diff --git a/arch/powerpc/mm/pgtable_64.c b/arch/powerpc/mm/pgtable_64.c
-index 5c889445bee9..a7569358522c 100644
---- a/arch/powerpc/mm/pgtable_64.c
-+++ b/arch/powerpc/mm/pgtable_64.c
-@@ -230,23 +230,23 @@ void __iomem *ioremap_coherent(phys_addr_t addr, unsigned long size)
- void __iomem * ioremap_prot(phys_addr_t addr, unsigned long size,
- 			     unsigned long flags)
- {
-+	pte_t pte = __pte(flags);
- 	void *caller = __builtin_return_address(0);
- 
- 	/* writeable implies dirty for kernel addresses */
--	if (flags & _PAGE_WRITE)
--		flags |= _PAGE_DIRTY;
-+	if (pte_write(pte))
-+		pte = pte_mkdirty(pte);
- 
- 	/* we don't want to let _PAGE_EXEC leak out */
--	flags &= ~_PAGE_EXEC;
-+	pte = pte_exprotect(pte);
- 	/*
- 	 * Force kernel mapping.
- 	 */
--	flags &= ~_PAGE_USER;
--	flags |= _PAGE_PRIVILEGED;
-+	pte = pte_mkprivileged(pte);
- 
- 	if (ppc_md.ioremap)
--		return ppc_md.ioremap(addr, size, __pgprot(flags), caller);
--	return __ioremap_caller(addr, size, __pgprot(flags), caller);
-+		return ppc_md.ioremap(addr, size, pte_pgprot(pte), caller);
-+	return __ioremap_caller(addr, size, pte_pgprot(pte), caller);
- }
- 
- 
-diff --git a/arch/powerpc/xmon/xmon.c b/arch/powerpc/xmon/xmon.c
-index 4264aedc7775..f65f2f38c441 100644
---- a/arch/powerpc/xmon/xmon.c
-+++ b/arch/powerpc/xmon/xmon.c
-@@ -2988,15 +2988,17 @@ static void show_task(struct task_struct *tsk)
- #ifdef CONFIG_PPC_BOOK3S_64
- void format_pte(void *ptep, unsigned long pte)
- {
-+	pte_t entry = __pte(pte);
++struct flag_info {
++	u64		mask;
++	u64		val;
++	const char	*set;
++	const char	*clear;
++	bool		is_val;
++	int		shift;
++};
 +
- 	printf("ptep @ 0x%016lx = 0x%016lx\n", (unsigned long)ptep, pte);
- 	printf("Maps physical address = 0x%016lx\n", pte & PTE_RPN_MASK);
- 
- 	printf("Flags = %s%s%s%s%s\n",
--	       (pte & _PAGE_ACCESSED) ? "Accessed " : "",
--	       (pte & _PAGE_DIRTY)    ? "Dirty " : "",
--	       (pte & _PAGE_READ)     ? "Read " : "",
--	       (pte & _PAGE_WRITE)    ? "Write " : "",
--	       (pte & _PAGE_EXEC)     ? "Exec " : "");
-+	       pte_young(entry) ? "Accessed " : "",
-+	       pte_dirty(entry) ? "Dirty " : "",
-+	       pte_read(entry)  ? "Read " : "",
-+	       pte_write(entry) ? "Write " : "",
-+	       pte_exec(entry)  ? "Exec " : "");
- }
- 
- static void show_pte(unsigned long addr)
++struct pgtable_level {
++	const struct flag_info *flag;
++	size_t num;
++	u64 mask;
++};
++
++extern struct pgtable_level pg_level[5];
 -- 
 2.13.3
 
