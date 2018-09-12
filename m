@@ -6,54 +6,54 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0C29C46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:30:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BB78C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:30:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A92120866
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:30:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E411420866
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:30:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XZ4mD9OP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A92120866
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MdZ588XX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E411420866
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728056AbeILNd2 (ORCPT
+        id S1728088AbeILNdb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 09:33:28 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41198 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726642AbeILNd1 (ORCPT
+        Wed, 12 Sep 2018 09:33:31 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:37386 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727789AbeILNda (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 09:33:27 -0400
-Received: by mail-pg1-f196.google.com with SMTP id s15-v6so665197pgv.8
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 01:29:59 -0700 (PDT)
+        Wed, 12 Sep 2018 09:33:30 -0400
+Received: by mail-pf1-f196.google.com with SMTP id h69-v6so652898pfd.4
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 01:30:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=a64G58V8et84UbVCYe1qqjcYTUZTiK5vlPsAeWbwcVI=;
-        b=XZ4mD9OPrI+JroMzHFWxIqIHmDNgkY8ABearv69nG5wQChTGC5Vn5ysiDsUmyYR1FC
-         t4nGKvqw5HfRzckZ7RObiVZxrviux66ZcQEkV1A76xBS5He+RCBSBHABk2fhoX1GbMkg
-         VCigB26LGdHcrAYZkTFQ32ie98xqSo1HmchjU=
+        bh=jPGAIL3sdk1Aa+qVaM14yKId1VZA9MbnVLCDYEKFuXg=;
+        b=MdZ588XXa/wpGdUAt4Ygq+BCWjnFwYVNL5v3gbPoGfNpZ10R8QGd1gS6l7AFo1hziz
+         Am6Tm7Y9f9SpD319PLWMdd519oGNHaY5n1uNYr0Y291U6IFIuHvUT3rQJGxRH/eFYeR5
+         EgKbamcC9lN1n059MA6tx938cPi+3WYav74r4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=a64G58V8et84UbVCYe1qqjcYTUZTiK5vlPsAeWbwcVI=;
-        b=IOmYTP8KsJsTjECNuosU1OUeQjrsLJdbyN2E83ND983zZevjJeXC0i421+c+hQasdF
-         qQn/UHhdIBJ2q4/mLBYGoe+bGy1WS1VOM+af5FBmK+lYg19qOBrf5eWy/Qh95MXYXwoH
-         1cHY3AE2B03tom2QBPNyoDyCPSsMK9nC2+LY/7RAx3pXkMuUljad79Cipgw51qH4D9uL
-         kAy+lmgVEi+GtuRFu5S9AfcCKNgiEoX63nrHfU16t+wiFYa2w/YHtKEGI4rqQ8TMUN2k
-         Nb/2DgNsH3IUxcSfEqyucfJVyQew8pPYYyXTIj7+oA6CZDQNHzFO/7tZrpMI4SB63FJP
-         7Q3w==
-X-Gm-Message-State: APzg51DtDAeERO8cXsui6UCsWApKCKEqUC28tosymqDNTnN3HnRUDvaF
-        ackVcvk1AFBiEHXjAdvDOkuVvQ==
-X-Google-Smtp-Source: ANB0Vdaa31py0iblp1gOUwoX6Nv0j0/DRZ0Y3D1koQ2vDrgOPArwuFkGFV7okirJ2JWY1Mk9xdcUGg==
-X-Received: by 2002:a65:6413:: with SMTP id a19-v6mr843673pgv.359.1536740999379;
-        Wed, 12 Sep 2018 01:29:59 -0700 (PDT)
+        bh=jPGAIL3sdk1Aa+qVaM14yKId1VZA9MbnVLCDYEKFuXg=;
+        b=Vf+BJRnWotNN2YKfQK2/e3M/9Edtmiz3NowkE/gQrhiyJ9JthXuUaenHLbE0dV3hRR
+         DM9ro0Y9fWujh3mVrlOTJgE1FmLdpfj+enxFj2/6j7K/++BXYo9zj05f/gunBUzJKdpJ
+         Nuzb36vAkbEYuX0rSseHa3UKuQd8nzbrmv/mu/qYmN6rLTOThR8uI58waQBsnv2LNPjP
+         8RC8uUK2PDH2WPXxLP8uUoGxNhNcjsf3wesj6aWQB/r0sQe29ZUdYREwXfefhexoIior
+         M4LiP4lZMp94pW3jp+NE168dWukOFf+Psmbtw7SoPqlvhX9d4C9lqtxQC6XFe3k6GzPR
+         2MZw==
+X-Gm-Message-State: APzg51Da5aFJK9cA+K41XRi9KT6ckscUY5q2DC8buOKLtzyY4GWEKYqa
+        hmxulgkCa+45I69mMxqdhRp7Iw==
+X-Google-Smtp-Source: ANB0VdZHu0cZ6GYi+8xaK12kwFYzxX6B5EYZSuWcAMT76APSbXJ9gzGM19eMMT++Tejq8tFatiqxJg==
+X-Received: by 2002:a62:2744:: with SMTP id n65-v6mr920713pfn.125.1536741002527;
+        Wed, 12 Sep 2018 01:30:02 -0700 (PDT)
 Received: from localhost ([122.171.64.45])
-        by smtp.gmail.com with ESMTPSA id g21-v6sm916259pfe.41.2018.09.12.01.29.58
+        by smtp.gmail.com with ESMTPSA id g25-v6sm1079645pfd.23.2018.09.12.01.30.01
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Sep 2018 01:29:58 -0700 (PDT)
+        Wed, 12 Sep 2018 01:30:02 -0700 (PDT)
 From:   Viresh Kumar <viresh.kumar@linaro.org>
 To:     niklas.cassel@linaro.org, Viresh Kumar <vireshk@kernel.org>,
         Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>
@@ -61,9 +61,9 @@ Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
         Rafael Wysocki <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
         Vincent Guittot <vincent.guittot@linaro.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 04/11] OPP: Parse OPP table's DT properties from _of_init_opp_table()
-Date:   Wed, 12 Sep 2018 13:58:43 +0530
-Message-Id: <9769f7f5b7772f0a96cf830209544cfb491d24f6.1536736872.git.viresh.kumar@linaro.org>
+Subject: [PATCH 05/11] OPP: Don't take OPP table's kref for static OPPs
+Date:   Wed, 12 Sep 2018 13:58:44 +0530
+Message-Id: <08942a9ab06dd76034242cb70dd2446020a2efe0.1536736872.git.viresh.kumar@linaro.org>
 X-Mailer: git-send-email 2.18.0.rc1.242.g61856ae69a2c
 In-Reply-To: <cover.1536736872.git.viresh.kumar@linaro.org>
 References: <cover.1536736872.git.viresh.kumar@linaro.org>
@@ -72,174 +72,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Parse the DT properties present in the OPP table from
-_of_init_opp_table(), which is a dedicated routine for DT parsing.
+The reference count is only required to be incremented for every call
+that may lead to adding the OPP table. For static OPPs the same should
+be done from the parent routine which adds all static OPPs together and
+so only one refcount for all static OPPs.
 
-Minor relocation of helpers is required for this.
+Update code to reflect that.
 
-It is possible now for _managed_opp() to return a partially initialized
-OPP table if the OPP table is created via the helpers like
-dev_pm_opp_set_supported_hw() and we need another flag to indicate if
-the static OPP are already parsed or not to make sure we don't
-incorrectly skip initializing the static OPPs.
+The refcount is incremented every time a dynamic OPP is created (as that
+can lead to creating the OPP table) and the same is dropped when the OPP
+is removed.
 
 Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- drivers/opp/of.c  | 79 ++++++++++++++++++++++++++++-------------------
- drivers/opp/opp.h |  2 ++
- 2 files changed, 50 insertions(+), 31 deletions(-)
+ drivers/opp/core.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/opp/of.c b/drivers/opp/of.c
-index a91857d163b2..ebf467b4d99e 100644
---- a/drivers/opp/of.c
-+++ b/drivers/opp/of.c
-@@ -23,6 +23,24 @@
+diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+index 332748adc262..2a6976265580 100644
+--- a/drivers/opp/core.c
++++ b/drivers/opp/core.c
+@@ -919,7 +919,6 @@ static void _opp_kref_release(struct kref *kref)
+ 	kfree(opp);
  
- #include "opp.h"
- 
-+/*
-+ * Returns opp descriptor node for a device node, caller must
-+ * do of_node_put().
-+ */
-+static struct device_node *_opp_of_get_opp_desc_node(struct device_node *np,
-+						     int index)
-+{
-+	/* "operating-points-v2" can be an array for power domain providers */
-+	return of_parse_phandle(np, "operating-points-v2", index);
-+}
-+
-+/* Returns opp descriptor node for a device, caller must do of_node_put() */
-+struct device_node *dev_pm_opp_of_get_opp_desc_node(struct device *dev)
-+{
-+	return _opp_of_get_opp_desc_node(dev->of_node, 0);
-+}
-+EXPORT_SYMBOL_GPL(dev_pm_opp_of_get_opp_desc_node);
-+
- static struct opp_table *_managed_opp(const struct device_node *np)
- {
- 	struct opp_table *opp_table, *managed_table = NULL;
-@@ -55,22 +73,37 @@ static struct opp_table *_managed_opp(const struct device_node *np)
- void _of_init_opp_table(struct opp_table *opp_table, struct device *dev,
- 			int index)
- {
--	struct device_node *np;
-+	struct device_node *np, *opp_np;
-+	u32 val;
- 
- 	/*
- 	 * Only required for backward compatibility with v1 bindings, but isn't
- 	 * harmful for other cases. And so we do it unconditionally.
- 	 */
- 	np = of_node_get(dev->of_node);
--	if (np) {
--		u32 val;
--
--		if (!of_property_read_u32(np, "clock-latency", &val))
--			opp_table->clock_latency_ns_max = val;
--		of_property_read_u32(np, "voltage-tolerance",
--				     &opp_table->voltage_tolerance_v1);
--		of_node_put(np);
--	}
-+	if (!np)
-+		return;
-+
-+	if (!of_property_read_u32(np, "clock-latency", &val))
-+		opp_table->clock_latency_ns_max = val;
-+	of_property_read_u32(np, "voltage-tolerance",
-+			     &opp_table->voltage_tolerance_v1);
-+
-+	/* Get OPP table node */
-+	opp_np = _opp_of_get_opp_desc_node(np, index);
-+	of_node_put(np);
-+
-+	if (!opp_np)
-+		return;
-+
-+	if (of_property_read_bool(opp_np, "opp-shared"))
-+		opp_table->shared_opp = OPP_TABLE_ACCESS_SHARED;
-+	else
-+		opp_table->shared_opp = OPP_TABLE_ACCESS_EXCLUSIVE;
-+
-+	opp_table->np = opp_np;
-+
-+	of_node_put(opp_np);
+ 	mutex_unlock(&opp_table->lock);
+-	dev_pm_opp_put_opp_table(opp_table);
  }
  
- static bool _opp_is_supported(struct device *dev, struct opp_table *opp_table,
-@@ -250,22 +283,6 @@ void dev_pm_opp_of_remove_table(struct device *dev)
- }
- EXPORT_SYMBOL_GPL(dev_pm_opp_of_remove_table);
+ void dev_pm_opp_get(struct dev_pm_opp *opp)
+@@ -963,11 +962,15 @@ void dev_pm_opp_remove(struct device *dev, unsigned long freq)
  
--/* Returns opp descriptor node for a device node, caller must
-- * do of_node_put() */
--static struct device_node *_opp_of_get_opp_desc_node(struct device_node *np,
--						     int index)
--{
--	/* "operating-points-v2" can be an array for power domain providers */
--	return of_parse_phandle(np, "operating-points-v2", index);
--}
--
--/* Returns opp descriptor node for a device, caller must do of_node_put() */
--struct device_node *dev_pm_opp_of_get_opp_desc_node(struct device *dev)
--{
--	return _opp_of_get_opp_desc_node(dev->of_node, 0);
--}
--EXPORT_SYMBOL_GPL(dev_pm_opp_of_get_opp_desc_node);
--
- /**
-  * _opp_add_static_v2() - Allocate static OPPs (As per 'v2' DT bindings)
-  * @opp_table:	OPP table
-@@ -392,6 +409,9 @@ static int _of_add_opp_table_v2(struct device *dev, struct device_node *opp_np,
- 		/* OPPs are already managed */
- 		if (!_add_opp_dev(dev, opp_table))
- 			ret = -ENOMEM;
-+		else if (!opp_table->parsed_static_opps)
-+			goto initialize_static_opps;
+ 	if (found) {
+ 		dev_pm_opp_put(opp);
 +
- 		goto put_opp_table;
++		/* Drop the reference taken by dev_pm_opp_add() */
++		dev_pm_opp_put_opp_table(opp_table);
+ 	} else {
+ 		dev_warn(dev, "%s: Couldn't find OPP with freq: %lu\n",
+ 			 __func__, freq);
  	}
  
-@@ -399,6 +419,7 @@ static int _of_add_opp_table_v2(struct device *dev, struct device_node *opp_np,
- 	if (!opp_table)
++	/* Drop the reference taken by _find_opp_table() */
+ 	dev_pm_opp_put_opp_table(opp_table);
+ }
+ EXPORT_SYMBOL_GPL(dev_pm_opp_remove);
+@@ -1085,9 +1088,6 @@ int _opp_add(struct device *dev, struct dev_pm_opp *new_opp,
+ 	new_opp->opp_table = opp_table;
+ 	kref_init(&new_opp->kref);
+ 
+-	/* Get a reference to the OPP table */
+-	_get_opp_table_kref(opp_table);
+-
+ 	ret = opp_debug_create_one(new_opp, opp_table);
+ 	if (ret)
+ 		dev_err(dev, "%s: Failed to register opp to debugfs (%d)\n",
+@@ -1566,8 +1566,9 @@ int dev_pm_opp_add(struct device *dev, unsigned long freq, unsigned long u_volt)
  		return -ENOMEM;
  
-+initialize_static_opps:
- 	/* We have opp-table node now, iterate over it and add OPPs */
- 	for_each_available_child_of_node(opp_np, np) {
- 		count++;
-@@ -434,11 +455,7 @@ static int _of_add_opp_table_v2(struct device *dev, struct device_node *opp_np,
- 	if (pstate_count)
- 		opp_table->genpd_performance_state = true;
+ 	ret = _opp_add_v1(opp_table, dev, freq, u_volt, true);
++	if (ret)
++		dev_pm_opp_put_opp_table(opp_table);
  
--	opp_table->np = opp_np;
--	if (of_property_read_bool(opp_np, "opp-shared"))
--		opp_table->shared_opp = OPP_TABLE_ACCESS_SHARED;
--	else
--		opp_table->shared_opp = OPP_TABLE_ACCESS_EXCLUSIVE;
-+	opp_table->parsed_static_opps = true;
- 
- put_opp_table:
- 	dev_pm_opp_put_opp_table(opp_table);
-diff --git a/drivers/opp/opp.h b/drivers/opp/opp.h
-index 84aba19531b8..d218fc0a498d 100644
---- a/drivers/opp/opp.h
-+++ b/drivers/opp/opp.h
-@@ -129,6 +129,7 @@ enum opp_table_access {
-  * @lock:	mutex protecting the opp_list and dev_list.
-  * @np:		struct device_node pointer for opp's DT node.
-  * @clock_latency_ns_max: Max clock latency in nanoseconds.
-+ * @parsed_static_opps: True if OPPs are initialized from DT.
-  * @shared_opp: OPP is shared between multiple devices.
-  * @suspend_opp: Pointer to OPP to be used during device suspend.
-  * @supported_hw: Array of version number to support.
-@@ -164,6 +165,7 @@ struct opp_table {
- 	/* For backward compatibility with v1 bindings */
- 	unsigned int voltage_tolerance_v1;
- 
-+	bool parsed_static_opps;
- 	enum opp_table_access shared_opp;
- 	struct dev_pm_opp *suspend_opp;
- 
+-	dev_pm_opp_put_opp_table(opp_table);
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(dev_pm_opp_add);
 -- 
 2.18.0.rc1.242.g61856ae69a2c
 
