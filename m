@@ -1,129 +1,124 @@
 Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.0 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1802FC070C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 21:04:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E5B3C070C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 21:06:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B752520C0A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 21:04:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B752520C0A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lichtvoll.de
+	by mail.kernel.org (Postfix) with ESMTP id 406372146F
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 21:06:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GfgaEX7l"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 406372146F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727772AbeIMCKS convert rfc822-to-8bit (ORCPT
+        id S1727864AbeIMCMz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 22:10:18 -0400
-Received: from mondschein.lichtvoll.de ([194.150.191.11]:55523 "EHLO
-        mail.lichtvoll.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726818AbeIMCKS (ORCPT
+        Wed, 12 Sep 2018 22:12:55 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41161 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726675AbeIMCMz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 22:10:18 -0400
-Authentication-Results: auth=pass smtp.auth=martin smtp.mailfrom=martin@lichtvoll.de
-Received: from 127.0.0.1 (localhost [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mail.lichtvoll.de (Postfix) with ESMTPSA id A84EA3AA705;
-        Wed, 12 Sep 2018 23:03:56 +0200 (CEST)
-From:   Martin Steigerwald <martin@lichtvoll.de>
-To:     Ville =?ISO-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Intel Gfx Mailing List <intel-gfx@freedesktop.org>,
-        Thorsten Leemhuis <regressions@leemhuis.info>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [Intel-gfx] [REGRESSION 4.19-rc2] sometimes hangs with black screen when resuming from suspend or hibernation (was: Re: Linux 4.19-rc2)
-Date:   Wed, 12 Sep 2018 23:03:55 +0200
-Message-ID: <4227681.v6uuv6rMDp@merkaba>
-In-Reply-To: <20180912171020.GE5565@intel.com>
-References: <CA+55aFyG0GbDfoghEhAmKBPcZCiPu6CCpPRz9GwjCzLuP_Vv5Q@mail.gmail.com> <3346308.cXARZRajoW@merkaba> <20180912171020.GE5565@intel.com>
+        Wed, 12 Sep 2018 22:12:55 -0400
+Received: by mail-wr1-f67.google.com with SMTP id z96-v6so3459827wrb.8
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 14:06:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=yY5WhE0yfjK2CVyfIBMYRMbGL/D+C6JLq0tj0MgvnpQ=;
+        b=GfgaEX7l/v7itvMjl6Jo6nkBe659JJkT2zlQM4PthtTY8Wf/7ounlHLpI6+zo+XkJU
+         nKx3uk+FkaTvvZBELqeT2q5PWsTK9KF6k9a4XfZRT7hQW6b+KVl/ZXzBq1llpCL/rutp
+         yBKdhdw20QSziGRE9HNDgE5Gmg5JmI+NgOKTENO0trvBp2VCWxQC8wA4H3YiMgMqVDy3
+         q9GbEqWUhmeLXHMtk+ZBxA9c4R04lV3sAjPf2AcXeKA35Zej63WIsJQwvN1onQ8eSK2r
+         F8xXx9mbrMgWOOYdgdq9cvWTINkau6T894OMG2g9ZE5wQ99P0V3Nn6VfKiM5AyJSQ4rt
+         KQIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=yY5WhE0yfjK2CVyfIBMYRMbGL/D+C6JLq0tj0MgvnpQ=;
+        b=LfJSyf+9QWmaGszOLBfYAVFCSf3/SlPVa/z37IVglnYS9Ud7uw/eHQd445fBfUOjEp
+         2pSI+mFLZsDbldEQGBOfuM83dqHnsSNSE+/NtUgTuB6xu6g41jFl0g03P+UDN5jqDwt2
+         4HdjOBgCEh4vA+ETRrJ6+wnm4SUOQf6CvT/6XhTFpcFuhFjVsKABFNKxhSv+EpCCPh5T
+         0wbq+KT6MimtM7VbLnMxyp54PCKqV48Qi8p8vsMvnQ06lPHm3s2E61cG6LZPVoiTMuGp
+         U6je6Ol21vQmo/If1tnGromQxJSXnt8uOG7kQQ3LkYsK7rlyoq6WYfSBXfLn0wuBsmaG
+         LzzA==
+X-Gm-Message-State: APzg51C4dDE9GFHwuLAxQuUM4lelfUYN7NSq+kzvpWQoZEdbhtCnpON/
+        KKwcL+Lj7b49thjp0Ngy5j0=
+X-Google-Smtp-Source: ANB0Vdbx18slIOR1432hwqz55xrM/5iYGctxkEdjhCIGeDZM6vI1DQ5/8rNG83wtbVcWIjN4CYJvxA==
+X-Received: by 2002:a5d:5248:: with SMTP id p8-v6mr3036857wrv.198.1536786394456;
+        Wed, 12 Sep 2018 14:06:34 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id n14-v6sm1372117wmc.14.2018.09.12.14.06.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Sep 2018 14:06:33 -0700 (PDT)
+Date:   Wed, 12 Sep 2018 23:06:30 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Richard Henderson <rth@twiddle.net>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Waiman Long <longman@redhat.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: Re: [PATCH 0/2] Use named address spaces for percpu data
+Message-ID: <20180912210630.GA2958@gmail.com>
+References: <20180912144442.29271-1-willy@infradead.org>
+ <988cf77c-e0cc-25fb-dcd6-945e6f2ba65e@twiddle.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <988cf77c-e0cc-25fb-dcd6-945e6f2ba65e@twiddle.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ville Syrjälä - 12.09.18, 19:10:
-> On Tue, Sep 11, 2018 at 12:17:05PM +0200, Martin Steigerwald wrote:
-> > Cc´d Intel Gfx mailing list, in case somebody there knows something:
+
+* Richard Henderson <rth@twiddle.net> wrote:
+
+> On 09/12/2018 07:44 AM, Matthew Wilcox wrote:
+> > rth wrote a patch back in 2016 that uses gcc's address space machinery
+> > to improve code generation for percpu accesses.  Ingo asked for some
+> > minor changes to be made, but Richard didn't respond.  While looking at
+> > something related, I came across them, and asked Richard's permission
+> > to resurrect and resend the patch, with the changes Ingo asked for at
+> > the time.
 > > 
-> > Cc´d Thorsten for regression tracking… forgot initially. Can also
-> > open bug report at a later time but so far I cannot provide many
-> > details about the issue.
+> > The important information about why we want these patch is in 1/2.
 > > 
-> > Rafael J. Wysocki - 11.09.18, 10:17:
-> > > On Tue, Sep 11, 2018 at 10:01 AM Martin Steigerwald
+> > Richard Henderson (2):
+> >   x86: Use named address spaces in asm/percpu.h
+> >   x86: Enable named address spaces for percpu data
 > > 
-> > <martin@lichtvoll.de> wrote:
-> > > > Hi.
-> > > > 
-> > > > Linus Torvalds - 02.09.18, 23:45:
-> > > > > As usual, the rc2 release is pretty small. People are taking a
-> > > > 
-> > > > With 4.19-rc2 this ThinkPad T520 with i5 Sandybrdige sometimes
-> > > > hangs
-> > > > with black screen when resuming from suspend or hibernation. 
-> > > > With
-> > > > 4.18.1 it did not. Of course there have been userspace related
-> > > > updates that could be related.
-> > > > 
-> > > > I currently have no time to dig into this and on this production
-> > > > laptop I generally do not do bisects between major kernel
-> > > > releases.
-> > > > So currently I only answer questions that do not require much
-> > > > time
-> > > > to answer.
-> > > > 
-> > > > For now I switched back to 4.18. If that is stable – and thus
-> > > > likely
-> > > > no userspace component is related –, I go with 4.19-rc3 or
-> > > > whatever
-> > > > is most recent version to see if the issue has been fixed
-> > > > already.
-> > > 
-> > > There were almost no general changes related to system-wide PM
-> > > between 4.18 and current, so I would suspect one of the device
-> > > drivers or the x86 core.  It also may be something like CPU
-> > > online/offline, however.> 
-> > I see. I wondered about intel-gfx driver already. Of course it could
-> > also be something else.
-> > 
-> > I forgot to mention: The mouse pointer was visible, but the screen
-> > remained black.
+> >  arch/x86/include/asm/percpu.h | 147 ++++++++++++++++++++--------------
+> >  1 file changed, 88 insertions(+), 59 deletions(-)
 > 
-> Did the mouse cursor still move or not?
+> Thanks for resurrecting this, Willy.  I'd totally forgotten about it.
+> The adjustments you made look fine.
 
-No, it did not move.
+Not all GCC versions seem to like this series:
 
-> Could also try suspend without any GUI stuff in the way. Or try the
-> intel ddx instead of the modesetting ddx (assuming that's what
-> you're using now) and no compositor to rule out GPU hangs killing
-> the compositor. The intel ddx can also deal with the GPU not
-> recovering from a hang by switching to software rendering,
-> whereas modesetting cannot.
+ In file included from arch/x86/mm/tlb.c:12:0:
+ arch/x86/mm/tlb.c: In function ‘switch_mm_irqs_off’:
+ ./arch/x86/include/asm/mmu_context.h:210:28: internal compiler error: Segmentation fault
+  #define switch_mm_irqs_off switch_mm_irqs_off
+ arch/x86/mm/tlb.c:183:6: note: in expansion of macro ‘switch_mm_irqs_off’
+  void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+ Please submit a full bug report,
+ with preprocessed source if appropriate.
+ See <file:///usr/share/doc/gcc-7/README.Bugs> for instructions.
 
-Thanks for these suggestions. Currently laptop is still on 4.18 again 
-(4.18.7) and I did not see this hang after resume so far. If it 
-continues to be stable for a few more days, I try with latest 4.19 again 
-as then its very likely kernel related.
-
-> Hmm. Also T520 is an optimus laptop maybe? If there's an nvidia
-> GPU involved it's going to be hard to get anyone to care. Better
-> switch that off in the BIOS if you haven't already.
-
-I decided back then for Intel only graphics. I never regretted this.
-
-For me NVidia graphics is not an option, unless NVidia significantly 
-changes their policy regarding free software drivers.
+gcc version 7.3.0 (Ubuntu 7.3.0-16ubuntu3) 
 
 Thanks,
--- 
-Martin
 
-
+	Ingo
