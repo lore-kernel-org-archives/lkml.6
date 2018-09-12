@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0893C070C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:44:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EFBCC070C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:44:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DC252133F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:44:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DC252133F
+	by mail.kernel.org (Postfix) with ESMTP id 4F6F8213A2
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:44:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F6F8213A2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728388AbeIMAuI (ORCPT
+        id S1728409AbeIMAuM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 20:50:08 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50578 "EHLO
+        Wed, 12 Sep 2018 20:50:12 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47166 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728362AbeIMAuG (ORCPT
+        by vger.kernel.org with ESMTP id S1728065AbeIMAuL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 20:50:06 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8CJYRbO104946
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 15:44:03 -0400
-Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mf7btmmsq-1
+        Wed, 12 Sep 2018 20:50:11 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8CJYcQP099096
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 15:44:08 -0400
+Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mf632qs63-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 15:44:03 -0400
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 15:44:08 -0400
 Received: from localhost
-        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <akrowiak@linux.vnet.ibm.com>;
-        Wed, 12 Sep 2018 13:44:03 -0600
-Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
-        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Wed, 12 Sep 2018 13:44:07 -0600
+Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
+        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 12 Sep 2018 13:44:00 -0600
+        Wed, 12 Sep 2018 13:44:04 -0600
 Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
-        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8CJhup832047196
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8CJi0qH51970300
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 12 Sep 2018 12:43:56 -0700
+        Wed, 12 Sep 2018 12:44:00 -0700
 Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C75A46A057;
-        Wed, 12 Sep 2018 13:43:56 -0600 (MDT)
+        by IMSVA (Postfix) with ESMTP id BB38B6A047;
+        Wed, 12 Sep 2018 13:44:00 -0600 (MDT)
 Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0CF466A047;
-        Wed, 12 Sep 2018 13:43:54 -0600 (MDT)
+        by IMSVA (Postfix) with ESMTP id 088E56A04D;
+        Wed, 12 Sep 2018 13:43:58 -0600 (MDT)
 Received: from localhost.localdomain (unknown [9.80.213.181])
         by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTPS;
-        Wed, 12 Sep 2018 13:43:53 -0600 (MDT)
+        Wed, 12 Sep 2018 13:43:57 -0600 (MDT)
 From:   Tony Krowiak <akrowiak@linux.vnet.ibm.com>
 To:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
         kvm@vger.kernel.org
@@ -65,20 +65,20 @@ Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
         fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
         akrowiak@linux.vnet.ibm.com, frankja@linux.ibm.com,
         Tony Krowiak <akrowiak@linux.ibm.com>
-Subject: [PATCH v10 08/26] s390: vfio-ap: sysfs interfaces to configure control domains
-Date:   Wed, 12 Sep 2018 15:42:58 -0400
+Subject: [PATCH v10 09/26] s390: vfio-ap: sysfs interface to view matrix mdev matrix
+Date:   Wed, 12 Sep 2018 15:42:59 -0400
 X-Mailer: git-send-email 1.7.1
 In-Reply-To: <1536781396-13601-1-git-send-email-akrowiak@linux.vnet.ibm.com>
 References: <1536781396-13601-1-git-send-email-akrowiak@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18091219-0016-0000-0000-0000092C78D9
+x-cbid: 18091219-0012-0000-0000-000016B252B1
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009709; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01087371; UDB=6.00561489; IPR=6.00867383;
- MB=3.00023256; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-12 19:44:02
+ PH=3.00000004; SC=3.00000266; SDB=6.01087371; UDB=6.00561489; IPR=6.00867384;
+ MB=3.00023256; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-12 19:44:06
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18091219-0017-0000-0000-000040546981
-Message-Id: <1536781396-13601-9-git-send-email-akrowiak@linux.vnet.ibm.com>
+x-cbparentid: 18091219-0013-0000-0000-000054612CAA
+Message-Id: <1536781396-13601-10-git-send-email-akrowiak@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-12_10:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -93,26 +93,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tony Krowiak <akrowiak@linux.ibm.com>
 
-Provides the sysfs interfaces for:
-
-1. Assigning AP control domains to the mediated matrix device
-
-2. Unassigning AP control domains from a mediated matrix device
-
-3. Displaying the control domains assigned to a mediated matrix
-   device
-
-The IDs of the AP control domains assigned to the mediated matrix
-device are stored in an AP domain mask (ADM). The bits in the ADM,
-from most significant to least significant bit, correspond to
-AP domain numbers 0 to 255. On some systems, the maximum allowable
-domain number may be less than 255 - depending upon the host's
-AP configuration - and assignment may be rejected if the input
-domain ID exceeds the limit.
-
-When a control domain is assigned, the bit corresponding its domain
-ID will be set in the ADM. Likewise, when a domain is unassigned,
-the bit corresponding to its domain ID will be cleared in the ADM.
+Provides a sysfs interface to view the AP matrix configured for the
+mediated matrix device.
 
 The relevant sysfs structures are:
 
@@ -121,48 +103,41 @@ The relevant sysfs structures are:
 ......... [vfio_ap-passthrough]
 ............ [devices]
 ...............[$uuid]
-.................. assign_control_domain
-.................. unassign_control_domain
+.................. matrix
 
-To assign a control domain to the $uuid mediated matrix device's
-ADM, write its domain number to the assign_control_domain file.
-To unassign a domain, write its domain number to the
-unassign_control_domain file. The domain number is specified
-using conventional semantics: If it begins with 0x the number
-will be parsed as a hexadecimal (case insensitive) number;
-if it begins with 0, it is parsed as an octal number;
-otherwise, it will be parsed as a decimal number.
+To view the matrix configured for the mediated matrix device,
+print the matrix file:
 
-For example, to assign control domain 173 (0xad) to the mediated
-matrix device $uuid:
+	cat matrix
 
-	echo 173 > assign_control_domain
+Below are examples of the output from the above command:
 
-	or
+Example 1: Adapters and domains assigned
+	Assignments:
+		Adapters 5 and 6
+		Domains 4 and 71 (0x47)
 
-	echo 0255 > assign_control_domain
+	Output
+		05.0004
+		05.0047
+		06.0004
+	06.0047
 
-	or
+Examples 2: Only adapters assigned
+	Assignments:
+		Adapters 5 and 6
 
-	echo 0xad > assign_control_domain
+	Output:
+		05.
+		06.
 
-To unassign control domain 173 (0xad):
+Examples 3: Only domains assigned
+	Assignments:
+		Domains 4 and 71 (0x47)
 
-	echo 173 > unassign_control_domain
-
-	or
-
-	echo 0255 > unassign_control_domain
-
-	or
-
-	echo 0xad > unassign_control_domain
-
-The assignment will be rejected if the APQI exceeds the maximum
-value for an AP domain:
-  * If the AP Extended Addressing (APXA) facility is installed,
-    the max value is 255
-  * Else the max value is 15
+	Output:
+		.0004
+		.0047
 
 Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
 Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
@@ -171,134 +146,75 @@ Tested-by: Farhan Ali <alifm@linux.ibm.com>
 Tested-by: Pierre Morel <pmorel@linux.ibm.com>
 Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
 ---
- drivers/s390/crypto/vfio_ap_ops.c |  112 +++++++++++++++++++++++++++++++++++++
- 1 files changed, 112 insertions(+), 0 deletions(-)
+ drivers/s390/crypto/vfio_ap_ops.c |   51 +++++++++++++++++++++++++++++++++++++
+ 1 files changed, 51 insertions(+), 0 deletions(-)
 
 diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
-index a687624..179b093 100644
+index 179b093..2a2dcf7 100644
 --- a/drivers/s390/crypto/vfio_ap_ops.c
 +++ b/drivers/s390/crypto/vfio_ap_ops.c
-@@ -519,11 +519,123 @@ static ssize_t unassign_domain_store(struct device *dev,
+@@ -628,6 +628,56 @@ static ssize_t control_domains_show(struct device *dev,
  }
- DEVICE_ATTR_WO(unassign_domain);
+ DEVICE_ATTR_RO(control_domains);
  
-+/**
-+ * assign_control_domain_store
-+ *
-+ * @dev:	the matrix device
-+ * @attr:	the mediated matrix device's assign_control_domain attribute
-+ * @buf:	a buffer containing the domain ID to be assigned
-+ * @count:	the number of bytes in @buf
-+ *
-+ * Parses the domain ID from @buf and sets the corresponding bit in the mediated
-+ * matrix device's ADM.
-+ *
-+ * Returns the number of bytes processed if the domain ID is valid; otherwise,
-+ * returns one of the following errors:
-+ *	-EINVAL if the ID is not a number
-+ *	-ENODEV if the ID exceeds the maximum value configured for the system
-+ */
-+static ssize_t assign_control_domain_store(struct device *dev,
-+					   struct device_attribute *attr,
-+					   const char *buf, size_t count)
++static ssize_t matrix_show(struct device *dev, struct device_attribute *attr,
++			   char *buf)
 +{
-+	int ret;
-+	unsigned long id;
 +	struct mdev_device *mdev = mdev_from_dev(dev);
 +	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
-+
-+	ret = kstrtoul(buf, 0, &id);
-+	if (ret)
-+		return ret;
-+
-+	if (id > matrix_mdev->matrix.adm_max)
-+		return -ENODEV;
-+
-+	/* Set the bit in the ADM (bitmask) corresponding to the AP control
-+	 * domain number (id). The bits in the mask, from most significant to
-+	 * least significant, correspond to IDs 0 up to the one less than the
-+	 * number of control domains that can be assigned.
-+	 */
-+	mutex_lock(&matrix_dev->lock);
-+	set_bit_inv(id, matrix_mdev->matrix.adm);
-+	mutex_unlock(&matrix_dev->lock);
-+
-+	return count;
-+}
-+DEVICE_ATTR_WO(assign_control_domain);
-+
-+/**
-+ * unassign_control_domain_store
-+ *
-+ * @dev:	the matrix device
-+ * @attr:	the mediated matrix device's unassign_control_domain attribute
-+ * @buf:	a buffer containing the domain ID to be unassigned
-+ * @count:	the number of bytes in @buf
-+ *
-+ * Parses the domain ID from @buf and clears the corresponding bit in the
-+ * mediated matrix device's ADM.
-+ *
-+ * Returns the number of bytes processed if the domain ID is valid; otherwise,
-+ * returns one of the following errors:
-+ *	-EINVAL if the ID is not a number
-+ *	-ENODEV if the ID exceeds the maximum value configured for the system
-+ */
-+static ssize_t unassign_control_domain_store(struct device *dev,
-+					     struct device_attribute *attr,
-+					     const char *buf, size_t count)
-+{
-+	int ret;
-+	unsigned long domid;
-+	struct mdev_device *mdev = mdev_from_dev(dev);
-+	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
-+	unsigned long max_domid =  matrix_mdev->matrix.adm_max;
-+
-+	ret = kstrtoul(buf, 0, &domid);
-+	if (ret)
-+		return ret;
-+	if (domid > max_domid)
-+		return -ENODEV;
-+
-+	mutex_lock(&matrix_dev->lock);
-+	clear_bit_inv(domid, matrix_mdev->matrix.adm);
-+	mutex_unlock(&matrix_dev->lock);
-+
-+	return count;
-+}
-+DEVICE_ATTR_WO(unassign_control_domain);
-+
-+static ssize_t control_domains_show(struct device *dev,
-+				    struct device_attribute *dev_attr,
-+				    char *buf)
-+{
-+	unsigned long id;
++	char *bufpos = buf;
++	unsigned long apid;
++	unsigned long apqi;
++	unsigned long apid1;
++	unsigned long apqi1;
++	unsigned long napm_bits = matrix_mdev->matrix.apm_max + 1;
++	unsigned long naqm_bits = matrix_mdev->matrix.aqm_max + 1;
 +	int nchars = 0;
 +	int n;
-+	char *bufpos = buf;
-+	struct mdev_device *mdev = mdev_from_dev(dev);
-+	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
-+	unsigned long max_domid = matrix_mdev->matrix.adm_max;
++
++	apid1 = find_first_bit_inv(matrix_mdev->matrix.apm, napm_bits);
++	apqi1 = find_first_bit_inv(matrix_mdev->matrix.aqm, naqm_bits);
 +
 +	mutex_lock(&matrix_dev->lock);
-+	for_each_set_bit_inv(id, matrix_mdev->matrix.adm, max_domid + 1) {
-+		n = sprintf(bufpos, "%04lx\n", id);
-+		bufpos += n;
-+		nchars += n;
++
++	if ((apid1 < napm_bits) && (apqi1 < naqm_bits)) {
++		for_each_set_bit_inv(apid, matrix_mdev->matrix.apm, napm_bits) {
++			for_each_set_bit_inv(apqi, matrix_mdev->matrix.aqm,
++					     naqm_bits) {
++				n = sprintf(bufpos, "%02lx.%04lx\n", apid,
++					    apqi);
++				bufpos += n;
++				nchars += n;
++			}
++		}
++	} else if (apid1 < napm_bits) {
++		for_each_set_bit_inv(apid, matrix_mdev->matrix.apm, napm_bits) {
++			n = sprintf(bufpos, "%02lx.\n", apid);
++			bufpos += n;
++			nchars += n;
++		}
++	} else if (apqi1 < naqm_bits) {
++		for_each_set_bit_inv(apqi, matrix_mdev->matrix.aqm, naqm_bits) {
++			n = sprintf(bufpos, ".%04lx\n", apqi);
++			bufpos += n;
++			nchars += n;
++		}
 +	}
++
 +	mutex_unlock(&matrix_dev->lock);
 +
 +	return nchars;
 +}
-+DEVICE_ATTR_RO(control_domains);
++DEVICE_ATTR_RO(matrix);
 +
  static struct attribute *vfio_ap_mdev_attrs[] = {
  	&dev_attr_assign_adapter.attr,
  	&dev_attr_unassign_adapter.attr,
- 	&dev_attr_assign_domain.attr,
- 	&dev_attr_unassign_domain.attr,
-+	&dev_attr_assign_control_domain.attr,
-+	&dev_attr_unassign_control_domain.attr,
-+	&dev_attr_control_domains.attr,
+@@ -636,6 +686,7 @@ static ssize_t control_domains_show(struct device *dev,
+ 	&dev_attr_assign_control_domain.attr,
+ 	&dev_attr_unassign_control_domain.attr,
+ 	&dev_attr_control_domains.attr,
++	&dev_attr_matrix.attr,
  	NULL,
  };
  
