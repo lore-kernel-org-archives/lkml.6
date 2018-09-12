@@ -2,93 +2,120 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E515CC46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 12:11:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB5EBC46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 12:14:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AAE620882
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 12:11:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="euwN3kfZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AAE620882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5D68620882
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 12:14:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D68620882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726912AbeILRPy (ORCPT
+        id S1726945AbeILRSs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 13:15:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41876 "EHLO mail.kernel.org"
+        Wed, 12 Sep 2018 13:18:48 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:51303 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726359AbeILRPx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 13:15:53 -0400
-Received: from localhost (173-25-171-118.client.mchsi.com [173.25.171.118])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA67420880;
-        Wed, 12 Sep 2018 12:11:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536754299;
-        bh=sFyCER0vomW13wXrQLzcNO6KztzE+QZNWK0rZSSJhR0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=euwN3kfZv3QHJ53RCw/ZUlr32jkbokP9PuNopWZvU5yXK8NBGWYPhOQ+elE2xDLiP
-         t1zs5FH63+K+jDCg9dqxQAU+xCqc8CYzPkxJYM8pHNMgFWubi58jL8HUusHN8dpuqW
-         2iBAupLPLWNQsAjfska9NK+jh6fRlyPkOz0uvgvk=
-Date:   Wed, 12 Sep 2018 07:11:37 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Joshua Abraham <j.abraham1776@gmail.com>
-Cc:     bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] drivers: pci: remove set but unused variable
-Message-ID: <20180912121137.GE118330@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180912023908.GA5549@josh-ThinkPad-T460s>
+        id S1726359AbeILRSr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 13:18:47 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 0F4E320720; Wed, 12 Sep 2018 14:14:31 +0200 (CEST)
+Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
+        by mail.bootlin.com (Postfix) with ESMTPSA id D8364203DA;
+        Wed, 12 Sep 2018 14:14:20 +0200 (CEST)
+Date:   Wed, 12 Sep 2018 14:14:20 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        radu_nicolae.pirea@upb.ro, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Mark Brown <broonie@kernel.org>, Jiri Slaby <jslaby@suse.com>,
+        Richard Genoud <richard.genoud@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>
+Subject: Re: [PATCH v12 0/6] Driver for at91 usart in spi mode
+Message-ID: <20180912121420.GE2760@piout.net>
+References: <20180911181838.GI4185@dell>
+ <20180911185839.GA25212@piout.net>
+ <20180911224418.GK4185@dell>
+ <20180911225440.GL4185@dell>
+ <20180912073355.GB2557@piout.net>
+ <20180912084143.GN4185@dell>
+ <CAMuHMdWefU0pw=c9TKOa+wGHchpg8JRfE0OnC4+wKDt-qrbH1A@mail.gmail.com>
+ <20180912105407.GR4185@dell>
+ <20180912111757.GC2760@piout.net>
+ <20180912114352.GT4185@dell>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180912023908.GA5549@josh-ThinkPad-T460s>
+In-Reply-To: <20180912114352.GT4185@dell>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 11, 2018 at 04:39:08PM -1000, Joshua Abraham wrote:
-> This patch removes a set but unused variable in quirks.c.
+On 12/09/2018 12:43:52+0100, Lee Jones wrote:
+> > > But ... we can't have it both ways.  *Either* it's a true MFD, in
+> > > which case it can/should have 2 separate compatible strings which can
+> > > be specified directly from the DT.  *Or* it's not an MFD.  In the
+> > > latter case, which I think we're all agreeing on (else we'd have 2
+> > > compatible strings), MFD is not the place to handle this (my original
+> > > point).
+> > > 
+> > 
+> > If that is what bothers you, then let's move it out of mfd.
 > 
-> Fixes warning:
-> variable ‘mmio_sys_info’ set but not used [-Wunused-but-set-variable]
+> As I've already mentioned.  I don't just want it moved out of MFD and
+> shoved somewhere else.  My aim is to fix this properly.
 > 
-> Signed-off-by: Joshua Abraham <j.abraham1776@gmail.com>
 
-Applied to pci/misc for v4.20, thanks!
+If it is out of MFD, then I'm not sure why you would care too much about
+it as you won't be maintaining that code. And I still this what was done
+was correct but I'm open to test what you suggest.
 
-> ---
->  drivers/pci/quirks.c | 2 --
->  1 file changed, 2 deletions(-)
+> > > So ... this is a USART device which can do SPI, right?
+> > > 
+> > > My current thinking is that; as this is a USART device first &
+> > > foremost, the USART should be probed in the first instance regardless,
+> > > then if SPI mode is specified it (the USART driver) registers the SPI
+> > > platform driver (as MFD does currently) and exits gracefully, allowing
+> > > the SPI driver to take over.
+> > > 
+> > > Spanner in the works: is it physically possible to change the mode at
+> > > run-time?  :s
+> > 
+> > Yes it is possible but on Linux that will not happen without probing
+> > the drivers again.
 > 
-> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-> index ef7143a274e0..690a3b71aa1f 100644
-> --- a/drivers/pci/quirks.c
-> +++ b/drivers/pci/quirks.c
-> @@ -4993,7 +4993,6 @@ static void quirk_switchtec_ntb_dma_alias(struct pci_dev *pdev)
->  	void __iomem *mmio;
->  	struct ntb_info_regs __iomem *mmio_ntb;
->  	struct ntb_ctrl_regs __iomem *mmio_ctrl;
-> -	struct sys_info_regs __iomem *mmio_sys_info;
->  	u64 partition_map;
->  	u8 partition;
->  	int pp;
-> @@ -5014,7 +5013,6 @@ static void quirk_switchtec_ntb_dma_alias(struct pci_dev *pdev)
->  
->  	mmio_ntb = mmio + SWITCHTEC_GAS_NTB_OFFSET;
->  	mmio_ctrl = (void __iomem *) mmio_ntb + SWITCHTEC_NTB_REG_CTRL_OFFSET;
-> -	mmio_sys_info = mmio + SWITCHTEC_GAS_SYS_INFO_OFFSET;
->  
->  	partition = ioread8(&mmio_ntb->partition_id);
->  
-> -- 
-> 2.17.1
+> Not sure I understand what you mean.
 > 
+
+I was just commenting on changing the mode at runtime.
+
+> I'm suggesting that you use the same platform_* interfaces MFD uses to
+> register the SPI driver if SPI mode has been selected.  Only do so
+> from the appropriate driver i.e. USART.
+> 
+
+Yeah, I understood that but I didn't comment because I'm not sure this
+will work yet.
+
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
