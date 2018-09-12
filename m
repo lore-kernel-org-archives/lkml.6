@@ -2,204 +2,130 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62242C46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:00:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C107BC46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:02:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1411020833
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:00:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1411020833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 52F8320833
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:02:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sNirJhDp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52F8320833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727762AbeILVFu (ORCPT
+        id S1728003AbeILVHH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 17:05:50 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:3450 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728217AbeILVDn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 17:03:43 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 429RK45H2rz9ttRq;
-        Wed, 12 Sep 2018 17:58:32 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id D0iUiNodzumK; Wed, 12 Sep 2018 17:58:32 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 429RK44jY5z9ttBm;
-        Wed, 12 Sep 2018 17:58:32 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 2A7DE8B86F;
-        Wed, 12 Sep 2018 17:58:33 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id CG1gLWGjWqbE; Wed, 12 Sep 2018 17:58:33 +0200 (CEST)
-Received: from pc16082vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 98FA78B858;
-        Wed, 12 Sep 2018 17:58:32 +0200 (CEST)
-Received: by pc16082vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 48F1571913; Wed, 12 Sep 2018 15:58:32 +0000 (UTC)
-Message-Id: <31dea7ecceb9737932beaa4dc3339c7808356872.1536692743.git.christophe.leroy@c-s.fr>
-In-Reply-To: <cover.1536692743.git.christophe.leroy@c-s.fr>
-References: <cover.1536692743.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v2 09/24] powerpc/mm: move some nohash pte helpers in
- nohash/[32:64]/pgtable.h
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Geoff Levand <geoff@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Kumar Gala <galak@kernel.crashing.org>,
-        Li Yang <leoyang.li@nxp.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Scott Wood <oss@buserror.net>, aneesh.kumar@linux.vnet.ibm.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, dri-devel@lists.freedesktop.org
-Date:   Wed, 12 Sep 2018 15:58:32 +0000 (UTC)
+        Wed, 12 Sep 2018 17:07:07 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:33196 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726677AbeILVHG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 17:07:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
+        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=DC8VCz/nDf7DRYDASPGB5gU41kIWFZRCMSM++6l7RxY=; b=sNirJhDpzDuTLj0z9vgzgrdyV
+        WhCR3ugHc/TG9p4uyMr2j5vKWb9cXd76dhmC54+EAdw8Pxp8V1E7KgtIYRyS4oojVmlOr1iO85UTg
+        s+w/Qh8dsTcDEXbYGrWJNBxagU1La/8SeukhOi9e3M+C9xbj8ufuVYgj8dXX0GtPZ5ZAS4u44/lSC
+        yY3f7ftRzqV6gioXw0L+HJgmGkHDDTrlYZPnErU5dszFoIXn/khOYBRjE2/1ik66TGN2KJa/Pf8uT
+        zhuSVineaJkbHygfCL2nM2qK0X6n9W4qtS0n7jwo0H0Mi2u/w8faYsVAElLvrbE05mowIpF7V9q1A
+        fb2UeM8UA==;
+Received: from [177.97.26.110] (helo=coco.lan)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g07aG-0003YR-Ed; Wed, 12 Sep 2018 16:01:40 +0000
+Date:   Wed, 12 Sep 2018 13:01:31 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        qat-linux@intel.com, linux-crypto@vger.kernel.org,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linaro-mm-sig@lists.linaro.org, amd-gfx@lists.freedesktop.org,
+        linux-input@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v2 05/17] compat_ioctl: move more drivers to
+ generic_compat_ioctl_ptrarg
+Message-ID: <20180912130131.2c6581d5@coco.lan>
+In-Reply-To: <20180912151134.436719-1-arnd@arndb.de>
+References: <20180912150142.157913-1-arnd@arndb.de>
+        <20180912151134.436719-1-arnd@arndb.de>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to allow their use in nohash/32/pgtable.h, we have to move the
-following helpers in nohash/[32:64]/pgtable.h:
-- pte_mkwrite()
-- pte_mkdirty()
-- pte_mkyoung()
-- pte_wrprotect()
+Em Wed, 12 Sep 2018 17:08:52 +0200
+Arnd Bergmann <arnd@arndb.de> escreveu:
 
-Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/include/asm/nohash/32/pgtable.h | 28 ++++++++++++++++++++++++++++
- arch/powerpc/include/asm/nohash/64/pgtable.h | 20 ++++++++++++++++++++
- arch/powerpc/include/asm/nohash/pgtable.h    | 28 ----------------------------
- 3 files changed, 48 insertions(+), 28 deletions(-)
+> The .ioctl and .compat_ioctl file operations have the same prototype so
+> they can both point to the same function, which works great almost all
+> the time when all the commands are compatible.
+>=20
+> One exception is the s390 architecture, where a compat pointer is only
+> 31 bit wide, and converting it into a 64-bit pointer requires calling
+> compat_ptr(). Most drivers here will ever run in s390, but since we now
+> have a generic helper for it, it's easy enough to use it consistently.
+>=20
+> I double-checked all these drivers to ensure that all ioctl arguments
+> are used as pointers or are ignored, but are not interpreted as integer
+> values.
+>=20
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
 
-diff --git a/arch/powerpc/include/asm/nohash/32/pgtable.h b/arch/powerpc/include/asm/nohash/32/pgtable.h
-index a7f44498ab6f..4373f8c44b6d 100644
---- a/arch/powerpc/include/asm/nohash/32/pgtable.h
-+++ b/arch/powerpc/include/asm/nohash/32/pgtable.h
-@@ -136,6 +136,34 @@ extern int icache_44x_need_flush;
- #define pte_clear(mm, addr, ptep) \
- 	do { pte_update(ptep, ~0, 0); } while (0)
- 
-+static inline pte_t pte_mkwrite(pte_t pte)
-+{
-+	pte_basic_t ptev;
-+
-+	ptev = pte_val(pte) & ~_PAGE_RO;
-+	ptev |= _PAGE_RW;
-+	return __pte(ptev);
-+}
-+
-+static inline pte_t pte_mkdirty(pte_t pte)
-+{
-+	return __pte(pte_val(pte) | _PAGE_DIRTY);
-+}
-+
-+static inline pte_t pte_mkyoung(pte_t pte)
-+{
-+	return __pte(pte_val(pte) | _PAGE_ACCESSED);
-+}
-+
-+static inline pte_t pte_wrprotect(pte_t pte)
-+{
-+	pte_basic_t ptev;
-+
-+	ptev = pte_val(pte) & ~(_PAGE_RW | _PAGE_HWWRITE);
-+	ptev |= _PAGE_RO;
-+	return __pte(ptev);
-+}
-+
- #define pmd_none(pmd)		(!pmd_val(pmd))
- #define	pmd_bad(pmd)		(pmd_val(pmd) & _PMD_BAD)
- #define	pmd_present(pmd)	(pmd_val(pmd) & _PMD_PRESENT_MASK)
-diff --git a/arch/powerpc/include/asm/nohash/64/pgtable.h b/arch/powerpc/include/asm/nohash/64/pgtable.h
-index 513b6e9e62c6..72dac522aa66 100644
---- a/arch/powerpc/include/asm/nohash/64/pgtable.h
-+++ b/arch/powerpc/include/asm/nohash/64/pgtable.h
-@@ -94,6 +94,26 @@
- #ifndef __ASSEMBLY__
- /* pte_clear moved to later in this file */
- 
-+static inline pte_t pte_mkwrite(pte_t pte)
-+{
-+	return __pte(pte_val(pte) | _PAGE_RW);
-+}
-+
-+static inline pte_t pte_mkdirty(pte_t pte)
-+{
-+	return __pte(pte_val(pte) | _PAGE_DIRTY);
-+}
-+
-+static inline pte_t pte_mkyoung(pte_t pte)
-+{
-+	return __pte(pte_val(pte) | _PAGE_ACCESSED);
-+}
-+
-+static inline pte_t pte_wrprotect(pte_t pte)
-+{
-+	return __pte(pte_val(pte) & ~_PAGE_RW);
-+}
-+
- #define PMD_BAD_BITS		(PTE_TABLE_SIZE-1)
- #define PUD_BAD_BITS		(PMD_TABLE_SIZE-1)
- 
-diff --git a/arch/powerpc/include/asm/nohash/pgtable.h b/arch/powerpc/include/asm/nohash/pgtable.h
-index 5b82e44c4231..c746e9e784cd 100644
---- a/arch/powerpc/include/asm/nohash/pgtable.h
-+++ b/arch/powerpc/include/asm/nohash/pgtable.h
-@@ -77,15 +77,6 @@ static inline unsigned long pte_pfn(pte_t pte)	{
- 	return pte_val(pte) >> PTE_RPN_SHIFT; }
- 
- /* Generic modifiers for PTE bits */
--static inline pte_t pte_wrprotect(pte_t pte)
--{
--	pte_basic_t ptev;
--
--	ptev = pte_val(pte) & ~(_PAGE_RW | _PAGE_HWWRITE);
--	ptev |= _PAGE_RO;
--	return __pte(ptev);
--}
--
- static inline pte_t pte_mkclean(pte_t pte)
- {
- 	return __pte(pte_val(pte) & ~(_PAGE_DIRTY | _PAGE_HWWRITE));
-@@ -96,25 +87,6 @@ static inline pte_t pte_mkold(pte_t pte)
- 	return __pte(pte_val(pte) & ~_PAGE_ACCESSED);
- }
- 
--static inline pte_t pte_mkwrite(pte_t pte)
--{
--	pte_basic_t ptev;
--
--	ptev = pte_val(pte) & ~_PAGE_RO;
--	ptev |= _PAGE_RW;
--	return __pte(ptev);
--}
--
--static inline pte_t pte_mkdirty(pte_t pte)
--{
--	return __pte(pte_val(pte) | _PAGE_DIRTY);
--}
--
--static inline pte_t pte_mkyoung(pte_t pte)
--{
--	return __pte(pte_val(pte) | _PAGE_ACCESSED);
--}
--
- static inline pte_t pte_mkspecial(pte_t pte)
- {
- 	return __pte(pte_val(pte) | _PAGE_SPECIAL);
--- 
-2.13.3
+>  drivers/media/rc/lirc_dev.c                 | 4 +---
 
+> diff --git a/drivers/media/rc/lirc_dev.c b/drivers/media/rc/lirc_dev.c
+> index f862f1b7f996..077209f414ed 100644
+> --- a/drivers/media/rc/lirc_dev.c
+> +++ b/drivers/media/rc/lirc_dev.c
+> @@ -730,9 +730,7 @@ static const struct file_operations lirc_fops =3D {
+>  	.owner		=3D THIS_MODULE,
+>  	.write		=3D ir_lirc_transmit_ir,
+>  	.unlocked_ioctl	=3D ir_lirc_ioctl,
+> -#ifdef CONFIG_COMPAT
+> -	.compat_ioctl	=3D ir_lirc_ioctl,
+> -#endif
+> +	.compat_ioctl	=3D generic_compat_ioctl_ptrarg,
+>  	.read		=3D ir_lirc_read,
+>  	.poll		=3D ir_lirc_poll,
+>  	.open		=3D ir_lirc_open,
+
+Adding an infrared remote controller to a s390 mainframe sounds fun :-)
+
+I suspect that one could implement it on a s390 platform=20
+using gpio-ir-recv and/or gpio-ir-tx drivers. Perhaps one possible
+practical usage would be to let the mainframe to send remote
+controller codes to adjust the air conditioning system ;-)
+
+=46rom lirc driver's PoV, there's nothing that really prevents one to
+do that and use lirc API, and the driver is generic enough to work
+on any hardware platform.
+
+I didn't check the implementation of generic_compat_ioctl_ptrarg(),
+but assuming it is ok,
+
+Acked-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+
+Thanks,
+Mauro
