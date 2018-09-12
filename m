@@ -3,31 +3,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F050ECDFC1
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 12:28:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89D66C4646A
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 12:28:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1862020866
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 12:28:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1862020866
+	by mail.kernel.org (Postfix) with ESMTP id 4F81120866
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 12:28:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F81120866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727789AbeILRcl (ORCPT
+        id S1727839AbeILRcx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 13:32:41 -0400
-Received: from foss.arm.com ([217.140.101.70]:58492 "EHLO foss.arm.com"
+        Wed, 12 Sep 2018 13:32:53 -0400
+Received: from foss.arm.com ([217.140.101.70]:58512 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726670AbeILRck (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 13:32:40 -0400
+        id S1726670AbeILRcx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 13:32:53 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D0B9F7A9;
-        Wed, 12 Sep 2018 05:28:22 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B95421596;
+        Wed, 12 Sep 2018 05:28:34 -0700 (PDT)
 Received: from [10.4.12.81] (melchizedek.emea.arm.com [10.4.12.81])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DF75A3F703;
-        Wed, 12 Sep 2018 05:28:20 -0700 (PDT)
-Subject: Re: [PATCH v5 05/27] arm64: Use daifflag_restore after bp_hardening
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9C4A83F703;
+        Wed, 12 Sep 2018 05:28:32 -0700 (PDT)
+Subject: Re: [PATCH v5 04/27] arm64: daifflags: Use irqflags functions for
+ daifflags
 To:     Julien Thierry <julien.thierry@arm.com>
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         daniel.thompson@linaro.org, joel@joelfernandes.org,
@@ -35,16 +37,14 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         christoffer.dall@arm.com, catalin.marinas@arm.com,
         will.deacon@arm.com
 References: <1535471497-38854-1-git-send-email-julien.thierry@arm.com>
- <1535471497-38854-6-git-send-email-julien.thierry@arm.com>
- <641119b9-3466-817d-3d6b-dd710c646b49@arm.com>
- <8f200315-1db9-1905-71ae-cb4269450b7c@arm.com>
+ <1535471497-38854-5-git-send-email-julien.thierry@arm.com>
 From:   James Morse <james.morse@arm.com>
-Message-ID: <71bb5289-b381-65da-c609-fa4a08640425@arm.com>
-Date:   Wed, 12 Sep 2018 13:28:19 +0100
+Message-ID: <1031e4c9-9123-7a94-a59c-4249cf51adf4@arm.com>
+Date:   Wed, 12 Sep 2018 13:28:30 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <8f200315-1db9-1905-71ae-cb4269450b7c@arm.com>
+In-Reply-To: <1535471497-38854-5-git-send-email-julien.thierry@arm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -55,43 +55,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi Julien,
 
-On 12/09/18 12:11, Julien Thierry wrote:
-> On 12/09/18 11:32, James Morse wrote:
->> On 28/08/18 16:51, Julien Thierry wrote:
->>> For EL0 entries requiring bp_hardening, daif status is kept at
->>> DAIF_PROCCTX_NOIRQ until after hardening has been done. Then interrupts
->>> are enabled through local_irq_enable().
->>>
->>> Before using local_irq_* functions, daifflags should be properly restored
->>> to a state where IRQs are enabled.
->>
->>> Enable IRQs by restoring DAIF_PROCCTX state after bp hardening.
->>
->> Is this just for symmetry, or are you going on to add something to the daifflags
->> state that local_irq_* functions won't change? (if so, could you allude to that
->> in the commit message)
+On 28/08/18 16:51, Julien Thierry wrote:
+> Some of the work done in daifflags save/restore is already provided
+> by irqflags functions. Daifflags should always be a superset of irqflags
+> (it handles irq status + status of other flags). Modifying behaviour of
+> irqflags should alter the behaviour of daifflags.
+> 
+> Use irqflags_save/restore functions for the corresponding daifflags
+> operation.
 
-> What happens is that once we use ICC_PMR_EL1, local_irq_enable will not touch
-> PSR.I. And we are coming back from an entry where PSR.I was kept to 1 so
-> local_irq_enable was not actually enabling the interrupts. On the otherhand,
-> restore will affect both.
+> diff --git a/arch/arm64/include/asm/daifflags.h b/arch/arm64/include/asm/daifflags.h
+> index 22e4c83..8d91f22 100644
+> --- a/arch/arm64/include/asm/daifflags.h
+> +++ b/arch/arm64/include/asm/daifflags.h
+> @@ -36,11 +36,8 @@ static inline unsigned long local_daif_save(void)
+>  {
+>  	unsigned long flags;
+>  
+> -	asm volatile(
+> -		"mrs	%0, daif		// local_daif_save\n"
+> -		: "=r" (flags)
+> -		:
+> -		: "memory");
+> +	flags = arch_local_save_flags();
 
-Got it. Thanks!
-
-Does this mean stop_machine()s local_save_flags()/local_irq_restore() will not
-be symmetric around __apply_alternatives_multi_stop()?
-I see you add alternatives in these in patch 15, but I haven't got that far yet)
-
-
-> Another option is to have the asm macro "enable_da_f" also switch to PMR usage
-> (i.e. "just keep normal interrupts disabled"). Overall it would probably be
-> easier to reason with, but I'm just unsure whether it is acceptable to receive a
-> Pseudo NMI before having applied the bp_hardening.
-
-Wouldn't this give the interrupt controller a headache? I assume IRQs really are
-masked when handle_arch_irq is called. (I know nothing about the gic)
+I clearly should have done this from the beginning!
+(I thought there was some header-loop that prevented it, but I can't reproduce
+that now!)
 
 
-Thanks,
+>  	local_daif_mask();
+>  
+>  	return flags;
+> @@ -60,11 +57,9 @@ static inline void local_daif_restore(unsigned long flags)
+>  {
+>  	if (!arch_irqs_disabled_flags(flags))
+>  		trace_hardirqs_on();
+> -	asm volatile(
+> -		"msr	daif, %0		// local_daif_restore"
+> -		:
+> -		: "r" (flags)
+> -		: "memory");
+> +
+> +	arch_local_irq_restore(flags);
 
-James
+And I thought this only messed with the I bit, which it clearly doesn't.
+
+Thanks for fixing these!
+
+Reviewed-by: James Morse <james.morse@arm.com>
