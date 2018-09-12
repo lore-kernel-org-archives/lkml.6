@@ -2,151 +2,253 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A35BAC6778D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:40:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 889ECC46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:41:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D87020866
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:40:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F31820866
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:41:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="ci7V/940"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D87020866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="o65ACWPW";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QzCsOufr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F31820866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727837AbeILTpK (ORCPT
+        id S1727990AbeILTqh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 15:45:10 -0400
-Received: from mail-sn1nam01on0091.outbound.protection.outlook.com ([104.47.32.91]:51648
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726945AbeILTpK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 15:45:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PgyaZTLOe82qawMwYiksIZJZTKiEzbyxA7McOGFjUIQ=;
- b=ci7V/9404R0Qc7auG2gz0iXbsHSgvpIQ51RnnvgH8KOu+ByLTShZKtkUDHWnKiPNaSJzkKtyPZj2qwDH/morXUuWdqUzLK68zTJVNShIYHyTM8yc55liJsfJCIKe2OcTZ7ocXsKlfSoo8QKsd/onOlLNbqXEtOytKYF6lWwRHvE=
-Received: from DM5PR21MB0508.namprd21.prod.outlook.com (10.172.91.142) by
- DM5PR21MB0860.namprd21.prod.outlook.com (10.173.172.146) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1164.9; Wed, 12 Sep 2018 14:40:19 +0000
-Received: from DM5PR21MB0508.namprd21.prod.outlook.com
- ([fe80::88e6:fdc:1d8e:71f5]) by DM5PR21MB0508.namprd21.prod.outlook.com
- ([fe80::88e6:fdc:1d8e:71f5%4]) with mapi id 15.20.1164.006; Wed, 12 Sep 2018
- 14:40:19 +0000
-From:   Pasha Tatashin <Pavel.Tatashin@microsoft.com>
-To:     Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Michal Hocko <mhocko@kernel.org>
-CC:     Mikhail Zaslonko <zaslonko@linux.ibm.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "osalvador@suse.de" <osalvador@suse.de>
-Subject: Re: [PATCH] memory_hotplug: fix the panic when memory end is not on
- the section boundary
-Thread-Topic: [PATCH] memory_hotplug: fix the panic when memory end is not on
- the section boundary
-Thread-Index: AQHUSQLFF/mQjCkfKkuMMO7HZfKu+6Tpf1cAgAMgwwCAAAn0gIAADVaAgAADooA=
-Date:   Wed, 12 Sep 2018 14:40:18 +0000
-Message-ID: <38ce1d0b-14bd-9a4a-1061-62c366cb11b5@microsoft.com>
-References: <20180910123527.71209-1-zaslonko@linux.ibm.com>
- <20180910131754.GG10951@dhcp22.suse.cz> <20180912150356.642c1dab@thinkpad>
- <20180912133933.GI10951@dhcp22.suse.cz> <20180912162717.5a018bf6@thinkpad>
-In-Reply-To: <20180912162717.5a018bf6@thinkpad>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [137.117.57.82]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR21MB0860;6:DP8yZP2FAKTXlRjvzGf8i+02lF5FbHLx6nbNIs8oMEMoRqExhShEogIyKM2tYXMbF7VOUrSNKUpk+ou3rhy+PL9Dk4T8WwiXMMky5Ze8hxPOfd5+HftplAebm6nkp6wVDo+C7k7k+AQngRKv0vsqkLZKQ/+ETnnZEIgUbKBMo1/0RQJ1ilID1kl/Ut4hbH/27jJXLfu6SKOXQjrHIO+uW5S6CUU+9evh8GoSDvJZR0DouTxjLJSF711DI94i1UOXsscVGTvaUPqNcZBzISm8XKCAGJzVQerlrnddZ3RUBnZkTGiMbpoSDt92eP0toG0TYzTwLnFrL3pV+qKFTLO5YsP71hWMMmUsjmMDRzdyjId4BCz1rffvJFIjOpGu2qLWVb7R1EZuKRrRg7JGlMmmkzzYEEWoAQE6rog+edDcyV1XcRO2UnKV/5EdOyTmPdgXxJk809KFYqarJ1ar4oJuJg==;5:6XXvjnYciJWxGuBkV/oDwRrTC7Mlzj0Db4MYsbRJMLtMWc9L3cZra9Uzd84mYRLwCIN8dxrFc8JRjUiA4+nk+Xg4bWs1aYN2t3C7nF9xAbABZYVU83Vxu1bnpxWB2bjt3NprvHGal+blmCLsBY0CLfiG3XtrmWWDQ9v3CGcnT8M=;7:MXVZ77C7ui8C5hRXF/Kpr4TK16ZeGOahukxcvgJAUfT068uA+NfGJ3O9x5vuakYYn5LPfXXFbRfd1BRSZ88SuGaOodrp6vVbUlJe9BOmkn3vMGMoNajLyBXkcm1z15AnieyB37d9NI8nye+yO/wRembuuQ+JUuoElMDTedroUC1AqFRdwUvfzryuMMS6Bq4bUrHIv+QmlHXsgoMtG8wLp6dfumrivErnn04ltaa8CuNjXJr+JCq/FmU5kycR4Trk
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 11d26f0a-13f0-4398-d3a4-08d618bda983
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:DM5PR21MB0860;
-x-ms-traffictypediagnostic: DM5PR21MB0860:
-x-microsoft-antispam-prvs: <DM5PR21MB0860C2ECAAD7841EDBE986F09D1B0@DM5PR21MB0860.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231344)(944501410)(52105095)(2018427008)(3002001)(10201501046)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123564045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699050)(76991041);SRVR:DM5PR21MB0860;BCL:0;PCL:0;RULEID:;SRVR:DM5PR21MB0860;
-x-forefront-prvs: 07935ACF08
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(366004)(376002)(136003)(39860400002)(396003)(199004)(189003)(5660300001)(106356001)(93886005)(105586002)(31686004)(3846002)(561944003)(6116002)(72206003)(6486002)(14454004)(99286004)(478600001)(6246003)(6436002)(25786009)(7736002)(305945005)(81166006)(4326008)(8676002)(81156014)(76176011)(8936002)(10090500001)(229853002)(6346003)(26005)(6512007)(2900100001)(68736007)(186003)(5250100002)(66066001)(11346002)(102836004)(6506007)(53546011)(486006)(31696002)(97736004)(2616005)(476003)(36756003)(446003)(256004)(86362001)(14444005)(22452003)(86612001)(53936002)(10290500003)(2906002)(110136005)(54906003)(316002);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR21MB0860;H:DM5PR21MB0508.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Pavel.Tatashin@microsoft.com; 
-x-microsoft-antispam-message-info: sUBvCNPCkHAqWhobRhNa0ecnQO13iDapbQ1e9+L1tDBzrI3kkvWKEwtyVVWdQXMaA1KW9ZNpQtcsngqwe/7fG1uYABl1sEKJlHvNe/BcfCNKTkaqARTIDQDcOcQ8sJKg8D/0PbxQbts6j4jh0MR/6J+5pi8hURmmKEZjFvOUDDH1B6in1uzjYQ8WLc5vARS1s2rDJf4ZyKf1ZMDtl1Jm57ZH7RKofqz9zCMl2t9dBJNzztsXvapKwH3YMVaWoxnOiohT/W2cAIjmfDmadvreQt58epNvH9gGpVBNmAYMMkC2XG764iVjHfh5CUV1aZ9jWopDdxnhank31OLixgmcXkcHMF52VXSWUs1mj9d+b5s=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <B05514B915A5E944BDC03F796D68E222@namprd21.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Wed, 12 Sep 2018 15:46:37 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:53406 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726879AbeILTqh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 15:46:37 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id BFC7F6081C; Wed, 12 Sep 2018 14:41:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1536763307;
+        bh=vK7nzpCGfzabl889LWci/0H7oE+JnLcjbRh9XZ4VZWU=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=o65ACWPW8Ow2V+cqabmUjCfyM8eWh/6wnvIx1bfNx928dnGHOaLpjw9r07bxSaC8r
+         MO0tij7u9L3wYmXyt4TPpXb3bDLwrlipp3j8XlmN02C7dHwXl82YED7B226D/N5pGN
+         t9kuELi0kmWYey4DuttJWoHzYfBIrUhBKiK47PXs=
+Received: from [10.226.60.81] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 257FE6053B;
+        Wed, 12 Sep 2018 14:41:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1536763306;
+        bh=vK7nzpCGfzabl889LWci/0H7oE+JnLcjbRh9XZ4VZWU=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=QzCsOufrv673kgm7vZlrZk0X228MzSMp7SgfUbf0FUu+iTNI5PcWZXmGCKC+USMnD
+         ay9pmJiJA+4b37j+1CVpsS84Vsoctpm+tBTJs2Kzd7K7aV5bcVeWWSH2ZadKVqxsno
+         6yv5lBAOBITsTAxIR7nN5/ADMScV7turlPRXFlMs=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 257FE6053B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+Subject: Re: [PATCH] ACPI/PPTT: Handle architecturally unknown cache types
+To:     Jeremy Linton <jeremy.linton@arm.com>, rjw@rjwysocki.net,
+        linux-acpi@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, vkilari@codeaurora.org,
+        Sudeep Holla <sudeep.holla@arm.com>
+References: <1536694334-5811-1-git-send-email-jhugo@codeaurora.org>
+ <f62f22a6-2dd8-f254-dbaf-b9e224099afd@arm.com>
+ <e74f2208-ac0d-6c45-8ddb-5b77d6a42fef@codeaurora.org>
+ <c34452c2-d1e8-19d8-45c1-b48ecf14bbd7@arm.com>
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+Message-ID: <98e2e6fa-7256-b5ac-7d2e-42c858c6e57c@codeaurora.org>
+Date:   Wed, 12 Sep 2018 08:41:45 -0600
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 11d26f0a-13f0-4398-d3a4-08d618bda983
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Sep 2018 14:40:19.0027
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR21MB0860
+In-Reply-To: <c34452c2-d1e8-19d8-45c1-b48ecf14bbd7@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDkvMTIvMTggMTA6MjcgQU0sIEdlcmFsZCBTY2hhZWZlciB3cm90ZToNCj4gT24gV2Vk
-LCAxMiBTZXAgMjAxOCAxNTozOTozMyArMDIwMA0KPiBNaWNoYWwgSG9ja28gPG1ob2Nrb0BrZXJu
-ZWwub3JnPiB3cm90ZToNCj4gDQo+PiBPbiBXZWQgMTItMDktMTggMTU6MDM6NTYsIEdlcmFsZCBT
-Y2hhZWZlciB3cm90ZToNCj4+IFsuLi5dDQo+Pj4gQlRXLCB0aG9zZSBzeXNmcyBhdHRyaWJ1dGVz
-IGFyZSB3b3JsZC1yZWFkYWJsZSwgc28gYW55b25lIGNhbiB0cmlnZ2VyDQo+Pj4gdGhlIHBhbmlj
-IGJ5IHNpbXBseSByZWFkaW5nIHRoZW0sIG9yIGp1c3QgcnVuIGxzbWVtIChhbHNvIGF2YWlsYWJs
-ZSBmb3INCj4+PiB4ODYgc2luY2UgdXRpbC1saW51eCAyLjMyKS4gT0ssIHlvdSBuZWVkIGEgc3Bl
-Y2lhbCBub3QtbWVtb3J5LWJsb2NrLWFsaWduZWQNCj4+PiBtZW09IHBhcmFtZXRlciBhbmQgREVC
-VUdfVk0gZm9yIHBvaXNvbiBjaGVjaywgYnV0IHcvbyBERUJVR19WTSB5b3Ugd291bGQNCj4+PiBz
-dGlsbCBhY2Nlc3MgdW5pbml0aWFsaXplZCBzdHJ1Y3QgcGFnZXMuIFRoaXMgc291bmRzIHZlcnkg
-d3JvbmcsIGFuZCBJDQo+Pj4gdGhpbmsgaXQgcmVhbGx5IHNob3VsZCBiZSBmaXhlZC4gIA0KPj4N
-Cj4+IE9oaCwgYWJzb2x1dGVseS4gTm9ib2R5IGlzIHF1ZXN0aW9uaW5nIHRoYXQuIFRoZSB0aGlu
-ZyBpcyB0aGF0IHRoZQ0KPj4gY29kZSBoYXMgYmVlbiBsaWtlbHkgYWx3YXlzIGJyb2tlbi4gV2Ug
-anVzdCBoYXZlbid0IG5vdGljZWQgYmVjYXVzZQ0KPj4gdGhvc2UgdW5pdGlhbGl6ZWQgcGFydHMg
-d2hlcmUgemVyb2VkIHByZXZpb3VzbHkuIE5vdyB0aGF0IHRoZSBpbXBsaWNpdA0KPj4gemVyb3lp
-bmcgaXMgZ29uZSBpdCBpcyBqdXN0IHZpc2libGUuDQo+Pg0KPj4gQWxsIHRoYXQgSSBhbSBhcmd1
-aW5nIGlzIHRoYXQgdGhlcmUgYXJlIG1hbnkgcGxhY2VzIHdoaWNoIGFzc3VtZQ0KPj4gcGFnZWJs
-b2NrcyB0byBiZSBmdWxseSBpbml0aWFsaXplZCBhbmQgcGx1Z2dpbmcgb25lIHBsYWNlIHRoYXQg
-Ymxvd3MgdXANCj4+IGF0IHRoZSB0aW1lIGlzIGp1c3Qgd2hhY2sgYSBtb2xlLiBXZSBuZWVkIHRv
-IGFkZHJlc3MgdGhpcyBtdWNoIGVhcmxpZXIuDQo+PiBFLmcuIGJ5IGFsbG93aW5nIG9ubHkgZnVs
-bCBwYWdlYmxvY2tzIHdoZW4gYWRkaW5nIGEgbWVtb3J5IHJhbmdlLg0KPiANCj4gSnVzdCB0byBt
-YWtlIHN1cmUgd2UgYXJlIHRhbGtpbmcgYWJvdXQgdGhlIHNhbWUgdGhpbmc6IHdoZW4geW91IHNh
-eQ0KPiAicGFnZWJsb2NrcyIsIGRvIHlvdSBtZWFuIHRoZSBNQVhfT1JERVJfTlJfUEFHRVMgLyBw
-YWdlYmxvY2tfbnJfcGFnZXMNCj4gdW5pdCBvZiBwYWdlcywgb3IgZG8geW91IG1lYW4gdGhlIG1l
-bW9yeSAoaG90cGx1ZykgYmxvY2sgdW5pdD8NCg0KRnJvbSBlYXJseSBkaXNjdXNzaW9uLCBpdCB3
-YXMgYWJvdXQgcGFnZWJsb2NrX25yX3BhZ2VzIG5vdCBhYm91dA0KbWVtb3J5X2Jsb2NrX3NpemVf
-Ynl0ZXMNCg0KPiANCj4gSSBkbyBub3Qgc2VlIGFueSBpc3N1ZSBoZXJlIHdpdGggTUFYX09SREVS
-X05SX1BBR0VTIC8gcGFnZWJsb2NrX25yX3BhZ2VzDQo+IHBhZ2VibG9ja3MsIGFuZCBpZiB0aGVy
-ZSB3YXMgc3VjaCBhbiBpc3N1ZSwgb2YgY291cnNlIHlvdSBhcmUgcmlnaHQgdGhhdA0KPiB0aGlz
-IHdvdWxkIGFmZmVjdCBtYW55IHBsYWNlcy4gSWYgdGhlcmUgd2FzIHN1Y2ggYW4gaXNzdWUsIEkg
-d291bGQgYWxzbw0KPiBhc3N1bWUgdGhhdCB3ZSB3b3VsZCBzZWUgdGhlIG5ldyBwYWdlIHBvaXNv
-biB3YXJuaW5nIGluIG1hbnkgb3RoZXIgcGxhY2VzLg0KPiANCj4gVGhlIGJ1ZyB0aGF0IE1pa2hh
-aWxzIHBhdGNoIHdvdWxkIGZpeCBvbmx5IGFmZmVjdHMgY29kZSB0aGF0IG9wZXJhdGVzDQo+IG9u
-IC8gaXRlcmF0ZXMgdGhyb3VnaCBtZW1vcnkgKGhvdHBsdWcpIGJsb2NrcywgYW5kIHRoYXQgZG9l
-cyBub3QgaGFwcGVuDQo+IGluIG1hbnkgcGxhY2VzLCBvbmx5IGluIHRoZSB0d28gZnVuY3Rpb25z
-IHRoYXQgaGlzIHBhdGNoIGZpeGVzLg0KDQpKdXN0IHRvIGJlIGNsZWFyLCBzbyBtZW1vcnkgaXMg
-cGFnZWJsb2NrX25yX3BhZ2VzIGFsaWduZWQsIHlldA0KbWVtb3J5X2Jsb2NrIGFyZSBsYXJnZXIg
-YW5kIHBhbmljIGlzIHN0aWxsIHRyaWdnZXJlZD8NCg0KSSBhc2ssIGJlY2F1c2UgMzA3NU0gaXMg
-bm90IDEyOE0gYWxpZ25lZC4NCg0KPiANCj4gV2hlbiB5b3Ugc2F5ICJhZGRyZXNzIHRoaXMgbXVj
-aCBlYXJsaWVyIiwgZG8geW91IG1lYW4gY2hhbmdpbmcgdGhlIHdheQ0KPiB0aGF0IGZyZWVfYXJl
-YV9pbml0X2NvcmUoKS9tZW1tYXBfaW5pdCgpIGluaXRpYWxpemUgc3RydWN0IHBhZ2VzLCBpLmUu
-DQo+IGhhdmUgdGhlbSBub3QgdXNlIHpvbmUtPnNwYW5uZWRfcGFnZXMgYXMgbGltaXQsIGJ1dCBy
-YXRoZXIgYWxpZ24gdGhhdA0KPiB1cCB0byB0aGUgbWVtb3J5IGJsb2NrIChub3QgcGFnZWJsb2Nr
-KSBib3VuZGFyeT8NCj4gDQoNClRoaXMgd2FzIG15IGluaXRpYWwgcHJvcG9zYWwsIHRvIGZpeCBt
-ZW1tYXBfaW5pdCgpIGFuZCBpbml0aWFsaXplIHN0cnVjdA0KcGFnZXMgYmV5b25kIHRoZSAiZW5k
-IiwgYW5kIGJlZm9yZSB0aGUgInN0YXJ0IiB0byBjb3ZlciB0aGUgd2hvbGUNCnNlY3Rpb24uIEJ1
-dCwgSSB0aGluayBNaWNoYWwgc3VnZ2VzdGVkIChhbmQgaGUgbWlnaHQgY29ycmVjdCBtZSkgdG8N
-CnNpbXBseSBpZ25vcmUgdW5hbGlnbmVkIG1lbW9yeSB0byBzZWN0aW9uIG1lbW9yeSBtdWNoIGVh
-cmxpZXI6IHNvDQphbnl0aGluZyB0aGF0IGRvZXMgbm90IGFsaWduIHRvIHNwYXJzZSBvcmRlciBp
-cyBub3QgYWRkZWQgYXQgYWxsIHRvIHRoZQ0Kc3lzdGVtLg0KDQpJIHRoaW5rIE1pY2hhbCdzIHBy
-b3Bvc2FsIHdvdWxkIHNpbXBsaWZ5IGFuZCBzdHJlbmd0aGVuIG1lbW9yeSBtYXBwaW5nDQpvdmVy
-YWxsLg0KDQpQYXZlbA==
+On 9/11/2018 3:25 PM, Jeremy Linton wrote:
+> Hi,
+> 
+> On 09/11/2018 03:38 PM, Jeffrey Hugo wrote:
+>> On 9/11/2018 2:16 PM, Jeremy Linton wrote:
+>>> Hi Jeffrey,
+>>>
+>>> (+Sudeep)
+>>>
+>>> On 09/11/2018 02:32 PM, Jeffrey Hugo wrote:
+>>>> The type of a cache might not be specified by architectural 
+>>>> mechanisms (ie
+>>>> system registers), but its type might be specified in the PPTT.  In 
+>>>> this
+>>>> case, following the PPTT specification, we should identify the cache as
+>>>> the type specified by PPTT.
+>>>>
+>>>> This fixes the following lscpu issue where only the cache type sysfs 
+>>>> file
+>>>> is missing which results in no output providing a poor user 
+>>>> experience in
+>>>> the above system configuration-
+>>>> lscpu: cannot open /sys/devices/system/cpu/cpu0/cache/index3/type: 
+>>>> No such
+>>>> file or directory
+>>>>
+>>>> Fixes: 2bd00bcd73e5 (ACPI/PPTT: Add Processor Properties Topology 
+>>>> Table parsing)
+>>>> Reported-by: Vijaya Kumar K <vkilari@codeaurora.org>
+>>>> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+>>>> ---
+>>>>   drivers/acpi/pptt.c | 15 +++++++++++++++
+>>>>   1 file changed, 15 insertions(+)
+>>>>
+>>>> diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
+>>>> index d1e26cb..3c6db09 100644
+>>>> --- a/drivers/acpi/pptt.c
+>>>> +++ b/drivers/acpi/pptt.c
+>>>> @@ -401,6 +401,21 @@ static void update_cache_properties(struct 
+>>>> cacheinfo *this_leaf,
+>>>>               break;
+>>>>           }
+>>>>       }
+>>>> +    if ((this_leaf->type == CACHE_TYPE_NOCACHE) &&
+>>>> +        (found_cache->flags & ACPI_PPTT_CACHE_TYPE_VALID)) {
+>>>> +        switch (found_cache->attributes & ACPI_PPTT_MASK_CACHE_TYPE) {
+>>>> +        case ACPI_PPTT_CACHE_TYPE_DATA:
+>>>> +            this_leaf->type = CACHE_TYPE_DATA;
+>>>> +            break;
+>>>> +        case ACPI_PPTT_CACHE_TYPE_INSTR:
+>>>> +            this_leaf->type = CACHE_TYPE_INST;
+>>>> +            break;
+>>>> +        case ACPI_PPTT_CACHE_TYPE_UNIFIED:
+>>>> +        case ACPI_PPTT_CACHE_TYPE_UNIFIED_ALT:
+>>>> +            this_leaf->type = CACHE_TYPE_UNIFIED;
+>>>> +            break;
+>>>> +        }
+>>>> +    }
+>>>>       /*
+>>>>        * If the above flags are valid, and the cache type is NOCACHE
+>>>>        * update the cache type as well.
+>>>>
+>>>
+>>> If you look at the next line of code following this comment its going 
+>>> to update the cache type for fully populated PPTT nodes. Although 
+>>> with the suggested change its only going to activate if someone 
+>>> completely fills out the node and fails to set the valid flag on the 
+>>> cache type. 
+>>
+>> Yes, however that case doesn't apply to the scenario we are concerned 
+>> about, doesn't seem to be fully following the PPTT spec, and seems odd 
+>> that Linux just assumes that a "fully specified" cache is unified.
+> 
+> Because, the architecturally specified ones won't be type NOCACHE?
+
+Correct.  However, what if you have a NOCACHE (not architecturally 
+specified), that is fully described in PPTT, as a non-unified cache 
+(data only)?  Unlikely?  Maybe.  Still seem possible though, therefore I 
+feel this assumption is suspect.
+
+> 
+>>
+>>> What I suspect is happening in the reported case is that the nodes in 
+>>> the PPTT table are missing fields we consider to be important. Since 
+>>> that data isn't being filled out anywhere else, so we leave the cache 
+>>> type alone too. This has the effect of hiding sysfs nodes with 
+>>> incomplete information.
+>>>
+>>> Also, the lack of the DATA/INST fields is based on the assumption 
+>>> that the only nodes which need their type field updated are outside 
+>>> of the CPU core itself so they are pretty much guaranteed to be 
+>>> UNIFIED. Are you hitting this case?
+>>>
+>>
+>> Yes.  Without this change, we hit the lscpu error in the commit 
+>> message, and get zero output about the system.  We don't even get 
+>> information about the caches which are architecturally specified or 
+>> how many cpus are present.  With this change, we get what we expect 
+>> out of lscpu (and also lstopo) including the cache(s) which are not 
+>> architecturally specified.
+> 
+> I'm a bit surprised this changes the behavior of the architecturally 
+> specified ones. As I mentioned above, those shouldn't be NOCACHE. We use 
+> the level/type as a key for matching a PPTT node to an architecturally 
+> described cache. If that is mismatched, something more fundamental is 
+> happening. About the only case I can think of that can cause this is if 
+> the CLIDR type fields are incorrect.
+> 
+> In which case I might suggest we move your switch() for the INST/DATA 
+> into the check below that comment.
+
+This change was not intended to impact architecturally specified ones, 
+however I can see how that is the case.  That would be the case if the 
+architecturally specified type is X and PPTT indicates Y.  According to 
+the PPTT spec, the cache should be treated as type Y then (ie the 
+contents of the PPTT override the architectural mechanisms).
+
+I can move my change below the current NOCACHE handling, which would be 
+valid for my scenario, but it seems odd.  If I do that, then the current 
+assumption will take priority.  IE, if a cache is "fully specified" in 
+PPTT, but is NOCACHE, then it will be treated as unified, regardless of 
+what PPTT says (maybe instruction, or data only).
+
+> 
+>>
+>> I guess I still don't understand why its important for PPTT to list, 
+>> for example, the sets/ways of a cache in all scenarios.  In the case 
+>> of a "transparent" cache (implementation defined as not reported per 
+>> section D3.4.2 of the ARM ARM where the cache cannot be managed by 
+>> SW), there may not be valid values for sets/ways.  I would argue its 
+>> better to not report that information, rather than provide bogus 
+>> information just to make Linux happy, which may break other OSes and 
+>> provide means for which a user to hang themselves.
+> 
+> This doesn't really have anything to do with the Arm/ARM's definition of 
+> set/way as it pertains to cache maint. Its more to assist userspace 
+> software with an understanding of the system cache architecture so it 
+> can make intelligent decisions about loop tiling and the like.
+> 
+> What we want is a consistent dependable view for software to utilize. An 
+> unreliable sysfs field is one that tends not to get used.
+I guess my argument is this -
+The cache is not specified architecturally because it cannot be managed 
+by software (see the ARM ARM section I referenced).
+
+However, its important that the user be able to "see" it, I'm not a 
+marketing guy, but I assume its going to be listed on the "data sheet".
+
+Therefore, the firmware is providing some information about the cache 
+(via SMBIOS tables and PPTT).
+
+The HW designers have indicated that there is no sane way to provide 
+sets/ways information to software, even on an informational basis (ie 
+not for cache maintenance, but for performance optimizations). 
+Therefore the firmware will not provide this information because it will 
+be wrong.
+
+So, therefore, we should still be able to tell the user that a cache 
+exists at the relevant level, and what size it is.  On the concerned 
+system, we cannot do that currently.
+
+> 
+>>
+>> However, in the case of a transparent cache, the size/type/level/write 
+>> policy/etc (whatever the firmware provider deems relevant) might be 
+>> valuable information for the OS to make scheduling decisions, and is 
+>> certainly valuable for user space utilities for cross-machine/data ou
+>> center level job scheduling.
+>>
+
+
+-- 
+Jeffrey Hugo
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
+Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
