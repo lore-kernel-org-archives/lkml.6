@@ -3,127 +3,80 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06B3CC4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 07:23:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ABA8C4646A
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 07:25:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEACB206B6
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 07:23:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEACB206B6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 3340F20866
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 07:25:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3340F20866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727403AbeILM1C (ORCPT
+        id S1726792AbeILM25 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 08:27:02 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:41503 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726313AbeILM1B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 08:27:01 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id BC25120795; Wed, 12 Sep 2018 09:23:47 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-30-219.w90-88.abo.wanadoo.fr [90.88.15.219])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 8AADE20720;
-        Wed, 12 Sep 2018 09:23:47 +0200 (CEST)
-Date:   Wed, 12 Sep 2018 09:23:47 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Paul Kocialkowski <contact@paulk.fr>, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-sunxi@googlegroups.com, Randy Li <ayaka@soulik.info>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: Re: [PATCH v9 5/9] media: platform: Add Cedrus VPU decoder driver
-Message-ID: <20180912072347.nqw4uu23fykjtz72@flea>
-References: <20180906222442.14825-1-contact@paulk.fr>
- <20180906222442.14825-6-contact@paulk.fr>
- <20180911124625.6759e429@coco.lan>
+        Wed, 12 Sep 2018 08:28:57 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33910 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726412AbeILM25 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 08:28:57 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 19555402333A;
+        Wed, 12 Sep 2018 07:25:44 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-66.ams2.redhat.com [10.36.116.66])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 79DEB2023416;
+        Wed, 12 Sep 2018 07:25:42 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id B846F11AB7; Wed, 12 Sep 2018 09:25:41 +0200 (CEST)
+Date:   Wed, 12 Sep 2018 09:25:41 +0200
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     Jiandi An <jiandi@amd.com>
+Cc:     Dave Airlie <airlied@gmail.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        virtio-dev@lists.oasis-open.org, Dave Airlie <airlied@linux.ie>,
+        "open list:VIRTIO CORE, NET..." 
+        <virtualization@lists.linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [virtio-dev] [PATCH 2/2] drm/virtio: add iommu support.
+Message-ID: <20180912072541.nagfrr2dgy34szcx@sirius.home.kraxel.org>
+References: <20180829122026.27012-1-kraxel@redhat.com>
+ <20180829122026.27012-3-kraxel@redhat.com>
+ <CAPM=9tyXc41DAkgjCRojrqH28qkirxgrpgNmrwu4WAeLpg7tAw@mail.gmail.com>
+ <9bf20fa1-3752-edd1-588c-e38cd166c3af@amd.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4iwt5yvaz3vewot5"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180911124625.6759e429@coco.lan>
+In-Reply-To: <9bf20fa1-3752-edd1-588c-e38cd166c3af@amd.com>
 User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 12 Sep 2018 07:25:44 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 12 Sep 2018 07:25:44 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'kraxel@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+  Hi,
 
---4iwt5yvaz3vewot5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> I attempted to fix it in the ttm layer and here is the discussion
+> https://lore.kernel.org/lkml/b44280d7-eb13-0996-71f5-3fbdeb466801@amd.com/
+> 
+> The ttm maintainer Christian is suggesting to map and set ttm->pages as decrypted
+> right after ttm->pages are allocated.
+> 
+> Just checking with you guys maybe there is a better way to handle this in
+> the virtio gpu layer instead of the common ttm layer.  Could you guys shine some
+> light on this?  Thanks.
 
-On Tue, Sep 11, 2018 at 12:46:25PM -0300, Mauro Carvalho Chehab wrote:
-> Em Fri,  7 Sep 2018 00:24:38 +0200
-> Paul Kocialkowski <contact@paulk.fr> escreveu:
->=20
-> > From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> >=20
-> > This introduces the Cedrus VPU driver that supports the VPU found in
-> > Allwinner SoCs, also known as Video Engine. It is implemented through
-> > a V4L2 M2M decoder device and a media device (used for media requests).
-> > So far, it only supports MPEG-2 decoding.
-> >=20
-> > Since this VPU is stateless, synchronization with media requests is
-> > required in order to ensure consistency between frame headers that
-> > contain metadata about the frame to process and the raw slice data that
-> > is used to generate the frame.
-> >=20
-> > This driver was made possible thanks to the long-standing effort
-> > carried out by the linux-sunxi community in the interest of reverse
-> > engineering, documenting and implementing support for the Allwinner VPU.
-> >=20
-> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> > Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
->=20
-> There are several checkpatch issues here. Ok, some can be
-> ignored, but there are at least some of them that sounda relevant.
+I think the tty layer is the right place to fix this.  virtio just calls
+down to ttm for mappings.  I think virtio should just hint to ttm using
+a flag in some struct, probably ttm_buffer_object or
+ttm_mem_type_manager, that the objects need decrypted mappings.
 
-Sorry for that. Given that it's intended to be in staging, do you want
-us to send subsequent patches or the whole serie?
+cheers,
+  Gerd
 
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---4iwt5yvaz3vewot5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluYvv0ACgkQ0rTAlCFN
-r3S58w/+MvryMqmIRUNmv1H9GXhuDsWOp7VMCpvVstUVg+kffP85rrA02wxoLE3Z
-CjnQHNHhBplbOag70aPmK72nY1aPHYYNFlaGzA+p+H/z7pNgSer2TnIBs+FzSjlB
-YpXPJFGBFjYAAEuFH/pZdMVrZP6OjXXKQ7vPUouLh1lERFUzbQ14dCnuYjCkIGzy
-FFu4f21IYtwc5VLfKKD5TVRREKXKBUEg9QdFcHyGxdIneg6gCMQamCNB0oopY3si
-HxOoaImNIQD/nwHRBhh6skWR1lSxCgBrBmL+PWbyx15RUcCFMOl0sWtN4Y7rL8g4
-cCGRZn2UUWJXPIRVswe1YL67uvL0Comft0jpyoOLJcuaQ1m7o8ZbrYKd5cmvFvq8
-VGPwcqArjKjFZMz4v4GDe7oP1iRr3m7xEr9SVsgBQnYBTFrxcGFJjhv9eTtN9d4G
-SKgoY0YcbuuEr48FRwfFJFvbGH3y9tcvWJio4UGgsFuY5W5mCFxPrm1+tRqvE0P2
-JxF4mfuVpsThh8Pb5TpynPsU5bmd6Ac0koF3f8NDAytqlwW2N2SRJqy8HuzVuWXB
-UByquWYIvuKiEkywek+7I5SngJRA+3+X57Pbe7BmEYUJYpRMPjT61YXG1oKfmrRH
-/OAO7wSCwkcMx5YWw4itGrhq2wqkn9GtU+3+nBevW+scBStCxYM=
-=8asQ
------END PGP SIGNATURE-----
-
---4iwt5yvaz3vewot5--
