@@ -2,104 +2,175 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D832C4167B
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 18:34:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 602CBC4167B
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 18:35:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 134D820880
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 18:34:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E23020854
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 18:35:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DF2XliIx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 134D820880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mi9+z1+v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E23020854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728056AbeILXkc (ORCPT
+        id S1728146AbeILXlM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 19:40:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42876 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727651AbeILXkc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 19:40:32 -0400
-Received: from gmail.com (unknown [104.132.51.88])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3DDD820854;
-        Wed, 12 Sep 2018 18:34:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536777286;
-        bh=pge98TJPPolDJ8DTUt2rNC12zELDyGW2I7GUqcQLE+o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DF2XliIx58Chsn1zS+fgGom+9KfqXXDOtZzgm/9hAxBo2ReIq+2ogcYcJBpgawARF
-         2Tz+i7+b+8NPlAHsJQRJGHP8HWJFkIoYiAf1nQgT545N2l7iFHO/M6Cc1VkcREI4C+
-         uztEwKe1Prc6A7lEWmtsIy8/oU60s0SRJ/avaMw8=
-Date:   Wed, 12 Sep 2018 11:34:44 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Subject: Re: [PATCH net-next v3 02/17] zinc: introduce minimal cryptography
- library
-Message-ID: <20180912183444.GB222557@gmail.com>
-References: <20180911010838.8818-1-Jason@zx2c4.com>
- <20180911010838.8818-3-Jason@zx2c4.com>
- <CAKv+Gu9nSeo4PFVrtjtqGQ32eqyxUp3xVCczZfu+dhFz5yLM0A@mail.gmail.com>
- <20180911220849.GC81235@gmail.com>
- <CAHmME9rxrC+CAR-xoXd-bZO1HYZ+TjvT_K4xgQwWXE53zi61xQ@mail.gmail.com>
- <CAKv+Gu9ZjX3A4bHHgRAkJtr+SKwti+d3dwE0fhGtmeQB_refqw@mail.gmail.com>
+        Wed, 12 Sep 2018 19:41:12 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:42221 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727651AbeILXlM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 19:41:12 -0400
+Received: by mail-lf1-f68.google.com with SMTP id z11-v6so2568712lff.9;
+        Wed, 12 Sep 2018 11:35:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:mail-followup-to:mime-version
+         :content-disposition:user-agent;
+        bh=ecIsW9IyKqy9C+GprLkMa0/3hlbYSHkBLQqcH/0CXKg=;
+        b=Mi9+z1+vebXim6B8HqKVMhkYp/yJEyF1BDHEzr0hvgbQWqAimCSFIfkrJdfG1bbt5y
+         wS/UneehNE48qrc/Q40/fuXyDKuz6OC0dlL7/83y4sX3QFo0CU52on+QjP5MROMwtG0u
+         KjxQ2hwIJZpAHv4IZefy/ZrNjwSmkXZxUPZkJ6mzQpXqpiYJxE6UaiB3wyMng1RUeh7q
+         1I/V3CfKlzbHf2T8w+2jkMP8vQDuwrfczPA5vRXzzD8X9Y3SKnMYsgRWp/Zc5+bDfgcQ
+         DHdZAqiEpzHqNJmQ5MrKojyKruxbMD52toTokQcTSNPLLdLy4W9r08C17aE1XkNpkBHm
+         Fv3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:mail-followup-to
+         :mime-version:content-disposition:user-agent;
+        bh=ecIsW9IyKqy9C+GprLkMa0/3hlbYSHkBLQqcH/0CXKg=;
+        b=VprI11/cbRj2Ln0zavTlVh0lQfdAEgrLDTShlKWXuz51OrgQS2qSAnDMUYa/e4cWqC
+         u75W9MRTR50HGVdz+rliMt5m28f4cy8hd2ezzuhbenU6GjLNF1HhMtASKWgeVMxODPR2
+         QAaAk7/RlbPH4hsZzZCoWdtP6hu2Y9JMBkumJQ0hwjbMZ4rqWOGKeJ2tqp8u5pNDYH/F
+         6PkMh2aY8WGcYIDFzkBXAlj7jvoaEbs3w2daHlLbeGv0S/zn/ppOuUPfXwy/OAeSbv8g
+         jnqtavnluElTPVF0N5iSSlgqTel1Wt5gfbCArBtCEhcrVxMGnfl0cCx4KvoktMq7mpFV
+         zPbg==
+X-Gm-Message-State: APzg51BSQsSeU6y0ETlu/GCsAv/beIjzTqXElpaHyxsVissukC/wOdkK
+        Q/6nza19ZExiAG4Nrnj2s8U=
+X-Google-Smtp-Source: ANB0VdbZq96+DMyOOhycAW9X5+F9qPnd6AIFhZQGvUELshDPkmY2qZDJN7O2QPhRtBQOB/Q/L7MNIQ==
+X-Received: by 2002:a19:18c:: with SMTP id 134-v6mr2320546lfb.16.1536777323797;
+        Wed, 12 Sep 2018 11:35:23 -0700 (PDT)
+Received: from vnote ([95.72.40.207])
+        by smtp.gmail.com with ESMTPSA id r22-v6sm295052ljh.22.2018.09.12.11.35.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Sep 2018 11:35:22 -0700 (PDT)
+Date:   Wed, 12 Sep 2018 21:35:19 +0300
+From:   Eugene Korenevsky <ekorenevsky@gmail.com>
+To:     Davidlohr Bueso <dave@stgolabs.net>, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [PATCH v3] efi: take size of partition entry from GPT header
+Message-ID: <20180912183519.GA31506@vnote>
+Mail-Followup-To: Eugene Korenevsky <ekorenevsky@gmail.com>,
+        Davidlohr Bueso <dave@stgolabs.net>, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKv+Gu9ZjX3A4bHHgRAkJtr+SKwti+d3dwE0fhGtmeQB_refqw@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 08:19:21PM +0200, Ard Biesheuvel wrote:
-> On 12 September 2018 at 20:16, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
-> > Hi Eric,
-> >
-> > On Wed, Sep 12, 2018 at 12:08 AM Eric Biggers <ebiggers@kernel.org> wrote:
-> >> I'd strongly prefer the assembly to be readable too.  Jason, I'm not sure if
-> >> you've actually read through the asm from the OpenSSL implementations, but the
-> >> generated .S files actually do lose a lot of semantic information that was in
-> >> the original .pl scripts.
-> >
-> > The thing to keep in mind is that the .S was not directly and blindly
-> > generated from the .pl. We started with the output of the .pl, and
-> > then, particularly in the case of x86_64, worked with it a lot, and
-> > now it's something a bit different. We've definitely spent a lot of
-> > time reading that assembly.
-> >
-> 
-> Can we please have those changes as a separate patch? Preferably to
-> the .pl file rather than the .S file, so we can easily distinguish the
-> code from upstream from the code that you modified.
-> 
-> > I'll see if I can improve the readability with some register name
-> > remapping on ARM. No guarantees, but I'll play a bit and see if I can
-> > make it a bit better.
-> >
-> > Jason
+Use gpt_header.sizeof_partition_entry instead of sizeof(gpt_entry)
+for GPT entry size.
+According to UEFI 2.7 spec 5.3.1 "GPT overview":, the size of a GUID Partition
+Entry element is defined in the Size Of Partition Entry field of GPT header.
+The GPT with entries sized more than sizeof(gpt_entry) is not illegal.
+OVMF firmware from EDK2 perfectly works with it, see edk2-tianocore source
+code.
 
-FWIW, yesterday I made a modified version of poly1305-armv4.pl that generates an
-asm file that works in kernel mode.  The changes are actually pretty small, and
-I think we can get them upstream into OpenSSL like they were for sha256-armv4.pl
-and sha512-armv4.pl.  I'll start a thread with Andy Polyakov and you two.
+Changes since v1: refactoring (extract get_gpt_entry function),
+                  fix (&ptes[i] -> pte)
+Changes since v2: use le32_to_cpu, fix typo, sanity check for
+                  sizeof_partition_entry
 
-But I don't have time to help with all the many OpenSSL asm files Jason is
-proposing, just maybe poly1305-armv4 and chacha-armv4 for now.
+Signed-off-by: Eugene Korenevsky <ekorenevsky@gmail.com>
+---
+ block/partitions/efi.c | 32 +++++++++++++++++++++-----------
+ 1 file changed, 21 insertions(+), 11 deletions(-)
 
-- Eric
+diff --git a/block/partitions/efi.c b/block/partitions/efi.c
+index 39f70d968754..c8ff7860973d 100644
+--- a/block/partitions/efi.c
++++ b/block/partitions/efi.c
+@@ -429,8 +429,8 @@ static int is_gpt_valid(struct parsed_partitions *state, u64 lba,
+ 		goto fail;
+ 	}
+ 	/* Check that sizeof_partition_entry has the correct value */
+-	if (le32_to_cpu((*gpt)->sizeof_partition_entry) != sizeof(gpt_entry)) {
+-		pr_debug("GUID Partition Entry Size check failed.\n");
++	if (le32_to_cpu((*gpt)->sizeof_partition_entry) < sizeof(gpt_entry)) {
++		pr_debug("GUID Partition Entry Size is too small.\n");
+ 		goto fail;
+ 	}
+ 
+@@ -670,6 +670,12 @@ static int find_valid_gpt(struct parsed_partitions *state, gpt_header **gpt,
+         return 0;
+ }
+ 
++static gpt_entry *get_gpt_entry(gpt_header *gpt, gpt_entry *ptes, u32 index)
++{
++	return (gpt_entry *)((u8 *)ptes +
++			le32_to_cpu(gpt->sizeof_partition_entry) * index);
++}
++
+ /**
+  * efi_partition(struct parsed_partitions *state)
+  * @state: disk parsed partitions
+@@ -704,32 +710,36 @@ int efi_partition(struct parsed_partitions *state)
+ 
+ 	pr_debug("GUID Partition Table is valid!  Yea!\n");
+ 
+-	for (i = 0; i < le32_to_cpu(gpt->num_partition_entries) && i < state->limit-1; i++) {
++	for (i = 0;
++	     i < le32_to_cpu(gpt->num_partition_entries) && i < state->limit-1;
++	     i++) {
++		gpt_entry *pte = get_gpt_entry(gpt, ptes, i);
+ 		struct partition_meta_info *info;
+ 		unsigned label_count = 0;
+ 		unsigned label_max;
+-		u64 start = le64_to_cpu(ptes[i].starting_lba);
+-		u64 size = le64_to_cpu(ptes[i].ending_lba) -
+-			   le64_to_cpu(ptes[i].starting_lba) + 1ULL;
++		u64 start = le64_to_cpu(pte->starting_lba);
++		u64 size = le64_to_cpu(pte->ending_lba) -
++			   le64_to_cpu(pte->starting_lba) + 1ULL;
+ 
+-		if (!is_pte_valid(&ptes[i], last_lba(state->bdev)))
++		if (!is_pte_valid(pte, last_lba(state->bdev)))
+ 			continue;
+ 
+ 		put_partition(state, i+1, start * ssz, size * ssz);
+ 
+ 		/* If this is a RAID volume, tell md */
+-		if (!efi_guidcmp(ptes[i].partition_type_guid, PARTITION_LINUX_RAID_GUID))
++		if (!efi_guidcmp(
++		    pte->partition_type_guid, PARTITION_LINUX_RAID_GUID))
+ 			state->parts[i + 1].flags = ADDPART_FLAG_RAID;
+ 
+ 		info = &state->parts[i + 1].info;
+-		efi_guid_to_str(&ptes[i].unique_partition_guid, info->uuid);
++		efi_guid_to_str(&pte->unique_partition_guid, info->uuid);
+ 
+ 		/* Naively convert UTF16-LE to 7 bits. */
+ 		label_max = min(ARRAY_SIZE(info->volname) - 1,
+-				ARRAY_SIZE(ptes[i].partition_name));
++				ARRAY_SIZE(pte->partition_name));
+ 		info->volname[label_max] = 0;
+ 		while (label_count < label_max) {
+-			u8 c = ptes[i].partition_name[label_count] & 0xff;
++			u8 c = pte->partition_name[label_count] & 0xff;
+ 			if (c && !isprint(c))
+ 				c = '!';
+ 			info->volname[label_count] = c;
+-- 
+2.18.0
+
