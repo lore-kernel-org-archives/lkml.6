@@ -2,114 +2,134 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA14EC46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 11:11:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23F55C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 11:18:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E52D20882
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 11:11:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E52D20882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id CB1DA2087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 11:18:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB1DA2087F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728149AbeILQPu (ORCPT
+        id S1728005AbeILQWW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 12:15:50 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54862 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728126AbeILQPu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 12:15:50 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8CB9ETG146703
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 07:11:47 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mf1jmggtq-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 07:11:46 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <schwidefsky@de.ibm.com>;
-        Wed, 12 Sep 2018 12:11:44 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 12 Sep 2018 12:11:42 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8CBBfxG66257034
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 12 Sep 2018 11:11:41 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 073D152052;
-        Wed, 12 Sep 2018 14:11:30 +0100 (BST)
-Received: from mschwideX1 (unknown [9.152.212.164])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id CFA4552050;
-        Wed, 12 Sep 2018 14:11:29 +0100 (BST)
-Date:   Wed, 12 Sep 2018 13:11:39 +0200
-From:   Martin Schwidefsky <schwidefsky@de.ibm.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Heiko Carstens <heiko.carstens@de.ibm.com>,
-        linux-s390@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] s390/tape: fix spelling mistake "partion" ->
- "partition"
-In-Reply-To: <20180911081858.27297-1-colin.king@canonical.com>
-References: <20180911081858.27297-1-colin.king@canonical.com>
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        Wed, 12 Sep 2018 12:22:22 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:50065 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726574AbeILQWW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 12:22:22 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id B325720618; Wed, 12 Sep 2018 13:18:15 +0200 (CEST)
+Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 0EBDC206FF;
+        Wed, 12 Sep 2018 13:17:58 +0200 (CEST)
+Date:   Wed, 12 Sep 2018 13:17:57 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        radu_nicolae.pirea@upb.ro, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Mark Brown <broonie@kernel.org>, Jiri Slaby <jslaby@suse.com>,
+        Richard Genoud <richard.genoud@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>
+Subject: Re: [PATCH v12 0/6] Driver for at91 usart in spi mode
+Message-ID: <20180912111757.GC2760@piout.net>
+References: <20180911153621.GP2494@piout.net>
+ <CAMuHMdV+=EgAYogwNHbY=RExkGox_+YSeHV6pJtQb6g6PzD-CQ@mail.gmail.com>
+ <20180911181838.GI4185@dell>
+ <20180911185839.GA25212@piout.net>
+ <20180911224418.GK4185@dell>
+ <20180911225440.GL4185@dell>
+ <20180912073355.GB2557@piout.net>
+ <20180912084143.GN4185@dell>
+ <CAMuHMdWefU0pw=c9TKOa+wGHchpg8JRfE0OnC4+wKDt-qrbH1A@mail.gmail.com>
+ <20180912105407.GR4185@dell>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-x-cbid: 18091211-4275-0000-0000-000002B92F2A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18091211-4276-0000-0000-000037C263B8
-Message-Id: <20180912131139.4402f76e@mschwideX1>
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-12_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=993 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809120116
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180912105407.GR4185@dell>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 11 Sep 2018 09:18:58 +0100
-Colin King <colin.king@canonical.com> wrote:
+On 12/09/2018 11:54:07+0100, Lee Jones wrote:
+> On Wed, 12 Sep 2018, Geert Uytterhoeven wrote:
+> > On Wed, Sep 12, 2018 at 10:41 AM Lee Jones <lee.jones@linaro.org> wrote:
+> > > On Wed, 12 Sep 2018, Alexandre Belloni wrote:
+> > > > On 11/09/2018 23:54:40+0100, Lee Jones wrote:
+> > > > > > > http://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-6438-32-bit-ARM926-Embedded-Microprocessor-SAM9G45_Datasheet.pdf
+> > > > > > >
+> > > > > > > USART doc starting p572, registers p621.
+> > > > >
+> > > > > After looking at the datasheet, I don't see any reason why one of the
+> > > > > two drivers can't be selected using different compatible strings.
+> > > >
+> > > > Because there is only one IP and we don't use the device tree to selecet
+> > > > linux specific drivers.
+> > >
+> > > We do it all the time.  There are loads of MFDs (def: same IP, with
+> > > different functions) which have separate compatibles for their various
+> > > functions.  If you wish this IP to operate as an SPI controller, it
+> > > should have an SPI compatible, if you wish it to operate as a U(S)ART,
+> > > then it should have a UART compatible.  It's what we do for most of
+> > > the other MFDs in the kernel.
+> > 
+> > There is a big difference: MFD functions are(more or less) independent
+> > functions, which can be used at the same time. It makes perfect sense for a
+> > single IP block that has both SPI and UART interfaces, that can be used at
+> > the same time.
+> > 
+> > In this case, there is a single piece of hardware that can perform
+> > different functions, but not at the same time. Performing a different
+> > function means configuring the hardware for that function, hence using a
+> > different driver (from a different subsystem).
+> 
+> Yes, I can see that PoV.
+> 
+> But ... we can't have it both ways.  *Either* it's a true MFD, in
+> which case it can/should have 2 separate compatible strings which can
+> be specified directly from the DT.  *Or* it's not an MFD.  In the
+> latter case, which I think we're all agreeing on (else we'd have 2
+> compatible strings), MFD is not the place to handle this (my original
+> point).
+> 
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in message text
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/s390/char/tape_3590.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/s390/char/tape_3590.c b/drivers/s390/char/tape_3590.c
-> index cdcde18e7220..4554cdf4d6bd 100644
-> --- a/drivers/s390/char/tape_3590.c
-> +++ b/drivers/s390/char/tape_3590.c
-> @@ -971,7 +971,7 @@ tape_3590_print_mim_msg_f0(struct tape_device *device, struct irb *irb)
->  		snprintf(exception, BUFSIZE, "Data degraded");
->  		break;
->  	case 0x03:
-> -		snprintf(exception, BUFSIZE, "Data degraded in partion %i",
-> +		snprintf(exception, BUFSIZE, "Data degraded in partition %i",
->  			sense->fmt.f70.mp);
->  		break;
->  	case 0x04:
+If that is what bothers you, then let's move it out of mfd.
 
-Applied to linux-s390:features. Thanks.
+> So ... this is a USART device which can do SPI, right?
+> 
+> My current thinking is that; as this is a USART device first &
+> foremost, the USART should be probed in the first instance regardless,
+> then if SPI mode is specified it (the USART driver) registers the SPI
+> platform driver (as MFD does currently) and exits gracefully, allowing
+> the SPI driver to take over.
+> 
+> Spanner in the works: is it physically possible to change the mode at
+> run-time?  :s
+
+Yes it is possible but on Linux that will not happen without probing
+the drivers again. I think DT overlays will be the only possible use
+case because on SPI, you'd still have to provide nodes for the connected
+SPI devices.
 
 -- 
-blue skies,
-   Martin.
-
-"Reality continues to ruin my life." - Calvin.
-
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
