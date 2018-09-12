@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7A16C04ABB
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 00:10:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ED58C4646A
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 00:10:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8067820880
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 00:10:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8067820880
+	by mail.kernel.org (Postfix) with ESMTP id C6EE120880
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 00:10:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6EE120880
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728038AbeILFLs (ORCPT
+        id S1728048AbeILFML (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 01:11:48 -0400
-Received: from mga14.intel.com ([192.55.52.115]:9561 "EHLO mga14.intel.com"
+        Wed, 12 Sep 2018 01:12:11 -0400
+Received: from mga03.intel.com ([134.134.136.65]:25689 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725936AbeILFLs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 01:11:48 -0400
+        id S1725740AbeILFMK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 01:12:10 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Sep 2018 17:10:04 -0700
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Sep 2018 17:10:27 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,362,1531810800"; 
-   d="scan'208";a="72213105"
+   d="scan'208";a="72213119"
 Received: from sohilbuildbox.sc.intel.com (HELO localhost.localdomain) ([172.25.110.4])
-  by orsmga007.jf.intel.com with ESMTP; 11 Sep 2018 17:10:04 -0700
+  by orsmga007.jf.intel.com with ESMTP; 11 Sep 2018 17:10:06 -0700
 From:   Sohil Mehta <sohil.mehta@intel.com>
 To:     Joerg Roedel <joro@8bytes.org>
 Cc:     Ashok Raj <ashok.raj@intel.com>,
@@ -43,9 +43,9 @@ Cc:     Ashok Raj <ashok.raj@intel.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Lu Baolu <baolu.lu@linux.intel.com>,
         Fenghua Yu <fenghua.yu@intel.com>
-Subject: [PATCH v8 1/6] iommu/vt-d: Relocate struct/function declarations to its header files
-Date:   Tue, 11 Sep 2018 17:11:36 -0700
-Message-Id: <20180912001141.64025-2-sohil.mehta@intel.com>
+Subject: [PATCH v8 2/6] iommu/vt-d: Update register definitions to VT-d 3.0 specification
+Date:   Tue, 11 Sep 2018 17:11:37 -0700
+Message-Id: <20180912001141.64025-3-sohil.mehta@intel.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180912001141.64025-1-sohil.mehta@intel.com>
 References: <20180912001141.64025-1-sohil.mehta@intel.com>
@@ -54,177 +54,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To reuse the static functions and the struct declarations, move them to
-corresponding header files and export the needed functions.
+Add new register definitions added in the VT-d 3.0 specification. Also
+include registers that were missing previously.
 
 Cc: Lu Baolu <baolu.lu@linux.intel.com>
 Cc: Fenghua Yu <fenghua.yu@intel.com>
 Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
 Cc: Ashok Raj <ashok.raj@intel.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Gayatri Kammela <gayatri.kammela@intel.com>
+Cc: Gayatri Kammela <gayatri.kammela@intel.com>
 Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
 ---
 
-v8: Remove pasid table related changes
-    Add Interrupt remapping related changes
-    Remove redundant extern type from functions
+v8: Simplify and split the patches differently
 
-v7: Split patch 1/5 and 2/5 differently
-    Update the commit message
+ include/linux/intel-iommu.h | 36 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
-v6: No change
-
-v5: No change
-
-v4: No change
-
-v3: No change
-
-v2: No change
-
- arch/x86/include/asm/irq_remapping.h |  2 ++
- drivers/iommu/intel-iommu.c          | 31 +++-------------------------
- drivers/iommu/intel_irq_remapping.c  |  2 +-
- include/linux/intel-iommu.h          | 30 +++++++++++++++++++++++++++
- 4 files changed, 36 insertions(+), 29 deletions(-)
-
-diff --git a/arch/x86/include/asm/irq_remapping.h b/arch/x86/include/asm/irq_remapping.h
-index 5f26962eff42..67ed72f31cc2 100644
---- a/arch/x86/include/asm/irq_remapping.h
-+++ b/arch/x86/include/asm/irq_remapping.h
-@@ -45,6 +45,8 @@ struct vcpu_data {
- 
- #ifdef CONFIG_IRQ_REMAP
- 
-+extern raw_spinlock_t irq_2_ir_lock;
-+
- extern bool irq_remapping_cap(enum irq_remap_cap cap);
- extern void set_irq_remapping_broken(void);
- extern int irq_remapping_prepare(void);
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 5f3f10cf9d9d..b5868c757995 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -185,16 +185,6 @@ static int rwbf_quirk;
- static int force_on = 0;
- int intel_iommu_tboot_noforce;
- 
--/*
-- * 0: Present
-- * 1-11: Reserved
-- * 12-63: Context Ptr (12 - (haw-1))
-- * 64-127: Reserved
-- */
--struct root_entry {
--	u64	lo;
--	u64	hi;
--};
- #define ROOT_ENTRY_NR (VTD_PAGE_SIZE/sizeof(struct root_entry))
- 
- /*
-@@ -220,21 +210,6 @@ static phys_addr_t root_entry_uctp(struct root_entry *re)
- 
- 	return re->hi & VTD_PAGE_MASK;
- }
--/*
-- * low 64 bits:
-- * 0: present
-- * 1: fault processing disable
-- * 2-3: translation type
-- * 12-63: address space root
-- * high 64 bits:
-- * 0-2: address width
-- * 3-6: aval
-- * 8-23: domain id
-- */
--struct context_entry {
--	u64 lo;
--	u64 hi;
--};
- 
- static inline void context_clear_pasid_enable(struct context_entry *context)
- {
-@@ -261,7 +236,7 @@ static inline bool __context_present(struct context_entry *context)
- 	return (context->lo & 1);
- }
- 
--static inline bool context_present(struct context_entry *context)
-+bool context_present(struct context_entry *context)
- {
- 	return context_pasid_enabled(context) ?
- 	     __context_present(context) :
-@@ -788,8 +763,8 @@ static void domain_update_iommu_cap(struct dmar_domain *domain)
- 	domain->iommu_superpage = domain_update_iommu_superpage(NULL);
- }
- 
--static inline struct context_entry *iommu_context_addr(struct intel_iommu *iommu,
--						       u8 bus, u8 devfn, int alloc)
-+struct context_entry *iommu_context_addr(struct intel_iommu *iommu, u8 bus,
-+					 u8 devfn, int alloc)
- {
- 	struct root_entry *root = &iommu->root_entry[bus];
- 	struct context_entry *context;
-diff --git a/drivers/iommu/intel_irq_remapping.c b/drivers/iommu/intel_irq_remapping.c
-index 967450bd421a..c2d6c11431de 100644
---- a/drivers/iommu/intel_irq_remapping.c
-+++ b/drivers/iommu/intel_irq_remapping.c
-@@ -76,7 +76,7 @@ static struct hpet_scope ir_hpet[MAX_HPET_TBS];
-  * in single-threaded environment with interrupt disabled, so no need to tabke
-  * the dmar_global_lock.
-  */
--static DEFINE_RAW_SPINLOCK(irq_2_ir_lock);
-+DEFINE_RAW_SPINLOCK(irq_2_ir_lock);
- static const struct irq_domain_ops intel_ir_domain_ops;
- 
- static void iommu_disable_irq_remapping(struct intel_iommu *iommu);
 diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
-index 28004d74ae04..b7cf32e8ae1f 100644
+index b7cf32e8ae1f..3bdb9aa198af 100644
 --- a/include/linux/intel-iommu.h
 +++ b/include/linux/intel-iommu.h
-@@ -389,6 +389,33 @@ struct pasid_entry;
- struct pasid_state_entry;
- struct page_req_dsc;
+@@ -72,6 +72,42 @@
+ #define	DMAR_PEDATA_REG	0xe4	/* Page request event interrupt data register */
+ #define	DMAR_PEADDR_REG	0xe8	/* Page request event interrupt addr register */
+ #define	DMAR_PEUADDR_REG 0xec	/* Page request event Upper address register */
++#define DMAR_MTRRCAP_REG 0x100	/* MTRR capability register */
++#define DMAR_MTRRDEF_REG 0x108	/* MTRR default type register */
++#define DMAR_MTRR_FIX64K_00000_REG 0x120 /* MTRR Fixed range registers */
++#define DMAR_MTRR_FIX16K_80000_REG 0x128
++#define DMAR_MTRR_FIX16K_A0000_REG 0x130
++#define DMAR_MTRR_FIX4K_C0000_REG 0x138
++#define DMAR_MTRR_FIX4K_C8000_REG 0x140
++#define DMAR_MTRR_FIX4K_D0000_REG 0x148
++#define DMAR_MTRR_FIX4K_D8000_REG 0x150
++#define DMAR_MTRR_FIX4K_E0000_REG 0x158
++#define DMAR_MTRR_FIX4K_E8000_REG 0x160
++#define DMAR_MTRR_FIX4K_F0000_REG 0x168
++#define DMAR_MTRR_FIX4K_F8000_REG 0x170
++#define DMAR_MTRR_PHYSBASE0_REG 0x180 /* MTRR Variable range registers */
++#define DMAR_MTRR_PHYSMASK0_REG 0x188
++#define DMAR_MTRR_PHYSBASE1_REG 0x190
++#define DMAR_MTRR_PHYSMASK1_REG 0x198
++#define DMAR_MTRR_PHYSBASE2_REG 0x1a0
++#define DMAR_MTRR_PHYSMASK2_REG 0x1a8
++#define DMAR_MTRR_PHYSBASE3_REG 0x1b0
++#define DMAR_MTRR_PHYSMASK3_REG 0x1b8
++#define DMAR_MTRR_PHYSBASE4_REG 0x1c0
++#define DMAR_MTRR_PHYSMASK4_REG 0x1c8
++#define DMAR_MTRR_PHYSBASE5_REG 0x1d0
++#define DMAR_MTRR_PHYSMASK5_REG 0x1d8
++#define DMAR_MTRR_PHYSBASE6_REG 0x1e0
++#define DMAR_MTRR_PHYSMASK6_REG 0x1e8
++#define DMAR_MTRR_PHYSBASE7_REG 0x1f0
++#define DMAR_MTRR_PHYSMASK7_REG 0x1f8
++#define DMAR_MTRR_PHYSBASE8_REG 0x200
++#define DMAR_MTRR_PHYSMASK8_REG 0x208
++#define DMAR_MTRR_PHYSBASE9_REG 0x210
++#define DMAR_MTRR_PHYSMASK9_REG 0x218
++#define DMAR_VCCAP_REG		0xe00 /* Virtual command capability register */
++#define DMAR_VCMD_REG		0xe10 /* Virtual command register */
++#define DMAR_VCRSP_REG		0xe20 /* Virtual command response register */
  
-+/*
-+ * 0: Present
-+ * 1-11: Reserved
-+ * 12-63: Context Ptr (12 - (haw-1))
-+ * 64-127: Reserved
-+ */
-+struct root_entry {
-+	u64     lo;
-+	u64     hi;
-+};
-+
-+/*
-+ * low 64 bits:
-+ * 0: present
-+ * 1: fault processing disable
-+ * 2-3: translation type
-+ * 12-63: address space root
-+ * high 64 bits:
-+ * 0-2: address width
-+ * 3-6: aval
-+ * 8-23: domain id
-+ */
-+struct context_entry {
-+	u64 lo;
-+	u64 hi;
-+};
-+
- struct dmar_domain {
- 	int	nid;			/* node id */
+ #define OFFSET_STRIDE		(9)
  
-@@ -559,5 +586,8 @@ extern struct intel_iommu *intel_svm_device_to_iommu(struct device *dev);
- #endif
- 
- extern const struct attribute_group *intel_iommu_groups[];
-+bool context_present(struct context_entry *context);
-+struct context_entry *iommu_context_addr(struct intel_iommu *iommu, u8 bus,
-+					 u8 devfn, int alloc);
- 
- #endif
 -- 
 2.18.0
 
