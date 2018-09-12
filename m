@@ -2,177 +2,115 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34C7EC46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:43:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB81BC6778D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:43:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E857220833
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:43:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E857220833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 9FDC420882
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:43:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FDC420882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727989AbeILVse (ORCPT
+        id S1728014AbeILVst (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 17:48:34 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38368 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726854AbeILVse (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 17:48:34 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 771FA40241C5;
-        Wed, 12 Sep 2018 16:33:37 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.34.27.30])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 7173F2026D76;
-        Wed, 12 Sep 2018 16:33:36 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Wed, 12 Sep 2018 18:33:37 +0200 (CEST)
-Date:   Wed, 12 Sep 2018 18:33:35 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] introduce for_each_process_thread_break() and
- for_each_process_thread_continue()
-Message-ID: <20180912163335.GA18748@redhat.com>
-References: <20180912163312.GA18739@redhat.com>
+        Wed, 12 Sep 2018 17:48:49 -0400
+Received: from mga14.intel.com ([192.55.52.115]:46556 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726854AbeILVst (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 17:48:49 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Sep 2018 09:43:28 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,365,1531810800"; 
+   d="scan'208";a="232317488"
+Received: from ray.jf.intel.com (HELO [10.7.201.139]) ([10.7.201.139])
+  by orsmga004.jf.intel.com with ESMTP; 12 Sep 2018 09:43:28 -0700
+Subject: Re: [PATCH 1/4] mm: Provide kernel parameter to allow disabling page
+ init poisoning
+To:     Alexander Duyck <alexander.duyck@gmail.com>, mhocko@kernel.org,
+        pavel.tatashin@microsoft.com, dan.j.williams@intel.com
+References: <20180910232615.4068.29155.stgit@localhost.localdomain>
+ <20180910234341.4068.26882.stgit@localhost.localdomain>
+ <20180912141053.GL10951@dhcp22.suse.cz>
+ <CAKgT0UdvhV7U5Zniq=KskXz2QsRP8C7ctr5=ZtJwYAVpBT-RHw@mail.gmail.com>
+ <841e8101-40db-9ff2-f688-5f175d91fc31@intel.com>
+ <CAKgT0UeKnaY4XebOmtGozbjEJN4k3cwyhdBLPPJLc677-QU+Sw@mail.gmail.com>
+Cc:     linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        linux-nvdimm@lists.01.org, dave.jiang@intel.com,
+        Ingo Molnar <mingo@kernel.org>, jglisse@redhat.com,
+        Andrew Morton <akpm@linux-foundation.org>, logang@deltatee.com,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzShEYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gPGRhdmVAc3I3MS5uZXQ+wsF7BBMBAgAlAhsDBgsJCAcDAgYVCAIJ
+ CgsEFgIDAQIeAQIXgAUCTo3k0QIZAQAKCRBoNZUwcMmSsMO2D/421Xg8pimb9mPzM5N7khT0
+ 2MCnaGssU1T59YPE25kYdx2HntwdO0JA27Wn9xx5zYijOe6B21ufrvsyv42auCO85+oFJWfE
+ K2R/IpLle09GDx5tcEmMAHX6KSxpHmGuJmUPibHVbfep2aCh9lKaDqQR07gXXWK5/yU1Dx0r
+ VVFRaHTasp9fZ9AmY4K9/BSA3VkQ8v3OrxNty3OdsrmTTzO91YszpdbjjEFZK53zXy6tUD2d
+ e1i0kBBS6NLAAsqEtneplz88T/v7MpLmpY30N9gQU3QyRC50jJ7LU9RazMjUQY1WohVsR56d
+ ORqFxS8ChhyJs7BI34vQusYHDTp6PnZHUppb9WIzjeWlC7Jc8lSBDlEWodmqQQgp5+6AfhTD
+ kDv1a+W5+ncq+Uo63WHRiCPuyt4di4/0zo28RVcjtzlGBZtmz2EIC3vUfmoZbO/Gn6EKbYAn
+ rzz3iU/JWV8DwQ+sZSGu0HmvYMt6t5SmqWQo/hyHtA7uF5Wxtu1lCgolSQw4t49ZuOyOnQi5
+ f8R3nE7lpVCSF1TT+h8kMvFPv3VG7KunyjHr3sEptYxQs4VRxqeirSuyBv1TyxT+LdTm6j4a
+ mulOWf+YtFRAgIYyyN5YOepDEBv4LUM8Tz98lZiNMlFyRMNrsLV6Pv6SxhrMxbT6TNVS5D+6
+ UorTLotDZKp5+M7BTQRUY85qARAAsgMW71BIXRgxjYNCYQ3Xs8k3TfAvQRbHccky50h99TUY
+ sqdULbsb3KhmY29raw1bgmyM0a4DGS1YKN7qazCDsdQlxIJp9t2YYdBKXVRzPCCsfWe1dK/q
+ 66UVhRPP8EGZ4CmFYuPTxqGY+dGRInxCeap/xzbKdvmPm01Iw3YFjAE4PQ4hTMr/H76KoDbD
+ cq62U50oKC83ca/PRRh2QqEqACvIH4BR7jueAZSPEDnzwxvVgzyeuhwqHY05QRK/wsKuhq7s
+ UuYtmN92Fasbxbw2tbVLZfoidklikvZAmotg0dwcFTjSRGEg0Gr3p/xBzJWNavFZZ95Rj7Et
+ db0lCt0HDSY5q4GMR+SrFbH+jzUY/ZqfGdZCBqo0cdPPp58krVgtIGR+ja2Mkva6ah94/oQN
+ lnCOw3udS+Eb/aRcM6detZr7XOngvxsWolBrhwTQFT9D2NH6ryAuvKd6yyAFt3/e7r+HHtkU
+ kOy27D7IpjngqP+b4EumELI/NxPgIqT69PQmo9IZaI/oRaKorYnDaZrMXViqDrFdD37XELwQ
+ gmLoSm2VfbOYY7fap/AhPOgOYOSqg3/Nxcapv71yoBzRRxOc4FxmZ65mn+q3rEM27yRztBW9
+ AnCKIc66T2i92HqXCw6AgoBJRjBkI3QnEkPgohQkZdAb8o9WGVKpfmZKbYBo4pEAEQEAAcLB
+ XwQYAQIACQUCVGPOagIbDAAKCRBoNZUwcMmSsJeCEACCh7P/aaOLKWQxcnw47p4phIVR6pVL
+ e4IEdR7Jf7ZL00s3vKSNT+nRqdl1ugJx9Ymsp8kXKMk9GSfmZpuMQB9c6io1qZc6nW/3TtvK
+ pNGz7KPPtaDzvKA4S5tfrWPnDr7n15AU5vsIZvgMjU42gkbemkjJwP0B1RkifIK60yQqAAlT
+ YZ14P0dIPdIPIlfEPiAWcg5BtLQU4Wg3cNQdpWrCJ1E3m/RIlXy/2Y3YOVVohfSy+4kvvYU3
+ lXUdPb04UPw4VWwjcVZPg7cgR7Izion61bGHqVqURgSALt2yvHl7cr68NYoFkzbNsGsye9ft
+ M9ozM23JSgMkRylPSXTeh5JIK9pz2+etco3AfLCKtaRVysjvpysukmWMTrx8QnI5Nn5MOlJj
+ 1Ov4/50JY9pXzgIDVSrgy6LYSMc4vKZ3QfCY7ipLRORyalFDF3j5AGCMRENJjHPD6O7bl3Xo
+ 4DzMID+8eucbXxKiNEbs21IqBZbbKdY1GkcEGTE7AnkA3Y6YB7I/j9mQ3hCgm5muJuhM/2Fr
+ OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
+ ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
+ z5cecg==
+Message-ID: <68ccf46e-8c1e-c796-df35-afb5b295d6ea@intel.com>
+Date:   Wed, 12 Sep 2018 09:43:27 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180912163312.GA18739@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 12 Sep 2018 16:33:37 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 12 Sep 2018 16:33:37 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'oleg@redhat.com' RCPT:''
+In-Reply-To: <CAKgT0UeKnaY4XebOmtGozbjEJN4k3cwyhdBLPPJLc677-QU+Sw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Usage:
+On 09/12/2018 09:36 AM, Alexander Duyck wrote:
+>>         vm_debug =      [KNL] Available with CONFIG_DEBUG_VM=y.
+>>                         May slow down boot speed, especially on larger-
+>>                         memory systems when enabled.
+>>                         off: turn off all runtime VM debug features
+>>                         all: turn on all debug features (default)
+> This would introduce a significant amount of code change if we do it
+> as a parameter that has control over everything.
 
-	rcu_read_lock();
-	for_each_process_thread(p, t) {
-		do_something_slow(p, t);
-
-		if (SPENT_TOO_MUCH_TIME) {
-			for_each_process_thread_break(p, t);
-			rcu_read_unlock();
-			schedule();
-			rcu_read_lock();
-			for_each_process_thread_continue(&p, &t);
-		}
-	}
-	rcu_read_unlock();
-
-This looks similar to rcu_lock_break(), but much better and the next patch
-changes check_hung_uninterruptible_tasks() to use these new helpers. But my
-real target is show_state_filter() which can trivially lead to lockup.
-
-Compared to rcu_lock_break(), for_each_process_thread_continue() never gives
-up, it relies on fact that both process and thread lists are sorted by the
-task->start_time key. So, for example, even if both leader/thread are already
-dead we can find the next alive process and continue.
-
-Strictly speaking, the for_each_process/for_each_thread loops in _continue()
-could be "SPEND_TOO_MUCH_TIME" by themselves, so perhaps we will add another
-"max_scan" argument later or do something else. But at least they can not
-livelock under heavy fork/exit loads, they are bounded by PID_MAX_DEFAULT in
-the worst case.
-
-NOTE: it seems that, contrary to the comment, task_struct->start_time is not
-really monotonic, and this should be probably fixed. Until then  _continue()
-might skip more threads with the same ->start_time than necessary.
-
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
----
- include/linux/sched/signal.h | 10 ++++++++++
- kernel/exit.c                | 42 ++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 52 insertions(+)
-
-diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
-index 1be3572..1c957d4 100644
---- a/include/linux/sched/signal.h
-+++ b/include/linux/sched/signal.h
-@@ -565,6 +565,16 @@ extern bool current_is_single_threaded(void);
- #define for_each_process_thread(p, t)	\
- 	for_each_process(p) for_each_thread(p, t)
- 
-+static inline void
-+for_each_process_thread_break(struct task_struct *p, struct task_struct *t)
-+{
-+	get_task_struct(p);
-+	get_task_struct(t);
-+}
-+
-+extern void
-+for_each_process_thread_continue(struct task_struct **, struct task_struct **);
-+
- typedef int (*proc_visitor)(struct task_struct *p, void *data);
- void walk_process_tree(struct task_struct *top, proc_visitor, void *);
- 
-diff --git a/kernel/exit.c b/kernel/exit.c
-index 0e21e6d..71380c7 100644
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -319,6 +319,48 @@ void rcuwait_wake_up(struct rcuwait *w)
- 	rcu_read_unlock();
- }
- 
-+void for_each_process_thread_continue(struct task_struct **p_leader,
-+				      struct task_struct **p_thread)
-+{
-+	struct task_struct *leader = *p_leader, *thread = *p_thread;
-+	struct task_struct *prev, *next;
-+	u64 start_time;
-+
-+	if (pid_alive(thread)) {
-+		/* mt exec could change the leader */
-+		*p_leader = thread->group_leader;
-+	} else if (pid_alive(leader)) {
-+		start_time = thread->start_time;
-+		prev = leader;
-+
-+		for_each_thread(leader, next) {
-+			if (next->start_time > start_time)
-+				break;
-+			prev = next;
-+		}
-+
-+		*p_thread = prev;
-+	} else {
-+		start_time = leader->start_time;
-+		prev = &init_task;
-+
-+		for_each_process(next) {
-+			if (next->start_time > start_time)
-+				break;
-+			prev = next;
-+		}
-+
-+		*p_leader = prev;
-+		/* a new thread can come after that, but this is fine */
-+		*p_thread = list_last_entry(&prev->signal->thread_head,
-+						struct task_struct,
-+						thread_node);
-+	}
-+
-+	put_task_struct(leader);
-+	put_task_struct(thread);
-+}
-+
- /*
-  * Determine if a process group is "orphaned", according to the POSIX
-  * definition in 2.2.2.52.  Orphaned process groups are not to be affected
--- 
-2.5.0
-
-
+Sure, but don't do that now.  Just put page poisoning under it now.
