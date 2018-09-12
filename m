@@ -2,95 +2,185 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAF71C46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 12:05:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54647C4646A
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 12:08:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9384B20890
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 12:05:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9384B20890
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D8B7C20839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 12:08:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="FGwMIR5D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8B7C20839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726800AbeILRJU (ORCPT
+        id S1726782AbeILRNK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 13:09:20 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47320 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726221AbeILRJU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 13:09:20 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 4C3D7ACD1;
-        Wed, 12 Sep 2018 12:05:05 +0000 (UTC)
-Date:   Wed, 12 Sep 2018 14:05:04 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     David Rientjes <rientjes@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Zi Yan <zi.yan@cs.rutgers.edu>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stefan Priebe <s.priebe@profihost.ag>
-Subject: Re: [PATCH] mm, thp: relax __GFP_THISNODE for MADV_HUGEPAGE mappings
-Message-ID: <20180912120504.GE10951@dhcp22.suse.cz>
-References: <20180907130550.11885-1-mhocko@kernel.org>
- <alpine.DEB.2.21.1809101253080.177111@chino.kir.corp.google.com>
- <20180911115613.GR10951@dhcp22.suse.cz>
- <alpine.DEB.2.21.1809111319060.189563@chino.kir.corp.google.com>
+        Wed, 12 Sep 2018 13:13:10 -0400
+Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:59642 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726359AbeILRNK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 13:13:10 -0400
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id A48A724E0F5D;
+        Wed, 12 Sep 2018 05:08:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1536754135; bh=ThBM0TeqoJzzGvOYoUKpqZ+Yte9WV+4Nn5Sk0ZgOlQU=;
+        h=From:To:CC:Subject:Date:From;
+        b=FGwMIR5DY5d/m7ZyZPw7LjV8oPFCrThVsfUOjHyiOBWfJ3Nj0IrIwte2gjuHxtyE0
+         hpBxnASzmhgJYmQiemsDLDhQ/Tyby9zROBl8Ecxtk0JDnRR5DDXq3OHJdykqHdoWba
+         /g4t2EH0hYDitV8pDB0IdzlNuFZ9GNhJt4n4NmiZLF7vBGj+Gc/hcMBcam0kH6Lx+D
+         +0jE6BigQAlJIovWD1zr7mwTT++1pb0fiHYkXnWoXAfqVfoyPkZcbuZHxa0zFXfPBP
+         rnfzBa7BMg0lzCU0dTD0KrPXWVWTHDz1eC2ZISW1RzexNUKglB0CGJsDZAq7DNMeah
+         W5cz3nHq4aJgw==
+Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
+        by mailhost.synopsys.com (Postfix) with ESMTP id B49193B5D;
+        Wed, 12 Sep 2018 05:08:52 -0700 (PDT)
+Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
+ US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Wed, 12 Sep 2018 05:08:42 -0700
+Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
+ by DE02WEHTCB.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Wed,
+ 12 Sep 2018 14:08:41 +0200
+From:   Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+To:     "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>
+CC:     "keescook@chromium.org" <keescook@chromium.org>,
+        "linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>
+Subject: defconfig fails if CROSS_COMPILE is set while cross-gcc is not
+ avaialble
+Thread-Topic: defconfig fails if CROSS_COMPILE is set while cross-gcc is not
+ avaialble
+Thread-Index: AQHUSpFXS1S71sJSu0SpMEzLuj4Mhw==
+Date:   Wed, 12 Sep 2018 12:08:40 +0000
+Message-ID: <0854f35e92c95e552721dc6a46f4ee2bc4020bc1.camel@synopsys.com>
+Accept-Language: en-US, ru-RU
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.121.8.87]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <FC6D131905B9584B98F6B5560EBC3DC2@internal.synopsys.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1809111319060.189563@chino.kir.corp.google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 11-09-18 13:30:20, David Rientjes wrote:
-> On Tue, 11 Sep 2018, Michal Hocko wrote:
-[...]
-> > hugepage specific MPOL flags sounds like yet another step into even more
-> > cluttered API and semantic, I am afraid. Why should this be any
-> > different from regular page allocations? You are getting off-node memory
-> > once your local node is full. You have to use an explicit binding to
-> > disallow that. THP should be similar in that regards. Once you have said
-> > that you _really_ want THP then you are closer to what we do for regular
-> > pages IMHO.
-> > 
-> 
-> Saying that we really want THP isn't an all-or-nothing decision.  We 
-> certainly want to try hard to fault hugepages locally especially at task 
-> startup when remapping our .text segment to thp, and MADV_HUGEPAGE works 
-> very well for that.  Remote hugepages would be a regression that we now 
-> have no way to avoid because the kernel doesn't provide for it, if we were 
-> to remove __GFP_THISNODE that this patch introduces.
-
-Why cannot you use mempolicy to bind to local nodes if you really care
-about the locality?
-
-> On Broadwell, for example, we find 7% slower access to remote hugepages 
-> than local native pages.  On Naples, that becomes worse: 14% slower access 
-> latency for intrasocket hugepages compared to local native pages and 39% 
-> slower for intersocket.
-
-So, again, how does this compare to regular 4k pages? You are going to
-pay for the same remote access as well.
-
-From what you have said so far it sounds like you would like to have
-something like the zone/node reclaim mode fine grained for a specific
-mapping. If we really want to support something like that then it should
-be a generic policy rather than THP specific thing IMHO.
-
-As I've said it is hard to come up with a solution that would satisfy
-everybody but considering that the existing reports are seeing this a
-regression and cosindering their NUMA requirements are not so strict as
-yours I would tend to think that stronger NUMA requirements should be
-expressed explicitly rather than implicit effect of a madvise flag. We
-do have APIs for that.
--- 
-Michal Hocko
-SUSE Labs
+SGVsbG8gTWFzYWhpcm8tc2FuLA0KDQpTdGFydGluZyBmcm9tIGtlcm5lbCB2NC4xNyBpdCBpcyBu
+byBsb25nZXIgcG9zc2libGUgdG8gaW5zdGFsbCBrZXJuZWwgaGVhZGVycw0KZm9yIEFSQyBhcmNo
+aXRlY3R1cmUgaWYgdGhlcmUncyBubyBjcm9zcy10b29sY2hhaW4gaW4gUEFUSC4NCg0KTm90ZSBp
+bnN0YWxsYXRpb24gb2YgaGVhZGVycyBpcyBqdXN0IG9uZSBvZiB1c2UtY2FzZXMgd2hlbiB3ZSBt
+aWdodCBub3QNCmhhdmUgY3Jvc3MtdG9vbHMgYXZhaWxhYmxlIGJ1dCBzdGlsbCB3YW50IHRvIHJ1
+biAibWFrZSB4eHhfZGVmY29uZmlnIi4NCkkuZS4gdGhlIHByb2JsZW0gaXMgIm1ha2UgeHh4X2Rl
+ZmNvbmZpZyIgd2l0aCBubyBjcm9zcy10b29sY2hhaW4uDQoNClRoYXQncyB3aGF0IEkgc2VlOg0K
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0+OC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+DQouL3NjcmlwdHMvZ2NjLXZlcnNpb24uc2g6IGxpbmUgMjY6IGFyYy1saW51eC1nY2M6IGNvbW1h
+bmQgbm90IGZvdW5kDQouL3NjcmlwdHMvZ2NjLXZlcnNpb24uc2g6IGxpbmUgMjc6IGFyYy1saW51
+eC1nY2M6IGNvbW1hbmQgbm90IGZvdW5kDQouL3NjcmlwdHMvZ2NjLXZlcnNpb24uc2g6IGxpbmUg
+MjY6IGFyYy1saW51eC1nY2M6IGNvbW1hbmQgbm90IGZvdW5kDQouL3NjcmlwdHMvZ2NjLXZlcnNp
+b24uc2g6IGxpbmUgMjc6IGFyYy1saW51eC1nY2M6IGNvbW1hbmQgbm90IGZvdW5kDQptYWtlOiBh
+cmMtbGludXgtZ2NjOiBDb21tYW5kIG5vdCBmb3VuZA0KL2Jpbi9zaDogYXJjLWxpbnV4LWdjYzog
+Y29tbWFuZCBub3QgZm91bmQNCi9iaW4vc2g6IGFyYy1saW51eC1nY2M6IGNvbW1hbmQgbm90IGZv
+dW5kDQoqKiogRGVmYXVsdCBjb25maWd1cmF0aW9uIGlzIGJhc2VkIG9uICduc2ltXzcwMF9kZWZj
+b25maWcnDQouL3NjcmlwdHMvZ2NjLXZlcnNpb24uc2g6IGxpbmUgMjY6IGFyYy1saW51eC1nY2M6
+IGNvbW1hbmQgbm90IGZvdW5kDQouL3NjcmlwdHMvZ2NjLXZlcnNpb24uc2g6IGxpbmUgMjc6IGFy
+Yy1saW51eC1nY2M6IGNvbW1hbmQgbm90IGZvdW5kDQouL3NjcmlwdHMvZ2NjLXZlcnNpb24uc2g6
+IGxpbmUgMjk6IGFyYy1saW51eC1nY2M6IGNvbW1hbmQgbm90IGZvdW5kDQouL3NjcmlwdHMvZ2Nj
+LXZlcnNpb24uc2g6IGxpbmUgMjY6IGFyYy1saW51eC1nY2M6IGNvbW1hbmQgbm90IGZvdW5kDQou
+L3NjcmlwdHMvZ2NjLXZlcnNpb24uc2g6IGxpbmUgMjc6IGFyYy1saW51eC1nY2M6IGNvbW1hbmQg
+bm90IGZvdW5kDQouL3NjcmlwdHMvZ2NjLXZlcnNpb24uc2g6IGxpbmUgMjk6IGFyYy1saW51eC1n
+Y2M6IGNvbW1hbmQgbm90IGZvdW5kDQppbml0L0tjb25maWc6MTc6IHN5bnRheCBlcnJvcg0KaW5p
+dC9LY29uZmlnOjE2OiBpbnZhbGlkIG9wdGlvbg0KLi9zY3JpcHRzL2NsYW5nLXZlcnNpb24uc2g6
+IGxpbmUgMTU6IGFyYy1saW51eC1nY2M6IGNvbW1hbmQgbm90IGZvdW5kDQouL3NjcmlwdHMvZ2Nj
+LXBsdWdpbi5zaDogbGluZSAxMTogYXJjLWxpbnV4LWdjYzogY29tbWFuZCBub3QgZm91bmQNCm1h
+a2VbMV06ICoqKiBbc2NyaXB0cy9rY29uZmlnL01ha2VmaWxlOjkxOiBkZWZjb25maWddIEVycm9y
+IDENCm1ha2U6ICoqKiBbTWFrZWZpbGU6NTMxOiBkZWZjb25maWddIEVycm9yIDINCi0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tPjgtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KDQpUaGF0
+IGRvZXNuJ3QgaGFwcGVuIGZvciBBUk0gYW5kIG90aGVyIGFyY2hlcyBzaW1wbHkgYmVjYXVzZSBm
+b3IgQVJDDQp3ZSBkZWZpbmUgQ1JPU1NfQ09NUElMRSBpZiBpdCBpcyBub3Qgc2V0IGJ5IHVzZXIs
+IHNlZToNCmh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3Rv
+cnZhbGRzL2xpbnV4LmdpdC90cmVlL2FyY2gvYXJjL01ha2VmaWxlI245DQoNClN0aWxsIGlmIENS
+T1NTX0NPTVBJTEUgaXMgc2V0IGJlZm9yZSBleGVjdXRpb24gb2YgIm1ha2UgZGVmY29uZmlnIg0K
+dGhlbiB0aGUgc2FtZSBwcm9ibGVtIGhhcHBlbnMgZm9yIG90aGVycy4NCg0KSSB3YXMgYWJsZSB0
+byBmaW5kIGEgc2VyaWVzIG9mIGNvbW1pdHMgd2hpY2ggY2F1c2UgdGhpcyBwcm9ibGVtLA0KaGVy
+ZSB0aGV5IGFyZToNCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tPjgtLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLQ0KNTlmNTM4NTViYWJmIC0gZ2NjLXBsdWdpbnM6IHRlc3QgcGx1Z2luIHN1
+cHBvcnQgaW4gS2NvbmZpZyBhbmQgY2xlYW4gdXAgTWFrZWZpbGUNCjQ2OWNiNzM3NmMwNiAtIGtj
+b25maWc6IGFkZCBDQ19JU19DTEFORyBhbmQgQ0xBTkdfVkVSU0lPTg0KYTQzNTM4OTg5ODBjIC0g
+a2NvbmZpZzogYWRkIENDX0lTX0dDQyBhbmQgR0NDX1ZFUlNJT04NCi0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tPjgtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KDQpXaGF0IGhhcHBlbiBp
+cyAiJChDQykiIGlzIHBhc3NlZCBhcyBhbiBhcmd1bWVudCBhbmQgaW4gaXRzIHR1cm4gQ0MgaXMN
+CiIkKENST1NTX0NPTVBJTEUpZ2NjIiwgc2VlOg0KaHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIv
+c2NtL2xpbnV4L2tlcm5lbC9naXQvdG9ydmFsZHMvbGludXguZ2l0L3RyZWUvTWFrZWZpbGUjbjM4
+NQ0KDQoNClNvIGlmIEkgc3Vic3RpdHV0ZSAiQ0MiIHdpdGggIkhPU1RDQyIgaW4gYSBjb3VwbGUg
+b2YgcGxhY2VzIChzZWUgYmVsb3cpDQp0aGUgcHJvYmxlbSBnb2VzIGF3YXkuIEJ1dCBJJ20gbm90
+IHJlYWxseSBzdXJlIGlmIHdoYXQgSSBkbyBpcyBjb3JyZWN0Lg0KSS5lLiB3aGVuIHdlJ3JlIGlu
+dGVyZXN0ZWQgaW4gQ0MgZm9yIHRhcmdldCBhbmQgd2hlbiBvbmx5IGhvc3QgQ0MgaXMgb2YNCm91
+ciBpbnRlcmVzdC4NCg0KV291bGQgYmUgaW50ZXJlc3RpbmcgdG8ga25vdyB5b3VyIG9waW5pb24g
+aGVyZS4NCg0KLUFsZXhleQ0KDQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LT44LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQpkaWZmIC0t
+Z2l0IGEvYXJjaC9LY29uZmlnIGIvYXJjaC9LY29uZmlnDQppbmRleCBkMWYyZWQ0NjJhYzguLjUz
+YzhjNzk5NGU2YiAxMDA2NDQNCi0tLSBhL2FyY2gvS2NvbmZpZw0KKysrIGIvYXJjaC9LY29uZmln
+DQpAQCAtNDEyLDcgKzQxMiw3IEBAIHByZWZlcnJlZC1wbHVnaW4taG9zdGNjIDo9ICQoaWYtc3Vj
+Y2VzcyxbICQoZ2NjLXZlcnNpb24pIC1nZSA0MDgwMCBdLCQoSE9TVENYWCksDQogDQogY29uZmln
+IFBMVUdJTl9IT1NUQ0MNCiAgICAgICAgc3RyaW5nDQotICAgICAgIGRlZmF1bHQgIiQoc2hlbGws
+JChzcmN0cmVlKS9zY3JpcHRzL2djYy1wbHVnaW4uc2ggIiQocHJlZmVycmVkLXBsdWdpbi1ob3N0
+Y2MpIiAiJChIT1NUQ1hYKSIgIiQoQ0MpIikiDQorICAgICAgIGRlZmF1bHQgIiQoc2hlbGwsJChz
+cmN0cmVlKS9zY3JpcHRzL2djYy1wbHVnaW4uc2ggIiQocHJlZmVycmVkLXBsdWdpbi1ob3N0Y2Mp
+IiAiJChIT1NUQ1hYKSIgIiQoSE9TVENDKSIpIg0KICAgICAgICBoZWxwDQogICAgICAgICAgSG9z
+dCBjb21waWxlciB1c2VkIHRvIGJ1aWxkIEdDQyBwbHVnaW5zLiAgVGhpcyBjYW4gYmUgJChIT1NU
+Q1hYKSwNCiAgICAgICAgICAkKEhPU1RDQyksIG9yIGEgbnVsbCBzdHJpbmcgaWYgR0NDIHBsdWdp
+biBpcyB1bnN1cHBvcnRlZC4NCmRpZmYgLS1naXQgYS9pbml0L0tjb25maWcgYi9pbml0L0tjb25m
+aWcNCmluZGV4IDJhNDg4MzJmZDQwZS4uYTAwOTRkZGI4MjQ0IDEwMDY0NA0KLS0tIGEvaW5pdC9L
+Y29uZmlnDQorKysgYi9pbml0L0tjb25maWcNCkBAIC0xMyw3ICsxMyw3IEBAIGNvbmZpZyBDQ19J
+U19HQ0MNCiANCiBjb25maWcgR0NDX1ZFUlNJT04NCiAgICAgICAgaW50DQotICAgICAgIGRlZmF1
+bHQgJChzaGVsbCwkKHNyY3RyZWUpL3NjcmlwdHMvZ2NjLXZlcnNpb24uc2ggLXAgJChDQykgfCBz
+ZWQgJ3MvXjAqLy8nKSBpZiBDQ19JU19HQ0MNCisgICAgICAgZGVmYXVsdCAkKHNoZWxsLCQoc3Jj
+dHJlZSkvc2NyaXB0cy9nY2MtdmVyc2lvbi5zaCAtcCAkKEhPU1RDQykgfCBzZWQgJ3MvXjAqLy8n
+KSBpZiBDQ19JU19HQ0MNCiAgICAgICAgZGVmYXVsdCAwDQogDQogY29uZmlnIENDX0lTX0NMQU5H
+DQpAQCAtMjEsNyArMjEsNyBAQCBjb25maWcgQ0NfSVNfQ0xBTkcNCiANCiBjb25maWcgQ0xBTkdf
+VkVSU0lPTg0KICAgICAgICBpbnQNCi0gICAgICAgZGVmYXVsdCAkKHNoZWxsLCQoc3JjdHJlZSkv
+c2NyaXB0cy9jbGFuZy12ZXJzaW9uLnNoICQoQ0MpKQ0KKyAgICAgICBkZWZhdWx0ICQoc2hlbGws
+JChzcmN0cmVlKS9zY3JpcHRzL2NsYW5nLXZlcnNpb24uc2ggJChIT1NUQ0MpKQ0KIA0KIGNvbmZp
+ZyBDT05TVFJVQ1RPUlMNCiAgICAgICAgYm9vbA0KZGlmZiAtLWdpdCBhL3NjcmlwdHMvS2J1aWxk
+LmluY2x1ZGUgYi9zY3JpcHRzL0tidWlsZC5pbmNsdWRlDQppbmRleCA4NjMyMWYwNjQ2MWUuLjY4
+NGNkNjQ1ZWViMSAxMDA2NDQNCi0tLSBhL3NjcmlwdHMvS2J1aWxkLmluY2x1ZGUNCisrKyBiL3Nj
+cmlwdHMvS2J1aWxkLmluY2x1ZGUNCkBAIC0xMDksNyArMTA5LDcgQEAgYXMtaW5zdHIgPSAkKGNh
+bGwgdHJ5LXJ1bixcDQogICAgICAgIHByaW50ZiAiJWJcbiIgIiQoMSkiIHwgJChDQykgJChLQlVJ
+TERfQUZMQUdTKSAtYyAteCBhc3NlbWJsZXIgLW8gIiQkVE1QIiAtLCQoMiksJCgzKSkNCiANCiAj
+IF9fY2Mtb3B0aW9uDQotIyBVc2FnZTogTVlfQ0ZMQUdTICs9ICQoY2FsbCBfX2NjLW9wdGlvbiwk
+KENDKSwkKE1ZX0NGTEFHUyksLW1hcmNoPXdpbmNoaXAtYzYsLW1hcmNoPWk1ODYpDQorIyBVc2Fn
+ZTogTVlfQ0ZMQUdTICs9ICQoY2FsbCBfX2NjLW9wdGlvbiwkKEhPU1RDQyksJChNWV9DRkxBR1Mp
+LC1tYXJjaD13aW5jaGlwLWM2LC1tYXJjaD1pNTg2KQ0KIF9fY2Mtb3B0aW9uID0gJChjYWxsIHRy
+eS1ydW4sXA0KICAgICAgICAkKDEpIC1XZXJyb3IgJCgyKSAkKDMpIC1jIC14IGMgL2Rldi9udWxs
+IC1vICIkJFRNUCIsJCgzKSwkKDQpKQ0KIA0KQEAgLTE0MywxMSArMTQzLDExIEBAIGNjLWRpc2Fi
+bGUtd2FybmluZyA9ICQoY2FsbCB0cnktcnVuLFwNCiBjYy1uYW1lID0gJChzaGVsbCAkKENDKSAt
+diAyPiYxIHwgZ3JlcCAtcSAiY2xhbmcgdmVyc2lvbiIgJiYgZWNobyBjbGFuZyB8fCBlY2hvIGdj
+YykNCiANCiAjIGNjLXZlcnNpb24NCi1jYy12ZXJzaW9uID0gJChzaGVsbCAkKENPTkZJR19TSEVM
+TCkgJChzcmN0cmVlKS9zY3JpcHRzL2djYy12ZXJzaW9uLnNoICQoQ0MpKQ0KK2NjLXZlcnNpb24g
+PSAkKHNoZWxsICQoQ09ORklHX1NIRUxMKSAkKHNyY3RyZWUpL3NjcmlwdHMvZ2NjLXZlcnNpb24u
+c2ggJChIT1NUQ0MpKQ0KIA0KICMgY2MtZnVsbHZlcnNpb24NCiBjYy1mdWxsdmVyc2lvbiA9ICQo
+c2hlbGwgJChDT05GSUdfU0hFTEwpIFwNCi0gICAgICAgJChzcmN0cmVlKS9zY3JpcHRzL2djYy12
+ZXJzaW9uLnNoIC1wICQoQ0MpKQ0KKyAgICAgICAkKHNyY3RyZWUpL3NjcmlwdHMvZ2NjLXZlcnNp
+b24uc2ggLXAgJChIT1NUQ0MpKQ0KIA0KICMgY2MtaWZ2ZXJzaW9uDQogIyBVc2FnZTogIEVYVFJB
+X0NGTEFHUyArPSAkKGNhbGwgY2MtaWZ2ZXJzaW9uLCAtbHQsIDA0MDIsIC1PMSkNCmRpZmYgLS1n
+aXQgYS9zY3JpcHRzL0tjb25maWcuaW5jbHVkZSBiL3NjcmlwdHMvS2NvbmZpZy5pbmNsdWRlDQpp
+bmRleCBkYWQ1NTgzNDUxYWYuLjNiMjhiZjk0Y2IyNCAxMDA2NDQNCi0tLSBhL3NjcmlwdHMvS2Nv
+bmZpZy5pbmNsdWRlDQorKysgYi9zY3JpcHRzL0tjb25maWcuaW5jbHVkZQ0KQEAgLTI3LDQgKzI3
+LDQgQEAgY2Mtb3B0aW9uID0gJChzdWNjZXNzLCQoQ0MpIC1XZXJyb3IgJCgxKSAtRSAteCBjIC9k
+ZXYvbnVsbCAtbyAvZGV2L251bGwpDQogbGQtb3B0aW9uID0gJChzdWNjZXNzLCQoTEQpIC12ICQo
+MSkpDQogDQogIyBnY2MgdmVyc2lvbiBpbmNsdWRpbmcgcGF0Y2ggbGV2ZWwNCi1nY2MtdmVyc2lv
+biA6PSAkKHNoZWxsLCQoc3JjdHJlZSkvc2NyaXB0cy9nY2MtdmVyc2lvbi5zaCAtcCAkKENDKSB8
+IHNlZCAncy9eMCovLycpDQorZ2NjLXZlcnNpb24gOj0gJChzaGVsbCwkKHNyY3RyZWUpL3Njcmlw
+dHMvZ2NjLXZlcnNpb24uc2ggLXAgJChIT1NUQ0MpIHwgc2VkICdzL14wKi8vJykNCi0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tPjgtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0NCg==
