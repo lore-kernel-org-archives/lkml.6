@@ -2,118 +2,180 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23C6BC4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 10:29:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0390C4646A
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 10:29:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDEC420880
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 10:29:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDEC420880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
+	by mail.kernel.org (Postfix) with ESMTP id 7171220866
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 10:29:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7171220866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727735AbeILPdO (ORCPT
+        id S1727771AbeILPdk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 11:33:14 -0400
-Received: from smtp.eu.citrix.com ([185.25.65.24]:5855 "EHLO
-        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726782AbeILPdN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 11:33:13 -0400
-X-IronPort-AV: E=Sophos;i="5.53,364,1531785600"; 
-   d="scan'208";a="78929444"
-Date:   Wed, 12 Sep 2018 12:29:08 +0200
-From:   Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
-To:     Julien Grall <julien.grall@arm.com>
-CC:     Jan Beulich <JBeulich@suse.com>, Jens Axboe <axboe@kernel.dk>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        <linux-kernel@vger.kernel.org>, <linux-block@vger.kernel.org>,
-        xen-devel <xen-devel@lists.xenproject.org>,
-        zhong jiang <zhongjiang@huawei.com>
-Subject: Re: [Xen-devel] [PATCH] drivers/block/xen-blkback/common.h: use
- DIV_ROUND_UP instead of reimplementing its function
-Message-ID: <20180912102908.4ls7vts55n2zfkdz@mac.bytemobile.com>
-References: <1536731100-56054-1-git-send-email-zhongjiang@huawei.com>
- <5B98CAE202000078001E79CC@prv1-mh.provo.novell.com>
- <20180912091350.6wuvt2jkvzg6wruo@mac.bytemobile.com>
- <20180912091639.oynlvdo6pghnqfvt@mac.bytemobile.com>
- <364bad2c-708e-6406-7b52-7bfef9d5dbe1@arm.com>
+        Wed, 12 Sep 2018 11:33:40 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57158 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726816AbeILPdk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 11:33:40 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F2CBC7A9;
+        Wed, 12 Sep 2018 03:29:45 -0700 (PDT)
+Received: from [10.4.12.81] (melchizedek.emea.arm.com [10.4.12.81])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3C8693F614;
+        Wed, 12 Sep 2018 03:29:43 -0700 (PDT)
+Subject: Re: [PATCH v5 03/27] arm64: alternative: Apply alternatives early in
+ boot process
+To:     Julien Thierry <julien.thierry@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        daniel.thompson@linaro.org, joel@joelfernandes.org,
+        marc.zyngier@arm.com, mark.rutland@arm.com,
+        christoffer.dall@arm.com, catalin.marinas@arm.com,
+        will.deacon@arm.com
+References: <1535471497-38854-1-git-send-email-julien.thierry@arm.com>
+ <1535471497-38854-4-git-send-email-julien.thierry@arm.com>
+From:   James Morse <james.morse@arm.com>
+Message-ID: <3becf020-b230-beb8-b304-d8097377f234@arm.com>
+Date:   Wed, 12 Sep 2018 11:29:41 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <364bad2c-708e-6406-7b52-7bfef9d5dbe1@arm.com>
-User-Agent: NeoMutt/20180716
-X-ClientProxiedBy: AMSPEX02CAS02.citrite.net (10.69.22.113) To
- AMSPEX02CL02.citrite.net (10.69.22.126)
+In-Reply-To: <1535471497-38854-4-git-send-email-julien.thierry@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 10:48:42AM +0100, Julien Grall wrote:
-> Hi,
-> 
-> On 09/12/2018 10:16 AM, Roger Pau Monné wrote:
-> > On Wed, Sep 12, 2018 at 11:13:50AM +0200, Roger Pau Monné wrote:
-> > > Adding Julien how did the work to support XEN_PAGE_SIZE != PAGE_SIZE.
-> > > 
-> > > On Wed, Sep 12, 2018 at 02:14:26AM -0600, Jan Beulich wrote:
-> > > > > > > On 12.09.18 at 07:45, <zhongjiang@huawei.com> wrote:
-> > > > > --- a/drivers/block/xen-blkback/common.h
-> > > > > +++ b/drivers/block/xen-blkback/common.h
-> > > > > @@ -65,7 +65,7 @@
-> > > > >   	(XEN_PAGES_PER_INDIRECT_FRAME / XEN_PAGES_PER_SEGMENT)
-> > > > >   #define MAX_INDIRECT_PAGES \
-> > > > > -	((MAX_INDIRECT_SEGMENTS + SEGS_PER_INDIRECT_FRAME - 1)/SEGS_PER_INDIRECT_FRAME)
-> > > > > +		DIV_ROUND_UP(MAX_INDIRECT_SEGMENTS, SEGS_PER_INDIRECT_FRAME)
-> > > > >   #define INDIRECT_PAGES(_segs) DIV_ROUND_UP(_segs, XEN_PAGES_PER_INDIRECT_FRAME)
-> > > > 
-> > > > My first reaction was to suggest
-> > > > 
-> > > > #define MAX_INDIRECT_PAGES INDIRECT_PAGES(MAX_INDIRECT_SEGMENTS)
-> > > > 
-> > > > but that wouldn't match what's there currently (note the two different
-> > > > divisors). I can't really decide whether that's just unfortunate naming
-> > > > of the two macros, or an actual bug.
-> > > 
-> > > I think there's indeed a bug here.
-> > > 
-> > > AFAICT, MAX_INDIRECT_PAGES should use XEN_PAGES_PER_INDIRECT_FRAME and
-> > > then it could be changed as Jan suggested.
-> 
-> The problem is SEGS_PER_INDIRECT_FRAME has been miscalculated. So I think it
-> would be fine to use XEN_PAGES_PER_INDIRECT_FRAME in MAX_INDIRECT_PAGES.
-> 
-> However the naming for XEN_PAGES_PER_INDIRECT_FRAME is misnamed. We return
-> number of a for segments per indirect frame. So I would rename to
-> SEGS_PER_INDIRECT_FRAME.
+Hi Julien,
 
-I don't think I agree with this last part, SEGS_PER_INDIRECT_FRAME
-would have to take into account XEN_PAGES_PER_SEGMENT, and
-XEN_PAGES_PER_INDIRECT_FRAME doesn't.
-
-XEN_PAGES_PER_INDIRECT_FRAME currently returns the number of grant
-references per indirect page, but as I understand it a segment can use
-more than one grant reference, if for example the guest page size is
-64KB.
-
+On 28/08/18 16:51, Julien Thierry wrote:
+> From: Daniel Thompson <daniel.thompson@linaro.org>
 > 
-> > > 
-> > > Current MAX_INDIRECT_PAGES is misnamed and should instead be
-> > > MAX_INDIRECT_SEGS (which on x86 is exactly the same because PAGE_SIZE
-> > > == XEN_PAGE_SIZE).
+> Currently alternatives are applied very late in the boot process (and
+> a long time after we enable scheduling). Some alternative sequences,
+> such as those that alter the way CPU context is stored, must be applied
+> much earlier in the boot sequence.
 > 
-> Looking at the usage:
-> 
-> j = min(MAX_INDIRECT_PAGES, INDIRECT_PAGES(nr_segments))
-> 
-> Where j is used as the number of grant ref. So I don't think the variable is
-> misnamed here.
+> Introduce apply_boot_alternatives() to allow some alternatives to be
+> applied immediately after we detect the CPU features of the boot CPU.
 
-Right, I agree that MAX_INDIRECT_PAGE/INDIRECT_PAGES is correct.
 
-Thanks, Roger.
+> diff --git a/arch/arm64/kernel/alternative.c b/arch/arm64/kernel/alternative.c
+> index b5d6039..70c2604 100644
+> --- a/arch/arm64/kernel/alternative.c
+> +++ b/arch/arm64/kernel/alternative.c
+> @@ -145,7 +145,8 @@ static void clean_dcache_range_nopatch(u64 start, u64 end)
+>  	} while (cur += d_size, cur < end);
+>  }
+>  
+> -static void __apply_alternatives(void *alt_region, bool is_module)
+> +static void __apply_alternatives(void *alt_region,  bool is_module,
+> +				 unsigned long feature_mask)
+
+Shouldn't feature_mask be a DECLARE_BITMAP() maybe-array like cpu_hwcaps?
+This means it keeps working when NR_CAPS grows over 64, which might happen
+sooner than we think for backported errata...
+
+
+> @@ -155,6 +156,9 @@ static void __apply_alternatives(void *alt_region, bool is_module)
+>  	for (alt = region->begin; alt < region->end; alt++) {
+>  		int nr_inst;
+>  
+> +		if ((BIT(alt->cpufeature) & feature_mask) == 0)
+> +			continue;
+> +
+>  		/* Use ARM64_CB_PATCH as an unconditional patch */
+>  		if (alt->cpufeature < ARM64_CB_PATCH &&
+>  		    !cpus_have_cap(alt->cpufeature))
+> @@ -213,7 +217,7 @@ static int __apply_alternatives_multi_stop(void *unused)
+>  		isb();
+>  	} else {
+>  		BUG_ON(alternatives_applied);
+> -		__apply_alternatives(&region, false);
+> +		__apply_alternatives(&region, false, ~boot_capabilities);
+
+Ah, this is tricky. There is a bitmap_complement() for the DECLARE_BITMAP()
+stuff, but we'd need a second array...
+
+We could pass the scope around, but then __apply_alternatives() would need to
+lookup the struct arm64_cpu_capabilities up every time. This is only a problem
+as we have one cap-number-space for errata/features, but separate sparse lists.
+
+(I think applying the alternatives one cap at a time is a bad idea as we would
+need to walk the alternative region NR_CAPS times)
+
+
+> @@ -227,6 +231,24 @@ void __init apply_alternatives_all(void)
+>  	stop_machine(__apply_alternatives_multi_stop, NULL, cpu_online_mask);
+>  }
+>  
+> +/*
+> + * This is called very early in the boot process (directly after we run
+> + * a feature detect on the boot CPU). No need to worry about other CPUs
+> + * here.
+> + */
+> +void __init apply_boot_alternatives(void)
+> +{
+> +	struct alt_region region = {
+> +		.begin	= (struct alt_instr *)__alt_instructions,
+> +		.end	= (struct alt_instr *)__alt_instructions_end,
+> +	};
+> +
+> +	/* If called on non-boot cpu things could go wrong */
+> +	WARN_ON(smp_processor_id() != 0);
+
+Isn't the problem if there are multiple CPUs online?
+
+
+> +	__apply_alternatives(&region, false, boot_capabilities);
+> +}
+> +
+>  #ifdef CONFIG_MODULES
+>  void apply_alternatives_module(void *start, size_t length)
+>  {
+
+> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> index 3bc1c8b..0d1e41e 100644
+> --- a/arch/arm64/kernel/cpufeature.c
+> +++ b/arch/arm64/kernel/cpufeature.c
+> @@ -52,6 +52,8 @@
+>  DECLARE_BITMAP(cpu_hwcaps, ARM64_NCAPS);
+>  EXPORT_SYMBOL(cpu_hwcaps);
+>  
+> +unsigned long boot_capabilities;
+> +
+>  /*
+>   * Flag to indicate if we have computed the system wide
+>   * capabilities based on the boot time active CPUs. This
+> @@ -1375,6 +1377,9 @@ static void __update_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
+>  		if (!cpus_have_cap(caps->capability) && caps->desc)
+>  			pr_info("%s %s\n", info, caps->desc);
+>  		cpus_set_cap(caps->capability);
+
+Hmm, the bitmap behind cpus_set_cap() is what cpus_have_cap() in
+__apply_alternatives() looks at. If you had a call to __apply_alternatives after
+update_cpu_capabilities(SCOPE_BOOT_CPU), but before any others, it would only
+apply those alternatives...
+
+(I don't think there is a problem re-applying the same alternative, but I
+haven't checked).
+
+
+> +
+> +		if (caps->type & SCOPE_BOOT_CPU)
+> +			__set_bit(caps->capability, &boot_capabilities);
+>  	}
+>  }
+
+
+Thanks,
+
+James
