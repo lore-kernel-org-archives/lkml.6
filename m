@@ -2,127 +2,98 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C994CC6778D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:58:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45ED8C6778D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:58:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CF8320880
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:58:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CF8320880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id F063320882
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:58:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hwGFUAUv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F063320882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728227AbeILWDy (ORCPT
+        id S1728229AbeILWEN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 18:03:54 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36094 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726428AbeILWDy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 18:03:54 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D598F7A9;
-        Wed, 12 Sep 2018 09:58:28 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A5E0F3F557;
-        Wed, 12 Sep 2018 09:58:28 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 91CCE1AE3231; Wed, 12 Sep 2018 17:58:45 +0100 (BST)
-Date:   Wed, 12 Sep 2018 17:58:45 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Nipun Gupta <nipun.gupta@nxp.com>
-Cc:     joro@8bytes.org, robin.murphy@arm.com, robh+dt@kernel.org,
-        robh@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com,
-        gregkh@linuxfoundation.org, laurentiu.tudor@nxp.com,
-        bhelgaas@google.com, hch@lst.de, m.szyprowski@samsung.com,
-        shawnguo@kernel.org, frowand.list@gmail.com,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org,
-        bharat.bhushan@nxp.com, stuyoder@gmail.com, leoyang.li@nxp.com
-Subject: Re: [PATCH 0/7 v7] Support for fsl-mc bus and its devices in SMMU
-Message-ID: <20180912165845.GD16071@arm.com>
-References: <1536587361-11047-1-git-send-email-nipun.gupta@nxp.com>
+        Wed, 12 Sep 2018 18:04:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37070 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725798AbeILWEM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 18:04:12 -0400
+Received: from localhost (unknown [146.7.4.73])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE51020880;
+        Wed, 12 Sep 2018 16:58:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1536771527;
+        bh=NtFz7Zjhd8eJyxJK3E4YjqMxN+qSTBSZsEQXDHolkRs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hwGFUAUvm5U1SSkZmzCsNNGl626u5TNg1JEDGccvBCFfhkcupnqFs+0PE/06l1DMZ
+         oEITQepdihVz/aHnINZCeEO6+DQMHA9W5NxhvQgjlgbVtCoUY9OovtlA5jxO4vtu+r
+         xR0bjMkHvpLqN9AT7dd3mbPO9GK/NdxnDPZBMjsw=
+Date:   Wed, 12 Sep 2018 11:58:46 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     linux-pci@vger.kernel.org, Russell Currey <ruscur@russell.cc>,
+        linuxppc-dev@lists.ozlabs.org
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: Add PPC contacts for PCI core error handling
+Message-ID: <20180912165846.GH118330@bhelgaas-glaptop.roam.corp.google.com>
+References: <153677132617.23091.12307288405707171077.stgit@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1536587361-11047-1-git-send-email-nipun.gupta@nxp.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <153677132617.23091.12307288405707171077.stgit@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nipun,
+On Wed, Sep 12, 2018 at 11:55:26AM -0500, Bjorn Helgaas wrote:
+> From: Bjorn Helgaas <bhelgaas@google.com>
+> 
+> The original PCI error recovery functionality was for the powerpc-specific
+> IBM EEH feature.  PCIe subsequently added some similar features, including
+> AER and DPC, that can be used on any architecture.
+> 
+> We want the generic PCI core error handling support to work with all of
+> these features.  Driver error recovery callbacks should be independent of
+> which feature the platform provides.
+> 
+> Add the generic PCI core error recovery files to the powerpc EEH
+> MAINTAINERS entry so the powerpc folks will be copied on changes to the
+> generic PCI error handling strategy.
 
-On Mon, Sep 10, 2018 at 07:19:14PM +0530, Nipun Gupta wrote:
-> This patchset defines IOMMU DT binding for fsl-mc bus and adds
-> support in SMMU for fsl-mc bus.
-> 
-> These patches
->   - Define property 'iommu-map' for fsl-mc bus (patch 1)
->   - Integrates the fsl-mc bus with the SMMU using this
->     IOMMU binding (patch 2,3,4)
->   - Adds the dma configuration support for fsl-mc bus (patch 5, 6)
->   - Updates the fsl-mc device node with iommu/dma related changes (patch 7)
+I really want to make sure the powerpc folks are plugged into any PCI core
+error handling discussions.  Please let me know if there's a better way
+than this patch, or if there are other people who should be added.
 
-It looks like you have all the Acks in place for this series now, so I
-assume it's going to go via Joerg directly. Is that right?
-
-Will
-
-> Changes in v2:
->   - use iommu-map property for fsl-mc bus
->   - rebase over patchset https://patchwork.kernel.org/patch/10317337/
->     and make corresponding changes for dma configuration of devices on
->     fsl-mc bus
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> ---
+>  MAINTAINERS |    4 ++++
+>  1 file changed, 4 insertions(+)
 > 
-> Changes in v3:
->   - move of_map_rid in drivers/of/address.c
-> 
-> Changes in v4:
->   - move of_map_rid in drivers/of/base.c
-> 
-> Changes in v5:
->   - break patch 5 in two separate patches (now patch 5/7 and patch 6/7)
->   - add changelog text in patch 3/7 and patch 5/7
->   - typo fix
-> 
-> Changes in v6:
->   - Updated fsl_mc_device_group() API to be more rational
->   - Added dma-coherent property in the LS2 smmu device node
->   - Minor fixes in the device-tree documentation
-> 
-> Changes in v7:
->   - Rebased over linux 4.19
-> 
-> Nipun Gupta (7):
->   Documentation: fsl-mc: add iommu-map device-tree binding for fsl-mc
->     bus
->   iommu/of: make of_pci_map_rid() available for other devices too
->   iommu/of: support iommu configuration for fsl-mc devices
->   iommu/arm-smmu: Add support for the fsl-mc bus
->   bus: fsl-mc: support dma configure for devices on fsl-mc bus
->   bus: fsl-mc: set coherent dma mask for devices on fsl-mc bus
->   arm64: dts: ls208xa: comply with the iommu map binding for fsl_mc
-> 
->  .../devicetree/bindings/misc/fsl,qoriq-mc.txt      |  39 ++++++++
->  arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi     |   7 +-
->  drivers/bus/fsl-mc/fsl-mc-bus.c                    |  16 +++-
->  drivers/iommu/arm-smmu.c                           |   7 ++
->  drivers/iommu/iommu.c                              |  13 +++
->  drivers/iommu/of_iommu.c                           |  25 ++++-
->  drivers/of/base.c                                  | 102 +++++++++++++++++++++
->  drivers/of/irq.c                                   |   5 +-
->  drivers/pci/of.c                                   | 101 --------------------
->  include/linux/fsl/mc.h                             |   8 ++
->  include/linux/iommu.h                              |   2 +
->  include/linux/of.h                                 |  11 +++
->  include/linux/of_pci.h                             |  10 --
->  13 files changed, 224 insertions(+), 122 deletions(-)
-> 
-> -- 
-> 1.9.1
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 7e10ba65bfe4..d6699597fd89 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -11202,6 +11202,10 @@ PCI ENHANCED ERROR HANDLING (EEH) FOR POWERPC
+>  M:	Russell Currey <ruscur@russell.cc>
+>  L:	linuxppc-dev@lists.ozlabs.org
+>  S:	Supported
+> +F:	Documentation/PCI/pci-error-recovery.txt
+> +F:	drivers/pci/pcie/aer.c
+> +F:	drivers/pci/pcie/dpc.c
+> +F:	drivers/pci/pcie/err.c
+>  F:	Documentation/powerpc/eeh-pci-error-recovery.txt
+>  F:	arch/powerpc/kernel/eeh*.c
+>  F:	arch/powerpc/platforms/*/eeh*.c
 > 
