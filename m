@@ -2,154 +2,199 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BFB3C070C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 22:28:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0366C070C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 22:28:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CAC02146E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 22:28:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 567FE2146E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 22:28:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="G2edDonS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CAC02146E
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RItN4KDT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 567FE2146E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728078AbeIMDec (ORCPT
+        id S1728148AbeIMDep (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 23:34:32 -0400
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:34311 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727772AbeIMDec (ORCPT
+        Wed, 12 Sep 2018 23:34:45 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:42967 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728095AbeIMDep (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 23:34:32 -0400
-Received: by mail-yb1-f195.google.com with SMTP id t10-v6so2484313ybb.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 15:27:57 -0700 (PDT)
+        Wed, 12 Sep 2018 23:34:45 -0400
+Received: by mail-pl1-f196.google.com with SMTP id g23-v6so1634447plq.9
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 15:28:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=DnrbMQY/zGzFjF9mWy2fkS0v7edeFczmBfQNudugy4o=;
-        b=G2edDonSJVV1HcL2wFDf+KoKT3V8CVeiH4ycoaxMtjadDaFrJlrVBilc4U4m8L8SS7
-         Fxt4p4qS5+c6q+8DfmrEtGaVMwbGWPjalQOVSgyYt6cZUp8ZVw+Du30lirEtHZL/JmxT
-         Obp4NZFkwqg+DK/agPSd4H8mvie0ejLKVM8BI=
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=8KNxWcmZbq/9VcjsM3slaV8Waiw2gwgR9BQDmllszmA=;
+        b=RItN4KDTD51nZjyFHVLhPRMoePELeuoPGtxgc2CtUcRrGevidWNbP0IJ+5tXilIOHX
+         nSu12ERXo62JjRN/eIr54AMQTvBwXj0Nn22pDqDMc7M6RNRP4NAggbOhYdYevsK/pmfU
+         7aT7yvE1Kb0rZpwVwevc7fXbJI5lA3qRdjVG4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=DnrbMQY/zGzFjF9mWy2fkS0v7edeFczmBfQNudugy4o=;
-        b=CROMwLmWTpuYIKujT085zazDBfqokJVWpV1lQeEKpaDaXUCmbyyKjzUtqWiRxW4ktP
-         Gv+MsE/oOQqQ0By2FNR0yqp8CJ66XrDzMsHb4Io9SApzXBtnh8yydGWbvR+3REijjPyB
-         J+bCTwb9fCphDUdHtI34QfjW9hO0v5L1I/cxHkQAo0S5qw2NqwAOm05XqRHjIhpNdvx0
-         tlOHHYRGMrKOE8HFb7Hww2WHhgw2KYKAGF2gIaAW1eoxaSRMrtnNVNshaNkN0yGz4cJN
-         UUCs2I9S1dL92yvoEQAUOxF+194wmTur2lNQEVkWIVWU+eByFMcFfnaMs0PloW9NzwwH
-         0p+w==
-X-Gm-Message-State: APzg51BUJO6SnWnEf4gubZh4q4te9Fucbmcc7pksR9IPHpygW17btHAQ
-        fLFq14t5lO/J4YbR59chO5aJwyhwBY0=
-X-Google-Smtp-Source: ANB0VdachNyIJiOJfzy6pPoAFj26UL3DWoKFTZc/PJlznjc3WmtPgdhRttJmYTrFJL5jCNjFtQrHDQ==
-X-Received: by 2002:a25:5182:: with SMTP id f124-v6mr2145264ybb.480.1536791276547;
-        Wed, 12 Sep 2018 15:27:56 -0700 (PDT)
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
-        by smtp.gmail.com with ESMTPSA id 203-v6sm872891ywv.34.2018.09.12.15.27.54
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Sep 2018 15:27:55 -0700 (PDT)
-Received: by mail-yb1-f177.google.com with SMTP id t71-v6so2460586ybi.7
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 15:27:54 -0700 (PDT)
-X-Received: by 2002:a25:19c3:: with SMTP id 186-v6mr2111427ybz.410.1536791274293;
- Wed, 12 Sep 2018 15:27:54 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8KNxWcmZbq/9VcjsM3slaV8Waiw2gwgR9BQDmllszmA=;
+        b=ZW+xps86cksXR/pObNeC0foQqjiEDDpf8lyp+BBuctXDeeDjh1SfX2AcyO7AALIvb9
+         CgKfO/gEpfhjSgyw/C35BkVaRBykNc4FfOetxzLLGBI6NxaNeuWn1lFGlD4WAqDnCnOg
+         uMR0yu5/W6twBGDjjEFx7D5A1XKEd/waduiPCMlHG/IeRyI1z40wk6Tcy27c/GjK46Dc
+         42idTqLMrZ9+N1jdPKYISOJvzEy72tVq1Qp6PnmFK8uFSZwK0ArZB5sAxRotWx4Gho9g
+         2SSLKwP5YzcPsNPC7SwZWH8ko8NMXPSTdmsR/BM4QeCC84hXgoaAcfNPZ8wA+iOBWMi6
+         ln5Q==
+X-Gm-Message-State: APzg51AUVI+IIxoVfFMbWTsbfOIqifD+jWM601yhJgK9JvML32jdk/YI
+        63nVT42k2mRJbp6dB1q3GWZi9Q==
+X-Google-Smtp-Source: ANB0VdZOvU7MGIm82E2tW5MtkesgpMaducpjkAgfWRFMO+AJrC9Jfgn/jUBSpO4Ct3NsTJoC/Dv14g==
+X-Received: by 2002:a17:902:4a:: with SMTP id 68-v6mr4274488pla.276.1536791290504;
+        Wed, 12 Sep 2018 15:28:10 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
+        by smtp.gmail.com with ESMTPSA id j22-v6sm2932532pfh.45.2018.09.12.15.28.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Sep 2018 15:28:09 -0700 (PDT)
+Date:   Wed, 12 Sep 2018 15:28:09 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Raju P L S S S N <rplsssn@codeaurora.org>
+Cc:     andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, sboyd@kernel.org,
+        evgreen@chromium.org, dianders@chromium.org, ilina@codeaurora.org
+Subject: Re: [PATCH v2 5/6] drivers: qcom: rpmh-rsc: write PDC data
+Message-ID: <20180912222809.GK22824@google.com>
+References: <1532685889-31345-1-git-send-email-rplsssn@codeaurora.org>
+ <1532685889-31345-6-git-send-email-rplsssn@codeaurora.org>
 MIME-Version: 1.0
-Received: by 2002:a25:5f04:0:0:0:0:0 with HTTP; Wed, 12 Sep 2018 15:27:53
- -0700 (PDT)
-In-Reply-To: <CAG48ez03ivLr6w+V911V7pqb1o=kcJw4CLEktcSVVE+=hXXP=w@mail.gmail.com>
-References: <20180911183909.233413-1-jannh@google.com> <CAG48ez03ivLr6w+V911V7pqb1o=kcJw4CLEktcSVVE+=hXXP=w@mail.gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 12 Sep 2018 15:27:53 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jKBPh+TSCuaitpPdk89hW=ch+QeRsUfE68pLpzLS=z4Jg@mail.gmail.com>
-Message-ID: <CAGXu5jKBPh+TSCuaitpPdk89hW=ch+QeRsUfE68pLpzLS=z4Jg@mail.gmail.com>
-Subject: Re: [PATCH] proc: restrict kernel stack dumps to root
-To:     Jann Horn <jannh@google.com>
-Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
-        Ken Chen <kenchen@google.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Security Officers <security@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1532685889-31345-6-git-send-email-rplsssn@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 8:29 AM, Jann Horn <jannh@google.com> wrote:
-> +linux-api, I guess
->
-> On Tue, Sep 11, 2018 at 8:39 PM Jann Horn <jannh@google.com> wrote:
->>
->> Restrict the ability to inspect kernel stacks of arbitrary tasks to root
->> in order to prevent a local attacker from exploiting racy stack unwinding
->> to leak kernel task stack contents.
->> See the added comment for a longer rationale.
->>
->> There don't seem to be any users of this userspace API that can't
->> gracefully bail out if reading from the file fails. Therefore, I believe
->> that this change is unlikely to break things.
->> In the case that this patch does end up needing a revert, the next-best
->> solution might be to fake a single-entry stack based on wchan.
->>
->> Fixes: 2ec220e27f50 ("proc: add /proc/*/stack")
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Jann Horn <jannh@google.com>
->> ---
->>  fs/proc/base.c | 14 ++++++++++++++
->>  1 file changed, 14 insertions(+)
->>
->> diff --git a/fs/proc/base.c b/fs/proc/base.c
->> index ccf86f16d9f0..7e9f07bf260d 100644
->> --- a/fs/proc/base.c
->> +++ b/fs/proc/base.c
->> @@ -407,6 +407,20 @@ static int proc_pid_stack(struct seq_file *m, struct pid_namespace *ns,
->>         unsigned long *entries;
->>         int err;
->>
->> +       /*
->> +        * The ability to racily run the kernel stack unwinder on a running task
->> +        * and then observe the unwinder output is scary; while it is useful for
->> +        * debugging kernel issues, it can also allow an attacker to leak kernel
->> +        * stack contents.
->> +        * Doing this in a manner that is at least safe from races would require
->> +        * some work to ensure that the remote task can not be scheduled; and
->> +        * even then, this would still expose the unwinder as local attack
->> +        * surface.
->> +        * Therefore, this interface is restricted to root.
->> +        */
->> +       if (!file_ns_capable(m->file, &init_user_ns, CAP_SYS_ADMIN))
->> +               return -EACCES;
+On Fri, Jul 27, 2018 at 03:34:48PM +0530, Raju P L S S S N wrote:
+> From: Lina Iyer <ilina@codeaurora.org>
+> 
+> The Power Domain Controller can be programmed to wakeup the RSC and
+> setup the resources back in the active state, before the processor is
+> woken up by a timer interrupt. The wakeup value from the timer hardware
+> can be copied to the PDC which has its own timer and is in an always-on
+> power domain. Programming the wakeup value is done through a separate
+> register on the RSC.
+> 
+> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+> Signed-off-by: Raju P.L.S.S.S.N <rplsssn@codeaurora.org>
+> ---
+> Changes in v2:
+>    - Remove unnecessary EXPORT_SYMBOL
+> ---
+>  drivers/soc/qcom/rpmh-internal.h |  3 +++
+>  drivers/soc/qcom/rpmh-rsc.c      | 35 +++++++++++++++++++++++++++++------
+>  2 files changed, 32 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/soc/qcom/rpmh-internal.h b/drivers/soc/qcom/rpmh-internal.h
+> index 6cd2f78..f5359be 100644
+> --- a/drivers/soc/qcom/rpmh-internal.h
+> +++ b/drivers/soc/qcom/rpmh-internal.h
+> @@ -87,6 +87,7 @@ struct rpmh_ctrlr {
+>   * Resource State Coordinator controller (RSC)
+>   *
+>   * @name:       controller identifier
+> + * @base:       start address of the RSC's DRV registers
+>   * @tcs_base:   start address of the TCS registers in this controller
+>   * @id:         instance id in the controller (Direct Resource Voter)
+>   * @num_tcs:    number of TCSes in this DRV
+> @@ -97,6 +98,7 @@ struct rpmh_ctrlr {
+>   */
+>  struct rsc_drv {
+>  	const char *name;
+> +	void __iomem *base;
+>  	void __iomem *tcs_base;
+>  	int id;
+>  	int num_tcs;
+> @@ -111,6 +113,7 @@ int rpmh_rsc_write_ctrl_data(struct rsc_drv *drv,
+>  			     const struct tcs_request *msg);
+>  int rpmh_rsc_invalidate(struct rsc_drv *drv);
+>  bool rpmh_rsc_ctrlr_is_idle(struct rsc_drv *drv);
+> +int rpmh_rsc_write_pdc_data(struct rsc_drv *drv, const struct tcs_request *msg);
+>  
+>  void rpmh_tx_done(const struct tcs_request *msg, int r);
+>  
+> diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
+> index 19616c9..c870477 100644
+> --- a/drivers/soc/qcom/rpmh-rsc.c
+> +++ b/drivers/soc/qcom/rpmh-rsc.c
+> @@ -60,6 +60,11 @@
+>  #define CMD_STATUS_ISSUED		BIT(8)
+>  #define CMD_STATUS_COMPL		BIT(16)
+>  
+> +/* PDC wakeup */
+> +#define RSC_PDC_DATA_SIZE		2
+> +#define RSC_PDC_DRV_DATA		0x38
+> +#define RSC_PDC_DATA_OFFSET		0x08
+> +
+>  static u32 read_tcs_reg(struct rsc_drv *drv, int reg, int tcs_id, int cmd_id)
+>  {
+>  	return readl_relaxed(drv->tcs_base + reg + RSC_DRV_TCS_OFFSET * tcs_id +
+> @@ -569,6 +574,25 @@ int rpmh_rsc_write_ctrl_data(struct rsc_drv *drv, const struct tcs_request *msg)
+>  	return tcs_ctrl_write(drv, msg);
+>  }
+>  
+> +int rpmh_rsc_write_pdc_data(struct rsc_drv *drv, const struct tcs_request *msg)
+> +{
+> +	int i;
+> +	void __iomem *addr = drv->base + RSC_PDC_DRV_DATA;
+> +
+> +	if (!msg || !msg->cmds || msg->num_cmds != RSC_PDC_DATA_SIZE)
+> +		return -EINVAL;
 
-In the past, we've avoided hard errors like this in favor of just
-censoring the output. Do we want to be more cautious here? (i.e.
-return 0 or a fuller seq_printf(m, "[<0>] privileged\n"); return 0;)
+Is it really always exactly 2 (RSC_PDC_DATA_SIZE) commands?
 
->> +
->>         entries = kmalloc_array(MAX_STACK_TRACE_DEPTH, sizeof(*entries),
->>                                 GFP_KERNEL);
->>         if (!entries)
->> --
->> 2.19.0.rc2.392.g5ba43deb5a-goog
->>
-
--Kees
-
--- 
-Kees Cook
-Pixel Security
+> +
+> +	for (i = 0; i < msg->num_cmds; i++) {
+> +		/* Only data is write capable */
+> +		writel_relaxed(msg->cmds[i].data, addr);
+> +		trace_rpmh_send_msg(drv, RSC_PDC_DRV_DATA, i, 0,
+> +				    &msg->cmds[i]);
+> +		addr += RSC_PDC_DATA_OFFSET;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static int rpmh_probe_tcs_config(struct platform_device *pdev,
+>  				 struct rsc_drv *drv)
+>  {
+> @@ -581,21 +605,20 @@ static int rpmh_probe_tcs_config(struct platform_device *pdev,
+>  	int i, ret, n, st = 0;
+>  	struct tcs_group *tcs;
+>  	struct resource *res;
+> -	void __iomem *base;
+>  	char drv_id[10] = {0};
+>  
+>  	snprintf(drv_id, ARRAY_SIZE(drv_id), "drv-%d", drv->id);
+>  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, drv_id);
+> -	base = devm_ioremap_resource(&pdev->dev, res);
+> -	if (IS_ERR(base))
+> -		return PTR_ERR(base);
+> +	drv->base = devm_ioremap_resource(&pdev->dev, res);
+> +	if (IS_ERR(drv->base))
+> +		return PTR_ERR(drv->base);
+>  
+>  	ret = of_property_read_u32(dn, "qcom,tcs-offset", &offset);
+>  	if (ret)
+>  		return ret;
+> -	drv->tcs_base = base + offset;
+> +	drv->tcs_base = drv->base + offset;
+>  
+> -	config = readl_relaxed(base + DRV_PRNT_CHLD_CONFIG);
+> +	config = readl_relaxed(drv->base + DRV_PRNT_CHLD_CONFIG);
+>  
+>  	max_tcs = config;
+>  	max_tcs &= DRV_NUM_TCS_MASK << (DRV_NUM_TCS_SHIFT * drv->id);
