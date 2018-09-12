@@ -2,112 +2,149 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B20C3C4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 04:10:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B49D1C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 04:19:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52F5320839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 04:10:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5229120866
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 04:19:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fNBGhOL7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52F5320839
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="asoBjp8Q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5229120866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726176AbeILJMk (ORCPT
+        id S1726184AbeILJWG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 05:12:40 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:59438 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725798AbeILJMk (ORCPT
+        Wed, 12 Sep 2018 05:22:06 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:36882 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725737AbeILJWG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 05:12:40 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w8C49kRM072583;
-        Tue, 11 Sep 2018 23:09:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1536725386;
-        bh=jFevDdF1nZ5Rzh5sKTMcs3+L65qk9w3tYNIBWwVsgPo=;
-        h=From:To:CC:Subject:Date;
-        b=fNBGhOL7wE11BVEs7sEBWkt1wk/iGTvmwdqrlRxSN0WZDaVzEIfpKJ+STlFRaPcVf
-         oRK6fMlAK7GhtiiKXNwRqscdtEZH0yfXAtt8UZA4SUaX/XRXN72HxQgVvyTiK8Mjbb
-         vd3RumFyQMRE5AMuFEXMjw2oQ5xqBknlwcGeqSC0=
-Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8C49kBM002231;
-        Tue, 11 Sep 2018 23:09:46 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 11
- Sep 2018 23:09:45 -0500
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Tue, 11 Sep 2018 23:09:45 -0500
-Received: from ula0393675.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8C49hf8007037;
-        Tue, 11 Sep 2018 23:09:43 -0500
-From:   Keerthy <j-keerthy@ti.com>
-To:     <mark.rutland@arm.com>, <robh+dt@kernel.org>
-CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, <j-keerthy@ti.com>,
-        <t-kristo@ti.com>, <tony@atomide.com>
-Subject: [PATCH] dt-bindings: power: Introduce suspend states supported properties
-Date:   Wed, 12 Sep 2018 09:39:32 +0530
-Message-ID: <1536725372-29174-1-git-send-email-j-keerthy@ti.com>
-X-Mailer: git-send-email 1.9.1
+        Wed, 12 Sep 2018 05:22:06 -0400
+Received: by mail-qt0-f194.google.com with SMTP id n6-v6so569576qtl.4
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 21:19:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=T7GeEr43YbtSGx67w8rL7Oth9A/SWaWTbgP3UxdVuAU=;
+        b=asoBjp8QMoyY6jvcE5naBqH169o7hy00hFcdHqISG5DJLInnahy6+uWQrGbn9sCu8a
+         cJxjoBB6bqML9+KxXVa00UUN0kW3zvWWNV/rqvEI/OfVom86K9+Hz7vtElz56O+BwmiS
+         Qx2KGSO7p5qAseSUtEY6j7eXtO21a47qZD7tzqB+GL/IZT9NsGyx1zYd5HLzy9Sev1L0
+         AX++rMfyZxUDf0YLPzr8cZ08nubnl3HmjOG0WXA9j9XC6gyXcuyXukHsBsbKKthPxCLG
+         rZKq/E5KKStiK3Dqbt5v0sJdUjAt3pf1aRXZ8PrZOsjZiRNrnFpuryA1pknBc2Q3tKEA
+         s5ZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=T7GeEr43YbtSGx67w8rL7Oth9A/SWaWTbgP3UxdVuAU=;
+        b=UiMaPH88gDtFlz0qra+LTgZj0EcnTJRPy0Bye5ZEjw3xL0uqbVk0ee+OIeZoZBjc4v
+         LdSFkK3I8ImGZ3bgbZvWZK4i53ZfK5nt6KnSz0mdlNBkK9rAUkhWQwrDSQiw7OTpcEnQ
+         jxaLrdZzStBNa8ikCCIr1QtRxx53Rhm9Wv2JAzYeWyKc2J+P5u1Wd4Cf1keVxmXKN+IT
+         SJN66AYB5WWQJ/7WkXn2Jn5vkqJHDT88FWTHlQFPhJCixGus+1DKlyUuSmhPM6oIRzvY
+         joM8dQABGgBLUsGdqPU6D74vM9IH508h0KjtgPo2LSyuOfMY5etmy/NU6VDUcxewLXUg
+         4XIw==
+X-Gm-Message-State: APzg51CEKpfSsJv7FSDAs7OP84hdVePymkMfbA/LWNV8Ct56c8of5j7R
+        NyfEIjnfAMIShi5AbncsYDfYgFy2D0/OqSvKROU=
+X-Google-Smtp-Source: ANB0VdZ770/DeK/kOoKGYqDJ958prxXCPrbWHLPdFpv5n7t89Zn+wfCUPwP6UwbsdRrc0El3LThWe5mKb34Ilw8cQEo=
+X-Received: by 2002:ac8:304a:: with SMTP id g10-v6mr10526qte.136.1536725969248;
+ Tue, 11 Sep 2018 21:19:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Received: by 2002:ac8:7494:0:0:0:0:0 with HTTP; Tue, 11 Sep 2018 21:19:08
+ -0700 (PDT)
+In-Reply-To: <CAK8P3a2cc741UqFSk+hXpC2s4S+A+0FuiM1yP=Z4rC18sJHq9g@mail.gmail.com>
+References: <20180910060455.20409-1-stefan@agner.ch> <CAK8P3a2cc741UqFSk+hXpC2s4S+A+0FuiM1yP=Z4rC18sJHq9g@mail.gmail.com>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Wed, 12 Sep 2018 06:19:08 +0200
+Message-ID: <CANiq72mGH3KW+FxVDF0PcAeaTCtnNz_oO=2-u4zZQ9kvbRDCtA@mail.gmail.com>
+Subject: Re: [PATCH] include/linux/compiler-clang.h: define __naked
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Stefan Agner <stefan@agner.ch>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Paul Lawrence <paullawrence@google.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introuduce linux generic suspend states supported properties.
-It is convenient for the generic suspend path to have
-the knowledge of the suspend states supported based on the
-device tree properties based on which it can either be suspended
-or safely bailed out of suspend if none of the suspend states
-are supported.
+Hi Arnd, Nick, Stefan,
 
-Signed-off-by: Keerthy <j-keerthy@ti.com>
----
- .../devicetree/bindings/power/power-states.txt     | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/power/power-states.txt
+On Mon, Sep 10, 2018 at 2:14 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Mon, Sep 10, 2018 at 8:05 AM Stefan Agner <stefan@agner.ch> wrote:
+>>
+>> ARM32 arch code uses the __naked attribute. This has previously been
+>> defined in include/linux/compiler-gcc.h, which is no longer included
+>> for Clang. Define __naked for Clang. Conservatively add all attributes
+>> previously used (and supported by Clang).
+>>
+>> This fixes compile errors when building ARM32 using Clang:
+>>   arch/arm/mach-exynos/mcpm-exynos.c:193:13: error: variable has incomplete type 'void'
+>>   static void __naked exynos_pm_power_up_setup(unsigned int affinity_level)
+>>               ^
+>>
+>> Fixes: 815f0ddb346c ("include/linux/compiler*.h: make compiler-*.h mutually exclusive")
+>> Signed-off-by: Stefan Agner <stefan@agner.ch>
+>
+>> +/*
+>> + * ARM32 is currently the only user of __naked supported by Clang. Follow
+>> + * gcc: Do not trace naked functions and make sure they don't get inlined.
+>> + */
+>> +#define __naked __attribute__((naked)) noinline notrace
+>> +
+>
+> Please see patches 5 and 6 of the series that Miguel posted:
+>
+> https://lore.kernel.org/lkml/20180908212459.19736-6-miguel.ojeda.sandonis@gmail.com/
+>
+> I suppose we want the patch to fix clang build as soon as possible though,
+> and follow up with the cleanup for the next merge window, right?
 
-diff --git a/Documentation/devicetree/bindings/power/power-states.txt b/Documentation/devicetree/bindings/power/power-states.txt
-new file mode 100644
-index 0000000..bb80b36
---- /dev/null
-+++ b/Documentation/devicetree/bindings/power/power-states.txt
-@@ -0,0 +1,22 @@
-+* Generic system suspend states support
-+
-+Most platforms support multiple suspend states. Define system
-+suspend states so that one can target appropriate low power
-+states based on the SoC capabilities.
-+
-+linux,suspend-to-memory-supported
-+
-+Upon suspend to memory the system context is saved to primary memory.
-+All the clocks for all the peripherals including CPU are gated.
-+
-+linux,suspend-power-off-supported
-+
-+In this case in additon to the clocks all the voltage resources are
-+turned off except the ones needed to keep the primary memory
-+and a wake up source that can trigger a wakeup event.
-+
-+linux,suspend-to-disk-supported
-+
-+Upon suspend to disk that system context is saved to secondary memory.
-+All the clocks for all the peripherals including CPU are gated. Even
-+the primary memory is turned off.
--- 
-1.9.1
+Not sure what the plans of Linus et. al. are, if they have any; but
+that would be a safe bet.
 
+In case they want to speed this up and put the entire series into
+v4.19 (instead of the two patches), I have done a binary & objdump
+diff between -rc2 and v4 (based on -rc2) on all object files (with
+UTS_RELEASE fixed to avoid some differences).
+
+In a x86_64 tinyconfig with gcc 7.3, the differences I found are:
+
+$ ./compare.py linux-rc2 linux-v4
+[2018-09-12 06:16:39,483] [INFO] [arch/x86/boot/compressed/piggy.o]
+Binary diff (use 'bash -c "cmp
+linux-rc2/arch/x86/boot/compressed/piggy.o
+linux-v4/arch/x86/boot/compressed/piggy.o"' to replicate)
+[2018-09-12 06:16:39,606] [INFO] [arch/x86/boot/header.o] Binary diff
+(use 'bash -c "cmp linux-rc2/arch/x86/boot/header.o
+linux-v4/arch/x86/boot/header.o"' to replicate)
+[2018-09-12 06:16:39,659] [INFO] [arch/x86/boot/version.o] Binary diff
+(use 'bash -c "cmp linux-rc2/arch/x86/boot/version.o
+linux-v4/arch/x86/boot/version.o"' to replicate)
+[2018-09-12 06:16:40,483] [INFO] [init/version.o] Binary diff (use
+'bash -c "cmp linux-rc2/init/version.o linux-v4/init/version.o"' to
+replicate)
+
+I will do a bigger one tomorrow or so and see if there are any
+important differences. Regardless of what we do, I will send the
+__naked patches separately as well (requested by Nick on GitHub).
+
+Cheers,
+Miguel
