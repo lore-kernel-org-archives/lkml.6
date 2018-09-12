@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1A34C4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 00:44:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3B76C04ABB
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 00:44:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A4CC20880
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 00:44:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A4CC20880
+	by mail.kernel.org (Postfix) with ESMTP id A8A1320839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 00:44:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8A1320839
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728188AbeILFqj (ORCPT
+        id S1728219AbeILFqn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 01:46:39 -0400
-Received: from mga02.intel.com ([134.134.136.20]:22578 "EHLO mga02.intel.com"
+        Wed, 12 Sep 2018 01:46:43 -0400
+Received: from mga02.intel.com ([134.134.136.20]:22566 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725738AbeILFqj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 01:46:39 -0400
+        id S1726454AbeILFqm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 01:46:42 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Sep 2018 17:44:48 -0700
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Sep 2018 17:44:20 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,362,1531810800"; 
-   d="scan'208";a="69283879"
+   d="scan'208";a="69283822"
 Received: from unknown (HELO yhuang-mobile.sh.intel.com) ([10.239.198.87])
-  by fmsmga007.fm.intel.com with ESMTP; 11 Sep 2018 17:44:44 -0700
+  by fmsmga007.fm.intel.com with ESMTP; 11 Sep 2018 17:44:15 -0700
 From:   Huang Ying <ying.huang@intel.com>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
@@ -46,9 +46,9 @@ Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
         Zi Yan <zi.yan@cs.rutgers.edu>,
         Daniel Jordan <daniel.m.jordan@oracle.com>
-Subject: [PATCH -V5 RESEND 10/21] swap: Support to count THP swapin and its fallback
-Date:   Wed, 12 Sep 2018 08:44:03 +0800
-Message-Id: <20180912004414.22583-11-ying.huang@intel.com>
+Subject: [PATCH -V5 RESEND 04/21] swap: Support PMD swap mapping in put_swap_page()
+Date:   Wed, 12 Sep 2018 08:43:57 +0800
+Message-Id: <20180912004414.22583-5-ying.huang@intel.com>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20180912004414.22583-1-ying.huang@intel.com>
 References: <20180912004414.22583-1-ying.huang@intel.com>
@@ -57,9 +57,15 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2 new /proc/vmstat fields are added, "thp_swapin" and
-"thp_swapin_fallback" to count swapin a THP from swap device in one
-piece and fallback to normal page swapin.
+Previously, during swapout, all PMD page mapping will be split and
+replaced with PTE swap mapping.  And when clearing the SWAP_HAS_CACHE
+flag for the huge swap cluster in put_swap_page(), the huge swap
+cluster will be split.  Now, during swapout, the PMD page mappings to
+the THP will be changed to PMD swap mappings to the corresponding swap
+cluster.  So when clearing the SWAP_HAS_CACHE flag, the huge swap
+cluster will only be split if the PMD swap mapping count is 0.
+Otherwise, we will keep it as the huge swap cluster.  So that we can
+swapin a THP in one piece later.
 
 Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
 Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
@@ -75,121 +81,60 @@ Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 Cc: Zi Yan <zi.yan@cs.rutgers.edu>
 Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
 ---
- Documentation/admin-guide/mm/transhuge.rst |  8 ++++++++
- include/linux/vm_event_item.h              |  2 ++
- mm/huge_memory.c                           |  4 +++-
- mm/page_io.c                               | 15 ++++++++++++---
- mm/vmstat.c                                |  2 ++
- 5 files changed, 27 insertions(+), 4 deletions(-)
+ mm/swapfile.c | 31 ++++++++++++++++++++++++-------
+ 1 file changed, 24 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
-index 7ab93a8404b9..85e33f785fd7 100644
---- a/Documentation/admin-guide/mm/transhuge.rst
-+++ b/Documentation/admin-guide/mm/transhuge.rst
-@@ -364,6 +364,14 @@ thp_swpout_fallback
- 	Usually because failed to allocate some continuous swap space
- 	for the huge page.
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index 138968b79de5..553d2551b35a 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -1314,6 +1314,15 @@ void swap_free(swp_entry_t entry)
  
-+thp_swpin
-+	is incremented every time a huge page is swapin in one piece
-+	without splitting.
-+
-+thp_swpin_fallback
-+	is incremented if a huge page has to be split during swapin.
-+	Usually because failed to allocate a huge page.
-+
- As the system ages, allocating huge pages may be expensive as the
- system uses memory compaction to copy data around memory to free a
- huge page for use. There are some counters in ``/proc/vmstat`` to help
-diff --git a/include/linux/vm_event_item.h b/include/linux/vm_event_item.h
-index 5c7f010676a7..7b438548a78e 100644
---- a/include/linux/vm_event_item.h
-+++ b/include/linux/vm_event_item.h
-@@ -88,6 +88,8 @@ enum vm_event_item { PGPGIN, PGPGOUT, PSWPIN, PSWPOUT,
- 		THP_ZERO_PAGE_ALLOC_FAILED,
- 		THP_SWPOUT,
- 		THP_SWPOUT_FALLBACK,
-+		THP_SWPIN,
-+		THP_SWPIN_FALLBACK,
- #endif
- #ifdef CONFIG_MEMORY_BALLOON
- 		BALLOON_INFLATE,
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 4dbc4f933c4f..1232ade5deca 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1673,8 +1673,10 @@ int do_huge_pmd_swap_page(struct vm_fault *vmf, pmd_t orig_pmd)
- 				/* swapoff occurs under us */
- 				} else if (ret == -EINVAL)
- 					ret = 0;
--				else
-+				else {
-+					count_vm_event(THP_SWPIN_FALLBACK);
- 					goto fallback;
-+				}
- 			}
- 			delayacct_clear_flag(DELAYACCT_PF_SWAPIN);
- 			goto out;
-diff --git a/mm/page_io.c b/mm/page_io.c
-index aafd19ec1db4..362254b99955 100644
---- a/mm/page_io.c
-+++ b/mm/page_io.c
-@@ -348,6 +348,15 @@ int __swap_writepage(struct page *page, struct writeback_control *wbc,
- 	return ret;
- }
- 
-+static inline void count_swpin_vm_event(struct page *page)
-+{
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+	if (unlikely(PageTransHuge(page)))
-+		count_vm_event(THP_SWPIN);
-+#endif
-+	count_vm_events(PSWPIN, hpage_nr_pages(page));
-+}
-+
- int swap_readpage(struct page *page, bool synchronous)
+ /*
+  * Called after dropping swapcache to decrease refcnt to swap entries.
++ *
++ * When a THP is added into swap cache, the SWAP_HAS_CACHE flag will
++ * be set in the swap_map[] of all swap entries in the huge swap
++ * cluster backing the THP.  This huge swap cluster will not be split
++ * unless the THP is split even if its PMD swap mapping count dropped
++ * to 0.  Later, when the THP is removed from swap cache, the
++ * SWAP_HAS_CACHE flag will be cleared in the swap_map[] of all swap
++ * entries in the huge swap cluster.  And this huge swap cluster will
++ * be split if its PMD swap mapping count is 0.
+  */
+ void put_swap_page(struct page *page, swp_entry_t entry)
  {
- 	struct bio *bio;
-@@ -371,7 +380,7 @@ int swap_readpage(struct page *page, bool synchronous)
+@@ -1332,15 +1341,23 @@ void put_swap_page(struct page *page, swp_entry_t entry)
  
- 		ret = mapping->a_ops->readpage(swap_file, page);
- 		if (!ret)
--			count_vm_event(PSWPIN);
-+			count_swpin_vm_event(page);
- 		return ret;
- 	}
- 
-@@ -382,7 +391,7 @@ int swap_readpage(struct page *page, bool synchronous)
- 			unlock_page(page);
+ 	ci = lock_cluster_or_swap_info(si, offset);
+ 	if (size == SWAPFILE_CLUSTER) {
+-		VM_BUG_ON(!cluster_is_huge(ci));
++		VM_BUG_ON(!IS_ALIGNED(offset, size));
+ 		map = si->swap_map + offset;
+-		for (i = 0; i < SWAPFILE_CLUSTER; i++) {
+-			val = map[i];
+-			VM_BUG_ON(!(val & SWAP_HAS_CACHE));
+-			if (val == SWAP_HAS_CACHE)
+-				free_entries++;
++		/*
++		 * No PMD swap mapping, the swap cluster will be freed
++		 * if all swap entries becoming free, otherwise the
++		 * huge swap cluster will be split.
++		 */
++		if (!cluster_swapcount(ci)) {
++			for (i = 0; i < SWAPFILE_CLUSTER; i++) {
++				val = map[i];
++				VM_BUG_ON(!(val & SWAP_HAS_CACHE));
++				if (val == SWAP_HAS_CACHE)
++					free_entries++;
++			}
++			if (free_entries != SWAPFILE_CLUSTER)
++				cluster_clear_huge(ci);
  		}
- 
--		count_vm_event(PSWPIN);
-+		count_swpin_vm_event(page);
- 		return 0;
- 	}
- 
-@@ -401,7 +410,7 @@ int swap_readpage(struct page *page, bool synchronous)
- 	get_task_struct(current);
- 	bio->bi_private = current;
- 	bio_set_op_attrs(bio, REQ_OP_READ, 0);
--	count_vm_event(PSWPIN);
-+	count_swpin_vm_event(page);
- 	bio_get(bio);
- 	qc = submit_bio(bio);
- 	while (synchronous) {
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index 8ba0870ecddd..ac04801bb0cb 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1263,6 +1263,8 @@ const char * const vmstat_text[] = {
- 	"thp_zero_page_alloc_failed",
- 	"thp_swpout",
- 	"thp_swpout_fallback",
-+	"thp_swpin",
-+	"thp_swpin_fallback",
- #endif
- #ifdef CONFIG_MEMORY_BALLOON
- 	"balloon_inflate",
+-		cluster_clear_huge(ci);
+ 		if (free_entries == SWAPFILE_CLUSTER) {
+ 			unlock_cluster_or_swap_info(si, ci);
+ 			spin_lock(&si->lock);
 -- 
 2.16.4
 
