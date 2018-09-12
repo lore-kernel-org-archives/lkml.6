@@ -2,67 +2,116 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B738EC46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:16:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED140C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:17:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B50F2087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:16:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B50F2087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=triplefau.lt
+	by mail.kernel.org (Postfix) with ESMTP id A2DB82087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:17:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2DB82087F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727715AbeILNTw convert rfc822-to-8bit (ORCPT
+        id S1727780AbeILNU4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 09:19:52 -0400
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:54631 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725948AbeILNTv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 09:19:51 -0400
-X-Greylist: delayed 43331 seconds by postgrey-1.27 at vger.kernel.org; Wed, 12 Sep 2018 09:19:50 EDT
-Received: from sogo2.bi1.0x35.net (sogo2.bi1.0x35.net [10.150.1.72])
-        (Authenticated sender: repk@triplefau.lt)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPA id 45C3424000D;
-        Wed, 12 Sep 2018 08:16:23 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
-In-Reply-To: <20180911184755.GA2562@kroah.com>
-From:   "Remi Pommarel" <repk@triplefau.lt>
-X-Forward: 62.23.167.188, 10.150.1.6
-Date:   Wed, 12 Sep 2018 10:16:22 +0200
-Cc:     "Jiri Slaby" <jslaby@suse.com>, linux-kernel@vger.kernel.org,
-        "Alexander Viro" <viro@zeniv.linux.org.uk>,
-        "Kees Cook" <keescook@chromium.org>,
-        "Elie Roudninski" <xademax@gmail.com>
-To:     "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+        Wed, 12 Sep 2018 09:20:56 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:12101 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726537AbeILNUz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 09:20:55 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id B1F91CC1080;
+        Wed, 12 Sep 2018 16:17:27 +0800 (CST)
+Received: from huawei.com (10.175.124.28) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.399.0; Wed, 12 Sep 2018
+ 16:17:23 +0800
+From:   Jason Yan <yanaijie@huawei.com>
+To:     <martin.petersen@oracle.com>, <jejb@linux.vnet.ibm.com>
+CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <john.garry@huawei.com>, <zhaohongjiang@huawei.com>,
+        <hare@suse.com>, <dan.j.williams@intel.com>, <jthumshirn@suse.de>,
+        <hch@lst.de>, <huangdaode@hisilicon.com>,
+        <chenxiang66@hisilicon.com>, <miaoxie@huawei.com>,
+        Jason Yan <yanaijie@huawei.com>,
+        Ewan Milne <emilne@redhat.com>, Tomas Henzl <thenzl@redhat.com>
+Subject: [PATCH 2/5] scsi: libsas: check the lldd callback correctly
+Date:   Wed, 12 Sep 2018 16:29:43 +0800
+Message-ID: <20180912082946.34814-3-yanaijie@huawei.com>
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20180912082946.34814-1-yanaijie@huawei.com>
+References: <20180912082946.34814-1-yanaijie@huawei.com>
 MIME-Version: 1.0
-Message-ID: <3459-5b98cb80-1-49ed5900@198591000>
-Subject: =?utf-8?q?Re=3A?==?utf-8?q?_=5BRFC?= PATCH =?utf-8?q?0=2F4=5D?= Add 
- specific vt input's key map
-User-Agent: SOGoMail 3.2.10
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
+X-Originating-IP: [10.175.124.28]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+We are using lldd_port_deformed so we'd better check if lldd_port_deformed
+is NULL.
+
+After this, we can remove hisi_sas_port_deformed() because it is just a
+stub to avoid a NULL dereference caused by the wrong check.
+
+Signed-off-by: Jason Yan <yanaijie@huawei.com>
+CC: John Garry <john.garry@huawei.com>
+CC: Johannes Thumshirn <jthumshirn@suse.de>
+CC: Ewan Milne <emilne@redhat.com>
+CC: Christoph Hellwig <hch@lst.de>
+CC: Tomas Henzl <thenzl@redhat.com>
+CC: Dan Williams <dan.j.williams@intel.com>
+CC: Hannes Reinecke <hare@suse.com>
+---
+ drivers/scsi/hisi_sas/hisi_sas_main.c | 9 ++-------
+ drivers/scsi/libsas/sas_discover.c    | 2 +-
+ 2 files changed, 3 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
+index a4e2e6aa9a6b..1975c9266978 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_main.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
+@@ -1861,10 +1861,6 @@ static void hisi_sas_port_formed(struct asd_sas_phy *sas_phy)
+ 	hisi_sas_port_notify_formed(sas_phy);
+ }
  
-On Tue, Sep 11, 2018 at 08:47:55PM +0200, Greg Kroah-Hartman wrote:  
-> 
-> Normally I do not review "RFC" patches as it implies the submitter does
-> not think they are a valid solution.  How about resending them as if you
-> think this is something ready to be merged?
-
-I had used "RFC" here because I had one or two questions about the
-implementation choices I made on those patches and not really on the
-solution itself. So, yes, I don't mind sending another round of those
-patches without RFC.
-
-Thanks,
-
+-static void hisi_sas_port_deformed(struct asd_sas_phy *sas_phy)
+-{
+-}
+-
+ static int hisi_sas_write_gpio(struct sas_ha_struct *sha, u8 reg_type,
+ 			u8 reg_index, u8 reg_count, u8 *write_data)
+ {
+@@ -1954,10 +1950,9 @@ static struct sas_domain_function_template hisi_sas_transport_ops = {
+ 	.lldd_I_T_nexus_reset	= hisi_sas_I_T_nexus_reset,
+ 	.lldd_lu_reset		= hisi_sas_lu_reset,
+ 	.lldd_query_task	= hisi_sas_query_task,
+-	.lldd_clear_nexus_ha = hisi_sas_clear_nexus_ha,
++	.lldd_clear_nexus_ha	= hisi_sas_clear_nexus_ha,
+ 	.lldd_port_formed	= hisi_sas_port_formed,
+-	.lldd_port_deformed = hisi_sas_port_deformed,
+-	.lldd_write_gpio = hisi_sas_write_gpio,
++	.lldd_write_gpio	= hisi_sas_write_gpio,
+ };
+ 
+ void hisi_sas_init_mem(struct hisi_hba *hisi_hba)
+diff --git a/drivers/scsi/libsas/sas_discover.c b/drivers/scsi/libsas/sas_discover.c
+index 0148ae62a52a..dde433aa59c2 100644
+--- a/drivers/scsi/libsas/sas_discover.c
++++ b/drivers/scsi/libsas/sas_discover.c
+@@ -260,7 +260,7 @@ static void sas_suspend_devices(struct work_struct *work)
+ 	 * phy_list is not being mutated
+ 	 */
+ 	list_for_each_entry(phy, &port->phy_list, port_phy_el) {
+-		if (si->dft->lldd_port_formed)
++		if (si->dft->lldd_port_deformed)
+ 			si->dft->lldd_port_deformed(phy);
+ 		phy->suspended = 1;
+ 		port->suspended = 1;
 -- 
-Remi
+2.14.4
 
