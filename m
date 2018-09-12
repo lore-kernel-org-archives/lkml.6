@@ -2,91 +2,82 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8397C46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:55:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6E3AC46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:55:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3B8520880
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:55:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ylf5Z5qp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3B8520880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7FDBF20880
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:55:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FDBF20880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=triplefau.lt
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728119AbeILWAv (ORCPT
+        id S1728150AbeILWBM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 18:00:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33382 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727051AbeILWAv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 18:00:51 -0400
-Received: from localhost (unknown [146.7.4.73])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 181E1206B6;
-        Wed, 12 Sep 2018 16:55:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536771327;
-        bh=brKWleqYoSK6gpr7eBJhol9g3Jb29URg7NqcMjhLcig=;
-        h=Subject:From:To:Cc:Date:From;
-        b=ylf5Z5qpkeWaToLwvMVdH0AD/eRUUYVL81xaoeViR62N/PJwDmW1vCA3IW1it/Zj3
-         jc+3UslZq231N0TFzYQJXs+L3MsX5wcHOLhSQwk8WAbEseslYvIEQOB4mB7Lc8t4eu
-         /06G1fn1S+zILMyz2LwgUwkR0uWGDGKYxMOSaVzM=
-Subject: [PATCH] MAINTAINERS: Add PPC contacts for PCI core error handling
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     linux-pci@vger.kernel.org, Russell Currey <ruscur@russell.cc>,
-        linuxppc-dev@lists.ozlabs.org
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 12 Sep 2018 11:55:26 -0500
-Message-ID: <153677132617.23091.12307288405707171077.stgit@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: StGit/0.18
+        Wed, 12 Sep 2018 18:01:12 -0400
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:49211 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727051AbeILWBM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 18:01:12 -0400
+X-Originating-IP: 88.190.179.123
+Received: from localhost (unknown [88.190.179.123])
+        (Authenticated sender: repk@triplefau.lt)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id B2D75C0009;
+        Wed, 12 Sep 2018 16:55:44 +0000 (UTC)
+Date:   Wed, 12 Sep 2018 19:03:51 +0200
+From:   Remi Pommarel <repk@triplefau.lt>
+To:     Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Kees Cook <keescook@chromium.org>,
+        Elie Roudninski <xademax@gmail.com>
+Subject: Re: [PATCH 0/4] Add specific vt input's key map
+Message-ID: <20180912170351.GB1119@voidbox.localdomain>
+References: <cover.1536695070.git.repk@triplefau.lt>
+ <20180912153519.533fb27a@alans-desktop>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180912153519.533fb27a@alans-desktop>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Helgaas <bhelgaas@google.com>
+On Wed, Sep 12, 2018 at 03:35:19PM +0100, Alan Cox wrote:
+> On Tue, 11 Sep 2018 22:23:55 +0200
+> Remi Pommarel <repk@triplefau.lt> wrote:
+> 
+> > This patchset adds a way to have a specific keyboard config (i.e.
+> > keycode to keysym map) for a vt attached input.
+> 
+> Who actually needs this given that you can't even render most
+> international symbols in text mode and X and friends already deal with
+> mapping of keyboards at this degree of fine-ness and even more so ?
 
-The original PCI error recovery functionality was for the powerpc-specific
-IBM EEH feature.  PCIe subsequently added some similar features, including
-AER and DPC, that can be used on any architecture.
+Let say you share one computer among people used to different keyboard
+layouts, so you have plugged in one keyboard for each of those people.
+Let say you have encrypted your disk with a long passphrase, the one
+that boots up the computer has to enter it. It could be annoying to
+learn another layout just to enter a passphrase to boot. This allows to
+set an udev rule in initrd to use a different layout per keyboard so
+every people using this computer can use their favorite layout to enter
+the passphrase.
 
-We want the generic PCI core error handling support to work with all of
-these features.  Driver error recovery callbacks should be independent of
-which feature the platform provides.
+I am in such a situation and so is @Elie.
 
-Add the generic PCI core error recovery files to the powerpc EEH
-MAINTAINERS entry so the powerpc folks will be copied on changes to the
-generic PCI error handling strategy.
+I also don't start X server at boot time (or sometimes I switch to a linux
+VT) it is not very convenient for me to switch layout to enter my password,
+or even to type "startx".
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
----
- MAINTAINERS |    4 ++++
- 1 file changed, 4 insertions(+)
+I do agree that it is not an absolute must-have or shiny feature, it is
+just a convenient one, at least for me.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 7e10ba65bfe4..d6699597fd89 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11202,6 +11202,10 @@ PCI ENHANCED ERROR HANDLING (EEH) FOR POWERPC
- M:	Russell Currey <ruscur@russell.cc>
- L:	linuxppc-dev@lists.ozlabs.org
- S:	Supported
-+F:	Documentation/PCI/pci-error-recovery.txt
-+F:	drivers/pci/pcie/aer.c
-+F:	drivers/pci/pcie/dpc.c
-+F:	drivers/pci/pcie/err.c
- F:	Documentation/powerpc/eeh-pci-error-recovery.txt
- F:	arch/powerpc/kernel/eeh*.c
- F:	arch/powerpc/platforms/*/eeh*.c
-
+-- 
+Remi
