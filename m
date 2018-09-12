@@ -2,104 +2,80 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61483C46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 18:19:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EDF4C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 18:19:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 055952088E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 18:19:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OZMlMigM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 055952088E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 208BE2088E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 18:19:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 208BE2088E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728031AbeILXZF (ORCPT
+        id S1728071AbeILXZf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 19:25:05 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:38452 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726675AbeILXZE (ORCPT
+        Wed, 12 Sep 2018 19:25:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46940 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727689AbeILXZf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 19:25:04 -0400
-Received: by mail-it0-f65.google.com with SMTP id p129-v6so4353293ite.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 11:19:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=vVYZmYDQusgs5WEVYlrHbZm15KeJNj+KqWke29rz0Yo=;
-        b=OZMlMigM6Mvsbl2TYqagohiWLeK2VOADJD9ggMPnEW7m5cPQTVr4nCXYlZIWZBjPTG
-         LNrCysyX78Qp9z0jPnp0ND/Vv3UmUd7YOvkMqHZZeE636kMKGGGUAbge6vmfIVfvnOVp
-         gVfaebjDQkj0eDx1pXOba+6jsZUkMR6kvqhIA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=vVYZmYDQusgs5WEVYlrHbZm15KeJNj+KqWke29rz0Yo=;
-        b=SzRK+8vATfgd3mhSLsl/SiJRLuvcUurW2Btub2JL75h8WrLWxNFo2ZMgaF2dPex7GO
-         lKEuXzI0iavfw9KvusACNFEgjHV3/plmOdDjXKp9C8k2GSH1zzFdTMorQXRDz8ZXNxtJ
-         xPnub/rMs1JkSxTEqj3xQon3VoExKCcXTTjX/UQ6CpoNMGTIImgAy07hvccVR8MRFv00
-         cG9o2bS0CReRbqkinwiylbOaiASelktmdGf+vjOuUop7aLjb2jjCCRxcxeMhMwvkG3fr
-         1lxLhf+N6lsDG9HcRvyLeL9cvYYFWhx79sU0NmmJCu2YNOrKMGdZAVzlG6EFCcf93sEe
-         zzOw==
-X-Gm-Message-State: APzg51D6P/IHzAf88xMHfGczwylCy0vrWfvY2jUedNi+bhCH+uCygQS8
-        uuFnJhNb06+1JGlxGUGCRABdKmbtbIfsD0JMzB00Jorp/YJ2ow==
-X-Google-Smtp-Source: ANB0VdZCKlHZweyIqrkoHpRVn8u4xvnW8lngLhhklffZcMZRB7R4qCFY0OLWnwlJAOI+qKqQMx+hdLewXm+zqG+qdBA=
-X-Received: by 2002:a02:4d1b:: with SMTP id l27-v6mr3152445jab.86.1536776361824;
- Wed, 12 Sep 2018 11:19:21 -0700 (PDT)
+        Wed, 12 Sep 2018 19:25:35 -0400
+Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5053D1017;
+        Wed, 12 Sep 2018 18:19:52 +0000 (UTC)
+Date:   Wed, 12 Sep 2018 20:19:28 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Vinod <vkoul@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Subject: Re: [GIT PULL] soundwire updates for v4.19-rc1
+Message-ID: <20180912181928.GA15480@kroah.com>
+References: <20180808162850.GN2395@vkoul-mobl>
+ <20180912072945.GA24289@kroah.com>
+ <20180912092233.GG2766@vkoul-mobl>
 MIME-Version: 1.0
-Received: by 2002:a6b:2848:0:0:0:0:0 with HTTP; Wed, 12 Sep 2018 11:19:21
- -0700 (PDT)
-In-Reply-To: <CAHmME9rxrC+CAR-xoXd-bZO1HYZ+TjvT_K4xgQwWXE53zi61xQ@mail.gmail.com>
-References: <20180911010838.8818-1-Jason@zx2c4.com> <20180911010838.8818-3-Jason@zx2c4.com>
- <CAKv+Gu9nSeo4PFVrtjtqGQ32eqyxUp3xVCczZfu+dhFz5yLM0A@mail.gmail.com>
- <20180911220849.GC81235@gmail.com> <CAHmME9rxrC+CAR-xoXd-bZO1HYZ+TjvT_K4xgQwWXE53zi61xQ@mail.gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Wed, 12 Sep 2018 20:19:21 +0200
-Message-ID: <CAKv+Gu9ZjX3A4bHHgRAkJtr+SKwti+d3dwE0fhGtmeQB_refqw@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 02/17] zinc: introduce minimal cryptography library
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     Eric Biggers <ebiggers@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180912092233.GG2766@vkoul-mobl>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12 September 2018 at 20:16, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
-> Hi Eric,
->
-> On Wed, Sep 12, 2018 at 12:08 AM Eric Biggers <ebiggers@kernel.org> wrote:
->> I'd strongly prefer the assembly to be readable too.  Jason, I'm not sure if
->> you've actually read through the asm from the OpenSSL implementations, but the
->> generated .S files actually do lose a lot of semantic information that was in
->> the original .pl scripts.
->
-> The thing to keep in mind is that the .S was not directly and blindly
-> generated from the .pl. We started with the output of the .pl, and
-> then, particularly in the case of x86_64, worked with it a lot, and
-> now it's something a bit different. We've definitely spent a lot of
-> time reading that assembly.
->
+On Wed, Sep 12, 2018 at 02:52:33PM +0530, Vinod wrote:
+> On 12-09-18, 09:29, Greg KH wrote:
+> > On Wed, Aug 08, 2018 at 09:58:50PM +0530, Vinod wrote:
+> > > Hey Greg,
+> > > 
+> > > Please PULL to receive the soundwire update for v4.19-rc1 with a signed
+> > > tag as you requested last time and the norm :-)
+> > > 
+> > > The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
+> > > 
+> > >   Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
+> > > 
+> > > are available in the Git repository at:
+> > > 
+> > >   git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/soundwire.git tags/soundwire-4.19-rc1
+> > 
+> > It's too late for all of these patches to go into 4.19-final.  Can you
+> > split this up into two sets of patches?  One for bugfixes to get into
+> > 4.19-final and one for new features for 4.20-rc1?
+> 
+> Yeah to be fair these were posted a bit late as well. I have already
+> rebased these on top of 4.19-rc1 and had them included in the linux-next
+> as well.
+> 
+> I will send fixes tag now. Would -rc6 be apt time for 4.20-rc1
+> inclusions?
 
-Can we please have those changes as a separate patch? Preferably to
-the .pl file rather than the .S file, so we can easily distinguish the
-code from upstream from the code that you modified.
+Yes, that's fine, but you can always send things sooner if you have
+them.
 
-> I'll see if I can improve the readability with some register name
-> remapping on ARM. No guarantees, but I'll play a bit and see if I can
-> make it a bit better.
->
-> Jason
+thanks,
+
+greg k-h
