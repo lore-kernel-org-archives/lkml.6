@@ -5,32 +5,32 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B8DDC6778D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:41:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE6F1C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:44:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C894B20833
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:41:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C894B20833
+	by mail.kernel.org (Postfix) with ESMTP id 642AC20833
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:44:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 642AC20833
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727626AbeILUq6 (ORCPT
+        id S1726906AbeILUtb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 16:46:58 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60200 "EHLO mx1.redhat.com"
+        Wed, 12 Sep 2018 16:49:31 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44224 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726640AbeILUq6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 16:46:58 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        id S1726640AbeILUtb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 16:49:31 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8DAC340122C3;
-        Wed, 12 Sep 2018 15:41:53 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8B9C38011059;
+        Wed, 12 Sep 2018 15:44:25 +0000 (UTC)
 Received: from llong.remote.csb (dhcp-17-55.bos.redhat.com [10.18.17.55])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 969D52166BA2;
-        Wed, 12 Sep 2018 15:41:52 +0000 (UTC)
-Subject: Re: [PATCH v3 1/4] fs/dcache: Fix incorrect nr_dentry_unused
- accounting in shrink_dcache_sb()
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B400810DCF46;
+        Wed, 12 Sep 2018 15:44:24 +0000 (UTC)
+Subject: Re: [PATCH v3 4/4] fs/dcache: Eliminate branches in
+ nr_dentry_negative accounting
 To:     Dave Chinner <david@fromorbit.com>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
@@ -49,47 +49,54 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         "Wangkai (Kevin C)" <wangkai86@huawei.com>,
         Michal Hocko <mhocko@kernel.org>
 References: <1536693506-11949-1-git-send-email-longman@redhat.com>
- <1536693506-11949-2-git-send-email-longman@redhat.com>
- <20180911220224.GE5631@dastard>
+ <1536693506-11949-5-git-send-email-longman@redhat.com>
+ <20180911221315.GH5631@dastard>
 From:   Waiman Long <longman@redhat.com>
 Organization: Red Hat
-Message-ID: <538489aa-d021-5662-7a46-d358f8770054@redhat.com>
-Date:   Wed, 12 Sep 2018 11:41:52 -0400
+Message-ID: <c481718c-ab2b-040b-b4d4-efee3a6c2e1e@redhat.com>
+Date:   Wed, 12 Sep 2018 11:44:24 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <20180911220224.GE5631@dastard>
+In-Reply-To: <20180911221315.GH5631@dastard>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 12 Sep 2018 15:41:53 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 12 Sep 2018 15:41:53 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 12 Sep 2018 15:44:25 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 12 Sep 2018 15:44:25 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/11/2018 06:02 PM, Dave Chinner wrote:
-> On Tue, Sep 11, 2018 at 03:18:23PM -0400, Waiman Long wrote:
->> The nr_dentry_unused per-cpu counter tracks dentries in both the
->> LRU lists and the shrink lists where the DCACHE_LRU_LIST bit is set.
->> The shrink_dcache_sb() function moves dentries from the LRU list to a
->> shrink list and subtracts the dentry count from nr_dentry_unused. This
->> is incorrect as the nr_dentry_unused count Will also be decremented in
->> shrink_dentry_list() via d_shrink_del(). To fix this double decrement,
->> the decrement in the shrink_dcache_sb() function is taken out.
+On 09/11/2018 06:13 PM, Dave Chinner wrote:
+> On Tue, Sep 11, 2018 at 03:18:26PM -0400, Waiman Long wrote:
+>> Because the accounting of nr_dentry_negative depends on whether a dentry
+>> is a negative one or not, branch instructions are introduced to handle
+>> the accounting conditionally. That may potentially slow down the task
+>> by a noticeable amount if that introduces sizeable amount of additional
+>> branch mispredictions.
 >>
->> Fixes: 4e717f5c1083 ("list_lru: remove special case function list_lru_dispose_all."
->>
->> Signed-off-by: Waiman Long <longman@redhat.com>
-> Please add a stable tag for this.
+>> To avoid that, the accounting code is now modified to use conditional
+>> move instructions instead, if supported by the architecture.
+> I think this is a case of over-optimisation. It makes the code
+> harder to read for extremely marginal benefit, and if we ever need
+> to add any more code for negative dentries in these paths the first
+> thing we'll have to do is revert this change.
 >
-> Otherwise looks fine.
+> Unless you have numbers demonstrating that it's a clear performance
+> improvement, then NACK for this patch.
 >
-> Reviewed-by: Dave Chinner <dchinner@redhat.com>
+> Cheers,
 >
-I will add the cc:stable tag.
+> Dave.
+
+Yes, this is an optimization.
+
+Unfortunately I don't have any performance number as I had not seen any
+significant performance difference outside of the noise range with these
+set of changes. I am not fine with not taking this patch.
 
 Cheers,
 Longman
