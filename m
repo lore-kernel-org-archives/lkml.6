@@ -2,692 +2,262 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD3D8C46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:59:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D11BC46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:59:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B8A32087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:59:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="NMuMe5Lo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B8A32087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	by mail.kernel.org (Postfix) with ESMTP id B209D2087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:59:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B209D2087F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728525AbeILVE6 (ORCPT
+        id S1728511AbeILVE5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 17:04:58 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:37218 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728379AbeILVEA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 17:04:57 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:33681 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728348AbeILVEA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 12 Sep 2018 17:04:00 -0400
-Received: by mail-it0-f65.google.com with SMTP id h20-v6so3730019itf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 08:58:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=xDwZ9IPlPpLW6KA/tgQTbpYLeFZMSVfEV0m+pDTHL2E=;
-        b=NMuMe5Lob91FoyCs+o21dEUb5FIeTwa53E+E7vAVw2DsPecEBKa6tBfWJcvvQhIMkq
-         UEma4G8VNGeb/qatQfV37rmc0FeCDX7EbsTqkcWfSVUWOYJ+Mh8R1wvAfU3G0OzllCxb
-         rBTVrMzlx88ADbPvExVsXEzdPkTXgI08LyJz0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=xDwZ9IPlPpLW6KA/tgQTbpYLeFZMSVfEV0m+pDTHL2E=;
-        b=Io73mgf6rSExOkSiONWS7LVhegkxzwqTUle68U3lgAHcj9F+XhPaS+FOlPV3RARxTd
-         gHzMRdV+zkWIvYGDgI3X6uxAy2SKqqos8HWqkWhGT9x3uDTIuahj14LSeYIcLq4O9Sfi
-         xexGdablbmZsS6M+bGfL/y3hoHXsu2d3VFmckrZ73Y4NJltfDCThRr41pjdZ3qBSZ60Z
-         yAz2E0LxnsLRcTzJNGy3tBIwtzQTK3hJMtlH/JNTNV5ws98nFKEcMGBAJnHU5dtHo7Mo
-         SGcdtLurrXP9ugT+uxet0aYCVAO9snSG7jemKyuvaMQgurQuHwHmKxgxiQZQ/YTh3kBY
-         93XQ==
-X-Gm-Message-State: APzg51Ap3Fbnet6UVLbXBpjB6T7c/0IwCkXnqd4XKcljgZsiFs/5Ygq3
-        xQCS7tbadahY8Q+s3PNnE0umArU2OzjodRW/MYBUuA==
-X-Google-Smtp-Source: ANB0Vdb9bcaXXW0k3MBWrfdZiKAUflKcMGCutgJk98cE1w9dl53IDm4d0v7js7OWGqsTvrnz9gGlZ3xMa1AxyytojE8=
-X-Received: by 2002:a24:6c04:: with SMTP id w4-v6mr2590796itb.4.1536767930147;
- Wed, 12 Sep 2018 08:58:50 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a4f:bf05:0:0:0:0:0 with HTTP; Wed, 12 Sep 2018 08:58:49
- -0700 (PDT)
-X-Originating-IP: [2a02:168:569e:0:3106:d637:d723:e855]
-In-Reply-To: <20180912151134.436719-1-arnd@arndb.de>
-References: <20180912150142.157913-1-arnd@arndb.de> <20180912151134.436719-1-arnd@arndb.de>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Wed, 12 Sep 2018 17:58:49 +0200
-X-Google-Sender-Auth: Y0U014Xay_8Rq27tmKKR56bEiE8
-Message-ID: <CAKMK7uGsR6Qdu=1Qa+Hqm921MJzTQW+o9T4VpvL6nqa2LkKXXA@mail.gmail.com>
-Subject: Re: [PATCH v2 05/17] compat_ioctl: move more drivers to generic_compat_ioctl_ptrarg
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        linux-iio@vger.kernel.org, Linux PCI <linux-pci@vger.kernel.org>,
-        linux-remoteproc@vger.kernel.org, linux-nvme@lists.infradead.org,
-        platform-driver-x86@vger.kernel.org, sparclinux@vger.kernel.org,
-        driverdevel <devel@driverdev.osuosl.org>,
-        linux-scsi@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-rdma@vger.kernel.org, qat-linux@intel.com,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        linux-input@vger.kernel.org,
-        "open list:DMA BUFFER SHARING FRAMEWORK" 
-        <linux-media@vger.kernel.org>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK" 
-        <linaro-mm-sig@lists.linaro.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        ceph-devel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        linux-wireless@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-crypto@vger.kernel.org, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-btrfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 429RKN5lryz9ttRy;
+        Wed, 12 Sep 2018 17:58:48 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id 7rP6qBhfTkGr; Wed, 12 Sep 2018 17:58:48 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 429RKN56Ngz9ttRt;
+        Wed, 12 Sep 2018 17:58:48 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 1A9108B858;
+        Wed, 12 Sep 2018 17:58:48 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id PEe_C3h7oSIK; Wed, 12 Sep 2018 17:58:47 +0200 (CEST)
+Received: from pc16082vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id BF1698B86F;
+        Wed, 12 Sep 2018 17:58:46 +0200 (CEST)
+Received: by pc16082vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 8378B71913; Wed, 12 Sep 2018 15:58:46 +0000 (UTC)
+Message-Id: <a89ba07fd74532a151c247e15300d2e741059305.1536692743.git.christophe.leroy@c-s.fr>
+In-Reply-To: <cover.1536692743.git.christophe.leroy@c-s.fr>
+References: <cover.1536692743.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v2 16/24] powerpc/book3s/32: do not include pte-common.h
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Geoff Levand <geoff@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Kumar Gala <galak@kernel.crashing.org>,
+        Li Yang <leoyang.li@nxp.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Scott Wood <oss@buserror.net>, aneesh.kumar@linux.vnet.ibm.com
+Cc:     linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, dri-devel@lists.freedesktop.org
+Date:   Wed, 12 Sep 2018 15:58:46 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 5:08 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> The .ioctl and .compat_ioctl file operations have the same prototype so
-> they can both point to the same function, which works great almost all
-> the time when all the commands are compatible.
->
-> One exception is the s390 architecture, where a compat pointer is only
-> 31 bit wide, and converting it into a 64-bit pointer requires calling
-> compat_ptr(). Most drivers here will ever run in s390, but since we now
-> have a generic helper for it, it's easy enough to use it consistently.
->
-> I double-checked all these drivers to ensure that all ioctl arguments
-> are used as pointers or are ignored, but are not interpreted as integer
-> values.
->
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+As done for book3s/64, add necessary flags/defines in
+book3s/32/pgtable.h and do not include pte-common.h
 
-Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+It allows in the meantime to remove all related hash
+definitions from pte-common.h and to also remove
+_PAGE_EXEC default as _PAGE_EXEC is defined on all
+platforms except book3s/32.
 
-At least for the drm and dma-buf bits.
--Daniel
+Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/include/asm/book3s/32/pgtable.h | 97 ++++++++++++++++++++++++++--
+ arch/powerpc/include/asm/pte-common.h        | 16 +----
+ 2 files changed, 96 insertions(+), 17 deletions(-)
 
-> ---
->  drivers/android/binder.c                    | 2 +-
->  drivers/crypto/qat/qat_common/adf_ctl_drv.c | 2 +-
->  drivers/dma-buf/dma-buf.c                   | 4 +---
->  drivers/dma-buf/sw_sync.c                   | 2 +-
->  drivers/dma-buf/sync_file.c                 | 2 +-
->  drivers/gpu/drm/amd/amdkfd/kfd_chardev.c    | 2 +-
->  drivers/hid/hidraw.c                        | 4 +---
->  drivers/iio/industrialio-core.c             | 2 +-
->  drivers/infiniband/core/uverbs_main.c       | 4 ++--
->  drivers/media/rc/lirc_dev.c                 | 4 +---
->  drivers/mfd/cros_ec_dev.c                   | 4 +---
->  drivers/misc/vmw_vmci/vmci_host.c           | 2 +-
->  drivers/nvdimm/bus.c                        | 4 ++--
->  drivers/nvme/host/core.c                    | 2 +-
->  drivers/pci/switch/switchtec.c              | 2 +-
->  drivers/platform/x86/wmi.c                  | 2 +-
->  drivers/rpmsg/rpmsg_char.c                  | 4 ++--
->  drivers/sbus/char/display7seg.c             | 2 +-
->  drivers/sbus/char/envctrl.c                 | 4 +---
->  drivers/scsi/3w-xxxx.c                      | 4 +---
->  drivers/scsi/cxlflash/main.c                | 2 +-
->  drivers/scsi/esas2r/esas2r_main.c           | 2 +-
->  drivers/scsi/pmcraid.c                      | 4 +---
->  drivers/staging/android/ion/ion.c           | 4 +---
->  drivers/staging/vme/devices/vme_user.c      | 2 +-
->  drivers/tee/tee_core.c                      | 2 +-
->  drivers/usb/class/cdc-wdm.c                 | 2 +-
->  drivers/usb/class/usbtmc.c                  | 4 +---
->  drivers/video/fbdev/ps3fb.c                 | 2 +-
->  drivers/virt/fsl_hypervisor.c               | 2 +-
->  fs/btrfs/super.c                            | 2 +-
->  fs/ceph/dir.c                               | 2 +-
->  fs/ceph/file.c                              | 2 +-
->  fs/fuse/dev.c                               | 2 +-
->  fs/notify/fanotify/fanotify_user.c          | 2 +-
->  fs/userfaultfd.c                            | 2 +-
->  net/rfkill/core.c                           | 2 +-
->  37 files changed, 40 insertions(+), 58 deletions(-)
->
-> diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-> index d58763b6b009..d2464f5759f8 100644
-> --- a/drivers/android/binder.c
-> +++ b/drivers/android/binder.c
-> @@ -5576,7 +5576,7 @@ static const struct file_operations binder_fops = {
->         .owner = THIS_MODULE,
->         .poll = binder_poll,
->         .unlocked_ioctl = binder_ioctl,
-> -       .compat_ioctl = binder_ioctl,
-> +       .compat_ioctl = generic_compat_ioctl_ptrarg,
->         .mmap = binder_mmap,
->         .open = binder_open,
->         .flush = binder_flush,
-> diff --git a/drivers/crypto/qat/qat_common/adf_ctl_drv.c b/drivers/crypto/qat/qat_common/adf_ctl_drv.c
-> index abc7a7f64d64..8ff77a70addc 100644
-> --- a/drivers/crypto/qat/qat_common/adf_ctl_drv.c
-> +++ b/drivers/crypto/qat/qat_common/adf_ctl_drv.c
-> @@ -68,7 +68,7 @@ static long adf_ctl_ioctl(struct file *fp, unsigned int cmd, unsigned long arg);
->  static const struct file_operations adf_ctl_ops = {
->         .owner = THIS_MODULE,
->         .unlocked_ioctl = adf_ctl_ioctl,
-> -       .compat_ioctl = adf_ctl_ioctl,
-> +       .compat_ioctl = generic_compat_ioctl_ptrarg,
->  };
->
->  struct adf_ctl_drv_info {
-> diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
-> index 13884474d158..a6d7dc4cf7e9 100644
-> --- a/drivers/dma-buf/dma-buf.c
-> +++ b/drivers/dma-buf/dma-buf.c
-> @@ -325,9 +325,7 @@ static const struct file_operations dma_buf_fops = {
->         .llseek         = dma_buf_llseek,
->         .poll           = dma_buf_poll,
->         .unlocked_ioctl = dma_buf_ioctl,
-> -#ifdef CONFIG_COMPAT
-> -       .compat_ioctl   = dma_buf_ioctl,
-> -#endif
-> +       .compat_ioctl   = generic_compat_ioctl_ptrarg,
->  };
->
->  /*
-> diff --git a/drivers/dma-buf/sw_sync.c b/drivers/dma-buf/sw_sync.c
-> index 53c1d6d36a64..bc810506d487 100644
-> --- a/drivers/dma-buf/sw_sync.c
-> +++ b/drivers/dma-buf/sw_sync.c
-> @@ -419,5 +419,5 @@ const struct file_operations sw_sync_debugfs_fops = {
->         .open           = sw_sync_debugfs_open,
->         .release        = sw_sync_debugfs_release,
->         .unlocked_ioctl = sw_sync_ioctl,
-> -       .compat_ioctl   = sw_sync_ioctl,
-> +       .compat_ioctl   = generic_compat_ioctl_ptrarg,
->  };
-> diff --git a/drivers/dma-buf/sync_file.c b/drivers/dma-buf/sync_file.c
-> index 35dd06479867..1c64ed60c658 100644
-> --- a/drivers/dma-buf/sync_file.c
-> +++ b/drivers/dma-buf/sync_file.c
-> @@ -488,5 +488,5 @@ static const struct file_operations sync_file_fops = {
->         .release = sync_file_release,
->         .poll = sync_file_poll,
->         .unlocked_ioctl = sync_file_ioctl,
-> -       .compat_ioctl = sync_file_ioctl,
-> +       .compat_ioctl = generic_compat_ioctl_ptrarg,
->  };
-> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c b/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
-> index 297b36c26a05..1d7b1e3c3ebe 100644
-> --- a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
-> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
-> @@ -47,7 +47,7 @@ static const char kfd_dev_name[] = "kfd";
->  static const struct file_operations kfd_fops = {
->         .owner = THIS_MODULE,
->         .unlocked_ioctl = kfd_ioctl,
-> -       .compat_ioctl = kfd_ioctl,
-> +       .compat_ioctl = generic_compat_ioctl_ptrarg,
->         .open = kfd_open,
->         .mmap = kfd_mmap,
->  };
-> diff --git a/drivers/hid/hidraw.c b/drivers/hid/hidraw.c
-> index 4a44e48e08b2..e44b64812850 100644
-> --- a/drivers/hid/hidraw.c
-> +++ b/drivers/hid/hidraw.c
-> @@ -476,9 +476,7 @@ static const struct file_operations hidraw_ops = {
->         .release =      hidraw_release,
->         .unlocked_ioctl = hidraw_ioctl,
->         .fasync =       hidraw_fasync,
-> -#ifdef CONFIG_COMPAT
-> -       .compat_ioctl   = hidraw_ioctl,
-> -#endif
-> +       .compat_ioctl   = generic_compat_ioctl_ptrarg,
->         .llseek =       noop_llseek,
->  };
->
-> diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
-> index a062cfddc5af..22844b94b0e9 100644
-> --- a/drivers/iio/industrialio-core.c
-> +++ b/drivers/iio/industrialio-core.c
-> @@ -1630,7 +1630,7 @@ static const struct file_operations iio_buffer_fileops = {
->         .owner = THIS_MODULE,
->         .llseek = noop_llseek,
->         .unlocked_ioctl = iio_ioctl,
-> -       .compat_ioctl = iio_ioctl,
-> +       .compat_ioctl = generic_compat_ioctl_ptrarg,
->  };
->
->  static int iio_check_unique_scan_index(struct iio_dev *indio_dev)
-> diff --git a/drivers/infiniband/core/uverbs_main.c b/drivers/infiniband/core/uverbs_main.c
-> index 823beca448e1..f4755c1c9cfa 100644
-> --- a/drivers/infiniband/core/uverbs_main.c
-> +++ b/drivers/infiniband/core/uverbs_main.c
-> @@ -930,7 +930,7 @@ static const struct file_operations uverbs_fops = {
->         .release = ib_uverbs_close,
->         .llseek  = no_llseek,
->         .unlocked_ioctl = ib_uverbs_ioctl,
-> -       .compat_ioctl = ib_uverbs_ioctl,
-> +       .compat_ioctl = generic_compat_ioctl_ptrarg,
->  };
->
->  static const struct file_operations uverbs_mmap_fops = {
-> @@ -941,7 +941,7 @@ static const struct file_operations uverbs_mmap_fops = {
->         .release = ib_uverbs_close,
->         .llseek  = no_llseek,
->         .unlocked_ioctl = ib_uverbs_ioctl,
-> -       .compat_ioctl = ib_uverbs_ioctl,
-> +       .compat_ioctl = generic_compat_ioctl_ptrarg,
->  };
->
->  static struct ib_client uverbs_client = {
-> diff --git a/drivers/media/rc/lirc_dev.c b/drivers/media/rc/lirc_dev.c
-> index f862f1b7f996..077209f414ed 100644
-> --- a/drivers/media/rc/lirc_dev.c
-> +++ b/drivers/media/rc/lirc_dev.c
-> @@ -730,9 +730,7 @@ static const struct file_operations lirc_fops = {
->         .owner          = THIS_MODULE,
->         .write          = ir_lirc_transmit_ir,
->         .unlocked_ioctl = ir_lirc_ioctl,
-> -#ifdef CONFIG_COMPAT
-> -       .compat_ioctl   = ir_lirc_ioctl,
-> -#endif
-> +       .compat_ioctl   = generic_compat_ioctl_ptrarg,
->         .read           = ir_lirc_read,
->         .poll           = ir_lirc_poll,
->         .open           = ir_lirc_open,
-> diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-> index 999dac752bcc..35a04bcf55da 100644
-> --- a/drivers/mfd/cros_ec_dev.c
-> +++ b/drivers/mfd/cros_ec_dev.c
-> @@ -258,9 +258,7 @@ static const struct file_operations fops = {
->         .release = ec_device_release,
->         .read = ec_device_read,
->         .unlocked_ioctl = ec_device_ioctl,
-> -#ifdef CONFIG_COMPAT
-> -       .compat_ioctl = ec_device_ioctl,
-> -#endif
-> +       .compat_ioctl = generic_compat_ioctl_ptrarg,
->  };
->
->  static void cros_ec_sensors_register(struct cros_ec_dev *ec)
-> diff --git a/drivers/misc/vmw_vmci/vmci_host.c b/drivers/misc/vmw_vmci/vmci_host.c
-> index 83e0c95d20a4..1308f889e53b 100644
-> --- a/drivers/misc/vmw_vmci/vmci_host.c
-> +++ b/drivers/misc/vmw_vmci/vmci_host.c
-> @@ -983,7 +983,7 @@ static const struct file_operations vmuser_fops = {
->         .release        = vmci_host_close,
->         .poll           = vmci_host_poll,
->         .unlocked_ioctl = vmci_host_unlocked_ioctl,
-> -       .compat_ioctl   = vmci_host_unlocked_ioctl,
-> +       .compat_ioctl   = generic_compat_ioctl_ptrarg,
->  };
->
->  static struct miscdevice vmci_host_miscdev = {
-> diff --git a/drivers/nvdimm/bus.c b/drivers/nvdimm/bus.c
-> index 8aae6dcc839f..7449cbc55df7 100644
-> --- a/drivers/nvdimm/bus.c
-> +++ b/drivers/nvdimm/bus.c
-> @@ -1133,7 +1133,7 @@ static const struct file_operations nvdimm_bus_fops = {
->         .owner = THIS_MODULE,
->         .open = nd_open,
->         .unlocked_ioctl = nd_ioctl,
-> -       .compat_ioctl = nd_ioctl,
-> +       .compat_ioctl = generic_compat_ioctl_ptrarg,
->         .llseek = noop_llseek,
->  };
->
-> @@ -1141,7 +1141,7 @@ static const struct file_operations nvdimm_fops = {
->         .owner = THIS_MODULE,
->         .open = nd_open,
->         .unlocked_ioctl = nvdimm_ioctl,
-> -       .compat_ioctl = nvdimm_ioctl,
-> +       .compat_ioctl = generic_compat_ioctl_ptrarg,
->         .llseek = noop_llseek,
->  };
->
-> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-> index dd8ec1dd9219..2d986f573a29 100644
-> --- a/drivers/nvme/host/core.c
-> +++ b/drivers/nvme/host/core.c
-> @@ -2579,7 +2579,7 @@ static const struct file_operations nvme_dev_fops = {
->         .owner          = THIS_MODULE,
->         .open           = nvme_dev_open,
->         .unlocked_ioctl = nvme_dev_ioctl,
-> -       .compat_ioctl   = nvme_dev_ioctl,
-> +       .compat_ioctl   = generic_compat_ioctl_ptrarg,
->  };
->
->  static ssize_t nvme_sysfs_reset(struct device *dev,
-> diff --git a/drivers/pci/switch/switchtec.c b/drivers/pci/switch/switchtec.c
-> index 9940cc70f38b..4296919c784e 100644
-> --- a/drivers/pci/switch/switchtec.c
-> +++ b/drivers/pci/switch/switchtec.c
-> @@ -967,7 +967,7 @@ static const struct file_operations switchtec_fops = {
->         .read = switchtec_dev_read,
->         .poll = switchtec_dev_poll,
->         .unlocked_ioctl = switchtec_dev_ioctl,
-> -       .compat_ioctl = switchtec_dev_ioctl,
-> +       .compat_ioctl = generic_compat_ioctl_ptrarg,
->  };
->
->  static void link_event_work(struct work_struct *work)
-> diff --git a/drivers/platform/x86/wmi.c b/drivers/platform/x86/wmi.c
-> index 04791ea5d97b..e4d0697e07d6 100644
-> --- a/drivers/platform/x86/wmi.c
-> +++ b/drivers/platform/x86/wmi.c
-> @@ -886,7 +886,7 @@ static const struct file_operations wmi_fops = {
->         .read           = wmi_char_read,
->         .open           = wmi_char_open,
->         .unlocked_ioctl = wmi_ioctl,
-> -       .compat_ioctl   = wmi_ioctl,
-> +       .compat_ioctl   = generic_compat_ioctl_ptrarg,
->  };
->
->  static int wmi_dev_probe(struct device *dev)
-> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-> index a76b963a7e50..02aefb2b2d47 100644
-> --- a/drivers/rpmsg/rpmsg_char.c
-> +++ b/drivers/rpmsg/rpmsg_char.c
-> @@ -285,7 +285,7 @@ static const struct file_operations rpmsg_eptdev_fops = {
->         .write = rpmsg_eptdev_write,
->         .poll = rpmsg_eptdev_poll,
->         .unlocked_ioctl = rpmsg_eptdev_ioctl,
-> -       .compat_ioctl = rpmsg_eptdev_ioctl,
-> +       .compat_ioctl = generic_compat_ioctl_ptrarg,
->  };
->
->  static ssize_t name_show(struct device *dev, struct device_attribute *attr,
-> @@ -446,7 +446,7 @@ static const struct file_operations rpmsg_ctrldev_fops = {
->         .open = rpmsg_ctrldev_open,
->         .release = rpmsg_ctrldev_release,
->         .unlocked_ioctl = rpmsg_ctrldev_ioctl,
-> -       .compat_ioctl = rpmsg_ctrldev_ioctl,
-> +       .compat_ioctl = generic_compat_ioctl_ptrarg,
->  };
->
->  static void rpmsg_ctrldev_release_device(struct device *dev)
-> diff --git a/drivers/sbus/char/display7seg.c b/drivers/sbus/char/display7seg.c
-> index 5c8ed7350a04..064fe7247eb2 100644
-> --- a/drivers/sbus/char/display7seg.c
-> +++ b/drivers/sbus/char/display7seg.c
-> @@ -155,7 +155,7 @@ static long d7s_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
->  static const struct file_operations d7s_fops = {
->         .owner =                THIS_MODULE,
->         .unlocked_ioctl =       d7s_ioctl,
-> -       .compat_ioctl =         d7s_ioctl,
-> +       .compat_ioctl =         generic_compat_ioctl_ptrarg,
->         .open =                 d7s_open,
->         .release =              d7s_release,
->         .llseek = noop_llseek,
-> diff --git a/drivers/sbus/char/envctrl.c b/drivers/sbus/char/envctrl.c
-> index 56e962a01493..a26665ccea56 100644
-> --- a/drivers/sbus/char/envctrl.c
-> +++ b/drivers/sbus/char/envctrl.c
-> @@ -714,9 +714,7 @@ static const struct file_operations envctrl_fops = {
->         .owner =                THIS_MODULE,
->         .read =                 envctrl_read,
->         .unlocked_ioctl =       envctrl_ioctl,
-> -#ifdef CONFIG_COMPAT
-> -       .compat_ioctl =         envctrl_ioctl,
-> -#endif
-> +       .compat_ioctl =         generic_compat_ioctl_ptrarg,
->         .open =                 envctrl_open,
->         .release =              envctrl_release,
->         .llseek =               noop_llseek,
-> diff --git a/drivers/scsi/3w-xxxx.c b/drivers/scsi/3w-xxxx.c
-> index 471366945bd4..86c9f22a152f 100644
-> --- a/drivers/scsi/3w-xxxx.c
-> +++ b/drivers/scsi/3w-xxxx.c
-> @@ -1047,9 +1047,7 @@ static int tw_chrdev_open(struct inode *inode, struct file *file)
->  static const struct file_operations tw_fops = {
->         .owner          = THIS_MODULE,
->         .unlocked_ioctl = tw_chrdev_ioctl,
-> -#ifdef CONFIG_COMPAT
-> -       .compat_ioctl   = tw_chrdev_ioctl,
-> -#endif
-> +       .compat_ioctl   = generic_compat_ioctl_ptrarg,
->         .open           = tw_chrdev_open,
->         .release        = NULL,
->         .llseek         = noop_llseek,
-> diff --git a/drivers/scsi/cxlflash/main.c b/drivers/scsi/cxlflash/main.c
-> index 6637116529aa..d968efeb50e8 100644
-> --- a/drivers/scsi/cxlflash/main.c
-> +++ b/drivers/scsi/cxlflash/main.c
-> @@ -3596,7 +3596,7 @@ static const struct file_operations cxlflash_chr_fops = {
->         .owner          = THIS_MODULE,
->         .open           = cxlflash_chr_open,
->         .unlocked_ioctl = cxlflash_chr_ioctl,
-> -       .compat_ioctl   = cxlflash_chr_ioctl,
-> +       .compat_ioctl   = generic_compat_ioctl_ptrarg,
->  };
->
->  /**
-> diff --git a/drivers/scsi/esas2r/esas2r_main.c b/drivers/scsi/esas2r/esas2r_main.c
-> index c07118617d89..95142292e702 100644
-> --- a/drivers/scsi/esas2r/esas2r_main.c
-> +++ b/drivers/scsi/esas2r/esas2r_main.c
-> @@ -614,7 +614,7 @@ static int __init esas2r_init(void)
->
->  /* Handle ioctl calls to "/proc/scsi/esas2r/ATTOnode" */
->  static const struct file_operations esas2r_proc_fops = {
-> -       .compat_ioctl   = esas2r_proc_ioctl,
-> +       .compat_ioctl   = generic_compat_ioctl_ptrarg,
->         .unlocked_ioctl = esas2r_proc_ioctl,
->  };
->
-> diff --git a/drivers/scsi/pmcraid.c b/drivers/scsi/pmcraid.c
-> index 4e86994e10e8..8a8c73d3bdad 100644
-> --- a/drivers/scsi/pmcraid.c
-> +++ b/drivers/scsi/pmcraid.c
-> @@ -3999,9 +3999,7 @@ static const struct file_operations pmcraid_fops = {
->         .open = pmcraid_chr_open,
->         .fasync = pmcraid_chr_fasync,
->         .unlocked_ioctl = pmcraid_chr_ioctl,
-> -#ifdef CONFIG_COMPAT
-> -       .compat_ioctl = pmcraid_chr_ioctl,
-> -#endif
-> +       .compat_ioctl = generic_compat_ioctl_ptrarg,
->         .llseek = noop_llseek,
->  };
->
-> diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/ion/ion.c
-> index 99073325b0c0..ef727c235392 100644
-> --- a/drivers/staging/android/ion/ion.c
-> +++ b/drivers/staging/android/ion/ion.c
-> @@ -484,9 +484,7 @@ int ion_query_heaps(struct ion_heap_query *query)
->  static const struct file_operations ion_fops = {
->         .owner          = THIS_MODULE,
->         .unlocked_ioctl = ion_ioctl,
-> -#ifdef CONFIG_COMPAT
-> -       .compat_ioctl   = ion_ioctl,
-> -#endif
-> +       .compat_ioctl   = generic_compat_ioctl_ptrarg,
->  };
->
->  static int debug_shrink_set(void *data, u64 val)
-> diff --git a/drivers/staging/vme/devices/vme_user.c b/drivers/staging/vme/devices/vme_user.c
-> index 6a33aaa1a49f..568700ffd2f2 100644
-> --- a/drivers/staging/vme/devices/vme_user.c
-> +++ b/drivers/staging/vme/devices/vme_user.c
-> @@ -494,7 +494,7 @@ static const struct file_operations vme_user_fops = {
->         .write = vme_user_write,
->         .llseek = vme_user_llseek,
->         .unlocked_ioctl = vme_user_unlocked_ioctl,
-> -       .compat_ioctl = vme_user_unlocked_ioctl,
-> +       .compat_ioctl = generic_compat_ioctl_ptrarg,
->         .mmap = vme_user_mmap,
->  };
->
-> diff --git a/drivers/tee/tee_core.c b/drivers/tee/tee_core.c
-> index dd46b758852a..cb79f28be894 100644
-> --- a/drivers/tee/tee_core.c
-> +++ b/drivers/tee/tee_core.c
-> @@ -670,7 +670,7 @@ static const struct file_operations tee_fops = {
->         .open = tee_open,
->         .release = tee_release,
->         .unlocked_ioctl = tee_ioctl,
-> -       .compat_ioctl = tee_ioctl,
-> +       .compat_ioctl = generic_compat_ioctl_ptrarg,
->  };
->
->  static void tee_release_device(struct device *dev)
-> diff --git a/drivers/usb/class/cdc-wdm.c b/drivers/usb/class/cdc-wdm.c
-> index bec581fb7c63..6e4998c8e64f 100644
-> --- a/drivers/usb/class/cdc-wdm.c
-> +++ b/drivers/usb/class/cdc-wdm.c
-> @@ -724,7 +724,7 @@ static const struct file_operations wdm_fops = {
->         .release =      wdm_release,
->         .poll =         wdm_poll,
->         .unlocked_ioctl = wdm_ioctl,
-> -       .compat_ioctl = wdm_ioctl,
-> +       .compat_ioctl = generic_compat_ioctl_ptrarg,
->         .llseek =       noop_llseek,
->  };
->
-> diff --git a/drivers/usb/class/usbtmc.c b/drivers/usb/class/usbtmc.c
-> index 83ffa5a14c3d..d5da47c4c462 100644
-> --- a/drivers/usb/class/usbtmc.c
-> +++ b/drivers/usb/class/usbtmc.c
-> @@ -1460,9 +1460,7 @@ static const struct file_operations fops = {
->         .open           = usbtmc_open,
->         .release        = usbtmc_release,
->         .unlocked_ioctl = usbtmc_ioctl,
-> -#ifdef CONFIG_COMPAT
-> -       .compat_ioctl   = usbtmc_ioctl,
-> -#endif
-> +       .compat_ioctl   = generic_compat_ioctl_ptrarg,
->         .fasync         = usbtmc_fasync,
->         .poll           = usbtmc_poll,
->         .llseek         = default_llseek,
-> diff --git a/drivers/video/fbdev/ps3fb.c b/drivers/video/fbdev/ps3fb.c
-> index 5ed2db39d823..f9f8ffaf1c4a 100644
-> --- a/drivers/video/fbdev/ps3fb.c
-> +++ b/drivers/video/fbdev/ps3fb.c
-> @@ -949,7 +949,7 @@ static struct fb_ops ps3fb_ops = {
->         .fb_mmap        = ps3fb_mmap,
->         .fb_blank       = ps3fb_blank,
->         .fb_ioctl       = ps3fb_ioctl,
-> -       .fb_compat_ioctl = ps3fb_ioctl
-> +       .fb_compat_ioctl = generic_compat_ioctl_ptrarg,
->  };
->
->  static const struct fb_fix_screeninfo ps3fb_fix = {
-> diff --git a/drivers/virt/fsl_hypervisor.c b/drivers/virt/fsl_hypervisor.c
-> index 8ba726e600e9..406b7e492214 100644
-> --- a/drivers/virt/fsl_hypervisor.c
-> +++ b/drivers/virt/fsl_hypervisor.c
-> @@ -703,7 +703,7 @@ static const struct file_operations fsl_hv_fops = {
->         .poll = fsl_hv_poll,
->         .read = fsl_hv_read,
->         .unlocked_ioctl = fsl_hv_ioctl,
-> -       .compat_ioctl = fsl_hv_ioctl,
-> +       .compat_ioctl = generic_compat_ioctl_ptrarg,
->  };
->
->  static struct miscdevice fsl_hv_misc_dev = {
-> diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-> index 6601c9aa5e35..2b5a8ad86305 100644
-> --- a/fs/btrfs/super.c
-> +++ b/fs/btrfs/super.c
-> @@ -2352,7 +2352,7 @@ static const struct super_operations btrfs_super_ops = {
->  static const struct file_operations btrfs_ctl_fops = {
->         .open = btrfs_control_open,
->         .unlocked_ioctl  = btrfs_control_ioctl,
-> -       .compat_ioctl = btrfs_control_ioctl,
-> +       .compat_ioctl = generic_compat_ioctl_ptrarg,
->         .owner   = THIS_MODULE,
->         .llseek = noop_llseek,
->  };
-> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-> index da73f29d7faa..eb869fe6774d 100644
-> --- a/fs/ceph/dir.c
-> +++ b/fs/ceph/dir.c
-> @@ -1489,7 +1489,7 @@ const struct file_operations ceph_dir_fops = {
->         .open = ceph_open,
->         .release = ceph_release,
->         .unlocked_ioctl = ceph_ioctl,
-> -       .compat_ioctl = ceph_ioctl,
-> +       .compat_ioctl = generic_compat_ioctl_ptrarg,
->         .fsync = ceph_fsync,
->         .lock = ceph_lock,
->         .flock = ceph_flock,
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index 92ab20433682..85094042cfac 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -1842,7 +1842,7 @@ const struct file_operations ceph_file_fops = {
->         .splice_read = generic_file_splice_read,
->         .splice_write = iter_file_splice_write,
->         .unlocked_ioctl = ceph_ioctl,
-> -       .compat_ioctl   = ceph_ioctl,
-> +       .compat_ioctl   = generic_compat_ioctl_ptrarg,
->         .fallocate      = ceph_fallocate,
->  };
->
-> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> index 11ea2c4a38ab..a6d4a24963ed 100644
-> --- a/fs/fuse/dev.c
-> +++ b/fs/fuse/dev.c
-> @@ -2258,7 +2258,7 @@ const struct file_operations fuse_dev_operations = {
->         .release        = fuse_dev_release,
->         .fasync         = fuse_dev_fasync,
->         .unlocked_ioctl = fuse_dev_ioctl,
-> -       .compat_ioctl   = fuse_dev_ioctl,
-> +       .compat_ioctl   = generic_compat_ioctl_ptrarg,
->  };
->  EXPORT_SYMBOL_GPL(fuse_dev_operations);
->
-> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-> index 69054886915b..fc4193b384cf 100644
-> --- a/fs/notify/fanotify/fanotify_user.c
-> +++ b/fs/notify/fanotify/fanotify_user.c
-> @@ -447,7 +447,7 @@ static const struct file_operations fanotify_fops = {
->         .fasync         = NULL,
->         .release        = fanotify_release,
->         .unlocked_ioctl = fanotify_ioctl,
-> -       .compat_ioctl   = fanotify_ioctl,
-> +       .compat_ioctl   = generic_compat_ioctl_ptrarg,
->         .llseek         = noop_llseek,
->  };
->
-> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-> index bfa0ec69f924..bc9118b58a8a 100644
-> --- a/fs/userfaultfd.c
-> +++ b/fs/userfaultfd.c
-> @@ -1878,7 +1878,7 @@ static const struct file_operations userfaultfd_fops = {
->         .poll           = userfaultfd_poll,
->         .read           = userfaultfd_read,
->         .unlocked_ioctl = userfaultfd_ioctl,
-> -       .compat_ioctl   = userfaultfd_ioctl,
-> +       .compat_ioctl   = generic_compat_ioctl_ptrarg,
->         .llseek         = noop_llseek,
->  };
->
-> diff --git a/net/rfkill/core.c b/net/rfkill/core.c
-> index 1355f5ca8d22..ba68b53f58ab 100644
-> --- a/net/rfkill/core.c
-> +++ b/net/rfkill/core.c
-> @@ -1323,7 +1323,7 @@ static const struct file_operations rfkill_fops = {
->         .release        = rfkill_fop_release,
->  #ifdef CONFIG_RFKILL_INPUT
->         .unlocked_ioctl = rfkill_fop_ioctl,
-> -       .compat_ioctl   = rfkill_fop_ioctl,
-> +       .compat_ioctl   = generic_compat_ioctl_ptrarg,
->  #endif
->         .llseek         = no_llseek,
->  };
-> --
-> 2.18.0
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
-
-
+diff --git a/arch/powerpc/include/asm/book3s/32/pgtable.h b/arch/powerpc/include/asm/book3s/32/pgtable.h
+index d4f2f396af70..5ffb7e3b211f 100644
+--- a/arch/powerpc/include/asm/book3s/32/pgtable.h
++++ b/arch/powerpc/include/asm/book3s/32/pgtable.h
+@@ -8,7 +8,97 @@
+ #include <asm/book3s/32/hash.h>
+ 
+ /* And here we include common definitions */
+-#include <asm/pte-common.h>
++
++#define _PAGE_KERNEL_RO		0
++#define _PAGE_KERNEL_ROX	0
++#define _PAGE_KERNEL_RW		(_PAGE_DIRTY | _PAGE_RW)
++#define _PAGE_KERNEL_RWX	(_PAGE_DIRTY | _PAGE_RW)
++
++#define _PAGE_HPTEFLAGS _PAGE_HASHPTE
++
++#ifndef __ASSEMBLY__
++
++static inline bool pte_user(pte_t pte)
++{
++	return pte_val(pte) & _PAGE_USER;
++}
++#endif /* __ASSEMBLY__ */
++
++/* Location of the PFN in the PTE. Most 32-bit platforms use the same
++ * as _PAGE_SHIFT here (ie, naturally aligned).
++ * Platform who don't just pre-define the value so we don't override it here
++ */
++#define PTE_RPN_SHIFT	(PAGE_SHIFT)
++
++/* The mask covered by the RPN must be a ULL on 32-bit platforms with
++ * 64-bit PTEs
++ */
++#ifdef CONFIG_PTE_64BIT
++#define PTE_RPN_MASK	(~((1ULL << PTE_RPN_SHIFT) - 1))
++#else
++#define PTE_RPN_MASK	(~((1UL << PTE_RPN_SHIFT) - 1))
++#endif
++
++/* _PAGE_CHG_MASK masks of bits that are to be preserved across
++ * pgprot changes
++ */
++#define _PAGE_CHG_MASK	(PTE_RPN_MASK | _PAGE_HASHPTE | _PAGE_DIRTY | \
++			 _PAGE_ACCESSED | _PAGE_SPECIAL)
++
++/* Mask of bits returned by pte_pgprot() */
++#define PAGE_PROT_BITS	(_PAGE_GUARDED | _PAGE_COHERENT | _PAGE_NO_CACHE | \
++			 _PAGE_WRITETHRU | _PAGE_USER | _PAGE_ACCESSED | \
++			 _PAGE_RW | _PAGE_DIRTY)
++
++/*
++ * We define 2 sets of base prot bits, one for basic pages (ie,
++ * cacheable kernel and user pages) and one for non cacheable
++ * pages. We always set _PAGE_COHERENT when SMP is enabled or
++ * the processor might need it for DMA coherency.
++ */
++#define _PAGE_BASE_NC	(_PAGE_PRESENT | _PAGE_ACCESSED)
++#define _PAGE_BASE	(_PAGE_BASE_NC | _PAGE_COHERENT)
++
++/* Permission masks used to generate the __P and __S table,
++ *
++ * Note:__pgprot is defined in arch/powerpc/include/asm/page.h
++ *
++ * Write permissions imply read permissions for now.
++ */
++#define PAGE_NONE	__pgprot(_PAGE_BASE)
++#define PAGE_SHARED	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_RW)
++#define PAGE_SHARED_X	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_RW)
++#define PAGE_COPY	__pgprot(_PAGE_BASE | _PAGE_USER)
++#define PAGE_COPY_X	__pgprot(_PAGE_BASE | _PAGE_USER)
++#define PAGE_READONLY	__pgprot(_PAGE_BASE | _PAGE_USER)
++#define PAGE_READONLY_X	__pgprot(_PAGE_BASE | _PAGE_USER)
++
++/* Permission masks used for kernel mappings */
++#define PAGE_KERNEL	__pgprot(_PAGE_BASE | _PAGE_KERNEL_RW)
++#define PAGE_KERNEL_NC	__pgprot(_PAGE_BASE_NC | _PAGE_KERNEL_RW | _PAGE_NO_CACHE)
++#define PAGE_KERNEL_NCG	__pgprot(_PAGE_BASE_NC | _PAGE_KERNEL_RW | \
++				 _PAGE_NO_CACHE | _PAGE_GUARDED)
++#define PAGE_KERNEL_X	__pgprot(_PAGE_BASE | _PAGE_KERNEL_RWX)
++#define PAGE_KERNEL_RO	__pgprot(_PAGE_BASE | _PAGE_KERNEL_RO)
++#define PAGE_KERNEL_ROX	__pgprot(_PAGE_BASE | _PAGE_KERNEL_ROX)
++
++/* Protection used for kernel text. We want the debuggers to be able to
++ * set breakpoints anywhere, so don't write protect the kernel text
++ * on platforms where such control is possible.
++ */
++#if defined(CONFIG_KGDB) || defined(CONFIG_XMON) || defined(CONFIG_BDI_SWITCH) ||\
++	defined(CONFIG_KPROBES) || defined(CONFIG_DYNAMIC_FTRACE)
++#define PAGE_KERNEL_TEXT	PAGE_KERNEL_X
++#else
++#define PAGE_KERNEL_TEXT	PAGE_KERNEL_ROX
++#endif
++
++/* Make modules code happy. We don't set RO yet */
++#define PAGE_KERNEL_EXEC	PAGE_KERNEL_X
++
++/* Advertise special mapping type for AGP */
++#define PAGE_AGP		(PAGE_KERNEL_NC)
++#define HAVE_PAGE_AGP
+ 
+ #define PTE_INDEX_SIZE	PTE_SHIFT
+ #define PMD_INDEX_SIZE	0
+@@ -219,7 +309,7 @@ static inline pte_t ptep_get_and_clear(struct mm_struct *mm, unsigned long addr,
+ static inline void ptep_set_wrprotect(struct mm_struct *mm, unsigned long addr,
+ 				      pte_t *ptep)
+ {
+-	pte_update(ptep, (_PAGE_RW | _PAGE_HWWRITE), _PAGE_RO);
++	pte_update(ptep, _PAGE_RW, 0);
+ }
+ static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
+ 					   unsigned long addr, pte_t *ptep)
+@@ -235,9 +325,8 @@ static inline void __ptep_set_access_flags(struct vm_area_struct *vma,
+ {
+ 	unsigned long set = pte_val(entry) &
+ 		(_PAGE_DIRTY | _PAGE_ACCESSED | _PAGE_RW);
+-	unsigned long clr = ~pte_val(entry) & _PAGE_RO;
+ 
+-	pte_update(ptep, clr, set);
++	pte_update(ptep, 0, set);
+ 
+ 	flush_tlb_page(vma, address);
+ }
+diff --git a/arch/powerpc/include/asm/pte-common.h b/arch/powerpc/include/asm/pte-common.h
+index 4860dae76dae..3a8ec18ffd22 100644
+--- a/arch/powerpc/include/asm/pte-common.h
++++ b/arch/powerpc/include/asm/pte-common.h
+@@ -5,15 +5,9 @@
+  * Some bits are only used on some cpu families... Make sure that all
+  * the undefined gets a sensible default
+  */
+-#ifndef _PAGE_HASHPTE
+-#define _PAGE_HASHPTE	0
+-#endif
+ #ifndef _PAGE_HWWRITE
+ #define _PAGE_HWWRITE	0
+ #endif
+-#ifndef _PAGE_EXEC
+-#define _PAGE_EXEC	0
+-#endif
+ #ifndef _PAGE_COHERENT
+ #define _PAGE_COHERENT	0
+ #endif
+@@ -68,11 +62,8 @@
+ #define _PAGE_KERNEL_RWX	(_PAGE_PRIVILEGED | _PAGE_DIRTY | _PAGE_RW | \
+ 				 _PAGE_HWWRITE | _PAGE_EXEC)
+ #endif
+-#ifndef _PAGE_HPTEFLAGS
+-#define _PAGE_HPTEFLAGS _PAGE_HASHPTE
+-#endif
+ #ifndef _PTE_NONE_MASK
+-#define _PTE_NONE_MASK	_PAGE_HPTEFLAGS
++#define _PTE_NONE_MASK	0
+ #endif
+ 
+ #ifndef __ASSEMBLY__
+@@ -108,7 +99,7 @@ static inline bool pte_user(pte_t pte)
+ /* _PAGE_CHG_MASK masks of bits that are to be preserved across
+  * pgprot changes
+  */
+-#define _PAGE_CHG_MASK	(PTE_RPN_MASK | _PAGE_HPTEFLAGS | _PAGE_DIRTY | \
++#define _PAGE_CHG_MASK	(PTE_RPN_MASK | _PAGE_DIRTY | \
+                          _PAGE_ACCESSED | _PAGE_SPECIAL)
+ 
+ /* Mask of bits returned by pte_pgprot() */
+@@ -125,8 +116,7 @@ static inline bool pte_user(pte_t pte)
+  * the processor might need it for DMA coherency.
+  */
+ #define _PAGE_BASE_NC	(_PAGE_PRESENT | _PAGE_ACCESSED | _PAGE_PSIZE)
+-#if defined(CONFIG_SMP) || defined(CONFIG_PPC_STD_MMU) || \
+-	defined(CONFIG_PPC_E500MC)
++#if defined(CONFIG_SMP) || defined(CONFIG_PPC_E500MC)
+ #define _PAGE_BASE	(_PAGE_BASE_NC | _PAGE_COHERENT)
+ #else
+ #define _PAGE_BASE	(_PAGE_BASE_NC)
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+2.13.3
+
