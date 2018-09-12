@@ -5,68 +5,108 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD39DC4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 13:01:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23B02C4646A
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 13:03:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CFDE20882
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 13:01:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CFDE20882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C435E20880
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 13:03:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C435E20880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727007AbeILSGL (ORCPT
+        id S1727019AbeILSIL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 14:06:11 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55002 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726491AbeILSGK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 14:06:10 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AA61740216FE;
-        Wed, 12 Sep 2018 13:01:45 +0000 (UTC)
-Received: from oldenburg.str.redhat.com (dhcp-192-212.str.redhat.com [10.33.192.212])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3C4532166BA3;
-        Wed, 12 Sep 2018 13:01:44 +0000 (UTC)
-Subject: Re: [PATCH v3] x86/vdso: Handle clock_gettime(CLOCK_TAI) in vDSO
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>
-Cc:     Matt Rickard <matt@softrans.com.au>,
-        Stephen Boyd <sboyd@kernel.org>,
-        John Stultz <john.stultz@linaro.org>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20180901015935.CCF0B18E20A9@virtux64.softrans.com.au>
- <CALCETrU4PzskO9pE6G4EkXNRRX3Mu7Vvjv1P8XgrfRMdgGDZSg@mail.gmail.com>
- <alpine.DEB.2.21.1809092159440.1402@nanos.tec.linutronix.de>
-From:   Florian Weimer <fweimer@redhat.com>
-Message-ID: <dde36e93-a21b-6223-8ffc-6dd11f687d38@redhat.com>
-Date:   Wed, 12 Sep 2018 15:01:43 +0200
+        Wed, 12 Sep 2018 14:08:11 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59232 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726606AbeILSIL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 14:08:11 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6F68A80D;
+        Wed, 12 Sep 2018 06:03:46 -0700 (PDT)
+Received: from [10.4.13.92] (e112298-lin.Emea.Arm.com [10.4.13.92])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BFD2E3F703;
+        Wed, 12 Sep 2018 06:03:44 -0700 (PDT)
+Subject: Re: [PATCH v5 05/27] arm64: Use daifflag_restore after bp_hardening
+To:     James Morse <james.morse@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        daniel.thompson@linaro.org, joel@joelfernandes.org,
+        marc.zyngier@arm.com, mark.rutland@arm.com,
+        christoffer.dall@arm.com, catalin.marinas@arm.com,
+        will.deacon@arm.com
+References: <1535471497-38854-1-git-send-email-julien.thierry@arm.com>
+ <1535471497-38854-6-git-send-email-julien.thierry@arm.com>
+ <641119b9-3466-817d-3d6b-dd710c646b49@arm.com>
+ <8f200315-1db9-1905-71ae-cb4269450b7c@arm.com>
+ <71bb5289-b381-65da-c609-fa4a08640425@arm.com>
+From:   Julien Thierry <julien.thierry@arm.com>
+Message-ID: <1c6ede25-052f-c31e-255d-86055ee1e568@arm.com>
+Date:   Wed, 12 Sep 2018 14:03:43 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1809092159440.1402@nanos.tec.linutronix.de>
+In-Reply-To: <71bb5289-b381-65da-c609-fa4a08640425@arm.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 12 Sep 2018 13:01:45 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 12 Sep 2018 13:01:45 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'fweimer@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/09/2018 10:05 PM, Thomas Gleixner wrote:
-> See the patch below. It's integrating TAI without slowing down everything
-> and it definitely does not result in indirect calls.
-> 
-> On a HSW it slows down clock_gettime() by ~0.5ns. On a SKL I get a speedup
-> by ~0.5ns. On a AMD Epyc server it's 1.2ns speedup. So it somehow depends
-> on the uarch and I also observed compiler version dependend variations.
 
-Does this mean glibc can keep using a single vDSO entrypoint, the one we 
-have today?
+On 12/09/18 13:28, James Morse wrote:
+> On 12/09/18 12:11, Julien Thierry wrote:
+>> On 12/09/18 11:32, James Morse wrote:
+>>> On 28/08/18 16:51, Julien Thierry wrote:
+>>>> For EL0 entries requiring bp_hardening, daif status is kept at
+>>>> DAIF_PROCCTX_NOIRQ until after hardening has been done. Then interrupts
+>>>> are enabled through local_irq_enable().
+>>>>
+>>>> Before using local_irq_* functions, daifflags should be properly restored
+>>>> to a state where IRQs are enabled.
+>>>
+>>>> Enable IRQs by restoring DAIF_PROCCTX state after bp hardening.
+>>>
+>>> Is this just for symmetry, or are you going on to add something to the daifflags
+>>> state that local_irq_* functions won't change? (if so, could you allude to that
+>>> in the commit message)
+> 
+>> What happens is that once we use ICC_PMR_EL1, local_irq_enable will not touch
+>> PSR.I. And we are coming back from an entry where PSR.I was kept to 1 so
+>> local_irq_enable was not actually enabling the interrupts. On the otherhand,
+>> restore will affect both.
+> 
+> Got it. Thanks!
+> 
+> Does this mean stop_machine()s local_save_flags()/local_irq_restore() will not
+> be symmetric around __apply_alternatives_multi_stop()?
+> I see you add alternatives in these in patch 15, but I haven't got that far yet)
+> 
+
+It's a good point but it should be fine.
+The changes to the irqflags make save/restore takes everything into 
+consideration (PMR + PSR.I) because of situtations like this, 
+enable/disable only toggle the PMR (so the goal is to not have PSR.I set 
+before reaching path calling enable/disable).
+Maybe I should add a comment for this in asm/irqflags.f when I add the 
+alternatives, so that at least arch code can be wary of this.
+
+> 
+>> Another option is to have the asm macro "enable_da_f" also switch to PMR usage
+>> (i.e. "just keep normal interrupts disabled"). Overall it would probably be
+>> easier to reason with, but I'm just unsure whether it is acceptable to receive a
+>> Pseudo NMI before having applied the bp_hardening.
+> 
+> Wouldn't this give the interrupt controller a headache? I assume IRQs really are
+> masked when handle_arch_irq is called. (I know nothing about the gic)
+> 
+
+Yes, you're right, I missed that da_f gets unmasked right before the 
+irq_handler... So unless I do some special case for irqs, enable_da_f is 
+not the way to go.
 
 Thanks,
-Florian
+
+-- 
+Julien Thierry
