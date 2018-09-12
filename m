@@ -2,109 +2,79 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC424C46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 06:57:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77623C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 06:58:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9757020833
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 06:57:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9757020833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 3BEF620833
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 06:58:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BEF620833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726743AbeILMAj (ORCPT
+        id S1727122AbeILMBi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 08:00:39 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:35539 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725958AbeILMAi (ORCPT
+        Wed, 12 Sep 2018 08:01:38 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:38271 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbeILMBi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 08:00:38 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8C6s3I82538883
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 11 Sep 2018 23:54:03 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8C6s3502538880;
-        Tue, 11 Sep 2018 23:54:03 -0700
-Date:   Tue, 11 Sep 2018 23:54:03 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Masami Hiramatsu <tipbot@zytor.com>
-Message-ID: <tip-cbdd96f5586151e48317d90a403941ec23f12660@git.kernel.org>
-Cc:     davem@davemloft.net, hpa@zytor.com, torvalds@linux-foundation.org,
-        peterz@infradead.org, linux-kernel@vger.kernel.org,
-        naveen.n.rao@linux.vnet.ibm.com, anil.s.keshavamurthy@intel.com,
-        mingo@kernel.org, mhiramat@kernel.org, tglx@linutronix.de
-Reply-To: naveen.n.rao@linux.vnet.ibm.com, anil.s.keshavamurthy@intel.com,
-          mingo@kernel.org, mhiramat@kernel.org, tglx@linutronix.de,
-          davem@davemloft.net, hpa@zytor.com,
-          torvalds@linux-foundation.org, peterz@infradead.org,
-          linux-kernel@vger.kernel.org
-In-Reply-To: <153666126882.21306.10738207224288507996.stgit@devbox>
-References: <153666126882.21306.10738207224288507996.stgit@devbox>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] kprobes: Don't call BUG_ON() if there is a kprobe
- in use on free list
-Git-Commit-ID: cbdd96f5586151e48317d90a403941ec23f12660
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Wed, 12 Sep 2018 08:01:38 -0400
+Received: from 61-220-137-37.hinet-ip.hinet.net ([61.220.137.37] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1fzz6Z-0000UZ-4a; Wed, 12 Sep 2018 06:58:27 +0000
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+To:     nic_swsd@realtek.com
+Cc:     davem@davemloft.net, hkallweit1@gmail.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>
+Subject: [PATCH 1/2] r8169: Align ASPM/CLKREQ setting function with vendor driver
+Date:   Wed, 12 Sep 2018 14:58:20 +0800
+Message-Id: <20180912065821.7198-1-kai.heng.feng@canonical.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  cbdd96f5586151e48317d90a403941ec23f12660
-Gitweb:     https://git.kernel.org/tip/cbdd96f5586151e48317d90a403941ec23f12660
-Author:     Masami Hiramatsu <mhiramat@kernel.org>
-AuthorDate: Tue, 11 Sep 2018 19:21:09 +0900
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Wed, 12 Sep 2018 08:01:16 +0200
+There's a small delay after setting ASPM in vendor drivers, r8101 and
+r8168.
+In addition, those drivers enable ASPM before ClkReq, also change that
+to align with vendor driver.
 
-kprobes: Don't call BUG_ON() if there is a kprobe in use on free list
+I haven't seen anything bad becasue of this, but I think it's better to
+keep in sync with vendor driver.
 
-Instead of calling BUG_ON(), if we find a kprobe in use on free kprobe
-list, just remove it from the list and keep it on kprobe hash list
-as same as other in-use kprobes.
-
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
-Cc: David S . Miller <davem@davemloft.net>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Naveen N . Rao <naveen.n.rao@linux.vnet.ibm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/153666126882.21306.10738207224288507996.stgit@devbox
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
 ---
- kernel/kprobes.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/realtek/r8169.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-index 63c342e5e6c3..90e98e233647 100644
---- a/kernel/kprobes.c
-+++ b/kernel/kprobes.c
-@@ -546,8 +546,14 @@ static void do_free_cleaned_kprobes(void)
- 	struct optimized_kprobe *op, *tmp;
- 
- 	list_for_each_entry_safe(op, tmp, &freeing_list, list) {
--		BUG_ON(!kprobe_unused(&op->kp));
- 		list_del_init(&op->list);
-+		if (WARN_ON_ONCE(!kprobe_unused(&op->kp))) {
-+			/*
-+			 * This must not happen, but if there is a kprobe
-+			 * still in use, keep it on kprobes hash list.
-+			 */
-+			continue;
-+		}
- 		free_aggr_kprobe(&op->kp);
+diff --git a/drivers/net/ethernet/realtek/r8169.c b/drivers/net/ethernet/realtek/r8169.c
+index b08d51bf7a20..5091e9fd601f 100644
+--- a/drivers/net/ethernet/realtek/r8169.c
++++ b/drivers/net/ethernet/realtek/r8169.c
+@@ -4775,12 +4775,14 @@ static void rtl_pcie_state_l2l3_enable(struct rtl8169_private *tp, bool enable)
+ static void rtl_hw_aspm_clkreq_enable(struct rtl8169_private *tp, bool enable)
+ {
+ 	if (enable) {
+-		RTL_W8(tp, Config2, RTL_R8(tp, Config2) | ClkReqEn);
+ 		RTL_W8(tp, Config5, RTL_R8(tp, Config5) | ASPM_en);
++		RTL_W8(tp, Config2, RTL_R8(tp, Config2) | ClkReqEn);
+ 	} else {
+ 		RTL_W8(tp, Config2, RTL_R8(tp, Config2) & ~ClkReqEn);
+ 		RTL_W8(tp, Config5, RTL_R8(tp, Config5) & ~ASPM_en);
  	}
++
++	udelay(10);
  }
+ 
+ static void rtl_hw_start_8168bb(struct rtl8169_private *tp)
+-- 
+2.17.1
+
