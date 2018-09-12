@@ -2,122 +2,149 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F50CC46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:24:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B1DEC46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:27:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FCC72087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:24:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FCC72087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 062232088E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:27:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 062232088E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727989AbeILO2E (ORCPT
+        id S1727805AbeILObA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 10:28:04 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52068 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727153AbeILO2E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 10:28:04 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EBD70AF69;
-        Wed, 12 Sep 2018 09:24:22 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 13CE21E3613; Wed, 12 Sep 2018 11:24:22 +0200 (CEST)
-Date:   Wed, 12 Sep 2018 11:24:22 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Toshi Kani <toshi.kani@hpe.com>
-Cc:     jack@suse.cz, dan.j.williams@intel.com, tytso@mit.edu,
-        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] ext4, dax: update dax check to skip journal inode
-Message-ID: <20180912092422.GA7782@quack2.suse.cz>
-References: <20180911154246.6844-1-toshi.kani@hpe.com>
- <20180911154246.6844-2-toshi.kani@hpe.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180911154246.6844-2-toshi.kani@hpe.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 12 Sep 2018 10:31:00 -0400
+Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:51322 "EHLO
+        alexa-out-blr.qualcomm.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727183AbeILObA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 10:31:00 -0400
+X-IronPort-AV: E=Sophos;i="5.53,364,1531765800"; 
+   d="scan'208";a="164674"
+Received: from ironmsg02-blr.qualcomm.com ([10.86.208.131])
+  by alexa-out-blr.qualcomm.com with ESMTP/TLS/AES256-SHA; 12 Sep 2018 14:57:17 +0530
+X-IronPort-AV: E=McAfee;i="5900,7806,9013"; a="1111909"
+Received: from blr-ubuntu-104.ap.qualcomm.com (HELO blr-ubuntu-104.qualcomm.com) ([10.79.40.64])
+  by ironmsg02-blr.qualcomm.com with ESMTP; 12 Sep 2018 14:57:16 +0530
+Received: by blr-ubuntu-104.qualcomm.com (Postfix, from userid 346745)
+        id F037829BF; Wed, 12 Sep 2018 14:57:15 +0530 (IST)
+From:   Arun KS <arunks@codeaurora.org>
+To:     akpm@linux-foundation.org, dan.j.williams@intel.com,
+        mhocko@suse.com, vbabka@suse.cz, pasha.tatashin@oracle.com,
+        iamjoonsoo.kim@lge.com, osalvador@suse.de, arunks@codeaurora.org,
+        malat@debian.org, gregkh@linuxfoundation.org,
+        yasu.isimatu@gmail.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Cc:     arunks.linux@gmail.com, vinmenon@codeaurora.org
+Subject: [RFC] memory_hotplug: Free pages as pageblock_order
+Date:   Wed, 12 Sep 2018 14:56:45 +0530
+Message-Id: <1536744405-16752-1-git-send-email-arunks@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 11-09-18 09:42:45, Toshi Kani wrote:
-> Ext4 mount path calls ext4_iget() to obtain the journal inode.  This
-> inode does not support DAX, and 'ext4_da_aops' needs to be set.  It
-> currently works for the DAX mount case because ext4_iget() always set
-> 'ext4_da_aops' to any regular files.
-> 
->   ext4_fill_super
->     ext4_load_journal
->       ext4_get_journal_inode
->         ext4_iget
-> 
-> In preparation to fix ext4_iget() to set 'ext4_dax_aops' for DAX files,
-> update ext4_should_use_dax() to return false for the journal inode.
-> 
-> Fixes: 5f0663bb4a64f588f0a2dd6d1be68d40f9af0086
-> Signed-off-by: Toshi Kani <toshi.kani@hpe.com>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: "Theodore Ts'o" <tytso@mit.edu>
-> Cc: Andreas Dilger <adilger.kernel@dilger.ca>
+When free pages are done with pageblock_order, time spend on
+coalescing pages by buddy allocator can be reduced. With
+section size of 256MB, hot add latency of a single section
+shows improvement from 50-60 ms to less than 1 ms, hence
+improving the hot add latency by 60%.
 
-The journal inode is similar to any other 'system' inode we have in ext4.
-We don't really expect any of the address space operations to be called for
-it because we don't use page cache with these inodes. Very similar
-situation is with e.g. quota files. So to me it seems this patch is not
-really necessary. Or did you observe any bad effects without this patch?
+If this looks okey, I'll modify users of set_online_page_callback
+and resend clean patch.
 
-That being said I agree that it would be a good cleanup to define something
-like ext4_is_system_inode() and disable DAX for these inodes just because
-they are special. But I don't see a need for this as a part of your fix.
+Signed-off-by: Arun KS <arunks@codeaurora.org>
+---
+ include/linux/memory_hotplug.h |  1 +
+ mm/memory_hotplug.c            | 52 ++++++++++++++++++++++++++++++++++++------
+ 2 files changed, 46 insertions(+), 7 deletions(-)
 
-								Honza
-
-> ---
->  fs/ext4/ext4_jbd2.h |    8 ++++++++
->  fs/ext4/inode.c     |    2 ++
->  2 files changed, 10 insertions(+)
-> 
-> diff --git a/fs/ext4/ext4_jbd2.h b/fs/ext4/ext4_jbd2.h
-> index 15b6dd733780..9847dc980a0d 100644
-> --- a/fs/ext4/ext4_jbd2.h
-> +++ b/fs/ext4/ext4_jbd2.h
-> @@ -437,6 +437,14 @@ static inline int ext4_should_writeback_data(struct inode *inode)
->  	return ext4_inode_journal_mode(inode) & EXT4_INODE_WRITEBACK_DATA_MODE;
->  }
->  
-> +static inline int ext4_is_journal_inode(struct inode *inode)
-> +{
-> +	struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
-> +	unsigned int journal_inum = le32_to_cpu(sbi->s_es->s_journal_inum);
-> +
-> +	return journal_inum && (journal_inum == inode->i_ino);
-> +}
-> +
->  /*
->   * This function controls whether or not we should try to go down the
->   * dioread_nolock code paths, which makes it safe to avoid taking
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index d0dd585add6a..775cd9b4af55 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -4686,6 +4686,8 @@ static bool ext4_should_use_dax(struct inode *inode)
->  		return false;
->  	if (ext4_should_journal_data(inode))
->  		return false;
-> +	if (ext4_is_journal_inode(inode))
-> +		return false;
->  	if (ext4_has_inline_data(inode))
->  		return false;
->  	if (ext4_encrypted_inode(inode))
+diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
+index 34a2822..447047d 100644
+--- a/include/linux/memory_hotplug.h
++++ b/include/linux/memory_hotplug.h
+@@ -88,6 +88,7 @@ extern int test_pages_in_a_zone(unsigned long start_pfn, unsigned long end_pfn,
+ extern void __offline_isolated_pages(unsigned long, unsigned long);
+ 
+ typedef void (*online_page_callback_t)(struct page *page);
++typedef int (*online_pages_callback_t)(struct page *page, unsigned int order);
+ 
+ extern int set_online_page_callback(online_page_callback_t callback);
+ extern int restore_online_page_callback(online_page_callback_t callback);
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index 38d94b7..853104d 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -662,19 +662,57 @@ static void generic_online_page(struct page *page)
+ 	__online_page_free(page);
+ }
+ 
++static int generic_online_pages(struct page *page, unsigned int order);
++static online_pages_callback_t online_pages_callback = generic_online_pages;
++
++static int generic_online_pages(struct page *page, unsigned int order)
++{
++	unsigned long nr_pages = 1 << order;
++	struct page *p = page;
++	unsigned int loop;
++
++	for (loop = 0 ; loop < nr_pages ; loop++, p++) {
++		__ClearPageReserved(p);
++		set_page_count(p, 0);
++	}
++	adjust_managed_page_count(page, nr_pages);
++	init_page_count(page);
++	__free_pages(page, order);
++
++	return 0;
++}
++
++static int online_pages_blocks(unsigned long start_pfn, unsigned long nr_pages)
++{
++	unsigned long pages_per_block = (1 << pageblock_order);
++	unsigned long nr_pageblocks = nr_pages / pages_per_block;
++//	unsigned long rem_pages = nr_pages % pages_per_block;
++	int i, ret, onlined_pages = 0;
++	struct page *page;
++
++	for (i = 0 ; i < nr_pageblocks ; i++) {
++		page = pfn_to_page(start_pfn + (i * pages_per_block));
++		ret = (*online_pages_callback)(page, pageblock_order);
++		if (!ret)
++			onlined_pages += pages_per_block;
++		else if (ret > 0)
++			onlined_pages += ret;
++	}
++/*
++	if (rem_pages)
++		onlined_pages += online_page_single(start_pfn + i, rem_pages);
++*/
++
++	return onlined_pages;
++}
++
+ static int online_pages_range(unsigned long start_pfn, unsigned long nr_pages,
+ 			void *arg)
+ {
+-	unsigned long i;
+ 	unsigned long onlined_pages = *(unsigned long *)arg;
+-	struct page *page;
+ 
+ 	if (PageReserved(pfn_to_page(start_pfn)))
+-		for (i = 0; i < nr_pages; i++) {
+-			page = pfn_to_page(start_pfn + i);
+-			(*online_page_callback)(page);
+-			onlined_pages++;
+-		}
++		onlined_pages = online_pages_blocks(start_pfn, nr_pages);
+ 
+ 	online_mem_sections(start_pfn, start_pfn + nr_pages);
+ 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+1.9.1
+
