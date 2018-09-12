@@ -6,78 +6,99 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96731C070C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 18:50:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6990C070C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 18:54:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 493D320880
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 18:50:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 493D320880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 7B81B2087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 18:54:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B81B2087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728022AbeILX4o convert rfc822-to-8bit (ORCPT
+        id S1728035AbeIMAA1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 19:56:44 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:37637 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726608AbeILX4n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 19:56:43 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 220E420756; Wed, 12 Sep 2018 20:50:53 +0200 (CEST)
-Received: from windsurf (LFbn-1-10682-153.w90-89.abo.wanadoo.fr [90.89.35.153])
-        by mail.bootlin.com (Postfix) with ESMTPSA id D660C20701;
-        Wed, 12 Sep 2018 20:50:52 +0200 (CEST)
-Date:   Wed, 12 Sep 2018 20:50:52 +0200
-From:   Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-To:     Baruch Siach <baruch@tkos.co.il>
-Cc:     Jan =?UTF-8?B?S3VuZHLDoXQ=?= <jan.kundrat@cesnet.cz>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Jason Cooper <jason@lakedaemon.net>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Russell King <linux@armlinux.org.uk>
-Subject: Re: [BISECTED] Regression: Solidrun Clearfog Base won't boot since
- "PCI: mvebu: Only remap I/O space if configured"
-Message-ID: <20180912205052.19de01a0@windsurf>
-In-Reply-To: <87zhwm4kl6.fsf@tkos.co.il>
-References: <61fdfd69-2bb6-478c-b0d5-69d8744adae3@cesnet.cz>
-        <87zhwm4kl6.fsf@tkos.co.il>
-Organization: Bootlin (formerly Free Electrons)
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        Wed, 12 Sep 2018 20:00:27 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:45810 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726608AbeIMAA1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 20:00:27 -0400
+Received: from [148.252.241.226] (helo=xylophone)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1g0AHY-0005D8-Vm; Wed, 12 Sep 2018 19:54:33 +0100
+Message-ID: <1536778472.3024.204.camel@codethink.co.uk>
+Subject: Re: [PATCH 4.4 18/31] r8152: napi hangup fix after disconnect
+From:   Ben Hutchings <ben.hutchings@codethink.co.uk>
+To:     Jiri Slaby <jslaby@suse.cz>, linux-usb@vger.kernel.org,
+        netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+Cc:     stable@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Date:   Wed, 12 Sep 2018 19:54:32 +0100
+In-Reply-To: <3b118091-d600-0be8-3204-c0f794ef6288@suse.cz>
+References: <20180720121340.158484922@linuxfoundation.org>
+         <20180720121340.812996969@linuxfoundation.org>
+         <1535128726.2902.32.camel@codethink.co.uk>
+         <3b118091-d600-0be8-3204-c0f794ef6288@suse.cz>
+Organization: Codethink Ltd.
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jan, Baruch,
-
-On Wed, 12 Sep 2018 21:49:41 +0300, Baruch Siach wrote:
-
-> Jan Kundrát writes:
-> > since commit ee1604381a371b3ea6aec7d5e43b6e3f5e153854 ("PCI: mvebu: Only
-> > remap I/O space if configured"), my board (Solidrun Clearfog Base) won't
-> > finish booting with 4.18-rc3 won't boot:  
+On Sat, 2018-08-25 at 09:43 +0200, Jiri Slaby wrote:
+> On 08/24/2018, 06:38 PM, Ben Hutchings wrote:
+> > On Fri, 2018-07-20 at 14:13 +0200, Greg Kroah-Hartman wrote:
+> > > 4.4-stable review patch.  If anyone has any objections, please let me know.
+> > > 
+> > > ------------------
+> > > 
+> > > From: Jiri Slaby <jslaby@suse.cz>
+> > > 
+> > > [ Upstream commit 0ee1f4734967af8321ecebaf9c74221ace34f2d5 ]
+> > 
+> > [...]
+> > > --- a/drivers/net/usb/r8152.c
+> > > +++ b/drivers/net/usb/r8152.c
+> > > @@ -3139,7 +3139,8 @@ static int rtl8152_close(struct net_devi
+> > >  #ifdef CONFIG_PM_SLEEP
+> > >  	unregister_pm_notifier(&tp->pm_notifier);
+> > >  #endif
+> > > -	napi_disable(&tp->napi);
+> > > +	if (!test_bit(RTL8152_UNPLUG, &tp->flags))
+> > > +		napi_disable(&tp->napi);
+> > >  	clear_bit(WORK_ENABLE, &tp->flags);
+> > >  	usb_kill_urb(tp->intr_urb);
+> > >  	cancel_delayed_work_sync(&tp->schedule);
+> > 
+> > This flag appears to be set only if the USB device is actually
+> > disconnected.  In case the driver is unbound for some other reason
+> > (like the module is removed), the same problem will occur.
 > 
-> You mean '4.19-rc3', right?
+> Could you elaborate? I thought this would happen:
+> module_exit -> usb_deregister -> usb_unbind_device -> rtl8152_disconnect
+> -> unregister_netdev -> rtl8152_close
 > 
-> >> [    1.741458] Internal error: Oops - undefined instruction: 0 [#1] SMP ARM
-> >> [    1.748182] CPU: 1 PID: 72 Comm: kworker/1:2 Tainted: G        W         4.19.0-rc3 #1  
-> 
-> The 'W' taint means that there was a kernel warning before. Which
-> warning was that?
-> 
-> I reproduced the same Oops on Clearfog Base without any taint:
+> Am I missing something?
 
-Thanks for the report, I'll have a look tomorrow when I have to
-ClearFog hardware.
+What I mean is that if the USB device has not been *physically*
+disconnected then its usb_device::state will not be
+USB_STATE_NOTATTACHED.  So rtl8152_disconnect() will not set the
+RTL8152_UNPLUG flag and rtl8152_close() will still call napi_disable()
+which will hang.
 
-Thanks,
+Some options to fix this:
+- Add a separate flag which rtl8152_close() checks and
+rtl8152_disconnect() always sets
+- Call dev_close() before netif_napi_del()
 
-Thomas
+Ben.
+
 -- 
-Thomas Petazzoni, CTO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Ben Hutchings, Software Developer                         Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
