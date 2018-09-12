@@ -2,131 +2,131 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EAACC6778D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:29:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52644C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:30:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE7212087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:29:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vB2vOVVl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE7212087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 14C532087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:30:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14C532087F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727346AbeILUed (ORCPT
+        id S1727623AbeILUfS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 16:34:33 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:39197 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726677AbeILUec (ORCPT
+        Wed, 12 Sep 2018 16:35:18 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:50048 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726677AbeILUfS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 16:34:32 -0400
-Received: by mail-oi0-f67.google.com with SMTP id c190-v6so4528557oig.6
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 08:29:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3CeVww6Qg1qE++zB6xtqhvqGC/l8NZBuMcSVzzARCHY=;
-        b=vB2vOVVlOpJ/yKyhu2vaTkeTdgGnJmEBXcZpKR/vWOaY2qY39Tx+nnHdt7ohuX2ydb
-         974I//CuS29P/jHWxmUsBk37sgMNIKhCDKY2wrWlOpiWdenPKqW6KOW7BbtV+KQ24c1R
-         K6W8pTGviB87/ki3lHsP9VfWUveBXoXdJrJjKXuDiPrBlhLOxpbpNqJSW5IsI6I5Q5EL
-         WIhmKZer9mVq6xol4EDGN1LnolI9ZGg+Gb+MHqFInM5HvEHlyIiKhO3HEbxCNZsP4lwC
-         SCO7cQGXAWzXv2fhqQCeVrIkmgwo5euUobL/R3H44muPKOBQVS7DiTiZGkjOqXtjxkcJ
-         tY+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3CeVww6Qg1qE++zB6xtqhvqGC/l8NZBuMcSVzzARCHY=;
-        b=T4UfknRlwqhizJ0vrwBvP/wPi71HILAjfq3w03wNO/70RSoQPgZ+XDM1kVM4zoKEk9
-         QNM8YD7CFf3HUxqTSB4p79O1PX2fX5Lv7bnLpN9YlvdPsEvXy6hKDfy1XlXyYhXOattM
-         4cGlozldyJmkmsFvfYsnTLhWdmsD+yUtqET0JAocsfu/1zmq2niCCjYUdPUpjtB0mbKY
-         oXhA4np/8XfnTFYKzpht/k54vHBTdKPjP71bNy9S1QO3yCHGRj94Qye2Z9WT95NbE8VY
-         aDprEjVmT7CcMXNnBCwidFVaTTWLw9QnXoV8qEia61EJcqs5uda1ZzyGT8qxSw4RhMeW
-         cEnw==
-X-Gm-Message-State: APzg51D5by5tmiKJ+PQO+rqUiK6yQipujVLro0j75HDkXJ7Ui0AoWuM2
-        gIgglmsnVFgyx/LNbY3RK4eWqraHSGraOEPLDilAT6j76nA=
-X-Google-Smtp-Source: ANB0VdYDRggV6ZMP9uzQ3X8L8V2pxAnQr61Ku1qY286hLZn3M+gchUOnBb70kOBlK7wXqHnokA7aOaZOcJtpjRrY02c=
-X-Received: by 2002:aca:dc55:: with SMTP id t82-v6mr2285092oig.159.1536766170592;
- Wed, 12 Sep 2018 08:29:30 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180911183909.233413-1-jannh@google.com>
-In-Reply-To: <20180911183909.233413-1-jannh@google.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Wed, 12 Sep 2018 17:29:04 +0200
-Message-ID: <CAG48ez03ivLr6w+V911V7pqb1o=kcJw4CLEktcSVVE+=hXXP=w@mail.gmail.com>
-Subject: Re: [PATCH] proc: restrict kernel stack dumps to root
-To:     Alexey Dobriyan <adobriyan@gmail.com>
-Cc:     Ken Chen <kenchen@google.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Andy Lutomirski <luto@amacapital.net>, security@kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 12 Sep 2018 16:35:18 -0400
+Received: from imladris.surriel.com ([96.67.55.152])
+        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <riel@shelob.surriel.com>)
+        id 1g075p-0001QO-Vi; Wed, 12 Sep 2018 11:30:14 -0400
+Message-ID: <a1ee2e5226c780312bd8ef5658f4b6422e7cf434.camel@surriel.com>
+Subject: Re: [RFC PATCH 04/10] x86/fpu: eager switch PKRU state
+From:   Rik van Riel <riel@surriel.com>
+To:     Andy Lutomirski <luto@amacapital.net>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?UTF-8?Q?Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Wed, 12 Sep 2018 11:30:10 -0400
+In-Reply-To: <181B4EB8-9FEB-415C-8069-192FB8A5B418@amacapital.net>
+References: <20180912133353.20595-1-bigeasy@linutronix.de>
+         <20180912133353.20595-5-bigeasy@linutronix.de>
+         <181B4EB8-9FEB-415C-8069-192FB8A5B418@amacapital.net>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-9uLlLkQIutZ/7ofX5Ed9"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+linux-api, I guess
 
-On Tue, Sep 11, 2018 at 8:39 PM Jann Horn <jannh@google.com> wrote:
->
-> Restrict the ability to inspect kernel stacks of arbitrary tasks to root
-> in order to prevent a local attacker from exploiting racy stack unwinding
-> to leak kernel task stack contents.
-> See the added comment for a longer rationale.
->
-> There don't seem to be any users of this userspace API that can't
-> gracefully bail out if reading from the file fails. Therefore, I believe
-> that this change is unlikely to break things.
-> In the case that this patch does end up needing a revert, the next-best
-> solution might be to fake a single-entry stack based on wchan.
->
-> Fixes: 2ec220e27f50 ("proc: add /proc/*/stack")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Jann Horn <jannh@google.com>
-> ---
->  fs/proc/base.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
->
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index ccf86f16d9f0..7e9f07bf260d 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -407,6 +407,20 @@ static int proc_pid_stack(struct seq_file *m, struct pid_namespace *ns,
->         unsigned long *entries;
->         int err;
->
-> +       /*
-> +        * The ability to racily run the kernel stack unwinder on a running task
-> +        * and then observe the unwinder output is scary; while it is useful for
-> +        * debugging kernel issues, it can also allow an attacker to leak kernel
-> +        * stack contents.
-> +        * Doing this in a manner that is at least safe from races would require
-> +        * some work to ensure that the remote task can not be scheduled; and
-> +        * even then, this would still expose the unwinder as local attack
-> +        * surface.
-> +        * Therefore, this interface is restricted to root.
-> +        */
-> +       if (!file_ns_capable(m->file, &init_user_ns, CAP_SYS_ADMIN))
-> +               return -EACCES;
-> +
->         entries = kmalloc_array(MAX_STACK_TRACE_DEPTH, sizeof(*entries),
->                                 GFP_KERNEL);
->         if (!entries)
-> --
-> 2.19.0.rc2.392.g5ba43deb5a-goog
->
+--=-9uLlLkQIutZ/7ofX5Ed9
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, 2018-09-12 at 08:20 -0700, Andy Lutomirski wrote:
+> >=20
+> > --- a/arch/x86/mm/pkeys.c
+> > +++ b/arch/x86/mm/pkeys.c
+> > @@ -18,6 +18,20 @@
+> >=20
+> > #include <asm/cpufeature.h>             /* boot_cpu_has,
+> > ...            */
+> > #include <asm/mmu_context.h>            /*
+> > vma_pkey()                   */
+> > +#include <asm/fpu/internal.h>
+> > +
+> > +void write_pkru(u32 pkru)
+> > +{
+> > +    if (!boot_cpu_has(X86_FEATURE_OSPKE))
+> > +        return;
+> > +
+> > +    current->thread.fpu.pkru =3D pkru;
+> > +
+>=20
+> I thought that the offset of PKRU in the xstate was fixed after boot.
+
+You are right, it is.  However, that offset would need
+to be stored somewhere, and the value read every time
+we wanted to read or store the PKRU value from/to the
+floating point state.
+
+I suspect that would not be any faster than keeping a
+copy of the PKRU value in a known location.
+
+> Anyway, as written, this needs a lockdep assertion that we=E2=80=99re not
+> preemptible, an explicit preempt_disable(), or a comment explaining
+> why it=E2=80=99s okay if we get preempted in this function.
+>=20
+> > +    __fpregs_changes_begin();
+
+This handles the preemption disabling, see patch
+3 of the series.
+
+> > +    __fpregs_load_activate(&current->thread.fpu,
+> > smp_processor_id());
+> > +    __write_pkru(pkru);
+> > +    __fpregs_changes_end();
+> > +}
+> >=20
+> > int __execute_only_pkey(struct mm_struct *mm)
+> > {
+> > --=20
+> > 2.19.0
+> >=20
+>=20
+>=20
+--=20
+All Rights Reversed.
+
+--=-9uLlLkQIutZ/7ofX5Ed9
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAluZMQIACgkQznnekoTE
+3oMCngf+MQ5EGK03pITbeTj/SLYeCBLG2MaNDq5exs5NICa6GLbattuWAGfUI7Ez
+SmUdvWTWGnWCS9OUxm7wo0P1VWOjuaxE21maRQXai9SaMUzAF7iR3QeYCcBJP5L9
+6IutHmElE4LPLvY7YT3wvv6Dq8uLEZ/fOns567fQsMGqiA8MISUxsN/mo4tHimsS
+M/GgjD+g3wX+Rft74lVwRW/0hRTWR97dkrnX1YPz5Oxp2jIha2TcAK0visaSlujy
+3WF0EUgDJBpgU6iVraX4mc3xHu0/aCfCJKMtIC4ghj4q6SM+eGMKpX/asGLOleAN
+K8GdwbUz1LR+ShLMzu0olhqSUB/ciA==
+=rdjP
+-----END PGP SIGNATURE-----
+
+--=-9uLlLkQIutZ/7ofX5Ed9--
+
