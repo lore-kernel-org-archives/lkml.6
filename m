@@ -6,58 +6,53 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0915AC07520
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 18:55:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DB81C07520
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 18:55:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B43242146E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 18:55:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FA8621471
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 18:55:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Muiz5gJd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B43242146E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wwiFzd33"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FA8621471
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728178AbeIMAB0 (ORCPT
+        id S1728201AbeIMABa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 20:01:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52730 "EHLO mail.kernel.org"
+        Wed, 12 Sep 2018 20:01:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52838 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727047AbeIMABZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 20:01:25 -0400
+        id S1727047AbeIMAB3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 20:01:29 -0400
 Received: from jouet.infradead.org (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 744F4213A2;
-        Wed, 12 Sep 2018 18:55:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CEDD12133F;
+        Wed, 12 Sep 2018 18:55:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536778534;
-        bh=QFkk5qyW2wNG2khu740m3Bh3YpNRILc5D5PaNdF/C70=;
+        s=default; t=1536778538;
+        bh=xrrLyYjGFhuSjVBHXYzfCUrtnQZIUUX4B3r1tcPH5Ig=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Muiz5gJdvCuZ4lvVo9cqaZPSqjPNk6/+8RnhVNPB72lNfT1DJ1pi1t3oaH90rqrTe
-         hRfmsTkKEBvuHAEmn8FVyhtCq0NGVWsAcEDC5+3dZzekORRi9yplYZaEJ7WAcR38YI
-         D8/PXJvcHFvkKpRZh5VaXly37ABHh51h8rHilmBM=
+        b=wwiFzd33zVknCwKnm4Q6clPjIge8djg0mCyxnMJ+IcAEz2ixL/ntylPZ9WYZKviKb
+         QQAD6+edT70hBAo8OGSOMf9LzSA90BLpQchhUqzd1bn4XigASzDnCmAxaxW6Apheka
+         5gPCHAxi/V1Y9dFTIgciEnclpe2sWky/wucAXf5Q=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         linux-perf-users@vger.kernel.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnd Bergmann <arnd@arndb.de>, David Ahern <dsahern@gmail.com>,
-        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+        Brian Starkey <brian.starkey@arm.com>,
+        David Ahern <dsahern@gmail.com>, Eric Anholt <eric@anholt.net>,
         Jiri Olsa <jolsa@kernel.org>,
-        Kim Phillips <kim.phillips@arm.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        Liviu Dudau <liviu.dudau@arm.com>,
         Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-        Thomas Richter <tmricht@linux.vnet.ibm.com>,
-        Wang Nan <wangnan0@huawei.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 2/7] tools headers uapi: Update tools's copy of asm-generic/unistd.h
-Date:   Wed, 12 Sep 2018 15:55:04 -0300
-Message-Id: <20180912185509.32187-3-acme@kernel.org>
+        Sean Paul <seanpaul@chromium.org>,
+        Wang Nan <wangnan0@huawei.com>
+Subject: [PATCH 3/7] tools headers uapi: Update tools's copy of drm/drm.h
+Date:   Wed, 12 Sep 2018 15:55:05 -0300
+Message-Id: <20180912185509.32187-4-acme@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180912185509.32187-1-acme@kernel.org>
 References: <20180912185509.32187-1-acme@kernel.org>
@@ -70,55 +65,56 @@ From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
 To get the changes in:
 
-	db7a2d1809a5 ("asm-generic: unistd.h: Wire up sys_rseq")
+	d67b6a206507 ("drm: writeback: Add client capability for exposing writeback connectors")
 
-That wires up the new 'rsec' system call, which will automagically
-support that syscall in the syscall table used by 'perf trace' on
-arm/arm64.
+This is for an argument to a DRM ioctl, which is not being prettyfied in
+the 'perf trace' DRM ioctl beautifier, but will now that syscalls are
+starting to have pointer arguments augmented via BPF.
 
-This cures the following warning during perf's build:
+This time around this just cures the following warning during perf's
+build:
 
-	Warning: Kernel ABI header at 'tools/include/uapi/asm-generic/unistd.h' differs from latest version at 'include/uapi/asm-generic/unistd.h'
-	diff -u tools/include/uapi/asm-generic/unistd.h include/uapi/asm-generic/unistd.h
+	Warning: Kernel ABI header at 'tools/include/uapi/drm/drm.h' differs from latest version at 'include/uapi/drm/drm.h'
+	diff -u tools/include/uapi/drm/drm.h include/uapi/drm/drm.h
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Brian Starkey <brian.starkey@arm.com>
 Cc: David Ahern <dsahern@gmail.com>
-Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Cc: Eric Anholt <eric@anholt.net>
 Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kim Phillips <kim.phillips@arm.com>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Liviu Dudau <liviu.dudau@arm.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: Thomas Richter <tmricht@linux.vnet.ibm.com>
+Cc: Sean Paul <seanpaul@chromium.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Link: https://lkml.kernel.org/n/tip-vt7k2itnitp1t9p3dp7qeb08@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-n7qib1bac6mc6w9oke7r4qdc@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/include/uapi/asm-generic/unistd.h | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ tools/include/uapi/drm/drm.h | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/tools/include/uapi/asm-generic/unistd.h b/tools/include/uapi/asm-generic/unistd.h
-index 42990676a55e..df4bedb9b01c 100644
---- a/tools/include/uapi/asm-generic/unistd.h
-+++ b/tools/include/uapi/asm-generic/unistd.h
-@@ -734,9 +734,11 @@ __SYSCALL(__NR_pkey_free,     sys_pkey_free)
- __SYSCALL(__NR_statx,     sys_statx)
- #define __NR_io_pgetevents 292
- __SC_COMP(__NR_io_pgetevents, sys_io_pgetevents, compat_sys_io_pgetevents)
-+#define __NR_rseq 293
-+__SYSCALL(__NR_rseq, sys_rseq)
+diff --git a/tools/include/uapi/drm/drm.h b/tools/include/uapi/drm/drm.h
+index 9c660e1688ab..300f336633f2 100644
+--- a/tools/include/uapi/drm/drm.h
++++ b/tools/include/uapi/drm/drm.h
+@@ -687,6 +687,15 @@ struct drm_get_cap {
+  */
+ #define DRM_CLIENT_CAP_ASPECT_RATIO    4
  
- #undef __NR_syscalls
--#define __NR_syscalls 293
-+#define __NR_syscalls 294
- 
- /*
-  * 32 bit systems traditionally used different
++/**
++ * DRM_CLIENT_CAP_WRITEBACK_CONNECTORS
++ *
++ * If set to 1, the DRM core will expose special connectors to be used for
++ * writing back to memory the scene setup in the commit. Depends on client
++ * also supporting DRM_CLIENT_CAP_ATOMIC
++ */
++#define DRM_CLIENT_CAP_WRITEBACK_CONNECTORS	5
++
+ /** DRM_IOCTL_SET_CLIENT_CAP ioctl argument type */
+ struct drm_set_client_cap {
+ 	__u64 capability;
 -- 
 2.14.4
 
