@@ -2,253 +2,180 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 809EDC46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:56:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57B27C6778D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:56:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38C7F20833
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:56:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38C7F20833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 05F7020833
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:56:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="NoxvxR7e"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05F7020833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727853AbeILVBd (ORCPT
+        id S1728015AbeILVB4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 17:01:33 -0400
-Received: from foss.arm.com ([217.140.101.70]:34222 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726821AbeILVBc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 17:01:32 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D7D0C7A9;
-        Wed, 12 Sep 2018 08:56:24 -0700 (PDT)
-Received: from e110439-lin (e110439-lin.Emea.Arm.com [10.4.12.126])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 14A303F5C0;
-        Wed, 12 Sep 2018 08:56:21 -0700 (PDT)
-Date:   Wed, 12 Sep 2018 16:56:19 +0100
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v4 02/16] sched/core: uclamp: map TASK's clamp values
- into CPU's clamp groups
-Message-ID: <20180912155619.GG1413@e110439-lin>
-References: <20180828135324.21976-1-patrick.bellasi@arm.com>
- <20180828135324.21976-3-patrick.bellasi@arm.com>
- <20180912134945.GZ24106@hirez.programming.kicks-ass.net>
+        Wed, 12 Sep 2018 17:01:56 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:45710 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727865AbeILVBu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 17:01:50 -0400
+Received: by mail-pg1-f195.google.com with SMTP id x26-v6so1265159pge.12
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 08:56:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=EMNkJdPwdBpD5xBITzB4iDjL2dq/Im2icV1KK6sTT1c=;
+        b=NoxvxR7eAuvDTalLZRHwo0Pcw4WQHG+TMxP2qAjjjvfLZHyQ6uZzB6ESNiYTWrTpdg
+         K+aJNZZzMpDlPC0q4QaNmQOLpW5XbbcF/DArG33F09wwIxWNxCG5p3ksLpiCp6d2S8Lz
+         b/IhQvUFrxIywkPl9KyGUuBcH11VrOmJUgiBlPbk+1lEBmIfOFFhqhzRW9GGXjqR/8Bw
+         IZOy0hRDUyYs0FsI5mJyWGAXyeI4EdMm0nmkkOJBkeRUAfnZkiU2Q1v0N4NXVqar5aZf
+         dFsIhcXEhnMXmrsPgiSilt1u+sT9/Y/K4ANKH3ZCVJd4O4irK0pks2dRMx40d+gmBNSq
+         cxTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=EMNkJdPwdBpD5xBITzB4iDjL2dq/Im2icV1KK6sTT1c=;
+        b=fPtdeRTF6uJH/+pp0tleOQ5LJWO9BGpt8dsq/NbYje7K2khmVR4/rlbUARI1DDgp0z
+         bU3ZZef+MEUJJI3ev879BxhcyGcSjI3rZ2s+zY7DvGSXadwaovNTxmNmJOPOWlupCc1L
+         5IhlI9NMS23kIOtE+M9a9xxBAR+vUMv0IKcjJyTDKCc+wDwWZIoO+Tlq7euOJ1cHoJaw
+         Ni2e5IJsGhL9Va3Lec8LdnkOt06Kcf9HJeQAr4goxXPnmQuhzGzUycmdJsCpz3NIPneT
+         Xy0StIKQxUgbE2LYN4yxO+WX7w8jAXoD2pU6ixyy28ZUPvK/mtegu1wAFp1C3AUurxVg
+         yZXA==
+X-Gm-Message-State: APzg51BXZuxmE81vWf9QyQxoiyAlieVz8AcZQGVTzO20yvSjSNOyvBQp
+        r7skZLlNTM6ssZ0wlZQ62dUT5Q==
+X-Google-Smtp-Source: ANB0Vdb9g/Gm1pm1I3lrG4BgLhJv4cd9YkSV09pAi5W7gHm1GPsLilz+jfhvSO/13u7JKNWvZsWiPg==
+X-Received: by 2002:a62:9c17:: with SMTP id f23-v6mr3079094pfe.209.1536767801500;
+        Wed, 12 Sep 2018 08:56:41 -0700 (PDT)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id g25-v6sm4396806pfd.23.2018.09.12.08.56.39
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Sep 2018 08:56:40 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1g07VP-0007Mj-9I; Wed, 12 Sep 2018 09:56:39 -0600
+Date:   Wed, 12 Sep 2018 09:56:39 -0600
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        qat-linux@intel.com, linux-crypto@vger.kernel.org,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linaro-mm-sig@lists.linaro.org, amd-gfx@lists.freedesktop.org,
+        linux-input@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v2 05/17] compat_ioctl: move more drivers to
+ generic_compat_ioctl_ptrarg
+Message-ID: <20180912155639.GF5633@ziepe.ca>
+References: <20180912150142.157913-1-arnd@arndb.de>
+ <20180912151134.436719-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180912134945.GZ24106@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180912151134.436719-1-arnd@arndb.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12-Sep 15:49, Peter Zijlstra wrote:
-> On Tue, Aug 28, 2018 at 02:53:10PM +0100, Patrick Bellasi wrote:
-> > +/**
-> > + * Utilization's clamp group
-> > + *
-> > + * A utilization clamp group maps a "clamp value" (value), i.e.
-> > + * util_{min,max}, to a "clamp group index" (group_id).
-> > + */
-> > +struct uclamp_se {
-> > +	unsigned int value;
-> > +	unsigned int group_id;
-> > +};
+On Wed, Sep 12, 2018 at 05:08:52PM +0200, Arnd Bergmann wrote:
+> The .ioctl and .compat_ioctl file operations have the same prototype so
+> they can both point to the same function, which works great almost all
+> the time when all the commands are compatible.
 > 
-> > +/**
-> > + * uclamp_map: reference counts a utilization "clamp value"
-> > + * @value:    the utilization "clamp value" required
-> > + * @se_count: the number of scheduling entities requiring the "clamp value"
-> > + * @se_lock:  serialize reference count updates by protecting se_count
+> One exception is the s390 architecture, where a compat pointer is only
+> 31 bit wide, and converting it into a 64-bit pointer requires calling
+> compat_ptr(). Most drivers here will ever run in s390, but since we now
+> have a generic helper for it, it's easy enough to use it consistently.
 > 
-> Why do you have a spinlock to serialize a single value? Don't we have
-> atomics for that?
-
-There are some code paths where it's used to protect clamp groups
-mapping and initialization, e.g.
-
-      uclamp_group_get()
-          spin_lock()
-              // initialize clamp group (if required) and then...
-              se_count += 1
-          spin_unlock()
-
-Almost all these paths are triggered from user-space and protected
-by a global uclamp_mutex, but fork/exit paths.
-
-To serialize these paths I'm using the spinlock above, does it make
-sense ? Can we use the global uclamp_mutex on forks/exit too ?
-
-One additional observations is that, if in the future we want to add a
-kernel space API, (e.g. driver asking for a new clamp value), maybe we
-will need to have a serialized non-sleeping uclamp_group_get() API ?
-
-> > + */
-> > +struct uclamp_map {
-> > +	int value;
-> > +	int se_count;
-> > +	raw_spinlock_t se_lock;
-> > +};
-> > +
-> > +/**
-> > + * uclamp_maps: maps each SEs "clamp value" into a CPUs "clamp group"
-> > + *
-> > + * Since only a limited number of different "clamp values" are supported, we
-> > + * need to map each different clamp value into a "clamp group" (group_id) to
-> > + * be used by the per-CPU accounting in the fast-path, when tasks are
-> > + * enqueued and dequeued.
-> > + * We also support different kind of utilization clamping, min and max
-> > + * utilization for example, each representing what we call a "clamp index"
-> > + * (clamp_id).
-> > + *
-> > + * A matrix is thus required to map "clamp values" to "clamp groups"
-> > + * (group_id), for each "clamp index" (clamp_id), where:
-> > + * - rows are indexed by clamp_id and they collect the clamp groups for a
-> > + *   given clamp index
-> > + * - columns are indexed by group_id and they collect the clamp values which
-> > + *   maps to that clamp group
-> > + *
-> > + * Thus, the column index of a given (clamp_id, value) pair represents the
-> > + * clamp group (group_id) used by the fast-path's per-CPU accounting.
-> > + *
-> > + * NOTE: first clamp group (group_id=0) is reserved for tracking of non
-> > + * clamped tasks.  Thus we allocate one more slot than the value of
-> > + * CONFIG_UCLAMP_GROUPS_COUNT.
-> > + *
-> > + * Here is the map layout and, right below, how entries are accessed by the
-> > + * following code.
-> > + *
-> > + *                          uclamp_maps is a matrix of
-> > + *          +------- UCLAMP_CNT by CONFIG_UCLAMP_GROUPS_COUNT+1 entries
-> > + *          |                                |
-> > + *          |                /---------------+---------------\
-> > + *          |               +------------+       +------------+
-> > + *          |  / UCLAMP_MIN | value      |       | value      |
-> > + *          |  |            | se_count   |...... | se_count   |
-> > + *          |  |            +------------+       +------------+
-> > + *          +--+            +------------+       +------------+
-> > + *             |            | value      |       | value      |
-> > + *             \ UCLAMP_MAX | se_count   |...... | se_count   |
-> > + *                          +-----^------+       +----^-------+
-> > + *                                |                   |
-> > + *                      uc_map =  +                   |
-> > + *                     &uclamp_maps[clamp_id][0]      +
-> > + *                                                clamp_value =
-> > + *                                       uc_map[group_id].value
-> > + */
-> > +static struct uclamp_map uclamp_maps[UCLAMP_CNT]
-> > +				    [CONFIG_UCLAMP_GROUPS_COUNT + 1]
-> > +				    ____cacheline_aligned_in_smp;
-> > +
+> I double-checked all these drivers to ensure that all ioctl arguments
+> are used as pointers or are ignored, but are not interpreted as integer
+> values.
 > 
-> I'm still completely confused by all this.
-> 
-> sizeof(uclamp_map) = 12
-> 
-> that array is 2*6=12 of those, so the whole thing is 144 bytes. which is
-> more than 2 (64 byte) cachelines.
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>  drivers/android/binder.c                    | 2 +-
+>  drivers/crypto/qat/qat_common/adf_ctl_drv.c | 2 +-
+>  drivers/dma-buf/dma-buf.c                   | 4 +---
+>  drivers/dma-buf/sw_sync.c                   | 2 +-
+>  drivers/dma-buf/sync_file.c                 | 2 +-
+>  drivers/gpu/drm/amd/amdkfd/kfd_chardev.c    | 2 +-
+>  drivers/hid/hidraw.c                        | 4 +---
+>  drivers/iio/industrialio-core.c             | 2 +-
+>  drivers/infiniband/core/uverbs_main.c       | 4 ++--
+>  drivers/media/rc/lirc_dev.c                 | 4 +---
+>  drivers/mfd/cros_ec_dev.c                   | 4 +---
+>  drivers/misc/vmw_vmci/vmci_host.c           | 2 +-
+>  drivers/nvdimm/bus.c                        | 4 ++--
+>  drivers/nvme/host/core.c                    | 2 +-
+>  drivers/pci/switch/switchtec.c              | 2 +-
+>  drivers/platform/x86/wmi.c                  | 2 +-
+>  drivers/rpmsg/rpmsg_char.c                  | 4 ++--
+>  drivers/sbus/char/display7seg.c             | 2 +-
+>  drivers/sbus/char/envctrl.c                 | 4 +---
+>  drivers/scsi/3w-xxxx.c                      | 4 +---
+>  drivers/scsi/cxlflash/main.c                | 2 +-
+>  drivers/scsi/esas2r/esas2r_main.c           | 2 +-
+>  drivers/scsi/pmcraid.c                      | 4 +---
+>  drivers/staging/android/ion/ion.c           | 4 +---
+>  drivers/staging/vme/devices/vme_user.c      | 2 +-
+>  drivers/tee/tee_core.c                      | 2 +-
+>  drivers/usb/class/cdc-wdm.c                 | 2 +-
+>  drivers/usb/class/usbtmc.c                  | 4 +---
+>  drivers/video/fbdev/ps3fb.c                 | 2 +-
+>  drivers/virt/fsl_hypervisor.c               | 2 +-
+>  fs/btrfs/super.c                            | 2 +-
+>  fs/ceph/dir.c                               | 2 +-
+>  fs/ceph/file.c                              | 2 +-
+>  fs/fuse/dev.c                               | 2 +-
+>  fs/notify/fanotify/fanotify_user.c          | 2 +-
+>  fs/userfaultfd.c                            | 2 +-
+>  net/rfkill/core.c                           | 2 +-
+>  37 files changed, 40 insertions(+), 58 deletions(-)
 
-This data structure is *not* used in the hot-path, that's why I did not
-care about fitting it exactly into few cache lines.
+> diff --git a/drivers/infiniband/core/uverbs_main.c b/drivers/infiniband/core/uverbs_main.c
+> index 823beca448e1..f4755c1c9cfa 100644
+> +++ b/drivers/infiniband/core/uverbs_main.c
+> @@ -930,7 +930,7 @@ static const struct file_operations uverbs_fops = {
+>  	.release = ib_uverbs_close,
+>  	.llseek	 = no_llseek,
+>  	.unlocked_ioctl = ib_uverbs_ioctl,
+> -	.compat_ioctl = ib_uverbs_ioctl,
+> +	.compat_ioctl = generic_compat_ioctl_ptrarg,
+>  };
+>  
+>  static const struct file_operations uverbs_mmap_fops = {
+> @@ -941,7 +941,7 @@ static const struct file_operations uverbs_mmap_fops = {
+>  	.release = ib_uverbs_close,
+>  	.llseek	 = no_llseek,
+>  	.unlocked_ioctl = ib_uverbs_ioctl,
+> -	.compat_ioctl = ib_uverbs_ioctl,
+> +	.compat_ioctl = generic_compat_ioctl_ptrarg,
+>  };
+>  
+>  static struct ib_client uverbs_client = {
 
-It's used to map a user-space "clamp value" into a kernel-space "clamp
-group" when user-space:
- - changes a task specific clamp value
- - changes a cgroup clamp value
- - a task forks/exits
+For uverbs:
 
-I assume we can consider all those as "slow" code paths, is that correct ?
+Acked-by: Jason Gunthorpe <jgg@mellanox.com>
 
-At enqueue/dequeue time we use instead struct uclamp_cpu, introduced
-by the next patch:
+It is very strange, this patch did not appear in the RDMA patchworks,
+I almost missed it  :|
 
-   [PATCH v4 03/16] sched/core: uclamp: add CPU's clamp groups accounting
-   https://lore.kernel.org/lkml/20180828135324.21976-4-patrick.bellasi@arm.com/
-
-That's where we refcount RUNNABLE tasks and we have to figure out
-the current clamp value for a CPU.
-
-That data structure, with CONFIG_UCLAMP_GROUPS_COUNT=5, is:
-
-   struct uclamp_cpu {
-           struct uclamp_group        group[2][6];          /*     0    96 */
-           /* --- cacheline 1 boundary (64 bytes) was 32 bytes ago --- */
-           int                        value[2];             /*    96     8 */
-           int                        flags;                /*   104     4 */
-
-           /* size: 108, cachelines: 2, members: 3 */
-           /* last cacheline: 44 bytes */
-   };
-
-and we fit into 2 cache lines with this data layout:
-
-   util_min[0..5] | util_max[0..5] | other data
-
-> What's the purpose of that cacheline align statement?
-
-In uclamp_maps, we still need to scan the array when a clamp value is
-changed from user-space, i.e. the cases reported above. Thus, that
-alignment is just to ensure that we minimize the number of cache lines
-used. Does that make sense ?
-
-Maybe that alignment implicitly generated by the compiler ?
-
-> Note that without that apparently superfluous lock, it would be 8*12 =
-> 96 bytes, which is 1.5 lines and would indeed suggest you default to
-> GROUP_COUNT=7 by default to fill 2 lines.
-
-Yes, will check better if we can count on just the uclamp_mutex
-
-> Why are the min and max things torn up like that?  I'm fairly sure I
-> asked some of that last time; but the above comments only try to explain
-> what, not why.
-
-We use that organization to speedup scanning for clamp values of the
-same clamp_id. That's more important in the hot-path than above, where
-we need to scan struct uclamp_cpu when a new aggregated clamp value
-has to be computed. This is done in:
-
-   [PATCH v4 03/16] sched/core: uclamp: add CPU's clamp groups accounting
-   https://lore.kernel.org/lkml/20180828135324.21976-4-patrick.bellasi@arm.com/
-
-Specifically:
-
-   dequeue_task()
-     uclamp_cpu_put()
-       uclamp_cpu_put_id(clamp_id)
-         uclamp_cpu_update(clamp_id)
-            // Here we have an array scan by clamp_id
-
-With the given data layout I reported above, when we update the
-min_clamp value (boost) we have all the data required in a single
-cache line.
-
-If that makes sense, I can certainly improve the comment above to
-justify its layout.
-
-Cheers,
-Patrick
-
--- 
-#include <best/regards.h>
-
-Patrick Bellasi
+Jason
