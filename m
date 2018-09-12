@@ -2,79 +2,98 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31A2CC04ABB
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 00:02:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C689AC04ABB
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 00:06:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1BD320882
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 00:02:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63B9620882
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 00:06:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="vUU4Lau7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1BD320882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="i5aJKBnF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63B9620882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728095AbeILFEM (ORCPT
+        id S1727983AbeILFHq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 01:04:12 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:44339 "EHLO frisell.zx2c4.com"
+        Wed, 12 Sep 2018 01:07:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44802 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725740AbeILFEL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 01:04:11 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id e131e7a4;
-        Tue, 11 Sep 2018 23:45:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=GoCYk7i41uIEhsvGpPVreJ0jjs4=; b=vUU4La
-        u7ECrFGXDsSdrB8LaLx5X6GIXe897tzUOmp3u8yl3ngbX+opVME5O36E/+TBbnYW
-        6Bx/GxdJHqv3S20mZUlH7WV7MRj0s5MEF9lxkGv6F7PYEljQ33kAVVu1X+61RSVr
-        0KZcFoov+n8xLsDBxFzfszxEiFyrrhdVj4CjBueICRfKin9pGDilsBgTjYomph81
-        H6j6S9WFmSAKO5/FLWSmyrN+WILpwtKuAbqGMwjmTTG58ODhK0QJ4pUE68M/vxlU
-        1pu6w2fD2Zkmq5hSLrLQlj8+gcEAW7ocLGPj7QcdoMXycSaXYin4xv67IFAXNfDo
-        OfiT3qlQh8Z8W+jA==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 0528a5d2 (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
-        Tue, 11 Sep 2018 23:45:45 +0000 (UTC)
-Received: by mail-oi0-f53.google.com with SMTP id r69-v6so219913oie.3;
-        Tue, 11 Sep 2018 17:02:28 -0700 (PDT)
-X-Gm-Message-State: APzg51BIjfR6XdltxeC8fOB/CGVzXKD79kdGkKXYWNKIa38XArPmThgL
-        MLAcpfNWtrOWhrqU71pKWQj35RpG1cXdKnk0UZ0=
-X-Google-Smtp-Source: ANB0VdadGDrhiMyWB+GgL4B2NzTDI0i+G7Q7UGWN7/ObjG7IbX9qWTGtfbrnb1vctDhtQjBP82mjCfYUgKhfWKObaN4=
-X-Received: by 2002:aca:e795:: with SMTP id e143-v6mr29701244oih.252.1536710547395;
- Tue, 11 Sep 2018 17:02:27 -0700 (PDT)
+        id S1725740AbeILFHq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 01:07:46 -0400
+Received: from localhost (unknown [104.132.1.88])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3156720880;
+        Wed, 12 Sep 2018 00:06:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1536710764;
+        bh=4SzkYwXr+ipJSeX8e8W7eV3i6YmmBBz/FJ1hMxCPESw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=i5aJKBnF0M3ULG7QUlaF0BTGYh+cGYpMgew3NPDP/iTJCWbhwVqo25SDz4vPYS25S
+         rQ2JHNz1xTTjU/KIf6x6sohXp5MHQOTcPpxGOiHuZvNgfEp8nkeyhP41ZSKaZ5d7iK
+         cHOvJIqQBLYGtQbpo+QPj9XKi0upN0ZIxliGVvIA=
+Date:   Tue, 11 Sep 2018 17:06:03 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <chao@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix quota info to adjust recovered data
+Message-ID: <20180912000603.GA67662@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180911201546.56566-1-jaegeuk@kernel.org>
+ <7aa2e6f3-a4b2-dfdd-6205-f19c4bc952e6@kernel.org>
 MIME-Version: 1.0
-References: <20180911214737.GA81235@gmail.com> <CAHmME9rFUruF-VN1pmU-k5nFsb9ppAPhPpW-5Ho9dKL2HCg4kA@mail.gmail.com>
- <20180911233015.GD11474@lunn.ch> <20180911.165739.2032677219588723041.davem@davemloft.net>
-In-Reply-To: <20180911.165739.2032677219588723041.davem@davemloft.net>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Tue, 11 Sep 2018 18:02:15 -0600
-X-Gmail-Original-Message-ID: <CAHmME9rSRn5z16B9Ck3+PK_Zmj0LdiJAVmmT+7La6_mht8tMUA@mail.gmail.com>
-Message-ID: <CAHmME9rSRn5z16B9Ck3+PK_Zmj0LdiJAVmmT+7La6_mht8tMUA@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 02/17] zinc: introduce minimal cryptography library
-To:     David Miller <davem@davemloft.net>
-Cc:     Andrew Lunn <andrew@lunn.ch>, Eric Biggers <ebiggers@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7aa2e6f3-a4b2-dfdd-6205-f19c4bc952e6@kernel.org>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 11, 2018 at 5:57 PM David Miller <davem@davemloft.net> wrote:
-> Both of Andrew's statements are completely true.
->
-> I'm not looking at any of the networking bits until the crypto stuff
-> is fully sorted and fully supported and Ack'd by crypto folks.
+On 09/12, Chao Yu wrote:
+> On 2018/9/12 4:15, Jaegeuk Kim wrote:
+> > fsck.f2fs is able to recover the quota structure, since roll-forward recovery
+> > can recover it based on previous user information.
+> 
+> I didn't get it, both fsck and kernel recover quota file based all inodes'
+> uid/gid/prjid, if {x}id didn't change, wouldn't those two recovery result be the
+> same?
 
-Seems reasonable to me.
+I thought that, but had to add this, since I was encountering quota errors right
+after getting some files recovered. And, I thought it'd make it more safe to do
+fsck after roll-forward recovery.
 
-Jason
+Anyway, let me test again without this patch for a while.
+
+Thanks,
+
+
+> 
+> Thanks,
+> 
+> > 
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >  fs/f2fs/recovery.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+> > index 95511ed11a22..1fde86a2107e 100644
+> > --- a/fs/f2fs/recovery.c
+> > +++ b/fs/f2fs/recovery.c
+> > @@ -675,6 +675,9 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
+> >  
+> >  	need_writecp = true;
+> >  
+> > +	/* quota is not fully updated due to the lack of user information. */
+> > +	set_sbi_flag(sbi, SBI_NEED_FSCK);
+> > +
+> >  	/* step #2: recover data */
+> >  	err = recover_data(sbi, &inode_list, &dir_list);
+> >  	if (!err)
+> > 
