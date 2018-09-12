@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8146FC4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:14:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FCDAC46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:14:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3337220866
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:14:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3337220866
+	by mail.kernel.org (Postfix) with ESMTP id 3BD8D20866
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:14:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BD8D20866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728318AbeILORv (ORCPT
+        id S1728334AbeILORz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 10:17:51 -0400
-Received: from foss.arm.com ([217.140.101.70]:56068 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727391AbeILORv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 10:17:51 -0400
+        Wed, 12 Sep 2018 10:17:55 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56104 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727391AbeILORz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 10:17:55 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B0AB21684;
-        Wed, 12 Sep 2018 02:14:13 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 12F267A9;
+        Wed, 12 Sep 2018 02:14:18 -0700 (PDT)
 Received: from queper01-lin.local (queper01-lin.emea.arm.com [10.4.13.27])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 991343F703;
-        Wed, 12 Sep 2018 02:14:09 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EF70D3F703;
+        Wed, 12 Sep 2018 02:14:13 -0700 (PDT)
 From:   Quentin Perret <quentin.perret@arm.com>
 To:     peterz@infradead.org, rjw@rjwysocki.net,
         linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
@@ -42,9 +42,9 @@ Cc:     gregkh@linuxfoundation.org, mingo@redhat.com,
         edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
         currojerez@riseup.net, javi.merino@kernel.org,
         quentin.perret@arm.com
-Subject: [PATCH v7 12/14] sched/fair: Select an energy-efficient CPU on task wake-up
-Date:   Wed, 12 Sep 2018 10:13:07 +0100
-Message-Id: <20180912091309.7551-13-quentin.perret@arm.com>
+Subject: [PATCH v7 13/14] sched/topology: Make Energy Aware Scheduling depend on schedutil
+Date:   Wed, 12 Sep 2018 10:13:08 +0100
+Message-Id: <20180912091309.7551-14-quentin.perret@arm.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180912091309.7551-1-quentin.perret@arm.com>
 References: <20180912091309.7551-1-quentin.perret@arm.com>
@@ -53,199 +53,231 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If an Energy Model (EM) is available and if the system isn't
-overutilized, re-route waking tasks into an energy-aware placement
-algorithm. The selection of an energy-efficient CPU for a task
-is achieved by estimating the impact on system-level active energy
-resulting from the placement of the task on the CPU with the highest
-spare capacity in each performance domain. This strategy spreads tasks
-in a performance domain and avoids overly aggressive task packing. The
-best CPU energy-wise is then selected if it saves a large enough amount
-of energy with respect to prev_cpu.
+Energy Aware Scheduling (EAS) is designed with the assumption that
+frequencies of CPUs follow their utilization value. When using a CPUFreq
+governor other than schedutil, the chances of this assumption being true
+are small, if any. When schedutil is being used, EAS' predictions are at
+least consistent with the frequency requests. Although those requests
+have no guarantees to be honored by the hardware, they should at least
+guide DVFS in the right direction and provide some hope in regards to the
+EAS model being accurate.
 
-Although it has already shown significant benefits on some existing
-targets, this approach cannot scale to platforms with numerous CPUs.
-This is an attempt to do something useful as writing a fast heuristic
-that performs reasonably well on a broad spectrum of architectures isn't
-an easy task. As such, the scope of usability of the energy-aware
-wake-up path is restricted to systems with the SD_ASYM_CPUCAPACITY flag
-set, and where the EM isn't too complex.
+To make sure EAS is only used in a sane configuration, create a strong
+dependency on schedutil being used. Since having sugov compiled-in does
+not provide that guarantee, make CPUFreq call a scheduler function on
+on governor changes hence letting it rebuild the scheduling domains,
+check the governors of the online CPUs, and enable/disable EAS
+accordingly.
 
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
 Signed-off-by: Quentin Perret <quentin.perret@arm.com>
 ---
- kernel/sched/fair.c | 139 +++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 136 insertions(+), 3 deletions(-)
+ drivers/cpufreq/cpufreq.c        |  2 ++
+ include/linux/sched/cpufreq.h    |  9 ++++++++
+ kernel/sched/cpufreq_schedutil.c | 37 ++++++++++++++++++++++++++++++--
+ kernel/sched/sched.h             |  4 +---
+ kernel/sched/topology.c          | 23 ++++++++++++++++----
+ 5 files changed, 66 insertions(+), 9 deletions(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 7ee3e43cdaf2..6e988a01011c 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -6339,6 +6339,114 @@ static long compute_energy(struct task_struct *p, int dst_cpu,
- 	return energy;
+diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+index b0dfd3222013..c0d21eb900e3 100644
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -25,6 +25,7 @@
+ #include <linux/kernel_stat.h>
+ #include <linux/module.h>
+ #include <linux/mutex.h>
++#include <linux/sched/cpufreq.h>
+ #include <linux/slab.h>
+ #include <linux/suspend.h>
+ #include <linux/syscore_ops.h>
+@@ -2271,6 +2272,7 @@ static int cpufreq_set_policy(struct cpufreq_policy *policy,
+ 		ret = cpufreq_start_governor(policy);
+ 		if (!ret) {
+ 			pr_debug("cpufreq: governor change\n");
++			sched_cpufreq_governor_change(policy, old_gov);
+ 			return 0;
+ 		}
+ 		cpufreq_exit_governor(policy);
+diff --git a/include/linux/sched/cpufreq.h b/include/linux/sched/cpufreq.h
+index afa940cd50dc..a2ead52feb17 100644
+--- a/include/linux/sched/cpufreq.h
++++ b/include/linux/sched/cpufreq.h
+@@ -2,6 +2,7 @@
+ #ifndef _LINUX_SCHED_CPUFREQ_H
+ #define _LINUX_SCHED_CPUFREQ_H
+ 
++#include <linux/cpufreq.h>
+ #include <linux/types.h>
+ 
+ /*
+@@ -28,4 +29,12 @@ static inline unsigned long map_util_freq(unsigned long util,
+ }
+ #endif /* CONFIG_CPU_FREQ */
+ 
++#if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
++void sched_cpufreq_governor_change(struct cpufreq_policy *policy,
++			struct cpufreq_governor *old_gov);
++#else
++static inline void sched_cpufreq_governor_change(struct cpufreq_policy *policy,
++			struct cpufreq_governor *old_gov) { }
++#endif
++
+ #endif /* _LINUX_SCHED_CPUFREQ_H */
+diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+index 8356cb0072a6..d2236d1166f4 100644
+--- a/kernel/sched/cpufreq_schedutil.c
++++ b/kernel/sched/cpufreq_schedutil.c
+@@ -632,7 +632,7 @@ static struct kobj_type sugov_tunables_ktype = {
+ 
+ /********************** cpufreq governor interface *********************/
+ 
+-static struct cpufreq_governor schedutil_gov;
++struct cpufreq_governor schedutil_gov;
+ 
+ static struct sugov_policy *sugov_policy_alloc(struct cpufreq_policy *policy)
+ {
+@@ -891,7 +891,7 @@ static void sugov_limits(struct cpufreq_policy *policy)
+ 	sg_policy->need_freq_update = true;
  }
  
-+/*
-+ * find_energy_efficient_cpu(): Find most energy-efficient target CPU for the
-+ * waking task. find_energy_efficient_cpu() looks for the CPU with maximum
-+ * spare capacity in each performance domain and uses it as a potential
-+ * candidate to execute the task. Then, it uses the Energy Model to figure
-+ * out which of the CPU candidates is the most energy-efficient.
-+ *
-+ * The rationale for this heuristic is as follows. In a performance domain,
-+ * all the most energy efficient CPU candidates (according to the Energy
-+ * Model) are those for which we'll request a low frequency. When there are
-+ * several CPUs for which the frequency request will be the same, we don't
-+ * have enough data to break the tie between them, because the Energy Model
-+ * only includes active power costs. With this model, if we assume that
-+ * frequency requests follow utilization (e.g. using schedutil), the CPU with
-+ * the maximum spare capacity in a performance domain is guaranteed to be among
-+ * the best candidates of the performance domain.
-+ *
-+ * In practice, it could be preferable from an energy standpoint to pack
-+ * small tasks on a CPU in order to let other CPUs go in deeper idle states,
-+ * but that could also hurt our chances to go cluster idle, and we have no
-+ * ways to tell with the current Energy Model if this is actually a good
-+ * idea or not. So, find_energy_efficient_cpu() basically favors
-+ * cluster-packing, and spreading inside a cluster. That should at least be
-+ * a good thing for latency, and this is consistent with the idea that most
-+ * of the energy savings of EAS come from the asymmetry of the system, and
-+ * not so much from breaking the tie between identical CPUs. That's also the
-+ * reason why EAS is enabled in the topology code only for systems where
-+ * SD_ASYM_CPUCAPACITY is set.
-+ */
-+static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu,
-+							struct perf_domain *pd)
+-static struct cpufreq_governor schedutil_gov = {
++struct cpufreq_governor schedutil_gov = {
+ 	.name			= "schedutil",
+ 	.owner			= THIS_MODULE,
+ 	.dynamic_switching	= true,
+@@ -914,3 +914,36 @@ static int __init sugov_register(void)
+ 	return cpufreq_register_governor(&schedutil_gov);
+ }
+ fs_initcall(sugov_register);
++
++#ifdef CONFIG_ENERGY_MODEL
++extern bool sched_energy_update;
++static DEFINE_MUTEX(rebuild_sd_mutex);
++
++static void rebuild_sd_workfn(struct work_struct *work)
 +{
-+	unsigned long prev_energy = ULONG_MAX, best_energy = ULONG_MAX;
-+	int cpu, best_energy_cpu = prev_cpu;
-+	struct perf_domain *head = pd;
-+	unsigned long cpu_cap, util;
-+	struct sched_domain *sd;
++	mutex_lock(&rebuild_sd_mutex);
++	sched_energy_update = true;
++	rebuild_sched_domains();
++	sched_energy_update = false;
++	mutex_unlock(&rebuild_sd_mutex);
++}
++static DECLARE_WORK(rebuild_sd_work, rebuild_sd_workfn);
 +
-+	sync_entity_load_avg(&p->se);
-+
-+	if (!task_util_est(p))
-+		return prev_cpu;
-+
-+	/*
-+	 * Energy-aware wake-up happens on the lowest sched_domain starting
-+	 * from sd_asym_cpucapacity spanning over this_cpu and prev_cpu.
-+	 */
-+	sd = rcu_dereference(*this_cpu_ptr(&sd_asym_cpucapacity));
-+	while (sd && !cpumask_test_cpu(prev_cpu, sched_domain_span(sd)))
-+		sd = sd->parent;
-+	if (!sd)
-+		return prev_cpu;
-+
-+	while (pd) {
-+		unsigned long cur_energy, spare_cap, max_spare_cap = 0;
-+		int max_spare_cap_cpu = -1;
-+
-+		for_each_cpu_and(cpu, perf_domain_span(pd), sched_domain_span(sd)) {
-+			if (!cpumask_test_cpu(cpu, &p->cpus_allowed))
-+				continue;
-+
-+			/* Skip CPUs that will be overutilized. */
-+			util = cpu_util_next(cpu, p, cpu);
-+			cpu_cap = capacity_of(cpu);
-+			if (cpu_cap * 1024 < util * capacity_margin)
-+				continue;
-+
-+			/* Always use prev_cpu as a candidate. */
-+			if (cpu == prev_cpu) {
-+				prev_energy = compute_energy(p, prev_cpu, head);
-+				if (prev_energy < best_energy)
-+					best_energy = prev_energy;
-+				continue;
-+			}
-+
-+			/*
-+			 * Find the CPU with the maximum spare capacity in
-+			 * the performance domain
-+			 */
-+			spare_cap = cpu_cap - util;
-+			if (spare_cap > max_spare_cap) {
-+				max_spare_cap = spare_cap;
-+				max_spare_cap_cpu = cpu;
-+			}
-+		}
-+
-+		/* Evaluate the energy impact of using this CPU. */
-+		if (max_spare_cap_cpu >= 0) {
-+			cur_energy = compute_energy(p, max_spare_cap_cpu, head);
-+			if (cur_energy < best_energy) {
-+				best_energy = cur_energy;
-+				best_energy_cpu = max_spare_cap_cpu;
-+			}
-+		}
-+		pd = pd->next;
++/*
++ * EAS shouldn't be attempted without sugov, so rebuild the sched_domains
++ * on governor changes to make sure the scheduler knows about it.
++ */
++void sched_cpufreq_governor_change(struct cpufreq_policy *policy,
++				  struct cpufreq_governor *old_gov)
++{
++	if (old_gov == &schedutil_gov || policy->governor == &schedutil_gov) {
++		/*
++		 * When called from the cpufreq_register_driver() path, the
++		 * cpu_hotplug_lock is already held, so use a work item to
++		 * avoid nested locking in rebuild_sched_domains().
++		 */
++		schedule_work(&rebuild_sd_work);
 +	}
 +
-+	/*
-+	 * Pick the best CPU if prev_cpu cannot be used, or if it saves at
-+	 * least 6% of the energy used by prev_cpu.
-+	 */
-+	if (prev_energy == ULONG_MAX ||
-+			(prev_energy - best_energy) > (prev_energy >> 4))
-+		return best_energy_cpu;
-+
-+	return prev_cpu;
 +}
-+
- /*
-  * select_task_rq_fair: Select target runqueue for the waking task in domains
-  * that have the 'sd_flag' flag set. In practice, this is SD_BALANCE_WAKE,
-@@ -6360,13 +6468,37 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_f
- 	int want_affine = 0;
- 	int sync = (wake_flags & WF_SYNC) && !(current->flags & PF_EXITING);
++#endif
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 309c0287004c..b16417beb92e 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -2264,10 +2264,8 @@ unsigned long scale_irq_capacity(unsigned long util, unsigned long irq, unsigned
+ }
+ #endif
  
-+	rcu_read_lock();
- 	if (sd_flag & SD_BALANCE_WAKE) {
- 		record_wakee(p);
--		want_affine = !wake_wide(p) && !wake_cap(p, cpu, prev_cpu)
--			      && cpumask_test_cpu(cpu, &p->cpus_allowed);
+-#ifdef CONFIG_SMP
+-#ifdef CONFIG_ENERGY_MODEL
++#if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
+ #define perf_domain_span(pd) (to_cpumask(((pd)->obj->cpus)))
+ #else
+ #define perf_domain_span(pd) NULL
+ #endif
+-#endif
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index 0d18d69b719c..3fb32de1bb28 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -201,7 +201,9 @@ sd_parent_degenerate(struct sched_domain *sd, struct sched_domain *parent)
+ 	return 1;
+ }
+ 
+-#ifdef CONFIG_ENERGY_MODEL
++#if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
++bool sched_energy_update;
 +
-+		/*
-+		 * Forkees are not accepted in the energy-aware wake-up path
-+		 * because they don't have any useful utilization data yet and
-+		 * it's not possible to forecast their impact on energy
-+		 * consumption. Consequently, they will be placed by
-+		 * find_idlest_cpu() on the least loaded CPU, which might turn
-+		 * out to be energy-inefficient in some use-cases. The
-+		 * alternative would be to bias new tasks towards specific types
-+		 * of CPUs first, or to try to infer their util_avg from the
-+		 * parent task, but those heuristics could hurt other use-cases
-+		 * too. So, until someone finds a better way to solve this,
-+		 * let's keep things simple by re-using the existing slow path.
-+		 */
-+		if (sched_feat(ENERGY_AWARE)) {
-+			struct root_domain *rd = cpu_rq(cpu)->rd;
-+			struct perf_domain *pd = rcu_dereference(rd->pd);
+ static void free_pd(struct perf_domain *pd)
+ {
+ 	struct perf_domain *tmp;
+@@ -275,6 +277,7 @@ static void destroy_perf_domain_rcu(struct rcu_head *rp)
+  *    1. the ENERGY_AWARE sched_feat is enabled;
+  *    2. the SD_ASYM_CPUCAPACITY flag is set in the sched_domain hierarchy.
+  *    3. the EM complexity is low enough to keep scheduling overheads low;
++ *    4. schedutil is driving the frequency of all CPUs of the rd;
+  *
+  * The complexity of the Energy Model is defined as:
+  *
+@@ -294,12 +297,15 @@ static void destroy_perf_domain_rcu(struct rcu_head *rp)
+  */
+ #define EM_MAX_COMPLEXITY 2048
+ 
++extern struct cpufreq_governor schedutil_gov;
+ static void build_perf_domains(const struct cpumask *cpu_map)
+ {
+ 	int i, nr_pd = 0, nr_cs = 0, nr_cpus = cpumask_weight(cpu_map);
+ 	struct perf_domain *pd = NULL, *tmp;
+ 	int cpu = cpumask_first(cpu_map);
+ 	struct root_domain *rd = cpu_rq(cpu)->rd;
++	struct cpufreq_policy *policy;
++	struct cpufreq_governor *gov;
+ 
+ 	/* EAS is enabled for asymmetric CPU capacity topologies. */
+ 	if (!per_cpu(sd_asym_cpucapacity, cpu)) {
+@@ -315,6 +321,15 @@ static void build_perf_domains(const struct cpumask *cpu_map)
+ 		if (find_pd(pd, i))
+ 			continue;
+ 
++		/* Do not attempt EAS if schedutil is not being used. */
++		policy = cpufreq_cpu_get(i);
++		if (!policy)
++			goto free;
++		gov = policy->governor;
++		cpufreq_cpu_put(policy);
++		if (gov != &schedutil_gov)
++			goto free;
 +
-+			if (pd && !READ_ONCE(rd->overutilized)) {
-+				new_cpu = find_energy_efficient_cpu(p, prev_cpu, pd);
-+				goto unlock;
-+			}
-+		}
-+
-+		want_affine = !wake_wide(p) && !wake_cap(p, cpu, prev_cpu) &&
-+			      cpumask_test_cpu(cpu, &p->cpus_allowed);
+ 		/* Create the new pd and add it to the local list. */
+ 		tmp = pd_init(i);
+ 		if (!tmp)
+@@ -357,7 +372,7 @@ static void build_perf_domains(const struct cpumask *cpu_map)
+ }
+ #else
+ static void free_pd(struct perf_domain *pd) { }
+-#endif /* CONFIG_ENERGY_MODEL */
++#endif /* CONFIG_ENERGY_MODEL && CONFIG_CPU_FREQ_GOV_SCHEDUTIL*/
+ 
+ static void free_rootdomain(struct rcu_head *rcu)
+ {
+@@ -2158,10 +2173,10 @@ void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
+ 		;
  	}
  
--	rcu_read_lock();
- 	for_each_domain(cpu, tmp) {
- 		if (!(tmp->flags & SD_LOAD_BALANCE))
- 			break;
-@@ -6401,6 +6533,7 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_f
- 		if (want_affine)
- 			current->recent_used_cpu = cpu;
- 	}
-+unlock:
- 	rcu_read_unlock();
- 
- 	return new_cpu;
+-#ifdef CONFIG_ENERGY_MODEL
++#if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
+ 	/* Build perf. domains: */
+ 	for (i = 0; i < ndoms_new; i++) {
+-		for (j = 0; j < n; j++) {
++		for (j = 0; j < n && !sched_energy_update; j++) {
+ 			if (cpumask_equal(doms_new[i], doms_cur[j]) &&
+ 			    cpu_rq(cpumask_first(doms_cur[j]))->rd->pd)
+ 				goto match3;
 -- 
 2.18.0
 
