@@ -2,100 +2,175 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A60AC46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 13:51:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8295C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 13:52:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1915220854
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 13:51:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BZUqJFy4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1915220854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 5B0F420854
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 13:52:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B0F420854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727746AbeILS4L (ORCPT
+        id S1727764AbeILS4v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 14:56:11 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:44434 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726672AbeILS4L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 14:56:11 -0400
-Received: by mail-oi0-f68.google.com with SMTP id l82-v6so3773323oih.11
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 06:51:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=BaSLFX2lpr69rLdyiRrdXU+tOD7HdC1lnJUvOJTGH80=;
-        b=BZUqJFy4NYM7jAbDnwfaOFK7phxmifV6IcPnWdX0L6g6ayU0u1aYBdA/oT24cYPnmj
-         drgNHslcZthlGV2hkFs8M8tSuvdTsrUy/WO2/+RIZ7VGFvSYt8R3gXlexNfOVmBvUU9k
-         8D/ZhbVMEOhbQLiKzltZyF6zzB60C3pFMQWhRp3msXXADFeRo/8mpeOHTnvS7t4EhbMA
-         KAyrsRZ5dcSaxQOK6/T7O+FUmEBhYWZu8GVZZcwqL9xWIwZZOjWeswLfNLdbOy3JS7KS
-         FhWi79i/ijMu3Zbwe2hbY6VfWqoDTTXga/KS5i1VPDa0zECfmEdkCqHifkT4HvgRbydR
-         v6mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=BaSLFX2lpr69rLdyiRrdXU+tOD7HdC1lnJUvOJTGH80=;
-        b=Tc8c8OSW2208Ck1wlv23x2XcVRZDdGvKgpJ/M21Oiqw21f06eO6NiRDBOrAiTmBNC0
-         XCYthoUwvad8DjGX6JxVkQuJEYXCmqNJHHqf5GS2rOsNBHbhOOrcW9wSEZ7fSPOhrUqd
-         r2D2qNSBxYBUHYz2co8E0jF1trUInsoQzKWRp3Xsl/Yu6voY1R9JjYdnLPYIDHzSX8lZ
-         d8rmfwWKXDCuU+vCNdJd6tvnZcxxyN0NLuvpypT90Ys92HPjl1h71b2T+Up5Q3rILfp7
-         IdxjQXt6IJGTeM9Wb5W70cU0mlCvqsx0cW2zn1PfGCRQpcn/1WwvfK27yJ31xIL7QBKt
-         HONQ==
-X-Gm-Message-State: APzg51Aq1TpOB3eXCX44eiYar4Ogcxb8Amt77GfNH186sU3lKVB7V0rm
-        AFfRb16/FQea/CFmMo82f06PBkIBDsglvCZhVPI=
-X-Google-Smtp-Source: ANB0VdaH6726HSfWxyYhccP+zPaImFYUg0+6psru0HaI486jcbVovtkohTuZFG2lKzCvNec1WJsGn/ti+3yjySiohdY=
-X-Received: by 2002:aca:bdc4:: with SMTP id n187-v6mr2029393oif.3.1536760294014;
- Wed, 12 Sep 2018 06:51:34 -0700 (PDT)
+        Wed, 12 Sep 2018 14:56:51 -0400
+Received: from foss.arm.com ([217.140.101.70]:59938 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726932AbeILS4v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 14:56:51 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E144280D;
+        Wed, 12 Sep 2018 06:52:13 -0700 (PDT)
+Received: from DESKTOP-E1NTVVP.localdomain (desktop-e1ntvvp.cambridge.arm.com [10.1.34.160])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C5C743F703;
+        Wed, 12 Sep 2018 06:52:11 -0700 (PDT)
+Date:   Wed, 12 Sep 2018 14:52:07 +0100
+From:   Brian Starkey <brian.starkey@arm.com>
+To:     dri-devel@lists.freedesktop.org, daniel@fooishbar.org,
+        airlied@linux.ie, gustavo@padovan.org,
+        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
+        linux-kernel@vger.kernel.org, alexandru-cosmin.gheorghe@arm.com,
+        liviu.dudau@arm.com, ayan.halder@arm.com, tfiga@chromium.org,
+        hoegsberg@chromium.org
+Subject: Re: [RFC PATCH v2 1/3] drm/fourcc: Add 'bpp' field for formats with
+ non-integer bytes-per-pixel
+Message-ID: <20180912135206.GA21008@DESKTOP-E1NTVVP.localdomain>
+References: <20180823152343.6474-1-brian.starkey@arm.com>
+ <20180823152343.6474-2-brian.starkey@arm.com>
+ <20180831081730.GM21634@phenom.ffwll.local>
+ <20180907124535.GA3461@DESKTOP-E1NTVVP.localdomain>
+ <20180907192626.GA7176@phenom.ffwll.local>
+ <20180910085003.GA36@DESKTOP-E1NTVVP.localdomain>
+ <20180910195325.GC19774@phenom.ffwll.local>
 MIME-Version: 1.0
-Received: by 2002:a9d:cca:0:0:0:0:0 with HTTP; Wed, 12 Sep 2018 06:51:33 -0700 (PDT)
-In-Reply-To: <AM6PR04MB51581BE201C12160B7A7CC5AE31B0@AM6PR04MB5158.eurprd04.prod.outlook.com>
-References: <20180823074918.641878835@linuxfoundation.org> <20180823074921.706703657@linuxfoundation.org>
- <1536694015.3024.141.camel@codethink.co.uk> <AM6PR04MB51581BE201C12160B7A7CC5AE31B0@AM6PR04MB5158.eurprd04.prod.outlook.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Wed, 12 Sep 2018 10:51:33 -0300
-Message-ID: <CAOMZO5CGyBq_J=aYqT-c+mDpUx4XpF6hqoONC2LZBc3VK1h51w@mail.gmail.com>
-Subject: Re: Fw: [PATCH 4.4 40/79] ARM: imx_v6_v7_defconfig: Select ULPI support
-To:     ben.hutchings@codethink.co.uk,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Fabio Estevam <fabio.estevam@nxp.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        alexander.levin@microsoft.com, Shawn Guo <shawnguo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20180910195325.GC19774@phenom.ffwll.local>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ben,
-
->> From: Fabio Estevam <fabio.estevam@nxp.com>
+On Mon, Sep 10, 2018 at 09:53:25PM +0200, Daniel Vetter wrote:
+>On Mon, Sep 10, 2018 at 09:50:03AM +0100, Brian Starkey wrote:
+>> Hi,
 >>
->> [ Upstream commit 157bcc06094c3c5800d3f4676527047b79b618e7 ]
+>> On Fri, Sep 07, 2018 at 09:28:44PM +0200, Daniel Vetter wrote:
+>> > On Fri, Sep 07, 2018 at 01:45:36PM +0100, Brian Starkey wrote:
+>> > > Hi Daniel,
+>> > >
+>> > > On Fri, Aug 31, 2018 at 10:17:30AM +0200, Daniel Vetter wrote:
+>> > > > On Thu, Aug 23, 2018 at 04:23:41PM +0100, Brian Starkey wrote:
+>> > > > > Some formats have a non-integer number of bytes per pixel, which can't
+>> > > > > be handled with the existing 'cpp' field in drm_format_info. To handle
+>> > > > > these formats, add a 'bpp' field, which is only used if cpp[0] == 0.
+>> > > > >
+>> > > > > This updates all the users of format->cpp in the core DRM code,
+>> > > > > converting them to use a new function to get the bits-per-pixel for any
+>> > > > > format.
+>> > > > >
+>> > > > > It's assumed that drivers will use the 'bpp' field when they add support
+>> > > > > for pixel formats with non-integer bytes-per-pixel.
+>> > > > >
+>> > > > > Signed-off-by: Brian Starkey <brian.starkey@arm.com>
+>> > > >
+>> > > > I assume you still require that stuff is eventually aligned to bytes? In
+>> > > > that case, can we subsume this into the tile work Alex is doing? It's
+>> > > > essentially just another special case of having storage-size units
+>> > > > measured in bytes which span more than 1x1 pixel. And I kinda don't want a
+>> > > > metric pile of special cases here in the format code, because that just
+>> > > > means every driver handles a different subset, with different bugs.
+>> > > > -Daniel
+>> > >
+>> > > Sorry for the delay, been struggling to free some cycles to think
+>> > > about this.
+>> > >
+>> > > I'm not sure how to pull this in with the tiling stuff. In the AFBC
+>> > > case then our AFBC superblocks are always nice round numbers (256
+>> > > pixels), and so it does end up being a multiple of bytes.
+>> > >
+>> > > However, AFBC supports different superblock sizes, so picking just one
+>> > > doesn't really work out, and putting AFBC in the core format table
+>> > > which reflects AFBC doesn't seem good.
+>> > >
+>> > > We could make something up (e.g. call these formats "tiled" with 2x4
+>> > > tiles, which guarantees a multiple of 8), but it would be an
+>> > > arbitrarily-selected lie, which often seems to spell trouble. If we
+>> > > did do that, would you re-define cpp as "bytes-per-tile"? Otherwise
+>> > > we still need to add a new field anyway.
+>> > >
+>> > > What's the pile of special cases you're worried about? The helper I've
+>> > > added here means that drivers which need to care can use one API and
+>> > > not implement their own bugs.
+>> >
+>> > I'm confused ... the new bits-per-pixel stuff you're adding here is for
+>> > yuv formats, not afbc. I'm just suggesting we have only 1 way of
+>> > describing such formats that need more descriptive power than cpp, whether
+>> > they have some kind of pixel-groups or small tiles.
 >>
->> Select CONFIG_USB_CHIPIDEA_ULPI and CONFIG_USB_ULPI_BUS so that
->> USB ULPI can be functional on some boards like imx51-babbge.
-> [...]
+>> Well, not really. The three formats which have non-integer cpp are:
+>> DRM_FORMAT_VUY101010, DRM_FORMAT_YUV420_8BIT and
+>> DRM_FORMAT_YUV420_10BIT. These formats are only valid with non-linear
+>> modifiers (no linear encoding is defined). Mali only supports them
+>> with AFBC.
+>>
+>> The formats themselves have no notion of tiling or grouping - the
+>> modifier adds that. I'm not aware of any non-AFBC uses of these
+>> formats, so I don't want to "make up" a small-tile layout restriction
+>> for them.
 >
-> CONFIG_USB_CHIPIDEA_ULPI doesn't exist in 4.4 or 4.9, so I think this
-> and commit 2ceb2780b790b "ARM: imx_v4_v5_defconfig: Select ULPI
-> support" should be reverted on those branches.
+>Ah, I missed that.
+>
+>> > For very special stuff like afbc you need to validate in the driver
+>> > anyway, too complicated. So I have no idea why you bring this up here?
+>>
+>> Sure, we can just let drivers provide their own format_info's for
+>> these, if that's what you prefer. The core format checking code can
+>> error out if it ever encounters them.
+>
+>It's format_info we're talking about. What I mean is that you just set all
+>these to 0 and let the format_info code ignore it. And then having a
+>bespoke drm_format_check_afbc helper function or similar, which checks all
+>the layout restrictions of afbc.
+>
+>I still maintain that bpp and tile_size are equavalent, and we really
+>don't need both. Both are defacto a form of numerator/denumerator. If you
+>don't like that you have to introduce "fake" tiles for afbc, then we can
+>rename tile_size to numerator and tile_h/w to denumerator_h/w. Doesn't
+>change one bit of the math. bpp simply hardcodes a denumerator of 8, and I
+>don't see why we need that special case. Except if you love to write
+>redundant self tests for all the math :-)
+>
+>So two options that I think are reasonable:
+>- one common numerator/denumerator. I don't care how you call that
+>  bikeshed.
 
-Agreed and I have already sent revert patches for all stable trees.
+Sorry for being dense, but I'm still struggling to get my head around
+what you're suggesting. In particular "bpp simply hardcodes a
+denumerator of 8" didn't make any sense to me. Could you give concrete
+examples for how you think this would look for e.g.
 
-When I submitted the patch I didn't have the intention to get it
-applied to any stable tree.
+ - DRM_FORMAT_VUY101010. 30-bits per pixel, no tiling.
+ - DRM_FORMAT_Y0L2. 16-bits per pixel, 2x2 pixel tiles
 
-One user reported a regression in 4.14 stable tree due to this commit,
-so I would recommend reverting it from stable.
+I think we need two things:
+ - The size, in bits, of a tile
+ - The width and height, in pixels, of a tile (currently implicitly
+   1x1)
 
-Thanks
+Do you disagree? Are you just saying that instead of adding .bpp I
+should be replacing .cpp with .bpp wholesale?
+
+>- don't check afbc using format_info, have your own helper that does that
+>  using custom code.
+
+We can do this, no problem.
+
+Thanks,
+-Brian
+
