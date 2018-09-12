@@ -2,393 +2,95 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8AF4C4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 06:12:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7486CC46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 06:18:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7212120833
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 06:12:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7212120833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1458D20839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 06:18:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="wAqPKTil"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1458D20839
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726782AbeILLPo (ORCPT
+        id S1726855AbeILLVW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 07:15:44 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37148 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726027AbeILLPo (ORCPT
+        Wed, 12 Sep 2018 07:21:22 -0400
+Received: from conuserg-09.nifty.com ([210.131.2.76]:53906 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726027AbeILLVW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 07:15:44 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8C6AXHg145725
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 02:12:45 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2mew9yr1n3-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 02:12:45 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
-        Wed, 12 Sep 2018 07:12:42 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 12 Sep 2018 07:12:39 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8C6Cb2i62259288
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 12 Sep 2018 06:12:37 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4B4C911C04C;
-        Wed, 12 Sep 2018 09:12:26 +0100 (BST)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2241B11C04A;
-        Wed, 12 Sep 2018 09:12:24 +0100 (BST)
-Received: from bangoria.in.ibm.com (unknown [9.124.35.146])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 12 Sep 2018 09:12:23 +0100 (BST)
-From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-To:     acme@kernel.org, jolsa@redhat.com
-Cc:     alexander.shishkin@linux.intel.com, namhyung@kernel.org,
-        tmricht@linux.ibm.com, sandipan@linux.ibm.com,
-        brueckner@linux.ibm.com, kim.phillips@arm.com,
-        kstewart@linuxfoundation.org, tglx@linutronix.de,
-        naveen.n.rao@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Subject: [PATCH v2] perf test: Add watchpoint test
-Date:   Wed, 12 Sep 2018 11:42:29 +0530
-X-Mailer: git-send-email 2.14.4
-X-TM-AS-GCONF: 00
-x-cbid: 18091206-0028-0000-0000-000002F809CD
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18091206-0029-0000-0000-000023B1A6FE
-Message-Id: <20180912061229.22832-1-ravi.bangoria@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-12_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809120066
+        Wed, 12 Sep 2018 07:21:22 -0400
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-09.nifty.com with ESMTP id w8C6IJNR012332;
+        Wed, 12 Sep 2018 15:18:19 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com w8C6IJNR012332
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1536733099;
+        bh=1Ofd2D5xflJouYcUk4EXEPfoy1UW1xAmnF6wO1wg+is=;
+        h=From:To:Cc:Subject:Date:From;
+        b=wAqPKTilA2WSi0Nt0YZze+nNpY2qcbR4GlihPHAyF+e0+TbCoQuiSQijdFddQVn1J
+         +Dq72dHQ0uOjmSfSUgEEg1woWzY3CjGf+AVVMMrHAEGdyl9Eyr27plwPpAbqcBUgr/
+         gz6MGQoI1BVXUPFUDczHYYI1YdOMSXTN9Xv3OTm+Bta2qghvwQ+T8S+gYhZP0Y8vk6
+         oZEKjqhyNE8VNQ8XsAfF2nSoJ4L3+HQrDNjdOaAl/6Ma6b2gEEyr3UJzvIS6Vlu84p
+         oiSGVQN7nuTcOQUyAL+NJem/Sz6kVyH2NYQ2nUp54nIx6Euy6PwJHbzdAnHg1deDV6
+         C7n5DfGxAXfCA==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] kbuild: remove old check for CFLAGS use
+Date:   Wed, 12 Sep 2018 15:18:02 +0900
+Message-Id: <1536733082-19110-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We don't have perf test available to test watchpoint functionality.
-Add simple set of tests:
- - Read only watchpoint
- - Write only watchpoint
- - Read / Write watchpoint
- - Runtime watchpoint modification
+This check has been here more than a decade since commit 0c53c8e6eb45
+("kbuild: check for wrong use of CFLAGS").
 
-Ex on powerpc:
-  $ sudo ./perf test 22
-  22: Watchpoint                                            :
-  22.1: Read Only Watchpoint                                : Ok
-  22.2: Write Only Watchpoint                               : Ok
-  22.3: Read / Write Watchpoint                             : Ok
-  22.4: Modify Watchpoint                                   : Ok
+Enough time for migration has passed.
 
-Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
-v1 -> v2:
- - Fix build failure for mips and other archs.
- - Show debug message if subtest is not supported.
 
- tools/perf/tests/Build          |   1 +
- tools/perf/tests/builtin-test.c |   9 ++
- tools/perf/tests/tests.h        |   3 +
- tools/perf/tests/wp.c           | 229 ++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 242 insertions(+)
- create mode 100644 tools/perf/tests/wp.c
+ scripts/Makefile.build | 10 ----------
+ 1 file changed, 10 deletions(-)
 
-diff --git a/tools/perf/tests/Build b/tools/perf/tests/Build
-index 6c108fa79ae3..0b2b8305c965 100644
---- a/tools/perf/tests/Build
-+++ b/tools/perf/tests/Build
-@@ -21,6 +21,7 @@ perf-y += python-use.o
- perf-y += bp_signal.o
- perf-y += bp_signal_overflow.o
- perf-y += bp_account.o
-+perf-y += wp.o
- perf-y += task-exit.o
- perf-y += sw-clock.o
- perf-y += mmap-thread-lookup.o
-diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
-index d7a5e1b9aa6f..54ca7d87236f 100644
---- a/tools/perf/tests/builtin-test.c
-+++ b/tools/perf/tests/builtin-test.c
-@@ -120,6 +120,15 @@ static struct test generic_tests[] = {
- 		.func = test__bp_accounting,
- 		.is_supported = test__bp_signal_is_supported,
- 	},
-+	{
-+		.desc = "Watchpoint",
-+		.func = test__wp,
-+		.subtest = {
-+			.skip_if_fail	= false,
-+			.get_nr		= test__wp_subtest_get_nr,
-+			.get_desc	= test__wp_subtest_get_desc,
-+		},
-+	},
- 	{
- 		.desc = "Number of exit events of a simple workload",
- 		.func = test__task_exit,
-diff --git a/tools/perf/tests/tests.h b/tools/perf/tests/tests.h
-index a9760e790563..8e26a4148f30 100644
---- a/tools/perf/tests/tests.h
-+++ b/tools/perf/tests/tests.h
-@@ -59,6 +59,9 @@ int test__python_use(struct test *test, int subtest);
- int test__bp_signal(struct test *test, int subtest);
- int test__bp_signal_overflow(struct test *test, int subtest);
- int test__bp_accounting(struct test *test, int subtest);
-+int test__wp(struct test *test, int subtest);
-+const char *test__wp_subtest_get_desc(int subtest);
-+int test__wp_subtest_get_nr(void);
- int test__task_exit(struct test *test, int subtest);
- int test__mem(struct test *test, int subtest);
- int test__sw_clock_freq(struct test *test, int subtest);
-diff --git a/tools/perf/tests/wp.c b/tools/perf/tests/wp.c
-new file mode 100644
-index 000000000000..017a99317f94
---- /dev/null
-+++ b/tools/perf/tests/wp.c
-@@ -0,0 +1,229 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <stdlib.h>
-+#include <sys/ioctl.h>
-+#include <linux/hw_breakpoint.h>
-+#include "tests.h"
-+#include "debug.h"
-+#include "cloexec.h"
-+
-+#define WP_TEST_ASSERT_VAL(fd, text, val)       \
-+do {                                            \
-+	long long count;                        \
-+	wp_read(fd, &count, sizeof(long long)); \
-+	TEST_ASSERT_VAL(text, count == val);    \
-+} while (0)
-+
-+volatile u64 data1;
-+volatile u8 data2[3];
-+
-+static int wp_read(int fd, long long *count, int size)
-+{
-+	int ret = read(fd, count, size);
-+
-+	if (ret != size) {
-+		pr_debug("failed to read: %d\n", ret);
-+		return -1;
-+	}
-+	return 0;
-+}
-+
-+static void get__perf_event_attr(struct perf_event_attr *attr, int wp_type,
-+				 void *wp_addr, unsigned long wp_len)
-+{
-+	memset(attr, 0, sizeof(struct perf_event_attr));
-+	attr->type           = PERF_TYPE_BREAKPOINT;
-+	attr->size           = sizeof(struct perf_event_attr);
-+	attr->config         = 0;
-+	attr->bp_type        = wp_type;
-+	attr->bp_addr        = (unsigned long)wp_addr;
-+	attr->bp_len         = wp_len;
-+	attr->sample_period  = 1;
-+	attr->sample_type    = PERF_SAMPLE_IP;
-+	attr->exclude_kernel = 1;
-+	attr->exclude_hv     = 1;
-+}
-+
-+static int __event(int wp_type, void *wp_addr, unsigned long wp_len)
-+{
-+	int fd;
-+	struct perf_event_attr attr;
-+
-+	get__perf_event_attr(&attr, wp_type, wp_addr, wp_len);
-+	fd = sys_perf_event_open(&attr, 0, -1, -1,
-+				 perf_event_open_cloexec_flag());
-+	if (fd < 0)
-+		pr_debug("failed opening event %x\n", attr.bp_type);
-+
-+	return fd;
-+}
-+
-+static int wp_ro_test(void)
-+{
-+	int fd;
-+	unsigned long tmp, tmp1 = rand();
-+
-+	fd = __event(HW_BREAKPOINT_R, (void *)&data1, sizeof(data1));
-+	if (fd < 0)
-+		return -1;
-+
-+	tmp = data1;
-+	WP_TEST_ASSERT_VAL(fd, "RO watchpoint", 1);
-+
-+	data1 = tmp1 + tmp;
-+	WP_TEST_ASSERT_VAL(fd, "RO watchpoint", 1);
-+
-+	close(fd);
-+	return 0;
-+}
-+
-+static int wp_wo_test(void)
-+{
-+	int fd;
-+	unsigned long tmp, tmp1 = rand();
-+
-+	fd = __event(HW_BREAKPOINT_W, (void *)&data1, sizeof(data1));
-+	if (fd < 0)
-+		return -1;
-+
-+	tmp = data1;
-+	WP_TEST_ASSERT_VAL(fd, "WO watchpoint", 0);
-+
-+	data1 = tmp1 + tmp;
-+	WP_TEST_ASSERT_VAL(fd, "WO watchpoint", 1);
-+
-+	close(fd);
-+	return 0;
-+}
-+
-+static int wp_rw_test(void)
-+{
-+	int fd;
-+	unsigned long tmp, tmp1 = rand();
-+
-+	fd = __event(HW_BREAKPOINT_R | HW_BREAKPOINT_W, (void *)&data1,
-+		     sizeof(data1));
-+	if (fd < 0)
-+		return -1;
-+
-+	tmp = data1;
-+	WP_TEST_ASSERT_VAL(fd, "RW watchpoint", 1);
-+
-+	data1 = tmp1 + tmp;
-+	WP_TEST_ASSERT_VAL(fd, "RW watchpoint", 2);
-+
-+	close(fd);
-+	return 0;
-+}
-+
-+static int wp_modify_test(void)
-+{
-+	int fd, ret;
-+	unsigned long tmp = rand();
-+	struct perf_event_attr new_attr;
-+
-+	fd = __event(HW_BREAKPOINT_W, (void *)&data1, sizeof(data1));
-+	if (fd < 0)
-+		return -1;
-+
-+	data1 = tmp;
-+	WP_TEST_ASSERT_VAL(fd, "Modify watchpoint", 1);
-+
-+	/* Modify watchpoint with disabled = 1 */
-+	get__perf_event_attr(&new_attr, HW_BREAKPOINT_W, (void *)&data2[0],
-+			     sizeof(u8) * 2);
-+	new_attr.disabled = 1;
-+	ret = ioctl(fd, PERF_EVENT_IOC_MODIFY_ATTRIBUTES, &new_attr);
-+	if (ret < 0) {
-+		pr_debug("ioctl(PERF_EVENT_IOC_MODIFY_ATTRIBUTES) failed\n");
-+		close(fd);
-+		return ret;
-+	}
-+
-+	data2[1] = tmp; /* Not Counted */
-+	WP_TEST_ASSERT_VAL(fd, "Modify watchpoint", 1);
-+
-+	/* Enable the event */
-+	ioctl(fd, PERF_EVENT_IOC_ENABLE, 0);
-+	if (ret < 0) {
-+		pr_debug("Failed to enable event\n");
-+		close(fd);
-+		return ret;
-+	}
-+
-+	data2[1] = tmp; /* Counted */
-+	WP_TEST_ASSERT_VAL(fd, "Modify watchpoint", 2);
-+
-+	data2[2] = tmp; /* Not Counted */
-+	WP_TEST_ASSERT_VAL(fd, "Modify watchpoint", 2);
-+
-+	close(fd);
-+	return 0;
-+}
-+
-+static bool wp_ro_supported(void)
-+{
-+#if defined (__x86_64__) || defined (__i386__)
-+	return false;
-+#else
-+	return true;
-+#endif
-+}
-+
-+static void wp_ro_skip_msg(void)
-+{
-+#if defined (__x86_64__) || defined (__i386__)
-+	pr_debug("Hardware does not support read only watchpoints.\n");
-+#endif
-+}
-+
-+static struct {
-+	const char *desc;
-+	int (*target_func)(void);
-+	bool (*is_supported)(void);
-+	void (*skip_msg)(void);
-+} wp_testcase_table[] = {
-+	{
-+		.desc = "Read Only Watchpoint",
-+		.target_func = &wp_ro_test,
-+		.is_supported = &wp_ro_supported,
-+		.skip_msg = &wp_ro_skip_msg,
-+	},
-+	{
-+		.desc = "Write Only Watchpoint",
-+		.target_func = &wp_wo_test,
-+	},
-+	{
-+		.desc = "Read / Write Watchpoint",
-+		.target_func = &wp_rw_test,
-+	},
-+	{
-+		.desc = "Modify Watchpoint",
-+		.target_func = &wp_modify_test,
-+	},
-+};
-+
-+int test__wp_subtest_get_nr(void)
-+{
-+	return (int)ARRAY_SIZE(wp_testcase_table);
-+}
-+
-+const char *test__wp_subtest_get_desc(int i)
-+{
-+	if (i < 0 || i >= (int)ARRAY_SIZE(wp_testcase_table))
-+		return NULL;
-+	return wp_testcase_table[i].desc;
-+}
-+
-+int test__wp(struct test *test __maybe_unused, int i)
-+{
-+	if (i < 0 || i >= (int)ARRAY_SIZE(wp_testcase_table))
-+		return TEST_FAIL;
-+
-+	if (wp_testcase_table[i].is_supported &&
-+	    !wp_testcase_table[i].is_supported()) {
-+		wp_testcase_table[i].skip_msg();
-+		return TEST_SKIP;
-+	}
-+
-+	return !wp_testcase_table[i].target_func() ? TEST_OK : TEST_FAIL;
-+}
+diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+index 5a2d1c9..cb03774 100644
+--- a/scripts/Makefile.build
++++ b/scripts/Makefile.build
+@@ -36,21 +36,11 @@ subdir-ccflags-y :=
+ 
+ include scripts/Kbuild.include
+ 
+-# For backward compatibility check that these variables do not change
+-save-cflags := $(CFLAGS)
+-
+ # The filename Kbuild has precedence over Makefile
+ kbuild-dir := $(if $(filter /%,$(src)),$(src),$(srctree)/$(src))
+ kbuild-file := $(if $(wildcard $(kbuild-dir)/Kbuild),$(kbuild-dir)/Kbuild,$(kbuild-dir)/Makefile)
+ include $(kbuild-file)
+ 
+-# If the save-* variables changed error out
+-ifeq ($(KBUILD_NOPEDANTIC),)
+-        ifneq ("$(save-cflags)","$(CFLAGS)")
+-                $(error CFLAGS was changed in "$(kbuild-file)". Fix it to use ccflags-y)
+-        endif
+-endif
+-
+ include scripts/Makefile.lib
+ 
+ # Do not include host rules unless needed
 -- 
-2.14.4
+2.7.4
 
