@@ -5,106 +5,147 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9129C04ABB
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 03:16:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18B8AC4646A
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 03:17:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8404820882
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 03:16:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8404820882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id A030920882
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 03:17:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A030920882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727051AbeILISW (ORCPT
+        id S1727666AbeILITw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 04:18:22 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35922 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726027AbeILISV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 04:18:21 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8C3EtSR113898
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 23:15:58 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2meqxvwdtj-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Sep 2018 23:15:57 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
-        Wed, 12 Sep 2018 04:15:55 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 12 Sep 2018 04:15:51 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8C3Fnha58261738
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 12 Sep 2018 03:15:49 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BFDCD5204F;
-        Wed, 12 Sep 2018 06:15:38 +0100 (BST)
-Received: from [9.124.35.146] (unknown [9.124.35.146])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id C1D2E52050;
-        Wed, 12 Sep 2018 06:15:36 +0100 (BST)
-Subject: Re: [PATCH] perf test: Add watchpoint test
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>
-Cc:     alexander.shishkin@linux.intel.com, namhyung@kernel.org,
-        tmricht@linux.ibm.com, sandipan@linux.ibm.com,
-        brueckner@linux.ibm.com, kim.phillips@arm.com,
-        kstewart@linuxfoundation.org, tglx@linutronix.de,
-        naveen.n.rao@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-References: <20180910095811.22892-1-ravi.bangoria@linux.ibm.com>
- <20180910103154.GD15548@krava> <20180910134754.GC5147@kernel.org>
- <20180910141830.GI5147@kernel.org>
-From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Date:   Wed, 12 Sep 2018 08:45:47 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180910141830.GI5147@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18091203-0008-0000-0000-0000026FFAC9
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18091203-0009-0000-0000-000021D834CB
-Message-Id: <ae18ee33-b748-1c74-3993-8f5181c65dec@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-12_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809120033
+        Wed, 12 Sep 2018 04:19:52 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55760 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726027AbeILITv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 04:19:51 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DB55987916;
+        Wed, 12 Sep 2018 03:17:26 +0000 (UTC)
+Received: from jason-ThinkPad-T450s.redhat.com (ovpn-12-130.pek2.redhat.com [10.72.12.130])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BDEAB2027EA4;
+        Wed, 12 Sep 2018 03:17:21 +0000 (UTC)
+From:   Jason Wang <jasowang@redhat.com>
+To:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        mst@redhat.com, jasowang@redhat.com
+Subject: [PATCH net-next V2 00/11] vhost_net TX batching
+Date:   Wed, 12 Sep 2018 11:16:58 +0800
+Message-Id: <20180912031709.14112-1-jasowang@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 12 Sep 2018 03:17:26 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 12 Sep 2018 03:17:26 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jasowang@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi all:
 
-> While testing, I got curious, as a 'perf test' user, why one of the
-> tests had the "Skip" result:
-> 
-> [root@seventh ~]# perf test watchpoint
-> 22: Watchpoint                                            :
-> 22.1: Read Only Watchpoint                                : Skip
-> 22.2: Write Only Watchpoint                               : Ok
-> 22.3: Read / Write Watchpoint                             : Ok
-> 22.4: Modify Watchpoint                                   : Ok
-> [root@seventh ~]#
-> 
-> I tried with 'perf test -v watchpoint' but that didn't help, perhaps you
-> could add some message after the "Skip" telling why it skipped that
-> test? I.e. hardware doesn't have that capability, kernel driver not yet
-> supporting that, something else?
+This series tries to batch submitting packets to underlayer socket
+through msg_control during sendmsg(). This is done by:
 
-Sure will add a message:
+1) Doing userspace copy inside vhost_net
+2) Build XDP buff
+3) Batch at most 64 (VHOST_NET_BATCH) XDP buffs and submit them once
+   through msg_control during sendmsg().
+4) Underlayer sockets can use XDP buffs directly when XDP is enalbed,
+   or build skb based on XDP buff.
 
-pr_debug("Hardware does not support read only watchpoints.");
+For the packet that can not be built easily with XDP or for the case
+that batch submission is hard (e.g sndbuf is limited). We will go for
+the previous slow path, passing iov iterator to underlayer socket
+through sendmsg() once per packet.
 
-Ravi
+This can help to improve cache utilization and avoid lots of indirect
+calls with sendmsg(). It can also co-operate with the batching support
+of the underlayer sockets (e.g the case of XDP redirection through
+maps).
+
+Testpmd(txonly) in guest shows obvious improvements:
+
+Test                /+pps%
+XDP_DROP on TAP     /+44.8%
+XDP_REDIRECT on TAP /+29%
+macvtap (skb)       /+26%
+
+Netperf TCP_STREAM TX from guest shows obvious improvements on small
+packet:
+
+    size/session/+thu%/+normalize%
+       64/     1/   +2%/    0%
+       64/     2/   +3%/   +1%
+       64/     4/   +7%/   +5%
+       64/     8/   +8%/   +6%
+      256/     1/   +3%/    0%
+      256/     2/  +10%/   +7%
+      256/     4/  +26%/  +22%
+      256/     8/  +27%/  +23%
+      512/     1/   +3%/   +2%
+      512/     2/  +19%/  +14%
+      512/     4/  +43%/  +40%
+      512/     8/  +45%/  +41%
+     1024/     1/   +4%/    0%
+     1024/     2/  +27%/  +21%
+     1024/     4/  +38%/  +73%
+     1024/     8/  +15%/  +24%
+     2048/     1/  +10%/   +7%
+     2048/     2/  +16%/  +12%
+     2048/     4/    0%/   +2%
+     2048/     8/    0%/   +2%
+     4096/     1/  +36%/  +60%
+     4096/     2/  -11%/  -26%
+     4096/     4/    0%/  +14%
+     4096/     8/    0%/   +4%
+    16384/     1/   -1%/   +5%
+    16384/     2/    0%/   +2%
+    16384/     4/    0%/   -3%
+    16384/     8/    0%/   +4%
+    65535/     1/    0%/  +10%
+    65535/     2/    0%/   +8%
+    65535/     4/    0%/   +1%
+    65535/     8/    0%/   +3%
+
+Please review.
+
+Thanks
+
+Changes from V1:
+
+- don't hold page refcnt for XDP_DROP
+- release page if build_skb() fails
+- introduce a helper to build skb for the path of no batching mode
+- rename tun_do_xdp() as tun_xdp_act() and use negative for reporting
+  errors instead of a pointer to integer
+- introduce a num field in tun_msg_ctl
+- introduce a new structure for storing metadata in the head of XDP
+  packet
+- do not store batche XDP inside vhoet_net_virtqueue
+
+Jason Wang (11):
+  net: sock: introduce SOCK_XDP
+  tuntap: switch to use XDP_PACKET_HEADROOM
+  tuntap: enable bh early during processing XDP
+  tuntap: simplify error handling in tun_build_skb()
+  tuntap: tweak on the path of skb XDP case in tun_build_skb()
+  tuntap: split out XDP logic
+  tuntap: move XDP flushing out of tun_do_xdp()
+  tun: switch to new type of msg_control
+  tuntap: accept an array of XDP buffs through sendmsg()
+  tap: accept an array of XDP buffs through sendmsg()
+  vhost_net: batch submitting XDP buffers to underlayer sockets
+
+ drivers/net/tap.c      |  88 +++++++++++++-
+ drivers/net/tun.c      | 267 ++++++++++++++++++++++++++++++++---------
+ drivers/vhost/net.c    | 181 +++++++++++++++++++++++++---
+ include/linux/if_tun.h |  14 +++
+ include/net/sock.h     |   1 +
+ 5 files changed, 471 insertions(+), 80 deletions(-)
+
+-- 
+2.17.1
 
