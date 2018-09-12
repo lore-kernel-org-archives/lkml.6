@@ -6,94 +6,111 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62C85C46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:58:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A927C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:58:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F0372087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:58:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F0372087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id F0E212087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:58:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0E212087F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727659AbeILOCG (ORCPT
+        id S1727781AbeILOCV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 10:02:06 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:44446 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726624AbeILOCG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 10:02:06 -0400
-Received: by mail-ed1-f68.google.com with SMTP id s10-v6so1107447edb.11;
-        Wed, 12 Sep 2018 01:58:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dALS/OETNspkEDAXHXhNB23qEiHtPEbb5udY9vU56LY=;
-        b=rqTM0vPNuBmeKere/A2KBF1uIIxHq6KVKOIA4PokxLgH+MQJPVrA01EdjjVmG5DuHm
-         QOXBxNtg8yMxbZeM2KWumRQ68wRVXYPoIDaW0ulkVljw4akP3mrBv2/BsUOc4zRSX1+h
-         MQsUsTlpd5FgceYgyj8QGi/pnrtmqNwydji9sGHSB3lEW344Zl/O5sIaXduNMTTEThGR
-         ef8HVEQURc7h9VgLlQNSpTaf+QWwDCZ446OcXXSyBV/FBQ673UXpH0Kfv5dnh3Sr9zxE
-         JRcg8l0SwIhtri1xg4pr6GyUDKps2zdQPHd0HRxeIGHtxng6pL+FRIjPwX5DQHfDaBkA
-         yzSg==
-X-Gm-Message-State: APzg51CDm5tWm+Q5C8HWX4D362nodRpqPmyyHTFJmZqog/RU4QwAZQ9u
-        IKyX6+h1XCBiqDul5/L6x+IXT9qT
-X-Google-Smtp-Source: ANB0VdYVT6yLNYPQBHAOmpi0Kz0eDUpbjQDI5T9aIwSrkHAIthjceXZyUozgC/HP4f+mraddnpBLlg==
-X-Received: by 2002:a50:a186:: with SMTP id 6-v6mr1655124edk.12.1536742710977;
-        Wed, 12 Sep 2018 01:58:30 -0700 (PDT)
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com. [209.85.221.51])
-        by smtp.gmail.com with ESMTPSA id e15-v6sm395594edb.60.2018.09.12.01.58.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Sep 2018 01:58:30 -0700 (PDT)
-Received: by mail-wr1-f51.google.com with SMTP id w11-v6so1143312wrc.5;
-        Wed, 12 Sep 2018 01:58:30 -0700 (PDT)
-X-Received: by 2002:a5d:4a44:: with SMTP id v4-v6mr721015wrs.278.1536742710159;
- Wed, 12 Sep 2018 01:58:30 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180907041948.19913-1-wens@csie.org> <20180907112331.wjml25rfkyabvwwt@flea>
-In-Reply-To: <20180907112331.wjml25rfkyabvwwt@flea>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Wed, 12 Sep 2018 16:58:15 +0800
-X-Gmail-Original-Message-ID: <CAGb2v66PFTL+LJvi-d3LXNBfZCBZoRL06ORXsb4npvgEg7pZ4Q@mail.gmail.com>
-Message-ID: <CAGb2v66PFTL+LJvi-d3LXNBfZCBZoRL06ORXsb4npvgEg7pZ4Q@mail.gmail.com>
-Subject: Re: [PATCH v2 0/6] drm/sun4i: Support color dithering for LCD panels
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Jonathan Liu <net147@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 12 Sep 2018 10:02:21 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47504 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726624AbeILOCV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 10:02:21 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3910AB016;
+        Wed, 12 Sep 2018 08:58:46 +0000 (UTC)
+Date:   Wed, 12 Sep 2018 10:58:45 +0200
+Message-ID: <s5hbm936qii.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Jeff Moyer <jmoyer@redhat.com>,
+        Paolo Valente <paolo.valente@linaro.org>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [REGRESSION] bfq probe failed on 4.19-rc3
+In-Reply-To: <8d5f3ab2-50e8-226c-8ccb-c722872910db@kernel.dk>
+References: <s5ha7ooxbps.wl-tiwai@suse.de>
+        <8b5a7dc9-2dc1-16ee-4b05-a72eb6680c77@kernel.dk>
+        <x49a7ooj7zp.fsf@segfault.boston.devel.redhat.com>
+        <bd71494f-4595-7586-4c46-000f2b2029aa@kernel.dk>
+        <x495zzcj7u8.fsf@segfault.boston.devel.redhat.com>
+        <8d5f3ab2-50e8-226c-8ccb-c722872910db@kernel.dk>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 7, 2018 at 7:23 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
->
-> On Fri, Sep 07, 2018 at 12:19:42PM +0800, Chen-Yu Tsai wrote:
-> >
-> > Hi,
-> >
-> > This is v2 of my sun4i-drm LCD color dithering series. v1 was from back
-> > in April [1]. Most of the driver code is unchanged.
-> >
-> > Changes since v1:
-> >
-> >   - Explicitly list properties from the simple-panel binding that apply
-> >     to the Bananapi 7" panel
-> >
-> >   - Moved an incorrectly squashed change from patch 3 to patch 1, where
-> >     it belongs
->
-> Applied the first three patches, thanks!
+On Tue, 11 Sep 2018 18:54:19 +0200,
+Jens Axboe wrote:
+> 
+> On 9/11/18 10:51 AM, Jeff Moyer wrote:
+> > Jens Axboe <axboe@kernel.dk> writes:
+> > 
+> >> On 9/11/18 10:48 AM, Jeff Moyer wrote:
+> >>> Jens Axboe <axboe@kernel.dk> writes:
+> >>>
+> >>>> On 9/11/18 10:03 AM, Takashi Iwai wrote:
+> >>>>> Hi,
+> >>>>>
+> >>>>> I noticed that bfq doesn't appear in the I/O scheduler list on
+> >>>>> 4.19-rc3.  It seems that blkcg_policy_register() at the beginning of
+> >>>>> bfq_init() returns -ENOSPC, hence the probe aborts silently.
+> >>>>>
+> >>>>> Is this already addressed?
+> >>>>
+> >>>> Haven't heard about this one before. What kernel did you last use that
+> >>>> worked?
+> >>>
+> >>> I'm guessing you just need to update the maximum number of policies:
+> >>>
+> >>> /*
+> >>>  * Maximum number of blkcg policies allowed to be registered concurrently.
+> >>>  * Defined here to simplify include dependency.
+> >>>  */
+> >>> #define BLKCG_MAX_POLS          3
+> >>
+> >> That is my guess too, hence the suggestion to try and disable the
+> >> iolatency policy. Just tried here without, and it works, rebooting
+> >> with to verify that we're running out of policy slots.
+> > 
+> > Functions calling this function: blkcg_policy_register
+> > 
+> >   File                      Function       Line
+> > 0 block/bfq-iosched.c       bfq_init       5675 ret =
+> >                                                 blkcg_policy_register(&blkcg_pol
+> >                                                 icy_bfq);
+> > 1 block/blk-iolatency.c     iolatency_init  946 return
+> >                                                 blkcg_policy_register(&blkcg_pol
+> >                                                 icy_iolatency);
+> > 2 block/blk-throttle.c      throtl_init    2511 return
+> >                                                 blkcg_policy_register(&blkcg_pol
+> >                                                 icy_throtl);
+> > 3 block/cfq-iosched.c       cfq_init       4869 ret =
+> >                                                 blkcg_policy_register(&blkcg_pol
+> >                                                 icy_cfq);
+> > 
+> > And then there were 4...
+> 
+> Exactly. I'd bump it to 5 to leave room for one more, if we have to grow it
+> again, probably worth it to make it dynamic. So for, not really needed. Takashi,
+> can verify that the below fixes it up for you?
 
-Any comments on patches 4 and 5?
+Yes, it works.
 
-Thanks
-ChenYu
+Tested-by: Takashi Iwai <tiwai@suse.de>
+
+
+Thanks!
+
+Takashi
