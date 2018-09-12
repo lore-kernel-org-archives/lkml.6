@@ -6,75 +6,77 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77623C46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 06:58:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C8ADC46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 06:58:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BEF620833
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 06:58:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BEF620833
+	by mail.kernel.org (Postfix) with ESMTP id 23F0420833
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 06:58:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23F0420833
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727122AbeILMBi (ORCPT
+        id S1727645AbeILMBn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 08:01:38 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:38271 "EHLO
+        Wed, 12 Sep 2018 08:01:43 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:38277 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725958AbeILMBi (ORCPT
+        with ESMTP id S1725958AbeILMBn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 08:01:38 -0400
+        Wed, 12 Sep 2018 08:01:43 -0400
 Received: from 61-220-137-37.hinet-ip.hinet.net ([61.220.137.37] helo=localhost)
         by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
         (Exim 4.76)
         (envelope-from <kai.heng.feng@canonical.com>)
-        id 1fzz6Z-0000UZ-4a; Wed, 12 Sep 2018 06:58:27 +0000
+        id 1fzz6d-0000Ug-ST; Wed, 12 Sep 2018 06:58:32 +0000
 From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
 To:     nic_swsd@realtek.com
 Cc:     davem@davemloft.net, hkallweit1@gmail.com, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: [PATCH 1/2] r8169: Align ASPM/CLKREQ setting function with vendor driver
-Date:   Wed, 12 Sep 2018 14:58:20 +0800
-Message-Id: <20180912065821.7198-1-kai.heng.feng@canonical.com>
+Subject: [PATCH 2/2] r8169: enable ASPM on RTL8106E
+Date:   Wed, 12 Sep 2018 14:58:21 +0800
+Message-Id: <20180912065821.7198-2-kai.heng.feng@canonical.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180912065821.7198-1-kai.heng.feng@canonical.com>
+References: <20180912065821.7198-1-kai.heng.feng@canonical.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There's a small delay after setting ASPM in vendor drivers, r8101 and
-r8168.
-In addition, those drivers enable ASPM before ClkReq, also change that
-to align with vendor driver.
+The Intel SoC was prevented from entering lower idle state because
+of RTL8106E's ASPM was not enabled.
 
-I haven't seen anything bad becasue of this, but I think it's better to
-keep in sync with vendor driver.
+So enable ASPM on RTL8106E (chip version 39).
+Now the Intel SoC can enter lower idle state, power consumption and
+temperature are much lower.
 
 Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
 ---
- drivers/net/ethernet/realtek/r8169.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/realtek/r8169.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/drivers/net/ethernet/realtek/r8169.c b/drivers/net/ethernet/realtek/r8169.c
-index b08d51bf7a20..5091e9fd601f 100644
+index 5091e9fd601f..3752b1bbe6db 100644
 --- a/drivers/net/ethernet/realtek/r8169.c
 +++ b/drivers/net/ethernet/realtek/r8169.c
-@@ -4775,12 +4775,14 @@ static void rtl_pcie_state_l2l3_enable(struct rtl8169_private *tp, bool enable)
- static void rtl_hw_aspm_clkreq_enable(struct rtl8169_private *tp, bool enable)
+@@ -5627,6 +5627,8 @@ static void rtl_hw_start_8402(struct rtl8169_private *tp)
+ 
+ static void rtl_hw_start_8106(struct rtl8169_private *tp)
  {
- 	if (enable) {
--		RTL_W8(tp, Config2, RTL_R8(tp, Config2) | ClkReqEn);
- 		RTL_W8(tp, Config5, RTL_R8(tp, Config5) | ASPM_en);
-+		RTL_W8(tp, Config2, RTL_R8(tp, Config2) | ClkReqEn);
- 	} else {
- 		RTL_W8(tp, Config2, RTL_R8(tp, Config2) & ~ClkReqEn);
- 		RTL_W8(tp, Config5, RTL_R8(tp, Config5) & ~ASPM_en);
- 	}
++	rtl_hw_aspm_clkreq_enable(tp, false);
 +
-+	udelay(10);
+ 	/* Force LAN exit from ASPM if Rx/Tx are not idle */
+ 	RTL_W32(tp, FuncEvent, RTL_R32(tp, FuncEvent) | 0x002800);
+ 
+@@ -5635,6 +5637,7 @@ static void rtl_hw_start_8106(struct rtl8169_private *tp)
+ 	RTL_W8(tp, DLLPR, RTL_R8(tp, DLLPR) & ~PFM_EN);
+ 
+ 	rtl_pcie_state_l2l3_enable(tp, false);
++	rtl_hw_aspm_clkreq_enable(tp, true);
  }
  
- static void rtl_hw_start_8168bb(struct rtl8169_private *tp)
+ static void rtl_hw_start_8101(struct rtl8169_private *tp)
 -- 
 2.17.1
 
