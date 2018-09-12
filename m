@@ -2,89 +2,98 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A826FC4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 03:54:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8F1AC4646A
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 04:05:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50013206B6
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 03:54:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50013206B6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 5E2EB20882
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 04:05:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="a9ezvdls"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E2EB20882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728001AbeILI5T (ORCPT
+        id S1726111AbeILJHk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 04:57:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46220 "EHLO mail.kernel.org"
+        Wed, 12 Sep 2018 05:07:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47418 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726644AbeILI5T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 04:57:19 -0400
-Received: from vmware.local.home (unknown [184.48.106.13])
+        id S1725737AbeILJHk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 05:07:40 -0400
+Received: from localhost (unknown [171.76.126.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE09B20839;
-        Wed, 12 Sep 2018 03:54:47 +0000 (UTC)
-Date:   Tue, 11 Sep 2018 23:54:45 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@polymtl.ca>,
-        Kunxun Xie <xiekunxun@huawei.com>
-Subject: Re: [Question] Are the trace APIs declared by
- "TRACE_EVENT(irq_handler_entry" allowed to be used in Ko?
-Message-ID: <20180911235445.3f361575@vmware.local.home>
-In-Reply-To: <5B987525.9070300@huawei.com>
-References: <5B987525.9070300@huawei.com>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A04320839;
+        Wed, 12 Sep 2018 04:05:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1536725106;
+        bh=xm/iYCXRL/GBgk6nOhAZAVyMDKqwjffY6ub9MFxuizs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=a9ezvdlspVCnr9Nm3e58aQcZIHb7b6kVeCBvaihjltWt2mClevfbFIVZabACAvFSl
+         0lhNKd+pq7m6EZR7BkZIkIxUX3IeBrGYeelvFv/1t9XGrlPYM8NTxBTGHBWgj9sT+S
+         3LnBClH0gJeDab/ea4Y/MOFKJ5GniiVi3SSbuYBU=
+Date:   Wed, 12 Sep 2018 09:34:56 +0530
+From:   Vinod <vkoul@kernel.org>
+To:     Yu Zhao <yuzhao@google.com>
+Cc:     Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@kernel.org>,
+        alsa-devel@alsa-project.org,
+        Rakesh Ughreja <rakesh.a.ughreja@intel.com>,
+        Jaroslav Kysela <perex@perex.cz>, linux-kernel@vger.kernel.org,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>
+Subject: Re: [PATCH 2/3] sound: enable interrupt after dma buffer
+ initialization
+Message-ID: <20180912040456.GD2766@vkoul-mobl>
+References: <20180910211718.200802-1-yuzhao@google.com>
+ <20180910212150.202655-1-yuzhao@google.com>
+ <s5hbm9436va.wl-tiwai@suse.de>
+ <20180911205825.GB18086@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180911205825.GB18086@google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 12 Sep 2018 10:08:37 +0800
-"Leizhen (ThunderTown)" <thunder.leizhen@huawei.com> wrote:
+On 11-09-18, 14:58, Yu Zhao wrote:
+> On Tue, Sep 11, 2018 at 08:06:49AM +0200, Takashi Iwai wrote:
+> > On Mon, 10 Sep 2018 23:21:50 +0200,
+> > Yu Zhao wrote:
+> > > 
+> > > In snd_hdac_bus_init_chip(), we enable interrupt before
+> > > snd_hdac_bus_init_cmd_io() initializing dma buffers. If irq has
+> > > been acquired and irq handler uses the dma buffer, kernel may crash
+> > > when interrupt comes in.
+> > > 
+> > > Fix the problem by postponing enabling irq after dma buffer
+> > > initialization. And warn once on null dma buffer pointer during the
+> > > initialization.
+> > > 
+> > > Signed-off-by: Yu Zhao <yuzhao@google.com>
+> > 
+> > Looks good to me.
+> > 
+> > Reviewed-by: Takashi Iwai <tiwai@suse.de>
+> > 
+> > 
+> > BTW, the reason why this hasn't been hit on the legacy HD-audio driver
+> > is that we allocate usually with MSI, so the irq is isolated.
+> > 
+> > Any reason that Intel SKL driver doesn't use MST?
+> 
+> This I'm not sure. Vinod might have answer to it, according to
+> https://patchwork.kernel.org/patch/6375831/#13796611
 
-> After patch 7e066fb870fc ("tracepoints: add DECLARE_TRACE() and DEFINE_TRACE()"),
-> the trace APIs declared by "TRACE_EVENT(irq_handler_entry" can not be directly used
-> by ko, because it's not explicitly exported by EXPORT_TRACEPOINT_SYMBOL_GPL or
-> EXPORT_TRACEPOINT_SYMBOL.
-> 
-> Did we miss it? or it's not recommended to be used in ko?
-> 
+IIRC (seemed quite some time back) we faced issues with using MSI on SKL
+and didnt try afterwards. If Intel folks can try it and check. Pierre is
+out, maybe Liam can help..?
 
-Why do you need it. This patch is almost 10 years old, and you are just
-now finding an issue with it?
-
--- Steve
-
-> 
-> -------------
-> 
-> commit 7e066fb870fcd1025ec3ba7bbde5d541094f4ce1
-> Author: Mathieu Desnoyers <mathieu.desnoyers@polymtl.ca>
-> Date:   Fri Nov 14 17:47:47 2008 -0500
-> 
->     tracepoints: add DECLARE_TRACE() and DEFINE_TRACE()
-> 
->     Impact: API *CHANGE*. Must update all tracepoint users.
-> 
->     Add DEFINE_TRACE() to tracepoints to let them declare the tracepoint
->     structure in a single spot for all the kernel. It helps reducing memory
->     consumption, especially when declaring a lot of tracepoints, e.g. for
->     kmalloc tracing.
-> 
->     *API CHANGE WARNING*: now, DECLARE_TRACE() must be used in headers for
->     tracepoint declarations rather than DEFINE_TRACE(). This is the sane way
->     to do it. The name previously used was misleading.
-> 
->     Updates scheduler instrumentation to follow this API change.
-> 
-> 
-
+-- 
+~Vinod
