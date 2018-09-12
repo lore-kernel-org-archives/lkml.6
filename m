@@ -2,95 +2,104 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.1 required=3.0 tests=DATE_IN_PAST_12_24,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8641DC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 11:36:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A36AAC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 11:39:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B17E20833
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 11:36:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B17E20833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=stwm.de
+	by mail.kernel.org (Postfix) with ESMTP id 431CE20833
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 11:39:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 431CE20833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727730AbeIMQqA convert rfc822-to-8bit (ORCPT
+        id S1727689AbeIMQsG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 12:46:00 -0400
-Received: from dresden.studentenwerk.mhn.de ([141.84.225.229]:36116 "EHLO
-        email.studentenwerk.mhn.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726879AbeIMQqA (ORCPT
+        Thu, 13 Sep 2018 12:48:06 -0400
+Received: from smtprelay0065.hostedemail.com ([216.40.44.65]:36490 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726879AbeIMQsG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 12:46:00 -0400
-X-Greylist: delayed 403 seconds by postgrey-1.27 at vger.kernel.org; Thu, 13 Sep 2018 12:45:59 EDT
-Received: from mailhub.studentenwerk.mhn.de (mailhub.studentenwerk.mhn.de [127.0.0.1])
-        by email.studentenwerk.mhn.de (Postfix) with ESMTP id 429xK10gFMzMkw5;
-        Thu, 13 Sep 2018 13:30:13 +0200 (CEST)
-From:   Wolfgang Walter <linux@stwm.de>
-To:     netdev@vger.kernel.org
-Cc:     Florian Westphal <fw@strlen.de>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        David Miller <davem@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Regression: kernel 4.14 an later very slow with many ipsec tunnels
-Date:   Thu, 13 Sep 2018 13:30:12 +0200
-Message-ID: <5781211.jtEvgqSZyO@stwm.de>
-User-Agent: KMail/4.14.3 (Linux/4.14.61-debian64.all+1.1; KDE/4.14.13; x86_64; ; )
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+        Thu, 13 Sep 2018 12:48:06 -0400
+Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
+        by smtpgrave05.hostedemail.com (Postfix) with ESMTP id 3F96F18016BDA;
+        Thu, 13 Sep 2018 11:18:33 +0000 (UTC)
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 2B99D83FF;
+        Thu, 13 Sep 2018 11:11:38 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: crowd41_be574425f55b
+X-Filterd-Recvd-Size: 2202
+Received: from XPS-9350 (mec5036d0.tmodns.net [208.54.80.236])
+        (Authenticated sender: joe@perches.com)
+        by omf11.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 13 Sep 2018 11:11:20 +0000 (UTC)
+Message-ID: <b97d7ccc921572ca5d783584eea1de04341ab02f.camel@perches.com>
+Subject: Re: [PATCH v3 1/2] ARM: s3c24xx: formatting cleanup in
+ mach-mini2440.c
+From:   Joe Perches <joe@perches.com>
+To:     Cedric Roux <sed@free.fr>, kgene@kernel.org, krzk@kernel.org,
+        linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20180907215446.15160-1-sed@free.fr>
+References: <20180907215446.15160-1-sed@free.fr>
+Content-Type: text/plain; charset="ISO-8859-1"
+Date:   Wed, 12 Sep 2018 12:21:37 -0700
+Mime-Version: 1.0
+X-Mailer: Evolution 3.28.1-2 
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Fri, 2018-09-07 at 23:54 +0200, Cedric Roux wrote:
+> Running:
+>     scripts/checkpatch.pl -f arch/arm/mach-s3c24xx/mach-mini2440.c
+> revealed several errors and warnings.
+> 
+> They were all removed, except one which is an #if 0 around the declaration
+> of a gpio pin. This needs some more investigation and I prefer to let it
+> here. This is not some dead code.
+[]
+> diff --git a/arch/arm/mach-s3c24xx/mach-mini2440.c b/arch/arm/mach-s3c24xx/mach-mini2440.c
+[]
+> @@ -674,17 +680,17 @@ static void __init mini2440_init(void)
+>  		mini2440_fb_info.displays =
+>  			&mini2440_lcd_cfg[features.lcd_index];
+>  
+> -		printk(KERN_INFO "MINI2440: LCD");
+> +		pr_info("MINI2440: LCD");
 
-thanks to the fix from Steffen Klassert I could now run 4.14.69 + his patch 
-and 4.18.7 + his patch without oopsing immediately.
+OK
 
-But I found that those kernels perform very bad. They perform so bad that they 
-are unusable for our router with about 3000 ipsec tunnels (tunnel mode network 
-<-> network).
+>  		for (li = 0; li < ARRAY_SIZE(mini2440_lcd_cfg); li++)
+>  			if (li == features.lcd_index)
+> -				printk(" [%d:%dx%d]", li,
+> +				pr_info(" [%d:%dx%d]", li,
+>  					mini2440_lcd_cfg[li].width,
+>  					mini2440_lcd_cfg[li].height);
 
-With 4.9. (and all other kernels I used in the last 10 years with much less 
-potent hardware) I never had an comparable performance issue with networking.
+pr_cont
 
-4.18.7 is better then 4.14.69 but still remains unusuable for us.
+>  			else
+> -				printk(" %d:%dx%d", li,
+> +				pr_info(" %d:%dx%d", li,
 
-Even with very little traffic all 8 cores are working 100% in ksoftirqd. As 
-soon as there is real traffic network gets rather unusuable.
+pr_cont
 
-Latency of packets goes from between 0.1ms to 1ms up to 100ms to 500ms (4.14) 
-or between 15ms to 90ms (4.18).
+>  					mini2440_lcd_cfg[li].width,
+>  					mini2440_lcd_cfg[li].height);
+> -		printk("\n");
+> +		pr_info("\n");
 
-Throughput also suffers a lot.
+pr_cont
 
-I have a simple test I run after every upgrade. This test basically copies 
-with scp large files to 60 different remote locations (involving ipsec), 
-limited to 1GBit/s combined, and in paralled I ping from different networks 
-over this router to machines in other networks of this router (no ipsec-
-tunnels involved).
+So only the first printk should use pr_info().
+The subsequent printk uses should use pr_cont()
 
-With 4.9 and earlier copying needs about 2 minutes and the pings all remain 
-under 2ms roundtrip. 
-
-With 4.14 copying these files needs more than one our. The roundtrip time of 
-the ping is > 1 second.
-
-With 4.18 this is much better, copying needs around 6 minutes and ping 
-roundtrip is between 30ms and 180ms. But even that is much worse then 4.9.
-
-I think this dramatic loss in performance is due to the removal of the flow 
-cache. I propose to revert that for 4.14. I also propose to revert it for the 
-next longterm kernel if no other solution is found bringing back 4.9 
-performance (at least about the same order of magnitude).
-
-Maybe it should generally be reverted until a solution to the problem exists.
-
-Regards,
--- 
-Wolfgang Walter
-Studentenwerk München
-Anstalt des öffentlichen Rechts
+>  		s3c24xx_fb_set_platdata(&mini2440_fb_info);
+>  	}
+>  
