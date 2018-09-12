@@ -2,86 +2,160 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F02DCC070C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 20:43:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3AB8C070C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 20:43:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6EA12146F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 20:43:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6EA12146F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 8456B2146F
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 20:43:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="rb9i4q5D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8456B2146F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728150AbeIMBtg (ORCPT
+        id S1728329AbeIMBt5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 21:49:36 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:40246 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726239AbeIMBtg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 21:49:36 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 4034D2072F; Wed, 12 Sep 2018 22:43:20 +0200 (CEST)
-Received: from localhost (unknown [88.191.26.124])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 14B05206F6;
-        Wed, 12 Sep 2018 22:43:10 +0200 (CEST)
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     linux-rtc@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH] rtc: remove irq_task from kerneldoc
-Date:   Wed, 12 Sep 2018 22:43:07 +0200
-Message-Id: <20180912204307.16373-1-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.19.0.rc2
+        Wed, 12 Sep 2018 21:49:57 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:57106 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726239AbeIMBt4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 21:49:56 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8CKcwSa080779;
+        Wed, 12 Sep 2018 20:43:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=reply-to : subject :
+ references : to : cc : from : message-id : date : mime-version :
+ in-reply-to : content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=Bba9sSXEN3aytWGO0OCu8Guqy9lM/DrpAsnYx+r9ZN0=;
+ b=rb9i4q5DqnhlBS6lXXewoZNtUwZF6+jxI/fFd8U2EwweT9avGPyqtYops1xk1d0l2gRh
+ aVZNZuzhDZhh6LSSp1Bar+eQKLq9Ggz6NeWog81GeoT0dhkEZ1IXY3p+KWfpSdnAMVS+
+ Ee1fqWbOGRfAWGIrh687z4la0Xd8xsgMm834iw8bZo6LNadYj+uZMJ4lEQKQiIpdgyCa
+ aY2I6hByO2+0d9Tv9AeqbbnejD2LvxSIoB2jjQ4TC9J1Qrq/KU8MjxRl8onWoTtV3P4A
+ ZAYZcvFACYYBYp1taoue7ot3dhkykQyUK4miwFnKa3YW6Q1Bti6HtPSWEumAu7AKwei+ fQ== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2130.oracle.com with ESMTP id 2mc5utmhdt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 12 Sep 2018 20:43:28 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w8CKhMVs031128
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 12 Sep 2018 20:43:22 GMT
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w8CKhLiS011093;
+        Wed, 12 Sep 2018 20:43:21 GMT
+Received: from [10.132.93.61] (/10.132.93.61)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 12 Sep 2018 13:43:21 -0700
+Reply-To: prakash.sangappa@oracle.com
+Subject: Re: [RFC PATCH] Add /proc/<pid>/numa_vamaps for numa node information
+References: <1525240686-13335-1-git-send-email-prakash.sangappa@oracle.com>
+ <20180502143323.1c723ccb509c3497050a2e0a@linux-foundation.org>
+ <2ce01d91-5fba-b1b7-2956-c8cc1853536d@intel.com>
+ <33f96879-351f-674a-ca23-43f233f4eb1d@linux.vnet.ibm.com>
+ <82d2b35c-272a-ad02-692f-2c109aacdfb6@oracle.com>
+ <8569dabb-4930-aa20-6249-72457e2df51e@intel.com>
+ <51145ccb-fc0d-0281-9757-fb8a5112ec24@oracle.com>
+ <c72fea44-59f3-b106-8311-b5eae2d254e7@intel.com>
+ <addeaadc-5ab2-f0c9-2194-dd100ae90f3a@oracle.com>
+ <aaca3180-7510-c008-3e12-8bbe92344ef4@intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-api@vger.kernel.org, mhocko@suse.com,
+        kirill.shutemov@linux.intel.com, n-horiguchi@ah.jp.nec.com,
+        drepper@gmail.com, rientjes@google.com,
+        Naoya Horiguchi <nao.horiguchi@gmail.com>,
+        Steven Sistare <steven.sistare@oracle.com>
+From:   "prakash.sangappa" <prakash.sangappa@oracle.com>
+Message-ID: <94ee0b6c-4663-0705-d4a8-c50342f6b483@oracle.com>
+Date:   Wed, 12 Sep 2018 13:42:34 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.5.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <aaca3180-7510-c008-3e12-8bbe92344ef4@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9014 signatures=668708
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1809120203
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Stale mentions of irq_task are left in the kerneldoc after its removal.
-Remove them.
 
-There is still one indirect mention left but commit 3c8bb90efb6e ("rtc: Fix
-hrtimer deadlock") can probably be reverted now.
 
-Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/rtc/interface.c | 3 ---
- 1 file changed, 3 deletions(-)
+On 05/09/2018 04:31 PM, Dave Hansen wrote:
+> On 05/07/2018 06:16 PM, prakash.sangappa wrote:
+>> It will be /proc/<pid>/numa_vamaps. Yes, the behavior will be
+>> different with respect to seeking. Output will still be text and
+>> the format will be same.
+>>
+>> I want to get feedback on this approach.
+> I think it would be really great if you can write down a list of the
+> things you actually want to accomplish.  Dare I say: you need a
+> requirements list.
+>
+> The numa_vamaps approach continues down the path of an ever-growing list
+> of highly-specialized /proc/<pid> files.  I don't think that is
+> sustainable, even if it has been our trajectory for many years.
+>
+> Pagemap wasn't exactly a shining example of us getting new ABIs right,
+> but it sounds like something along those is what we need.
 
-diff --git a/drivers/rtc/interface.c b/drivers/rtc/interface.c
-index 3d577e259e91..612a83d3ddcc 100644
---- a/drivers/rtc/interface.c
-+++ b/drivers/rtc/interface.c
-@@ -596,7 +596,6 @@ EXPORT_SYMBOL_GPL(rtc_update_irq_enable);
-  * This function is called when an AIE, UIE or PIE mode interrupt
-  * has occurred (or been emulated).
-  *
-- * Triggers the registered irq_task function callback.
-  */
- void rtc_handle_legacy_irq(struct rtc_device *rtc, int num, int mode)
- {
-@@ -741,7 +740,6 @@ static int rtc_update_hrtimer(struct rtc_device *rtc, int enabled)
- /**
-  * rtc_irq_set_state - enable/disable 2^N Hz periodic IRQs
-  * @rtc: the rtc device
-- * @task: currently registered with rtc_irq_register()
-  * @enabled: true to enable periodic IRQs
-  * Context: any
-  *
-@@ -764,7 +762,6 @@ int rtc_irq_set_state(struct rtc_device *rtc, int enabled)
- /**
-  * rtc_irq_set_freq - set 2^N Hz periodic IRQ frequency for IRQ
-  * @rtc: the rtc device
-- * @task: currently registered with rtc_irq_register()
-  * @freq: positive frequency
-  * Context: any
-  *
--- 
-2.19.0.rc2
+Just sent out a V2 patch.  This patch simplifies the file content. It
+only provides VA range to numa node id information.
 
+The requirement is basically observability for performance analysis.
+
+- Need to be able to determine VA range to numa node id information.
+   Which also gives an idea of which range has memory allocated.
+
+- The proc file /proc/<pid>/numa_vamaps is in text so it is easy to
+   directly view.
+
+The V2 patch supports seeking to a particular process VA from where
+the application could read the VA to  numa node id information.
+
+Also added the 'PTRACE_MODE_READ_REALCREDS' check when opening the
+file /proc file as was indicated by Michal Hacko
+
+The VA range to numa node information from this file can be used by pmap.
+
+Here is a sample from a prototype change to pmap(procps) showing
+numa node information, gathered from the new 'numa_vamaps' file.
+
+$ ./rpmap -L -A 00000000006f8000,00007f5f730fe000 31423|more
+31423:   bash
+00000000006f8000     16K  N1 rw--- bash
+00000000006fc000      4K  N0 rw--- bash
+00000000006fd000      4K  N0 rw---   [ anon ]
+00000000006fe000      8K  N1 rw---   [ anon ]
+0000000000700000      4K  N0 rw---   [ anon ]
+0000000000701000      4K  N1 rw---   [ anon ]
+0000000000702000      4K  N0 rw---   [ anon ]
+0000000000ce8000     52K  N0 rw---   [ anon ]
+0000000000cf5000      4K  N1 rw---   [ anon ]
+0000000000cf6000     28K  N0 rw---   [ anon ]
+0000000000cfd000      4K  N1 rw---   [ anon ]
+0000000000cfe000     28K  N0 rw---   [ anon ]
+0000000000d05000    504K  N1 rw---   [ anon ]
+0000000000d83000      8K  N0 rw---   [ anon ]
+0000000000d85000    932K  N1 rw---   [ anon ]
+0000000000e6e000      4K   - rw---   [ anon ]
+0000000000e6f000    168K  N1 rw---   [ anon ]
+00007f5f72ef4000      4K  N2 r-x-- libnss_files-2.23.so
+00007f5f72ef5000     40K  N0 r-x-- libnss_files-2.23.so
+00007f5f72eff000   2044K   - ----- libnss_files-2.23.so
+00007f5f730fe000      4K  N0 r---- libnss_files-2.23.so
+  total             3868K
+
+-Prakash.
