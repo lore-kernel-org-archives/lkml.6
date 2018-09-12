@@ -2,169 +2,132 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42A0EC4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:41:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC6F4C4646A
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:41:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D706B206B8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:41:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64D38206B8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:41:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ursulin-net.20150623.gappssmtp.com header.i=@ursulin-net.20150623.gappssmtp.com header.b="JerLaMZW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D706B206B8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MAEn5N8v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64D38206B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727651AbeILNpO (ORCPT
+        id S1727780AbeILNpU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 09:45:14 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:41262 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726502AbeILNpO (ORCPT
+        Wed, 12 Sep 2018 09:45:20 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37072 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726502AbeILNpS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 09:45:14 -0400
-Received: by mail-wr1-f68.google.com with SMTP id z96-v6so1078493wrb.8
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 01:41:43 -0700 (PDT)
+        Wed, 12 Sep 2018 09:45:18 -0400
+Received: by mail-wr1-f67.google.com with SMTP id u12-v6so1085517wrr.4
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 01:41:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ursulin-net.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=C/0tqtyKIui3gTmlZeuRN7hzV31E1/YS3e/kooZohyc=;
-        b=JerLaMZWvrU2U/Q5x3DSsZUj1rnC2ilkNEuSFaTlWa5rM8Vs3onW5Cp+nxdPrnLZGZ
-         IWcNFBILN/B/Kkdje+Rod6dJ5H2B4rrEb2XJ+jSQ0UgDKKfcQM+X4dkmdS19Fm3/80+R
-         O0NUCP7N5g7pQUH2d/0slJMjz9aje47P7DqH/V5aEqCZ+8Kcotpxh4BbL8KkvJfZ4DI3
-         vCcudbGeANgjBne3A/YrX1SaAl7AALapEDYzmV03tM+N5vJ+5TwNPLzRCFlyZL8/0oRl
-         +5/BMJbOw5ohCCQmHst2lsmfAOgYnvKm+FIvTxeNzXaA2aB8+9yzr/B28IAHsTUumvRX
-         gj+A==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=cdzXHeIFeBzs41NLH9B+3flVQODuHYwCbb1mrqSVS24=;
+        b=MAEn5N8vJSJMOKNGUDQ/fuHs11uLucbW91K2SVIr9q8XUpIAVgLy59kwJ+h8y+UYSp
+         oadZpD9yQdFmkLuePLivBd2JWe7JZTseG+MQprowtXVilF8Co4pYrucn5Bfj5JumkM/B
+         bbpcoiNW8ra98W1dbSBsqFANVUJjp8ot0CXd4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=C/0tqtyKIui3gTmlZeuRN7hzV31E1/YS3e/kooZohyc=;
-        b=rVKOpqbyQZXuImh0vwUa08a4qJtKPxovLHYWb0L1myPJr7n+/CxxgEYW6AfpVab1Ac
-         s305CTXyWkVwRQn5XzOMv2tUvMqM6kZ5PXsTgj9lfKW+osb6f0bYIHYNrN/VOAMcHXMA
-         6xpSEbkktspQ4tB9N0ySTmyVDGrHUwY/UZVYt9GgyzYiEXGg7uoKzQl7VbIO5/8lp9P9
-         wLHZVKGgsFHLskxKtz+4eYrQxkFaRqIqruTaKl6JtIiPCTyeR0ZERDciP3Pfe7wkw20c
-         s/psx+tZzPsPEnu66hjDxz4ZGA72lLed20iTGe3Yc8wtoaawi4Xtn8h1b4QyqhxZroFQ
-         /k3g==
-X-Gm-Message-State: APzg51ALzL88xkuZXMuXoYXJq2kFIFjcmZFSNVnWazqBr1coEqNiPhB4
-        ua++mmU+eyF0+/t8+zDE8KdAKg==
-X-Google-Smtp-Source: ANB0Vdbj14UA8+edIK+yYsun1bNR/z5VwLCuUhAY7rB3d8o5SQ54PYyvpxp5k9HJUJKAo0M4AG3vyA==
-X-Received: by 2002:a5d:4089:: with SMTP id o9-v6mr659113wrp.133.1536741702471;
-        Wed, 12 Sep 2018 01:41:42 -0700 (PDT)
-Received: from [192.168.0.197] ([95.144.165.37])
-        by smtp.googlemail.com with ESMTPSA id h10-v6sm644903wmf.44.2018.09.12.01.41.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Sep 2018 01:41:41 -0700 (PDT)
-Subject: Re: [RFC 0/4] perf: Per PMU access controls (paranoid setting)
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Cc:     Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        Andi Kleen <ak@linux.intel.com>, x86@kernel.org
-References: <20180626153642.5587-1-tvrtko.ursulin@linux.intel.com>
- <27559444-ca88-2c04-c85c-613116e9e51f@linux.intel.com>
-From:   Tvrtko Ursulin <tursulin@ursulin.net>
-Message-ID: <3361d8e1-50a0-2404-78cb-b83ca345b565@ursulin.net>
-Date:   Wed, 12 Sep 2018 09:41:40 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=cdzXHeIFeBzs41NLH9B+3flVQODuHYwCbb1mrqSVS24=;
+        b=dqTT9tHehMWAVDl6Q2JmNJ0cnljiRnstPOTJbVI+WdBnXOekeZjj0uRPZqMHjsmKNx
+         cIpd1iIjuqyQ24fH0vLFB6YG0rrZ3x3EHHmFEbXV8nj8KIJC1FTuKp0Curl5RGANRkKL
+         rCWLlyHHjmKV+bKmL000e8x2mzhio2kl5nSZqaQJQMfhgSGV7K2YLGik126E+2ArEq3K
+         6saWnO8b1VyrILvqqM4qu4tucpgbTKr3Z/GvJw7dt1AueR/OkRUulJaOQ6lpqfilcsmO
+         buyBlgfj3+Nf3Xy9nH9K/IAgUSb+Za/PW7gocLmguHBMz9D1hDq2g8QIlscDShZ9eBNZ
+         p2bw==
+X-Gm-Message-State: APzg51AfnAx8BfvqhfiIn/sd0TEoWJ1MX3UkvvUE+JsZFNVaVu2kIDr5
+        BJV+saSrxMO8ic5+oA0pKOhxZw==
+X-Google-Smtp-Source: ANB0Vdax+omjCwocb9QLLLD2chwLGGz2+TmwM6YsEob3OIPPdHerUT+iIruFJV8fDiZ1roEs60iScg==
+X-Received: by 2002:adf:f1cc:: with SMTP id z12-v6mr654025wro.214.1536741706618;
+        Wed, 12 Sep 2018 01:41:46 -0700 (PDT)
+Received: from dell ([89.238.177.251])
+        by smtp.gmail.com with ESMTPSA id 94-v6sm657763wrc.10.2018.09.12.01.41.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Sep 2018 01:41:45 -0700 (PDT)
+Date:   Wed, 12 Sep 2018 09:41:43 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        radu_nicolae.pirea@upb.ro, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Mark Brown <broonie@kernel.org>, Jiri Slaby <jslaby@suse.com>,
+        Richard Genoud <richard.genoud@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>
+Subject: Re: [PATCH v12 0/6] Driver for at91 usart in spi mode
+Message-ID: <20180912084143.GN4185@dell>
+References: <20180911093356.GE4185@dell>
+ <20180911093917.GL2494@piout.net>
+ <CAMuHMdXH8gNjKGOHGFc+K03U2zsVCSN7G_Q4wtepQr859nRQKg@mail.gmail.com>
+ <20180911153621.GP2494@piout.net>
+ <CAMuHMdV+=EgAYogwNHbY=RExkGox_+YSeHV6pJtQb6g6PzD-CQ@mail.gmail.com>
+ <20180911181838.GI4185@dell>
+ <20180911185839.GA25212@piout.net>
+ <20180911224418.GK4185@dell>
+ <20180911225440.GL4185@dell>
+ <20180912073355.GB2557@piout.net>
 MIME-Version: 1.0
-In-Reply-To: <27559444-ca88-2c04-c85c-613116e9e51f@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180912073355.GB2557@piout.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 12 Sep 2018, Alexandre Belloni wrote:
 
-On 12/09/18 07:52, Alexey Budankov wrote:
+> On 11/09/2018 23:54:40+0100, Lee Jones wrote:
+> > > > http://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-6438-32-bit-ARM926-Embedded-Microprocessor-SAM9G45_Datasheet.pdf
+> > > > 
+> > > > USART doc starting p572, registers p621.
+> > 
+> > After looking at the datasheet, I don't see any reason why one of the
+> > two drivers can't be selected using different compatible strings.
 > 
-> Hi,
-> 
-> Is there any plans or may be even progress on that so far?
+> Because there is only one IP and we don't use the device tree to selecet
+> linux specific drivers.
 
-It's hanging in the back of my mind. AFAIR after last round there was a 
-build failure or two to fix on more exotic (to me) hardware, and Jiri 
-Olsa provided a tools/perf snippet supporting the feature.
+We do it all the time.  There are loads of MFDs (def: same IP, with
+different functions) which have separate compatibles for their various
+functions.  If you wish this IP to operate as an SPI controller, it
+should have an SPI compatible, if you wish it to operate as a U(S)ART,
+then it should have a UART compatible.  It's what we do for most of
+the other MFDs in the kernel.
 
-But essentially I haven't done any work on it since due not seeing the 
-route to upstream. :( In other words, will someone review it and will 
-that r-b make it have a chance of getting into some tree. If I had a 
-clear statement from someone with authority in these aspects I would 
-progress it, but otherwise it felt like it's not going anywhere.
+> If you are not happy having that in MFD, I guess we can move it out
+> somewhere else.
 
-Regards,
+My issue isn't pertaining to where the hack lives, it's that there is
+a hack in the first place.
 
-Tvrtko
-
-
-> Thanks,
-> Alexey
-> 
-> On 26.06.2018 18:36, Tvrtko Ursulin wrote:
->> From: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
->>
->> For situations where sysadmins might want to allow different level of
->> access control for different PMUs, we start creating per-PMU
->> perf_event_paranoid controls in sysfs.
->>
->> These work in equivalent fashion as the existing perf_event_paranoid
->> sysctl, which now becomes the parent control for each PMU.
->>
->> On PMU registration the global/parent value will be inherited by each PMU,
->> as it will be propagated to all registered PMUs when the sysctl is
->> updated.
->>
->> At any later point individual PMU access controls, located in
->> <sysfs>/device/<pmu-name>/perf_event_paranoid, can be adjusted to achieve
->> fine grained access control.
->>
->> Discussion from previous posting:
->> https://lkml.org/lkml/2018/5/21/156
->>
->> Cc: Thomas Gleixner <tglx@linutronix.de>
->> Cc: Peter Zijlstra <peterz@infradead.org>
->> Cc: Ingo Molnar <mingo@redhat.com>
->> Cc: "H. Peter Anvin" <hpa@zytor.com>
->> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
->> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
->> Cc: Jiri Olsa <jolsa@redhat.com>
->> Cc: Namhyung Kim <namhyung@kernel.org>
->> Cc: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
->> Cc: Andi Kleen <ak@linux.intel.com>
->> Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
->> Cc: linux-kernel@vger.kernel.org
->> Cc: x86@kernel.org
->>
->> Tvrtko Ursulin (4):
->>    perf: Move some access checks later in perf_event_open
->>    perf: Pass pmu pointer to perf_paranoid_* helpers
->>    perf: Allow per PMU access control
->>    perf Documentation: Document the per PMU perf_event_paranoid interface
->>
->>   .../sysfs-bus-event_source-devices-events     |  14 +++
->>   arch/powerpc/perf/core-book3s.c               |   2 +-
->>   arch/x86/events/intel/bts.c                   |   2 +-
->>   arch/x86/events/intel/core.c                  |   2 +-
->>   arch/x86/events/intel/p4.c                    |   2 +-
->>   include/linux/perf_event.h                    |  18 ++-
->>   kernel/events/core.c                          | 104 +++++++++++++++---
->>   kernel/sysctl.c                               |   4 +-
->>   kernel/trace/trace_event_perf.c               |   6 +-
->>   9 files changed, 123 insertions(+), 31 deletions(-)
->>
-> 
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
