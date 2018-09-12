@@ -2,138 +2,104 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66864C070C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:18:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8661C070C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:19:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26CE22146D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:18:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26CE22146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 6F44A20C0A
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:19:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F44A20C0A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728215AbeIMAYU (ORCPT
+        id S1728225AbeIMAZd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 20:24:20 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:41431 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728014AbeIMAYU (ORCPT
+        Wed, 12 Sep 2018 20:25:33 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:35183 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728056AbeIMAZd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 20:24:20 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id EF418806C7; Wed, 12 Sep 2018 21:18:20 +0200 (CEST)
-Date:   Wed, 12 Sep 2018 21:18:20 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Baolin Wang <baolin.wang@linaro.org>, rteysseyre@gmail.com,
-        broonie@kernel.org, linus.walleij@linaro.org,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 1/2] leds: core: Introduce LED pattern trigger
-Message-ID: <20180912191820.GA27704@amd>
-References: <5a502ec29251c019ddad8f3314ab45fc0f6feaf7.1536027873.git.baolin.wang@linaro.org>
- <20180908050208.GY2523@minitux>
- <20180910211935.GA4697@amd>
- <dd1f8dd2-d577-ab12-e67a-7ed71459055a@gmail.com>
+        Wed, 12 Sep 2018 20:25:33 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8CJIrIm2743956
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 12 Sep 2018 12:18:54 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8CJIrDP2743953;
+        Wed, 12 Sep 2018 12:18:53 -0700
+Date:   Wed, 12 Sep 2018 12:18:53 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-2vvwh2o19orn56di0ksrtgzr@git.kernel.org>
+Cc:     dsahern@gmail.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, jolsa@kernel.org,
+        namhyung@kernel.org, mingo@kernel.org, acme@redhat.com,
+        wangnan0@huawei.com, adrian.hunter@intel.com, peterz@infradead.org
+Reply-To: peterz@infradead.org, adrian.hunter@intel.com,
+          wangnan0@huawei.com, acme@redhat.com, mingo@kernel.org,
+          namhyung@kernel.org, jolsa@kernel.org, hpa@zytor.com,
+          dsahern@gmail.com, tglx@linutronix.de,
+          linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] tools headers uapi: Update tools's copy of
+ linux/perf_event.h
+Git-Commit-ID: 0ee03d936cbb300309ed6154ac1cc12b63e9785f
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="2fHTh5uZTiUOsy+g"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <dd1f8dd2-d577-ab12-e67a-7ed71459055a@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  0ee03d936cbb300309ed6154ac1cc12b63e9785f
+Gitweb:     https://git.kernel.org/tip/0ee03d936cbb300309ed6154ac1cc12b63e9785f
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Tue, 11 Sep 2018 10:57:13 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Tue, 11 Sep 2018 10:57:13 -0300
 
---2fHTh5uZTiUOsy+g
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+tools headers uapi: Update tools's copy of linux/perf_event.h
 
-Hi!
+To get the changes in:
 
-> >>> diff --git a/Documentation/ABI/testing/sysfs-class-led-trigger-patter=
-n b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
-> >> [..]
-> >>> +What:		/sys/class/leds/<led>/hw_pattern
-> >>> +Date:		September 2018
-> >>> +KernelVersion:	4.20
-> >>> +Description:
-> >>> +		Specify a hardware pattern for the LED, for LED hardware that
-> >>> +		supports autonomously controlling brightness over time, according
-> >>> +		to some preprogrammed hardware patterns.
-> >>> +
-> >>> +		Since different LED hardware can have different semantics of
-> >>> +		hardware patterns, each driver is expected to provide its own
-> >>> +		description for the hardware patterns in their ABI documentation
-> >>> +		file.
-> >>> +
-> >>
-> >> So, after a full circle we're back at drivers with support for hardware
-> >> patterns should have their own ABI for setting that pattern.
-> >>
-> >> The controls for my hardware is:
-> >> * a list of brightness values
-> >> * the rate of the pattern
-> >> * a flag to indicate that the pattern should be played from start
-> >>   to end, end to start or start to end to start
-> >> * a boolean indicating if the pattern should be played once or repeated
-> >>   indefinitely.
-> >=20
-> > No, we are not back to full circle.
-> >=20
-> > Or at least we should not be.
-> >=20
-> > Yes, hw_pattern can have some limitation pattern does not, but if you
-> > take values from hw_pattern file and put them into pattern file, you
-> > should get the same pattern (with more power being consumed). And that
-> > property is kind of important for me, because it should keep the ABI
-> > reasonable.
->=20
-> If you looked at what we agreed on with Baolin, you'd realize
-> that this property is in no way preserved.
-> This is what the whole story is about - we're introducing hw_pattern
-> because of difficulties in describing breathing pattern by a series
-> of [brightness delta_t] tuples.
->=20
-> And Bjorn presented another example. I'm inclined to leave the
-> definition of hw_pattern semantics to the LED class drivers,
-> and allow them to create related sysfs files.
+	09121255c784 ("perf/UAPI: Clearly mark __PERF_SAMPLE_CALLCHAIN_EARLY as internal use")
 
-Please lets not do that.
+This cures the following warning during perf's build:
 
-We already have drivers that do that and it is complete
-nightmare. Some take binary code for the tiny CPU driving the LED.
+	Warning: Kernel ABI header at 'tools/include/uapi/linux/perf_event.h' differs from latest version at 'include/uapi/linux/perf_event.h'
+	diff -u tools/include/uapi/linux/perf_event.h include/uapi/linux/perf_event.h
 
-What exactly is the problem? [brightness delta_t] can describe
-anything single LED can do in finite time. You are right, that
-[brightness delta_t] sequence may get rather long, and it may be hard
-to turn that sequence into parameters. Are there any _interesting_
-sequences hardware can do but [brightness delta_t] can not store
-reasonably?
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-2vvwh2o19orn56di0ksrtgzr@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/include/uapi/linux/perf_event.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---2fHTh5uZTiUOsy+g
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAluZZnwACgkQMOfwapXb+vKk4ACfeuiIz9zul593vxA5PPJRklQ7
-04wAn3mbOGBFjJoVrINshnq/FECRY26v
-=EOK8
------END PGP SIGNATURE-----
-
---2fHTh5uZTiUOsy+g--
+diff --git a/tools/include/uapi/linux/perf_event.h b/tools/include/uapi/linux/perf_event.h
+index eeb787b1c53c..f35eb72739c0 100644
+--- a/tools/include/uapi/linux/perf_event.h
++++ b/tools/include/uapi/linux/perf_event.h
+@@ -144,7 +144,7 @@ enum perf_event_sample_format {
+ 
+ 	PERF_SAMPLE_MAX = 1U << 20,		/* non-ABI */
+ 
+-	__PERF_SAMPLE_CALLCHAIN_EARLY		= 1ULL << 63,
++	__PERF_SAMPLE_CALLCHAIN_EARLY		= 1ULL << 63, /* non-ABI; internal use */
+ };
+ 
+ /*
