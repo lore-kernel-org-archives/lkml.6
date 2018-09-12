@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDFD8ECDFC1
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:13:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64B42C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:13:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0A6920866
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:13:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0A6920866
+	by mail.kernel.org (Postfix) with ESMTP id 21D0420866
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:13:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21D0420866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727969AbeILORD (ORCPT
+        id S1728018AbeILORH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 10:17:03 -0400
-Received: from foss.arm.com ([217.140.101.70]:55760 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726901AbeILORC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 10:17:02 -0400
+        Wed, 12 Sep 2018 10:17:07 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55790 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726901AbeILORH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 10:17:07 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A81621596;
-        Wed, 12 Sep 2018 02:13:25 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0A40B15BF;
+        Wed, 12 Sep 2018 02:13:30 -0700 (PDT)
 Received: from queper01-lin.local (queper01-lin.emea.arm.com [10.4.13.27])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 900343F703;
-        Wed, 12 Sep 2018 02:13:21 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E6B483F703;
+        Wed, 12 Sep 2018 02:13:25 -0700 (PDT)
 From:   Quentin Perret <quentin.perret@arm.com>
 To:     peterz@infradead.org, rjw@rjwysocki.net,
         linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
@@ -42,9 +42,9 @@ Cc:     gregkh@linuxfoundation.org, mingo@redhat.com,
         edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
         currojerez@riseup.net, javi.merino@kernel.org,
         quentin.perret@arm.com
-Subject: [PATCH v7 01/14] sched: Relocate arch_scale_cpu_capacity
-Date:   Wed, 12 Sep 2018 10:12:56 +0100
-Message-Id: <20180912091309.7551-2-quentin.perret@arm.com>
+Subject: [PATCH v7 02/14] sched/cpufreq: Prepare schedutil for Energy Aware Scheduling
+Date:   Wed, 12 Sep 2018 10:12:57 +0100
+Message-Id: <20180912091309.7551-3-quentin.perret@arm.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180912091309.7551-1-quentin.perret@arm.com>
 References: <20180912091309.7551-1-quentin.perret@arm.com>
@@ -53,88 +53,221 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-By default, arch_scale_cpu_capacity() is only visible from within the
-kernel/sched folder. Relocate it to include/linux/sched/topology.h to
-make it visible to other clients needing to know about the capacity of
-CPUs, such as the Energy Model framework.
+Schedutil requests frequency by aggregating utilization signals from
+the scheduler (CFS, RT, DL, IRQ) and applying and 25% margin on top of
+them. Since Energy Aware Scheduling (EAS) needs to be able to predict
+the frequency requests, it needs to forecast the decisions made by the
+governor.
+
+In order to prepare the introduction of EAS, introduce
+schedutil_freq_util() to centralize the aforementioned signal
+aggregation and make it available to both schedutil and EAS. Since
+frequency selection and energy estimation still need to deal with RT and
+DL signals slightly differently, schedutil_freq_util() is called with a
+different 'type' parameter in those two contexts, and returns an
+aggregated utilization signal accordingly. While at it, introduce the
+map_util_freq() function which is designed to make schedutil's 25%
+margin usable easily for both sugov and EAS.
+
+As EAS will be able to predict schedutil's frequency requests more
+accurately than any other governor by design, it'd be sensible to make
+sure EAS cannot be used without schedutil. This will be done later, once
+EAS has actually been introduced.
 
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
 Signed-off-by: Quentin Perret <quentin.perret@arm.com>
 ---
- include/linux/sched/topology.h | 19 +++++++++++++++++++
- kernel/sched/sched.h           | 21 ---------------------
- 2 files changed, 19 insertions(+), 21 deletions(-)
+ include/linux/sched/cpufreq.h    |  6 +++
+ kernel/sched/cpufreq_schedutil.c | 89 +++++++++++++++++++++-----------
+ kernel/sched/sched.h             | 14 +++++
+ 3 files changed, 80 insertions(+), 29 deletions(-)
 
-diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
-index 4fe2e49ab13b..1aaa14462207 100644
---- a/include/linux/sched/topology.h
-+++ b/include/linux/sched/topology.h
-@@ -202,6 +202,17 @@ extern void set_sched_topology(struct sched_domain_topology_level *tl);
- # define SD_INIT_NAME(type)
- #endif
- 
-+#ifndef arch_scale_cpu_capacity
-+static __always_inline
-+unsigned long arch_scale_cpu_capacity(struct sched_domain *sd, int cpu)
+diff --git a/include/linux/sched/cpufreq.h b/include/linux/sched/cpufreq.h
+index 59667444669f..afa940cd50dc 100644
+--- a/include/linux/sched/cpufreq.h
++++ b/include/linux/sched/cpufreq.h
+@@ -20,6 +20,12 @@ void cpufreq_add_update_util_hook(int cpu, struct update_util_data *data,
+                        void (*func)(struct update_util_data *data, u64 time,
+ 				    unsigned int flags));
+ void cpufreq_remove_update_util_hook(int cpu);
++
++static inline unsigned long map_util_freq(unsigned long util,
++					unsigned long freq, unsigned long cap)
 +{
-+	if (sd && (sd->flags & SD_SHARE_CPUCAPACITY) && (sd->span_weight > 1))
-+		return sd->smt_gain / sd->span_weight;
-+
-+	return SCHED_CAPACITY_SCALE;
++	return (freq + (freq >> 2)) * util / cap;
 +}
-+#endif
-+
- #else /* CONFIG_SMP */
+ #endif /* CONFIG_CPU_FREQ */
  
- struct sched_domain_attr;
-@@ -217,6 +228,14 @@ static inline bool cpus_share_cache(int this_cpu, int that_cpu)
- 	return true;
+ #endif /* _LINUX_SCHED_CPUFREQ_H */
+diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+index 3fffad3bc8a8..8356cb0072a6 100644
+--- a/kernel/sched/cpufreq_schedutil.c
++++ b/kernel/sched/cpufreq_schedutil.c
+@@ -13,6 +13,7 @@
+ 
+ #include "sched.h"
+ 
++#include <linux/sched/cpufreq.h>
+ #include <trace/events/power.h>
+ 
+ struct sugov_tunables {
+@@ -167,7 +168,7 @@ static unsigned int get_next_freq(struct sugov_policy *sg_policy,
+ 	unsigned int freq = arch_scale_freq_invariant() ?
+ 				policy->cpuinfo.max_freq : policy->cur;
+ 
+-	freq = (freq + (freq >> 2)) * util / max;
++	freq = map_util_freq(util, freq, max);
+ 
+ 	if (freq == sg_policy->cached_raw_freq && !sg_policy->need_freq_update)
+ 		return sg_policy->next_freq;
+@@ -197,15 +198,15 @@ static unsigned int get_next_freq(struct sugov_policy *sg_policy,
+  * based on the task model parameters and gives the minimal utilization
+  * required to meet deadlines.
+  */
+-static unsigned long sugov_get_util(struct sugov_cpu *sg_cpu)
++unsigned long schedutil_freq_util(int cpu, unsigned long util_cfs,
++				  enum schedutil_type type)
+ {
+-	struct rq *rq = cpu_rq(sg_cpu->cpu);
++	struct rq *rq = cpu_rq(cpu);
+ 	unsigned long util, irq, max;
+ 
+-	sg_cpu->max = max = arch_scale_cpu_capacity(NULL, sg_cpu->cpu);
+-	sg_cpu->bw_dl = cpu_bw_dl(rq);
++	max = arch_scale_cpu_capacity(NULL, cpu);
+ 
+-	if (rt_rq_is_runnable(&rq->rt))
++	if (type == FREQUENCY_UTIL && rt_rq_is_runnable(&rq->rt))
+ 		return max;
+ 
+ 	/*
+@@ -223,20 +224,33 @@ static unsigned long sugov_get_util(struct sugov_cpu *sg_cpu)
+ 	 * utilization (PELT windows are synchronized) we can directly add them
+ 	 * to obtain the CPU's actual utilization.
+ 	 */
+-	util = cpu_util_cfs(rq);
++	util = util_cfs;
+ 	util += cpu_util_rt(rq);
+ 
+-	/*
+-	 * We do not make cpu_util_dl() a permanent part of this sum because we
+-	 * want to use cpu_bw_dl() later on, but we need to check if the
+-	 * CFS+RT+DL sum is saturated (ie. no idle time) such that we select
+-	 * f_max when there is no idle time.
+-	 *
+-	 * NOTE: numerical errors or stop class might cause us to not quite hit
+-	 * saturation when we should -- something for later.
+-	 */
+-	if ((util + cpu_util_dl(rq)) >= max)
+-		return max;
++	if (type == FREQUENCY_UTIL) {
++		/*
++		 * For frequency selection we do not make cpu_util_dl() a
++		 * permanent part of this sum because we want to use
++		 * cpu_bw_dl() later on, but we need to check if the
++		 * CFS+RT+DL sum is saturated (ie. no idle time) such
++		 * that we select f_max when there is no idle time.
++		 *
++		 * NOTE: numerical errors or stop class might cause us
++		 * to not quite hit saturation when we should --
++		 * something for later.
++		 */
++
++		if ((util + cpu_util_dl(rq)) >= max)
++			return max;
++	} else {
++		/*
++		 * OTOH, for energy computation we need the estimated
++		 * running time, so include util_dl and ignore dl_bw.
++		 */
++		util += cpu_util_dl(rq);
++		if (util >= max)
++			return max;
++	}
+ 
+ 	/*
+ 	 * There is still idle time; further improve the number by using the
+@@ -250,17 +264,34 @@ static unsigned long sugov_get_util(struct sugov_cpu *sg_cpu)
+ 	util = scale_irq_capacity(util, irq, max);
+ 	util += irq;
+ 
+-	/*
+-	 * Bandwidth required by DEADLINE must always be granted while, for
+-	 * FAIR and RT, we use blocked utilization of IDLE CPUs as a mechanism
+-	 * to gracefully reduce the frequency when no tasks show up for longer
+-	 * periods of time.
+-	 *
+-	 * Ideally we would like to set bw_dl as min/guaranteed freq and util +
+-	 * bw_dl as requested freq. However, cpufreq is not yet ready for such
+-	 * an interface. So, we only do the latter for now.
+-	 */
+-	return min(max, util + sg_cpu->bw_dl);
++	if (type == FREQUENCY_UTIL) {
++		/*
++		 * Bandwidth required by DEADLINE must always be granted
++		 * while, for FAIR and RT, we use blocked utilization of
++		 * IDLE CPUs as a mechanism to gracefully reduce the
++		 * frequency when no tasks show up for longer periods of
++		 * time.
++		 *
++		 * Ideally we would like to set bw_dl as min/guaranteed
++		 * freq and util + bw_dl as requested freq. However,
++		 * cpufreq is not yet ready for such an interface. So,
++		 * we only do the latter for now.
++		 */
++		util += cpu_bw_dl(rq);
++	}
++
++	return min(max, util);
++}
++
++static unsigned long sugov_get_util(struct sugov_cpu *sg_cpu)
++{
++	struct rq *rq = cpu_rq(sg_cpu->cpu);
++	unsigned long util = cpu_util_cfs(rq);
++
++	sg_cpu->max = arch_scale_cpu_capacity(NULL, sg_cpu->cpu);
++	sg_cpu->bw_dl = cpu_bw_dl(rq);
++
++	return schedutil_freq_util(sg_cpu->cpu, util, FREQUENCY_UTIL);
  }
  
-+#ifndef arch_scale_cpu_capacity
-+static __always_inline
-+unsigned long arch_scale_cpu_capacity(void __always_unused *sd, int cpu)
-+{
-+	return SCHED_CAPACITY_SCALE;
-+}
-+#endif
-+
- #endif	/* !CONFIG_SMP */
- 
- static inline int task_node(const struct task_struct *p)
+ /**
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 85b3a2bf6c2b..481e6759441b 100644
+index 481e6759441b..d59effb34786 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
-@@ -1761,27 +1761,6 @@ unsigned long arch_scale_freq_capacity(int cpu)
- }
+@@ -2172,7 +2172,15 @@ static inline void cpufreq_update_util(struct rq *rq, unsigned int flags) {}
+ # define arch_scale_freq_invariant()	false
  #endif
  
--#ifdef CONFIG_SMP
--#ifndef arch_scale_cpu_capacity
--static __always_inline
--unsigned long arch_scale_cpu_capacity(struct sched_domain *sd, int cpu)
--{
--	if (sd && (sd->flags & SD_SHARE_CPUCAPACITY) && (sd->span_weight > 1))
--		return sd->smt_gain / sd->span_weight;
--
--	return SCHED_CAPACITY_SCALE;
--}
--#endif
--#else
--#ifndef arch_scale_cpu_capacity
--static __always_inline
--unsigned long arch_scale_cpu_capacity(void __always_unused *sd, int cpu)
--{
--	return SCHED_CAPACITY_SCALE;
--}
--#endif
--#endif
--
- struct rq *__task_rq_lock(struct task_struct *p, struct rq_flags *rf)
- 	__acquires(rq->lock);
++enum schedutil_type {
++	FREQUENCY_UTIL,
++	ENERGY_UTIL,
++};
++
+ #ifdef CONFIG_CPU_FREQ_GOV_SCHEDUTIL
++unsigned long schedutil_freq_util(int cpu, unsigned long util_cfs,
++				  enum schedutil_type type);
++
+ static inline unsigned long cpu_bw_dl(struct rq *rq)
+ {
+ 	return (rq->dl.running_bw * SCHED_CAPACITY_SCALE) >> BW_SHIFT;
+@@ -2199,6 +2207,12 @@ static inline unsigned long cpu_util_rt(struct rq *rq)
+ {
+ 	return READ_ONCE(rq->avg_rt.util_avg);
+ }
++#else /* CONFIG_CPU_FREQ_GOV_SCHEDUTIL */
++static inline unsigned long schedutil_freq_util(int cpu, unsigned long util,
++				  enum schedutil_type type)
++{
++	return util;
++}
+ #endif
  
+ #ifdef HAVE_SCHED_AVG_IRQ
 -- 
 2.18.0
 
