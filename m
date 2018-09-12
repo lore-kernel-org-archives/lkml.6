@@ -3,84 +3,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43902C46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 06:33:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98037C4646A
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 06:33:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1E0420880
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 06:33:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1E0420880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 5DB8620866
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 06:33:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DB8620866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727384AbeILLgC (ORCPT
+        id S1727611AbeILLgV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 07:36:02 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:42864 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725910AbeILLgC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 07:36:02 -0400
-Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fzyhu-0003NV-GA; Wed, 12 Sep 2018 08:32:58 +0200
-Date:   Wed, 12 Sep 2018 08:32:58 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
-cc:     jian-hong@endlessm.com, Linux Netdev List <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Regression caused by commit 7bb05b85bc2d ("r8169: don't use
- MSI-X on RTL8106e")
-In-Reply-To: <5D685053-1A33-4553-8678-A50C542466FD@canonical.com>
-Message-ID: <alpine.DEB.2.21.1809120826310.1427@nanos.tec.linutronix.de>
-References: <5D685053-1A33-4553-8678-A50C542466FD@canonical.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        Wed, 12 Sep 2018 07:36:21 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60794 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725910AbeILLgV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 07:36:21 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9C915402333A;
+        Wed, 12 Sep 2018 06:33:19 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-66.ams2.redhat.com [10.36.116.66])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7998410EE6D4;
+        Wed, 12 Sep 2018 06:33:17 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id D61B49B1B; Wed, 12 Sep 2018 08:33:16 +0200 (CEST)
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     laurent.pinchart@ideasonboard.com, daniel@ffwll.ch,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        linux-media@vger.kernel.org (open list:DMA BUFFER SHARING FRAMEWORK),
+        linaro-mm-sig@lists.linaro.org (moderated list:DMA BUFFER SHARING
+        FRAMEWORK), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v3 2/3] udmabuf: check that __pad is zero
+Date:   Wed, 12 Sep 2018 08:33:15 +0200
+Message-Id: <20180912063316.21047-3-kraxel@redhat.com>
+In-Reply-To: <20180912063316.21047-1-kraxel@redhat.com>
+References: <20180912063316.21047-1-kraxel@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 12 Sep 2018 06:33:19 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 12 Sep 2018 06:33:19 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'kraxel@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 12 Sep 2018, Kai-Heng Feng wrote:
+Reported-by: Yann Droneaud <ydroneaud@opteya.com>
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+---
+ drivers/dma-buf/udmabuf.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> There's a Dell machine with RTL8106e stops to work after S3 since the
-> commit introduced. So I am wondering if it's possible to revert the
-> commit and use DMI/subsystem id based quirk table?
+diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
+index 9edabce0b8..964beadd11 100644
+--- a/drivers/dma-buf/udmabuf.c
++++ b/drivers/dma-buf/udmabuf.c
+@@ -134,6 +134,8 @@ static long udmabuf_create(const struct udmabuf_create_list *head,
+ 
+ 	pglimit = (size_limit_mb * 1024 * 1024) >> PAGE_SHIFT;
+ 	for (i = 0; i < head->count; i++) {
++		if (list[i].__pad)
++			goto err;
+ 		if (!IS_ALIGNED(list[i].offset, PAGE_SIZE))
+ 			goto err;
+ 		if (!IS_ALIGNED(list[i].size, PAGE_SIZE))
+-- 
+2.9.3
 
-Probably.
-
-> It's because of commit bc976233a872 ("genirq/msi, x86/vector: Prevent
-> reservation mode for non maskable MSI") cleared the reservation mode, and I
-> can see this after S3:
-> 
-> [   94.872838] do_IRQ: 3.33 No irq handler for vector
-
-It's not because of that commit, really. There is a interrupt sent after
-resume to the wrong vector for whatever reason. The MSI vector cannot be
-masked it seems in the device, but the driver should quiescen the device to
-a point where it does not send interrupts.
-
-> If the device uses MSI-X instead of MSI, the issue doesn't happen because of
-> reservation mode.
-
-Reservation mode has absolutely nothing to do with that. What prevents the
-issue is the fact that MSI-X can be masked by the IRQ core.
-
-> Is it something should be handled by x86 BIOS? Because I don't see this issue
-> when I use Suspend-to-Idle, which doesn't use BIOS to do suspend.
-
-Suspend to idle works completely different and I don't see the BIOS at
-fault here. it's more an issue of MSI not being maskable on that device,
-which can't be fixed in BIOS or it's some half quiescened state which is
-used when suspending and that's a pure driver issue.
-
-Thanks,
-
-	tglx
