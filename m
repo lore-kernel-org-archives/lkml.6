@@ -6,56 +6,55 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89F7FC4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 11:51:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EA52C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 11:51:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 228AF2088E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 11:51:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 228AF2088E
+	by mail.kernel.org (Postfix) with ESMTP id 346682088E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 11:51:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 346682088E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727749AbeILQzL (ORCPT
+        id S1727774AbeILQ4I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 12:55:11 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:44801 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726552AbeILQzK (ORCPT
+        Wed, 12 Sep 2018 12:56:08 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:39380 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726082AbeILQ4H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 12:55:10 -0400
-Received: by mail-lf1-f66.google.com with SMTP id g6-v6so1394649lfb.11;
-        Wed, 12 Sep 2018 04:50:57 -0700 (PDT)
+        Wed, 12 Sep 2018 12:56:07 -0400
+Received: by mail-lj1-f194.google.com with SMTP id l15-v6so1354811lji.6;
+        Wed, 12 Sep 2018 04:51:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=05EA8QTt/58+Fvd/V7F9qvQUwtbuaOjF4e31NaPjYEA=;
-        b=opvqlk/CBCejjRYJaJ4BvLgXcosYfith3rbJAJBB96I8PN2Z/NJkXsv7TD+EwhS5Om
-         J7VS8Sslq4zHsDJN8TJ8S4U1N+Gik5GR3TIZNRkmM1NF+JK8/LJlPuCcUFpEdkiAXf7t
-         Gj5RhptNK+WrfWzg/4eggcG6b2dRAj386pxhjNGIyyf+S959PbLhjF/SuwRkyvRTsYdu
-         WezcWwaA6wY8j6L6540gZql8op0IM9K+nBfDQBtIj4lFEI+2Le7yuRLCKy1qNv4sPrRB
-         5qFMPJC3Nv0NxwcC/jfKu8K6E/FwRnUo9lWTV2ckZ6VdhznrmW2AoQ3HTC7iQNIiNB3d
-         6AIw==
-X-Gm-Message-State: APzg51D9syz+kQGjY35LCnI2RRrL53xFYYzOrS2+ZYBNapbBwZ5K1CwS
-        83EIWVAONveVCOwMtvrMC+0=
-X-Google-Smtp-Source: ANB0VdZAmI7ntGbgcWqYs3KsCUqTDVfbqLqnY5DUHRpct9DVLMVQO97WDvHkFSp+6w3lfPpxjsh9JA==
-X-Received: by 2002:a19:73c5:: with SMTP id h66-v6mr1251498lfk.22.1536753056776;
-        Wed, 12 Sep 2018 04:50:56 -0700 (PDT)
+        bh=SG/lyraXUfaV6k4xUd/Jf0K0Fe86V40nCnP2xWVrEJQ=;
+        b=PkU2d6NF2Lhk+iR/4NWfwhUodfdHA7zAzQZZ2D7v4RmRtoAVPGnEixDqOURw31/dxT
+         FVEttUf6MJouKWoAdrSFD8ImMJ7m+tVgO1qE0rQ+5nsi6ADr0E5XmUDzV2hX/I9L8z6Q
+         3pQorxYzkXNrDhNFnVCj8or+eq3KGMAKldTS6l/hLP/xKvokAZBK08rgwknuJlrOkgwk
+         bViAifJCHgmCMgx+/EJjnWTaPAcUxAJy9XfhRc6Fp2V5/mRMxwNVtMKQKQVlZd8ojBmn
+         GFDv7nO3z60xlLD1pzfs2HmignSkt4SD7DEijA54b9/8lVSrjsjJ/kJnYCfmCMhpabPF
+         DOQg==
+X-Gm-Message-State: APzg51A4ckYU5jWOINUWWL+zD/cJ1ds5Sb5UTLJSGOz15Mbqno/a4MNn
+        Yj/gBptfzJOgdjp9L7ZnMZ8=
+X-Google-Smtp-Source: ANB0Vdae3x1Bwm4ImQ0Rhd2WdOjvj2CNoc2y9+9G4ea9xKvvh5+FBv8dAtWKnsGXGyfN0yOeLPJ6TA==
+X-Received: by 2002:a2e:9057:: with SMTP id n23-v6mr1195568ljg.44.1536753113684;
+        Wed, 12 Sep 2018 04:51:53 -0700 (PDT)
 Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id g133-v6sm146425lfg.81.2018.09.12.04.50.55
+        by smtp.gmail.com with ESMTPSA id w200-v6sm147767lff.71.2018.09.12.04.51.52
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Sep 2018 04:50:56 -0700 (PDT)
-Date:   Wed, 12 Sep 2018 14:50:41 +0300
+        Wed, 12 Sep 2018 04:51:53 -0700 (PDT)
+Date:   Wed, 12 Sep 2018 14:51:39 +0300
 From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 To:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        lgirdwood@gmail.com, broonie@kernel.org, mazziesaccount@gmail.com,
-        matti.vaittinen@fi.rohmeurope.com
+        lgirdwood@gmail.com, broonie@kernel.org, sboyd@kernel.org,
+        mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com
 Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
-        sboyd@kernel.org
-Subject: [PATCH v2 4/7] regulator: Support regulators where voltage ranges
- are selectable
-Message-ID: <3714c1b58d90b188abd1de2bb4e58a9e5ad3bd9b.1536750863.git.matti.vaittinen@fi.rohmeurope.com>
+        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com
+Subject: [PATCH v2 5/7] regulator/mfd: bd718xx: rename bd71837/bd71847 common
+ instances
+Message-ID: <74dc36388bc48a59191cc212094c85b157fd5197.1536750863.git.matti.vaittinen@fi.rohmeurope.com>
 References: <cover.1536750863.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -67,354 +66,427 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For example ROHM BD71837 and ROHM BD71847 Power management ICs have
-regulators which provide multiple linear ranges. Ranges can be
-selected by individual non contagious bit in vsel register. Add
-regmap helper functions for selecting ranges.
+Rename parts of code that support both BD71837 and BD71847 to BD718XX.
 
 Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 ---
- drivers/regulator/core.c         |   5 +
- drivers/regulator/helpers.c      | 232 +++++++++++++++++++++++++++++++++++++++
- include/linux/regulator/driver.h |  20 +++-
- 3 files changed, 256 insertions(+), 1 deletion(-)
+ drivers/mfd/rohm-bd718x7.c            | 98 +++++++++++++++++------------------
+ drivers/regulator/bd71837-regulator.c | 24 ++++-----
+ include/linux/mfd/rohm-bd718x7.h      | 62 +++++++++++-----------
+ 3 files changed, 92 insertions(+), 92 deletions(-)
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 5f2218c67edf..b836a129288a 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -2788,6 +2788,11 @@ static int regulator_map_voltage(struct regulator_dev *rdev, int min_uV,
- 	if (desc->ops->list_voltage == regulator_list_voltage_linear_range)
- 		return regulator_map_voltage_linear_range(rdev, min_uV, max_uV);
+diff --git a/drivers/mfd/rohm-bd718x7.c b/drivers/mfd/rohm-bd718x7.c
+index 31de0953c3a8..0b254b60bddb 100644
+--- a/drivers/mfd/rohm-bd718x7.c
++++ b/drivers/mfd/rohm-bd718x7.c
+@@ -2,9 +2,9 @@
+ //
+ // Copyright (C) 2018 ROHM Semiconductors
+ //
+-// ROHM BD71837MWV PMIC driver
++// ROHM BD71837MWV and BD71847MWV PMIC driver
+ //
+-// Datasheet available from
++// Datasheet for BD71837MWV available from
+ // https://www.rohm.com/datasheet/BD71837MWV/bd71837mwv-e
  
-+	if (desc->ops->list_voltage ==
-+		regulator_list_voltage_pickable_linear_range)
-+		return regulator_map_voltage_pickable_linear_range(rdev,
-+							min_uV, max_uV);
-+
- 	return regulator_map_voltage_iterate(rdev, min_uV, max_uV);
+ #include <linux/gpio_keys.h>
+@@ -29,7 +29,7 @@ static struct gpio_keys_platform_data bd718xx_powerkey_data = {
+ 	.name = "bd718xx-pwrkey",
+ };
+ 
+-static struct mfd_cell bd71837_mfd_cells[] = {
++static struct mfd_cell bd718xx_mfd_cells[] = {
+ 	{
+ 		.name = "gpio-keys",
+ 		.platform_data = &bd718xx_powerkey_data,
+@@ -39,20 +39,20 @@ static struct mfd_cell bd71837_mfd_cells[] = {
+ 	{ .name = "bd718xx-pmic", },
+ };
+ 
+-static const struct regmap_irq bd71837_irqs[] = {
+-	REGMAP_IRQ_REG(BD71837_INT_SWRST, 0, BD71837_INT_SWRST_MASK),
+-	REGMAP_IRQ_REG(BD71837_INT_PWRBTN_S, 0, BD71837_INT_PWRBTN_S_MASK),
+-	REGMAP_IRQ_REG(BD71837_INT_PWRBTN_L, 0, BD71837_INT_PWRBTN_L_MASK),
+-	REGMAP_IRQ_REG(BD71837_INT_PWRBTN, 0, BD71837_INT_PWRBTN_MASK),
+-	REGMAP_IRQ_REG(BD71837_INT_WDOG, 0, BD71837_INT_WDOG_MASK),
+-	REGMAP_IRQ_REG(BD71837_INT_ON_REQ, 0, BD71837_INT_ON_REQ_MASK),
+-	REGMAP_IRQ_REG(BD71837_INT_STBY_REQ, 0, BD71837_INT_STBY_REQ_MASK),
++static const struct regmap_irq bd718xx_irqs[] = {
++	REGMAP_IRQ_REG(BD718XX_INT_SWRST, 0, BD718XX_INT_SWRST_MASK),
++	REGMAP_IRQ_REG(BD718XX_INT_PWRBTN_S, 0, BD718XX_INT_PWRBTN_S_MASK),
++	REGMAP_IRQ_REG(BD718XX_INT_PWRBTN_L, 0, BD718XX_INT_PWRBTN_L_MASK),
++	REGMAP_IRQ_REG(BD718XX_INT_PWRBTN, 0, BD718XX_INT_PWRBTN_MASK),
++	REGMAP_IRQ_REG(BD718XX_INT_WDOG, 0, BD718XX_INT_WDOG_MASK),
++	REGMAP_IRQ_REG(BD718XX_INT_ON_REQ, 0, BD718XX_INT_ON_REQ_MASK),
++	REGMAP_IRQ_REG(BD718XX_INT_STBY_REQ, 0, BD718XX_INT_STBY_REQ_MASK),
+ };
+ 
+-static struct regmap_irq_chip bd71837_irq_chip = {
+-	.name = "bd71837-irq",
+-	.irqs = bd71837_irqs,
+-	.num_irqs = ARRAY_SIZE(bd71837_irqs),
++static struct regmap_irq_chip bd718xx_irq_chip = {
++	.name = "bd718xx-irq",
++	.irqs = bd718xx_irqs,
++	.num_irqs = ARRAY_SIZE(bd718xx_irqs),
+ 	.num_regs = 1,
+ 	.irq_reg_stride = 1,
+ 	.status_base = BD718XX_REG_IRQ,
+@@ -72,7 +72,7 @@ static const struct regmap_access_table volatile_regs = {
+ 	.n_yes_ranges = 1,
+ };
+ 
+-static const struct regmap_config bd71837_regmap_config = {
++static const struct regmap_config bd718xx_regmap_config = {
+ 	.reg_bits = 8,
+ 	.val_bits = 8,
+ 	.volatile_table = &volatile_regs,
+@@ -80,10 +80,10 @@ static const struct regmap_config bd71837_regmap_config = {
+ 	.cache_type = REGCACHE_RBTREE,
+ };
+ 
+-static int bd71837_i2c_probe(struct i2c_client *i2c,
++static int bd718xx_i2c_probe(struct i2c_client *i2c,
+ 			    const struct i2c_device_id *id)
+ {
+-	struct bd71837 *bd71837;
++	struct bd718xx *bd718xx;
+ 	int ret;
+ 
+ 	if (!i2c->irq) {
+@@ -91,32 +91,32 @@ static int bd71837_i2c_probe(struct i2c_client *i2c,
+ 		return -EINVAL;
+ 	}
+ 
+-	bd71837 = devm_kzalloc(&i2c->dev, sizeof(struct bd71837), GFP_KERNEL);
++	bd718xx = devm_kzalloc(&i2c->dev, sizeof(struct bd718xx), GFP_KERNEL);
+ 
+-	if (!bd71837)
++	if (!bd718xx)
+ 		return -ENOMEM;
+ 
+-	bd71837->chip_irq = i2c->irq;
+-	bd71837->chip_type = (unsigned int)of_device_get_match_data(&i2c->dev);
+-	bd71837->dev = &i2c->dev;
+-	dev_set_drvdata(&i2c->dev, bd71837);
++	bd718xx->chip_irq = i2c->irq;
++	bd718xx->chip_type = (unsigned int)of_device_get_match_data(&i2c->dev);
++	bd718xx->dev = &i2c->dev;
++	dev_set_drvdata(&i2c->dev, bd718xx);
+ 
+-	bd71837->regmap = devm_regmap_init_i2c(i2c, &bd71837_regmap_config);
+-	if (IS_ERR(bd71837->regmap)) {
++	bd718xx->regmap = devm_regmap_init_i2c(i2c, &bd718xx_regmap_config);
++	if (IS_ERR(bd718xx->regmap)) {
+ 		dev_err(&i2c->dev, "regmap initialization failed\n");
+-		return PTR_ERR(bd71837->regmap);
++		return PTR_ERR(bd718xx->regmap);
+ 	}
+ 
+-	ret = devm_regmap_add_irq_chip(&i2c->dev, bd71837->regmap,
+-				       bd71837->chip_irq, IRQF_ONESHOT, 0,
+-				       &bd71837_irq_chip, &bd71837->irq_data);
++	ret = devm_regmap_add_irq_chip(&i2c->dev, bd718xx->regmap,
++				       bd718xx->chip_irq, IRQF_ONESHOT, 0,
++				       &bd718xx_irq_chip, &bd718xx->irq_data);
+ 	if (ret) {
+ 		dev_err(&i2c->dev, "Failed to add irq_chip\n");
+ 		return ret;
+ 	}
+ 
+ 	/* Configure short press to 10 milliseconds */
+-	ret = regmap_update_bits(bd71837->regmap,
++	ret = regmap_update_bits(bd718xx->regmap,
+ 				 BD718XX_REG_PWRONCONFIG0,
+ 				 BD718XX_PWRBTN_PRESS_DURATION_MASK,
+ 				 BD718XX_PWRBTN_SHORT_PRESS_10MS);
+@@ -127,7 +127,7 @@ static int bd71837_i2c_probe(struct i2c_client *i2c,
+ 	}
+ 
+ 	/* Configure long press to 10 seconds */
+-	ret = regmap_update_bits(bd71837->regmap,
++	ret = regmap_update_bits(bd718xx->regmap,
+ 				 BD718XX_REG_PWRONCONFIG1,
+ 				 BD718XX_PWRBTN_PRESS_DURATION_MASK,
+ 				 BD718XX_PWRBTN_LONG_PRESS_10S);
+@@ -138,7 +138,7 @@ static int bd71837_i2c_probe(struct i2c_client *i2c,
+ 		return ret;
+ 	}
+ 
+-	ret = regmap_irq_get_virq(bd71837->irq_data, BD71837_INT_PWRBTN_S);
++	ret = regmap_irq_get_virq(bd718xx->irq_data, BD718XX_INT_PWRBTN_S);
+ 
+ 	if (ret < 0) {
+ 		dev_err(&i2c->dev, "Failed to get the IRQ\n");
+@@ -147,17 +147,17 @@ static int bd71837_i2c_probe(struct i2c_client *i2c,
+ 
+ 	button.irq = ret;
+ 
+-	ret = devm_mfd_add_devices(bd71837->dev, PLATFORM_DEVID_AUTO,
+-				   bd71837_mfd_cells,
+-				   ARRAY_SIZE(bd71837_mfd_cells), NULL, 0,
+-				   regmap_irq_get_domain(bd71837->irq_data));
++	ret = devm_mfd_add_devices(bd718xx->dev, PLATFORM_DEVID_AUTO,
++				   bd718xx_mfd_cells,
++				   ARRAY_SIZE(bd718xx_mfd_cells), NULL, 0,
++				   regmap_irq_get_domain(bd718xx->irq_data));
+ 	if (ret)
+ 		dev_err(&i2c->dev, "Failed to create subdevices\n");
+ 
+ 	return ret;
  }
  
-diff --git a/drivers/regulator/helpers.c b/drivers/regulator/helpers.c
-index ef09021dc46e..5686a1335bd3 100644
---- a/drivers/regulator/helpers.c
-+++ b/drivers/regulator/helpers.c
-@@ -103,6 +103,128 @@ int regulator_disable_regmap(struct regulator_dev *rdev)
+-static const struct of_device_id bd71837_of_match[] = {
++static const struct of_device_id bd718xx_of_match[] = {
+ 	{
+ 		.compatible = "rohm,bd71837",
+ 		.data = (void *)BD718XX_TYPE_BD71837,
+@@ -168,30 +168,30 @@ static const struct of_device_id bd71837_of_match[] = {
+ 	},
+ 	{ }
+ };
+-MODULE_DEVICE_TABLE(of, bd71837_of_match);
++MODULE_DEVICE_TABLE(of, bd718xx_of_match);
+ 
+-static struct i2c_driver bd71837_i2c_driver = {
++static struct i2c_driver bd718xx_i2c_driver = {
+ 	.driver = {
+ 		.name = "rohm-bd718x7",
+-		.of_match_table = bd71837_of_match,
++		.of_match_table = bd718xx_of_match,
+ 	},
+-	.probe = bd71837_i2c_probe,
++	.probe = bd718xx_i2c_probe,
+ };
+ 
+-static int __init bd71837_i2c_init(void)
++static int __init bd718xx_i2c_init(void)
+ {
+-	return i2c_add_driver(&bd71837_i2c_driver);
++	return i2c_add_driver(&bd718xx_i2c_driver);
  }
- EXPORT_SYMBOL_GPL(regulator_disable_regmap);
  
-+static int regulator_range_selector_to_index(struct regulator_dev *rdev,
-+					     unsigned int rval)
-+{
-+	int i;
-+
-+	if (!rdev->desc->linear_range_selectors)
-+		return -EINVAL;
-+
-+	rval &= rdev->desc->vsel_range_mask;
-+
-+	for (i = 0; i < rdev->desc->n_linear_ranges; i++) {
-+		if (rdev->desc->linear_range_selectors[i] == rval)
-+			return i;
-+	}
-+	return -EINVAL;
-+}
-+
-+/**
-+ * regulator_get_voltage_sel_pickable_regmap - pickable range get_voltage_sel
-+ *
-+ * @rdev: regulator to operate on
-+ *
-+ * Regulators that use regmap for their register I/O and use pickable
-+ * ranges can set the vsel_reg, vsel_mask, vsel_range_reg and vsel_range_mask
-+ * fields in their descriptor and then use this as their get_voltage_vsel
-+ * operation, saving some code.
-+ */
-+int regulator_get_voltage_sel_pickable_regmap(struct regulator_dev *rdev)
-+{
-+	unsigned int r_val;
-+	int range;
-+	unsigned int val;
-+	int ret, i;
-+	unsigned int voltages_in_range = 0;
-+
-+	if (!rdev->desc->linear_ranges)
-+		return -EINVAL;
-+
-+	ret = regmap_read(rdev->regmap, rdev->desc->vsel_reg, &val);
-+	if (ret != 0)
-+		return ret;
-+
-+	ret = regmap_read(rdev->regmap, rdev->desc->vsel_range_reg, &r_val);
-+	if (ret != 0)
-+		return ret;
-+
-+	val &= rdev->desc->vsel_mask;
-+	val >>= ffs(rdev->desc->vsel_mask) - 1;
-+
-+	range = regulator_range_selector_to_index(rdev, r_val);
-+	if (range < 0)
-+		return -EINVAL;
-+
-+	for (i = 0; i < range; i++)
-+		voltages_in_range += (rdev->desc->linear_ranges[i].max_sel -
-+				     rdev->desc->linear_ranges[i].min_sel) + 1;
-+
-+	return val + voltages_in_range;
-+}
-+EXPORT_SYMBOL_GPL(regulator_get_voltage_sel_pickable_regmap);
-+
-+/**
-+ * regulator_set_voltage_sel_pickable_regmap - pickable range set_voltage_sel
-+ *
-+ * @rdev: regulator to operate on
-+ * @sel: Selector to set
-+ *
-+ * Regulators that use regmap for their register I/O and use pickable
-+ * ranges can set the vsel_reg, vsel_mask, vsel_range_reg and vsel_range_mask
-+ * fields in their descriptor and then use this as their set_voltage_vsel
-+ * operation, saving some code.
-+ */
-+int regulator_set_voltage_sel_pickable_regmap(struct regulator_dev *rdev,
-+					      unsigned int sel)
-+{
-+	unsigned int range;
-+	int ret, i;
-+	unsigned int voltages_in_range = 0;
-+
-+	for (i = 0; i < rdev->desc->n_linear_ranges; i++) {
-+		voltages_in_range = (rdev->desc->linear_ranges[i].max_sel -
-+				     rdev->desc->linear_ranges[i].min_sel) + 1;
-+		if (sel < voltages_in_range)
-+			break;
-+		sel -= voltages_in_range;
-+	}
-+
-+	if (i == rdev->desc->n_linear_ranges)
-+		return -EINVAL;
-+
-+	sel <<= ffs(rdev->desc->vsel_mask) - 1;
-+	sel += rdev->desc->linear_ranges[i].min_sel;
-+
-+	range = rdev->desc->linear_range_selectors[i];
-+
-+	if (rdev->desc->vsel_reg == rdev->desc->vsel_range_reg) {
-+		ret = regmap_update_bits(rdev->regmap,
-+					 rdev->desc->vsel_reg,
-+					 rdev->desc->vsel_range_mask |
-+					 rdev->desc->vsel_mask, sel | range);
-+	} else {
-+		ret = regmap_update_bits(rdev->regmap,
-+					 rdev->desc->vsel_range_reg,
-+					 rdev->desc->vsel_range_mask, range);
-+		if (ret)
-+			return ret;
-+
-+		ret = regmap_update_bits(rdev->regmap, rdev->desc->vsel_reg,
-+				  rdev->desc->vsel_mask, sel);
-+	}
-+
-+	if (ret)
-+		return ret;
-+
-+	if (rdev->desc->apply_bit)
-+		ret = regmap_update_bits(rdev->regmap, rdev->desc->apply_reg,
-+					 rdev->desc->apply_bit,
-+					 rdev->desc->apply_bit);
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(regulator_set_voltage_sel_pickable_regmap);
-+
- /**
-  * regulator_get_voltage_sel_regmap - standard get_voltage_sel for regmap users
-  *
-@@ -337,6 +459,76 @@ int regulator_map_voltage_linear_range(struct regulator_dev *rdev,
+ /* Initialise early so consumer devices can complete system boot */
+-subsys_initcall(bd71837_i2c_init);
++subsys_initcall(bd718xx_i2c_init);
+ 
+-static void __exit bd71837_i2c_exit(void)
++static void __exit bd718xx_i2c_exit(void)
+ {
+-	i2c_del_driver(&bd71837_i2c_driver);
++	i2c_del_driver(&bd718xx_i2c_driver);
  }
- EXPORT_SYMBOL_GPL(regulator_map_voltage_linear_range);
+-module_exit(bd71837_i2c_exit);
++module_exit(bd718xx_i2c_exit);
  
-+/**
-+ * regulator_map_voltage_pickable_linear_range - map_voltage, pickable ranges
-+ *
-+ * @rdev: Regulator to operate on
-+ * @min_uV: Lower bound for voltage
-+ * @max_uV: Upper bound for voltage
-+ *
-+ * Drivers providing pickable linear_ranges in their descriptor can use
-+ * this as their map_voltage() callback.
-+ */
-+int regulator_map_voltage_pickable_linear_range(struct regulator_dev *rdev,
-+						int min_uV, int max_uV)
-+{
-+	const struct regulator_linear_range *range;
-+	int ret = -EINVAL;
-+	int voltage, i;
-+	unsigned int selector = 0;
-+
-+	if (!rdev->desc->n_linear_ranges) {
-+		BUG_ON(!rdev->desc->n_linear_ranges);
-+		return -EINVAL;
-+	}
-+
-+	for (i = 0; i < rdev->desc->n_linear_ranges; i++) {
-+		int linear_max_uV;
-+
-+		range = &rdev->desc->linear_ranges[i];
-+		linear_max_uV = range->min_uV +
-+			(range->max_sel - range->min_sel) * range->uV_step;
-+
-+		if (!(min_uV <= linear_max_uV && max_uV >= range->min_uV)) {
-+			selector += (range->max_sel - range->min_sel + 1);
-+			continue;
-+		}
-+
-+		if (min_uV <= range->min_uV)
-+			min_uV = range->min_uV;
-+
-+		/* range->uV_step == 0 means fixed voltage range */
-+		if (range->uV_step == 0) {
-+			ret = 0;
-+		} else {
-+			ret = DIV_ROUND_UP(min_uV - range->min_uV,
-+					   range->uV_step);
-+			if (ret < 0)
-+				return ret;
-+		}
-+
-+		ret += selector;
-+
-+		voltage = rdev->desc->ops->list_voltage(rdev, ret);
-+
-+		/*
-+		 * Map back into a voltage to verify we're still in bounds.
-+		 * We may have overlapping voltage ranges. Hence we don't
-+		 * exit but retry until we have checked all ranges.
-+		 */
-+		if (voltage < min_uV || voltage > max_uV)
-+			selector += (range->max_sel - range->min_sel + 1);
-+		else
-+			break;
-+	}
-+
-+	if (i == rdev->desc->n_linear_ranges)
-+		return -EINVAL;
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(regulator_map_voltage_pickable_linear_range);
-+
- /**
-  * regulator_list_voltage_linear - List voltages with simple calculation
-  *
-@@ -361,6 +553,46 @@ int regulator_list_voltage_linear(struct regulator_dev *rdev,
+ MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
+-MODULE_DESCRIPTION("ROHM BD71837 Power Management IC driver");
++MODULE_DESCRIPTION("ROHM BD71837/BD71847 Power Management IC driver");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/regulator/bd71837-regulator.c b/drivers/regulator/bd71837-regulator.c
+index 1dbba20ede3e..1872d3f1f313 100644
+--- a/drivers/regulator/bd71837-regulator.c
++++ b/drivers/regulator/bd71837-regulator.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ // Copyright (C) 2018 ROHM Semiconductors
+-// bd71837-regulator.c ROHM BD71837MWV regulator driver
++// bd71837-regulator.c ROHM BD71837MWV/BD71847MWV regulator driver
+ 
+ #include <linux/delay.h>
+ #include <linux/err.h>
+@@ -17,7 +17,7 @@
+ 
+ struct bd718xx_pmic {
+ 	struct bd718xx_regulator_data *rdata;
+-	struct bd71837 *mfd;
++	struct bd718xx *mfd;
+ 	struct platform_device *pdev;
+ 	struct regulator_dev *rdev[BD718XX_REGULATOR_AMOUNT];
+ };
+@@ -30,11 +30,11 @@ struct bd718xx_pmic {
+  * 10: 2.50mV/usec	10mV 4uS
+  * 11: 1.25mV/usec	10mV 8uS
+  */
+-static int bd71837_buck1234_set_ramp_delay(struct regulator_dev *rdev,
++static int bd718xx_buck1234_set_ramp_delay(struct regulator_dev *rdev,
+ 					   int ramp_delay)
+ {
+ 	struct bd718xx_pmic *pmic = rdev_get_drvdata(rdev);
+-	struct bd71837 *mfd = pmic->mfd;
++	struct bd718xx *mfd = pmic->mfd;
+ 	int id = rdev->desc->id;
+ 	unsigned int ramp_value = BUCK_RAMPRATE_10P00MV;
+ 
+@@ -124,7 +124,7 @@ static struct regulator_ops bd718xx_dvs_buck_regulator_ops = {
+ 	.set_voltage_sel = regulator_set_voltage_sel_regmap,
+ 	.get_voltage_sel = regulator_get_voltage_sel_regmap,
+ 	.set_voltage_time_sel = regulator_set_voltage_time_sel,
+-	.set_ramp_delay = bd71837_buck1234_set_ramp_delay,
++	.set_ramp_delay = bd718xx_buck1234_set_ramp_delay,
+ };
+ 
+ /*
+@@ -404,7 +404,7 @@ static const struct bd718xx_regulator_data bd71847_regulators[] = {
+ 			.id = BD718XX_BUCK6,
+ 			.ops = &bd718xx_buck_regulator_ops,
+ 			.type = REGULATOR_VOLTAGE,
+-			.n_voltages = BD71837_4TH_NODVS_BUCK_VOLTAGE_NUM,
++			.n_voltages = BD718XX_4TH_NODVS_BUCK_VOLTAGE_NUM,
+ 			.linear_ranges = bd718xx_4th_nodvs_buck_volts,
+ 			.n_linear_ranges =
+ 				ARRAY_SIZE(bd718xx_4th_nodvs_buck_volts),
+@@ -732,7 +732,7 @@ static const struct bd718xx_regulator_data bd71837_regulators[] = {
+ 			.id = BD718XX_BUCK8,
+ 			.ops = &bd718xx_buck_regulator_ops,
+ 			.type = REGULATOR_VOLTAGE,
+-			.n_voltages = BD71837_4TH_NODVS_BUCK_VOLTAGE_NUM,
++			.n_voltages = BD718XX_4TH_NODVS_BUCK_VOLTAGE_NUM,
+ 			.linear_ranges = bd718xx_4th_nodvs_buck_volts,
+ 			.n_linear_ranges =
+ 				ARRAY_SIZE(bd718xx_4th_nodvs_buck_volts),
+@@ -923,7 +923,7 @@ struct bd718xx_pmic_inits {
+ 	unsigned int r_amount;
+ };
+ 
+-static int bd71837_probe(struct platform_device *pdev)
++static int bd718xx_probe(struct platform_device *pdev)
+ {
+ 	struct bd718xx_pmic *pmic;
+ 	struct regulator_config config = { 0 };
+@@ -1027,15 +1027,15 @@ static int bd71837_probe(struct platform_device *pdev)
+ 	return err;
  }
- EXPORT_SYMBOL_GPL(regulator_list_voltage_linear);
  
-+/**
-+ * regulator_list_voltage_pickable_linear_range - pickable range list voltages
-+ *
-+ * @rdev: Regulator device
-+ * @selector: Selector to convert into a voltage
-+ *
-+ * list_voltage() operation, intended to be used by drivers utilizing pickable
-+ * ranges helpers.
-+ */
-+int regulator_list_voltage_pickable_linear_range(struct regulator_dev *rdev,
-+						 unsigned int selector)
-+{
-+	const struct regulator_linear_range *range;
-+	int i;
-+	unsigned int all_sels = 0;
-+
-+	if (!rdev->desc->n_linear_ranges) {
-+		BUG_ON(!rdev->desc->n_linear_ranges);
-+		return -EINVAL;
-+	}
-+
-+	for (i = 0; i < rdev->desc->n_linear_ranges; i++) {
-+		unsigned int sels_in_range;
-+
-+		range = &rdev->desc->linear_ranges[i];
-+
-+		sels_in_range = range->max_sel - range->min_sel;
-+
-+		if (all_sels + sels_in_range >= selector) {
-+			selector -= all_sels;
-+			return range->min_uV + (range->uV_step * selector);
-+		}
-+
-+		all_sels += (sels_in_range + 1);
-+	}
-+
-+	return -EINVAL;
-+}
-+EXPORT_SYMBOL_GPL(regulator_list_voltage_pickable_linear_range);
-+
- /**
-  * regulator_list_voltage_linear_range - List voltages for linear ranges
-  *
-diff --git a/include/linux/regulator/driver.h b/include/linux/regulator/driver.h
-index 0fd8fbb74763..a9c030192147 100644
---- a/include/linux/regulator/driver.h
-+++ b/include/linux/regulator/driver.h
-@@ -271,9 +271,16 @@ enum regulator_type {
-  * @ramp_delay: Time to settle down after voltage change (unit: uV/us)
-  * @min_dropout_uV: The minimum dropout voltage this regulator can handle
-  * @linear_ranges: A constant table of possible voltage ranges.
-- * @n_linear_ranges: Number of entries in the @linear_ranges table.
-+ * @linear_range_selectors: A constant table of voltage range selectors.
-+ *			    If pickable ranges are used each range must
-+ *			    have corresponding selector here.
-+ * @n_linear_ranges: Number of entries in the @linear_ranges (and in
-+ *		     linear_range_selectors if used) table(s).
-  * @volt_table: Voltage mapping table (if table based mapping)
-  *
-+ * @vsel_range_reg: Register for range selector when using pickable ranges
-+ *		    and regulator_regmap_X_voltage_X_pickable functions.
-+ * @vsel_range_mask: Mask for register bitfield used for range selector
-  * @vsel_reg: Register for selector when using regulator_regmap_X_voltage_
-  * @vsel_mask: Mask for register bitfield used for selector
-  * @csel_reg: Register for TPS65218 LS3 current regulator
-@@ -338,10 +345,14 @@ struct regulator_desc {
- 	int min_dropout_uV;
+-static struct platform_driver bd71837_regulator = {
++static struct platform_driver bd718xx_regulator = {
+ 	.driver = {
+ 		.name = "bd718xx-pmic",
+ 	},
+-	.probe = bd71837_probe,
++	.probe = bd718xx_probe,
+ };
  
- 	const struct regulator_linear_range *linear_ranges;
-+	const unsigned int *linear_range_selectors;
-+
- 	int n_linear_ranges;
+-module_platform_driver(bd71837_regulator);
++module_platform_driver(bd718xx_regulator);
  
- 	const unsigned int *volt_table;
+ MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
+-MODULE_DESCRIPTION("BD71837 voltage regulator driver");
++MODULE_DESCRIPTION("BD71837/BD71847 voltage regulator driver");
+ MODULE_LICENSE("GPL");
+diff --git a/include/linux/mfd/rohm-bd718x7.h b/include/linux/mfd/rohm-bd718x7.h
+index 625e3607e069..3ce258e73f1d 100644
+--- a/include/linux/mfd/rohm-bd718x7.h
++++ b/include/linux/mfd/rohm-bd718x7.h
+@@ -1,8 +1,8 @@
+ /* SPDX-License-Identifier: GPL-2.0-or-later */
+ /* Copyright (C) 2018 ROHM Semiconductors */
  
-+	unsigned int vsel_range_reg;
-+	unsigned int vsel_range_mask;
- 	unsigned int vsel_reg;
- 	unsigned int vsel_mask;
- 	unsigned int csel_reg;
-@@ -498,18 +509,25 @@ int regulator_mode_to_status(unsigned int);
+-#ifndef __LINUX_MFD_BD71837_H__
+-#define __LINUX_MFD_BD71837_H__
++#ifndef __LINUX_MFD_BD718XX_H__
++#define __LINUX_MFD_BD718XX_H__
  
- int regulator_list_voltage_linear(struct regulator_dev *rdev,
- 				  unsigned int selector);
-+int regulator_list_voltage_pickable_linear_range(struct regulator_dev *rdev,
-+						   unsigned int selector);
- int regulator_list_voltage_linear_range(struct regulator_dev *rdev,
- 					unsigned int selector);
- int regulator_list_voltage_table(struct regulator_dev *rdev,
- 				  unsigned int selector);
- int regulator_map_voltage_linear(struct regulator_dev *rdev,
- 				  int min_uV, int max_uV);
-+int regulator_map_voltage_pickable_linear_range(struct regulator_dev *rdev,
-+						  int min_uV, int max_uV);
- int regulator_map_voltage_linear_range(struct regulator_dev *rdev,
- 				       int min_uV, int max_uV);
- int regulator_map_voltage_iterate(struct regulator_dev *rdev,
- 				  int min_uV, int max_uV);
- int regulator_map_voltage_ascend(struct regulator_dev *rdev,
- 				  int min_uV, int max_uV);
-+int regulator_get_voltage_sel_pickable_regmap(struct regulator_dev *rdev);
-+int regulator_set_voltage_sel_pickable_regmap(struct regulator_dev *rdev,
-+						unsigned int sel);
- int regulator_get_voltage_sel_regmap(struct regulator_dev *rdev);
- int regulator_set_voltage_sel_regmap(struct regulator_dev *rdev, unsigned sel);
- int regulator_is_enabled_regmap(struct regulator_dev *rdev);
+ #include <linux/regmap.h>
+ 
+@@ -183,7 +183,7 @@ enum {
+ #define BD71837_BUCK4_VRMON130          0x80
+ #define BD71837_LDO7_VRMON80            0x40
+ 
+-/* BD71837_REG_IRQ bits */
++/* BD718XX_REG_IRQ bits */
+ #define IRQ_SWRST		0x40
+ #define IRQ_PWRON_S		0x20
+ #define IRQ_PWRON_L		0x10
+@@ -192,31 +192,31 @@ enum {
+ #define IRQ_ON_REQ		0x02
+ #define IRQ_STBY_REQ		0x01
+ 
+-/* BD71837_REG_OUT32K bits */
+-#define BD71837_OUT32K_EN	0x01
++/* BD718XX_REG_OUT32K bits */
++#define BD718XX_OUT32K_EN	0x01
+ 
+-/* BD71837 gated clock rate */
+-#define BD71837_CLK_RATE 32768
++/* BD7183XX gated clock rate */
++#define BD718XX_CLK_RATE 32768
+ 
+-/* ROHM BD71837 irqs */
++/* ROHM BD718XX irqs */
+ enum {
+-	BD71837_INT_STBY_REQ,
+-	BD71837_INT_ON_REQ,
+-	BD71837_INT_WDOG,
+-	BD71837_INT_PWRBTN,
+-	BD71837_INT_PWRBTN_L,
+-	BD71837_INT_PWRBTN_S,
+-	BD71837_INT_SWRST
++	BD718XX_INT_STBY_REQ,
++	BD718XX_INT_ON_REQ,
++	BD718XX_INT_WDOG,
++	BD718XX_INT_PWRBTN,
++	BD718XX_INT_PWRBTN_L,
++	BD718XX_INT_PWRBTN_S,
++	BD718XX_INT_SWRST
+ };
+ 
+-/* ROHM BD71837 interrupt masks */
+-#define BD71837_INT_SWRST_MASK		0x40
+-#define BD71837_INT_PWRBTN_S_MASK	0x20
+-#define BD71837_INT_PWRBTN_L_MASK	0x10
+-#define BD71837_INT_PWRBTN_MASK		0x8
+-#define BD71837_INT_WDOG_MASK		0x4
+-#define BD71837_INT_ON_REQ_MASK		0x2
+-#define BD71837_INT_STBY_REQ_MASK	0x1
++/* ROHM BD718XX interrupt masks */
++#define BD718XX_INT_SWRST_MASK		0x40
++#define BD718XX_INT_PWRBTN_S_MASK	0x20
++#define BD718XX_INT_PWRBTN_L_MASK	0x10
++#define BD718XX_INT_PWRBTN_MASK		0x8
++#define BD718XX_INT_WDOG_MASK		0x4
++#define BD718XX_INT_ON_REQ_MASK		0x2
++#define BD718XX_INT_STBY_REQ_MASK	0x1
+ 
+ /* Register write induced reset settings */
+ 
+@@ -226,13 +226,13 @@ enum {
+  * write 1 to it we will trigger the action. So always write 0 to it when
+  * changning SWRESET action - no matter what we read from it.
+  */
+-#define BD71837_SWRESET_TYPE_MASK	7
+-#define BD71837_SWRESET_TYPE_DISABLED	0
+-#define BD71837_SWRESET_TYPE_COLD	4
+-#define BD71837_SWRESET_TYPE_WARM	6
++#define BD718XX_SWRESET_TYPE_MASK	7
++#define BD718XX_SWRESET_TYPE_DISABLED	0
++#define BD718XX_SWRESET_TYPE_COLD	4
++#define BD718XX_SWRESET_TYPE_WARM	6
+ 
+-#define BD71837_SWRESET_RESET_MASK	1
+-#define BD71837_SWRESET_RESET		1
++#define BD718XX_SWRESET_RESET_MASK	1
++#define BD718XX_SWRESET_RESET		1
+ 
+ /* Poweroff state transition conditions */
+ 
+@@ -320,7 +320,7 @@ enum {
+ struct bd718xx_pmic;
+ struct bd718xx_clk;
+ 
+-struct bd71837 {
++struct bd718xx {
+ 	unsigned int chip_type;
+ 	struct device *dev;
+ 	struct regmap *regmap;
+@@ -333,4 +333,4 @@ struct bd71837 {
+ 	struct bd718xx_clk *clk;
+ };
+ 
+-#endif /* __LINUX_MFD_BD71837_H__ */
++#endif /* __LINUX_MFD_BD718XX_H__ */
 -- 
 2.14.3
 
