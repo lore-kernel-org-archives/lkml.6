@@ -6,57 +6,57 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE8D1C46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 07:52:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27054ECDFC1
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 07:52:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FCF920882
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 07:52:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B139D20882
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 07:52:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="m3RXtFE3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FCF920882
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="U/nS09/f"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B139D20882
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728265AbeILMze (ORCPT
+        id S1728284AbeILMzg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 08:55:34 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39028 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728197AbeILMzd (ORCPT
+        Wed, 12 Sep 2018 08:55:36 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:35403 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728054AbeILMze (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 08:55:33 -0400
-Received: by mail-wr1-f66.google.com with SMTP id s14-v6so919374wrw.6
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 00:52:14 -0700 (PDT)
+        Wed, 12 Sep 2018 08:55:34 -0400
+Received: by mail-wr1-f68.google.com with SMTP id j26-v6so932956wre.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 00:52:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Qf5F4zQiRY1sa80CZGwpbNfNFuNr+OQm/6a5BbgsJ/E=;
-        b=m3RXtFE3lF34IyYI/WJEStDcvX/dGKlbvFUtWyIa606CcNGS08LOhyItTD7Velw9ci
-         p7R9L3OrQT21PmmSmGqEp6PmX9R3JHTFxVHrkBNvQ4gIE0+ai3/TlyOD83+i7jKYlodt
-         0n6a954VKbOlAS91dA4LgSpo7UJmJkIK+K8RbkccFoqLkasn0HEmg9Fi9Ad4rFZ6Gl4v
-         bMVDaEb+Z138xZJD4qyiM0h0+jnOsRU89hjICaVe9/8wOOhPZcNHIm99AfSk/OcIWfRd
-         3Efp8ckcsqsapK5pdo/zety0tUOFLZ35Q6vtUNU51vNMY+f/ZpJCoaOYF/C+HfJY0Efa
-         v/kg==
+        bh=SlueuK3D0KeRnvcAEcelp7MxOUpOfwsUS5G08uyAGgM=;
+        b=U/nS09/f1K13kRtxhqixd6Dz914B8d7hXMIHKUtMnIeNNjr+Z0W77trvKYXmkSteM6
+         4lxtSfrBtmxE7a2O+bWIi21v/27UIBSjUtReKA9Idy0maq9R6W7Xbcw1D2zgWlCfWlQb
+         GDDAd7ORnGpshvQ5vV953c4uuODaYMfQ/BBQEt4N1c1o/TjyGZCx8Jy5GXb095OyZjws
+         0lkvv3uFz1+Wxl3QslvFyYs6nGb6sVUg00cM4HlCYQESQmuHWUzPLxIri8/ITNDkz51I
+         fPF6Zq38Rxh0XFUanm/n+5D8lT2mDaZcfqcDiGJBbZ+RB9UDr55MpbUrckA0oZflav+w
+         mcxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Qf5F4zQiRY1sa80CZGwpbNfNFuNr+OQm/6a5BbgsJ/E=;
-        b=obAwD6muTIF1qwG2Il0M7XSljR7KyBftJ6AkPE/udJOYLtEW6KeJOpioirMaId7mCb
-         W6qhKauDygsPmH6modFRYKKPDBHjsD8Ex9+uqxB+ZnOCNN/f0s6xI2aIrjltN9LYDxPI
-         kMiMB2Y9PmGORAt+XNeXXVUn0b38ks4eJhQo1G4+7WpzoJEpNNoJIQtM7RfjOKpFu2L6
-         AiFfdrb3OZcigof5jUcCWdRiM53rovTz8eTBLPCcQ5jBsOtj9b9Kv5bbD0wlCWsACz13
-         YA19b0EG6hPmbLA9IoEHyitVz6UjAaA/fQ+K3gVKK1AgFXAFVtV0zCpGzdzJHvKxEQ2E
-         ln2Q==
-X-Gm-Message-State: APzg51C9QWRG61aolaJFekFDG6FUcd5x1uZLNvOGB/GXAkphEU6C1vFB
-        w6BBJTVO8LmhmXzoBFIvvStC4A==
-X-Google-Smtp-Source: ANB0VdZK1F/vtpw3CGekT+2tST3Z2ZYI2eZ6x/UkitKhkssbHd+ZVEq/bj4WDm03ZoCqVWJWv6P0Sw==
-X-Received: by 2002:adf:bd10:: with SMTP id j16-v6mr482270wrh.267.1536738733524;
-        Wed, 12 Sep 2018 00:52:13 -0700 (PDT)
+        bh=SlueuK3D0KeRnvcAEcelp7MxOUpOfwsUS5G08uyAGgM=;
+        b=VvU9aFE11G0swjCf6Qti1cN8aCVex0HVoDxj0n9UfYeR0pzaOUjEoEkxS+J5pvqPtK
+         Zlngdrh3u7VMTeGYD35Zml9mWhlAJ0Wywqmezgyn84iQdwHGVYMvBmAin/IduimY6UCN
+         vEbaILDXwb8Ds38xmKWpLri/Tqmlj2I+K7oedb8wZsU5GlIPZ8FzhXN4uLcBixZdORst
+         va+ux7sZo7QLc/sZxbneX4qyVeb5JbFVxluTMBfEdSsZV0wh8wwweiL7X2WUD75xT6Me
+         38/X9FpkMLTUQ6+I0wRr3PT34nbS1hGAwX7ZUQqo/PNjLrIi38VP8fbivXHdPpdNUpX1
+         ziFg==
+X-Gm-Message-State: APzg51BXXWPd1s6dpBRX62bN8oW/SSXKlp8nOxBbcd/Ynt4a7fAQCzD7
+        gxmKpMR+16NCv9pCTiAjQRN+bA==
+X-Google-Smtp-Source: ANB0VdZx7bfMc2Yp6gvxO2lSWstnoWPtk5yyLobK8LITg+ehGl1Olf8+LNV5PkQ0RjlkGdvkRhxAdg==
+X-Received: by 2002:adf:ed88:: with SMTP id c8-v6mr518705wro.264.1536738734945;
+        Wed, 12 Sep 2018 00:52:14 -0700 (PDT)
 Received: from brgl-bgdev.lan (LFbn-MAR-1-609-89.w90-118.abo.wanadoo.fr. [90.118.185.89])
-        by smtp.gmail.com with ESMTPSA id l7-v6sm169341wrt.67.2018.09.12.00.52.11
+        by smtp.gmail.com with ESMTPSA id l7-v6sm169341wrt.67.2018.09.12.00.52.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Sep 2018 00:52:12 -0700 (PDT)
+        Wed, 12 Sep 2018 00:52:14 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
         "David S . Miller" <davem@davemloft.net>,
@@ -74,9 +74,9 @@ To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
 Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v3 18/21] nvmem: make the naming of arguments in nvmem_cell_get() consistent
-Date:   Wed, 12 Sep 2018 09:51:26 +0200
-Message-Id: <20180912075129.25185-19-brgl@bgdev.pl>
+Subject: [PATCH v3 19/21] nvmem: use EOPNOTSUPP instead of ENOSYS
+Date:   Wed, 12 Sep 2018 09:51:27 +0200
+Message-Id: <20180912075129.25185-20-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180912075129.25185-1-brgl@bgdev.pl>
 References: <20180912075129.25185-1-brgl@bgdev.pl>
@@ -87,137 +87,159 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-The argument representing the cell name in the nvmem_cell_get() family
-of functions is not consistend between function prototypes and
-definitions. Name it 'id' in all those routines. This is in line with
-other frameworks and can represent both the DT cell name from the
-nvmem-cell-names property as well as the con_id field from cell
-lookup entries.
+Checkpatch emits warnings when using ENOSYS. Some of the frameworks
+started using EOPNOTSUPP as return values for API functions when given
+subsystem is disabled in Kconfig.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/nvmem/core.c           | 27 ++++++++++++++-------------
- include/linux/nvmem-consumer.h | 12 ++++++------
- 2 files changed, 20 insertions(+), 19 deletions(-)
+ include/linux/nvmem-consumer.h | 30 +++++++++++++++---------------
+ include/linux/nvmem-provider.h |  4 ++--
+ 2 files changed, 17 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index 6cdf4f2678f6..f4930f605d4f 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -977,16 +977,15 @@ nvmem_cell_get_from_lookup(struct device *dev, const char *con_id)
-  * of_nvmem_cell_get() - Get a nvmem cell from given device node and cell id
-  *
-  * @np: Device tree node that uses the nvmem cell.
-- * @name: nvmem cell name from nvmem-cell-names property, or NULL
-- *	  for the cell at index 0 (the lone cell with no accompanying
-- *	  nvmem-cell-names property).
-+ * @id: nvmem cell name from nvmem-cell-names property, or NULL
-+ *      for the cell at index 0 (the lone cell with no accompanying
-+ *      nvmem-cell-names property).
-  *
-  * Return: Will be an ERR_PTR() on error or a valid pointer
-  * to a struct nvmem_cell.  The nvmem_cell will be freed by the
-  * nvmem_cell_put().
-  */
--struct nvmem_cell *of_nvmem_cell_get(struct device_node *np,
--					    const char *name)
-+struct nvmem_cell *of_nvmem_cell_get(struct device_node *np, const char *id)
- {
- 	struct device_node *cell_np, *nvmem_np;
- 	struct nvmem_device *nvmem;
-@@ -994,8 +993,8 @@ struct nvmem_cell *of_nvmem_cell_get(struct device_node *np,
- 	int index = 0;
- 
- 	/* if cell name exists, find index to the name */
--	if (name)
--		index = of_property_match_string(np, "nvmem-cell-names", name);
-+	if (id)
-+		index = of_property_match_string(np, "nvmem-cell-names", id);
- 
- 	cell_np = of_parse_phandle(np, "nvmem-cells", index);
- 	if (!cell_np)
-@@ -1025,27 +1024,29 @@ EXPORT_SYMBOL_GPL(of_nvmem_cell_get);
-  * nvmem_cell_get() - Get nvmem cell of device form a given cell name
-  *
-  * @dev: Device that requests the nvmem cell.
-- * @cell_id: nvmem cell name to get.
-+ * @id: nvmem cell name to get (this corresponds with the name from the
-+ *      nvmem-cell-names property for DT systems and with the con_id from
-+ *      the lookup entry for non-DT systems).
-  *
-  * Return: Will be an ERR_PTR() on error or a valid pointer
-  * to a struct nvmem_cell.  The nvmem_cell will be freed by the
-  * nvmem_cell_put().
-  */
--struct nvmem_cell *nvmem_cell_get(struct device *dev, const char *cell_id)
-+struct nvmem_cell *nvmem_cell_get(struct device *dev, const char *id)
- {
- 	struct nvmem_cell *cell;
- 
- 	if (dev->of_node) { /* try dt first */
--		cell = of_nvmem_cell_get(dev->of_node, cell_id);
-+		cell = of_nvmem_cell_get(dev->of_node, id);
- 		if (!IS_ERR(cell) || PTR_ERR(cell) == -EPROBE_DEFER)
- 			return cell;
- 	}
- 
--	/* NULL cell_id only allowed for device tree; invalid otherwise */
--	if (!cell_id)
-+	/* NULL cell id only allowed for device tree; invalid otherwise */
-+	if (!id)
- 		return ERR_PTR(-EINVAL);
- 
--	return nvmem_cell_get_from_lookup(dev, cell_id);
-+	return nvmem_cell_get_from_lookup(dev, id);
- }
- EXPORT_SYMBOL_GPL(nvmem_cell_get);
- 
 diff --git a/include/linux/nvmem-consumer.h b/include/linux/nvmem-consumer.h
-index d18caae2f7ac..e17617fa034f 100644
+index e17617fa034f..312bfa5efd80 100644
 --- a/include/linux/nvmem-consumer.h
 +++ b/include/linux/nvmem-consumer.h
-@@ -55,8 +55,8 @@ enum {
- #if IS_ENABLED(CONFIG_NVMEM)
- 
- /* Cell based interface */
--struct nvmem_cell *nvmem_cell_get(struct device *dev, const char *name);
--struct nvmem_cell *devm_nvmem_cell_get(struct device *dev, const char *name);
-+struct nvmem_cell *nvmem_cell_get(struct device *dev, const char *id);
-+struct nvmem_cell *devm_nvmem_cell_get(struct device *dev, const char *id);
- void nvmem_cell_put(struct nvmem_cell *cell);
- void devm_nvmem_cell_put(struct device *dev, struct nvmem_cell *cell);
- void *nvmem_cell_read(struct nvmem_cell *cell, size_t *len);
-@@ -91,13 +91,13 @@ int nvmem_unregister_notifier(struct notifier_block *nb);
- #else
- 
+@@ -93,13 +93,13 @@ int nvmem_unregister_notifier(struct notifier_block *nb);
  static inline struct nvmem_cell *nvmem_cell_get(struct device *dev,
--						const char *name)
-+						const char *id)
+ 						const char *id)
  {
- 	return ERR_PTR(-ENOSYS);
+-	return ERR_PTR(-ENOSYS);
++	return ERR_PTR(-EOPNOTSUPP);
  }
  
  static inline struct nvmem_cell *devm_nvmem_cell_get(struct device *dev,
--				       const char *name)
-+						     const char *id)
+ 						     const char *id)
  {
- 	return ERR_PTR(-ENOSYS);
+-	return ERR_PTR(-ENOSYS);
++	return ERR_PTR(-EOPNOTSUPP);
  }
-@@ -201,12 +201,12 @@ static inline int nvmem_unregister_notifier(struct notifier_block *nb)
  
- #if IS_ENABLED(CONFIG_NVMEM) && IS_ENABLED(CONFIG_OF)
- struct nvmem_cell *of_nvmem_cell_get(struct device_node *np,
--				     const char *name);
-+				     const char *id);
- struct nvmem_device *of_nvmem_device_get(struct device_node *np,
- 					 const char *name);
- #else
- static inline struct nvmem_cell *of_nvmem_cell_get(struct device_node *np,
--				     const char *name)
-+						   const char *id)
+ static inline void devm_nvmem_cell_put(struct device *dev,
+@@ -113,31 +113,31 @@ static inline void nvmem_cell_put(struct nvmem_cell *cell)
+ 
+ static inline void *nvmem_cell_read(struct nvmem_cell *cell, size_t *len)
  {
- 	return ERR_PTR(-ENOSYS);
+-	return ERR_PTR(-ENOSYS);
++	return ERR_PTR(-EOPNOTSUPP);
  }
+ 
+ static inline int nvmem_cell_write(struct nvmem_cell *cell,
+ 				    const char *buf, size_t len)
+ {
+-	return -ENOSYS;
++	return -EOPNOTSUPP;
+ }
+ 
+ static inline int nvmem_cell_read_u32(struct device *dev,
+ 				      const char *cell_id, u32 *val)
+ {
+-	return -ENOSYS;
++	return -EOPNOTSUPP;
+ }
+ 
+ static inline struct nvmem_device *nvmem_device_get(struct device *dev,
+ 						    const char *name)
+ {
+-	return ERR_PTR(-ENOSYS);
++	return ERR_PTR(-EOPNOTSUPP);
+ }
+ 
+ static inline struct nvmem_device *devm_nvmem_device_get(struct device *dev,
+ 							 const char *name)
+ {
+-	return ERR_PTR(-ENOSYS);
++	return ERR_PTR(-EOPNOTSUPP);
+ }
+ 
+ static inline void nvmem_device_put(struct nvmem_device *nvmem)
+@@ -153,28 +153,28 @@ static inline ssize_t nvmem_device_cell_read(struct nvmem_device *nvmem,
+ 					 struct nvmem_cell_info *info,
+ 					 void *buf)
+ {
+-	return -ENOSYS;
++	return -EOPNOTSUPP;
+ }
+ 
+ static inline int nvmem_device_cell_write(struct nvmem_device *nvmem,
+ 					  struct nvmem_cell_info *info,
+ 					  void *buf)
+ {
+-	return -ENOSYS;
++	return -EOPNOTSUPP;
+ }
+ 
+ static inline int nvmem_device_read(struct nvmem_device *nvmem,
+ 				    unsigned int offset, size_t bytes,
+ 				    void *buf)
+ {
+-	return -ENOSYS;
++	return -EOPNOTSUPP;
+ }
+ 
+ static inline int nvmem_device_write(struct nvmem_device *nvmem,
+ 				     unsigned int offset, size_t bytes,
+ 				     void *buf)
+ {
+-	return -ENOSYS;
++	return -EOPNOTSUPP;
+ }
+ 
+ static inline const char *nvmem_dev_name(struct nvmem_device *nvmem)
+@@ -189,12 +189,12 @@ nvmem_del_cell_lookups(struct nvmem_cell_lookup *entries, size_t nentries) {}
+ 
+ static inline int nvmem_register_notifier(struct notifier_block *nb)
+ {
+-	return -ENOSYS;
++	return -EOPNOTSUPP;
+ }
+ 
+ static inline int nvmem_unregister_notifier(struct notifier_block *nb)
+ {
+-	return -ENOSYS;
++	return -EOPNOTSUPP;
+ }
+ 
+ #endif /* CONFIG_NVMEM */
+@@ -208,13 +208,13 @@ struct nvmem_device *of_nvmem_device_get(struct device_node *np,
+ static inline struct nvmem_cell *of_nvmem_cell_get(struct device_node *np,
+ 						   const char *id)
+ {
+-	return ERR_PTR(-ENOSYS);
++	return ERR_PTR(-EOPNOTSUPP);
+ }
+ 
+ static inline struct nvmem_device *of_nvmem_device_get(struct device_node *np,
+ 						       const char *name)
+ {
+-	return ERR_PTR(-ENOSYS);
++	return ERR_PTR(-EOPNOTSUPP);
+ }
+ #endif /* CONFIG_NVMEM && CONFIG_OF */
+ 
+diff --git a/include/linux/nvmem-provider.h b/include/linux/nvmem-provider.h
+index d37785afd14d..01ad6895ea12 100644
+--- a/include/linux/nvmem-provider.h
++++ b/include/linux/nvmem-provider.h
+@@ -100,7 +100,7 @@ void nvmem_del_cell_table(struct nvmem_cell_table *table);
+ 
+ static inline struct nvmem_device *nvmem_register(const struct nvmem_config *c)
+ {
+-	return ERR_PTR(-ENOSYS);
++	return ERR_PTR(-EOPNOTSUPP);
+ }
+ 
+ static inline void nvmem_unregister(struct nvmem_device *nvmem) {}
+@@ -114,7 +114,7 @@ devm_nvmem_register(struct device *dev, const struct nvmem_config *c)
+ static inline int
+ devm_nvmem_unregister(struct device *dev, struct nvmem_device *nvmem)
+ {
+-	return ERR_PTR(-ENOSYS);
++	return ERR_PTR(-EOPNOTSUPP);
+ 
+ }
+ 
 -- 
 2.18.0
 
