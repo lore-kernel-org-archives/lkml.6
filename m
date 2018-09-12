@@ -2,146 +2,451 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59881C070C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:42:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4104DC070C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:43:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5CF0213A2
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:42:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LHBsFcQD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5CF0213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id D44382133F
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:43:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D44382133F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726575AbeIMAsx (ORCPT
+        id S1726884AbeIMAti (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 20:48:53 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:36035 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725979AbeIMAsx (ORCPT
+        Wed, 12 Sep 2018 20:49:38 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43600 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726692AbeIMAti (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 20:48:53 -0400
-Received: by mail-lj1-f196.google.com with SMTP id v26-v6so2652279ljj.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 12:42:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=sjAnTjGg6As3Kf/lNlb6DteNOBDSgZraKD18NeUiKb4=;
-        b=LHBsFcQDgUrt02L9kcnhloFfhJhUMCuJcyOu9VIFR/lDZMLZgl20RrN8Km4Wn5NFAX
-         TNzi+c27gN6OGhpIYfvc6rE/MqyFWNhsosAiIpftO6LxTzFh5wkHScUPdY1j5Hd2ZnJB
-         1IKmbtDR8ArzWEQIn42Gvae2Plod0ZNskEcdI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sjAnTjGg6As3Kf/lNlb6DteNOBDSgZraKD18NeUiKb4=;
-        b=krCgz8vvz4gEBnqcQtEtMU/NjDApEaP+4VtrqzB7wrxpU4+QCm/yXc4vb5F1LSZc8e
-         ESP3ZBpqAFdiyHqhKD1QZoJR2rxDZxS5goeFxWqxj4J7xPPv6DFqDYm0EJiQ1UyfbMUo
-         WAwlcMEyz62anO53iKwIyr8YIEKRAl6ufmooE891nD15r/h7k/DHKBY5+jRCs9BpolgS
-         wIyE9YC1Q/r8KjebSmpsWW02PLLkM9uXrW9OSW1KHQjAztg+8pTQZMv94qpkv2YZb4eJ
-         BpYTNgzH63tOzJaJwyXEJvcam1CFI6C4VFVeTS2J7qIRhVcC8NjD5efG/4PqlAYyu906
-         Siow==
-X-Gm-Message-State: APzg51AWLUUWboKF3AQhZ4gv1VCNdk1cQAVWLolcYyN97BWLoEHYzexz
-        OnDefwKT2Tp1RphNRFt76+E1FiHXGZiiQ1MgQrf8RA==
-X-Google-Smtp-Source: ANB0VdbPjLEoCxhCwf7j1MLuUjKF/nAZunOlT8zPdeh7YuWxsdyutml2r7R6GtwWjKOTWuQg862zwEv7cJhPzA2SDwI=
-X-Received: by 2002:a2e:9ec9:: with SMTP id h9-v6mr2101254ljk.133.1536781369227;
- Wed, 12 Sep 2018 12:42:49 -0700 (PDT)
-MIME-Version: 1.0
-References: <1536224915-31766-1-git-send-email-suzuki.poulose@arm.com>
-In-Reply-To: <1536224915-31766-1-git-send-email-suzuki.poulose@arm.com>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Wed, 12 Sep 2018 13:42:37 -0600
-Message-ID: <CANLsYkxvF44MiX8RZtx3yU5yj=nyjbUXOYkv8oV2uYD6CbHENg@mail.gmail.com>
-Subject: Re: [PATCH v2 00/14] coresight: Implement device claim protocol
-To:     "Suzuki K. Poulose" <suzuki.poulose@arm.com>
-Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        coresight@lists.linaro.org, Robert Walker <robert.walker@arm.com>,
-        Al Grant <al.grant@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 12 Sep 2018 20:49:38 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8CJY4Ow100832
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 15:43:33 -0400
+Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mf84hars5-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 15:43:33 -0400
+Received: from localhost
+        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.vnet.ibm.com>;
+        Wed, 12 Sep 2018 13:43:32 -0600
+Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
+        by e36.co.us.ibm.com (192.168.1.136) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 12 Sep 2018 13:43:27 -0600
+Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8CJhOiD36831340
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 12 Sep 2018 12:43:24 -0700
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EC6486A05A;
+        Wed, 12 Sep 2018 13:43:23 -0600 (MDT)
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 109846A04F;
+        Wed, 12 Sep 2018 13:43:20 -0600 (MDT)
+Received: from localhost.localdomain (unknown [9.80.213.181])
+        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTPS;
+        Wed, 12 Sep 2018 13:43:20 -0600 (MDT)
+From:   Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+To:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        akrowiak@linux.vnet.ibm.com, frankja@linux.ibm.com,
+        Tony Krowiak <akrowiak@linux.ibm.com>
+Subject: [PATCH v10 00/26] guest dedicated crypto adapters
+Date:   Wed, 12 Sep 2018 15:42:50 -0400
+X-Mailer: git-send-email 1.7.1
+X-TM-AS-GCONF: 00
+x-cbid: 18091219-0020-0000-0000-00000E640D46
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009709; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01087371; UDB=6.00561488; IPR=6.00867383;
+ MB=3.00023256; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-12 19:43:30
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18091219-0021-0000-0000-0000630134D8
+Message-Id: <1536781396-13601-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-12_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809120195
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 6 Sep 2018 at 03:08, Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
->
-> Coresight architecture defines CLAIM tags for a device to negotiate
-> control of the components (external agent vs self-hosted). Each device
-> has a pair of registers (CLAIMSET & CLAIMCLR) for managing the CLAIM
-> tags. However, the protocol for the CLAIM tags is IMPLEMENTATION DEFINED.
-> PSCI has recommendations for the use of the CLAIM tags to negotiate
-> controls for external agent vs self-hosted use, as defined in
-> ARM DEN 0022D, Section "6.8.1 Debug and Trace save and restore".
->
-> This series implements the recommended protocol by PSCI.
->
-> There were two options for the implementation.
->  1) Have the claim/disclaim operations performed from the coresight
->     generic driver - This doesn't work unfortunately for ETM devices
->     as the need cross-CPU calls to access the CLAIM registers. Also,
->     makes it complex for error recovery and reference counting.
->
->  2) Have the claim/disclaim operations performed from the device
->     specific drivers. The disadvantage is that the calls are sprinkled
->     in each driver, but this makes the operation much simpler.
->
-> This series implements the method (2). The first part of the series
-> prepares different drivers to handle errors from the lower layer
-> and clean up the state. The second part of the series updates the
-> existing drivers to claim/disclaim the devices as necessary.
->
-> Tested with a hacked coresight driver which modifies the external
-> claim tag via sysfs handle.
->
-> Applies on coresight/next in Mathieu's tree.
->
-> Changes since V1:
->  - Handle errors is enabling path and disable only the components
->    that were enabled in the iteration.
->  - Fix build break on arm32 (etm3x)
->  - Update commit description for "coresight: Add support for CLAIM tag protocol"
->
-> Suzuki K Poulose (14):
->   coresight: Handle failures in enabling a trace path
->   coresight: tmc-etr: Refactor for handling errors
->   coresight: tmc-etr: Handle errors enabling CATU
->   coresight: tmc-etb/etf: Prepare to handle errors enabling
->   coresight: etm4x: Add support for handling errors
->   coresight: etm3: Add support for handling errors
->   coresight: etb10: Handle errors enabling the device
->   coresight: dynamic-replicator: Handle multiple connections
->   coresight: Add support for CLAIM tag protocol
->   coresight: etmx: Claim devices before use
->   coresight: funnel: Claim devices before use
->   coresight: catu: Claim device before use
->   coresight: dynamic-replicator: Claim device for use
->   coreisght: tmc: Claim device before use
->
->  drivers/hwtracing/coresight/coresight-catu.c       |   6 ++
->  .../coresight/coresight-dynamic-replicator.c       |  79 ++++++++++----
->  drivers/hwtracing/coresight/coresight-etb10.c      |  18 +++-
->  drivers/hwtracing/coresight/coresight-etm3x.c      |  56 +++++++---
->  drivers/hwtracing/coresight/coresight-etm4x.c      |  51 ++++++---
->  drivers/hwtracing/coresight/coresight-funnel.c     |  26 ++++-
->  drivers/hwtracing/coresight/coresight-priv.h       |   7 ++
->  drivers/hwtracing/coresight/coresight-tmc-etf.c    |  95 +++++++++++------
->  drivers/hwtracing/coresight/coresight-tmc-etr.c    |  80 +++++++++-----
->  drivers/hwtracing/coresight/coresight.c            | 118 +++++++++++++++++++--
->  include/linux/coresight.h                          |  20 ++++
->  11 files changed, 434 insertions(+), 122 deletions(-)
+From: Tony Krowiak <akrowiak@linux.ibm.com>
 
-I have applied this set.
+Notes:
+=====
 
-Thanks,
-Mathieu
+Patches 1-2 (by David) are posted with this series because they are not
+currently available in our master branch, upon which this series is based,
+and because this series is dependent upon them.  
 
->
-> --
-> 2.7.4
->
+This patch series works with the v8 QEMU patches.
+
+Abstract:
+========
+
+On s390, we have cryptographic coprocessor cards, which are modeled on
+Linux as devices on the AP bus. Each card can be partitioned into domains
+which can be thought of as a set of hardware registers for processing 
+crypto commands. Crypto commands are sent to a specific domain within a
+card is via a queue which is identified as a (card,domain) tuple. We model 
+this something like the following (assuming we have access to cards 3 and 
+4 and domains 1 and 2):
+
+AP -> card3 -> queue (3,1)
+            -> queue (3,2)
+   -> card4 -> queue (4,1)
+            -> queue (4,2)
+
+If we want to virtualize this, we can use a feature provided by the
+hardware. We basically attach a satellite control block to our main
+hardware virtualization control block and the hardware takes care of
+most of the rest.
+
+For this control block, we don't specify explicit tuples, but a list of
+cards and a list of domains. The guest will get access to the cross
+product.
+
+Because of this, we need to take care that the lists provided to
+different guests don't overlap; i.e., we need to enforce sane
+configurations. Otherwise, one guest may get access to things like
+secret keys for another guest.
+
+The idea of this patch set is to introduce a new device, the matrix
+device. This matrix device hangs off a different root and acts as the
+parent node for mdev devices.
+
+If you now want to give the tuples (4,1) and (4,2), you need to do the
+following:
+
+- Make sure the queues (4,1) and (4,2) belong to vfio_ap (see patches
+  #5 and #6)
+- Create the mediated device.
+- Assign card 4 and domains 1 and 2 to the mediated device
+- Optionally activate the mediated device.
+
+QEMU will now simply consume the mediated device and things should work.
+
+For a complete description of the architecture and concepts underlying
+the design, see the Documentation/s390/vfio-ap.txt file included with this
+patch set.
+
+v9 => v10 Change log:
+===================
+* Replaced statically allocated with dynamically allocated matrix device
+* Made changes to drivers/iommu/Kconfig and arch/s390/Kconfig to fix the
+  dependency chain so that make menuconfig can be used to configure VFIO_AP
+* Added KVM device attributes to enable/disable hw interpretation of AP
+  instructions from userspace.
+* Return more meaningful error values from mediated matrix device
+  assignment sysfs interfaces
+* No longer enforcing convention that the ADM is a superset of the AQM at
+  for guest level 2
+* Broke 2 vSIE patches into several to make it easier to review them
+* Reworked vSIE patches to handle various CRYCB formats
+v8 => v9 Change log:
+===================
+* Removed /sys/devices/virtual/misc/vfio_ap device and restored 
+  /sys/devices/vfio_ap/matrix device as parent of mediated matrix devices
+* Return boolean from ap_configuration_available() in ap.h instead of 0 or
+  an error.
+* Miscellaneous changes due to review comments 
+
+v7 => v8 Change log:
+===================
+* Removed the AP bus gained the ability to designate queues as 'used by
+  host' or as 'used by alternate driver(s)'. 
+* Removed 'activate' attribute from mediated device.
+* Do consistency checking during device assignment:
+  1. Verify that APQNs assigned to the mediated device are bound to the 
+     VFIO AP device driver
+  2. Verify that no APQN assigned to the mediated matrix device is assigned
+     to any other mediated matrix device.
+* The attributes of a mediated matrix device that is in use by a guest can
+  not be changed - i.e., no device assignment/unassignment allowed
+* A mediated matrix device that is in use by a guest can not be removed.
+* Removed all printk logging from VFIO AP driver; allowing return codes
+  from interfaces to describe the error.
+* Reworked the handling of the CRYCB in vSIE based upon patches introduced
+  by David in the mainline. 
+
+v6 => v7 Change log:
+===================
+* The AP bus gained the ability to designate queues as 'used by host'
+  or as 'used by alternate driver(s)'. This allows us to authorise access
+  (via the CRYCB) to queues that are not currently bound to the vfio_ap
+  driver. If a  vfio_ap owned queue diss- and reapears it's guaranteed
+  to get bound back to the vfio_ap driver.
+* The mediated device gained an 'activate' attribute. Sharing conflicts are
+  checked on activation now. If the device was not activated, the mdev
+  open still implies activation. An active ap_matrix_mdev device claims
+  it's resources -- an inactive does not.
+* An active ap_matrix_mdev device can not be removed. An ap_matrix_mdev
+  that is hooked up with a guest can not be deactivated.
+* An active ap_matrix_mdev device rejects assign_* and deassign_*
+  operations. Thus changing the CRYCB masks of a guest in order to
+  accomplys certain hotplug scenarios is planned, but not supported yet. In
+  previous versions it was possible to do those operations on a ap_matrix_mdev
+  that is hooked up to a guest, but the changes would take effect on the next
+  mdev_open. 
+* Synchronisation was reworked.
+* The sysfs path of the parent device changed from /sys/devices/vfio_ap/matrix/
+  to /sys/devices/virtual/misc/vfio_ap/. The parent device is a misc
+  device now.
+* The severity for most of the messages were reduced form error to
+  warning.
+*  We are not as thick headed about the zapq as we used to be in v6.
+
+v5 => v6 Change log:
+===================
+* Added VSIE support - thanks to Pierre Morel
+* Added VFIO_DEVICE_RESET ioctl
+* Zeroizing AP queues when mediated device released and when 
+  VFIO_DEVICE_RESET ioctl is invoked
+* Removed /arch/s390/kvm/kvm-ap.c and arch/s390/include/asm/kvm-ap.h and
+  moved guest matrix configuration into vfio driver
+* Removed temporary interfaces to be supplied by AP bus
+* Made the variable that keeps track of mdev instance count an atomic_t
+  type
+* Removed code iterating through vm_list to determine if another guest has
+  a queue .... not keep a list of matrix_mdev devices and verify against
+  that list. Removes the need for the kvm_lock.
+* Added a sysfs attribute for the mediated matrix device to display the
+  matrix contained in the guest's CRYCB if a guest is using the mdev.
+
+
+v4 => v5 Change log:
+===================
+* Verify AP queues bound to driver in mediated device open callback, prior
+  to configuring the matrix in the CRYCB
+* Implement VFIO_DEVICE_RESET ioctl
+* Zeroize queues on guest entry and exit
+* Removed vnet from all email IBM email addresses referenced
+* Add synchronization in mdev create/remove and open/release.
+
+v4 => v5 Change log:
+===================
+* Added code to mdev open callback to ensure not more than one vfio-ap
+  device can be opened by a guest.
+* Interpret AP instructions by default
+* Removed patch implementing interface to enable/disable AP interpretation,
+  since that will now be done by default
+* Removed patch to reset crypto attributes for ALL vcpus. That will be 
+  submitted as a single patch since it will not be needed in this series - 
+  i.e., it was called from the interface to enable/disable AP instructions
+* All code for initializing crypto for a guest has been moved back to 
+  kvm-s390.c, kvm_s390_crypto_init(kvm) function
+* Maintaining a module reference count for the vfio_ap module so it is not
+  removed while a guest with AP devices is running.
+  
+
+
+v3 => v4 Change log:
+===================
+* Resolved issue with enabling ZCRYPT when KVM is enabled by using
+  #ifdef ZCRYPT in relevant functions
+* Added patch with a new function for resetting the crypto attributes
+  for all vcpus to resolve the issue raised with running vcpus getting out 
+  of sync.
+* Removed KVM_S390_VM_CRYPTO_INTERPRET_AP: Setting interpretive exec mode
+  from vfio_ap driver when mdev device is opened.
+
+
+v2 => v3 Change log:
+===================
+* Set APIE in VCPU setup function
+* Renamed patch 13/15:
+    KVM: s390: Configure the guest's CRYCB
+    KVM: s390: Configure the guest's AP devices
+* Fixed problem with building arch/s390/kvm/kvm-ap.c when CONFIG_ZCRYPT
+  not selected 
+* Removed patch introducing VSIE support for AP pending further 
+  investigation
+* Initialized AP maximum mask sizes - i.e., APM, AQM and ADM - from info
+  returned from PQAP(QCI) function
+* Introduced a new device attribute to the KVM_S390_VM_CRYPTO attribute
+  group for setting a flag via the KVM_SET_DEVICE_ATTR ioctl to indicate
+  whether ECA_APIE should be set or not. The flag is used in the 
+  kvm_s390_vcpu_crypto_setup() function to set ECA_APIE in the SIE block. 
+  
+
+v1 => v2 Change log:
+===================
+* Added documentation vfio-ap.txt
+* Renamed vfio_ap_matrix module and device driver to vfio_ap
+* Use device core device list instead of maintaining list of matrix
+  devices in driver
+* Added VSIE support for AP
+* Create matrix device before registering VFIO AP device driver with the
+  AP bus
+* Renamed the following files in drivers/s390/crypto:
+  * vfio_ap_matrix.drv -> vfio_ap_drv
+  * vfio_ap_matrix_private.h -> vfio_ap_private.h
+  * vfio_ap_matrix_ops.c -> vfio_ap_ops.c
+* arch/s390/include/asm/kvm/ap-matrix-config.h
+  * Renamed to kvm-ap.h
+  * Changed the data type of the bit mask fields for the matrix structure
+    to unsigned long and create them with DECLARE_BITMAP 
+  * Changed #define prefixes from AP_MATRIX to KVM_AP
+  * Changed function and structure prefixes from ap_matrix to kvm_ap
+  * Added function interface to check if AP Extended Addressing (APXA)
+    facility is installedCRYCB_FORMAT_MASK
+  * Added function interface to get the maximum ID for AP mask type
+  * Added function interface to set the AP execution mode
+* arch/s390/kvm/ap-matrix-config.c
+  * Renamed to kvm-ap.c
+  * Changed function prefixes from ap_matrix to kvm_ap
+  * Added function to check if AP Extended Addressing (APXA) facility is
+    installed
+  * Added function to get the maximum ID for AP mask type
+  * Added function to set the AP execution mode
+  * Added a boolean parameter to the functions that retrieve the APM, AQM
+    and ADM bit mask fields from the CRYCB. If true, then the function
+    will clear the bits in the mask before returning a reference to it
+  * Added validation to verify that APM, AQM and ADM bits that are set do
+    not exceed the maximum ID value allowed
+  * 
+* arch/s390/include/asm/kvm_host.h
+  * Changed defined for ECA_AP to ECA_APIE - interpretive execution mode
+  * Added a flag to struct kvm_s390_crypto to indicate whether the 
+    KVM_S390_VM_CPU_FEAT_AP CPU model feature for AP facilities is set
+  * Added two CPU facilities features to set STFLE.12 and STFLE.15
+* arch/s390/kvm/kvm-s390.c
+  * Added initialization for new KVM_S390_VM_CPU_FEAT_AP CPU model feature
+  * Removed kvm_s390_apxa_installed() function
+  * Changed call to kvm_s390_apxa_installed() which has been removed to a
+    call to new kvm_ap_apxa_installed() function.
+  * Added code to kvm_s390_vcpu_crypto_setup() to set the new CPU model 
+    feature flag in the kvm_s390_crypto structure 
+  * Added CRYCB_FORMAT_MASK to mask CRYCBD
+* arch/s390/tools/gen_facilities.c
+  * Added STFLE.12 and STFLE.15 to struct facility _def
+* drivers/s390/crypto/vfio_ap_matrix_private.h
+  * Changed name of file to vfio_ap.private.h
+  * Changed #define prefixes from VFIO_AP_MATRIX to VFIO_AP
+  * struct ap_matrix: removed list fields and locks
+  * struct vfio_ap_queue: removed list field
+  * Renamed functions ap_matrix_mdev_register and ap_matrix_mdev_unregister
+    to vfio_ap_mdev_register and vfio_ap_mdev_unregister respectively
+* drivers/s390/crypto/vfio_ap_matrix_drv.c
+  * Renamed file to drivers/s390/crypto/vfio_ap_drv.c
+  * Changed all #define, structure and function prefixes to vfio_ap
+  * probe function
+    * Changed root device name for the matrix device to vfio_ap:
+      i.e., /sys/devices/vfio_ap/matrix
+    * No longer storing the AP queue device in a list, it is retrievable via
+      the device core
+    * Removed unnecessary check whether matrix device exists
+    * Store the vfio_ap_queue structure in the private field of the ap_queue
+      structure rather than using list interface
+  * remove function
+    * Retrieve vfio_ap_queue structure from the struct ap_queue private 
+      data rather than from a list
+  * Removed unnecesary check 
+* drivers/s390/crypto/vfio_ap_matrix_ops.c
+  * Renamed file to vfio_ap_ops.c
+  * Changed #define prefixes from AP_MATRIX to VFIO_AP
+  * Changed function name prefixes from ap_matrix to vfio_ap
+  * Removed ioctl to configure the CRYCB
+  * create function
+    * Removed ap_matrix_mdev_find_by_uuid() function - function is provided
+      by mdev core
+    * Removed available_instances verification, provided by mdev core
+    * Removed check to see if mediated device exists, handled by mdev core
+  * notifier function
+    * Configuring matrix here instead of via ioctl
+    * Set interpretive execution mode for all VCPUs
+   * Removed R/O attributes to display adapters and domains
+   * Added an R/O attribute to display the matrix
+  * assign_control_domain mdev attribute:
+    * Removed check to see if the domain is installed on the linux host
+    * Added check to verify the control domain ID does not exceed the max 
+      value
+  * assign_adapter mdev attribute:
+    * Added check to verify the adapter ID does not exceed the max 
+      value
+    * If any APQNs configured for the mediated matrix device that
+      have an APID matching the adapter ID being assigned are not
+      bound to the vfio_ap device driver then it is assumed that the APQN is 
+      bound to another driver and assignment will fail
+  * assign_domain mdev attribute:
+    * Added check to verify the domain ID does not exceed the max 
+      value
+    * If any APQNs configured for the mediated matrix device that
+      have an APQI matching the domain ID being assigned are not
+      bound to the vfio_ap device driver then it is assumed that the APQN is 
+      bound to another driver and assignment will fail
+* tools/arch/s390/include/uapi/asm/kvm.h
+  * removed  KVM_S390_VM_CPU_FEAT_AP feature definition
+
+David Hildenbrand (2):
+  KVM: s390: vsie: simulate VCPU SIE entry/exit
+  KVM: s390: introduce and use KVM_REQ_VSIE_RESTART
+
+Pierre Morel (9):
+  KVM: s390: Clear Crypto Control Block when using vSIE
+  KVM: s390: vsie: Do the CRYCB validation first
+  KVM: s390: vsie: Make use of CRYCB FORMAT2 clear
+  KVM: s390: vsie: Allow CRYCB FORMAT-2
+  KVM: s390: vsie: allow CRYCB FORMAT-1
+  KVM: s390: vsie: allow CRYCB FORMAT-0
+  KVM: s390: vsie: allow guest FORMAT-0 CRYCB on host FORMAT-1
+  KVM: s390: vsie: allow guest FORMAT-1 CRYCB on host FORMAT-2
+  KVM: s390: vsie: allow guest FORMAT-0 CRYCB on host FORMAT-2
+
+Tony Krowiak (15):
+  KVM: s390: refactor crypto initialization
+  s390: vfio-ap: base implementation of VFIO AP device driver
+  s390: vfio-ap: register matrix device with VFIO mdev framework
+  s390: vfio-ap: sysfs interfaces to configure adapters
+  s390: vfio-ap: sysfs interfaces to configure domains
+  s390: vfio-ap: sysfs interfaces to configure control domains
+  s390: vfio-ap: sysfs interface to view matrix mdev matrix
+  KVM: s390: interfaces to clear CRYCB masks
+  s390: vfio-ap: implement mediated device open callback
+  s390: vfio-ap: implement VFIO_DEVICE_GET_INFO ioctl
+  s390: vfio-ap: zeroize the AP queues
+  s390: vfio-ap: implement VFIO_DEVICE_RESET ioctl
+  KVM: s390: device attrs to enable/disable AP interpretation
+  KVM: s390: CPU model support for AP virtualization
+  s390: doc: detailed specifications for AP virtualization
+
+ Documentation/s390/vfio-ap.txt        |  778 ++++++++++++++++++++++++++
+ MAINTAINERS                           |   12 +
+ arch/s390/Kconfig                     |   11 +
+ arch/s390/include/asm/kvm_host.h      |    7 +
+ arch/s390/include/uapi/asm/kvm.h      |    3 +
+ arch/s390/kvm/kvm-s390.c              |  134 +++--
+ arch/s390/kvm/kvm-s390.h              |    1 +
+ arch/s390/kvm/vsie.c                  |  208 +++++++-
+ arch/s390/tools/gen_facilities.c      |    2 +
+ drivers/iommu/Kconfig                 |    8 +
+ drivers/s390/crypto/Makefile          |    4 +
+ drivers/s390/crypto/vfio_ap_drv.c     |  153 ++++++
+ drivers/s390/crypto/vfio_ap_ops.c     |  973 +++++++++++++++++++++++++++++++++
+ drivers/s390/crypto/vfio_ap_private.h |   88 +++
+ include/uapi/linux/vfio.h             |    2 +
+ 15 files changed, 2324 insertions(+), 60 deletions(-)
+ create mode 100644 Documentation/s390/vfio-ap.txt
+ create mode 100644 drivers/s390/crypto/vfio_ap_drv.c
+ create mode 100644 drivers/s390/crypto/vfio_ap_ops.c
+ create mode 100644 drivers/s390/crypto/vfio_ap_private.h
+
