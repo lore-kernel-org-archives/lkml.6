@@ -6,317 +6,96 @@ X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87CCEC46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:55:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03D5EC6778D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:56:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3848F204EC
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:55:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A364020833
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:56:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="feKXciKD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3848F204EC
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aXSu+hXd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A364020833
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727752AbeILVAo (ORCPT
+        id S1727786AbeILVBJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 17:00:44 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:45620 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726673AbeILVAo (ORCPT
+        Wed, 12 Sep 2018 17:01:09 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:53604 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726673AbeILVBI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 17:00:44 -0400
+        Wed, 12 Sep 2018 17:01:08 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=klwCCBL9B27IDSd7LFfhTFlf3iCGOFloIZx2/YJV4v8=; b=feKXciKDIWjlnctwqx5ZCTGcm
-        22Wtq2zeqWF58maedutNDLtkmHamobUvfbgnWYbmr7ULoIsIl5a/h25wokJ76JIIYrzCUlKKue1bV
-        T1gelbDSVXYh1Wm0uU0wMyDpaAN3WHQKBaf1ZNvuZCc+XQtKQ+a0N14krShMExD6Q4wIkzL59c7bk
-        RZFsv7qI1d0fsNVNRYy7H7bpxvXucUp+RbdIAN6MNRF2qQLA1kp1P3BZUUadG8cEMZvErxR2W+8/a
-        0R4Hk/VoTVHWzvgJalB2eORkBckAj3eAOW5wOeUPFWUVl989EB5c8uBoPbYVBZvzLKVeVZkyT9uvE
-        MqPa9M/YQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g07U4-0003bm-RT; Wed, 12 Sep 2018 15:55:17 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 9D77E202C1A2D; Wed, 12 Sep 2018 17:55:14 +0200 (CEST)
-Date:   Wed, 12 Sep 2018 17:55:14 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Guo Ren <ren_guo@c-sky.com>
-Cc:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, daniel.lezcano@linaro.org,
-        jason@lakedaemon.net, arnd@arndb.de, devicetree@vger.kernel.org,
-        andrea.parri@amarulasolutions.com, c-sky_gcc_upstream@c-sky.com,
-        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com,
-        wbx@uclibc-ng.org, green.hu@gmail.com
-Subject: Re: [PATCH V3 11/27] csky: Atomic operations
-Message-ID: <20180912155514.GV24082@hirez.programming.kicks-ass.net>
-References: <cover.1536757532.git.ren_guo@c-sky.com>
- <93e8b592e429c156ad4d4ca5d85ef48fd0ab8b70.1536757532.git.ren_guo@c-sky.com>
+         bh=PxfS/9f6yTpE9ZgTQ8/cv2PwqzOJ4nIbA2ojseAd9Ko=; b=aXSu+hXd0Wz0PgWFph0vSpPFP
+        lEspZmIVHEns4m5xBN5j3mzVBIpq7Ux0FOqt9ZYyKnheX2Ikdqme+nzdilNqksIvMN5bQlhX2avqn
+        30q4wuR6ZmaqPJ7eQengDnum7CX1TJJ8X4qZM7D4Bdczmmz1nxtqHdJuqtDPWwertNsEg3D2+GChA
+        Xxi7IEGEEGjB4K8RxDKfdVICGxQriAHNKm15GDKmVKsjeF8n2PC3H5ipNocpYCHoQB5VJuDtrnc4Z
+        sidkE4o4dhB01SC3ehaDWKa/RG4txaEZDHB+Fstn2ccBsy7le0dlH0d/0Z5h5noyoDWtSspnsFGvK
+        R0ih9M/KQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g07Uj-0000uy-Pv; Wed, 12 Sep 2018 15:55:57 +0000
+Date:   Wed, 12 Sep 2018 08:55:57 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-doc@vger.kernel.org, "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jan Kara <jack@suse.cz>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Larry Woodman <lwoodman@redhat.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "Wangkai (Kevin C)" <wangkai86@huawei.com>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [PATCH v3 4/4] fs/dcache: Eliminate branches in
+ nr_dentry_negative accounting
+Message-ID: <20180912155557.GA18304@bombadil.infradead.org>
+References: <1536693506-11949-1-git-send-email-longman@redhat.com>
+ <1536693506-11949-5-git-send-email-longman@redhat.com>
+ <20180912023610.GB20056@bombadil.infradead.org>
+ <bf7592c3-dc1d-635e-8bb0-717f6e8a54d9@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <93e8b592e429c156ad4d4ca5d85ef48fd0ab8b70.1536757532.git.ren_guo@c-sky.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <bf7592c3-dc1d-635e-8bb0-717f6e8a54d9@redhat.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 09:24:45PM +0800, Guo Ren wrote:
+On Wed, Sep 12, 2018 at 11:49:22AM -0400, Waiman Long wrote:
+> > unless our macrology has got too clever for the compilre to see through
+> > it.  In which case, the right answer is to simplify the percpu code,
+> > not to force the compiler to optimise the code in the way that makes
+> > sense for your current microarchitecture.
+> >
+> I had actually looked at the x86 object file generated to verify that it
+> did use cmove with the patch and use branch without. It is possible that
+> there are other twists to make that happen with the above expression. I
+> will need to run some experiments to figure it out. In the mean time, I
+> am fine with dropping this patch as it is a micro-optimization that
+> doesn't change the behavior at all.
 
-> +#define ATOMIC_OP(op, c_op)						\
-> +static inline void atomic_##op(int i, atomic_t *v)			\
-> +{									\
-> +	unsigned long tmp;						\
-> +									\
-> +	smp_mb();							\
-> +	asm volatile (							\
-> +	"1:	ldex.w		%0, (%2) \n"				\
-> +	"	" #op "		%0, %1   \n"				\
-> +	"	stex.w		%0, (%2) \n"				\
-> +	"	bez		%0, 1b   \n"				\
-> +		: "=&r" (tmp)						\
-> +		: "r" (i), "r"(&v->counter)				\
-> +		: "memory");						\
-> +	smp_mb();							\
-> +}
+I don't understand why you included it, to be honest.  But it did get
+me looking at the percpu code to see if it was too clever.  And that
+led to the resubmission of rth's patch from two years ago that I cc'd
+you on earlier.
 
-ATOMIC_OP doesn't need to imply any smp_mb()'s what so ever.
+With that patch applied, gcc should be able to choose to use the
+cmov if it feels that would be a better optimisation.  It already
+makes one different decision in dcache.o, namely that it uses addq
+$0x1,%gs:0x0(%rip) instead of incq %gs:0x0(%rip).  Apparently this
+performs better on some CPUs.
 
-> +#define ATOMIC_OP_RETURN(op, c_op)					\
-> +static inline int atomic_##op##_return(int i, atomic_t *v)		\
-> +{									\
-> +	unsigned long tmp, ret;						\
-> +									\
-> +	smp_mb();							\
-> +	asm volatile (							\
-> +	"1:	ldex.w		%0, (%3) \n"				\
-> +	"	" #op "		%0, %2   \n"				\
-> +	"	mov		%1, %0   \n"				\
-> +	"	stex.w		%0, (%3) \n"				\
-> +	"	bez		%0, 1b   \n"				\
-> +		: "=&r" (tmp), "=&r" (ret)				\
-> +		: "r" (i), "r"(&v->counter)				\
-> +		: "memory");						\
-> +	smp_mb();							\
-> +									\
-> +	return ret;							\
-> +}
-> +
-> +#define ATOMIC_FETCH_OP(op, c_op)					\
-> +static inline int atomic_fetch_##op(int i, atomic_t *v)			\
-> +{									\
-> +	unsigned long tmp, ret;						\
-> +									\
-> +	smp_mb();							\
-> +	asm volatile (							\
-> +	"1:	ldex.w		%0, (%3) \n"				\
-> +	"	mov		%1, %0   \n"				\
-> +	"	" #op "		%0, %2   \n"				\
-> +	"	stex.w		%0, (%3) \n"				\
-> +	"	bez		%0, 1b   \n"				\
-> +		: "=&r" (tmp), "=&r" (ret)				\
-> +		: "r" (i), "r"(&v->counter)				\
-> +		: "memory");						\
-> +	smp_mb();							\
-> +									\
-> +	return ret;							\
-> +}
-
-For these you could generate _relaxed variants and not provide smp_mb()
-inside them.
-
-> +#else /* CONFIG_CPU_HAS_LDSTEX */
-> +
-> +#include <linux/irqflags.h>
-> +
-
-> +#define ATOMIC_OP(op, c_op)						\
-> +static inline void atomic_##op(int i, atomic_t *v)			\
-> +{									\
-> +	unsigned long tmp, flags;					\
-> +									\
-> +	raw_local_irq_save(flags);					\
-> +									\
-> +	asm volatile (							\
-> +	"	ldw		%0, (%2) \n"				\
-> +	"	" #op "		%0, %1   \n"				\
-> +	"	stw		%0, (%2) \n"				\
-> +		: "=&r" (tmp)						\
-> +		: "r" (i), "r"(&v->counter)				\
-> +		: "memory");						\
-> +									\
-> +	raw_local_irq_restore(flags);					\
-> +}
-
-Is this really 'better' than the generic UP fallback implementation?
-
-
-
-
-
-> diff --git a/arch/csky/include/asm/spinlock.h b/arch/csky/include/asm/spinlock.h
-> new file mode 100644
-> index 0000000..f1081bb
-> --- /dev/null
-> +++ b/arch/csky/include/asm/spinlock.h
-> @@ -0,0 +1,286 @@
-> +#ifndef __ASM_CSKY_SPINLOCK_H
-> +#define __ASM_CSKY_SPINLOCK_H
-> +
-> +#include <linux/spinlock_types.h>
-> +#include <asm/barrier.h>
-> +
-> +#ifdef CONFIG_QUEUED_RWLOCKS
-> +
-> +/*
-> + * Ticket-based spin-locking.
-> + */
-> +static inline void arch_spin_lock(arch_spinlock_t *lock)
-> +{
-> +	arch_spinlock_t lockval;
-> +	u32 ticket_next = 1 << TICKET_NEXT;
-> +	u32 *p = &lock->lock;
-> +	u32 tmp;
-> +
-> +	smp_mb();
-
-spin_lock() doesn't need smp_mb() before.
-
-> +	asm volatile (
-> +		"1:	ldex.w		%0, (%2) \n"
-> +		"	mov		%1, %0	 \n"
-> +		"	add		%0, %3	 \n"
-> +		"	stex.w		%0, (%2) \n"
-> +		"	bez		%0, 1b   \n"
-> +		: "=&r" (tmp), "=&r" (lockval)
-> +		: "r"(p), "r"(ticket_next)
-> +		: "cc");
-> +
-> +	while (lockval.tickets.next != lockval.tickets.owner) {
-> +		lockval.tickets.owner = READ_ONCE(lock->tickets.owner);
-> +	}
-> +
-> +	smp_mb();
-> +}
-> +
-> +static inline int arch_spin_trylock(arch_spinlock_t *lock)
-> +{
-> +	u32 tmp, contended, res;
-> +	u32 ticket_next = 1 << TICKET_NEXT;
-> +	u32 *p = &lock->lock;
-> +
-> +	smp_mb();
-
-idem.
-
-> +	do {
-> +		asm volatile (
-> +		"	ldex.w		%0, (%3)   \n"
-> +		"	movi		%2, 1	   \n"
-> +		"	rotli		%1, %0, 16 \n"
-> +		"	cmpne		%1, %0     \n"
-> +		"	bt		1f         \n"
-> +		"	movi		%2, 0	   \n"
-> +		"	add		%0, %0, %4 \n"
-> +		"	stex.w		%0, (%3)   \n"
-> +		"1:				   \n"
-> +		: "=&r" (res), "=&r" (tmp), "=&r" (contended)
-> +		: "r"(p), "r"(ticket_next)
-> +		: "cc");
-> +	} while (!res);
-> +
-> +	if (!contended)
-> +		smp_mb();
-> +
-> +	return !contended;
-> +}
-> +
-> +static inline void arch_spin_unlock(arch_spinlock_t *lock)
-> +{
-> +	smp_mb();
-> +	lock->tickets.owner++;
-> +	smp_mb();
-
-spin_unlock() doesn't need smp_mb() after.
-
-> +}
-> +
-> +static inline int arch_spin_value_unlocked(arch_spinlock_t lock)
-> +{
-> +	return lock.tickets.owner == lock.tickets.next;
-> +}
-> +
-> +static inline int arch_spin_is_locked(arch_spinlock_t *lock)
-> +{
-> +	return !arch_spin_value_unlocked(READ_ONCE(*lock));
-> +}
-> +
-> +static inline int arch_spin_is_contended(arch_spinlock_t *lock)
-> +{
-> +	struct __raw_tickets tickets = READ_ONCE(lock->tickets);
-> +	return (tickets.next - tickets.owner) > 1;
-> +}
-> +#define arch_spin_is_contended	arch_spin_is_contended
-> +
-> +#include <asm/qrwlock.h>
-> +
-> +/* See include/linux/spinlock.h */
-> +#define smp_mb__after_spinlock()	smp_mb()
-> +
-> +#else /* CONFIG_QUEUED_RWLOCKS */
-> +
-> +/*
-> + * Test-and-set spin-locking.
-> + */
-
-Why retain that?
-
-same comments; it has far too many smp_mb()s in.
-
-> +#endif /* CONFIG_QUEUED_RWLOCKS */
-> +#endif /* __ASM_CSKY_SPINLOCK_H */
-> diff --git a/arch/csky/include/asm/spinlock_types.h b/arch/csky/include/asm/spinlock_types.h
-> new file mode 100644
-> index 0000000..7e825c2
-> --- /dev/null
-> +++ b/arch/csky/include/asm/spinlock_types.h
-> @@ -0,0 +1,35 @@
-> +#ifndef __ASM_CSKY_SPINLOCK_TYPES_H
-> +#define __ASM_CSKY_SPINLOCK_TYPES_H
-> +
-> +#ifndef __LINUX_SPINLOCK_TYPES_H
-> +# error "please don't include this file directly"
-> +#endif
-> +
-> +#define TICKET_NEXT	16
-> +
-> +typedef struct {
-> +	union {
-> +		u32 lock;
-> +		struct __raw_tickets {
-> +			/* little endian */
-> +			u16 owner;
-> +			u16 next;
-> +		} tickets;
-> +	};
-> +} arch_spinlock_t;
-> +
-> +#define __ARCH_SPIN_LOCK_UNLOCKED	{ { 0 } }
-> +
-> +#ifdef CONFIG_QUEUED_RWLOCKS
-> +#include <asm-generic/qrwlock_types.h>
-> +
-> +#else /* CONFIG_NR_CPUS > 2 */
-> +
-> +typedef struct {
-> +	u32 lock;
-> +} arch_rwlock_t;
-> +
-> +#define __ARCH_RW_LOCK_UNLOCKED		{ 0 }
-> +
-> +#endif /* CONFIG_QUEUED_RWLOCKS */
-> +#endif /* __ASM_CSKY_SPINLOCK_TYPES_H */
+So I wouldn't spend any more time on this patch.
