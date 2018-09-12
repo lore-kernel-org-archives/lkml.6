@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EAAAC4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:00:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2995ECDFC2
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:00:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25C9B20880
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:00:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25C9B20880
+	by mail.kernel.org (Postfix) with ESMTP id 693A720880
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:00:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 693A720880
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728131AbeILODf (ORCPT
+        id S1728146AbeILODh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 10:03:35 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:60298 "EHLO inva020.nxp.com"
+        Wed, 12 Sep 2018 10:03:37 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:60264 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728089AbeILODf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 10:03:35 -0400
+        id S1728046AbeILODg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 10:03:36 -0400
 Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id D1DBA1A0264;
-        Wed, 12 Sep 2018 11:00:00 +0200 (CEST)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 96D3A1A025D;
+        Wed, 12 Sep 2018 10:59:59 +0200 (CEST)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C374F1A0268;
-        Wed, 12 Sep 2018 11:00:00 +0200 (CEST)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 897BC1A025B;
+        Wed, 12 Sep 2018 10:59:59 +0200 (CEST)
 Received: from enigma.ea.freescale.net (enigma.ea.freescale.net [10.171.81.110])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 3BE6C205F0;
-        Wed, 12 Sep 2018 11:00:00 +0200 (CEST)
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 0B22E205F0;
+        Wed, 12 Sep 2018 10:59:59 +0200 (CEST)
 From:   =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>
 To:     Herbert Xu <herbert@gondor.apana.org.au>,
         Stuart Yoder <stuyoder@gmail.com>,
@@ -42,9 +42,9 @@ Cc:     "David S . Miller" <davem@davemloft.net>,
         Aymen Sghaier <aymen.sghaier@nxp.com>,
         linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 12/12] arm64: defconfig: enable CAAM crypto engine on QorIQ DPAA2 SoCs
-Date:   Wed, 12 Sep 2018 11:59:37 +0300
-Message-Id: <20180912085937.22489-13-horia.geanta@nxp.com>
+Subject: [PATCH v2 10/12] crypto: caam - export ahash shared descriptor generation
+Date:   Wed, 12 Sep 2018 11:59:35 +0300
+Message-Id: <20180912085937.22489-11-horia.geanta@nxp.com>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180912085937.22489-1-horia.geanta@nxp.com>
 References: <20180912085937.22489-1-horia.geanta@nxp.com>
@@ -57,28 +57,288 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable CAAM (Cryptographic Accelerator and Assurance Module) driver
-for QorIQ Data Path Acceleration Architecture (DPAA) v2.
-It handles DPSECI (Data Path SEC Interface) DPAA2 objects that sit
-on the Management Complex (MC) fsl-mc bus.
+caam/qi2 driver will support ahash algorithms,
+thus move ahash descriptors generation in a shared location.
 
 Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
 ---
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/crypto/caam/Kconfig         |  3 ++
+ drivers/crypto/caam/Makefile        |  1 +
+ drivers/crypto/caam/caamhash.c      | 79 +++++-------------------------------
+ drivers/crypto/caam/caamhash_desc.c | 80 +++++++++++++++++++++++++++++++++++++
+ drivers/crypto/caam/caamhash_desc.h | 21 ++++++++++
+ 5 files changed, 114 insertions(+), 70 deletions(-)
+ create mode 100644 drivers/crypto/caam/caamhash_desc.c
+ create mode 100644 drivers/crypto/caam/caamhash_desc.h
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 6815db53674e..3d165b4cdd2a 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -698,6 +698,7 @@ CONFIG_MEMTEST=y
- CONFIG_SECURITY=y
- CONFIG_CRYPTO_ECHAINIV=y
- CONFIG_CRYPTO_ANSI_CPRNG=y
-+CONFIG_CRYPTO_DEV_FSL_DPAA2_CAAM=y
- CONFIG_ARM64_CRYPTO=y
- CONFIG_CRYPTO_SHA1_ARM64_CE=y
- CONFIG_CRYPTO_SHA2_ARM64_CE=y
+diff --git a/drivers/crypto/caam/Kconfig b/drivers/crypto/caam/Kconfig
+index 8d162cb34591..03c1db0239ae 100644
+--- a/drivers/crypto/caam/Kconfig
++++ b/drivers/crypto/caam/Kconfig
+@@ -172,3 +172,6 @@ config CRYPTO_DEV_FSL_CAAM_CRYPTO_API_DESC
+ 	def_tristate (CRYPTO_DEV_FSL_CAAM_CRYPTO_API || \
+ 		      CRYPTO_DEV_FSL_CAAM_CRYPTO_API_QI || \
+ 		      CRYPTO_DEV_FSL_DPAA2_CAAM)
++
++config CRYPTO_DEV_FSL_CAAM_AHASH_API_DESC
++	def_tristate (CRYPTO_DEV_FSL_CAAM_AHASH_API)
+diff --git a/drivers/crypto/caam/Makefile b/drivers/crypto/caam/Makefile
+index fd507bab1828..7bbfd06a11ff 100644
+--- a/drivers/crypto/caam/Makefile
++++ b/drivers/crypto/caam/Makefile
+@@ -15,6 +15,7 @@ obj-$(CONFIG_CRYPTO_DEV_FSL_CAAM_CRYPTO_API) += caamalg.o
+ obj-$(CONFIG_CRYPTO_DEV_FSL_CAAM_CRYPTO_API_QI) += caamalg_qi.o
+ obj-$(CONFIG_CRYPTO_DEV_FSL_CAAM_CRYPTO_API_DESC) += caamalg_desc.o
+ obj-$(CONFIG_CRYPTO_DEV_FSL_CAAM_AHASH_API) += caamhash.o
++obj-$(CONFIG_CRYPTO_DEV_FSL_CAAM_AHASH_API_DESC) += caamhash_desc.o
+ obj-$(CONFIG_CRYPTO_DEV_FSL_CAAM_RNG_API) += caamrng.o
+ obj-$(CONFIG_CRYPTO_DEV_FSL_CAAM_PKC_API) += caam_pkc.o
+ 
+diff --git a/drivers/crypto/caam/caamhash.c b/drivers/crypto/caam/caamhash.c
+index 43975ab5f09c..4c30bb5516d6 100644
+--- a/drivers/crypto/caam/caamhash.c
++++ b/drivers/crypto/caam/caamhash.c
+@@ -62,6 +62,7 @@
+ #include "error.h"
+ #include "sg_sw_sec4.h"
+ #include "key_gen.h"
++#include "caamhash_desc.h"
+ 
+ #define CAAM_CRA_PRIORITY		3000
+ 
+@@ -71,14 +72,6 @@
+ #define CAAM_MAX_HASH_BLOCK_SIZE	SHA512_BLOCK_SIZE
+ #define CAAM_MAX_HASH_DIGEST_SIZE	SHA512_DIGEST_SIZE
+ 
+-/* length of descriptors text */
+-#define DESC_AHASH_BASE			(3 * CAAM_CMD_SZ)
+-#define DESC_AHASH_UPDATE_LEN		(6 * CAAM_CMD_SZ)
+-#define DESC_AHASH_UPDATE_FIRST_LEN	(DESC_AHASH_BASE + 4 * CAAM_CMD_SZ)
+-#define DESC_AHASH_FINAL_LEN		(DESC_AHASH_BASE + 5 * CAAM_CMD_SZ)
+-#define DESC_AHASH_FINUP_LEN		(DESC_AHASH_BASE + 5 * CAAM_CMD_SZ)
+-#define DESC_AHASH_DIGEST_LEN		(DESC_AHASH_BASE + 4 * CAAM_CMD_SZ)
+-
+ #define DESC_HASH_MAX_USED_BYTES	(DESC_AHASH_FINAL_LEN + \
+ 					 CAAM_MAX_HASH_KEY_SIZE)
+ #define DESC_HASH_MAX_USED_LEN		(DESC_HASH_MAX_USED_BYTES / CAAM_CMD_SZ)
+@@ -235,60 +228,6 @@ static inline int ctx_map_to_sec4_sg(struct device *jrdev,
+ 	return 0;
+ }
+ 
+-/*
+- * For ahash update, final and finup (import_ctx = true)
+- *     import context, read and write to seqout
+- * For ahash firsts and digest (import_ctx = false)
+- *     read and write to seqout
+- */
+-static inline void ahash_gen_sh_desc(u32 *desc, u32 state, int digestsize,
+-				     struct caam_hash_ctx *ctx, bool import_ctx,
+-				     int era)
+-{
+-	u32 op = ctx->adata.algtype;
+-	u32 *skip_key_load;
+-
+-	init_sh_desc(desc, HDR_SHARE_SERIAL);
+-
+-	/* Append key if it has been set; ahash update excluded */
+-	if ((state != OP_ALG_AS_UPDATE) && (ctx->adata.keylen)) {
+-		/* Skip key loading if already shared */
+-		skip_key_load = append_jump(desc, JUMP_JSL | JUMP_TEST_ALL |
+-					    JUMP_COND_SHRD);
+-
+-		if (era < 6)
+-			append_key_as_imm(desc, ctx->key, ctx->adata.keylen_pad,
+-					  ctx->adata.keylen, CLASS_2 |
+-					  KEY_DEST_MDHA_SPLIT | KEY_ENC);
+-		else
+-			append_proto_dkp(desc, &ctx->adata);
+-
+-		set_jump_tgt_here(desc, skip_key_load);
+-
+-		op |= OP_ALG_AAI_HMAC_PRECOMP;
+-	}
+-
+-	/* If needed, import context from software */
+-	if (import_ctx)
+-		append_seq_load(desc, ctx->ctx_len, LDST_CLASS_2_CCB |
+-				LDST_SRCDST_BYTE_CONTEXT);
+-
+-	/* Class 2 operation */
+-	append_operation(desc, op | state | OP_ALG_ENCRYPT);
+-
+-	/*
+-	 * Load from buf and/or src and write to req->result or state->context
+-	 * Calculate remaining bytes to read
+-	 */
+-	append_math_add(desc, VARSEQINLEN, SEQINLEN, REG0, CAAM_CMD_SZ);
+-	/* Read remaining bytes */
+-	append_seq_fifo_load(desc, 0, FIFOLD_CLASS_CLASS2 | FIFOLD_TYPE_LAST2 |
+-			     FIFOLD_TYPE_MSG | KEY_VLF);
+-	/* Store class2 context bytes */
+-	append_seq_store(desc, digestsize, LDST_CLASS_2_CCB |
+-			 LDST_SRCDST_BYTE_CONTEXT);
+-}
+-
+ static int ahash_set_sh_desc(struct crypto_ahash *ahash)
+ {
+ 	struct caam_hash_ctx *ctx = crypto_ahash_ctx(ahash);
+@@ -301,8 +240,8 @@ static int ahash_set_sh_desc(struct crypto_ahash *ahash)
+ 
+ 	/* ahash_update shared descriptor */
+ 	desc = ctx->sh_desc_update;
+-	ahash_gen_sh_desc(desc, OP_ALG_AS_UPDATE, ctx->ctx_len, ctx, true,
+-			  ctrlpriv->era);
++	cnstr_shdsc_ahash(desc, &ctx->adata, OP_ALG_AS_UPDATE, ctx->ctx_len,
++			  ctx->ctx_len, true, ctrlpriv->era);
+ 	dma_sync_single_for_device(jrdev, ctx->sh_desc_update_dma,
+ 				   desc_bytes(desc), ctx->dir);
+ #ifdef DEBUG
+@@ -313,8 +252,8 @@ static int ahash_set_sh_desc(struct crypto_ahash *ahash)
+ 
+ 	/* ahash_update_first shared descriptor */
+ 	desc = ctx->sh_desc_update_first;
+-	ahash_gen_sh_desc(desc, OP_ALG_AS_INIT, ctx->ctx_len, ctx, false,
+-			  ctrlpriv->era);
++	cnstr_shdsc_ahash(desc, &ctx->adata, OP_ALG_AS_INIT, ctx->ctx_len,
++			  ctx->ctx_len, false, ctrlpriv->era);
+ 	dma_sync_single_for_device(jrdev, ctx->sh_desc_update_first_dma,
+ 				   desc_bytes(desc), ctx->dir);
+ #ifdef DEBUG
+@@ -325,8 +264,8 @@ static int ahash_set_sh_desc(struct crypto_ahash *ahash)
+ 
+ 	/* ahash_final shared descriptor */
+ 	desc = ctx->sh_desc_fin;
+-	ahash_gen_sh_desc(desc, OP_ALG_AS_FINALIZE, digestsize, ctx, true,
+-			  ctrlpriv->era);
++	cnstr_shdsc_ahash(desc, &ctx->adata, OP_ALG_AS_FINALIZE, digestsize,
++			  ctx->ctx_len, true, ctrlpriv->era);
+ 	dma_sync_single_for_device(jrdev, ctx->sh_desc_fin_dma,
+ 				   desc_bytes(desc), ctx->dir);
+ #ifdef DEBUG
+@@ -337,8 +276,8 @@ static int ahash_set_sh_desc(struct crypto_ahash *ahash)
+ 
+ 	/* ahash_digest shared descriptor */
+ 	desc = ctx->sh_desc_digest;
+-	ahash_gen_sh_desc(desc, OP_ALG_AS_INITFINAL, digestsize, ctx, false,
+-			  ctrlpriv->era);
++	cnstr_shdsc_ahash(desc, &ctx->adata, OP_ALG_AS_INITFINAL, digestsize,
++			  ctx->ctx_len, false, ctrlpriv->era);
+ 	dma_sync_single_for_device(jrdev, ctx->sh_desc_digest_dma,
+ 				   desc_bytes(desc), ctx->dir);
+ #ifdef DEBUG
+diff --git a/drivers/crypto/caam/caamhash_desc.c b/drivers/crypto/caam/caamhash_desc.c
+new file mode 100644
+index 000000000000..a12f7959a2c3
+--- /dev/null
++++ b/drivers/crypto/caam/caamhash_desc.c
+@@ -0,0 +1,80 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
++/*
++ * Shared descriptors for ahash algorithms
++ *
++ * Copyright 2017 NXP
++ */
++
++#include "compat.h"
++#include "desc_constr.h"
++#include "caamhash_desc.h"
++
++/**
++ * cnstr_shdsc_ahash - ahash shared descriptor
++ * @desc: pointer to buffer used for descriptor construction
++ * @adata: pointer to authentication transform definitions.
++ *         A split key is required for SEC Era < 6; the size of the split key
++ *         is specified in this case.
++ *         Valid algorithm values - one of OP_ALG_ALGSEL_{MD5, SHA1, SHA224,
++ *         SHA256, SHA384, SHA512}.
++ * @state: algorithm state OP_ALG_AS_{INIT, FINALIZE, INITFINALIZE, UPDATE}
++ * @digestsize: algorithm's digest size
++ * @ctx_len: size of Context Register
++ * @import_ctx: true if previous Context Register needs to be restored
++ *              must be true for ahash update and final
++ *              must be false for for ahash first and digest
++ * @era: SEC Era
++ */
++void cnstr_shdsc_ahash(u32 * const desc, struct alginfo *adata, u32 state,
++		       int digestsize, int ctx_len, bool import_ctx, int era)
++{
++	u32 op = adata->algtype;
++
++	init_sh_desc(desc, HDR_SHARE_SERIAL);
++
++	/* Append key if it has been set; ahash update excluded */
++	if (state != OP_ALG_AS_UPDATE && adata->keylen) {
++		u32 *skip_key_load;
++
++		/* Skip key loading if already shared */
++		skip_key_load = append_jump(desc, JUMP_JSL | JUMP_TEST_ALL |
++					    JUMP_COND_SHRD);
++
++		if (era < 6)
++			append_key_as_imm(desc, adata->key_virt,
++					  adata->keylen_pad,
++					  adata->keylen, CLASS_2 |
++					  KEY_DEST_MDHA_SPLIT | KEY_ENC);
++		else
++			append_proto_dkp(desc, adata);
++
++		set_jump_tgt_here(desc, skip_key_load);
++
++		op |= OP_ALG_AAI_HMAC_PRECOMP;
++	}
++
++	/* If needed, import context from software */
++	if (import_ctx)
++		append_seq_load(desc, ctx_len, LDST_CLASS_2_CCB |
++				LDST_SRCDST_BYTE_CONTEXT);
++
++	/* Class 2 operation */
++	append_operation(desc, op | state | OP_ALG_ENCRYPT);
++
++	/*
++	 * Load from buf and/or src and write to req->result or state->context
++	 * Calculate remaining bytes to read
++	 */
++	append_math_add(desc, VARSEQINLEN, SEQINLEN, REG0, CAAM_CMD_SZ);
++	/* Read remaining bytes */
++	append_seq_fifo_load(desc, 0, FIFOLD_CLASS_CLASS2 | FIFOLD_TYPE_LAST2 |
++			     FIFOLD_TYPE_MSG | KEY_VLF);
++	/* Store class2 context bytes */
++	append_seq_store(desc, digestsize, LDST_CLASS_2_CCB |
++			 LDST_SRCDST_BYTE_CONTEXT);
++}
++EXPORT_SYMBOL(cnstr_shdsc_ahash);
++
++MODULE_LICENSE("Dual BSD/GPL");
++MODULE_DESCRIPTION("FSL CAAM ahash descriptors support");
++MODULE_AUTHOR("NXP Semiconductors");
+diff --git a/drivers/crypto/caam/caamhash_desc.h b/drivers/crypto/caam/caamhash_desc.h
+new file mode 100644
+index 000000000000..631fc1ac312c
+--- /dev/null
++++ b/drivers/crypto/caam/caamhash_desc.h
+@@ -0,0 +1,21 @@
++/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause) */
++/*
++ * Shared descriptors for ahash algorithms
++ *
++ * Copyright 2017 NXP
++ */
++
++#ifndef _CAAMHASH_DESC_H_
++#define _CAAMHASH_DESC_H_
++
++/* length of descriptors text */
++#define DESC_AHASH_BASE			(3 * CAAM_CMD_SZ)
++#define DESC_AHASH_UPDATE_LEN		(6 * CAAM_CMD_SZ)
++#define DESC_AHASH_UPDATE_FIRST_LEN	(DESC_AHASH_BASE + 4 * CAAM_CMD_SZ)
++#define DESC_AHASH_FINAL_LEN		(DESC_AHASH_BASE + 5 * CAAM_CMD_SZ)
++#define DESC_AHASH_DIGEST_LEN		(DESC_AHASH_BASE + 4 * CAAM_CMD_SZ)
++
++void cnstr_shdsc_ahash(u32 * const desc, struct alginfo *adata, u32 state,
++		       int digestsize, int ctx_len, bool import_ctx, int era);
++
++#endif /* _CAAMHASH_DESC_H_ */
 -- 
 2.16.2
 
