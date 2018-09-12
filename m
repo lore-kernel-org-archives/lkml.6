@@ -2,115 +2,110 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,TVD_SUBJ_WIPE_DEBT,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BCB5C070C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 23:09:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4372BC070C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 23:10:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CC912146E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 23:09:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCC9D2146E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 23:10:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K8EYQUV6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CC912146E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RzfNcAQ1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCC9D2146E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726685AbeIMEPu (ORCPT
+        id S1726930AbeIMERN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 00:15:50 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:44094 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725751AbeIMEPu (ORCPT
+        Thu, 13 Sep 2018 00:17:13 -0400
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:37889 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726616AbeIMERM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 00:15:50 -0400
-Received: by mail-qk1-f193.google.com with SMTP id d131-v6so2178419qke.11
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 16:09:08 -0700 (PDT)
+        Thu, 13 Sep 2018 00:17:12 -0400
+Received: by mail-yb1-f194.google.com with SMTP id e18-v6so2506248ybq.5
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 16:10:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:mime-version:content-disposition
-         :content-transfer-encoding:user-agent;
-        bh=PMBhSsUTwZQfsvYWSUIflvFWLLu4tkrVGV+SyhSri1Y=;
-        b=K8EYQUV6Y4+Mr42NG7nL2JIlVboS6BsvhVX6I9qovcI5n95zUw3jcbGnc8Zz7Exhgg
-         cmfjUgDWkUuc01mxnfMRIAKLRU1OTzLMltgh2quQC/RPa8yjxzDFJGpPQbnfd7GaiSjU
-         vvwYPW+PT00pLh6KGgtz4mRwtkLDi0V5uLwuSnmYEXC7kJIz34YRDCseYzwi/wfBGexj
-         0zkfBcGy3CbpIWvl6NLanynodq4N4UIpvS+H1/NEU3zSAqnECKpxNmswdAsLWwBUtsaB
-         lVMp/98KBHWBT1KFmfRjlAnSNrUOPkWcdrpfB41n4Ij9m4QswX/uRnrFojPEMlqZUxqc
-         jpgQ==
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=VBpOXpCINY2YeLFfXYjVRFqff0/PcTakTrlP2W3g5fI=;
+        b=RzfNcAQ1ZCDn8oGFMHHI8PQJpvatFpgB5RF8JkT/HruzKLHIpOmIwqSa4ZKDOHGvbq
+         liMEwOHa3+zslDJCOXfJYnaxwlxqhs6kLlhnkT+faRHMlGZmFp+hWZzGjf52hP07+0vH
+         KOzzrn3EKAKyVSX1VfvNjkZRMhBAWvQi5Rz44=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
-         :content-disposition:content-transfer-encoding:user-agent;
-        bh=PMBhSsUTwZQfsvYWSUIflvFWLLu4tkrVGV+SyhSri1Y=;
-        b=NZxCDOBLYugYEY3iPkygFuCRM8jeh4QVmocpd9cR/fE4n15u9244oMJPiIxGpd4URT
-         T1wGndbVZpBiHW7Y7btO5RFj8ikhvnZD4zLVLEKnMbrnKFRkUHiN/cuJoxluaVLSFWdF
-         WbFDO7ES2uKjWjJGFqgzAS77JMuyPAt0GKcBZsiuTrfftHadwUaLXrGLXzYjdFzMnbOS
-         9oY3BkXLdfJPV62G0QbdFcwfNCseeY6F6dtSYhcF83mwk33MNVZhhtJJusDCk5s59+d7
-         HUquTxj7tRimFfZWkK8EdMaIS3020YdV4ELUJgX4+D9U/0VyNKNE9rKiROX2iHA9EIyC
-         YqKw==
-X-Gm-Message-State: APzg51CUs9pUG5SDt6a2NIgjJlMmg8PqSMjxA5Ir2KF5DUsBnwYSndpg
-        2BnXhgJ3JXrkSy57+lv1mOww5Qju
-X-Google-Smtp-Source: ANB0VdYC5p+eWj2iQ8Of79dz3/zb2oOEAGjUEVbzLdLf+4wLWcKr1kxoGGNvtQbpaSUCeCKKRnKBMw==
-X-Received: by 2002:a37:c392:: with SMTP id r18-v6mr3290762qkl.56.1536793747455;
-        Wed, 12 Sep 2018 16:09:07 -0700 (PDT)
-Received: from WindFlash ([201.82.148.26])
-        by smtp.gmail.com with ESMTPSA id y47-v6sm1596191qtk.27.2018.09.12.16.09.05
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=VBpOXpCINY2YeLFfXYjVRFqff0/PcTakTrlP2W3g5fI=;
+        b=lQ3wG90aQvjjlWpklcbXuOJ/aFLu1+2s1AJ2HQbWMi1niAw1MMhmEA31W8WIt+Y8w6
+         qNq13UK/95D/IYIxdbLBmWbKkaUk1x1V9rghtQD7GM+LAeFmWhp4RKTvbpYC5g0ZSxUn
+         jnri/OAEvKRsBwI2xqMWLF1eOOj2pyDi/52h/nPpgtjknRcKGgoIxG1rC2C9Tp8KIRgL
+         YTAbJXINS0JHPY5v+WU8L0UFd6etYsQyiSfUuQqxOhSQskl1KeSdecIZ63UUEDzbgm0/
+         cLf0j5rTQpu5b81M5pvCArx4eQZ+EVNbrP5q0bRmJACFP74EFqpVfpJlDoMwXN9RxkIJ
+         EYhQ==
+X-Gm-Message-State: APzg51CXUlo+BkVIY0oAqslh5PM4pBL67hbp3mUx74gCV2qnPmugTKoq
+        fZiR/+oEOwrydbQP/4qeNvTdd38B3fA=
+X-Google-Smtp-Source: ANB0VdbBwB8GgYnDSQjqUbYETgah2Oll9zW1r2lUbvoP+Wk1P86LJ1OdSDMqrCBGCHV/zsFBrqBbVA==
+X-Received: by 2002:a25:2183:: with SMTP id h125-v6mr2166019ybh.339.1536793828499;
+        Wed, 12 Sep 2018 16:10:28 -0700 (PDT)
+Received: from mail-yw1-f42.google.com (mail-yw1-f42.google.com. [209.85.161.42])
+        by smtp.gmail.com with ESMTPSA id l3-v6sm588711ywd.98.2018.09.12.16.10.26
         for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Sep 2018 16:09:06 -0700 (PDT)
-Date:   Wed, 12 Sep 2018 20:09:02 -0300
-From:   Leonardo =?utf-8?B?QnLDoXM=?= <leobras.c@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Subject: [PATCH] Optimize tests and remove shadowed local variable.
-Message-ID: <20180912230902.GA9625@WindFlash>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Sep 2018 16:10:27 -0700 (PDT)
+Received: by mail-yw1-f42.google.com with SMTP id y134-v6so410747ywg.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 16:10:26 -0700 (PDT)
+X-Received: by 2002:a81:4e01:: with SMTP id c1-v6mr2229904ywb.237.1536793826425;
+ Wed, 12 Sep 2018 16:10:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a25:5f04:0:0:0:0:0 with HTTP; Wed, 12 Sep 2018 16:10:25
+ -0700 (PDT)
+In-Reply-To: <39bcaa18-4c53-f386-5e89-8903a49a3256@schaufler-ca.com>
+References: <cbf848ae-a1ac-c5ab-f23b-bc9217fceebe@schaufler-ca.com> <39bcaa18-4c53-f386-5e89-8903a49a3256@schaufler-ca.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 12 Sep 2018 16:10:25 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jLBwipu9WD41rQvdTjoM=+3gigrA3sp1s1gFv8C_U0nRg@mail.gmail.com>
+Message-ID: <CAGXu5jLBwipu9WD41rQvdTjoM=+3gigrA3sp1s1gFv8C_U0nRg@mail.gmail.com>
+Subject: Re: [PATCH 03/10] SELinux: Abstract use of cred security blob
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     LSM <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        LKLM <linux-kernel@vger.kernel.org>,
+        SE Linux <selinux@tycho.nsa.gov>,
+        John Johansen <john.johansen@canonical.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Removes an unnecessary shadowed local variable (start).
-Optimize test of isdigit:
-- If isalpha returns true, isdigit will return false, so no need to test.
+On Tue, Sep 11, 2018 at 9:41 AM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+> Don't use the cred->security pointer directly.
+> Provide a helper function that provides the security blob pointer.
+>
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 
-Signed-off-by: Leonardo Brás <leobras.c@gmail.com>
----
- scripts/asn1_compiler.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Like smack, this seems to be largely:
 
-diff --git a/scripts/asn1_compiler.c b/scripts/asn1_compiler.c
-index c146020fc783..a0056df4e358 100644
---- a/scripts/asn1_compiler.c
-+++ b/scripts/asn1_compiler.c
-@@ -413,7 +413,7 @@ static void tokenise(char *buffer, char *end)
- 
- 			/* Handle string tokens */
- 			if (isalpha(*p)) {
--				const char **dir, *start = p;
-+				const char **dir;
- 
- 				/* Can be a directive, type name or element
- 				 * name.  Find the end of the name.
-@@ -454,10 +454,10 @@ static void tokenise(char *buffer, char *end)
- 
- 				tokens[tix++].token_type = TOKEN_TYPE_NAME;
- 				continue;
--			}
- 
--			/* Handle numbers */
--			if (isdigit(*p)) {
-+			} else if (isdigit(*p)) {
-+				/* Handle numbers */
-+
- 				/* Find the end of the number */
- 				q = p + 1;
- 				while (q < nl && (isdigit(*q)))
+s/$identifier->security/selinux_cred($identifier)/
+s/current_security()/selinux_cred(current_cred())/
+
+Is that right? The one __task_cred() use seemed to be fully contained
+under rcu read lock.
+
+Reviewed-by: Kees Cook <keescook@chromium.org>
+
+-Kees
+
 -- 
-2.19.0
-
+Kees Cook
+Pixel Security
