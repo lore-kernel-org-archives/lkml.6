@@ -2,93 +2,109 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94BA4C6778D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:09:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 690C5C6778D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:10:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D8B920880
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:09:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D8B920880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 24C7920880
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:10:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="i5JAdej6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24C7920880
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726992AbeILUOW (ORCPT
+        id S1727413AbeILUPO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 16:14:22 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:47109 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726640AbeILUOW (ORCPT
+        Wed, 12 Sep 2018 16:15:14 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:56030 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726640AbeILUPO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 16:14:22 -0400
-Received: from [114.245.38.229] (helo=[192.168.1.10])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <aaron.ma@canonical.com>)
-        id 1g06lf-0005Py-9p; Wed, 12 Sep 2018 15:09:24 +0000
-Subject: Re: [PATCH] x86/efi: earlyprintk - Add 64bit efi fb address support
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1536423828-5693-1-git-send-email-aaron.ma@canonical.com>
- <CAKv+Gu_dfQUXDdvk99fe6-qW3wj8e=8wR2aqCtJj1GfkXirzRg@mail.gmail.com>
-From:   Aaron Ma <aaron.ma@canonical.com>
-Openpgp: preference=signencrypt
-Message-ID: <7b08c376-2c34-d462-9d6f-2a104ca48878@canonical.com>
-Date:   Wed, 12 Sep 2018 23:09:07 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 12 Sep 2018 16:15:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
+        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=2cMM9MVTRNt9cwnvQWLhBo97CFIDL+v7SbTApHgMYIg=; b=i5JAdej6/CF6dVuEZJ3SRs05I
+        YkW/9pnH5uug8qkEilIThCN8TMJHeNR2OKbzaZ1lb8j50YpvAUxOI/7YFQsFLptJ48QZGzSc6F4hy
+        lmyt3AGutHop8V4/afp6Rr0ORahlitHko/VidYoqEaU10fhW2LdHNY1Hfm7Sq29dZWmjnhtjvk0pc
+        nJ9nYIhWykwqTPkLcJo4p4qR2yhGlGC7XfUHBLr9BM0kWh6wnALG6Bzt5ecd1CqWrCHCuhJ+Yt8d1
+        5s670p2ZpaHBag3d0yVvdC7j9skvuEOrXyHyvGdCmwJxXF4NOHHaLXyhkGkSa6eVfc1P5e9t0Qj04
+        ipmNyj7Ww==;
+Received: from [177.97.26.110] (helo=coco.lan)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g06mW-0003iM-RO; Wed, 12 Sep 2018 15:10:17 +0000
+Date:   Wed, 12 Sep 2018 12:10:12 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Prabhakar Lad <prabhakar.csengg@gmail.com>,
+        Benoit Parrot <bparrot@ti.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Hyun Kwon <hyun.kwon@xilinx.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>
+Subject: Re: [PATCH] media: Convert to using %pOFn instead of
+ device_node.name
+Message-ID: <20180912121012.33cc3c21@coco.lan>
+In-Reply-To: <CAL_JsqKdLoH9X_ThSr45NOqijWRBJgC7eV_iCrCXf5Jhu-dpkQ@mail.gmail.com>
+References: <20180828015252.28511-1-robh@kernel.org>
+        <20180828015252.28511-28-robh@kernel.org>
+        <2863201.EMhOTYQe29@avalon>
+        <CAL_JsqKdLoH9X_ThSr45NOqijWRBJgC7eV_iCrCXf5Jhu-dpkQ@mail.gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <CAKv+Gu_dfQUXDdvk99fe6-qW3wj8e=8wR2aqCtJj1GfkXirzRg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/12/2018 11:00 PM, Ard Biesheuvel wrote:
-> On 8 September 2018 at 18:23, Aaron Ma <aaron.ma@canonical.com> wrote:
->> EFI GOP uses 64-bit frame buffer address in some BIOS.
->> Add 64bit address support in efi earlyprintk.
->>
->> Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
->> ---
->>  arch/x86/platform/efi/early_printk.c | 4 ++++
->>  1 file changed, 4 insertions(+)
->>
->> diff --git a/arch/x86/platform/efi/early_printk.c b/arch/x86/platform/efi/early_printk.c
->> index 5fdacb322ceb..c0ae25f59acd 100644
->> --- a/arch/x86/platform/efi/early_printk.c
->> +++ b/arch/x86/platform/efi/early_printk.c
->> @@ -32,6 +32,8 @@ static __init int early_efi_map_fb(void)
->>                 return 0;
->>
->>         base = boot_params.screen_info.lfb_base;
->> +       if (boot_params.screen_info.capabilities & VIDEO_CAPABILITY_64BIT_BASE)
->> +               base |= (u64)boot_params.screen_info.ext_lfb_base << 32;
->>         size = boot_params.screen_info.lfb_size;
->>         efi_fb = ioremap(base, size);
->>
->> @@ -49,6 +51,8 @@ static __ref void *early_efi_map(unsigned long start, unsigned long len)
->>         unsigned long base;
->>
->>         base = boot_params.screen_info.lfb_base;
->> +       if (boot_params.screen_info.capabilities & VIDEO_CAPABILITY_64BIT_BASE)
->> +               base |= (u64)boot_params.screen_info.ext_lfb_base << 32;
->>
->>         if (efi_fb)
->>                 return (efi_fb + start);
-> Please fix this in a way that works on 32-bit x86/PAE as well (i.e.,
-> use a suitable type for base)
-> 
+Em Tue, 28 Aug 2018 07:21:46 -0500
+Rob Herring <robh@kernel.org> escreveu:
 
-Right, I will send a v2 patch.
+> On Tue, Aug 28, 2018 at 5:06 AM Laurent Pinchart
+> <laurent.pinchart@ideasonboard.com> wrote:
+> >
+> > Hi Rob,
+> >
+> > Thank you for the patch.
+> >
+> > On Tuesday, 28 August 2018 04:52:29 EEST Rob Herring wrote:  
+> > > In preparation to remove the node name pointer from struct device_node,
+> > > convert printf users to use the %pOFn format specifier.
+> > >
+> > > Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> > > Cc: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+> > > Cc: Benoit Parrot <bparrot@ti.com>
+> > > Cc: Philipp Zabel <p.zabel@pengutronix.de>
+> > > Cc: Hyun Kwon <hyun.kwon@xilinx.com>
+> > > Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > > Cc: Michal Simek <michal.simek@xilinx.com>
+> > > Cc: linux-media@vger.kernel.org
+> > > Signed-off-by: Rob Herring <robh@kernel.org>  
+> >
+> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> >
+> > Which tree would you like to merge this through ?  
+> 
+> Media tree. There's no dependency.
+
+Ok. I'm applying it.
+
+> 
+> Rob
+
+
 
 Thanks,
-Aaron
+Mauro
