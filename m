@@ -2,67 +2,158 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D126C4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 13:25:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEEC8C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 13:25:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94E0F206B6
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 13:25:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94E0F206B6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 7BE7C206B6
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 13:25:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BE7C206B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727943AbeILS35 (ORCPT
+        id S1728015AbeILSaA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 14:29:57 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:12103 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727789AbeILS35 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 14:29:57 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 56547F8FF43C5;
-        Wed, 12 Sep 2018 21:25:20 +0800 (CST)
-Received: from [127.0.0.1] (10.177.29.68) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.399.0; Wed, 12 Sep 2018
- 21:25:18 +0800
-Message-ID: <5B9913BE.1040807@huawei.com>
-Date:   Wed, 12 Sep 2018 21:25:18 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
-MIME-Version: 1.0
-To:     David Miller <davem@davemloft.net>
-CC:     <edumazet@google.com>, <kuznet@ms2.inr.ac.ru>,
-        <yoshfuji@linux-ipv6.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] net: ipv4: Use BUG_ON directly instead of a if condition
- followed by BUG
-References: <1536590282-23899-1-git-send-email-zhongjiang@huawei.com> <20180911.235417.1481257495387934935.davem@davemloft.net>
-In-Reply-To: <20180911.235417.1481257495387934935.davem@davemloft.net>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.68]
-X-CFilter-Loop: Reflected
+        Wed, 12 Sep 2018 14:30:00 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:47093 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727791AbeILS37 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 14:29:59 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07437936|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03293;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=15;RT=15;SR=0;TI=SMTPD_---.CpvhVDy_1536758711;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CpvhVDy_1536758711)
+          by smtp.aliyun-inc.com(10.147.42.135);
+          Wed, 12 Sep 2018 21:25:11 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, daniel.lezcano@linaro.org,
+        jason@lakedaemon.net, arnd@arndb.de, devicetree@vger.kernel.org,
+        andrea.parri@amarulasolutions.com, peterz@infradead.org
+Cc:     c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
+        thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org, ren_guo@c-sky.com,
+        green.hu@gmail.com
+Subject: [PATCH V3 10/27] csky: IRQ handling
+Date:   Wed, 12 Sep 2018 21:24:44 +0800
+Message-Id: <0acf2d5c98e856ddb024a8877a5d4935582c22a5.1536757532.git.ren_guo@c-sky.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1536757532.git.ren_guo@c-sky.com>
+References: <cover.1536757532.git.ren_guo@c-sky.com>
+In-Reply-To: <cover.1536757532.git.ren_guo@c-sky.com>
+References: <cover.1536757532.git.ren_guo@c-sky.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/9/12 14:54, David Miller wrote:
-> From: zhong jiang <zhongjiang@huawei.com>
-> Date: Mon, 10 Sep 2018 22:38:02 +0800
->
->> The if condition can be removed if we use BUG_ON directly.
->> The issule is detected with the help of Coccinelle.
->>
->> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-> You keep asking if this is worthy to do.
->
-> I think the most worthy thing to do is actually build test your
-> patches.
- I am sorry for that.  :-[
+Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+---
+ arch/csky/include/asm/irq.h      |  8 +++++++
+ arch/csky/include/asm/irqflags.h | 49 ++++++++++++++++++++++++++++++++++++++++
+ arch/csky/kernel/irq.c           | 21 +++++++++++++++++
+ 3 files changed, 78 insertions(+)
+ create mode 100644 arch/csky/include/asm/irq.h
+ create mode 100644 arch/csky/include/asm/irqflags.h
+ create mode 100644 arch/csky/kernel/irq.c
 
-Thanks,
-zhong jiang
+diff --git a/arch/csky/include/asm/irq.h b/arch/csky/include/asm/irq.h
+new file mode 100644
+index 0000000..f8ce7f4
+--- /dev/null
++++ b/arch/csky/include/asm/irq.h
+@@ -0,0 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
++#ifndef __ASM_CSKY_IRQ_H
++#define __ASM_CSKY_IRQ_H
++
++#include <asm-generic/irq.h>
++
++#endif /* __ASM_CSKY_IRQ_H */
+diff --git a/arch/csky/include/asm/irqflags.h b/arch/csky/include/asm/irqflags.h
+new file mode 100644
+index 0000000..bd55b21
+--- /dev/null
++++ b/arch/csky/include/asm/irqflags.h
+@@ -0,0 +1,49 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
++#ifndef __ASM_CSKY_IRQFLAGS_H
++#define __ASM_CSKY_IRQFLAGS_H
++#include <abi/reg_ops.h>
++
++static inline unsigned long arch_local_irq_save(void)
++{
++	unsigned long flags;
++
++	flags = mfcr("psr");
++	asm volatile("psrclr ie\n":::"memory");
++	return flags;
++}
++#define arch_local_irq_save arch_local_irq_save
++
++static inline void arch_local_irq_enable(void)
++{
++	asm volatile("psrset ee, ie\n":::"memory");
++}
++#define arch_local_irq_enable arch_local_irq_enable
++
++static inline void arch_local_irq_disable(void)
++{
++	asm volatile("psrclr ie\n":::"memory");
++}
++#define arch_local_irq_disable arch_local_irq_disable
++
++static inline unsigned long arch_local_save_flags(void)
++{
++	return mfcr("psr");
++}
++#define arch_local_save_flags arch_local_save_flags
++
++static inline void arch_local_irq_restore(unsigned long flags)
++{
++	mtcr("psr", flags);
++}
++#define arch_local_irq_restore arch_local_irq_restore
++
++static inline int arch_irqs_disabled_flags(unsigned long flags)
++{
++	return !(flags & (1<<6));
++}
++#define arch_irqs_disabled_flags arch_irqs_disabled_flags
++
++#include <asm-generic/irqflags.h>
++
++#endif /* __ASM_CSKY_IRQFLAGS_H */
+diff --git a/arch/csky/kernel/irq.c b/arch/csky/kernel/irq.c
+new file mode 100644
+index 0000000..798a2ba
+--- /dev/null
++++ b/arch/csky/kernel/irq.c
+@@ -0,0 +1,21 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
++#include <linux/init.h>
++#include <linux/interrupt.h>
++#include <linux/irq.h>
++#include <linux/irqchip.h>
++#include <asm/traps.h>
++#include <asm/smp.h>
++
++void __init init_IRQ(void)
++{
++	irqchip_init();
++#ifdef CONFIG_SMP
++	setup_smp_ipi();
++#endif
++}
++
++asmlinkage void __irq_entry csky_do_IRQ(struct pt_regs *regs)
++{
++	handle_arch_irq(regs);
++}
+-- 
+2.7.4
 
