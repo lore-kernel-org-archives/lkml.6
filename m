@@ -2,83 +2,104 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D493EC46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 04:25:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E30CC46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 04:32:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CC2620866
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 04:25:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33B95206B6
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 04:32:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="2UlIyprc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CC2620866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="RiarUkEF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33B95206B6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726428AbeILJ2c (ORCPT
+        id S1726533AbeILJez (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 05:28:32 -0400
-Received: from conuserg-07.nifty.com ([210.131.2.74]:32285 "EHLO
-        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725740AbeILJ2c (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 05:28:32 -0400
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-07.nifty.com with ESMTP id w8C4PNLV025631;
-        Wed, 12 Sep 2018 13:25:23 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w8C4PNLV025631
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1536726324;
-        bh=UrKjS4w0DtVaY1t9GuHe2zcZQugHX0XIU9drYuKoqBw=;
-        h=From:To:Cc:Subject:Date:From;
-        b=2UlIyprc6ZCHRtbEFdu2aW2u/7lks3sqUjfFz/U3JAS6AJM8Y6SSsh3o3mI04oCYW
-         qqcbOAvvSDLOfis/FX6LqidGJ/VjQf6Ub6qd43eK//i4DW73bkeAPRoZjuHLMy4cKJ
-         H7qRilyyDoB3bqHt5gkJdVrb7W/wTyOr3JMxPxxfvMbwlPhrV9DB48DfXS3RWpTCim
-         zVCbpd0VGUq5hxG454Of+wihxonWwr2w0Q3AIZZym4hmyIQ3X75XwuE35wsYjtvIhw
-         k5EV7zLYtFaf9eGgdx6AMrj2hnXyHGmxH3wMhKKduZCOCItBqoMwsL03Ins8YfsnmK
-         ghI38/7bK9jUg==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>,
-        linux-xtensa@linux-xtensa.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] xtensa: remove unnecessary KBUILD_SRC ifeq conditional
-Date:   Wed, 12 Sep 2018 13:25:19 +0900
-Message-Id: <1536726319-9645-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 12 Sep 2018 05:34:55 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:49115 "EHLO frisell.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725738AbeILJey (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 05:34:54 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 26c689bc;
+        Wed, 12 Sep 2018 04:15:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to:cc
+        :content-type:content-transfer-encoding; s=mail; bh=S6ANol2e2m77
+        gIN6Kn+N6c5BFyk=; b=RiarUkEFHb1JeimEq1I3rZb4p02QTaLcFrv6Tfav3C5f
+        XFVzHJ6ca0IAJin10DBS73kbB+i47Z6LCQKV9hZ79Lees09a595+KpWOcsHAP7xc
+        SiFbk5YESJodcZ8FmffrLHPtlHF4JPBRVxfn2esDxuJ3NgDSHkfOY3/VJfI8/e/i
+        EvtkiNx8c/jDOZa3ZuyBFdJBGBsGrJcVqLvjooCxaBG7lDGOfrU6eoLeWgSggGMI
+        OfACXtzuw20WrKw6TCQoiCEaVFDcANmDpSTUxNfFPXVdTxnO1G+AGGMXUi0d0bhy
+        Rrdpj6l6LlF0wcoMQGgvHUBRxdP/7T5SQk2UDS66ig==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 9932cd4c (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
+        Wed, 12 Sep 2018 04:15:28 +0000 (UTC)
+Received: by mail-oi0-f42.google.com with SMTP id b15-v6so1078418oib.10;
+        Tue, 11 Sep 2018 21:32:13 -0700 (PDT)
+X-Gm-Message-State: APzg51AkMfyW4WBKBXabKPZzxrQNlp1oqcJEAWej3mrIW8AvO9YVxkw4
+        RK65MSmKkZsugXQTMh+T22ZwEnH9fPTZRAhZZus=
+X-Google-Smtp-Source: ANB0VdYrLjteb1kWzmK43XHaJIvJFr3A0Y3xyA+xOlqFCC8qGHPZw0YbdQ5w4FeBtjqjXGd1Wy85pet7LPMTwBqBFYY=
+X-Received: by 2002:aca:dc82:: with SMTP id t124-v6mr22038oig.189.1536726732658;
+ Tue, 11 Sep 2018 21:32:12 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180911010838.8818-1-Jason@zx2c4.com> <20180911010838.8818-3-Jason@zx2c4.com>
+ <CAKv+Gu9nSeo4PFVrtjtqGQ32eqyxUp3xVCczZfu+dhFz5yLM0A@mail.gmail.com>
+ <20180911145624.GA21635@kroah.com> <20180911214737.GA81235@gmail.com>
+ <49BAF465-B3DC-4155-BFF9-DB6C386C1878@amacapital.net> <CAHmME9q+mqT+vtM1FdBvf8=nAFu=u+wN48sOxqLcFthxYVn7NQ@mail.gmail.com>
+ <2E01FBB6-030A-40AB-8BEE-F8F271A57568@amacapital.net> <CAHmME9om2rJONj6mMvSPHjiZDQKe05BCe=GonHN=c2Rg4n=pkg@mail.gmail.com>
+In-Reply-To: <CAHmME9om2rJONj6mMvSPHjiZDQKe05BCe=GonHN=c2Rg4n=pkg@mail.gmail.com>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Tue, 11 Sep 2018 22:29:34 -0600
+X-Gmail-Original-Message-ID: <CAHmME9pp1f-3eUvyFAR1nvvvcmtaqQio_X1EmKwSaLNBgDiHLQ@mail.gmail.com>
+Message-ID: <CAHmME9pp1f-3eUvyFAR1nvvvcmtaqQio_X1EmKwSaLNBgDiHLQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v3 02/17] zinc: introduce minimal cryptography library
+To:     Andy Lutomirski <luto@amacapital.net>,
+        Eric Biggers <ebiggers@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-You can always prefix variant/platform header search paths with
-$(srctree)/ because $(srctree) is '.' for in-tree building.
+Hi Eric, Andy,
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+> On Tue, Sep 11, 2018 at 5:01 PM Andy Lutomirski <luto@amacapital.net> wro=
+te:
+> > I think Ard=E2=80=99s point is valid: in the long run we don=E2=80=99t =
+want two competing software implementations of each primitive. It clearly *=
+should* be possible to make crypto API call into zinc for synchronous softw=
+are operations, but a demonstration of how this actually works and that the=
+re isn=E2=80=99t some change to zinc to make it would well would be in orde=
+r, I think.
+> >
+> > IMO the right approach is do one conversion right away and save the res=
+t for later.
 
- arch/xtensa/Makefile | 4 ----
- 1 file changed, 4 deletions(-)
+It turned out to be fairly straight forward and quick to do. I'm on a
+transatlantic plane so the connection is super spotty, but you can
+check out the three commits added to:
+<https://git.kernel.org/pub/scm/linux/kernel/git/zx2c4/linux.git/log?h=3Djd=
+/wireguard>
+-- the two "crypto:" commits and the one "random:" commit.
+Alternatively, you can look directly at
+<https://git.kernel.org/pub/scm/linux/kernel/git/zx2c4/linux.git/tree/crypt=
+o/poly1305_zinc.c?h=3Djd/wireguard>
+and <https://git.kernel.org/pub/scm/linux/kernel/git/zx2c4/linux.git/tree/c=
+rypto/chacha20_zinc.c?h=3Djd/wireguard>.
+I'll be refining and checking these over the next week or so, but the
+basics were super easy to do.
 
-diff --git a/arch/xtensa/Makefile b/arch/xtensa/Makefile
-index 295c120..d67e30fa 100644
---- a/arch/xtensa/Makefile
-+++ b/arch/xtensa/Makefile
-@@ -64,11 +64,7 @@ endif
- vardirs := $(patsubst %,arch/xtensa/variants/%/,$(variant-y))
- plfdirs := $(patsubst %,arch/xtensa/platforms/%/,$(platform-y))
- 
--ifeq ($(KBUILD_SRC),)
--KBUILD_CPPFLAGS += $(patsubst %,-I%include,$(vardirs) $(plfdirs))
--else
- KBUILD_CPPFLAGS += $(patsubst %,-I$(srctree)/%include,$(vardirs) $(plfdirs))
--endif
- 
- KBUILD_DEFCONFIG := iss_defconfig
- 
--- 
-2.7.4
-
+Jason
