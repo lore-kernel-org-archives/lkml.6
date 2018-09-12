@@ -2,147 +2,110 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B947C4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:01:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D8B0C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:05:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 327FE2087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:01:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 327FE2087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id C31D420880
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:05:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="nDsarqaU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C31D420880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727872AbeILOD3 (ORCPT
+        id S1727848AbeILOIk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 10:03:29 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:60192 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726640AbeILOD3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 10:03:29 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A0B131A0112;
-        Wed, 12 Sep 2018 10:59:53 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 941A81A0102;
-        Wed, 12 Sep 2018 10:59:53 +0200 (CEST)
-Received: from enigma.ea.freescale.net (enigma.ea.freescale.net [10.171.81.110])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 149A8205F0;
-        Wed, 12 Sep 2018 10:59:53 +0200 (CEST)
-From:   =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Stuart Yoder <stuyoder@gmail.com>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Li Yang <leoyang.li@nxp.com>, Roy Pledge <roy.pledge@nxp.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Wed, 12 Sep 2018 10:08:40 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:35508 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727579AbeILOIj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 10:08:39 -0400
+Received: by mail-lf1-f65.google.com with SMTP id q13-v6so1018724lfc.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 02:05:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=SQ4djfH15Y6cvUUbrSQWMhBh8y69o6NwSOK5aJODhx8=;
+        b=nDsarqaUnvAlOFJ3+wZadjB28ZDoANjx++Gnr1bqGR/Cprp0LZUnLEMHuOSwnKoS2q
+         WOF1vn0c7LuruCeGVxC0DvEJhlkA045ybkTtTUbbSrjibzncde4w228w6bOb4aUnjUsq
+         jyUaz7ZXdeEzLqDg/RCqV4sGf/FjViCPKu6PWEL+9zWqBRei1SzNckMtiNBciU0LCoMz
+         Ww4megspXkAwoSwHeIriu4ezLRPczF40Q7Kcy4BtgMlLt+hjCv1SUcSnBwobcnm4Fj1E
+         LasXtCYsPwYOGGM8m2q3zDPP5H0om3lWgsOO53n0IA5nl1h0tntkTacbBqxOUYbashLq
+         Kvng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=SQ4djfH15Y6cvUUbrSQWMhBh8y69o6NwSOK5aJODhx8=;
+        b=mqp9QwNp7fY+cqb9C8JQwRR/hwSNhAKLUVJBQWL6+2ncXBRb96dLAnF7XpXUjSSDGT
+         ZfdqyGq6oZa4H6JHuflu27pqp1cSM2VeSY7wmBvfgfikfG3GLVLrsHm3ldFPybgfYJjM
+         ySHR1TJgxYgGmoXxq5zFOBtsj2O4kfmqKkMp6+3ZADdNyUwHfAgltH+SMmFih+E6A2w6
+         d714KhAcsG3bB2XHOPMeXrp38GR5SGdCWitpFLm54KB3XoD1DW1DzTz1kyszn6X2mkh0
+         nm2OO3iUWZXeTnlXOImQGkxevlfAhh4eqmF/Uv48TvAChYqQh9UkR8VLUQyeq5BcQx/H
+         WW8A==
+X-Gm-Message-State: APzg51CwipLEH0y9ITa21xRlArwl+6Nnl+w3GXW1wjvHymOvt4QLmY1N
+        LBt3IPg8GUYVU01EJ3+gFr/EdyCqsR4=
+X-Google-Smtp-Source: ANB0VdYqb52ob+THJvA0JZr3l6ioArx7Dixn9Uip5r1keRFWveZ9Rdenfr4xH1ivnrWKzfgPTrR8rw==
+X-Received: by 2002:a19:115b:: with SMTP id g88-v6mr724141lfi.57.1536743102330;
+        Wed, 12 Sep 2018 02:05:02 -0700 (PDT)
+Received: from [192.168.0.126] ([31.173.86.47])
+        by smtp.gmail.com with ESMTPSA id e41-v6sm91026lji.37.2018.09.12.02.05.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Sep 2018 02:05:01 -0700 (PDT)
+Subject: Re: [PATCH v2] neighbour: confirm neigh entries when ARP packet is
+ received
+To:     Vasily Khoruzhick <vasilykh@arista.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Roopa Prabhu <roopa@cumulusnetworks.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Jim Westfall <jwestfall@surrealistic.net>,
+        Wolfgang Bumiller <w.bumiller@proxmox.com>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ihar Hrachyshka <ihrachys@redhat.com>, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 00/12] crypto: caam - add DPAA2 (DPSECI) driver
-Date:   Wed, 12 Sep 2018 11:59:25 +0300
-Message-Id: <20180912085937.22489-1-horia.geanta@nxp.com>
-X-Mailer: git-send-email 2.16.2
+References: <20180911180406.31283-1-vasilykh@arista.com>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <11ed0447-bcf9-8590-94bb-1a4b842ee002@cogentembedded.com>
+Date:   Wed, 12 Sep 2018 12:05:00 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+In-Reply-To: <20180911180406.31283-1-vasilykh@arista.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hello!
 
-This patch set adds the CAAM crypto engine driver for DPAA2
-(Data Path Acceleration Architecture v2) found on ARMv8-based SoCs
-like LS1088A, LS2088A, LX2160A.
+On 9/11/2018 9:04 PM, Vasily Khoruzhick wrote:
 
-v1 -> v2:
-5/12 - new patch fixing sparse endianness-related warnings
-2/12 - changed commit message, since it's not a straightforward revert
-3/12, 8/12, 11/12 - fixed sparse and compiler warnings
+> Update 'confirmed' timestamp when ARP packet is received. It shouldn't
+> affect locktime logic and anyway entry can be confirmed by any higher-layer
+> protocol. Thus it makes to sense not to confirm it when ARP packet is
 
-Previous versions:
-v1: https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1763549.html
-RFC: https://www.mail-archive.com/linux-crypto@vger.kernel.org/msg27290.html
+    "Makes sense" or "makes no sense"?
 
-Driver consists of:
--DPSECI (Data Path SEC Interface) backend - low-level API that allows
-to manage DPSECI devices (DPAA2 objects) that sit on
-the Management Complex (MC) fsl-mc bus
--algorithms frontend - AEAD, skcipher and ahash algorithms implementation
+> received.
+> 
+> Fixes: 77d7123342 ("neighbour: update neigh timestamps iff update is
+> effective")
+> 
+> Signed-off-by: Vasily Khoruzhick <vasilykh@arista.com>
+[...]
 
-Patches 1-4 are fsl-mc bus and DPIO dependencies.
-Stuart, Laurentiu, Leo, Roy, please review the patches and let me know
-if you have anything against going with them through the cryptodev tree.
-
-Patch 5 fixes sparse endianness-related warnings in regs.h helper functions.
-
-Patches 6-11 are the core of the patch set, adding the driver.
-For symmetric encryption the new skcipher interface is used.
-
-Patch 12 enables driver on arm64. It will be built only if dependency
-on DPIO (CONFIG_FSL_MC_DPIO) is satisfied.
-
-Note: multiple modprobe/rmmod won't work without the following patches
-[5/7,v7] bus/fsl-mc: support dma configure for devices on fsl-mc bus
-https://patchwork.kernel.org/patch/10594179
-[7/7,v7] arm64: dts: ls208xa: comply with the iommu map binding for fsl_mc
-https://patchwork.kernel.org/patch/10594171
-(for LS1088A a similar DT update is needed)
-
-Thanks,
-Horia
-
-Horia Geantă (12):
-  bus: fsl-mc: add support for dpseci device type
-  soc: fsl: dpio: add back some frame queue functions
-  soc: fsl: dpio: add frame list format support
-  soc: fsl: dpio: add congestion notification support
-  crypto: caam - fix implicit casts in endianness helpers
-  crypto: caam - add DPAA2-CAAM (DPSECI) backend API
-  crypto: caam - add Queue Interface v2 error codes
-  crypto: caam/qi2 - add DPAA2-CAAM driver
-  crypto: caam/qi2 - add skcipher algorithms
-  crypto: caam - export ahash shared descriptor generation
-  crypto: caam/qi2 - add support for ahash algorithms
-  arm64: defconfig: enable CAAM crypto engine on QorIQ DPAA2 SoCs
-
- arch/arm64/configs/defconfig        |    1 +
- drivers/bus/fsl-mc/fsl-mc-bus.c     |    5 +
- drivers/crypto/Makefile             |    2 +-
- drivers/crypto/caam/Kconfig         |   55 +-
- drivers/crypto/caam/Makefile        |   10 +-
- drivers/crypto/caam/caamalg_qi2.c   | 5165 +++++++++++++++++++++++++++++++++++
- drivers/crypto/caam/caamalg_qi2.h   |  223 ++
- drivers/crypto/caam/caamhash.c      |   79 +-
- drivers/crypto/caam/caamhash_desc.c |   80 +
- drivers/crypto/caam/caamhash_desc.h |   21 +
- drivers/crypto/caam/compat.h        |    1 +
- drivers/crypto/caam/dpseci.c        |  426 +++
- drivers/crypto/caam/dpseci.h        |  333 +++
- drivers/crypto/caam/dpseci_cmd.h    |  149 +
- drivers/crypto/caam/error.c         |   79 +-
- drivers/crypto/caam/error.h         |    6 +-
- drivers/crypto/caam/regs.h          |   30 +-
- drivers/soc/fsl/dpio/dpio-service.c |   58 +
- include/linux/fsl/mc.h              |    6 +
- include/soc/fsl/dpaa2-fd.h          |  242 ++
- include/soc/fsl/dpaa2-global.h      |   15 +
- include/soc/fsl/dpaa2-io.h          |    4 +
- 22 files changed, 6885 insertions(+), 105 deletions(-)
- create mode 100644 drivers/crypto/caam/caamalg_qi2.c
- create mode 100644 drivers/crypto/caam/caamalg_qi2.h
- create mode 100644 drivers/crypto/caam/caamhash_desc.c
- create mode 100644 drivers/crypto/caam/caamhash_desc.h
- create mode 100644 drivers/crypto/caam/dpseci.c
- create mode 100644 drivers/crypto/caam/dpseci.h
- create mode 100644 drivers/crypto/caam/dpseci_cmd.h
-
--- 
-2.16.2
+MBR, Sergei
 
