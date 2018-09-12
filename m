@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E5B5C4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:00:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE4E5C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:00:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C56BF20882
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:00:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C56BF20882
+	by mail.kernel.org (Postfix) with ESMTP id 8B63620880
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:00:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B63620880
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728087AbeILODe (ORCPT
+        id S1728056AbeILODd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 10:03:34 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:60264 "EHLO inva020.nxp.com"
+        Wed, 12 Sep 2018 10:03:33 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:60232 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727985AbeILODc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727560AbeILODc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 12 Sep 2018 10:03:32 -0400
 Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9481B1A0254;
-        Wed, 12 Sep 2018 10:59:56 +0200 (CEST)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 671461A0113;
+        Wed, 12 Sep 2018 10:59:55 +0200 (CEST)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 884971A0144;
-        Wed, 12 Sep 2018 10:59:56 +0200 (CEST)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 5620F1A0102;
+        Wed, 12 Sep 2018 10:59:55 +0200 (CEST)
 Received: from enigma.ea.freescale.net (enigma.ea.freescale.net [10.171.81.110])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 093BC205F0;
-        Wed, 12 Sep 2018 10:59:56 +0200 (CEST)
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id CC758205F0;
+        Wed, 12 Sep 2018 10:59:54 +0200 (CEST)
 From:   =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>
 To:     Herbert Xu <herbert@gondor.apana.org.au>,
         Stuart Yoder <stuyoder@gmail.com>,
@@ -42,9 +42,9 @@ Cc:     "David S . Miller" <davem@davemloft.net>,
         Aymen Sghaier <aymen.sghaier@nxp.com>,
         linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 05/12] crypto: caam - fix implicit casts in endianness helpers
-Date:   Wed, 12 Sep 2018 11:59:30 +0300
-Message-Id: <20180912085937.22489-6-horia.geanta@nxp.com>
+Subject: [PATCH v2 03/12] soc: fsl: dpio: add frame list format support
+Date:   Wed, 12 Sep 2018 11:59:28 +0300
+Message-Id: <20180912085937.22489-4-horia.geanta@nxp.com>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180912085937.22489-1-horia.geanta@nxp.com>
 References: <20180912085937.22489-1-horia.geanta@nxp.com>
@@ -57,66 +57,278 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix the following sparse endianness warnings:
+Add support for dpaa2_fd_list format, i.e. dpaa2_fl_entry structure
+and accessors.
 
-drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __le32unsigned int @@
-drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-drivers/crypto/caam/regs.h:95:1:    got restricted __le32 [usertype] <noident>
-drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __be32unsigned int @@
-drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-drivers/crypto/caam/regs.h:95:1:    got restricted __be32 [usertype] <noident>
+Frame list entries (FLEs) are similar, but not identical to FDs:
++ "F" (final) bit
+- FMT[b'01] is reserved
+- DD, SC, DROPP bits (covered by "FD compatibility" field in FLE case)
+- FLC[5:0] not used for stashing
 
-drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __le32
-drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
-
-Fixes: 261ea058f016 ("crypto: caam - handle core endianness != caam endianness")
-Reported-by: kbuild test robot <lkp@intel.com>
 Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
 ---
- drivers/crypto/caam/regs.h | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+ include/soc/fsl/dpaa2-fd.h | 242 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 242 insertions(+)
 
-diff --git a/drivers/crypto/caam/regs.h b/drivers/crypto/caam/regs.h
-index 4fb91ba39c36..ce3f9ad7120f 100644
---- a/drivers/crypto/caam/regs.h
-+++ b/drivers/crypto/caam/regs.h
-@@ -70,22 +70,22 @@
- extern bool caam_little_end;
- extern bool caam_imx;
+diff --git a/include/soc/fsl/dpaa2-fd.h b/include/soc/fsl/dpaa2-fd.h
+index 2576abaa7779..90ae8d191f1a 100644
+--- a/include/soc/fsl/dpaa2-fd.h
++++ b/include/soc/fsl/dpaa2-fd.h
+@@ -66,6 +66,15 @@ struct dpaa2_fd {
+ #define SG_BPID_MASK		0x3FFF
+ #define SG_FINAL_FLAG_MASK	0x1
+ #define SG_FINAL_FLAG_SHIFT	15
++#define FL_SHORT_LEN_FLAG_MASK	0x1
++#define FL_SHORT_LEN_FLAG_SHIFT	14
++#define FL_SHORT_LEN_MASK	0x3FFFF
++#define FL_OFFSET_MASK		0x0FFF
++#define FL_FORMAT_MASK		0x3
++#define FL_FORMAT_SHIFT		12
++#define FL_BPID_MASK		0x3FFF
++#define FL_FINAL_FLAG_MASK	0x1
++#define FL_FINAL_FLAG_SHIFT	15
  
--#define caam_to_cpu(len)				\
--static inline u##len caam##len ## _to_cpu(u##len val)	\
--{							\
--	if (caam_little_end)				\
--		return le##len ## _to_cpu(val);		\
--	else						\
--		return be##len ## _to_cpu(val);		\
-+#define caam_to_cpu(len)						\
-+static inline u##len caam##len ## _to_cpu(u##len val)			\
-+{									\
-+	if (caam_little_end)						\
-+		return le##len ## _to_cpu((__force __le##len)val);	\
-+	else								\
-+		return be##len ## _to_cpu((__force __be##len)val);	\
+ /* Error bits in FD CTRL */
+ #define FD_CTRL_ERR_MASK	0x000000FF
+@@ -435,4 +444,237 @@ static inline void dpaa2_sg_set_final(struct dpaa2_sg_entry *sg, bool final)
+ 	sg->format_offset |= cpu_to_le16(final << SG_FINAL_FLAG_SHIFT);
  }
  
--#define cpu_to_caam(len)				\
--static inline u##len cpu_to_caam##len(u##len val)	\
--{							\
--	if (caam_little_end)				\
--		return cpu_to_le##len(val);		\
--	else						\
--		return cpu_to_be##len(val);		\
-+#define cpu_to_caam(len)					\
-+static inline u##len cpu_to_caam##len(u##len val)		\
-+{								\
-+	if (caam_little_end)					\
-+		return (__force u##len)cpu_to_le##len(val);	\
-+	else							\
-+		return (__force u##len)cpu_to_be##len(val);	\
- }
- 
- caam_to_cpu(16)
++/**
++ * struct dpaa2_fl_entry - structure for frame list entry.
++ * @addr:          address in the FLE
++ * @len:           length in the FLE
++ * @bpid:          buffer pool ID
++ * @format_offset: format, offset, and short-length fields
++ * @frc:           frame context
++ * @ctrl:          control bits...including pta, pvt1, pvt2, err, etc
++ * @flc:           flow context address
++ */
++struct dpaa2_fl_entry {
++	__le64 addr;
++	__le32 len;
++	__le16 bpid;
++	__le16 format_offset;
++	__le32 frc;
++	__le32 ctrl;
++	__le64 flc;
++};
++
++enum dpaa2_fl_format {
++	dpaa2_fl_single = 0,
++	dpaa2_fl_res,
++	dpaa2_fl_sg
++};
++
++/**
++ * dpaa2_fl_get_addr() - get the addr field of FLE
++ * @fle: the given frame list entry
++ *
++ * Return the address in the frame list entry.
++ */
++static inline dma_addr_t dpaa2_fl_get_addr(const struct dpaa2_fl_entry *fle)
++{
++	return (dma_addr_t)le64_to_cpu(fle->addr);
++}
++
++/**
++ * dpaa2_fl_set_addr() - Set the addr field of FLE
++ * @fle: the given frame list entry
++ * @addr: the address needs to be set in frame list entry
++ */
++static inline void dpaa2_fl_set_addr(struct dpaa2_fl_entry *fle,
++				     dma_addr_t addr)
++{
++	fle->addr = cpu_to_le64(addr);
++}
++
++/**
++ * dpaa2_fl_get_frc() - Get the frame context in the FLE
++ * @fle: the given frame list entry
++ *
++ * Return the frame context field in the frame lsit entry.
++ */
++static inline u32 dpaa2_fl_get_frc(const struct dpaa2_fl_entry *fle)
++{
++	return le32_to_cpu(fle->frc);
++}
++
++/**
++ * dpaa2_fl_set_frc() - Set the frame context in the FLE
++ * @fle: the given frame list entry
++ * @frc: the frame context needs to be set in frame list entry
++ */
++static inline void dpaa2_fl_set_frc(struct dpaa2_fl_entry *fle, u32 frc)
++{
++	fle->frc = cpu_to_le32(frc);
++}
++
++/**
++ * dpaa2_fl_get_ctrl() - Get the control bits in the FLE
++ * @fle: the given frame list entry
++ *
++ * Return the control bits field in the frame list entry.
++ */
++static inline u32 dpaa2_fl_get_ctrl(const struct dpaa2_fl_entry *fle)
++{
++	return le32_to_cpu(fle->ctrl);
++}
++
++/**
++ * dpaa2_fl_set_ctrl() - Set the control bits in the FLE
++ * @fle: the given frame list entry
++ * @ctrl: the control bits to be set in the frame list entry
++ */
++static inline void dpaa2_fl_set_ctrl(struct dpaa2_fl_entry *fle, u32 ctrl)
++{
++	fle->ctrl = cpu_to_le32(ctrl);
++}
++
++/**
++ * dpaa2_fl_get_flc() - Get the flow context in the FLE
++ * @fle: the given frame list entry
++ *
++ * Return the flow context in the frame list entry.
++ */
++static inline dma_addr_t dpaa2_fl_get_flc(const struct dpaa2_fl_entry *fle)
++{
++	return (dma_addr_t)le64_to_cpu(fle->flc);
++}
++
++/**
++ * dpaa2_fl_set_flc() - Set the flow context field of FLE
++ * @fle: the given frame list entry
++ * @flc_addr: the flow context needs to be set in frame list entry
++ */
++static inline void dpaa2_fl_set_flc(struct dpaa2_fl_entry *fle,
++				    dma_addr_t flc_addr)
++{
++	fle->flc = cpu_to_le64(flc_addr);
++}
++
++static inline bool dpaa2_fl_short_len(const struct dpaa2_fl_entry *fle)
++{
++	return !!((le16_to_cpu(fle->format_offset) >>
++		  FL_SHORT_LEN_FLAG_SHIFT) & FL_SHORT_LEN_FLAG_MASK);
++}
++
++/**
++ * dpaa2_fl_get_len() - Get the length in the FLE
++ * @fle: the given frame list entry
++ *
++ * Return the length field in the frame list entry.
++ */
++static inline u32 dpaa2_fl_get_len(const struct dpaa2_fl_entry *fle)
++{
++	if (dpaa2_fl_short_len(fle))
++		return le32_to_cpu(fle->len) & FL_SHORT_LEN_MASK;
++
++	return le32_to_cpu(fle->len);
++}
++
++/**
++ * dpaa2_fl_set_len() - Set the length field of FLE
++ * @fle: the given frame list entry
++ * @len: the length needs to be set in frame list entry
++ */
++static inline void dpaa2_fl_set_len(struct dpaa2_fl_entry *fle, u32 len)
++{
++	fle->len = cpu_to_le32(len);
++}
++
++/**
++ * dpaa2_fl_get_offset() - Get the offset field in the frame list entry
++ * @fle: the given frame list entry
++ *
++ * Return the offset.
++ */
++static inline u16 dpaa2_fl_get_offset(const struct dpaa2_fl_entry *fle)
++{
++	return le16_to_cpu(fle->format_offset) & FL_OFFSET_MASK;
++}
++
++/**
++ * dpaa2_fl_set_offset() - Set the offset field of FLE
++ * @fle: the given frame list entry
++ * @offset: the offset needs to be set in frame list entry
++ */
++static inline void dpaa2_fl_set_offset(struct dpaa2_fl_entry *fle, u16 offset)
++{
++	fle->format_offset &= cpu_to_le16(~FL_OFFSET_MASK);
++	fle->format_offset |= cpu_to_le16(offset);
++}
++
++/**
++ * dpaa2_fl_get_format() - Get the format field in the FLE
++ * @fle: the given frame list entry
++ *
++ * Return the format.
++ */
++static inline enum dpaa2_fl_format dpaa2_fl_get_format(const struct dpaa2_fl_entry *fle)
++{
++	return (enum dpaa2_fl_format)((le16_to_cpu(fle->format_offset) >>
++				       FL_FORMAT_SHIFT) & FL_FORMAT_MASK);
++}
++
++/**
++ * dpaa2_fl_set_format() - Set the format field of FLE
++ * @fle: the given frame list entry
++ * @format: the format needs to be set in frame list entry
++ */
++static inline void dpaa2_fl_set_format(struct dpaa2_fl_entry *fle,
++				       enum dpaa2_fl_format format)
++{
++	fle->format_offset &= cpu_to_le16(~(FL_FORMAT_MASK << FL_FORMAT_SHIFT));
++	fle->format_offset |= cpu_to_le16(format << FL_FORMAT_SHIFT);
++}
++
++/**
++ * dpaa2_fl_get_bpid() - Get the bpid field in the FLE
++ * @fle: the given frame list entry
++ *
++ * Return the buffer pool id.
++ */
++static inline u16 dpaa2_fl_get_bpid(const struct dpaa2_fl_entry *fle)
++{
++	return le16_to_cpu(fle->bpid) & FL_BPID_MASK;
++}
++
++/**
++ * dpaa2_fl_set_bpid() - Set the bpid field of FLE
++ * @fle: the given frame list entry
++ * @bpid: buffer pool id to be set
++ */
++static inline void dpaa2_fl_set_bpid(struct dpaa2_fl_entry *fle, u16 bpid)
++{
++	fle->bpid &= cpu_to_le16(~(FL_BPID_MASK));
++	fle->bpid |= cpu_to_le16(bpid);
++}
++
++/**
++ * dpaa2_fl_is_final() - Check final bit in FLE
++ * @fle: the given frame list entry
++ *
++ * Return bool.
++ */
++static inline bool dpaa2_fl_is_final(const struct dpaa2_fl_entry *fle)
++{
++	return !!(le16_to_cpu(fle->format_offset) >> FL_FINAL_FLAG_SHIFT);
++}
++
++/**
++ * dpaa2_fl_set_final() - Set the final bit in FLE
++ * @fle: the given frame list entry
++ * @final: the final boolean to be set
++ */
++static inline void dpaa2_fl_set_final(struct dpaa2_fl_entry *fle, bool final)
++{
++	fle->format_offset &= cpu_to_le16((~(FL_FINAL_FLAG_MASK <<
++					     FL_FINAL_FLAG_SHIFT)) & 0xFFFF);
++	fle->format_offset |= cpu_to_le16(final << FL_FINAL_FLAG_SHIFT);
++}
++
+ #endif /* __FSL_DPAA2_FD_H */
 -- 
 2.16.2
 
