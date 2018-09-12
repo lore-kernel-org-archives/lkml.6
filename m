@@ -2,154 +2,106 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D655CC6778D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:24:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EFA6C6778D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:24:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82C262087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:24:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 086312087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:24:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BZhQR3DP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82C262087F
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jwyIAVbA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 086312087F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727805AbeILV35 (ORCPT
+        id S1728041AbeILVaG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 17:29:57 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52880 "EHLO
+        Wed, 12 Sep 2018 17:30:06 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:53172 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726798AbeILV35 (ORCPT
+        with ESMTP id S1726792AbeILVaG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 17:29:57 -0400
+        Wed, 12 Sep 2018 17:30:06 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=7Lks6pZ72TXPOV0M611gEvH/TdS6H5aMizLe3D2jQtc=; b=BZhQR3DPq8sdNB/kbsCmisU/l
-        20J14vxl1BvzJNCbX+j5Nv3xHKN7Kd0+HfHltZaH+9roS8aBZ1V0K5T0ESvQULH8/B/5yoKDD7WRr
-        JzAXwJmwY4kPIOcVgDOBNs0xKV4l3S/23OAcsjUW3TXcatDg3SDNPrpJfecD8CDe0HthPSW6mdt3r
-        fgQuci1socdBHs1VptR7AHAxi2RFKnPZ2exfDxBqJXth42J5WOQWt3cBlwkWyZo70oSEesg4kG+fW
-        jNCO9OgilE18fTva0gaeTHaAndVvlgloV2FPAfFlIi4EjsIZOodK5ipatsG3nwkUo5eY++mnnXC2M
-        BrMmdNxGw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+         bh=Dnl+nsZSFtuJH7PGS4Sec4+GXx7gVXmHXNRwYQVPmPk=; b=jwyIAVbACcLprCWbP6im3Ephe
+        FlrTud8yZMp3a6xYXakuAN3CznHqt7dr7+Jf6RW2n4vnsPx37Tt9a7XXOk3Z/vWreKLmWKxbHG6OF
+        JSCg9GTI+AEYZE+YZvwv7GkRjuX+3a7D6HX1iZc15bmJUbRZJvNiS3JNwyQKUQQOSMDxwQrkRQdBN
+        ZaxPqjMPQDVu1UDYD4vAKfm26zIV0Ks6EFTKjRgzY1PiJf0jBDnrUAXMeGsPEWiK81voWDMdgIHgW
+        OJpA5Jy0L2enFDNfEzlW0zkoj3ay3xGxudqTltk7pa7bZZccNHZdiu//zv4ZiGCm6/21pz5kQXIJG
+        S2wPJHKJw==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g07wL-0001gK-F2; Wed, 12 Sep 2018 16:24:29 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 85DA5202C1A09; Wed, 12 Sep 2018 18:24:27 +0200 (CEST)
-Date:   Wed, 12 Sep 2018 18:24:27 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
+        id 1g07wX-0001ki-L5; Wed, 12 Sep 2018 16:24:41 +0000
+Subject: Re: [PATCH 5/5] PM / hibernate: An option to request that snapshot
+ image must be authenticated
+To:     "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>
 Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v4 02/16] sched/core: uclamp: map TASK's clamp values
- into CPU's clamp groups
-Message-ID: <20180912162427.GA24106@hirez.programming.kicks-ass.net>
-References: <20180828135324.21976-1-patrick.bellasi@arm.com>
- <20180828135324.21976-3-patrick.bellasi@arm.com>
+        "Lee, Chun-Yi" <jlee@suse.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Chen Yu <yu.c.chen@intel.com>,
+        Oliver Neukum <oneukum@suse.com>,
+        Ryan Chen <yu.chen.surf@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Giovanni Gherdovich <ggherdovich@suse.cz>
+References: <20180912142337.21955-1-jlee@suse.com>
+ <20180912142337.21955-6-jlee@suse.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <0ee402c0-bd0e-ea84-9def-f6355b83b4f5@infradead.org>
+Date:   Wed, 12 Sep 2018 09:24:38 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180828135324.21976-3-patrick.bellasi@arm.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180912142337.21955-6-jlee@suse.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 02:53:10PM +0100, Patrick Bellasi wrote:
->  static inline int __setscheduler_uclamp(struct task_struct *p,
->  					const struct sched_attr *attr)
+Hi,
 
-But large for inline now.
-
->  {
-> +	int group_id[UCLAMP_CNT] = { UCLAMP_NOT_VALID };
-> +	int lower_bound, upper_bound;
-> +	struct uclamp_se *uc_se;
-> +	int result = 0;
-
-I think the thing would become much more readable if you set
-lower/upper_bound right here.
+On 9/12/18 7:23 AM, Lee, Chun-Yi wrote:
+> diff --git a/kernel/power/Kconfig b/kernel/power/Kconfig
+> index 7c5c30149dbc..3c998fd6dc4c 100644
+> --- a/kernel/power/Kconfig
+> +++ b/kernel/power/Kconfig
+> @@ -90,6 +90,17 @@ config HIBERNATION_ENC_AUTH
+>  	  master key of hibernation. The TPM trusted key depends on TPM. The
+>  	  security of user defined key relies on user space.
 >  
-> +	mutex_lock(&uclamp_mutex);
->  
-> +	/* Find a valid group_id for each required clamp value */
-> +	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MIN) {
-> +		upper_bound = (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MAX)
-> +			? attr->sched_util_max
-> +			: p->uclamp[UCLAMP_MAX].value;
-> +
-> +		if (upper_bound == UCLAMP_NOT_VALID)
-> +			upper_bound = SCHED_CAPACITY_SCALE;
-> +		if (attr->sched_util_min > upper_bound) {
-> +			result = -EINVAL;
-> +			goto done;
-> +		}
-> +
-> +		result = uclamp_group_find(UCLAMP_MIN, attr->sched_util_min);
-> +		if (result == -ENOSPC) {
-> +			pr_err(UCLAMP_ENOSPC_FMT, "MIN");
+> +config HIBERNATION_ENC_AUTH_FORCE
+> +	bool "Require hibernate snapshot image to be validly signed"
+> +	depends on HIBERNATION_ENC_AUTH
+> +	help
+> +	  This option will prevent that a snapshot image without (valid)
+> +	  signature be restored. Without this option, a unauthenticated
 
-AFAICT this is an unpriv part of the syscall; and you can spam the log
-without limits. Not good.
+	                                              an
 
-> +			goto done;
-> +		}
-> +		group_id[UCLAMP_MIN] = result;
-> +	}
-> +	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MAX) {
-> +		lower_bound = (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MIN)
-> +			? attr->sched_util_min
-> +			: p->uclamp[UCLAMP_MIN].value;
+> +	  snapshot image can be restored but the restored kernel will be
+> +	  tainted. Which also means that the hibernation can be triggered
+
+s/Which/This/
+
+or like this:
+	  tainted, which also
+
+> +	  without snapshot key but kernel will be tainted without this
+> +	  option.
 > +
-> +		if (lower_bound == UCLAMP_NOT_VALID)
-> +			lower_bound = 0;
-> +		if (attr->sched_util_max < lower_bound ||
-> +		    attr->sched_util_max > SCHED_CAPACITY_SCALE) {
-> +			result = -EINVAL;
-> +			goto done;
-> +		}
-> +
-> +		result = uclamp_group_find(UCLAMP_MAX, attr->sched_util_max);
-> +		if (result == -ENOSPC) {
-> +			pr_err(UCLAMP_ENOSPC_FMT, "MAX");
-> +			goto done;
-> +		}
-> +		group_id[UCLAMP_MAX] = result;
-> +	}
-> +
-> +	/* Update each required clamp group */
-> +	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MIN) {
-> +		uc_se = &p->uclamp[UCLAMP_MIN];
-> +		uclamp_group_get(UCLAMP_MIN, group_id[UCLAMP_MIN],
-> +				 uc_se, attr->sched_util_min);
-> +	}
-> +	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MAX) {
-> +		uc_se = &p->uclamp[UCLAMP_MAX];
-> +		uclamp_group_get(UCLAMP_MAX, group_id[UCLAMP_MAX],
-> +				 uc_se, attr->sched_util_max);
-> +	}
-> +
-> +done:
-> +	mutex_unlock(&uclamp_mutex);
-> +
-> +	return result;
-> +}
+
+
+-- 
+~Randy
