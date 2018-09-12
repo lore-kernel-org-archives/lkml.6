@@ -6,49 +6,49 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3C13C46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 18:06:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39B9EC6778D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 18:06:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 627A62088E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 18:06:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E93892088E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 18:06:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Zl9pXI/X";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HMLxqkLi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 627A62088E
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Dc7+GokG";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Dc7+GokG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E93892088E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727994AbeILXM3 (ORCPT
+        id S1728033AbeILXMc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 19:12:29 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:43214 "EHLO
+        Wed, 12 Sep 2018 19:12:32 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:43352 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727183AbeILXM3 (ORCPT
+        with ESMTP id S1727972AbeILXMa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 19:12:29 -0400
+        Wed, 12 Sep 2018 19:12:30 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 9220C6031A; Wed, 12 Sep 2018 18:06:48 +0000 (UTC)
+        id E8550609F3; Wed, 12 Sep 2018 18:06:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536775608;
-        bh=/lIPHjO1S+kApq8sHgaf3227KfrIOQECtzluju/q8VA=;
+        s=default; t=1536775609;
+        bh=g3Sdv6CpVkM0FD+8VN6I1vcE8P5fndxD3Xsg60kjUBM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Zl9pXI/XhJ4sz3QAFt7MD0WUvLvu+UuAg609Zao9lSqbetj/E9Yprs4CmRxS6im0K
-         pJrSATegIx4tu6m03CnGIy+4TLGhlVGkEyicnN6Va503V90yLE0wY4xQ5TZQwgjTVN
-         uPnFdYIwyOgryjeXBwcXgE0AIoXBu85TESh6K01Q=
+        b=Dc7+GokGbC/AmULaUEbfSIE3xzPE+tpPebUbuSeXpIyBQiAdMdbiZxD681PEZ27uH
+         c1We0s8nChH+FwcpEq5bPmyxMXVIBBpeWTlBQqtiQINjLLAQ3Z5AoVC5AamW4IiX8x
+         uRGFUg1P1Gb1rLUDkMY9AZRPuhQqBYyT2zOpWjNg=
 Received: from vgutta-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: vnkgutta@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id B14C3607DD;
-        Wed, 12 Sep 2018 18:06:46 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B6A3C60881;
+        Wed, 12 Sep 2018 18:06:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536775607;
-        bh=/lIPHjO1S+kApq8sHgaf3227KfrIOQECtzluju/q8VA=;
+        s=default; t=1536775609;
+        bh=g3Sdv6CpVkM0FD+8VN6I1vcE8P5fndxD3Xsg60kjUBM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HMLxqkLiOaT3VumE+SZZEStkcAVDIsafh7jWyj/+KGCGutx6oPDklTjm/DgryXJTA
-         +fGdU2tUBdVBOgygUxxJjsFe/6fWA1noGE9TewtBLw/Eu4J5ay+CfLBXdSGk/pV7ZN
-         5fq+kdm1WDgfLZbx9M6Nc2dmbrZk7gzsWYywDlOc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B14C3607DD
+        b=Dc7+GokGbC/AmULaUEbfSIE3xzPE+tpPebUbuSeXpIyBQiAdMdbiZxD681PEZ27uH
+         c1We0s8nChH+FwcpEq5bPmyxMXVIBBpeWTlBQqtiQINjLLAQ3Z5AoVC5AamW4IiX8x
+         uRGFUg1P1Gb1rLUDkMY9AZRPuhQqBYyT2zOpWjNg=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B6A3C60881
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vnkgutta@codeaurora.org
 From:   Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
@@ -63,9 +63,9 @@ To:     Borislav Petkov <bp@alien8.de>, evgreen@chromium.org,
         swboyd@chromium.org, bjorn.andersson@linaro.org,
         Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
 Cc:     Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
-Subject: [PATCH v6 1/4] drivers: soc: Add broadcast base for Last Level Cache Controller (LLCC)
-Date:   Wed, 12 Sep 2018 11:06:32 -0700
-Message-Id: <1536775595-11192-2-git-send-email-vnkgutta@codeaurora.org>
+Subject: [PATCH v6 2/4] drivers: soc: Add support to register LLCC EDAC driver
+Date:   Wed, 12 Sep 2018 11:06:33 -0700
+Message-Id: <1536775595-11192-3-git-send-email-vnkgutta@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1536775595-11192-1-git-send-email-vnkgutta@codeaurora.org>
 References: <1536775595-11192-1-git-send-email-vnkgutta@codeaurora.org>
@@ -74,171 +74,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, broadcast base is set to end of the LLCC banks, which may
-not be correct always. As the number of banks may vary for each chipset
-and the broadcast base could be at a different address as well. This info
-depends on the chipset, so get the broadcast base info from the device
-tree (DT). Add broadcast base in LLCC driver and use this for broadcast
-writes.
+Cache error reporting controller detects and reports single and
+double bit errors on Last Level Cache Controller (LLCC) cache.
+Add required support to register LLCC EDAC driver as platform driver,
+from LLCC driver.
 
 Signed-off-by: Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
 Reviewed-by: Evan Green <evgreen@chromium.org>
 ---
- drivers/soc/qcom/llcc-slice.c      | 55 +++++++++++++++++++++++---------------
- include/linux/soc/qcom/llcc-qcom.h |  4 +--
- 2 files changed, 35 insertions(+), 24 deletions(-)
+ drivers/soc/qcom/llcc-slice.c      | 18 ++++++++++++++++--
+ include/linux/soc/qcom/llcc-qcom.h |  2 ++
+ 2 files changed, 18 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/soc/qcom/llcc-slice.c b/drivers/soc/qcom/llcc-slice.c
-index fcaad1a..a63640d 100644
+index a63640d..09c8bb0 100644
 --- a/drivers/soc/qcom/llcc-slice.c
 +++ b/drivers/soc/qcom/llcc-slice.c
-@@ -105,22 +105,24 @@ static int llcc_update_act_ctrl(u32 sid,
- 	u32 slice_status;
- 	int ret;
- 
--	act_ctrl_reg = drv_data->bcast_off + LLCC_TRP_ACT_CTRLn(sid);
--	status_reg = drv_data->bcast_off + LLCC_TRP_STATUSn(sid);
-+	act_ctrl_reg = LLCC_TRP_ACT_CTRLn(sid);
-+	status_reg = LLCC_TRP_STATUSn(sid);
- 
- 	/* Set the ACTIVE trigger */
- 	act_ctrl_reg_val |= ACT_CTRL_ACT_TRIG;
--	ret = regmap_write(drv_data->regmap, act_ctrl_reg, act_ctrl_reg_val);
-+	ret = regmap_write(drv_data->bcast_regmap, act_ctrl_reg,
-+				act_ctrl_reg_val);
- 	if (ret)
- 		return ret;
- 
- 	/* Clear the ACTIVE trigger */
- 	act_ctrl_reg_val &= ~ACT_CTRL_ACT_TRIG;
--	ret = regmap_write(drv_data->regmap, act_ctrl_reg, act_ctrl_reg_val);
-+	ret = regmap_write(drv_data->bcast_regmap, act_ctrl_reg,
-+				act_ctrl_reg_val);
- 	if (ret)
- 		return ret;
- 
--	ret = regmap_read_poll_timeout(drv_data->regmap, status_reg,
-+	ret = regmap_read_poll_timeout(drv_data->bcast_regmap, status_reg,
- 				      slice_status, !(slice_status & status),
- 				      0, LLCC_STATUS_READ_DELAY);
- 	return ret;
-@@ -225,16 +227,13 @@ static int qcom_llcc_cfg_program(struct platform_device *pdev)
- 	int ret;
+@@ -224,7 +224,7 @@ static int qcom_llcc_cfg_program(struct platform_device *pdev)
+ 	u32 attr0_val;
+ 	u32 max_cap_cacheline;
+ 	u32 sz;
+-	int ret;
++	int ret = 0;
  	const struct llcc_slice_config *llcc_table;
  	struct llcc_slice_desc desc;
--	u32 bcast_off = drv_data->bcast_off;
  
- 	sz = drv_data->cfg_size;
- 	llcc_table = drv_data->cfg;
- 
- 	for (i = 0; i < sz; i++) {
--		attr1_cfg = bcast_off +
--				LLCC_TRP_ATTR1_CFGn(llcc_table[i].slice_id);
--		attr0_cfg = bcast_off +
--				LLCC_TRP_ATTR0_CFGn(llcc_table[i].slice_id);
-+		attr1_cfg = LLCC_TRP_ATTR1_CFGn(llcc_table[i].slice_id);
-+		attr0_cfg = LLCC_TRP_ATTR0_CFGn(llcc_table[i].slice_id);
- 
- 		attr1_val = llcc_table[i].cache_mode;
- 		attr1_val |= llcc_table[i].probe_target_ways <<
-@@ -259,10 +258,12 @@ static int qcom_llcc_cfg_program(struct platform_device *pdev)
- 		attr0_val = llcc_table[i].res_ways & ATTR0_RES_WAYS_MASK;
- 		attr0_val |= llcc_table[i].bonus_ways << ATTR0_BONUS_WAYS_SHIFT;
- 
--		ret = regmap_write(drv_data->regmap, attr1_cfg, attr1_val);
-+		ret = regmap_write(drv_data->bcast_regmap, attr1_cfg,
-+					attr1_val);
- 		if (ret)
- 			return ret;
--		ret = regmap_write(drv_data->regmap, attr0_cfg, attr0_val);
-+		ret = regmap_write(drv_data->bcast_regmap, attr0_cfg,
-+					attr0_val);
- 		if (ret)
- 			return ret;
- 		if (llcc_table[i].activate_on_init) {
-@@ -278,24 +279,36 @@ int qcom_llcc_probe(struct platform_device *pdev,
- {
- 	u32 num_banks;
- 	struct device *dev = &pdev->dev;
--	struct resource *res;
--	void __iomem *base;
-+	struct resource *llcc_banks_res, *llcc_bcast_res;
-+	void __iomem *llcc_banks_base, *llcc_bcast_base;
+@@ -282,6 +282,7 @@ int qcom_llcc_probe(struct platform_device *pdev,
+ 	struct resource *llcc_banks_res, *llcc_bcast_res;
+ 	void __iomem *llcc_banks_base, *llcc_bcast_base;
  	int ret, i;
++	struct platform_device *llcc_edac;
  
  	drv_data = devm_kzalloc(dev, sizeof(*drv_data), GFP_KERNEL);
  	if (!drv_data)
- 		return -ENOMEM;
+@@ -341,6 +342,19 @@ int qcom_llcc_probe(struct platform_device *pdev,
+ 	mutex_init(&drv_data->lock);
+ 	platform_set_drvdata(pdev, drv_data);
  
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	base = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(base))
--		return PTR_ERR(base);
-+	llcc_banks_res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
-+							"llcc_base");
-+	llcc_banks_base = devm_ioremap_resource(&pdev->dev, llcc_banks_res);
-+	if (IS_ERR(llcc_banks_base))
-+		return PTR_ERR(llcc_banks_base);
- 
--	drv_data->regmap = devm_regmap_init_mmio(dev, base,
--					&llcc_regmap_config);
-+	drv_data->regmap = devm_regmap_init_mmio(dev, llcc_banks_base,
-+						&llcc_regmap_config);
- 	if (IS_ERR(drv_data->regmap))
- 		return PTR_ERR(drv_data->regmap);
- 
-+	llcc_bcast_res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
-+							"llcc_broadcast_base");
-+	llcc_bcast_base = devm_ioremap_resource(&pdev->dev, llcc_bcast_res);
-+	if (IS_ERR(llcc_bcast_base))
-+		return PTR_ERR(llcc_bcast_base);
+-	return qcom_llcc_cfg_program(pdev);
++	ret = qcom_llcc_cfg_program(pdev);
++	if (ret)
++		return ret;
 +
-+	drv_data->bcast_regmap = devm_regmap_init_mmio(dev, llcc_bcast_base,
-+							&llcc_regmap_config);
-+	if (IS_ERR(drv_data->bcast_regmap))
-+		return PTR_ERR(drv_data->bcast_regmap);
++	drv_data->ecc_irq = platform_get_irq(pdev, 0);
++	if (drv_data->ecc_irq >= 0) {
++		llcc_edac = platform_device_register_data(&pdev->dev,
++						"qcom_llcc_edac", -1, drv_data,
++						sizeof(*drv_data));
++		if (IS_ERR(llcc_edac))
++			dev_err(dev, "Failed to register llcc edac driver\n");
++	}
 +
- 	ret = regmap_read(drv_data->regmap, LLCC_COMMON_STATUS0,
- 						&num_banks);
- 	if (ret)
-@@ -317,8 +330,6 @@ int qcom_llcc_probe(struct platform_device *pdev,
- 	for (i = 0; i < num_banks; i++)
- 		drv_data->offsets[i] = i * BANK_OFFSET_STRIDE;
- 
--	drv_data->bcast_off = num_banks * BANK_OFFSET_STRIDE;
--
- 	drv_data->bitmap = devm_kcalloc(dev,
- 	BITS_TO_LONGS(drv_data->max_slices), sizeof(unsigned long),
- 						GFP_KERNEL);
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(qcom_llcc_probe);
 diff --git a/include/linux/soc/qcom/llcc-qcom.h b/include/linux/soc/qcom/llcc-qcom.h
-index 7e3b9c6..c681e79 100644
+index c681e79..2e4b34d 100644
 --- a/include/linux/soc/qcom/llcc-qcom.h
 +++ b/include/linux/soc/qcom/llcc-qcom.h
-@@ -70,22 +70,22 @@ struct llcc_slice_config {
- /**
-  * llcc_drv_data - Data associated with the llcc driver
-  * @regmap: regmap associated with the llcc device
-+ * @bcast_regmap: regmap associated with llcc broadcast offset
-  * @cfg: pointer to the data structure for slice configuration
-  * @lock: mutex associated with each slice
-  * @cfg_size: size of the config data table
-  * @max_slices: max slices as read from device tree
-- * @bcast_off: Offset of the broadcast bank
+@@ -78,6 +78,7 @@ struct llcc_slice_config {
   * @num_banks: Number of llcc banks
   * @bitmap: Bit map to track the active slice ids
   * @offsets: Pointer to the bank offsets array
++ * @ecc_irq: interrupt for llcc cache error detection and reporting
   */
  struct llcc_drv_data {
  	struct regmap *regmap;
-+	struct regmap *bcast_regmap;
- 	const struct llcc_slice_config *cfg;
- 	struct mutex lock;
- 	u32 cfg_size;
- 	u32 max_slices;
--	u32 bcast_off;
+@@ -89,6 +90,7 @@ struct llcc_drv_data {
  	u32 num_banks;
  	unsigned long *bitmap;
  	u32 *offsets;
++	int ecc_irq;
+ };
+ 
+ #if IS_ENABLED(CONFIG_QCOM_LLCC)
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
