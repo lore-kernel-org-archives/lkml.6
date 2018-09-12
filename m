@@ -2,171 +2,535 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=0.1 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,UNWANTED_LANGUAGE_BODY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B8C6C6778D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:54:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B43DC6778D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:54:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4910920839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:54:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fB9bKNXf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4910920839
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 4BA2320891
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:54:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BA2320891
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728550AbeILT7U (ORCPT
+        id S1728561AbeILT73 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 15:59:20 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:38295 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728090AbeILT7U (ORCPT
+        Wed, 12 Sep 2018 15:59:29 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:37797 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728491AbeILT72 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 15:59:20 -0400
-Received: by mail-it0-f65.google.com with SMTP id p129-v6so3413475ite.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 07:54:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=k5V+92Mk2pae4B9LhuCcmaUy962Eq0PEXLKrQvbziRQ=;
-        b=fB9bKNXfRlaE18KWq8t4mOT6pqGKfk5oLJqvYdLfqUcdq7lXCTlvLyxGlAmpNsp4pD
-         PfbU25iwzQYrI5sIqKuvpkAIMIEOlPanPtUWSoz75y3JvqJovQLZogVF28q9Zj6i0yWU
-         myjJW5kX+RBb//5ZSI9GAb2My0OKnmekyofBSugnqJpJT7HUlYl7c/5xu9stONwowv+u
-         HzbB4nMxKQvhMI+ImS9mCQzKsvVgjD2/yJYknqSAcRxocJ+XCdtZjlgVc7shnlLWRbxy
-         L3oEonKRvCmm5V6qihTvB22ZdCJwwurT7yWHzcn9yD8LSchv8nTDxMB2MH5oIVyssPgl
-         3pRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=k5V+92Mk2pae4B9LhuCcmaUy962Eq0PEXLKrQvbziRQ=;
-        b=RxndXjEVDNNkcGX/JtWAh1PJKKG466ttkfUW/Ysm3XajLEfwPIWt4+S7lDrGKaxN2P
-         l14z+0QWDtAv08KCWXTTql23Ji1mr1n1sYhNLpxj7umuEQ/B5q1dxS03NHBqZZ1Iyps7
-         OBALpSAaQQunutfq5rqrmxDj7Tqwowpm2uk6rkBcSr8AzpQgKGLc4n5KgunWjaa3aP9e
-         YguaGh/gF1bOOoJuCo2uMF7d03O2c73R7818Z6LCJXKJoopkSe3PIAY0TlsyNpvnobku
-         CdvT1aC37TTj6dMsWJC0zUjyoadJ2umIwVLzLY/Axj+NGC/EPc9fMR28vlIL0tJtKSf1
-         w+0g==
-X-Gm-Message-State: APzg51DzEfqEfD4898feJsBCM6v3HCEuTrpzDxB6JadebMcry+4BRB8O
-        Niu30Y4NIxuTxUDvHBXZXiceGthXiy/mASwBIlgt7g==
-X-Google-Smtp-Source: ANB0VdYIgDfcH2L/IcfYXP9gKzej4kJkJoVqTXCBYPB7z8lI52qCiftuCmljLZS/HSupcsmnpCc+pmg3X+j6MGEVHOo=
-X-Received: by 2002:a02:c04e:: with SMTP id u14-v6mr2172320jam.110.1536764067365;
- Wed, 12 Sep 2018 07:54:27 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a02:5942:0:0:0:0:0 with HTTP; Wed, 12 Sep 2018 07:54:06
- -0700 (PDT)
-In-Reply-To: <b4ba65afa55f2fdfd2856fb03c5aba99c7a8bdd7.1535462971.git.andreyknvl@google.com>
-References: <cover.1535462971.git.andreyknvl@google.com> <b4ba65afa55f2fdfd2856fb03c5aba99c7a8bdd7.1535462971.git.andreyknvl@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 12 Sep 2018 16:54:06 +0200
-Message-ID: <CACT4Y+Z4zLSBdXGtk-6nH64UpOVA8s5TJZSpokAqEu4pE8LpCA@mail.gmail.com>
-Subject: Re: [PATCH v6 04/18] khwasan, arm64: adjust shadow size for CONFIG_KASAN_HW
-To:     Andrey Konovalov <andreyknvl@google.com>
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Dave Martin <dave.martin@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-sparse@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
-        "open list:KERNEL BUILD + fi..." <linux-kbuild@vger.kernel.org>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Jann Horn <jannh@google.com>,
-        Mark Brand <markbrand@google.com>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Vishwath Mohan <vishwath@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 12 Sep 2018 15:59:28 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07437672|-1;CH=blue;FP=13222124786583081082|1|1|11|0|-1|-1|-1;HT=e01e01542;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=15;RT=15;SR=0;TI=SMTPD_---.CpxPAVs_1536764013;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CpxPAVs_1536764013)
+          by smtp.aliyun-inc.com(10.147.44.118);
+          Wed, 12 Sep 2018 22:53:33 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, daniel.lezcano@linaro.org,
+        jason@lakedaemon.net, arnd@arndb.de, devicetree@vger.kernel.org,
+        andrea.parri@amarulasolutions.com, peterz@infradead.org
+Cc:     c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
+        thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org, ren_guo@c-sky.com,
+        green.hu@gmail.com
+Subject: [PATCH V4 26/27] irqchip: add C-SKY irqchip drivers
+Date:   Wed, 12 Sep 2018 22:52:08 +0800
+Message-Id: <60808788fef80cc6c64064982e58a22ed4abd006.1536758961.git.ren_guo@c-sky.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <93e8b592e429c156ad4d4ca5d85ef48fd0ab8b70.1536758961.git.ren_guo@c-sky.com>
+References: <93e8b592e429c156ad4d4ca5d85ef48fd0ab8b70.1536758961.git.ren_guo@c-sky.com>
+In-Reply-To: <cover.1536758961.git.ren_guo@c-sky.com>
+References: <cover.1536758961.git.ren_guo@c-sky.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 29, 2018 at 1:35 PM, Andrey Konovalov <andreyknvl@google.com> wrote:
-> KWHASAN uses 1 shadow byte for 16 bytes of kernel memory, so it requires
-> 1/16th of the kernel virtual address space for the shadow memory.
->
-> This commit sets KASAN_SHADOW_SCALE_SHIFT to 4 when KHWASAN is enabled.
->
-> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
-> ---
->  arch/arm64/Makefile             |  2 +-
->  arch/arm64/include/asm/memory.h | 13 +++++++++----
->  2 files changed, 10 insertions(+), 5 deletions(-)
->
-> diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
-> index 106039d25e2f..17047b8ab984 100644
-> --- a/arch/arm64/Makefile
-> +++ b/arch/arm64/Makefile
-> @@ -94,7 +94,7 @@ endif
->  # KASAN_SHADOW_OFFSET = VA_START + (1 << (VA_BITS - KASAN_SHADOW_SCALE_SHIFT))
->  #                               - (1 << (64 - KASAN_SHADOW_SCALE_SHIFT))
->  # in 32-bit arithmetic
-> -KASAN_SHADOW_SCALE_SHIFT := 3
-> +KASAN_SHADOW_SCALE_SHIFT := $(if $(CONFIG_KASAN_HW), 4, 3)
->  KASAN_SHADOW_OFFSET := $(shell printf "0x%08x00000000\n" $$(( \
->         (0xffffffff & (-1 << ($(CONFIG_ARM64_VA_BITS) - 32))) \
->         + (1 << ($(CONFIG_ARM64_VA_BITS) - 32 - $(KASAN_SHADOW_SCALE_SHIFT))) \
-> diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
-> index b96442960aea..f5e262ee76c1 100644
-> --- a/arch/arm64/include/asm/memory.h
-> +++ b/arch/arm64/include/asm/memory.h
-> @@ -74,12 +74,17 @@
->  #define KERNEL_END        _end
->
->  /*
-> - * KASAN requires 1/8th of the kernel virtual address space for the shadow
-> - * region. KASAN can bloat the stack significantly, so double the (minimum)
-> - * stack size when KASAN is in use.
-> + * KASAN and KHWASAN require 1/8th and 1/16th of the kernel virtual address
+This patch add C-SKY two interrupt conrollers.
 
+ - irq-csky-apb-intc is a simple SOC interrupt controller which is
+   used in a lot of C-SKY SOC products.
 
-I am somewhat confused by the terminology.
-"KASAN" is not actually "CONFIG_KASAN" below, it is actually
-"CONFIG_KASAN_GENERIC". While "KHWASAN" translates to "KASAN_HW" few
-lines later.
-I think we need some consistent terminology for comments and config
-names until it's too late.
+ - irq-csky-mpintc is C-SKY smp system interrupt controller and it
+   could support 16 soft irqs, 16 private irqs, and 992 irqs.
 
+Changelog:
+ - change name with upstream feed-back.
+ - remove CSKY_VECIRQ_LEGENCY.
+ - change irq map, reserve soft_irq&private_irq space.
+ - add License and Copyright
+ - change to generic irq chip framework.
+ - support set_affinity for irq balance in SMP
+ - add INTC_IFR to clear irq-pending
+ - use irq_domain_add_linear instead of leagcy.
+ - add set_handle_irq(), ref from openrisc & arm.
 
-> + * space for the shadow region respectively. They can bloat the stack
-> + * significantly, so double the (minimum) stack size when they are in use.
->   */
-> -#ifdef CONFIG_KASAN
-> +#ifdef CONFIG_KASAN_GENERIC
->  #define KASAN_SHADOW_SCALE_SHIFT 3
-> +#endif
-> +#ifdef CONFIG_KASAN_HW
-> +#define KASAN_SHADOW_SCALE_SHIFT 4
-> +#endif
-> +#ifdef CONFIG_KASAN
->  #define KASAN_SHADOW_SIZE      (UL(1) << (VA_BITS - KASAN_SHADOW_SCALE_SHIFT))
->  #define KASAN_THREAD_SHIFT     1
->  #else
-> --
-> 2.19.0.rc0.228.g281dcd1b4d0-goog
->
+Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+---
+ drivers/irqchip/Makefile            |   1 +
+ drivers/irqchip/irq-csky-apb-intc.c | 243 ++++++++++++++++++++++++++++++++++++
+ drivers/irqchip/irq-csky-mpintc.c   | 191 ++++++++++++++++++++++++++++
+ 3 files changed, 435 insertions(+)
+ create mode 100644 drivers/irqchip/irq-csky-apb-intc.c
+ create mode 100644 drivers/irqchip/irq-csky-mpintc.c
+
+diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+index 15f268f..4838546 100644
+--- a/drivers/irqchip/Makefile
++++ b/drivers/irqchip/Makefile
+@@ -87,3 +87,4 @@ obj-$(CONFIG_MESON_IRQ_GPIO)		+= irq-meson-gpio.o
+ obj-$(CONFIG_GOLDFISH_PIC) 		+= irq-goldfish-pic.o
+ obj-$(CONFIG_NDS32)			+= irq-ativic32.o
+ obj-$(CONFIG_QCOM_PDC)			+= qcom-pdc.o
++obj-$(CONFIG_CSKY)			+= irq-csky-mpintc.o irq-csky-apb-intc.o
+diff --git a/drivers/irqchip/irq-csky-apb-intc.c b/drivers/irqchip/irq-csky-apb-intc.c
+new file mode 100644
+index 0000000..2c869ab
+--- /dev/null
++++ b/drivers/irqchip/irq-csky-apb-intc.c
+@@ -0,0 +1,243 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
++
++#include <linux/kernel.h>
++#include <linux/init.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/module.h>
++#include <linux/irqdomain.h>
++#include <linux/irqchip.h>
++#include <linux/irq.h>
++#include <linux/interrupt.h>
++#include <asm/irq.h>
++#include <asm/io.h>
++
++#define INTC_IRQS		64
++
++#define CK_INTC_ICR		0x00
++#define CK_INTC_PEN31_00	0x14
++#define CK_INTC_PEN63_32	0x2c
++#define CK_INTC_NEN31_00	0x10
++#define CK_INTC_NEN63_32	0x28
++#define CK_INTC_IFR31_00	0x08
++#define CK_INTC_IFR63_32	0x20
++#define CK_INTC_SOURCE		0x40
++#define CK_INTC_DUAL_BASE	0x100
++
++#define GX_INTC_PEN31_00	0x00
++#define GX_INTC_PEN63_32	0x04
++#define GX_INTC_NEN31_00	0x40
++#define GX_INTC_NEN63_32	0x44
++#define GX_INTC_NMASK31_00	0x50
++#define GX_INTC_NMASK63_32	0x54
++#define GX_INTC_SOURCE		0x60
++
++static void __iomem *reg_base;
++static struct irq_domain *root_domain;
++
++static int nr_irq = INTC_IRQS;
++
++static void __init ck_set_gc(void __iomem *reg_base, u32 mask_reg, u32 irq_base)
++{
++	struct irq_chip_generic *gc;
++
++	gc = irq_get_domain_generic_chip(root_domain, irq_base);
++	gc->reg_base = reg_base;
++	gc->chip_types[0].regs.mask = mask_reg;
++	gc->chip_types[0].chip.irq_mask = irq_gc_mask_clr_bit;
++	gc->chip_types[0].chip.irq_unmask = irq_gc_mask_set_bit;
++}
++
++static inline u32 build_channel_val(u32 idx, u32 magic)
++{
++	u32 res;
++
++	/*
++	 * Set the same index for each channel
++	 */
++	res = idx | (idx << 8) | (idx << 16) | (idx << 24);
++
++	/*
++	 * Set the channel magic number in descending order.
++	 * The magic is 0x00010203 for ck-intc
++	 * The magic is 0x03020100 for gx6605s-intc
++	 */
++	return res | magic;
++}
++
++static inline void setup_irq_channel(u32 magic, void __iomem *reg_addr)
++{
++	u32 i;
++
++	/* Setup 64 channel slots */
++	for (i = 0; i < INTC_IRQS; i += 4) {
++		writel_relaxed(build_channel_val(i, magic), reg_addr + i);
++	}
++}
++
++static int __init
++ck_intc_init_comm(struct device_node *node, struct device_node *parent)
++{
++	int ret;
++
++	if (parent) {
++		pr_err("C-SKY Intc not a root irq controller\n");
++		return -EINVAL;
++	}
++
++	reg_base = of_iomap(node, 0);
++	if (!reg_base) {
++		pr_err("C-SKY Intc unable to map: %p.\n", node);
++		return -EINVAL;
++	}
++
++	root_domain = irq_domain_add_linear(node, nr_irq, &irq_generic_chip_ops, NULL);
++	if (!root_domain) {
++		pr_err("C-SKY Intc irq_domain_add failed.\n");
++		return -ENOMEM;
++	}
++
++	ret = irq_alloc_domain_generic_chips(root_domain, 32, 1,
++					     "csky_intc", handle_level_irq,
++					     IRQ_NOREQUEST | IRQ_NOPROBE | IRQ_NOAUTOEN,
++					     0, 0);
++	if (ret) {
++		pr_err("C-SKY Intc irq_alloc_gc failed.\n");
++		return -ENOMEM;
++	}
++
++	return 0;
++}
++
++static inline int handle_irq_perbit(struct pt_regs *regs, u32 hwirq, u32 irq_base)
++{
++	u32 irq;
++
++	if (hwirq == 0) return 0;
++
++	while (hwirq) {
++		irq = __ffs(hwirq);
++		hwirq &= ~BIT(irq);
++		handle_domain_irq(root_domain, irq_base + irq, regs);
++	}
++
++	return 1;
++}
++
++/* gx6605s 64 irqs interrupt controller */
++static void gx_irq_handler(struct pt_regs *regs)
++{
++	int ret;
++
++	do {
++		ret  = handle_irq_perbit(regs ,readl_relaxed(reg_base + GX_INTC_PEN31_00), 0);
++		ret |= handle_irq_perbit(regs ,readl_relaxed(reg_base + GX_INTC_PEN63_32), 32);
++	} while(ret);
++}
++
++static int __init
++gx_intc_init(struct device_node *node, struct device_node *parent)
++{
++	int ret;
++
++	ret = ck_intc_init_comm(node, parent);
++	if (ret)
++		return ret;
++
++	/* Initial enable reg to disable all interrupts */
++	writel_relaxed(0x0, reg_base + GX_INTC_NEN31_00);
++	writel_relaxed(0x0, reg_base + GX_INTC_NEN63_32);
++
++	/* Initial mask reg with all unmasked, becasue we only use enalbe reg */
++	writel_relaxed(0x0, reg_base + GX_INTC_NMASK31_00);
++	writel_relaxed(0x0, reg_base + GX_INTC_NMASK63_32);
++
++	setup_irq_channel(0x03020100, reg_base + GX_INTC_SOURCE);
++
++	ck_set_gc(reg_base, GX_INTC_NEN31_00, 0);
++	ck_set_gc(reg_base, GX_INTC_NEN63_32, 32);
++
++	set_handle_irq(gx_irq_handler);
++
++	return 0;
++}
++IRQCHIP_DECLARE(csky_gx6605s_intc, "csky,gx6605s-intc", gx_intc_init);
++
++/* C-SKY simple 64 irqs interrupt controller, dual-together could support 128 irqs */
++static void ck_irq_handler(struct pt_regs *regs)
++{
++	int ret;
++
++	do {
++		/* handle 0 - 31 irqs */
++		ret  = handle_irq_perbit(regs, readl_relaxed(reg_base + CK_INTC_PEN31_00), 0);
++		ret |= handle_irq_perbit(regs, readl_relaxed(reg_base + CK_INTC_PEN63_32), 32);
++
++		writel_relaxed(0, reg_base + CK_INTC_IFR31_00);
++		writel_relaxed(0, reg_base + CK_INTC_IFR63_32);
++
++		if (nr_irq == INTC_IRQS) continue;
++
++		/* handle 64 - 127 irqs */
++		ret |= handle_irq_perbit(regs,
++			   readl_relaxed(reg_base + CK_INTC_PEN31_00 + CK_INTC_DUAL_BASE), 64);
++		ret |= handle_irq_perbit(regs,
++			   readl_relaxed(reg_base + CK_INTC_PEN63_32 + CK_INTC_DUAL_BASE), 96);
++
++		writel_relaxed(0, reg_base + CK_INTC_IFR63_32 + CK_INTC_DUAL_BASE);
++		writel_relaxed(0, reg_base + CK_INTC_IFR31_00 + CK_INTC_DUAL_BASE);
++	} while(ret);
++}
++
++static int __init
++ck_intc_init(struct device_node *node, struct device_node *parent)
++{
++	int ret;
++
++	ret = ck_intc_init_comm(node, parent);
++	if (ret)
++		return ret;
++
++	/* Initial enable reg to disable all interrupts */
++	writel_relaxed(0, reg_base + CK_INTC_NEN31_00);
++	writel_relaxed(0, reg_base + CK_INTC_NEN63_32);
++
++	/* Enable irq intc */
++	writel_relaxed(BIT(31), reg_base + CK_INTC_ICR);
++
++	ck_set_gc(reg_base, CK_INTC_NEN31_00, 0);
++	ck_set_gc(reg_base, CK_INTC_NEN63_32, 32);
++
++	setup_irq_channel(0x00010203, reg_base + CK_INTC_SOURCE);
++
++	set_handle_irq(ck_irq_handler);
++
++	return 0;
++}
++IRQCHIP_DECLARE(ck_intc, "csky,apb-intc", ck_intc_init);
++
++static int __init
++ck_dual_intc_init(struct device_node *node, struct device_node *parent)
++{
++	int ret;
++
++	/* dual-apb-intc up to 128 irq sources*/
++	nr_irq = INTC_IRQS * 2;
++
++	ret = ck_intc_init(node, parent);
++	if (ret)
++		return ret;
++
++	/* Initial enable reg to disable all interrupts */
++	writel_relaxed(0, reg_base + CK_INTC_NEN31_00 + CK_INTC_DUAL_BASE);
++	writel_relaxed(0, reg_base + CK_INTC_NEN63_32 + CK_INTC_DUAL_BASE);
++
++	ck_set_gc(reg_base + CK_INTC_DUAL_BASE, CK_INTC_NEN31_00, 64);
++	ck_set_gc(reg_base + CK_INTC_DUAL_BASE, CK_INTC_NEN63_32, 96);
++
++	setup_irq_channel(0x00010203, reg_base + CK_INTC_SOURCE + CK_INTC_DUAL_BASE);
++
++	return 0;
++}
++IRQCHIP_DECLARE(ck_dual_intc, "csky,dual-apb-intc", ck_dual_intc_init);
+diff --git a/drivers/irqchip/irq-csky-mpintc.c b/drivers/irqchip/irq-csky-mpintc.c
+new file mode 100644
+index 0000000..2b2f75c
+--- /dev/null
++++ b/drivers/irqchip/irq-csky-mpintc.c
+@@ -0,0 +1,191 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
++
++#include <linux/kernel.h>
++#include <linux/init.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/module.h>
++#include <linux/irqdomain.h>
++#include <linux/irqchip.h>
++#include <linux/irq.h>
++#include <linux/interrupt.h>
++#include <asm/irq.h>
++#include <asm/io.h>
++#include <asm/traps.h>
++#include <asm/reg_ops.h>
++#include <asm/smp.h>
++
++static void __iomem *INTCG_base;
++static void __iomem *INTCL_base;
++
++#define COMM_IRQ_BASE	32
++
++#define INTCG_SIZE	0x8000
++#define INTCL_SIZE	0x1000
++#define INTC_SIZE	INTCL_SIZE*nr_cpu_ids + INTCG_SIZE
++
++#define INTCG_ICTLR	0x0
++#define INTCG_CICFGR	0x100
++#define INTCG_CIDSTR	0x1000
++
++#define INTCL_PICTLR	0x0
++#define INTCL_SIGR	0x60
++#define INTCL_HPPIR	0x68
++#define INTCL_RDYIR	0x6c
++#define INTCL_SENR	0xa0
++#define INTCL_CENR	0xa4
++#define INTCL_CACR	0xb4
++
++#define INTC_IRQS	256
++
++static DEFINE_PER_CPU(void __iomem *, intcl_reg);
++
++static void csky_mpintc_handler(struct pt_regs *regs)
++{
++	void __iomem *reg_base = this_cpu_read(intcl_reg);
++
++	do {
++		handle_domain_irq(NULL,
++				  readl_relaxed(reg_base + INTCL_RDYIR),
++				  regs);
++	} while (readl_relaxed(reg_base + INTCL_HPPIR) & BIT(31));
++}
++
++static void csky_mpintc_enable(struct irq_data *d)
++{
++	void __iomem *reg_base = this_cpu_read(intcl_reg);
++
++	writel_relaxed(d->hwirq, reg_base + INTCL_SENR);
++}
++
++static void csky_mpintc_disable(struct irq_data *d)
++{
++	void __iomem *reg_base = this_cpu_read(intcl_reg);
++
++	writel_relaxed(d->hwirq, reg_base + INTCL_CENR);
++}
++
++static void csky_mpintc_eoi(struct irq_data *d)
++{
++	void __iomem *reg_base = this_cpu_read(intcl_reg);
++
++	writel_relaxed(d->hwirq, reg_base + INTCL_CACR);
++}
++
++#ifdef CONFIG_SMP
++static int csky_irq_set_affinity(struct irq_data *d,
++				 const struct cpumask *mask_val,
++				 bool force)
++{
++	unsigned int cpu;
++	unsigned int offset = 4 * (d->hwirq - COMM_IRQ_BASE);
++
++	if (!force)
++		cpu = cpumask_any_and(mask_val, cpu_online_mask);
++	else
++		cpu = cpumask_first(mask_val);
++
++	if (cpu >= nr_cpu_ids)
++		return -EINVAL;
++
++	/* Enable interrupt destination */
++	cpu |= BIT(31);
++
++	writel_relaxed(cpu, INTCG_base + INTCG_CIDSTR + offset);
++
++	irq_data_update_effective_affinity(d, cpumask_of(cpu));
++
++	return IRQ_SET_MASK_OK_DONE;
++}
++#endif
++
++static struct irq_chip csky_irq_chip = {
++	.name           = "C-SKY SMP Intc V2",
++	.irq_eoi	= csky_mpintc_eoi,
++	.irq_enable	= csky_mpintc_enable,
++	.irq_disable	= csky_mpintc_disable,
++#ifdef CONFIG_SMP
++	.irq_set_affinity = csky_irq_set_affinity,
++#endif
++};
++
++static int csky_irqdomain_map(struct irq_domain *d, unsigned int irq,
++			      irq_hw_number_t hwirq)
++{
++	if(hwirq < COMM_IRQ_BASE) {
++		irq_set_percpu_devid(irq);
++		irq_set_chip_and_handler(irq, &csky_irq_chip, handle_percpu_irq);
++	} else {
++		irq_set_chip_and_handler(irq, &csky_irq_chip, handle_fasteoi_irq);
++	}
++
++	return 0;
++}
++
++static const struct irq_domain_ops csky_irqdomain_ops = {
++	.map	= csky_irqdomain_map,
++	.xlate	= irq_domain_xlate_onecell,
++};
++
++#ifdef CONFIG_SMP
++static void csky_mpintc_send_ipi(const unsigned long *mask, unsigned long irq)
++{
++	void __iomem *reg_base = this_cpu_read(intcl_reg);
++
++	/*
++	 * INTCL_SIGR[3:0] INTID
++	 * INTCL_SIGR[8:15] CPUMASK
++	 */
++	writel_relaxed((*mask) << 8 | irq, reg_base + INTCL_SIGR);
++}
++#endif
++
++/* C-SKY multi processor interrupt controller */
++static int __init
++csky_mpintc_init(struct device_node *node, struct device_node *parent)
++{
++	struct irq_domain *root_domain;
++	unsigned int cpu, nr_irq;
++	int ret;
++
++	if (parent)
++		return 0;
++
++	ret = of_property_read_u32(node, "csky,num-irqs", &nr_irq);
++	if (ret < 0) {
++		nr_irq = INTC_IRQS;
++	}
++
++	if (INTCG_base == NULL) {
++		INTCG_base = ioremap(mfcr("cr<31, 14>"), INTC_SIZE);
++		if (INTCG_base == NULL)
++			return -EIO;
++
++		INTCL_base = INTCG_base + INTCG_SIZE;
++
++		writel_relaxed(BIT(0), INTCG_base + INTCG_ICTLR);
++	}
++
++	root_domain = irq_domain_add_linear(node, nr_irq, &csky_irqdomain_ops,
++					    NULL);
++	if (!root_domain)
++		return -ENXIO;
++
++	irq_set_default_host(root_domain);
++
++	/* for every cpu */
++	for_each_present_cpu(cpu) {
++		per_cpu(intcl_reg, cpu) = INTCL_base + (INTCL_SIZE * cpu);
++		writel_relaxed(BIT(0), per_cpu(intcl_reg, cpu) + INTCL_PICTLR);
++	}
++
++	set_handle_irq(&csky_mpintc_handler);
++
++#ifdef CONFIG_SMP
++	set_send_ipi(&csky_mpintc_send_ipi);
++#endif
++
++	return 0;
++}
++IRQCHIP_DECLARE(csky_mpintc, "csky,mpintc", csky_mpintc_init);
+-- 
+2.7.4
+
