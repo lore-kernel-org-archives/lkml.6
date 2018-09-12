@@ -2,197 +2,114 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3A4EC6778D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:13:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65B4FC6778D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:14:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 805BC20880
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:13:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 805BC20880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2947120880
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:14:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2947120880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727984AbeILUSh (ORCPT
+        id S1727786AbeILUT3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 16:18:37 -0400
-Received: from mga12.intel.com ([192.55.52.136]:33077 "EHLO mga12.intel.com"
+        Wed, 12 Sep 2018 16:19:29 -0400
+Received: from mout.gmx.net ([212.227.15.18]:53877 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726640AbeILUSh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 16:18:37 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Sep 2018 08:13:40 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,365,1531810800"; 
-   d="scan'208";a="88146928"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.20])
-  by fmsmga004.fm.intel.com with ESMTP; 12 Sep 2018 08:09:39 -0700
-Date:   Wed, 12 Sep 2018 08:09:39 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        cpandya@codeaurora.org, toshi.kani@hpe.com, tglx@linutronix.de,
-        mhocko@suse.com, akpm@linux-foundation.org
-Subject: Re: [PATCH 4/5] lib/ioremap: Ensure phys_addr actually corresponds
- to a physical address
-Message-ID: <20180912150939.GA30274@linux.intel.com>
-References: <1536747974-25875-1-git-send-email-will.deacon@arm.com>
- <1536747974-25875-5-git-send-email-will.deacon@arm.com>
+        id S1726810AbeILUT3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 16:19:29 -0400
+Received: from [10.0.0.14] ([113.87.91.49]) by mail.gmx.com (mrgmx002
+ [212.227.17.184]) with ESMTPSA (Nemesis) id 0MJk04-1g1D9k3LiW-0016ro; Wed, 12
+ Sep 2018 17:04:45 +0200
+Subject: Re: [PATCH v2 2/5] ext4: cache NULL when both default_acl and acl are
+ NULL
+To:     tytso@mit.edu, adilger.kernel@dilger.ca
+Cc:     jack@suse.com, jaegeuk@kernel.org, yuchao0@huawei.com,
+        shaggy@kernel.org, hubcap@omnibond.com, martin@omnibond.com,
+        devel@lists.orangefs.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        jfs-discussion@lists.sourceforge.net
+References: <20180831143352.22970-1-cgxu519@gmx.com>
+ <20180831143352.22970-2-cgxu519@gmx.com>
+From:   cgxu519 <cgxu519@gmx.com>
+Message-ID: <f1dd02a3-78ea-0240-72cc-135ee26f6524@gmx.com>
+Date:   Wed, 12 Sep 2018 23:04:35 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1536747974-25875-5-git-send-email-will.deacon@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180831143352.22970-2-cgxu519@gmx.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Provags-ID: V03:K1:mIatdzC03k0f10jGPkm1FBUZoB6babITqGa3dMCCpVS/P4O96AJ
+ ndhsfDuFZdM6wnBDFMxLe1B6bkIec1ji57z/cmA1c6GOm+H08Dbfj4ZCsg+ViqaXaB28wo+
+ gsTxqMU7hohTURxdWHXErU7MAygEw5GGicZT5pexYfAC3fF5qIl1tFuP+ra77Yk+FGgiuMZ
+ 9ExHvGYXzFxtV25w0zgJQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:KNBu9F54qmM=:oSsTzVkwhjT/RMfzWAzZ0E
+ nabCZV9XPsrha63umRlLqdFL9vqUyrENJ3/xcPvNPCf7Z/d4rMJbj3qfOZZAwsLaiP/s3BnSj
+ iJd1f0wU4OIJaXMZgA3vARcJaFv6dJiSIcipXu3wWRCE/ParNv1zVTAPThni19FEznYKSMwMz
+ emdIhSIjqWfXnZNNOCa7n6gnpq6mz2Ph0aDimVHQPShYOWICLrJh1ZxXiOnMoJB+0tyDSF9Do
+ eHNmzy228XCPGm0i6DhKU7lew2bZq1u2mJfr5p1SirrQsWt7MYuqBV040R4F9haK+QhK8PcR0
+ 8/8gzXCtM9NTxjFjtRe8lfgLzVDNR46N+ORKA2uiRM2qKUq6sPLVTt6vF2ZEmrXXhVa19EMnY
+ I40XalPiFhFIEsGfY4Q+dBMcTUrM2kMd5Fac92QBUg0RtYqFHcD2j5lMfNjfLihdg8VFQxQ2f
+ hl+6nsCzh61FhdXNV72Ae5NHURzFrR+TKCfLKL541zxpbXH3+pTN8DFAn06peq1u60KRfgt/A
+ SfEZpL0o0Ua5O/YmsseJzjjgflP57yqGCldOyoKqNwiSjBAF2V0gACdId+d0pcRW4zUunJKfm
+ u/oE5fqHlxmm/UzxoF5vu3O8wgPyPrtLUVwI4dOzjpe1Xx34+5/6PbMu9ZA6XF25z6xicw52a
+ CgR50ZFfe1Xpzu1mUUUcpNLbdQaQbwhvKW7kWVWrtbXmlbRGmg1doLm021P9NJtpFIRYeLktp
+ Q6fYRll8ppgIc+jPsh5s7av2E6dETvSy6yV/fJ1TNvSi7iOH6tzb1qFol8utOtWeCXHVxcKXg
+ tyBbZX5hI/ZsffUWPj3891Nc9yUERF2wXpqbehVPgNG6CnfEeQ=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 11:26:13AM +0100, Will Deacon wrote:
-> The current ioremap() code uses a phys_addr variable at each level of
-> page table, which is confusingly offset by subtracting the base virtual
-> address being mapped so that adding the current virtual address back on
-> when iterating through the page table entries gives back the corresponding
-> physical address.
-> 
-> This is fairly confusing and results in all users of phys_addr having to
-> add the current virtual address back on. Instead, this patch just updates
-> phys_addr when iterating over the page table entries, ensuring that it's
-> always up-to-date and doesn't require explicit offsetting.
-> 
-> Cc: Chintan Pandya <cpandya@codeaurora.org>
-> Cc: Toshi Kani <toshi.kani@hpe.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Signed-off-by: Will Deacon <will.deacon@arm.com>
+On 08/31/2018 10:33 PM, Chengguang Xu wrote:
+> default_acl and acl of newly created inode will be initiated
+> as ACL_NOT_CACHED in vfs function inode_init_always() and later
+> will be updated by calling xxx_init_acl() in specific filesystems.
+> Howerver, when default_acl and acl are NULL then they keep the value
+> of ACL_NOT_CACHED, this patch tries to cache NULL for acl/default_acl
+> in this case.
+>
+> Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
 > ---
->  lib/ioremap.c | 28 ++++++++++++----------------
->  1 file changed, 12 insertions(+), 16 deletions(-)
-> 
-> diff --git a/lib/ioremap.c b/lib/ioremap.c
-> index 6c72764af19c..fc834a59c90c 100644
-> --- a/lib/ioremap.c
-> +++ b/lib/ioremap.c
-> @@ -101,19 +101,18 @@ static inline int ioremap_pmd_range(pud_t *pud, unsigned long addr,
->  	pmd_t *pmd;
->  	unsigned long next;
->  
-> -	phys_addr -= addr;
->  	pmd = pmd_alloc(&init_mm, pud, addr);
->  	if (!pmd)
->  		return -ENOMEM;
->  	do {
->  		next = pmd_addr_end(addr, end);
->  
-> -		if (ioremap_try_huge_pmd(pmd, addr, next, phys_addr + addr, prot))
-> +		if (ioremap_try_huge_pmd(pmd, addr, next, phys_addr, prot))
->  			continue;
->  
-> -		if (ioremap_pte_range(pmd, addr, next, phys_addr + addr, prot))
-> +		if (ioremap_pte_range(pmd, addr, next, phys_addr, prot))
->  			return -ENOMEM;
-> -	} while (pmd++, addr = next, addr != end);
-> +	} while (pmd++, addr = next, phys_addr += PMD_SIZE, addr != end);
+> v1->v2:
+> - Coding style change.
+>
+>   fs/ext4/acl.c | 4 ++++
+>   1 file changed, 4 insertions(+)
+>
+> diff --git a/fs/ext4/acl.c b/fs/ext4/acl.c
+> index fb50f9aa6ead..c1d570ee1d9f 100644
+> --- a/fs/ext4/acl.c
+> +++ b/fs/ext4/acl.c
+> @@ -284,12 +284,16 @@ ext4_init_acl(handle_t *handle, struct inode *inode, struct inode *dir)
+>   		error = __ext4_set_acl(handle, inode, ACL_TYPE_DEFAULT,
+>   				       default_acl, XATTR_CREATE);
+>   		posix_acl_release(default_acl);
+> +	} else {
+> +		inode->i_default_acl = NULL;
+>   	}
+>   	if (acl) {
+>   		if (!error)
+>   			error = __ext4_set_acl(handle, inode, ACL_TYPE_ACCESS,
+>   					       acl, XATTR_CREATE);
+>   		posix_acl_release(acl);
+> +	} else {
+> +		inode->i_acl = NULL;
+>   	}
+>   	return error;
+>   }
 
-I think bumping phys_addr by PXX_SIZE is wrong if phys_addr and addr
-start unaligned with respect to PXX_SIZE.  The addresses must be
-PAGE_ALIGNED, which lets ioremap_pte_range() do a simple calculation,
-but that doesn't hold true for the upper levels, i.e. phys_addr needs
-to be adjusted using an algorithm similar to pxx_addr_end().
+Hi Ted,  Andreas
 
-Using a 2mb page as an example (lower 32 bits only): 
+Have you got chance to look at this patch?
 
-pxx_size  = 0x00020000
-pxx_mask  = 0xfffe0000
-addr      = 0x1000
-end       = 0x00040000
-phys_addr = 0x1000
-
-Loop 1:
-   addr = 0x1000
-   phys = 0x1000
-
-Loop 2:
-   addr = 0x20000
-   phys = 0x21000
+Thanks,
+Chengguang
 
 
->  	return 0;
->  }
->  
-> @@ -142,19 +141,18 @@ static inline int ioremap_pud_range(p4d_t *p4d, unsigned long addr,
->  	pud_t *pud;
->  	unsigned long next;
->  
-> -	phys_addr -= addr;
->  	pud = pud_alloc(&init_mm, p4d, addr);
->  	if (!pud)
->  		return -ENOMEM;
->  	do {
->  		next = pud_addr_end(addr, end);
->  
-> -		if (ioremap_try_huge_pud(pud, addr, next, phys_addr + addr, prot))
-> +		if (ioremap_try_huge_pud(pud, addr, next, phys_addr, prot))
->  			continue;
->  
-> -		if (ioremap_pmd_range(pud, addr, next, phys_addr + addr, prot))
-> +		if (ioremap_pmd_range(pud, addr, next, phys_addr, prot))
->  			return -ENOMEM;
-> -	} while (pud++, addr = next, addr != end);
-> +	} while (pud++, addr = next, phys_addr += PUD_SIZE, addr != end);
->  	return 0;
->  }
->  
-> @@ -164,7 +162,6 @@ static inline int ioremap_p4d_range(pgd_t *pgd, unsigned long addr,
->  	p4d_t *p4d;
->  	unsigned long next;
->  
-> -	phys_addr -= addr;
->  	p4d = p4d_alloc(&init_mm, pgd, addr);
->  	if (!p4d)
->  		return -ENOMEM;
-> @@ -173,14 +170,14 @@ static inline int ioremap_p4d_range(pgd_t *pgd, unsigned long addr,
->  
->  		if (ioremap_p4d_enabled() &&
->  		    ((next - addr) == P4D_SIZE) &&
-> -		    IS_ALIGNED(phys_addr + addr, P4D_SIZE)) {
-> -			if (p4d_set_huge(p4d, phys_addr + addr, prot))
-> +		    IS_ALIGNED(phys_addr, P4D_SIZE)) {
-> +			if (p4d_set_huge(p4d, phys_addr, prot))
->  				continue;
->  		}
->  
-> -		if (ioremap_pud_range(p4d, addr, next, phys_addr + addr, prot))
-> +		if (ioremap_pud_range(p4d, addr, next, phys_addr, prot))
->  			return -ENOMEM;
-> -	} while (p4d++, addr = next, addr != end);
-> +	} while (p4d++, addr = next, phys_addr += P4D_SIZE, addr != end);
->  	return 0;
->  }
->  
-> @@ -196,14 +193,13 @@ int ioremap_page_range(unsigned long addr,
->  	BUG_ON(addr >= end);
->  
->  	start = addr;
-> -	phys_addr -= addr;
->  	pgd = pgd_offset_k(addr);
->  	do {
->  		next = pgd_addr_end(addr, end);
-> -		err = ioremap_p4d_range(pgd, addr, next, phys_addr+addr, prot);
-> +		err = ioremap_p4d_range(pgd, addr, next, phys_addr, prot);
->  		if (err)
->  			break;
-> -	} while (pgd++, addr = next, addr != end);
-> +	} while (pgd++, addr = next, phys_addr += PGDIR_SIZE, addr != end);
->  
->  	flush_cache_vmap(start, end);
->  
-> -- 
-> 2.1.4
-> 
