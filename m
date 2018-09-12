@@ -6,116 +6,100 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6AF9C6778D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:32:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F3E2C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:34:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96AFF20880
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:32:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96AFF20880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 21CCB20880
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:34:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21CCB20880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727998AbeILThA (ORCPT
+        id S1727852AbeILTjB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 15:37:00 -0400
-Received: from gateway30.websitewelcome.com ([192.185.152.11]:16031 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727670AbeILThA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 15:37:00 -0400
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id 839534341
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 09:32:13 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 06BRgqw7MBcCX06BagHP7T; Wed, 12 Sep 2018 09:32:13 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.106.191] (port=46028 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1g06BQ-002trA-Mf; Wed, 12 Sep 2018 09:31:57 -0500
-Date:   Wed, 12 Sep 2018 09:31:53 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Paulo Zanoni <paulo.r.zanoni@intel.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>
-Cc:     intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] drm/i915/dp: fix shifting by a negative number of bits
-Message-ID: <20180912143153.GA27564@embeddedor.com>
+        Wed, 12 Sep 2018 15:39:01 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:56012 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726819AbeILTjB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 15:39:01 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 501C020799; Wed, 12 Sep 2018 16:34:13 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-30-219.w90-88.abo.wanadoo.fr [90.88.15.219])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 1D52D203DA;
+        Wed, 12 Sep 2018 16:34:03 +0200 (CEST)
+Date:   Wed, 12 Sep 2018 16:34:02 +0200
+From:   Antoine Tenart <antoine.tenart@bootlin.com>
+To:     Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        davem@davemloft.net, kishon@ti.com, gregory.clement@bootlin.com,
+        jason@lakedaemon.net, sebastian.hesselbarth@gmail.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
+        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
+        ymarkman@marvell.com, mw@semihalf.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH net-next v3 02/10] net: mvpp2: phylink support
+Message-ID: <20180912143402.GA23373@kwain>
+References: <20180517082939.14598-1-antoine.tenart@bootlin.com>
+ <20180517082939.14598-3-antoine.tenart@bootlin.com>
+ <20180827165058.GD30658@n2100.armlinux.org.uk>
+ <20180831133651.GB32574@kwain>
+ <20180831141123.GM30658@n2100.armlinux.org.uk>
+ <20180831143721.GB19733@lunn.ch>
+ <20180831152131.GN30658@n2100.armlinux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.106.191
-X-Source-L: No
-X-Exim-ID: 1g06BQ-002trA-Mf
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.106.191]:46028
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 8
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180831152131.GN30658@n2100.armlinux.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Function intel_port_to_tc() returns PORT_TC_NONE on error, which is
-a negative value -1. In case PORT_TC_NONE is returned, there is an
-undefined behavior when shifting by a negative number of bits in
-both DP_PHY_MODE_STATUS_NOT_SAFE and P_PHY_MODE_STATUS_COMPLETED
-macros.
+Russell,
 
-Fix this by adding sanity checks on intel_port_to_tc return value, before
-using macros DP_PHY_MODE_STATUS_NOT_SAFE and P_PHY_MODE_STATUS_COMPLETED.
+On Fri, Aug 31, 2018 at 04:21:31PM +0100, Russell King - ARM Linux wrote:
+> 
+> I think some questions for Antoine are:
 
-Addresses-Coverity-ID: 1473324 ("Bad bit shift operation")
-Addresses-Coverity-ID: 1473325 ("Bad bit shift operation")
-Fixes: 39d1e234e1e1 ("drm/i915/icl: implement the tc/legacy HPD {dis,}connect flows")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/gpu/drm/i915/intel_dp.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+I just got back to this. Using the SFP port on the 7040-db board (which
+is one of the problematic interfaces):
 
-diff --git a/drivers/gpu/drm/i915/intel_dp.c b/drivers/gpu/drm/i915/intel_dp.c
-index 436c22d..e34b7b1 100644
---- a/drivers/gpu/drm/i915/intel_dp.c
-+++ b/drivers/gpu/drm/i915/intel_dp.c
-@@ -4811,6 +4811,11 @@ static bool icl_tc_phy_connect(struct drm_i915_private *dev_priv,
- 	    dig_port->tc_type != TC_PORT_TYPEC)
- 		return true;
- 
-+	if (tc_port < 0) {
-+		DRM_DEBUG_KMS("Bad TC port %d\n", tc_port);
-+		return false;
-+	}
-+
- 	val = I915_READ(PORT_TX_DFLEXDPPMS);
- 	if (!(val & DP_PHY_MODE_STATUS_COMPLETED(tc_port))) {
- 		DRM_DEBUG_KMS("DP PHY for TC port %d not ready\n", tc_port);
-@@ -4857,6 +4862,10 @@ static void icl_tc_phy_disconnect(struct drm_i915_private *dev_priv,
- 	    dig_port->tc_type != TC_PORT_TYPEC)
- 		return;
- 
-+	if (tc_port < 0) {
-+		DRM_DEBUG_KMS("Bad TC port %d\n", tc_port);
-+		return;
-+	}
- 	/*
- 	 * This function may be called many times in a row without an HPD event
- 	 * in between, so try to avoid the write when we can.
+> - what is the state of the carrier at the start of mvpp2_start() ?
+
+Always on.
+
+> - when does the missing call to mac_link_up() occur - is it the first
+>   time the netdev is brought up, or a subsequent time?
+
+Only the first time the netdev is brought up. If the link is set down
+and then up again, its phylink link state would be good, and a mismatch
+with the carrier state occurs as expected.
+
+> - is the carrier always off at the end of mvpp2_stop()?
+
+Always off.
+
+So the issue really is the phylink internal link state matching the
+carrier on when phylink is started the first time (and hence mac_config
+is not called).
+
+I've made some patches to rework PPv2 not to mess things up in
+mac_config(), I've added a call to netif_carrier_off() at the
+beginning of phylink_start(), and then removed the netif_carrier_off()
+call in mvneta's open() function. It seems to work fine, I tested a few
+boards with various network configurations. I'll send them so that
+we can have more people testing this, and have proper reviews, since
+this seems to be an acceptable solution given the answers in this
+thread.
+
+Thanks,
+Antoine
+
 -- 
-2.7.4
-
+Antoine Ténart, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
