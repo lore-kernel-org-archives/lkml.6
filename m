@@ -2,114 +2,126 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 538CDC4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 07:34:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ABACC4646A
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 07:41:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1E4E2087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 07:34:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="hONyyxg5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1E4E2087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 374AC2087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 07:41:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 374AC2087F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727413AbeILMhi (ORCPT
+        id S1726819AbeILMo4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 08:37:38 -0400
-Received: from ozlabs.org ([203.11.71.1]:44677 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726442AbeILMhh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 08:37:37 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 429D7J39tdz9sBn;
-        Wed, 12 Sep 2018 17:34:19 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1536737661;
-        bh=iXhds9CGCraKsVeh/9gSz2j5A4Lm645jxXcLBIDE+lo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=hONyyxg5/c+S8KDOSNFzw6go65OI47RrPzi6gUmFlne8Ingtx0II7o7THxhHiK0kK
-         kQ4ryNc6fu1Xkxi5/HEmDRIa+TxcExbxpDmK2BK/oPQnnrHBbxtdJjkvE0lvdomem1
-         AcnLabUyZF9TeMvnms2p170w3AtCTJOCZtTk2JB3NRsIQgFicUOlHgEJngSjy+YQ2C
-         rLFT5yoD9zhiVVxkW/BJzmgh7PsttxvT2Lrp28TA6yhsh7/dOFTxOTeYfqkekUt7/T
-         O1Vbc6Hm7nQa7b/ah2CUnJhIaqYZUlXqRYx6aY2GpobHfzfwo9DgcnLTcPb51hvzAR
-         DvC3ozjNQjJgg==
-Date:   Wed, 12 Sep 2018 17:34:04 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Chao Yu <yuchao0@huawei.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Gao Xiang <gaoxiang25@huawei.com>,
-        <devel@driverdev.osuosl.org>, Miao Xie <miaoxie@huawei.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>, <weidu.du@huawei.com>,
-        <linux-erofs@lists.ozlabs.org>
-Subject: Re: [PATCH] Revert "staging: erofs: disable compiling temporarile"
-Message-ID: <20180912173404.288ea2e5@canb.auug.org.au>
-In-Reply-To: <58dbf050-ac24-9d8a-bbf3-0e28e10149ff@huawei.com>
-References: <1535427588-69630-1-git-send-email-gaoxiang25@huawei.com>
-        <20180828054444.GA4453@kroah.com>
-        <0c701b3c-5553-cf4c-c0b3-ad151b84662c@huawei.com>
-        <f12ae5df-3130-f293-5863-3d9ff0802e92@huawei.com>
-        <20180828130559.GA5427@kroah.com>
-        <16974cb6-2eed-7c12-9e27-c65a32b81673@huawei.com>
-        <20180829094403.3a3bf19b@canb.auug.org.au>
-        <20180906092504.282d5f62@canb.auug.org.au>
-        <58dbf050-ac24-9d8a-bbf3-0e28e10149ff@huawei.com>
+        Wed, 12 Sep 2018 08:44:56 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:33791 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726442AbeILMo4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 08:44:56 -0400
+Received: by mail-lj1-f195.google.com with SMTP id s12-v6so780228ljj.0;
+        Wed, 12 Sep 2018 00:41:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=2nqDRDklo2hT94SqpcHF61npXIkcSCVuv78W+0YVJR4=;
+        b=rIKFt0ftz6A27iRE9sh9qRgEtXjgx9dIt1rPjCL4tINO6JAf1OXaOFaq8ULJLWuXdV
+         zPtP/RbLzXzCUU7IUEv97Ish5aExPCGe2XS6RFsfBeS+K1Acggy2kTuWFtuhtfjTyuVD
+         9WfZJzJAORMJcuN2/h4h1MgPkqVQvup5RN4a22MSus8OsE6ovboh82ih6hO6qpW5t3OZ
+         ryzGB+dPQriCMfUJ54xmrOgpEWVaV0QGXHN46q+WLAfxe+l8a5LAEo221LAbcvaCWiHL
+         9kM3NtOaMSmgeofsRgsHbtYCTZduQ20fvO1xPJWVrRdeFx3Q3zzWPdZnM4mpod5dF7yq
+         DQIg==
+X-Gm-Message-State: APzg51DVBAsFsUu3hNy/1E3gGXEaONP29ELOkM9PKW8HIkta2J6f/HU6
+        1iUwr2BaRybydXA08mPmkdI=
+X-Google-Smtp-Source: ANB0Vdac44m3O3UMZ6dx9THgXzZU7IrgeJYVfbEptRUyjaVF/sbazKFTqBZuPixGGExaSDBFDTnBgg==
+X-Received: by 2002:a2e:9057:: with SMTP id n23-v6mr486197ljg.44.1536738098150;
+        Wed, 12 Sep 2018 00:41:38 -0700 (PDT)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id z17-v6sm53913lfb.21.2018.09.12.00.41.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Sep 2018 00:41:37 -0700 (PDT)
+Date:   Wed, 12 Sep 2018 10:41:35 +0300
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, lgirdwood@gmail.com,
+        broonie@kernel.org, mazziesaccount@gmail.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com
+Subject: Re: [PATCH 7/8] regulator: bd718XX use pickable ranges
+Message-ID: <20180912074135.GB2381@localhost.localdomain>
+References: <cover.1535545377.git.matti.vaittinen@fi.rohmeurope.com>
+ <6fa8728de34a18623736d3b01537930eda2dd54e.1535545377.git.matti.vaittinen@fi.rohmeurope.com>
+ <20180911135549.GS4185@dell>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/UGpUTf55C_0tqjhVIY1aVtz"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180911135549.GS4185@dell>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/UGpUTf55C_0tqjhVIY1aVtz
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-Hi Chao,
+On Tue, Sep 11, 2018 at 02:55:49PM +0100, Lee Jones wrote:
+> On Wed, 29 Aug 2018, Matti Vaittinen wrote:
+> 
+> > Few regulators in BD71837 and BD71847 can output voltages from
+> > different voltage ranges. Register interface is arranged so that
+> > used range is selected by toggling bits which are not next to actual
+> > voltage selection bits. Then the voltage inside selected range is
+> > determined by voltage selection bits (as usual). Support BD71837
+> > and BD71847 selectible range voltages using new pickable ranges
+> > helpers.
+> 
+> [...]
+> 
+> > diff --git a/include/linux/mfd/rohm-bd718x7.h b/include/linux/mfd/rohm-bd718x7.h
+> > index d1730b97ba52..4cc617047d5f 100644
+> > --- a/include/linux/mfd/rohm-bd718x7.h
+> > +++ b/include/linux/mfd/rohm-bd718x7.h
+> > @@ -7,13 +7,13 @@
+> >  #include <linux/regmap.h>
+> >  
+> >  enum {
+> > -	BD718XX_TYPE_BD71837,
+> > +	BD718XX_TYPE_BD71837 = 0,
+> >  	BD718XX_TYPE_BD71847,
+> >  	BD718XX_TYPE_AMNT // Keep this as last item
+> >  };
+> >  
+> >  enum {
+> > -	BD718XX_BUCK1	=	0,
+> > +	BD718XX_BUCK1 = 0,
+> >  	BD718XX_BUCK2,
+> >  	BD718XX_BUCK3,
+> >  	BD718XX_BUCK4,
+> > @@ -31,31 +31,27 @@ enum {
+> >  	BD718XX_REGULATOR_MAX,
+> >  };
+> 
+> Even though I don't care enough to NACK the patch, the above are
+> unrelated changes and should normally be contained in a separate
+> patch.
 
-On Wed, 12 Sep 2018 15:19:16 +0800 Chao Yu <yuchao0@huawei.com> wrote:
->
-> To make sure, did -next tree enable erofs compiling now?
+Thanks. But as I am going to modify the patch set anyways I can do this
+change in first patch for the series. You're right that it is more
+appropriate place for this change.
 
-Yes, from yesterday.
-
-> Xiang has made two patches to fix integration issue with other vfs change=
-s,
-> and Greg and David have already picked them in their tree.
->=20
-> staging: erofs: rename superblock flags (MS_xyz -> SB_xyz)
-> staging: erofs: update .mount and .remount_sb
-
-I noticed, thanks.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/UGpUTf55C_0tqjhVIY1aVtz
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluYwWwACgkQAVBC80lX
-0GzO7wf/R/QBANvTbw5jhoJZn3JonWExnILmeXhfpdCRLN754Ogu5EbausJjQNfZ
-OWrGe3xkInrAKeT7fEEKiLpZNoaeHokLYnZickZEqjtWd0/eUPlxVUm4Y+zBCyD5
-9qVQObaYYOziaL34w1wYwLI4ImYsoKPmpFZ6NBq4lWo9TLo6p85nmKcYR/E2CaCF
-0krxCW2yyDss/fpWmRi/3/BmRORf+qnV+o5xBIvNqOj8+MaopEBz8yPEizj4PYNM
-3O1TqOXWVgyRvs5Mt5jErWDeJ7iPOxijXdSkL/0DvdBTmUhduu3bg3GqJ9ISF777
-GDodDpSHHkWOb2D2sKNne2Kj7wXegQ==
-=EbhR
------END PGP SIGNATURE-----
-
---Sig_/UGpUTf55C_0tqjhVIY1aVtz--
+> 
+> For my own reference:
+>   Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+> 
+> -- 
+> Lee Jones [李琼斯]
+> Linaro Services Technical Lead
+> Linaro.org │ Open source software for ARM SoCs
+> Follow Linaro: Facebook | Twitter | Blog
