@@ -3,117 +3,342 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F0D1C6778D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:47:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A464BC46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:48:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AF4E20833
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:47:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DC562088E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 15:48:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="c7bpqklV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AF4E20833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B3Ex+uBX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DC562088E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727566AbeILUw1 (ORCPT
+        id S1727658AbeILUxa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 16:52:27 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:46233 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726866AbeILUw1 (ORCPT
+        Wed, 12 Sep 2018 16:53:30 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:39539 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726836AbeILUxa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 16:52:27 -0400
-Received: by mail-pl1-f194.google.com with SMTP id t19-v6so1154346ply.13
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 08:47:21 -0700 (PDT)
+        Wed, 12 Sep 2018 16:53:30 -0400
+Received: by mail-it0-f68.google.com with SMTP id h1-v6so3651962itj.4
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 08:48:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=42SJlqJZuu6SRLlPyMRMzajgqPPjYpEJjmPYlo2xirU=;
-        b=c7bpqklVClPc1F0Cr0VdTzbVWZpKzFr00ZoyAk/ZWWQOW/Hh5+Cy5610kskcc0Yf0d
-         AkGSsxJjbZgeNscOn9JXVy+0BVLV+XcjnGn89euzqK2pwTkbhuWCWAkUD12j7PlMSYCk
-         UdmyL2l/F0ojvYAywuE8UZ4T5yWLAjlxd8kMli8/IBcsHyU/pLWyfHnuhJ5/VH/taMWL
-         uCwxdTusZ+uxLI9PsWIrPGB9eWhD7PPko+y9SGYYR0A/yHip0S9/zGtV44BuSmInn4zY
-         FOT/hXoFn+puMDhRSa8lQQ/ypEgTIMHCK9ghMBZgoSILdW1CNFyxHqUSPUtdBH5RV6Bc
-         7MFg==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rgED9KJ5B/hFTTLcQGDuse+QaLxQ7AM0RqFakmWPcbY=;
+        b=B3Ex+uBXPUuUTO7ZWtITeGqmxnbEQba+/QMSPLXFAA9xNwqOyl2aLxXVefa2JdTX2O
+         jl0RoGnOrB2DuXG8Z2YsJdjFJkPN5GhYoCboP4tBv5PzElLFfiO2VAonGsBullb6mT+2
+         0rRy28lqinao8HNfwfsH+A4/fCW1fZVLaicMWM2N38pcu+KCMORs3dUkoQ2Mio2bHgfT
+         cNVIRpTqcRxFk9JRgKd65cJpq06xLJE5g1coO3DZSGekJ7dAZJap3obLoDxlNz3LVPjW
+         sXhAcNVoihiSs6mQJzq2+tHl6DFtOKzf00ebovzwxnZ1wxMpJ1Ct8NSK+Qy5C8SiSPIL
+         zG1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=42SJlqJZuu6SRLlPyMRMzajgqPPjYpEJjmPYlo2xirU=;
-        b=kqGT91PMUJ6jlN+Rpd9+C8K1L6VAHj6UrRTnHUQshBbRj964VFGCXNf405i8ORzeAX
-         ibDyd43y7Ri2qPDebnNDXFhYN7dnd2xKufBNmGbkDP1aBJHM/VubZfTYJgbu11YBwjV6
-         6Co3Vn4OtrcICgUNl5OVdRyI+THTwJnWK6vjztnC4qjf21aONa3v+VHAVx/T2tUa3JxF
-         X5PoHr1mmwz0MOUhE3qDwtJh9jpmFPDoeRG+6uj/OAoAyHjZdCRUSaOXAoEQ0vO4AaZo
-         gzOUs/so8I7UlMwP7o5vOwE2un/xwl4cz4f+xpgJcsItAf39HMW3Sg5i3V4hRwk+1UZ4
-         FiGQ==
-X-Gm-Message-State: APzg51Bc6+XE95JJa+h2uN5e31caJn4ADoWc+7Y5r2E+cIqGIF/NxmwP
-        amYgXUaAgzbfTZX04v7tw6RDcA==
-X-Google-Smtp-Source: ANB0VdbtFge3F/dwAXw1CjkP1uiGUgWanqBi4LAb0oQhwgNqhl20HpbgyNb1MckgsQqQp34cVHG+Dg==
-X-Received: by 2002:a17:902:6b47:: with SMTP id g7-v6mr3040276plt.128.1536767241244;
-        Wed, 12 Sep 2018 08:47:21 -0700 (PDT)
-Received: from ?IPv6:2601:646:c200:7429:9592:4a20:451a:68da? ([2601:646:c200:7429:9592:4a20:451a:68da])
-        by smtp.gmail.com with ESMTPSA id z5-v6sm1757890pfh.83.2018.09.12.08.47.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Sep 2018 08:47:20 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [RFC PATCH 10/10] x86/fpu: defer FPU state load until return to userspace
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (15G77)
-In-Reply-To: <20180912133353.20595-11-bigeasy@linutronix.de>
-Date:   Wed, 12 Sep 2018 08:47:19 -0700
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?utf-8?Q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <650FC457-7E4C-473A-9E5F-EAFC74F6444B@amacapital.net>
-References: <20180912133353.20595-1-bigeasy@linutronix.de> <20180912133353.20595-11-bigeasy@linutronix.de>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rgED9KJ5B/hFTTLcQGDuse+QaLxQ7AM0RqFakmWPcbY=;
+        b=X8Va/Jcbcmg3Rdncx2M3gZPMV0CkU+IRWP28V182eUMKLRXDZqoW+gR3b4YdVUbqDx
+         7L524eHqSRn0vG0wPB6duesuK55g+OGIGYXu8Rc78idrc8vxUvY1tW2WBRxiwEUvhtcC
+         D9SroeB2vnD/vsszXCM9m/69z48p/c7zcQaLDdqRuwAKHVAXoIwN0nxT8gb9P7F79lqw
+         MjsOkuPnwFs2PfpyuKOGPQaj52iNRwcsY1uCqW9kML+AASwNBsjdD2Jcw60KWhSrmKQe
+         0FqZvOImkSaOjM2exOGKjjhQra9UaGDAWIC2lKl9oWryc5ldDdzN+bNpe9DQosx1gDDB
+         yZuw==
+X-Gm-Message-State: APzg51DZ/nlVzdMK07Hk5wwDIZ9ej1MFgstzs4k94sVntwCCNR22TpVN
+        PDq7SCVUCiMQ/DfzuU/UhUAu4BlHMHzqy8HMwQs=
+X-Google-Smtp-Source: ANB0Vdb4OYm3/umeX9H/qV7WMGJon0W8PfYImlvur/AV2Z7pljbB72iH8VmfuHpoDE/OXN68sJpYbj7qFi7qtcoe5QE=
+X-Received: by 2002:a24:ed84:: with SMTP id r126-v6mr2659514ith.58.1536767303691;
+ Wed, 12 Sep 2018 08:48:23 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180910232615.4068.29155.stgit@localhost.localdomain>
+ <20180910234354.4068.65260.stgit@localhost.localdomain> <7b96298e-9590-befd-0670-ed0c9fcf53d5@microsoft.com>
+In-Reply-To: <7b96298e-9590-befd-0670-ed0c9fcf53d5@microsoft.com>
+From:   Alexander Duyck <alexander.duyck@gmail.com>
+Date:   Wed, 12 Sep 2018 08:48:12 -0700
+Message-ID: <CAKgT0UdKZVUPBk=rg5kfUuFBpuZQEKPuGw31x5O2nMyuULgi0g@mail.gmail.com>
+Subject: Re: [PATCH 3/4] mm: Defer ZONE_DEVICE page initialization to the
+ point where we init pgmap
+To:     Pavel.Tatashin@microsoft.com
+Cc:     linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        linux-nvdimm@lists.01.org, Michal Hocko <mhocko@suse.com>,
+        dave.jiang@intel.com, Ingo Molnar <mingo@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>, jglisse@redhat.com,
+        Andrew Morton <akpm@linux-foundation.org>, logang@deltatee.com,
+        dan.j.williams@intel.com,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Sep 12, 2018 at 6:59 AM Pasha Tatashin
+<Pavel.Tatashin@microsoft.com> wrote:
+>
+> Hi Alex,
 
-> On Sep 12, 2018, at 6:33 AM, Sebastian Andrzej Siewior <bigeasy@linutronix=
-.de> wrote:
->=20
-> From: Rik van Riel <riel@surriel.com>
->=20
-> Defer loading of FPU state until return to userspace. This gives
-> the kernel the potential to skip loading FPU state for tasks that
-> stay in kernel mode, or for tasks that end up with repeated
-> invocations of kernel_fpu_begin.
->=20
-> It also increases the chances that a task's FPU state will remain
-> valid in the FPU registers until it is scheduled back in, allowing
-> us to skip restoring that task's FPU state altogether.
->=20
->=20
+Hi Pavel,
 
-> --- a/arch/x86/kernel/fpu/core.c
-> +++ b/arch/x86/kernel/fpu/core.c
-> @@ -101,14 +101,14 @@ void __kernel_fpu_begin(void)
->=20
->    kernel_fpu_disable();
->=20
-> -    if (fpu->initialized) {
-> +    __cpu_invalidate_fpregs_state();
-> +
-> +    if (!test_and_set_thread_flag(TIF_LOAD_FPU)) {
+> Please re-base on linux-next,  memmap_init_zone() has been updated there
+> compared to mainline. You might even find a way to unify some parts of
+> memmap_init_zone and memmap_init_zone_device as memmap_init_zone() is a
+> lot simpler now.
 
-Since the already-TIF_LOAD_FPU path is supposed to be fast here, use test_th=
-read_flag() instead. test_and_set operations do unconditional RMW operations=
- and are always full barriers, so they=E2=80=99re slow.
+This patch applied to the linux-next tree with only a little bit of
+fuzz. It looks like it is mostly due to some code you had added above
+the function as well. I have updated this patch so that it will apply
+to both linux and linux-next by just moving the new function to
+underneath memmap_init_zone instead of above it.
 
-Also, on top of this patch, there should be lots of cleanups available. In p=
-articular, all the fpu state accessors could probably be reworked to take TI=
-F_LOAD_FPU into account, which would simplify the callers and maybe even the=
- mess of variables tracking whether the state is in regs.=
+> I think __init_single_page() should stay local to page_alloc.c to keep
+> the inlining optimization.
+
+I agree. In addition it will make pulling common init together into
+one space easier. I would rather not have us create an opportunity for
+things to further diverge by making it available for anybody to use.
+
+> I will review you this patch once you send an updated version.
+
+Other than moving the new function from being added above versus below
+there isn't much else that needs to change, at least for this patch. I
+have some follow-up patches I am planning that will be targeted for
+linux-next. Those I think will focus more on what you have in mind in
+terms of combining this new function
+
+> Thank you,
+> Pavel
+
+Thanks,
+- Alex
+
+> On 9/10/18 7:43 PM, Alexander Duyck wrote:
+> > From: Alexander Duyck <alexander.h.duyck@intel.com>
+> >
+> > The ZONE_DEVICE pages were being initialized in two locations. One was with
+> > the memory_hotplug lock held and another was outside of that lock. The
+> > problem with this is that it was nearly doubling the memory initialization
+> > time. Instead of doing this twice, once while holding a global lock and
+> > once without, I am opting to defer the initialization to the one outside of
+> > the lock. This allows us to avoid serializing the overhead for memory init
+> > and we can instead focus on per-node init times.
+> >
+> > One issue I encountered is that devm_memremap_pages and
+> > hmm_devmmem_pages_create were initializing only the pgmap field the same
+> > way. One wasn't initializing hmm_data, and the other was initializing it to
+> > a poison value. Since this is something that is exposed to the driver in
+> > the case of hmm I am opting for a third option and just initializing
+> > hmm_data to 0 since this is going to be exposed to unknown third party
+> > drivers.
+> >
+> > Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
+> > ---
+> >  include/linux/mm.h |    2 +
+> >  kernel/memremap.c  |   24 +++++---------
+> >  mm/hmm.c           |   12 ++++---
+> >  mm/page_alloc.c    |   89 +++++++++++++++++++++++++++++++++++++++++++++++++++-
+> >  4 files changed, 105 insertions(+), 22 deletions(-)
+> >
+> > diff --git a/include/linux/mm.h b/include/linux/mm.h
+> > index a61ebe8ad4ca..47b440bb3050 100644
+> > --- a/include/linux/mm.h
+> > +++ b/include/linux/mm.h
+> > @@ -848,6 +848,8 @@ static inline bool is_zone_device_page(const struct page *page)
+> >  {
+> >       return page_zonenum(page) == ZONE_DEVICE;
+> >  }
+> > +extern void memmap_init_zone_device(struct zone *, unsigned long,
+> > +                                 unsigned long, struct dev_pagemap *);
+> >  #else
+> >  static inline bool is_zone_device_page(const struct page *page)
+> >  {
+> > diff --git a/kernel/memremap.c b/kernel/memremap.c
+> > index 5b8600d39931..d0c32e473f82 100644
+> > --- a/kernel/memremap.c
+> > +++ b/kernel/memremap.c
+> > @@ -175,10 +175,10 @@ void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap)
+> >       struct vmem_altmap *altmap = pgmap->altmap_valid ?
+> >                       &pgmap->altmap : NULL;
+> >       struct resource *res = &pgmap->res;
+> > -     unsigned long pfn, pgoff, order;
+> > +     struct dev_pagemap *conflict_pgmap;
+> >       pgprot_t pgprot = PAGE_KERNEL;
+> > +     unsigned long pgoff, order;
+> >       int error, nid, is_ram;
+> > -     struct dev_pagemap *conflict_pgmap;
+> >
+> >       align_start = res->start & ~(SECTION_SIZE - 1);
+> >       align_size = ALIGN(res->start + resource_size(res), SECTION_SIZE)
+> > @@ -256,19 +256,13 @@ void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap)
+> >       if (error)
+> >               goto err_add_memory;
+> >
+> > -     for_each_device_pfn(pfn, pgmap) {
+> > -             struct page *page = pfn_to_page(pfn);
+> > -
+> > -             /*
+> > -              * ZONE_DEVICE pages union ->lru with a ->pgmap back
+> > -              * pointer.  It is a bug if a ZONE_DEVICE page is ever
+> > -              * freed or placed on a driver-private list.  Seed the
+> > -              * storage with LIST_POISON* values.
+> > -              */
+> > -             list_del(&page->lru);
+> > -             page->pgmap = pgmap;
+> > -             percpu_ref_get(pgmap->ref);
+> > -     }
+> > +     /*
+> > +      * Initialization of the pages has been deferred until now in order
+> > +      * to allow us to do the work while not holding the hotplug lock.
+> > +      */
+> > +     memmap_init_zone_device(&NODE_DATA(nid)->node_zones[ZONE_DEVICE],
+> > +                             align_start >> PAGE_SHIFT,
+> > +                             align_size >> PAGE_SHIFT, pgmap);
+> >
+> >       devm_add_action(dev, devm_memremap_pages_release, pgmap);
+> >
+> > diff --git a/mm/hmm.c b/mm/hmm.c
+> > index c968e49f7a0c..774d684fa2b4 100644
+> > --- a/mm/hmm.c
+> > +++ b/mm/hmm.c
+> > @@ -1024,7 +1024,6 @@ static int hmm_devmem_pages_create(struct hmm_devmem *devmem)
+> >       resource_size_t key, align_start, align_size, align_end;
+> >       struct device *device = devmem->device;
+> >       int ret, nid, is_ram;
+> > -     unsigned long pfn;
+> >
+> >       align_start = devmem->resource->start & ~(PA_SECTION_SIZE - 1);
+> >       align_size = ALIGN(devmem->resource->start +
+> > @@ -1109,11 +1108,14 @@ static int hmm_devmem_pages_create(struct hmm_devmem *devmem)
+> >                               align_size >> PAGE_SHIFT, NULL);
+> >       mem_hotplug_done();
+> >
+> > -     for (pfn = devmem->pfn_first; pfn < devmem->pfn_last; pfn++) {
+> > -             struct page *page = pfn_to_page(pfn);
+> > +     /*
+> > +      * Initialization of the pages has been deferred until now in order
+> > +      * to allow us to do the work while not holding the hotplug lock.
+> > +      */
+> > +     memmap_init_zone_device(&NODE_DATA(nid)->node_zones[ZONE_DEVICE],
+> > +                             align_start >> PAGE_SHIFT,
+> > +                             align_size >> PAGE_SHIFT, &devmem->pagemap);
+> >
+> > -             page->pgmap = &devmem->pagemap;
+> > -     }
+> >       return 0;
+> >
+> >  error_add_memory:
+> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> > index a9b095a72fd9..81a3fd942c45 100644
+> > --- a/mm/page_alloc.c
+> > +++ b/mm/page_alloc.c
+> > @@ -5454,6 +5454,83 @@ void __ref build_all_zonelists(pg_data_t *pgdat)
+> >  #endif
+> >  }
+> >
+> > +#ifdef CONFIG_ZONE_DEVICE
+> > +void __ref memmap_init_zone_device(struct zone *zone, unsigned long pfn,
+> > +                                unsigned long size,
+> > +                                struct dev_pagemap *pgmap)
+> > +{
+> > +     struct pglist_data *pgdat = zone->zone_pgdat;
+> > +     unsigned long zone_idx = zone_idx(zone);
+> > +     unsigned long end_pfn = pfn + size;
+> > +     unsigned long start = jiffies;
+> > +     int nid = pgdat->node_id;
+> > +     unsigned long nr_pages;
+> > +
+> > +     if (WARN_ON_ONCE(!pgmap || !is_dev_zone(zone)))
+> > +             return;
+> > +
+> > +     /*
+> > +      * The call to memmap_init_zone should have already taken care
+> > +      * of the pages reserved for the memmap, so we can just jump to
+> > +      * the end of that region and start processing the device pages.
+> > +      */
+> > +     if (pgmap->altmap_valid) {
+> > +             struct vmem_altmap *altmap = &pgmap->altmap;
+> > +
+> > +             pfn = altmap->base_pfn + vmem_altmap_offset(altmap);
+> > +     }
+> > +
+> > +     /* Record the number of pages we are about to initialize */
+> > +     nr_pages = end_pfn - pfn;
+> > +
+> > +     for (; pfn < end_pfn; pfn++) {
+> > +             struct page *page = pfn_to_page(pfn);
+> > +
+> > +             __init_single_page(page, pfn, zone_idx, nid);
+> > +
+> > +             /*
+> > +              * Mark page reserved as it will need to wait for onlining
+> > +              * phase for it to be fully associated with a zone.
+> > +              *
+> > +              * We can use the non-atomic __set_bit operation for setting
+> > +              * the flag as we are still initializing the pages.
+> > +              */
+> > +             __SetPageReserved(page);
+> > +
+> > +             /*
+> > +              * ZONE_DEVICE pages union ->lru with a ->pgmap back
+> > +              * pointer and hmm_data.  It is a bug if a ZONE_DEVICE
+> > +              * page is ever freed or placed on a driver-private list.
+> > +              */
+> > +             page->pgmap = pgmap;
+> > +             page->hmm_data = 0;
+> > +
+> > +             /*
+> > +              * Mark the block movable so that blocks are reserved for
+> > +              * movable at startup. This will force kernel allocations
+> > +              * to reserve their blocks rather than leaking throughout
+> > +              * the address space during boot when many long-lived
+> > +              * kernel allocations are made.
+> > +              *
+> > +              * bitmap is created for zone's valid pfn range. but memmap
+> > +              * can be created for invalid pages (for alignment)
+> > +              * check here not to call set_pageblock_migratetype() against
+> > +              * pfn out of zone.
+> > +              *
+> > +              * Please note that MEMMAP_HOTPLUG path doesn't clear memmap
+> > +              * because this is done early in sparse_add_one_section
+> > +              */
+> > +             if (!(pfn & (pageblock_nr_pages - 1))) {
+> > +                     set_pageblock_migratetype(page, MIGRATE_MOVABLE);
+> > +                     cond_resched();
+> > +             }
+> > +     }
+> > +
+> > +     pr_info("%s initialised, %lu pages in %ums\n", dev_name(pgmap->dev),
+> > +             nr_pages, jiffies_to_msecs(jiffies - start));
+> > +}
+> > +
+> > +#endif
+> >  /*
+> >   * Initially all pages are reserved - free ones are freed
+> >   * up by free_all_bootmem() once the early boot process is
+> > @@ -5477,10 +5554,18 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
+> >
+> >       /*
+> >        * Honor reservation requested by the driver for this ZONE_DEVICE
+> > -      * memory
+> > +      * memory. We limit the total number of pages to initialize to just
+> > +      * those that might contain the memory mapping. We will defer the
+> > +      * ZONE_DEVICE page initialization until after we have released
+> > +      * the hotplug lock.
+> >        */
+> > -     if (altmap && start_pfn == altmap->base_pfn)
+> > +     if (altmap && start_pfn == altmap->base_pfn) {
+> >               start_pfn += altmap->reserve;
+> > +             end_pfn = altmap->base_pfn +
+> > +                       vmem_altmap_offset(altmap);
+> > +     } else if (zone == ZONE_DEVICE) {
+> > +             end_pfn = start_pfn;
+> > +     }
+> >
+> >       for (pfn = start_pfn; pfn < end_pfn; pfn++) {
+> >               /*
+> >
