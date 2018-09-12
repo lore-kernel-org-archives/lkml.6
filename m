@@ -2,83 +2,175 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CA2DC4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:14:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3BE3C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:14:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 297A220866
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:14:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 297A220866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
+	by mail.kernel.org (Postfix) with ESMTP id 7900520866
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:14:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7900520866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728245AbeILORg (ORCPT
+        id S1728264AbeILORi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 10:17:36 -0400
-Received: from smtp.ctxuk.citrix.com ([185.25.65.24]:2180 "EHLO
-        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728211AbeILORf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 10:17:35 -0400
-X-IronPort-AV: E=Sophos;i="5.53,364,1531785600"; 
-   d="scan'208";a="78924783"
-Date:   Wed, 12 Sep 2018 11:13:50 +0200
-From:   Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
-To:     Jan Beulich <JBeulich@suse.com>
-CC:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        xen-devel <xen-devel@lists.xenproject.org>,
-        zhong jiang <zhongjiang@huawei.com>,
-        <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [Xen-devel] [PATCH] drivers/block/xen-blkback/common.h: use
- DIV_ROUND_UP instead of reimplementing its function
-Message-ID: <20180912091350.6wuvt2jkvzg6wruo@mac.bytemobile.com>
-References: <1536731100-56054-1-git-send-email-zhongjiang@huawei.com>
- <5B98CAE202000078001E79CC@prv1-mh.provo.novell.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <5B98CAE202000078001E79CC@prv1-mh.provo.novell.com>
-User-Agent: NeoMutt/20180716
-X-ClientProxiedBy: AMSPEX02CAS01.citrite.net (10.69.22.112) To
- AMSPEX02CL02.citrite.net (10.69.22.126)
+        Wed, 12 Sep 2018 10:17:38 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55986 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728211AbeILORi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 10:17:38 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A1CD21682;
+        Wed, 12 Sep 2018 02:14:00 -0700 (PDT)
+Received: from queper01-lin.local (queper01-lin.emea.arm.com [10.4.13.27])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 89EA23F703;
+        Wed, 12 Sep 2018 02:13:56 -0700 (PDT)
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     peterz@infradead.org, rjw@rjwysocki.net,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Cc:     gregkh@linuxfoundation.org, mingo@redhat.com,
+        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
+        chris.redpath@arm.com, patrick.bellasi@arm.com,
+        valentin.schneider@arm.com, vincent.guittot@linaro.org,
+        thara.gopinath@linaro.org, viresh.kumar@linaro.org,
+        tkjos@google.com, joel@joelfernandes.org, smuckle@google.com,
+        adharmap@codeaurora.org, skannan@codeaurora.org,
+        pkondeti@codeaurora.org, juri.lelli@redhat.com,
+        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
+        currojerez@riseup.net, javi.merino@kernel.org,
+        quentin.perret@arm.com
+Subject: [PATCH v7 09/14] sched/fair: Clean-up update_sg_lb_stats parameters
+Date:   Wed, 12 Sep 2018 10:13:04 +0100
+Message-Id: <20180912091309.7551-10-quentin.perret@arm.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180912091309.7551-1-quentin.perret@arm.com>
+References: <20180912091309.7551-1-quentin.perret@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding Julien how did the work to support XEN_PAGE_SIZE != PAGE_SIZE.
+In preparation for the introduction of a new root domain flag which can
+be set during load balance (the 'overutilized' flag), clean-up the set
+of parameters passed to update_sg_lb_stats(). More specifically, the
+'local_group' and 'local_idx' parameters can be removed since they can
+easily be reconstructed from within the function.
 
-On Wed, Sep 12, 2018 at 02:14:26AM -0600, Jan Beulich wrote:
-> >>> On 12.09.18 at 07:45, <zhongjiang@huawei.com> wrote:
-> > --- a/drivers/block/xen-blkback/common.h
-> > +++ b/drivers/block/xen-blkback/common.h
-> > @@ -65,7 +65,7 @@
-> >  	(XEN_PAGES_PER_INDIRECT_FRAME / XEN_PAGES_PER_SEGMENT)
-> >  
-> >  #define MAX_INDIRECT_PAGES \
-> > -	((MAX_INDIRECT_SEGMENTS + SEGS_PER_INDIRECT_FRAME - 1)/SEGS_PER_INDIRECT_FRAME)
-> > +		DIV_ROUND_UP(MAX_INDIRECT_SEGMENTS, SEGS_PER_INDIRECT_FRAME)
-> >  #define INDIRECT_PAGES(_segs) DIV_ROUND_UP(_segs, XEN_PAGES_PER_INDIRECT_FRAME)
-> 
-> My first reaction was to suggest
-> 
-> #define MAX_INDIRECT_PAGES INDIRECT_PAGES(MAX_INDIRECT_SEGMENTS)
-> 
-> but that wouldn't match what's there currently (note the two different
-> divisors). I can't really decide whether that's just unfortunate naming
-> of the two macros, or an actual bug.
+While at it, transform the 'overload' parameter into a flag stored in
+the 'sg_status' parameter hence facilitating the definition of new flags
+when needed.
 
-I think there's indeed a bug here.
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
+Suggested-by: Valentin Schneider <valentin.schneider@arm.com>
+Signed-off-by: Quentin Perret <quentin.perret@arm.com>
+---
+ kernel/sched/fair.c  | 27 +++++++++++----------------
+ kernel/sched/sched.h |  3 +++
+ 2 files changed, 14 insertions(+), 16 deletions(-)
 
-AFAICT, MAX_INDIRECT_PAGES should use XEN_PAGES_PER_INDIRECT_FRAME and
-then it could be changed as Jan suggested.
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index c28c7adcc7b3..23381feae4ec 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -7782,16 +7782,16 @@ static bool update_nohz_stats(struct rq *rq, bool force)
+  * update_sg_lb_stats - Update sched_group's statistics for load balancing.
+  * @env: The load balancing environment.
+  * @group: sched_group whose statistics are to be updated.
+- * @load_idx: Load index of sched_domain of this_cpu for load calc.
+- * @local_group: Does group contain this_cpu.
+  * @sgs: variable to hold the statistics for this group.
+- * @overload: Indicate pullable load (e.g. >1 runnable task).
++ * @sg_status: Holds flag indicating the status of the sched_group
+  */
+ static inline void update_sg_lb_stats(struct lb_env *env,
+-			struct sched_group *group, int load_idx,
+-			int local_group, struct sg_lb_stats *sgs,
+-			bool *overload)
++				      struct sched_group *group,
++				      struct sg_lb_stats *sgs,
++				      int *sg_status)
+ {
++	int local_group = cpumask_test_cpu(env->dst_cpu, sched_group_span(group));
++	int load_idx = get_sd_load_idx(env->sd, env->idle);
+ 	unsigned long load;
+ 	int i, nr_running;
+ 
+@@ -7815,7 +7815,7 @@ static inline void update_sg_lb_stats(struct lb_env *env,
+ 
+ 		nr_running = rq->nr_running;
+ 		if (nr_running > 1)
+-			*overload = true;
++			*sg_status |= SG_OVERLOAD;
+ 
+ #ifdef CONFIG_NUMA_BALANCING
+ 		sgs->nr_numa_running += rq->nr_numa_running;
+@@ -7831,7 +7831,7 @@ static inline void update_sg_lb_stats(struct lb_env *env,
+ 		if (env->sd->flags & SD_ASYM_CPUCAPACITY &&
+ 		    sgs->group_misfit_task_load < rq->misfit_task_load) {
+ 			sgs->group_misfit_task_load = rq->misfit_task_load;
+-			*overload = 1;
++			*sg_status |= SG_OVERLOAD;
+ 		}
+ 	}
+ 
+@@ -7976,17 +7976,14 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
+ 	struct sched_group *sg = env->sd->groups;
+ 	struct sg_lb_stats *local = &sds->local_stat;
+ 	struct sg_lb_stats tmp_sgs;
+-	int load_idx;
+-	bool overload = false;
+ 	bool prefer_sibling = child && child->flags & SD_PREFER_SIBLING;
++	int sg_status = 0;
+ 
+ #ifdef CONFIG_NO_HZ_COMMON
+ 	if (env->idle == CPU_NEWLY_IDLE && READ_ONCE(nohz.has_blocked))
+ 		env->flags |= LBF_NOHZ_STATS;
+ #endif
+ 
+-	load_idx = get_sd_load_idx(env->sd, env->idle);
+-
+ 	do {
+ 		struct sg_lb_stats *sgs = &tmp_sgs;
+ 		int local_group;
+@@ -8001,8 +7998,7 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
+ 				update_group_capacity(env->sd, env->dst_cpu);
+ 		}
+ 
+-		update_sg_lb_stats(env, sg, load_idx, local_group, sgs,
+-						&overload);
++		update_sg_lb_stats(env, sg, sgs, &sg_status);
+ 
+ 		if (local_group)
+ 			goto next_group;
+@@ -8052,8 +8048,7 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
+ 
+ 	if (!env->sd->parent) {
+ 		/* update overload indicator if we are at root domain */
+-		if (READ_ONCE(env->dst_rq->rd->overload) != overload)
+-			WRITE_ONCE(env->dst_rq->rd->overload, overload);
++		WRITE_ONCE(env->dst_rq->rd->overload, sg_status & SG_OVERLOAD);
+ 	}
+ }
+ 
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 7ced27701454..bee902d46d35 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -707,6 +707,9 @@ struct perf_domain {
+ 	struct rcu_head rcu;
+ };
+ 
++/* Scheduling group status flags */
++#define SG_OVERLOAD		0x1 /* More than one runnable task on a CPU. */
++
+ /*
+  * We add the notion of a root-domain which will be used to define per-domain
+  * variables. Each exclusive cpuset essentially defines an island domain by
+-- 
+2.18.0
 
-Current MAX_INDIRECT_PAGES is misnamed and should instead be
-MAX_INDIRECT_SEGS (which on x86 is exactly the same because PAGE_SIZE
-== XEN_PAGE_SIZE).
-
-Roger.
