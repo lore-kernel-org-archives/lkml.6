@@ -6,49 +6,58 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FE59C07520
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 18:55:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0915AC07520
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 18:55:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8BAC2133F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 18:55:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B43242146E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 18:55:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Afb7smz8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8BAC2133F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Muiz5gJd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B43242146E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728157AbeIMABV (ORCPT
+        id S1728178AbeIMAB0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 20:01:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52612 "EHLO mail.kernel.org"
+        Wed, 12 Sep 2018 20:01:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52730 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727047AbeIMABU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 20:01:20 -0400
+        id S1727047AbeIMABZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 20:01:25 -0400
 Received: from jouet.infradead.org (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 52D7820882;
-        Wed, 12 Sep 2018 18:55:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 744F4213A2;
+        Wed, 12 Sep 2018 18:55:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536778529;
-        bh=A/ZAcd9vwLhqeF8NfxvkuHI+mIc7xYiRdKXaGABFEI0=;
+        s=default; t=1536778534;
+        bh=QFkk5qyW2wNG2khu740m3Bh3YpNRILc5D5PaNdF/C70=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Afb7smz8SEmUZO5jgGSAls1lp4Z46mWqqWwhP8K86mp1wwwvhN09pB+ZnrSxKf9j5
-         B6wJqTzEM0KAAeUol8Hf8Ax/tk+gDyYvU3mlG9/rS/z28a/vWXRlCq+U5GYx3gBhk5
-         b1DxwoQrDdwMdQkFBZ55jZyv90VI9DMAtdfxLpnk=
+        b=Muiz5gJdvCuZ4lvVo9cqaZPSqjPNk6/+8RnhVNPB72lNfT1DJ1pi1t3oaH90rqrTe
+         hRfmsTkKEBvuHAEmn8FVyhtCq0NGVWsAcEDC5+3dZzekORRi9yplYZaEJ7WAcR38YI
+         D8/PXJvcHFvkKpRZh5VaXly37ABHh51h8rHilmBM=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         linux-perf-users@vger.kernel.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
         Adrian Hunter <adrian.hunter@intel.com>,
-        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>, David Ahern <dsahern@gmail.com>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Kim Phillips <kim.phillips@arm.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Namhyung Kim <namhyung@kernel.org>,
-        Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 1/7] tools headers uapi: Update tools's copy of linux/perf_event.h
-Date:   Wed, 12 Sep 2018 15:55:03 -0300
-Message-Id: <20180912185509.32187-2-acme@kernel.org>
+        Peter Zijlstra <peterz@infradead.org>,
+        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
+        Thomas Richter <tmricht@linux.vnet.ibm.com>,
+        Wang Nan <wangnan0@huawei.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 2/7] tools headers uapi: Update tools's copy of asm-generic/unistd.h
+Date:   Wed, 12 Sep 2018 15:55:04 -0300
+Message-Id: <20180912185509.32187-3-acme@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180912185509.32187-1-acme@kernel.org>
 References: <20180912185509.32187-1-acme@kernel.org>
@@ -61,38 +70,55 @@ From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
 To get the changes in:
 
-	09121255c784 ("perf/UAPI: Clearly mark __PERF_SAMPLE_CALLCHAIN_EARLY as internal use")
+	db7a2d1809a5 ("asm-generic: unistd.h: Wire up sys_rseq")
+
+That wires up the new 'rsec' system call, which will automagically
+support that syscall in the syscall table used by 'perf trace' on
+arm/arm64.
 
 This cures the following warning during perf's build:
 
-	Warning: Kernel ABI header at 'tools/include/uapi/linux/perf_event.h' differs from latest version at 'include/uapi/linux/perf_event.h'
-	diff -u tools/include/uapi/linux/perf_event.h include/uapi/linux/perf_event.h
+	Warning: Kernel ABI header at 'tools/include/uapi/asm-generic/unistd.h' differs from latest version at 'include/uapi/asm-generic/unistd.h'
+	diff -u tools/include/uapi/asm-generic/unistd.h include/uapi/asm-generic/unistd.h
 
-Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
 Cc: David Ahern <dsahern@gmail.com>
+Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Kim Phillips <kim.phillips@arm.com>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
 Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Cc: Thomas Richter <tmricht@linux.vnet.ibm.com>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-2vvwh2o19orn56di0ksrtgzr@git.kernel.org
+Cc: Will Deacon <will.deacon@arm.com>
+Link: https://lkml.kernel.org/n/tip-vt7k2itnitp1t9p3dp7qeb08@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/include/uapi/linux/perf_event.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/include/uapi/asm-generic/unistd.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/tools/include/uapi/linux/perf_event.h b/tools/include/uapi/linux/perf_event.h
-index eeb787b1c53c..f35eb72739c0 100644
---- a/tools/include/uapi/linux/perf_event.h
-+++ b/tools/include/uapi/linux/perf_event.h
-@@ -144,7 +144,7 @@ enum perf_event_sample_format {
+diff --git a/tools/include/uapi/asm-generic/unistd.h b/tools/include/uapi/asm-generic/unistd.h
+index 42990676a55e..df4bedb9b01c 100644
+--- a/tools/include/uapi/asm-generic/unistd.h
++++ b/tools/include/uapi/asm-generic/unistd.h
+@@ -734,9 +734,11 @@ __SYSCALL(__NR_pkey_free,     sys_pkey_free)
+ __SYSCALL(__NR_statx,     sys_statx)
+ #define __NR_io_pgetevents 292
+ __SC_COMP(__NR_io_pgetevents, sys_io_pgetevents, compat_sys_io_pgetevents)
++#define __NR_rseq 293
++__SYSCALL(__NR_rseq, sys_rseq)
  
- 	PERF_SAMPLE_MAX = 1U << 20,		/* non-ABI */
- 
--	__PERF_SAMPLE_CALLCHAIN_EARLY		= 1ULL << 63,
-+	__PERF_SAMPLE_CALLCHAIN_EARLY		= 1ULL << 63, /* non-ABI; internal use */
- };
+ #undef __NR_syscalls
+-#define __NR_syscalls 293
++#define __NR_syscalls 294
  
  /*
+  * 32 bit systems traditionally used different
 -- 
 2.14.4
 
