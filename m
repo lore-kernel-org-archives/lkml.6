@@ -2,109 +2,126 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C88BDC070C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 21:58:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52A98C070C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 22:02:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6446D20C0A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 21:58:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6446D20C0A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 064472133F
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 22:02:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 064472133F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727946AbeIMDEd (ORCPT
+        id S1727847AbeIMDJZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 23:04:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60554 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726838AbeIMDEd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 23:04:33 -0400
-Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E9B0FD3E;
-        Wed, 12 Sep 2018 21:58:02 +0000 (UTC)
-Date:   Wed, 12 Sep 2018 23:57:59 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Dave Jiang <dave.jiang@intel.com>,
-        Vishal L Verma <vishal.l.verma@intel.com>,
-        "Du, Fan" <fan.du@intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH] uio: fix is_source param for check_copy_size() in
- copy_to_iter_mcsafe()
-Message-ID: <20180912215759.GA3000@kroah.com>
-References: <153617950046.33664.13445188581267552601.stgit@djiang5-desk3.ch.intel.com>
- <20180912074850.GA362@kroah.com>
- <CAPcyv4j9CooFiUpJnQvp2tP26u_Sys4AP4JmGtNBZf5R5ug8xg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4j9CooFiUpJnQvp2tP26u_Sys4AP4JmGtNBZf5R5ug8xg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 12 Sep 2018 23:09:25 -0400
+Received: from mga02.intel.com ([134.134.136.20]:29651 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726575AbeIMDJZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 23:09:25 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Sep 2018 15:02:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,366,1531810800"; 
+   d="scan'208";a="91202185"
+Received: from przanoni-mobl.jf.intel.com ([10.24.10.174])
+  by orsmga002.jf.intel.com with ESMTP; 12 Sep 2018 15:02:31 -0700
+Message-ID: <1536789750.2958.17.camel@intel.com>
+Subject: Re: [PATCH] drm/i915/dp: fix shifting by a negative number of bits
+From:   Paulo Zanoni <paulo.r.zanoni@intel.com>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>
+Cc:     intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org,
+        "Vivi, Rodrigo" <rodrigo.vivi@intel.com>
+Date:   Wed, 12 Sep 2018 15:02:30 -0700
+In-Reply-To: <20180912143153.GA27564@embeddedor.com>
+References: <20180912143153.GA27564@embeddedor.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 02:51:53PM -0700, Dan Williams wrote:
-> On Wed, Sep 12, 2018 at 12:48 AM, Greg KH <gregkh@linuxfoundation.org> wrote:
-> > On Wed, Sep 05, 2018 at 01:31:40PM -0700, Dave Jiang wrote:
-> >> copy_to_iter_mcsafe() is passing in the is_source parameter as "false"
-> >> to check_copy_size(). This is different than what copy_to_iter() does.
-> >> Also, the addr parameter passed to check_copy_size() is the source so
-> >> therefore we should be passing in "true" instead.
-> >>
-> >> Fixes: 8780356ef630 ("x86/asm/memcpy_mcsafe: Define copy_to_iter_mcsafe()")
-> >> Cc: Fan Du <fan.du@intel.com>
-> >> Reported-by: Wenwei Tao <wenwei.tww@alibaba-inc.com>
-> >> Signed-off-by: Dave Jiang <dave.jiang@intel.com>
-> >> Reviewed-by: Vishal Verma <vishal.l.verma@intel.com>
-> >> Cc: stable <stable@vger.kernel.org>
-> >> ---
-> >>  include/linux/uio.h |    2 +-
-> >
-> > I am not the maintainer of this file, sorry, please work with the -mm
-> > developers for this.
+Em Qua, 2018-09-12 às 09:31 -0500, Gustavo A. R. Silva escreveu:
+> Function intel_port_to_tc() returns PORT_TC_NONE on error, which is
+> a negative value -1. In case PORT_TC_NONE is returned, there is an
+> undefined behavior when shifting by a negative number of bits in
+> both DP_PHY_MODE_STATUS_NOT_SAFE and P_PHY_MODE_STATUS_COMPLETED
+> macros.
 > 
-> Likely this is get_maintainer.pl's fault:
+> Fix this by adding sanity checks on intel_port_to_tc return value,
+> before
+> using macros DP_PHY_MODE_STATUS_NOT_SAFE and
+> P_PHY_MODE_STATUS_COMPLETED.
+
+This was just discussed yesterday in a patch by Rodrigo:
+
+https://patchwork.freedesktop.org/patch/246903/
+
+I would personally prefer his version because it avoids passing -1 to
+register macros that Coverity doesn't seem to care about, it's a single
+check and it prints WARN() instead of DRM_DEBUG_KMS().
+
+Although I do prefer your commit message explanation :).
+
+Perhaps I should reconsider my vote to not merge it. Or we could
+actually go and test what happens when intel_port_to_tc() is broken,
+fixing all the issues instead of just the ones reported by Coverity.
+
+Anyway, Rodrigo's patch with an improved commit message could receive
+my R-B tag now.
+
 > 
-> $ ./scripts/get_maintainer.pl  -f include/linux/uio.h
-> Greg Kroah-Hartman <gregkh@linuxfoundation.org> (maintainer:USERSPACE I/O (UIO))
-> linux-kernel@vger.kernel.org (open list)
+> Addresses-Coverity-ID: 1473324 ("Bad bit shift operation")
+> Addresses-Coverity-ID: 1473325 ("Bad bit shift operation")
+> Fixes: 39d1e234e1e1 ("drm/i915/icl: implement the tc/legacy HPD
+> {dis,}connect flows")
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  drivers/gpu/drm/i915/intel_dp.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 > 
-> Maybe a MAINTAINERS update like the following is warranted, because I
-> don't think -mm developers are right either, Al seems to be authority
-> on iov_iter apis:
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index d870cb57c887..0018e19b4d8e 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -15344,13 +15344,18 @@ F:    arch/x86/um/
->  F:     fs/hostfs/
->  F:     fs/hppfs/
-> 
-> +USERSPACE ACCESS (uaccess, copy_{to,from}_iter)
-> +M:     Alexander Viro <viro@zeniv.linux.org.uk>
-> +S:     Maintained
-> +F:     include/linux/uio*.h
-> +F:     lib/iov_iter.c
+> diff --git a/drivers/gpu/drm/i915/intel_dp.c
+> b/drivers/gpu/drm/i915/intel_dp.c
+> index 436c22d..e34b7b1 100644
+> --- a/drivers/gpu/drm/i915/intel_dp.c
+> +++ b/drivers/gpu/drm/i915/intel_dp.c
+> @@ -4811,6 +4811,11 @@ static bool icl_tc_phy_connect(struct
+> drm_i915_private *dev_priv,
+>  	    dig_port->tc_type != TC_PORT_TYPEC)
+>  		return true;
+>  
+> +	if (tc_port < 0) {
+> +		DRM_DEBUG_KMS("Bad TC port %d\n", tc_port);
+> +		return false;
+> +	}
 > +
->  USERSPACE I/O (UIO)
->  M:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->  S:     Maintained
->  T:     git git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git
->  F:     Documentation/driver-api/uio-howto.rst
->  F:     drivers/uio/
-> -F:     include/linux/uio*.h
-
-Don't drop that line, uio_driver.h is what it should just say, right?
-
-thanks,
-
-greg k-h
+>  	val = I915_READ(PORT_TX_DFLEXDPPMS);
+>  	if (!(val & DP_PHY_MODE_STATUS_COMPLETED(tc_port))) {
+>  		DRM_DEBUG_KMS("DP PHY for TC port %d not ready\n",
+> tc_port);
+> @@ -4857,6 +4862,10 @@ static void icl_tc_phy_disconnect(struct
+> drm_i915_private *dev_priv,
+>  	    dig_port->tc_type != TC_PORT_TYPEC)
+>  		return;
+>  
+> +	if (tc_port < 0) {
+> +		DRM_DEBUG_KMS("Bad TC port %d\n", tc_port);
+> +		return;
+> +	}
+>  	/*
+>  	 * This function may be called many times in a row without
+> an HPD event
+>  	 * in between, so try to avoid the write when we can.
