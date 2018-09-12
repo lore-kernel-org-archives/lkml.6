@@ -2,113 +2,95 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CDDDC4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 12:03:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAF71C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 12:05:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C46A20890
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 12:03:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C46A20890
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 9384B20890
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 12:05:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9384B20890
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726821AbeILRHZ (ORCPT
+        id S1726800AbeILRJU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 13:07:25 -0400
-Received: from foss.arm.com ([217.140.101.70]:58206 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726221AbeILRHZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 13:07:25 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B248F7A9;
-        Wed, 12 Sep 2018 05:03:11 -0700 (PDT)
-Received: from [10.4.13.92] (e112298-lin.Emea.Arm.com [10.4.13.92])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DD0263F614;
-        Wed, 12 Sep 2018 05:03:09 -0700 (PDT)
-Subject: Re: [PATCH v5 02/27] arm64: cpufeature: Use alternatives for VHE
- cpu_enable
-To:     James Morse <james.morse@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
-        joel@joelfernandes.org, marc.zyngier@arm.com, mark.rutland@arm.com,
-        christoffer.dall@arm.com, catalin.marinas@arm.com,
-        will.deacon@arm.com, Suzuki K Poulose <suzuki.poulose@arm.com>
-References: <1535471497-38854-1-git-send-email-julien.thierry@arm.com>
- <1535471497-38854-3-git-send-email-julien.thierry@arm.com>
- <1d425320-aed3-b949-1ec5-f378248aac4d@arm.com>
-From:   Julien Thierry <julien.thierry@arm.com>
-Message-ID: <85d74cec-2290-9e89-b155-f0f7c523b4a4@arm.com>
-Date:   Wed, 12 Sep 2018 13:03:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 12 Sep 2018 13:09:20 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47320 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726221AbeILRJU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 13:09:20 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 4C3D7ACD1;
+        Wed, 12 Sep 2018 12:05:05 +0000 (UTC)
+Date:   Wed, 12 Sep 2018 14:05:04 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     David Rientjes <rientjes@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stefan Priebe <s.priebe@profihost.ag>
+Subject: Re: [PATCH] mm, thp: relax __GFP_THISNODE for MADV_HUGEPAGE mappings
+Message-ID: <20180912120504.GE10951@dhcp22.suse.cz>
+References: <20180907130550.11885-1-mhocko@kernel.org>
+ <alpine.DEB.2.21.1809101253080.177111@chino.kir.corp.google.com>
+ <20180911115613.GR10951@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1809111319060.189563@chino.kir.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <1d425320-aed3-b949-1ec5-f378248aac4d@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1809111319060.189563@chino.kir.corp.google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi James,
+On Tue 11-09-18 13:30:20, David Rientjes wrote:
+> On Tue, 11 Sep 2018, Michal Hocko wrote:
+[...]
+> > hugepage specific MPOL flags sounds like yet another step into even more
+> > cluttered API and semantic, I am afraid. Why should this be any
+> > different from regular page allocations? You are getting off-node memory
+> > once your local node is full. You have to use an explicit binding to
+> > disallow that. THP should be similar in that regards. Once you have said
+> > that you _really_ want THP then you are closer to what we do for regular
+> > pages IMHO.
+> > 
+> 
+> Saying that we really want THP isn't an all-or-nothing decision.  We 
+> certainly want to try hard to fault hugepages locally especially at task 
+> startup when remapping our .text segment to thp, and MADV_HUGEPAGE works 
+> very well for that.  Remote hugepages would be a regression that we now 
+> have no way to avoid because the kernel doesn't provide for it, if we were 
+> to remove __GFP_THISNODE that this patch introduces.
 
-On 12/09/18 11:28, James Morse wrote:
-> Hi Julien,
-> 
-> On 28/08/18 16:51, Julien Thierry wrote:
->> The cpu_enable callback for VHE feature requires all alternatives to have
->> been applied. This prevents applying VHE alternative separately from the
->> rest.
->>
->> Use an alternative depending on VHE feature to know whether VHE
->> alternatives have already been applied.
-> 
->> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
->> index 1e433ac..3bc1c8b 100644
->> --- a/arch/arm64/kernel/cpufeature.c
->> +++ b/arch/arm64/kernel/cpufeature.c
->> @@ -1022,8 +1024,15 @@ static void cpu_copy_el2regs(const struct arm64_cpu_capabilities *__unused)
->>   	 * that, freshly-onlined CPUs will set tpidr_el2, so we don't need to
->>   	 * do anything here.
->>   	 */
->> -	if (!alternatives_applied)
->> -		write_sysreg(read_sysreg(tpidr_el1), tpidr_el2);
->> +	asm volatile(ALTERNATIVE(
->> +		"mrs	%0, tpidr_el1\n"
->> +		"msr	tpidr_el2, %0",
->> +		"nop\n"
->> +		"nop",
->> +		ARM64_HAS_VIRT_HOST_EXTN)
->> +		: "+r" (tmp)
->> +		:
->> +		: "memory");
->>   }
->>   #endif
-> 
-> Catalin's preference was to keep this all in C:
-> https://patchwork.kernel.org/patch/10007977/
-> , for which we need to know if 'the' alternative has been applied.
-> 
-> I suspect there may be more registers in this list if we have to switch to
-> another EL2 register using alternatives. (but I don't have an example).
-> 
-> Could we make 'alternatives_applied' a macro that takes the cap as an argument?
-> 
+Why cannot you use mempolicy to bind to local nodes if you really care
+about the locality?
 
-I wanted to do this initially, the issue was that the alternatives 
-framework works on regions to patch rather than caps to apply. So I 
-found it a bit odd to associate the "code corresponding to cap was 
-applied" with the alternative application.
+> On Broadwell, for example, we find 7% slower access to remote hugepages 
+> than local native pages.  On Naples, that becomes worse: 14% slower access 
+> latency for intrasocket hugepages compared to local native pages and 39% 
+> slower for intersocket.
 
-Although in patch 3 with the feature mask I guess that at the end of the 
-__apply_alternatives loop, if the cap was part of the mask passed, it 
-can be considered as applied.
-If the asm inline is problematic I can go that route.
+So, again, how does this compare to regular 4k pages? You are going to
+pay for the same remote access as well.
 
-Thanks,
+From what you have said so far it sounds like you would like to have
+something like the zone/node reclaim mode fine grained for a specific
+mapping. If we really want to support something like that then it should
+be a generic policy rather than THP specific thing IMHO.
 
+As I've said it is hard to come up with a solution that would satisfy
+everybody but considering that the existing reports are seeing this a
+regression and cosindering their NUMA requirements are not so strict as
+yours I would tend to think that stronger NUMA requirements should be
+expressed explicitly rather than implicit effect of a madvise flag. We
+do have APIs for that.
 -- 
-Julien Thierry
+Michal Hocko
+SUSE Labs
