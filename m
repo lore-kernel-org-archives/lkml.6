@@ -2,232 +2,205 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35E1CC46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:37:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56B07ECDFC1
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:37:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA6C520866
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:37:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0553D20866
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:37:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="IyEC1xxB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA6C520866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LpoJ6kj1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0553D20866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727939AbeILTmj (ORCPT
+        id S1728054AbeILTmk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 15:42:39 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41195 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726819AbeILTmj (ORCPT
+        Wed, 12 Sep 2018 15:42:40 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:36176 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726945AbeILTmj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 12 Sep 2018 15:42:39 -0400
-Received: by mail-pg1-f196.google.com with SMTP id s15-v6so1166393pgv.8
+Received: by mail-it0-f65.google.com with SMTP id u13-v6so3350072iti.1
         for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 07:37:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=y0P6O8v7rThGQSl1OcgYGkbGNCqDY4v92y928eGZHWE=;
-        b=IyEC1xxB9SDq7DDAdhQlsSpsIb1xnlJWM8R1ZMoYU+E2UsXf3XIOvkkuMOe6Uyqyck
-         0fLqMzsUu2SA5ulC0+Mi4dFLFYk2CnWBeB9HQG4iJTcFFg1EBKCNwoiROLd2PW4sm2RO
-         nBZVrfbboZUZiZUGdU3tHr3waRAPKqnBh7xbw0cwA2A+4UlcGcuhxkHAhbvWR9xfeOrg
-         5t3YOyA86N204sYMEXuH4h8UkdhnUy5dubE87Kzj/k5tz1qNHJXsM5Xg2Cnlbwa8dqmr
-         E2Ef/9VVUkRgHraIO5uDMgIDeRYKqB8f2ODnBoN4Uwe0Bj/OzUsunPTYdXK0i33LYmkl
-         oP4Q==
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=t2AkKMW3uG9PmM8uWvE13AYW8LWT09XOFJXk8rE9+rs=;
+        b=LpoJ6kj1MZIAj4RWDpJO7wmdULde5QkARDY2VqMWixEU6WA2NR0Scr5Z/rN3Jrvu89
+         Px0nKa2u2p3vgpVKKG8El/ippR0qxbWQQE67S0KPoC1IfVRxwyeE78CVcpUR0CGfwj0v
+         fE9s4Hu30MAX2E5dZZ4eE9/e6U+1ykq32kQek=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=y0P6O8v7rThGQSl1OcgYGkbGNCqDY4v92y928eGZHWE=;
-        b=Qc7/DtuhkSphXiVlS+BqJ5+s/U+R0Y5pPG3t6JeH5+oVFVFQPSbuJdEhieMAJk96Z0
-         oYRgh7b3RqCpfZ6teTOVnMh9ABHZtPj1zNqK98bU8E29YQubM2l+cL4nwLBqCo6XP/K+
-         fPHeRAx0dKeMiWFLzWP9mQRlYXSYIHeRKfT852VOY0BJEslZan30oneJ05kCt+8s4BNU
-         B1VUZjK7fteRc9VQxvj+lXxv+i6qNN6ZatRc0IV02I6MNagbVZYkWKriNJthf84VQYSf
-         prCSqeDhQ3rPBtV2vagDJAeMUJoLIMGiJ4qxBdpja0bH09s/EXFu71IO3AWrHvfbpza+
-         52Vg==
-X-Gm-Message-State: APzg51DgM8Maapkz3qds5ZZnF2DYapvZp3Q36DxnLx5yPGuvrbjY1GML
-        gm3mFvzxZDIjsqlYbRBB6M8Nuw==
-X-Google-Smtp-Source: ANB0VdYBXt1+1kaYBcrAzPk2rhJ6ZgSEwQAOwccBBhCunRaUJj1UDJ3sfcWlspjaE8bh0WRLO5xH7g==
-X-Received: by 2002:a65:5581:: with SMTP id j1-v6mr2619698pgs.203.1536763070655;
-        Wed, 12 Sep 2018 07:37:50 -0700 (PDT)
-Received: from anup-ubuntu64.dlink.router ([106.51.30.16])
-        by smtp.googlemail.com with ESMTPSA id u9-v6sm2161116pfi.104.2018.09.12.07.37.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Sep 2018 07:37:49 -0700 (PDT)
-From:   Anup Patel <anup@brainfault.org>
-To:     Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>
-Cc:     Atish Patra <atish.patra@wdc.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Anup Patel <anup@brainfault.org>
-Subject: [PATCH v2] RISC-V: Show IPI stats
-Date:   Wed, 12 Sep 2018 20:07:34 +0530
-Message-Id: <20180912143734.21205-1-anup@brainfault.org>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=t2AkKMW3uG9PmM8uWvE13AYW8LWT09XOFJXk8rE9+rs=;
+        b=eNn2ciy6MyePhR77xryuw2xFUyx5NkEZTpz0Vd0mbm334RjV5zJ+KEBmBp/fSRkb+c
+         JcOxN+BWEFNGeS6oQ62AM1C26IxxOlXnr+5ty4FaRxAAS84LmnqKLTAEfW0+ebillfRo
+         DV7Ykb3K9qbrc8r+LrckV2QH85QslB8RutQiRY1CLQarPzGLXCb9ioByNWqLNsxxpDkB
+         lfO6OC5QpPoEWA2CPEi+Bu9uXQFTmDfwwMpc6+zLb4KFcD9euO1/38k6XZdsoa7EU0mD
+         yWx40MscAJSMj37xvppeUpucABhGZwsa+Ild9hZLm2jdhOeULOSx92s+ZpWy5/myvdUc
+         nsCg==
+X-Gm-Message-State: APzg51BAz1fz5ArLih/waBJGc7ODoZwKK1glXNI0YF97eP9fi9lYbcj3
+        DfBtnKYCZ/1YtvhSWFatkVvYSE+f0dP1OvajsRhLpA==
+X-Google-Smtp-Source: ANB0VdbveI6Zbkez4xmT5NB+MEZCUa9O4OSZhL3Fxa6r1teWR8rAvysGfbYdxMtfxUtTkX98o8Xn8RpctVR1SnGzxuM=
+X-Received: by 2002:a24:57cb:: with SMTP id u194-v6mr2182935ita.148.1536763071344;
+ Wed, 12 Sep 2018 07:37:51 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a6b:2848:0:0:0:0:0 with HTTP; Wed, 12 Sep 2018 07:37:50
+ -0700 (PDT)
+In-Reply-To: <1536693322-8335-1-git-send-email-sai.praneeth.prakhya@intel.com>
+References: <1536693322-8335-1-git-send-email-sai.praneeth.prakhya@intel.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Wed, 12 Sep 2018 16:37:50 +0200
+Message-ID: <CAKv+Gu8zfM_iZ7T7P=5+1aXEHPaL3E2yQ_eWEsXCJA3zaAA6Yw@mail.gmail.com>
+Subject: Re: [PATCH V6 0/2] Add efi page fault handler to recover from page
+To:     Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Cc:     linux-efi <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Al Stone <astone@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch provides arch_show_interrupts() implementation to
-show IPI stats via /proc/interrupts.
+On 11 September 2018 at 21:15, Sai Praneeth Prakhya
+<sai.praneeth.prakhya@intel.com> wrote:
+> From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
+>
+> There may exist some buggy UEFI firmware implementations that access efi
+> memory regions other than EFI_RUNTIME_SERVICES_<CODE/DATA> even after
+> the kernel has assumed control of the platform. This violates UEFI
+> specification. Hence, provide a efi specific page fault handler which
+> recovers from page faults caused by buggy firmware.
+>
+> Page faults triggered by firmware happen at ring 0 and if unhandled,
+> hangs the kernel. So, provide an efi specific page fault handler to:
+> 1. Avoid panics/hangs caused by buggy firmware.
+> 2. Shout loud that the firmware is buggy and hence is not a kernel bug.
+>
+> The efi page fault handler will check if the access is by
+> efi_reset_system().
+> 1. If so, then the efi page fault handler will reboot the machine
+>    through BIOS and not through efi_reset_system().
+> 2. If not, then the efi page fault handler will freeze efi_rts_wq and
+>    schedules a new process.
+>
+> This issue was reported by Al Stone when he saw that reboot via EFI hangs
+> the machine. Upon debugging, I found that it's efi_reset_system() that's
+> touching memory regions which it shouldn't. To reproduce the same
+> behavior, I have hacked OVMF and made efi_reset_system() buggy. Along
+> with efi_reset_system(), I have also modified get_next_high_mono_count()
+> and set_virtual_address_map(). They illegally access both boot time and
+> other efi regions.
+>
+> Testing the patch set:
+> ----------------------
+> 1. Download buggy firmware from here [1].
+> 2. Run a qemu instance with this buggy BIOS and boot mainline kernel.
+> Add reboot=efi to the kernel command line arguments and after the kernel
+> is up and running, type "reboot". The kernel should hang while rebooting.
+> 3. With the same setup, boot kernel after applying patches and the
+> reboot should work fine. Also please notice warning/error messages
+> printed by kernel.
+>
 
-Now the contents of /proc/interrupts" will look like below:
-           CPU0       CPU1       CPU2       CPU3
-  8:         17          7          6         14  SiFive PLIC   8  virtio0
- 10:         10         10          9         11  SiFive PLIC  10  ttyS0
-IPI0:       170        673        251         79  Rescheduling interrupts
-IPI1:         1         12         27          1  Function call interrupts
-IPI2:         0          0          0          0  CPU wake-up interrupts
+Did you test these patches with other buggy runtime services?
 
-Signed-off-by: Anup Patel <anup@brainfault.org>
----
-
-Changes since v1:
- - Add stub inline show_ipi_stats() function for !CONFIG_SMP
- - Make ipi_names[] dynamically sized at compile time
- - Minor beautification of ipi_names[] using tabs
-
- arch/riscv/include/asm/smp.h |  9 +++++++++
- arch/riscv/kernel/irq.c      |  8 ++++++++
- arch/riscv/kernel/smp.c      | 30 ++++++++++++++++++++++++++++--
- 3 files changed, 45 insertions(+), 2 deletions(-)
-
-diff --git a/arch/riscv/include/asm/smp.h b/arch/riscv/include/asm/smp.h
-index 8145b8657d20..37e909c04f47 100644
---- a/arch/riscv/include/asm/smp.h
-+++ b/arch/riscv/include/asm/smp.h
-@@ -36,6 +36,8 @@ static inline bool can_hotplug_cpu(void)
- static inline void arch_send_call_wakeup_ipi(int cpu) { }
- #endif
- 
-+struct seq_file;
-+
- #ifdef CONFIG_SMP
- 
- enum ipi_message_type {
-@@ -48,6 +50,9 @@ enum ipi_message_type {
- void send_ipi_message(const struct cpumask *to_whom,
- 		      enum ipi_message_type operation);
- 
-+/* print IPI stats */
-+void show_ipi_stats(struct seq_file *p, int prec);
-+
- /* SMP initialization hook for setup_arch */
- void __init setup_smp(void);
- 
-@@ -75,6 +80,10 @@ void boot_sec_cpu(void);
- 
- #else
- 
-+static inline void show_ipi_stats(struct seq_file *p, int prec)
-+{
-+}
-+
- static inline int riscv_hartid_to_cpuid(int hartid)
- {
- 	return 0;
-diff --git a/arch/riscv/kernel/irq.c b/arch/riscv/kernel/irq.c
-index 7e14b0d9a71d..96202139ade5 100644
---- a/arch/riscv/kernel/irq.c
-+++ b/arch/riscv/kernel/irq.c
-@@ -8,6 +8,8 @@
- #include <linux/interrupt.h>
- #include <linux/irqchip.h>
- #include <linux/irqdomain.h>
-+#include <linux/seq_file.h>
-+#include <asm/smp.h>
- 
- /*
-  * Possible interrupt causes:
-@@ -24,6 +26,12 @@
-  */
- #define INTERRUPT_CAUSE_FLAG	(1UL << (__riscv_xlen - 1))
- 
-+int arch_show_interrupts(struct seq_file *p, int prec)
-+{
-+	show_ipi_stats(p, prec);
-+	return 0;
-+}
-+
- asmlinkage void __irq_entry do_IRQ(struct pt_regs *regs, unsigned long cause)
- {
- 	struct pt_regs *old_regs = set_irq_regs(regs);
-diff --git a/arch/riscv/kernel/smp.c b/arch/riscv/kernel/smp.c
-index 629456bb6122..70fd1351d6d9 100644
---- a/arch/riscv/kernel/smp.c
-+++ b/arch/riscv/kernel/smp.c
-@@ -22,6 +22,7 @@
- #include <linux/interrupt.h>
- #include <linux/smp.h>
- #include <linux/sched.h>
-+#include <linux/seq_file.h>
- 
- #include <asm/sbi.h>
- #include <asm/tlbflush.h>
-@@ -29,6 +30,7 @@
- 
- /* A collection of single bit ipi messages.  */
- static struct {
-+	unsigned long stats[IPI_MAX] ____cacheline_aligned;
- 	unsigned long bits ____cacheline_aligned;
- } ipi_data[NR_CPUS] __cacheline_aligned;
- 
-@@ -61,6 +63,7 @@ int setup_profiling_timer(unsigned int multiplier)
- void riscv_software_interrupt(void)
- {
- 	unsigned long *pending_ipis = &ipi_data[smp_processor_id()].bits;
-+	unsigned long *stats = ipi_data[smp_processor_id()].stats;
- 
- 	/* Clear pending IPI */
- 	csr_clear(sip, SIE_SSIE);
-@@ -75,11 +78,15 @@ void riscv_software_interrupt(void)
- 		if (ops == 0)
- 			return;
- 
--		if (ops & (1 << IPI_RESCHEDULE))
-+		if (ops & (1 << IPI_RESCHEDULE)) {
-+			stats[IPI_RESCHEDULE]++;
- 			scheduler_ipi();
-+		}
- 
--		if (ops & (1 << IPI_CALL_FUNC))
-+		if (ops & (1 << IPI_CALL_FUNC)) {
-+			stats[IPI_CALL_FUNC]++;
- 			generic_smp_call_function_interrupt();
-+		}
- 
- 		BUG_ON((ops >> IPI_MAX) != 0);
- 
-@@ -105,6 +112,25 @@ send_ipi_message(const struct cpumask *to_whom, enum ipi_message_type operation)
- 	sbi_send_ipi(cpumask_bits(&hartid_mask));
- }
- 
-+static const char *ipi_names[] = {
-+	[IPI_RESCHEDULE]	= "Rescheduling interrupts",
-+	[IPI_CALL_FUNC]		= "Function call interrupts",
-+	[IPI_CALL_WAKEUP]	= "CPU wake-up interrupts",
-+};
-+
-+void show_ipi_stats(struct seq_file *p, int prec)
-+{
-+	unsigned int cpu, i;
-+
-+	for (i = 0; i < IPI_MAX; i++) {
-+		seq_printf(p, "%*s%u:%s", prec - 1, "IPI", i,
-+			   prec >= 4 ? " " : "");
-+		for_each_online_cpu(cpu)
-+			seq_printf(p, "%10lu ", ipi_data[cpu].stats[i]);
-+		seq_printf(p, " %s\n", ipi_names[i]);
-+	}
-+}
-+
- void arch_send_call_function_ipi_mask(struct cpumask *mask)
- {
- 	send_ipi_message(mask, IPI_CALL_FUNC);
--- 
-2.17.1
-
+> Changes from RFC to V1:
+> -----------------------
+> 1. Drop "long jump" technique of dealing with illegal access and instead
+>    use scheduling away from efi_rts_wq.
+>
+> Changes from V1 to V2:
+> ----------------------
+> 1. Shortened config name to CONFIG_EFI_WARN_ON_ILLEGAL_ACCESS from
+>    CONFIG_EFI_WARN_ON_ILLEGAL_ACCESSES.
+> 2. Made the config option available only to expert users.
+> 3. efi_free_boot_services() should be called only when
+>    CONFIG_EFI_WARN_ON_ILLEGAL_ACCESS is not enabled. Previously, this
+>    was part of init/main.c file. As it is an architecture agnostic code,
+>    moved the change to arch/x86/platform/efi/quirks.c file.
+>
+> Changes from V2 to V3:
+> ----------------------
+> 1. Drop treating illegal access to EFI_BOOT_SERVICES_<CODE/DATA> regions
+>    separately from illegal accesses to other regions like
+>    EFI_CONVENTIONAL_MEMORY or EFI_LOADER_<CODE/DATA>.
+>    In previous versions, illegal access to EFI_BOOT_SERVICES_<CODE/DATA>
+>    regions were handled by mapping requested region to efi_pgd but from
+>    V3 they are handled similar to illegal access to other regions i.e by
+>    freezing efi_rts_wq and scheduling new process.
+> 2. Change __efi_init_fixup attribute to __efi_init.
+>
+> Changes from V3 to V4:
+> ----------------------
+> 1. Drop saving original memory map passed by kernel. It also means less
+>    checks in efi page fault handler.
+> 2. Change the config name to EFI_PAGE_FAULT_HANDLER to reflect it's
+>    functionality more appropriately.
+>
+> Changes from V4 to V5:
+> ----------------------
+> 1. Drop config option that enables efi page fault handler, instead make
+>    it default.
+> 2. Call schedule() in an infinite loop to account for spurious wake ups.
+> 3. Introduce "NONE" as an efi runtime service function identifier so that
+>    it could be used in efi_recover_from_page_fault() to check if the page
+>    fault was indeed triggered by an efi runtime service.
+>
+> Changes from V5 to V6:
+> ----------------------
+> 1. Thanks to 0-day for reporting build error when CONFIG_EFI is not
+>    enabled. Fixed it by calling efi page fault handler only when
+>    CONFIG_EFI is enabled.
+> 2. Change return type of efi page fault handler from int to void. void
+>    return type should do (and int is not needed) because the efi page
+>    fault handler returns only upon a failure to handle page fault.
+>
+> Note:
+> -----
+> Patch set based on "next" branch in efi tree.
+>
+> [1] https://drive.google.com/drive/folders/1VozKTms92ifyVHAT0ZDQe55ZYL1UE5wt
+>
+> Sai Praneeth (2):
+>   efi: Make efi_rts_work accessible to efi page fault handler
+>   x86/efi: Add efi page fault handler to recover from page faults caused
+>         by the firmware
+>
+>  arch/x86/include/asm/efi.h              |  1 +
+>  arch/x86/mm/fault.c                     |  9 ++++
+>  arch/x86/platform/efi/quirks.c          | 78 +++++++++++++++++++++++++++++++++
+>  drivers/firmware/efi/runtime-wrappers.c | 61 +++++++-------------------
+>  include/linux/efi.h                     | 42 ++++++++++++++++++
+>  5 files changed, 147 insertions(+), 44 deletions(-)
+>
+> Tested-by: Bhupesh Sharma <bhsharma@redhat.com>
+> Suggested-by: Matt Fleming <matt@codeblueprint.co.uk>
+> Based-on-code-from: Ricardo Neri <ricardo.neri@intel.com>
+> Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+> Cc: Al Stone <astone@redhat.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Cc: Bhupesh Sharma <bhsharma@redhat.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+>
+> --
+> 2.7.4
+>
