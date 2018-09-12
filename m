@@ -2,92 +2,138 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 413C4C46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 11:37:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BD08C4646A
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 11:44:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7A2C20882
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 11:37:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7A2C20882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 38E9220890
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 11:44:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38E9220890
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbeILQlZ (ORCPT
+        id S1727044AbeILQsY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 12:41:25 -0400
-Received: from foss.arm.com ([217.140.101.70]:57938 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726082AbeILQlZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 12:41:25 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E34E67A9;
-        Wed, 12 Sep 2018 04:37:16 -0700 (PDT)
-Received: from [10.4.12.116] (e107155-lin.emea.arm.com [10.4.12.116])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5C63F3F614;
-        Wed, 12 Sep 2018 04:37:15 -0700 (PDT)
-Cc:     Sudeep Holla <sudeep.holla@arm.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        t-kristo@ti.com, tony@atomide.com
-Subject: Re: [PATCH] dt-bindings: power: Introduce suspend states supported
- properties
-To:     Keerthy <j-keerthy@ti.com>, mark.rutland@arm.com,
-        robh+dt@kernel.org
-References: <1536725372-29174-1-git-send-email-j-keerthy@ti.com>
- <781b2eb2-1568-b4e5-46f2-c4612862d728@arm.com>
- <5c49cb0c-a436-c957-e6b3-5f3aa7af92f9@ti.com>
-From:   Sudeep Holla <sudeep.holla@arm.com>
-Organization: ARM
-Message-ID: <2c08c85f-a3e0-c1ce-3f87-0866868bd7e4@arm.com>
-Date:   Wed, 12 Sep 2018 12:37:13 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 12 Sep 2018 12:48:24 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:40983 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726552AbeILQsY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 12:48:24 -0400
+Received: by mail-lj1-f194.google.com with SMTP id y17-v6so1333324ljy.8;
+        Wed, 12 Sep 2018 04:44:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:content-transfer-encoding:user-agent;
+        bh=B/2ksNmbCUJqZLwO+g44lmvij4XM3PRDiPEPV0z24is=;
+        b=Sk4AbViGUv9Nyh4y/jLSRViPWpPLiwjCr8O2sRCrEi2apLjzuZgjQtnIvgo/LEZIjS
+         ox7W25F+2rjj4MFYAKQQse8XSLwjIPcBnG4j/ZlAqZ2oGWHQxtdFQFFLemhTAIOMCobV
+         pTw1YDadXknWx9mz47t3zsyHXyzSJ/dB3MyUhn41uGhs/1+TSslWdDzAbbK2QRQe4Zp8
+         Yux/KyI5ta9SFCZiaSJNiIgLyLxyXqZe5nFK7mDmYFaPFkbpFs34P4QeA87ej3//tV6A
+         k35aOYA16c9EFin3TdH1TDZBVca15n+4lnCbt2eVx7W7v5cW0EZrNIueweL8RTBu6QKe
+         ZA+Q==
+X-Gm-Message-State: APzg51DmiUWhRcxgD4BpScYM03YNY+a7WsfGFuSDsMZ1L4lm/LwYf9NV
+        Vj6l5tOuYvo2gI/rtcNah/Y=
+X-Google-Smtp-Source: ANB0VdbaGfYWUbJyps622Sil8igzhC1QkkNkcYNQWvAv3mTTFlj8loqSQlAm6JJod20+bJmYfrhB/w==
+X-Received: by 2002:a2e:954e:: with SMTP id t14-v6mr1136826ljh.68.1536752652933;
+        Wed, 12 Sep 2018 04:44:12 -0700 (PDT)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id h4-v6sm137530lfj.69.2018.09.12.04.44.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Sep 2018 04:44:12 -0700 (PDT)
+Date:   Wed, 12 Sep 2018 14:43:59 +0300
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        lgirdwood@gmail.com, broonie@kernel.org, mazziesaccount@gmail.com,
+        matti.vaittinen@fi.rohmeurope.com
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
+        sboyd@kernel.org
+Subject: [PATCH v2 0/7] regulator/mfd/dt_bindings: bd718x7: Support ROHM
+ bd71847
+Message-ID: <cover.1536750863.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-In-Reply-To: <5c49cb0c-a436-c957-e6b3-5f3aa7af92f9@ti.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Patch series adding support for ROHM BD71847 PMIC.
 
+ROHM BD71847 is modified version of ROHM BD71837 Power Management IC.
+BD71847 integrates 6 buck regulators and 6  LDO’s.
 
-On 12/09/18 12:19, Keerthy wrote:
-> 
-> 
-> On Wednesday 12 September 2018 04:32 PM, Sudeep Holla wrote:
->>
->>
->> On 12/09/18 05:09, Keerthy wrote:
->>> Introuduce linux generic suspend states supported properties.
->>> It is convenient for the generic suspend path to have
->>> the knowledge of the suspend states supported based on the
->>> device tree properties based on which it can either be suspended
->>> or safely bailed out of suspend if none of the suspend states
->>> are supported.
->>>
->>
->> NACK for any bindings that are linux specific. The suspend feature is so
->> platform dependent that I see no need for generic Linux bindings for the
->> same.
-> 
-> suspend to mem and suspend to disk are pretty generic states and i agree
-> implementation is platform dependent so why not have properties that
-> convey if they are supported?
-> 
+The patch series adds support for BD71847 in BD71837 driver. It also
+extends BD71837 to support all BUCK/LDO output voltages.
 
-We already have power domains and idle states for that. If you need to
-restrict few states on some platform for whatever reasons, just disable
-those states. I don't see the need to add any more bindings for the same.
+Support for "pickable voltage ranges" is introduced in order to fully
+support BD71837/BD71847 voltage selection registers. Some of the voltage
+regulators provide different multiple voltage ranges and output voltage
+is determined by range selection bit(s) and voltage selection bits
+instead of plain voltage selection bits.
 
-> Is the disagreement over making the properties being linux specific?
-> 
+Changelog v2
+- Dropped first patch (voltage monitoring fix) and "rebased" on top of
+  next-20180912 because first patch was already applied.
+- Fixed two commit message typos.
+Fixes based on comments from Lee Jones
+- removed PMIC revision check.
+- stored chip type directly to data pointer
+- minor readability improvement to DT binding
+- unified naming for last enum members
+- moved unrelated changes from pickable ranges patch
+- removed C++ style comment
 
-Yes.
+Patch 2:
+	limited BD71847 support (without range selection)
+Patch 3:
+	BD71847 device-tree bindings for regulators
+Patch 4:
+	BD71847 device-tree bindings for mfd
+Patch 5:
+	Voltage range selection support to regulator helpers
+Patch 6:
+	Simple renaming plenty of BD71837 occurrences to BD718XX
+Patch 7:
+	BD71837/BD71847 Full voltage range support using helpers from
+	patch 5
+Patch 8:
+	Renaming bd71837 regulator driver to bd718x7
+
+this patch series is based on linux-next tag next-20180912.
+
+Matti Vaittinen (7):
+  regulator: Support ROHM BD71847 power management IC
+  regulator: dt bindings: add BD71847 device-tree binding documentation
+  mfd: dt bindings: add BD71847 device-tree binding documentation
+  regulator: Support regulators where voltage ranges are selectable
+  regulator/mfd: bd718xx: rename bd71837/bd71847 common instances
+  regulator: bd718XX use pickable ranges
+  regulator: bd718xx: rename bd71837 to 718xx
+
+ .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  |   17 +-
+ .../bindings/regulator/rohm,bd71837-regulator.txt  |   12 +-
+ drivers/mfd/rohm-bd718x7.c                         |  160 ++-
+ drivers/regulator/Kconfig                          |    2 +-
+ drivers/regulator/Makefile                         |    2 +-
+ drivers/regulator/bd71837-regulator.c              |  644 -----------
+ drivers/regulator/bd718x7-regulator.c              | 1138 ++++++++++++++++++++
+ drivers/regulator/core.c                           |    5 +
+ drivers/regulator/helpers.c                        |  232 ++++
+ include/linux/mfd/rohm-bd718x7.h                   |  333 +++---
+ include/linux/regulator/driver.h                   |   20 +-
+ 11 files changed, 1644 insertions(+), 921 deletions(-)
+ delete mode 100644 drivers/regulator/bd71837-regulator.c
+ create mode 100644 drivers/regulator/bd718x7-regulator.c
 
 -- 
-Regards,
-Sudeep
+2.14.3
+
