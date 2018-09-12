@@ -2,96 +2,99 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28F0FC6778D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:45:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0B59C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:45:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C701C20833
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:45:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9ECF720833
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:45:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="U83OMdVB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C701C20833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="UQrKiXtG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ECF720833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727804AbeILVu5 (ORCPT
+        id S1728100AbeILVvK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 17:50:57 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:41605 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726798AbeILVu5 (ORCPT
+        Wed, 12 Sep 2018 17:51:10 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:34915 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727859AbeILVvK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 17:50:57 -0400
-Received: by mail-pl1-f195.google.com with SMTP id b12-v6so1245829plr.8
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 09:45:35 -0700 (PDT)
+        Wed, 12 Sep 2018 17:51:10 -0400
+Received: by mail-pf1-f196.google.com with SMTP id p12-v6so1300021pfh.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 09:45:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=/iSBHV4N+CfZFH8TFqEfs20bUBQJc1s8na1Lh4ikqcM=;
-        b=U83OMdVBQY8wQU3Cu5OoRsxFIDF/ulCmoRor4KsW6EaXr8yyX85lRkyX2wBC2dnYMO
-         gOBIeRWJLKwHbBlO6UxEj0llqORPlicXERwYsIptM/Y1j+GQZy5vy9aOuW0uMFRkYGbb
-         IJ6u5dWmjcl0nzN3d5SkBrHx7gqL4WJeJctdM=
+        d=sifive.com; s=google;
+        h=date:subject:cc:from:to:message-id;
+        bh=9wP8+9i5XJMvzEOFa+si4rgDR5ROxmCGUsjpVlLxVtM=;
+        b=UQrKiXtGD3p4HXeX3sedmPK2UKvudNsO1sfpzd99ouN/C9ezDJ8G9+EFH5P5PrpZZT
+         KwIOiMvSF+8jOdic/jMthd2luIJv5cm3fIqb6uDz7lstNlQbC1jDUyRLHZs9UDE9ZWIo
+         vZQHlDSeBZel+RWY82GVfPMLGVKhwdgfH/B8KKzx+Q3eI0HWKBzWGhewoObD9s2YIPpt
+         6BwbAvvfXmvMQqYx9LyVzUf6b5zoZdCQrvb4xoeEOpyyrt6Rj5LMstdGHDer4oBJ+8kc
+         +6LKw65/6It6NKK5FrCpvI679zmmGlcY5QT83lEy1mhEOwXV0sCYOO5RdGrExm2v7Zxm
+         9ldg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=/iSBHV4N+CfZFH8TFqEfs20bUBQJc1s8na1Lh4ikqcM=;
-        b=bIyNluqIkjC48lOwVh/qsATdaflK9odt6aJJiE+5yrfVpxf0Hx71cnP2Li9WOqoV04
-         pgGpWcy0oUlY3K30YYunExjuglZabJLNy05p8ZJ+DP8lC7YnHtNLcGzwN716TL/VBmMS
-         keLTlsjg6rxzo2Jf4BpXQlm/Vos5yxm4QovzLb65hPT6vPRhxjWe8/OkTwksPHDiImge
-         cZxSQpfZMDynbJ9v/kGVGL6cv1+X8Vm8k697Iuc2d4+kFy88+iSC0nuGuRXY5XkMGDrn
-         6peQk8kaggtMH1Sp3vClv6T1JIImmSmd1A6q59lQAyHfHibvDcYo3yzX00/3//GNtrJH
-         +xgw==
-X-Gm-Message-State: APzg51D1EiG8Qi7fKycx7CJmqXB7YxKCRHhD6xbsHuyIHBr2xw0dn9jW
-        pThPdYHvuzqooplY5Nb2n2KsGA==
-X-Google-Smtp-Source: ANB0VdZyGrnZSXbA9C9UcrCduERJuY7eKwG2ggsfN/mtoXsCMJdmnjkeDoUWJ+ltFGYbxZXbC5OZZg==
-X-Received: by 2002:a17:902:6b05:: with SMTP id o5-v6mr3301855plk.338.1536770735271;
-        Wed, 12 Sep 2018 09:45:35 -0700 (PDT)
-Received: from zsm-linux.mtv.corp.google.com ([2620:15c:202:201:1b7c:8280:c835:b226])
-        by smtp.googlemail.com with ESMTPSA id e14-v6sm2257804pgv.48.2018.09.12.09.45.33
+        h=x-gm-message-state:date:subject:cc:from:to:message-id;
+        bh=9wP8+9i5XJMvzEOFa+si4rgDR5ROxmCGUsjpVlLxVtM=;
+        b=T6L/IZL5chbI5ohBSVnOhVmlJFwDX4PbSP+6aniaQK+9AP0K3DP7hZnw9kT6hqcwP2
+         Y0lfHTlRw+c2CbPITG4Pr91mKLug8QL3ID1CtoMvEnDey/HVFjYym1iTQ7NaRBEMzQwk
+         w5FmjdYWfZdtxI+Vc5ltEOLm01iPcGVm3aQshOuVZpckklt+1N6V6vBnr4iFYhrKuzDh
+         1wYr6D+fgGj8rSvMF3WhGOmRh/jWdpx163JqIojBLFhc6F5RfC0tDhkPjx+U5WgmjbQK
+         lzYvW9Va0YqJILsiar+0bUdE+Bqw/gJuvKiPcSIpopc4HafUtBCLFn5jPTS7UOlwkgCc
+         Jltw==
+X-Gm-Message-State: APzg51DTRf1i6gtf2V3HyybCfrugDr9+EwbXMAkPg+1BTtaqLYTXAXcM
+        mtEEOzCkoB7Zm62Subsuu29NJGHNrRU=
+X-Google-Smtp-Source: ANB0VdYR0eRBY0k5X5JrhM0jOkflnCV8tsljGYbZwOehf+HVnbeAPijJ2qauNAoxLm4fOzt28R2FOw==
+X-Received: by 2002:a62:3909:: with SMTP id g9-v6mr3365313pfa.176.1536770747568;
+        Wed, 12 Sep 2018 09:45:47 -0700 (PDT)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id f13-v6sm1999117pgs.92.2018.09.12.09.45.46
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Sep 2018 09:45:34 -0700 (PDT)
-From:   Zubin Mithra <zsm@chromium.org>
-To:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org, groeck@chromium.org,
-        keescook@chromium.org, zsm@chromium.org
-Subject: [PATCH] perf/pt: Annotate pt_cap_group with __ro_after_init
-Date:   Wed, 12 Sep 2018 09:45:10 -0700
-Message-Id: <20180912164510.23444-1-zsm@chromium.org>
-X-Mailer: git-send-email 2.19.0.rc2.392.g5ba43deb5a-goog
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 12 Sep 2018 09:45:46 -0700 (PDT)
+Date:   Wed, 12 Sep 2018 09:45:46 -0700 (PDT)
+X-Google-Original-Date: Wed, 12 Sep 2018 09:45:43 PDT (-0700)
+Subject: [GIT PULL] RISC-V: A single fix for 4.19-rc3
+CC:     linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Message-ID: <mhng-2cf2fc4d-085f-4974-96ad-e27b240611d6@palmer-si-x1c4>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pt_cap_group is written to in pt_pmu_hw_init and not modified after. This makes
-it a suitable candidate for annotating as __ro_after_init.
+I forgot to send this out last week as I was going to the GNU tool cauldron.  I
+haven't gotten through my backlog yet so I don't have any other patches for
+this RC, so I figured I'd just send out the old tag.  If that's an issue I can
+make a new one.
 
-Signed-off-by: Zubin Mithra <zsm@chromium.org>
----
- arch/x86/events/intel/pt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The following changes since commit 57361846b52bc686112da6ca5368d11210796804:
 
-diff --git a/arch/x86/events/intel/pt.c b/arch/x86/events/intel/pt.c
-index 8d016ce5b80d..3a0aa83cbd07 100644
---- a/arch/x86/events/intel/pt.c
-+++ b/arch/x86/events/intel/pt.c
-@@ -95,7 +95,7 @@ static ssize_t pt_cap_show(struct device *cdev,
- 	return snprintf(buf, PAGE_SIZE, "%x\n", pt_cap_get(cap));
- }
- 
--static struct attribute_group pt_cap_group = {
-+static struct attribute_group pt_cap_group __ro_after_init = {
- 	.name	= "caps",
- };
- 
--- 
-2.18.0.597.ga71716f1ad-goog
+  Linux 4.19-rc2 (2018-09-02 14:37:30 -0700)
 
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/palmer/riscv-linux.git tags/riscv-for-linus-4.19-rc3
+
+for you to fetch changes up to e866d3e84eb7c9588afb77604d417e8cc49fe216:
+
+  riscv: Do not overwrite initrd_start and initrd_end (2018-09-04 17:04:50 -0700)
+
+----------------------------------------------------------------
+RISC-V: A single fix for 4.19-rc3
+
+This tag contains what I hope to be the last RISC-V patch for 4.19.  It
+fixes a bug in our initramfs support by removing some broken and
+obselete code.
+
+----------------------------------------------------------------
+Guenter Roeck (1):
+      riscv: Do not overwrite initrd_start and initrd_end
+
+ arch/riscv/kernel/setup.c | 7 -------
+ 1 file changed, 7 deletions(-)
