@@ -1,117 +1,300 @@
-Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.0 required=5.0 tests=FUZZY_XPILL,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B9A1FC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 18:34:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E9DCC070C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:21:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 167CD20853
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 18:34:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="3FxMCqxn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 167CD20853
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id AF01820880
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:21:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF01820880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727838AbeINXtk (ORCPT
+        id S1728270AbeIMA07 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 19:49:40 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:49618 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726849AbeINXtj (ORCPT
+        Wed, 12 Sep 2018 20:26:59 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:33335 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728121AbeIMA07 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 19:49:39 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8EITGEk149253;
-        Fri, 14 Sep 2018 18:33:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=ytKQHq8Dx6iYVyVgGWr5nyXdL0umMAPS02a7KuAIros=;
- b=3FxMCqxnWvZ0HjakdzncOEDk5ox4HWqkkfG2KJF4vaiZvDug8YbUD7/CQUKlFJJRuOR1
- IOvQUh2Z7gXt8s3LT7PBOeYPLM/yi69dUW59NMj+P7igO+bceRdpXnm7h5CUJR+NdR7W
- noWqR+rc6/rH873/6FMYcDVzeeKzVYY2CMS3uQ2/WXSfj9u1B83b5TBDwZtax5vmUpf+
- /c+AQAtbiusHPDc3c4DJ0Zv+ICt9k2F4+4zmc31KkPCc6nubIFZ7NlFr/+ZtGNPS2Lzj
- DzdMxKRJLTABtFZPde66Z7VM9+Olrp4VBTF2VZ+06+lQIxHRNhztfsuksocv7TQAMLUJ Qg== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2130.oracle.com with ESMTP id 2mc5uu0n69-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 14 Sep 2018 18:33:42 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w8EIXfsj027963
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 14 Sep 2018 18:33:41 GMT
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w8EIXeX0020116;
-        Fri, 14 Sep 2018 18:33:40 GMT
-Received: from [192.168.1.250] (/76.253.0.199)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 14 Sep 2018 18:33:40 +0000
-Subject: Re: [PATCH] net/mlx4_core: print firmware version during driver
- loading
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     Leon Romanovsky <leon@kernel.org>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tariqt@mellanox.com, davem@davemloft.net
-References: <20180914002514.27571-1-qing.huang@oracle.com>
- <20180914044314.GC5257@mtr-leonro.mtl.com>
- <c580ad9d-b63d-743b-2278-1c4cf3553186@oracle.com>
- <20180914181718.GD3811@lunn.ch>
-From:   Qing Huang <qing.huang@oracle.com>
-Message-ID: <c332f10a-5ad0-53fd-5111-1964443b3092@oracle.com>
-Date:   Fri, 14 Sep 2018 11:33:40 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 12 Sep 2018 20:26:59 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8CJKV4h2744098
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 12 Sep 2018 12:20:31 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8CJKVXH2744094;
+        Wed, 12 Sep 2018 12:20:31 -0700
+Date:   Wed, 12 Sep 2018 12:20:31 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-2vvwh2o19orn56di0ksrtgzr@git.kernel.org>
+Cc:     mingo@kernel.org, jmattson@google.com, pbonzini@redhat.com,
+        wangnan0@huawei.com, dsahern@gmail.com, jolsa@kernel.org,
+        borntraeger@de.ibm.com, marc.zyngier@arm.com, peterz@infradead.org,
+        james.morse@arm.com, namhyung@kernel.org, cohuck@redhat.com,
+        david@redhat.com, ehabkost@redhat.com,
+        linux-kernel@vger.kernel.org, gengdongjiu@huawei.com,
+        hpa@zytor.com, tglx@linutronix.de, adrian.hunter@intel.com,
+        acme@redhat.com, frankja@linux.ibm.com
+Reply-To: linux-kernel@vger.kernel.org, gengdongjiu@huawei.com,
+          hpa@zytor.com, tglx@linutronix.de, frankja@linux.ibm.com,
+          adrian.hunter@intel.com, acme@redhat.com, pbonzini@redhat.com,
+          mingo@kernel.org, jmattson@google.com, dsahern@gmail.com,
+          borntraeger@de.ibm.com, marc.zyngier@arm.com, jolsa@kernel.org,
+          wangnan0@huawei.com, peterz@infradead.org, james.morse@arm.com,
+          namhyung@kernel.org, cohuck@redhat.com, david@redhat.com,
+          ehabkost@redhat.com
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] tools headers uapi: Update tools's copies of kvm
+ headers
+Git-Commit-ID: 0210c156d7fd330bce1c2c842bee9d27f1c5dfeb
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <20180914181718.GD3811@lunn.ch>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9016 signatures=668708
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809140188
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Message-ID: <20180912192031.LSeq5Gv8V6ZxwKY77pNUfyGQ5nlsggquByzsfUDXQ3Y@z>
 
+Commit-ID:  0210c156d7fd330bce1c2c842bee9d27f1c5dfeb
+Gitweb:     https://git.kernel.org/tip/0210c156d7fd330bce1c2c842bee9d27f1c5dfeb
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Tue, 11 Sep 2018 11:18:58 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Tue, 11 Sep 2018 13:09:26 -0300
 
+tools headers uapi: Update tools's copies of kvm headers
 
-On 9/14/2018 11:17 AM, Andrew Lunn wrote:
-> On Fri, Sep 14, 2018 at 10:15:48AM -0700, Qing Huang wrote:
->> The FW version is actually a very crucial piece of information and only
->> printed once here
->> when the driver is loaded. People tend to get confused when switching
->> multiple FW files
->> back and forth without running separate utility tools, especially at
->> customer sites.
->> IMHO, this information is very useful and only takes up very little log file
->> space. :-)
-> Why not use ethtool -i ?
->
-> $ sudo ethtool -i eth0
-> driver: r8169
-> version: 2.3LK-NAPI
-> firmware-version: rtl8168g-2_0.0.1 02/06/13
->
->      Andrew
-Sure. You can also use ibstat or ibv_devinfo tool if they are installed. 
-But it's not very
-convenient in some cases.
+To get the changes in:
 
-E.g.
-A customer upgrades FW on HCAs and encounters issues. During triage, 
-it's much easier
-to study customer uploaded log files when remotely testing different FW 
-files.
+	a449938297e5 ("KVM: s390: Add huge page enablement control")
+	8fcc4b5923af ("kvm: nVMX: Introduce KVM_CAP_NESTED_STATE")
+	be26b3a73413 ("arm64: KVM: export the capability to set guest SError syndrome")
+	b7b27facc7b5 ("arm/arm64: KVM: Add KVM_GET/SET_VCPU_EVENTS")
+	b0960b9569db ("KVM: arm: Add 32bit get/set events support")
+	a3da7b4a3be5 ("KVM: s390: add etoken support for guests")
 
-Thanks.
+This makes 'perf trace' automagically get aware of these new ioctls:
 
+  $ cp include/uapi/linux/kvm.h tools/include/uapi/linux/kvm.h
+  $ tools/perf/trace/beauty/kvm_ioctl.sh  > /tmp/after
+  $ diff -u /tmp/before /tmp/after
+  --- /tmp/before	2018-09-11 11:18:29.173207586 -0300
+  +++ /tmp/after	2018-09-11 11:18:38.488200446 -0300
+  @@ -84,6 +84,8 @@
+        [0xbb] = "MEMORY_ENCRYPT_REG_REGION",
+        [0xbc] = "MEMORY_ENCRYPT_UNREG_REGION",
+        [0xbd] = "HYPERV_EVENTFD",
+  +     [0xbe] = "GET_NESTED_STATE",
+  +     [0xbf] = "SET_NESTED_STATE",
+        [0xe0] = "CREATE_DEVICE",
+        [0xe1] = "SET_DEVICE_ATTR",
+        [0xe2] = "G
 
+And cures the following warning during perf's build:
 
+	Warning: Kernel ABI header at 'tools/include/uapi/linux/kvm.h' differs from latest version at 'include/uapi/linux/kvm.h'
+	diff -u tools/include/uapi/linux/kvm.h include/uapi/linux/kvm.h
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Christian Borntraeger <borntraeger@de.ibm.com>
+Cc: Cornelia Huck <cohuck@redhat.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Dongjiu Geng <gengdongjiu@huawei.com>
+Cc: Eduardo Habkost <ehabkost@redhat.com>
+Cc: James Morse <james.morse@arm.com>
+Cc: Janosch Frank <frankja@linux.ibm.com>
+Cc: Jim Mattson <jmattson@google.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-2vvwh2o19orn56di0ksrtgzr@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/arch/arm/include/uapi/asm/kvm.h   | 13 ++++++++++++
+ tools/arch/arm64/include/uapi/asm/kvm.h | 13 ++++++++++++
+ tools/arch/s390/include/uapi/asm/kvm.h  |  5 ++++-
+ tools/arch/x86/include/uapi/asm/kvm.h   | 37 +++++++++++++++++++++++++++++++++
+ tools/include/uapi/linux/kvm.h          |  6 ++++++
+ 5 files changed, 73 insertions(+), 1 deletion(-)
+
+diff --git a/tools/arch/arm/include/uapi/asm/kvm.h b/tools/arch/arm/include/uapi/asm/kvm.h
+index 16e006f708ca..4602464ebdfb 100644
+--- a/tools/arch/arm/include/uapi/asm/kvm.h
++++ b/tools/arch/arm/include/uapi/asm/kvm.h
+@@ -27,6 +27,7 @@
+ #define __KVM_HAVE_GUEST_DEBUG
+ #define __KVM_HAVE_IRQ_LINE
+ #define __KVM_HAVE_READONLY_MEM
++#define __KVM_HAVE_VCPU_EVENTS
+ 
+ #define KVM_COALESCED_MMIO_PAGE_OFFSET 1
+ 
+@@ -125,6 +126,18 @@ struct kvm_sync_regs {
+ struct kvm_arch_memory_slot {
+ };
+ 
++/* for KVM_GET/SET_VCPU_EVENTS */
++struct kvm_vcpu_events {
++	struct {
++		__u8 serror_pending;
++		__u8 serror_has_esr;
++		/* Align it to 8 bytes */
++		__u8 pad[6];
++		__u64 serror_esr;
++	} exception;
++	__u32 reserved[12];
++};
++
+ /* If you need to interpret the index values, here is the key: */
+ #define KVM_REG_ARM_COPROC_MASK		0x000000000FFF0000
+ #define KVM_REG_ARM_COPROC_SHIFT	16
+diff --git a/tools/arch/arm64/include/uapi/asm/kvm.h b/tools/arch/arm64/include/uapi/asm/kvm.h
+index 4e76630dd655..97c3478ee6e7 100644
+--- a/tools/arch/arm64/include/uapi/asm/kvm.h
++++ b/tools/arch/arm64/include/uapi/asm/kvm.h
+@@ -39,6 +39,7 @@
+ #define __KVM_HAVE_GUEST_DEBUG
+ #define __KVM_HAVE_IRQ_LINE
+ #define __KVM_HAVE_READONLY_MEM
++#define __KVM_HAVE_VCPU_EVENTS
+ 
+ #define KVM_COALESCED_MMIO_PAGE_OFFSET 1
+ 
+@@ -154,6 +155,18 @@ struct kvm_sync_regs {
+ struct kvm_arch_memory_slot {
+ };
+ 
++/* for KVM_GET/SET_VCPU_EVENTS */
++struct kvm_vcpu_events {
++	struct {
++		__u8 serror_pending;
++		__u8 serror_has_esr;
++		/* Align it to 8 bytes */
++		__u8 pad[6];
++		__u64 serror_esr;
++	} exception;
++	__u32 reserved[12];
++};
++
+ /* If you need to interpret the index values, here is the key: */
+ #define KVM_REG_ARM_COPROC_MASK		0x000000000FFF0000
+ #define KVM_REG_ARM_COPROC_SHIFT	16
+diff --git a/tools/arch/s390/include/uapi/asm/kvm.h b/tools/arch/s390/include/uapi/asm/kvm.h
+index 4cdaa55fabfe..9a50f02b9894 100644
+--- a/tools/arch/s390/include/uapi/asm/kvm.h
++++ b/tools/arch/s390/include/uapi/asm/kvm.h
+@@ -4,7 +4,7 @@
+ /*
+  * KVM s390 specific structures and definitions
+  *
+- * Copyright IBM Corp. 2008
++ * Copyright IBM Corp. 2008, 2018
+  *
+  *    Author(s): Carsten Otte <cotte@de.ibm.com>
+  *               Christian Borntraeger <borntraeger@de.ibm.com>
+@@ -225,6 +225,7 @@ struct kvm_guest_debug_arch {
+ #define KVM_SYNC_FPRS   (1UL << 8)
+ #define KVM_SYNC_GSCB   (1UL << 9)
+ #define KVM_SYNC_BPBC   (1UL << 10)
++#define KVM_SYNC_ETOKEN (1UL << 11)
+ /* length and alignment of the sdnx as a power of two */
+ #define SDNXC 8
+ #define SDNXL (1UL << SDNXC)
+@@ -258,6 +259,8 @@ struct kvm_sync_regs {
+ 		struct {
+ 			__u64 reserved1[2];
+ 			__u64 gscb[4];
++			__u64 etoken;
++			__u64 etoken_extension;
+ 		};
+ 	};
+ };
+diff --git a/tools/arch/x86/include/uapi/asm/kvm.h b/tools/arch/x86/include/uapi/asm/kvm.h
+index c535c2fdea13..86299efa804a 100644
+--- a/tools/arch/x86/include/uapi/asm/kvm.h
++++ b/tools/arch/x86/include/uapi/asm/kvm.h
+@@ -378,4 +378,41 @@ struct kvm_sync_regs {
+ #define KVM_X86_QUIRK_LINT0_REENABLED	(1 << 0)
+ #define KVM_X86_QUIRK_CD_NW_CLEARED	(1 << 1)
+ 
++#define KVM_STATE_NESTED_GUEST_MODE	0x00000001
++#define KVM_STATE_NESTED_RUN_PENDING	0x00000002
++
++#define KVM_STATE_NESTED_SMM_GUEST_MODE	0x00000001
++#define KVM_STATE_NESTED_SMM_VMXON	0x00000002
++
++struct kvm_vmx_nested_state {
++	__u64 vmxon_pa;
++	__u64 vmcs_pa;
++
++	struct {
++		__u16 flags;
++	} smm;
++};
++
++/* for KVM_CAP_NESTED_STATE */
++struct kvm_nested_state {
++	/* KVM_STATE_* flags */
++	__u16 flags;
++
++	/* 0 for VMX, 1 for SVM.  */
++	__u16 format;
++
++	/* 128 for SVM, 128 + VMCS size for VMX.  */
++	__u32 size;
++
++	union {
++		/* VMXON, VMCS */
++		struct kvm_vmx_nested_state vmx;
++
++		/* Pad the header to 128 bytes.  */
++		__u8 pad[120];
++	};
++
++	__u8 data[0];
++};
++
+ #endif /* _ASM_X86_KVM_H */
+diff --git a/tools/include/uapi/linux/kvm.h b/tools/include/uapi/linux/kvm.h
+index b6270a3b38e9..07548de5c988 100644
+--- a/tools/include/uapi/linux/kvm.h
++++ b/tools/include/uapi/linux/kvm.h
+@@ -949,6 +949,9 @@ struct kvm_ppc_resize_hpt {
+ #define KVM_CAP_GET_MSR_FEATURES 153
+ #define KVM_CAP_HYPERV_EVENTFD 154
+ #define KVM_CAP_HYPERV_TLBFLUSH 155
++#define KVM_CAP_S390_HPAGE_1M 156
++#define KVM_CAP_NESTED_STATE 157
++#define KVM_CAP_ARM_INJECT_SERROR_ESR 158
+ 
+ #ifdef KVM_CAP_IRQ_ROUTING
+ 
+@@ -1391,6 +1394,9 @@ struct kvm_enc_region {
+ /* Available with KVM_CAP_HYPERV_EVENTFD */
+ #define KVM_HYPERV_EVENTFD        _IOW(KVMIO,  0xbd, struct kvm_hyperv_eventfd)
+ 
++/* Available with KVM_CAP_NESTED_STATE */
++#define KVM_GET_NESTED_STATE         _IOWR(KVMIO, 0xbe, struct kvm_nested_state)
++#define KVM_SET_NESTED_STATE         _IOW(KVMIO,  0xbf, struct kvm_nested_state)
+ 
+ /* Secure Encrypted Virtualization command */
+ enum sev_cmd_id {
