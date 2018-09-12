@@ -2,138 +2,114 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8A23C46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 17:06:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAAA4C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 17:10:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4534E2087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 17:06:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="io9V298S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4534E2087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id 3F5702087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 17:10:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F5702087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727739AbeILWLy (ORCPT
+        id S1727720AbeILWPw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 18:11:54 -0400
-Received: from smtprelay.synopsys.com ([198.182.47.9]:43714 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726428AbeILWLx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 18:11:53 -0400
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id DCBC024E2442;
-        Wed, 12 Sep 2018 10:06:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1536771986; bh=qdkcKry7FoKTqKkw+p/R2udJLE6bAT63Nqb+T1FGIyE=;
-        h=From:To:CC:Subject:Date:References:From;
-        b=io9V298Ssin5WxHH3qu73FrN/UtaO0V7d0uhmrFZsfHUJtW1uv++4ISeUI7pFY/dN
-         Y6TFOPgStGLnGbTq8Z2+Djr3TwfBiJCt16hTWPqJ5PT+gYtET/J5lUr2rawkn6gk6w
-         tEiEXo/HiJoDu8WPKMGO9r68IB4I94o7OdLJFNywZk4H/Bi36/GQhPYrF/t0NEjQxE
-         sGlk0jznWH7JcnUbslE4609P37zuU1cgRFQKbUoI49iPyUT2Q1xxeoVn+eCLdiORaC
-         AWf7GLohXm9BCKH+LcwK+Srh3UlvDIMg2lrjKfvKkBnoL0Yz9kFrBOALIOyGBTEeoM
-         n3RW2s7PPlkJg==
-Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
-        by mailhost.synopsys.com (Postfix) with ESMTP id BEA0F3CAC;
-        Wed, 12 Sep 2018 10:06:26 -0700 (PDT)
-Received: from us01wembx1.internal.synopsys.com ([169.254.1.253]) by
- US01WEHTC3.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Wed, 12
- Sep 2018 10:06:26 -0700
-From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-CC:     Claudiu Zissulescu <Claudiu.Zissulescu@synopsys.com>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ARCv2: build: use mcpu=hs38 iso generic mcpu=archs
-Thread-Topic: [PATCH] ARCv2: build: use mcpu=hs38 iso generic mcpu=archs
-Thread-Index: AQHUSrnSGrPxheeqgEeU4ZLjmI6SIQ==
-Date:   Wed, 12 Sep 2018 17:06:25 +0000
-Message-ID: <C2D7FE5348E1B147BCA15975FBA23075012B0949BC@us01wembx1.internal.synopsys.com>
-References: <20180912165817.GA5118@roeck-us.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.144.199.104]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 12 Sep 2018 18:15:52 -0400
+Received: from mga06.intel.com ([134.134.136.31]:59956 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726428AbeILWPw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 18:15:52 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Sep 2018 10:10:24 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,365,1531810800"; 
+   d="scan'208";a="89430639"
+Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
+  by fmsmga001.fm.intel.com with SMTP; 12 Sep 2018 10:10:21 -0700
+Received: by stinkbox (sSMTP sendmail emulation); Wed, 12 Sep 2018 20:10:20 +0300
+Date:   Wed, 12 Sep 2018 20:10:20 +0300
+From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To:     Martin Steigerwald <martin@lichtvoll.de>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Intel Gfx Mailing List <intel-gfx@freedesktop.org>,
+        Thorsten Leemhuis <regressions@leemhuis.info>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [Intel-gfx] [REGRESSION 4.19-rc2] sometimes hangs with black
+ screen when resuming from suspend or hibernation (was: Re: Linux 4.19-rc2)
+Message-ID: <20180912171020.GE5565@intel.com>
+References: <CA+55aFyG0GbDfoghEhAmKBPcZCiPu6CCpPRz9GwjCzLuP_Vv5Q@mail.gmail.com>
+ <20222492.cP35YpYkb6@merkaba>
+ <CAJZ5v0i3gH4H6Su5MPWA3DA_i4mvHEqfw3y=rr0XOpZi5bbqhA@mail.gmail.com>
+ <3346308.cXARZRajoW@merkaba>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3346308.cXARZRajoW@merkaba>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/12/2018 09:58 AM, Guenter Roeck wrote:=0A=
-> Hi,=0A=
->=0A=
-> On Fri, Sep 07, 2018 at 03:13:10PM -0700, Vineet Gupta wrote:=0A=
->> helps gcc with better instruction selections such as 64-bit multiply MPY=
-D=0A=
->>=0A=
->> before=0A=
->> ------=0A=
->> 82c34b58 <sched_clock>:=0A=
->> 82c34b58:	ld	r2,[0x83068d00]=0A=
->> 82c34b60:	add_s	r2,r2,0x7530=0A=
->> 82c34b66:	mov_s	r0,0x989680=0A=
->> 82c34b6c:	mpymu	r5,r2,r0=0A=
->> 82c34b70:	mpy	r4,r2,r0=0A=
->> 82c34b74:	mov_s	r0,r4=0A=
->> 82c34b76:	j_s.d	[blink]=0A=
->> 82c34b78:	mov_s	r1,r5=0A=
->> 82c34b7a:	nop_s=0A=
->>=0A=
->> after=0A=
->> ------=0A=
->> 82c34b7c <sched_clock>:=0A=
->> 82c34b7c:	ld	r0,[0x83064d00]=0A=
->> 82c34b84:	add_s	r0,r0,0x7530=0A=
->> 82c34b8a:	mpydu	r0,r0,0x989680=0A=
->> 82c34b92:	j_s	[blink]=0A=
->>=0A=
->> Signed-off-by: Vineet Gupta <vgupta@synopsys.com>=0A=
-> This patch causes my arc2 test builds to fail=0A=
->=0A=
-> Building arc:axs103_defconfig ... failed=0A=
-> --------------=0A=
-> Error log:=0A=
->=0A=
-> standard input}: Assembler messages:=0A=
-> {standard input}:154: Error: inappropriate arguments for opcode 'st'=0A=
-> {standard input}:157: Error: Insn j_s has a jump/branch instruction j_s i=
-n its delay slot.=0A=
-> {standard input}:186: Error: inappropriate arguments for opcode 'st'=0A=
-> make[3]: *** [net/core/dev.o] Error 1=0A=
-> make[2]: *** [net/core] Error 2=0A=
->=0A=
-> Building arc:nsim_hs_smp_defconfig ... failed=0A=
-> --------------=0A=
-> Error log:=0A=
-> {standard input}: Assembler messages:=0A=
-> {standard input}:218: Error: inappropriate arguments for opcode 'st'=0A=
-> {standard input}:9329: Error: inappropriate arguments for opcode 'st'=0A=
->=0A=
-> Building arc:vdk_hs38_smp_defconfig ... failed=0A=
-> --------------=0A=
-> Error log:=0A=
->=0A=
-> {standard input}: Assembler messages:=0A=
-> {standard input}:9629: Error: inappropriate arguments for opcode 'st'=0A=
-> {standard input}:9883: Error: inappropriate arguments for opcode 'st'=0A=
->=0A=
-> I use a toolchain based on gcc 7.3.0 and binutils 2.30. What version=0A=
-> of gcc and binutils do I need for the builds to complete ?=0A=
-=0A=
-Hmm I have a prebuilt 2017.03 release of tools (gcc 7.1.1 based) and I don'=
-t see=0A=
-the issue above when building net/core/dev.o=0A=
-I presume your toolchain was built off of upstream gcc sources.=0A=
-Can you please post the output of your arc-linux*gcc -v=0A=
-=0A=
-Thx,=0A=
--Vineet=0A=
+On Tue, Sep 11, 2018 at 12:17:05PM +0200, Martin Steigerwald wrote:
+> Cc´d Intel Gfx mailing list, in case somebody there knows something:
+> 
+> Cc´d Thorsten for regression tracking… forgot initially. Can also open 
+> bug report at a later time but so far I cannot provide many details 
+> about the issue.
+> 
+> Rafael J. Wysocki - 11.09.18, 10:17:
+> > On Tue, Sep 11, 2018 at 10:01 AM Martin Steigerwald 
+> <martin@lichtvoll.de> wrote:
+> > > Hi.
+> > > 
+> > > Linus Torvalds - 02.09.18, 23:45:
+> > > > As usual, the rc2 release is pretty small. People are taking a
+> > > 
+> > > With 4.19-rc2 this ThinkPad T520 with i5 Sandybrdige sometimes hangs
+> > > with black screen when resuming from suspend or hibernation.  With
+> > > 4.18.1 it did not. Of course there have been userspace related
+> > > updates that could be related.
+> > > 
+> > > I currently have no time to dig into this and on this production
+> > > laptop I generally do not do bisects between major kernel releases.
+> > > So currently I only answer questions that do not require much time
+> > > to answer.
+> > > 
+> > > For now I switched back to 4.18. If that is stable – and thus likely
+> > > no userspace component is related –, I go with 4.19-rc3 or whatever
+> > > is most recent version to see if the issue has been fixed already.
+> > 
+> > There were almost no general changes related to system-wide PM between
+> > 4.18 and current, so I would suspect one of the device drivers or the
+> > x86 core.  It also may be something like CPU online/offline, however.
+> 
+> I see. I wondered about intel-gfx driver already. Of course it could 
+> also be something else.
+> 
+> I forgot to mention: The mouse pointer was visible, but the screen 
+> remained black.
+
+Did the mouse cursor still move or not?
+
+Could also try suspend without any GUI stuff in the way. Or try the
+intel ddx instead of the modesetting ddx (assuming that's what
+you're using now) and no compositor to rule out GPU hangs killing
+the compositor. The intel ddx can also deal with the GPU not
+recovering from a hang by switching to software rendering,
+whereas modesetting cannot.
+
+Hmm. Also T520 is an optimus laptop maybe? If there's an nvidia
+GPU involved it's going to be hard to get anyone to care. Better
+switch that off in the BIOS if you haven't already.
+
+-- 
+Ville Syrjälä
+Intel
