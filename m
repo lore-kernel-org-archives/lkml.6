@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F4A4C6778D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:54:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF824C6778D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:55:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D29C620839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:54:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D29C620839
+	by mail.kernel.org (Postfix) with ESMTP id B41F720839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:55:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B41F720839
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728569AbeILT7j (ORCPT
+        id S1728308AbeILT6W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 15:59:39 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:39440 "EHLO
+        Wed, 12 Sep 2018 15:58:22 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:45746 "EHLO
         smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727992AbeILT6a (ORCPT
+        by vger.kernel.org with ESMTP id S1728270AbeILT6T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 15:58:30 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1322832|-1;CH=blue;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03271;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=15;RT=15;SR=0;TI=SMTPD_---.CpxA9jF_1536764002;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CpxA9jF_1536764002)
-          by smtp.aliyun-inc.com(10.147.42.241);
-          Wed, 12 Sep 2018 22:53:22 +0800
+        Wed, 12 Sep 2018 15:58:19 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.0824754|-1;CH=blue;FP=17186617557674820946|2|2|12|0|-1|-1|-1;HT=e02c03296;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=15;RT=15;SR=0;TI=SMTPD_---.CpxFQLY_1536763996;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CpxFQLY_1536763996)
+          by smtp.aliyun-inc.com(10.147.40.26);
+          Wed, 12 Sep 2018 22:53:16 +0800
 From:   Guo Ren <ren_guo@c-sky.com>
 To:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
         tglx@linutronix.de, daniel.lezcano@linaro.org,
@@ -35,9 +35,9 @@ To:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
 Cc:     c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
         thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org, ren_guo@c-sky.com,
         green.hu@gmail.com
-Subject: [PATCH V4 20/27] dt-bindings: timer: C-SKY Multi-processor timer
-Date:   Wed, 12 Sep 2018 22:52:02 +0800
-Message-Id: <e301225bda1dc8dfe7aa5b1b2bbe83b82403f47d.1536758961.git.ren_guo@c-sky.com>
+Subject: [PATCH V4 18/27] dt-bindings: csky CPU Bindings
+Date:   Wed, 12 Sep 2018 22:52:00 +0800
+Message-Id: <f14bfbce2d3c36fa620f9e5cb1805e82b150e76a.1536758961.git.ren_guo@c-sky.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <93e8b592e429c156ad4d4ca5d85ef48fd0ab8b70.1536758961.git.ren_guo@c-sky.com>
 References: <93e8b592e429c156ad4d4ca5d85ef48fd0ab8b70.1536758961.git.ren_guo@c-sky.com>
@@ -50,61 +50,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Guo Ren <ren_guo@c-sky.com>
 ---
- .../devicetree/bindings/timer/csky,mptimer.txt     | 46 ++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/timer/csky,mptimer.txt
+ Documentation/devicetree/bindings/csky/cpus.txt | 70 +++++++++++++++++++++++++
+ 1 file changed, 70 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/csky/cpus.txt
 
-diff --git a/Documentation/devicetree/bindings/timer/csky,mptimer.txt b/Documentation/devicetree/bindings/timer/csky,mptimer.txt
+diff --git a/Documentation/devicetree/bindings/csky/cpus.txt b/Documentation/devicetree/bindings/csky/cpus.txt
 new file mode 100644
-index 0000000..0d7369f
+index 0000000..ee3901d
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/timer/csky,mptimer.txt
-@@ -0,0 +1,46 @@
-+============================
-+C-SKY Multi-processors Timer
-+============================
++++ b/Documentation/devicetree/bindings/csky/cpus.txt
+@@ -0,0 +1,70 @@
++==================
++C-SKY CPU Bindings
++==================
 +
-+C-SKY multi-processors timer is designed for C-SKY SMP system and the
-+regs is accessed by cpu co-processor 4 registers with mtcr/mfcr.
++The device tree allows to describe the layout of CPUs in a system through
++the "cpus" node, which in turn contains a number of subnodes (ie "cpu")
++defining properties for every cpu.
 +
-+ - PTIM_CTLR "cr<0, 14>" Control reg to start reset timer.
-+ - PTIM_TSR  "cr<1, 14>" Interrupt cleanup status reg.
-+ - PTIM_CCVR "cr<3, 14>" Current counter value reg.
-+ - PTIM_LVR  "cr<6, 14>" Window value reg to triger next event.
++Only SMP system need to care about the cpus node and single processor
++needn't define cpus node at all.
 +
-+==============================
-+timer node bindings definition
-+==============================
++=====================================
++cpus and cpu node bindings definition
++=====================================
 +
-+        Description: Describes SMP timer
++- cpus node
++
++        Description: Container of cpu nodes
++
++        The node name must be "cpus".
++
++        A cpus node must define the following properties:
++
++        - #address-cells
++                Usage: required
++                Value type: <u32>
++                Definition: must be set to 1
++        - #size-cells
++                Usage: required
++                Value type: <u32>
++                Definition: must be set to 0
++
++- cpu node
++
++        Description: Describes one of SMP cores
 +
 +        PROPERTIES
 +
-+        - compatible
++        - device_type
 +                Usage: required
 +                Value type: <string>
-+                Definition: must be "csky,mptimer"
-+	- clocks
-+		Usage: required
-+		Value type: <node>
-+                Definition: must be input clk node
-+        - interrupt
++                Definition: must be "cpu"
++        - reg
 +                Usage: required
 +                Value type: <u32>
-+                Definition: must be timer irq num defined by soc
-+        - interrupt-parent:
++                Definition: CPU index
++        - status:
 +                Usage: required
-+		Value type: <node>
-+                Definition: must be interrupt controller node
++                Value type: <string>
++                Definition: "ok"       means enable  the cpu-core
++                            "disabled" means disable the cpu-core
 +
-+Examples:
-+---------
++Example:
++--------
 +
-+	timer: timer {
-+		compatible = "csky,mptimer";
-+		clocks = <&dummy_apb_clk>;
-+		interrupts = <16>;
-+		interrupt-parent = <&intc>;
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		cpu@0 {
++			device_type = "cpu";
++			reg = <0>;
++			status = "ok";
++		};
++
++		cpu@1 {
++			device_type = "cpu";
++			reg = <1>;
++			status = "ok";
++		};
 +	};
 -- 
 2.7.4
