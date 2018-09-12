@@ -2,90 +2,86 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8751C4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 01:11:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D551C4646A
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 01:12:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7190A20866
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 01:11:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE08920883
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 01:12:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fz21e/a1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7190A20866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dN0//W7E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE08920883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728146AbeILGM6 (ORCPT
+        id S1728165AbeILGOR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 02:12:58 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:33618 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726686AbeILGM6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 02:12:58 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8C1AAdQ069483;
-        Wed, 12 Sep 2018 01:10:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2018-07-02;
- bh=4GAlNwrht7yKBb7diAuoyfL24xf4YjKwJNO6Z8e8YDM=;
- b=fz21e/a1ZnhWORlsvyfJgUaTIlqIGfJXxbpXKef1hpSXsU5QG4s4xJtbadGPOtEjqoWh
- Pj8YDLomtyBgHh1BrjsUG6KgkCwI7qQzM0OVoCQgqajCOBcDGYDl57WYOB090Ub8QJby
- X6gONHuVYoL70mUd9OrgPYejwJXIsnXav0YwVX2n/pvugyelok+o97ECjYU6RgyiVQyY
- /Czq+5iVhUn1jy2T7Qm3KvvZbH//3g/BUFPluinS/Cy2BYFdLJEcE2QuK1jGyYBs9OCH
- IqIJKEDZG1bcz/wBHfkKc7rxXJxXK1Rkf/YcK7oY1lGdrMG127AX4iBqyvAXkAAoP2D6 nw== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2130.oracle.com with ESMTP id 2mc5utfcu3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 12 Sep 2018 01:10:48 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w8C1Am9w004180
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 12 Sep 2018 01:10:48 GMT
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w8C1AlOF025461;
-        Wed, 12 Sep 2018 01:10:47 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 11 Sep 2018 18:10:47 -0700
-To:     Colin King <colin.king@canonical.com>
-Cc:     qla2xxx-upstream@qlogic.com,
-        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scsi: qla2xxx: fix typo "CT-PASSTRHU" -> "CT-PASSTHRU"
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20180909222503.8298-1-colin.king@canonical.com>
-Date:   Tue, 11 Sep 2018 21:10:43 -0400
-In-Reply-To: <20180909222503.8298-1-colin.king@canonical.com> (Colin King's
-        message of "Sun, 9 Sep 2018 23:25:03 +0100")
-Message-ID: <yq136ufy0z0.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        Wed, 12 Sep 2018 02:14:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35286 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726686AbeILGOR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 02:14:17 -0400
+Received: from dragon (unknown [104.237.86.3])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0937320866;
+        Wed, 12 Sep 2018 01:12:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1536714740;
+        bh=7ImKEDSs2tSNfD4cCw2j1hIslvbbl3GX/lGsCv8TLr0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dN0//W7EwG8w4rOwstJIWo+aHcCSqV/rBv7PKPXEHcDr8CM8/pby+Xr6DuxdzGPTS
+         rHgImHfoBjpNxRMMiaLDFr3yjwrQRd4ndH9ys4ECEgoTy8mSjnLXMwriO9yYCv1qwm
+         6Q4zJz4WqvFgmNGW5k7wHY+kp77gc6AvYvf1C43k=
+Date:   Wed, 12 Sep 2018 09:10:34 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Oleksij Rempel <o.rempel@pengutronix.de>
+Cc:     Mark Brown <broonie@kernel.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        kernel@pengutronix.de, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Russell King <linux@armlinux.org.uk>, linux-imx@nxp.com,
+        yibin.gong@nxp.com, "A.s. Dong" <aisheng.dong@nxp.com>
+Subject: Re: [PATCH v9 2/6] ARM: imx6: register pm_power_off handler if
+ "fsl,pmic-stby-poweroff" is set
+Message-ID: <20180912011033.GB28469@dragon>
+References: <20180802103425.3053-1-o.rempel@pengutronix.de>
+ <20180802103425.3053-3-o.rempel@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9013 signatures=668708
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=606
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809120011
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180802103425.3053-3-o.rempel@pengutronix.de>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Aug 02, 2018 at 12:34:21PM +0200, Oleksij Rempel wrote:
+> One of the Freescale recommended sequences for power off with external
+> PMIC is the following:
+> ...
+> 3.  SoC is programming PMIC for power off when standby is asserted.
+> 4.  In CCM STOP mode, Standby is asserted, PMIC gates SoC supplies.
+> 
+> See:
+> http://www.nxp.com/assets/documents/data/en/reference-manuals/IMX6DQRM.pdf
+> page 5083
+> 
+> This patch implements step 4. of this sequence.
+> 
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
-Colin,
-
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Trivial fix to typo in debug message text.
-
-Applied to 4.20/scsi-queue, thanks!
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Applied, thanks.
