@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D3ADC4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:24:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47CC9C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:25:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CD9E20880
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:24:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC09420880
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:25:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P8I5XQ59"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CD9E20880
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YPvmzxBJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC09420880
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728011AbeILT3Z (ORCPT
+        id S1728030AbeILT3x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 15:29:25 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:44516 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726672AbeILT3Y (ORCPT
+        Wed, 12 Sep 2018 15:29:53 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:44564 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726537AbeILT3x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 15:29:24 -0400
-Received: by mail-pf1-f193.google.com with SMTP id k21-v6so1087010pff.11;
-        Wed, 12 Sep 2018 07:24:40 -0700 (PDT)
+        Wed, 12 Sep 2018 15:29:53 -0400
+Received: by mail-pf1-f195.google.com with SMTP id k21-v6so1087666pff.11;
+        Wed, 12 Sep 2018 07:25:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=b4QbV5/izBBk04/XxTj2GLqtb8eRHVrVbQmwmvpKlrM=;
-        b=P8I5XQ59Cta9NCY7QNhBNLZHgqCKQYOwJnYJ2huXOECExAe8HseYyXaRdww+x9s2IU
-         FLUzuQ0d/nxj50XVHext6wFe1w2S6paaXnFKCb6ai3g0w9DPHV6lUvfMprlrJEPmjOHP
-         yl0017jSZlRuHlSmQnoqFP3zC8mwx44EFEko7vOAs6OPpu36fO0w/eGNO/71ytoqfuri
-         MLb3jAuOo+8/G9MsMTvTEQ4+JNDbJBC8RCIyv1ZBQJZY2XMtTMRAJvBQxTXHYehs8zCk
-         ffzAF9lA61hy1EKG7Qy/dxMHQ1xaA6BLHoqQsqmRmWiHbzVmoH8VEg7fTtEwj7kv5JEI
-         CrxA==
+        bh=mIYZkmlAKW9DXMB6mufGujz5hO7WeUIoyhtH0q4lSLQ=;
+        b=YPvmzxBJhYf5HKpBTs729PIKgHbXuY/xWQKCme8njWS96JEpC3gPuIhbj9XPGhtCai
+         W0VCj0Nm9qaQxiuUhrGdTZpeqb2UFDkGry4YFZ0v2EKgONm6DaxhQaqb+EBIMa/xP0qd
+         UAS7Dzz49I9ZnbRtBzDagzTG5eqyv7htmzoIf6kJTN6PNBk+K7G2ZFFULUzb8OFwLhXI
+         UQBnDZP4/QQsGk18tV3r1km5GJ4kWwHRtZmwJkST3mwV5GwiFOt3CZrOTHKBX3fzzbX4
+         OR3L9D6XDbVDAVG3kenJ7Tq4c8L6n05QV9zkSAPUSaSdGJG0N1qofzMPAP/CkDloMVCr
+         wPjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=b4QbV5/izBBk04/XxTj2GLqtb8eRHVrVbQmwmvpKlrM=;
-        b=LP03HmHoBNvnL9GGCAuRi6MEZFyONXlCakK1k7ixmAtIPl6blpn58O5AqnDomQOzvT
-         K1iY8bLgFUQmRixImszncPcszBFsvKmQTDTkwlwcbLHohL9jwGNKUfImkfVUlcwmxrAl
-         4ujWZYWJ78Fvs4jirDRJs28iXJq/caRlQUkD0fT4KzsdkHghPX8aoGKjFB43okopRmRp
-         HOKodd0ykbBHcYr5AVYP71rElVUiVrH7f+Zdps0f5h7dxbsBtSkhTByBAZJeDMDupGCy
-         4NVJtPDOadL7RfF+9RrUNSwyZ5d53xa3yw75WSZ/A9ZNkw72ZeVkaMrOJBYKklkhCt5p
-         M5HQ==
-X-Gm-Message-State: APzg51DLOe4R7k5g8KE58vBabknMlGIsWDAHw4buYxa/PkVaMzsLrotl
-        qTBytCAq6mi6+2IFmkZAE8XcyOKR
-X-Google-Smtp-Source: ANB0Vdbyzd2J4pNPYcJahSBeEHXtgIXoAYe8ahTYmlP7dtgwYYHQVSuoCzLJnzr5PCYzaDCSgnzxug==
-X-Received: by 2002:a63:9a42:: with SMTP id e2-v6mr2678838pgo.263.1536762279995;
-        Wed, 12 Sep 2018 07:24:39 -0700 (PDT)
+        bh=mIYZkmlAKW9DXMB6mufGujz5hO7WeUIoyhtH0q4lSLQ=;
+        b=qi6oqJeVpOL9ZbHTU3zOt+Tq3thYJ2Pstf7hwZuWJvJ51Qc/CLXTAkJBTpuspRI2gT
+         bcwv/b4cU9qk2SNEme8MFySLhLhNX4FV9dO78Qk7DgSh/i++TuROiIhAD8651AJvt/Nt
+         2aO371TUOimxoka7Dt8t0qVEWnYgUw9y1C8itrmdSWM5Cg0PRtyWdXzj1Rjsg+8go8U+
+         qAL022B6ZgnKs8evse1wUnruog9L8u+jitegNZhIIeWWepLp7C6bidCqqetJp2rTUOD/
+         ctdIhuHMeaFT6owj2MkXYHiuIxWuze5IXp47sRPJ1Yba67yBMykYfxZJ9FNLcyB5So2R
+         6+CA==
+X-Gm-Message-State: APzg51Cy+wJNYfP7SGLDC70OfIfaantLJQAP2sSW5DL+xi/KEaqqx1dV
+        sXzY0XddkVs1jks08tHz/Dw=
+X-Google-Smtp-Source: ANB0VdYKzuD1pUQJl60qjuklRRBFd35JE2nsu/FxuX2LOgZvn0iSQj7CyujToVoSMVbWj5XSTlITbQ==
+X-Received: by 2002:a63:d401:: with SMTP id a1-v6mr2624849pgh.414.1536762308735;
+        Wed, 12 Sep 2018 07:25:08 -0700 (PDT)
 Received: from linux-l9pv.suse ([124.11.22.254])
-        by smtp.gmail.com with ESMTPSA id t9-v6sm2124213pgi.87.2018.09.12.07.24.33
+        by smtp.gmail.com with ESMTPSA id t9-v6sm2124213pgi.87.2018.09.12.07.24.40
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 12 Sep 2018 07:24:39 -0700 (PDT)
+        Wed, 12 Sep 2018 07:25:08 -0700 (PDT)
 From:   "Lee, Chun-Yi" <joeyli.kernel@gmail.com>
 X-Google-Original-From: "Lee, Chun-Yi" <jlee@suse.com>
 To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
@@ -70,9 +70,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
         Ryan Chen <yu.chen.surf@gmail.com>,
         David Howells <dhowells@redhat.com>,
         Giovanni Gherdovich <ggherdovich@suse.cz>
-Subject: [PATCH 4/5] PM / hibernate: Erase the snapshot master key in snapshot pages
-Date:   Wed, 12 Sep 2018 22:23:36 +0800
-Message-Id: <20180912142337.21955-5-jlee@suse.com>
+Subject: [PATCH 5/5] PM / hibernate: An option to request that snapshot image must be authenticated
+Date:   Wed, 12 Sep 2018 22:23:37 +0800
+Message-Id: <20180912142337.21955-6-jlee@suse.com>
 X-Mailer: git-send-email 2.12.3
 In-Reply-To: <20180912142337.21955-1-jlee@suse.com>
 References: <20180912142337.21955-1-jlee@suse.com>
@@ -81,13 +81,16 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the encryption key be guessed then the snapshot master key can
-also be grabbed from snapshot image. Which means that the authentication
-key can also be calculated. So kernel erases master key in snapshot
-pages.
+This kernel option is similar to the option for kernel module signature
+verification. When this option is unselected, kernel will be tainted by
+restored from a snapshot image without (valid) signature.
 
-Because the master key in image kernel be erased, kernel uses the
-trampoline page to forward snapshot master key to image kernel.
+When the option is selected, kernel will refuse the system to be restored
+from a unauthenticated image. The hibernation resume process will be stopped
+, the snapshot image will be discarded and system just boots as normal.
+
+The hibernation can be triggered without snapshot master key when this
+option is unselected. But kernel will be tainted after hibernation resume.
 
 Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 Cc: Pavel Machek <pavel@ucw.cz>
@@ -98,171 +101,242 @@ Cc: David Howells <dhowells@redhat.com>
 Cc: Giovanni Gherdovich <ggherdovich@suse.cz>
 Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
 ---
- kernel/power/power.h        |  6 +++++
- kernel/power/snapshot.c     |  5 ++++
- kernel/power/snapshot_key.c | 66 +++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 77 insertions(+)
+ Documentation/admin-guide/kernel-parameters.txt |  6 ++++
+ include/linux/kernel.h                          |  3 +-
+ kernel/panic.c                                  |  1 +
+ kernel/power/Kconfig                            | 11 +++++++
+ kernel/power/hibernate.c                        |  8 +++--
+ kernel/power/power.h                            |  5 ++++
+ kernel/power/snapshot.c                         | 40 +++++++++++++++++++++++--
+ kernel/power/user.c                             |  2 +-
+ 8 files changed, 69 insertions(+), 7 deletions(-)
 
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 970d837bd57f..c4be29103865 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -3941,6 +3941,12 @@
+ 		protect_image	Turn on image protection during restoration
+ 				(that will set all pages holding image data
+ 				during restoration read-only).
++		enforce_auth	When HIBERNATION_ENC_AUTH is set, this means
++				that snapshot image without (valid) signature
++				will fail to restore.
++				Note that if HIBERNATION_ENC_AUTH_FORCE is
++				set, that is always true, so this option does
++				nothing.
+ 
+ 	retain_initrd	[RAM] Keep initrd memory after extraction
+ 
+diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+index d6aac75b51ba..61714489cb57 100644
+--- a/include/linux/kernel.h
++++ b/include/linux/kernel.h
+@@ -598,7 +598,8 @@ extern enum system_states {
+ #define TAINT_LIVEPATCH			15
+ #define TAINT_AUX			16
+ #define TAINT_RANDSTRUCT		17
+-#define TAINT_FLAGS_COUNT		18
++#define TAINT_UNSAFE_HIBERNATE		18
++#define TAINT_FLAGS_COUNT		19
+ 
+ struct taint_flag {
+ 	char c_true;	/* character printed when tainted */
+diff --git a/kernel/panic.c b/kernel/panic.c
+index 8b2e002d52eb..624eb1150361 100644
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -327,6 +327,7 @@ const struct taint_flag taint_flags[TAINT_FLAGS_COUNT] = {
+ 	[ TAINT_LIVEPATCH ]		= { 'K', ' ', true },
+ 	[ TAINT_AUX ]			= { 'X', ' ', true },
+ 	[ TAINT_RANDSTRUCT ]		= { 'T', ' ', true },
++	[ TAINT_UNSAFE_HIBERNATE ]	= { 'H', ' ', true },
+ };
+ 
+ /**
+diff --git a/kernel/power/Kconfig b/kernel/power/Kconfig
+index 7c5c30149dbc..3c998fd6dc4c 100644
+--- a/kernel/power/Kconfig
++++ b/kernel/power/Kconfig
+@@ -90,6 +90,17 @@ config HIBERNATION_ENC_AUTH
+ 	  master key of hibernation. The TPM trusted key depends on TPM. The
+ 	  security of user defined key relies on user space.
+ 
++config HIBERNATION_ENC_AUTH_FORCE
++	bool "Require hibernate snapshot image to be validly signed"
++	depends on HIBERNATION_ENC_AUTH
++	help
++	  This option will prevent that a snapshot image without (valid)
++	  signature be restored. Without this option, a unauthenticated
++	  snapshot image can be restored but the restored kernel will be
++	  tainted. Which also means that the hibernation can be triggered
++	  without snapshot key but kernel will be tainted without this
++	  option.
++
+ config ARCH_SAVE_PAGE_KEYS
+ 	bool
+ 
+diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
+index 79f4db284126..70a0d630a6c2 100644
+--- a/kernel/power/hibernate.c
++++ b/kernel/power/hibernate.c
+@@ -272,11 +272,11 @@ static int create_image(int platform_mode)
+ 	int error;
+ 
+ 	error = snapshot_prepare_hash(false);
+-	if (error)
++	if (error && snapshot_is_enforce_auth())
+ 		return error;
+ 
+ 	error = snapshot_prepare_crypto(false, true);
+-	if (error)
++	if (error && snapshot_is_enforce_auth())
+ 		goto finish_hash;
+ 
+ 	error = dpm_suspend_end(PMSG_FREEZE);
+@@ -708,7 +708,7 @@ int hibernate(void)
+ 	}
+ 
+ 	error = snapshot_key_init();
+-	if (error)
++	if (error && snapshot_is_enforce_auth())
+ 		return error;
+ 
+ 	error = snapshot_create_trampoline();
+@@ -1251,6 +1251,8 @@ static int __init hibernate_setup(char *str)
+ 	} else if (IS_ENABLED(CONFIG_STRICT_KERNEL_RWX)
+ 		   && !strncmp(str, "protect_image", 13)) {
+ 		enable_restore_image_protection();
++	} else if (!strncmp(str, "enforce_auth", 10)) {
++		snapshot_set_enforce_auth();
+ 	}
+ 	return 1;
+ }
 diff --git a/kernel/power/power.h b/kernel/power/power.h
-index 41263fdd3a54..d2fc73b2e200 100644
+index d2fc73b2e200..edb63991bcdc 100644
 --- a/kernel/power/power.h
 +++ b/kernel/power/power.h
 @@ -36,6 +36,7 @@ struct swsusp_info {
  struct trampoline {
  	bool snapshot_key_valid;
  	int sig_verify_ret;
-+	u8 snapshot_key[SNAPSHOT_KEY_SIZE];
++	bool enforce_auth;
+ 	u8 snapshot_key[SNAPSHOT_KEY_SIZE];
  } __aligned(PAGE_SIZE);
  
- #ifdef CONFIG_HIBERNATION
-@@ -55,6 +56,9 @@ extern int snapshot_key_init(void);
+@@ -51,6 +52,8 @@ extern int snapshot_prepare_crypto(bool may_sleep, bool create_iv);
+ extern void snapshot_finish_crypto(void);
+ extern int snapshot_prepare_hash(bool may_sleep);
+ extern void snapshot_finish_hash(void);
++extern void snapshot_set_enforce_auth(void);
++extern int snapshot_is_enforce_auth(void);
+ /* kernel/power/snapshot_key.c */
+ extern int snapshot_key_init(void);
  extern bool snapshot_key_initialized(void);
- extern int snapshot_get_auth_key(u8 *auth_key, bool may_sleep);
- extern int snapshot_get_enc_key(u8 *enc_key, bool may_sleep);
-+extern void snapshot_key_page_erase(unsigned long pfn, void *buff_addr);
-+extern void snapshot_key_trampoline_backup(struct trampoline *t);
-+extern void snapshot_key_trampoline_restore(struct trampoline *t);
- #else
- static inline int snapshot_image_verify_decrypt(void) { return 0; }
- static inline int snapshot_prepare_crypto(bool may_sleep, bool create_iv) { return 0; }
-@@ -62,6 +66,8 @@ static inline void snapshot_finish_crypto(void) {}
+@@ -65,6 +68,8 @@ static inline int snapshot_prepare_crypto(bool may_sleep, bool create_iv) { retu
+ static inline void snapshot_finish_crypto(void) {}
  static inline int snapshot_prepare_hash(bool may_sleep) { return 0; }
  static inline void snapshot_finish_hash(void) {}
++static inline void snapshot_set_enforce_auth(void) {}
++static inline int snapshot_is_enforce_auth(void) { return 0; }
  static inline int snapshot_key_init(void) { return 0; }
-+static inline void snapshot_key_trampoline_backup(struct trampoline *t) {}
-+static inline void snapshot_key_trampoline_restore(struct trampoline *t) {}
- #endif	/* !CONFIG_HIBERNATION_ENC_AUTH */
- 
- #ifdef CONFIG_ARCH_HIBERNATION_HEADER
+ static inline void snapshot_key_trampoline_backup(struct trampoline *t) {}
+ static inline void snapshot_key_trampoline_restore(struct trampoline *t) {}
 diff --git a/kernel/power/snapshot.c b/kernel/power/snapshot.c
-index c9a6e4983571..dd176df75d2b 100644
+index dd176df75d2b..803340dfe8ef 100644
 --- a/kernel/power/snapshot.c
 +++ b/kernel/power/snapshot.c
-@@ -1696,6 +1696,9 @@ __copy_data_pages(struct memory_bitmap *copy_bm, struct memory_bitmap *orig_bm)
- 			crypto_buffer = page_address(d_page);
- 		}
- 
-+		/* Erase key data in snapshot */
-+		snapshot_key_page_erase(pfn, crypto_buffer);
-+
- 		/* Encrypt hashed page */
- 		encrypt_data_page(crypto_buffer);
- 
-@@ -2481,6 +2484,7 @@ void snapshot_init_trampoline(void)
- 	t = (struct trampoline *)trampoline_buff;
- 
- 	init_sig_verify(t);
-+	snapshot_key_trampoline_backup(t);
- 
- 	pr_info("Hibernation trampoline page prepared\n");
- }
-@@ -2504,6 +2508,7 @@ void snapshot_restore_trampoline(void)
- 	t = (struct trampoline *)trampoline_virt;
- 
- 	handle_sig_verify(t);
-+	snapshot_key_trampoline_restore(t);
- 	snapshot_free_trampoline();
- }
- 
-diff --git a/kernel/power/snapshot_key.c b/kernel/power/snapshot_key.c
-index 091f33929b47..c0f179283f9e 100644
---- a/kernel/power/snapshot_key.c
-+++ b/kernel/power/snapshot_key.c
-@@ -29,11 +29,26 @@ static struct snapshot_key {
- 	const char *key_name;
- 	bool initialized;
- 	unsigned int key_len;
-+	unsigned long pfn;			/* pfn of keyblob */
-+	unsigned long addr_offset;		/* offset in page for keyblob */
- 	u8 key[SNAPSHOT_KEY_SIZE];
-+	u8 fingerprint[SHA512_DIGEST_SIZE];	/* fingerprint of keyblob */
- } skey = {
- 	.key_name = "swsusp-kmk",
- };
- 
-+static void snapshot_key_clean(void)
-+{
-+	crypto_free_shash(hash_tfm);
-+	hash_tfm = NULL;
-+	skey.pfn = 0;
-+	skey.key_len = 0;
-+	skey.addr_offset = 0;
-+	memzero_explicit(skey.key, SNAPSHOT_KEY_SIZE);
-+	memzero_explicit(skey.fingerprint, SHA512_DIGEST_SIZE);
-+	skey.initialized = false;
-+}
-+
- static int calc_hash(u8 *digest, const u8 *buf, unsigned int buflen,
- 		     bool may_sleep)
- {
-@@ -74,6 +89,53 @@ static int calc_key_hash(u8 *key, unsigned int key_len, const char *salt,
+@@ -1537,6 +1537,23 @@ static int decrypt_data_page(void *encrypted_page)
  	return ret;
  }
  
-+static int get_key_fingerprint(u8 *fingerprint, u8 *key, unsigned int key_len,
-+				bool may_sleep)
++/* enforce the snapshot to be signed */
++#ifdef CONFIG_HIBERNATION_ENC_AUTH_FORCE
++static bool enforce_auth = true;
++#else
++static bool enforce_auth;
++#endif
++
++void snapshot_set_enforce_auth(void)
 +{
-+	return calc_key_hash(key, key_len, "FINGERPRINT", fingerprint, may_sleep);
++	enforce_auth = true;
 +}
 +
-+void snapshot_key_page_erase(unsigned long pfn, void *buff_addr)
++int snapshot_is_enforce_auth(void)
 +{
-+	if (!skey.initialized || pfn != skey.pfn)
-+		return;
++	return enforce_auth;
++}
 +
-+	/* erase key data from snapshot buffer page */
-+	if (!memcmp(skey.key, buff_addr + skey.addr_offset, skey.key_len)) {
-+		memzero_explicit(buff_addr + skey.addr_offset, skey.key_len);
-+		pr_info("Erased swsusp key in snapshot pages.\n");
+ /*
+  * Signature of snapshot image
+  */
+@@ -1603,6 +1620,8 @@ int snapshot_prepare_hash(bool may_sleep)
+ 	crypto_free_shash(tfm);
+ 	s4_verify_digest = NULL;
+ 	s4_verify_desc = NULL;
++	if (!enforce_auth)
++		ret = 0;
+ 	return ret;
+ }
+ 
+@@ -1664,6 +1683,8 @@ int snapshot_image_verify_decrypt(void)
+ 		pr_warn("Signature verification failed: %d\n", ret);
+  error:
+ 	sig_verify_ret = ret;
++	if (!enforce_auth)
++		ret = 0;
+ 	return ret;
+ }
+ 
+@@ -1751,6 +1772,7 @@ static void load_signature(struct swsusp_info *info)
+ 
+ static void init_sig_verify(struct trampoline *t)
+ {
++	t->enforce_auth = enforce_auth;
+ 	t->sig_verify_ret = sig_verify_ret;
+ 	t->snapshot_key_valid = snapshot_key_valid;
+ 	sig_verify_ret = 0;
+@@ -1759,11 +1781,25 @@ static void init_sig_verify(struct trampoline *t)
+ 
+ static void handle_sig_verify(struct trampoline *t)
+ {
+-	if (t->sig_verify_ret)
++	enforce_auth = t->enforce_auth;
++	if (enforce_auth)
++		pr_info("Enforce the snapshot to be validly signed\n");
++
++	if (t->sig_verify_ret) {
+ 		pr_warn("Signature verification failed: %d\n",
+ 			t->sig_verify_ret);
+-	else if (t->snapshot_key_valid)
++		if (t->snapshot_key_valid)
++			pr_warn("Did not find valid snapshot key.\n");
++		/* taint kernel */
++		if (!enforce_auth) {
++			pr_warn("System resumed from unsafe snapshot - "
++				"tainting kernel\n");
++			add_taint(TAINT_UNSAFE_HIBERNATE, LOCKDEP_STILL_OK);
++			pr_info("%s\n", print_tainted());
++		}
++	} else if (t->snapshot_key_valid) {
+ 		pr_info("Signature verification passed.\n");
 +	}
-+}
-+
-+/* this function may sleeps because snapshot_key_init() */
-+void snapshot_key_trampoline_backup(struct trampoline *t)
-+{
-+	if (!t || snapshot_key_init())
-+		return;
-+
-+	memcpy(t->snapshot_key, skey.key, skey.key_len);
-+}
-+
-+/* Be called after snapshot image restored success */
-+void snapshot_key_trampoline_restore(struct trampoline *t)
-+{
-+	u8 fingerprint[SHA512_DIGEST_SIZE];
-+
-+	if (!skey.initialized || !t)
-+		return;
-+
-+	/* check key fingerprint before restore */
-+	get_key_fingerprint(fingerprint, t->snapshot_key, skey.key_len, true);
-+	if (memcmp(skey.fingerprint, fingerprint, SHA512_DIGEST_SIZE)) {
-+		pr_warn("Restored swsusp key failed, fingerprint mismatch.\n");
-+		snapshot_key_clean();
-+		return;
-+	}
-+
-+	memcpy(skey.key, t->snapshot_key, skey.key_len);
-+	memzero_explicit(t->snapshot_key, SNAPSHOT_KEY_SIZE);
-+}
-+
- /* Derive authentication/encryption key */
- static int get_derived_key(u8 *derived_key, const char *derived_type_str,
- 			   bool may_sleep)
-@@ -223,9 +285,13 @@ int snapshot_key_init(void)
- 	if (err)
- 		goto key_fail;
- 
-+	skey.pfn = page_to_pfn(virt_to_page(skey.key));
-+	skey.addr_offset = (unsigned long) skey.key & ~PAGE_MASK;
-+	get_key_fingerprint(skey.fingerprint, skey.key, skey.key_len, true);
- 	skey.initialized = true;
- 
- 	pr_info("Snapshot key is initialled.\n");
-+	pr_debug("Fingerprint %*phN\n", SHA512_DIGEST_SIZE, skey.fingerprint);
- 
- 	return 0;
- 
+ }
+ #else
+ static int
+diff --git a/kernel/power/user.c b/kernel/power/user.c
+index d5c8f777e8d8..9597f48f01d0 100644
+--- a/kernel/power/user.c
++++ b/kernel/power/user.c
+@@ -261,7 +261,7 @@ static long snapshot_ioctl(struct file *filp, unsigned int cmd,
+ 			break;
+ 		}
+ 		error = snapshot_key_init();
+-		if (error)
++		if (error && snapshot_is_enforce_auth())
+ 			return error;
+ 		error = snapshot_create_trampoline();
+ 		if (error)
 -- 
 2.13.6
 
