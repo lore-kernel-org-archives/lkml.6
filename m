@@ -2,94 +2,69 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEDF9C4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:10:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 328B2C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:18:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 644B120882
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:10:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 644B120882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D0C0D20839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 14:18:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0C0D20839
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727820AbeILTPi (ORCPT
+        id S1727063AbeILTXN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 15:15:38 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42228 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726642AbeILTPi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 15:15:38 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 71AC4AEF2;
-        Wed, 12 Sep 2018 14:10:55 +0000 (UTC)
-Date:   Wed, 12 Sep 2018 16:10:53 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Alexander Duyck <alexander.duyck@gmail.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, pavel.tatashin@microsoft.com,
-        dave.jiang@intel.com, mingo@kernel.org, dave.hansen@intel.com,
-        jglisse@redhat.com, akpm@linux-foundation.org, logang@deltatee.com,
-        dan.j.williams@intel.com, kirill.shutemov@linux.intel.com
-Subject: Re: [PATCH 1/4] mm: Provide kernel parameter to allow disabling page
- init poisoning
-Message-ID: <20180912141053.GL10951@dhcp22.suse.cz>
-References: <20180910232615.4068.29155.stgit@localhost.localdomain>
- <20180910234341.4068.26882.stgit@localhost.localdomain>
+        Wed, 12 Sep 2018 15:23:13 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:43983 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726537AbeILTXN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 15:23:13 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1g05xO-0001pR-W6; Wed, 12 Sep 2018 16:17:27 +0200
+Date:   Wed, 12 Sep 2018 16:17:26 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Florian Weimer <fweimer@redhat.com>
+cc:     Andy Lutomirski <luto@kernel.org>,
+        Matt Rickard <matt@softrans.com.au>,
+        Stephen Boyd <sboyd@kernel.org>,
+        John Stultz <john.stultz@linaro.org>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] x86/vdso: Handle clock_gettime(CLOCK_TAI) in vDSO
+In-Reply-To: <dde36e93-a21b-6223-8ffc-6dd11f687d38@redhat.com>
+Message-ID: <alpine.DEB.2.21.1809121616040.9957@nanos.tec.linutronix.de>
+References: <20180901015935.CCF0B18E20A9@virtux64.softrans.com.au> <CALCETrU4PzskO9pE6G4EkXNRRX3Mu7Vvjv1P8XgrfRMdgGDZSg@mail.gmail.com> <alpine.DEB.2.21.1809092159440.1402@nanos.tec.linutronix.de> <dde36e93-a21b-6223-8ffc-6dd11f687d38@redhat.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180910234341.4068.26882.stgit@localhost.localdomain>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 10-09-18 16:43:41, Alexander Duyck wrote:
-> From: Alexander Duyck <alexander.h.duyck@intel.com>
+On Wed, 12 Sep 2018, Florian Weimer wrote:
+> On 09/09/2018 10:05 PM, Thomas Gleixner wrote:
+> > See the patch below. It's integrating TAI without slowing down everything
+> > and it definitely does not result in indirect calls.
+> > 
+> > On a HSW it slows down clock_gettime() by ~0.5ns. On a SKL I get a speedup
+> > by ~0.5ns. On a AMD Epyc server it's 1.2ns speedup. So it somehow depends
+> > on the uarch and I also observed compiler version dependend variations.
 > 
-> On systems with a large amount of memory it can take a significant amount
-> of time to initialize all of the page structs with the PAGE_POISON_PATTERN
-> value. I have seen it take over 2 minutes to initialize a system with
-> over 12GB of RAM.
-> 
-> In order to work around the issue I had to disable CONFIG_DEBUG_VM and then
-> the boot time returned to something much more reasonable as the
-> arch_add_memory call completed in milliseconds versus seconds. However in
-> doing that I had to disable all of the other VM debugging on the system.
-> 
-> In order to work around a kernel that might have CONFIG_DEBUG_VM enabled on
-> a system that has a large amount of memory I have added a new kernel
-> parameter named "page_init_poison" that can be set to "off" in order to
-> disable it.
+> Does this mean glibc can keep using a single vDSO entrypoint, the one we
+> have today?
 
-I am still not convinced that this all is worth the additional code. It
-is much better than a new config option for sure. If we really want this
-though then I suggest that the parameter handler should note the
-disabled state (when CONFIG_DEBUG_VM is on) to the kernel log. I would
-also make it explicit who might want to do that in the parameter
-description.
+We have no intention to change that.
 
-> +	page_init_poison=	[KNL] Boot-time parameter changing the
-> +			state of poisoning of page structures during early
-> +			boot. Used to verify page metadata is not accessed
-> +			prior to initialization. Available with
-> +			CONFIG_DEBUG_VM=y.
-> +			off: turn off poisoning
-> +			on: turn on poisoning (default)
-> +
+But we surely could provide separate entry points as an extra to avoid a
+bunch of conditionals.
 
-what about the following wording or something along those lines
+Thanks,
 
-Boot-time parameter to control struct page poisoning which is a
-debugging feature to catch unitialized struct page access. This option
-is available only for CONFIG_DEBUG_VM=y and it affects boot time
-(especially on large systems). If there are no poisoning bugs reported
-on the particular system and workload it should be safe to disable it to
-speed up the boot time.
--- 
-Michal Hocko
-SUSE Labs
+	tglx
+
