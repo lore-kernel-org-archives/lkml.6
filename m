@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92805C4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:59:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 596F7ECDFC1
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:00:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49DBC2087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 08:59:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49DBC2087F
+	by mail.kernel.org (Postfix) with ESMTP id 1E4582087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:00:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E4582087F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727983AbeILODa (ORCPT
+        id S1728004AbeILODb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 10:03:30 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:47162 "EHLO inva021.nxp.com"
+        Wed, 12 Sep 2018 10:03:31 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:47186 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727409AbeILOD3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 10:03:29 -0400
+        id S1727579AbeILODb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 10:03:31 -0400
 Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3C50F200126;
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id CA5E3200146;
         Wed, 12 Sep 2018 10:59:54 +0200 (CEST)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 2E6C6200123;
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id BCD59200123;
         Wed, 12 Sep 2018 10:59:54 +0200 (CEST)
 Received: from enigma.ea.freescale.net (enigma.ea.freescale.net [10.171.81.110])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id A3CEF205F0;
-        Wed, 12 Sep 2018 10:59:53 +0200 (CEST)
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 3E393205F0;
+        Wed, 12 Sep 2018 10:59:54 +0200 (CEST)
 From:   =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>
 To:     Herbert Xu <herbert@gondor.apana.org.au>,
         Stuart Yoder <stuyoder@gmail.com>,
@@ -42,9 +42,9 @@ Cc:     "David S . Miller" <davem@davemloft.net>,
         Aymen Sghaier <aymen.sghaier@nxp.com>,
         linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 01/12] bus: fsl-mc: add support for dpseci device type
-Date:   Wed, 12 Sep 2018 11:59:26 +0300
-Message-Id: <20180912085937.22489-2-horia.geanta@nxp.com>
+Subject: [PATCH v2 02/12] soc: fsl: dpio: add back some frame queue functions
+Date:   Wed, 12 Sep 2018 11:59:27 +0300
+Message-Id: <20180912085937.22489-3-horia.geanta@nxp.com>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180912085937.22489-1-horia.geanta@nxp.com>
 References: <20180912085937.22489-1-horia.geanta@nxp.com>
@@ -57,59 +57,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This commit adds back functions removed in
+commit a211c8170b3c ("staging: fsl-mc/dpio: remove couple of unused functions")
+since dpseci object will make use of them.
+
+Acked-by: Li Yang <leoyang.li@nxp.com>
 Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
 ---
- drivers/bus/fsl-mc/fsl-mc-bus.c | 5 +++++
- include/linux/fsl/mc.h          | 6 ++++++
- 2 files changed, 11 insertions(+)
+ drivers/soc/fsl/dpio/dpio-service.c | 58 +++++++++++++++++++++++++++++++++++++
+ include/soc/fsl/dpaa2-io.h          |  4 +++
+ 2 files changed, 62 insertions(+)
 
-diff --git a/drivers/bus/fsl-mc/fsl-mc-bus.c b/drivers/bus/fsl-mc/fsl-mc-bus.c
-index 5d8266c6571f..4552b06fe601 100644
---- a/drivers/bus/fsl-mc/fsl-mc-bus.c
-+++ b/drivers/bus/fsl-mc/fsl-mc-bus.c
-@@ -188,6 +188,10 @@ struct device_type fsl_mc_bus_dprtc_type = {
- 	.name = "fsl_mc_bus_dprtc"
- };
- 
-+struct device_type fsl_mc_bus_dpseci_type = {
-+	.name = "fsl_mc_bus_dpseci"
-+};
-+
- static struct device_type *fsl_mc_get_device_type(const char *type)
- {
- 	static const struct {
-@@ -203,6 +207,7 @@ static struct device_type *fsl_mc_get_device_type(const char *type)
- 		{ &fsl_mc_bus_dpmcp_type, "dpmcp" },
- 		{ &fsl_mc_bus_dpmac_type, "dpmac" },
- 		{ &fsl_mc_bus_dprtc_type, "dprtc" },
-+		{ &fsl_mc_bus_dpseci_type, "dpseci" },
- 		{ NULL, NULL }
- 	};
- 	int i;
-diff --git a/include/linux/fsl/mc.h b/include/linux/fsl/mc.h
-index f27cb14088a4..5160f06ffbac 100644
---- a/include/linux/fsl/mc.h
-+++ b/include/linux/fsl/mc.h
-@@ -405,6 +405,7 @@ extern struct device_type fsl_mc_bus_dpcon_type;
- extern struct device_type fsl_mc_bus_dpmcp_type;
- extern struct device_type fsl_mc_bus_dpmac_type;
- extern struct device_type fsl_mc_bus_dprtc_type;
-+extern struct device_type fsl_mc_bus_dpseci_type;
- 
- static inline bool is_fsl_mc_bus_dprc(const struct fsl_mc_device *mc_dev)
- {
-@@ -451,6 +452,11 @@ static inline bool is_fsl_mc_bus_dprtc(const struct fsl_mc_device *mc_dev)
- 	return mc_dev->dev.type == &fsl_mc_bus_dprtc_type;
+diff --git a/drivers/soc/fsl/dpio/dpio-service.c b/drivers/soc/fsl/dpio/dpio-service.c
+index 9b17f72349ed..321a92613a7e 100644
+--- a/drivers/soc/fsl/dpio/dpio-service.c
++++ b/drivers/soc/fsl/dpio/dpio-service.c
+@@ -309,6 +309,37 @@ int dpaa2_io_service_rearm(struct dpaa2_io *d,
  }
+ EXPORT_SYMBOL_GPL(dpaa2_io_service_rearm);
  
-+static inline bool is_fsl_mc_bus_dpseci(const struct fsl_mc_device *mc_dev)
++/**
++ * dpaa2_io_service_pull_fq() - pull dequeue functions from a fq.
++ * @d: the given DPIO service.
++ * @fqid: the given frame queue id.
++ * @s: the dpaa2_io_store object for the result.
++ *
++ * Return 0 for success, or error code for failure.
++ */
++int dpaa2_io_service_pull_fq(struct dpaa2_io *d, u32 fqid,
++			     struct dpaa2_io_store *s)
 +{
-+	return mc_dev->dev.type == &fsl_mc_bus_dpseci_type;
-+}
++	struct qbman_pull_desc pd;
++	int err;
 +
- /*
-  * Data Path Buffer Pool (DPBP) API
-  * Contains initialization APIs and runtime control APIs for DPBP
++	qbman_pull_desc_clear(&pd);
++	qbman_pull_desc_set_storage(&pd, s->vaddr, s->paddr, 1);
++	qbman_pull_desc_set_numframes(&pd, (u8)s->max);
++	qbman_pull_desc_set_fq(&pd, fqid);
++
++	d = service_select(d);
++	if (!d)
++		return -ENODEV;
++	s->swp = d->swp;
++	err = qbman_swp_pull(d->swp, &pd);
++	if (err)
++		s->swp = NULL;
++
++	return err;
++}
++EXPORT_SYMBOL(dpaa2_io_service_pull_fq);
++
+ /**
+  * dpaa2_io_service_pull_channel() - pull dequeue functions from a channel.
+  * @d: the given DPIO service.
+@@ -341,6 +372,33 @@ int dpaa2_io_service_pull_channel(struct dpaa2_io *d, u32 channelid,
+ }
+ EXPORT_SYMBOL_GPL(dpaa2_io_service_pull_channel);
+ 
++/**
++ * dpaa2_io_service_enqueue_fq() - Enqueue a frame to a frame queue.
++ * @d: the given DPIO service.
++ * @fqid: the given frame queue id.
++ * @fd: the frame descriptor which is enqueued.
++ *
++ * Return 0 for successful enqueue, -EBUSY if the enqueue ring is not ready,
++ * or -ENODEV if there is no dpio service.
++ */
++int dpaa2_io_service_enqueue_fq(struct dpaa2_io *d,
++				u32 fqid,
++				const struct dpaa2_fd *fd)
++{
++	struct qbman_eq_desc ed;
++
++	d = service_select(d);
++	if (!d)
++		return -ENODEV;
++
++	qbman_eq_desc_clear(&ed);
++	qbman_eq_desc_set_no_orp(&ed, 0);
++	qbman_eq_desc_set_fq(&ed, fqid);
++
++	return qbman_swp_enqueue(d->swp, &ed, fd);
++}
++EXPORT_SYMBOL(dpaa2_io_service_enqueue_fq);
++
+ /**
+  * dpaa2_io_service_enqueue_qd() - Enqueue a frame to a QD.
+  * @d: the given DPIO service.
+diff --git a/include/soc/fsl/dpaa2-io.h b/include/soc/fsl/dpaa2-io.h
+index ab51e40d11db..70997ab2146c 100644
+--- a/include/soc/fsl/dpaa2-io.h
++++ b/include/soc/fsl/dpaa2-io.h
+@@ -97,9 +97,13 @@ void dpaa2_io_service_deregister(struct dpaa2_io *service,
+ int dpaa2_io_service_rearm(struct dpaa2_io *service,
+ 			   struct dpaa2_io_notification_ctx *ctx);
+ 
++int dpaa2_io_service_pull_fq(struct dpaa2_io *d, u32 fqid,
++			     struct dpaa2_io_store *s);
+ int dpaa2_io_service_pull_channel(struct dpaa2_io *d, u32 channelid,
+ 				  struct dpaa2_io_store *s);
+ 
++int dpaa2_io_service_enqueue_fq(struct dpaa2_io *d, u32 fqid,
++				const struct dpaa2_fd *fd);
+ int dpaa2_io_service_enqueue_qd(struct dpaa2_io *d, u32 qdid, u8 prio,
+ 				u16 qdbin, const struct dpaa2_fd *fd);
+ int dpaa2_io_service_release(struct dpaa2_io *d, u32 bpid,
 -- 
 2.16.2
 
