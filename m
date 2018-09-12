@@ -2,127 +2,166 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 212CDC46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:02:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D453AC46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:05:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0F3720880
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:02:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dPwSUE02"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0F3720880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id 8180920833
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:05:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8180920833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728200AbeILVHm (ORCPT
+        id S1727648AbeILVKh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 17:07:42 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:33208 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727391AbeILVHm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 17:07:42 -0400
-Received: by mail-pg1-f196.google.com with SMTP id s7-v6so1305707pgc.0;
-        Wed, 12 Sep 2018 09:02:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3EKTlf27jyQZ8s4nntev35+YoNxNHI6V2pv6fmn4nIs=;
-        b=dPwSUE02h6pFvcjHFYfMClSRBtNGHFG5GUOSXT/VlDtyk/HnicioJ9yWTjxyjOfuW5
-         Il+VyP3bZKsAZdZsf3KYOFv+7a3BAwHXQFAUETDXkaIqRVttoNlflumJOXDryzX51kPp
-         gEvNf5W42liQ/8dT6ShgxqHC0a8EWFr5t6SXvmZk5qatge9bQ/8WgWSiu00hIi2ObMac
-         I/I/Tu6ulAk1EGC3Ucw3cXa0WbyOdTBJ/Np057Z/Hk5f2uNP3qJQiTIT5jtP0mgq/a0b
-         3lPUwP0LP0xXVC08lJdFlnMjH3u/x3VqaJ3Zsjf1NXnmPnJ8DrkSHWTnDNg6g80k9jOb
-         0M3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3EKTlf27jyQZ8s4nntev35+YoNxNHI6V2pv6fmn4nIs=;
-        b=XyXx3RWb90y0aEYW3HNKyQDbVZMEqHJhvTbUFoTfAzRD6sf2zuzi9GvYSMnYjezots
-         P5ySDQzNPL1haorjatpkEgBT0OJAkk4/jCS4goy4sAaIoHcpwnPexJaonXj1j3IMqKVX
-         0M8EbQBFLaahTA/3BaEw5G9Aan3kpI68N2c3m22aBzpwUcGUuC/8XgHNgV4e/GFR1PdK
-         FP+gKb2fIxuIbx8rljuBTstM+Nq3nn73HyHpQ0Jx9aEpLpWTXp8vbwsWj8YBhwFDSsw2
-         8rsJ8UrvrM6zBjkcd049UhdtV7TNV/CKg173QtQDIhvOgquGpSyWY7ny7eR9i3xd+Zb0
-         hGTA==
-X-Gm-Message-State: APzg51B1lhGBT/hGy+8V4QSNs9u75rgDbZSUjOFpj7HB7bPxCvVdTkwV
-        0+guz32QDNuvB5A4p2b2XDE=
-X-Google-Smtp-Source: ANB0Vdb3ahCBughx6uSa79JERcIVZDeS65ChYjx/LzcU4ViFCfKddoocY6VVf0XVa/sRi1pUoXwuuw==
-X-Received: by 2002:a63:fc07:: with SMTP id j7-v6mr3061541pgi.1.1536768152024;
-        Wed, 12 Sep 2018 09:02:32 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id r205-v6sm4472696pgr.11.2018.09.12.09.02.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Sep 2018 09:02:30 -0700 (PDT)
-Date:   Wed, 12 Sep 2018 09:02:29 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Jagdish Tirumala <t.jag587@gmail.com>
-Cc:     wim@linux-watchdog.org, yamada.masahiro@socionext.com,
-        linux-watchdog@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] WATCHDOG: uniphier_wdt.c: Fixed error do not initialise
- statics to 0
-Message-ID: <20180912160229.GA3300@roeck-us.net>
-References: <20180912153354.4658-1-t.jag587@gmail.com>
+        Wed, 12 Sep 2018 17:10:37 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:3024 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726677AbeILVKg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 17:10:36 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 429RSz5kM7z9ttKn;
+        Wed, 12 Sep 2018 18:05:23 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id r69zPBY0gVMr; Wed, 12 Sep 2018 18:05:23 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 429RSz54nkz9ttBm;
+        Wed, 12 Sep 2018 18:05:23 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 798A88B873;
+        Wed, 12 Sep 2018 18:05:24 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id bEDGqj7LG45u; Wed, 12 Sep 2018 18:05:24 +0200 (CEST)
+Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 121C08B871;
+        Wed, 12 Sep 2018 18:05:24 +0200 (CEST)
+Subject: Re: [RFC PATCH v1 00/17] ban the use of _PAGE_XXX flags outside
+ platform specific code
+To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com,
+        aneesh.kumar@linux.vnet.ibm.com
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <cover.1535913369.git.christophe.leroy@c-s.fr>
+ <8736uneylc.fsf@linux.ibm.com> <1f4d6cc9-5d18-b171-02b0-d715629d594f@c-s.fr>
+ <8736uhsx3l.fsf@linux.ibm.com>
+From:   Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <7bf77801-9c6c-a39e-6d82-3a0b0d870b65@c-s.fr>
+Date:   Wed, 12 Sep 2018 18:05:23 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180912153354.4658-1-t.jag587@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <8736uhsx3l.fsf@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 08:33:54AM -0700, Jagdish Tirumala wrote:
-> Fixed error do not initialise statics to 0
-> in file drivers/watchdog/uniphier_wdt.c
+
+
+Le 10/09/2018 à 08:08, Aneesh Kumar K.V a écrit :
+> Christophe Leroy <christophe.leroy@c-s.fr> writes:
+> 
+>> On 09/06/2018 09:58 AM, Aneesh Kumar K.V wrote:
+>>> Christophe Leroy <christophe.leroy@c-s.fr> writes:
+>>>
+>>>> Today flags like for instance _PAGE_RW or _PAGE_USER are used through
+>>>> common parts of code.
+>>>> Using those directly in common parts of code have proven to lead to
+>>>> mistakes or misbehaviour, because their use is not always as trivial
+>>>> as one could think.
+>>>>
+>>>> For instance, (flags & _PAGE_USER) == 0 isn't enough to tell
+>>>> that a page is a kernel page, because some targets are using
+>>>> _PAGE_PRIVILEDGED and not _PAGE_USER, so the test has to be
+>>>> (flags & (_PAGE_USER | _PAGE_PRIVILEDGED)) == _PAGE_PRIVILEDGED
+>>>> This has to (bad) consequences:
+>>>>
+>>>>    - All targets must define every bit, even the unsupported ones,
+>>>>      leading to a lot of useless #define _PAGE_XXX 0
+>>>>    - If someone forgets to take into account all possible _PAGE_XXX bits
+>>>>      for the case, we can get unexpected behaviour on some targets.
+>>>>
+>>>> This becomes even more complex when we come to using _PAGE_RW.
+>>>> Testing (flags & _PAGE_RW) is not enough to test whether a page
+>>>> if writable or not, because:
+>>>>
+>>>>    - Some targets have _PAGE_RO instead, which has to be unset to tell
+>>>>      a page is writable
+>>>>    - Some targets have _PAGE_R and _PAGE_W, in which case
+>>>>      _PAGE_RW = _PAGE_R | _PAGE_W
+>>>>    - Even knowing whether a page is readable is not always trivial because:
+>>>>      - Some targets requires to check that _PAGE_R is set to ensure page
+>>>>      is readable
+>>>>      - Some targets requires to check that _PAGE_NA is not set
+>>>>      - Some targets requires to check that _PAGE_RO or _PAGE_RW is set
+>>>>
+>>>> Etc ....
+>>>>
+>>>> In order to work around all those issues and minimise the risks of errors,
+>>>> this serie aims at removing all use of _PAGE_XXX flags from powerpc code
+>>>> and always use pte_xxx() and pte_mkxxx() accessors instead. Those accessors
+>>>> are then defined in target specific parts of the kernel code.
+>>>
+>>> The series is really good. It also helps in code readability. Few things
+>>> i am not sure there is a way to reduce the overhead
+>>>
+>>> -		access = _PAGE_EXEC;
+>>> +		access = pte_val(pte_mkexec(__pte(0)));
+>>>
+>>> Considering we have multiple big endian to little endian coversion there
+>>> for book3s 64.
+>>
+>> Thanks for the review.
+>>
+>> For the above, I propose the following:
+>>
+>> diff --git a/arch/powerpc/mm/hash_utils_64.c
+>> b/arch/powerpc/mm/hash_utils_64.c
+>> index f23a89d8e4ce..904ac9c84ea5 100644
+>> --- a/arch/powerpc/mm/hash_utils_64.c
+>> +++ b/arch/powerpc/mm/hash_utils_64.c
+>> @@ -1482,7 +1482,7 @@ static bool should_hash_preload(struct mm_struct
+>> *mm, unsigned long ea)
+>>    #endif
+>>
+>>    void hash_preload(struct mm_struct *mm, unsigned long ea,
+>> -		  unsigned long access, unsigned long trap)
+>> +		  bool is_exec, unsigned long trap)
+>>    {
+>>    	int hugepage_shift;
+>>    	unsigned long vsid;
+>> @@ -1490,6 +1490,7 @@ void hash_preload(struct mm_struct *mm, unsigned
+>> long ea,
+>>    	pte_t *ptep;
+>>    	unsigned long flags;
+>>    	int rc, ssize, update_flags = 0;
+>> +	unsigned long access = is_exec ? _PAGE_EXEC : 0;
+> 
+> 
+> I guess it will be better if we do
+> 
+> unsigned long access = _PAGE_PRESENT | _PAGE_READ
+> 
+> if (is_exec)
+>     access |= _PAGE_EXEC.
+> 
+> That will also bring it closer to __hash_page. I agree that we should
+> always find _PAGE_PRESENT and _PAGE_READ set, because we just handled
+> the page fault.
 > 
 
-I don't mind the patch, but I do mind both subject and description
-as misleading. This is not an error, except for checkpatch.
+Ok, I did it in v2, can you have a look (patch 11/24) ?
 
-A subject such as "watchdog: uniphier_wdt: Do not initialize static
-variables to 0" and a description along the line of
-
-Fix the following checkpatch error:
-
-ERROR: do not initialise statics to 0
-#44: FILE: drivers/watchdog/uniphier_wdt.c:44:
-+static unsigned int timeout = 0;
-
-would be more appropriate.
-
-Please also note that the watchdog subsystem does not use capital
-letters to describe the subsystem name, and the driver tag should not
-include ".c". As a general note, I would suggest to do a quick browse
-through commits in a subsystem to get an idea about its conventions.
-
-Thanks,
-Guenter
-
-> Signed-off-by: Jagdish Tirumala <t.jag587@gmail.com>
-> ---
->  drivers/watchdog/uniphier_wdt.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/watchdog/uniphier_wdt.c b/drivers/watchdog/uniphier_wdt.c
-> index e20a7a459d69..2c62ad7250fb 100644
-> --- a/drivers/watchdog/uniphier_wdt.c
-> +++ b/drivers/watchdog/uniphier_wdt.c
-> @@ -41,7 +41,7 @@
->  #define WDT_PERIOD_MIN			1
->  #define WDT_PERIOD_MAX			128
->  
-> -static unsigned int timeout = 0;
-> +static unsigned int timeout;
->  static bool nowayout = WATCHDOG_NOWAYOUT;
->  
->  struct uniphier_wdt_dev {
-> -- 
-> 2.17.1
-> 
+Christophe
