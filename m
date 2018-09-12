@@ -2,148 +2,153 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8116AC46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 17:01:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED617C6778D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 17:02:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45C8B20882
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 17:01:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45C8B20882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 90D6020880
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 17:02:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90D6020880
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nokia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728103AbeILWGu (ORCPT
+        id S1727834AbeILWIV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 18:06:50 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51794 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726454AbeILWGu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 18:06:50 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8CH0m8x089011
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 13:01:24 -0400
-Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mf632hy2p-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 13:01:22 -0400
-Received: from localhost
-        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
-        Wed, 12 Sep 2018 11:01:19 -0600
-Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
-        by e36.co.us.ibm.com (192.168.1.136) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 12 Sep 2018 11:01:16 -0600
-Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
-        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8CH1D1G51511398
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 12 Sep 2018 10:01:13 -0700
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 24575136053;
-        Wed, 12 Sep 2018 11:01:13 -0600 (MDT)
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D9BAB136059;
-        Wed, 12 Sep 2018 11:01:09 -0600 (MDT)
-Received: from oc8043147753.ibm.com (unknown [9.80.213.181])
-        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed, 12 Sep 2018 11:01:09 -0600 (MDT)
-Subject: Re: [PATCH v9 13/22] s390: vfio-ap: sysfs interface to view matrix
- mdev matrix
-To:     Cornelia Huck <cohuck@redhat.com>,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
-        pbonzini@redhat.com, alex.williamson@redhat.com,
-        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com
-References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1534196899-16987-14-git-send-email-akrowiak@linux.vnet.ibm.com>
- <20180820160802.1fe8f704.cohuck@redhat.com>
-From:   Tony Krowiak <akrowiak@linux.ibm.com>
-Date:   Wed, 12 Sep 2018 13:01:08 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Wed, 12 Sep 2018 18:08:21 -0400
+Received: from mail-db5eur01on0133.outbound.protection.outlook.com ([104.47.2.133]:44960
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726428AbeILWIV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 18:08:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.onmicrosoft.com;
+ s=selector1-nokia-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=T5IXjQJQHXQ9Jc/79DfGoAA7QFw1a2q9tyVtlEeP6Nk=;
+ b=mBGxYAdia+XjwaodJnLmst+vZzDjOH9PkYV8aTkVdUfrmXEStqUhft5GdusyuE+rDPG0zU5q8yTfKxQUe2eyAHcv+0GoGHTxanB4QLCuK0K7/VvPeepRAQvNxli+z1uWdz2o/hyj2XEvAzuH1pklFGIBeho47OmlOWIza+aq4Aw=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=alexander.sverdlin@nokia.com; 
+Received: from ulegcpsvdell.emea.nsn-net.net (131.228.32.181) by
+ VI1PR07MB3981.eurprd07.prod.outlook.com (2603:10a6:803:39::13) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1122.10; Wed, 12 Sep 2018 17:02:50 +0000
+From:   Alexander Sverdlin <alexander.sverdlin@nokia.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Alexander Sverdlin <alexander.sverdlin@nokia.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH] tools: Remove conflicting BITS_PER_LONG define
+Date:   Wed, 12 Sep 2018 19:02:32 +0200
+Message-Id: <20180912170232.25258-1-alexander.sverdlin@nokia.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-In-Reply-To: <20180820160802.1fe8f704.cohuck@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18091217-0020-0000-0000-00000E633290
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009708; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01087317; UDB=6.00561456; IPR=6.00867329;
- MB=3.00023256; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-12 17:01:19
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18091217-0021-0000-0000-00006300A3C6
-Message-Id: <0e8bac2b-31a0-a1de-c6cf-e824cd256af6@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-12_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809120171
+Content-Type: text/plain
+X-Originating-IP: [131.228.32.181]
+X-ClientProxiedBy: AM0PR02CA0014.eurprd02.prod.outlook.com
+ (2603:10a6:208:3e::27) To VI1PR07MB3981.eurprd07.prod.outlook.com
+ (2603:10a6:803:39::13)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 0e75eba0-db71-44d1-caa1-08d618d1929d
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:VI1PR07MB3981;
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR07MB3981;3:gUwoIncl4WVs8vls98Ar1GizSOc2GmWXTetZ6qOuXtxdc4BApKoxpEAbyqzpag9nV6Hm1i0F067VENXW2Suyj+UmIrU008//KqpRTE9TsndwkWC9Uo2XYIbtjBZHgC+mx16I+BI2Xjfx5OU6V4dtfgtbyuC3FsslYFLdNnW5Ee7t/H58Oz5oHK81cUqPQyqJZCrnJGRmTeHdA7ngObd0WhW5VM6TUfhPAyNrOp++PadGt328sV4eHfeWVBHSDPxw;25:AHs6ZLsR6UYNTMOM+h8jrQk7TSnkkHwgcj/QDNx6AEssmjie05IMEpG51L7+zfG0JUw4MxgIxEv3QJxqGyAOiXbyGBcnTvFAX1n/bItVpAQX7JnTLaUHRwSQ+1yuSu7JbM7bdynQY5BLmq01cn9ASZsvLODnyc41cIbJJDxJR4Tx1QPVgiP9efLeIEjLX00rp4SOf2tg+P+nq+I9N3K8LHDbRJfmP7MX6l8HVsocn299tjlp2ioBGLDfEXR5t2o4I+QTTdsAzJF9rjpzh1FbKZkGNJANzmRJ1QpCMmO1KpCefxZh/6gafv7PmIva0MQGn7UPFILyhHXs3cNCyUvhPQ==;31:UX32ckD2/fLwlFzEBfEq4kZh6v/9ycUAMdZy/jBJsPHyd1Q5XHwYUKs9a9CZdPKObGpzaMwPNOar7JI6jx9T0twOPj3a8+ZsR4AuVXcptoiuxSYD7N9ij/p1NzpnyOP2TzXn84ZtGwyEeTPoyncJJaBTJ6aohTT8nLDU2CTzzj+BnwhZqj+jiNfKU8JPJ10q9hsPHToUzo5b/71k7HczgItVzHR0fAgPySSAUEi37Vg=
+X-MS-TrafficTypeDiagnostic: VI1PR07MB3981:
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR07MB3981;20:B0RAbplGH3o9rs1v9s5daskZZdjaweMWMqk4wTZc974TEj8GMT742MFEL+qwnfD9XyYjXqiSCN7ZCzVVDsk8+Fr+7XqjdsmVvLPxoS9rkPPp9TKxMnnKgs4ZEO8vyUXm/8YOB6wYVAyYdZn0riOHfbmQkj0DE30M2vHmyGlFCti1M7ZXA7NcSD7TG4+wWpvHsr5fMTkzTurFoQ/s9ZDhEvb0BrxJecIQ6teAMO8kQ51tGwBTcExxpR3MkPonFF10/1uVvZmXIJQh+JmMuqpSGUdZRf9GtqgaSifx3w3c3JCP0DNaTt52cHBJ8w+1ZM+EXWh6NEbF3iqA3mpL8sFXtP8lx51yIu69DeTgEav02ZpBGyXMwZpkRIs78CWEy0dgowhKgbgYs5HJLoLaloa8qv0D9X63E3cRbbOMDjV4WAJganMSzD+PmOJyfL/rP1cWhkfDAzcuna0wpKxy5kHA3DQ9ikUNnp9R5bdz5zhvILdDZJrsrqYe6shDf8Lx7a4N;4:OZLMJst6Scll6GiP/g3QtYROa/aCPUHcFFirmCD6eCuWoeZSkQshgU511UYCWi2/v4zuim/zaYEGAtWvmHr4jxwYKBR8THa4/0oFUHBpcsUhYUzKNTAscBcK/0n+kYpbz/8UmGrmgYcXc/8Uj6Co9o6VfHK6vAOvXLQt+gAOEPyCx1PoBloIsBpaqtJIrDsj/lrMeLvwU7I/pP17HEbR00yC+XZfkd5VFip5x+qplrsjehTn9LqcpKT8AfsLQ4B+i6fvwJjkugzfA71iYXGG8YpRxHzWITQZGgot1qVLlO8ajE6sGAcuyTkJSKHIOWAoDE5VAu4i6z9hgLd9ngjfeEaiS5DvRiEAslS42JjoKh6KU1UfpAzFT4cq3cWUccGi
+X-Microsoft-Antispam-PRVS: <VI1PR07MB3981C8D02A886B261EDB2546881B0@VI1PR07MB3981.eurprd07.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(82608151540597)(109105607167333)(195916259791689);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231311)(11241501184)(806099)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123564045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699050);SRVR:VI1PR07MB3981;BCL:0;PCL:0;RULEID:;SRVR:VI1PR07MB3981;
+X-Forefront-PRVS: 07935ACF08
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(376002)(136003)(396003)(346002)(39860400002)(366004)(189003)(199004)(106356001)(86362001)(8676002)(6512007)(4326008)(53936002)(6666003)(25786009)(5660300001)(316002)(16586007)(54906003)(68736007)(6916009)(48376002)(44832011)(97736004)(305945005)(6486002)(105586002)(7736002)(2906002)(8936002)(81166006)(3846002)(50466002)(6116002)(81156014)(1076002)(47776003)(2361001)(1857600001)(26005)(66066001)(50226002)(186003)(478600001)(386003)(6506007)(36756003)(16526019)(956004)(51416003)(486006)(2351001)(476003)(52116002)(2616005);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR07MB3981;H:ulegcpsvdell.emea.nsn-net.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: nokia.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR07MB3981;23:0qq5Y5jL8ZTtfXn2CFfihfTZwE74FOaxhHAW6LsGX?=
+ =?us-ascii?Q?sXUZttwa7zj9V56IiRvTWvXJ1Lz6NiH+k6pIHrSoNTvmkCiwqlddOnSYBJFl?=
+ =?us-ascii?Q?rHV3fD758MBkPwHNaexLDvegd1AaXyrZexxw47WKRgjS5lNHuohMnC6OlEGQ?=
+ =?us-ascii?Q?oMhRP7rw2oQavgNxDAzXSwlLMGmS9JNdC3cV6pHl2z7rW9pb5qtNO4bhjKIz?=
+ =?us-ascii?Q?AJrg6Omv2bqCJLCTZZfMBLNwmJ24kdgkbD+UDdNc87QMZSpwzh0CMWXsV4F/?=
+ =?us-ascii?Q?n83srfgmgX1HpjMA7TTfD1IAeR4FOdpGwYQuZbHc60Z9y/caWQpYTQ+r/E/M?=
+ =?us-ascii?Q?R+yLO/pIGS+elN9dnjCl5BOmy6ZFzz1keT9KY5JYHrlz4E6mHebdHo+PN+/t?=
+ =?us-ascii?Q?/MhJgZydseZVUBbMYH8ubH02+FEmRHTPFT9ZzAuw1krW/sUkiQ2q38s08Rsn?=
+ =?us-ascii?Q?W0iByIe0KixJtS2t4GNsRTTiJsIEey1kYHgkVfXybojHMmN58HeMc2wlccfW?=
+ =?us-ascii?Q?YYIMCjgtdxVkKBSMhewx16T6jDSV+JxnXEK6GdYbNut7dt3nhwuQh2EWg1GF?=
+ =?us-ascii?Q?ytNSe7Ykw0L2Gu/vNKSOo85f+YNhRglpePljtDHjA1Z1XramR0wLyt39Iajn?=
+ =?us-ascii?Q?0GqgZN7f672uwsvEWwr+pO56HXkdlHIu4T/GsFdKi4BsVnl4sCwYinjXoPn6?=
+ =?us-ascii?Q?dmZeInOow2xFuEgahFaBj4OTAe2o4DJ1EQ4DNptyOraFT6ZHkE8FSQuyFDk1?=
+ =?us-ascii?Q?m4Qh3X5zZDasvZ1Sm2BEy4o04kIi2ibdolxKtNr4WHAm1yqKr2kMR4GOqwN7?=
+ =?us-ascii?Q?wRRKKoJdIV3bPF8iuc4I1vtYUhPm4pGZq3ZKZI2B8EVMl0A1a0IfZcAS85ht?=
+ =?us-ascii?Q?8ObPG3lAlKx9qI5YZrAnGCgoUP0LJyTk0mgh0RfkjKcSqK5gc+PQPCYzOAD0?=
+ =?us-ascii?Q?EtqjQQ9FHSSFxqUcniRI5dm6790JV70d3Eq3/9K+e0ZfKdJLgWlwSK5i9UdT?=
+ =?us-ascii?Q?xBsr/X2pmgVbqU7ru97yFXDhJ0m+18ITOfDaIKz4EhDE5eYzIQ/AR7A1UQRW?=
+ =?us-ascii?Q?IgWTuxoUYPVumLlXeP4M8KxoPBZ58ZlsQLHEYRzQEWmJoS1CsZmVwFLmHnNZ?=
+ =?us-ascii?Q?dko8PDvN4nTScAYb8hvsr8OmM50wPyusHxUxYpZDvoE8ALnHefR03aw8tNXv?=
+ =?us-ascii?Q?Rfl7Yd1O0cmNVeCHRXxV+3mlGa/HzN95Ns6tQlotElMEu9Z+PxBN4u3Zw=3D?=
+ =?us-ascii?Q?=3D?=
+X-Microsoft-Antispam-Message-Info: xKTw5yEYHuje37Ev/Z/ECoSgh88Kwa+X6I9EBhcXvvwFuEUqctjTtC1lXekna2+8HIfngZtSyZZU4y+kzKgd0dh7hB9Aqo224bRxXXHErgOyQzgcHgeYAxmkTexaWYel5dAKmhiNlIlmrL8sSH8iE9nORT2Bvr2xagC6v5SqGdfHGvIVUuaTqY4D/2R1jzK0PjGltxI3mFq+s3VHdOk0M43+Iwt+ZJpR7aH+gdnADrzfryBSyfzwZ/+bMW6f1wyvY7kkCdr+l/LeAqwkNuCB4HabZqCs3mNJPoht/9ElBwTuXtmMd55/Q2nxDN040COYfrzc+pHp3J/NujG6+DPRmEXfkW/Qdfk0QL/jbkSDkPTvuYJ64uszzjfiCe6Cj96CzQedUihKxBVrAmemwLUa9Q==
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR07MB3981;6:k9ZzEHaYr/PHu31Jsw5jFdXpNaJDdrkf6xWgq7raj2ymgypn44DPebHPPKPDkSZ5ilsRvVi/DH3pA8sMbw9cjTL+KpgSJalbs9xBQLzsBJkdB4OtiqgCuCJRnMjB5Rn36mKrGCXpsVFO83TS2Y1ii5wEb2bY0KCHsWtZHMbbgToTOj046rZtiLYvXqXtIKpsJ9vUVrhkDloEm7tz+AXwYAQRcSlH1BEol4/BW/6A7ZcCNWeavq3v+O9AujlFttcIhEH0JE0LTgGIby4uqgY6KbJ442Nvf8GlQUyWQZ+XbPxIjllqIaKJMY5Rj1M61d2HpWciGQ8GAZJcZhPYs/KyMHiyaW5bJ60k0jf0qujlfgV/OLqcqGIM/OPtAkX0ILXPMRt/IY4/UZuM9ntr+boSQjcaEkATaMFVXavzJzojn/HXruSfQVOtTDmKUe45xVA1Yw2lUkpd7dS3K68H1Gy2BA==;5:XuEGywv3+IPu4ATPMjHJEa2nD/Uv/SNN2wVo+h86Er0GN39ASzRppsWw2bVxiUsRcFD57Kg0YfUK/FGmmGdkiQigTKYLYvFgrUEnE5gdH90DWTA9SdpeGu8qZyCScHlbvQSGGU/yOIxiXpOBHSxBYFyTG7OViWz3IZkxf+MxRhE=;7:xeTgsfvqAooN60B0XTKbEqRUgjmPXzXVoJiZ8GIaBpSbnHKcrIsXCBfHlXsyDzeebTeo67eU1utTjOZdeNgJj3uD8b7ttKFxlDcibcB8VhOzzWnhH99UmVV5o4rZNn0cv5kVV+yr0BlOJHDxH7MiGS6vxV+O37Zafw4GfL9dRfbe03ynUD/zg+O83AeQIIhIJFVWD+IObadyEArphjmhYO28URSC+hRONzOQvekJQp0MhU9YVWEpHpA/moe3ElMG
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: nokia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2018 17:02:50.3581 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0e75eba0-db71-44d1-caa1-08d618d1929d
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 5d471751-9675-428d-917b-70f44f9630b0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR07MB3981
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/20/2018 10:08 AM, Cornelia Huck wrote:
-> I find this output to be a bit confusing; but OTOH, I'm probably not
-> the person to parse it :) Still, some comments.
->
->  From previous discussions, ISTR that this is mainly supposed to be a
-> debugging/administration aid. Of course, this generates some questions:
-> - Should this be in sysfs (sysfs attributes are supposed to follow the
->    "one value per file" rule, at least for the most part), or would
->    debugfs be a better fit?
-> - Should userspace code be able to introspect the current
->    configuration? If yes, it might be better to have some
->    not-so-nice-but-easily-parsable output, possibly one attribute for
->    the assigned adapters and one for the assigned domains, and a tool
->    which distills that into a nice "matrix" with labeled rows and
->    columns for human consumption.
->
-> That said, I don't really have major objections to that interface.
+  CC       .../tools/objtool/builtin-check.o
+  ...
+In file included from .../tools/arch/x86/include/uapi/asm/bitsperlong.h:11:0,
+                 from .../tools/include/asm-generic/bitops/__ffs.h:6,
+                 from .../tools/include/asm-generic/bitops.h:16,
+                 from .../tools/include/linux/bitops.h:35,
+                 from .../tools/include/linux/hashtable.h:13,
+                 from elf.h:24,
+                 from check.h:22,
+                 from builtin-check.c:30:
+.../tools/include/asm-generic/bitsperlong.h:8:0: error: "BITS_PER_LONG" redefined [-Werror]
+ #define BITS_PER_LONG (__CHAR_BIT__ * __SIZEOF_LONG__)
 
-For now, I will leave it in, but we could conceivably simplify configuration
-of the matrix and adhere to sysfs rules by modeling this after the AP bus
-apmask and aqmask sysfs interfaces. If we did that, there would need to 
-be only
-three RW sysfs interfaces:
+Include <asm/bitsperlong.h> instead as other headers do.
 
-apm or apmask or ap_mask or adapter_mask or apid_mask
-aqm or aqmask or aq_mask or domains or usage_domain_mask or apqi_mask
-adm or admask or ad_mask or control_domains or control_domain_mask or 
-domain_mask
+Signed-off-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
+---
 
-To assign a device, either a bitmask or a comma separated list of IDs 
-prepended
-with a '+' could be passed in. To unassign a device, either a bitmask in 
-or a
-comma-separated list of IDs prepended with a '-' could be passed in.
+Seen during x86_64 build. Seems that most of the compilers do not define
+__SIZEOF_LONG__, but my does.
 
-Reading an attribute would return the mask. As you suggested, tools could be
-provided to parse the output and display it in a human-readable format.
+ tools/include/linux/bitops.h | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
->
->> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
->> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
->> Tested-by: Michael Mueller <mimu@linux.ibm.com>
->> Tested-by: Farhan Ali <alifm@linux.ibm.com>
->> Tested-by: Pierre Morel <pmorel@linux.ibm.com>
->> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
->> ---
->>   drivers/s390/crypto/vfio_ap_ops.c |   52 +++++++++++++++++++++++++++++++++++++
->>   1 files changed, 52 insertions(+), 0 deletions(-)
-
+diff --git a/tools/include/linux/bitops.h b/tools/include/linux/bitops.h
+index acc704b..4ae5232 100644
+--- a/tools/include/linux/bitops.h
++++ b/tools/include/linux/bitops.h
+@@ -3,16 +3,13 @@
+ #define _TOOLS_LINUX_BITOPS_H_
+ 
+ #include <asm/types.h>
++#include <asm/bitsperlong.h>
+ #include <linux/compiler.h>
+ 
+ #ifndef __WORDSIZE
+ #define __WORDSIZE (__SIZEOF_LONG__ * 8)
+ #endif
+ 
+-#ifndef BITS_PER_LONG
+-# define BITS_PER_LONG __WORDSIZE
+-#endif
+-
+ #define BIT_MASK(nr)		(1UL << ((nr) % BITS_PER_LONG))
+ #define BIT_WORD(nr)		((nr) / BITS_PER_LONG)
+ #define BITS_PER_BYTE		8
+-- 
+2.4.6
 
