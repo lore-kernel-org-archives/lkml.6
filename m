@@ -2,72 +2,68 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A10BDC4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 06:03:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07E2EC4646A
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 06:07:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62D8D20833
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 06:03:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62D8D20833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id A353820833
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 06:07:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A353820833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726821AbeILLGH (ORCPT
+        id S1726754AbeILLKN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 07:06:07 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:16041 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725910AbeILLGH (ORCPT
+        Wed, 12 Sep 2018 07:10:13 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:57034 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726027AbeILLKN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 07:06:07 -0400
-X-UUID: 45840e37803d4716b7af026e45b3b4da-20180912
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
-        (envelope-from <stu.hsieh@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1385664976; Wed, 12 Sep 2018 14:02:59 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Wed, 12 Sep 2018 14:02:55 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Wed, 12 Sep 2018 14:02:55 +0800
-From:   Stu Hsieh <stu.hsieh@mediatek.com>
-To:     CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>
-CC:     David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <srv_heupstream@mediatek.com>,
-        Stu Hsieh <stu.hsieh@mediatek.com>
-Subject: [PATCH v1 0/1] Add function to set the possible crtc for connector
-Date:   Wed, 12 Sep 2018 14:02:49 +0800
-Message-ID: <1536732170-30046-1-git-send-email-stu.hsieh@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: 3C97834555DEB5432D7192310C3853F5F65757E6426101A8254D7FA10D3118D62000:8
-X-MTK:  N
+        Wed, 12 Sep 2018 07:10:13 -0400
+Received: from localhost (74-93-104-98-Washington.hfc.comcastbusiness.net [74.93.104.98])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 066F012DE57F3;
+        Tue, 11 Sep 2018 23:07:16 -0700 (PDT)
+Date:   Tue, 11 Sep 2018 23:07:16 -0700 (PDT)
+Message-Id: <20180911.230716.1048852895308106303.davem@davemloft.net>
+To:     igor.stoppa@gmail.com
+Cc:     igor.stoppa@huawei.com, huangdaode@hisilicon.com,
+        yisen.zhuang@huawei.com, salil.mehta@huawei.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] ethernet: hnae: drop adhoc assert() macros
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20180908150142.27976-1-igor.stoppa@huawei.com>
+References: <20180908150142.27976-1-igor.stoppa@huawei.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 11 Sep 2018 23:07:17 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add the function for connector driver(dpi or dsi) to set the
-possible crtc.
+From: Igor Stoppa <igor.stoppa@gmail.com>
+Date: Sat,  8 Sep 2018 18:01:42 +0300
 
-The connector associated which crtc is depend on the ddp_path.
+> Replace assert() with a less misleading test_condition() using WARN()
+> Drop one check which had bitrotted and didn't compile anymore.
+> 
+> Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
 
-Stu Hsieh (1):
-  drm/mediatek: add function to match the connector and crtc
+I'm still kind of not happy about this.
 
- drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c | 41 +++++++++++++++++++++++++++++
- drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h |  2 ++
- 2 files changed, 43 insertions(+)
+Make the driver use kernel interfaces like WARN_ON_ONCE()
+etc. directly instead of defining alias CPP macros private to the
+driver.
 
--- 
-2.12.5.2.gbdf23ab
+If it needs to be conditional upon DEBUG, we have pr_debug() and
+the likes as well.
 
+Thank you.
