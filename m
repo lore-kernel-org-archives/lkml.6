@@ -6,67 +6,68 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61280C46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:54:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BD94C4646A
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:54:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1ADAC204EC
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:54:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37836204EC
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:54:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="J9L6R4gf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ADAC204EC
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="J7iNXgPx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37836204EC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727833AbeILO6J (ORCPT
+        id S1727939AbeILO6P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 10:58:09 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:36685 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727796AbeILO6I (ORCPT
+        Wed, 12 Sep 2018 10:58:15 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:46682 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727838AbeILO6O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 10:58:08 -0400
-Received: by mail-ed1-f65.google.com with SMTP id f4-v6so1274553edq.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 02:54:21 -0700 (PDT)
+        Wed, 12 Sep 2018 10:58:14 -0400
+Received: by mail-ed1-f67.google.com with SMTP id k14-v6so1228755edr.13
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 02:54:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=p+l9eG3EJUvs5PqroE1oN9/c9Y5I3RjwbnuwyKuwaKQ=;
-        b=J9L6R4gfDqVWuTaZEOBoz4A2w3TIHW5Klx19orLgDv4Sl9La0s0FWXmR7JLmcigpEW
-         DKdX1UdAg4XCcBHHnA6xPilTPpyQPnTZrgTwqHzUH+7yNsz7VXqCYTy2XnAIoSuRiR5R
-         Wtnd7im10Eb7dMJnSui63aISD1ETTo4synyUs=
+        bh=riG+y2OQmTlvhmbDhsUEl+RI4V/hGhEUB0MS2rrQeBQ=;
+        b=J7iNXgPxBSZ+pki5xkFgN0QR8tpRD4VGQACWhqUWNwi7rc+e0kureuFPWn+6dNadnw
+         Gk8mV9fDNXq68e+GmyyOI1J/pAGAkSxokIpX33cahxTw07n8xjiU0hBVxu95NGfBefQc
+         eK/B3u36f2wFA5kIQ6PwGQHuJqFwLVPFfi0OQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to:references;
-        bh=p+l9eG3EJUvs5PqroE1oN9/c9Y5I3RjwbnuwyKuwaKQ=;
-        b=F022DfVh6GS5IqXKPYPVHaTBU/9h9dj21g9iOPU6delTklEJqzLhstfVlhXyIRQ71t
-         RHvGErM7e1LWs1VuDYz9Gxqf4N9iP/hNliv7jsKtnV85e1pBZ/hnJlTJT8TBXqMEJnsa
-         4v0N9Oyw08sh3joRSauUwsd+mQWVqZ8ypOpFO0p82dJG8ImZWAkZE8leCFqZKPRbqKbQ
-         uiCm1S1Jx55ZBzi2t7zp2Qjoouk524Oaprvk0uLKttUY1UKbzfEIX9cg3a8+8jFOt6Sp
-         dJDJddLdUOECs2bK36vZtGkI43MDuehOfmwtuaAfgAWd+vXBwttB5fN2U3niSUSeryMg
-         owdQ==
-X-Gm-Message-State: APzg51BX+KqIzq+1MJZNZuAkpw6E8apQanx+EQqyhCkCYJHzXDzMWyTS
-        yg8OgDePp0AU4ugSaGjhJmLXWQcIkJk=
-X-Google-Smtp-Source: ANB0VdbSsex1y2ZqSJRinWn/tow2hwoiUOr+U6Mt7gKCh3qdE3OOHyCp78cosnNSvL8j2lYsgrD9rg==
-X-Received: by 2002:a50:de03:: with SMTP id z3-v6mr1749903edk.245.1536746060744;
-        Wed, 12 Sep 2018 02:54:20 -0700 (PDT)
+        bh=riG+y2OQmTlvhmbDhsUEl+RI4V/hGhEUB0MS2rrQeBQ=;
+        b=g97aCt+TkeoohEdgpWCo8mL+18mroaJ1oOizo9N4iCslOQAqyE5pMIc7zAEJFo8En8
+         cO0+l9o4uHklrhT6/KUk8IXySctIIZWwvC7N2mrbG0wfxxKVtXKMpnwK7BGWhPezrb2r
+         ICOdNNGS2VwrIO1+YQ7jWrVhRGg631zITZBfrr5v1UPERpSIjvCyl8dImR+8RPWX62K3
+         Yu5Pi7jfoTjKs4886TxzPSrHL5IiRi5yg6J1JYECBxaO+DKiyIO7zZd5oXIY0TZ2dT+8
+         czHcqmDlORYKyRedB7biJK5S3lmzgmqsEhxjrcG14U1vxvC1Ez8/tho4D9SmNQQaGhPh
+         ssCw==
+X-Gm-Message-State: APzg51CevBmjEjxx/PV7QUahzLeKqxwyd4rFrmhUppUzTfKxcGjnpEas
+        Ok3/B121TbcrEVNpvE/zJlblxFIS1gM=
+X-Google-Smtp-Source: ANB0VdY/OWh6YPLatwTYa29i5URA7qpn/6cMeHf89ksVho+2kxum4qiqZDBdAJtPLYfysa9utnV7GA==
+X-Received: by 2002:a50:d90e:: with SMTP id t14-v6mr1766863edj.241.1536746066927;
+        Wed, 12 Sep 2018 02:54:26 -0700 (PDT)
 Received: from localhost ([49.248.190.214])
-        by smtp.gmail.com with ESMTPSA id f13-v6sm690554edf.50.2018.09.12.02.54.18
+        by smtp.gmail.com with ESMTPSA id x22-v6sm397969edb.8.2018.09.12.02.54.24
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Sep 2018 02:54:19 -0700 (PDT)
+        Wed, 12 Sep 2018 02:54:26 -0700 (PDT)
 From:   Amit Kucheria <amit.kucheria@linaro.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     rnayak@codeaurora.org, linux-arm-msm@vger.kernel.org,
         bjorn.andersson@linaro.org, edubezval@gmail.com,
         smohanad@codeaurora.org, andy.gross@linaro.org,
         dianders@chromium.org, mka@chromium.org,
-        Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-pm@vger.kernel.org
-Subject: [PATCH v3 08/16] thermal: tsens: Check if the IP is correctly enabled by firmware
-Date:   Wed, 12 Sep 2018 15:22:53 +0530
-Message-Id: <140b054230a61e13995ae4b685746c8faf068d61.1536744310.git.amit.kucheria@linaro.org>
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH v3 09/16] arm: dts: msm8974: thermal: split address space into two
+Date:   Wed, 12 Sep 2018 15:22:54 +0530
+Message-Id: <088724896f21d556ecf1e16a6c59c0e404444fa6.1536744310.git.amit.kucheria@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.1536744310.git.amit.kucheria@linaro.org>
 References: <cover.1536744310.git.amit.kucheria@linaro.org>
@@ -77,58 +78,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The SROT registers are initialised by the secure firmware at boot. We
-don't have write access to the registers. Check if the block is enabled
-before continuing.
+We've earlier added support to split the register address space into TM
+and SROT regions. Split up the regmap address space into two for msm8974
+that has a similar register layout.
+
+Since tsens-common.c/init_common() currently only registers one address
+space, the order is important (TM before SROT).  This is OK since the
+code doesn't really use the SROT functionality yet.
 
 Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
 ---
- drivers/thermal/qcom/tsens-common.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ arch/arm/boot/dts/qcom-msm8974.dtsi | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/thermal/qcom/tsens-common.c b/drivers/thermal/qcom/tsens-common.c
-index 0b8a793f15f4..3be4be2e0465 100644
---- a/drivers/thermal/qcom/tsens-common.c
-+++ b/drivers/thermal/qcom/tsens-common.c
-@@ -12,6 +12,10 @@
- #include <linux/regmap.h>
- #include "tsens.h"
+diff --git a/arch/arm/boot/dts/qcom-msm8974.dtsi b/arch/arm/boot/dts/qcom-msm8974.dtsi
+index d9019a49b292..56dbbf788d15 100644
+--- a/arch/arm/boot/dts/qcom-msm8974.dtsi
++++ b/arch/arm/boot/dts/qcom-msm8974.dtsi
+@@ -427,9 +427,10 @@
+ 			};
+ 		};
  
-+/* SROT */
-+#define TSENS_EN		BIT(0)
-+
-+/* TM */
- #define STATUS_OFFSET		0x30
- #define SN_ADDR_OFFSET		0x4
- #define SN_ST_TEMP_MASK		0x3ff
-@@ -119,7 +123,10 @@ int __init init_common(struct tsens_device *tmdev)
- {
- 	void __iomem *tm_base, *srot_base;
- 	struct resource *res;
-+	u32 code;
-+	int ret;
- 	struct platform_device *op = of_find_device_by_node(tmdev->dev->of_node);
-+	u16 ctrl_offset = tmdev->reg_offsets[SROT_CTRL_OFFSET];
- 
- 	if (!op)
- 		return -EINVAL;
-@@ -151,5 +158,15 @@ int __init init_common(struct tsens_device *tmdev)
- 	if (IS_ERR(tmdev->tm_map))
- 		return PTR_ERR(tmdev->tm_map);
- 
-+	if (tmdev->srot_map) {
-+		ret = regmap_read(tmdev->srot_map, ctrl_offset, &code);
-+		if (ret)
-+			return ret;
-+		if (!(code & TSENS_EN)) {
-+			dev_err(tmdev->dev, "tsens device is not enabled\n");
-+			return -ENODEV;
-+		}
-+	}
-+
- 	return 0;
- }
+-		tsens: thermal-sensor@fc4a8000 {
++		tsens: thermal-sensor@fc4a9000 {
+ 			compatible = "qcom,msm8974-tsens";
+-			reg = <0xfc4a8000 0x2000>;
++			reg = <0xfc4a9000 0x1000>, /* TM */
++			      <0xfc4a8000 0x1000>; /* SROT */
+ 			nvmem-cells = <&tsens_calib>, <&tsens_backup>;
+ 			nvmem-cell-names = "calib", "calib_backup";
+ 			#thermal-sensor-cells = <1>;
 -- 
 2.17.1
 
