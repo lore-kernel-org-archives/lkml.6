@@ -6,55 +6,55 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54AD5C4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:54:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61280C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:54:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05A73204EC
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:54:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1ADAC204EC
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 09:54:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VdS5xPkq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05A73204EC
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="J9L6R4gf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ADAC204EC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727790AbeILO6D (ORCPT
+        id S1727833AbeILO6J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 10:58:03 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:34233 "EHLO
+        Wed, 12 Sep 2018 10:58:09 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:36685 "EHLO
         mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727685AbeILO6C (ORCPT
+        with ESMTP id S1727796AbeILO6I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 10:58:02 -0400
-Received: by mail-ed1-f65.google.com with SMTP id u1-v6so1277792eds.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 02:54:15 -0700 (PDT)
+        Wed, 12 Sep 2018 10:58:08 -0400
+Received: by mail-ed1-f65.google.com with SMTP id f4-v6so1274553edq.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 02:54:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=f5bkI9k4W2c9XfxovD/lpb7m212pStl1rJ1cHBfU/w8=;
-        b=VdS5xPkqWD6huuj6drH9txEG/ptP+bfjajMdOn+cz2qpUtJh5vgHCFhg8v7ObU0t1D
-         OxcIdFHzjrQIscgwb1WYW5ZTRfRNEN0eFsNsLjpJJ2P5KLWhHBfCQyQRjagq5jxRMyMB
-         DQLwd/g2rjIrv71lJ+mmjLQbtv3Z0mHGx+rys=
+        bh=p+l9eG3EJUvs5PqroE1oN9/c9Y5I3RjwbnuwyKuwaKQ=;
+        b=J9L6R4gfDqVWuTaZEOBoz4A2w3TIHW5Klx19orLgDv4Sl9La0s0FWXmR7JLmcigpEW
+         DKdX1UdAg4XCcBHHnA6xPilTPpyQPnTZrgTwqHzUH+7yNsz7VXqCYTy2XnAIoSuRiR5R
+         Wtnd7im10Eb7dMJnSui63aISD1ETTo4synyUs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to:references;
-        bh=f5bkI9k4W2c9XfxovD/lpb7m212pStl1rJ1cHBfU/w8=;
-        b=hF9eQDwJzx6/P3RQiZ1xyRx4V166epzy6WY6v9EzDc1fu0SJS7/NqFbRYX4ne7kOmW
-         E2G/0JbaNgkEKLvB8VMhG+q1+IVBm/CtIQ/TtA1U5c25A2bX9IA9jym4nEhLYj9y86aR
-         19q1PLZJgqmIEgD6AtEv36kv5pC1YcovBHMAUYwZzarwpQdGtl8M4mCio22jzUU4sWHc
-         qPfEviIe8NzcKV62OxPPrJePoclII0efJZ83ZUqbethzHvlqC5u1u2VpqIHCoSCq42xv
-         AxO6o1yf/14w6nZwTAlFDaE/EVb9VPf+M4dPaXh1qorym+R37oKuqsmXg/A552W39aY1
-         w73w==
-X-Gm-Message-State: APzg51B8XY3PRHZ/82AEi2Dh4CJYGkzVaLjXsbDvnB5ZQxFWf2Y9hQQr
-        1hb86ycNfyLr/2dwLb4sghiLVx/bPsY=
-X-Google-Smtp-Source: ANB0Vda6nzPa9Nf5fkD2j1meLN4TlS0Av8gySTdcrZ+8tMwv417kv8e5jHmghUsxHV1rb4UllTUIPA==
-X-Received: by 2002:a50:a804:: with SMTP id j4-v6mr1808568edc.105.1536746054401;
-        Wed, 12 Sep 2018 02:54:14 -0700 (PDT)
+        bh=p+l9eG3EJUvs5PqroE1oN9/c9Y5I3RjwbnuwyKuwaKQ=;
+        b=F022DfVh6GS5IqXKPYPVHaTBU/9h9dj21g9iOPU6delTklEJqzLhstfVlhXyIRQ71t
+         RHvGErM7e1LWs1VuDYz9Gxqf4N9iP/hNliv7jsKtnV85e1pBZ/hnJlTJT8TBXqMEJnsa
+         4v0N9Oyw08sh3joRSauUwsd+mQWVqZ8ypOpFO0p82dJG8ImZWAkZE8leCFqZKPRbqKbQ
+         uiCm1S1Jx55ZBzi2t7zp2Qjoouk524Oaprvk0uLKttUY1UKbzfEIX9cg3a8+8jFOt6Sp
+         dJDJddLdUOECs2bK36vZtGkI43MDuehOfmwtuaAfgAWd+vXBwttB5fN2U3niSUSeryMg
+         owdQ==
+X-Gm-Message-State: APzg51BX+KqIzq+1MJZNZuAkpw6E8apQanx+EQqyhCkCYJHzXDzMWyTS
+        yg8OgDePp0AU4ugSaGjhJmLXWQcIkJk=
+X-Google-Smtp-Source: ANB0VdbSsex1y2ZqSJRinWn/tow2hwoiUOr+U6Mt7gKCh3qdE3OOHyCp78cosnNSvL8j2lYsgrD9rg==
+X-Received: by 2002:a50:de03:: with SMTP id z3-v6mr1749903edk.245.1536746060744;
+        Wed, 12 Sep 2018 02:54:20 -0700 (PDT)
 Received: from localhost ([49.248.190.214])
-        by smtp.gmail.com with ESMTPSA id h8-v6sm400574edi.68.2018.09.12.02.54.12
+        by smtp.gmail.com with ESMTPSA id f13-v6sm690554edf.50.2018.09.12.02.54.18
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Sep 2018 02:54:13 -0700 (PDT)
+        Wed, 12 Sep 2018 02:54:19 -0700 (PDT)
 From:   Amit Kucheria <amit.kucheria@linaro.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     rnayak@codeaurora.org, linux-arm-msm@vger.kernel.org,
@@ -64,9 +64,9 @@ Cc:     rnayak@codeaurora.org, linux-arm-msm@vger.kernel.org,
         Zhang Rui <rui.zhang@intel.com>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
         linux-pm@vger.kernel.org
-Subject: [PATCH v3 07/16] thermal: tsens: Pass register offsets as private data
-Date:   Wed, 12 Sep 2018 15:22:52 +0530
-Message-Id: <dccdcf386d8d5298a77ec31cde699852cc4409c5.1536744310.git.amit.kucheria@linaro.org>
+Subject: [PATCH v3 08/16] thermal: tsens: Check if the IP is correctly enabled by firmware
+Date:   Wed, 12 Sep 2018 15:22:53 +0530
+Message-Id: <140b054230a61e13995ae4b685746c8faf068d61.1536744310.git.amit.kucheria@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.1536744310.git.amit.kucheria@linaro.org>
 References: <cover.1536744310.git.amit.kucheria@linaro.org>
@@ -77,110 +77,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Registers have moved around across TSENS generations. For example, the
-CTRL register was at offset 0x0 in the SROT region on msm8916 but is at
-offset 0x4 in newer v2 based TSENS HW blocks.
-
-Allow passing offsets of important registers so that we can continue to
-use common functions.
+The SROT registers are initialised by the secure firmware at boot. We
+don't have write access to the registers. Check if the block is enabled
+before continuing.
 
 Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/thermal/qcom/tsens-8916.c | 1 +
- drivers/thermal/qcom/tsens-8974.c | 1 +
- drivers/thermal/qcom/tsens-v2.c   | 2 ++
- drivers/thermal/qcom/tsens.c      | 3 +++
- drivers/thermal/qcom/tsens.h      | 9 +++++++++
- 5 files changed, 16 insertions(+)
+ drivers/thermal/qcom/tsens-common.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/drivers/thermal/qcom/tsens-8916.c b/drivers/thermal/qcom/tsens-8916.c
-index c4955c85e922..c6dd620ac029 100644
---- a/drivers/thermal/qcom/tsens-8916.c
-+++ b/drivers/thermal/qcom/tsens-8916.c
-@@ -100,5 +100,6 @@ static const struct tsens_ops ops_8916 = {
- const struct tsens_data data_8916 = {
- 	.num_sensors	= 5,
- 	.ops		= &ops_8916,
-+	.reg_offsets	= { [SROT_CTRL_OFFSET] = 0x0 },
- 	.hw_ids		= (unsigned int []){0, 1, 2, 4, 5 },
- };
-diff --git a/drivers/thermal/qcom/tsens-8974.c b/drivers/thermal/qcom/tsens-8974.c
-index 7e149edbfeb6..3d3fda3d731b 100644
---- a/drivers/thermal/qcom/tsens-8974.c
-+++ b/drivers/thermal/qcom/tsens-8974.c
-@@ -232,4 +232,5 @@ static const struct tsens_ops ops_8974 = {
- const struct tsens_data data_8974 = {
- 	.num_sensors	= 11,
- 	.ops		= &ops_8974,
-+	.reg_offsets	= { [SROT_CTRL_OFFSET] = 0x0 },
- };
-diff --git a/drivers/thermal/qcom/tsens-v2.c b/drivers/thermal/qcom/tsens-v2.c
-index 1bdef92e4521..381a212872bf 100644
---- a/drivers/thermal/qcom/tsens-v2.c
-+++ b/drivers/thermal/qcom/tsens-v2.c
-@@ -68,10 +68,12 @@ static const struct tsens_ops ops_generic_v2 = {
+diff --git a/drivers/thermal/qcom/tsens-common.c b/drivers/thermal/qcom/tsens-common.c
+index 0b8a793f15f4..3be4be2e0465 100644
+--- a/drivers/thermal/qcom/tsens-common.c
++++ b/drivers/thermal/qcom/tsens-common.c
+@@ -12,6 +12,10 @@
+ #include <linux/regmap.h>
+ #include "tsens.h"
  
- const struct tsens_data data_tsens_v2 = {
- 	.ops            = &ops_generic_v2,
-+	.reg_offsets	= { [SROT_CTRL_OFFSET] = 0x4 },
- };
++/* SROT */
++#define TSENS_EN		BIT(0)
++
++/* TM */
+ #define STATUS_OFFSET		0x30
+ #define SN_ADDR_OFFSET		0x4
+ #define SN_ST_TEMP_MASK		0x3ff
+@@ -119,7 +123,10 @@ int __init init_common(struct tsens_device *tmdev)
+ {
+ 	void __iomem *tm_base, *srot_base;
+ 	struct resource *res;
++	u32 code;
++	int ret;
+ 	struct platform_device *op = of_find_device_by_node(tmdev->dev->of_node);
++	u16 ctrl_offset = tmdev->reg_offsets[SROT_CTRL_OFFSET];
  
- /* Kept around for backward compatibility with old msm8996.dtsi */
- const struct tsens_data data_8996 = {
- 	.num_sensors	= 13,
- 	.ops		= &ops_generic_v2,
-+	.reg_offsets	= { [SROT_CTRL_OFFSET] = 0x4 },
- };
-diff --git a/drivers/thermal/qcom/tsens.c b/drivers/thermal/qcom/tsens.c
-index 9a8e8f7b4ae1..f1ec9bbe4717 100644
---- a/drivers/thermal/qcom/tsens.c
-+++ b/drivers/thermal/qcom/tsens.c
-@@ -144,6 +144,9 @@ static int tsens_probe(struct platform_device *pdev)
- 		else
- 			tmdev->sensor[i].hw_id = i;
- 	}
-+	for (i = 0; i < REG_ARRAY_SIZE; i++) {
-+		tmdev->reg_offsets[i] = data->reg_offsets[i];
-+	}
- 
- 	if (!tmdev->ops || !tmdev->ops->init || !tmdev->ops->get_temp)
+ 	if (!op)
  		return -EINVAL;
-diff --git a/drivers/thermal/qcom/tsens.h b/drivers/thermal/qcom/tsens.h
-index b9c4bcf255fa..7b7feee5dc46 100644
---- a/drivers/thermal/qcom/tsens.h
-+++ b/drivers/thermal/qcom/tsens.h
-@@ -48,15 +48,23 @@ struct tsens_ops {
- 	int (*get_trend)(struct tsens_device *, int, enum thermal_trend *);
- };
+@@ -151,5 +158,15 @@ int __init init_common(struct tsens_device *tmdev)
+ 	if (IS_ERR(tmdev->tm_map))
+ 		return PTR_ERR(tmdev->tm_map);
  
-+enum reg_list {
-+	SROT_CTRL_OFFSET,
++	if (tmdev->srot_map) {
++		ret = regmap_read(tmdev->srot_map, ctrl_offset, &code);
++		if (ret)
++			return ret;
++		if (!(code & TSENS_EN)) {
++			dev_err(tmdev->dev, "tsens device is not enabled\n");
++			return -ENODEV;
++		}
++	}
 +
-+	REG_ARRAY_SIZE,
-+};
-+
- /**
-  * struct tsens_data - tsens instance specific data
-  * @num_sensors: Max number of sensors supported by platform
-  * @ops: operations the tsens instance supports
-  * @hw_ids: Subset of sensors ids supported by platform, if not the first n
-+ * @reg_offsets: Register offsets for commonly used registers
-  */
- struct tsens_data {
- 	const u32		num_sensors;
- 	const struct tsens_ops	*ops;
-+	const u16		reg_offsets[REG_ARRAY_SIZE];
- 	unsigned int		*hw_ids;
- };
- 
-@@ -72,6 +80,7 @@ struct tsens_device {
- 	struct regmap			*tm_map;
- 	struct regmap			*srot_map;
- 	u32				tm_offset;
-+	u16				reg_offsets[REG_ARRAY_SIZE];
- 	struct tsens_context		ctx;
- 	const struct tsens_ops		*ops;
- 	struct tsens_sensor		sensor[0];
+ 	return 0;
+ }
 -- 
 2.17.1
 
