@@ -2,525 +2,220 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFD96C46469
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:12:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94B03C46469
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:12:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EB9520882
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:12:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EB9520882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 3F8A520880
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 16:12:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kh4TlGV0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F8A520880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728177AbeILVQk (ORCPT
+        id S1728096AbeILVRp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 17:16:40 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:60146 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728091AbeILVQj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 17:16:39 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 59834207B3; Wed, 12 Sep 2018 18:11:25 +0200 (CEST)
-Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 1B1792071D;
-        Wed, 12 Sep 2018 18:11:25 +0200 (CEST)
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexander Dahl <ada@thorsis.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH v6 2/7] clocksource/drivers: Add a new driver for the Atmel ARM TC blocks
-Date:   Wed, 12 Sep 2018 18:11:17 +0200
-Message-Id: <20180912161122.7717-3-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.19.0.rc2
-In-Reply-To: <20180912161122.7717-1-alexandre.belloni@bootlin.com>
-References: <20180912161122.7717-1-alexandre.belloni@bootlin.com>
+        Wed, 12 Sep 2018 17:17:45 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:46244 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727051AbeILVRo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 17:17:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=3cMuVh7nHbWdcqVCPMDieiBkxBIqy4nedGR4N48aKJc=; b=kh4TlGV0gW4banNcPmTMp5fQN
+        HwFFWzRBS4Ir2tAexNzhcuUxeVUwCjvR4PZMzGtmRNaHtRPefXnRjHWdFqVtYLmLaLZT717Wlhqr6
+        37zGUlWEqzW37GLkrGLLBaE7UN0xccwIQOrLrgXl/TNMphqiFRRktRKbSqd7jAt/Bn9YLRJb03beR
+        HaJj9hus8+9h96me5XqVhB4KNDXd4dqW2iJ0JCSUF80tGIz+WtPfSzTGbnEjgikEcjBtVCcq95++y
+        XDIoZEIINAAI7+60xoODl/AalEmZdHWIS8yJgi+VhqbWYcW2dXknD82k2oGEj6zFbFNkeDR94V0B0
+        /K9533UMw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g07ka-0003qw-1x; Wed, 12 Sep 2018 16:12:20 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 707BD202C1A09; Wed, 12 Sep 2018 18:12:18 +0200 (CEST)
+Date:   Wed, 12 Sep 2018 18:12:18 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v4 02/16] sched/core: uclamp: map TASK's clamp values
+ into CPU's clamp groups
+Message-ID: <20180912161218.GW24082@hirez.programming.kicks-ass.net>
+References: <20180828135324.21976-1-patrick.bellasi@arm.com>
+ <20180828135324.21976-3-patrick.bellasi@arm.com>
+ <20180912134945.GZ24106@hirez.programming.kicks-ass.net>
+ <20180912155619.GG1413@e110439-lin>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180912155619.GG1413@e110439-lin>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a driver for the Atmel Timer Counter Blocks. This driver provides a
-clocksource and two clockevent devices.
+On Wed, Sep 12, 2018 at 04:56:19PM +0100, Patrick Bellasi wrote:
+> On 12-Sep 15:49, Peter Zijlstra wrote:
+> > On Tue, Aug 28, 2018 at 02:53:10PM +0100, Patrick Bellasi wrote:
 
-One of the clockevent device is linked to the clocksource counter and so it
-will run at the same frequency. This will be used when there is only on TCB
-channel available for timers.
+> > > +/**
+> > > + * uclamp_map: reference counts a utilization "clamp value"
+> > > + * @value:    the utilization "clamp value" required
+> > > + * @se_count: the number of scheduling entities requiring the "clamp value"
+> > > + * @se_lock:  serialize reference count updates by protecting se_count
+> > 
+> > Why do you have a spinlock to serialize a single value? Don't we have
+> > atomics for that?
+> 
+> There are some code paths where it's used to protect clamp groups
+> mapping and initialization, e.g.
+> 
+>       uclamp_group_get()
+>           spin_lock()
+>               // initialize clamp group (if required) and then...
+>               se_count += 1
+>           spin_unlock()
+> 
+> Almost all these paths are triggered from user-space and protected
+> by a global uclamp_mutex, but fork/exit paths.
+> 
+> To serialize these paths I'm using the spinlock above, does it make
+> sense ? Can we use the global uclamp_mutex on forks/exit too ?
 
-The other clockevent device runs on a separate TCB channel when available.
+OK, then your comment is misleading; it serializes both fields.
 
-This driver uses regmap and syscon to be able to probe early in the boot
-and avoid having to switch on the TCB clocksource later. Using regmap also
-means that unused TCB channels may be used by other drivers (PWM for
-example). read/writel are still used to access channel specific registers
-to avoid the performance impact of regmap (mainly locking).
+> One additional observations is that, if in the future we want to add a
+> kernel space API, (e.g. driver asking for a new clamp value), maybe we
+> will need to have a serialized non-sleeping uclamp_group_get() API ?
 
-Tested-by: Alexander Dahl <ada@thorsis.com>
-Tested-by: Andras Szemzo <szemzo.andras@gmail.com>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/clocksource/Kconfig           |   8 +
- drivers/clocksource/Makefile          |   3 +-
- drivers/clocksource/timer-atmel-tcb.c | 409 ++++++++++++++++++++++++++
- 3 files changed, 419 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clocksource/timer-atmel-tcb.c
+No idea; but if you want to go all fancy you can replace he whole
+uclamp_map thing with something like:
 
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index a11f4ba98b05..8c7324e409f6 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -403,6 +403,14 @@ config ATMEL_ST
- 	help
- 	  Support for the Atmel ST timer.
- 
-+config ATMEL_ARM_TCB_CLKSRC
-+	bool "Microchip ARM TC Block" if COMPILE_TEST
-+	select REGMAP_MMIO
-+	depends on GENERIC_CLOCKEVENTS
-+	help
-+	  This enables build of clocksource and clockevent driver for
-+	  the integrated Timer Counter Blocks in Microchip ARM SoCs.
-+
- config CLKSRC_EXYNOS_MCT
- 	bool "Exynos multi core timer driver" if COMPILE_TEST
- 	depends on ARM || ARM64
-diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
-index db51b2427e8a..0df9384a1230 100644
---- a/drivers/clocksource/Makefile
-+++ b/drivers/clocksource/Makefile
-@@ -3,7 +3,8 @@ obj-$(CONFIG_TIMER_OF)		+= timer-of.o
- obj-$(CONFIG_TIMER_PROBE)	+= timer-probe.o
- obj-$(CONFIG_ATMEL_PIT)		+= timer-atmel-pit.o
- obj-$(CONFIG_ATMEL_ST)		+= timer-atmel-st.o
--obj-$(CONFIG_ATMEL_TCB_CLKSRC)	+= tcb_clksrc.o
-+obj-$(CONFIG_ATMEL_TCB_CLKSRC) += tcb_clksrc.o
-+obj-$(CONFIG_ATMEL_ARM_TCB_CLKSRC)	+= timer-atmel-tcb.o
- obj-$(CONFIG_X86_PM_TIMER)	+= acpi_pm.o
- obj-$(CONFIG_SCx200HR_TIMER)	+= scx200_hrt.o
- obj-$(CONFIG_CS5535_CLOCK_EVENT_SRC)	+= cs5535-clockevt.o
-diff --git a/drivers/clocksource/timer-atmel-tcb.c b/drivers/clocksource/timer-atmel-tcb.c
-new file mode 100644
-index 000000000000..3064881af963
---- /dev/null
-+++ b/drivers/clocksource/timer-atmel-tcb.c
-@@ -0,0 +1,409 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <linux/clk.h>
-+#include <linux/clockchips.h>
-+#include <linux/clocksource.h>
-+#include <linux/interrupt.h>
-+#include <linux/kernel.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/of_address.h>
-+#include <linux/of_irq.h>
-+#include <linux/regmap.h>
-+#include <linux/sched_clock.h>
-+#include <soc/at91/atmel_tcb.h>
-+
-+struct atmel_tcb_clksrc {
-+	struct clocksource clksrc;
-+	struct clock_event_device clkevt;
-+	struct regmap *regmap;
-+	void __iomem *base;
-+	struct clk *clk[2];
-+	char name[20];
-+	int channels[2];
-+	int bits;
-+	int irq;
-+	struct {
-+		u32 cmr;
-+		u32 imr;
-+		u32 rc;
-+		bool clken;
-+	} cache[2];
-+	u32 bmr_cache;
-+	bool registered;
-+	bool clk_enabled;
-+};
-+
-+static struct atmel_tcb_clksrc tc;
-+
-+static struct clk *tcb_clk_get(struct device_node *node, int channel)
-+{
-+	struct clk *clk;
-+	char clk_name[] = "t0_clk";
-+
-+	clk_name[1] += channel;
-+	clk = of_clk_get_by_name(node->parent, clk_name);
-+	if (!IS_ERR(clk))
-+		return clk;
-+
-+	return of_clk_get_by_name(node->parent, "t0_clk");
-+}
-+
-+/*
-+ * Clocksource and clockevent using the same channel(s)
-+ */
-+static u64 tc_get_cycles(struct clocksource *cs)
-+{
-+	u32 lower, upper;
-+
-+	do {
-+		upper = readl_relaxed(tc.base + ATMEL_TC_CV(tc.channels[1]));
-+		lower = readl_relaxed(tc.base + ATMEL_TC_CV(tc.channels[0]));
-+	} while (upper != readl_relaxed(tc.base + ATMEL_TC_CV(tc.channels[1])));
-+
-+	return (upper << 16) | lower;
-+}
-+
-+static u64 tc_get_cycles32(struct clocksource *cs)
-+{
-+	return readl_relaxed(tc.base + ATMEL_TC_CV(tc.channels[0]));
-+}
-+
-+static u64 notrace tc_sched_clock_read(void)
-+{
-+	return tc_get_cycles(&tc.clksrc);
-+}
-+
-+static u64 notrace tc_sched_clock_read32(void)
-+{
-+	return tc_get_cycles32(&tc.clksrc);
-+}
-+
-+static int tcb_clkevt_next_event(unsigned long delta,
-+				 struct clock_event_device *d)
-+{
-+	u32 old, next, cur;
-+
-+	old = readl(tc.base + ATMEL_TC_CV(tc.channels[0]));
-+	next = old + delta;
-+	writel(next, tc.base + ATMEL_TC_RC(tc.channels[0]));
-+	cur = readl(tc.base + ATMEL_TC_CV(tc.channels[0]));
-+
-+	/* check whether the delta elapsed while setting the register */
-+	if ((next < old && cur < old && cur > next) ||
-+	    (next > old && (cur < old || cur > next))) {
-+		/*
-+		 * Clear the CPCS bit in the status register to avoid
-+		 * generating a spurious interrupt next time a valid
-+		 * timer event is configured.
-+		 */
-+		old = readl(tc.base + ATMEL_TC_SR(tc.channels[0]));
-+		return -ETIME;
-+	}
-+
-+	writel(ATMEL_TC_CPCS, tc.base + ATMEL_TC_IER(tc.channels[0]));
-+
-+	return 0;
-+}
-+
-+static irqreturn_t tc_clkevt_irq(int irq, void *handle)
-+{
-+	unsigned int sr;
-+
-+	sr = readl(tc.base + ATMEL_TC_SR(tc.channels[0]));
-+	if (sr & ATMEL_TC_CPCS) {
-+		tc.clkevt.event_handler(&tc.clkevt);
-+		return IRQ_HANDLED;
-+	}
-+
-+	return IRQ_NONE;
-+}
-+
-+static int tcb_clkevt_oneshot(struct clock_event_device *dev)
-+{
-+	if (clockevent_state_oneshot(dev))
-+		return 0;
-+
-+	/*
-+	 * Because both clockevent devices may share the same IRQ, we don't want
-+	 * the less likely one to stay requested
-+	 */
-+	return request_irq(tc.irq, tc_clkevt_irq, IRQF_TIMER | IRQF_SHARED,
-+			   tc.name, &tc);
-+}
-+
-+static int tcb_clkevt_shutdown(struct clock_event_device *dev)
-+{
-+	writel(0xff, tc.base + ATMEL_TC_IDR(tc.channels[0]));
-+	if (tc.bits == 16)
-+		writel(0xff, tc.base + ATMEL_TC_IDR(tc.channels[1]));
-+
-+	if (!clockevent_state_detached(dev))
-+		free_irq(tc.irq, &tc);
-+
-+	return 0;
-+}
-+
-+static void __init tcb_setup_dual_chan(struct atmel_tcb_clksrc *tc,
-+				       int mck_divisor_idx)
-+{
-+	/* first channel: waveform mode, input mclk/8, clock TIOA on overflow */
-+	writel(mck_divisor_idx			/* likely divide-by-8 */
-+	       | ATMEL_TC_CMR_WAVE
-+	       | ATMEL_TC_CMR_WAVESEL_UP	/* free-run */
-+	       | ATMEL_TC_CMR_ACPA(SET)		/* TIOA rises at 0 */
-+	       | ATMEL_TC_CMR_ACPC(CLEAR),	/* (duty cycle 50%) */
-+	       tc->base + ATMEL_TC_CMR(tc->channels[0]));
-+	writel(0x0000, tc->base + ATMEL_TC_RA(tc->channels[0]));
-+	writel(0x8000, tc->base + ATMEL_TC_RC(tc->channels[0]));
-+	writel(0xff, tc->base + ATMEL_TC_IDR(tc->channels[0]));	/* no irqs */
-+	writel(ATMEL_TC_CCR_CLKEN, tc->base + ATMEL_TC_CCR(tc->channels[0]));
-+
-+	/* second channel: waveform mode, input TIOA */
-+	writel(ATMEL_TC_CMR_XC(tc->channels[1])		/* input: TIOA */
-+	       | ATMEL_TC_CMR_WAVE
-+	       | ATMEL_TC_CMR_WAVESEL_UP,		/* free-run */
-+	       tc->base + ATMEL_TC_CMR(tc->channels[1]));
-+	writel(0xff, tc->base + ATMEL_TC_IDR(tc->channels[1]));	/* no irqs */
-+	writel(ATMEL_TC_CCR_CLKEN, tc->base + ATMEL_TC_CCR(tc->channels[1]));
-+
-+	/* chain both channel, we assume the previous channel */
-+	regmap_write(tc->regmap, ATMEL_TC_BMR,
-+		     ATMEL_TC_BMR_TCXC(1 + tc->channels[1], tc->channels[1]));
-+	/* then reset all the timers */
-+	regmap_write(tc->regmap, ATMEL_TC_BCR, ATMEL_TC_BCR_SYNC);
-+}
-+
-+static void __init tcb_setup_single_chan(struct atmel_tcb_clksrc *tc,
-+					 int mck_divisor_idx)
-+{
-+	/* channel 0:  waveform mode, input mclk/8 */
-+	writel(mck_divisor_idx			/* likely divide-by-8 */
-+	       | ATMEL_TC_CMR_WAVE
-+	       | ATMEL_TC_CMR_WAVESEL_UP,	/* free-run */
-+	       tc->base + ATMEL_TC_CMR(tc->channels[0]));
-+	writel(0xff, tc->base + ATMEL_TC_IDR(tc->channels[0]));	/* no irqs */
-+	writel(ATMEL_TC_CCR_CLKEN, tc->base + ATMEL_TC_CCR(tc->channels[0]));
-+
-+	/* then reset all the timers */
-+	regmap_write(tc->regmap, ATMEL_TC_BCR, ATMEL_TC_BCR_SYNC);
-+}
-+
-+static void tc_clksrc_suspend(struct clocksource *cs)
-+{
-+	int i;
-+
-+	for (i = 0; i < 1 + (tc.bits == 16); i++) {
-+		tc.cache[i].cmr = readl(tc.base + ATMEL_TC_CMR(tc.channels[i]));
-+		tc.cache[i].imr = readl(tc.base + ATMEL_TC_IMR(tc.channels[i]));
-+		tc.cache[i].rc = readl(tc.base + ATMEL_TC_RC(tc.channels[i]));
-+		tc.cache[i].clken = !!(readl(tc.base +
-+					     ATMEL_TC_SR(tc.channels[i])) &
-+				       ATMEL_TC_CLKSTA);
-+	}
-+
-+	if (tc.bits == 16)
-+		regmap_read(tc.regmap, ATMEL_TC_BMR, &tc.bmr_cache);
-+}
-+
-+static void tc_clksrc_resume(struct clocksource *cs)
-+{
-+	int i;
-+
-+	for (i = 0; i < 1 + (tc.bits == 16); i++) {
-+		/* Restore registers for the channel, RA and RB are not used  */
-+		writel(tc.cache[i].cmr, tc.base + ATMEL_TC_CMR(tc.channels[i]));
-+		writel(tc.cache[i].rc, tc.base + ATMEL_TC_RC(tc.channels[i]));
-+		writel(0, tc.base + ATMEL_TC_RA(tc.channels[i]));
-+		writel(0, tc.base + ATMEL_TC_RB(tc.channels[i]));
-+		/* Disable all the interrupts */
-+		writel(0xff, tc.base + ATMEL_TC_IDR(tc.channels[i]));
-+		/* Reenable interrupts that were enabled before suspending */
-+		writel(tc.cache[i].imr, tc.base + ATMEL_TC_IER(tc.channels[i]));
-+
-+		/* Start the clock if it was used */
-+		if (tc.cache[i].clken)
-+			writel(ATMEL_TC_CCR_CLKEN, tc.base +
-+			       ATMEL_TC_CCR(tc.channels[i]));
-+	}
-+
-+	/* in case of dual channel, chain channels */
-+	if (tc.bits == 16)
-+		regmap_write(tc.regmap, ATMEL_TC_BMR, tc.bmr_cache);
-+	/* Finally, trigger all the channels*/
-+	regmap_write(tc.regmap, ATMEL_TC_BCR, ATMEL_TC_BCR_SYNC);
-+}
-+
-+static int __init tcb_clksrc_register(struct device_node *node,
-+				      struct regmap *regmap, void __iomem *base,
-+				      int channel, int channel1, int irq,
-+				      int bits)
-+{
-+	u32 rate, divided_rate = 0;
-+	int best_divisor_idx = -1;
-+	int i, err = -1;
-+	u64 (*tc_sched_clock)(void);
-+
-+	tc.regmap = regmap;
-+	tc.base = base;
-+	tc.channels[0] = channel;
-+	tc.channels[1] = channel1;
-+	tc.irq = irq;
-+	tc.bits = bits;
-+
-+	tc.clk[0] = tcb_clk_get(node, tc.channels[0]);
-+	if (IS_ERR(tc.clk[0]))
-+		return PTR_ERR(tc.clk[0]);
-+	err = clk_prepare_enable(tc.clk[0]);
-+	if (err) {
-+		pr_debug("can't enable T0 clk\n");
-+		goto err_clk;
-+	}
-+
-+	/* How fast will we be counting?  Pick something over 5 MHz.  */
-+	rate = (u32)clk_get_rate(tc.clk[0]);
-+	for (i = 0; i < 5; i++) {
-+		unsigned int divisor = atmel_tc_divisors[i];
-+		unsigned int tmp;
-+
-+		if (!divisor)
-+			continue;
-+
-+		tmp = rate / divisor;
-+		pr_debug("TC: %u / %-3u [%d] --> %u\n", rate, divisor, i, tmp);
-+		if (best_divisor_idx > 0) {
-+			if (tmp < 5 * 1000 * 1000)
-+				continue;
-+		}
-+		divided_rate = tmp;
-+		best_divisor_idx = i;
-+	}
-+
-+	if (tc.bits == 32) {
-+		tc.clksrc.read = tc_get_cycles32;
-+		tcb_setup_single_chan(&tc, best_divisor_idx);
-+		tc_sched_clock = tc_sched_clock_read32;
-+		snprintf(tc.name, sizeof(tc.name), "%s:%d",
-+			 kbasename(node->parent->full_name), tc.channels[0]);
-+	} else {
-+		tc.clk[1] = tcb_clk_get(node, tc.channels[1]);
-+		if (IS_ERR(tc.clk[1]))
-+			goto err_disable_t0;
-+
-+		err = clk_prepare_enable(tc.clk[1]);
-+		if (err) {
-+			pr_debug("can't enable T1 clk\n");
-+			goto err_clk1;
-+		}
-+		tc.clksrc.read = tc_get_cycles,
-+		tcb_setup_dual_chan(&tc, best_divisor_idx);
-+		tc_sched_clock = tc_sched_clock_read;
-+		snprintf(tc.name, sizeof(tc.name), "%s:%d,%d",
-+			 kbasename(node->parent->full_name), tc.channels[0],
-+			 tc.channels[1]);
-+	}
-+
-+	pr_debug("%s at %d.%03d MHz\n", tc.name,
-+		 divided_rate / 1000000,
-+		 ((divided_rate + 500000) % 1000000) / 1000);
-+
-+	tc.clksrc.name = tc.name;
-+	tc.clksrc.suspend = tc_clksrc_suspend;
-+	tc.clksrc.resume = tc_clksrc_resume;
-+	tc.clksrc.rating = 200;
-+	tc.clksrc.mask = CLOCKSOURCE_MASK(32);
-+	tc.clksrc.flags = CLOCK_SOURCE_IS_CONTINUOUS;
-+
-+	err = clocksource_register_hz(&tc.clksrc, divided_rate);
-+	if (err)
-+		goto err_disable_t1;
-+
-+	sched_clock_register(tc_sched_clock, 32, divided_rate);
-+
-+	tc.registered = true;
-+
-+	/* Set up and register clockevents */
-+	tc.clkevt.name = tc.name;
-+	tc.clkevt.cpumask = cpumask_of(0);
-+	tc.clkevt.set_next_event = tcb_clkevt_next_event;
-+	tc.clkevt.set_state_oneshot = tcb_clkevt_oneshot;
-+	tc.clkevt.set_state_shutdown = tcb_clkevt_shutdown;
-+	tc.clkevt.features = CLOCK_EVT_FEAT_ONESHOT;
-+	tc.clkevt.rating = 125;
-+
-+	clockevents_config_and_register(&tc.clkevt, divided_rate, 1,
-+					BIT(tc.bits) - 1);
-+
-+	return 0;
-+
-+err_disable_t1:
-+	if (tc.bits == 16)
-+		clk_disable_unprepare(tc.clk[1]);
-+
-+err_clk1:
-+	if (tc.bits == 16)
-+		clk_put(tc.clk[1]);
-+
-+err_disable_t0:
-+	clk_disable_unprepare(tc.clk[0]);
-+
-+err_clk:
-+	clk_put(tc.clk[0]);
-+
-+	pr_err("%s: unable to register clocksource/clockevent\n",
-+	       tc.clksrc.name);
-+
-+	return err;
-+}
-+
-+static int __init tcb_clksrc_init(struct device_node *node)
-+{
-+	const struct of_device_id *match;
-+	struct regmap *regmap;
-+	void __iomem *tcb_base;
-+	u32 channel;
-+	int bits, irq, err, chan1 = -1;
-+
-+	if (tc.registered)
-+		return -ENODEV;
-+
-+	/*
-+	 * The regmap has to be used to access registers that are shared
-+	 * between channels on the same TCB but we keep direct IO access for
-+	 * the counters to avoid the impact on performance
-+	 */
-+	regmap = syscon_node_to_regmap(node->parent);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
-+	tcb_base = of_iomap(node->parent, 0);
-+	if (!tcb_base) {
-+		pr_err("%s +%d %s\n", __FILE__, __LINE__, __func__);
-+		return -ENXIO;
-+	}
-+
-+	match = of_match_node(atmel_tcb_dt_ids, node->parent);
-+	bits = (int)match->data;
-+
-+	err = of_property_read_u32_index(node, "reg", 0, &channel);
-+	if (err)
-+		return err;
-+
-+	irq = of_irq_get(node->parent, channel);
-+	if (irq < 0) {
-+		irq = of_irq_get(node->parent, 0);
-+		if (irq < 0)
-+			return irq;
-+	}
-+
-+	if (bits == 16) {
-+		of_property_read_u32_index(node, "reg", 1, &chan1);
-+		if (chan1 == -1) {
-+			pr_err("%s: clocksource needs two channels\n",
-+			       node->parent->full_name);
-+			return -EINVAL;
-+		}
-+	}
-+
-+	return tcb_clksrc_register(node, regmap, tcb_base, channel, chan1, irq,
-+				   bits);
-+}
-+TIMER_OF_DECLARE(atmel_tcb_clksrc, "atmel,tcb-timer", tcb_clksrc_init);
--- 
-2.19.0.rc2
+struct uclamp_map {
+	union {
+		struct {
+			unsigned long v : 10;
+			unsigned long c : BITS_PER_LONG - 10;
+		};
+		atomic_long_t s;
+	};
+};
 
+And use uclamp_map::c == 0 as unused (as per normal refcount
+semantics) and atomic_long_cmpxchg() the whole thing using
+uclamp_map::s.
+
+> > > + *                          uclamp_maps is a matrix of
+> > > + *          +------- UCLAMP_CNT by CONFIG_UCLAMP_GROUPS_COUNT+1 entries
+> > > + *          |                                |
+> > > + *          |                /---------------+---------------\
+> > > + *          |               +------------+       +------------+
+> > > + *          |  / UCLAMP_MIN | value      |       | value      |
+> > > + *          |  |            | se_count   |...... | se_count   |
+> > > + *          |  |            +------------+       +------------+
+> > > + *          +--+            +------------+       +------------+
+> > > + *             |            | value      |       | value      |
+> > > + *             \ UCLAMP_MAX | se_count   |...... | se_count   |
+> > > + *                          +-----^------+       +----^-------+
+> > > + *                                |                   |
+> > > + *                      uc_map =  +                   |
+> > > + *                     &uclamp_maps[clamp_id][0]      +
+> > > + *                                                clamp_value =
+> > > + *                                       uc_map[group_id].value
+> > > + */
+> > > +static struct uclamp_map uclamp_maps[UCLAMP_CNT]
+> > > +				    [CONFIG_UCLAMP_GROUPS_COUNT + 1]
+> > > +				    ____cacheline_aligned_in_smp;
+> > > +
+> > 
+> > I'm still completely confused by all this.
+> > 
+> > sizeof(uclamp_map) = 12
+> > 
+> > that array is 2*6=12 of those, so the whole thing is 144 bytes. which is
+> > more than 2 (64 byte) cachelines.
+> 
+> This data structure is *not* used in the hot-path, that's why I did not
+> care about fitting it exactly into few cache lines.
+> 
+> It's used to map a user-space "clamp value" into a kernel-space "clamp
+> group" when user-space:
+>  - changes a task specific clamp value
+>  - changes a cgroup clamp value
+>  - a task forks/exits
+> 
+> I assume we can consider all those as "slow" code paths, is that correct ?
+
+Yep.
+
+> > What's the purpose of that cacheline align statement?
+> 
+> In uclamp_maps, we still need to scan the array when a clamp value is
+> changed from user-space, i.e. the cases reported above. Thus, that
+> alignment is just to ensure that we minimize the number of cache lines
+> used. Does that make sense ?
+> 
+> Maybe that alignment implicitly generated by the compiler ?
+
+It is not, but if it really is a slow path, we shouldn't care about
+alignment.
+
+> > Note that without that apparently superfluous lock, it would be 8*12 =
+> > 96 bytes, which is 1.5 lines and would indeed suggest you default to
+> > GROUP_COUNT=7 by default to fill 2 lines.
+> 
+> Yes, will check better if we can count on just the uclamp_mutex
+
+Well, if we don't care about performance (slow path) then keeping he
+lock is fine, just the comment and alignment are misleading.
+
+> > Why are the min and max things torn up like that?  I'm fairly sure I
+> > asked some of that last time; but the above comments only try to explain
+> > what, not why.
+> 
+> We use that organization to speedup scanning for clamp values of the
+> same clamp_id. That's more important in the hot-path than above, where
+> we need to scan struct uclamp_cpu when a new aggregated clamp value
+> has to be computed. This is done in:
+> 
+>    [PATCH v4 03/16] sched/core: uclamp: add CPU's clamp groups accounting
+>    https://lore.kernel.org/lkml/20180828135324.21976-4-patrick.bellasi@arm.com/
+> 
+> Specifically:
+> 
+>    dequeue_task()
+>      uclamp_cpu_put()
+>        uclamp_cpu_put_id(clamp_id)
+>          uclamp_cpu_update(clamp_id)
+>             // Here we have an array scan by clamp_id
+> 
+> With the given data layout I reported above, when we update the
+> min_clamp value (boost) we have all the data required in a single
+> cache line.
+> 
+> If that makes sense, I can certainly improve the comment above to
+> justify its layout.
+
+OK, let me read on.
