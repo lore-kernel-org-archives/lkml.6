@@ -2,164 +2,254 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51B10C070C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:58:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 222B5C070C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 20:00:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8E0120833
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:58:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dDtM14K9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8E0120833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id BDF0820833
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 20:00:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDF0820833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728036AbeIMBEy (ORCPT
+        id S1728103AbeIMBGX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 21:04:54 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:39559 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726069AbeIMBEy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 21:04:54 -0400
-Received: by mail-pl1-f195.google.com with SMTP id w14-v6so1479965plp.6;
-        Wed, 12 Sep 2018 12:58:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=vX8n0KmAjuMJfBREk2i/rTqu87r3EuXkGrNwOO8AXZM=;
-        b=dDtM14K9Ig8F8S2AKOMPjfVxEP0na1Y5FMRH0WMA5JjnoaV7zv5NDL3h7Cnn/yCiGK
-         2owXVsCCJbAKAsO6ky9Q91IuAYDQgJSQOHFgeHLQa7lbWDy0fx73Wx0ftonncNqoBqNF
-         4mBONAvR3E5TP7fJk3KsqlhuUnjo2t7WJW6SQajX5eZYm1YYRzuUneci5gZcbY9dxcz4
-         Eq5UBczkBbwalxi0B/UumT7X5l25ZYUw0TfPDaQohuvw5PutaEyTO7JvTAqaSk9djsB6
-         wXl2JGlnuXSxPsNA9IVIhfppfozyJe6NTSu9JRfClE2J1+vuA9Dt1AxDw8gwgGhN5kgB
-         RtQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vX8n0KmAjuMJfBREk2i/rTqu87r3EuXkGrNwOO8AXZM=;
-        b=QbmaiOTkndJvC9+oJi24Vq5WuxKkJetagHkGk4+0xx3RH6ESioQX4QKpxqrG8O/BNz
-         uuhZ12u3Jdk8oS990/TGBm3bJPiM94uwu7xkrZZvWXLOI9vwp9+umN9+7eeFqae9z9Q3
-         8lF3VBpG4wL4CJlPoWMZlT8WvL4iClN3AOayFp1WKWA5HrNi5UhvxqUs+lTIikn39DHd
-         lzCPSKi6npFXSBJP6CbGU28+DiBL3sGaDgmh45Ggw5dLiPZ6GUVVSpw6ao5be8pN1/Kf
-         WmLEqb8D+Ka9EXZ4NRqx3+H0yKkJ9WNUnQNncOTTw8t7q7HcPzt75WwJbuqQgUqs5JA2
-         l7Pg==
-X-Gm-Message-State: APzg51C+7AT7L9kNTHA6JHEXiRt7RgUkqVNkIh+EIBdNSCGkqMlyLdIP
-        pBh3KkbXSQhoRsJq++XKRj2ZcB7l
-X-Google-Smtp-Source: ANB0VdYAhtcAdkyc+Pbd4aYUa4MH+f7BEAk9W5xSQ2ENGHAgCvqWyIjRG9ExMGlCdKakMlhjzi418g==
-X-Received: by 2002:a17:902:e85:: with SMTP id 5-v6mr3883728plx.73.1536782327159;
-        Wed, 12 Sep 2018 12:58:47 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id b21-v6sm6175248pfm.97.2018.09.12.12.58.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Sep 2018 12:58:46 -0700 (PDT)
-Date:   Wed, 12 Sep 2018 12:58:44 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Cc:     Joel Stanley <joel@jms.id.au>, linux-aspeed@lists.ozlabs.org,
-        Vernon Mauery <vernon.mauery@linux.intel.com>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-i2c@vger.kernel.org, jarkko.nikula@linux.intel.com,
-        =?iso-8859-1?Q?C=E9dric?= Le Goater <clg@kaod.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        James Feist <james.feist@linux.intel.com>
-Subject: Re: [PATCH i2c-next v6] i2c: aspeed: Handle master/slave combined
- irq events properly
-Message-ID: <20180912195844.GA6893@roeck-us.net>
-References: <20180823225731.19063-1-jae.hyun.yoo@linux.intel.com>
- <20180911183734.GA21976@roeck-us.net>
- <1f34fe8c-69ef-5f2d-25dc-d5f6037cc558@linux.intel.com>
- <20180911204107.GA26017@roeck-us.net>
- <e5135af4-9105-214f-5de2-65cc03804222@linux.intel.com>
- <CACPK8Xdv3aP_zOHAL0WMgwvkpBHAUesU7OdhW==jgvXjRmt-Zw@mail.gmail.com>
- <20180911233302.GA18799@roeck-us.net>
- <5698ca34-14c9-8d05-c4e6-5acf85ff9d14@linux.intel.com>
- <20180912013449.GA12612@roeck-us.net>
- <7fd98646-fb5a-be4d-ce37-84b74e0fa8b3@linux.intel.com>
+        Wed, 12 Sep 2018 21:06:23 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:39539 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726069AbeIMBGX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 21:06:23 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 519A920741; Wed, 12 Sep 2018 22:00:15 +0200 (CEST)
+Received: from localhost (unknown [88.191.26.124])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 2629E206DE;
+        Wed, 12 Sep 2018 22:00:05 +0200 (CEST)
+Date:   Wed, 12 Sep 2018 22:00:04 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 06/17] compat_ioctl: move rtc handling into rtc-dev.c
+Message-ID: <20180912200004.GM2760@piout.net>
+References: <20180912150142.157913-1-arnd@arndb.de>
+ <20180912151134.436719-1-arnd@arndb.de>
+ <20180912151134.436719-2-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7fd98646-fb5a-be4d-ce37-84b74e0fa8b3@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180912151134.436719-2-arnd@arndb.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 09:54:51AM -0700, Jae Hyun Yoo wrote:
-> On 9/11/2018 6:34 PM, Guenter Roeck wrote:
-> >On Tue, Sep 11, 2018 at 04:58:44PM -0700, Jae Hyun Yoo wrote:
-> >>On 9/11/2018 4:33 PM, Guenter Roeck wrote:
-> >>>Looking into the patch, clearing the interrupt status at the end of an
-> >>>interrupt handler is always suspicious and tends to result in race
-> >>>conditions (because additional interrupts may have arrived while handling
-> >>>the existing interrupts, or because interrupt handling itself may trigger
-> >>>another interrupt). With that in mind, the following patch fixes the
-> >>>problem for me.
-> >>>
-> >>>Guenter
-> >>>
-> >>>---
-> >>>
-> >>>diff --git a/drivers/i2c/busses/i2c-aspeed.c b/drivers/i2c/busses/i2c-aspeed.c
-> >>>index c258c4d9a4c0..c488e6950b7c 100644
-> >>>--- a/drivers/i2c/busses/i2c-aspeed.c
-> >>>+++ b/drivers/i2c/busses/i2c-aspeed.c
-> >>>@@ -552,6 +552,8 @@ static irqreturn_t aspeed_i2c_bus_irq(int irq, void *dev_id)
-> >>>  	spin_lock(&bus->lock);
-> >>>  	irq_received = readl(bus->base + ASPEED_I2C_INTR_STS_REG);
-> >>>+	/* Ack all interrupt bits. */
-> >>>+	writel(irq_received, bus->base + ASPEED_I2C_INTR_STS_REG);
-> >>>  	irq_remaining = irq_received;
-> >>>  #if IS_ENABLED(CONFIG_I2C_SLAVE)
-> >>>@@ -584,8 +586,6 @@ static irqreturn_t aspeed_i2c_bus_irq(int irq, void *dev_id)
-> >>>  			"irq handled != irq. expected 0x%08x, but was 0x%08x\n",
-> >>>  			irq_received, irq_handled);
-> >>>-	/* Ack all interrupt bits. */
-> >>>-	writel(irq_received, bus->base + ASPEED_I2C_INTR_STS_REG);
-> >>>  	spin_unlock(&bus->lock);
-> >>>  	return irq_remaining ? IRQ_NONE : IRQ_HANDLED;
-> >>>  }
-> >>>
-> >>
-> >>My intention of putting the code at the end of interrupt handler was,
-> >>to reduce possibility of combined irq calls which is explained in this
-> >>patch. But YES, I agree with you. It could make a potential race
-> >
-> >Hmm, yes, but that doesn't explain why it would make sense to acknowledge
-> >the interrupt late. The interrupt ack only means "I am going to handle these
-> >interrupts". If additional interrupts arrive while the interrupt handler
-> >is active, those will have to be acknowledged separately.
-> >
-> >Sure, there is a risk that an interrupt arrives while the handler is
-> >running, and that it is handled but not acknowledged. That can happen
-> >with pretty much all interrupt handlers, and there are mitigations to
-> >limit the impact (for example, read the interrupt status register in
-> >a loop until no more interrupts are pending). But acknowledging
-> >an interrupt that was possibly not handled is always bad idea.
+On 12/09/2018 17:08:53+0200, Arnd Bergmann wrote:
+> We no longer need the rtc compat handling to be in common code, now that
+> all drivers are either moved to the rtc-class framework, or (rarely)
+> exist in drivers/char for architectures without compat mode (m68k,
+> alpha and ia64, respectively).
 > 
-> Well, that's generally right but not always. Sometimes that depends on
-> hardware and Aspeed I2C is the case.
+> I checked the list of ioctl commands in drivers, and the ones that are
+> not already handled are all compatible, again with the one exception of
+> m68k driver, which implements RTC_PLL_GET and RTC_PLL_SET, but has no
+> compat mode.
 > 
-> This is a description from Aspeed AST2500 datasheet:
->   I2CD10 Interrupt Status Register
->   bit 2 Receive Done Interrupt status
->         S/W needs to clear this status bit to allow next data receiving.
+> Since the ioctl commands are either compatible or differ in both structure
+> and command code between 32-bit and 64-bit, we can merge the compat
+> handler into the native one and just implement the two common compat
+> commands (RTC_IRQP_READ, RTC_IRQP_SET) there.
 > 
-> It means, driver should hold this bit to prevent transition of hardware
-> state machine until the driver handles received data, so the bit should
-> be cleared at the end of interrupt handler.
+> The old conversion handler also deals with RTC_EPOCH_READ and
+> RTC_EPOCH_SET, which are not handled in rtc-dev.c but only in
+> a single device driver (rtc-vr41xx), so I'm adding the compat
+> version in the same place. I don't expect other drivers to need
+> those commands in the future.
 > 
-That makes sense. Does that apply to the other status bits as well ?
-Reason for asking is that the current code actually gets stuck
-in transmit, not receive.
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-Thanks,
-Guenter
+> ---
+> v2: merge compat handler into ioctl function to avoid the
+>     compat_alloc_user_space() roundtrip, based on feedback
+>     from Al Viro.
+> ---
+>  drivers/rtc/rtc-dev.c    | 13 +++++++++-
+>  drivers/rtc/rtc-vr41xx.c | 10 ++++++++
+>  fs/compat_ioctl.c        | 54 ----------------------------------------
+>  3 files changed, 22 insertions(+), 55 deletions(-)
+> 
+> diff --git a/drivers/rtc/rtc-dev.c b/drivers/rtc/rtc-dev.c
+> index 43d962a9c210..ccd5b1795e20 100644
+> --- a/drivers/rtc/rtc-dev.c
+> +++ b/drivers/rtc/rtc-dev.c
+> @@ -13,6 +13,7 @@
+>  
+>  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+>  
+> +#include <linux/compat.h>
+>  #include <linux/module.h>
+>  #include <linux/rtc.h>
+>  #include <linux/sched/signal.h>
+> @@ -364,10 +365,19 @@ static long rtc_dev_ioctl(struct file *file,
+>  		mutex_unlock(&rtc->ops_lock);
+>  		return rtc_update_irq_enable(rtc, 0);
+>  
+> +#ifdef CONFIG_COMPAT
+> +#define RTC_IRQP_SET32		_IOW('p', 0x0c, compat_ulong_t)
+> +#define RTC_IRQP_READ32		_IOR('p', 0x0b, compat_ulong_t)
+> +	case RTC_IRQP_SET32:
+> +		err = rtc_irq_set_freq(rtc, arg);
+> +		break;
+> +	case RTC_IRQP_READ32:
+> +		err = put_user(rtc->irq_freq, (unsigned int __user *)uarg);
+> +		break;
+> +#endif
+>  	case RTC_IRQP_SET:
+>  		err = rtc_irq_set_freq(rtc, arg);
+>  		break;
+> -
+>  	case RTC_IRQP_READ:
+>  		err = put_user(rtc->irq_freq, (unsigned long __user *)uarg);
+>  		break;
+> @@ -439,6 +449,7 @@ static const struct file_operations rtc_dev_fops = {
+>  	.read		= rtc_dev_read,
+>  	.poll		= rtc_dev_poll,
+>  	.unlocked_ioctl	= rtc_dev_ioctl,
+> +	.compat_ioctl	= generic_compat_ioctl_ptrarg,
+>  	.open		= rtc_dev_open,
+>  	.release	= rtc_dev_release,
+>  	.fasync		= rtc_dev_fasync,
+> diff --git a/drivers/rtc/rtc-vr41xx.c b/drivers/rtc/rtc-vr41xx.c
+> index 70f013e692b0..1d90bde59d21 100644
+> --- a/drivers/rtc/rtc-vr41xx.c
+> +++ b/drivers/rtc/rtc-vr41xx.c
+> @@ -17,6 +17,7 @@
+>   *  along with this program; if not, write to the Free Software
+>   *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+>   */
+> +#include <linux/compat.h>
+>  #include <linux/err.h>
+>  #include <linux/fs.h>
+>  #include <linux/init.h>
+> @@ -79,6 +80,10 @@ static void __iomem *rtc2_base;
+>  #define rtc2_read(offset)		readw(rtc2_base + (offset))
+>  #define rtc2_write(offset, value)	writew((value), rtc2_base + (offset))
+>  
+> +/* 32-bit compat for ioctls that nobody else uses */
+> +#define RTC_EPOCH_READ32	_IOR('p', 0x0d, compat_ulong_t)
+> +#define RTC_EPOCH_SET32		_IOW('p', 0x0e, compat_ulong_t)
+> +
+>  static unsigned long epoch = 1970;	/* Jan 1 1970 00:00:00 */
+>  
+>  static DEFINE_SPINLOCK(rtc_lock);
+> @@ -195,6 +200,11 @@ static int vr41xx_rtc_ioctl(struct device *dev, unsigned int cmd, unsigned long
+>  	switch (cmd) {
+>  	case RTC_EPOCH_READ:
+>  		return put_user(epoch, (unsigned long __user *)arg);
+> +#ifdef CONFIG_COMPAT
+> +	case RTC_EPOCH_READ32:
+> +		return put_user(epoch, (unsigned int __user *)arg);
+> +	case RTC_EPOCH_SET32:
+> +#endif
+>  	case RTC_EPOCH_SET:
+>  		/* Doesn't support before 1900 */
+>  		if (arg < 1900)
+> diff --git a/fs/compat_ioctl.c b/fs/compat_ioctl.c
+> index 2d7c7e149083..312b52b4e974 100644
+> --- a/fs/compat_ioctl.c
+> +++ b/fs/compat_ioctl.c
+> @@ -46,7 +46,6 @@
+>  #include <linux/raw.h>
+>  #include <linux/blkdev.h>
+>  #include <linux/elevator.h>
+> -#include <linux/rtc.h>
+>  #include <linux/pci.h>
+>  #include <linux/serial.h>
+>  #include <linux/if_tun.h>
+> @@ -633,37 +632,6 @@ static int serial_struct_ioctl(struct file *file,
+>          return err;
+>  }
+>  
+> -#define RTC_IRQP_READ32		_IOR('p', 0x0b, compat_ulong_t)
+> -#define RTC_IRQP_SET32		_IOW('p', 0x0c, compat_ulong_t)
+> -#define RTC_EPOCH_READ32	_IOR('p', 0x0d, compat_ulong_t)
+> -#define RTC_EPOCH_SET32		_IOW('p', 0x0e, compat_ulong_t)
+> -
+> -static int rtc_ioctl(struct file *file,
+> -		unsigned cmd, void __user *argp)
+> -{
+> -	unsigned long __user *valp = compat_alloc_user_space(sizeof(*valp));
+> -	int ret;
+> -
+> -	if (valp == NULL)
+> -		return -EFAULT;
+> -	switch (cmd) {
+> -	case RTC_IRQP_READ32:
+> -	case RTC_EPOCH_READ32:
+> -		ret = do_ioctl(file, (cmd == RTC_IRQP_READ32) ?
+> -					RTC_IRQP_READ : RTC_EPOCH_READ,
+> -					(unsigned long)valp);
+> -		if (ret)
+> -			return ret;
+> -		return convert_in_user(valp, (unsigned int __user *)argp);
+> -	case RTC_IRQP_SET32:
+> -		return do_ioctl(file, RTC_IRQP_SET, (unsigned long)argp);
+> -	case RTC_EPOCH_SET32:
+> -		return do_ioctl(file, RTC_EPOCH_SET, (unsigned long)argp);
+> -	}
+> -
+> -	return -ENOIOCTLCMD;
+> -}
+> -
+>  /* on ia32 l_start is on a 32-bit boundary */
+>  #if defined(CONFIG_IA64) || defined(CONFIG_X86_64)
+>  struct space_resv_32 {
+> @@ -816,21 +784,6 @@ COMPATIBLE_IOCTL(SCSI_IOCTL_GET_PCI)
+>  /* Big V (don't complain on serial console) */
+>  IGNORE_IOCTL(VT_OPENQRY)
+>  IGNORE_IOCTL(VT_GETMODE)
+> -/* Little p (/dev/rtc, /dev/envctrl, etc.) */
+> -COMPATIBLE_IOCTL(RTC_AIE_ON)
+> -COMPATIBLE_IOCTL(RTC_AIE_OFF)
+> -COMPATIBLE_IOCTL(RTC_UIE_ON)
+> -COMPATIBLE_IOCTL(RTC_UIE_OFF)
+> -COMPATIBLE_IOCTL(RTC_PIE_ON)
+> -COMPATIBLE_IOCTL(RTC_PIE_OFF)
+> -COMPATIBLE_IOCTL(RTC_WIE_ON)
+> -COMPATIBLE_IOCTL(RTC_WIE_OFF)
+> -COMPATIBLE_IOCTL(RTC_ALM_SET)
+> -COMPATIBLE_IOCTL(RTC_ALM_READ)
+> -COMPATIBLE_IOCTL(RTC_RD_TIME)
+> -COMPATIBLE_IOCTL(RTC_SET_TIME)
+> -COMPATIBLE_IOCTL(RTC_WKALM_SET)
+> -COMPATIBLE_IOCTL(RTC_WKALM_RD)
+>  /*
+>   * These two are only for the sbus rtc driver, but
+>   * hwclock tries them on every rtc device first when
+> @@ -1307,13 +1260,6 @@ static long do_ioctl_trans(unsigned int cmd,
+>  	case TIOCGSERIAL:
+>  	case TIOCSSERIAL:
+>  		return serial_struct_ioctl(file, cmd, argp);
+> -	/* Not implemented in the native kernel */
+> -	case RTC_IRQP_READ32:
+> -	case RTC_IRQP_SET32:
+> -	case RTC_EPOCH_READ32:
+> -	case RTC_EPOCH_SET32:
+> -		return rtc_ioctl(file, cmd, argp);
+> -
+>  	/* dvb */
+>  	case VIDEO_GET_EVENT:
+>  		return do_video_get_event(file, cmd, argp);
+> -- 
+> 2.18.0
+> 
+
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
