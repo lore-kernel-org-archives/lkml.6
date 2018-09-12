@@ -2,77 +2,55 @@ Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF982C4646A
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 04:58:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7745C4646A
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 05:03:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B5E820839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 04:58:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rI9ZxGNq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B5E820839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id 6331620880
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 05:03:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6331620880
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726642AbeILKBe (ORCPT
+        id S1726359AbeILKGG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 06:01:34 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:38687 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726073AbeILKBe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 06:01:34 -0400
-Received: by mail-pf1-f193.google.com with SMTP id x17-v6so382003pfh.5;
-        Tue, 11 Sep 2018 21:58:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=pCPl6VdbXdq/0aEWzW2wUZ3z9/BeDtwpNC0lheZ+VrY=;
-        b=rI9ZxGNqWiOxplPJC6zvh/Mo/DyV9qowVenZCMBNZPDe6mql8ENGEFfpqfrPmfR9xs
-         zbwI4M5JKQPoC6v5WouA3Q8R5z0jktX0Bu77YMB9rUEBG2BEo5nAZ2vtDFPOh8+SAaDC
-         vbuA71a8vwSGUQOMLpDRpjEurvJLYd0DWTa58HgxnDhq6PRcvImo3rjUKL83TAeAU4Hm
-         gwVnGggVqzRV/hL5BEioakELrrxzGhM93FeOu8E5rY/MdBYZpFGKLRTBujbtAGv6YlvX
-         wcF4TAnDeRWUeb29Hq5ZnzanX7cj5/rRhxkRAklV+kE0NysVRP6L5VRmNH3FQhz2+ZtG
-         KcYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=pCPl6VdbXdq/0aEWzW2wUZ3z9/BeDtwpNC0lheZ+VrY=;
-        b=DNySQWPcFOCSuZhXhRDPEapLN3vXQiC4s4vcc4kaOO930kMfTeqsQxWA0k/sfBqA+1
-         tgUkqaBk3YFetHdS/2R4ep6Sv83lDvkcCrETMVQcLq7KLZk+D96Aw36poqjrlVSKnb3r
-         LJTRLpLSkrUDyCEdstxPxF7UUKFNeMrI9wsnd1+aQP4PyEFRsUlPVB5yzZntGgjQGZks
-         PmLZa7TL7KrK/ibM8AHIpAGSCa8IyFM021awtcAI2x/H/OtpgW65pRVEEdBt4eOBf603
-         dvN94siznXPSjEcNPbFg5Hle6XJou1EDRv3vz4KPtvkow4Bnvd3CDCErQLGsPxCj1E9g
-         lZdA==
-X-Gm-Message-State: APzg51AdH8zXWkLeXCFr6wZm6TSSYyru9pXh6Wop/CsYi1V1J3PDPdRK
-        3mW0Cwa/Se8Nv4DrfmFdFbP5aCGB
-X-Google-Smtp-Source: ANB0VdYe1plpMxCDjIxdTFqGzLF3rL+f4x++gmMEI8BvGfVYFu4mI3DCjAuHWDY5KJ2FeqbgKVkF6g==
-X-Received: by 2002:a63:cd4c:: with SMTP id a12-v6mr90790pgj.15.1536728330452;
-        Tue, 11 Sep 2018 21:58:50 -0700 (PDT)
-Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id m15-v6sm33904413pfk.149.2018.09.11.21.58.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Sep 2018 21:58:49 -0700 (PDT)
-Subject: Re: [PATCH] firmware: vpd: fix spelling mistake "partion" ->
- "partition"
-To:     Colin King <colin.king@canonical.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180911165858.3015-1-colin.king@canonical.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <50220bc9-326f-7a93-fecb-9b67fbac98b9@roeck-us.net>
-Date:   Tue, 11 Sep 2018 21:58:48 -0700
+        Wed, 12 Sep 2018 06:06:06 -0400
+Received: from mga18.intel.com ([134.134.136.126]:8843 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725738AbeILKGG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Sep 2018 06:06:06 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Sep 2018 22:03:21 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,363,1531810800"; 
+   d="scan'208";a="69321952"
+Received: from allen-box.sh.intel.com (HELO [10.239.161.122]) ([10.239.161.122])
+  by fmsmga007.fm.intel.com with ESMTP; 11 Sep 2018 22:03:11 -0700
+Cc:     baolu.lu@linux.intel.com, kevin.tian@intel.com,
+        ashok.raj@intel.com, tiwei.bie@intel.com, sanjay.k.kumar@intel.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        yi.y.sun@intel.com, jacob.jun.pan@intel.com, kvm@vger.kernel.org
+Subject: Re: [RFC PATCH v2 08/10] vfio/type1: Add domain at(de)taching group
+ helpers
+To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Kirti Wankhede <kwankhede@nvidia.com>
+References: <20180830040922.30426-1-baolu.lu@linux.intel.com>
+ <20180830040922.30426-9-baolu.lu@linux.intel.com>
+ <c5124ac1-65fe-7f89-265c-bef229bc5ce9@arm.com>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <a97c8f75-ff49-5b87-198f-d3c8950d4e90@linux.intel.com>
+Date:   Wed, 12 Sep 2018 13:02:00 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180911165858.3015-1-colin.king@canonical.com>
+In-Reply-To: <c5124ac1-65fe-7f89-265c-bef229bc5ce9@arm.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -81,36 +59,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/11/2018 09:58 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in comment
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Hi,
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-
-Interesting - drivers/firmware/google/ does not have a maintainer.
-Greg - is it correct to assume that you are the de-facto maintainer ?
-
-Guenter
-
-> ---
->   drivers/firmware/google/vpd.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+On 09/11/2018 12:23 AM, Jean-Philippe Brucker wrote:
+> On 30/08/2018 05:09, Lu Baolu wrote:
+>> +static int vfio_detach_aux_domain(struct device *dev, void *data)
+>> +{
+>> +	struct iommu_domain *domain = data;
+>> +
+>> +	vfio_mdev_set_aux_domain(dev, NULL);
+>> +	iommu_detach_device(domain, dev->parent);
 > 
-> diff --git a/drivers/firmware/google/vpd.c b/drivers/firmware/google/vpd.c
-> index 1aa67bb5d8c0..c0c0b4e4e281 100644
-> --- a/drivers/firmware/google/vpd.c
-> +++ b/drivers/firmware/google/vpd.c
-> @@ -198,7 +198,7 @@ static int vpd_section_init(const char *name, struct vpd_section *sec,
->   
->   	sec->name = name;
->   
-> -	/* We want to export the raw partion with name ${name}_raw */
-> +	/* We want to export the raw partition with name ${name}_raw */
->   	sec->raw_name = kasprintf(GFP_KERNEL, "%s_raw", name);
->   	if (!sec->raw_name) {
->   		err = -ENOMEM;
+> I think that's only going to work for vt-d, which doesn't use a
+> default_domain. For other drivers, iommu.c ends up calling
+> domain->ops->attach_dev(default_domain, dev) here, which isn't what we want.
+
+This doesn't break any functionality. It takes effect only if iommu
+hardware supports finer granular translation and advertises it through
+the API.
+
 > 
+> That was my concern with reusing attach/detach_dev callbacks for PASID
+> management. The attach_dev code of IOMMU drivers already has to deal
+> with toggling between default and unmanaged domain. Dealing with more
+> state transitions in the same path is going to be difficult.
+
+Let's consider it from the API point of view.
+
+We have iommu_a(de)ttach_device() APIs to attach or detach a domain
+to/from a device. We should avoid applying a limitation of "these are
+only for single domain case, for multiple domains, use another API".
+
+Best regards,
+Lu Baolu
 
