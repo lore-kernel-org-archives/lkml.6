@@ -6,34 +6,41 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48DD0C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:42:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A48DC07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:42:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CCFD20854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:42:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CCFD20854
+	by mail.kernel.org (Postfix) with ESMTP id 2CC9920854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:42:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CC9920854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729769AbeIMSwG (ORCPT
+        id S1729777AbeIMSwK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:52:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60194 "EHLO
+        Thu, 13 Sep 2018 14:52:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60202 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728637AbeIMSwG (ORCPT
+        with ESMTP id S1728637AbeIMSwK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:52:06 -0400
+        Thu, 13 Sep 2018 14:52:10 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CFFB2D19;
-        Thu, 13 Sep 2018 13:42:33 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D1D21D19;
+        Thu, 13 Sep 2018 13:42:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stephen Hemminger <sthemmin@microsoft.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 016/115] hv_netvsc: ignore devices that are not PCI
-Date:   Thu, 13 Sep 2018 15:30:36 +0200
-Message-Id: <20180913131824.514116209@linuxfoundation.org>
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Rik van Riel <riel@redhat.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Kees Cook <keescook@chromium.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 025/115] fork: dont copy inconsistent signal handler state to child
+Date:   Thu, 13 Sep 2018 15:30:45 +0200
+Message-Id: <20180913131825.157447412@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -51,47 +58,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stephen Hemminger <stephen@networkplumber.org>
+From: Jann Horn <jannh@google.com>
 
-[ Upstream commit b93c1b5ac8643cc08bb74fa8ae21d6c63dfcb23d ]
+[ Upstream commit 06e62a46bbba20aa5286102016a04214bb446141 ]
 
-Registering another device with same MAC address (such as TAP, VPN or
-DPDK KNI) will confuse the VF autobinding logic.  Restrict the search
-to only run if the device is known to be a PCI attached VF.
+Before this change, if a multithreaded process forks while one of its
+threads is changing a signal handler using sigaction(), the memcpy() in
+copy_sighand() can race with the struct assignment in do_sigaction().  It
+isn't clear whether this can cause corruption of the userspace signal
+handler pointer, but it definitely can cause inconsistency between
+different fields of struct sigaction.
 
-Fixes: e8ff40d4bff1 ("hv_netvsc: improve VF device matching")
-Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Take the appropriate spinlock to avoid this.
+
+I have tested that this patch prevents inconsistency between sa_sigaction
+and sa_flags, which is possible before this patch.
+
+Link: http://lkml.kernel.org/r/20180702145108.73189-1-jannh@google.com
+Signed-off-by: Jann Horn <jannh@google.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Rik van Riel <riel@redhat.com>
+Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/hyperv/netvsc_drv.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ kernel/fork.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/net/hyperv/netvsc_drv.c
-+++ b/drivers/net/hyperv/netvsc_drv.c
-@@ -29,6 +29,7 @@
- #include <linux/netdevice.h>
- #include <linux/inetdevice.h>
- #include <linux/etherdevice.h>
-+#include <linux/pci.h>
- #include <linux/skbuff.h>
- #include <linux/if_vlan.h>
- #include <linux/in.h>
-@@ -1895,11 +1896,15 @@ static int netvsc_register_vf(struct net
- {
- 	struct net_device *ndev;
- 	struct net_device_context *net_device_ctx;
-+	struct device *pdev = vf_netdev->dev.parent;
- 	struct netvsc_device *netvsc_dev;
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1350,7 +1350,9 @@ static int copy_sighand(unsigned long cl
+ 		return -ENOMEM;
  
- 	if (vf_netdev->addr_len != ETH_ALEN)
- 		return NOTIFY_DONE;
+ 	atomic_set(&sig->count, 1);
++	spin_lock_irq(&current->sighand->siglock);
+ 	memcpy(sig->action, current->sighand->action, sizeof(sig->action));
++	spin_unlock_irq(&current->sighand->siglock);
+ 	return 0;
+ }
  
-+	if (!pdev || !dev_is_pci(pdev) || dev_is_pf(pdev))
-+		return NOTIFY_DONE;
-+
- 	/*
- 	 * We will use the MAC address to locate the synthetic interface to
- 	 * associate with the VF interface. If we don't find a matching
 
 
