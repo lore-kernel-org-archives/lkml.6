@@ -2,87 +2,89 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51F38FA374E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 373F1FA3742
 	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 17:35:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DFCF2177C
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 17:05:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DFCF2177C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C41372170B
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 16:42:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C41372170B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728462AbeIMWQI (ORCPT
+        id S1728323AbeIMVxC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 18:16:08 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:47112 "EHLO mx1.redhat.com"
+        Thu, 13 Sep 2018 17:53:02 -0400
+Received: from foss.arm.com ([217.140.101.70]:51132 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727082AbeIMWQH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 18:16:07 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7FA543082B71;
-        Thu, 13 Sep 2018 17:05:45 +0000 (UTC)
-Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 26AA0608E0;
-        Thu, 13 Sep 2018 17:05:42 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     kvm@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Jim Mattson <jmattson@google.com>,
-        Liran Alon <liran.alon@oracle.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v5 07/12] x86/kvm/hyperv: don't clear VP assist pages on init
-Date:   Thu, 13 Sep 2018 19:05:17 +0200
-Message-Id: <20180913170522.24876-8-vkuznets@redhat.com>
-In-Reply-To: <20180913170522.24876-1-vkuznets@redhat.com>
-References: <20180913170522.24876-1-vkuznets@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Thu, 13 Sep 2018 17:05:45 +0000 (UTC)
+        id S1726452AbeIMVxB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 17:53:01 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 840251596;
+        Thu, 13 Sep 2018 09:42:44 -0700 (PDT)
+Received: from e110467-lin.cambridge.arm.com (e110467-lin.emea.arm.com [10.4.12.131])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B96DF3F703;
+        Thu, 13 Sep 2018 09:42:42 -0700 (PDT)
+From:   Robin Murphy <robin.murphy@arm.com>
+To:     joro@8bytes.org, will.deacon@arm.com, thunder.leizhen@huawei.com,
+        iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     linuxarm@huawei.com, guohanjun@huawei.com, huawei.libin@huawei.com,
+        john.garry@huawei.com
+Subject: [PATCH v6 4/7] iommu/io-pgtable: Add helper for toggling non-strict mode
+Date:   Thu, 13 Sep 2018 17:42:21 +0100
+Message-Id: <63a2a074219ff045c4616b9f5680d0dd9e922b59.1536856828.git.robin.murphy@arm.com>
+X-Mailer: git-send-email 2.19.0.dirty
+In-Reply-To: <cover.1536856828.git.robin.murphy@arm.com>
+References: <cover.1536856828.git.robin.murphy@arm.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VP assist pages may hold valuable data which needs to be preserved across
-migration. Clean PV EOI portion of the data on init, the guest is
-responsible for making sure there's no garbage in the rest.
+Since this might become a repeated idiom in drivers, let's add a tidy
+encapsulation from the outset.
 
-This will be used for nVMX migration, eVMCS address needs to be preserved.
-
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Robin Murphy <robin.murphy@arm.com>
 ---
- arch/x86/kvm/hyperv.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/iommu/io-pgtable.c | 9 +++++++++
+ drivers/iommu/io-pgtable.h | 1 +
+ 2 files changed, 10 insertions(+)
 
-diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
-index b1655d01c368..ae3e2e0de680 100644
---- a/arch/x86/kvm/hyperv.c
-+++ b/arch/x86/kvm/hyperv.c
-@@ -1080,7 +1080,13 @@ static int kvm_hv_set_msr(struct kvm_vcpu *vcpu, u32 msr, u64 data, bool host)
- 		addr = kvm_vcpu_gfn_to_hva(vcpu, gfn);
- 		if (kvm_is_error_hva(addr))
- 			return 1;
--		if (__clear_user((void __user *)addr, PAGE_SIZE))
+diff --git a/drivers/iommu/io-pgtable.c b/drivers/iommu/io-pgtable.c
+index 127558d83667..af9abe52cf06 100644
+--- a/drivers/iommu/io-pgtable.c
++++ b/drivers/iommu/io-pgtable.c
+@@ -77,3 +77,12 @@ void free_io_pgtable_ops(struct io_pgtable_ops *ops)
+ 	io_pgtable_tlb_flush_all(iop);
+ 	io_pgtable_init_table[iop->fmt]->free(iop);
+ }
 +
-+		/*
-+		 * Clear apic_assist portion of f(struct hv_vp_assist_page
-+		 * only, there can be valuable data in the rest which needs
-+		 * to be preserved e.g. on migration.
-+		 */
-+		if (__clear_user((void __user *)addr, sizeof(u32)))
- 			return 1;
- 		hv->hv_vapic = data;
- 		kvm_vcpu_mark_page_dirty(vcpu, gfn);
++void io_pgtable_set_non_strict(struct io_pgtable_ops *ops, bool val) {
++	struct io_pgtable *iop = io_pgtable_ops_to_pgtable(ops);
++
++	if (val)
++		iop->cfg.quirks |= IO_PGTABLE_QUIRK_NON_STRICT;
++	else
++		iop->cfg.quirks &= ~IO_PGTABLE_QUIRK_NON_STRICT;
++}
+diff --git a/drivers/iommu/io-pgtable.h b/drivers/iommu/io-pgtable.h
+index 47d5ae559329..0602a132655c 100644
+--- a/drivers/iommu/io-pgtable.h
++++ b/drivers/iommu/io-pgtable.h
+@@ -153,6 +153,7 @@ struct io_pgtable_ops *alloc_io_pgtable_ops(enum io_pgtable_fmt fmt,
+  */
+ void free_io_pgtable_ops(struct io_pgtable_ops *ops);
+ 
++void io_pgtable_set_non_strict(struct io_pgtable_ops *ops, bool val);
+ 
+ /*
+  * Internal structures for page table allocator implementations.
 -- 
-2.14.4
+2.19.0.dirty
 
