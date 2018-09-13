@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F1E4C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:03:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A32BFC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:03:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E597820652
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:03:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E597820652
+	by mail.kernel.org (Postfix) with ESMTP id 66B1320652
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:03:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66B1320652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732048AbeIMTNZ (ORCPT
+        id S1732059AbeIMTN2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:13:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35330 "EHLO
+        Thu, 13 Sep 2018 15:13:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35334 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728556AbeIMTNY (ORCPT
+        with ESMTP id S1728556AbeIMTN1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:13:24 -0400
+        Thu, 13 Sep 2018 15:13:27 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3536CD32;
-        Thu, 13 Sep 2018 14:03:45 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6DDD2D2E;
+        Thu, 13 Sep 2018 14:03:48 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mikita Lipski <mikita.lipski@amd.com>,
-        Charlene Liu <Charlene.Liu@amd.com>,
-        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.18 166/197] drm/amd/display: update clk for various HDMI color depths
-Date:   Thu, 13 Sep 2018 15:31:55 +0200
-Message-Id: <20180913131848.199588449@linuxfoundation.org>
+        stable@vger.kernel.org, Anand Jain <anand.jain@oracle.com>,
+        David Sterba <dsterba@suse.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.18 149/197] btrfs: lift uuid_mutex to callers of btrfs_parse_early_options
+Date:   Thu, 13 Sep 2018 15:31:38 +0200
+Message-Id: <20180913131847.511999376@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -53,57 +52,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mikita Lipski <mikita.lipski@amd.com>
+From: David Sterba <dsterba@suse.com>
 
-commit 81aca8e75c1b046865fb2badef95a0dcff6f73de upstream.
+[ Upstream commit 5139cff598d42b1e531f40c84691a7e945f04553 ]
 
-[why]
-When programming tonga's connector's backend we didn't take
-in account that HDMI's colour depth might be more than 8bpc
-therefore we need to add a switch statement that would adjust
-the pixel clock accordingly.
+Prepartory work to fix race between mount and device scan.
 
-[how]
-Add a switch statement updating clock by its appropriate
-coefficient.
+btrfs_parse_early_options calls the device scan from mount and we'll
+need to let mount completely manage the critical section.
 
-Signed-off-by: Mikita Lipski <mikita.lipski@amd.com>
-Reviewed-by: Charlene Liu <Charlene.Liu@amd.com>
-Acked-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Cc: stable@vger.kernel.org
+Reviewed-by: Anand Jain <anand.jain@oracle.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/gpu/drm/amd/display/dc/bios/command_table.c |   18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ fs/btrfs/super.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/amd/display/dc/bios/command_table.c
-+++ b/drivers/gpu/drm/amd/display/dc/bios/command_table.c
-@@ -808,6 +808,24 @@ static enum bp_result transmitter_contro
- 	 * (=1: 8bpp, =1.25: 10bpp, =1.5:12bpp, =2: 16bpp)
- 	 * LVDS mode: usPixelClock = pixel clock
- 	 */
-+	if  (cntl->signal == SIGNAL_TYPE_HDMI_TYPE_A) {
-+		switch (cntl->color_depth) {
-+		case COLOR_DEPTH_101010:
-+			params.usSymClock =
-+				cpu_to_le16((le16_to_cpu(params.usSymClock) * 30) / 24);
-+			break;
-+		case COLOR_DEPTH_121212:
-+			params.usSymClock =
-+				cpu_to_le16((le16_to_cpu(params.usSymClock) * 36) / 24);
-+			break;
-+		case COLOR_DEPTH_161616:
-+			params.usSymClock =
-+				cpu_to_le16((le16_to_cpu(params.usSymClock) * 48) / 24);
-+			break;
-+		default:
-+			break;
-+		}
-+	}
+--- a/fs/btrfs/super.c
++++ b/fs/btrfs/super.c
+@@ -892,6 +892,8 @@ static int btrfs_parse_early_options(con
+ 	char *device_name, *opts, *orig, *p;
+ 	int error = 0;
  
- 	if (EXEC_BIOS_CMD_TABLE(UNIPHYTransmitterControl, params))
- 		result = BP_RESULT_OK;
++	lockdep_assert_held(&uuid_mutex);
++
+ 	if (!options)
+ 		return 0;
+ 
+@@ -917,10 +919,8 @@ static int btrfs_parse_early_options(con
+ 				error = -ENOMEM;
+ 				goto out;
+ 			}
+-			mutex_lock(&uuid_mutex);
+ 			error = btrfs_scan_one_device(device_name,
+ 					flags, holder, fs_devices);
+-			mutex_unlock(&uuid_mutex);
+ 			kfree(device_name);
+ 			if (error)
+ 				goto out;
+@@ -1528,8 +1528,10 @@ static struct dentry *btrfs_mount_root(s
+ 	if (!(flags & SB_RDONLY))
+ 		mode |= FMODE_WRITE;
+ 
++	mutex_lock(&uuid_mutex);
+ 	error = btrfs_parse_early_options(data, mode, fs_type,
+ 					  &fs_devices);
++	mutex_unlock(&uuid_mutex);
+ 	if (error) {
+ 		return ERR_PTR(error);
+ 	}
 
 
