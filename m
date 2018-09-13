@@ -6,35 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AE41C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:49:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70B20C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:49:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15D7620854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:49:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15D7620854
+	by mail.kernel.org (Postfix) with ESMTP id 368A620854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:49:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 368A620854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730174AbeIMS7W (ORCPT
+        id S1730421AbeIMS71 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:59:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33038 "EHLO
+        Thu, 13 Sep 2018 14:59:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33052 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728253AbeIMS7V (ORCPT
+        with ESMTP id S1730146AbeIMS70 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:59:21 -0400
+        Thu, 13 Sep 2018 14:59:26 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9C280CFE;
-        Thu, 13 Sep 2018 13:49:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7BF86CFE;
+        Thu, 13 Sep 2018 13:49:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, James Zhu <James.Zhu@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Huang Rui <ray.huang@amd.com>, Likun Gao <Likun.Gao@amd.com>
-Subject: [PATCH 4.14 094/115] drm/amdgpu:add VCN booting with firmware loaded by PSP
-Date:   Thu, 13 Sep 2018 15:31:54 +0200
-Message-Id: <20180913131829.246468494@linuxfoundation.org>
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mat Martineau <mathew.j.martineau@linux.intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 095/115] uapi/linux/keyctl.h: dont use C++ reserved keyword as a struct member name
+Date:   Thu, 13 Sep 2018 15:31:55 +0200
+Message-Id: <20180913131829.298662284@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -52,126 +56,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Likun Gao <Likun.Gao@amd.com>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-commit 4d77c0f676e910fb1f1870738aa4bd168f253621 upstream.
+commit 8a2336e549d385bb0b46880435b411df8d8200e8 upstream.
 
-Setup psp firmware loading for VCN, and make VCN block
-booting from tmr mac address.
+Since this header is in "include/uapi/linux/", apparently people want to
+use it in userspace programs -- even in C++ ones.  However, the header
+uses a C++ reserved keyword ("private"), so change that to "dh_private"
+instead to allow the header file to be used in C++ userspace.
 
-Signed-off-by: James Zhu <James.Zhu@amd.com>
-Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
-Acked-by: Huang Rui <ray.huang@amd.com>
-Reviewed-by: Likun Gao <Likun.Gao@amd.com>
-Signed-off-by: Likun Gao <Likun.Gao@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Cc: stable@vger.kernel.org
+Fixes https://bugzilla.kernel.org/show_bug.cgi?id=191051
+Link: http://lkml.kernel.org/r/0db6c314-1ef4-9bfa-1baa-7214dd2ee061@infradead.org
+Fixes: ddbb41148724 ("KEYS: Add KEYCTL_DH_COMPUTE command")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: David Howells <dhowells@redhat.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: Mat Martineau <mathew.j.martineau@linux.intel.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c |   17 ++++++++------
- drivers/gpu/drm/amd/amdgpu/vcn_v1_0.c   |   38 +++++++++++++++++++++++++-------
- 2 files changed, 40 insertions(+), 15 deletions(-)
+ include/uapi/linux/keyctl.h |    2 +-
+ security/keys/dh.c          |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c
-@@ -93,9 +93,10 @@ int amdgpu_vcn_sw_init(struct amdgpu_dev
- 		version_major, version_minor, family_id);
+--- a/include/uapi/linux/keyctl.h
++++ b/include/uapi/linux/keyctl.h
+@@ -65,7 +65,7 @@
  
- 
--	bo_size = AMDGPU_GPU_PAGE_ALIGN(le32_to_cpu(hdr->ucode_size_bytes) + 8)
--		  +  AMDGPU_VCN_STACK_SIZE + AMDGPU_VCN_HEAP_SIZE
-+	bo_size = AMDGPU_VCN_STACK_SIZE + AMDGPU_VCN_HEAP_SIZE
- 		  +  AMDGPU_VCN_SESSION_SIZE * 40;
-+	if (adev->firmware.load_type != AMDGPU_FW_LOAD_PSP)
-+		bo_size += AMDGPU_GPU_PAGE_ALIGN(le32_to_cpu(hdr->ucode_size_bytes) + 8);
- 	r = amdgpu_bo_create_kernel(adev, bo_size, PAGE_SIZE,
- 				    AMDGPU_GEM_DOMAIN_VRAM, &adev->vcn.vcpu_bo,
- 				    &adev->vcn.gpu_addr, &adev->vcn.cpu_addr);
-@@ -191,11 +192,13 @@ int amdgpu_vcn_resume(struct amdgpu_devi
- 		unsigned offset;
- 
- 		hdr = (const struct common_firmware_header *)adev->vcn.fw->data;
--		offset = le32_to_cpu(hdr->ucode_array_offset_bytes);
--		memcpy_toio(adev->vcn.cpu_addr, adev->vcn.fw->data + offset,
--			    le32_to_cpu(hdr->ucode_size_bytes));
--		size -= le32_to_cpu(hdr->ucode_size_bytes);
--		ptr += le32_to_cpu(hdr->ucode_size_bytes);
-+		if (adev->firmware.load_type != AMDGPU_FW_LOAD_PSP) {
-+			offset = le32_to_cpu(hdr->ucode_array_offset_bytes);
-+			memcpy_toio(adev->vcn.cpu_addr, adev->vcn.fw->data + offset,
-+				    le32_to_cpu(hdr->ucode_size_bytes));
-+			size -= le32_to_cpu(hdr->ucode_size_bytes);
-+			ptr += le32_to_cpu(hdr->ucode_size_bytes);
-+		}
- 		memset_io(ptr, 0, size);
+ /* keyctl structures */
+ struct keyctl_dh_params {
+-	__s32 private;
++	__s32 dh_private;
+ 	__s32 prime;
+ 	__s32 base;
+ };
+--- a/security/keys/dh.c
++++ b/security/keys/dh.c
+@@ -307,7 +307,7 @@ long __keyctl_dh_compute(struct keyctl_d
  	}
+ 	dh_inputs.g_size = dlen;
  
---- a/drivers/gpu/drm/amd/amdgpu/vcn_v1_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/vcn_v1_0.c
-@@ -91,6 +91,16 @@ static int vcn_v1_0_sw_init(void *handle
- 	if (r)
- 		return r;
- 
-+	if (adev->firmware.load_type == AMDGPU_FW_LOAD_PSP) {
-+		const struct common_firmware_header *hdr;
-+		hdr = (const struct common_firmware_header *)adev->vcn.fw->data;
-+		adev->firmware.ucode[AMDGPU_UCODE_ID_VCN].ucode_id = AMDGPU_UCODE_ID_VCN;
-+		adev->firmware.ucode[AMDGPU_UCODE_ID_VCN].fw = adev->vcn.fw;
-+		adev->firmware.fw_size +=
-+			ALIGN(le32_to_cpu(hdr->ucode_size_bytes), PAGE_SIZE);
-+		DRM_INFO("PSP loading VCN firmware\n");
-+	}
-+
- 	r = amdgpu_vcn_resume(adev);
- 	if (r)
- 		return r;
-@@ -248,26 +258,38 @@ static int vcn_v1_0_resume(void *handle)
- static void vcn_v1_0_mc_resume(struct amdgpu_device *adev)
- {
- 	uint32_t size = AMDGPU_GPU_PAGE_ALIGN(adev->vcn.fw->size + 4);
-+	uint32_t offset;
- 
--	WREG32_SOC15(UVD, 0, mmUVD_LMI_VCPU_CACHE_64BIT_BAR_LOW,
-+	if (adev->firmware.load_type == AMDGPU_FW_LOAD_PSP) {
-+		WREG32_SOC15(UVD, 0, mmUVD_LMI_VCPU_CACHE_64BIT_BAR_LOW,
-+			     (adev->firmware.ucode[AMDGPU_UCODE_ID_VCN].tmr_mc_addr_lo));
-+		WREG32_SOC15(UVD, 0, mmUVD_LMI_VCPU_CACHE_64BIT_BAR_HIGH,
-+			     (adev->firmware.ucode[AMDGPU_UCODE_ID_VCN].tmr_mc_addr_hi));
-+		WREG32_SOC15(UVD, 0, mmUVD_VCPU_CACHE_OFFSET0, 0);
-+		offset = 0;
-+	} else {
-+		WREG32_SOC15(UVD, 0, mmUVD_LMI_VCPU_CACHE_64BIT_BAR_LOW,
- 			lower_32_bits(adev->vcn.gpu_addr));
--	WREG32_SOC15(UVD, 0, mmUVD_LMI_VCPU_CACHE_64BIT_BAR_HIGH,
-+		WREG32_SOC15(UVD, 0, mmUVD_LMI_VCPU_CACHE_64BIT_BAR_HIGH,
- 			upper_32_bits(adev->vcn.gpu_addr));
--	WREG32_SOC15(UVD, 0, mmUVD_VCPU_CACHE_OFFSET0,
--				AMDGPU_UVD_FIRMWARE_OFFSET >> 3);
-+		offset = size;
-+		WREG32_SOC15(UVD, 0, mmUVD_VCPU_CACHE_OFFSET0,
-+			     AMDGPU_UVD_FIRMWARE_OFFSET >> 3);
-+	}
-+
- 	WREG32_SOC15(UVD, 0, mmUVD_VCPU_CACHE_SIZE0, size);
- 
- 	WREG32_SOC15(UVD, 0, mmUVD_LMI_VCPU_CACHE1_64BIT_BAR_LOW,
--			lower_32_bits(adev->vcn.gpu_addr + size));
-+		     lower_32_bits(adev->vcn.gpu_addr + offset));
- 	WREG32_SOC15(UVD, 0, mmUVD_LMI_VCPU_CACHE1_64BIT_BAR_HIGH,
--			upper_32_bits(adev->vcn.gpu_addr + size));
-+		     upper_32_bits(adev->vcn.gpu_addr + offset));
- 	WREG32_SOC15(UVD, 0, mmUVD_VCPU_CACHE_OFFSET1, 0);
- 	WREG32_SOC15(UVD, 0, mmUVD_VCPU_CACHE_SIZE1, AMDGPU_VCN_HEAP_SIZE);
- 
- 	WREG32_SOC15(UVD, 0, mmUVD_LMI_VCPU_CACHE2_64BIT_BAR_LOW,
--			lower_32_bits(adev->vcn.gpu_addr + size + AMDGPU_VCN_HEAP_SIZE));
-+		     lower_32_bits(adev->vcn.gpu_addr + offset + AMDGPU_VCN_HEAP_SIZE));
- 	WREG32_SOC15(UVD, 0, mmUVD_LMI_VCPU_CACHE2_64BIT_BAR_HIGH,
--			upper_32_bits(adev->vcn.gpu_addr + size + AMDGPU_VCN_HEAP_SIZE));
-+		     upper_32_bits(adev->vcn.gpu_addr + offset + AMDGPU_VCN_HEAP_SIZE));
- 	WREG32_SOC15(UVD, 0, mmUVD_VCPU_CACHE_OFFSET2, 0);
- 	WREG32_SOC15(UVD, 0, mmUVD_VCPU_CACHE_SIZE2,
- 			AMDGPU_VCN_STACK_SIZE + (AMDGPU_VCN_SESSION_SIZE * 40));
+-	dlen = dh_data_from_key(pcopy.private, &dh_inputs.key);
++	dlen = dh_data_from_key(pcopy.dh_private, &dh_inputs.key);
+ 	if (dlen < 0) {
+ 		ret = dlen;
+ 		goto out2;
 
 
