@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB28DC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:51:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 296FEC07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:51:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7854520854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:51:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7854520854
+	by mail.kernel.org (Postfix) with ESMTP id CBE6020854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:51:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBE6020854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730789AbeIMTAn (ORCPT
+        id S1730799AbeIMTAr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:00:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33252 "EHLO
+        Thu, 13 Sep 2018 15:00:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33260 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728484AbeIMTAn (ORCPT
+        with ESMTP id S1730608AbeIMTAq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:00:43 -0400
+        Thu, 13 Sep 2018 15:00:46 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 309D4CFE;
-        Thu, 13 Sep 2018 13:51:08 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4EEA7CFE;
+        Thu, 13 Sep 2018 13:51:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Geoff Alexander <alexandg@cs.unm.edu>,
+        stable@vger.kernel.org, Xin Long <lucien.xin@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 002/197] ipv4: tcp: send zero IPID for RST and ACK sent in SYN-RECV and TIME-WAIT state
-Date:   Thu, 13 Sep 2018 15:29:11 +0200
-Message-Id: <20180913131841.663578061@linuxfoundation.org>
+Subject: [PATCH 4.18 020/197] sctp: remove useless start_fail from sctp_ht_iter in proc
+Date:   Thu, 13 Sep 2018 15:29:29 +0200
+Message-Id: <20180913131842.375718310@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -52,51 +53,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Xin Long <lucien.xin@gmail.com>
 
-[ Upstream commit 431280eebed9f5079553daf003011097763e71fd ]
+[ Upstream commit 834539e69a5fe2aab33cc777ccfd4a4fcc5b9770 ]
 
-tcp uses per-cpu (and per namespace) sockets (net->ipv4.tcp_sk) internally
-to send some control packets.
+After changing rhashtable_walk_start to return void, start_fail would
+never be set other value than 0, and the checking for start_fail is
+pointless, so remove it.
 
-1) RST packets, through tcp_v4_send_reset()
-2) ACK packets in SYN-RECV and TIME-WAIT state, through tcp_v4_send_ack()
-
-These packets assert IP_DF, and also use the hashed IP ident generator
-to provide an IPv4 ID number.
-
-Geoff Alexander reported this could be used to build off-path attacks.
-
-These packets should not be fragmented, since their size is smaller than
-IPV4_MIN_MTU. Only some tunneled paths could eventually have to fragment,
-regardless of inner IPID.
-
-We really can use zero IPID, to address the flaw, and as a bonus,
-avoid a couple of atomic operations in ip_idents_reserve()
-
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: Geoff Alexander <alexandg@cs.unm.edu>
-Tested-by: Geoff Alexander <alexandg@cs.unm.edu>
+Fixes: 97a6ec4ac021 ("rhashtable: Change rhashtable_walk_start to return void")
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Acked-by: Neil Horman <nhorman@tuxdriver.com>
+Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/tcp_ipv4.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ net/sctp/proc.c |    4 ----
+ 1 file changed, 4 deletions(-)
 
---- a/net/ipv4/tcp_ipv4.c
-+++ b/net/ipv4/tcp_ipv4.c
-@@ -2516,6 +2516,12 @@ static int __net_init tcp_sk_init(struct
- 		if (res)
- 			goto fail;
- 		sock_set_flag(sk, SOCK_USE_WRITE_QUEUE);
-+
-+		/* Please enforce IP_DF and IPID==0 for RST and
-+		 * ACK sent in SYN-RECV and TIME-WAIT state.
-+		 */
-+		inet_sk(sk)->pmtudisc = IP_PMTUDISC_DO;
-+
- 		*per_cpu_ptr(net->ipv4.tcp_sk, cpu) = sk;
- 	}
+--- a/net/sctp/proc.c
++++ b/net/sctp/proc.c
+@@ -215,7 +215,6 @@ static const struct seq_operations sctp_
+ struct sctp_ht_iter {
+ 	struct seq_net_private p;
+ 	struct rhashtable_iter hti;
+-	int start_fail;
+ };
+ 
+ static void *sctp_transport_seq_start(struct seq_file *seq, loff_t *pos)
+@@ -224,7 +223,6 @@ static void *sctp_transport_seq_start(st
+ 
+ 	sctp_transport_walk_start(&iter->hti);
+ 
+-	iter->start_fail = 0;
+ 	return sctp_transport_get_idx(seq_file_net(seq), &iter->hti, *pos);
+ }
+ 
+@@ -232,8 +230,6 @@ static void sctp_transport_seq_stop(stru
+ {
+ 	struct sctp_ht_iter *iter = seq->private;
+ 
+-	if (iter->start_fail)
+-		return;
+ 	sctp_transport_walk_stop(&iter->hti);
+ }
  
 
 
