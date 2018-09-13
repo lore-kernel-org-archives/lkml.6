@@ -2,282 +2,177 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00FD7C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 11:39:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57D58C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 11:53:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A40D720833
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 11:39:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="WVbp0UwX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A40D720833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0067120861
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 11:53:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0067120861
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727789AbeIMQso (ORCPT
+        id S1727644AbeIMRCY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 12:48:44 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40200 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726855AbeIMQsn (ORCPT
+        Thu, 13 Sep 2018 13:02:24 -0400
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:45221
+        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726919AbeIMRCY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 12:48:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=MC7rym0MxKSbCOMsLp5yaIUwDO3ZqFhlf6jYZhQkgJE=; b=WVbp0UwXDOb8
-        oyt0u3YXTMGSP5Vt5vSd6QkQWcK2pO4GfG9I12wLo1iynMnl8r9V9rAK/s60mFParUr7VF/3u2ak+
-        FffRK7ra/6w/LOG70TQ18CcNbW0synzsOkGQVEBNTmeFowGJaqNeChZxFLwIw4Ve0n4SJ1AU6WqbL
-        atLuE=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1g0Py8-0000JS-SP; Thu, 13 Sep 2018 11:39:32 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id A00211121CA5; Thu, 13 Sep 2018 12:39:32 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     Mark Brown <broonie@kernel.org>, broonie@kernel.org,
-        lgirdwood@gmail.com, alsa-devel@alsa-project.org,
-        bgoswami@codeaurora.org, linux-kernel@vger.kernel.org,
-        tiwai@suse.com, vkoul@kernel.org, rohitkr@codeaurora.org,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: core: add support to card rebind" to the asoc tree
-In-Reply-To:  <20180912091500.21126-1-srinivas.kandagatla@linaro.org>
-Message-Id: <20180913113932.A00211121CA5@debutante.sirena.org.uk>
-Date:   Thu, 13 Sep 2018 12:39:32 +0100 (BST)
+        Thu, 13 Sep 2018 13:02:24 -0400
+X-IronPort-AV: E=Sophos;i="5.53,368,1531778400"; 
+   d="scan'208";a="278749449"
+Received: from 155-88-168-194.static.virginm.net (HELO [10.151.103.231]) ([194.168.88.155])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES128-SHA; 13 Sep 2018 13:53:12 +0200
+Subject: Re: [PATCH] ACPI/PPTT: Handle architecturally unknown cache types
+To:     Sudeep Holla <sudeep.holla@arm.com>,
+        James Morse <james.morse@arm.com>
+Cc:     Jeffrey Hugo <jhugo@codeaurora.org>,
+        Jeremy Linton <jeremy.linton@arm.com>, rjw@rjwysocki.net,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        vkilari@codeaurora.org
+References: <1536694334-5811-1-git-send-email-jhugo@codeaurora.org>
+ <f62f22a6-2dd8-f254-dbaf-b9e224099afd@arm.com>
+ <e74f2208-ac0d-6c45-8ddb-5b77d6a42fef@codeaurora.org>
+ <f8dc2958-a7c7-a633-3a06-97fed7c3510b@arm.com>
+ <4f253bf4-ef2d-849f-b793-9b0530e72aab@gmail.com>
+ <c7e74980-eb5d-1b2a-8ebb-7210b4f507a2@arm.com>
+ <20180913103525.GA7777@e107155-lin>
+From:   Brice Goglin <brice.goglin@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=brice.goglin@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <0f23136a-cfb7-8def-702a-87e02705f0d6@gmail.com>
+Date:   Thu, 13 Sep 2018 12:53:11 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180913103525.GA7777@e107155-lin>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+Le 13/09/2018 à 11:35, Sudeep Holla a écrit :
+> On Thu, Sep 13, 2018 at 10:39:10AM +0100, James Morse wrote:
+>> Hi Brice,
+>>
+>> On 13/09/18 06:51, Brice Goglin wrote:
+>>> Le 12/09/2018 à 11:49, Sudeep Holla a écrit :
+>>>>> Yes.  Without this change, we hit the lscpu error in the commit message,
+>>>>> and get zero output about the system.  We don't even get information
+>>>>> about the caches which are architecturally specified or how many cpus
+>>>>> are present.  With this change, we get what we expect out of lscpu (and
+>>>>> also lstopo) including the cache(s) which are not architecturally
+>>>>> specified.
+>>>>>
+>>>> lscpu and lstopo are so broken. They just assume everything on CPU0.
+>>>> If you hotplug them out, you start seeing issues. So reading and file
+>>>> that doesn't exist and then bail out on other essential info though they
+>>>> are present, hmmm ...
+>>> Can you elaborate?
+>>>
+>>> I am not sure cpu0 is supposed to be offlineable on Linux. There's no
+>>> "online" file in /sys/devices/system/cpu/cpu0. That's why former lstopo
+>>> doesn't like CPU0 being hotplugged out. We are actually making that case
+>>> work for another non-standard corner case. But offlining "cpu0" this is
+>>> considered "normal", somebody must add that missing "online" sysfs
+>>> attribute for "cpu0" (change
+>>> https://elixir.bootlin.com/linux/latest/source/drivers/base/cpu.c#L375).
+>> On x86 you can't normally offline CPU0, its something to do with certain
+>> interrupts always being routed to CPU0, (oh, and hibernate).
+>> You should be able to enable this behaviour with 'cpu0_hotplug' on the kernel
+>> command line.
+>>
+>> (Kconfig's CONFIG_BOOTPARAM_HOTPLUG_CPU0 and CONFIG_DEBUG_HOTPLUG_CPU0 are also
+>> worth a look)
+>>
+>> On arm64 at least, cpu0 is just like the others, and can be offlined.
+>>
+> Thanks James, for providing all the details.
+>
+> To add to the issues I spotted with lscpu/lstopo around topology, it ignores
+> the updates to topology sibling masks when CPUs are hotplugged in and out.
+>
+> We have following in lscpu:
+> 	add_summary_n(tb, _("Core(s) per socket:"),
+> 			cores_per_socket ?: desc->ncores / desc->nsockets);
+>
+> Now when cores_per_socket = 1, (i.e when we don't have procfs entry),
+> if ncores = (ncores_max - few_cpus_hotplugged_out), core(s) per socket
+> will get computed as less than the actual number.
+>
+> IMO lscpu should be used only when all CPUs are online and it should have
+> a warning when all cores are not online.
+>
+>>> By the way, did anybody actually see an error with lstopo when there's
+>>> no "type" attribute for L3? I can't reproduce any issue, we just skip
+>>> that specific cache entirely, but everything else appears. If you guys
+>>> want to make that "no_cache" cache appear, I'll make it a Unified cache
+>>> unless you tell me what to show :)
+> IIUC, Jeffrey Hugo did see error as per his initial message:
+> "
+> This fixes the following lscpu issue where only the cache type sysfs file
+> is missing which results in no output providing a poor user experience in
+> the above system configuration.
+> lscpu: cannot open /sys/devices/system/cpu/cpu0/cache/index3/type: No such
+> file or directory
+> "
+>
 
-   ASoC: core: add support to card rebind
+I don't know about lscpu (it's a different project), but lstopo
+shouldn't have any such problem.
 
-has been applied to the asoc tree at
+If you see an issue with lstopo, I'd be interesting in getting the
+tarball generated by hwloc-gather-topology (it dumps useful files from
+procfs and sysfs so that we may debug offline).
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From e894efef9ac7c10b7727798dcc711cccf07569f9 Mon Sep 17 00:00:00 2001
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Date: Wed, 12 Sep 2018 10:15:00 +0100
-Subject: [PATCH] ASoC: core: add support to card rebind
-
-Current behaviour of ASoC core w.r.t to component removal is that it
-unregisters dependent sound card totally. There is no support to
-rebind the card if the component comes back.
-Typical use case is DSP restart or kernel modules itself.
-
-With this patch, core now maintains list of cards that are unbind due to
-any of its depended components are removed and card not unregistered yet.
-This list is cleared when the card is rebind successfully or when the
-card is unregistered from machine driver.
-
-This list of unbind cards are tried to bind once again after every new
-component is successfully added, giving a fair chance for card bind
-to be successful.
-
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- include/sound/soc.h  |  2 ++
- sound/soc/soc-core.c | 85 ++++++++++++++++++++++++++++++--------------
- 2 files changed, 60 insertions(+), 27 deletions(-)
-
-diff --git a/include/sound/soc.h b/include/sound/soc.h
-index e17a7ae9a155..1e093b399bc0 100644
---- a/include/sound/soc.h
-+++ b/include/sound/soc.h
-@@ -1097,6 +1097,7 @@ struct snd_soc_card {
- 
- 	/* lists of probed devices belonging to this card */
- 	struct list_head component_dev_list;
-+	struct list_head list;
- 
- 	struct list_head widgets;
- 	struct list_head paths;
-@@ -1373,6 +1374,7 @@ static inline void snd_soc_initialize_card_lists(struct snd_soc_card *card)
- 	INIT_LIST_HEAD(&card->dapm_list);
- 	INIT_LIST_HEAD(&card->aux_comp_list);
- 	INIT_LIST_HEAD(&card->component_dev_list);
-+	INIT_LIST_HEAD(&card->list);
- }
- 
- static inline bool snd_soc_volsw_is_stereo(struct soc_mixer_control *mc)
-diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
-index 7e18937c2214..807f112fad80 100644
---- a/sound/soc/soc-core.c
-+++ b/sound/soc/soc-core.c
-@@ -52,6 +52,7 @@ EXPORT_SYMBOL_GPL(snd_soc_debugfs_root);
- 
- static DEFINE_MUTEX(client_mutex);
- static LIST_HEAD(component_list);
-+static LIST_HEAD(unbind_card_list);
- 
- /*
-  * This is a timeout to do a DAPM powerdown after a stream is closed().
-@@ -2679,6 +2680,33 @@ int snd_soc_dai_digital_mute(struct snd_soc_dai *dai, int mute,
- }
- EXPORT_SYMBOL_GPL(snd_soc_dai_digital_mute);
- 
-+static int snd_soc_bind_card(struct snd_soc_card *card)
-+{
-+	struct snd_soc_pcm_runtime *rtd;
-+	int ret;
-+
-+	ret = snd_soc_instantiate_card(card);
-+	if (ret != 0)
-+		return ret;
-+
-+	/* deactivate pins to sleep state */
-+	list_for_each_entry(rtd, &card->rtd_list, list)  {
-+		struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
-+		struct snd_soc_dai *codec_dai;
-+		int j;
-+
-+		for_each_rtd_codec_dai(rtd, j, codec_dai) {
-+			if (!codec_dai->active)
-+				pinctrl_pm_select_sleep_state(codec_dai->dev);
-+		}
-+
-+		if (!cpu_dai->active)
-+			pinctrl_pm_select_sleep_state(cpu_dai->dev);
-+	}
-+
-+	return ret;
-+}
-+
- /**
-  * snd_soc_register_card - Register a card with the ASoC core
-  *
-@@ -2688,7 +2716,6 @@ EXPORT_SYMBOL_GPL(snd_soc_dai_digital_mute);
- int snd_soc_register_card(struct snd_soc_card *card)
- {
- 	int i, ret;
--	struct snd_soc_pcm_runtime *rtd;
- 
- 	if (!card->name || !card->dev)
- 		return -EINVAL;
-@@ -2719,28 +2746,23 @@ int snd_soc_register_card(struct snd_soc_card *card)
- 	mutex_init(&card->mutex);
- 	mutex_init(&card->dapm_mutex);
- 
--	ret = snd_soc_instantiate_card(card);
--	if (ret != 0)
--		return ret;
--
--	/* deactivate pins to sleep state */
--	list_for_each_entry(rtd, &card->rtd_list, list)  {
--		struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
--		struct snd_soc_dai *codec_dai;
--		int j;
--
--		for_each_rtd_codec_dai(rtd, j, codec_dai) {
--			if (!codec_dai->active)
--				pinctrl_pm_select_sleep_state(codec_dai->dev);
--		}
-+	return snd_soc_bind_card(card);
-+}
-+EXPORT_SYMBOL_GPL(snd_soc_register_card);
- 
--		if (!cpu_dai->active)
--			pinctrl_pm_select_sleep_state(cpu_dai->dev);
-+static void snd_soc_unbind_card(struct snd_soc_card *card, bool unregister)
-+{
-+	if (card->instantiated) {
-+		card->instantiated = false;
-+		snd_soc_dapm_shutdown(card);
-+		soc_cleanup_card_resources(card);
-+		if (!unregister)
-+			list_add(&card->list, &unbind_card_list);
-+	} else {
-+		if (unregister)
-+			list_del(&card->list);
- 	}
--
--	return ret;
- }
--EXPORT_SYMBOL_GPL(snd_soc_register_card);
- 
- /**
-  * snd_soc_unregister_card - Unregister a card with the ASoC core
-@@ -2750,12 +2772,8 @@ EXPORT_SYMBOL_GPL(snd_soc_register_card);
-  */
- int snd_soc_unregister_card(struct snd_soc_card *card)
- {
--	if (card->instantiated) {
--		card->instantiated = false;
--		snd_soc_dapm_shutdown(card);
--		soc_cleanup_card_resources(card);
--		dev_dbg(card->dev, "ASoC: Unregistered card '%s'\n", card->name);
--	}
-+	snd_soc_unbind_card(card, true);
-+	dev_dbg(card->dev, "ASoC: Unregistered card '%s'\n", card->name);
- 
- 	return 0;
- }
-@@ -3099,7 +3117,7 @@ static void snd_soc_component_del_unlocked(struct snd_soc_component *component)
- 	struct snd_soc_card *card = component->card;
- 
- 	if (card)
--		snd_soc_unregister_card(card);
-+		snd_soc_unbind_card(card, false);
- 
- 	list_del(&component->list);
- }
-@@ -3139,6 +3157,18 @@ static void convert_endianness_formats(struct snd_soc_pcm_stream *stream)
- 			stream->formats |= endianness_format_map[i];
- }
- 
-+static void snd_soc_try_rebind_card(void)
-+{
-+	struct snd_soc_card *card, *c;
-+
-+	if (!list_empty(&unbind_card_list)) {
-+		list_for_each_entry_safe(card, c, &unbind_card_list, list) {
-+			if (!snd_soc_bind_card(card))
-+				list_del(&card->list);
-+		}
-+	}
-+}
-+
- int snd_soc_add_component(struct device *dev,
- 			struct snd_soc_component *component,
- 			const struct snd_soc_component_driver *component_driver,
-@@ -3166,6 +3196,7 @@ int snd_soc_add_component(struct device *dev,
- 	}
- 
- 	snd_soc_component_add(component);
-+	snd_soc_try_rebind_card();
- 
- 	return 0;
- 
--- 
-2.19.0.rc2
+Brice
 
