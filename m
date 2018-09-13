@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21612C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:56:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBB3CC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:56:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA7AE204FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:56:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA7AE204FD
+	by mail.kernel.org (Postfix) with ESMTP id 7E49D20652
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:56:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E49D20652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731412AbeIMTGN (ORCPT
+        id S1731421AbeIMTGU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:06:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34188 "EHLO
+        Thu, 13 Sep 2018 15:06:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34202 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730337AbeIMTGN (ORCPT
+        with ESMTP id S1730337AbeIMTGT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:06:13 -0400
+        Thu, 13 Sep 2018 15:06:19 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5414ED19;
-        Thu, 13 Sep 2018 13:56:36 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A825CD10;
+        Thu, 13 Sep 2018 13:56:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Palmer Dabbelt <palmer@sifive.com>,
+        stable@vger.kernel.org, Georgi Nikolov <gnikolov@icdsoft.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Florian Westphal <fw@strlen.de>,
+        Michal Hocko <mhocko@suse.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 090/197] RISC-V: Use KBUILD_CFLAGS instead of KCFLAGS when building the vDSO
-Date:   Thu, 13 Sep 2018 15:30:39 +0200
-Message-Id: <20180913131845.131802941@linuxfoundation.org>
+Subject: [PATCH 4.18 073/197] netfilter: x_tables: do not fail xt_alloc_table_info too easilly
+Date:   Thu, 13 Sep 2018 15:30:22 +0200
+Message-Id: <20180913131844.446697748@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -52,43 +55,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Palmer Dabbelt <palmer@sifive.com>
+From: Michal Hocko <mhocko@suse.com>
 
-[ Upstream commit 4938c79bd0f5f3650c8c2cd4cdc972f0a6962ce4 ]
+[ Upstream commit a148ce15375fc664ad64762c751c0c2aecb2cafe ]
 
-If you use a 64-bit compiler to build a 32-bit kernel then you'll get an
-error when building the vDSO due to a library mismatch.  The happens
-because the relevant "-march" argument isn't supplied to the GCC run
-that generates one of the vDSO intermediate files.
+eacd86ca3b03 ("net/netfilter/x_tables.c: use kvmalloc()
+in xt_alloc_table_info()") has unintentionally fortified
+xt_alloc_table_info allocation when __GFP_RETRY has been dropped from
+the vmalloc fallback. Later on there was a syzbot report that this
+can lead to OOM killer invocations when tables are too large and
+0537250fdc6c ("netfilter: x_tables: make allocation less aggressive")
+has been merged to restore the original behavior. Georgi Nikolov however
+noticed that he is not able to install his iptables anymore so this can
+be seen as a regression.
 
-I'm not actually sure what the right thing to do here is as I'm not
-particularly familiar with the kernel build system.  I poked the
-documentation and it appears that KCFLAGS is the correct thing to do
-(it's suggested that should be used when building modules), but we set
-KBUILD_CFLAGS in arch/riscv/Makefile.
+The primary argument for 0537250fdc6c was that this allocation path
+shouldn't really trigger the OOM killer and kill innocent tasks. On the
+other hand the interface requires root and as such should allow what the
+admin asks for. Root inside a namespaces makes this more complicated
+because those might be not trusted in general. If they are not then such
+namespaces should be restricted anyway. Therefore drop the __GFP_NORETRY
+and replace it by __GFP_ACCOUNT to enfore memcg constrains on it.
 
-This does at least fix the build error.
-
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
+Fixes: 0537250fdc6c ("netfilter: x_tables: make allocation less aggressive")
+Reported-by: Georgi Nikolov <gnikolov@icdsoft.com>
+Suggested-by: Vlastimil Babka <vbabka@suse.cz>
+Acked-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/riscv/kernel/vdso/Makefile |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/netfilter/x_tables.c |    7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
---- a/arch/riscv/kernel/vdso/Makefile
-+++ b/arch/riscv/kernel/vdso/Makefile
-@@ -52,8 +52,8 @@ $(obj)/%.so: $(obj)/%.so.dbg FORCE
- # Add -lgcc so rv32 gets static muldi3 and lshrdi3 definitions.
- # Make sure only to export the intended __vdso_xxx symbol offsets.
- quiet_cmd_vdsold = VDSOLD  $@
--      cmd_vdsold = $(CC) $(KCFLAGS) $(call cc-option, -no-pie) -nostdlib $(SYSCFLAGS_$(@F)) \
--                           -Wl,-T,$(filter-out FORCE,$^) -o $@.tmp -lgcc && \
-+      cmd_vdsold = $(CC) $(KBUILD_CFLAGS) $(call cc-option, -no-pie) -nostdlib -nostartfiles $(SYSCFLAGS_$(@F)) \
-+                           -Wl,-T,$(filter-out FORCE,$^) -o $@.tmp && \
-                    $(CROSS_COMPILE)objcopy \
-                            $(patsubst %, -G __vdso_%, $(vdso-syms)) $@.tmp $@
+--- a/net/netfilter/x_tables.c
++++ b/net/netfilter/x_tables.c
+@@ -1178,12 +1178,7 @@ struct xt_table_info *xt_alloc_table_inf
+ 	if (sz < sizeof(*info) || sz >= XT_MAX_TABLE_SIZE)
+ 		return NULL;
+ 
+-	/* __GFP_NORETRY is not fully supported by kvmalloc but it should
+-	 * work reasonably well if sz is too large and bail out rather
+-	 * than shoot all processes down before realizing there is nothing
+-	 * more to reclaim.
+-	 */
+-	info = kvmalloc(sz, GFP_KERNEL | __GFP_NORETRY);
++	info = kvmalloc(sz, GFP_KERNEL_ACCOUNT);
+ 	if (!info)
+ 		return NULL;
  
 
 
