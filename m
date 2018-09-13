@@ -6,500 +6,98 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E90B5C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 06:58:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6D5DC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 07:02:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68BFF20854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 06:58:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68BFF20854
+	by mail.kernel.org (Postfix) with ESMTP id 9A92320881
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 07:02:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A92320881
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727161AbeIMMGb (ORCPT
+        id S1727150AbeIMMKJ convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 08:06:31 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:42614 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726680AbeIMMGa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 08:06:30 -0400
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.phx2.redhat.com [10.5.11.24])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8EA38307D98F;
-        Thu, 13 Sep 2018 06:58:22 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6FC89308BE75;
-        Thu, 13 Sep 2018 06:58:22 +0000 (UTC)
-Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 0327618005CF;
-        Thu, 13 Sep 2018 06:58:22 +0000 (UTC)
-Date:   Thu, 13 Sep 2018 02:58:21 -0400 (EDT)
-From:   Pankaj Gupta <pagupta@redhat.com>
-To:     Luiz Capitulino <lcapitulino@redhat.com>
-Cc:     kwolf@redhat.com, jack@suse.cz,
-        xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
-        kvm@vger.kernel.org, riel@surriel.com, linux-nvdimm@ml01.01.org,
-        david@redhat.com, ross zwisler <ross.zwisler@intel.com>,
-        linux-kernel@vger.kernel.org, qemu-devel@nongnu.org,
-        hch@infradead.org, imammedo@redhat.com, mst@redhat.com,
-        stefanha@redhat.com, niteshnarayanlal@hotmail.com,
-        pbonzini@redhat.com, dan j williams <dan.j.williams@intel.com>,
-        nilal@redhat.com
-Message-ID: <831225077.12817716.1536821901550.JavaMail.zimbra@redhat.com>
-In-Reply-To: <20180912125423.3ad0e034@doriath>
-References: <20180831133019.27579-1-pagupta@redhat.com> <20180831133019.27579-4-pagupta@redhat.com> <20180912125423.3ad0e034@doriath>
-Subject: Re: [Qemu-devel] [PATCH 3/3]  virtio-pmem: Add virtio pmem driver
+        Thu, 13 Sep 2018 08:10:09 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:34903 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726741AbeIMMKJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 08:10:09 -0400
+Received: by mail-lf1-f67.google.com with SMTP id q13-v6so3874126lfc.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 00:02:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=KRdWlk5uVYAEVUZwL4iHRm9XeMBrapaUYPwsyVAv6Po=;
+        b=ScPXeCf1vtpiUpfJV8204nKYrJsYc/3ByqrVByXbbuNPZrQ5MphRfbMcqp+W7+kQO9
+         2Nq+qWOCXpDmoc/2JXoT5mfhQhfFzhFU4gg6Ng99vjy5uaDEQ94yEkXN3U7JJ/6dLpp0
+         fLp+tz2YEluxrEVFp84zujaJqLsOZv0kGWBmcMt86QYdBgSMtfHN9eqRhyMCoDD2Q2vk
+         fWBy3VIVfU9mzMdynLZ1h9Goc6rXwA1F+HyQ+CEkBdoMoS8of8F1z62dyeJY56AWB7he
+         JnVrbcato9x/PjxxVOQEhOAKVUZ59iOwuwSwRWQzXx5TBPAiJAr/uSvh2S2DQeRHUdMu
+         QLHw==
+X-Gm-Message-State: APzg51B25bZX3kefGWu9DWasDfRJs0H8fJ+WVxvm423YCK5p3a5x/Yzf
+        +LeJ1t7vwEwDsa8SRs9ezysN2ZNbpGbwFfTf0Encdg==
+X-Google-Smtp-Source: ANB0VdZytGP0eoinSUaXt/bBQ/lgoKfUWjwpbdRV2iMxMG6v+iN2HyPmFcwSyOFmbac0nc0bpfIOd2//YkulEiLHFdE=
+X-Received: by 2002:a19:d808:: with SMTP id p8-v6mr3685382lfg.105.1536822119306;
+ Thu, 13 Sep 2018 00:01:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.116.92, 10.4.195.11]
-Thread-Topic: virtio-pmem: Add virtio pmem driver
-Thread-Index: CGZPF/wW03m2XCTPcXrEOY6T2uCHpA==
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.24
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Thu, 13 Sep 2018 06:58:22 +0000 (UTC)
+References: <1536810739-27342-1-git-send-email-zhongjiang@huawei.com>
+In-Reply-To: <1536810739-27342-1-git-send-email-zhongjiang@huawei.com>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Thu, 13 Sep 2018 09:01:47 +0200
+Message-ID: <CAO-hwJJAGdUokt4rByNFsit1bY8t3ZpV3CFh-ES7-GNukZTBLw@mail.gmail.com>
+Subject: Re: [PATCH] HID: logitech: fix a used uninitialized GCC warning
+To:     zhongjiang@huawei.com
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Sep 13, 2018 at 6:04 AM zhong jiang <zhongjiang@huawei.com> wrote:
+>
+> Fix the following compile warning:
+>
+> drivers/hid/hid-logitech-hidpp.c: In function ‘hi_res_scroll_enable’:
+> drivers/hid/hid-logitech-hidpp.c:2714:54: warning: ‘multiplier’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+>   hidpp->vertical_wheel_counter.resolution_multiplier = multiplier;
+>
+> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+> ---
+>  drivers/hid/hid-logitech-hidpp.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/hid/hid-logitech-hidpp.c b/drivers/hid/hid-logitech-hidpp.c
+> index 5f0c080..83c43dd 100644
+> --- a/drivers/hid/hid-logitech-hidpp.c
+> +++ b/drivers/hid/hid-logitech-hidpp.c
+> @@ -2696,7 +2696,7 @@ static int hi_res_scroll_look_up_microns(__u32 product_id)
+>  static int hi_res_scroll_enable(struct hidpp_device *hidpp)
+>  {
+>         int ret;
+> -       u8 multiplier;
+> +       u8 uninitialized_var(multiplier);
 
-Hi Luiz,
+I think your patch is correct (multiplier will be set given the code
+path), but IMO, it feels terribly wrong to explicitly remove this
+warning this way. The problem is that if someone else adds a new piece
+of code, we might miss the fact that multiplier is not set and we
+might show garbage in the hid_info call.
 
-Thanks for the review.
+Why don't you initialize the value to 8 as in the 'else' statement and
+remove the now duplicated assignement in this else statement?
 
-> 
-> > This patch adds virtio-pmem driver for KVM guest.
-> > 
-> > Guest reads the persistent memory range information from
-> > Qemu over VIRTIO and registers it on nvdimm_bus. It also
-> > creates a nd_region object with the persistent memory
-> > range information so that existing 'nvdimm/pmem' driver
-> > can reserve this into system memory map. This way
-> > 'virtio-pmem' driver uses existing functionality of pmem
-> > driver to register persistent memory compatible for DAX
-> > capable filesystems.
-> > 
-> > This also provides function to perform guest flush over
-> > VIRTIO from 'pmem' driver when userspace performs flush
-> > on DAX memory range.
-> > 
-> > Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
-> > ---
-> >  drivers/virtio/Kconfig           |   9 ++
-> >  drivers/virtio/Makefile          |   1 +
-> >  drivers/virtio/virtio_pmem.c     | 255
-> >  +++++++++++++++++++++++++++++++++++++++
-> >  include/uapi/linux/virtio_ids.h  |   1 +
-> >  include/uapi/linux/virtio_pmem.h |  40 ++++++
-> >  5 files changed, 306 insertions(+)
-> >  create mode 100644 drivers/virtio/virtio_pmem.c
-> >  create mode 100644 include/uapi/linux/virtio_pmem.h
-> > 
-> > diff --git a/drivers/virtio/Kconfig b/drivers/virtio/Kconfig
-> > index 3589764..a331e23 100644
-> > --- a/drivers/virtio/Kconfig
-> > +++ b/drivers/virtio/Kconfig
-> > @@ -42,6 +42,15 @@ config VIRTIO_PCI_LEGACY
-> >  
-> >  	  If unsure, say Y.
-> >  
-> > +config VIRTIO_PMEM
-> > +	tristate "Support for virtio pmem driver"
-> > +	depends on VIRTIO
-> > +	help
-> > +	This driver provides support for virtio based flushing interface
-> > +	for persistent memory range.
-> > +
-> > +	If unsure, say M.
-> > +
-> >  config VIRTIO_BALLOON
-> >  	tristate "Virtio balloon driver"
-> >  	depends on VIRTIO
-> > diff --git a/drivers/virtio/Makefile b/drivers/virtio/Makefile
-> > index 3a2b5c5..cbe91c6 100644
-> > --- a/drivers/virtio/Makefile
-> > +++ b/drivers/virtio/Makefile
-> > @@ -6,3 +6,4 @@ virtio_pci-y := virtio_pci_modern.o virtio_pci_common.o
-> >  virtio_pci-$(CONFIG_VIRTIO_PCI_LEGACY) += virtio_pci_legacy.o
-> >  obj-$(CONFIG_VIRTIO_BALLOON) += virtio_balloon.o
-> >  obj-$(CONFIG_VIRTIO_INPUT) += virtio_input.o
-> > +obj-$(CONFIG_VIRTIO_PMEM) += virtio_pmem.o
-> > diff --git a/drivers/virtio/virtio_pmem.c b/drivers/virtio/virtio_pmem.c
-> > new file mode 100644
-> > index 0000000..c22cc87
-> > --- /dev/null
-> > +++ b/drivers/virtio/virtio_pmem.c
-> > @@ -0,0 +1,255 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * virtio_pmem.c: Virtio pmem Driver
-> > + *
-> > + * Discovers persistent memory range information
-> > + * from host and provides a virtio based flushing
-> > + * interface.
-> > + */
-> > +#include <linux/virtio.h>
-> > +#include <linux/module.h>
-> > +#include <linux/virtio_ids.h>
-> > +#include <linux/virtio_config.h>
-> > +#include <uapi/linux/virtio_pmem.h>
-> > +#include <linux/spinlock.h>
-> > +#include <linux/libnvdimm.h>
-> > +#include <linux/nd.h>
-> > +
-> > +struct virtio_pmem_request {
-> > +	/* Host return status corresponding to flush request */
-> > +	int ret;
-> > +
-> > +	/* command name*/
-> > +	char name[16];
-> > +
-> > +	/* Wait queue to process deferred work after ack from host */
-> > +	wait_queue_head_t host_acked;
-> > +	bool done;
-> > +
-> > +	/* Wait queue to process deferred work after virt queue buffer avail */
-> > +	wait_queue_head_t wq_buf;
-> > +	bool wq_buf_avail;
-> > +	struct list_head list;
-> > +};
-> > +
-> > +struct virtio_pmem {
-> > +	struct virtio_device *vdev;
-> > +
-> > +	/* Virtio pmem request queue */
-> > +	struct virtqueue *req_vq;
-> > +
-> > +	/* nvdimm bus registers virtio pmem device */
-> > +	struct nvdimm_bus *nvdimm_bus;
-> > +	struct nvdimm_bus_descriptor nd_desc;
-> > +
-> > +	/* List to store deferred work if virtqueue is full */
-> > +	struct list_head req_list;
-> > +
-> > +	/* Synchronize virtqueue data */
-> > +	spinlock_t pmem_lock;
-> > +
-> > +	/* Memory region information */
-> > +	uint64_t start;
-> > +	uint64_t size;
-> > +};
-> > +
-> > +static struct virtio_device_id id_table[] = {
-> > +	{ VIRTIO_ID_PMEM, VIRTIO_DEV_ANY_ID },
-> > +	{ 0 },
-> > +};
-> > +
-> > + /* The interrupt handler */
-> > +static void host_ack(struct virtqueue *vq)
-> > +{
-> > +	unsigned int len;
-> > +	unsigned long flags;
-> > +	struct virtio_pmem_request *req, *req_buf;
-> > +	struct virtio_pmem *vpmem = vq->vdev->priv;
-> > +
-> > +	spin_lock_irqsave(&vpmem->pmem_lock, flags);
-> > +	while ((req = virtqueue_get_buf(vq, &len)) != NULL) {
-> > +		req->done = true;
-> > +		wake_up(&req->host_acked);
-> > +
-> > +		if (!list_empty(&vpmem->req_list)) {
-> > +			req_buf = list_first_entry(&vpmem->req_list,
-> > +					struct virtio_pmem_request, list);
-> > +			list_del(&vpmem->req_list);
-> > +			req_buf->wq_buf_avail = true;
-> > +			wake_up(&req_buf->wq_buf);
-> > +		}
-> > +	}
-> > +	spin_unlock_irqrestore(&vpmem->pmem_lock, flags);
-> > +}
-> > + /* Initialize virt queue */
-> > +static int init_vq(struct virtio_pmem *vpmem)
-> > +{
-> > +	struct virtqueue *vq;
-> > +
-> > +	/* single vq */
-> > +	vpmem->req_vq = vq = virtio_find_single_vq(vpmem->vdev,
-> > +				host_ack, "flush_queue");
-> > +	if (IS_ERR(vq))
-> > +		return PTR_ERR(vq);
-> > +
-> > +	spin_lock_init(&vpmem->pmem_lock);
-> > +	INIT_LIST_HEAD(&vpmem->req_list);
-> > +
-> > +	return 0;
-> > +};
-> > +
-> > + /* The request submission function */
-> > +static int virtio_pmem_flush(struct nd_region *nd_region)
-> > +{
-> > +	int err;
-> > +	unsigned long flags;
-> > +	struct scatterlist *sgs[2], sg, ret;
-> > +	struct virtio_device *vdev =
-> > +		dev_to_virtio(nd_region->dev.parent->parent);
-> > +	struct virtio_pmem *vpmem = vdev->priv;
-> 
-> I'm missing a might_sleep() call in this function.
+Cheers,
+Benjamin
 
-I am not sure if we need might_sleep here? 
-We can add it as debugging aid for detecting any problems
-in sleeping from acquired atomic context?
-
-> 
-> > +	struct virtio_pmem_request *req = kmalloc(sizeof(*req), GFP_KERNEL);
-> > +
-> > +	if (!req)
-> > +		return -ENOMEM;
-> > +
-> > +	req->done = req->wq_buf_avail = false;
-> > +	strcpy(req->name, "FLUSH");
-> > +	init_waitqueue_head(&req->host_acked);
-> > +	init_waitqueue_head(&req->wq_buf);
-> > +
-> > +	spin_lock_irqsave(&vpmem->pmem_lock, flags);
-> > +	sg_init_one(&sg, req->name, strlen(req->name));
-> > +	sgs[0] = &sg;
-> > +	sg_init_one(&ret, &req->ret, sizeof(req->ret));
-> > +	sgs[1] = &ret;
-> 
-> It seems that sg_init_one() is only setting fields, in this
-> case you can move spin_lock_irqsave() here.
-
-yes, will move spin_lock_irqsave here.
-
-> 
-> > +	err = virtqueue_add_sgs(vpmem->req_vq, sgs, 1, 1, req, GFP_ATOMIC);
-> > +	if (err) {
-> > +		dev_err(&vdev->dev, "failed to send command to virtio pmem device\n");
-> > +
-> > +		list_add_tail(&vpmem->req_list, &req->list);
-> > +		spin_unlock_irqrestore(&vpmem->pmem_lock, flags);
-> > +
-> > +		/* When host has read buffer, this completes via host_ack */
-> > +		wait_event(req->wq_buf, req->wq_buf_avail);
-> > +		spin_lock_irqsave(&vpmem->pmem_lock, flags);
-> 
-> Is this error handling code assuming that at some point
-> virtqueue_add_sgs() will succeed for a different thread? If yes,
-> what happens if the assumption is false? That is, what happens if
-> virtqueue_add_sgs() never succeeds anymore?
-
-virtqueue_add_sgs will not succeed and corresponding thread should wait.
-All subsequent calling threads should also wait. As soon as there is first
-available free entry(from host), first waiting thread is acknowledged.
-
-In worst case if Qemu is not utilizing any of the used buffer will keep
-multiple threads waiting. 
-
-> 
-> Why not just return an error?
-
-As per suggestion by Stefan in previous discussion: if the virtqueue is full.  
-Printing a message and failing the flush isn't appropriate.  This thread needs to 
-wait until virtqueue space becomes available.
-
-> 
-> > +	}
-> > +	virtqueue_kick(vpmem->req_vq);
-> > +	spin_unlock_irqrestore(&vpmem->pmem_lock, flags);
-> > +
-> > +	/* When host has read buffer, this completes via host_ack */
-> > +	wait_event(req->host_acked, req->done);
-> > +	err = req->ret;
-> 
-> If I'm understanding the QEMU code correctly, you're returning EIO
-> from QEMU if fsync() fails. I think this is wrong, since we don't know
-> if EIO in QEMU will be the same EIO in the guest. One way to solve this
-> would be to return 0 for success and 1 for failure from QEMU, and let the
-> guest implementation pick its error code (for your implementation it
-> could be EIO).
-
-Makes sense, will change this. 
-
-Thanks,
-Pankaj 
-> 
-> > +	kfree(req);
-> > +
-> > +	return err;
-> > +};
-> > +EXPORT_SYMBOL_GPL(virtio_pmem_flush);
-> > +
-> > +static int virtio_pmem_probe(struct virtio_device *vdev)
-> > +{
-> > +	int err = 0;
-> > +	struct resource res;
-> > +	struct virtio_pmem *vpmem;
-> > +	struct nvdimm_bus *nvdimm_bus;
-> > +	struct nd_region_desc ndr_desc;
-> > +	int nid = dev_to_node(&vdev->dev);
-> > +	struct nd_region *nd_region;
-> > +
-> > +	if (!vdev->config->get) {
-> > +		dev_err(&vdev->dev, "%s failure: config disabled\n",
-> > +			__func__);
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	vdev->priv = vpmem = devm_kzalloc(&vdev->dev, sizeof(*vpmem),
-> > +			GFP_KERNEL);
-> > +	if (!vpmem) {
-> > +		err = -ENOMEM;
-> > +		goto out_err;
-> > +	}
-> > +
-> > +	vpmem->vdev = vdev;
-> > +	err = init_vq(vpmem);
-> > +	if (err)
-> > +		goto out_err;
-> > +
-> > +	virtio_cread(vpmem->vdev, struct virtio_pmem_config,
-> > +			start, &vpmem->start);
-> > +	virtio_cread(vpmem->vdev, struct virtio_pmem_config,
-> > +			size, &vpmem->size);
-> > +
-> > +	res.start = vpmem->start;
-> > +	res.end   = vpmem->start + vpmem->size-1;
-> > +	vpmem->nd_desc.provider_name = "virtio-pmem";
-> > +	vpmem->nd_desc.module = THIS_MODULE;
-> > +
-> > +	vpmem->nvdimm_bus = nvdimm_bus = nvdimm_bus_register(&vdev->dev,
-> > +						&vpmem->nd_desc);
-> > +	if (!nvdimm_bus)
-> > +		goto out_vq;
-> > +
-> > +	dev_set_drvdata(&vdev->dev, nvdimm_bus);
-> > +	memset(&ndr_desc, 0, sizeof(ndr_desc));
-> > +
-> > +	ndr_desc.res = &res;
-> > +	ndr_desc.numa_node = nid;
-> > +	ndr_desc.flush = virtio_pmem_flush;
-> > +	set_bit(ND_REGION_PAGEMAP, &ndr_desc.flags);
-> > +	nd_region = nvdimm_pmem_region_create(nvdimm_bus, &ndr_desc);
-> > +
-> > +	if (!nd_region)
-> > +		goto out_nd;
-> > +
-> > +	//virtio_device_ready(vdev);
-> > +	return 0;
-> > +out_nd:
-> > +	err = -ENXIO;
-> > +	nvdimm_bus_unregister(nvdimm_bus);
-> > +out_vq:
-> > +	vdev->config->del_vqs(vdev);
-> > +out_err:
-> > +	dev_err(&vdev->dev, "failed to register virtio pmem memory\n");
-> > +	return err;
-> > +}
-> > +
-> > +static void virtio_pmem_remove(struct virtio_device *vdev)
-> > +{
-> > +	struct virtio_pmem *vpmem = vdev->priv;
-> > +	struct nvdimm_bus *nvdimm_bus = dev_get_drvdata(&vdev->dev);
-> > +
-> > +	nvdimm_bus_unregister(nvdimm_bus);
-> > +	vdev->config->del_vqs(vdev);
-> > +	kfree(vpmem);
-> > +}
-> > +
-> > +#ifdef CONFIG_PM_SLEEP
-> > +static int virtio_pmem_freeze(struct virtio_device *vdev)
-> > +{
-> > +	/* todo: handle freeze function */
-> > +	return -EPERM;
-> > +}
-> > +
-> > +static int virtio_pmem_restore(struct virtio_device *vdev)
-> > +{
-> > +	/* todo: handle restore function */
-> > +	return -EPERM;
-> > +}
-> > +#endif
-> > +
-> > +
-> > +static struct virtio_driver virtio_pmem_driver = {
-> > +	.driver.name		= KBUILD_MODNAME,
-> > +	.driver.owner		= THIS_MODULE,
-> > +	.id_table		= id_table,
-> > +	.probe			= virtio_pmem_probe,
-> > +	.remove			= virtio_pmem_remove,
-> > +#ifdef CONFIG_PM_SLEEP
-> > +	.freeze                 = virtio_pmem_freeze,
-> > +	.restore                = virtio_pmem_restore,
-> > +#endif
-> > +};
-> > +
-> > +module_virtio_driver(virtio_pmem_driver);
-> > +MODULE_DEVICE_TABLE(virtio, id_table);
-> > +MODULE_DESCRIPTION("Virtio pmem driver");
-> > +MODULE_LICENSE("GPL");
-> > diff --git a/include/uapi/linux/virtio_ids.h
-> > b/include/uapi/linux/virtio_ids.h
-> > index 6d5c3b2..3463895 100644
-> > --- a/include/uapi/linux/virtio_ids.h
-> > +++ b/include/uapi/linux/virtio_ids.h
-> > @@ -43,5 +43,6 @@
-> >  #define VIRTIO_ID_INPUT        18 /* virtio input */
-> >  #define VIRTIO_ID_VSOCK        19 /* virtio vsock transport */
-> >  #define VIRTIO_ID_CRYPTO       20 /* virtio crypto */
-> > +#define VIRTIO_ID_PMEM         25 /* virtio pmem */
-> >  
-> >  #endif /* _LINUX_VIRTIO_IDS_H */
-> > diff --git a/include/uapi/linux/virtio_pmem.h
-> > b/include/uapi/linux/virtio_pmem.h
-> > new file mode 100644
-> > index 0000000..c7c22a5
-> > --- /dev/null
-> > +++ b/include/uapi/linux/virtio_pmem.h
-> > @@ -0,0 +1,40 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +/*
-> > + * This header, excluding the #ifdef __KERNEL__ part, is BSD licensed so
-> > + * anyone can use the definitions to implement compatible drivers/servers:
-> > + *
-> > + *
-> > + * Redistribution and use in source and binary forms, with or without
-> > + * modification, are permitted provided that the following conditions
-> > + * are met:
-> > + * 1. Redistributions of source code must retain the above copyright
-> > + *    notice, this list of conditions and the following disclaimer.
-> > + * 2. Redistributions in binary form must reproduce the above copyright
-> > + *    notice, this list of conditions and the following disclaimer in the
-> > + *    documentation and/or other materials provided with the distribution.
-> > + * 3. Neither the name of IBM nor the names of its contributors
-> > + *    may be used to endorse or promote products derived from this
-> > software
-> > + *    without specific prior written permission.
-> > + * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-> > ``AS IS''
-> > + * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-> > THE
-> > + * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-> > PURPOSE
-> > + * ARE DISCLAIMED.  IN NO EVENT SHALL IBM OR CONTRIBUTORS BE LIABLE
-> > + * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-> > CONSEQUENTIAL
-> > + * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
-> > + * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-> > + * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
-> > STRICT
-> > + * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
-> > WAY
-> > + * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-> > + * SUCH DAMAGE.
-> > + *
-> > + * Copyright (C) Red Hat, Inc., 2018-2019
-> > + * Copyright (C) Pankaj Gupta <pagupta@redhat.com>, 2018
-> > + */
-> > +#ifndef _UAPI_LINUX_VIRTIO_PMEM_H
-> > +#define _UAPI_LINUX_VIRTIO_PMEM_H
-> > +
-> > +struct virtio_pmem_config {
-> > +	__le64 start;
-> > +	__le64 size;
-> > +};
-> > +#endif
-> 
-> 
-> 
+>
+>         if (hidpp->quirks & HIDPP_QUIRK_HI_RES_SCROLL_X2121) {
+>                 ret = hidpp_hrw_set_wheel_mode(hidpp, false, true, false);
+> --
+> 1.7.12.4
+>
