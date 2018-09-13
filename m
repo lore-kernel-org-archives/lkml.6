@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A60FEC07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:04:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C55AC07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:04:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 656EA20652
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:04:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 656EA20652
+	by mail.kernel.org (Postfix) with ESMTP id 2E51620652
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:04:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E51620652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732079AbeIMTNl (ORCPT
+        id S1732091AbeIMTNo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:13:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35356 "EHLO
+        Thu, 13 Sep 2018 15:13:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35362 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728556AbeIMTNl (ORCPT
+        with ESMTP id S1728556AbeIMTNo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:13:41 -0400
+        Thu, 13 Sep 2018 15:13:44 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E7BB9D35;
-        Thu, 13 Sep 2018 14:04:01 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 13D10D35;
+        Thu, 13 Sep 2018 14:04:04 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Harry Wentland <harry.wentland@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
-Subject: [PATCH 4.18 168/197] drm/amd/display: Report non-DP display as disconnected without EDID
-Date:   Thu, 13 Sep 2018 15:31:57 +0200
-Message-Id: <20180913131848.278909539@linuxfoundation.org>
+        stable@vger.kernel.org, Julia Lawall <Julia.Lawall@lip6.fr>,
+        Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 4.18 169/197] drm/rockchip: lvds: add missing of_node_put
+Date:   Thu, 13 Sep 2018 15:31:58 +0200
+Message-Id: <20180913131848.320705092@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -52,54 +51,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Harry Wentland <harry.wentland@amd.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-commit 01dc285d5cd89b77686d8baef8482c58d7dc3ead upstream.
+commit ebfb081edc8afd250a6d290c37481bfb2262e7cb upstream.
 
-[Why]
-Some boards seem to have a problem where HPD is high on HDMI even though
-no display is connected. We don't want to report these as connected. DP
-spec still requires us to report DP displays as connected when HPD is
-high but we can't read the EDID in order to go to fail-safe mode.
+The device node iterators perform an of_node_get on each iteration, so a
+jump out of the loop requires an of_node_put.
 
-[How]
-If connector_signal is not DP abort detection if we can't retrieve the
-EDID.
+The semantic patch that fixes this problem is as follows
+(http://coccinelle.lip6.fr):
 
-v2: Add Bugzilla and stable
+// <smpl>
+@@
+expression root,e;
+local idexpression child;
+iterator name for_each_child_of_node;
+@@
 
-Bugzilla: https://bugs.freedesktop.org/107390
-Bugzilla: https://bugs.freedesktop.org/106846
+ for_each_child_of_node(root, child) {
+   ... when != of_node_put(child)
+       when != e = child
++  of_node_put(child);
+?  break;
+   ...
+}
+... when != child
+// </smpl>
+
+Fixes: 34cc0aa25456 ("drm/rockchip: Add support for Rockchip Soc LVDS")
 Cc: stable@vger.kernel.org
-Signed-off-by: Harry Wentland <harry.wentland@amd.com>
-Acked-by: Alex Deucher <alexander.deucher@amd.com>
-Reviewed-by: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Link: https://patchwork.freedesktop.org/patch/msgid/1527102436-13447-6-git-send-email-Julia.Lawall@lip6.fr
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/display/dc/core/dc_link.c |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/gpu/drm/rockchip/rockchip_lvds.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/amd/display/dc/core/dc_link.c
-+++ b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
-@@ -728,6 +728,17 @@ bool dc_link_detect(struct dc_link *link
+--- a/drivers/gpu/drm/rockchip/rockchip_lvds.c
++++ b/drivers/gpu/drm/rockchip/rockchip_lvds.c
+@@ -363,8 +363,10 @@ static int rockchip_lvds_bind(struct dev
+ 		of_property_read_u32(endpoint, "reg", &endpoint_id);
+ 		ret = drm_of_find_panel_or_bridge(dev->of_node, 1, endpoint_id,
+ 						  &lvds->panel, &lvds->bridge);
+-		if (!ret)
++		if (!ret) {
++			of_node_put(endpoint);
  			break;
- 		case EDID_NO_RESPONSE:
- 			DC_LOG_ERROR("No EDID read.\n");
-+
-+			/*
-+			 * Abort detection for non-DP connectors if we have
-+			 * no EDID
-+			 *
-+			 * DP needs to report as connected if HDP is high
-+			 * even if we have no EDID in order to go to
-+			 * fail-safe mode
-+			 */
-+			if (!dc_is_dp_signal(link->connector_signal))
-+				return false;
- 		default:
- 			break;
- 		}
++		}
+ 	}
+ 	if (!child_count) {
+ 		DRM_DEV_ERROR(dev, "lvds port does not have any children\n");
 
 
