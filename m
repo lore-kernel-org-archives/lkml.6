@@ -2,120 +2,127 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=5.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=5.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31BA8C43143
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 19:21:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8517C43143
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 19:23:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFEAF21476
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 19:21:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3960421476
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 19:23:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="to4RDxfc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFEAF21476
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="bJZ4KnH1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3960421476
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728302AbeINAcG (ORCPT
+        id S1727841AbeINAeU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 20:32:06 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:39163 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727082AbeINAcF (ORCPT
+        Thu, 13 Sep 2018 20:34:20 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:36426 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727383AbeINAeT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 20:32:05 -0400
-Received: by mail-oi0-f68.google.com with SMTP id c190-v6so10539813oig.6
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 12:21:14 -0700 (PDT)
+        Thu, 13 Sep 2018 20:34:19 -0400
+Received: by mail-lj1-f196.google.com with SMTP id v26-v6so5576983ljj.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 12:23:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=QnIRSSWQVZEzs31+v/Ssk5qhkfLojl4KO9Kw45qcCPo=;
-        b=to4RDxfcChh07K+hynoDoOkVrQmfrX9CwlgNUAUt79hZxo1qfzvz+U5cncUgP8+9Ik
-         ubJ9PB0NGT9mwwzoRNMOU86hzZTdaHlNC1MiCxtb/5Y+y+CS0AXkA2RXH02wbVZIgTTp
-         6jFNZ569jT+hbP95uHPMPrEA5ncAHYBLo4vN5ueCCBRRGh+2qomrhXxjYRaAnwfXuKID
-         PTxaCwaxAo3BSS/VDUQ7+lQQ1P+GorwJtaO79FyXt+iQlKFbbpcAhhKe+Cg1k6UsME5N
-         cgimkiqT/k256/wajKx2VWouk6sEgCZBlMvCGXW1Ngy167lVKb0nmU15qOiX9nrQa9/a
-         OeYQ==
+        bh=d57+uZPpR/VzDByvk2rw5mRfBpWJoXIMQ6scAv85B9I=;
+        b=bJZ4KnH1c95BXh90ik4ertRPQureyrK2RLPkVSMtbK0fVGf3U5z4dhFclo1FrttfvZ
+         tR1MYrfJqaU5PLdA/ffCU7zr1SwzS4kKdNTkahxJmFmXgNdX5IFwytF1UHa7MCls4wCK
+         VDd4QNMiviM8m6/dJuBwUozCF7C7hijObeINAVQrrh7KmJOano5nqPdTDYmdlVSnHq6/
+         iTrqo/+5QB7ZPolQ59yoAgBlqWgS6NrS3U2x0M6U5oUc+y2XuxC2cXJ6rPZsHykazjmS
+         ZO12aqTAZLR+GYcNs+/HTfqdp0xM1VpcluhrAs5VX2ZJl+HpU5fFc0hAGZ2VLZPlTI5j
+         Z40w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=QnIRSSWQVZEzs31+v/Ssk5qhkfLojl4KO9Kw45qcCPo=;
-        b=kYNKmSShzxMZ0kqCab7Zkt5nocugRJFyCVOXVtEeifCdRpP8M499i+h7DX72+wJoby
-         cZSNKo9PyF+gAz3aaXaHKEtcEgBhaL/NcJB6KTUIgpQqx4VyTt3xDJahsb91mltSShpP
-         QeK2Kco1TblAUjylHRfmov40OjkWi7nugpGNcEJV37dEfbnV+j0Umhg9aK+0n8jld11h
-         B3/spOfy+RNsCCXlBfIPU8VWEZJWN1yJ3nU0H+iXl8Y9loQK/P770wzd3hGuobfDdif6
-         81P8/pWP4G5LQTik6bEHS/4BgdMr+cZ9E6vfpGUswwuaQMaeCnjDjyMUXCVTE6FYXk0s
-         6M6A==
-X-Gm-Message-State: APzg51BGqsVxlNiqm17XI56yqnocs4Hm+XTi2z3BwIKNk/MVemzA76rv
-        x6jRPfuGtoUZk9CWwa6Eig/nuwaQDBagqg/bPvjeQA==
-X-Google-Smtp-Source: ANB0VdZU4aL8C+cj3uE20d3y6S3Ce+2BKGXad08rPT7NZO8f5tkQAnIzBV3sN18sZZCRD+YDslAgQkRHMYO0msPJUUw=
-X-Received: by 2002:aca:f105:: with SMTP id p5-v6mr7751947oih.342.1536866473518;
- Thu, 13 Sep 2018 12:21:13 -0700 (PDT)
+        bh=d57+uZPpR/VzDByvk2rw5mRfBpWJoXIMQ6scAv85B9I=;
+        b=tWZGd6W+gx39hIIExsIArIjtHJtIxFvo3CqhvKt7qP/WjVnUbDXUBA4UfuGXTc5KNT
+         2ctoiqYoI7xux0NvkYT7xytKch0fW2Y9wdAY5ZC4qSIUblGUL/Zc3xmoQmZcfCB7hQ5j
+         ywBclN7RzVUUVUo41xFypLAV8KQPGNQCzgIN07tTw8IRkWIAYmt5VEBj1arUwIAD67v+
+         TiM9wUWuQEJE9RX7lzo+5c5Til4RgOxMJ2T5/PIeokfcqxvkzI/rTkLXJdE8321qhBT/
+         mNKiUT48y2FRc3wSsjPidMErgbnhhn3m/4UdB8fv7j39w7CAUAY1awopI8bTedBL3Us/
+         pB4Q==
+X-Gm-Message-State: APzg51AYw7VWYOaig2guYhDgoWgI72a9EDUM8Yle3YaRagb274paVtlJ
+        a2CE0/M+Ubcho/ml0unipPb7uz9grCZTYFelBWin
+X-Google-Smtp-Source: ANB0VdbL0IM8Tz8ZHCYLs35/iFbXY9yWvBcJ7JiG6tmmikt46Denm0mf7up538JcvI7ha4yq/1cGbldPCemh/0i30EQ=
+X-Received: by 2002:a2e:8743:: with SMTP id q3-v6mr5564739ljj.139.1536866606273;
+ Thu, 13 Sep 2018 12:23:26 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:ac9:2aea:0:0:0:0:0 with HTTP; Thu, 13 Sep 2018 12:21:13
- -0700 (PDT)
-In-Reply-To: <20180913170522.24876-10-vkuznets@redhat.com>
-References: <20180913170522.24876-1-vkuznets@redhat.com> <20180913170522.24876-10-vkuznets@redhat.com>
-From:   Jim Mattson <jmattson@google.com>
-Date:   Thu, 13 Sep 2018 12:21:13 -0700
-Message-ID: <CALMp9eTTK67npZLjpCYA=6EPpvF8nZZq7fH=e7NQRhDYXZ=UNQ@mail.gmail.com>
-Subject: Re: [PATCH v5 09/12] x86/kvm/nVMX: allow bare VMXON state migration
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     kvm list <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Liran Alon <liran.alon@oracle.com>,
-        LKML <linux-kernel@vger.kernel.org>
+References: <000000000000038dab0575476b73@google.com> <f3bcebc6-47a7-518e-70f7-c7e167621841@I-love.SAKURA.ne.jp>
+ <CAHC9VhT-Thu6KppC-MWzqkB7R1CaQA9DWXOQnG0b2uS9+rvzoA@mail.gmail.com> <ea29a8bf-95b2-91d2-043b-ed73c9023166@i-love.sakura.ne.jp>
+In-Reply-To: <ea29a8bf-95b2-91d2-043b-ed73c9023166@i-love.sakura.ne.jp>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 13 Sep 2018 15:23:15 -0400
+Message-ID: <CAHC9VhR8My9_Dt=4OhUoHsN8MRViLaBmcfzbeJWmvnGn_AQmzw@mail.gmail.com>
+Subject: Re: [PATCH] selinux: Add __GFP_NOWARN to allocation at str_read()
+To:     penguin-kernel@i-love.sakura.ne.jp
+Cc:     selinux@tycho.nsa.gov,
+        syzbot+ac488b9811036cea7ea0@syzkaller.appspotmail.com,
+        Eric Paris <eparis@parisplace.org>,
+        linux-kernel@vger.kernel.org, peter.enderborg@sony.com,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        syzkaller-bugs@googlegroups.com, linux-mm@kvack.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 13, 2018 at 10:05 AM, Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
-> It is perfectly valid for a guest to do VMXON and not do VMPTRLD. This
-> state needs to be preserved on migration.
+On Thu, Sep 13, 2018 at 2:26 AM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+> On 2018/09/13 12:02, Paul Moore wrote:
+> > On Fri, Sep 7, 2018 at 12:43 PM Tetsuo Handa
+> > <penguin-kernel@i-love.sakura.ne.jp> wrote:
+> >> syzbot is hitting warning at str_read() [1] because len parameter can
+> >> become larger than KMALLOC_MAX_SIZE. We don't need to emit warning for
+> >> this case.
+> >>
+> >> [1] https://syzkaller.appspot.com/bug?id=7f2f5aad79ea8663c296a2eedb81978401a908f0
+> >>
+> >> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> >> Reported-by: syzbot <syzbot+ac488b9811036cea7ea0@syzkaller.appspotmail.com>
+> >> ---
+> >>  security/selinux/ss/policydb.c | 2 +-
+> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+> >> index e9394e7..f4eadd3 100644
+> >> --- a/security/selinux/ss/policydb.c
+> >> +++ b/security/selinux/ss/policydb.c
+> >> @@ -1101,7 +1101,7 @@ static int str_read(char **strp, gfp_t flags, void *fp, u32 len)
+> >>         if ((len == 0) || (len == (u32)-1))
+> >>                 return -EINVAL;
+> >>
+> >> -       str = kmalloc(len + 1, flags);
+> >> +       str = kmalloc(len + 1, flags | __GFP_NOWARN);
+> >>         if (!str)
+> >>                 return -ENOMEM;
+> >
+> > Thanks for the patch.
+> >
+> > My eyes are starting to glaze over a bit chasing down all of the
+> > different kmalloc() code paths trying to ensure that this always does
+> > the right thing based on size of the allocation and the different slab
+> > allocators ... are we sure that this will always return NULL when (len
+> > + 1) is greater than KMALLOC_MAX_SIZE for the different slab allocator
+> > configurations?
 >
-> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-> ---
->  arch/x86/kvm/vmx.c | 15 ++++++++-------
->  1 file changed, 8 insertions(+), 7 deletions(-)
+> Yes, for (len + 1) cannot become 0 (which causes kmalloc() to return
+> ZERO_SIZE_PTR) due to (len == (u32)-1) check above.
 >
-> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-> index d3297fadf7ed..25a25fff8dd9 100644
-> --- a/arch/x86/kvm/vmx.c
-> +++ b/arch/x86/kvm/vmx.c
-> @@ -14482,13 +14482,6 @@ static int vmx_set_nested_state(struct kvm_vcpu *vcpu,
->         if (!page_address_valid(vcpu, kvm_state->vmx.vmxon_pa))
->                 return -EINVAL;
->
-> -       if (kvm_state->size < sizeof(kvm_state) + sizeof(*vmcs12))
-> -               return -EINVAL;
-> -
-> -       if (kvm_state->vmx.vmcs_pa == kvm_state->vmx.vmxon_pa ||
-> -           !page_address_valid(vcpu, kvm_state->vmx.vmcs_pa))
-> -               return -EINVAL;
-> -
->         if ((kvm_state->vmx.smm.flags & KVM_STATE_NESTED_SMM_GUEST_MODE) &&
->             (kvm_state->flags & KVM_STATE_NESTED_GUEST_MODE))
->                 return -EINVAL;
-> @@ -14510,6 +14503,14 @@ static int vmx_set_nested_state(struct kvm_vcpu *vcpu,
->         if (ret)
->                 return ret;
->
-> +       /* Empty 'VMXON' state is permitted */
-> +       if (kvm_state->size < sizeof(kvm_state) + sizeof(*vmcs12))
-> +               return 0;
+> The only concern would be whether you want allocation failure messages.
+> I assumed you don't need it because we are returning -ENOMEM to the caller.
 
-In the original version of this code, the early exit is:
+I'm not to worried about the failure messages, returning -ENOMEM
+should be sufficient in this case.
 
-if (kvm_state.vmcs_pa == -1ull)
-        return 0;
+-- 
+paul moore
+www.paul-moore.com
