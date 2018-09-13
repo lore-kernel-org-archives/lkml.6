@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13A8CC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:53:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C90EDC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:53:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C833720854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:53:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C833720854
+	by mail.kernel.org (Postfix) with ESMTP id 8E9AE20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:53:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E9AE20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731093AbeIMTCp (ORCPT
+        id S1731107AbeIMTCt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:02:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33642 "EHLO
+        Thu, 13 Sep 2018 15:02:49 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33652 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730002AbeIMTCp (ORCPT
+        with ESMTP id S1730473AbeIMTCs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:02:45 -0400
+        Thu, 13 Sep 2018 15:02:48 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 29149D19;
-        Thu, 13 Sep 2018 13:53:08 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 62958D19;
+        Thu, 13 Sep 2018 13:53:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
-        Tejun Heo <tj@kernel.org>,
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Yuexing Wang <wangyxlandq@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 050/197] workqueue: re-add lockdep dependencies for flushing
-Date:   Thu, 13 Sep 2018 15:29:59 +0200
-Message-Id: <20180913131843.539392943@linuxfoundation.org>
+Subject: [PATCH 4.18 051/197] scripts: modpost: check memory allocation results
+Date:   Thu, 13 Sep 2018 15:30:00 +0200
+Message-Id: <20180913131843.576886553@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -52,69 +53,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-[ Upstream commit 87915adc3f0acdf03c776df42e308e5a155c19af ]
+[ Upstream commit 1f3aa9002dc6a0d59a4b599b4fc8f01cf43ef014 ]
 
-In flush_work(), we need to create a lockdep dependency so that
-the following scenario is appropriately tagged as a problem:
+Fix missing error check for memory allocation functions in
+scripts/mod/modpost.c.
 
-  work_function()
-  {
-    mutex_lock(&mutex);
-    ...
-  }
+Fixes kernel bugzilla #200319:
+https://bugzilla.kernel.org/show_bug.cgi?id=200319
 
-  other_function()
-  {
-    mutex_lock(&mutex);
-    flush_work(&work); // or cancel_work_sync(&work);
-  }
-
-This is a problem since the work might be running and be blocked
-on trying to acquire the mutex.
-
-Similarly, in flush_workqueue().
-
-These were removed after cross-release partially caught these
-problems, but now cross-release was reverted anyway. IMHO the
-removal was erroneous anyway though, since lockdep should be
-able to catch potential problems, not just actual ones, and
-cross-release would only have caught the problem when actually
-invoking wait_for_completion().
-
-Fixes: fd1a5b04dfb8 ("workqueue: Remove now redundant lock acquisitions wrt. workqueue flushes")
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Yuexing Wang <wangyxlandq@gmail.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/workqueue.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ scripts/mod/modpost.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -2652,6 +2652,9 @@ void flush_workqueue(struct workqueue_st
- 	if (WARN_ON(!wq_online))
- 		return;
+--- a/scripts/mod/modpost.c
++++ b/scripts/mod/modpost.c
+@@ -672,7 +672,7 @@ static void handle_modversions(struct mo
+ 			if (ELF_ST_TYPE(sym->st_info) == STT_SPARC_REGISTER)
+ 				break;
+ 			if (symname[0] == '.') {
+-				char *munged = strdup(symname);
++				char *munged = NOFAIL(strdup(symname));
+ 				munged[0] = '_';
+ 				munged[1] = toupper(munged[1]);
+ 				symname = munged;
+@@ -1318,7 +1318,7 @@ static Elf_Sym *find_elf_symbol2(struct
+ static char *sec2annotation(const char *s)
+ {
+ 	if (match(s, init_exit_sections)) {
+-		char *p = malloc(20);
++		char *p = NOFAIL(malloc(20));
+ 		char *r = p;
  
-+	lock_map_acquire(&wq->lockdep_map);
-+	lock_map_release(&wq->lockdep_map);
-+
- 	mutex_lock(&wq->mutex);
+ 		*p++ = '_';
+@@ -1338,7 +1338,7 @@ static char *sec2annotation(const char *
+ 			strcat(p, " ");
+ 		return r;
+ 	} else {
+-		return strdup("");
++		return NOFAIL(strdup(""));
+ 	}
+ }
  
- 	/*
-@@ -2905,6 +2908,11 @@ static bool __flush_work(struct work_str
- 	if (WARN_ON(!wq_online))
- 		return false;
- 
-+	if (!from_cancel) {
-+		lock_map_acquire(&work->lockdep_map);
-+		lock_map_release(&work->lockdep_map);
-+	}
-+
- 	if (start_flush_work(work, &barr, from_cancel)) {
- 		wait_for_completion(&barr.done);
- 		destroy_work_on_stack(&barr.work);
+@@ -2036,7 +2036,7 @@ void buf_write(struct buffer *buf, const
+ {
+ 	if (buf->size - buf->pos < len) {
+ 		buf->size += len + SZ;
+-		buf->p = realloc(buf->p, buf->size);
++		buf->p = NOFAIL(realloc(buf->p, buf->size));
+ 	}
+ 	strncpy(buf->p + buf->pos, s, len);
+ 	buf->pos += len;
 
 
