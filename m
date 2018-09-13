@@ -2,112 +2,216 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29570C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 09:22:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04FFAC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 09:23:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D601A20854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 09:22:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 997BE20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 09:23:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fzJpRGx4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D601A20854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tpw16FtV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 997BE20854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728059AbeIMOa6 (ORCPT
+        id S1726930AbeIMOc2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 10:30:58 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:33270 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726751AbeIMOa5 (ORCPT
+        Thu, 13 Sep 2018 10:32:28 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:40192 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726724AbeIMOc1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 10:30:57 -0400
-Received: by mail-it0-f66.google.com with SMTP id j198-v6so1267326ita.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 02:22:20 -0700 (PDT)
+        Thu, 13 Sep 2018 10:32:27 -0400
+Received: by mail-ed1-f68.google.com with SMTP id j62-v6so4052419edd.7
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 02:23:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NHB8ORIjoIhutvy9NcRm9NF71dAzGyNycr99x/StYXs=;
-        b=fzJpRGx4J216C4i4vGoBRLn4/7Sssdg/m2I+1Z8I0rC820/UR6sZc9n/aRqliX4SS1
-         QUt4S+tymsE5pI7p5b0frS9g4LT06SjnI/CqQXgr2MIT99IBCaKxPo3JI0cD+fXIUvEF
-         R27BSIkztMnxF2RCLl5Ay9y6VtG3OBQ3voKQ4=
+         :cc:content-transfer-encoding;
+        bh=FDrJxJ5V45cJk2jIRSmMUn/nju6fLSnYkZcnSiG4fBc=;
+        b=tpw16FtV5IboCC+QKY5b3ip3QtCzNclXMfxrLw9bhXHDdu4x6Vbf/ytoeTiTKuCKAu
+         buq2XKD/PJy1UMPIcJx4YjU1o8XyZDI0CK7Etg1EuIVVHoDqVGdZwfaJzeo2dCei8tEI
+         On5JbsdzshJ5t5bxSGn9/HocW0fFD5pHJd/Xv2zOc1JFtyoI0aBzKY9bgWkmwcFHDDTY
+         iZdIejuLq9rq+OimoRGct4RKpu4RjyX/X7Y44uVegCqoDJa48UBJExShWS0BmNn5Y0dI
+         Ffg8fOhojRoqwVZqPv2JfVI3kpV3FUwT/DjKj23PmEyFNnuxuGpaNfmdd83TPPhWrTEG
+         /aGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NHB8ORIjoIhutvy9NcRm9NF71dAzGyNycr99x/StYXs=;
-        b=L7owlPiiAsXhQKIreGg6iiqjt/gL4YsWbV1iWgqq7OzYJpPUfHQ6s3SNTS1iUtmKkE
-         nVrasVnAKaa7OahHR1txg+fkUTUznn8CsdDMNe3WzGIeZeVAfjRmmvNwq92TcnQ/QoW+
-         hFn4dHcgophvf8It64FhNaDwsH2ww7Nn7RoLcg3tXpsE+s848V9MJ3QhU0Vz/BEFaoCF
-         vQcoLHTHL9AAe0rZB4oF8+LzcUZvbIth0Fva7/sf3bt9r+WPaC//M/ov/0fJZw6eWL+1
-         C+B+WcGHAYNYmUJ15yiPZYDo8MIJEL/eNFaVDZcfoe1U2TmdNaRc+3ggZOTrl85um6Bn
-         Z7vQ==
-X-Gm-Message-State: APzg51DS0qHWnwayJLvynAKHPRbLjlk5Utvdwpt0+yrQIsFR/pFPKQGX
-        FeukFq7LkXfnHV57+aMdkHZfmI/G/sIiI1qyAC29/w==
-X-Google-Smtp-Source: ANB0VdbR8RYtlqbDOZYb1OgeV4HxNnebgKxzGrmW9Z6ev4nDKpj73Duk+kF6F/3rVU9HMZid6AxqyD5sPtjzcxFeFpw=
-X-Received: by 2002:a24:9d84:: with SMTP id f126-v6mr5594349itd.130.1536830539719;
- Thu, 13 Sep 2018 02:22:19 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=FDrJxJ5V45cJk2jIRSmMUn/nju6fLSnYkZcnSiG4fBc=;
+        b=Rfxx83bdsCtusy5FaI6y4Ogayy8dhg1yxycB8reCSWomRGk700o3fuUanQ9h6l29bT
+         7bXqIkRhRcInVW6T40KZRUJb+jSmt/fiDuzInVw6TRJGegvO3O+ZCsmXBJgpp2FF9grK
+         NU/JJVQhDjGoJqk0+CuXYfzX8bi1FCW8UIEKNFu6hcQqqie5cKIVgCtGJKHHhsscrjgo
+         CoA4v5/gzkPftGMNNCi+kT2LEGIg+lNy1e3V6hBiTyh9S8deTmpCX2mHnGI2lg4Kxoa0
+         Sd/ppa36UG6cA9odgEYOgpvU8S1FA5lRdSDedYLNDrMS75fyNGKJN2Rt2Zep7ufixhNQ
+         +46A==
+X-Gm-Message-State: APzg51DXR2uQPeYMh7UcLJcDYMz2hDbrUbQc6ikWuh3hHZxz6Qsu/LcA
+        aD+PoH71RJVb6Zn3uQW6QeIkjgDNmn+H7Y3olMOcAA==
+X-Google-Smtp-Source: ANB0VdZuF8balbyyftbUlsSr6MhS9L+CPTrhHdqXrCNkif+B2EzpnRT00CFIPZnZHofe+YWsKKJSzTo0WVTyhzpkijA=
+X-Received: by 2002:a50:87fb:: with SMTP id 56-v6mr9440897edz.68.1536830628603;
+ Thu, 13 Sep 2018 02:23:48 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180902120144.6855-1-jmkrzyszt@gmail.com> <20180905215008.1649-1-jmkrzyszt@gmail.com>
-In-Reply-To: <20180905215008.1649-1-jmkrzyszt@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 13 Sep 2018 11:22:06 +0200
-Message-ID: <CACRpkdbAG1N0v-BrXruf5088L0x3XwSHbFTWOFxjHQWx0LKz5g@mail.gmail.com>
-Subject: Re: [PATCH v8 0/4] gpiolib: speed up GPIO array processing
-To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>,
-        Peter Korsgaard <peter.korsgaard@barco.com>,
-        Peter Rosin <peda@axentia.se>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Greg KH <gregkh@linuxfoundation.org>, kishon@ti.com,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald <pmeerw@pmeerw.net>,
-        Jiri Slaby <jslaby@suse.com>, Willy Tarreau <w@1wt.eu>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Sebastien Bourdelin <sebastien.bourdelin@savoirfairelinux.com>,
-        Lukas Wunner <lukas@wunner.de>,
-        Rojhalat Ibrahim <imr@rtschenk.de>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        ext Tony Lindgren <tony@atomide.com>,
-        Yegor Yefremov <yegorslists@googlemail.com>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, linux-doc@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-mmc <linux-mmc@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>, linux-iio@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-serial@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <00000000000016eb330575bd2fab@google.com>
+In-Reply-To: <00000000000016eb330575bd2fab@google.com>
+From:   Alexander Potapenko <glider@google.com>
+Date:   Thu, 13 Sep 2018 11:23:37 +0200
+Message-ID: <CAG_fn=WwdgnCQ2fOw_LEXwv7Fdbmshxo57XJXNbfbawDndJZ_Q@mail.gmail.com>
+Subject: Re: KMSAN: kernel-infoleak in copy_page_to_iter (2)
+To:     syzbot+2dcfeaf8cb49b05e8f1a@syzkaller.appspotmail.com
+Cc:     Andi Kleen <ak@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>, jack@suse.cz,
+        jlayton@redhat.com, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        mawilcox@microsoft.com, mgorman@techsingularity.net,
+        syzkaller-bugs@googlegroups.com, bart.vanassche@wdc.com,
+        axboe@kernel.dk, matias.bjorling@wdc.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 5, 2018 at 11:49 PM Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
+On Thu, Sep 13, 2018 at 11:18 AM syzbot
+<syzbot+2dcfeaf8cb49b05e8f1a@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    123906095e30 kmsan: introduce kmsan_interrupt_enter()/kms=
+a..
+> git tree:       https://github.com/google/kmsan.git/master
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D1249fcb840000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D848e40757852a=
+f3e
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3D2dcfeaf8cb49b05=
+e8f1a
+> compiler:       clang version 7.0.0 (trunk 334104)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D116ef050400=
+000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D122870ff80000=
+0
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit=
+:
+> Reported-by: syzbot+2dcfeaf8cb49b05e8f1a@syzkaller.appspotmail.com
+>
+> random: sshd: uninitialized urandom read (32 bytes read)
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> BUG: KMSAN: kernel-infoleak in copyout lib/iov_iter.c:140 [inline]
+> BUG: KMSAN: kernel-infoleak in copy_page_to_iter_iovec lib/iov_iter.c:212
+> [inline]
+> BUG: KMSAN: kernel-infoleak in copy_page_to_iter+0x754/0x1b70
+> lib/iov_iter.c:716
+> CPU: 0 PID: 4516 Comm: blkid Not tainted 4.17.0+ #9
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>   __dump_stack lib/dump_stack.c:77 [inline]
+>   dump_stack+0x185/0x1d0 lib/dump_stack.c:113
+>   kmsan_report+0x188/0x2a0 mm/kmsan/kmsan.c:1125
+>   kmsan_internal_check_memory+0x17e/0x1f0 mm/kmsan/kmsan.c:1238
+>   kmsan_copy_to_user+0x7a/0x160 mm/kmsan/kmsan.c:1261
+>   copyout lib/iov_iter.c:140 [inline]
+>   copy_page_to_iter_iovec lib/iov_iter.c:212 [inline]
+>   copy_page_to_iter+0x754/0x1b70 lib/iov_iter.c:716
+>   generic_file_buffered_read mm/filemap.c:2185 [inline]
+>   generic_file_read_iter+0x2ef8/0x44d0 mm/filemap.c:2362
+>   blkdev_read_iter+0x20d/0x280 fs/block_dev.c:1930
+>   call_read_iter include/linux/fs.h:1778 [inline]
+>   new_sync_read fs/read_write.c:406 [inline]
+>   __vfs_read+0x775/0x9d0 fs/read_write.c:418
+>   vfs_read+0x36c/0x6b0 fs/read_write.c:452
+>   ksys_read fs/read_write.c:578 [inline]
+>   __do_sys_read fs/read_write.c:588 [inline]
+>   __se_sys_read fs/read_write.c:586 [inline]
+>   __x64_sys_read+0x1bf/0x3e0 fs/read_write.c:586
+>   do_syscall_64+0x15b/0x230 arch/x86/entry/common.c:287
+>   entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> RIP: 0033:0x7fdeff68f310
+> RSP: 002b:00007ffe999660b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fdeff68f310
+> RDX: 0000000000000100 RSI: 0000000001e78df8 RDI: 0000000000000003
+> RBP: 0000000001e78dd0 R08: 0000000000000028 R09: 0000000001680000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000001e78030
+> R13: 0000000000000100 R14: 0000000001e78080 R15: 0000000001e78de8
+>
+> Uninit was created at:
+>   kmsan_save_stack_with_flags mm/kmsan/kmsan.c:282 [inline]
+>   kmsan_alloc_meta_for_pages+0x161/0x3a0 mm/kmsan/kmsan.c:819
+>   kmsan_alloc_page+0x82/0xe0 mm/kmsan/kmsan.c:889
+>   __alloc_pages_nodemask+0xf7b/0x5cc0 mm/page_alloc.c:4402
+>   alloc_pages_current+0x6b1/0x970 mm/mempolicy.c:2093
+>   alloc_pages include/linux/gfp.h:494 [inline]
+>   __page_cache_alloc+0x95/0x320 mm/filemap.c:946
+>   pagecache_get_page+0x52b/0x1450 mm/filemap.c:1577
+>   grab_cache_page_write_begin+0x10d/0x190 mm/filemap.c:3089
+>   block_write_begin+0xf9/0x3a0 fs/buffer.c:2068
+>   blkdev_write_begin+0xf5/0x110 fs/block_dev.c:584
+>   generic_perform_write+0x438/0x9d0 mm/filemap.c:3139
+>   __generic_file_write_iter+0x43b/0xa10 mm/filemap.c:3264
+>   blkdev_write_iter+0x3a8/0x5f0 fs/block_dev.c:1910
+>   do_iter_readv_writev+0x81c/0xa20 include/linux/fs.h:1778
+>   do_iter_write+0x30d/0xd50 fs/read_write.c:959
+>   vfs_writev fs/read_write.c:1004 [inline]
+>   do_writev+0x3be/0x820 fs/read_write.c:1039
+>   __do_sys_writev fs/read_write.c:1112 [inline]
+>   __se_sys_writev fs/read_write.c:1109 [inline]
+>   __x64_sys_writev+0xe1/0x120 fs/read_write.c:1109
+>   do_syscall_64+0x15b/0x230 arch/x86/entry/common.c:287
+>   entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>
+> Bytes 4-255 of 256 are uninitialized
+> Memory access starts at ffff8801b9903000
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+This particular report was caused by the repro program writing a byte
+to /dev/nullb0 and /sbin/blkid reading from that device in the
+background.
+But it turns out that simply running `cat /dev/nullb0` already prints
+uninitialized kernel memory.
+Is this the intended behavior of the null block driver?
+>
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> syzbot.
+> syzbot can test patches for this bug, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
+>
+> --
+> You received this message because you are subscribed to the Google Groups=
+ "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an=
+ email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgi=
+d/syzkaller-bugs/00000000000016eb330575bd2fab%40google.com.
+> For more options, visit https://groups.google.com/d/optout.
 
-> The goal is to boost performance of get/set array functions while
-> processing GPIO arrays which represent pins of a signle chip in
-> hardware order.  If resulting performance is close to PIO, GPIO API
-> can be used for data I/O without much loss of speed.
 
-I applied the v8 to an immutable branch and pushed to kernelorg
-so the build servers can churn it a bit, and if it works fine
-then we can merge this into the devel branch and also set up
-that as something other subsystems can pull in if they need it.
 
-I'm really excited to merge this!
+--=20
+Alexander Potapenko
+Software Engineer
 
-Yours,
-Linus Walleij
+Google Germany GmbH
+Erika-Mann-Stra=C3=9Fe, 33
+80636 M=C3=BCnchen
+
+Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
+Registergericht und -nummer: Hamburg, HRB 86891
+Sitz der Gesellschaft: Hamburg
