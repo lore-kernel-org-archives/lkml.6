@@ -2,203 +2,121 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5697EFA3751
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52A5AFA3752
 	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 17:35:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C09420881
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 15:43:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NIyecWJO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C09420881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 60C6921756
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 16:51:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60C6921756
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kaod.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727844AbeIMUxD (ORCPT
+        id S1728031AbeIMWBz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 16:53:03 -0400
-Received: from mail-io1-f49.google.com ([209.85.166.49]:32818 "EHLO
-        mail-io1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726763AbeIMUxD (ORCPT
+        Thu, 13 Sep 2018 18:01:55 -0400
+Received: from 10.mo179.mail-out.ovh.net ([46.105.79.46]:59204 "EHLO
+        10.mo179.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726835AbeIMWBz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 16:53:03 -0400
-Received: by mail-io1-f49.google.com with SMTP id r196-v6so3546180iod.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 08:42:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=tEf4SmJ/m3MuEYMCYriasC6mhFVOVmCk2r36nlDLxaU=;
-        b=NIyecWJOUT+d7Mju6fhw4dQQBiTP0MmgsLvn0tarMhGnGVcVYojctUyZpvmiE5vl6y
-         o4E6PgOXcmiYg+IRA5jcxUiTLrgo3fysufnH7ACQXpED+tnnE7tMSPUOp1gTskGh9+v9
-         bXx2R6Sum1pYQlNjtwy1pczPtvHbUT+sleahE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=tEf4SmJ/m3MuEYMCYriasC6mhFVOVmCk2r36nlDLxaU=;
-        b=AxnC9HCztUM93oQtg5jlDq7XiGTCGCKrjyfwhORlHACB4Zcu0gf0qyu5C+K1tHxW7o
-         R+5uZqCxmwUSPvYwS0h8KW4syXtPqBP+za/hBvTUQlP5RRWvwu9b9jrP+2y0LY43NRGx
-         7P33UVzmnDmT8iamx9M6wlfq75XjX3EzGQg47pQEi4E8vAODaNXZowrOZ7xDHnOozDib
-         oJ9plsdt9QpfSqwBmI00guT2ziXqrmjHgU7IiRc5l28+cTZIkAEQaqs2LhhyjwURPTV8
-         dy2Wi82yl7mVRuCueXW7dgSmoYDiolFf6Xh1jbdQxxi6Ubhdn3AmcOAD4MvnsynpIXBe
-         InSA==
-X-Gm-Message-State: APzg51CYenKmvXPcYX+AGSgfMx0g91HO25xqF8s1gxvGOMDqoW/hQyeb
-        dtXi3s/wn9Vb2bfqVmzp8ZzixzofvTD7WkgSPUHpEQ==
-X-Google-Smtp-Source: ANB0VdZhPxZdUplEnHevZunVcenKkeV/nKM5v2RUJzl6L3e1JDdc3b5uh2bVie179GFdfpwHGc4ZaGBH2pplpVD4oaU=
-X-Received: by 2002:a6b:4516:: with SMTP id s22-v6mr6952867ioa.60.1536853379126;
- Thu, 13 Sep 2018 08:42:59 -0700 (PDT)
+        Thu, 13 Sep 2018 18:01:55 -0400
+X-Greylist: delayed 943 seconds by postgrey-1.27 at vger.kernel.org; Thu, 13 Sep 2018 18:01:54 EDT
+Received: from player714.ha.ovh.net (unknown [10.109.160.153])
+        by mo179.mail-out.ovh.net (Postfix) with ESMTP id 9064DFA166
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 18:35:55 +0200 (CEST)
+Received: from zorba.kaod.org (LFbn-1-10605-110.w90-89.abo.wanadoo.fr [90.89.196.110])
+        (Authenticated sender: postmaster@kaod.org)
+        by player714.ha.ovh.net (Postfix) with ESMTPSA id E79843C00AA;
+        Thu, 13 Sep 2018 18:35:38 +0200 (CEST)
+Subject: Re: [PATCH i2c-next v6] i2c: aspeed: Handle master/slave combined irq
+ events properly
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
+        Joel Stanley <joel@jms.id.au>, linux-aspeed@lists.ozlabs.org,
+        Vernon Mauery <vernon.mauery@linux.intel.com>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-i2c@vger.kernel.org, jarkko.nikula@linux.intel.com,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        James Feist <james.feist@linux.intel.com>
+References: <20180911233302.GA18799@roeck-us.net>
+ <5698ca34-14c9-8d05-c4e6-5acf85ff9d14@linux.intel.com>
+ <20180912013449.GA12612@roeck-us.net>
+ <7fd98646-fb5a-be4d-ce37-84b74e0fa8b3@linux.intel.com>
+ <20180912195844.GA6893@roeck-us.net>
+ <da7f4691-7428-3114-32bb-e0171f6c7228@linux.intel.com>
+ <20180912203059.GA18201@roeck-us.net>
+ <fb185839-3ae0-01dc-09e8-f22db55ecb04@kaod.org>
+ <3f86e75f-1502-eae8-0633-d087937111c8@roeck-us.net>
+ <f47b3050-3abd-caa4-cc71-4b13ef60e2c0@kaod.org>
+ <20180913155703.GA22605@roeck-us.net>
+From:   =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>
+Message-ID: <2c481986-7ee0-4887-5c9b-64e2cd9d8c04@kaod.org>
+Date:   Thu, 13 Sep 2018 18:35:38 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a6b:2848:0:0:0:0:0 with HTTP; Thu, 13 Sep 2018 08:42:58
- -0700 (PDT)
-In-Reply-To: <CAHmME9pcODNc2m26DH1cQY6R+grxYW5dvFpNDpz_GiugM3qufw@mail.gmail.com>
-References: <20180911010838.8818-1-Jason@zx2c4.com> <20180911010838.8818-3-Jason@zx2c4.com>
- <CAKv+Gu9nSeo4PFVrtjtqGQ32eqyxUp3xVCczZfu+dhFz5yLM0A@mail.gmail.com>
- <CAHmME9rTEFLaYmzFrc719LW2DWS2Ua_vL6by1UXZ9uDvMpbhYw@mail.gmail.com>
- <CAKv+Gu9RGo9rtGsmwMLZ_=-WSQ_h7har4agXP-2XOKupq-KYtA@mail.gmail.com>
- <CALCETrU2qkLVaxC=cpU5iAeT5B7xGsR+m2ZWtLVK37jMMWtcAA@mail.gmail.com>
- <CAKv+Gu8z1r7F_wbR6-e0Vbryqby7djDy2OR6JJURCsTo6ZMa2g@mail.gmail.com> <CAHmME9pcODNc2m26DH1cQY6R+grxYW5dvFpNDpz_GiugM3qufw@mail.gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Thu, 13 Sep 2018 17:42:58 +0200
-Message-ID: <CAKv+Gu9GVbSETjp01tANMwJgA6O9aexhnH+47836KjZg+71q2A@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 02/17] zinc: introduce minimal cryptography library
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     Andrew Lutomirski <luto@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180913155703.GA22605@roeck-us.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 10514497755225951104
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtjedrjeeigddutddtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddm
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13 September 2018 at 16:32, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
-> On Thu, Sep 13, 2018 at 7:41 AM Ard Biesheuvel
-> <ard.biesheuvel@linaro.org> wrote:
->> But one of the supposed selling points of this crypto library is that
->> it gives engineers who are frightened of crypto in general and the
->> crypto API in particular simple and easy to use crypto primitives
->> rather than having to jump through the crypto API's hoops.
->
-> The goal is for engineers who want to specifically use algorithm X
-> from within the kernel in a non-dynamic way to be able to then use
-> algorithm X with a simple function call. The goal is not to open it up
-> to people who have no idea what they're doing; for that a NaCL-like
-> library with functions like "crypto_box_open" or something would fit
-> the bill; but that's also not what we're trying to do here. Please
-> don't confuse the design goals. The rest of your email is therefore a
-> bit of a straw man; cut the rhetoric out.
->
->> A crypto library whose only encryption algorithm is a stream cipher
->> does *not* deliver on that promise, since it is only suitable for
->> cases where IVs are guaranteed not to be reused.
->
-> False. We also offer XChaCha20Poly1305, which takes a massive nonce,
-> suitable for random generation.
->
-> If there became a useful case for AES-PMAC-SIV or even AES-GCM or
-> something to that extent, then Zinc would add that as required. But
-> we're not going to start adding random ciphers unless they're needed.
->
+On 09/13/2018 05:57 PM, Guenter Roeck wrote:
+> On Thu, Sep 13, 2018 at 05:48:59PM +0200, Cédric Le Goater wrote:
+>> On 09/13/2018 03:33 PM, Guenter Roeck wrote:
+> [ ... ]
+>>>>>   /*
+>>>>>    * The state machine needs some refinement. It is only used to track
+>>>>>    * invalid STOP commands for the moment.
+>>>>> @@ -188,7 +215,7 @@ static void aspeed_i2c_bus_handle_cmd(AspeedI2CBus *bus, uint64_t value)
+>>>>>   {
+>>>>>       bus->cmd &= ~0xFFFF;
+>>>>>       bus->cmd |= value & 0xFFFF;
+>>>>> -    bus->intr_status = 0;> +    bus->intr_status &= I2CD_INTR_RX_DONE;
+>>>>
+>>>> it deserves a comment to understand which scenario we are trying to handle.
+>>>>    
+>>>
+>>> Ok. FWIW, I wonder if intr_status should be touched here in the first place,
+>>> but I neither have the hardware nor a datasheet, so I don't know if any bits
+>>> are auto-cleared.
+>>
+>> I just pushed a patch on my branch with some more explanation : 
+>>
+>> 	https://github.com/legoater/qemu/commits/aspeed-3.1
+>>
+> That seems to suggest that none of the status bits auto-clears, and that
+> the above code clearing intr_status should be removed entirely.
+> Am I missing something ?
 
-I'd prefer it if all the accelerated software implementations live in
-the same place. But I do strongly prefer arch code to live in
-arch/$arch, simply because of the maintenance scope for arch
-developers and maintainers.
+You are right. I just pushed another version of the previous patch with this 
+new hunk :
 
-I think AES-GCM is a useful example here. I really like the SIMD token
-abstraction a lot, but I would like to understand how this would work
-in Zinc if you have
-a) a generic implementation
-b) perhaps an arch specific scalar implementation
-c) a pure NEON implementation
-d) an implementation using AES instructions but not the PMULL instructions
-e) an implementation that uses AES and PMULL instructions.
+@@ -188,7 +200,6 @@ static void aspeed_i2c_bus_handle_cmd(As
+ {
+     bus->cmd &= ~0xFFFF;
+     bus->cmd |= value & 0xFFFF;
+-    bus->intr_status = 0;
+ 
+     if (bus->cmd & I2CD_M_START_CMD) {
+         uint8_t state = aspeed_i2c_get_state(bus) & I2CD_MACTIVE ?
 
-On arch/arm64 we support code patching, on other arches it may be
-different. We also support udev loading of modules depending on CPU
-capabilities, which means only the implementation you are likely to
-use will be loaded, and other modules are disregarded.
 
-I am not asking you to implement this now. But I do want to understand
-how these use cases fit into Zinc. And note that this has nothing to
-do with the crypto API: this could simply be a synchronous
-aes_gcm_encrypt() library function that maps to any of the above at
-runtime depending on the platform's capabilities.
+The QEMU palmetto and witherspoon machines seem to behave fine. Can you give 
+it a try ?
 
->> You yourself were
->> bitten by the clunkiness of the crypto API when attempting to use the
->> SHA26 code, right? So shouldn't we move that into this crypto library
->> as well?
->
-> As stated in the initial commit, and in numerous other emails
-> stretching back a year, yes, sha256 and other things in lib/ are going
-> to be put into Zinc following the initial merge of Zinc. These changes
-> will happen incrementally, like everything else that happens in the
-> kernel. Sha256, in particular, is probably the first thing I'll port
-> post-merge.
->
+Thanks,
 
-Excellent.
-
->> I think it is reasonable for WireGuard to standardize on
->> ChaCha20/Poly1305 only, although I have my concerns about the flag day
->> that will be required if this 'one true cipher' ever does turn out to
->> be compromised (either that, or we will have to go back in time and
->> add some kind of protocol versioning to existing deployments of
->> WireGuard)
->
-> Those concerns are not valid and have already been addressed (to you,
-> I believe) on this mailing list and elsewhere. WireGuard is versioned,
-> hence there's no need to "add" versioning, and it is prepared to roll
-> out new cryptography in a subsequent version should there be any
-> issues. In other words, your concern is based on a misunderstanding of
-> the protocol. If you have issues, however, with the design decisions
-> of WireGuard, something that's been heavily discussed with members of
-> the linux kernel community, networking community, cryptography
-> community, and so forth, for the last 3 years, I invite you to bring
-> them up on <wireguard@lists.zx2c4.com>.
->
-
-I'd prefer to have the discussion here, if you don't mind.
-
-IIUC clients and servers need to run the same version of the protocol.
-So does it require a flag day to switch the world over to the new
-version when the old one is deprecated?
-
->> And frankly, if the code were as good as the prose, we wouldn't be
->> having this discussion.
->
-> Please cut out this rhetoric. That's an obviously unprovable
-> statement, but it probably isn't true anyway. I wish you'd stick to
-> technical concerns only, rather than what appears to be a desire to
-> derail this by any means necessary.
->
-
-I apologize if I hit a nerve there, that was not my intention.
-
-I am not an 'entrenched crypto API guy that is out to get you'. I am a
-core ARM developer that takes an interest in crypto, shares your
-concern about the usability of the crypto API, and tries to ensure
-that what we end up is maintainable and usable for everybody.
-
->> Zinc adds its own clunky ways to mix arch and
->> generic code, involving GCC -include command line arguments and
->> #ifdefs everywhere. My review comments on this were completely ignored
->> by Jason.
->
-> No, they were not ignored. v2 cleaned up the #ifdefs. v4 has already
-> cleaned up the makefile stuff and will be even cleaner. Good things
-> await, don't worry.
->
-
-You know what? If you're up for it, let's not wait until Plumbers, but
-instead, let's collaborate off list to get this into shape.
+C.
