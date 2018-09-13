@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FDE2C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:45:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D84AC07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:45:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EABCD20881
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:45:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EABCD20881
+	by mail.kernel.org (Postfix) with ESMTP id 5448620881
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:45:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5448620881
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728239AbeIMSyl (ORCPT
+        id S1730132AbeIMSyp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:54:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60664 "EHLO
+        Thu, 13 Sep 2018 14:54:45 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60674 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729717AbeIMSyl (ORCPT
+        with ESMTP id S1728813AbeIMSyp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:54:41 -0400
+        Thu, 13 Sep 2018 14:54:45 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 35AA0D19;
-        Thu, 13 Sep 2018 13:45:08 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 69696D10;
+        Thu, 13 Sep 2018 13:45:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        stable@vger.kernel.org, Gabriel Bercarug <bercarug@amazon.com>,
+        =?UTF-8?q?Roger=20Pau=20Monn=C3=A9?= <roger.pau@citrix.com>,
+        Juergen Gross <jgross@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 062/115] Input: do not use WARN() in input_alloc_absinfo()
-Date:   Thu, 13 Sep 2018 15:31:22 +0200
-Message-Id: <20180913131827.525452650@linuxfoundation.org>
+Subject: [PATCH 4.14 063/115] xen/balloon: fix balloon initialization for PVH Dom0
+Date:   Thu, 13 Sep 2018 15:31:23 +0200
+Message-Id: <20180913131827.583224588@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -52,56 +54,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+From: Roger Pau Monne <roger.pau@citrix.com>
 
-[ Upstream commit 100294cee9a98bfd4d6cb2d1c8a8aef0e959b0c4 ]
+[ Upstream commit 3596924a233e45aa918c961a902170fc4916461b ]
 
-Some of fuzzers set panic_on_warn=1 so that they can handle WARN()ings
-the same way they handle full-blown kernel crashes. We used WARN() in
-input_alloc_absinfo() to get a better idea where memory allocation
-failed, but since then kmalloc() and friends started dumping call stack on
-memory allocation failures anyway, so we are not getting anything extra
-from WARN().
+The current balloon code tries to calculate a delta factor for the
+balloon target when running in HVM mode in order to account for memory
+used by the firmware.
 
-Because of the above, let's replace WARN with dev_err(). We use dev_err()
-instead of simply removing message and relying on kcalloc() to give us
-stack dump so that we'd know the instance of hardware device to which we
-were trying to attach input device.
+This workaround for memory accounting doesn't work properly on a PVH
+Dom0, that has a static-max value different from the target value even
+at startup. Note that this is not a problem for DomUs because guests are
+started with a static-max value that matches the amount of RAM in the
+memory map.
 
-Reported-by: Dmitry Vyukov <dvyukov@google.com>
-Acked-by: Dmitry Vyukov <dvyukov@google.com>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Fix this by forcefully setting target_diff for Dom0, regardless of
+it's mode.
+
+Reported-by: Gabriel Bercarug <bercarug@amazon.com>
+Signed-off-by: Roger Pau Monné <roger.pau@citrix.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/input/input.c |   16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+ drivers/xen/xen-balloon.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/input/input.c
-+++ b/drivers/input/input.c
-@@ -480,11 +480,19 @@ EXPORT_SYMBOL(input_inject_event);
-  */
- void input_alloc_absinfo(struct input_dev *dev)
- {
--	if (!dev->absinfo)
--		dev->absinfo = kcalloc(ABS_CNT, sizeof(*dev->absinfo),
--					GFP_KERNEL);
-+	if (dev->absinfo)
-+		return;
- 
--	WARN(!dev->absinfo, "%s(): kcalloc() failed?\n", __func__);
-+	dev->absinfo = kcalloc(ABS_CNT, sizeof(*dev->absinfo), GFP_KERNEL);
-+	if (!dev->absinfo) {
-+		dev_err(dev->dev.parent ?: &dev->dev,
-+			"%s: unable to allocate memory\n", __func__);
-+		/*
-+		 * We will handle this allocation failure in
-+		 * input_register_device() when we refuse to register input
-+		 * device with ABS bits but without absinfo.
-+		 */
-+	}
- }
- EXPORT_SYMBOL(input_alloc_absinfo);
+--- a/drivers/xen/xen-balloon.c
++++ b/drivers/xen/xen-balloon.c
+@@ -81,7 +81,7 @@ static void watch_target(struct xenbus_w
+ 			static_max = new_target;
+ 		else
+ 			static_max >>= PAGE_SHIFT - 10;
+-		target_diff = xen_pv_domain() ? 0
++		target_diff = (xen_pv_domain() || xen_initial_domain()) ? 0
+ 				: static_max - balloon_stats.target_pages;
+ 	}
  
 
 
