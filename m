@@ -6,35 +6,40 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CAFEC07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:59:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5769BC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:59:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1255120652
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:59:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1255120652
+	by mail.kernel.org (Postfix) with ESMTP id 1570020652
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:59:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1570020652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731715AbeIMTJM (ORCPT
+        id S1731722AbeIMTJP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:09:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34820 "EHLO
+        Thu, 13 Sep 2018 15:09:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34834 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731116AbeIMTJL (ORCPT
+        with ESMTP id S1731164AbeIMTJO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:09:11 -0400
+        Thu, 13 Sep 2018 15:09:14 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BF8B4D0E;
-        Thu, 13 Sep 2018 13:59:33 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B700DD0E;
+        Thu, 13 Sep 2018 13:59:36 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steve French <stfrench@microsoft.com>,
-        Aurelien Aptel <aaptel@suse.com>,
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Scott Wood <oss@buserror.net>,
+        Kumar Gala <galak@kernel.crashing.org>,
+        linuxppc-dev@lists.ozlabs.org,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 123/197] smb3: if server does not support posix do not allow posix mount option
-Date:   Thu, 13 Sep 2018 15:31:12 +0200
-Message-Id: <20180913131846.465029010@linuxfoundation.org>
+Subject: [PATCH 4.18 124/197] powerpc/platforms/85xx: fix t1042rdb_diu.c build errors & warning
+Date:   Thu, 13 Sep 2018 15:31:13 +0200
+Message-Id: <20180913131846.505123144@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -52,41 +57,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steve French <stfrench@microsoft.com>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-[ Upstream commit 8505c8bfd85a260c9dc5c47e15bd8c5357fcbcd2 ]
+[ Upstream commit f5daf77a55ef0e695cc90c440ed6503073ac5e07 ]
 
-If user specifies "posix" on an SMB3.11 mount, then fail the mount
-if server does not return the POSIX negotiate context indicating
-support for posix.
+Fix build errors and warnings in t1042rdb_diu.c by adding header files
+and MODULE_LICENSE().
 
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Reviewed-by: Aurelien Aptel <aaptel@suse.com>
+../arch/powerpc/platforms/85xx/t1042rdb_diu.c:152:1: warning: data definition has no type or storage class
+ early_initcall(t1042rdb_diu_init);
+../arch/powerpc/platforms/85xx/t1042rdb_diu.c:152:1: error: type defaults to 'int' in declaration of 'early_initcall' [-Werror=implicit-int]
+../arch/powerpc/platforms/85xx/t1042rdb_diu.c:152:1: warning: parameter names (without types) in function declaration
+
+and
+WARNING: modpost: missing MODULE_LICENSE() in arch/powerpc/platforms/85xx/t1042rdb_diu.o
+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Scott Wood <oss@buserror.net>
+Cc: Kumar Gala <galak@kernel.crashing.org>
+Cc: linuxppc-dev@lists.ozlabs.org
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/cifs/connect.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ arch/powerpc/platforms/85xx/t1042rdb_diu.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/fs/cifs/connect.c
-+++ b/fs/cifs/connect.c
-@@ -3031,11 +3031,15 @@ cifs_get_tcon(struct cifs_ses *ses, stru
- 	}
+--- a/arch/powerpc/platforms/85xx/t1042rdb_diu.c
++++ b/arch/powerpc/platforms/85xx/t1042rdb_diu.c
+@@ -9,8 +9,10 @@
+  * option) any later version.
+  */
  
- #ifdef CONFIG_CIFS_SMB311
--	if ((volume_info->linux_ext) && (ses->server->posix_ext_supported)) {
--		if (ses->server->vals->protocol_id == SMB311_PROT_ID) {
-+	if (volume_info->linux_ext) {
-+		if (ses->server->posix_ext_supported) {
- 			tcon->posix_extensions = true;
- 			printk_once(KERN_WARNING
- 				"SMB3.11 POSIX Extensions are experimental\n");
-+		} else {
-+			cifs_dbg(VFS, "Server does not support mounting with posix SMB3.11 extensions.\n");
-+			rc = -EOPNOTSUPP;
-+			goto out_fail;
- 		}
- 	}
- #endif /* 311 */
++#include <linux/init.h>
+ #include <linux/io.h>
+ #include <linux/kernel.h>
++#include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ 
+@@ -150,3 +152,5 @@ static int __init t1042rdb_diu_init(void
+ }
+ 
+ early_initcall(t1042rdb_diu_init);
++
++MODULE_LICENSE("GPL");
 
 
