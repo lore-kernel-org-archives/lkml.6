@@ -6,35 +6,40 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57E23C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:53:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 523A4C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:53:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CCC920854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:53:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CCC920854
+	by mail.kernel.org (Postfix) with ESMTP id 182FE20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:53:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 182FE20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730719AbeIMTDH (ORCPT
+        id S1730904AbeIMTDL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:03:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33676 "EHLO
+        Thu, 13 Sep 2018 15:03:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33688 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728810AbeIMTDG (ORCPT
+        with ESMTP id S1728810AbeIMTDL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:03:06 -0400
+        Thu, 13 Sep 2018 15:03:11 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E0F9CCE7;
-        Thu, 13 Sep 2018 13:53:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F05F5CE7;
+        Thu, 13 Sep 2018 13:53:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        John Johansen <john.johansen@canonical.com>,
+        stable@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Christoffer Dall <cdall@kernel.org>,
+        Peter Maydel <peter.maydell@linaro.org>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 052/197] apparmor: fix an error code in __aa_create_ns()
-Date:   Thu, 13 Sep 2018 15:30:01 +0200
-Message-Id: <20180913131843.615114388@linuxfoundation.org>
+Subject: [PATCH 4.18 053/197] virtio: pci-legacy: Validate queue pfn
+Date:   Thu, 13 Sep 2018 15:30:02 +0200
+Message-Id: <20180913131843.651175379@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -52,32 +57,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-[ Upstream commit 0a6b29230ec336189bab32498df3f06c8a6944d8 ]
+[ Upstream commit 69599206ea9a3f8f2e94d46580579cbf9d08ad6c ]
 
-We should return error pointers in this function.  Returning NULL
-results in a NULL dereference in the caller.
+Legacy PCI over virtio uses a 32bit PFN for the queue. If the
+queue pfn is too large to fit in 32bits, which we could hit on
+arm64 systems with 52bit physical addresses (even with 64K page
+size), we simply miss out a proper link to the other side of
+the queue.
 
-Fixes: 73688d1ed0b8 ("apparmor: refactor prepare_ns() and make usable from different views")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: John Johansen <john.johansen@canonical.com>
+Add a check to validate the PFN, rather than silently breaking
+the devices.
+
+Cc: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Christoffer Dall <cdall@kernel.org>
+Cc: Peter Maydel <peter.maydell@linaro.org>
+Cc: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- security/apparmor/policy_ns.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/virtio/virtio_pci_legacy.c |   14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
---- a/security/apparmor/policy_ns.c
-+++ b/security/apparmor/policy_ns.c
-@@ -255,7 +255,7 @@ static struct aa_ns *__aa_create_ns(stru
+--- a/drivers/virtio/virtio_pci_legacy.c
++++ b/drivers/virtio/virtio_pci_legacy.c
+@@ -122,6 +122,7 @@ static struct virtqueue *setup_vq(struct
+ 	struct virtqueue *vq;
+ 	u16 num;
+ 	int err;
++	u64 q_pfn;
  
- 	ns = alloc_ns(parent->base.hname, name);
- 	if (!ns)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
- 	ns->level = parent->level + 1;
- 	mutex_lock_nested(&ns->lock, ns->level);
- 	error = __aafs_ns_mkdir(ns, ns_subns_dir(parent), name, dir);
+ 	/* Select the queue we're interested in */
+ 	iowrite16(index, vp_dev->ioaddr + VIRTIO_PCI_QUEUE_SEL);
+@@ -141,9 +142,17 @@ static struct virtqueue *setup_vq(struct
+ 	if (!vq)
+ 		return ERR_PTR(-ENOMEM);
+ 
++	q_pfn = virtqueue_get_desc_addr(vq) >> VIRTIO_PCI_QUEUE_ADDR_SHIFT;
++	if (q_pfn >> 32) {
++		dev_err(&vp_dev->pci_dev->dev,
++			"platform bug: legacy virtio-mmio must not be used with RAM above 0x%llxGB\n",
++			0x1ULL << (32 + PAGE_SHIFT - 30));
++		err = -E2BIG;
++		goto out_del_vq;
++	}
++
+ 	/* activate the queue */
+-	iowrite32(virtqueue_get_desc_addr(vq) >> VIRTIO_PCI_QUEUE_ADDR_SHIFT,
+-		  vp_dev->ioaddr + VIRTIO_PCI_QUEUE_PFN);
++	iowrite32(q_pfn, vp_dev->ioaddr + VIRTIO_PCI_QUEUE_PFN);
+ 
+ 	vq->priv = (void __force *)vp_dev->ioaddr + VIRTIO_PCI_QUEUE_NOTIFY;
+ 
+@@ -160,6 +169,7 @@ static struct virtqueue *setup_vq(struct
+ 
+ out_deactivate:
+ 	iowrite32(0, vp_dev->ioaddr + VIRTIO_PCI_QUEUE_PFN);
++out_del_vq:
+ 	vring_del_virtqueue(vq);
+ 	return ERR_PTR(err);
+ }
 
 
