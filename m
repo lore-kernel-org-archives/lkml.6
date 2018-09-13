@@ -2,207 +2,261 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60C05C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:58:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0888CC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:59:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 190F820854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:58:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 190F820854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B734E20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:59:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B734E20854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728106AbeIMSEl (ORCPT
+        id S1728546AbeIMSI0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:04:41 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60568 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727872AbeIMSEj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:04:39 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5871A65991;
-        Thu, 13 Sep 2018 12:55:18 +0000 (UTC)
-Received: from krava.brq.redhat.com (unknown [10.43.17.10])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7A92A600C6;
-        Thu, 13 Sep 2018 12:55:16 +0000 (UTC)
-From:   Jiri Olsa <jolsa@kernel.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andi Kleen <andi@firstfloor.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: [PATCH 11/48] perf tools: Handle indexed data file properly
-Date:   Thu, 13 Sep 2018 14:54:13 +0200
-Message-Id: <20180913125450.21342-12-jolsa@kernel.org>
-In-Reply-To: <20180913125450.21342-1-jolsa@kernel.org>
-References: <20180913125450.21342-1-jolsa@kernel.org>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 13 Sep 2018 12:55:18 +0000 (UTC)
+        Thu, 13 Sep 2018 14:08:26 -0400
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:37627 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727656AbeIMSIZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 14:08:25 -0400
+X-Originating-IP: 2.224.242.101
+Received: from w540 (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 70DB2C0017;
+        Thu, 13 Sep 2018 12:58:59 +0000 (UTC)
+Date:   Thu, 13 Sep 2018 14:58:57 +0200
+From:   jacopo mondi <jacopo@jmondi.org>
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc:     Steve Longerbeam <slongerbeam@gmail.com>,
+        linux-media@vger.kernel.org,
+        Steve Longerbeam <steve_longerbeam@mentor.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 06/17] media: v4l2-fwnode: Add a convenience function
+ for registering subdevs with notifiers
+Message-ID: <20180913125857.GC11509@w540>
+References: <1531175957-1973-1-git-send-email-steve_longerbeam@mentor.com>
+ <1531175957-1973-7-git-send-email-steve_longerbeam@mentor.com>
+ <20180913103727.GB28160@w540>
+ <20180913124425.h5vfjyr3b44j4nxv@paasikivi.fi.intel.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="lCAWRPmW1mITcIfM"
+Content-Disposition: inline
+In-Reply-To: <20180913124425.h5vfjyr3b44j4nxv@paasikivi.fi.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Namhyung Kim <namhyung@kernel.org>
 
-When perf detects data file has index table, process header part first
-and then rest data files in a row.  Note that the indexed sample data is
-recorded for each cpu/thread separately, it's already ordered with
-respect to themselves so no need to use the ordered event queue
-interface.
+--lCAWRPmW1mITcIfM
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Link: http://lkml.kernel.org/n/tip-pqgpc6m32s2cwprxpom9871g@git.kernel.org
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- tools/perf/builtin-record.c |  2 ++
- tools/perf/perf.c           |  1 +
- tools/perf/perf.h           |  2 ++
- tools/perf/util/header.c    |  1 +
- tools/perf/util/session.c   | 52 ++++++++++++++++++++++++++++++-------
- 5 files changed, 48 insertions(+), 10 deletions(-)
+Hi Sakari,
 
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index b5deda2e890c..9690c1f3e666 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -53,6 +53,8 @@
- #include <sys/mman.h>
- #include <sys/wait.h>
- #include <linux/time64.h>
-+#include <sys/types.h>
-+#include <sys/stat.h>
- 
- struct switch_output {
- 	bool		 enabled;
-diff --git a/tools/perf/perf.c b/tools/perf/perf.c
-index a11cb006f968..989ea9799c88 100644
---- a/tools/perf/perf.c
-+++ b/tools/perf/perf.c
-@@ -38,6 +38,7 @@ const char perf_more_info_string[] =
- 
- static int use_pager = -1;
- const char *input_name;
-+bool perf_has_index;
- 
- struct cmd_struct {
- 	const char *cmd;
-diff --git a/tools/perf/perf.h b/tools/perf/perf.h
-index 21bf7f5a3cf5..fba61cc5291f 100644
---- a/tools/perf/perf.h
-+++ b/tools/perf/perf.h
-@@ -37,6 +37,8 @@ void pthread__unblock_sigwinch(void);
- 
- #include "util/target.h"
- 
-+extern bool perf_has_index;
-+
- struct record_opts {
- 	struct target target;
- 	bool	     group;
-diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-index b097bcc35d34..08ccd38e8eca 100644
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -2603,6 +2603,7 @@ static int process_data_index(struct feat_fd *ff, void *data __maybe_unused)
- 
- 	ph->index = idx;
- 	ph->nr_index = nr_idx;
-+	perf_has_index = true;
- 	return 0;
- }
- 
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index 7d2c8ce6cfad..15314052084d 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -1840,7 +1840,9 @@ static int __perf_session__process_events(struct perf_session *session,
- 	mmap_size = MMAP_SIZE;
- 	if (mmap_size > file_size) {
- 		mmap_size = file_size;
--		session->one_mmap = true;
-+
-+		if (!perf_has_index)
-+			session->one_mmap = true;
- 	}
- 
- 	memset(mmaps, 0, sizeof(mmaps));
-@@ -1918,8 +1920,6 @@ static int __perf_session__process_events(struct perf_session *session,
- 	err = perf_session__flush_thread_stacks(session);
- out_err:
- 	ui_progress__finish();
--	if (!tool->no_warn)
--		perf_session__warn_about_errors(session);
- 	/*
- 	 * We may switching perf.data output, make ordered_events
- 	 * reusable.
-@@ -1930,20 +1930,52 @@ static int __perf_session__process_events(struct perf_session *session,
- 	return err;
- }
- 
-+static int __perf_session__process_indexed_events(struct perf_session *session)
-+{
-+	struct perf_tool *tool = session->tool;
-+	int err = 0, i;
-+
-+	for (i = 0; i < (int)session->header.nr_index; i++) {
-+		struct perf_file_section *idx = &session->header.index[i];
-+
-+		if (!idx->size)
-+			continue;
-+
-+		err = __perf_session__process_events(session, idx->offset,
-+						     idx->size,
-+						     idx->offset + idx->size);
-+		if (err < 0)
-+			break;
-+	}
-+
-+	if (!tool->no_warn)
-+		perf_session__warn_about_errors(session);
-+
-+	return err;
-+}
-+
- int perf_session__process_events(struct perf_session *session)
- {
--	u64 size = perf_data__size(session->data);
-+	struct perf_tool *tool = session->tool;
-+	struct perf_data *data = session->data;
-+	u64 size = perf_data__size(data);
- 	int err;
- 
- 	if (perf_session__register_idle_thread(session) < 0)
- 		return -ENOMEM;
- 
--	if (!perf_data__is_pipe(session->data))
--		err = __perf_session__process_events(session,
--						     session->header.data_offset,
--						     session->header.data_size, size);
--	else
--		err = __perf_session__process_pipe_events(session);
-+	if (perf_data__is_pipe(data))
-+		return __perf_session__process_pipe_events(session);
-+	if (perf_has_index)
-+		return __perf_session__process_indexed_events(session);
-+
-+	err = __perf_session__process_events(session,
-+					     session->header.data_offset,
-+					     session->header.data_size,
-+					     size);
-+
-+	if (!tool->no_warn)
-+		perf_session__warn_about_errors(session);
- 
- 	return err;
- }
--- 
-2.17.1
+On Thu, Sep 13, 2018 at 03:44:25PM +0300, Sakari Ailus wrote:
+> Hi Jacopo,
+>
+> On Thu, Sep 13, 2018 at 12:37:27PM +0200, jacopo mondi wrote:
+> > Hi Steve,
+> >
+> > On Mon, Jul 09, 2018 at 03:39:06PM -0700, Steve Longerbeam wrote:
+> > > Adds v4l2_async_register_fwnode_subdev(), which is a convenience function
+> > > for parsing a sub-device's fwnode port endpoints for connected remote
+> > > sub-devices, registering a sub-device notifier, and then registering
+> > > the sub-device itself.
+> > >
+> > > Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
+> > > ---
+> > > Changes since v5:
+> > > - add call to v4l2_async_notifier_init().
+> > > Changes since v4:
+> > > - none
+> > > Changes since v3:
+> > > - remove support for port sub-devices, such sub-devices will have to
+> > >   role their own.
+> > > Changes since v2:
+> > > - fix error-out path in v4l2_async_register_fwnode_subdev() that forgot
+> > >   to put device.
+> > > Changes since v1:
+> > > - add #include <media/v4l2-subdev.h> to v4l2-fwnode.h for
+> > >   'struct v4l2_subdev' declaration.
+> > > ---
+> > >  drivers/media/v4l2-core/v4l2-fwnode.c | 64 +++++++++++++++++++++++++++++++++++
+> > >  include/media/v4l2-fwnode.h           | 38 +++++++++++++++++++++
+> > >  2 files changed, 102 insertions(+)
+> > >
+> > > diff --git a/drivers/media/v4l2-core/v4l2-fwnode.c b/drivers/media/v4l2-core/v4l2-fwnode.c
+> > > index 67ad333..94d867a 100644
+> > > --- a/drivers/media/v4l2-core/v4l2-fwnode.c
+> > > +++ b/drivers/media/v4l2-core/v4l2-fwnode.c
+> > > @@ -872,6 +872,70 @@ int v4l2_async_register_subdev_sensor_common(struct v4l2_subdev *sd)
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(v4l2_async_register_subdev_sensor_common);
+> > >
+> > > +int v4l2_async_register_fwnode_subdev(
+> >
+> > The meat of this function is to register a subdev with a notifier,
+> > so I would make it clear in the function name which is otherwise
+> > misleading
+> >
+> > > +	struct v4l2_subdev *sd, size_t asd_struct_size,
+> > > +	unsigned int *ports, unsigned int num_ports,
+> > > +	int (*parse_endpoint)(struct device *dev,
+> > > +			      struct v4l2_fwnode_endpoint *vep,
+> > > +			      struct v4l2_async_subdev *asd))
+> > > +{
+> > > +	struct v4l2_async_notifier *notifier;
+> > > +	struct device *dev = sd->dev;
+> > > +	struct fwnode_handle *fwnode;
+> > > +	int ret;
+> > > +
+> > > +	if (WARN_ON(!dev))
+> > > +		return -ENODEV;
+> > > +
+> > > +	fwnode = dev_fwnode(dev);
+> > > +	if (!fwnode_device_is_available(fwnode))
+> > > +		return -ENODEV;
+> > > +
+> > > +	notifier = kzalloc(sizeof(*notifier), GFP_KERNEL);
+> > > +	if (!notifier)
+> > > +		return -ENOMEM;
+> > > +
+> > > +	v4l2_async_notifier_init(notifier);
+> > > +
+> > > +	if (!ports) {
+> > > +		ret = v4l2_async_notifier_parse_fwnode_endpoints(
+> > > +			dev, notifier, asd_struct_size, parse_endpoint);
+> > > +		if (ret < 0)
+> > > +			goto out_cleanup;
+> > > +	} else {
+> > > +		unsigned int i;
+> > > +
+> > > +		for (i = 0; i < num_ports; i++) {
+> >
+> > It's not particularly exciting to iterate on pointers received from
+> > callers without checking for num_ports first.
+>
+> The loop is not executed if num_ports is zero, so I don't see a problem
+> with that.
+>
 
+I know this is internal drivers API and failures are meant to be
+catched early in development, but what if the actual number of ports
+identifiers is < then the num_ports parameter?
+
+> >
+> > Also the caller has to allocate an array of "ports" and keep track of it
+> > just to pass it to this function and I don't see a way to set the
+> > notifier's ops before the notifier gets registered here below.
+>
+> True; this can be seen as an omission but quite a few drivers have no need
+> for this either. It could be added later on --- I think it'd make perfect
+> sense.
+>
+
+In a 'notifier configuration' structure that gather these and existing
+function parameters together as you suggested...
+
+> >
+> > > +			ret = v4l2_async_notifier_parse_fwnode_endpoints_by_port(
+> > > +				dev, notifier, asd_struct_size,
+> > > +				ports[i], parse_endpoint);
+> > > +			if (ret < 0)
+> > > +				goto out_cleanup;
+> > > +		}
+> > > +	}
+> > > +
+> > > +	ret = v4l2_async_subdev_notifier_register(sd, notifier);
+> > > +	if (ret < 0)
+> > > +		goto out_cleanup;
+> > > +
+> > > +	ret = v4l2_async_register_subdev(sd);
+> > > +	if (ret < 0)
+> > > +		goto out_unregister;
+> > > +
+> > > +	sd->subdev_notifier = notifier;
+> >
+> > This is set already by v4l2_async_subdev_notifier_register()
+>
+> The same pattern is actually present in
+> v4l2_async_register_subdev_sensor_common(). It's used in unregistration
+> that can only happen after the registration, i.e. this function, has
+> completed.
+>
+> >
+> > In general, I have doubts this function is really needed. It requires
+> > the caller to reserve memory just to pass down a list of intergers,
+> > and there is no way to set subdev ops.
+> >
+> > Could you have a look at how drivers/media/platform/rcar-vin/rcar-csi2.c
+> > registers a subdevice and an associated notifier and see if in your
+> > opinion it can be implemented in the same way in your imx csi/csi2 driver,
+> > or you still like this one most?
+>
+> I was actually thinking of changing this later on a bit. I came to think of
+> this after picking up the patchset to my tree... oh well.
+>
+> This function is meant for cases where you have multiple ports. That's not
+> working very nicely at the moment, and even with my patches, you can't pass
+> default configuration to e.g. v4l2_async_notifier_parse_fwnode_endpoints().
+> So there's definitely work to do. I'd like to move the details of parsing
+> out of drivers; every driver is doing almost the same but just in a little
+> bit different way.
+>
+
+I see...
+
+> The arguments should to be put into a struct. That way we get rid of a very
+> long series of hard-to-read function arguments, as well as we don't need to
+> change every caller when the function gets something new and interesting to
+> do.
+>
+> Right now the entire patchset is so big (40 patches) that I'd prefer to get
+> it in unless serious issues are found, and proceed the development on top.
+>
+
+Sure, please go ahead and thanks for the reply.
+
+Cheers
+   j
+
+> --
+> Kind regards,
+>
+> Sakari Ailus
+> sakari.ailus@linux.intel.com
+
+--lCAWRPmW1mITcIfM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJbml8RAAoJEHI0Bo8WoVY8LjkQALnhBfdcw/AMi9GaQaOxJHh6
+LkwJsSEl4VEb37w2YLjArZeE8udzMWfG9GftYHYalchRA9yhnsAJODl6czGtE4LP
+eHqKGehd/iAMlZ2aEKifIN63WVHV6YBuY7DhFbQ370EeeToLwEdSwGeBp/ot1tGd
+BbRA3Bd0e50gnUcX79TUbe3wAKoTcKMjXANZ4M3AOdvoYBhVYq8DLqjL2EtIEPJF
+b2ieoRO491aJdUvy0tWHI3ZA4fTfAglkNIQoAUbBq3cKOGLAa9SktOKnGiwXNPXA
+yQPGkuThxUQmQWoPmPYKXZER0HkbPTKIenst/sGNXKoHwthQkXma1NBXUieVloCb
+HwYR6a9qlJAXOYoctPPZXKhllR+1NlDR1KSu7UUv03JDY6SXnaRmGiSxnxyujqd1
+OYYy+p4BH2lXXI4+XcJYIR/uPWMiSm8xkNiLOI6u+u/t+zhh8RBtDFgM2tQOC7aq
+6vGP7OdfPTtXmQujBIURlDj3pqVw+M9mhIdu4KQ/rKhD025oOXa+nDpcnILrkyAQ
+oXmZp/2aaCyW7WY+Iqd7T3AfPfSkK1rHrrrJxNP4vYN6ldG+BDnp2MR+HSY3i1YF
+6VS40jxEQ/rvWKRzZrtZUlKu10WfUB5QG3JQ52wBXCIRE7BYnYWEhlRV0d9kYWUi
+GdpS2R3ZyVP8o9u1pOw8
+=nFhZ
+-----END PGP SIGNATURE-----
+
+--lCAWRPmW1mITcIfM--
