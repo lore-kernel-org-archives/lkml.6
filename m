@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC885C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:58:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBF1DC07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:58:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 773CB20869
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:58:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 773CB20869
+	by mail.kernel.org (Postfix) with ESMTP id 9058720866
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:58:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9058720866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731285AbeIMTIE (ORCPT
+        id S1731407AbeIMTII (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:08:04 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34548 "EHLO
+        Thu, 13 Sep 2018 15:08:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34588 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728566AbeIMTID (ORCPT
+        with ESMTP id S1728566AbeIMTIH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:08:03 -0400
+        Thu, 13 Sep 2018 15:08:07 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 67FF8D0E;
-        Thu, 13 Sep 2018 13:58:26 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2657ED15;
+        Thu, 13 Sep 2018 13:58:29 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        John Garry <john.garry@huawei.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 107/197] scsi: aic94xx: fix an error code in aic94xx_init()
-Date:   Thu, 13 Sep 2018 15:30:56 +0200
-Message-Id: <20180913131845.830323396@linuxfoundation.org>
+Subject: [PATCH 4.18 108/197] NFSv4: Fix error handling in nfs4_sp4_select_mode()
+Date:   Thu, 13 Sep 2018 15:30:57 +0200
+Message-Id: <20180913131845.870544708@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -54,36 +52,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
-[ Upstream commit 0756c57bce3d26da2592d834d8910b6887021701 ]
+[ Upstream commit 72bf75cfc00c02aa66ef6133048f37aa5d88825c ]
 
-We accidentally return success instead of -ENOMEM on this error path.
+Error code is set in the error handling cases but never used. Fix it.
 
-Fixes: 2908d778ab3e ("[SCSI] aic94xx: new driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-Reviewed-by: John Garry <john.garry@huawei.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: 937e3133cd0b ("NFSv4.1: Ensure we clear the SP4_MACH_CRED flags in nfs4_sp4_select_mode()")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/aic94xx/aic94xx_init.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/nfs/nfs4proc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/scsi/aic94xx/aic94xx_init.c
-+++ b/drivers/scsi/aic94xx/aic94xx_init.c
-@@ -1030,8 +1030,10 @@ static int __init aic94xx_init(void)
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -7734,7 +7734,7 @@ static int nfs4_sp4_select_mode(struct n
+ 	}
+ out:
+ 	clp->cl_sp4_flags = flags;
+-	return 0;
++	return ret;
+ }
  
- 	aic94xx_transport_template =
- 		sas_domain_attach_transport(&aic94xx_transport_functions);
--	if (!aic94xx_transport_template)
-+	if (!aic94xx_transport_template) {
-+		err = -ENOMEM;
- 		goto out_destroy_caches;
-+	}
- 
- 	err = pci_register_driver(&aic94xx_pci_driver);
- 	if (err)
+ struct nfs41_exchange_id_data {
 
 
