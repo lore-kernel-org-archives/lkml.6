@@ -2,104 +2,160 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C648C070C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 03:07:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEA71C070C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 03:10:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03202213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 03:07:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37FB8213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 03:10:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lzlLr2L0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03202213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="f+Wg/ALb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37FB8213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727649AbeIMIOn (ORCPT
+        id S1727365AbeIMISL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 04:14:43 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:36006 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726364AbeIMIOn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 04:14:43 -0400
-Received: by mail-pf1-f195.google.com with SMTP id b11-v6so1984700pfo.3;
-        Wed, 12 Sep 2018 20:07:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=YQ5exA3UDgqtg3kFvjbqHCjK5UqOrYOG45Iw4jIRy8U=;
-        b=lzlLr2L0jja7WSAFcE4TP212fMrFewIqtAiR5IR2eQzGATj8z+t0/Vni4gLgm/cfRs
-         raf8YerJsEYOxsibB4mVWIH/xAKudIU4ZOvHxcb3LCuzPA2mkXLUmqcGL823ihpW+9y0
-         i5ldmqobsTuqnft7vvb8kq50E3r744YN9xN3xMlu5EFjHMz8L1/UoGcB0rwsmLJE3TNz
-         xVWdqbeqwqBE567u5VKR2HM8k7LYax3SArfutoCNzs3HCizJvlT6wrQTMnyEM04Fo5lH
-         awMwp1/OugOAIkuwwKC1/KGBcY4g9xSy6hatLe1SyxDGGQgq3NbDhj1oTq3h/wfza6Hy
-         zzpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=YQ5exA3UDgqtg3kFvjbqHCjK5UqOrYOG45Iw4jIRy8U=;
-        b=SPY2RJ5eQ2JhXscOJvxCHNKZ5vZk7WuCEmfo7Qu2x3IGjOW07S+neeiTZowRdQGm0E
-         odI3/04xfNFTi5RY1Krt00CaV4ZLP4HiBJGusx1iYWgVQcWrOoeoxw1NKGRigHmvSvh1
-         7LxRP5BeORBG6t2w3yjZYlY60NhgdzeuoeIoPvY6ssyKv1rLbRsh53GZNibKWUJdLz79
-         u67dpE6LwY1dCJwLCk/t5LKwhlFhvU8udh+JG1c5izjUR1/TkVcXUiomddhCXl1NOJzz
-         xrbU72NoQ2Cx3FYORaLCnSMnC9XuNJCiULqtFC97oa3Iwmpjwo7oJhH1B4l8RO1ETGT4
-         rPzg==
-X-Gm-Message-State: APzg51CxoMFnnkQ1zGsCcopyCzL4BozlvwCi8Gc5zgaPU9goNcYuW/Xa
-        p+u66Y0PwuqOjeQRbZb9HBY=
-X-Google-Smtp-Source: ANB0VdYZYLOsc4W5XVzoDK/9d8OcXPdIYnq4WubychtjSXiQcWICFH9H0HR39HnN42CMvrATWxf1gQ==
-X-Received: by 2002:a63:b258:: with SMTP id t24-v6mr5166013pgo.317.1536808035407;
-        Wed, 12 Sep 2018 20:07:15 -0700 (PDT)
-Received: from josh-ThinkPad-T460s (cpe-75-80-215-168.hawaii.res.rr.com. [75.80.215.168])
-        by smtp.gmail.com with ESMTPSA id b203-v6sm3841027pfb.174.2018.09.12.20.07.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Sep 2018 20:07:14 -0700 (PDT)
-From:   Josh Abraham <j.abraham1776@gmail.com>
-X-Google-Original-From: Josh Abraham <sinisterpatrician@gmail.com>
-Date:   Wed, 12 Sep 2018 17:07:11 -1000
-To:     vinholikatti@gmail.com
-Cc:     jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
-        linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, j.abraham1776@gmail.com
-Subject: [PATCH] scsi: ufs: use PTR_ERR_OR_ZERO in ufs_hisi_get_resource()
-Message-ID: <20180913030711.GA12975@josh-ThinkPad-T460s>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Thu, 13 Sep 2018 04:18:11 -0400
+Received: from m12-18.163.com ([220.181.12.18]:35504 "EHLO m12-18.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726364AbeIMISL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 04:18:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id; bh=jR0ANHsLe9cIzVF67K
+        DnHJmwjC8PTvrH2QOMNeE9VFw=; b=f+Wg/ALbnG9B2AzyK+SCwUyLRp81vyaSvr
+        wgtdBm/nWjn5L2QY0mWlFFiq0TqlDts6npWyzk7WVxdwDKQQckz9bJlYQFVVBuvN
+        Eb3uWXTiXT0XRnx3NXCTLXD4fIhx7hP1Qh/qXP4MMqPLKScVj1u/Ch84ZqAOTR23
+        rlVBQ8Shk=
+Received: from localhost.localdomain (unknown [49.65.59.196])
+        by smtp14 (Coremail) with SMTP id EsCowACXkQMa1ZlbCiuETA--.54041S4;
+        Thu, 13 Sep 2018 11:10:19 +0800 (CST)
+From:   Dou Liyang <dou_liyang@163.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     tglx@linutronix.de, kashyap.desai@broadcom.com,
+        shivasharan.srikanteshwara@broadcom.com, sumit.saxena@broadcom.com,
+        ming.lei@redhat.com, hch@lst.de, douly.fnst@cn.fujitsu.com
+Subject: [RFC PATCH] irq/affinity: Mark the pre/post vectors as regular interrupts
+Date:   Thu, 13 Sep 2018 11:10:11 +0800
+Message-Id: <20180913031011.17376-1-dou_liyang@163.com>
+X-Mailer: git-send-email 2.14.3
+X-CM-TRANSID: EsCowACXkQMa1ZlbCiuETA--.54041S4
+X-Coremail-Antispam: 1Uf129KBjvJXoWxGr1DZr1fXFyfXw4UGFyrXrb_yoW5uw1kpr
+        4UKFyfWrW8JF4fWw1kKan7AFy3Cas3X39FyFnrX3WfCrZag3WqqryFqF1fXF1UGrW3CF1U
+        AFy2qr4I9w1UJFDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jTSoJUUUUU=
+X-Originating-IP: [49.65.59.196]
+X-CM-SenderInfo: pgrxszxl1d0wi6rwjhhfrp/1tbiLhvAolSIcR8m1wAAsU
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use PTR_ERR_OR_ZERO instead of IF_ERR() return PTR_ERR().
+From: Dou Liyang <douly.fnst@cn.fujitsu.com>
 
-Signed-off-by: Joshua Abraham <j.abraham1776@gmail.com>
+As Kashyap and Sumit reported, in MSI/-x subsystem, the pre/post vectors
+may be used to some extra reply queues for performance. the best way to
+map the pre/post vectors is map them to the local numa node.
+
+But, current Linux can't do that, because
+
+  The pre and post vectors are marked managed and their affinity mask
+  is set to the irq default affinity mask.
+
+  The default affinity mask is by default ALL cpus, but it can be tweaked
+  both on the kernel command line and via proc.
+
+  If that mask is only a subset of CPUs and all of them go offline
+  then these vectors are shutdown in managed mode.
+
+So, clear these affinity mask and check it in alloc_desc() to leave them
+as regular interrupts which can be affinity controlled and also can move
+freely on hotplug.
+
+Note: will break the validation of affinity mask(s)
+
+Reported-by: Kashyap Desai <kashyap.desai@broadcom.com>
+Reported-by: Sumit Saxena <sumit.saxena@broadcom.com>
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
 ---
- drivers/scsi/ufs/ufs-hisi.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ kernel/irq/affinity.c |  9 ++++++---
+ kernel/irq/irqdesc.c  | 24 ++++++++++--------------
+ 2 files changed, 16 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/scsi/ufs/ufs-hisi.c b/drivers/scsi/ufs/ufs-hisi.c
-index 46df707e6f2c..e79499469cb3 100644
---- a/drivers/scsi/ufs/ufs-hisi.c
-+++ b/drivers/scsi/ufs/ufs-hisi.c
-@@ -505,10 +505,8 @@ static int ufs_hisi_get_resource(struct ufs_hisi_host *host)
- 	/* get resource of ufs sys ctrl */
- 	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
- 	host->ufs_sys_ctrl = devm_ioremap_resource(dev, mem_res);
--	if (IS_ERR(host->ufs_sys_ctrl))
--		return PTR_ERR(host->ufs_sys_ctrl);
+diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
+index f4f29b9d90ee..ba35a5050dd2 100644
+--- a/kernel/irq/affinity.c
++++ b/kernel/irq/affinity.c
+@@ -204,7 +204,7 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
  
--	return 0;
-+	return PTR_ERR_OR_ZERO(host->ufs_sys_ctrl);
- }
+ 	/* Fill out vectors at the beginning that don't need affinity */
+ 	for (curvec = 0; curvec < affd->pre_vectors; curvec++)
+-		cpumask_copy(masks + curvec, irq_default_affinity);
++		cpumask_clear(masks + curvec);
  
- static void ufs_hisi_set_pm_lvl(struct ufs_hba *hba)
+ 	/* Stabilize the cpumasks */
+ 	get_online_cpus();
+@@ -234,10 +234,13 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
+ 	/* Fill out vectors at the end that don't need affinity */
+ 	if (usedvecs >= affvecs)
+ 		curvec = affd->pre_vectors + affvecs;
+-	else
++	else {
+ 		curvec = affd->pre_vectors + usedvecs;
++		for (; curvec < affd->pre_vectors + affvecs; curvec++)
++			cpumask_copy(masks + curvec, irq_default_affinity);
++	}
+ 	for (; curvec < nvecs; curvec++)
+-		cpumask_copy(masks + curvec, irq_default_affinity);
++		cpumask_clear(masks + curvec);
+ 
+ outnodemsk:
+ 	free_node_to_cpumask(node_to_cpumask);
+diff --git a/kernel/irq/irqdesc.c b/kernel/irq/irqdesc.c
+index 578d0e5f1b5b..5cffa791a20b 100644
+--- a/kernel/irq/irqdesc.c
++++ b/kernel/irq/irqdesc.c
+@@ -453,24 +453,20 @@ static int alloc_descs(unsigned int start, unsigned int cnt, int node,
+ {
+ 	const struct cpumask *mask = NULL;
+ 	struct irq_desc *desc;
+-	unsigned int flags;
++	unsigned int flags = 0;
+ 	int i;
+ 
+-	/* Validate affinity mask(s) */
+-	if (affinity) {
+-		for (i = 0, mask = affinity; i < cnt; i++, mask++) {
+-			if (cpumask_empty(mask))
+-				return -EINVAL;
+-		}
+-	}
+-
+-	flags = affinity ? IRQD_AFFINITY_MANAGED | IRQD_MANAGED_SHUTDOWN : 0;
+-	mask = NULL;
+-
+ 	for (i = 0; i < cnt; i++) {
+ 		if (affinity) {
+-			node = cpu_to_node(cpumask_first(affinity));
+-			mask = affinity;
++			if (cpumask_empty(affinity)) {
++				flags = 0;
++				mask = NULL;
++			} else {
++				flags = IRQD_AFFINITY_MANAGED |
++					IRQD_MANAGED_SHUTDOWN;
++				mask = affinity;
++				node = cpu_to_node(cpumask_first(affinity));
++			}
+ 			affinity++;
+ 		}
+ 		desc = alloc_desc(start + i, node, flags, mask, owner);
 -- 
-2.17.1
+2.14.3
+
 
