@@ -6,38 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CE9BC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:33:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F4C3C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:33:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C77A720854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:33:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C77A720854
+	by mail.kernel.org (Postfix) with ESMTP id 20DDD20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:33:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20DDD20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728567AbeIMSm6 (ORCPT
+        id S1728585AbeIMSnB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:42:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58702 "EHLO
+        Thu, 13 Sep 2018 14:43:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58716 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726741AbeIMSm5 (ORCPT
+        with ESMTP id S1726985AbeIMSnA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:42:57 -0400
+        Thu, 13 Sep 2018 14:43:00 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D95A2D10;
-        Thu, 13 Sep 2018 13:33:26 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4FF96D18;
+        Thu, 13 Sep 2018 13:33:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Manoil Claudiu <claudiu.manoil@freescale.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
+        stable@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Jason Cooper <jason@lakedaemon.net>,
         Thomas Gleixner <tglx@linutronix.de>,
         Hanjun Guo <hanjun.guo@linaro.org>
-Subject: [PATCH 4.4 43/60] genirq: Delay incrementing interrupt count if its disabled/pending
-Date:   Thu, 13 Sep 2018 15:30:50 +0200
-Message-Id: <20180913131747.453952836@linuxfoundation.org>
+Subject: [PATCH 4.4 44/60] irqchip/gic-v3-its: Recompute the number of pages on page size change
+Date:   Thu, 13 Sep 2018 15:30:51 +0200
+Message-Id: <20180913131747.512837981@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131745.261413581@linuxfoundation.org>
 References: <20180913131745.261413581@linuxfoundation.org>
@@ -55,99 +54,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sudeep Holla <sudeep.holla@arm.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
 
-commit a946e8c717f9355d1abd5408ed0adc0002d1aed1 upstream.
+commit 18aa60ce2751c95d3412ed06a58b8b6cfb6f88f2 upstream.
 
-In case of a wakeup interrupt, irq_pm_check_wakeup disables the interrupt
-and marks it pending and suspended, disables it and notifies the pm core
-about the wake event. The interrupt gets handled later once the system
-is resumed.
+When the programming of a GITS_BASERn register fails because of
+an unsupported ITS page size, we retry it with a smaller page size.
+Unfortunately, we don't recompute the number of allocated ITS pages,
+indicating the wrong value computed in the original allocation.
 
-However the irq stats is updated twice: once when it's disabled waiting
-for the system to resume and later when it's handled, resulting in wrong
-counting of the wakeup interrupt when waking up the system.
+A convenient fix is to free the pages we allocated, update the
+page size, and restart the allocation. This will ensure that
+we always allocate the right amount in the case of a device
+table, specially if we have to reduce the allocation order
+to stay within the boundaries of the ITS maximum allocation.
 
-This patch updates the interrupt count so that it's updated only when
-the interrupt gets handled. It's already handled correctly in
-handle_edge_irq and handle_edge_eoi_irq.
-
-Reported-by: Manoil Claudiu <claudiu.manoil@freescale.com>
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Link: http://lkml.kernel.org/r/1446661957-1019-1-git-send-email-sudeep.holla@arm.com
+Reported-and-tested-by: Ma Jun <majun258@huawei.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: Jason Cooper <jason@lakedaemon.net>
+Link: http://lkml.kernel.org/r/1453818255-1289-1-git-send-email-marc.zyngier@arm.com
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Hanjun Guo <hanjun.guo@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/irq/chip.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/irqchip/irq-gic-v3-its.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/kernel/irq/chip.c
-+++ b/kernel/irq/chip.c
-@@ -338,7 +338,6 @@ void handle_nested_irq(unsigned int irq)
- 	raw_spin_lock_irq(&desc->lock);
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -884,6 +884,7 @@ static int its_alloc_tables(const char *
+ 		}
  
- 	desc->istate &= ~(IRQS_REPLAY | IRQS_WAITING);
--	kstat_incr_irqs_this_cpu(desc);
- 
- 	action = desc->action;
- 	if (unlikely(!action || irqd_irq_disabled(&desc->irq_data))) {
-@@ -346,6 +345,7 @@ void handle_nested_irq(unsigned int irq)
- 		goto out_unlock;
- 	}
- 
-+	kstat_incr_irqs_this_cpu(desc);
- 	irqd_set(&desc->irq_data, IRQD_IRQ_INPROGRESS);
- 	raw_spin_unlock_irq(&desc->lock);
- 
-@@ -412,13 +412,13 @@ void handle_simple_irq(struct irq_desc *
- 		goto out_unlock;
- 
- 	desc->istate &= ~(IRQS_REPLAY | IRQS_WAITING);
--	kstat_incr_irqs_this_cpu(desc);
- 
- 	if (unlikely(!desc->action || irqd_irq_disabled(&desc->irq_data))) {
- 		desc->istate |= IRQS_PENDING;
- 		goto out_unlock;
- 	}
- 
-+	kstat_incr_irqs_this_cpu(desc);
- 	handle_irq_event(desc);
- 
- out_unlock:
-@@ -462,7 +462,6 @@ void handle_level_irq(struct irq_desc *d
- 		goto out_unlock;
- 
- 	desc->istate &= ~(IRQS_REPLAY | IRQS_WAITING);
--	kstat_incr_irqs_this_cpu(desc);
- 
- 	/*
- 	 * If its disabled or no action available
-@@ -473,6 +472,7 @@ void handle_level_irq(struct irq_desc *d
- 		goto out_unlock;
- 	}
- 
-+	kstat_incr_irqs_this_cpu(desc);
- 	handle_irq_event(desc);
- 
- 	cond_unmask_irq(desc);
-@@ -532,7 +532,6 @@ void handle_fasteoi_irq(struct irq_desc
- 		goto out;
- 
- 	desc->istate &= ~(IRQS_REPLAY | IRQS_WAITING);
--	kstat_incr_irqs_this_cpu(desc);
- 
- 	/*
- 	 * If its disabled or no action available
-@@ -544,6 +543,7 @@ void handle_fasteoi_irq(struct irq_desc
- 		goto out;
- 	}
- 
-+	kstat_incr_irqs_this_cpu(desc);
- 	if (desc->istate & IRQS_ONESHOT)
- 		mask_irq(desc);
+ 		alloc_size = (1 << order) * PAGE_SIZE;
++retry_alloc_baser:
+ 		alloc_pages = (alloc_size / psz);
+ 		if (alloc_pages > GITS_BASER_PAGES_MAX) {
+ 			alloc_pages = GITS_BASER_PAGES_MAX;
+@@ -947,13 +948,16 @@ retry_baser:
+ 			 * size and retry. If we reach 4K, then
+ 			 * something is horribly wrong...
+ 			 */
++			free_pages((unsigned long)base, order);
++			its->tables[i] = NULL;
++
+ 			switch (psz) {
+ 			case SZ_16K:
+ 				psz = SZ_4K;
+-				goto retry_baser;
++				goto retry_alloc_baser;
+ 			case SZ_64K:
+ 				psz = SZ_16K;
+-				goto retry_baser;
++				goto retry_alloc_baser;
+ 			}
+ 		}
  
 
 
