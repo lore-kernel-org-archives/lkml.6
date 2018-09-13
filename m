@@ -3,125 +3,101 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EFC1C070C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 02:27:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8B59C070C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 02:27:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45F4B213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 02:27:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FBD1213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 02:27:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="qzXmo6g5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45F4B213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=russell.cc
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="cjGMAxSh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FBD1213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726828AbeIMHeY (ORCPT
+        id S1726886AbeIMHfN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 03:34:24 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:43207 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726285AbeIMHeX (ORCPT
+        Thu, 13 Sep 2018 03:35:13 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:41063 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726399AbeIMHfM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 03:34:23 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id 7B583218FD;
-        Wed, 12 Sep 2018 22:27:03 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Wed, 12 Sep 2018 22:27:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=S+CU6Y
-        hvjuHgNhUVT/HgkV8Tf9YVQEcO/L9EEfQj4MY=; b=qzXmo6g5AFM91FjFNUxjCG
-        2yPsPaQ4f9uvmsntlpveZumPQ6QNPcx8Voofkw1a0pTKwZleE1aXZMxfKYlueFwz
-        EJZqS/4MTzAVEyGB6GbyDQDoU9rtnE7DrdoP8CmyyFAav+QKMdJG7EVt5mrLeZzg
-        rNCOaWBV56D99lZHbGX1/SHmUDiIIZU5fp6s/CmAO0pZ0Cg7btxN6PwSFatMtTC1
-        +fJ53ZKaWdinPGjMQ5BOsnu7BBK+TWVRnWSUZGW/U/9CX0EZtAnYuPyeIGhH/qb+
-        6/CXYpwPC+38gQHNQfnNjWHvGtikFpaksgyFAnJsNq/G1Aq57UIhujZWBzET85Rw
-        ==
-X-ME-Proxy: <xmx:9sqZW4S9LS6B-3wSn1Mhq1CR24eW9D-84fKw9S2tluPnZ4dewxLitQ>
-    <xmx:9sqZW1XgFY8VcOstpgSZbap9n49JVVTBpqSiGtibmgwNBzJVweg8Kw>
-    <xmx:9sqZW8Qyuceqkv8cZ8yfuwDcztrEO4fVZHkPP2Rm5Y8678kcGgW7wA>
-    <xmx:9sqZW7mD8rMAyEpsEvbxjNTqLneHZ_XW9VsIXDNG9J1aseBQa1wMhQ>
-    <xmx:9sqZW49pK3SOXP9jNKoVUFKeeukg7cgTi-72zsk5Ilauawv7cJMjHg>
-    <xmx:98qZW_N5i8UkqCpcdYswHiZyHl-fSMHDIdz4Z2ZWLqXTDJWbYM_CEw>
-X-ME-Sender: <xms:9sqZW6SwLpojUdGezZVvrcqLgbDjkg9TyZucU18XQFsuJOJqJZysbg>
-Received: from snap.ozlabs.ibm.com (unknown [122.99.82.10])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 5EF0C102D9;
-        Wed, 12 Sep 2018 22:26:58 -0400 (EDT)
-Message-ID: <94b8929d44af6dd965600b7d159458312d500582.camel@russell.cc>
-Subject: Re: [PATCH] MAINTAINERS: Add PPC contacts for PCI core error
- handling
-From:   Russell Currey <ruscur@russell.cc>
-To:     Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, sbobroff@linux.ibm.com
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-kernel@vger.kernel.org, oohall@gmail.com
-In-Reply-To: <20180912165846.GH118330@bhelgaas-glaptop.roam.corp.google.com>
-References: <153677132617.23091.12307288405707171077.stgit@bhelgaas-glaptop.roam.corp.google.com>
-         <20180912165846.GH118330@bhelgaas-glaptop.roam.corp.google.com>
+        Thu, 13 Sep 2018 03:35:12 -0400
+Received: by mail-lf1-f67.google.com with SMTP id l26-v6so3431763lfc.8
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 19:27:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bTBAiOhJjXdpy7pTQ3EM/qRpEIA9FGKANOyCbhWLtsU=;
+        b=cjGMAxShqfwmgLUfj19Q/pn+WXgDbe3dwzTU5DmlrE1rLuaJTxAUETdjBo5XibGh+u
+         SbF+oI0canFL31kU412agnng4TOVpr3ElU9Um5JMltlU6xjNmCs0F4BthqaBu61DHjMu
+         3FWyI6UU3V2N5puF6e7nD3+R3qt+Po3ZlApWeoNsJ0EotkcC306m39jSfnEheM+Lydn4
+         1aLQhwmrVm60p8/y/RVUy9CqkD0ihyodtZuRAaDicnLgeqSjb1y3F+VrqS9gDJCCRSru
+         s10A50Q+dPlSIauR7LlTJifkxfJ7wD1/5BcJiOPdp5F4hhMoxDsS7dye5e0fuUmgSspt
+         Ok+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bTBAiOhJjXdpy7pTQ3EM/qRpEIA9FGKANOyCbhWLtsU=;
+        b=A9cMH1YFVnktIaJFpO9C66pbDT1mmqnum7Zx710IFRXrPSoLvcB0Qvbsw/3ekoBRlY
+         ygYsbSjzB2DVYjZZQ+wDV94lvLEguLg+hqeBoeCogxkY+p1JhDc6oXew/cpwemJpaZ/a
+         Nj72lmVwxorUKhFzQ4aTdoOXaQJaPbG2hK1IEQD7Ak2TE5bRxIyZKcbdT2SRikt7jUXM
+         ZzN4Qip8uRTEfTA9MKC2kk0QwIyYmo13+neK91utUZt/+WKrBkKdpgTXaM93sgLr1uii
+         4L/KVfWai3sElQ2BkyG27njnmLeLAPDkEhWFgx1O0GVcRj7o/VS927Kv9lru93EgKNIY
+         1Ssg==
+X-Gm-Message-State: APzg51CaZeXeJKZC+flfjY+XGkZXfqb4xTN3h3LAKJBwPMnH2oTfrcbp
+        95aPnbGHk5OEtd89I/KN7bwGk3MmUedGmUpm1TzY
+X-Google-Smtp-Source: ANB0Vdb0ZQcMslZjYFw3109JK3hS/6yBbc1AScJXHtbIYgh+QZWkJVT9Oo/MznIHZs3AEp80OEq4Fr9jauUSGcYqVxQ=
+X-Received: by 2002:ac2:4308:: with SMTP id l8-v6mr3286339lfh.35.1536805672071;
+ Wed, 12 Sep 2018 19:27:52 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180907165635.8469-1-kent.overstreet@gmail.com>
+ <20180907165635.8469-4-kent.overstreet@gmail.com> <89c167ff-91d3-7a27-78c6-82710bb11771@I-love.SAKURA.ne.jp>
+ <20180907175014.GA29485@kmo-pixel>
+In-Reply-To: <20180907175014.GA29485@kmo-pixel>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 12 Sep 2018 22:27:40 -0400
+Message-ID: <CAHC9VhS=CaEd4quGRv97Dn_2gm7=jMq+nHJvSOnuBtoA=DZvDQ@mail.gmail.com>
+Subject: Re: [PATCH 3/6] selinux: convert to kvmalloc
+To:     kent.overstreet@gmail.com, selinux@tycho.nsa.gov
+Cc:     penguin-kernel@i-love.sakura.ne.jp, linux-kernel@vger.kernel.org,
+        dave.hansen@intel.com, willy@infradead.org,
+        linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Date:   Thu, 13 Sep 2018 12:26:55 +1000
-Mime-Version: 1.0
-X-Mailer: Evolution 3.28.1-2 
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-09-12 at 11:58 -0500, Bjorn Helgaas wrote:
-> On Wed, Sep 12, 2018 at 11:55:26AM -0500, Bjorn Helgaas wrote:
-> > From: Bjorn Helgaas <bhelgaas@google.com>
-> > 
-> > The original PCI error recovery functionality was for the powerpc-specific
-> > IBM EEH feature.  PCIe subsequently added some similar features, including
-> > AER and DPC, that can be used on any architecture.
-> > 
-> > We want the generic PCI core error handling support to work with all of
-> > these features.  Driver error recovery callbacks should be independent of
-> > which feature the platform provides.
-> > 
-> > Add the generic PCI core error recovery files to the powerpc EEH
-> > MAINTAINERS entry so the powerpc folks will be copied on changes to the
-> > generic PCI error handling strategy.
-> 
-> I really want to make sure the powerpc folks are plugged into any PCI core
-> error handling discussions.  Please let me know if there's a better way
-> than this patch, or if there are other people who should be added.
+On Fri, Sep 7, 2018 at 1:50 PM Kent Overstreet
+<kent.overstreet@gmail.com> wrote:
+> On Sat, Sep 08, 2018 at 02:08:03AM +0900, Tetsuo Handa wrote:
+> > On 2018/09/08 1:56, Kent Overstreet wrote:
+> > > @@ -329,8 +328,7 @@ int avtab_alloc(struct avtab *h, u32 nrules)
+> > >             nslot = MAX_AVTAB_HASH_BUCKETS;
+> > >     mask = nslot - 1;
+> > >
+> > > -   h->htable = flex_array_alloc(sizeof(struct avtab_node *), nslot,
+> > > -                                GFP_KERNEL | __GFP_ZERO);
+> > > +   h->htable = kvmalloc_array(nslot, sizeof(void *), GFP_KERNEL);
+> > >     if (!h->htable)
+> > >             return -ENOMEM;
+> > >
+> >
+> > kvmalloc_array() does not imply __GFP_ZERO.
+>
+> Thanks, fixed
 
-I think this patch is definitely a good idea.
+When you resubmit this patch, please make sure you submit it to the
+SELinux list (added to the To line above) so that it can be properly
+reviewed and merged.
 
-Alongside this (whether you want to include it in your patch or not, Bjorn),
-Sam Bobroff should replace myself as maintainer.  He's been very active in fixing,
-reworking and reviewing in EEH land and will probably do a better job of keeping
-his finger on the pulse of the generic PCI error handling code than I did.
+Thanks.
 
-- Russell
-
-> 
-> > Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> > ---
-> >  MAINTAINERS |    4 ++++
-> >  1 file changed, 4 insertions(+)
-> > 
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 7e10ba65bfe4..d6699597fd89 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -11202,6 +11202,10 @@ PCI ENHANCED ERROR HANDLING (EEH) FOR POWERPC
-> >  M:	Russell Currey <ruscur@russell.cc>
-> >  L:	linuxppc-dev@lists.ozlabs.org
-> >  S:	Supported
-> > +F:	Documentation/PCI/pci-error-recovery.txt
-> > +F:	drivers/pci/pcie/aer.c
-> > +F:	drivers/pci/pcie/dpc.c
-> > +F:	drivers/pci/pcie/err.c
-> >  F:	Documentation/powerpc/eeh-pci-error-recovery.txt
-> >  F:	arch/powerpc/kernel/eeh*.c
-> >  F:	arch/powerpc/platforms/*/eeh*.c
-> > 
+-- 
+paul moore
+www.paul-moore.com
