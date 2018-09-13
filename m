@@ -2,259 +2,286 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95F39C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 09:30:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87968C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 09:31:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 366CF206B8
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 09:30:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2381520882
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 09:31:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SAPuWZxE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 366CF206B8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=monstr-eu.20150623.gappssmtp.com header.i=@monstr-eu.20150623.gappssmtp.com header.b="PrqoKDcZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2381520882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=monstr.eu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728211AbeIMOje (ORCPT
+        id S1728224AbeIMOjh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 10:39:34 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:54774 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727996AbeIMOje (ORCPT
+        Thu, 13 Sep 2018 10:39:37 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:38223 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726509AbeIMOje (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 13 Sep 2018 10:39:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
-        Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=8SZF02odPbsQ4xvgQWyvxT1sx9U/BZ3+F6zLfQjUdFU=; b=SAPuWZxE8US/drkjmCPvaY4SGz
-        nDXhcIA2qU091yXD2HQ6jmZmqbtLzEzwgv3TKWnrdjAXDWslYqEEL29XCWq4L8cNkqCAN6+UimrBO
-        6Fmz5ogiDd5vP8ioRckIwaZqqQvwPYpy+CZzHdMWLq46QtZNQTxNpnUM9KpySkVDP262Sr0i/Y5ry
-        eVPw37h2qjzRFNYSfsuz1q7zwfSj4h1suU3WAiVMISnL5/5ELIubpha14EgaFxpB7DJSewcqt12YY
-        //ymUPpSR8g3Ib2EG3PN7Tpyk5J6pO2BL6L7XcQZKJtsasiqIHT7+lURbn8QdsEN1FWYxNXUG68n0
-        RkJNUCdA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g0Nw0-0000yn-SG; Thu, 13 Sep 2018 09:29:13 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 4738020587E51; Thu, 13 Sep 2018 11:29:10 +0200 (CEST)
-Message-ID: <20180913092812.071989585@infradead.org>
-User-Agent: quilt/0.65
-Date:   Thu, 13 Sep 2018 11:21:14 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     will.deacon@arm.com, aneesh.kumar@linux.vnet.ibm.com,
-        akpm@linux-foundation.org, npiggin@gmail.com
-Cc:     linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, peterz@infradead.org,
-        linux@armlinux.org.uk, heiko.carstens@de.ibm.com,
-        David Miller <davem@davemloft.net>,
-        Guan Xuetao <gxt@pku.edu.cn>
-Subject: [RFC][PATCH 04/11] asm-generic/tlb: Provide generic VIPT cache flush
-References: <20180913092110.817204997@infradead.org>
+Received: by mail-wm0-f67.google.com with SMTP id t25-v6so5380944wmi.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 02:30:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=monstr-eu.20150623.gappssmtp.com; s=20150623;
+        h=reply-to:subject:to:cc:references:from:openpgp:autocrypt:message-id
+         :date:user-agent:mime-version:in-reply-to;
+        bh=cgp/4PbF1jH0DppZpJV45b2IYRkgP087Q9bvbULOWOM=;
+        b=PrqoKDcZSUQTJUxdmRvmm2OPYkwhNxz5iC/56BUgzT8FCSAPBwERSblDvkYMAN0ArB
+         ihhS4+Mp0dLjWWAfiOMDSpbXFaFUqr0C+Z9mljkhlGhtduqTSZCXHu2vtoTcdBahsOa9
+         RaTlJy17vy8OZ13uyrRpWj01+nOD0wS4Z/pSGuZWzdkdIOQPl3xxuDesMy3g9tCxyLGc
+         rajc4jFXcwJEF27VnIrr6ctxeltC+lIUP3bR3KPXbt+xLbSLPF2BIjrU717jDm9lDJzZ
+         qG9Ags4pjAACoDHvFBZxJ5/NndaIJCuW9utoD/3ToKXH1W7RKC9lMJkh7uVgRkKLHs5H
+         tOKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:reply-to:subject:to:cc:references:from:openpgp
+         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to;
+        bh=cgp/4PbF1jH0DppZpJV45b2IYRkgP087Q9bvbULOWOM=;
+        b=WvqofqprXhvw+jJkexC5nWqV5/MIaQ17l1nMhGvcWG6vRhG8piDtfA1mulTReXYHcC
+         0AGXT7WHD1CRfL3/WQmrj/lTVnUxCZG8EE759U4i3FFfeGfe3ZL5/Twxtv7MieTYpx9C
+         8KP/8b/Tbuvq5krZ0yqydCjfr9vFDGZE74XpjOZMeZdZZIQFrv34aEBsOWR0rf3mBEfr
+         Y0xxYyCQdZT4z9f8RWMMGVVhGtJzJTCxmAyZO3wZ9Jhe+W2LfpHwNwESTtlv6i7VWyMF
+         sPE2rQTbZQeDb2nAl5HBpUWdGKC/uMSBTIsYv3HSmkkZq1ooN/WNEOG6pacgN/oWMXij
+         6d7A==
+X-Gm-Message-State: APzg51DhRVb0T4/nWjdJQWQxtg9aI3G3Hti6CPIpxJ++UvszM0gyMbvk
+        QHRbg0U/MePIY42Neq4A56UTpw==
+X-Google-Smtp-Source: ANB0VdZ2Dn47FIC4Z2WfIW+iWePaBUMhrTw8yQtXPAyUD1yRRiO8BLkK0vnDCXyfO9AzoshUB4+eXA==
+X-Received: by 2002:a1c:3a92:: with SMTP id h140-v6mr4865843wma.41.1536831054445;
+        Thu, 13 Sep 2018 02:30:54 -0700 (PDT)
+Received: from [173.194.76.109] ([149.199.62.254])
+        by smtp.gmail.com with ESMTPSA id r6-v6sm3040312wrt.92.2018.09.13.02.30.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Sep 2018 02:30:53 -0700 (PDT)
+Reply-To: monstr@monstr.eu
+Subject: Re: [PATCH 1/2] of: base: Introduce of_alias_check_id() to check
+ alias IDs
+To:     Michal Simek <michal.simek@xilinx.com>,
+        linux-kernel@vger.kernel.org
+Cc:     devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+References: <0ee4683a7d3927c2ef20b1e106720e6154811cd7.1535980468.git.michal.simek@xilinx.com>
+From:   Michal Simek <monstr@monstr.eu>
+Openpgp: preference=signencrypt
+Autocrypt: addr=monstr@monstr.eu; prefer-encrypt=mutual; keydata=
+ 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
+ RmzhqoTJlA==
+Message-ID: <f67030b9-0afa-15f1-6e9f-284b51724bff@monstr.eu>
+Date:   Thu, 13 Sep 2018 11:30:48 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <0ee4683a7d3927c2ef20b1e106720e6154811cd7.1535980468.git.michal.simek@xilinx.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="TT1AdXVD1OFBCCdRtQfJGpOSK7KsctXr7"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The one obvious thing SH and ARM want is a sensible default for
-tlb_start_vma(). (also: https://lkml.org/lkml/2004/1/15/6 )
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--TT1AdXVD1OFBCCdRtQfJGpOSK7KsctXr7
+Content-Type: multipart/mixed; boundary="q9kHpJ06SzFgzaYECd2uaXV2cQKth14PE";
+ protected-headers="v1"
+From: Michal Simek <monstr@monstr.eu>
+Reply-To: monstr@monstr.eu
+To: Michal Simek <michal.simek@xilinx.com>, linux-kernel@vger.kernel.org
+Cc: devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+ Frank Rowand <frowand.list@gmail.com>
+Message-ID: <f67030b9-0afa-15f1-6e9f-284b51724bff@monstr.eu>
+Subject: Re: [PATCH 1/2] of: base: Introduce of_alias_check_id() to check
+ alias IDs
+References: <0ee4683a7d3927c2ef20b1e106720e6154811cd7.1535980468.git.michal.simek@xilinx.com>
+In-Reply-To: <0ee4683a7d3927c2ef20b1e106720e6154811cd7.1535980468.git.michal.simek@xilinx.com>
 
-Avoid all VIPT architectures providing their own tlb_start_vma()
-implementation and rely on architectures to provide a no-op
-flush_cache_range() when it is not relevant.
+--q9kHpJ06SzFgzaYECd2uaXV2cQKth14PE
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-The below makes tlb_start_vma() default to flush_cache_range(), which
-should be right and sufficient. The only exceptions that I found where
-(oddly):
+Hi Rob,
 
-  - m68k-mmu
-  - sparc64
-  - unicore
+On 3.9.2018 15:14, Michal Simek wrote:
+> The function travers the lookup table to check if the request alias
+> id is compatible with the device driver match structure.
+> This function will be used by serial drivers to check if requested alia=
+s
+> is allocated or free to use.
+>=20
+> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+> ---
+>=20
+> Based on discussion with Rob
+> https://lkml.org/lkml/2018/4/27/397
+> nbits is passed to the function not to limit only to 32/64bit fields.
+>=20
+> ---
+>  drivers/of/base.c  | 48 ++++++++++++++++++++++++++++++++++++++++++++++=
+++
+>  include/linux/of.h |  3 +++
+>  2 files changed, 51 insertions(+)
+>=20
+> diff --git a/drivers/of/base.c b/drivers/of/base.c
+> index 466e3c8582f0..236a85d69957 100644
+> --- a/drivers/of/base.c
+> +++ b/drivers/of/base.c
+> @@ -16,6 +16,7 @@
+> =20
+>  #define pr_fmt(fmt)	"OF: " fmt
+> =20
+> +#include <linux/bitmap.h>
+>  #include <linux/console.h>
+>  #include <linux/ctype.h>
+>  #include <linux/cpu.h>
+> @@ -1893,6 +1894,53 @@ int of_alias_get_id(struct device_node *np, cons=
+t char *stem)
+>  EXPORT_SYMBOL_GPL(of_alias_get_id);
+> =20
+>  /**
+> + * of_alias_get_alias_list - Get alias list for the given device drive=
+r
+> + * @matches:	Array of OF device match structures to search in
+> + * @stem:	Alias stem of the given device_node
+> + * @bitmap:	Bitmap field pointer
+> + * @nbits:	Maximum number of alias ID which can be recorded it bitmap
+> + *
+> + * The function travels the lookup table to record alias ids for the g=
+iven
+> + * device match structures and alias stem.
+> + */
+> +void of_alias_get_alias_list(const struct of_device_id *matches,
+> +			     const char *stem, unsigned long *bitmap,
+> +			     unsigned int nbits)
+> +{
+> +	struct alias_prop *app;
+> +
+> +	/* Zero bitmap field to make sure that all the time it is clean */
+> +	bitmap_zero(bitmap, nbits);
+> +
+> +	mutex_lock(&of_mutex);
+> +	pr_debug("%s: Looking for stem: %s\n", __func__, stem);
+> +	list_for_each_entry(app, &aliases_lookup, link) {
+> +		pr_debug("%s: stem: %s, id: %d\n",
+> +			 __func__, app->stem, app->id);
+> +
+> +		if (strcmp(app->stem, stem) !=3D 0) {
+> +			pr_debug("%s: stem comparison doesn't passed %s\n",
+> +				 __func__, app->stem);
+> +			continue;
+> +		}
+> +
+> +		if (app->id >=3D nbits) {
+> +			pr_debug("%s: ID %d greater then bitmap field %d\n",
+> +				__func__, app->id, nbits);
+> +			continue;
+> +		}
+> +
+> +		if (of_match_node(matches, app->np)) {
+> +			pr_debug("%s: Allocated ID %d\n", __func__, app->id);
+> +			set_bit(app->id, bitmap);
+> +		}
+> +		/* Alias exist but it not compatible with matches */
+> +	}
+> +	mutex_unlock(&of_mutex);
+> +}
+> +EXPORT_SYMBOL_GPL(of_alias_get_alias_list);
+> +
+> +/**
+>   * of_alias_get_highest_id - Get highest alias id for the given stem
+>   * @stem:	Alias stem to be examined
+>   *
+> diff --git a/include/linux/of.h b/include/linux/of.h
+> index 4d25e4f952d9..e474710e3930 100644
+> --- a/include/linux/of.h
+> +++ b/include/linux/of.h
+> @@ -387,6 +387,9 @@ extern int of_phandle_iterator_args(struct of_phand=
+le_iterator *it,
+>  extern void of_alias_scan(void * (*dt_alloc)(u64 size, u64 align));
+>  extern int of_alias_get_id(struct device_node *np, const char *stem);
+>  extern int of_alias_get_highest_id(const char *stem);
+> +extern void of_alias_get_alias_list(const struct of_device_id *matches=
+,
+> +				    const char *stem, unsigned long *bitmap,
+> +				    unsigned int nbits);
+> =20
+>  extern int of_machine_is_compatible(const char *compat);
+> =20
+>=20
 
-Those architectures appear to have flush_cache_range(), but their
-current tlb_start_vma() does not call it.
+Can you please take a look at this patch?
 
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Nick Piggin <npiggin@gmail.com>
-Cc: David Miller <davem@davemloft.net>
-Cc: Guan Xuetao <gxt@pku.edu.cn>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- arch/arc/include/asm/tlb.h      |    9 ---------
- arch/mips/include/asm/tlb.h     |    9 ---------
- arch/nds32/include/asm/tlb.h    |    6 ------
- arch/nios2/include/asm/tlb.h    |   10 ----------
- arch/parisc/include/asm/tlb.h   |    5 -----
- arch/sparc/include/asm/tlb_32.h |    5 -----
- arch/xtensa/include/asm/tlb.h   |    9 ---------
- include/asm-generic/tlb.h       |   19 +++++++++++--------
- 8 files changed, 11 insertions(+), 61 deletions(-)
+Thanks,
+Michal
 
---- a/arch/arc/include/asm/tlb.h
-+++ b/arch/arc/include/asm/tlb.h
-@@ -23,15 +23,6 @@ do {						\
-  *
-  * Note, read http://lkml.org/lkml/2004/1/15/6
-  */
--#ifndef CONFIG_ARC_CACHE_VIPT_ALIASING
--#define tlb_start_vma(tlb, vma)
--#else
--#define tlb_start_vma(tlb, vma)						\
--do {									\
--	if (!tlb->fullmm)						\
--		flush_cache_range(vma, vma->vm_start, vma->vm_end);	\
--} while(0)
--#endif
- 
- #define tlb_end_vma(tlb, vma)						\
- do {									\
---- a/arch/mips/include/asm/tlb.h
-+++ b/arch/mips/include/asm/tlb.h
-@@ -5,15 +5,6 @@
- #include <asm/cpu-features.h>
- #include <asm/mipsregs.h>
- 
--/*
-- * MIPS doesn't need any special per-pte or per-vma handling, except
-- * we need to flush cache for area to be unmapped.
-- */
--#define tlb_start_vma(tlb, vma)					\
--	do {							\
--		if (!tlb->fullmm)				\
--			flush_cache_range(vma, vma->vm_start, vma->vm_end); \
--	}  while (0)
- #define tlb_end_vma(tlb, vma) do { } while (0)
- #define __tlb_remove_tlb_entry(tlb, ptep, address) do { } while (0)
- 
---- a/arch/nds32/include/asm/tlb.h
-+++ b/arch/nds32/include/asm/tlb.h
-@@ -4,12 +4,6 @@
- #ifndef __ASMNDS32_TLB_H
- #define __ASMNDS32_TLB_H
- 
--#define tlb_start_vma(tlb,vma)						\
--	do {								\
--		if (!tlb->fullmm)					\
--			flush_cache_range(vma, vma->vm_start, vma->vm_end); \
--	} while (0)
--
- #define tlb_end_vma(tlb,vma)				\
- 	do { 						\
- 		if(!tlb->fullmm)			\
---- a/arch/nios2/include/asm/tlb.h
-+++ b/arch/nios2/include/asm/tlb.h
-@@ -15,16 +15,6 @@
- 
- extern void set_mmu_pid(unsigned long pid);
- 
--/*
-- * NiosII doesn't need any special per-pte or per-vma handling, except
-- * we need to flush cache for the area to be unmapped.
-- */
--#define tlb_start_vma(tlb, vma)					\
--	do {							\
--		if (!tlb->fullmm)				\
--			flush_cache_range(vma, vma->vm_start, vma->vm_end); \
--	}  while (0)
--
- #define tlb_end_vma(tlb, vma)	do { } while (0)
- #define __tlb_remove_tlb_entry(tlb, ptep, address)	do { } while (0)
- 
---- a/arch/parisc/include/asm/tlb.h
-+++ b/arch/parisc/include/asm/tlb.h
-@@ -7,11 +7,6 @@ do {	if ((tlb)->fullmm)		\
- 		flush_tlb_mm((tlb)->mm);\
- } while (0)
- 
--#define tlb_start_vma(tlb, vma) \
--do {	if (!(tlb)->fullmm)	\
--		flush_cache_range(vma, vma->vm_start, vma->vm_end); \
--} while (0)
--
- #define tlb_end_vma(tlb, vma)	\
- do {	if (!(tlb)->fullmm)	\
- 		flush_tlb_range(vma, vma->vm_start, vma->vm_end); \
---- a/arch/sparc/include/asm/tlb_32.h
-+++ b/arch/sparc/include/asm/tlb_32.h
-@@ -2,11 +2,6 @@
- #ifndef _SPARC_TLB_H
- #define _SPARC_TLB_H
- 
--#define tlb_start_vma(tlb, vma) \
--do {								\
--	flush_cache_range(vma, vma->vm_start, vma->vm_end);	\
--} while (0)
--
- #define tlb_end_vma(tlb, vma) \
- do {								\
- 	flush_tlb_range(vma, vma->vm_start, vma->vm_end);	\
---- a/arch/xtensa/include/asm/tlb.h
-+++ b/arch/xtensa/include/asm/tlb.h
-@@ -16,19 +16,10 @@
- 
- #if (DCACHE_WAY_SIZE <= PAGE_SIZE)
- 
--/* Note, read http://lkml.org/lkml/2004/1/15/6 */
--
--# define tlb_start_vma(tlb,vma)			do { } while (0)
- # define tlb_end_vma(tlb,vma)			do { } while (0)
- 
- #else
- 
--# define tlb_start_vma(tlb, vma)					      \
--	do {								      \
--		if (!tlb->fullmm)					      \
--			flush_cache_range(vma, vma->vm_start, vma->vm_end);   \
--	} while(0)
--
- # define tlb_end_vma(tlb, vma)						      \
- 	do {								      \
- 		if (!tlb->fullmm)					      \
---- a/include/asm-generic/tlb.h
-+++ b/include/asm-generic/tlb.h
-@@ -19,6 +19,7 @@
- #include <linux/swap.h>
- #include <asm/pgalloc.h>
- #include <asm/tlbflush.h>
-+#include <asm/cacheflush.h>
- 
- #ifdef CONFIG_MMU
- 
-@@ -351,17 +352,19 @@ static inline unsigned long tlb_get_unma
-  * the vmas are adjusted to only cover the region to be torn down.
-  */
- #ifndef tlb_start_vma
--#define tlb_start_vma(tlb, vma) do { } while (0)
-+#define tlb_start_vma(tlb, vma)						\
-+do {									\
-+	if (!tlb->fullmm)						\
-+		flush_cache_range(vma, vma->vm_start, vma->vm_end);	\
-+} while (0)
- #endif
- 
--#define __tlb_end_vma(tlb, vma)					\
--	do {							\
--		if (!tlb->fullmm)				\
--			tlb_flush_mmu_tlbonly(tlb);		\
--	} while (0)
--
- #ifndef tlb_end_vma
--#define tlb_end_vma	__tlb_end_vma
-+#define tlb_end_vma(tlb, vma)						\
-+do {									\
-+	if (!tlb->fullmm)						\
-+		tlb_flush_mmu_tlbonly(tlb);				\
-+} while (0)
- #endif
- 
- #ifndef __tlb_remove_tlb_entry
+--=20
+Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
+w: www.monstr.eu p: +42-0-721842854
+Maintainer of Linux kernel - Xilinx Microblaze
+Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP ARM64 SoCs
+U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP SoCs
 
 
+
+
+--q9kHpJ06SzFgzaYECd2uaXV2cQKth14PE--
+
+--TT1AdXVD1OFBCCdRtQfJGpOSK7KsctXr7
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iEYEARECAAYFAluaLkgACgkQykllyylKDCHSqwCgkF/nachzgOYUWT3mGLLHxeX5
+FpkAn0xmdsUDwNbQJXhohhWlFhpzu3v0
+=z7p3
+-----END PGP SIGNATURE-----
+
+--TT1AdXVD1OFBCCdRtQfJGpOSK7KsctXr7--
