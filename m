@@ -5,30 +5,30 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7C2BC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:55:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A025C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:55:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9826820854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:55:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9826820854
+	by mail.kernel.org (Postfix) with ESMTP id E1FC120854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:55:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1FC120854
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728182AbeIMSEs (ORCPT
+        id S1728197AbeIMSEv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:04:48 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:42792 "EHLO mx1.redhat.com"
+        Thu, 13 Sep 2018 14:04:51 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54542 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728169AbeIMSEr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:04:47 -0400
+        id S1728099AbeIMSEu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 14:04:50 -0400
 Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 60947307D980;
-        Thu, 13 Sep 2018 12:55:27 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id A188130025EC;
+        Thu, 13 Sep 2018 12:55:29 +0000 (UTC)
 Received: from krava.brq.redhat.com (unknown [10.43.17.10])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4FB35600C6;
-        Thu, 13 Sep 2018 12:55:25 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9FC6A600C8;
+        Thu, 13 Sep 2018 12:55:27 +0000 (UTC)
 From:   Jiri Olsa <jolsa@kernel.org>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     Frederic Weisbecker <fweisbec@gmail.com>,
@@ -39,13 +39,13 @@ Cc:     Frederic Weisbecker <fweisbec@gmail.com>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>,
         Andi Kleen <andi@firstfloor.org>,
         Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: [PATCH 15/48] perf tools: Add a test case for thread comm handling
-Date:   Thu, 13 Sep 2018 14:54:17 +0200
-Message-Id: <20180913125450.21342-16-jolsa@kernel.org>
+Subject: [PATCH 16/48] perf tools: Use thread__comm_by_time() when adding hist entries
+Date:   Thu, 13 Sep 2018 14:54:18 +0200
+Message-Id: <20180913125450.21342-17-jolsa@kernel.org>
 In-Reply-To: <20180913125450.21342-1-jolsa@kernel.org>
 References: <20180913125450.21342-1-jolsa@kernel.org>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Thu, 13 Sep 2018 12:55:27 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Thu, 13 Sep 2018 12:55:29 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -53,114 +53,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Namhyung Kim <namhyung@kernel.org>
 
-The new test case checks various thread comm handling APIs like
-overridding and time sorting.
+Now thread->comm can be handled with time properly, use it to find
+the correct comm at the time when adding hist entries.
 
 Cc: Frederic Weisbecker <fweisbec@gmail.com>
-Link: http://lkml.kernel.org/n/tip-b31f0pktgl0k2dba3lqp159w@git.kernel.org
+Link: http://lkml.kernel.org/n/tip-lwjol849j2jy4hmwwjxu99r7@git.kernel.org
 Signed-off-by: Namhyung Kim <namhyung@kernel.org>
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- tools/perf/tests/Build          |  1 +
- tools/perf/tests/builtin-test.c |  4 +++
- tools/perf/tests/tests.h        |  1 +
- tools/perf/tests/thread-comm.c  | 48 +++++++++++++++++++++++++++++++++
- 4 files changed, 54 insertions(+)
- create mode 100644 tools/perf/tests/thread-comm.c
+ tools/perf/util/hist.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/tests/Build b/tools/perf/tests/Build
-index 6c108fa79ae3..713fc29871e2 100644
---- a/tools/perf/tests/Build
-+++ b/tools/perf/tests/Build
-@@ -24,6 +24,7 @@ perf-y += bp_account.o
- perf-y += task-exit.o
- perf-y += sw-clock.o
- perf-y += mmap-thread-lookup.o
-+perf-y += thread-comm.o
- perf-y += thread-mg-share.o
- perf-y += switch-tracking.o
- perf-y += keep-tracking.o
-diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
-index d7a5e1b9aa6f..982e5f64df62 100644
---- a/tools/perf/tests/builtin-test.c
-+++ b/tools/perf/tests/builtin-test.c
-@@ -279,6 +279,10 @@ static struct test generic_tests[] = {
- 		.desc = "mem2node",
- 		.func = test__mem2node,
- 	},
-+	{
-+		.desc = "Test thread comm handling",
-+		.func = test__thread_comm,
-+	},
- 	{
- 		.func = NULL,
- 	},
-diff --git a/tools/perf/tests/tests.h b/tools/perf/tests/tests.h
-index a9760e790563..5d16a56f262f 100644
---- a/tools/perf/tests/tests.h
-+++ b/tools/perf/tests/tests.h
-@@ -104,6 +104,7 @@ const char *test__clang_subtest_get_desc(int subtest);
- int test__clang_subtest_get_nr(void);
- int test__unit_number__scnprint(struct test *test, int subtest);
- int test__mem2node(struct test *t, int subtest);
-+int test__thread_comm(struct test *test, int subtest);
- 
- bool test__bp_signal_is_supported(void);
- 
-diff --git a/tools/perf/tests/thread-comm.c b/tools/perf/tests/thread-comm.c
-new file mode 100644
-index 000000000000..9fcfd2c43488
---- /dev/null
-+++ b/tools/perf/tests/thread-comm.c
-@@ -0,0 +1,48 @@
-+#include <linux/compiler.h>
-+#include "tests.h"
-+#include "machine.h"
-+#include "thread.h"
-+#include "debug.h"
-+
-+int test__thread_comm(struct test *test __maybe_unused, int subtest __maybe_unused)
-+{
-+	struct machines machines;
-+	struct machine *machine;
-+	struct thread *t;
-+
-+	/*
-+	 * This test is to check whether it can retrieve a correct
-+	 * comm for a given time.  When multi-file data storage is
-+	 * enabled, those task/comm events are processed first so the
-+	 * later sample should find a matching comm properly.
-+	 */
-+	machines__init(&machines);
-+	machine = &machines.host;
-+
-+	t = machine__findnew_thread(machine, 100, 100);
-+	TEST_ASSERT_VAL("wrong init thread comm",
-+			!strcmp(thread__comm_str(t), ":100"));
-+
-+	thread__set_comm(t, "perf-test1", 10000);
-+	TEST_ASSERT_VAL("failed to override thread comm",
-+			!strcmp(thread__comm_str(t), "perf-test1"));
-+
-+	thread__set_comm(t, "perf-test2", 20000);
-+	thread__set_comm(t, "perf-test3", 30000);
-+	thread__set_comm(t, "perf-test4", 40000);
-+
-+	TEST_ASSERT_VAL("failed to find timed comm",
-+			!strcmp(thread__comm_str_by_time(t, 20000), "perf-test2"));
-+	TEST_ASSERT_VAL("failed to find timed comm",
-+			!strcmp(thread__comm_str_by_time(t, 35000), "perf-test3"));
-+	TEST_ASSERT_VAL("failed to find timed comm",
-+			!strcmp(thread__comm_str_by_time(t, 50000), "perf-test4"));
-+
-+	thread__set_comm(t, "perf-test1.5", 15000);
-+	TEST_ASSERT_VAL("failed to sort timed comm",
-+			!strcmp(thread__comm_str_by_time(t, 15000), "perf-test1.5"));
-+
-+	machine__delete_threads(machine);
-+	machines__exit(&machines);
-+	return 0;
-+}
+diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
+index 828cb9794c76..7c47e5749809 100644
+--- a/tools/perf/util/hist.c
++++ b/tools/perf/util/hist.c
+@@ -592,7 +592,7 @@ __hists__add_entry(struct hists *hists,
+ 	struct namespaces *ns = thread__namespaces(al->thread);
+ 	struct hist_entry entry = {
+ 		.thread	= al->thread,
+-		.comm = thread__comm(al->thread),
++		.comm = thread__comm_by_time(al->thread, sample->time),
+ 		.cgroup_id = {
+ 			.dev = ns ? ns->link_info[CGROUP_NS_INDEX].dev : 0,
+ 			.ino = ns ? ns->link_info[CGROUP_NS_INDEX].ino : 0,
+@@ -952,7 +952,7 @@ iter_add_next_cumulative_entry(struct hist_entry_iter *iter,
+ 		.hists = evsel__hists(evsel),
+ 		.cpu = al->cpu,
+ 		.thread = al->thread,
+-		.comm = thread__comm(al->thread),
++		.comm = thread__comm_by_time(al->thread, sample->time),
+ 		.ip = al->addr,
+ 		.ms = {
+ 			.map = al->map,
 -- 
 2.17.1
 
