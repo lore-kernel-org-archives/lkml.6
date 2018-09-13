@@ -2,43 +2,40 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAD_ENC_HEADER,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84C59C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:52:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 192BFC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:52:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A8D320854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:52:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A8D320854
+	by mail.kernel.org (Postfix) with ESMTP id D2C4620854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:52:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2C4620854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731039AbeIMTC2 (ORCPT
+        id S1731050AbeIMTCb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:02:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33576 "EHLO
+        Thu, 13 Sep 2018 15:02:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33592 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730002AbeIMTC1 (ORCPT
+        with ESMTP id S1730051AbeIMTCa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:02:27 -0400
+        Thu, 13 Sep 2018 15:02:30 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0E568D19;
-        Thu, 13 Sep 2018 13:52:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3A07FD19;
+        Thu, 13 Sep 2018 13:52:55 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "=?UTF-8?q?Ernesto=20A . =20Fern=C3=A1ndez?=" 
-        <ernesto.mnd.fernandez@gmail.com>, Wen Xu <wen.xu@gatech.edu>,
-        Viacheslav Dubeyko <slava@dubeyko.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Olof Johansson <olof@lixom.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 045/197] hfsplus: fix NULL dereference in hfsplus_lookup()
-Date:   Thu, 13 Sep 2018 15:29:54 +0200
-Message-Id: <20180913131843.346659588@linuxfoundation.org>
+Subject: [PATCH 4.18 046/197] iommu/rockchip: Move irq request past pm_runtime_enable
+Date:   Thu, 13 Sep 2018 15:29:55 +0200
+Message-Id: <20180913131843.388158321@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -56,53 +53,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Ernesto A. Fern·ndez" <ernesto.mnd.fernandez@gmail.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
 
-[ Upstream commit a7ec7a4193a2eb3b5341243fc0b621c1ac9e4ec4 ]
+[ Upstream commit 1aa55ca9b14af6cfd987ce4fdaf548f7067a5d07 ]
 
-An HFS+ filesystem can be mounted read-only without having a metadata
-directory, which is needed to support hardlinks.  But if the catalog
-data is corrupted, a directory lookup may still find dentries claiming
-to be hardlinks.
+Enabling the interrupt early, before power has been applied to the
+device, can result in an interrupt being delivered too early if:
 
-hfsplus_lookup() does check that ->hidden_dir is not NULL in such a
-situation, but mistakenly does so after dereferencing it for the first
-time.  Reorder this check to prevent a crash.
+- the IOMMU shares an interrupt with a VOP
+- the VOP has a pending interrupt (after a kexec, for example)
 
-This happens when looking up corrupted catalog data (dentry) on a
-filesystem with no metadata directory (this could only ever happen on a
-read-only mount).  Wen Xu sent the replication steps in detail to the
-fsdevel list: https://bugzilla.kernel.org/show_bug.cgi?id=200297
+In these conditions, we end-up taking the interrupt without
+the IOMMU being ready to handle the interrupt (not powered on).
 
-Link: http://lkml.kernel.org/r/20180712215344.q44dyrhymm4ajkao@eaf
-Signed-off-by: Ernesto A. Fern√°ndez <ernesto.mnd.fernandez@gmail.com>
-Reported-by: Wen Xu <wen.xu@gatech.edu>
-Cc: Viacheslav Dubeyko <slava@dubeyko.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Moving the interrupt request past the pm_runtime_enable() call
+makes sure we can at least access the IOMMU registers. Note that
+this is only a partial fix, and that the VOP interrupt will still
+be screaming until the VOP driver kicks in, which advocates for
+a more synchronized interrupt enabling/disabling approach.
+
+Fixes: 0f181d3cf7d98 ("iommu/rockchip: Add runtime PM support")
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Olof Johansson <olof@lixom.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/hfsplus/dir.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/iommu/rockchip-iommu.c |   24 +++++++++++++-----------
+ 1 file changed, 13 insertions(+), 11 deletions(-)
 
---- a/fs/hfsplus/dir.c
-+++ b/fs/hfsplus/dir.c
-@@ -78,13 +78,13 @@ again:
- 				cpu_to_be32(HFSP_HARDLINK_TYPE) &&
- 				entry.file.user_info.fdCreator ==
- 				cpu_to_be32(HFSP_HFSPLUS_CREATOR) &&
-+				HFSPLUS_SB(sb)->hidden_dir &&
- 				(entry.file.create_date ==
- 					HFSPLUS_I(HFSPLUS_SB(sb)->hidden_dir)->
- 						create_date ||
- 				entry.file.create_date ==
- 					HFSPLUS_I(d_inode(sb->s_root))->
--						create_date) &&
--				HFSPLUS_SB(sb)->hidden_dir) {
-+						create_date)) {
- 			struct qstr str;
- 			char name[32];
+--- a/drivers/iommu/rockchip-iommu.c
++++ b/drivers/iommu/rockchip-iommu.c
+@@ -1161,17 +1161,6 @@ static int rk_iommu_probe(struct platfor
+ 	if (iommu->num_mmu == 0)
+ 		return PTR_ERR(iommu->bases[0]);
  
+-	i = 0;
+-	while ((irq = platform_get_irq(pdev, i++)) != -ENXIO) {
+-		if (irq < 0)
+-			return irq;
+-
+-		err = devm_request_irq(iommu->dev, irq, rk_iommu_irq,
+-				       IRQF_SHARED, dev_name(dev), iommu);
+-		if (err)
+-			return err;
+-	}
+-
+ 	iommu->reset_disabled = device_property_read_bool(dev,
+ 					"rockchip,disable-mmu-reset");
+ 
+@@ -1228,6 +1217,19 @@ static int rk_iommu_probe(struct platfor
+ 
+ 	pm_runtime_enable(dev);
+ 
++	i = 0;
++	while ((irq = platform_get_irq(pdev, i++)) != -ENXIO) {
++		if (irq < 0)
++			return irq;
++
++		err = devm_request_irq(iommu->dev, irq, rk_iommu_irq,
++				       IRQF_SHARED, dev_name(dev), iommu);
++		if (err) {
++			pm_runtime_disable(dev);
++			goto err_remove_sysfs;
++		}
++	}
++
+ 	return 0;
+ err_remove_sysfs:
+ 	iommu_device_sysfs_remove(&iommu->iommu);
 
 
