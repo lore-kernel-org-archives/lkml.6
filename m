@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4E21C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:51:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1827C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:51:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8177720881
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:51:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8177720881
+	by mail.kernel.org (Postfix) with ESMTP id 3FD6720854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:51:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FD6720854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730802AbeIMTAw (ORCPT
+        id S1730810AbeIMTA4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:00:52 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33272 "EHLO
+        Thu, 13 Sep 2018 15:00:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33280 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730214AbeIMTAv (ORCPT
+        with ESMTP id S1726967AbeIMTAz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:00:51 -0400
+        Thu, 13 Sep 2018 15:00:55 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 76CFBD10;
-        Thu, 13 Sep 2018 13:51:16 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9F1F6D10;
+        Thu, 13 Sep 2018 13:51:20 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jianlin Shi <jishi@redhat.com>,
-        Xin Long <lucien.xin@gmail.com>,
+        stable@vger.kernel.org, Ahmad Fatoum <a.fatoum@pengutronix.de>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 021/197] erspan: set erspan_ver to 1 by default when adding an erspan dev
-Date:   Thu, 13 Sep 2018 15:29:30 +0200
-Message-Id: <20180913131842.412239756@linuxfoundation.org>
+Subject: [PATCH 4.18 022/197] net: macb: Fix regression breaking non-MDIO fixed-link PHYs
+Date:   Thu, 13 Sep 2018 15:29:31 +0200
+Message-Id: <20180913131842.454065227@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -52,56 +51,96 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Ahmad Fatoum <a.fatoum@pengutronix.de>
 
-[ Upstream commit 84581bdae9587023cea1d139523f0ef0f28bd88d ]
+[ Upstream commit ab5f11055fdf8dfc3ddbd89e8e3cc550de41d1d3 ]
 
-After erspan_ver is introudced, if erspan_ver is not set in iproute, its
-value will be left 0 by default. Since Commit 02f99df1875c ("erspan: fix
-invalid erspan version."), it has broken the traffic due to the version
-check in erspan_xmit if users are not aware of 'erspan_ver' param, like
-using an old version of iproute.
+commit 739de9a1563a ("net: macb: Reorganize macb_mii bringup") broke
+initializing macb on the EVB-KSZ9477 eval board.
+There, of_mdiobus_register was called even for the fixed-link representing
+the RGMII-link to the switch with the result that the driver attempts to
+enumerate PHYs on a non-existent MDIO bus:
 
-To fix this compatibility problem, it sets erspan_ver to 1 by default
-when adding an erspan dev in erspan_setup. Note that we can't do it in
-ipgre_netlink_parms, as this function is also used by ipgre_changelink.
+	libphy: MACB_mii_bus: probed
+	mdio_bus f0028000.ethernet-ffffffff: fixed-link has invalid PHY address
+	mdio_bus f0028000.ethernet-ffffffff: scan phy fixed-link at address 0
+        [snip]
+	mdio_bus f0028000.ethernet-ffffffff: scan phy fixed-link at address 31
 
-Fixes: 02f99df1875c ("erspan: fix invalid erspan version.")
-Reported-by: Jianlin Shi <jishi@redhat.com>
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
+The "MDIO" bus registration succeeds regardless, having claimed the reset GPIO,
+and calling of_phy_register_fixed_link later on fails because it tries
+to claim the same GPIO:
+
+	macb f0028000.ethernet: broken fixed-link specification
+
+Fix this by registering the fixed-link before calling mdiobus_register.
+
+Fixes: 739de9a1563a ("net: macb: Reorganize macb_mii bringup")
+Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/ip_gre.c  |    3 +++
- net/ipv6/ip6_gre.c |    1 +
- 2 files changed, 4 insertions(+)
+ drivers/net/ethernet/cadence/macb_main.c |   27 +++++++++++++++++----------
+ 1 file changed, 17 insertions(+), 10 deletions(-)
 
---- a/net/ipv4/ip_gre.c
-+++ b/net/ipv4/ip_gre.c
-@@ -1511,11 +1511,14 @@ nla_put_failure:
+--- a/drivers/net/ethernet/cadence/macb_main.c
++++ b/drivers/net/ethernet/cadence/macb_main.c
+@@ -481,11 +481,6 @@ static int macb_mii_probe(struct net_dev
  
- static void erspan_setup(struct net_device *dev)
+ 	if (np) {
+ 		if (of_phy_is_fixed_link(np)) {
+-			if (of_phy_register_fixed_link(np) < 0) {
+-				dev_err(&bp->pdev->dev,
+-					"broken fixed-link specification\n");
+-				return -ENODEV;
+-			}
+ 			bp->phy_node = of_node_get(np);
+ 		} else {
+ 			bp->phy_node = of_parse_phandle(np, "phy-handle", 0);
+@@ -568,7 +563,7 @@ static int macb_mii_init(struct macb *bp
  {
-+	struct ip_tunnel *t = netdev_priv(dev);
+ 	struct macb_platform_data *pdata;
+ 	struct device_node *np;
+-	int err;
++	int err = -ENXIO;
+ 
+ 	/* Enable management port */
+ 	macb_writel(bp, NCR, MACB_BIT(MPE));
+@@ -591,12 +586,23 @@ static int macb_mii_init(struct macb *bp
+ 	dev_set_drvdata(&bp->dev->dev, bp->mii_bus);
+ 
+ 	np = bp->pdev->dev.of_node;
+-	if (pdata)
+-		bp->mii_bus->phy_mask = pdata->phy_mask;
++	if (np && of_phy_is_fixed_link(np)) {
++		if (of_phy_register_fixed_link(np) < 0) {
++			dev_err(&bp->pdev->dev,
++				"broken fixed-link specification %pOF\n", np);
++			goto err_out_free_mdiobus;
++		}
 +
- 	ether_setup(dev);
- 	dev->netdev_ops = &erspan_netdev_ops;
- 	dev->priv_flags &= ~IFF_TX_SKB_SHARING;
- 	dev->priv_flags |= IFF_LIVE_ADDR_CHANGE;
- 	ip_tunnel_setup(dev, erspan_net_id);
-+	t->erspan_ver = 1;
- }
++		err = mdiobus_register(bp->mii_bus);
++	} else {
++		if (pdata)
++			bp->mii_bus->phy_mask = pdata->phy_mask;
++
++		err = of_mdiobus_register(bp->mii_bus, np);
++	}
  
- static const struct nla_policy ipgre_policy[IFLA_GRE_MAX + 1] = {
---- a/net/ipv6/ip6_gre.c
-+++ b/net/ipv6/ip6_gre.c
-@@ -1776,6 +1776,7 @@ static void ip6gre_netlink_parms(struct
- 	if (data[IFLA_GRE_COLLECT_METADATA])
- 		parms->collect_md = true;
+-	err = of_mdiobus_register(bp->mii_bus, np);
+ 	if (err)
+-		goto err_out_free_mdiobus;
++		goto err_out_free_fixed_link;
  
-+	parms->erspan_ver = 1;
- 	if (data[IFLA_GRE_ERSPAN_VER])
- 		parms->erspan_ver = nla_get_u8(data[IFLA_GRE_ERSPAN_VER]);
+ 	err = macb_mii_probe(bp->dev);
+ 	if (err)
+@@ -606,6 +612,7 @@ static int macb_mii_init(struct macb *bp
  
+ err_out_unregister_bus:
+ 	mdiobus_unregister(bp->mii_bus);
++err_out_free_fixed_link:
+ 	if (np && of_phy_is_fixed_link(np))
+ 		of_phy_deregister_fixed_link(np);
+ err_out_free_mdiobus:
 
 
