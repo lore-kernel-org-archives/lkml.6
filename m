@@ -2,100 +2,91 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A221C43143
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 18:16:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87D11C43143
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 18:21:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20E35204EC
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 18:16:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E6DF20866
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 18:21:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=digitalocean.com header.i=@digitalocean.com header.b="SeGyiGCx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20E35204EC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=digitalocean.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="qAAwKXoL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E6DF20866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728057AbeIMX1H (ORCPT
+        id S1728045AbeIMXcI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 19:27:07 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:42833 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726821AbeIMX1H (ORCPT
+        Thu, 13 Sep 2018 19:32:08 -0400
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:25957 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726821AbeIMXcI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 19:27:07 -0400
-Received: by mail-pf1-f193.google.com with SMTP id l9-v6so3029163pff.9
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 11:16:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=digitalocean.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=yDYpIWL93vJZrcgkcDELYHIQ9E3tcqiIXB6NTHCqFD4=;
-        b=SeGyiGCxgenv+yjr9moQIDA/wFF7VCCnUJ+pJjsrXE3HD/IXxldPqmNzM6601X6aEu
-         HXBoTw/aCQh+/tLQZ7FZPDLzzs1+z19WC57KBY3Oz8C4V3OUBgju+l1sJxo1xbKx8iCI
-         ewQMFRp9RDxJbJmIO2IE3qXbhQYHje9SZNmp8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=yDYpIWL93vJZrcgkcDELYHIQ9E3tcqiIXB6NTHCqFD4=;
-        b=IIh7NAO1gIgxVY1480Wxp9M3UJ4zWpzP1WLn1nzokHLagD+Cb3i4ZahVh1DqCBEY2x
-         tE4QWRad2ADhi3RJBawtQTXpocr7d12L1QsgJmNIvrLRJwn6/Au1H+tgCcjdc0ItTQ0M
-         s8/e8KtGJX58pxXKwyJ8OrvOmo+MYYIIMUmpdS2bG45FR6tjAh6Uyw2lxu5sV0FFHpuz
-         3XkTGhjRgYg+xoNTduP6NV9GRX/m7V2AvOVlZE4QGwTgCKu+zA7vUNGl6u/vemNtgzsY
-         KJQWDu6HrgIobs9et4FKgag4sp1Uht20NEm7abrPIVvNqj54j4Znr475wrInJai7Nryy
-         C58Q==
-X-Gm-Message-State: APzg51BaWuhAGmukEgHUuHky/ghDgDVJmP1jX0gvmTSdnCqqWtvcFPeE
-        bdwmdiAmhxFfO2uO22zOysd5LUceQZQ=
-X-Google-Smtp-Source: ANB0Vda5hdQj//4+V178H1dqavo6CpmOmPKv+zYYIBAdAkWAak+rPcc/IY/TCjsnXF82KuC5icU1bA==
-X-Received: by 2002:a62:8a4f:: with SMTP id y76-v6mr8511415pfd.233.1536862589616;
-        Thu, 13 Sep 2018 11:16:29 -0700 (PDT)
-Received: from breakout.internal.digitalocean.com (97-120-204-225.ptld.qwest.net. [97.120.204.225])
-        by smtp.gmail.com with ESMTPSA id w12-v6sm6543737pfd.110.2018.09.13.11.16.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 13 Sep 2018 11:16:29 -0700 (PDT)
-Received: by breakout.internal.digitalocean.com (Postfix, from userid 1000)
-        id EB7918A2A78; Thu, 13 Sep 2018 11:16:27 -0700 (PDT)
-Date:   Thu, 13 Sep 2018 11:16:27 -0700
-From:   Nishanth Aravamudan <naravamudan@digitalocean.com>
-To:     Jan =?iso-8859-1?Q?H=2E_Sch=F6nherr?= <jschoenh@amazon.de>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC 00/60] Coscheduling for Linux
-Message-ID: <20180913181627.GA29148@breakout>
-References: <20180907214047.26914-1-jschoenh@amazon.de>
- <20180912002449.GA21797@breakout>
- <c41f4e4f-30a1-5a3c-dec6-dc8f1d181c94@amazon.de>
- <20180912231535.GA1546@breakout>
- <5490845c-3f71-8487-8580-87b18a639ecd@amazon.de>
+        Thu, 13 Sep 2018 19:32:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1536862890; x=1568398890;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=yzYEl/g8Zu0F+QIYe4jICa4Us7bNfLEsmkqW2dz9gzI=;
+  b=qAAwKXoLuXKeNM7elSl5HVmbeA7G2g1TXWUAIgUuexpoIifQPlJijP+s
+   Rp6wImmm2ovDYbyLjiiOeU8GP/f0E7giqrcVORJLpbzx1SAZ+0PZjmS5G
+   Bx6lckY2rC1DPDY1oi0kNBIk3wKTVwwhOPVv71zGSDN5aQ4+9OUJJ3I4H
+   TEdjRswDwEyF3wDvPfp4ER8O5gqI68LucKHImXT7NEtqnk5IvRiRtITh2
+   shyxpkCGAd0nMba/gqKfURnO6/kpGqfsP3a4u3ZN+jOZaR8+Jm5H4cy4V
+   7ZFZkeIpQq90gDYAp5tiKYK86y5J0TtD2FZSGKhBHI0SzbsTgq7dRVrIL
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.53,370,1531756800"; 
+   d="scan'208";a="89711104"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 14 Sep 2018 02:21:29 +0800
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep02.wdc.com with ESMTP; 13 Sep 2018 11:07:50 -0700
+Received: from c02v91rdhtd5.sdcorp.global.sandisk.com (HELO [10.196.159.148]) ([10.196.159.148])
+  by uls-op-cesaip01.wdc.com with ESMTP; 13 Sep 2018 11:21:29 -0700
+Subject: Re: [PATCH v4 10/12] RISC-V: User WRITE_ONCE instead of direct access
+To:     Andreas Schwab <schwab@linux-m68k.org>
+Cc:     "palmer@sifive.com" <palmer@sifive.com>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "hch@infradead.org" <hch@infradead.org>,
+        "anup@brainfault.org" <anup@brainfault.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
+        "jeremy.linton@arm.com" <jeremy.linton@arm.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "jason@lakedaemon.net" <jason@lakedaemon.net>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "dmitriy@oss-tech.org" <dmitriy@oss-tech.org>,
+        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>
+References: <1536696339-15204-1-git-send-email-atish.patra@wdc.com>
+ <1536696339-15204-11-git-send-email-atish.patra@wdc.com>
+ <87o9d3vkp3.fsf@igel.home>
+From:   Atish Patra <atish.patra@wdc.com>
+Message-ID: <d8b0c26e-2438-3a2c-ba7d-98431396a659@wdc.com>
+Date:   Thu, 13 Sep 2018 11:21:29 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5490845c-3f71-8487-8580-87b18a639ecd@amazon.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <87o9d3vkp3.fsf@igel.home>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13.09.2018 [13:31:36 +0200], Jan H. Schönherr wrote:
-> On 09/13/2018 01:15 AM, Nishanth Aravamudan wrote:
-> > [...] if I just try to set machine's
-> > cpu.scheduled to 1, with no other changes (not even changing any child
-> > cgroup's cpu.scheduled yet), I get the following trace:
-> > 
-> > [16052.164259] ------------[ cut here ]------------
-> > [16052.168973] rq->clock_update_flags < RQCF_ACT_SKIP
-> > [16052.168991] WARNING: CPU: 59 PID: 59533 at kernel/sched/sched.h:1303 assert_clock_updated.isra.82.part.83+0x15/0x18
-> [snip]
+On 9/11/18 1:33 PM, Andreas Schwab wrote:
+> s/User/Use/
 > 
-> This goes away with the change below (which fixes patch 58/60).
+> Andreas.
+> 
+Fixed. Thanks.
 
-Yep, I can confirm this one as well, is now fixed.
-
--Nish
+Regards,
+Atish
