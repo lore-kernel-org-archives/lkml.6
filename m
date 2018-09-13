@@ -2,102 +2,269 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2378AC43143
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 20:22:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67129C63685
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 20:22:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B56C22086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 20:22:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05CC92086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 20:22:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hkzAPtg5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B56C22086C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Z5dQKL9O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05CC92086C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728210AbeINBdL (ORCPT
+        id S1728247AbeINBd3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 21:33:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47538 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728029AbeINBdK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 21:33:10 -0400
-Received: from mail-yw1-f45.google.com (mail-yw1-f45.google.com [209.85.161.45])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 461D520C0A;
-        Thu, 13 Sep 2018 20:22:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536870127;
-        bh=J7DCk9nceq9oh1NpPx9/2yCEBtqEge+qNVpiJYH2wkM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=hkzAPtg5mge2O1fWJBhNaYn4jgg21MRfnFt2AMcG+JPEOfvhzj7Bd6W+fXMP4v1BK
-         TDuNia230XFVJpjqxpXYlozPccvEBnZQx5qcJxSeGf4sA4/gL3v2T/iebDK7ZF8Tcd
-         olMK6rM+//Sl5qEDd9vAOnUvuiJ7aR8dPsmHOjwI=
-Received: by mail-yw1-f45.google.com with SMTP id l189-v6so1725436ywb.10;
-        Thu, 13 Sep 2018 13:22:07 -0700 (PDT)
-X-Gm-Message-State: APzg51B848AWEeh4gxJxW+MIpMg/wqhk3rbhs/2mw5o2AsGUqscfa0Xb
-        CtIICy4nKKqsTfylpB/CRB70p47MSruJUX1e/Zk=
-X-Google-Smtp-Source: ANB0VdbUGN6/j9B5YKYui9QIThtKmFrO6HnxL95Ar/ft3h5wHDiGNGH51iBxeZROGIXvndwlr9U/JUqvyqSJhECQZPk=
-X-Received: by 2002:a81:578e:: with SMTP id l136-v6mr4265671ywb.396.1536870126500;
- Thu, 13 Sep 2018 13:22:06 -0700 (PDT)
+        Thu, 13 Sep 2018 21:33:29 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:43231 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728215AbeINBd3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 21:33:29 -0400
+Received: by mail-ed1-f66.google.com with SMTP id z27-v6so5650602edb.10
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 13:22:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=4SoW90uiVGeXBwQDZBoEdwVJr27rAmCSY/9P69WvW2g=;
+        b=Z5dQKL9OLihoQPiq9q81okiUs3jMhRxFomSp59ikQyddektdwYEDYmGDatUfb2JcQu
+         gMaRX10o0YwHvR5tEPGMd+rx6T3Pl4pT4DOCpa0gXBenIcYhza5dWtwaFTU2+YaNHxTb
+         Y/RQxlhKnrG1kt7lvyT3vz2458wuBvcfMBykw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=4SoW90uiVGeXBwQDZBoEdwVJr27rAmCSY/9P69WvW2g=;
+        b=npE4hI0JdHb2NAZNrab4fnJhdLvJCw70WpaSYp+vQS5HhK6CLyNnNs2BqXmi3xGffz
+         G2Cv8rxQEi3fxCatM1cWq7r8X7BmdAJn5q8/JhC47gg/pJ3aoc+bkpbU2VnOMGCZ9cOw
+         uKLQMcr72FCbh16w3trBYiX0esmhlCiClEoh3A5BFbdzEHQgV7S1sKw5LtdAHpcL0Mz3
+         H+RElpWPTtLyPa7lnFTNykXoAXY2BY8hHFuyisfv7R5MCmv/SiWZpBNEKAd+R8JqPOhz
+         0mYs+PwN7UR2uVJ/R6wsgbJpUMUT72AqafscX+RZWI/A8/nY+7Fbvj2RL0/1q2zaTa7Q
+         4PRQ==
+X-Gm-Message-State: APzg51CzpdGhpUk1VhV1CQ74o6GbeTIs5caGmlIzS5FFr+zK/tz30xfg
+        59wpgyc0Uyge0zwLy5wrAqS9JQ==
+X-Google-Smtp-Source: ANB0VdZwF7wKn6BRqEd73FDVtaJxMLtz9PvLeuGFp+VYBP3kTtfXuugcTWCH20c/6HygU6jEdbUjvA==
+X-Received: by 2002:a50:bb69:: with SMTP id y96-v6mr14164358ede.10.1536870143231;
+        Thu, 13 Sep 2018 13:22:23 -0700 (PDT)
+Received: from [10.136.13.65] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id x44-v6sm2117869edd.1.2018.09.13.13.22.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Sep 2018 13:22:22 -0700 (PDT)
+Subject: Re: [PATCH] arm64: defconfig: enable EFI_ARMSTUB_DTB_LOADER
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Olof Johansson <olof@lixom.net>
+Cc:     Grant Likely <grant.likely@secretlab.ca>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Broadcom Kernel Feedback List 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Leif Lindholm <leif.lindholm@linaro.org>,
+        Alexander Graf <agraf@suse.de>
+References: <1535563287-24803-1-git-send-email-scott.branden@broadcom.com>
+ <CAOesGMhjcJ1p3QcEYb9fsx3fMXAOsgR2njOq=VKgEbWGwJi36g@mail.gmail.com>
+ <fb07b89d-d427-5e59-9f17-b12df26284ec@broadcom.com>
+ <CAKv+Gu-R7eX=aj=O2-gpzmp0K4t0T4s536UiqJZs0WuxRjkYwQ@mail.gmail.com>
+ <CAOesGMho8CfT7iDXadmkB5=7DoOi6n8qXcS9X643vf+Y0BbD6w@mail.gmail.com>
+ <CAKv+Gu_mKU+RdPgg2Dfezy4-L+KDEEBx02R49ObomRhEkJJ6Mw@mail.gmail.com>
+ <CAOesGMgLHx3+j1bWEsMWsN-yjGNZyLOpAjLg0Jut8gG=ADE25g@mail.gmail.com>
+ <CAKv+Gu_x=bS4xJcD_LuEnnN=Lx4Jc87uK8J_ACdA9EeUqtM3Yg@mail.gmail.com>
+ <CACxGe6uK+N5XUqZhH7gAQXoq+QXMvFPHF_i4WqivrufTU=0cog@mail.gmail.com>
+ <1946321c-704c-f800-1007-b720d6c7f162@broadcom.com>
+ <CAOesGMhUWh-DeVccqmwzJkHyHur39DAUBu-hJWuKDuSNO+R+aA@mail.gmail.com>
+ <CAKv+Gu_=XLmgbNq2fkvSUqKA6CV_WE8jOVZ8mz4kPt0CQStdJA@mail.gmail.com>
+From:   Scott Branden <scott.branden@broadcom.com>
+Message-ID: <b711f74c-363f-4f41-bb1e-a9550147758a@broadcom.com>
+Date:   Thu, 13 Sep 2018 13:22:16 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180911123732.32579-1-colin.king@canonical.com>
-In-Reply-To: <20180911123732.32579-1-colin.king@canonical.com>
-From:   Alan Tull <atull@kernel.org>
-Date:   Thu, 13 Sep 2018 15:21:30 -0500
-X-Gmail-Original-Message-ID: <CANk1AXTxBtMEJo0NTW9g0GeMX8-RTcD_PJ2eyqkYyCtw-u_9Mw@mail.gmail.com>
-Message-ID: <CANk1AXTxBtMEJo0NTW9g0GeMX8-RTcD_PJ2eyqkYyCtw-u_9Mw@mail.gmail.com>
-Subject: Re: [PATCH] fpga: region: fix spelling mistake "partion" -> "partition"
-To:     Colin King <colin.king@canonical.com>
-Cc:     Moritz Fischer <mdf@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-fpga@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, kernel-janitors@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAKv+Gu_=XLmgbNq2fkvSUqKA6CV_WE8jOVZ8mz4kPt0CQStdJA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 11, 2018 at 7:37 AM Colin King <colin.king@canonical.com> wrote:
 
-Hi Colin,
 
+On 18-09-10 11:08 AM, Ard Biesheuvel wrote:
+> On 10 September 2018 at 20:01, Olof Johansson <olof@lixom.net> wrote:
+>> On Mon, Sep 10, 2018 at 10:53 AM, Scott Branden
+>> <scott.branden@broadcom.com> wrote:
+>>> Olof/All,
+>>>
+>>>
+>>> On 18-09-04 03:13 AM, Grant Likely wrote:
+>>>> Hey folks. More comments below, but the short answer is I really don't
+>>>> see what the problem is. Distros cannot easily support platforms that
+>>>> require a dtb= parameter, and so they probably won't. They may or may
+>>>> not disable 'dtb=', depending on whether they see it as valuable for
+>>>> debug.
+>>>>
+>>>> Vertically integrated platforms are a different beast. We may strongly
+>>>> recommend firmware provides the dtb for all the mentioned good
+>>>> reasons, but they still get to decide their deployment methodology,
+>>>> and it is not burdensome for the kernel to keep the dtb= feature that
+>>>> they are using.
+>>>>
+>>>> On Tue, Sep 4, 2018 at 7:24 AM Ard Biesheuvel <ard.biesheuvel@linaro.org>
+>>>> wrote:
+>>>>> On 2 September 2018 at 04:54, Olof Johansson <olof@lixom.net> wrote:
+>>>>>> On Thu, Aug 30, 2018 at 9:23 AM, Ard Biesheuvel
+>>>>>> <ard.biesheuvel@linaro.org> wrote:
+>>>>>>> On 30 August 2018 at 17:06, Olof Johansson <olof@lixom.net> wrote:
+>>>>>>>> On Wed, Aug 29, 2018 at 10:54 PM, Ard Biesheuvel
+>>>>>>>> <ard.biesheuvel@linaro.org> wrote:
+>>>>>>>>> On 29 August 2018 at 20:59, Scott Branden
+>>>>>>>>> <scott.branden@broadcom.com> wrote:
+>>>>>>>>>> Hi Olof,
+>>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>> On 18-08-29 11:44 AM, Olof Johansson wrote:
+>>>>>>>>>>> Hi,
+>>>>>>>>>>>
+>>>>>>>>>>> On Wed, Aug 29, 2018 at 10:21 AM, Scott Branden
+>>>>>>>>>>> <scott.branden@broadcom.com> wrote:
+>>>>>>>>>>>> Enable EFI_ARMSTUB_DTB_LOADER to add support for the dtb= command
+>>>>>>>>>>>> line
+>>>>>>>>>>>> parameter to function with efi loader.
+>>>>>>>>>>>>
+>>>>>>>>>>>> Required to boot on existing bootloaders that do not support
+>>>>>>>>>>>> devicetree
+>>>>>>>>>>>> provided by the platform or by the bootloader.
+>>>>>>>>>>>>
+>>>>>>>>>>>> Fixes: 3d7ee348aa41 ("efi/libstub/arm: Add opt-in Kconfig option
+>>>>>>>>>>>> for the
+>>>>>>>>>>>> DTB loader")
+>>>>>>>>>>>> Signed-off-by: Scott Branden <scott.branden@broadcom.com>
+>>>>>>>>>>> Why did Ard create an option for this if it's just going be turned
+>>>>>>>>>>> on
+>>>>>>>>>>> in default configs? Doesn't make sense to me.
+>>>>>>>>>>>
+>>>>>>>>>>> It would help to know what firmware still is crippled and how
+>>>>>>>>>>> common
+>>>>>>>>>>> it is, since it's been a few years that this has been a requirement
+>>>>>>>>>>> by
+>>>>>>>>>>> now.
+>>>>>>>>>> Broadcom NS2 and Stingray in current development and production need
+>>>>>>>>>> this
+>>>>>>>>>> option in the kernel enabled in order to boot.
+>>>>>>>>> And these production systems run mainline kernels in a defconfig
+>>>>>>>>> configuration?
+>>>>>>>>>
+>>>>>>>>> The simply reality is that the DTB loader has been deprecated for a
+>>>>>>>>> good reason: it was only ever intended as a development hack anyway,
+>>>>>>>>> and if we need to treat the EFI stub provided DTB as a first class
+>>>>>>>>> citizen, there are things we need to fix to make things works as
+>>>>>>>>> expected. For instance, GRUB will put a property in the /chosen node
+>>>>>>>>> for the initramfs which will get dropped if you boot with dtb=.
+>>>>>>>>>
+>>>>>>>>> Don't be surprised if some future enhancements of the EFI stub code
+>>>>>>>>> depend on !EFI_ARMSTUB_DTB_LOADER.
+>>>> That's an odd statement to make. The DTB loader code is well contained
+>>>> and with defined semantics... True, the semantics are "I DON'T BELIEVE
+>>>> FIRMWARE", but it is still well defined. What scenario are you
+>>>> envisioning where EFI_ARMSTUB_DTB_LOADER would be explicitly excluded?
+>>>>
+>>>> Conversely, the dtb= argument is an invaluable debug tool during
+>>>> development. As Olof has already said, there are a lot of embedded
+>>>> deployments where there is no desire for grub or any other
+>>>> intermediary loader.
+>>>>
+>>>>>>>>> On UEFI systems, DTBs [or ACPI
+>>>>>>>>> tables] are used by the firmware to describe itself and the
+>>>>>>>>> underlying
+>>>>>>>>> platform to the OS, and the practice of booting with DTB file images
+>>>>>>>>> (taken from the kernel build as well) conflicts with that view. Note
+>>>>>>>>> that GRUB still permits you to load DTBs from files (and supports
+>>>>>>>>> more
+>>>>>>>>> sources than just the file system the kernel Image was loaded from).
+>>>>>>>> Ard,
+>>>>>>>>
+>>>>>>>> Maybe a WARN() splat would be more useful as a phasing-out method than
+>>>>>>>> removing functionality for them that needs to be reinstated through
+>>>>>>>> changing the config?
+>>>>>>>>
+>>>>>>> We don't have any of that in the stub, and inventing new ways to pass
+>>>>>>> such information between the stub and the kernel proper seems like a
+>>>>>>> cart-before-horse kind of thing to me. The EFI stub diagnostic
+>>>>>>> messages you get on the serial console are not recorded in the kernel
+>>>>>>> log buffer, so they only appear if you actually look at the serial
+>>>>>>> output.
+>>>> As an aside, they probably should be recorded. That is probably a
+>>>> question for the UEFI USWG. Grub and the ARMSTUB could probably bodge
+>>>> something together, but that would be non-standard.
+>>>>
+>>>>>> Ah yeah. I suppose you could do it in the kernel later if you detect
+>>>>>> you've booted through EFI with dtb= on the command line though.
+>>>>>>
+>>>>>>>> Once the stub and the boot method is there, it's hard to undo as we
+>>>>>>>> can see here. Being loud and warn might be more useful, and set a
+>>>>>>>> timeline for hard removal (12 months?).
+>>>>>>>>
+>>>>>>> The dtb= handling is still there, it is just not enabled by default.
+>>>>>>> We can keep it around if people are still using it. But as I pointed
+>>>>>>> out, we may decide to make new functionality available only if it is
+>>>>>>> disabled, and at that point, we'll have to choose between one or the
+>>>>>>> other in defconfig, which is annoying.
+>>>>>>>
+>>>>>>>> Scott; an alternative for you is to do a boot wrapper that bundles a
+>>>>>>>> DT and kernel, and boot that instead of the kernel image (outside of
+>>>>>>>> the kernel tree). Some 32-bit platforms from Marvell use that. That
+>>>>>>>> way the kernel will just see it as a normally passed in DT.
+>>>>>>>>
+>>>>>>> Or use GRUB. It comes wired up in all the distros, and let's you load
+>>>>>>> a DT binary from anywhere you can imagine, as opposed to the EFI stub
+>>>>>>> which can only load it if it happens to reside in the same file system
+>>>>>>> (or even directory - I can't remember) as the kernel image. Note that
+>>>>>>> the same reservations apply to doing that - the firmware is no longer
+>>>>>>> able to describe itself to the OS via the DT, which is really the only
+>>>>>>> conduit it has available on an arm64 system..
+>>>>>> So, I've looked at the history here a bit, and dtb= support was
+>>>>>> introduced in 2014. Nowhere does it say that it isn't a recommended
+>>>>>> way of booting.
+>>>>>>
+>>>>>> There are some firmware stacks today that modify and provide a
+>>>>>> runtime-updated devicetree to the kernel, but there are also a bunch
+>>>>>> who don't. Most "real" products will want a firmware that knows how to
+>>>>>> pass in things such as firmware environment variables, or MAC
+>>>>>> addresses, etc, to the kernel, but not all of them need it.
+>>>>>>
+>>>>>> In particular, in a world where you want EFI to be used on embedded
+>>>>>> platforms, requiring another bootloader step such as GRUB to be able
+>>>>>> to reasonably boot said platforms seems like a significant and
+>>>>>> unfortunate new limitation. Documentation/efi-stub.txt has absolutely
+>>>>>> no indication that it is a second-class option that isn't expected to
+>>>>>> be available everywhere. It doesn't really matter what _your_
+>>>>>> intention was around it, if those who use it never found out and now
+>>>>>> rely on it.
+>>>>>>
+>>>>>> Unfortunately the way forward here is to revert 3d7ee348aa4127a.
+>>> What's the path forward?  Revert, defconfig change (this patch), or Kconfig
+>>> default addition?
+>> Revert or Kconfig select, and a Kconfig select means that the option
+>> is a dead one anyway so we might as well revert.
+>>
+> I disagree. Making it default y is fine by me, but please don't remove it.
 >
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Trivial fix to spelling mistake in the documentation
+>> Ard, do you have other fixes lined up or should we take the patch
+>> through arm-soc?
+>>
+> I don't have any fixes but either way is fine.
+I submitted the version of the patch Ard requested here for somebody to 
+pick up.
+https://lore.kernel.org/patchwork/patch/984521/
 
-I took a look, there's other misspellings in this doc.  I'd like to
-get them all in one patch if possible.  If I have time I'll add them
-to this patch or if you have time, you can.
 
-Alan
 
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  Documentation/devicetree/bindings/fpga/fpga-region.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Documentation/devicetree/bindings/fpga/fpga-region.txt b/Documentation/devicetree/bindings/fpga/fpga-region.txt
-> index 6db8aeda461a..71beb85b56f1 100644
-> --- a/Documentation/devicetree/bindings/fpga/fpga-region.txt
-> +++ b/Documentation/devicetree/bindings/fpga/fpga-region.txt
-> @@ -484,7 +484,7 @@ It is beyond the scope of this document to fully describe all the FPGA design
->  constraints required to make partial reconfiguration work[1] [2] [3], but a few
->  deserve quick mention.
->
-> -A persona must have boundary connections that line up with those of the partion
-> +A persona must have boundary connections that line up with those of the partition
->  or region it is designed to go into.
->
->  During programming, transactions through those connections must be stopped and
-> --
-> 2.17.1
->
