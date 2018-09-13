@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA817C070C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 02:42:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB72FC07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 02:43:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E3B42146E
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 02:42:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E3B42146E
+	by mail.kernel.org (Postfix) with ESMTP id 76FDA2146E
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 02:43:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76FDA2146E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728397AbeIMHuA (ORCPT
+        id S1728380AbeIMHuA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 13 Sep 2018 03:50:00 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:43750 "EHLO
+Received: from zeniv.linux.org.uk ([195.92.253.2]:43784 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727762AbeIMHsR (ORCPT
+        with ESMTP id S1727859AbeIMHsR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 13 Sep 2018 03:48:17 -0400
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1g0HYr-0006Sa-TP; Thu, 13 Sep 2018 02:40:53 +0000
+        id 1g0HYs-0006TA-Rl; Thu, 13 Sep 2018 02:40:54 +0000
 From:   Al Viro <viro@ZenIV.linux.org.uk>
 To:     Arnd Bergmann <arnd@arndb.de>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 35/50] synclink: reduce pointless checks in ->ioctl()
-Date:   Thu, 13 Sep 2018 03:40:34 +0100
-Message-Id: <20180913024049.24567-35-viro@ZenIV.linux.org.uk>
+Subject: [PATCH 40/50] kill the rest of tty COMPAT_IOCTL() entries
+Date:   Thu, 13 Sep 2018 03:40:39 +0100
+Message-Id: <20180913024049.24567-40-viro@ZenIV.linux.org.uk>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20180913024049.24567-1-viro@ZenIV.linux.org.uk>
 References: <20180913023119.GQ19965@ZenIV.linux.org.uk>
@@ -43,73 +43,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-it's never getting called with TIOC[SG]SERIAL anymore (nor has
-it ever supported those, while we are at it)
+TIOCLINUX is handled by ->compat_ioctl() in the only place that has
+native ->ioctl() recognizing it, TIOC{START,STOP} are simply useless
+these days - unrecognized compat ioctl won't spew into syslog
+anymore.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- drivers/char/pcmcia/synclink_cs.c | 3 +--
- drivers/tty/synclink.c            | 3 +--
- drivers/tty/synclink_gt.c         | 3 +--
- drivers/tty/synclinkmp.c          | 3 +--
- 4 files changed, 4 insertions(+), 8 deletions(-)
+ fs/compat_ioctl.c | 13 -------------
+ 1 file changed, 13 deletions(-)
 
-diff --git a/drivers/char/pcmcia/synclink_cs.c b/drivers/char/pcmcia/synclink_cs.c
-index 66b04194aa9f..82f9a6a814ae 100644
---- a/drivers/char/pcmcia/synclink_cs.c
-+++ b/drivers/char/pcmcia/synclink_cs.c
-@@ -2237,8 +2237,7 @@ static int mgslpc_ioctl(struct tty_struct *tty,
- 	if (mgslpc_paranoia_check(info, tty->name, "mgslpc_ioctl"))
- 		return -ENODEV;
+diff --git a/fs/compat_ioctl.c b/fs/compat_ioctl.c
+index 2b35c6707e3d..ca2b51d9cb61 100644
+--- a/fs/compat_ioctl.c
++++ b/fs/compat_ioctl.c
+@@ -647,8 +647,6 @@ static unsigned int ioctl_pointer[] = {
+ COMPATIBLE_IOCTL(0x4B50)   /* KDGHWCLK - not in the kernel, but don't complain */
+ COMPATIBLE_IOCTL(0x4B51)   /* KDSHWCLK - not in the kernel, but don't complain */
  
--	if ((cmd != TIOCGSERIAL) && (cmd != TIOCSSERIAL) &&
--	    (cmd != TIOCMIWAIT)) {
-+	if (cmd != TIOCMIWAIT) {
- 		if (tty_io_error(tty))
- 		    return -EIO;
- 	}
-diff --git a/drivers/tty/synclink.c b/drivers/tty/synclink.c
-index fbdf4d01c6a9..d55c858d6058 100644
---- a/drivers/tty/synclink.c
-+++ b/drivers/tty/synclink.c
-@@ -2959,8 +2959,7 @@ static int mgsl_ioctl(struct tty_struct *tty,
- 	if (mgsl_paranoia_check(info, tty->name, "mgsl_ioctl"))
- 		return -ENODEV;
+-/* Big T */
+-COMPATIBLE_IOCTL(TIOCLINUX)
+ /* Little t */
+ COMPATIBLE_IOCTL(TIOCOUTQ)
+ /* Little f */
+@@ -1113,17 +1111,6 @@ COMPATIBLE_IOCTL(JSIOCGAXES)
+ COMPATIBLE_IOCTL(JSIOCGBUTTONS)
+ COMPATIBLE_IOCTL(JSIOCGNAME(0))
  
--	if ((cmd != TIOCGSERIAL) && (cmd != TIOCSSERIAL) &&
--	    (cmd != TIOCMIWAIT)) {
-+	if (cmd != TIOCMIWAIT) {
- 		if (tty_io_error(tty))
- 		    return -EIO;
- 	}
-diff --git a/drivers/tty/synclink_gt.c b/drivers/tty/synclink_gt.c
-index a94086597ebd..b8287a010336 100644
---- a/drivers/tty/synclink_gt.c
-+++ b/drivers/tty/synclink_gt.c
-@@ -1029,8 +1029,7 @@ static int ioctl(struct tty_struct *tty,
- 		return -ENODEV;
- 	DBGINFO(("%s ioctl() cmd=%08X\n", info->device_name, cmd));
- 
--	if ((cmd != TIOCGSERIAL) && (cmd != TIOCSSERIAL) &&
--	    (cmd != TIOCMIWAIT)) {
-+	if (cmd != TIOCMIWAIT) {
- 		if (tty_io_error(tty))
- 		    return -EIO;
- 	}
-diff --git a/drivers/tty/synclinkmp.c b/drivers/tty/synclinkmp.c
-index 1e4d5b9c981a..fcb91bf7a15b 100644
---- a/drivers/tty/synclinkmp.c
-+++ b/drivers/tty/synclinkmp.c
-@@ -1259,8 +1259,7 @@ static int ioctl(struct tty_struct *tty,
- 	if (sanity_check(info, tty->name, "ioctl"))
- 		return -ENODEV;
- 
--	if ((cmd != TIOCGSERIAL) && (cmd != TIOCSSERIAL) &&
--	    (cmd != TIOCMIWAIT)) {
-+	if (cmd != TIOCMIWAIT) {
- 		if (tty_io_error(tty))
- 		    return -EIO;
- 	}
+-#ifdef TIOCSTART
+-/*
+- * For these two we have definitions in ioctls.h and/or termios.h on
+- * some architectures but no actual implemention.  Some applications
+- * like bash call them if they are defined in the headers, so we provide
+- * entries here to avoid syslog message spew.
+- */
+-COMPATIBLE_IOCTL(TIOCSTART)
+-COMPATIBLE_IOCTL(TIOCSTOP)
+-#endif
+-
+ /* fat 'r' ioctls. These are handled by fat with ->compat_ioctl,
+    but we don't want warnings on other file systems. So declare
+    them as compatible here. */
 -- 
 2.11.0
 
