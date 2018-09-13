@@ -2,120 +2,131 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30166FC6182
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 22:18:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55AA9C04AB8
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 22:20:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4E852086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 22:18:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F34AA2086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 22:20:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="PyDea6CR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4E852086C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f82t5bNe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F34AA2086C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728313AbeINDaQ (ORCPT
+        id S1728187AbeINDbr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 23:30:16 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:35280 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727417AbeINDaQ (ORCPT
+        Thu, 13 Sep 2018 23:31:47 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:47058 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727413AbeINDbq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 23:30:16 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8DMDtgT091467;
-        Thu, 13 Sep 2018 22:18:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=reply-to : subject :
- references : to : cc : from : message-id : date : mime-version :
- in-reply-to : content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=YL3mI0chfkhxEnzcHseoHiXzb9R1AnqMOVv1ldjS/r4=;
- b=PyDea6CRU+83gWdhbLeDm5L2FB3qagZMmO6f3iH18LRMxJD54FygG8O6zmP63cb5O8I5
- l4tLyxsqg2bxA9lwJgWXMMv5hHTVNEh5mxoqmXMtFW5+z+7DdNN9YFINDoofOfBiIbbR
- +HLFTupQEQ2q40+2KEAsjkUC9qCuJTQwfmtvUgJXe3z49tUST7nK7AYD7hFkInkQRAve
- s0Yf7aDctimCvvlJCFF18feykOcZcFgYnkzaqViKj/m2BOu1QhacRyS05wjW+3n//VMD
- wdkjfku60PV2d71yvHfUW2mwJQYEUxxQu/Qv21Q+uiwc0hGKp85bVGCi3vRMs0i9Dtuz Tw== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2mc72r3xgt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 13 Sep 2018 22:18:44 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w8DMIhbU025364
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 13 Sep 2018 22:18:43 GMT
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w8DMIhw8028789;
-        Thu, 13 Sep 2018 22:18:43 GMT
-Received: from [10.132.93.61] (/10.132.93.61)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 13 Sep 2018 15:18:42 -0700
-Reply-To: prakash.sangappa@oracle.com
-Subject: Re: [RFC PATCH] Add /proc/<pid>/numa_vamaps for numa node information
-References: <20180912230212.GA6567@avx2>
-To:     Alexey Dobriyan <adobriyan@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, mhocko@kernel.org,
-        dave.hansen@intel.com, cl@linux.com, khandual@linux.vnet.ibm.com
-From:   "prakash.sangappa" <prakash.sangappa@oracle.com>
-Message-ID: <dd4c3282-03b8-7480-fea7-fecce0ea2444@oracle.com>
-Date:   Thu, 13 Sep 2018 15:17:57 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.5.1
+        Thu, 13 Sep 2018 23:31:46 -0400
+Received: by mail-pf1-f194.google.com with SMTP id u24-v6so3285790pfn.13
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 15:20:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uNpZDY++mCeCl7CX2IIt3kDcnLGQUx3a40KbAkA2prE=;
+        b=f82t5bNebYgVTg92dBEG5tYS5cMAGaEv2i/IbTjHmKvCePAFqvXj9YIHsUpH8Zz+pb
+         XrGuhp47ghFjYPWor90icIOHYSd53eTA0icDFHc8Vtq6xXx8ckGr4j4Q7iN/HvcupVVh
+         BoRovx8j+VMePZu0gYvx7mCQOajpjABXN+9UdjXKlsg2io+4weYdp6ejYePsmrVG20PT
+         o4pSUJm0hRhjQymi2Q2jxgOY2TL2AO06JU5IZUfpVHLiqQVUkyN/5ntFmtYxbFBzeYDf
+         EHyQgEMhK5n+RpKy2PsfKuO9L+esaAI6haUCxy8XzUiP6Yet0YqsdEFl641ZmDoWnKFG
+         /3zA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uNpZDY++mCeCl7CX2IIt3kDcnLGQUx3a40KbAkA2prE=;
+        b=Q/rrMyhtf2Cr7EI4CuE1e/gG6yr4p7QsZ6pws0ljsjyuXGb5dQ6oHOjX2ifn6xrK7W
+         XUrxjbu9VKvOvvBKuUiSlxiOTfcjRIYK1t6LRbF7jb89WScJj6PuSA6nOqmJolDyV5QJ
+         4xOxFV7p9SJraa1FyRhByqoY+BW2POXbToxBKEUSDgM3UW03a7NSPF+My17o/r6Y8AFf
+         FBGUrzENiOAo0czBPuN3nK6j+rZduDOzeGdDGV+sqiqzthtKnCkxVeIjJB0uPIpbOEGu
+         egTjwnbtotEHyiL91Aa+2rNRzwQn2fVgt3bznxbW2g9e8x1ipBNKvRfcDFrdNf2S/itp
+         lPFQ==
+X-Gm-Message-State: APzg51DwkdZPeHKJWibrCBQP6ly1DPoOEmrb2Sq3PYjivMssrRW1L+pO
+        crPtCiiNSa8XCq+XE6cP96NVpVXv+MxpRPWc2f+jHg==
+X-Google-Smtp-Source: ANB0VdYJAEG4W1NL3NWgGbY4V8f2Vjb9d705B3liOJWRBE6o5NtBa9XlaDKMZ8/lzkzblS2kGJeDVP5kFue6p1XBArA=
+X-Received: by 2002:a63:1363:: with SMTP id 35-v6mr8910022pgt.202.1536877219108;
+ Thu, 13 Sep 2018 15:20:19 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180912230212.GA6567@avx2>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9015 signatures=668708
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=962
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809130220
+References: <20180910060455.20409-1-stefan@agner.ch> <CAK8P3a2cc741UqFSk+hXpC2s4S+A+0FuiM1yP=Z4rC18sJHq9g@mail.gmail.com>
+ <CANiq72mGH3KW+FxVDF0PcAeaTCtnNz_oO=2-u4zZQ9kvbRDCtA@mail.gmail.com> <CANiq72=BE8ygC6r4cJ2TshwOKCEv0C8F2xmpLRhSVMfqq16xUQ@mail.gmail.com>
+In-Reply-To: <CANiq72=BE8ygC6r4cJ2TshwOKCEv0C8F2xmpLRhSVMfqq16xUQ@mail.gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Thu, 13 Sep 2018 15:20:07 -0700
+Message-ID: <CAKwvOdkgdbn76+jGEwUayGriGn+4GQVLtxkzszkBueP6XuOGLw@mail.gmail.com>
+Subject: Re: [PATCH] include/linux/compiler-clang.h: define __naked
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Stefan Agner <stefan@agner.ch>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>, dwmw@amazon.co.uk,
+        Paul Lawrence <paullawrence@google.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Dmitry Vyukov <dvyukov@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 09/12/2018 04:02 PM, Alexey Dobriyan wrote:
->> The /proc/pid/numa_vamaps shows mapped address ranges to numa node id
->> from where the physical pages are allocated.
-> All these files make the problem with useless dentry and /proc/*/* inode
-> instantiations worse (unlike top level /proc/* files which are
-> tolerable).
+On Wed, Sep 12, 2018 at 9:03 PM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
 >
->> +address-range	numa-node-id
->> +
->> +00400000-00410000 N1
->> +00410000-0047f000 N0
->> +0047f000-00480000 N2
->> +00480000-00481000 -
->> +00481000-004a0000 N0
->> +004a0000-004a2000 -
->> +004a2000-004aa000 N2
->> +004aa000-004ad000 N0
->> +004ad000-004ae000 -
-> 'N' is useless data.
+> Hi again,
+>
+> On Wed, Sep 12, 2018 at 6:19 AM, Miguel Ojeda
+> <miguel.ojeda.sandonis@gmail.com> wrote:
+> >
+> > I will do a bigger one tomorrow or so and see if there are any
+> > important differences. Regardless of what we do, I will send the
+> > __naked patches separately as well (requested by Nick on GitHub).
+>
+> So I did a comparison with a full allyesconfig between -rc2 and -rc2 +
+> v4. I find quite a lot binary differences, but not a single objdump -d
+> difference (object file by object file) just by fixing UTS_RELEASE to
+> the same value, so I guess that is a very good sign in case someone
+> wants to pick the entire series sooner than expected. Regardless, I
+> will send the separate __naked patches.
+>
+> I should note that, at some point in one of my allyesconfig builds I got this:
+>
+>   UPD     include/generated/compile.h
+>   CC      init/version.o
+>   AR      init/built-in.a
+>   AR      built-in.a
+>   LD      vmlinux.o
+>   MODPOST vmlinux.o
+> ld: drivers/edac/amd64_edac.o(.text+0x200031d2): reloc against
+> `__asan_load4_noabort': error 4
+> ld: final link failed: Nonrepresentable section on output
+> Makefile:1035: recipe for target 'vmlinux' failed
+> make: *** [vmlinux] Error 1
 
-'N' could be dropped.
++ Dmitry for the KASAN error (Andrey was already cc'ed)
 
 >
-> Parsing with awk won't work because field #3 is separated with space
-> but field #2 with '-'.
+> Running make (without cleaning) didn't reproduce it, and the other
+> allyesconfig builds didn't suffer any problem either. Maybe my
+> hardware is failing, but I wanted to let you know nevertheless.
 >
-> %08lx-%08lx kind of sucks: 32-bit get aligned data so parsing can be
-> faster by pointing to &p[8+1] but not on 64-bit.
-> If scanf("%lx-%lx") is used then leading zeroes are useless.
+> Cheers,
+> Miguel
 
-This was similar to how '/proc/*/maps' file presents the  address range.
-However, we could separate start and end address of the range with a
-space, if that would be preferred.
 
-> Text is harder than it looks.
 
-We could make each line fixed length.  It could be  "%016lx %016lx %04d"
-i.e 4 digit for node number?
-
-> Please in the name of everything holy add new honest system call.
-
+-- 
+Thanks,
+~Nick Desaulniers
