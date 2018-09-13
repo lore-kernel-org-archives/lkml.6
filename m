@@ -3,49 +3,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=5.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0408BC63685
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 18:37:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E270C63685
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 18:37:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F99520880
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 18:37:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 190BA204FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 18:37:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="p8OfWjMZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F99520880
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="aQprcnoZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 190BA204FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728315AbeIMXsW (ORCPT
+        id S1728166AbeIMXru (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 19:48:22 -0400
+        Thu, 13 Sep 2018 19:47:50 -0400
 Received: from esa4.hgst.iphmx.com ([216.71.154.42]:26981 "EHLO
         esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728122AbeIMXru (ORCPT
+        with ESMTP id S1728122AbeIMXrt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 19:47:50 -0400
+        Thu, 13 Sep 2018 19:47:49 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1536863829; x=1568399829;
+  t=1536863828; x=1568399828;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references;
-  bh=hHc2LrdBwOBtFq/XX/Lx9EyE7SXlK8+7PHJpwa22/DA=;
-  b=p8OfWjMZEyPWvJrAev2W3lao5nI1gAbiS+9cpJMqlqhhXtdhmMJuuG1h
-   oybQUgntdkBC/0lep4ENRXbYzNUgsXboV6K8123EdqkbOfIvLAbXM/vE+
-   yy+oG3ijD5rnxssaW10k9OPpO7Vw3EtJiOU1FHYih6+WXvs3LH73Mx6DY
-   CpLYV9//fjXaEzBf1g8fDNKRs6Vj4Amart4+KUkoky7gsY19aj6g/9FSb
-   BI3k+VpFcc40ifUrJm/oSVzDQYwFNxzTOZ+Xz9feJ55CMuimlLxCJP/I7
-   B08DcRSosJfmlig6pB92TbdrfVc/lpJgXbLH5YasByP1lFQmImYdFFird
-   g==;
+  bh=DtzhQvMvxLSSEv9fq5kc/Y4PFD1IDH+eCGEVY+GherI=;
+  b=aQprcnoZpNjypnm4pZdgulVyXM2Co3ktXvodYSxbdiEt8j5GOBusC2/M
+   Fw9Qv9n2sXwVI3TOPfuhxvQbEOVYnsrXksTtGHRvmIou+/Dt8zjcS1U78
+   xWGFushP5ttNoyajBz9LUfVYWtNrpPGs6orTnPPucIMdbjx9R5/9S08k1
+   ENTm1ZLdkrmouwA0X/dQdvggT1xCU/Sc775xFsu3Y2ccoMlkUcXFWIT4r
+   x9rh1xZz6hw7LOtXdg8F/YqFfNOto0bNWsjtePUPvvxVYVuegZMPqy1Xi
+   RofykOOFYMzbuRpgxGE18jZEHvcve4a4zrJQS1omk/vZMTdcVxuofM4ri
+   w==;
 X-IronPort-AV: E=Sophos;i="5.53,370,1531756800"; 
-   d="scan'208";a="89712022"
+   d="scan'208";a="89712015"
 Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 14 Sep 2018 02:37:09 +0800
+  by ob1.hgst.iphmx.com with ESMTP; 14 Sep 2018 02:37:08 +0800
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP; 13 Sep 2018 11:23:39 -0700
+  by uls-op-cesaep01.wdc.com with ESMTP; 13 Sep 2018 11:23:38 -0700
 Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
-  by uls-op-cesaip02.wdc.com with ESMTP; 13 Sep 2018 11:37:08 -0700
+  by uls-op-cesaip02.wdc.com with ESMTP; 13 Sep 2018 11:37:07 -0700
 From:   Atish Patra <atish.patra@wdc.com>
 To:     palmer@sifive.com, linux-riscv@lists.infradead.org,
         hch@infradead.org, anup@brainfault.org
@@ -55,9 +55,9 @@ Cc:     mark.rutland@arm.com, atish.patra@wdc.com, tglx@linutronix.de,
         gregkh@linuxfoundation.org, jason@lakedaemon.net,
         catalin.marinas@arm.com, dmitriy@oss-tech.org,
         ard.biesheuvel@linaro.org, schwab@linux-m68k.org
-Subject: [PATCH v5 07/12] RISC-V: Rename riscv_of_processor_hart to riscv_of_processor_hartid
-Date:   Thu, 13 Sep 2018 11:37:00 -0700
-Message-Id: <1536863825-66808-8-git-send-email-atish.patra@wdc.com>
+Subject: [PATCH v5 04/12] RISC-V: Comment on the TLB flush in smp_callin()
+Date:   Thu, 13 Sep 2018 11:36:57 -0700
+Message-Id: <1536863825-66808-5-git-send-email-atish.patra@wdc.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1536863825-66808-1-git-send-email-atish.patra@wdc.com>
 References: <1536863825-66808-1-git-send-email-atish.patra@wdc.com>
@@ -68,93 +68,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Palmer Dabbelt <palmer@sifive.com>
 
-It's a bit confusing exactly what this function does: it actually
-returns the hartid of an OF processor node, failing with -1 on invalid
-nodes.  I've changed the name to _hartid() in order to make that a bit
-more clear, as well as adding a comment.
+This isn't readily apparent from reading the code.
 
 Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
 [Atish: code comment formatting update]
 Signed-off-by: Atish Patra <atish.patra@wdc.com>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/riscv/include/asm/processor.h | 2 +-
- arch/riscv/kernel/cpu.c            | 7 +++++--
- arch/riscv/kernel/smpboot.c        | 2 +-
- drivers/clocksource/riscv_timer.c  | 2 +-
- drivers/irqchip/irq-sifive-plic.c  | 2 +-
- 5 files changed, 9 insertions(+), 6 deletions(-)
+ arch/riscv/kernel/smpboot.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/riscv/include/asm/processor.h b/arch/riscv/include/asm/processor.h
-index 3fe4af81..50de774d 100644
---- a/arch/riscv/include/asm/processor.h
-+++ b/arch/riscv/include/asm/processor.h
-@@ -88,7 +88,7 @@ static inline void wait_for_interrupt(void)
- }
- 
- struct device_node;
--extern int riscv_of_processor_hart(struct device_node *node);
-+int riscv_of_processor_hartid(struct device_node *node);
- 
- extern void riscv_fill_hwcap(void);
- 
-diff --git a/arch/riscv/kernel/cpu.c b/arch/riscv/kernel/cpu.c
-index 1c0bf662..4723e235 100644
---- a/arch/riscv/kernel/cpu.c
-+++ b/arch/riscv/kernel/cpu.c
-@@ -15,8 +15,11 @@
- #include <linux/seq_file.h>
- #include <linux/of.h>
- 
--/* Return -1 if not a valid hart */
--int riscv_of_processor_hart(struct device_node *node)
-+/*
-+ * Returns the hart ID of the given device tree node, or -1 if the device tree
-+ * node isn't a RISC-V hart.
-+ */
-+int riscv_of_processor_hartid(struct device_node *node)
- {
- 	const char *isa, *status;
- 	u32 hart;
 diff --git a/arch/riscv/kernel/smpboot.c b/arch/riscv/kernel/smpboot.c
-index 670749ec..cfb0b02d 100644
+index 56abab6a..712e9ca8 100644
 --- a/arch/riscv/kernel/smpboot.c
 +++ b/arch/riscv/kernel/smpboot.c
-@@ -53,7 +53,7 @@ void __init setup_smp(void)
- 	int hart, im_okay_therefore_i_am = 0;
- 
- 	while ((dn = of_find_node_by_type(dn, "cpu"))) {
--		hart = riscv_of_processor_hart(dn);
-+		hart = riscv_of_processor_hartid(dn);
- 		if (hart >= 0) {
- 			set_cpu_possible(hart, true);
- 			set_cpu_present(hart, true);
-diff --git a/drivers/clocksource/riscv_timer.c b/drivers/clocksource/riscv_timer.c
-index 4e8b347e..ad7453fc 100644
---- a/drivers/clocksource/riscv_timer.c
-+++ b/drivers/clocksource/riscv_timer.c
-@@ -84,7 +84,7 @@ void riscv_timer_interrupt(void)
- 
- static int __init riscv_timer_init_dt(struct device_node *n)
- {
--	int cpu_id = riscv_of_processor_hart(n), error;
-+	int cpu_id = riscv_of_processor_hartid(n), error;
- 	struct clocksource *cs;
- 
- 	if (cpu_id != smp_processor_id())
-diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
-index 532e9d68..c55eaa31 100644
---- a/drivers/irqchip/irq-sifive-plic.c
-+++ b/drivers/irqchip/irq-sifive-plic.c
-@@ -176,7 +176,7 @@ static int plic_find_hart_id(struct device_node *node)
- {
- 	for (; node; node = node->parent) {
- 		if (of_device_is_compatible(node, "riscv"))
--			return riscv_of_processor_hart(node);
-+			return riscv_of_processor_hartid(node);
- 	}
- 
- 	return -1;
+@@ -106,6 +106,10 @@ asmlinkage void __init smp_callin(void)
+ 	trap_init();
+ 	notify_cpu_starting(smp_processor_id());
+ 	set_cpu_online(smp_processor_id(), 1);
++	/*
++	 * Remote TLB flushes are ignored while the CPU is offline, so emit
++	 * a local TLB flush right now just in case.
++	 */
+ 	local_flush_tlb_all();
+ 	local_irq_enable();
+ 	preempt_disable();
 -- 
 2.7.4
 
