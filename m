@@ -2,261 +2,177 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0888CC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:59:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38DBBC07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:59:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B734E20854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:59:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B734E20854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
+	by mail.kernel.org (Postfix) with ESMTP id F01EE20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:59:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F01EE20854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728546AbeIMSI0 (ORCPT
+        id S1728020AbeIMSEe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:08:26 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:37627 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727656AbeIMSIZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:08:25 -0400
-X-Originating-IP: 2.224.242.101
-Received: from w540 (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 70DB2C0017;
-        Thu, 13 Sep 2018 12:58:59 +0000 (UTC)
-Date:   Thu, 13 Sep 2018 14:58:57 +0200
-From:   jacopo mondi <jacopo@jmondi.org>
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc:     Steve Longerbeam <slongerbeam@gmail.com>,
-        linux-media@vger.kernel.org,
-        Steve Longerbeam <steve_longerbeam@mentor.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Niklas =?utf-8?Q?S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 06/17] media: v4l2-fwnode: Add a convenience function
- for registering subdevs with notifiers
-Message-ID: <20180913125857.GC11509@w540>
-References: <1531175957-1973-1-git-send-email-steve_longerbeam@mentor.com>
- <1531175957-1973-7-git-send-email-steve_longerbeam@mentor.com>
- <20180913103727.GB28160@w540>
- <20180913124425.h5vfjyr3b44j4nxv@paasikivi.fi.intel.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="lCAWRPmW1mITcIfM"
-Content-Disposition: inline
-In-Reply-To: <20180913124425.h5vfjyr3b44j4nxv@paasikivi.fi.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Thu, 13 Sep 2018 14:04:34 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49980 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727948AbeIMSEd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 14:04:33 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D8E6F2C974B;
+        Thu, 13 Sep 2018 12:55:11 +0000 (UTC)
+Received: from krava.brq.redhat.com (unknown [10.43.17.10])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 09F37600C8;
+        Thu, 13 Sep 2018 12:55:09 +0000 (UTC)
+From:   Jiri Olsa <jolsa@kernel.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andi Kleen <andi@firstfloor.org>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>
+Subject: [PATCH 08/48] perf report: Skip dummy tracking event
+Date:   Thu, 13 Sep 2018 14:54:10 +0200
+Message-Id: <20180913125450.21342-9-jolsa@kernel.org>
+In-Reply-To: <20180913125450.21342-1-jolsa@kernel.org>
+References: <20180913125450.21342-1-jolsa@kernel.org>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 13 Sep 2018 12:55:12 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Namhyung Kim <namhyung@kernel.org>
 
---lCAWRPmW1mITcIfM
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+The dummy tracking event is only for tracking task/comom/mmap events
+and has no sample data for itself. So no need to report, just skip it.
 
-Hi Sakari,
+Link: http://lkml.kernel.org/n/tip-l2hq7g8c7lt73aqmqpo6dywj@git.kernel.org
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+---
+ tools/perf/builtin-report.c    |  3 +++
+ tools/perf/ui/browsers/hists.c | 30 ++++++++++++++++++++++++------
+ tools/perf/ui/gtk/hists.c      |  3 +++
+ 3 files changed, 30 insertions(+), 6 deletions(-)
 
-On Thu, Sep 13, 2018 at 03:44:25PM +0300, Sakari Ailus wrote:
-> Hi Jacopo,
->
-> On Thu, Sep 13, 2018 at 12:37:27PM +0200, jacopo mondi wrote:
-> > Hi Steve,
-> >
-> > On Mon, Jul 09, 2018 at 03:39:06PM -0700, Steve Longerbeam wrote:
-> > > Adds v4l2_async_register_fwnode_subdev(), which is a convenience function
-> > > for parsing a sub-device's fwnode port endpoints for connected remote
-> > > sub-devices, registering a sub-device notifier, and then registering
-> > > the sub-device itself.
-> > >
-> > > Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
-> > > ---
-> > > Changes since v5:
-> > > - add call to v4l2_async_notifier_init().
-> > > Changes since v4:
-> > > - none
-> > > Changes since v3:
-> > > - remove support for port sub-devices, such sub-devices will have to
-> > >   role their own.
-> > > Changes since v2:
-> > > - fix error-out path in v4l2_async_register_fwnode_subdev() that forgot
-> > >   to put device.
-> > > Changes since v1:
-> > > - add #include <media/v4l2-subdev.h> to v4l2-fwnode.h for
-> > >   'struct v4l2_subdev' declaration.
-> > > ---
-> > >  drivers/media/v4l2-core/v4l2-fwnode.c | 64 +++++++++++++++++++++++++++++++++++
-> > >  include/media/v4l2-fwnode.h           | 38 +++++++++++++++++++++
-> > >  2 files changed, 102 insertions(+)
-> > >
-> > > diff --git a/drivers/media/v4l2-core/v4l2-fwnode.c b/drivers/media/v4l2-core/v4l2-fwnode.c
-> > > index 67ad333..94d867a 100644
-> > > --- a/drivers/media/v4l2-core/v4l2-fwnode.c
-> > > +++ b/drivers/media/v4l2-core/v4l2-fwnode.c
-> > > @@ -872,6 +872,70 @@ int v4l2_async_register_subdev_sensor_common(struct v4l2_subdev *sd)
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(v4l2_async_register_subdev_sensor_common);
-> > >
-> > > +int v4l2_async_register_fwnode_subdev(
-> >
-> > The meat of this function is to register a subdev with a notifier,
-> > so I would make it clear in the function name which is otherwise
-> > misleading
-> >
-> > > +	struct v4l2_subdev *sd, size_t asd_struct_size,
-> > > +	unsigned int *ports, unsigned int num_ports,
-> > > +	int (*parse_endpoint)(struct device *dev,
-> > > +			      struct v4l2_fwnode_endpoint *vep,
-> > > +			      struct v4l2_async_subdev *asd))
-> > > +{
-> > > +	struct v4l2_async_notifier *notifier;
-> > > +	struct device *dev = sd->dev;
-> > > +	struct fwnode_handle *fwnode;
-> > > +	int ret;
-> > > +
-> > > +	if (WARN_ON(!dev))
-> > > +		return -ENODEV;
-> > > +
-> > > +	fwnode = dev_fwnode(dev);
-> > > +	if (!fwnode_device_is_available(fwnode))
-> > > +		return -ENODEV;
-> > > +
-> > > +	notifier = kzalloc(sizeof(*notifier), GFP_KERNEL);
-> > > +	if (!notifier)
-> > > +		return -ENOMEM;
-> > > +
-> > > +	v4l2_async_notifier_init(notifier);
-> > > +
-> > > +	if (!ports) {
-> > > +		ret = v4l2_async_notifier_parse_fwnode_endpoints(
-> > > +			dev, notifier, asd_struct_size, parse_endpoint);
-> > > +		if (ret < 0)
-> > > +			goto out_cleanup;
-> > > +	} else {
-> > > +		unsigned int i;
-> > > +
-> > > +		for (i = 0; i < num_ports; i++) {
-> >
-> > It's not particularly exciting to iterate on pointers received from
-> > callers without checking for num_ports first.
->
-> The loop is not executed if num_ports is zero, so I don't see a problem
-> with that.
->
+diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+index 7507e4d6dce1..3666a6b82ff1 100644
+--- a/tools/perf/builtin-report.c
++++ b/tools/perf/builtin-report.c
+@@ -471,6 +471,9 @@ static int perf_evlist__tty_browse_hists(struct perf_evlist *evlist,
+ 		struct hists *hists = evsel__hists(pos);
+ 		const char *evname = perf_evsel__name(pos);
+ 
++		if (perf_evsel__is_dummy_tracking(pos))
++			continue;
++
+ 		if (symbol_conf.event_group &&
+ 		    !perf_evsel__is_group_leader(pos))
+ 			continue;
+diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
+index a96f62ca984a..a517becda28a 100644
+--- a/tools/perf/ui/browsers/hists.c
++++ b/tools/perf/ui/browsers/hists.c
+@@ -3214,14 +3214,17 @@ static int perf_evsel_menu__run(struct perf_evsel_menu *menu,
+ 	return key;
+ }
+ 
+-static bool filter_group_entries(struct ui_browser *browser __maybe_unused,
+-				 void *entry)
++static bool filter_entries(struct ui_browser *browser __maybe_unused,
++			   void *entry)
+ {
+ 	struct perf_evsel *evsel = list_entry(entry, struct perf_evsel, node);
+ 
+ 	if (symbol_conf.event_group && !perf_evsel__is_group_leader(evsel))
+ 		return true;
+ 
++	if (perf_evsel__is_dummy_tracking(evsel))
++		return true;
++
+ 	return false;
+ }
+ 
+@@ -3240,7 +3243,7 @@ static int __perf_evlist__tui_browse_hists(struct perf_evlist *evlist,
+ 			.refresh    = ui_browser__list_head_refresh,
+ 			.seek	    = ui_browser__list_head_seek,
+ 			.write	    = perf_evsel_menu__write,
+-			.filter	    = filter_group_entries,
++			.filter	    = filter_entries,
+ 			.nr_entries = nr_entries,
+ 			.priv	    = evlist,
+ 		},
+@@ -3271,11 +3274,11 @@ int perf_evlist__tui_browse_hists(struct perf_evlist *evlist, const char *help,
+ 				  struct annotation_options *annotation_opts)
+ {
+ 	int nr_entries = evlist->nr_entries;
++	struct perf_evsel *first = perf_evlist__first(evlist);
++	struct perf_evsel *pos;
+ 
+ single_entry:
+ 	if (nr_entries == 1) {
+-		struct perf_evsel *first = perf_evlist__first(evlist);
+-
+ 		return perf_evsel__hists_browse(first, nr_entries, help,
+ 						false, hbt, min_pcnt,
+ 						env, warn_lost_event,
+@@ -3283,10 +3286,11 @@ int perf_evlist__tui_browse_hists(struct perf_evlist *evlist, const char *help,
+ 	}
+ 
+ 	if (symbol_conf.event_group) {
+-		struct perf_evsel *pos;
+ 
+ 		nr_entries = 0;
+ 		evlist__for_each_entry(evlist, pos) {
++			if (perf_evsel__is_dummy_tracking(pos))
++				continue;
+ 			if (perf_evsel__is_group_leader(pos))
+ 				nr_entries++;
+ 		}
+@@ -3295,6 +3299,20 @@ int perf_evlist__tui_browse_hists(struct perf_evlist *evlist, const char *help,
+ 			goto single_entry;
+ 	}
+ 
++	evlist__for_each_entry(evlist, pos) {
++		if (perf_evsel__is_dummy_tracking(pos))
++			nr_entries--;
++	}
++
++	if (nr_entries == 1) {
++		evlist__for_each_entry(evlist, pos) {
++			if (!perf_evsel__is_dummy_tracking(pos)) {
++				first = pos;
++				goto single_entry;
++			}
++		}
++	}
++
+ 	return __perf_evlist__tui_browse_hists(evlist, nr_entries, help,
+ 					       hbt, min_pcnt, env,
+ 					       warn_lost_event,
+diff --git a/tools/perf/ui/gtk/hists.c b/tools/perf/ui/gtk/hists.c
+index 4ab663ec3e5e..adbece4e0071 100644
+--- a/tools/perf/ui/gtk/hists.c
++++ b/tools/perf/ui/gtk/hists.c
+@@ -639,6 +639,9 @@ int perf_evlist__gtk_browse_hists(struct perf_evlist *evlist,
+ 		char buf[512];
+ 		size_t size = sizeof(buf);
+ 
++		if (perf_evsel__is_dummy_tracking(pos))
++			continue;
++
+ 		if (symbol_conf.event_group) {
+ 			if (!perf_evsel__is_group_leader(pos))
+ 				continue;
+-- 
+2.17.1
 
-I know this is internal drivers API and failures are meant to be
-catched early in development, but what if the actual number of ports
-identifiers is < then the num_ports parameter?
-
-> >
-> > Also the caller has to allocate an array of "ports" and keep track of it
-> > just to pass it to this function and I don't see a way to set the
-> > notifier's ops before the notifier gets registered here below.
->
-> True; this can be seen as an omission but quite a few drivers have no need
-> for this either. It could be added later on --- I think it'd make perfect
-> sense.
->
-
-In a 'notifier configuration' structure that gather these and existing
-function parameters together as you suggested...
-
-> >
-> > > +			ret = v4l2_async_notifier_parse_fwnode_endpoints_by_port(
-> > > +				dev, notifier, asd_struct_size,
-> > > +				ports[i], parse_endpoint);
-> > > +			if (ret < 0)
-> > > +				goto out_cleanup;
-> > > +		}
-> > > +	}
-> > > +
-> > > +	ret = v4l2_async_subdev_notifier_register(sd, notifier);
-> > > +	if (ret < 0)
-> > > +		goto out_cleanup;
-> > > +
-> > > +	ret = v4l2_async_register_subdev(sd);
-> > > +	if (ret < 0)
-> > > +		goto out_unregister;
-> > > +
-> > > +	sd->subdev_notifier = notifier;
-> >
-> > This is set already by v4l2_async_subdev_notifier_register()
->
-> The same pattern is actually present in
-> v4l2_async_register_subdev_sensor_common(). It's used in unregistration
-> that can only happen after the registration, i.e. this function, has
-> completed.
->
-> >
-> > In general, I have doubts this function is really needed. It requires
-> > the caller to reserve memory just to pass down a list of intergers,
-> > and there is no way to set subdev ops.
-> >
-> > Could you have a look at how drivers/media/platform/rcar-vin/rcar-csi2.c
-> > registers a subdevice and an associated notifier and see if in your
-> > opinion it can be implemented in the same way in your imx csi/csi2 driver,
-> > or you still like this one most?
->
-> I was actually thinking of changing this later on a bit. I came to think of
-> this after picking up the patchset to my tree... oh well.
->
-> This function is meant for cases where you have multiple ports. That's not
-> working very nicely at the moment, and even with my patches, you can't pass
-> default configuration to e.g. v4l2_async_notifier_parse_fwnode_endpoints().
-> So there's definitely work to do. I'd like to move the details of parsing
-> out of drivers; every driver is doing almost the same but just in a little
-> bit different way.
->
-
-I see...
-
-> The arguments should to be put into a struct. That way we get rid of a very
-> long series of hard-to-read function arguments, as well as we don't need to
-> change every caller when the function gets something new and interesting to
-> do.
->
-> Right now the entire patchset is so big (40 patches) that I'd prefer to get
-> it in unless serious issues are found, and proceed the development on top.
->
-
-Sure, please go ahead and thanks for the reply.
-
-Cheers
-   j
-
-> --
-> Kind regards,
->
-> Sakari Ailus
-> sakari.ailus@linux.intel.com
-
---lCAWRPmW1mITcIfM
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJbml8RAAoJEHI0Bo8WoVY8LjkQALnhBfdcw/AMi9GaQaOxJHh6
-LkwJsSEl4VEb37w2YLjArZeE8udzMWfG9GftYHYalchRA9yhnsAJODl6czGtE4LP
-eHqKGehd/iAMlZ2aEKifIN63WVHV6YBuY7DhFbQ370EeeToLwEdSwGeBp/ot1tGd
-BbRA3Bd0e50gnUcX79TUbe3wAKoTcKMjXANZ4M3AOdvoYBhVYq8DLqjL2EtIEPJF
-b2ieoRO491aJdUvy0tWHI3ZA4fTfAglkNIQoAUbBq3cKOGLAa9SktOKnGiwXNPXA
-yQPGkuThxUQmQWoPmPYKXZER0HkbPTKIenst/sGNXKoHwthQkXma1NBXUieVloCb
-HwYR6a9qlJAXOYoctPPZXKhllR+1NlDR1KSu7UUv03JDY6SXnaRmGiSxnxyujqd1
-OYYy+p4BH2lXXI4+XcJYIR/uPWMiSm8xkNiLOI6u+u/t+zhh8RBtDFgM2tQOC7aq
-6vGP7OdfPTtXmQujBIURlDj3pqVw+M9mhIdu4KQ/rKhD025oOXa+nDpcnILrkyAQ
-oXmZp/2aaCyW7WY+Iqd7T3AfPfSkK1rHrrrJxNP4vYN6ldG+BDnp2MR+HSY3i1YF
-6VS40jxEQ/rvWKRzZrtZUlKu10WfUB5QG3JQ52wBXCIRE7BYnYWEhlRV0d9kYWUi
-GdpS2R3ZyVP8o9u1pOw8
-=nFhZ
------END PGP SIGNATURE-----
-
---lCAWRPmW1mITcIfM--
