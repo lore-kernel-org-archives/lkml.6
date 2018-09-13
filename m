@@ -6,35 +6,41 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D470C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:32:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 111E5C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:32:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5F0220854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:32:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5F0220854
+	by mail.kernel.org (Postfix) with ESMTP id CA5C020854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:32:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA5C020854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728189AbeIMSl3 (ORCPT
+        id S1728216AbeIMSlc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:41:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58456 "EHLO
+        Thu, 13 Sep 2018 14:41:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58472 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727127AbeIMSl2 (ORCPT
+        with ESMTP id S1727127AbeIMSlc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:41:28 -0400
+        Thu, 13 Sep 2018 14:41:32 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 46C0AD18;
-        Thu, 13 Sep 2018 13:31:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6E5CED16;
+        Thu, 13 Sep 2018 13:32:02 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jonas Gorski <jonas.gorski@gmail.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
+        stable@vger.kernel.org,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        Greg Kurz <groug@kaod.org>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Ron Minnich <rminnich@sandia.gov>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dominique Martinet <dominique.martinet@cea.fr>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 20/60] irqchip/bcm7038-l1: Hide cpu offline callback when building for !SMP
-Date:   Thu, 13 Sep 2018 15:30:27 +0200
-Message-Id: <20180913131746.317552287@linuxfoundation.org>
+Subject: [PATCH 4.4 21/60] net/9p: fix error path of p9_virtio_probe
+Date:   Thu, 13 Sep 2018 15:30:28 +0200
+Message-Id: <20180913131746.378678645@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131745.261413581@linuxfoundation.org>
 References: <20180913131745.261413581@linuxfoundation.org>
@@ -52,56 +58,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jonas Gorski <jonas.gorski@gmail.com>
+From: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
 
-[ Upstream commit 0702bc4d2fe793018ad9aa0eb14bff7f526c4095 ]
+[ Upstream commit 92aef4675d5b1b55404e1532379e343bed0e5cf2 ]
 
-When compiling bmips with SMP disabled, the build fails with:
+Currently when virtio_find_single_vq fails, we go through del_vqs which
+throws a warning (Trying to free already-free IRQ).  Skip del_vqs if vq
+allocation failed.
 
-drivers/irqchip/irq-bcm7038-l1.o: In function `bcm7038_l1_cpu_offline':
-drivers/irqchip/irq-bcm7038-l1.c:242: undefined reference to `irq_set_affinity_locked'
-make[5]: *** [vmlinux] Error 1
-
-Fix this by adding and setting bcm7038_l1_cpu_offline only when actually
-compiling for SMP. It wouldn't have been used anyway, as it requires
-CPU_HOTPLUG, which in turn requires SMP.
-
-Fixes: 34c535793bcb ("irqchip/bcm7038-l1: Implement irq_cpu_offline() callback")
-Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Link: http://lkml.kernel.org/r/20180524101021.49880-1-jean-philippe.brucker@arm.com
+Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Reviewed-by: Greg Kurz <groug@kaod.org>
+Cc: Eric Van Hensbergen <ericvh@gmail.com>
+Cc: Ron Minnich <rminnich@sandia.gov>
+Cc: Latchesar Ionkov <lucho@ionkov.net>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/irqchip/irq-bcm7038-l1.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ net/9p/trans_virtio.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/irqchip/irq-bcm7038-l1.c
-+++ b/drivers/irqchip/irq-bcm7038-l1.c
-@@ -216,6 +216,7 @@ static int bcm7038_l1_set_affinity(struc
- 	return 0;
- }
- 
-+#ifdef CONFIG_SMP
- static void bcm7038_l1_cpu_offline(struct irq_data *d)
- {
- 	struct cpumask *mask = irq_data_get_affinity_mask(d);
-@@ -240,6 +241,7 @@ static void bcm7038_l1_cpu_offline(struc
+--- a/net/9p/trans_virtio.c
++++ b/net/9p/trans_virtio.c
+@@ -574,7 +574,7 @@ static int p9_virtio_probe(struct virtio
+ 	chan->vq = virtio_find_single_vq(vdev, req_done, "requests");
+ 	if (IS_ERR(chan->vq)) {
+ 		err = PTR_ERR(chan->vq);
+-		goto out_free_vq;
++		goto out_free_chan;
  	}
- 	irq_set_affinity_locked(d, &new_affinity, false);
- }
-+#endif
- 
- static int __init bcm7038_l1_init_one(struct device_node *dn,
- 				      unsigned int idx,
-@@ -292,7 +294,9 @@ static struct irq_chip bcm7038_l1_irq_ch
- 	.irq_mask		= bcm7038_l1_mask,
- 	.irq_unmask		= bcm7038_l1_unmask,
- 	.irq_set_affinity	= bcm7038_l1_set_affinity,
-+#ifdef CONFIG_SMP
- 	.irq_cpu_offline	= bcm7038_l1_cpu_offline,
-+#endif
- };
- 
- static int bcm7038_l1_map(struct irq_domain *d, unsigned int virq,
+ 	chan->vq->vdev->priv = chan;
+ 	spin_lock_init(&chan->lock);
+@@ -627,6 +627,7 @@ out_free_tag:
+ 	kfree(tag);
+ out_free_vq:
+ 	vdev->config->del_vqs(vdev);
++out_free_chan:
+ 	kfree(chan);
+ fail:
+ 	return err;
 
 
