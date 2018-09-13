@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63D78C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:34:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58FFFC07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:34:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2528120C0A
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:34:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2528120C0A
+	by mail.kernel.org (Postfix) with ESMTP id 0FCCC20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:34:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FCCC20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728851AbeIMSoB (ORCPT
+        id S1728878AbeIMSoI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:44:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58898 "EHLO
+        Thu, 13 Sep 2018 14:44:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58930 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727332AbeIMSoB (ORCPT
+        with ESMTP id S1727999AbeIMSoI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:44:01 -0400
+        Thu, 13 Sep 2018 14:44:08 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0E068D16;
-        Thu, 13 Sep 2018 13:34:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 66924CF3;
+        Thu, 13 Sep 2018 13:34:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Juergen Gross <jgross@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jan Beulich <jbeulich@suse.com>,
-        Jason Andryuk <jandryuk@gmail.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Subject: [PATCH 4.4 36/60] x86/pae: use 64 bit atomic xchg function in native_ptep_get_and_clear
-Date:   Thu, 13 Sep 2018 15:30:43 +0200
-Message-Id: <20180913131747.131105336@linuxfoundation.org>
+        Tyler Hicks <tyhicks@canonical.com>,
+        Seth Arnold <seth.arnold@canonical.com>,
+        Stefan Bader <stefan.bader@canonical.com>
+Subject: [PATCH 4.4 38/60] irda: Fix memory leak caused by repeated binds of irda socket
+Date:   Thu, 13 Sep 2018 15:30:45 +0200
+Message-Id: <20180913131747.222350392@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131745.261413581@linuxfoundation.org>
 References: <20180913131745.261413581@linuxfoundation.org>
@@ -54,62 +52,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Juergen Gross <jgross@suse.com>
+From: Tyler Hicks <tyhicks@canonical.com>
 
-commit b2d7a075a1ccef2fb321d595802190c8e9b39004 upstream.
+The irda_bind() function allocates memory for self->ias_obj without
+checking to see if the socket is already bound. A userspace process
+could repeatedly bind the socket, have each new object added into the
+LM-IAS database, and lose the reference to the old object assigned to
+the socket to exhaust memory resources. This patch errors out of the
+bind operation when self->ias_obj is already assigned.
 
-Using only 32-bit writes for the pte will result in an intermediate
-L1TF vulnerable PTE. When running as a Xen PV guest this will at once
-switch the guest to shadow mode resulting in a loss of performance.
+CVE-2018-6554
 
-Use arch_atomic64_xchg() instead which will perform the requested
-operation atomically with all 64 bits.
-
-Some performance considerations according to:
-
-https://software.intel.com/sites/default/files/managed/ad/dc/Intel-Xeon-Scalable-Processor-throughput-latency.pdf
-
-The main number should be the latency, as there is no tight loop around
-native_ptep_get_and_clear().
-
-"lock cmpxchg8b" has a latency of 20 cycles, while "lock xchg" (with a
-memory operand) isn't mentioned in that document. "lock xadd" (with xadd
-having 3 cycles less latency than xchg) has a latency of 11, so we can
-assume a latency of 14 for "lock xchg".
-
-Signed-off-by: Juergen Gross <jgross@suse.com>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Jan Beulich <jbeulich@suse.com>
-Tested-by: Jason Andryuk <jandryuk@gmail.com>
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Tyler Hicks <tyhicks@canonical.com>
+Reviewed-by: Seth Arnold <seth.arnold@canonical.com>
+Reviewed-by: Stefan Bader <stefan.bader@canonical.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/x86/include/asm/pgtable-3level.h |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ net/irda/af_irda.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/arch/x86/include/asm/pgtable-3level.h
-+++ b/arch/x86/include/asm/pgtable-3level.h
-@@ -1,6 +1,8 @@
- #ifndef _ASM_X86_PGTABLE_3LEVEL_H
- #define _ASM_X86_PGTABLE_3LEVEL_H
+--- a/net/irda/af_irda.c
++++ b/net/irda/af_irda.c
+@@ -774,6 +774,13 @@ static int irda_bind(struct socket *sock
+ 		return -EINVAL;
  
-+#include <asm/atomic64_32.h>
+ 	lock_sock(sk);
 +
- /*
-  * Intel Physical Address Extension (PAE) Mode - three-level page
-  * tables on PPro+ CPUs.
-@@ -142,10 +144,7 @@ static inline pte_t native_ptep_get_and_
- {
- 	pte_t res;
- 
--	/* xchg acts as a barrier before the setting of the high bits */
--	res.pte_low = xchg(&ptep->pte_low, 0);
--	res.pte_high = ptep->pte_high;
--	ptep->pte_high = 0;
-+	res.pte = (pteval_t)arch_atomic64_xchg((atomic64_t *)ptep, 0);
- 
- 	return res;
- }
++	/* Ensure that the socket is not already bound */
++	if (self->ias_obj) {
++		err = -EINVAL;
++		goto out;
++	}
++
+ #ifdef CONFIG_IRDA_ULTRA
+ 	/* Special care for Ultra sockets */
+ 	if ((sk->sk_type == SOCK_DGRAM) &&
 
 
