@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49D06C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:41:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33C2FC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:41:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BDDC20854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:41:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BDDC20854
+	by mail.kernel.org (Postfix) with ESMTP id E30FC20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:41:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E30FC20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729601AbeIMSuc (ORCPT
+        id S1729607AbeIMSug (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:50:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59956 "EHLO
+        Thu, 13 Sep 2018 14:50:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59968 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728811AbeIMSuc (ORCPT
+        with ESMTP id S1728921AbeIMSug (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:50:32 -0400
+        Thu, 13 Sep 2018 14:50:36 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 15B7DD19;
-        Thu, 13 Sep 2018 13:40:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7EB16CF3;
+        Thu, 13 Sep 2018 13:41:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -33,9 +33,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
         "David S. Miller" <davem@davemloft.net>,
         Amit Pundir <amit.pundir@linaro.org>
-Subject: [PATCH 4.9 68/78] sch_htb: fix crash on init failure
-Date:   Thu, 13 Sep 2018 15:31:55 +0200
-Message-Id: <20180913131812.489447139@linuxfoundation.org>
+Subject: [PATCH 4.9 69/78] sch_multiq: fix double free on init failure
+Date:   Thu, 13 Sep 2018 15:31:56 +0200
+Message-Id: <20180913131812.579558000@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131805.732342940@linuxfoundation.org>
 References: <20180913131805.732342940@linuxfoundation.org>
@@ -55,103 +55,116 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
 
-commit 88c2ace69dbef696edba77712882af03879abc9c upstream.
+commit e89d469e3be3ed3d7124a803211a463ff83d0964 upstream.
 
-The commit below added a call to the ->destroy() callback for all qdiscs
-which failed in their ->init(), but some were not prepared for such
-change and can't handle partially initialized qdisc. HTB is one of them
-and if any error occurs before the qdisc watchdog timer and qdisc work are
-initialized then we can hit either a null ptr deref (timer->base) when
-canceling in ->destroy or lockdep error info about trying to register
-a non-static key and a stack dump. So to fix these two move the watchdog
-timer and workqueue init before anything that can err out.
-To reproduce userspace needs to send broken htb qdisc create request,
-tested with a modified tc (q_htb.c).
+The below commit added a call to ->destroy() on init failure, but multiq
+still frees ->queues on error in init, but ->queues is also freed by
+->destroy() thus we get double free and corrupted memory.
+
+Very easy to reproduce (eth0 not multiqueue):
+$ tc qdisc add dev eth0 root multiq
+RTNETLINK answers: Operation not supported
+$ ip l add dumdum type dummy
+(crash)
 
 Trace log:
-[ 2710.897602] BUG: unable to handle kernel NULL pointer dereference at (null)
-[ 2710.897977] IP: hrtimer_active+0x17/0x8a
-[ 2710.898174] PGD 58fab067
-[ 2710.898175] P4D 58fab067
-[ 2710.898353] PUD 586c0067
-[ 2710.898531] PMD 0
-[ 2710.898710]
-[ 2710.899045] Oops: 0000 [#1] SMP
-[ 2710.899232] Modules linked in:
-[ 2710.899419] CPU: 1 PID: 950 Comm: tc Not tainted 4.13.0-rc6+ #54
-[ 2710.899646] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.7.5-20140531_083030-gandalf 04/01/2014
-[ 2710.900035] task: ffff880059ed2700 task.stack: ffff88005ad4c000
-[ 2710.900262] RIP: 0010:hrtimer_active+0x17/0x8a
-[ 2710.900467] RSP: 0018:ffff88005ad4f960 EFLAGS: 00010246
-[ 2710.900684] RAX: 0000000000000000 RBX: ffff88003701e298 RCX: 0000000000000000
-[ 2710.900933] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff88003701e298
-[ 2710.901177] RBP: ffff88005ad4f980 R08: 0000000000000001 R09: 0000000000000001
-[ 2710.901419] R10: ffff88005ad4f800 R11: 0000000000000400 R12: 0000000000000000
-[ 2710.901663] R13: ffff88003701e298 R14: ffffffff822a4540 R15: ffff88005ad4fac0
-[ 2710.901907] FS:  00007f2f5e90f740(0000) GS:ffff88005d880000(0000) knlGS:0000000000000000
-[ 2710.902277] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 2710.902500] CR2: 0000000000000000 CR3: 0000000058ca3000 CR4: 00000000000406e0
-[ 2710.902744] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[ 2710.902977] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[ 2710.903180] Call Trace:
-[ 2710.903332]  hrtimer_try_to_cancel+0x1a/0x93
-[ 2710.903504]  hrtimer_cancel+0x15/0x20
-[ 2710.903667]  qdisc_watchdog_cancel+0x12/0x14
-[ 2710.903866]  htb_destroy+0x2e/0xf7
-[ 2710.904097]  qdisc_create+0x377/0x3fd
-[ 2710.904330]  tc_modify_qdisc+0x4d2/0x4fd
-[ 2710.904511]  rtnetlink_rcv_msg+0x188/0x197
-[ 2710.904682]  ? rcu_read_unlock+0x3e/0x5f
-[ 2710.904849]  ? rtnl_newlink+0x729/0x729
-[ 2710.905017]  netlink_rcv_skb+0x6c/0xce
-[ 2710.905183]  rtnetlink_rcv+0x23/0x2a
-[ 2710.905345]  netlink_unicast+0x103/0x181
-[ 2710.905511]  netlink_sendmsg+0x326/0x337
-[ 2710.905679]  sock_sendmsg_nosec+0x14/0x3f
-[ 2710.905847]  sock_sendmsg+0x29/0x2e
-[ 2710.906010]  ___sys_sendmsg+0x209/0x28b
-[ 2710.906176]  ? do_raw_spin_unlock+0xcd/0xf8
-[ 2710.906346]  ? _raw_spin_unlock+0x27/0x31
-[ 2710.906514]  ? __handle_mm_fault+0x651/0xdb1
-[ 2710.906685]  ? check_chain_key+0xb0/0xfd
-[ 2710.906855]  __sys_sendmsg+0x45/0x63
-[ 2710.907018]  ? __sys_sendmsg+0x45/0x63
-[ 2710.907185]  SyS_sendmsg+0x19/0x1b
-[ 2710.907344]  entry_SYSCALL_64_fastpath+0x23/0xc2
-
-Note that probably this bug goes further back because the default qdisc
-handling always calls ->destroy on init failure too.
+[ 3929.467747] general protection fault: 0000 [#1] SMP
+[ 3929.468083] Modules linked in:
+[ 3929.468302] CPU: 3 PID: 967 Comm: ip Not tainted 4.13.0-rc6+ #56
+[ 3929.468625] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.7.5-20140531_083030-gandalf 04/01/2014
+[ 3929.469124] task: ffff88003716a700 task.stack: ffff88005872c000
+[ 3929.469449] RIP: 0010:__kmalloc_track_caller+0x117/0x1be
+[ 3929.469746] RSP: 0018:ffff88005872f6a0 EFLAGS: 00010246
+[ 3929.470042] RAX: 00000000000002de RBX: 0000000058a59000 RCX: 00000000000002df
+[ 3929.470406] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffffff821f7020
+[ 3929.470770] RBP: ffff88005872f6e8 R08: 000000000001f010 R09: 0000000000000000
+[ 3929.471133] R10: ffff88005872f730 R11: 0000000000008cdd R12: ff006d75646d7564
+[ 3929.471496] R13: 00000000014000c0 R14: ffff88005b403c00 R15: ffff88005b403c00
+[ 3929.471869] FS:  00007f0b70480740(0000) GS:ffff88005d980000(0000) knlGS:0000000000000000
+[ 3929.472286] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 3929.472677] CR2: 00007ffcee4f3000 CR3: 0000000059d45000 CR4: 00000000000406e0
+[ 3929.473209] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[ 3929.474109] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[ 3929.474873] Call Trace:
+[ 3929.475337]  ? kstrdup_const+0x23/0x25
+[ 3929.475863]  kstrdup+0x2e/0x4b
+[ 3929.476338]  kstrdup_const+0x23/0x25
+[ 3929.478084]  __kernfs_new_node+0x28/0xbc
+[ 3929.478478]  kernfs_new_node+0x35/0x55
+[ 3929.478929]  kernfs_create_link+0x23/0x76
+[ 3929.479478]  sysfs_do_create_link_sd.isra.2+0x85/0xd7
+[ 3929.480096]  sysfs_create_link+0x33/0x35
+[ 3929.480649]  device_add+0x200/0x589
+[ 3929.481184]  netdev_register_kobject+0x7c/0x12f
+[ 3929.481711]  register_netdevice+0x373/0x471
+[ 3929.482174]  rtnl_newlink+0x614/0x729
+[ 3929.482610]  ? rtnl_newlink+0x17f/0x729
+[ 3929.483080]  rtnetlink_rcv_msg+0x188/0x197
+[ 3929.483533]  ? rcu_read_unlock+0x3e/0x5f
+[ 3929.483984]  ? rtnl_newlink+0x729/0x729
+[ 3929.484420]  netlink_rcv_skb+0x6c/0xce
+[ 3929.484858]  rtnetlink_rcv+0x23/0x2a
+[ 3929.485291]  netlink_unicast+0x103/0x181
+[ 3929.485735]  netlink_sendmsg+0x326/0x337
+[ 3929.486181]  sock_sendmsg_nosec+0x14/0x3f
+[ 3929.486614]  sock_sendmsg+0x29/0x2e
+[ 3929.486973]  ___sys_sendmsg+0x209/0x28b
+[ 3929.487340]  ? do_raw_spin_unlock+0xcd/0xf8
+[ 3929.487719]  ? _raw_spin_unlock+0x27/0x31
+[ 3929.488092]  ? __handle_mm_fault+0x651/0xdb1
+[ 3929.488471]  ? check_chain_key+0xb0/0xfd
+[ 3929.488847]  __sys_sendmsg+0x45/0x63
+[ 3929.489206]  ? __sys_sendmsg+0x45/0x63
+[ 3929.489576]  SyS_sendmsg+0x19/0x1b
+[ 3929.489901]  entry_SYSCALL_64_fastpath+0x23/0xc2
+[ 3929.490172] RIP: 0033:0x7f0b6fb93690
+[ 3929.490423] RSP: 002b:00007ffcee4ed588 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+[ 3929.490881] RAX: ffffffffffffffda RBX: ffffffff810d278c RCX: 00007f0b6fb93690
+[ 3929.491198] RDX: 0000000000000000 RSI: 00007ffcee4ed5d0 RDI: 0000000000000003
+[ 3929.491521] RBP: ffff88005872ff98 R08: 0000000000000001 R09: 0000000000000000
+[ 3929.491801] R10: 00007ffcee4ed350 R11: 0000000000000246 R12: 0000000000000002
+[ 3929.492075] R13: 000000000066f1a0 R14: 00007ffcee4f5680 R15: 0000000000000000
+[ 3929.492352]  ? trace_hardirqs_off_caller+0xa7/0xcf
+[ 3929.492590] Code: 8b 45 c0 48 8b 45 b8 74 17 48 8b 4d c8 83 ca ff 44
+89 ee 4c 89 f7 e8 83 ca ff ff 49 89 c4 eb 49 49 63 56 20 48 8d 48 01 4d
+8b 06 <49> 8b 1c 14 48 89 c2 4c 89 e0 65 49 0f c7 08 0f 94 c0 83 f0 01
+[ 3929.493335] RIP: __kmalloc_track_caller+0x117/0x1be RSP: ffff88005872f6a0
 
 Fixes: 87b60cfacf9f ("net_sched: fix error recovery at qdisc creation")
-Fixes: 0fbbeb1ba43b ("[PKT_SCHED]: Fix missing qdisc_destroy() in qdisc_create_dflt()")
+Fixes: f07d1501292b ("multiq: Further multiqueue cleanup")
 Signed-off-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
+[AmitP: Removed unused variable 'err' in multiq_init()]
 Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/sch_htb.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ net/sched/sch_multiq.c |    9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
---- a/net/sched/sch_htb.c
-+++ b/net/sched/sch_htb.c
-@@ -1013,6 +1013,9 @@ static int htb_init(struct Qdisc *sch, s
- 	int err;
- 	int i;
+--- a/net/sched/sch_multiq.c
++++ b/net/sched/sch_multiq.c
+@@ -234,7 +234,7 @@ static int multiq_tune(struct Qdisc *sch
+ static int multiq_init(struct Qdisc *sch, struct nlattr *opt)
+ {
+ 	struct multiq_sched_data *q = qdisc_priv(sch);
+-	int i, err;
++	int i;
  
-+	qdisc_watchdog_init(&q->watchdog, sch);
-+	INIT_WORK(&q->work, htb_work_func);
-+
- 	if (!opt)
- 		return -EINVAL;
+ 	q->queues = NULL;
  
-@@ -1033,8 +1036,6 @@ static int htb_init(struct Qdisc *sch, s
- 	for (i = 0; i < TC_HTB_NUMPRIO; i++)
- 		INIT_LIST_HEAD(q->drops + i);
+@@ -249,12 +249,7 @@ static int multiq_init(struct Qdisc *sch
+ 	for (i = 0; i < q->max_bands; i++)
+ 		q->queues[i] = &noop_qdisc;
  
--	qdisc_watchdog_init(&q->watchdog, sch);
--	INIT_WORK(&q->work, htb_work_func);
- 	qdisc_skb_head_init(&q->direct_queue);
+-	err = multiq_tune(sch, opt);
+-
+-	if (err)
+-		kfree(q->queues);
+-
+-	return err;
++	return multiq_tune(sch, opt);
+ }
  
- 	if (tb[TCA_HTB_DIRECT_QLEN])
+ static int multiq_dump(struct Qdisc *sch, struct sk_buff *skb)
 
 
