@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DD2EC07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:04:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B688DC07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:05:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF35220854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:04:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF35220854
+	by mail.kernel.org (Postfix) with ESMTP id 78FC420652
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:05:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78FC420652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732157AbeIMTOf (ORCPT
+        id S1732162AbeIMTOi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:14:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35444 "EHLO
+        Thu, 13 Sep 2018 15:14:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35452 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728565AbeIMTOe (ORCPT
+        with ESMTP id S1731555AbeIMTOi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:14:34 -0400
+        Thu, 13 Sep 2018 15:14:38 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 68852D36;
-        Thu, 13 Sep 2018 14:04:54 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 965A2D36;
+        Thu, 13 Sep 2018 14:04:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, James Zhu <James.Zhu@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Huang Rui <ray.huang@amd.com>, Likun Gao <Likun.Gao@amd.com>
-Subject: [PATCH 4.18 178/197] drm/amdgpu:add VCN booting with firmware loaded by PSP
-Date:   Thu, 13 Sep 2018 15:32:07 +0200
-Message-Id: <20180913131848.684024094@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.18 179/197] drm/amdgpu: fix incorrect use of fcheck
+Date:   Thu, 13 Sep 2018 15:32:08 +0200
+Message-Id: <20180913131848.727522026@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -52,126 +52,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Likun Gao <Likun.Gao@amd.com>
+From: Christian König <christian.koenig@amd.com>
 
-commit 4d77c0f676e910fb1f1870738aa4bd168f253621 upstream.
+commit bce31d4c1ae8865d6382e3a27b07b4bb8e020ade upstream.
 
-Setup psp firmware loading for VCN, and make VCN block
-booting from tmr mac address.
+The usage isn't RCU protected.
 
-Signed-off-by: James Zhu <James.Zhu@amd.com>
-Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
-Acked-by: Huang Rui <ray.huang@amd.com>
-Reviewed-by: Likun Gao <Likun.Gao@amd.com>
-Signed-off-by: Likun Gao <Likun.Gao@amd.com>
+Signed-off-by: Christian König <christian.koenig@amd.com>
+Acked-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Cc: stable@vger.kernel.org
+CC: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c |   17 ++++++++------
- drivers/gpu/drm/amd/amdgpu/vcn_v1_0.c   |   38 +++++++++++++++++++++++++-------
- 2 files changed, 40 insertions(+), 15 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_sched.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c
-@@ -111,9 +111,10 @@ int amdgpu_vcn_sw_init(struct amdgpu_dev
- 			version_major, version_minor, family_id);
- 	}
- 
--	bo_size = AMDGPU_GPU_PAGE_ALIGN(le32_to_cpu(hdr->ucode_size_bytes) + 8)
--		  +  AMDGPU_VCN_STACK_SIZE + AMDGPU_VCN_HEAP_SIZE
-+	bo_size = AMDGPU_VCN_STACK_SIZE + AMDGPU_VCN_HEAP_SIZE
- 		  +  AMDGPU_VCN_SESSION_SIZE * 40;
-+	if (adev->firmware.load_type != AMDGPU_FW_LOAD_PSP)
-+		bo_size += AMDGPU_GPU_PAGE_ALIGN(le32_to_cpu(hdr->ucode_size_bytes) + 8);
- 	r = amdgpu_bo_create_kernel(adev, bo_size, PAGE_SIZE,
- 				    AMDGPU_GEM_DOMAIN_VRAM, &adev->vcn.vcpu_bo,
- 				    &adev->vcn.gpu_addr, &adev->vcn.cpu_addr);
-@@ -187,11 +188,13 @@ int amdgpu_vcn_resume(struct amdgpu_devi
- 		unsigned offset;
- 
- 		hdr = (const struct common_firmware_header *)adev->vcn.fw->data;
--		offset = le32_to_cpu(hdr->ucode_array_offset_bytes);
--		memcpy_toio(adev->vcn.cpu_addr, adev->vcn.fw->data + offset,
--			    le32_to_cpu(hdr->ucode_size_bytes));
--		size -= le32_to_cpu(hdr->ucode_size_bytes);
--		ptr += le32_to_cpu(hdr->ucode_size_bytes);
-+		if (adev->firmware.load_type != AMDGPU_FW_LOAD_PSP) {
-+			offset = le32_to_cpu(hdr->ucode_array_offset_bytes);
-+			memcpy_toio(adev->vcn.cpu_addr, adev->vcn.fw->data + offset,
-+				    le32_to_cpu(hdr->ucode_size_bytes));
-+			size -= le32_to_cpu(hdr->ucode_size_bytes);
-+			ptr += le32_to_cpu(hdr->ucode_size_bytes);
-+		}
- 		memset_io(ptr, 0, size);
- 	}
- 
---- a/drivers/gpu/drm/amd/amdgpu/vcn_v1_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/vcn_v1_0.c
-@@ -90,6 +90,16 @@ static int vcn_v1_0_sw_init(void *handle
- 	if (r)
- 		return r;
- 
-+	if (adev->firmware.load_type == AMDGPU_FW_LOAD_PSP) {
-+		const struct common_firmware_header *hdr;
-+		hdr = (const struct common_firmware_header *)adev->vcn.fw->data;
-+		adev->firmware.ucode[AMDGPU_UCODE_ID_VCN].ucode_id = AMDGPU_UCODE_ID_VCN;
-+		adev->firmware.ucode[AMDGPU_UCODE_ID_VCN].fw = adev->vcn.fw;
-+		adev->firmware.fw_size +=
-+			ALIGN(le32_to_cpu(hdr->ucode_size_bytes), PAGE_SIZE);
-+		DRM_INFO("PSP loading VCN firmware\n");
-+	}
-+
- 	r = amdgpu_vcn_resume(adev);
- 	if (r)
- 		return r;
-@@ -241,26 +251,38 @@ static int vcn_v1_0_resume(void *handle)
- static void vcn_v1_0_mc_resume(struct amdgpu_device *adev)
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_sched.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_sched.c
+@@ -53,7 +53,7 @@ static int amdgpu_sched_process_priority
+ 						  int fd,
+ 						  enum drm_sched_priority priority)
  {
- 	uint32_t size = AMDGPU_GPU_PAGE_ALIGN(adev->vcn.fw->size + 4);
-+	uint32_t offset;
+-	struct file *filp = fcheck(fd);
++	struct file *filp = fget(fd);
+ 	struct drm_file *file;
+ 	struct pid *pid;
+ 	struct amdgpu_fpriv *fpriv;
+@@ -78,6 +78,8 @@ static int amdgpu_sched_process_priority
  
--	WREG32_SOC15(UVD, 0, mmUVD_LMI_VCPU_CACHE_64BIT_BAR_LOW,
-+	if (adev->firmware.load_type == AMDGPU_FW_LOAD_PSP) {
-+		WREG32_SOC15(UVD, 0, mmUVD_LMI_VCPU_CACHE_64BIT_BAR_LOW,
-+			     (adev->firmware.ucode[AMDGPU_UCODE_ID_VCN].tmr_mc_addr_lo));
-+		WREG32_SOC15(UVD, 0, mmUVD_LMI_VCPU_CACHE_64BIT_BAR_HIGH,
-+			     (adev->firmware.ucode[AMDGPU_UCODE_ID_VCN].tmr_mc_addr_hi));
-+		WREG32_SOC15(UVD, 0, mmUVD_VCPU_CACHE_OFFSET0, 0);
-+		offset = 0;
-+	} else {
-+		WREG32_SOC15(UVD, 0, mmUVD_LMI_VCPU_CACHE_64BIT_BAR_LOW,
- 			lower_32_bits(adev->vcn.gpu_addr));
--	WREG32_SOC15(UVD, 0, mmUVD_LMI_VCPU_CACHE_64BIT_BAR_HIGH,
-+		WREG32_SOC15(UVD, 0, mmUVD_LMI_VCPU_CACHE_64BIT_BAR_HIGH,
- 			upper_32_bits(adev->vcn.gpu_addr));
--	WREG32_SOC15(UVD, 0, mmUVD_VCPU_CACHE_OFFSET0,
--				AMDGPU_UVD_FIRMWARE_OFFSET >> 3);
-+		offset = size;
-+		WREG32_SOC15(UVD, 0, mmUVD_VCPU_CACHE_OFFSET0,
-+			     AMDGPU_UVD_FIRMWARE_OFFSET >> 3);
-+	}
+ 	put_pid(pid);
+ 
++	fput(filp);
 +
- 	WREG32_SOC15(UVD, 0, mmUVD_VCPU_CACHE_SIZE0, size);
+ 	return 0;
+ }
  
- 	WREG32_SOC15(UVD, 0, mmUVD_LMI_VCPU_CACHE1_64BIT_BAR_LOW,
--			lower_32_bits(adev->vcn.gpu_addr + size));
-+		     lower_32_bits(adev->vcn.gpu_addr + offset));
- 	WREG32_SOC15(UVD, 0, mmUVD_LMI_VCPU_CACHE1_64BIT_BAR_HIGH,
--			upper_32_bits(adev->vcn.gpu_addr + size));
-+		     upper_32_bits(adev->vcn.gpu_addr + offset));
- 	WREG32_SOC15(UVD, 0, mmUVD_VCPU_CACHE_OFFSET1, 0);
- 	WREG32_SOC15(UVD, 0, mmUVD_VCPU_CACHE_SIZE1, AMDGPU_VCN_HEAP_SIZE);
- 
- 	WREG32_SOC15(UVD, 0, mmUVD_LMI_VCPU_CACHE2_64BIT_BAR_LOW,
--			lower_32_bits(adev->vcn.gpu_addr + size + AMDGPU_VCN_HEAP_SIZE));
-+		     lower_32_bits(adev->vcn.gpu_addr + offset + AMDGPU_VCN_HEAP_SIZE));
- 	WREG32_SOC15(UVD, 0, mmUVD_LMI_VCPU_CACHE2_64BIT_BAR_HIGH,
--			upper_32_bits(adev->vcn.gpu_addr + size + AMDGPU_VCN_HEAP_SIZE));
-+		     upper_32_bits(adev->vcn.gpu_addr + offset + AMDGPU_VCN_HEAP_SIZE));
- 	WREG32_SOC15(UVD, 0, mmUVD_VCPU_CACHE_OFFSET2, 0);
- 	WREG32_SOC15(UVD, 0, mmUVD_VCPU_CACHE_SIZE2,
- 			AMDGPU_VCN_STACK_SIZE + (AMDGPU_VCN_SESSION_SIZE * 40));
 
 
