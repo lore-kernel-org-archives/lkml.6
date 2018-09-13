@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9F8EC07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:58:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C797C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:58:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99F6A20866
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:58:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99F6A20866
+	by mail.kernel.org (Postfix) with ESMTP id D5877204FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:58:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5877204FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731426AbeIMTIP (ORCPT
+        id S1731571AbeIMTIS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:08:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34626 "EHLO
+        Thu, 13 Sep 2018 15:08:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34658 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728566AbeIMTIO (ORCPT
+        with ESMTP id S1728566AbeIMTIS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:08:14 -0400
+        Thu, 13 Sep 2018 15:08:18 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C62D6D0E;
-        Thu, 13 Sep 2018 13:58:36 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3A27ED15;
+        Thu, 13 Sep 2018 13:58:40 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, shaochun chen <cscnull@gmail.com>,
-        Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Song Liu <songliubraving@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 075/197] netfilter: fix memory leaks on netlink_dump_start error
-Date:   Thu, 13 Sep 2018 15:30:24 +0200
-Message-Id: <20180913131844.524514107@linuxfoundation.org>
+Subject: [PATCH 4.18 076/197] tcp, ulp: add alias for all ulp modules
+Date:   Thu, 13 Sep 2018 15:30:25 +0200
+Message-Id: <20180913131844.568035775@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -53,138 +54,93 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian Westphal <fw@strlen.de>
+From: Daniel Borkmann <daniel@iogearbox.net>
 
-[ Upstream commit 3e673b23b541b8e7f773b2d378d6eb99831741cd ]
+[ Upstream commit 037b0b86ecf5646f8eae777d8b52ff8b401692ec ]
 
-Shaochun Chen points out we leak dumper filter state allocations
-stored in dump_control->data in case there is an error before netlink sets
-cb_running (after which ->done will be called at some point).
+Lets not turn the TCP ULP lookup into an arbitrary module loader as
+we only intend to load ULP modules through this mechanism, not other
+unrelated kernel modules:
 
-In order to fix this, add .start functions and move allocations there.
+  [root@bar]# cat foo.c
+  #include <sys/types.h>
+  #include <sys/socket.h>
+  #include <linux/tcp.h>
+  #include <linux/in.h>
 
-Same pattern as used in commit 90fd131afc565159c9e0ea742f082b337e10f8c6
-("netfilter: nf_tables: move dumper state allocation into ->start").
+  int main(void)
+  {
+      int sock = socket(PF_INET, SOCK_STREAM, 0);
+      setsockopt(sock, IPPROTO_TCP, TCP_ULP, "sctp", sizeof("sctp"));
+      return 0;
+  }
 
-Reported-by: shaochun chen <cscnull@gmail.com>
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+  [root@bar]# gcc foo.c -O2 -Wall
+  [root@bar]# lsmod | grep sctp
+  [root@bar]# ./a.out
+  [root@bar]# lsmod | grep sctp
+  sctp                 1077248  4
+  libcrc32c              16384  3 nf_conntrack,nf_nat,sctp
+  [root@bar]#
+
+Fix it by adding module alias to TCP ULP modules, so probing module
+via request_module() will be limited to tcp-ulp-[name]. The existing
+modules like kTLS will load fine given tcp-ulp-tls alias, but others
+will fail to load:
+
+  [root@bar]# lsmod | grep sctp
+  [root@bar]# ./a.out
+  [root@bar]# lsmod | grep sctp
+  [root@bar]#
+
+Sockmap is not affected from this since it's either built-in or not.
+
+Fixes: 734942cc4ea6 ("tcp: ULP infrastructure")
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Acked-by: John Fastabend <john.fastabend@gmail.com>
+Acked-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/netfilter/nf_conntrack_netlink.c |   26 +++++++++++++++++---------
- net/netfilter/nfnetlink_acct.c       |   29 +++++++++++++----------------
- 2 files changed, 30 insertions(+), 25 deletions(-)
+ include/net/tcp.h  |    4 ++++
+ net/ipv4/tcp_ulp.c |    2 +-
+ net/tls/tls_main.c |    1 +
+ 3 files changed, 6 insertions(+), 1 deletion(-)
 
---- a/net/netfilter/nf_conntrack_netlink.c
-+++ b/net/netfilter/nf_conntrack_netlink.c
-@@ -821,6 +821,21 @@ ctnetlink_alloc_filter(const struct nlat
- #endif
- }
+--- a/include/net/tcp.h
++++ b/include/net/tcp.h
+@@ -2023,6 +2023,10 @@ int tcp_set_ulp_id(struct sock *sk, cons
+ void tcp_get_available_ulp(char *buf, size_t len);
+ void tcp_cleanup_ulp(struct sock *sk);
  
-+static int ctnetlink_start(struct netlink_callback *cb)
-+{
-+	const struct nlattr * const *cda = cb->data;
-+	struct ctnetlink_filter *filter = NULL;
++#define MODULE_ALIAS_TCP_ULP(name)				\
++	__MODULE_INFO(alias, alias_userspace, name);		\
++	__MODULE_INFO(alias, alias_tcp_ulp, "tcp-ulp-" name)
 +
-+	if (cda[CTA_MARK] && cda[CTA_MARK_MASK]) {
-+		filter = ctnetlink_alloc_filter(cda);
-+		if (IS_ERR(filter))
-+			return PTR_ERR(filter);
-+	}
-+
-+	cb->data = filter;
-+	return 0;
-+}
-+
- static int ctnetlink_filter_match(struct nf_conn *ct, void *data)
- {
- 	struct ctnetlink_filter *filter = data;
-@@ -1240,19 +1255,12 @@ static int ctnetlink_get_conntrack(struc
- 
- 	if (nlh->nlmsg_flags & NLM_F_DUMP) {
- 		struct netlink_dump_control c = {
-+			.start = ctnetlink_start,
- 			.dump = ctnetlink_dump_table,
- 			.done = ctnetlink_done,
-+			.data = (void *)cda,
- 		};
- 
--		if (cda[CTA_MARK] && cda[CTA_MARK_MASK]) {
--			struct ctnetlink_filter *filter;
--
--			filter = ctnetlink_alloc_filter(cda);
--			if (IS_ERR(filter))
--				return PTR_ERR(filter);
--
--			c.data = filter;
--		}
- 		return netlink_dump_start(ctnl, skb, nlh, &c);
+ /* Call BPF_SOCK_OPS program that returns an int. If the return value
+  * is < 0, then the BPF op failed (for example if the loaded BPF
+  * program does not support the chosen operation or there is no BPF
+--- a/net/ipv4/tcp_ulp.c
++++ b/net/ipv4/tcp_ulp.c
+@@ -51,7 +51,7 @@ static const struct tcp_ulp_ops *__tcp_u
+ #ifdef CONFIG_MODULES
+ 	if (!ulp && capable(CAP_NET_ADMIN)) {
+ 		rcu_read_unlock();
+-		request_module("%s", name);
++		request_module("tcp-ulp-%s", name);
+ 		rcu_read_lock();
+ 		ulp = tcp_ulp_find(name);
  	}
+--- a/net/tls/tls_main.c
++++ b/net/tls/tls_main.c
+@@ -45,6 +45,7 @@
+ MODULE_AUTHOR("Mellanox Technologies");
+ MODULE_DESCRIPTION("Transport Layer Security Support");
+ MODULE_LICENSE("Dual BSD/GPL");
++MODULE_ALIAS_TCP_ULP("tls");
  
---- a/net/netfilter/nfnetlink_acct.c
-+++ b/net/netfilter/nfnetlink_acct.c
-@@ -238,29 +238,33 @@ static const struct nla_policy filter_po
- 	[NFACCT_FILTER_VALUE]	= { .type = NLA_U32 },
- };
- 
--static struct nfacct_filter *
--nfacct_filter_alloc(const struct nlattr * const attr)
-+static int nfnl_acct_start(struct netlink_callback *cb)
- {
--	struct nfacct_filter *filter;
-+	const struct nlattr *const attr = cb->data;
- 	struct nlattr *tb[NFACCT_FILTER_MAX + 1];
-+	struct nfacct_filter *filter;
- 	int err;
- 
-+	if (!attr)
-+		return 0;
-+
- 	err = nla_parse_nested(tb, NFACCT_FILTER_MAX, attr, filter_policy,
- 			       NULL);
- 	if (err < 0)
--		return ERR_PTR(err);
-+		return err;
- 
- 	if (!tb[NFACCT_FILTER_MASK] || !tb[NFACCT_FILTER_VALUE])
--		return ERR_PTR(-EINVAL);
-+		return -EINVAL;
- 
- 	filter = kzalloc(sizeof(struct nfacct_filter), GFP_KERNEL);
- 	if (!filter)
--		return ERR_PTR(-ENOMEM);
-+		return -ENOMEM;
- 
- 	filter->mask = ntohl(nla_get_be32(tb[NFACCT_FILTER_MASK]));
- 	filter->value = ntohl(nla_get_be32(tb[NFACCT_FILTER_VALUE]));
-+	cb->data = filter;
- 
--	return filter;
-+	return 0;
- }
- 
- static int nfnl_acct_get(struct net *net, struct sock *nfnl,
-@@ -275,18 +279,11 @@ static int nfnl_acct_get(struct net *net
- 	if (nlh->nlmsg_flags & NLM_F_DUMP) {
- 		struct netlink_dump_control c = {
- 			.dump = nfnl_acct_dump,
-+			.start = nfnl_acct_start,
- 			.done = nfnl_acct_done,
-+			.data = (void *)tb[NFACCT_FILTER],
- 		};
- 
--		if (tb[NFACCT_FILTER]) {
--			struct nfacct_filter *filter;
--
--			filter = nfacct_filter_alloc(tb[NFACCT_FILTER]);
--			if (IS_ERR(filter))
--				return PTR_ERR(filter);
--
--			c.data = filter;
--		}
- 		return netlink_dump_start(nfnl, skb, nlh, &c);
- 	}
- 
+ enum {
+ 	TLSV4,
 
 
