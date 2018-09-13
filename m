@@ -2,92 +2,107 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5806FFA3758
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AFAFFA374C
 	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 17:35:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D7E22152E
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 16:07:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D7E22152E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id C9A5221523
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 16:51:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AD9YfyLC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9A5221523
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728204AbeIMVRW (ORCPT
+        id S1727806AbeIMWB0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 17:17:22 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:50490 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726763AbeIMVRW (ORCPT
+        Thu, 13 Sep 2018 18:01:26 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:37129 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726835AbeIMWB0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 17:17:22 -0400
-Received: from localhost (74-93-104-98-Washington.hfc.comcastbusiness.net [74.93.104.98])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id ED59C13FDD215;
-        Thu, 13 Sep 2018 09:07:12 -0700 (PDT)
-Date:   Thu, 13 Sep 2018 09:07:12 -0700 (PDT)
-Message-Id: <20180913.090712.1849966692069488441.davem@davemloft.net>
-To:     gomonovych@gmail.com
-Cc:     w-kwok2@ti.com, m-karicheri2@ti.com, grygorii.strashko@ti.com,
-        vasyl.gomonovych@nokia.com, ssantosh@kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] knav: qmss: Introduce queue descriptors monitor
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20180911211549.12092-1-gomonovych@gmail.com>
-References: <20180911211549.12092-1-gomonovych@gmail.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 13 Sep 2018 09:07:13 -0700 (PDT)
+        Thu, 13 Sep 2018 18:01:26 -0400
+Received: by mail-pg1-f194.google.com with SMTP id 2-v6so3021944pgo.4;
+        Thu, 13 Sep 2018 09:51:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=q2xjXa9tXM8hHCQQp1h1B9WXJr7pdXE3pUUxfr42lOE=;
+        b=AD9YfyLCkpFCWACwtWbAEEvQzuVzMep7NaVBS5EJkeS0KFfPiJnp6CDV3VjUefk9Oj
+         0Mv2B5/E7Xv6GvXHGA1Vpsnxu4secGe94hxY/6NSow1LYbvmUgg+kLBr45V4DNJ0svmC
+         7ELyhUcZwhunfgFtV79laDpGI9GwVVp88sB5FtdyN55G8VNrP80tXRVtPos6ixU8iZkY
+         CeKzdMYeeQzsXRe1L0NLVMZzPBTwLP11bBjMPWGHmmCGWr3mywePTr8mvAcO5MImCBUc
+         9hQIA3IwJWZ3JsTcyzIS2qtOTIdcSTrXLVzePxcTZd9uRfvezqKwmbWNtvw+uwIJcCJs
+         mx1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=q2xjXa9tXM8hHCQQp1h1B9WXJr7pdXE3pUUxfr42lOE=;
+        b=Kt8C3IwBPxWMS+GA2i+/3Kf686KYIKmqFe8OfRBzGIrHVbltWIv2jPXeul0EE77lee
+         GWQphADwHE3IjXAmlZcr2nriosu73D4Ill3ICoBTQZYewEB0JTloWXfyD2KtfSYHwD+5
+         snMHn+u2Q9z80GxFTkimWvQJh44F0V7TUsyS6A3+E8WyWu9joofgLGa0MXYv8bnlZMj0
+         puAFGhJ4HHf5BS/otg8SWeuMxPpURxtZKJ9+qhoneBCimFAN7xBSUY0X2izfXH+reHXP
+         flAnrxoKRkTI/5WZasTZX721u02U/Qt2pGDJsIKbIEuKzHGiZUbNIC92VGrMICk3SjqF
+         qi/Q==
+X-Gm-Message-State: APzg51AuSjyoBRvdUVyIcFthvHgKUbTPtdkE2blFFdz+NeYZw8A7fo4g
+        Er73YA48M7atNiYE5VOYBAzEddln
+X-Google-Smtp-Source: ANB0VdZTnUt5G/VR2ipb6i+/1ofMNIOiQh7+VV3PiQNEr21IEvn8n5kC5UfpdENBvYnjHzqsx0MuzQ==
+X-Received: by 2002:a62:280a:: with SMTP id o10-v6mr8242787pfo.129.1536857466933;
+        Thu, 13 Sep 2018 09:51:06 -0700 (PDT)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
+        by smtp.gmail.com with ESMTPSA id v26-v6sm5988790pfe.57.2018.09.13.09.51.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Sep 2018 09:51:05 -0700 (PDT)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     netdev@vger.kernel.org
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net-next] net: dsa: b53: Do not fail when IRQ are not initialized
+Date:   Thu, 13 Sep 2018 09:50:45 -0700
+Message-Id: <20180913165045.3802-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasyl Gomonovych <gomonovych@gmail.com>
-Date: Tue, 11 Sep 2018 23:15:47 +0200
+When the Device Tree is not providing the per-port interrupts, do not fail
+during b53_srab_irq_enable() but instead bail out gracefully. The SRAB driver
+is used on the BCM5301X (Northstar) platforms which do not yet have the SRAB
+interrupts wired up.
 
-> Monitor and record available descriptors in knav_qmss queues
-> Get amount of available descriptors in free-descriptor queue
-> base on event-triggered RX traffic.
-> Also monitor free-descriptor queue base on periodic time interval
-> in kernel thread.
-> To start monitoring available descriptors in queue earlyi,
-> module parameters, enable start monitoring in boottime
-> 
-> This queue descriptor monitor helps debugging starvation issue.
-> The monitor should help debug queue under traffic pressure
-> and can describe the shape of this pressure when a queue
-> faced descriptors starvation.
-> Monitor helpful for IP blocks which do not have dedicated
-> descriptor starvation interrupt like RapidIO IP.
-> 
-> Registration and enable file in debugfs hierarchy
-> 
-> |-/sys/kernel/debug
-> |-- knav_qmssm_soc:hwqueue@2a40000
-> |   |-- 8710
-> |   |   |-- buffer_size
-> |   |   |-- enable
-> |   |   |-- monitor_stats
-> |   |   -- unregister
-> 
-> ---
-> 
-> The current implementation is the first iteration
-> and require additional work.
-> By this patch I would like to know does this could be
-> helpful for other components and continue my work in a right way.
-> 
-> Signed-off-by: Vasyl Gomonovych <vasyl.gomonovych@nokia.com>
+Fixes: 16994374a6fc ("net: dsa: b53: Make SRAB driver manage port interrupts")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ drivers/net/dsa/b53/b53_srab.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-This is way over engineered for just keeping some statistics around.
+diff --git a/drivers/net/dsa/b53/b53_srab.c b/drivers/net/dsa/b53/b53_srab.c
+index 321052732799..90f514252987 100644
+--- a/drivers/net/dsa/b53/b53_srab.c
++++ b/drivers/net/dsa/b53/b53_srab.c
+@@ -415,7 +415,13 @@ static int b53_srab_irq_enable(struct b53_device *dev, int port)
+ {
+ 	struct b53_srab_priv *priv = dev->priv;
+ 	struct b53_srab_port_priv *p = &priv->port_intrs[port];
+-	int ret;
++	int ret = 0;
++
++	/* Interrupt is optional and was not specified, do not make
++	 * this fatal
++	 */
++	if (p->irq == -ENXIO)
++		return ret;
+ 
+ 	ret = request_threaded_irq(p->irq, b53_srab_port_isr,
+ 				   b53_srab_port_thread, 0,
+-- 
+2.17.1
 
-Just have a periodic timer or a workqueue that does the necessary
-sampling.
