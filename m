@@ -2,108 +2,91 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9F73C070C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 00:48:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09C57C070C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 00:48:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91D182146E
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 00:48:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7663213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 00:48:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CbRvHcrf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91D182146E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="hA/KPb1n"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7663213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727650AbeIMFzr (ORCPT
+        id S1727749AbeIMFz5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 01:55:47 -0400
-Received: from mail-vk1-f193.google.com ([209.85.221.193]:39067 "EHLO
-        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726261AbeIMFzr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 01:55:47 -0400
-Received: by mail-vk1-f193.google.com with SMTP id e139-v6so446697vkf.6;
-        Wed, 12 Sep 2018 17:48:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5lFbn7Q1DS1X+ewhy820fogG9oqwDWQ1IE1ITmLuKqQ=;
-        b=CbRvHcrf8dGz2c0w7Tq0YQ1+FQZSU7e6NEao+/i+cftzlqFUjYHfe9N09aCBskTepw
-         oRrjQBtU0F4Z3UNQMG7l6HNku3OakuWAyLCD17yOr0Jxw+sC1f0S7cTNFgoa81ScsesF
-         DJNKLeuuOUAOF/oXRHiriwar+egu22Ew+AHTwOz68JMblmMWYLwPbyo2e9E+at7Pk0bc
-         nYIvclI7R5XwbpWZOXgChSjz0V8oXpwK1YwwW0okdVEpQXjgO14knfPGsZHWtSWZYsvO
-         MZOYhYfZ3pZq5XvwOOHzj+NePC/4pOUW7Sl2UJdh3zzg7b3c+HZqAqONTyZXzyR/KoBm
-         CDnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5lFbn7Q1DS1X+ewhy820fogG9oqwDWQ1IE1ITmLuKqQ=;
-        b=COKrhEOgQ2cXcj98cc/kGASnOQLUdpKK/fKzPMiorhWlh4rp9qFzIwmUTcE5F0pz0+
-         O6oAIEtVuEU6DP5NcaJzJbRohUt1wdXx1nLK/EPTq/M/FD+PofyKIpI6hpK0DVn3auwH
-         HlxZIztOL38fmKeuzm5xXmkPNz6RTxqIeqyrt/el7cZUfxyHn7JcSH3WxlXSKZjcfFLk
-         ZAlOydJDmVKzE3yQAO+ZP1iSa4Iz8YhZMCwkNcZGkfnOmN+k0ikeo25xAxDcsZudsqPx
-         fNZ6jOR6NEey1pXhtjggFa0p8M6Z6pdAyYwhzIPvm5rIa6y8b+UvEQeAj5j/R46uHBGv
-         r6cQ==
-X-Gm-Message-State: APzg51AZhkgEGxdpsAGEQLDgFk5yr0S1VA3acLy8Es4Xogl8UTzXDT9z
-        LnSNwBEsOpEQYs1WJCxbqKEMQZKNE7CKJFIqA24=
-X-Google-Smtp-Source: ANB0Vdb0UKLDPhgw+cXLcnudHe3wTBp//bdCq0sB0fW5wv1gcaRgdPqSHfijjxItJbPh6u2quBMa/ICXQsslei+sPBc=
-X-Received: by 2002:a1f:61c5:: with SMTP id v188-v6mr1689312vkb.19.1536799724826;
- Wed, 12 Sep 2018 17:48:44 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180912150142.157913-1-arnd@arndb.de> <20180912150142.157913-4-arnd@arndb.de>
-In-Reply-To: <20180912150142.157913-4-arnd@arndb.de>
-From:   "Yan, Zheng" <ukernel@gmail.com>
-Date:   Thu, 13 Sep 2018 08:48:33 +0800
-Message-ID: <CAAM7YAnmTOMUdB4jVTzXv7C3dh58ekThm=U-GMJ9-_zzWti53w@mail.gmail.com>
-Subject: Re: [PATCH v2 04/17] ceph: fix compat_ioctl for ceph_dir_operations
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        stable@vger.kernel.org, Zheng Yan <zyan@redhat.com>,
-        Sage Weil <sage@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
-        Chengguang Xu <cgxu519@gmx.com>,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 13 Sep 2018 01:55:57 -0400
+Received: from vern.gendns.com ([206.190.152.46]:46415 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727657AbeIMFz5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 01:55:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=lechnology.com; s=default; h=Message-Id:Date:Subject:Cc:To:From:Sender:
+        Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=prFj7rcxV2cnB62BqhkybRrNpLWDoSqJLcSTiGmpZ50=; b=hA/KPb1nWBkCAJUUDeFhhgPXhB
+        vydTDCud4NzABQKkIVsj53BsNgu8cGdQI4ccj+GqwOKBdklWxKvHXldfiko6W+7Etz63DmrvSi1R1
+        yAOUYg2OagcIAyh5YDPVyVVVbDGG+mkfPmo8G5/BJTOGMm6OInXH2WnZFOjnFbvH45vo6AwkQAqhI
+        th3SQqBb6jFeXDHNjG6+pH/xQGafY7rME4JLVAFLsaKLmy2rja2+HiIiYR3SQ0/W7hU7+mDN0SPR0
+        CsgMkE+65iv4aXHy6Nv3AauY2BS6BjiP+PLdo9owMLWAlWLWUWs1mAEVhzPrwhOBksp9mQOvxmkrX
+        fC1mayHw==;
+Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:34302 helo=freyr.lechnology.com)
+        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <david@lechnology.com>)
+        id 1g0FoS-00AI73-LB; Wed, 12 Sep 2018 20:48:52 -0400
+From:   David Lechner <david@lechnology.com>
+To:     Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, David Lechner <david@lechnology.com>
+Subject: [PATCH] power_supply: sysfs: ratelimit property read error message
+Date:   Wed, 12 Sep 2018 19:48:30 -0500
+Message-Id: <20180913004830.1265-1-david@lechnology.com>
+X-Mailer: git-send-email 2.17.1
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 11:10 PM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> The ceph_ioctl function is used both for files and directories, but only
-> the files support doing that in 32-bit compat mode.
->
-> For consistency, add the same compat handler to the dir operations
-> as well.
->
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  fs/ceph/dir.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-> index 82928cea0209..da73f29d7faa 100644
-> --- a/fs/ceph/dir.c
-> +++ b/fs/ceph/dir.c
-> @@ -1489,6 +1489,7 @@ const struct file_operations ceph_dir_fops = {
->         .open = ceph_open,
->         .release = ceph_release,
->         .unlocked_ioctl = ceph_ioctl,
-> +       .compat_ioctl = ceph_ioctl,
->         .fsync = ceph_fsync,
->         .lock = ceph_lock,
->         .flock = ceph_flock,
-> --
-> 2.18.0
->
+This adds ratelimiting to the message that is printed when reading a
+power supply property via sysfs returns an error. This will prevent
+userspace applications from unintentionally dDOSing the system by
+continuosuly reading a property that returns an error.
 
-Reviewed-by: "Yan, Zheng" <zyan@redhat.com>
+Signed-off-by: David Lechner <david@lechnology.com>
+---
+ drivers/power/supply/power_supply_sysfs.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/power/supply/power_supply_sysfs.c b/drivers/power/supply/power_supply_sysfs.c
+index 6170ed8b6854..dce24f596160 100644
+--- a/drivers/power/supply/power_supply_sysfs.c
++++ b/drivers/power/supply/power_supply_sysfs.c
+@@ -131,7 +131,8 @@ static ssize_t power_supply_show_property(struct device *dev,
+ 				dev_dbg(dev, "driver has no data for `%s' property\n",
+ 					attr->attr.name);
+ 			else if (ret != -ENODEV && ret != -EAGAIN)
+-				dev_err(dev, "driver failed to report `%s' property: %zd\n",
++				dev_err_ratelimited(dev,
++					"driver failed to report `%s' property: %zd\n",
+ 					attr->attr.name, ret);
+ 			return ret;
+ 		}
+-- 
+2.17.1
+
