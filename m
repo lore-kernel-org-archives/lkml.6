@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35511C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:50:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2561C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:50:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E70F820881
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:50:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E70F820881
+	by mail.kernel.org (Postfix) with ESMTP id A5DCE20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:50:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5DCE20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730740AbeIMTAL (ORCPT
+        id S1730747AbeIMTAX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:00:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33190 "EHLO
+        Thu, 13 Sep 2018 15:00:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33200 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727760AbeIMTAL (ORCPT
+        with ESMTP id S1729363AbeIMTAW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:00:11 -0400
+        Thu, 13 Sep 2018 15:00:22 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9F5DBCFE;
-        Thu, 13 Sep 2018 13:50:36 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 199EACFE;
+        Thu, 13 Sep 2018 13:50:46 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Michael Chan <michael.chan@broadcom.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 014/197] bnxt_en: Clean up unused functions.
-Date:   Thu, 13 Sep 2018 15:29:23 +0200
-Message-Id: <20180913131842.136533505@linuxfoundation.org>
+Subject: [PATCH 4.18 015/197] bnxt_en: Do not adjust max_cp_rings by the ones used by RDMA.
+Date:   Thu, 13 Sep 2018 15:29:24 +0200
+Message-Id: <20180913131842.180746718@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -53,75 +53,121 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Michael Chan <michael.chan@broadcom.com>
 
-[ Upstream commit ad95c27bdb930105f3eea02621bda157caf2862d ]
+[ Upstream commit 00fe9c326d2027f2437dea38ef0e82f9d02d94c0 ]
 
-Remove unused bnxt_subtract_ulp_resources().  Change
-bnxt_get_max_func_irqs() to static since it is only locally used.
+Currently, the driver adjusts the bp->hw_resc.max_cp_rings by the number
+of MSIX vectors used by RDMA.  There is one code path in open that needs
+to check the true max_cp_rings including any used by RDMA.  This code
+is now checking for the reduced max_cp_rings which will fail when the
+number of cp rings is very small.
 
+To fix this in a clean way, we don't adjust max_cp_rings anymore.
+Instead, we add a helper bnxt_get_max_func_cp_rings_for_en() to get the
+reduced max_cp_rings when appropriate.
+
+Fixes: ec86f14ea506 ("bnxt_en: Add ULP calls to stop and restart IRQs.")
 Signed-off-by: Michael Chan <michael.chan@broadcom.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/bnxt/bnxt.c     |    2 +-
- drivers/net/ethernet/broadcom/bnxt/bnxt.h     |    1 -
- drivers/net/ethernet/broadcom/bnxt/bnxt_ulp.c |   15 ---------------
- drivers/net/ethernet/broadcom/bnxt/bnxt_ulp.h |    1 -
- 4 files changed, 1 insertion(+), 18 deletions(-)
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c       |    7 ++++---
+ drivers/net/ethernet/broadcom/bnxt/bnxt.h       |    2 +-
+ drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c |    7 ++++---
+ drivers/net/ethernet/broadcom/bnxt/bnxt_ulp.c   |    5 -----
+ 4 files changed, 9 insertions(+), 12 deletions(-)
 
 --- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
 +++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -5912,7 +5912,7 @@ void bnxt_set_max_func_cp_rings(struct b
- 	bp->hw_resc.max_cp_rings = max;
+@@ -5907,9 +5907,9 @@ unsigned int bnxt_get_max_func_cp_rings(
+ 	return bp->hw_resc.max_cp_rings;
  }
  
--unsigned int bnxt_get_max_func_irqs(struct bnxt *bp)
-+static unsigned int bnxt_get_max_func_irqs(struct bnxt *bp)
+-void bnxt_set_max_func_cp_rings(struct bnxt *bp, unsigned int max)
++unsigned int bnxt_get_max_func_cp_rings_for_en(struct bnxt *bp)
  {
- 	struct bnxt_hw_resc *hw_resc = &bp->hw_resc;
+-	bp->hw_resc.max_cp_rings = max;
++	return bp->hw_resc.max_cp_rings - bnxt_get_ulp_msix_num(bp);
+ }
  
+ static unsigned int bnxt_get_max_func_irqs(struct bnxt *bp)
+@@ -8492,7 +8492,8 @@ static void _bnxt_get_max_rings(struct b
+ 
+ 	*max_tx = hw_resc->max_tx_rings;
+ 	*max_rx = hw_resc->max_rx_rings;
+-	*max_cp = min_t(int, hw_resc->max_irqs, hw_resc->max_cp_rings);
++	*max_cp = min_t(int, bnxt_get_max_func_cp_rings_for_en(bp),
++			hw_resc->max_irqs);
+ 	*max_cp = min_t(int, *max_cp, hw_resc->max_stat_ctxs);
+ 	max_ring_grps = hw_resc->max_hw_ring_grps;
+ 	if (BNXT_CHIP_TYPE_NITRO_A0(bp) && BNXT_PF(bp)) {
 --- a/drivers/net/ethernet/broadcom/bnxt/bnxt.h
 +++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-@@ -1469,7 +1469,6 @@ unsigned int bnxt_get_max_func_stat_ctxs
+@@ -1468,7 +1468,7 @@ int bnxt_hwrm_set_coal(struct bnxt *);
+ unsigned int bnxt_get_max_func_stat_ctxs(struct bnxt *bp);
  void bnxt_set_max_func_stat_ctxs(struct bnxt *bp, unsigned int max);
  unsigned int bnxt_get_max_func_cp_rings(struct bnxt *bp);
- void bnxt_set_max_func_cp_rings(struct bnxt *bp, unsigned int max);
--unsigned int bnxt_get_max_func_irqs(struct bnxt *bp);
+-void bnxt_set_max_func_cp_rings(struct bnxt *bp, unsigned int max);
++unsigned int bnxt_get_max_func_cp_rings_for_en(struct bnxt *bp);
  int bnxt_get_avail_msix(struct bnxt *bp, int num);
  int bnxt_reserve_rings(struct bnxt *bp);
  void bnxt_tx_disable(struct bnxt *bp);
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c
+@@ -451,7 +451,7 @@ static int bnxt_hwrm_func_vf_resc_cfg(st
+ 
+ 	bnxt_hwrm_cmd_hdr_init(bp, &req, HWRM_FUNC_VF_RESOURCE_CFG, -1, -1);
+ 
+-	vf_cp_rings = hw_resc->max_cp_rings - bp->cp_nr_rings;
++	vf_cp_rings = bnxt_get_max_func_cp_rings_for_en(bp) - bp->cp_nr_rings;
+ 	vf_stat_ctx = hw_resc->max_stat_ctxs - bp->num_stat_ctxs;
+ 	if (bp->flags & BNXT_FLAG_AGG_RINGS)
+ 		vf_rx_rings = hw_resc->max_rx_rings - bp->rx_nr_rings * 2;
+@@ -544,7 +544,8 @@ static int bnxt_hwrm_func_cfg(struct bnx
+ 	max_stat_ctxs = hw_resc->max_stat_ctxs;
+ 
+ 	/* Remaining rings are distributed equally amongs VF's for now */
+-	vf_cp_rings = (hw_resc->max_cp_rings - bp->cp_nr_rings) / num_vfs;
++	vf_cp_rings = (bnxt_get_max_func_cp_rings_for_en(bp) -
++		       bp->cp_nr_rings) / num_vfs;
+ 	vf_stat_ctx = (max_stat_ctxs - bp->num_stat_ctxs) / num_vfs;
+ 	if (bp->flags & BNXT_FLAG_AGG_RINGS)
+ 		vf_rx_rings = (hw_resc->max_rx_rings - bp->rx_nr_rings * 2) /
+@@ -638,7 +639,7 @@ static int bnxt_sriov_enable(struct bnxt
+ 	 */
+ 	vfs_supported = *num_vfs;
+ 
+-	avail_cp = hw_resc->max_cp_rings - bp->cp_nr_rings;
++	avail_cp = bnxt_get_max_func_cp_rings_for_en(bp) - bp->cp_nr_rings;
+ 	avail_stat = hw_resc->max_stat_ctxs - bp->num_stat_ctxs;
+ 	avail_cp = min_t(int, avail_cp, avail_stat);
+ 
 --- a/drivers/net/ethernet/broadcom/bnxt/bnxt_ulp.c
 +++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_ulp.c
-@@ -220,21 +220,6 @@ int bnxt_get_ulp_msix_base(struct bnxt *
- 	return 0;
+@@ -169,7 +169,6 @@ static int bnxt_req_msix_vecs(struct bnx
+ 		edev->ulp_tbl[ulp_id].msix_requested = avail_msix;
+ 	}
+ 	bnxt_fill_msix_vecs(bp, ent);
+-	bnxt_set_max_func_cp_rings(bp, max_cp_rings - avail_msix);
+ 	edev->flags |= BNXT_EN_FLAG_MSIX_REQUESTED;
+ 	return avail_msix;
  }
- 
--void bnxt_subtract_ulp_resources(struct bnxt *bp, int ulp_id)
--{
--	ASSERT_RTNL();
--	if (bnxt_ulp_registered(bp->edev, ulp_id)) {
--		struct bnxt_en_dev *edev = bp->edev;
--		unsigned int msix_req, max;
--
--		msix_req = edev->ulp_tbl[ulp_id].msix_requested;
--		max = bnxt_get_max_func_cp_rings(bp);
--		bnxt_set_max_func_cp_rings(bp, max - msix_req);
--		max = bnxt_get_max_func_stat_ctxs(bp);
--		bnxt_set_max_func_stat_ctxs(bp, max - 1);
--	}
--}
--
- static int bnxt_send_msg(struct bnxt_en_dev *edev, int ulp_id,
- 			 struct bnxt_fw_msg *fw_msg)
+@@ -178,7 +177,6 @@ static int bnxt_free_msix_vecs(struct bn
  {
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt_ulp.h
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_ulp.h
-@@ -90,7 +90,6 @@ static inline bool bnxt_ulp_registered(s
+ 	struct net_device *dev = edev->net;
+ 	struct bnxt *bp = netdev_priv(dev);
+-	int max_cp_rings, msix_requested;
  
- int bnxt_get_ulp_msix_num(struct bnxt *bp);
- int bnxt_get_ulp_msix_base(struct bnxt *bp);
--void bnxt_subtract_ulp_resources(struct bnxt *bp, int ulp_id);
- void bnxt_ulp_stop(struct bnxt *bp);
- void bnxt_ulp_start(struct bnxt *bp);
- void bnxt_ulp_sriov_cfg(struct bnxt *bp, int num_vfs);
+ 	ASSERT_RTNL();
+ 	if (ulp_id != BNXT_ROCE_ULP)
+@@ -187,9 +185,6 @@ static int bnxt_free_msix_vecs(struct bn
+ 	if (!(edev->flags & BNXT_EN_FLAG_MSIX_REQUESTED))
+ 		return 0;
+ 
+-	max_cp_rings = bnxt_get_max_func_cp_rings(bp);
+-	msix_requested = edev->ulp_tbl[ulp_id].msix_requested;
+-	bnxt_set_max_func_cp_rings(bp, max_cp_rings + msix_requested);
+ 	edev->ulp_tbl[ulp_id].msix_requested = 0;
+ 	edev->flags &= ~BNXT_EN_FLAG_MSIX_REQUESTED;
+ 	if (netif_running(dev)) {
 
 
