@@ -2,145 +2,141 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 421DBC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 05:52:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9973BC07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 05:53:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF5CF20861
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 05:52:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF5CF20861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 58EBF20861
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 05:53:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58EBF20861
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727409AbeIMLAw (ORCPT
+        id S1727716AbeIMLBB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 07:00:52 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60114 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726675AbeIMLAv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 07:00:51 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 34D39AE5E;
-        Thu, 13 Sep 2018 05:52:52 +0000 (UTC)
-Subject: Re: [PATCHv3 2/2] btrfs: change remove_extent_mapping to be void
- function
-To:     zhong jiang <zhongjiang@huawei.com>, dsterba@suse.com
-Cc:     jbacik@fb.com, clm@fb.com, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1536807675-25086-1-git-send-email-zhongjiang@huawei.com>
- <1536807675-25086-3-git-send-email-zhongjiang@huawei.com>
-From:   Nikolay Borisov <nborisov@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <42551abf-3ca1-7df6-0383-a1d8aa83ec89@suse.com>
-Date:   Thu, 13 Sep 2018 08:52:50 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 13 Sep 2018 07:01:01 -0400
+Received: from mail-io1-f69.google.com ([209.85.166.69]:56375 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726945AbeIMLBA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 07:01:00 -0400
+Received: by mail-io1-f69.google.com with SMTP id a3-v6so3132431iod.23
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 22:53:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=mO/mbV/lyCO4ho5Nedxx0wcTsQMjCNvEV1dbAL1ukKo=;
+        b=dAujigMvl4RQ+4Nt5XS4m8efhDAtoU1E4XXI7cYzpOtB1fND5ggOu/7i3wyrciCyIe
+         LwcS7w7qIGYxFE+4gO2eVAq+pXYtRVXj4extePrMzgKERspIdSYkCr4YGNQtFYiaQgvN
+         v1uUQ2iPbW+N+PuLZ7MRJqktfwhyMKcUagFpbKkY7tl0ISrOSVOM0WeT2aKMcU74z+2g
+         Yb8/B54xTu/XE16niA8oSTSIVbUKAHV4FlDrT/q5XmEwb5c8gQAiQylkPd8emoiQ7A8V
+         fFKis/yk1Kv4jtp6kY9QDeGCYvcmY/dtd1nZnjgz7sZmMuwuLXR0Yh36ze3HVrj1qs8H
+         1/Aw==
+X-Gm-Message-State: APzg51BWBHoAlur02N6f88srXzyAHft/hJG+jztvSRwPBPaB0wktetSr
+        5LNc2FK8ct8SRapoZYZa3iVA4Ln3CD8BzBxZKqg4rsohHSCQ
+X-Google-Smtp-Source: ANB0Vdamgc1xXEmN36JV2c643kZttJMEW5mV4rXCFGHvm4Nkj1M8B9lu6I+zlUGu0VFoV53relDoJt31qbBEHOu+OlQLmF4SDD25
 MIME-Version: 1.0
-In-Reply-To: <1536807675-25086-3-git-send-email-zhongjiang@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a6b:c94f:: with SMTP id z76-v6mr4504815iof.13.1536817982628;
+ Wed, 12 Sep 2018 22:53:02 -0700 (PDT)
+Date:   Wed, 12 Sep 2018 22:53:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f06cae0575ba5158@google.com>
+Subject: KASAN: global-out-of-bounds Read in mqueue_get_tree
+From:   syzbot <syzbot+8a81fb3d40f8c58aa8e2@syzkaller.appspotmail.com>
+To:     arnd@arndb.de, dbueso@suse.de, dhowells@redhat.com,
+        ebiederm@xmission.com, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
+
+syzbot found the following crash on:
+
+HEAD commit:    7c1b097f27bf Add linux-next specific files for 20180912
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=152fcd49400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5980033172920ec0
+dashboard link: https://syzkaller.appspot.com/bug?extid=8a81fb3d40f8c58aa8e2
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=140a53da400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10b0c6ae400000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+8a81fb3d40f8c58aa8e2@syzkaller.appspotmail.com
+
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+==================================================================
+BUG: KASAN: global-out-of-bounds in mqueue_get_tree+0x2a2/0x2e0  
+ipc/mqueue.c:362
+Read of size 8 at addr ffffffff885cef68 by task syz-executor013/5545
+
+CPU: 0 PID: 5545 Comm: syz-executor013 Not tainted  
+4.19.0-rc3-next-20180912+ #72
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1d3/0x2c4 lib/dump_stack.c:113
+  print_address_description.cold.8+0x58/0x1ff mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+  mqueue_get_tree+0x2a2/0x2e0 ipc/mqueue.c:362
+  vfs_get_tree+0x1cb/0x5c0 fs/super.c:1787
+  mq_create_mount+0xe3/0x190 ipc/mqueue.c:415
+  mq_init_ns+0x15a/0x210 ipc/mqueue.c:1621
+  create_ipc_ns ipc/namespace.c:58 [inline]
+  copy_ipcs+0x3d2/0x580 ipc/namespace.c:84
+  create_new_namespaces+0x376/0x900 kernel/nsproxy.c:87
+  unshare_nsproxy_namespaces+0xc3/0x1f0 kernel/nsproxy.c:206
+  ksys_unshare+0x79c/0x10b0 kernel/fork.c:2535
+  __do_sys_unshare kernel/fork.c:2603 [inline]
+  __se_sys_unshare kernel/fork.c:2601 [inline]
+  __x64_sys_unshare+0x31/0x40 kernel/fork.c:2601
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x446257
+Code: 00 00 00 b8 63 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 dd d7 fb ff c3  
+66 2e 0f 1f 84 00 00 00 00 00 66 90 b8 10 01 00 00 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 bd d7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffe2677e8e8 EFLAGS: 00000217 ORIG_RAX: 0000000000000110
+RAX: ffffffffffffffda RBX: 00007ffe2677f450 RCX: 0000000000446257
+RDX: 0000000000000000 RSI: 00007ffe2677e8f0 RDI: 0000000008000000
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000018
+R10: 0000000000000000 R11: 0000000000000217 R12: 0000000000403ea0
+R13: 0000000000403f30 R14: 0000000000000000 R15: 0000000000000000
+
+The buggy address belongs to the variable:
+  ipcns_operations+0x68/0xa00
+
+Memory state around the buggy address:
+  ffffffff885cee00: fa fa fa fa 00 00 00 00 00 02 fa fa fa fa fa fa
+  ffffffff885cee80: 00 00 00 01 fa fa fa fa 04 fa fa fa fa fa fa fa
+> ffffffff885cef00: 00 00 00 00 00 00 00 00 fa fa fa fa 03 fa fa fa
+                                                           ^
+  ffffffff885cef80: fa fa fa fa 07 fa fa fa fa fa fa fa 00 03 fa fa
+  ffffffff885cf000: fa fa fa fa 00 fa fa fa fa fa fa fa 00 04 fa fa
+==================================================================
 
 
-On 13.09.2018 06:01, zhong jiang wrote:
-> remove_extent_mapping use the variable "ret" for return value,
-> but it is not modified after initialzation. Further, I find that
-> any of the callers do not handle the return value, so it is safe
-> to drop the unneeded "ret" and make it to be void function.
-> 
-> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Reviewed-by: Nikolay Borisov <nborisov@suse.com
-
-> ---
->  fs/btrfs/extent_map.c | 5 +----
->  fs/btrfs/extent_map.h | 2 +-
->  2 files changed, 2 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/btrfs/extent_map.c b/fs/btrfs/extent_map.c
-> index c4e2347..81b6a08 100644
-> --- a/fs/btrfs/extent_map.c
-> +++ b/fs/btrfs/extent_map.c
-> @@ -428,16 +428,13 @@ struct extent_map *search_extent_mapping(struct extent_map_tree *tree,
->   * Removes @em from @tree.  No reference counts are dropped, and no checks
->   * are done to see if the range is in use
->   */
-> -int remove_extent_mapping(struct extent_map_tree *tree, struct extent_map *em)
-> +void remove_extent_mapping(struct extent_map_tree *tree, struct extent_map *em)
->  {
-> -	int ret = 0;
-> -
->  	WARN_ON(test_bit(EXTENT_FLAG_PINNED, &em->flags));
->  	rb_erase_cached(&em->rb_node, &tree->map);
->  	if (!test_bit(EXTENT_FLAG_LOGGING, &em->flags))
->  		list_del_init(&em->list);
->  	RB_CLEAR_NODE(&em->rb_node);
-> -	return ret;
->  }
->  
->  void replace_extent_mapping(struct extent_map_tree *tree,
-> diff --git a/fs/btrfs/extent_map.h b/fs/btrfs/extent_map.h
-> index df4e1a5..8798745 100644
-> --- a/fs/btrfs/extent_map.h
-> +++ b/fs/btrfs/extent_map.h
-> @@ -78,7 +78,7 @@ struct extent_map *lookup_extent_mapping(struct extent_map_tree *tree,
->  					 u64 start, u64 len);
->  int add_extent_mapping(struct extent_map_tree *tree,
->  		       struct extent_map *em, int modified);
-> -int remove_extent_mapping(struct extent_map_tree *tree, struct extent_map *em);
-> +void remove_extent_mapping(struct extent_map_tree *tree, struct extent_map *em);
->  void replace_extent_mapping(struct extent_map_tree *tree,
->  			    struct extent_map *cur,
->  			    struct extent_map *new,
-> 
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
