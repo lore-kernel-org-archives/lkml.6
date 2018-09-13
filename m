@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 673D5C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:46:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D02B4C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:46:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D13320881
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:46:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D13320881
+	by mail.kernel.org (Postfix) with ESMTP id 9503420854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:46:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9503420854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730220AbeIMSze (ORCPT
+        id S1730229AbeIMSzi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:55:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60786 "EHLO
+        Thu, 13 Sep 2018 14:55:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60792 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729449AbeIMSzd (ORCPT
+        with ESMTP id S1729449AbeIMSzh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:55:33 -0400
+        Thu, 13 Sep 2018 14:55:37 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 38741D10;
-        Thu, 13 Sep 2018 13:46:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 76608D10;
+        Thu, 13 Sep 2018 13:46:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Steve French <stfrench@microsoft.com>,
         Aurelien Aptel <aaptel@suse.com>,
+        Pavel Shilovsky <pshilov@microsoft.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 072/115] smb3: fix reset of bytes read and written stats
-Date:   Thu, 13 Sep 2018 15:31:32 +0200
-Message-Id: <20180913131828.114602175@linuxfoundation.org>
+Subject: [PATCH 4.14 073/115] SMB3: Number of requests sent should be displayed for SMB3 not just CIFS
+Date:   Thu, 13 Sep 2018 15:31:33 +0200
+Message-Id: <20180913131828.167549249@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -54,58 +55,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Steve French <stfrench@microsoft.com>
 
-[ Upstream commit c281bc0c7412308c7ec0888904f7c99353da4796 ]
+[ Upstream commit 289131e1f1e6ad8c661ec05e176b8f0915672059 ]
 
-echo 0 > /proc/fs/cifs/Stats is supposed to reset the stats
-but there were four (see example below) that were not reset
-(bytes read and witten, total vfs ops and max ops
-at one time).
+For SMB2/SMB3 the number of requests sent was not displayed
+in /proc/fs/cifs/Stats unless CONFIG_CIFS_STATS2 was
+enabled (only number of failed requests displayed). As
+with earlier dialects, we should be displaying these
+counters if CONFIG_CIFS_STATS is enabled. They
+are important for debugging.
 
-...
+e.g. when you cat /proc/fs/cifs/Stats (before the patch)
+Resources in use
+CIFS Session: 1
+Share (unique mount targets): 2
+SMB Request/Response Buffer: 1 Pool size: 5
+SMB Small Req/Resp Buffer: 1 Pool size: 30
+Operations (MIDs): 0
+
 0 session 0 share reconnects
-Total vfs operations: 100 maximum at one time: 2
+Total vfs operations: 690 maximum at one time: 2
 
 1) \\localhost\test
-SMBs: 0
-Bytes read: 502092  Bytes written: 31457286
-TreeConnects: 0 total 0 failed
-TreeDisconnects: 0 total 0 failed
-...
-
-This patch fixes cifs_stats_proc_write to properly reset
-those four.
+SMBs: 975
+Negotiates: 0 sent 0 failed
+SessionSetups: 0 sent 0 failed
+Logoffs: 0 sent 0 failed
+TreeConnects: 0 sent 0 failed
+TreeDisconnects: 0 sent 0 failed
+Creates: 0 sent 2 failed
+Closes: 0 sent 0 failed
+Flushes: 0 sent 0 failed
+Reads: 0 sent 0 failed
+Writes: 0 sent 0 failed
+Locks: 0 sent 0 failed
+IOCTLs: 0 sent 1 failed
+Cancels: 0 sent 0 failed
+Echos: 0 sent 0 failed
+QueryDirectories: 0 sent 63 failed
 
 Signed-off-by: Steve French <stfrench@microsoft.com>
 Reviewed-by: Aurelien Aptel <aaptel@suse.com>
+Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/cifs/cifs_debug.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ fs/cifs/smb2pdu.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/cifs/cifs_debug.c
-+++ b/fs/cifs/cifs_debug.c
-@@ -289,6 +289,10 @@ static ssize_t cifs_stats_proc_write(str
- 		atomic_set(&totBufAllocCount, 0);
- 		atomic_set(&totSmBufAllocCount, 0);
- #endif /* CONFIG_CIFS_STATS2 */
-+		spin_lock(&GlobalMid_Lock);
-+		GlobalMaxActiveXid = 0;
-+		GlobalCurrentXid = 0;
-+		spin_unlock(&GlobalMid_Lock);
- 		spin_lock(&cifs_tcp_ses_lock);
- 		list_for_each(tmp1, &cifs_tcp_ses_list) {
- 			server = list_entry(tmp1, struct TCP_Server_Info,
-@@ -301,6 +305,10 @@ static ssize_t cifs_stats_proc_write(str
- 							  struct cifs_tcon,
- 							  tcon_list);
- 					atomic_set(&tcon->num_smbs_sent, 0);
-+					spin_lock(&tcon->stat_lock);
-+					tcon->bytes_read = 0;
-+					tcon->bytes_written = 0;
-+					spin_unlock(&tcon->stat_lock);
- 					if (server->ops->clear_stats)
- 						server->ops->clear_stats(tcon);
- 				}
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -393,7 +393,7 @@ small_smb2_init(__le16 smb2_command, str
+ 	pdu->hdr.smb2_buf_length = cpu_to_be32(total_len);
+ 
+ 	if (tcon != NULL) {
+-#ifdef CONFIG_CIFS_STATS2
++#ifdef CONFIG_CIFS_STATS
+ 		uint16_t com_code = le16_to_cpu(smb2_command);
+ 		cifs_stats_inc(&tcon->stats.smb2_stats.smb2_com_sent[com_code]);
+ #endif
 
 
