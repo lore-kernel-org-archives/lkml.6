@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA595C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:54:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46560C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:54:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E9E220854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:54:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E9E220854
+	by mail.kernel.org (Postfix) with ESMTP id 0B2E620854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:54:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B2E620854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731197AbeIMTEP (ORCPT
+        id S1731203AbeIMTET (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:04:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33874 "EHLO
+        Thu, 13 Sep 2018 15:04:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33890 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728699AbeIMTEP (ORCPT
+        with ESMTP id S1728699AbeIMTET (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:04:15 -0400
+        Thu, 13 Sep 2018 15:04:19 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 565B1D1C;
-        Thu, 13 Sep 2018 13:54:39 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EB9A2D1C;
+        Thu, 13 Sep 2018 13:54:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ronnie Sahlberg <lsahlber@redhat.com>,
-        Steve French <stfrench@microsoft.com>,
+        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Song Liu <songliubraving@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 037/197] cifs: check if SMB2 PDU size has been padded and suppress the warning
-Date:   Thu, 13 Sep 2018 15:29:46 +0200
-Message-Id: <20180913131843.036039092@linuxfoundation.org>
+Subject: [PATCH 4.18 064/197] tcp, ulp: fix leftover icsk_ulp_ops preventing sock from reattach
+Date:   Thu, 13 Sep 2018 15:30:13 +0200
+Message-Id: <20180913131844.084550052@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -52,42 +54,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ronnie Sahlberg <lsahlber@redhat.com>
+From: Daniel Borkmann <daniel@iogearbox.net>
 
-[ Upstream commit e6c47dd0da1e3a484e778046fc10da0b20606a86 ]
+[ Upstream commit 90545cdc3f2b2ea700e24335610cd181e73756da ]
 
-Some SMB2/3 servers, Win2016 but possibly others too, adds padding
-not only between PDUs in a compound but also to the final PDU.
-This padding extends the PDU to a multiple of 8 bytes.
+I found that in BPF sockmap programs once we either delete a socket
+from the map or we updated a map slot and the old socket was purged
+from the map that these socket can never get reattached into a map
+even though their related psock has been dropped entirely at that
+point.
 
-Check if the unexpected length looks like this might be the case
-and avoid triggering the log messages for :
+Reason is that tcp_cleanup_ulp() leaves the old icsk->icsk_ulp_ops
+intact, so that on the next tcp_set_ulp_id() the kernel returns an
+-EEXIST thinking there is still some active ULP attached.
 
-  "SMB2 server sent bad RFC1001 len %d not %d\n"
+BPF sockmap is the only one that has this issue as the other user,
+kTLS, only calls tcp_cleanup_ulp() from tcp_v4_destroy_sock() whereas
+sockmap semantics allow dropping the socket from the map with all
+related psock state being cleaned up.
 
-Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
+Fixes: 1aa12bdf1bfb ("bpf: sockmap, add sock close() hook to remove socks")
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Acked-by: John Fastabend <john.fastabend@gmail.com>
+Acked-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/cifs/smb2misc.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ net/ipv4/tcp_ulp.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/fs/cifs/smb2misc.c
-+++ b/fs/cifs/smb2misc.c
-@@ -241,6 +241,13 @@ smb2_check_message(char *buf, unsigned i
- 			return 0;
- 
- 		/*
-+		 * Some windows servers (win2016) will pad also the final
-+		 * PDU in a compound to 8 bytes.
-+		 */
-+		if (((clc_len + 7) & ~7) == len)
-+			return 0;
+--- a/net/ipv4/tcp_ulp.c
++++ b/net/ipv4/tcp_ulp.c
+@@ -129,6 +129,8 @@ void tcp_cleanup_ulp(struct sock *sk)
+ 	if (icsk->icsk_ulp_ops->release)
+ 		icsk->icsk_ulp_ops->release(sk);
+ 	module_put(icsk->icsk_ulp_ops->owner);
 +
-+		/*
- 		 * MacOS server pads after SMB2.1 write response with 3 bytes
- 		 * of junk. Other servers match RFC1001 len to actual
- 		 * SMB2/SMB3 frame length (header + smb2 response specific data)
++	icsk->icsk_ulp_ops = NULL;
+ }
+ 
+ /* Change upper layer protocol for socket */
 
 
