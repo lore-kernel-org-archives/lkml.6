@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A852C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 02:41:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56356C070C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 02:42:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C79862146E
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 02:41:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C79862146E
+	by mail.kernel.org (Postfix) with ESMTP id 1898E2146E
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 02:42:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1898E2146E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728287AbeIMHtF (ORCPT
+        id S1728326AbeIMHtW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 03:49:05 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:43814 "EHLO
+        Thu, 13 Sep 2018 03:49:22 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:43786 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728037AbeIMHsS (ORCPT
+        with ESMTP id S1727881AbeIMHsS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 13 Sep 2018 03:48:18 -0400
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1g0HYt-0006Tj-H6; Thu, 13 Sep 2018 02:40:55 +0000
+        id 1g0HYs-0006TH-WE; Thu, 13 Sep 2018 02:40:55 +0000
 From:   Al Viro <viro@ZenIV.linux.org.uk>
 To:     Arnd Bergmann <arnd@arndb.de>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 45/50] gigaset: don't try to printk userland buffer contents
-Date:   Thu, 13 Sep 2018 03:40:44 +0100
-Message-Id: <20180913024049.24567-45-viro@ZenIV.linux.org.uk>
+Subject: [PATCH 41/50] dgnc: break-related ioctls won't reach ->ioctl()
+Date:   Thu, 13 Sep 2018 03:40:40 +0100
+Message-Id: <20180913024049.24567-41-viro@ZenIV.linux.org.uk>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20180913024049.24567-1-viro@ZenIV.linux.org.uk>
 References: <20180913023119.GQ19965@ZenIV.linux.org.uk>
@@ -43,26 +43,100 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-especially when you've just copied it in...
+kill the dead code, especially since ->break_ctl() will do the
+right thing anyway.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- drivers/isdn/gigaset/interface.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/dgnc/dgnc_tty.c | 75 -----------------------------------------
+ 1 file changed, 75 deletions(-)
 
-diff --git a/drivers/isdn/gigaset/interface.c b/drivers/isdn/gigaset/interface.c
-index 600c79b030cd..f9698c0c3885 100644
---- a/drivers/isdn/gigaset/interface.c
-+++ b/drivers/isdn/gigaset/interface.c
-@@ -206,7 +206,7 @@ static int if_ioctl(struct tty_struct *tty,
- 				? -EFAULT : 0;
- 			if (retval >= 0) {
- 				gigaset_dbg_buffer(DEBUG_IF, "GIGASET_BRKCHARS",
--						   6, (const unsigned char *) arg);
-+						   6, buf);
- 				retval = cs->ops->brkchars(cs, buf);
- 			}
- 			break;
+diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
+index 9accaa705820..040af55e9e68 100644
+--- a/drivers/staging/dgnc/dgnc_tty.c
++++ b/drivers/staging/dgnc/dgnc_tty.c
+@@ -2081,81 +2081,6 @@ static int dgnc_tty_ioctl(struct tty_struct *tty, unsigned int cmd,
+ 
+ 	switch (cmd) {
+ 	/* Here are all the standard ioctl's that we MUST implement */
+-
+-	case TCSBRK:
+-		/*
+-		 * TCSBRK is SVID version: non-zero arg --> no break
+-		 * this behaviour is exploited by tcdrain().
+-		 *
+-		 * According to POSIX.1 spec (7.2.2.1.2) breaks should be
+-		 * between 0.25 and 0.5 seconds so we'll ask for something
+-		 * in the middle: 0.375 seconds.
+-		 */
+-		rc = tty_check_change(tty);
+-		spin_unlock_irqrestore(&ch->ch_lock, flags);
+-		if (rc)
+-			return rc;
+-
+-		rc = ch_bd_ops->drain(tty, 0);
+-		if (rc)
+-			return -EINTR;
+-
+-		spin_lock_irqsave(&ch->ch_lock, flags);
+-
+-		if (((cmd == TCSBRK) && (!arg)) || (cmd == TCSBRKP))
+-			ch_bd_ops->send_break(ch, 250);
+-
+-		spin_unlock_irqrestore(&ch->ch_lock, flags);
+-
+-		return 0;
+-
+-	case TCSBRKP:
+-		/*
+-		 * support for POSIX tcsendbreak()
+-		 * According to POSIX.1 spec (7.2.2.1.2) breaks should be
+-		 * between 0.25 and 0.5 seconds so we'll ask for something
+-		 * in the middle: 0.375 seconds.
+-		 */
+-		rc = tty_check_change(tty);
+-		spin_unlock_irqrestore(&ch->ch_lock, flags);
+-		if (rc)
+-			return rc;
+-
+-		rc = ch_bd_ops->drain(tty, 0);
+-		if (rc)
+-			return -EINTR;
+-
+-		spin_lock_irqsave(&ch->ch_lock, flags);
+-
+-		ch_bd_ops->send_break(ch, 250);
+-
+-		spin_unlock_irqrestore(&ch->ch_lock, flags);
+-
+-		return 0;
+-
+-	case TIOCSBRK:
+-		rc = tty_check_change(tty);
+-		spin_unlock_irqrestore(&ch->ch_lock, flags);
+-		if (rc)
+-			return rc;
+-
+-		rc = ch_bd_ops->drain(tty, 0);
+-		if (rc)
+-			return -EINTR;
+-
+-		spin_lock_irqsave(&ch->ch_lock, flags);
+-
+-		ch_bd_ops->send_break(ch, 250);
+-
+-		spin_unlock_irqrestore(&ch->ch_lock, flags);
+-
+-		return 0;
+-
+-	case TIOCCBRK:
+-		/* Do Nothing */
+-		spin_unlock_irqrestore(&ch->ch_lock, flags);
+-		return 0;
+-
+ 	case TIOCGSOFTCAR:
+ 
+ 		spin_unlock_irqrestore(&ch->ch_lock, flags);
 -- 
 2.11.0
 
