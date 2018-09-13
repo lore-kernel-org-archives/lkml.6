@@ -2,136 +2,102 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BEEDC43143
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 20:20:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2378AC43143
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 20:22:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B30022086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 20:20:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B56C22086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 20:22:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="aecOU2/H"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B30022086C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hkzAPtg5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B56C22086C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728175AbeINBb0 (ORCPT
+        id S1728210AbeINBdL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 21:31:26 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:38217 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728038AbeINBb0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 21:31:26 -0400
-Received: by mail-pl1-f193.google.com with SMTP id u11-v6so3105217plq.5
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 13:20:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=CDDSUKz9NtNvHaoyexLzc+koabhzRYXuUDJ1jOIoVyQ=;
-        b=aecOU2/HD16ahGO5kxNviohY2SmqTveCvEFppZ+3uPPgjUnp4DRqIiAYtI9zYKUOSZ
-         Im+feYEmJg9kvZvCMJP2NzuXwCBfamd6G1ai7u5AlSxhiP6F7x+JCBCesG9AkZqiruNd
-         GqlTEmIDtcb2DWxWO/bHMf+wfveeAn/IFxl4s6F6q+TBpjTLgJr/Rf0lSp7NFCFnfMW1
-         RxcB+nStLXKdvxjFuyugDO9wCFZdSlGeTj++tt8joBcuLJ5pxupR34vCCHbgmC447jhO
-         yXV+JQiCPaIz9zkvsB8y5K/06V/NyogyMVun9phUuslGB1kDweHcyVN4C2O7e7YOSWLk
-         DAsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CDDSUKz9NtNvHaoyexLzc+koabhzRYXuUDJ1jOIoVyQ=;
-        b=oWKWcsX9+QGnFBtUt5tR+1g51fmSlMKmvL4yx5OtHIrWB+gTiIJmPYj4Wi2Oz98zmz
-         eLvAgA2xYa337CRKvO6w7xDXS58MGBHSgAmI8wKO9L1HdEq5Tn8igRs50Bh4+oPpUp0N
-         VWItn+6BF3ADSaFvkVXokQ5vBTz5Ii84743KKyBZi0BPh4tlw9cB2/AO+MCuvumgzX8R
-         lJHc/aMyE9sDOW993bxo6PFhBCAOcnC5S7gXMbjKSTUC66+jcHYXsI9vApBWM32klYi3
-         obxdM+2Vs56TKLkl8x4ddFniH56UuTzIFX4549rIL1gY9XQ2tOB5G+GaU+TkV91FMpyI
-         fxbg==
-X-Gm-Message-State: APzg51AKI/H/q1zze7hQiGrv2mCYfi+ffzYamgkPIsiqN8WK2P108duC
-        Bj4A1qdqsShkUr7uk0qqgGxxpA==
-X-Google-Smtp-Source: ANB0VdbWTaFvVKF4bG8GllZsGevdSVgETCrsj1RyIGUwYreJkd70L0GQ/d8rKsMxBBMdjMGMRkfE9w==
-X-Received: by 2002:a17:902:292b:: with SMTP id g40-v6mr8677271plb.223.1536870023016;
-        Thu, 13 Sep 2018 13:20:23 -0700 (PDT)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id v22-v6sm8301533pfi.60.2018.09.13.13.20.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 13 Sep 2018 13:20:22 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1g0Y69-00040f-74; Thu, 13 Sep 2018 14:20:21 -0600
-Date:   Thu, 13 Sep 2018 14:20:21 -0600
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc:     peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org, jgross@suse.com, dunlapg@umich.edu,
-        "Dr. Greg Wettstein" <greg@wind.enjellic.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>, stable@vger.kernel.org
-Subject: Re: [PATCH RESEND] tpm: Restore functionality to xen vtpm driver.
-Message-ID: <20180913202021.GD31953@ziepe.ca>
-References: <20180913194749.32178-1-boris.ostrovsky@oracle.com>
+        Thu, 13 Sep 2018 21:33:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47538 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728029AbeINBdK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 21:33:10 -0400
+Received: from mail-yw1-f45.google.com (mail-yw1-f45.google.com [209.85.161.45])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 461D520C0A;
+        Thu, 13 Sep 2018 20:22:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1536870127;
+        bh=J7DCk9nceq9oh1NpPx9/2yCEBtqEge+qNVpiJYH2wkM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=hkzAPtg5mge2O1fWJBhNaYn4jgg21MRfnFt2AMcG+JPEOfvhzj7Bd6W+fXMP4v1BK
+         TDuNia230XFVJpjqxpXYlozPccvEBnZQx5qcJxSeGf4sA4/gL3v2T/iebDK7ZF8Tcd
+         olMK6rM+//Sl5qEDd9vAOnUvuiJ7aR8dPsmHOjwI=
+Received: by mail-yw1-f45.google.com with SMTP id l189-v6so1725436ywb.10;
+        Thu, 13 Sep 2018 13:22:07 -0700 (PDT)
+X-Gm-Message-State: APzg51B848AWEeh4gxJxW+MIpMg/wqhk3rbhs/2mw5o2AsGUqscfa0Xb
+        CtIICy4nKKqsTfylpB/CRB70p47MSruJUX1e/Zk=
+X-Google-Smtp-Source: ANB0VdbUGN6/j9B5YKYui9QIThtKmFrO6HnxL95Ar/ft3h5wHDiGNGH51iBxeZROGIXvndwlr9U/JUqvyqSJhECQZPk=
+X-Received: by 2002:a81:578e:: with SMTP id l136-v6mr4265671ywb.396.1536870126500;
+ Thu, 13 Sep 2018 13:22:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180913194749.32178-1-boris.ostrovsky@oracle.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20180911123732.32579-1-colin.king@canonical.com>
+In-Reply-To: <20180911123732.32579-1-colin.king@canonical.com>
+From:   Alan Tull <atull@kernel.org>
+Date:   Thu, 13 Sep 2018 15:21:30 -0500
+X-Gmail-Original-Message-ID: <CANk1AXTxBtMEJo0NTW9g0GeMX8-RTcD_PJ2eyqkYyCtw-u_9Mw@mail.gmail.com>
+Message-ID: <CANk1AXTxBtMEJo0NTW9g0GeMX8-RTcD_PJ2eyqkYyCtw-u_9Mw@mail.gmail.com>
+Subject: Re: [PATCH] fpga: region: fix spelling mistake "partion" -> "partition"
+To:     Colin King <colin.king@canonical.com>
+Cc:     Moritz Fischer <mdf@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-fpga@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 13, 2018 at 03:47:49PM -0400, Boris Ostrovsky wrote:
-> From: "Dr. Greg Wettstein" <greg@wind.enjellic.com>
-> 
-> Functionality of the xen-tpmfront driver was lost secondary to
-> the introduction of xenbus multi-page support in commit ccc9d90a9a8b
-> ("xenbus_client: Extend interface to support multi-page ring").
+On Tue, Sep 11, 2018 at 7:37 AM Colin King <colin.king@canonical.com> wrote:
 
-This should be in a Fixes: line..
+Hi Colin,
 
-> In this commit a pointer to the shared page address was being
-> passed to the xenbus_grant_ring() function rather then the
-> address of the shared page itself.  This resulted in a situation
-> where the driver would attach to the vtpm-stubdom but any attempt
-> to send a command to the stub domain would timeout.
-> 
-> A diagnostic finding for this regression is the following error
-> message being generated when the xen-tpmfront driver probes for a
-> device:
-> 
-> <3>vtpm vtpm-0: tpm_transmit: tpm_send: error -62
-> 
-> <3>vtpm vtpm-0: A TPM error (-62) occurred attempting to determine
-> the timeouts
-> 
-> This fix is relevant to all kernels from 4.1 forward which is the
-> release in which multi-page xenbus support was introduced.
-> 
-> Daniel De Graaf formulated the fix by code inspection after the
-> regression point was located.
-> 
-> Signed-off-by: Dr. Greg Wettstein <greg@enjellic.com>
-> 
-> [boris: fixed commit message formatting]
-> Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-> Cc: stable@vger.kernel.org # v4.1+
-> We've lost this patch a couple of years ago, re-submitting.
-> 
-> 
->  drivers/char/tpm/xen-tpmfront.c | 2 +-
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Trivial fix to spelling mistake in the documentation
+
+I took a look, there's other misspellings in this doc.  I'd like to
+get them all in one patch if possible.  If I have time I'll add them
+to this patch or if you have time, you can.
+
+Alan
+
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  Documentation/devicetree/bindings/fpga/fpga-region.txt | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-tpmfront.c
-> index 911475d36800..b150f87f38f5 100644
-> +++ b/drivers/char/tpm/xen-tpmfront.c
-> @@ -264,7 +264,7 @@ static int setup_ring(struct xenbus_device *dev, struct tpm_private *priv)
->  		return -ENOMEM;
->  	}
->  
-> -	rv = xenbus_grant_ring(dev, &priv->shr, 1, &gref);
-> +	rv = xenbus_grant_ring(dev, priv->shr, 1, &gref);
->  	if (rv < 0)
->  		return rv;
->  
+>
+> diff --git a/Documentation/devicetree/bindings/fpga/fpga-region.txt b/Documentation/devicetree/bindings/fpga/fpga-region.txt
+> index 6db8aeda461a..71beb85b56f1 100644
+> --- a/Documentation/devicetree/bindings/fpga/fpga-region.txt
+> +++ b/Documentation/devicetree/bindings/fpga/fpga-region.txt
+> @@ -484,7 +484,7 @@ It is beyond the scope of this document to fully describe all the FPGA design
+>  constraints required to make partial reconfiguration work[1] [2] [3], but a few
+>  deserve quick mention.
+>
+> -A persona must have boundary connections that line up with those of the partion
+> +A persona must have boundary connections that line up with those of the partition
+>  or region it is designed to go into.
+>
+>  During programming, transactions through those connections must be stopped and
+> --
+> 2.17.1
+>
