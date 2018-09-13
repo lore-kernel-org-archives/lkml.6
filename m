@@ -2,101 +2,112 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 130BDC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 07:39:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A050C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 07:40:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBF9720866
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 07:39:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBF9720866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 0081E20866
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 07:40:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rJzaAYvB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0081E20866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727693AbeIMMrW (ORCPT
+        id S1727726AbeIMMtB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 08:47:22 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:11699 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726680AbeIMMrW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 08:47:22 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 1F3D8514BD132;
-        Thu, 13 Sep 2018 15:39:04 +0800 (CST)
-Received: from [127.0.0.1] (10.177.29.68) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.399.0; Thu, 13 Sep 2018
- 15:39:03 +0800
-Message-ID: <5B9A1416.7010405@huawei.com>
-Date:   Thu, 13 Sep 2018 15:39:02 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
+        Thu, 13 Sep 2018 08:49:01 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34024 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726835AbeIMMtB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 08:49:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Rwu5nHS+YtKYcregdpnqjfkf50U5AzMbgfwEtt4P7Gg=; b=rJzaAYvB7CkX4CdWLMWaMXsiF
+        9x7dXYzPQQYmr4lNwbbK41h1c/BjouFQ6K4bwoB5+Z3iEhDYgwtN/0/9kbacs8yTFQBbkYKSxkbl1
+        1c6+q21TA3PpxMjtSd769sO2QSGsLJU0ivheqYLEKruYnps4LC7TavmegGuUJ/7yh1i23bda0lYcS
+        HarSFrjs5POim7bvdy5clny3Ejv3Q2Qh9CsO7Ewx7kecKc4k5T/7G3vKyWei1pg/BMEGOzqamfLmK
+        nb00Z7gC5O1t66PwMK+hS9u6HeAalDU1oJ7Kners05XeijSBaWd3UuIDq2fDAgPzU8ZeOOc2YR1sJ
+        aPORX6DtA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g0MF2-0008Rx-KB; Thu, 13 Sep 2018 07:40:44 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id EE65120587670; Thu, 13 Sep 2018 09:40:42 +0200 (CEST)
+Date:   Thu, 13 Sep 2018 09:40:42 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Jiri Olsa <jolsa@kernel.org>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <andi@firstfloor.org>
+Subject: Re: [PATCH] perf: Prevent recursion in ring buffer
+Message-ID: <20180913074042.GU24124@hirez.programming.kicks-ass.net>
+References: <20180912193317.10339-1-jolsa@kernel.org>
 MIME-Version: 1.0
-To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>
-CC:     Jiri Kosina <jikos@kernel.org>, open list:
-        HID CORE LAYER <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>, ;
-Illegal-Object: Syntax error in CC: address found on vger.kernel.org:
-        CC:     ;
-                        ^-missing semicolon to end mail group, extraneous tokens in mailbox, missing end of mailbox
-Subject: Re: [PATCH] HID: logitech: fix a used uninitialized GCC warning
-References: <1536810739-27342-1-git-send-email-zhongjiang@huawei.com> <CAO-hwJJAGdUokt4rByNFsit1bY8t3ZpV3CFh-ES7-GNukZTBLw@mail.gmail.com>
-In-Reply-To: <CAO-hwJJAGdUokt4rByNFsit1bY8t3ZpV3CFh-ES7-GNukZTBLw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.177.29.68]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180912193317.10339-1-jolsa@kernel.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/9/13 15:01, Benjamin Tissoires wrote:
-> On Thu, Sep 13, 2018 at 6:04 AM zhong jiang <zhongjiang@huawei.com> wrote:
->> Fix the following compile warning:
->>
->> drivers/hid/hid-logitech-hidpp.c: In function ‘hi_res_scroll_enable’:
->> drivers/hid/hid-logitech-hidpp.c:2714:54: warning: ‘multiplier’ may be used uninitialized in this function [-Wmaybe-uninitialized]
->>   hidpp->vertical_wheel_counter.resolution_multiplier = multiplier;
->>
->> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
->> ---
->>  drivers/hid/hid-logitech-hidpp.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/hid/hid-logitech-hidpp.c b/drivers/hid/hid-logitech-hidpp.c
->> index 5f0c080..83c43dd 100644
->> --- a/drivers/hid/hid-logitech-hidpp.c
->> +++ b/drivers/hid/hid-logitech-hidpp.c
->> @@ -2696,7 +2696,7 @@ static int hi_res_scroll_look_up_microns(__u32 product_id)
->>  static int hi_res_scroll_enable(struct hidpp_device *hidpp)
->>  {
->>         int ret;
->> -       u8 multiplier;
->> +       u8 uninitialized_var(multiplier);
-> I think your patch is correct (multiplier will be set given the code
-> path), but IMO, it feels terribly wrong to explicitly remove this
-> warning this way. The problem is that if someone else adds a new piece
-> of code, we might miss the fact that multiplier is not set and we
-> might show garbage in the hid_info call.
-Make sense.
->
-> Why don't you initialize the value to 8 as in the 'else' statement and
-> remove the now duplicated assignement in this else statement?
-Will do in v2.  Thank you for your suggestion.
+On Wed, Sep 12, 2018 at 09:33:17PM +0200, Jiri Olsa wrote:
 
-Thanks,
-zhong jiang
-> Cheers,
-> Benjamin
->
->>         if (hidpp->quirks & HIDPP_QUIRK_HI_RES_SCROLL_X2121) {
->>                 ret = hidpp_hrw_set_wheel_mode(hidpp, false, true, false);
->> --
->> 1.7.12.4
->>
-> .
->
+>   # perf record -e 'sched:sched_switch,sched:sched_wakeup' perf bench sched messaging
 
+> The reason for the corruptions are some of the scheduling tracepoints,
+> that have __perf_task dfined and thus allow to store data to another
+> cpu ring buffer:
+> 
+>   sched_waking
+>   sched_wakeup
+>   sched_wakeup_new
+>   sched_stat_wait
+>   sched_stat_sleep
+>   sched_stat_iowait
+>   sched_stat_blocked
 
+> And then iterates events of the 'task' and store the sample
+> for any task's event that passes tracepoint checks:
+> 
+>   ctx = rcu_dereference(task->perf_event_ctxp[perf_sw_context]);
+> 
+>   list_for_each_entry_rcu(event, &ctx->event_list, event_entry) {
+>     if (event->attr.type != PERF_TYPE_TRACEPOINT)
+>       continue;
+>     if (event->attr.config != entry->type)
+>       continue;
+> 
+>     perf_swevent_event(event, count, &data, regs);
+>   }
+> 
+> Above code can race with same code running on another cpu,
+> ending up with 2 cpus trying to store under the same ring
+> buffer, which is not handled at the moment.
+
+It can yes, however the only way I can see this breaking is if we use
+!inherited events with a strict per-task buffer, but your record command
+doesn't use that.
+
+Now, your test-case uses inherited events, which would all share the
+buffer, however IIRC inherited events require per-task-per-cpu buffers,
+because there is already no guarantee the various tasks run on the same
+CPU in the first place.
+
+This means we _should_ write to the @task's local CPU buffer, and that
+would work again.
+
+Let me try and figure out where this is going wrong.
