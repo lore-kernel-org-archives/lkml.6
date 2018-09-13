@@ -2,46 +2,50 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D3F3C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:31:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41ED5C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:31:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD7602146E
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:31:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD7602146E
+	by mail.kernel.org (Postfix) with ESMTP id EBB5E20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:31:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBB5E20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727697AbeIMSkr (ORCPT
+        id S1727763AbeIMSkv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:40:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58288 "EHLO
+        Thu, 13 Sep 2018 14:40:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58304 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726452AbeIMSkr (ORCPT
+        with ESMTP id S1726452AbeIMSkv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:40:47 -0400
+        Thu, 13 Sep 2018 14:40:51 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8C580D19;
-        Thu, 13 Sep 2018 13:31:18 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 81491D1B;
+        Thu, 13 Sep 2018 13:31:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Beulich <JBeulich@suse.com>,
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
         Michal Hocko <mhocko@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 01/60] x86/speculation/l1tf: Fix up pte->pfn conversion for PAE
-Date:   Thu, 13 Sep 2018 15:30:08 +0200
-Message-Id: <20180913131745.340659928@linuxfoundation.org>
+        Andrew Morton <akpm@linux-foundation.org>,
+        Rik van Riel <riel@redhat.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Kees Cook <keescook@chromium.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 10/60] fork: dont copy inconsistent signal handler state to child
+Date:   Thu, 13 Sep 2018 15:30:17 +0200
+Message-Id: <20180913131745.776629828@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131745.261413581@linuxfoundation.org>
 References: <20180913131745.261413581@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -54,41 +58,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michal Hocko <mhocko@suse.cz>
+From: Jann Horn <jannh@google.com>
 
-commit e14d7dfb41f5807a0c1c26a13f2b8ef16af24935 upstream.
+[ Upstream commit 06e62a46bbba20aa5286102016a04214bb446141 ]
 
-Jan has noticed that pte_pfn and co. resp. pfn_pte are incorrect for
-CONFIG_PAE because phys_addr_t is wider than unsigned long and so the
-pte_val reps. shift left would get truncated. Fix this up by using proper
-types.
+Before this change, if a multithreaded process forks while one of its
+threads is changing a signal handler using sigaction(), the memcpy() in
+copy_sighand() can race with the struct assignment in do_sigaction().  It
+isn't clear whether this can cause corruption of the userspace signal
+handler pointer, but it definitely can cause inconsistency between
+different fields of struct sigaction.
 
-[Just one chunk, again, needed here.  Thanks to Ben and Guenter for
-finding and fixing this. - gregkh]
+Take the appropriate spinlock to avoid this.
 
-Fixes: 6b28baca9b1f ("x86/speculation/l1tf: Protect PROT_NONE PTEs against speculation")
-Reported-by: Jan Beulich <JBeulich@suse.com>
-Signed-off-by: Michal Hocko <mhocko@suse.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
+I have tested that this patch prevents inconsistency between sa_sigaction
+and sa_flags, which is possible before this patch.
+
+Link: http://lkml.kernel.org/r/20180702145108.73189-1-jannh@google.com
+Signed-off-by: Jann Horn <jannh@google.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Rik van Riel <riel@redhat.com>
+Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/x86/include/asm/pgtable.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/fork.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/arch/x86/include/asm/pgtable.h
-+++ b/arch/x86/include/asm/pgtable.h
-@@ -385,7 +385,7 @@ static inline pmd_t pfn_pmd(unsigned lon
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1109,7 +1109,9 @@ static int copy_sighand(unsigned long cl
+ 		return -ENOMEM;
  
- static inline pud_t pfn_pud(unsigned long page_nr, pgprot_t pgprot)
- {
--	phys_addr_t pfn = page_nr << PAGE_SHIFT;
-+	phys_addr_t pfn = (phys_addr_t)page_nr << PAGE_SHIFT;
- 	pfn ^= protnone_mask(pgprot_val(pgprot));
- 	pfn &= PHYSICAL_PUD_PAGE_MASK;
- 	return __pud(pfn | massage_pgprot(pgprot));
+ 	atomic_set(&sig->count, 1);
++	spin_lock_irq(&current->sighand->siglock);
+ 	memcpy(sig->action, current->sighand->action, sizeof(sig->action));
++	spin_unlock_irq(&current->sighand->siglock);
+ 	return 0;
+ }
+ 
 
 
