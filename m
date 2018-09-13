@@ -2,44 +2,39 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAD_ENC_HEADER,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A53FC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:44:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B669C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:44:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0271C20854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:44:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0271C20854
+	by mail.kernel.org (Postfix) with ESMTP id DDE632146E
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:44:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDE632146E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730080AbeIMSyY (ORCPT
+        id S1730083AbeIMSy3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:54:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60624 "EHLO
+        Thu, 13 Sep 2018 14:54:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60638 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728239AbeIMSyX (ORCPT
+        with ESMTP id S1728239AbeIMSy2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:54:23 -0400
+        Thu, 13 Sep 2018 14:54:28 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2EC9FCF3;
-        Thu, 13 Sep 2018 13:44:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5D0F3CF3;
+        Thu, 13 Sep 2018 13:44:55 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "=?UTF-8?q?Ernesto=20A . =20Fern=C3=A1ndez?=" 
-        <ernesto.mnd.fernandez@gmail.com>,
-        Anatoly Trosinenko <anatoly.trosinenko@gmail.com>,
-        Viacheslav Dubeyko <slava@dubeyko.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Laura Abbott <labbott@redhat.com>,
+        "J. Bruce Fields" <bfields@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 023/115] hfs: prevent crash on exit from failed search
-Date:   Thu, 13 Sep 2018 15:30:43 +0200
-Message-Id: <20180913131824.999383871@linuxfoundation.org>
+Subject: [PATCH 4.14 024/115] sunrpc: Dont use stack buffer with scatterlist
+Date:   Thu, 13 Sep 2018 15:30:44 +0200
+Message-Id: <20180913131825.086389858@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -57,41 +52,105 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Ernesto A. Fern·ndez" <ernesto.mnd.fernandez@gmail.com>
+From: Laura Abbott <labbott@redhat.com>
 
-[ Upstream commit dc2572791d3a41bab94400af2b6bca9d71ccd303 ]
+[ Upstream commit 44090cc876926277329e1608bafc01b9f6da627f ]
 
-hfs_find_exit() expects fd->bnode to be NULL after a search has failed.
-hfs_brec_insert() may instead set it to an error-valued pointer.  Fix
-this to prevent a crash.
+Fedora got a bug report from NFS:
 
-Link: http://lkml.kernel.org/r/53d9749a029c41b4016c495fc5838c9dba3afc52.1530294815.git.ernesto.mnd.fernandez@gmail.com
-Signed-off-by: Ernesto A. Fern√°ndez <ernesto.mnd.fernandez@gmail.com>
-Cc: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
-Cc: Viacheslav Dubeyko <slava@dubeyko.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+kernel BUG at include/linux/scatterlist.h:143!
+...
+RIP: 0010:sg_init_one+0x7d/0x90
+..
+  make_checksum+0x4e7/0x760 [rpcsec_gss_krb5]
+  gss_get_mic_kerberos+0x26e/0x310 [rpcsec_gss_krb5]
+  gss_marshal+0x126/0x1a0 [auth_rpcgss]
+  ? __local_bh_enable_ip+0x80/0xe0
+  ? call_transmit_status+0x1d0/0x1d0 [sunrpc]
+  call_transmit+0x137/0x230 [sunrpc]
+  __rpc_execute+0x9b/0x490 [sunrpc]
+  rpc_run_task+0x119/0x150 [sunrpc]
+  nfs4_run_exchange_id+0x1bd/0x250 [nfsv4]
+  _nfs4_proc_exchange_id+0x2d/0x490 [nfsv4]
+  nfs41_discover_server_trunking+0x1c/0xa0 [nfsv4]
+  nfs4_discover_server_trunking+0x80/0x270 [nfsv4]
+  nfs4_init_client+0x16e/0x240 [nfsv4]
+  ? nfs_get_client+0x4c9/0x5d0 [nfs]
+  ? _raw_spin_unlock+0x24/0x30
+  ? nfs_get_client+0x4c9/0x5d0 [nfs]
+  nfs4_set_client+0xb2/0x100 [nfsv4]
+  nfs4_create_server+0xff/0x290 [nfsv4]
+  nfs4_remote_mount+0x28/0x50 [nfsv4]
+  mount_fs+0x3b/0x16a
+  vfs_kern_mount.part.35+0x54/0x160
+  nfs_do_root_mount+0x7f/0xc0 [nfsv4]
+  nfs4_try_mount+0x43/0x70 [nfsv4]
+  ? get_nfs_version+0x21/0x80 [nfs]
+  nfs_fs_mount+0x789/0xbf0 [nfs]
+  ? pcpu_alloc+0x6ca/0x7e0
+  ? nfs_clone_super+0x70/0x70 [nfs]
+  ? nfs_parse_mount_options+0xb40/0xb40 [nfs]
+  mount_fs+0x3b/0x16a
+  vfs_kern_mount.part.35+0x54/0x160
+  do_mount+0x1fd/0xd50
+  ksys_mount+0xba/0xd0
+  __x64_sys_mount+0x21/0x30
+  do_syscall_64+0x60/0x1f0
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+This is BUG_ON(!virt_addr_valid(buf)) triggered by using a stack
+allocated buffer with a scatterlist. Convert the buffer for
+rc4salt to be dynamically allocated instead.
+
+Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1615258
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/hfs/brec.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ net/sunrpc/auth_gss/gss_krb5_crypto.c |   12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
---- a/fs/hfs/brec.c
-+++ b/fs/hfs/brec.c
-@@ -75,9 +75,10 @@ int hfs_brec_insert(struct hfs_find_data
- 	if (!fd->bnode) {
- 		if (!tree->root)
- 			hfs_btree_inc_height(tree);
--		fd->bnode = hfs_bnode_find(tree, tree->leaf_head);
--		if (IS_ERR(fd->bnode))
--			return PTR_ERR(fd->bnode);
-+		node = hfs_bnode_find(tree, tree->leaf_head);
-+		if (IS_ERR(node))
-+			return PTR_ERR(node);
-+		fd->bnode = node;
- 		fd->record = -1;
+--- a/net/sunrpc/auth_gss/gss_krb5_crypto.c
++++ b/net/sunrpc/auth_gss/gss_krb5_crypto.c
+@@ -169,7 +169,7 @@ make_checksum_hmac_md5(struct krb5_ctx *
+ 	struct scatterlist              sg[1];
+ 	int err = -1;
+ 	u8 *checksumdata;
+-	u8 rc4salt[4];
++	u8 *rc4salt;
+ 	struct crypto_ahash *md5;
+ 	struct crypto_ahash *hmac_md5;
+ 	struct ahash_request *req;
+@@ -183,14 +183,18 @@ make_checksum_hmac_md5(struct krb5_ctx *
+ 		return GSS_S_FAILURE;
  	}
- 	new_node = NULL;
+ 
++	rc4salt = kmalloc_array(4, sizeof(*rc4salt), GFP_NOFS);
++	if (!rc4salt)
++		return GSS_S_FAILURE;
++
+ 	if (arcfour_hmac_md5_usage_to_salt(usage, rc4salt)) {
+ 		dprintk("%s: invalid usage value %u\n", __func__, usage);
+-		return GSS_S_FAILURE;
++		goto out_free_rc4salt;
+ 	}
+ 
+ 	checksumdata = kmalloc(GSS_KRB5_MAX_CKSUM_LEN, GFP_NOFS);
+ 	if (!checksumdata)
+-		return GSS_S_FAILURE;
++		goto out_free_rc4salt;
+ 
+ 	md5 = crypto_alloc_ahash("md5", 0, CRYPTO_ALG_ASYNC);
+ 	if (IS_ERR(md5))
+@@ -258,6 +262,8 @@ out_free_md5:
+ 	crypto_free_ahash(md5);
+ out_free_cksum:
+ 	kfree(checksumdata);
++out_free_rc4salt:
++	kfree(rc4salt);
+ 	return err ? GSS_S_FAILURE : 0;
+ }
+ 
 
 
