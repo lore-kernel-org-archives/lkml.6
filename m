@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C3F1C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:38:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52CA3C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:38:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 508E720854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:38:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 508E720854
+	by mail.kernel.org (Postfix) with ESMTP id 1661220854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:38:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1661220854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729444AbeIMSrl (ORCPT
+        id S1729458AbeIMSrp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:47:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59648 "EHLO
+        Thu, 13 Sep 2018 14:47:45 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59660 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728239AbeIMSrk (ORCPT
+        with ESMTP id S1727658AbeIMSro (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:47:40 -0400
+        Thu, 13 Sep 2018 14:47:44 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 09E40CF3;
-        Thu, 13 Sep 2018 13:38:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3B385D10;
+        Thu, 13 Sep 2018 13:38:13 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xu Wen <wen.xu@gatech.edu>,
-        Qu Wenruo <wqu@suse.com>, Gu Jinxiang <gujx@cn.fujitsu.com>,
-        David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Zha Qipeng <qipeng.zha@intel.com>,
+        platform-driver-x86@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 54/78] btrfs: relocation: Only remove reloc rb_trees if reloc control has been initialized
-Date:   Thu, 13 Sep 2018 15:31:41 +0200
-Message-Id: <20180913131811.184647018@linuxfoundation.org>
+Subject: [PATCH 4.9 28/78] platform/x86: intel_punit_ipc: fix build errors
+Date:   Thu, 13 Sep 2018 15:31:15 +0200
+Message-Id: <20180913131808.353589565@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131805.732342940@linuxfoundation.org>
 References: <20180913131805.732342940@linuxfoundation.org>
@@ -53,63 +54,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Qu Wenruo <wqu@suse.com>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-[ Upstream commit 389305b2aa68723c754f88d9dbd268a400e10664 ]
+[ Upstream commit 340fd4cff43f18bace9358d4decdc9b6ed0715be ]
 
-Invalid reloc tree can cause kernel NULL pointer dereference when btrfs
-does some cleanup of the reloc roots.
+Fix build errors by #including <linux/io.h>.
 
-It turns out that fs_info::reloc_ctl can be NULL in
-btrfs_recover_relocation() as we allocate relocation control after all
-reloc roots have been verified.
-So when we hit: note, we haven't called set_reloc_control() thus
-fs_info::reloc_ctl is still NULL.
+../drivers/platform/x86/intel_punit_ipc.c: In function 'ipc_read_status':
+../drivers/platform/x86/intel_punit_ipc.c:55:2: error: implicit declaration of function 'readl' [-Werror=implicit-function-declaration]
+  return readl(ipcdev->base[type][BASE_IFACE]);
+../drivers/platform/x86/intel_punit_ipc.c: In function 'ipc_write_cmd':
+../drivers/platform/x86/intel_punit_ipc.c:60:2: error: implicit declaration of function 'writel' [-Werror=implicit-function-declaration]
+  writel(cmd, ipcdev->base[type][BASE_IFACE]);
 
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=199833
-Reported-by: Xu Wen <wen.xu@gatech.edu>
-Signed-off-by: Qu Wenruo <wqu@suse.com>
-Tested-by: Gu Jinxiang <gujx@cn.fujitsu.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Fixes: 447ae3166702 ("x86: Don't include linux/irq.h from asm/hardirq.h")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Zha Qipeng <qipeng.zha@intel.com>
+Cc: platform-driver-x86@vger.kernel.org
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/relocation.c |   23 ++++++++++++-----------
- 1 file changed, 12 insertions(+), 11 deletions(-)
+ drivers/platform/x86/intel_punit_ipc.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/btrfs/relocation.c
-+++ b/fs/btrfs/relocation.c
-@@ -1325,18 +1325,19 @@ static void __del_reloc_root(struct btrf
- 	struct mapping_node *node = NULL;
- 	struct reloc_control *rc = root->fs_info->reloc_ctl;
+--- a/drivers/platform/x86/intel_punit_ipc.c
++++ b/drivers/platform/x86/intel_punit_ipc.c
+@@ -17,6 +17,7 @@
+ #include <linux/bitops.h>
+ #include <linux/device.h>
+ #include <linux/interrupt.h>
++#include <linux/io.h>
+ #include <linux/platform_device.h>
+ #include <asm/intel_punit_ipc.h>
  
--	spin_lock(&rc->reloc_root_tree.lock);
--	rb_node = tree_search(&rc->reloc_root_tree.rb_root,
--			      root->node->start);
--	if (rb_node) {
--		node = rb_entry(rb_node, struct mapping_node, rb_node);
--		rb_erase(&node->rb_node, &rc->reloc_root_tree.rb_root);
-+	if (rc) {
-+		spin_lock(&rc->reloc_root_tree.lock);
-+		rb_node = tree_search(&rc->reloc_root_tree.rb_root,
-+				      root->node->start);
-+		if (rb_node) {
-+			node = rb_entry(rb_node, struct mapping_node, rb_node);
-+			rb_erase(&node->rb_node, &rc->reloc_root_tree.rb_root);
-+		}
-+		spin_unlock(&rc->reloc_root_tree.lock);
-+		if (!node)
-+			return;
-+		BUG_ON((struct btrfs_root *)node->data != root);
- 	}
--	spin_unlock(&rc->reloc_root_tree.lock);
--
--	if (!node)
--		return;
--	BUG_ON((struct btrfs_root *)node->data != root);
- 
- 	spin_lock(&root->fs_info->trans_lock);
- 	list_del_init(&root->root_list);
 
 
