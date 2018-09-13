@@ -7,56 +7,56 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEE5FC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 11:22:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38860C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 11:22:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6196C20839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 11:22:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E583820839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 11:22:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lOzJGeri"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6196C20839
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="riZZQpOL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E583820839
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727762AbeIMQbM (ORCPT
+        id S1727805AbeIMQbO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 12:31:12 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:37299 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726797AbeIMQbL (ORCPT
+        Thu, 13 Sep 2018 12:31:14 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44250 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726828AbeIMQbN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 12:31:11 -0400
-Received: by mail-wm0-f68.google.com with SMTP id n11-v6so5791251wmc.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 04:22:10 -0700 (PDT)
+        Thu, 13 Sep 2018 12:31:13 -0400
+Received: by mail-wr1-f65.google.com with SMTP id v16-v6so5192041wro.11
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 04:22:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
+        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=6IAsQA6hU2nCPGIGOd69vr3u1tuP9372Dtj3Q9Neyds=;
-        b=lOzJGeri27oyM5PSoVkMpY+8m2bGZb4UTObAFthyIe2/AC1Fl4pn5iGVRDvW1ne8Hp
-         qY3LSFujH9+BZbWfkhDVpMOpmPZPHlgu3eHHtBNCajX/34IFfMlmshq7YYGq4ffJJcsq
-         uiDhlkXK3WUUZ2Y2EaTH+8+r+2fd/0YGWXncjIExsBo+r4dqN2nCG0g1RhorMHvSQoSu
-         dCwQoTrydg1zl6Lst7/jwr+08KUPj2qPpZwt6Um1eo2zJDhgjD6oO/TJCPyUYsMmWTQB
-         hC4lH1Z4mhZLHRMS2fdjAOvCDdoYu0ii1hj1cznGfHj/2pq9OHfpnAymQEZAP/LKOHaG
-         Bg8Q==
+        bh=91QhPC3Xjc3TQAm8K0a68uNGIKKtw9ovWxFTrPH712w=;
+        b=riZZQpOLYYgXvrzanT+oP6q20l7xDTE9KI/t3vpOi8wHs7eQDCxEU0ugz4L2FOGQoD
+         8z0TGQx7cZVCa6M4QEv9QmG79N97tgQDx/B2vqBG7OlLyYWEWC0pyd4lN+dGJx2ritNG
+         snvxyeTGrljkVOBZKnXLKVWiAOJrBi8qaRboiRhTP/zDrYW4jesRujxPkflceLuwSj0D
+         eitOaCe6sj1KDWLrgUEZsULmKnYwsKp/5K+e6HbACyZ1GiywKVMt1SuaiWBJNsVPfPcm
+         V2O/uUDF0tF9SgMq18YpbVciJbrv9MsPzse5Op+MO6jP4dVcEn5cQEHbRH8LR8zzWo9E
+         y7sA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=6IAsQA6hU2nCPGIGOd69vr3u1tuP9372Dtj3Q9Neyds=;
-        b=AyxLnyzB7lUc7MzWB88q8of3SQ2P/QS+tAkVLfi7sQCcS4/qP9iZpjVfKDLDY3uMsG
-         m7HP5jMGBjb5zgGN1th4AuZDw9VD9jQf5lrL3pFJHlnbGwXg0hxkAaY7Z36qBTux/8E+
-         f6lzVtIVguJt6Wcyi7LdSaUV+UtTH85Pmu+4g0B8m6/grEfGb87BOJQnWIHuFY0nPtto
-         Cd4taciKkWakWn6ytxGlMOf3tIG4MSi3ZWJmbXb//FE2z5pUIhb1Gsw32EAH1SrXCpss
-         WUaNcsFGi7MmRkCEsX68gkw+RWqyurWSPbXTp/ps9WdDIUfDuNOnLX95fEhGVPCdgHjZ
-         d/nA==
-X-Gm-Message-State: APzg51CgDcsJesw4W6mKcPhD4fPkQ3M9JrbIWL1y+6fC7dDxqvvJA+w3
-        OviaOD5Ltsia7g21nP3SBqrViS9R
-X-Google-Smtp-Source: ANB0VdYEb1p/c1PSsnn2RQd1vJ60tSo7nnocGymrSzs2ElnRG0Gy/2QS4ja+by48nVcLsdvHufJOcQ==
-X-Received: by 2002:a1c:32c4:: with SMTP id y187-v6mr5019300wmy.31.1536837729613;
-        Thu, 13 Sep 2018 04:22:09 -0700 (PDT)
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=91QhPC3Xjc3TQAm8K0a68uNGIKKtw9ovWxFTrPH712w=;
+        b=VsQxqBRfczXkR+iKkBNdpSlv3u3w+zmvOgqzWn+be0SiNfBnylp2PIJLfiDxtsUddS
+         VXDFquYhq94dHEJac1DQefR2e3U7SVTp9cgo4es1DvaJezJaaUkGCiN8DMc5GVremrAI
+         T8Y+JrFl7XJUeYYniJzHbhtlKusUdxK3M9EDOG8nA/Vr6abNvtmC+Z9Zen18Beeq2Cpp
+         fUu1Mk9kogkUmFbwN/6zdNUPYzGEoq5wiEok0lAbC3/TmipEaE2qq5b0cLelJKQHJouj
+         BIY8z0R8TbP6C44//BlBfDRJpXLxGqZ42woUmfKLle4OPezPRD14NTgmbbXqnyUBwRuL
+         bRug==
+X-Gm-Message-State: APzg51Cjyzhyshpcqq6rGtNEQmXlRjxZdxv8t8nJ7rVunLOmapQna0vx
+        pWzqSwoP8neqcpcXIivQJUSl2buC
+X-Google-Smtp-Source: ANB0VdYqCUnjXP6MKQP2zhG/3nONfeEuuGNRPhw2jYx8ZKQLxeQbfcF/O3upeF9QxqwbR3FYa+NsBQ==
+X-Received: by 2002:adf:b2b5:: with SMTP id g50-v6mr4758562wrd.218.1536837730615;
+        Thu, 13 Sep 2018 04:22:10 -0700 (PDT)
 Received: from baker.fritz.box ([2a02:908:1257:4460:c8f7:2479:525e:9500])
-        by smtp.gmail.com with ESMTPSA id u65-v6sm5528748wmd.31.2018.09.13.04.22.08
+        by smtp.gmail.com with ESMTPSA id u65-v6sm5528748wmd.31.2018.09.13.04.22.09
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
         Thu, 13 Sep 2018 04:22:09 -0700 (PDT)
 From:   "=?UTF-8?q?Christian=20K=C3=B6nig?=" 
@@ -64,10 +64,12 @@ From:   "=?UTF-8?q?Christian=20K=C3=B6nig?="
 X-Google-Original-From: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
 To:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] list: introduce list_bulk_move_tail helper
-Date:   Thu, 13 Sep 2018 13:22:07 +0200
-Message-Id: <20180913112208.1353-1-christian.koenig@amd.com>
+Subject: [PATCH 2/2] drm/ttm: once more fix ttm_bo_bulk_move_lru_tail v2
+Date:   Thu, 13 Sep 2018 13:22:08 +0200
+Message-Id: <20180913112208.1353-2-christian.koenig@amd.com>
 X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180913112208.1353-1-christian.koenig@amd.com>
+References: <20180913112208.1353-1-christian.koenig@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -76,50 +78,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move all entries between @first and including @last before @head.
+While cutting the lists we sometimes accidentally added a list_head from
+the stack to the LRUs, effectively corrupting the list.
 
-This is useful for LRU lists where a whole block of entries should be
-moved to the end of an list.
+Remove the list cutting and use explicit list manipulation instead.
+
+v2: separate out new list_bulk_move_tail helper
 
 Signed-off-by: Christian König <christian.koenig@amd.com>
 ---
- include/linux/list.h | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ drivers/gpu/drm/ttm/ttm_bo.c | 46 +++++++++++++++++++-------------------------
+ 1 file changed, 20 insertions(+), 26 deletions(-)
 
-diff --git a/include/linux/list.h b/include/linux/list.h
-index de04cc5ed536..edb7628e46ed 100644
---- a/include/linux/list.h
-+++ b/include/linux/list.h
-@@ -183,6 +183,29 @@ static inline void list_move_tail(struct list_head *list,
- 	list_add_tail(list, head);
+diff --git a/drivers/gpu/drm/ttm/ttm_bo.c b/drivers/gpu/drm/ttm/ttm_bo.c
+index 138c98902033..26b889f86670 100644
+--- a/drivers/gpu/drm/ttm/ttm_bo.c
++++ b/drivers/gpu/drm/ttm/ttm_bo.c
+@@ -247,47 +247,38 @@ void ttm_bo_move_to_lru_tail(struct ttm_buffer_object *bo,
  }
+ EXPORT_SYMBOL(ttm_bo_move_to_lru_tail);
  
-+/**
-+ * list_bulk_move_tail - move a subsection of a list to its tail
-+ * @head: the head that will follow our entry
-+ * @first: first entry to move
-+ * @last: last entry to move, can be the same as first
-+ *
-+ * Move all entries between @first and including @last before @head.
-+ * All three entries must belong to the same linked list.
-+ */
-+static inline void list_bulk_move_tail(struct list_head *head,
-+				       struct list_head *first,
-+				       struct list_head *last)
-+{
-+	first->prev->next = last->next;
-+	last->next->prev = first->prev;
+-static void ttm_bo_bulk_move_helper(struct ttm_lru_bulk_move_pos *pos,
+-				    struct list_head *lru, bool is_swap)
+-{
+-	struct list_head *list;
+-	LIST_HEAD(entries);
+-	LIST_HEAD(before);
+-
+-	reservation_object_assert_held(pos->last->resv);
+-	list = is_swap ? &pos->last->swap : &pos->last->lru;
+-	list_cut_position(&entries, lru, list);
+-
+-	reservation_object_assert_held(pos->first->resv);
+-	list = is_swap ? pos->first->swap.prev : pos->first->lru.prev;
+-	list_cut_position(&before, &entries, list);
+-
+-	list_splice(&before, lru);
+-	list_splice_tail(&entries, lru);
+-}
+-
+ void ttm_bo_bulk_move_lru_tail(struct ttm_lru_bulk_move *bulk)
+ {
+ 	unsigned i;
+ 
+ 	for (i = 0; i < TTM_MAX_BO_PRIORITY; ++i) {
++		struct ttm_lru_bulk_move_pos *pos = &bulk->tt[i];
+ 		struct ttm_mem_type_manager *man;
+ 
+-		if (!bulk->tt[i].first)
++		if (!pos->first)
+ 			continue;
+ 
+-		man = &bulk->tt[i].first->bdev->man[TTM_PL_TT];
+-		ttm_bo_bulk_move_helper(&bulk->tt[i], &man->lru[i], false);
++		reservation_object_assert_held(pos->first->resv);
++		reservation_object_assert_held(pos->last->resv);
 +
-+	head->prev->next = first;
-+	first->prev = head->prev;
++		man = &pos->first->bdev->man[TTM_PL_TT];
++		list_bulk_move_tail(&man->lru[i], &pos->first->lru,
++				    &pos->last->lru);
+ 	}
+ 
+ 	for (i = 0; i < TTM_MAX_BO_PRIORITY; ++i) {
++		struct ttm_lru_bulk_move_pos *pos = &bulk->vram[i];
+ 		struct ttm_mem_type_manager *man;
+ 
+-		if (!bulk->vram[i].first)
++		if (!pos->first)
+ 			continue;
+ 
+-		man = &bulk->vram[i].first->bdev->man[TTM_PL_VRAM];
+-		ttm_bo_bulk_move_helper(&bulk->vram[i], &man->lru[i], false);
++		reservation_object_assert_held(pos->first->resv);
++		reservation_object_assert_held(pos->last->resv);
 +
-+	last->next = head;
-+	head->prev = last;
-+}
++		man = &pos->first->bdev->man[TTM_PL_VRAM];
++		list_bulk_move_tail(&man->lru[i], &pos->first->lru,
++				    &pos->last->lru);
+ 	}
+ 
+ 	for (i = 0; i < TTM_MAX_BO_PRIORITY; ++i) {
+@@ -297,8 +288,11 @@ void ttm_bo_bulk_move_lru_tail(struct ttm_lru_bulk_move *bulk)
+ 		if (!pos->first)
+ 			continue;
+ 
++		reservation_object_assert_held(pos->first->resv);
++		reservation_object_assert_held(pos->last->resv);
 +
- /**
-  * list_is_last - tests whether @list is the last entry in list @head
-  * @list: the entry to test
+ 		lru = &pos->first->bdev->glob->swap_lru[i];
+-		ttm_bo_bulk_move_helper(&bulk->swap[i], lru, true);
++		list_bulk_move_tail(lru, &pos->first->swap, &pos->last->swap);
+ 	}
+ }
+ EXPORT_SYMBOL(ttm_bo_bulk_move_lru_tail);
 -- 
 2.14.1
 
