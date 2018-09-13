@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81F09C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:43:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05012C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:43:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4668F20854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:43:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4668F20854
+	by mail.kernel.org (Postfix) with ESMTP id BE83B20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:43:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE83B20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729838AbeIMSwz (ORCPT
+        id S1729846AbeIMSxA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:52:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60328 "EHLO
+        Thu, 13 Sep 2018 14:53:00 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60340 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729160AbeIMSwy (ORCPT
+        with ESMTP id S1728650AbeIMSw7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:52:54 -0400
+        Thu, 13 Sep 2018 14:52:59 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4D011D10;
-        Thu, 13 Sep 2018 13:43:22 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7636CD10;
+        Thu, 13 Sep 2018 13:43:26 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 034/115] pwm: meson: Fix mux clock names
-Date:   Thu, 13 Sep 2018 15:30:54 +0200
-Message-Id: <20180913131825.796029623@linuxfoundation.org>
+        stable@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 017/115] hv_netvsc: Fix a deadlock by getting rtnl lock earlier in netvsc_probe()
+Date:   Thu, 13 Sep 2018 15:30:37 +0200
+Message-Id: <20180913131824.597582634@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -53,51 +54,117 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jerome Brunet <jbrunet@baylibre.com>
+From: Dexuan Cui <decui@microsoft.com>
 
-[ Upstream commit b96e9eb62841c519ba1db32d036628be3cdef91f ]
+[ Upstream commit e04e7a7bbd4bbabef4e1a58367e5fc9b2edc3b10 ]
 
-Current clock name looks like this:
-/soc/bus@ffd00000/pwm@1b000#mux0
+This patch fixes the race between netvsc_probe() and
+rndis_set_subchannel(), which can cause a deadlock.
 
-This is bad because CCF uses the clock to create a directory in clk debugfs.
-With such name, the directory creation (silently) fails and the debugfs
-entry end up being created at the debugfs root.
+These are the related 3 paths which show the deadlock:
 
-With this change, the clock name will now be:
-ffd1b000.pwm#mux0
+path #1:
+    Workqueue: hv_vmbus_con vmbus_onmessage_work [hv_vmbus]
+    Call Trace:
+     schedule
+     schedule_preempt_disabled
+     __mutex_lock
+     __device_attach
+     bus_probe_device
+     device_add
+     vmbus_device_register
+     vmbus_onoffer
+     vmbus_onmessage_work
+     process_one_work
+     worker_thread
+     kthread
+     ret_from_fork
 
-This matches the clock naming scheme used in the ethernet and mmc driver.
-It also fixes the problem with debugfs.
+path #2:
+    schedule
+     schedule_preempt_disabled
+     __mutex_lock
+     netvsc_probe
+     vmbus_probe
+     really_probe
+     __driver_attach
+     bus_for_each_dev
+     driver_attach_async
+     async_run_entry_fn
+     process_one_work
+     worker_thread
+     kthread
+     ret_from_fork
 
-Fixes: 36af66a79056 ("pwm: Convert to using %pOF instead of full_name")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
-Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+path #3:
+    Workqueue: events netvsc_subchan_work [hv_netvsc]
+    Call Trace:
+     schedule
+     rndis_set_subchannel
+     netvsc_subchan_work
+     process_one_work
+     worker_thread
+     kthread
+     ret_from_fork
+
+Before path #1 finishes, path #2 can start to run, because just before
+the "bus_probe_device(dev);" in device_add() in path #1, there is a line
+"object_uevent(&dev->kobj, KOBJ_ADD);", so systemd-udevd can
+immediately try to load hv_netvsc and hence path #2 can start to run.
+
+Next, path #2 offloads the subchannal's initialization to a workqueue,
+i.e. path #3, so we can end up in a deadlock situation like this:
+
+Path #2 gets the device lock, and is trying to get the rtnl lock;
+Path #3 gets the rtnl lock and is waiting for all the subchannel messages
+to be processed;
+Path #1 is trying to get the device lock, but since #2 is not releasing
+the device lock, path #1 has to sleep; since the VMBus messages are
+processed one by one, this means the sub-channel messages can't be
+procedded, so #3 has to sleep with the rtnl lock held, and finally #2
+has to sleep... Now all the 3 paths are sleeping and we hit the deadlock.
+
+With the patch, we can make sure #2 gets both the device lock and the
+rtnl lock together, gets its job done, and releases the locks, so #1
+and #3 will not be blocked for ever.
+
+Fixes: 8195b1396ec8 ("hv_netvsc: fix deadlock on hotplug")
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Cc: K. Y. Srinivasan <kys@microsoft.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pwm/pwm-meson.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/hyperv/netvsc_drv.c |   11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
---- a/drivers/pwm/pwm-meson.c
-+++ b/drivers/pwm/pwm-meson.c
-@@ -432,7 +432,6 @@ static int meson_pwm_init_channels(struc
- 				   struct meson_pwm_channel *channels)
- {
- 	struct device *dev = meson->chip.dev;
--	struct device_node *np = dev->of_node;
- 	struct clk_init_data init;
- 	unsigned int i;
- 	char name[255];
-@@ -441,7 +440,7 @@ static int meson_pwm_init_channels(struc
- 	for (i = 0; i < meson->chip.npwm; i++) {
- 		struct meson_pwm_channel *channel = &channels[i];
+--- a/drivers/net/hyperv/netvsc_drv.c
++++ b/drivers/net/hyperv/netvsc_drv.c
+@@ -2044,6 +2044,16 @@ static int netvsc_probe(struct hv_device
  
--		snprintf(name, sizeof(name), "%pOF#mux%u", np, i);
-+		snprintf(name, sizeof(name), "%s#mux%u", dev_name(dev), i);
+ 	memcpy(net->dev_addr, device_info.mac_adr, ETH_ALEN);
  
- 		init.name = name;
- 		init.ops = &clk_mux_ops;
++	/* We must get rtnl lock before scheduling nvdev->subchan_work,
++	 * otherwise netvsc_subchan_work() can get rtnl lock first and wait
++	 * all subchannels to show up, but that may not happen because
++	 * netvsc_probe() can't get rtnl lock and as a result vmbus_onoffer()
++	 * -> ... -> device_add() -> ... -> __device_attach() can't get
++	 * the device lock, so all the subchannels can't be processed --
++	 * finally netvsc_subchan_work() hangs for ever.
++	 */
++	rtnl_lock();
++
+ 	if (nvdev->num_chn > 1)
+ 		schedule_work(&nvdev->subchan_work);
+ 
+@@ -2062,7 +2072,6 @@ static int netvsc_probe(struct hv_device
+ 	else
+ 		net->max_mtu = ETH_DATA_LEN;
+ 
+-	rtnl_lock();
+ 	ret = register_netdevice(net);
+ 	if (ret != 0) {
+ 		pr_err("Unable to register netdev.\n");
 
 
