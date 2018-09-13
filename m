@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E89CEC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:06:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7F85C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:06:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98B3720854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:06:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98B3720854
+	by mail.kernel.org (Postfix) with ESMTP id 9C07B20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:06:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C07B20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732245AbeIMTQ0 (ORCPT
+        id S1732252AbeIMTQ3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:16:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35644 "EHLO
+        Thu, 13 Sep 2018 15:16:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35650 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731896AbeIMTQZ (ORCPT
+        with ESMTP id S1731408AbeIMTQ2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:16:25 -0400
+        Thu, 13 Sep 2018 15:16:28 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 28E1AD36;
-        Thu, 13 Sep 2018 14:06:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 588DCD36;
+        Thu, 13 Sep 2018 14:06:48 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -33,9 +33,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
         =?UTF-8?q?Michel=20D=C3=A4nzer?= <michel.daenzer@amd.com>,
         Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.18 187/197] drm/amdgpu: Make pin_size values atomic
-Date:   Thu, 13 Sep 2018 15:32:16 +0200
-Message-Id: <20180913131849.042646050@linuxfoundation.org>
+Subject: [PATCH 4.18 188/197] drm/amdgpu: Warn and update pin_size values when destroying a pinned BO
+Date:   Thu, 13 Sep 2018 15:32:17 +0200
+Message-Id: <20180913131849.079965041@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -55,138 +55,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Michel Dänzer <michel.daenzer@amd.com>
 
-commit a5ccfe5c20740f2fbf00291490cdf8d2373ec255 upstream.
+commit 15e6b76880e65be24250e30986084b5569b7a06f upstream.
 
-Concurrent execution of the non-atomic arithmetic could result in
-completely bogus values.
+This shouldn't happen, but if it does, we'll get a backtrace of the
+caller, and update the pin_size values as needed.
 
 v2:
-* Rebased on v2 of the previous patch
+* Check bo->pin_count instead of placement flags (Christian König)
 
-Cc: stable@vger.kernel.org
-Bugzilla: https://bugs.freedesktop.org/106872
 Reviewed-by: Christian König <christian.koenig@amd.com>
 Signed-off-by: Michel Dänzer <michel.daenzer@amd.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu.h        |    6 +++---
- drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c     |    2 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c    |   22 +++++++++++-----------
- drivers/gpu/drm/amd/amdgpu/amdgpu_object.c |   14 ++++++++------
- 4 files changed, 23 insertions(+), 21 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_object.c |   32 ++++++++++++++++++++++-------
+ 1 file changed, 25 insertions(+), 7 deletions(-)
 
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu.h
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu.h
-@@ -1579,9 +1579,9 @@ struct amdgpu_device {
- 	DECLARE_HASHTABLE(mn_hash, 7);
- 
- 	/* tracking pinned memory */
--	u64 vram_pin_size;
--	u64 visible_pin_size;
--	u64 gart_pin_size;
-+	atomic64_t vram_pin_size;
-+	atomic64_t visible_pin_size;
-+	atomic64_t gart_pin_size;
- 
- 	/* amdkfd interface */
- 	struct kfd_dev          *kfd;
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
-@@ -257,7 +257,7 @@ static void amdgpu_cs_get_threshold_for_
- 		return;
- 	}
- 
--	total_vram = adev->gmc.real_vram_size - adev->vram_pin_size;
-+	total_vram = adev->gmc.real_vram_size - atomic64_read(&adev->vram_pin_size);
- 	used_vram = amdgpu_vram_mgr_usage(&adev->mman.bdev.man[TTM_PL_VRAM]);
- 	free_vram = used_vram >= total_vram ? 0 : total_vram - used_vram;
- 
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
-@@ -494,13 +494,13 @@ static int amdgpu_info_ioctl(struct drm_
- 	case AMDGPU_INFO_VRAM_GTT: {
- 		struct drm_amdgpu_info_vram_gtt vram_gtt;
- 
--		vram_gtt.vram_size = adev->gmc.real_vram_size;
--		vram_gtt.vram_size -= adev->vram_pin_size;
--		vram_gtt.vram_cpu_accessible_size = adev->gmc.visible_vram_size;
--		vram_gtt.vram_cpu_accessible_size -= adev->visible_pin_size;
-+		vram_gtt.vram_size = adev->gmc.real_vram_size -
-+			atomic64_read(&adev->vram_pin_size);
-+		vram_gtt.vram_cpu_accessible_size = adev->gmc.visible_vram_size -
-+			atomic64_read(&adev->visible_pin_size);
- 		vram_gtt.gtt_size = adev->mman.bdev.man[TTM_PL_TT].size;
- 		vram_gtt.gtt_size *= PAGE_SIZE;
--		vram_gtt.gtt_size -= adev->gart_pin_size;
-+		vram_gtt.gtt_size -= atomic64_read(&adev->gart_pin_size);
- 		return copy_to_user(out, &vram_gtt,
- 				    min((size_t)size, sizeof(vram_gtt))) ? -EFAULT : 0;
- 	}
-@@ -509,16 +509,16 @@ static int amdgpu_info_ioctl(struct drm_
- 
- 		memset(&mem, 0, sizeof(mem));
- 		mem.vram.total_heap_size = adev->gmc.real_vram_size;
--		mem.vram.usable_heap_size =
--			adev->gmc.real_vram_size - adev->vram_pin_size;
-+		mem.vram.usable_heap_size = adev->gmc.real_vram_size -
-+			atomic64_read(&adev->vram_pin_size);
- 		mem.vram.heap_usage =
- 			amdgpu_vram_mgr_usage(&adev->mman.bdev.man[TTM_PL_VRAM]);
- 		mem.vram.max_allocation = mem.vram.usable_heap_size * 3 / 4;
- 
- 		mem.cpu_accessible_vram.total_heap_size =
- 			adev->gmc.visible_vram_size;
--		mem.cpu_accessible_vram.usable_heap_size =
--			adev->gmc.visible_vram_size - adev->visible_pin_size;
-+		mem.cpu_accessible_vram.usable_heap_size = adev->gmc.visible_vram_size -
-+			atomic64_read(&adev->visible_pin_size);
- 		mem.cpu_accessible_vram.heap_usage =
- 			amdgpu_vram_mgr_vis_usage(&adev->mman.bdev.man[TTM_PL_VRAM]);
- 		mem.cpu_accessible_vram.max_allocation =
-@@ -526,8 +526,8 @@ static int amdgpu_info_ioctl(struct drm_
- 
- 		mem.gtt.total_heap_size = adev->mman.bdev.man[TTM_PL_TT].size;
- 		mem.gtt.total_heap_size *= PAGE_SIZE;
--		mem.gtt.usable_heap_size = mem.gtt.total_heap_size
--			- adev->gart_pin_size;
-+		mem.gtt.usable_heap_size = mem.gtt.total_heap_size -
-+			atomic64_read(&adev->gart_pin_size);
- 		mem.gtt.heap_usage =
- 			amdgpu_gtt_mgr_usage(&adev->mman.bdev.man[TTM_PL_TT]);
- 		mem.gtt.max_allocation = mem.gtt.usable_heap_size * 3 / 4;
 --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
 +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
-@@ -761,10 +761,11 @@ int amdgpu_bo_pin_restricted(struct amdg
+@@ -50,11 +50,35 @@ static bool amdgpu_need_backup(struct am
+ 	return true;
+ }
  
- 	domain = amdgpu_mem_type_to_domain(bo->tbo.mem.mem_type);
- 	if (domain == AMDGPU_GEM_DOMAIN_VRAM) {
--		adev->vram_pin_size += amdgpu_bo_size(bo);
--		adev->visible_pin_size += amdgpu_vram_mgr_bo_visible_size(bo);
-+		atomic64_add(amdgpu_bo_size(bo), &adev->vram_pin_size);
-+		atomic64_add(amdgpu_vram_mgr_bo_visible_size(bo),
-+			     &adev->visible_pin_size);
- 	} else if (domain == AMDGPU_GEM_DOMAIN_GTT) {
--		adev->gart_pin_size += amdgpu_bo_size(bo);
-+		atomic64_add(amdgpu_bo_size(bo), &adev->gart_pin_size);
- 	}
- 
- error:
-@@ -791,10 +792,11 @@ int amdgpu_bo_unpin(struct amdgpu_bo *bo
- 		return 0;
- 
- 	if (bo->tbo.mem.mem_type == TTM_PL_VRAM) {
--		adev->vram_pin_size -= amdgpu_bo_size(bo);
--		adev->visible_pin_size -= amdgpu_vram_mgr_bo_visible_size(bo);
++/**
++ * amdgpu_bo_subtract_pin_size - Remove BO from pin_size accounting
++ *
++ * @bo: &amdgpu_bo buffer object
++ *
++ * This function is called when a BO stops being pinned, and updates the
++ * &amdgpu_device pin_size values accordingly.
++ */
++static void amdgpu_bo_subtract_pin_size(struct amdgpu_bo *bo)
++{
++	struct amdgpu_device *adev = amdgpu_ttm_adev(bo->tbo.bdev);
++
++	if (bo->tbo.mem.mem_type == TTM_PL_VRAM) {
 +		atomic64_sub(amdgpu_bo_size(bo), &adev->vram_pin_size);
 +		atomic64_sub(amdgpu_vram_mgr_bo_visible_size(bo),
 +			     &adev->visible_pin_size);
- 	} else if (bo->tbo.mem.mem_type == TTM_PL_TT) {
--		adev->gart_pin_size -= amdgpu_bo_size(bo);
++	} else if (bo->tbo.mem.mem_type == TTM_PL_TT) {
 +		atomic64_sub(amdgpu_bo_size(bo), &adev->gart_pin_size);
- 	}
++	}
++}
++
+ static void amdgpu_ttm_bo_destroy(struct ttm_buffer_object *tbo)
+ {
+ 	struct amdgpu_device *adev = amdgpu_ttm_adev(tbo->bdev);
+ 	struct amdgpu_bo *bo = ttm_to_amdgpu_bo(tbo);
+ 
++	if (WARN_ON_ONCE(bo->pin_count > 0))
++		amdgpu_bo_subtract_pin_size(bo);
++
+ 	if (bo->kfd_bo)
+ 		amdgpu_amdkfd_unreserve_system_memory_limit(bo);
+ 
+@@ -791,13 +815,7 @@ int amdgpu_bo_unpin(struct amdgpu_bo *bo
+ 	if (bo->pin_count)
+ 		return 0;
+ 
+-	if (bo->tbo.mem.mem_type == TTM_PL_VRAM) {
+-		atomic64_sub(amdgpu_bo_size(bo), &adev->vram_pin_size);
+-		atomic64_sub(amdgpu_vram_mgr_bo_visible_size(bo),
+-			     &adev->visible_pin_size);
+-	} else if (bo->tbo.mem.mem_type == TTM_PL_TT) {
+-		atomic64_sub(amdgpu_bo_size(bo), &adev->gart_pin_size);
+-	}
++	amdgpu_bo_subtract_pin_size(bo);
  
  	for (i = 0; i < bo->placement.num_placement; i++) {
+ 		bo->placements[i].lpfn = 0;
 
 
