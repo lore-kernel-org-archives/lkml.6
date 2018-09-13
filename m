@@ -2,111 +2,141 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06ACCC04AB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 22:31:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59058FC6182
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 22:33:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9845E20861
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 22:31:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED6552086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 22:33:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZHF82xJP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9845E20861
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="a1/L/Miw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED6552086C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728257AbeINDnR (ORCPT
+        id S1728315AbeINDos (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 23:43:17 -0400
-Received: from mail-pl1-f201.google.com ([209.85.214.201]:49013 "EHLO
-        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727988AbeINDnR (ORCPT
+        Thu, 13 Sep 2018 23:44:48 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:45286 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727988AbeINDor (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 23:43:17 -0400
-Received: by mail-pl1-f201.google.com with SMTP id bh1-v6so3296914plb.15
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 15:31:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=S+oLy1i9WomBzWLyCwBGFOwZ+XnhzaGC5nebu3J/cqI=;
-        b=ZHF82xJPrjNVQ5qaoqwMUDqr6EdB+cndsZEWHlrAB6aETmK44XmP7OFf08GYNsUlbe
-         Dji42D6nlptLFf1lohqP5KarkrI8ALKA2xgcdLwPlXwIOjfDJsIHwgcomwT727X6d2rf
-         LuD1NCo1F7/NLZpHmLkn34zKyKvRqkwWr+y3F3gZ3SJOYpOVoU+iCumsx2cZGyw6qJ++
-         MAuYaFmvXyy69vmcROAKnwsQcoQAl+vC74bPSxMH7kyAWJNdE/maIUeUux7i4MXK9O50
-         m5svrHSjKugBUoxfraWwHTSRmaw/CCnBDfCIANza21IbZyX2eYyoR+AXGOtW8A49Cnwg
-         YpLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=S+oLy1i9WomBzWLyCwBGFOwZ+XnhzaGC5nebu3J/cqI=;
-        b=HEMN3zKy/DWstMw1LDqjenZQ6TbIikfhN7kpFDSuO0i2XavPohNr8+Jad1p9IKOLyB
-         KGdo12kIk4VXZEhkociROksEo4d2uiDIqZJHGfG2ibZU234yPT+l4oH6nVbKCs+QU+fe
-         +QrgC8SLUjv5LYyBBGYyQU3Gt1G60hlAdTeJRrpnQNuIiFMpAJyNfItp20e/Nypwr63B
-         5tM/D6UW33HTNNmajQwRQh87pVMSyBB8m45DqFvlylvNvLHJhGIAfI15GKDhH618EewO
-         66dWv5AjKSsTVg0hTOS2N/iO/zC6ZNAXnWZloc+F0zkV0+TBhuU+Oy+xTgRse7gedEsN
-         VPvg==
-X-Gm-Message-State: APzg51DLwIFp7DBklUFeLAuEcTesmksDeO7GgVSnoYjexsZ+y5gglAD/
-        ckBQKL5JoF+QgXmh+Wbpuu1e8eKa7L+K
-X-Google-Smtp-Source: ANB0VdbReS/UgjWcRw5n9KAo6p11Mj1GeCj14mO3qqklLfFwOD42ED5qd2H0QQtKnVIPG0Xl1JHYWcvTdBkD
-X-Received: by 2002:a63:2057:: with SMTP id r23-v6mr585534pgm.18.1536877908229;
- Thu, 13 Sep 2018 15:31:48 -0700 (PDT)
-Date:   Thu, 13 Sep 2018 15:31:43 -0700
-Message-Id: <20180913223143.12664-1-rajatja@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.19.0.397.gdd90340f6a-goog
-Subject: [PATCH] pinctrl: icelake: Fix the resource number for community-4/5
-From:   Rajat Jain <rajatja@google.com>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     rajatxjain@gmail.com, subrata.banik@intel.com,
-        aamir.bohra@intel.com, Rajat Jain <rajatja@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 13 Sep 2018 23:44:47 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8DMTqY5102328;
+        Thu, 13 Sep 2018 22:33:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=reply-to : subject :
+ references : to : cc : from : message-id : date : mime-version :
+ in-reply-to : content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=kUHhMLrexydgspIrCsIZbD9E1DzJgge6Gm0siA7CP+A=;
+ b=a1/L/MiwMnD7/eacNglAT5G7rNPsYHhman5+OvqbU/AB9qPglG4DF2hAbH2Db8qrfGH0
+ ieZekF4UxE/3bvn2GX00u0Jw7NsoJHjVomurKgvSkgOxRLi9ivQ1Gn38W0m34EGVDQwY
+ Qu/r5Wp1jbeNAFMG1IpLnx9H4naOw6QrSFHVqUaAh215MgQYuOUyXhtVMcn8DlutlUEn
+ 0anQzXxfL7t0pbPrkFEMLw4//sCKGOXChc7lTpbMxbQYs7UaGY1Wqi+tJPaCCqpiiAzb
+ RBlyC0yKre9f7TrM4vc/QUU2NCHe9cGrZOCxsJZpteFXUjkKAoIQTRjFW8XkLxTK6aGQ iQ== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2mc72r3yqc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 13 Sep 2018 22:33:11 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w8DMXAmY031889
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 13 Sep 2018 22:33:10 GMT
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w8DMX8fl008158;
+        Thu, 13 Sep 2018 22:33:08 GMT
+Received: from [10.132.93.61] (/10.132.93.61)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 13 Sep 2018 15:33:08 -0700
+Reply-To: prakash.sangappa@oracle.com
+Subject: Re: [PATCH V2 0/6] VA to numa node information
+References: <1536783844-4145-1-git-send-email-prakash.sangappa@oracle.com>
+ <20180913084011.GC20287@dhcp22.suse.cz>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        dave.hansen@intel.com, nao.horiguchi@gmail.com,
+        akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
+        khandual@linux.vnet.ibm.com, steven.sistare@oracle.com
+From:   "prakash.sangappa" <prakash.sangappa@oracle.com>
+Message-ID: <375951d0-f103-dec3-34d8-bbeb2f45f666@oracle.com>
+Date:   Thu, 13 Sep 2018 15:32:25 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.5.1
+MIME-Version: 1.0
+In-Reply-To: <20180913084011.GC20287@dhcp22.suse.cz>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9015 signatures=668708
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1809130222
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Icelake does not have a community-3, and the memory resources are
-laid out in the following order in the ACPI:
 
-resource-0: community-0 registers
-resource-1: community-1 registers
-resource-2: community-2 registers
-resource-3: community-4 registers
-resource-4: community-5 registers
 
-(EDS also describes the communities in the above order).
+On 09/13/2018 01:40 AM, Michal Hocko wrote:
+> On Wed 12-09-18 13:23:58, Prakash Sangappa wrote:
+>> For analysis purpose it is useful to have numa node information
+>> corresponding mapped virtual address ranges of a process. Currently,
+>> the file /proc/<pid>/numa_maps provides list of numa nodes from where pages
+>> are allocated per VMA of a process. This is not useful if an user needs to
+>> determine which numa node the mapped pages are allocated from for a
+>> particular address range. It would have helped if the numa node information
+>> presented in /proc/<pid>/numa_maps was broken down by VA ranges showing the
+>> exact numa node from where the pages have been allocated.
+>>
+>> The format of /proc/<pid>/numa_maps file content is dependent on
+>> /proc/<pid>/maps file content as mentioned in the manpage. i.e one line
+>> entry for every VMA corresponding to entries in /proc/<pids>/maps file.
+>> Therefore changing the output of /proc/<pid>/numa_maps may not be possible.
+>>
+>> This patch set introduces the file /proc/<pid>/numa_vamaps which
+>> will provide proper break down of VA ranges by numa node id from where the
+>> mapped pages are allocated. For Address ranges not having any pages mapped,
+>> a '-' is printed instead of numa node id.
+>>
+>> Includes support to lseek, allowing seeking to a specific process Virtual
+>> address(VA) starting from where the address range to numa node information
+>> can to be read from this file.
+>>
+>> The new file /proc/<pid>/numa_vamaps will be governed by ptrace access
+>> mode PTRACE_MODE_READ_REALCREDS.
+>>
+>> See following for previous discussion about this proposal
+>>
+>> https://marc.info/?t=152524073400001&r=1&w=2
+> It would be really great to give a short summary of the previous
+> discussion. E.g. why do we need a proc interface in the first place when
+> we already have an API to query for the information you are proposing to
+> export [1]
+>
+> [1] http://lkml.kernel.org/r/20180503085741.GD4535@dhcp22.suse.cz
 
-Since the pinctrl driver exposes communities 0, 1, 4, 5, it needs to get
-the corresponding community registers by getting the resourse number right.
-Currently the resourse number is not correct for community 4 and 5, thus
-fix that.
+The proc interface provides an efficient way to export address range
+to numa node id mapping information compared to using the API.
+For example, for sparsely populated mappings, if a VMA has large portions
+not have any physical pages mapped, the page walk done thru the /proc file
+interface can skip over non existent PMDs / ptes. Whereas using the
+API the application would have to scan the entire VMA in page size units.
 
-Signed-off-by: Rajat Jain <rajatja@google.com>
----
- drivers/pinctrl/intel/pinctrl-icelake.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Also, VMAs having THP pages can have a mix of 4k pages and hugepages.
+The page walks would be efficient in scanning and determining if it is
+a THP huge page and step over it. Whereas using the API, the application
+would not know what page size mapping is used for a given VA and so would
+have to again scan the VMA in units of 4k page size.
 
-diff --git a/drivers/pinctrl/intel/pinctrl-icelake.c b/drivers/pinctrl/intel/pinctrl-icelake.c
-index 630b966ce081..5b4eaf7c90df 100644
---- a/drivers/pinctrl/intel/pinctrl-icelake.c
-+++ b/drivers/pinctrl/intel/pinctrl-icelake.c
-@@ -331,8 +331,8 @@ static const struct intel_padgroup icllp_community5_gpps[] = {
- static const struct intel_community icllp_communities[] = {
- 	ICL_COMMUNITY(0, 0, 58, icllp_community0_gpps),
- 	ICL_COMMUNITY(1, 59, 152, icllp_community1_gpps),
--	ICL_COMMUNITY(2, 153, 215, icllp_community4_gpps),
--	ICL_COMMUNITY(3, 216, 240, icllp_community5_gpps),
-+	ICL_COMMUNITY(3, 153, 215, icllp_community4_gpps),
-+	ICL_COMMUNITY(4, 216, 240, icllp_community5_gpps),
- };
- 
- static const unsigned int icllp_spi0_pins[] = { 22, 23, 24, 25, 26 };
--- 
-2.19.0.397.gdd90340f6a-goog
+If this sounds reasonable, I can add it to the commit / patch description.
+
+-Prakash.
+
+
+
+
 
