@@ -2,64 +2,103 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C33FFC04AB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 23:42:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0806DC04AB8
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 23:46:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2763E20861
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 23:42:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2763E20861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 962BC20861
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 23:46:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="W7QnsZTi";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Ou3VPljm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 962BC20861
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727027AbeINExt (ORCPT
+        id S1727160AbeINE5q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 00:53:49 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:45670 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725878AbeINExt (ORCPT
+        Fri, 14 Sep 2018 00:57:46 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:59200 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726911AbeINE5p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 00:53:49 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1g0bFM-00071y-OQ; Thu, 13 Sep 2018 23:42:04 +0000
-Date:   Fri, 14 Sep 2018 00:42:04 +0100
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC] UAPI: Check headers by compiling all together as C++
-Message-ID: <20180913234204.GW19965@ZenIV.linux.org.uk>
-References: <20180913221546.GV19965@ZenIV.linux.org.uk>
- <20180905185922.GA25461@avx2>
- <20180905192636.GA13608@kroah.com>
- <20180905193111.GA27217@avx2>
- <20180905222247.GT19965@ZenIV.linux.org.uk>
- <20180913220124.GA12570@avx2>
- <26412.1536881269@warthog.procyon.org.uk>
+        Fri, 14 Sep 2018 00:57:45 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 411E460541; Thu, 13 Sep 2018 23:46:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1536882363;
+        bh=BhPfPuGFeGC1Db/tUUz4YSA2Mivq7EX9ugphwtvIB94=;
+        h=Date:From:To:Subject:From;
+        b=W7QnsZTi1nI+i8/X7gnTCBgCjtIjYRQ+yCrmtLJDJgtrmb3Xf5wQc25eqZIp08W7J
+         WMRZ/PsbMB3A+bLzTpZ7yKdxi4JsamMYjSHKYNG/VJVcKiaZrPi8D/T/R/RuMq1yls
+         16CZl63gkKMHd+5opw3/v+qri7GsDlBCSs2WddfQ=
+Received: from codeaurora.org (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rkuo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8DBD560558;
+        Thu, 13 Sep 2018 23:46:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1536882362;
+        bh=BhPfPuGFeGC1Db/tUUz4YSA2Mivq7EX9ugphwtvIB94=;
+        h=Date:From:To:Subject:From;
+        b=Ou3VPljmb/Bh80L7tbDoLmeZvOFhTxJ/oIkro0fAbTZ9wp7Tvxl6Ajy3vkBm++dzi
+         Ek6sCRZ+MjwLO7O0wfg9caI5m1T9+a84+zWN94wThf6OAxL0IRHTpa7ffohCZGKgX6
+         vUeO5GNjfgh3AJxUxAUDndVdWerahwIgXeW2aKVY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8DBD560558
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rkuo@codeaurora.org
+Date:   Thu, 13 Sep 2018 18:46:01 -0500
+From:   Richard Kuo <rkuo@codeaurora.org>
+To:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-hexagon@vger.kernel.org
+Subject: [GIT PULL] Hexagon cleanups
+Message-ID: <20180913234600.GA2406@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <26412.1536881269@warthog.procyon.org.uk>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 14, 2018 at 12:27:49AM +0100, David Howells wrote:
-> Al Viro <viro@ZenIV.linux.org.uk> wrote:
-> 
-> > 	It's too early for AFD postings.  And you *are* tempting
-> > me to throw into the tree as many anti-C++ devices as can be
-> > done tastefully, just to stop somebody attempting that insanity
-> > in the earnest.
-> 
-> You would deliberately break the UAPI header files to make sure that they
-> couldn't be used with C++?
+Linus,
 
-UAPI - no; userland folks can use INTERCAL, for all I care.
-Kernel-side, though, it's quite tempting...
+Please pull the following changes for Hexagon; they contain some fixes for compile
+warnings.
+
+
+Thanks,
+Richard Kuo
+
+
+
+The following changes since commit 11da3a7f84f19c26da6f86af878298694ede0804:
+
+  Linux 4.19-rc3 (2018-09-09 17:26:43 -0700)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/rkuo/linux-hexagon-kernel.git for-linus
+
+for you to fetch changes up to 5c41aaad409c097cf1ef74f2c649fed994744ef5:
+
+  hexagon: modify ffs() and fls() to return int (2018-09-10 19:42:15 -0500)
+
+----------------------------------------------------------------
+Randy Dunlap (2):
+      arch/hexagon: fix kernel/dma.c build warning
+      hexagon: modify ffs() and fls() to return int
+
+ arch/hexagon/include/asm/bitops.h | 4 ++--
+ arch/hexagon/kernel/dma.c         | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+-- 
+Employee of Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum, 
+a Linux Foundation Collaborative Project
