@@ -6,40 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1304C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:33:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28124C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:33:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7700520854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:33:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7700520854
+	by mail.kernel.org (Postfix) with ESMTP id D946C20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:33:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D946C20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728615AbeIMSnE (ORCPT
+        id S1728627AbeIMSnH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:43:04 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58734 "EHLO
+        Thu, 13 Sep 2018 14:43:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58748 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727990AbeIMSnD (ORCPT
+        with ESMTP id S1726985AbeIMSnG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:43:03 -0400
+        Thu, 13 Sep 2018 14:43:06 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 90869D19;
-        Thu, 13 Sep 2018 13:33:33 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EC782D10;
+        Thu, 13 Sep 2018 13:33:36 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         Shanker Donthineni <shankerd@codeaurora.org>,
         Marc Zyngier <marc.zyngier@arm.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Vikram Sethi <vikrams@codeaurora.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Thomas Gleixner <tglx@linutronix.de>,
         Hanjun Guo <hanjun.guo@linaro.org>
-Subject: [PATCH 4.4 45/60] irqchip/gicv3-its: Fix memory leak in its_free_tables()
-Date:   Thu, 13 Sep 2018 15:30:52 +0200
-Message-Id: <20180913131747.555279999@linuxfoundation.org>
+Subject: [PATCH 4.4 46/60] irqchip/gicv3-its: Avoid cache flush beyond ITS_BASERn memory size
+Date:   Thu, 13 Sep 2018 15:30:53 +0200
+Message-Id: <20180913131747.607156056@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131745.261413581@linuxfoundation.org>
 References: <20180913131745.261413581@linuxfoundation.org>
@@ -59,77 +55,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Shanker Donthineni <shankerd@codeaurora.org>
 
-commit 1a485f4d2e28efd77075b2952926683d6c245633 upstream.
+commit 2eca0d6ceea1f108b2d3ac81fb34698c4fd41006 upstream.
 
-The current ITS driver has a memory leak in its_free_tables(). It
-happens on tear down path of the driver when its_probe() call fails.
-its_free_tables() should free the exact number of pages that have
-been allocated, not just a single page as current code does.
+Function its_alloc_tables() maintains two local variables, "order" and
+and "alloc_size", to hold memory size that has been allocated to
+ITS_BASEn. We don't always refresh the variable alloc_size whenever
+value of the variable order changes, causing the following two
+problems.
 
-This patch records the memory size for each ITS_BASERn at the time of
-page allocation and uses the same size information when freeing pages
-to fix the issue.
+  - Cache flush operation with size more than required.
+  - Information reported by pr_info is not correct.
+
+Use a helper macro that converts page order to size in bytes instead of
+variable "alloc_size" to fix both the problems.
 
 Signed-off-by: Shanker Donthineni <shankerd@codeaurora.org>
-Acked-by: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Jason Cooper <jason@lakedaemon.net>
-Cc: Vikram Sethi <vikrams@codeaurora.org>
-Cc: linux-arm-kernel@lists.infradead.org
-Link: http://lkml.kernel.org/r/1454379584-21772-1-git-send-email-shankerd@codeaurora.org
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Hanjun Guo <hanjun.guo@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/irqchip/irq-gic-v3-its.c |   17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
+ drivers/irqchip/irq-gic-v3-its.c |   11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
 --- a/drivers/irqchip/irq-gic-v3-its.c
 +++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -67,7 +67,10 @@ struct its_node {
- 	unsigned long		phys_base;
- 	struct its_cmd_block	*cmd_base;
- 	struct its_cmd_block	*cmd_write;
--	void			*tables[GITS_BASER_NR_REGS];
-+	struct {
-+		void		*base;
-+		u32		order;
-+	} tables[GITS_BASER_NR_REGS];
- 	struct its_collection	*collections;
- 	struct list_head	its_device_list;
- 	u64			flags;
-@@ -816,9 +819,10 @@ static void its_free_tables(struct its_n
- 	int i;
+@@ -80,6 +80,9 @@ struct its_node {
  
- 	for (i = 0; i < GITS_BASER_NR_REGS; i++) {
--		if (its->tables[i]) {
--			free_page((unsigned long)its->tables[i]);
--			its->tables[i] = NULL;
-+		if (its->tables[i].base) {
-+			free_pages((unsigned long)its->tables[i].base,
-+				   its->tables[i].order);
-+			its->tables[i].base = NULL;
- 		}
- 	}
- }
-@@ -899,7 +903,8 @@ retry_alloc_baser:
- 			goto out_free;
+ #define ITS_ITT_ALIGN		SZ_256
+ 
++/* Convert page order to size in bytes */
++#define PAGE_ORDER_TO_SIZE(o)	(PAGE_SIZE << (o))
++
+ struct event_lpi_map {
+ 	unsigned long		*lpi_map;
+ 	u16			*col_map;
+@@ -855,7 +858,6 @@ static int its_alloc_tables(const char *
+ 		u64 type = GITS_BASER_TYPE(val);
+ 		u64 entry_size = GITS_BASER_ENTRY_SIZE(val);
+ 		int order = get_order(psz);
+-		int alloc_size;
+ 		int alloc_pages;
+ 		u64 tmp;
+ 		void *base;
+@@ -887,9 +889,8 @@ static int its_alloc_tables(const char *
+ 			}
  		}
  
--		its->tables[i] = base;
-+		its->tables[i].base = base;
-+		its->tables[i].order = order;
+-		alloc_size = (1 << order) * PAGE_SIZE;
+ retry_alloc_baser:
+-		alloc_pages = (alloc_size / psz);
++		alloc_pages = (PAGE_ORDER_TO_SIZE(order) / psz);
+ 		if (alloc_pages > GITS_BASER_PAGES_MAX) {
+ 			alloc_pages = GITS_BASER_PAGES_MAX;
+ 			order = get_order(GITS_BASER_PAGES_MAX * psz);
+@@ -942,7 +943,7 @@ retry_baser:
+ 			shr = tmp & GITS_BASER_SHAREABILITY_MASK;
+ 			if (!shr) {
+ 				cache = GITS_BASER_nC;
+-				__flush_dcache_area(base, alloc_size);
++				__flush_dcache_area(base, PAGE_ORDER_TO_SIZE(order));
+ 			}
+ 			goto retry_baser;
+ 		}
+@@ -975,7 +976,7 @@ retry_baser:
+ 		}
  
- retry_baser:
- 		val = (virt_to_phys(base) 				 |
-@@ -949,7 +954,7 @@ retry_baser:
- 			 * something is horribly wrong...
- 			 */
- 			free_pages((unsigned long)base, order);
--			its->tables[i] = NULL;
-+			its->tables[i].base = NULL;
- 
- 			switch (psz) {
- 			case SZ_16K:
+ 		pr_info("ITS: allocated %d %s @%lx (psz %dK, shr %d)\n",
+-			(int)(alloc_size / entry_size),
++			(int)(PAGE_ORDER_TO_SIZE(order) / entry_size),
+ 			its_base_type_string[type],
+ 			(unsigned long)virt_to_phys(base),
+ 			psz / SZ_1K, (int)shr >> GITS_BASER_SHAREABILITY_SHIFT);
 
 
