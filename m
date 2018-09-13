@@ -2,215 +2,183 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FA81ECDFD1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B3CBFA375C
 	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 17:35:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92ADC20866
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 15:37:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92ADC20866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 2BA972175D
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 16:57:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BA972175D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kaod.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728352AbeIMUrg (ORCPT
+        id S1727560AbeIMWHy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 16:47:36 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50274 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727662AbeIMUrg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 16:47:36 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6C9D97A9;
-        Thu, 13 Sep 2018 08:37:34 -0700 (PDT)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.emea.arm.com [10.4.13.117])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DC3C33F557;
-        Thu, 13 Sep 2018 08:37:30 -0700 (PDT)
-Date:   Thu, 13 Sep 2018 16:37:27 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Lina Iyer <lina.iyer@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Juri Lelli <juri.lelli@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Thu, 13 Sep 2018 18:07:54 -0400
+Received: from 5.mo173.mail-out.ovh.net ([46.105.40.148]:46436 "EHLO
+        5.mo173.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727194AbeIMWHy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 18:07:54 -0400
+X-Greylist: delayed 39771 seconds by postgrey-1.27 at vger.kernel.org; Thu, 13 Sep 2018 18:07:51 EDT
+Received: from player687.ha.ovh.net (unknown [10.109.160.143])
+        by mo173.mail-out.ovh.net (Postfix) with ESMTP id C5037D59B8
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 18:51:17 +0200 (CEST)
+Received: from zorba.kaod.org (LFbn-1-10605-110.w90-89.abo.wanadoo.fr [90.89.196.110])
+        (Authenticated sender: postmaster@kaod.org)
+        by player687.ha.ovh.net (Postfix) with ESMTPSA id D74922C00B1;
+        Thu, 13 Sep 2018 18:51:04 +0200 (CEST)
+Subject: Re: [PATCH i2c-next v6] i2c: aspeed: Handle master/slave combined irq
+ events properly
+To:     Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Cc:     Joel Stanley <joel@jms.id.au>, linux-aspeed@lists.ozlabs.org,
+        Vernon Mauery <vernon.mauery@linux.intel.com>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Brendan Higgins <brendanhiggins@google.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH v8 07/26] PM / Domains: Add genpd governor for CPUs
-Message-ID: <20180913153727.GB6199@e107981-ln.cambridge.arm.com>
-References: <20180620172226.15012-1-ulf.hansson@linaro.org>
- <20180620172226.15012-8-ulf.hansson@linaro.org>
- <3574880.GjmnMm1lMq@aspire.rjw.lan>
- <10360149.m4MlxDWZY5@aspire.rjw.lan>
- <CAPDyKFonHYSq32WxvB1x5PXissXZvraqazgU_ZyLR=tsyD9vAA@mail.gmail.com>
- <CAJZ5v0hX3gC0J_z1tMu-KkNBRf3GuJ91tbFC2Z+0D1BnHkY8kg@mail.gmail.com>
- <20180809153925.GA20329@red-moon>
- <CAPDyKFp=AuqEPHKYgi-+DAhejQZSHixmtLORj_Rkn3m8fUoqJw@mail.gmail.com>
- <20180824103828.GA11491@red-moon>
- <CAPDyKFqDHeMwyJ3Xx1kJcj968s=__3juR5bPn-d_3w=bzo-ovA@mail.gmail.com>
+        linux-i2c@vger.kernel.org, jarkko.nikula@linux.intel.com,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        James Feist <james.feist@linux.intel.com>
+References: <20180823225731.19063-1-jae.hyun.yoo@linux.intel.com>
+ <20180911183734.GA21976@roeck-us.net>
+ <1f34fe8c-69ef-5f2d-25dc-d5f6037cc558@linux.intel.com>
+ <20180911204107.GA26017@roeck-us.net>
+ <e5135af4-9105-214f-5de2-65cc03804222@linux.intel.com>
+ <CACPK8Xdv3aP_zOHAL0WMgwvkpBHAUesU7OdhW==jgvXjRmt-Zw@mail.gmail.com>
+ <20180911233302.GA18799@roeck-us.net>
+ <5698ca34-14c9-8d05-c4e6-5acf85ff9d14@linux.intel.com>
+ <20180912013449.GA12612@roeck-us.net>
+ <7fd98646-fb5a-be4d-ce37-84b74e0fa8b3@linux.intel.com>
+ <285ea914-5407-7fde-036d-95978f95a430@kaod.org>
+ <7a1706b1-7787-eeff-2295-f6180fe84c6e@linux.intel.com>
+From:   =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>
+Message-ID: <798fd5fe-475f-f633-c830-62a3e4f1692d@kaod.org>
+Date:   Thu, 13 Sep 2018 18:51:04 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFqDHeMwyJ3Xx1kJcj968s=__3juR5bPn-d_3w=bzo-ovA@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <7a1706b1-7787-eeff-2295-f6180fe84c6e@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 10774017683744983936
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtjedrjeeigddutdefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddm
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 30, 2018 at 03:36:02PM +0200, Ulf Hansson wrote:
-> On 24 August 2018 at 12:38, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com> wrote:
-> > On Fri, Aug 24, 2018 at 11:26:19AM +0200, Ulf Hansson wrote:
-> >
-> > [...]
-> >
-> >> > That's a good question and it maybe gives a path towards a solution.
-> >> >
-> >> > AFAICS the genPD governor only selects the idle state parameter that
-> >> > determines the idle state at, say, GenPD cpumask level it does not touch
-> >> > the CPUidle decision, that works on a subset of idle states (at cpu
-> >> > level).
-> >> >
-> >> > That's my understanding, which can be wrong so please correct me
-> >> > if that's the case because that's a bit confusing.
-> >> >
-> >> > Let's imagine that we flattened out the list of idle states and feed
-> >> > CPUidle with it (all of them - cpu, cluster, package, system - as it is
-> >> > in the mainline _now_). Then the GenPD governor can run-through the
-> >> > CPUidle selection and _demote_ the idle state if necessary since it
-> >> > understands that some CPUs in the GenPD will wake up shortly and break
-> >> > the target residency hyphothesis the CPUidle governor is expecting.
-> >> >
-> >> > The whole idea about this series is improving CPUidle decision when
-> >> > the target idle state is _shared_ among groups of cpus (again, please
-> >> > do correct me if I am wrong).
-> >>
-> >> Absolutely, this is one of the main reason for the series!
-> >>
-> >> >
-> >> > It is obvious that a GenPD governor must only demote - never promote a
-> >> > CPU idle state selection given that hierarchy implies more power
-> >> > savings and higher target residencies required.
-> >>
-> >> Absolutely. I apologize if I have been using the word "promote"
-> >> wrongly, I realize it may be a bit confusing.
-> >>
-> >> >
-> >> > This whole series would become more generic and won't depend on
-> >> > PSCI OSI at all - actually that would become a hierarchical
-> >> > CPUidle governor.
-> >>
-> >> Well, to me we need a first user of the new infrastructure code in
-> >> genpd and PSCI is probably the easiest one to start with. An option
-> >> would be to start with an old ARM32 platform, but it seems a bit silly
-> >> to me.
-> >
-> > If the code can be structured as described above as a hierarchical
-> > (possibly optional through a Kconfig entry or sysfs tuning) idle
-> > decision you can apply it to _any_ PSCI based platform out there,
-> > provided that the new governor improves power savings.
-> >
-> >> In regards to OS-initiated mode vs platform coordinated mode, let's
-> >> discuss that in details in the other email thread instead.
-> >
-> > I think that's crystal clear by now that IMHO PSCI OS-initiated mode is
-> > a red-herring, it has nothing to do with this series, it is there just
-> > because QC firmware does not support PSCI platform coordinated suspend
-> > mode.
-> 
-> I fully agree that the series isn't specific to PSCI OSI mode. On the
-> other hand, for PSCI OSI mode, that's where I see this series to fit
-> naturally. And in particular for the QCOM 410c board.
-> 
-> When it comes to the PSCI PC mode, it may under certain circumstances
-> be useful to deploy this approach for that as well, and I agree that
-> it seems reasonable to have that configurable as opt-in, somehow.
-> 
-> Although, let's discuss that separately, in a next step. Or at least
-> let's try to keep PSCI related technical discussions to the other
-> thread, as that makes it easier to follow.
-> 
-> >
-> > You can apply the concept in this series to _any_ arch provided
-> > the power domains representation is correct (and again, I would sound
-> > like a broken record but the series must improve power savings over
-> > vanilla CPUidle menu governor).
-> 
-> I agree, but let me elaborate a bit, to hopefully add some clarity,
-> which I may not have been able to communicate earlier.
-> 
-> The goal with the series is to enable platforms to support all its
-> available idlestates, which are shared among a group of CPUs. This is
-> the case for QCOM 410c, for example.
-> 
-> To my knowledge, we have other ARM32 based platforms that currently
-> have disabled some of its cluster idle states. That's because they
-> can't know when it's safe to power off the cluster "coherency domain",
-> in cases when the platform also have other shared resources in it.
-> 
-> The point is, to see improved power savings, additional platform
-> deployment may be needed and that just takes time. For example runtime
-> PM support is needed in those drivers that deals with the "shared
-> resources", a correctly modeled PM domain topology using genpd, etc,
-> etc.
-> 
-> >
-> >> > I still think that PSCI firmware and most certainly mwait() play the
-> >> > role the GenPD governor does since they can detect in FW/HW whether
-> >> > that's worthwhile to switch off a domain, the information is obviously
-> >> > there and the kernel would just add latency to the idle path in that
-> >> > case but let's gloss over this for the sake of this discussion.
-> >>
-> >> Yep, let's discuss that separately.
-> >>
-> >> That said, can I interpret your comments on the series up until this
-> >> change, that you seems rather happy with where the series is going?
-> >
-> > It is something we have been discussing with Daniel since generic idle
-> > was merged for Arm a long while back. I have nothing against describing
-> > idle states with power domains but it must improve idle decisions
-> > against the mainline. As I said before, runtime PM can also be used
-> > to get rid of CPU PM notifiers (because with power domains we KNOW
-> > what devices eg PMU are switched off on idle entry, we do not guess
-> > any longer; replacing CPU PM notifiers is challenging and can be
-> > tackled - if required - in a different series).
-> 
-> Yes, we have be talking about the CPU PM and CPU_CLUSTER_PM notifiers
-> and I fully agree. It's something that we should look into and in
-> future steps.
-> 
-> >
-> > Bottom line (talk is cheap, I know and apologise about that): this
-> > series (up until this change) adds complexity to the idle path and lots
-> > of code; if its usage is made optional and can be switched on on systems
-> > where it saves power that's fine by me as long as we keep PSCI
-> > OS-initiated idle states out of the equation, that's an orthogonal
-> > discussion as, I hope, I managed to convey.
-> >
-> > Thanks,
-> > Lorenzo
-> 
-> Lorenzo, thanks for your feedback!
-> 
-> Please, when you have time, could you also reply to the other thread
-> we started, I would like to understand how I should proceed with this
-> series.
+Hello ! 
 
-OK, thanks, I will, sorry for the delay in responding.
+On 09/13/2018 06:31 PM, Jae Hyun Yoo wrote:
+> Hi Cédric,
+> 
+> On 9/12/2018 10:47 PM, Cédric Le Goater wrote:
+>> On 09/12/2018 06:54 PM, Jae Hyun Yoo wrote:
+>>> On 9/11/2018 6:34 PM, Guenter Roeck wrote:
+>>>> On Tue, Sep 11, 2018 at 04:58:44PM -0700, Jae Hyun Yoo wrote:
+>>>>> On 9/11/2018 4:33 PM, Guenter Roeck wrote:
+>>>>>> Looking into the patch, clearing the interrupt status at the end of an
+>>>>>> interrupt handler is always suspicious and tends to result in race
+>>>>>> conditions (because additional interrupts may have arrived while handling
+>>>>>> the existing interrupts, or because interrupt handling itself may trigger
+>>>>>> another interrupt). With that in mind, the following patch fixes the
+>>>>>> problem for me.
+>>>>>>
+>>>>>> Guenter
+>>>>>>
+>>>>>> ---
+>>>>>>
+>>>>>> diff --git a/drivers/i2c/busses/i2c-aspeed.c b/drivers/i2c/busses/i2c-aspeed.c
+>>>>>> index c258c4d9a4c0..c488e6950b7c 100644
+>>>>>> --- a/drivers/i2c/busses/i2c-aspeed.c
+>>>>>> +++ b/drivers/i2c/busses/i2c-aspeed.c
+>>>>>> @@ -552,6 +552,8 @@ static irqreturn_t aspeed_i2c_bus_irq(int irq, void *dev_id)
+>>>>>>        spin_lock(&bus->lock);
+>>>>>>        irq_received = readl(bus->base + ASPEED_I2C_INTR_STS_REG);
+>>>>>> +    /* Ack all interrupt bits. */
+>>>>>> +    writel(irq_received, bus->base + ASPEED_I2C_INTR_STS_REG);
+>>>>>>        irq_remaining = irq_received;
+>>>>>>    #if IS_ENABLED(CONFIG_I2C_SLAVE)
+>>>>>> @@ -584,8 +586,6 @@ static irqreturn_t aspeed_i2c_bus_irq(int irq, void *dev_id)
+>>>>>>                "irq handled != irq. expected 0x%08x, but was 0x%08x\n",
+>>>>>>                irq_received, irq_handled);
+>>>>>> -    /* Ack all interrupt bits. */
+>>>>>> -    writel(irq_received, bus->base + ASPEED_I2C_INTR_STS_REG);
+>>>>>>        spin_unlock(&bus->lock);
+>>>>>>        return irq_remaining ? IRQ_NONE : IRQ_HANDLED;
+>>>>>>    }
+>>>>>>
+>>>>>
+>>>>> My intention of putting the code at the end of interrupt handler was,
+>>>>> to reduce possibility of combined irq calls which is explained in this
+>>>>> patch. But YES, I agree with you. It could make a potential race
+>>>>
+>>>> Hmm, yes, but that doesn't explain why it would make sense to acknowledge
+>>>> the interrupt late. The interrupt ack only means "I am going to handle these
+>>>> interrupts". If additional interrupts arrive while the interrupt handler
+>>>> is active, those will have to be acknowledged separately.
+>>>>
+>>>> Sure, there is a risk that an interrupt arrives while the handler is
+>>>> running, and that it is handled but not acknowledged. That can happen
+>>>> with pretty much all interrupt handlers, and there are mitigations to
+>>>> limit the impact (for example, read the interrupt status register in
+>>>> a loop until no more interrupts are pending). But acknowledging
+>>>> an interrupt that was possibly not handled is always bad idea.
+>>>
+>>> Well, that's generally right but not always. Sometimes that depends on
+>>> hardware and Aspeed I2C is the case.
+>>>
+>>> This is a description from Aspeed AST2500 datasheet:
+>>>    I2CD10 Interrupt Status Register
+>>>    bit 2 Receive Done Interrupt status
+>>>          S/W needs to clear this status bit to allow next data receiving.
+>>>
+>>> It means, driver should hold this bit to prevent transition of hardware
+>>> state machine until the driver handles received data, so the bit should
+>>> be cleared at the end of interrupt handler.
+>>>
+>>> Let me share my test result. Your code change works on 100KHz bus speed
+>>> but doesn't work well on 1MHz bus speed. Investigated that interrupt
+>>> handling is fast enough in 100KHz test but in 1MHz, most of data is
+>>> corrupted because the bit is cleared at the beginning of interrupt
+>>> handler so it allows receiving of the next data but the interrupt
+>>> handler isn't fast enough to read the data buffer on time. I checked
+>>> this problem on BMC-ME channel which ME sends lots of IPMB packets to
+>>> BMC at 1MHz speed. You could simply check the data corruption problem on
+>>> the BMC-ME channel.
+>>
+>> OK.
+>>  
+>>> My thought is, the current code is right for real Aspeed I2C hardware.
+>>> It seems that QEMU 3.0 model for witherspoon-bmc doesn't simulate the
+>>> actual Aspeed I2C hardware correctly.
+>>
+>> That might be very well possible yes. it also misses support for the slave
+>> mode and the DMA registers.
+>>
+> 
+> Yes, it would be good if qemu's Aspeed I2C model supports slave mode.
+> Since the current linux Aspeed I2C driver supports byte transfer mode
+> only, so DMA transfer mode support in qemu could be considered later.
 
-Lorenzo
+The Aspeed SDK already does, so yes, we will need to consider it.
+
+> Implementing pool mode and DMA mode for linux Aspeed I2C are in my
+> backlog at this moment.
+
+Is there a QEMU model for an I2C/IPMB device ? 
+
+There is already a large IPMI framework in QEMU, that would be interesting.
+to extend.
+
+Thanks,
+
+C. 
+
+
