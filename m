@@ -2,286 +2,149 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87968C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 09:31:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35505C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 09:31:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2381520882
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 09:31:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1883206B8
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 09:31:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=monstr-eu.20150623.gappssmtp.com header.i=@monstr-eu.20150623.gappssmtp.com header.b="PrqoKDcZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2381520882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=monstr.eu
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="pCUZAAQE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1883206B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728224AbeIMOjh (ORCPT
+        id S1728065AbeIMOkZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 10:39:37 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:38223 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726509AbeIMOje (ORCPT
+        Thu, 13 Sep 2018 10:40:25 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:35637 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726509AbeIMOkY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 10:39:34 -0400
-Received: by mail-wm0-f67.google.com with SMTP id t25-v6so5380944wmi.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 02:30:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=monstr-eu.20150623.gappssmtp.com; s=20150623;
-        h=reply-to:subject:to:cc:references:from:openpgp:autocrypt:message-id
-         :date:user-agent:mime-version:in-reply-to;
-        bh=cgp/4PbF1jH0DppZpJV45b2IYRkgP087Q9bvbULOWOM=;
-        b=PrqoKDcZSUQTJUxdmRvmm2OPYkwhNxz5iC/56BUgzT8FCSAPBwERSblDvkYMAN0ArB
-         ihhS4+Mp0dLjWWAfiOMDSpbXFaFUqr0C+Z9mljkhlGhtduqTSZCXHu2vtoTcdBahsOa9
-         RaTlJy17vy8OZ13uyrRpWj01+nOD0wS4Z/pSGuZWzdkdIOQPl3xxuDesMy3g9tCxyLGc
-         rajc4jFXcwJEF27VnIrr6ctxeltC+lIUP3bR3KPXbt+xLbSLPF2BIjrU717jDm9lDJzZ
-         qG9Ags4pjAACoDHvFBZxJ5/NndaIJCuW9utoD/3ToKXH1W7RKC9lMJkh7uVgRkKLHs5H
-         tOKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:reply-to:subject:to:cc:references:from:openpgp
-         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to;
-        bh=cgp/4PbF1jH0DppZpJV45b2IYRkgP087Q9bvbULOWOM=;
-        b=WvqofqprXhvw+jJkexC5nWqV5/MIaQ17l1nMhGvcWG6vRhG8piDtfA1mulTReXYHcC
-         0AGXT7WHD1CRfL3/WQmrj/lTVnUxCZG8EE759U4i3FFfeGfe3ZL5/Twxtv7MieTYpx9C
-         8KP/8b/Tbuvq5krZ0yqydCjfr9vFDGZE74XpjOZMeZdZZIQFrv34aEBsOWR0rf3mBEfr
-         Y0xxYyCQdZT4z9f8RWMMGVVhGtJzJTCxmAyZO3wZ9Jhe+W2LfpHwNwESTtlv6i7VWyMF
-         sPE2rQTbZQeDb2nAl5HBpUWdGKC/uMSBTIsYv3HSmkkZq1ooN/WNEOG6pacgN/oWMXij
-         6d7A==
-X-Gm-Message-State: APzg51DhRVb0T4/nWjdJQWQxtg9aI3G3Hti6CPIpxJ++UvszM0gyMbvk
-        QHRbg0U/MePIY42Neq4A56UTpw==
-X-Google-Smtp-Source: ANB0VdZ2Dn47FIC4Z2WfIW+iWePaBUMhrTw8yQtXPAyUD1yRRiO8BLkK0vnDCXyfO9AzoshUB4+eXA==
-X-Received: by 2002:a1c:3a92:: with SMTP id h140-v6mr4865843wma.41.1536831054445;
-        Thu, 13 Sep 2018 02:30:54 -0700 (PDT)
-Received: from [173.194.76.109] ([149.199.62.254])
-        by smtp.gmail.com with ESMTPSA id r6-v6sm3040312wrt.92.2018.09.13.02.30.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Sep 2018 02:30:53 -0700 (PDT)
-Reply-To: monstr@monstr.eu
-Subject: Re: [PATCH 1/2] of: base: Introduce of_alias_check_id() to check
- alias IDs
-To:     Michal Simek <michal.simek@xilinx.com>,
-        linux-kernel@vger.kernel.org
-Cc:     devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>
-References: <0ee4683a7d3927c2ef20b1e106720e6154811cd7.1535980468.git.michal.simek@xilinx.com>
-From:   Michal Simek <monstr@monstr.eu>
-Openpgp: preference=signencrypt
-Autocrypt: addr=monstr@monstr.eu; prefer-encrypt=mutual; keydata=
- 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
- RmzhqoTJlA==
-Message-ID: <f67030b9-0afa-15f1-6e9f-284b51724bff@monstr.eu>
-Date:   Thu, 13 Sep 2018 11:30:48 +0200
+        Thu, 13 Sep 2018 10:40:24 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20180913093144euoutp015110dc260a39f83f77e241a9ebe2ccab~T678-CIZr1846818468euoutp01f
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 09:31:44 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180913093144euoutp015110dc260a39f83f77e241a9ebe2ccab~T678-CIZr1846818468euoutp01f
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1536831104;
+        bh=zSwIA1/iz4YSPkoGRU9yEwAB6hVZ9L4vgiVgJbPB2dc=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=pCUZAAQEfZlNzdt4rl30g3Tts5YV7lNWZf+a0UCRAi9Gq8mjNxP9IkojWwnbCdH2L
+         3gFOSCmzDc1JZ+mRoaFrcs4nqH3gPz4mHJfnRMjtYfxpBoGNmclLSACRm4GlfpFoJW
+         HA0Q1l+zioV6E6VgFD7uB3ZpD33bEqJMCn44M1V8=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20180913093144eucas1p22ea4c455172f4d7582b5cce6dd31bef4~T678jNi6m2855728557eucas1p2p;
+        Thu, 13 Sep 2018 09:31:44 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 6A.F1.04441.F7E2A9B5; Thu, 13
+        Sep 2018 10:31:43 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20180913093142eucas1p131c2ef771af3ee9fd7096f8a5ce673b5~T677eyaxO2985429854eucas1p1V;
+        Thu, 13 Sep 2018 09:31:42 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20180913093142eusmtrp2f29a6586cd2a27df085e945d71cc20c9~T677OF-Ua1714917149eusmtrp27;
+        Thu, 13 Sep 2018 09:31:42 +0000 (GMT)
+X-AuditID: cbfec7f2-5c9ff70000001159-6d-5b9a2e7f0ab2
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id CC.C6.04128.E7E2A9B5; Thu, 13
+        Sep 2018 10:31:42 +0100 (BST)
+Received: from [106.120.43.17] (unknown [106.120.43.17]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20180913093142eusmtip1251acb069402b6906f7e6e97bdf441f2~T6766nS1h0989709897eusmtip1S;
+        Thu, 13 Sep 2018 09:31:42 +0000 (GMT)
+Subject: Re: [PATCH v2 2/2] drm: bridge: document bridge attach/detach
+ imbalance
+To:     Peter Rosin <peda@axentia.se>, linux-kernel@vger.kernel.org
+Cc:     David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
+        Vincent Abriou <vincent.abriou@st.com>
+From:   Andrzej Hajda <a.hajda@samsung.com>
+Date:   Thu, 13 Sep 2018 11:31:41 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <0ee4683a7d3927c2ef20b1e106720e6154811cd7.1535980468.git.michal.simek@xilinx.com>
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="TT1AdXVD1OFBCCdRtQfJGpOSK7KsctXr7"
+In-Reply-To: <20180806061910.29914-3-peda@axentia.se>
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprPKsWRmVeSWpSXmKPExsWy7djP87r1erOiDSZ+0LToPXeSyeLK1/ds
+        Fpd3zWGz2HtoPqPFmasHWBxYPaYdmM3usf3bA1aP+93HmTye/tjL7PF5k1wAaxSXTUpqTmZZ
+        apG+XQJXxpdTZ5gL9nFU7Nx4lbWB8RNbFyMnh4SAicT89YuZuxi5OIQEVjBKPL+1gB3C+cIo
+        sXDPBajMZ0aJs807WLsYOcBaTi0ShYgvZ5Q4s3gWG4TzllHi3YEmFpC5wgJBEpdWnWICsUUE
+        7CWmXnsJZjML5El0PDwDtptNQFPi7+abYDaLgKrE+lOXmEFsUYEIiSMPFjKC2LwCghInZz4B
+        m8kpYCpxcu4iqDnyEtvfzmGGsMUlbj2ZzwRyhITAPHaJ9qfHmUEu5RUokzhwJhXiTxeJta3P
+        2SFsYYlXx7dA2TIS/3fOZ4Kw6yWaZl5hhpjTwShxYvFyaCBZSxw+fhHse2ago9fv0ocIO0o8
+        ff+WHRIofBI33gpCnMMnMWnbdGaIMK9ER5sQRLWixP2zW5khbHGJpRe+sk1gVJqF5MlZSB6b
+        heSxWQh7FzCyrGIUTy0tzk1PLTbMSy3XK07MLS7NS9dLzs/dxAhMNqf/Hf+0g/HrpaRDjAIc
+        jEo8vDPUZ0YLsSaWFVfmHmKU4GBWEuF9zQ4U4k1JrKxKLcqPLyrNSS0+xCjNwaIkzsunlRYt
+        JJCeWJKanZpakFoEk2Xi4JRqYPQ8KKjIxTBdTvnl/cOndixTMfT2cfdmYPReblMherjxasbB
+        OtcrK+65t5+/k5B5T5jJQ/d1UlL9jrP2a2LMXf/4aLpb5useWSdy7J1eqETOQb5nKpwVQhNu
+        fP1+VV3TYPWB1QXv9yvPZPg8af132yemJWmdbwXSN144e+hjXd0K+Wl5P3flqyuxFGckGmox
+        FxUnAgBjUtZ1MgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMIsWRmVeSWpSXmKPExsVy+t/xu7p1erOiDZ7fkLfoPXeSyeLK1/ds
+        Fpd3zWGz2HtoPqPFmasHWBxYPaYdmM3usf3bA1aP+93HmTye/tjL7PF5k1wAa5SeTVF+aUmq
+        QkZ+cYmtUrShhZGeoaWFnpGJpZ6hsXmslZGpkr6dTUpqTmZZapG+XYJexpdTZ5gL9nFU7Nx4
+        lbWB8RNbFyMHh4SAicSpRaJdjFwcQgJLGSWe3W5m6WLkBIqLS+ye/5YZwhaW+HOtiw2i6DWj
+        xLHv+5hAEsICQRKXVp0Cs0UE7CWmXnsJZjML5En8v9YK1bCZUWLdoulgk9gENCX+br7JBmLz
+        CthJHHj+G6yBRUBVYv2pS2A1ogIREquXv2CFqBGUODnzCdhFnAKmEifnLoJaoC7xZx5EPbOA
+        vMT2t3OgbHGJW0/mM01gFJqFpH0WkpZZSFpmIWlZwMiyilEktbQ4Nz232EivODG3uDQvXS85
+        P3cTIzDCth37uWUHY9e74EOMAhyMSjy8L5RmRguxJpYVV+YeYpTgYFYS4X3NDhTiTUmsrEot
+        yo8vKs1JLT7EaAr03ERmKdHkfGD055XEG5oamltYGpobmxubWSiJ8543qIwSEkhPLEnNTk0t
+        SC2C6WPi4JRqYDykzhz8uq1r3rZFzUUmckZFn52Nzyv+29dWef+w7rq3+347fVp1K7zeXrxp
+        90wHzbWxH6Ktv2iGufU37s5+vHujut2UD/57Ul+21Mraa8zw4zjJP/Oa14SQpB+Om45J6fXo
+        7juZ47L3oYGRrrxp+OPz3ltar269piciILZfY56HqchPpTvhPUosxRmJhlrMRcWJACepWt3G
+        AgAA
+Message-Id: <20180913093142eucas1p131c2ef771af3ee9fd7096f8a5ce673b5~T677eyaxO2985429854eucas1p1V@eucas1p1.samsung.com>
+X-CMS-MailID: 20180913093142eucas1p131c2ef771af3ee9fd7096f8a5ce673b5
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20180806082220epcas4p383c3ee1b2ea8def665621ef82dba68d0
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180806082220epcas4p383c3ee1b2ea8def665621ef82dba68d0
+References: <20180806061910.29914-1-peda@axentia.se>
+        <CGME20180806082220epcas4p383c3ee1b2ea8def665621ef82dba68d0@epcas4p3.samsung.com>
+        <20180806061910.29914-3-peda@axentia.se>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---TT1AdXVD1OFBCCdRtQfJGpOSK7KsctXr7
-Content-Type: multipart/mixed; boundary="q9kHpJ06SzFgzaYECd2uaXV2cQKth14PE";
- protected-headers="v1"
-From: Michal Simek <monstr@monstr.eu>
-Reply-To: monstr@monstr.eu
-To: Michal Simek <michal.simek@xilinx.com>, linux-kernel@vger.kernel.org
-Cc: devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
- Frank Rowand <frowand.list@gmail.com>
-Message-ID: <f67030b9-0afa-15f1-6e9f-284b51724bff@monstr.eu>
-Subject: Re: [PATCH 1/2] of: base: Introduce of_alias_check_id() to check
- alias IDs
-References: <0ee4683a7d3927c2ef20b1e106720e6154811cd7.1535980468.git.michal.simek@xilinx.com>
-In-Reply-To: <0ee4683a7d3927c2ef20b1e106720e6154811cd7.1535980468.git.michal.simek@xilinx.com>
-
---q9kHpJ06SzFgzaYECd2uaXV2cQKth14PE
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-
-Hi Rob,
-
-On 3.9.2018 15:14, Michal Simek wrote:
-> The function travers the lookup table to check if the request alias
-> id is compatible with the device driver match structure.
-> This function will be used by serial drivers to check if requested alia=
-s
-> is allocated or free to use.
->=20
-> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+On 06.08.2018 08:19, Peter Rosin wrote:
+> Since 4a878c03d562 ("drm: bridge: Detach bridge from encoder at encoder
+> cleanup time"), it is generally no longer correct to detach bridges from
+> encoders manually. Document that.
+>
+> Signed-off-by: Peter Rosin <peda@axentia.se>
 > ---
->=20
-> Based on discussion with Rob
-> https://lkml.org/lkml/2018/4/27/397
-> nbits is passed to the function not to limit only to 32/64bit fields.
->=20
-> ---
->  drivers/of/base.c  | 48 ++++++++++++++++++++++++++++++++++++++++++++++=
-++
->  include/linux/of.h |  3 +++
->  2 files changed, 51 insertions(+)
->=20
-> diff --git a/drivers/of/base.c b/drivers/of/base.c
-> index 466e3c8582f0..236a85d69957 100644
-> --- a/drivers/of/base.c
-> +++ b/drivers/of/base.c
-> @@ -16,6 +16,7 @@
-> =20
->  #define pr_fmt(fmt)	"OF: " fmt
-> =20
-> +#include <linux/bitmap.h>
->  #include <linux/console.h>
->  #include <linux/ctype.h>
->  #include <linux/cpu.h>
-> @@ -1893,6 +1894,53 @@ int of_alias_get_id(struct device_node *np, cons=
-t char *stem)
->  EXPORT_SYMBOL_GPL(of_alias_get_id);
-> =20
->  /**
-> + * of_alias_get_alias_list - Get alias list for the given device drive=
-r
-> + * @matches:	Array of OF device match structures to search in
-> + * @stem:	Alias stem of the given device_node
-> + * @bitmap:	Bitmap field pointer
-> + * @nbits:	Maximum number of alias ID which can be recorded it bitmap
-> + *
-> + * The function travels the lookup table to record alias ids for the g=
-iven
-> + * device match structures and alias stem.
-> + */
-> +void of_alias_get_alias_list(const struct of_device_id *matches,
-> +			     const char *stem, unsigned long *bitmap,
-> +			     unsigned int nbits)
-> +{
-> +	struct alias_prop *app;
-> +
-> +	/* Zero bitmap field to make sure that all the time it is clean */
-> +	bitmap_zero(bitmap, nbits);
-> +
-> +	mutex_lock(&of_mutex);
-> +	pr_debug("%s: Looking for stem: %s\n", __func__, stem);
-> +	list_for_each_entry(app, &aliases_lookup, link) {
-> +		pr_debug("%s: stem: %s, id: %d\n",
-> +			 __func__, app->stem, app->id);
-> +
-> +		if (strcmp(app->stem, stem) !=3D 0) {
-> +			pr_debug("%s: stem comparison doesn't passed %s\n",
-> +				 __func__, app->stem);
-> +			continue;
-> +		}
-> +
-> +		if (app->id >=3D nbits) {
-> +			pr_debug("%s: ID %d greater then bitmap field %d\n",
-> +				__func__, app->id, nbits);
-> +			continue;
-> +		}
-> +
-> +		if (of_match_node(matches, app->np)) {
-> +			pr_debug("%s: Allocated ID %d\n", __func__, app->id);
-> +			set_bit(app->id, bitmap);
-> +		}
-> +		/* Alias exist but it not compatible with matches */
-> +	}
-> +	mutex_unlock(&of_mutex);
-> +}
-> +EXPORT_SYMBOL_GPL(of_alias_get_alias_list);
-> +
-> +/**
->   * of_alias_get_highest_id - Get highest alias id for the given stem
->   * @stem:	Alias stem to be examined
+>  drivers/gpu/drm/drm_bridge.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
+> index 1638bfe9627c..ba7025041e46 100644
+> --- a/drivers/gpu/drm/drm_bridge.c
+> +++ b/drivers/gpu/drm/drm_bridge.c
+> @@ -104,6 +104,10 @@ EXPORT_SYMBOL(drm_bridge_remove);
+>   * If non-NULL the previous bridge must be already attached by a call to this
+>   * function.
 >   *
-> diff --git a/include/linux/of.h b/include/linux/of.h
-> index 4d25e4f952d9..e474710e3930 100644
-> --- a/include/linux/of.h
-> +++ b/include/linux/of.h
-> @@ -387,6 +387,9 @@ extern int of_phandle_iterator_args(struct of_phand=
-le_iterator *it,
->  extern void of_alias_scan(void * (*dt_alloc)(u64 size, u64 align));
->  extern int of_alias_get_id(struct device_node *np, const char *stem);
->  extern int of_alias_get_highest_id(const char *stem);
-> +extern void of_alias_get_alias_list(const struct of_device_id *matches=
-,
-> +				    const char *stem, unsigned long *bitmap,
-> +				    unsigned int nbits);
-> =20
->  extern int of_machine_is_compatible(const char *compat);
-> =20
->=20
+> + * Note that bridges attached to encoders are auto-detached during encoder
+> + * cleanup in drm_encoder_cleanup(), so drm_bridge_attach() should generally
+> + * *not* be balanced with a drm_bridge_detach() in driver code.
+> + *
+>   * RETURNS:
+>   * Zero on success, error code on failure
+>   */
 
-Can you please take a look at this patch?
+Pushed to drm-misc-next.
 
-Thanks,
-Michal
+--
+Regards
+Andrzej
 
---=20
-Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
-w: www.monstr.eu p: +42-0-721842854
-Maintainer of Linux kernel - Xilinx Microblaze
-Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP ARM64 SoCs
-U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP SoCs
-
-
-
-
---q9kHpJ06SzFgzaYECd2uaXV2cQKth14PE--
-
---TT1AdXVD1OFBCCdRtQfJGpOSK7KsctXr7
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iEYEARECAAYFAluaLkgACgkQykllyylKDCHSqwCgkF/nachzgOYUWT3mGLLHxeX5
-FpkAn0xmdsUDwNbQJXhohhWlFhpzu3v0
-=z7p3
------END PGP SIGNATURE-----
-
---TT1AdXVD1OFBCCdRtQfJGpOSK7KsctXr7--
