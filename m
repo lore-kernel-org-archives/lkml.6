@@ -2,42 +2,39 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0856BC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:31:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A55A7C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:31:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6A2420C0A
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:31:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6A2420C0A
+	by mail.kernel.org (Postfix) with ESMTP id 6196F20C0A
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:31:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6196F20C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728098AbeIMSlP (ORCPT
+        id S1728125AbeIMSlT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:41:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58412 "EHLO
+        Thu, 13 Sep 2018 14:41:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58428 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726637AbeIMSlO (ORCPT
+        with ESMTP id S1728093AbeIMSlS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:41:14 -0400
+        Thu, 13 Sep 2018 14:41:18 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0C6B0D1A;
-        Thu, 13 Sep 2018 13:31:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 53445D19;
+        Thu, 13 Sep 2018 13:31:49 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tan Hu <tan.hu@zte.com.cn>,
-        Jiang Biao <jiang.biao2@zte.com.cn>,
-        Julian Anastasov <ja@ssi.bg>,
-        Simon Horman <horms@verge.net.au>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+        Lee Jones <lee.jones@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 17/60] ipvs: fix race between ip_vs_conn_new() and ip_vs_del_dest()
-Date:   Thu, 13 Sep 2018 15:30:24 +0200
-Message-Id: <20180913131746.176139405@linuxfoundation.org>
+Subject: [PATCH 4.4 18/60] mfd: sm501: Set coherent_dma_mask when creating subdevices
+Date:   Thu, 13 Sep 2018 15:30:25 +0200
+Message-Id: <20180913131746.220380077@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131745.261413581@linuxfoundation.org>
 References: <20180913131745.261413581@linuxfoundation.org>
@@ -55,83 +52,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tan Hu <tan.hu@zte.com.cn>
+From: Guenter Roeck <linux@roeck-us.net>
 
-[ Upstream commit a53b42c11815d2357e31a9403ae3950517525894 ]
+[ Upstream commit 2f606da78230f09cf1a71fde6ee91d0c710fa2b2 ]
 
-We came across infinite loop in ipvs when using ipvs in docker
-env.
+Instantiating the sm501 OHCI subdevice results in a kernel warning.
 
-When ipvs receives new packets and cannot find an ipvs connection,
-it will create a new connection, then if the dest is unavailable
-(i.e. IP_VS_DEST_F_AVAILABLE), the packet will be dropped sliently.
+sm501-usb sm501-usb: SM501 OHCI
+sm501-usb sm501-usb: new USB bus registered, assigned bus number 1
+WARNING: CPU: 0 PID: 1 at ./include/linux/dma-mapping.h:516
+ohci_init+0x194/0x2d8
+Modules linked in:
 
-But if the dropped packet is the first packet of this connection,
-the connection control timer never has a chance to start and the
-ipvs connection cannot be released. This will lead to memory leak, or
-infinite loop in cleanup_net() when net namespace is released like
-this:
+CPU: 0 PID: 1 Comm: swapper Tainted: G        W
+4.18.0-rc7-00178-g0b5b1f9a78b5 #1
+PC is at ohci_init+0x194/0x2d8
+PR is at ohci_init+0x168/0x2d8
+PC  : 8c27844c SP  : 8f81dd94 SR  : 40008001
+TEA : 29613060
+R0  : 00000000 R1  : 00000000 R2  : 00000000 R3  : 00000202
+R4  : 8fa98b88 R5  : 8c277e68 R6  : 00000000 R7  : 00000000
+R8  : 8f965814 R9  : 8c388100 R10 : 8fa98800 R11 : 8fa98928
+R12 : 8c48302c R13 : 8fa98920 R14 : 8c48302c
+MACH: 00000096 MACL: 0000017c GBR : 00000000 PR  : 8c278420
 
-    ip_vs_conn_net_cleanup at ffffffffa0a9f31a [ip_vs]
-    __ip_vs_cleanup at ffffffffa0a9f60a [ip_vs]
-    ops_exit_list at ffffffff81567a49
-    cleanup_net at ffffffff81568b40
-    process_one_work at ffffffff810a851b
-    worker_thread at ffffffff810a9356
-    kthread at ffffffff810b0b6f
-    ret_from_fork at ffffffff81697a18
+Call trace:
+ [<(ptrval)>] usb_add_hcd+0x1e8/0x6ec
+ [<(ptrval)>] _dev_info+0x0/0x54
+ [<(ptrval)>] arch_local_save_flags+0x0/0x8
+ [<(ptrval)>] arch_local_irq_restore+0x0/0x24
+ [<(ptrval)>] ohci_hcd_sm501_drv_probe+0x114/0x2d8
+...
 
-race condition:
-    CPU1                           CPU2
-    ip_vs_in()
-      ip_vs_conn_new()
-                                   ip_vs_del_dest()
-                                     __ip_vs_unlink_dest()
-                                       ~IP_VS_DEST_F_AVAILABLE
-      cp->dest && !IP_VS_DEST_F_AVAILABLE
-      __ip_vs_conn_put
-    ...
-    cleanup_net  ---> infinite looping
+Initialize coherent_dma_mask when creating SM501 subdevices to fix
+the problem.
 
-Fix this by checking whether the timer already started.
-
-Signed-off-by: Tan Hu <tan.hu@zte.com.cn>
-Reviewed-by: Jiang Biao <jiang.biao2@zte.com.cn>
-Acked-by: Julian Anastasov <ja@ssi.bg>
-Acked-by: Simon Horman <horms@verge.net.au>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: b6d6454fdb66f ("mfd: SM501 core driver")
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/netfilter/ipvs/ip_vs_core.c |   15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ drivers/mfd/sm501.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/netfilter/ipvs/ip_vs_core.c
-+++ b/net/netfilter/ipvs/ip_vs_core.c
-@@ -1809,13 +1809,20 @@ ip_vs_in(struct netns_ipvs *ipvs, unsign
- 	if (cp->dest && !(cp->dest->flags & IP_VS_DEST_F_AVAILABLE)) {
- 		/* the destination server is not available */
+--- a/drivers/mfd/sm501.c
++++ b/drivers/mfd/sm501.c
+@@ -714,6 +714,7 @@ sm501_create_subdev(struct sm501_devdata
+ 	smdev->pdev.name = name;
+ 	smdev->pdev.id = sm->pdev_id;
+ 	smdev->pdev.dev.parent = sm->dev;
++	smdev->pdev.dev.coherent_dma_mask = 0xffffffff;
  
--		if (sysctl_expire_nodest_conn(ipvs)) {
-+		__u32 flags = cp->flags;
-+
-+		/* when timer already started, silently drop the packet.*/
-+		if (timer_pending(&cp->timer))
-+			__ip_vs_conn_put(cp);
-+		else
-+			ip_vs_conn_put(cp);
-+
-+		if (sysctl_expire_nodest_conn(ipvs) &&
-+		    !(flags & IP_VS_CONN_F_ONE_PACKET)) {
- 			/* try to expire the connection immediately */
- 			ip_vs_conn_expire_now(cp);
- 		}
--		/* don't restart its timer, and silently
--		   drop the packet. */
--		__ip_vs_conn_put(cp);
-+
- 		return NF_DROP;
- 	}
- 
+ 	if (res_count) {
+ 		smdev->pdev.resource = (struct resource *)(smdev+1);
 
 
