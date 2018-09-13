@@ -5,88 +5,179 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED259C67788
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E99B6C63684
 	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 17:35:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 923FA2133F
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 15:49:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 923FA2133F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 9F34E206B6
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 15:51:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F34E206B6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727860AbeIMU7S (ORCPT
+        id S1727820AbeIMVBn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 16:59:18 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36184 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727365AbeIMU7S (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 16:59:18 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1g0Tri-0004pd-Hz; Thu, 13 Sep 2018 16:49:10 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1g0Trh-0000Eb-SB; Thu, 13 Sep 2018 16:49:09 +0100
-Message-ID: <0dbcdd4d81ed965915ccf2471dd4d5a3d025c93b.camel@decadent.org.uk>
-Subject: Re: 4.19-rc3: bindeb-pkg target is failing on ppc64
-From:   Ben Hutchings <ben@decadent.org.uk>
-To:     Rui Salvaterra <rsalvaterra@gmail.com>
-Cc:     yamada.masahiro@socionext.com, michal.lkml@markovi.net,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 13 Sep 2018 16:48:59 +0100
-In-Reply-To: <CALjTZvYcKOycB=XeF-Eqtmq3ADh2be+gfWGiw0jbSgEUo6q8Dw@mail.gmail.com>
-References: <CALjTZvb4hOY_Hew-jEUtpyhkGbmh4Tgb0doPC6EaGtz_rMGt7A@mail.gmail.com>
-         <eb1fe15c9ced6950d6a38c901278b8196ae4938d.camel@decadent.org.uk>
-         <CALjTZvYcKOycB=XeF-Eqtmq3ADh2be+gfWGiw0jbSgEUo6q8Dw@mail.gmail.com>
-Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="=-EuXEQRX8XeOMxJgw3rwr"
-User-Agent: Evolution 3.29.92-1 
-Mime-Version: 1.0
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        Thu, 13 Sep 2018 17:01:43 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54540 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726819AbeIMVBn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 17:01:43 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id F30B53001FCD;
+        Thu, 13 Sep 2018 15:51:37 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A36705D6B3;
+        Thu, 13 Sep 2018 15:51:36 +0000 (UTC)
+Subject: [PATCH 00/10] iov_iter: Add new iters and use with AFS
+From:   David Howells <dhowells@redhat.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
+Date:   Thu, 13 Sep 2018 16:51:35 +0100
+Message-ID: <153685389564.14766.11306559824641824935.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Thu, 13 Sep 2018 15:51:38 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---=-EuXEQRX8XeOMxJgw3rwr
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Hi Al,
 
-Like I said, please send the error messages; we're not going to guess.
+Here's a set of patches that adds two new iov_iter types and then makes AFS
+use them to do I/O.  The iov_iter changes are:
 
-Ben.
+ (1) Separate the type from the direction in the iov_iter struct and
+     provide accessor functions to wrap type checking.
 
---=20
-Ben Hutchings
-Computers are not intelligent.	They only think they are.
+ (2) Renumber the type constants to be contiguous small unsigned integers,
+     starting from 0 and then use switch-statements rather than if-else
+     chains using bit-testing.
+
+     Note that the compiler can optimise this better by using CMP rather
+     than AND/TEST, say, as comparing integers requires fewer CMP
+     instructions or can use jump tables.
+
+ (3) Change iov_offset from size_t to loff_t.  This allows iov_offset to be
+     then used as a byte offset with ITER_MAPPING and allows 4GiB and larger
+     reads and writes to be proposed.
+
+     This makes no difference on a 64-bit system, but does make a 32-bit
+     compilation a bit larger.
+
+ (4) Add an ITER_MAPPING iterator type.  This provides an iterator that
+     directly accesses an address_space, and assumes that the target pages
+     are in some way locked (eg. PG_lock or PG_writeback).
+
+ (5) Add an ITER_DISCARD iterator type.  This provides an iterator that
+     simply discards anything written to it.  It cannot be used as a data
+     source.
+
+The afs changes are:
+
+ (1) Use a single ITER_MAPPING iterator to cover all the data read by a
+     single FetchData RPC op.  This involves switching the operation to an
+     ITER_KVEC iterator to read the status record that's transmitted after
+     the data.
+
+ (2) Use an ITER_DISCARD iterator to discard any extra data the server may
+     have included that we don't want.
+
+ (3) Use a single ITER_MAPPING iterator to cover all the data written by a
+     single StoreData RPC op.
+
+ (4) Add synchronous O_DIRECT read support.
+
+This should also be useful for doing direct I/O from cachefiles.
+
+The patches can be found here also:
+
+	http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=afs-iov
+
+David
+---
+David Howells (10):
+      iov_iter: Separate type from direction and use accessor functions
+      iov_iter: Renumber the ITER_* constants in uio.h
+      iov_iter: Make count and iov_offset loff_t not size_t
+      iov_iter: Add mapping and discard iterator types
+      afs: Better tracing of protocol errors
+      afs: Set up the iov_iter before calling afs_extract_data()
+      afs: Use ITER_MAPPING for writing
+      afs: Add O_DIRECT read support
+      afs: Add a couple of tracepoints to log I/O errors
+      afs: Don't invoke the server to read data beyond EOF
 
 
+ block/bio.c                              |    2 
+ drivers/block/drbd/drbd_main.c           |    2 
+ drivers/block/drbd/drbd_receiver.c       |    2 
+ drivers/block/loop.c                     |    9 
+ drivers/block/nbd.c                      |   12 -
+ drivers/isdn/mISDN/l1oip_core.c          |    3 
+ drivers/misc/vmw_vmci/vmci_queue_pair.c  |    6 
+ drivers/nvme/target/io-cmd-file.c        |    2 
+ drivers/target/iscsi/iscsi_target_util.c |    6 
+ drivers/target/target_core_file.c        |    6 
+ drivers/usb/usbip/usbip_common.c         |    2 
+ drivers/xen/pvcalls-back.c               |    8 
+ fs/9p/vfs_addr.c                         |    4 
+ fs/9p/vfs_dir.c                          |    2 
+ fs/9p/xattr.c                            |    4 
+ fs/afs/cmservice.c                       |   56 +--
+ fs/afs/dir.c                             |  208 ++++++++---
+ fs/afs/file.c                            |  262 ++++++++++----
+ fs/afs/fsclient.c                        |  409 ++++++++-------------
+ fs/afs/inode.c                           |    2 
+ fs/afs/internal.h                        |   81 +++-
+ fs/afs/mntpt.c                           |    6 
+ fs/afs/rxrpc.c                           |  156 ++------
+ fs/afs/server.c                          |    4 
+ fs/afs/vlclient.c                        |  134 +++----
+ fs/afs/volume.c                          |    2 
+ fs/afs/write.c                           |  112 ++++--
+ fs/block_dev.c                           |    2 
+ fs/btrfs/file.c                          |    7 
+ fs/ceph/file.c                           |    7 
+ fs/cifs/connect.c                        |    4 
+ fs/cifs/file.c                           |    4 
+ fs/cifs/misc.c                           |    4 
+ fs/cifs/smb2ops.c                        |    4 
+ fs/cifs/smbdirect.c                      |   17 +
+ fs/cifs/transport.c                      |    8 
+ fs/direct-io.c                           |    2 
+ fs/dlm/lowcomms.c                        |    2 
+ fs/fuse/file.c                           |    2 
+ fs/iomap.c                               |    2 
+ fs/nfs/direct.c                          |    2 
+ fs/nfsd/vfs.c                            |    4 
+ fs/ocfs2/cluster/tcp.c                   |    2 
+ fs/orangefs/inode.c                      |    2 
+ fs/splice.c                              |    7 
+ include/linux/fscache.h                  |   31 ++
+ include/linux/uio.h                      |   69 ++--
+ include/trace/events/afs.h               |  202 ++++++++---
+ lib/iov_iter.c                           |  572 ++++++++++++++++++++++++------
+ mm/filemap.c                             |    2 
+ mm/page_io.c                             |    2 
+ net/9p/client.c                          |    4 
+ net/9p/trans_virtio.c                    |    2 
+ net/bluetooth/6lowpan.c                  |    2 
+ net/bluetooth/a2mp.c                     |    2 
+ net/bluetooth/smp.c                      |    2 
+ net/ceph/messenger.c                     |    6 
+ net/netfilter/ipvs/ip_vs_sync.c          |    2 
+ net/smc/smc_clc.c                        |    4 
+ net/socket.c                             |    6 
+ net/sunrpc/svcsock.c                     |    2 
+ net/tipc/topsrv.c                        |    2 
+ net/tls/tls_device.c                     |    4 
+ net/tls/tls_sw.c                         |    4 
+ 64 files changed, 1551 insertions(+), 953 deletions(-)
 
---=-EuXEQRX8XeOMxJgw3rwr
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAluahusACgkQ57/I7JWG
-EQk0EQ/+OCis/y+/5+30XmLUwlPKs/KjCNXUukH62UdlowoVJEo5XhGvGoXUBSh0
-guieQGa9adyMyI9vEgAY6QrtxduvCBuAx2CZmTi6lFFCnBP1zKyXOQ1TI07lPz/1
-mEZBDFTC52E8tWcC00jWO9/1IKrZ8tMVhDRRYqq0xvXQFNirL2eXcfv6hPm+9hsf
-bDeGmEEHZAeLNdJCXN02KsOnyAqLRiXqPQaEWvrlBwBb6+L8iuqOccwtC5l6ShGD
-JBMxXAmWg21MREnPkOXwMIMoJ1nzDdhvg8Xfv/O9d+u49nRXCCX8KFOtfCIR50Jy
-0sDXAKOycxw3Yojc00D2cvT5NMz0jEt9lQ9jvRfMpcIHWAo1Z7ii61e9beLXhLXT
-pYHtCqEeHsjzI5hwvu8B0SElyxWLcPXgBfESSvHHBfGIsEfXIGMnHlqcqEUdKAtK
-uzww5vB+/ZYYBkQjjER/PmX5Gcshm2LOS1GXB7sYD+Pv298BcbUCZkKGEdjWCsCg
-qXyAUysS0g5KBKPDFww1a6pE+qjxqglSa/rRnzAszS1BdVGBS5tATcAsWI3dQerN
-/UBhruBFXtvu+mZ7eveYjndo2n81zEmoDBKzSPUTfOX0QzQGbRyMk8kxAMctydvq
-+SAny8x2E6b1G99hYWxBMyo3XOQkUroHlbDyimts8OgI+RR8AK4=
-=LS6u
------END PGP SIGNATURE-----
-
---=-EuXEQRX8XeOMxJgw3rwr--
