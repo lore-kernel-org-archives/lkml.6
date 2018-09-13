@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6F3AC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:06:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61BECC07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:06:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65FC120861
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:06:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65FC120861
+	by mail.kernel.org (Postfix) with ESMTP id 25B2F20861
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:06:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25B2F20861
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732086AbeIMTQI (ORCPT
+        id S1732205AbeIMTQN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:16:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35606 "EHLO
+        Thu, 13 Sep 2018 15:16:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35614 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731264AbeIMTQH (ORCPT
+        with ESMTP id S1729120AbeIMTQM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:16:07 -0400
+        Thu, 13 Sep 2018 15:16:12 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 98D5FD3B;
-        Thu, 13 Sep 2018 14:06:27 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BB48AD3A;
+        Thu, 13 Sep 2018 14:06:32 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.18 195/197] x86: kvm: avoid unused variable warning
-Date:   Thu, 13 Sep 2018 15:32:24 +0200
-Message-Id: <20180913131849.356446411@linuxfoundation.org>
+        stable@vger.kernel.org, Robert Munteanu <rombert@apache.org>,
+        Jiri Kosina <jkosina@suse.cz>
+Subject: [PATCH 4.18 196/197] HID: redragon: fix num lock and caps lock LEDs
+Date:   Thu, 13 Sep 2018 15:32:25 +0200
+Message-Id: <20180913131849.395774512@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -51,46 +51,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Robert Munteanu <rombert@apache.org>
 
-commit 7288bde1f9df6c1475675419bdd7725ce84dec56 upstream.
+commit dc9b8e85ed95cbe7e3ad0eabb5b48d617bbc365e upstream.
 
-Removing one of the two accesses of the maxphyaddr variable led to
-a harmless warning:
+The redragon asura keyboard registers two input devices. The initial commit
+85455dd906d5 ("HID: redragon: Fix modifier keys for Redragon Asura Keyboard")
+considered this an error and prevented one of the devices from registering.
+However, once this is done the num lock and caps lock leds no longer toggle on
+and off, although the key functionality is not affected.
 
-arch/x86/kvm/x86.c: In function 'kvm_set_mmio_spte_mask':
-arch/x86/kvm/x86.c:6563:6: error: unused variable 'maxphyaddr' [-Werror=unused-variable]
+This commit removes the code that prevents the input device
+registration and restores the num lock and caps lock LEDs.
 
-Removing the #ifdef seems to be the nicest workaround, as it
-makes the code look cleaner than adding another #ifdef.
-
-Fixes: 28a1f3ac1d0c ("kvm: x86: Set highest physical address bits in non-present/reserved SPTEs")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Cc: stable@vger.kernel.org # L1TF
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Fixes: 85455dd906d5 ("HID: redragon: Fix modifier keys for Redragon Asura Keyboard")
+Signed-off-by: Robert Munteanu <rombert@apache.org>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/x86.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/hid/hid-redragon.c |   26 +-------------------------
+ 1 file changed, 1 insertion(+), 25 deletions(-)
 
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -6516,14 +6516,12 @@ static void kvm_set_mmio_spte_mask(void)
- 	/* Set the present bit. */
- 	mask |= 1ull;
- 
--#ifdef CONFIG_X86_64
- 	/*
- 	 * If reserved bit is not supported, clear the present bit to disable
- 	 * mmio page fault.
- 	 */
--	if (maxphyaddr == 52)
-+	if (IS_ENABLED(CONFIG_X86_64) && maxphyaddr == 52)
- 		mask &= ~1ull;
--#endif
- 
- 	kvm_mmu_set_mmio_spte_mask(mask, mask);
+--- a/drivers/hid/hid-redragon.c
++++ b/drivers/hid/hid-redragon.c
+@@ -44,29 +44,6 @@ static __u8 *redragon_report_fixup(struc
+ 	return rdesc;
  }
+ 
+-static int redragon_probe(struct hid_device *dev,
+-	const struct hid_device_id *id)
+-{
+-	int ret;
+-
+-	ret = hid_parse(dev);
+-	if (ret) {
+-		hid_err(dev, "parse failed\n");
+-		return ret;
+-	}
+-
+-	/* do not register unused input device */
+-	if (dev->maxapplication == 1)
+-		return 0;
+-
+-	ret = hid_hw_start(dev, HID_CONNECT_DEFAULT);
+-	if (ret) {
+-		hid_err(dev, "hw start failed\n");
+-		return ret;
+-	}
+-
+-	return 0;
+-}
+ static const struct hid_device_id redragon_devices[] = {
+ 	{HID_USB_DEVICE(USB_VENDOR_ID_JESS, USB_DEVICE_ID_REDRAGON_ASURA)},
+ 	{}
+@@ -77,8 +54,7 @@ MODULE_DEVICE_TABLE(hid, redragon_device
+ static struct hid_driver redragon_driver = {
+ 	.name = "redragon",
+ 	.id_table = redragon_devices,
+-	.report_fixup = redragon_report_fixup,
+-	.probe = redragon_probe
++	.report_fixup = redragon_report_fixup
+ };
+ 
+ module_hid_driver(redragon_driver);
 
 
