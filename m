@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7B81C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:32:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25ED3C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:32:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA0D920854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:32:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA0D920854
+	by mail.kernel.org (Postfix) with ESMTP id DC27C20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:32:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC27C20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728488AbeIMSmS (ORCPT
+        id S1728499AbeIMSmV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:42:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58626 "EHLO
+        Thu, 13 Sep 2018 14:42:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58636 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727419AbeIMSmS (ORCPT
+        with ESMTP id S1727150AbeIMSmU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:42:18 -0400
+        Thu, 13 Sep 2018 14:42:20 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 27380D10;
-        Thu, 13 Sep 2018 13:32:47 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 45355CF3;
+        Thu, 13 Sep 2018 13:32:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michal Tesar <mtesar@redhat.com>,
-        Florian Westphal <fw@strlen.de>,
-        Eric Dumazet <edumazet@google.com>,
+        stable@vger.kernel.org, Alexey Kodanev <alexey.kodanev@oracle.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 05/60] tcp: do not restart timewait timer on rst reception
-Date:   Thu, 13 Sep 2018 15:30:12 +0200
-Message-Id: <20180913131745.540760651@linuxfoundation.org>
+Subject: [PATCH 4.4 06/60] vti6: remove !skb->ignore_df check from vti6_xmit()
+Date:   Thu, 13 Sep 2018 15:30:13 +0200
+Message-Id: <20180913131745.580366897@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131745.261413581@linuxfoundation.org>
 References: <20180913131745.261413581@linuxfoundation.org>
@@ -53,122 +52,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian Westphal <fw@strlen.de>
+From: Alexey Kodanev <alexey.kodanev@oracle.com>
 
-[ Upstream commit 63cc357f7bba6729869565a12df08441a5995d9a ]
+[ Upstream commit 9f2895461439fda2801a7906fb4c5fb3dbb37a0a ]
 
-RFC 1337 says:
- ''Ignore RST segments in TIME-WAIT state.
-   If the 2 minute MSL is enforced, this fix avoids all three hazards.''
+Before the commit d6990976af7c ("vti6: fix PMTU caching and reporting
+on xmit") '!skb->ignore_df' check was always true because the function
+skb_scrub_packet() was called before it, resetting ignore_df to zero.
 
-So with net.ipv4.tcp_rfc1337=1, expected behaviour is to have TIME-WAIT sk
-expire rather than removing it instantly when a reset is received.
+In the commit, skb_scrub_packet() was moved below, and now this check
+can be false for the packet, e.g. when sending it in the two fragments,
+this prevents successful PMTU updates in such case. The next attempts
+to send the packet lead to the same tx error. Moreover, vti6 initial
+MTU value relies on PMTU adjustments.
 
-However, Linux will also re-start the TIME-WAIT timer.
+This issue can be reproduced with the following LTP test script:
+    udp_ipsec_vti.sh -6 -p ah -m tunnel -s 2000
 
-This causes connect to fail when tying to re-use ports or very long
-delays (until syn retry interval exceeds MSL).
-
-packetdrill test case:
-// Demonstrate bogus rearming of TIME-WAIT timer in rfc1337 mode.
-`sysctl net.ipv4.tcp_rfc1337=1`
-
-0.000 socket(..., SOCK_STREAM, IPPROTO_TCP) = 3
-0.000 setsockopt(3, SOL_SOCKET, SO_REUSEADDR, [1], 4) = 0
-0.000 bind(3, ..., ...) = 0
-0.000 listen(3, 1) = 0
-
-0.100 < S 0:0(0) win 29200 <mss 1460,nop,nop,sackOK,nop,wscale 7>
-0.100 > S. 0:0(0) ack 1 <mss 1460,nop,nop,sackOK,nop,wscale 7>
-0.200 < . 1:1(0) ack 1 win 257
-0.200 accept(3, ..., ...) = 4
-
-// Receive first segment
-0.310 < P. 1:1001(1000) ack 1 win 46
-
-// Send one ACK
-0.310 > . 1:1(0) ack 1001
-
-// read 1000 byte
-0.310 read(4, ..., 1000) = 1000
-
-// Application writes 100 bytes
-0.350 write(4, ..., 100) = 100
-0.350 > P. 1:101(100) ack 1001
-
-// ACK
-0.500 < . 1001:1001(0) ack 101 win 257
-
-// close the connection
-0.600 close(4) = 0
-0.600 > F. 101:101(0) ack 1001 win 244
-
-// Our side is in FIN_WAIT_1 & waits for ack to fin
-0.7 < . 1001:1001(0) ack 102 win 244
-
-// Our side is in FIN_WAIT_2 with no outstanding data.
-0.8 < F. 1001:1001(0) ack 102 win 244
-0.8 > . 102:102(0) ack 1002 win 244
-
-// Our side is now in TIME_WAIT state, send ack for fin.
-0.9 < F. 1002:1002(0) ack 102 win 244
-0.9 > . 102:102(0) ack 1002 win 244
-
-// Peer reopens with in-window SYN:
-1.000 < S 1000:1000(0) win 9200 <mss 1460,nop,nop,sackOK,nop,wscale 7>
-
-// Therefore, reply with ACK.
-1.000 > . 102:102(0) ack 1002 win 244
-
-// Peer sends RST for this ACK.  Normally this RST results
-// in tw socket removal, but rfc1337=1 setting prevents this.
-1.100 < R 1002:1002(0) win 244
-
-// second syn. Due to rfc1337=1 expect another pure ACK.
-31.0 < S 1000:1000(0) win 9200 <mss 1460,nop,nop,sackOK,nop,wscale 7>
-31.0 > . 102:102(0) ack 1002 win 244
-
-// .. and another RST from peer.
-31.1 < R 1002:1002(0) win 244
-31.2 `echo no timer restart;ss -m -e -a -i -n -t -o state TIME-WAIT`
-
-// third syn after one minute.  Time-Wait socket should have expired by now.
-63.0 < S 1000:1000(0) win 9200 <mss 1460,nop,nop,sackOK,nop,wscale 7>
-
-// so we expect a syn-ack & 3whs to proceed from here on.
-63.0 > S. 0:0(0) ack 1 <mss 1460,nop,nop,sackOK,nop,wscale 7>
-
-Without this patch, 'ss' shows restarts of tw timer and last packet is
-thus just another pure ack, more than one minute later.
-
-This restores the original code from commit 283fd6cf0be690a83
-("Merge in ANK networking jumbo patch") in netdev-vger-cvs.git .
-
-For some reason the else branch was removed/lost in 1f28b683339f7
-("Merge in TCP/UDP optimizations and [..]") and timer restart became
-unconditional.
-
-Reported-by: Michal Tesar <mtesar@redhat.com>
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
+Fixes: ccd740cbc6e0 ("vti6: Add pmtu handling to vti6_xmit.")
+Signed-off-by: Alexey Kodanev <alexey.kodanev@oracle.com>
+Acked-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/tcp_minisocks.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/ipv6/ip6_vti.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ipv4/tcp_minisocks.c
-+++ b/net/ipv4/tcp_minisocks.c
-@@ -200,8 +200,9 @@ kill:
- 				inet_twsk_deschedule_put(tw);
- 				return TCP_TW_SUCCESS;
- 			}
-+		} else {
-+			inet_twsk_reschedule(tw, TCP_TIMEWAIT_LEN);
- 		}
--		inet_twsk_reschedule(tw, TCP_TIMEWAIT_LEN);
+--- a/net/ipv6/ip6_vti.c
++++ b/net/ipv6/ip6_vti.c
+@@ -470,7 +470,7 @@ vti6_xmit(struct sk_buff *skb, struct ne
+ 	}
  
- 		if (tmp_opt.saw_tstamp) {
- 			tcptw->tw_ts_recent	  = tmp_opt.rcv_tsval;
+ 	mtu = dst_mtu(dst);
+-	if (!skb->ignore_df && skb->len > mtu) {
++	if (skb->len > mtu) {
+ 		skb_dst(skb)->ops->update_pmtu(dst, NULL, skb, mtu);
+ 
+ 		if (skb->protocol == htons(ETH_P_IPV6)) {
 
 
