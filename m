@@ -2,147 +2,139 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C7A1C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:26:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D44D2C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:28:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B514B20861
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:26:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 804722147C
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:28:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="gf2ygXnO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B514B20861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uJWV5OFV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 804722147C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727726AbeIMTgh (ORCPT
+        id S1727972AbeIMThz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:36:37 -0400
-Received: from vern.gendns.com ([206.190.152.46]:46517 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726741AbeIMTgg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:36:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=IZZgvUx9RJZ8uvSOM70gTpEseE17YXDOS1vzz42g9CM=; b=gf2ygXnOlv8/yenUmgXA4zOvbc
-        E9zdQFFXvs0tSTeGHaKd6y/CGqfyozLC6bZmXZO8tbr6/Vlc9CAmdZ6BXVoZdtD4lksVV2dtON+JZ
-        A2aR8FXrMexIF//fCeWF5Bepv5JESbGCFXsWzvt3GHkchtR6PomUo4DpkK4NEe01/zcLhQMqyRKA+
-        sdImI08SfZCe1Y94DXzdgfl2DHndkZ3WJ3AKm3c0Z0z3g95DqvUreBl0r0a6W28iwXj0+BtinZIVp
-        /muSLehWvUgf4s9f90vdZRlDxs/fxOlZdaGNhqGgIYTliWo1OLJbCYRvahsvAHGnij2VEVSjkgGgY
-        Qo8/6T/A==;
-Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:42168 helo=[192.168.0.134])
-        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <david@lechnology.com>)
-        id 1g0Sa0-00BuOP-Jo; Thu, 13 Sep 2018 10:26:48 -0400
-Subject: Re: [PATCH v2 4/4] spi: spi-davinci: Add support for SPI_CS_WORD
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     linux-spi <linux-spi@vger.kernel.org>, linux-iio@vger.kernel.org,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald <pmeerw@pmeerw.net>,
-        Mark Brown <broonie@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180913003920.30600-1-david@lechnology.com>
- <20180913003920.30600-5-david@lechnology.com>
- <CAMuHMdUb=sXBBRLhKNxsWT_Z4PCoLcM16NajvmPVHWsvgoL7_w@mail.gmail.com>
-From:   David Lechner <david@lechnology.com>
-Message-ID: <fb43f4d7-5b19-72be-9216-efdca9b59eba@lechnology.com>
-Date:   Thu, 13 Sep 2018 09:26:48 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 13 Sep 2018 15:37:55 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:35255 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727841AbeIMThy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 15:37:54 -0400
+Received: by mail-pg1-f195.google.com with SMTP id 7-v6so2840449pgf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 07:28:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=xvfoXrHPe7ea3dZN/E6pi8vHopvaBJ0KysWUAGYUNtM=;
+        b=uJWV5OFVDroMIkOtv8d/+EYITgcdmWHgFV77yAikqekGNW75IfiMtD6UwjB3eeqWqX
+         ov7EOUbCx8OlBQZ06xmvSooRYv5POGZ0M1V2dIleagQ+nH/HNdjIZ7YtAirXsO7DZxIF
+         znCi8ExkOryGkERPvu7KSLHz2uqMBgxnCoZ3TDfQ277M/4cC04MGzTS+xqMgHBZE8cgs
+         GMbckZVUmAagYWbAXN1qY2zrIVeBe6gJ9RxGOvAaAYmoCjxFfz9B/K1fQ8xfpkjwjP0d
+         lcDcTNKsci6f76sE77l2OL//emyBEd1REfA2aEbSTKNL1Llf47YaxkJQPLCAaj/9uCm1
+         uYwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xvfoXrHPe7ea3dZN/E6pi8vHopvaBJ0KysWUAGYUNtM=;
+        b=lTcVCzmX4Y3u1zN1LFRFN1A/+M3uavRNQAfCJg4SDntAHgyngF4QS+OGMCUN/N6lDs
+         SX4iiBTb7Dgxzy90rt7AGkwHgTYswPg8r8rlgVG6yYC6MYSCCn4ZV0W7M8Db+jcGCdT/
+         kPrayTRk1VJOYl65iVjiAMd0sJlNjzlNLoRrZw+d9LYK36aHhwrtmAgsD4mmhFYDGngv
+         2zXPk9ZPbiECWN9FTxz633EUbs72ChmoaKVpnE6bSekjBUcshuYW+fW0yWfDkv4vZwDH
+         Y++ZMbZDPsyC2mWuhSRCyog6YO1/qHCvi5OiuRpEga9Urfw1zzexzExZkZRV4wxir5AA
+         eceg==
+X-Gm-Message-State: APzg51CVXv7UyjKTrjBdzsc6OIpIf3kIEYvEYfrxHTgaTtcRE5e4tF6J
+        KNAXYvkUI0G9nZ+M1Jh3pjU=
+X-Google-Smtp-Source: ANB0VdZ2klTZtKz5OuB4jWIsOCq7ztOdANJcCBU/M5DOnpBMgF6BYV1ZRxBjMINOcXIMvRIsKggb+w==
+X-Received: by 2002:a63:1a1a:: with SMTP id a26-v6mr7422134pga.449.1536848888421;
+        Thu, 13 Sep 2018 07:28:08 -0700 (PDT)
+Received: from localhost ([121.137.63.184])
+        by smtp.gmail.com with ESMTPSA id v82-v6sm5743853pfd.64.2018.09.13.07.28.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 13 Sep 2018 07:28:06 -0700 (PDT)
+From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Date:   Thu, 13 Sep 2018 23:28:02 +0900
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Alexander Potapenko <glider@google.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Dmitriy Vyukov <dvyukov@google.com>,
+        penguin-kernel@i-love.sakura.ne.jp,
+        kbuild test robot <fengguang.wu@intel.com>,
+        syzkaller <syzkaller@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] printk: inject caller information into the body of
+ message
+Message-ID: <20180913142802.GB517@tigerII.localdomain>
+References: <20180620091541.GB444@jagdpanzerIV>
+ <CACT4Y+bcp4fSBBq3F86T-C4+n-YkeXUGMqpvkJ6vj6mK-TU2EA@mail.gmail.com>
+ <20180620110759.GD444@jagdpanzerIV>
+ <CACT4Y+aER3O2x2ApM=MVFoFXhp_T_rUeyG9CBx031qyH0voSRg@mail.gmail.com>
+ <20180620130628.GA1000@tigerII.localdomain>
+ <CAG_fn=XuZo5yrZzVizP26iV6eFfJtAHUs4NsDFXFyvnaJkdSQw@mail.gmail.com>
+ <20180912065307.GA606@jagdpanzerIV>
+ <20180912120548.4280f04a@vmware.local.home>
+ <20180913071204.GA604@jagdpanzerIV>
+ <20180913122625.6ieyexpcmlc5z2it@pathway.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdUb=sXBBRLhKNxsWT_Z4PCoLcM16NajvmPVHWsvgoL7_w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180913122625.6ieyexpcmlc5z2it@pathway.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/13/2018 08:44 AM, Geert Uytterhoeven wrote:
-> Hi David,
+On (09/13/18 14:26), Petr Mladek wrote:
+> > +
+> > +int vpr_line(struct pr_line *pl, const char *fmt, va_list args)
+> > +{
+> > +	struct seq_buf *s = &pl->sb;
+> > +	int ret, len;
+> > +
+> > +	if (fmt[0] == '\n') {
+> > +		pr_line_flush(pl);
+> > +		return 0;
+> > +	}
 > 
-> On Thu, Sep 13, 2018 at 2:40 AM David Lechner <david@lechnology.com> wrote:
->> This adds support for the SPI_CS_WORD flag to the TI DaVinci SPI
->> driver. This mode can be used as long as we are using the hardware
->> chip select and not a GPIO chip select.
->>
->> Signed-off-by: David Lechner <david@lechnology.com>
->> ---
->>   drivers/spi/spi-davinci.c | 11 ++++++++---
->>   1 file changed, 8 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/spi/spi-davinci.c b/drivers/spi/spi-davinci.c
->> index d502cf504deb..8f7dcbc53c57 100644
->> --- a/drivers/spi/spi-davinci.c
->> +++ b/drivers/spi/spi-davinci.c
->> @@ -230,7 +230,8 @@ static void davinci_spi_chipselect(struct spi_device *spi, int value)
->>                                  !(spi->mode & SPI_CS_HIGH));
->>          } else {
->>                  if (value == BITBANG_CS_ACTIVE) {
->> -                       spidat1 |= SPIDAT1_CSHOLD_MASK;
->> +                       if (!(spi->mode & SPI_CS_WORD))
->> +                               spidat1 |= SPIDAT1_CSHOLD_MASK;
->>                          spidat1 &= ~(0x1 << chip_sel);
->>                  }
->>          }
->> @@ -440,8 +441,12 @@ static int davinci_spi_setup(struct spi_device *spi)
->>                          return retval;
->>                  }
->>
->> -               if (internal_cs)
->> +               if (internal_cs) {
->>                          set_io_bits(dspi->base + SPIPC0, 1 << spi->chip_select);
->> +               } else if (spi->mode & SPI_CS_WORD) {
->> +                       dev_err(&spi->dev, "SPI_CS_WORD can't be use with GPIO CS\n");
->> +                       return -EINVAL;
+> You would need to check if fmt[1] == '\0'. But then you would need
+> to be careful about a possible buffer overflow. I would personally
+> avoid this optimization.
+
+Good call. It was a fast path for pr_cont("\n").
+But it made me wondering and I did some grepping
+
+arch/m68k/kernel/traps.c:                               pr_cont("\n       ");
+arch/m68k/kernel/traps.c:                       pr_cont("\n       ");
+kernel/trace/ftrace.c:          pr_cont("\n expected tramp: %lx\n", ip);
+
+Lovely.
+It will take us some time.
+
+> > +	ret = seq_buf_vprintf(s, fmt, args);
+> > +
+> > +	len = seq_buf_used(s);
+> > +	if (len && s->buffer[len - 1] == '\n')
+> > +		pr_line_flush(pl);
 > 
-> Does the SPI core fall back to splitting the transfer in this case?
+> This would cause that pr_line_flush() won't be strictly needed.
+> Also it would encourage people to use this feature a more
+> complicated way (for more lines). Do we really want this?
 
-Hmm... it doesn't look like it.
+Not that I see any problems with pr_line_flush(). But can drop it, sure.
+pr_line() is a replacement for pr_cont() and as such it's not for multi-line
+buffering.
 
-I suppose it might be best to modify the SPI core to say:
-
-	if ((spi->mode & SPI_CS_WORD) && (!(ctlr->mode_bits & SPI_CS_WORD) ||
-					  gpio_is_valid(spi->cs_gpio)) {
-
-instead of:
-
-	if ((spi->mode & SPI_CS_WORD) && !(ctlr->mode_bits & SPI_CS_WORD)) {
-
-Then we could drop the error above.
-
-> 
->> +               }
-> 
-> Gr{oetje,eeting}s,
-> 
->                          Geert
-> 
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                  -- Linus Torvalds
-> 
-
+	-ss
