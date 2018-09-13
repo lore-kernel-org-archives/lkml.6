@@ -6,38 +6,41 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C777C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:48:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3375C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:48:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5A0220854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:48:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5A0220854
+	by mail.kernel.org (Postfix) with ESMTP id 987DE20881
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:48:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 987DE20881
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730493AbeIMS6N (ORCPT
+        id S1730504AbeIMS6Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:58:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32920 "EHLO
+        Thu, 13 Sep 2018 14:58:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:32930 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728460AbeIMS6M (ORCPT
+        with ESMTP id S1728460AbeIMS6Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:58:12 -0400
+        Thu, 13 Sep 2018 14:58:16 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A2765D19;
-        Thu, 13 Sep 2018 13:48:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9596BD19;
+        Thu, 13 Sep 2018 13:48:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Shashank Sharma <shashank.sharma@intel.com>,
-        Imre Deak <imre.deak@intel.com>,
-        Jani Nikula <jani.nikula@intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        =?UTF-8?q?Fredrik=20Sch=C3=B6n?= <fredrik.schon@gmail.com>
-Subject: [PATCH 4.14 104/115] drm/i915: Increase LSPCON timeout
-Date:   Thu, 13 Sep 2018 15:32:04 +0200
-Message-Id: <20180913131829.764008622@linuxfoundation.org>
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Lucas De Marchi <lucas.demarchi@profusion.mobi>,
+        Lucas De Marchi <lucas.de.marchi@gmail.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Jessica Yu <jeyu@kernel.org>,
+        Chih-Wei Huang <cwhuang@linux.org.tw>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Maxim Zhukov <mussitantesmortem@gmail.com>
+Subject: [PATCH 4.14 105/115] kbuild: make missing $DEPMOD a Warning instead of an Error
+Date:   Thu, 13 Sep 2018 15:32:05 +0200
+Message-Id: <20180913131829.802651419@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -55,53 +58,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Fredrik Schön <fredrikschon@gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-commit 299c2a904b1e8d5096d4813df6371357d97a6cd1 upstream.
+commit 914b087ff9e0e9a399a4927fa30793064afc0178 upstream.
 
-100 ms is not enough time for the LSPCON adapter on Intel NUC devices to
-settle. This causes dropped display modes at boot or screen reconfiguration.
-Empirical testing can reproduce the error up to a timeout of 190 ms. Basic
-boot and stress testing at 200 ms has not (yet) failed.
+When $DEPMOD is not found, only print a warning instead of exiting
+with an error message and error status:
 
-Increase timeout to 400 ms to get some margin of error.
+Warning: 'make modules_install' requires /sbin/depmod. Please install it.
+This is probably in the kmod package.
 
-Changes from v1:
-The initial suggestion of 1000 ms was lowered due to concerns about delaying
-valid timeout cases.
-Update patch metadata.
+Change the Error to a Warning because "not all build hosts for cross
+compiling Linux are Linux systems and are able to provide a working
+port of depmod, especially at the file patch /sbin/depmod."
 
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=107503
-Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1570392
-Fixes: 357c0ae9198a ("drm/i915/lspcon: Wait for expected LSPCON mode to settle")
-Cc: Shashank Sharma <shashank.sharma@intel.com>
-Cc: Imre Deak <imre.deak@intel.com>
-Cc: Jani Nikula <jani.nikula@intel.com>
-Cc: <stable@vger.kernel.org> # v4.11+
-Reviewed-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Reviewed-by: Shashank Sharma <shashank.sharma@intel.com>
-Signed-off-by: Fredrik Schön <fredrik.schon@gmail.com>
-Signed-off-by: Jani Nikula <jani.nikula@intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180817200728.8154-1-fredrik.schon@gmail.com
-(cherry picked from commit 59f1c8ab30d6f9042562949f42cbd3f3cf69de94)
-Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Reviewed-by: Shashank Sharma <shashank.sharma@intel.com>
-Signed-off-by: Fredrik Schön <fredrik.schon@gmail.com>
+I.e., "make modules_install" may be used to copy/install the
+loadable modules files to a target directory on a build system and
+then transferred to an embedded device where /sbin/depmod is run
+instead of it being run on the build system.
+
+Fixes: 934193a654c1 ("kbuild: verify that $DEPMOD is installed")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Reported-by: H. Nikolaus Schaller <hns@goldelico.com>
+Cc: stable@vger.kernel.org
+Cc: Lucas De Marchi <lucas.demarchi@profusion.mobi>
+Cc: Lucas De Marchi <lucas.de.marchi@gmail.com>
+Cc: Michal Marek <michal.lkml@markovi.net>
+Cc: Jessica Yu <jeyu@kernel.org>
+Cc: Chih-Wei Huang <cwhuang@linux.org.tw>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Maxim Zhukov <mussitantesmortem@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/gpu/drm/i915/intel_lspcon.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/i915/intel_lspcon.c
-+++ b/drivers/gpu/drm/i915/intel_lspcon.c
-@@ -75,7 +75,7 @@ static enum drm_lspcon_mode lspcon_wait_
- 		      lspcon_mode_name(mode));
+---
+ scripts/depmod.sh |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/scripts/depmod.sh
++++ b/scripts/depmod.sh
+@@ -16,9 +16,9 @@ if ! test -r System.map ; then
+ fi
  
- 	wait_for((current_mode = lspcon_get_current_mode(lspcon)) == mode ||
--		 current_mode == DRM_LSPCON_MODE_INVALID, 100);
-+                current_mode == DRM_LSPCON_MODE_INVALID, 400);
- 	if (current_mode != mode)
- 		DRM_DEBUG_KMS("LSPCON mode hasn't settled\n");
+ if [ -z $(command -v $DEPMOD) ]; then
+-	echo "'make modules_install' requires $DEPMOD. Please install it." >&2
++	echo "Warning: 'make modules_install' requires $DEPMOD. Please install it." >&2
+ 	echo "This is probably in the kmod package." >&2
+-	exit 1
++	exit 0
+ fi
  
+ # older versions of depmod don't support -P <symbol-prefix>
 
 
