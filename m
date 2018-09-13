@@ -2,107 +2,194 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18A5DC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 09:04:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE1C6C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 09:07:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A260B20882
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 09:04:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A260B20882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C60642133F
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 09:07:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C60642133F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727770AbeIMONT (ORCPT
+        id S1727662AbeIMOQY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 10:13:19 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:44216 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726930AbeIMONT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 10:13:19 -0400
-Received: by mail-ot1-f65.google.com with SMTP id 36-v6so577412oth.11;
-        Thu, 13 Sep 2018 02:04:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qTBDTCN+avDE0VHfH/L88RANFkgm8jULENDyOcOUNhw=;
-        b=j7aNeOy0IggDYiry74Ki65zmh/8TgrlHe02jj8UHmZUz2QUPYESKOXh9VGqBtt/jbA
-         RZweFeVsAHO30LYpRq6yp+bnBDuGm5Lx1mokeccGbpTQBS6OqC+KL6Y2Kn1txwGLt+qn
-         v5cnit5MDH6d5sjGO+KXeewKlT218+zhYhPx7svypP3YYxVMnOMljXiBT3ra+TPCxUn8
-         jt/siq6fqB8zvG0XAVgLDLAj98+23NE4MD7RlbguFR+v69nFLFCOcxKA16sYsat5+vd3
-         QcwootZ3OtuLHF6oh2dQW0cqKfx3QyDRvl9h0AizAfpWonoj5uiBal9TiYf+D9ERvcQa
-         S7Mw==
-X-Gm-Message-State: APzg51A9aJ71wMcnnQS/HRV5/LiFeei60XuLTk3bhJFl5aKTsYUvGucO
-        z5vAavUOPxwhA/zoROIYs6M17B2YKoowUlVr0Kchew==
-X-Google-Smtp-Source: ANB0VdblEq2S5oXvRSSGDp7fVlzvYG5BgOy8bUQTMSMQ2DQugVacGN6bO+ZlOKMTRHUDDQiX+4VsFl4tXVvg/mI/gPk=
-X-Received: by 2002:a9d:26ee:: with SMTP id i43-v6mr570660otd.35.1536829486460;
- Thu, 13 Sep 2018 02:04:46 -0700 (PDT)
+        Thu, 13 Sep 2018 10:16:24 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:52802 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726680AbeIMOQY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 10:16:24 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 79EA230001E2;
+        Thu, 13 Sep 2018 09:07:51 +0000 (UTC)
+Received: from [10.72.12.62] (ovpn-12-62.pek2.redhat.com [10.72.12.62])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2C27E600C2;
+        Thu, 13 Sep 2018 09:07:45 +0000 (UTC)
+Subject: Re: [PATCH net-next V2] virtio_net: ethtool tx napi configuration
+To:     mst@redhat.com
+Cc:     davem@davemloft.net, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Willem de Bruijn <willemb@google.com>
+References: <20180913053545.18585-1-jasowang@redhat.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <1ebbe892-1be0-18b1-3dee-d52bedc9a05d@redhat.com>
+Date:   Thu, 13 Sep 2018 17:07:43 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180912161119.2692-1-vkuznets@redhat.com> <CAJZ5v0jeq=PoF10OZgO9ST_nuRW3Z8emPmX=nTrOSsLKYzZuww@mail.gmail.com>
- <875zz9ainn.fsf@vitty.brq.redhat.com>
-In-Reply-To: <875zz9ainn.fsf@vitty.brq.redhat.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 13 Sep 2018 11:04:34 +0200
-Message-ID: <CAJZ5v0gEGfHTEPQ3MpFQeviDBv174aoJjGR45NJfzkRerxQhjQ@mail.gmail.com>
-Subject: Re: [PATCH RFC] kernel/hung_task.c: disable on suspend
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180913053545.18585-1-jasowang@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Thu, 13 Sep 2018 09:07:51 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 13, 2018 at 10:47 AM Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
+
+
+On 2018年09月13日 13:35, Jason Wang wrote:
+> Implement ethtool .set_coalesce (-C) and .get_coalesce (-c) handlers.
+> Interrupt moderation is currently not supported, so these accept and
+> display the default settings of 0 usec and 1 frame.
 >
-> "Rafael J. Wysocki" <rafael@kernel.org> writes:
+> Toggle tx napi through a bit in tx-frames. So as to not interfere
+> with possible future interrupt moderation, value 1 means tx napi while
+> value 0 means not.
 >
-> > On Wed, Sep 12, 2018 at 6:11 PM Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
-> >>
-> >> It is possible to observe hung_task complaints when system goes to
-> >> suspend-to-idle state:
-> >>
-> >>  PM: Syncing filesystems ... done.
-> >>  Freezing user space processes ... (elapsed 0.001 seconds) done.
-> >>  OOM killer disabled.
-> >>  Freezing remaining freezable tasks ... (elapsed 0.002 seconds) done.
-> >>  sd 0:0:0:0: [sda] Synchronizing SCSI cache
-> >>  INFO: task bash:1569 blocked for more than 120 seconds.
-> >>        Not tainted 4.19.0-rc3_+ #687
-> >>  "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> >>  bash            D    0  1569    604 0x00000000
-> >>  Call Trace:
-> >>   ? __schedule+0x1fe/0x7e0
-> >>   schedule+0x28/0x80
-> >>   suspend_devices_and_enter+0x4ac/0x750
-> >>   pm_suspend+0x2c0/0x310
-> >
-> > This actually is a good catch, but the problem is related to what
-> > happens to the monotonic clock during suspend to idle.
-> >
-> > The clock issue needs to be addressed anyway IMO and then this problem
-> > will go away automatically.
+> To properly synchronize with the data path, tx napi is disabled and
+> tx lock is held when changing the value of napi weight. And two more
+> places that can access tx napi weight:
 >
-> Do I understand it correctly that the suggestion is to fully suspend
-> monothonic clock in s2idle (and don't advance it after resume)?
+> - speculative tx polling in rx napi, we can leave it as is since it
+>    not a must for correctness.
+> - skb_xmit_done(), one more check of napi weight is added before
+>    trying to enable tx to avoid tx to be disabled forever if napi is
+>    disabled after skb_xmit_done() but before the napi
+>
+> Link: https://patchwork.ozlabs.org/patch/948149/
+> Suggested-by: Jason Wang <jasowang@redhat.com>
+> Signed-off-by: Willem de Bruijn <willemb@google.com>
+> Signed-off-by: Jason Wang <jasowang@redhat.com>
+> ---
+> Changes from V1:
+> - try to synchronize with datapath to allow changing mode when
+>    interface is up.
+> - use tx-frames 0 as to disable tx napi while tx-frames 1 to enable tx napi
+> ---
+>   drivers/net/virtio_net.c | 64 +++++++++++++++++++++++++++++++++++++++-
+>   1 file changed, 63 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> index 765920905226..6e70864f5899 100644
+> --- a/drivers/net/virtio_net.c
+> +++ b/drivers/net/virtio_net.c
+> @@ -66,6 +66,8 @@ DECLARE_EWMA(pkt_len, 0, 64)
+>   
+>   #define VIRTNET_DRIVER_VERSION "1.0.0"
+>   
+> +static const u32 ethtool_coalesce_napi_mask = (1UL << 10);
+> +
+>   static const unsigned long guest_offloads[] = {
+>   	VIRTIO_NET_F_GUEST_TSO4,
+>   	VIRTIO_NET_F_GUEST_TSO6,
+> @@ -1444,7 +1446,10 @@ static int virtnet_poll_tx(struct napi_struct *napi, int budget)
+>   
+>   	virtqueue_napi_complete(napi, sq->vq, 0);
+>   
+> -	if (sq->vq->num_free >= 2 + MAX_SKB_FRAGS)
+> +	/* Check napi.weight to avoid tx stall since it could be set
+> +	 * to zero by ethtool after skb_xmit_done().
+> +	 */
+> +	if (sq->vq->num_free >= 2 + MAX_SKB_FRAGS || !sq->napi.weight)
+>   		netif_tx_wake_queue(txq);
+>   
+>   	return 0;
+> @@ -2181,6 +2186,61 @@ static int virtnet_get_link_ksettings(struct net_device *dev,
+>   	return 0;
+>   }
+>   
+> +static int virtnet_set_coalesce(struct net_device *dev,
+> +				struct ethtool_coalesce *ec)
+> +{
+> +	struct ethtool_coalesce ec_default = {
+> +		.cmd = ETHTOOL_SCOALESCE,
+> +		.rx_max_coalesced_frames = 1,
+> +	};
+> +	struct virtnet_info *vi = netdev_priv(dev);
+> +	int i, napi_weight;
+> +
+> +	if (ec->tx_max_coalesced_frames > 1)
+> +		return -EINVAL;
+> +
+> +	ec_default.tx_max_coalesced_frames = ec->tx_max_coalesced_frames;
+> +	napi_weight = ec->tx_max_coalesced_frames ? NAPI_POLL_WEIGHT : 0;
+> +
+> +	/* disallow changes to fields not explicitly tested above */
+> +	if (memcmp(ec, &ec_default, sizeof(ec_default)))
+> +		return -EINVAL;
+> +
+> +	if (napi_weight ^ vi->sq[0].napi.weight) {
+> +		for (i = 0; i < vi->max_queue_pairs; i++) {
+> +			struct netdev_queue *txq =
+> +			       netdev_get_tx_queue(vi->dev, i);
+> +
+> +			virtnet_napi_tx_disable(&vi->sq[i].napi);
+> +			__netif_tx_lock_bh(txq);
 
-Something like that.
+Need to check netif_running() before disabling napi. Otherwise we may 
+have a infinite loop here.
 
-We already do that to some extent, but kind of with the assumption
-that it will not grow too much in s2idle_loop(), but it may actually
-grow too much in there, so we need to compensate for that to make the
-s2idle behavior reflect the suspend-to-RAM one.
+The discussion is still ongoing, if we decide to go set_coalesce, I will 
+post a V3.
 
-I have a patch for that, will post it shortly.
+Thanks
 
-Thanks,
-Rafael
+> +			vi->sq[i].napi.weight = napi_weight;
+> +			__netif_tx_unlock_bh(txq);
+> +			virtnet_napi_tx_enable(vi, vi->sq[i].vq,
+> +					       &vi->sq[i].napi);
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int virtnet_get_coalesce(struct net_device *dev,
+> +				struct ethtool_coalesce *ec)
+> +{
+> +	struct ethtool_coalesce ec_default = {
+> +		.cmd = ETHTOOL_GCOALESCE,
+> +		.rx_max_coalesced_frames = 1,
+> +		.tx_max_coalesced_frames = 0,
+> +	};
+> +	struct virtnet_info *vi = netdev_priv(dev);
+> +
+> +	memcpy(ec, &ec_default, sizeof(ec_default));
+> +
+> +	if (vi->sq[0].napi.weight)
+> +		ec->tx_max_coalesced_frames = 1;
+> +
+> +	return 0;
+> +}
+> +
+>   static void virtnet_init_settings(struct net_device *dev)
+>   {
+>   	struct virtnet_info *vi = netdev_priv(dev);
+> @@ -2219,6 +2279,8 @@ static const struct ethtool_ops virtnet_ethtool_ops = {
+>   	.get_ts_info = ethtool_op_get_ts_info,
+>   	.get_link_ksettings = virtnet_get_link_ksettings,
+>   	.set_link_ksettings = virtnet_set_link_ksettings,
+> +	.set_coalesce = virtnet_set_coalesce,
+> +	.get_coalesce = virtnet_get_coalesce,
+>   };
+>   
+>   static void virtnet_freeze_down(struct virtio_device *vdev)
+
