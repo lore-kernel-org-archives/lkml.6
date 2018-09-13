@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DA82C61CF0
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:47:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12787C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:47:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3027020854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:47:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3027020854
+	by mail.kernel.org (Postfix) with ESMTP id CAAD220854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:47:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAAD220854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730398AbeIMS4s (ORCPT
+        id S1730409AbeIMS4v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:56:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60980 "EHLO
+        Thu, 13 Sep 2018 14:56:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:32790 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728616AbeIMS4s (ORCPT
+        with ESMTP id S1729219AbeIMS4u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:56:48 -0400
+        Thu, 13 Sep 2018 14:56:50 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4039ECF3;
-        Thu, 13 Sep 2018 13:47:14 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 733A9CFE;
+        Thu, 13 Sep 2018 13:47:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: [PATCH 4.14 089/115] drm/edid: Add 6 bpc quirk for SDC panel in Lenovo B50-80
-Date:   Thu, 13 Sep 2018 15:31:49 +0200
-Message-Id: <20180913131828.979698531@linuxfoundation.org>
+        stable@vger.kernel.org, Greg Edwards <gedwards@ddn.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 056/115] block: bvec_nr_vecs() returns value for wrong slab
+Date:   Thu, 13 Sep 2018 15:31:16 +0200
+Message-Id: <20180913131827.178534837@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -52,37 +52,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: Greg Edwards <gedwards@ddn.com>
 
-commit 25da75043f8690fd083878447c91f289dfb63b87 upstream.
+[ Upstream commit d6c02a9beb67f13d5f14f23e72fa9981e8b84477 ]
 
-Another panel that reports "DFP 1.x compliant TMDS" but it supports 6bpc
-instead of 8 bpc.
+In commit ed996a52c868 ("block: simplify and cleanup bvec pool
+handling"), the value of the slab index is incremented by one in
+bvec_alloc() after the allocation is done to indicate an index value of
+0 does not need to be later freed.
 
-Apply 6 bpc quirk for the panel to fix it.
+bvec_nr_vecs() was not updated accordingly, and thus returns the wrong
+value.  Decrement idx before performing the lookup.
 
-BugLink: https://bugs.launchpad.net/bugs/1788308
-Cc: <stable@vger.kernel.org> # v4.8+
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180823055332.7723-1-kai.heng.feng@canonical.com
+Fixes: ed996a52c868 ("block: simplify and cleanup bvec pool handling")
+Signed-off-by: Greg Edwards <gedwards@ddn.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/gpu/drm/drm_edid.c |    3 +++
- 1 file changed, 3 insertions(+)
+ block/bio.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/drm_edid.c
-+++ b/drivers/gpu/drm/drm_edid.c
-@@ -114,6 +114,9 @@ static const struct edid_quirk {
- 	/* CPT panel of Asus UX303LA reports 8 bpc, but is a 6 bpc panel */
- 	{ "CPT", 0x17df, EDID_QUIRK_FORCE_6BPC },
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -156,7 +156,7 @@ out:
  
-+	/* SDC panel of Lenovo B50-80 reports 8 bpc, but is a 6 bpc panel */
-+	{ "SDC", 0x3652, EDID_QUIRK_FORCE_6BPC },
-+
- 	/* Belinea 10 15 55 */
- 	{ "MAX", 1516, EDID_QUIRK_PREFER_LARGE_60 },
- 	{ "MAX", 0x77e, EDID_QUIRK_PREFER_LARGE_60 },
+ unsigned int bvec_nr_vecs(unsigned short idx)
+ {
+-	return bvec_slabs[idx].nr_vecs;
++	return bvec_slabs[--idx].nr_vecs;
+ }
+ 
+ void bvec_free(mempool_t *pool, struct bio_vec *bv, unsigned int idx)
 
 
