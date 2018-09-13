@@ -6,41 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A48DC07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:42:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8587C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:42:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CC9920854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:42:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CC9920854
+	by mail.kernel.org (Postfix) with ESMTP id 9DAED20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:42:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DAED20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729777AbeIMSwK (ORCPT
+        id S1729790AbeIMSwO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:52:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60202 "EHLO
+        Thu, 13 Sep 2018 14:52:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60226 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728637AbeIMSwK (ORCPT
+        with ESMTP id S1727644AbeIMSwN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:52:10 -0400
+        Thu, 13 Sep 2018 14:52:13 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D1D21D19;
-        Thu, 13 Sep 2018 13:42:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 30E8CD1A;
+        Thu, 13 Sep 2018 13:42:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Michal Hocko <mhocko@suse.com>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Jan Kara <jack@suse.cz>, Jeff Mahoney <jeffm@suse.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Rik van Riel <riel@redhat.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        Oleg Nesterov <oleg@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 025/115] fork: dont copy inconsistent signal handler state to child
-Date:   Thu, 13 Sep 2018 15:30:45 +0200
-Message-Id: <20180913131825.157447412@linuxfoundation.org>
+Subject: [PATCH 4.14 026/115] reiserfs: change j_timestamp type to time64_t
+Date:   Thu, 13 Sep 2018 15:30:46 +0200
+Message-Id: <20180913131825.223205731@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -58,49 +54,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 06e62a46bbba20aa5286102016a04214bb446141 ]
+[ Upstream commit 8b73ce6a4bae4fe12bcb2c361c0da4183c2e1b6f ]
 
-Before this change, if a multithreaded process forks while one of its
-threads is changing a signal handler using sigaction(), the memcpy() in
-copy_sighand() can race with the struct assignment in do_sigaction().  It
-isn't clear whether this can cause corruption of the userspace signal
-handler pointer, but it definitely can cause inconsistency between
-different fields of struct sigaction.
+This uses the deprecated time_t type but is write-only, and could be
+removed, but as Jeff explains, having a timestamp can be usefule for
+post-mortem analysis in crash dumps.
 
-Take the appropriate spinlock to avoid this.
+In order to remove one of the last instances of time_t, this changes the
+type to time64_t, same as j_trans_start_time.
 
-I have tested that this patch prevents inconsistency between sa_sigaction
-and sa_flags, which is possible before this patch.
-
-Link: http://lkml.kernel.org/r/20180702145108.73189-1-jannh@google.com
-Signed-off-by: Jann Horn <jannh@google.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Rik van Riel <riel@redhat.com>
-Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Oleg Nesterov <oleg@redhat.com>
+Link: http://lkml.kernel.org/r/20180622133315.221210-1-arnd@arndb.de
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Jeff Mahoney <jeffm@suse.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/fork.c |    2 ++
- 1 file changed, 2 insertions(+)
+ fs/reiserfs/reiserfs.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1350,7 +1350,9 @@ static int copy_sighand(unsigned long cl
- 		return -ENOMEM;
+--- a/fs/reiserfs/reiserfs.h
++++ b/fs/reiserfs/reiserfs.h
+@@ -271,7 +271,7 @@ struct reiserfs_journal_list {
  
- 	atomic_set(&sig->count, 1);
-+	spin_lock_irq(&current->sighand->siglock);
- 	memcpy(sig->action, current->sighand->action, sizeof(sig->action));
-+	spin_unlock_irq(&current->sighand->siglock);
- 	return 0;
- }
- 
+ 	struct mutex j_commit_mutex;
+ 	unsigned int j_trans_id;
+-	time_t j_timestamp;
++	time64_t j_timestamp; /* write-only but useful for crash dump analysis */
+ 	struct reiserfs_list_bitmap *j_list_bitmap;
+ 	struct buffer_head *j_commit_bh;	/* commit buffer head */
+ 	struct reiserfs_journal_cnode *j_realblock;
 
 
