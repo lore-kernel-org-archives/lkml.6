@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 279EAC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:04:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E35B2C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:04:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9C3C20652
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:04:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9C3C20652
+	by mail.kernel.org (Postfix) with ESMTP id A9C2720854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:04:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9C2720854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732128AbeIMTOY (ORCPT
+        id S1732137AbeIMTO2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:14:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35418 "EHLO
+        Thu, 13 Sep 2018 15:14:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35422 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727566AbeIMTOY (ORCPT
+        with ESMTP id S1728565AbeIMTO1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:14:24 -0400
+        Thu, 13 Sep 2018 15:14:27 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DB90BD35;
-        Thu, 13 Sep 2018 14:04:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 12B3ED35;
+        Thu, 13 Sep 2018 14:04:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, James Zhu <James.Zhu@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Huang Rui <ray.huang@amd.com>, Likun Gao <Likun.Gao@amd.com>
-Subject: [PATCH 4.18 176/197] drm/amdgpu:add new firmware id for VCN
-Date:   Thu, 13 Sep 2018 15:32:05 +0200
-Message-Id: <20180913131848.600541927@linuxfoundation.org>
+        stable@vger.kernel.org, Anand Jain <anand.jain@oracle.com>,
+        David Sterba <dsterba@suse.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.18 150/197] btrfs: reorder initialization before the mount locks uuid_mutex
+Date:   Thu, 13 Sep 2018 15:31:39 +0200
+Message-Id: <20180913131847.549276005@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -52,34 +52,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Likun Gao <Likun.Gao@amd.com>
+From: David Sterba <dsterba@suse.com>
 
-commit c9ca989696ff28ffb015cc2b7c5577938ef2626c upstream.
+[ Upstream commit 399f7f4c42e8a58c8456264d5112287aefe44cf4 ]
 
-Add the new firmware id for VCN into the enum
+In preparation to take a big lock, move resource initialization before
+the critical section. It's not obvious from the diff, the desired order
+is:
 
-Signed-off-by: James Zhu <James.Zhu@amd.com>
-Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
-Acked-by: Huang Rui <ray.huang@amd.com>
-Reviewed-by: Likun Gao <Likun.Gao@amd.com>
-Signed-off-by: Likun Gao <Likun.Gao@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Cc: stable@vger.kernel.org
+- initialize mount security options
+- allocate temporary fs_info
+- allocate superblock buffers
+
+Reviewed-by: Anand Jain <anand.jain@oracle.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.h |    1 +
- 1 file changed, 1 insertion(+)
+ fs/btrfs/super.c |   30 ++++++++++++++----------------
+ 1 file changed, 14 insertions(+), 16 deletions(-)
 
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.h
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.h
-@@ -194,6 +194,7 @@ enum AMDGPU_UCODE_ID {
- 	AMDGPU_UCODE_ID_SMC,
- 	AMDGPU_UCODE_ID_UVD,
- 	AMDGPU_UCODE_ID_VCE,
-+	AMDGPU_UCODE_ID_VCN,
- 	AMDGPU_UCODE_ID_MAXIMUM,
- };
+--- a/fs/btrfs/super.c
++++ b/fs/btrfs/super.c
+@@ -1528,14 +1528,6 @@ static struct dentry *btrfs_mount_root(s
+ 	if (!(flags & SB_RDONLY))
+ 		mode |= FMODE_WRITE;
  
+-	mutex_lock(&uuid_mutex);
+-	error = btrfs_parse_early_options(data, mode, fs_type,
+-					  &fs_devices);
+-	mutex_unlock(&uuid_mutex);
+-	if (error) {
+-		return ERR_PTR(error);
+-	}
+-
+ 	security_init_mnt_opts(&new_sec_opts);
+ 	if (data) {
+ 		error = parse_security_options(data, &new_sec_opts);
+@@ -1543,12 +1535,6 @@ static struct dentry *btrfs_mount_root(s
+ 			return ERR_PTR(error);
+ 	}
+ 
+-	mutex_lock(&uuid_mutex);
+-	error = btrfs_scan_one_device(device_name, mode, fs_type, &fs_devices);
+-	mutex_unlock(&uuid_mutex);
+-	if (error)
+-		goto error_sec_opts;
+-
+ 	/*
+ 	 * Setup a dummy root and fs_info for test/set super.  This is because
+ 	 * we don't actually fill this stuff out until open_ctree, but we need
+@@ -1561,8 +1547,6 @@ static struct dentry *btrfs_mount_root(s
+ 		goto error_sec_opts;
+ 	}
+ 
+-	fs_info->fs_devices = fs_devices;
+-
+ 	fs_info->super_copy = kzalloc(BTRFS_SUPER_INFO_SIZE, GFP_KERNEL);
+ 	fs_info->super_for_commit = kzalloc(BTRFS_SUPER_INFO_SIZE, GFP_KERNEL);
+ 	security_init_mnt_opts(&fs_info->security_opts);
+@@ -1572,6 +1556,20 @@ static struct dentry *btrfs_mount_root(s
+ 	}
+ 
+ 	mutex_lock(&uuid_mutex);
++	error = btrfs_parse_early_options(data, mode, fs_type, &fs_devices);
++	mutex_unlock(&uuid_mutex);
++	if (error)
++		goto error_fs_info;
++
++	mutex_lock(&uuid_mutex);
++	error = btrfs_scan_one_device(device_name, mode, fs_type, &fs_devices);
++	mutex_unlock(&uuid_mutex);
++	if (error)
++		goto error_fs_info;
++
++	fs_info->fs_devices = fs_devices;
++
++	mutex_lock(&uuid_mutex);
+ 	error = btrfs_open_devices(fs_devices, mode, fs_type);
+ 	mutex_unlock(&uuid_mutex);
+ 	if (error)
 
 
