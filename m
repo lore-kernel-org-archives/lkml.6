@@ -2,62 +2,81 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B40DC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 10:50:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81737C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 10:56:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F387420861
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 10:50:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F387420861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 171B220861
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 10:56:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 171B220861
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727807AbeIMP7r (ORCPT
+        id S1727566AbeIMQFE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 11:59:47 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40466 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726912AbeIMP7q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 11:59:46 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8306BAFAF;
-        Thu, 13 Sep 2018 10:50:51 +0000 (UTC)
-Date:   Thu, 13 Sep 2018 12:50:50 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org
-Subject: [GIT PULL] printk for 4.19-rc4
-Message-ID: <20180913105050.coaflmozppxkava5@pathway.suse.cz>
+        Thu, 13 Sep 2018 12:05:04 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:41497 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726741AbeIMQFE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 12:05:04 -0400
+Received: by mail-qt0-f193.google.com with SMTP id t39-v6so4860501qtc.8
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 03:56:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aFy5OlA0Qd0z765toTYIzCgYYKZC4H5Ur9JNpVtTt14=;
+        b=cXgQ39bpAmf3bPpod2OEG+IPW1zbCOk/HCH5o52SsTyDSZkYbOYF1jQcOI/2a1Hq8k
+         ytL7qIUrw3kXVrKbDSvAhLETlieaDUoHj4fDAw4lC7GiwwWvwQLSHa8cPCN9+S6EzVvZ
+         /Hvg+joCOpg3SWZ0BnRERxypdAtVmLsDa/1bALGZaLAcSMPorFVZXqUoTPceHlVfPOIl
+         E2oopgATHgfOosX+QygCRm4oQBjq8ShS6p9/9M5uvJ9O0lF2TzHZ7Md+f46SsbWA3mpG
+         51tq3vj0v/GmDLTxUZRQFFtghO8SlyIbszK3vr3Tdbhh+RRNu5yv8uxNRu41PssIT38C
+         Jyqw==
+X-Gm-Message-State: APzg51CZcABTJirS30l/9MmsZYfBUcMNF25U/yikqKySoMylAqVP9uZG
+        56Hg/3p9xIwVlLexFFUbTYKT0WPxvIyD09bOq+WqXZOl
+X-Google-Smtp-Source: ANB0VdZ8qqW3O443852l+i/v6V3xcR/AT6nAqggDLDYMoNYZlRHmKgOMKeVRBegQC+uMurFH7RZ+l3/GLaCdT0JQZGU=
+X-Received: by 2002:aed:2b47:: with SMTP id p65-v6mr4684809qtd.132.1536836168224;
+ Thu, 13 Sep 2018 03:56:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: NeoMutt/20170421 (1.8.2)
+References: <20180913023119.GQ19965@ZenIV.linux.org.uk> <20180913024049.24567-1-viro@ZenIV.linux.org.uk>
+ <20180913024049.24567-40-viro@ZenIV.linux.org.uk>
+In-Reply-To: <20180913024049.24567-40-viro@ZenIV.linux.org.uk>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 13 Sep 2018 12:55:52 +0200
+Message-ID: <CAK8P3a1J=qFKNiyHSB=uhz9i4wc5vU0=Q2smgS9VBaa4jYWsFw@mail.gmail.com>
+Subject: Re: [PATCH 40/50] kill the rest of tty COMPAT_IOCTL() entries
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     gregkh <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On Thu, Sep 13, 2018 at 4:40 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
 
-please pull one regression fix from
+> @@ -1113,17 +1111,6 @@ COMPATIBLE_IOCTL(JSIOCGAXES)
+>  COMPATIBLE_IOCTL(JSIOCGBUTTONS)
+>  COMPATIBLE_IOCTL(JSIOCGNAME(0))
+>
+> -#ifdef TIOCSTART
+> -/*
+> - * For these two we have definitions in ioctls.h and/or termios.h on
+> - * some architectures but no actual implemention.  Some applications
+> - * like bash call them if they are defined in the headers, so we provide
+> - * entries here to avoid syslog message spew.
+> - */
+> -COMPATIBLE_IOCTL(TIOCSTART)
+> -COMPATIBLE_IOCTL(TIOCSTOP)
+> -#endif
+> -
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/pmladek/printk tags/printk-for-4.19-rc4
+These are also included in my "compat_ioctl: remove IGNORE_IOCTL()"
+patch, but it's trivial to rebased one on top of the other of course.
 
-===================
-
-- Revert a commit that caused "quiet", "debug", and "loglevel"
-  early parameters to be ignored for early boot messages.
-
-----------------------------------------------------------------
-Petr Mladek (1):
-      Revert "printk: make sure to print log on console."
-
- kernel/printk/printk.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+       Arnd
