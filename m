@@ -2,83 +2,93 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99715C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:18:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EA01C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:23:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15C1020861
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:18:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15C1020861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 2832920C0A
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:23:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2832920C0A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727697AbeIMS2U (ORCPT
+        id S1727657AbeIMSc0 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:28:20 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:12112 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727002AbeIMS2U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:28:20 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 58137FE5FBD20;
-        Thu, 13 Sep 2018 21:18:48 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.399.0; Thu, 13 Sep 2018
- 21:18:42 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <jmorris@namei.org>, <serge@hallyn.com>, <casey@schaufler-ca.com>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] Smack: remove set but not used variable 'root_inode'
-Date:   Thu, 13 Sep 2018 21:18:11 +0800
-Message-ID: <20180913131811.25432-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        Thu, 13 Sep 2018 14:32:26 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:22229 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726452AbeIMSc0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 14:32:26 -0400
+X-Greylist: delayed 76624 seconds by postgrey-1.27 at vger.kernel.org; Thu, 13 Sep 2018 14:32:25 EDT
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by eu-smtp-1.mimecast.com with ESMTP id
+ uk-mta-42-zJIENtI3N9CNmXesgMuzxA-1; Thu, 13 Sep 2018 14:22:57 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
+ (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu,
+ 13 Sep 2018 14:25:07 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Thu, 13 Sep 2018 14:25:07 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Davidlohr Bueso' <dave@stgolabs.net>,
+        Eugene Korenevsky <ekorenevsky@gmail.com>,
+        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: RE: [PATCH v3] efi: take size of partition entry from GPT header
+Thread-Topic: [PATCH v3] efi: take size of partition entry from GPT header
+Thread-Index: AQHUSsp7gqL1twr/rUmBM1hCfMHUxKTuNArg
+Date:   Thu, 13 Sep 2018 13:25:07 +0000
+Message-ID: <c158b639852d48d382445d33da8c6a1e@AcuMS.aculab.com>
+References: <20180912183519.GA31506@vnote> <20180912185517.GE3902@linux-r8p5>
+In-Reply-To: <20180912185517.GE3902@linux-r8p5>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+X-MC-Unique: zJIENtI3N9CNmXesgMuzxA-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+From: Davidlohr Bueso
+> Sent: 12 September 2018 19:55
+> 
+> On Wed, 12 Sep 2018, Eugene Korenevsky wrote:
+> > /**
+> >  * efi_partition(struct parsed_partitions *state)
+> >  * @state: disk parsed partitions
+> >@@ -704,32 +710,36 @@ int efi_partition(struct parsed_partitions *state)
+> >
+> > 	pr_debug("GUID Partition Table is valid!  Yea!\n");
+> >
+> >-	for (i = 0; i < le32_to_cpu(gpt->num_partition_entries) && i < state->limit-1; i++) {
+> >+	for (i = 0;
+> >+	     i < le32_to_cpu(gpt->num_partition_entries) && i < state->limit-1;
+> >+	     i++) {
+> 
+> Please rearrange this like:
+> 
+>        for (i = 0; i < le32_to_cpu(gpt->num_partition_entries) &&
+>        	      	      i < state->limit-1; i++)
 
-security/smack/smackfs.c: In function 'smk_fill_super':
-security/smack/smackfs.c:2856:16: warning:
- variable 'root_inode' set but not used [-Wunused-but-set-variable]
+Better still cache le32_to_cpu(gpt->num_partition_entries) to a local
+so that it only has to be calculated once (even if it gets spilled
+to the stack).
+It can be bounded by state->limit-1 at the same time.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- security/smack/smackfs.c | 3 ---
- 1 file changed, 3 deletions(-)
+	David
 
-diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
-index f4e91c5..8972da4 100644
---- a/security/smack/smackfs.c
-+++ b/security/smack/smackfs.c
-@@ -2855,7 +2855,6 @@ static int smk_fill_super(struct super_block *sb, void *data, size_t data_size,
- 			  int silent)
- {
- 	int rc;
--	struct inode *root_inode;
- 
- 	static const struct tree_descr smack_files[] = {
- 		[SMK_LOAD] = {
-@@ -2919,8 +2918,6 @@ static int smk_fill_super(struct super_block *sb, void *data, size_t data_size,
- 		return rc;
- 	}
- 
--	root_inode = d_inode(sb->s_root);
 -
- 	return 0;
- }
- 
--- 
-2.7.0
-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
