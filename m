@@ -2,43 +2,44 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8A35C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:05:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71D2DC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:05:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7049120652
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:05:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7049120652
+	by mail.kernel.org (Postfix) with ESMTP id 1DF5F20652
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:05:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DF5F20652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732192AbeIMTPS (ORCPT
+        id S1732194AbeIMTPV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:15:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35514 "EHLO
+        Thu, 13 Sep 2018 15:15:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35528 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731789AbeIMTPR (ORCPT
+        with ESMTP id S1727995AbeIMTPU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:15:17 -0400
+        Thu, 13 Sep 2018 15:15:20 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 03CF2D39;
-        Thu, 13 Sep 2018 14:05:36 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2B932D36;
+        Thu, 13 Sep 2018 14:05:39 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
-        Takashi Iwai <tiwai@suse.de>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        stable@vger.kernel.org,
+        Wolfgang Draxinger <wdraxinger.maillist@draxit.de>,
+        Vito Caputo <vcaputo@pengaru.com>,
+        kitsunyan <kitsunyan@airmail.cc>,
+        Joonas Saarinen <jza@saunalahti.fi>,
         =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
         <ville.syrjala@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
         Rodrigo Vivi <rodrigo.vivi@intel.com>
-Subject: [PATCH 4.18 152/197] drm/i915/lpe: Mark LPE audio runtime pm as "no callbacks"
-Date:   Thu, 13 Sep 2018 15:31:41 +0200
-Message-Id: <20180913131847.632486242@linuxfoundation.org>
+Subject: [PATCH 4.18 153/197] drm/i915: Nuke the LVDS lid notifier
+Date:   Thu, 13 Sep 2018 15:31:42 +0200
+Message-Id: <20180913131847.670940406@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -56,45 +57,289 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chris Wilson <chris@chris-wilson.co.uk>
+From: Ville Syrjälä <ville.syrjala@linux.intel.com>
 
-commit 75eef0f1ed478284911b8723a5bdb659499a7aac upstream.
+commit 05c72e77ccda89ff624108b1b59a0fc43843f343 upstream.
 
-The LPE audio is a child device of i915, it is powered up and down
-alongside the igfx and presents no independent runtime interface. This
-aptly fulfils the description of a "No-Callback" Device, so mark it
-thus.
+We broke the LVDS notifier resume thing in (presumably) commit
+e2c8b8701e2d ("drm/i915: Use atomic helpers for suspend, v2.") as
+we no longer duplicate the current state in the LVDS notifier and
+thus we never resume it properly either.
 
-Fixes: 183c00350ccd ("drm/i915: Fix runtime PM for LPE audio")
-Testcase: igt/pm_rpm/basic-pci-d3-state
-Testcase: igt/pm_rpm/basic-rte
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Takashi Iwai <tiwai@suse.de>
-Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Instead of trying to fix it again let's just kill off the lid
+notifier entirely. None of the machines tested thus far have
+apparently needed it. Originally the lid notifier was added to
+work around cases where the VBIOS was clobbering some of the
+hardware state behind the driver's back, mostly on Thinkpads.
+We now have a few report of Thinkpads working just fine without
+the notifier. So maybe it was misdiagnosed originally, or
+something else has changed (ACPI video stuff perhaps?).
+
+If we do end up finding a machine where the VBIOS is still causing
+problems I would suggest that we first try setting various bits in
+the VBIOS scratch registers. There are several to choose from that
+may instruct the VBIOS to steer clear.
+
+With the notifier gone we'll also stop looking at the panel status
+in ->detect().
+
+v2: Nuke enum modeset_restore (Rodrigo)
+
 Cc: stable@vger.kernel.org
-Reviewed-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180802140416.6062-1-chris@chris-wilson.co.uk
-(cherry picked from commit 46e831abe864a6b59fa3de253a681c0f2ee1bf2f)
-Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: Wolfgang Draxinger <wdraxinger.maillist@draxit.de>
+Cc: Vito Caputo <vcaputo@pengaru.com>
+Cc: kitsunyan <kitsunyan@airmail.cc>
+Cc: Joonas Saarinen <jza@saunalahti.fi>
+Tested-by: Vito Caputo <vcaputo@pengaru.com> # Thinkapd X61s
+Tested-by: kitsunyan <kitsunyan@airmail.cc> # ThinkPad X200
+Tested-by: Joonas Saarinen <jza@saunalahti.fi> # Fujitsu Siemens U9210
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=105902
+References: https://lists.freedesktop.org/archives/intel-gfx/2018-June/169315.html
+References: https://bugs.freedesktop.org/show_bug.cgi?id=21230
+Fixes: e2c8b8701e2d ("drm/i915: Use atomic helpers for suspend, v2.")
+Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180717174216.22252-1-ville.syrjala@linux.intel.com
+Reviewed-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/intel_lpe_audio.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/gpu/drm/i915/i915_drv.c   |   10 --
+ drivers/gpu/drm/i915/i915_drv.h   |    8 --
+ drivers/gpu/drm/i915/intel_lvds.c |  136 --------------------------------------
+ 3 files changed, 2 insertions(+), 152 deletions(-)
 
---- a/drivers/gpu/drm/i915/intel_lpe_audio.c
-+++ b/drivers/gpu/drm/i915/intel_lpe_audio.c
-@@ -127,9 +127,7 @@ lpe_audio_platdev_create(struct drm_i915
- 		return platdev;
- 	}
+--- a/drivers/gpu/drm/i915/i915_drv.c
++++ b/drivers/gpu/drm/i915/i915_drv.c
+@@ -919,7 +919,6 @@ static int i915_driver_init_early(struct
+ 	spin_lock_init(&dev_priv->uncore.lock);
  
--	pm_runtime_forbid(&platdev->dev);
--	pm_runtime_set_active(&platdev->dev);
--	pm_runtime_enable(&platdev->dev);
-+	pm_runtime_no_callbacks(&platdev->dev);
+ 	mutex_init(&dev_priv->sb_lock);
+-	mutex_init(&dev_priv->modeset_restore_lock);
+ 	mutex_init(&dev_priv->av_mutex);
+ 	mutex_init(&dev_priv->wm.wm_mutex);
+ 	mutex_init(&dev_priv->pps_mutex);
+@@ -1560,11 +1559,6 @@ static int i915_drm_suspend(struct drm_d
+ 	pci_power_t opregion_target_state;
+ 	int error;
  
- 	return platdev;
+-	/* ignore lid events during suspend */
+-	mutex_lock(&dev_priv->modeset_restore_lock);
+-	dev_priv->modeset_restore = MODESET_SUSPENDED;
+-	mutex_unlock(&dev_priv->modeset_restore_lock);
+-
+ 	disable_rpm_wakeref_asserts(dev_priv);
+ 
+ 	/* We do a lot of poking in a lot of registers, make sure they work
+@@ -1764,10 +1758,6 @@ static int i915_drm_resume(struct drm_de
+ 
+ 	intel_fbdev_set_suspend(dev, FBINFO_STATE_RUNNING, false);
+ 
+-	mutex_lock(&dev_priv->modeset_restore_lock);
+-	dev_priv->modeset_restore = MODESET_DONE;
+-	mutex_unlock(&dev_priv->modeset_restore_lock);
+-
+ 	intel_opregion_notify_adapter(dev_priv, PCI_D0);
+ 
+ 	enable_rpm_wakeref_asserts(dev_priv);
+--- a/drivers/gpu/drm/i915/i915_drv.h
++++ b/drivers/gpu/drm/i915/i915_drv.h
+@@ -1003,12 +1003,6 @@ struct i915_gem_mm {
+ #define I915_ENGINE_DEAD_TIMEOUT  (4 * HZ)  /* Seqno, head and subunits dead */
+ #define I915_SEQNO_DEAD_TIMEOUT   (12 * HZ) /* Seqno dead with active head */
+ 
+-enum modeset_restore {
+-	MODESET_ON_LID_OPEN,
+-	MODESET_DONE,
+-	MODESET_SUSPENDED,
+-};
+-
+ #define DP_AUX_A 0x40
+ #define DP_AUX_B 0x10
+ #define DP_AUX_C 0x20
+@@ -1740,8 +1734,6 @@ struct drm_i915_private {
+ 
+ 	unsigned long quirks;
+ 
+-	enum modeset_restore modeset_restore;
+-	struct mutex modeset_restore_lock;
+ 	struct drm_atomic_state *modeset_restore_state;
+ 	struct drm_modeset_acquire_ctx reset_ctx;
+ 
+--- a/drivers/gpu/drm/i915/intel_lvds.c
++++ b/drivers/gpu/drm/i915/intel_lvds.c
+@@ -44,8 +44,6 @@
+ /* Private structure for the integrated LVDS support */
+ struct intel_lvds_connector {
+ 	struct intel_connector base;
+-
+-	struct notifier_block lid_notifier;
+ };
+ 
+ struct intel_lvds_pps {
+@@ -454,26 +452,9 @@ static bool intel_lvds_compute_config(st
+ 	return true;
  }
+ 
+-/*
+- * Detect the LVDS connection.
+- *
+- * Since LVDS doesn't have hotlug, we use the lid as a proxy.  Open means
+- * connected and closed means disconnected.  We also send hotplug events as
+- * needed, using lid status notification from the input layer.
+- */
+ static enum drm_connector_status
+ intel_lvds_detect(struct drm_connector *connector, bool force)
+ {
+-	struct drm_i915_private *dev_priv = to_i915(connector->dev);
+-	enum drm_connector_status status;
+-
+-	DRM_DEBUG_KMS("[CONNECTOR:%d:%s]\n",
+-		      connector->base.id, connector->name);
+-
+-	status = intel_panel_detect(dev_priv);
+-	if (status != connector_status_unknown)
+-		return status;
+-
+ 	return connector_status_connected;
+ }
+ 
+@@ -498,117 +479,6 @@ static int intel_lvds_get_modes(struct d
+ 	return 1;
+ }
+ 
+-static int intel_no_modeset_on_lid_dmi_callback(const struct dmi_system_id *id)
+-{
+-	DRM_INFO("Skipping forced modeset for %s\n", id->ident);
+-	return 1;
+-}
+-
+-/* The GPU hangs up on these systems if modeset is performed on LID open */
+-static const struct dmi_system_id intel_no_modeset_on_lid[] = {
+-	{
+-		.callback = intel_no_modeset_on_lid_dmi_callback,
+-		.ident = "Toshiba Tecra A11",
+-		.matches = {
+-			DMI_MATCH(DMI_SYS_VENDOR, "TOSHIBA"),
+-			DMI_MATCH(DMI_PRODUCT_NAME, "TECRA A11"),
+-		},
+-	},
+-
+-	{ }	/* terminating entry */
+-};
+-
+-/*
+- * Lid events. Note the use of 'modeset':
+- *  - we set it to MODESET_ON_LID_OPEN on lid close,
+- *    and set it to MODESET_DONE on open
+- *  - we use it as a "only once" bit (ie we ignore
+- *    duplicate events where it was already properly set)
+- *  - the suspend/resume paths will set it to
+- *    MODESET_SUSPENDED and ignore the lid open event,
+- *    because they restore the mode ("lid open").
+- */
+-static int intel_lid_notify(struct notifier_block *nb, unsigned long val,
+-			    void *unused)
+-{
+-	struct intel_lvds_connector *lvds_connector =
+-		container_of(nb, struct intel_lvds_connector, lid_notifier);
+-	struct drm_connector *connector = &lvds_connector->base.base;
+-	struct drm_device *dev = connector->dev;
+-	struct drm_i915_private *dev_priv = to_i915(dev);
+-
+-	if (dev->switch_power_state != DRM_SWITCH_POWER_ON)
+-		return NOTIFY_OK;
+-
+-	mutex_lock(&dev_priv->modeset_restore_lock);
+-	if (dev_priv->modeset_restore == MODESET_SUSPENDED)
+-		goto exit;
+-	/*
+-	 * check and update the status of LVDS connector after receiving
+-	 * the LID nofication event.
+-	 */
+-	connector->status = connector->funcs->detect(connector, false);
+-
+-	/* Don't force modeset on machines where it causes a GPU lockup */
+-	if (dmi_check_system(intel_no_modeset_on_lid))
+-		goto exit;
+-	if (!acpi_lid_open()) {
+-		/* do modeset on next lid open event */
+-		dev_priv->modeset_restore = MODESET_ON_LID_OPEN;
+-		goto exit;
+-	}
+-
+-	if (dev_priv->modeset_restore == MODESET_DONE)
+-		goto exit;
+-
+-	/*
+-	 * Some old platform's BIOS love to wreak havoc while the lid is closed.
+-	 * We try to detect this here and undo any damage. The split for PCH
+-	 * platforms is rather conservative and a bit arbitrary expect that on
+-	 * those platforms VGA disabling requires actual legacy VGA I/O access,
+-	 * and as part of the cleanup in the hw state restore we also redisable
+-	 * the vga plane.
+-	 */
+-	if (!HAS_PCH_SPLIT(dev_priv))
+-		intel_display_resume(dev);
+-
+-	dev_priv->modeset_restore = MODESET_DONE;
+-
+-exit:
+-	mutex_unlock(&dev_priv->modeset_restore_lock);
+-	return NOTIFY_OK;
+-}
+-
+-static int
+-intel_lvds_connector_register(struct drm_connector *connector)
+-{
+-	struct intel_lvds_connector *lvds = to_lvds_connector(connector);
+-	int ret;
+-
+-	ret = intel_connector_register(connector);
+-	if (ret)
+-		return ret;
+-
+-	lvds->lid_notifier.notifier_call = intel_lid_notify;
+-	if (acpi_lid_notifier_register(&lvds->lid_notifier)) {
+-		DRM_DEBUG_KMS("lid notifier registration failed\n");
+-		lvds->lid_notifier.notifier_call = NULL;
+-	}
+-
+-	return 0;
+-}
+-
+-static void
+-intel_lvds_connector_unregister(struct drm_connector *connector)
+-{
+-	struct intel_lvds_connector *lvds = to_lvds_connector(connector);
+-
+-	if (lvds->lid_notifier.notifier_call)
+-		acpi_lid_notifier_unregister(&lvds->lid_notifier);
+-
+-	intel_connector_unregister(connector);
+-}
+-
+ /**
+  * intel_lvds_destroy - unregister and free LVDS structures
+  * @connector: connector to free
+@@ -641,8 +511,8 @@ static const struct drm_connector_funcs
+ 	.fill_modes = drm_helper_probe_single_connector_modes,
+ 	.atomic_get_property = intel_digital_connector_atomic_get_property,
+ 	.atomic_set_property = intel_digital_connector_atomic_set_property,
+-	.late_register = intel_lvds_connector_register,
+-	.early_unregister = intel_lvds_connector_unregister,
++	.late_register = intel_connector_register,
++	.early_unregister = intel_connector_unregister,
+ 	.destroy = intel_lvds_destroy,
+ 	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+ 	.atomic_duplicate_state = intel_digital_connector_duplicate_state,
+@@ -1108,8 +978,6 @@ void intel_lvds_init(struct drm_i915_pri
+ 	 * 2) check for VBT data
+ 	 * 3) check to see if LVDS is already on
+ 	 *    if none of the above, no panel
+-	 * 4) make sure lid is open
+-	 *    if closed, act like it's not there for now
+ 	 */
+ 
+ 	/*
 
 
