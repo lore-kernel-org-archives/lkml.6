@@ -5,30 +5,30 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32A48C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:54:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14416C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:55:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAAD020882
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:54:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAAD020882
+	by mail.kernel.org (Postfix) with ESMTP id ABA8120882
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:55:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABA8120882
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727660AbeIMSEO (ORCPT
+        id S1727693AbeIMSET (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:04:14 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60218 "EHLO mx1.redhat.com"
+        Thu, 13 Sep 2018 14:04:19 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:33090 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726930AbeIMSEO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:04:14 -0400
+        id S1726919AbeIMSES (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 14:04:18 -0400
 Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AAEA83082B64;
-        Thu, 13 Sep 2018 12:54:53 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2FF6485A05;
+        Thu, 13 Sep 2018 12:54:56 +0000 (UTC)
 Received: from krava.brq.redhat.com (unknown [10.43.17.10])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8E552600C6;
-        Thu, 13 Sep 2018 12:54:51 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 01F09600C6;
+        Thu, 13 Sep 2018 12:54:53 +0000 (UTC)
 From:   Jiri Olsa <jolsa@kernel.org>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     lkml <linux-kernel@vger.kernel.org>,
@@ -38,219 +38,632 @@ Cc:     lkml <linux-kernel@vger.kernel.org>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>,
         Andi Kleen <andi@firstfloor.org>,
         Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: [RFCv2 00/48] perf tools: Add threads to record command
-Date:   Thu, 13 Sep 2018 14:54:02 +0200
-Message-Id: <20180913125450.21342-1-jolsa@kernel.org>
+Subject: [PATCH 01/48] perf tools: Remove perf_tool from event_op2
+Date:   Thu, 13 Sep 2018 14:54:03 +0200
+Message-Id: <20180913125450.21342-2-jolsa@kernel.org>
+In-Reply-To: <20180913125450.21342-1-jolsa@kernel.org>
+References: <20180913125450.21342-1-jolsa@kernel.org>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Thu, 13 Sep 2018 12:54:53 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Thu, 13 Sep 2018 12:54:56 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-hi,
-sending *RFC* for threads support in perf record command.
+Now when we keep perf_tool pointer inside perf_session,
+there's no need to have perf_tool argument in the
+event_op2 callback. Removing it.
 
-In big picture this patchset adds perf record --threads
-option that allows to create threads in following modes:
-
-1) single thread mode (current)
-
-  $ perf record ...
-  $ perf record --threads=1 ...
-
-  - all maps are read/stored under process thread
-
-2) mode with specific (X) number of threads
-
-  $ perf record --threads=X ...
-
-  - maps are spread equaly among threads
-
-3) mode that creates thread for every monitored memory map
-
-  $ perf record --threads ...
-
-  - which in perf record is equal to number of CPUs, and
-    it pins each thread to its map's cpu:
-
-4) TODO - NUMA aware threads/maps separation
-   ...
-
-The perf.data stays as a single file.
-
-v2 changes:
-  - rebased to current Arnaldo's perf/core
-    (also based on few fixes from my perf/core, see the branch details below)
-
-This patchset contains lot of preparation changes to make
-threaded record possible:
-
-  - Namhyung's changes to create multiple data streams in
-    perf data file, which allows having each thread data
-    being stored in separate files and merged into single
-    perf data after
-
-  - Namhyung's changes to create track mmaps for auxiliary
-    events
-
-  - Namhyung's changes to search for threads/mmaps/comms
-    using the time. This is needed because we have now
-    multiple data streams which are processed separately,
-    but they all need access to complete auxiliary events
-    data (threads/mmaps/comms). That's also a reason why
-    the auxiliary events are stored into separate data
-    stream, which is processed before real data.
-
-  - the rest of the code that adds threads abstraction into
-    record command allows to create them and distribute maps
-    among them
-
-  - other preparational changes
-
-The threaded monitoring currently can't monitor backward maps
-and there are probably more limitations which I haven't spotted
-yet.
-
-So far I tested on laptop:
-  http://people.redhat.com/~jolsa/record_threads/test-4CPU.txt
-
-and a one bigger server:
-  http://people.redhat.com/~jolsa/record_threads/test-208CPU.txt
-
-I can see decrease in recorded LOST events, but both the benchmark
-and the monitoring must be carefully configured wrt:
-  - number of events (frequency)
-  - size of the memory maps
-  - size of events (callchains)
-  - final perf.data size
-
-It's also available in:
-  git://git.kernel.org/pub/scm/linux/kernel/git/jolsa/perf.git
-  perf/record_threads
-
-thoughts? ;-) thanks
-jirka
-
-
+Link: http://lkml.kernel.org/n/tip-dc99gim2w2919gdnzrl3tegh@git.kernel.org
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
-Jiri Olsa (30):
-      perf tools: Remove perf_tool from event_op2
-      perf tools: Remove perf_tool from event_op3
-      perf tools: Pass struct perf_mmap into auxtrace_mmap__read* functions
-      perf tools: Add struct perf_mmap arg into record__write
-      perf tools: Create separate mmap for dummy tracking event
-      perf tools: Make copyfile_offset global
-      perf tools: Add perf_data__create_index function
-      perf record: Add --index option for building index table
-      perf tools: Convert dead thread list into rbtree
-      perf tools: Add thread::exited flag
-      perf callchain: Maintain libunwind's address space in map_groups
-      perf tools: Rename perf_evlist__munmap_filtered to perf_mmap__put_filtered
-      tools lib fd array: Introduce fdarray__add_clone function
-      tools lib subcmd: Add OPT_INTEGER_OPTARG|_SET options
-      perf tools: Move __perf_session__process_events args into struct
-      perf ui progress: Fix index progress display
-      perf tools: Add threads debug variable
-      perf tools: Add perf_mmap__read_tail function
-      perf record: Introduce struct record_thread
-      perf record: Read record thread's mmaps
-      perf record: Move waking into struct record
-      perf record: Move samples into struct record_thread
-      perf record: Move bytes_written into struct record_thread
-      perf record: Add record_thread start/stop/process functions
-      perf record: Wait for all threads being started
-      perf record: Add --threads option
-      perf record: Add --thread-stats option support
-      perf record: Add maps to --thread-stats output
-      perf record: Spread maps for --threads option
-      perf record: Spread maps for --threads=X option
+ tools/perf/builtin-annotate.c |  7 ++--
+ tools/perf/builtin-inject.c   | 26 ++++++--------
+ tools/perf/builtin-report.c   |  9 +++--
+ tools/perf/builtin-script.c   | 38 ++++++++++----------
+ tools/perf/builtin-stat.c     | 23 ++++++------
+ tools/perf/util/auxtrace.c    | 10 +++---
+ tools/perf/util/auxtrace.h    | 10 +++---
+ tools/perf/util/header.c      | 16 ++++-----
+ tools/perf/util/header.h      | 15 ++++----
+ tools/perf/util/session.c     | 67 +++++++++++++++--------------------
+ tools/perf/util/session.h     |  5 ++-
+ tools/perf/util/stat.c        |  5 ++-
+ tools/perf/util/stat.h        |  5 ++-
+ tools/perf/util/tool.h        |  3 +-
+ 14 files changed, 103 insertions(+), 136 deletions(-)
 
-Namhyung Kim (18):
-      perf tools: Use a software dummy event to track task/mmap events
-      perf tools: Extend perf_evlist__mmap_ex() to use track mmap
-      perf report: Skip dummy tracking event
-      perf tools: Add HEADER_DATA_INDEX feature
-      perf tools: Handle indexed data file properly
-      perf tools: Introduce thread__comm(_str)_by_time() helpers
-      perf tools: Add a test case for thread comm handling
-      perf tools: Use thread__comm_by_time() when adding hist entries
-      perf tools: Introduce machine__find*_thread_by_time()
-      perf tools: Add a test case for timed thread handling
-      perf tools: Maintain map groups list in a leader thread
-      perf tools: Introduce thread__find_symbol_by_time() and friends
-      perf callchain: Use thread__find_addr_location_by_time() and friends
-      perf tools: Add a test case for timed map groups handling
-      perf tools: Save timestamp of a map creation
-      perf tools: Introduce map_groups__{insert,find}_by_time()
-      perf tools: Use map_groups__find_addr_by_time()
-      perf tools: Add testcase for managing maps with time
+diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
+index 830481b8db26..93d679eaf1f4 100644
+--- a/tools/perf/builtin-annotate.c
++++ b/tools/perf/builtin-annotate.c
+@@ -283,12 +283,11 @@ static int process_sample_event(struct perf_tool *tool,
+ 	return ret;
+ }
+ 
+-static int process_feature_event(struct perf_tool *tool,
+-				 union perf_event *event,
+-				 struct perf_session *session)
++static int process_feature_event(struct perf_session *session,
++				 union perf_event *event)
+ {
+ 	if (event->feat.feat_id < HEADER_LAST_FEATURE)
+-		return perf_event__process_feature(tool, event, session);
++		return perf_event__process_feature(session, event);
+ 	return 0;
+ }
+ 
+diff --git a/tools/perf/builtin-inject.c b/tools/perf/builtin-inject.c
+index a3b346359ba0..d77ed2aea95a 100644
+--- a/tools/perf/builtin-inject.c
++++ b/tools/perf/builtin-inject.c
+@@ -86,12 +86,10 @@ static int perf_event__drop_oe(struct perf_tool *tool __maybe_unused,
+ }
+ #endif
+ 
+-static int perf_event__repipe_op2_synth(struct perf_tool *tool,
+-					union perf_event *event,
+-					struct perf_session *session
+-					__maybe_unused)
++static int perf_event__repipe_op2_synth(struct perf_session *session,
++					union perf_event *event)
+ {
+-	return perf_event__repipe_synth(tool, event);
++	return perf_event__repipe_synth(session->tool, event);
+ }
+ 
+ static int perf_event__repipe_attr(struct perf_tool *tool,
+@@ -362,26 +360,24 @@ static int perf_event__repipe_exit(struct perf_tool *tool,
+ 	return err;
+ }
+ 
+-static int perf_event__repipe_tracing_data(struct perf_tool *tool,
+-					   union perf_event *event,
+-					   struct perf_session *session)
++static int perf_event__repipe_tracing_data(struct perf_session *session,
++					   union perf_event *event)
+ {
+ 	int err;
+ 
+-	perf_event__repipe_synth(tool, event);
+-	err = perf_event__process_tracing_data(tool, event, session);
++	perf_event__repipe_synth(session->tool, event);
++	err = perf_event__process_tracing_data(session, event);
+ 
+ 	return err;
+ }
+ 
+-static int perf_event__repipe_id_index(struct perf_tool *tool,
+-				       union perf_event *event,
+-				       struct perf_session *session)
++static int perf_event__repipe_id_index(struct perf_session *session,
++				       union perf_event *event)
+ {
+ 	int err;
+ 
+-	perf_event__repipe_synth(tool, event);
+-	err = perf_event__process_id_index(tool, event, session);
++	perf_event__repipe_synth(session->tool, event);
++	err = perf_event__process_id_index(session, event);
+ 
+ 	return err;
+ }
+diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+index 76e12bcd1765..7507e4d6dce1 100644
+--- a/tools/perf/builtin-report.c
++++ b/tools/perf/builtin-report.c
+@@ -201,14 +201,13 @@ static void setup_forced_leader(struct report *report,
+ 		perf_evlist__force_leader(evlist);
+ }
+ 
+-static int process_feature_event(struct perf_tool *tool,
+-				 union perf_event *event,
+-				 struct perf_session *session __maybe_unused)
++static int process_feature_event(struct perf_session *session,
++				 union perf_event *event)
+ {
+-	struct report *rep = container_of(tool, struct report, tool);
++	struct report *rep = container_of(session->tool, struct report, tool);
+ 
+ 	if (event->feat.feat_id < HEADER_LAST_FEATURE)
+-		return perf_event__process_feature(tool, event, session);
++		return perf_event__process_feature(session, event);
+ 
+ 	if (event->feat.feat_id != HEADER_LAST_FEATURE) {
+ 		pr_err("failed: wrong feature ID: %" PRIu64 "\n",
+diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+index 6176bae177c2..765391b6c88c 100644
+--- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -2965,9 +2965,8 @@ static void script__setup_sample_type(struct perf_script *script)
+ 	}
+ }
+ 
+-static int process_stat_round_event(struct perf_tool *tool __maybe_unused,
+-				    union perf_event *event,
+-				    struct perf_session *session)
++static int process_stat_round_event(struct perf_session *session,
++				    union perf_event *event)
+ {
+ 	struct stat_round_event *round = &event->stat_round;
+ 	struct perf_evsel *counter;
+@@ -2981,9 +2980,8 @@ static int process_stat_round_event(struct perf_tool *tool __maybe_unused,
+ 	return 0;
+ }
+ 
+-static int process_stat_config_event(struct perf_tool *tool __maybe_unused,
+-				     union perf_event *event,
+-				     struct perf_session *session __maybe_unused)
++static int process_stat_config_event(struct perf_session *session __maybe_unused,
++				     union perf_event *event)
+ {
+ 	perf_event__read_stat_config(&stat_config, &event->stat_config);
+ 	return 0;
+@@ -3009,10 +3007,10 @@ static int set_maps(struct perf_script *script)
+ }
+ 
+ static
+-int process_thread_map_event(struct perf_tool *tool,
+-			     union perf_event *event,
+-			     struct perf_session *session __maybe_unused)
++int process_thread_map_event(struct perf_session *session,
++			     union perf_event *event)
+ {
++	struct perf_tool *tool = session->tool;
+ 	struct perf_script *script = container_of(tool, struct perf_script, tool);
+ 
+ 	if (script->threads) {
+@@ -3028,10 +3026,10 @@ int process_thread_map_event(struct perf_tool *tool,
+ }
+ 
+ static
+-int process_cpu_map_event(struct perf_tool *tool __maybe_unused,
+-			  union perf_event *event,
+-			  struct perf_session *session __maybe_unused)
++int process_cpu_map_event(struct perf_session *session,
++			  union perf_event *event)
+ {
++	struct perf_tool *tool = session->tool;
+ 	struct perf_script *script = container_of(tool, struct perf_script, tool);
+ 
+ 	if (script->cpus) {
+@@ -3046,21 +3044,21 @@ int process_cpu_map_event(struct perf_tool *tool __maybe_unused,
+ 	return set_maps(script);
+ }
+ 
+-static int process_feature_event(struct perf_tool *tool,
+-				 union perf_event *event,
+-				 struct perf_session *session)
++static int process_feature_event(struct perf_session *session,
++				 union perf_event *event)
+ {
+ 	if (event->feat.feat_id < HEADER_LAST_FEATURE)
+-		return perf_event__process_feature(tool, event, session);
++		return perf_event__process_feature(session, event);
+ 	return 0;
+ }
+ 
+ #ifdef HAVE_AUXTRACE_SUPPORT
+-static int perf_script__process_auxtrace_info(struct perf_tool *tool,
+-					      union perf_event *event,
+-					      struct perf_session *session)
++static int perf_script__process_auxtrace_info(struct perf_session *session,
++					      union perf_event *event)
+ {
+-	int ret = perf_event__process_auxtrace_info(tool, event, session);
++	struct perf_tool *tool = session->tool;
++
++	int ret = perf_event__process_auxtrace_info(session, event);
+ 
+ 	if (ret == 0) {
+ 		struct perf_script *script = container_of(tool, struct perf_script, tool);
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index 0b0e3961d511..b86aba1c8028 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -1354,9 +1354,8 @@ static int __cmd_record(int argc, const char **argv)
+ 	return argc;
+ }
+ 
+-static int process_stat_round_event(struct perf_tool *tool __maybe_unused,
+-				    union perf_event *event,
+-				    struct perf_session *session)
++static int process_stat_round_event(struct perf_session *session,
++				    union perf_event *event)
+ {
+ 	struct stat_round_event *stat_round = &event->stat_round;
+ 	struct perf_evsel *counter;
+@@ -1381,10 +1380,10 @@ static int process_stat_round_event(struct perf_tool *tool __maybe_unused,
+ }
+ 
+ static
+-int process_stat_config_event(struct perf_tool *tool,
+-			      union perf_event *event,
+-			      struct perf_session *session __maybe_unused)
++int process_stat_config_event(struct perf_session *session,
++			      union perf_event *event)
+ {
++	struct perf_tool *tool = session->tool;
+ 	struct perf_stat *st = container_of(tool, struct perf_stat, tool);
+ 
+ 	perf_event__read_stat_config(&stat_config, &event->stat_config);
+@@ -1424,10 +1423,10 @@ static int set_maps(struct perf_stat *st)
+ }
+ 
+ static
+-int process_thread_map_event(struct perf_tool *tool,
+-			     union perf_event *event,
+-			     struct perf_session *session __maybe_unused)
++int process_thread_map_event(struct perf_session *session,
++			     union perf_event *event)
+ {
++	struct perf_tool *tool = session->tool;
+ 	struct perf_stat *st = container_of(tool, struct perf_stat, tool);
+ 
+ 	if (st->threads) {
+@@ -1443,10 +1442,10 @@ int process_thread_map_event(struct perf_tool *tool,
+ }
+ 
+ static
+-int process_cpu_map_event(struct perf_tool *tool,
+-			  union perf_event *event,
+-			  struct perf_session *session __maybe_unused)
++int process_cpu_map_event(struct perf_session *session,
++			  union perf_event *event)
+ {
++	struct perf_tool *tool = session->tool;
+ 	struct perf_stat *st = container_of(tool, struct perf_stat, tool);
+ 	struct cpu_map *cpus;
+ 
+diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
+index db1511359c5e..86f0bc445f93 100644
+--- a/tools/perf/util/auxtrace.c
++++ b/tools/perf/util/auxtrace.c
+@@ -906,9 +906,8 @@ int perf_event__synthesize_auxtrace_info(struct auxtrace_record *itr,
+ 	return err;
+ }
+ 
+-int perf_event__process_auxtrace_info(struct perf_tool *tool __maybe_unused,
+-				      union perf_event *event,
+-				      struct perf_session *session)
++int perf_event__process_auxtrace_info(struct perf_session *session,
++				      union perf_event *event)
+ {
+ 	enum auxtrace_type type = event->auxtrace_info.type;
+ 
+@@ -1185,9 +1184,8 @@ void events_stats__auxtrace_error_warn(const struct events_stats *stats)
+ 	}
+ }
+ 
+-int perf_event__process_auxtrace_error(struct perf_tool *tool __maybe_unused,
+-				       union perf_event *event,
+-				       struct perf_session *session)
++int perf_event__process_auxtrace_error(struct perf_session *session,
++				       union perf_event *event)
+ {
+ 	if (auxtrace__dont_decode(session))
+ 		return 0;
+diff --git a/tools/perf/util/auxtrace.h b/tools/perf/util/auxtrace.h
+index 71fc3bd74299..97776470a52e 100644
+--- a/tools/perf/util/auxtrace.h
++++ b/tools/perf/util/auxtrace.h
+@@ -517,15 +517,13 @@ int perf_event__synthesize_auxtrace_info(struct auxtrace_record *itr,
+ 					 struct perf_tool *tool,
+ 					 struct perf_session *session,
+ 					 perf_event__handler_t process);
+-int perf_event__process_auxtrace_info(struct perf_tool *tool,
+-				      union perf_event *event,
+-				      struct perf_session *session);
++int perf_event__process_auxtrace_info(struct perf_session *session,
++				      union perf_event *event);
+ s64 perf_event__process_auxtrace(struct perf_tool *tool,
+ 				 union perf_event *event,
+ 				 struct perf_session *session);
+-int perf_event__process_auxtrace_error(struct perf_tool *tool,
+-				       union perf_event *event,
+-				       struct perf_session *session);
++int perf_event__process_auxtrace_error(struct perf_session *session,
++				       union perf_event *event);
+ int itrace_parse_synth_opts(const struct option *opt, const char *str,
+ 			    int unset);
+ void itrace_synth_opts__set_default(struct itrace_synth_opts *synth_opts);
+diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+index 91e6d9cfd906..c78051ad1fcc 100644
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -3448,10 +3448,10 @@ int perf_event__synthesize_features(struct perf_tool *tool,
+ 	return ret;
+ }
+ 
+-int perf_event__process_feature(struct perf_tool *tool,
+-				union perf_event *event,
+-				struct perf_session *session __maybe_unused)
++int perf_event__process_feature(struct perf_session *session,
++				union perf_event *event)
+ {
++	struct perf_tool *tool = session->tool;
+ 	struct feat_fd ff = { .fd = 0 };
+ 	struct feature_event *fe = (struct feature_event *)event;
+ 	int type = fe->header.type;
+@@ -3856,9 +3856,8 @@ int perf_event__synthesize_tracing_data(struct perf_tool *tool, int fd,
+ 	return aligned_size;
+ }
+ 
+-int perf_event__process_tracing_data(struct perf_tool *tool __maybe_unused,
+-				     union perf_event *event,
+-				     struct perf_session *session)
++int perf_event__process_tracing_data(struct perf_session *session,
++				     union perf_event *event)
+ {
+ 	ssize_t size_read, padding, size = event->tracing_data.size;
+ 	int fd = perf_data__fd(session->data);
+@@ -3924,9 +3923,8 @@ int perf_event__synthesize_build_id(struct perf_tool *tool,
+ 	return err;
+ }
+ 
+-int perf_event__process_build_id(struct perf_tool *tool __maybe_unused,
+-				 union perf_event *event,
+-				 struct perf_session *session)
++int perf_event__process_build_id(struct perf_session *session,
++				 union perf_event *event)
+ {
+ 	__event_process_build_id(&event->build_id,
+ 				 event->build_id.filename,
+diff --git a/tools/perf/util/header.h b/tools/perf/util/header.h
+index ff2a1263fb9b..e17903caa71d 100644
+--- a/tools/perf/util/header.h
++++ b/tools/perf/util/header.h
+@@ -116,9 +116,8 @@ int perf_event__synthesize_extra_attr(struct perf_tool *tool,
+ 				      perf_event__handler_t process,
+ 				      bool is_pipe);
+ 
+-int perf_event__process_feature(struct perf_tool *tool,
+-				union perf_event *event,
+-				struct perf_session *session);
++int perf_event__process_feature(struct perf_session *session,
++				union perf_event *event);
+ 
+ int perf_event__synthesize_attr(struct perf_tool *tool,
+ 				struct perf_event_attr *attr, u32 ids, u64 *id,
+@@ -148,17 +147,15 @@ size_t perf_event__fprintf_event_update(union perf_event *event, FILE *fp);
+ int perf_event__synthesize_tracing_data(struct perf_tool *tool,
+ 					int fd, struct perf_evlist *evlist,
+ 					perf_event__handler_t process);
+-int perf_event__process_tracing_data(struct perf_tool *tool,
+-				     union perf_event *event,
+-				     struct perf_session *session);
++int perf_event__process_tracing_data(struct perf_session *session,
++				     union perf_event *event);
+ 
+ int perf_event__synthesize_build_id(struct perf_tool *tool,
+ 				    struct dso *pos, u16 misc,
+ 				    perf_event__handler_t process,
+ 				    struct machine *machine);
+-int perf_event__process_build_id(struct perf_tool *tool,
+-				 union perf_event *event,
+-				 struct perf_session *session);
++int perf_event__process_build_id(struct perf_session *session,
++				 union perf_event *event);
+ bool is_perf_magic(u64 magic);
+ 
+ #define NAME_ALIGN 64
+diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
+index 8b9369303561..e781cdba845c 100644
+--- a/tools/perf/util/session.c
++++ b/tools/perf/util/session.c
+@@ -199,12 +199,10 @@ void perf_session__delete(struct perf_session *session)
+ 	free(session);
+ }
+ 
+-static int process_event_synth_tracing_data_stub(struct perf_tool *tool
++static int process_event_synth_tracing_data_stub(struct perf_session *session
+ 						 __maybe_unused,
+ 						 union perf_event *event
+-						 __maybe_unused,
+-						 struct perf_session *session
+-						__maybe_unused)
++						 __maybe_unused)
+ {
+ 	dump_printf(": unhandled!\n");
+ 	return 0;
+@@ -288,9 +286,8 @@ static s64 process_event_auxtrace_stub(struct perf_tool *tool __maybe_unused,
+ 	return event->auxtrace.size;
+ }
+ 
+-static int process_event_op2_stub(struct perf_tool *tool __maybe_unused,
+-				  union perf_event *event __maybe_unused,
+-				  struct perf_session *session __maybe_unused)
++static int process_event_op2_stub(struct perf_session *session __maybe_unused,
++				  union perf_event *event __maybe_unused)
+ {
+ 	dump_printf(": unhandled!\n");
+ 	return 0;
+@@ -298,9 +295,8 @@ static int process_event_op2_stub(struct perf_tool *tool __maybe_unused,
+ 
+ 
+ static
+-int process_event_thread_map_stub(struct perf_tool *tool __maybe_unused,
+-				  union perf_event *event __maybe_unused,
+-				  struct perf_session *session __maybe_unused)
++int process_event_thread_map_stub(struct perf_session *session __maybe_unused,
++				  union perf_event *event __maybe_unused)
+ {
+ 	if (dump_trace)
+ 		perf_event__fprintf_thread_map(event, stdout);
+@@ -310,9 +306,8 @@ int process_event_thread_map_stub(struct perf_tool *tool __maybe_unused,
+ }
+ 
+ static
+-int process_event_cpu_map_stub(struct perf_tool *tool __maybe_unused,
+-			       union perf_event *event __maybe_unused,
+-			       struct perf_session *session __maybe_unused)
++int process_event_cpu_map_stub(struct perf_session *session __maybe_unused,
++			       union perf_event *event __maybe_unused)
+ {
+ 	if (dump_trace)
+ 		perf_event__fprintf_cpu_map(event, stdout);
+@@ -322,9 +317,8 @@ int process_event_cpu_map_stub(struct perf_tool *tool __maybe_unused,
+ }
+ 
+ static
+-int process_event_stat_config_stub(struct perf_tool *tool __maybe_unused,
+-				   union perf_event *event __maybe_unused,
+-				   struct perf_session *session __maybe_unused)
++int process_event_stat_config_stub(struct perf_session *session __maybe_unused,
++				   union perf_event *event __maybe_unused)
+ {
+ 	if (dump_trace)
+ 		perf_event__fprintf_stat_config(event, stdout);
+@@ -333,10 +327,8 @@ int process_event_stat_config_stub(struct perf_tool *tool __maybe_unused,
+ 	return 0;
+ }
+ 
+-static int process_stat_stub(struct perf_tool *tool __maybe_unused,
+-			     union perf_event *event __maybe_unused,
+-			     struct perf_session *perf_session
+-			     __maybe_unused)
++static int process_stat_stub(struct perf_session *perf_session __maybe_unused,
++			     union perf_event *event)
+ {
+ 	if (dump_trace)
+ 		perf_event__fprintf_stat(event, stdout);
+@@ -345,10 +337,8 @@ static int process_stat_stub(struct perf_tool *tool __maybe_unused,
+ 	return 0;
+ }
+ 
+-static int process_stat_round_stub(struct perf_tool *tool __maybe_unused,
+-				   union perf_event *event __maybe_unused,
+-				   struct perf_session *perf_session
+-				   __maybe_unused)
++static int process_stat_round_stub(struct perf_session *perf_session __maybe_unused,
++				   union perf_event *event)
+ {
+ 	if (dump_trace)
+ 		perf_event__fprintf_stat_round(event, stdout);
+@@ -1374,37 +1364,37 @@ static s64 perf_session__process_user_event(struct perf_session *session,
+ 	case PERF_RECORD_HEADER_TRACING_DATA:
+ 		/* setup for reading amidst mmap */
+ 		lseek(fd, file_offset, SEEK_SET);
+-		return tool->tracing_data(tool, event, session);
++		return tool->tracing_data(session, event);
+ 	case PERF_RECORD_HEADER_BUILD_ID:
+-		return tool->build_id(tool, event, session);
++		return tool->build_id(session, event);
+ 	case PERF_RECORD_FINISHED_ROUND:
+ 		return tool->finished_round(tool, event, oe);
+ 	case PERF_RECORD_ID_INDEX:
+-		return tool->id_index(tool, event, session);
++		return tool->id_index(session, event);
+ 	case PERF_RECORD_AUXTRACE_INFO:
+-		return tool->auxtrace_info(tool, event, session);
++		return tool->auxtrace_info(session, event);
+ 	case PERF_RECORD_AUXTRACE:
+ 		/* setup for reading amidst mmap */
+ 		lseek(fd, file_offset + event->header.size, SEEK_SET);
+ 		return tool->auxtrace(tool, event, session);
+ 	case PERF_RECORD_AUXTRACE_ERROR:
+ 		perf_session__auxtrace_error_inc(session, event);
+-		return tool->auxtrace_error(tool, event, session);
++		return tool->auxtrace_error(session, event);
+ 	case PERF_RECORD_THREAD_MAP:
+-		return tool->thread_map(tool, event, session);
++		return tool->thread_map(session, event);
+ 	case PERF_RECORD_CPU_MAP:
+-		return tool->cpu_map(tool, event, session);
++		return tool->cpu_map(session, event);
+ 	case PERF_RECORD_STAT_CONFIG:
+-		return tool->stat_config(tool, event, session);
++		return tool->stat_config(session, event);
+ 	case PERF_RECORD_STAT:
+-		return tool->stat(tool, event, session);
++		return tool->stat(session, event);
+ 	case PERF_RECORD_STAT_ROUND:
+-		return tool->stat_round(tool, event, session);
++		return tool->stat_round(session, event);
+ 	case PERF_RECORD_TIME_CONV:
+ 		session->time_conv = event->time_conv;
+-		return tool->time_conv(tool, event, session);
++		return tool->time_conv(session, event);
+ 	case PERF_RECORD_HEADER_FEATURE:
+-		return tool->feature(tool, event, session);
++		return tool->feature(session, event);
+ 	default:
+ 		return -EINVAL;
+ 	}
+@@ -2133,9 +2123,8 @@ int __perf_session__set_tracepoints_handlers(struct perf_session *session,
+ 	return err;
+ }
+ 
+-int perf_event__process_id_index(struct perf_tool *tool __maybe_unused,
+-				 union perf_event *event,
+-				 struct perf_session *session)
++int perf_event__process_id_index(struct perf_session *session,
++				 union perf_event *event)
+ {
+ 	struct perf_evlist *evlist = session->evlist;
+ 	struct id_index_event *ie = &event->id_index;
+diff --git a/tools/perf/util/session.h b/tools/perf/util/session.h
+index da40b4b380ca..d96eccd7d27f 100644
+--- a/tools/perf/util/session.h
++++ b/tools/perf/util/session.h
+@@ -120,9 +120,8 @@ int perf_session__deliver_synth_event(struct perf_session *session,
+ 				      union perf_event *event,
+ 				      struct perf_sample *sample);
+ 
+-int perf_event__process_id_index(struct perf_tool *tool,
+-				 union perf_event *event,
+-				 struct perf_session *session);
++int perf_event__process_id_index(struct perf_session *session,
++				 union perf_event *event);
+ 
+ int perf_event__synthesize_id_index(struct perf_tool *tool,
+ 				    perf_event__handler_t process,
+diff --git a/tools/perf/util/stat.c b/tools/perf/util/stat.c
+index 5d3172bcc4ae..4d40515307b8 100644
+--- a/tools/perf/util/stat.c
++++ b/tools/perf/util/stat.c
+@@ -374,9 +374,8 @@ int perf_stat_process_counter(struct perf_stat_config *config,
+ 	return 0;
+ }
+ 
+-int perf_event__process_stat_event(struct perf_tool *tool __maybe_unused,
+-				   union perf_event *event,
+-				   struct perf_session *session)
++int perf_event__process_stat_event(struct perf_session *session,
++				   union perf_event *event)
+ {
+ 	struct perf_counts_values count;
+ 	struct stat_event *st = &event->stat;
+diff --git a/tools/perf/util/stat.h b/tools/perf/util/stat.h
+index 3a13a6dc5a62..2f9c9159a364 100644
+--- a/tools/perf/util/stat.h
++++ b/tools/perf/util/stat.h
+@@ -199,9 +199,8 @@ int perf_stat_process_counter(struct perf_stat_config *config,
+ struct perf_tool;
+ union perf_event;
+ struct perf_session;
+-int perf_event__process_stat_event(struct perf_tool *tool,
+-				   union perf_event *event,
+-				   struct perf_session *session);
++int perf_event__process_stat_event(struct perf_session *session,
++				   union perf_event *event);
+ 
+ size_t perf_event__fprintf_stat(union perf_event *event, FILE *fp);
+ size_t perf_event__fprintf_stat_round(union perf_event *event, FILE *fp);
+diff --git a/tools/perf/util/tool.h b/tools/perf/util/tool.h
+index 183c91453522..9c7f78d76275 100644
+--- a/tools/perf/util/tool.h
++++ b/tools/perf/util/tool.h
+@@ -26,8 +26,7 @@ typedef int (*event_attr_op)(struct perf_tool *tool,
+ 			     union perf_event *event,
+ 			     struct perf_evlist **pevlist);
+ 
+-typedef int (*event_op2)(struct perf_tool *tool, union perf_event *event,
+-			 struct perf_session *session);
++typedef int (*event_op2)(struct perf_session *session, union perf_event *event);
+ 
+ typedef int (*event_oe)(struct perf_tool *tool, union perf_event *event,
+ 			struct ordered_events *oe);
+-- 
+2.17.1
 
- tools/lib/api/fd/array.c                 |  17 +
- tools/lib/api/fd/array.h                 |   1 +
- tools/lib/subcmd/parse-options.c         |   2 +
- tools/lib/subcmd/parse-options.h         |   9 +
- tools/perf/Documentation/perf-record.txt |   4 +
- tools/perf/Documentation/perf.txt        |   1 +
- tools/perf/builtin-annotate.c            |   7 +-
- tools/perf/builtin-inject.c              |  32 +-
- tools/perf/builtin-record.c              | 899 +++++++++++++++++++++++++++++--
- tools/perf/builtin-report.c              |  12 +-
- tools/perf/builtin-script.c              |  38 +-
- tools/perf/builtin-stat.c                |  23 +-
- tools/perf/perf.c                        |   1 +
- tools/perf/perf.h                        |   3 +
- tools/perf/tests/Build                   |   4 +
- tools/perf/tests/builtin-test.c          |  16 +
- tools/perf/tests/dwarf-unwind.c          |   4 +-
- tools/perf/tests/hists_common.c          |   2 +-
- tools/perf/tests/hists_link.c            |   2 +-
- tools/perf/tests/tests.h                 |   4 +
- tools/perf/tests/thread-comm.c           |  48 ++
- tools/perf/tests/thread-lookup-time.c    | 181 +++++++
- tools/perf/tests/thread-map-time.c       |  90 ++++
- tools/perf/tests/thread-mg-share.c       |   7 +-
- tools/perf/tests/thread-mg-time.c        |  94 ++++
- tools/perf/ui/browsers/hists.c           |  30 +-
- tools/perf/ui/gtk/hists.c                |   3 +
- tools/perf/util/auxtrace.c               |  30 +-
- tools/perf/util/auxtrace.h               |  21 +-
- tools/perf/util/data.c                   |  64 +++
- tools/perf/util/data.h                   |   5 +
- tools/perf/util/debug.c                  |   2 +
- tools/perf/util/debug.h                  |   1 +
- tools/perf/util/dso.c                    |   2 +-
- tools/perf/util/event.c                  | 135 ++++-
- tools/perf/util/evlist.c                 |  96 +++-
- tools/perf/util/evlist.h                 |   7 +-
- tools/perf/util/evsel.h                  |  15 +
- tools/perf/util/header.c                 |  93 +++-
- tools/perf/util/header.h                 |  18 +-
- tools/perf/util/hist.c                   |   4 +-
- tools/perf/util/intel-pt.c               |   2 +-
- tools/perf/util/machine.c                | 293 ++++++++--
- tools/perf/util/machine.h                |  22 +-
- tools/perf/util/map.c                    |  79 ++-
- tools/perf/util/map.h                    |  40 +-
- tools/perf/util/mmap.c                   |   6 +-
- tools/perf/util/mmap.h                   |  33 +-
- tools/perf/util/session.c                | 178 +++---
- tools/perf/util/session.h                |   5 +-
- tools/perf/util/stat.c                   |   5 +-
- tools/perf/util/stat.h                   |   5 +-
- tools/perf/util/symbol-elf.c             |   2 +-
- tools/perf/util/symbol.c                 |   4 +-
- tools/perf/util/thread.c                 | 200 ++++++-
- tools/perf/util/thread.h                 |  27 +-
- tools/perf/util/tool.h                   |   7 +-
- tools/perf/util/unwind-libdw.c           |   6 +-
- tools/perf/util/unwind-libunwind-local.c |  39 +-
- tools/perf/util/unwind-libunwind.c       |   9 +-
- tools/perf/util/unwind.h                 |   7 +-
- tools/perf/util/util.c                   |   2 +-
- tools/perf/util/util.h                   |   2 +
- 63 files changed, 2608 insertions(+), 392 deletions(-)
- create mode 100644 tools/perf/tests/thread-comm.c
- create mode 100644 tools/perf/tests/thread-lookup-time.c
- create mode 100644 tools/perf/tests/thread-map-time.c
- create mode 100644 tools/perf/tests/thread-mg-time.c
