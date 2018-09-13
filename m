@@ -6,88 +6,93 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64E02C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 11:30:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D83E7C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 11:31:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2908520C0A
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 11:30:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2908520C0A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 9CEEC20861
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 11:31:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CEEC20861
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728168AbeIMQj4 (ORCPT
+        id S1728080AbeIMQjr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 12:39:56 -0400
-Received: from mga06.intel.com ([134.134.136.31]:45641 "EHLO mga06.intel.com"
+        Thu, 13 Sep 2018 12:39:47 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:37507 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728106AbeIMQj4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 12:39:56 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Sep 2018 04:30:53 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,368,1531810800"; 
-   d="scan'208";a="88415838"
-Received: from ahunter-desktop.fi.intel.com ([10.237.72.98])
-  by fmsmga004.fm.intel.com with ESMTP; 13 Sep 2018 04:30:34 -0700
-From:   Adrian Hunter <adrian.hunter@intel.com>
-To:     "Martin K . Petersen" <martin.petersen@oracle.com>,
-        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-        Ming Lei <ming.lei@redhat.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Bart Van Assche <Bart.VanAssche@wdc.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stanislav Nijnikov <stanislav.nijnikov@wdc.com>,
-        Evan Green <evgreen@chromium.org>,
-        Vinayak Holikatti <vinholikatti@gmail.com>,
-        Janek Kotas <jank@cadence.com>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Asutosh Das <asutoshd@codeaurora.org>,
-        Subhash Jadavani <subhashj@codeaurora.org>,
-        Sayali Lokhande <sayalil@codeaurora.org>,
-        Li Wei <liwei213@huawei.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Alex Lemberg <Alex.Lemberg@sandisk.com>
-Subject: [PATCH RFC] scsi: ufs: Disable blk-mq for now
-Date:   Thu, 13 Sep 2018 14:28:48 +0300
-Message-Id: <20180913112848.7807-1-adrian.hunter@intel.com>
-X-Mailer: git-send-email 2.17.1
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+        id S1727002AbeIMQjq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 12:39:46 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id DE04C208DC; Thu, 13 Sep 2018 13:30:41 +0200 (CEST)
+Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 96C6A208F0;
+        Thu, 13 Sep 2018 13:30:29 +0200 (CEST)
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexander Dahl <ada@thorsis.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH v7 5/7] ARM: at91: Implement clocksource selection
+Date:   Thu, 13 Sep 2018 13:30:22 +0200
+Message-Id: <20180913113024.3571-6-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20180913113024.3571-1-alexandre.belloni@bootlin.com>
+References: <20180913113024.3571-1-alexandre.belloni@bootlin.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-blk-mq does not support runtime pm, so disable blk-mq support for now.
+Allow selecting and unselecting the PIT clocksource driver so it doesn't
+have to be compile when unused.
 
-Fixes: d5038a13eca7 ("scsi: core: switch to scsi-mq by default")
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Tested-by: Alexander Dahl <ada@thorsis.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- drivers/scsi/ufs/ufshcd.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/arm/mach-at91/Kconfig | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index 40548bae8efa..a4d36497a047 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -7975,6 +7975,13 @@ int ufshcd_alloc_host(struct device *dev, struct ufs_hba **hba_handle)
- 		err = -ENOMEM;
- 		goto out_error;
- 	}
+diff --git a/arch/arm/mach-at91/Kconfig b/arch/arm/mach-at91/Kconfig
+index 903f23c309df..fa493a86e2bb 100644
+--- a/arch/arm/mach-at91/Kconfig
++++ b/arch/arm/mach-at91/Kconfig
+@@ -107,6 +107,31 @@ config SOC_AT91SAM9
+ 	    AT91SAM9X35
+ 	    AT91SAM9XE
+ 
++comment "Clocksource driver selection"
 +
-+	/*
-+	 * Do not use blk-mq at this time because blk-mq does not support
-+	 * runtime pm.
-+	 */
-+	host->use_blk_mq = false;
++config ATMEL_CLOCKSOURCE_PIT
++	bool "Periodic Interval Timer (PIT) support"
++	depends on SOC_AT91SAM9 || SOC_SAMA5
++	default SOC_AT91SAM9 || SOC_SAMA5
++	select ATMEL_PIT
++	help
++	  Select this to get a clocksource based on the Atmel Periodic Interval
++	  Timer. It has a relatively low resolution and the TC Block clocksource
++	  should be preferred.
 +
- 	hba = shost_priv(host);
- 	hba->host = host;
- 	hba->dev = dev;
++config ATMEL_CLOCKSOURCE_TCB
++	bool "Timer Counter Blocks (TCB) support"
++	depends on SOC_AT91RM9200 || SOC_AT91SAM9 || SOC_SAMA5 || COMPILE_TEST
++	default SOC_AT91RM9200 || SOC_AT91SAM9 || SOC_SAMA5
++	depends on !ATMEL_TCLIB
++	select ATMEL_ARM_TCB_CLKSRC
++	help
++	  Select this to get a high precision clocksource based on a
++	  TC block with a 5+ MHz base clock rate.
++	  On platforms with 16-bit counters, two timer channels are combined
++	  to make a single 32-bit timer.
++	  It can also be used as a clock event device supporting oneshot mode.
++
+ config HAVE_AT91_UTMI
+ 	bool
+ 
 -- 
-2.17.1
+2.19.0
 
