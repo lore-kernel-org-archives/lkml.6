@@ -2,155 +2,113 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B669C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:44:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7202FC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:45:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDE632146E
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:44:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDE632146E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 3874620854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:45:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3874620854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730083AbeIMSy3 (ORCPT
+        id S1730094AbeIMSyb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:54:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60638 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728239AbeIMSy2 (ORCPT
+        Thu, 13 Sep 2018 14:54:31 -0400
+Received: from mail-vk1-f194.google.com ([209.85.221.194]:39159 "EHLO
+        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728239AbeIMSya (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:54:28 -0400
-Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5D0F3CF3;
-        Thu, 13 Sep 2018 13:44:55 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Laura Abbott <labbott@redhat.com>,
-        "J. Bruce Fields" <bfields@redhat.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 024/115] sunrpc: Dont use stack buffer with scatterlist
-Date:   Thu, 13 Sep 2018 15:30:44 +0200
-Message-Id: <20180913131825.086389858@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
-References: <20180913131823.327472833@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Thu, 13 Sep 2018 14:54:30 -0400
+Received: by mail-vk1-f194.google.com with SMTP id e139-v6so805334vkf.6;
+        Thu, 13 Sep 2018 06:44:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kdkJD5mXCNLNAOELXVShrVGyk1NM9hcWPCU/wRGLePE=;
+        b=OMZmy8WwPuPkwYcnqLpHvSfbUcKImGRJQw/2ULivPyHVjmRlk4rKM8qFomZht97pY8
+         +xrNj774MzHjfL3oJcoWQdj6AyMKCpwP3QjlaRDzNLLjq352iRvm7FFmb5PdoB8uUdO0
+         cTlvrGtosj6aLZq4PDSXempWFY6lkakC1SuwmQ36PqJWgT/Xx4Xpk3kWvKn/krNKOCGK
+         BFi+mtkkV/2lYTIVHYv9ZqBp39pJ3pnrSaf0EKPXWhkL6PGeJxxss/wLg9ut6IF4M7x5
+         XKMzjPRbeAR1QOyEohedL7XFI68HIvQe2KSbgDR9W8hXp1QwWWR1nwBmo5Mo8MdGUCCF
+         vBGw==
+X-Gm-Message-State: APzg51BQy+dVEMLhDgQXYIjdxXGNeqzREmEGtrr2ZMu2o4DVQFWFJNan
+        wdTnch2I71IGMldzKJpDGoWATMGhmTQDSFceyaU=
+X-Google-Smtp-Source: ANB0VdZw2GNaoiuNTiq5wSr2KY/w1K3UShCyNiPCrFb/kgaBwyqoIsT3pWZPffkn+lWMwos+W5GnJOKee3cGD9gJbE8=
+X-Received: by 2002:a1f:2ad6:: with SMTP id q205-v6mr1639438vkq.83.1536846297226;
+ Thu, 13 Sep 2018 06:44:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20180913003920.30600-1-david@lechnology.com> <20180913003920.30600-5-david@lechnology.com>
+In-Reply-To: <20180913003920.30600-5-david@lechnology.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 13 Sep 2018 15:44:43 +0200
+Message-ID: <CAMuHMdUb=sXBBRLhKNxsWT_Z4PCoLcM16NajvmPVHWsvgoL7_w@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] spi: spi-davinci: Add support for SPI_CS_WORD
+To:     David Lechner <david@lechnology.com>
+Cc:     linux-spi <linux-spi@vger.kernel.org>, linux-iio@vger.kernel.org,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald <pmeerw@pmeerw.net>,
+        Mark Brown <broonie@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+Hi David,
 
-------------------
+On Thu, Sep 13, 2018 at 2:40 AM David Lechner <david@lechnology.com> wrote:
+> This adds support for the SPI_CS_WORD flag to the TI DaVinci SPI
+> driver. This mode can be used as long as we are using the hardware
+> chip select and not a GPIO chip select.
+>
+> Signed-off-by: David Lechner <david@lechnology.com>
+> ---
+>  drivers/spi/spi-davinci.c | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/spi/spi-davinci.c b/drivers/spi/spi-davinci.c
+> index d502cf504deb..8f7dcbc53c57 100644
+> --- a/drivers/spi/spi-davinci.c
+> +++ b/drivers/spi/spi-davinci.c
+> @@ -230,7 +230,8 @@ static void davinci_spi_chipselect(struct spi_device *spi, int value)
+>                                 !(spi->mode & SPI_CS_HIGH));
+>         } else {
+>                 if (value == BITBANG_CS_ACTIVE) {
+> -                       spidat1 |= SPIDAT1_CSHOLD_MASK;
+> +                       if (!(spi->mode & SPI_CS_WORD))
+> +                               spidat1 |= SPIDAT1_CSHOLD_MASK;
+>                         spidat1 &= ~(0x1 << chip_sel);
+>                 }
+>         }
+> @@ -440,8 +441,12 @@ static int davinci_spi_setup(struct spi_device *spi)
+>                         return retval;
+>                 }
+>
+> -               if (internal_cs)
+> +               if (internal_cs) {
+>                         set_io_bits(dspi->base + SPIPC0, 1 << spi->chip_select);
+> +               } else if (spi->mode & SPI_CS_WORD) {
+> +                       dev_err(&spi->dev, "SPI_CS_WORD can't be use with GPIO CS\n");
+> +                       return -EINVAL;
 
-From: Laura Abbott <labbott@redhat.com>
+Does the SPI core fall back to splitting the transfer in this case?
 
-[ Upstream commit 44090cc876926277329e1608bafc01b9f6da627f ]
+> +               }
 
-Fedora got a bug report from NFS:
+Gr{oetje,eeting}s,
 
-kernel BUG at include/linux/scatterlist.h:143!
-...
-RIP: 0010:sg_init_one+0x7d/0x90
-..
-  make_checksum+0x4e7/0x760 [rpcsec_gss_krb5]
-  gss_get_mic_kerberos+0x26e/0x310 [rpcsec_gss_krb5]
-  gss_marshal+0x126/0x1a0 [auth_rpcgss]
-  ? __local_bh_enable_ip+0x80/0xe0
-  ? call_transmit_status+0x1d0/0x1d0 [sunrpc]
-  call_transmit+0x137/0x230 [sunrpc]
-  __rpc_execute+0x9b/0x490 [sunrpc]
-  rpc_run_task+0x119/0x150 [sunrpc]
-  nfs4_run_exchange_id+0x1bd/0x250 [nfsv4]
-  _nfs4_proc_exchange_id+0x2d/0x490 [nfsv4]
-  nfs41_discover_server_trunking+0x1c/0xa0 [nfsv4]
-  nfs4_discover_server_trunking+0x80/0x270 [nfsv4]
-  nfs4_init_client+0x16e/0x240 [nfsv4]
-  ? nfs_get_client+0x4c9/0x5d0 [nfs]
-  ? _raw_spin_unlock+0x24/0x30
-  ? nfs_get_client+0x4c9/0x5d0 [nfs]
-  nfs4_set_client+0xb2/0x100 [nfsv4]
-  nfs4_create_server+0xff/0x290 [nfsv4]
-  nfs4_remote_mount+0x28/0x50 [nfsv4]
-  mount_fs+0x3b/0x16a
-  vfs_kern_mount.part.35+0x54/0x160
-  nfs_do_root_mount+0x7f/0xc0 [nfsv4]
-  nfs4_try_mount+0x43/0x70 [nfsv4]
-  ? get_nfs_version+0x21/0x80 [nfs]
-  nfs_fs_mount+0x789/0xbf0 [nfs]
-  ? pcpu_alloc+0x6ca/0x7e0
-  ? nfs_clone_super+0x70/0x70 [nfs]
-  ? nfs_parse_mount_options+0xb40/0xb40 [nfs]
-  mount_fs+0x3b/0x16a
-  vfs_kern_mount.part.35+0x54/0x160
-  do_mount+0x1fd/0xd50
-  ksys_mount+0xba/0xd0
-  __x64_sys_mount+0x21/0x30
-  do_syscall_64+0x60/0x1f0
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+                        Geert
 
-This is BUG_ON(!virt_addr_valid(buf)) triggered by using a stack
-allocated buffer with a scatterlist. Convert the buffer for
-rc4salt to be dynamically allocated instead.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1615258
-Signed-off-by: Laura Abbott <labbott@redhat.com>
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/sunrpc/auth_gss/gss_krb5_crypto.c |   12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
-
---- a/net/sunrpc/auth_gss/gss_krb5_crypto.c
-+++ b/net/sunrpc/auth_gss/gss_krb5_crypto.c
-@@ -169,7 +169,7 @@ make_checksum_hmac_md5(struct krb5_ctx *
- 	struct scatterlist              sg[1];
- 	int err = -1;
- 	u8 *checksumdata;
--	u8 rc4salt[4];
-+	u8 *rc4salt;
- 	struct crypto_ahash *md5;
- 	struct crypto_ahash *hmac_md5;
- 	struct ahash_request *req;
-@@ -183,14 +183,18 @@ make_checksum_hmac_md5(struct krb5_ctx *
- 		return GSS_S_FAILURE;
- 	}
- 
-+	rc4salt = kmalloc_array(4, sizeof(*rc4salt), GFP_NOFS);
-+	if (!rc4salt)
-+		return GSS_S_FAILURE;
-+
- 	if (arcfour_hmac_md5_usage_to_salt(usage, rc4salt)) {
- 		dprintk("%s: invalid usage value %u\n", __func__, usage);
--		return GSS_S_FAILURE;
-+		goto out_free_rc4salt;
- 	}
- 
- 	checksumdata = kmalloc(GSS_KRB5_MAX_CKSUM_LEN, GFP_NOFS);
- 	if (!checksumdata)
--		return GSS_S_FAILURE;
-+		goto out_free_rc4salt;
- 
- 	md5 = crypto_alloc_ahash("md5", 0, CRYPTO_ALG_ASYNC);
- 	if (IS_ERR(md5))
-@@ -258,6 +262,8 @@ out_free_md5:
- 	crypto_free_ahash(md5);
- out_free_cksum:
- 	kfree(checksumdata);
-+out_free_rc4salt:
-+	kfree(rc4salt);
- 	return err ? GSS_S_FAILURE : 0;
- }
- 
-
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
