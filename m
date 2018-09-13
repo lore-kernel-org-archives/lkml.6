@@ -6,37 +6,40 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB3BDC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:44:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C9D6C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:44:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B053420854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:44:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B053420854
+	by mail.kernel.org (Postfix) with ESMTP id 1133720854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:44:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1133720854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729997AbeIMSxw (ORCPT
+        id S1730007AbeIMSx4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:53:52 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60508 "EHLO
+        Thu, 13 Sep 2018 14:53:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60520 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728768AbeIMSxv (ORCPT
+        with ESMTP id S1728768AbeIMSxz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:53:51 -0400
+        Thu, 13 Sep 2018 14:53:55 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4D04ACF3;
-        Thu, 13 Sep 2018 13:44:18 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 63304D19;
+        Thu, 13 Sep 2018 13:44:22 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jian Shen <shenjian15@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Benno Evers <bevers@mesosphere.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Krister Johansen <kjlx@templeofstupid.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 047/115] net: hns3: Fix for phy link issue when using marvell phy driver
-Date:   Thu, 13 Sep 2018 15:31:07 +0200
-Message-Id: <20180913131826.540735769@linuxfoundation.org>
+Subject: [PATCH 4.14 048/115] perf tools: Check for null when copying nsinfo.
+Date:   Thu, 13 Sep 2018 15:31:08 +0200
+Message-Id: <20180913131826.585793797@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -54,44 +57,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jian Shen <shenjian15@huawei.com>
+From: Benno Evers <bevers@mesosphere.com>
 
-[ Upstream commit 60081dcc4fce385ade26d3145b2479789df0b7e5 ]
+[ Upstream commit 3f4417d693b43fa240ac8bde4487f67745ca23d8 ]
 
-For marvell phy m88e1510, bit SUPPORTED_FIBRE of phydev->supported
-is default on. Both phy_resume() and phy_suspend() will check the
-SUPPORTED_FIBRE bit and write register of fibre page.
+The argument to nsinfo__copy() was assumed to be valid, but some code paths
+exist that will lead to NULL being passed.
 
-Currently in hns3 driver, the SUPPORTED_FIBRE bit will be cleared
-after phy_connect_direct() finished. Because phy_resume() is called
-in phy_connect_direct(), and phy_suspend() is called when disconnect
-phy device, so the operation for fibre page register is not symmetrical.
-It will cause phy link issue when reload hns3 driver.
+In particular, running 'perf script -D' on a perf.data file containing an
+PERF_RECORD_MMAP event associating the '[vdso]' dso with pid 0 earlier in
+the event stream will lead to a segfault.
 
-This patch fixes it by disable the SUPPORTED_FIBRE before connecting
-phy.
+Since all calling code is already checking for a non-null return value,
+just return NULL for this case as well.
 
-Fixes: 256727da7395 ("net: hns3: Add MDIO support to HNS3 Ethernet driver for hip08 SoC")
-Signed-off-by: Jian Shen <shenjian15@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Benno Evers <bevers@mesosphere.com>
+Acked-by: Namhyung Kim <namhyung@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Krister Johansen <kjlx@templeofstupid.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20180810133614.9925-1-bevers@mesosphere.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mdio.c |    2 ++
- 1 file changed, 2 insertions(+)
+ tools/perf/util/namespaces.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mdio.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mdio.c
-@@ -187,6 +187,8 @@ int hclge_mac_start_phy(struct hclge_dev
- 	if (!phydev)
- 		return 0;
+--- a/tools/perf/util/namespaces.c
++++ b/tools/perf/util/namespaces.c
+@@ -138,6 +138,9 @@ struct nsinfo *nsinfo__copy(struct nsinf
+ {
+ 	struct nsinfo *nnsi;
  
-+	phydev->supported &= ~SUPPORTED_FIBRE;
++	if (nsi == NULL)
++		return NULL;
 +
- 	ret = phy_connect_direct(netdev, phydev,
- 				 hclge_mac_adjust_link,
- 				 PHY_INTERFACE_MODE_SGMII);
+ 	nnsi = calloc(1, sizeof(*nnsi));
+ 	if (nnsi != NULL) {
+ 		nnsi->pid = nsi->pid;
 
 
