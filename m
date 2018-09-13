@@ -5,214 +5,277 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 795C7FC617F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60153FC616F
 	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 17:35:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55E2A2152F
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 16:09:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55E2A2152F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D870D21546
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 16:10:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D870D21546
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728432AbeIMVTN (ORCPT
+        id S1728331AbeIMVUu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 17:19:13 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:47666 "EHLO mx1.redhat.com"
+        Thu, 13 Sep 2018 17:20:50 -0400
+Received: from mga06.intel.com ([134.134.136.31]:16735 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727358AbeIMVTN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 17:19:13 -0400
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8E93288313;
-        Thu, 13 Sep 2018 16:09:03 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4E67F2010CBA;
-        Thu, 13 Sep 2018 16:09:02 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 1/6] dns: Allow the dns resolver to retrieve a server set
-From:   David Howells <dhowells@redhat.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
-        keyrings@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Thu, 13 Sep 2018 17:09:01 +0100
-Message-ID: <153685494161.16086.536892492442787707.stgit@warthog.procyon.org.uk>
-In-Reply-To: <153685493441.16086.3483582787020297039.stgit@warthog.procyon.org.uk>
-References: <153685493441.16086.3483582787020297039.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        id S1726819AbeIMVUu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 17:20:50 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Sep 2018 09:10:39 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,369,1531810800"; 
+   d="scan'208";a="74018912"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga006.jf.intel.com with ESMTP; 13 Sep 2018 09:10:39 -0700
+Received: from [10.125.252.28] (abudanko-mobl.ccr.corp.intel.com [10.125.252.28])
+        by linux.intel.com (Postfix) with ESMTP id 5B6D1580145;
+        Thu, 13 Sep 2018 09:10:37 -0700 (PDT)
+Subject: Re: [RFCv2 00/48] perf tools: Add threads to record command
+To:     Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andi Kleen <andi@firstfloor.org>
+References: <20180913125450.21342-1-jolsa@kernel.org>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <cba27d6a-a97b-cbb7-4be8-d1c14fb7dea5@linux.intel.com>
+Date:   Thu, 13 Sep 2018 19:10:35 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20180913125450.21342-1-jolsa@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 13 Sep 2018 16:09:03 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow the DNS resolver to retrieve a set of servers and their associated
-addresses, ports, preference and weight ratings.
+Hi,
 
-In terms of communication with userspace, "srv=1" is added to the callout
-string (the '1' indicating the maximum data version supported by the
-kernel) to ask the userspace side for this.
+On 13.09.2018 15:54, Jiri Olsa wrote:
+> hi,
+> sending *RFC* for threads support in perf record command.
+> 
+> In big picture this patchset adds perf record --threads
+> option that allows to create threads in following modes:
+> 
+> 1) single thread mode (current)
+> 
+>   $ perf record ...
+>   $ perf record --threads=1 ...
+> 
+>   - all maps are read/stored under process thread
+> 
+> 2) mode with specific (X) number of threads
+> 
+>   $ perf record --threads=X ...
+> 
+>   - maps are spread equaly among threads
+> 
+> 3) mode that creates thread for every monitored memory map
+> 
+>   $ perf record --threads ...
+> 
+>   - which in perf record is equal to number of CPUs, and
+>     it pins each thread to its map's cpu:
+> 
+> 4) TODO - NUMA aware threads/maps separation
+>    ...
+> 
+> The perf.data stays as a single file.
+> 
+> v2 changes:
+>   - rebased to current Arnaldo's perf/core
+>     (also based on few fixes from my perf/core, see the branch details below)
+> 
+> This patchset contains lot of preparation changes to make
+> threaded record possible:
+> 
+>   - Namhyung's changes to create multiple data streams in
+>     perf data file, which allows having each thread data
+>     being stored in separate files and merged into single
+>     perf data after
+> 
+>   - Namhyung's changes to create track mmaps for auxiliary
+>     events
+> 
+>   - Namhyung's changes to search for threads/mmaps/comms
+>     using the time. This is needed because we have now
+>     multiple data streams which are processed separately,
+>     but they all need access to complete auxiliary events
+>     data (threads/mmaps/comms). That's also a reason why
+>     the auxiliary events are stored into separate data
+>     stream, which is processed before real data.
+> 
+>   - the rest of the code that adds threads abstraction into
+>     record command allows to create them and distribute maps
+>     among them
+> 
+>   - other preparational changes
+> 
+> The threaded monitoring currently can't monitor backward maps
+> and there are probably more limitations which I haven't spotted
+> yet.
+> 
+> So far I tested on laptop:
+>   http://people.redhat.com/~jolsa/record_threads/test-4CPU.txt
+> 
+> and a one bigger server:
+>   http://people.redhat.com/~jolsa/record_threads/test-208CPU.txt
+> 
+> I can see decrease in recorded LOST events, but both the benchmark
+> and the monitoring must be carefully configured wrt:
+>   - number of events (frequency)
+>   - size of the memory maps
+>   - size of events (callchains)
+>   - final perf.data size
+> 
+> It's also available in:
+>   git://git.kernel.org/pub/scm/linux/kernel/git/jolsa/perf.git
+>   perf/record_threads
+> 
+> thoughts? ;-) thanks
+> jirka
 
-If the userspace side doesn't recognise it, it will ignore the option and
-return the usual text address list.
+It is preferable to split into smaller pieces that bring 
+some improvement proved by metrics numbers and ready for 
+merging and upstream. Do we have more metrics than the 
+data loss from trace AIO patches?
 
-If the userspace side does recognise it, it will return some binary data
-that begins with a zero byte that would cause the string parsers to give an
-error.  The second byte contains the version of the data in the blob (this
-may be between 1 and the version specified in the callout data).  The
-remainder of the payload is version-specific.
+There is usage of Posix threading API but there is no 
+its implementation in the patch series, to avoid dependency 
+on externally coded designs in the core of the tool.
 
-In version 1, the payload looks like (note that this is packed):
-
-	u8	Non-string marker (ie. 0)
-	u8	Content (0 => Server list)
-	u8	Version (ie. 1)
-	u8	Number of servers
-	foreach-server {
-		u16	Name length (LE)
-		u16	Priority (as per SRV record) (LE)
-		u16	Weight (as per SRV record) (LE)
-		u16	Port (LE)
-		u8	Protocol (IPPROTO_*)
-		u8	Number of addresses
-		char[]	Name (not NUL-terminated)
-		foreach-address {
-			u8		Family (AF_INET{,6})
-			union {
-				u8[4]	ipv4_addr
-				u8[16]	ipv6_addr
-			}
-		}
-	}
-
-This can then be used to fetch a whole cell's configuration for AFS, for
-example.
-
-Signed-off-by: David Howells <dhowells@redhat.com>
----
-
- net/dns_resolver/dns_key.c   |   61 ++++++++++++++++++++++++++++++++++++++++--
- net/dns_resolver/dns_query.c |    5 +--
- 2 files changed, 59 insertions(+), 7 deletions(-)
-
-diff --git a/net/dns_resolver/dns_key.c b/net/dns_resolver/dns_key.c
-index 7f4534828f6c..ac3c9aa75727 100644
---- a/net/dns_resolver/dns_key.c
-+++ b/net/dns_resolver/dns_key.c
-@@ -48,14 +48,40 @@ const struct cred *dns_resolver_cache;
- /*
-  * Preparse instantiation data for a dns_resolver key.
-  *
-- * The data must be a NUL-terminated string, with the NUL char accounted in
-- * datalen.
-+ * For normal hostname lookups, the data must be a NUL-terminated string, with
-+ * the NUL char accounted in datalen.
-  *
-  * If the data contains a '#' characters, then we take the clause after each
-  * one to be an option of the form 'key=value'.  The actual data of interest is
-  * the string leading up to the first '#'.  For instance:
-  *
-  *        "ip1,ip2,...#foo=bar"
-+ *
-+ * For server list requests, the data must begin with a NUL char and be
-+ * followed by a byte indicating the version of the data format.  Version 1
-+ * looks something like (note this is packed):
-+ *
-+ *	u8      Non-string marker (ie. 0)
-+ *	u8	Content (0 is server list)
-+ *	u8	Version (ie. 1)
-+ *	u8	Number of servers
-+ *	foreach-server {
-+ *		u16	Name length (LE)
-+ *		u16	Priority (as per SRV record, low first) (LE)
-+ *		u16	Weight (as per SRV record, higher first) (LE)
-+ *		u16	Port (LE)
-+ *		u8	Protocol (IPPROTO_*)
-+ *		u8	Number of addresses
-+ *		char[]	Name (not NUL-terminated)
-+ *		foreach-address {
-+ *			u8		Family (AF_INET{,6})
-+ *			union {
-+ *				u8[4]	ipv4_addr
-+ *				u8[16]	ipv6_addr
-+ *			}
-+ *		}
-+ *	}
-+ *
-  */
- static int
- dns_resolver_preparse(struct key_preparsed_payload *prep)
-@@ -66,9 +92,37 @@ dns_resolver_preparse(struct key_preparsed_payload *prep)
- 	int datalen = prep->datalen, result_len = 0;
- 	const char *data = prep->data, *end, *opt;
- 
-+	if (datalen <= 1 || !data)
-+		return -EINVAL;
-+
-+	if (data[0] == 0) {
-+		/* It may be a server list. */
-+		if (datalen <= 3)
-+			return -EINVAL;
-+
-+		data++;
-+		kenter("[%u,%u],%u", data[0], data[1], datalen);
-+		if (data[0] != 0) {
-+			pr_warn_ratelimited(
-+				"dns_resolver: Unsupported result type (%u)\n",
-+				(unsigned char)data[0]);
-+			return -EINVAL;
-+		}
-+
-+		if (data[1] != 1) {
-+			pr_warn_ratelimited(
-+				"dns_resolver: Unsupported server list version (%u)\n",
-+				(unsigned char)data[1]);
-+			return -EINVAL;
-+		}
-+
-+		result_len = datalen - 1;
-+		goto store_result;
-+	}
-+
- 	kenter("'%*.*s',%u", datalen, datalen, data, datalen);
- 
--	if (datalen <= 1 || !data || data[datalen - 1] != '\0')
-+	if (!data || data[datalen - 1] != '\0')
- 		return -EINVAL;
- 	datalen--;
- 
-@@ -144,6 +198,7 @@ dns_resolver_preparse(struct key_preparsed_payload *prep)
- 		return 0;
- 	}
- 
-+store_result:
- 	kdebug("store result");
- 	prep->quotalen = result_len;
- 
-diff --git a/net/dns_resolver/dns_query.c b/net/dns_resolver/dns_query.c
-index 49da67034f29..76338c38738a 100644
---- a/net/dns_resolver/dns_query.c
-+++ b/net/dns_resolver/dns_query.c
-@@ -148,12 +148,9 @@ int dns_query(const char *type, const char *name, size_t namelen,
- 
- 	if (_result) {
- 		ret = -ENOMEM;
--		*_result = kmalloc(len + 1, GFP_KERNEL);
-+		*_result = kmemdup_nul(upayload->data, len, GFP_KERNEL);
- 		if (!*_result)
- 			goto put;
--
--		memcpy(*_result, upayload->data, len);
--		(*_result)[len] = '\0';
- 	}
- 
- 	if (_expiry)
-
+> 
+> 
+> ---
+> Jiri Olsa (30):
+>       perf tools: Remove perf_tool from event_op2
+>       perf tools: Remove perf_tool from event_op3
+>       perf tools: Pass struct perf_mmap into auxtrace_mmap__read* functions
+>       perf tools: Add struct perf_mmap arg into record__write
+>       perf tools: Create separate mmap for dummy tracking event
+>       perf tools: Make copyfile_offset global
+>       perf tools: Add perf_data__create_index function
+>       perf record: Add --index option for building index table
+>       perf tools: Convert dead thread list into rbtree
+>       perf tools: Add thread::exited flag
+>       perf callchain: Maintain libunwind's address space in map_groups
+>       perf tools: Rename perf_evlist__munmap_filtered to perf_mmap__put_filtered
+>       tools lib fd array: Introduce fdarray__add_clone function
+>       tools lib subcmd: Add OPT_INTEGER_OPTARG|_SET options
+>       perf tools: Move __perf_session__process_events args into struct
+>       perf ui progress: Fix index progress display
+>       perf tools: Add threads debug variable
+>       perf tools: Add perf_mmap__read_tail function
+>       perf record: Introduce struct record_thread
+>       perf record: Read record thread's mmaps
+>       perf record: Move waking into struct record
+>       perf record: Move samples into struct record_thread
+>       perf record: Move bytes_written into struct record_thread
+>       perf record: Add record_thread start/stop/process functions
+>       perf record: Wait for all threads being started
+>       perf record: Add --threads option
+>       perf record: Add --thread-stats option support
+>       perf record: Add maps to --thread-stats output
+>       perf record: Spread maps for --threads option
+>       perf record: Spread maps for --threads=X option
+> 
+> Namhyung Kim (18):
+>       perf tools: Use a software dummy event to track task/mmap events
+>       perf tools: Extend perf_evlist__mmap_ex() to use track mmap
+>       perf report: Skip dummy tracking event
+>       perf tools: Add HEADER_DATA_INDEX feature
+>       perf tools: Handle indexed data file properly
+>       perf tools: Introduce thread__comm(_str)_by_time() helpers
+>       perf tools: Add a test case for thread comm handling
+>       perf tools: Use thread__comm_by_time() when adding hist entries
+>       perf tools: Introduce machine__find*_thread_by_time()
+>       perf tools: Add a test case for timed thread handling
+>       perf tools: Maintain map groups list in a leader thread
+>       perf tools: Introduce thread__find_symbol_by_time() and friends
+>       perf callchain: Use thread__find_addr_location_by_time() and friends
+>       perf tools: Add a test case for timed map groups handling
+>       perf tools: Save timestamp of a map creation
+>       perf tools: Introduce map_groups__{insert,find}_by_time()
+>       perf tools: Use map_groups__find_addr_by_time()
+>       perf tools: Add testcase for managing maps with time
+> 
+>  tools/lib/api/fd/array.c                 |  17 +
+>  tools/lib/api/fd/array.h                 |   1 +
+>  tools/lib/subcmd/parse-options.c         |   2 +
+>  tools/lib/subcmd/parse-options.h         |   9 +
+>  tools/perf/Documentation/perf-record.txt |   4 +
+>  tools/perf/Documentation/perf.txt        |   1 +
+>  tools/perf/builtin-annotate.c            |   7 +-
+>  tools/perf/builtin-inject.c              |  32 +-
+>  tools/perf/builtin-record.c              | 899 +++++++++++++++++++++++++++++--
+>  tools/perf/builtin-report.c              |  12 +-
+>  tools/perf/builtin-script.c              |  38 +-
+>  tools/perf/builtin-stat.c                |  23 +-
+>  tools/perf/perf.c                        |   1 +
+>  tools/perf/perf.h                        |   3 +
+>  tools/perf/tests/Build                   |   4 +
+>  tools/perf/tests/builtin-test.c          |  16 +
+>  tools/perf/tests/dwarf-unwind.c          |   4 +-
+>  tools/perf/tests/hists_common.c          |   2 +-
+>  tools/perf/tests/hists_link.c            |   2 +-
+>  tools/perf/tests/tests.h                 |   4 +
+>  tools/perf/tests/thread-comm.c           |  48 ++
+>  tools/perf/tests/thread-lookup-time.c    | 181 +++++++
+>  tools/perf/tests/thread-map-time.c       |  90 ++++
+>  tools/perf/tests/thread-mg-share.c       |   7 +-
+>  tools/perf/tests/thread-mg-time.c        |  94 ++++
+>  tools/perf/ui/browsers/hists.c           |  30 +-
+>  tools/perf/ui/gtk/hists.c                |   3 +
+>  tools/perf/util/auxtrace.c               |  30 +-
+>  tools/perf/util/auxtrace.h               |  21 +-
+>  tools/perf/util/data.c                   |  64 +++
+>  tools/perf/util/data.h                   |   5 +
+>  tools/perf/util/debug.c                  |   2 +
+>  tools/perf/util/debug.h                  |   1 +
+>  tools/perf/util/dso.c                    |   2 +-
+>  tools/perf/util/event.c                  | 135 ++++-
+>  tools/perf/util/evlist.c                 |  96 +++-
+>  tools/perf/util/evlist.h                 |   7 +-
+>  tools/perf/util/evsel.h                  |  15 +
+>  tools/perf/util/header.c                 |  93 +++-
+>  tools/perf/util/header.h                 |  18 +-
+>  tools/perf/util/hist.c                   |   4 +-
+>  tools/perf/util/intel-pt.c               |   2 +-
+>  tools/perf/util/machine.c                | 293 ++++++++--
+>  tools/perf/util/machine.h                |  22 +-
+>  tools/perf/util/map.c                    |  79 ++-
+>  tools/perf/util/map.h                    |  40 +-
+>  tools/perf/util/mmap.c                   |   6 +-
+>  tools/perf/util/mmap.h                   |  33 +-
+>  tools/perf/util/session.c                | 178 +++---
+>  tools/perf/util/session.h                |   5 +-
+>  tools/perf/util/stat.c                   |   5 +-
+>  tools/perf/util/stat.h                   |   5 +-
+>  tools/perf/util/symbol-elf.c             |   2 +-
+>  tools/perf/util/symbol.c                 |   4 +-
+>  tools/perf/util/thread.c                 | 200 ++++++-
+>  tools/perf/util/thread.h                 |  27 +-
+>  tools/perf/util/tool.h                   |   7 +-
+>  tools/perf/util/unwind-libdw.c           |   6 +-
+>  tools/perf/util/unwind-libunwind-local.c |  39 +-
+>  tools/perf/util/unwind-libunwind.c       |   9 +-
+>  tools/perf/util/unwind.h                 |   7 +-
+>  tools/perf/util/util.c                   |   2 +-
+>  tools/perf/util/util.h                   |   2 +
+>  63 files changed, 2608 insertions(+), 392 deletions(-)
+>  create mode 100644 tools/perf/tests/thread-comm.c
+>  create mode 100644 tools/perf/tests/thread-lookup-time.c
+>  create mode 100644 tools/perf/tests/thread-map-time.c
+>  create mode 100644 tools/perf/tests/thread-mg-time.c
+> 
