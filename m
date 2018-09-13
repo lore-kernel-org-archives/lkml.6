@@ -3,113 +3,151 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C513CC070C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 00:01:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98827C070C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 00:04:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 728E020882
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 00:01:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FCF420882
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 00:04:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="deY5RNY7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 728E020882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qRsm9vxW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FCF420882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726985AbeIMFIJ (ORCPT
+        id S1726860AbeIMFLa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 01:08:09 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:39516 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726254AbeIMFIJ (ORCPT
+        Thu, 13 Sep 2018 01:11:30 -0400
+Received: from mail-qt0-f182.google.com ([209.85.216.182]:40806 "EHLO
+        mail-qt0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726261AbeIMFL3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 01:08:09 -0400
-Received: by mail-wm0-f68.google.com with SMTP id q8-v6so4219636wmq.4
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 17:01:15 -0700 (PDT)
+        Thu, 13 Sep 2018 01:11:29 -0400
+Received: by mail-qt0-f182.google.com with SMTP id h4-v6so3754393qtj.7
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 17:04:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=NlHj7Vhh6eLuGkKS2Pxv9SAvayJlb7tdXTe2j2eEj1g=;
-        b=deY5RNY7smrUkqQpRrVSmwY/jUDdGWb3BoWV6wnTurEXyeXbbxhg/l4qq5YMIqsC54
-         EF7z7veA/ifornwFwrQaPrCGP3qcHua0PBMsh7T45xMIxCnTx7TbB7Rs29/JYw552Qg5
-         9x9L1so5oWp84SHHsFppzjOtgrbdcj/BhNYxtMyA0xwaWuRwB0naJdEQSmPMf2xw/Irm
-         te3clGfoG+b8qPlvz2K2AM1/PPO56Eif4pK1d1kc7GQ9uc/KriRIzMg4glwgst0FcdSg
-         lYw4VkerMR3Kg8zFM0rU90JP0lYk7L6jKAgDWDd/nlH68wVeGH5NxotSEaD24h2gYBU1
-         Jrcw==
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=CsmgCikYEYJXaisfBUGRy2seQVF6E9Y3mCCliq4JDb8=;
+        b=qRsm9vxW3TKoBAYny/x4AQpnW8ntT/1wX98mK/bU7F5UlQTtYeLtWoU7AD8tcxoWZz
+         kAkik4uZWz7wiuB5CA4tWQdokXuiUMPyKL7i6MoOpTQpfpbQxKJo53myhMHhz6aQMb5j
+         H7dQCjew74kzyBhQf7PTMHDW264YQ7qOi1UWzfg9e59YdYF9bEe7vsJR6n7zehMV17fh
+         q4+mFacyiBDckl5z60a6fy0z4823dBlEVbnnwoKoAkmWyWIvZ46uOhm8+L+94yAAvqoC
+         04VaRk20H1IanFwvwEY6TgnByUPvFo/DnO5PvBNwkFAFaPY3EBC0+mrWYaPPBq2kOJSQ
+         7HuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=NlHj7Vhh6eLuGkKS2Pxv9SAvayJlb7tdXTe2j2eEj1g=;
-        b=J8ACYJ85Od5IeAeL9bPWOjAv1tnami9lbP297+JZ6li2v5w7u8D7tocLe5g2IVEenW
-         SBumkWDWTC1bqwHhhUDh3nvz6l+Z9MoJI8ZWBphoyLt43TIF2UCak7K9vFLtyAmZGjVX
-         exho239EXqR/hdWEsgstERFpMnUu6Vy3J5FTJYo49bM4IzzBQCnYWi8fQKLHsAcYddZk
-         gB8gQA1sz/l3CgS+G43zZSCa+oa1ihqaSc7uMVXw0GpNA/bI9BBXDoRSPHZ1pVkYTSkq
-         Oppt0Pp3iOs7cz0AlKHnnIXOh/HJknfXo1/Bp+UYJLDCzUCU5xCqRo6rpfnPcIBW58C6
-         GeZQ==
-X-Gm-Message-State: APzg51AaXwVF6fHL1G357P451KT0+VFZvHS0+oKRQMRUro37JzD4FE17
-        nVG2032dmmPrTfzAXvbPK12TarEfGo+wcpBm15j5Ww==
-X-Google-Smtp-Source: ANB0VdYc77upy1//ts3hG5HNBL8eyS0p3V1RMMVx1GRI4xOLHfROxTXmZywOkTCtr92iCyyf/1vVhqppsvLrWp8sIZc=
-X-Received: by 2002:a1c:7e92:: with SMTP id z140-v6mr3218255wmc.48.1536796875010;
- Wed, 12 Sep 2018 17:01:15 -0700 (PDT)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=CsmgCikYEYJXaisfBUGRy2seQVF6E9Y3mCCliq4JDb8=;
+        b=rCJZ8cUUJwRdcgpq5olNVwRcNLNNNwSnI2fF+2HrNr+zFD4CkClFIStY3zhToU4tJf
+         JgzGMotCGZnqMzdDIAuUo/n/KX99kkj/vTAvnymwwaUlZLHqXZG7ldMxBlbDUt3+wZRl
+         dSKyl3oOWvteil+BDo50FEYZ3n+F8Qc2yGJYZdvjwC1Z4ehEL3nlu3d8qvddw0CIt5tC
+         yU4su749ggI8tgi2QZerFDD8lQHhOZvSNABkoqlyM8wQULWu017ROjIL1JTsMvT0kAgK
+         emRU9m44thjRjK2ubveCKeBA8oeHV0W++6CcLicjQJO2Q9LSBFQFLevSvN8lwX+UrS+h
+         xo6A==
+X-Gm-Message-State: APzg51Bkxr88GYqOQGYKsgq/d66/8HcxQ0SYTxM+sY7NHUHlHjW+ws0M
+        CD86UPhN6YV0Zlh4xt8xPO0KMyoPJvLSrgA5BpJN8+CH
+X-Google-Smtp-Source: ANB0VdZh/m0g5wCjUFL3bVYpHU0GL62mw8b6z1Jz6/vGHDR4ixpZUuFZOfNJTbKR5RWOFMW2qI/x/DvK30Be6xl1W0g=
+X-Received: by 2002:aed:2023:: with SMTP id 32-v6mr3364666qta.166.1536797076229;
+ Wed, 12 Sep 2018 17:04:36 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a1c:7810:0:0:0:0:0 with HTTP; Wed, 12 Sep 2018 17:00:54
- -0700 (PDT)
-In-Reply-To: <20180906152859.7810-4-tycho@tycho.ws>
-References: <20180906152859.7810-1-tycho@tycho.ws> <20180906152859.7810-4-tycho@tycho.ws>
-From:   Andy Lutomirski <luto@amacapital.net>
-Date:   Wed, 12 Sep 2018 17:00:54 -0700
-Message-ID: <CALCETrXGBZyqDb7DEysHmOkxaBrXUp4s2X08HfqZkpjM28s3Hg@mail.gmail.com>
-Subject: Re: [PATCH v6 3/5] seccomp: add a way to get a listener fd from ptrace
-To:     Tycho Andersen <tycho@tycho.ws>
-Cc:     Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        Jann Horn <jannh@google.com>
+From:   Dave Airlie <airlied@gmail.com>
+Date:   Thu, 13 Sep 2018 10:04:24 +1000
+Message-ID: <CAPM=9twk+MqRtKrNKx+VL6u5vhUBF7m9NvWxStcE=4acgoJ_GA@mail.gmail.com>
+Subject: [git pull] drm nouveau runpm and mst fixes
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 6, 2018 at 8:28 AM, Tycho Andersen <tycho@tycho.ws> wrote:
-> As an alternative to SECCOMP_FILTER_FLAG_GET_LISTENER, perhaps a ptrace()
-> version which can acquire filters is useful. There are at least two reasons
-> this is preferable, even though it uses ptrace:
->
-> 1. You can control tasks that aren't cooperating with you
-> 2. You can control tasks whose filters block sendmsg() and socket(); if the
->    task installs a filter which blocks these calls, there's no way with
->    SECCOMP_FILTER_FLAG_GET_LISTENER to get the fd out to the privileged task.
+Hi Linus,
 
-Hmm.  I contemplated this a bit and looked at your example a bit, and
-I have a few thoughts:
+I'm sending this separately as it's a bit larger than I generally like
+for one driver, but it does contain a bunch of make my nvidia laptop
+not die (runpm) and a bunch of make my docking station and monitor
+display stuff (mst) fixes.
 
- - What happens if you nest code like your sample?  That is, if you
-are already in some container that is seccomped and there's a
-listener, can you even run your sample?
+Lyude has spent a lot of time on these, and we are putting the fixes
+into distro kernels as well asap, as it helps a bunch of standard
+Lenovo laptops, so I'm fairly happy things are better than they were
+before these patches, but I decided to split them out just for
+clarification.
 
- - Is there any association between the filter layer that uses the
-USER_NOTIF return and the listener?  How would this API express such a
-relationship?
+I'll have a normal -fixes pull tomorrow most likely.
 
-I realize that my dream of how this should all work requires eBPF and
-BPF_CALL, so it may not be viable right now, but I'd like a better
-understanding of how this all fits together.
+Dave.
 
-Also, I think that it's not strictly true that a filter that blocks
-sendmsg() is problematic.  You could clone a thread, call seccomp() in
-that thread, then get a listener, then execve().  Or we could have a
-seccomp() mode that adds a filter but only kicks in after execve().
-The latter could be generally useful.
+drm-fixes-2018-09-12:
+nouveau runpm and MST race fixes.
+The following changes since commit 11da3a7f84f19c26da6f86af878298694ede0804:
 
---Andy
+  Linux 4.19-rc3 (2018-09-09 17:26:43 -0700)
+
+are available in the Git repository at:
+
+  git://anongit.freedesktop.org/drm/drm tags/drm-fixes-2018-09-12
+
+for you to fetch changes up to 2887e5ce15ddaa2f9a19e66f7462bbf0fe6867e0:
+
+  Merge branch 'linux-4.19' of git://github.com/skeggsb/linux into
+drm-fixes (2018-09-11 16:54:46 +1000)
+
+----------------------------------------------------------------
+nouveau runpm and MST race fixes.
+
+----------------------------------------------------------------
+Ben Skeggs (7):
+      drm/nouveau: fix oops in client init failure path
+      drm/nouveau/mmu: don't attempt to dereference vmm without valid
+instance pointer
+      drm/nouveau/TBDdevinit: don't fail when PMU/PRE_OS is missing from VBIOS
+      drm/nouveau/disp: remove unused struct member
+      drm/nouveau/disp: move eDP panel power handling
+      drm/nouveau/disp: fix DP disable race
+      drm/nouveau/disp/gm200-: enforce identity-mapped SOR assignment
+for LVDS/eDP panels
+
+Dave Airlie (1):
+      Merge branch 'linux-4.19' of git://github.com/skeggsb/linux into drm-fixes
+
+Lyude Paul (13):
+      drm/nouveau/drm/nouveau: Fix bogus drm_kms_helper_poll_enable() placement
+      drm/nouveau: Remove duplicate poll_enable() in pmops_runtime_suspend()
+      drm/nouveau/drm/nouveau: Fix deadlock with fb_helper with async
+RPM requests
+      drm/nouveau/drm/nouveau: Use pm_runtime_get_noresume() in
+connector_detect()
+      drm/nouveau: Fix deadlocks in nouveau_connector_detect()
+      drm/nouveau: Remove useless poll_enable() call in switcheroo_set_state()
+      drm/nouveau: Remove useless poll_disable() call in switcheroo_set_state()
+      drm/nouveau: Remove useless poll_enable() call in drm_load()
+      drm/nouveau: Only write DP_MSTM_CTRL when needed
+      drm/nouveau: Reset MST branching unit before enabling
+      drm/nouveau/drm/nouveau: Prevent handling ACPI HPD events too early
+      drm/nouveau/drm/nouveau: Don't forget to cancel hpd_work on suspend/unload
+      drm/nouveau: Fix nouveau_connector_ddc_detect()
+
+ drivers/gpu/drm/nouveau/dispnv50/disp.c            |  67 +++++++++----
+ drivers/gpu/drm/nouveau/nouveau_connector.c        | 110 +++++++++++----------
+ drivers/gpu/drm/nouveau/nouveau_display.c          |  44 ++++++---
+ drivers/gpu/drm/nouveau/nouveau_display.h          |   2 +-
+ drivers/gpu/drm/nouveau/nouveau_drm.c              |  21 ++--
+ drivers/gpu/drm/nouveau/nouveau_fbcon.c            |  57 +++++++++++
+ drivers/gpu/drm/nouveau/nouveau_fbcon.h            |   5 +
+ drivers/gpu/drm/nouveau/nouveau_vga.c              |   2 -
+ drivers/gpu/drm/nouveau/nvkm/engine/disp/base.c    |  14 +++
+ drivers/gpu/drm/nouveau/nvkm/engine/disp/dp.c      |  54 ++++++++--
+ drivers/gpu/drm/nouveau/nvkm/engine/disp/ior.h     |   1 +
+ drivers/gpu/drm/nouveau/nvkm/engine/disp/nv50.c    |   6 +-
+ drivers/gpu/drm/nouveau/nvkm/engine/disp/outp.c    |  18 +++-
+ drivers/gpu/drm/nouveau/nvkm/engine/disp/outp.h    |   5 +-
+ .../gpu/drm/nouveau/nvkm/subdev/devinit/gm200.c    |   3 +-
+ drivers/gpu/drm/nouveau/nvkm/subdev/mmu/vmm.c      |   2 +-
+ 16 files changed, 297 insertions(+), 114 deletions(-)
