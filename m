@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46F60C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 00:12:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C2EFC070C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 00:12:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00A4D204EC
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 00:12:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00A4D204EC
+	by mail.kernel.org (Postfix) with ESMTP id 01771204EC
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 00:12:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01771204EC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728042AbeIMFTE (ORCPT
+        id S1727987AbeIMFTD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 01:19:04 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:38626 "EHLO ale.deltatee.com"
+        Thu, 13 Sep 2018 01:19:03 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:38604 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727403AbeIMFTC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 01:19:02 -0400
+        id S1727754AbeIMFTB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 01:19:01 -0400
 Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
         by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1g0FEl-0006bF-QX; Wed, 12 Sep 2018 18:12:06 -0600
+        id 1g0FEm-0006bV-CS; Wed, 12 Sep 2018 18:12:05 -0600
 Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1g0FEl-00015c-Kv; Wed, 12 Sep 2018 18:11:59 -0600
+        id 1g0FEm-00015r-47; Wed, 12 Sep 2018 18:12:00 -0600
 From:   Logan Gunthorpe <logang@deltatee.com>
 To:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
         linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
@@ -48,8 +48,8 @@ Cc:     Stephen Bates <sbates@raithlin.com>,
         =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
         Jens Axboe <axboe@kernel.dk>,
         Logan Gunthorpe <logang@deltatee.com>
-Date:   Wed, 12 Sep 2018 18:11:50 -0600
-Message-Id: <20180913001156.4115-8-logang@deltatee.com>
+Date:   Wed, 12 Sep 2018 18:11:55 -0600
+Message-Id: <20180913001156.4115-13-logang@deltatee.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913001156.4115-1-logang@deltatee.com>
 References: <20180913001156.4115-1-logang@deltatee.com>
@@ -58,7 +58,7 @@ Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 172.16.1.31
 X-SA-Exim-Rcpt-To: linux-nvme@lists.infradead.org, linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org, linux-block@vger.kernel.org, sbates@raithlin.com, hch@lst.de, sagi@grimberg.me, bhelgaas@google.com, jgg@mellanox.com, maxg@mellanox.com, keith.busch@intel.com, dan.j.williams@intel.com, benh@kernel.crashing.org, jglisse@redhat.com, alex.williamson@redhat.com, christian.koenig@amd.com, axboe@kernel.dk, logang@deltatee.com
 X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v6 07/13] block: Add PCI P2P flag for request queue and check support for requests
+Subject: [PATCH v6 12/13] nvmet: Introduce helper functions to allocate and free request SGLs
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -66,39 +66,129 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-QUEUE_FLAG_PCI_P2P is introduced meaning a driver's request queue
-supports targeting P2P memory.
+Add helpers to allocate and free the SGL in a struct nvmet_req:
 
-When a request is submitted we check if PCI P2PDMA memory is assigned
-to the first page in the bio. If it is, we ensure the queue it's
-submitted to supports it, and enforce REQ_NOMERGE.
+int nvmet_req_alloc_sgl(struct nvmet_req *req, struct nvmet_sq *sq)
+void nvmet_req_free_sgl(struct nvmet_req *req)
+
+This will be expanded in a future patch to implement peer-to-peer
+memory DMAs and should be common with all target drivers. The presently
+unused 'sq' argument in the alloc function will be necessary to
+decide whether to use peer-to-peer memory and obtain the correct
+provider to allocate the memory.
+
+The new helpers are used in nvmet-rdma. Seeing we use req.transfer_len
+as the length of the SGL it is set earlier and cleared on any error.
+It also seems to be unnecessary to accumulate the length as the map_sgl
+functions should only ever be called once per request.
 
 Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Acked-by: Sagi Grimberg <sagi@grimberg.me>
+Cc: Christoph Hellwig <hch@lst.de>
 ---
- include/linux/blkdev.h | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/nvme/target/core.c  | 18 ++++++++++++++++++
+ drivers/nvme/target/nvmet.h |  2 ++
+ drivers/nvme/target/rdma.c  | 20 ++++++++++++--------
+ 3 files changed, 32 insertions(+), 8 deletions(-)
 
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index d6869e0e2b64..7bf80ca802e1 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -699,6 +699,7 @@ struct request_queue {
- #define QUEUE_FLAG_SCSI_PASSTHROUGH 27	/* queue supports SCSI commands */
- #define QUEUE_FLAG_QUIESCED    28	/* queue has been quiesced */
- #define QUEUE_FLAG_PREEMPT_ONLY	29	/* only process REQ_PREEMPT requests */
-+#define QUEUE_FLAG_PCI_P2PDMA  30	/* device supports pci p2p requests */
+diff --git a/drivers/nvme/target/core.c b/drivers/nvme/target/core.c
+index b5ec96abd048..bddd1599b826 100644
+--- a/drivers/nvme/target/core.c
++++ b/drivers/nvme/target/core.c
+@@ -725,6 +725,24 @@ void nvmet_req_execute(struct nvmet_req *req)
+ }
+ EXPORT_SYMBOL_GPL(nvmet_req_execute);
  
- #define QUEUE_FLAG_DEFAULT	((1 << QUEUE_FLAG_IO_STAT) |		\
- 				 (1 << QUEUE_FLAG_SAME_COMP)	|	\
-@@ -731,6 +732,8 @@ bool blk_queue_flag_test_and_clear(unsigned int flag, struct request_queue *q);
- #define blk_queue_dax(q)	test_bit(QUEUE_FLAG_DAX, &(q)->queue_flags)
- #define blk_queue_scsi_passthrough(q)	\
- 	test_bit(QUEUE_FLAG_SCSI_PASSTHROUGH, &(q)->queue_flags)
-+#define blk_queue_pci_p2pdma(q)	\
-+	test_bit(QUEUE_FLAG_PCI_P2PDMA, &(q)->queue_flags)
++int nvmet_req_alloc_sgl(struct nvmet_req *req, struct nvmet_sq *sq)
++{
++	req->sg = sgl_alloc(req->transfer_len, GFP_KERNEL, &req->sg_cnt);
++	if (!req->sg)
++		return -ENOMEM;
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(nvmet_req_alloc_sgl);
++
++void nvmet_req_free_sgl(struct nvmet_req *req)
++{
++	sgl_free(req->sg);
++	req->sg = NULL;
++	req->sg_cnt = 0;
++}
++EXPORT_SYMBOL_GPL(nvmet_req_free_sgl);
++
+ static inline bool nvmet_cc_en(u32 cc)
+ {
+ 	return (cc >> NVME_CC_EN_SHIFT) & 0x1;
+diff --git a/drivers/nvme/target/nvmet.h b/drivers/nvme/target/nvmet.h
+index ec9af4ee03b6..7d6cb61021e4 100644
+--- a/drivers/nvme/target/nvmet.h
++++ b/drivers/nvme/target/nvmet.h
+@@ -336,6 +336,8 @@ bool nvmet_req_init(struct nvmet_req *req, struct nvmet_cq *cq,
+ void nvmet_req_uninit(struct nvmet_req *req);
+ void nvmet_req_execute(struct nvmet_req *req);
+ void nvmet_req_complete(struct nvmet_req *req, u16 status);
++int nvmet_req_alloc_sgl(struct nvmet_req *req, struct nvmet_sq *sq);
++void nvmet_req_free_sgl(struct nvmet_req *req);
  
- #define blk_noretry_request(rq) \
- 	((rq)->cmd_flags & (REQ_FAILFAST_DEV|REQ_FAILFAST_TRANSPORT| \
+ void nvmet_cq_setup(struct nvmet_ctrl *ctrl, struct nvmet_cq *cq, u16 qid,
+ 		u16 size);
+diff --git a/drivers/nvme/target/rdma.c b/drivers/nvme/target/rdma.c
+index 3533e918ea37..e148dee72ba5 100644
+--- a/drivers/nvme/target/rdma.c
++++ b/drivers/nvme/target/rdma.c
+@@ -489,7 +489,7 @@ static void nvmet_rdma_release_rsp(struct nvmet_rdma_rsp *rsp)
+ 	}
+ 
+ 	if (rsp->req.sg != rsp->cmd->inline_sg)
+-		sgl_free(rsp->req.sg);
++		nvmet_req_free_sgl(&rsp->req);
+ 
+ 	if (unlikely(!list_empty_careful(&queue->rsp_wr_wait_list)))
+ 		nvmet_rdma_process_wr_wait_list(queue);
+@@ -638,24 +638,24 @@ static u16 nvmet_rdma_map_sgl_keyed(struct nvmet_rdma_rsp *rsp,
+ {
+ 	struct rdma_cm_id *cm_id = rsp->queue->cm_id;
+ 	u64 addr = le64_to_cpu(sgl->addr);
+-	u32 len = get_unaligned_le24(sgl->length);
+ 	u32 key = get_unaligned_le32(sgl->key);
+ 	int ret;
+ 
++	rsp->req.transfer_len = get_unaligned_le24(sgl->length);
++
+ 	/* no data command? */
+-	if (!len)
++	if (!rsp->req.transfer_len)
+ 		return 0;
+ 
+-	rsp->req.sg = sgl_alloc(len, GFP_KERNEL, &rsp->req.sg_cnt);
+-	if (!rsp->req.sg)
+-		return NVME_SC_INTERNAL;
++	ret = nvmet_req_alloc_sgl(&rsp->req, &rsp->queue->nvme_sq);
++	if (ret < 0)
++		goto error_out;
+ 
+ 	ret = rdma_rw_ctx_init(&rsp->rw, cm_id->qp, cm_id->port_num,
+ 			rsp->req.sg, rsp->req.sg_cnt, 0, addr, key,
+ 			nvmet_data_dir(&rsp->req));
+ 	if (ret < 0)
+-		return NVME_SC_INTERNAL;
+-	rsp->req.transfer_len += len;
++		goto error_out;
+ 	rsp->n_rdma += ret;
+ 
+ 	if (invalidate) {
+@@ -664,6 +664,10 @@ static u16 nvmet_rdma_map_sgl_keyed(struct nvmet_rdma_rsp *rsp,
+ 	}
+ 
+ 	return 0;
++
++error_out:
++	rsp->req.transfer_len = 0;
++	return NVME_SC_INTERNAL;
+ }
+ 
+ static u16 nvmet_rdma_map_sgl(struct nvmet_rdma_rsp *rsp)
 -- 
 2.19.0
 
