@@ -6,35 +6,41 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38AA6C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:06:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F99CC07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:06:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1BCB20854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:06:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1BCB20854
+	by mail.kernel.org (Postfix) with ESMTP id 135B120854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:06:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 135B120854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731858AbeIMTP4 (ORCPT
+        id S1732015AbeIMTQA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:15:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35568 "EHLO
+        Thu, 13 Sep 2018 15:16:00 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35590 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729111AbeIMTPz (ORCPT
+        with ESMTP id S1731651AbeIMTP7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:15:55 -0400
+        Thu, 13 Sep 2018 15:15:59 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 64F9FD36;
-        Thu, 13 Sep 2018 14:06:15 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 52839D39;
+        Thu, 13 Sep 2018 14:06:19 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anand Jain <anand.jain@oracle.com>,
-        David Sterba <dsterba@suse.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 147/197] btrfs: use device_list_mutex when removing stale devices
-Date:   Thu, 13 Sep 2018 15:31:36 +0200
-Message-Id: <20180913131847.435319298@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Chuanhua Lei <chuanhua.lei@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        yixin.zhu@linux.intel.com, "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Len Brown <len.brown@intel.com>,
+        Pavel Tatashin <pasha.tatashin@microsoft.com>,
+        Rajvi Jingar <rajvi.jingar@intel.com>,
+        Dou Liyang <douly.fnst@cn.fujitsu.com>
+Subject: [PATCH 4.18 185/197] x86/tsc: Prevent result truncation on 32bit
+Date:   Thu, 13 Sep 2018 15:32:14 +0200
+Message-Id: <20180913131848.961235382@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -52,65 +58,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anand Jain <anand.jain@oracle.com>
+From: Chuanhua Lei <chuanhua.lei@linux.intel.com>
 
-[ Upstream commit 7bcb8164ad9435068d9bc3b83b8a002c64d63ff6 ]
+commit 17f6bac2249356c795339e03a0742cd79be3cab8 upstream.
 
-btrfs_free_stale_devices() finds a stale (not opened) device matching
-path in the fs_uuid list. We are already under uuid_mutex so when we
-check for each fs_devices, hold the device_list_mutex too.
+Loops per jiffy is calculated by multiplying tsc_khz with 1e3 and then
+dividing it by HZ.
 
-Signed-off-by: Anand Jain <anand.jain@oracle.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Both tsc_khz and the temporary variable holding the multiplication result
+are of type unsigned long, so on 32bit the result is truncated to the lower
+32bit.
+
+Use u64 as type for the temporary variable and cast tsc_khz to it before
+multiplying.
+
+[ tglx: Massaged changelog and removed pointless braces ]
+
+[ tglx: Backport to stable. Due to massive code changes is the upstream
+  	commit not applicable anymore. The issue has gone unnoticed in
+  	kernels pre 4.19 because the bogus LPJ value gets fixed up in a
+  	later stage of early boot, but it still might cause subtle and hard
+  	to debug issues between these two points. ]
+
+Fixes: cf7a63ef4e02 ("x86/tsc: Calibrate tsc only once")
+Signed-off-by: Chuanhua Lei <chuanhua.lei@linux.intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: yixin.zhu@linux.intel.com
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Len Brown <len.brown@intel.com>
+Cc: Pavel Tatashin <pasha.tatashin@microsoft.com>
+Cc: Rajvi Jingar <rajvi.jingar@intel.com>
+Cc: Dou Liyang <douly.fnst@cn.fujitsu.com>
+Link: https://lkml.kernel.org/r/1536228203-18701-1-git-send-email-chuanhua.lei@linux.intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/btrfs/volumes.c |   25 +++++++++++++++----------
- 1 file changed, 15 insertions(+), 10 deletions(-)
 
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -640,8 +640,11 @@ static void btrfs_free_stale_devices(con
- 	struct btrfs_device *device, *tmp_device;
+---
+ arch/x86/kernel/tsc.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/arch/x86/kernel/tsc.c
++++ b/arch/x86/kernel/tsc.c
+@@ -1343,7 +1343,7 @@ device_initcall(init_tsc_clocksource);
  
- 	list_for_each_entry_safe(fs_devices, tmp_fs_devices, &fs_uuids, fs_list) {
--		if (fs_devices->opened)
-+		mutex_lock(&fs_devices->device_list_mutex);
-+		if (fs_devices->opened) {
-+			mutex_unlock(&fs_devices->device_list_mutex);
- 			continue;
-+		}
+ void __init tsc_early_delay_calibrate(void)
+ {
+-	unsigned long lpj;
++	u64 lpj;
  
- 		list_for_each_entry_safe(device, tmp_device,
- 					 &fs_devices->devices, dev_list) {
-@@ -661,16 +664,18 @@ static void btrfs_free_stale_devices(con
- 				continue;
+ 	if (!boot_cpu_has(X86_FEATURE_TSC))
+ 		return;
+@@ -1355,7 +1355,7 @@ void __init tsc_early_delay_calibrate(vo
+ 	if (!tsc_khz)
+ 		return;
  
- 			/* delete the stale device */
--			if (fs_devices->num_devices == 1) {
--				btrfs_sysfs_remove_fsid(fs_devices);
--				list_del(&fs_devices->fs_list);
--				free_fs_devices(fs_devices);
-+			fs_devices->num_devices--;
-+			list_del(&device->dev_list);
-+			btrfs_free_device(device);
-+
-+			if (fs_devices->num_devices == 0)
- 				break;
--			} else {
--				fs_devices->num_devices--;
--				list_del(&device->dev_list);
--				btrfs_free_device(device);
--			}
-+		}
-+		mutex_unlock(&fs_devices->device_list_mutex);
-+		if (fs_devices->num_devices == 0) {
-+			btrfs_sysfs_remove_fsid(fs_devices);
-+			list_del(&fs_devices->fs_list);
-+			free_fs_devices(fs_devices);
- 		}
- 	}
+-	lpj = tsc_khz * 1000;
++	lpj = (u64)tsc_khz * 1000;
+ 	do_div(lpj, HZ);
+ 	loops_per_jiffy = lpj;
  }
 
 
