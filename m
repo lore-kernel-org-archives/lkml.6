@@ -2,149 +2,157 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5412CC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 09:12:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6881C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 09:15:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBCE720866
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 09:12:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBCE720866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 84488204FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 09:15:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84488204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727828AbeIMOUv (ORCPT
+        id S1727944AbeIMOYO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 10:20:51 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44320 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726862AbeIMOUv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 10:20:51 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8D946xg075878
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 05:12:16 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mfh5x0wfx-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 05:12:16 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pasic@linux.ibm.com>;
-        Thu, 13 Sep 2018 10:12:14 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 13 Sep 2018 10:12:11 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8D9CARG57999564
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 13 Sep 2018 09:12:10 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 65C7F52059;
-        Thu, 13 Sep 2018 12:11:58 +0100 (BST)
-Received: from oc0155643701.ibm.com (unknown [9.152.224.42])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id CBB6A5204F;
-        Thu, 13 Sep 2018 12:11:57 +0100 (BST)
-Subject: Re: [PATCH v9 13/22] s390: vfio-ap: sysfs interface to view matrix
- mdev matrix
-To:     Tony Krowiak <akrowiak@linux.ibm.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
-        pbonzini@redhat.com, alex.williamson@redhat.com,
-        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com
-References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1534196899-16987-14-git-send-email-akrowiak@linux.vnet.ibm.com>
- <20180820160802.1fe8f704.cohuck@redhat.com>
- <0e8bac2b-31a0-a1de-c6cf-e824cd256af6@linux.ibm.com>
-From:   Halil Pasic <pasic@linux.ibm.com>
-Date:   Thu, 13 Sep 2018 11:12:09 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 13 Sep 2018 10:24:14 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43720 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726832AbeIMOYO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 10:24:14 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1E3A718A;
+        Thu, 13 Sep 2018 02:15:39 -0700 (PDT)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.emea.arm.com [10.4.13.117])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BCAD53F575;
+        Thu, 13 Sep 2018 02:15:37 -0700 (PDT)
+Date:   Thu, 13 Sep 2018 10:15:34 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+Cc:     Jingoo Han <jingoohan1@gmail.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3] PCI: dwc: fix scheduling while atomic issues
+Message-ID: <20180913091534.GB32721@e107981-ln.cambridge.arm.com>
+References: <20180829110408.556c3622@xhacker.debian>
+ <20180910165722.38218779@xhacker.debian>
 MIME-Version: 1.0
-In-Reply-To: <0e8bac2b-31a0-a1de-c6cf-e824cd256af6@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18091309-0016-0000-0000-00000204CFDD
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18091309-0017-0000-0000-0000325B9E76
-Message-Id: <1375257e-38c3-f9e3-049e-d1a602d084c9@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-13_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809130096
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180910165722.38218779@xhacker.debian>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Sep 10, 2018 at 04:57:22PM +0800, Jisheng Zhang wrote:
+> Hi all,
+> 
+> On Wed, 29 Aug 2018 11:04:08 +0800 Jisheng Zhang wrote:
+> 
+> > When programming inbound/outbound atu, we call usleep_range() after
+> > each checking PCIE_ATU_ENABLE bit. Unfortunately, the atu programming
+> > can be called in atomic context:
+> > 
+> > inbound atu programming could be called through
+> > pci_epc_write_header()
+> >   =>dw_pcie_ep_write_header()
+> >     =>dw_pcie_prog_inbound_atu()  
+> > 
+> > outbound atu programming could be called through
+> > pci_bus_read_config_dword()
+> >   =>dw_pcie_rd_conf()
+> >     =>dw_pcie_prog_outbound_atu()  
+> > 
+> > Fix this issue by calling mdelay() instead.
+> 
+> Any comments about this patch?
+> 
+> Thanks,
+> Jisheng
+> 
+> > 
+> > Fixes: f8aed6ec624f ("PCI: dwc: designware: Add EP mode support")
+> > Fixes: d8bbeb39fbf3 ("PCI: designware: Wait for iATU enable")
 
+Can you split it into two patches and repost it please ? It will make
+everyone's life easier to backport it if there is need, I will apply
+then.
 
-On 09/12/2018 07:01 PM, Tony Krowiak wrote:
-> On 08/20/2018 10:08 AM, Cornelia Huck wrote:
->> I find this output to be a bit confusing; but OTOH, I'm probably not
->> the person to parse it :) Still, some comments.
->>
->>  From previous discussions, ISTR that this is mainly supposed to be a
->> debugging/administration aid. Of course, this generates some questions:
->> - Should this be in sysfs (sysfs attributes are supposed to follow the
->>    "one value per file" rule, at least for the most part), or would
->>    debugfs be a better fit?
->> - Should userspace code be able to introspect the current
->>    configuration? If yes, it might be better to have some
->>    not-so-nice-but-easily-parsable output, possibly one attribute for
->>    the assigned adapters and one for the assigned domains, and a tool
->>    which distills that into a nice "matrix" with labeled rows and
->>    columns for human consumption.
->>
->> That said, I don't really have major objections to that interface.
-> 
-> For now, I will leave it in, but we could conceivably simplify configuration
-> of the matrix and adhere to sysfs rules by modeling this after the AP bus
-> apmask and aqmask sysfs interfaces. If we did that, there would need to be only
-> three RW sysfs interfaces:
-> 
-> apm or apmask or ap_mask or adapter_mask or apid_mask
-> aqm or aqmask or aq_mask or domains or usage_domain_mask or apqi_mask
-> adm or admask or ad_mask or control_domains or control_domain_mask or domain_mask
-> 
-> To assign a device, either a bitmask or a comma separated list of IDs prepended
-> with a '+' could be passed in. To unassign a device, either a bitmask in or a
-> comma-separated list of IDs prepended with a '-' could be passed in.
-> 
-> Reading an attribute would return the mask. As you suggested, tools could be
-> provided to parse the output and display it in a human-readable format.
-> 
+Thanks,
+Lorenzo
 
-I would prefer an interface where one can set at least one whole mask in one
-go over the current one that let us manipulate just one bit at a time.
-
-Hallil
-
->>
->>> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
->>> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
->>> Tested-by: Michael Mueller <mimu@linux.ibm.com>
->>> Tested-by: Farhan Ali <alifm@linux.ibm.com>
->>> Tested-by: Pierre Morel <pmorel@linux.ibm.com>
->>> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
->>> ---
->>>   drivers/s390/crypto/vfio_ap_ops.c |   52 +++++++++++++++++++++++++++++++++++++
->>>   1 files changed, 52 insertions(+), 0 deletions(-)
+> > Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+> > Acked-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+> > ---
+> > 
+> > since v2:
+> >  - Add Fixes tag
+> >  - Add Gustavo's Ack
+> > 
+> > since v1:
+> >  - use mdelay() instead of udelay() to avoid __bad_udelay()
+> > 
+> >  drivers/pci/controller/dwc/pcie-designware.c | 8 ++++----
+> >  drivers/pci/controller/dwc/pcie-designware.h | 3 +--
+> >  2 files changed, 5 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
+> > index 778c4f76a884..2153956a0b20 100644
+> > --- a/drivers/pci/controller/dwc/pcie-designware.c
+> > +++ b/drivers/pci/controller/dwc/pcie-designware.c
+> > @@ -135,7 +135,7 @@ static void dw_pcie_prog_outbound_atu_unroll(struct dw_pcie *pci, int index,
+> >  		if (val & PCIE_ATU_ENABLE)
+> >  			return;
+> >  
+> > -		usleep_range(LINK_WAIT_IATU_MIN, LINK_WAIT_IATU_MAX);
+> > +		mdelay(LINK_WAIT_IATU);
+> >  	}
+> >  	dev_err(pci->dev, "Outbound iATU is not being enabled\n");
+> >  }
+> > @@ -178,7 +178,7 @@ void dw_pcie_prog_outbound_atu(struct dw_pcie *pci, int index, int type,
+> >  		if (val & PCIE_ATU_ENABLE)
+> >  			return;
+> >  
+> > -		usleep_range(LINK_WAIT_IATU_MIN, LINK_WAIT_IATU_MAX);
+> > +		mdelay(LINK_WAIT_IATU);
+> >  	}
+> >  	dev_err(pci->dev, "Outbound iATU is not being enabled\n");
+> >  }
+> > @@ -236,7 +236,7 @@ static int dw_pcie_prog_inbound_atu_unroll(struct dw_pcie *pci, int index,
+> >  		if (val & PCIE_ATU_ENABLE)
+> >  			return 0;
+> >  
+> > -		usleep_range(LINK_WAIT_IATU_MIN, LINK_WAIT_IATU_MAX);
+> > +		mdelay(LINK_WAIT_IATU);
+> >  	}
+> >  	dev_err(pci->dev, "Inbound iATU is not being enabled\n");
+> >  
+> > @@ -282,7 +282,7 @@ int dw_pcie_prog_inbound_atu(struct dw_pcie *pci, int index, int bar,
+> >  		if (val & PCIE_ATU_ENABLE)
+> >  			return 0;
+> >  
+> > -		usleep_range(LINK_WAIT_IATU_MIN, LINK_WAIT_IATU_MAX);
+> > +		mdelay(LINK_WAIT_IATU);
+> >  	}
+> >  	dev_err(pci->dev, "Inbound iATU is not being enabled\n");
+> >  
+> > diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+> > index 96126fd8403c..9f1a5e399b70 100644
+> > --- a/drivers/pci/controller/dwc/pcie-designware.h
+> > +++ b/drivers/pci/controller/dwc/pcie-designware.h
+> > @@ -26,8 +26,7 @@
+> >  
+> >  /* Parameters for the waiting for iATU enabled routine */
+> >  #define LINK_WAIT_MAX_IATU_RETRIES	5
+> > -#define LINK_WAIT_IATU_MIN		9000
+> > -#define LINK_WAIT_IATU_MAX		10000
+> > +#define LINK_WAIT_IATU			9
+> >  
+> >  /* Synopsys-specific PCIe configuration registers */
+> >  #define PCIE_PORT_LINK_CONTROL		0x710
 > 
-> 
-
