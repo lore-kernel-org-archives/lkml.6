@@ -2,84 +2,116 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=5.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC208C43143
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 19:53:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EFBEC43143
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 19:56:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C55E20882
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 19:53:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C55E20882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id ADAEE20881
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 19:56:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sQdjBkur"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADAEE20881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728046AbeINBEW (ORCPT
+        id S1728089AbeINBHZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 21:04:22 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:33874 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727640AbeINBEW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 21:04:22 -0400
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 816CF30022E6;
-        Thu, 13 Sep 2018 19:53:24 +0000 (UTC)
-Received: from oldenburg.str.redhat.com (ovpn-116-49.ams2.redhat.com [10.36.116.49])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id DC8CF2010CF7;
-        Thu, 13 Sep 2018 19:53:22 +0000 (UTC)
-Subject: Re: [PATCH v3] x86/vdso: Handle clock_gettime(CLOCK_TAI) in vDSO
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Matt Rickard <matt@softrans.com.au>,
-        Stephen Boyd <sboyd@kernel.org>,
-        John Stultz <john.stultz@linaro.org>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20180901015935.CCF0B18E20A9@virtux64.softrans.com.au>
- <CALCETrU4PzskO9pE6G4EkXNRRX3Mu7Vvjv1P8XgrfRMdgGDZSg@mail.gmail.com>
- <alpine.DEB.2.21.1809092159440.1402@nanos.tec.linutronix.de>
- <dde36e93-a21b-6223-8ffc-6dd11f687d38@redhat.com>
- <alpine.DEB.2.21.1809121616040.9957@nanos.tec.linutronix.de>
- <59403142-1073-3926-65dd-ac55ead357b9@redhat.com>
- <alpine.DEB.2.21.1809121623430.9957@nanos.tec.linutronix.de>
- <DEC1E2DC-2D89-4955-81FC-4EDCF3692214@amacapital.net>
- <0120ea99-fcac-839a-ef8f-1daa74c17bec@redhat.com>
- <F5CE2714-B491-490D-9B03-E111A61E333F@amacapital.net>
- <5f9e890c-fd67-2e39-42ca-64290301b20a@redhat.com>
- <B47AF238-71A6-4FC1-BC5A-55893C2D76B0@amacapital.net>
-From:   Florian Weimer <fweimer@redhat.com>
-Message-ID: <b9ba6669-205e-023d-2c11-fc962dc32d55@redhat.com>
-Date:   Thu, 13 Sep 2018 21:53:20 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 13 Sep 2018 21:07:25 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:45104 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726824AbeINBHZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 21:07:25 -0400
+Received: by mail-lf1-f65.google.com with SMTP id r4-v6so5862658lff.12;
+        Thu, 13 Sep 2018 12:56:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=23cXMf47zlG+EXF0BN9s0/N/8EQyzAWSeFPZ7wusQ0M=;
+        b=sQdjBkurYhDtyIpVEU5d1yW1iamI4km64Sxb+pQNBQJj5ssnxId7QM0NxrU3U2P9Ez
+         Txh98jT1VJo9/owj2Pl8uTX1OMJkb970op9CbVWpl3/ijndjPfwtLv4BPNPcxsLC8mM4
+         H0/+MjB/0FGrDC3yMU/Rx2Ns16AzbHDUHOf3ufy6rJaXZ9YLaNEtjCfxdAwNOkO0fnTa
+         XrYft/satqpr5qEpgoLZLqU+GxzoTaDmesvADADDRfSBpUtaMEqUOwFoAqnVwskG35Lg
+         meuhKmHrocl8jRjwgz6090jGzGQjUEZBYW9+8OMDmBDlcC2u+rXMT929xmFalF71GLsQ
+         DS0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=23cXMf47zlG+EXF0BN9s0/N/8EQyzAWSeFPZ7wusQ0M=;
+        b=A683z67/nLEBov22djSIg1Z3rtW8hmEFQCcHAwzoBXFZPxJkOf4OWs3LtWcxNdXqbN
+         /Q43r9e4XSuDoVdq4Tn5iVAnNLII3DmMAIE9V6KyEcU1zzV6Kp344MD6MUnSHeTssyRv
+         ABdutoU2vfQ8n1nOOvz+F2b61z+UrAZLHdp59ngp6TlM2wH1/bHyYwfFTpFT61yGtbPW
+         Miu3b9T3WKbPrlojpFZbXeCWIxtuKW+TLFub0lTNjTc8FJsfvlOKhLZBs8EYnBExoCSj
+         6X8zEmaTVvCjAptzT2/IujpcJhh/R6fFXM23mP8o2duQIUtiQLrHTD/dxN80xHgEA9+c
+         ztiA==
+X-Gm-Message-State: APzg51A/j9rIQy0rmhN7qvx8an35leW23oaGCPoGDbPKNVYwooWA1R2G
+        cq2/LNYTwTWG8oHhvoRVQqolQ0kfgPOms1UPQk0=
+X-Google-Smtp-Source: ANB0Vdage30185YePREijZciNGVyGfrQ2yDWs0DhAdv1r5D5xeSNfpnhb3KnrJYbievFu7/WB9TVp++4Qxa4FOSImQQ=
+X-Received: by 2002:a19:4a09:: with SMTP id x9-v6mr6171212lfa.80.1536868584754;
+ Thu, 13 Sep 2018 12:56:24 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <B47AF238-71A6-4FC1-BC5A-55893C2D76B0@amacapital.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Thu, 13 Sep 2018 19:53:24 +0000 (UTC)
+References: <20180913163541.7364-1-jim@jtan.com>
+In-Reply-To: <20180913163541.7364-1-jim@jtan.com>
+From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Date:   Thu, 13 Sep 2018 21:56:08 +0200
+Message-ID: <CAPybu_1WO8jcJbKJfiyCcfTahtxqSvdvyhyYaZsog05ab+OXWw@mail.gmail.com>
+Subject: Re: [PATCH] gpiolib: fix freeing of descriptors on error
+To:     Jim Paris <jim@jtan.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/13/2018 09:35 PM, Andy Lutomirski wrote:
+Hi Jim
 
->> Somewhat special, yes, but not overly so, and not in the type-polymorphic sense.  We can't give direct access of the vDSO implementation to applications because the kernel does not know about the userspace errno variable.  We do that for time on x86_64, where applications call into the vDSO directly, bypassing glibc completely after binding.
-> 
-> If the vDSO adds special helpers for CLOCK_MONOTONIC and CLOCK_REALTIME, I think we can reasonably safely promise that they never fail. (seccomp can obviously break that promise if there’s no TSC, but I think that seccomp users who do that get to keep both pieces.)
+I have sent an identical patch 3 hours before you [1] ;)
+Seems that we are working on the same stuff.
 
-I agree, I thought about the same thing.  We already do not return 
-EFAULT for invalid pointers, for obvious reasons.  And if the clock ID 
-is fixed, the EINVAL error is impossible.
+Cheers
 
-That would shave off a few nanoseconds more if the calling convention is 
-identical to what glibc exposes to applications.  If the vDSO is not 
-available or the symbol is missing, we can provide an implementation 
-based on the current clock_gettime in glibc.
+[1] https://www.spinics.net/lists/linux-gpio/msg32541.html
 
-Thanks,
-Florian
+On Thu, Sep 13, 2018 at 6:42 PM Jim Paris <jim@jtan.com> wrote:
+>
+> When the main loop in linehandle_create() encounters an error, it
+> fails to free one of the previously-requested GPIO descriptors.
+> This renders the unfreed GPIO unusable until reboot, and leaves
+> its label pointing to free'd kernel memory.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: ab3dbcf78f60 ("gpioib: do not free unrequested descriptors")
+> Signed-off-by: Jim Paris <jim@jtan.com>
+> ---
+>  drivers/gpio/gpiolib.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index e8f8a1999393..a57300c1d649 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -571,7 +571,7 @@ static int linehandle_create(struct gpio_device *gdev, void __user *ip)
+>                 if (ret)
+>                         goto out_free_descs;
+>                 lh->descs[i] = desc;
+> -               count = i;
+> +               count = i + 1;
+>
+>                 if (lflags & GPIOHANDLE_REQUEST_ACTIVE_LOW)
+>                         set_bit(FLAG_ACTIVE_LOW, &desc->flags);
+> --
+> 2.18.0
+>
+
+
+-- 
+Ricardo Ribalda
