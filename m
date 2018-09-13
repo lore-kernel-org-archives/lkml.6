@@ -2,116 +2,87 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59F69FA3755
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51F38FA374E
 	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 17:35:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63FFB217C1
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 17:31:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SpFG7r/e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63FFB217C1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 6DFCF2177C
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 17:05:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DFCF2177C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728082AbeIMWlq (ORCPT
+        id S1728462AbeIMWQI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 18:41:46 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:46963 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727152AbeIMWlq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 18:41:46 -0400
-Received: by mail-pf1-f193.google.com with SMTP id u24-v6so2971690pfn.13;
-        Thu, 13 Sep 2018 10:31:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=GZT/mWDmQ0lUKamsyGENfL+7LBls95gbKzwOeeFrUkA=;
-        b=SpFG7r/eXUbKTvAxOpAyaapnuaRbU8rRXgnQQA74WxmFb8sOQ4E7MezRcsqAuUHZto
-         /Asf5IphJFaZaCgZgXo6Pela/v2Ozqcrwf5Kxft2JJXkVjrKbxwqUFfuKFXUOCAtpWGD
-         ErQtiWv6WCWZI7tFcLoUayJM4IMrUFj1Gdb2BZ1+BgwuhEa0rShf0/d63vLXn+nrWDV0
-         9Yxf1YnmHN82mRtEVKmU/fR77swsxwu+b59FDZrlbyT8KzpkyypREQCSi0ZhEBwUrI7m
-         BKSjac7okcSHsSdkeyS4afg5zYEbC+cuk4I1c90P4SEzurLnqiILW8US497p9mwUyku9
-         nq+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=GZT/mWDmQ0lUKamsyGENfL+7LBls95gbKzwOeeFrUkA=;
-        b=bYgHil6tSXoXiRCXkCMRSUrAE1gZEfxFVpB5shyvHRWt6sWquw4GHGgSyIFI/897PQ
-         yzbcsddguNyynf2NgUDkwmbn3jnKygUz6diknCd0sSYKBQ4XDs+ao5VqVqQhbc4hhN0W
-         m7qvGT0RLdsK2C17K9EwP1IwoKIIEb46dOwrkCrnfU8vtqCqWexo+hfPTmtwJme6WRfv
-         pmzZcqzbmN1On3chZSGfJ9xx/oFMzLeIqgttf1JuAhGqpqChEHjQaetvA3S0jMt8KQ4p
-         NJ4zvfy8dcfXAPFTI23qtXCo/TYqtg+Ia/70mMMc63VO0wRfWO2+atpDziYZOPRNLRrj
-         YhcA==
-X-Gm-Message-State: APzg51BoNjw73hgb+SdEJe3ydrZQDelSviXHmIs/idNJ2NaB1Pn+w4d5
-        7gSyK+WHjigPVRCdjuSb2MU=
-X-Google-Smtp-Source: ANB0VdZ0MlzD7iGvwVRKIjATgueNZy8u6yYoZO865QqEQ3J7RqtMYeCr5JrimyX46kH1tdO+V269Eg==
-X-Received: by 2002:a62:3545:: with SMTP id c66-v6mr8332074pfa.63.1536859878236;
-        Thu, 13 Sep 2018 10:31:18 -0700 (PDT)
-Received: from ?IPv6:2620:15c:2c1:200:55c7:81e6:c7d8:94b? ([2620:15c:2c1:200:55c7:81e6:c7d8:94b])
-        by smtp.gmail.com with ESMTPSA id i25-v6sm7967848pfi.150.2018.09.13.10.31.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Sep 2018 10:31:17 -0700 (PDT)
-Subject: Re: KMSAN: uninit-value in pppoe_rcv
-To:     Guillaume Nault <g.nault@alphalink.fr>,
-        Alexander Potapenko <glider@google.com>
-Cc:     Eric Dumazet <eric.dumazet@gmail.com>,
-        syzbot+f5f6080811c849739212@syzkaller.appspotmail.com,
-        LKML <linux-kernel@vger.kernel.org>, mostrows@earthlink.net,
-        Networking <netdev@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com
-References: <0000000000004624c30575a9fd40@google.com>
- <CAG_fn=Vk2HMPCLJV3aj1dt0KkDmksasBRRfKGnCTRHjvQ6OnQg@mail.gmail.com>
- <7424e094-afda-084a-ad80-299f219ced92@gmail.com>
- <CAG_fn=WXPsQBWR1GDsprY3aL4oW0v6EGhNB5wrvPJCOMh_U7wQ@mail.gmail.com>
- <20180913161929.GA1507@alphalink.fr> <20180913172344.GB1507@alphalink.fr>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <9b41183c-34ea-33d3-a1bf-b0d283675af2@gmail.com>
-Date:   Thu, 13 Sep 2018 10:31:16 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180913172344.GB1507@alphalink.fr>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 13 Sep 2018 18:16:08 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:47112 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727082AbeIMWQH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 18:16:07 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7FA543082B71;
+        Thu, 13 Sep 2018 17:05:45 +0000 (UTC)
+Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 26AA0608E0;
+        Thu, 13 Sep 2018 17:05:42 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Jim Mattson <jmattson@google.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v5 07/12] x86/kvm/hyperv: don't clear VP assist pages on init
+Date:   Thu, 13 Sep 2018 19:05:17 +0200
+Message-Id: <20180913170522.24876-8-vkuznets@redhat.com>
+In-Reply-To: <20180913170522.24876-1-vkuznets@redhat.com>
+References: <20180913170522.24876-1-vkuznets@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Thu, 13 Sep 2018 17:05:45 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+VP assist pages may hold valuable data which needs to be preserved across
+migration. Clean PV EOI portion of the data on init, the guest is
+responsible for making sure there's no garbage in the rest.
 
+This will be used for nVMX migration, eVMCS address needs to be preserved.
 
-On 09/13/2018 10:23 AM, Guillaume Nault wrote:
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+---
+ arch/x86/kvm/hyperv.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-> Nothing to change in tun.c. Just some more tests in pppoe.
-> Can you try this patch? It only addresses this particular report, not
-> the problems spotted by Eric.
-> 
-> -------- 8< --------
-> diff --git a/drivers/net/ppp/pppoe.c b/drivers/net/ppp/pppoe.c
-> index 5aa59f41bf8c..77241b584dff 100644
-> --- a/drivers/net/ppp/pppoe.c
-> +++ b/drivers/net/ppp/pppoe.c
-> @@ -429,6 +429,9 @@ static int pppoe_rcv(struct sk_buff *skb, struct net_device *dev,
->  	if (!skb)
->  		goto out;
->  
-> +	if (skb_mac_header_len(skb) < ETH_HLEN)
-> +		goto drop;
-> +
->  	if (!pskb_may_pull(skb, sizeof(struct pppoe_hdr)))
->  		goto drop;
->  
-> 
+diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
+index b1655d01c368..ae3e2e0de680 100644
+--- a/arch/x86/kvm/hyperv.c
++++ b/arch/x86/kvm/hyperv.c
+@@ -1080,7 +1080,13 @@ static int kvm_hv_set_msr(struct kvm_vcpu *vcpu, u32 msr, u64 data, bool host)
+ 		addr = kvm_vcpu_gfn_to_hva(vcpu, gfn);
+ 		if (kvm_is_error_hva(addr))
+ 			return 1;
+-		if (__clear_user((void __user *)addr, PAGE_SIZE))
++
++		/*
++		 * Clear apic_assist portion of f(struct hv_vp_assist_page
++		 * only, there can be valuable data in the rest which needs
++		 * to be preserved e.g. on migration.
++		 */
++		if (__clear_user((void __user *)addr, sizeof(u32)))
+ 			return 1;
+ 		hv->hv_vapic = data;
+ 		kvm_vcpu_mark_page_dirty(vcpu, gfn);
+-- 
+2.14.4
 
-
-Yeah this probably will help ;)
