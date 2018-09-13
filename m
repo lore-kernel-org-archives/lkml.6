@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D84AC07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:45:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 838A7C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:45:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5448620881
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:45:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5448620881
+	by mail.kernel.org (Postfix) with ESMTP id 4543B20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:45:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4543B20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730132AbeIMSyp (ORCPT
+        id S1730142AbeIMSyt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:54:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60674 "EHLO
+        Thu, 13 Sep 2018 14:54:49 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60686 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728813AbeIMSyp (ORCPT
+        with ESMTP id S1728549AbeIMSyt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:54:45 -0400
+        Thu, 13 Sep 2018 14:54:49 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 69696D10;
-        Thu, 13 Sep 2018 13:45:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8EE80D10;
+        Thu, 13 Sep 2018 13:45:16 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gabriel Bercarug <bercarug@amazon.com>,
-        =?UTF-8?q?Roger=20Pau=20Monn=C3=A9?= <roger.pau@citrix.com>,
-        Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        stable@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 063/115] xen/balloon: fix balloon initialization for PVH Dom0
-Date:   Thu, 13 Sep 2018 15:31:23 +0200
-Message-Id: <20180913131827.583224588@linuxfoundation.org>
+Subject: [PATCH 4.14 064/115] PCI: mvebu: Fix I/O space end address calculation
+Date:   Thu, 13 Sep 2018 15:31:24 +0200
+Message-Id: <20180913131827.637537775@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -54,43 +53,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Roger Pau Monne <roger.pau@citrix.com>
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 
-[ Upstream commit 3596924a233e45aa918c961a902170fc4916461b ]
+[ Upstream commit dfd0309fd7b30a5baffaf47b2fccb88b46d64d69 ]
 
-The current balloon code tries to calculate a delta factor for the
-balloon target when running in HVM mode in order to account for memory
-used by the firmware.
+pcie->realio.end should be the address of last byte of the area,
+therefore using resource_size() of another resource is not correct, we
+must substract 1 to get the address of the last byte.
 
-This workaround for memory accounting doesn't work properly on a PVH
-Dom0, that has a static-max value different from the target value even
-at startup. Note that this is not a problem for DomUs because guests are
-started with a static-max value that matches the amount of RAM in the
-memory map.
-
-Fix this by forcefully setting target_diff for Dom0, regardless of
-it's mode.
-
-Reported-by: Gabriel Bercarug <bercarug@amazon.com>
-Signed-off-by: Roger Pau Monné <roger.pau@citrix.com>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Fixes: 11be65472a427 ("PCI: mvebu: Adapt to the new device tree layout")
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/xen/xen-balloon.c |    2 +-
+ drivers/pci/host/pci-mvebu.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/xen/xen-balloon.c
-+++ b/drivers/xen/xen-balloon.c
-@@ -81,7 +81,7 @@ static void watch_target(struct xenbus_w
- 			static_max = new_target;
- 		else
- 			static_max >>= PAGE_SHIFT - 10;
--		target_diff = xen_pv_domain() ? 0
-+		target_diff = (xen_pv_domain() || xen_initial_domain()) ? 0
- 				: static_max - balloon_stats.target_pages;
- 	}
+--- a/drivers/pci/host/pci-mvebu.c
++++ b/drivers/pci/host/pci-mvebu.c
+@@ -1220,7 +1220,7 @@ static int mvebu_pcie_probe(struct platf
+ 		pcie->realio.start = PCIBIOS_MIN_IO;
+ 		pcie->realio.end = min_t(resource_size_t,
+ 					 IO_SPACE_LIMIT,
+-					 resource_size(&pcie->io));
++					 resource_size(&pcie->io) - 1);
+ 	} else
+ 		pcie->realio = pcie->io;
  
 
 
