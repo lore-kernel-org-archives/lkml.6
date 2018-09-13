@@ -2,276 +2,223 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B024C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 00:13:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E89B2C070C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 00:22:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFB1421477
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 00:13:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFB1421477
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id 83EE5204EC
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 00:22:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83EE5204EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728208AbeIMFUY (ORCPT
+        id S1726912AbeIMF3G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 01:20:24 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:38576 "EHLO ale.deltatee.com"
+        Thu, 13 Sep 2018 01:29:06 -0400
+Received: from mga05.intel.com ([192.55.52.43]:26919 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726365AbeIMFS6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 01:18:58 -0400
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1g0FEl-0006bE-NR; Wed, 12 Sep 2018 18:12:03 -0600
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1g0FEl-00015Z-Hj; Wed, 12 Sep 2018 18:11:59 -0600
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org
-Cc:     Stephen Bates <sbates@raithlin.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        id S1726111AbeIMF3G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 01:29:06 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Sep 2018 17:21:07 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,366,1531810800"; 
+   d="scan'208";a="232421741"
+Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
+  by orsmga004.jf.intel.com with ESMTP; 12 Sep 2018 17:19:55 -0700
+Received: from shsmsx104.ccr.corp.intel.com (10.239.4.70) by
+ FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Wed, 12 Sep 2018 17:19:47 -0700
+Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.205]) by
+ SHSMSX104.ccr.corp.intel.com ([169.254.5.143]) with mapi id 14.03.0319.002;
+ Thu, 13 Sep 2018 08:19:45 +0800
+From:   "Tian, Kevin" <kevin.tian@intel.com>
+To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
         Alex Williamson <alex.williamson@redhat.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Date:   Wed, 12 Sep 2018 18:11:49 -0600
-Message-Id: <20180913001156.4115-7-logang@deltatee.com>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20180913001156.4115-1-logang@deltatee.com>
-References: <20180913001156.4115-1-logang@deltatee.com>
+        "Kirti Wankhede" <kwankhede@nvidia.com>
+CC:     "Raj, Ashok" <ashok.raj@intel.com>,
+        "Bie, Tiwei" <tiwei.bie@intel.com>,
+        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Sun, Yi Y" <yi.y.sun@intel.com>,
+        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+Subject: RE: [RFC PATCH v2 00/10] vfio/mdev: IOMMU aware mediated device
+Thread-Topic: [RFC PATCH v2 00/10] vfio/mdev: IOMMU aware mediated device
+Thread-Index: AQHUQBd63AINefsFr0WaDhgLiguCyqTpPryAgAI/kgCAAP6ogIAA7miA
+Date:   Thu, 13 Sep 2018 00:19:44 +0000
+Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D191300D06@SHSMSX101.ccr.corp.intel.com>
+References: <20180830040922.30426-1-baolu.lu@linux.intel.com>
+ <380dc154-5d72-0085-2056-fa466789e1ab@arm.com>
+ <aa1ff748-c2ec-acc0-f1d9-cdff2b131e58@linux.intel.com>
+ <3602f8c1-df17-4894-1bcc-4d779f9aa7fd@arm.com>
+In-Reply-To: <3602f8c1-df17-4894-1bcc-4d779f9aa7fd@arm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMGI1NWQwOTEtYTEyNi00NjQ3LWE2MTItMTcyODVlNDVkMTZlIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiV0FKeVB6cmswWXhCOG16MlhxXC8wSEJLUWRVWUp2aUVlNWp1MUI4MWFcL0JUT3BYTkxJaGsrSlNwR0pQWG9EdHBkIn0=
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-nvme@lists.infradead.org, linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org, linux-block@vger.kernel.org, sbates@raithlin.com, hch@lst.de, sagi@grimberg.me, bhelgaas@google.com, jgg@mellanox.com, maxg@mellanox.com, keith.busch@intel.com, dan.j.williams@intel.com, benh@kernel.crashing.org, jglisse@redhat.com, alex.williamson@redhat.com, christian.koenig@amd.com, axboe@kernel.dk, logang@deltatee.com, corbet@lwn.net
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v6 06/13] PCI/P2PDMA: Add P2P DMA driver writer's documentation
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a restructured text file describing how to write drivers
-with support for P2P DMA transactions. The document describes
-how to use the APIs that were added in the previous few
-commits.
-
-Also adds an index for the PCI documentation tree even though this
-is the only PCI document that has been converted to restructured text
-at this time.
-
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Cc: Jonathan Corbet <corbet@lwn.net>
----
- Documentation/driver-api/pci/index.rst  |   1 +
- Documentation/driver-api/pci/p2pdma.rst | 170 ++++++++++++++++++++++++
- 2 files changed, 171 insertions(+)
- create mode 100644 Documentation/driver-api/pci/p2pdma.rst
-
-diff --git a/Documentation/driver-api/pci/index.rst b/Documentation/driver-api/pci/index.rst
-index eaf20b24bf7d..ecc7416c523b 100644
---- a/Documentation/driver-api/pci/index.rst
-+++ b/Documentation/driver-api/pci/index.rst
-@@ -11,6 +11,7 @@ The Linux PCI driver implementer's API guide
-    :maxdepth: 2
- 
-    pci
-+   p2pdma
- 
- .. only::  subproject and html
- 
-diff --git a/Documentation/driver-api/pci/p2pdma.rst b/Documentation/driver-api/pci/p2pdma.rst
-new file mode 100644
-index 000000000000..38cfd9295a72
---- /dev/null
-+++ b/Documentation/driver-api/pci/p2pdma.rst
-@@ -0,0 +1,170 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+============================
-+PCI Peer-to-Peer DMA Support
-+============================
-+
-+The PCI bus has pretty decent support for performing DMA transfers
-+between two devices on the bus. This type of transaction is henceforth
-+called Peer-to-Peer (or P2P). However, there are a number of issues that
-+make P2P transactions tricky to do in a perfectly safe way.
-+
-+One of the biggest issues is that PCI doesn't require forwarding
-+transactions between hierarchy domains, and in PCIe, each Root Port
-+defines a separate hierarchy domain. To make things worse, there is no
-+simple way to determine if a given Root Complex supports this or not.
-+(See PCIe r4.0, sec 1.3.1). Therefore, as of this writing, the kernel
-+only supports doing P2P when the endpoints involved are all behind the
-+same PCI bridge, as such devices are all in the same PCI hierarchy
-+domain, and the spec guarantees that all transactions within the
-+hierarchy will be routable, but it does not require routing
-+between hierarchies.
-+
-+The second issue is that to make use of existing interfaces in Linux,
-+memory that is used for P2P transactions needs to be backed by struct
-+pages. However, PCI BARs are not typically cache coherent so there are
-+a few corner case gotchas with these pages so developers need to
-+be careful about what they do with them.
-+
-+
-+Driver Writer's Guide
-+=====================
-+
-+In a given P2P implementation there may be three or more different
-+types of kernel drivers in play:
-+
-+* Provider - A driver which provides or publishes P2P resources like
-+  memory or doorbell registers to other drivers.
-+* Client - A driver which makes use of a resource by setting up a
-+  DMA transaction to or from it.
-+* Orchestrator - A driver which orchestrates the flow of data between
-+  clients and providers.
-+
-+In many cases there could be overlap between these three types (i.e.,
-+it may be typical for a driver to be both a provider and a client).
-+
-+For example, in the NVMe Target Copy Offload implementation:
-+
-+* The NVMe PCI driver is both a client, provider and orchestrator
-+  in that it exposes any CMB (Controller Memory Buffer) as a P2P memory
-+  resource (provider), it accepts P2P memory pages as buffers in requests
-+  to be used directly (client) and it can also make use the CMB as
-+  submission queue entries.
-+* The RDMA driver is a client in this arrangement so that an RNIC
-+  can DMA directly to the memory exposed by the NVMe device.
-+* The NVMe Target driver (nvmet) can orchestrate the data from the RNIC
-+  to the P2P memory (CMB) and then to the NVMe device (and vice versa).
-+
-+This is currently the only arrangement supported by the kernel but
-+one could imagine slight tweaks to this that would allow for the same
-+functionality. For example, if a specific RNIC added a BAR with some
-+memory behind it, its driver could add support as a P2P provider and
-+then the NVMe Target could use the RNIC's memory instead of the CMB
-+in cases where the NVMe cards in use do not have CMB support.
-+
-+
-+Provider Drivers
-+----------------
-+
-+A provider simply needs to register a BAR (or a portion of a BAR)
-+as a P2P DMA resource using :c:func:`pci_p2pdma_add_resource()`.
-+This will register struct pages for all the specified memory.
-+
-+After that it may optionally publish all of its resources as
-+P2P memory using :c:func:`pci_p2pmem_publish()`. This will allow
-+any orchestrator drivers to find and use the memory. When marked in
-+this way, the resource must be regular memory with no side effects.
-+
-+For the time being this is fairly rudimentary in that all resources
-+are typically going to be P2P memory. Future work will likely expand
-+this to include other types of resources like doorbells.
-+
-+
-+Client Drivers
-+--------------
-+
-+A client driver typically only has to conditionally change its DMA map
-+routine to use the mapping function :c:func:`pci_p2pdma_map_sg()` instead
-+of the usual :c:func:`dma_map_sg()` function. Memory mapped in this
-+way does not need to be unmapped.
-+
-+The client may also, optionally, make use of
-+:c:func:`is_pci_p2pdma_page()` to determine when to use the P2P mapping
-+functions and when to use the regular mapping functions. In some
-+situations, it may be more appropriate to use a flag to indicate a
-+given request is P2P memory and map appropriately (for example the
-+block layer uses a flag to keep P2P memory out of queues that do not
-+have P2P client support). It is important to ensure that struct pages that
-+back P2P memory stay out of code that does not have support for them.
-+
-+
-+Orchestrator Drivers
-+--------------------
-+
-+The first task an orchestrator driver must do is compile a list of
-+all client devices that will be involved in a given transaction. For
-+example, the NVMe Target driver creates a list including all NVMe
-+devices and the RNIC in use. The list is stored as an anonymous struct
-+list_head which must be initialized with the usual INIT_LIST_HEAD.
-+The following functions may then be used to add to, remove from and free
-+the list of clients with the functions :c:func:`pci_p2pdma_add_client()`,
-+:c:func:`pci_p2pdma_remove_client()` and
-+:c:func:`pci_p2pdma_client_list_free()`.
-+
-+With the client list in hand, the orchestrator may then call
-+:c:func:`pci_p2pmem_find()` to obtain a published P2P memory provider
-+that is supported (behind the same root port) as all the clients. If more
-+than one provider is supported, the one nearest to all the clients will
-+be chosen first. If there are more than one provider is an equal distance
-+away, the one returned will be chosen at random. This function returns the PCI
-+device to use for the provider with a reference taken and therefore
-+when it's no longer needed it should be returned with pci_dev_put().
-+
-+Alternatively, if the orchestrator knows (via some other means)
-+which provider it wants to use it may use :c:func:`pci_has_p2pmem()`
-+to determine if it has P2P memory and :c:func:`pci_p2pdma_distance()`
-+to determine the cumulative distance between it and a potential
-+list of clients.
-+
-+With a supported provider in hand, the driver can then call
-+:c:func:`pci_p2pdma_assign_provider()` to assign the provider
-+to the client list. This function returns false if any of the
-+clients are unsupported by the provider.
-+
-+Once a provider is assigned to a client list via either
-+:c:func:`pci_p2pmem_find()` or :c:func:`pci_p2pdma_assign_provider()`,
-+the list is permanently bound to the provider such that any new clients
-+added to the list must be supported by the already selected provider.
-+If they are not supported, :c:func:`pci_p2pdma_add_client()` will return
-+an error. In this way, orchestrators are free to add and remove devices
-+without having to recheck support or tear down existing transfers to
-+change P2P providers.
-+
-+Once a provider is selected, the orchestrator can then use
-+:c:func:`pci_alloc_p2pmem()` and :c:func:`pci_free_p2pmem()` to
-+allocate P2P memory from the provider. :c:func:`pci_p2pmem_alloc_sgl()`
-+and :c:func:`pci_p2pmem_free_sgl()` are convenience functions for
-+allocating scatter-gather lists with P2P memory.
-+
-+Struct Page Caveats
-+-------------------
-+
-+Driver writers should be very careful about not passing these special
-+struct pages to code that isn't prepared for it. At this time, the kernel
-+interfaces do not have any checks for ensuring this. This obviously
-+precludes passing these pages to userspace.
-+
-+P2P memory is also technically IO memory but should never have any side
-+effects behind it. Thus, the order of loads and stores should not be important
-+and ioreadX(), iowriteX() and friends should not be necessary.
-+However, as the memory is not cache coherent, if access ever needs to
-+be protected by a spinlock then :c:func:`mmiowb()` must be used before
-+unlocking the lock. (See ACQUIRES VS I/O ACCESSES in
-+Documentation/memory-barriers.txt)
-+
-+
-+P2P DMA Support Library
-+=====================
-+
-+.. kernel-doc:: drivers/pci/p2pdma.c
-+   :export:
--- 
-2.19.0
-
+PiBGcm9tOiBKZWFuLVBoaWxpcHBlIEJydWNrZXINCj4gU2VudDogVGh1cnNkYXksIFNlcHRlbWJl
+ciAxMywgMjAxOCAxOjU0IEFNDQo+IA0KPiBPbiAxMi8wOS8yMDE4IDAzOjQyLCBMdSBCYW9sdSB3
+cm90ZToNCj4gPiBIaSwNCj4gPg0KPiA+IE9uIDA5LzExLzIwMTggMTI6MjIgQU0sIEplYW4tUGhp
+bGlwcGUgQnJ1Y2tlciB3cm90ZToNCj4gPj4gSGksDQo+ID4+DQo+ID4+IE9uIDMwLzA4LzIwMTgg
+MDU6MDksIEx1IEJhb2x1IHdyb3RlOg0KPiA+Pj4gQmVsb3cgQVBJcyBhcmUgaW50cm9kdWNlZCBp
+biB0aGUgSU9NTVUgZ2x1ZSBmb3IgZGV2aWNlIGRyaXZlcnMgdG8gdXNlDQo+ID4+PiB0aGUgZmlu
+ZXIgZ3JhbnVsYXJpdHkgdHJhbnNsYXRpb24uDQo+ID4+Pg0KPiA+Pj4gKiBpb21tdV9jYXBhYmxl
+KElPTU1VX0NBUF9BVVhfRE9NQUlOKQ0KPiA+Pj4gICAgLSBSZXByZXNlbnRzIHRoZSBhYmlsaXR5
+IGZvciBzdXBwb3J0aW5nIG11bHRpcGxlIGRvbWFpbnMgcGVyIGRldmljZQ0KPiA+Pj4gICAgICAo
+YS5rLmEuIGZpbmVyIGdyYW51bGFyaXR5IHRyYW5zbGF0aW9ucykgb2YgdGhlIElPTU1VIGhhcmR3
+YXJlLg0KPiA+Pg0KPiA+PiBpb21tdV9jYXBhYmxlKCkgY2Fubm90IHJlcHJlc2VudCBoYXJkd2Fy
+ZSBjYXBhYmlsaXRpZXMsIHdlIG5lZWQNCj4gPj4gc29tZXRoaW5nIGVsc2UgZm9yIHN5c3RlbXMg
+d2l0aCBtdWx0aXBsZSBJT01NVXMgdGhhdCBoYXZlIGRpZmZlcmVudA0KPiA+PiBjYXBzLiBIb3cg
+YWJvdXQgaW9tbXVfZG9tYWluX2dldF9hdHRyIG9uIHRoZSBkZXZpY2UncyBkb21haW4NCj4gaW5z
+dGVhZD8NCj4gPg0KPiA+IERvbWFpbiBpcyBub3QgYSBnb29kIGNob2ljZSBmb3IgcGVyIGlvbW11
+IGNhcCBxdWVyeS4gQSBkb21haW4gbWlnaHQgYmUNCj4gPiBhdHRhY2hlZCB0byBkZXZpY2VzIGJl
+bG9uZ2luZyB0byBkaWZmZXJlbnQgaW9tbXUncy4NCj4gPg0KPiA+IEhvdyBhYm91dCBhbiBBUEkg
+d2l0aCBkZXZpY2Ugc3RydWN0dXJlIGFzIHBhcmFtZXRlcj8gQSBkZXZpY2UgYWx3YXlzDQo+ID4g
+YmVsb25ncyB0byBhIHNwZWNpZmljIGlvbW11LiBUaGlzIEFQSSBpcyBzdXBwb3NlZCB0byBiZSB1
+c2VkIHRoZQ0KPiA+IGRldmljZSBkcml2ZXIuDQo+IA0KPiBBaCByaWdodCwgZG9tYWluIGF0dHJp
+YnV0ZXMgd29uJ3Qgd29yay4gWW91ciBzdWdnZXN0aW9uIHNlZW1zIG1vcmUNCj4gc3VpdGFibGUs
+IGJ1dCBtYXliZSB1c2VycyBjYW4gc2ltcGx5IHRyeSB0byBlbmFibGUgYXV4aWxpYXJ5IGRvbWFp
+bnMNCj4gZmlyc3QsIGFuZCBjb25jbHVkZSB0aGF0IHRoZSBJT01NVSBkb2Vzbid0IHN1cHBvcnQg
+aXQgaWYgaXQgcmV0dXJucyBhbiBlcnJvcg0KPiANCj4gPj4+ICogaW9tbXVfZW4oZGlzKWFibGVf
+YXV4X2RvbWFpbihzdHJ1Y3QgZGV2aWNlICpkZXYpDQo+ID4+PiAgICAtIEVuYWJsZS9kaXNhYmxl
+IHRoZSBtdWx0aXBsZSBkb21haW5zIGNhcGFiaWxpdHkgZm9yIGEgZGV2aWNlDQo+ID4+PiAgICAg
+IHJlZmVyZW5jZWQgYnkgQGRldi4NCj4gDQo+IEl0IHN0cmlrZXMgbWUgbm93IHRoYXQgaW4gdGhl
+IElPTU1VIGRyaXZlciwNCj4gaW9tbXVfZW5hYmxlL2Rpc2FibGVfYXV4X2RvbWFpbigpIHdpbGwg
+ZG8gdGhlIHNhbWUgdGhpbmcgYXMNCj4gaW9tbXVfc3ZhX2RldmljZV9pbml0L3NodXRkb3duKCkN
+Cj4gKGh0dHBzOi8vd3d3LnNwaW5pY3MubmV0L2xpc3RzL2FybS1rZXJuZWwvbXNnNjUxODk2Lmh0
+bWwpLiBTb21lIElPTU1VDQo+IGRyaXZlcnMgd2FudCB0byBlbmFibGUgUEFTSUQgYW5kIGFsbG9j
+YXRlIFBBU0lEIHRhYmxlcyBvbmx5IHdoZW4NCj4gcmVxdWVzdGVkIGJ5IHVzZXJzLCBpbiB0aGUg
+c3ZhX2luaXRfZGV2aWNlIElPTU1VIG9wIChzZWUgSm9lcmcncyBjb21tZW50DQo+IGxhc3QgeWVh
+ciBodHRwczovL3BhdGNod29yay5rZXJuZWwub3JnL3BhdGNoLzk5ODkzMDcvIzIxMDI1NDI5KS4g
+TWF5YmUNCj4gd2UgY291bGQgc2ltcGx5IGFkZCBhIGZsYWcgdG8gaW9tbXVfc3ZhX2RldmljZV9p
+bml0Pw0KDQpXZSBjb3VsZCBjb21iaW5lLCBidXQgZGVmaW5pdGVseSAnc3ZhJyBzaG91bGQgYmUg
+cmVtb3ZlZCA6LSkNCg0KPiANCj4gPj4+ICogaW9tbXVfYXV4aWxpYXJ5X2lkKHN0cnVjdCBpb21t
+dV9kb21haW4gKmRvbWFpbikNCj4gPj4+ICAgIC0gUmV0dXJuIHRoZSBpbmRleCB2YWx1ZSB1c2Vk
+IGZvciBmaW5lci1ncmFudWxhcml0eSBETUEgdHJhbnNsYXRpb24uDQo+ID4+PiAgICAgIFRoZSBz
+cGVjaWZpYyBkZXZpY2UgZHJpdmVyIG5lZWRzIHRvIGZlZWQgdGhlIGhhcmR3YXJlIHdpdGggdGhp
+cw0KPiA+Pj4gICAgICB2YWx1ZSwgc28gdGhhdCBoYXJkd2FyZSBkZXZpY2UgY291bGQgaXNzdWUg
+dGhlIERNQSB0cmFuc2FjdGlvbiB3aXRoDQo+ID4+PiAgICAgIHRoaXMgdmFsdWUgdGFnZ2VkLg0K
+PiA+Pg0KPiA+PiBUaGlzIGNvdWxkIGFsc28gcmV1c2UgaW9tbXVfZG9tYWluX2dldF9hdHRyLg0K
+PiA+Pg0KPiA+Pg0KPiA+PiBNb3JlIGdlbmVyYWxseSBJJ20gaGF2aW5nIHRyb3VibGUgdW5kZXJz
+dGFuZGluZyBob3cgYXV4aWxpYXJ5IGRvbWFpbnMNCj4gPj4gd2lsbCBiZSB1c2VkLiBTbyBWRklP
+IGFsbG9jYXRlcyBQQVNJRHMgbGlrZSB0aGlzOg0KPiA+DQo+ID4gQXMgSSB3cm90ZSBpbiB0aGUg
+Y292ZXIgbGV0dGVyLCAiYXV4aWxpYXJ5IGRvbWFpbiIgaXMganVzdCBhIG5hbWUgdG8NCj4gPiBl
+YXNlIGRpc2N1c3Npb24uIEl0J3MgYWN0dWFsbHkgaGFzIG5vIHNwZWNpYWwgbWVhbmluZyAod2Ug
+dGhpbmsgYSBkb21haW4NCj4gPiBhcyBhbiBpc29sYXRpb24gYm91bmRhcnkgd2hpY2ggY291bGQg
+YmUgdXNlZCBieSB0aGUgSU9NTVUgdG8gaXNvbGF0ZQ0KPiA+IHRoZSBETUEgdHJhbnNhY3Rpb25z
+IG91dCBvZiBhIFBDSSBkZXZpY2Ugb3IgcGFydGlhbCBvZiBpdCkuDQo+ID4NCj4gPiBTbyBkcml2
+ZXJzIGxpa2UgdmZpbyBzaG91bGQgc2VlIG5vIGRpZmZlcmVuY2Ugd2hlbiB1c2UgYW4gYXV4aWxp
+YXJ5DQo+ID4gZG9tYWluLiBUaGUgYXV4aWxpYXJ5IGRvbWFpbiBpcyBub3QgYXdhcmUgb3V0IG9m
+IGlvbW11IGRyaXZlci4NCj4gDQo+IEZvciBhbiBhdXhpbGlhcnkgZG9tYWluLCBWRklPIGRvZXMg
+bmVlZCB0byByZXRyaWV2ZSB0aGUgUEFTSUQgYW5kIHdyaXRlDQo+IGl0IHRvIGhhcmR3YXJlLiBC
+dXQgYmVpbmcgYWJsZSB0byByZXVzZQ0KPiBpb21tdV9tYXAvdW5tYXAvaW92YV90b19waHlzL2V0
+Yw0KPiBvbiB0aGUgYXV4aWxpYXJ5IGRvbWFpbiBpcyBuaWNlLg0KPiANCj4gPj4gKiBpb21tdV9l
+bmFibGVfYXV4X2RvbWFpbihwYXJlbnRfZGV2KQ0KPiA+PiAqIGlvbW11X2RvbWFpbl9hbGxvYygp
+IC0+IGRvbTENCj4gPj4gKiBpb21tdV9kb21haW5fYWxsb2MoKSAtPiBkb20yDQo+ID4+ICogaW9t
+bXVfYXR0YWNoX2RldmljZShkb20xLCBwYXJlbnRfZGV2KQ0KPiA+PiAgICAtPiBkb20xIGdldHMg
+UEFTSUQgIzENCj4gPj4gKiBpb21tdV9hdHRhY2hfZGV2aWNlKGRvbTIsIHBhcmVudF9kZXYpDQo+
+ID4+ICAgIC0+IGRvbTIgZ2V0cyBQQVNJRCAjMg0KPiA+Pg0KPiA+PiBUaGVuIEknbSBub3Qgc3Vy
+ZSBhYm91dCB0aGUgbmV4dCBzdGVwcywgd2hlbiB1c2Vyc3BhY2UgZG9lcw0KPiA+PiBWRklPX0lP
+TU1VX01BUF9ETUEgb3IgVkZJT19JT01NVV9CSU5EIG9uIGFuIG1kZXYncw0KPiBjb250YWluZXIu
+IElzIHRoZQ0KPiA+PiBmb2xsb3dpbmcgdXNlIGFjY3VyYXRlPw0KPiA+Pg0KPiA+PiBGb3IgdGhl
+IHNpbmdsZSB0cmFuc2xhdGlvbiBsZXZlbDoNCj4gPj4gKiBpb21tdV9tYXAoZG9tMSwgLi4uKSB1
+cGRhdGVzIGZpcnN0LWxldmVsL3NlY29uZC1sZXZlbCBwZ3RhYmxlcyBmb3INCj4gPj4gUEFTSUQg
+IzENCj4gPj4gKiBpb21tdV9tYXAoZG9tMiwgLi4uKSB1cGRhdGVzIGZpcnN0LWxldmVsL3NlY29u
+ZC1sZXZlbCBwZ3RhYmxlcyBmb3INCj4gPj4gUEFTSUQgIzINCj4gPj4NCj4gPj4gTmVzdGVkIHRy
+YW5zbGF0aW9uOg0KPiA+PiAqIGlvbW11X21hcChkb20xLCAuLi4pIHVwZGF0ZXMgc2Vjb25kLWxl
+dmVsIHBndGFibGVzIGZvciBQQVNJRCAjMQ0KPiA+PiAqIGlvbW11X2JpbmRfdGFibGUoZG9tMSwg
+Li4uKSBiaW5kcyBmaXJzdC1sZXZlbCBwZ3RhYmxlcywgcHJvdmlkZWQgYnkNCj4gPj4gdGhlIGd1
+ZXN0LCBmb3IgUEFTSUQgIzENCj4gPj4gKiBpb21tdV9tYXAoZG9tMiwgLi4uKSB1cGRhdGVzIHNl
+Y29uZC1sZXZlbCBwZ3RhYmxlcyBmb3IgUEFTSUQgIzINCj4gPj4gKiBpb21tdV9iaW5kX3RhYmxl
+KGRvbTIsIC4uLikgYmluZHMgZmlyc3QtbGV2ZWwgcGd0YWJsZXMgZm9yIFBBU0lEICMyDQo+ID4+
+Pg0KPiA+PiBJJ20gdHJ5aW5nIHRvIHVuZGVyc3RhbmQgaG93IHRvIGltcGxlbWVudCB0aGlzIHdp
+dGggU01NVSBhbmQgb3RoZXINCj4gPg0KPiA+IFRoaXMgaXMgcHJvcG9zZWQgZm9yIGFyY2hpdGVj
+dHVyZXMgd2hpY2ggc3VwcG9ydCBmaW5lciBncmFudWxhcml0eQ0KPiA+IHNlY29uZCBsZXZlbCB0
+cmFuc2xhdGlvbiB3aXRoIG5vIGltcGFjdCBvbiBhcmNoaXRlY3R1cmVzIHdoaWNoIG9ubHkNCj4g
+PiBzdXBwb3J0IFNvdXJjZSBJRCBvciB0aGUgc2ltaWxhciBncmFudWxhcml0eS4NCj4gDQo+IEp1
+c3QgdG8gYmUgY2xlYXIsIGluIHRoaXMgcGFyYWdyYXBoIHlvdSdyZSBvbmx5IHJlZmVycmluZyB0
+byB0aGUNCj4gTmVzdGVkL3NlY29uZC1sZXZlbCB0cmFuc2xhdGlvbiBmb3IgbWRldiwgd2hpY2gg
+aXMgc3BlY2lmaWMgdG8gdnQtZA0KPiByZXYzPyBPdGhlciBhcmNoaXRlY3R1cmVzIGNhbiBzdGls
+bCBkbyBmaXJzdC1sZXZlbCB0cmFuc2xhdGlvbiB3aXRoDQo+IFBBU0lELCB0byBzdXBwb3J0IHNv
+bWUgdXNlLWNhc2VzIG9mIElPTU1VIGF3YXJlIG1lZGlhdGVkIGRldmljZQ0KPiAoYXNzaWduaW5n
+IG1kZXZzIHRvIHVzZXJzcGFjZSBkcml2ZXJzLCBmb3IgZXhhbXBsZSkNCg0KeWVzLiBhdXggZG9t
+YWluIGNvbmNlcHQgYXBwbGllcyBvbmx5IHRvIHZ0LWQgcmV2MyB3aGljaCBpbnRyb2R1Y2VzDQpz
+Y2FsYWJsZSBtb2RlLiBDYXJlIGlzIHRha2VuIHRvIGF2b2lkIGJyZWFraW5nIHVzYWdlcyBvbiBl
+eGlzdGluZw0KYXJjaGl0ZWN0dXJlcy4NCg0Kb25lIG5vdGUuIEFzc2lnbmluZyBtZGV2cyB0byB1
+c2VyIHNwYWNlIGFsb25lIGRvZXNuJ3QgaW1wbHkgSU9NTVUNCmF3YXJlLiBBbGwgZXhpc3Rpbmcg
+bWRldiB1c2FnZXMgdXNlIHNvZnR3YXJlIG9yIHByb3ByaWV0YXJ5IG1ldGhvZHMgdG8NCmlzb2xh
+dGUgRE1BLiBUaGVyZSBpcyBvbmx5IG9uZSBwb3RlbnRpYWwgSU9NTVUgYXdhcmUgbWRldiB1c2Fn
+ZSANCndoaWNoIHdlIHRhbGtlZCBub3QgcmVseSBvbiB2dC1kIHJldjMgc2NhbGFibGUgbW9kZSAt
+IHdyYXAgYSByYW5kb20gDQpQQ0kgZGV2aWNlIGludG8gYSBzaW5nbGUgbWRldiBpbnN0YW5jZSAo
+bm8gc2hhcmluZykuIEluIHRoYXQgY2FzZSBtZGV2IA0KaW5oZXJpdHMgUklEIGZyb20gcGFyZW50
+IFBDSSBkZXZpY2UsIHRodXMgaXMgaXNvbGF0ZWQgYnkgSU9NTVUgaW4gUklEIA0KZ3JhbnVsYXIu
+IE91ciBSRkMgc3VwcG9ydHMgdGhpcyB1c2FnZSB0b28uIEluIFZGSU8gdHdvIHVzYWdlcyAoUEFT
+SUQtDQpiYXNlZCBhbmQgUklELWJhc2VkKSB1c2Ugc2FtZSBjb2RlIHBhdGgsIGkuZS4gYWx3YXlz
+IGJpbmRpbmcgZG9tYWluIHRvDQp0aGUgcGFyZW50IGRldmljZSBvZiBtZGV2LiBCdXQgd2l0aGlu
+IElPTU1VIHRoZXkgZ28gZGlmZmVyZW50IHBhdGhzLg0KUEFTSUQtYmFzZWQgd2lsbCBnbyB0byBh
+dXgtZG9tYWluIGFzIGlvbW11X2VuYWJsZV9hdXhfZG9tYWluDQpoYXMgYmVlbiBjYWxsZWQgb24g
+dGhhdCBkZXZpY2UuIFJJRC1iYXNlZCB3aWxsIGZvbGxvdyBleGlzdGluZyANCnVubWFuYWdlZCBk
+b21haW4gcGF0aCwgYXMgaWYgaXQgaXMgcGFyZW50IGRldmljZSBhc3NpZ25tZW50Lg0KDQo+IA0K
+PiA+PiBJT01NVXMuIEl0J3Mgbm90IGEgY2xlYW4gZml0IHNpbmNlIHdlIGhhdmUgYSBzaW5nbGUg
+ZG9tYWluIHRvIGhvbGQgdGhlDQo+ID4+IHNlY29uZC1sZXZlbCBwZ3RhYmxlcy4NCj4gPg0KPiA+
+IERvIHlvdSBtaW5kIGV4cGxhaW5pbmcgd2h5IGEgZG9tYWluIGhvbGRzIG11bHRpcGxlIHNlY29u
+ZC1sZXZlbA0KPiA+IHBndGFibGVzPyBTaG91bGRuJ3QgdGhhdCBiZSBtdWx0aXBsZSBkb21haW5z
+Pw0KPiANCj4gSSBkaWRuJ3QgbWVhbiBhIHNpbmdsZSBkb21haW4gaG9sZGluZyBtdWx0aXBsZSBz
+ZWNvbmQtbGV2ZWwgcGd0YWJsZXMsDQo+IGJ1dCBhIHNpbmdsZSBkb21haW4gaG9sZGluZyBhIHNp
+bmdsZSBzZXQgb2Ygc2Vjb25kLWxldmVsIHBndGFibGVzIGZvcg0KPiBhbGwgbWRldnMuIEJ1dCBs
+ZXQncyBpZ25vcmUgdGhhdCwgbWRldiBhbmQgc2Vjb25kLWxldmVsIGlzbid0IHJlYWxpc3RpYw0K
+PiBmb3IgYXJtIFNNTVUuDQoNCnllcy4gc2luZ2xlIHNlY29uZC1sZXZlbCBkb2Vzbid0IGFsbG93
+IG11bHRpcGxlIG1kZXZzIChlYWNoIG1kZXYNCmFzc2lnbmVkIHRvIGRpZmZlcmVudCB1c2VyIHBy
+b2Nlc3Mgb3IgVk0pLiB0aGF0IGlzIHdoeSB2dC1kIHJldjMNCmludHJvZHVjZXMgc2NhbGFibGUg
+bW9kZS4gOi0pDQoNCj4gDQo+ID4+IFRoZW4gYWdhaW4sIHRoZSBuZXN0ZWQgY2FzZSBwcm9iYWJs
+eSBkb2Vzbid0DQo+ID4+IG1hdHRlciBmb3IgdXMgLSB3ZSBtaWdodCBhcyB3ZWxsIGFzc2lnbiB0
+aGUgcGFyZW50IGRpcmVjdGx5LCBzaW5jZSBhbGwNCj4gPj4gbWRldnMgaGF2ZSB0aGUgc2FtZSBz
+ZWNvbmQtbGV2ZWwgYW5kIGNhbiBvbmx5IGJlIGFzc2lnbmVkIHRvIHRoZSBzYW1lDQo+IFZNLg0K
+PiA+Pg0KPiA+Pg0KPiA+PiBBbHNvLCBjYW4gbm9uLVZGSU8gZGV2aWNlIGRyaXZlcnMgdXNlIGF1
+eGlsaWFyeSBkb21haW5zIHRvIGRvDQo+IG1hcC91bm1hcA0KPiA+PiBvbiBQQVNJRHM/IFRoZXkg
+YXJlIGFza2luZyB0byBkbyB0aGF0IGFuZCBJJ20gcHJvcG9zaW5nIHRoZSBwcml2YXRlDQo+ID4+
+IFBBU0lEIHRoaW5nLCBidXQgc2luY2UgYXV4IGRvbWFpbnMgcHJvdmlkZSBhIHNpbWlsYXIgZmVh
+dHVyZSB3ZSBzaG91bGQNCj4gPj4gcHJvYmFibHkgY29udmVyZ2Ugc29tZWhvdy4NCj4gPg0KPiA+
+IFllcywgYW55IG5vbi1WRklPIGRldmljZSBkcml2ZXIgY291bGQgdXNlIGF1eCBkb21haW4gYXMg
+d2VsbC4gVGhlIHVzZQ0KPiA+IG1vZGVsIGlzOg0KPiA+DQo+ID4gaW9tbXVfZW5hYmxlX2F1eF9k
+b21haW4oZGV2KQ0KPiA+IC0tIGVuYWJsZXMgYXV4IGRvbWFpbiBzdXBwb3J0IGZvciB0aGlzIGRl
+dmljZQ0KPiA+DQo+ID4gaW9tbXVfZG9tYWluX2FsbG9jKGRldikNCj4gPiAtLSBhbGxvY2F0ZSBh
+biBpb21tdSBkb21haW4NCj4gPg0KPiA+IGlvbW11X2F0dGFjaF9kZXZpY2UoZG9tYWluLCBkZXYp
+DQo+ID4gLS0gYXR0YWNoIHRoZSBkb21haW4gdG8gZGV2aWNlDQo+ID4NCj4gPiBpb21tdV9hdXhp
+bGlhcnlfaWQoZG9tYWluKQ0KPiA+IC0tIHJldHJpZXZlIHRoZSBwYXNpZCBpZCB1c2VkIGJ5IHRo
+aXMgZG9tYWluDQo+ID4NCj4gPiBUaGUgZGV2aWNlIGRyaXZlciB0aGVuDQo+ID4NCj4gPiBpb21t
+dV9tYXAoZG9tYWluLCAuLi4pDQo+ID4NCj4gPiBzZXQgdGhlIHBhc2lkIGlkIHRvIGhhcmR3YXJl
+IHJlZ2lzdGVyIGFuZCBzdGFydCB0byBkbyBkbWEuDQo+IA0KPiBTb3VuZHMgZ29vZCwgSSdsbCBk
+cm9wIHRoZSBwcml2YXRlIFBBU0lEIHBhdGNoIGlmIHdlIGNhbiBmaWd1cmUgb3V0IGENCj4gc29s
+dXRpb24gdG8gdGhlIGF0dGFjaC9kZXRhY2hfZGV2IHByb2JsZW0gZGlzY3Vzc2VkIG9uIHBhdGNo
+IDgvMTANCj4gDQoNCkNhbiB5b3UgZWxhYm9yYXRlIGEgYml0IG9uIHByaXZhdGUgUEFTSUQgdXNh
+Z2U/IHdoYXQgaXMgdGhlDQpoaWdoIGxldmVsIGZsb3cgb24gaXQ/IA0KDQpBZ2FpbiBiYXNlZCBv
+biBlYXJsaWVyIGV4cGxhbmF0aW9uLCBhdXggZG9tYWluIGlzIHNwZWNpZmljIHRvIElPTU1VDQph
+cmNoaXRlY3R1cmUgc3VwcG9ydGluZyB2dGQgc2NhbGFibGUgbW9kZS1saWtlIGNhcGFiaWxpdHks
+IHdoaWNoIGFsbG93cw0Kc2VwYXJhdGUgMm5kLzFzdCBsZXZlbCB0cmFuc2xhdGlvbnMgcGVyIFBB
+U0lELiBOZWVkIGEgYmV0dGVyIHVuZGVyc3RhbmRpbmcNCmhvdyBwcml2YXRlIFBBU0lEIGlzIHJl
+bGV2YW50IGhlcmUuDQoNClRoYW5rcw0KS2V2aW4NCg==
