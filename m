@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 382B8C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:59:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E163CC07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:59:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE75A20652
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:59:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE75A20652
+	by mail.kernel.org (Postfix) with ESMTP id A635320652
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:59:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A635320652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731733AbeIMTJX (ORCPT
+        id S1731743AbeIMTJ1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:09:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34866 "EHLO
+        Thu, 13 Sep 2018 15:09:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34876 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728339AbeIMTJW (ORCPT
+        with ESMTP id S1729039AbeIMTJ0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:09:22 -0400
+        Thu, 13 Sep 2018 15:09:26 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3310FD15;
-        Thu, 13 Sep 2018 13:59:45 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5776ED19;
+        Thu, 13 Sep 2018 13:59:48 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Richard Weinberger <richard@nod.at>,
+        stable@vger.kernel.org, Michal Suchanek <msuchanek@suse.com>,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 126/197] um: fix parallel building with O= option
-Date:   Thu, 13 Sep 2018 15:31:15 +0200
-Message-Id: <20180913131846.588125958@linuxfoundation.org>
+Subject: [PATCH 4.18 127/197] powerpc/pseries: Avoid using the size greater than RTAS_ERROR_LOG_MAX.
+Date:   Thu, 13 Sep 2018 15:31:16 +0200
+Message-Id: <20180913131846.624968166@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -53,73 +53,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
 
-[ Upstream commit 13d3d01e26b942ada7cfced68ccb6db49597874a ]
+[ Upstream commit 74e96bf44f430cf7a01de19ba6cf49b361cdfd6e ]
 
-Randy Dunlap reports UML occasionally fails to build with -j<N> and
-O=<builddir> options.
+The global mce data buffer that used to copy rtas error log is of 2048
+(RTAS_ERROR_LOG_MAX) bytes in size. Before the copy we read
+extended_log_length from rtas error log header, then use max of
+extended_log_length and RTAS_ERROR_LOG_MAX as a size of data to be copied.
+Ideally the platform (phyp) will never send extended error log with
+size > 2048. But if that happens, then we have a risk of buffer overrun
+and corruption. Fix this by using min_t instead.
 
-  make[1]: Entering directory '/home/rdunlap/mmotm-2018-0802-1529/UM64'
-    UPD     include/generated/uapi/linux/version.h
-    WRAP    arch/x86/include/generated/asm/dma-contiguous.h
-    WRAP    arch/x86/include/generated/asm/export.h
-    WRAP    arch/x86/include/generated/asm/early_ioremap.h
-    WRAP    arch/x86/include/generated/asm/mcs_spinlock.h
-    WRAP    arch/x86/include/generated/asm/mm-arch-hooks.h
-    WRAP    arch/x86/include/generated/uapi/asm/bpf_perf_event.h
-    WRAP    arch/x86/include/generated/uapi/asm/poll.h
-    GEN     ./Makefile
-  make[2]: *** No rule to make target 'archheaders'.  Stop.
-  arch/um/Makefile:119: recipe for target 'archheaders' failed
-  make[1]: *** [archheaders] Error 2
-  make[1]: *** Waiting for unfinished jobs....
-    UPD     include/config/kernel.release
-  make[1]: *** wait: No child processes.  Stop.
-  Makefile:146: recipe for target 'sub-make' failed
-  make: *** [sub-make] Error 2
-
-The cause of the problem is the use of '$(MAKE) KBUILD_SRC=',
-which recurses to the top Makefile via the $(objtree)/Makefile
-generated by scripts/mkmakefile.
-
-When you run "make -j<N> O=<builddir> ARCH=um", Make can execute
-'archheaders' and 'outputmakefile' targets simultaneously because
-there is no dependency between them.
-
-If it happens,
-
-  $(Q)$(MAKE) KBUILD_SRC= ARCH=$(HEADER_ARCH) archheaders
-
-... tries to run $(objtree)/Makefile that is being updated.
-
-The correct way for the recursion is
-
-  $(Q)$(MAKE) -f $(srctree)/Makefile ARCH=$(HEADER_ARCH) archheaders
-
-..., which does not rely on the generated Makefile.
-
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-Acked-by: Richard Weinberger <richard@nod.at>
+Fixes: d368514c3097 ("powerpc: Fix corruption when grabbing FWNMI data")
+Reported-by: Michal Suchanek <msuchanek@suse.com>
+Signed-off-by: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/um/Makefile |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/powerpc/platforms/pseries/ras.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/um/Makefile
-+++ b/arch/um/Makefile
-@@ -122,8 +122,7 @@ archheaders:
- 	$(Q)$(MAKE) -f $(srctree)/scripts/Makefile.asm-generic \
- 	            kbuild-file=$(HOST_DIR)/include/uapi/asm/Kbuild \
- 		    obj=$(HOST_DIR)/include/generated/uapi/asm
--	$(Q)$(MAKE) KBUILD_SRC= ARCH=$(HEADER_ARCH) archheaders
--
-+	$(Q)$(MAKE) -f $(srctree)/Makefile ARCH=$(HEADER_ARCH) archheaders
+--- a/arch/powerpc/platforms/pseries/ras.c
++++ b/arch/powerpc/platforms/pseries/ras.c
+@@ -371,7 +371,7 @@ static struct rtas_error_log *fwnmi_get_
+ 		int len, error_log_length;
  
- archprepare: include/generated/user_constants.h
- 
+ 		error_log_length = 8 + rtas_error_extended_log_length(h);
+-		len = max_t(int, error_log_length, RTAS_ERROR_LOG_MAX);
++		len = min_t(int, error_log_length, RTAS_ERROR_LOG_MAX);
+ 		memset(global_mce_data_buf, 0, RTAS_ERROR_LOG_MAX);
+ 		memcpy(global_mce_data_buf, h, len);
+ 		errhdr = (struct rtas_error_log *)global_mce_data_buf;
 
 
