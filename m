@@ -3,99 +3,101 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A5A6C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:32:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6E2AC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:32:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC07920861
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:32:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC07920861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
+	by mail.kernel.org (Postfix) with ESMTP id 7660720882
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:32:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7660720882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727655AbeIMRlP (ORCPT
+        id S1727689AbeIMRmC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 13:41:15 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:36800 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726819AbeIMRlO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 13:41:14 -0400
-Received: from wd0459.dip.tu-dresden.de ([141.76.109.203] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1g0Qmg-0002wM-A8; Thu, 13 Sep 2018 14:31:46 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Damian Kos <dkos@cadence.com>
-Cc:     David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <sean@poorly.run>, Sandy Huang <hjc@rock-chips.com>,
-        Quentin Schulz <quentin.schulz@bootlin.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, pgaj@cadence.com,
-        ltyrala@cadence.com, stelford@cadence.com, jartur@cadence.com,
-        piotrs@cadence.com
-Subject: Re: [PATCH v3 0/5] drm: add support for Cadence MHDP DPI/DP bridge.
-Date:   Thu, 13 Sep 2018 14:31:45 +0200
-Message-ID: <11916444.D1tlAhbW8U@phil>
-In-Reply-To: <1535451894-2518-1-git-send-email-dkos@cadence.com>
-References: <1535451894-2518-1-git-send-email-dkos@cadence.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Thu, 13 Sep 2018 13:42:02 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35094 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726821AbeIMRmC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 13:42:02 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1g0QnY-0003My-Oh; Thu, 13 Sep 2018 13:32:40 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1g0QnY-0002XH-Cg; Thu, 13 Sep 2018 13:32:40 +0100
+Message-ID: <eb1fe15c9ced6950d6a38c901278b8196ae4938d.camel@decadent.org.uk>
+Subject: Re: 4.19-rc3: bindeb-pkg target is failing on ppc64
+From:   Ben Hutchings <ben@decadent.org.uk>
+To:     Rui Salvaterra <rsalvaterra@gmail.com>,
+        yamada.masahiro@socionext.com, michal.lkml@markovi.net
+Cc:     linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Thu, 13 Sep 2018 13:32:35 +0100
+In-Reply-To: <CALjTZvb4hOY_Hew-jEUtpyhkGbmh4Tgb0doPC6EaGtz_rMGt7A@mail.gmail.com>
+References: <CALjTZvb4hOY_Hew-jEUtpyhkGbmh4Tgb0doPC6EaGtz_rMGt7A@mail.gmail.com>
+Content-Type: multipart/signed; micalg="pgp-sha512";
+        protocol="application/pgp-signature"; boundary="=-4saDnkeQRwr71nfUjRPF"
+User-Agent: Evolution 3.29.92-1 
+Mime-Version: 1.0
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Dienstag, 28. August 2018, 12:24:43 CEST schrieb Damian Kos:
-> Hello!
-> 
-> This is the series of patches that will add support for the Cadence's DPI/DP
-> bridge. Please note that this is a preliminary version of the driver and there
-> will be more patches in the future with updates, fixes and improvements.
-> Please keep that in mind when looking at FIXME/TODO/XXX comments.
-> 
-> Initially, MHDP driver was developed as a DRM bridge driver and was planed to
-> be placed in drivers/gpu/drm/bridge/mhdp.c.  However, there was already
-> a driver for Cadence's DP controller developed by RockChip, but that driver
-> uses the different DRM framework and looks like a part of a bigger system.
-> Both controllers (including firmware) are quite different internally
-> (MST/FEC/DSC support, link training done by driver, additional commands, IRQ's
-> etc.) but they have similar register map, except for Framer/Streamer (which is
-> noticeably different), so they appear similar.
-> 
-> The following patches contain:
-> - Moving common code to drivers/gpu/drm/bridge/cdns-mhdp-common.* and
->   modifying it a bit (mostly new prefixes for functions and data types) so it
->   can be used by two, higher level, drivers.
-> - Modifying existing RockChip's DP driver to use the common code after changes
->   made to it (use the new cdns_mhdp_device structure and new function names).
-> - Modifying DRM helpers a bit. Some are required for new driver, some are
->   updates from DP 1.2 to 1.3 or 1.4.
-> - Adding documentation for device tree bindings.
-> - Adding preliminary Cadence DPI/DP bridge driver.
-> 
-> Some of the things that will be added later on include (but are not limited
-> to):
-> - Support for Cadence SD0801 PHY (PHY's driver should be on the way by now)
-> - MST support
-> - DSC support
-> - FEC support
-> - HDCP support
 
-with te Kconfig issue in patch5 fixed, this series tested on
-rk3288 (analogix-dp) and rk3399 (analogix-dp + cadence-dp)
-Everything seems to work that worked before.
+--=-4saDnkeQRwr71nfUjRPF
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Tested-by: Heiko Stuebner <heiko@sntech.de>
+On Tue, 2018-09-11 at 15:58 +0100, Rui Salvaterra wrote:
+> Greetings! I'm having trouble building the kernel on my ppc64 machine
+> (Power Mac G5) running Debian Sid. The make bindeb-pkg target is failing
+> ever since 4.19-rc1. Is this a known issue? If not, let me know if you ne=
+ed
+> anything else in order to help debug this. Thanks in advance!
+
+It sounds like you don't actually have a ppc64 installation, but a
+powerpc installation with a 64-bit kernel.  In that case you will now
+need to add ppc64 as a secondary architecture by running:
+
+    dpkg --add-architecture ppc64
+
+If that doesn't help, please send the error messages you're getting.
+
+Ben.
+
+--=20
+Ben Hutchings
+Computers are not intelligent.	They only think they are.
 
 
+
+--=-4saDnkeQRwr71nfUjRPF
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAluaWOQACgkQ57/I7JWG
+EQllCg/+If7rEF/SFCUdHE9Lo4cXEXwjzd0zkECbnOoM091fotF1hd0H6vy0Vh2R
+Rxwmz+2g88hNbgaYMMEDhNhxLBTwqVnoalFPWUdRgW5J56rKUpJYYg4YQ7BRvpth
+yyMCub2zPrtq4mtpSfhYwOEtD1R83FgvV9mkCm6jUgpIGo3KbHo5H3EiKEuouwok
+vX3IoI2l33Dr92VEifyy/NOqKWl/JlvO2sNOpo6Zs4uMQaqZY5bi0ulaerVN45Sd
+Amel1q/G5p9HzpdkzTRfBki/348y7OfYYQy7Ad0I/NgX0Cs8Q8wDc6/T4ltph3L+
+mo/wwhOG+UbTbnSCiLTBZmdkGvMBe5FCkSLxPwwOrvMghAnG8xgh1ejZsYec0URH
+4B0hIYn65KfQpNr1rhEW/ukDGxfagmtkQdTN/mPueeZov1mG3zrBGNBfUONmfpn3
+AsQAHEeB5Q0WbUeFIZ0aI4alhJz+NLgDZzMBtXVtDbgEw0qZGHWGs379pJMhCMEv
+Q4dzj0xrz5ZXY2zkF5wHm0KBap9eHQvHbv3t+yEcTP/MdNeX/X/5bRBs5fjIYEOQ
+ee3jXPuuywa0NB1GRHK66uCRU/aHPpJ+tOuCwuudvPxw45qij/MEVgVfVaxU0Bv7
+5pmqHiuKvLCm6C5OQcwJZ1W0Evx2NjJzyMQsT6c5MBTWfMDKQnI=
+=a0gt
+-----END PGP SIGNATURE-----
+
+--=-4saDnkeQRwr71nfUjRPF--
