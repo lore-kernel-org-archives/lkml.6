@@ -2,126 +2,111 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1CF7C04AB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 22:25:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06ACCC04AB8
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 22:31:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 651942086D
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 22:25:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9845E20861
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 22:31:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fE6eTF5e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 651942086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZHF82xJP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9845E20861
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728218AbeINDhS (ORCPT
+        id S1728257AbeINDnR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 23:37:18 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:35638 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727867AbeINDhR (ORCPT
+        Thu, 13 Sep 2018 23:43:17 -0400
+Received: from mail-pl1-f201.google.com ([209.85.214.201]:49013 "EHLO
+        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727988AbeINDnR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 23:37:17 -0400
-Received: by mail-pg1-f193.google.com with SMTP id 7-v6so3401793pgf.2;
-        Thu, 13 Sep 2018 15:25:49 -0700 (PDT)
+        Thu, 13 Sep 2018 23:43:17 -0400
+Received: by mail-pl1-f201.google.com with SMTP id bh1-v6so3296914plb.15
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 15:31:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=KT85D3d0NmKGKqNVwqzx2eagX+ScxoxczTO/shHCPE0=;
-        b=fE6eTF5efPkHtr+s0khVfsITCT6pXnG6MSkzR17sJD26JrPnCszBU3aCynJm+CLG4a
-         MkIcy2+DJAyTmGU9v1DMYEp+nO83cee1Cu5ZL+6IR7xcRrXWGax2HW381HSeIYXWH44s
-         gSNF7UDcc9H2F6qO8wAQt/oBZi2Hsbdg9sr3CaEQvGtFHc1aN2/HjRguX50IOQwNrKKR
-         OZ2lbKAyLg3ofNFs7UwbrmIYoqV1gz8ePeu6k8UPpmnX5xyX2FVZtcuR7flghBnKZ/p/
-         XtxJIU+oTcvrsiCsE2egi/1aVnNnA3m6xE8Q0pGlB7Y6vXBZqzwQuAsHjoBSrPSsYekd
-         nCpQ==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=S+oLy1i9WomBzWLyCwBGFOwZ+XnhzaGC5nebu3J/cqI=;
+        b=ZHF82xJPrjNVQ5qaoqwMUDqr6EdB+cndsZEWHlrAB6aETmK44XmP7OFf08GYNsUlbe
+         Dji42D6nlptLFf1lohqP5KarkrI8ALKA2xgcdLwPlXwIOjfDJsIHwgcomwT727X6d2rf
+         LuD1NCo1F7/NLZpHmLkn34zKyKvRqkwWr+y3F3gZ3SJOYpOVoU+iCumsx2cZGyw6qJ++
+         MAuYaFmvXyy69vmcROAKnwsQcoQAl+vC74bPSxMH7kyAWJNdE/maIUeUux7i4MXK9O50
+         m5svrHSjKugBUoxfraWwHTSRmaw/CCnBDfCIANza21IbZyX2eYyoR+AXGOtW8A49Cnwg
+         YpLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=KT85D3d0NmKGKqNVwqzx2eagX+ScxoxczTO/shHCPE0=;
-        b=ggZ7EU1sAVZNuEDSDMn7ceV+kd5pv2oXA0lQ5zwMgrgF/6JMS32fPflZl9Skgnao+P
-         9RSoRBF+qFJIZl7ntGfWPRLEsLkk3kM1aHWfRO8a40c330BlFO9CTGK+Z95yFadE8pnZ
-         gwJwvzF+5X9F5a4SFZ+LloGb0A8V8A/eVbHo5/cHv5BkfEgbGri6QFRS1pwUldKlhlGQ
-         mpvOQI+aGSv7lMMKyg4uSRx/z9Zky1s4d4L0Cdqxfa0oK1Pkm1Yup6mpMXkxn1iINXlG
-         hQSLzH22pLTN57dAVrj06STZe8WGc8esZq47RSsw/lYNA50tXQkhVuS3433f6wiXCOy7
-         gulg==
-X-Gm-Message-State: APzg51CuXca9Ppf2e+8EC7xkJ5LaeFz00mk+hF8y7Xembk9lJ3JnYtDb
-        f7x7rbTPblnCv536rfNeM0U=
-X-Google-Smtp-Source: ANB0Vdakw7w21ZPCVDH3vsL0xD+m6M3GwUmdPfG84KkuOc4uiC31+xitaJjfpRGZn8rB1wA8dSLSbg==
-X-Received: by 2002:a62:fcd2:: with SMTP id e201-v6mr9402345pfh.101.1536877549386;
-        Thu, 13 Sep 2018 15:25:49 -0700 (PDT)
-Received: from [10.0.2.15] ([192.19.218.250])
-        by smtp.gmail.com with ESMTPSA id 143-v6sm7199833pfy.156.2018.09.13.15.25.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Sep 2018 15:25:48 -0700 (PDT)
-Subject: Re: [PATCH v3 0/3] Stingray thermal driver support
-To:     Srinath Mannam <srinath.mannam@broadcom.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com
-References: <1533819299-3401-1-git-send-email-srinath.mannam@broadcom.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <9dee54fd-eaef-5454-0c96-d105ba2e221d@gmail.com>
-Date:   Thu, 13 Sep 2018 15:25:45 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <1533819299-3401-1-git-send-email-srinath.mannam@broadcom.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=S+oLy1i9WomBzWLyCwBGFOwZ+XnhzaGC5nebu3J/cqI=;
+        b=HEMN3zKy/DWstMw1LDqjenZQ6TbIikfhN7kpFDSuO0i2XavPohNr8+Jad1p9IKOLyB
+         KGdo12kIk4VXZEhkociROksEo4d2uiDIqZJHGfG2ibZU234yPT+l4oH6nVbKCs+QU+fe
+         +QrgC8SLUjv5LYyBBGYyQU3Gt1G60hlAdTeJRrpnQNuIiFMpAJyNfItp20e/Nypwr63B
+         5tM/D6UW33HTNNmajQwRQh87pVMSyBB8m45DqFvlylvNvLHJhGIAfI15GKDhH618EewO
+         66dWv5AjKSsTVg0hTOS2N/iO/zC6ZNAXnWZloc+F0zkV0+TBhuU+Oy+xTgRse7gedEsN
+         VPvg==
+X-Gm-Message-State: APzg51DLwIFp7DBklUFeLAuEcTesmksDeO7GgVSnoYjexsZ+y5gglAD/
+        ckBQKL5JoF+QgXmh+Wbpuu1e8eKa7L+K
+X-Google-Smtp-Source: ANB0VdbReS/UgjWcRw5n9KAo6p11Mj1GeCj14mO3qqklLfFwOD42ED5qd2H0QQtKnVIPG0Xl1JHYWcvTdBkD
+X-Received: by 2002:a63:2057:: with SMTP id r23-v6mr585534pgm.18.1536877908229;
+ Thu, 13 Sep 2018 15:31:48 -0700 (PDT)
+Date:   Thu, 13 Sep 2018 15:31:43 -0700
+Message-Id: <20180913223143.12664-1-rajatja@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.19.0.397.gdd90340f6a-goog
+Subject: [PATCH] pinctrl: icelake: Fix the resource number for community-4/5
+From:   Rajat Jain <rajatja@google.com>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     rajatxjain@gmail.com, subrata.banik@intel.com,
+        aamir.bohra@intel.com, Rajat Jain <rajatja@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The Icelake does not have a community-3, and the memory resources are
+laid out in the following order in the ACPI:
 
+resource-0: community-0 registers
+resource-1: community-1 registers
+resource-2: community-2 registers
+resource-3: community-4 registers
+resource-4: community-5 registers
 
-On 08/09/18 05:54, Srinath Mannam wrote:
-> These patches adds the stingray thermal driver and its
-> corresponding DT nodes with documentation.
-> 
-> Changes from v2:
->   - All stingray TMON DT nodes are combine together into single.
->     Temperature registers are combined into one mem resource.
->     brcm,tmon-mask parameter has available TMONs mask value.
->   - All available TMONs are initialized together in single
->     instance of driver probe call.
-> 
-> Changes from v1:
->   - Fixed auto build sparce warning.
+(EDS also describes the communities in the above order).
 
-Thermal maintainers, can you please review patch #3? The binding and DTS
-changes can go through arm-soc if you would like, or you can take
-patches 1 and 3 and I take patch 2, either way is fine.
+Since the pinctrl driver exposes communities 0, 1, 4, 5, it needs to get
+the corresponding community registers by getting the resourse number right.
+Currently the resourse number is not correct for community 4 and 5, thus
+fix that.
 
-Thank you
+Signed-off-by: Rajat Jain <rajatja@google.com>
+---
+ drivers/pinctrl/intel/pinctrl-icelake.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> 
-> Pramod Kumar (3):
->   dt-bindings: thermal: Add binding document for SR thermal
->   arm64: dts: stingray: Add Stingray Thermal DT support.
->   thermal: broadcom: Add Stingray thermal driver
-> 
->  .../bindings/thermal/brcm,sr-thermal.txt           |  23 +++
->  .../arm64/boot/dts/broadcom/stingray/stingray.dtsi |  13 ++
->  drivers/thermal/Kconfig                            |   3 +-
->  drivers/thermal/broadcom/Kconfig                   |   9 +
->  drivers/thermal/broadcom/Makefile                  |   1 +
->  drivers/thermal/broadcom/sr-thermal.c              | 216 +++++++++++++++++++++
->  6 files changed, 264 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
->  create mode 100644 drivers/thermal/broadcom/sr-thermal.c
-> 
-
+diff --git a/drivers/pinctrl/intel/pinctrl-icelake.c b/drivers/pinctrl/intel/pinctrl-icelake.c
+index 630b966ce081..5b4eaf7c90df 100644
+--- a/drivers/pinctrl/intel/pinctrl-icelake.c
++++ b/drivers/pinctrl/intel/pinctrl-icelake.c
+@@ -331,8 +331,8 @@ static const struct intel_padgroup icllp_community5_gpps[] = {
+ static const struct intel_community icllp_communities[] = {
+ 	ICL_COMMUNITY(0, 0, 58, icllp_community0_gpps),
+ 	ICL_COMMUNITY(1, 59, 152, icllp_community1_gpps),
+-	ICL_COMMUNITY(2, 153, 215, icllp_community4_gpps),
+-	ICL_COMMUNITY(3, 216, 240, icllp_community5_gpps),
++	ICL_COMMUNITY(3, 153, 215, icllp_community4_gpps),
++	ICL_COMMUNITY(4, 216, 240, icllp_community5_gpps),
+ };
+ 
+ static const unsigned int icllp_spi0_pins[] = { 22, 23, 24, 25, 26 };
 -- 
-Florian
+2.19.0.397.gdd90340f6a-goog
+
