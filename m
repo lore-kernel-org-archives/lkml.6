@@ -2,115 +2,89 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0525C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:13:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45E82C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:17:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 515B020866
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:13:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WHIHpw8K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 515B020866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id E63E920881
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:17:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E63E920881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727640AbeIMRWj (ORCPT
+        id S1727824AbeIMR1E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 13:22:39 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:54643 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726914AbeIMRWj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 13:22:39 -0400
-Received: by mail-it0-f68.google.com with SMTP id f14-v6so7454567ita.4
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 05:13:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=2LGZVX/QPOtYkFeURxYBVnkopTb78PDQvKrl3YDuBxo=;
-        b=WHIHpw8KkoR4nUaBTHFlSxFLWGIQLjp2xzYlQxtTob+omCQaGL4skyEqFKec272o2c
-         6xQAMrrDOo8FUVEWXBe+ZDbUcSqR7P4hFJCSj1QwST8N/jmZrkC9Y2hH+zwkSTnvz+Ql
-         69HwVU0L0eVXYRg4ALRH4n8O+K2wMZ2E802Ag=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=2LGZVX/QPOtYkFeURxYBVnkopTb78PDQvKrl3YDuBxo=;
-        b=OqWZhx/zL7/Zqb/0n5qg1nyLPRQNNfdh/ItKBkhCmLzlysCdxbzS7iPauVQOQiMbQz
-         LK02V8tmAUU0aRO6aMQ/X8pWLyRAgVCjtB1SK3U9QrcQ7gBaikyWuJ16NjNaQoO55v5z
-         iOtjqVLUoDiROtCC4ZU6eXSZsw0CzhojIWRItSJUB6bBmdarmXXBPUZcC2S7CNihQ+1J
-         4/a/+evbjrPh9dLdBDGbv4sEtRNYI5LWrZzST6HP2kRV6qQEgTXAq2pNP1EpROI0vbl6
-         H0xdJD6al/ZyIpfWmg9txC15pX409qmTTqkYRFouAsZQ7t5IWq/GcZjN3gYXZfMpWNKB
-         Up6g==
-X-Gm-Message-State: APzg51D6FEi8BdLKWpBp1BPhIT8lT9YPtTJCQtWPkWwm/4s1O+1tGY/F
-        I+Yg1I411h43YnrUkEzCGD2N6Nl4lgmXUQUseI3pAZ0wiFg=
-X-Google-Smtp-Source: ANB0VdYNxvUvK/Lj3LTH0g92AZ/f4geaGNlaKU3nQbQ+nHMKclJkg8UQWqqvA4mYMTPl5l/E0JGP1AuujN2zaJgM2rk=
-X-Received: by 2002:a02:6c45:: with SMTP id w66-v6mr6242858jab.87.1536840807019;
- Thu, 13 Sep 2018 05:13:27 -0700 (PDT)
+        Thu, 13 Sep 2018 13:27:04 -0400
+Received: from mga01.intel.com ([192.55.52.88]:2689 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727051AbeIMR1D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 13:27:03 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Sep 2018 05:17:49 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,369,1531810800"; 
+   d="scan'208";a="85653642"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.98]) ([10.237.72.98])
+  by fmsmga002.fm.intel.com with ESMTP; 13 Sep 2018 05:17:24 -0700
+Subject: Re: [PATCH RFC] scsi: ufs: Disable blk-mq for now
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
+        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
+        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Bart Van Assche <Bart.VanAssche@wdc.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Stanislav Nijnikov <stanislav.nijnikov@wdc.com>,
+        Evan Green <evgreen@chromium.org>,
+        Vinayak Holikatti <vinholikatti@gmail.com>,
+        Janek Kotas <jank@cadence.com>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Asutosh Das <asutoshd@codeaurora.org>,
+        Subhash Jadavani <subhashj@codeaurora.org>,
+        Sayali Lokhande <sayalil@codeaurora.org>,
+        Li Wei <liwei213@huawei.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Alex Lemberg <Alex.Lemberg@sandisk.com>
+References: <20180913112848.7807-1-adrian.hunter@intel.com>
+ <20180913120459.GA4965@ming.t460p>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <e4d0c716-006a-72cb-0240-4ae5749b21b8@intel.com>
+Date:   Thu, 13 Sep 2018 15:15:39 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 13 Sep 2018 14:13:15 +0200
-Message-ID: <CACRpkdY7m-Q54BwoKEN5a4+9fTgQ3o6qWNXT+y0bqGkG2dkBiA@mail.gmail.com>
-Subject: [GIT PULL] pin control fixes for v4.19
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180913120459.GA4965@ming.t460p>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On 13/09/18 15:05, Ming Lei wrote:
+> On Thu, Sep 13, 2018 at 02:28:48PM +0300, Adrian Hunter wrote:
+>> blk-mq does not support runtime pm, so disable blk-mq support for now.
+> 
+> So could you describe a bit what the issue you are trying to fix?
 
-here are some three pin control fixes for the v4.19 series. This subsystem
-has been unusually quiet this merge window so not much fixes appeared.
+UFS is a low-power solution, so we must be able to runtime suspend.
 
-Please pull them in!
+> 
+> This is host level runtime PM you are trying to address, and if blk-mq
+> runtime isn't enabled, I guess the host won't be runtime suspended at all
+> because some of its descendant are always active.
+> 
+> So seems we need to do nothing for preventing the host controller from
+> entering runtime suspend.
 
-Details in the signed tag.
-
-Yours,
-Linus Walleij
-
-
-The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
-
-  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-tags/pinctrl-v4.19-2
-
-for you to fetch changes up to 5bc5a671b1f4b3aa019264ce970d3683a9ffa761:
-
-  pinctrl: madera: Fix possible NULL pointer with pdata config
-(2018-08-29 14:02:47 +0200)
-
-----------------------------------------------------------------
-Pin control fixes for the v4.19 kernel cycle:
-
-- A complicated IRQ fix for the MSM driver (see commit).
-
-- Fix the group/function check in the Ingenic driver.
-
-- Deal with a possible NULL pointer dereference in the Madera
-  driver.
-
-----------------------------------------------------------------
-Paul Burton (1):
-      pinctrl: ingenic: Fix group & function error checking
-
-Richard Fitzgerald (1):
-      pinctrl: madera: Fix possible NULL pointer with pdata config
-
-Stephen Boyd (1):
-      pinctrl: msm: Really mask level interrupts to prevent latching
-
- drivers/pinctrl/cirrus/pinctrl-madera-core.c |  2 +-
- drivers/pinctrl/pinctrl-ingenic.c            |  4 ++--
- drivers/pinctrl/qcom/pinctrl-msm.c           | 24 ++++++++++++++++++++++++
- 3 files changed, 27 insertions(+), 3 deletions(-)
+We don't want to prevent the host controller from runtime suspending, quite
+the opposite.
