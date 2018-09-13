@@ -2,39 +2,45 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAD_ENC_HEADER,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BD8CC07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:55:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 545D6C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:55:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20E03204FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:55:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20E03204FD
+	by mail.kernel.org (Postfix) with ESMTP id 16B72204FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:55:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16B72204FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731151AbeIMTE6 (ORCPT
+        id S1731247AbeIMTFC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:04:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33970 "EHLO
+        Thu, 13 Sep 2018 15:05:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33978 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727783AbeIMTE6 (ORCPT
+        with ESMTP id S1727783AbeIMTFB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:04:58 -0400
+        Thu, 13 Sep 2018 15:05:01 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7CF6BCE7;
-        Thu, 13 Sep 2018 13:55:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 65D65D10;
+        Thu, 13 Sep 2018 13:55:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Philipp Rudo <prudo@linux.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        stable@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        syzbot <syzbot+01ffaf5d9568dd1609f7@syzkaller.appspotmail.com>,
+        "=?UTF-8?q?Ernesto=20A . =20Fern=C3=A1ndez?=" 
+        <ernesto.mnd.fernandez@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 070/197] s390/kdump: Fix memleak in nt_vmcoreinfo
-Date:   Thu, 13 Sep 2018 15:30:19 +0200
-Message-Id: <20180913131844.322845048@linuxfoundation.org>
+Subject: [PATCH 4.18 038/197] hfsplus: dont return 0 when fill_super() failed
+Date:   Thu, 13 Sep 2018 15:29:47 +0200
+Message-Id: <20180913131843.077619787@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -52,68 +58,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Philipp Rudo <prudo@linux.ibm.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-[ Upstream commit 2d2e7075b87181ed0c675e4936e20bdadba02e1f ]
+[ Upstream commit 7464726cb5998846306ed0a7d6714afb2e37b25d ]
 
-The vmcoreinfo of a crashed system is potentially fragmented. Thus the
-crash kernel has an intermediate step where the vmcoreinfo is copied into a
-temporary, continuous buffer in the crash kernel memory. This temporary
-buffer is never freed. Free it now to prevent the memleak.
+syzbot is reporting NULL pointer dereference at mount_fs() [1].  This is
+because hfsplus_fill_super() is by error returning 0 when
+hfsplus_fill_super() detected invalid filesystem image, and mount_bdev()
+is returning NULL because dget(s->s_root) == NULL if s->s_root == NULL,
+and mount_fs() is accessing root->d_sb because IS_ERR(root) == false if
+root == NULL.  Fix this by returning -EINVAL when hfsplus_fill_super()
+detected invalid filesystem image.
 
-While at it replace all occurrences of "VMCOREINFO" by its corresponding
-macro to prevent potential renaming issues.
+[1] https://syzkaller.appspot.com/bug?id=21acb6850cecbc960c927229e597158cf35f33d0
 
-Signed-off-by: Philipp Rudo <prudo@linux.ibm.com>
-Acked-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Link: http://lkml.kernel.org/r/d83ce31a-874c-dd5b-f790-41405983a5be@I-love.SAKURA.ne.jp
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: syzbot <syzbot+01ffaf5d9568dd1609f7@syzkaller.appspotmail.com>
+Reviewed-by: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/s390/kernel/crash_dump.c |   17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+ fs/hfsplus/super.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/arch/s390/kernel/crash_dump.c
-+++ b/arch/s390/kernel/crash_dump.c
-@@ -404,11 +404,13 @@ static void *get_vmcoreinfo_old(unsigned
- 	if (copy_oldmem_kernel(nt_name, addr + sizeof(note),
- 			       sizeof(nt_name) - 1))
- 		return NULL;
--	if (strcmp(nt_name, "VMCOREINFO") != 0)
-+	if (strcmp(nt_name, VMCOREINFO_NOTE_NAME) != 0)
- 		return NULL;
- 	vmcoreinfo = kzalloc_panic(note.n_descsz);
--	if (copy_oldmem_kernel(vmcoreinfo, addr + 24, note.n_descsz))
-+	if (copy_oldmem_kernel(vmcoreinfo, addr + 24, note.n_descsz)) {
-+		kfree(vmcoreinfo);
- 		return NULL;
-+	}
- 	*size = note.n_descsz;
- 	return vmcoreinfo;
- }
-@@ -418,15 +420,20 @@ static void *get_vmcoreinfo_old(unsigned
-  */
- static void *nt_vmcoreinfo(void *ptr)
- {
-+	const char *name = VMCOREINFO_NOTE_NAME;
- 	unsigned long size;
- 	void *vmcoreinfo;
- 
- 	vmcoreinfo = os_info_old_entry(OS_INFO_VMCOREINFO, &size);
--	if (!vmcoreinfo)
--		vmcoreinfo = get_vmcoreinfo_old(&size);
-+	if (vmcoreinfo)
-+		return nt_init_name(ptr, 0, vmcoreinfo, size, name);
-+
-+	vmcoreinfo = get_vmcoreinfo_old(&size);
- 	if (!vmcoreinfo)
- 		return ptr;
--	return nt_init_name(ptr, 0, vmcoreinfo, size, "VMCOREINFO");
-+	ptr = nt_init_name(ptr, 0, vmcoreinfo, size, name);
-+	kfree(vmcoreinfo);
-+	return ptr;
- }
- 
- /*
+--- a/fs/hfsplus/super.c
++++ b/fs/hfsplus/super.c
+@@ -524,8 +524,10 @@ static int hfsplus_fill_super(struct sup
+ 		goto out_put_root;
+ 	if (!hfs_brec_read(&fd, &entry, sizeof(entry))) {
+ 		hfs_find_exit(&fd);
+-		if (entry.type != cpu_to_be16(HFSPLUS_FOLDER))
++		if (entry.type != cpu_to_be16(HFSPLUS_FOLDER)) {
++			err = -EINVAL;
+ 			goto out_put_root;
++		}
+ 		inode = hfsplus_iget(sb, be32_to_cpu(entry.folder.id));
+ 		if (IS_ERR(inode)) {
+ 			err = PTR_ERR(inode);
 
 
