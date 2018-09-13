@@ -2,166 +2,154 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6090C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 15:03:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48B6CC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 15:04:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5196720866
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 15:03:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5196720866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0018420869
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 15:04:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0018420869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=iki.fi
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728199AbeIMUNM (ORCPT
+        id S1728266AbeIMUO2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 16:13:12 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49798 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726824AbeIMUNM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 16:13:12 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 26CE57A9;
-        Thu, 13 Sep 2018 08:03:18 -0700 (PDT)
-Received: from [10.4.12.111] (ostrya.Emea.Arm.com [10.4.12.111])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D79C13F557;
-        Thu, 13 Sep 2018 08:03:15 -0700 (PDT)
-Subject: Re: [RFC PATCH v2 00/10] vfio/mdev: IOMMU aware mediated device
-To:     "Tian, Kevin" <kevin.tian@intel.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Kirti Wankhede <kwankhede@nvidia.com>
-Cc:     "Raj, Ashok" <ashok.raj@intel.com>,
-        "Bie, Tiwei" <tiwei.bie@intel.com>,
-        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Sun, Yi Y" <yi.y.sun@intel.com>,
-        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
-References: <20180830040922.30426-1-baolu.lu@linux.intel.com>
- <380dc154-5d72-0085-2056-fa466789e1ab@arm.com>
- <aa1ff748-c2ec-acc0-f1d9-cdff2b131e58@linux.intel.com>
- <3602f8c1-df17-4894-1bcc-4d779f9aa7fd@arm.com>
- <AADFC41AFE54684AB9EE6CBC0274A5D191300D06@SHSMSX101.ccr.corp.intel.com>
-From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Message-ID: <03d496b0-84c2-b3ca-5be5-d4540c6d8ec7@arm.com>
-Date:   Thu, 13 Sep 2018 16:03:01 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Thu, 13 Sep 2018 16:14:28 -0400
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:47992 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726824AbeIMUO1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 16:14:27 -0400
+Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2001:1bc8:1a6:d3d5::80:2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 8D379634C84;
+        Thu, 13 Sep 2018 18:04:31 +0300 (EEST)
+Received: from sakke by valkosipuli.localdomain with local (Exim 4.89)
+        (envelope-from <sakari.ailus@retiisi.org.uk>)
+        id 1g0TAV-0000P3-CK; Thu, 13 Sep 2018 18:04:31 +0300
+Date:   Thu, 13 Sep 2018 18:04:31 +0300
+From:   Sakari Ailus <sakari.ailus@iki.fi>
+To:     Todor Tomov <ttomov@mm-sol.com>
+Cc:     hans.verkuil@cisco.com, linux-media@vger.kernel.org,
+        Todor Tomov <todor.tomov@linaro.org>, mchehab@kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v3 16/23] camss: vfe: Support for frame padding
+Message-ID: <20180913150431.e5auwpqkostav5qz@valkosipuli.retiisi.org.uk>
+References: <1500287629-23703-1-git-send-email-todor.tomov@linaro.org>
+ <1500287629-23703-17-git-send-email-todor.tomov@linaro.org>
+ <20170720151732.h4wmqr56j4tuhk7r@valkosipuli.retiisi.org.uk>
+ <90fecd27-3255-fbec-a73f-598cc66a3b31@mm-sol.com>
 MIME-Version: 1.0
-In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D191300D06@SHSMSX101.ccr.corp.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <90fecd27-3255-fbec-a73f-598cc66a3b31@mm-sol.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/09/2018 01:19, Tian, Kevin wrote:
->>> This is proposed for architectures which support finer granularity
->>> second level translation with no impact on architectures which only
->>> support Source ID or the similar granularity.
->>
->> Just to be clear, in this paragraph you're only referring to the
->> Nested/second-level translation for mdev, which is specific to vt-d
->> rev3? Other architectures can still do first-level translation with
->> PASID, to support some use-cases of IOMMU aware mediated device
->> (assigning mdevs to userspace drivers, for example)
+Hi Todor,
+
+Apologies for the late reply.
+
+On Mon, Sep 03, 2018 at 06:38:20PM +0300, Todor Tomov wrote:
+> Hi Sakari and all,
 > 
-> yes. aux domain concept applies only to vt-d rev3 which introduces
-> scalable mode. Care is taken to avoid breaking usages on existing
-> architectures.
+> I'm sorry to up this thread from an year ago but I'm currently thinking
+> about a problem which is related to this so I decided to ask here.
 > 
-> one note. Assigning mdevs to user space alone doesn't imply IOMMU
-> aware. All existing mdev usages use software or proprietary methods to
-> isolate DMA. There is only one potential IOMMU aware mdev usage 
-> which we talked not rely on vt-d rev3 scalable mode - wrap a random 
-> PCI device into a single mdev instance (no sharing). In that case mdev 
-> inherits RID from parent PCI device, thus is isolated by IOMMU in RID 
-> granular. Our RFC supports this usage too. In VFIO two usages (PASID-
-> based and RID-based) use same code path, i.e. always binding domain to
-> the parent device of mdev. But within IOMMU they go different paths.
-> PASID-based will go to aux-domain as iommu_enable_aux_domain
-> has been called on that device. RID-based will follow existing 
-> unmanaged domain path, as if it is parent device assignment.
-
-For Arm SMMU we're more interested in the PASID-granular case than the
-RID-granular one. It doesn't necessarily require vt-d rev3 scalable
-mode, the following example can be implemented with an SMMUv3, since it
-only needs PASID-granular first-level translation:
-
-We have a PCI function that supports PASID, and can be partitioned into
-multiple isolated entities, mdevs. Each mdev has an MMIO frame, an MSI
-vector and a PASID.
-
-Different processes (userspace drivers, not QEMU) each open one mdev. A
-process controlling one mdev has two ways of doing DMA:
-
-(1) Classically, the process uses a VFIO_TYPE1v2_IOMMU container. This
-creates an auxiliary domain for the mdev, with PASID #35. The process
-creates DMA mappings with VFIO_IOMMU_MAP_DMA. VFIO calls iommu_map on
-the auxiliary domain. The IOMMU driver populates the pgtables associated
-with PASID #35.
-
-(2) SVA. One way of doing it: the process uses a new
-"VFIO_TYPE1_SVA_IOMMU" type of container. VFIO binds the process address
-space to the device, gets PASID #35. Simpler, but not everyone wants to
-use SVA, especially not userspace drivers which need the highest
-performance.
-
-
-This example only needs to modify first-level translation, and works
-with SMMUv3. The kernel here could be the host, in which case
-second-level translation is disabled in the SMMU, or it could be the
-guest, in which case second-level mappings are created by QEMU and
-first-level translation is managed by assigning PASID tables to the guest.
-
-So (2) would use iommu_sva_bind_device(), but (1) needs something else.
-Aren't auxiliary domains suitable for (1)? Why limit auxiliary domain to
-second-level or nested translation? It seems silly to use a different
-API for first-level, since the flow in userspace and VFIO is the same as
-your second-level case as far as MAP_DMA ioctl goes. The difference is
-that in your case the auxiliary domain supports an additional operation
-which binds first-level page tables. An auxiliary domain that only
-supports first-level wouldn't support this operation, but it can still
-implement iommu_map/unmap/etc.
-
-
-Another note: if for some reason you did want to allow userspace to
-choose between first-level or second-level, you could implement the
-VFIO_TYPE1_NESTING_IOMMU container. It acts like a VFIO_TYPE1v2_IOMMU,
-but also sets the DOMAIN_ATTR_NESTING on the IOMMU domain. So DMA_MAP
-ioctl on a NESTING container would populate second-level, and DMA_MAP on
-a normal container populates first-level. But if you're always going to
-use second-level by default, the distinction isn't necessary.
-
-
->> Sounds good, I'll drop the private PASID patch if we can figure out a
->> solution to the attach/detach_dev problem discussed on patch 8/10
->>
+> On 20.07.2017 18:17, Sakari Ailus wrote:
+> > Hi Todor,
+> > 
+> > On Mon, Jul 17, 2017 at 01:33:42PM +0300, Todor Tomov wrote:
+> >> Add support for horizontal and vertical frame padding.
+> >>
+> >> Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
+> >> ---
+> >>  drivers/media/platform/qcom/camss-8x16/camss-vfe.c | 86 +++++++++++++++++-----
+> >>  .../media/platform/qcom/camss-8x16/camss-video.c   | 69 ++++++++++++-----
+> >>  .../media/platform/qcom/camss-8x16/camss-video.h   |  2 +
+> >>  3 files changed, 121 insertions(+), 36 deletions(-)
+> >>
 > 
-> Can you elaborate a bit on private PASID usage? what is the
-> high level flow on it? 
+> ...
 > 
-> Again based on earlier explanation, aux domain is specific to IOMMU
-> architecture supporting vtd scalable mode-like capability, which allows
-> separate 2nd/1st level translations per PASID. Need a better understanding
-> how private PASID is relevant here.
+> >> diff --git a/drivers/media/platform/qcom/camss-8x16/camss-video.c b/drivers/media/platform/qcom/camss-8x16/camss-video.c
+> >> index c5ebf5c..5a2bf18 100644
+> >> --- a/drivers/media/platform/qcom/camss-8x16/camss-video.c
+> >> +++ b/drivers/media/platform/qcom/camss-8x16/camss-video.c
+> 
+> ...
+> 
+> >> @@ -542,28 +537,68 @@ static int video_g_fmt(struct file *file, void *fh, struct v4l2_format *f)
+> >>  	return 0;
+> >>  }
+> >>  
+> >> -static int video_s_fmt(struct file *file, void *fh, struct v4l2_format *f)
+> >> +static int video_try_fmt(struct file *file, void *fh, struct v4l2_format *f)
+> >>  {
+> >>  	struct camss_video *video = video_drvdata(file);
+> >> +	struct v4l2_plane_pix_format *p;
+> >> +	u32 bytesperline[3] = { 0 };
+> >> +	u32 sizeimage[3] = { 0 };
+> >> +	u32 lines;
+> >>  	int ret;
+> >> +	int i;
+> >>  
+> >> -	if (vb2_is_busy(&video->vb2_q))
+> >> -		return -EBUSY;
+> >> +	if (video->line_based)
+> >> +		for (i = 0; i < f->fmt.pix_mp.num_planes && i < 3; i++) {
+> >> +			p = &f->fmt.pix_mp.plane_fmt[i];
+> >> +			bytesperline[i] = clamp_t(u32, p->bytesperline,
+> >> +						  1, 65528);
+> >> +			sizeimage[i] = clamp_t(u32, p->sizeimage,
+> >> +					       bytesperline[i],
+> >> +					       bytesperline[i] * 4096);
+> >> +		}
+> >>  
+> >>  	ret = video_get_subdev_format(video, f);
+> >>  	if (ret < 0)
+> >>  		return ret;
+> > 
+> > If you take the width and height from the sub-device format, then for the
+> > user to figure out how big a buffer is needed for a particular format it
+> > takes to change the sub-device format.
+> > 
+> > I wouldn't do this but keep the image dimensions on the video node
+> > independent of what's configured on the sub-device.
+> 
+> So the question is whether the video device node should:
+> a) keep its format and framesize always in sync with what is set on the
+>    subdev node with active link to it. This means all s_fmt and enum_fmt
+>    will return only the value which is in sink with the subdev node;
+> b) allow to set all possible allowed formats and framesizes. This however
+>    allows the userspace to try to start the streaming with format and
+>    framesizes not in sync (on video and subdev node) in which case the
+>    start streaming will fail.
+> 
+> Currently the driver is implemented as in b) and I hit this problem (in b))
+> when I try to use it from opencv. I wonder how this can be overcome, the
+> userspace cannot be blamed that it tried to start streaming for format
+> and framesize which were allowed to be set.
+> 
+> Are there any new insights on this lately - what can be done to avoid
+> the problems in a) and b)?
 
-Private PASIDs are used for doing iommu_map/iommu_unmap on PASIDs
-(first-level translation):
-https://www.spinics.net/lists/dri-devel/msg177003.html As above, some
-people don't want SVA, some can't do it, some may even want a few
-private address spaces just for their kernel driver. They need a way to
-allocate PASIDs and do iommu_map/iommu_unmap on them, without binding to
-a process. I was planning to add the private PASID patch to my SVA
-series, but in my opinion the feature overlaps with auxiliary domains.
+I'd like to refer to Linux camera user space that hasn't yet materialised,
+yet there are plans to implemnt that. One of the aims are to support
+regular V4L2 applications on complex devices.
 
-Thanks,
-Jean
+<URL:https://linuxtv.org/news.php?entry=2018-07-13.mchehab>
+
+There's unfortunately nothing more concrete than that I could refer to at
+the moment.
+
+-- 
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi
