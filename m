@@ -2,92 +2,93 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62E48C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 08:37:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0FE7C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 08:39:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20BB520C0A
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 08:37:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20BB520C0A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 9F94820882
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 08:39:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F94820882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727852AbeIMNpx (ORCPT
+        id S1727697AbeIMNrj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 09:45:53 -0400
-Received: from smtp.nue.novell.com ([195.135.221.5]:58527 "EHLO
-        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726932AbeIMNpx (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Thu, 13 Sep 2018 09:45:53 -0400
-Received: from linux-l9pv.suse (unknown.telstraglobal.net [134.159.103.118])
-        by smtp.nue.novell.com with ESMTP (TLS encrypted); Thu, 13 Sep 2018 10:37:20 +0200
-Date:   Thu, 13 Sep 2018 16:37:09 +0800
-From:   joeyli <jlee@suse.com>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Chen Yu <yu.c.chen@intel.com>,
-        Oliver Neukum <oneukum@suse.com>,
-        Ryan Chen <yu.chen.surf@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>
-Subject: Re: [PATCH 5/5] PM / hibernate: An option to request that snapshot
- image must be authenticated
-Message-ID: <20180913083709.GD3593@linux-l9pv.suse>
-References: <20180912142337.21955-1-jlee@suse.com>
- <20180912142337.21955-6-jlee@suse.com>
- <0ee402c0-bd0e-ea84-9def-f6355b83b4f5@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0ee402c0-bd0e-ea84-9def-f6355b83b4f5@infradead.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Thu, 13 Sep 2018 09:47:39 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:36935 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726308AbeIMNrj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 09:47:39 -0400
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1g0N9J-00038v-Ug; Thu, 13 Sep 2018 10:38:53 +0200
+Message-ID: <1536827930.3452.4.camel@pengutronix.de>
+Subject: Re: [PATCH v2 6/8] drm/imx: support handling bridge timings bus
+ flags
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Stefan Agner <stefan@agner.ch>, linus.walleij@linaro.org,
+        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
+        robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de
+Cc:     kernel@pengutronix.de, fabio.estevam@nxp.com, linux-imx@nxp.com,
+        architt@codeaurora.org, a.hajda@samsung.com, gustavo@padovan.org,
+        maarten.lankhorst@linux.intel.com, sean@poorly.run,
+        marcel.ziswiler@toradex.com, max.krummenacher@toradex.com,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date:   Thu, 13 Sep 2018 10:38:50 +0200
+In-Reply-To: <20180912183222.25414-7-stefan@agner.ch>
+References: <20180912183222.25414-1-stefan@agner.ch>
+         <20180912183222.25414-7-stefan@agner.ch>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Randy, 
+On Wed, 2018-09-12 at 11:32 -0700, Stefan Agner wrote:
+> A bridge might require specific settings for the pixel data on
+> the bus.
 
-On Wed, Sep 12, 2018 at 09:24:38AM -0700, Randy Dunlap wrote:
-> Hi,
-> 
-> On 9/12/18 7:23 AM, Lee, Chun-Yi wrote:
-> > diff --git a/kernel/power/Kconfig b/kernel/power/Kconfig
-> > index 7c5c30149dbc..3c998fd6dc4c 100644
-> > --- a/kernel/power/Kconfig
-> > +++ b/kernel/power/Kconfig
-> > @@ -90,6 +90,17 @@ config HIBERNATION_ENC_AUTH
-> >  	  master key of hibernation. The TPM trusted key depends on TPM. The
-> >  	  security of user defined key relies on user space.
-> >  
-> > +config HIBERNATION_ENC_AUTH_FORCE
-> > +	bool "Require hibernate snapshot image to be validly signed"
-> > +	depends on HIBERNATION_ENC_AUTH
-> > +	help
-> > +	  This option will prevent that a snapshot image without (valid)
-> > +	  signature be restored. Without this option, a unauthenticated
-> 
-> 	                                              an
-> 
-> > +	  snapshot image can be restored but the restored kernel will be
-> > +	  tainted. Which also means that the hibernation can be triggered
-> 
-> s/Which/This/
-> 
-> or like this:
-> 	  tainted, which also
->
+On which bus? The bridge has input and output.
 
-Thanks for your review and suggestion! I will update the description in
-next version.
+> Copy the bus flags from the bridge timings if a bridge
+> is in use.
+> 
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> ---
+>  drivers/gpu/drm/imx/parallel-display.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/imx/parallel-display.c b/drivers/gpu/drm/imx/parallel-display.c
+> index aefd04e18f93..7798a0621df7 100644
+> --- a/drivers/gpu/drm/imx/parallel-display.c
+> +++ b/drivers/gpu/drm/imx/parallel-display.c
+> @@ -239,6 +239,9 @@ static int imx_pd_bind(struct device *dev, struct device *master, void *data)
+>  	if (ret && ret != -ENODEV)
+>  		return ret;
+>  
+> +	if (imxpd->bridge && imxpd->bridge->timings)
+> +		imxpd->bus_flags = imxpd->bridge->timings->input_bus_flags;
 
-Regards
-Joey Lee
+Oh, ok. I'd also specify input bus in the commit message.
+
+> +
+>  	imxpd->dev = dev;
+>  
+>  	ret = imx_pd_register(drm, imxpd);
+
+regards
+Philipp
