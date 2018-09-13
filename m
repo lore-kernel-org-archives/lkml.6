@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2561C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:50:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 406A2C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:50:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5DCE20854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:50:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5DCE20854
+	by mail.kernel.org (Postfix) with ESMTP id E8C7320881
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:50:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8C7320881
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730747AbeIMTAX (ORCPT
+        id S1730758AbeIMTA0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:00:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33200 "EHLO
+        Thu, 13 Sep 2018 15:00:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33206 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729363AbeIMTAW (ORCPT
+        with ESMTP id S1729363AbeIMTAZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:00:22 -0400
+        Thu, 13 Sep 2018 15:00:25 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 199EACFE;
-        Thu, 13 Sep 2018 13:50:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6CDE9CFE;
+        Thu, 13 Sep 2018 13:50:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Chan <michael.chan@broadcom.com>,
+        stable@vger.kernel.org, Davide Caratti <dcaratti@redhat.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 015/197] bnxt_en: Do not adjust max_cp_rings by the ones used by RDMA.
-Date:   Thu, 13 Sep 2018 15:29:24 +0200
-Message-Id: <20180913131842.180746718@linuxfoundation.org>
+Subject: [PATCH 4.18 016/197] net/sched: act_pedit: fix dump of extended layered op
+Date:   Thu, 13 Sep 2018 15:29:25 +0200
+Message-Id: <20180913131842.220944944@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -51,123 +52,124 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Chan <michael.chan@broadcom.com>
+From: Davide Caratti <dcaratti@redhat.com>
 
-[ Upstream commit 00fe9c326d2027f2437dea38ef0e82f9d02d94c0 ]
+[ Upstream commit 85eb9af182243ce9a8b72410d5321c440ac5f8d7 ]
 
-Currently, the driver adjusts the bp->hw_resc.max_cp_rings by the number
-of MSIX vectors used by RDMA.  There is one code path in open that needs
-to check the true max_cp_rings including any used by RDMA.  This code
-is now checking for the reduced max_cp_rings which will fail when the
-number of cp rings is very small.
+in the (rare) case of failure in nla_nest_start(), missing NULL checks in
+tcf_pedit_key_ex_dump() can make the following command
 
-To fix this in a clean way, we don't adjust max_cp_rings anymore.
-Instead, we add a helper bnxt_get_max_func_cp_rings_for_en() to get the
-reduced max_cp_rings when appropriate.
+ # tc action add action pedit ex munge ip ttl set 64
 
-Fixes: ec86f14ea506 ("bnxt_en: Add ULP calls to stop and restart IRQs.")
-Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+dereference a NULL pointer:
+
+ BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
+ PGD 800000007d1cd067 P4D 800000007d1cd067 PUD 7acd3067 PMD 0
+ Oops: 0002 [#1] SMP PTI
+ CPU: 0 PID: 3336 Comm: tc Tainted: G            E     4.18.0.pedit+ #425
+ Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
+ RIP: 0010:tcf_pedit_dump+0x19d/0x358 [act_pedit]
+ Code: be 02 00 00 00 48 89 df 66 89 44 24 20 e8 9b b1 fd e0 85 c0 75 46 8b 83 c8 00 00 00 49 83 c5 08 48 03 83 d0 00 00 00 4d 39 f5 <66> 89 04 25 00 00 00 00 0f 84 81 01 00 00 41 8b 45 00 48 8d 4c 24
+ RSP: 0018:ffffb5d4004478a8 EFLAGS: 00010246
+ RAX: ffff8880fcda2070 RBX: ffff8880fadd2900 RCX: 0000000000000000
+ RDX: 0000000000000002 RSI: ffffb5d4004478ca RDI: ffff8880fcda206e
+ RBP: ffff8880fb9cb900 R08: 0000000000000008 R09: ffff8880fcda206e
+ R10: ffff8880fadd2900 R11: 0000000000000000 R12: ffff8880fd26cf40
+ R13: ffff8880fc957430 R14: ffff8880fc957430 R15: ffff8880fb9cb988
+ FS:  00007f75a537a740(0000) GS:ffff8880fda00000(0000) knlGS:0000000000000000
+ CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ CR2: 0000000000000000 CR3: 000000007a2fa005 CR4: 00000000001606f0
+ Call Trace:
+  ? __nla_reserve+0x38/0x50
+  tcf_action_dump_1+0xd2/0x130
+  tcf_action_dump+0x6a/0xf0
+  tca_get_fill.constprop.31+0xa3/0x120
+  tcf_action_add+0xd1/0x170
+  tc_ctl_action+0x137/0x150
+  rtnetlink_rcv_msg+0x263/0x2d0
+  ? _cond_resched+0x15/0x40
+  ? rtnl_calcit.isra.30+0x110/0x110
+  netlink_rcv_skb+0x4d/0x130
+  netlink_unicast+0x1a3/0x250
+  netlink_sendmsg+0x2ae/0x3a0
+  sock_sendmsg+0x36/0x40
+  ___sys_sendmsg+0x26f/0x2d0
+  ? do_wp_page+0x8e/0x5f0
+  ? handle_pte_fault+0x6c3/0xf50
+  ? __handle_mm_fault+0x38e/0x520
+  ? __sys_sendmsg+0x5e/0xa0
+  __sys_sendmsg+0x5e/0xa0
+  do_syscall_64+0x5b/0x180
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+ RIP: 0033:0x7f75a4583ba0
+ Code: c3 48 8b 05 f2 62 2c 00 f7 db 64 89 18 48 83 cb ff eb dd 0f 1f 80 00 00 00 00 83 3d fd c3 2c 00 00 75 10 b8 2e 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 31 c3 48 83 ec 08 e8 ae cc 00 00 48 89 04 24
+ RSP: 002b:00007fff60ee7418 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+ RAX: ffffffffffffffda RBX: 00007fff60ee7540 RCX: 00007f75a4583ba0
+ RDX: 0000000000000000 RSI: 00007fff60ee7490 RDI: 0000000000000003
+ RBP: 000000005b842d3e R08: 0000000000000002 R09: 0000000000000000
+ R10: 00007fff60ee6ea0 R11: 0000000000000246 R12: 0000000000000000
+ R13: 00007fff60ee7554 R14: 0000000000000001 R15: 000000000066c100
+ Modules linked in: act_pedit(E) ip6table_filter ip6_tables iptable_filter binfmt_misc crct10dif_pclmul ext4 crc32_pclmul mbcache ghash_clmulni_intel jbd2 pcbc snd_hda_codec_generic snd_hda_intel snd_hda_codec snd_hda_core snd_hwdep snd_seq snd_seq_device snd_pcm aesni_intel crypto_simd snd_timer cryptd glue_helper snd joydev pcspkr soundcore virtio_balloon i2c_piix4 nfsd auth_rpcgss nfs_acl lockd grace sunrpc ip_tables xfs libcrc32c ata_generic pata_acpi virtio_net net_failover virtio_blk virtio_console failover qxl crc32c_intel drm_kms_helper syscopyarea serio_raw sysfillrect sysimgblt fb_sys_fops ttm drm ata_piix virtio_pci libata virtio_ring i2c_core virtio floppy dm_mirror dm_region_hash dm_log dm_mod [last unloaded: act_pedit]
+ CR2: 0000000000000000
+
+Like it's done for other TC actions, give up dumping pedit rules and return
+an error if nla_nest_start() returns NULL.
+
+Fixes: 71d0ed7079df ("net/act_pedit: Support using offset relative to the conventional network headers")
+Signed-off-by: Davide Caratti <dcaratti@redhat.com>
+Acked-by: Cong Wang <xiyou.wangcong@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/bnxt/bnxt.c       |    7 ++++---
- drivers/net/ethernet/broadcom/bnxt/bnxt.h       |    2 +-
- drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c |    7 ++++---
- drivers/net/ethernet/broadcom/bnxt/bnxt_ulp.c   |    5 -----
- 4 files changed, 9 insertions(+), 12 deletions(-)
+ net/sched/act_pedit.c |   18 +++++++++++++-----
+ 1 file changed, 13 insertions(+), 5 deletions(-)
 
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -5907,9 +5907,9 @@ unsigned int bnxt_get_max_func_cp_rings(
- 	return bp->hw_resc.max_cp_rings;
- }
- 
--void bnxt_set_max_func_cp_rings(struct bnxt *bp, unsigned int max)
-+unsigned int bnxt_get_max_func_cp_rings_for_en(struct bnxt *bp)
+--- a/net/sched/act_pedit.c
++++ b/net/sched/act_pedit.c
+@@ -109,16 +109,18 @@ static int tcf_pedit_key_ex_dump(struct
  {
--	bp->hw_resc.max_cp_rings = max;
-+	return bp->hw_resc.max_cp_rings - bnxt_get_ulp_msix_num(bp);
+ 	struct nlattr *keys_start = nla_nest_start(skb, TCA_PEDIT_KEYS_EX);
+ 
++	if (!keys_start)
++		goto nla_failure;
+ 	for (; n > 0; n--) {
+ 		struct nlattr *key_start;
+ 
+ 		key_start = nla_nest_start(skb, TCA_PEDIT_KEY_EX);
++		if (!key_start)
++			goto nla_failure;
+ 
+ 		if (nla_put_u16(skb, TCA_PEDIT_KEY_EX_HTYPE, keys_ex->htype) ||
+-		    nla_put_u16(skb, TCA_PEDIT_KEY_EX_CMD, keys_ex->cmd)) {
+-			nlmsg_trim(skb, keys_start);
+-			return -EINVAL;
+-		}
++		    nla_put_u16(skb, TCA_PEDIT_KEY_EX_CMD, keys_ex->cmd))
++			goto nla_failure;
+ 
+ 		nla_nest_end(skb, key_start);
+ 
+@@ -128,6 +130,9 @@ static int tcf_pedit_key_ex_dump(struct
+ 	nla_nest_end(skb, keys_start);
+ 
+ 	return 0;
++nla_failure:
++	nla_nest_cancel(skb, keys_start);
++	return -EINVAL;
  }
  
- static unsigned int bnxt_get_max_func_irqs(struct bnxt *bp)
-@@ -8492,7 +8492,8 @@ static void _bnxt_get_max_rings(struct b
+ static int tcf_pedit_init(struct net *net, struct nlattr *nla,
+@@ -395,7 +400,10 @@ static int tcf_pedit_dump(struct sk_buff
+ 	opt->bindcnt = p->tcf_bindcnt - bind;
  
- 	*max_tx = hw_resc->max_tx_rings;
- 	*max_rx = hw_resc->max_rx_rings;
--	*max_cp = min_t(int, hw_resc->max_irqs, hw_resc->max_cp_rings);
-+	*max_cp = min_t(int, bnxt_get_max_func_cp_rings_for_en(bp),
-+			hw_resc->max_irqs);
- 	*max_cp = min_t(int, *max_cp, hw_resc->max_stat_ctxs);
- 	max_ring_grps = hw_resc->max_hw_ring_grps;
- 	if (BNXT_CHIP_TYPE_NITRO_A0(bp) && BNXT_PF(bp)) {
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-@@ -1468,7 +1468,7 @@ int bnxt_hwrm_set_coal(struct bnxt *);
- unsigned int bnxt_get_max_func_stat_ctxs(struct bnxt *bp);
- void bnxt_set_max_func_stat_ctxs(struct bnxt *bp, unsigned int max);
- unsigned int bnxt_get_max_func_cp_rings(struct bnxt *bp);
--void bnxt_set_max_func_cp_rings(struct bnxt *bp, unsigned int max);
-+unsigned int bnxt_get_max_func_cp_rings_for_en(struct bnxt *bp);
- int bnxt_get_avail_msix(struct bnxt *bp, int num);
- int bnxt_reserve_rings(struct bnxt *bp);
- void bnxt_tx_disable(struct bnxt *bp);
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c
-@@ -451,7 +451,7 @@ static int bnxt_hwrm_func_vf_resc_cfg(st
+ 	if (p->tcfp_keys_ex) {
+-		tcf_pedit_key_ex_dump(skb, p->tcfp_keys_ex, p->tcfp_nkeys);
++		if (tcf_pedit_key_ex_dump(skb,
++					  p->tcfp_keys_ex,
++					  p->tcfp_nkeys))
++			goto nla_put_failure;
  
- 	bnxt_hwrm_cmd_hdr_init(bp, &req, HWRM_FUNC_VF_RESOURCE_CFG, -1, -1);
- 
--	vf_cp_rings = hw_resc->max_cp_rings - bp->cp_nr_rings;
-+	vf_cp_rings = bnxt_get_max_func_cp_rings_for_en(bp) - bp->cp_nr_rings;
- 	vf_stat_ctx = hw_resc->max_stat_ctxs - bp->num_stat_ctxs;
- 	if (bp->flags & BNXT_FLAG_AGG_RINGS)
- 		vf_rx_rings = hw_resc->max_rx_rings - bp->rx_nr_rings * 2;
-@@ -544,7 +544,8 @@ static int bnxt_hwrm_func_cfg(struct bnx
- 	max_stat_ctxs = hw_resc->max_stat_ctxs;
- 
- 	/* Remaining rings are distributed equally amongs VF's for now */
--	vf_cp_rings = (hw_resc->max_cp_rings - bp->cp_nr_rings) / num_vfs;
-+	vf_cp_rings = (bnxt_get_max_func_cp_rings_for_en(bp) -
-+		       bp->cp_nr_rings) / num_vfs;
- 	vf_stat_ctx = (max_stat_ctxs - bp->num_stat_ctxs) / num_vfs;
- 	if (bp->flags & BNXT_FLAG_AGG_RINGS)
- 		vf_rx_rings = (hw_resc->max_rx_rings - bp->rx_nr_rings * 2) /
-@@ -638,7 +639,7 @@ static int bnxt_sriov_enable(struct bnxt
- 	 */
- 	vfs_supported = *num_vfs;
- 
--	avail_cp = hw_resc->max_cp_rings - bp->cp_nr_rings;
-+	avail_cp = bnxt_get_max_func_cp_rings_for_en(bp) - bp->cp_nr_rings;
- 	avail_stat = hw_resc->max_stat_ctxs - bp->num_stat_ctxs;
- 	avail_cp = min_t(int, avail_cp, avail_stat);
- 
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt_ulp.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_ulp.c
-@@ -169,7 +169,6 @@ static int bnxt_req_msix_vecs(struct bnx
- 		edev->ulp_tbl[ulp_id].msix_requested = avail_msix;
- 	}
- 	bnxt_fill_msix_vecs(bp, ent);
--	bnxt_set_max_func_cp_rings(bp, max_cp_rings - avail_msix);
- 	edev->flags |= BNXT_EN_FLAG_MSIX_REQUESTED;
- 	return avail_msix;
- }
-@@ -178,7 +177,6 @@ static int bnxt_free_msix_vecs(struct bn
- {
- 	struct net_device *dev = edev->net;
- 	struct bnxt *bp = netdev_priv(dev);
--	int max_cp_rings, msix_requested;
- 
- 	ASSERT_RTNL();
- 	if (ulp_id != BNXT_ROCE_ULP)
-@@ -187,9 +185,6 @@ static int bnxt_free_msix_vecs(struct bn
- 	if (!(edev->flags & BNXT_EN_FLAG_MSIX_REQUESTED))
- 		return 0;
- 
--	max_cp_rings = bnxt_get_max_func_cp_rings(bp);
--	msix_requested = edev->ulp_tbl[ulp_id].msix_requested;
--	bnxt_set_max_func_cp_rings(bp, max_cp_rings + msix_requested);
- 	edev->ulp_tbl[ulp_id].msix_requested = 0;
- 	edev->flags &= ~BNXT_EN_FLAG_MSIX_REQUESTED;
- 	if (netif_running(dev)) {
+ 		if (nla_put(skb, TCA_PEDIT_PARMS_EX, s, opt))
+ 			goto nla_put_failure;
 
 
