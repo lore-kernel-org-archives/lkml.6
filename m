@@ -2,142 +2,144 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=5.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=5.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 222B9C43143
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 18:39:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5EB9C43143
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 18:42:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1CA1204FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 18:39:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1CA1204FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 8761D20880
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 18:42:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DOapD+Ru"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8761D20880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728204AbeIMXuV (ORCPT
+        id S1728059AbeIMXxc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 19:50:21 -0400
-Received: from gateway34.websitewelcome.com ([192.185.149.62]:37447 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727231AbeIMXuV (ORCPT
+        Thu, 13 Sep 2018 19:53:32 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:33500 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727246AbeIMXxb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 19:50:21 -0400
-Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway34.websitewelcome.com (Postfix) with ESMTP id 59D9F479D
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 13:39:37 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 0WWSgRH3sbXuJ0WWZgk5aO; Thu, 13 Sep 2018 13:39:36 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.119.25] (port=50376 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1g0WWS-001i4V-0O; Thu, 13 Sep 2018 13:39:24 -0500
-Date:   Thu, 13 Sep 2018 13:39:22 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Siva Reddy Kallam <siva.kallam@broadcom.com>,
-        Prashant Sreedharan <prashant@broadcom.com>,
-        Michael Chan <mchan@broadcom.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH net-next] tg3: Fix fall-through annotations
-Message-ID: <20180913183922.GA31390@embeddedor.com>
+        Thu, 13 Sep 2018 19:53:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=dDYDbEuRdd1XRsqdoeE4Jji5tPrAoJc8ageC6Z1teuI=; b=DOapD+RuAZWAk5TbK4lSwxMmS
+        Lt8cpJjaQYgw8QzHK9v0XzUZtVy8NqeUsCFjc5K3R0yorzTSvDUDtFkF+VUu19WxLjRpUrMuIW2Zv
+        ZKWnnbWp81vxxRL3RKjDeUvUNLZKA4jROFq5S4gRA+rjxv3A3mWzloinAgOG/1gmjbtKAhCMf7Ypn
+        1MKNUN+iwfMtp8kqr8QugdtQsBSa+tMgslnMaKpFMAAmOuiASsj3CsWGtYPwVb1h0zcRqyPhjg6RG
+        vP4NOzD+JVok+3qMad7qooLw+5M76zaoCZSSjPel8kFBmLf24Y3ec+vl5mSPfrpEasTie9LpGOqnq
+        InpRIq2kQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g0WZV-0004hM-8q; Thu, 13 Sep 2018 18:42:33 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 0512D2058769D; Thu, 13 Sep 2018 20:42:30 +0200 (CEST)
+Date:   Thu, 13 Sep 2018 20:42:30 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Dave Hansen <dave.hansen@linux.intel.com>
+Cc:     will.deacon@arm.com, aneesh.kumar@linux.vnet.ibm.com,
+        akpm@linux-foundation.org, npiggin@gmail.com,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux@armlinux.org.uk,
+        heiko.carstens@de.ibm.com
+Subject: Re: [RFC][PATCH 03/11] x86/mm: Page size aware flush_tlb_mm_range()
+Message-ID: <20180913184230.GD24124@hirez.programming.kicks-ass.net>
+References: <20180913092110.817204997@infradead.org>
+ <20180913092812.012757318@infradead.org>
+ <f89e61a3-0eb0-3d00-fbaa-f30c2cf60be3@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.119.25
-X-Source-L: No
-X-Exim-ID: 1g0WWS-001i4V-0O
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.119.25]:50376
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <f89e61a3-0eb0-3d00-fbaa-f30c2cf60be3@linux.intel.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace "fallthru" with a proper "fall through" annotation.
+On Thu, Sep 13, 2018 at 10:22:58AM -0700, Dave Hansen wrote:
+> > +static inline void tlb_flush(struct mmu_gather *tlb)
+> > +{
+> > +	unsigned long start = 0UL, end = TLB_FLUSH_ALL;
+> > +	unsigned int invl_shift = tlb_get_unmap_shift(tlb);
+> 
+> I had to go back and look at
+> 
+> 	https://patchwork.kernel.org/patch/10587207/
 
-This fix is part of the ongoing efforts to enabling
--Wimplicit-fallthrough
+I so hate patchwork...
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/net/ethernet/broadcom/tg3.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+> to figure out what was going on.  I wonder if we could make the code a
+> bit more standalone.
+> 
+> This at least needs a comment about what it's getting from 'tlb'.  Maybe
+> just:
+> 
+> 	/* Find the smallest page size that we unmapped: */
+> 
+> > --- a/arch/x86/include/asm/tlbflush.h
+> > +++ b/arch/x86/include/asm/tlbflush.h
+> > @@ -507,23 +507,25 @@ struct flush_tlb_info {
+> >  	unsigned long		start;
+> >  	unsigned long		end;
+> >  	u64			new_tlb_gen;
+> > +	unsigned int		invl_shift;
+> >  };
+> 
+> Maybe we really should just call this flush_stride or something.
 
-diff --git a/drivers/net/ethernet/broadcom/tg3.c b/drivers/net/ethernet/broadcom/tg3.c
-index e6f28c7..ee7ef32 100644
---- a/drivers/net/ethernet/broadcom/tg3.c
-+++ b/drivers/net/ethernet/broadcom/tg3.c
-@@ -1598,7 +1598,7 @@ static int tg3_mdio_init(struct tg3 *tp)
- 			phydev->dev_flags |= PHY_BRCM_EXT_IBND_RX_ENABLE;
- 		if (tg3_flag(tp, RGMII_EXT_IBND_TX_EN))
- 			phydev->dev_flags |= PHY_BRCM_EXT_IBND_TX_ENABLE;
--		/* fallthru */
-+		/* fall through */
- 	case PHY_ID_RTL8211C:
- 		phydev->interface = PHY_INTERFACE_MODE_RGMII;
- 		break;
-@@ -2127,7 +2127,7 @@ static int tg3_phy_init(struct tg3 *tp)
- 					      SUPPORTED_Asym_Pause);
- 			break;
- 		}
--		/* fallthru */
-+		/* fall through */
- 	case PHY_INTERFACE_MODE_MII:
- 		phydev->supported &= (PHY_BASIC_FEATURES |
- 				      SUPPORTED_Pause |
-@@ -5215,7 +5215,7 @@ static int tg3_fiber_aneg_smachine(struct tg3 *tp,
- 		if (ap->flags & (MR_AN_ENABLE | MR_RESTART_AN))
- 			ap->state = ANEG_STATE_AN_ENABLE;
- 
--		/* fallthru */
-+		/* fall through */
- 	case ANEG_STATE_AN_ENABLE:
- 		ap->flags &= ~(MR_AN_COMPLETE | MR_PAGE_RX);
- 		if (ap->flags & MR_AN_ENABLE) {
-@@ -5245,7 +5245,7 @@ static int tg3_fiber_aneg_smachine(struct tg3 *tp,
- 		ret = ANEG_TIMER_ENAB;
- 		ap->state = ANEG_STATE_RESTART;
- 
--		/* fallthru */
-+		/* fall through */
- 	case ANEG_STATE_RESTART:
- 		delta = ap->cur_time - ap->link_time;
- 		if (delta > ANEG_STATE_SETTLE_TIME)
-@@ -5288,7 +5288,7 @@ static int tg3_fiber_aneg_smachine(struct tg3 *tp,
- 
- 		ap->state = ANEG_STATE_ACK_DETECT;
- 
--		/* fallthru */
-+		/* fall through */
- 	case ANEG_STATE_ACK_DETECT:
- 		if (ap->ack_match != 0) {
- 			if ((ap->rxconfig & ~ANEG_CFG_ACK) ==
-@@ -14013,7 +14013,7 @@ static int tg3_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
- 	case SIOCGMIIPHY:
- 		data->phy_id = tp->phy_addr;
- 
--		/* fallthru */
-+		/* fall through */
- 	case SIOCGMIIREG: {
- 		u32 mii_regval;
- 
--- 
-2.7.4
+But its a shift, not a size. stride_shift?
 
+> >  #define local_flush_tlb() __flush_tlb()
+> >  
+> >  #define flush_tlb_mm(mm)	flush_tlb_mm_range(mm, 0UL, TLB_FLUSH_ALL, 0UL)
+> >  
+> > -#define flush_tlb_range(vma, start, end)	\
+> > -		flush_tlb_mm_range(vma->vm_mm, start, end, vma->vm_flags)
+> > +#define flush_tlb_range(vma, start, end)			\
+> > +		flush_tlb_mm_range((vma)->vm_mm, start, end,	\
+> > +				(vma)->vm_flags & VM_HUGETLB ? PMD_SHIFT : PAGE_SHIFT)
+> 
+> This is safe.  But, Couldn't this PMD_SHIFT also be PUD_SHIFT for a 1G
+> hugetlb page?
+
+It could be, but can we tell at that point?
+
+> >  void native_flush_tlb_others(const struct cpumask *cpumask,
+> > --- a/arch/x86/mm/tlb.c
+> > +++ b/arch/x86/mm/tlb.c
+> > @@ -522,12 +522,12 @@ static void flush_tlb_func_common(const
+> >  	    f->new_tlb_gen == mm_tlb_gen) {
+> >  		/* Partial flush */
+> >  		unsigned long addr;
+> > -		unsigned long nr_pages = (f->end - f->start) >> PAGE_SHIFT;
+> > +		unsigned long nr_pages = (f->end - f->start) >> f->invl_shift;
+> 
+> We might want to make this nr_invalidations or nr_flushes now so we
+> don't get it confused with PAGE_SIZE stuff.
+
+Sure, can rename.
+
+> Otherwise, this makes me a *tiny* bit nervous.  I think we're good about
+> ensuring that we fully flush 4k mappings from the TLB before going up to
+> a 2MB mapping because of all the errata we've had there over the years.
+> But, had we left 4k mappings around, the old flushing code would have
+> cleaned them up for us.
+
+Indeed.
+
+> This certainly tightly ties the invalidations to what was in the page
+> tables.  If that diverged from the TLB at some point, there's certainly
+> more exposure here.
+>
+> Looks fun, though. :)
+
+:-)
