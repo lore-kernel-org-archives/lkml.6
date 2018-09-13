@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE65FC07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:35:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D381FC07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:35:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C71720854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:35:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C71720854
+	by mail.kernel.org (Postfix) with ESMTP id 99B7220854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:35:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99B7220854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728986AbeIMSoi (ORCPT
+        id S1728999AbeIMSom (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:44:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59020 "EHLO
+        Thu, 13 Sep 2018 14:44:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59028 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727716AbeIMSoi (ORCPT
+        with ESMTP id S1727716AbeIMSol (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:44:38 -0400
+        Thu, 13 Sep 2018 14:44:41 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3F2CAD18;
-        Thu, 13 Sep 2018 13:35:08 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6F468D18;
+        Thu, 13 Sep 2018 13:35:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stephen Hemminger <sthemmin@microsoft.com>,
+        stable@vger.kernel.org, Vlad Buslov <vladbu@mellanox.com>,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 12/78] hv_netvsc: ignore devices that are not PCI
-Date:   Thu, 13 Sep 2018 15:30:59 +0200
-Message-Id: <20180913131806.563117036@linuxfoundation.org>
+Subject: [PATCH 4.9 13/78] act_ife: move tcfa_lock down to where necessary
+Date:   Thu, 13 Sep 2018 15:31:00 +0200
+Message-Id: <20180913131806.627503894@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131805.732342940@linuxfoundation.org>
 References: <20180913131805.732342940@linuxfoundation.org>
@@ -51,47 +53,157 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stephen Hemminger <stephen@networkplumber.org>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-[ Upstream commit b93c1b5ac8643cc08bb74fa8ae21d6c63dfcb23d ]
+[ Upstream commit 4e407ff5cd67ec76eeeea1deec227b7982dc7f66 ]
 
-Registering another device with same MAC address (such as TAP, VPN or
-DPDK KNI) will confuse the VF autobinding logic.  Restrict the search
-to only run if the device is known to be a PCI attached VF.
+The only time we need to take tcfa_lock is when adding
+a new metainfo to an existing ife->metalist. We don't need
+to take tcfa_lock so early and so broadly in tcf_ife_init().
 
-Fixes: e8ff40d4bff1 ("hv_netvsc: improve VF device matching")
-Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
+This means we can always take ife_mod_lock first, avoid the
+reverse locking ordering warning as reported by Vlad.
+
+Reported-by: Vlad Buslov <vladbu@mellanox.com>
+Tested-by: Vlad Buslov <vladbu@mellanox.com>
+Cc: Vlad Buslov <vladbu@mellanox.com>
+Cc: Jamal Hadi Salim <jhs@mojatatu.com>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/hyperv/netvsc_drv.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ net/sched/act_ife.c |   37 +++++++++++++------------------------
+ 1 file changed, 13 insertions(+), 24 deletions(-)
 
---- a/drivers/net/hyperv/netvsc_drv.c
-+++ b/drivers/net/hyperv/netvsc_drv.c
-@@ -29,6 +29,7 @@
- #include <linux/netdevice.h>
- #include <linux/inetdevice.h>
- #include <linux/etherdevice.h>
-+#include <linux/pci.h>
- #include <linux/skbuff.h>
- #include <linux/if_vlan.h>
- #include <linux/in.h>
-@@ -1228,11 +1229,15 @@ static int netvsc_register_vf(struct net
+--- a/net/sched/act_ife.c
++++ b/net/sched/act_ife.c
+@@ -267,10 +267,8 @@ static int ife_validate_metatype(struct
+ }
+ 
+ /* called when adding new meta information
+- * under ife->tcf_lock for existing action
+ */
+-static int load_metaops_and_vet(struct tcf_ife_info *ife, u32 metaid,
+-				void *val, int len, bool exists)
++static int load_metaops_and_vet(u32 metaid, void *val, int len)
  {
- 	struct net_device *ndev;
- 	struct net_device_context *net_device_ctx;
-+	struct device *pdev = vf_netdev->dev.parent;
- 	struct netvsc_device *netvsc_dev;
+ 	struct tcf_meta_ops *ops = find_ife_oplist(metaid);
+ 	int ret = 0;
+@@ -278,13 +276,9 @@ static int load_metaops_and_vet(struct t
+ 	if (!ops) {
+ 		ret = -ENOENT;
+ #ifdef CONFIG_MODULES
+-		if (exists)
+-			spin_unlock_bh(&ife->tcf_lock);
+ 		rtnl_unlock();
+ 		request_module("ifemeta%u", metaid);
+ 		rtnl_lock();
+-		if (exists)
+-			spin_lock_bh(&ife->tcf_lock);
+ 		ops = find_ife_oplist(metaid);
+ #endif
+ 	}
+@@ -301,10 +295,9 @@ static int load_metaops_and_vet(struct t
+ }
  
- 	if (vf_netdev->addr_len != ETH_ALEN)
- 		return NOTIFY_DONE;
+ /* called when adding new meta information
+- * under ife->tcf_lock for existing action
+ */
+ static int add_metainfo(struct tcf_ife_info *ife, u32 metaid, void *metaval,
+-			int len, bool atomic)
++			int len, bool atomic, bool exists)
+ {
+ 	struct tcf_meta_info *mi = NULL;
+ 	struct tcf_meta_ops *ops = find_ife_oplist(metaid);
+@@ -331,12 +324,16 @@ static int add_metainfo(struct tcf_ife_i
+ 		}
+ 	}
  
-+	if (!pdev || !dev_is_pci(pdev) || dev_is_pf(pdev))
-+		return NOTIFY_DONE;
-+
- 	/*
- 	 * We will use the MAC address to locate the synthetic interface to
- 	 * associate with the VF interface. If we don't find a matching
++	if (exists)
++		spin_lock_bh(&ife->tcf_lock);
+ 	list_add_tail(&mi->metalist, &ife->metalist);
++	if (exists)
++		spin_unlock_bh(&ife->tcf_lock);
+ 
+ 	return ret;
+ }
+ 
+-static int use_all_metadata(struct tcf_ife_info *ife)
++static int use_all_metadata(struct tcf_ife_info *ife, bool exists)
+ {
+ 	struct tcf_meta_ops *o;
+ 	int rc = 0;
+@@ -344,7 +341,7 @@ static int use_all_metadata(struct tcf_i
+ 
+ 	read_lock(&ife_mod_lock);
+ 	list_for_each_entry(o, &ifeoplist, list) {
+-		rc = add_metainfo(ife, o->metaid, NULL, 0, true);
++		rc = add_metainfo(ife, o->metaid, NULL, 0, true, exists);
+ 		if (rc == 0)
+ 			installed += 1;
+ 	}
+@@ -416,7 +413,6 @@ static void tcf_ife_cleanup(struct tc_ac
+ 	spin_unlock_bh(&ife->tcf_lock);
+ }
+ 
+-/* under ife->tcf_lock for existing action */
+ static int populate_metalist(struct tcf_ife_info *ife, struct nlattr **tb,
+ 			     bool exists)
+ {
+@@ -430,11 +426,11 @@ static int populate_metalist(struct tcf_
+ 			val = nla_data(tb[i]);
+ 			len = nla_len(tb[i]);
+ 
+-			rc = load_metaops_and_vet(ife, i, val, len, exists);
++			rc = load_metaops_and_vet(i, val, len);
+ 			if (rc != 0)
+ 				return rc;
+ 
+-			rc = add_metainfo(ife, i, val, len, exists);
++			rc = add_metainfo(ife, i, val, len, false, exists);
+ 			if (rc)
+ 				return rc;
+ 		}
+@@ -510,6 +506,8 @@ static int tcf_ife_init(struct net *net,
+ 	if (exists)
+ 		spin_lock_bh(&ife->tcf_lock);
+ 	ife->tcf_action = parm->action;
++	if (exists)
++		spin_unlock_bh(&ife->tcf_lock);
+ 
+ 	if (parm->flags & IFE_ENCODE) {
+ 		if (daddr)
+@@ -537,9 +535,6 @@ metadata_parse_err:
+ 				tcf_hash_release(*a, bind);
+ 			if (ret == ACT_P_CREATED)
+ 				_tcf_ife_cleanup(*a, bind);
+-
+-			if (exists)
+-				spin_unlock_bh(&ife->tcf_lock);
+ 			return err;
+ 		}
+ 
+@@ -553,20 +548,14 @@ metadata_parse_err:
+ 		 * as we can. You better have at least one else we are
+ 		 * going to bail out
+ 		 */
+-		err = use_all_metadata(ife);
++		err = use_all_metadata(ife, exists);
+ 		if (err) {
+ 			if (ret == ACT_P_CREATED)
+ 				_tcf_ife_cleanup(*a, bind);
+-
+-			if (exists)
+-				spin_unlock_bh(&ife->tcf_lock);
+ 			return err;
+ 		}
+ 	}
+ 
+-	if (exists)
+-		spin_unlock_bh(&ife->tcf_lock);
+-
+ 	if (ret == ACT_P_CREATED)
+ 		tcf_hash_insert(tn, *a);
+ 
 
 
