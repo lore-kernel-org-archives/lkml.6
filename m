@@ -6,35 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E194FC07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:05:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C34E6C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:05:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A47E620652
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:05:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A47E620652
+	by mail.kernel.org (Postfix) with ESMTP id 8725820854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:05:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8725820854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732181AbeIMTOr (ORCPT
+        id S1731751AbeIMTPE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:14:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35468 "EHLO
+        Thu, 13 Sep 2018 15:15:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35478 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731360AbeIMTOq (ORCPT
+        with ESMTP id S1728095AbeIMTPE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:14:46 -0400
+        Thu, 13 Sep 2018 15:15:04 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 45D9CD36;
-        Thu, 13 Sep 2018 14:05:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A743ED36;
+        Thu, 13 Sep 2018 14:05:24 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
-        Jan-Marek Glogowski <glogow@fbihome.de>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>
-Subject: [PATCH 4.18 181/197] drm/i915: Re-apply "Perform link quality check, unconditionally during long pulse"
-Date:   Thu, 13 Sep 2018 15:32:10 +0200
-Message-Id: <20180913131848.803046555@linuxfoundation.org>
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mat Martineau <mathew.j.martineau@linux.intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.18 182/197] uapi/linux/keyctl.h: dont use C++ reserved keyword as a struct member name
+Date:   Thu, 13 Sep 2018 15:32:11 +0200
+Message-Id: <20180913131848.841795110@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -52,95 +56,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jan-Marek Glogowski <glogow@fbihome.de>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-commit 399334708b4f07b107094e5db4a390f0f25d2d4f upstream.
+commit 8a2336e549d385bb0b46880435b411df8d8200e8 upstream.
 
-This re-applies the workaround for "some DP sinks, [which] are a
-little nuts" from commit 1a36147bb939 ("drm/i915: Perform link
-quality check unconditionally during long pulse").
-It makes the secondary AOC E2460P monitor connected via DP to an
-acer Veriton N4640G usable again.
+Since this header is in "include/uapi/linux/", apparently people want to
+use it in userspace programs -- even in C++ ones.  However, the header
+uses a C++ reserved keyword ("private"), so change that to "dh_private"
+instead to allow the header file to be used in C++ userspace.
 
-This hunk was dropped in commit c85d200e8321 ("drm/i915: Move SST
-DP link retraining into the ->post_hotplug() hook")
-
-Fixes: c85d200e8321 ("drm/i915: Move SST DP link retraining into the ->post_hotplug() hook")
-[Cleaned up commit message, added stable cc]
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Signed-off-by: Jan-Marek Glogowski <glogow@fbihome.de>
-Cc: stable@vger.kernel.org
-Link: https://patchwork.freedesktop.org/patch/msgid/20180825191035.3945-1-lyude@redhat.com
-(cherry picked from commit 3cf71bc9904d7ee4a25a822c5dcb54c7804ea388)
-Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Fixes https://bugzilla.kernel.org/show_bug.cgi?id=191051
+Link: http://lkml.kernel.org/r/0db6c314-1ef4-9bfa-1baa-7214dd2ee061@infradead.org
+Fixes: ddbb41148724 ("KEYS: Add KEYCTL_DH_COMPUTE command")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: David Howells <dhowells@redhat.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: Mat Martineau <mathew.j.martineau@linux.intel.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/intel_dp.c |   33 +++++++++++++++++++--------------
- 1 file changed, 19 insertions(+), 14 deletions(-)
+ include/uapi/linux/keyctl.h |    2 +-
+ security/keys/dh.c          |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/i915/intel_dp.c
-+++ b/drivers/gpu/drm/i915/intel_dp.c
-@@ -4293,18 +4293,6 @@ intel_dp_needs_link_retrain(struct intel
- 	return !drm_dp_channel_eq_ok(link_status, intel_dp->lane_count);
- }
+--- a/include/uapi/linux/keyctl.h
++++ b/include/uapi/linux/keyctl.h
+@@ -65,7 +65,7 @@
  
--/*
-- * If display is now connected check links status,
-- * there has been known issues of link loss triggering
-- * long pulse.
-- *
-- * Some sinks (eg. ASUS PB287Q) seem to perform some
-- * weird HPD ping pong during modesets. So we can apparently
-- * end up with HPD going low during a modeset, and then
-- * going back up soon after. And once that happens we must
-- * retrain the link to get a picture. That's in case no
-- * userspace component reacted to intermittent HPD dip.
-- */
- int intel_dp_retrain_link(struct intel_encoder *encoder,
- 			  struct drm_modeset_acquire_ctx *ctx)
- {
-@@ -4794,7 +4782,8 @@ intel_dp_unset_edid(struct intel_dp *int
- }
- 
- static int
--intel_dp_long_pulse(struct intel_connector *connector)
-+intel_dp_long_pulse(struct intel_connector *connector,
-+		    struct drm_modeset_acquire_ctx *ctx)
- {
- 	struct drm_i915_private *dev_priv = to_i915(connector->base.dev);
- 	struct intel_dp *intel_dp = intel_attached_dp(&connector->base);
-@@ -4853,6 +4842,22 @@ intel_dp_long_pulse(struct intel_connect
- 		 */
- 		status = connector_status_disconnected;
- 		goto out;
-+	} else {
-+		/*
-+		 * If display is now connected check links status,
-+		 * there has been known issues of link loss triggering
-+		 * long pulse.
-+		 *
-+		 * Some sinks (eg. ASUS PB287Q) seem to perform some
-+		 * weird HPD ping pong during modesets. So we can apparently
-+		 * end up with HPD going low during a modeset, and then
-+		 * going back up soon after. And once that happens we must
-+		 * retrain the link to get a picture. That's in case no
-+		 * userspace component reacted to intermittent HPD dip.
-+		 */
-+		struct intel_encoder *encoder = &dp_to_dig_port(intel_dp)->base;
-+
-+		intel_dp_retrain_link(encoder, ctx);
+ /* keyctl structures */
+ struct keyctl_dh_params {
+-	__s32 private;
++	__s32 dh_private;
+ 	__s32 prime;
+ 	__s32 base;
+ };
+--- a/security/keys/dh.c
++++ b/security/keys/dh.c
+@@ -300,7 +300,7 @@ long __keyctl_dh_compute(struct keyctl_d
  	}
+ 	dh_inputs.g_size = dlen;
  
- 	/*
-@@ -4914,7 +4919,7 @@ intel_dp_detect(struct drm_connector *co
- 				return ret;
- 		}
- 
--		status = intel_dp_long_pulse(intel_dp->attached_connector);
-+		status = intel_dp_long_pulse(intel_dp->attached_connector, ctx);
- 	}
- 
- 	intel_dp->detect_done = false;
+-	dlen = dh_data_from_key(pcopy.private, &dh_inputs.key);
++	dlen = dh_data_from_key(pcopy.dh_private, &dh_inputs.key);
+ 	if (dlen < 0) {
+ 		ret = dlen;
+ 		goto out2;
 
 
