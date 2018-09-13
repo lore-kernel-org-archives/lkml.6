@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89A02C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:49:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42F54C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:49:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FEA420854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:49:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FEA420854
+	by mail.kernel.org (Postfix) with ESMTP id D917C20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:49:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D917C20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730579AbeIMS6i (ORCPT
+        id S1730594AbeIMS6l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:58:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32984 "EHLO
+        Thu, 13 Sep 2018 14:58:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:32992 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728688AbeIMS6h (ORCPT
+        with ESMTP id S1728688AbeIMS6k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:58:37 -0400
+        Thu, 13 Sep 2018 14:58:40 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C6056CFE;
-        Thu, 13 Sep 2018 13:49:02 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EFF3FCFE;
+        Thu, 13 Sep 2018 13:49:06 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Junaid Shahid <junaids@google.com>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
         Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.14 110/115] kvm: x86: Set highest physical address bits in non-present/reserved SPTEs
-Date:   Thu, 13 Sep 2018 15:32:10 +0200
-Message-Id: <20180913131830.061070299@linuxfoundation.org>
+Subject: [PATCH 4.14 111/115] x86: kvm: avoid unused variable warning
+Date:   Thu, 13 Sep 2018 15:32:11 +0200
+Message-Id: <20180913131830.111166455@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -51,133 +51,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Junaid Shahid <junaids@google.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 28a1f3ac1d0c8558ee4453d9634dad891a6e922e upstream.
+commit 7288bde1f9df6c1475675419bdd7725ce84dec56 upstream.
 
-Always set the 5 upper-most supported physical address bits to 1 for SPTEs
-that are marked as non-present or reserved, to make them unusable for
-L1TF attacks from the guest. Currently, this just applies to MMIO SPTEs.
-(We do not need to mark PTEs that are completely 0 as physical page 0
-is already reserved.)
+Removing one of the two accesses of the maxphyaddr variable led to
+a harmless warning:
 
-This allows mitigation of L1TF without disabling hyper-threading by using
-shadow paging mode instead of EPT.
+arch/x86/kvm/x86.c: In function 'kvm_set_mmio_spte_mask':
+arch/x86/kvm/x86.c:6563:6: error: unused variable 'maxphyaddr' [-Werror=unused-variable]
 
-Signed-off-by: Junaid Shahid <junaids@google.com>
+Removing the #ifdef seems to be the nicest workaround, as it
+makes the code look cleaner than adding another #ifdef.
+
+Fixes: 28a1f3ac1d0c ("kvm: x86: Set highest physical address bits in non-present/reserved SPTEs")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Cc: stable@vger.kernel.org # L1TF
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/mmu.c |   43 ++++++++++++++++++++++++++++++++++++++-----
- arch/x86/kvm/x86.c |    8 ++++++--
- 2 files changed, 44 insertions(+), 7 deletions(-)
+ arch/x86/kvm/x86.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -220,6 +220,17 @@ static const u64 shadow_acc_track_saved_
- 						    PT64_EPT_EXECUTABLE_MASK;
- static const u64 shadow_acc_track_saved_bits_shift = PT64_SECOND_AVAIL_BITS_SHIFT;
- 
-+/*
-+ * This mask must be set on all non-zero Non-Present or Reserved SPTEs in order
-+ * to guard against L1TF attacks.
-+ */
-+static u64 __read_mostly shadow_nonpresent_or_rsvd_mask;
-+
-+/*
-+ * The number of high-order 1 bits to use in the mask above.
-+ */
-+static const u64 shadow_nonpresent_or_rsvd_mask_len = 5;
-+
- static void mmu_spte_set(u64 *sptep, u64 spte);
- static void mmu_free_roots(struct kvm_vcpu *vcpu);
- 
-@@ -308,9 +319,13 @@ static void mark_mmio_spte(struct kvm_vc
- {
- 	unsigned int gen = kvm_current_mmio_generation(vcpu);
- 	u64 mask = generation_mmio_spte_mask(gen);
-+	u64 gpa = gfn << PAGE_SHIFT;
- 
- 	access &= ACC_WRITE_MASK | ACC_USER_MASK;
--	mask |= shadow_mmio_value | access | gfn << PAGE_SHIFT;
-+	mask |= shadow_mmio_value | access;
-+	mask |= gpa | shadow_nonpresent_or_rsvd_mask;
-+	mask |= (gpa & shadow_nonpresent_or_rsvd_mask)
-+		<< shadow_nonpresent_or_rsvd_mask_len;
- 
- 	trace_mark_mmio_spte(sptep, gfn, access, gen);
- 	mmu_spte_set(sptep, mask);
-@@ -323,8 +338,14 @@ static bool is_mmio_spte(u64 spte)
- 
- static gfn_t get_mmio_spte_gfn(u64 spte)
- {
--	u64 mask = generation_mmio_spte_mask(MMIO_GEN_MASK) | shadow_mmio_mask;
--	return (spte & ~mask) >> PAGE_SHIFT;
-+	u64 mask = generation_mmio_spte_mask(MMIO_GEN_MASK) | shadow_mmio_mask |
-+		   shadow_nonpresent_or_rsvd_mask;
-+	u64 gpa = spte & ~mask;
-+
-+	gpa |= (spte >> shadow_nonpresent_or_rsvd_mask_len)
-+	       & shadow_nonpresent_or_rsvd_mask;
-+
-+	return gpa >> PAGE_SHIFT;
- }
- 
- static unsigned get_mmio_spte_access(u64 spte)
-@@ -381,7 +402,7 @@ void kvm_mmu_set_mask_ptes(u64 user_mask
- }
- EXPORT_SYMBOL_GPL(kvm_mmu_set_mask_ptes);
- 
--void kvm_mmu_clear_all_pte_masks(void)
-+static void kvm_mmu_reset_all_pte_masks(void)
- {
- 	shadow_user_mask = 0;
- 	shadow_accessed_mask = 0;
-@@ -391,6 +412,18 @@ void kvm_mmu_clear_all_pte_masks(void)
- 	shadow_mmio_mask = 0;
- 	shadow_present_mask = 0;
- 	shadow_acc_track_mask = 0;
-+
-+	/*
-+	 * If the CPU has 46 or less physical address bits, then set an
-+	 * appropriate mask to guard against L1TF attacks. Otherwise, it is
-+	 * assumed that the CPU is not vulnerable to L1TF.
-+	 */
-+	if (boot_cpu_data.x86_phys_bits <
-+	    52 - shadow_nonpresent_or_rsvd_mask_len)
-+		shadow_nonpresent_or_rsvd_mask =
-+			rsvd_bits(boot_cpu_data.x86_phys_bits -
-+				  shadow_nonpresent_or_rsvd_mask_len,
-+				  boot_cpu_data.x86_phys_bits - 1);
- }
- 
- static int is_cpuid_PSE36(void)
-@@ -5473,7 +5506,7 @@ static void mmu_destroy_caches(void)
- 
- int kvm_mmu_module_init(void)
- {
--	kvm_mmu_clear_all_pte_masks();
-+	kvm_mmu_reset_all_pte_masks();
- 
- 	pte_list_desc_cache = kmem_cache_create("pte_list_desc",
- 					    sizeof(struct pte_list_desc),
 --- a/arch/x86/kvm/x86.c
 +++ b/arch/x86/kvm/x86.c
-@@ -6194,8 +6194,12 @@ static void kvm_set_mmio_spte_mask(void)
- 	 * Set the reserved bits and the present bit of an paging-structure
- 	 * entry to generate page fault with PFER.RSV = 1.
- 	 */
--	 /* Mask the reserved physical address bits. */
--	mask = rsvd_bits(maxphyaddr, 51);
-+
-+	/*
-+	 * Mask the uppermost physical address bit, which would be reserved as
-+	 * long as the supported physical address width is less than 52.
-+	 */
-+	mask = 1ull << 51;
- 
+@@ -6204,14 +6204,12 @@ static void kvm_set_mmio_spte_mask(void)
  	/* Set the present bit. */
  	mask |= 1ull;
+ 
+-#ifdef CONFIG_X86_64
+ 	/*
+ 	 * If reserved bit is not supported, clear the present bit to disable
+ 	 * mmio page fault.
+ 	 */
+-	if (maxphyaddr == 52)
++	if (IS_ENABLED(CONFIG_X86_64) && maxphyaddr == 52)
+ 		mask &= ~1ull;
+-#endif
+ 
+ 	kvm_mmu_set_mmio_spte_mask(mask, mask);
+ }
 
 
