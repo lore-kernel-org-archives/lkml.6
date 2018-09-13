@@ -5,99 +5,158 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95D89F81827
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A447FF81834
 	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 17:35:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88F202177F
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 17:05:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88F202177F
+	by mail.kernel.org (Postfix) with ESMTP id 4CC0121532
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 16:09:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CC0121532
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728498AbeIMWQL (ORCPT
+        id S1728493AbeIMVTV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 18:16:11 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:7238 "EHLO mx1.redhat.com"
+        Thu, 13 Sep 2018 17:19:21 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:46835 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727082AbeIMWQK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 18:16:10 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        id S1727839AbeIMVTU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 17:19:20 -0400
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 34D16310E9A9;
-        Thu, 13 Sep 2018 17:05:48 +0000 (UTC)
-Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C7060608E0;
-        Thu, 13 Sep 2018 17:05:45 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     kvm@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Jim Mattson <jmattson@google.com>,
-        Liran Alon <liran.alon@oracle.com>,
+        by mx1.redhat.com (Postfix) with ESMTPS id 06D86C0587FE;
+        Thu, 13 Sep 2018 16:09:11 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7704C2010CAA;
+        Thu, 13 Sep 2018 16:09:09 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 2/6] afs: Do better max capacity handling on address lists
+From:   David Howells <dhowells@redhat.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
+        keyrings@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v5 08/12] x86/kvm/lapic: preserve gfn_to_hva_cache len on cache reinit
-Date:   Thu, 13 Sep 2018 19:05:18 +0200
-Message-Id: <20180913170522.24876-9-vkuznets@redhat.com>
-In-Reply-To: <20180913170522.24876-1-vkuznets@redhat.com>
-References: <20180913170522.24876-1-vkuznets@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Thu, 13 Sep 2018 17:05:48 +0000 (UTC)
+Date:   Thu, 13 Sep 2018 17:09:08 +0100
+Message-ID: <153685494877.16086.6419466153343099957.stgit@warthog.procyon.org.uk>
+In-Reply-To: <153685493441.16086.3483582787020297039.stgit@warthog.procyon.org.uk>
+References: <153685493441.16086.3483582787020297039.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Thu, 13 Sep 2018 16:09:11 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-vcpu->arch.pv_eoi is accessible through both HV_X64_MSR_VP_ASSIST_PAGE and
-MSR_KVM_PV_EOI_EN so on migration userspace may try to restore them in any
-order. Values match, however, kvm_lapic_enable_pv_eoi() uses different
-length: for Hyper-V case it's the whole struct hv_vp_assist_page, for KVM
-native case it is 8. In case we restore KVM-native MSR last cache will
-be reinitialized with len=8 so trying to access VP assist page beyond
-8 bytes with kvm_read_guest_cached() will fail.
+Note the maximum allocated capacity in an afs_addr_list struct and discard
+addresses that would exceed it in afs_merge_fs_addr{4,6}().
 
-Check if we re-initializing cache for the same address and preserve length
-in case it was greater.
+Also, since the current maximum capacity is less than 255, reduce the
+relevant members to bytes.
 
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
 ---
- arch/x86/kvm/lapic.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-index adad933ed538..362a370f9738 100644
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@ -2608,14 +2608,22 @@ int kvm_hv_vapic_msr_read(struct kvm_vcpu *vcpu, u32 reg, u64 *data)
- int kvm_lapic_enable_pv_eoi(struct kvm_vcpu *vcpu, u64 data, unsigned long len)
- {
- 	u64 addr = data & ~KVM_MSR_ENABLED;
-+	struct gfn_to_hva_cache *ghc = &vcpu->arch.pv_eoi.data;
-+	unsigned long new_len;
-+
- 	if (!IS_ALIGNED(addr, 4))
- 		return 1;
+ fs/afs/addr_list.c |   19 +++++++++++--------
+ fs/afs/internal.h  |    8 +++++---
+ 2 files changed, 16 insertions(+), 11 deletions(-)
+
+diff --git a/fs/afs/addr_list.c b/fs/afs/addr_list.c
+index 025a9a5e1c32..4dbb8af54668 100644
+--- a/fs/afs/addr_list.c
++++ b/fs/afs/addr_list.c
+@@ -17,11 +17,6 @@
+ #include "internal.h"
+ #include "afs_fs.h"
  
- 	vcpu->arch.pv_eoi.msr_val = data;
- 	if (!pv_eoi_enabled(vcpu))
- 		return 0;
--	return kvm_gfn_to_hva_cache_init(vcpu->kvm, &vcpu->arch.pv_eoi.data,
--					 addr, len);
-+
-+	if (addr == ghc->gpa && len <= ghc->len)
-+		new_len = ghc->len;
-+	else
-+		new_len = len;
-+
-+	return kvm_gfn_to_hva_cache_init(vcpu->kvm, ghc, addr, new_len);
- }
+-//#define AFS_MAX_ADDRESSES
+-//	((unsigned int)((PAGE_SIZE - sizeof(struct afs_addr_list)) /
+-//			sizeof(struct sockaddr_rxrpc)))
+-#define AFS_MAX_ADDRESSES ((unsigned int)(sizeof(unsigned long) * 8))
+-
+ /*
+  * Release an address list.
+  */
+@@ -43,11 +38,15 @@ struct afs_addr_list *afs_alloc_addrlist(unsigned int nr,
  
- void kvm_apic_accept_events(struct kvm_vcpu *vcpu)
--- 
-2.14.4
+ 	_enter("%u,%u,%u", nr, service, port);
+ 
++	if (nr > AFS_MAX_ADDRESSES)
++		nr = AFS_MAX_ADDRESSES;
++
+ 	alist = kzalloc(struct_size(alist, addrs, nr), GFP_KERNEL);
+ 	if (!alist)
+ 		return NULL;
+ 
+ 	refcount_set(&alist->usage, 1);
++	alist->max_addrs = nr;
+ 
+ 	for (i = 0; i < nr; i++) {
+ 		struct sockaddr_rxrpc *srx = &alist->addrs[i];
+@@ -109,8 +108,6 @@ struct afs_addr_list *afs_parse_text_addrs(const char *text, size_t len,
+ 	} while (p < end);
+ 
+ 	_debug("%u/%u addresses", nr, AFS_MAX_ADDRESSES);
+-	if (nr > AFS_MAX_ADDRESSES)
+-		nr = AFS_MAX_ADDRESSES;
+ 
+ 	alist = afs_alloc_addrlist(nr, service, port);
+ 	if (!alist)
+@@ -180,7 +177,7 @@ struct afs_addr_list *afs_parse_text_addrs(const char *text, size_t len,
+ 		}
+ 
+ 		alist->nr_addrs++;
+-	} while (p < end && alist->nr_addrs < AFS_MAX_ADDRESSES);
++	} while (p < end && alist->nr_addrs < alist->max_addrs);
+ 
+ 	_leave(" = [nr %u]", alist->nr_addrs);
+ 	return alist;
+@@ -241,6 +238,9 @@ void afs_merge_fs_addr4(struct afs_addr_list *alist, __be32 xdr, u16 port)
+ 	__be16 xport = htons(port);
+ 	int i;
+ 
++	if (alist->nr_addrs >= alist->max_addrs)
++		return;
++
+ 	for (i = 0; i < alist->nr_ipv4; i++) {
+ 		a = &alist->addrs[i].transport.sin6;
+ 		if (xdr == a->sin6_addr.s6_addr32[3] &&
+@@ -277,6 +277,9 @@ void afs_merge_fs_addr6(struct afs_addr_list *alist, __be32 *xdr, u16 port)
+ 	__be16 xport = htons(port);
+ 	int i, diff;
+ 
++	if (alist->nr_addrs >= alist->max_addrs)
++		return;
++
+ 	for (i = alist->nr_ipv4; i < alist->nr_addrs; i++) {
+ 		a = &alist->addrs[i].transport.sin6;
+ 		diff = memcmp(xdr, &a->sin6_addr, 16);
+diff --git a/fs/afs/internal.h b/fs/afs/internal.h
+index 871a228d7f37..8ae4e2ebb99a 100644
+--- a/fs/afs/internal.h
++++ b/fs/afs/internal.h
+@@ -73,12 +73,14 @@ struct afs_addr_list {
+ 	struct rcu_head		rcu;		/* Must be first */
+ 	refcount_t		usage;
+ 	u32			version;	/* Version */
+-	unsigned short		nr_addrs;
+-	unsigned short		index;		/* Address currently in use */
+-	unsigned short		nr_ipv4;	/* Number of IPv4 addresses */
++	unsigned char		max_addrs;
++	unsigned char		nr_addrs;
++	unsigned char		index;		/* Address currently in use */
++	unsigned char		nr_ipv4;	/* Number of IPv4 addresses */
+ 	unsigned long		probed;		/* Mask of servers that have been probed */
+ 	unsigned long		yfs;		/* Mask of servers that are YFS */
+ 	struct sockaddr_rxrpc	addrs[];
++#define AFS_MAX_ADDRESSES ((unsigned int)(sizeof(unsigned long) * 8))
+ };
+ 
+ /*
 
