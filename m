@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 642ACC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:47:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D492EC07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:47:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2882720854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:47:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2882720854
+	by mail.kernel.org (Postfix) with ESMTP id 8DA7920854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:47:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DA7920854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730430AbeIMS46 (ORCPT
+        id S1730444AbeIMS5B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:56:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32816 "EHLO
+        Thu, 13 Sep 2018 14:57:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:32826 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729066AbeIMS45 (ORCPT
+        with ESMTP id S1729066AbeIMS5A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:56:57 -0400
+        Thu, 13 Sep 2018 14:57:00 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BA22CCFE;
-        Thu, 13 Sep 2018 13:47:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D0431CFE;
+        Thu, 13 Sep 2018 13:47:26 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Hoeppner <hoeppner@linux.ibm.com>,
-        Stefan Haberland <sth@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 058/115] s390/dasd: fix panic for failed online processing
-Date:   Thu, 13 Sep 2018 15:31:18 +0200
-Message-Id: <20180913131827.315590837@linuxfoundation.org>
+Subject: [PATCH 4.14 059/115] ACPI / scan: Initialize status to ACPI_STA_DEFAULT
+Date:   Thu, 13 Sep 2018 15:31:19 +0200
+Message-Id: <20180913131827.360206101@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -53,42 +52,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefan Haberland <sth@linux.ibm.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-[ Upstream commit 7c6553d4db03350dad0110c3224194c19df76a8f ]
+[ Upstream commit 5971b0c1594d6c34e257101ed5fdffec65205c50 ]
 
-Fix a panic that occurs for a device that got an error in
-dasd_eckd_check_characteristics() during online processing.
-For example the read configuration data command may have failed.
+Since commit 63347db0affa "ACPI / scan: Use acpi_bus_get_status() to
+initialize ACPI_TYPE_DEVICE devs" the status field of normal acpi_devices
+gets set to 0 by acpi_bus_type_and_status() and filled with its actual
+value later when acpi_add_single_object() calls acpi_bus_get_status().
 
-If this error occurs the device is not being set online and the earlier
-invoked steps during online processing are rolled back. Therefore
-dasd_eckd_uncheck_device() is called which needs a valid private
-structure. But this pointer is not valid if
-dasd_eckd_check_characteristics() has failed.
+This means that any acpi_match_device_ids() calls in between will always
+fail with -ENOENT.
 
-Check for a valid device->private pointer to prevent a panic.
+We already have a workaround for this, which temporary forces status to
+ACPI_STA_DEFAULT in drivers/acpi/x86/utils.c: acpi_device_always_present()
+and the next commit in this series adds another acpi_match_device_ids()
+call between status being initialized as 0 and the acpi_bus_get_status()
+call.
 
-Reviewed-by: Jan Hoeppner <hoeppner@linux.ibm.com>
-Signed-off-by: Stefan Haberland <sth@linux.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Rather then adding another workaround, this commit makes
+acpi_bus_type_and_status() initialize status to ACPI_STA_DEFAULT, this is
+safe to do as the only code looking at status between the initialization
+and the acpi_bus_get_status() call is those acpi_match_device_ids() calls.
+
+Note this does mean that we need to (re)set status to 0 in case the
+acpi_bus_get_status() call fails.
+
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/s390/block/dasd_eckd.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/acpi/scan.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/s390/block/dasd_eckd.c
-+++ b/drivers/s390/block/dasd_eckd.c
-@@ -1778,6 +1778,9 @@ static void dasd_eckd_uncheck_device(str
- 	struct dasd_eckd_private *private = device->private;
- 	int i;
+--- a/drivers/acpi/scan.c
++++ b/drivers/acpi/scan.c
+@@ -1599,7 +1599,8 @@ static int acpi_add_single_object(struct
+ 	 * Note this must be done before the get power-/wakeup_dev-flags calls.
+ 	 */
+ 	if (type == ACPI_BUS_TYPE_DEVICE)
+-		acpi_bus_get_status(device);
++		if (acpi_bus_get_status(device) < 0)
++			acpi_set_device_status(device, 0);
  
-+	if (!private)
-+		return;
-+
- 	dasd_alias_disconnect_device_from_lcu(device);
- 	private->ned = NULL;
- 	private->sneq = NULL;
+ 	acpi_bus_get_power_flags(device);
+ 	acpi_bus_get_wakeup_device_flags(device);
+@@ -1677,7 +1678,7 @@ static int acpi_bus_type_and_status(acpi
+ 		 * acpi_add_single_object updates this once we've an acpi_device
+ 		 * so that acpi_bus_get_status' quirk handling can be used.
+ 		 */
+-		*sta = 0;
++		*sta = ACPI_STA_DEFAULT;
+ 		break;
+ 	case ACPI_TYPE_PROCESSOR:
+ 		*type = ACPI_BUS_TYPE_PROCESSOR;
 
 
