@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBB3CC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:56:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CF14C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:56:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E49D20652
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:56:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E49D20652
+	by mail.kernel.org (Postfix) with ESMTP id C55CF204FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:56:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C55CF204FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731421AbeIMTGU (ORCPT
+        id S1731431AbeIMTGY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:06:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34202 "EHLO
+        Thu, 13 Sep 2018 15:06:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34214 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730337AbeIMTGT (ORCPT
+        with ESMTP id S1730337AbeIMTGX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:06:19 -0400
+        Thu, 13 Sep 2018 15:06:23 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A825CD10;
-        Thu, 13 Sep 2018 13:56:42 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C8470D10;
+        Thu, 13 Sep 2018 13:56:46 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Georgi Nikolov <gnikolov@icdsoft.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Florian Westphal <fw@strlen.de>,
-        Michal Hocko <mhocko@suse.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org, Ludovic Barre <ludovic.barre@st.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 073/197] netfilter: x_tables: do not fail xt_alloc_table_info too easilly
-Date:   Thu, 13 Sep 2018 15:30:22 +0200
-Message-Id: <20180913131844.446697748@linuxfoundation.org>
+Subject: [PATCH 4.18 091/197] irqchip/stm32: Fix init error handling
+Date:   Thu, 13 Sep 2018 15:30:40 +0200
+Message-Id: <20180913131845.174348825@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -55,56 +53,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michal Hocko <mhocko@suse.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit a148ce15375fc664ad64762c751c0c2aecb2cafe ]
+[ Upstream commit 4096165d55218a6f58b6c2ebc5d2428aa0aa70e4 ]
 
-eacd86ca3b03 ("net/netfilter/x_tables.c: use kvmalloc()
-in xt_alloc_table_info()") has unintentionally fortified
-xt_alloc_table_info allocation when __GFP_RETRY has been dropped from
-the vmalloc fallback. Later on there was a syzbot report that this
-can lead to OOM killer invocations when tables are too large and
-0537250fdc6c ("netfilter: x_tables: make allocation less aggressive")
-has been merged to restore the original behavior. Georgi Nikolov however
-noticed that he is not able to install his iptables anymore so this can
-be seen as a regression.
+If there are any errors in stm32_exti_host_init() then it leads to a
+NULL dereference in the callers.  The function should clean up after
+itself.
 
-The primary argument for 0537250fdc6c was that this allocation path
-shouldn't really trigger the OOM killer and kill innocent tasks. On the
-other hand the interface requires root and as such should allow what the
-admin asks for. Root inside a namespaces makes this more complicated
-because those might be not trusted in general. If they are not then such
-namespaces should be restricted anyway. Therefore drop the __GFP_NORETRY
-and replace it by __GFP_ACCOUNT to enfore memcg constrains on it.
-
-Fixes: 0537250fdc6c ("netfilter: x_tables: make allocation less aggressive")
-Reported-by: Georgi Nikolov <gnikolov@icdsoft.com>
-Suggested-by: Vlastimil Babka <vbabka@suse.cz>
-Acked-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Michal Hocko <mhocko@suse.com>
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: f9fc1745501e ("irqchip/stm32: Add host and driver data structures")
+Reviewed-by: Ludovic Barre <ludovic.barre@st.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/netfilter/x_tables.c |    7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ drivers/irqchip/irq-stm32-exti.c |   25 +++++++++++++------------
+ 1 file changed, 13 insertions(+), 12 deletions(-)
 
---- a/net/netfilter/x_tables.c
-+++ b/net/netfilter/x_tables.c
-@@ -1178,12 +1178,7 @@ struct xt_table_info *xt_alloc_table_inf
- 	if (sz < sizeof(*info) || sz >= XT_MAX_TABLE_SIZE)
- 		return NULL;
+--- a/drivers/irqchip/irq-stm32-exti.c
++++ b/drivers/irqchip/irq-stm32-exti.c
+@@ -602,17 +602,24 @@ stm32_exti_host_data *stm32_exti_host_in
+ 					sizeof(struct stm32_exti_chip_data),
+ 					GFP_KERNEL);
+ 	if (!host_data->chips_data)
+-		return NULL;
++		goto free_host_data;
  
--	/* __GFP_NORETRY is not fully supported by kvmalloc but it should
--	 * work reasonably well if sz is too large and bail out rather
--	 * than shoot all processes down before realizing there is nothing
--	 * more to reclaim.
--	 */
--	info = kvmalloc(sz, GFP_KERNEL | __GFP_NORETRY);
-+	info = kvmalloc(sz, GFP_KERNEL_ACCOUNT);
- 	if (!info)
- 		return NULL;
+ 	host_data->base = of_iomap(node, 0);
+ 	if (!host_data->base) {
+ 		pr_err("%pOF: Unable to map registers\n", node);
+-		return NULL;
++		goto free_chips_data;
+ 	}
  
+ 	stm32_host_data = host_data;
+ 
+ 	return host_data;
++
++free_chips_data:
++	kfree(host_data->chips_data);
++free_host_data:
++	kfree(host_data);
++
++	return NULL;
+ }
+ 
+ static struct
+@@ -664,10 +671,8 @@ static int __init stm32_exti_init(const
+ 	struct irq_domain *domain;
+ 
+ 	host_data = stm32_exti_host_init(drv_data, node);
+-	if (!host_data) {
+-		ret = -ENOMEM;
+-		goto out_free_mem;
+-	}
++	if (!host_data)
++		return -ENOMEM;
+ 
+ 	domain = irq_domain_add_linear(node, drv_data->bank_nr * IRQS_PER_BANK,
+ 				       &irq_exti_domain_ops, NULL);
+@@ -724,7 +729,6 @@ out_free_domain:
+ 	irq_domain_remove(domain);
+ out_unmap:
+ 	iounmap(host_data->base);
+-out_free_mem:
+ 	kfree(host_data->chips_data);
+ 	kfree(host_data);
+ 	return ret;
+@@ -751,10 +755,8 @@ __init stm32_exti_hierarchy_init(const s
+ 	}
+ 
+ 	host_data = stm32_exti_host_init(drv_data, node);
+-	if (!host_data) {
+-		ret = -ENOMEM;
+-		goto out_free_mem;
+-	}
++	if (!host_data)
++		return -ENOMEM;
+ 
+ 	for (i = 0; i < drv_data->bank_nr; i++)
+ 		stm32_exti_chip_init(host_data, i, node);
+@@ -776,7 +778,6 @@ __init stm32_exti_hierarchy_init(const s
+ 
+ out_unmap:
+ 	iounmap(host_data->base);
+-out_free_mem:
+ 	kfree(host_data->chips_data);
+ 	kfree(host_data);
+ 	return ret;
 
 
