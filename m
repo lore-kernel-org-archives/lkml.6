@@ -2,105 +2,92 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06C50C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:43:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2970C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:43:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C05C020854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:43:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C05C020854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 60B8620854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:43:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NRKfPOy2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60B8620854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729856AbeIMSxD (ORCPT
+        id S1729864AbeIMSxE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:53:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60348 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728650AbeIMSxC (ORCPT
+        Thu, 13 Sep 2018 14:53:04 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:42312 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729312AbeIMSxD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:53:02 -0400
-Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 288A7CF3;
-        Thu, 13 Sep 2018 13:43:29 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        icytxw@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 035/115] mm/fadvise.c: fix signed overflow UBSAN complaint
-Date:   Thu, 13 Sep 2018 15:30:55 +0200
-Message-Id: <20180913131825.870428284@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
-References: <20180913131823.327472833@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Thu, 13 Sep 2018 14:53:03 -0400
+Received: by mail-qt0-f193.google.com with SMTP id z8-v6so5345654qto.9
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 06:43:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=vhaXPG+D9JJ3+1tmlkaAXLO6gN5/4pKQeja1D6L4Dg4=;
+        b=NRKfPOy2bM0XFIb3sSWIkU99eO63tl6nksRyJ6hLyARkpTohRDpCJOr8b5r5ZMtbV3
+         J8HpKVUvtPrbsxFZIrBR2ZyGdttZhHpSP3IjBTvqEX8hOps3P3jFmWRK0x9Ki4tiofVA
+         bg59dLOhlBdvwhqyhy/OKRybIgtDU5RTELxdo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=vhaXPG+D9JJ3+1tmlkaAXLO6gN5/4pKQeja1D6L4Dg4=;
+        b=UEE+ozJicbM0tjuo+l357yqsjWccBQu1QZZ0eroUrcDkEC5SgvbR4IvCRn9atVwn6X
+         Nq05HzpbzL+lJOdvHtLvlrbxbKqpKV5m2kv2x3dkSgduZH2RnEYW1nUQMUKfiH73g2B8
+         WlpA+JYvCooee38b7GTg4LTN9nlxWXm7ti8JlvppatyJSwHJRFTMg2xIydMnA9xddzIh
+         defVfdhzAuqxRPc6NB14n0PG6bYJQPbnxQLHz3iXmm2s9N9hf4a/57OWNoWpd+Eq9XQR
+         fCd6QotA8n7/IJzM4YRFwmp72cu9SwaXZfNv88wOsmR+EchtIJxcSvs9i9uNUS9U0Cyx
+         uc2Q==
+X-Gm-Message-State: APzg51B7vDR50QxBDRzThz2h24PSajVzY+pLRYQQIQzEqbZWrPqC8Xpi
+        tuAtyJy8UJPppfMT0zylqq26x+VckF8jdw==
+X-Google-Smtp-Source: ANB0VdbVzfEVTmyGFnpVYdvAwJ57ORxxfpPebXLW/k0boRg0R27or0pLMlF0QruS4iEsI/dujptcUg==
+X-Received: by 2002:ac8:6b13:: with SMTP id w19-v6mr5291670qts.317.1536846210473;
+        Thu, 13 Sep 2018 06:43:30 -0700 (PDT)
+Received: from [192.168.2.120] (modemcable228.104-82-70.mc.videotron.ca. [70.82.104.228])
+        by smtp.googlemail.com with ESMTPSA id f25-v6sm2794894qkh.13.2018.09.13.06.43.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Sep 2018 06:43:29 -0700 (PDT)
+Subject: Re: [PATCH 1/2] thermal: imx: improve error message
+To:     Anson Huang <Anson.Huang@nxp.com>, rui.zhang@intel.com,
+        edubezval@gmail.com, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1536829986-23702-1-git-send-email-Anson.Huang@nxp.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <3ef674ab-6152-dc77-6c5e-5d5d23642a9f@linaro.org>
+Date:   Thu, 13 Sep 2018 15:43:28 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <1536829986-23702-1-git-send-email-Anson.Huang@nxp.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+On 13/09/2018 11:13, Anson Huang wrote:
+> Remove the duplicated "from" to improve the error message.
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
 
-------------------
+Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-From: Andrey Ryabinin <aryabinin@virtuozzo.com>
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-[ Upstream commit a718e28f538441a3b6612da9ff226973376cdf0f ]
-
-Signed integer overflow is undefined according to the C standard.  The
-overflow in ksys_fadvise64_64() is deliberate, but since it is signed
-overflow, UBSAN complains:
-
-	UBSAN: Undefined behaviour in mm/fadvise.c:76:10
-	signed integer overflow:
-	4 + 9223372036854775805 cannot be represented in type 'long long int'
-
-Use unsigned types to do math.  Unsigned overflow is defined so UBSAN
-will not complain about it.  This patch doesn't change generated code.
-
-[akpm@linux-foundation.org: add comment explaining the casts]
-Link: http://lkml.kernel.org/r/20180629184453.7614-1-aryabinin@virtuozzo.com
-Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Reported-by: <icytxw@gmail.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- mm/fadvise.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
---- a/mm/fadvise.c
-+++ b/mm/fadvise.c
-@@ -71,8 +71,12 @@ SYSCALL_DEFINE4(fadvise64_64, int, fd, l
- 		goto out;
- 	}
- 
--	/* Careful about overflows. Len == 0 means "as much as possible" */
--	endbyte = offset + len;
-+	/*
-+	 * Careful about overflows. Len == 0 means "as much as possible".  Use
-+	 * unsigned math because signed overflows are undefined and UBSan
-+	 * complains.
-+	 */
-+	endbyte = (u64)offset + (u64)len;
- 	if (!len || endbyte < len)
- 		endbyte = -1;
- 	else
-
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
