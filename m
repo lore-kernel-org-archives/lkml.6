@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25DADC07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:04:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC85DC07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:04:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E09CD20652
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:04:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E09CD20652
+	by mail.kernel.org (Postfix) with ESMTP id 7499520861
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:04:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7499520861
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732096AbeIMTOP (ORCPT
+        id S1732108AbeIMTOS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:14:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35400 "EHLO
+        Thu, 13 Sep 2018 15:14:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35406 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727566AbeIMTOP (ORCPT
+        with ESMTP id S1727566AbeIMTOS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:14:15 -0400
+        Thu, 13 Sep 2018 15:14:18 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 748D4D35;
-        Thu, 13 Sep 2018 14:04:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9CA36D35;
+        Thu, 13 Sep 2018 14:04:38 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mikita Lipski <mikita.lipski@amd.com>,
-        Harry Wentland <Harry.Wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.18 173/197] drm/amd/display: Check if clock source in use before disabling
-Date:   Thu, 13 Sep 2018 15:32:02 +0200
-Message-Id: <20180913131848.483211012@linuxfoundation.org>
+        stable@vger.kernel.org, James Zhu <James.Zhu@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Huang Rui <ray.huang@amd.com>, Likun Gao <Likun.Gao@amd.com>
+Subject: [PATCH 4.18 174/197] drm/amdgpu: update tmr mc address
+Date:   Thu, 13 Sep 2018 15:32:03 +0200
+Message-Id: <20180913131848.521425547@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -53,137 +52,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mikita Lipski <mikita.lipski@amd.com>
+From: James Zhu <jzhums@gmail.com>
 
-commit ad8960a6cb06c446d0a391ce095f6f28edf36aff upstream.
+commit 435198f33b56d7b875a8173a0227ddf0de285aa1 upstream.
 
-[why]
-We are disabling clock source while other pipes are still using
-it, because we don't verify the number of pipes that share it.
+Update tmr mc address with firmware loading address
+which is returned from PSP firmware
 
-[how]
-- Adding a function in resources to return the number of pipes
-sharing the clock source.
-- Checking that no one is sharing the clock source before disabling
-
-Signed-off-by: Mikita Lipski <mikita.lipski@amd.com>
-Reviewed-by: Harry Wentland <Harry.Wentland@amd.com>
-Acked-by: Leo Li <sunpeng.li@amd.com>
+Signed-off-by: James Zhu <James.Zhu@amd.com>
+Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+Acked-by: Huang Rui <ray.huang@amd.com>
+Reviewed-by: Likun Gao <Likun.Gao@amd.com>
+Signed-off-by: Likun Gao <Likun.Gao@amd.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/display/dc/core/dc_resource.c           |   46 ++++++++----
- drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c |    4 -
- drivers/gpu/drm/amd/display/dc/inc/resource.h               |    5 +
- 3 files changed, 40 insertions(+), 15 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/gpu/drm/amd/display/dc/core/dc_resource.c
-+++ b/drivers/gpu/drm/amd/display/dc/core/dc_resource.c
-@@ -268,24 +268,30 @@ bool resource_construct(
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
+@@ -131,6 +131,11 @@ psp_cmd_submit_buf(struct psp_context *p
+ 		msleep(1);
+ 	}
  
- 	return true;
- }
-+static int find_matching_clock_source(
-+		const struct resource_pool *pool,
-+		struct clock_source *clock_source)
-+{
- 
-+	int i;
-+
-+	for (i = 0; i < pool->clk_src_count; i++) {
-+		if (pool->clock_sources[i] == clock_source)
-+			return i;
++	if (ucode) {
++		ucode->tmr_mc_addr_lo = psp->cmd_buf_mem->resp.fw_addr_lo;
++		ucode->tmr_mc_addr_hi = psp->cmd_buf_mem->resp.fw_addr_hi;
 +	}
-+	return -1;
-+}
- 
- void resource_unreference_clock_source(
- 		struct resource_context *res_ctx,
- 		const struct resource_pool *pool,
- 		struct clock_source *clock_source)
- {
--	int i;
--
--	for (i = 0; i < pool->clk_src_count; i++) {
--		if (pool->clock_sources[i] != clock_source)
--			continue;
-+	int i = find_matching_clock_source(pool, clock_source);
- 
-+	if (i > -1)
- 		res_ctx->clock_source_ref_count[i]--;
- 
--		break;
--	}
--
- 	if (pool->dp_clock_source == clock_source)
- 		res_ctx->dp_clock_source_ref_count--;
- }
-@@ -295,19 +301,31 @@ void resource_reference_clock_source(
- 		const struct resource_pool *pool,
- 		struct clock_source *clock_source)
- {
--	int i;
--	for (i = 0; i < pool->clk_src_count; i++) {
--		if (pool->clock_sources[i] != clock_source)
--			continue;
-+	int i = find_matching_clock_source(pool, clock_source);
- 
-+	if (i > -1)
- 		res_ctx->clock_source_ref_count[i]++;
--		break;
--	}
- 
- 	if (pool->dp_clock_source == clock_source)
- 		res_ctx->dp_clock_source_ref_count++;
++
+ 	return ret;
  }
  
-+int resource_get_clock_source_reference(
-+		struct resource_context *res_ctx,
-+		const struct resource_pool *pool,
-+		struct clock_source *clock_source)
-+{
-+	int i = find_matching_clock_source(pool, clock_source);
-+
-+	if (i > -1)
-+		return res_ctx->clock_source_ref_count[i];
-+
-+	if (pool->dp_clock_source == clock_source)
-+		return res_ctx->dp_clock_source_ref_count;
-+
-+	return -1;
-+}
-+
- bool resource_are_streams_timing_synchronizable(
- 	struct dc_stream_state *stream1,
- 	struct dc_stream_state *stream2)
---- a/drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c
-+++ b/drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c
-@@ -1939,7 +1939,9 @@ static void dce110_reset_hw_ctx_wrap(
- 			pipe_ctx_old->plane_res.mi->funcs->free_mem_input(
- 					pipe_ctx_old->plane_res.mi, dc->current_state->stream_count);
- 
--			if (old_clk)
-+			if (old_clk && 0 == resource_get_clock_source_reference(&context->res_ctx,
-+										dc->res_pool,
-+										old_clk))
- 				old_clk->funcs->cs_power_down(old_clk);
- 
- 			dc->hwss.disable_plane(dc, pipe_ctx_old);
---- a/drivers/gpu/drm/amd/display/dc/inc/resource.h
-+++ b/drivers/gpu/drm/amd/display/dc/inc/resource.h
-@@ -102,6 +102,11 @@ void resource_reference_clock_source(
- 		const struct resource_pool *pool,
- 		struct clock_source *clock_source);
- 
-+int resource_get_clock_source_reference(
-+		struct resource_context *res_ctx,
-+		const struct resource_pool *pool,
-+		struct clock_source *clock_source);
-+
- bool resource_are_streams_timing_synchronizable(
- 		struct dc_stream_state *stream1,
- 		struct dc_stream_state *stream2);
 
 
