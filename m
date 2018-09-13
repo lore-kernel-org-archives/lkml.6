@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30FE5C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:54:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C2BCC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:54:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D039F20854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:54:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D039F20854
+	by mail.kernel.org (Postfix) with ESMTP id E512620854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:54:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E512620854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731213AbeIMTEY (ORCPT
+        id S1731222AbeIMTEa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:04:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33904 "EHLO
+        Thu, 13 Sep 2018 15:04:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33912 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728699AbeIMTEX (ORCPT
+        with ESMTP id S1728699AbeIMTEa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:04:23 -0400
+        Thu, 13 Sep 2018 15:04:30 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1CD4ED19;
-        Thu, 13 Sep 2018 13:54:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 711C6D1A;
+        Thu, 13 Sep 2018 13:54:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Song Liu <songliubraving@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
+        stable@vger.kernel.org, Tariq Toukan <tariqt@mellanox.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 065/197] bpf, sockmap: fix sock_map_ctx_update_elem race with exist/noexist
-Date:   Thu, 13 Sep 2018 15:30:14 +0200
-Message-Id: <20180913131844.125576816@linuxfoundation.org>
+Subject: [PATCH 4.18 066/197] net/xdp: Fix suspicious RCU usage warning
+Date:   Thu, 13 Sep 2018 15:30:15 +0200
+Message-Id: <20180913131844.162508679@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -54,291 +53,100 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Daniel Borkmann <daniel@iogearbox.net>
+From: Tariq Toukan <tariqt@mellanox.com>
 
-[ Upstream commit 585f5a6252ee43ec8feeee07387e3fcc7e8bb292 ]
+[ Upstream commit 21b172ee11b6ec260bd7e6a27b11a8a8d392fce5 ]
 
-The current code in sock_map_ctx_update_elem() allows for BPF_EXIST
-and BPF_NOEXIST map update flags. While on array-like maps this approach
-is rather uncommon, e.g. bpf_fd_array_map_update_elem() and others
-enforce map update flags to be BPF_ANY such that xchg() can be used
-directly, the current implementation in sock map does not guarantee
-that such operation with BPF_EXIST / BPF_NOEXIST is atomic.
+Fix the warning below by calling rhashtable_lookup_fast.
+Also, make some code movements for better quality and human
+readability.
 
-The initial test does a READ_ONCE(stab->sock_map[i]) to fetch the
-socket from the slot which is then tested for NULL / non-NULL. However
-later after __sock_map_ctx_update_elem(), the actual update is done
-through osock = xchg(&stab->sock_map[i], sock). Problem is that in
-the meantime a different CPU could have updated / deleted a socket
-on that specific slot and thus flag contraints won't hold anymore.
+[  342.450870] WARNING: suspicious RCU usage
+[  342.455856] 4.18.0-rc2+ #17 Tainted: G           O
+[  342.462210] -----------------------------
+[  342.467202] ./include/linux/rhashtable.h:481 suspicious rcu_dereference_check() usage!
+[  342.476568]
+[  342.476568] other info that might help us debug this:
+[  342.476568]
+[  342.486978]
+[  342.486978] rcu_scheduler_active = 2, debug_locks = 1
+[  342.495211] 4 locks held by modprobe/3934:
+[  342.500265]  #0: 00000000e23116b2 (mlx5_intf_mutex){+.+.}, at:
+mlx5_unregister_interface+0x18/0x90 [mlx5_core]
+[  342.511953]  #1: 00000000ca16db96 (rtnl_mutex){+.+.}, at: unregister_netdev+0xe/0x20
+[  342.521109]  #2: 00000000a46e2c4b (&priv->state_lock){+.+.}, at: mlx5e_close+0x29/0x60
+[mlx5_core]
+[  342.531642]  #3: 0000000060c5bde3 (mem_id_lock){+.+.}, at: xdp_rxq_info_unreg+0x93/0x6b0
+[  342.541206]
+[  342.541206] stack backtrace:
+[  342.547075] CPU: 12 PID: 3934 Comm: modprobe Tainted: G           O      4.18.0-rc2+ #17
+[  342.556621] Hardware name: Dell Inc. PowerEdge R730/0H21J3, BIOS 1.5.4 10/002/2015
+[  342.565606] Call Trace:
+[  342.568861]  dump_stack+0x78/0xb3
+[  342.573086]  xdp_rxq_info_unreg+0x3f5/0x6b0
+[  342.578285]  ? __call_rcu+0x220/0x300
+[  342.582911]  mlx5e_free_rq+0x38/0xc0 [mlx5_core]
+[  342.588602]  mlx5e_close_channel+0x20/0x120 [mlx5_core]
+[  342.594976]  mlx5e_close_channels+0x26/0x40 [mlx5_core]
+[  342.601345]  mlx5e_close_locked+0x44/0x50 [mlx5_core]
+[  342.607519]  mlx5e_close+0x42/0x60 [mlx5_core]
+[  342.613005]  __dev_close_many+0xb1/0x120
+[  342.617911]  dev_close_many+0xa2/0x170
+[  342.622622]  rollback_registered_many+0x148/0x460
+[  342.628401]  ? __lock_acquire+0x48d/0x11b0
+[  342.633498]  ? unregister_netdev+0xe/0x20
+[  342.638495]  rollback_registered+0x56/0x90
+[  342.643588]  unregister_netdevice_queue+0x7e/0x100
+[  342.649461]  unregister_netdev+0x18/0x20
+[  342.654362]  mlx5e_remove+0x2a/0x50 [mlx5_core]
+[  342.659944]  mlx5_remove_device+0xe5/0x110 [mlx5_core]
+[  342.666208]  mlx5_unregister_interface+0x39/0x90 [mlx5_core]
+[  342.673038]  cleanup+0x5/0xbfc [mlx5_core]
+[  342.678094]  __x64_sys_delete_module+0x16b/0x240
+[  342.683725]  ? do_syscall_64+0x1c/0x210
+[  342.688476]  do_syscall_64+0x5a/0x210
+[  342.693025]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-I've been thinking whether best would be to just break UAPI and do
-an enforcement of BPF_ANY to check if someone actually complains,
-however trouble is that already in BPF kselftest we use BPF_NOEXIST
-for the map update, and therefore it might have been copied into
-applications already. The fix to keep the current behavior intact
-would be to add a map lock similar to the sock hash bucket lock only
-for covering the whole map.
-
-Fixes: 174a79ff9515 ("bpf: sockmap with sk redirect support")
+Fixes: 8d5d88527587 ("xdp: rhashtable with allocator ID to pointer mapping")
+Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
+Suggested-by: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Jesper Dangaard Brouer <brouer@redhat.com>
+Acked-by: Jesper Dangaard Brouer <brouer@redhat.com>
 Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Acked-by: John Fastabend <john.fastabend@gmail.com>
-Acked-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/bpf/sockmap.c |  106 +++++++++++++++++++++++++++------------------------
- 1 file changed, 57 insertions(+), 49 deletions(-)
+ net/core/xdp.c |   14 +++-----------
+ 1 file changed, 3 insertions(+), 11 deletions(-)
 
---- a/kernel/bpf/sockmap.c
-+++ b/kernel/bpf/sockmap.c
-@@ -58,6 +58,7 @@ struct bpf_stab {
- 	struct bpf_map map;
- 	struct sock **sock_map;
- 	struct bpf_sock_progs progs;
-+	raw_spinlock_t lock;
- };
- 
- struct bucket {
-@@ -89,9 +90,9 @@ enum smap_psock_state {
- 
- struct smap_psock_map_entry {
- 	struct list_head list;
-+	struct bpf_map *map;
- 	struct sock **entry;
- 	struct htab_elem __rcu *hash_link;
--	struct bpf_htab __rcu *htab;
- };
- 
- struct smap_psock {
-@@ -343,13 +344,18 @@ static void bpf_tcp_close(struct sock *s
- 	e = psock_map_pop(sk, psock);
- 	while (e) {
- 		if (e->entry) {
--			osk = cmpxchg(e->entry, sk, NULL);
-+			struct bpf_stab *stab = container_of(e->map, struct bpf_stab, map);
-+
-+			raw_spin_lock_bh(&stab->lock);
-+			osk = *e->entry;
- 			if (osk == sk) {
-+				*e->entry = NULL;
- 				smap_release_sock(psock, sk);
- 			}
-+			raw_spin_unlock_bh(&stab->lock);
- 		} else {
- 			struct htab_elem *link = rcu_dereference(e->hash_link);
--			struct bpf_htab *htab = rcu_dereference(e->htab);
-+			struct bpf_htab *htab = container_of(e->map, struct bpf_htab, map);
- 			struct hlist_head *head;
- 			struct htab_elem *l;
- 			struct bucket *b;
-@@ -1644,6 +1650,7 @@ static struct bpf_map *sock_map_alloc(un
- 		return ERR_PTR(-ENOMEM);
- 
- 	bpf_map_init_from_attr(&stab->map, attr);
-+	raw_spin_lock_init(&stab->lock);
- 
- 	/* make sure page count doesn't overflow */
- 	cost = (u64) stab->map.max_entries * sizeof(struct sock *);
-@@ -1714,14 +1721,15 @@ static void sock_map_free(struct bpf_map
- 	 * and a grace period expire to ensure psock is really safe to remove.
- 	 */
- 	rcu_read_lock();
-+	raw_spin_lock_bh(&stab->lock);
- 	for (i = 0; i < stab->map.max_entries; i++) {
- 		struct smap_psock *psock;
- 		struct sock *sock;
- 
--		sock = xchg(&stab->sock_map[i], NULL);
-+		sock = stab->sock_map[i];
- 		if (!sock)
- 			continue;
--
-+		stab->sock_map[i] = NULL;
- 		psock = smap_psock_sk(sock);
- 		/* This check handles a racing sock event that can get the
- 		 * sk_callback_lock before this case but after xchg happens
-@@ -1733,6 +1741,7 @@ static void sock_map_free(struct bpf_map
- 			smap_release_sock(psock, sock);
- 		}
- 	}
-+	raw_spin_unlock_bh(&stab->lock);
- 	rcu_read_unlock();
- 
- 	sock_map_remove_complete(stab);
-@@ -1776,14 +1785,16 @@ static int sock_map_delete_elem(struct b
- 	if (k >= map->max_entries)
- 		return -EINVAL;
- 
--	sock = xchg(&stab->sock_map[k], NULL);
-+	raw_spin_lock_bh(&stab->lock);
-+	sock = stab->sock_map[k];
-+	stab->sock_map[k] = NULL;
-+	raw_spin_unlock_bh(&stab->lock);
- 	if (!sock)
- 		return -EINVAL;
- 
- 	psock = smap_psock_sk(sock);
- 	if (!psock)
--		goto out;
--
-+		return 0;
- 	if (psock->bpf_parse) {
- 		write_lock_bh(&sock->sk_callback_lock);
- 		smap_stop_sock(psock, sock);
-@@ -1791,7 +1802,6 @@ static int sock_map_delete_elem(struct b
- 	}
- 	smap_list_map_remove(psock, &stab->sock_map[k]);
- 	smap_release_sock(psock, sock);
--out:
- 	return 0;
- }
- 
-@@ -1827,11 +1837,9 @@ out:
- static int __sock_map_ctx_update_elem(struct bpf_map *map,
- 				      struct bpf_sock_progs *progs,
- 				      struct sock *sock,
--				      struct sock **map_link,
- 				      void *key)
+--- a/net/core/xdp.c
++++ b/net/core/xdp.c
+@@ -95,23 +95,15 @@ static void __xdp_rxq_info_unreg_mem_mod
  {
- 	struct bpf_prog *verdict, *parse, *tx_msg;
--	struct smap_psock_map_entry *e = NULL;
- 	struct smap_psock *psock;
- 	bool new = false;
- 	int err = 0;
-@@ -1904,14 +1912,6 @@ static int __sock_map_ctx_update_elem(st
- 		new = true;
- 	}
+ 	struct xdp_mem_allocator *xa;
+ 	int id = xdp_rxq->mem.id;
+-	int err;
  
--	if (map_link) {
--		e = kzalloc(sizeof(*e), GFP_ATOMIC | __GFP_NOWARN);
--		if (!e) {
--			err = -ENOMEM;
--			goto out_free;
--		}
+ 	if (id == 0)
+ 		return;
+ 
+ 	mutex_lock(&mem_id_lock);
+ 
+-	xa = rhashtable_lookup(mem_id_ht, &id, mem_id_rht_params);
+-	if (!xa) {
+-		mutex_unlock(&mem_id_lock);
+-		return;
 -	}
 -
- 	/* 3. At this point we have a reference to a valid psock that is
- 	 * running. Attach any BPF programs needed.
- 	 */
-@@ -1933,17 +1933,6 @@ static int __sock_map_ctx_update_elem(st
- 		write_unlock_bh(&sock->sk_callback_lock);
- 	}
- 
--	/* 4. Place psock in sockmap for use and stop any programs on
--	 * the old sock assuming its not the same sock we are replacing
--	 * it with. Because we can only have a single set of programs if
--	 * old_sock has a strp we can stop it.
--	 */
--	if (map_link) {
--		e->entry = map_link;
--		spin_lock_bh(&psock->maps_lock);
--		list_add_tail(&e->list, &psock->maps);
--		spin_unlock_bh(&psock->maps_lock);
--	}
- 	return err;
- out_free:
- 	smap_release_sock(psock, sock);
-@@ -1954,7 +1943,6 @@ out_progs:
- 	}
- 	if (tx_msg)
- 		bpf_prog_put(tx_msg);
--	kfree(e);
- 	return err;
- }
- 
-@@ -1964,36 +1952,57 @@ static int sock_map_ctx_update_elem(stru
- {
- 	struct bpf_stab *stab = container_of(map, struct bpf_stab, map);
- 	struct bpf_sock_progs *progs = &stab->progs;
--	struct sock *osock, *sock;
-+	struct sock *osock, *sock = skops->sk;
-+	struct smap_psock_map_entry *e;
-+	struct smap_psock *psock;
- 	u32 i = *(u32 *)key;
- 	int err;
- 
- 	if (unlikely(flags > BPF_EXIST))
- 		return -EINVAL;
+-	err = rhashtable_remove_fast(mem_id_ht, &xa->node, mem_id_rht_params);
+-	WARN_ON(err);
 -
- 	if (unlikely(i >= stab->map.max_entries))
- 		return -E2BIG;
+-	call_rcu(&xa->rcu, __xdp_mem_allocator_rcu_free);
++	xa = rhashtable_lookup_fast(mem_id_ht, &id, mem_id_rht_params);
++	if (xa && !rhashtable_remove_fast(mem_id_ht, &xa->node, mem_id_rht_params))
++		call_rcu(&xa->rcu, __xdp_mem_allocator_rcu_free);
  
--	sock = READ_ONCE(stab->sock_map[i]);
--	if (flags == BPF_EXIST && !sock)
--		return -ENOENT;
--	else if (flags == BPF_NOEXIST && sock)
--		return -EEXIST;
-+	e = kzalloc(sizeof(*e), GFP_ATOMIC | __GFP_NOWARN);
-+	if (!e)
-+		return -ENOMEM;
- 
--	sock = skops->sk;
--	err = __sock_map_ctx_update_elem(map, progs, sock, &stab->sock_map[i],
--					 key);
-+	err = __sock_map_ctx_update_elem(map, progs, sock, key);
- 	if (err)
- 		goto out;
- 
--	osock = xchg(&stab->sock_map[i], sock);
--	if (osock) {
--		struct smap_psock *opsock = smap_psock_sk(osock);
-+	/* psock guaranteed to be present. */
-+	psock = smap_psock_sk(sock);
-+	raw_spin_lock_bh(&stab->lock);
-+	osock = stab->sock_map[i];
-+	if (osock && flags == BPF_NOEXIST) {
-+		err = -EEXIST;
-+		goto out_unlock;
-+	}
-+	if (!osock && flags == BPF_EXIST) {
-+		err = -ENOENT;
-+		goto out_unlock;
-+	}
-+
-+	e->entry = &stab->sock_map[i];
-+	e->map = map;
-+	spin_lock_bh(&psock->maps_lock);
-+	list_add_tail(&e->list, &psock->maps);
-+	spin_unlock_bh(&psock->maps_lock);
- 
--		smap_list_map_remove(opsock, &stab->sock_map[i]);
--		smap_release_sock(opsock, osock);
-+	stab->sock_map[i] = sock;
-+	if (osock) {
-+		psock = smap_psock_sk(osock);
-+		smap_list_map_remove(psock, &stab->sock_map[i]);
-+		smap_release_sock(psock, osock);
- 	}
-+	raw_spin_unlock_bh(&stab->lock);
-+	return 0;
-+out_unlock:
-+	smap_release_sock(psock, sock);
-+	raw_spin_unlock_bh(&stab->lock);
- out:
-+	kfree(e);
- 	return err;
+ 	mutex_unlock(&mem_id_lock);
  }
- 
-@@ -2356,7 +2365,7 @@ static int sock_hash_ctx_update_elem(str
- 	b = __select_bucket(htab, hash);
- 	head = &b->head;
- 
--	err = __sock_map_ctx_update_elem(map, progs, sock, NULL, key);
-+	err = __sock_map_ctx_update_elem(map, progs, sock, key);
- 	if (err)
- 		goto err;
- 
-@@ -2382,8 +2391,7 @@ static int sock_hash_ctx_update_elem(str
- 	}
- 
- 	rcu_assign_pointer(e->hash_link, l_new);
--	rcu_assign_pointer(e->htab,
--			   container_of(map, struct bpf_htab, map));
-+	e->map = map;
- 	spin_lock_bh(&psock->maps_lock);
- 	list_add_tail(&e->list, &psock->maps);
- 	spin_unlock_bh(&psock->maps_lock);
 
 
