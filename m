@@ -2,127 +2,88 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F22C0C04AB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 21:25:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A124CC04AB8
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 21:27:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A73B2086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 21:25:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 428552086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 21:27:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="3W0NyYIb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A73B2086C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gHVt+pAO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 428552086C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728215AbeINCgv (ORCPT
+        id S1728153AbeINCiW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 22:36:51 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:46770 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727598AbeINCgv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 22:36:51 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8DLJ1Yf094749;
-        Thu, 13 Sep 2018 21:25:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2018-07-02;
- bh=n/Q7pouo9UZUjCtXlRGxKqQGOvgKqLLKkPyB9BHK3/w=;
- b=3W0NyYIbLXeSs9DWRapNCs44r0uBk28HPRQ6QKxk+f5HOaHXOnDURbm+lCCFtA+6fErK
- lyMmXxjFnACkUxx3M/wChdflAIJK3toCLjFWVoRaxxW2UHLxtr02WgXIfdRQSaYhli0x
- JcngIx+CPOSkaN7AxyauOyF2/UTnLdrAk6wc1UIA21TJ2lbMI+UU0upVcKos6lS23enx
- tFumdO1zlcWxJ3sb3lJIqKWhjxVeEZpjsGH8ADMmivqSipp+YOw9ivYJTGU4R5QgWsgJ
- ogPDo+B9BaIaT2G+NUn+dz91guQ6aZHYRlfrJXGkeGUvOTq/0as6MetW+wiMJN+ONRyr Hg== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2120.oracle.com with ESMTP id 2mc6cq3tsn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 13 Sep 2018 21:25:17 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w8DLPH3d023247
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 13 Sep 2018 21:25:17 GMT
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w8DLPGmb001472;
-        Thu, 13 Sep 2018 21:25:16 GMT
-Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 13 Sep 2018 14:25:15 -0700
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-To:     peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org, jgross@suse.com, dunlapg@umich.edu,
-        "Dr. Greg Wettstein" <greg@wind.enjellic.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        stable@vger.kernel.org
-Subject: [PATCH v2] tpm: Restore functionality to xen vtpm driver.
-Date:   Thu, 13 Sep 2018 17:25:51 -0400
-Message-Id: <20180913212551.2435-1-boris.ostrovsky@oracle.com>
-X-Mailer: git-send-email 2.17.1
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9015 signatures=668708
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809130211
+        Thu, 13 Sep 2018 22:38:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59024 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727728AbeINCiV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 22:38:21 -0400
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C99820881;
+        Thu, 13 Sep 2018 21:27:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1536874025;
+        bh=p+tdWCD3+qCv3ttWpFfo/4tC6Elg4VqkvmXH9UYiS/E=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=gHVt+pAOo1iLrEMPsZDfH8RuSYH5q355+X8fQrvIpIXoG2joNpfFSMhZXGvjwuRqn
+         f1rMn0DqAOvTZm45dT5KbIMj7yO0ID6p5PPkVZ/7TuCAZ43UJyyu5tXGzI5pu0G3od
+         l1ojm1GN4e0boHnjgOFM+WDlzjb5SlzhAOYyHhqY=
+Received: by mail-qk1-f181.google.com with SMTP id z125-v6so4054759qkb.12;
+        Thu, 13 Sep 2018 14:27:05 -0700 (PDT)
+X-Gm-Message-State: APzg51AMlme5Fu/xuTvxzhLKT6z7IwNpfvxcC+RTKM/x+qOcCWn3INUX
+        Q+o3ARjfWgIeun7w4cH83pVs5qL1iapGtbrCpg==
+X-Google-Smtp-Source: ANB0VdZinhYzjvTO+KwvAxOdZSnOWxx+Rs4MaDYI/D0tajNT2huELLORFET4iRmkhxR5/mKrewxlQk/qMZJ403FmuS8=
+X-Received: by 2002:a37:bec4:: with SMTP id o187-v6mr6427539qkf.326.1536874024761;
+ Thu, 13 Sep 2018 14:27:04 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180828154433.5693-1-robh@kernel.org> <20180828154433.5693-7-robh@kernel.org>
+ <20180912121705.010a999d@coco.lan> <CAL_JsqK8B46x8bm_aYggJSPAWrMGZ1rZ58uWCmyiSqA2KZpiFg@mail.gmail.com>
+ <c7a3263ac94a6c31bd58c06683d55015be2e8be4.camel@perches.com>
+In-Reply-To: <c7a3263ac94a6c31bd58c06683d55015be2e8be4.camel@perches.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 13 Sep 2018 16:26:53 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqL=+O=G-0uVdKGcq4T8pSzkdGV1sd_p682-6SFXuNt2mA@mail.gmail.com>
+Message-ID: <CAL_JsqL=+O=G-0uVdKGcq4T8pSzkdGV1sd_p682-6SFXuNt2mA@mail.gmail.com>
+Subject: Re: [PATCH v2] staging: Convert to using %pOFn instead of device_node.name
+To:     Joe Perches <joe@perches.com>
+Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Ian Arkver <ian.arkver.dev@gmail.com>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        devel@driverdev.osuosl.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Dr. Greg Wettstein" <greg@wind.enjellic.com>
+On Thu, Sep 13, 2018 at 3:45 PM Joe Perches <joe@perches.com> wrote:
+>
+> On Wed, 2018-09-12 at 15:26 -0500, Rob Herring wrote:
+> > A problem with MAINTAINERS is there is no way to tell who applies
+> > patches for a given path vs. anyone else listed.
+>
+> try the --scm option
 
-Functionality of the xen-tpmfront driver was lost secondary to
-the introduction of xenbus multi-page support in commit ccc9d90a9a8b
-("xenbus_client: Extend interface to support multi-page ring").
+That kind of helps if the maintainer has listed a tree, but gives
+wrong results if not. And you still have to figure out who owns which
+tree. That's not hard, but it's not scriptable.
 
-In this commit a pointer to the shared page address was being
-passed to the xenbus_grant_ring() function rather then the
-address of the shared page itself.  This resulted in a situation
-where the driver would attach to the vtpm-stubdom but any attempt
-to send a command to the stub domain would timeout.
+IMO, we should reserve 'M:' for maintainers with trees and use 'R:'
+driver maintainers. That's redefining M as "maintainer" rather than
+"mail patches to". You could still have both for a entry so you can
+know who to go bug when your patch hasn't been applied.
 
-A diagnostic finding for this regression is the following error
-message being generated when the xen-tpmfront driver probes for a
-device:
-
-<3>vtpm vtpm-0: tpm_transmit: tpm_send: error -62
-
-<3>vtpm vtpm-0: A TPM error (-62) occurred attempting to determine
-the timeouts
-
-This fix is relevant to all kernels from 4.1 forward which is the
-release in which multi-page xenbus support was introduced.
-
-Daniel De Graaf formulated the fix by code inspection after the
-regression point was located.
-
-Fixes: ccc9d90a9a8b ("xenbus_client: Extend interface to support multi-page ring")
-Signed-off-by: Dr. Greg Wettstein <greg@enjellic.com>
-
-[boris: fixed commit message formatting, added Fixes tag]
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: stable@vger.kernel.org # v4.1+
----
- drivers/char/tpm/xen-tpmfront.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-tpmfront.c
-index 911475d36800..b150f87f38f5 100644
---- a/drivers/char/tpm/xen-tpmfront.c
-+++ b/drivers/char/tpm/xen-tpmfront.c
-@@ -264,7 +264,7 @@ static int setup_ring(struct xenbus_device *dev, struct tpm_private *priv)
- 		return -ENOMEM;
- 	}
- 
--	rv = xenbus_grant_ring(dev, &priv->shr, 1, &gref);
-+	rv = xenbus_grant_ring(dev, priv->shr, 1, &gref);
- 	if (rv < 0)
- 		return rv;
- 
--- 
-2.17.1
-
+Rob
