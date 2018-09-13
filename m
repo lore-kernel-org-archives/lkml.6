@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D492EC07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:47:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28218C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:47:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DA7920854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:47:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DA7920854
+	by mail.kernel.org (Postfix) with ESMTP id E1E7320854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:47:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1E7320854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730444AbeIMS5B (ORCPT
+        id S1730450AbeIMS5E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:57:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32826 "EHLO
+        Thu, 13 Sep 2018 14:57:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:32832 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729066AbeIMS5A (ORCPT
+        with ESMTP id S1729066AbeIMS5E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:57:00 -0400
+        Thu, 13 Sep 2018 14:57:04 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D0431CFE;
-        Thu, 13 Sep 2018 13:47:26 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1516DCFE;
+        Thu, 13 Sep 2018 13:47:29 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        John Garry <john.garry@huawei.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 059/115] ACPI / scan: Initialize status to ACPI_STA_DEFAULT
-Date:   Thu, 13 Sep 2018 15:31:19 +0200
-Message-Id: <20180913131827.360206101@linuxfoundation.org>
+Subject: [PATCH 4.14 060/115] scsi: aic94xx: fix an error code in aic94xx_init()
+Date:   Thu, 13 Sep 2018 15:31:20 +0200
+Message-Id: <20180913131827.409457001@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -52,60 +54,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 5971b0c1594d6c34e257101ed5fdffec65205c50 ]
+[ Upstream commit 0756c57bce3d26da2592d834d8910b6887021701 ]
 
-Since commit 63347db0affa "ACPI / scan: Use acpi_bus_get_status() to
-initialize ACPI_TYPE_DEVICE devs" the status field of normal acpi_devices
-gets set to 0 by acpi_bus_type_and_status() and filled with its actual
-value later when acpi_add_single_object() calls acpi_bus_get_status().
+We accidentally return success instead of -ENOMEM on this error path.
 
-This means that any acpi_match_device_ids() calls in between will always
-fail with -ENOENT.
-
-We already have a workaround for this, which temporary forces status to
-ACPI_STA_DEFAULT in drivers/acpi/x86/utils.c: acpi_device_always_present()
-and the next commit in this series adds another acpi_match_device_ids()
-call between status being initialized as 0 and the acpi_bus_get_status()
-call.
-
-Rather then adding another workaround, this commit makes
-acpi_bus_type_and_status() initialize status to ACPI_STA_DEFAULT, this is
-safe to do as the only code looking at status between the initialization
-and the acpi_bus_get_status() call is those acpi_match_device_ids() calls.
-
-Note this does mean that we need to (re)set status to 0 in case the
-acpi_bus_get_status() call fails.
-
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Fixes: 2908d778ab3e ("[SCSI] aic94xx: new driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Reviewed-by: John Garry <john.garry@huawei.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/acpi/scan.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/scsi/aic94xx/aic94xx_init.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/acpi/scan.c
-+++ b/drivers/acpi/scan.c
-@@ -1599,7 +1599,8 @@ static int acpi_add_single_object(struct
- 	 * Note this must be done before the get power-/wakeup_dev-flags calls.
- 	 */
- 	if (type == ACPI_BUS_TYPE_DEVICE)
--		acpi_bus_get_status(device);
-+		if (acpi_bus_get_status(device) < 0)
-+			acpi_set_device_status(device, 0);
+--- a/drivers/scsi/aic94xx/aic94xx_init.c
++++ b/drivers/scsi/aic94xx/aic94xx_init.c
+@@ -1030,8 +1030,10 @@ static int __init aic94xx_init(void)
  
- 	acpi_bus_get_power_flags(device);
- 	acpi_bus_get_wakeup_device_flags(device);
-@@ -1677,7 +1678,7 @@ static int acpi_bus_type_and_status(acpi
- 		 * acpi_add_single_object updates this once we've an acpi_device
- 		 * so that acpi_bus_get_status' quirk handling can be used.
- 		 */
--		*sta = 0;
-+		*sta = ACPI_STA_DEFAULT;
- 		break;
- 	case ACPI_TYPE_PROCESSOR:
- 		*type = ACPI_BUS_TYPE_PROCESSOR;
+ 	aic94xx_transport_template =
+ 		sas_domain_attach_transport(&aic94xx_transport_functions);
+-	if (!aic94xx_transport_template)
++	if (!aic94xx_transport_template) {
++		err = -ENOMEM;
+ 		goto out_destroy_caches;
++	}
+ 
+ 	err = pci_register_driver(&aic94xx_pci_driver);
+ 	if (err)
 
 
