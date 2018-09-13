@@ -6,40 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5808C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:46:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03F91C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:46:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43F9620854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:46:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43F9620854
+	by mail.kernel.org (Postfix) with ESMTP id BD4C920854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:46:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD4C920854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730335AbeIMS4M (ORCPT
+        id S1730342AbeIMS4R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:56:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60906 "EHLO
+        Thu, 13 Sep 2018 14:56:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60920 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730138AbeIMS4M (ORCPT
+        with ESMTP id S1728441AbeIMS4Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:56:12 -0400
+        Thu, 13 Sep 2018 14:56:16 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 76F6AD19;
-        Thu, 13 Sep 2018 13:46:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9791DD19;
+        Thu, 13 Sep 2018 13:46:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Aneesh Kumar <aneesh.kumar@linux.vnet.ibm.com>,
-        Sandipan Das <sandipan@linux.ibm.com>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, Xu Wen <wen.xu@gatech.edu>,
+        Qu Wenruo <wqu@suse.com>, Gu Jinxiang <gujx@cn.fujitsu.com>,
+        David Sterba <dsterba@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 055/115] perf probe powerpc: Fix trace event post-processing
-Date:   Thu, 13 Sep 2018 15:31:15 +0200
-Message-Id: <20180913131827.081735061@linuxfoundation.org>
+Subject: [PATCH 4.14 082/115] btrfs: relocation: Only remove reloc rb_trees if reloc control has been initialized
+Date:   Thu, 13 Sep 2018 15:31:42 +0200
+Message-Id: <20180913131828.612303033@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -57,161 +53,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sandipan Das <sandipan@linux.ibm.com>
+From: Qu Wenruo <wqu@suse.com>
 
-[ Upstream commit 354b064b8ebc1e1ede58550ca9e08bfa81e6af43 ]
+[ Upstream commit 389305b2aa68723c754f88d9dbd268a400e10664 ]
 
-In some cases, a symbol may have multiple aliases. Attempting to add an
-entry probe for such symbols results in a probe being added at an
-incorrect location while it fails altogether for return probes. This is
-only applicable for binaries with debug information.
+Invalid reloc tree can cause kernel NULL pointer dereference when btrfs
+does some cleanup of the reloc roots.
 
-During the arch-dependent post-processing, the offset from the start of
-the symbol at which the probe is to be attached is determined and added
-to the start address of the symbol to get the probe's location.  In case
-there are multiple aliases, this offset gets added multiple times for
-each alias of the symbol and we end up with an incorrect probe location.
+It turns out that fs_info::reloc_ctl can be NULL in
+btrfs_recover_relocation() as we allocate relocation control after all
+reloc roots have been verified.
+So when we hit: note, we haven't called set_reloc_control() thus
+fs_info::reloc_ctl is still NULL.
 
-This can be verified on a powerpc64le system as shown below.
-
-  $ nm /lib/modules/$(uname -r)/build/vmlinux | grep "sys_open$"
-  ...
-  c000000000414290 T __se_sys_open
-  c000000000414290 T sys_open
-
-  $ objdump -d /lib/modules/$(uname -r)/build/vmlinux | grep -A 10 "<__se_sys_open>:"
-
-  c000000000414290 <__se_sys_open>:
-  c000000000414290:       19 01 4c 3c     addis   r2,r12,281
-  c000000000414294:       70 c4 42 38     addi    r2,r2,-15248
-  c000000000414298:       a6 02 08 7c     mflr    r0
-  c00000000041429c:       e8 ff a1 fb     std     r29,-24(r1)
-  c0000000004142a0:       f0 ff c1 fb     std     r30,-16(r1)
-  c0000000004142a4:       f8 ff e1 fb     std     r31,-8(r1)
-  c0000000004142a8:       10 00 01 f8     std     r0,16(r1)
-  c0000000004142ac:       c1 ff 21 f8     stdu    r1,-64(r1)
-  c0000000004142b0:       78 23 9f 7c     mr      r31,r4
-  c0000000004142b4:       78 1b 7e 7c     mr      r30,r3
-
-  For both the entry probe and the return probe, the probe location
-  should be _text+4276888 (0xc000000000414298). Since another alias
-  exists for 'sys_open', the post-processing code will end up adding
-  the offset (8 for powerpc64le) twice and perf will attempt to add
-  the probe at _text+4276896 (0xc0000000004142a0) instead.
-
-Before:
-
-  # perf probe -v -a sys_open
-
-  probe-definition(0): sys_open
-  symbol:sys_open file:(null) line:0 offset:0 return:0 lazy:(null)
-  0 arguments
-  Looking at the vmlinux_path (8 entries long)
-  Using /lib/modules/4.18.0-rc8+/build/vmlinux for symbols
-  Open Debuginfo file: /lib/modules/4.18.0-rc8+/build/vmlinux
-  Try to find probe point from debuginfo.
-  Symbol sys_open address found : c000000000414290
-  Matched function: __se_sys_open [2ad03a0]
-  Probe point found: __se_sys_open+0
-  Found 1 probe_trace_events.
-  Opening /sys/kernel/debug/tracing/kprobe_events write=1
-  Writing event: p:probe/sys_open _text+4276896
-  Added new event:
-    probe:sys_open       (on sys_open)
-  ...
-
-  # perf probe -v -a sys_open%return $retval
-
-  probe-definition(0): sys_open%return
-  symbol:sys_open file:(null) line:0 offset:0 return:1 lazy:(null)
-  0 arguments
-  Looking at the vmlinux_path (8 entries long)
-  Using /lib/modules/4.18.0-rc8+/build/vmlinux for symbols
-  Open Debuginfo file: /lib/modules/4.18.0-rc8+/build/vmlinux
-  Try to find probe point from debuginfo.
-  Symbol sys_open address found : c000000000414290
-  Matched function: __se_sys_open [2ad03a0]
-  Probe point found: __se_sys_open+0
-  Found 1 probe_trace_events.
-  Opening /sys/kernel/debug/tracing/README write=0
-  Opening /sys/kernel/debug/tracing/kprobe_events write=1
-  Parsing probe_events: p:probe/sys_open _text+4276896
-  Group:probe Event:sys_open probe:p
-  Writing event: r:probe/sys_open__return _text+4276896
-  Failed to write event: Invalid argument
-    Error: Failed to add events. Reason: Invalid argument (Code: -22)
-
-After:
-
-  # perf probe -v -a sys_open
-
-  probe-definition(0): sys_open
-  symbol:sys_open file:(null) line:0 offset:0 return:0 lazy:(null)
-  0 arguments
-  Looking at the vmlinux_path (8 entries long)
-  Using /lib/modules/4.18.0-rc8+/build/vmlinux for symbols
-  Open Debuginfo file: /lib/modules/4.18.0-rc8+/build/vmlinux
-  Try to find probe point from debuginfo.
-  Symbol sys_open address found : c000000000414290
-  Matched function: __se_sys_open [2ad03a0]
-  Probe point found: __se_sys_open+0
-  Found 1 probe_trace_events.
-  Opening /sys/kernel/debug/tracing/kprobe_events write=1
-  Writing event: p:probe/sys_open _text+4276888
-  Added new event:
-    probe:sys_open       (on sys_open)
-  ...
-
-  # perf probe -v -a sys_open%return $retval
-
-  probe-definition(0): sys_open%return
-  symbol:sys_open file:(null) line:0 offset:0 return:1 lazy:(null)
-  0 arguments
-  Looking at the vmlinux_path (8 entries long)
-  Using /lib/modules/4.18.0-rc8+/build/vmlinux for symbols
-  Open Debuginfo file: /lib/modules/4.18.0-rc8+/build/vmlinux
-  Try to find probe point from debuginfo.
-  Symbol sys_open address found : c000000000414290
-  Matched function: __se_sys_open [2ad03a0]
-  Probe point found: __se_sys_open+0
-  Found 1 probe_trace_events.
-  Opening /sys/kernel/debug/tracing/README write=0
-  Opening /sys/kernel/debug/tracing/kprobe_events write=1
-  Parsing probe_events: p:probe/sys_open _text+4276888
-  Group:probe Event:sys_open probe:p
-  Writing event: r:probe/sys_open__return _text+4276888
-  Added new event:
-    probe:sys_open__return (on sys_open%return)
-  ...
-
-Reported-by: Aneesh Kumar <aneesh.kumar@linux.vnet.ibm.com>
-Signed-off-by: Sandipan Das <sandipan@linux.ibm.com>
-Acked-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Cc: Aneesh Kumar <aneesh.kumar@linux.vnet.ibm.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Fixes: 99e608b5954c ("perf probe ppc64le: Fix probe location when using DWARF")
-Link: http://lkml.kernel.org/r/20180809161929.35058-1-sandipan@linux.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=199833
+Reported-by: Xu Wen <wen.xu@gatech.edu>
+Signed-off-by: Qu Wenruo <wqu@suse.com>
+Tested-by: Gu Jinxiang <gujx@cn.fujitsu.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/arch/powerpc/util/sym-handling.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/btrfs/relocation.c |   23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
 
---- a/tools/perf/arch/powerpc/util/sym-handling.c
-+++ b/tools/perf/arch/powerpc/util/sym-handling.c
-@@ -141,8 +141,10 @@ void arch__post_process_probe_trace_even
- 	for (i = 0; i < ntevs; i++) {
- 		tev = &pev->tevs[i];
- 		map__for_each_symbol(map, sym, tmp) {
--			if (map->unmap_ip(map, sym->start) == tev->point.address)
-+			if (map->unmap_ip(map, sym->start) == tev->point.address) {
- 				arch__fix_tev_from_maps(pev, tev, map, sym);
-+				break;
-+			}
- 		}
+--- a/fs/btrfs/relocation.c
++++ b/fs/btrfs/relocation.c
+@@ -1334,18 +1334,19 @@ static void __del_reloc_root(struct btrf
+ 	struct mapping_node *node = NULL;
+ 	struct reloc_control *rc = fs_info->reloc_ctl;
+ 
+-	spin_lock(&rc->reloc_root_tree.lock);
+-	rb_node = tree_search(&rc->reloc_root_tree.rb_root,
+-			      root->node->start);
+-	if (rb_node) {
+-		node = rb_entry(rb_node, struct mapping_node, rb_node);
+-		rb_erase(&node->rb_node, &rc->reloc_root_tree.rb_root);
++	if (rc) {
++		spin_lock(&rc->reloc_root_tree.lock);
++		rb_node = tree_search(&rc->reloc_root_tree.rb_root,
++				      root->node->start);
++		if (rb_node) {
++			node = rb_entry(rb_node, struct mapping_node, rb_node);
++			rb_erase(&node->rb_node, &rc->reloc_root_tree.rb_root);
++		}
++		spin_unlock(&rc->reloc_root_tree.lock);
++		if (!node)
++			return;
++		BUG_ON((struct btrfs_root *)node->data != root);
  	}
- }
+-	spin_unlock(&rc->reloc_root_tree.lock);
+-
+-	if (!node)
+-		return;
+-	BUG_ON((struct btrfs_root *)node->data != root);
+ 
+ 	spin_lock(&fs_info->trans_lock);
+ 	list_del_init(&root->root_list);
 
 
