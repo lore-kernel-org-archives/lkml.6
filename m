@@ -6,114 +6,82 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1F8EC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 08:41:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2949FC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 08:42:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E57020854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 08:41:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E57020854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=iki.fi
+	by mail.kernel.org (Postfix) with ESMTP id DC24120854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 08:42:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC24120854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727649AbeIMNuZ (ORCPT
+        id S1727834AbeIMNvL convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 09:50:25 -0400
-Received: from mail.kapsi.fi ([91.232.154.25]:48909 "EHLO mail.kapsi.fi"
+        Thu, 13 Sep 2018 09:51:11 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:58381 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726308AbeIMNuY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 09:50:24 -0400
-Received: from [91.232.154.11] (helo=lakka.kapsi.fi)
-        by mail.kapsi.fi with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <decoy@iki.fi>)
-        id 1g0NCE-0007LU-Nf
-        for linux-kernel@vger.kernel.org; Thu, 13 Sep 2018 11:41:54 +0300
-Received: from decoy (helo=localhost)
-        by lakka.kapsi.fi with local-esmtp (Exim 4.84_2)
-        (envelope-from <decoy@iki.fi>)
-        id 1g0NBu-0003w2-Jp
-        for linux-kernel@vger.kernel.org; Thu, 13 Sep 2018 11:41:34 +0300
-Date:   Thu, 13 Sep 2018 11:41:31 +0300 (EEST)
-From:   Sampo Syreeni <decoy@iki.fi>
-To:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Message-ID: <alpine.DEB.2.11.1809131041000.11646@lakka.kapsi.fi>
-User-Agent: Alpine 2.11 (DEB 23 2013-08-11)
+        id S1726308AbeIMNvL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 09:51:11 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 8416220877; Thu, 13 Sep 2018 10:42:41 +0200 (CEST)
+Received: from windsurf (AAubervilliers-681-1-99-10.w90-88.abo.wanadoo.fr [90.88.4.10])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 3AD1120719;
+        Thu, 13 Sep 2018 10:42:41 +0200 (CEST)
+Date:   Thu, 13 Sep 2018 10:42:41 +0200
+From:   Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+To:     Jan =?UTF-8?B?S3VuZHLDoXQ=?= <jan.kundrat@cesnet.cz>
+Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Baruch Siach <baruch@tkos.co.il>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [BISECTED] Regression: Solidrun Clearfog Base won't boot since
+ "PCI: mvebu: Only remap I/O space if configured"
+Message-ID: <20180913104241.65db8243@windsurf>
+In-Reply-To: <5ad46fec-a71a-477a-b23f-d20aacfb481d@cesnet.cz>
+References: <61fdfd69-2bb6-478c-b0d5-69d8744adae3@cesnet.cz>
+        <87zhwm4kl6.fsf@tkos.co.il>
+        <20180912231050.GX30658@n2100.armlinux.org.uk>
+        <20180913094515.351967bb@windsurf>
+        <5ad46fec-a71a-477a-b23f-d20aacfb481d@cesnet.cz>
+Organization: Bootlin (formerly Free Electrons)
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; format=flowed; charset=US-ASCII
-X-SA-Exim-Connect-IP: 91.232.154.11
-X-SA-Exim-Mail-From: decoy@iki.fi
-Subject: about timer API's/a possible development idea
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on mail.kapsi.fi)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi. I'm new to the kernel, but I'd still like to ask a question. Can it 
-sleep(3) or somesuch higher resolution version, *without* 
-deterministically waking my process up? Are there API's which enable you 
-to state to the scheduler: "I'd *like* to be woken up 100ms from here, 
-*but* it's okay if you hold off for a minute for your own higher 
-purposes"?
+Hello,
 
-If there already is an interface which lets me communicate something 
-like that to the scheduler, my point is moot; forget about everything 
-I'm about to say.
+On Thu, 13 Sep 2018 10:20:45 +0200, Jan Kundrát wrote:
+> On čtvrtek 13. září 2018 9:45:15 CEST, Thomas Petazzoni wrote:
+> > What about something like the below. I tested it, including the error
+> > case by forcing an -EPROBE_DEFER. The new pci_unmap_io() is modeled
+> > after pci_unmap_iospace(). Actually, I would prefer to use
+> > pci_remap_iospace() and pci_unmap_iospace() but for now this API
+> > doesn't allow overloading the memory type used for the mapping.  
+> 
+> Thanks for providing this fix so quickly, Thomas. I can confirm that this 
+> patch -- tested on top of 54eda9df17f3215b9ed16629ee71ea07413efdaf ("Merge 
+> tag 'pci-v4.19-fixes-1' of 
+> git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci"). Disclaimer: I 
+> have zero familiarity with Linux' PCI code.
+> 
+> Tested-by: Jan Kundrát <jan.kundrat@cesnet.cz>
 
-However, if no such API exists, I'd like to argue why it would be 
-useful. Perchance even necessary, and via incorporation into the Linux 
-and then the Android kernel, something worthy of POSIX standardization.
+Thanks for the testing. I'll wait for Russell to say if he is happy
+(or not) with the addition of pci_unmap_io() in the ARM code, if that's
+the case, I'll send a proper patch to fix the issue.
 
-My point is that quite a number of applications like phones' radios and 
-even your common Intel microprocessors rely on being able to switch off 
-or throttle back, intermittently, in order to conserve power and/or 
-heat. That can only happen if those chips have nothing to do.
+Best regards,
 
-Scheduled wakeups make-do for the chips, and especially so if they 
-happen at random intervals. That's the dearth of *my* phone's battery at 
-least: constant wakeups from a ton of background apps.
-
-While I don't know *what* those apps are doing for real, I suspect most 
-of them are spinning in a while(1) {do-polling; do-advertising; 
-sleep(arbitrary-time-constaant);} -kinda loop. So that in toto they end 
-up waking up my kernel, and when online even my radio, pretty much all 
-the time.
-
-A rather simple means of stopping that sort of behavior would be to 
-enable -- not just simple sleep -- but sleep with tolerance. Most of 
-those problematic apps don't really need to be woken up *precisely* 
-100ms from here, to poll something. They'd be just as well if they were 
-woken up a second from now, or even a minute. Yet they might not be able 
-to communicaate that to the scheduler right now.
-
-If they could, the scheduler could suddenly batch up operations over 
-multiple applications. It could not only wake up cores and do batch 
-optimization over the processes woken, but it could also only wake up 
-the costly-in-battery-and-latency radio transmitter of your mobile just 
-when it has to. Say, in the polling interval of the many low power radio 
-protocols which we nowadays have.
-
-Again, I don't know pretty much anything about kernel development, or 
-the extant low level API's Linux people have. But I do know something 
-like this would be useful, and easy to interface towards any extant 
-no-tick scheduler. *NIX-kernel-wise and POSIX-wise even it would be 
-rather a simple exercise to just overload any blocking calls which carry 
-a deadline with a second call, taking two arguments instead of one. The 
-second one being the actual deadline, and the first one being what we 
-now experience under POSIX rules. Between those two, the scheduler would 
-have much more latitude for optimization.
-
-Such calls could be aliased back from sleep(x,y) to just the current 
-sleep(x) without loss of functionality. The second time argument could 
-be treated as a hint, even formally, with no loss of functionality. 
-However when implemented, that hint could yield real efficiency gains in 
-heat expenditure, battery life, and maybe even processing latency, since 
-it *does* constitute a kind of implicit barrier device.
-
-Please tell me someone implemented something like that already, and it's 
-on its way to standardization? If not, please tell me some of you are 
-interested in the idea.
+Thomas
 -- 
-Sampo Syreeni, aka decoy - decoy@iki.fi, http://decoy.iki.fi/front
-+358-40-3255353, 025E D175 ABE5 027C 9494 EEB0 E090 8BA9 0509 85C2
+Thomas Petazzoni, CTO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
