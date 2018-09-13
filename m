@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC85DC07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:04:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0986CC07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:04:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7499520861
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:04:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7499520861
+	by mail.kernel.org (Postfix) with ESMTP id C432B20652
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:04:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C432B20652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732108AbeIMTOS (ORCPT
+        id S1732117AbeIMTOV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:14:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35406 "EHLO
+        Thu, 13 Sep 2018 15:14:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35410 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727566AbeIMTOS (ORCPT
+        with ESMTP id S1731179AbeIMTOV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:14:18 -0400
+        Thu, 13 Sep 2018 15:14:21 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9CA36D35;
-        Thu, 13 Sep 2018 14:04:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B8DD3D35;
+        Thu, 13 Sep 2018 14:04:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, James Zhu <James.Zhu@amd.com>,
         Alex Deucher <alexander.deucher@amd.com>,
-        Huang Rui <ray.huang@amd.com>, Likun Gao <Likun.Gao@amd.com>
-Subject: [PATCH 4.18 174/197] drm/amdgpu: update tmr mc address
-Date:   Thu, 13 Sep 2018 15:32:03 +0200
-Message-Id: <20180913131848.521425547@linuxfoundation.org>
+        Huang Rui <ray.huang@amd.com>, Likun Gao <likun.gao@amd.com>,
+        Likun Gao <Likun.Gao@amd.com>
+Subject: [PATCH 4.18 175/197] drm/amdgpu:add tmr mc address into amdgpu_firmware_info
+Date:   Thu, 13 Sep 2018 15:32:04 +0200
+Message-Id: <20180913131848.562433266@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -54,37 +55,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: James Zhu <jzhums@gmail.com>
 
-commit 435198f33b56d7b875a8173a0227ddf0de285aa1 upstream.
+commit abf412b3efb2f943d9b98a489e9aca836be21333 upstream.
 
-Update tmr mc address with firmware loading address
-which is returned from PSP firmware
+amdgpu IP blocks booting need Trust Memory Region(tmr) mc address
+of its firmware which is loaded by PSP
 
 Signed-off-by: James Zhu <James.Zhu@amd.com>
 Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
 Acked-by: Huang Rui <ray.huang@amd.com>
-Reviewed-by: Likun Gao <Likun.Gao@amd.com>
+Reviewed-by: Likun Gao <likun.gao@amd.com>
 Signed-off-by: Likun Gao <Likun.Gao@amd.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.h |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
-@@ -131,6 +131,11 @@ psp_cmd_submit_buf(struct psp_context *p
- 		msleep(1);
- 	}
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.h
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.h
+@@ -226,6 +226,9 @@ struct amdgpu_firmware_info {
+ 	void *kaddr;
+ 	/* ucode_size_bytes */
+ 	uint32_t ucode_size;
++	/* starting tmr mc address */
++	uint32_t tmr_mc_addr_lo;
++	uint32_t tmr_mc_addr_hi;
+ };
  
-+	if (ucode) {
-+		ucode->tmr_mc_addr_lo = psp->cmd_buf_mem->resp.fw_addr_lo;
-+		ucode->tmr_mc_addr_hi = psp->cmd_buf_mem->resp.fw_addr_hi;
-+	}
-+
- 	return ret;
- }
- 
+ void amdgpu_ucode_print_mc_hdr(const struct common_firmware_header *hdr);
 
 
