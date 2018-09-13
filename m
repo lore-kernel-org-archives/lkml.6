@@ -2,106 +2,124 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6336F81833
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6E76F81838
 	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 17:35:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4113E215E5
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 16:32:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A5CD21569
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 16:12:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IggVjLzy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4113E215E5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="maitDEE9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A5CD21569
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728015AbeIMVma (ORCPT
+        id S1728240AbeIMVWc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 17:42:30 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:41601 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726452AbeIMVma (ORCPT
+        Thu, 13 Sep 2018 17:22:32 -0400
+Received: from mail-qk1-f202.google.com ([209.85.222.202]:54086 "EHLO
+        mail-qk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726819AbeIMVWc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 17:42:30 -0400
-Received: by mail-pl1-f196.google.com with SMTP id b12-v6so2836964plr.8
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 09:32:15 -0700 (PDT)
+        Thu, 13 Sep 2018 17:22:32 -0400
+Received: by mail-qk1-f202.google.com with SMTP id f64-v6so5196354qkb.20
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 09:12:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=pf6OkK8djwhkhMDYw62KDVUBpw3fMLEWWaac+NLWwaQ=;
-        b=IggVjLzyk1VtW6W1hn/uJT5kZ/BGubreRxlFF0dHwnhbr2xDOMQfr59yl7LYtGY9qK
-         E01Ceex2JLl0UalwcusqUlmhn6pfgWQD8LUwVG+4ykciWnSmDxcZCiwFzefiu4hELMqT
-         bE98rjHGaT5QcfpFbX8f7GfCAll45ZRhAyEu4=
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=zGk//fqE+XT9HqJjdclLb8ahsHMYDLzUz4mSW+Kg4lk=;
+        b=maitDEE90y9ZpFHAvvMn/x1SytBhaKJE5hwOmHROvuWoDrF91leA+Kts1l/tZa12op
+         d/MzxPKgEESRfOrY50abSzYIK3S5cTfTnhzR2s+GuTVelh1kcvk18rM5GpefuQjW0FXX
+         Z0RfOarFMB9GUUKEhc9tSHwAufHMcC/eQ3RGdQ6eQSvKjVvcV3uDb584H6219Wzg/FUL
+         wa/OmCWjcJwRUN0EB25QTl3HkXIEIcwsc3lweUzo+2BWVViWEd1t8auGzkku2Wn5BJ1p
+         bGMi6EcNhGZDNFhYPpQo4sP7+k0fL91y5VfIqiRDAHb1mKAuzFRVVrw+SOU5ohgEKqRz
+         9atA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=pf6OkK8djwhkhMDYw62KDVUBpw3fMLEWWaac+NLWwaQ=;
-        b=g1Jo7qtLVKEFZGiM/PSq3oUz7EOOJXc3qsCdF8DQt7HBcHGRHsbCnB4D/wrLTUEU2d
-         OxDwbV6sJYdOk1/ePcijT4+4QN0OqcPoi9b9T0JyxPc1Z07KtouzDRLwarSVnbkqVjIA
-         c3FZ4ykxhWkktrcqD6ghXc6Uny16DvdgvK+aDB8/s1rN4fR06XX0ETzbUiJSMUh2/r06
-         q7atWLHhpAHPoT4FLmsv3CYiZ0GyiXNWdisrKfVtfCIlJjm21Ye0TTxumCLdc3VYiro2
-         C7FvBinIBqTAgb7ilm6v8PjkWSmIeOMWEQyhdnAKf38iiYZkbYkUYTVqsAr5f/GrafE9
-         S/Bw==
-X-Gm-Message-State: APzg51Dq/Ypscy1AUX8YVSy5WoT5dbrCxM6P2KoM5IAr+9aqNGkJR85u
-        6iO7ByeZ6DthXMyd4+jEdMrtIc0Bfzs=
-X-Google-Smtp-Source: ANB0Vda0JKdnWT+Lq5nI95GDBzF+/s6lXdBJIzKtfm8jIhtEN0wqupe4T5qf5fegc9yUhPaM10qGtA==
-X-Received: by 2002:a17:902:59ce:: with SMTP id d14-v6mr8055417plj.42.1536856335338;
-        Thu, 13 Sep 2018 09:32:15 -0700 (PDT)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id v72-v6sm8889319pfj.22.2018.09.13.09.32.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 13 Sep 2018 09:32:14 -0700 (PDT)
-Date:   Thu, 13 Sep 2018 09:32:12 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Bin Yang <bin.yang@intel.com>
-Subject: [GIT PULL] pstore fixes for v4.19-rc4
-Message-ID: <20180913163212.GA36793@beast>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=zGk//fqE+XT9HqJjdclLb8ahsHMYDLzUz4mSW+Kg4lk=;
+        b=DM8qaPqkaVxrBClU6jPoXJ//S7DsMXYSE+7NotBQnw4/XsIx5WuwolonJeg5R2hRFn
+         wGu85wrDlCArZssDNVlrAmJMVKavS0ocOJ1Np9PNZWD5YWPyr25CTFjzZrsUkzHw56Wq
+         k6v7r0Kr4R5/HNWsf1X9gXiZLNaVJ4/sWwvxqgr2JdO7359Fz4QXmewxt4LYyly4qeTn
+         UFeBh9XWpCwfSI1TAcG22ByYezeNQfomXtyVktD08X2dtidOvERk/KVgczuoplDB4yjb
+         eAdLvu4/Pbz5W8H/eXIosLK75GLCz8bbKr3E1sPL4HYEXXbLWmz6DNHyuonoErM6D8Eb
+         efOQ==
+X-Gm-Message-State: APzg51C+Wsxr55oJsko0/9dE7vR7FNPz5Z1vwcOJ7HZUjXeDxPfVbCcZ
+        EsseF8RMsXSCUFRVqUpIras+5YTqIw==
+X-Google-Smtp-Source: ANB0VdZDd8To0hItpH5LDcNvjkrYhQCXXILiiZ9or+yhHtpA4lvAi3gqmEP3EooKoNW00xOGwcXn5FBfog==
+X-Received: by 2002:a0c:bd26:: with SMTP id m38-v6mr2462679qvg.53.1536855140660;
+ Thu, 13 Sep 2018 09:12:20 -0700 (PDT)
+Date:   Thu, 13 Sep 2018 18:12:09 +0200
+Message-Id: <20180913161209.63693-1-jannh@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.19.0.rc2.392.g5ba43deb5a-goog
+Subject: [PATCH] apparmor: don't try to replace stale label in ptrace access check
+From:   Jann Horn <jannh@google.com>
+To:     John Johansen <john.johansen@canonical.com>,
+        apparmor@lists.ubuntu.com, jannh@google.com
+Cc:     linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+As a comment above begin_current_label_crit_section() explains,
+begin_current_label_crit_section() must run in sleepable context because
+when label_is_stale() is true, aa_replace_current_label() runs, which uses
+prepare_creds(), which can sleep.
+Until now, the ptrace access check (which runs with a task lock held)
+violated this rule.
 
-Please pull this pstore fix for v4.19-rc4. It fixes a 6 year old pstore
-bug that everyone just got lucky in avoiding, likely due only using
-page-aligned persistent ram regions.
+Also add a might_sleep() assertion to begin_current_label_crit_section(),
+because asserts are less likely to be ignored than comments.
 
-Thanks!
+Signed-off-by: Jann Horn <jannh@google.com>
+---
+I have tested that just the might_sleep() yells a lot, and adding the
+rest of the patch stops the yelling.
 
--Kees
+ security/apparmor/include/cred.h | 2 ++
+ security/apparmor/lsm.c          | 4 ++--
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-The following changes since commit 57361846b52bc686112da6ca5368d11210796804:
-
-  Linux 4.19-rc2 (2018-09-02 14:37:30 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/pstore-v4.19-rc4
-
-for you to fetch changes up to 831b624df1b420c8f9281ed1307a8db23afb72df:
-
-  pstore: Fix incorrect persistent ram buffer mapping (2018-09-13 09:14:57 -0700)
-
-----------------------------------------------------------------
-pstore fixes for v4.19-rc4:
-
-- Handle page-vs-byte offset handling between iomap and vmap (Bin Yang)
-
-----------------------------------------------------------------
-Bin Yang (1):
-      pstore: Fix incorrect persistent ram buffer mapping
-
- fs/pstore/ram_core.c | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
-
+diff --git a/security/apparmor/include/cred.h b/security/apparmor/include/cred.h
+index e287b7d0d4be..265ae6641a06 100644
+--- a/security/apparmor/include/cred.h
++++ b/security/apparmor/include/cred.h
+@@ -151,6 +151,8 @@ static inline struct aa_label *begin_current_label_crit_section(void)
+ {
+ 	struct aa_label *label = aa_current_raw_label();
+ 
++	might_sleep();
++
+ 	if (label_is_stale(label)) {
+ 		label = aa_get_newest_label(label);
+ 		if (aa_replace_current_label(label) == 0)
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index 8b8b70620bbe..e3f40c20b9b4 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -114,13 +114,13 @@ static int apparmor_ptrace_access_check(struct task_struct *child,
+ 	struct aa_label *tracer, *tracee;
+ 	int error;
+ 
+-	tracer = begin_current_label_crit_section();
++	tracer = __begin_current_label_crit_section();
+ 	tracee = aa_get_task_label(child);
+ 	error = aa_may_ptrace(tracer, tracee,
+ 			(mode & PTRACE_MODE_READ) ? AA_PTRACE_READ
+ 						  : AA_PTRACE_TRACE);
+ 	aa_put_label(tracee);
+-	end_current_label_crit_section(tracer);
++	__end_current_label_crit_section(tracer);
+ 
+ 	return error;
+ }
 -- 
-Kees Cook
-Pixel Security
+2.19.0.rc2.392.g5ba43deb5a-goog
+
