@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B6BFC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:35:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A09FC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:35:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B97D920854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:35:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B97D920854
+	by mail.kernel.org (Postfix) with ESMTP id C3C6B20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:35:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3C6B20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729064AbeIMSpC (ORCPT
+        id S1729075AbeIMSpG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:45:02 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59096 "EHLO
+        Thu, 13 Sep 2018 14:45:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59104 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727788AbeIMSpB (ORCPT
+        with ESMTP id S1727788AbeIMSpF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:45:01 -0400
+        Thu, 13 Sep 2018 14:45:05 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D7530D18;
-        Thu, 13 Sep 2018 13:35:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 44E0FD18;
+        Thu, 13 Sep 2018 13:35:35 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Laura Abbott <labbott@redhat.com>,
-        "J. Bruce Fields" <bfields@redhat.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 19/78] sunrpc: Dont use stack buffer with scatterlist
-Date:   Thu, 13 Sep 2018 15:31:06 +0200
-Message-Id: <20180913131806.988428353@linuxfoundation.org>
+        stable@vger.kernel.org, Jamal Hadi Salim <jhs@mojatatu.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 02/78] act_ife: fix a potential use-after-free
+Date:   Thu, 13 Sep 2018 15:30:49 +0200
+Message-Id: <20180913131805.866644287@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131805.732342940@linuxfoundation.org>
 References: <20180913131805.732342940@linuxfoundation.org>
@@ -52,105 +52,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Laura Abbott <labbott@redhat.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-[ Upstream commit 44090cc876926277329e1608bafc01b9f6da627f ]
+[ Upstream commit 6d784f1625ea68783cc1fb17de8f6cd3e1660c3f ]
 
-Fedora got a bug report from NFS:
+Immediately after module_put(), user could delete this
+module, so e->ops could be already freed before we call
+e->ops->release().
 
-kernel BUG at include/linux/scatterlist.h:143!
-...
-RIP: 0010:sg_init_one+0x7d/0x90
-..
-  make_checksum+0x4e7/0x760 [rpcsec_gss_krb5]
-  gss_get_mic_kerberos+0x26e/0x310 [rpcsec_gss_krb5]
-  gss_marshal+0x126/0x1a0 [auth_rpcgss]
-  ? __local_bh_enable_ip+0x80/0xe0
-  ? call_transmit_status+0x1d0/0x1d0 [sunrpc]
-  call_transmit+0x137/0x230 [sunrpc]
-  __rpc_execute+0x9b/0x490 [sunrpc]
-  rpc_run_task+0x119/0x150 [sunrpc]
-  nfs4_run_exchange_id+0x1bd/0x250 [nfsv4]
-  _nfs4_proc_exchange_id+0x2d/0x490 [nfsv4]
-  nfs41_discover_server_trunking+0x1c/0xa0 [nfsv4]
-  nfs4_discover_server_trunking+0x80/0x270 [nfsv4]
-  nfs4_init_client+0x16e/0x240 [nfsv4]
-  ? nfs_get_client+0x4c9/0x5d0 [nfs]
-  ? _raw_spin_unlock+0x24/0x30
-  ? nfs_get_client+0x4c9/0x5d0 [nfs]
-  nfs4_set_client+0xb2/0x100 [nfsv4]
-  nfs4_create_server+0xff/0x290 [nfsv4]
-  nfs4_remote_mount+0x28/0x50 [nfsv4]
-  mount_fs+0x3b/0x16a
-  vfs_kern_mount.part.35+0x54/0x160
-  nfs_do_root_mount+0x7f/0xc0 [nfsv4]
-  nfs4_try_mount+0x43/0x70 [nfsv4]
-  ? get_nfs_version+0x21/0x80 [nfs]
-  nfs_fs_mount+0x789/0xbf0 [nfs]
-  ? pcpu_alloc+0x6ca/0x7e0
-  ? nfs_clone_super+0x70/0x70 [nfs]
-  ? nfs_parse_mount_options+0xb40/0xb40 [nfs]
-  mount_fs+0x3b/0x16a
-  vfs_kern_mount.part.35+0x54/0x160
-  do_mount+0x1fd/0xd50
-  ksys_mount+0xba/0xd0
-  __x64_sys_mount+0x21/0x30
-  do_syscall_64+0x60/0x1f0
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+Fix this by moving module_put() after ops->release().
 
-This is BUG_ON(!virt_addr_valid(buf)) triggered by using a stack
-allocated buffer with a scatterlist. Convert the buffer for
-rc4salt to be dynamically allocated instead.
-
-Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1615258
-Signed-off-by: Laura Abbott <labbott@redhat.com>
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Fixes: ef6980b6becb ("introduce IFE action")
+Cc: Jamal Hadi Salim <jhs@mojatatu.com>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sunrpc/auth_gss/gss_krb5_crypto.c |   12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ net/sched/act_ife.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/sunrpc/auth_gss/gss_krb5_crypto.c
-+++ b/net/sunrpc/auth_gss/gss_krb5_crypto.c
-@@ -169,7 +169,7 @@ make_checksum_hmac_md5(struct krb5_ctx *
- 	struct scatterlist              sg[1];
- 	int err = -1;
- 	u8 *checksumdata;
--	u8 rc4salt[4];
-+	u8 *rc4salt;
- 	struct crypto_ahash *md5;
- 	struct crypto_ahash *hmac_md5;
- 	struct ahash_request *req;
-@@ -183,14 +183,18 @@ make_checksum_hmac_md5(struct krb5_ctx *
- 		return GSS_S_FAILURE;
+--- a/net/sched/act_ife.c
++++ b/net/sched/act_ife.c
+@@ -395,7 +395,6 @@ static void _tcf_ife_cleanup(struct tc_a
+ 	struct tcf_meta_info *e, *n;
+ 
+ 	list_for_each_entry_safe(e, n, &ife->metalist, metalist) {
+-		module_put(e->ops->owner);
+ 		list_del(&e->metalist);
+ 		if (e->metaval) {
+ 			if (e->ops->release)
+@@ -403,6 +402,7 @@ static void _tcf_ife_cleanup(struct tc_a
+ 			else
+ 				kfree(e->metaval);
+ 		}
++		module_put(e->ops->owner);
+ 		kfree(e);
  	}
- 
-+	rc4salt = kmalloc_array(4, sizeof(*rc4salt), GFP_NOFS);
-+	if (!rc4salt)
-+		return GSS_S_FAILURE;
-+
- 	if (arcfour_hmac_md5_usage_to_salt(usage, rc4salt)) {
- 		dprintk("%s: invalid usage value %u\n", __func__, usage);
--		return GSS_S_FAILURE;
-+		goto out_free_rc4salt;
- 	}
- 
- 	checksumdata = kmalloc(GSS_KRB5_MAX_CKSUM_LEN, GFP_NOFS);
- 	if (!checksumdata)
--		return GSS_S_FAILURE;
-+		goto out_free_rc4salt;
- 
- 	md5 = crypto_alloc_ahash("md5", 0, CRYPTO_ALG_ASYNC);
- 	if (IS_ERR(md5))
-@@ -258,6 +262,8 @@ out_free_md5:
- 	crypto_free_ahash(md5);
- out_free_cksum:
- 	kfree(checksumdata);
-+out_free_rc4salt:
-+	kfree(rc4salt);
- 	return err ? GSS_S_FAILURE : 0;
  }
- 
 
 
