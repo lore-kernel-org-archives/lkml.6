@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB7FDC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:46:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C46BC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:46:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94C1920854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:46:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94C1920854
+	by mail.kernel.org (Postfix) with ESMTP id C0E4420854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:46:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0E4420854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729521AbeIMSzo (ORCPT
+        id S1730262AbeIMSzu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:55:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60830 "EHLO
+        Thu, 13 Sep 2018 14:55:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60840 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728479AbeIMSzn (ORCPT
+        with ESMTP id S1728479AbeIMSzt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:55:43 -0400
+        Thu, 13 Sep 2018 14:55:49 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B44A8D19;
-        Thu, 13 Sep 2018 13:46:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2AE9BD19;
+        Thu, 13 Sep 2018 13:46:15 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
+        stable@vger.kernel.org, Michal Suchanek <msuchanek@suse.com>,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 075/115] powerpc/64s: Make rfi_flush_fallback a little more robust
-Date:   Thu, 13 Sep 2018 15:31:35 +0200
-Message-Id: <20180913131828.260656544@linuxfoundation.org>
+Subject: [PATCH 4.14 076/115] powerpc/pseries: Avoid using the size greater than RTAS_ERROR_LOG_MAX.
+Date:   Thu, 13 Sep 2018 15:31:36 +0200
+Message-Id: <20180913131828.312158158@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -52,99 +53,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
 
-[ Upstream commit 78ee9946371f5848ddfc88ab1a43867df8f17d83 ]
+[ Upstream commit 74e96bf44f430cf7a01de19ba6cf49b361cdfd6e ]
 
-Because rfi_flush_fallback runs immediately before the return to
-userspace it currently runs with the user r1 (stack pointer). This
-means if we oops in there we will report a bad kernel stack pointer in
-the exception entry path, eg:
+The global mce data buffer that used to copy rtas error log is of 2048
+(RTAS_ERROR_LOG_MAX) bytes in size. Before the copy we read
+extended_log_length from rtas error log header, then use max of
+extended_log_length and RTAS_ERROR_LOG_MAX as a size of data to be copied.
+Ideally the platform (phyp) will never send extended error log with
+size > 2048. But if that happens, then we have a risk of buffer overrun
+and corruption. Fix this by using min_t instead.
 
-  Bad kernel stack pointer 7ffff7150e40 at c0000000000023b4
-  Oops: Bad kernel stack pointer, sig: 6 [#1]
-  LE SMP NR_CPUS=32 NUMA PowerNV
-  Modules linked in:
-  CPU: 0 PID: 1246 Comm: klogd Not tainted 4.18.0-rc2-gcc-7.3.1-00175-g0443f8a69ba3 #7
-  NIP:  c0000000000023b4 LR: 0000000010053e00 CTR: 0000000000000040
-  REGS: c0000000fffe7d40 TRAP: 4100   Not tainted  (4.18.0-rc2-gcc-7.3.1-00175-g0443f8a69ba3)
-  MSR:  9000000002803031 <SF,HV,VEC,VSX,FP,ME,IR,DR,LE>  CR: 44000442  XER: 20000000
-  CFAR: c00000000000bac8 IRQMASK: c0000000f1e66a80
-  GPR00: 0000000002000000 00007ffff7150e40 00007fff93a99900 0000000000000020
-  ...
-  NIP [c0000000000023b4] rfi_flush_fallback+0x34/0x80
-  LR [0000000010053e00] 0x10053e00
-
-Although the NIP tells us where we were, and the TRAP number tells us
-what happened, it would still be nicer if we could report the actual
-exception rather than barfing about the stack pointer.
-
-We an do that fairly simply by loading the kernel stack pointer on
-entry and restoring the user value before returning. That way we see a
-regular oops such as:
-
-  Unrecoverable exception 4100 at c00000000000239c
-  Oops: Unrecoverable exception, sig: 6 [#1]
-  LE SMP NR_CPUS=32 NUMA PowerNV
-  Modules linked in:
-  CPU: 0 PID: 1251 Comm: klogd Not tainted 4.18.0-rc3-gcc-7.3.1-00097-g4ebfcac65acd-dirty #40
-  NIP:  c00000000000239c LR: 0000000010053e00 CTR: 0000000000000040
-  REGS: c0000000f1e17bb0 TRAP: 4100   Not tainted  (4.18.0-rc3-gcc-7.3.1-00097-g4ebfcac65acd-dirty)
-  MSR:  9000000002803031 <SF,HV,VEC,VSX,FP,ME,IR,DR,LE>  CR: 44000442  XER: 20000000
-  CFAR: c00000000000bac8 IRQMASK: 0
-  ...
-  NIP [c00000000000239c] rfi_flush_fallback+0x3c/0x80
-  LR [0000000010053e00] 0x10053e00
-  Call Trace:
-  [c0000000f1e17e30] [c00000000000b9e4] system_call+0x5c/0x70 (unreliable)
-
-Note this shouldn't make the kernel stack pointer vulnerable to a
-meltdown attack, because it should be flushed from the cache before we
-return to userspace. The user r1 value will be in the cache, because
-we load it in the return path, but that is harmless.
-
+Fixes: d368514c3097 ("powerpc: Fix corruption when grabbing FWNMI data")
+Reported-by: Michal Suchanek <msuchanek@suse.com>
+Signed-off-by: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/kernel/exceptions-64s.S |    6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/powerpc/platforms/pseries/ras.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/powerpc/kernel/exceptions-64s.S
-+++ b/arch/powerpc/kernel/exceptions-64s.S
-@@ -1452,6 +1452,8 @@ TRAMP_REAL_BEGIN(stf_barrier_fallback)
- TRAMP_REAL_BEGIN(rfi_flush_fallback)
- 	SET_SCRATCH0(r13);
- 	GET_PACA(r13);
-+	std	r1,PACA_EXRFI+EX_R12(r13)
-+	ld	r1,PACAKSAVE(r13)
- 	std	r9,PACA_EXRFI+EX_R9(r13)
- 	std	r10,PACA_EXRFI+EX_R10(r13)
- 	std	r11,PACA_EXRFI+EX_R11(r13)
-@@ -1486,12 +1488,15 @@ TRAMP_REAL_BEGIN(rfi_flush_fallback)
- 	ld	r9,PACA_EXRFI+EX_R9(r13)
- 	ld	r10,PACA_EXRFI+EX_R10(r13)
- 	ld	r11,PACA_EXRFI+EX_R11(r13)
-+	ld	r1,PACA_EXRFI+EX_R12(r13)
- 	GET_SCRATCH0(r13);
- 	rfid
+--- a/arch/powerpc/platforms/pseries/ras.c
++++ b/arch/powerpc/platforms/pseries/ras.c
+@@ -371,7 +371,7 @@ static struct rtas_error_log *fwnmi_get_
+ 		int len, error_log_length;
  
- TRAMP_REAL_BEGIN(hrfi_flush_fallback)
- 	SET_SCRATCH0(r13);
- 	GET_PACA(r13);
-+	std	r1,PACA_EXRFI+EX_R12(r13)
-+	ld	r1,PACAKSAVE(r13)
- 	std	r9,PACA_EXRFI+EX_R9(r13)
- 	std	r10,PACA_EXRFI+EX_R10(r13)
- 	std	r11,PACA_EXRFI+EX_R11(r13)
-@@ -1526,6 +1531,7 @@ TRAMP_REAL_BEGIN(hrfi_flush_fallback)
- 	ld	r9,PACA_EXRFI+EX_R9(r13)
- 	ld	r10,PACA_EXRFI+EX_R10(r13)
- 	ld	r11,PACA_EXRFI+EX_R11(r13)
-+	ld	r1,PACA_EXRFI+EX_R12(r13)
- 	GET_SCRATCH0(r13);
- 	hrfid
- 
+ 		error_log_length = 8 + rtas_error_extended_log_length(h);
+-		len = max_t(int, error_log_length, RTAS_ERROR_LOG_MAX);
++		len = min_t(int, error_log_length, RTAS_ERROR_LOG_MAX);
+ 		memset(global_mce_data_buf, 0, RTAS_ERROR_LOG_MAX);
+ 		memcpy(global_mce_data_buf, h, len);
+ 		errhdr = (struct rtas_error_log *)global_mce_data_buf;
 
 
