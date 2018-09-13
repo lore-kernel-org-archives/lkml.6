@@ -5,101 +5,408 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87E14FC6190
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8535DFC618D
 	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 17:35:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B91C21770
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 17:05:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B91C21770
+	by mail.kernel.org (Postfix) with ESMTP id 3BFCD214C1
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 15:52:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BFCD214C1
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728102AbeIMWPt (ORCPT
+        id S1728599AbeIMVCy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 18:15:49 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:42232 "EHLO mx1.redhat.com"
+        Thu, 13 Sep 2018 17:02:54 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55178 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726821AbeIMWPs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 18:15:48 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        id S1727730AbeIMVCx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 17:02:53 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AE90999D39;
-        Thu, 13 Sep 2018 17:05:26 +0000 (UTC)
-Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 46B28608E8;
-        Thu, 13 Sep 2018 17:05:24 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     kvm@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Jim Mattson <jmattson@google.com>,
-        Liran Alon <liran.alon@oracle.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v5 00/12] KVM: nVMX: Enlightened VMCS for Hyper-V on KVM
-Date:   Thu, 13 Sep 2018 19:05:10 +0200
-Message-Id: <20180913170522.24876-1-vkuznets@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 13 Sep 2018 17:05:26 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5C23E3001FBF;
+        Thu, 13 Sep 2018 15:52:48 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id ED1145D6B5;
+        Thu, 13 Sep 2018 15:52:46 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 09/10] afs: Add a couple of tracepoints to log I/O errors
+From:   David Howells <dhowells@redhat.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
+Date:   Thu, 13 Sep 2018 16:52:46 +0100
+Message-ID: <153685396615.14766.14173884921607519657.stgit@warthog.procyon.org.uk>
+In-Reply-To: <153685389564.14766.11306559824641824935.stgit@warthog.procyon.org.uk>
+References: <153685389564.14766.11306559824641824935.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Thu, 13 Sep 2018 15:52:48 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Changes since v4:
-- Rebase.
-- Adjust nested state migration support after additional testing.
-- Enhance self-test.
-- Drop "KVM: selftests: compile against local uapi headers" patch,
-  add "tools/headers: update kvm.h" instead.
+Add a couple of tracepoints to log the production of I/O errors within the AFS
+filesystem.
 
-Original description:
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
 
-This is an initial implementation of Enlightened VMCS for nested Hyper-V on
-KVM. Using it helps to spare 1500 cpu cycles for nested vmexit (tight cpuid
-loop in WS2016 with Hyper-V role on KVM: 15200 cycles -> 13700 cycles).
+ fs/afs/cmservice.c         |   10 +++--
+ fs/afs/dir.c               |   23 ++++++++----
+ fs/afs/internal.h          |   11 ++++++
+ fs/afs/mntpt.c             |    6 +++
+ fs/afs/rxrpc.c             |    2 +
+ fs/afs/server.c            |    4 +-
+ fs/afs/volume.c            |    2 +
+ fs/afs/write.c             |    1 +
+ include/trace/events/afs.h |   81 ++++++++++++++++++++++++++++++++++++++++++++
+ 9 files changed, 122 insertions(+), 18 deletions(-)
 
-Ladi Prosek (1):
-  KVM: hyperv: define VP assist page helpers
-
-Vitaly Kuznetsov (11):
-  KVM: VMX: refactor evmcs_sanitize_exec_ctrls()
-  KVM: nVMX: add KVM_CAP_HYPERV_ENLIGHTENED_VMCS capability
-  KVM: nVMX: add enlightened VMCS state
-  KVM: nVMX: implement enlightened VMPTRLD and VMCLEAR
-  KVM: nVMX: optimize prepare_vmcs02{,_full} for Enlightened VMCS case
-  x86/kvm/hyperv: don't clear VP assist pages on init
-  x86/kvm/lapic: preserve gfn_to_hva_cache len on cache reinit
-  x86/kvm/nVMX: allow bare VMXON state migration
-  x86/kvm/nVMX: nested state migration for Enlightened VMCS
-  tools/headers: update kvm.h
-  KVM: selftests: add Enlightened VMCS test
-
- arch/x86/include/asm/kvm_host.h             |    3 +
- arch/x86/include/uapi/asm/kvm.h             |    1 +
- arch/x86/kvm/hyperv.c                       |   31 +-
- arch/x86/kvm/hyperv.h                       |    4 +
- arch/x86/kvm/lapic.c                        |   14 +-
- arch/x86/kvm/lapic.h                        |    2 +-
- arch/x86/kvm/svm.c                          |    9 +
- arch/x86/kvm/vmx.c                          |  906 ++++++++++++++++++----
- arch/x86/kvm/x86.c                          |   23 +-
- include/uapi/linux/kvm.h                    |    1 +
- tools/include/uapi/linux/kvm.h              |    7 +
- tools/testing/selftests/kvm/Makefile        |    1 +
- tools/testing/selftests/kvm/evmcs_test.c    |  160 ++++
- tools/testing/selftests/kvm/include/evmcs.h | 1099 +++++++++++++++++++++++++++
- tools/testing/selftests/kvm/include/vmx.h   |   28 +
- tools/testing/selftests/kvm/lib/vmx.c       |   48 +-
- 16 files changed, 2156 insertions(+), 181 deletions(-)
- create mode 100644 tools/testing/selftests/kvm/evmcs_test.c
- create mode 100644 tools/testing/selftests/kvm/include/evmcs.h
-
--- 
-2.14.4
+diff --git a/fs/afs/cmservice.c b/fs/afs/cmservice.c
+index 4db62ae8dc1a..186f621f8722 100644
+--- a/fs/afs/cmservice.c
++++ b/fs/afs/cmservice.c
+@@ -260,7 +260,7 @@ static int afs_deliver_cb_callback(struct afs_call *call)
+ 	}
+ 
+ 	if (!afs_check_call_state(call, AFS_CALL_SV_REPLYING))
+-		return -EIO;
++		return afs_io_error(call, afs_io_error_cm_reply);
+ 
+ 	/* we'll need the file server record as that tells us which set of
+ 	 * vnodes to operate upon */
+@@ -368,7 +368,7 @@ static int afs_deliver_cb_init_call_back_state3(struct afs_call *call)
+ 	}
+ 
+ 	if (!afs_check_call_state(call, AFS_CALL_SV_REPLYING))
+-		return -EIO;
++		return afs_io_error(call, afs_io_error_cm_reply);
+ 
+ 	/* we'll need the file server record as that tells us which set of
+ 	 * vnodes to operate upon */
+@@ -409,7 +409,7 @@ static int afs_deliver_cb_probe(struct afs_call *call)
+ 		return ret;
+ 
+ 	if (!afs_check_call_state(call, AFS_CALL_SV_REPLYING))
+-		return -EIO;
++		return afs_io_error(call, afs_io_error_cm_reply);
+ 
+ 	return afs_queue_call_work(call);
+ }
+@@ -490,7 +490,7 @@ static int afs_deliver_cb_probe_uuid(struct afs_call *call)
+ 	}
+ 
+ 	if (!afs_check_call_state(call, AFS_CALL_SV_REPLYING))
+-		return -EIO;
++		return afs_io_error(call, afs_io_error_cm_reply);
+ 
+ 	return afs_queue_call_work(call);
+ }
+@@ -573,7 +573,7 @@ static int afs_deliver_cb_tell_me_about_yourself(struct afs_call *call)
+ 		return ret;
+ 
+ 	if (!afs_check_call_state(call, AFS_CALL_SV_REPLYING))
+-		return -EIO;
++		return afs_io_error(call, afs_io_error_cm_reply);
+ 
+ 	return afs_queue_call_work(call);
+ }
+diff --git a/fs/afs/dir.c b/fs/afs/dir.c
+index c36b54b7450b..15f740b910fb 100644
+--- a/fs/afs/dir.c
++++ b/fs/afs/dir.c
+@@ -172,6 +172,7 @@ static bool afs_dir_check_page(struct afs_vnode *dvnode, struct page *page,
+ 			       ntohs(dbuf->blocks[tmp].hdr.magic));
+ 			trace_afs_dir_check_failed(dvnode, off, i_size);
+ 			kunmap(page);
++			trace_afs_file_error(dvnode, -EIO, afs_file_error_dir_bad_magic);
+ 			goto error;
+ 		}
+ 
+@@ -271,12 +272,15 @@ static struct afs_read *afs_read_dir(struct afs_vnode *dvnode, struct key *key)
+ 
+ expand:
+ 	i_size = i_size_read(&dvnode->vfs_inode);
+-	ret = -EIO;
+-	if (i_size < 2048)
++	if (i_size < 2048) {
++		ret = afs_bad(dvnode, afs_file_error_dir_small);
+ 		goto error;
+-	ret = -EFBIG;
+-	if (i_size > 2048 * 1024)
++	}
++	if (i_size > 2048 * 1024) {
++		trace_afs_file_error(dvnode, -EFBIG, afs_file_error_dir_big);
++		ret = -EFBIG;
+ 		goto error;
++	}
+ 
+ 	nr_pages = (i_size + PAGE_SIZE - 1) / PAGE_SIZE;
+ 
+@@ -381,7 +385,8 @@ static struct afs_read *afs_read_dir(struct afs_vnode *dvnode, struct key *key)
+ /*
+  * deal with one block in an AFS directory
+  */
+-static int afs_dir_iterate_block(struct dir_context *ctx,
++static int afs_dir_iterate_block(struct afs_vnode *dvnode,
++				 struct dir_context *ctx,
+ 				 union afs_xdr_dir_block *block,
+ 				 unsigned blkoff)
+ {
+@@ -431,7 +436,7 @@ static int afs_dir_iterate_block(struct dir_context *ctx,
+ 				       " (len %u/%zu)",
+ 				       blkoff / sizeof(union afs_xdr_dir_block),
+ 				       offset, next, tmp, nlen);
+-				return -EIO;
++				return afs_bad(dvnode, afs_file_error_dir_over_end);
+ 			}
+ 			if (!(block->hdr.bitmap[next / 8] &
+ 			      (1 << (next % 8)))) {
+@@ -439,7 +444,7 @@ static int afs_dir_iterate_block(struct dir_context *ctx,
+ 				       " %u unmarked extension (len %u/%zu)",
+ 				       blkoff / sizeof(union afs_xdr_dir_block),
+ 				       offset, next, tmp, nlen);
+-				return -EIO;
++				return afs_bad(dvnode, afs_file_error_dir_unmarked_ext);
+ 			}
+ 
+ 			_debug("ENT[%zu.%u]: ext %u/%zu",
+@@ -515,7 +520,7 @@ static int afs_dir_iterate(struct inode *dir, struct dir_context *ctx,
+ 			page = radix_tree_deref_slot(slot);
+ 		rcu_read_unlock();
+ 		if (!page) {
+-			ret = -EIO;
++			ret = afs_bad(dvnode, afs_file_error_dir_missing_page);
+ 			break;
+ 		}
+ 		mark_page_accessed(page);
+@@ -528,7 +533,7 @@ static int afs_dir_iterate(struct inode *dir, struct dir_context *ctx,
+ 		do {
+ 			dblock = &dbuf->blocks[(blkoff % PAGE_SIZE) /
+ 					       sizeof(union afs_xdr_dir_block)];
+-			ret = afs_dir_iterate_block(ctx, dblock, blkoff);
++			ret = afs_dir_iterate_block(dvnode, ctx, dblock, blkoff);
+ 			if (ret != 1) {
+ 				kunmap(page);
+ 				goto out;
+diff --git a/fs/afs/internal.h b/fs/afs/internal.h
+index 38b48382db52..3dd502e55720 100644
+--- a/fs/afs/internal.h
++++ b/fs/afs/internal.h
+@@ -1150,6 +1150,17 @@ static inline void afs_check_for_remote_deletion(struct afs_fs_cursor *fc,
+ 	}
+ }
+ 
++static inline int afs_io_error(struct afs_call *call, enum afs_io_error where)
++{
++	trace_afs_io_error(call->debug_id, -EIO, where);
++	return -EIO;
++}
++
++static inline int afs_bad(struct afs_vnode *vnode, enum afs_file_error where)
++{
++	trace_afs_file_error(vnode, -EIO, where);
++	return -EIO;
++}
+ 
+ /*****************************************************************************/
+ /*
+diff --git a/fs/afs/mntpt.c b/fs/afs/mntpt.c
+index 99fd13500a97..4238bb63931d 100644
+--- a/fs/afs/mntpt.c
++++ b/fs/afs/mntpt.c
+@@ -130,6 +130,12 @@ static struct vfsmount *afs_mntpt_do_automount(struct dentry *mntpt)
+ 			goto error_no_page;
+ 		}
+ 
++		if (PageError(page)) {
++			put_page(page);
++			ret = afs_bad(AFS_FS_I(d_inode(mntpt)), afs_file_error_mntpt);
++			goto error_no_page;
++		}
++
+ 		ret = -EIO;
+ 		if (PageError(page))
+ 			goto error;
+diff --git a/fs/afs/rxrpc.c b/fs/afs/rxrpc.c
+index 6138c12c74a3..748b37b130a2 100644
+--- a/fs/afs/rxrpc.c
++++ b/fs/afs/rxrpc.c
+@@ -845,7 +845,7 @@ int afs_extract_data(struct afs_call *call, bool want_more)
+ 			break;
+ 		case AFS_CALL_COMPLETE:
+ 			kdebug("prem complete %d", call->error);
+-			return -EIO;
++			return afs_io_error(call, afs_io_error_extract);
+ 		default:
+ 			break;
+ 		}
+diff --git a/fs/afs/server.c b/fs/afs/server.c
+index 1d329e6981d5..b7874bf9402e 100644
+--- a/fs/afs/server.c
++++ b/fs/afs/server.c
+@@ -274,7 +274,7 @@ static struct afs_addr_list *afs_vl_lookup_addrs(struct afs_cell *cell,
+ 		case -ECONNREFUSED:
+ 			break;
+ 		default:
+-			ac.error = -EIO;
++			ac.error = afs_io_error(NULL, afs_io_error_vl_lookup_fail);
+ 			goto error;
+ 		}
+ 	}
+@@ -560,7 +560,7 @@ static bool afs_do_probe_fileserver(struct afs_fs_cursor *fc)
+ 		case -ETIME:
+ 			break;
+ 		default:
+-			fc->ac.error = -EIO;
++			fc->ac.error = afs_io_error(NULL, afs_io_error_fs_probe_fail);
+ 			goto error;
+ 		}
+ 	}
+diff --git a/fs/afs/volume.c b/fs/afs/volume.c
+index 3037bd01f617..7bd4fc784c38 100644
+--- a/fs/afs/volume.c
++++ b/fs/afs/volume.c
+@@ -116,7 +116,7 @@ static struct afs_vldb_entry *afs_vl_lookup_vldb(struct afs_cell *cell,
+ 		case -ECONNREFUSED:
+ 			break;
+ 		default:
+-			ac.error = -EIO;
++			ac.error = afs_io_error(NULL, afs_io_error_vl_lookup_fail);
+ 			goto error;
+ 		}
+ 	}
+diff --git a/fs/afs/write.c b/fs/afs/write.c
+index 46a3a911c682..1dfca4b722da 100644
+--- a/fs/afs/write.c
++++ b/fs/afs/write.c
+@@ -537,6 +537,7 @@ static int afs_write_back_from_locked_page(struct address_space *mapping,
+ 	case -ENOENT:
+ 	case -ENOMEDIUM:
+ 	case -ENXIO:
++		trace_afs_file_error(vnode, ret, afs_file_error_writeback_fail);
+ 		afs_kill_pages(mapping, first, last);
+ 		mapping_set_error(mapping, ret);
+ 		break;
+diff --git a/include/trace/events/afs.h b/include/trace/events/afs.h
+index 9c44245987b3..d9c99c423fd9 100644
+--- a/include/trace/events/afs.h
++++ b/include/trace/events/afs.h
+@@ -103,6 +103,24 @@ enum afs_eproto_cause {
+ 	afs_eproto_yvl_vlendpt_type,
+ };
+ 
++enum afs_io_error {
++	afs_io_error_cm_reply,
++	afs_io_error_extract,
++	afs_io_error_fs_probe_fail,
++	afs_io_error_vl_lookup_fail,
++};
++
++enum afs_file_error {
++	afs_file_error_dir_bad_magic,
++	afs_file_error_dir_big,
++	afs_file_error_dir_missing_page,
++	afs_file_error_dir_over_end,
++	afs_file_error_dir_small,
++	afs_file_error_dir_unmarked_ext,
++	afs_file_error_mntpt,
++	afs_file_error_writeback_fail,
++};
++
+ #endif /* end __AFS_DECLARE_TRACE_ENUMS_ONCE_ONLY */
+ 
+ /*
+@@ -183,6 +201,21 @@ enum afs_eproto_cause {
+ 	EM(afs_eproto_yvl_vlendpt6_len,	"YVL.VlEnd6Len") \
+ 	E_(afs_eproto_yvl_vlendpt_type,	"YVL.VlEndType")
+ 
++#define afs_io_errors							\
++	EM(afs_io_error_cm_reply,		"CM_REPLY")		\
++	EM(afs_io_error_extract,		"EXTRACT")		\
++	EM(afs_io_error_fs_probe_fail,		"FS_PROBE_FAIL")	\
++	E_(afs_io_error_vl_lookup_fail,		"VL_LOOKUP_FAIL")
++
++#define afs_file_errors							\
++	EM(afs_file_error_dir_bad_magic,	"DIR_BAD_MAGIC")	\
++	EM(afs_file_error_dir_big,		"DIR_BIG")		\
++	EM(afs_file_error_dir_missing_page,	"DIR_MISSING_PAGE")	\
++	EM(afs_file_error_dir_over_end,		"DIR_ENT_OVER_END")	\
++	EM(afs_file_error_dir_small,		"DIR_SMALL")		\
++	EM(afs_file_error_dir_unmarked_ext,	"DIR_UNMARKED_EXT")	\
++	EM(afs_file_error_mntpt,		"MNTPT_READ_FAILED")	\
++	E_(afs_file_error_writeback_fail,	"WRITEBACK_FAILED")
+ 
+ /*
+  * Export enum symbols via userspace.
+@@ -197,6 +230,9 @@ afs_fs_operations;
+ afs_vl_operations;
+ afs_edit_dir_ops;
+ afs_edit_dir_reasons;
++afs_eproto_causes;
++afs_io_errors;
++afs_file_errors;
+ 
+ /*
+  * Now redefine the EM() and E_() macros to map the enums to the strings that
+@@ -600,6 +636,51 @@ TRACE_EVENT(afs_protocol_error,
+ 		      __print_symbolic(__entry->cause, afs_eproto_causes))
+ 	    );
+ 
++TRACE_EVENT(afs_io_error,
++	    TP_PROTO(unsigned int call, int error, enum afs_io_error where),
++
++	    TP_ARGS(call, error, where),
++
++	    TP_STRUCT__entry(
++		    __field(unsigned int,	call		)
++		    __field(int,		error		)
++		    __field(enum afs_io_error,	where		)
++			     ),
++
++	    TP_fast_assign(
++		    __entry->call = call;
++		    __entry->error = error;
++		    __entry->where = where;
++			   ),
++
++	    TP_printk("c=%08x r=%d %s",
++		      __entry->call, __entry->error,
++		      __print_symbolic(__entry->where, afs_io_errors))
++	    );
++
++TRACE_EVENT(afs_file_error,
++	    TP_PROTO(struct afs_vnode *vnode, int error, enum afs_file_error where),
++
++	    TP_ARGS(vnode, error, where),
++
++	    TP_STRUCT__entry(
++		    __field_struct(struct afs_fid,	fid		)
++		    __field(int,			error		)
++		    __field(enum afs_file_error,	where		)
++			     ),
++
++	    TP_fast_assign(
++		    __entry->fid = vnode->fid;
++		    __entry->error = error;
++		    __entry->where = where;
++			   ),
++
++	    TP_printk("%x:%x:%x r=%d %s",
++		      __entry->fid.vid, __entry->fid.vnode, __entry->fid.unique,
++		      __entry->error,
++		      __print_symbolic(__entry->where, afs_file_errors))
++	    );
++
+ TRACE_EVENT(afs_cm_no_server,
+ 	    TP_PROTO(struct afs_call *call, struct sockaddr_rxrpc *srx),
+ 
 
