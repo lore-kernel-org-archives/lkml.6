@@ -6,41 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3375C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:48:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B650C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:48:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 987DE20881
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:48:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 987DE20881
+	by mail.kernel.org (Postfix) with ESMTP id 3F4D420854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:48:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F4D420854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730504AbeIMS6Q (ORCPT
+        id S1730517AbeIMS6T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:58:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32930 "EHLO
+        Thu, 13 Sep 2018 14:58:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:32950 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728460AbeIMS6Q (ORCPT
+        with ESMTP id S1728460AbeIMS6T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:58:16 -0400
+        Thu, 13 Sep 2018 14:58:19 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9596BD19;
-        Thu, 13 Sep 2018 13:48:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D3E47D1A;
+        Thu, 13 Sep 2018 13:48:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Lucas De Marchi <lucas.demarchi@profusion.mobi>,
-        Lucas De Marchi <lucas.de.marchi@gmail.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Jessica Yu <jeyu@kernel.org>,
-        Chih-Wei Huang <cwhuang@linux.org.tw>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Maxim Zhukov <mussitantesmortem@gmail.com>
-Subject: [PATCH 4.14 105/115] kbuild: make missing $DEPMOD a Warning instead of an Error
-Date:   Thu, 13 Sep 2018 15:32:05 +0200
-Message-Id: <20180913131829.802651419@linuxfoundation.org>
+        stable@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: [PATCH 4.14 106/115] s390/lib: use expoline for all bcr instructions
+Date:   Thu, 13 Sep 2018 15:32:06 +0200
+Message-Id: <20180913131829.852610886@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -58,55 +51,91 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
 
-commit 914b087ff9e0e9a399a4927fa30793064afc0178 upstream.
+commit 5eda25b10297684c1f46a14199ec00210f3c346e upstream.
 
-When $DEPMOD is not found, only print a warning instead of exiting
-with an error message and error status:
+The memove, memset, memcpy, __memset16, __memset32 and __memset64
+function have an additional indirect return branch in form of a
+"bzr" instruction. These need to use expolines as well.
 
-Warning: 'make modules_install' requires /sbin/depmod. Please install it.
-This is probably in the kmod package.
-
-Change the Error to a Warning because "not all build hosts for cross
-compiling Linux are Linux systems and are able to provide a working
-port of depmod, especially at the file patch /sbin/depmod."
-
-I.e., "make modules_install" may be used to copy/install the
-loadable modules files to a target directory on a build system and
-then transferred to an embedded device where /sbin/depmod is run
-instead of it being run on the build system.
-
-Fixes: 934193a654c1 ("kbuild: verify that $DEPMOD is installed")
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Reported-by: H. Nikolaus Schaller <hns@goldelico.com>
-Cc: stable@vger.kernel.org
-Cc: Lucas De Marchi <lucas.demarchi@profusion.mobi>
-Cc: Lucas De Marchi <lucas.de.marchi@gmail.com>
-Cc: Michal Marek <michal.lkml@markovi.net>
-Cc: Jessica Yu <jeyu@kernel.org>
-Cc: Chih-Wei Huang <cwhuang@linux.org.tw>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Maxim Zhukov <mussitantesmortem@gmail.com>
+Cc: <stable@vger.kernel.org> # v4.17+
+Fixes: 97489e0663 ("s390/lib: use expoline for indirect branches")
+Reviewed-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- scripts/depmod.sh |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/s390/lib/mem.S |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
---- a/scripts/depmod.sh
-+++ b/scripts/depmod.sh
-@@ -16,9 +16,9 @@ if ! test -r System.map ; then
- fi
- 
- if [ -z $(command -v $DEPMOD) ]; then
--	echo "'make modules_install' requires $DEPMOD. Please install it." >&2
-+	echo "Warning: 'make modules_install' requires $DEPMOD. Please install it." >&2
- 	echo "This is probably in the kmod package." >&2
--	exit 1
-+	exit 0
- fi
- 
- # older versions of depmod don't support -P <symbol-prefix>
+--- a/arch/s390/lib/mem.S
++++ b/arch/s390/lib/mem.S
+@@ -17,7 +17,7 @@
+ ENTRY(memmove)
+ 	ltgr	%r4,%r4
+ 	lgr	%r1,%r2
+-	bzr	%r14
++	jz	.Lmemmove_exit
+ 	aghi	%r4,-1
+ 	clgr	%r2,%r3
+ 	jnh	.Lmemmove_forward
+@@ -36,6 +36,7 @@ ENTRY(memmove)
+ .Lmemmove_forward_remainder:
+ 	larl	%r5,.Lmemmove_mvc
+ 	ex	%r4,0(%r5)
++.Lmemmove_exit:
+ 	BR_EX	%r14
+ .Lmemmove_reverse:
+ 	ic	%r0,0(%r4,%r3)
+@@ -65,7 +66,7 @@ EXPORT_SYMBOL(memmove)
+  */
+ ENTRY(memset)
+ 	ltgr	%r4,%r4
+-	bzr	%r14
++	jz	.Lmemset_exit
+ 	ltgr	%r3,%r3
+ 	jnz	.Lmemset_fill
+ 	aghi	%r4,-1
+@@ -80,12 +81,13 @@ ENTRY(memset)
+ .Lmemset_clear_remainder:
+ 	larl	%r3,.Lmemset_xc
+ 	ex	%r4,0(%r3)
++.Lmemset_exit:
+ 	BR_EX	%r14
+ .Lmemset_fill:
+ 	stc	%r3,0(%r2)
+ 	cghi	%r4,1
+ 	lgr	%r1,%r2
+-	ber	%r14
++	je	.Lmemset_fill_exit
+ 	aghi	%r4,-2
+ 	srlg	%r3,%r4,8
+ 	ltgr	%r3,%r3
+@@ -97,6 +99,7 @@ ENTRY(memset)
+ .Lmemset_fill_remainder:
+ 	larl	%r3,.Lmemset_mvc
+ 	ex	%r4,0(%r3)
++.Lmemset_fill_exit:
+ 	BR_EX	%r14
+ .Lmemset_xc:
+ 	xc	0(1,%r1),0(%r1)
+@@ -111,7 +114,7 @@ EXPORT_SYMBOL(memset)
+  */
+ ENTRY(memcpy)
+ 	ltgr	%r4,%r4
+-	bzr	%r14
++	jz	.Lmemcpy_exit
+ 	aghi	%r4,-1
+ 	srlg	%r5,%r4,8
+ 	ltgr	%r5,%r5
+@@ -120,6 +123,7 @@ ENTRY(memcpy)
+ .Lmemcpy_remainder:
+ 	larl	%r5,.Lmemcpy_mvc
+ 	ex	%r4,0(%r5)
++.Lmemcpy_exit:
+ 	BR_EX	%r14
+ .Lmemcpy_loop:
+ 	mvc	0(256,%r1),0(%r3)
 
 
