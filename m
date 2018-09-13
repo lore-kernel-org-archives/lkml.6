@@ -2,116 +2,133 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=5.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EFBEC43143
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 19:56:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6BF9C43143
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 20:10:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADAEE20881
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 19:56:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sQdjBkur"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADAEE20881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 57AD320866
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 20:10:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57AD320866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728089AbeINBHZ (ORCPT
+        id S1728078AbeINBU7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 21:07:25 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:45104 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726824AbeINBHZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 21:07:25 -0400
-Received: by mail-lf1-f65.google.com with SMTP id r4-v6so5862658lff.12;
-        Thu, 13 Sep 2018 12:56:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=23cXMf47zlG+EXF0BN9s0/N/8EQyzAWSeFPZ7wusQ0M=;
-        b=sQdjBkurYhDtyIpVEU5d1yW1iamI4km64Sxb+pQNBQJj5ssnxId7QM0NxrU3U2P9Ez
-         Txh98jT1VJo9/owj2Pl8uTX1OMJkb970op9CbVWpl3/ijndjPfwtLv4BPNPcxsLC8mM4
-         H0/+MjB/0FGrDC3yMU/Rx2Ns16AzbHDUHOf3ufy6rJaXZ9YLaNEtjCfxdAwNOkO0fnTa
-         XrYft/satqpr5qEpgoLZLqU+GxzoTaDmesvADADDRfSBpUtaMEqUOwFoAqnVwskG35Lg
-         meuhKmHrocl8jRjwgz6090jGzGQjUEZBYW9+8OMDmBDlcC2u+rXMT929xmFalF71GLsQ
-         DS0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=23cXMf47zlG+EXF0BN9s0/N/8EQyzAWSeFPZ7wusQ0M=;
-        b=A683z67/nLEBov22djSIg1Z3rtW8hmEFQCcHAwzoBXFZPxJkOf4OWs3LtWcxNdXqbN
-         /Q43r9e4XSuDoVdq4Tn5iVAnNLII3DmMAIE9V6KyEcU1zzV6Kp344MD6MUnSHeTssyRv
-         ABdutoU2vfQ8n1nOOvz+F2b61z+UrAZLHdp59ngp6TlM2wH1/bHyYwfFTpFT61yGtbPW
-         Miu3b9T3WKbPrlojpFZbXeCWIxtuKW+TLFub0lTNjTc8FJsfvlOKhLZBs8EYnBExoCSj
-         6X8zEmaTVvCjAptzT2/IujpcJhh/R6fFXM23mP8o2duQIUtiQLrHTD/dxN80xHgEA9+c
-         ztiA==
-X-Gm-Message-State: APzg51A/j9rIQy0rmhN7qvx8an35leW23oaGCPoGDbPKNVYwooWA1R2G
-        cq2/LNYTwTWG8oHhvoRVQqolQ0kfgPOms1UPQk0=
-X-Google-Smtp-Source: ANB0Vdage30185YePREijZciNGVyGfrQ2yDWs0DhAdv1r5D5xeSNfpnhb3KnrJYbievFu7/WB9TVp++4Qxa4FOSImQQ=
-X-Received: by 2002:a19:4a09:: with SMTP id x9-v6mr6171212lfa.80.1536868584754;
- Thu, 13 Sep 2018 12:56:24 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180913163541.7364-1-jim@jtan.com>
-In-Reply-To: <20180913163541.7364-1-jim@jtan.com>
-From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Date:   Thu, 13 Sep 2018 21:56:08 +0200
-Message-ID: <CAPybu_1WO8jcJbKJfiyCcfTahtxqSvdvyhyYaZsog05ab+OXWw@mail.gmail.com>
-Subject: Re: [PATCH] gpiolib: fix freeing of descriptors on error
-To:     Jim Paris <jim@jtan.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 13 Sep 2018 21:20:59 -0400
+Received: from mga11.intel.com ([192.55.52.93]:56110 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726445AbeINBU7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 21:20:59 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Sep 2018 13:09:58 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,370,1531810800"; 
+   d="scan'208";a="262395032"
+Received: from otc-brkl-02.jf.intel.com ([10.54.39.19])
+  by fmsmga005.fm.intel.com with ESMTP; 13 Sep 2018 13:09:42 -0700
+From:   kan.liang@linux.intel.com
+To:     peterz@infradead.org, tglx@linutronix.de, acme@kernel.org,
+        mingo@redhat.com, linux-kernel@vger.kernel.org
+Cc:     ak@linux.intel.com, jolsa@redhat.com, namhyung@kernel.org,
+        Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH] perf/x86/intel/lbr: Optimize context switches for LBR
+Date:   Thu, 13 Sep 2018 16:08:51 -0400
+Message-Id: <1536869331-63561-1-git-send-email-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.4.11
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jim
+From: Kan Liang <kan.liang@linux.intel.com>
 
-I have sent an identical patch 3 hours before you [1] ;)
-Seems that we are working on the same stuff.
+LBR can bring big overhead when the benchmark has high context switches.
+For example, a sub benchmark of Dacapo, avrora.
 
-Cheers
+Baseline: java -jar dacapo-9.12-MR1-bach.jar avrora -n 20
+With LBR: perf record --branch-filter any,u -- java -jar
+dacapo-9.12-MR1-bach.jar avrora -n 20
 
-[1] https://www.spinics.net/lists/linux-gpio/msg32541.html
+Baseline (ms)    With LBR (ms)    Overhead
+6508		 19831		  205%
 
-On Thu, Sep 13, 2018 at 6:42 PM Jim Paris <jim@jtan.com> wrote:
->
-> When the main loop in linehandle_create() encounters an error, it
-> fails to free one of the previously-requested GPIO descriptors.
-> This renders the unfreed GPIO unusable until reboot, and leaves
-> its label pointing to free'd kernel memory.
->
-> Cc: stable@vger.kernel.org
-> Fixes: ab3dbcf78f60 ("gpioib: do not free unrequested descriptors")
-> Signed-off-by: Jim Paris <jim@jtan.com>
-> ---
->  drivers/gpio/gpiolib.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index e8f8a1999393..a57300c1d649 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -571,7 +571,7 @@ static int linehandle_create(struct gpio_device *gdev, void __user *ip)
->                 if (ret)
->                         goto out_free_descs;
->                 lh->descs[i] = desc;
-> -               count = i;
-> +               count = i + 1;
->
->                 if (lflags & GPIOHANDLE_REQUEST_ACTIVE_LOW)
->                         set_bit(FLAG_ACTIVE_LOW, &desc->flags);
-> --
-> 2.18.0
->
+In principle the LBRs need to be flushed between threads. So does
+current code.
 
+However in practice the LBRs clear very quickly when any code runs,
+so it is unlikely to be a functional problem of LBR use for sampling
+if there is a small leak shortly after each context switch.
+It is mainly a security issue that we don't want to leak anything to an
+attacker.
 
+Different threads in a process already must trust each other so we can
+safely leak in this case without opening security holes.
+
+When switching to kernel threads (such as the common switch to idle
+case) which also share the same mm and are guaranteed to not be
+attackers.
+
+For those cases, resetting the LBRs can be safely avoid.
+Checking ctx_id, only resetting the LBRs when switching to a different
+user process.
+
+With the patch,
+Baseline (ms)    With LBR (ms)    Overhead
+6508		 10350            59%
+
+Reported-by: Sandhya Viswanathan <sandhya.viswanathan@intel.com>
+Suggested-by: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
+ arch/x86/events/intel/lbr.c  | 16 ++++++++++++++--
+ arch/x86/events/perf_event.h |  1 +
+ 2 files changed, 15 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/events/intel/lbr.c b/arch/x86/events/intel/lbr.c
+index f3e006b..26344c4 100644
+--- a/arch/x86/events/intel/lbr.c
++++ b/arch/x86/events/intel/lbr.c
+@@ -444,9 +444,21 @@ void intel_pmu_lbr_sched_task(struct perf_event_context *ctx, bool sched_in)
+ 	 * are not tagged with an identifier, we need to wipe the LBR, even for
+ 	 * per-cpu events. You simply cannot resolve the branches from the old
+ 	 * address space.
++	 * We don't need to wipe the LBR for a kernel thread which share the
++	 * same mm with previous user thread.
+ 	 */
+-	if (sched_in)
+-		intel_pmu_lbr_reset();
++	if (!current || !current->mm)
++		return;
++	if (sched_in) {
++		/*
++		 * Only flush when switching to user threads
++		 * and mm context changed
++		 */
++		if (current->mm->context.ctx_id != cpuc->last_ctx_id)
++			intel_pmu_lbr_reset();
++	} else {
++		cpuc->last_ctx_id = current->mm->context.ctx_id;
++	}
+ }
+ 
+ static inline bool branch_user_callstack(unsigned br_sel)
+diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
+index 1562863..3aa3379 100644
+--- a/arch/x86/events/perf_event.h
++++ b/arch/x86/events/perf_event.h
+@@ -217,6 +217,7 @@ struct cpu_hw_events {
+ 	u64				br_sel;
+ 	struct x86_perf_task_context	*last_task_ctx;
+ 	int				last_log_id;
++	u64				last_ctx_id;
+ 
+ 	/*
+ 	 * Intel host/guest exclude bits
 -- 
-Ricardo Ribalda
+2.4.11
+
