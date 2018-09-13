@@ -2,82 +2,87 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92438C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:05:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09986C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:07:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38A5720839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:05:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38A5720839
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 8BD9C20839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:07:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BD9C20839
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727941AbeIMROg (ORCPT
+        id S1727988AbeIMRQ1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 13:14:36 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40620 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727300AbeIMROg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 13:14:36 -0400
-Received: from smtp.corp.redhat.com (int-mx11.intmail.prod.int.phx2.redhat.com [10.5.11.26])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 55291C025D21;
-        Thu, 13 Sep 2018 12:05:26 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-34.pek2.redhat.com [10.72.8.34])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C28733091323;
-        Thu, 13 Sep 2018 12:05:05 +0000 (UTC)
-Date:   Thu, 13 Sep 2018 20:05:00 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
-        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Bart Van Assche <Bart.VanAssche@wdc.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stanislav Nijnikov <stanislav.nijnikov@wdc.com>,
-        Evan Green <evgreen@chromium.org>,
-        Vinayak Holikatti <vinholikatti@gmail.com>,
-        Janek Kotas <jank@cadence.com>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Asutosh Das <asutoshd@codeaurora.org>,
-        Subhash Jadavani <subhashj@codeaurora.org>,
-        Sayali Lokhande <sayalil@codeaurora.org>,
-        Li Wei <liwei213@huawei.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Alex Lemberg <Alex.Lemberg@sandisk.com>
-Subject: Re: [PATCH RFC] scsi: ufs: Disable blk-mq for now
-Message-ID: <20180913120459.GA4965@ming.t460p>
-References: <20180913112848.7807-1-adrian.hunter@intel.com>
+        Thu, 13 Sep 2018 13:16:27 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:12111 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727004AbeIMRQ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 13:16:27 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 78120C1B03DCF;
+        Thu, 13 Sep 2018 20:07:12 +0800 (CST)
+Received: from [127.0.0.1] (10.177.31.96) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.399.0; Thu, 13 Sep 2018
+ 20:07:00 +0800
+Subject: Re: [PATCH net-next] NFC: nci: remove redundant variable 'status'
+To:     <davem@davemloft.net>, <sameo@linux.intel.com>
+References: <20180801072020.14696-1-yuehaibing@huawei.com>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
+From:   YueHaibing <yuehaibing@huawei.com>
+Message-ID: <c168a8ff-0736-d21d-9c5c-bde001ad018c@huawei.com>
+Date:   Thu, 13 Sep 2018 20:06:59 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180913112848.7807-1-adrian.hunter@intel.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.26
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Thu, 13 Sep 2018 12:05:26 +0000 (UTC)
+In-Reply-To: <20180801072020.14696-1-yuehaibing@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 13, 2018 at 02:28:48PM +0300, Adrian Hunter wrote:
-> blk-mq does not support runtime pm, so disable blk-mq support for now.
+Ping.
 
-So could you describe a bit what the issue you are trying to fix?
+On 2018/8/1 15:20, YueHaibing wrote:
+> After commit d8cd37ed2fc8 ("NFC: nci: Fix improper management of HCI return code")
+> variable 'status' is being assigned but never used,
+> so can be removed. Also make a trival cleanup.
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  net/nfc/nci/hci.c | 10 ++--------
+>  1 file changed, 2 insertions(+), 8 deletions(-)
+> 
+> diff --git a/net/nfc/nci/hci.c b/net/nfc/nci/hci.c
+> index ddfc52a..4debba8 100644
+> --- a/net/nfc/nci/hci.c
+> +++ b/net/nfc/nci/hci.c
+> @@ -370,17 +370,11 @@ static void nci_hci_resp_received(struct nci_dev *ndev, u8 pipe,
+>  				  u8 result, struct sk_buff *skb)
+>  {
+>  	struct nci_conn_info    *conn_info;
+> -	u8 status = result;
+>  
+>  	conn_info = ndev->hci_dev->conn_info;
+> -	if (!conn_info) {
+> -		status = NCI_STATUS_REJECTED;
+> -		goto exit;
+> -	}
+> -
+> -	conn_info->rx_skb = skb;
+> +	if (conn_info)
+> +		conn_info->rx_skb = skb;
+>  
+> -exit:
+>  	nci_req_complete(ndev, NCI_STATUS_OK);
+>  }
+>  
+> 
 
-This is host level runtime PM you are trying to address, and if blk-mq
-runtime isn't enabled, I guess the host won't be runtime suspended at all
-because some of its descendant are always active.
-
-So seems we need to do nothing for preventing the host controller from
-entering runtime suspend.
-
-Thanks,
-Ming
