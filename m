@@ -2,136 +2,134 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B513C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 15:07:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE941C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 15:09:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C01E020869
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 15:07:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ph1kLtpe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C01E020869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 5940A206B6
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 15:09:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5940A206B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728381AbeIMURF (ORCPT
+        id S1728225AbeIMUTO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 16:17:05 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:39752 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727865AbeIMURF (ORCPT
+        Thu, 13 Sep 2018 16:19:14 -0400
+Received: from smtp.ctxuk.citrix.com ([185.25.65.24]:28963 "EHLO
+        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726824AbeIMUTO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 16:17:05 -0400
-Received: by mail-it0-f65.google.com with SMTP id h1-v6so8139806itj.4
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 08:07:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=kvIV91aPNn5SA+AG9Ippjbb3td7Qp9sxqO5jjn7UwEQ=;
-        b=Ph1kLtpecTHq4+pHUwQRTs7YaMYxMRatrij1EO4QlYBtFBFesrcpbn3x+qOvGq3UzT
-         XLVuktgaToihj1kdJE1ZtxC3kYlT9hTpRJOi2EITaA5Jyi6KZrJKJbzzyW9TGNrrHXMH
-         aaWeRVcFNVseZG3rNTx7JczXa+X6blXWllpQ8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=kvIV91aPNn5SA+AG9Ippjbb3td7Qp9sxqO5jjn7UwEQ=;
-        b=QNdlTSiQ8DOpx56wDS3OSZyCoa3qI7C8oL3W3iMZo8paGcbvUsQViszq0iznOacgZ+
-         tyerZrI9S2d78Q4wkoyt9RP9H5M2xVzT3Q070KGeIfcCaQkGsX5oRWMe5TO5WUKe9mDf
-         f5PEIH27WH/gPFrs9sbReQR24iv5rvSNQZJ6jNj5s37CvprNvwE4i+iN4qbu85LL+pQj
-         gpNZKpXAFwNfa797je+gfVQuHDt7y23xLdVIvflPNeqQtWU5RIrE9aBcHpbSojA9iUWc
-         /bdpa9EKmHXjFLp8lTbRoHB8jj+6I5SwiFhRZmTrJE1ZEa3vLpcr/u40orBAIAK5OyMa
-         03Ng==
-X-Gm-Message-State: APzg51DquMSe2+DIKgku8zNzjWrKw3gLJG9HK4eljzAmN+48XWMyuUnY
-        aNZE3Pbb3TF4Ip4QJ4SOq0oeFOM/az4OcxRC3ix5MmQ+FKaHWg==
-X-Google-Smtp-Source: ANB0VdZ9S8+r6T9s75jCFRxkoe6+5RBHWmQIyZMkVwb/lumV3xB0s4021cX9leorzIYdBVjSGswiquwpNo/fqfc8prw=
-X-Received: by 2002:a02:4d1b:: with SMTP id l27-v6mr6988376jab.86.1536851229511;
- Thu, 13 Sep 2018 08:07:09 -0700 (PDT)
+        Thu, 13 Sep 2018 16:19:14 -0400
+X-IronPort-AV: E=Sophos;i="5.53,369,1531785600"; 
+   d="scan'208";a="79013252"
+Date:   Thu, 13 Sep 2018 17:08:00 +0200
+From:   Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
+To:     Valentin Vidic <Valentin.Vidic@CARNet.hr>
+CC:     <drbd-user@lists.linbit.com>, Jens Axboe <axboe@kernel.dk>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <xen-devel@lists.xenproject.org>
+Subject: Re: [DRBD-user] [PATCH] xen-blkback: Switch to closed state after
+ releasing the backing device
+Message-ID: <20180913150800.haswzd7t2xccbgvl@mac.bytemobile.com>
+References: <20180907120337.GB11834@soda.linbit>
+ <20180907121348.GM26705@gavran.carpriv.carnet.hr>
+ <20180907132828.GC11834@soda.linbit>
+ <20180907164500.GN26705@gavran.carpriv.carnet.hr>
+ <20180907171459.GO26705@gavran.carpriv.carnet.hr>
+ <20180908073432.GP26705@gavran.carpriv.carnet.hr>
+ <20180910124531.GA31737@soda.linbit>
+ <20180910132252.GE26705@gavran.carpriv.carnet.hr>
+ <20180910150058.suxehc3uheyho4qx@mac.bytemobile.com>
+ <20180910161831.GG26705@gavran.carpriv.carnet.hr>
 MIME-Version: 1.0
-Received: by 2002:a6b:2848:0:0:0:0:0 with HTTP; Thu, 13 Sep 2018 08:07:08
- -0700 (PDT)
-In-Reply-To: <CAHmME9pp8HoisxQWL_eELR-ziiBii-7mcA=oF9UF-WMucewX5w@mail.gmail.com>
-References: <20180911010838.8818-1-Jason@zx2c4.com> <20180911010838.8818-3-Jason@zx2c4.com>
- <CAKv+Gu9nSeo4PFVrtjtqGQ32eqyxUp3xVCczZfu+dhFz5yLM0A@mail.gmail.com>
- <CAHmME9rTEFLaYmzFrc719LW2DWS2Ua_vL6by1UXZ9uDvMpbhYw@mail.gmail.com>
- <CAKv+Gu9RGo9rtGsmwMLZ_=-WSQ_h7har4agXP-2XOKupq-KYtA@mail.gmail.com>
- <CALCETrU2qkLVaxC=cpU5iAeT5B7xGsR+m2ZWtLVK37jMMWtcAA@mail.gmail.com> <CAHmME9pp8HoisxQWL_eELR-ziiBii-7mcA=oF9UF-WMucewX5w@mail.gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Thu, 13 Sep 2018 17:07:08 +0200
-Message-ID: <CAKv+Gu-CVsXQmx1BZQMe__LREvWEigd2FdoA2ErLu1ky6gzHtw@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 02/17] zinc: introduce minimal cryptography library
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     Andrew Lutomirski <luto@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180910161831.GG26705@gavran.carpriv.carnet.hr>
+User-Agent: NeoMutt/20180716
+X-ClientProxiedBy: AMSPEX02CAS01.citrite.net (10.69.22.112) To
+ AMSPEX02CL02.citrite.net (10.69.22.126)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13 September 2018 at 16:18, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
-> On Thu, Sep 13, 2018 at 1:45 AM Andy Lutomirski <luto@kernel.org> wrote:
->> I'm not convinced that there's any real need for *all* crypto
->> algorithms to move into lib/zinc or to move at all.  As I see it,
->> there are two classes of crypto algorithms in the kernel:
->>
->> a) Crypto that is used by code that chooses its algorithm statically
->> and wants synchronous operations.  These include everything in
->> drivers/char/random.c, but also a bunch of various networking things
->> that are hardcoded and basically everything that uses stack buffers.
->> (This means it includes all the code that I broke when I did
->> VMAP_STACK.  Sign.)
->
-> Right, exactly. This is what will wind up using Zinc. I'm working on
-> an example usage of this for v4 of the patch submission, which you can
-> ogle in a preview here if you're curious:
->
-> https://git.zx2c4.com/linux-dev/commit/?h=big_key_rewrite
->
-> 28 insertions, 206 deletions :-D
->
+On Mon, Sep 10, 2018 at 06:18:31PM +0200, Valentin Vidic wrote:
+> On Mon, Sep 10, 2018 at 05:00:58PM +0200, Roger Pau Monné wrote:
+> > I can try to take a look at this and attempt to make sure the state is
+> > only changed to closed in blkback _after_ the device has been
+> > released, but it might take me a couple of days to get you a patch.
+> 
+> Thanks, I have two test nodes now where I can try different approaches.
+> 
+> > I'm afraid that other hotplug scripts will also have issues with such
+> > behavior, and we shouldn't force all users of hotplug scripts to add
+> > such workarounds.
+> 
+> True, iSCSI and other "network" disks might have similar problems.
 
-I must say, that actually looks pretty good.
+So I have the following patch which I think might solve your issues
+while keeping the reset logic working. Would you mind giving it a try
+with your use case and pvgrub?
 
->> b) Crypto that is used dynamically.  This includes dm-crypt
->> (aes-xts-plain64, aes-cbc-essiv, etc), all the ALG_IF interfaces, a
->> lot of IPSEC stuff, possibly KCM, and probably many more.  These will
->> get comparatively little benefit from being converted to a zinc-like
->> interface.  For some of these cases, it wouldn't make any sense at all
->> to convert them.  Certainly the ones that do async hardware crypto
->> using DMA engines will never look at all like zinc, even under the
->> hood.
->
-> Right, this is what the crypto API will continue to be used for.
->
->
->> I think that, as a short-term goal, it makes a lot of sense to have
->> implementations of the crypto that *new* kernel code (like Wireguard)
->> wants to use in style (a) that live in /lib, and it obviously makes
->> sense to consolidate their implementations with the crypto/
->> implementations in a timely manner.  As a medium-term goal, adding
->> more algorithms as needed for things that could use the simpler APIs
->> (Bluetooth, perhaps) would make sense.
->
-> Agreed 100%. With regards to "consolidate their implementations" --
-> I've actually already done this after your urging yesterday, and so
-> that will be a part of v4.
->
->> But I see no reason at all that /lib should ever contain a grab-bag of
->> crypto implementations just for the heck of it.  They should have real
->> in-kernel users IMO.  And this means that there will probably always
->> be some crypto implementations in crypto/ for things like aes-xts.
->
-> Right, precisely.
->
-> Jason
+Thanks, Roger.
+---8<---
+From c6a76a6265f29440c886b422c9d1b8549ffd6ed8 Mon Sep 17 00:00:00 2001
+From: Roger Pau Monne <roger.pau@citrix.com>
+Date: Thu, 13 Sep 2018 11:27:57 +0200
+Subject: [PATCH] xen-blkback: only set Closed state when resources have been
+ released
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Don't set the backend to Closed state until all the resources have
+been released and the blkback instance is gone. Setting the backend
+state to Closed will be done by xenbus_dev_remove after removing the
+device instance.
+
+Note that this requires disconnecting and allowing reconnection with
+state Closing, since the Closed state will only be reached when
+detaching the device.
+
+Reported-by: Valentin Vidic <Valentin.Vidic@carnet.hr>
+Signed-off-by: Roger Pau Monné <roger.pau@citrix.com>
+---
+ drivers/block/xen-blkback/xenbus.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/block/xen-blkback/xenbus.c b/drivers/block/xen-blkback/xenbus.c
+index a4bc74e72c39..b0629f1b0511 100644
+--- a/drivers/block/xen-blkback/xenbus.c
++++ b/drivers/block/xen-blkback/xenbus.c
+@@ -770,7 +770,8 @@ static void frontend_changed(struct xenbus_device *dev,
+ 
+ 	switch (frontend_state) {
+ 	case XenbusStateInitialising:
+-		if (dev->state == XenbusStateClosed) {
++		if (dev->state == XenbusStateClosed ||
++		    dev->state == XenbusStateClosing) {
+ 			pr_info("%s: prepare for reconnect\n", dev->nodename);
+ 			xenbus_switch_state(dev, XenbusStateInitWait);
+ 		}
+@@ -809,12 +810,12 @@ static void frontend_changed(struct xenbus_device *dev,
+ 		break;
+ 
+ 	case XenbusStateClosing:
++		xen_blkif_disconnect(be->blkif);
+ 		xenbus_switch_state(dev, XenbusStateClosing);
+ 		break;
+ 
+ 	case XenbusStateClosed:
+ 		xen_blkif_disconnect(be->blkif);
+-		xenbus_switch_state(dev, XenbusStateClosed);
+ 		if (xenbus_dev_is_online(dev))
+ 			break;
+ 		/* fall through */
+-- 
+2.18.0
+
