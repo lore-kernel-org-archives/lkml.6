@@ -6,43 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1352BC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:50:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EEF3C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:50:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C45C120881
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:50:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C45C120881
+	by mail.kernel.org (Postfix) with ESMTP id 3194C20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:50:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3194C20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730663AbeIMS7d (ORCPT
+        id S1730685AbeIMS7k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:59:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33086 "EHLO
+        Thu, 13 Sep 2018 14:59:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33106 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729686AbeIMS7d (ORCPT
+        with ESMTP id S1728513AbeIMS7j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:59:33 -0400
+        Thu, 13 Sep 2018 14:59:39 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A79B8D1A;
-        Thu, 13 Sep 2018 13:49:58 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3B8B1D1B;
+        Thu, 13 Sep 2018 13:50:05 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, luca abeni <luca.abeni@santannapisa.it>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Juri Lelli <juri.lelli@arm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Mike Galbraith <efault@gmx.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>,
+        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <m@bjorling.me>,
+        Jens Axboe <axboe@kernel.dk>,
         Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 4.14 097/115] sched/deadline: Fix switching to -deadline
-Date:   Thu, 13 Sep 2018 15:31:57 +0200
-Message-Id: <20180913131829.395953899@linuxfoundation.org>
+Subject: [PATCH 4.14 098/115] lightnvm: pblk: free padded entries in write buffer
+Date:   Thu, 13 Sep 2018 15:31:58 +0200
+Message-Id: <20180913131829.449589335@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -60,73 +54,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Luca Abeni <luca.abeni@santannapisa.it>
+From: Javier González <javier@cnexlabs.com>
 
-commit 295d6d5e373607729bcc8182c25afe964655714f upstream.
+commit cd8ddbf7a5e206fe6995ab0aee245d597dd6a7f2 upstream.
 
-Fix a bug introduced in:
+When a REQ_FLUSH reaches pblk, the bio cannot be directly completed.
+Instead, data on the write buffer is flushed and the bio is completed on
+the completion pah. This might require some sectors to be padded in
+order to guarantee a successful write.
 
-  72f9f3fdc928 ("sched/deadline: Remove dl_new from struct sched_dl_entity")
+This patch fixes a memory leak on the padded pages. A consequence of
+this bad free was that internal bios not containing data (only a flush)
+were not being completed.
 
-After that commit, when switching to -deadline if the scheduling
-deadline of a task is in the past then switched_to_dl() calls
-setup_new_entity() to properly initialize the scheduling deadline
-and runtime.
-
-The problem is that the task is enqueued _before_ having its parameters
-initialized by setup_new_entity(), and this can cause problems.
-For example, a task with its out-of-date deadline in the past will
-potentially be enqueued as the highest priority one; however, its
-adjusted deadline may not be the earliest one.
-
-This patch fixes the problem by initializing the task's parameters before
-enqueuing it.
-
-Signed-off-by: luca abeni <luca.abeni@santannapisa.it>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Daniel Bristot de Oliveira <bristot@redhat.com>
-Cc: Juri Lelli <juri.lelli@arm.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Mike Galbraith <efault@gmx.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/1504778971-13573-3-git-send-email-luca.abeni@santannapisa.it
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: a4bd217b4326 ("lightnvm: physical block device (pblk) target")
+Signed-off-by: Javier González <javier@cnexlabs.com>
+Signed-off-by: Matias Bjørling <m@bjorling.me>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/sched/deadline.c |   11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ drivers/lightnvm/pblk-core.c  |    1 -
+ drivers/lightnvm/pblk-write.c |    7 ++++++-
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -1365,6 +1365,10 @@ enqueue_dl_entity(struct sched_dl_entity
- 		update_dl_entity(dl_se, pi_se);
- 	} else if (flags & ENQUEUE_REPLENISH) {
- 		replenish_dl_entity(dl_se, pi_se);
-+	} else if ((flags & ENQUEUE_RESTORE) &&
-+		  dl_time_before(dl_se->deadline,
-+				 rq_clock(rq_of_dl_rq(dl_rq_of_se(dl_se))))) {
-+		setup_new_dl_entity(dl_se);
+--- a/drivers/lightnvm/pblk-core.c
++++ b/drivers/lightnvm/pblk-core.c
+@@ -190,7 +190,6 @@ void pblk_bio_free_pages(struct pblk *pb
+ 
+ 	WARN_ON(off + nr_pages != bio->bi_vcnt);
+ 
+-	bio_advance(bio, off * PBLK_EXPOSED_PAGE_SIZE);
+ 	for (i = off; i < nr_pages + off; i++) {
+ 		bv = bio->bi_io_vec[i];
+ 		mempool_free(bv.bv_page, pblk->page_bio_pool);
+--- a/drivers/lightnvm/pblk-write.c
++++ b/drivers/lightnvm/pblk-write.c
+@@ -33,6 +33,10 @@ static unsigned long pblk_end_w_bio(stru
+ 			bio_endio(original_bio);
  	}
  
- 	__enqueue_dl_entity(dl_se);
-@@ -2256,13 +2260,6 @@ static void switched_to_dl(struct rq *rq
++	if (c_ctx->nr_padded)
++		pblk_bio_free_pages(pblk, rqd->bio, c_ctx->nr_valid,
++							c_ctx->nr_padded);
++
+ #ifdef CONFIG_NVM_DEBUG
+ 	atomic_long_add(c_ctx->nr_valid, &pblk->sync_writes);
+ #endif
+@@ -521,7 +525,8 @@ static void pblk_free_write_rqd(struct p
+ 	struct bio *bio = rqd->bio;
  
- 		return;
- 	}
--	/*
--	 * If p is boosted we already updated its params in
--	 * rt_mutex_setprio()->enqueue_task(..., ENQUEUE_REPLENISH),
--	 * p's deadline being now already after rq_clock(rq).
--	 */
--	if (dl_time_before(p->dl.deadline, rq_clock(rq)))
--		setup_new_dl_entity(&p->dl);
+ 	if (c_ctx->nr_padded)
+-		pblk_bio_free_pages(pblk, bio, rqd->nr_ppas, c_ctx->nr_padded);
++		pblk_bio_free_pages(pblk, bio, c_ctx->nr_valid,
++							c_ctx->nr_padded);
+ }
  
- 	if (rq->curr != p) {
- #ifdef CONFIG_SMP
+ static int pblk_submit_write(struct pblk *pblk)
 
 
