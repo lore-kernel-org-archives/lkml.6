@@ -2,70 +2,80 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92AB2C43143
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 17:58:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44579C43143
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 17:58:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 302F1204FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 17:58:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 302F1204FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id C5403204FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 17:58:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5403204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727999AbeIMXJP (ORCPT
+        id S1728109AbeIMXJU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 19:09:15 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:51728 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726637AbeIMXJP (ORCPT
+        Thu, 13 Sep 2018 19:09:20 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:39522 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726637AbeIMXJT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 19:09:15 -0400
-Received: from localhost (unknown [24.18.143.0])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 7A3AE1401D975;
-        Thu, 13 Sep 2018 10:58:41 -0700 (PDT)
-Date:   Thu, 13 Sep 2018 10:58:40 -0700 (PDT)
-Message-Id: <20180913.105840.140151724801067072.davem@davemloft.net>
-To:     yanhaishuang@cmss.chinamobile.com
-Cc:     kuznet@ms2.inr.ac.ru, jbenc@redhat.com, netdev@vger.kernel.org,
+        Thu, 13 Sep 2018 19:09:19 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
+        id 1g0Vt7-0000LX-Cf; Thu, 13 Sep 2018 17:58:45 +0000
+Date:   Thu, 13 Sep 2018 18:58:45 +0100
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2,net-next 1/2] ip_gre: fix parsing gre header in
- ipgre_err
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1536744082-3568-1-git-send-email-yanhaishuang@cmss.chinamobile.com>
-References: <1536744082-3568-1-git-send-email-yanhaishuang@cmss.chinamobile.com>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 13 Sep 2018 10:58:41 -0700 (PDT)
+Subject: Re: [PATCH 00/10] iov_iter: Add new iters and use with AFS
+Message-ID: <20180913175845.GS19965@ZenIV.linux.org.uk>
+References: <153685389564.14766.11306559824641824935.stgit@warthog.procyon.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <153685389564.14766.11306559824641824935.stgit@warthog.procyon.org.uk>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
-Date: Wed, 12 Sep 2018 17:21:21 +0800
+On Thu, Sep 13, 2018 at 04:51:35PM +0100, David Howells wrote:
+> 
+> Hi Al,
+> 
+> Here's a set of patches that adds two new iov_iter types and then makes AFS
+> use them to do I/O.  The iov_iter changes are:
+> 
+>  (1) Separate the type from the direction in the iov_iter struct and
+>      provide accessor functions to wrap type checking.
+> 
+>  (2) Renumber the type constants to be contiguous small unsigned integers,
+>      starting from 0 and then use switch-statements rather than if-else
+>      chains using bit-testing.
+> 
+>      Note that the compiler can optimise this better by using CMP rather
+>      than AND/TEST, say, as comparing integers requires fewer CMP
+>      instructions or can use jump tables.
+> 
+>  (3) Change iov_offset from size_t to loff_t.  This allows iov_offset to be
+>      then used as a byte offset with ITER_MAPPING and allows 4GiB and larger
+>      reads and writes to be proposed.
+> 
+>      This makes no difference on a 64-bit system, but does make a 32-bit
+>      compilation a bit larger.
+> 
+>  (4) Add an ITER_MAPPING iterator type.  This provides an iterator that
+>      directly accesses an address_space, and assumes that the target pages
+>      are in some way locked (eg. PG_lock or PG_writeback).
+> 
+>  (5) Add an ITER_DISCARD iterator type.  This provides an iterator that
+>      simply discards anything written to it.  It cannot be used as a data
+>      source.
 
-> @@ -86,7 +86,7 @@ int gre_parse_header(struct sk_buff *skb, struct tnl_ptk_info *tpi,
->  
->  	options = (__be32 *)(greh + 1);
->  	if (greh->flags & GRE_CSUM) {
-> -		if (skb_checksum_simple_validate(skb)) {
-> +		if (csum_err && skb_checksum_simple_validate(skb)) {
->  			*csum_err = true;
->  			return -EINVAL;
->  		}
-
-You want to ignore csum errors, but you do not want to elide the side
-effects of the skb_checksum_simple_validate() call which are to set
-skb->csum_valid and skb->csum.
-
-Therefore, the skb_checksum_simple_validate() call still needs to be
-performed. We just wont return -EINVAL in the NULL csum_err case.
-
+Hmm...   I'll take a look in about an hour (need to finish the sodding tty-ioctl
+stuff first), will post review then.  Sorry, I remember seeing it posted several
+weeks ago, slipped through the cracks then ;-/
