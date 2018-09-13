@@ -2,182 +2,294 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B594AC43143
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 18:23:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90E31C63684
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 18:23:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5329220866
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 18:23:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A68620866
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 18:23:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lJsuZi25"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5329220866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cRtzoRK9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A68620866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728067AbeIMXeL (ORCPT
+        id S1727834AbeIMXeK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 19:34:11 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:45942 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727009AbeIMXeK (ORCPT
+        Thu, 13 Sep 2018 19:34:10 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44302 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727152AbeIMXeK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 13 Sep 2018 19:34:10 -0400
-Received: by mail-oi0-f66.google.com with SMTP id t68-v6so10318019oie.12
+Received: by mail-pf1-f194.google.com with SMTP id k21-v6so3039237pff.11
         for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 11:23:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LSURC0PY0vgPVYHHz0YushTc1IoCAXgUire1vj3IPOU=;
-        b=lJsuZi259B7Or1w9yNScC9CsdCIBXiLnRyijtiqrCvkgRT32lwzrfvv3BQZ6LoFeeS
-         wl1X81cfMOkLOgU+2HstkVn72hfEojhFK/9RJrVCkUpmq6O18SG+LFgam6yBbYpQ+8cJ
-         nxXRg6s109vm9ptxTs7J4EMKrM65Ubp5B8S7i3T+guAfwfBXDlzTnZq8Ooix9er57qH2
-         NS2UBD4wWQacRdfFu/hfu5zreXmMNGiqJPZ97NTzFkXn47/2Lv8RqGmx8e6rfceFYLud
-         tdHUEqeiwaH+qLYX2k7xtEhg9IlclcGgHHMnp/7scDU08ahfQu9Zla6fMmIAwAU8rlTW
-         jGfw==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=KXp0QpKCsRKEVKktOJ1EZRM4MRqtDkPgK7TrpTCo/ag=;
+        b=cRtzoRK9of/CwVrjbxf+1pVKtq6l77323gx0P1lpF7jfZ7X1+6s/6pqgNi2oCiDZ+n
+         XPnyYCX9KMwk3+rjz4enPHHava7ArjuRAc+SuqET1daKFIerW25hC1Fg2QwDNJza3VUO
+         hdZE6UOMMnvkTj29wdvGZ30z3JReM/Fhs/d+Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LSURC0PY0vgPVYHHz0YushTc1IoCAXgUire1vj3IPOU=;
-        b=GfulI5ccvIGQM9S87Nc+ovba2mHZFnRHSK4vHp8DzUhASBdLT4T/1BqGIijHLzs10u
-         GOOzqhYN2kdmYZBGGxfgtQrn4/PDmpZ9YVqbgplQe5cZBDgnTGQQdYtcvL/hCQZ+elUU
-         XTAYTYr7Yneqb+igGUGH9iiYiFieUiQdQ9UjWi/82+kjvlwe2BWi3cH3AEMDzXav6Xbl
-         kaA+nn5gr4Z9MiEnX5bjX2AmFtgU86yFJOTjHE8Wsb/nuYkPH1WtyyW6gCSDXo/BSJmY
-         4ViQQIGleKcOe6dn9jTEfj0+c9ciEaWSiZGeix41cbb7l4JSsXvJGLLSaHO4Ddkm3Ry4
-         iqIQ==
-X-Gm-Message-State: APzg51Bkd1oCRjT8L5CrufmqmkYyYZhCaHnYGGnCzcZencpQJDIwrHho
-        7OOMg6mwyShQaOj9bNuc3zo2ZkCg6jv4WVU6RmERmw==
-X-Google-Smtp-Source: ANB0VdZGbcHNfl1f7VvRckQZ6vQGx+2dGiVi/NLDVcwfmiPxL0e0eclzaKa48Hm3/7+OsVDHvgA03xy8DmlUUaaioOQ=
-X-Received: by 2002:aca:c585:: with SMTP id v127-v6mr7402261oif.348.1536863009984;
- Thu, 13 Sep 2018 11:23:29 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=KXp0QpKCsRKEVKktOJ1EZRM4MRqtDkPgK7TrpTCo/ag=;
+        b=H1whTNFqVmhIHIQq970u3B3KN3ahv+o64ev4PBrLbOs5gr0nHHrXpO+/B54/VnHPnT
+         w+cWA/htUrCt313R7o4dymtmdo335HH1zjeQTlt41BssGiPJ384QotmAAMDXrKGRTYo7
+         97FqV3mV8JY24wpg8eK5ZJTNU9vCLPnTwPS7QMN1kCud176GIS38vZu5LpUOxEObyhLb
+         YpABCMfqpJQbdFCGBj3Ds6FIrNpsxNmU2HrhyxvETJ7aNjrY6eL/Ngx+MJpSVlUP7teu
+         PPgU3RvylzjRzM1VfwGcz3yVoFHA13K70rmCRPRBwlN8yBX141x2pwrj49JnTS0J8/cq
+         1Pjw==
+X-Gm-Message-State: APzg51BCBnSSoLZZHcw+iGt+uZ8cV6YXTLGHUHZS0h5Xw0lbku0sBx+N
+        /TcWJdB8uYh4qO1/ZgR5P2An/g==
+X-Google-Smtp-Source: ANB0VdYBr78AgCj/YhdVCIzQXCXFdos24nNULYHgjgCZ6QWge9lHzdIoA1Qy5LLCXPaqsoJt/XMkPg==
+X-Received: by 2002:a63:f244:: with SMTP id d4-v6mr8114565pgk.2.1536863010701;
+        Thu, 13 Sep 2018 11:23:30 -0700 (PDT)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id k4-v6sm7283688pfj.30.2018.09.13.11.23.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 13 Sep 2018 11:23:29 -0700 (PDT)
+Date:   Thu, 13 Sep 2018 11:23:28 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Eric Biggers <ebiggers@google.com>,
+        Gilad Ben-Yossef <gilad@benyossef.com>,
+        Alexander Stein <alexander.stein@systec-electronic.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Arnaud Ebalard <arno@natisbad.org>,
+        Corentin Labbe <clabbe.montjoie@gmail.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Christian Lamparter <chunkeey@gmail.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        linux-crypto@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH][RFC] crypto: skcipher: Remove VLA usage
+Message-ID: <20180913182328.GA9812@beast>
 MIME-Version: 1.0
-References: <cover.1535462971.git.andreyknvl@google.com> <f5e73b5ead3355932ad8b5fc96b141c3f5b8c16c.1535462971.git.andreyknvl@google.com>
- <CACT4Y+aEwYiaVN--RH_0VBh0wbCcrf-Ndz+_eOaBNi6nKxrfQA@mail.gmail.com>
- <CAG48ez2oT1dtDcH8SfPLnoX5F8d6Pd=M-eOKHhYJ83EuL_j6wQ@mail.gmail.com>
- <CACT4Y+avu_68GoQcc32zpcOpAu-Pw7m71VmuKtEkOw=vKgxi7w@mail.gmail.com> <CAKwvOdns=3bktpXLEpo6o0J8OQPym6YE+x6Dvs_kYSBsuJKtSw@mail.gmail.com>
-In-Reply-To: <CAKwvOdns=3bktpXLEpo6o0J8OQPym6YE+x6Dvs_kYSBsuJKtSw@mail.gmail.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Thu, 13 Sep 2018 20:23:03 +0200
-Message-ID: <CAG48ez2AoEiFdLH2aLSjxdkdFbBT1PimOByaWbFykObTA2yqKg@mail.gmail.com>
-Subject: Re: [PATCH v6 15/18] khwasan, arm64: add brk handler for inline instrumentation
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>, dave.martin@arm.com,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>, geert@linux-m68k.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        kasan-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-sparse@vger.kernel.org,
-        Linux-MM <linux-mm@kvack.org>, linux-kbuild@vger.kernel.org,
-        Kostya Serebryany <kcc@google.com>,
-        Evgenii Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>, Ramana.Radhakrishnan@arm.com,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben.Ayrapetyan@arm.com, Mark Brand <markbrand@google.com>,
-        cpandya@codeaurora.org, Vishwath Mohan <vishwath@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 13, 2018 at 8:09 PM Nick Desaulniers
-<ndesaulniers@google.com> wrote:
->
-> On Thu, Sep 13, 2018 at 1:37 AM Dmitry Vyukov <dvyukov@google.com> wrote:
-> >
-> > On Wed, Sep 12, 2018 at 7:39 PM, Jann Horn <jannh@google.com> wrote:
-> > > On Wed, Sep 12, 2018 at 7:16 PM Dmitry Vyukov <dvyukov@google.com> wrote:
-> > >> On Wed, Aug 29, 2018 at 1:35 PM, Andrey Konovalov <andreyknvl@google.com> wrote:
-> > > [...]
-> > >> > +static int khwasan_handler(struct pt_regs *regs, unsigned int esr)
-> > >> > +{
-> > >> > +       bool recover = esr & KHWASAN_ESR_RECOVER;
-> > >> > +       bool write = esr & KHWASAN_ESR_WRITE;
-> > >> > +       size_t size = KHWASAN_ESR_SIZE(esr);
-> > >> > +       u64 addr = regs->regs[0];
-> > >> > +       u64 pc = regs->pc;
-> > >> > +
-> > >> > +       if (user_mode(regs))
-> > >> > +               return DBG_HOOK_ERROR;
-> > >> > +
-> > >> > +       kasan_report(addr, size, write, pc);
-> > >> > +
-> > >> > +       /*
-> > >> > +        * The instrumentation allows to control whether we can proceed after
-> > >> > +        * a crash was detected. This is done by passing the -recover flag to
-> > >> > +        * the compiler. Disabling recovery allows to generate more compact
-> > >> > +        * code.
-> > >> > +        *
-> > >> > +        * Unfortunately disabling recovery doesn't work for the kernel right
-> > >> > +        * now. KHWASAN reporting is disabled in some contexts (for example when
-> > >> > +        * the allocator accesses slab object metadata; same is true for KASAN;
-> > >> > +        * this is controlled by current->kasan_depth). All these accesses are
-> > >> > +        * detected by the tool, even though the reports for them are not
-> > >> > +        * printed.
-> > >> > +        *
-> > >> > +        * This is something that might be fixed at some point in the future.
-> > >> > +        */
-> > >> > +       if (!recover)
-> > >> > +               die("Oops - KHWASAN", regs, 0);
-> > >>
-> > >> Why die and not panic? Die seems to be much less used function, and it
-> > >> calls panic anyway, and we call panic in kasan_report if panic_on_warn
-> > >> is set.
-> > >
-> > > die() is vaguely equivalent to BUG(); die() and BUG() normally only
-> > > terminate the current process, which may or may not leave the system
-> > > somewhat usable, while panic() always brings down the whole system.
-> > > AFAIK panic() shouldn't be used unless you're in some very low-level
-> > > code where you know that trying to just kill the current process can't
-> > > work and the entire system is broken beyond repair.
-> > >
-> > > If KASAN traps on some random memory access, there's a good chance
-> > > that just killing the current process will allow at least parts of the
-> > > system to continue. I'm not sure whether BUG() or die() is more
-> > > appropriate here, but I think it definitely should not be a panic().
-> >
-> >
-> > Nick, do you know if die() will be enough to catch problems on Android
-> > phones? panic_on_warn would turn this into panic, but I guess one does
-> > not want panic_on_warn on a canary phone.
->
-> die() has arch specific implementations, so looking at:
->
-> arch/arm64/kernel/traps.c:196#die
->
-> it looks like panic is invoked if in_interrupt() or panic_on_oops(),
-> which is a configure option.  So maybe the config for KHWASAN should
-> also enable that? Otherwise seems easy to forget.  But maybe that
-> should remain configurable separately?
+RFC follow-up to https://lkml.kernel.org/r/CAGXu5j+bpLK=EQ9LHkO8V=sdaQwt==6fbGhgn2Vi1E9_WxSGRQ@mail.gmail.com
 
-In the upstream kernel, it is desirable to be able to discover bugs
-and debug them from inside the running system. When you detect a bug
-that makes it impossible for the current task to continue safely,
-you're supposed to use something like BUG() to terminate the task; if
-you can continue safely, you're supposed to use WARN(). Either way,
-you should *not* just shoot down the whole kernel unless the system is
-corrupted so badly that trying to keep running would be pointless.
+The core API changes:
 
-You can configure the kernel such that it crashes the device when such
-an event occurs, and doing so can sometimes be beneficial; but please
-don't hardcode such policies into the upstream kernel.
+	struct crypto_sync_skcipher
+	crypto_alloc_sync_skcipher()
+	crypto_free_sync_skcipher()
+	crypto_sync_skcipher_setkey()
+	skcipher_request_set_sync_tfm()
+	SKCIPHER_REQUEST_ON_STACK type check
+
+and a single user's refactoring as an example:
+
+	drivers/crypto/ccp/ccp-crypto.h
+	drivers/crypto/ccp/ccp-crypto-aes-xts.c
+
+Does this look correct? If so, I can continue and do the other 60
+instances of SKCIPHER_REQUEST_ON_STACK().
+
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ crypto/skcipher.c                       | 24 +++++++++++++++++
+ drivers/crypto/ccp/ccp-crypto-aes-xts.c | 10 ++++----
+ drivers/crypto/ccp/ccp-crypto.h         |  2 +-
+ include/crypto/skcipher.h               | 34 ++++++++++++++++++++++++-
+ 4 files changed, 63 insertions(+), 7 deletions(-)
+
+diff --git a/crypto/skcipher.c b/crypto/skcipher.c
+index 0bd8c6caa498..4caab81d2d02 100644
+--- a/crypto/skcipher.c
++++ b/crypto/skcipher.c
+@@ -949,6 +949,30 @@ struct crypto_skcipher *crypto_alloc_skcipher(const char *alg_name,
+ }
+ EXPORT_SYMBOL_GPL(crypto_alloc_skcipher);
+ 
++struct crypto_sync_skcipher *crypto_alloc_sync_skcipher(
++				const char *alg_name, u32 type, u32 mask)
++{
++	struct crypto_skcipher *tfm;
++
++	/* Only sync algorithms allowed. */
++	mask |= CRYPTO_ALG_ASYNC;
++
++	tfm = crypto_alloc_tfm(alg_name, &crypto_skcipher_type2, type, mask);
++
++	/*
++	 * Make sure we do not allocate something that might get used with
++	 * an on-stack request: check the request size.
++	 */
++	if (!IS_ERR(tfm) && WARN_ON(crypto_skcipher_reqsize(tfm) >
++				    MAX_SYNC_SKCIPHER_REQSIZE)) {
++		crypto_free_skcipher(tfm);
++		return ERR_PTR(-EINVAL);
++	}
++
++	return (struct crypto_sync_skcipher *)tfm;
++}
++EXPORT_SYMBOL_GPL(crypto_alloc_sync_skcipher);
++
+ int crypto_has_skcipher2(const char *alg_name, u32 type, u32 mask)
+ {
+ 	return crypto_type_has_alg(alg_name, &crypto_skcipher_type2,
+diff --git a/drivers/crypto/ccp/ccp-crypto-aes-xts.c b/drivers/crypto/ccp/ccp-crypto-aes-xts.c
+index 94b5bcf5b628..983c921736b4 100644
+--- a/drivers/crypto/ccp/ccp-crypto-aes-xts.c
++++ b/drivers/crypto/ccp/ccp-crypto-aes-xts.c
+@@ -102,7 +102,7 @@ static int ccp_aes_xts_setkey(struct crypto_ablkcipher *tfm, const u8 *key,
+ 	ctx->u.aes.key_len = key_len / 2;
+ 	sg_init_one(&ctx->u.aes.key_sg, ctx->u.aes.key, key_len);
+ 
+-	return crypto_skcipher_setkey(ctx->u.aes.tfm_skcipher, key, key_len);
++	return crypto_sync_skcipher_setkey(ctx->u.aes.tfm_skcipher, key, key_len);
+ }
+ 
+ static int ccp_aes_xts_crypt(struct ablkcipher_request *req,
+@@ -156,7 +156,7 @@ static int ccp_aes_xts_crypt(struct ablkcipher_request *req,
+ 		/* Use the fallback to process the request for any
+ 		 * unsupported unit sizes or key sizes
+ 		 */
+-		skcipher_request_set_tfm(subreq, ctx->u.aes.tfm_skcipher);
++		skcipher_request_set_sync_tfm(subreq, ctx->u.aes.tfm_skcipher);
+ 		skcipher_request_set_callback(subreq, req->base.flags,
+ 					      NULL, NULL);
+ 		skcipher_request_set_crypt(subreq, req->src, req->dst,
+@@ -203,12 +203,12 @@ static int ccp_aes_xts_decrypt(struct ablkcipher_request *req)
+ static int ccp_aes_xts_cra_init(struct crypto_tfm *tfm)
+ {
+ 	struct ccp_ctx *ctx = crypto_tfm_ctx(tfm);
+-	struct crypto_skcipher *fallback_tfm;
++	struct crypto_sync_skcipher *fallback_tfm;
+ 
+ 	ctx->complete = ccp_aes_xts_complete;
+ 	ctx->u.aes.key_len = 0;
+ 
+-	fallback_tfm = crypto_alloc_skcipher("xts(aes)", 0,
++	fallback_tfm = crypto_alloc_sync_skcipher("xts(aes)", 0,
+ 					     CRYPTO_ALG_ASYNC |
+ 					     CRYPTO_ALG_NEED_FALLBACK);
+ 	if (IS_ERR(fallback_tfm)) {
+@@ -226,7 +226,7 @@ static void ccp_aes_xts_cra_exit(struct crypto_tfm *tfm)
+ {
+ 	struct ccp_ctx *ctx = crypto_tfm_ctx(tfm);
+ 
+-	crypto_free_skcipher(ctx->u.aes.tfm_skcipher);
++	crypto_free_sync_skcipher(ctx->u.aes.tfm_skcipher);
+ }
+ 
+ static int ccp_register_aes_xts_alg(struct list_head *head,
+diff --git a/drivers/crypto/ccp/ccp-crypto.h b/drivers/crypto/ccp/ccp-crypto.h
+index b9fd090c46c2..28819e11db96 100644
+--- a/drivers/crypto/ccp/ccp-crypto.h
++++ b/drivers/crypto/ccp/ccp-crypto.h
+@@ -88,7 +88,7 @@ static inline struct ccp_crypto_ahash_alg *
+ /***** AES related defines *****/
+ struct ccp_aes_ctx {
+ 	/* Fallback cipher for XTS with unsupported unit sizes */
+-	struct crypto_skcipher *tfm_skcipher;
++	struct crypto_sync_skcipher *tfm_skcipher;
+ 
+ 	/* Cipher used to generate CMAC K1/K2 keys */
+ 	struct crypto_cipher *tfm_cipher;
+diff --git a/include/crypto/skcipher.h b/include/crypto/skcipher.h
+index 2f327f090c3e..4435f3a3d621 100644
+--- a/include/crypto/skcipher.h
++++ b/include/crypto/skcipher.h
+@@ -65,6 +65,10 @@ struct crypto_skcipher {
+ 	struct crypto_tfm base;
+ };
+ 
++struct crypto_sync_skcipher {
++	struct crypto_skcipher base;
++};
++
+ /**
+  * struct skcipher_alg - symmetric key cipher definition
+  * @min_keysize: Minimum key size supported by the transformation. This is the
+@@ -139,9 +143,17 @@ struct skcipher_alg {
+ 	struct crypto_alg base;
+ };
+ 
++#define MAX_SYNC_SKCIPHER_REQSIZE      384
++/*
++ * This performs a type-check against the "tfm" argument to make sure
++ * all users have the correct skcipher tfm for doing on-stack requests.
++ */
+ #define SKCIPHER_REQUEST_ON_STACK(name, tfm) \
+ 	char __##name##_desc[sizeof(struct skcipher_request) + \
+-		crypto_skcipher_reqsize(tfm)] CRYPTO_MINALIGN_ATTR; \
++			     MAX_SYNC_SKCIPHER_REQSIZE + \
++			     (!(sizeof((struct crypto_sync_skcipher *)1 == \
++				       (typeof(tfm))1))) \
++			    ] CRYPTO_MINALIGN_ATTR; \
+ 	struct skcipher_request *name = (void *)__##name##_desc
+ 
+ /**
+@@ -197,6 +209,9 @@ static inline struct crypto_skcipher *__crypto_skcipher_cast(
+ struct crypto_skcipher *crypto_alloc_skcipher(const char *alg_name,
+ 					      u32 type, u32 mask);
+ 
++struct crypto_sync_skcipher *crypto_alloc_sync_skcipher(const char *alg_name,
++					      u32 type, u32 mask);
++
+ static inline struct crypto_tfm *crypto_skcipher_tfm(
+ 	struct crypto_skcipher *tfm)
+ {
+@@ -212,6 +227,11 @@ static inline void crypto_free_skcipher(struct crypto_skcipher *tfm)
+ 	crypto_destroy_tfm(tfm, crypto_skcipher_tfm(tfm));
+ }
+ 
++static inline void crypto_free_sync_skcipher(struct crypto_sync_skcipher *tfm)
++{
++	crypto_free_skcipher(&tfm->base);
++}
++
+ /**
+  * crypto_has_skcipher() - Search for the availability of an skcipher.
+  * @alg_name: is the cra_name / name or cra_driver_name / driver name of the
+@@ -401,6 +421,12 @@ static inline int crypto_skcipher_setkey(struct crypto_skcipher *tfm,
+ 	return tfm->setkey(tfm, key, keylen);
+ }
+ 
++static inline int crypto_sync_skcipher_setkey(struct crypto_sync_skcipher *tfm,
++					 const u8 *key, unsigned int keylen)
++{
++	return crypto_skcipher_setkey(&tfm->base, key, keylen);
++}
++
+ static inline unsigned int crypto_skcipher_default_keysize(
+ 	struct crypto_skcipher *tfm)
+ {
+@@ -500,6 +526,12 @@ static inline void skcipher_request_set_tfm(struct skcipher_request *req,
+ 	req->base.tfm = crypto_skcipher_tfm(tfm);
+ }
+ 
++static inline void skcipher_request_set_sync_tfm(struct skcipher_request *req,
++					    struct crypto_sync_skcipher *tfm)
++{
++	skcipher_request_set_tfm(req, &tfm->base);
++}
++
+ static inline struct skcipher_request *skcipher_request_cast(
+ 	struct crypto_async_request *req)
+ {
+-- 
+2.17.1
+
+
+-- 
+Kees Cook
+Pixel Security
