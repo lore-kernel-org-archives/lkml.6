@@ -3,79 +3,83 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=5.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CF4CC04AB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 20:50:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 093B8C04AB8
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 20:51:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F057E20866
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 20:50:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F057E20866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A1ABD20866
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 20:51:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1ABD20866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727859AbeINCB2 (ORCPT
+        id S1728093AbeINCC5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 22:01:28 -0400
-Received: from mga02.intel.com ([134.134.136.20]:29899 "EHLO mga02.intel.com"
+        Thu, 13 Sep 2018 22:02:57 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:55462 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726821AbeINCB2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 22:01:28 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Sep 2018 13:50:19 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,370,1531810800"; 
-   d="scan'208";a="74089951"
-Received: from rjwysock-mobl1.ger.corp.intel.com (HELO [10.249.146.110]) ([10.249.146.110])
-  by orsmga006.jf.intel.com with ESMTP; 13 Sep 2018 13:50:17 -0700
-Subject: Re: [REGRESSION] Errors at reboot after 722e5f2b1eec
-To:     James Wang <jnwang@suse.com>, Pingfan Liu <kernelfans@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     tiwai@suse.de, bpetkov@suse.de, linux-kernel@vger.kernel.org
-References: <s5hk1ns1m8n.wl-tiwai@suse.de> <20180911093324.GB10436@kroah.com>
- <CAFgQCTtA0zFti3-X6r2E+60mWTWxzKoRehzE18Lg0M5D-MeM9w@mail.gmail.com>
- <14f8bb1c-ef13-1329-b144-d487949615e5@suse.com>
- <19d8cdd3-7f22-4066-e77f-8d17bf50bee7@intel.com>
- <90446c6c-e6ef-e55d-07f7-01f661fa2cd6@suse.com>
-From:   "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Organization: Intel Technology Poland Sp. z o. o., KRS 101882, ul. Slowackiego
- 173, 80-298 Gdansk
-Message-ID: <f08dda15-1b2c-a564-4f2b-90736cc4b340@intel.com>
-Date:   Thu, 13 Sep 2018 22:50:17 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726821AbeINCC5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 22:02:57 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id F088E20730; Thu, 13 Sep 2018 22:51:45 +0200 (CEST)
+Received: from localhost (unknown [88.191.26.124])
+        by mail.bootlin.com (Postfix) with ESMTPSA id C538A206FF;
+        Thu, 13 Sep 2018 22:51:35 +0200 (CEST)
+Date:   Thu, 13 Sep 2018 22:51:36 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     Alessandro Zummo <a.zummo@towertech.it>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
+        =?iso-8859-1?Q?S=F8ren?= Andersen <san@skov.dk>
+Subject: Re: [PATCH v1 1/5] dt-binding: rtci-pcf8523: add quartz_load property
+Message-ID: <20180913205136.GL14988@piout.net>
+References: <20180822183555.GA24084@ravnborg.org>
+ <20180907193508.24974-2-sam@ravnborg.org>
+ <20180913190516.GG14988@piout.net>
+ <20180913204412.GA30987@ravnborg.org>
 MIME-Version: 1.0
-In-Reply-To: <90446c6c-e6ef-e55d-07f7-01f661fa2cd6@suse.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180913204412.GA30987@ravnborg.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/13/2018 5:21 PM, James Wang wrote:
->
-> On 09/12/2018 11:56 AM, Rafael J. Wysocki wrote:
->> On 9/12/2018 11:10 AM, James Wang wrote:
->>> On 09/12/2018 02:41 PM, Pingfan Liu wrote:
->>>> Cc James, could you try to enable initcall_debug, and paste the
->>>> shutdown seq with 722e5f2b1eec ("driver core: Partially revert "driver
->>>> core: correct device's shutdown order"") and without it?
->>> OK. And I will scheudule some testing orders, ahah, I'm in a business
->>> trip.
->>> All operations will be a little bit delay, but I will make it done.
->>>
->>> James
->>>
->> Can you please open a Bugzilla entry at bugzilla.kernel.org for the
->> tracking of this issue and attach the results to that one for future
->> reference?
->>
-> Hi sir,
-> File a bug is no problem. but which product category should be used.
+On 13/09/2018 22:44:12+0200, Sam Ravnborg wrote:
+> > The boolean properties usually don't work well for RTCs because people
+> > usually want to keep any previous configuration that may have been done
+> > at the factory or in the bootloader so I would use:
+> > 
+> > nxp,quartz_load_fF and this would be either 7000 or 12500.
+> We had is implmented like this (using pF) in the beginning but
+> then went for the simpler property.
+> Will add a fF property as you suggest and avoid breaking the existing drivers.
+> We will check a few of the boards to see if the current configuration
+> of the pcf8523 driver looks wrong, and if so we will print
+> the warnings as suggested.
+> 
+> I think the above covers feedback on all patches.
+> And thanks for the feedback!
+> 
 
-Please file it under "Drivers/Other" and let me know the number. Thanks!
+Hint: look at the cubox-i and the hummingboard schematics. I'm
+definitely not an analog expert but the two capacitors on the cubox-i
+are making me think that the setting should be different from the
+hummingboard.
 
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
