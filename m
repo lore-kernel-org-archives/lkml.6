@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 713D4C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:37:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 061A6C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:37:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23ECC20854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:37:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23ECC20854
+	by mail.kernel.org (Postfix) with ESMTP id C06BA20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:37:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C06BA20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729304AbeIMSqu (ORCPT
+        id S1729315AbeIMSqw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:46:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59500 "EHLO
+        Thu, 13 Sep 2018 14:46:52 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59518 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727649AbeIMSqs (ORCPT
+        with ESMTP id S1727649AbeIMSqw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:46:48 -0400
+        Thu, 13 Sep 2018 14:46:52 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 41702CF3;
-        Thu, 13 Sep 2018 13:37:18 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 76F75D10;
+        Thu, 13 Sep 2018 13:37:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        John Garry <john.garry@huawei.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 43/78] scsi: aic94xx: fix an error code in aic94xx_init()
-Date:   Thu, 13 Sep 2018 15:31:30 +0200
-Message-Id: <20180913131810.178445832@linuxfoundation.org>
+Subject: [PATCH 4.9 44/78] PCI: mvebu: Fix I/O space end address calculation
+Date:   Thu, 13 Sep 2018 15:31:31 +0200
+Message-Id: <20180913131810.269029536@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131805.732342940@linuxfoundation.org>
 References: <20180913131805.732342940@linuxfoundation.org>
@@ -54,36 +53,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 
-[ Upstream commit 0756c57bce3d26da2592d834d8910b6887021701 ]
+[ Upstream commit dfd0309fd7b30a5baffaf47b2fccb88b46d64d69 ]
 
-We accidentally return success instead of -ENOMEM on this error path.
+pcie->realio.end should be the address of last byte of the area,
+therefore using resource_size() of another resource is not correct, we
+must substract 1 to get the address of the last byte.
 
-Fixes: 2908d778ab3e ("[SCSI] aic94xx: new driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-Reviewed-by: John Garry <john.garry@huawei.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: 11be65472a427 ("PCI: mvebu: Adapt to the new device tree layout")
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/aic94xx/aic94xx_init.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/pci/host/pci-mvebu.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/scsi/aic94xx/aic94xx_init.c
-+++ b/drivers/scsi/aic94xx/aic94xx_init.c
-@@ -1031,8 +1031,10 @@ static int __init aic94xx_init(void)
+--- a/drivers/pci/host/pci-mvebu.c
++++ b/drivers/pci/host/pci-mvebu.c
+@@ -1236,7 +1236,7 @@ static int mvebu_pcie_probe(struct platf
+ 		pcie->realio.start = PCIBIOS_MIN_IO;
+ 		pcie->realio.end = min_t(resource_size_t,
+ 					 IO_SPACE_LIMIT,
+-					 resource_size(&pcie->io));
++					 resource_size(&pcie->io) - 1);
+ 	} else
+ 		pcie->realio = pcie->io;
  
- 	aic94xx_transport_template =
- 		sas_domain_attach_transport(&aic94xx_transport_functions);
--	if (!aic94xx_transport_template)
-+	if (!aic94xx_transport_template) {
-+		err = -ENOMEM;
- 		goto out_destroy_caches;
-+	}
- 
- 	err = pci_register_driver(&aic94xx_pci_driver);
- 	if (err)
 
 
