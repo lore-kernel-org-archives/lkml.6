@@ -6,37 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05012C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:43:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06C50C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:43:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE83B20854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:43:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE83B20854
+	by mail.kernel.org (Postfix) with ESMTP id C05C020854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:43:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C05C020854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729846AbeIMSxA (ORCPT
+        id S1729856AbeIMSxD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:53:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60340 "EHLO
+        Thu, 13 Sep 2018 14:53:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60348 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728650AbeIMSw7 (ORCPT
+        with ESMTP id S1728650AbeIMSxC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:52:59 -0400
+        Thu, 13 Sep 2018 14:53:02 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7636CD10;
-        Thu, 13 Sep 2018 13:43:26 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 288A7CF3;
+        Thu, 13 Sep 2018 13:43:29 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 017/115] hv_netvsc: Fix a deadlock by getting rtnl lock earlier in netvsc_probe()
-Date:   Thu, 13 Sep 2018 15:30:37 +0200
-Message-Id: <20180913131824.597582634@linuxfoundation.org>
+        stable@vger.kernel.org, Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        icytxw@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 035/115] mm/fadvise.c: fix signed overflow UBSAN complaint
+Date:   Thu, 13 Sep 2018 15:30:55 +0200
+Message-Id: <20180913131825.870428284@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -54,117 +55,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dexuan Cui <decui@microsoft.com>
+From: Andrey Ryabinin <aryabinin@virtuozzo.com>
 
-[ Upstream commit e04e7a7bbd4bbabef4e1a58367e5fc9b2edc3b10 ]
+[ Upstream commit a718e28f538441a3b6612da9ff226973376cdf0f ]
 
-This patch fixes the race between netvsc_probe() and
-rndis_set_subchannel(), which can cause a deadlock.
+Signed integer overflow is undefined according to the C standard.  The
+overflow in ksys_fadvise64_64() is deliberate, but since it is signed
+overflow, UBSAN complains:
 
-These are the related 3 paths which show the deadlock:
+	UBSAN: Undefined behaviour in mm/fadvise.c:76:10
+	signed integer overflow:
+	4 + 9223372036854775805 cannot be represented in type 'long long int'
 
-path #1:
-    Workqueue: hv_vmbus_con vmbus_onmessage_work [hv_vmbus]
-    Call Trace:
-     schedule
-     schedule_preempt_disabled
-     __mutex_lock
-     __device_attach
-     bus_probe_device
-     device_add
-     vmbus_device_register
-     vmbus_onoffer
-     vmbus_onmessage_work
-     process_one_work
-     worker_thread
-     kthread
-     ret_from_fork
+Use unsigned types to do math.  Unsigned overflow is defined so UBSAN
+will not complain about it.  This patch doesn't change generated code.
 
-path #2:
-    schedule
-     schedule_preempt_disabled
-     __mutex_lock
-     netvsc_probe
-     vmbus_probe
-     really_probe
-     __driver_attach
-     bus_for_each_dev
-     driver_attach_async
-     async_run_entry_fn
-     process_one_work
-     worker_thread
-     kthread
-     ret_from_fork
-
-path #3:
-    Workqueue: events netvsc_subchan_work [hv_netvsc]
-    Call Trace:
-     schedule
-     rndis_set_subchannel
-     netvsc_subchan_work
-     process_one_work
-     worker_thread
-     kthread
-     ret_from_fork
-
-Before path #1 finishes, path #2 can start to run, because just before
-the "bus_probe_device(dev);" in device_add() in path #1, there is a line
-"object_uevent(&dev->kobj, KOBJ_ADD);", so systemd-udevd can
-immediately try to load hv_netvsc and hence path #2 can start to run.
-
-Next, path #2 offloads the subchannal's initialization to a workqueue,
-i.e. path #3, so we can end up in a deadlock situation like this:
-
-Path #2 gets the device lock, and is trying to get the rtnl lock;
-Path #3 gets the rtnl lock and is waiting for all the subchannel messages
-to be processed;
-Path #1 is trying to get the device lock, but since #2 is not releasing
-the device lock, path #1 has to sleep; since the VMBus messages are
-processed one by one, this means the sub-channel messages can't be
-procedded, so #3 has to sleep with the rtnl lock held, and finally #2
-has to sleep... Now all the 3 paths are sleeping and we hit the deadlock.
-
-With the patch, we can make sure #2 gets both the device lock and the
-rtnl lock together, gets its job done, and releases the locks, so #1
-and #3 will not be blocked for ever.
-
-Fixes: 8195b1396ec8 ("hv_netvsc: fix deadlock on hotplug")
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Cc: K. Y. Srinivasan <kys@microsoft.com>
-Cc: Haiyang Zhang <haiyangz@microsoft.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+[akpm@linux-foundation.org: add comment explaining the casts]
+Link: http://lkml.kernel.org/r/20180629184453.7614-1-aryabinin@virtuozzo.com
+Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Reported-by: <icytxw@gmail.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Alexander Potapenko <glider@google.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/hyperv/netvsc_drv.c |   11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ mm/fadvise.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/net/hyperv/netvsc_drv.c
-+++ b/drivers/net/hyperv/netvsc_drv.c
-@@ -2044,6 +2044,16 @@ static int netvsc_probe(struct hv_device
+--- a/mm/fadvise.c
++++ b/mm/fadvise.c
+@@ -71,8 +71,12 @@ SYSCALL_DEFINE4(fadvise64_64, int, fd, l
+ 		goto out;
+ 	}
  
- 	memcpy(net->dev_addr, device_info.mac_adr, ETH_ALEN);
- 
-+	/* We must get rtnl lock before scheduling nvdev->subchan_work,
-+	 * otherwise netvsc_subchan_work() can get rtnl lock first and wait
-+	 * all subchannels to show up, but that may not happen because
-+	 * netvsc_probe() can't get rtnl lock and as a result vmbus_onoffer()
-+	 * -> ... -> device_add() -> ... -> __device_attach() can't get
-+	 * the device lock, so all the subchannels can't be processed --
-+	 * finally netvsc_subchan_work() hangs for ever.
+-	/* Careful about overflows. Len == 0 means "as much as possible" */
+-	endbyte = offset + len;
++	/*
++	 * Careful about overflows. Len == 0 means "as much as possible".  Use
++	 * unsigned math because signed overflows are undefined and UBSan
++	 * complains.
 +	 */
-+	rtnl_lock();
-+
- 	if (nvdev->num_chn > 1)
- 		schedule_work(&nvdev->subchan_work);
- 
-@@ -2062,7 +2072,6 @@ static int netvsc_probe(struct hv_device
++	endbyte = (u64)offset + (u64)len;
+ 	if (!len || endbyte < len)
+ 		endbyte = -1;
  	else
- 		net->max_mtu = ETH_DATA_LEN;
- 
--	rtnl_lock();
- 	ret = register_netdevice(net);
- 	if (ret != 0) {
- 		pr_err("Unable to register netdev.\n");
 
 
