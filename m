@@ -2,122 +2,92 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 573CDC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 10:29:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2D16C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 10:29:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E018720C0A
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 10:29:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=netronome-com.20150623.gappssmtp.com header.i=@netronome-com.20150623.gappssmtp.com header.b="j3yow6JN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E018720C0A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=netronome.com
+	by mail.kernel.org (Postfix) with ESMTP id 8948C20C0A
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 10:29:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8948C20C0A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727246AbeIMPhy (ORCPT
+        id S1727600AbeIMPiJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 11:37:54 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:37960 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726797AbeIMPhy (ORCPT
+        Thu, 13 Sep 2018 11:38:09 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:37027 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726797AbeIMPiJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 11:37:54 -0400
-Received: by mail-ed1-f68.google.com with SMTP id h33-v6so4210764edb.5
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 03:29:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=FLA+r5NYG0s3eIIhSySu8fuz6fE0lGJg332IqybXSBg=;
-        b=j3yow6JN/fIfYyEicb/G76pSYBWmIyZGlpq3k5zSjFb+Ftu9I5ZVqrK4lIvBAoSjrj
-         GzzTgFyad9xz03GkqCDJ0C5LqmxbellVCL1IvHBAp1NLSVHVWMXNghgCg3xcHIs3ictQ
-         EqlAYHB05OyX2fCzQ0YbJ8i2wTWcRyGqY9GoL1dTPxMDRBirs3qF99IFm48p+tumWoxQ
-         EjQdIG+rLfRbKtxvN4o6cWWWqxjUOsxcCO8bix3l/BOpTyTB43w2NN/axOd9E879FP0g
-         P8d/FCpgXuSR+iItAy35g0kr0tbvPJu/ePBNo4myywIBjCfGdI1YlASKSSpLGhFLBFX/
-         V7BQ==
+        Thu, 13 Sep 2018 11:38:09 -0400
+Received: by mail-qt0-f194.google.com with SMTP id n6-v6so4822652qtl.4;
+        Thu, 13 Sep 2018 03:29:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FLA+r5NYG0s3eIIhSySu8fuz6fE0lGJg332IqybXSBg=;
-        b=Zw+hOBeGFC31PhN3KaurvhdSC5N+g5fI2TzD/RoG+7RrKpAyooC6t9k1Htajtsn1C9
-         G87/bWWMxgUjL48hg+iYqAmP46K4VrpdCkECtnePGj0VNgJgoobqaUr2y3f1JUF9XNME
-         HC6Qbup+/gGh9/ZN+qgbfjnamaotUv2eP4BHyeMCFmB5R5T2X5EqXmwkyaxM69dZbFev
-         4mlmb8yPKE231sM4We339mtiGDiqnCu+ZcpM5X85jiJwoVofd3vvvohUYQ2jdLok7PVd
-         qeETXr55yekrkKTh8hQjRUbuATanIPWzunrToXjywFf8ef7WUKj3e9fv/349cQ2WtAVO
-         lGxg==
-X-Gm-Message-State: APzg51BKKP+APPzRi7ATDPn3gVUbD9dj3dYe2gH73VXfHCcNG5YokStE
-        /vVRMJVkWQnW1OhurmPcBud/pQ==
-X-Google-Smtp-Source: ANB0VdZiaoC/qiIH3dgpI/luxCe2bQxnCXzUvni0RDdrPCLKbJ+31RU70eEqOvkYrPJgbeLJKRio0w==
-X-Received: by 2002:a50:8406:: with SMTP id 6-v6mr9546134edp.97.1536834542375;
-        Thu, 13 Sep 2018 03:29:02 -0700 (PDT)
-Received: from netronome.com (watermunt.horms.nl. [80.127.179.77])
-        by smtp.gmail.com with ESMTPSA id f7-v6sm2774545edd.6.2018.09.13.03.29.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 13 Sep 2018 03:29:02 -0700 (PDT)
-Date:   Thu, 13 Sep 2018 12:28:59 +0200
-From:   Simon Horman <simon.horman@netronome.com>
-To:     zhong jiang <zhongjiang@huawei.com>
-Cc:     davem@davemloft.net, edumazet@google.com, kuznet@ms2.inr.ac.ru,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2] net: ipv4: Use BUG_ON directly instead of a if
- condition followed by BUG
-Message-ID: <20180913102859.kpeelj3mycjnyvhd@netronome.com>
-References: <1536671593-14746-1-git-send-email-zhongjiang@huawei.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=d3syHV27SIXgKwY6Ph9XLOevIOx6TOILxBDaFeGQ94c=;
+        b=I2DcdjegwOtxVQTnA8Ja2tm0Sk9mGo81fUqRRLJLCZ6uLP/XaMuKKwH8pAJ33MhHOQ
+         ght6rH6rDvlxMHG7Rt80VsHyj2WasbO0B0esW+eZmZxyXo1mCEKWLzY3zRmDXP7siWAe
+         VRj2BsvVS4OrNIOVZ6ib//VGJKUg4nYzp7d4lDy2JS1IH5Oa4xjmPx2sKwsQ6jCTyO4M
+         wkpkUhlfvLsznbjwkxovOvJbaEtk0m6TnKqcM+YwUUZD0uCLd7bjfr5bBvfriKpL86CV
+         jv11vf8NK0/p4hEffhkNMWuiwehWRYSzWT2DPqXArnm1Oj8dMGVUqWXngZyJFVS6spbH
+         /A4g==
+X-Gm-Message-State: APzg51CsM8Nflzjk17TCDlFcu67+ZS+6nOGX0/UTuSLHSug+0Rt9VaBZ
+        mEKGXuxuF7ocGtQ4HBcoVV1IYYCaUvQX4z9aUGkmiHbX
+X-Google-Smtp-Source: ANB0VdboGSLOx6FRwpky/fjL/EdO79cvq1QiZiRwaUufCSAnagBZPGDP33veF+y05k+1XZlaM3OaR7p8g76mK66IN64=
+X-Received: by 2002:a0c:fb08:: with SMTP id c8-v6mr4576342qvp.149.1536834558305;
+ Thu, 13 Sep 2018 03:29:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1536671593-14746-1-git-send-email-zhongjiang@huawei.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <20180912150142.157913-1-arnd@arndb.de> <20180913020757.GP19965@ZenIV.linux.org.uk>
+In-Reply-To: <20180913020757.GP19965@ZenIV.linux.org.uk>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 13 Sep 2018 12:29:02 +0200
+Message-ID: <CAK8P3a2PTaanqmJycLCJ5QgNFXONb7nVye1=TJST639wDBNpAQ@mail.gmail.com>
+Subject: Re: [PATCH v2 01/17] compat_ioctl: add generic_compat_ioctl_ptrarg()
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 11, 2018 at 09:13:13PM +0800, zhong jiang wrote:
-> The if condition can be removed if we use BUG_ON directly.
-> The issule is detected with the help of Coccinelle.
-> 
-> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-> ---
->  net/ipv4/tcp_input.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-> index 62508a2..526c05e 100644
-> --- a/net/ipv4/tcp_input.c
-> +++ b/net/ipv4/tcp_input.c
-> @@ -4934,8 +4934,8 @@ void tcp_rbtree_insert(struct rb_root *root, struct sk_buff *skb)
->  			BUG_ON(offset < 0);
->  			if (size > 0) {
->  				size = min(copy, size);
-> -				if (skb_copy_bits(skb, offset, skb_put(nskb, size), size))
-> -					BUG();
-> +				BUG_ON(skb_copy_bits(skb, offset,
-> +						     skb_put(nskb, size), size));
+On Thu, Sep 13, 2018 at 4:07 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Wed, Sep 12, 2018 at 05:01:02PM +0200, Arnd Bergmann wrote:
+> > Many drivers have ioctl() handlers that are completely compatible
+> > between 32-bit and 64-bit architectures, except for the argument
+> > that is passed down from user space and may have to be passed
+> > through compat_ptr() in order to become a valid 64-bit pointer.
+> >
+> > Using ".compat_ptr=generic_compat_ioctl_ptrarg" in file operations
+> > should let us simplify a lot of those drivers to avoid #ifdef
+> > checks, and convert additional drivers that don't have proper
+> > compat handling yet.
+>
+> Just keep in mind that this should *only* be used when all
+> ioctls implemented in a given instance do take pointers.
+> Because otherwise you are asking for trouble - e.g. if one of
+> them takes an u32 used as a bitmap, this will run into trouble
+> as soon as somebody uses bit 31.  With no visible warnings.
+>
+> IOW, it shouldn't be used blindly and it should come with big
+> fat warning.
 
-Perhaps things have changed but it doesn't seem desirable to me to use
-BUG_ON with statements that have side-effects in case at some point BUG_ON
-gets compiled out.
+I was hoping that the _ptrarg suffix gives enough warning here,
+but maybe not. I was careful to only use it in cases that I
+checked are safe, either using only pointer arguments, or
+no arguments.
 
->  				TCP_SKB_CB(nskb)->end_seq += size;
->  				copy -= size;
->  				start += size;
-> @@ -5327,8 +5327,8 @@ static void tcp_urg(struct sock *sk, struct sk_buff *skb, const struct tcphdr *t
->  		/* Is the urgent pointer pointing into this packet? */
->  		if (ptr < skb->len) {
->  			u8 tmp;
-> -			if (skb_copy_bits(skb, ptr, &tmp, 1))
-> -				BUG();
-> +
-> +			BUG_ON(skb_copy_bits(skb, ptr, &tmp, 1));
->  			tp->urg_data = TCP_URG_VALID | tmp;
->  			if (!sock_flag(sk, SOCK_DEAD))
->  				sk->sk_data_ready(sk);
-> -- 
-> 1.7.12.4
-> 
+What we might do for further clarification (besides adding a
+comment next to the declaration), would be to add a
+complementary generic_compat_ioctl_intarg() that skips
+the compat_ptr(). There are only a handful of drivers that
+would use this though.
+
+       Arnd
