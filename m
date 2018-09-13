@@ -6,40 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C9D6C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:44:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F712C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:44:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1133720854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:44:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1133720854
+	by mail.kernel.org (Postfix) with ESMTP id 4509E20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:44:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4509E20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730007AbeIMSx4 (ORCPT
+        id S1728342AbeIMSyA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:53:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60520 "EHLO
+        Thu, 13 Sep 2018 14:54:00 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60534 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728768AbeIMSxz (ORCPT
+        with ESMTP id S1728261AbeIMSx6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:53:55 -0400
+        Thu, 13 Sep 2018 14:53:58 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 63304D19;
-        Thu, 13 Sep 2018 13:44:22 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B7912CF3;
+        Thu, 13 Sep 2018 13:44:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Benno Evers <bevers@mesosphere.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Krister Johansen <kjlx@templeofstupid.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, Jonas Gorski <jonas.gorski@gmail.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 048/115] perf tools: Check for null when copying nsinfo.
-Date:   Thu, 13 Sep 2018 15:31:08 +0200
-Message-Id: <20180913131826.585793797@linuxfoundation.org>
+Subject: [PATCH 4.14 049/115] irqchip/bcm7038-l1: Hide cpu offline callback when building for !SMP
+Date:   Thu, 13 Sep 2018 15:31:09 +0200
+Message-Id: <20180913131826.645626946@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -57,45 +52,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Benno Evers <bevers@mesosphere.com>
+From: Jonas Gorski <jonas.gorski@gmail.com>
 
-[ Upstream commit 3f4417d693b43fa240ac8bde4487f67745ca23d8 ]
+[ Upstream commit 0702bc4d2fe793018ad9aa0eb14bff7f526c4095 ]
 
-The argument to nsinfo__copy() was assumed to be valid, but some code paths
-exist that will lead to NULL being passed.
+When compiling bmips with SMP disabled, the build fails with:
 
-In particular, running 'perf script -D' on a perf.data file containing an
-PERF_RECORD_MMAP event associating the '[vdso]' dso with pid 0 earlier in
-the event stream will lead to a segfault.
+drivers/irqchip/irq-bcm7038-l1.o: In function `bcm7038_l1_cpu_offline':
+drivers/irqchip/irq-bcm7038-l1.c:242: undefined reference to `irq_set_affinity_locked'
+make[5]: *** [vmlinux] Error 1
 
-Since all calling code is already checking for a non-null return value,
-just return NULL for this case as well.
+Fix this by adding and setting bcm7038_l1_cpu_offline only when actually
+compiling for SMP. It wouldn't have been used anyway, as it requires
+CPU_HOTPLUG, which in turn requires SMP.
 
-Signed-off-by: Benno Evers <bevers@mesosphere.com>
-Acked-by: Namhyung Kim <namhyung@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Krister Johansen <kjlx@templeofstupid.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180810133614.9925-1-bevers@mesosphere.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: 34c535793bcb ("irqchip/bcm7038-l1: Implement irq_cpu_offline() callback")
+Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/util/namespaces.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/irqchip/irq-bcm7038-l1.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/tools/perf/util/namespaces.c
-+++ b/tools/perf/util/namespaces.c
-@@ -138,6 +138,9 @@ struct nsinfo *nsinfo__copy(struct nsinf
- {
- 	struct nsinfo *nnsi;
+--- a/drivers/irqchip/irq-bcm7038-l1.c
++++ b/drivers/irqchip/irq-bcm7038-l1.c
+@@ -217,6 +217,7 @@ static int bcm7038_l1_set_affinity(struc
+ 	return 0;
+ }
  
-+	if (nsi == NULL)
-+		return NULL;
-+
- 	nnsi = calloc(1, sizeof(*nnsi));
- 	if (nnsi != NULL) {
- 		nnsi->pid = nsi->pid;
++#ifdef CONFIG_SMP
+ static void bcm7038_l1_cpu_offline(struct irq_data *d)
+ {
+ 	struct cpumask *mask = irq_data_get_affinity_mask(d);
+@@ -241,6 +242,7 @@ static void bcm7038_l1_cpu_offline(struc
+ 	}
+ 	irq_set_affinity_locked(d, &new_affinity, false);
+ }
++#endif
+ 
+ static int __init bcm7038_l1_init_one(struct device_node *dn,
+ 				      unsigned int idx,
+@@ -293,7 +295,9 @@ static struct irq_chip bcm7038_l1_irq_ch
+ 	.irq_mask		= bcm7038_l1_mask,
+ 	.irq_unmask		= bcm7038_l1_unmask,
+ 	.irq_set_affinity	= bcm7038_l1_set_affinity,
++#ifdef CONFIG_SMP
+ 	.irq_cpu_offline	= bcm7038_l1_cpu_offline,
++#endif
+ };
+ 
+ static int bcm7038_l1_map(struct irq_domain *d, unsigned int virq,
 
 
