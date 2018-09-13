@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39F3FC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:55:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C883C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:55:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E51BA20854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:54:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E51BA20854
+	by mail.kernel.org (Postfix) with ESMTP id D2F3820854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:55:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2F3820854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731235AbeIMTEd (ORCPT
+        id S1731244AbeIMTEg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:04:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33930 "EHLO
+        Thu, 13 Sep 2018 15:04:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33942 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730414AbeIMTEc (ORCPT
+        with ESMTP id S1730414AbeIMTEg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:04:32 -0400
+        Thu, 13 Sep 2018 15:04:36 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D5442D1B;
-        Thu, 13 Sep 2018 13:54:56 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 01299D1D;
+        Thu, 13 Sep 2018 13:54:59 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Song Liu <songliubraving@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
+        stable@vger.kernel.org, Jean-Tsung Hsiao <jhsiao@redhat.com>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Yonghong Song <yhs@fb.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 067/197] bpf, sockmap: fix leakage of smap_psock_map_entry
-Date:   Thu, 13 Sep 2018 15:30:16 +0200
-Message-Id: <20180913131844.199727283@linuxfoundation.org>
+Subject: [PATCH 4.18 068/197] samples/bpf: all XDP samples should unload xdp/bpf prog on SIGTERM
+Date:   Thu, 13 Sep 2018 15:30:17 +0200
+Message-Id: <20180913131844.238179718@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -54,116 +54,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Daniel Borkmann <daniel@iogearbox.net>
+From: Jesper Dangaard Brouer <brouer@redhat.com>
 
-[ Upstream commit d40b0116c94bd8fc2b63aae35ce8e66bb53bba42 ]
+[ Upstream commit 817b89beb9d8876450fcde9155e17425c329569d ]
 
-While working on sockmap I noticed that we do not always kfree the
-struct smap_psock_map_entry list elements which track psocks attached
-to maps. In the case of sock_hash_ctx_update_elem(), these map entries
-are allocated outside of __sock_map_ctx_update_elem() with their
-linkage to the socket hash table filled. In the case of sock array,
-the map entries are allocated inside of __sock_map_ctx_update_elem()
-and added with their linkage to the psock->maps. Both additions are
-under psock->maps_lock each.
+It is common XDP practice to unload/deattach the XDP bpf program,
+when the XDP sample program is Ctrl-C interrupted (SIGINT) or
+killed (SIGTERM).
 
-Now, we drop these elements from their psock->maps list in a few
-occasions: i) in sock array via smap_list_map_remove() when an entry
-is either deleted from the map from user space, or updated via
-user space or BPF program where we drop the old socket at that map
-slot, or the sock array is freed via sock_map_free() and drops all
-its elements; ii) for sock hash via smap_list_hash_remove() in exactly
-the same occasions as just described for sock array; iii) in the
-bpf_tcp_close() where we remove the elements from the list via
-psock_map_pop() and iterate over them dropping themselves from either
-sock array or sock hash; and last but not least iv) once again in
-smap_gc_work() which is a callback for deferring the work once the
-psock refcount hit zero and thus the socket is being destroyed.
+The samples/bpf programs xdp_redirect_cpu and xdp_rxq_info,
+forgot to trap signal SIGTERM (which is the default signal used
+by the kill command).
 
-Problem is that the only case where we kfree() the list entry is
-in case iv), which at that point should have an empty list in
-normal cases. So in cases from i) to iii) we unlink the elements
-without freeing where they go out of reach from us. Hence fix is
-to properly kfree() them as well to stop the leakage. Given these
-are all handled under psock->maps_lock there is no need for deferred
-RCU freeing.
+This was discovered by Red Hat QA, which automated scripts depend
+on killing the XDP sample program after a timeout period.
 
-I later also ran with kmemleak detector and it confirmed the finding
-as well where in the state before the fix the object goes unreferenced
-while after the patch no kmemleak report related to BPF showed up.
-
-  [...]
-  unreferenced object 0xffff880378eadae0 (size 64):
-    comm "test_sockmap", pid 2225, jiffies 4294720701 (age 43.504s)
-    hex dump (first 32 bytes):
-      00 01 00 00 00 00 ad de 00 02 00 00 00 00 ad de  ................
-      50 4d 75 5d 03 88 ff ff 00 00 00 00 00 00 00 00  PMu]............
-    backtrace:
-      [<000000005225ac3c>] sock_map_ctx_update_elem.isra.21+0xd8/0x210
-      [<0000000045dd6d3c>] bpf_sock_map_update+0x29/0x60
-      [<00000000877723aa>] ___bpf_prog_run+0x1e1f/0x4960
-      [<000000002ef89e83>] 0xffffffffffffffff
-  unreferenced object 0xffff880378ead240 (size 64):
-    comm "test_sockmap", pid 2225, jiffies 4294720701 (age 43.504s)
-    hex dump (first 32 bytes):
-      00 01 00 00 00 00 ad de 00 02 00 00 00 00 ad de  ................
-      00 44 75 5d 03 88 ff ff 00 00 00 00 00 00 00 00  .Du]............
-    backtrace:
-      [<000000005225ac3c>] sock_map_ctx_update_elem.isra.21+0xd8/0x210
-      [<0000000030e37a3a>] sock_map_update_elem+0x125/0x240
-      [<000000002e5ce36e>] map_update_elem+0x4eb/0x7b0
-      [<00000000db453cc9>] __x64_sys_bpf+0x1f9/0x360
-      [<0000000000763660>] do_syscall_64+0x9a/0x300
-      [<00000000422a2bb2>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
-      [<000000002ef89e83>] 0xffffffffffffffff
-  [...]
-
-Fixes: e9db4ef6bf4c ("bpf: sockhash fix omitted bucket lock in sock_close")
-Fixes: 54fedb42c653 ("bpf: sockmap, fix smap_list_map_remove when psock is in many maps")
-Fixes: 2f857d04601a ("bpf: sockmap, remove STRPARSER map_flags and add multi-map support")
+Fixes: fad3917e361b ("samples/bpf: add cpumap sample program xdp_redirect_cpu")
+Fixes: 0fca931a6f21 ("samples/bpf: program demonstrating access to xdp_rxq_info")
+Reported-by: Jean-Tsung Hsiao <jhsiao@redhat.com>
+Signed-off-by: Jesper Dangaard Brouer <brouer@redhat.com>
+Acked-by: Yonghong Song <yhs@fb.com>
 Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Acked-by: John Fastabend <john.fastabend@gmail.com>
-Acked-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/bpf/sockmap.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ samples/bpf/xdp_redirect_cpu_user.c |    3 ++-
+ samples/bpf/xdp_rxq_info_user.c     |    3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
---- a/kernel/bpf/sockmap.c
-+++ b/kernel/bpf/sockmap.c
-@@ -376,6 +376,7 @@ static void bpf_tcp_close(struct sock *s
- 			}
- 			raw_spin_unlock_bh(&b->lock);
- 		}
-+		kfree(e);
- 		e = psock_map_pop(sk, psock);
+--- a/samples/bpf/xdp_redirect_cpu_user.c
++++ b/samples/bpf/xdp_redirect_cpu_user.c
+@@ -679,8 +679,9 @@ int main(int argc, char **argv)
+ 		return EXIT_FAIL_OPTION;
  	}
- 	rcu_read_unlock();
-@@ -1685,8 +1686,10 @@ static void smap_list_map_remove(struct
  
- 	spin_lock_bh(&psock->maps_lock);
- 	list_for_each_entry_safe(e, tmp, &psock->maps, list) {
--		if (e->entry == entry)
-+		if (e->entry == entry) {
- 			list_del(&e->list);
-+			kfree(e);
-+		}
- 	}
- 	spin_unlock_bh(&psock->maps_lock);
- }
-@@ -1700,8 +1703,10 @@ static void smap_list_hash_remove(struct
- 	list_for_each_entry_safe(e, tmp, &psock->maps, list) {
- 		struct htab_elem *c = rcu_dereference(e->hash_link);
+-	/* Remove XDP program when program is interrupted */
++	/* Remove XDP program when program is interrupted or killed */
+ 	signal(SIGINT, int_exit);
++	signal(SIGTERM, int_exit);
  
--		if (c == hash_link)
-+		if (c == hash_link) {
- 			list_del(&e->list);
-+			kfree(e);
-+		}
+ 	if (bpf_set_link_xdp_fd(ifindex, prog_fd[prog_num], xdp_flags) < 0) {
+ 		fprintf(stderr, "link set xdp fd failed\n");
+--- a/samples/bpf/xdp_rxq_info_user.c
++++ b/samples/bpf/xdp_rxq_info_user.c
+@@ -534,8 +534,9 @@ int main(int argc, char **argv)
+ 		exit(EXIT_FAIL_BPF);
  	}
- 	spin_unlock_bh(&psock->maps_lock);
- }
+ 
+-	/* Remove XDP program when program is interrupted */
++	/* Remove XDP program when program is interrupted or killed */
+ 	signal(SIGINT, int_exit);
++	signal(SIGTERM, int_exit);
+ 
+ 	if (bpf_set_link_xdp_fd(ifindex, prog_fd, xdp_flags) < 0) {
+ 		fprintf(stderr, "link set xdp fd failed\n");
 
 
