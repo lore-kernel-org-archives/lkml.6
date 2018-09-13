@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7653EC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:01:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BC87C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:01:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CDBF20652
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:01:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CDBF20652
+	by mail.kernel.org (Postfix) with ESMTP id 4867A20652
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:01:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4867A20652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731813AbeIMTLB (ORCPT
+        id S1731826AbeIMTLE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:11:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35026 "EHLO
+        Thu, 13 Sep 2018 15:11:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35036 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730449AbeIMTLA (ORCPT
+        with ESMTP id S1731165AbeIMTLD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:11:00 -0400
+        Thu, 13 Sep 2018 15:11:03 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 07274D19;
-        Thu, 13 Sep 2018 14:01:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2C7D0D20;
+        Thu, 13 Sep 2018 14:01:24 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qu Wenruo <wqu@suse.com>,
-        David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org, John Pittman <jpittman@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 138/197] btrfs: check-integrity: Fix NULL pointer dereference for degraded mount
-Date:   Thu, 13 Sep 2018 15:31:27 +0200
-Message-Id: <20180913131847.077236851@linuxfoundation.org>
+Subject: [PATCH 4.18 112/197] dm kcopyd: avoid softlockup in run_complete_job
+Date:   Thu, 13 Sep 2018 15:31:01 +0200
+Message-Id: <20180913131846.032032003@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -52,49 +52,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Qu Wenruo <wqu@suse.com>
+From: John Pittman <jpittman@redhat.com>
 
-[ Upstream commit 9912bbf6440ba0555e91d3306520da01872c7c1d ]
+[ Upstream commit 784c9a29e99eb40b842c29ecf1cc3a79e00fb629 ]
 
-Commit f8f84b2dfda5 ("btrfs: index check-integrity state hash by a dev_t")
-changed how btrfsic indexes device state.
+It was reported that softlockups occur when using dm-snapshot ontop of
+slow (rbd) storage.  E.g.:
 
-Now we need to access device->bdev->bd_dev, while for degraded mount
-it's completely possible to have device->bdev as NULL, thus it will
-trigger a NULL pointer dereference at mount time.
+[ 4047.990647] watchdog: BUG: soft lockup - CPU#10 stuck for 22s! [kworker/10:23:26177]
+...
+[ 4048.034151] Workqueue: kcopyd do_work [dm_mod]
+[ 4048.034156] RIP: 0010:copy_callback+0x41/0x160 [dm_snapshot]
+...
+[ 4048.034190] Call Trace:
+[ 4048.034196]  ? __chunk_is_tracked+0x70/0x70 [dm_snapshot]
+[ 4048.034200]  run_complete_job+0x5f/0xb0 [dm_mod]
+[ 4048.034205]  process_jobs+0x91/0x220 [dm_mod]
+[ 4048.034210]  ? kcopyd_put_pages+0x40/0x40 [dm_mod]
+[ 4048.034214]  do_work+0x46/0xa0 [dm_mod]
+[ 4048.034219]  process_one_work+0x171/0x370
+[ 4048.034221]  worker_thread+0x1fc/0x3f0
+[ 4048.034224]  kthread+0xf8/0x130
+[ 4048.034226]  ? max_active_store+0x80/0x80
+[ 4048.034227]  ? kthread_bind+0x10/0x10
+[ 4048.034231]  ret_from_fork+0x35/0x40
+[ 4048.034233] Kernel panic - not syncing: softlockup: hung tasks
 
-Fix it by checking if the device is degraded before accessing
-device->bdev->bd_dev.
+Fix this by calling cond_resched() after run_complete_job()'s callout to
+the dm_kcopyd_notify_fn (which is dm-snap.c:copy_callback in the above
+trace).
 
-There are a lot of other places accessing device->bdev->bd_dev, however
-the other call sites have either checked device->bdev, or the
-device->bdev is passed from btrfsic_map_block(), so it won't cause harm.
-
-Fixes: f8f84b2dfda5 ("btrfs: index check-integrity state hash by a dev_t")
-Signed-off-by: Qu Wenruo <wqu@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: John Pittman <jpittman@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/check-integrity.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/md/dm-kcopyd.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/fs/btrfs/check-integrity.c
-+++ b/fs/btrfs/check-integrity.c
-@@ -1539,7 +1539,12 @@ static int btrfsic_map_block(struct btrf
- 	}
+--- a/drivers/md/dm-kcopyd.c
++++ b/drivers/md/dm-kcopyd.c
+@@ -487,6 +487,8 @@ static int run_complete_job(struct kcopy
+ 	if (atomic_dec_and_test(&kc->nr_jobs))
+ 		wake_up(&kc->destroyq);
  
- 	device = multi->stripes[0].dev;
--	block_ctx_out->dev = btrfsic_dev_state_lookup(device->bdev->bd_dev);
-+	if (test_bit(BTRFS_DEV_STATE_MISSING, &device->dev_state) ||
-+	    !device->bdev || !device->name)
-+		block_ctx_out->dev = NULL;
-+	else
-+		block_ctx_out->dev = btrfsic_dev_state_lookup(
-+							device->bdev->bd_dev);
- 	block_ctx_out->dev_bytenr = multi->stripes[0].physical;
- 	block_ctx_out->start = bytenr;
- 	block_ctx_out->len = len;
++	cond_resched();
++
+ 	return 0;
+ }
+ 
 
 
