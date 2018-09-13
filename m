@@ -2,200 +2,136 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=5.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9091DC04AB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 21:42:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 800F2FC6182
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 21:43:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5569E2146E
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 21:42:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5569E2146E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 258232146E
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 21:43:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=konsulko.com header.i=@konsulko.com header.b="EJrt2maw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 258232146E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728294AbeINCxx (ORCPT
+        id S1728300AbeINCzI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 22:53:53 -0400
-Received: from mga01.intel.com ([192.55.52.88]:13954 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728229AbeINCxx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 22:53:53 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Sep 2018 14:37:08 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,370,1531810800"; 
-   d="scan'208";a="263300615"
-Received: from rpedgeco-desk5.jf.intel.com ([10.54.75.168])
-  by fmsmga006.fm.intel.com with ESMTP; 13 Sep 2018 14:37:08 -0700
-From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
-To:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        kernel-hardening@lists.openwall.com, daniel@iogearbox.net,
-        jannh@google.com, keescook@chromium.org,
-        alexei.starovoitov@gmail.com
-Cc:     kristen@linux.intel.com, dave.hansen@intel.com,
-        arjan@linux.intel.com, Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: [PATCH v6 3/4] vmalloc: Add debugfs modfraginfo
-Date:   Thu, 13 Sep 2018 14:31:37 -0700
-Message-Id: <1536874298-23492-4-git-send-email-rick.p.edgecombe@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1536874298-23492-1-git-send-email-rick.p.edgecombe@intel.com>
-References: <1536874298-23492-1-git-send-email-rick.p.edgecombe@intel.com>
+        Thu, 13 Sep 2018 22:55:08 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:38320 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727773AbeINCzI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 22:55:08 -0400
+Received: by mail-io1-f68.google.com with SMTP id y3-v6so4424932ioc.5
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 14:43:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=konsulko.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QC4xCRBf+sqKJaI3IajyAgsIYn5dr5uvIXjrxS/MNtg=;
+        b=EJrt2mawuW9zJlvzt5xdRxqky8DEB+JBFpMcWdyCDS4xjb81alTbs+JIbuWQC8IuKS
+         ox/U1HqtI9+s7g243F7R10Fze89kt1Adc3UkHLzqWl5xht9A4D+FdrnbkoU/LIZnBm5Z
+         2/N4dxr2Ny7i6F/yq3xPwyzvMSWSL9/nyqI8o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QC4xCRBf+sqKJaI3IajyAgsIYn5dr5uvIXjrxS/MNtg=;
+        b=MkhTJy1BhiU1pYmh4HzVPvxeef/M9J4MzDzvZFeNrxeWC86CuiCpOyCbRrcu+pLvI7
+         /QJQPaxiiXFMjM19IpigC6r3rdXeauIJuAv65uat3ae2mF0vTM8HD/T2kdHIzV6P+WY4
+         ulobkXgF+Ei+MZ7cF0qt6r8i/rQv5tSZJzntodvyrxbzfE+L020MO60hJXknz6UvVbNM
+         SLFa5UlHzKKhd3zrWaSCMsL/+WoEObe/jMddzoZHY+Utmbgv+YP6wWvfp3omwJAv8BCn
+         GIyyYiAPQe3iXd2GRO+/W5NFRTy4DwihmzzEy+1VLW48wRcFS2LE4UjLaq9hdUWOAm8W
+         eN0Q==
+X-Gm-Message-State: APzg51AbBW8ilyq23U5dGQUm7qq99pWFumC5unGiSSEsn577ngDhkYhw
+        64P6msBimW06TLNC5aakBOVCE1Jtswo1Ig0Lwq0K/g==
+X-Google-Smtp-Source: ANB0VdZeOcvDBuDDmUV4/d/ADtLxtqTYJmw6IVxifBQHIhe9Q/PBSfgQCkb95VwlqL8lpUXrcJ/LWwLCSoSsdmcCyO0=
+X-Received: by 2002:a6b:ac45:: with SMTP id v66-v6mr8385048ioe.66.1536875028000;
+ Thu, 13 Sep 2018 14:43:48 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180913035145.28056-1-songqiang.1304521@gmail.com>
+In-Reply-To: <20180913035145.28056-1-songqiang.1304521@gmail.com>
+From:   Matt Ranostay <matt.ranostay@konsulko.com>
+Date:   Thu, 13 Sep 2018 14:43:35 -0700
+Message-ID: <CAJCx=gk3Md910hfD2ZiTRNj6mv1nf+r6p_0tYMu7uKiEp4ZvOw@mail.gmail.com>
+Subject: Re: [PATCH] iio: proximity: lidar-v2: replace i2c block access method
+ with the one already implemented.
+To:     songqiang1304521@gmail.com
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        songqiang.1304521@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add debugfs file "modfraginfo" for providing info on module space fragmentation.
-This can be used for determining if loadable module randomization is causing any
-problems for extreme module loading situations, like huge numbers of modules or
-extremely large modules.
+On Wed, Sep 12, 2018 at 8:51 PM Song Qiang <songqiang1304521@gmail.com> wrote:
+>
+> This driver tries to access a block of data on a i2c bus and it tries
+> to manually make a device command frame and a consecutively read frame,
+> then uses i2c_transfer() to read data. But this has already been
+> implemented in i2c_smbus_read_i2c_block_data().
+> Sorry for not having this device by my hand, which is a little expansive
+> for me, but I have another i2c device and tested with both i2c_transfer()
+> and i2c_smbus_read_i2c_block_data() and they all ends the same.
+> I'm not familiar with the SMBus, don't know if the lidar_smbus_xfer()
+> function is the same as i2c_smbus_read_block_data()? The original code
+> is commented with something I'm not sure, but I think if it's a standard
+> SMBus, it should be able to use in here.
+> Hoping for someone to explain.
+>
 
-Sample output when KASLR is enabled and X86_64 is configured:
-	Largest free space:	897912 kB
-	  Total free space:	1025424 kB
-Allocations in backup area:	0
+Yes actually there is a reason for this insanity!
 
-Sample output when just X86_64:
-	Largest free space:	897912 kB
-	  Total free space:	1025424 kB
+It isn't actually SMBUS (note the lidar_smbus_xfer function below it)
+and has a odd way to read registers via I2C.
+Basically the I2C_M_STOP flags is the reason you can use the standard
+i2c_smbus_read_i2c_block_data().
 
-Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
----
- mm/vmalloc.c | 102 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 101 insertions(+), 1 deletion(-)
+Page 6 in this datasheet
+* http://static.garmin.com/pumac/LIDAR_Lite_v3_Operation_Manual_and_Technical_Specifications.pdf
 
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 1954458..a44b902 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -18,6 +18,7 @@
- #include <linux/interrupt.h>
- #include <linux/proc_fs.h>
- #include <linux/seq_file.h>
-+#include <linux/debugfs.h>
- #include <linux/debugobjects.h>
- #include <linux/kallsyms.h>
- #include <linux/list.h>
-@@ -33,6 +34,7 @@
- #include <linux/bitops.h>
- 
- #include <linux/uaccess.h>
-+#include <asm/setup.h>
- #include <asm/tlbflush.h>
- #include <asm/shmparam.h>
- 
-@@ -2919,7 +2921,105 @@ static int __init proc_vmalloc_init(void)
- 		proc_create_seq("vmallocinfo", 0400, NULL, &vmalloc_op);
- 	return 0;
- }
--module_init(proc_vmalloc_init);
-+#else
-+static int __init proc_vmalloc_init(void)
-+{
-+	return 0;
-+}
-+#endif
-+
-+#if defined(CONFIG_RANDOMIZE_BASE) && defined(CONFIG_X86_64)
-+static inline unsigned long is_in_backup(unsigned long addr)
-+{
-+	return addr >= MODULES_VADDR + MODULES_RAND_LEN;
-+}
-+#else
-+static inline unsigned long is_in_backup(unsigned long addr)
-+{
-+	return 0;
-+}
- 
-+inline bool kaslr_enabled(void);
- #endif
- 
-+
-+#if defined(CONFIG_DEBUG_FS) && defined(CONFIG_X86_64)
-+static int modulefraginfo_debug_show(struct seq_file *m, void *v)
-+{
-+	unsigned long last_end = MODULES_VADDR;
-+	unsigned long total_free = 0;
-+	unsigned long largest_free = 0;
-+	unsigned long backup_cnt = 0;
-+	unsigned long gap;
-+	struct vmap_area *prev, *cur = NULL;
-+
-+	spin_lock(&vmap_area_lock);
-+
-+	if (!pvm_find_next_prev(MODULES_VADDR, &cur, &prev) || !cur)
-+		goto done;
-+
-+	for (; cur->va_end <= MODULES_END; cur = list_next_entry(cur, list)) {
-+		/* Don't count areas that are marked to be lazily freed */
-+		if (!(cur->flags & VM_LAZY_FREE)) {
-+			backup_cnt += is_in_backup(cur->va_start);
-+			gap = cur->va_start - last_end;
-+			if (gap > largest_free)
-+				largest_free = gap;
-+			total_free += gap;
-+			last_end = cur->va_end;
-+		}
-+
-+		if (list_is_last(&cur->list, &vmap_area_list))
-+			break;
-+	}
-+
-+done:
-+	gap = (MODULES_END - last_end);
-+	if (gap > largest_free)
-+		largest_free = gap;
-+	total_free += gap;
-+
-+	spin_unlock(&vmap_area_lock);
-+
-+	seq_printf(m, "\tLargest free space:\t%lu kB\n", largest_free / 1024);
-+	seq_printf(m, "\t  Total free space:\t%lu kB\n", total_free / 1024);
-+
-+	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE) && kaslr_enabled())
-+		seq_printf(m, "Allocations in backup area:\t%lu\n", backup_cnt);
-+
-+	return 0;
-+}
-+
-+static int proc_module_frag_debug_open(struct inode *inode, struct file *file)
-+{
-+	return single_open(file, modulefraginfo_debug_show, NULL);
-+}
-+
-+static const struct file_operations debug_module_frag_operations = {
-+	.open       = proc_module_frag_debug_open,
-+	.read       = seq_read,
-+	.llseek     = seq_lseek,
-+	.release    = single_release,
-+};
-+
-+static void __init debug_modfrag_init(void)
-+{
-+	debugfs_create_file("modfraginfo", 0400, NULL, NULL,
-+			&debug_module_frag_operations);
-+}
-+#else /* defined(CONFIG_DEBUG_FS) && defined(CONFIG_X86_64) */
-+static void __init debug_modfrag_init(void)
-+{
-+}
-+#endif
-+
-+#if defined(CONFIG_DEBUG_FS) || defined(CONFIG_PROC_FS)
-+static int __init info_vmalloc_init(void)
-+{
-+	proc_vmalloc_init();
-+	debug_modfrag_init();
-+	return 0;
-+}
-+
-+module_init(info_vmalloc_init);
-+#endif
--- 
-2.7.4
-
+> Signed-off-by: Song Qiang <songqiang.1304521@gmail.com>
+> ---
+>  .../iio/proximity/pulsedlight-lidar-lite-v2.c  | 18 +-----------------
+>  1 file changed, 1 insertion(+), 17 deletions(-)
+>
+> diff --git a/drivers/iio/proximity/pulsedlight-lidar-lite-v2.c b/drivers/iio/proximity/pulsedlight-lidar-lite-v2.c
+> index 47af54f14756..ca880ba8e820 100644
+> --- a/drivers/iio/proximity/pulsedlight-lidar-lite-v2.c
+> +++ b/drivers/iio/proximity/pulsedlight-lidar-lite-v2.c
+> @@ -63,23 +63,7 @@ static const struct iio_chan_spec lidar_channels[] = {
+>
+>  static int lidar_i2c_xfer(struct lidar_data *data, u8 reg, u8 *val, int len)
+>  {
+> -       struct i2c_client *client = data->client;
+> -       struct i2c_msg msg[2];
+> -       int ret;
+> -
+> -       msg[0].addr = client->addr;
+> -       msg[0].flags = client->flags | I2C_M_STOP;
+> -       msg[0].len = 1;
+> -       msg[0].buf  = (char *) &reg;
+> -
+> -       msg[1].addr = client->addr;
+> -       msg[1].flags = client->flags | I2C_M_RD;
+> -       msg[1].len = len;
+> -       msg[1].buf = (char *) val;
+> -
+> -       ret = i2c_transfer(client->adapter, msg, 2);
+> -
+> -       return (ret == 2) ? 0 : -EIO;
+> +       return i2c_smbus_read_i2c_block_data(data->client, reg, len, val);
+>  }
+>
+>  static int lidar_smbus_xfer(struct lidar_data *data, u8 reg, u8 *val, int len)
+> --
+> 2.17.1
+>
