@@ -2,183 +2,117 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B3CBFA375C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EF25FC616E
 	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 17:35:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BA972175D
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 16:57:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BA972175D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kaod.org
+	by mail.kernel.org (Postfix) with ESMTP id 28BBF21722
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 16:42:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28BBF21722
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727560AbeIMWHy (ORCPT
+        id S1728468AbeIMVxK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 18:07:54 -0400
-Received: from 5.mo173.mail-out.ovh.net ([46.105.40.148]:46436 "EHLO
-        5.mo173.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727194AbeIMWHy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 18:07:54 -0400
-X-Greylist: delayed 39771 seconds by postgrey-1.27 at vger.kernel.org; Thu, 13 Sep 2018 18:07:51 EDT
-Received: from player687.ha.ovh.net (unknown [10.109.160.143])
-        by mo173.mail-out.ovh.net (Postfix) with ESMTP id C5037D59B8
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 18:51:17 +0200 (CEST)
-Received: from zorba.kaod.org (LFbn-1-10605-110.w90-89.abo.wanadoo.fr [90.89.196.110])
-        (Authenticated sender: postmaster@kaod.org)
-        by player687.ha.ovh.net (Postfix) with ESMTPSA id D74922C00B1;
-        Thu, 13 Sep 2018 18:51:04 +0200 (CEST)
-Subject: Re: [PATCH i2c-next v6] i2c: aspeed: Handle master/slave combined irq
- events properly
-To:     Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc:     Joel Stanley <joel@jms.id.au>, linux-aspeed@lists.ozlabs.org,
-        Vernon Mauery <vernon.mauery@linux.intel.com>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-i2c@vger.kernel.org, jarkko.nikula@linux.intel.com,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        James Feist <james.feist@linux.intel.com>
-References: <20180823225731.19063-1-jae.hyun.yoo@linux.intel.com>
- <20180911183734.GA21976@roeck-us.net>
- <1f34fe8c-69ef-5f2d-25dc-d5f6037cc558@linux.intel.com>
- <20180911204107.GA26017@roeck-us.net>
- <e5135af4-9105-214f-5de2-65cc03804222@linux.intel.com>
- <CACPK8Xdv3aP_zOHAL0WMgwvkpBHAUesU7OdhW==jgvXjRmt-Zw@mail.gmail.com>
- <20180911233302.GA18799@roeck-us.net>
- <5698ca34-14c9-8d05-c4e6-5acf85ff9d14@linux.intel.com>
- <20180912013449.GA12612@roeck-us.net>
- <7fd98646-fb5a-be4d-ce37-84b74e0fa8b3@linux.intel.com>
- <285ea914-5407-7fde-036d-95978f95a430@kaod.org>
- <7a1706b1-7787-eeff-2295-f6180fe84c6e@linux.intel.com>
-From:   =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>
-Message-ID: <798fd5fe-475f-f633-c830-62a3e4f1692d@kaod.org>
-Date:   Thu, 13 Sep 2018 18:51:04 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 13 Sep 2018 17:53:10 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51170 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728430AbeIMVxJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 17:53:09 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 76FDD1684;
+        Thu, 13 Sep 2018 09:42:52 -0700 (PDT)
+Received: from e110467-lin.cambridge.arm.com (e110467-lin.emea.arm.com [10.4.12.131])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id AC5243F703;
+        Thu, 13 Sep 2018 09:42:50 -0700 (PDT)
+From:   Robin Murphy <robin.murphy@arm.com>
+To:     joro@8bytes.org, will.deacon@arm.com, thunder.leizhen@huawei.com,
+        iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     linuxarm@huawei.com, guohanjun@huawei.com, huawei.libin@huawei.com,
+        john.garry@huawei.com
+Subject: [PATCH v6 7/7] iommu/dma: Add bootup option "iommu.non_strict"
+Date:   Thu, 13 Sep 2018 17:42:24 +0100
+Message-Id: <94fe2e15d36565e13218b007b9d5d9d08f190e5e.1536856828.git.robin.murphy@arm.com>
+X-Mailer: git-send-email 2.19.0.dirty
+In-Reply-To: <cover.1536856828.git.robin.murphy@arm.com>
+References: <cover.1536856828.git.robin.murphy@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <7a1706b1-7787-eeff-2295-f6180fe84c6e@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 10774017683744983936
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtjedrjeeigddutdefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddm
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello ! 
+From: Zhen Lei <thunder.leizhen@huawei.com>
 
-On 09/13/2018 06:31 PM, Jae Hyun Yoo wrote:
-> Hi Cédric,
-> 
-> On 9/12/2018 10:47 PM, Cédric Le Goater wrote:
->> On 09/12/2018 06:54 PM, Jae Hyun Yoo wrote:
->>> On 9/11/2018 6:34 PM, Guenter Roeck wrote:
->>>> On Tue, Sep 11, 2018 at 04:58:44PM -0700, Jae Hyun Yoo wrote:
->>>>> On 9/11/2018 4:33 PM, Guenter Roeck wrote:
->>>>>> Looking into the patch, clearing the interrupt status at the end of an
->>>>>> interrupt handler is always suspicious and tends to result in race
->>>>>> conditions (because additional interrupts may have arrived while handling
->>>>>> the existing interrupts, or because interrupt handling itself may trigger
->>>>>> another interrupt). With that in mind, the following patch fixes the
->>>>>> problem for me.
->>>>>>
->>>>>> Guenter
->>>>>>
->>>>>> ---
->>>>>>
->>>>>> diff --git a/drivers/i2c/busses/i2c-aspeed.c b/drivers/i2c/busses/i2c-aspeed.c
->>>>>> index c258c4d9a4c0..c488e6950b7c 100644
->>>>>> --- a/drivers/i2c/busses/i2c-aspeed.c
->>>>>> +++ b/drivers/i2c/busses/i2c-aspeed.c
->>>>>> @@ -552,6 +552,8 @@ static irqreturn_t aspeed_i2c_bus_irq(int irq, void *dev_id)
->>>>>>        spin_lock(&bus->lock);
->>>>>>        irq_received = readl(bus->base + ASPEED_I2C_INTR_STS_REG);
->>>>>> +    /* Ack all interrupt bits. */
->>>>>> +    writel(irq_received, bus->base + ASPEED_I2C_INTR_STS_REG);
->>>>>>        irq_remaining = irq_received;
->>>>>>    #if IS_ENABLED(CONFIG_I2C_SLAVE)
->>>>>> @@ -584,8 +586,6 @@ static irqreturn_t aspeed_i2c_bus_irq(int irq, void *dev_id)
->>>>>>                "irq handled != irq. expected 0x%08x, but was 0x%08x\n",
->>>>>>                irq_received, irq_handled);
->>>>>> -    /* Ack all interrupt bits. */
->>>>>> -    writel(irq_received, bus->base + ASPEED_I2C_INTR_STS_REG);
->>>>>>        spin_unlock(&bus->lock);
->>>>>>        return irq_remaining ? IRQ_NONE : IRQ_HANDLED;
->>>>>>    }
->>>>>>
->>>>>
->>>>> My intention of putting the code at the end of interrupt handler was,
->>>>> to reduce possibility of combined irq calls which is explained in this
->>>>> patch. But YES, I agree with you. It could make a potential race
->>>>
->>>> Hmm, yes, but that doesn't explain why it would make sense to acknowledge
->>>> the interrupt late. The interrupt ack only means "I am going to handle these
->>>> interrupts". If additional interrupts arrive while the interrupt handler
->>>> is active, those will have to be acknowledged separately.
->>>>
->>>> Sure, there is a risk that an interrupt arrives while the handler is
->>>> running, and that it is handled but not acknowledged. That can happen
->>>> with pretty much all interrupt handlers, and there are mitigations to
->>>> limit the impact (for example, read the interrupt status register in
->>>> a loop until no more interrupts are pending). But acknowledging
->>>> an interrupt that was possibly not handled is always bad idea.
->>>
->>> Well, that's generally right but not always. Sometimes that depends on
->>> hardware and Aspeed I2C is the case.
->>>
->>> This is a description from Aspeed AST2500 datasheet:
->>>    I2CD10 Interrupt Status Register
->>>    bit 2 Receive Done Interrupt status
->>>          S/W needs to clear this status bit to allow next data receiving.
->>>
->>> It means, driver should hold this bit to prevent transition of hardware
->>> state machine until the driver handles received data, so the bit should
->>> be cleared at the end of interrupt handler.
->>>
->>> Let me share my test result. Your code change works on 100KHz bus speed
->>> but doesn't work well on 1MHz bus speed. Investigated that interrupt
->>> handling is fast enough in 100KHz test but in 1MHz, most of data is
->>> corrupted because the bit is cleared at the beginning of interrupt
->>> handler so it allows receiving of the next data but the interrupt
->>> handler isn't fast enough to read the data buffer on time. I checked
->>> this problem on BMC-ME channel which ME sends lots of IPMB packets to
->>> BMC at 1MHz speed. You could simply check the data corruption problem on
->>> the BMC-ME channel.
->>
->> OK.
->>  
->>> My thought is, the current code is right for real Aspeed I2C hardware.
->>> It seems that QEMU 3.0 model for witherspoon-bmc doesn't simulate the
->>> actual Aspeed I2C hardware correctly.
->>
->> That might be very well possible yes. it also misses support for the slave
->> mode and the DMA registers.
->>
-> 
-> Yes, it would be good if qemu's Aspeed I2C model supports slave mode.
-> Since the current linux Aspeed I2C driver supports byte transfer mode
-> only, so DMA transfer mode support in qemu could be considered later.
+Add a bootup option to make the system manager can choose which mode to
+be used. The default mode is strict.
 
-The Aspeed SDK already does, so yes, we will need to consider it.
+Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+[rm: make it a generic iommu-dma feature]
+Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+---
+ .../admin-guide/kernel-parameters.txt          | 13 +++++++++++++
+ drivers/iommu/dma-iommu.c                      | 18 ++++++++++++++++++
+ 2 files changed, 31 insertions(+)
 
-> Implementing pool mode and DMA mode for linux Aspeed I2C are in my
-> backlog at this moment.
-
-Is there a QEMU model for an I2C/IPMB device ? 
-
-There is already a large IPMI framework in QEMU, that would be interesting.
-to extend.
-
-Thanks,
-
-C. 
-
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 9871e649ffef..406b91759b62 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -1749,6 +1749,19 @@
+ 		nobypass	[PPC/POWERNV]
+ 			Disable IOMMU bypass, using IOMMU for PCI devices.
+ 
++	iommu.non_strict=	[ARM64]
++			Format: { "0" | "1" }
++			0 - strict mode, default.
++			    Release IOVAs after the related TLBs are invalid
++			    completely.
++			1 - non-strict mode.
++			    Put off TLBs invalidation and release memory first.
++			    It's good for scatter-gather performance but lacks
++			    full isolation, an untrusted device can access the
++			    reused memory because the TLBs may still valid.
++			    Please take	full consideration before choosing this
++			    mode. Note that, VFIO will always use strict mode.
++
+ 	iommu.passthrough=
+ 			[ARM64] Configure DMA to bypass the IOMMU by default.
+ 			Format: { "0" | "1" }
+diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+index d91849fe4ebe..04d4c5453acd 100644
+--- a/drivers/iommu/dma-iommu.c
++++ b/drivers/iommu/dma-iommu.c
+@@ -62,6 +62,24 @@ struct iommu_dma_cookie {
+ 
+ static bool iommu_dma_non_strict __read_mostly;
+ 
++static int __init iommu_dma_setup(char *str)
++{
++	int ret;
++
++	ret = kstrtobool(str, &iommu_dma_non_strict);
++	if (ret)
++		return ret;
++
++	if (iommu_dma_non_strict) {
++		pr_warn("WARNING: iommu non-strict mode is chosen.\n"
++			"It's good for scatter-gather performance but lacks full isolation\n");
++		add_taint(TAINT_WARN, LOCKDEP_STILL_OK);
++	}
++
++	return 0;
++}
++early_param("iommu.non_strict", iommu_dma_setup);
++
+ static inline size_t cookie_msi_granule(struct iommu_dma_cookie *cookie)
+ {
+ 	if (cookie->type == IOMMU_DMA_IOVA_COOKIE)
+-- 
+2.19.0.dirty
 
