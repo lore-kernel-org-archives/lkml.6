@@ -6,38 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 012E4C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:31:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 811F9C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:31:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B025B20C0A
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:31:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B025B20C0A
+	by mail.kernel.org (Postfix) with ESMTP id 349DD20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:31:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 349DD20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728036AbeIMSlI (ORCPT
+        id S1728073AbeIMSlL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:41:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58382 "EHLO
+        Thu, 13 Sep 2018 14:41:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58396 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727806AbeIMSlH (ORCPT
+        with ESMTP id S1726637AbeIMSlL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:41:07 -0400
+        Thu, 13 Sep 2018 14:41:11 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 453C6D1A;
-        Thu, 13 Sep 2018 13:31:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E71DED1B;
+        Thu, 13 Sep 2018 13:31:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        icytxw@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
+        stable@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Vegard Nossum <vegard.nossum@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 15/60] mm/fadvise.c: fix signed overflow UBSAN complaint
-Date:   Thu, 13 Sep 2018 15:30:22 +0200
-Message-Id: <20180913131746.067804505@linuxfoundation.org>
+Subject: [PATCH 4.4 16/60] fs/dcache.c: fix kmemcheck splat at take_dentry_name_snapshot()
+Date:   Thu, 13 Sep 2018 15:30:23 +0200
+Message-Id: <20180913131746.127262201@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131745.261413581@linuxfoundation.org>
 References: <20180913131745.261413581@linuxfoundation.org>
@@ -55,52 +56,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andrey Ryabinin <aryabinin@virtuozzo.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-[ Upstream commit a718e28f538441a3b6612da9ff226973376cdf0f ]
+[ Upstream commit 6cd00a01f0c1ae6a852b09c59b8dd55cc6c35d1d ]
 
-Signed integer overflow is undefined according to the C standard.  The
-overflow in ksys_fadvise64_64() is deliberate, but since it is signed
-overflow, UBSAN complains:
+Since only dentry->d_name.len + 1 bytes out of DNAME_INLINE_LEN bytes
+are initialized at __d_alloc(), we can't copy the whole size
+unconditionally.
 
-	UBSAN: Undefined behaviour in mm/fadvise.c:76:10
-	signed integer overflow:
-	4 + 9223372036854775805 cannot be represented in type 'long long int'
+ WARNING: kmemcheck: Caught 32-bit read from uninitialized memory (ffff8fa27465ac50)
+ 636f6e66696766732e746d70000000000010000000000000020000000188ffff
+  i i i i i i i i i i i i i u u u u u u u u u u i i i i i u u u u
+                                  ^
+ RIP: 0010:take_dentry_name_snapshot+0x28/0x50
+ RSP: 0018:ffffa83000f5bdf8 EFLAGS: 00010246
+ RAX: 0000000000000020 RBX: ffff8fa274b20550 RCX: 0000000000000002
+ RDX: ffffa83000f5be40 RSI: ffff8fa27465ac50 RDI: ffffa83000f5be60
+ RBP: ffffa83000f5bdf8 R08: ffffa83000f5be48 R09: 0000000000000001
+ R10: ffff8fa27465ac00 R11: ffff8fa27465acc0 R12: ffff8fa27465ac00
+ R13: ffff8fa27465acc0 R14: 0000000000000000 R15: 0000000000000000
+ FS:  00007f79737ac8c0(0000) GS:ffffffff8fc30000(0000) knlGS:0000000000000000
+ CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ CR2: ffff8fa274c0b000 CR3: 0000000134aa7002 CR4: 00000000000606f0
+  take_dentry_name_snapshot+0x28/0x50
+  vfs_rename+0x128/0x870
+  SyS_rename+0x3b2/0x3d0
+  entry_SYSCALL_64_fastpath+0x1a/0xa4
+  0xffffffffffffffff
 
-Use unsigned types to do math.  Unsigned overflow is defined so UBSAN
-will not complain about it.  This patch doesn't change generated code.
-
-[akpm@linux-foundation.org: add comment explaining the casts]
-Link: http://lkml.kernel.org/r/20180629184453.7614-1-aryabinin@virtuozzo.com
-Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Reported-by: <icytxw@gmail.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
+Link: http://lkml.kernel.org/r/201709131912.GBG39012.QMJLOVFSFFOOtH@I-love.SAKURA.ne.jp
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: Vegard Nossum <vegard.nossum@gmail.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/fadvise.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ fs/dcache.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/mm/fadvise.c
-+++ b/mm/fadvise.c
-@@ -68,8 +68,12 @@ SYSCALL_DEFINE4(fadvise64_64, int, fd, l
- 		goto out;
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -278,7 +278,8 @@ void take_dentry_name_snapshot(struct na
+ 		spin_unlock(&dentry->d_lock);
+ 		name->name = p->name;
+ 	} else {
+-		memcpy(name->inline_name, dentry->d_iname, DNAME_INLINE_LEN);
++		memcpy(name->inline_name, dentry->d_iname,
++		       dentry->d_name.len + 1);
+ 		spin_unlock(&dentry->d_lock);
+ 		name->name = name->inline_name;
  	}
- 
--	/* Careful about overflows. Len == 0 means "as much as possible" */
--	endbyte = offset + len;
-+	/*
-+	 * Careful about overflows. Len == 0 means "as much as possible".  Use
-+	 * unsigned math because signed overflows are undefined and UBSan
-+	 * complains.
-+	 */
-+	endbyte = (u64)offset + (u64)len;
- 	if (!len || endbyte < len)
- 		endbyte = -1;
- 	else
 
 
