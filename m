@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 825E1C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:43:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C372CC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:43:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4719820854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:43:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4719820854
+	by mail.kernel.org (Postfix) with ESMTP id 8612120854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:43:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8612120854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729889AbeIMSxK (ORCPT
+        id S1729901AbeIMSxO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:53:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60378 "EHLO
+        Thu, 13 Sep 2018 14:53:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60392 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729312AbeIMSxK (ORCPT
+        with ESMTP id S1728536AbeIMSxN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:53:10 -0400
+        Thu, 13 Sep 2018 14:53:13 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C929CCF3;
-        Thu, 13 Sep 2018 13:43:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F2E32D19;
+        Thu, 13 Sep 2018 13:43:40 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        Zha Qipeng <qipeng.zha@intel.com>,
-        platform-driver-x86@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        stable@vger.kernel.org, Roman Mamedov <rm@romanrm.net>,
+        Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 037/115] platform/x86: intel_punit_ipc: fix build errors
-Date:   Thu, 13 Sep 2018 15:30:57 +0200
-Message-Id: <20180913131825.993778835@linuxfoundation.org>
+Subject: [PATCH 4.14 038/115] netfilter: ip6t_rpfilter: set F_IFACE for linklocal addresses
+Date:   Thu, 13 Sep 2018 15:30:58 +0200
+Message-Id: <20180913131826.071061783@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -54,39 +53,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Florian Westphal <fw@strlen.de>
 
-[ Upstream commit 340fd4cff43f18bace9358d4decdc9b6ed0715be ]
+[ Upstream commit da786717e0894886301ed2536843c13f9e8fd53e ]
 
-Fix build errors by #including <linux/io.h>.
+Roman reports that DHCPv6 client no longer sees replies from server
+due to
 
-../drivers/platform/x86/intel_punit_ipc.c: In function 'ipc_read_status':
-../drivers/platform/x86/intel_punit_ipc.c:55:2: error: implicit declaration of function 'readl' [-Werror=implicit-function-declaration]
-  return readl(ipcdev->base[type][BASE_IFACE]);
-../drivers/platform/x86/intel_punit_ipc.c: In function 'ipc_write_cmd':
-../drivers/platform/x86/intel_punit_ipc.c:60:2: error: implicit declaration of function 'writel' [-Werror=implicit-function-declaration]
-  writel(cmd, ipcdev->base[type][BASE_IFACE]);
+ip6tables -t raw -A PREROUTING -m rpfilter --invert -j DROP
 
-Fixes: 447ae3166702 ("x86: Don't include linux/irq.h from asm/hardirq.h")
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Zha Qipeng <qipeng.zha@intel.com>
-Cc: platform-driver-x86@vger.kernel.org
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+rule.  We need to set the F_IFACE flag for linklocal addresses, they
+are scoped per-device.
+
+Fixes: 47b7e7f82802 ("netfilter: don't set F_IFACE on ipv6 fib lookups")
+Reported-by: Roman Mamedov <rm@romanrm.net>
+Tested-by: Roman Mamedov <rm@romanrm.net>
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/platform/x86/intel_punit_ipc.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/ipv6/netfilter/ip6t_rpfilter.c |   12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
---- a/drivers/platform/x86/intel_punit_ipc.c
-+++ b/drivers/platform/x86/intel_punit_ipc.c
-@@ -17,6 +17,7 @@
- #include <linux/bitops.h>
- #include <linux/device.h>
- #include <linux/interrupt.h>
-+#include <linux/io.h>
- #include <linux/platform_device.h>
- #include <asm/intel_punit_ipc.h>
+--- a/net/ipv6/netfilter/ip6t_rpfilter.c
++++ b/net/ipv6/netfilter/ip6t_rpfilter.c
+@@ -26,6 +26,12 @@ static bool rpfilter_addr_unicast(const
+ 	return addr_type & IPV6_ADDR_UNICAST;
+ }
  
++static bool rpfilter_addr_linklocal(const struct in6_addr *addr)
++{
++	int addr_type = ipv6_addr_type(addr);
++	return addr_type & IPV6_ADDR_LINKLOCAL;
++}
++
+ static bool rpfilter_lookup_reverse6(struct net *net, const struct sk_buff *skb,
+ 				     const struct net_device *dev, u8 flags)
+ {
+@@ -48,7 +54,11 @@ static bool rpfilter_lookup_reverse6(str
+ 	}
+ 
+ 	fl6.flowi6_mark = flags & XT_RPFILTER_VALID_MARK ? skb->mark : 0;
+-	if ((flags & XT_RPFILTER_LOOSE) == 0)
++
++	if (rpfilter_addr_linklocal(&iph->saddr)) {
++		lookup_flags |= RT6_LOOKUP_F_IFACE;
++		fl6.flowi6_oif = dev->ifindex;
++	} else if ((flags & XT_RPFILTER_LOOSE) == 0)
+ 		fl6.flowi6_oif = dev->ifindex;
+ 
+ 	rt = (void *) ip6_route_lookup(net, &fl6, lookup_flags);
 
 
