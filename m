@@ -2,81 +2,84 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=5.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F7CFC43143
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 19:48:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC208C43143
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 19:53:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7B1E20866
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 19:48:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WPNGaT0B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7B1E20866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 6C55E20882
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 19:53:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C55E20882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728163AbeINA7M (ORCPT
+        id S1728046AbeINBEW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 20:59:12 -0400
-Received: from mail-it0-f47.google.com ([209.85.214.47]:39740 "EHLO
-        mail-it0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726839AbeINA7M (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 20:59:12 -0400
-Received: by mail-it0-f47.google.com with SMTP id h1-v6so9301619itj.4;
-        Thu, 13 Sep 2018 12:48:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EpSqoHloRitp382xCPsaYDoJMi4lr5stUxXxiJnsPlA=;
-        b=WPNGaT0B1C2fhOUJv+s1H+H0JTT2WPX+3G8rhSvnxrGyoKUpif1+UcO8sD7qzYbvhA
-         MgFKL9bNM3krcJDZsMUgbKl53x6Sisb+hn2b2Ge6B7mtoETId9nIFLuC34qQucOcPWji
-         uss0q8sWrT7ns6ZvLP55+SnnVZC2bIAp2BlFhlMsjlfnh0OkAQqOMpVyUXgWKTgfQl75
-         tDjs+TxLyVtj5za4esFVulqmMG2EtZBxdxI+cVx5tqr46MNKT2pDBGBXes3AlHpzjJ4D
-         CpaBRDvcU57ETt6SYTVF2cZNGIQoBZKgTWUZWx/6ETC7/xIBcECHL1YxloV33WIroFge
-         xjFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EpSqoHloRitp382xCPsaYDoJMi4lr5stUxXxiJnsPlA=;
-        b=V0JbOoUDxLRDTu337hx+Gyg4BPm6oxxWSAVRAsaiZu6DbMRXu1oi4cosPCEIGqLCXV
-         X6ItMTTbRWDPv3IIJ90dxmUhNUPMLxuKU8+IfktvEzmAnKO8ktA9VhNqSC+GiLxI2XUb
-         wCfmcx34IwK+UrkeRyrzY7f2aQjuKWXqcx6pwp9d3qQqYv7lVQnF9IsoXOCq2OSm2o7B
-         CSZHL9fIlwtnKWtYtdEtNl2/J8PSYFi38YcbjBh9rWCuBh/0MnYWgNCZ6Ac7Hgse9aj0
-         nu1lrV9mQpg6gxcmkAxS39aTL9d+UhXgR+Fx7lgOGT3xok5xoGyRdmVfSbS8qspMClIY
-         YFmQ==
-X-Gm-Message-State: APzg51AxNzNuM/Kuc31lQ0qkFFZdnYkd7uowNlNWAB3aHKVV0iqOWBDU
-        +P54ewuexBngymgU+cVXNoW9Y/yTXcI/xdi3AoQ=
-X-Google-Smtp-Source: ANB0Vda56dvk25MRqJ8rdxI6lf2EKAR4j/4S/wLrLxhBjUdNF/m/sgB0+I5vSkBS4xOoL725P0WhdO9Y+UQG/NaaBdc=
-X-Received: by 2002:a24:7bd4:: with SMTP id q203-v6mr7626953itc.123.1536868094236;
- Thu, 13 Sep 2018 12:48:14 -0700 (PDT)
+        Thu, 13 Sep 2018 21:04:22 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:33874 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727640AbeINBEW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 21:04:22 -0400
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 816CF30022E6;
+        Thu, 13 Sep 2018 19:53:24 +0000 (UTC)
+Received: from oldenburg.str.redhat.com (ovpn-116-49.ams2.redhat.com [10.36.116.49])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id DC8CF2010CF7;
+        Thu, 13 Sep 2018 19:53:22 +0000 (UTC)
+Subject: Re: [PATCH v3] x86/vdso: Handle clock_gettime(CLOCK_TAI) in vDSO
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Matt Rickard <matt@softrans.com.au>,
+        Stephen Boyd <sboyd@kernel.org>,
+        John Stultz <john.stultz@linaro.org>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20180901015935.CCF0B18E20A9@virtux64.softrans.com.au>
+ <CALCETrU4PzskO9pE6G4EkXNRRX3Mu7Vvjv1P8XgrfRMdgGDZSg@mail.gmail.com>
+ <alpine.DEB.2.21.1809092159440.1402@nanos.tec.linutronix.de>
+ <dde36e93-a21b-6223-8ffc-6dd11f687d38@redhat.com>
+ <alpine.DEB.2.21.1809121616040.9957@nanos.tec.linutronix.de>
+ <59403142-1073-3926-65dd-ac55ead357b9@redhat.com>
+ <alpine.DEB.2.21.1809121623430.9957@nanos.tec.linutronix.de>
+ <DEC1E2DC-2D89-4955-81FC-4EDCF3692214@amacapital.net>
+ <0120ea99-fcac-839a-ef8f-1daa74c17bec@redhat.com>
+ <F5CE2714-B491-490D-9B03-E111A61E333F@amacapital.net>
+ <5f9e890c-fd67-2e39-42ca-64290301b20a@redhat.com>
+ <B47AF238-71A6-4FC1-BC5A-55893C2D76B0@amacapital.net>
+From:   Florian Weimer <fweimer@redhat.com>
+Message-ID: <b9ba6669-205e-023d-2c11-fc962dc32d55@redhat.com>
+Date:   Thu, 13 Sep 2018 21:53:20 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180911161527.GA30689@vnote> <20180912083844.iegei2kobcz4b7ag@ws.net.home>
- <6d349d22d37041c1a2942d8ed4c76b69@AcuMS.aculab.com>
-In-Reply-To: <6d349d22d37041c1a2942d8ed4c76b69@AcuMS.aculab.com>
-From:   Eugene Korenevsky <ekorenevsky@gmail.com>
-Date:   Thu, 13 Sep 2018 22:48:03 +0300
-Message-ID: <CAJC2YLaug4=7otnRC7x+UdDp=5ErgJFHFL_7mjRO7sdM2CrUfQ@mail.gmail.com>
-Subject: Re: [PATCH v2] efi: take size of partition entry from GPT header
-To:     David.Laight@aculab.com
-Cc:     kzak@redhat.com, Davidlohr Bueso <dave@stgolabs.net>,
-        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <B47AF238-71A6-4FC1-BC5A-55893C2D76B0@amacapital.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Thu, 13 Sep 2018 19:53:24 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> I suspect you also need a sanity check that the value isn't too small
-> or stupidly large.
+On 09/13/2018 09:35 PM, Andy Lutomirski wrote:
 
-What would be the criterion for too large entries?
+>> Somewhat special, yes, but not overly so, and not in the type-polymorphic sense.  We can't give direct access of the vDSO implementation to applications because the kernel does not know about the userspace errno variable.  We do that for time on x86_64, where applications call into the vDSO directly, bypassing glibc completely after binding.
+> 
+> If the vDSO adds special helpers for CLOCK_MONOTONIC and CLOCK_REALTIME, I think we can reasonably safely promise that they never fail. (seccomp can obviously break that promise if there’s no TSC, but I think that seccomp users who do that get to keep both pieces.)
 
--- 
-Eugene
+I agree, I thought about the same thing.  We already do not return 
+EFAULT for invalid pointers, for obvious reasons.  And if the clock ID 
+is fixed, the EINVAL error is impossible.
+
+That would shave off a few nanoseconds more if the calling convention is 
+identical to what glibc exposes to applications.  If the vDSO is not 
+available or the symbol is missing, we can provide an implementation 
+based on the current clock_gettime in glibc.
+
+Thanks,
+Florian
