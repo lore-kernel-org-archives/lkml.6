@@ -1,70 +1,465 @@
-Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4442AC070C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 23:56:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4B8BC070C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 00:00:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E90862087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 23:56:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E90862087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 6814D20882
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 00:00:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WBc64pCX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6814D20882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726786AbeIMFDe (ORCPT
+        id S1726830AbeIMFG5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 01:03:34 -0400
-Received: from mga02.intel.com ([134.134.136.20]:58928 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726111AbeIMFDe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 01:03:34 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Sep 2018 16:56:43 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,366,1531810800"; 
-   d="scan'208";a="89529279"
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by fmsmga001.fm.intel.com with ESMTP; 12 Sep 2018 16:56:42 -0700
-Date:   Wed, 12 Sep 2018 16:54:08 -0700
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Fenghua Yu <fenghua.yu@intel.com>, Ingo Molnar <mingo@redhat.com>,
-        H Peter Anvin <hpa@zytor.com>,
-        Tony Luck <tony.luck@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        x86 <x86@kernel.org>, Xiaochen Shen <xiaochen.shen@intel.com>
-Subject: Re: [PATCH] x86/intel_rdt: Show missing resctrl mount options
-Message-ID: <20180912235408.GA59943@romley-ivt3.sc.intel.com>
-References: <1536110984-154868-1-git-send-email-fenghua.yu@intel.com>
- <alpine.DEB.2.21.1809081405580.1402@nanos.tec.linutronix.de>
+        Thu, 13 Sep 2018 01:06:57 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:35643 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726204AbeIMFG4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 01:06:56 -0400
+Received: by mail-yw1-f66.google.com with SMTP id 14-v6so449504ywe.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 17:00:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=/0hqXGNHcd777vdKk0Oq6aY19XEkOHM4At0BKSCfJqA=;
+        b=WBc64pCXU8P1nOoKO8oYwmmer8b0a1khEzpsX37c6tul7bMnywwpMCf5kpL5PV0Jwa
+         BPK29QdojKTqMoSXB8iFzURnK+mIAmrT6k7/PIYV6a6Yzceju3jWp7nfXzmSXmZ96n+A
+         fpuT4tGnzIgKqM+WxWmzuDiYrQH6k+oZs0Vik=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=/0hqXGNHcd777vdKk0Oq6aY19XEkOHM4At0BKSCfJqA=;
+        b=QKKu8SqxPP9HwtAv5Kwe/sZw23evubMeyROlmwZ2xmx7/QKHj2yyH9/bNNIFPAqDcy
+         LVm6eLYpc4rS9yCBJy1/UN9WM5gebtFR4FTKRJ9dsgWCxEbsGZrZUDhig3oplIb0TPsa
+         EIF9CqxVvLjDnRu9eRKvxZFDbNu1bTUF5Vc80eS+fsglJTafGErzm+Z64VDXvCPU3rBt
+         HpgdHHCKxG0nXN6arNX9sJbLL2A95gQtlu/xgWow5NHG0bszXEe6BQvdZ5oNBaBTig8p
+         kczSO0GTqmOe+P9kKd9BXoPlfhxTjU50lMHXxTrhV+wwxvzfkFNf81oqXJSh7j7M5xVn
+         fubQ==
+X-Gm-Message-State: APzg51BR9j/fbDENLEkAgo94c1c+Z39zmaerA8XsXngtJrkfS6rmX9nb
+        SEynDhGeMFxm8csLgqJBEuVemJfsMp8=
+X-Google-Smtp-Source: ANB0VdYcyPYmxwkXvv6/NwAL65JQvZkMfG67gf7zTLORZEQHZD1KtLg9jAq/xX6y+gLD19yL89xpQg==
+X-Received: by 2002:a81:a195:: with SMTP id y143-v6mr2217224ywg.200.1536796802980;
+        Wed, 12 Sep 2018 17:00:02 -0700 (PDT)
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com. [209.85.219.179])
+        by smtp.gmail.com with ESMTPSA id z125-v6sm857443ywg.57.2018.09.12.17.00.01
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Sep 2018 17:00:01 -0700 (PDT)
+Received: by mail-yb1-f179.google.com with SMTP id m123-v6so2565037ybm.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 17:00:01 -0700 (PDT)
+X-Received: by 2002:a25:5c87:: with SMTP id q129-v6mr2313800ybb.403.1536796800997;
+ Wed, 12 Sep 2018 17:00:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1809081405580.1402@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Received: by 2002:a25:5f04:0:0:0:0:0 with HTTP; Wed, 12 Sep 2018 17:00:00
+ -0700 (PDT)
+In-Reply-To: <748e4bca-41f1-c43b-a691-bf6b3d910793@schaufler-ca.com>
+References: <cbf848ae-a1ac-c5ab-f23b-bc9217fceebe@schaufler-ca.com> <748e4bca-41f1-c43b-a691-bf6b3d910793@schaufler-ca.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 12 Sep 2018 17:00:00 -0700
+X-Gmail-Original-Message-ID: <CAGXu5j+WwT=eFv8upvSHUUHq23TQJ3HvXy=ASZOwsQRR88Wg4w@mail.gmail.com>
+Message-ID: <CAGXu5j+WwT=eFv8upvSHUUHq23TQJ3HvXy=ASZOwsQRR88Wg4w@mail.gmail.com>
+Subject: Re: [PATCH 06/10] LSM: Infrastructure management of the file security blob
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     LSM <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        LKLM <linux-kernel@vger.kernel.org>,
+        SE Linux <selinux@tycho.nsa.gov>,
+        John Johansen <john.johansen@canonical.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 08, 2018 at 02:07:41PM +0200, Thomas Gleixner wrote:
-> On Tue, 4 Sep 2018, Fenghua Yu wrote:
-> > 
-> > Signed-off-by: Xiaochen Shen <xiaochen.shen@intel.com>
-> > Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
-> 
-> Sigh. Am I supposed to assume that this patch is authored by Xiaochen?
+On Tue, Sep 11, 2018 at 9:42 AM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+> Move management of the file->f_security blob out of the
+> individual security modules and into the infrastructure.
+> The modules no longer allocate or free the data, instead
+> they tell the infrastructure how much space they require.
+>
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> ---
+>  include/linux/lsm_hooks.h  |  1 +
+>  security/apparmor/lsm.c    | 19 +++++++-------
+>  security/security.c        | 54 +++++++++++++++++++++++++++++++++++---
+>  security/selinux/hooks.c   | 25 ++----------------
+>  security/smack/smack.h     |  5 ++++
+>  security/smack/smack_lsm.c | 26 +++++++-----------
+>  6 files changed, 78 insertions(+), 52 deletions(-)
+>
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index 0bef312efd45..167ffbd4d0c0 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -2029,6 +2029,7 @@ struct security_hook_list {
+>   */
+>  struct lsm_blob_sizes {
+>         int     lbs_cred;
+> +       int     lbs_file;
+>  };
+>
+>  /*
+> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+> index c2566aaa138e..15716b6ff860 100644
+> --- a/security/apparmor/lsm.c
+> +++ b/security/apparmor/lsm.c
+> @@ -431,21 +431,21 @@ static int apparmor_file_open(struct file *file)
+>
+>  static int apparmor_file_alloc_security(struct file *file)
+>  {
+> -       int error = 0;
+> -
+> -       /* freed by apparmor_file_free_security */
+> +       struct aa_file_ctx *ctx = file_ctx(file);
+>         struct aa_label *label = begin_current_label_crit_section();
+> -       file->f_security = aa_alloc_file_ctx(label, GFP_KERNEL);
+> -       if (!file_ctx(file))
+> -               error = -ENOMEM;
+> -       end_current_label_crit_section(label);
+>
+> -       return error;
+> +       spin_lock_init(&ctx->lock);
+> +       rcu_assign_pointer(ctx->label, aa_get_label(label));
+> +       end_current_label_crit_section(label);
+> +       return 0;
+>  }
+>
+>  static void apparmor_file_free_security(struct file *file)
+>  {
+> -       aa_free_file_ctx(file_ctx(file));
+> +       struct aa_file_ctx *ctx = file_ctx(file);
+> +
+> +       if (ctx)
+> +               aa_put_label(rcu_access_pointer(ctx->label));
+>  }
+>
+>  static int common_file_perm(const char *op, struct file *file, u32 mask)
+> @@ -1131,6 +1131,7 @@ static void apparmor_sock_graft(struct sock *sk, struct socket *parent)
+>   */
+>  struct lsm_blob_sizes apparmor_blob_sizes = {
+>         .lbs_cred = sizeof(struct aa_task_ctx *),
+> +       .lbs_file = sizeof(struct aa_file_ctx),
+>  };
+>
+>  static struct security_hook_list apparmor_hooks[] __lsm_ro_after_init = {
+> diff --git a/security/security.c b/security/security.c
+> index ff7df14f6db1..5430cae73cf6 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -40,6 +40,8 @@
+>  struct security_hook_heads security_hook_heads __lsm_ro_after_init;
+>  static ATOMIC_NOTIFIER_HEAD(lsm_notifier_chain);
+>
+> +static struct kmem_cache *lsm_file_cache;
+> +
+>  char *lsm_names;
+>  static struct lsm_blob_sizes blob_sizes;
+>
+> @@ -92,6 +94,13 @@ int __init security_init(void)
+>          */
+>         do_security_initcalls();
+>
+> +       /*
+> +        * Create any kmem_caches needed for blobs
+> +        */
+> +       if (blob_sizes.lbs_file)
+> +               lsm_file_cache = kmem_cache_create("lsm_file_cache",
+> +                                                  blob_sizes.lbs_file, 0,
+> +                                                  SLAB_PANIC, NULL);
+>         /*
+>          * The second call to a module specific init function
+>          * adds hooks to the hook lists and does any other early
+> @@ -101,6 +110,7 @@ int __init security_init(void)
+>
+>  #ifdef CONFIG_SECURITY_LSM_DEBUG
+>         pr_info("LSM: cred blob size       = %d\n", blob_sizes.lbs_cred);
+> +       pr_info("LSM: file blob size       = %d\n", blob_sizes.lbs_file);
+>  #endif
+>
+>         return 0;
+> @@ -277,6 +287,28 @@ static void __init lsm_set_size(int *need, int *lbs)
+>  void __init security_add_blobs(struct lsm_blob_sizes *needed)
+>  {
+>         lsm_set_size(&needed->lbs_cred, &blob_sizes.lbs_cred);
+> +       lsm_set_size(&needed->lbs_file, &blob_sizes.lbs_file);
+> +}
+> +
+> +/**
+> + * lsm_file_alloc - allocate a composite file blob
+> + * @file: the file that needs a blob
+> + *
+> + * Allocate the file blob for all the modules
+> + *
+> + * Returns 0, or -ENOMEM if memory can't be allocated.
+> + */
+> +int lsm_file_alloc(struct file *file)
+> +{
+> +       if (!lsm_file_cache) {
+> +               file->f_security = NULL;
+> +               return 0;
+> +       }
+> +
+> +       file->f_security = kmem_cache_zalloc(lsm_file_cache, GFP_KERNEL);
+> +       if (file->f_security == NULL)
+> +               return -ENOMEM;
+> +       return 0;
+>  }
+>
+>  /*
+> @@ -962,12 +994,28 @@ int security_file_permission(struct file *file, int mask)
+>
+>  int security_file_alloc(struct file *file)
+>  {
+> -       return call_int_hook(file_alloc_security, 0, file);
+> +       int rc = lsm_file_alloc(file);
+> +
+> +       if (rc)
+> +               return rc;
+> +       rc = call_int_hook(file_alloc_security, 0, file);
+> +       if (unlikely(rc))
+> +               security_file_free(file);
+> +       return rc;
+>  }
+>
+>  void security_file_free(struct file *file)
+>  {
+> +       void *blob;
+> +
+> +       if (!lsm_file_cache)
+> +               return;
 
-Yes, Xiaochen is the author. Sorry for the mistake.
+Should this be WARN_ON?
 
-I just now sent out v2 patch to use right author Xiaochen in the patch.
+> +
+>         call_void_hook(file_free_security, file);
+> +
+> +       blob = file->f_security;
+> +       file->f_security = NULL;
+> +       kmem_cache_free(lsm_file_cache, blob);
+>  }
+>
+>  int security_file_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+> @@ -1085,7 +1133,7 @@ int security_cred_alloc_blank(struct cred *cred, gfp_t gfp)
+>                 return rc;
+>
+>         rc = call_int_hook(cred_alloc_blank, 0, cred, gfp);
+> -       if (rc)
+> +       if (unlikely(rc))
+>                 security_cred_free(cred);
+>         return rc;
+>  }
+> @@ -1106,7 +1154,7 @@ int security_prepare_creds(struct cred *new, const struct cred *old, gfp_t gfp)
+>                 return rc;
+>
+>         rc = call_int_hook(cred_prepare, 0, new, old, gfp);
+> -       if (rc)
+> +       if (unlikely(rc))
+>                 security_cred_free(new);
+>         return rc;
+>  }
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 94b3123c237b..3468b4592036 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -149,7 +149,6 @@ static int __init checkreqprot_setup(char *str)
+>  __setup("checkreqprot=", checkreqprot_setup);
+>
+>  static struct kmem_cache *sel_inode_cache;
+> -static struct kmem_cache *file_security_cache;
+>
+>  /**
+>   * selinux_secmark_enabled - Check to see if SECMARK is currently enabled
+> @@ -381,27 +380,15 @@ static void inode_free_security(struct inode *inode)
+>
+>  static int file_alloc_security(struct file *file)
+>  {
+> -       struct file_security_struct *fsec;
+> +       struct file_security_struct *fsec = selinux_file(file);
+>         u32 sid = current_sid();
+>
+> -       fsec = kmem_cache_zalloc(file_security_cache, GFP_KERNEL);
+> -       if (!fsec)
+> -               return -ENOMEM;
+> -
+>         fsec->sid = sid;
+>         fsec->fown_sid = sid;
+> -       file->f_security = fsec;
+>
+>         return 0;
+>  }
+>
+> -static void file_free_security(struct file *file)
+> -{
+> -       struct file_security_struct *fsec = selinux_file(file);
+> -       file->f_security = NULL;
+> -       kmem_cache_free(file_security_cache, fsec);
+> -}
+> -
+>  static int superblock_alloc_security(struct super_block *sb)
+>  {
+>         struct superblock_security_struct *sbsec;
+> @@ -3558,11 +3545,6 @@ static int selinux_file_alloc_security(struct file *file)
+>         return file_alloc_security(file);
+>  }
+>
+> -static void selinux_file_free_security(struct file *file)
+> -{
+> -       file_free_security(file);
+> -}
+> -
+>  /*
+>   * Check whether a task has the ioctl permission and cmd
+>   * operation to an inode.
+> @@ -6857,6 +6839,7 @@ static void selinux_bpf_prog_free(struct bpf_prog_aux *aux)
+>
+>  struct lsm_blob_sizes selinux_blob_sizes = {
+>         .lbs_cred = sizeof(struct task_security_struct),
+> +       .lbs_file = sizeof(struct file_security_struct),
+>  };
+>
+>  static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+> @@ -6927,7 +6910,6 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+>
+>         LSM_HOOK_INIT(file_permission, selinux_file_permission),
+>         LSM_HOOK_INIT(file_alloc_security, selinux_file_alloc_security),
+> -       LSM_HOOK_INIT(file_free_security, selinux_file_free_security),
+>         LSM_HOOK_INIT(file_ioctl, selinux_file_ioctl),
+>         LSM_HOOK_INIT(mmap_file, selinux_mmap_file),
+>         LSM_HOOK_INIT(mmap_addr, selinux_mmap_addr),
+> @@ -7130,9 +7112,6 @@ static __init int selinux_init(void)
+>         sel_inode_cache = kmem_cache_create("selinux_inode_security",
+>                                             sizeof(struct inode_security_struct),
+>                                             0, SLAB_PANIC, NULL);
+> -       file_security_cache = kmem_cache_create("selinux_file_security",
+> -                                           sizeof(struct file_security_struct),
+> -                                           0, SLAB_PANIC, NULL);
+>         avc_init();
+>
+>         avtab_cache_init();
+> diff --git a/security/smack/smack.h b/security/smack/smack.h
+> index 0c6dce446825..043525a52e94 100644
+> --- a/security/smack/smack.h
+> +++ b/security/smack/smack.h
+> @@ -362,6 +362,11 @@ static inline struct task_smack *smack_cred(const struct cred *cred)
+>         return cred->security;
+>  }
+>
+> +static inline struct smack_known **smack_file(const struct file *file)
+> +{
+> +       return file->f_security;
+> +}
+> +
+>  /*
+>   * Is the directory transmuting?
+>   */
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index a06ea8aa89c4..d1430341798f 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -1571,24 +1571,12 @@ static void smack_inode_getsecid(struct inode *inode, u32 *secid)
+>   */
+>  static int smack_file_alloc_security(struct file *file)
+>  {
+> -       struct smack_known *skp = smk_of_current();
+> +       struct smack_known **blob = smack_file(file);
+>
+> -       file->f_security = skp;
+> +       *blob = smk_of_current();
+>         return 0;
+>  }
+>
+> -/**
+> - * smack_file_free_security - clear a file security blob
+> - * @file: the object
+> - *
+> - * The security blob for a file is a pointer to the master
+> - * label list, so no memory is freed.
+> - */
+> -static void smack_file_free_security(struct file *file)
+> -{
+> -       file->f_security = NULL;
+> -}
+> -
+>  /**
+>   * smack_file_ioctl - Smack check on ioctls
+>   * @file: the object
+> @@ -1813,7 +1801,9 @@ static int smack_mmap_file(struct file *file,
+>   */
+>  static void smack_file_set_fowner(struct file *file)
+>  {
+> -       file->f_security = smk_of_current();
+> +       struct smack_known **blob = smack_file(file);
+> +
+> +       *blob = smk_of_current();
+>  }
 
-Thanks.
+Is this supposed to be part of a separate patch to prepare smack for
+the infrastructure change?
 
--Fenghua
+Otherwise, seems good.
+
+-Kees
+
+>
+>  /**
+> @@ -1830,6 +1820,7 @@ static void smack_file_set_fowner(struct file *file)
+>  static int smack_file_send_sigiotask(struct task_struct *tsk,
+>                                      struct fown_struct *fown, int signum)
+>  {
+> +       struct smack_known **blob;
+>         struct smack_known *skp;
+>         struct smack_known *tkp = smk_of_task(smack_cred(tsk->cred));
+>         struct file *file;
+> @@ -1842,7 +1833,8 @@ static int smack_file_send_sigiotask(struct task_struct *tsk,
+>         file = container_of(fown, struct file, f_owner);
+>
+>         /* we don't log here as rc can be overriden */
+> -       skp = file->f_security;
+> +       blob = smack_file(file);
+> +       skp = *blob;
+>         rc = smk_access(skp, tkp, MAY_DELIVER, NULL);
+>         rc = smk_bu_note("sigiotask", skp, tkp, MAY_DELIVER, rc);
+>         if (rc != 0 && has_capability(tsk, CAP_MAC_OVERRIDE))
+> @@ -4626,6 +4618,7 @@ static int smack_dentry_create_files_as(struct dentry *dentry, int mode,
+>
+>  struct lsm_blob_sizes smack_blob_sizes = {
+>         .lbs_cred = sizeof(struct task_smack),
+> +       .lbs_file = sizeof(struct smack_known *),
+>  };
+>
+>  static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
+> @@ -4663,7 +4656,6 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
+>         LSM_HOOK_INIT(inode_getsecid, smack_inode_getsecid),
+>
+>         LSM_HOOK_INIT(file_alloc_security, smack_file_alloc_security),
+> -       LSM_HOOK_INIT(file_free_security, smack_file_free_security),
+>         LSM_HOOK_INIT(file_ioctl, smack_file_ioctl),
+>         LSM_HOOK_INIT(file_lock, smack_file_lock),
+>         LSM_HOOK_INIT(file_fcntl, smack_file_fcntl),
+> --
+> 2.17.1
+>
+>
+
+
+
+-- 
+Kees Cook
+Pixel Security
