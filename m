@@ -3,107 +3,91 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62718FC616D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42EF8FA3745
 	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 17:35:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0BA321566
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 16:10:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0BA321566
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id C487B21530
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 16:09:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C487B21530
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728469AbeIMVVA (ORCPT
+        id S1728554AbeIMVTb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 17:21:00 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:44186 "EHLO ale.deltatee.com"
+        Thu, 13 Sep 2018 17:19:31 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45366 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726819AbeIMVVA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 17:21:00 -0400
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1g0UCf-0001Ef-BM; Thu, 13 Sep 2018 10:10:50 -0600
-To:     Dan Williams <dan.j.williams@intel.com>, akpm@linux-foundation.org
-Cc:     Christoph Hellwig <hch@lst.de>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        alexander.h.duyck@intel.com, linux-mm@kvack.org,
+        id S1727994AbeIMVTa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 17:19:30 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 26AD7308403C;
+        Thu, 13 Sep 2018 16:09:21 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F17A65D9C9;
+        Thu, 13 Sep 2018 16:09:19 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 3/6] afs: afs_end_vnode_operation() needs to translate abort
+ codes to errors
+From:   David Howells <dhowells@redhat.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
+        keyrings@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <153680531988.453305.8080706591516037706.stgit@dwillia2-desk3.amr.corp.intel.com>
- <153680533172.453305.5701902165148172434.stgit@dwillia2-desk3.amr.corp.intel.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <50c1172d-29c6-4509-de0d-897163b0b2e4@deltatee.com>
-Date:   Thu, 13 Sep 2018 10:10:45 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+Date:   Thu, 13 Sep 2018 17:09:16 +0100
+Message-ID: <153685495622.16086.10265386563835390377.stgit@warthog.procyon.org.uk>
+In-Reply-To: <153685493441.16086.3483582787020297039.stgit@warthog.procyon.org.uk>
+References: <153685493441.16086.3483582787020297039.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-In-Reply-To: <153680533172.453305.5701902165148172434.stgit@dwillia2-desk3.amr.corp.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-mm@kvack.org, alexander.h.duyck@intel.com, jglisse@redhat.com, hch@lst.de, akpm@linux-foundation.org, dan.j.williams@intel.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v5 2/7] mm, devm_memremap_pages: Kill mapping "System RAM"
- support
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Thu, 13 Sep 2018 16:09:21 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+afs_end_vnode_operation() calls the function to translate an abort code
+into an error return, but never actually assigns the error.
 
+Fix this by storing the looked up error back into the cursor.
 
-On 12/09/18 08:22 PM, Dan Williams wrote:
-> Given the fact that devm_memremap_pages() requires a percpu_ref that is
-> torn down by devm_memremap_pages_release() the current support for
-> mapping RAM is broken.
-> 
-> Support for remapping "System RAM" has been broken since the beginning
-> and there is no existing user of this this code path, so just kill the
-> support and make it an explicit error.
-> 
-> This cleanup also simplifies a follow-on patch to fix the error path
-> when setting a devm release action for devm_memremap_pages_release()
-> fails.
-> 
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: "Jérôme Glisse" <jglisse@redhat.com>
-> Cc: Logan Gunthorpe <logang@deltatee.com>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
 
-Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+ fs/afs/rotate.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Logan
+diff --git a/fs/afs/rotate.c b/fs/afs/rotate.c
+index 1faef56b12bd..add0dbb18763 100644
+--- a/fs/afs/rotate.c
++++ b/fs/afs/rotate.c
+@@ -512,7 +512,6 @@ bool afs_select_current_fileserver(struct afs_fs_cursor *fc)
+ int afs_end_vnode_operation(struct afs_fs_cursor *fc)
+ {
+ 	struct afs_net *net = afs_v2net(fc->vnode);
+-	int ret;
+ 
+ 	mutex_unlock(&fc->vnode->io_lock);
+ 
+@@ -520,9 +519,8 @@ int afs_end_vnode_operation(struct afs_fs_cursor *fc)
+ 	afs_put_cb_interest(net, fc->cbi);
+ 	afs_put_serverlist(net, fc->server_list);
+ 
+-	ret = fc->ac.error;
+-	if (ret == -ECONNABORTED)
+-		afs_abort_to_error(fc->ac.abort_code);
++	if (fc->ac.error == -ECONNABORTED)
++		fc->ac.error = afs_abort_to_error(fc->ac.abort_code);
+ 
+ 	return fc->ac.error;
+ }
 
-> ---
->  kernel/memremap.c |    9 +++------
->  1 file changed, 3 insertions(+), 6 deletions(-)
-> 
-> diff --git a/kernel/memremap.c b/kernel/memremap.c
-> index f95c7833db6d..92e838127767 100644
-> --- a/kernel/memremap.c
-> +++ b/kernel/memremap.c
-> @@ -202,15 +202,12 @@ void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap)
->  	is_ram = region_intersects(align_start, align_size,
->  		IORESOURCE_SYSTEM_RAM, IORES_DESC_NONE);
->  
-> -	if (is_ram == REGION_MIXED) {
-> -		WARN_ONCE(1, "%s attempted on mixed region %pr\n",
-> -				__func__, res);
-> +	if (is_ram != REGION_DISJOINT) {
-> +		WARN_ONCE(1, "%s attempted on %s region %pr\n", __func__,
-> +				is_ram == REGION_MIXED ? "mixed" : "ram", res);
->  		return ERR_PTR(-ENXIO);
->  	}
->  
-> -	if (is_ram == REGION_INTERSECTS)
-> -		return __va(res->start);
-> -
->  	if (!pgmap->ref)
->  		return ERR_PTR(-EINVAL);
->  
-> 
