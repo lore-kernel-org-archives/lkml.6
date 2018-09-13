@@ -2,114 +2,185 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ED21F81825
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 923BBF81822
 	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 17:35:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B92AA2150B
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 15:58:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="dz0dfmW0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B92AA2150B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	by mail.kernel.org (Postfix) with ESMTP id 8DA1921761
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 16:57:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DA1921761
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728474AbeIMVJD (ORCPT
+        id S1727774AbeIMWIA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 17:09:03 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:41499 "EHLO frisell.zx2c4.com"
+        Thu, 13 Sep 2018 18:08:00 -0400
+Received: from mga01.intel.com ([192.55.52.88]:42850 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727730AbeIMVJD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 17:09:03 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 889d88f3;
-        Thu, 13 Sep 2018 15:41:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=aXk07+9/W0BukxIV5LWvqzdUWVI=; b=dz0dfm
-        W0HPZzGP2MDdvcN0IkLLCqqVjXqG/fC4zKW6oB9ilih9QLOILcYvbq+BUv0o7w7q
-        oeXR/mq7KBqDobh69V8aOABYRu2PJ9oUp9TtHsZCr4Z1cEsvxAwdUx4rphgE/iBW
-        5/1B6xOTXvil/4D988JbZCePLDD/k9OoTNNUfTWVjf1D0vyYJr/3BAxlv7Ki1vYk
-        6xrlTGhK4A0IP15n9d7po4cZKLvNh7pfX0eo85OhD/Vj5a4ylUmLn5PG5PLaVNPz
-        mDV1hTlfWZA85QMuXUvSheBrF/1BJ+2DWPrQtJkAtiHqNTTWW+DOyYDSWt1ajTCB
-        n8vTzhxmLOPqa8iA==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 1aca9017 (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
-        Thu, 13 Sep 2018 15:41:56 +0000 (UTC)
-Received: by mail-oi0-f45.google.com with SMTP id c190-v6so9917376oig.6;
-        Thu, 13 Sep 2018 08:58:52 -0700 (PDT)
-X-Gm-Message-State: APzg51ArwNtnEKrZYLtvbXJCSk9bsGbSvOxvNsuBbOnQFxHqUJo3JZ0u
-        9BFHGBOv6X8z5yyEZNiLfXEDzNayJAFMQxfXylU=
-X-Google-Smtp-Source: ANB0VdbF/23N83mIGiqA8FgV62nY4HysFJlEkl9SzxIFLNxTnZi0aup6+wY2Zb1cOFb7loULp15+XP/BFSzkiX1CAMo=
-X-Received: by 2002:aca:dc82:: with SMTP id t124-v6mr6589668oig.189.1536854331807;
- Thu, 13 Sep 2018 08:58:51 -0700 (PDT)
+        id S1726821AbeIMWIA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 18:08:00 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Sep 2018 09:55:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,369,1531810800"; 
+   d="scan'208";a="80207740"
+Received: from otc-nc-03.jf.intel.com (HELO otc-nc-03) ([10.54.39.32])
+  by FMSMGA003.fm.intel.com with ESMTP; 13 Sep 2018 09:55:21 -0700
+Date:   Thu, 13 Sep 2018 09:55:21 -0700
+From:   "Raj, Ashok" <ashok.raj@intel.com>
+To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Cc:     "Tian, Kevin" <kevin.tian@intel.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Kirti Wankhede <kwankhede@nvidia.com>,
+        "Bie, Tiwei" <tiwei.bie@intel.com>,
+        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Sun, Yi Y" <yi.y.sun@intel.com>,
+        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        Ashok Raj <ashok.raj@intel.com>
+Subject: Re: [RFC PATCH v2 00/10] vfio/mdev: IOMMU aware mediated device
+Message-ID: <20180913165520.GA14731@otc-nc-03>
+References: <20180830040922.30426-1-baolu.lu@linux.intel.com>
+ <380dc154-5d72-0085-2056-fa466789e1ab@arm.com>
+ <aa1ff748-c2ec-acc0-f1d9-cdff2b131e58@linux.intel.com>
+ <3602f8c1-df17-4894-1bcc-4d779f9aa7fd@arm.com>
+ <AADFC41AFE54684AB9EE6CBC0274A5D191300D06@SHSMSX101.ccr.corp.intel.com>
+ <03d496b0-84c2-b3ca-5be5-d4540c6d8ec7@arm.com>
 MIME-Version: 1.0
-References: <20180911010838.8818-1-Jason@zx2c4.com> <20180911010838.8818-3-Jason@zx2c4.com>
- <CAKv+Gu9nSeo4PFVrtjtqGQ32eqyxUp3xVCczZfu+dhFz5yLM0A@mail.gmail.com>
- <CAHmME9rTEFLaYmzFrc719LW2DWS2Ua_vL6by1UXZ9uDvMpbhYw@mail.gmail.com>
- <CAKv+Gu9RGo9rtGsmwMLZ_=-WSQ_h7har4agXP-2XOKupq-KYtA@mail.gmail.com>
- <CALCETrU2qkLVaxC=cpU5iAeT5B7xGsR+m2ZWtLVK37jMMWtcAA@mail.gmail.com>
- <CAKv+Gu8z1r7F_wbR6-e0Vbryqby7djDy2OR6JJURCsTo6ZMa2g@mail.gmail.com>
- <CAHmME9pcODNc2m26DH1cQY6R+grxYW5dvFpNDpz_GiugM3qufw@mail.gmail.com> <CAKv+Gu9GVbSETjp01tANMwJgA6O9aexhnH+47836KjZg+71q2A@mail.gmail.com>
-In-Reply-To: <CAKv+Gu9GVbSETjp01tANMwJgA6O9aexhnH+47836KjZg+71q2A@mail.gmail.com>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Thu, 13 Sep 2018 17:58:39 +0200
-X-Gmail-Original-Message-ID: <CAHmME9qjTyYpm_PsQ5_oZSfZBGa29zME1XHVak9F4Ued-qm67g@mail.gmail.com>
-Message-ID: <CAHmME9qjTyYpm_PsQ5_oZSfZBGa29zME1XHVak9F4Ued-qm67g@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 02/17] zinc: introduce minimal cryptography library
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Andrew Lutomirski <luto@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <03d496b0-84c2-b3ca-5be5-d4540c6d8ec7@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 13, 2018 at 5:43 PM Ard Biesheuvel
-<ard.biesheuvel@linaro.org> wrote:
-> I'd prefer it if all the accelerated software implementations live in
-> the same place. But I do strongly prefer arch code to live in
-> arch/$arch
+On Thu, Sep 13, 2018 at 04:03:01PM +0100, Jean-Philippe Brucker wrote:
+> On 13/09/2018 01:19, Tian, Kevin wrote:
+> >>> This is proposed for architectures which support finer granularity
+> >>> second level translation with no impact on architectures which only
+> >>> support Source ID or the similar granularity.
+> >>
+> >> Just to be clear, in this paragraph you're only referring to the
+> >> Nested/second-level translation for mdev, which is specific to vt-d
+> >> rev3? Other architectures can still do first-level translation with
+> >> PASID, to support some use-cases of IOMMU aware mediated device
+> >> (assigning mdevs to userspace drivers, for example)
+> > 
+> > yes. aux domain concept applies only to vt-d rev3 which introduces
+> > scalable mode. Care is taken to avoid breaking usages on existing
+> > architectures.
+> > 
+> > one note. Assigning mdevs to user space alone doesn't imply IOMMU
+> > aware. All existing mdev usages use software or proprietary methods to
+> > isolate DMA. There is only one potential IOMMU aware mdev usage 
+> > which we talked not rely on vt-d rev3 scalable mode - wrap a random 
+> > PCI device into a single mdev instance (no sharing). In that case mdev 
+> > inherits RID from parent PCI device, thus is isolated by IOMMU in RID 
+> > granular. Our RFC supports this usage too. In VFIO two usages (PASID-
+> > based and RID-based) use same code path, i.e. always binding domain to
+> > the parent device of mdev. But within IOMMU they go different paths.
+> > PASID-based will go to aux-domain as iommu_enable_aux_domain
+> > has been called on that device. RID-based will follow existing 
+> > unmanaged domain path, as if it is parent device assignment.
+> 
+> For Arm SMMU we're more interested in the PASID-granular case than the
+> RID-granular one. It doesn't necessarily require vt-d rev3 scalable
+> mode, the following example can be implemented with an SMMUv3, since it
+> only needs PASID-granular first-level translation:
 
-Zinc follows the scheme of the raid6 code, as well as of most other
-crypto libraries: code is grouped by cipher, making it easy for people
-to work with and understand differing implementations. It also allows
-us to trivially link these together at compile time rather than at
-link time, which makes cipher selection much more efficient. It's
-really much more maintainable this way.
+You are right, you can simply use the first level as IOVA for every PASID.
 
-> I think AES-GCM is a useful example here. I really like the SIMD token
-> abstraction a lot, but I would like to understand how this would work
-> in Zinc if you have
-> a) a generic implementation
-> b) perhaps an arch specific scalar implementation
-> c) a pure NEON implementation
-> d) an implementation using AES instructions but not the PMULL instructions
-> e) an implementation that uses AES and PMULL instructions.
+Only issue becomes when you need to assign that to a guest, you would be required
+to shadow the 1st level. If you have a 2nd level per-pasid first level can
+be managed in guest and don't require to shadow them.
 
-The same way that Zinc currently chooses between the five different
-implementations for, say, x86_64 ChaCha20:
+> 
+> We have a PCI function that supports PASID, and can be partitioned into
+> multiple isolated entities, mdevs. Each mdev has an MMIO frame, an MSI
+> vector and a PASID.
+> 
+> Different processes (userspace drivers, not QEMU) each open one mdev. A
+> process controlling one mdev has two ways of doing DMA:
+> 
+> (1) Classically, the process uses a VFIO_TYPE1v2_IOMMU container. This
+> creates an auxiliary domain for the mdev, with PASID #35. The process
+> creates DMA mappings with VFIO_IOMMU_MAP_DMA. VFIO calls iommu_map on
+> the auxiliary domain. The IOMMU driver populates the pgtables associated
+> with PASID #35.
+> 
+> (2) SVA. One way of doing it: the process uses a new
+> "VFIO_TYPE1_SVA_IOMMU" type of container. VFIO binds the process address
+> space to the device, gets PASID #35. Simpler, but not everyone wants to
+> use SVA, especially not userspace drivers which need the highest
+> performance.
+> 
+> 
+> This example only needs to modify first-level translation, and works
+> with SMMUv3. The kernel here could be the host, in which case
+> second-level translation is disabled in the SMMU, or it could be the
+> guest, in which case second-level mappings are created by QEMU and
+> first-level translation is managed by assigning PASID tables to the guest.
+> 
+> So (2) would use iommu_sva_bind_device(), but (1) needs something else.
+> Aren't auxiliary domains suitable for (1)? Why limit auxiliary domain to
+> second-level or nested translation? It seems silly to use a different
+> API for first-level, since the flow in userspace and VFIO is the same as
+> your second-level case as far as MAP_DMA ioctl goes. The difference is
+> that in your case the auxiliary domain supports an additional operation
+> which binds first-level page tables. An auxiliary domain that only
+> supports first-level wouldn't support this operation, but it can still
+> implement iommu_map/unmap/etc.
+> 
+> 
+> Another note: if for some reason you did want to allow userspace to
+> choose between first-level or second-level, you could implement the
+> VFIO_TYPE1_NESTING_IOMMU container. It acts like a VFIO_TYPE1v2_IOMMU,
+> but also sets the DOMAIN_ATTR_NESTING on the IOMMU domain. So DMA_MAP
+> ioctl on a NESTING container would populate second-level, and DMA_MAP on
+> a normal container populates first-level. But if you're always going to
+> use second-level by default, the distinction isn't necessary.
 
-- Generic C scalar
-- SSSE3
-- AVX2
-- AVX512F
-- AVX512VL
+Where is the nesting attribute specified? in vt-d2 it was part of context
+entry, so also meant all PASID's are nested now. In vt-d3 its part of
+PASID context.
 
-We make a decision based on CPU capabilities, SIMD context, and input
-length, and then choose the right function.
+It seems unsafe to share PASID's with different VM's since any request 
+W/O PASID has only one mapping.
 
-> You know what? If you're up for it, let's not wait until Plumbers, but
-> instead, let's collaborate off list to get this into shape.
+> 
+> 
+> >> Sounds good, I'll drop the private PASID patch if we can figure out a
+> >> solution to the attach/detach_dev problem discussed on patch 8/10
+> >>
+> > 
+> > Can you elaborate a bit on private PASID usage? what is the
+> > high level flow on it? 
+> > 
+> > Again based on earlier explanation, aux domain is specific to IOMMU
+> > architecture supporting vtd scalable mode-like capability, which allows
+> > separate 2nd/1st level translations per PASID. Need a better understanding
+> > how private PASID is relevant here.
+> 
+> Private PASIDs are used for doing iommu_map/iommu_unmap on PASIDs
+> (first-level translation):
+> https://www.spinics.net/lists/dri-devel/msg177003.html As above, some
+> people don't want SVA, some can't do it, some may even want a few
+> private address spaces just for their kernel driver. They need a way to
+> allocate PASIDs and do iommu_map/iommu_unmap on them, without binding to
+> a process. I was planning to add the private PASID patch to my SVA
+> series, but in my opinion the feature overlaps with auxiliary domains.
 
-Sure, sounds good.
-
-Jason
+It sounds like it maps to AUX domains.
