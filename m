@@ -2,229 +2,106 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CEF3C61CF0
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 09:38:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02443C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 09:38:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50D5421477
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 09:38:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50D5421477
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 9FF1B21477
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 09:38:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GHzXVApy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FF1B21477
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728095AbeIMOqi (ORCPT
+        id S1728121AbeIMOqp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 10:46:38 -0400
-Received: from mga01.intel.com ([192.55.52.88]:49364 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728031AbeIMOqh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 10:46:37 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Sep 2018 02:37:56 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,368,1531810800"; 
-   d="scan'208";a="90093148"
-Received: from svm-s2600wft.bj.intel.com ([10.240.193.45])
-  by orsmga001.jf.intel.com with ESMTP; 13 Sep 2018 02:37:50 -0700
-From:   Yi Sun <yi.y.sun@linux.intel.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     x86@kernel.org, chao.p.peng@intel.com, chao.gao@intel.com,
-        isaku.yamahata@intel.com, michael.h.kelly@microsoft.com,
-        tianyu.lan@microsoft.com, Yi Sun <yi.y.sun@linux.intel.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>
-Subject: [PATCH v1 2/3] locking/pvqspinlock, hv: Enable PV qspinlock for Hyper-V
-Date:   Thu, 13 Sep 2018 17:13:24 +0800
-Message-Id: <1536830005-37260-3-git-send-email-yi.y.sun@linux.intel.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1536830005-37260-1-git-send-email-yi.y.sun@linux.intel.com>
-References: <1536830005-37260-1-git-send-email-yi.y.sun@linux.intel.com>
+        Thu, 13 Sep 2018 10:46:45 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:46848 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726697AbeIMOqp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 10:46:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=NjzUUt+slHX66hXSRscAiWx2a/YyKrrpq0J6OsnZlKQ=; b=GHzXVApy+cJnpHPbBdQyZjbjY
+        SsgglhGlJsqtR9RupjcVjp5KqNZFWW4qKyxUuYUmkuMu3qxPclsgE4ATXKWvZUexLRj0TC2ElisfJ
+        lTSjUYFK6RpWzt+zaQsnAKPTTzjn2LdNSshaqeZ833AYa0ER9n6K1aaiblcbbW2f8pL0JteLLO1h6
+        fhVdgx5C1qekXRJokSjuVJWs4Ya3H8HgFHS/5UNlkWAcGccKWrM4CaUqTprQh/PsNSllnQeqS+QLx
+        sRyc4yl2sIxIFPZABQ0uvB695iCIKvarme0W8Aod2X8BplIJNYlif8rIwp4t9+FENMydoTWJlcLct
+        isHc5KarQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g0O4S-00072a-7b; Thu, 13 Sep 2018 09:37:56 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 13C712026833F; Thu, 13 Sep 2018 11:37:54 +0200 (CEST)
+Date:   Thu, 13 Sep 2018 11:37:54 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <andi@firstfloor.org>
+Subject: Re: [PATCH] perf: Prevent recursion in ring buffer
+Message-ID: <20180913093754.GV24124@hirez.programming.kicks-ass.net>
+References: <20180912193317.10339-1-jolsa@kernel.org>
+ <20180913070740.GT24124@hirez.programming.kicks-ass.net>
+ <20180913074607.GB15173@krava>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180913074607.GB15173@krava>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Follow PV spinlock mechanism to implement the callback functions
-to allow the CPU idling and kicking operations on Hyper-V.
+On Thu, Sep 13, 2018 at 09:46:07AM +0200, Jiri Olsa wrote:
+> On Thu, Sep 13, 2018 at 09:07:40AM +0200, Peter Zijlstra wrote:
+> > On Wed, Sep 12, 2018 at 09:33:17PM +0200, Jiri Olsa wrote:
+> > > Some of the scheduling tracepoints allow the perf_tp_event
+> > > code to write to ring buffer under different cpu than the
+> > > code is running on.
+> > 
+> > ARGH.. that is indeed borken.
 
-HVCALL_NOTIFY_LONG_SPIN_WAIT is a hypercall used by a guest OS to
-notify the hypervisor that the calling virtual processor is attempting
-to acquire a resource that is potentially held by another virtual
-processor within the same partition. This scheduling hint improves the
-scalability of partitions with more than one virtual processor.
+> I was first thinking to just leave it on the current cpu,
+> but not sure current users would be ok with that ;-)
 
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>
-Cc: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Signed-off-by: Yi Sun <yi.y.sun@linux.intel.com>
----
- arch/x86/hyperv/Makefile        |  2 +-
- arch/x86/hyperv/hv_spinlock.c   | 99 +++++++++++++++++++++++++++++++++++++++++
- arch/x86/include/asm/mshyperv.h |  3 ++
- arch/x86/kernel/smpboot.c       |  2 +
- 4 files changed, 105 insertions(+), 1 deletion(-)
- create mode 100644 arch/x86/hyperv/hv_spinlock.c
+> ---
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index abaed4f8bb7f..9b534a2ecf17 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -8308,6 +8308,8 @@ void perf_tp_event(u16 event_type, u64 count, void *record, int entry_size,
+>  				continue;
+>  			if (event->attr.config != entry->type)
+>  				continue;
+> +			if (event->cpu != smp_processor_id())
+> +				continue;
+>  			if (perf_tp_event_match(event, &data, regs))
+>  				perf_swevent_event(event, count, &data, regs);
+>  		}
 
-diff --git a/arch/x86/hyperv/Makefile b/arch/x86/hyperv/Makefile
-index b21ee65..5b6937c 100644
---- a/arch/x86/hyperv/Makefile
-+++ b/arch/x86/hyperv/Makefile
-@@ -1,2 +1,2 @@
- obj-y			:= hv_init.o mmu.o nested.o
--obj-$(CONFIG_X86_64)	+= hv_apic.o
-+obj-$(CONFIG_X86_64)	+= hv_apic.o hv_spinlock.o
-diff --git a/arch/x86/hyperv/hv_spinlock.c b/arch/x86/hyperv/hv_spinlock.c
-new file mode 100644
-index 0000000..134c89f
---- /dev/null
-+++ b/arch/x86/hyperv/hv_spinlock.c
-@@ -0,0 +1,99 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * Hyper-V specific spinlock code.
-+ *
-+ * Copyright (C) 2018, Intel, Inc.
-+ *
-+ * Author : Yi Sun <yi.y.sun@linux.intel.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms of the GNU General Public License version 2 as published
-+ * by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful, but
-+ * WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE, GOOD TITLE or
-+ * NON INFRINGEMENT.  See the GNU General Public License for more
-+ * details.
-+ *
-+ */
-+
-+#include <linux/kernel_stat.h>
-+#include <linux/spinlock.h>
-+#include <linux/debugfs.h>
-+#include <linux/log2.h>
-+#include <linux/gfp.h>
-+
-+#include <asm/mshyperv.h>
-+#include <asm/hyperv-tlfs.h>
-+#include <asm/paravirt.h>
-+#include <asm/qspinlock.h>
-+#include <asm/apic.h>
-+
-+static bool hv_pvspin = true;
-+static u32 spin_wait_info = 0;
-+
-+static void hv_notify_long_spin_wait(void)
-+{
-+	u64 input = spin_wait_info | 0x00000000ffffffff;
-+
-+	spin_wait_info++;
-+	hv_do_fast_hypercall8(HVCALL_NOTIFY_LONG_SPIN_WAIT, input);
-+}
-+
-+static void hv_qlock_kick(int cpu)
-+{
-+	spin_wait_info--;
-+	apic->send_IPI(cpu, X86_PLATFORM_IPI_VECTOR);
-+}
-+
-+/*
-+ * Halt the current CPU & release it back to the host
-+ */
-+static void hv_qlock_wait(u8 *byte, u8 val)
-+{
-+	unsigned long msr_val;
-+
-+	if (READ_ONCE(*byte) != val)
-+		return;
-+
-+	hv_notify_long_spin_wait();
-+
-+	rdmsrl(HV_X64_MSR_GUEST_IDLE, msr_val);
-+}
-+
-+/*
-+ * Hyper-V does not support this so far.
-+ */
-+bool hv_vcpu_is_preempted(int vcpu)
-+{
-+	return false;
-+}
-+PV_CALLEE_SAVE_REGS_THUNK(hv_vcpu_is_preempted);
-+
-+void __init hv_init_spinlocks(void)
-+{
-+	if (!hv_pvspin ||
-+	    !apic ||
-+	    !(ms_hyperv.hints & HV_X64_CLUSTER_IPI_RECOMMENDED) ||
-+	    !(ms_hyperv.features & HV_X64_MSR_GUEST_IDLE_AVAILABLE)) {
-+		pr_warn("hv: PV spinlocks disabled\n");
-+		return;
-+	}
-+	pr_info("hv: PV spinlocks enabled\n");
-+
-+	__pv_init_lock_hash();
-+	pv_lock_ops.queued_spin_lock_slowpath = __pv_queued_spin_lock_slowpath;
-+	pv_lock_ops.queued_spin_unlock = PV_CALLEE_SAVE(__pv_queued_spin_unlock);
-+	pv_lock_ops.wait = hv_qlock_wait;
-+	pv_lock_ops.kick = hv_qlock_kick;
-+	pv_lock_ops.vcpu_is_preempted = PV_CALLEE_SAVE(hv_vcpu_is_preempted);
-+}
-+
-+static __init int hv_parse_nopvspin(char *arg)
-+{
-+	hv_pvspin = false;
-+	return 0;
-+}
-+early_param("hv_nopvspin", hv_parse_nopvspin);
-diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
-index f377044..ac36ea9 100644
---- a/arch/x86/include/asm/mshyperv.h
-+++ b/arch/x86/include/asm/mshyperv.h
-@@ -355,6 +355,8 @@ static inline int cpumask_to_vpset(struct hv_vpset *vpset,
- static inline void hv_apic_init(void) {}
- #endif
- 
-+void __init hv_init_spinlocks(void);
-+
- #else /* CONFIG_HYPERV */
- static inline void hyperv_init(void) {}
- static inline bool hv_is_hyperv_initialized(void) { return false; }
-@@ -368,6 +370,7 @@ static inline struct hv_vp_assist_page *hv_get_vp_assist_page(unsigned int cpu)
- 	return NULL;
- }
- static inline int hyperv_flush_guest_mapping(u64 as) { return -1; }
-+void __init hv_init_spinlocks(void) {}
- #endif /* CONFIG_HYPERV */
- 
- #ifdef CONFIG_HYPERV_TSCPAGE
-diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-index f02ecaf..8bf08ba 100644
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -81,6 +81,7 @@
- #include <asm/cpu_device_id.h>
- #include <asm/spec-ctrl.h>
- #include <asm/hw_irq.h>
-+#include <asm/mshyperv.h>
- 
- /* representing HT siblings of each logical CPU */
- DEFINE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_sibling_map);
-@@ -1335,6 +1336,7 @@ void __init native_smp_prepare_boot_cpu(void)
- 	/* already set me in cpu_online_mask in boot_cpu_init() */
- 	cpumask_set_cpu(me, cpu_callout_mask);
- 	cpu_set_state_online(me);
-+	hv_init_spinlocks();
- }
- 
- void __init calculate_max_logical_packages(void)
--- 
-1.9.1
+That might indeed be the best we can do.
 
+So the whole TP muck would be responsible for placing only matching
+events on the hlist, which is where our normal CPU filter is I think.
+
+The above then does the same for @task. Which without this would also be
+getting nr_cpus copies of the event I think.
+
+It does mean not getting any events if the @task only has a per-task
+buffer, but there's nothing to be done about that. And I'm not even sure
+we can create a useful warning for that :/
