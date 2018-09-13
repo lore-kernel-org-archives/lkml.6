@@ -2,117 +2,122 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D018FC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 05:51:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F69C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 05:52:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93A7020882
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 05:51:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93A7020882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 316AC20882
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 05:52:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 316AC20882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727685AbeIMK7k (ORCPT
+        id S1726835AbeIMLAn convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 06:59:40 -0400
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:38888
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726985AbeIMK7j (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 06:59:39 -0400
-X-IronPort-AV: E=Sophos;i="5.53,367,1531778400"; 
-   d="scan'208";a="278697209"
-Received: from 82.24-253-62.static.virginmediabusiness.co.uk (HELO [172.17.1.131]) ([62.253.24.82])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES128-SHA; 13 Sep 2018 07:51:39 +0200
-Subject: Re: [PATCH] ACPI/PPTT: Handle architecturally unknown cache types
-To:     Sudeep Holla <sudeep.holla@arm.com>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        Jeremy Linton <jeremy.linton@arm.com>, rjw@rjwysocki.net,
-        linux-acpi@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, vkilari@codeaurora.org
-References: <1536694334-5811-1-git-send-email-jhugo@codeaurora.org>
- <f62f22a6-2dd8-f254-dbaf-b9e224099afd@arm.com>
- <e74f2208-ac0d-6c45-8ddb-5b77d6a42fef@codeaurora.org>
- <f8dc2958-a7c7-a633-3a06-97fed7c3510b@arm.com>
-From:   Brice Goglin <brice.goglin@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=brice.goglin@gmail.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <4f253bf4-ef2d-849f-b793-9b0530e72aab@gmail.com>
-Date:   Thu, 13 Sep 2018 06:51:38 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <f8dc2958-a7c7-a633-3a06-97fed7c3510b@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+        Thu, 13 Sep 2018 07:00:43 -0400
+Received: from mga02.intel.com ([134.134.136.20]:12510 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726675AbeIMLAn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 07:00:43 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Sep 2018 22:52:45 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,367,1531810800"; 
+   d="scan'208";a="85570604"
+Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
+  by fmsmga002.fm.intel.com with ESMTP; 12 Sep 2018 22:52:38 -0700
+Received: from fmsmsx118.amr.corp.intel.com (10.18.116.18) by
+ FMSMSX108.amr.corp.intel.com (10.18.124.206) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Wed, 12 Sep 2018 22:52:38 -0700
+Received: from shsmsx151.ccr.corp.intel.com (10.239.6.50) by
+ fmsmsx118.amr.corp.intel.com (10.18.116.18) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Wed, 12 Sep 2018 22:52:37 -0700
+Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.205]) by
+ SHSMSX151.ccr.corp.intel.com ([169.254.3.16]) with mapi id 14.03.0319.002;
+ Thu, 13 Sep 2018 13:52:33 +0800
+From:   "Tian, Kevin" <kevin.tian@intel.com>
+To:     "Raj, Ashok" <ashok.raj@intel.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>
+CC:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Sun, Yi Y" <yi.y.sun@intel.com>,
+        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: RE: [PATCH v2 06/12] iommu/vt-d: Add second level page table
+ interface
+Thread-Topic: [PATCH v2 06/12] iommu/vt-d: Add second level page table
+ interface
+Thread-Index: AQHUQAHwDWc2LNkyDUSjEMfaICr4mqTimnUAgAEJkYCAAPprAIAJKacQ
+Date:   Thu, 13 Sep 2018 05:52:32 +0000
+Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D191301901@SHSMSX101.ccr.corp.intel.com>
+References: <20180830013524.28743-1-baolu.lu@linux.intel.com>
+        <20180830013524.28743-7-baolu.lu@linux.intel.com>
+        <AADFC41AFE54684AB9EE6CBC0274A5D1912F2C24@SHSMSX101.ccr.corp.intel.com>
+        <331eef29-ae41-2d36-9487-265d773aae5b@linux.intel.com>
+ <20180907174328.GA95061@otc-nc-03>
+In-Reply-To: <20180907174328.GA95061@otc-nc-03>
+Accept-Language: en-US
 Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMGJiMGU3MjMtMjVhYS00MmVjLThhYWEtZDJlMDI4M2M2ODk2IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiODVjXC9OUnRkQXBaVUYxOFdyak5TN2R3cWs0OFJ3TnBkRzhPd01Sb3pVRWtLZXoxakRPMHZoNktGOEtIT29cL3NYIn0=
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le 12/09/2018 à 11:49, Sudeep Holla a écrit :
->
->> Yes.  Without this change, we hit the lscpu error in the commit message,
->> and get zero output about the system.  We don't even get information
->> about the caches which are architecturally specified or how many cpus
->> are present.  With this change, we get what we expect out of lscpu (and
->> also lstopo) including the cache(s) which are not architecturally
->> specified.
->>
-> lscpu and lstopo are so broken. They just assume everything on CPU0.
-> If you hotplug them out, you start seeing issues. So reading and file
-> that doesn't exist and then bail out on other essential info though they
-> are present, hmmm ...
+> From: Raj, Ashok
+> Sent: Saturday, September 8, 2018 1:43 AM
+> 
+> On Fri, Sep 07, 2018 at 10:47:11AM +0800, Lu Baolu wrote:
+> >
+> > >>+
+> > >>+	intel_pasid_clear_entry(dev, pasid);
+> > >>+
+> > >>+	if (!ecap_coherent(iommu->ecap)) {
+> > >>+		pte = intel_pasid_get_entry(dev, pasid);
+> > >>+		clflush_cache_range(pte, sizeof(*pte));
+> > >>+	}
+> > >>+
+> > >>+	pasid_based_pasid_cache_invalidation(iommu, did, pasid);
+> > >>+	pasid_based_iotlb_cache_invalidation(iommu, did, pasid);
+> > >>+
+> > >>+	/* Device IOTLB doesn't need to be flushed in caching mode. */
+> > >>+	if (!cap_caching_mode(iommu->cap))
+> > >>+		pasid_based_dev_iotlb_cache_invalidation(iommu, dev,
+> > >>pasid);
+> > >
+> > >can you elaborate, or point to any spec reference?
+> > >
+> >
+> > In the driver, device iotlb doesn't get flushed in caching mode. I just
+> > follow what have been done there.
+> >
+> > It also makes sense to me since only the bare metal host needs to
+> > consider whether and how to flush the device iotlb.
+> >
+> 
+> DavidW might remember, i think the idea was to help with cost
+> of virtualization, we can avoid taking 2 exits vs handling
+> it directly when we do iotlb flushing instead.
+> 
 
-Can you elaborate?
+OK, performance-wise it makes sense. though strictly speaking it
+doesn't follow spec...
 
-I am not sure cpu0 is supposed to be offlineable on Linux. There's no
-"online" file in /sys/devices/system/cpu/cpu0. That's why former lstopo
-doesn't like CPU0 being hotplugged out. We are actually making that case
-work for another non-standard corner case. But offlining "cpu0" this is
-considered "normal", somebody must add that missing "online" sysfs
-attribute for "cpu0" (change
-https://elixir.bootlin.com/linux/latest/source/drivers/base/cpu.c#L375).
-
-By the way, did anybody actually see an error with lstopo when there's
-no "type" attribute for L3? I can't reproduce any issue, we just skip
-that specific cache entirely, but everything else appears. If you guys
-want to make that "no_cache" cache appear, I'll make it a Unified cache
-unless you tell me what to show :)
-
-Brice
+Thanks
+Kevin
