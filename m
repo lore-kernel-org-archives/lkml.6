@@ -6,38 +6,41 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4AB7C61CF0
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:36:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66983C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:36:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A6D920C0A
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:36:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A6D920C0A
+	by mail.kernel.org (Postfix) with ESMTP id 27CDC20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:36:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27CDC20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729215AbeIMSqH (ORCPT
+        id S1729223AbeIMSqK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:46:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59278 "EHLO
+        Thu, 13 Sep 2018 14:46:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59300 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727009AbeIMSqG (ORCPT
+        with ESMTP id S1727009AbeIMSqK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:46:06 -0400
+        Thu, 13 Sep 2018 14:46:10 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C29B0D10;
-        Thu, 13 Sep 2018 13:36:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D4400D18;
+        Thu, 13 Sep 2018 13:36:38 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Ron Minnich <rminnich@sandia.gov>,
+        Latchesar Ionkov <lucho@ionkov.net>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        icytxw@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Tomas Bortoli <tomasbortoli@gmail.com>,
+        syzbot+735d926e9d1317c3310c@syzkaller.appspotmail.com,
+        Yiwen Jiang <jiangyiwen@huwei.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dominique Martinet <dominique.martinet@cea.fr>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 26/78] mm/fadvise.c: fix signed overflow UBSAN complaint
-Date:   Thu, 13 Sep 2018 15:31:13 +0200
-Message-Id: <20180913131807.653947889@linuxfoundation.org>
+Subject: [PATCH 4.9 35/78] net/9p/trans_fd.c: fix race by holding the lock
+Date:   Thu, 13 Sep 2018 15:31:22 +0200
+Message-Id: <20180913131809.578378646@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131805.732342940@linuxfoundation.org>
 References: <20180913131805.732342940@linuxfoundation.org>
@@ -55,52 +58,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andrey Ryabinin <aryabinin@virtuozzo.com>
+From: Tomas Bortoli <tomasbortoli@gmail.com>
 
-[ Upstream commit a718e28f538441a3b6612da9ff226973376cdf0f ]
+[ Upstream commit 9f476d7c540cb57556d3cc7e78704e6cd5100f5f ]
 
-Signed integer overflow is undefined according to the C standard.  The
-overflow in ksys_fadvise64_64() is deliberate, but since it is signed
-overflow, UBSAN complains:
+It may be possible to run p9_fd_cancel() with a deleted req->req_list
+and incur in a double del. To fix hold the client->lock while changing
+the status, so the other threads will be synchronized.
 
-	UBSAN: Undefined behaviour in mm/fadvise.c:76:10
-	signed integer overflow:
-	4 + 9223372036854775805 cannot be represented in type 'long long int'
-
-Use unsigned types to do math.  Unsigned overflow is defined so UBSAN
-will not complain about it.  This patch doesn't change generated code.
-
-[akpm@linux-foundation.org: add comment explaining the casts]
-Link: http://lkml.kernel.org/r/20180629184453.7614-1-aryabinin@virtuozzo.com
-Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Reported-by: <icytxw@gmail.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Link: http://lkml.kernel.org/r/20180723184253.6682-1-tomasbortoli@gmail.com
+Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
+Reported-by: syzbot+735d926e9d1317c3310c@syzkaller.appspotmail.com
+To: Eric Van Hensbergen <ericvh@gmail.com>
+To: Ron Minnich <rminnich@sandia.gov>
+To: Latchesar Ionkov <lucho@ionkov.net>
+Cc: Yiwen Jiang <jiangyiwen@huwei.com>
+Cc: David S. Miller <davem@davemloft.net>
+Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/fadvise.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ net/9p/trans_fd.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/mm/fadvise.c
-+++ b/mm/fadvise.c
-@@ -68,8 +68,12 @@ SYSCALL_DEFINE4(fadvise64_64, int, fd, l
- 		goto out;
+--- a/net/9p/trans_fd.c
++++ b/net/9p/trans_fd.c
+@@ -195,15 +195,14 @@ static void p9_mux_poll_stop(struct p9_c
+ static void p9_conn_cancel(struct p9_conn *m, int err)
+ {
+ 	struct p9_req_t *req, *rtmp;
+-	unsigned long flags;
+ 	LIST_HEAD(cancel_list);
+ 
+ 	p9_debug(P9_DEBUG_ERROR, "mux %p err %d\n", m, err);
+ 
+-	spin_lock_irqsave(&m->client->lock, flags);
++	spin_lock(&m->client->lock);
+ 
+ 	if (m->err) {
+-		spin_unlock_irqrestore(&m->client->lock, flags);
++		spin_unlock(&m->client->lock);
+ 		return;
  	}
  
--	/* Careful about overflows. Len == 0 means "as much as possible" */
--	endbyte = offset + len;
-+	/*
-+	 * Careful about overflows. Len == 0 means "as much as possible".  Use
-+	 * unsigned math because signed overflows are undefined and UBSan
-+	 * complains.
-+	 */
-+	endbyte = (u64)offset + (u64)len;
- 	if (!len || endbyte < len)
- 		endbyte = -1;
- 	else
+@@ -215,7 +214,6 @@ static void p9_conn_cancel(struct p9_con
+ 	list_for_each_entry_safe(req, rtmp, &m->unsent_req_list, req_list) {
+ 		list_move(&req->req_list, &cancel_list);
+ 	}
+-	spin_unlock_irqrestore(&m->client->lock, flags);
+ 
+ 	list_for_each_entry_safe(req, rtmp, &cancel_list, req_list) {
+ 		p9_debug(P9_DEBUG_ERROR, "call back req %p\n", req);
+@@ -224,6 +222,7 @@ static void p9_conn_cancel(struct p9_con
+ 			req->t_err = err;
+ 		p9_client_cb(m->client, req, REQ_STATUS_ERROR);
+ 	}
++	spin_unlock(&m->client->lock);
+ }
+ 
+ static int
+@@ -379,8 +378,9 @@ static void p9_read_work(struct work_str
+ 		if (m->req->status != REQ_STATUS_ERROR)
+ 			status = REQ_STATUS_RCVD;
+ 		list_del(&m->req->req_list);
+-		spin_unlock(&m->client->lock);
++		/* update req->status while holding client->lock  */
+ 		p9_client_cb(m->client, m->req, status);
++		spin_unlock(&m->client->lock);
+ 		m->rc.sdata = NULL;
+ 		m->rc.offset = 0;
+ 		m->rc.capacity = 0;
 
 
