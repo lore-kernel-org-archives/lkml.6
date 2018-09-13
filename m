@@ -6,127 +6,268 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D78CCC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 10:35:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DDC6C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 10:37:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85DFA20854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 10:35:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85DFA20854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 28F0920882
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 10:37:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28F0920882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727649AbeIMPo0 (ORCPT
+        id S1727686AbeIMPqZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 11:44:26 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45758 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726912AbeIMPo0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 11:44:26 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2237E80D;
-        Thu, 13 Sep 2018 03:35:35 -0700 (PDT)
-Received: from e107155-lin (e107155-lin.emea.arm.com [10.4.12.116])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 161B83F557;
-        Thu, 13 Sep 2018 03:35:32 -0700 (PDT)
-Date:   Thu, 13 Sep 2018 11:35:25 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     James Morse <james.morse@arm.com>,
-        Brice Goglin <brice.goglin@gmail.com>
-Cc:     Jeffrey Hugo <jhugo@codeaurora.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Jeremy Linton <jeremy.linton@arm.com>, rjw@rjwysocki.net,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        vkilari@codeaurora.org
-Subject: Re: [PATCH] ACPI/PPTT: Handle architecturally unknown cache types
-Message-ID: <20180913103525.GA7777@e107155-lin>
-References: <1536694334-5811-1-git-send-email-jhugo@codeaurora.org>
- <f62f22a6-2dd8-f254-dbaf-b9e224099afd@arm.com>
- <e74f2208-ac0d-6c45-8ddb-5b77d6a42fef@codeaurora.org>
- <f8dc2958-a7c7-a633-3a06-97fed7c3510b@arm.com>
- <4f253bf4-ef2d-849f-b793-9b0530e72aab@gmail.com>
- <c7e74980-eb5d-1b2a-8ebb-7210b4f507a2@arm.com>
+        Thu, 13 Sep 2018 11:46:25 -0400
+Received: from relay9-d.mail.gandi.net ([217.70.183.199]:58377 "EHLO
+        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726912AbeIMPqZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 11:46:25 -0400
+X-Originating-IP: 2.224.242.101
+Received: from w540 (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 6D8CEFF811;
+        Thu, 13 Sep 2018 10:37:29 +0000 (UTC)
+Date:   Thu, 13 Sep 2018 12:37:27 +0200
+From:   jacopo mondi <jacopo@jmondi.org>
+To:     Steve Longerbeam <slongerbeam@gmail.com>
+Cc:     linux-media@vger.kernel.org,
+        Steve Longerbeam <steve_longerbeam@mentor.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 06/17] media: v4l2-fwnode: Add a convenience function
+ for registering subdevs with notifiers
+Message-ID: <20180913103727.GB28160@w540>
+References: <1531175957-1973-1-git-send-email-steve_longerbeam@mentor.com>
+ <1531175957-1973-7-git-send-email-steve_longerbeam@mentor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="dEhLd0jN5MocHkcT"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c7e74980-eb5d-1b2a-8ebb-7210b4f507a2@arm.com>
+In-Reply-To: <1531175957-1973-7-git-send-email-steve_longerbeam@mentor.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 13, 2018 at 10:39:10AM +0100, James Morse wrote:
-> Hi Brice,
+
+--dEhLd0jN5MocHkcT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+
+Hi Steve,
+
+On Mon, Jul 09, 2018 at 03:39:06PM -0700, Steve Longerbeam wrote:
+> Adds v4l2_async_register_fwnode_subdev(), which is a convenience function
+> for parsing a sub-device's fwnode port endpoints for connected remote
+> sub-devices, registering a sub-device notifier, and then registering
+> the sub-device itself.
 >
-> On 13/09/18 06:51, Brice Goglin wrote:
-> > Le 12/09/2018 à 11:49, Sudeep Holla a écrit :
-> >>> Yes.  Without this change, we hit the lscpu error in the commit message,
-> >>> and get zero output about the system.  We don't even get information
-> >>> about the caches which are architecturally specified or how many cpus
-> >>> are present.  With this change, we get what we expect out of lscpu (and
-> >>> also lstopo) including the cache(s) which are not architecturally
-> >>> specified.
-> >>>
-> >> lscpu and lstopo are so broken. They just assume everything on CPU0.
-> >> If you hotplug them out, you start seeing issues. So reading and file
-> >> that doesn't exist and then bail out on other essential info though they
-> >> are present, hmmm ...
-> >
-> > Can you elaborate?
-> >
-> > I am not sure cpu0 is supposed to be offlineable on Linux. There's no
-> > "online" file in /sys/devices/system/cpu/cpu0. That's why former lstopo
-> > doesn't like CPU0 being hotplugged out. We are actually making that case
-> > work for another non-standard corner case. But offlining "cpu0" this is
-> > considered "normal", somebody must add that missing "online" sysfs
-> > attribute for "cpu0" (change
-> > https://elixir.bootlin.com/linux/latest/source/drivers/base/cpu.c#L375).
+> Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
+> ---
+> Changes since v5:
+> - add call to v4l2_async_notifier_init().
+> Changes since v4:
+> - none
+> Changes since v3:
+> - remove support for port sub-devices, such sub-devices will have to
+>   role their own.
+> Changes since v2:
+> - fix error-out path in v4l2_async_register_fwnode_subdev() that forgot
+>   to put device.
+> Changes since v1:
+> - add #include <media/v4l2-subdev.h> to v4l2-fwnode.h for
+>   'struct v4l2_subdev' declaration.
+> ---
+>  drivers/media/v4l2-core/v4l2-fwnode.c | 64 +++++++++++++++++++++++++++++++++++
+>  include/media/v4l2-fwnode.h           | 38 +++++++++++++++++++++
+>  2 files changed, 102 insertions(+)
 >
-> On x86 you can't normally offline CPU0, its something to do with certain
-> interrupts always being routed to CPU0, (oh, and hibernate).
-> You should be able to enable this behaviour with 'cpu0_hotplug' on the kernel
-> command line.
+> diff --git a/drivers/media/v4l2-core/v4l2-fwnode.c b/drivers/media/v4l2-core/v4l2-fwnode.c
+> index 67ad333..94d867a 100644
+> --- a/drivers/media/v4l2-core/v4l2-fwnode.c
+> +++ b/drivers/media/v4l2-core/v4l2-fwnode.c
+> @@ -872,6 +872,70 @@ int v4l2_async_register_subdev_sensor_common(struct v4l2_subdev *sd)
+>  }
+>  EXPORT_SYMBOL_GPL(v4l2_async_register_subdev_sensor_common);
 >
-> (Kconfig's CONFIG_BOOTPARAM_HOTPLUG_CPU0 and CONFIG_DEBUG_HOTPLUG_CPU0 are also
-> worth a look)
+> +int v4l2_async_register_fwnode_subdev(
+
+The meat of this function is to register a subdev with a notifier,
+so I would make it clear in the function name which is otherwise
+misleading
+
+> +	struct v4l2_subdev *sd, size_t asd_struct_size,
+> +	unsigned int *ports, unsigned int num_ports,
+> +	int (*parse_endpoint)(struct device *dev,
+> +			      struct v4l2_fwnode_endpoint *vep,
+> +			      struct v4l2_async_subdev *asd))
+> +{
+> +	struct v4l2_async_notifier *notifier;
+> +	struct device *dev = sd->dev;
+> +	struct fwnode_handle *fwnode;
+> +	int ret;
+> +
+> +	if (WARN_ON(!dev))
+> +		return -ENODEV;
+> +
+> +	fwnode = dev_fwnode(dev);
+> +	if (!fwnode_device_is_available(fwnode))
+> +		return -ENODEV;
+> +
+> +	notifier = kzalloc(sizeof(*notifier), GFP_KERNEL);
+> +	if (!notifier)
+> +		return -ENOMEM;
+> +
+> +	v4l2_async_notifier_init(notifier);
+> +
+> +	if (!ports) {
+> +		ret = v4l2_async_notifier_parse_fwnode_endpoints(
+> +			dev, notifier, asd_struct_size, parse_endpoint);
+> +		if (ret < 0)
+> +			goto out_cleanup;
+> +	} else {
+> +		unsigned int i;
+> +
+> +		for (i = 0; i < num_ports; i++) {
+
+It's not particularly exciting to iterate on pointers received from
+callers without checking for num_ports first.
+
+Also the caller has to allocate an array of "ports" and keep track of it
+just to pass it to this function and I don't see a way to set the
+notifier's ops before the notifier gets registered here below.
+
+> +			ret = v4l2_async_notifier_parse_fwnode_endpoints_by_port(
+> +				dev, notifier, asd_struct_size,
+> +				ports[i], parse_endpoint);
+> +			if (ret < 0)
+> +				goto out_cleanup;
+> +		}
+> +	}
+> +
+> +	ret = v4l2_async_subdev_notifier_register(sd, notifier);
+> +	if (ret < 0)
+> +		goto out_cleanup;
+> +
+> +	ret = v4l2_async_register_subdev(sd);
+> +	if (ret < 0)
+> +		goto out_unregister;
+> +
+> +	sd->subdev_notifier = notifier;
+
+This is set already by v4l2_async_subdev_notifier_register()
+
+In general, I have doubts this function is really needed. It requires
+the caller to reserve memory just to pass down a list of intergers,
+and there is no way to set subdev ops.
+
+Could you have a look at how drivers/media/platform/rcar-vin/rcar-csi2.c
+registers a subdevice and an associated notifier and see if in your
+opinion it can be implemented in the same way in your imx csi/csi2 driver,
+or you still like this one most?
+
+Thanks
+   j
+> +
+> +	return 0;
+> +
+> +out_unregister:
+> +	v4l2_async_notifier_unregister(notifier);
+> +out_cleanup:
+> +	v4l2_async_notifier_cleanup(notifier);
+> +	kfree(notifier);
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(v4l2_async_register_fwnode_subdev);
+> +
+>  MODULE_LICENSE("GPL");
+>  MODULE_AUTHOR("Sakari Ailus <sakari.ailus@linux.intel.com>");
+>  MODULE_AUTHOR("Sylwester Nawrocki <s.nawrocki@samsung.com>");
+> diff --git a/include/media/v4l2-fwnode.h b/include/media/v4l2-fwnode.h
+> index ea7a8b2..031ebb0 100644
+> --- a/include/media/v4l2-fwnode.h
+> +++ b/include/media/v4l2-fwnode.h
+> @@ -23,6 +23,7 @@
+>  #include <linux/types.h>
 >
-> On arm64 at least, cpu0 is just like the others, and can be offlined.
+>  #include <media/v4l2-mediabus.h>
+> +#include <media/v4l2-subdev.h>
+>
+>  struct fwnode_handle;
+>  struct v4l2_async_notifier;
+> @@ -360,4 +361,41 @@ int v4l2_async_notifier_parse_fwnode_endpoints_by_port(
+>  int v4l2_async_notifier_parse_fwnode_sensor_common(
+>  	struct device *dev, struct v4l2_async_notifier *notifier);
+>
+> +/**
+> + * v4l2_async_register_fwnode_subdev - registers a sub-device to the
+> + *					asynchronous sub-device framework
+> + *					and parses fwnode endpoints
+> + *
+> + * @sd: pointer to struct &v4l2_subdev
+> + * @asd_struct_size: size of the driver's async sub-device struct, including
+> + *		     sizeof(struct v4l2_async_subdev). The &struct
+> + *		     v4l2_async_subdev shall be the first member of
+> + *		     the driver's async sub-device struct, i.e. both
+> + *		     begin at the same memory address.
+> + * @ports: array of port id's to parse for fwnode endpoints. If NULL, will
+> + *	   parse all ports owned by the sub-device.
+> + * @num_ports: number of ports in @ports array. Ignored if @ports is NULL.
+> + * @parse_endpoint: Driver's callback function called on each V4L2 fwnode
+> + *		    endpoint. Optional.
+> + *
+> + * This function is just like v4l2_async_register_subdev() with the
+> + * exception that calling it will also allocate a notifier for the
+> + * sub-device, parse the sub-device's firmware node endpoints using
+> + * v4l2_async_notifier_parse_fwnode_endpoints() or
+> + * v4l2_async_notifier_parse_fwnode_endpoints_by_port(), and
+> + * registers the sub-device notifier. The sub-device is similarly
+> + * unregistered by calling v4l2_async_unregister_subdev().
+> + *
+> + * While registered, the subdev module is marked as in-use.
+> + *
+> + * An error is returned if the module is no longer loaded on any attempts
+> + * to register it.
+> + */
+> +int v4l2_async_register_fwnode_subdev(
+> +	struct v4l2_subdev *sd, size_t asd_struct_size,
+> +	unsigned int *ports, unsigned int num_ports,
+> +	int (*parse_endpoint)(struct device *dev,
+> +			      struct v4l2_fwnode_endpoint *vep,
+> +			      struct v4l2_async_subdev *asd));
+> +
+>  #endif /* _V4L2_FWNODE_H */
+> --
+> 2.7.4
 >
 
-Thanks James, for providing all the details.
+--dEhLd0jN5MocHkcT
+Content-Type: application/pgp-signature; name="signature.asc"
 
-To add to the issues I spotted with lscpu/lstopo around topology, it ignores
-the updates to topology sibling masks when CPUs are hotplugged in and out.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-We have following in lscpu:
-	add_summary_n(tb, _("Core(s) per socket:"),
-			cores_per_socket ?: desc->ncores / desc->nsockets);
+iQIcBAEBAgAGBQJbmj3nAAoJEHI0Bo8WoVY8BBUP/0/XYjJxIOrRjAqkdTdx+SIT
+CMwvzQf3VqYzUUFn1LDqcQlkovgrziZv6rDj1Aaf6I0jFFdtsPXZfqbK6CkQEaMC
+tdIGlD03Jy18E5lviO+W+7lXFU1ztwALzFQFiAqX/U4OiTj3ajYC95vtKCLDMHwm
+3qrTsCOcvtcDpqSMtHznzcmCri/ygBCmfa4Ts6BTC6rAdJoXmjlKRHVeXXcCLWGg
+uczLqhQIkvpbMwOeCgzv3stOyUzv7Q4+/stG5f6Lhvc7MYdnFexfJzHiYawg0Lv/
+DmXZRnoemsXw7I2JTuUeQhg6hIUA6TTjQXMotDa+FPcZJBscYolFXvUMBQtZI/c0
+Gbj9UKeMzqXT0QKLjuZUda/uqdC4MT9cZhkn7BJlUfZSRDIZvgMK+w0ov5pv8wFc
+qRZ3wEbOMxSTt4UUk+bsK0PPQLNCl1YdgJCz2re+0O/mwcwLmz5mZg2YO60kAoDO
+cfmzl+IJ1c16L4yTAx1UUcZ/XkgzdUe8GAOHAfisLlwVzSGFxl7QgnqN1+QGOWMU
+OuHftZehGJ0PoLUFEAx3J+5gFeVchx+sDxhpOcAy4FcHRHA3v8+ufTpFT6flkdrL
+y2DUSJprhiURMDc/QzcfLLa/EOjWzwu+Wcc9S01eUnro237RFc2bv80X9a748cRh
+KqBdTz6gee4q1bM1aiYK
+=2SND
+-----END PGP SIGNATURE-----
 
-Now when cores_per_socket = 1, (i.e when we don't have procfs entry),
-if ncores = (ncores_max - few_cpus_hotplugged_out), core(s) per socket
-will get computed as less than the actual number.
-
-IMO lscpu should be used only when all CPUs are online and it should have
-a warning when all cores are not online.
-
-> > By the way, did anybody actually see an error with lstopo when there's
-> > no "type" attribute for L3? I can't reproduce any issue, we just skip
-> > that specific cache entirely, but everything else appears. If you guys
-> > want to make that "no_cache" cache appear, I'll make it a Unified cache
-> > unless you tell me what to show :)
-
-IIUC, Jeffrey Hugo did see error as per his initial message:
-"
-This fixes the following lscpu issue where only the cache type sysfs file
-is missing which results in no output providing a poor user experience in
-the above system configuration.
-lscpu: cannot open /sys/devices/system/cpu/cpu0/cache/index3/type: No such
-file or directory
-"
-
---
-Regards,
-Sudeep
-
-[1] https://www.spinics.net/lists/arm-kernel/msg661101.html
+--dEhLd0jN5MocHkcT--
