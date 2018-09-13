@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8567AC07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:45:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AEE8C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:45:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4520920854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:45:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4520920854
+	by mail.kernel.org (Postfix) with ESMTP id 21FFE2146E
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:45:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21FFE2146E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730156AbeIMSyy (ORCPT
+        id S1730167AbeIMSy5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:54:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60698 "EHLO
+        Thu, 13 Sep 2018 14:54:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60706 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729896AbeIMSyy (ORCPT
+        with ESMTP id S1727391AbeIMSy4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:54:54 -0400
+        Thu, 13 Sep 2018 14:54:56 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B3DDED10;
-        Thu, 13 Sep 2018 13:45:20 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DA10FD10;
+        Thu, 13 Sep 2018 13:45:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John Pittman <jpittman@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>,
+        stable@vger.kernel.org, Ian Abbott <abbotti@mev.co.uk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 065/115] dm kcopyd: avoid softlockup in run_complete_job
-Date:   Thu, 13 Sep 2018 15:31:25 +0200
-Message-Id: <20180913131827.676953065@linuxfoundation.org>
+Subject: [PATCH 4.14 066/115] staging: comedi: ni_mio_common: fix subdevice flags for PFI subdevice
+Date:   Thu, 13 Sep 2018 15:31:26 +0200
+Message-Id: <20180913131827.754678360@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -52,54 +51,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: John Pittman <jpittman@redhat.com>
+From: Ian Abbott <abbotti@mev.co.uk>
 
-[ Upstream commit 784c9a29e99eb40b842c29ecf1cc3a79e00fb629 ]
+[ Upstream commit e083926b3e269d4064825dcf2ad50c636fddf8cf ]
 
-It was reported that softlockups occur when using dm-snapshot ontop of
-slow (rbd) storage.  E.g.:
+The PFI subdevice flags indicate that the subdevice is readable and
+writeable, but that is only true for the supported "M-series" boards,
+not the older "E-series" boards.  Only set the SDF_READABLE and
+SDF_WRITABLE subdevice flags for the M-series boards.  These two flags
+are mainly for informational purposes.
 
-[ 4047.990647] watchdog: BUG: soft lockup - CPU#10 stuck for 22s! [kworker/10:23:26177]
-...
-[ 4048.034151] Workqueue: kcopyd do_work [dm_mod]
-[ 4048.034156] RIP: 0010:copy_callback+0x41/0x160 [dm_snapshot]
-...
-[ 4048.034190] Call Trace:
-[ 4048.034196]  ? __chunk_is_tracked+0x70/0x70 [dm_snapshot]
-[ 4048.034200]  run_complete_job+0x5f/0xb0 [dm_mod]
-[ 4048.034205]  process_jobs+0x91/0x220 [dm_mod]
-[ 4048.034210]  ? kcopyd_put_pages+0x40/0x40 [dm_mod]
-[ 4048.034214]  do_work+0x46/0xa0 [dm_mod]
-[ 4048.034219]  process_one_work+0x171/0x370
-[ 4048.034221]  worker_thread+0x1fc/0x3f0
-[ 4048.034224]  kthread+0xf8/0x130
-[ 4048.034226]  ? max_active_store+0x80/0x80
-[ 4048.034227]  ? kthread_bind+0x10/0x10
-[ 4048.034231]  ret_from_fork+0x35/0x40
-[ 4048.034233] Kernel panic - not syncing: softlockup: hung tasks
-
-Fix this by calling cond_resched() after run_complete_job()'s callout to
-the dm_kcopyd_notify_fn (which is dm-snap.c:copy_callback in the above
-trace).
-
-Signed-off-by: John Pittman <jpittman@redhat.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/md/dm-kcopyd.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/staging/comedi/drivers/ni_mio_common.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/md/dm-kcopyd.c
-+++ b/drivers/md/dm-kcopyd.c
-@@ -484,6 +484,8 @@ static int run_complete_job(struct kcopy
- 	if (atomic_dec_and_test(&kc->nr_jobs))
- 		wake_up(&kc->destroyq);
+--- a/drivers/staging/comedi/drivers/ni_mio_common.c
++++ b/drivers/staging/comedi/drivers/ni_mio_common.c
+@@ -5453,11 +5453,11 @@ static int ni_E_init(struct comedi_devic
+ 	/* Digital I/O (PFI) subdevice */
+ 	s = &dev->subdevices[NI_PFI_DIO_SUBDEV];
+ 	s->type		= COMEDI_SUBD_DIO;
+-	s->subdev_flags	= SDF_READABLE | SDF_WRITABLE | SDF_INTERNAL;
+ 	s->maxdata	= 1;
+ 	if (devpriv->is_m_series) {
+ 		s->n_chan	= 16;
+ 		s->insn_bits	= ni_pfi_insn_bits;
++		s->subdev_flags	= SDF_READABLE | SDF_WRITABLE | SDF_INTERNAL;
  
-+	cond_resched();
-+
- 	return 0;
- }
+ 		ni_writew(dev, s->state, NI_M_PFI_DO_REG);
+ 		for (i = 0; i < NUM_PFI_OUTPUT_SELECT_REGS; ++i) {
+@@ -5466,6 +5466,7 @@ static int ni_E_init(struct comedi_devic
+ 		}
+ 	} else {
+ 		s->n_chan	= 10;
++		s->subdev_flags	= SDF_INTERNAL;
+ 	}
+ 	s->insn_config	= ni_pfi_insn_config;
  
 
 
