@@ -6,41 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86A52C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:44:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFED5C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:44:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B6A320854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:44:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B6A320854
+	by mail.kernel.org (Postfix) with ESMTP id 82AAF20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:44:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82AAF20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730041AbeIMSyG (ORCPT
+        id S1730046AbeIMSyL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:54:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60574 "EHLO
+        Thu, 13 Sep 2018 14:54:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60582 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729357AbeIMSyG (ORCPT
+        with ESMTP id S1728565AbeIMSyK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:54:06 -0400
+        Thu, 13 Sep 2018 14:54:10 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 22E00CF3;
-        Thu, 13 Sep 2018 13:44:32 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0F640D10;
+        Thu, 13 Sep 2018 13:44:36 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Greg Kurz <groug@kaod.org>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Ron Minnich <rminnich@sandia.gov>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dominique Martinet <dominique.martinet@cea.fr>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 051/115] net/9p: fix error path of p9_virtio_probe
-Date:   Thu, 13 Sep 2018 15:31:11 +0200
-Message-Id: <20180913131826.812888225@linuxfoundation.org>
+        stable@vger.kernel.org, Jamal Hadi Salim <jhs@mojatatu.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 019/115] act_ife: fix a potential deadlock
+Date:   Thu, 13 Sep 2018 15:30:39 +0200
+Message-Id: <20180913131824.703629451@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -58,46 +52,108 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-[ Upstream commit 92aef4675d5b1b55404e1532379e343bed0e5cf2 ]
+[ Upstream commit 5ffe57da29b3802baeddaa40909682bbb4cb4d48 ]
 
-Currently when virtio_find_single_vq fails, we go through del_vqs which
-throws a warning (Trying to free already-free IRQ).  Skip del_vqs if vq
-allocation failed.
+use_all_metadata() acquires read_lock(&ife_mod_lock), then calls
+add_metainfo() which calls find_ife_oplist() which acquires the same
+lock again. Deadlock!
 
-Link: http://lkml.kernel.org/r/20180524101021.49880-1-jean-philippe.brucker@arm.com
-Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Reviewed-by: Greg Kurz <groug@kaod.org>
-Cc: Eric Van Hensbergen <ericvh@gmail.com>
-Cc: Ron Minnich <rminnich@sandia.gov>
-Cc: Latchesar Ionkov <lucho@ionkov.net>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Introduce __add_metainfo() which accepts struct tcf_meta_ops *ops
+as an additional parameter and let its callers to decide how
+to find it. For use_all_metadata(), it already has ops, no
+need to find it again, just call __add_metainfo() directly.
+
+And, as ife_mod_lock is only needed for find_ife_oplist(),
+this means we can make non-atomic allocation for populate_metalist()
+now.
+
+Fixes: 817e9f2c5c26 ("act_ife: acquire ife_mod_lock before reading ifeoplist")
+Cc: Jamal Hadi Salim <jhs@mojatatu.com>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/9p/trans_virtio.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/sched/act_ife.c |   34 +++++++++++++++++++++-------------
+ 1 file changed, 21 insertions(+), 13 deletions(-)
 
---- a/net/9p/trans_virtio.c
-+++ b/net/9p/trans_virtio.c
-@@ -571,7 +571,7 @@ static int p9_virtio_probe(struct virtio
- 	chan->vq = virtio_find_single_vq(vdev, req_done, "requests");
- 	if (IS_ERR(chan->vq)) {
- 		err = PTR_ERR(chan->vq);
--		goto out_free_vq;
-+		goto out_free_chan;
+--- a/net/sched/act_ife.c
++++ b/net/sched/act_ife.c
+@@ -278,22 +278,16 @@ static int load_metaops_and_vet(u32 meta
+ 
+ /* called when adding new meta information
+ */
+-static int add_metainfo(struct tcf_ife_info *ife, u32 metaid, void *metaval,
+-			int len, bool atomic, bool exists)
++static int __add_metainfo(const struct tcf_meta_ops *ops,
++			  struct tcf_ife_info *ife, u32 metaid, void *metaval,
++			  int len, bool atomic, bool exists)
+ {
+ 	struct tcf_meta_info *mi = NULL;
+-	struct tcf_meta_ops *ops = find_ife_oplist(metaid);
+ 	int ret = 0;
+ 
+-	if (!ops)
+-		return -ENOENT;
+-
+ 	mi = kzalloc(sizeof(*mi), atomic ? GFP_ATOMIC : GFP_KERNEL);
+-	if (!mi) {
+-		/*put back what find_ife_oplist took */
+-		module_put(ops->owner);
++	if (!mi)
+ 		return -ENOMEM;
+-	}
+ 
+ 	mi->metaid = metaid;
+ 	mi->ops = ops;
+@@ -301,7 +295,6 @@ static int add_metainfo(struct tcf_ife_i
+ 		ret = ops->alloc(mi, metaval, atomic ? GFP_ATOMIC : GFP_KERNEL);
+ 		if (ret != 0) {
+ 			kfree(mi);
+-			module_put(ops->owner);
+ 			return ret;
+ 		}
  	}
- 	chan->vq->vdev->priv = chan;
- 	spin_lock_init(&chan->lock);
-@@ -624,6 +624,7 @@ out_free_tag:
- 	kfree(tag);
- out_free_vq:
- 	vdev->config->del_vqs(vdev);
-+out_free_chan:
- 	kfree(chan);
- fail:
- 	return err;
+@@ -315,6 +308,21 @@ static int add_metainfo(struct tcf_ife_i
+ 	return ret;
+ }
+ 
++static int add_metainfo(struct tcf_ife_info *ife, u32 metaid, void *metaval,
++			int len, bool exists)
++{
++	const struct tcf_meta_ops *ops = find_ife_oplist(metaid);
++	int ret;
++
++	if (!ops)
++		return -ENOENT;
++	ret = __add_metainfo(ops, ife, metaid, metaval, len, false, exists);
++	if (ret)
++		/*put back what find_ife_oplist took */
++		module_put(ops->owner);
++	return ret;
++}
++
+ static int use_all_metadata(struct tcf_ife_info *ife, bool exists)
+ {
+ 	struct tcf_meta_ops *o;
+@@ -323,7 +331,7 @@ static int use_all_metadata(struct tcf_i
+ 
+ 	read_lock(&ife_mod_lock);
+ 	list_for_each_entry(o, &ifeoplist, list) {
+-		rc = add_metainfo(ife, o->metaid, NULL, 0, true, exists);
++		rc = __add_metainfo(o, ife, o->metaid, NULL, 0, true, exists);
+ 		if (rc == 0)
+ 			installed += 1;
+ 	}
+@@ -412,7 +420,7 @@ static int populate_metalist(struct tcf_
+ 			if (rc != 0)
+ 				return rc;
+ 
+-			rc = add_metainfo(ife, i, val, len, false, exists);
++			rc = add_metainfo(ife, i, val, len, exists);
+ 			if (rc)
+ 				return rc;
+ 		}
 
 
