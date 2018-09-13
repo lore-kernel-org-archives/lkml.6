@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01109C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:32:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFE9AC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:32:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7A1F20854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:32:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7A1F20854
+	by mail.kernel.org (Postfix) with ESMTP id 7DE0720854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:32:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DE0720854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728429AbeIMSmL (ORCPT
+        id S1728446AbeIMSmP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:42:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58600 "EHLO
+        Thu, 13 Sep 2018 14:42:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58612 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727002AbeIMSmK (ORCPT
+        with ESMTP id S1727419AbeIMSmO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:42:10 -0400
+        Thu, 13 Sep 2018 14:42:14 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 92B54CF3;
-        Thu, 13 Sep 2018 13:32:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E89BCCF3;
+        Thu, 13 Sep 2018 13:32:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Misono Tomohiro <misono.tomohiro@jp.fujitsu.com>,
-        David Sterba <dsterba@suse.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 32/60] btrfs: replace: Reset on-disk dev stats value after replace
-Date:   Thu, 13 Sep 2018 15:30:39 +0200
-Message-Id: <20180913131746.925698415@linuxfoundation.org>
+        stable@vger.kernel.org, Manish <manish.chopra@cavium.com>,
+        Benjamin Poirier <bpoirier@suse.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 04/60] qlge: Fix netdev features configuration.
+Date:   Thu, 13 Sep 2018 15:30:11 +0200
+Message-Id: <20180913131745.487634317@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131745.261413581@linuxfoundation.org>
 References: <20180913131745.261413581@linuxfoundation.org>
@@ -53,46 +52,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Misono Tomohiro <misono.tomohiro@jp.fujitsu.com>
+From: Manish Chopra <manish.chopra@cavium.com>
 
-[ Upstream commit 1e7e1f9e3aba00c9b9c323bfeeddafe69ff21ff6 ]
+[ Upstream commit 6750c87074c5b534d82fdaabb1deb45b8f1f57de ]
 
-on-disk devs stats value is updated in btrfs_run_dev_stats(),
-which is called during commit transaction, if device->dev_stats_ccnt
-is not zero.
+qlge_fix_features() is not supposed to modify hardware or
+driver state, rather it is supposed to only fix requested
+fetures bits. Currently qlge_fix_features() also goes for
+interface down and up unnecessarily if there is not even
+any change in features set.
 
-Since current replace operation does not touch dev_stats_ccnt,
-on-disk dev stats value is not updated. Therefore "btrfs device stats"
-may return old device's value after umount/mount
-(Example: See "btrfs ins dump-t -t DEV $DEV" after btrfs/100 finish).
+This patch changes/fixes following -
 
-Fix this by just incrementing dev_stats_ccnt in
-btrfs_dev_replace_finishing() when replace is succeeded and this will
-update the values.
+1) Move reload of interface or device re-config from
+   qlge_fix_features() to qlge_set_features().
+2) Reload of interface in qlge_set_features() only if
+   relevant feature bit (NETIF_F_HW_VLAN_CTAG_RX) is changed.
+3) Get rid of qlge_fix_features() since driver is not really
+   required to fix any features bit.
 
-Signed-off-by: Misono Tomohiro <misono.tomohiro@jp.fujitsu.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Manish <manish.chopra@cavium.com>
+Reviewed-by: Benjamin Poirier <bpoirier@suse.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/dev-replace.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/net/ethernet/qlogic/qlge/qlge_main.c |   23 ++++++++---------------
+ 1 file changed, 8 insertions(+), 15 deletions(-)
 
---- a/fs/btrfs/dev-replace.c
-+++ b/fs/btrfs/dev-replace.c
-@@ -574,6 +574,12 @@ static int btrfs_dev_replace_finishing(s
- 	btrfs_rm_dev_replace_unblocked(fs_info);
+--- a/drivers/net/ethernet/qlogic/qlge/qlge_main.c
++++ b/drivers/net/ethernet/qlogic/qlge/qlge_main.c
+@@ -2388,26 +2388,20 @@ static int qlge_update_hw_vlan_features(
+ 	return status;
+ }
  
- 	/*
-+	 * Increment dev_stats_ccnt so that btrfs_run_dev_stats() will
-+	 * update on-disk dev stats value during commit transaction
-+	 */
-+	atomic_inc(&tgt_device->dev_stats_ccnt);
+-static netdev_features_t qlge_fix_features(struct net_device *ndev,
+-	netdev_features_t features)
+-{
+-	int err;
+-
+-	/* Update the behavior of vlan accel in the adapter */
+-	err = qlge_update_hw_vlan_features(ndev, features);
+-	if (err)
+-		return err;
+-
+-	return features;
+-}
+-
+ static int qlge_set_features(struct net_device *ndev,
+ 	netdev_features_t features)
+ {
+ 	netdev_features_t changed = ndev->features ^ features;
++	int err;
 +
-+	/*
- 	 * this is again a consistent state where no dev_replace procedure
- 	 * is running, the target device is part of the filesystem, the
- 	 * source device is not part of the filesystem anymore and its 1st
++	if (changed & NETIF_F_HW_VLAN_CTAG_RX) {
++		/* Update the behavior of vlan accel in the adapter */
++		err = qlge_update_hw_vlan_features(ndev, features);
++		if (err)
++			return err;
+ 
+-	if (changed & NETIF_F_HW_VLAN_CTAG_RX)
+ 		qlge_vlan_mode(ndev, features);
++	}
+ 
+ 	return 0;
+ }
+@@ -4720,7 +4714,6 @@ static const struct net_device_ops qlge_
+ 	.ndo_set_mac_address	= qlge_set_mac_address,
+ 	.ndo_validate_addr	= eth_validate_addr,
+ 	.ndo_tx_timeout		= qlge_tx_timeout,
+-	.ndo_fix_features	= qlge_fix_features,
+ 	.ndo_set_features	= qlge_set_features,
+ 	.ndo_vlan_rx_add_vid	= qlge_vlan_rx_add_vid,
+ 	.ndo_vlan_rx_kill_vid	= qlge_vlan_rx_kill_vid,
 
 
