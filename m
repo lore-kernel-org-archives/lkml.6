@@ -2,185 +2,111 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE7C2C070C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 02:31:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82AC1C070C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 02:32:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C4882146E
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 02:31:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C4882146E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 28F9120882
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 02:32:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oNU8DxCk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28F9120882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726694AbeIMHim (ORCPT
+        id S1726919AbeIMHjs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 03:38:42 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:43342 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726285AbeIMHim (ORCPT
+        Thu, 13 Sep 2018 03:39:48 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:41595 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726285AbeIMHjr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 03:38:42 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1g0HPb-00068t-PA; Thu, 13 Sep 2018 02:31:19 +0000
-Date:   Thu, 13 Sep 2018 03:31:19 +0100
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCHES] tty ioctls cleanups, compat and not only
-Message-ID: <20180913023119.GQ19965@ZenIV.linux.org.uk>
+        Thu, 13 Sep 2018 03:39:47 -0400
+Received: by mail-io1-f67.google.com with SMTP id q4-v6so1930997iob.8
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 19:32:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=al50tF7NPi9gaw6aJNwrZnftu/N04MbDd/1HZzxh/Yg=;
+        b=oNU8DxCkMkyb4p/SCYeEKRCEXEIm008msv5mfp/DnejErld4f0s5dI2faOe+k4ZgvH
+         1esnRhZr//UJLToUz7y+IYhV0xgEkIOw8+RdT5aePIQ+FrXPze0hrjQdwQEPj9VHPoPu
+         IFZTH7xyHmP9kM3sU8CAMerMhqD/rBXjsC7QPXAbJBy0Ss8OYWmutj+/0kIWmu0Bz89h
+         rBcvEsY4aKDX3E+8XHsRVVF4zdScFmYU32+cAIzwW3DgZpTIJg4uyN06k3pmc5yDvgbm
+         p4nqV9hgqk1E5fk99W01c0s1lWzqVKsSd6njgwMZ0RVvi6VGcFeX6g45KPIEspbzBJBl
+         Srkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=al50tF7NPi9gaw6aJNwrZnftu/N04MbDd/1HZzxh/Yg=;
+        b=R2pspT9mJrcoyrT0Xn6rvxQFl0KcI2vo3HbiVXtac+dcU1WrrEj+I3PXGP4UQf7qg2
+         x8G/6k7UhdGFIamgkLmV8xe+z33iChjaqmKvfyMttXc/NzrJJzym0j3JwinZfCb3z1+w
+         gpE0krX2eN+HiLXiw282XH6ZNkEf1RcSJMMctY6haPwcS1K+Y23qXGOp1DZDua8SQLiH
+         psj1En0vfONmoKeFmIclfcEyH9DBC5QrcXoNevBWNP61S/k5BzC1mYKKiYMe+HzETO/K
+         s1ClWHoj/jNKQ7Q9rcqSH7hKIrSO7QOzFkHVBBnWW3GPJm9Bqvp6cXBOjOxoxwUAcohb
+         drgQ==
+X-Gm-Message-State: APzg51Aw7apDgFuqAS6mKOq80N8oeOsKhKeTCuUVmI8UNp6Z3TghvsUQ
+        ROXv/2S+AuKC6ksucSeyF4CL54ci4YyqnLSvsYc=
+X-Google-Smtp-Source: ANB0VdZ6PD4z7avkSNk1dqgUdD4VSLGN4/VZ4NprMsTf9+2Yyc+Et6kGND2G07YT6irTmUf0uCDlzpXIh95F1uXNWiw=
+X-Received: by 2002:a6b:6c12:: with SMTP id a18-v6mr4401133ioh.72.1536805947346;
+ Wed, 12 Sep 2018 19:32:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.1 (2017-09-22)
+References: <20180912155530.GF2966370@devbig004.ftw2.facebook.com> <201809130951227309678@zte.com.cn>
+In-Reply-To: <201809130951227309678@zte.com.cn>
+From:   Lai Jiangshan <jiangshanlai@gmail.com>
+Date:   Thu, 13 Sep 2018 10:32:15 +0800
+Message-ID: <CAJhGHyB0DgnCMkxa5otMePD+toa2pLwN2Kp78maxVOu6bKohsg@mail.gmail.com>
+Subject: Re: [PATCH] workqueue: combine judgments in the loop ofmaybe_create_worker
+To:     liu.song11@zte.com.cn
+Cc:     Tejun Heo <tj@kernel.org>, liusong@tom.com,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-	See vfs.git#work.tty-ioctl.  Completely untested, should seriously
-clean the things up wrt compat.  Remaining problems (aside of the bugs
-introduced in it, of course):
-	* TIOCSERGSTRUCT must die; it's present only in amiserial and it's
-_vile_; look at what it copies out and weep.
-	* synclink_gt has proper compat handling for its private ioctls;
-other synclink drivers (with the same ioctls) do not.
-	* dgnc definitely has buggered ioctls - structs full of longs are
-bloody bad idea for passing around.  It's in staging, and I'd say that it
-needs the userland ABI fixed.
-	* cyclades, rocket, moxa and mxser probably have non-trivial
-problems with their private ioctls; I hadn't looked into those.
-	* n_gsm needs ->compat_ioctl(); easy to do, I just hadn't done it
-yet.
-	* ipwireless might or might not need compat_ioctl (PPP stuff in it);
-not sure.
-	* ldisc private ioctls need more work.  Hadn't gone there yet.
-Generic ioctls should be fine - they never reach ->compat_ioctl() with this
-series.
+On Thu, Sep 13, 2018 at 9:51 AM <liu.song11@zte.com.cn> wrote:
+>
+> >> From: Liu Song <liu.song11@zte.com.cn>
+> >>
+> >> Although the 'need_to_create_worker' has been determined to be
+> >> true before entering the function. However, adjusting the order
+> >> of judgment can combine two judgments in the loop. Also improve
+> >> the matching between logical operations and function naming.
+> >>
+> > >Signed-off-by: Liu Song <liu.song11@zte.com.cn>
+> >
+> >idk, this doesn't really improve anything.
+> >
+> >Thanks.
+> >
+> >--
+> >tejun
+>
+> Hi, tejun
+> Indeed, the logic of the code has not changed.
 
-	There's some overlap with patches posted earlier - e.g. I'm fairly
-sure that keyboard ioctl "remove from fs/compat_ioctl.c" part duplicates
-one of yours; I'll be glad to drop and replace such duplicates with already
-posted variants.
+The logic of the code is changed in the patch when create_worker()
+happened to be failed.
 
-	Basic idea is to shunt generic ioctls that are reachable only
-via tty_ioctl() very early in tty_compat_ioctl(), separately for those
-that do and do not need compat_ptr().  That already simplifies the hell
-out of ->compat_ioctl() situation - its instances won't ever see those,
-so they can e.g. ignore the behaviour of n_tty_ioctl_helper(); whatever
-they get in cmd won't be accepted by that one.
+Failed create_worker() doesn't always result to COOLDOWN due to
+the possible condition changes. if (!need_to_create_worker(pool)),
+it dosn't need to COOLDOWN.
 
-	Next we separate TIOC[SG]SERIAL into a couple of new methods,
-leaving the copyin/copyout to callers.  That allows to take care of
-compat for those in tty_compat_ioctl() *and* actually kills some of
-->ioctl() instances.
 
-	And then there's dead code of all kinds all over the place ;-/
-The oldest one has been alive from Aug 1 1992 to Oct 18 1992 and had
-shambled around ever since (FIONBIO), but there are other examples.
-10 years dead is better than 26, but still...
 
-	Shortlog and diffstat follow, patches in followups...
-
-Al Viro (50):
-      presence of RS485 ioctls has been unconditional since 2014
-      move compat handling of tty ioctls to tty_compat_ioctl()
-      tty_ioctl(): drop FIONBIO handling
-      mos7720: bury dead TIOCM... in ->ioctl()
-      tty_ioctl(): start taking TIOC[SG]SERIAL into separate methods
-      simserial: switch to ->[sg]et_serial()
-      fwserial: switch to ->[sg]et_serial()
-      greybus/uart: switch to ->[sg]et_serial()
-      amiserial: switch to ->[sg]et_serial()
-      cyclades: switch to ->[sg]et_serial()
-      ipwireless: switch to ->[sg]et_serial()
-      isicom: switch to ->[sg]et_serial()
-      moxa: switch to ->[sg]et_serial()
-      mxser: switch to ->[sg]et_serial()
-      serial_core: switch to ->[sg]et_serial()
-      rfcomm: get rid of mentioning TIOC[SG]SERIAL
-      usb-serial: begin switching to ->[sg]et_serial()
-      cdc-acm: switch to ->[sg]et_serial()
-      ark3116: switch to ->get_serial()
-      f81232: switch to ->get_serial()
-      f81534: switch to ->get_serial()
-      fdti_sio: switch to ->[sg]et_serial()
-      io_edgeport: switch to ->get_serial()
-      io_ti: switch to ->get_serial()
-      mos7720: switch to ->get_serial()
-      mos7840: switch to ->get_serial()
-      opticon: switch to ->get_serial()
-      pl2303: switch to ->get_serial()
-      quatech2: switch to ->get_serial()
-      ssu100: switch to ->get_serial()
-      ti_usb_3410_5052: switch to ->[sg]et_serial()
-      whiteheat: switch to ->get_serial()
-      usb_wwan: switch to ->[sg]et_serial()
-      complete ->[sg]et_serial() switchover
-      synclink: reduce pointless checks in ->ioctl()
-      take compat TIOC[SG]SERIAL treatment into tty_compat_ioctl()
-      kill capinc_tty_ioctl()
-      isdn_tty: TCSBRK{,P} won't reach ->ioctl()
-      dgnc: TIOCM... won't reach ->ioctl()
-      kill the rest of tty COMPAT_IOCTL() entries
-      dgnc: break-related ioctls won't reach ->ioctl()
-      remove fallback to drivers for TIOCGICOUNT
-      dgnc: leave TIOC[GS]SOFTCAR to ldisc
-      dgnc: don't bother with (empty) stub for TCXONC
-      gigaset: don't try to printk userland buffer contents
-      vt_compat_ioctl(): clean up, use compat_ptr() properly
-      gigaset: add ->compat_ioctl()
-      compat_ioctl - kill keyboard ioctl handling
-      pty: fix compat ioctls
-      synclink_gt(): fix compat_ioctl()
-
- arch/ia64/hp/sim/simserial.c          |  17 ++-
- drivers/char/pcmcia/synclink_cs.c     |   3 +-
- drivers/isdn/capi/capi.c              |   7 --
- drivers/isdn/gigaset/interface.c      |  13 +-
- drivers/isdn/i4l/isdn_tty.c           |  19 ---
- drivers/staging/dgnc/dgnc_tty.c       | 218 --------------------------------
- drivers/staging/fwserial/fwserial.c   |  66 +++++-----
- drivers/staging/greybus/uart.c        |  47 +++----
- drivers/tty/amiserial.c               |  83 ++++++-------
- drivers/tty/cyclades.c                |  77 ++++++------
- drivers/tty/ipwireless/tty.c          |  36 +++---
- drivers/tty/isicom.c                  |  72 ++++-------
- drivers/tty/moxa.c                    |  79 ++++++------
- drivers/tty/mxser.c                   |  97 ++++++++-------
- drivers/tty/pty.c                     |   6 +-
- drivers/tty/serial/serial_core.c      |  38 ++----
- drivers/tty/synclink.c                |   3 +-
- drivers/tty/synclink_gt.c             |  19 +--
- drivers/tty/synclinkmp.c              |   3 +-
- drivers/tty/tty_io.c                  | 226 +++++++++++++++++++++++++++-------
- drivers/tty/tty_ioctl.c               |  16 ---
- drivers/tty/vt/vt_ioctl.c             |  31 ++---
- drivers/usb/class/cdc-acm.c           |  41 +++---
- drivers/usb/serial/ark3116.c          |  38 ++----
- drivers/usb/serial/f81232.c           |  36 ++----
- drivers/usb/serial/f81534.c           |  38 ++----
- drivers/usb/serial/ftdi_sio.c         |  48 ++++----
- drivers/usb/serial/io_edgeport.c      |  37 +++---
- drivers/usb/serial/io_ti.c            |  47 +++----
- drivers/usb/serial/mos7720.c          |  88 +++----------
- drivers/usb/serial/mos7840.c          |  40 +++---
- drivers/usb/serial/opticon.c          |  43 ++-----
- drivers/usb/serial/option.c           |   3 +-
- drivers/usb/serial/pl2303.c           |  29 ++---
- drivers/usb/serial/quatech2.c         |  42 ++-----
- drivers/usb/serial/ssu100.c           |  42 ++-----
- drivers/usb/serial/ti_usb_3410_5052.c |  74 ++++-------
- drivers/usb/serial/usb-serial.c       |  18 +++
- drivers/usb/serial/usb-wwan.h         |   6 +-
- drivers/usb/serial/usb_wwan.c         |  63 +++-------
- drivers/usb/serial/whiteheat.c        |  42 +++----
- fs/compat_ioctl.c                     | 169 -------------------------
- include/linux/tty.h                   |   2 -
- include/linux/tty_driver.h            |   3 +
- include/linux/usb/serial.h            |   2 +
- net/bluetooth/rfcomm/tty.c            |   8 --
- 46 files changed, 744 insertions(+), 1391 deletions(-)
+> The idea that I made this change is
+> that when reading the workqueue code, from 'maybe_create_worker' naming, it is
+> possible to create a worker, but the implementation will definitely create a worker,
+> which makes me somewhat confused. After analysis, I found the determine whether
+> to create a worker before the function call. So this patch seems to be able to reduce
+> the confusion between the function naming and implementation.
+>
+> Thanks
+> Best regards
