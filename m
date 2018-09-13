@@ -2,136 +2,132 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 800F2FC6182
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 21:43:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFC8DC04AB8
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 21:50:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 258232146E
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 21:43:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60A9420881
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 21:50:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=konsulko.com header.i=@konsulko.com header.b="EJrt2maw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 258232146E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pUxKiL3H"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60A9420881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728300AbeINCzI (ORCPT
+        id S1728183AbeINDBq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 22:55:08 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:38320 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727773AbeINCzI (ORCPT
+        Thu, 13 Sep 2018 23:01:46 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:35485 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727413AbeINDBq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 22:55:08 -0400
-Received: by mail-io1-f68.google.com with SMTP id y3-v6so4424932ioc.5
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 14:43:48 -0700 (PDT)
+        Thu, 13 Sep 2018 23:01:46 -0400
+Received: by mail-pg1-f196.google.com with SMTP id 7-v6so3365982pgf.2;
+        Thu, 13 Sep 2018 14:50:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QC4xCRBf+sqKJaI3IajyAgsIYn5dr5uvIXjrxS/MNtg=;
-        b=EJrt2mawuW9zJlvzt5xdRxqky8DEB+JBFpMcWdyCDS4xjb81alTbs+JIbuWQC8IuKS
-         ox/U1HqtI9+s7g243F7R10Fze89kt1Adc3UkHLzqWl5xht9A4D+FdrnbkoU/LIZnBm5Z
-         2/N4dxr2Ny7i6F/yq3xPwyzvMSWSL9/nyqI8o=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Tpxnm4SPATDFDhHW7EJFbN4E6pNAuK1LkqCym6UiHMs=;
+        b=pUxKiL3HC57TIILzELYYXIDj6ZT7UgEoCyJ8e7UzBXPlhST/DxMcbETyAYqTlPjW9M
+         LmIaIbkFU4y0zFeeB3eDLTm95IzLLSKjIv/USLyLTUeSxIRpdLQzIMOXjYB6GZrnBOCP
+         XE9GmmAo5P9rjcO4P6zjSJnkbh3HHVKCvWPINTZfntmIgKgqgA02h5XdRCeO8dA2sm/4
+         723osRChaJAmWsvNvBzn1/QJPCGJHMeC6N0112+q/IYjz6mgOJToEA2fVhgJ9g9BzcPp
+         IKtL5HhjWHW1H03fDvcfZ69esk87hIjTqjWGh9x58bnesJSi3059Pk1FYJx8d4F2jJu6
+         w/Bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QC4xCRBf+sqKJaI3IajyAgsIYn5dr5uvIXjrxS/MNtg=;
-        b=MkhTJy1BhiU1pYmh4HzVPvxeef/M9J4MzDzvZFeNrxeWC86CuiCpOyCbRrcu+pLvI7
-         /QJQPaxiiXFMjM19IpigC6r3rdXeauIJuAv65uat3ae2mF0vTM8HD/T2kdHIzV6P+WY4
-         ulobkXgF+Ei+MZ7cF0qt6r8i/rQv5tSZJzntodvyrxbzfE+L020MO60hJXknz6UvVbNM
-         SLFa5UlHzKKhd3zrWaSCMsL/+WoEObe/jMddzoZHY+Utmbgv+YP6wWvfp3omwJAv8BCn
-         GIyyYiAPQe3iXd2GRO+/W5NFRTy4DwihmzzEy+1VLW48wRcFS2LE4UjLaq9hdUWOAm8W
-         eN0Q==
-X-Gm-Message-State: APzg51AbBW8ilyq23U5dGQUm7qq99pWFumC5unGiSSEsn577ngDhkYhw
-        64P6msBimW06TLNC5aakBOVCE1Jtswo1Ig0Lwq0K/g==
-X-Google-Smtp-Source: ANB0VdZeOcvDBuDDmUV4/d/ADtLxtqTYJmw6IVxifBQHIhe9Q/PBSfgQCkb95VwlqL8lpUXrcJ/LWwLCSoSsdmcCyO0=
-X-Received: by 2002:a6b:ac45:: with SMTP id v66-v6mr8385048ioe.66.1536875028000;
- Thu, 13 Sep 2018 14:43:48 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Tpxnm4SPATDFDhHW7EJFbN4E6pNAuK1LkqCym6UiHMs=;
+        b=nXwsTwKZnTx0hZzBOY1sz7kTubfRnp/wGOdUz9fWENXAbHDzmO3s8EZFXVI4iElbBr
+         HEaRc9oItx3PcZ+7D0k7Zx2sVoR/IFLRn+iigMVw3fhquCNIm7evkueRy083v0EvLvtv
+         p8YYWSlOu+rqQUr/B0blYtLs62bsYnpwBoLjH6a29HM0VWRSaBq/+tTQ3WpDpO+HV+SK
+         sQBuHyhP6JVsMCaayYXSQguqlJ4BPouQ7jRb+4+qPLmjw4bf/lT3KCubsyLLMOQim9UC
+         LQuWk2lWLDM2PZ0Kgx+7zXbb+e/HQIFq6LzoaVCsN95InWQqs8Umm2bdiOb0SQ7KOUPc
+         M1jA==
+X-Gm-Message-State: APzg51Cz8oRQluzm5XlSkGw9Fta8H8vCFLT55NBSzbm1Xg4o4zpoMHxj
+        +oH2B1cOpMthUcaoKzePwvucaS28
+X-Google-Smtp-Source: ANB0VdYFTZe3QJ/6D+M8ImxruOsWtxz+taukk0/g3Db3d9TvlTe3fS344aDkGi6aU5i7XDXvbY0VAQ==
+X-Received: by 2002:a63:c00b:: with SMTP id h11-v6mr8708780pgg.279.1536875424730;
+        Thu, 13 Sep 2018 14:50:24 -0700 (PDT)
+Received: from [10.0.2.15] ([192.19.218.250])
+        by smtp.gmail.com with ESMTPSA id o21-v6sm8052747pfi.165.2018.09.13.14.50.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Sep 2018 14:50:23 -0700 (PDT)
+Subject: Re: Multi-parent IRQ domains
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180913155945.GA19903@ulmo>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <ea9261a9-2c4d-7ca4-6dca-73f385aa46d5@gmail.com>
+Date:   Thu, 13 Sep 2018 14:50:21 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180913035145.28056-1-songqiang.1304521@gmail.com>
-In-Reply-To: <20180913035145.28056-1-songqiang.1304521@gmail.com>
-From:   Matt Ranostay <matt.ranostay@konsulko.com>
-Date:   Thu, 13 Sep 2018 14:43:35 -0700
-Message-ID: <CAJCx=gk3Md910hfD2ZiTRNj6mv1nf+r6p_0tYMu7uKiEp4ZvOw@mail.gmail.com>
-Subject: Re: [PATCH] iio: proximity: lidar-v2: replace i2c block access method
- with the one already implemented.
-To:     songqiang1304521@gmail.com
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        songqiang.1304521@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180913155945.GA19903@ulmo>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 8:51 PM Song Qiang <songqiang1304521@gmail.com> wrote:
->
-> This driver tries to access a block of data on a i2c bus and it tries
-> to manually make a device command frame and a consecutively read frame,
-> then uses i2c_transfer() to read data. But this has already been
-> implemented in i2c_smbus_read_i2c_block_data().
-> Sorry for not having this device by my hand, which is a little expansive
-> for me, but I have another i2c device and tested with both i2c_transfer()
-> and i2c_smbus_read_i2c_block_data() and they all ends the same.
-> I'm not familiar with the SMBus, don't know if the lidar_smbus_xfer()
-> function is the same as i2c_smbus_read_block_data()? The original code
-> is commented with something I'm not sure, but I think if it's a standard
-> SMBus, it should be able to use in here.
-> Hoping for someone to explain.
->
 
-Yes actually there is a reason for this insanity!
 
-It isn't actually SMBUS (note the lidar_smbus_xfer function below it)
-and has a odd way to read registers via I2C.
-Basically the I2C_M_STOP flags is the reason you can use the standard
-i2c_smbus_read_i2c_block_data().
+On 09/13/18 08:59, Thierry Reding wrote:
+> Hi everyone,
+> 
+> I've been trying to implement a feature on recent Tegra chips that's
+> called "wake events". These wake events are implemented as part of the
+> power management controller (PMC) and they control which events can be
+> used to wake the system from suspend. Events include things like an
+> alarm interrupt from an RTC, or the GPIO interrupt hooked up to a
+> power button for example.
+> 
+> We already have a driver for a couple of other things that the PMC does,
+> so I thought it'd be natural to implement this functionality as an IRQ
+> chip in the PMC driver. The way that this would work is that for all the
+> devices that are wakeup sources, we'd end up specifying the PMC as the
+> interrupt parent and the PMC would then itself have the main GIC as its
+> parent. That way, the hierarchical IRQ domain infrastructure would take
+> care of pretty much everything.
+> 
+> Unfortunately I've run into some issues here. One problem that I'm
+> facing is that PMC could have more than one parent. For example, the RTC
+> alarm interrupt goes straight to the GIC, but the power button GPIO goes
+> through the GPIO controller first and then to the GIC. This doesn't seem
+> to be something that's currently possible.
+> 
+> The way I imagine this to work from a DT perspective is as follows:
 
-Page 6 in this datasheet
-* http://static.garmin.com/pumac/LIDAR_Lite_v3_Operation_Manual_and_Technical_Specifications.pdf
+There is an interrupts-extended property which as a first cell takes a
+phandle to the parent interrupt controller, e.g:
 
-> Signed-off-by: Song Qiang <songqiang.1304521@gmail.com>
-> ---
->  .../iio/proximity/pulsedlight-lidar-lite-v2.c  | 18 +-----------------
->  1 file changed, 1 insertion(+), 17 deletions(-)
->
-> diff --git a/drivers/iio/proximity/pulsedlight-lidar-lite-v2.c b/drivers/iio/proximity/pulsedlight-lidar-lite-v2.c
-> index 47af54f14756..ca880ba8e820 100644
-> --- a/drivers/iio/proximity/pulsedlight-lidar-lite-v2.c
-> +++ b/drivers/iio/proximity/pulsedlight-lidar-lite-v2.c
-> @@ -63,23 +63,7 @@ static const struct iio_chan_spec lidar_channels[] = {
->
->  static int lidar_i2c_xfer(struct lidar_data *data, u8 reg, u8 *val, int len)
->  {
-> -       struct i2c_client *client = data->client;
-> -       struct i2c_msg msg[2];
-> -       int ret;
-> -
-> -       msg[0].addr = client->addr;
-> -       msg[0].flags = client->flags | I2C_M_STOP;
-> -       msg[0].len = 1;
-> -       msg[0].buf  = (char *) &reg;
-> -
-> -       msg[1].addr = client->addr;
-> -       msg[1].flags = client->flags | I2C_M_RD;
-> -       msg[1].len = len;
-> -       msg[1].buf = (char *) val;
-> -
-> -       ret = i2c_transfer(client->adapter, msg, 2);
-> -
-> -       return (ret == 2) ? 0 : -EIO;
-> +       return i2c_smbus_read_i2c_block_data(data->client, reg, len, val);
->  }
->
->  static int lidar_smbus_xfer(struct lidar_data *data, u8 reg, u8 *val, int len)
-> --
-> 2.17.1
->
+interrupts-extended = <&gic 73 GIPC_SPI IRQ_TYPE_LEVEL_HIGH>,
+			<&pmc 10>;
+
+(provided that I understood your problem and example correctly). We have
+a similar use case on our STB chips where we have "main" interrupts
+wired to the ARM GIC and wake-up interrupts wired to a specific wake-up
+interrupt controller in an always-on domain. The two controllers have a
+different #interrupt-cells specifier.
+
+The interrupt infrastructure in Linux already knows how to deal with
+that and whether you use of_get_irq() or platform_get_irq() you should
+obtain the correct virtual interrupt numbers that you expected, parented
+to the appropriate interrupt controller.
+
+Hope this helps.
+-- 
+Florian
