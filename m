@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BCD6C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:52:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91BECC07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:52:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEA6120854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:52:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEA6120854
+	by mail.kernel.org (Postfix) with ESMTP id 551CF20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:52:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 551CF20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730949AbeIMTBw (ORCPT
+        id S1730969AbeIMTB4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:01:52 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33456 "EHLO
+        Thu, 13 Sep 2018 15:01:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33474 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730119AbeIMTBw (ORCPT
+        with ESMTP id S1730119AbeIMTBz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:01:52 -0400
+        Thu, 13 Sep 2018 15:01:55 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7E253CDB;
-        Thu, 13 Sep 2018 13:52:16 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 96A96CDB;
+        Thu, 13 Sep 2018 13:52:19 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anssi Hannula <anssi.hannula@bitwise.fi>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 004/197] net: macb: do not disable MDIO bus at open/close time
-Date:   Thu, 13 Sep 2018 15:29:13 +0200
-Message-Id: <20180913131841.741954631@linuxfoundation.org>
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Jiri Pirko <jiri@resnulli.us>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH 4.18 005/197] net: sched: Fix memory exposure from short TCA_U32_SEL
+Date:   Thu, 13 Sep 2018 15:29:14 +0200
+Message-Id: <20180913131841.780508534@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -52,66 +55,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anssi Hannula <anssi.hannula@bitwise.fi>
+From: Kees Cook <keescook@chromium.org>
 
-[ Upstream commit 0da70f808029476001109b6cb076737bc04cea2e ]
+[ Upstream commit 98c8f125fd8a6240ea343c1aa50a1be9047791b8 ]
 
-macb_reset_hw() is called from macb_close() and indirectly from
-macb_open(). macb_reset_hw() zeroes the NCR register, including the MPE
-(Management Port Enable) bit.
+Via u32_change(), TCA_U32_SEL has an unspecified type in the netlink
+policy, so max length isn't enforced, only minimum. This means nkeys
+(from userspace) was being trusted without checking the actual size of
+nla_len(), which could lead to a memory over-read, and ultimately an
+exposure via a call to u32_dump(). Reachability is CAP_NET_ADMIN within
+a namespace.
 
-This will prevent accessing any other PHYs for other Ethernet MACs on
-the MDIO bus, which remains registered at macb_reset_hw() time, until
-macb_init_hw() is called from macb_open() which sets the MPE bit again.
-
-I.e. currently the MDIO bus has a short disruption at open time and is
-disabled at close time until the interface is opened again.
-
-Fix that by only touching the RE and TE bits when enabling and disabling
-RX/TX.
-
-v2: Make macb_init_hw() NCR write a single statement.
-
-Fixes: 6c36a7074436 ("macb: Use generic PHY layer")
-Signed-off-by: Anssi Hannula <anssi.hannula@bitwise.fi>
-Reviewed-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-Tested-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+Reported-by: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Jamal Hadi Salim <jhs@mojatatu.com>
+Cc: Cong Wang <xiyou.wangcong@gmail.com>
+Cc: Jiri Pirko <jiri@resnulli.us>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: netdev@vger.kernel.org
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Acked-by: Jamal Hadi Salim <jhs@mojatatu.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/cadence/macb_main.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ net/sched/cls_u32.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/cadence/macb_main.c
-+++ b/drivers/net/ethernet/cadence/macb_main.c
-@@ -1957,14 +1957,17 @@ static void macb_reset_hw(struct macb *b
- {
- 	struct macb_queue *queue;
- 	unsigned int q;
-+	u32 ctrl = macb_readl(bp, NCR);
- 
- 	/* Disable RX and TX (XXX: Should we halt the transmission
- 	 * more gracefully?)
- 	 */
--	macb_writel(bp, NCR, 0);
-+	ctrl &= ~(MACB_BIT(RE) | MACB_BIT(TE));
- 
- 	/* Clear the stats registers (XXX: Update stats first?) */
--	macb_writel(bp, NCR, MACB_BIT(CLRSTAT));
-+	ctrl |= MACB_BIT(CLRSTAT);
-+
-+	macb_writel(bp, NCR, ctrl);
- 
- 	/* Clear all status flags */
- 	macb_writel(bp, TSR, -1);
-@@ -2152,7 +2155,7 @@ static void macb_init_hw(struct macb *bp
+--- a/net/sched/cls_u32.c
++++ b/net/sched/cls_u32.c
+@@ -912,6 +912,7 @@ static int u32_change(struct net *net, s
+ 	struct nlattr *opt = tca[TCA_OPTIONS];
+ 	struct nlattr *tb[TCA_U32_MAX + 1];
+ 	u32 htid, flags = 0;
++	size_t sel_size;
+ 	int err;
+ #ifdef CONFIG_CLS_U32_PERF
+ 	size_t size;
+@@ -1074,8 +1075,13 @@ static int u32_change(struct net *net, s
  	}
  
- 	/* Enable TX and RX */
--	macb_writel(bp, NCR, MACB_BIT(RE) | MACB_BIT(TE) | MACB_BIT(MPE));
-+	macb_writel(bp, NCR, macb_readl(bp, NCR) | MACB_BIT(RE) | MACB_BIT(TE));
- }
+ 	s = nla_data(tb[TCA_U32_SEL]);
++	sel_size = struct_size(s, keys, s->nkeys);
++	if (nla_len(tb[TCA_U32_SEL]) < sel_size) {
++		err = -EINVAL;
++		goto erridr;
++	}
  
- /* The hash address register is 64 bits long and takes up two
+-	n = kzalloc(sizeof(*n) + s->nkeys*sizeof(struct tc_u32_key), GFP_KERNEL);
++	n = kzalloc(offsetof(typeof(*n), sel) + sel_size, GFP_KERNEL);
+ 	if (n == NULL) {
+ 		err = -ENOBUFS;
+ 		goto erridr;
+@@ -1090,7 +1096,7 @@ static int u32_change(struct net *net, s
+ 	}
+ #endif
+ 
+-	memcpy(&n->sel, s, sizeof(*s) + s->nkeys*sizeof(struct tc_u32_key));
++	memcpy(&n->sel, s, sel_size);
+ 	RCU_INIT_POINTER(n->ht_up, ht);
+ 	n->handle = handle;
+ 	n->fshift = s->hmask ? ffs(ntohl(s->hmask)) - 1 : 0;
 
 
