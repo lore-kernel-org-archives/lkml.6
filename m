@@ -2,143 +2,216 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 379B8C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:40:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F3D6C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:45:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFCA020861
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:40:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="MgF85QVS";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NxkPM8Il"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFCA020861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kroah.com
+	by mail.kernel.org (Postfix) with ESMTP id 4B51C20866
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:45:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B51C20866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727413AbeIMRuH (ORCPT
+        id S1727600AbeIMRyR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 13:50:07 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:52579 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727152AbeIMRuH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 13:50:07 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id 3770421C24;
-        Thu, 13 Sep 2018 08:40:49 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Thu, 13 Sep 2018 08:40:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-        :content-type:date:from:in-reply-to:message-id:mime-version
-        :references:subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=bctkEN6WQEQdmswgZ5q9UdKcdLtoxHG/h7fFVQUn198=; b=MgF85QVS
-        9K/Y0swnmwTXZ6PBmaefPl6bvz9nR3VVpfwxXZinSbHhyKZS2NDPZvuiBN8XJ6IG
-        bucrAMQ83S38K/RL/alfXqprKpuVgNR9X7J5WrwL0NWjBOQEvNC2uwGfExY4A1T5
-        O1GOw4U/pX2Qvs8M4rTF2RerpH7NIHVE658VddFLoLALkzuC4hP5/PN7teSnQnm6
-        hMjuu/b1jhv5i5AG8zIDodkOaJwoaN3iTzxiCAAt2e8OfuV4dPdYtSfMOLQIS1oN
-        cV8NUY8GqkfWXnWXjRJ/0B5QHbxpRbkXp6/gMBHxRh4ThwZN7rSu2PHuYYnNT4J2
-        mguJtj8x/l7HUg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-sender
-        :x-me-sender:x-sasl-enc; s=fm3; bh=bctkEN6WQEQdmswgZ5q9UdKcdLtox
-        HG/h7fFVQUn198=; b=NxkPM8Illl6sqvNjvXXvH20BSyQ30m4veaYFjtz6KVz8Q
-        RvTtTOTHvJHcL/UuzTrqmzK6twEPGtNujGtM2xK86fOzJZcar9V9FvHHw1IqLyvs
-        Ul/7uRLj7lz08Gx31Go80P0TjcGgzMHwWc9fpCb3bh39FOLu1T5vzEsnZSpZPDdt
-        NXscdr+1/VjJQho1ZOKguDqQPrj8WoNtuOUORQAe3f4FE4uvptochDD5MMxXbS8j
-        UvawN/cVj/N31qGsfTgsFWhZBx4sBg++epfuHCyLl6CfgdYTKXiL6+58phMhzRg3
-        zk0a/fUO7o1/rV1jVxjDzRTwg5hkH5UfRXpeTsqng==
-X-ME-Proxy: <xmx:z1qaW2wEU7OpEgyGaoE1keJQihRIyUL6tNBFEkeBWWN3uYcEhmg1Pg>
-    <xmx:z1qaW5Dds0HslkgC9ZVJWjNk-tN3GWlCKrOLHkHB2St29g2uVgx6Cw>
-    <xmx:z1qaW2OzlM1IspUuzZFPW_AuU2-G4ypilSjbUUepiCNP-GyXrjC1cA>
-    <xmx:z1qaW3hoxanQOYp4Unz2MjZr_2ZqlkESHuN3NG2LXO-fdGSHHBIE9g>
-    <xmx:z1qaW0YS6E331dDYrx_v1kYwhHs6g_2zfJk80Z1kgA3U_HArKEPAiA>
-    <xmx:0VqaW7Pcod-2C2CQRMRdzZpZzFPvUb2O12s4cexwqjS_3XCgwiCbZQ>
-X-ME-Sender: <xms:z1qaW0el8hP5rbao1tQe0tx2qEct2Sco7uYNOjj8fhW0EnjwyU8Muw>
-Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 41D38102A0;
-        Thu, 13 Sep 2018 08:40:47 -0400 (EDT)
-Date:   Thu, 13 Sep 2018 14:40:46 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Cc:     stable@vger.kernel.org, will.deacon@arm.com, mark.rutland@arm.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        catalin.marinas@arm.com
-Subject: Re: [stable PATCH 1/2] arm64: Fix mismatched cache line size
- detection
-Message-ID: <20180913124046.GA21180@kroah.com>
-References: <1536052210-11625-1-git-send-email-suzuki.poulose@arm.com>
- <20180912193816.GF21563@kroah.com>
- <4b8db4d5-20d7-5597-7977-b8df1072ecc7@arm.com>
- <20180913121951.GE2268@kroah.com>
+        Thu, 13 Sep 2018 13:54:17 -0400
+Received: from mga01.intel.com ([192.55.52.88]:6165 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726930AbeIMRyR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 13:54:17 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Sep 2018 05:44:43 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,369,1531810800"; 
+   d="scan'208";a="232559007"
+Received: from paasikivi.fi.intel.com ([10.237.72.42])
+  by orsmga004.jf.intel.com with ESMTP; 13 Sep 2018 05:44:26 -0700
+Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
+        id A157B207A8; Thu, 13 Sep 2018 15:44:25 +0300 (EEST)
+Date:   Thu, 13 Sep 2018 15:44:25 +0300
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     jacopo mondi <jacopo@jmondi.org>
+Cc:     Steve Longerbeam <slongerbeam@gmail.com>,
+        linux-media@vger.kernel.org,
+        Steve Longerbeam <steve_longerbeam@mentor.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 06/17] media: v4l2-fwnode: Add a convenience function
+ for registering subdevs with notifiers
+Message-ID: <20180913124425.h5vfjyr3b44j4nxv@paasikivi.fi.intel.com>
+References: <1531175957-1973-1-git-send-email-steve_longerbeam@mentor.com>
+ <1531175957-1973-7-git-send-email-steve_longerbeam@mentor.com>
+ <20180913103727.GB28160@w540>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180913121951.GE2268@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180913103727.GB28160@w540>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 13, 2018 at 02:19:51PM +0200, Greg KH wrote:
-> On Thu, Sep 13, 2018 at 10:54:06AM +0100, Suzuki K Poulose wrote:
-> > Hi Greg,
-> > 
-> > On 12/09/18 20:38, Greg KH wrote:
-> > > On Tue, Sep 04, 2018 at 10:10:09AM +0100, Suzuki K Poulose wrote:
-> > > > commit 4c4a39dd5fe2d13e2d2fa5fceb8ef95d19fc389a upstream
-> > > > 
-> > > > If there is a mismatch in the I/D min line size, we must
-> > > > always use the system wide safe value both in applications
-> > > > and in the kernel, while performing cache operations. However,
-> > > > we have been checking more bits than just the min line sizes,
-> > > > which triggers false negatives. We may need to trap the user
-> > > > accesses in such cases, but not necessarily patch the kernel.
-> > > > 
-> > > > This patch fixes the check to do the right thing as advertised.
-> > > > A new capability will be added to check mismatches in other
-> > > > fields and ensure we trap the CTR accesses.
-> > > > 
-> > > > Fixes: be68a8aaf925 ("arm64: cpufeature: Fix CTR_EL0 field definitions")
-> > > > Cc: <stable@vger.kernel.org> # v4.9
-> > > 
-> > > Why 4.9?  be68a8aaf925 only showed up in 4.16 and was backported only to
-> > > 4.14-stable.  Not to 4.9-stable from what I can tell.
-> > 
-> > Now when you asked this, I realise that the Fixes tags were not sufficient.
-> > 
-> > Actually this series fixes a bit more than the commit: be68a8aaf925 ("arm64: cpufeature:
-> > Fix CTR_EL0 field definitions"). I think these patches should have :
-> > 
-> > Fixes: commit 116c81f427ff6c5 ("arm64: Work around systems with mismatched cache line sizes")
-> > 
-> > and
-> > 
-> > Enable trapping on mismatched bits in CTR for IDC/DIC, which were
-> > added to v8.3 onwards.
-> > 
-> > Essentially these patches makes sure that we trap accesses to
-> > CTR_EL0 when some of the fields are mismatched across CPUs, so
-> > that the CPUs get a consistent view of the cache properties
-> > throughout the system. It also makes sure that we put out
-> > correct information about why we trap accesses to the CTR_EL0
-> > accesses from the userspace.
-> > 
-> > Hope this helps. The same applies for the next patch.
+Hi Jacopo,
+
+On Thu, Sep 13, 2018 at 12:37:27PM +0200, jacopo mondi wrote:
+> Hi Steve,
 > 
-> Yes, it does help.  But these patches do not apply to the 4.14.y series,
-> which I also need to apply them to (you don't want to move from 4.9.y to
-> 4.14.y and get a regression.)
+> On Mon, Jul 09, 2018 at 03:39:06PM -0700, Steve Longerbeam wrote:
+> > Adds v4l2_async_register_fwnode_subdev(), which is a convenience function
+> > for parsing a sub-device's fwnode port endpoints for connected remote
+> > sub-devices, registering a sub-device notifier, and then registering
+> > the sub-device itself.
+> >
+> > Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
+> > ---
+> > Changes since v5:
+> > - add call to v4l2_async_notifier_init().
+> > Changes since v4:
+> > - none
+> > Changes since v3:
+> > - remove support for port sub-devices, such sub-devices will have to
+> >   role their own.
+> > Changes since v2:
+> > - fix error-out path in v4l2_async_register_fwnode_subdev() that forgot
+> >   to put device.
+> > Changes since v1:
+> > - add #include <media/v4l2-subdev.h> to v4l2-fwnode.h for
+> >   'struct v4l2_subdev' declaration.
+> > ---
+> >  drivers/media/v4l2-core/v4l2-fwnode.c | 64 +++++++++++++++++++++++++++++++++++
+> >  include/media/v4l2-fwnode.h           | 38 +++++++++++++++++++++
+> >  2 files changed, 102 insertions(+)
+> >
+> > diff --git a/drivers/media/v4l2-core/v4l2-fwnode.c b/drivers/media/v4l2-core/v4l2-fwnode.c
+> > index 67ad333..94d867a 100644
+> > --- a/drivers/media/v4l2-core/v4l2-fwnode.c
+> > +++ b/drivers/media/v4l2-core/v4l2-fwnode.c
+> > @@ -872,6 +872,70 @@ int v4l2_async_register_subdev_sensor_common(struct v4l2_subdev *sd)
+> >  }
+> >  EXPORT_SYMBOL_GPL(v4l2_async_register_subdev_sensor_common);
+> >
+> > +int v4l2_async_register_fwnode_subdev(
 > 
-> So can you provide backports for both of these patches for 4.14.y?  Then
-> I would be glad to queue these all up.
+> The meat of this function is to register a subdev with a notifier,
+> so I would make it clear in the function name which is otherwise
+> misleading
+> 
+> > +	struct v4l2_subdev *sd, size_t asd_struct_size,
+> > +	unsigned int *ports, unsigned int num_ports,
+> > +	int (*parse_endpoint)(struct device *dev,
+> > +			      struct v4l2_fwnode_endpoint *vep,
+> > +			      struct v4l2_async_subdev *asd))
+> > +{
+> > +	struct v4l2_async_notifier *notifier;
+> > +	struct device *dev = sd->dev;
+> > +	struct fwnode_handle *fwnode;
+> > +	int ret;
+> > +
+> > +	if (WARN_ON(!dev))
+> > +		return -ENODEV;
+> > +
+> > +	fwnode = dev_fwnode(dev);
+> > +	if (!fwnode_device_is_available(fwnode))
+> > +		return -ENODEV;
+> > +
+> > +	notifier = kzalloc(sizeof(*notifier), GFP_KERNEL);
+> > +	if (!notifier)
+> > +		return -ENOMEM;
+> > +
+> > +	v4l2_async_notifier_init(notifier);
+> > +
+> > +	if (!ports) {
+> > +		ret = v4l2_async_notifier_parse_fwnode_endpoints(
+> > +			dev, notifier, asd_struct_size, parse_endpoint);
+> > +		if (ret < 0)
+> > +			goto out_cleanup;
+> > +	} else {
+> > +		unsigned int i;
+> > +
+> > +		for (i = 0; i < num_ports; i++) {
+> 
+> It's not particularly exciting to iterate on pointers received from
+> callers without checking for num_ports first.
 
-Oh nevermind, I found those patches in my queue, you already sent them!
+The loop is not executed if num_ports is zero, so I don't see a problem
+with that.
 
-sorry for the noise.
+> 
+> Also the caller has to allocate an array of "ports" and keep track of it
+> just to pass it to this function and I don't see a way to set the
+> notifier's ops before the notifier gets registered here below.
 
-greg k-h
+True; this can be seen as an omission but quite a few drivers have no need
+for this either. It could be added later on --- I think it'd make perfect
+sense.
+
+> 
+> > +			ret = v4l2_async_notifier_parse_fwnode_endpoints_by_port(
+> > +				dev, notifier, asd_struct_size,
+> > +				ports[i], parse_endpoint);
+> > +			if (ret < 0)
+> > +				goto out_cleanup;
+> > +		}
+> > +	}
+> > +
+> > +	ret = v4l2_async_subdev_notifier_register(sd, notifier);
+> > +	if (ret < 0)
+> > +		goto out_cleanup;
+> > +
+> > +	ret = v4l2_async_register_subdev(sd);
+> > +	if (ret < 0)
+> > +		goto out_unregister;
+> > +
+> > +	sd->subdev_notifier = notifier;
+> 
+> This is set already by v4l2_async_subdev_notifier_register()
+
+The same pattern is actually present in
+v4l2_async_register_subdev_sensor_common(). It's used in unregistration
+that can only happen after the registration, i.e. this function, has
+completed.
+
+> 
+> In general, I have doubts this function is really needed. It requires
+> the caller to reserve memory just to pass down a list of intergers,
+> and there is no way to set subdev ops.
+> 
+> Could you have a look at how drivers/media/platform/rcar-vin/rcar-csi2.c
+> registers a subdevice and an associated notifier and see if in your
+> opinion it can be implemented in the same way in your imx csi/csi2 driver,
+> or you still like this one most?
+
+I was actually thinking of changing this later on a bit. I came to think of
+this after picking up the patchset to my tree... oh well.
+
+This function is meant for cases where you have multiple ports. That's not
+working very nicely at the moment, and even with my patches, you can't pass
+default configuration to e.g. v4l2_async_notifier_parse_fwnode_endpoints().
+So there's definitely work to do. I'd like to move the details of parsing
+out of drivers; every driver is doing almost the same but just in a little
+bit different way.
+
+The arguments should to be put into a struct. That way we get rid of a very
+long series of hard-to-read function arguments, as well as we don't need to
+change every caller when the function gets something new and interesting to
+do.
+
+Right now the entire patchset is so big (40 patches) that I'd prefer to get
+it in unless serious issues are found, and proceed the development on top.
+
+-- 
+Kind regards,
+
+Sakari Ailus
+sakari.ailus@linux.intel.com
