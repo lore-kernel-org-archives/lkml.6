@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 429A4C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:34:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 506CDC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:34:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 017A120C0A
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:34:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 017A120C0A
+	by mail.kernel.org (Postfix) with ESMTP id 123A920854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:34:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 123A920854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728926AbeIMSoV (ORCPT
+        id S1728936AbeIMSoY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:44:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58962 "EHLO
+        Thu, 13 Sep 2018 14:44:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58970 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727666AbeIMSoU (ORCPT
+        with ESMTP id S1727666AbeIMSoX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:44:20 -0400
+        Thu, 13 Sep 2018 14:44:23 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 864F7CF3;
-        Thu, 13 Sep 2018 13:34:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AAC45CF3;
+        Thu, 13 Sep 2018 13:34:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "natechancellor@gmail.com, mark.rutland@arm.com, will.deacon@arm.com,
-        steve.capper@arm.com, kirill.shutemov@linux.intel.com, vbabka@suse.cz,
-        mgorman@suse.de, Chas Williams" <chas3@att.com>,
-        Chas Williams <chas3@att.com>
-Subject: [PATCH 4.4 42/60] Fixes: Commit cdbf92675fad ("mm: numa: avoid waiting on freed migrated pages")
-Date:   Thu, 13 Sep 2018 15:30:49 +0200
-Message-Id: <20180913131747.410834060@linuxfoundation.org>
+        stable@vger.kernel.org, Xu Wen <wen.xu@gatech.edu>,
+        Qu Wenruo <wqu@suse.com>, Gu Jinxiang <gujx@cn.fujitsu.com>,
+        David Sterba <dsterba@suse.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 33/60] btrfs: relocation: Only remove reloc rb_trees if reloc control has been initialized
+Date:   Thu, 13 Sep 2018 15:30:40 +0200
+Message-Id: <20180913131746.978526298@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131745.261413581@linuxfoundation.org>
 References: <20180913131745.261413581@linuxfoundation.org>
@@ -53,38 +53,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
+From: Qu Wenruo <wqu@suse.com>
 
-From: Chas Williams <chas3@att.com>
+[ Upstream commit 389305b2aa68723c754f88d9dbd268a400e10664 ]
 
-Commit cdbf92675fad ("mm: numa: avoid waiting on freed migrated pages")
-was an incomplete backport of the upstream commit.  It is necessary to
-always reset page_nid before attempting any early exit.
+Invalid reloc tree can cause kernel NULL pointer dereference when btrfs
+does some cleanup of the reloc roots.
 
-The original commit conflicted due to lack of commit 82b0f8c39a38
-("mm: join struct fault_env and vm_fault") in 4.9 so it wasn't a clean
-application, and the change must have just gotten lost in the noise.
+It turns out that fs_info::reloc_ctl can be NULL in
+btrfs_recover_relocation() as we allocate relocation control after all
+reloc roots have been verified.
+So when we hit: note, we haven't called set_reloc_control() thus
+fs_info::reloc_ctl is still NULL.
 
-Signed-off-by: Chas Williams <chas3@att.com>
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=199833
+Reported-by: Xu Wen <wen.xu@gatech.edu>
+Signed-off-by: Qu Wenruo <wqu@suse.com>
+Tested-by: Gu Jinxiang <gujx@cn.fujitsu.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/huge_memory.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/btrfs/relocation.c |   23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
 
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1393,12 +1393,12 @@ int do_huge_pmd_numa_page(struct mm_stru
+--- a/fs/btrfs/relocation.c
++++ b/fs/btrfs/relocation.c
+@@ -1318,18 +1318,19 @@ static void __del_reloc_root(struct btrf
+ 	struct mapping_node *node = NULL;
+ 	struct reloc_control *rc = root->fs_info->reloc_ctl;
  
- 	/* Migration could have started since the pmd_trans_migrating check */
- 	if (!page_locked) {
-+		page_nid = -1;
- 		if (!get_page_unless_zero(page))
- 			goto out_unlock;
- 		spin_unlock(ptl);
- 		wait_on_page_locked(page);
- 		put_page(page);
--		page_nid = -1;
- 		goto out;
+-	spin_lock(&rc->reloc_root_tree.lock);
+-	rb_node = tree_search(&rc->reloc_root_tree.rb_root,
+-			      root->node->start);
+-	if (rb_node) {
+-		node = rb_entry(rb_node, struct mapping_node, rb_node);
+-		rb_erase(&node->rb_node, &rc->reloc_root_tree.rb_root);
++	if (rc) {
++		spin_lock(&rc->reloc_root_tree.lock);
++		rb_node = tree_search(&rc->reloc_root_tree.rb_root,
++				      root->node->start);
++		if (rb_node) {
++			node = rb_entry(rb_node, struct mapping_node, rb_node);
++			rb_erase(&node->rb_node, &rc->reloc_root_tree.rb_root);
++		}
++		spin_unlock(&rc->reloc_root_tree.lock);
++		if (!node)
++			return;
++		BUG_ON((struct btrfs_root *)node->data != root);
  	}
+-	spin_unlock(&rc->reloc_root_tree.lock);
+-
+-	if (!node)
+-		return;
+-	BUG_ON((struct btrfs_root *)node->data != root);
  
+ 	spin_lock(&root->fs_info->trans_lock);
+ 	list_del_init(&root->root_list);
 
 
