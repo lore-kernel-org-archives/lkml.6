@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E53D2C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:38:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D4BFC07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:38:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A92F420854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:38:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A92F420854
+	by mail.kernel.org (Postfix) with ESMTP id E5A0720854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:38:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5A0720854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729161AbeIMSsG (ORCPT
+        id S1729491AbeIMSsM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:48:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59712 "EHLO
+        Thu, 13 Sep 2018 14:48:12 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59720 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727623AbeIMSsF (ORCPT
+        with ESMTP id S1727623AbeIMSsM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:48:05 -0400
+        Thu, 13 Sep 2018 14:48:12 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D9044CF3;
-        Thu, 13 Sep 2018 13:38:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1B340CF3;
+        Thu, 13 Sep 2018 13:38:40 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: [PATCH 4.9 58/78] drm/edid: Add 6 bpc quirk for SDC panel in Lenovo B50-80
-Date:   Thu, 13 Sep 2018 15:31:45 +0200
-Message-Id: <20180913131811.550721459@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        kernel test robot <xiaolong.ye@intel.com>,
+        Ricardo Nabinger Sanchez <rnsanchez@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Matthieu Baerts <matthieu.baerts@tessares.net>
+Subject: [PATCH 4.9 59/78] tcp: Revert "tcp: tcp_probe: use spin_lock_bh()"
+Date:   Thu, 13 Sep 2018 15:31:46 +0200
+Message-Id: <20180913131811.656361967@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131805.732342940@linuxfoundation.org>
 References: <20180913131805.732342940@linuxfoundation.org>
@@ -52,37 +54,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 25da75043f8690fd083878447c91f289dfb63b87 upstream.
+commit 29869d66870a715177bfb505f66a7e0e8bcc89c3 upstream.
 
-Another panel that reports "DFP 1.x compliant TMDS" but it supports 6bpc
-instead of 8 bpc.
+This reverts commit e70ac171658679ecf6bea4bbd9e9325cd6079d2b.
 
-Apply 6 bpc quirk for the panel to fix it.
+jtcp_rcv_established() is in fact called with hard irq being disabled.
 
-BugLink: https://bugs.launchpad.net/bugs/1788308
-Cc: <stable@vger.kernel.org> # v4.8+
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180823055332.7723-1-kai.heng.feng@canonical.com
+Initial bug report from Ricardo Nabinger Sanchez [1] still needs
+to be investigated, but does not look like a TCP bug.
+
+[1] https://www.spinics.net/lists/netdev/msg420960.html
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: kernel test robot <xiaolong.ye@intel.com>
+Cc: Ricardo Nabinger Sanchez <rnsanchez@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Matthieu Baerts <matthieu.baerts@tessares.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/drm_edid.c |    3 +++
- 1 file changed, 3 insertions(+)
+ net/ipv4/tcp_probe.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/drm_edid.c
-+++ b/drivers/gpu/drm/drm_edid.c
-@@ -110,6 +110,9 @@ static const struct edid_quirk {
- 	/* CPT panel of Asus UX303LA reports 8 bpc, but is a 6 bpc panel */
- 	{ "CPT", 0x17df, EDID_QUIRK_FORCE_6BPC },
+--- a/net/ipv4/tcp_probe.c
++++ b/net/ipv4/tcp_probe.c
+@@ -117,7 +117,7 @@ static void jtcp_rcv_established(struct
+ 	     (fwmark > 0 && skb->mark == fwmark)) &&
+ 	    (full || tp->snd_cwnd != tcp_probe.lastcwnd)) {
  
-+	/* SDC panel of Lenovo B50-80 reports 8 bpc, but is a 6 bpc panel */
-+	{ "SDC", 0x3652, EDID_QUIRK_FORCE_6BPC },
-+
- 	/* Belinea 10 15 55 */
- 	{ "MAX", 1516, EDID_QUIRK_PREFER_LARGE_60 },
- 	{ "MAX", 0x77e, EDID_QUIRK_PREFER_LARGE_60 },
+-		spin_lock_bh(&tcp_probe.lock);
++		spin_lock(&tcp_probe.lock);
+ 		/* If log fills, just silently drop */
+ 		if (tcp_probe_avail() > 1) {
+ 			struct tcp_log *p = tcp_probe.log + tcp_probe.head;
+@@ -157,7 +157,7 @@ static void jtcp_rcv_established(struct
+ 			tcp_probe.head = (tcp_probe.head + 1) & (bufsize - 1);
+ 		}
+ 		tcp_probe.lastcwnd = tp->snd_cwnd;
+-		spin_unlock_bh(&tcp_probe.lock);
++		spin_unlock(&tcp_probe.lock);
+ 
+ 		wake_up(&tcp_probe.wait);
+ 	}
 
 
