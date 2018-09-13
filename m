@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06E8DC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:38:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C3F1C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:38:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFD4F20C0A
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:38:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFD4F20C0A
+	by mail.kernel.org (Postfix) with ESMTP id 508E720854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:38:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 508E720854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729434AbeIMSrh (ORCPT
+        id S1729444AbeIMSrl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:47:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59638 "EHLO
+        Thu, 13 Sep 2018 14:47:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59648 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728239AbeIMSrh (ORCPT
+        with ESMTP id S1728239AbeIMSrk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:47:37 -0400
+        Thu, 13 Sep 2018 14:47:40 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DCD7ECF3;
-        Thu, 13 Sep 2018 13:38:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 09E40CF3;
+        Thu, 13 Sep 2018 13:38:09 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Misono Tomohiro <misono.tomohiro@jp.fujitsu.com>,
+        stable@vger.kernel.org, Xu Wen <wen.xu@gatech.edu>,
+        Qu Wenruo <wqu@suse.com>, Gu Jinxiang <gujx@cn.fujitsu.com>,
         David Sterba <dsterba@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 53/78] btrfs: replace: Reset on-disk dev stats value after replace
-Date:   Thu, 13 Sep 2018 15:31:40 +0200
-Message-Id: <20180913131811.101682399@linuxfoundation.org>
+Subject: [PATCH 4.9 54/78] btrfs: relocation: Only remove reloc rb_trees if reloc control has been initialized
+Date:   Thu, 13 Sep 2018 15:31:41 +0200
+Message-Id: <20180913131811.184647018@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131805.732342940@linuxfoundation.org>
 References: <20180913131805.732342940@linuxfoundation.org>
@@ -53,46 +53,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Misono Tomohiro <misono.tomohiro@jp.fujitsu.com>
+From: Qu Wenruo <wqu@suse.com>
 
-[ Upstream commit 1e7e1f9e3aba00c9b9c323bfeeddafe69ff21ff6 ]
+[ Upstream commit 389305b2aa68723c754f88d9dbd268a400e10664 ]
 
-on-disk devs stats value is updated in btrfs_run_dev_stats(),
-which is called during commit transaction, if device->dev_stats_ccnt
-is not zero.
+Invalid reloc tree can cause kernel NULL pointer dereference when btrfs
+does some cleanup of the reloc roots.
 
-Since current replace operation does not touch dev_stats_ccnt,
-on-disk dev stats value is not updated. Therefore "btrfs device stats"
-may return old device's value after umount/mount
-(Example: See "btrfs ins dump-t -t DEV $DEV" after btrfs/100 finish).
+It turns out that fs_info::reloc_ctl can be NULL in
+btrfs_recover_relocation() as we allocate relocation control after all
+reloc roots have been verified.
+So when we hit: note, we haven't called set_reloc_control() thus
+fs_info::reloc_ctl is still NULL.
 
-Fix this by just incrementing dev_stats_ccnt in
-btrfs_dev_replace_finishing() when replace is succeeded and this will
-update the values.
-
-Signed-off-by: Misono Tomohiro <misono.tomohiro@jp.fujitsu.com>
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=199833
+Reported-by: Xu Wen <wen.xu@gatech.edu>
+Signed-off-by: Qu Wenruo <wqu@suse.com>
+Tested-by: Gu Jinxiang <gujx@cn.fujitsu.com>
 Reviewed-by: David Sterba <dsterba@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/dev-replace.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ fs/btrfs/relocation.c |   23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
 
---- a/fs/btrfs/dev-replace.c
-+++ b/fs/btrfs/dev-replace.c
-@@ -586,6 +586,12 @@ static int btrfs_dev_replace_finishing(s
- 	btrfs_rm_dev_replace_unblocked(fs_info);
+--- a/fs/btrfs/relocation.c
++++ b/fs/btrfs/relocation.c
+@@ -1325,18 +1325,19 @@ static void __del_reloc_root(struct btrf
+ 	struct mapping_node *node = NULL;
+ 	struct reloc_control *rc = root->fs_info->reloc_ctl;
  
- 	/*
-+	 * Increment dev_stats_ccnt so that btrfs_run_dev_stats() will
-+	 * update on-disk dev stats value during commit transaction
-+	 */
-+	atomic_inc(&tgt_device->dev_stats_ccnt);
-+
-+	/*
- 	 * this is again a consistent state where no dev_replace procedure
- 	 * is running, the target device is part of the filesystem, the
- 	 * source device is not part of the filesystem anymore and its 1st
+-	spin_lock(&rc->reloc_root_tree.lock);
+-	rb_node = tree_search(&rc->reloc_root_tree.rb_root,
+-			      root->node->start);
+-	if (rb_node) {
+-		node = rb_entry(rb_node, struct mapping_node, rb_node);
+-		rb_erase(&node->rb_node, &rc->reloc_root_tree.rb_root);
++	if (rc) {
++		spin_lock(&rc->reloc_root_tree.lock);
++		rb_node = tree_search(&rc->reloc_root_tree.rb_root,
++				      root->node->start);
++		if (rb_node) {
++			node = rb_entry(rb_node, struct mapping_node, rb_node);
++			rb_erase(&node->rb_node, &rc->reloc_root_tree.rb_root);
++		}
++		spin_unlock(&rc->reloc_root_tree.lock);
++		if (!node)
++			return;
++		BUG_ON((struct btrfs_root *)node->data != root);
+ 	}
+-	spin_unlock(&rc->reloc_root_tree.lock);
+-
+-	if (!node)
+-		return;
+-	BUG_ON((struct btrfs_root *)node->data != root);
+ 
+ 	spin_lock(&root->fs_info->trans_lock);
+ 	list_del_init(&root->root_list);
 
 
