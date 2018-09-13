@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7A36C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:45:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 309A7C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:45:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C9B120C0A
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:45:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C9B120C0A
+	by mail.kernel.org (Postfix) with ESMTP id E53F620881
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:45:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E53F620881
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729794AbeIMSzN (ORCPT
+        id S1730185AbeIMSzQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:55:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60724 "EHLO
+        Thu, 13 Sep 2018 14:55:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60742 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727391AbeIMSzM (ORCPT
+        with ESMTP id S1729570AbeIMSzP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:55:12 -0400
+        Thu, 13 Sep 2018 14:55:15 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 037C6D19;
-        Thu, 13 Sep 2018 13:45:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 27BCBD1A;
+        Thu, 13 Sep 2018 13:45:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Suman Anna <s-anna@ti.com>,
-        Ralf Goebel <ralf.goebel@imago-technologies.com>,
-        Joerg Roedel <jroedel@suse.de>,
+        stable@vger.kernel.org, Breno Leitao <leitao@debian.org>,
+        Gustavo Romero <gromero@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 068/115] iommu/omap: Fix cache flushes on L2 table entries
-Date:   Thu, 13 Sep 2018 15:31:28 +0200
-Message-Id: <20180913131827.894058131@linuxfoundation.org>
+Subject: [PATCH 4.14 069/115] selftests/powerpc: Kill child processes on SIGINT
+Date:   Thu, 13 Sep 2018 15:31:29 +0200
+Message-Id: <20180913131827.942975089@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -53,48 +53,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ralf Goebel <ralf.goebel@imago-technologies.com>
+From: Breno Leitao <leitao@debian.org>
 
-[ Upstream commit 04c532a1cdc7e423656c07937aa4b5c1c2b064f9 ]
+[ Upstream commit 7c27a26e1ed5a7dd709aa19685d2c98f64e1cf0c ]
 
-The base address used for DMA operations on the second-level table
-did incorrectly include the offset for the table entry. The offset
-was then added again which lead to incorrect behavior.
+There are some powerpc selftests, as tm/tm-unavailable, that run for a long
+period (>120 seconds), and if it is interrupted, as pressing CRTL-C
+(SIGINT), the foreground process (harness) dies but the child process and
+threads continue to execute (with PPID = 1 now) in background.
 
-Operations on the L1 table are not affected.
+In this case, you'd think the whole test exited, but there are remaining
+threads and processes being executed in background. Sometimes these
+zombies processes are doing annoying things, as consuming the whole CPU or
+dumping things to STDOUT.
 
-The calculation of the base address is changed to point to the
-beginning of the L2 table.
+This patch fixes this problem by attaching an empty signal handler to
+SIGINT in the harness process. This handler will interrupt (EINTR) the
+parent process waitpid() call, letting the code to follow through the
+normal flow, which will kill all the processes in the child process group.
 
-Fixes: bfee0cf0ee1d ("iommu/omap: Use DMA-API for performing cache flushes")
-Acked-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Ralf Goebel <ralf.goebel@imago-technologies.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+This patch also fixes a typo.
+
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Signed-off-by: Gustavo Romero <gromero@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/iommu/omap-iommu.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/testing/selftests/powerpc/harness.c |   18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
---- a/drivers/iommu/omap-iommu.c
-+++ b/drivers/iommu/omap-iommu.c
-@@ -529,7 +529,7 @@ static u32 *iopte_alloc(struct omap_iomm
+--- a/tools/testing/selftests/powerpc/harness.c
++++ b/tools/testing/selftests/powerpc/harness.c
+@@ -85,13 +85,13 @@ wait:
+ 	return status;
+ }
  
- pte_ready:
- 	iopte = iopte_offset(iopgd, da);
--	*pt_dma = virt_to_phys(iopte);
-+	*pt_dma = iopgd_page_paddr(iopgd);
- 	dev_vdbg(obj->dev,
- 		 "%s: da:%08x pgd:%p *pgd:%08x pte:%p *pte:%08x\n",
- 		 __func__, da, iopgd, *iopgd, iopte, *iopte);
-@@ -717,7 +717,7 @@ static size_t iopgtable_clear_entry_core
- 		}
- 		bytes *= nent;
- 		memset(iopte, 0, nent * sizeof(*iopte));
--		pt_dma = virt_to_phys(iopte);
-+		pt_dma = iopgd_page_paddr(iopgd);
- 		flush_iopte_range(obj->dev, pt_dma, pt_offset, nent);
+-static void alarm_handler(int signum)
++static void sig_handler(int signum)
+ {
+-	/* Jut wake us up from waitpid */
++	/* Just wake us up from waitpid */
+ }
  
- 		/*
+-static struct sigaction alarm_action = {
+-	.sa_handler = alarm_handler,
++static struct sigaction sig_action = {
++	.sa_handler = sig_handler,
+ };
+ 
+ void test_harness_set_timeout(uint64_t time)
+@@ -106,8 +106,14 @@ int test_harness(int (test_function)(voi
+ 	test_start(name);
+ 	test_set_git_version(GIT_VERSION);
+ 
+-	if (sigaction(SIGALRM, &alarm_action, NULL)) {
+-		perror("sigaction");
++	if (sigaction(SIGINT, &sig_action, NULL)) {
++		perror("sigaction (sigint)");
++		test_error(name);
++		return 1;
++	}
++
++	if (sigaction(SIGALRM, &sig_action, NULL)) {
++		perror("sigaction (sigalrm)");
+ 		test_error(name);
+ 		return 1;
+ 	}
 
 
