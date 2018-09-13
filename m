@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B533CC07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 02:43:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D905C070C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 02:43:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 730B02146E
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 02:43:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 730B02146E
+	by mail.kernel.org (Postfix) with ESMTP id E3F0F2146E
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 02:43:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3F0F2146E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728449AbeIMHuv (ORCPT
+        id S1728250AbeIMHuv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 13 Sep 2018 03:50:51 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:43700 "EHLO
+Received: from zeniv.linux.org.uk ([195.92.253.2]:43744 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727736AbeIMHsQ (ORCPT
+        with ESMTP id S1727760AbeIMHsQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 13 Sep 2018 03:48:16 -0400
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1g0HYq-0006RZ-Lh; Thu, 13 Sep 2018 02:40:52 +0000
+        id 1g0HYr-0006ST-OS; Thu, 13 Sep 2018 02:40:53 +0000
 From:   Al Viro <viro@ZenIV.linux.org.uk>
 To:     Arnd Bergmann <arnd@arndb.de>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 26/50] mos7840: switch to ->get_serial()
-Date:   Thu, 13 Sep 2018 03:40:25 +0100
-Message-Id: <20180913024049.24567-26-viro@ZenIV.linux.org.uk>
+Subject: [PATCH 34/50] complete ->[sg]et_serial() switchover
+Date:   Thu, 13 Sep 2018 03:40:33 +0100
+Message-Id: <20180913024049.24567-34-viro@ZenIV.linux.org.uk>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20180913024049.24567-1-viro@ZenIV.linux.org.uk>
 References: <20180913023119.GQ19965@ZenIV.linux.org.uk>
@@ -45,79 +45,70 @@ From: Al Viro <viro@zeniv.linux.org.uk>
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- drivers/usb/serial/mos7840.c | 40 +++++++++++++++++-----------------------
- 1 file changed, 17 insertions(+), 23 deletions(-)
+ drivers/tty/tty_io.c            | 12 ++++--------
+ drivers/usb/serial/usb-serial.c |  4 ++--
+ 2 files changed, 6 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/usb/serial/mos7840.c b/drivers/usb/serial/mos7840.c
-index b42bad85097a..8d0b80e44191 100644
---- a/drivers/usb/serial/mos7840.c
-+++ b/drivers/usb/serial/mos7840.c
-@@ -1931,27 +1931,27 @@ static int mos7840_get_lsr_info(struct tty_struct *tty,
-  *      function to get information about serial port
-  *****************************************************************************/
- 
--static int mos7840_get_serial_info(struct moschip_port *mos7840_port,
--				   struct serial_struct __user *retinfo)
-+static int mos7840_get_serial_info(struct tty_struct *tty,
-+				   struct serial_struct *ss)
- {
--	struct serial_struct tmp;
-+	struct usb_serial_port *port = tty->driver_data;
-+	struct moschip_port *mos7840_port;
- 
--	if (mos7840_port == NULL)
-+	if (mos7840_port_paranoia_check(port, __func__))
- 		return -1;
- 
--	memset(&tmp, 0, sizeof(tmp));
--
--	tmp.type = PORT_16550A;
--	tmp.line = mos7840_port->port->minor;
--	tmp.port = mos7840_port->port->port_number;
--	tmp.irq = 0;
--	tmp.xmit_fifo_size = NUM_URBS * URB_TRANSFER_BUFFER_SIZE;
--	tmp.baud_base = 9600;
--	tmp.close_delay = 5 * HZ;
--	tmp.closing_wait = 30 * HZ;
-+	mos7840_port = mos7840_get_port_private(port);
-+	if (mos7840_port == NULL)
-+		return -1;
- 
--	if (copy_to_user(retinfo, &tmp, sizeof(*retinfo)))
--		return -EFAULT;
-+	ss->type = PORT_16550A;
-+	ss->line = mos7840_port->port->minor;
-+	ss->port = mos7840_port->port->port_number;
-+	ss->irq = 0;
-+	ss->xmit_fifo_size = NUM_URBS * URB_TRANSFER_BUFFER_SIZE;
-+	ss->baud_base = 9600;
-+	ss->close_delay = 5 * HZ;
-+	ss->closing_wait = 30 * HZ;
- 	return 0;
+diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
+index 91d73732e11c..80d6c041c87e 100644
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -2474,7 +2474,7 @@ static int tty_tiocsserial(struct tty_struct *tty, struct serial_struct __user *
+ 		pr_warn("%s: '%s' is using deprecated serial flags (with no effect): %.8x\n",
+ 			__func__, get_task_comm(comm, current), flags);
+ 	if (!tty->ops->set_serial)
+-		return -ENOIOCTLCMD;
++		return -ENOTTY;
+ 	return tty->ops->set_serial(tty, &v);
  }
  
-@@ -1982,13 +1982,6 @@ static int mos7840_ioctl(struct tty_struct *tty,
- 		dev_dbg(&port->dev, "%s TIOCSERGETLSR\n", __func__);
- 		return mos7840_get_lsr_info(tty, argp);
+@@ -2485,7 +2485,7 @@ static int tty_tiocgserial(struct tty_struct *tty, struct serial_struct __user *
+ 	memset(&v, 0, sizeof(struct serial_struct));
  
--	case TIOCGSERIAL:
--		dev_dbg(&port->dev, "%s TIOCGSERIAL\n", __func__);
--		return mos7840_get_serial_info(mos7840_port, argp);
--
--	case TIOCSSERIAL:
--		dev_dbg(&port->dev, "%s TIOCSSERIAL\n", __func__);
--		break;
- 	default:
+ 	if (!tty->ops->set_serial)
+-		return -ENOIOCTLCMD;
++		return -ENOTTY;
+ 	err = tty->ops->get_serial(tty, &v);
+ 	if (!err && copy_to_user(ss, &v, sizeof(struct serial_struct)))
+ 		err = -EFAULT;
+@@ -2621,13 +2621,9 @@ long tty_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 		}
  		break;
- 	}
-@@ -2376,6 +2369,7 @@ static struct usb_serial_driver moschip7840_4port_device = {
- 	.calc_num_ports = mos7840_calc_num_ports,
- 	.probe = mos7840_probe,
- 	.ioctl = mos7840_ioctl,
-+	.get_serial = mos7840_get_serial_info,
- 	.set_termios = mos7840_set_termios,
- 	.break_ctl = mos7840_break,
- 	.tiocmget = mos7840_tiocmget,
+ 	case TIOCSSERIAL:
+-		retval = tty_tiocsserial(tty, p);
+-		if (retval != -ENOIOCTLCMD)
+-			return retval;
++		return tty_tiocsserial(tty, p);
+ 	case TIOCGSERIAL:
+-		retval = tty_tiocgserial(tty, p);
+-		if (retval != -ENOIOCTLCMD)
+-			return retval;
++		return tty_tiocgserial(tty, p);
+ 	case TIOCGPTPEER:
+ 		/* Special because the struct file is needed */
+ 		return ptm_open_peer(file, tty, (int)arg);
+diff --git a/drivers/usb/serial/usb-serial.c b/drivers/usb/serial/usb-serial.c
+index 8bdc48fa5a67..b633f57a86ec 100644
+--- a/drivers/usb/serial/usb-serial.c
++++ b/drivers/usb/serial/usb-serial.c
+@@ -401,7 +401,7 @@ static int serial_get_serial(struct tty_struct *tty, struct serial_struct *ss)
+ 	struct usb_serial_port *port = tty->driver_data;
+ 	if (port->serial->type->get_serial)
+ 		return port->serial->type->get_serial(tty, ss);
+-	return -ENOIOCTLCMD;
++	return -ENOTTY;
+ }
+ 
+ static int serial_set_serial(struct tty_struct *tty, struct serial_struct *ss)
+@@ -409,7 +409,7 @@ static int serial_set_serial(struct tty_struct *tty, struct serial_struct *ss)
+ 	struct usb_serial_port *port = tty->driver_data;
+ 	if (port->serial->type->set_serial)
+ 		return port->serial->type->get_serial(tty, ss);
+-	return -ENOIOCTLCMD;
++	return -ENOTTY;
+ }
+ 
+ static int serial_ioctl(struct tty_struct *tty,
 -- 
 2.11.0
 
