@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA59BC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:51:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 143FEC07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:51:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D46520881
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:51:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D46520881
+	by mail.kernel.org (Postfix) with ESMTP id C4BCB20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:51:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4BCB20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730859AbeIMTBR (ORCPT
+        id S1730880AbeIMTBV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:01:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33324 "EHLO
+        Thu, 13 Sep 2018 15:01:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33334 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729138AbeIMTBQ (ORCPT
+        with ESMTP id S1730372AbeIMTBV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:01:16 -0400
+        Thu, 13 Sep 2018 15:01:21 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D5E78D10;
-        Thu, 13 Sep 2018 13:51:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E5EC0D10;
+        Thu, 13 Sep 2018 13:51:45 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tariq Toukan <tariqt@mellanox.com>,
-        Eran Ben Elisha <eranbe@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 027/197] net/mlx5: Fix SQ offset in QPs with small RQ
-Date:   Thu, 13 Sep 2018 15:29:36 +0200
-Message-Id: <20180913131842.647142172@linuxfoundation.org>
+        stable@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        Realtek linux nic maintainers <nic_swsd@realtek.com>,
+        Azat Khuzhin <a3at.mail@gmail.com>
+Subject: [PATCH 4.18 028/197] r8169: set RxConfig after tx/rx is enabled for RTL8169sb/8110sb devices
+Date:   Thu, 13 Sep 2018 15:29:37 +0200
+Message-Id: <20180913131842.688567279@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -53,47 +53,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tariq Toukan <tariqt@mellanox.com>
+From: Azat Khuzhin <a3at.mail@gmail.com>
 
-[ Upstream commit 639505d4397b8c654a8e2616f9cb70ece40c83f9 ]
+[ Upstream commit 05212ba8132b42047ab5d63d759c6f9c28e7eab5 ]
 
-Correct the formula for calculating the RQ page remainder,
-which should be in byte granularity.  The result will be
-non-zero only for RQs smaller than PAGE_SIZE, as an RQ size
-is a power of 2.
+I have two Ethernet adapters:
+  r8169 0000:03:01.0 eth0: RTL8169sb/8110sb, 00:14:d1:14:2d:49, XID 10000000, IRQ 18
+  r8169 0000:01:00.0 eth0: RTL8168e/8111e, 64:66:b3:11:14:5d, XID 2c200000, IRQ 30
+And after upgrading from linux 4.15 [1] to linux 4.18+ [2] RTL8169sb failed to
+receive any packets. tcpdump shows a lot of checksum mismatch.
 
-Divide this by the SQ stride (MLX5_SEND_WQE_BB) to get the
-SQ offset in strides granularity.
+  [1]: a0f79386a4968b4925da6db2d1daffd0605a4402
+  [2]: 0519359784328bfa92bf0931bf0cff3b58c16932 (4.19 merge window opened)
 
-Fixes: d7037ad73daa ("net/mlx5: Fix QP fragmented buffer allocation")
-Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
-Reviewed-by: Eran Ben Elisha <eranbe@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+I started bisecting and the found that [3] breaks it. According to [4]:
+  "For 8110S, 8110SB, and 8110SC series, the initial value of RxConfig
+  needs to be set after the tx/rx is enabled."
+So I moved rtl_init_rxcfg() after enabling tx/rs and now my adapter works
+(RTL8168e works too).
+
+  [3]: 3559d81e76bfe3803e89f2e04cf6ef7ab4f3aace
+  [4]: e542a2269f232d61270ceddd42b73a4348dee2bb ("r8169: adjust the RxConfig
+settings.")
+
+Also drop "rx" from rtl_set_rx_tx_config_registers(), since it does nothing
+with it already.
+
+Fixes: 3559d81e76bfe3803e89f2e04cf6ef7ab4f3aace ("r8169: simplify
+rtl_hw_start_8169")
+
+Cc: Heiner Kallweit <hkallweit1@gmail.com>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: netdev@vger.kernel.org
+Cc: Realtek linux nic maintainers <nic_swsd@realtek.com>
+Signed-off-by: Azat Khuzhin <a3at.mail@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/wq.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/realtek/r8169.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/wq.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/wq.c
-@@ -139,14 +139,15 @@ int mlx5_wq_qp_create(struct mlx5_core_d
- 		      struct mlx5_wq_ctrl *wq_ctrl)
+--- a/drivers/net/ethernet/realtek/r8169.c
++++ b/drivers/net/ethernet/realtek/r8169.c
+@@ -5039,7 +5039,7 @@ static void rtl8169_hw_reset(struct rtl8
+ 	rtl_hw_reset(tp);
+ }
+ 
+-static void rtl_set_rx_tx_config_registers(struct rtl8169_private *tp)
++static void rtl_set_tx_config_registers(struct rtl8169_private *tp)
  {
- 	u32 sq_strides_offset;
-+	u32 rq_pg_remainder;
- 	int err;
+ 	/* Set DMA burst size and Interframe Gap Time */
+ 	RTL_W32(tp, TxConfig, (TX_DMA_BURST << TxDMAShift) |
+@@ -5150,12 +5150,14 @@ static void rtl_hw_start(struct  rtl8169
  
- 	mlx5_fill_fbc(MLX5_GET(qpc, qpc, log_rq_stride) + 4,
- 		      MLX5_GET(qpc, qpc, log_rq_size),
- 		      &wq->rq.fbc);
+ 	rtl_set_rx_max_size(tp);
+ 	rtl_set_rx_tx_desc_registers(tp);
+-	rtl_set_rx_tx_config_registers(tp);
++	rtl_set_tx_config_registers(tp);
+ 	RTL_W8(tp, Cfg9346, Cfg9346_Lock);
  
--	sq_strides_offset =
--		((wq->rq.fbc.frag_sz_m1 + 1) % PAGE_SIZE) / MLX5_SEND_WQE_BB;
-+	rq_pg_remainder   = mlx5_wq_cyc_get_byte_size(&wq->rq) % PAGE_SIZE;
-+	sq_strides_offset = rq_pg_remainder / MLX5_SEND_WQE_BB;
- 
- 	mlx5_fill_fbc_offset(ilog2(MLX5_SEND_WQE_BB),
- 			     MLX5_GET(qpc, qpc, log_sq_size),
+ 	/* Initially a 10 us delay. Turned it into a PCI commit. - FR */
+ 	RTL_R8(tp, IntrMask);
+ 	RTL_W8(tp, ChipCmd, CmdTxEnb | CmdRxEnb);
++	rtl_init_rxcfg(tp);
++
+ 	rtl_set_rx_mode(tp->dev);
+ 	/* no early-rx interrupts */
+ 	RTL_W16(tp, MultiIntr, RTL_R16(tp, MultiIntr) & 0xf000);
 
 
