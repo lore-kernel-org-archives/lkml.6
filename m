@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C797C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:58:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11761C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:58:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5877204FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:58:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5877204FD
+	by mail.kernel.org (Postfix) with ESMTP id C93C7204FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:58:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C93C7204FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731571AbeIMTIS (ORCPT
+        id S1731595AbeIMTIV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:08:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34658 "EHLO
+        Thu, 13 Sep 2018 15:08:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34696 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728566AbeIMTIS (ORCPT
+        with ESMTP id S1728566AbeIMTIU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:08:18 -0400
+        Thu, 13 Sep 2018 15:08:20 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3A27ED15;
-        Thu, 13 Sep 2018 13:58:40 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6027BD0E;
+        Thu, 13 Sep 2018 13:58:43 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Song Liu <songliubraving@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
+        stable@vger.kernel.org,
+        "Lachmann, Juergen" <juergen.lachmann@harman.com>,
+        Richard Weinberger <richard@nod.at>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 076/197] tcp, ulp: add alias for all ulp modules
-Date:   Thu, 13 Sep 2018 15:30:25 +0200
-Message-Id: <20180913131844.568035775@linuxfoundation.org>
+Subject: [PATCH 4.18 077/197] ubi: Initialize Fastmap checkmapping correctly
+Date:   Thu, 13 Sep 2018 15:30:26 +0200
+Message-Id: <20180913131844.606589126@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -54,93 +53,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Daniel Borkmann <daniel@iogearbox.net>
+From: Richard Weinberger <richard@nod.at>
 
-[ Upstream commit 037b0b86ecf5646f8eae777d8b52ff8b401692ec ]
+[ Upstream commit 25677478474a91fa1b46f19a4a591a9848bca6fb ]
 
-Lets not turn the TCP ULP lookup into an arbitrary module loader as
-we only intend to load ULP modules through this mechanism, not other
-unrelated kernel modules:
+We cannot do it last, otherwithse it will be skipped for dynamic
+volumes.
 
-  [root@bar]# cat foo.c
-  #include <sys/types.h>
-  #include <sys/socket.h>
-  #include <linux/tcp.h>
-  #include <linux/in.h>
-
-  int main(void)
-  {
-      int sock = socket(PF_INET, SOCK_STREAM, 0);
-      setsockopt(sock, IPPROTO_TCP, TCP_ULP, "sctp", sizeof("sctp"));
-      return 0;
-  }
-
-  [root@bar]# gcc foo.c -O2 -Wall
-  [root@bar]# lsmod | grep sctp
-  [root@bar]# ./a.out
-  [root@bar]# lsmod | grep sctp
-  sctp                 1077248  4
-  libcrc32c              16384  3 nf_conntrack,nf_nat,sctp
-  [root@bar]#
-
-Fix it by adding module alias to TCP ULP modules, so probing module
-via request_module() will be limited to tcp-ulp-[name]. The existing
-modules like kTLS will load fine given tcp-ulp-tls alias, but others
-will fail to load:
-
-  [root@bar]# lsmod | grep sctp
-  [root@bar]# ./a.out
-  [root@bar]# lsmod | grep sctp
-  [root@bar]#
-
-Sockmap is not affected from this since it's either built-in or not.
-
-Fixes: 734942cc4ea6 ("tcp: ULP infrastructure")
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Acked-by: John Fastabend <john.fastabend@gmail.com>
-Acked-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Reported-by: Lachmann, Juergen <juergen.lachmann@harman.com>
+Fixes: 34653fd8c46e ("ubi: fastmap: Check each mapping only once")
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/net/tcp.h  |    4 ++++
- net/ipv4/tcp_ulp.c |    2 +-
- net/tls/tls_main.c |    1 +
- 3 files changed, 6 insertions(+), 1 deletion(-)
+ drivers/mtd/ubi/vtbl.c |   20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
---- a/include/net/tcp.h
-+++ b/include/net/tcp.h
-@@ -2023,6 +2023,10 @@ int tcp_set_ulp_id(struct sock *sk, cons
- void tcp_get_available_ulp(char *buf, size_t len);
- void tcp_cleanup_ulp(struct sock *sk);
+--- a/drivers/mtd/ubi/vtbl.c
++++ b/drivers/mtd/ubi/vtbl.c
+@@ -579,6 +579,16 @@ static int init_volumes(struct ubi_devic
+ 		reserved_pebs += vol->reserved_pebs;
  
-+#define MODULE_ALIAS_TCP_ULP(name)				\
-+	__MODULE_INFO(alias, alias_userspace, name);		\
-+	__MODULE_INFO(alias, alias_tcp_ulp, "tcp-ulp-" name)
+ 		/*
++		 * We use ubi->peb_count and not vol->reserved_pebs because
++		 * we want to keep the code simple. Otherwise we'd have to
++		 * resize/check the bitmap upon volume resize too.
++		 * Allocating a few bytes more does not hurt.
++		 */
++		err = ubi_fastmap_init_checkmap(vol, ubi->peb_count);
++		if (err)
++			return err;
 +
- /* Call BPF_SOCK_OPS program that returns an int. If the return value
-  * is < 0, then the BPF op failed (for example if the loaded BPF
-  * program does not support the chosen operation or there is no BPF
---- a/net/ipv4/tcp_ulp.c
-+++ b/net/ipv4/tcp_ulp.c
-@@ -51,7 +51,7 @@ static const struct tcp_ulp_ops *__tcp_u
- #ifdef CONFIG_MODULES
- 	if (!ulp && capable(CAP_NET_ADMIN)) {
- 		rcu_read_unlock();
--		request_module("%s", name);
-+		request_module("tcp-ulp-%s", name);
- 		rcu_read_lock();
- 		ulp = tcp_ulp_find(name);
++		/*
+ 		 * In case of dynamic volume UBI knows nothing about how many
+ 		 * data is stored there. So assume the whole volume is used.
+ 		 */
+@@ -620,16 +630,6 @@ static int init_volumes(struct ubi_devic
+ 			(long long)(vol->used_ebs - 1) * vol->usable_leb_size;
+ 		vol->used_bytes += av->last_data_size;
+ 		vol->last_eb_bytes = av->last_data_size;
+-
+-		/*
+-		 * We use ubi->peb_count and not vol->reserved_pebs because
+-		 * we want to keep the code simple. Otherwise we'd have to
+-		 * resize/check the bitmap upon volume resize too.
+-		 * Allocating a few bytes more does not hurt.
+-		 */
+-		err = ubi_fastmap_init_checkmap(vol, ubi->peb_count);
+-		if (err)
+-			return err;
  	}
---- a/net/tls/tls_main.c
-+++ b/net/tls/tls_main.c
-@@ -45,6 +45,7 @@
- MODULE_AUTHOR("Mellanox Technologies");
- MODULE_DESCRIPTION("Transport Layer Security Support");
- MODULE_LICENSE("Dual BSD/GPL");
-+MODULE_ALIAS_TCP_ULP("tls");
  
- enum {
- 	TLSV4,
+ 	/* And add the layout volume */
 
 
