@@ -6,65 +6,88 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53266C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:33:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 412DAC07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:33:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18E0620854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:33:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18E0620854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 0336520854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:33:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0336520854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728470AbeIMSmS (ORCPT
+        id S1728518AbeIMSmo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:42:18 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:11700 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727002AbeIMSmQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:42:16 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 0DA787228C93F;
-        Thu, 13 Sep 2018 21:32:41 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.399.0; Thu, 13 Sep 2018
- 21:32:35 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH net-next] vxlan: Remove duplicated include from vxlan.h
-Date:   Thu, 13 Sep 2018 21:32:23 +0800
-Message-ID: <20180913133223.14984-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        Thu, 13 Sep 2018 14:42:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58654 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726741AbeIMSmn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 14:42:43 -0400
+Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 25A34D10;
+        Thu, 13 Sep 2018 13:33:13 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Ronnie Sahlberg <lsahlber@redhat.com>,
+        Steve French <stfrench@microsoft.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 07/60] cifs: check if SMB2 PDU size has been padded and suppress the warning
+Date:   Thu, 13 Sep 2018 15:30:14 +0200
+Message-Id: <20180913131745.625212051@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20180913131745.261413581@linuxfoundation.org>
+References: <20180913131745.261413581@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove duplicated include.
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+------------------
+
+From: Ronnie Sahlberg <lsahlber@redhat.com>
+
+[ Upstream commit e6c47dd0da1e3a484e778046fc10da0b20606a86 ]
+
+Some SMB2/3 servers, Win2016 but possibly others too, adds padding
+not only between PDUs in a compound but also to the final PDU.
+This padding extends the PDU to a multiple of 8 bytes.
+
+Check if the unexpected length looks like this might be the case
+and avoid triggering the log messages for :
+
+  "SMB2 server sent bad RFC1001 len %d not %d\n"
+
+Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/net/vxlan.h | 1 -
- 1 file changed, 1 deletion(-)
+ fs/cifs/smb2misc.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/include/net/vxlan.h b/include/net/vxlan.h
-index b99a02ae..7ef1517 100644
---- a/include/net/vxlan.h
-+++ b/include/net/vxlan.h
-@@ -5,7 +5,6 @@
- #include <linux/if_vlan.h>
- #include <net/udp_tunnel.h>
- #include <net/dst_metadata.h>
--#include <net/udp_tunnel.h>
+--- a/fs/cifs/smb2misc.c
++++ b/fs/cifs/smb2misc.c
+@@ -185,6 +185,13 @@ smb2_check_message(char *buf, unsigned i
+ 			return 0;
  
- /* VXLAN protocol (RFC 7348) header:
-  * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
--- 
-2.7.0
+ 		/*
++		 * Some windows servers (win2016) will pad also the final
++		 * PDU in a compound to 8 bytes.
++		 */
++		if (((clc_len + 7) & ~7) == len)
++			return 0;
++
++		/*
+ 		 * MacOS server pads after SMB2.1 write response with 3 bytes
+ 		 * of junk. Other servers match RFC1001 len to actual
+ 		 * SMB2/SMB3 frame length (header + smb2 response specific data)
 
 
