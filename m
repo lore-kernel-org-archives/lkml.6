@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DC3EFC6179
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5519EFA3754
 	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 17:35:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F79C21710
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 16:42:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F79C21710
+	by mail.kernel.org (Postfix) with ESMTP id 2C9A721708
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 16:42:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C9A721708
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728380AbeIMVxG (ORCPT
+        id S1728138AbeIMVwx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 17:53:06 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51144 "EHLO
+        Thu, 13 Sep 2018 17:52:53 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51100 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726452AbeIMVxE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 17:53:04 -0400
+        id S1726452AbeIMVwx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 17:52:53 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 65AD080D;
-        Thu, 13 Sep 2018 09:42:47 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CCD511596;
+        Thu, 13 Sep 2018 09:42:36 -0700 (PDT)
 Received: from e110467-lin.cambridge.arm.com (e110467-lin.emea.arm.com [10.4.12.131])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 9AC603F703;
-        Thu, 13 Sep 2018 09:42:45 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0E2483F703;
+        Thu, 13 Sep 2018 09:42:34 -0700 (PDT)
 From:   Robin Murphy <robin.murphy@arm.com>
 To:     joro@8bytes.org, will.deacon@arm.com, thunder.leizhen@huawei.com,
         iommu@lists.linux-foundation.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc:     linuxarm@huawei.com, guohanjun@huawei.com, huawei.libin@huawei.com,
         john.garry@huawei.com
-Subject: [PATCH v6 5/7] iommu/arm-smmu-v3: Add support for non-strict mode
-Date:   Thu, 13 Sep 2018 17:42:22 +0100
-Message-Id: <9804a057ac2fcd4d7a5c3878a7e6daa33751c9fc.1536856828.git.robin.murphy@arm.com>
+Subject: [PATCH v6 1/7] iommu/arm-smmu-v3: Implement flush_iotlb_all hook
+Date:   Thu, 13 Sep 2018 17:42:18 +0100
+Message-Id: <f2c5d38962c1f7ceccdf5faafb90d7076eef0752.1536856828.git.robin.murphy@arm.com>
 X-Mailer: git-send-email 2.19.0.dirty
 In-Reply-To: <cover.1536856828.git.robin.murphy@arm.com>
 References: <cover.1536856828.git.robin.murphy@arm.com>
@@ -49,96 +49,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Zhen Lei <thunder.leizhen@huawei.com>
 
-Dynamically choose strict or non-strict mode for page table config based
-on the iommu domain type.
+.flush_iotlb_all is currently stubbed to arm_smmu_iotlb_sync() since the
+only time it would ever need to actually do anything is for callers
+doing their own explicit batching, e.g.:
+
+	iommu_unmap_fast(domain, ...);
+	iommu_unmap_fast(domain, ...);
+	iommu_iotlb_flush_all(domain, ...);
+
+where since io-pgtable still issues the TLBI commands implicitly in the
+unmap instead of implementing .iotlb_range_add, the "flush" only needs
+to ensure completion of those already-in-flight invalidations.
+
+However, we're about to start using it in anger with flush queues, so
+let's get a proper implementation wired up.
 
 Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
-[rm: convert to domain attribute]
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+[rm: expand commit message]
 Signed-off-by: Robin Murphy <robin.murphy@arm.com>
 ---
- drivers/iommu/arm-smmu-v3.c | 33 +++++++++++++++++++++++++++------
- 1 file changed, 27 insertions(+), 6 deletions(-)
+ drivers/iommu/arm-smmu-v3.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
-index f10c852479fc..e2f0e4a3374d 100644
+index e395f1ff3f81..f10c852479fc 100644
 --- a/drivers/iommu/arm-smmu-v3.c
 +++ b/drivers/iommu/arm-smmu-v3.c
-@@ -612,6 +612,7 @@ struct arm_smmu_domain {
- 	struct mutex			init_mutex; /* Protects smmu pointer */
+@@ -1781,6 +1781,14 @@ arm_smmu_unmap(struct iommu_domain *domain, unsigned long iova, size_t size)
+ 	return ops->unmap(ops, iova, size);
+ }
  
- 	struct io_pgtable_ops		*pgtbl_ops;
-+	bool				non_strict;
- 
- 	enum arm_smmu_domain_stage	stage;
- 	union {
-@@ -1633,6 +1634,9 @@ static int arm_smmu_domain_finalise(struct iommu_domain *domain)
- 	if (smmu->features & ARM_SMMU_FEAT_COHERENCY)
- 		pgtbl_cfg.quirks = IO_PGTABLE_QUIRK_NO_DMA;
- 
-+	if (smmu_domain->non_strict)
-+		pgtbl_cfg.quirks |= IO_PGTABLE_QUIRK_NON_STRICT;
++static void arm_smmu_flush_iotlb_all(struct iommu_domain *domain)
++{
++	struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
 +
- 	pgtbl_ops = alloc_io_pgtable_ops(fmt, &pgtbl_cfg, smmu_domain);
- 	if (!pgtbl_ops)
- 		return -ENOMEM;
-@@ -1934,13 +1938,17 @@ static int arm_smmu_domain_get_attr(struct iommu_domain *domain,
++	if (smmu_domain->smmu)
++		arm_smmu_tlb_inv_context(smmu_domain);
++}
++
+ static void arm_smmu_iotlb_sync(struct iommu_domain *domain)
  {
- 	struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
- 
--	if (domain->type != IOMMU_DOMAIN_UNMANAGED)
--		return -EINVAL;
--
- 	switch (attr) {
- 	case DOMAIN_ATTR_NESTING:
-+		if (domain->type != IOMMU_DOMAIN_UNMANAGED)
-+			return -EINVAL;
- 		*(int *)data = (smmu_domain->stage == ARM_SMMU_DOMAIN_NESTED);
- 		return 0;
-+	case DOMAIN_ATTR_DMA_USE_FLUSH_QUEUE:
-+		if (domain->type != IOMMU_DOMAIN_DMA)
-+			return -EINVAL;
-+		*(int *)data = smmu_domain->non_strict;
-+		return 0;
- 	default:
- 		return -ENODEV;
- 	}
-@@ -1952,13 +1960,15 @@ static int arm_smmu_domain_set_attr(struct iommu_domain *domain,
- 	int ret = 0;
- 	struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
- 
--	if (domain->type != IOMMU_DOMAIN_UNMANAGED)
--		return -EINVAL;
--
- 	mutex_lock(&smmu_domain->init_mutex);
- 
- 	switch (attr) {
- 	case DOMAIN_ATTR_NESTING:
-+		if (domain->type != IOMMU_DOMAIN_UNMANAGED) {
-+			ret = -EINVAL;
-+			goto out_unlock;
-+		}
-+
- 		if (smmu_domain->smmu) {
- 			ret = -EPERM;
- 			goto out_unlock;
-@@ -1970,6 +1980,17 @@ static int arm_smmu_domain_set_attr(struct iommu_domain *domain,
- 			smmu_domain->stage = ARM_SMMU_DOMAIN_S1;
- 
- 		break;
-+	case DOMAIN_ATTR_DMA_USE_FLUSH_QUEUE:
-+		if (domain->type != IOMMU_DOMAIN_DMA) {
-+			ret = -EINVAL;
-+			goto out_unlock;
-+		}
-+
-+		smmu_domain->non_strict = *(int *)data;
-+		if (smmu_domain->pgtbl_ops)
-+			io_pgtable_set_non_strict(smmu_domain->pgtbl_ops,
-+						  smmu_domain->non_strict);
-+		break;
- 	default:
- 		ret = -ENODEV;
- 	}
+ 	struct arm_smmu_device *smmu = to_smmu_domain(domain)->smmu;
+@@ -2008,7 +2016,7 @@ static struct iommu_ops arm_smmu_ops = {
+ 	.attach_dev		= arm_smmu_attach_dev,
+ 	.map			= arm_smmu_map,
+ 	.unmap			= arm_smmu_unmap,
+-	.flush_iotlb_all	= arm_smmu_iotlb_sync,
++	.flush_iotlb_all	= arm_smmu_flush_iotlb_all,
+ 	.iotlb_sync		= arm_smmu_iotlb_sync,
+ 	.iova_to_phys		= arm_smmu_iova_to_phys,
+ 	.add_device		= arm_smmu_add_device,
 -- 
 2.19.0.dirty
 
