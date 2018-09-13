@@ -6,40 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3CECC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:42:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF5D0C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:43:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78A6620854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:42:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78A6620854
+	by mail.kernel.org (Postfix) with ESMTP id B564E20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:43:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B564E20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729550AbeIMSw1 (ORCPT
+        id S1729806AbeIMSwb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:52:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60268 "EHLO
+        Thu, 13 Sep 2018 14:52:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60284 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727231AbeIMSw1 (ORCPT
+        with ESMTP id S1727231AbeIMSwa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:52:27 -0400
+        Thu, 13 Sep 2018 14:52:30 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6BA19D10;
-        Thu, 13 Sep 2018 13:42:54 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CCA6ED19;
+        Thu, 13 Sep 2018 13:42:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Anatoly Trosinenko <anatoly.trosinenko@gmail.com>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Yuexing Wang <wangyxlandq@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 029/115] fat: validate ->i_start before using
-Date:   Thu, 13 Sep 2018 15:30:49 +0200
-Message-Id: <20180913131825.430223092@linuxfoundation.org>
+Subject: [PATCH 4.14 030/115] scripts: modpost: check memory allocation results
+Date:   Thu, 13 Sep 2018 15:30:50 +0200
+Message-Id: <20180913131825.521822825@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -57,120 +53,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-[ Upstream commit 0afa9626667c3659ef8bd82d42a11e39fedf235c ]
+[ Upstream commit 1f3aa9002dc6a0d59a4b599b4fc8f01cf43ef014 ]
 
-On corrupted FATfs may have invalid ->i_start.  To handle it, this checks
-->i_start before using, and return proper error code.
+Fix missing error check for memory allocation functions in
+scripts/mod/modpost.c.
 
-Link: http://lkml.kernel.org/r/87o9f8y1t5.fsf_-_@mail.parknet.co.jp
-Signed-off-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-Reported-by: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
-Tested-by: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
-Cc: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes kernel bugzilla #200319:
+https://bugzilla.kernel.org/show_bug.cgi?id=200319
+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Yuexing Wang <wangyxlandq@gmail.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/fat/cache.c  |   19 ++++++++++++-------
- fs/fat/fat.h    |    5 +++++
- fs/fat/fatent.c |    6 +++---
- 3 files changed, 20 insertions(+), 10 deletions(-)
+ scripts/mod/modpost.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/fs/fat/cache.c
-+++ b/fs/fat/cache.c
-@@ -225,7 +225,8 @@ static inline void cache_init(struct fat
- int fat_get_cluster(struct inode *inode, int cluster, int *fclus, int *dclus)
+--- a/scripts/mod/modpost.c
++++ b/scripts/mod/modpost.c
+@@ -677,7 +677,7 @@ static void handle_modversions(struct mo
+ 			if (ELF_ST_TYPE(sym->st_info) == STT_SPARC_REGISTER)
+ 				break;
+ 			if (symname[0] == '.') {
+-				char *munged = strdup(symname);
++				char *munged = NOFAIL(strdup(symname));
+ 				munged[0] = '_';
+ 				munged[1] = toupper(munged[1]);
+ 				symname = munged;
+@@ -1329,7 +1329,7 @@ static Elf_Sym *find_elf_symbol2(struct
+ static char *sec2annotation(const char *s)
  {
- 	struct super_block *sb = inode->i_sb;
--	const int limit = sb->s_maxbytes >> MSDOS_SB(sb)->cluster_bits;
-+	struct msdos_sb_info *sbi = MSDOS_SB(sb);
-+	const int limit = sb->s_maxbytes >> sbi->cluster_bits;
- 	struct fat_entry fatent;
- 	struct fat_cache_id cid;
- 	int nr;
-@@ -234,6 +235,12 @@ int fat_get_cluster(struct inode *inode,
+ 	if (match(s, init_exit_sections)) {
+-		char *p = malloc(20);
++		char *p = NOFAIL(malloc(20));
+ 		char *r = p;
  
- 	*fclus = 0;
- 	*dclus = MSDOS_I(inode)->i_start;
-+	if (!fat_valid_entry(sbi, *dclus)) {
-+		fat_fs_error_ratelimit(sb,
-+			"%s: invalid start cluster (i_pos %lld, start %08x)",
-+			__func__, MSDOS_I(inode)->i_pos, *dclus);
-+		return -EIO;
-+	}
- 	if (cluster == 0)
- 		return 0;
- 
-@@ -250,9 +257,8 @@ int fat_get_cluster(struct inode *inode,
- 		/* prevent the infinite loop of cluster chain */
- 		if (*fclus > limit) {
- 			fat_fs_error_ratelimit(sb,
--					"%s: detected the cluster chain loop"
--					" (i_pos %lld)", __func__,
--					MSDOS_I(inode)->i_pos);
-+				"%s: detected the cluster chain loop (i_pos %lld)",
-+				__func__, MSDOS_I(inode)->i_pos);
- 			nr = -EIO;
- 			goto out;
- 		}
-@@ -262,9 +268,8 @@ int fat_get_cluster(struct inode *inode,
- 			goto out;
- 		else if (nr == FAT_ENT_FREE) {
- 			fat_fs_error_ratelimit(sb,
--				       "%s: invalid cluster chain (i_pos %lld)",
--				       __func__,
--				       MSDOS_I(inode)->i_pos);
-+				"%s: invalid cluster chain (i_pos %lld)",
-+				__func__, MSDOS_I(inode)->i_pos);
- 			nr = -EIO;
- 			goto out;
- 		} else if (nr == FAT_ENT_EOF) {
---- a/fs/fat/fat.h
-+++ b/fs/fat/fat.h
-@@ -348,6 +348,11 @@ static inline void fatent_brelse(struct
- 	fatent->fat_inode = NULL;
+ 		*p++ = '_';
+@@ -1349,7 +1349,7 @@ static char *sec2annotation(const char *
+ 			strcat(p, " ");
+ 		return r;
+ 	} else {
+-		return strdup("");
++		return NOFAIL(strdup(""));
+ 	}
  }
  
-+static inline bool fat_valid_entry(struct msdos_sb_info *sbi, int entry)
-+{
-+	return FAT_START_ENT <= entry && entry < sbi->max_cluster;
-+}
-+
- extern void fat_ent_access_init(struct super_block *sb);
- extern int fat_ent_read(struct inode *inode, struct fat_entry *fatent,
- 			int entry);
---- a/fs/fat/fatent.c
-+++ b/fs/fat/fatent.c
-@@ -23,7 +23,7 @@ static void fat12_ent_blocknr(struct sup
+@@ -2050,7 +2050,7 @@ void buf_write(struct buffer *buf, const
  {
- 	struct msdos_sb_info *sbi = MSDOS_SB(sb);
- 	int bytes = entry + (entry >> 1);
--	WARN_ON(entry < FAT_START_ENT || sbi->max_cluster <= entry);
-+	WARN_ON(!fat_valid_entry(sbi, entry));
- 	*offset = bytes & (sb->s_blocksize - 1);
- 	*blocknr = sbi->fat_start + (bytes >> sb->s_blocksize_bits);
- }
-@@ -33,7 +33,7 @@ static void fat_ent_blocknr(struct super
- {
- 	struct msdos_sb_info *sbi = MSDOS_SB(sb);
- 	int bytes = (entry << sbi->fatent_shift);
--	WARN_ON(entry < FAT_START_ENT || sbi->max_cluster <= entry);
-+	WARN_ON(!fat_valid_entry(sbi, entry));
- 	*offset = bytes & (sb->s_blocksize - 1);
- 	*blocknr = sbi->fat_start + (bytes >> sb->s_blocksize_bits);
- }
-@@ -353,7 +353,7 @@ int fat_ent_read(struct inode *inode, st
- 	int err, offset;
- 	sector_t blocknr;
- 
--	if (entry < FAT_START_ENT || sbi->max_cluster <= entry) {
-+	if (!fat_valid_entry(sbi, entry)) {
- 		fatent_brelse(fatent);
- 		fat_fs_error(sb, "invalid access to FAT (entry 0x%08x)", entry);
- 		return -EIO;
+ 	if (buf->size - buf->pos < len) {
+ 		buf->size += len + SZ;
+-		buf->p = realloc(buf->p, buf->size);
++		buf->p = NOFAIL(realloc(buf->p, buf->size));
+ 	}
+ 	strncpy(buf->p + buf->pos, s, len);
+ 	buf->pos += len;
 
 
