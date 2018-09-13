@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAA4EC07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:53:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6656C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:53:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56A2220854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:53:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56A2220854
+	by mail.kernel.org (Postfix) with ESMTP id 972C320854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:53:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 972C320854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731156AbeIMTDY (ORCPT
+        id S1731170AbeIMTD1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:03:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33740 "EHLO
+        Thu, 13 Sep 2018 15:03:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33750 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728810AbeIMTDY (ORCPT
+        with ESMTP id S1728810AbeIMTD1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:03:24 -0400
+        Thu, 13 Sep 2018 15:03:27 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EFE19D19;
-        Thu, 13 Sep 2018 13:53:47 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1F00DD19;
+        Thu, 13 Sep 2018 13:53:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gary Leshner <gary.s.leshner@intel.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 056/197] IB/hfi1: Invalid NUMA node information can cause a divide by zero
-Date:   Thu, 13 Sep 2018 15:30:05 +0200
-Message-Id: <20180913131843.770790558@linuxfoundation.org>
+Subject: [PATCH 4.18 057/197] pwm: meson: Fix mux clock names
+Date:   Thu, 13 Sep 2018 15:30:06 +0200
+Message-Id: <20180913131843.804736565@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -55,117 +53,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Michael J. Ruhl" <michael.j.ruhl@intel.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
 
-[ Upstream commit c513de490f808d8480346f9a58e6a4a5f3de12e7 ]
+[ Upstream commit b96e9eb62841c519ba1db32d036628be3cdef91f ]
 
-If the system BIOS does not supply NUMA node information to the
-PCI devices, the NUMA node is selected by choosing the current
-node.
+Current clock name looks like this:
+/soc/bus@ffd00000/pwm@1b000#mux0
 
-This can lead to the following crash:
+This is bad because CCF uses the clock to create a directory in clk debugfs.
+With such name, the directory creation (silently) fails and the debugfs
+entry end up being created at the debugfs root.
 
-divide error: 0000 SMP
-CPU: 0 PID: 4 Comm: kworker/0:0 Tainted: G          IOE
-------------   3.10.0-693.21.1.el7.x86_64 #1
-Hardware name: Intel Corporation S2600KP/S2600KP, BIOS
-SE5C610.86B.01.01.0005.101720141054 10/17/2014
-Workqueue: events work_for_cpu_fn
-task: ffff880174480fd0 ti: ffff880174488000 task.ti: ffff880174488000
-RIP: 0010: [<ffffffffc020ac69>] hfi1_dev_affinity_init+0x129/0x6a0 [hfi1]
-RSP: 0018:ffff88017448bbf8  EFLAGS: 00010246
-RAX: 0000000000000011 RBX: ffff88107ffba6c0 RCX: ffff88085c22e130
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff880824ad0000
-RBP: ffff88017448bc48 R08: 0000000000000011 R09: 0000000000000002
-R10: ffff8808582b6ca0 R11: 0000000000003151 R12: ffff8808582b6ca0
-R13: ffff8808582b6518 R14: ffff8808582b6010 R15: 0000000000000012
-FS:  0000000000000000(0000) GS:ffff88085ec00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007efc707404f0 CR3: 0000000001a02000 CR4: 00000000001607f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
-Call Trace:
- hfi1_init_dd+0x14b3/0x27a0 [hfi1]
- ? pcie_capability_write_word+0x46/0x70
- ? hfi1_pcie_init+0xc0/0x200 [hfi1]
- do_init_one+0x153/0x4c0 [hfi1]
- ? sched_clock_cpu+0x85/0xc0
- init_one+0x1b5/0x260 [hfi1]
- local_pci_probe+0x4a/0xb0
- work_for_cpu_fn+0x1a/0x30
- process_one_work+0x17f/0x440
- worker_thread+0x278/0x3c0
- ? manage_workers.isra.24+0x2a0/0x2a0
- kthread+0xd1/0xe0
- ? insert_kthread_work+0x40/0x40
- ret_from_fork+0x77/0xb0
- ? insert_kthread_work+0x40/0x40
+With this change, the clock name will now be:
+ffd1b000.pwm#mux0
 
-If the BIOS is not supplying NUMA information:
-  - set the default table count to 1 for all possible nodes
-  - select node 0 (instead of current NUMA) node to get consistent
-    performance
-  - generate an error indicating that the BIOS should be upgraded
+This matches the clock naming scheme used in the ethernet and mmc driver.
+It also fixes the problem with debugfs.
 
-Reviewed-by: Gary Leshner <gary.s.leshner@intel.com>
-Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Signed-off-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-
+Fixes: 36af66a79056 ("pwm: Convert to using %pOF instead of full_name")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/hw/hfi1/affinity.c |   24 +++++++++++++++++++++---
- 1 file changed, 21 insertions(+), 3 deletions(-)
+ drivers/pwm/pwm-meson.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/infiniband/hw/hfi1/affinity.c
-+++ b/drivers/infiniband/hw/hfi1/affinity.c
-@@ -198,7 +198,7 @@ int node_affinity_init(void)
- 		while ((dev = pci_get_device(ids->vendor, ids->device, dev))) {
- 			node = pcibus_to_node(dev->bus);
- 			if (node < 0)
--				node = numa_node_id();
-+				goto out;
+--- a/drivers/pwm/pwm-meson.c
++++ b/drivers/pwm/pwm-meson.c
+@@ -458,7 +458,6 @@ static int meson_pwm_init_channels(struc
+ 				   struct meson_pwm_channel *channels)
+ {
+ 	struct device *dev = meson->chip.dev;
+-	struct device_node *np = dev->of_node;
+ 	struct clk_init_data init;
+ 	unsigned int i;
+ 	char name[255];
+@@ -467,7 +466,7 @@ static int meson_pwm_init_channels(struc
+ 	for (i = 0; i < meson->chip.npwm; i++) {
+ 		struct meson_pwm_channel *channel = &channels[i];
  
- 			hfi1_per_node_cntr[node]++;
- 		}
-@@ -206,6 +206,18 @@ int node_affinity_init(void)
- 	}
+-		snprintf(name, sizeof(name), "%pOF#mux%u", np, i);
++		snprintf(name, sizeof(name), "%s#mux%u", dev_name(dev), i);
  
- 	return 0;
-+
-+out:
-+	/*
-+	 * Invalid PCI NUMA node information found, note it, and populate
-+	 * our database 1:1.
-+	 */
-+	pr_err("HFI: Invalid PCI NUMA node. Performance may be affected\n");
-+	pr_err("HFI: System BIOS may need to be upgraded\n");
-+	for (node = 0; node < node_affinity.num_possible_nodes; node++)
-+		hfi1_per_node_cntr[node] = 1;
-+
-+	return 0;
- }
- 
- static void node_affinity_destroy(struct hfi1_affinity_node *entry)
-@@ -622,8 +634,14 @@ int hfi1_dev_affinity_init(struct hfi1_d
- 	int curr_cpu, possible, i, ret;
- 	bool new_entry = false;
- 
--	if (node < 0)
--		node = numa_node_id();
-+	/*
-+	 * If the BIOS does not have the NUMA node information set, select
-+	 * NUMA 0 so we get consistent performance.
-+	 */
-+	if (node < 0) {
-+		dd_dev_err(dd, "Invalid PCI NUMA node. Performance may be affected\n");
-+		node = 0;
-+	}
- 	dd->node = node;
- 
- 	local_mask = cpumask_of_node(dd->node);
+ 		init.name = name;
+ 		init.ops = &clk_mux_ops;
 
 
