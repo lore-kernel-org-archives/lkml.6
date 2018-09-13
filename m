@@ -3,215 +3,134 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F3D6C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:45:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 626A2C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:46:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B51C20866
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:45:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B51C20866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id EA2CA20882
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:46:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA2CA20882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727600AbeIMRyR (ORCPT
+        id S1727644AbeIMRzX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 13:54:17 -0400
-Received: from mga01.intel.com ([192.55.52.88]:6165 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726930AbeIMRyR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 13:54:17 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Sep 2018 05:44:43 -0700
-X-ExtLoop1: 1
+        Thu, 13 Sep 2018 13:55:23 -0400
+Received: from esa1.microchip.iphmx.com ([68.232.147.91]:46906 "EHLO
+        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726797AbeIMRzX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 13:55:23 -0400
 X-IronPort-AV: E=Sophos;i="5.53,369,1531810800"; 
-   d="scan'208";a="232559007"
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by orsmga004.jf.intel.com with ESMTP; 13 Sep 2018 05:44:26 -0700
-Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
-        id A157B207A8; Thu, 13 Sep 2018 15:44:25 +0300 (EEST)
-Date:   Thu, 13 Sep 2018 15:44:25 +0300
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     jacopo mondi <jacopo@jmondi.org>
-Cc:     Steve Longerbeam <slongerbeam@gmail.com>,
-        linux-media@vger.kernel.org,
-        Steve Longerbeam <steve_longerbeam@mentor.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 06/17] media: v4l2-fwnode: Add a convenience function
- for registering subdevs with notifiers
-Message-ID: <20180913124425.h5vfjyr3b44j4nxv@paasikivi.fi.intel.com>
-References: <1531175957-1973-1-git-send-email-steve_longerbeam@mentor.com>
- <1531175957-1973-7-git-send-email-steve_longerbeam@mentor.com>
- <20180913103727.GB28160@w540>
+   d="scan'208";a="20621715"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 13 Sep 2018 05:46:04 -0700
+Received: from ibiza.rfo.atmel.com (10.10.76.4) by chn-sv-exch03.mchp-main.com
+ (10.10.76.49) with Microsoft SMTP Server id 14.3.352.0; Thu, 13 Sep 2018
+ 05:46:03 -0700
+From:   Ludovic Desroches <ludovic.desroches@microchip.com>
+To:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <plagnioj@jcrosoft.com>,
+        <linus.walleij@linaro.org>, <nicolas.ferre@microchip.com>,
+        <alexandre.belloni@bootlin.com>, <hverkuil@xs4all.nl>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>
+Subject: [PATCH] pinctrl: at91: don't use the same irqchip with multiple gpiochips
+Date:   Thu, 13 Sep 2018 14:42:13 +0200
+Message-ID: <20180913124213.32065-1-ludovic.desroches@microchip.com>
+X-Mailer: git-send-email 2.12.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180913103727.GB28160@w540>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacopo,
+Sharing the same irqchip with multiple gpiochips is not a good
+practice. For instance, when installing hooks, we change the state
+of the irqchip. The initial state of the irqchip for the second
+gpiochip to register is then disrupted.
 
-On Thu, Sep 13, 2018 at 12:37:27PM +0200, jacopo mondi wrote:
-> Hi Steve,
-> 
-> On Mon, Jul 09, 2018 at 03:39:06PM -0700, Steve Longerbeam wrote:
-> > Adds v4l2_async_register_fwnode_subdev(), which is a convenience function
-> > for parsing a sub-device's fwnode port endpoints for connected remote
-> > sub-devices, registering a sub-device notifier, and then registering
-> > the sub-device itself.
-> >
-> > Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
-> > ---
-> > Changes since v5:
-> > - add call to v4l2_async_notifier_init().
-> > Changes since v4:
-> > - none
-> > Changes since v3:
-> > - remove support for port sub-devices, such sub-devices will have to
-> >   role their own.
-> > Changes since v2:
-> > - fix error-out path in v4l2_async_register_fwnode_subdev() that forgot
-> >   to put device.
-> > Changes since v1:
-> > - add #include <media/v4l2-subdev.h> to v4l2-fwnode.h for
-> >   'struct v4l2_subdev' declaration.
-> > ---
-> >  drivers/media/v4l2-core/v4l2-fwnode.c | 64 +++++++++++++++++++++++++++++++++++
-> >  include/media/v4l2-fwnode.h           | 38 +++++++++++++++++++++
-> >  2 files changed, 102 insertions(+)
-> >
-> > diff --git a/drivers/media/v4l2-core/v4l2-fwnode.c b/drivers/media/v4l2-core/v4l2-fwnode.c
-> > index 67ad333..94d867a 100644
-> > --- a/drivers/media/v4l2-core/v4l2-fwnode.c
-> > +++ b/drivers/media/v4l2-core/v4l2-fwnode.c
-> > @@ -872,6 +872,70 @@ int v4l2_async_register_subdev_sensor_common(struct v4l2_subdev *sd)
-> >  }
-> >  EXPORT_SYMBOL_GPL(v4l2_async_register_subdev_sensor_common);
-> >
-> > +int v4l2_async_register_fwnode_subdev(
-> 
-> The meat of this function is to register a subdev with a notifier,
-> so I would make it clear in the function name which is otherwise
-> misleading
-> 
-> > +	struct v4l2_subdev *sd, size_t asd_struct_size,
-> > +	unsigned int *ports, unsigned int num_ports,
-> > +	int (*parse_endpoint)(struct device *dev,
-> > +			      struct v4l2_fwnode_endpoint *vep,
-> > +			      struct v4l2_async_subdev *asd))
-> > +{
-> > +	struct v4l2_async_notifier *notifier;
-> > +	struct device *dev = sd->dev;
-> > +	struct fwnode_handle *fwnode;
-> > +	int ret;
-> > +
-> > +	if (WARN_ON(!dev))
-> > +		return -ENODEV;
-> > +
-> > +	fwnode = dev_fwnode(dev);
-> > +	if (!fwnode_device_is_available(fwnode))
-> > +		return -ENODEV;
-> > +
-> > +	notifier = kzalloc(sizeof(*notifier), GFP_KERNEL);
-> > +	if (!notifier)
-> > +		return -ENOMEM;
-> > +
-> > +	v4l2_async_notifier_init(notifier);
-> > +
-> > +	if (!ports) {
-> > +		ret = v4l2_async_notifier_parse_fwnode_endpoints(
-> > +			dev, notifier, asd_struct_size, parse_endpoint);
-> > +		if (ret < 0)
-> > +			goto out_cleanup;
-> > +	} else {
-> > +		unsigned int i;
-> > +
-> > +		for (i = 0; i < num_ports; i++) {
-> 
-> It's not particularly exciting to iterate on pointers received from
-> callers without checking for num_ports first.
+Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+---
+Hi,
 
-The loop is not executed if num_ports is zero, so I don't see a problem
-with that.
+This patch fixes the issue encountered in linux-next because of
+"gpiolib: override irq_enable/disable". As discussed [1], the gpiolib
+can do some extra checks but sharing the same irqchip with multiple
+gpiochips is seen as a bad practice.
 
-> 
-> Also the caller has to allocate an array of "ports" and keep track of it
-> just to pass it to this function and I don't see a way to set the
-> notifier's ops before the notifier gets registered here below.
+[1] https://www.spinics.net/lists/arm-kernel/msg676097.html
 
-True; this can be seen as an omission but quite a few drivers have no need
-for this either. It could be added later on --- I think it'd make perfect
-sense.
+ drivers/pinctrl/pinctrl-at91.c | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
-> 
-> > +			ret = v4l2_async_notifier_parse_fwnode_endpoints_by_port(
-> > +				dev, notifier, asd_struct_size,
-> > +				ports[i], parse_endpoint);
-> > +			if (ret < 0)
-> > +				goto out_cleanup;
-> > +		}
-> > +	}
-> > +
-> > +	ret = v4l2_async_subdev_notifier_register(sd, notifier);
-> > +	if (ret < 0)
-> > +		goto out_cleanup;
-> > +
-> > +	ret = v4l2_async_register_subdev(sd);
-> > +	if (ret < 0)
-> > +		goto out_unregister;
-> > +
-> > +	sd->subdev_notifier = notifier;
-> 
-> This is set already by v4l2_async_subdev_notifier_register()
-
-The same pattern is actually present in
-v4l2_async_register_subdev_sensor_common(). It's used in unregistration
-that can only happen after the registration, i.e. this function, has
-completed.
-
-> 
-> In general, I have doubts this function is really needed. It requires
-> the caller to reserve memory just to pass down a list of intergers,
-> and there is no way to set subdev ops.
-> 
-> Could you have a look at how drivers/media/platform/rcar-vin/rcar-csi2.c
-> registers a subdevice and an associated notifier and see if in your
-> opinion it can be implemented in the same way in your imx csi/csi2 driver,
-> or you still like this one most?
-
-I was actually thinking of changing this later on a bit. I came to think of
-this after picking up the patchset to my tree... oh well.
-
-This function is meant for cases where you have multiple ports. That's not
-working very nicely at the moment, and even with my patches, you can't pass
-default configuration to e.g. v4l2_async_notifier_parse_fwnode_endpoints().
-So there's definitely work to do. I'd like to move the details of parsing
-out of drivers; every driver is doing almost the same but just in a little
-bit different way.
-
-The arguments should to be put into a struct. That way we get rid of a very
-long series of hard-to-read function arguments, as well as we don't need to
-change every caller when the function gets something new and interesting to
-do.
-
-Right now the entire patchset is so big (40 patches) that I'd prefer to get
-it in unless serious issues are found, and proceed the development on top.
-
+diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
+index cfd8239f2727..911ea0fe2a41 100644
+--- a/drivers/pinctrl/pinctrl-at91.c
++++ b/drivers/pinctrl/pinctrl-at91.c
+@@ -1574,16 +1574,6 @@ void at91_pinctrl_gpio_resume(void)
+ #define gpio_irq_set_wake	NULL
+ #endif /* CONFIG_PM */
+ 
+-static struct irq_chip gpio_irqchip = {
+-	.name		= "GPIO",
+-	.irq_ack	= gpio_irq_ack,
+-	.irq_disable	= gpio_irq_mask,
+-	.irq_mask	= gpio_irq_mask,
+-	.irq_unmask	= gpio_irq_unmask,
+-	/* .irq_set_type is set dynamically */
+-	.irq_set_wake	= gpio_irq_set_wake,
+-};
+-
+ static void gpio_irq_handler(struct irq_desc *desc)
+ {
+ 	struct irq_chip *chip = irq_desc_get_chip(desc);
+@@ -1624,12 +1614,22 @@ static int at91_gpio_of_irq_setup(struct platform_device *pdev,
+ 	struct gpio_chip	*gpiochip_prev = NULL;
+ 	struct at91_gpio_chip   *prev = NULL;
+ 	struct irq_data		*d = irq_get_irq_data(at91_gpio->pioc_virq);
++	struct irq_chip		*gpio_irqchip;
+ 	int ret, i;
+ 
++	gpio_irqchip = devm_kzalloc(&pdev->dev, sizeof(*gpio_irqchip), GFP_KERNEL);
++	if (!gpio_irqchip)
++		return -ENOMEM;
++
+ 	at91_gpio->pioc_hwirq = irqd_to_hwirq(d);
+ 
+-	/* Setup proper .irq_set_type function */
+-	gpio_irqchip.irq_set_type = at91_gpio->ops->irq_type;
++	gpio_irqchip->name = "GPIO";
++	gpio_irqchip->irq_ack = gpio_irq_ack;
++	gpio_irqchip->irq_disable = gpio_irq_mask;
++	gpio_irqchip->irq_mask = gpio_irq_mask;
++	gpio_irqchip->irq_unmask = gpio_irq_unmask;
++	gpio_irqchip->irq_set_wake = gpio_irq_set_wake,
++	gpio_irqchip->irq_set_type = at91_gpio->ops->irq_type;
+ 
+ 	/* Disable irqs of this PIO controller */
+ 	writel_relaxed(~0, at91_gpio->regbase + PIO_IDR);
+@@ -1640,7 +1640,7 @@ static int at91_gpio_of_irq_setup(struct platform_device *pdev,
+ 	 * interrupt.
+ 	 */
+ 	ret = gpiochip_irqchip_add(&at91_gpio->chip,
+-				   &gpio_irqchip,
++				   gpio_irqchip,
+ 				   0,
+ 				   handle_edge_irq,
+ 				   IRQ_TYPE_NONE);
+@@ -1658,7 +1658,7 @@ static int at91_gpio_of_irq_setup(struct platform_device *pdev,
+ 	if (!gpiochip_prev) {
+ 		/* Then register the chain on the parent IRQ */
+ 		gpiochip_set_chained_irqchip(&at91_gpio->chip,
+-					     &gpio_irqchip,
++					     gpio_irqchip,
+ 					     at91_gpio->pioc_virq,
+ 					     gpio_irq_handler);
+ 		return 0;
 -- 
-Kind regards,
+2.12.2
 
-Sakari Ailus
-sakari.ailus@linux.intel.com
