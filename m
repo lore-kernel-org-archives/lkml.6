@@ -2,273 +2,169 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.6 required=3.0 tests=GAPPY_SUBJECT,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65B1AC04AB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 23:32:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E0A1C04AB8
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 23:38:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1BE920853
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 23:32:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1BE920853
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id D7A9F20861
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 23:38:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Sn0jRHMf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7A9F20861
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727056AbeINEoc (ORCPT
+        id S1727065AbeINEu3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 00:44:32 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:47840 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726374AbeINEob (ORCPT
+        Fri, 14 Sep 2018 00:50:29 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:45698 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726873AbeINEu2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 00:44:31 -0400
-Received: from static-50-53-48-205.bvtn.or.frontiernet.net ([50.53.48.205] helo=[192.168.192.153])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <john.johansen@canonical.com>)
-        id 1g0b6M-0004nL-08; Thu, 13 Sep 2018 23:32:46 +0000
-Subject: Re: [PATCH 10/10] LSM: Blob sharing support for S.A.R.A and LandLock
-To:     Kees Cook <keescook@chromium.org>, Paul Moore <paul@paul-moore.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        SE Linux <selinux@tycho.nsa.gov>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>
-References: <cbf848ae-a1ac-c5ab-f23b-bc9217fceebe@schaufler-ca.com>
- <99cb1ae7-8881-eb9a-a8cb-a787abe454e1@schaufler-ca.com>
- <CAGXu5jLONSfPHYYYTLSma-+arVHSQKaEWb9JxpOn6TNKtyLNhw@mail.gmail.com>
- <CAHC9VhQN0wq0zZS5BYU9jBomaWvCaJ_BqJjHF3AT7FG8Z0nLDQ@mail.gmail.com>
- <CAGXu5jJs6kmd6Tjgwqb2Zx7e-jNbHqfJ57poZuyz4Qj=AKVfmQ@mail.gmail.com>
- <CAHC9VhQ20tBAMwOJ9mg0tBHYUoxjh0Szr3d62HuPw2SyT4XDLw@mail.gmail.com>
- <CAGXu5jKec1JTsoqwKGThcJoamdL618AHu4jfFbqqQiauz1kjyg@mail.gmail.com>
- <CAHC9VhQwT4d3wC37cVrrX-hZq1L3e6=TEAse4m-YH9SiFnkieA@mail.gmail.com>
- <CAGXu5jLapViSK-j08Tq8cCZodiZXFsXze71xFPg6MQhDWDHDAA@mail.gmail.com>
- <CAGXu5j+j47FH5RF2vrJh95=YFX76oSBFo8O6GZqa0utcfE1AVA@mail.gmail.com>
-From:   John Johansen <john.johansen@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Canonical
-Message-ID: <0eb75e66-ed50-4013-6440-38bc2f814c6f@canonical.com>
-Date:   Thu, 13 Sep 2018 16:32:42 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 14 Sep 2018 00:50:28 -0400
+Received: by mail-ot1-f66.google.com with SMTP id a19-v6so2920614otl.12
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 16:38:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=U5CW1YWpZFdvpCnLDej1XlHGV1b5XayREpWf1XPP9ag=;
+        b=Sn0jRHMf/58BcOuJz5Cj+Ijmq7Zlh9Pr9tRQcJK60xRRcCsxTE/jQtFUaw88aBmhuN
+         OAdDhNtCeWUZCDR2HGRurxjnZZ2B4nwPpGQfvbDky1svgxOxdnurpIKIEqJ7Pqtkw+3W
+         TdaqdjsEF8HzQfI7m+TTBtU38xe0I5h6IF0SADTNWER2WjYWqY44jRre9enOVuFZpatl
+         o2y9cuN0cWDdm7kUXFxQ6b90etRCPFYSbBmC4uKuAKYL7XU7QAAXan5e7g+BkHKg8Aw9
+         uNhgHxXT0HG3X1zVKrNVl7G29PPWSShqnQ5YDITm0aloU6DvhkukzYZn45sxyO+fmAhE
+         PGzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=U5CW1YWpZFdvpCnLDej1XlHGV1b5XayREpWf1XPP9ag=;
+        b=nBtwHh2eRYrIGT3KEUPQMjRNUT1eWZKJrM4biZBucoOCNMr00RTmrdu3HasVuf8qfi
+         XmwmKtxHrrmifsTiGjhFlEfggeZBovwmO6Jjg/hSknZ09FM7L4GO5TwHG3khTsoKYbsu
+         4jk5Q7p2UVh6Lkb2inm9bAbbD4NvflQiQ/S7eJsi0E/JZlnhp+tUmh4CeAhTlZI2VCWz
+         9S9k0yewXRQNZi2j0SQhQlvjFKkq9R5DQQrzFIjid9m2/gvcl3Kjh3IVWr678TVVS2+0
+         RqNi6u3QxkNUpogjrd2uevqLjqMloE7sYl9SH8jKxOI2Ego1xtqdKWI0REAdq2A7/+EE
+         v+PQ==
+X-Gm-Message-State: APzg51AHxThM6sCz6ULSJDcMkitpSeXkNx7Ay8TyNg/+IrhbDDsiCpI1
+        yP034/6qBQ2pcEuqSh67AUHrDXaCHK00QVyfHWiFGA==
+X-Google-Smtp-Source: ANB0VdZAE6j5e/8/1DGLRfsB5wIknTDCt/IBcoS1ie/mAGmFL0GguSyiU+iwHdPYAUBjwl9gB8n7+Hf4vORLbidKV7c=
+X-Received: by 2002:a9d:5b46:: with SMTP id e6-v6mr2917599otj.331.1536881926592;
+ Thu, 13 Sep 2018 16:38:46 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5j+j47FH5RF2vrJh95=YFX76oSBFo8O6GZqa0utcfE1AVA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <20180913021113.18150-1-badhri@google.com> <20180913021113.18150-2-badhri@google.com>
+ <20180913063943.GA13306@jackp-linux.qualcomm.com> <CAPTae5JLnbHnFUXv4W0GY6a=kAmGCx7XfOUKrWo0q__enbvvQA@mail.gmail.com>
+ <CAPTae5KXAeCKerHh4PMFJ=7JhmwFwbc7-CQB-3JYamYbHtV+2A@mail.gmail.com> <20180913170746.GB13306@jackp-linux.qualcomm.com>
+In-Reply-To: <20180913170746.GB13306@jackp-linux.qualcomm.com>
+From:   Badhri Jagan Sridharan <badhri@google.com>
+Date:   Thu, 13 Sep 2018 16:38:10 -0700
+Message-ID: <CAPTae5+WyxADQfDJivzmCBpFbA8RqpCGKDys6tUpHwF8+vt8iQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] typec: tcpm: Add option to maintain current limit at Vsafe5V
+To:     jackp@codeaurora.org
+Cc:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        USB <linux-usb@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/13/2018 04:06 PM, Kees Cook wrote:
-> On Thu, Sep 13, 2018 at 2:51 PM, Kees Cook <keescook@chromium.org> wrote:
->> At the very least, to avoid stacking now (i.e. TOMOYO being enabled
->> with another major LSM), we just do nothing. The existing code already
->> makes the existing major LSMs exclusive. Adding a stackable LSM would
->> need to just have its own "enable" flag (i.e. ignore
->> security_module_enable()), and then either check a runtime "is
->> stacking allowed?" flag or have new "depends on SECURITY_STACKING". (I
->> think the CONFIG will force distros into enabling it without any
->> runtime opt-out.)
-> 
-> Before stacking, we have:
-> 
-> - major LSM, pick one
-> - all CONFIG minor LSMs, in security.c order
-> 
-> There are two minor LSMs: Yama and LoadPin. If built, Yama is always
-> on (though it has sysctl knobs). If built, LoadPin is controlled by a
-> boot param.
-> 
-> Picking the major LSM happens via "security=$LSM" and a per-LSM check
-> of security_module_enable("$LSM").
-> 
-> Ordering is major, then per security.c for minors.
-> 
-> 
-> Under stacking, we have:
-> 
-> The minor LSMs remain unchanged.
-> 
-> We don't have SARA and Landlock yet, but we do have TOMOYO, which we
-> can use as an example to future "compatible blob-using LSMs".
-> 
-> I see two issues:
-> 
-> - how to determine which set of LSMs are enabled at boot
-> - how to determine the ORDER of the LSMs
-> 
-> 
-> Casey's implementation does this (correct me if I'm wrong):
-> 
-> The minor LSMs remain unchanged.
-> 
-> SECURITY_$lsm_STACKED determines which major is enabled, with
-> SECURITY_TOMOYO_STACKED allowed in addition. If security= is
-> specified, all other major LSMs are disabled (i.e. it is not possible
-> to switch between SELinux/AppArmor/SMACK without also disabling
-> TOMOYO).
-> 
-> Ordering is per security/Makefile modulo enabled-ness for majors (i.e.
-> TOMOYO is always _before_ AppArmor if stacked together, otherwise
-> after SELinux and SMACK), and per security.c for minors.
-> 
-> 
-> I don't think this is how we want it to work. For example, Ubuntu
-> builds in all LSMs, and default-enables AppArmor. If an Ubuntu user
-> wants TOMOYO, the boot with "security=tomoyo". If Ubuntu wants to make
-> stacking available to users but off by default, what CONFIGs do they
-> pick? They could try SECURITY_APPARMOR_STACKED=y and
-> SECURITY_TOMOYO_STACKED=n, but then how does an end user choose
-> "apparmor and tomoyo" (or more meaningfully, for the future:
-> "apparmor, sara, and landlock")? They can still pick
-> "security=tomoyo", but there isn't a runtime way to opt into stacking.
-> 
-
-Ubuntu is carrying an early set of the stacking patches and about a
-dozen patches on top of that.
-
-It allows choosing to build the LSMs separate from the what the
-default LSM(s) are. There is some config patching here that I need to
-update and drop onto this thread.
-
-There is also a patch that allows selecting the set of LSMs at boot.
-
-   security=selinux,apparmor
-
-but yama and loadpin are treated differently and I never liked
-that. But again another patch to rebase and drop on this thread for
-discussion.
-
-
-> 
-> What about leaving SECURITY_$lsm_DEFAULT as-is, and then...
-> 
-> In the past I'd suggested using "security=" to determine both enabled
-> and order: "security=tomoyo,smack" would mean stacked LSMs, with
-> tomoyo going first.
-> 
-> Currently I'm leaning towards "security=" to select ONLY the
-> incompatible LSM, and per-LSM "enable" flags to determine stacking:
-> 
->     tomoyo.enabled=1 security=smack
+On Thu, Sep 13, 2018 at 10:07 AM Jack Pham <jackp@codeaurora.org> wrote:
 >
+> On Thu, Sep 13, 2018 at 6:43 AM Badhri Jagan Sridharan
+> <badhri@google.com> wrote:
+> >
+> > On Wed, Sep 12, 2018 at 11:39 PM Jack Pham <jackp@codeaurora.org> wrote:
+> > >
+> > > Hello Badhri,
+> > >
+> > > On Wed, Sep 12, 2018 at 07:11:13PM -0700, Badhri Jagan Sridharan wrote:
+> > > > During hard reset, TCPM turns off the charging path.
+> > > > The spec provides an option for Sink to either drop to vSafe5V or vSafe0V.
+> > >
+> > > This doesn't make sense. By definition the sink isn't sourcing VBUS, so
+> > > how can it control whether to allow the voltage to be 5V or 0V?
+> >
+> > The way I understand it, this is for the current limits that can be
+> > set on the Sink side.
+> > During hard reset, sink has to fallback to VSafe5V or VSafe0V if
+> > higher pd contract was negotiated.
+>
+> Ok, you are talking about sink current draw limits but vSafe{0,5}V are
+> voltage definitions so these are orthogonal. Again, the sink can't
+> directly dictate the voltage that's being sourced so I don't see how it
+> has a choice here. If a PD contract was negotiated for greater than 5V
+> and a hard reset happens then yes the voltage would fall to 0V and then
+> rise back to 5V and during this time sink needs to draw appropriate
+> current.
 
-I don't like this, it makes it hard for the end user specifying option
-at boot time. They have to set security= for the modules they want and
-then also individual modules $lsm.enabled= which is very inconvenient
-for users.
+>
+> > > > From USB_PD_R3_0
+> > > > 2.6.2 Sink Operation
+> > > > ..
+> > > > Serious errors are handled by Hard Reset Signaling issued by either Port
+> > > > Partner. A Hard Reset:
+> > > > resets protocol as for a Soft Reset but also returns the power supply to
+> > > > USB Default Operation (vSafe0V or vSafe5V output) in order to protect the
+> > > > Sink.
+> > >
+> > > I can see how the wording here "vSafe0V *or* vSafe5V" is misleading, as
+> > > I think it actually is both. In later parts of the spec, the source's
+> > > VBUS behavior is well defined in that it must first drop to vSafe0V
+> > > and then return to vSafe5V. Please refer to section 7.1.5.
+> >
+> >
+> > Yeah thats for the source. But for sink, Say if the source isnt PD, then,
+> > sink initiated hard resets happen during the connection. Sink would hard reset
+> > couple of times before deeming that the partner is non PD. When connected
+> > to Type-A ports/non-pd partner, vbus is not going to likely drop so there isnt
+> > a reason to setcharge to false or drop the input current limit. Do you agree ?
+>
+> Sure that makes sense. In this case I wonder if TCPM even needs to call
+> set_charge(false) considering it does not yet know if the partner is PD
+> capable or not. For sure, if the partner is PD capable and contract had
+> been previously established, we'd definitely need to set_current_limit()
+> to default levels and/or turn off charging.
+>
+> But in the case of hard reset attempts to try to determine if the source
+> will send its capabilities (thereby being PD capable), wouldn't the
+> initial default current limits still be in place? I think this is the
+> point you're trying to make, that there is no need to disrupt charging
+> if a hard reset is not going to cause VBUS to reset.
 
-apparmor.enabled really should only default to enabled and provides a
-legacy way to disable apparmor during boot. This option was around
-before security= was added.
+Yes that's right ! I wasnt sure how to put that in words. Thanks for
+doing that !
+You do concur right ?
 
-I need to leave it available as its become part of the api (there are
-applications checking /sys/module/apparmor/parameters/enabled but we
-can remove it from the Kconfig.
+>
+> To me it sounds like what you're trying to do makes sense only if you
+> can make a run-time determination of a partner's PD capability, and not
+> based on a config option.
 
+Yes this should be possible. port->pd_capable already has that info.
 
-> This doesn't explicitly address ordering, though. If we made param
-> _position_ meaningful, then we could get ordering (i.e. above would
-> mean "tomoyo first").
-> 
+To sum it up:
+if the partner is pd capable, set charge to false in SNK_HARD_RESET_SINK_OFF and
+readjust current limits to default in SNK_HARD_RESET_SINK_ON and turn
+on charging.
 
-yes, I think that makes sense
+If partner is not pd capable, do not turn off charging nor adjust
+current limit as host port is
+not going to respond to hard reset.
 
-> Note, ordering matters because call_int_hook() will _stop_ on a
-> non-zero return value: potentially hiding events from later LSMs. Do
-> we need to revisit this? I seem to remember if being a very dead
-> horse, and we needed to quick-abort otherwise we ended up in
-> nonsensical states.
-> 
+Does it make sense ?
 
-we shouldn't be in nonsensical states but we are doing work that is
-thrown away.
-
-Another potential solution is allowing an LSM to register a set of
-post hooks that will get called after the regular LSM hooks are
-called. This would allow an LSM that cared about whether a hook
-succeeded or not to do some processing.
-
-
-> The reason for the new approach is because I can't find a meaningful
-> way to provide CONFIGs that make sense. We want to provide a few
-> things:
-> 
-> - is an LSM built into the kernel at all? (CONFIG_SECURITY_$lsm)
-> - is an LSM enabled by default? (CONFIG_SECURITY_$lsm_ENABLED?)
-> - has an LSM been enable for this boot? $lsm.enabled=1 or security=$lsm,$lsm ?
-
-at least for apparmor it is apparmor.enabled=1 AND security=apparmor or security=$lsm,apparmor ...
-
-> - what order should any stacking happen? Makefile? security=?
-> 
-Preferably not. For the single LSM we have the ability to choose the default LSM, ideally we let the distro decide in the Kconfig and the user with security=...
-
-> And for the incompatible-major, do we stick with CONFIG_SECURITY_$lsm_DEFAULT ?
-
-Ideally Kconfig wouldn't let you choose incompatible LSMs when
-selecting what is going to be enabled by default.
-
-> 
-> 
-> 
-> Anyway, if the concern is with exposed behavior for distros, what do
-> we want? i.e. what should be done for patch 10. Everything else looks
-> good.
-> 
-
-well speaking for Ubuntu we want to be able to specify the default LSMs
-and we want to enable our users to change this.
-
-The current patchset we have is less than ideal partly because of the
-whole $lsm.enabled vs security= mess that needs to be resolved.
+>
+> Thanks,
+> Jack
+>
+> --
+> The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
