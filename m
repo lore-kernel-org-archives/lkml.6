@@ -5,408 +5,137 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8535DFC618D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7B44F81839
 	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 17:35:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BFCD214C1
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 15:52:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BFCD214C1
+	by mail.kernel.org (Postfix) with ESMTP id E13E62152C
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 16:09:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E13E62152C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728599AbeIMVCy (ORCPT
+        id S1728360AbeIMVTJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 17:02:54 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:55178 "EHLO mx1.redhat.com"
+        Thu, 13 Sep 2018 17:19:09 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:52056 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727730AbeIMVCx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 17:02:53 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        id S1727358AbeIMVTG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 17:19:06 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5C23E3001FBF;
-        Thu, 13 Sep 2018 15:52:48 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id ED1145D6B5;
-        Thu, 13 Sep 2018 15:52:46 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 09/10] afs: Add a couple of tracepoints to log I/O errors
-From:   David Howells <dhowells@redhat.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
-Date:   Thu, 13 Sep 2018 16:52:46 +0100
-Message-ID: <153685396615.14766.14173884921607519657.stgit@warthog.procyon.org.uk>
-In-Reply-To: <153685389564.14766.11306559824641824935.stgit@warthog.procyon.org.uk>
-References: <153685389564.14766.11306559824641824935.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Thu, 13 Sep 2018 15:52:48 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6EC013082A30;
+        Thu, 13 Sep 2018 16:08:57 +0000 (UTC)
+Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D08811001914;
+        Thu, 13 Sep 2018 16:08:52 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Oleg Nesterov <oleg@redhat.com>
+Subject: [PATCH] kernel/hung_task.c: disable on suspend
+Date:   Thu, 13 Sep 2018 18:08:51 +0200
+Message-Id: <20180913160851.18169-1-vkuznets@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Thu, 13 Sep 2018 16:08:57 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a couple of tracepoints to log the production of I/O errors within the AFS
-filesystem.
+It is possible to observe hung_task complaints when system goes to
+suspend-to-idle state:
 
-Signed-off-by: David Howells <dhowells@redhat.com>
+ PM: Syncing filesystems ... done.
+ Freezing user space processes ... (elapsed 0.001 seconds) done.
+ OOM killer disabled.
+ Freezing remaining freezable tasks ... (elapsed 0.002 seconds) done.
+ sd 0:0:0:0: [sda] Synchronizing SCSI cache
+ INFO: task bash:1569 blocked for more than 120 seconds.
+       Not tainted 4.19.0-rc3_+ #687
+ "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+ bash            D    0  1569    604 0x00000000
+ Call Trace:
+  ? __schedule+0x1fe/0x7e0
+  schedule+0x28/0x80
+  suspend_devices_and_enter+0x4ac/0x750
+  pm_suspend+0x2c0/0x310
+
+Register a PM notifier to disable the detector on suspend and re-enable
+back on wakeup.
+
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 ---
+Changes since RFC:
+- Add PM_HIBERNATION_PREPARE/PM_POST_HIBERNATION for consistency
+  [Rafael J. Wysocki]
+---
+ kernel/hung_task.c | 28 +++++++++++++++++++++++++++-
+ 1 file changed, 27 insertions(+), 1 deletion(-)
 
- fs/afs/cmservice.c         |   10 +++--
- fs/afs/dir.c               |   23 ++++++++----
- fs/afs/internal.h          |   11 ++++++
- fs/afs/mntpt.c             |    6 +++
- fs/afs/rxrpc.c             |    2 +
- fs/afs/server.c            |    4 +-
- fs/afs/volume.c            |    2 +
- fs/afs/write.c             |    1 +
- include/trace/events/afs.h |   81 ++++++++++++++++++++++++++++++++++++++++++++
- 9 files changed, 122 insertions(+), 18 deletions(-)
-
-diff --git a/fs/afs/cmservice.c b/fs/afs/cmservice.c
-index 4db62ae8dc1a..186f621f8722 100644
---- a/fs/afs/cmservice.c
-+++ b/fs/afs/cmservice.c
-@@ -260,7 +260,7 @@ static int afs_deliver_cb_callback(struct afs_call *call)
- 	}
- 
- 	if (!afs_check_call_state(call, AFS_CALL_SV_REPLYING))
--		return -EIO;
-+		return afs_io_error(call, afs_io_error_cm_reply);
- 
- 	/* we'll need the file server record as that tells us which set of
- 	 * vnodes to operate upon */
-@@ -368,7 +368,7 @@ static int afs_deliver_cb_init_call_back_state3(struct afs_call *call)
- 	}
- 
- 	if (!afs_check_call_state(call, AFS_CALL_SV_REPLYING))
--		return -EIO;
-+		return afs_io_error(call, afs_io_error_cm_reply);
- 
- 	/* we'll need the file server record as that tells us which set of
- 	 * vnodes to operate upon */
-@@ -409,7 +409,7 @@ static int afs_deliver_cb_probe(struct afs_call *call)
- 		return ret;
- 
- 	if (!afs_check_call_state(call, AFS_CALL_SV_REPLYING))
--		return -EIO;
-+		return afs_io_error(call, afs_io_error_cm_reply);
- 
- 	return afs_queue_call_work(call);
+diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+index b9132d1269ef..41955c5d8427 100644
+--- a/kernel/hung_task.c
++++ b/kernel/hung_task.c
+@@ -15,6 +15,7 @@
+ #include <linux/lockdep.h>
+ #include <linux/export.h>
+ #include <linux/sysctl.h>
++#include <linux/suspend.h>
+ #include <linux/utsname.h>
+ #include <linux/sched/signal.h>
+ #include <linux/sched/debug.h>
+@@ -242,6 +243,26 @@ void reset_hung_task_detector(void)
  }
-@@ -490,7 +490,7 @@ static int afs_deliver_cb_probe_uuid(struct afs_call *call)
- 	}
+ EXPORT_SYMBOL_GPL(reset_hung_task_detector);
  
- 	if (!afs_check_call_state(call, AFS_CALL_SV_REPLYING))
--		return -EIO;
-+		return afs_io_error(call, afs_io_error_cm_reply);
- 
- 	return afs_queue_call_work(call);
- }
-@@ -573,7 +573,7 @@ static int afs_deliver_cb_tell_me_about_yourself(struct afs_call *call)
- 		return ret;
- 
- 	if (!afs_check_call_state(call, AFS_CALL_SV_REPLYING))
--		return -EIO;
-+		return afs_io_error(call, afs_io_error_cm_reply);
- 
- 	return afs_queue_call_work(call);
- }
-diff --git a/fs/afs/dir.c b/fs/afs/dir.c
-index c36b54b7450b..15f740b910fb 100644
---- a/fs/afs/dir.c
-+++ b/fs/afs/dir.c
-@@ -172,6 +172,7 @@ static bool afs_dir_check_page(struct afs_vnode *dvnode, struct page *page,
- 			       ntohs(dbuf->blocks[tmp].hdr.magic));
- 			trace_afs_dir_check_failed(dvnode, off, i_size);
- 			kunmap(page);
-+			trace_afs_file_error(dvnode, -EIO, afs_file_error_dir_bad_magic);
- 			goto error;
- 		}
- 
-@@ -271,12 +272,15 @@ static struct afs_read *afs_read_dir(struct afs_vnode *dvnode, struct key *key)
- 
- expand:
- 	i_size = i_size_read(&dvnode->vfs_inode);
--	ret = -EIO;
--	if (i_size < 2048)
-+	if (i_size < 2048) {
-+		ret = afs_bad(dvnode, afs_file_error_dir_small);
- 		goto error;
--	ret = -EFBIG;
--	if (i_size > 2048 * 1024)
++static bool hung_detector_suspended;
++
++static int hungtask_pm_notify(struct notifier_block *self,
++			      unsigned long action, void *hcpu)
++{
++	switch (action) {
++	case PM_SUSPEND_PREPARE:
++	case PM_HIBERNATION_PREPARE:
++		hung_detector_suspended = true;
++		break;
++	case PM_POST_SUSPEND:
++	case PM_POST_HIBERNATION:
++		hung_detector_suspended = false;
++		break;
++	default:
++		break;
 +	}
-+	if (i_size > 2048 * 1024) {
-+		trace_afs_file_error(dvnode, -EFBIG, afs_file_error_dir_big);
-+		ret = -EFBIG;
- 		goto error;
-+	}
- 
- 	nr_pages = (i_size + PAGE_SIZE - 1) / PAGE_SIZE;
- 
-@@ -381,7 +385,8 @@ static struct afs_read *afs_read_dir(struct afs_vnode *dvnode, struct key *key)
++	return NOTIFY_OK;
++}
++
  /*
-  * deal with one block in an AFS directory
+  * kthread which checks for tasks stuck in D state
   */
--static int afs_dir_iterate_block(struct dir_context *ctx,
-+static int afs_dir_iterate_block(struct afs_vnode *dvnode,
-+				 struct dir_context *ctx,
- 				 union afs_xdr_dir_block *block,
- 				 unsigned blkoff)
+@@ -261,7 +282,8 @@ static int watchdog(void *dummy)
+ 		interval = min_t(unsigned long, interval, timeout);
+ 		t = hung_timeout_jiffies(hung_last_checked, interval);
+ 		if (t <= 0) {
+-			if (!atomic_xchg(&reset_hung_task, 0))
++			if (!atomic_xchg(&reset_hung_task, 0) &&
++			    !hung_detector_suspended)
+ 				check_hung_uninterruptible_tasks(timeout);
+ 			hung_last_checked = jiffies;
+ 			continue;
+@@ -275,6 +297,10 @@ static int watchdog(void *dummy)
+ static int __init hung_task_init(void)
  {
-@@ -431,7 +436,7 @@ static int afs_dir_iterate_block(struct dir_context *ctx,
- 				       " (len %u/%zu)",
- 				       blkoff / sizeof(union afs_xdr_dir_block),
- 				       offset, next, tmp, nlen);
--				return -EIO;
-+				return afs_bad(dvnode, afs_file_error_dir_over_end);
- 			}
- 			if (!(block->hdr.bitmap[next / 8] &
- 			      (1 << (next % 8)))) {
-@@ -439,7 +444,7 @@ static int afs_dir_iterate_block(struct dir_context *ctx,
- 				       " %u unmarked extension (len %u/%zu)",
- 				       blkoff / sizeof(union afs_xdr_dir_block),
- 				       offset, next, tmp, nlen);
--				return -EIO;
-+				return afs_bad(dvnode, afs_file_error_dir_unmarked_ext);
- 			}
+ 	atomic_notifier_chain_register(&panic_notifier_list, &panic_block);
++
++	/* Disable hung task detector on suspend */
++	pm_notifier(hungtask_pm_notify, 0);
++
+ 	watchdog_task = kthread_run(watchdog, NULL, "khungtaskd");
  
- 			_debug("ENT[%zu.%u]: ext %u/%zu",
-@@ -515,7 +520,7 @@ static int afs_dir_iterate(struct inode *dir, struct dir_context *ctx,
- 			page = radix_tree_deref_slot(slot);
- 		rcu_read_unlock();
- 		if (!page) {
--			ret = -EIO;
-+			ret = afs_bad(dvnode, afs_file_error_dir_missing_page);
- 			break;
- 		}
- 		mark_page_accessed(page);
-@@ -528,7 +533,7 @@ static int afs_dir_iterate(struct inode *dir, struct dir_context *ctx,
- 		do {
- 			dblock = &dbuf->blocks[(blkoff % PAGE_SIZE) /
- 					       sizeof(union afs_xdr_dir_block)];
--			ret = afs_dir_iterate_block(ctx, dblock, blkoff);
-+			ret = afs_dir_iterate_block(dvnode, ctx, dblock, blkoff);
- 			if (ret != 1) {
- 				kunmap(page);
- 				goto out;
-diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index 38b48382db52..3dd502e55720 100644
---- a/fs/afs/internal.h
-+++ b/fs/afs/internal.h
-@@ -1150,6 +1150,17 @@ static inline void afs_check_for_remote_deletion(struct afs_fs_cursor *fc,
- 	}
- }
- 
-+static inline int afs_io_error(struct afs_call *call, enum afs_io_error where)
-+{
-+	trace_afs_io_error(call->debug_id, -EIO, where);
-+	return -EIO;
-+}
-+
-+static inline int afs_bad(struct afs_vnode *vnode, enum afs_file_error where)
-+{
-+	trace_afs_file_error(vnode, -EIO, where);
-+	return -EIO;
-+}
- 
- /*****************************************************************************/
- /*
-diff --git a/fs/afs/mntpt.c b/fs/afs/mntpt.c
-index 99fd13500a97..4238bb63931d 100644
---- a/fs/afs/mntpt.c
-+++ b/fs/afs/mntpt.c
-@@ -130,6 +130,12 @@ static struct vfsmount *afs_mntpt_do_automount(struct dentry *mntpt)
- 			goto error_no_page;
- 		}
- 
-+		if (PageError(page)) {
-+			put_page(page);
-+			ret = afs_bad(AFS_FS_I(d_inode(mntpt)), afs_file_error_mntpt);
-+			goto error_no_page;
-+		}
-+
- 		ret = -EIO;
- 		if (PageError(page))
- 			goto error;
-diff --git a/fs/afs/rxrpc.c b/fs/afs/rxrpc.c
-index 6138c12c74a3..748b37b130a2 100644
---- a/fs/afs/rxrpc.c
-+++ b/fs/afs/rxrpc.c
-@@ -845,7 +845,7 @@ int afs_extract_data(struct afs_call *call, bool want_more)
- 			break;
- 		case AFS_CALL_COMPLETE:
- 			kdebug("prem complete %d", call->error);
--			return -EIO;
-+			return afs_io_error(call, afs_io_error_extract);
- 		default:
- 			break;
- 		}
-diff --git a/fs/afs/server.c b/fs/afs/server.c
-index 1d329e6981d5..b7874bf9402e 100644
---- a/fs/afs/server.c
-+++ b/fs/afs/server.c
-@@ -274,7 +274,7 @@ static struct afs_addr_list *afs_vl_lookup_addrs(struct afs_cell *cell,
- 		case -ECONNREFUSED:
- 			break;
- 		default:
--			ac.error = -EIO;
-+			ac.error = afs_io_error(NULL, afs_io_error_vl_lookup_fail);
- 			goto error;
- 		}
- 	}
-@@ -560,7 +560,7 @@ static bool afs_do_probe_fileserver(struct afs_fs_cursor *fc)
- 		case -ETIME:
- 			break;
- 		default:
--			fc->ac.error = -EIO;
-+			fc->ac.error = afs_io_error(NULL, afs_io_error_fs_probe_fail);
- 			goto error;
- 		}
- 	}
-diff --git a/fs/afs/volume.c b/fs/afs/volume.c
-index 3037bd01f617..7bd4fc784c38 100644
---- a/fs/afs/volume.c
-+++ b/fs/afs/volume.c
-@@ -116,7 +116,7 @@ static struct afs_vldb_entry *afs_vl_lookup_vldb(struct afs_cell *cell,
- 		case -ECONNREFUSED:
- 			break;
- 		default:
--			ac.error = -EIO;
-+			ac.error = afs_io_error(NULL, afs_io_error_vl_lookup_fail);
- 			goto error;
- 		}
- 	}
-diff --git a/fs/afs/write.c b/fs/afs/write.c
-index 46a3a911c682..1dfca4b722da 100644
---- a/fs/afs/write.c
-+++ b/fs/afs/write.c
-@@ -537,6 +537,7 @@ static int afs_write_back_from_locked_page(struct address_space *mapping,
- 	case -ENOENT:
- 	case -ENOMEDIUM:
- 	case -ENXIO:
-+		trace_afs_file_error(vnode, ret, afs_file_error_writeback_fail);
- 		afs_kill_pages(mapping, first, last);
- 		mapping_set_error(mapping, ret);
- 		break;
-diff --git a/include/trace/events/afs.h b/include/trace/events/afs.h
-index 9c44245987b3..d9c99c423fd9 100644
---- a/include/trace/events/afs.h
-+++ b/include/trace/events/afs.h
-@@ -103,6 +103,24 @@ enum afs_eproto_cause {
- 	afs_eproto_yvl_vlendpt_type,
- };
- 
-+enum afs_io_error {
-+	afs_io_error_cm_reply,
-+	afs_io_error_extract,
-+	afs_io_error_fs_probe_fail,
-+	afs_io_error_vl_lookup_fail,
-+};
-+
-+enum afs_file_error {
-+	afs_file_error_dir_bad_magic,
-+	afs_file_error_dir_big,
-+	afs_file_error_dir_missing_page,
-+	afs_file_error_dir_over_end,
-+	afs_file_error_dir_small,
-+	afs_file_error_dir_unmarked_ext,
-+	afs_file_error_mntpt,
-+	afs_file_error_writeback_fail,
-+};
-+
- #endif /* end __AFS_DECLARE_TRACE_ENUMS_ONCE_ONLY */
- 
- /*
-@@ -183,6 +201,21 @@ enum afs_eproto_cause {
- 	EM(afs_eproto_yvl_vlendpt6_len,	"YVL.VlEnd6Len") \
- 	E_(afs_eproto_yvl_vlendpt_type,	"YVL.VlEndType")
- 
-+#define afs_io_errors							\
-+	EM(afs_io_error_cm_reply,		"CM_REPLY")		\
-+	EM(afs_io_error_extract,		"EXTRACT")		\
-+	EM(afs_io_error_fs_probe_fail,		"FS_PROBE_FAIL")	\
-+	E_(afs_io_error_vl_lookup_fail,		"VL_LOOKUP_FAIL")
-+
-+#define afs_file_errors							\
-+	EM(afs_file_error_dir_bad_magic,	"DIR_BAD_MAGIC")	\
-+	EM(afs_file_error_dir_big,		"DIR_BIG")		\
-+	EM(afs_file_error_dir_missing_page,	"DIR_MISSING_PAGE")	\
-+	EM(afs_file_error_dir_over_end,		"DIR_ENT_OVER_END")	\
-+	EM(afs_file_error_dir_small,		"DIR_SMALL")		\
-+	EM(afs_file_error_dir_unmarked_ext,	"DIR_UNMARKED_EXT")	\
-+	EM(afs_file_error_mntpt,		"MNTPT_READ_FAILED")	\
-+	E_(afs_file_error_writeback_fail,	"WRITEBACK_FAILED")
- 
- /*
-  * Export enum symbols via userspace.
-@@ -197,6 +230,9 @@ afs_fs_operations;
- afs_vl_operations;
- afs_edit_dir_ops;
- afs_edit_dir_reasons;
-+afs_eproto_causes;
-+afs_io_errors;
-+afs_file_errors;
- 
- /*
-  * Now redefine the EM() and E_() macros to map the enums to the strings that
-@@ -600,6 +636,51 @@ TRACE_EVENT(afs_protocol_error,
- 		      __print_symbolic(__entry->cause, afs_eproto_causes))
- 	    );
- 
-+TRACE_EVENT(afs_io_error,
-+	    TP_PROTO(unsigned int call, int error, enum afs_io_error where),
-+
-+	    TP_ARGS(call, error, where),
-+
-+	    TP_STRUCT__entry(
-+		    __field(unsigned int,	call		)
-+		    __field(int,		error		)
-+		    __field(enum afs_io_error,	where		)
-+			     ),
-+
-+	    TP_fast_assign(
-+		    __entry->call = call;
-+		    __entry->error = error;
-+		    __entry->where = where;
-+			   ),
-+
-+	    TP_printk("c=%08x r=%d %s",
-+		      __entry->call, __entry->error,
-+		      __print_symbolic(__entry->where, afs_io_errors))
-+	    );
-+
-+TRACE_EVENT(afs_file_error,
-+	    TP_PROTO(struct afs_vnode *vnode, int error, enum afs_file_error where),
-+
-+	    TP_ARGS(vnode, error, where),
-+
-+	    TP_STRUCT__entry(
-+		    __field_struct(struct afs_fid,	fid		)
-+		    __field(int,			error		)
-+		    __field(enum afs_file_error,	where		)
-+			     ),
-+
-+	    TP_fast_assign(
-+		    __entry->fid = vnode->fid;
-+		    __entry->error = error;
-+		    __entry->where = where;
-+			   ),
-+
-+	    TP_printk("%x:%x:%x r=%d %s",
-+		      __entry->fid.vid, __entry->fid.vnode, __entry->fid.unique,
-+		      __entry->error,
-+		      __print_symbolic(__entry->where, afs_file_errors))
-+	    );
-+
- TRACE_EVENT(afs_cm_no_server,
- 	    TP_PROTO(struct afs_call *call, struct sockaddr_rxrpc *srx),
- 
+ 	return 0;
+-- 
+2.14.4
 
