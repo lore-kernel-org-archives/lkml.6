@@ -2,182 +2,108 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E99B6C63684
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF1BAECDFC1
 	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 17:35:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F34E206B6
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 15:51:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F34E206B6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 9434D20882
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 15:46:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="yerT4ZOI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9434D20882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727820AbeIMVBn (ORCPT
+        id S1728157AbeIMU4L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 17:01:43 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:54540 "EHLO mx1.redhat.com"
+        Thu, 13 Sep 2018 16:56:11 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:52699 "EHLO frisell.zx2c4.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726819AbeIMVBn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 17:01:43 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id F30B53001FCD;
-        Thu, 13 Sep 2018 15:51:37 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A36705D6B3;
-        Thu, 13 Sep 2018 15:51:36 +0000 (UTC)
-Subject: [PATCH 00/10] iov_iter: Add new iters and use with AFS
-From:   David Howells <dhowells@redhat.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
-Date:   Thu, 13 Sep 2018 16:51:35 +0100
-Message-ID: <153685389564.14766.11306559824641824935.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        id S1726819AbeIMU4K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 16:56:10 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id f0c530a2;
+        Thu, 13 Sep 2018 15:29:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to:cc
+        :content-type; s=mail; bh=RdZUR/tpm7SsDg97avDsa3jlRlc=; b=yerT4Z
+        OIDq4Wez5inXEbSALNOoYljD6YskWi/V0asl2jocOOhfn8X89tfetxNV6wbmvMsT
+        rEANuQtlJPB+XEXr4lCdYcWABToisb1+0nTp9qwp6tLrh4zncctZpMDpQ43yTYXS
+        VqGxnoA6Smbp6hTAJvQRP6rXai0nlWmniXjQfVaYyuq3bPWlYKkl0T85WxmapO4O
+        UDIJtONMxsi/O/z4smaMVw+uzCueatmFkwlELMWjFOZ7pw0Zg7alYV3b6snEj2G6
+        Bkjy0zjWbQpYvQEHARYOuTGgEo1m6SE/Eq9fWEZ38oSmEgremfTziGC+Zzl7UHfO
+        scEC02Hil1wNXIBA==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id b1d7cf17 (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
+        Thu, 13 Sep 2018 15:29:06 +0000 (UTC)
+Received: by mail-oi0-f46.google.com with SMTP id k12-v6so9864966oiw.8;
+        Thu, 13 Sep 2018 08:46:02 -0700 (PDT)
+X-Gm-Message-State: APzg51BaK2rtJJXcLgVYyqWiD88RFAOxyT6PjSAvu31xJOHrwVt/Iej3
+        Hsk6ez0HWZA+8Tf/xgGGRSE/5m7y5YWpKOufmLc=
+X-Google-Smtp-Source: ANB0Vdbj2OOyj3GDwoqGqoeIhTmxPT3apJaRt0VeNflJuzByTArm9MyfId3MlixLnvYTFZuQNThLzGAwewWCMdnd2ks=
+X-Received: by 2002:aca:dc82:: with SMTP id t124-v6mr6560415oig.189.1536853561789;
+ Thu, 13 Sep 2018 08:46:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Thu, 13 Sep 2018 15:51:38 +0000 (UTC)
+References: <20180911010838.8818-1-Jason@zx2c4.com> <20180911010838.8818-3-Jason@zx2c4.com>
+ <CAKv+Gu9nSeo4PFVrtjtqGQ32eqyxUp3xVCczZfu+dhFz5yLM0A@mail.gmail.com>
+ <CAHmME9rTEFLaYmzFrc719LW2DWS2Ua_vL6by1UXZ9uDvMpbhYw@mail.gmail.com>
+ <CAKv+Gu9RGo9rtGsmwMLZ_=-WSQ_h7har4agXP-2XOKupq-KYtA@mail.gmail.com>
+ <CAHmME9oYAEwFQAriVRm5zZKCo0Sh1=t5YheNZ+MtKQLQPoMWeg@mail.gmail.com> <CAKv+Gu9VamLBv5Ji5AtvugUrAYQYaotLFZZGA=Rt18JUDEaAMQ@mail.gmail.com>
+In-Reply-To: <CAKv+Gu9VamLBv5Ji5AtvugUrAYQYaotLFZZGA=Rt18JUDEaAMQ@mail.gmail.com>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Thu, 13 Sep 2018 17:45:49 +0200
+X-Gmail-Original-Message-ID: <CAHmME9rfCc-Hp08AzeWT8M19Nivs3DY=DnmEQ9pT-qxf+vKiXw@mail.gmail.com>
+Message-ID: <CAHmME9rfCc-Hp08AzeWT8M19Nivs3DY=DnmEQ9pT-qxf+vKiXw@mail.gmail.com>
+Subject: Re: [PATCH net-next v3 02/17] zinc: introduce minimal cryptography library
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Sep 13, 2018 at 5:04 PM Ard Biesheuvel
+<ard.biesheuvel@linaro.org> wrote:
+> > The code still benefits from the review that's gone into OpenSSL. It's
+> > not modified in ways that would affect the cryptographic operations
+> > being done. It's modified to be suitable for kernel space.
+>
+> So could we please at least have those changes as a separate patch then?
 
-Hi Al,
+I'll experiment with a couple ways of trying to communicate with
+precision what's been changed from OpenSSL for the next round of
+patches.
 
-Here's a set of patches that adds two new iov_iter types and then makes AFS
-use them to do I/O.  The iov_iter changes are:
+> > That's interesting. I'll bring this up with AndyP. FWIW, if you think
+> > you have a real and compelling claim here, I'd be much more likely to
+> > accept a different ChaCha20 implementation than I would be to accept a
+> > different Poly1305 implementation. (It's a *lot* harder to screw up
+> > ChaCha20 than it is to screw up Poly1305.)
+>
+> The question is really whether we want different implementations in
+> the crypto API and in zinc.
 
- (1) Separate the type from the direction in the iov_iter struct and
-     provide accessor functions to wrap type checking.
+Per earlier in this discussion, I've already authored patches that
+replaces the crypto API's implementations with simple calls to Zinc,
+so that code isn't duplicated. These will be in v4 and you can comment
+on the approach then.
 
- (2) Renumber the type constants to be contiguous small unsigned integers,
-     starting from 0 and then use switch-statements rather than if-else
-     chains using bit-testing.
+> You are completely missing my point. I am not particularly invested in
+> the crypto API, and I share the concerns about its usability. That is
+> why I want to make sure that your solution actually results in a net
+> improvement for everybody, not just for WireGuard, in a maintainable
+> way.
 
-     Note that the compiler can optimise this better by using CMP rather
-     than AND/TEST, say, as comparing integers requires fewer CMP
-     instructions or can use jump tables.
-
- (3) Change iov_offset from size_t to loff_t.  This allows iov_offset to be
-     then used as a byte offset with ITER_MAPPING and allows 4GiB and larger
-     reads and writes to be proposed.
-
-     This makes no difference on a 64-bit system, but does make a 32-bit
-     compilation a bit larger.
-
- (4) Add an ITER_MAPPING iterator type.  This provides an iterator that
-     directly accesses an address_space, and assumes that the target pages
-     are in some way locked (eg. PG_lock or PG_writeback).
-
- (5) Add an ITER_DISCARD iterator type.  This provides an iterator that
-     simply discards anything written to it.  It cannot be used as a data
-     source.
-
-The afs changes are:
-
- (1) Use a single ITER_MAPPING iterator to cover all the data read by a
-     single FetchData RPC op.  This involves switching the operation to an
-     ITER_KVEC iterator to read the status record that's transmitted after
-     the data.
-
- (2) Use an ITER_DISCARD iterator to discard any extra data the server may
-     have included that we don't want.
-
- (3) Use a single ITER_MAPPING iterator to cover all the data written by a
-     single StoreData RPC op.
-
- (4) Add synchronous O_DIRECT read support.
-
-This should also be useful for doing direct I/O from cachefiles.
-
-The patches can be found here also:
-
-	http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=afs-iov
-
-David
----
-David Howells (10):
-      iov_iter: Separate type from direction and use accessor functions
-      iov_iter: Renumber the ITER_* constants in uio.h
-      iov_iter: Make count and iov_offset loff_t not size_t
-      iov_iter: Add mapping and discard iterator types
-      afs: Better tracing of protocol errors
-      afs: Set up the iov_iter before calling afs_extract_data()
-      afs: Use ITER_MAPPING for writing
-      afs: Add O_DIRECT read support
-      afs: Add a couple of tracepoints to log I/O errors
-      afs: Don't invoke the server to read data beyond EOF
-
-
- block/bio.c                              |    2 
- drivers/block/drbd/drbd_main.c           |    2 
- drivers/block/drbd/drbd_receiver.c       |    2 
- drivers/block/loop.c                     |    9 
- drivers/block/nbd.c                      |   12 -
- drivers/isdn/mISDN/l1oip_core.c          |    3 
- drivers/misc/vmw_vmci/vmci_queue_pair.c  |    6 
- drivers/nvme/target/io-cmd-file.c        |    2 
- drivers/target/iscsi/iscsi_target_util.c |    6 
- drivers/target/target_core_file.c        |    6 
- drivers/usb/usbip/usbip_common.c         |    2 
- drivers/xen/pvcalls-back.c               |    8 
- fs/9p/vfs_addr.c                         |    4 
- fs/9p/vfs_dir.c                          |    2 
- fs/9p/xattr.c                            |    4 
- fs/afs/cmservice.c                       |   56 +--
- fs/afs/dir.c                             |  208 ++++++++---
- fs/afs/file.c                            |  262 ++++++++++----
- fs/afs/fsclient.c                        |  409 ++++++++-------------
- fs/afs/inode.c                           |    2 
- fs/afs/internal.h                        |   81 +++-
- fs/afs/mntpt.c                           |    6 
- fs/afs/rxrpc.c                           |  156 ++------
- fs/afs/server.c                          |    4 
- fs/afs/vlclient.c                        |  134 +++----
- fs/afs/volume.c                          |    2 
- fs/afs/write.c                           |  112 ++++--
- fs/block_dev.c                           |    2 
- fs/btrfs/file.c                          |    7 
- fs/ceph/file.c                           |    7 
- fs/cifs/connect.c                        |    4 
- fs/cifs/file.c                           |    4 
- fs/cifs/misc.c                           |    4 
- fs/cifs/smb2ops.c                        |    4 
- fs/cifs/smbdirect.c                      |   17 +
- fs/cifs/transport.c                      |    8 
- fs/direct-io.c                           |    2 
- fs/dlm/lowcomms.c                        |    2 
- fs/fuse/file.c                           |    2 
- fs/iomap.c                               |    2 
- fs/nfs/direct.c                          |    2 
- fs/nfsd/vfs.c                            |    4 
- fs/ocfs2/cluster/tcp.c                   |    2 
- fs/orangefs/inode.c                      |    2 
- fs/splice.c                              |    7 
- include/linux/fscache.h                  |   31 ++
- include/linux/uio.h                      |   69 ++--
- include/trace/events/afs.h               |  202 ++++++++---
- lib/iov_iter.c                           |  572 ++++++++++++++++++++++++------
- mm/filemap.c                             |    2 
- mm/page_io.c                             |    2 
- net/9p/client.c                          |    4 
- net/9p/trans_virtio.c                    |    2 
- net/bluetooth/6lowpan.c                  |    2 
- net/bluetooth/a2mp.c                     |    2 
- net/bluetooth/smp.c                      |    2 
- net/ceph/messenger.c                     |    6 
- net/netfilter/ipvs/ip_vs_sync.c          |    2 
- net/smc/smc_clc.c                        |    4 
- net/socket.c                             |    6 
- net/sunrpc/svcsock.c                     |    2 
- net/tipc/topsrv.c                        |    2 
- net/tls/tls_device.c                     |    4 
- net/tls/tls_sw.c                         |    4 
- 64 files changed, 1551 insertions(+), 953 deletions(-)
-
+Right, likewise. I've put quite a bit of effort into separating Zinc
+into Zinc and not into something part of WireGuard. The motivation for
+doing so is a decent amount of call sites all around the kernel that
+I'd like to gradually fix up.
