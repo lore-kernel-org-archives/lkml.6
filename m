@@ -2,67 +2,108 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B592C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 11:28:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F500C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 11:30:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 074C020839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 11:28:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 074C020839
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 17B8D20861
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 11:30:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17B8D20861
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727736AbeIMQhq convert rfc822-to-8bit (ORCPT
+        id S1727869AbeIMQjl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 12:37:46 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:54996 "EHLO mx1.redhat.com"
+        Thu, 13 Sep 2018 12:39:41 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:37475 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726450AbeIMQhp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 12:37:45 -0400
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B3B7D3082B72;
-        Thu, 13 Sep 2018 11:28:43 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A03882010CF7;
-        Thu, 13 Sep 2018 11:28:42 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20180913010517.GB7632@shao2-debian>
-References: <20180913010517.GB7632@shao2-debian>
-To:     kernel test robot <rong.a.chen@intel.com>
-Cc:     dhowells@redhat.com, LKML <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, lkp@01.org
-Subject: Re: [LKP] [ipc] 61224adcd2: general_protection_fault:#[##]
+        id S1726818AbeIMQjl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 12:39:41 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 2B470208F4; Thu, 13 Sep 2018 13:30:36 +0200 (CEST)
+Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 997DF208CE;
+        Thu, 13 Sep 2018 13:30:25 +0200 (CEST)
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexander Dahl <ada@thorsis.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH v7 0/7] clocksource: rework Atmel TCB timer driver
+Date:   Thu, 13 Sep 2018 13:30:17 +0200
+Message-Id: <20180913113024.3571-1-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <23068.1536838121.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Thu, 13 Sep 2018 12:28:41 +0100
-Message-ID: <23069.1536838121@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Thu, 13 Sep 2018 11:28:43 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kernel test robot <rong.a.chen@intel.com> wrote:
+Hi,
 
-> To reproduce:
-> 
->         git clone https://github.com/intel/lkp-tests.git
->         cd lkp-tests
->         bin/lkp qemu -k <bzImage> job-script # job-script is attached in this email
+This series reworks the Atmel TCB drivers. It introduces a new driver to handle
+the clocksource and clockevent devices.
 
-Tried that.  That seems to work for me.  Or, at least, it comes to a prompt at
-which I can log in.  I'm not sure whether anything else is meant to happen.
+This is necessary because:
+ - the current tcb_clksrc driver is probed too late to be able to be used at
+   boot and we now have SoCs that don't have a PIT. They currently are not able
+   to boot a mainline kernel.
+ - using the PIT doesn't work well with preempt-rt because its interrupt is
+   shared (in particular with the UART and their interrupt flags are
+   incompatible)
+ - the current solution is wasting some TCB channels
 
-David
+The plan is to get this driver upstream, then convert the TCB PWM driver to be
+able to get rid of the tcb_clksrc driver along with atmel_tclib now that AVR32
+is gone.
+
+changes in v7:
+ - fixed a warning when building on 64 bit platforms
+
+changes in v6:
+ - rebased on v4.19-rc1
+ - separated the clocksource/clockevent and the single clockevent in two
+   different patches
+ - removed struct tc_clkevt_device and simply use struct atmel_tcb_clksrc
+ - removed struct atmel_tcb_info
+ - moved tcb_clk_get and tcb_irq_get to users
+
+changes in v5:
+ - rebased on v4.18-rc1
+ - fixed the clock enabling/disabling in atomic context under preempt-rt
+
+Changes in v4:
+ - rebased on top of v4.17-rc1
+ - fixed an issue when setting max_delta for clockevents_config_and_register
+
+Alexandre Belloni (7):
+  ARM: at91: add TCB registers definitions
+  clocksource/drivers: Add a new driver for the Atmel ARM TC blocks
+  clocksource/drivers: timer-atmel-tcb: add clockevent device on
+    separate channel
+  clocksource/drivers: atmel-pit: make option silent
+  ARM: at91: Implement clocksource selection
+  ARM: configs: at91: use new TCB timer driver
+  ARM: configs: at91: unselect PIT
+
+ arch/arm/configs/at91_dt_defconfig    |   2 +-
+ arch/arm/configs/sama5_defconfig      |   2 +-
+ arch/arm/mach-at91/Kconfig            |  25 ++
+ drivers/clocksource/Kconfig           |  13 +-
+ drivers/clocksource/Makefile          |   3 +-
+ drivers/clocksource/timer-atmel-tcb.c | 617 ++++++++++++++++++++++++++
+ include/soc/at91/atmel_tcb.h          | 183 ++++++++
+ 7 files changed, 841 insertions(+), 4 deletions(-)
+ create mode 100644 drivers/clocksource/timer-atmel-tcb.c
+ create mode 100644 include/soc/at91/atmel_tcb.h
+
+-- 
+2.19.0
+
