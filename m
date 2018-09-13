@@ -5,554 +5,161 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BDE6ECDFDF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48E75FA3748
 	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 17:35:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C92E921486
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 15:52:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C92E921486
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 28E802152B
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 17:23:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28E802152B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728456AbeIMVCZ (ORCPT
+        id S1728091AbeIMWdZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 17:02:25 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37980 "EHLO mx1.redhat.com"
+        Thu, 13 Sep 2018 18:33:25 -0400
+Received: from mga03.intel.com ([134.134.136.65]:37699 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727730AbeIMVCY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 17:02:24 -0400
-Received: from smtp.corp.redhat.com (int-mx11.intmail.prod.int.phx2.redhat.com [10.5.11.26])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1D000CD4A8;
-        Thu, 13 Sep 2018 15:52:19 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BDA7F30912F4;
-        Thu, 13 Sep 2018 15:52:17 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 05/10] afs: Better tracing of protocol errors
-From:   David Howells <dhowells@redhat.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
-Date:   Thu, 13 Sep 2018 16:52:16 +0100
-Message-ID: <153685393686.14766.17795549518400806578.stgit@warthog.procyon.org.uk>
-In-Reply-To: <153685389564.14766.11306559824641824935.stgit@warthog.procyon.org.uk>
-References: <153685389564.14766.11306559824641824935.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        id S1727384AbeIMWdZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 18:33:25 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Sep 2018 10:22:58 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,369,1531810800"; 
+   d="scan'208";a="232634298"
+Received: from davehex.jf.intel.com (HELO [172.16.44.168]) ([10.7.198.90])
+  by orsmga004.jf.intel.com with ESMTP; 13 Sep 2018 10:22:58 -0700
+Subject: Re: [RFC][PATCH 03/11] x86/mm: Page size aware flush_tlb_mm_range()
+To:     Peter Zijlstra <peterz@infradead.org>, will.deacon@arm.com,
+        aneesh.kumar@linux.vnet.ibm.com, akpm@linux-foundation.org,
+        npiggin@gmail.com
+References: <20180913092110.817204997@infradead.org>
+ <20180913092812.012757318@infradead.org>
+Cc:     linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux@armlinux.org.uk,
+        heiko.carstens@de.ibm.com
+From:   Dave Hansen <dave.hansen@linux.intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <f89e61a3-0eb0-3d00-fbaa-f30c2cf60be3@linux.intel.com>
+Date:   Thu, 13 Sep 2018 10:22:58 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.26
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 13 Sep 2018 15:52:19 +0000 (UTC)
+In-Reply-To: <20180913092812.012757318@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Include the site of detection of AFS protocol errors in trace lines to
-better be able to determine what went wrong.
+> +static inline void tlb_flush(struct mmu_gather *tlb)
+> +{
+> +	unsigned long start = 0UL, end = TLB_FLUSH_ALL;
+> +	unsigned int invl_shift = tlb_get_unmap_shift(tlb);
 
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+I had to go back and look at
 
- fs/afs/cmservice.c         |    6 ++
- fs/afs/fsclient.c          |  117 +++++++++++++++++++++++++++-----------------
- fs/afs/inode.c             |    2 -
- fs/afs/internal.h          |    2 -
- fs/afs/rxrpc.c             |    5 +-
- fs/afs/vlclient.c          |   30 ++++++++---
- include/trace/events/afs.h |   54 +++++++++++++++++---
- 7 files changed, 146 insertions(+), 70 deletions(-)
+	https://patchwork.kernel.org/patch/10587207/
 
-diff --git a/fs/afs/cmservice.c b/fs/afs/cmservice.c
-index 9e51d6fe7e8f..58f79301a716 100644
---- a/fs/afs/cmservice.c
-+++ b/fs/afs/cmservice.c
-@@ -189,7 +189,8 @@ static int afs_deliver_cb_callback(struct afs_call *call)
- 		call->count = ntohl(call->tmp);
- 		_debug("FID count: %u", call->count);
- 		if (call->count > AFSCBMAX)
--			return afs_protocol_error(call, -EBADMSG);
-+			return afs_protocol_error(call, -EBADMSG,
-+						  afs_eproto_cb_fid_count);
- 
- 		call->buffer = kmalloc(array3_size(call->count, 3, 4),
- 				       GFP_KERNEL);
-@@ -234,7 +235,8 @@ static int afs_deliver_cb_callback(struct afs_call *call)
- 		call->count2 = ntohl(call->tmp);
- 		_debug("CB count: %u", call->count2);
- 		if (call->count2 != call->count && call->count2 != 0)
--			return afs_protocol_error(call, -EBADMSG);
-+			return afs_protocol_error(call, -EBADMSG,
-+						  afs_eproto_cb_count);
- 		call->offset = 0;
- 		call->unmarshall++;
- 
-diff --git a/fs/afs/fsclient.c b/fs/afs/fsclient.c
-index 50929cb91732..d9a5815945dc 100644
---- a/fs/afs/fsclient.c
-+++ b/fs/afs/fsclient.c
-@@ -233,7 +233,7 @@ static int xdr_decode_AFSFetchStatus(struct afs_call *call,
- 
- bad:
- 	xdr_dump_bad(*_bp);
--	return afs_protocol_error(call, -EBADMSG);
-+	return afs_protocol_error(call, -EBADMSG, afs_eproto_bad_status);
- }
- 
- /*
-@@ -399,9 +399,10 @@ static int afs_deliver_fs_fetch_status_vnode(struct afs_call *call)
- 
- 	/* unmarshall the reply once we've received all of it */
- 	bp = call->buffer;
--	if (afs_decode_status(call, &bp, &vnode->status, vnode,
--			      &call->expected_version, NULL) < 0)
--		return afs_protocol_error(call, -EBADMSG);
-+	ret = afs_decode_status(call, &bp, &vnode->status, vnode,
-+				&call->expected_version, NULL);
-+	if (ret < 0)
-+		return ret;
- 	xdr_decode_AFSCallBack(call, vnode, &bp);
- 	if (call->reply[1])
- 		xdr_decode_AFSVolSync(&bp, call->reply[1]);
-@@ -580,9 +581,10 @@ static int afs_deliver_fs_fetch_data(struct afs_call *call)
- 			return ret;
- 
- 		bp = call->buffer;
--		if (afs_decode_status(call, &bp, &vnode->status, vnode,
--				      &vnode->status.data_version, req) < 0)
--			return afs_protocol_error(call, -EBADMSG);
-+		ret = afs_decode_status(call, &bp, &vnode->status, vnode,
-+					&vnode->status.data_version, req);
-+		if (ret < 0)
-+			return ret;
- 		xdr_decode_AFSCallBack(call, vnode, &bp);
- 		if (call->reply[1])
- 			xdr_decode_AFSVolSync(&bp, call->reply[1]);
-@@ -733,10 +735,13 @@ static int afs_deliver_fs_create_vnode(struct afs_call *call)
- 	/* unmarshall the reply once we've received all of it */
- 	bp = call->buffer;
- 	xdr_decode_AFSFid(&bp, call->reply[1]);
--	if (afs_decode_status(call, &bp, call->reply[2], NULL, NULL, NULL) < 0 ||
--	    afs_decode_status(call, &bp, &vnode->status, vnode,
--			      &call->expected_version, NULL) < 0)
--		return afs_protocol_error(call, -EBADMSG);
-+	ret = afs_decode_status(call, &bp, call->reply[2], NULL, NULL, NULL);
-+	if (ret < 0)
-+		return ret;
-+	ret = afs_decode_status(call, &bp, &vnode->status, vnode,
-+				&call->expected_version, NULL);
-+	if (ret < 0)
-+		return ret;
- 	xdr_decode_AFSCallBack_raw(&bp, call->reply[3]);
- 	/* xdr_decode_AFSVolSync(&bp, call->reply[X]); */
- 
-@@ -839,9 +844,10 @@ static int afs_deliver_fs_remove(struct afs_call *call)
- 
- 	/* unmarshall the reply once we've received all of it */
- 	bp = call->buffer;
--	if (afs_decode_status(call, &bp, &vnode->status, vnode,
--			      &call->expected_version, NULL) < 0)
--		return afs_protocol_error(call, -EBADMSG);
-+	ret = afs_decode_status(call, &bp, &vnode->status, vnode,
-+				&call->expected_version, NULL);
-+	if (ret < 0)
-+		return ret;
- 	/* xdr_decode_AFSVolSync(&bp, call->reply[X]); */
- 
- 	_leave(" = 0 [done]");
-@@ -929,10 +935,13 @@ static int afs_deliver_fs_link(struct afs_call *call)
- 
- 	/* unmarshall the reply once we've received all of it */
- 	bp = call->buffer;
--	if (afs_decode_status(call, &bp, &vnode->status, vnode, NULL, NULL) < 0 ||
--	    afs_decode_status(call, &bp, &dvnode->status, dvnode,
--			      &call->expected_version, NULL) < 0)
--		return afs_protocol_error(call, -EBADMSG);
-+	ret = afs_decode_status(call, &bp, &vnode->status, vnode, NULL, NULL);
-+	if (ret < 0)
-+		return ret;
-+	ret = afs_decode_status(call, &bp, &dvnode->status, dvnode,
-+				&call->expected_version, NULL);
-+	if (ret < 0)
-+		return ret;
- 	/* xdr_decode_AFSVolSync(&bp, call->reply[X]); */
- 
- 	_leave(" = 0 [done]");
-@@ -1016,10 +1025,13 @@ static int afs_deliver_fs_symlink(struct afs_call *call)
- 	/* unmarshall the reply once we've received all of it */
- 	bp = call->buffer;
- 	xdr_decode_AFSFid(&bp, call->reply[1]);
--	if (afs_decode_status(call, &bp, call->reply[2], NULL, NULL, NULL) ||
--	    afs_decode_status(call, &bp, &vnode->status, vnode,
--			      &call->expected_version, NULL) < 0)
--		return afs_protocol_error(call, -EBADMSG);
-+	ret = afs_decode_status(call, &bp, call->reply[2], NULL, NULL, NULL);
-+	if (ret < 0)
-+		return ret;
-+	ret = afs_decode_status(call, &bp, &vnode->status, vnode,
-+				&call->expected_version, NULL);
-+	if (ret < 0)
-+		return ret;
- 	/* xdr_decode_AFSVolSync(&bp, call->reply[X]); */
- 
- 	_leave(" = 0 [done]");
-@@ -1122,13 +1134,16 @@ static int afs_deliver_fs_rename(struct afs_call *call)
- 
- 	/* unmarshall the reply once we've received all of it */
- 	bp = call->buffer;
--	if (afs_decode_status(call, &bp, &orig_dvnode->status, orig_dvnode,
--			      &call->expected_version, NULL) < 0)
--		return afs_protocol_error(call, -EBADMSG);
--	if (new_dvnode != orig_dvnode &&
--	    afs_decode_status(call, &bp, &new_dvnode->status, new_dvnode,
--			      &call->expected_version_2, NULL) < 0)
--		return afs_protocol_error(call, -EBADMSG);
-+	ret = afs_decode_status(call, &bp, &orig_dvnode->status, orig_dvnode,
-+				&call->expected_version, NULL);
-+	if (ret < 0)
-+		return ret;
-+	if (new_dvnode != orig_dvnode) {
-+		ret = afs_decode_status(call, &bp, &new_dvnode->status, new_dvnode,
-+					&call->expected_version_2, NULL);
-+		if (ret < 0)
-+			return ret;
-+	}
- 	/* xdr_decode_AFSVolSync(&bp, call->reply[X]); */
- 
- 	_leave(" = 0 [done]");
-@@ -1231,9 +1246,10 @@ static int afs_deliver_fs_store_data(struct afs_call *call)
- 
- 	/* unmarshall the reply once we've received all of it */
- 	bp = call->buffer;
--	if (afs_decode_status(call, &bp, &vnode->status, vnode,
--			      &call->expected_version, NULL) < 0)
--		return afs_protocol_error(call, -EBADMSG);
-+	ret = afs_decode_status(call, &bp, &vnode->status, vnode,
-+				&call->expected_version, NULL);
-+	if (ret < 0)
-+		return ret;
- 	/* xdr_decode_AFSVolSync(&bp, call->reply[X]); */
- 
- 	afs_pages_written_back(vnode, call);
-@@ -1407,9 +1423,10 @@ static int afs_deliver_fs_store_status(struct afs_call *call)
- 
- 	/* unmarshall the reply once we've received all of it */
- 	bp = call->buffer;
--	if (afs_decode_status(call, &bp, &vnode->status, vnode,
--			      &call->expected_version, NULL) < 0)
--		return afs_protocol_error(call, -EBADMSG);
-+	ret = afs_decode_status(call, &bp, &vnode->status, vnode,
-+				&call->expected_version, NULL);
-+	if (ret < 0)
-+		return ret;
- 	/* xdr_decode_AFSVolSync(&bp, call->reply[X]); */
- 
- 	_leave(" = 0 [done]");
-@@ -1612,7 +1629,8 @@ static int afs_deliver_fs_get_volume_status(struct afs_call *call)
- 		call->count = ntohl(call->tmp);
- 		_debug("volname length: %u", call->count);
- 		if (call->count >= AFSNAMEMAX)
--			return afs_protocol_error(call, -EBADMSG);
-+			return afs_protocol_error(call, -EBADMSG,
-+						  afs_eproto_volname_len);
- 		call->offset = 0;
- 		call->unmarshall++;
- 
-@@ -1659,7 +1677,8 @@ static int afs_deliver_fs_get_volume_status(struct afs_call *call)
- 		call->count = ntohl(call->tmp);
- 		_debug("offline msg length: %u", call->count);
- 		if (call->count >= AFSNAMEMAX)
--			return afs_protocol_error(call, -EBADMSG);
-+			return afs_protocol_error(call, -EBADMSG,
-+						  afs_eproto_offline_msg_len);
- 		call->offset = 0;
- 		call->unmarshall++;
- 
-@@ -1706,7 +1725,8 @@ static int afs_deliver_fs_get_volume_status(struct afs_call *call)
- 		call->count = ntohl(call->tmp);
- 		_debug("motd length: %u", call->count);
- 		if (call->count >= AFSNAMEMAX)
--			return afs_protocol_error(call, -EBADMSG);
-+			return afs_protocol_error(call, -EBADMSG,
-+						  afs_eproto_motd_len);
- 		call->offset = 0;
- 		call->unmarshall++;
- 
-@@ -2109,8 +2129,10 @@ static int afs_deliver_fs_fetch_status(struct afs_call *call)
- 
- 	/* unmarshall the reply once we've received all of it */
- 	bp = call->buffer;
--	afs_decode_status(call, &bp, status, vnode,
--			  &call->expected_version, NULL);
-+	ret = afs_decode_status(call, &bp, status, vnode,
-+				&call->expected_version, NULL);
-+	if (ret < 0)
-+		return ret;
- 	callback[call->count].version	= ntohl(bp[0]);
- 	callback[call->count].expiry	= ntohl(bp[1]);
- 	callback[call->count].type	= ntohl(bp[2]);
-@@ -2206,7 +2228,8 @@ static int afs_deliver_fs_inline_bulk_status(struct afs_call *call)
- 		tmp = ntohl(call->tmp);
- 		_debug("status count: %u/%u", tmp, call->count2);
- 		if (tmp != call->count2)
--			return afs_protocol_error(call, -EBADMSG);
-+			return afs_protocol_error(call, -EBADMSG,
-+						  afs_eproto_ibulkst_count);
- 
- 		call->count = 0;
- 		call->unmarshall++;
-@@ -2221,10 +2244,11 @@ static int afs_deliver_fs_inline_bulk_status(struct afs_call *call)
- 
- 		bp = call->buffer;
- 		statuses = call->reply[1];
--		if (afs_decode_status(call, &bp, &statuses[call->count],
--				      call->count == 0 ? vnode : NULL,
--				      NULL, NULL) < 0)
--			return afs_protocol_error(call, -EBADMSG);
-+		ret = afs_decode_status(call, &bp, &statuses[call->count],
-+					call->count == 0 ? vnode : NULL,
-+					NULL, NULL);
-+		if (ret < 0)
-+			return ret;
- 
- 		call->count++;
- 		if (call->count < call->count2)
-@@ -2244,7 +2268,8 @@ static int afs_deliver_fs_inline_bulk_status(struct afs_call *call)
- 		tmp = ntohl(call->tmp);
- 		_debug("CB count: %u", tmp);
- 		if (tmp != call->count2)
--			return afs_protocol_error(call, -EBADMSG);
-+			return afs_protocol_error(call, -EBADMSG,
-+						  afs_eproto_ibulkst_cb_count);
- 		call->count = 0;
- 		call->unmarshall++;
- 	more_cbs:
-diff --git a/fs/afs/inode.c b/fs/afs/inode.c
-index 479b7fdda124..ab4e7a15c205 100644
---- a/fs/afs/inode.c
-+++ b/fs/afs/inode.c
-@@ -82,7 +82,7 @@ static int afs_inode_init_from_status(struct afs_vnode *vnode, struct key *key)
- 	default:
- 		printk("kAFS: AFS vnode with undefined type\n");
- 		read_sequnlock_excl(&vnode->cb_lock);
--		return afs_protocol_error(NULL, -EBADMSG);
-+		return afs_protocol_error(NULL, -EBADMSG, afs_eproto_file_type);
- 	}
- 
- 	inode->i_blocks		= 0;
-diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index 871a228d7f37..457a8f76b6a2 100644
---- a/fs/afs/internal.h
-+++ b/fs/afs/internal.h
-@@ -929,7 +929,7 @@ extern void afs_flat_call_destructor(struct afs_call *);
- extern void afs_send_empty_reply(struct afs_call *);
- extern void afs_send_simple_reply(struct afs_call *, const void *, size_t);
- extern int afs_extract_data(struct afs_call *, void *, size_t, bool);
--extern int afs_protocol_error(struct afs_call *, int);
-+extern int afs_protocol_error(struct afs_call *, int, enum afs_eproto_cause);
- 
- static inline int afs_transfer_reply(struct afs_call *call)
- {
-diff --git a/fs/afs/rxrpc.c b/fs/afs/rxrpc.c
-index ad947f8c63f1..20199f2b2c31 100644
---- a/fs/afs/rxrpc.c
-+++ b/fs/afs/rxrpc.c
-@@ -941,8 +941,9 @@ int afs_extract_data(struct afs_call *call, void *buf, size_t count,
- /*
-  * Log protocol error production.
-  */
--noinline int afs_protocol_error(struct afs_call *call, int error)
-+noinline int afs_protocol_error(struct afs_call *call, int error,
-+				enum afs_eproto_cause cause)
- {
--	trace_afs_protocol_error(call, error, __builtin_return_address(0));
-+	trace_afs_protocol_error(call, error, cause);
- 	return error;
- }
-diff --git a/fs/afs/vlclient.c b/fs/afs/vlclient.c
-index c3b740813fc7..d0f95c4ab05e 100644
---- a/fs/afs/vlclient.c
-+++ b/fs/afs/vlclient.c
-@@ -451,7 +451,8 @@ static int afs_deliver_yfsvl_get_endpoints(struct afs_call *call)
- 		call->count2	= ntohl(*bp); /* Type or next count */
- 
- 		if (call->count > YFS_MAXENDPOINTS)
--			return afs_protocol_error(call, -EBADMSG);
-+			return afs_protocol_error(call, -EBADMSG,
-+						  afs_eproto_yvl_fsendpt_num);
- 
- 		alist = afs_alloc_addrlist(call->count, FS_SERVICE, AFS_FS_PORT);
- 		if (!alist)
-@@ -475,7 +476,8 @@ static int afs_deliver_yfsvl_get_endpoints(struct afs_call *call)
- 			size = sizeof(__be32) * (1 + 4 + 1);
- 			break;
- 		default:
--			return afs_protocol_error(call, -EBADMSG);
-+			return afs_protocol_error(call, -EBADMSG,
-+						  afs_eproto_yvl_fsendpt_type);
- 		}
- 
- 		size += sizeof(__be32);
-@@ -488,18 +490,21 @@ static int afs_deliver_yfsvl_get_endpoints(struct afs_call *call)
- 		switch (call->count2) {
- 		case YFS_ENDPOINT_IPV4:
- 			if (ntohl(bp[0]) != sizeof(__be32) * 2)
--				return afs_protocol_error(call, -EBADMSG);
-+				return afs_protocol_error(call, -EBADMSG,
-+							  afs_eproto_yvl_fsendpt4_len);
- 			afs_merge_fs_addr4(alist, bp[1], ntohl(bp[2]));
- 			bp += 3;
- 			break;
- 		case YFS_ENDPOINT_IPV6:
- 			if (ntohl(bp[0]) != sizeof(__be32) * 5)
--				return afs_protocol_error(call, -EBADMSG);
-+				return afs_protocol_error(call, -EBADMSG,
-+							  afs_eproto_yvl_fsendpt6_len);
- 			afs_merge_fs_addr6(alist, bp + 1, ntohl(bp[5]));
- 			bp += 6;
- 			break;
- 		default:
--			return afs_protocol_error(call, -EBADMSG);
-+			return afs_protocol_error(call, -EBADMSG,
-+						  afs_eproto_yvl_fsendpt_type);
- 		}
- 
- 		/* Got either the type of the next entry or the count of
-@@ -518,7 +523,8 @@ static int afs_deliver_yfsvl_get_endpoints(struct afs_call *call)
- 		if (!call->count)
- 			goto end;
- 		if (call->count > YFS_MAXENDPOINTS)
--			return afs_protocol_error(call, -EBADMSG);
-+			return afs_protocol_error(call, -EBADMSG,
-+						  afs_eproto_yvl_vlendpt_type);
- 
- 		call->unmarshall = 3;
- 
-@@ -546,7 +552,8 @@ static int afs_deliver_yfsvl_get_endpoints(struct afs_call *call)
- 			size = sizeof(__be32) * (1 + 4 + 1);
- 			break;
- 		default:
--			return afs_protocol_error(call, -EBADMSG);
-+			return afs_protocol_error(call, -EBADMSG,
-+						  afs_eproto_yvl_vlendpt_type);
- 		}
- 
- 		if (call->count > 1)
-@@ -559,16 +566,19 @@ static int afs_deliver_yfsvl_get_endpoints(struct afs_call *call)
- 		switch (call->count2) {
- 		case YFS_ENDPOINT_IPV4:
- 			if (ntohl(bp[0]) != sizeof(__be32) * 2)
--				return afs_protocol_error(call, -EBADMSG);
-+				return afs_protocol_error(call, -EBADMSG,
-+							  afs_eproto_yvl_vlendpt4_len);
- 			bp += 3;
- 			break;
- 		case YFS_ENDPOINT_IPV6:
- 			if (ntohl(bp[0]) != sizeof(__be32) * 5)
--				return afs_protocol_error(call, -EBADMSG);
-+				return afs_protocol_error(call, -EBADMSG,
-+							  afs_eproto_yvl_vlendpt6_len);
- 			bp += 6;
- 			break;
- 		default:
--			return afs_protocol_error(call, -EBADMSG);
-+			return afs_protocol_error(call, -EBADMSG,
-+						  afs_eproto_yvl_vlendpt_type);
- 		}
- 
- 		/* Got either the type of the next entry or the count of
-diff --git a/include/trace/events/afs.h b/include/trace/events/afs.h
-index d0a341bc4540..5c60ade2c7d8 100644
---- a/include/trace/events/afs.h
-+++ b/include/trace/events/afs.h
-@@ -84,6 +84,25 @@ enum afs_edit_dir_reason {
- 	afs_edit_dir_for_unlink,
- };
- 
-+enum afs_eproto_cause {
-+	afs_eproto_bad_status,
-+	afs_eproto_cb_count,
-+	afs_eproto_cb_fid_count,
-+	afs_eproto_file_type,
-+	afs_eproto_ibulkst_cb_count,
-+	afs_eproto_ibulkst_count,
-+	afs_eproto_motd_len,
-+	afs_eproto_offline_msg_len,
-+	afs_eproto_volname_len,
-+	afs_eproto_yvl_fsendpt4_len,
-+	afs_eproto_yvl_fsendpt6_len,
-+	afs_eproto_yvl_fsendpt_num,
-+	afs_eproto_yvl_fsendpt_type,
-+	afs_eproto_yvl_vlendpt4_len,
-+	afs_eproto_yvl_vlendpt6_len,
-+	afs_eproto_yvl_vlendpt_type,
-+};
-+
- #endif /* end __AFS_DECLARE_TRACE_ENUMS_ONCE_ONLY */
- 
- /*
-@@ -146,6 +165,24 @@ enum afs_edit_dir_reason {
- 	EM(afs_edit_dir_for_symlink,		"Symlnk") \
- 	E_(afs_edit_dir_for_unlink,		"Unlink")
- 
-+#define afs_eproto_causes			\
-+	EM(afs_eproto_bad_status,	"BadStatus") \
-+	EM(afs_eproto_cb_count,		"CbCount") \
-+	EM(afs_eproto_cb_fid_count,	"CbFidCount") \
-+	EM(afs_eproto_file_type,	"FileTYpe") \
-+	EM(afs_eproto_ibulkst_cb_count,	"IBS.CbCount") \
-+	EM(afs_eproto_ibulkst_count,	"IBS.FidCount") \
-+	EM(afs_eproto_motd_len,		"MotdLen") \
-+	EM(afs_eproto_offline_msg_len,	"OfflineMsgLen") \
-+	EM(afs_eproto_volname_len,	"VolNameLen") \
-+	EM(afs_eproto_yvl_fsendpt4_len,	"YVL.FsEnd4Len") \
-+	EM(afs_eproto_yvl_fsendpt6_len,	"YVL.FsEnd6Len") \
-+	EM(afs_eproto_yvl_fsendpt_num,	"YVL.FsEndCount") \
-+	EM(afs_eproto_yvl_fsendpt_type,	"YVL.FsEndType") \
-+	EM(afs_eproto_yvl_vlendpt4_len,	"YVL.VlEnd4Len") \
-+	EM(afs_eproto_yvl_vlendpt6_len,	"YVL.VlEnd6Len") \
-+	E_(afs_eproto_yvl_vlendpt_type,	"YVL.VlEndType")
-+
- 
- /*
-  * Export enum symbols via userspace.
-@@ -555,24 +592,25 @@ TRACE_EVENT(afs_edit_dir,
- 	    );
- 
- TRACE_EVENT(afs_protocol_error,
--	    TP_PROTO(struct afs_call *call, int error, const void *where),
-+	    TP_PROTO(struct afs_call *call, int error, enum afs_eproto_cause cause),
- 
--	    TP_ARGS(call, error, where),
-+	    TP_ARGS(call, error, cause),
- 
- 	    TP_STRUCT__entry(
--		    __field(unsigned int,	call		)
--		    __field(int,		error		)
--		    __field(const void *,	where		)
-+		    __field(unsigned int,		call		)
-+		    __field(int,			error		)
-+		    __field(enum afs_eproto_cause,	cause		)
- 			     ),
- 
- 	    TP_fast_assign(
- 		    __entry->call = call ? call->debug_id : 0;
- 		    __entry->error = error;
--		    __entry->where = where;
-+		    __entry->cause = cause;
- 			   ),
- 
--	    TP_printk("c=%08x r=%d sp=%pSR",
--		      __entry->call, __entry->error, __entry->where)
-+	    TP_printk("c=%08x r=%d %s",
-+		      __entry->call, __entry->error,
-+		      __print_symbolic(__entry->cause, afs_eproto_causes))
- 	    );
- 
- TRACE_EVENT(afs_cm_no_server,
+to figure out what was going on.  I wonder if we could make the code a
+bit more standalone.
 
+This at least needs a comment about what it's getting from 'tlb'.  Maybe
+just:
+
+	/* Find the smallest page size that we unmapped: */
+
+> --- a/arch/x86/include/asm/tlbflush.h
+> +++ b/arch/x86/include/asm/tlbflush.h
+> @@ -507,23 +507,25 @@ struct flush_tlb_info {
+>  	unsigned long		start;
+>  	unsigned long		end;
+>  	u64			new_tlb_gen;
+> +	unsigned int		invl_shift;
+>  };
+
+Maybe we really should just call this flush_stride or something.
+
+>  #define local_flush_tlb() __flush_tlb()
+>  
+>  #define flush_tlb_mm(mm)	flush_tlb_mm_range(mm, 0UL, TLB_FLUSH_ALL, 0UL)
+>  
+> -#define flush_tlb_range(vma, start, end)	\
+> -		flush_tlb_mm_range(vma->vm_mm, start, end, vma->vm_flags)
+> +#define flush_tlb_range(vma, start, end)			\
+> +		flush_tlb_mm_range((vma)->vm_mm, start, end,	\
+> +				(vma)->vm_flags & VM_HUGETLB ? PMD_SHIFT : PAGE_SHIFT)
+
+This is safe.  But, Couldn't this PMD_SHIFT also be PUD_SHIFT for a 1G
+hugetlb page?
+
+>  void native_flush_tlb_others(const struct cpumask *cpumask,
+> --- a/arch/x86/mm/tlb.c
+> +++ b/arch/x86/mm/tlb.c
+> @@ -522,12 +522,12 @@ static void flush_tlb_func_common(const
+>  	    f->new_tlb_gen == mm_tlb_gen) {
+>  		/* Partial flush */
+>  		unsigned long addr;
+> -		unsigned long nr_pages = (f->end - f->start) >> PAGE_SHIFT;
+> +		unsigned long nr_pages = (f->end - f->start) >> f->invl_shift;
+
+We might want to make this nr_invalidations or nr_flushes now so we
+don't get it confused with PAGE_SIZE stuff.
+
+Otherwise, this makes me a *tiny* bit nervous.  I think we're good about
+ensuring that we fully flush 4k mappings from the TLB before going up to
+a 2MB mapping because of all the errata we've had there over the years.
+But, had we left 4k mappings around, the old flushing code would have
+cleaned them up for us.
+
+This certainly tightly ties the invalidations to what was in the page
+tables.  If that diverged from the TLB at some point, there's certainly
+more exposure here.
+
+Looks fun, though. :)
