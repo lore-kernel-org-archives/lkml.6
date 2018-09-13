@@ -2,154 +2,214 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48B6CC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 15:04:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AD78C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 15:04:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0018420869
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 15:04:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0018420869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=iki.fi
+	by mail.kernel.org (Postfix) with ESMTP id BA86520866
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 15:04:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="B+fVIuk5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA86520866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728266AbeIMUO2 (ORCPT
+        id S1728312AbeIMUOo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 16:14:28 -0400
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:47992 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726824AbeIMUO1 (ORCPT
+        Thu, 13 Sep 2018 16:14:44 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:45586 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728021AbeIMUOn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 16:14:27 -0400
-Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2001:1bc8:1a6:d3d5::80:2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 8D379634C84;
-        Thu, 13 Sep 2018 18:04:31 +0300 (EEST)
-Received: from sakke by valkosipuli.localdomain with local (Exim 4.89)
-        (envelope-from <sakari.ailus@retiisi.org.uk>)
-        id 1g0TAV-0000P3-CK; Thu, 13 Sep 2018 18:04:31 +0300
-Date:   Thu, 13 Sep 2018 18:04:31 +0300
-From:   Sakari Ailus <sakari.ailus@iki.fi>
-To:     Todor Tomov <ttomov@mm-sol.com>
-Cc:     hans.verkuil@cisco.com, linux-media@vger.kernel.org,
-        Todor Tomov <todor.tomov@linaro.org>, mchehab@kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v3 16/23] camss: vfe: Support for frame padding
-Message-ID: <20180913150431.e5auwpqkostav5qz@valkosipuli.retiisi.org.uk>
-References: <1500287629-23703-1-git-send-email-todor.tomov@linaro.org>
- <1500287629-23703-17-git-send-email-todor.tomov@linaro.org>
- <20170720151732.h4wmqr56j4tuhk7r@valkosipuli.retiisi.org.uk>
- <90fecd27-3255-fbec-a73f-598cc66a3b31@mm-sol.com>
+        Thu, 13 Sep 2018 16:14:43 -0400
+Received: by mail-io1-f68.google.com with SMTP id e12-v6so3367834iok.12
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 08:04:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=/HEIX+5Ne6hvg5kgG+6v+/iMERQM1SwHZqzxueuI2L8=;
+        b=B+fVIuk5FiB8aKdMJkG9M03xfKY0nz9/2xwVnydkH3BaRRrEGsKvpYXELf7OHp77+A
+         en6BW4pT9yR6zKNfwouAacinrrt1XbIjQr/H28tSVCiGnPtE8mdY2oHo3eaNkSP0lcS5
+         wHpTIdpiPKVG9gD2Yfgdcb7K8afXyL11hD+4Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=/HEIX+5Ne6hvg5kgG+6v+/iMERQM1SwHZqzxueuI2L8=;
+        b=eSWFY7PmIHVGyG3F2WGvSX6O0cfvXJiOgpM1XAi7SA0LvERFbMe7jUSsOz1IoLI7gA
+         uupUV/cx3RbBWjrX6mKfZXph/tNk/FwZlYpk3e8SBAOr9FkdsOSWVLwSMvNV8sGU15zP
+         wrakjL6hucYECvA6+WJX2q9dQBkJKKHogNa+LckJkUAGB8blhB4Tj8Pq93hRMzGGeqtU
+         zRG3V7WCB74GsDr/mD6hP/zbtzh3Ib3Y77LpYR/W2W2FM6jrSGFpgr8PZPkl+dPo6Wh/
+         kh69r+31ZleWDC/QZaJzPNgmM4kqiV4wHvpns7ukKT44V+PFZ1AHTeDWTkw7BzdMBE2L
+         zDMQ==
+X-Gm-Message-State: APzg51AnRKBp4pBqbOCef/aVGS4coalceEA4aYwlu+fOAkWkSo77WsrT
+        uDqdPxicQp4Z0T/DX9Ebt0HGiRy6Bo/r8plXLAzGnA==
+X-Google-Smtp-Source: ANB0VdbVfYJhJF4Eq5tiQ3kFrp9+kLYTsj/IWa/fp9uYoDFzd/hYAZIVqjFQ4cNyszvLN2/ilYB2K9PhnzwsdyITdeg=
+X-Received: by 2002:a6b:be83:: with SMTP id o125-v6mr6385514iof.173.1536851088404;
+ Thu, 13 Sep 2018 08:04:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <90fecd27-3255-fbec-a73f-598cc66a3b31@mm-sol.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Received: by 2002:a6b:2848:0:0:0:0:0 with HTTP; Thu, 13 Sep 2018 08:04:47
+ -0700 (PDT)
+In-Reply-To: <CAHmME9oYAEwFQAriVRm5zZKCo0Sh1=t5YheNZ+MtKQLQPoMWeg@mail.gmail.com>
+References: <20180911010838.8818-1-Jason@zx2c4.com> <20180911010838.8818-3-Jason@zx2c4.com>
+ <CAKv+Gu9nSeo4PFVrtjtqGQ32eqyxUp3xVCczZfu+dhFz5yLM0A@mail.gmail.com>
+ <CAHmME9rTEFLaYmzFrc719LW2DWS2Ua_vL6by1UXZ9uDvMpbhYw@mail.gmail.com>
+ <CAKv+Gu9RGo9rtGsmwMLZ_=-WSQ_h7har4agXP-2XOKupq-KYtA@mail.gmail.com> <CAHmME9oYAEwFQAriVRm5zZKCo0Sh1=t5YheNZ+MtKQLQPoMWeg@mail.gmail.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Thu, 13 Sep 2018 17:04:47 +0200
+Message-ID: <CAKv+Gu9VamLBv5Ji5AtvugUrAYQYaotLFZZGA=Rt18JUDEaAMQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v3 02/17] zinc: introduce minimal cryptography library
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Todor,
+On 13 September 2018 at 16:15, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+> Hi Ard,
+>
+> On Thu, Sep 13, 2018 at 12:56 AM Ard Biesheuvel
+> <ard.biesheuvel@linaro.org> wrote:
+>> In this series, you are dumping a huge volume of unannotated,
+>> generated asm into the kernel which has been modified [by you] to
+>> [among other things?] adhere to the kernel API (without documenting
+>> what the changes are exactly). How does that live up to the promise of
+>> better, peer reviewed code?
+>
+> The code still benefits from the review that's gone into OpenSSL. It's
+> not modified in ways that would affect the cryptographic operations
+> being done. It's modified to be suitable for kernel space.
+>
 
-Apologies for the late reply.
+So could we please at least have those changes as a separate patch then?
 
-On Mon, Sep 03, 2018 at 06:38:20PM +0300, Todor Tomov wrote:
-> Hi Sakari and all,
-> 
-> I'm sorry to up this thread from an year ago but I'm currently thinking
-> about a problem which is related to this so I decided to ask here.
-> 
-> On 20.07.2017 18:17, Sakari Ailus wrote:
-> > Hi Todor,
-> > 
-> > On Mon, Jul 17, 2017 at 01:33:42PM +0300, Todor Tomov wrote:
-> >> Add support for horizontal and vertical frame padding.
-> >>
-> >> Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
-> >> ---
-> >>  drivers/media/platform/qcom/camss-8x16/camss-vfe.c | 86 +++++++++++++++++-----
-> >>  .../media/platform/qcom/camss-8x16/camss-video.c   | 69 ++++++++++++-----
-> >>  .../media/platform/qcom/camss-8x16/camss-video.h   |  2 +
-> >>  3 files changed, 121 insertions(+), 36 deletions(-)
-> >>
-> 
-> ...
-> 
-> >> diff --git a/drivers/media/platform/qcom/camss-8x16/camss-video.c b/drivers/media/platform/qcom/camss-8x16/camss-video.c
-> >> index c5ebf5c..5a2bf18 100644
-> >> --- a/drivers/media/platform/qcom/camss-8x16/camss-video.c
-> >> +++ b/drivers/media/platform/qcom/camss-8x16/camss-video.c
-> 
-> ...
-> 
-> >> @@ -542,28 +537,68 @@ static int video_g_fmt(struct file *file, void *fh, struct v4l2_format *f)
-> >>  	return 0;
-> >>  }
-> >>  
-> >> -static int video_s_fmt(struct file *file, void *fh, struct v4l2_format *f)
-> >> +static int video_try_fmt(struct file *file, void *fh, struct v4l2_format *f)
-> >>  {
-> >>  	struct camss_video *video = video_drvdata(file);
-> >> +	struct v4l2_plane_pix_format *p;
-> >> +	u32 bytesperline[3] = { 0 };
-> >> +	u32 sizeimage[3] = { 0 };
-> >> +	u32 lines;
-> >>  	int ret;
-> >> +	int i;
-> >>  
-> >> -	if (vb2_is_busy(&video->vb2_q))
-> >> -		return -EBUSY;
-> >> +	if (video->line_based)
-> >> +		for (i = 0; i < f->fmt.pix_mp.num_planes && i < 3; i++) {
-> >> +			p = &f->fmt.pix_mp.plane_fmt[i];
-> >> +			bytesperline[i] = clamp_t(u32, p->bytesperline,
-> >> +						  1, 65528);
-> >> +			sizeimage[i] = clamp_t(u32, p->sizeimage,
-> >> +					       bytesperline[i],
-> >> +					       bytesperline[i] * 4096);
-> >> +		}
-> >>  
-> >>  	ret = video_get_subdev_format(video, f);
-> >>  	if (ret < 0)
-> >>  		return ret;
-> > 
-> > If you take the width and height from the sub-device format, then for the
-> > user to figure out how big a buffer is needed for a particular format it
-> > takes to change the sub-device format.
-> > 
-> > I wouldn't do this but keep the image dimensions on the video node
-> > independent of what's configured on the sub-device.
-> 
-> So the question is whether the video device node should:
-> a) keep its format and framesize always in sync with what is set on the
->    subdev node with active link to it. This means all s_fmt and enum_fmt
->    will return only the value which is in sink with the subdev node;
-> b) allow to set all possible allowed formats and framesizes. This however
->    allows the userspace to try to start the streaming with format and
->    framesizes not in sync (on video and subdev node) in which case the
->    start streaming will fail.
-> 
-> Currently the driver is implemented as in b) and I hit this problem (in b))
-> when I try to use it from opencv. I wonder how this can be overcome, the
-> userspace cannot be blamed that it tried to start streaming for format
-> and framesize which were allowed to be set.
-> 
-> Are there any new insights on this lately - what can be done to avoid
-> the problems in a) and b)?
+>> Then there is the performance claim. We know for instance that the
+>> OpenSSL ARM NEON code for ChaCha20 is faster on cores that happen to
+>> possess a micro-architectural property that ALU instructions are
+>> essentially free when they are interleaved with SIMD instructions. But
+>> we also know that a) Cortex-A7, which is a relevant target, is not one
+>> of those cores, and b) that chip designers are not likely to optimize
+>> for that particular usage pattern so relying on it in generic code is
+>> unwise in general.
+>
+> That's interesting. I'll bring this up with AndyP. FWIW, if you think
+> you have a real and compelling claim here, I'd be much more likely to
+> accept a different ChaCha20 implementation than I would be to accept a
+> different Poly1305 implementation. (It's a *lot* harder to screw up
+> ChaCha20 than it is to screw up Poly1305.)
+>
 
-I'd like to refer to Linux camera user space that hasn't yet materialised,
-yet there are plans to implemnt that. One of the aims are to support
-regular V4L2 applications on complex devices.
+The question is really whether we want different implementations in
+the crypto API and in zinc.
 
-<URL:https://linuxtv.org/news.php?entry=2018-07-13.mchehab>
+>> I am also concerned about your claim that all software algorithms will
+>> be moved into this crypto library.
+>
+> I'll defer to Andy's response here, which I think is a correct one:
+> https://lkml.org/lkml/2018/9/13/27
+>
+> The short answer is that Zinc is going to be adding the ciphers that
+> people want to use for normal reasons from normal code. For example,
+> after this merges, we'll next be working on moving the remaining
+> non-optimized C code out of lib/ that's called by places (such as
+> SHA2).
+>
 
-There's unfortunately nothing more concrete than that I could refer to at
-the moment.
+Excellent.
 
--- 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi
+>> You are not specific about whose
+>> responsibility it will be that this is going to happen in a timely
+>> fashion.
+>
+> I thought I laid out the roadmap for this in the commit message. In
+> case I wasn't clear: my plan is to tackle lib/ after merging, and I
+> plan to do so in a timely manner. It's a pretty common tactic to keep
+> layering on tasks, "what about X?", "what about Y?", "I won't agree
+> unless Z!" -- when in reality kernel development and refactorings are
+> done incrementally. I've been around on this list contributing code
+> for long enough that you should have a decent amount of confidence
+> that I'm not just going to disappear working on this or something
+> insane like that. And neither are the two academic cryptographers CC'd
+> on this thread. So, as Andy said, we're going to be porting to Zinc
+> the primitives that are useful for the various applications of Zinc.
+> This means yes, we'll have SHA2 in there.
+>
+>> chaining modes
+>> What are the APIs
+>> going to look like for block ciphers, taking chaining modes into
+>> account?
+>
+> As mentioned in the commit message and numerous times, we're not
+> trying to make a win32-like crypto API here or to remake the existing
+> Linux crypto API. Rather we're providing libraries of specific
+> functions that are useful for various circumstances. For example, if
+> AES-GCM is desired at some point, then we'll have a similar API for
+> that as we do for ChaPoly -- one that takes buffers and one that takes
+> sg. Likewise, hash functions use the familiar init/update/final.
+> "Generic" chaining modes aren't really part of the equation or design
+> goals.
+>
+> Again, I realize you've spent a long time working on the existing
+> crypto API, and so your questions and concerns are in the line of,
+> "how are we going to make Zinc look like the existing crypto API in
+> functionality?"
+
+You are completely missing my point. I am not particularly invested in
+the crypto API, and I share the concerns about its usability. That is
+why I want to make sure that your solution actually results in a net
+improvement for everybody, not just for WireGuard, in a maintainable
+way.
+
+> But that's not what we're up to here. We have a
+> different and complementary design goal. I understand why you're
+> squirming, but please recognize we're working on different things.
+>
+>> I'm sure it is rather simple to port the crypto API implementation of
+>> ChaCha20 to use your library. I am more concerned about how your
+>> library is going to expand to cover all other software algorithms that
+>> we currently use in the kernel.
+>
+> The subset of algorithms we add will be developed with the same
+> methodology as the present ones. There is nothing making this
+> particularly difficult or even more difficult for other primitives
+> than it was for ChaCha20. It's especially easy, in fact, since we're
+> following similar design methodologies as the vast majority of other
+> cryptography libraries that have been developed. Namely, we're
+> creating simple things called "functions".
+>
+>> Of course. But please respond to all the concerns,
+>> You have not
+>> responded to that concern yet.
+>
+> Sorry, it's certainly not my intention. I've been on vacation with my
+> family for the last several weeks, and only returned home
+> sleep-deprived last night after 4 days of plane delays. I've now
+> rested and will resume working on this full-time and I'll try my best
+> to address concerns, and also go back through emails to find things I
+> might have missed. (First, though, I'm going to deal with getting back
+> the three suitcases the airline lost in transit...)
+>
+>> > Anyway, it sounds like this whole thing may have ruffled your feathers
+>> > a bit. Will you be at Linux Plumbers Conference in November? I'm
+>> > planning on attending, and perhaps we could find some time there to
+>> > sit down and talk one on one a bit.
+>>
+>> That would be good, yes. I will be there.
+>
+> Looking forward to talking to you there, and hopefully we can put to
+> rest any lingering concerns.
+>
+> Jason
