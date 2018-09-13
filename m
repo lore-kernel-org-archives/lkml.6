@@ -2,67 +2,85 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09ECAC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 05:03:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E94CCC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 05:03:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B08720866
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 05:03:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B08720866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 9DF2120866
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 05:03:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DF2120866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=guarana.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727152AbeIMKKq (ORCPT
+        id S1727628AbeIMKKy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 06:10:46 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:54164 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726317AbeIMKKq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 06:10:46 -0400
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1g0JmK-00028e-33; Thu, 13 Sep 2018 13:02:56 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1g0JmG-0004hh-W7; Thu, 13 Sep 2018 13:02:53 +0800
-Date:   Thu, 13 Sep 2018 13:02:52 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Brijesh Singh <brijesh.singh@amd.com>
-Cc:     linux-crypto@vger.kernel.org, thomas.lendacky@amd.com,
-        Gary Hook <Gary.Hook@amd.com>, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>
-Subject: Re: [PATCH crypto-2.6] crypto: ccp: add timeout support in the SEV
- command
-Message-ID: <20180913050252.wvcjy7gxjzokoca4@gondor.apana.org.au>
-References: <1534367485-4386-1-git-send-email-brijesh.singh@amd.com>
- <1534367485-4386-2-git-send-email-brijesh.singh@amd.com>
- <20180904051930.5kvyyu75ym5mubuz@gondor.apana.org.au>
- <ec8245a3-1620-4501-0ebd-f04dfe973bc8@amd.com>
+        Thu, 13 Sep 2018 06:10:54 -0400
+Received: from aws.guarana.org ([13.237.110.252]:49608 "EHLO aws.guarana.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727194AbeIMKKy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 06:10:54 -0400
+Received: by aws.guarana.org (Postfix, from userid 1006)
+        id BFD2BA146F; Thu, 13 Sep 2018 05:03:01 +0000 (UTC)
+Date:   Thu, 13 Sep 2018 05:03:01 +0000
+From:   Kevin Easton <kevin@guarana.org>
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Samuel Neves <sneves@dei.uc.pt>, linux-arch@vger.kernel.org
+Subject: Re: [PATCH net-next v3 01/17] asm: simd context helper API
+Message-ID: <20180913050301.GA26367@ip-172-31-15-78>
+References: <20180911010838.8818-1-Jason@zx2c4.com>
+ <20180911010838.8818-2-Jason@zx2c4.com>
+ <20180912061433.GA8484@ip-172-31-15-78>
+ <CAHmME9pmgu_xWJ0rvdS4RhzwjKPiNdkQ9nc6mqTNeb6A8xT8Eg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ec8245a3-1620-4501-0ebd-f04dfe973bc8@amd.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CAHmME9pmgu_xWJ0rvdS4RhzwjKPiNdkQ9nc6mqTNeb6A8xT8Eg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 11, 2018 at 07:11:05PM -0500, Brijesh Singh wrote:
->
-> Can you please include this patch in your next 4.19-rcX pull request?
-> Multiple folks are encountering this firmware bug on Ryzen systems. I
-> will submit the modified version of this patch for stable release (s) so
-> that we fix issues in 4.18,.17 and .16. thank you.
+On Wed, Sep 12, 2018 at 08:10:41PM +0200, Jason A. Donenfeld wrote:
+> On Wed, Sep 12, 2018 at 8:14 AM Kevin Easton <kevin@guarana.org> wrote:
+> > Given that it's always supposed to be used like that, mightn't it be
+> > better if simd_relax() took a pointer to the context, so the call is
+> > just
+> >
+> >     simd_relax(&simd_context);
+> >
+> > ?
+> >
+> > The inlining means that there won't actually be a pointer dereference in
+> > the emitted code.
+> >
+> > If simd_put() also took a pointer then it could set the context back to
+> > HAVE_NO_SIMD as well?
+> 
+> That's sort of a neat idea. I guess in this scheme, you'd envision:
+> 
+>    simd_context_t simd_context;
+> 
+>    simd_get(&simd_context);
+>    simd_relax(&simd_context);
+>    simd_put(&simd_context);
+> 
+> And this way, if simd_context ever becomes a heavier struct, it can be
+> modified in place rather than returned by value from the function. On
+> the other hand, it's a little bit more annoying to type and makes it
+> harder to do declaration and initialization on the same line.
 
-OK, I will add it to the crypto tree.
+Yes.  It's also how most get/put APIs already work in the kernel, eg
+kref_get/put (mostly because they tend to be 'getting/putting' an
+already-initialized object, though).
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+    - Kevin
