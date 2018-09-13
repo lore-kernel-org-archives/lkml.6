@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11761C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:58:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40AEFC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:58:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C93C7204FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:58:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C93C7204FD
+	by mail.kernel.org (Postfix) with ESMTP id 0523E204FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:58:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0523E204FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731595AbeIMTIV (ORCPT
+        id S1731604AbeIMTIZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:08:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34696 "EHLO
+        Thu, 13 Sep 2018 15:08:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34706 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728566AbeIMTIU (ORCPT
+        with ESMTP id S1728566AbeIMTIY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:08:20 -0400
+        Thu, 13 Sep 2018 15:08:24 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6027BD0E;
-        Thu, 13 Sep 2018 13:58:43 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7D7DED19;
+        Thu, 13 Sep 2018 13:58:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Lachmann, Juergen" <juergen.lachmann@harman.com>,
-        Richard Weinberger <richard@nod.at>,
+        stable@vger.kernel.org, Gal Pressman <pressmangal@gmail.com>,
+        Lijun Ou <oulijun@huawei.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 077/197] ubi: Initialize Fastmap checkmapping correctly
-Date:   Thu, 13 Sep 2018 15:30:26 +0200
-Message-Id: <20180913131844.606589126@linuxfoundation.org>
+Subject: [PATCH 4.18 078/197] RDMA/hns: Fix usage of bitmap allocation functions return values
+Date:   Thu, 13 Sep 2018 15:30:27 +0200
+Message-Id: <20180913131844.647700657@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -53,57 +53,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Richard Weinberger <richard@nod.at>
+From: Gal Pressman <pressmangal@gmail.com>
 
-[ Upstream commit 25677478474a91fa1b46f19a4a591a9848bca6fb ]
+[ Upstream commit a1ceeca679dccc492235f0f629d9e9f7b3d51ca8 ]
 
-We cannot do it last, otherwithse it will be skipped for dynamic
-volumes.
+hns bitmap allocation functions return 0 on success and -1 on failure.
+Callers of these functions wrongly used their return value as an errno,
+fix that by making a proper conversion.
 
-Reported-by: Lachmann, Juergen <juergen.lachmann@harman.com>
-Fixes: 34653fd8c46e ("ubi: fastmap: Check each mapping only once")
-Signed-off-by: Richard Weinberger <richard@nod.at>
+Fixes: a598c6f4c5a8 ("IB/hns: Simplify function of pd alloc and qp alloc")
+Signed-off-by: Gal Pressman <pressmangal@gmail.com>
+Acked-by: Lijun Ou <oulijun@huawei.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mtd/ubi/vtbl.c |   20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ drivers/infiniband/hw/hns/hns_roce_pd.c |    2 +-
+ drivers/infiniband/hw/hns/hns_roce_qp.c |    5 ++++-
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/mtd/ubi/vtbl.c
-+++ b/drivers/mtd/ubi/vtbl.c
-@@ -579,6 +579,16 @@ static int init_volumes(struct ubi_devic
- 		reserved_pebs += vol->reserved_pebs;
+--- a/drivers/infiniband/hw/hns/hns_roce_pd.c
++++ b/drivers/infiniband/hw/hns/hns_roce_pd.c
+@@ -37,7 +37,7 @@
  
- 		/*
-+		 * We use ubi->peb_count and not vol->reserved_pebs because
-+		 * we want to keep the code simple. Otherwise we'd have to
-+		 * resize/check the bitmap upon volume resize too.
-+		 * Allocating a few bytes more does not hurt.
-+		 */
-+		err = ubi_fastmap_init_checkmap(vol, ubi->peb_count);
-+		if (err)
-+			return err;
-+
-+		/*
- 		 * In case of dynamic volume UBI knows nothing about how many
- 		 * data is stored there. So assume the whole volume is used.
- 		 */
-@@ -620,16 +630,6 @@ static int init_volumes(struct ubi_devic
- 			(long long)(vol->used_ebs - 1) * vol->usable_leb_size;
- 		vol->used_bytes += av->last_data_size;
- 		vol->last_eb_bytes = av->last_data_size;
--
--		/*
--		 * We use ubi->peb_count and not vol->reserved_pebs because
--		 * we want to keep the code simple. Otherwise we'd have to
--		 * resize/check the bitmap upon volume resize too.
--		 * Allocating a few bytes more does not hurt.
--		 */
--		err = ubi_fastmap_init_checkmap(vol, ubi->peb_count);
--		if (err)
--			return err;
- 	}
+ static int hns_roce_pd_alloc(struct hns_roce_dev *hr_dev, unsigned long *pdn)
+ {
+-	return hns_roce_bitmap_alloc(&hr_dev->pd_bitmap, pdn);
++	return hns_roce_bitmap_alloc(&hr_dev->pd_bitmap, pdn) ? -ENOMEM : 0;
+ }
  
- 	/* And add the layout volume */
+ static void hns_roce_pd_free(struct hns_roce_dev *hr_dev, unsigned long pdn)
+--- a/drivers/infiniband/hw/hns/hns_roce_qp.c
++++ b/drivers/infiniband/hw/hns/hns_roce_qp.c
+@@ -115,7 +115,10 @@ static int hns_roce_reserve_range_qp(str
+ {
+ 	struct hns_roce_qp_table *qp_table = &hr_dev->qp_table;
+ 
+-	return hns_roce_bitmap_alloc_range(&qp_table->bitmap, cnt, align, base);
++	return hns_roce_bitmap_alloc_range(&qp_table->bitmap, cnt, align,
++					   base) ?
++		       -ENOMEM :
++		       0;
+ }
+ 
+ enum hns_roce_qp_state to_hns_roce_state(enum ib_qp_state state)
 
 
