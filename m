@@ -2,202 +2,177 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,GAPPY_SUBJECT,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5031C04AB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 23:06:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A91FC04AB8
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 23:11:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CED620861
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 23:06:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OqKxiKNF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CED620861
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 1EC3D20839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 23:11:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EC3D20839
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726902AbeINESG (ORCPT
+        id S1726883AbeINEWq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 00:18:06 -0400
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:42242 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725757AbeINESF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 00:18:05 -0400
-Received: by mail-yb1-f195.google.com with SMTP id j8-v6so4008535ybg.9
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 16:06:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=KZXyikcutpT5p88IsEoShpQCbRxdRRD1SOXBLkD82i8=;
-        b=OqKxiKNFhuEOJ1IjKSXSo79mcr7HwQbAGiaNchTb67/X8y1Ocri7//TSx1y3Az4VfI
-         9UPjbr2ARywPXF67htBluN+4SMBkyonpdkgubbN5ezEMx2hyB8Lq1MkEKvYYXL300XIY
-         fI2BK9ZV2iq4wqtjwWWMNtbtk1aC+Gi/cJfZo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=KZXyikcutpT5p88IsEoShpQCbRxdRRD1SOXBLkD82i8=;
-        b=Gy2PnzDpFvUqzXyh2qkE6Di6lMz8U64vSP68RnkAmkYyMUngIVYyeYvpwDu/Pnkbo/
-         TmO0tLZFWOias43X4sYTeaqDtOHOSmD4vAdSYlbwA7cID/nU8vkQMyIuftt8Fb+Ni3GQ
-         fxf0cVDfMtIAAJ/sxtQ6ZeCtLvklGESBvVLL95zaGMw9RRMG2r4B4jSTvpoxSGWpRHJ7
-         4CiGh17PMZyDChJlO41ZS0uTLYZcVd7w3KVZmCs1GDvOHKEyvIa+QOF5FSa/3tnr7wlw
-         IoHJfGX+ttqmg+1dPQsheAncbyMLZAHsyMczqI8Wid9xkApvXlDEDr2jxJ+uo7eUCmwu
-         tYWg==
-X-Gm-Message-State: APzg51D7TOMquZuuI1TpgiV1Sgpl/q/3xQWYPlbwDOTpO6TfL0QNx2z7
-        x7bu3A/sc3sWJPzVWyJEdpiNKmK1VeI=
-X-Google-Smtp-Source: ANB0VdZe4cUMsFmsxi6kxGl9KTwLrsMFRs7C7gEfyPYpXBI6QSKPCMI39dPozXf/T+XjWqiyfno6EA==
-X-Received: by 2002:a25:db83:: with SMTP id g125-v6mr4658575ybf.412.1536879989038;
-        Thu, 13 Sep 2018 16:06:29 -0700 (PDT)
-Received: from mail-yw1-f54.google.com (mail-yw1-f54.google.com. [209.85.161.54])
-        by smtp.gmail.com with ESMTPSA id f5-v6sm2976428ywa.39.2018.09.13.16.06.27
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Sep 2018 16:06:27 -0700 (PDT)
-Received: by mail-yw1-f54.google.com with SMTP id l9-v6so1888854ywc.11
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 16:06:27 -0700 (PDT)
-X-Received: by 2002:a81:1194:: with SMTP id 142-v6mr4684650ywr.168.1536879986953;
- Thu, 13 Sep 2018 16:06:26 -0700 (PDT)
+        Fri, 14 Sep 2018 00:22:46 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34410 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725757AbeINEWq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 00:22:46 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id AAC20AFFB;
+        Thu, 13 Sep 2018 23:11:07 +0000 (UTC)
+Subject: Re: [PATCH] ARM: dts: aspeed: Adding Facebook TioagaPass BMC
+To:     Vijay Khemka <vijaykhemka@fb.com>
+References: <20180913195751.1833227-1-vijaykhemka@fb.com>
+From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+Organization: SUSE Linux GmbH
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, joel@jms.id.au,
+        andrew@aj.id.au, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org
+Message-ID: <f71ea702-d500-aeed-a97c-6beca9818b4f@suse.de>
+Date:   Fri, 14 Sep 2018 01:11:05 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Received: by 2002:a25:5f04:0:0:0:0:0 with HTTP; Thu, 13 Sep 2018 16:06:25
- -0700 (PDT)
-In-Reply-To: <CAGXu5jLapViSK-j08Tq8cCZodiZXFsXze71xFPg6MQhDWDHDAA@mail.gmail.com>
-References: <cbf848ae-a1ac-c5ab-f23b-bc9217fceebe@schaufler-ca.com>
- <99cb1ae7-8881-eb9a-a8cb-a787abe454e1@schaufler-ca.com> <CAGXu5jLONSfPHYYYTLSma-+arVHSQKaEWb9JxpOn6TNKtyLNhw@mail.gmail.com>
- <CAHC9VhQN0wq0zZS5BYU9jBomaWvCaJ_BqJjHF3AT7FG8Z0nLDQ@mail.gmail.com>
- <CAGXu5jJs6kmd6Tjgwqb2Zx7e-jNbHqfJ57poZuyz4Qj=AKVfmQ@mail.gmail.com>
- <CAHC9VhQ20tBAMwOJ9mg0tBHYUoxjh0Szr3d62HuPw2SyT4XDLw@mail.gmail.com>
- <CAGXu5jKec1JTsoqwKGThcJoamdL618AHu4jfFbqqQiauz1kjyg@mail.gmail.com>
- <CAHC9VhQwT4d3wC37cVrrX-hZq1L3e6=TEAse4m-YH9SiFnkieA@mail.gmail.com> <CAGXu5jLapViSK-j08Tq8cCZodiZXFsXze71xFPg6MQhDWDHDAA@mail.gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Thu, 13 Sep 2018 16:06:25 -0700
-X-Gmail-Original-Message-ID: <CAGXu5j+j47FH5RF2vrJh95=YFX76oSBFo8O6GZqa0utcfE1AVA@mail.gmail.com>
-Message-ID: <CAGXu5j+j47FH5RF2vrJh95=YFX76oSBFo8O6GZqa0utcfE1AVA@mail.gmail.com>
-Subject: Re: [PATCH 10/10] LSM: Blob sharing support for S.A.R.A and LandLock
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        SE Linux <selinux@tycho.nsa.gov>,
-        John Johansen <john.johansen@canonical.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180913195751.1833227-1-vijaykhemka@fb.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 13, 2018 at 2:51 PM, Kees Cook <keescook@chromium.org> wrote:
-> At the very least, to avoid stacking now (i.e. TOMOYO being enabled
-> with another major LSM), we just do nothing. The existing code already
-> makes the existing major LSMs exclusive. Adding a stackable LSM would
-> need to just have its own "enable" flag (i.e. ignore
-> security_module_enable()), and then either check a runtime "is
-> stacking allowed?" flag or have new "depends on SECURITY_STACKING". (I
-> think the CONFIG will force distros into enabling it without any
-> runtime opt-out.)
+Hi Vijay,
 
-Before stacking, we have:
+Am 13.09.18 um 21:57 schrieb Vijay Khemka:
+> Initial introduction of Facebook TioagaPass family equipped with
+> Aspeed 2500 BMC SoC. Neptune is a x86 server development kit
+> with a ASPEED ast2500 BMC manufactured by Facebook.
+> Specifically, This adds the tiogapass platform device tree file
+> including the flash layout used by the tiogapass BMC machines.
+> 
+> This also adds an entry of tiogapass device tree file in Makefile
+> as well an entry of Facebook in Documentation for vendor prefix
+> 
+> Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
+> ---
+>  .../devicetree/bindings/vendor-prefixes.txt   |   1 +
+>  arch/arm/boot/dts/Makefile                    |   1 +
+>  .../dts/aspeed-bmc-facebook-tiogapass.dts     | 152 ++++++++++++++++++
+>  3 files changed, 154 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts
+> 
+> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+> index 2c3fc512e746..733b2d523642 100644
+> --- a/Documentation/devicetree/bindings/vendor-prefixes.txt
+> +++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+> @@ -127,6 +127,7 @@ everspin	Everspin Technologies, Inc.
+>  exar	Exar Corporation
+>  excito	Excito
+>  ezchip	EZchip Semiconductor
+> +facebook  Facebook
 
-- major LSM, pick one
-- all CONFIG minor LSMs, in security.c order
+Indentation looks wrong?
 
-There are two minor LSMs: Yama and LoadPin. If built, Yama is always
-on (though it has sysctl knobs). If built, LoadPin is controlled by a
-boot param.
+>  fairphone	Fairphone B.V.
+>  faraday	Faraday Technology Corporation
+>  fastrax	Fastrax Oy
 
-Picking the major LSM happens via "security=$LSM" and a per-LSM check
-of security_module_enable("$LSM").
+This addition should probably be in a patch with "dt-bindings:" subject
+prefix, before adding the concrete .dts file using it.
 
-Ordering is major, then per security.c for minors.
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index b5bd3de87c33..9c82c1681c38 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -1206,4 +1206,5 @@ dtb-$(CONFIG_ARCH_ASPEED) += \
+>  	aspeed-bmc-opp-witherspoon.dtb \
+>  	aspeed-bmc-opp-zaius.dtb \
+>  	aspeed-bmc-portwell-neptune.dtb \
+> +	aspeed-bmc-facebook-tiogapass.dtb \
+>  	aspeed-bmc-quanta-q71l.dtb
+> diff --git a/arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts b/arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts
+> new file mode 100644
+> index 000000000000..859a00581e34
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts
+> @@ -0,0 +1,152 @@
+> +// SPDX-License-Identifier: GPL-2.0
 
+Note that the new SPDX name would be GPL-2.0-only to distinguish.
+No "OR MIT"?
 
-Under stacking, we have:
+> +// Copyright (c) 2017 Facebook Inc.
 
-The minor LSMs remain unchanged.
+No 2018?
 
-We don't have SARA and Landlock yet, but we do have TOMOYO, which we
-can use as an example to future "compatible blob-using LSMs".
+> +/dts-v1/;
+> +
+> +#include "aspeed-g5.dtsi"
+> +#include <dt-bindings/gpio/aspeed-gpio.h>
+> +
+> +/ {
+> +	model = "Facebook TiogaPass BMC";
+> +	compatible = "facebook,tiogapass-bmc", "aspeed,ast2500";
+[snip]
 
-I see two issues:
+There's some inconsistency between subject, commit message, filename and
+compatibles of how this thing is actually called: Tioga or Tioaga?
 
-- how to determine which set of LSMs are enabled at boot
-- how to determine the ORDER of the LSMs
-
-
-Casey's implementation does this (correct me if I'm wrong):
-
-The minor LSMs remain unchanged.
-
-SECURITY_$lsm_STACKED determines which major is enabled, with
-SECURITY_TOMOYO_STACKED allowed in addition. If security= is
-specified, all other major LSMs are disabled (i.e. it is not possible
-to switch between SELinux/AppArmor/SMACK without also disabling
-TOMOYO).
-
-Ordering is per security/Makefile modulo enabled-ness for majors (i.e.
-TOMOYO is always _before_ AppArmor if stacked together, otherwise
-after SELinux and SMACK), and per security.c for minors.
-
-
-I don't think this is how we want it to work. For example, Ubuntu
-builds in all LSMs, and default-enables AppArmor. If an Ubuntu user
-wants TOMOYO, the boot with "security=tomoyo". If Ubuntu wants to make
-stacking available to users but off by default, what CONFIGs do they
-pick? They could try SECURITY_APPARMOR_STACKED=y and
-SECURITY_TOMOYO_STACKED=n, but then how does an end user choose
-"apparmor and tomoyo" (or more meaningfully, for the future:
-"apparmor, sara, and landlock")? They can still pick
-"security=tomoyo", but there isn't a runtime way to opt into stacking.
-
-
-What about leaving SECURITY_$lsm_DEFAULT as-is, and then...
-
-In the past I'd suggested using "security=" to determine both enabled
-and order: "security=tomoyo,smack" would mean stacked LSMs, with
-tomoyo going first.
-
-Currently I'm leaning towards "security=" to select ONLY the
-incompatible LSM, and per-LSM "enable" flags to determine stacking:
-
-    tomoyo.enabled=1 security=smack
-
-This doesn't explicitly address ordering, though. If we made param
-_position_ meaningful, then we could get ordering (i.e. above would
-mean "tomoyo first").
-
-Note, ordering matters because call_int_hook() will _stop_ on a
-non-zero return value: potentially hiding events from later LSMs. Do
-we need to revisit this? I seem to remember if being a very dead
-horse, and we needed to quick-abort otherwise we ended up in
-nonsensical states.
-
-The reason for the new approach is because I can't find a meaningful
-way to provide CONFIGs that make sense. We want to provide a few
-things:
-
-- is an LSM built into the kernel at all? (CONFIG_SECURITY_$lsm)
-- is an LSM enabled by default? (CONFIG_SECURITY_$lsm_ENABLED?)
-- has an LSM been enable for this boot? $lsm.enabled=1 or security=$lsm,$lsm ?
-- what order should any stacking happen? Makefile? security=?
-
-And for the incompatible-major, do we stick with CONFIG_SECURITY_$lsm_DEFAULT ?
-
-
-
-Anyway, if the concern is with exposed behavior for distros, what do
-we want? i.e. what should be done for patch 10. Everything else looks
-good.
-
--Kees
+Regards,
+Andreas
 
 -- 
-Kees Cook
-Pixel Security
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
