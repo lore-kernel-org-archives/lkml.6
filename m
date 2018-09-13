@@ -2,96 +2,163 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBA57C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 06:01:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3ECEC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 06:11:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AB8520854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 06:01:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7021F20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 06:11:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="edS5DDnB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AB8520854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WHX7Hu0n"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7021F20854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726830AbeIMLJE (ORCPT
+        id S1726794AbeIMLTw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 07:09:04 -0400
-Received: from conuserg-11.nifty.com ([210.131.2.78]:32912 "EHLO
-        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726724AbeIMLJE (ORCPT
+        Thu, 13 Sep 2018 07:19:52 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:35480 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726570AbeIMLTw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 07:09:04 -0400
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-11.nifty.com with ESMTP id w8D5wsjd002858;
-        Thu, 13 Sep 2018 14:58:54 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com w8D5wsjd002858
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1536818335;
-        bh=Zzz6TfVv4KOjT4SlS07cnGQiDxiJTQwq6CquERnGz1Y=;
-        h=From:To:Cc:Subject:Date:From;
-        b=edS5DDnBL8jPnK/UBkiK82hNjaZ8uEmzPtUArvhnKXF/6aPLzehcTql3eGBXpIFwM
-         FiL4a+1MBNs4M0uVx0RrxmPjkYHdCY0VCQrhaqWSTDw+Txj7HdcpV5YgHy+vzG+Rdf
-         WjNVrpjlkfjjonpxarD3YOto6FxiVMne7npQoj6TS/phh6vBY9kINpurK5YZusxaxl
-         AvyLfPr46jZQBvth97R1bwjGnYO2nq6Y2JoUpITBj93GquWLkv+twtEUBA1Cttl1AA
-         ZGTdErOqbRrbz3SMoI8Eu4ocfyHsBnXbSGoj1fCv3iAUVObULDeOPsFiHpmr5UET3O
-         7vUd1a5cucXYw==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-mtd@lists.infradead.org,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Steffen Trumtrar <s.trumtrar@pengutronix.de>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: [PATCH] mtd: rawnand: denali: fix a race condition when DMA is kicked
-Date:   Thu, 13 Sep 2018 14:58:49 +0900
-Message-Id: <1536818329-11068-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 13 Sep 2018 07:19:52 -0400
+Received: by mail-oi0-f66.google.com with SMTP id m11-v6so8329827oic.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 23:11:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=H1JNbMfwbESozImo8DPIHl1nzsZDhdGy6DOG//hFizs=;
+        b=WHX7Hu0nHHEm2k+Embws5gMordF26EQqCUPy02x4lYbyPHlvfWFznfJQVOwJAqsum+
+         A/A58WEhooragib8oo8HJeY6FBBb6PtRVE86PCsdRikVO11NL9ZLfjyCj+7c2QWclqsa
+         VCOBkmGoR4aR81x4ukbOTPi7GUxLDOGgeunbY3o0ZHcmPYX+vh6NcSm2au4Ij0jUUlu7
+         /TE7g63A/E1pexTHydGJ6XxPqR7nFogQpgEyLVYwIkPNq83mauTOwB29oExn2lFG4+sE
+         iFR6Cv769v5HLo543pafjBm7jLL55Ny6QYBLSsZwObQpUih+ajVyGUqFmPLt/WkbRfns
+         TZdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=H1JNbMfwbESozImo8DPIHl1nzsZDhdGy6DOG//hFizs=;
+        b=uQASahvcbLzwQnfdJhmuou45VopL8sZZxsC0FsJZqaGpvqxBsxS9fk4KJwR/htHkvS
+         iF+RpxmOE3sR521XPz7H168kmvJqA2PtKY3ODIpT0g6P/HQIxPMOsDTPT1+7VO12hzqe
+         dZAVsWOEbliDuZte0PXBEez22G9CnpRBUoj/ClqPYU+HlXe0NfbAqn280jpL3JdF58Bo
+         diEDq6EJ5K4qT/feoCmB8hqGwxEHCYM7q62aKTi+L5K0IUngQnoC2LlfrEGqXMls8q0O
+         tlUiS26qW6cFRTidd6v4/oZWBTM/4rHfJ9STTbxjNJnRITAkjEr8sPwYa4jjDNUjFk6N
+         Y8AQ==
+X-Gm-Message-State: APzg51DsAvGzuHASUNJrSAxA+NzAJxkJx5IuB4dCzZBbGO6/o28llLsa
+        ouPFmGD45GlotDAG0NLI0edfy/26zMxeaTV+4Pg=
+X-Google-Smtp-Source: ANB0VdY9+cTOuANQn8lGkqU7HTehomdKLlZF/hrZfRRvfYr4ffDYcAKdt461w6pt+QRlj6AUgbY9uixHcpiycJMYGEU=
+X-Received: by 2002:aca:2cd3:: with SMTP id s202-v6mr5081352ois.253.1536819110506;
+ Wed, 12 Sep 2018 23:11:50 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:ac9:5e12:0:0:0:0:0 with HTTP; Wed, 12 Sep 2018 23:11:49
+ -0700 (PDT)
+In-Reply-To: <ciirm8efdy916l.fsf@u54ee758033e858cfa736.ant.amazon.com>
+References: <CA+55aFxyUdhYjnQdnmWAt8tTwn4HQ1xz3SAMZJiawkLpMiJ_+w@mail.gmail.com>
+ <ciirm8a7p3alos.fsf@u54ee758033e858cfa736.ant.amazon.com> <CA+55aFzHj_GNZWG4K2oDu4DPP9sZdTZ9PY7sBxGB6WoN9g8d=A@mail.gmail.com>
+ <ciirm8zhwyiqh4.fsf@u54ee758033e858cfa736.ant.amazon.com> <ciirm8efdy916l.fsf@u54ee758033e858cfa736.ant.amazon.com>
+From:   Juerg Haefliger <juergh@gmail.com>
+Date:   Thu, 13 Sep 2018 08:11:49 +0200
+Message-ID: <CADLDEKsxx=MSFu=4_4JLX1afUMr3GVjNxSQ-726NrbLn8KQaQg@mail.gmail.com>
+Subject: Re: Redoing eXclusive Page Frame Ownership (XPFO) with isolated CPUs
+ in mind (for KVM to isolate its guests per CPU)
+To:     Julian Stecklina <jsteckli@amazon.de>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        deepa.srinivasan@oracle.com, Jim Mattson <jmattson@google.com>,
+        Andrew Cooper <andrew.cooper3@citrix.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        linux-mm <linux-mm@kvack.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        joao.m.martins@oracle.com, pradeep.vincent@oracle.com,
+        Andi Kleen <ak@linux.intel.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        kanth.ghatraju@oracle.com, Liran Alon <liran.alon@oracle.com>,
+        Kees Cook <keescook@google.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        chris.hyser@oracle.com, Tyler Hicks <tyhicks@canonical.com>,
+        John Haxby <john.haxby@oracle.com>,
+        Jon Masters <jcm@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I thought the read-back of the DMA_ENABLE register was unnecessary
-(at least it is working on my boards), then deleted it in commit
-586a2c52909d ("mtd: nand: denali: squash denali_enable_dma() helper
-into caller").  Sorry, I was wrong - it caused a timing issue on
-Cyclone5 SoCFPGAs.
+On Wed, Sep 12, 2018 at 5:37 PM, Julian Stecklina <jsteckli@amazon.de> wrote:
+> Julian Stecklina <jsteckli@amazon.de> writes:
+>
+>> Linus Torvalds <torvalds@linux-foundation.org> writes:
+>>
+>>> On Fri, Aug 31, 2018 at 12:45 AM Julian Stecklina <jsteckli@amazon.de> wrote:
+>>>>
+>>>> I've been spending some cycles on the XPFO patch set this week. For the
+>>>> patch set as it was posted for v4.13, the performance overhead of
+>>>> compiling a Linux kernel is ~40% on x86_64[1]. The overhead comes almost
+>>>> completely from TLB flushing. If we can live with stale TLB entries
+>>>> allowing temporary access (which I think is reasonable), we can remove
+>>>> all TLB flushing (on x86). This reduces the overhead to 2-3% for
+>>>> kernel compile.
+>>>
+>>> I have to say, even 2-3% for a kernel compile sounds absolutely horrendous.
+>>
+>> Well, it's at least in a range where it doesn't look hopeless.
+>>
+>>> Kernel bullds are 90% user space at least for me, so a 2-3% slowdown
+>>> from a kernel is not some small unnoticeable thing.
+>>
+>> The overhead seems to come from the hooks that XPFO adds to
+>> alloc/free_pages. These hooks add a couple of atomic operations per
+>> allocated (4K) page for book keeping. Some of these atomic ops are only
+>> for debugging and could be removed. There is also some opportunity to
+>> streamline the per-page space overhead of XPFO.
+>
+> I've updated my XPFO branch[1] to make some of the debugging optional
+> and also integrated the XPFO bookkeeping with struct page, instead of
+> requiring CONFIG_PAGE_EXTENSION, which removes some checks in the hot
+> path.
 
-Revive the register read-back, commenting why this is necessary.
+FWIW, that was my original design but there was some resistance to
+adding more to the page struct and page extension was suggested
+instead.
 
-Fixes: 586a2c52909d ("mtd: nand: denali: squash denali_enable_dma() helper into caller")
-Reported-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
 
- drivers/mtd/nand/raw/denali.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+> These changes push the overhead down to somewhere between 1.5 and
+> 2% for my quad core box in kernel compile. This is close to the
+> measurement noise, so I take suggestions for a better benchmark here.
+>
+> Of course, if you hit contention on the xpfo spinlock then performance
+> will suffer. I guess this is what happened on Khalid's large box.
+>
+> I'll try to remove the spinlocks and add fixup code to the pagefault
+> handler to see whether this improves the situation on large boxes. This
+> might turn out to be ugly, though.
 
-diff --git a/drivers/mtd/nand/raw/denali.c b/drivers/mtd/nand/raw/denali.c
-index 67b2065..b864b93 100644
---- a/drivers/mtd/nand/raw/denali.c
-+++ b/drivers/mtd/nand/raw/denali.c
-@@ -596,6 +596,12 @@ static int denali_dma_xfer(struct denali_nand_info *denali, void *buf,
- 	}
- 
- 	iowrite32(DMA_ENABLE__FLAG, denali->reg + DMA_ENABLE);
-+	/*
-+	 * The ->setup_dma() hook kicks DMA by using the data/command
-+	 * interface, which belongs to a different AXI port from the
-+	 * register interface.  Read back the register to avoid a race.
-+	 */
-+	ioread32(denali->reg + DMA_ENABLE);
- 
- 	denali_reset_irq(denali);
- 	denali->setup_dma(denali, dma_addr, page, write);
--- 
-2.7.4
+I'm wondering how much performance we're loosing by having to split
+hugepages. Any chance this can be quantified somehow? Maybe we can
+have a pool of some sorts reserved for userpages and group allocations
+so that we can track the XPFO state at the hugepage level instead of
+at the 4k level to prevent/reduce page splitting. Not sure if that
+causes issues or has any unwanted side effects though...
 
+...Juerg
+
+
+> Julian
+>
+> [1] http://git.infradead.org/users/jsteckli/linux-xpfo.git/shortlog/refs/heads/xpfo-master
+> --
+> Amazon Development Center Germany GmbH
+> Berlin - Dresden - Aachen
+> main office: Krausenstr. 38, 10117 Berlin
+> Geschaeftsfuehrer: Dr. Ralf Herbrich, Christian Schlaeger
+> Ust-ID: DE289237879
+> Eingetragen am Amtsgericht Charlottenburg HRB 149173 B
+>
