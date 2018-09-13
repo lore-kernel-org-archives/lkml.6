@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B808CC07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:32:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CADEC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:32:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FC9A20C0A
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:32:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FC9A20C0A
+	by mail.kernel.org (Postfix) with ESMTP id 6048F20C0A
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:32:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6048F20C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728237AbeIMSlf (ORCPT
+        id S1728258AbeIMSli (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:41:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58488 "EHLO
+        Thu, 13 Sep 2018 14:41:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58502 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727127AbeIMSle (ORCPT
+        with ESMTP id S1728242AbeIMSli (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:41:34 -0400
+        Thu, 13 Sep 2018 14:41:38 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BA87BD10;
-        Thu, 13 Sep 2018 13:32:05 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D4DCED10;
+        Thu, 13 Sep 2018 13:32:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Jan Hoeppner <hoeppner@linux.ibm.com>,
+        Stefan Haberland <sth@linux.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 22/60] powerpc: Fix size calculation using resource_size()
-Date:   Thu, 13 Sep 2018 15:30:29 +0200
-Message-Id: <20180913131746.432835324@linuxfoundation.org>
+Subject: [PATCH 4.4 23/60] s390/dasd: fix hanging offline processing due to canceled worker
+Date:   Thu, 13 Sep 2018 15:30:30 +0200
+Message-Id: <20180913131746.481025068@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131745.261413581@linuxfoundation.org>
 References: <20180913131745.261413581@linuxfoundation.org>
@@ -53,33 +53,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Stefan Haberland <sth@linux.ibm.com>
 
-[ Upstream commit c42d3be0c06f0c1c416054022aa535c08a1f9b39 ]
+[ Upstream commit 669f3765b755fd8739ab46ce3a9c6292ce8b3d2a ]
 
-The problem is the the calculation should be "end - start + 1" but the
-plus one is missing in this calculation.
+During offline processing two worker threads are canceled without
+freeing the device reference which leads to a hanging offline process.
 
-Fixes: 8626816e905e ("powerpc: add support for MPIC message register API")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Reviewed-by: Jan Hoeppner <hoeppner@linux.ibm.com>
+Signed-off-by: Stefan Haberland <sth@linux.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/sysdev/mpic_msgr.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/s390/block/dasd_eckd.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/arch/powerpc/sysdev/mpic_msgr.c
-+++ b/arch/powerpc/sysdev/mpic_msgr.c
-@@ -196,7 +196,7 @@ static int mpic_msgr_probe(struct platfo
+--- a/drivers/s390/block/dasd_eckd.c
++++ b/drivers/s390/block/dasd_eckd.c
+@@ -2101,8 +2101,11 @@ static int dasd_eckd_basic_to_ready(stru
  
- 	/* IO map the message register block. */
- 	of_address_to_resource(np, 0, &rsrc);
--	msgr_block_addr = ioremap(rsrc.start, rsrc.end - rsrc.start);
-+	msgr_block_addr = ioremap(rsrc.start, resource_size(&rsrc));
- 	if (!msgr_block_addr) {
- 		dev_err(&dev->dev, "Failed to iomap MPIC message registers");
- 		return -EFAULT;
+ static int dasd_eckd_online_to_ready(struct dasd_device *device)
+ {
+-	cancel_work_sync(&device->reload_device);
+-	cancel_work_sync(&device->kick_validate);
++	if (cancel_work_sync(&device->reload_device))
++		dasd_put_device(device);
++	if (cancel_work_sync(&device->kick_validate))
++		dasd_put_device(device);
++
+ 	return 0;
+ };
+ 
 
 
