@@ -2,102 +2,85 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B279BC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 15:17:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FA12C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 15:17:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 719E6206B6
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 15:17:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 719E6206B6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id C81FD20880
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 15:17:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C81FD20880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728303AbeIMU0z (ORCPT
+        id S1728346AbeIMU1X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 16:26:55 -0400
-Received: from foss.arm.com ([217.140.101.70]:49968 "EHLO foss.arm.com"
+        Thu, 13 Sep 2018 16:27:23 -0400
+Received: from sauhun.de ([88.99.104.3]:38890 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726824AbeIMU0z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 16:26:55 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1562F7A9;
-        Thu, 13 Sep 2018 08:16:58 -0700 (PDT)
-Received: from [10.4.12.116] (e107155-lin.emea.arm.com [10.4.12.116])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 097AA3F557;
-        Thu, 13 Sep 2018 08:16:55 -0700 (PDT)
-Cc:     Sudeep Holla <sudeep.holla@arm.com>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        Jeremy Linton <jeremy.linton@arm.com>, rjw@rjwysocki.net,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        vkilari@codeaurora.org
-Subject: Re: [PATCH] ACPI/PPTT: Handle architecturally unknown cache types
-To:     Brice Goglin <brice.goglin@gmail.com>,
-        James Morse <james.morse@arm.com>
-References: <1536694334-5811-1-git-send-email-jhugo@codeaurora.org>
- <f62f22a6-2dd8-f254-dbaf-b9e224099afd@arm.com>
- <e74f2208-ac0d-6c45-8ddb-5b77d6a42fef@codeaurora.org>
- <f8dc2958-a7c7-a633-3a06-97fed7c3510b@arm.com>
- <4f253bf4-ef2d-849f-b793-9b0530e72aab@gmail.com>
- <c7e74980-eb5d-1b2a-8ebb-7210b4f507a2@arm.com>
- <20180913103525.GA7777@e107155-lin>
- <0f23136a-cfb7-8def-702a-87e02705f0d6@gmail.com>
-From:   Sudeep Holla <sudeep.holla@arm.com>
-Organization: ARM
-Message-ID: <00cadeff-3a1c-c780-2641-04e47c26181f@arm.com>
-Date:   Thu, 13 Sep 2018 16:16:54 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <0f23136a-cfb7-8def-702a-87e02705f0d6@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1728230AbeIMU1X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 16:27:23 -0400
+Received: from localhost (p54B3335A.dip0.t-ipconnect.de [84.179.51.90])
+        by pokefinder.org (Postfix) with ESMTPSA id 542E42C278A;
+        Thu, 13 Sep 2018 17:17:24 +0200 (CEST)
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     iommu@lists.linux-foundation.org,
+        Robin Murphy <robin.murphy@arm.com>,
+        Christoph Hellwig <hch@lst.de>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFC PATCH 0/3] dma-mapping: clear dangling pointers consistently
+Date:   Thu, 13 Sep 2018 17:17:13 +0200
+Message-Id: <20180913151716.6333-1-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+When working with dma_set_max_seg_size(), I noticed issues with a
+dangling dma_parms pointer. I saw Christoph just worked on handling
+something similar for the dma_ops pointer, too. I came up with three
+patches on top of Christoph's work which I send out for discussion here:
+
+Patch 1 fixes a meanwhile stale comment.
+
+Patch 2 makes clearing the dma_ops pointer more consistent because it
+was missed on the custom ARM implementation to the best of my knowledge.
+
+Patch 3 generalizes teardown_dma_ops to teardown_dma, so that clearing
+dma_parms can be added there.
+
+All these patches are based on the dma-mapping for-next branch. They are
+build tested and runtime tested on a Renesas Salvator-XS board (R-Car
+M3-N, ARM64) and Renesas Lager board (R-Car H2, ARM32).
+
+A branch containing these (and dma_parms additions for the above boards)
+can be found here:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/sdhi/set_max_seg
+
+Looking forward to opinions.
+
+Regards,
+
+   Wolfram
 
 
-On 13/09/18 12:53, Brice Goglin wrote:
-> Le 13/09/2018 à 11:35, Sudeep Holla a écrit :
+Wolfram Sang (3):
+  ARM: dma-mapping: update comment about handling dma_ops when detaching
+    from IOMMU
+  dma-mapping: clear dma_ops pointer also on ARM
+  dma-mapping: clear dma_parms on teardown, too
 
-
->>> On 13/09/18 06:51, Brice Goglin wrote:
-
-[...]
-
->>>> By the way, did anybody actually see an error with lstopo when there's
->>>> no "type" attribute for L3? I can't reproduce any issue, we just skip
->>>> that specific cache entirely, but everything else appears. If you guys
->>>> want to make that "no_cache" cache appear, I'll make it a Unified cache
->>>> unless you tell me what to show :)
->> IIUC, Jeffrey Hugo did see error as per his initial message:
->> "
->> This fixes the following lscpu issue where only the cache type sysfs file
->> is missing which results in no output providing a poor user experience in
->> the above system configuration.
->> lscpu: cannot open /sys/devices/system/cpu/cpu0/cache/index3/type: No such
->> file or directory
->> "
->>
-> 
-> I don't know about lscpu (it's a different project), but lstopo
-> shouldn't have any such problem.
-> 
-
-Ah OK, I have only looked at lscpu source. Sorry for that, I assumed
-they are based on same/similar code base. Thanks for letting me know
-they are not.
-
-> If you see an issue with lstopo, I'd be interesting in getting the
-> tarball generated by hwloc-gather-topology (it dumps useful files from
-> procfs and sysfs so that we may debug offline).
-
-Thanks for the information.
+ arch/arm/mm/dma-mapping.c   | 8 ++++----
+ include/linux/dma-mapping.h | 6 ++++--
+ 2 files changed, 8 insertions(+), 6 deletions(-)
 
 -- 
-Regards,
-Sudeep
+2.18.0
+
