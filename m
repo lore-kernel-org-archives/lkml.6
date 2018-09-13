@@ -2,75 +2,102 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=5.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42EF9C04AB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 21:03:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88FADFC6182
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 21:04:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAF6120861
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 21:03:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAF6120861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
+	by mail.kernel.org (Postfix) with ESMTP id 3FC8220882
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 21:04:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wA0qLRaI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FC8220882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728198AbeINCOm (ORCPT
+        id S1728227AbeINCP0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 22:14:42 -0400
-Received: from Chamillionaire.breakpoint.cc ([146.0.238.67]:36658 "EHLO
-        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727383AbeINCOm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 22:14:42 -0400
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.89)
-        (envelope-from <fw@strlen.de>)
-        id 1g0Ylp-0001sy-NN; Thu, 13 Sep 2018 23:03:25 +0200
-Date:   Thu, 13 Sep 2018 23:03:25 +0200
-From:   Florian Westphal <fw@strlen.de>
-To:     David Miller <davem@davemloft.net>
-Cc:     fw@strlen.de, linux@stwm.de, netdev@vger.kernel.org,
-        steffen.klassert@secunet.com, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, christophe.gouault@6wind.com
-Subject: Re: Regression: kernel 4.14 an later very slow with many ipsec
- tunnels
-Message-ID: <20180913210325.5usfj2rorvuvtyc7@breakpoint.cc>
-References: <20180913135844.3ut6fxgx67t6ndtu@breakpoint.cc>
- <3448099.9yk84El3Sa@stwm.de>
- <20180913163848.ni5xc4gc4d6uusdn@breakpoint.cc>
- <20180913.102305.939671149040995911.davem@davemloft.net>
+        Thu, 13 Sep 2018 22:15:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55762 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727995AbeINCPZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 22:15:25 -0400
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A5622146E
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 21:04:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1536872653;
+        bh=d/8oUQ59SBvtkx7hXLyOZRjobVqFEj1M6AXqCL0R370=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=wA0qLRaI7d1oGjTP3Pb31rnOG8NZ21eQzOVrdMfYpQNyHz5iGMCpGMnCBgLWvgy96
+         KwprQANKFgfB+JZgKplEXaxxgFHnLMguW0a0fcU3xJgwDHu4gRSriVA2BUYAzCjXpi
+         jzJf6Brt3A5ZaJpM2FMw0C6kp/hJIK4zS6Y5xN34=
+Received: by mail-wr1-f44.google.com with SMTP id v17-v6so8106296wrr.9
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 14:04:13 -0700 (PDT)
+X-Gm-Message-State: APzg51A0kQCDeXPT9nElM/Qa3f4eSQfM8Ewo33uPTkkDTrtQFulE1dtL
+        9h4X34aK0HvbhypiMCEQbqC8zcyJDLg8RsEBFQUGzw==
+X-Google-Smtp-Source: ANB0VdbkkCEHClT5tfTdO8nIJZKAPWCRrX5U+ECcnIKnhmGhaxlCSLyHjfgAbpuwJOVuvnPsMR47bwYb9YYWEGwUL0I=
+X-Received: by 2002:a1c:8e81:: with SMTP id q123-v6mr6795244wmd.56.1536872651805;
+ Thu, 13 Sep 2018 14:04:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180913.102305.939671149040995911.davem@davemloft.net>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <20180913202428.7284-1-abrodkin@synopsys.com>
+In-Reply-To: <20180913202428.7284-1-abrodkin@synopsys.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 13 Sep 2018 16:04:00 -0500
+X-Gmail-Original-Message-ID: <CABGGisxY5yLxT1QDQYOOQYJEJ+Wx8uK3ZmSvPEqvYyfAHbhScQ@mail.gmail.com>
+Message-ID: <CABGGisxY5yLxT1QDQYOOQYJEJ+Wx8uK3ZmSvPEqvYyfAHbhScQ@mail.gmail.com>
+Subject: Re: [PATCH] ARC: Get rid of toolchain check
+To:     Alexey.Brodkin@synopsys.com
+Cc:     linux-snps-arc@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vineet.Gupta1@synopsys.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-David Miller <davem@davemloft.net> wrote:
-> From: Florian Westphal <fw@strlen.de>
-> Date: Thu, 13 Sep 2018 18:38:48 +0200
-> 
-> > Wolfgang Walter <linux@stwm.de> wrote:
-> >> What I can say is that it depends mainly on number of policy rules and SA.
-> > 
-> > Thats already a good hint, I guess we're hitting long hash chains in
-> > xfrm_policy_lookup_bytype().
-> 
-> I don't really see how recent changes can influence that.
+On Thu, Sep 13, 2018 at 3:24 PM Alexey Brodkin
+<Alexey.Brodkin@synopsys.com> wrote:
+>
+> This check is very naive: we simply test if GCC invoked without
+> "-mcpu=XXX" has ARC700 define set. In that case we think that GCC
+> was built with "--with-cpu=arc700" and has libgcc built for ARC700.
+>
+> Otherwise if ARC700 is not defined we think that everythng was built
+> for ARCv2.
+>
+> But in reality our life is much more interesting.
+>
+> 1. Regardless of GCC configuration (i.e. what we pass in "--with-cpu"
+>    it may generate code for any ARC core).
+>
+> 2. libgcc might be built with explicitly specified "--mcpu=YYY"
+>
+> That's exactly what happens in case of multilibbed toolchains:
+>  - GCC is configured with default settings
+>  - All the libs built for many different CPU flavors
+>
+> I.e. that check gets in the way of usage of multilibbed
+> toolchains. And even non-multilibbed toolchains are affected.
+> OpenEmbedded also builds GCC without "--with-cpu" because
+> each and every target component later is compiled with explicitly
+> set "-mcpu=ZZZ".
+>
+> Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
+> ---
+>  arch/arc/Makefile | 14 --------------
+>  1 file changed, 14 deletions(-)
 
-I don't think there is a recent change that did this.
++1 for this. Removing it also helps with my work to be able to build
+all the .dts files with only a host compiler. That also needs the hunk
+setting CROSS_COMPILE removed and not having a built-in dtb by
+default, but this is a step in the right direction.
 
-Walter says < 4.14 is ok, so this is likely related to flow cache removal.
+Acked-by: Rob Herring <robh@kernel.org>
 
-F.e. it looks like all prefixed policies end up in a linked list
-(net->xfrm.policy_inexact) and are not even in a hash table.
-
-I am staring at b58555f1767c9f4e330fcf168e4e753d2d9196e0
-but can't figure out how to configure that away from the
-'no hashing for prefixed policies' default or why we even have
-policy_inexact in first place :/
-
-I'll look at this again tomorrow.
+Rob
