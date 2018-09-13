@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03BE7C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:46:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AB80C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:47:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCF3F20854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:46:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCF3F20854
+	by mail.kernel.org (Postfix) with ESMTP id EE7C520854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:47:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE7C520854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730360AbeIMS4X (ORCPT
+        id S1730362AbeIMS4e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:56:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60934 "EHLO
+        Thu, 13 Sep 2018 14:56:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60944 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728441AbeIMS4X (ORCPT
+        with ESMTP id S1727004AbeIMS4d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:56:23 -0400
+        Thu, 13 Sep 2018 14:56:33 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4BC2CD19;
-        Thu, 13 Sep 2018 13:46:49 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B572AD19;
+        Thu, 13 Sep 2018 13:46:59 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>,
         Olof Johansson <olof@lixom.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 084/115] arm64: rockchip: Force CONFIG_PM on Rockchip systems
-Date:   Thu, 13 Sep 2018 15:31:44 +0200
-Message-Id: <20180913131828.701054968@linuxfoundation.org>
+Subject: [PATCH 4.14 085/115] ARM: rockchip: Force CONFIG_PM on Rockchip systems
+Date:   Thu, 13 Sep 2018 15:31:45 +0200
+Message-Id: <20180913131828.762696457@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -54,7 +54,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marc Zyngier <marc.zyngier@arm.com>
 
-[ Upstream commit 7db7a8f5638a2ffe0c0c0d55b5186b6191fd6af7 ]
+[ Upstream commit d1558dfd9f22c99a5b8e1354ad881ee40749da89 ]
 
 A number of the Rockchip-specific drivers (IOMMU, display controllers)
 are now assuming that CONFIG_PM is set, and may completely misbehave
@@ -69,18 +69,18 @@ Signed-off-by: Olof Johansson <olof@lixom.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/Kconfig.platforms |    1 +
+ arch/arm/mach-rockchip/Kconfig |    1 +
  1 file changed, 1 insertion(+)
 
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -148,6 +148,7 @@ config ARCH_ROCKCHIP
- 	select GPIOLIB
- 	select PINCTRL
- 	select PINCTRL_ROCKCHIP
+--- a/arch/arm/mach-rockchip/Kconfig
++++ b/arch/arm/mach-rockchip/Kconfig
+@@ -18,6 +18,7 @@ config ARCH_ROCKCHIP
+ 	select ARM_GLOBAL_TIMER
+ 	select CLKSRC_ARM_GLOBAL_TIMER_SCHED_CLOCK
+ 	select ZONE_DMA if ARM_LPAE
 +	select PM
- 	select ROCKCHIP_TIMER
  	help
- 	  This enables support for the ARMv8 based Rockchip chipsets,
+ 	  Support for Rockchip's Cortex-A9 Single-to-Quad-Core-SoCs
+ 	  containing the RK2928, RK30xx and RK31xx series.
 
 
