@@ -2,307 +2,99 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B04FAC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 06:22:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49745C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 06:23:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47D0420881
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 06:22:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47D0420881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kaod.org
+	by mail.kernel.org (Postfix) with ESMTP id 01CDC20881
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 06:23:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="OZaz/Z9K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01CDC20881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726767AbeIMLal (ORCPT
+        id S1726932AbeIMLbF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 07:30:41 -0400
-Received: from 9.mo68.mail-out.ovh.net ([46.105.78.111]:44125 "EHLO
-        9.mo68.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726570AbeIMLak (ORCPT
+        Thu, 13 Sep 2018 07:31:05 -0400
+Received: from smtprelay4.synopsys.com ([198.182.47.9]:41776 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726570AbeIMLbE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 07:30:40 -0400
-X-Greylist: delayed 1807 seconds by postgrey-1.27 at vger.kernel.org; Thu, 13 Sep 2018 07:30:39 EDT
-Received: from player729.ha.ovh.net (unknown [10.109.146.211])
-        by mo68.mail-out.ovh.net (Postfix) with ESMTP id B23BBF7DAF
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 07:45:20 +0200 (CEST)
-Received: from zorba.kaod.org (LFbn-1-10605-110.w90-89.abo.wanadoo.fr [90.89.196.110])
-        (Authenticated sender: postmaster@kaod.org)
-        by player729.ha.ovh.net (Postfix) with ESMTPSA id 559A35E0092;
-        Thu, 13 Sep 2018 07:45:08 +0200 (CEST)
-Subject: Re: [PATCH i2c-next v6] i2c: aspeed: Handle master/slave combined irq
- events properly
-To:     Guenter Roeck <linux@roeck-us.net>,
-        Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Cc:     Joel Stanley <joel@jms.id.au>, linux-aspeed@lists.ozlabs.org,
-        Vernon Mauery <vernon.mauery@linux.intel.com>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-i2c@vger.kernel.org, jarkko.nikula@linux.intel.com,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        James Feist <james.feist@linux.intel.com>
-References: <1f34fe8c-69ef-5f2d-25dc-d5f6037cc558@linux.intel.com>
- <20180911204107.GA26017@roeck-us.net>
- <e5135af4-9105-214f-5de2-65cc03804222@linux.intel.com>
- <CACPK8Xdv3aP_zOHAL0WMgwvkpBHAUesU7OdhW==jgvXjRmt-Zw@mail.gmail.com>
- <20180911233302.GA18799@roeck-us.net>
- <5698ca34-14c9-8d05-c4e6-5acf85ff9d14@linux.intel.com>
- <20180912013449.GA12612@roeck-us.net>
- <7fd98646-fb5a-be4d-ce37-84b74e0fa8b3@linux.intel.com>
- <20180912195844.GA6893@roeck-us.net>
- <da7f4691-7428-3114-32bb-e0171f6c7228@linux.intel.com>
- <20180912203059.GA18201@roeck-us.net>
-From:   =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>
-Message-ID: <fb185839-3ae0-01dc-09e8-f22db55ecb04@kaod.org>
-Date:   Thu, 13 Sep 2018 07:45:07 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180912203059.GA18201@roeck-us.net>
-Content-Type: text/plain; charset=utf-8
+        Thu, 13 Sep 2018 07:31:04 -0400
+Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 582D324E099C;
+        Wed, 12 Sep 2018 23:23:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1536819782; bh=FvWCKKU8cv6weFSA1Hp6wAFlMkgncqSdeBPx01/Dqec=;
+        h=From:To:CC:Subject:Date:References:From;
+        b=OZaz/Z9K6pjAUZMO1x4gxF4g82pHZ3SSr0nrAU0/pELFKuDSMppsE1leYfTrUvRmO
+         qegN8fizvMJ1m7OkeoLS+ghvU7e+tyXI8MfWcPcY1+E1Og/NgHIX0UdPad1xWxKB0D
+         aol5YIU4vCu26tFxpUbsdc1/ogZdzeXmDgUuBVJ/gKNxgpM5acW5/s10ohf6vHyE0L
+         /0olabKF4WsPuCPKDvPtX72wEYlAAap2D7QihYX4OWwnqYCq+Gk2FOFnW2oZ8kk0S3
+         DiKueZK7T8r0V7vSg2y1AClYGOCd1cuTfDrGxeDMg6PRQdo4QzBT34LTSyYHIFAi18
+         tTkDjABfUVnOw==
+Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 06D355796;
+        Wed, 12 Sep 2018 23:23:02 -0700 (PDT)
+Received: from AM04WEHTCB.internal.synopsys.com (10.116.16.192) by
+ US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Wed, 12 Sep 2018 23:22:51 -0700
+Received: from AM04WEMBXA.internal.synopsys.com ([fe80::79c3:55f2:1f20:5bf4])
+ by am04wehtcb.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Thu,
+ 13 Sep 2018 10:22:48 +0400
+From:   Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>
+To:     Amelie Delaunay <amelie.delaunay@st.com>,
+        Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+CC:     "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Fabrice Gasnier <fabrice.gasnier@st.com>
+Subject: Re: [PATCH 0/4] usb: dwc2: fix host mode external vbus supply
+ management
+Thread-Topic: [PATCH 0/4] usb: dwc2: fix host mode external vbus supply
+ management
+Thread-Index: AQHURQ1CtuXxa1UsAEm+X5SsTyLaSA==
+Date:   Thu, 13 Sep 2018 06:22:47 +0000
+Message-ID: <410670D7E743164D87FA6160E7907A56013A769B0C@am04wembxa.internal.synopsys.com>
+References: <1536147605-26279-1-git-send-email-amelie.delaunay@st.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Ovh-Tracer-Id: 17973866115038940032
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtjedrjeehgddutdduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddm
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.116.70.57]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/12/2018 10:30 PM, Guenter Roeck wrote:
-> On Wed, Sep 12, 2018 at 01:10:45PM -0700, Jae Hyun Yoo wrote:
->> On 9/12/2018 12:58 PM, Guenter Roeck wrote:
->>> On Wed, Sep 12, 2018 at 09:54:51AM -0700, Jae Hyun Yoo wrote:
->>>> On 9/11/2018 6:34 PM, Guenter Roeck wrote:
->>>>> On Tue, Sep 11, 2018 at 04:58:44PM -0700, Jae Hyun Yoo wrote:
->>>>>> On 9/11/2018 4:33 PM, Guenter Roeck wrote:
->>>>>>> Looking into the patch, clearing the interrupt status at the end of an
->>>>>>> interrupt handler is always suspicious and tends to result in race
->>>>>>> conditions (because additional interrupts may have arrived while handling
->>>>>>> the existing interrupts, or because interrupt handling itself may trigger
->>>>>>> another interrupt). With that in mind, the following patch fixes the
->>>>>>> problem for me.
->>>>>>>
->>>>>>> Guenter
->>>>>>>
->>>>>>> ---
->>>>>>>
->>>>>>> diff --git a/drivers/i2c/busses/i2c-aspeed.c b/drivers/i2c/busses/i2c-aspeed.c
->>>>>>> index c258c4d9a4c0..c488e6950b7c 100644
->>>>>>> --- a/drivers/i2c/busses/i2c-aspeed.c
->>>>>>> +++ b/drivers/i2c/busses/i2c-aspeed.c
->>>>>>> @@ -552,6 +552,8 @@ static irqreturn_t aspeed_i2c_bus_irq(int irq, void *dev_id)
->>>>>>>  	spin_lock(&bus->lock);
->>>>>>>  	irq_received = readl(bus->base + ASPEED_I2C_INTR_STS_REG);
->>>>>>> +	/* Ack all interrupt bits. */
->>>>>>> +	writel(irq_received, bus->base + ASPEED_I2C_INTR_STS_REG);
->>>>>>>  	irq_remaining = irq_received;
->>>>>>>  #if IS_ENABLED(CONFIG_I2C_SLAVE)
->>>>>>> @@ -584,8 +586,6 @@ static irqreturn_t aspeed_i2c_bus_irq(int irq, void *dev_id)
->>>>>>>  			"irq handled != irq. expected 0x%08x, but was 0x%08x\n",
->>>>>>>  			irq_received, irq_handled);
->>>>>>> -	/* Ack all interrupt bits. */
->>>>>>> -	writel(irq_received, bus->base + ASPEED_I2C_INTR_STS_REG);
->>>>>>>  	spin_unlock(&bus->lock);
->>>>>>>  	return irq_remaining ? IRQ_NONE : IRQ_HANDLED;
->>>>>>>  }
->>>>>>>
->>>>>>
->>>>>> My intention of putting the code at the end of interrupt handler was,
->>>>>> to reduce possibility of combined irq calls which is explained in this
->>>>>> patch. But YES, I agree with you. It could make a potential race
->>>>>
->>>>> Hmm, yes, but that doesn't explain why it would make sense to acknowledge
->>>>> the interrupt late. The interrupt ack only means "I am going to handle these
->>>>> interrupts". If additional interrupts arrive while the interrupt handler
->>>>> is active, those will have to be acknowledged separately.
->>>>>
->>>>> Sure, there is a risk that an interrupt arrives while the handler is
->>>>> running, and that it is handled but not acknowledged. That can happen
->>>>> with pretty much all interrupt handlers, and there are mitigations to
->>>>> limit the impact (for example, read the interrupt status register in
->>>>> a loop until no more interrupts are pending). But acknowledging
->>>>> an interrupt that was possibly not handled is always bad idea.
->>>>
->>>> Well, that's generally right but not always. Sometimes that depends on
->>>> hardware and Aspeed I2C is the case.
->>>>
->>>> This is a description from Aspeed AST2500 datasheet:
->>>>   I2CD10 Interrupt Status Register
->>>>   bit 2 Receive Done Interrupt status
->>>>         S/W needs to clear this status bit to allow next data receiving.
->>>>
->>>> It means, driver should hold this bit to prevent transition of hardware
->>>> state machine until the driver handles received data, so the bit should
->>>> be cleared at the end of interrupt handler.
->>>>
->>> That makes sense. Does that apply to the other status bits as well ?
->>> Reason for asking is that the current code actually gets stuck
->>> in transmit, not receive.
->>>
->> Only bit 2 has that description in datasheet. Is slave config enabled
->> for QEMU build? Does that get stuck in master sending or slave
->> receiving?
->>
-> qemu does not support slave mode. Linux gets stuck in master tx.
-> 
-> I played with the code on both sides. I had to make changes in both
-> the linux kernel and in qemu to get the code to work again.
-> See attached.
-> 
-> Guenter
-> 
-> ---
-> Linux:
-> 
-> diff --git a/drivers/i2c/busses/i2c-aspeed.c b/drivers/i2c/busses/i2c-aspeed.c
-> index c258c4d9a4c0..3d518e09369f 100644
-> --- a/drivers/i2c/busses/i2c-aspeed.c
-> +++ b/drivers/i2c/busses/i2c-aspeed.c
-> @@ -552,6 +552,9 @@ static irqreturn_t aspeed_i2c_bus_irq(int irq, void *dev_id)
->  
->  	spin_lock(&bus->lock);
->  	irq_received = readl(bus->base + ASPEED_I2C_INTR_STS_REG);
-> +	/* Ack all interrupts except for Rx done */
-> +	writel(irq_received & ~ASPEED_I2CD_INTR_RX_DONE,
-> +	       bus->base + ASPEED_I2C_INTR_STS_REG);
->  	irq_remaining = irq_received;
->  
->  #if IS_ENABLED(CONFIG_I2C_SLAVE)
-> @@ -584,8 +587,10 @@ static irqreturn_t aspeed_i2c_bus_irq(int irq, void *dev_id)
->  			"irq handled != irq. expected 0x%08x, but was 0x%08x\n",
->  			irq_received, irq_handled);
->  
-> -	/* Ack all interrupt bits. */
-> -	writel(irq_received, bus->base + ASPEED_I2C_INTR_STS_REG);
-> +	/* Ack Rx done */
-> +	if (irq_received & ASPEED_I2CD_INTR_RX_DONE)
-> +		writel(ASPEED_I2CD_INTR_RX_DONE,
-> +		       bus->base + ASPEED_I2C_INTR_STS_REG);
->  	spin_unlock(&bus->lock);
->  	return irq_remaining ? IRQ_NONE : IRQ_HANDLED;
->  }
-> 
-> ---
-> qemu:
-> 
-> diff --git a/hw/i2c/aspeed_i2c.c b/hw/i2c/aspeed_i2c.c
-> index c762c73..0d4aa08 100644
-> --- a/hw/i2c/aspeed_i2c.c
-> +++ b/hw/i2c/aspeed_i2c.c
-> @@ -180,6 +180,33 @@ static uint8_t aspeed_i2c_get_state(AspeedI2CBus *bus)
->      return (bus->cmd >> I2CD_TX_STATE_SHIFT) & I2CD_TX_STATE_MASK;
->  }
->  
-> +static void aspeed_i2c_handle_rx_cmd(AspeedI2CBus *bus)
-> +{
-> +    int ret;
-> +
-> +    if (!(bus->cmd & (I2CD_M_RX_CMD | I2CD_M_S_RX_CMD_LAST))) {
-> +        return;
-> +    }
-
-it deserves a comment to understand which scenario we are trying to handle.
-
-> +    if (bus->intr_status & I2CD_INTR_RX_DONE) {
-> +        return;
-> +    }
-
-should be handled in aspeed_i2c_bus_handle_cmd() I think
-
-> +    aspeed_i2c_set_state(bus, I2CD_MRXD);
-> +    ret = i2c_recv(bus->bus);
-> +    if (ret < 0) {
-> +        qemu_log_mask(LOG_GUEST_ERROR, "%s: read failed\n", __func__);
-> +        ret = 0xff;
-> +    } else {
-> +        bus->intr_status |= I2CD_INTR_RX_DONE;
-> +    }
-> +    bus->buf = (ret & I2CD_BYTE_BUF_RX_MASK) << I2CD_BYTE_BUF_RX_SHIFT;
-> +    if (bus->cmd & I2CD_M_S_RX_CMD_LAST) {
-> +        i2c_nack(bus->bus);
-> +    }
-> +    bus->cmd &= ~(I2CD_M_RX_CMD | I2CD_M_S_RX_CMD_LAST);
-> +    aspeed_i2c_set_state(bus, I2CD_MACTIVE);
-> +}
-> +
->  /*
->   * The state machine needs some refinement. It is only used to track
->   * invalid STOP commands for the moment.
-> @@ -188,7 +215,7 @@ static void aspeed_i2c_bus_handle_cmd(AspeedI2CBus *bus, uint64_t value)
->  {
->      bus->cmd &= ~0xFFFF;
->      bus->cmd |= value & 0xFFFF;
-> -    bus->intr_status = 0;> +    bus->intr_status &= I2CD_INTR_RX_DONE;
-
-it deserves a comment to understand which scenario we are trying to handle.
-  
->      if (bus->cmd & I2CD_M_START_CMD) {
->          uint8_t state = aspeed_i2c_get_state(bus) & I2CD_MACTIVE ?
-> @@ -227,22 +254,7 @@ static void aspeed_i2c_bus_handle_cmd(AspeedI2CBus *bus, uint64_t value)
->      }
->  
->      if (bus->cmd & (I2CD_M_RX_CMD | I2CD_M_S_RX_CMD_LAST)) {
-> -        int ret;
-> -
-> -        aspeed_i2c_set_state(bus, I2CD_MRXD);
-> -        ret = i2c_recv(bus->bus);
-> -        if (ret < 0) {
-> -            qemu_log_mask(LOG_GUEST_ERROR, "%s: read failed\n", __func__);
-> -            ret = 0xff;
-> -        } else {
-> -            bus->intr_status |= I2CD_INTR_RX_DONE;
-> -        }
-> -        bus->buf = (ret & I2CD_BYTE_BUF_RX_MASK) << I2CD_BYTE_BUF_RX_SHIFT;
-> -        if (bus->cmd & I2CD_M_S_RX_CMD_LAST) {
-> -            i2c_nack(bus->bus);
-> -        }
-> -        bus->cmd &= ~(I2CD_M_RX_CMD | I2CD_M_S_RX_CMD_LAST);
-> -        aspeed_i2c_set_state(bus, I2CD_MACTIVE);
-> +        aspeed_i2c_handle_rx_cmd(bus);
->      }
->  
->      if (bus->cmd & I2CD_M_STOP_CMD) {
-> @@ -263,6 +275,7 @@ static void aspeed_i2c_bus_write(void *opaque, hwaddr offset,
->                                   uint64_t value, unsigned size)
->  {
->      AspeedI2CBus *bus = opaque;
-> +    int status;
->  
->      switch (offset) {
->      case I2CD_FUN_CTRL_REG:
-> @@ -283,9 +296,16 @@ static void aspeed_i2c_bus_write(void *opaque, hwaddr offset,
->          bus->intr_ctrl = value & 0x7FFF;
->          break;
->      case I2CD_INTR_STS_REG:
-> +        status = bus->intr_status;
->          bus->intr_status &= ~(value & 0x7FFF);
-> -        bus->controller->intr_status &= ~(1 << bus->id);
-> -        qemu_irq_lower(bus->controller->irq);
-> +        if (!bus->intr_status) {
-> +            bus->controller->intr_status &= ~(1 << bus->id);
-> +            qemu_irq_lower(bus->controller->irq);
-> +        }
-
-That part below is indeed something to fix. I had a similar patch.
-
-
-> +        if ((status & I2CD_INTR_RX_DONE) && !(bus->intr_status & I2CD_INTR_RX_DONE)) {
-> +            aspeed_i2c_handle_rx_cmd(bus);
-> +            aspeed_i2c_bus_raise_interrupt(bus);
-> +        }
-
-ok.
-
-Thanks for looking into this.
-
-C.
-
->          break;
->      case I2CD_DEV_ADDR_REG:
->          qemu_log_mask(LOG_UNIMP, "%s: slave mode not implemented\n",
-> 
-
+On 9/5/2018 3:40 PM, Amelie Delaunay wrote:=0A=
+> This patchset fixes and improves host mode external vbus supply managemen=
+t,=0A=
+> mainly around suspend/resume use cases. It also avoid 'vbus regulator"=0A=
+> to be requested lots of times upon each call to dwc2_vbus_supply_init(),=
+=0A=
+> especially when pm runtime is enabled.=0A=
+> =0A=
+> Fabrice Gasnier (4):=0A=
+>    usb: dwc2: get optional vbus-supply regulator once=0A=
+>    usb: dwc2: fix a race with external vbus supply=0A=
+>    usb: dwc2: fix call to vbus supply exit routine, call it unlocked=0A=
+>    usb: dwc2: fix unbalanced use of external vbus-supply=0A=
+> =0A=
+>   drivers/usb/dwc2/hcd.c      | 45 ++++++++++++++++++++++++++++++++++----=
+-------=0A=
+>   drivers/usb/dwc2/platform.c |  8 ++++++++=0A=
+>   2 files changed, 42 insertions(+), 11 deletions(-)=0A=
+> =0A=
+Tested-by: Artur Petrosyan <arturp@synopsys.com>=0A=
+Acked-by: Minas Harutyunyan <hminas@synopsys.com>=0A=
