@@ -1,208 +1,152 @@
 Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.8 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5781C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:55:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8334C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:55:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A6932146E
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:55:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A6932146E
+	by mail.kernel.org (Postfix) with ESMTP id 6CE7C20C0A
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:55:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CE7C20C0A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727805AbeIMSEY (ORCPT
+        id S1727842AbeIMSE1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:04:24 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58790 "EHLO mx1.redhat.com"
+        Thu, 13 Sep 2018 14:04:27 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54272 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727749AbeIMSEX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:04:23 -0400
+        id S1727749AbeIMSEZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 14:04:25 -0400
 Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AA4EA74EE4;
-        Thu, 13 Sep 2018 12:55:02 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0A31830842A8;
+        Thu, 13 Sep 2018 12:55:05 +0000 (UTC)
 Received: from krava.brq.redhat.com (unknown [10.43.17.10])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C87BE600C6;
-        Thu, 13 Sep 2018 12:55:00 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F1D78600C8;
+        Thu, 13 Sep 2018 12:55:02 +0000 (UTC)
 From:   Jiri Olsa <jolsa@kernel.org>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        lkml <linux-kernel@vger.kernel.org>,
         Ingo Molnar <mingo@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>,
         Andi Kleen <andi@firstfloor.org>,
         Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: [PATCH 04/48] perf tools: Add struct perf_mmap arg into record__write
-Date:   Thu, 13 Sep 2018 14:54:06 +0200
-Message-Id: <20180913125450.21342-5-jolsa@kernel.org>
+Subject: [PATCH 05/48] perf tools: Use a software dummy event to track task/mmap events
+Date:   Thu, 13 Sep 2018 14:54:07 +0200
+Message-Id: <20180913125450.21342-6-jolsa@kernel.org>
 In-Reply-To: <20180913125450.21342-1-jolsa@kernel.org>
 References: <20180913125450.21342-1-jolsa@kernel.org>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 13 Sep 2018 12:55:03 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Thu, 13 Sep 2018 12:55:05 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The map argument will hold the file pointer
-to write the data to.
+From: Namhyung Kim <namhyung@kernel.org>
 
-Link: http://lkml.kernel.org/n/tip-hnoi427zudjnm86awuejhnnt@git.kernel.org
+Add APIs for software dummy event to track task/comm/mmap events
+separately. The perf record will use them to save such events in
+a separate mmap buffer to make it easy to index. This is just a
+preparation of multi-thread support which will come later.
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Link: http://lkml.kernel.org/n/tip-qo7opc5kb3ueuicyjdyqupkh@git.kernel.org
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- tools/perf/builtin-record.c | 24 ++++++++++++++----------
- tools/perf/util/auxtrace.c  |  2 +-
- tools/perf/util/auxtrace.h  |  1 +
- tools/perf/util/mmap.c      |  6 +++---
- tools/perf/util/mmap.h      |  2 +-
- 5 files changed, 20 insertions(+), 15 deletions(-)
+ tools/perf/util/evlist.c | 30 ++++++++++++++++++++++++++++++
+ tools/perf/util/evlist.h |  1 +
+ tools/perf/util/evsel.h  | 15 +++++++++++++++
+ 3 files changed, 46 insertions(+)
 
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index fd8b12c5f4ae..0980dfe3396b 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -106,9 +106,12 @@ static bool switch_output_time(struct record *rec)
- 	       trigger_is_ready(&switch_output_trigger);
- }
- 
--static int record__write(struct record *rec, void *bf, size_t size)
-+static int record__write(struct record *rec, struct perf_mmap *map __maybe_unused,
-+			 void *bf, size_t size)
- {
--	if (perf_data__write(rec->session->data, bf, size) < 0) {
-+	struct perf_data_file *file = &rec->session->data->file;
-+
-+	if (perf_data_file__write(file, bf, size) < 0) {
- 		pr_err("failed to write perf data, error: %m\n");
- 		return -1;
- 	}
-@@ -127,15 +130,15 @@ static int process_synthesized_event(struct perf_tool *tool,
- 				     struct machine *machine __maybe_unused)
- {
- 	struct record *rec = container_of(tool, struct record, tool);
--	return record__write(rec, event, event->header.size);
-+	return record__write(rec, NULL, event, event->header.size);
- }
- 
--static int record__pushfn(void *to, void *bf, size_t size)
-+static int record__pushfn(struct perf_mmap *map, void *to, void *bf, size_t size)
- {
- 	struct record *rec = to;
- 
- 	rec->samples++;
--	return record__write(rec, bf, size);
-+	return record__write(rec, map, bf, size);
- }
- 
- static volatile int done;
-@@ -170,6 +173,7 @@ static void record__sig_exit(void)
- #ifdef HAVE_AUXTRACE_SUPPORT
- 
- static int record__process_auxtrace(struct perf_tool *tool,
-+				    struct perf_mmap *map,
- 				    union perf_event *event, void *data1,
- 				    size_t len1, void *data2, size_t len2)
- {
-@@ -197,11 +201,11 @@ static int record__process_auxtrace(struct perf_tool *tool,
- 	if (padding)
- 		padding = 8 - padding;
- 
--	record__write(rec, event, event->header.size);
--	record__write(rec, data1, len1);
-+	record__write(rec, map, event, event->header.size);
-+	record__write(rec, map, data1, len1);
- 	if (len2)
--		record__write(rec, data2, len2);
--	record__write(rec, &pad, padding);
-+		record__write(rec, map, data2, len2);
-+	record__write(rec, map, &pad, padding);
- 
+diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+index be440df29615..7428d65650c9 100644
+--- a/tools/perf/util/evlist.c
++++ b/tools/perf/util/evlist.c
+@@ -267,6 +267,36 @@ int perf_evlist__add_dummy(struct perf_evlist *evlist)
  	return 0;
  }
-@@ -549,7 +553,7 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
- 	 * at least one event.
- 	 */
- 	if (bytes_written != rec->bytes_written)
--		rc = record__write(rec, &finished_round_event, sizeof(finished_round_event));
-+		rc = record__write(rec, NULL, &finished_round_event, sizeof(finished_round_event));
  
- 	if (overwrite)
- 		perf_evlist__toggle_bkw_mmap(evlist, BKW_MMAP_EMPTY);
-diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
-index 2fecee57f555..c4617bcfd521 100644
---- a/tools/perf/util/auxtrace.c
-+++ b/tools/perf/util/auxtrace.c
-@@ -1285,7 +1285,7 @@ static int __auxtrace_mmap__read(struct perf_mmap *map,
- 	ev.auxtrace.tid = mm->tid;
- 	ev.auxtrace.cpu = mm->cpu;
- 
--	if (fn(tool, &ev, data1, len1, data2, len2))
-+	if (fn(tool, map, &ev, data1, len1, data2, len2))
- 		return -1;
- 
- 	mm->prev = head;
-diff --git a/tools/perf/util/auxtrace.h b/tools/perf/util/auxtrace.h
-index 7eeb141361b9..a86b7eab6673 100644
---- a/tools/perf/util/auxtrace.h
-+++ b/tools/perf/util/auxtrace.h
-@@ -435,6 +435,7 @@ void auxtrace_mmap_params__set_idx(struct auxtrace_mmap_params *mp,
- 				   bool per_cpu);
- 
- typedef int (*process_auxtrace_t)(struct perf_tool *tool,
-+				  struct perf_mmap *map,
- 				  union perf_event *event, void *data1,
- 				  size_t len1, void *data2, size_t len2);
- 
-diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-index 215f69f41672..cdb95b3a1213 100644
---- a/tools/perf/util/mmap.c
-+++ b/tools/perf/util/mmap.c
-@@ -281,7 +281,7 @@ int perf_mmap__read_init(struct perf_mmap *map)
++int perf_evlist__add_dummy_tracking(struct perf_evlist *evlist)
++{
++	struct perf_event_attr attr = {
++		.type = PERF_TYPE_SOFTWARE,
++		.config = PERF_COUNT_SW_DUMMY,
++		.exclude_kernel = 1,
++	};
++	struct perf_evsel *evsel;
++
++	event_attr_init(&attr);
++
++	evsel = perf_evsel__new(&attr);
++	if (evsel == NULL)
++		goto error;
++
++	/* use strdup() because free(evsel) assumes name is allocated */
++	evsel->name = strdup("dummy");
++	if (!evsel->name)
++		goto error_free;
++
++	perf_evlist__add(evlist, evsel);
++	perf_evlist__set_tracking_event(evlist, evsel);
++
++	return 0;
++error_free:
++	perf_evsel__delete(evsel);
++error:
++	return -ENOMEM;
++}
++
+ static int perf_evlist__add_attrs(struct perf_evlist *evlist,
+ 				  struct perf_event_attr *attrs, size_t nr_attrs)
+ {
+diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
+index dc66436add98..c11cb80e7847 100644
+--- a/tools/perf/util/evlist.h
++++ b/tools/perf/util/evlist.h
+@@ -76,6 +76,7 @@ static inline int perf_evlist__add_default(struct perf_evlist *evlist)
+ 	return __perf_evlist__add_default(evlist, true);
  }
  
- int perf_mmap__push(struct perf_mmap *md, void *to,
--		    int push(void *to, void *buf, size_t size))
-+		    int push(struct perf_mmap *map, void *to, void *buf, size_t size))
- {
- 	u64 head = perf_mmap__read_head(md);
- 	unsigned char *data = md->base + page_size;
-@@ -300,7 +300,7 @@ int perf_mmap__push(struct perf_mmap *md, void *to,
- 		size = md->mask + 1 - (md->start & md->mask);
- 		md->start += size;
++int perf_evlist__add_dummy_tracking(struct perf_evlist *evlist);
+ int __perf_evlist__add_default_attrs(struct perf_evlist *evlist,
+ 				     struct perf_event_attr *attrs, size_t nr_attrs);
  
--		if (push(to, buf, size) < 0) {
-+		if (push(md, to, buf, size) < 0) {
- 			rc = -1;
- 			goto out;
- 		}
-@@ -310,7 +310,7 @@ int perf_mmap__push(struct perf_mmap *md, void *to,
- 	size = md->end - md->start;
- 	md->start += size;
+diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
+index 4f8430a85531..6e18b9ff997d 100644
+--- a/tools/perf/util/evsel.h
++++ b/tools/perf/util/evsel.h
+@@ -411,6 +411,21 @@ static inline bool perf_evsel__is_clock(struct perf_evsel *evsel)
+ 	       perf_evsel__match(evsel, SOFTWARE, SW_TASK_CLOCK);
+ }
  
--	if (push(to, buf, size) < 0) {
-+	if (push(md, to, buf, size) < 0) {
- 		rc = -1;
- 		goto out;
- 	}
-diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
-index 05a6d47c7956..e603314dc792 100644
---- a/tools/perf/util/mmap.h
-+++ b/tools/perf/util/mmap.h
-@@ -93,7 +93,7 @@ union perf_event *perf_mmap__read_forward(struct perf_mmap *map);
- union perf_event *perf_mmap__read_event(struct perf_mmap *map);
- 
- int perf_mmap__push(struct perf_mmap *md, void *to,
--		    int push(void *to, void *buf, size_t size));
-+		    int push(struct perf_mmap *map, void *to, void *buf, size_t size));
- 
- size_t perf_mmap__mmap_len(struct perf_mmap *map);
- 
++/**
++ * perf_evsel__is_dummy_tracking - Return whether given evsel is a dummy
++ * event for tracking meta events only
++ *
++ * @evsel - evsel selector to be tested
++ *
++ * Return %true if event is a dummy tracking event
++ */
++static inline bool perf_evsel__is_dummy_tracking(struct perf_evsel *evsel)
++{
++	return evsel->attr.type == PERF_TYPE_SOFTWARE &&
++		evsel->attr.config == PERF_COUNT_SW_DUMMY &&
++		evsel->attr.task == 1 && evsel->attr.mmap == 1;
++}
++
+ struct perf_attr_details {
+ 	bool freq;
+ 	bool verbose;
 -- 
 2.17.1
 
