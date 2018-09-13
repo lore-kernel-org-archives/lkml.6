@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3FB2C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:02:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83F7BC07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:02:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AEFA20652
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:02:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AEFA20652
+	by mail.kernel.org (Postfix) with ESMTP id 401D920652
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:02:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 401D920652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731991AbeIMTMQ (ORCPT
+        id S1731998AbeIMTMV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:12:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35256 "EHLO
+        Thu, 13 Sep 2018 15:12:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35268 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731126AbeIMTMQ (ORCPT
+        with ESMTP id S1731408AbeIMTMU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:12:16 -0400
+        Thu, 13 Sep 2018 15:12:20 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8DAACD30;
-        Thu, 13 Sep 2018 14:02:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B8320D32;
+        Thu, 13 Sep 2018 14:02:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Evan Quan <evan.quan@amd.com>,
+        stable@vger.kernel.org, Paul Menzel <pmenzel@molgen.mpg.de>,
         Alex Deucher <alexander.deucher@amd.com>,
-        Rex Zhu <Rex.Zhu@amd.com>
-Subject: [PATCH 4.18 157/197] drm/amdgpu: fix a reversed condition
-Date:   Thu, 13 Sep 2018 15:31:46 +0200
-Message-Id: <20180913131847.840637555@linuxfoundation.org>
+        Junwei Zhang <Jerry.Zhang@amd.com>,
+        =?UTF-8?q?Michel=20D=C3=A4nzer?= <michel.daenzer@amd.com>
+Subject: [PATCH 4.18 158/197] drm/amdgpu: Fix RLC safe mode test in gfx_v9_0_enter_rlc_safe_mode
+Date:   Thu, 13 Sep 2018 15:31:47 +0200
+Message-Id: <20180913131847.877779550@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -52,34 +53,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Rex Zhu <rex.zhu@amd.com>
+From: Michel Dänzer <michel.daenzer@amd.com>
 
-commit ccf9ef0b0d10434dec5046bcfc4e834a7b1830fd upstream.
+commit 226127a67e31a9518d9516d3e4890759b379d874 upstream.
 
-This test was reversed so it would end up leading to vddnb value
-can't be read via hwmon on APU.
+We were testing the register offset, instead of the value stored in the
+register, therefore always timing out the loop.
 
-Reviewed-by: Evan Quan <evan.quan@amd.com>
-Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Rex Zhu <Rex.Zhu@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+This reduces suspend time of the system in the bug report below by ~600
+ms.
+
 Cc: stable@vger.kernel.org
+Bugzilla: https://bugs.freedesktop.org/107277
+Tested-by: Paul Menzel <pmenzel@molgen.mpg.de>
+Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+Reviewed-by: Junwei Zhang <Jerry.Zhang@amd.com>
+Signed-off-by: Michel Dänzer <michel.daenzer@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c |    2 +-
+ drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c
-@@ -1157,7 +1157,7 @@ static ssize_t amdgpu_hwmon_show_vddnb(s
- 	int r, size = sizeof(vddnb);
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+@@ -3433,7 +3433,7 @@ static void gfx_v9_0_enter_rlc_safe_mode
  
- 	/* only APUs have vddnb */
--	if  (adev->flags & AMD_IS_APU)
-+	if  (!(adev->flags & AMD_IS_APU))
- 		return -EINVAL;
- 
- 	/* Can't get voltage when the card is off */
+ 		/* wait for RLC_SAFE_MODE */
+ 		for (i = 0; i < adev->usec_timeout; i++) {
+-			if (!REG_GET_FIELD(SOC15_REG_OFFSET(GC, 0, mmRLC_SAFE_MODE), RLC_SAFE_MODE, CMD))
++			if (!REG_GET_FIELD(RREG32_SOC15(GC, 0, mmRLC_SAFE_MODE), RLC_SAFE_MODE, CMD))
+ 				break;
+ 			udelay(1);
+ 		}
 
 
