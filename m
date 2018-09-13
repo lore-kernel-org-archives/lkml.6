@@ -2,108 +2,278 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF1BAECDFC1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F18B1ECDFCD
 	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 17:35:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9434D20882
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 15:46:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="yerT4ZOI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9434D20882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	by mail.kernel.org (Postfix) with ESMTP id 970C42177A
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 17:05:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 970C42177A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728157AbeIMU4L (ORCPT
+        id S1728378AbeIMWQC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 16:56:11 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:52699 "EHLO frisell.zx2c4.com"
+        Thu, 13 Sep 2018 18:16:02 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42686 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726819AbeIMU4K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 16:56:10 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id f0c530a2;
-        Thu, 13 Sep 2018 15:29:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=RdZUR/tpm7SsDg97avDsa3jlRlc=; b=yerT4Z
-        OIDq4Wez5inXEbSALNOoYljD6YskWi/V0asl2jocOOhfn8X89tfetxNV6wbmvMsT
-        rEANuQtlJPB+XEXr4lCdYcWABToisb1+0nTp9qwp6tLrh4zncctZpMDpQ43yTYXS
-        VqGxnoA6Smbp6hTAJvQRP6rXai0nlWmniXjQfVaYyuq3bPWlYKkl0T85WxmapO4O
-        UDIJtONMxsi/O/z4smaMVw+uzCueatmFkwlELMWjFOZ7pw0Zg7alYV3b6snEj2G6
-        Bkjy0zjWbQpYvQEHARYOuTGgEo1m6SE/Eq9fWEZ38oSmEgremfTziGC+Zzl7UHfO
-        scEC02Hil1wNXIBA==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id b1d7cf17 (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
-        Thu, 13 Sep 2018 15:29:06 +0000 (UTC)
-Received: by mail-oi0-f46.google.com with SMTP id k12-v6so9864966oiw.8;
-        Thu, 13 Sep 2018 08:46:02 -0700 (PDT)
-X-Gm-Message-State: APzg51BaK2rtJJXcLgVYyqWiD88RFAOxyT6PjSAvu31xJOHrwVt/Iej3
-        Hsk6ez0HWZA+8Tf/xgGGRSE/5m7y5YWpKOufmLc=
-X-Google-Smtp-Source: ANB0Vdbj2OOyj3GDwoqGqoeIhTmxPT3apJaRt0VeNflJuzByTArm9MyfId3MlixLnvYTFZuQNThLzGAwewWCMdnd2ks=
-X-Received: by 2002:aca:dc82:: with SMTP id t124-v6mr6560415oig.189.1536853561789;
- Thu, 13 Sep 2018 08:46:01 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180911010838.8818-1-Jason@zx2c4.com> <20180911010838.8818-3-Jason@zx2c4.com>
- <CAKv+Gu9nSeo4PFVrtjtqGQ32eqyxUp3xVCczZfu+dhFz5yLM0A@mail.gmail.com>
- <CAHmME9rTEFLaYmzFrc719LW2DWS2Ua_vL6by1UXZ9uDvMpbhYw@mail.gmail.com>
- <CAKv+Gu9RGo9rtGsmwMLZ_=-WSQ_h7har4agXP-2XOKupq-KYtA@mail.gmail.com>
- <CAHmME9oYAEwFQAriVRm5zZKCo0Sh1=t5YheNZ+MtKQLQPoMWeg@mail.gmail.com> <CAKv+Gu9VamLBv5Ji5AtvugUrAYQYaotLFZZGA=Rt18JUDEaAMQ@mail.gmail.com>
-In-Reply-To: <CAKv+Gu9VamLBv5Ji5AtvugUrAYQYaotLFZZGA=Rt18JUDEaAMQ@mail.gmail.com>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Thu, 13 Sep 2018 17:45:49 +0200
-X-Gmail-Original-Message-ID: <CAHmME9rfCc-Hp08AzeWT8M19Nivs3DY=DnmEQ9pT-qxf+vKiXw@mail.gmail.com>
-Message-ID: <CAHmME9rfCc-Hp08AzeWT8M19Nivs3DY=DnmEQ9pT-qxf+vKiXw@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 02/17] zinc: introduce minimal cryptography library
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1728342AbeIMWQC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 18:16:02 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 358AB80F9C;
+        Thu, 13 Sep 2018 17:05:40 +0000 (UTC)
+Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D0822608E0;
+        Thu, 13 Sep 2018 17:05:37 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Jim Mattson <jmattson@google.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v5 05/12] KVM: nVMX: implement enlightened VMPTRLD and VMCLEAR
+Date:   Thu, 13 Sep 2018 19:05:15 +0200
+Message-Id: <20180913170522.24876-6-vkuznets@redhat.com>
+In-Reply-To: <20180913170522.24876-1-vkuznets@redhat.com>
+References: <20180913170522.24876-1-vkuznets@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Thu, 13 Sep 2018 17:05:40 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 13, 2018 at 5:04 PM Ard Biesheuvel
-<ard.biesheuvel@linaro.org> wrote:
-> > The code still benefits from the review that's gone into OpenSSL. It's
-> > not modified in ways that would affect the cryptographic operations
-> > being done. It's modified to be suitable for kernel space.
->
-> So could we please at least have those changes as a separate patch then?
+Per Hyper-V TLFS 5.0b:
 
-I'll experiment with a couple ways of trying to communicate with
-precision what's been changed from OpenSSL for the next round of
-patches.
+"The L1 hypervisor may choose to use enlightened VMCSs by writing 1 to
+the corresponding field in the VP assist page (see section 7.8.7).
+Another field in the VP assist page controls the currently active
+enlightened VMCS. Each enlightened VMCS is exactly one page (4 KB) in
+size and must be initially zeroed. No VMPTRLD instruction must be
+executed to make an enlightened VMCS active or current.
 
-> > That's interesting. I'll bring this up with AndyP. FWIW, if you think
-> > you have a real and compelling claim here, I'd be much more likely to
-> > accept a different ChaCha20 implementation than I would be to accept a
-> > different Poly1305 implementation. (It's a *lot* harder to screw up
-> > ChaCha20 than it is to screw up Poly1305.)
->
-> The question is really whether we want different implementations in
-> the crypto API and in zinc.
+After the L1 hypervisor performs a VM entry with an enlightened VMCS,
+the VMCS is considered active on the processor. An enlightened VMCS
+can only be active on a single processor at the same time. The L1
+hypervisor can execute a VMCLEAR instruction to transition an
+enlightened VMCS from the active to the non-active state. Any VMREAD
+or VMWRITE instructions while an enlightened VMCS is active is
+unsupported and can result in unexpected behavior."
 
-Per earlier in this discussion, I've already authored patches that
-replaces the crypto API's implementations with simple calls to Zinc,
-so that code isn't duplicated. These will be in v4 and you can comment
-on the approach then.
+Keep Enlightened VMCS structure for the current L2 guest permanently mapped
+from struct nested_vmx instead of mapping it every time.
 
-> You are completely missing my point. I am not particularly invested in
-> the crypto API, and I share the concerns about its usability. That is
-> why I want to make sure that your solution actually results in a net
-> improvement for everybody, not just for WireGuard, in a maintainable
-> way.
+Suggested-by: Ladi Prosek <lprosek@redhat.com>
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+---
+ arch/x86/kvm/vmx.c | 113 +++++++++++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 106 insertions(+), 7 deletions(-)
 
-Right, likewise. I've put quite a bit of effort into separating Zinc
-into Zinc and not into something part of WireGuard. The motivation for
-doing so is a decent amount of call sites all around the kernel that
-I'd like to gradually fix up.
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index cb0e18d3a111..993f48154087 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -20,6 +20,7 @@
+ #include "mmu.h"
+ #include "cpuid.h"
+ #include "lapic.h"
++#include "hyperv.h"
+ 
+ #include <linux/kvm_host.h>
+ #include <linux/module.h>
+@@ -877,6 +878,8 @@ struct nested_vmx {
+ 		bool guest_mode;
+ 	} smm;
+ 
++	gpa_t hv_evmcs_vmptr;
++	struct page *hv_evmcs_page;
+ 	struct hv_enlightened_vmcs *hv_evmcs;
+ };
+ 
+@@ -8099,7 +8102,9 @@ static void nested_vmx_failInvalid(struct kvm_vcpu *vcpu)
+ static void nested_vmx_failValid(struct kvm_vcpu *vcpu,
+ 					u32 vm_instruction_error)
+ {
+-	if (to_vmx(vcpu)->nested.current_vmptr == -1ull) {
++	struct vcpu_vmx *vmx = to_vmx(vcpu);
++
++	if (vmx->nested.current_vmptr == -1ull && !vmx->nested.hv_evmcs) {
+ 		/*
+ 		 * failValid writes the error number to the current VMCS, which
+ 		 * can't be done there isn't a current VMCS.
+@@ -8434,6 +8439,18 @@ static void vmx_disable_shadow_vmcs(struct vcpu_vmx *vmx)
+ 	vmcs_write64(VMCS_LINK_POINTER, -1ull);
+ }
+ 
++static inline void nested_release_evmcs(struct vcpu_vmx *vmx)
++{
++	if (!vmx->nested.hv_evmcs)
++		return;
++
++	kunmap(vmx->nested.hv_evmcs_page);
++	kvm_release_page_dirty(vmx->nested.hv_evmcs_page);
++	vmx->nested.hv_evmcs_vmptr = -1ull;
++	vmx->nested.hv_evmcs_page = NULL;
++	vmx->nested.hv_evmcs = NULL;
++}
++
+ static inline void nested_release_vmcs12(struct vcpu_vmx *vmx)
+ {
+ 	if (vmx->nested.current_vmptr == -1ull)
+@@ -8494,6 +8511,8 @@ static void free_nested(struct vcpu_vmx *vmx)
+ 		vmx->nested.pi_desc = NULL;
+ 	}
+ 
++	nested_release_evmcs(vmx);
++
+ 	free_loaded_vmcs(&vmx->nested.vmcs02);
+ }
+ 
+@@ -8530,12 +8549,18 @@ static int handle_vmclear(struct kvm_vcpu *vcpu)
+ 		return kvm_skip_emulated_instruction(vcpu);
+ 	}
+ 
+-	if (vmptr == vmx->nested.current_vmptr)
+-		nested_release_vmcs12(vmx);
++	if (vmx->nested.hv_evmcs_page) {
++		if (vmptr == vmx->nested.hv_evmcs_vmptr)
++			nested_release_evmcs(vmx);
++	} else {
++		if (vmptr == vmx->nested.current_vmptr)
++			nested_release_vmcs12(vmx);
+ 
+-	kvm_vcpu_write_guest(vcpu,
+-			vmptr + offsetof(struct vmcs12, launch_state),
+-			&zero, sizeof(zero));
++		kvm_vcpu_write_guest(vcpu,
++				     vmptr + offsetof(struct vmcs12,
++						      launch_state),
++				     &zero, sizeof(zero));
++	}
+ 
+ 	nested_vmx_succeed(vcpu);
+ 	return kvm_skip_emulated_instruction(vcpu);
+@@ -8626,6 +8651,8 @@ static int copy_enlightened_to_vmcs12(struct vcpu_vmx *vmx)
+ 	struct vmcs12 *vmcs12 = vmx->nested.cached_vmcs12;
+ 	struct hv_enlightened_vmcs *evmcs = vmx->nested.hv_evmcs;
+ 
++	vmcs12->hdr.revision_id = evmcs->revision_id;
++
+ 	/* HV_VMX_ENLIGHTENED_CLEAN_FIELD_NONE */
+ 	vmcs12->tpr_threshold = evmcs->tpr_threshold;
+ 	vmcs12->guest_rip = evmcs->guest_rip;
+@@ -9283,6 +9310,10 @@ static int handle_vmptrld(struct kvm_vcpu *vcpu)
+ 		return kvm_skip_emulated_instruction(vcpu);
+ 	}
+ 
++	/* Forbid normal VMPTRLD if Enlightened version was used */
++	if (vmx->nested.hv_evmcs)
++		return 1;
++
+ 	if (vmx->nested.current_vmptr != vmptr) {
+ 		struct vmcs12 *new_vmcs12;
+ 		struct page *page;
+@@ -9318,6 +9349,68 @@ static int handle_vmptrld(struct kvm_vcpu *vcpu)
+ 	return kvm_skip_emulated_instruction(vcpu);
+ }
+ 
++/*
++ * This is an equivalent of the nested hypervisor executing the vmptrld
++ * instruction.
++ */
++static int nested_vmx_handle_enlightened_vmptrld(struct kvm_vcpu *vcpu)
++{
++	struct vcpu_vmx *vmx = to_vmx(vcpu);
++	struct hv_vp_assist_page assist_page;
++
++	if (likely(!vmx->nested.enlightened_vmcs_enabled))
++		return 1;
++
++	if (unlikely(!kvm_hv_get_assist_page(vcpu, &assist_page)))
++		return 1;
++
++	if (unlikely(!assist_page.enlighten_vmentry))
++		return 1;
++
++	if (unlikely(assist_page.current_nested_vmcs !=
++		     vmx->nested.hv_evmcs_vmptr)) {
++
++		if (!vmx->nested.hv_evmcs)
++			vmx->nested.current_vmptr = -1ull;
++
++		nested_release_evmcs(vmx);
++
++		vmx->nested.hv_evmcs_page = kvm_vcpu_gpa_to_page(
++			vcpu, assist_page.current_nested_vmcs);
++
++		if (unlikely(is_error_page(vmx->nested.hv_evmcs_page)))
++			return 0;
++
++		vmx->nested.hv_evmcs = kmap(vmx->nested.hv_evmcs_page);
++
++		if (vmx->nested.hv_evmcs->revision_id != VMCS12_REVISION) {
++			nested_release_evmcs(vmx);
++			return 0;
++		}
++
++		vmx->nested.dirty_vmcs12 = true;
++		/*
++		 * As we keep L2 state for one guest only 'hv_clean_fields' mask
++		 * can't be used when we switch between them. Reset it here for
++		 * simplicity.
++		 */
++		vmx->nested.hv_evmcs->hv_clean_fields &=
++			~HV_VMX_ENLIGHTENED_CLEAN_FIELD_ALL;
++		vmx->nested.hv_evmcs_vmptr = assist_page.current_nested_vmcs;
++
++		/*
++		 * Unlike normal vmcs12, enlightened vmcs12 is not fully
++		 * reloaded from guest's memory (read only fields, fields not
++		 * present in struct hv_enlightened_vmcs, ...). Make sure there
++		 * are no leftovers.
++		 */
++		memset(vmx->nested.cached_vmcs12, 0,
++		       sizeof(*vmx->nested.cached_vmcs12));
++
++	}
++	return 1;
++}
++
+ /* Emulate the VMPTRST instruction */
+ static int handle_vmptrst(struct kvm_vcpu *vcpu)
+ {
+@@ -9330,6 +9423,9 @@ static int handle_vmptrst(struct kvm_vcpu *vcpu)
+ 	if (!nested_vmx_check_permission(vcpu))
+ 		return 1;
+ 
++	if (unlikely(to_vmx(vcpu)->nested.hv_evmcs))
++		return 1;
++
+ 	if (get_vmx_mem_address(vcpu, exit_qual, instr_info, true, &gva))
+ 		return 1;
+ 	/* *_system ok, nested_vmx_check_permission has verified cpl=0 */
+@@ -13044,7 +13140,10 @@ static int nested_vmx_run(struct kvm_vcpu *vcpu, bool launch)
+ 	if (!nested_vmx_check_permission(vcpu))
+ 		return 1;
+ 
+-	if (!nested_vmx_check_vmcs12(vcpu))
++	if (!nested_vmx_handle_enlightened_vmptrld(vcpu))
++		return 1;
++
++	if (!vmx->nested.hv_evmcs && !nested_vmx_check_vmcs12(vcpu))
+ 		goto out;
+ 
+ 	vmcs12 = get_vmcs12(vcpu);
+-- 
+2.14.4
+
