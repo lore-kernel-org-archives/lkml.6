@@ -6,88 +6,65 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25ED3C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:32:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53266C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:33:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC27C20854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:32:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC27C20854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 18E0620854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:33:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18E0620854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728499AbeIMSmV (ORCPT
+        id S1728470AbeIMSmS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:42:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58636 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727150AbeIMSmU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:42:20 -0400
-Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 45355CF3;
-        Thu, 13 Sep 2018 13:32:51 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Kodanev <alexey.kodanev@oracle.com>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 06/60] vti6: remove !skb->ignore_df check from vti6_xmit()
-Date:   Thu, 13 Sep 2018 15:30:13 +0200
-Message-Id: <20180913131745.580366897@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20180913131745.261413581@linuxfoundation.org>
-References: <20180913131745.261413581@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Thu, 13 Sep 2018 14:42:18 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:11700 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727002AbeIMSmQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 14:42:16 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 0DA787228C93F;
+        Thu, 13 Sep 2018 21:32:41 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.399.0; Thu, 13 Sep 2018
+ 21:32:35 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH net-next] vxlan: Remove duplicated include from vxlan.h
+Date:   Thu, 13 Sep 2018 21:32:23 +0800
+Message-ID: <20180913133223.14984-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+Remove duplicated include.
 
-------------------
-
-From: Alexey Kodanev <alexey.kodanev@oracle.com>
-
-[ Upstream commit 9f2895461439fda2801a7906fb4c5fb3dbb37a0a ]
-
-Before the commit d6990976af7c ("vti6: fix PMTU caching and reporting
-on xmit") '!skb->ignore_df' check was always true because the function
-skb_scrub_packet() was called before it, resetting ignore_df to zero.
-
-In the commit, skb_scrub_packet() was moved below, and now this check
-can be false for the packet, e.g. when sending it in the two fragments,
-this prevents successful PMTU updates in such case. The next attempts
-to send the packet lead to the same tx error. Moreover, vti6 initial
-MTU value relies on PMTU adjustments.
-
-This issue can be reproduced with the following LTP test script:
-    udp_ipsec_vti.sh -6 -p ah -m tunnel -s 2000
-
-Fixes: ccd740cbc6e0 ("vti6: Add pmtu handling to vti6_xmit.")
-Signed-off-by: Alexey Kodanev <alexey.kodanev@oracle.com>
-Acked-by: Steffen Klassert <steffen.klassert@secunet.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- net/ipv6/ip6_vti.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/net/vxlan.h | 1 -
+ 1 file changed, 1 deletion(-)
 
---- a/net/ipv6/ip6_vti.c
-+++ b/net/ipv6/ip6_vti.c
-@@ -470,7 +470,7 @@ vti6_xmit(struct sk_buff *skb, struct ne
- 	}
+diff --git a/include/net/vxlan.h b/include/net/vxlan.h
+index b99a02ae..7ef1517 100644
+--- a/include/net/vxlan.h
++++ b/include/net/vxlan.h
+@@ -5,7 +5,6 @@
+ #include <linux/if_vlan.h>
+ #include <net/udp_tunnel.h>
+ #include <net/dst_metadata.h>
+-#include <net/udp_tunnel.h>
  
- 	mtu = dst_mtu(dst);
--	if (!skb->ignore_df && skb->len > mtu) {
-+	if (skb->len > mtu) {
- 		skb_dst(skb)->ops->update_pmtu(dst, NULL, skb, mtu);
- 
- 		if (skb->protocol == htons(ETH_P_IPV6)) {
+ /* VXLAN protocol (RFC 7348) header:
+  * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+-- 
+2.7.0
 
 
