@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86453C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 02:44:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7EFDC070C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 02:44:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 235222146E
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 02:44:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 235222146E
+	by mail.kernel.org (Postfix) with ESMTP id 7DBEE2146E
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 02:44:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DBEE2146E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728150AbeIMHuu (ORCPT
+        id S1727847AbeIMHsQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 03:50:50 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:43736 "EHLO
+        Thu, 13 Sep 2018 03:48:16 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:43698 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727756AbeIMHsQ (ORCPT
+        with ESMTP id S1727728AbeIMHsQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 13 Sep 2018 03:48:16 -0400
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1g0HYr-0006SF-GV; Thu, 13 Sep 2018 02:40:53 +0000
+        id 1g0HYq-0006RS-G8; Thu, 13 Sep 2018 02:40:52 +0000
 From:   Al Viro <viro@ZenIV.linux.org.uk>
 To:     Arnd Bergmann <arnd@arndb.de>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 32/50] whiteheat: switch to ->get_serial()
-Date:   Thu, 13 Sep 2018 03:40:31 +0100
-Message-Id: <20180913024049.24567-32-viro@ZenIV.linux.org.uk>
+Subject: [PATCH 25/50] mos7720: switch to ->get_serial()
+Date:   Thu, 13 Sep 2018 03:40:24 +0100
+Message-Id: <20180913024049.24567-25-viro@ZenIV.linux.org.uk>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20180913024049.24567-1-viro@ZenIV.linux.org.uk>
 References: <20180913023119.GQ19965@ZenIV.linux.org.uk>
@@ -43,84 +43,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-... and fix the return value - on success it used to have ioctl(2)
-fill the user-supplied struct serial_struct and return -ENOTTY.
-
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- drivers/usb/serial/whiteheat.c | 42 +++++++++++++++---------------------------
- 1 file changed, 15 insertions(+), 27 deletions(-)
+ drivers/usb/serial/mos7720.c | 38 ++++++++++++++++----------------------
+ 1 file changed, 16 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/usb/serial/whiteheat.c b/drivers/usb/serial/whiteheat.c
-index 1c7b46a8620c..aefd84f88b59 100644
---- a/drivers/usb/serial/whiteheat.c
-+++ b/drivers/usb/serial/whiteheat.c
-@@ -83,8 +83,8 @@ static int  whiteheat_port_remove(struct usb_serial_port *port);
- static int  whiteheat_open(struct tty_struct *tty,
- 			struct usb_serial_port *port);
- static void whiteheat_close(struct usb_serial_port *port);
--static int  whiteheat_ioctl(struct tty_struct *tty,
--			unsigned int cmd, unsigned long arg);
-+static int  whiteheat_get_serial(struct tty_struct *tty,
-+			struct serial_struct *ss);
- static void whiteheat_set_termios(struct tty_struct *tty,
- 			struct usb_serial_port *port, struct ktermios *old);
- static int  whiteheat_tiocmget(struct tty_struct *tty);
-@@ -120,7 +120,7 @@ static struct usb_serial_driver whiteheat_device = {
- 	.port_remove =		whiteheat_port_remove,
- 	.open =			whiteheat_open,
- 	.close =		whiteheat_close,
--	.ioctl =		whiteheat_ioctl,
-+	.get_serial =		whiteheat_get_serial,
- 	.set_termios =		whiteheat_set_termios,
- 	.break_ctl =		whiteheat_break_ctl,
- 	.tiocmget =		whiteheat_tiocmget,
-@@ -442,33 +442,21 @@ static int whiteheat_tiocmset(struct tty_struct *tty,
+diff --git a/drivers/usb/serial/mos7720.c b/drivers/usb/serial/mos7720.c
+index 4c06357b3ef8..451fca707e04 100644
+--- a/drivers/usb/serial/mos7720.c
++++ b/drivers/usb/serial/mos7720.c
+@@ -1786,24 +1786,22 @@ static int mos7720_tiocmset(struct tty_struct *tty,
+ 	return 0;
  }
  
- 
--static int whiteheat_ioctl(struct tty_struct *tty,
--					unsigned int cmd, unsigned long arg)
-+static int whiteheat_get_serial(struct tty_struct *tty,
-+				struct serial_struct *ss)
+-static int get_serial_info(struct moschip_port *mos7720_port,
+-			   struct serial_struct __user *retinfo)
++static int get_serial_info(struct tty_struct *tty,
++			   struct serial_struct *ss)
  {
- 	struct usb_serial_port *port = tty->driver_data;
--	struct serial_struct serstruct;
--	void __user *user_arg = (void __user *)arg;
+-	struct serial_struct tmp;
 -
--	switch (cmd) {
--	case TIOCGSERIAL:
--		memset(&serstruct, 0, sizeof(serstruct));
--		serstruct.type = PORT_16654;
--		serstruct.line = port->minor;
--		serstruct.port = port->port_number;
--		serstruct.xmit_fifo_size = kfifo_size(&port->write_fifo);
--		serstruct.custom_divisor = 0;
--		serstruct.baud_base = 460800;
--		serstruct.close_delay = CLOSING_DELAY;
--		serstruct.closing_wait = CLOSING_DELAY;
+-	memset(&tmp, 0, sizeof(tmp));
 -
--		if (copy_to_user(user_arg, &serstruct, sizeof(serstruct)))
--			return -EFAULT;
--		break;
--	default:
--		break;
--	}
- 
--	return -ENOIOCTLCMD;
-+	ss->type = PORT_16654;
-+	ss->line = port->minor;
-+	ss->port = port->port_number;
-+	ss->xmit_fifo_size = kfifo_size(&port->write_fifo);
-+	ss->custom_divisor = 0;
-+	ss->baud_base = 460800;
-+	ss->close_delay = CLOSING_DELAY;
-+	ss->closing_wait = CLOSING_DELAY;
-+
-+	return 0;
+-	tmp.type		= PORT_16550A;
+-	tmp.line		= mos7720_port->port->minor;
+-	tmp.port		= mos7720_port->port->port_number;
+-	tmp.irq			= 0;
+-	tmp.xmit_fifo_size	= NUM_URBS * URB_TRANSFER_BUFFER_SIZE;
+-	tmp.baud_base		= 9600;
+-	tmp.close_delay		= 5*HZ;
+-	tmp.closing_wait	= 30*HZ;
+-
+-	if (copy_to_user(retinfo, &tmp, sizeof(*retinfo)))
+-		return -EFAULT;
++	struct usb_serial_port *port = tty->driver_data;
++	struct moschip_port *mos7720_port;
++	mos7720_port = usb_get_serial_port_data(port);
++	if (mos7720_port == NULL)
++		return -ENODEV;
++	ss->type		= PORT_16550A;
++	ss->line		= mos7720_port->port->minor;
++	ss->port		= mos7720_port->port->port_number;
++	ss->irq			= 0;
++	ss->xmit_fifo_size	= NUM_URBS * URB_TRANSFER_BUFFER_SIZE;
++	ss->baud_base		= 9600;
++	ss->close_delay		= 5*HZ;
++	ss->closing_wait	= 30*HZ;
+ 	return 0;
  }
  
+@@ -1822,11 +1820,6 @@ static int mos7720_ioctl(struct tty_struct *tty,
+ 		dev_dbg(&port->dev, "%s TIOCSERGETLSR\n", __func__);
+ 		return get_lsr_info(tty, mos7720_port,
+ 					(unsigned int __user *)arg);
+-
+-	case TIOCGSERIAL:
+-		dev_dbg(&port->dev, "%s TIOCGSERIAL\n", __func__);
+-		return get_serial_info(mos7720_port,
+-				       (struct serial_struct __user *)arg);
+ 	}
  
+ 	return -ENOIOCTLCMD;
+@@ -1963,6 +1956,7 @@ static struct usb_serial_driver moschip7720_2port_driver = {
+ 	.ioctl			= mos7720_ioctl,
+ 	.tiocmget		= mos7720_tiocmget,
+ 	.tiocmset		= mos7720_tiocmset,
++	.get_serial		= get_serial_info,
+ 	.set_termios		= mos7720_set_termios,
+ 	.write			= mos7720_write,
+ 	.write_room		= mos7720_write_room,
 -- 
 2.11.0
 
