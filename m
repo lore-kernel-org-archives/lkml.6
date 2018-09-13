@@ -3,38 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43541C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:38:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E53D2C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:38:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01E6C20854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:38:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01E6C20854
+	by mail.kernel.org (Postfix) with ESMTP id A92F420854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:38:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A92F420854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729481AbeIMSr4 (ORCPT
+        id S1729161AbeIMSsG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:47:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59702 "EHLO
+        Thu, 13 Sep 2018 14:48:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59712 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727658AbeIMSrz (ORCPT
+        with ESMTP id S1727623AbeIMSsF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:47:55 -0400
+        Thu, 13 Sep 2018 14:48:05 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9ED8ACF3;
-        Thu, 13 Sep 2018 13:38:24 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D9044CF3;
+        Thu, 13 Sep 2018 13:38:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>,
-        Olof Johansson <olof@lixom.net>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 57/78] ARM: rockchip: Force CONFIG_PM on Rockchip systems
-Date:   Thu, 13 Sep 2018 15:31:44 +0200
-Message-Id: <20180913131811.447297853@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: [PATCH 4.9 58/78] drm/edid: Add 6 bpc quirk for SDC panel in Lenovo B50-80
+Date:   Thu, 13 Sep 2018 15:31:45 +0200
+Message-Id: <20180913131811.550721459@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131805.732342940@linuxfoundation.org>
 References: <20180913131805.732342940@linuxfoundation.org>
@@ -52,35 +52,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-[ Upstream commit d1558dfd9f22c99a5b8e1354ad881ee40749da89 ]
+commit 25da75043f8690fd083878447c91f289dfb63b87 upstream.
 
-A number of the Rockchip-specific drivers (IOMMU, display controllers)
-are now assuming that CONFIG_PM is set, and may completely misbehave
-if that's not the case.
+Another panel that reports "DFP 1.x compliant TMDS" but it supports 6bpc
+instead of 8 bpc.
 
-Since there is hardly any reason for this configuration option not
-to be selected anyway, let's require it (in the same way Tegra already
-does).
+Apply 6 bpc quirk for the panel to fix it.
 
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Olof Johansson <olof@lixom.net>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+BugLink: https://bugs.launchpad.net/bugs/1788308
+Cc: <stable@vger.kernel.org> # v4.8+
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180823055332.7723-1-kai.heng.feng@canonical.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm/mach-rockchip/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
 
---- a/arch/arm/mach-rockchip/Kconfig
-+++ b/arch/arm/mach-rockchip/Kconfig
-@@ -16,6 +16,7 @@ config ARCH_ROCKCHIP
- 	select ROCKCHIP_TIMER
- 	select ARM_GLOBAL_TIMER
- 	select CLKSRC_ARM_GLOBAL_TIMER_SCHED_CLOCK
-+	select PM
- 	help
- 	  Support for Rockchip's Cortex-A9 Single-to-Quad-Core-SoCs
- 	  containing the RK2928, RK30xx and RK31xx series.
+---
+ drivers/gpu/drm/drm_edid.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+--- a/drivers/gpu/drm/drm_edid.c
++++ b/drivers/gpu/drm/drm_edid.c
+@@ -110,6 +110,9 @@ static const struct edid_quirk {
+ 	/* CPT panel of Asus UX303LA reports 8 bpc, but is a 6 bpc panel */
+ 	{ "CPT", 0x17df, EDID_QUIRK_FORCE_6BPC },
+ 
++	/* SDC panel of Lenovo B50-80 reports 8 bpc, but is a 6 bpc panel */
++	{ "SDC", 0x3652, EDID_QUIRK_FORCE_6BPC },
++
+ 	/* Belinea 10 15 55 */
+ 	{ "MAX", 1516, EDID_QUIRK_PREFER_LARGE_60 },
+ 	{ "MAX", 0x77e, EDID_QUIRK_PREFER_LARGE_60 },
 
 
