@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01F36C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:02:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 789C0C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:02:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B279220652
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:02:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B279220652
+	by mail.kernel.org (Postfix) with ESMTP id 359C320652
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:02:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 359C320652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731967AbeIMTMF (ORCPT
+        id S1731970AbeIMTMJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:12:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35222 "EHLO
+        Thu, 13 Sep 2018 15:12:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35234 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731249AbeIMTME (ORCPT
+        with ESMTP id S1731008AbeIMTMI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:12:04 -0400
+        Thu, 13 Sep 2018 15:12:08 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6F8D8D2E;
-        Thu, 13 Sep 2018 14:02:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CA723D2F;
+        Thu, 13 Sep 2018 14:02:29 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 118/197] RDS: IB: fix passing zero to ERR_PTR() warning
-Date:   Thu, 13 Sep 2018 15:31:07 +0200
-Message-Id: <20180913131846.270683851@linuxfoundation.org>
+Subject: [PATCH 4.18 109/197] Input: do not use WARN() in input_alloc_absinfo()
+Date:   Thu, 13 Sep 2018 15:30:58 +0200
+Message-Id: <20180913131845.908607038@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -53,34 +52,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-[ Upstream commit 5941923da29e84bc9e2a1abb2c14fffaf8d71e2f ]
+[ Upstream commit 100294cee9a98bfd4d6cb2d1c8a8aef0e959b0c4 ]
 
-Fix a static code checker warning:
- net/rds/ib_frmr.c:82 rds_ib_alloc_frmr() warn: passing zero to 'ERR_PTR'
+Some of fuzzers set panic_on_warn=1 so that they can handle WARN()ings
+the same way they handle full-blown kernel crashes. We used WARN() in
+input_alloc_absinfo() to get a better idea where memory allocation
+failed, but since then kmalloc() and friends started dumping call stack on
+memory allocation failures anyway, so we are not getting anything extra
+from WARN().
 
-The error path for ib_alloc_mr failure should set err to PTR_ERR.
+Because of the above, let's replace WARN with dev_err(). We use dev_err()
+instead of simply removing message and relying on kcalloc() to give us
+stack dump so that we'd know the instance of hardware device to which we
+were trying to attach input device.
 
-Fixes: 1659185fb4d0 ("RDS: IB: Support Fastreg MR (FRMR) memory registration mode")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: Dmitry Vyukov <dvyukov@google.com>
+Acked-by: Dmitry Vyukov <dvyukov@google.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/rds/ib_frmr.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/input/input.c |   16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
---- a/net/rds/ib_frmr.c
-+++ b/net/rds/ib_frmr.c
-@@ -61,6 +61,7 @@ static struct rds_ib_mr *rds_ib_alloc_fr
- 			 pool->fmr_attr.max_pages);
- 	if (IS_ERR(frmr->mr)) {
- 		pr_warn("RDS/IB: %s failed to allocate MR", __func__);
-+		err = PTR_ERR(frmr->mr);
- 		goto out_no_cigar;
- 	}
+--- a/drivers/input/input.c
++++ b/drivers/input/input.c
+@@ -480,11 +480,19 @@ EXPORT_SYMBOL(input_inject_event);
+  */
+ void input_alloc_absinfo(struct input_dev *dev)
+ {
+-	if (!dev->absinfo)
+-		dev->absinfo = kcalloc(ABS_CNT, sizeof(*dev->absinfo),
+-					GFP_KERNEL);
++	if (dev->absinfo)
++		return;
+ 
+-	WARN(!dev->absinfo, "%s(): kcalloc() failed?\n", __func__);
++	dev->absinfo = kcalloc(ABS_CNT, sizeof(*dev->absinfo), GFP_KERNEL);
++	if (!dev->absinfo) {
++		dev_err(dev->dev.parent ?: &dev->dev,
++			"%s: unable to allocate memory\n", __func__);
++		/*
++		 * We will handle this allocation failure in
++		 * input_register_device() when we refuse to register input
++		 * device with ABS bits but without absinfo.
++		 */
++	}
+ }
+ EXPORT_SYMBOL(input_alloc_absinfo);
  
 
 
