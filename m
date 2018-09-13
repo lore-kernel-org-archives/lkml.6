@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A8B8C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 02:43:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D0DDC07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 02:43:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3A212146E
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 02:43:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3A212146E
+	by mail.kernel.org (Postfix) with ESMTP id 273432146E
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 02:43:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 273432146E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728029AbeIMHsR (ORCPT
+        id S1727992AbeIMHsR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 13 Sep 2018 03:48:17 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:43624 "EHLO
+Received: from zeniv.linux.org.uk ([195.92.253.2]:43644 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727009AbeIMHsO (ORCPT
+        with ESMTP id S1727150AbeIMHsO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 13 Sep 2018 03:48:14 -0400
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1g0HYo-0006Q3-PK; Thu, 13 Sep 2018 02:40:50 +0000
+        id 1g0HYp-0006QZ-CS; Thu, 13 Sep 2018 02:40:51 +0000
 From:   Al Viro <viro@ZenIV.linux.org.uk>
 To:     Arnd Bergmann <arnd@arndb.de>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 13/50] moxa: switch to ->[sg]et_serial()
-Date:   Thu, 13 Sep 2018 03:40:12 +0100
-Message-Id: <20180913024049.24567-13-viro@ZenIV.linux.org.uk>
+Subject: [PATCH 17/50] usb-serial: begin switching to ->[sg]et_serial()
+Date:   Thu, 13 Sep 2018 03:40:16 +0100
+Message-Id: <20180913024049.24567-17-viro@ZenIV.linux.org.uk>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20180913024049.24567-1-viro@ZenIV.linux.org.uk>
 References: <20180913023119.GQ19965@ZenIV.linux.org.uk>
@@ -43,140 +43,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-Pointless dead assignments in moxa_set_serial_info() killed off;
-they would've been a bug, if not for the fact that user-settable
-flags had never been used in that driver.  Bogus from day 1,
-though...
+add such methods for usb_serial_driver, provide tty_operations
+->[sg]et_serial() calling those.  For now the lack of methods
+in driver means ENOIOCTLCMD from usb-serial ->[sg]et_serial(),
+making tty_ioctl() fall back to calling ->ioctl().  Once all
+drivers are converted, we'll be returning -ENOTTY instead,
+completing the switchover.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- drivers/tty/moxa.c | 79 +++++++++++++++++++++++++++---------------------------
- 1 file changed, 40 insertions(+), 39 deletions(-)
+ drivers/usb/serial/usb-serial.c | 18 ++++++++++++++++++
+ include/linux/usb/serial.h      |  2 ++
+ 2 files changed, 20 insertions(+)
 
-diff --git a/drivers/tty/moxa.c b/drivers/tty/moxa.c
-index 250a19f042d7..3a1a5e0ee93f 100644
---- a/drivers/tty/moxa.c
-+++ b/drivers/tty/moxa.c
-@@ -221,8 +221,8 @@ static int MoxaPortRxQueue(struct moxa_port *);
- static int MoxaPortTxFree(struct moxa_port *);
- static void MoxaPortTxDisable(struct moxa_port *);
- static void MoxaPortTxEnable(struct moxa_port *);
--static int moxa_get_serial_info(struct moxa_port *, struct serial_struct __user *);
--static int moxa_set_serial_info(struct moxa_port *, struct serial_struct __user *);
-+static int moxa_get_serial_info(struct tty_struct *, struct serial_struct *);
-+static int moxa_set_serial_info(struct tty_struct *, struct serial_struct *);
- static void MoxaSetFifo(struct moxa_port *port, int enable);
- 
- /*
-@@ -375,16 +375,6 @@ static int moxa_ioctl(struct tty_struct *tty,
- 		}
- 		break;
- 	}
--	case TIOCGSERIAL:
--	        mutex_lock(&ch->port.mutex);
--		ret = moxa_get_serial_info(ch, argp);
--		mutex_unlock(&ch->port.mutex);
--		break;
--	case TIOCSSERIAL:
--	        mutex_lock(&ch->port.mutex);
--		ret = moxa_set_serial_info(ch, argp);
--		mutex_unlock(&ch->port.mutex);
--		break;
- 	default:
- 		ret = -ENOIOCTLCMD;
- 	}
-@@ -415,6 +405,8 @@ static const struct tty_operations moxa_ops = {
- 	.break_ctl = moxa_break_ctl,
- 	.tiocmget = moxa_tiocmget,
- 	.tiocmset = moxa_tiocmset,
-+	.set_serial = moxa_set_serial_info,
-+	.get_serial = moxa_get_serial_info,
- };
- 
- static const struct tty_port_operations moxa_port_ops = {
-@@ -2034,46 +2026,55 @@ static void MoxaPortTxEnable(struct moxa_port *port)
- 	moxafunc(port->tableAddr, FC_SetXonState, Magic_code);
+diff --git a/drivers/usb/serial/usb-serial.c b/drivers/usb/serial/usb-serial.c
+index f7aaa7f079e1..8bdc48fa5a67 100644
+--- a/drivers/usb/serial/usb-serial.c
++++ b/drivers/usb/serial/usb-serial.c
+@@ -396,6 +396,22 @@ static void serial_unthrottle(struct tty_struct *tty)
+ 		port->serial->type->unthrottle(tty);
  }
  
--static int moxa_get_serial_info(struct moxa_port *info,
--		struct serial_struct __user *retinfo)
-+static int moxa_get_serial_info(struct tty_struct *tty,
-+		struct serial_struct *ss)
- {
--	struct serial_struct tmp = {
--		.type = info->type,
--		.line = info->port.tty->index,
--		.flags = info->port.flags,
--		.baud_base = 921600,
--		.close_delay = info->port.close_delay
--	};
--	return copy_to_user(retinfo, &tmp, sizeof(*retinfo)) ? -EFAULT : 0;
-+	struct moxa_port *info = tty->driver_data;
++static int serial_get_serial(struct tty_struct *tty, struct serial_struct *ss)
++{
++	struct usb_serial_port *port = tty->driver_data;
++	if (port->serial->type->get_serial)
++		return port->serial->type->get_serial(tty, ss);
++	return -ENOIOCTLCMD;
++}
 +
-+	if (tty->index == MAX_PORTS)
-+		return -EINVAL;
-+	if (!info)
-+		return -ENODEV;
-+	mutex_lock(&info->port.mutex);
-+	ss->type = info->type,
-+	ss->line = info->port.tty->index,
-+	ss->flags = info->port.flags,
-+	ss->baud_base = 921600,
-+	ss->close_delay = info->port.close_delay;
-+	mutex_unlock(&info->port.mutex);
-+	return 0;
- }
- 
- 
--static int moxa_set_serial_info(struct moxa_port *info,
--		struct serial_struct __user *new_info)
-+static int moxa_set_serial_info(struct tty_struct *tty,
-+		struct serial_struct *ss)
++static int serial_set_serial(struct tty_struct *tty, struct serial_struct *ss)
++{
++	struct usb_serial_port *port = tty->driver_data;
++	if (port->serial->type->set_serial)
++		return port->serial->type->get_serial(tty, ss);
++	return -ENOIOCTLCMD;
++}
++
+ static int serial_ioctl(struct tty_struct *tty,
+ 					unsigned int cmd, unsigned long arg)
  {
--	struct serial_struct new_serial;
-+	struct moxa_port *info = tty->driver_data;
- 
--	if (copy_from_user(&new_serial, new_info, sizeof(new_serial)))
--		return -EFAULT;
-+	if (tty->index == MAX_PORTS)
-+		return -EINVAL;
-+	if (!info)
-+		return -ENODEV;
- 
--	if (new_serial.irq != 0 || new_serial.port != 0 ||
--			new_serial.custom_divisor != 0 ||
--			new_serial.baud_base != 921600)
-+	if (ss->irq != 0 || ss->port != 0 ||
-+			ss->custom_divisor != 0 ||
-+			ss->baud_base != 921600)
- 		return -EPERM;
- 
-+	mutex_lock(&info->port.mutex);
- 	if (!capable(CAP_SYS_ADMIN)) {
--		if (((new_serial.flags & ~ASYNC_USR_MASK) !=
--		     (info->port.flags & ~ASYNC_USR_MASK)))
-+		if (((ss->flags & ~ASYNC_USR_MASK) !=
-+		     (info->port.flags & ~ASYNC_USR_MASK))) {
-+			mutex_unlock(&info->port.mutex);
- 			return -EPERM;
--	} else
--		info->port.close_delay = new_serial.close_delay * HZ / 100;
--
--	new_serial.flags = (new_serial.flags & ~ASYNC_FLAGS);
--	new_serial.flags |= (info->port.flags & ASYNC_FLAGS);
-+		}
-+	}
-+	info->port.close_delay = ss->close_delay * HZ / 100;
- 
--	MoxaSetFifo(info, new_serial.type == PORT_16550A);
-+	MoxaSetFifo(info, ss->type == PORT_16550A);
- 
--	info->type = new_serial.type;
-+	info->type = ss->type;
-+	mutex_unlock(&info->port.mutex);
- 	return 0;
- }
- 
+@@ -1177,6 +1193,8 @@ static const struct tty_operations serial_ops = {
+ 	.tiocmget =		serial_tiocmget,
+ 	.tiocmset =		serial_tiocmset,
+ 	.get_icount =		serial_get_icount,
++	.set_serial =		serial_set_serial,
++	.get_serial =		serial_get_serial,
+ 	.cleanup =		serial_cleanup,
+ 	.install =		serial_install,
+ 	.proc_show =		serial_proc_show,
+diff --git a/include/linux/usb/serial.h b/include/linux/usb/serial.h
+index 106551a5616e..1c19f77ed541 100644
+--- a/include/linux/usb/serial.h
++++ b/include/linux/usb/serial.h
+@@ -285,6 +285,8 @@ struct usb_serial_driver {
+ 	int  (*write_room)(struct tty_struct *tty);
+ 	int  (*ioctl)(struct tty_struct *tty,
+ 		      unsigned int cmd, unsigned long arg);
++	int  (*get_serial)(struct tty_struct *tty, struct serial_struct *ss);
++	int  (*set_serial)(struct tty_struct *tty, struct serial_struct *ss);
+ 	void (*set_termios)(struct tty_struct *tty,
+ 			struct usb_serial_port *port, struct ktermios *old);
+ 	void (*break_ctl)(struct tty_struct *tty, int break_state);
 -- 
 2.11.0
 
