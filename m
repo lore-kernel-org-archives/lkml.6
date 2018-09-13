@@ -2,112 +2,92 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89E98C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 09:37:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0D0BC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 09:37:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C673206B8
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 09:37:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C673206B8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
+	by mail.kernel.org (Postfix) with ESMTP id 65CE4206B8
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 09:37:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65CE4206B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727383AbeIMOpo (ORCPT
+        id S1727803AbeIMOqg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 10:45:44 -0400
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:56479 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726724AbeIMOpo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 10:45:44 -0400
-X-Originating-IP: 2.224.242.101
-Received: from w540 (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 9E323FF806;
-        Thu, 13 Sep 2018 09:37:01 +0000 (UTC)
-Date:   Thu, 13 Sep 2018 11:37:00 +0200
-From:   jacopo mondi <jacopo@jmondi.org>
-To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc:     linux-kernel@vger.kernel.org, kbingham@kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 1/4] MAINTAINERS: rcar-du: Add co-maintainer
-Message-ID: <20180913093700.GZ28160@w540>
-References: <20180806143904.4716-1-kieran.bingham@ideasonboard.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="pWT/WNRdoJORH3Bm"
-Content-Disposition: inline
-In-Reply-To: <20180806143904.4716-1-kieran.bingham@ideasonboard.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Thu, 13 Sep 2018 10:46:36 -0400
+Received: from mga01.intel.com ([192.55.52.88]:49361 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726751AbeIMOqg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 10:46:36 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Sep 2018 02:37:55 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,368,1531810800"; 
+   d="scan'208";a="90093124"
+Received: from svm-s2600wft.bj.intel.com ([10.240.193.45])
+  by orsmga001.jf.intel.com with ESMTP; 13 Sep 2018 02:37:44 -0700
+From:   Yi Sun <yi.y.sun@linux.intel.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     x86@kernel.org, chao.p.peng@intel.com, chao.gao@intel.com,
+        isaku.yamahata@intel.com, michael.h.kelly@microsoft.com,
+        tianyu.lan@microsoft.com, Yi Sun <yi.y.sun@linux.intel.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Jonathan Corbet <corbet@lwn.net>
+Subject: [PATCH v1 0/3] Enable PV qspinlock for Hyper-V
+Date:   Thu, 13 Sep 2018 17:13:22 +0800
+Message-Id: <1536830005-37260-1-git-send-email-yi.y.sun@linux.intel.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patch adds the necessary Hyper-V specific code to allow
+PV qspinlock work on Hyper-V.
 
---pWT/WNRdoJORH3Bm
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In wait callback function, read HV_X64_MSR_GUEST_IDLE MSR
+to trigger the guest's transition to the idle power state
+which can be exited by an IPI even if IF flag is disabled.
+Beside that, make HVCALL_NOTIFY_LONG_SPIN_WAIT hypervall to
+notify the hypervisor that the calling virtual processor is
+attempting to acquire a resource that is potentially held
+by another virtual processor within the same partition. This
+scheduling hint improves the scalability of partitions with
+more than one virtual processor.
 
-Hi Kieran, Laurent
+In kick callback function, just send platform IPI to make
+waiting vcpu exit idle state.
 
-On Mon, Aug 06, 2018 at 03:39:01PM +0100, Kieran Bingham wrote:
-> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
->
-> Add myself as a co-maintainer for the Renesas DRM drivers.
->
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> ---
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: linux-renesas-soc@vger.kernel.org
->
->  MAINTAINERS | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 7cebd5bba8a8..c7cecb9201b3 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -4764,6 +4764,7 @@ F:	Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
->
->  DRM DRIVERS FOR RENESAS
->  M:	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> +M:	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
->  L:	dri-devel@lists.freedesktop.org
->  L:	linux-renesas-soc@vger.kernel.org
->  T:	git git://linuxtv.org/pinchartl/fbdev
+In vcpu_is_preempted callback function, return false directly
+because Hyper-V does not provide such interface so far.
 
-Am I wrong or this git repository isn't actual anymore for DU?
 
-> --
-> 2.17.1
->
+Cc: "K. Y. Srinivasan" <kys@microsoft.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Cc: Jonathan Corbet <corbet@lwn.net>
 
---pWT/WNRdoJORH3Bm
-Content-Type: application/pgp-signature; name="signature.asc"
+Yi Sun (3):
+  X86/Hyper-V: Add Guest IDLE MSR support
+  locking/pvqspinlock, hv: Enable PV qspinlock for Hyper-V
+  hv: add description for hv_nopvspin
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+ Documentation/admin-guide/kernel-parameters.txt |  5 ++
+ arch/x86/hyperv/Makefile                        |  2 +-
+ arch/x86/hyperv/hv_spinlock.c                   | 99 +++++++++++++++++++++++++
+ arch/x86/include/asm/hyperv-tlfs.h              |  5 ++
+ arch/x86/include/asm/mshyperv.h                 |  3 +
+ arch/x86/kernel/smpboot.c                       |  2 +
+ 6 files changed, 115 insertions(+), 1 deletion(-)
+ create mode 100644 arch/x86/hyperv/hv_spinlock.c
 
-iQIcBAEBAgAGBQJbmi+7AAoJEHI0Bo8WoVY8FO4P/2nYQQeiNOwV5u+Gcsg5qmDW
-SMwiBIOnYKakvPMFd9r53qkFRuLQBBL/LQUuniR9XJkkYKxOakW3XjrzkAAp9Aw7
-u59m0E5AAQ51Mj4b70WITctpJBuR8Pbb3no0If+iSNejg5wnc1O25S3kRipeJUDn
-3ynzUYqw0uFYtYPGPb8/fxDNTfOahVsU4QUh3SGduVzKrwojcaC2MXweabAVN082
-uyq0874XfvItoMEc7u7SK4ON7VFGVHMlREGzv9yPJ0jIF7v/Sl278U9rPey6K3Jw
-Adatg9XvCpp2R+fau8xeAPbS2tLy9qdsDecMjqHarle83W4A7JlI55h3reCxcION
-s6akr5e4bzSe9EUZNr2oZtIfe+sC7TmIAw1psMqp0TMTrDzou9cTFVAf2XLdZ+ts
-C03VNlWL8QOt++fdiaHPmd9odnl2VY/cVsdJhUA9JiokFW+ecxUfrF7fOIxmh0jn
-hXwTeeFl+oaxn3Bfrb7A++d+1f4FrQekfce1UmKBqD2gdIl+DiVTP8J/44JTQ4ae
-BzGITPcr8gAyhwRSSTcyHlj3F2KrorhqqfX7VM5kpQsintDw+VjwKGDk+mzKts9h
-2IaxZOdoudBHHPUe5Mpgl+JVEdW5SqDD2TpSX/jbR2b0dzWK0SaIa5Kxe7RWlrTU
-2Gy0cz9a267LHE7ylH5K
-=oxN4
------END PGP SIGNATURE-----
+-- 
+1.9.1
 
---pWT/WNRdoJORH3Bm--
