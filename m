@@ -3,99 +3,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40AEFC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:58:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D557C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:58:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0523E204FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:58:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0523E204FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id AA98F204FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:58:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA98F204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731604AbeIMTIZ (ORCPT
+        id S1731632AbeIMTI3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:08:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34706 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728566AbeIMTIY (ORCPT
+        Thu, 13 Sep 2018 15:08:29 -0400
+Received: from Chamillionaire.breakpoint.cc ([146.0.238.67]:33598 "EHLO
+        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731265AbeIMTI2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:08:24 -0400
-Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7D7DED19;
-        Thu, 13 Sep 2018 13:58:47 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gal Pressman <pressmangal@gmail.com>,
-        Lijun Ou <oulijun@huawei.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 078/197] RDMA/hns: Fix usage of bitmap allocation functions return values
-Date:   Thu, 13 Sep 2018 15:30:27 +0200
-Message-Id: <20180913131844.647700657@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
-References: <20180913131841.568116777@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Thu, 13 Sep 2018 15:08:28 -0400
+Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.89)
+        (envelope-from <fw@strlen.de>)
+        id 1g0S8q-0006K7-Mm; Thu, 13 Sep 2018 15:58:44 +0200
+Date:   Thu, 13 Sep 2018 15:58:44 +0200
+From:   Florian Westphal <fw@strlen.de>
+To:     Wolfgang Walter <linux@stwm.de>
+Cc:     netdev@vger.kernel.org, Florian Westphal <fw@strlen.de>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        David Miller <davem@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: Regression: kernel 4.14 an later very slow with many ipsec
+ tunnels
+Message-ID: <20180913135844.3ut6fxgx67t6ndtu@breakpoint.cc>
+References: <5781211.jtEvgqSZyO@stwm.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5781211.jtEvgqSZyO@stwm.de>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.18-stable review patch.  If anyone has any objections, please let me know.
+Wolfgang Walter <linux@stwm.de> wrote:
+> thanks to the fix from Steffen Klassert I could now run 4.14.69 + his patch 
+> and 4.18.7 + his patch without oopsing immediately.
+> 
+> But I found that those kernels perform very bad. They perform so bad that they 
+> are unusable for our router with about 3000 ipsec tunnels (tunnel mode network 
+> <-> network).
 
-------------------
+Can you do a 'perf record -a -g sleep 5' with 4.18 and provide 'perf
+report' result?
 
-From: Gal Pressman <pressmangal@gmail.com>
-
-[ Upstream commit a1ceeca679dccc492235f0f629d9e9f7b3d51ca8 ]
-
-hns bitmap allocation functions return 0 on success and -1 on failure.
-Callers of these functions wrongly used their return value as an errno,
-fix that by making a proper conversion.
-
-Fixes: a598c6f4c5a8 ("IB/hns: Simplify function of pd alloc and qp alloc")
-Signed-off-by: Gal Pressman <pressmangal@gmail.com>
-Acked-by: Lijun Ou <oulijun@huawei.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/infiniband/hw/hns/hns_roce_pd.c |    2 +-
- drivers/infiniband/hw/hns/hns_roce_qp.c |    5 ++++-
- 2 files changed, 5 insertions(+), 2 deletions(-)
-
---- a/drivers/infiniband/hw/hns/hns_roce_pd.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_pd.c
-@@ -37,7 +37,7 @@
- 
- static int hns_roce_pd_alloc(struct hns_roce_dev *hr_dev, unsigned long *pdn)
- {
--	return hns_roce_bitmap_alloc(&hr_dev->pd_bitmap, pdn);
-+	return hns_roce_bitmap_alloc(&hr_dev->pd_bitmap, pdn) ? -ENOMEM : 0;
- }
- 
- static void hns_roce_pd_free(struct hns_roce_dev *hr_dev, unsigned long pdn)
---- a/drivers/infiniband/hw/hns/hns_roce_qp.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_qp.c
-@@ -115,7 +115,10 @@ static int hns_roce_reserve_range_qp(str
- {
- 	struct hns_roce_qp_table *qp_table = &hr_dev->qp_table;
- 
--	return hns_roce_bitmap_alloc_range(&qp_table->bitmap, cnt, align, base);
-+	return hns_roce_bitmap_alloc_range(&qp_table->bitmap, cnt, align,
-+					   base) ?
-+		       -ENOMEM :
-+		       0;
- }
- 
- enum hns_roce_qp_state to_hns_roce_state(enum ib_qp_state state)
-
-
+It would be good to see where those cycles are spent.
