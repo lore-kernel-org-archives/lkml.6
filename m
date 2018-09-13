@@ -6,36 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A39AAC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:41:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E836C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:41:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5544C20C0A
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:41:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5544C20C0A
+	by mail.kernel.org (Postfix) with ESMTP id E50F220854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:41:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E50F220854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729661AbeIMSvN (ORCPT
+        id S1729671AbeIMSvR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:51:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60052 "EHLO
+        Thu, 13 Sep 2018 14:51:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60060 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728471AbeIMSvM (ORCPT
+        with ESMTP id S1728471AbeIMSvQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:51:12 -0400
+        Thu, 13 Sep 2018 14:51:16 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D20BFCF3;
-        Thu, 13 Sep 2018 13:41:39 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0F0B6CF3;
+        Thu, 13 Sep 2018 13:41:43 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Dirk van der Merwe <dirk.vandermerwe@netronome.com>,
+        syzbot+fe62a0c9aa6a85c6de16@syzkaller.appspotmail.com,
+        Xin Long <lucien.xin@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 012/115] nfp: wait for posted reconfigs when disabling the device
-Date:   Thu, 13 Sep 2018 15:30:32 +0200
-Message-Id: <20180913131824.220783404@linuxfoundation.org>
+Subject: [PATCH 4.14 013/115] sctp: hold transport before accessing its asoc in sctp_transport_get_next
+Date:   Thu, 13 Sep 2018 15:30:33 +0200
+Message-Id: <20180913131824.298539904@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -53,122 +55,99 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jakub Kicinski <jakub.kicinski@netronome.com>
+From: Xin Long <lucien.xin@gmail.com>
 
-[ Upstream commit 9ad716b95fd6c6be46a4f2d5936e514b5bcd744d ]
+[ Upstream commit bab1be79a5169ac748d8292b20c86d874022d7ba ]
 
-To avoid leaking a running timer we need to wait for the
-posted reconfigs after netdev is unregistered.  In common
-case the process of deinitializing the device will perform
-synchronous reconfigs which wait for posted requests, but
-especially with VXLAN ports being actively added and removed
-there can be a race condition leaving a timer running after
-adapter structure is freed leading to a crash.
+As Marcelo noticed, in sctp_transport_get_next, it is iterating over
+transports but then also accessing the association directly, without
+checking any refcnts before that, which can cause an use-after-free
+Read.
 
-Add an explicit flush after deregistering and for a good
-measure a warning to check if timer is running just before
-structures are freed.
+So fix it by holding transport before accessing the association. With
+that, sctp_transport_hold calls can be removed in the later places.
 
-Fixes: 3d780b926a12 ("nfp: add async reconfiguration mechanism")
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Reviewed-by: Dirk van der Merwe <dirk.vandermerwe@netronome.com>
+Fixes: 626d16f50f39 ("sctp: export some apis or variables for sctp_diag and reuse some for proc")
+Reported-by: syzbot+fe62a0c9aa6a85c6de16@syzkaller.appspotmail.com
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Acked-by: Neil Horman <nhorman@tuxdriver.com>
+Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/netronome/nfp/nfp_net_common.c |   48 +++++++++++++-------
- 1 file changed, 33 insertions(+), 15 deletions(-)
+ net/sctp/proc.c   |    4 ----
+ net/sctp/socket.c |   22 +++++++++++++++-------
+ 2 files changed, 15 insertions(+), 11 deletions(-)
 
---- a/drivers/net/ethernet/netronome/nfp/nfp_net_common.c
-+++ b/drivers/net/ethernet/netronome/nfp/nfp_net_common.c
-@@ -227,29 +227,16 @@ done:
- 	spin_unlock_bh(&nn->reconfig_lock);
- }
- 
--/**
-- * nfp_net_reconfig() - Reconfigure the firmware
-- * @nn:      NFP Net device to reconfigure
-- * @update:  The value for the update field in the BAR config
-- *
-- * Write the update word to the BAR and ping the reconfig queue.  The
-- * poll until the firmware has acknowledged the update by zeroing the
-- * update word.
-- *
-- * Return: Negative errno on error, 0 on success
-- */
--int nfp_net_reconfig(struct nfp_net *nn, u32 update)
-+static void nfp_net_reconfig_sync_enter(struct nfp_net *nn)
- {
- 	bool cancelled_timer = false;
- 	u32 pre_posted_requests;
--	int ret;
- 
- 	spin_lock_bh(&nn->reconfig_lock);
- 
- 	nn->reconfig_sync_present = true;
- 
- 	if (nn->reconfig_timer_active) {
--		del_timer(&nn->reconfig_timer);
- 		nn->reconfig_timer_active = false;
- 		cancelled_timer = true;
+--- a/net/sctp/proc.c
++++ b/net/sctp/proc.c
+@@ -335,8 +335,6 @@ static int sctp_assocs_seq_show(struct s
  	}
-@@ -258,14 +245,43 @@ int nfp_net_reconfig(struct nfp_net *nn,
  
- 	spin_unlock_bh(&nn->reconfig_lock);
+ 	transport = (struct sctp_transport *)v;
+-	if (!sctp_transport_hold(transport))
+-		return 0;
+ 	assoc = transport->asoc;
+ 	epb = &assoc->base;
+ 	sk = epb->sk;
+@@ -426,8 +424,6 @@ static int sctp_remaddr_seq_show(struct
+ 	}
  
--	if (cancelled_timer)
-+	if (cancelled_timer) {
-+		del_timer_sync(&nn->reconfig_timer);
- 		nfp_net_reconfig_wait(nn, nn->reconfig_timer.expires);
+ 	transport = (struct sctp_transport *)v;
+-	if (!sctp_transport_hold(transport))
+-		return 0;
+ 	assoc = transport->asoc;
+ 
+ 	list_for_each_entry_rcu(tsp, &assoc->peer.transport_addr_list,
+--- a/net/sctp/socket.c
++++ b/net/sctp/socket.c
+@@ -4660,9 +4660,14 @@ struct sctp_transport *sctp_transport_ge
+ 			break;
+ 		}
+ 
++		if (!sctp_transport_hold(t))
++			continue;
++
+ 		if (net_eq(sock_net(t->asoc->base.sk), net) &&
+ 		    t->asoc->peer.primary_path == t)
+ 			break;
++
++		sctp_transport_put(t);
+ 	}
+ 
+ 	return t;
+@@ -4672,13 +4677,18 @@ struct sctp_transport *sctp_transport_ge
+ 					      struct rhashtable_iter *iter,
+ 					      int pos)
+ {
+-	void *obj = SEQ_START_TOKEN;
++	struct sctp_transport *t;
++
++	if (!pos)
++		return SEQ_START_TOKEN;
+ 
+-	while (pos && (obj = sctp_transport_get_next(net, iter)) &&
+-	       !IS_ERR(obj))
+-		pos--;
++	while ((t = sctp_transport_get_next(net, iter)) && !IS_ERR(t)) {
++		if (!--pos)
++			break;
++		sctp_transport_put(t);
 +	}
  
- 	/* Run the posted reconfigs which were issued before we started */
- 	if (pre_posted_requests) {
- 		nfp_net_reconfig_start(nn, pre_posted_requests);
- 		nfp_net_reconfig_wait(nn, jiffies + HZ * NFP_NET_POLL_TIMEOUT);
- 	}
-+}
-+
-+static void nfp_net_reconfig_wait_posted(struct nfp_net *nn)
-+{
-+	nfp_net_reconfig_sync_enter(nn);
-+
-+	spin_lock_bh(&nn->reconfig_lock);
-+	nn->reconfig_sync_present = false;
-+	spin_unlock_bh(&nn->reconfig_lock);
-+}
-+
-+/**
-+ * nfp_net_reconfig() - Reconfigure the firmware
-+ * @nn:      NFP Net device to reconfigure
-+ * @update:  The value for the update field in the BAR config
-+ *
-+ * Write the update word to the BAR and ping the reconfig queue.  The
-+ * poll until the firmware has acknowledged the update by zeroing the
-+ * update word.
-+ *
-+ * Return: Negative errno on error, 0 on success
-+ */
-+int nfp_net_reconfig(struct nfp_net *nn, u32 update)
-+{
-+	int ret;
-+
-+	nfp_net_reconfig_sync_enter(nn);
- 
- 	nfp_net_reconfig_start(nn, update);
- 	ret = nfp_net_reconfig_wait(nn, jiffies + HZ * NFP_NET_POLL_TIMEOUT);
-@@ -3560,6 +3576,7 @@ struct nfp_net *nfp_net_alloc(struct pci
-  */
- void nfp_net_free(struct nfp_net *nn)
- {
-+	WARN_ON(timer_pending(&nn->reconfig_timer) || nn->reconfig_posted);
- 	if (nn->xdp_prog)
- 		bpf_prog_put(nn->xdp_prog);
- 
-@@ -3829,4 +3846,5 @@ void nfp_net_clean(struct nfp_net *nn)
- 		return;
- 
- 	unregister_netdev(nn->dp.netdev);
-+	nfp_net_reconfig_wait_posted(nn);
+-	return obj;
++	return t;
  }
+ 
+ int sctp_for_each_endpoint(int (*cb)(struct sctp_endpoint *, void *),
+@@ -4738,8 +4748,6 @@ again:
+ 
+ 	tsp = sctp_transport_get_idx(net, &hti, *pos + 1);
+ 	for (; !IS_ERR_OR_NULL(tsp); tsp = sctp_transport_get_next(net, &hti)) {
+-		if (!sctp_transport_hold(tsp))
+-			continue;
+ 		ret = cb(tsp, p);
+ 		if (ret)
+ 			break;
 
 
