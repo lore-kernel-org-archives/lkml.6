@@ -3,39 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE5E0C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:00:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F3D5C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:00:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B056C20652
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:00:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B056C20652
+	by mail.kernel.org (Postfix) with ESMTP id 31CAA20652
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:00:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31CAA20652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731787AbeIMTJv (ORCPT
+        id S1731797AbeIMTJ5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:09:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34914 "EHLO
+        Thu, 13 Sep 2018 15:09:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34928 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729047AbeIMTJu (ORCPT
+        with ESMTP id S1729047AbeIMTJ5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:09:50 -0400
+        Thu, 13 Sep 2018 15:09:57 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0E521D15;
-        Thu, 13 Sep 2018 14:00:11 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C5464D15;
+        Thu, 13 Sep 2018 14:00:19 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
+        stable@vger.kernel.org, Jim Mattson <jmattson@google.com>,
+        David Hildenbrand <david@redhat.com>,
         Paolo Bonzini <pbonzini@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 130/197] KVM: vmx: track host_state.loaded using a loaded_vmcs pointer
-Date:   Thu, 13 Sep 2018 15:31:19 +0200
-Message-Id: <20180913131846.757756409@linuxfoundation.org>
+Subject: [PATCH 4.18 131/197] kvm: nVMX: Fix fault vector for VMX operation at CPL > 0
+Date:   Thu, 13 Sep 2018 15:31:20 +0200
+Message-Id: <20180913131846.798471542@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -53,102 +53,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+From: Jim Mattson <jmattson@google.com>
 
-[ Upstream commit bd9966de4e14fb559e89a06f7f5c9aab2cc028b9 ]
+[ Upstream commit 36090bf43a6b835a42f515cb515ff6fa293a25fe ]
 
-Using 'struct loaded_vmcs*' to track whether the CPU registers
-contain host or guest state kills two birds with one stone.
+The fault that should be raised for a privilege level violation is #GP
+rather than #UD.
 
-  1. The (effective) boolean host_state.loaded is poorly named.
-     It does not track whether or not host state is loaded into
-     the CPU registers (which most readers would expect), but
-     rather tracks if host state has been saved AND guest state
-     is loaded.
-
-  2. Using a loaded_vmcs pointer provides a more robust framework
-     for the optimized guest/host state switching, especially when
-     consideration per-VMCS enhancements.  To that end, WARN_ONCE
-     if we try to switch to host state with a different VMCS than
-     was last used to save host state.
-
-Resolve an occurrence of the new WARN by setting loaded_vmcs after
-the call to vmx_vcpu_put() in vmx_switch_vmcs().
-
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Fixes: 727ba748e110b4 ("kvm: nVMX: Enforce cpl=0 for VMX instructions")
+Signed-off-by: Jim Mattson <jmattson@google.com>
+Reviewed-by: David Hildenbrand <david@redhat.com>
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kvm/vmx.c |   22 +++++++++++++++-------
- 1 file changed, 15 insertions(+), 7 deletions(-)
+ arch/x86/kvm/vmx.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 --- a/arch/x86/kvm/vmx.c
 +++ b/arch/x86/kvm/vmx.c
-@@ -939,17 +939,21 @@ struct vcpu_vmx {
- 	/*
- 	 * loaded_vmcs points to the VMCS currently used in this vcpu. For a
- 	 * non-nested (L1) guest, it always points to vmcs01. For a nested
--	 * guest (L2), it points to a different VMCS.
-+	 * guest (L2), it points to a different VMCS.  loaded_cpu_state points
-+	 * to the VMCS whose state is loaded into the CPU registers that only
-+	 * need to be switched when transitioning to/from the kernel; a NULL
-+	 * value indicates that host state is loaded.
- 	 */
- 	struct loaded_vmcs    vmcs01;
- 	struct loaded_vmcs   *loaded_vmcs;
-+	struct loaded_vmcs   *loaded_cpu_state;
- 	bool                  __launched; /* temporary, used in vmx_vcpu_run */
- 	struct msr_autoload {
- 		struct vmx_msrs guest;
- 		struct vmx_msrs host;
- 	} msr_autoload;
-+
- 	struct {
--		int           loaded;
- 		u16           fs_sel, gs_sel, ldt_sel;
- #ifdef CONFIG_X86_64
- 		u16           ds_sel, es_sel;
-@@ -2750,10 +2754,11 @@ static void vmx_save_host_state(struct k
- #endif
- 	int i;
+@@ -8123,7 +8123,7 @@ static int handle_vmon(struct kvm_vcpu *
  
--	if (vmx->host_state.loaded)
-+	if (vmx->loaded_cpu_state)
- 		return;
+ 	/* CPL=0 must be checked manually. */
+ 	if (vmx_get_cpl(vcpu)) {
+-		kvm_queue_exception(vcpu, UD_VECTOR);
++		kvm_inject_gp(vcpu, 0);
+ 		return 1;
+ 	}
  
--	vmx->host_state.loaded = 1;
-+	vmx->loaded_cpu_state = vmx->loaded_vmcs;
-+
- 	/*
- 	 * Set host fs and gs selectors.  Unfortunately, 22.2.3 does not
- 	 * allow segment selectors with cpl > 0 or ti == 1.
-@@ -2815,11 +2820,14 @@ static void vmx_save_host_state(struct k
- 
- static void __vmx_load_host_state(struct vcpu_vmx *vmx)
+@@ -8187,7 +8187,7 @@ static int handle_vmon(struct kvm_vcpu *
+ static int nested_vmx_check_permission(struct kvm_vcpu *vcpu)
  {
--	if (!vmx->host_state.loaded)
-+	if (!vmx->loaded_cpu_state)
- 		return;
+ 	if (vmx_get_cpl(vcpu)) {
+-		kvm_queue_exception(vcpu, UD_VECTOR);
++		kvm_inject_gp(vcpu, 0);
+ 		return 0;
+ 	}
  
-+	WARN_ON_ONCE(vmx->loaded_cpu_state != vmx->loaded_vmcs);
-+
- 	++vmx->vcpu.stat.host_state_reload;
--	vmx->host_state.loaded = 0;
-+	vmx->loaded_cpu_state = NULL;
-+
- #ifdef CONFIG_X86_64
- 	if (is_long_mode(&vmx->vcpu))
- 		rdmsrl(MSR_KERNEL_GS_BASE, vmx->msr_guest_kernel_gs_base);
-@@ -10517,8 +10525,8 @@ static void vmx_switch_vmcs(struct kvm_v
- 		return;
- 
- 	cpu = get_cpu();
--	vmx->loaded_vmcs = vmcs;
- 	vmx_vcpu_put(vcpu);
-+	vmx->loaded_vmcs = vmcs;
- 	vmx_vcpu_load(vcpu, cpu);
- 	put_cpu();
- }
 
 
