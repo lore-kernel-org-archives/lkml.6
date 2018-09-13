@@ -2,87 +2,82 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40D5EC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 09:56:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B92AFC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 09:58:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D337220882
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 09:56:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="XrYnrj3W"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D337220882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
+	by mail.kernel.org (Postfix) with ESMTP id 6A93E20882
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 09:58:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A93E20882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727231AbeIMPFL (ORCPT
+        id S1726932AbeIMPGm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 11:05:11 -0400
-Received: from m12-14.163.com ([220.181.12.14]:42721 "EHLO m12-14.163.com"
+        Thu, 13 Sep 2018 11:06:42 -0400
+Received: from mga11.intel.com ([192.55.52.93]:42118 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726721AbeIMPFL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 11:05:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=Subject:From:Message-ID:Date:MIME-Version; bh=12PIk
-        rbyDH141P5nOQXg/XjsqpEE2dEo7iYHdV4Mb7U=; b=XrYnrj3Wa2IkHmTSAPggc
-        KZSDXnZmVpZVnyrK8s22rVwtLPO+n/MhFYaRCRUXUXShkqSWsQDIJTVlO0ABZYOm
-        MKfOXbQj1N7hfVBZPzY8CycSC5iy/vuPVQB7gYKxcHZVPvpi+VKrCt8IhBfNSa/Y
-        C/ILa22r+YLdSZZrC/glCY=
-Received: from localhost.localdomain (unknown [49.65.59.196])
-        by smtp10 (Coremail) with SMTP id DsCowABn0NYONJpbgEk7Qw--.28196S2;
-        Thu, 13 Sep 2018 17:55:28 +0800 (CST)
-Subject: Re: [PATCH] sched/core: Fix compiling warring in smp=n case
-To:     linux-kernel@vger.kernel.org, x86@kernel.org
-Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        peterz@infradead.org, vincent.guittot@linaro.org,
-        Dou Liyang <douly.fnst@cn.fujitsu.com>
-References: <20180810023523.23923-1-douly.fnst@cn.fujitsu.com>
-From:   Dou Liyang <dou_liyang@163.com>
-Message-ID: <2278505d-94ce-ab68-dbe3-5e4e1c9094ef@163.com>
-Date:   Thu, 13 Sep 2018 17:55:25 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1726741AbeIMPGm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 11:06:42 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Sep 2018 02:57:57 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,368,1531810800"; 
+   d="scan'208";a="72873832"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by orsmga008.jf.intel.com with SMTP; 13 Sep 2018 02:57:53 -0700
+Received: by lahna (sSMTP sendmail emulation); Thu, 13 Sep 2018 12:57:53 +0300
+Date:   Thu, 13 Sep 2018 12:57:53 +0300
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Yehezkel Bernat <yehezkelshb@gmail.com>
+Cc:     lukas@wunner.de, Andreas Noever <andreas.noever@gmail.com>,
+        michael.jamet@intel.com, stephen@networkplumber.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/5] thunderbolt: Correlate PCI devices with Thunderbolt
+ ports
+Message-ID: <20180913095753.GF14465@lahna.fi.intel.com>
+References: <cover.1536517047.git.lukas@wunner.de>
+ <f53ea40a7487e145aa1a62c347cef1814072e140.1536517047.git.lukas@wunner.de>
+ <20180910094454.GJ14465@lahna.fi.intel.com>
+ <CA+CmpXtUHwu97tA6bTDJKbVyiPrYT0aEWr1SGrP88DFKNybEcA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180810023523.23923-1-douly.fnst@cn.fujitsu.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: DsCowABn0NYONJpbgEk7Qw--.28196S2
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-        VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU60tCUUUUU
-X-Originating-IP: [49.65.59.196]
-X-CM-SenderInfo: pgrxszxl1d0wi6rwjhhfrp/1tbiIBDAolWBjWXkrQAAsn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+CmpXtUHwu97tA6bTDJKbVyiPrYT0aEWr1SGrP88DFKNybEcA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-At 08/10/2018 10:35 AM, Dou Liyang wrote:
-> When compiling kernel with SMP disabled, the build warns with:
+On Thu, Sep 13, 2018 at 12:43:03PM +0300, Yehezkel Bernat wrote:
+> On Mon, Sep 10, 2018 at 12:45 PM Mika Westerberg
+> <mika.westerberg@linux.intel.com> wrote:
+> >
+> > Hi Lukas,
+> >
+> > On Sun, Sep 09, 2018 at 11:42:01PM +0200, Lukas Wunner wrote:
+> > > Ideas what we can do with correlation:
+> > >
+> > > * Represent the relationship between PCI devices and Thunderbolt ports
+> > >   with symlinks in sysfs.
+> >
+> > I wonder is that really useful? I don't think we should be adding sysfs
+> > entries without any real reason why it would be needed and who would be
+> > using them.
 > 
-> kernel/sched/core.c: In function ‘update_rq_clock_task’:
-> kernel/sched/core.c:139:17: warning: unused variable ‘irq_delta’ [-Wunused-variable]
->    s64 steal = 0, irq_delta = 0;
-> 
-> Fix this by revert the HAVE_SCHED_AVG_IRQ to
-> 
->    defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
-> 
-> Fixes: 2e62c4743adc ("sched/fair: Remove #ifdefs from scale_rt_capacity()")
+> I think Lukas mentioned where it can be useful, even if it isn't used right now.
+> We also know this can be useful for some QoS configurations (even if we didn't
+> found it useful enough for now).
 
-Hi,
-
-  Miguel also found this warning. Can we pick it up now? ;-)
-
-Thanks,
-	dou
-
-
-
-
-
+I have no doubts that is not useful :) The issue is that currently it
+does not do anything except adds this functionality to the driver but
+nobody uses it. Like in the other parts of the kernel, let's merge this
+at the same time when there is a legitimate user for the feature.
