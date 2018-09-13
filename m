@@ -6,35 +6,41 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58FFFC07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:34:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0E6AC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:34:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FCCC20854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:34:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FCCC20854
+	by mail.kernel.org (Postfix) with ESMTP id 6373D20C0A
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:34:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6373D20C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728878AbeIMSoI (ORCPT
+        id S1728865AbeIMSoF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:44:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58930 "EHLO
+        Thu, 13 Sep 2018 14:44:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58912 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727999AbeIMSoI (ORCPT
+        with ESMTP id S1728853AbeIMSoE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:44:08 -0400
+        Thu, 13 Sep 2018 14:44:04 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 66924CF3;
-        Thu, 13 Sep 2018 13:34:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0A77AD10;
+        Thu, 13 Sep 2018 13:34:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Seth Arnold <seth.arnold@canonical.com>,
-        Stefan Bader <stefan.bader@canonical.com>
-Subject: [PATCH 4.4 38/60] irda: Fix memory leak caused by repeated binds of irda socket
-Date:   Thu, 13 Sep 2018 15:30:45 +0200
-Message-Id: <20180913131747.222350392@linuxfoundation.org>
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Lucas De Marchi <lucas.demarchi@profusion.mobi>,
+        Lucas De Marchi <lucas.de.marchi@gmail.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Jessica Yu <jeyu@kernel.org>,
+        Chih-Wei Huang <cwhuang@linux.org.tw>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Maxim Zhukov <mussitantesmortem@gmail.com>
+Subject: [PATCH 4.4 37/60] kbuild: make missing $DEPMOD a Warning instead of an Error
+Date:   Thu, 13 Sep 2018 15:30:44 +0200
+Message-Id: <20180913131747.176046617@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131745.261413581@linuxfoundation.org>
 References: <20180913131745.261413581@linuxfoundation.org>
@@ -52,41 +58,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tyler Hicks <tyhicks@canonical.com>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-The irda_bind() function allocates memory for self->ias_obj without
-checking to see if the socket is already bound. A userspace process
-could repeatedly bind the socket, have each new object added into the
-LM-IAS database, and lose the reference to the old object assigned to
-the socket to exhaust memory resources. This patch errors out of the
-bind operation when self->ias_obj is already assigned.
+commit 914b087ff9e0e9a399a4927fa30793064afc0178 upstream.
 
-CVE-2018-6554
+When $DEPMOD is not found, only print a warning instead of exiting
+with an error message and error status:
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Tyler Hicks <tyhicks@canonical.com>
-Reviewed-by: Seth Arnold <seth.arnold@canonical.com>
-Reviewed-by: Stefan Bader <stefan.bader@canonical.com>
+Warning: 'make modules_install' requires /sbin/depmod. Please install it.
+This is probably in the kmod package.
+
+Change the Error to a Warning because "not all build hosts for cross
+compiling Linux are Linux systems and are able to provide a working
+port of depmod, especially at the file patch /sbin/depmod."
+
+I.e., "make modules_install" may be used to copy/install the
+loadable modules files to a target directory on a build system and
+then transferred to an embedded device where /sbin/depmod is run
+instead of it being run on the build system.
+
+Fixes: 934193a654c1 ("kbuild: verify that $DEPMOD is installed")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Reported-by: H. Nikolaus Schaller <hns@goldelico.com>
+Cc: stable@vger.kernel.org
+Cc: Lucas De Marchi <lucas.demarchi@profusion.mobi>
+Cc: Lucas De Marchi <lucas.de.marchi@gmail.com>
+Cc: Michal Marek <michal.lkml@markovi.net>
+Cc: Jessica Yu <jeyu@kernel.org>
+Cc: Chih-Wei Huang <cwhuang@linux.org.tw>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Maxim Zhukov <mussitantesmortem@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/irda/af_irda.c |    7 +++++++
- 1 file changed, 7 insertions(+)
 
---- a/net/irda/af_irda.c
-+++ b/net/irda/af_irda.c
-@@ -774,6 +774,13 @@ static int irda_bind(struct socket *sock
- 		return -EINVAL;
+---
+ scripts/depmod.sh |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/scripts/depmod.sh
++++ b/scripts/depmod.sh
+@@ -15,9 +15,9 @@ if ! test -r System.map ; then
+ fi
  
- 	lock_sock(sk);
-+
-+	/* Ensure that the socket is not already bound */
-+	if (self->ias_obj) {
-+		err = -EINVAL;
-+		goto out;
-+	}
-+
- #ifdef CONFIG_IRDA_ULTRA
- 	/* Special care for Ultra sockets */
- 	if ((sk->sk_type == SOCK_DGRAM) &&
+ if [ -z $(command -v $DEPMOD) ]; then
+-	echo "'make modules_install' requires $DEPMOD. Please install it." >&2
++	echo "Warning: 'make modules_install' requires $DEPMOD. Please install it." >&2
+ 	echo "This is probably in the kmod package." >&2
+-	exit 1
++	exit 0
+ fi
+ 
+ # older versions of depmod don't support -P <symbol-prefix>
 
 
