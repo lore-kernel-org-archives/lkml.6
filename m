@@ -6,39 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C85CC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:54:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A51E0C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:54:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2056F20854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:54:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2056F20854
+	by mail.kernel.org (Postfix) with ESMTP id 686A220881
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:54:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 686A220881
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730985AbeIMTEE (ORCPT
+        id S1731015AbeIMTEI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:04:04 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33824 "EHLO
+        Thu, 13 Sep 2018 15:04:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33842 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727644AbeIMTED (ORCPT
+        with ESMTP id S1727644AbeIMTEH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:04:03 -0400
+        Thu, 13 Sep 2018 15:04:07 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 98EFED1A;
-        Thu, 13 Sep 2018 13:54:27 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AE98CD19;
+        Thu, 13 Sep 2018 13:54:31 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Vegard Nossum <vegard.nossum@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Zha Qipeng <qipeng.zha@intel.com>,
+        platform-driver-x86@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 061/197] fs/dcache.c: fix kmemcheck splat at take_dentry_name_snapshot()
-Date:   Thu, 13 Sep 2018 15:30:10 +0200
-Message-Id: <20180913131843.962998773@linuxfoundation.org>
+Subject: [PATCH 4.18 062/197] platform/x86: intel_punit_ipc: fix build errors
+Date:   Thu, 13 Sep 2018 15:30:11 +0200
+Message-Id: <20180913131844.004580650@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -56,57 +54,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-[ Upstream commit 6cd00a01f0c1ae6a852b09c59b8dd55cc6c35d1d ]
+[ Upstream commit 340fd4cff43f18bace9358d4decdc9b6ed0715be ]
 
-Since only dentry->d_name.len + 1 bytes out of DNAME_INLINE_LEN bytes
-are initialized at __d_alloc(), we can't copy the whole size
-unconditionally.
+Fix build errors by #including <linux/io.h>.
 
- WARNING: kmemcheck: Caught 32-bit read from uninitialized memory (ffff8fa27465ac50)
- 636f6e66696766732e746d70000000000010000000000000020000000188ffff
-  i i i i i i i i i i i i i u u u u u u u u u u i i i i i u u u u
-                                  ^
- RIP: 0010:take_dentry_name_snapshot+0x28/0x50
- RSP: 0018:ffffa83000f5bdf8 EFLAGS: 00010246
- RAX: 0000000000000020 RBX: ffff8fa274b20550 RCX: 0000000000000002
- RDX: ffffa83000f5be40 RSI: ffff8fa27465ac50 RDI: ffffa83000f5be60
- RBP: ffffa83000f5bdf8 R08: ffffa83000f5be48 R09: 0000000000000001
- R10: ffff8fa27465ac00 R11: ffff8fa27465acc0 R12: ffff8fa27465ac00
- R13: ffff8fa27465acc0 R14: 0000000000000000 R15: 0000000000000000
- FS:  00007f79737ac8c0(0000) GS:ffffffff8fc30000(0000) knlGS:0000000000000000
- CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: ffff8fa274c0b000 CR3: 0000000134aa7002 CR4: 00000000000606f0
-  take_dentry_name_snapshot+0x28/0x50
-  vfs_rename+0x128/0x870
-  SyS_rename+0x3b2/0x3d0
-  entry_SYSCALL_64_fastpath+0x1a/0xa4
-  0xffffffffffffffff
+../drivers/platform/x86/intel_punit_ipc.c: In function 'ipc_read_status':
+../drivers/platform/x86/intel_punit_ipc.c:55:2: error: implicit declaration of function 'readl' [-Werror=implicit-function-declaration]
+  return readl(ipcdev->base[type][BASE_IFACE]);
+../drivers/platform/x86/intel_punit_ipc.c: In function 'ipc_write_cmd':
+../drivers/platform/x86/intel_punit_ipc.c:60:2: error: implicit declaration of function 'writel' [-Werror=implicit-function-declaration]
+  writel(cmd, ipcdev->base[type][BASE_IFACE]);
 
-Link: http://lkml.kernel.org/r/201709131912.GBG39012.QMJLOVFSFFOOtH@I-love.SAKURA.ne.jp
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: Vegard Nossum <vegard.nossum@gmail.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 447ae3166702 ("x86: Don't include linux/irq.h from asm/hardirq.h")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Zha Qipeng <qipeng.zha@intel.com>
+Cc: platform-driver-x86@vger.kernel.org
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/dcache.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/platform/x86/intel_punit_ipc.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -292,7 +292,8 @@ void take_dentry_name_snapshot(struct na
- 		spin_unlock(&dentry->d_lock);
- 		name->name = p->name;
- 	} else {
--		memcpy(name->inline_name, dentry->d_iname, DNAME_INLINE_LEN);
-+		memcpy(name->inline_name, dentry->d_iname,
-+		       dentry->d_name.len + 1);
- 		spin_unlock(&dentry->d_lock);
- 		name->name = name->inline_name;
- 	}
+--- a/drivers/platform/x86/intel_punit_ipc.c
++++ b/drivers/platform/x86/intel_punit_ipc.c
+@@ -17,6 +17,7 @@
+ #include <linux/bitops.h>
+ #include <linux/device.h>
+ #include <linux/interrupt.h>
++#include <linux/io.h>
+ #include <linux/platform_device.h>
+ #include <asm/intel_punit_ipc.h>
+ 
 
 
