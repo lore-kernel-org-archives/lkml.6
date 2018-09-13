@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0DCAC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:57:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B91E4C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:57:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6605204FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:57:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6605204FD
+	by mail.kernel.org (Postfix) with ESMTP id 7BD61204FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:57:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BD61204FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731466AbeIMTHE (ORCPT
+        id S1731477AbeIMTHH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:07:04 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34372 "EHLO
+        Thu, 13 Sep 2018 15:07:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34380 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728566AbeIMTHD (ORCPT
+        with ESMTP id S1728566AbeIMTHH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:07:03 -0400
+        Thu, 13 Sep 2018 15:07:07 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4E036D10;
-        Thu, 13 Sep 2018 13:57:26 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6AAFED10;
+        Thu, 13 Sep 2018 13:57:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 098/197] powerpc/uaccess: Enable get_user(u64, *p) on 32-bit
-Date:   Thu, 13 Sep 2018 15:30:47 +0200
-Message-Id: <20180913131845.458970104@linuxfoundation.org>
+Subject: [PATCH 4.18 099/197] powerpc: Fix size calculation using resource_size()
+Date:   Thu, 13 Sep 2018 15:30:48 +0200
+Message-Id: <20180913131845.499388508@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -51,85 +53,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit f7a6947cd49b7ff4e03f1b4f7e7b223003d752ca ]
+[ Upstream commit c42d3be0c06f0c1c416054022aa535c08a1f9b39 ]
 
-Currently if you build a 32-bit powerpc kernel and use get_user() to
-load a u64 value it will fail to build with eg:
+The problem is the the calculation should be "end - start + 1" but the
+plus one is missing in this calculation.
 
-  kernel/rseq.o: In function `rseq_get_rseq_cs':
-  kernel/rseq.c:123: undefined reference to `__get_user_bad'
-
-This is hitting the check in __get_user_size() that makes sure the
-size we're copying doesn't exceed the size of the destination:
-
-  #define __get_user_size(x, ptr, size, retval)
-  do {
-  	retval = 0;
-  	__chk_user_ptr(ptr);
-  	if (size > sizeof(x))
-  		(x) = __get_user_bad();
-
-Which doesn't immediately make sense because the size of the
-destination is u64, but it's not really, because __get_user_check()
-etc. internally create an unsigned long and copy into that:
-
-  #define __get_user_check(x, ptr, size)
-  ({
-  	long __gu_err = -EFAULT;
-  	unsigned long  __gu_val = 0;
-
-The problem being that on 32-bit unsigned long is not big enough to
-hold a u64. We can fix this with a trick from hpa in the x86 code, we
-statically check the type of x and set the type of __gu_val to either
-unsigned long or unsigned long long.
-
+Fixes: 8626816e905e ("powerpc: add support for MPIC message register API")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/include/asm/uaccess.h |   13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ arch/powerpc/sysdev/mpic_msgr.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/powerpc/include/asm/uaccess.h
-+++ b/arch/powerpc/include/asm/uaccess.h
-@@ -250,10 +250,17 @@ do {								\
- 	}							\
- } while (0)
+--- a/arch/powerpc/sysdev/mpic_msgr.c
++++ b/arch/powerpc/sysdev/mpic_msgr.c
+@@ -196,7 +196,7 @@ static int mpic_msgr_probe(struct platfo
  
-+/*
-+ * This is a type: either unsigned long, if the argument fits into
-+ * that type, or otherwise unsigned long long.
-+ */
-+#define __long_type(x) \
-+	__typeof__(__builtin_choose_expr(sizeof(x) > sizeof(0UL), 0ULL, 0UL))
-+
- #define __get_user_nocheck(x, ptr, size)			\
- ({								\
- 	long __gu_err;						\
--	unsigned long __gu_val;					\
-+	__long_type(*(ptr)) __gu_val;				\
- 	const __typeof__(*(ptr)) __user *__gu_addr = (ptr);	\
- 	__chk_user_ptr(ptr);					\
- 	if (!is_kernel_addr((unsigned long)__gu_addr))		\
-@@ -267,7 +274,7 @@ do {								\
- #define __get_user_check(x, ptr, size)					\
- ({									\
- 	long __gu_err = -EFAULT;					\
--	unsigned long  __gu_val = 0;					\
-+	__long_type(*(ptr)) __gu_val = 0;				\
- 	const __typeof__(*(ptr)) __user *__gu_addr = (ptr);		\
- 	might_fault();							\
- 	if (access_ok(VERIFY_READ, __gu_addr, (size))) {		\
-@@ -281,7 +288,7 @@ do {								\
- #define __get_user_nosleep(x, ptr, size)			\
- ({								\
- 	long __gu_err;						\
--	unsigned long __gu_val;					\
-+	__long_type(*(ptr)) __gu_val;				\
- 	const __typeof__(*(ptr)) __user *__gu_addr = (ptr);	\
- 	__chk_user_ptr(ptr);					\
- 	barrier_nospec();					\
+ 	/* IO map the message register block. */
+ 	of_address_to_resource(np, 0, &rsrc);
+-	msgr_block_addr = ioremap(rsrc.start, rsrc.end - rsrc.start);
++	msgr_block_addr = ioremap(rsrc.start, resource_size(&rsrc));
+ 	if (!msgr_block_addr) {
+ 		dev_err(&dev->dev, "Failed to iomap MPIC message registers");
+ 		return -EFAULT;
 
 
