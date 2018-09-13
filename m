@@ -6,34 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FCF1C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:02:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE48BC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:02:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03B5220652
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:02:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03B5220652
+	by mail.kernel.org (Postfix) with ESMTP id 73ED720652
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:02:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73ED720652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731928AbeIMTLj (ORCPT
+        id S1731937AbeIMTLq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:11:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35134 "EHLO
+        Thu, 13 Sep 2018 15:11:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35148 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731505AbeIMTLj (ORCPT
+        with ESMTP id S1731470AbeIMTLq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:11:39 -0400
+        Thu, 13 Sep 2018 15:11:46 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AA0C9D29;
-        Thu, 13 Sep 2018 14:02:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7A57DD2A;
+        Thu, 13 Sep 2018 14:02:07 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ian Abbott <abbotti@mev.co.uk>,
+        stable@vger.kernel.org, Matthias Kaehlcke <mka@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 113/197] staging: comedi: ni_mio_common: fix subdevice flags for PFI subdevice
-Date:   Thu, 13 Sep 2018 15:31:02 +0200
-Message-Id: <20180913131846.067655560@linuxfoundation.org>
+Subject: [PATCH 4.18 114/197] ASoC: rt5677: Fix initialization of rt5677_of_match.data
+Date:   Thu, 13 Sep 2018 15:31:03 +0200
+Message-Id: <20180913131846.109883858@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -51,46 +54,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ian Abbott <abbotti@mev.co.uk>
+From: Matthias Kaehlcke <mka@chromium.org>
 
-[ Upstream commit e083926b3e269d4064825dcf2ad50c636fddf8cf ]
+[ Upstream commit f861e3e28a3016a2064d9f600eaa92a530b732b4 ]
 
-The PFI subdevice flags indicate that the subdevice is readable and
-writeable, but that is only true for the supported "M-series" boards,
-not the older "E-series" boards.  Only set the SDF_READABLE and
-SDF_WRITABLE subdevice flags for the M-series boards.  These two flags
-are mainly for informational purposes.
+The driver expects to find the device id in rt5677_of_match.data, however
+it is currently assigned to rt5677_of_match.type. Fix this.
 
-Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+The problem was found with the help of clang:
+  sound/soc/codecs/rt5677.c:5010:36: warning: expression which evaluates to
+  zero treated as a null pointer constant of type 'const void *'
+  [-Wnon-literal-null-conversion]
+    { .compatible = "realtek,rt5677", RT5677 },
+                                      ^~~~~~
+
+Fixes: ddc9e69b9dc2 ("ASoC: rt5677: Hide platform data in the module sources")
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Reviewed-by: Guenter Roeck <groeck@chromium.org>
+Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/staging/comedi/drivers/ni_mio_common.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ sound/soc/codecs/rt5677.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/staging/comedi/drivers/ni_mio_common.c
-+++ b/drivers/staging/comedi/drivers/ni_mio_common.c
-@@ -5446,11 +5446,11 @@ static int ni_E_init(struct comedi_devic
- 	/* Digital I/O (PFI) subdevice */
- 	s = &dev->subdevices[NI_PFI_DIO_SUBDEV];
- 	s->type		= COMEDI_SUBD_DIO;
--	s->subdev_flags	= SDF_READABLE | SDF_WRITABLE | SDF_INTERNAL;
- 	s->maxdata	= 1;
- 	if (devpriv->is_m_series) {
- 		s->n_chan	= 16;
- 		s->insn_bits	= ni_pfi_insn_bits;
-+		s->subdev_flags	= SDF_READABLE | SDF_WRITABLE | SDF_INTERNAL;
+--- a/sound/soc/codecs/rt5677.c
++++ b/sound/soc/codecs/rt5677.c
+@@ -5007,7 +5007,7 @@ static const struct regmap_config rt5677
+ };
  
- 		ni_writew(dev, s->state, NI_M_PFI_DO_REG);
- 		for (i = 0; i < NUM_PFI_OUTPUT_SELECT_REGS; ++i) {
-@@ -5459,6 +5459,7 @@ static int ni_E_init(struct comedi_devic
- 		}
- 	} else {
- 		s->n_chan	= 10;
-+		s->subdev_flags	= SDF_INTERNAL;
- 	}
- 	s->insn_config	= ni_pfi_insn_config;
- 
+ static const struct of_device_id rt5677_of_match[] = {
+-	{ .compatible = "realtek,rt5677", RT5677 },
++	{ .compatible = "realtek,rt5677", .data = (const void *)RT5677 },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, rt5677_of_match);
 
 
