@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D496C070C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 00:08:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A33BBC070C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 00:08:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5112D20882
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 00:08:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5112D20882
+	by mail.kernel.org (Postfix) with ESMTP id 64A4D2146E
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 00:08:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64A4D2146E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727864AbeIMFPa (ORCPT
+        id S1727724AbeIMFPR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 01:15:30 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:38404 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726204AbeIMFPR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 13 Sep 2018 01:15:17 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:38374 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727577AbeIMFPQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 01:15:16 -0400
 Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
         by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1g0FBE-0006Vg-FY; Wed, 12 Sep 2018 18:08:23 -0600
+        id 1g0FBE-0006Vd-9s; Wed, 12 Sep 2018 18:08:22 -0600
 Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1g0FBA-00010g-OT; Wed, 12 Sep 2018 18:08:16 -0600
+        id 1g0FBA-00010X-BA; Wed, 12 Sep 2018 18:08:16 -0600
 From:   Logan Gunthorpe <logang@deltatee.com>
 To:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
         linux-ntb@googlegroups.com, linux-crypto@vger.kernel.org,
@@ -39,19 +39,20 @@ Cc:     Arnd Bergmann <arnd@arndb.de>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
         =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
         Logan Gunthorpe <logang@deltatee.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-Date:   Wed, 12 Sep 2018 18:08:13 -0600
-Message-Id: <20180913000815.3824-5-logang@deltatee.com>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>
+Date:   Wed, 12 Sep 2018 18:08:10 -0600
+Message-Id: <20180913000815.3824-2-logang@deltatee.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913000815.3824-1-logang@deltatee.com>
 References: <20180913000815.3824-1-logang@deltatee.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org, akpm@linux-foundation.org, arnd@arndb.de, gregkh@linuxfoundation.org, andy.shevchenko@gmail.com, horia.geanta@nxp.com, logang@deltatee.com, hch@lst.de, gnomes@lxorguk.ukuu.org.uk
+X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org, akpm@linux-foundation.org, arnd@arndb.de, andy.shevchenko@gmail.com, horia.geanta@nxp.com, logang@deltatee.com, tglx@linutronix.de, gregkh@linuxfoundation.org, kstewart@linuxfoundation.org, pombredanne@nexb.com
 X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v21 4/6] io-64-nonatomic: add io{read|write}64[be]{_lo_hi|_hi_lo} macros
+Subject: [PATCH v21 1/6] iomap: Use non-raw io functions for io{read|write}XXbe
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -59,175 +60,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds generic io{read|write}64[be]{_lo_hi|_hi_lo} macros if
-they are not already defined by the architecture. (As they are provided
-by the generic iomap library).
+Fix an asymmetry in the io{read|write}XXbe functions in that the
+big-endian variants make use of the raw io accessors while the
+little-endian variants use the regular accessors. Some architectures
+implement barriers to order against both spinlocks and DMA accesses
+and for these case, the big-endian variant of the API would not be
+protected.
 
-The patch also points io{read|write}64[be] to the variant specified by the
-header name.
+Thus, change the mmio_XXXXbe macros to use the appropriate swab() function
+wrapping the regular accessor. This is similar to what was done for PIO.
 
-This is because new drivers are encouraged to use ioreadXX, et al instead
-of readX[1], et al -- and mixing ioreadXX with readq is pretty ugly.
+When this code was originally written, barriers in the IO accessors were
+not common and the accessors simply wrapped the raw functions in a
+conversion to CPU endianness. Since then, barriers have been added in
+some architectures and are now missing in the big endian variant of the
+API.
 
-[1] LDD3: section 9.4.2
+This also manages to silence a few sparse warnings that check
+for using the correct endian types which the original code did
+not annotate correctly.
 
 Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Link: http://lkml.kernel.org/r/CAK8P3a25zQDxyaY3iVv+JmSSzs7F6ssGc+HdBkGs54ZfViX+Fg@mail.gmail.com
 ---
- include/linux/io-64-nonatomic-hi-lo.h | 64 +++++++++++++++++++++++++++
- include/linux/io-64-nonatomic-lo-hi.h | 64 +++++++++++++++++++++++++++
- 2 files changed, 128 insertions(+)
+ lib/iomap.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/io-64-nonatomic-hi-lo.h b/include/linux/io-64-nonatomic-hi-lo.h
-index 862d786a904f..ae21b72cce85 100644
---- a/include/linux/io-64-nonatomic-hi-lo.h
-+++ b/include/linux/io-64-nonatomic-hi-lo.h
-@@ -55,4 +55,68 @@ static inline void hi_lo_writeq_relaxed(__u64 val, volatile void __iomem *addr)
- #define writeq_relaxed hi_lo_writeq_relaxed
+diff --git a/lib/iomap.c b/lib/iomap.c
+index 541d926da95e..2c293b22569f 100644
+--- a/lib/iomap.c
++++ b/lib/iomap.c
+@@ -65,8 +65,8 @@ static void bad_io_access(unsigned long port, const char *access)
  #endif
  
-+#ifndef ioread64_hi_lo
-+#define ioread64_hi_lo ioread64_hi_lo
-+static inline u64 ioread64_hi_lo(void __iomem *addr)
-+{
-+	u32 low, high;
-+
-+	high = ioread32(addr + sizeof(u32));
-+	low = ioread32(addr);
-+
-+	return low + ((u64)high << 32);
-+}
-+#endif
-+
-+#ifndef iowrite64_hi_lo
-+#define iowrite64_hi_lo iowrite64_hi_lo
-+static inline void iowrite64_hi_lo(u64 val, void __iomem *addr)
-+{
-+	iowrite32(val >> 32, addr + sizeof(u32));
-+	iowrite32(val, addr);
-+}
-+#endif
-+
-+#ifndef ioread64be_hi_lo
-+#define ioread64be_hi_lo ioread64be_hi_lo
-+static inline u64 ioread64be_hi_lo(void __iomem *addr)
-+{
-+	u32 low, high;
-+
-+	high = ioread32be(addr);
-+	low = ioread32be(addr + sizeof(u32));
-+
-+	return low + ((u64)high << 32);
-+}
-+#endif
-+
-+#ifndef iowrite64be_hi_lo
-+#define iowrite64be_hi_lo iowrite64be_hi_lo
-+static inline void iowrite64be_hi_lo(u64 val, void __iomem *addr)
-+{
-+	iowrite32be(val >> 32, addr);
-+	iowrite32be(val, addr + sizeof(u32));
-+}
-+#endif
-+
-+#ifndef ioread64
-+#define ioread64_is_nonatomic
-+#define ioread64 ioread64_hi_lo
-+#endif
-+
-+#ifndef iowrite64
-+#define iowrite64_is_nonatomic
-+#define iowrite64 iowrite64_hi_lo
-+#endif
-+
-+#ifndef ioread64be
-+#define ioread64be_is_nonatomic
-+#define ioread64be ioread64be_hi_lo
-+#endif
-+
-+#ifndef iowrite64be
-+#define iowrite64be_is_nonatomic
-+#define iowrite64be iowrite64be_hi_lo
-+#endif
-+
- #endif	/* _LINUX_IO_64_NONATOMIC_HI_LO_H_ */
-diff --git a/include/linux/io-64-nonatomic-lo-hi.h b/include/linux/io-64-nonatomic-lo-hi.h
-index d042e7bb5adb..faaa842dbdb9 100644
---- a/include/linux/io-64-nonatomic-lo-hi.h
-+++ b/include/linux/io-64-nonatomic-lo-hi.h
-@@ -55,4 +55,68 @@ static inline void lo_hi_writeq_relaxed(__u64 val, volatile void __iomem *addr)
- #define writeq_relaxed lo_hi_writeq_relaxed
+ #ifndef mmio_read16be
+-#define mmio_read16be(addr) be16_to_cpu(__raw_readw(addr))
+-#define mmio_read32be(addr) be32_to_cpu(__raw_readl(addr))
++#define mmio_read16be(addr) swab16(readw(addr))
++#define mmio_read32be(addr) swab32(readl(addr))
  #endif
  
-+#ifndef ioread64_lo_hi
-+#define ioread64_lo_hi ioread64_lo_hi
-+static inline u64 ioread64_lo_hi(void __iomem *addr)
-+{
-+	u32 low, high;
-+
-+	low = ioread32(addr);
-+	high = ioread32(addr + sizeof(u32));
-+
-+	return low + ((u64)high << 32);
-+}
-+#endif
-+
-+#ifndef iowrite64_lo_hi
-+#define iowrite64_lo_hi iowrite64_lo_hi
-+static inline void iowrite64_lo_hi(u64 val, void __iomem *addr)
-+{
-+	iowrite32(val, addr);
-+	iowrite32(val >> 32, addr + sizeof(u32));
-+}
-+#endif
-+
-+#ifndef ioread64be_lo_hi
-+#define ioread64be_lo_hi ioread64be_lo_hi
-+static inline u64 ioread64be_lo_hi(void __iomem *addr)
-+{
-+	u32 low, high;
-+
-+	low = ioread32be(addr + sizeof(u32));
-+	high = ioread32be(addr);
-+
-+	return low + ((u64)high << 32);
-+}
-+#endif
-+
-+#ifndef iowrite64be_lo_hi
-+#define iowrite64be_lo_hi iowrite64be_lo_hi
-+static inline void iowrite64be_lo_hi(u64 val, void __iomem *addr)
-+{
-+	iowrite32be(val, addr + sizeof(u32));
-+	iowrite32be(val >> 32, addr);
-+}
-+#endif
-+
-+#ifndef ioread64
-+#define ioread64_is_nonatomic
-+#define ioread64 ioread64_lo_hi
-+#endif
-+
-+#ifndef iowrite64
-+#define iowrite64_is_nonatomic
-+#define iowrite64 iowrite64_lo_hi
-+#endif
-+
-+#ifndef ioread64be
-+#define ioread64be_is_nonatomic
-+#define ioread64be ioread64be_lo_hi
-+#endif
-+
-+#ifndef iowrite64be
-+#define iowrite64be_is_nonatomic
-+#define iowrite64be iowrite64be_lo_hi
-+#endif
-+
- #endif	/* _LINUX_IO_64_NONATOMIC_LO_HI_H_ */
+ unsigned int ioread8(void __iomem *addr)
+@@ -106,8 +106,8 @@ EXPORT_SYMBOL(ioread32be);
+ #endif
+ 
+ #ifndef mmio_write16be
+-#define mmio_write16be(val,port) __raw_writew(be16_to_cpu(val),port)
+-#define mmio_write32be(val,port) __raw_writel(be32_to_cpu(val),port)
++#define mmio_write16be(val,port) writew(swab16(val),port)
++#define mmio_write32be(val,port) writel(swab32(val),port)
+ #endif
+ 
+ void iowrite8(u8 val, void __iomem *addr)
 -- 
 2.19.0
 
