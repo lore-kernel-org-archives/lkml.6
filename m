@@ -2,108 +2,106 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0A3EC43143
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 19:10:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0B2CC43143
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 19:10:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77EC121476
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 19:10:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B19B2147C
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 19:10:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="LMOWVr1N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77EC121476
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vT7H+NHX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B19B2147C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728395AbeINAVP (ORCPT
+        id S1728421AbeINAVU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 20:21:15 -0400
-Received: from mail-ed1-f52.google.com ([209.85.208.52]:46929 "EHLO
-        mail-ed1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728091AbeINAVO (ORCPT
+        Thu, 13 Sep 2018 20:21:20 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:42497 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728091AbeINAVU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 20:21:14 -0400
-Received: by mail-ed1-f52.google.com with SMTP id k14-v6so5478032edr.13
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 12:10:25 -0700 (PDT)
+        Thu, 13 Sep 2018 20:21:20 -0400
+Received: by mail-wr1-f65.google.com with SMTP id v17-v6so7619000wrr.9;
+        Thu, 13 Sep 2018 12:10:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=googlenew;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=hHRQA9boOvNAjvjJozlDs1aG8YX1tcbcPlOhGMn78bY=;
-        b=LMOWVr1NZOGmBof6KcewJ49cMFTA78wYI2UEoPayCU88FdS3FfYQrg/0Ggzp4kKM8d
-         BzIJabY0O5BjWu2tX2C2Kybww+O1AsCPFF2f22JAP+8ByVw5beAhzADb2xvI50eHWQ2P
-         ZPkRnh3/pZAzM9vJgVGaWBqkZ519xInDhkckhvODefZX990mfr+wNdkXr2UVpk30zuuK
-         PmxUvXJU/gROQfSdYPwnuZ8A8oOKH8thklXnzur4fG0NmhFetA6wa5aoNtNGYzxr2ZxX
-         rSrYIi0F9Wb/5GDSkkrat+n0HmOiRrnkmmRp1G36lefsPzsvFK6/uniarsDPZUOQVu+b
-         W+0w==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=hDCYJtX/zksqPe3mHmWKy5Wj8M7yBG67g1ioNaml7Ss=;
+        b=vT7H+NHXcRe7C8BqoCYugElGGLDv6biRPJyQYKDk8Eu25ORc33qvvsOtY3//tYQ3Ci
+         pnGEoFnFzvS6PJ3NZo9Ns89i9dorgboPo8aVzsrFEhT7IMJIBbQzPfHU4eDncPFTRHqu
+         KmPJOvHU7/vaSfo5lUt+wYy0lN73uGQg/jl2Z7LIi5JCNB0SH4TTF+CT0R7OXPXuXiEc
+         X4iImdGxmvSYuQWQc62xmYc2hcqFXFNkhPdhglFXK+bCncv/DbQym1V3op9uxtH3u6ci
+         Il7dltrJpQuSMHI9Tc0vNOxTVGYgzgrAdKJZMNsLuBDgeJmIW2tjfAAU20kX2MO8+jFV
+         h6vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=hHRQA9boOvNAjvjJozlDs1aG8YX1tcbcPlOhGMn78bY=;
-        b=FVMKgDNQ1AWIvMuyknTPkBbGrSJVvp2BOcL6Fw/oIi2RHOLjg7pNPD1K+Zviek7Jdu
-         0o128NlPlR5VpurPoybkTkTp+CCpIxloT7XoUjni3TZOSrYbcpDYGQFrRPVQzIfyXl+4
-         GGeaDxBpO9kX+siVc9cUMpVAKo8aLO6ltPRwybxigRo2eptVryOGpKjcuETUJKXBWwdC
-         s3PZwsz5Jjeur9VSeknVoDuPuz6bMmZZPbYPeWw/pNRbN4/Znq97/f86eh470gDQM9v4
-         lq/WlbA06Upp+N5BIndXZIxH4Ns6u/JtJWwnzPNIr3RXAqAeVhGintqbOiLtwAt0RPJm
-         +BBQ==
-X-Gm-Message-State: APzg51AVnNQy/8jluWIP3oKaoJx0wtv5FVSvDRv1J7AhAhrtK6GtKJGe
-        T4k5cip4BCCwZxT1iEJAS4tn3+bD0jb68Ng7URBKZA==
-X-Google-Smtp-Source: ANB0VdbQFNhGj0aIgJpjiCHsKmBlgi4uHFnVzESHoEpz24mBqbgqVgE+eD8nskX9zrc5+3w43q6kxhcSvSP5AgvVVxw=
-X-Received: by 2002:a50:94b3:: with SMTP id s48-v6mr12903479eda.125.1536865824417;
- Thu, 13 Sep 2018 12:10:24 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=hDCYJtX/zksqPe3mHmWKy5Wj8M7yBG67g1ioNaml7Ss=;
+        b=aVAC5hs/VuLali+h6MLwUpJQ2zTytC9ZAQujfS6mPWgz3vO3e5KOX9wec5BxPs180+
+         MidGxenHT1wAMk8/BXGYFcCQN4QyYbkPQY8EyBKI3LHEpqDRVqqicvHFxWr9T1t25Zs9
+         Tc+3w9llP509XW51UNE/zPpe9aWvQ1oIdyLUDin2fpUxl8UlnAdM6lzLdVzvXfkwsGmo
+         ivL3f+y97e2ll793LYGGaQKMgvMMET/1PyMegAzVKYGQRdtjHkbQfQ8g1QRow7JjZJow
+         TkfuO3BH07IXChyEJjni/wsXbJyxLCVXw3IvC/vqgNuuf+1jBML6tfvKInuJEhjP66Qb
+         jw3Q==
+X-Gm-Message-State: APzg51DUO4EYOC+3bCoVt0Zy8mwQ3XLU5zY05MOvh4CSqINEvv8XawTg
+        l7ANZeepeL6enqCrcG/VQr4=
+X-Google-Smtp-Source: ANB0VdZ7MNppUZgWlY44i5sRLAhvE5rQVlSCIr0xUgfGiz7igPtIx997T4bC0mAClIST0G2YSjtPwg==
+X-Received: by 2002:a1c:19c2:: with SMTP id 185-v6mr6121526wmz.79.1536865829358;
+        Thu, 13 Sep 2018 12:10:29 -0700 (PDT)
+Received: from flashbox ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id g7-v6sm4497558wrw.30.2018.09.13.12.10.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 13 Sep 2018 12:10:28 -0700 (PDT)
+Date:   Thu, 13 Sep 2018 12:10:26 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 4.14 000/115] 4.14.70-stable review
+Message-ID: <20180913191026.GB30873@flashbox>
+References: <20180913131823.327472833@linuxfoundation.org>
 MIME-Version: 1.0
-Received: by 2002:a50:955c:0:0:0:0:0 with HTTP; Thu, 13 Sep 2018 12:10:04
- -0700 (PDT)
-In-Reply-To: <20180913.120241.924379440079172532.davem@davemloft.net>
-References: <20180913181203.4207-1-vasilykh@arista.com> <16ad730b-ef79-62b0-4b11-9473c0b033e1@cogentembedded.com>
- <20180913.120241.924379440079172532.davem@davemloft.net>
-From:   Vasiliy Khoruzhick <vasilykh@arista.com>
-Date:   Thu, 13 Sep 2018 12:10:04 -0700
-Message-ID: <CAL0zPMNndiwJSXEjy1v8himze06fU6_AgMAN=XRnemjjxfoRQg@mail.gmail.com>
-Subject: Re: [PATCH v3] neighbour: confirm neigh entries when ARP packet is received
-To:     David Miller <davem@davemloft.net>
-Cc:     sergei.shtylyov@cogentembedded.com,
-        Roopa Prabhu <roopa@cumulusnetworks.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Jim Westfall <jwestfall@surrealistic.net>,
-        Wolfgang Bumiller <w.bumiller@proxmox.com>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ihar Hrachyshka <ihrachys@redhat.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 13, 2018 at 12:02 PM, David Miller <davem@davemloft.net> wrote:
-> From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> Date: Thu, 13 Sep 2018 21:26:42 +0300
->
->> Hello!
->>
->> On 09/13/2018 09:12 PM, Vasily Khoruzhick wrote:
->>
->>> Update 'confirmed' timestamp when ARP packet is received. It shouldn't
->>> affect locktime logic and anyway entry can be confirmed by any higher-layer
->>> protocol. Thus it makes sense to confirm it when ARP packet is received.
->>>
->>> Fixes: 77d7123342 ("neighbour: update neigh timestamps iff update is effective")
->>
->>    Need at least 12 hex digits... Perhaps could be fixed when applying?
->
-> Yeah I took care of that.
->
->>
->>> Signed-off-by: Vasily Khoruzhick <vasilykh@arista.com>
->> [...]
->
-> Applied and queued up for -stable.
+On Thu, Sep 13, 2018 at 03:30:20PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.70 release.
+> There are 115 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat Sep 15 13:17:48 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.70-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
+
+Merged, compiled, and installed onto my Raspberry Pi.
+
+No initial issues noticed in dmesg or general usage.
 
 Thanks!
+Nathan
