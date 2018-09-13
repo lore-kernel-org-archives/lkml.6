@@ -2,88 +2,79 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43636C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 15:17:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B68EDC46469
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 15:17:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02435206B6
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 15:17:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02435206B6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+	by mail.kernel.org (Postfix) with ESMTP id 79336206B6
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 15:17:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79336206B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728478AbeIMU1h (ORCPT
+        id S1728527AbeIMU1l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 16:27:37 -0400
-Received: from sauhun.de ([88.99.104.3]:38944 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728230AbeIMU1Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 16:27:24 -0400
-Received: from localhost (p54B3335A.dip0.t-ipconnect.de [84.179.51.90])
-        by pokefinder.org (Postfix) with ESMTPSA id 2B8B42CF688;
-        Thu, 13 Sep 2018 17:17:26 +0200 (CEST)
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     iommu@lists.linux-foundation.org,
-        Robin Murphy <robin.murphy@arm.com>,
-        Christoph Hellwig <hch@lst.de>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 3/3] dma-mapping: clear dma_parms on teardown, too
-Date:   Thu, 13 Sep 2018 17:17:16 +0200
-Message-Id: <20180913151716.6333-4-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180913151716.6333-1-wsa+renesas@sang-engineering.com>
-References: <20180913151716.6333-1-wsa+renesas@sang-engineering.com>
+        Thu, 13 Sep 2018 16:27:41 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:49844 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726835AbeIMU1k (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 16:27:40 -0400
+Received: from localhost (74-93-104-98-Washington.hfc.comcastbusiness.net [74.93.104.98])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id F308213FCB0E3;
+        Thu, 13 Sep 2018 08:17:42 -0700 (PDT)
+Date:   Thu, 13 Sep 2018 08:17:42 -0700 (PDT)
+Message-Id: <20180913.081742.846333906880381162.davem@davemloft.net>
+To:     nautsch2@gmail.com
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
+        gregkh@linuxfoundation.org, ek@google.com, tglx@linutronix.de,
+        maze@google.com, shli@fb.com, kstewart@linuxfoundation.org,
+        pombredanne@nexb.com
+Subject: Re: [PATCH 1/1] ipv6: Add sockopt IPV6_MULTICAST_ALL analogue to
+ IP_MULTICAST_ALL
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20180910082715.11506-2-nautsch2@gmail.com>
+References: <20180910082715.11506-1-nautsch2@gmail.com>
+        <20180910082715.11506-2-nautsch2@gmail.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 13 Sep 2018 08:17:43 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While sanitizig the pointer for dma_ops on teardown, do the same for
-dma_parms, too. Rename the function to have a more generic name.
+From: Andre Naujoks <nautsch2@gmail.com>
+Date: Mon, 10 Sep 2018 10:27:15 +0200
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- arch/arm/mm/dma-mapping.c   | 2 +-
- include/linux/dma-mapping.h | 5 +++--
- 2 files changed, 4 insertions(+), 3 deletions(-)
+> The socket option will be enabled by default to ensure current behaviour
+> is not changed. This is the same for the IPv4 version.
+> 
+> A socket bound to in6addr_any and a specific port will receive all traffic
+> on that port. Analogue to IP_MULTICAST_ALL, disable this behaviour, if
+> one or more multicast groups were joined (using said socket) and only
+> pass on multicast traffic from groups, which were explicitly joined via
+> this socket.
+> 
+> Without this option disabled a socket (system even) joined to multiple
+> multicast groups is very hard to get right. Filtering by destination
+> address has to take place in user space to avoid receiving multicast
+> traffic from other multicast groups, which might have traffic on the same
+> port.
+> 
+> The extension of the IP_MULTICAST_ALL socketoption to just apply to ipv6,
+> too, is not done to avoid changing the behaviour of current applications.
+> 
+> Signed-off-by: Andre Naujoks <nautsch2@gmail.com>
+> Acked-By: YOSHIFUJI Hideaki <yoshfuji@linux-ipv6.org>
 
-diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
-index 466b0242e8af..bcf77bc0423f 100644
---- a/arch/arm/mm/dma-mapping.c
-+++ b/arch/arm/mm/dma-mapping.c
-@@ -2399,5 +2399,5 @@ void arch_teardown_dma_ops(struct device *dev)
- 	if (dev->archdata.dma_ops_setup)
- 		arm_teardown_iommu_dma_ops(dev);
- 
--	generic_teardown_dma_ops(dev);
-+	generic_teardown_dma(dev);
- }
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index 020512cb7f0e..6a2d8779b1d8 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -663,12 +663,13 @@ static inline void arch_setup_dma_ops(struct device *dev, u64 dma_base,
- 				      bool coherent) { }
- #endif
- 
--static inline void generic_teardown_dma_ops(struct device *dev)
-+static inline void generic_teardown_dma(struct device *dev)
- {
- 	dev->dma_ops = NULL;
-+	dev->dma_parms = NULL;
- }
- #ifndef arch_teardown_dma_ops
--#define arch_teardown_dma_ops generic_teardown_dma_ops
-+#define arch_teardown_dma_ops generic_teardown_dma
- #endif
- 
- static inline unsigned int dma_get_max_seg_size(struct device *dev)
--- 
-2.18.0
-
+Applied to net-next, thank you.
