@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92E3BC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:32:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB852C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:32:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F93B20854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:32:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F93B20854
+	by mail.kernel.org (Postfix) with ESMTP id 8D4AE20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:32:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D4AE20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728374AbeIMSmC (ORCPT
+        id S1728391AbeIMSmF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:42:02 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58570 "EHLO
+        Thu, 13 Sep 2018 14:42:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58580 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727152AbeIMSmB (ORCPT
+        with ESMTP id S1728376AbeIMSmE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:42:01 -0400
+        Thu, 13 Sep 2018 14:42:04 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E1E6ACF3;
-        Thu, 13 Sep 2018 13:32:31 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1D572CF3;
+        Thu, 13 Sep 2018 13:32:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Doug Berger <opendmb@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 03/60] net: bcmgenet: use MAC link status for fixed phy
-Date:   Thu, 13 Sep 2018 15:30:10 +0200
-Message-Id: <20180913131745.439674818@linuxfoundation.org>
+        stable@vger.kernel.org, Steve French <stfrench@microsoft.com>,
+        Aurelien Aptel <aaptel@suse.com>,
+        Pavel Shilovsky <pshilov@microsoft.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 30/60] SMB3: Number of requests sent should be displayed for SMB3 not just CIFS
+Date:   Thu, 13 Sep 2018 15:30:37 +0200
+Message-Id: <20180913131746.828316331@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131745.261413581@linuxfoundation.org>
 References: <20180913131745.261413581@linuxfoundation.org>
@@ -52,56 +53,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Doug Berger <opendmb@gmail.com>
+From: Steve French <stfrench@microsoft.com>
 
-[ Upstream commit c3c397c1f16c51601a3fac4fe0c63ad8aa85a904 ]
+[ Upstream commit 289131e1f1e6ad8c661ec05e176b8f0915672059 ]
 
-When using the fixed PHY with GENET (e.g. MOCA) the PHY link
-status can be determined from the internal link status captured
-by the MAC. This allows the PHY state machine to use the correct
-link state with the fixed PHY even if MAC link event interrupts
-are missed when the net device is opened.
+For SMB2/SMB3 the number of requests sent was not displayed
+in /proc/fs/cifs/Stats unless CONFIG_CIFS_STATS2 was
+enabled (only number of failed requests displayed). As
+with earlier dialects, we should be displaying these
+counters if CONFIG_CIFS_STATS is enabled. They
+are important for debugging.
 
-Fixes: 8d88c6ebb34c ("net: bcmgenet: enable MoCA link state change detection")
-Signed-off-by: Doug Berger <opendmb@gmail.com>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+e.g. when you cat /proc/fs/cifs/Stats (before the patch)
+Resources in use
+CIFS Session: 1
+Share (unique mount targets): 2
+SMB Request/Response Buffer: 1 Pool size: 5
+SMB Small Req/Resp Buffer: 1 Pool size: 30
+Operations (MIDs): 0
+
+0 session 0 share reconnects
+Total vfs operations: 690 maximum at one time: 2
+
+1) \\localhost\test
+SMBs: 975
+Negotiates: 0 sent 0 failed
+SessionSetups: 0 sent 0 failed
+Logoffs: 0 sent 0 failed
+TreeConnects: 0 sent 0 failed
+TreeDisconnects: 0 sent 0 failed
+Creates: 0 sent 2 failed
+Closes: 0 sent 0 failed
+Flushes: 0 sent 0 failed
+Reads: 0 sent 0 failed
+Writes: 0 sent 0 failed
+Locks: 0 sent 0 failed
+IOCTLs: 0 sent 1 failed
+Cancels: 0 sent 0 failed
+Echos: 0 sent 0 failed
+QueryDirectories: 0 sent 63 failed
+
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Aurelien Aptel <aaptel@suse.com>
+Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/genet/bcmgenet.h |    3 +++
- drivers/net/ethernet/broadcom/genet/bcmmii.c   |   10 ++++++++--
- 2 files changed, 11 insertions(+), 2 deletions(-)
+ fs/cifs/smb2pdu.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/broadcom/genet/bcmgenet.h
-+++ b/drivers/net/ethernet/broadcom/genet/bcmgenet.h
-@@ -185,6 +185,9 @@ struct bcmgenet_mib_counters {
- #define UMAC_MAC1			0x010
- #define UMAC_MAX_FRAME_LEN		0x014
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -315,7 +315,7 @@ small_smb2_init(__le16 smb2_command, str
+ 	smb2_hdr_assemble((struct smb2_hdr *) *request_buf, smb2_command, tcon);
  
-+#define UMAC_MODE			0x44
-+#define  MODE_LINK_STATUS		(1 << 5)
-+
- #define UMAC_EEE_CTRL			0x064
- #define  EN_LPI_RX_PAUSE		(1 << 0)
- #define  EN_LPI_TX_PFC			(1 << 1)
---- a/drivers/net/ethernet/broadcom/genet/bcmmii.c
-+++ b/drivers/net/ethernet/broadcom/genet/bcmmii.c
-@@ -167,8 +167,14 @@ void bcmgenet_mii_setup(struct net_devic
- static int bcmgenet_fixed_phy_link_update(struct net_device *dev,
- 					  struct fixed_phy_status *status)
- {
--	if (dev && dev->phydev && status)
--		status->link = dev->phydev->link;
-+	struct bcmgenet_priv *priv;
-+	u32 reg;
-+
-+	if (dev && dev->phydev && status) {
-+		priv = netdev_priv(dev);
-+		reg = bcmgenet_umac_readl(priv, UMAC_MODE);
-+		status->link = !!(reg & MODE_LINK_STATUS);
-+	}
- 
- 	return 0;
- }
+ 	if (tcon != NULL) {
+-#ifdef CONFIG_CIFS_STATS2
++#ifdef CONFIG_CIFS_STATS
+ 		uint16_t com_code = le16_to_cpu(smb2_command);
+ 		cifs_stats_inc(&tcon->stats.smb2_stats.smb2_com_sent[com_code]);
+ #endif
 
 
