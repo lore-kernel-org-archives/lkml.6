@@ -6,99 +6,92 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A17DC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:07:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F9EDC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:07:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F95A20854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:07:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F95A20854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 1303620854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:07:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1303620854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732274AbeIMTQt (ORCPT
+        id S1732290AbeIMTQx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:16:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35694 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729096AbeIMTQs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:16:48 -0400
-Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DFF49D3A;
-        Thu, 13 Sep 2018 14:07:08 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Juergen Gross <jgross@suse.com>,
-        Jan Beulich <jbeulich@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Subject: [PATCH 4.18 192/197] x86/xen: dont write ptes directly in 32-bit PV guests
-Date:   Thu, 13 Sep 2018 15:32:21 +0200
-Message-Id: <20180913131849.239171518@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
-References: <20180913131841.568116777@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Thu, 13 Sep 2018 15:16:53 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:41147 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729096AbeIMTQw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 15:16:52 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 73E2CD67295F4;
+        Thu, 13 Sep 2018 22:07:09 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.399.0; Thu, 13 Sep 2018
+ 22:07:00 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <ath10k@lists.infradead.org>, <kvalo@codeaurora.org>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <davem@davemloft.net>, <linux-wireless@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] ath10k: Remove duplicated includes
+Date:   Thu, 13 Sep 2018 22:01:21 +0800
+Message-ID: <20180913140121.23152-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.18-stable review patch.  If anyone has any objections, please let me know.
+remove duplicated include from ath10k driver.
 
-------------------
-
-From: Juergen Gross <jgross@suse.com>
-
-commit f7c90c2aa4004808dff777ba6ae2c7294dd06851 upstream.
-
-In some cases 32-bit PAE PV guests still write PTEs directly instead of
-using hypercalls. This is especially bad when clearing a PTE as this is
-done via 32-bit writes which will produce intermediate L1TF attackable
-PTEs.
-
-Change the code to use hypercalls instead.
-
-Signed-off-by: Juergen Gross <jgross@suse.com>
-Reviewed-by: Jan Beulich <jbeulich@suse.com>
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- arch/x86/xen/mmu_pv.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/net/wireless/ath/ath10k/htt.h     | 1 -
+ drivers/net/wireless/ath/ath10k/mac.c     | 1 -
+ drivers/net/wireless/ath/ath10k/wmi-tlv.c | 1 -
+ 3 files changed, 3 deletions(-)
 
---- a/arch/x86/xen/mmu_pv.c
-+++ b/arch/x86/xen/mmu_pv.c
-@@ -434,14 +434,13 @@ static void xen_set_pud(pud_t *ptr, pud_
- static void xen_set_pte_atomic(pte_t *ptep, pte_t pte)
- {
- 	trace_xen_mmu_set_pte_atomic(ptep, pte);
--	set_64bit((u64 *)ptep, native_pte_val(pte));
-+	__xen_set_pte(ptep, pte);
- }
+diff --git a/drivers/net/wireless/ath/ath10k/htt.h b/drivers/net/wireless/ath/ath10k/htt.h
+index 5d3ff80..eaf3a00 100644
+--- a/drivers/net/wireless/ath/ath10k/htt.h
++++ b/drivers/net/wireless/ath/ath10k/htt.h
+@@ -29,7 +29,6 @@
+ #include "htc.h"
+ #include "hw.h"
+ #include "rx_desc.h"
+-#include "hw.h"
  
- static void xen_pte_clear(struct mm_struct *mm, unsigned long addr, pte_t *ptep)
- {
- 	trace_xen_mmu_pte_clear(mm, addr, ptep);
--	if (!xen_batched_set_pte(ptep, native_make_pte(0)))
--		native_pte_clear(mm, addr, ptep);
-+	__xen_set_pte(ptep, native_make_pte(0));
- }
- 
- static void xen_pmd_clear(pmd_t *pmdp)
-@@ -1571,7 +1570,7 @@ static void __init xen_set_pte_init(pte_
- 		pte = __pte_ma(((pte_val_ma(*ptep) & _PAGE_RW) | ~_PAGE_RW) &
- 			       pte_val_ma(pte));
- #endif
--	native_set_pte(ptep, pte);
-+	__xen_set_pte(ptep, pte);
- }
- 
- /* Early in boot, while setting up the initial pagetable, assume
+ enum htt_dbg_stats_type {
+ 	HTT_DBG_STATS_WAL_PDEV_TXRX = 1 << 0,
+diff --git a/drivers/net/wireless/ath/ath10k/mac.c b/drivers/net/wireless/ath/ath10k/mac.c
+index 496772d..e37ea39 100644
+--- a/drivers/net/wireless/ath/ath10k/mac.c
++++ b/drivers/net/wireless/ath/ath10k/mac.c
+@@ -30,7 +30,6 @@
+ #include "htt.h"
+ #include "txrx.h"
+ #include "testmode.h"
+-#include "wmi.h"
+ #include "wmi-tlv.h"
+ #include "wmi-ops.h"
+ #include "wow.h"
+diff --git a/drivers/net/wireless/ath/ath10k/wmi-tlv.c b/drivers/net/wireless/ath/ath10k/wmi-tlv.c
+index cdc1e64..6c6656d6 100644
+--- a/drivers/net/wireless/ath/ath10k/wmi-tlv.c
++++ b/drivers/net/wireless/ath/ath10k/wmi-tlv.c
+@@ -19,7 +19,6 @@
+ #include "debug.h"
+ #include "mac.h"
+ #include "hw.h"
+-#include "mac.h"
+ #include "wmi.h"
+ #include "wmi-ops.h"
+ #include "wmi-tlv.h"
+-- 
+2.7.0
 
 
