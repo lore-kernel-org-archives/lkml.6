@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5A5FC07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:45:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7A36C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:45:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8629620854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:45:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8629620854
+	by mail.kernel.org (Postfix) with ESMTP id 9C9B120C0A
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:45:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C9B120C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730179AbeIMSzB (ORCPT
+        id S1729794AbeIMSzN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:55:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60716 "EHLO
+        Thu, 13 Sep 2018 14:55:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60724 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729967AbeIMSzB (ORCPT
+        with ESMTP id S1727391AbeIMSzM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:55:01 -0400
+        Thu, 13 Sep 2018 14:55:12 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 21619D10;
-        Thu, 13 Sep 2018 13:45:27 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 037C6D19;
+        Thu, 13 Sep 2018 13:45:38 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matthias Kaehlcke <mka@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Suman Anna <s-anna@ti.com>,
+        Ralf Goebel <ralf.goebel@imago-technologies.com>,
+        Joerg Roedel <jroedel@suse.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 067/115] ASoC: rt5677: Fix initialization of rt5677_of_match.data
-Date:   Thu, 13 Sep 2018 15:31:27 +0200
-Message-Id: <20180913131827.810439351@linuxfoundation.org>
+Subject: [PATCH 4.14 068/115] iommu/omap: Fix cache flushes on L2 table entries
+Date:   Thu, 13 Sep 2018 15:31:28 +0200
+Message-Id: <20180913131827.894058131@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -54,41 +53,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Matthias Kaehlcke <mka@chromium.org>
+From: Ralf Goebel <ralf.goebel@imago-technologies.com>
 
-[ Upstream commit f861e3e28a3016a2064d9f600eaa92a530b732b4 ]
+[ Upstream commit 04c532a1cdc7e423656c07937aa4b5c1c2b064f9 ]
 
-The driver expects to find the device id in rt5677_of_match.data, however
-it is currently assigned to rt5677_of_match.type. Fix this.
+The base address used for DMA operations on the second-level table
+did incorrectly include the offset for the table entry. The offset
+was then added again which lead to incorrect behavior.
 
-The problem was found with the help of clang:
-  sound/soc/codecs/rt5677.c:5010:36: warning: expression which evaluates to
-  zero treated as a null pointer constant of type 'const void *'
-  [-Wnon-literal-null-conversion]
-    { .compatible = "realtek,rt5677", RT5677 },
-                                      ^~~~~~
+Operations on the L1 table are not affected.
 
-Fixes: ddc9e69b9dc2 ("ASoC: rt5677: Hide platform data in the module sources")
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-Reviewed-by: Guenter Roeck <groeck@chromium.org>
-Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+The calculation of the base address is changed to point to the
+beginning of the L2 table.
+
+Fixes: bfee0cf0ee1d ("iommu/omap: Use DMA-API for performing cache flushes")
+Acked-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Ralf Goebel <ralf.goebel@imago-technologies.com>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/soc/codecs/rt5677.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/iommu/omap-iommu.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/sound/soc/codecs/rt5677.c
-+++ b/sound/soc/codecs/rt5677.c
-@@ -5017,7 +5017,7 @@ static const struct i2c_device_id rt5677
- MODULE_DEVICE_TABLE(i2c, rt5677_i2c_id);
+--- a/drivers/iommu/omap-iommu.c
++++ b/drivers/iommu/omap-iommu.c
+@@ -529,7 +529,7 @@ static u32 *iopte_alloc(struct omap_iomm
  
- static const struct of_device_id rt5677_of_match[] = {
--	{ .compatible = "realtek,rt5677", RT5677 },
-+	{ .compatible = "realtek,rt5677", .data = (const void *)RT5677 },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, rt5677_of_match);
+ pte_ready:
+ 	iopte = iopte_offset(iopgd, da);
+-	*pt_dma = virt_to_phys(iopte);
++	*pt_dma = iopgd_page_paddr(iopgd);
+ 	dev_vdbg(obj->dev,
+ 		 "%s: da:%08x pgd:%p *pgd:%08x pte:%p *pte:%08x\n",
+ 		 __func__, da, iopgd, *iopgd, iopte, *iopte);
+@@ -717,7 +717,7 @@ static size_t iopgtable_clear_entry_core
+ 		}
+ 		bytes *= nent;
+ 		memset(iopte, 0, nent * sizeof(*iopte));
+-		pt_dma = virt_to_phys(iopte);
++		pt_dma = iopgd_page_paddr(iopgd);
+ 		flush_iopte_range(obj->dev, pt_dma, pt_offset, nent);
+ 
+ 		/*
 
 
