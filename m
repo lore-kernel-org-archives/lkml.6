@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86D8CC07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:02:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9876FC07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:02:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42F9A20652
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:02:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42F9A20652
+	by mail.kernel.org (Postfix) with ESMTP id 55B4620652
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:02:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55B4620652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731949AbeIMTL5 (ORCPT
+        id S1731958AbeIMTMC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:11:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35198 "EHLO
+        Thu, 13 Sep 2018 15:12:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35212 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731249AbeIMTL4 (ORCPT
+        with ESMTP id S1731249AbeIMTMB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:11:56 -0400
+        Thu, 13 Sep 2018 15:12:01 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 11B46D0E;
-        Thu, 13 Sep 2018 14:02:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 34CC1D20;
+        Thu, 13 Sep 2018 14:02:22 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Breno Leitao <leitao@debian.org>,
-        Gustavo Romero <gromero@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, nixiaoming <nixiaoming@huawei.com>,
+        Paul Moore <paul@paul-moore.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 116/197] selftests/powerpc: Kill child processes on SIGINT
-Date:   Thu, 13 Sep 2018 15:31:05 +0200
-Message-Id: <20180913131846.190275079@linuxfoundation.org>
+Subject: [PATCH 4.18 117/197] selinux: cleanup dentry and inodes on error in selinuxfs
+Date:   Thu, 13 Sep 2018 15:31:06 +0200
+Message-Id: <20180913131846.229231657@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -53,72 +52,119 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Breno Leitao <leitao@debian.org>
+From: nixiaoming <nixiaoming@huawei.com>
 
-[ Upstream commit 7c27a26e1ed5a7dd709aa19685d2c98f64e1cf0c ]
+[ Upstream commit 7e4237faa7213c1cc1d0aa65a44c67ba4729ce9f ]
 
-There are some powerpc selftests, as tm/tm-unavailable, that run for a long
-period (>120 seconds), and if it is interrupted, as pressing CRTL-C
-(SIGINT), the foreground process (harness) dies but the child process and
-threads continue to execute (with PPID = 1 now) in background.
+If the resource requested by d_alloc_name is not added to the linked
+list through d_add, then dput needs to be called to release the
+subsequent abnormal branch to avoid resource leakage.
 
-In this case, you'd think the whole test exited, but there are remaining
-threads and processes being executed in background. Sometimes these
-zombies processes are doing annoying things, as consuming the whole CPU or
-dumping things to STDOUT.
+Add missing dput to selinuxfs.c
 
-This patch fixes this problem by attaching an empty signal handler to
-SIGINT in the harness process. This handler will interrupt (EINTR) the
-parent process waitpid() call, letting the code to follow through the
-normal flow, which will kill all the processes in the child process group.
-
-This patch also fixes a typo.
-
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Signed-off-by: Gustavo Romero <gromero@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: nixiaoming <nixiaoming@huawei.com>
+[PM: tweak the subject line]
+Signed-off-by: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/powerpc/harness.c |   18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+ security/selinux/selinuxfs.c |   33 +++++++++++++++++++++++++--------
+ 1 file changed, 25 insertions(+), 8 deletions(-)
 
---- a/tools/testing/selftests/powerpc/harness.c
-+++ b/tools/testing/selftests/powerpc/harness.c
-@@ -85,13 +85,13 @@ wait:
- 	return status;
- }
+--- a/security/selinux/selinuxfs.c
++++ b/security/selinux/selinuxfs.c
+@@ -1365,13 +1365,18 @@ static int sel_make_bools(struct selinux
  
--static void alarm_handler(int signum)
-+static void sig_handler(int signum)
- {
--	/* Jut wake us up from waitpid */
-+	/* Just wake us up from waitpid */
- }
+ 		ret = -ENOMEM;
+ 		inode = sel_make_inode(dir->d_sb, S_IFREG | S_IRUGO | S_IWUSR);
+-		if (!inode)
++		if (!inode) {
++			dput(dentry);
+ 			goto out;
++		}
  
--static struct sigaction alarm_action = {
--	.sa_handler = alarm_handler,
-+static struct sigaction sig_action = {
-+	.sa_handler = sig_handler,
- };
+ 		ret = -ENAMETOOLONG;
+ 		len = snprintf(page, PAGE_SIZE, "/%s/%s", BOOL_DIR_NAME, names[i]);
+-		if (len >= PAGE_SIZE)
++		if (len >= PAGE_SIZE) {
++			dput(dentry);
++			iput(inode);
+ 			goto out;
++		}
  
- void test_harness_set_timeout(uint64_t time)
-@@ -106,8 +106,14 @@ int test_harness(int (test_function)(voi
- 	test_start(name);
- 	test_set_git_version(GIT_VERSION);
+ 		isec = (struct inode_security_struct *)inode->i_security;
+ 		ret = security_genfs_sid(fsi->state, "selinuxfs", page,
+@@ -1586,8 +1591,10 @@ static int sel_make_avc_files(struct den
+ 			return -ENOMEM;
  
--	if (sigaction(SIGALRM, &alarm_action, NULL)) {
--		perror("sigaction");
-+	if (sigaction(SIGINT, &sig_action, NULL)) {
-+		perror("sigaction (sigint)");
-+		test_error(name);
-+		return 1;
+ 		inode = sel_make_inode(dir->d_sb, S_IFREG|files[i].mode);
+-		if (!inode)
++		if (!inode) {
++			dput(dentry);
+ 			return -ENOMEM;
++		}
+ 
+ 		inode->i_fop = files[i].ops;
+ 		inode->i_ino = ++fsi->last_ino;
+@@ -1632,8 +1639,10 @@ static int sel_make_initcon_files(struct
+ 			return -ENOMEM;
+ 
+ 		inode = sel_make_inode(dir->d_sb, S_IFREG|S_IRUGO);
+-		if (!inode)
++		if (!inode) {
++			dput(dentry);
+ 			return -ENOMEM;
++		}
+ 
+ 		inode->i_fop = &sel_initcon_ops;
+ 		inode->i_ino = i|SEL_INITCON_INO_OFFSET;
+@@ -1733,8 +1742,10 @@ static int sel_make_perm_files(char *obj
+ 
+ 		rc = -ENOMEM;
+ 		inode = sel_make_inode(dir->d_sb, S_IFREG|S_IRUGO);
+-		if (!inode)
++		if (!inode) {
++			dput(dentry);
+ 			goto out;
++		}
+ 
+ 		inode->i_fop = &sel_perm_ops;
+ 		/* i+1 since perm values are 1-indexed */
+@@ -1763,8 +1774,10 @@ static int sel_make_class_dir_entries(ch
+ 		return -ENOMEM;
+ 
+ 	inode = sel_make_inode(dir->d_sb, S_IFREG|S_IRUGO);
+-	if (!inode)
++	if (!inode) {
++		dput(dentry);
+ 		return -ENOMEM;
 +	}
-+
-+	if (sigaction(SIGALRM, &sig_action, NULL)) {
-+		perror("sigaction (sigalrm)");
- 		test_error(name);
- 		return 1;
- 	}
+ 
+ 	inode->i_fop = &sel_class_ops;
+ 	inode->i_ino = sel_class_to_ino(index);
+@@ -1838,8 +1851,10 @@ static int sel_make_policycap(struct sel
+ 			return -ENOMEM;
+ 
+ 		inode = sel_make_inode(fsi->sb, S_IFREG | 0444);
+-		if (inode == NULL)
++		if (inode == NULL) {
++			dput(dentry);
+ 			return -ENOMEM;
++		}
+ 
+ 		inode->i_fop = &sel_policycap_ops;
+ 		inode->i_ino = iter | SEL_POLICYCAP_INO_OFFSET;
+@@ -1932,8 +1947,10 @@ static int sel_fill_super(struct super_b
+ 
+ 	ret = -ENOMEM;
+ 	inode = sel_make_inode(sb, S_IFCHR | S_IRUGO | S_IWUGO);
+-	if (!inode)
++	if (!inode) {
++		dput(dentry);
+ 		goto err;
++	}
+ 
+ 	inode->i_ino = ++fsi->last_ino;
+ 	isec = (struct inode_security_struct *)inode->i_security;
 
 
