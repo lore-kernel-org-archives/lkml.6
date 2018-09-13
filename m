@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CA4FC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:42:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 670AEC07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:42:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FE3420854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:42:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FE3420854
+	by mail.kernel.org (Postfix) with ESMTP id 2BD4F20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:42:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BD4F20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729695AbeIMSv3 (ORCPT
+        id S1729710AbeIMSvf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:51:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60088 "EHLO
+        Thu, 13 Sep 2018 14:51:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60096 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727534AbeIMSv2 (ORCPT
+        with ESMTP id S1729122AbeIMSve (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:51:28 -0400
+        Thu, 13 Sep 2018 14:51:34 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AA3BDD19;
-        Thu, 13 Sep 2018 13:41:56 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4A1FAD19;
+        Thu, 13 Sep 2018 13:42:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Doug Berger <opendmb@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
+        stable@vger.kernel.org, Anssi Hannula <anssi.hannula@bitwise.fi>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 003/115] net: bcmgenet: use MAC link status for fixed phy
-Date:   Thu, 13 Sep 2018 15:30:23 +0200
-Message-Id: <20180913131823.547307327@linuxfoundation.org>
+Subject: [PATCH 4.14 004/115] net: macb: do not disable MDIO bus at open/close time
+Date:   Thu, 13 Sep 2018 15:30:24 +0200
+Message-Id: <20180913131823.647389795@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -52,56 +52,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Doug Berger <opendmb@gmail.com>
+From: Anssi Hannula <anssi.hannula@bitwise.fi>
 
-[ Upstream commit c3c397c1f16c51601a3fac4fe0c63ad8aa85a904 ]
+[ Upstream commit 0da70f808029476001109b6cb076737bc04cea2e ]
 
-When using the fixed PHY with GENET (e.g. MOCA) the PHY link
-status can be determined from the internal link status captured
-by the MAC. This allows the PHY state machine to use the correct
-link state with the fixed PHY even if MAC link event interrupts
-are missed when the net device is opened.
+macb_reset_hw() is called from macb_close() and indirectly from
+macb_open(). macb_reset_hw() zeroes the NCR register, including the MPE
+(Management Port Enable) bit.
 
-Fixes: 8d88c6ebb34c ("net: bcmgenet: enable MoCA link state change detection")
-Signed-off-by: Doug Berger <opendmb@gmail.com>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+This will prevent accessing any other PHYs for other Ethernet MACs on
+the MDIO bus, which remains registered at macb_reset_hw() time, until
+macb_init_hw() is called from macb_open() which sets the MPE bit again.
+
+I.e. currently the MDIO bus has a short disruption at open time and is
+disabled at close time until the interface is opened again.
+
+Fix that by only touching the RE and TE bits when enabling and disabling
+RX/TX.
+
+v2: Make macb_init_hw() NCR write a single statement.
+
+Fixes: 6c36a7074436 ("macb: Use generic PHY layer")
+Signed-off-by: Anssi Hannula <anssi.hannula@bitwise.fi>
+Reviewed-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+Tested-by: Claudiu Beznea <claudiu.beznea@microchip.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/genet/bcmgenet.h |    3 +++
- drivers/net/ethernet/broadcom/genet/bcmmii.c   |   10 ++++++++--
- 2 files changed, 11 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/cadence/macb_main.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/drivers/net/ethernet/broadcom/genet/bcmgenet.h
-+++ b/drivers/net/ethernet/broadcom/genet/bcmgenet.h
-@@ -185,6 +185,9 @@ struct bcmgenet_mib_counters {
- #define UMAC_MAC1			0x010
- #define UMAC_MAX_FRAME_LEN		0x014
- 
-+#define UMAC_MODE			0x44
-+#define  MODE_LINK_STATUS		(1 << 5)
-+
- #define UMAC_EEE_CTRL			0x064
- #define  EN_LPI_RX_PAUSE		(1 << 0)
- #define  EN_LPI_TX_PFC			(1 << 1)
---- a/drivers/net/ethernet/broadcom/genet/bcmmii.c
-+++ b/drivers/net/ethernet/broadcom/genet/bcmmii.c
-@@ -115,8 +115,14 @@ void bcmgenet_mii_setup(struct net_devic
- static int bcmgenet_fixed_phy_link_update(struct net_device *dev,
- 					  struct fixed_phy_status *status)
+--- a/drivers/net/ethernet/cadence/macb_main.c
++++ b/drivers/net/ethernet/cadence/macb_main.c
+@@ -1884,14 +1884,17 @@ static void macb_reset_hw(struct macb *b
  {
--	if (dev && dev->phydev && status)
--		status->link = dev->phydev->link;
-+	struct bcmgenet_priv *priv;
-+	u32 reg;
-+
-+	if (dev && dev->phydev && status) {
-+		priv = netdev_priv(dev);
-+		reg = bcmgenet_umac_readl(priv, UMAC_MODE);
-+		status->link = !!(reg & MODE_LINK_STATUS);
-+	}
+ 	struct macb_queue *queue;
+ 	unsigned int q;
++	u32 ctrl = macb_readl(bp, NCR);
  
- 	return 0;
+ 	/* Disable RX and TX (XXX: Should we halt the transmission
+ 	 * more gracefully?)
+ 	 */
+-	macb_writel(bp, NCR, 0);
++	ctrl &= ~(MACB_BIT(RE) | MACB_BIT(TE));
+ 
+ 	/* Clear the stats registers (XXX: Update stats first?) */
+-	macb_writel(bp, NCR, MACB_BIT(CLRSTAT));
++	ctrl |= MACB_BIT(CLRSTAT);
++
++	macb_writel(bp, NCR, ctrl);
+ 
+ 	/* Clear all status flags */
+ 	macb_writel(bp, TSR, -1);
+@@ -2070,7 +2073,7 @@ static void macb_init_hw(struct macb *bp
+ 	}
+ 
+ 	/* Enable TX and RX */
+-	macb_writel(bp, NCR, MACB_BIT(RE) | MACB_BIT(TE) | MACB_BIT(MPE));
++	macb_writel(bp, NCR, macb_readl(bp, NCR) | MACB_BIT(RE) | MACB_BIT(TE));
  }
+ 
+ /* The hash address register is 64 bits long and takes up two
 
 
