@@ -6,88 +6,144 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2D16C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 10:29:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 079D4C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 10:30:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8948C20C0A
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 10:29:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8948C20C0A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 855D320882
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 10:30:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 855D320882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727600AbeIMPiJ (ORCPT
+        id S1727670AbeIMPjN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 11:38:09 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:37027 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726797AbeIMPiJ (ORCPT
+        Thu, 13 Sep 2018 11:39:13 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36126 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726797AbeIMPjN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 11:38:09 -0400
-Received: by mail-qt0-f194.google.com with SMTP id n6-v6so4822652qtl.4;
-        Thu, 13 Sep 2018 03:29:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=d3syHV27SIXgKwY6Ph9XLOevIOx6TOILxBDaFeGQ94c=;
-        b=I2DcdjegwOtxVQTnA8Ja2tm0Sk9mGo81fUqRRLJLCZ6uLP/XaMuKKwH8pAJ33MhHOQ
-         ght6rH6rDvlxMHG7Rt80VsHyj2WasbO0B0esW+eZmZxyXo1mCEKWLzY3zRmDXP7siWAe
-         VRj2BsvVS4OrNIOVZ6ib//VGJKUg4nYzp7d4lDy2JS1IH5Oa4xjmPx2sKwsQ6jCTyO4M
-         wkpkUhlfvLsznbjwkxovOvJbaEtk0m6TnKqcM+YwUUZD0uCLd7bjfr5bBvfriKpL86CV
-         jv11vf8NK0/p4hEffhkNMWuiwehWRYSzWT2DPqXArnm1Oj8dMGVUqWXngZyJFVS6spbH
-         /A4g==
-X-Gm-Message-State: APzg51CsM8Nflzjk17TCDlFcu67+ZS+6nOGX0/UTuSLHSug+0Rt9VaBZ
-        mEKGXuxuF7ocGtQ4HBcoVV1IYYCaUvQX4z9aUGkmiHbX
-X-Google-Smtp-Source: ANB0VdboGSLOx6FRwpky/fjL/EdO79cvq1QiZiRwaUufCSAnagBZPGDP33veF+y05k+1XZlaM3OaR7p8g76mK66IN64=
-X-Received: by 2002:a0c:fb08:: with SMTP id c8-v6mr4576342qvp.149.1536834558305;
- Thu, 13 Sep 2018 03:29:18 -0700 (PDT)
+        Thu, 13 Sep 2018 11:39:13 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8DASpEl094521
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 06:30:21 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2mfn96jcbn-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 06:30:21 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <schwidefsky@de.ibm.com>;
+        Thu, 13 Sep 2018 11:30:19 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 13 Sep 2018 11:30:17 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8DAUGiI63635472
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 13 Sep 2018 10:30:16 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A14F1A4065;
+        Thu, 13 Sep 2018 13:30:04 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 609C3A4059;
+        Thu, 13 Sep 2018 13:30:04 +0100 (BST)
+Received: from mschwideX1 (unknown [9.152.212.164])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 13 Sep 2018 13:30:04 +0100 (BST)
+Date:   Thu, 13 Sep 2018 12:30:14 +0200
+From:   Martin Schwidefsky <schwidefsky@de.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     will.deacon@arm.com, aneesh.kumar@linux.vnet.ibm.com,
+        akpm@linux-foundation.org, npiggin@gmail.com,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux@armlinux.org.uk,
+        heiko.carstens@de.ibm.com
+Subject: Re: [RFC][PATCH 01/11] asm-generic/tlb: Provide a comment
+In-Reply-To: <20180913092811.894806629@infradead.org>
+References: <20180913092110.817204997@infradead.org>
+        <20180913092811.894806629@infradead.org>
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20180912150142.157913-1-arnd@arndb.de> <20180913020757.GP19965@ZenIV.linux.org.uk>
-In-Reply-To: <20180913020757.GP19965@ZenIV.linux.org.uk>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 13 Sep 2018 12:29:02 +0200
-Message-ID: <CAK8P3a2PTaanqmJycLCJ5QgNFXONb7nVye1=TJST639wDBNpAQ@mail.gmail.com>
-Subject: Re: [PATCH v2 01/17] compat_ioctl: add generic_compat_ioctl_ptrarg()
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-TM-AS-GCONF: 00
+x-cbid: 18091310-0020-0000-0000-000002C5C483
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18091310-0021-0000-0000-00002113200D
+Message-Id: <20180913123014.0d9321b8@mschwideX1>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-13_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=745 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809130108
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 13, 2018 at 4:07 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Wed, Sep 12, 2018 at 05:01:02PM +0200, Arnd Bergmann wrote:
-> > Many drivers have ioctl() handlers that are completely compatible
-> > between 32-bit and 64-bit architectures, except for the argument
-> > that is passed down from user space and may have to be passed
-> > through compat_ptr() in order to become a valid 64-bit pointer.
-> >
-> > Using ".compat_ptr=generic_compat_ioctl_ptrarg" in file operations
-> > should let us simplify a lot of those drivers to avoid #ifdef
-> > checks, and convert additional drivers that don't have proper
-> > compat handling yet.
->
-> Just keep in mind that this should *only* be used when all
-> ioctls implemented in a given instance do take pointers.
-> Because otherwise you are asking for trouble - e.g. if one of
-> them takes an u32 used as a bitmap, this will run into trouble
-> as soon as somebody uses bit 31.  With no visible warnings.
->
-> IOW, it shouldn't be used blindly and it should come with big
-> fat warning.
+On Thu, 13 Sep 2018 11:21:11 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-I was hoping that the _ptrarg suffix gives enough warning here,
-but maybe not. I was careful to only use it in cases that I
-checked are safe, either using only pointer arguments, or
-no arguments.
+> Write a comment explaining some of this..
+> 
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Nick Piggin <npiggin@gmail.com>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> ---
+>  include/asm-generic/tlb.h |  120 ++++++++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 117 insertions(+), 3 deletions(-)
+> 
+> --- a/include/asm-generic/tlb.h
+> +++ b/include/asm-generic/tlb.h
+> @@ -22,6 +22,119 @@
+> 
+>  #ifdef CONFIG_MMU
+> 
+> +/*
+> + * Generic MMU-gather implementation.
+> + *
+> + * The mmu_gather data structure is used by the mm code to implement the
+> + * correct and efficient ordering of freeing pages and TLB invalidations.
+> + *
+> + * This correct ordering is:
+> + *
+> + *  1) unhook page
+> + *  2) TLB invalidate page
+> + *  3) free page
+> + *
+> + * That is, we must never free a page before we have ensured there are no live
+> + * translations left to it. Otherwise it might be possible to observe (or
+> + * worse, change) the page content after it has been reused.
+> + *
 
-What we might do for further clarification (besides adding a
-comment next to the declaration), would be to add a
-complementary generic_compat_ioctl_intarg() that skips
-the compat_ptr(). There are only a handful of drivers that
-would use this though.
+This first comment already includes the reason why s390 is probably better off
+with its own mmu-gather implementation. It depends on the situation if we have
 
-       Arnd
+1) unhook the page and do a TLB flush at the same time
+2) free page
+
+or
+
+1) unhook page
+2) free page
+3) final TLB flush of the whole mm
+
+A variant of the second order we had in the past is to do the mm TLB flush first,
+then the unhooks and frees of the individual pages. The are some tricky corners
+switching between the two variants, see finish_arch_post_lock_switch.
+
+The point is: we *never* have the order 1) unhook, 2) TLB invalidate, 3) free.
+If there is concurrency due to a multi-threaded application we have to do the
+unhook of the page-table entry and the TLB flush with a single instruction.
+
+-- 
+blue skies,
+   Martin.
+
+"Reality continues to ruin my life." - Calvin.
+
