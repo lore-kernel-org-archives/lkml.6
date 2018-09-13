@@ -2,91 +2,104 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FED1C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 09:38:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D98A4C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 09:39:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 621A5206B8
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 09:38:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 621A5206B8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 8F0C7206B8
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 09:39:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F0C7206B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728114AbeIMOrg (ORCPT
+        id S1728152AbeIMOry (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 10:47:36 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:57453 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726697AbeIMOrg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 10:47:36 -0400
-Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1Mbies-1fPh1P0WT8-00dByY; Thu, 13 Sep 2018 11:38:45 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-        Manu Gautam <mgautam@codeaurora.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] usb: dwc3: add EXTCON dependency for qcom
-Date:   Thu, 13 Sep 2018 11:37:31 +0200
-Message-Id: <20180913093843.884284-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.18.0
-X-Provags-ID: V03:K1:FH5Xl0G0I6KYvWVGe8HJ305OPqLUtHLvR7RlKAjO/9qNREHqkbQ
- waMVfBCTgLwipChcPH6co8mVO11gJJrG5dxvOLZI9v0+uRFHmiK5lsv6kYqXNGEgWWPsuFf
- x9nYS8S/iTT1ZcGEkVvYN9hITzQ4+6i9bFLTE1hKZg6wWOpo7rlCwIQMyyanD18pDxwZ9AM
- +rLolx8yhIPx+JRxAhDaw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:WOin64x8hLY=:8Zm5hVylzWQ+ys7zcCvz42
- WPAn4iQ2UIElCalykTmPwN+pC0wq7xteINuWeR/ZlytnA6J4JfjNk4puu9Gd+Q8NUmZuI/jX4
- 9R5+jghpOUmwgAvhJZzh2lGmbfL3NAKp2XEFE2kATQapoREhMLm0wcnU0fStpeRp+b3eUZ+UI
- 9icM0AvBR6qI5Bj/RJsnGBo7h/nOucqEoJGl0jSbB2K4IgAE/kveHR6lolusZdfkBuUna0tPy
- zO0FaNgBtKlqirbssP6EmSDF9eqkP2Lsw32dG0Qq4IbxaGOf3almC8EXRqv8D3lGK9c5Q+7mA
- PqkjQ5xPk1WIOpBi57wvoaDSCUYiyfwPXjaKjDcM2Ws4rnjk5eO0hIL6PdXkIQ3fDoGCuOcJT
- DAnjO91fizvIgfc0xaZr1O0fl3EZj/lEs31XgyBOl2dD9b454aYXpPzbi3ImRBmliNXDil2LL
- B7XCkymkfppGsaDCDzW5eWbLP7Fim2bLLdxe0PcKA2dlK6KGogdh3b9amR0GquE9nVsR2OPTy
- hkLwO8rJOKlsTTHfkgVX/YV11BGJVemUIeSiYyixWOH/C9gztN/RFzesm5mkS96SJv6q1MHC6
- xzwT89j7A57cLzyp28n4+sajjSH329U98rNHOtVP2h5SNZyUznDfA49fG/xN50WRuG+7Ez2kR
- feMEiv/ltNnasQXvjkQqiNhRu5DIIsVrhhy/LtXEfO/xeDKMHkibtTRoB67MVBIEjCew=
+        Thu, 13 Sep 2018 10:47:54 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44488 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726697AbeIMOrx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 10:47:53 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5475480D;
+        Thu, 13 Sep 2018 02:39:13 -0700 (PDT)
+Received: from [10.4.12.81] (melchizedek.emea.arm.com [10.4.12.81])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C49373F575;
+        Thu, 13 Sep 2018 02:39:11 -0700 (PDT)
+Subject: Re: [PATCH] ACPI/PPTT: Handle architecturally unknown cache types
+To:     Brice Goglin <brice.goglin@gmail.com>
+Cc:     Sudeep Holla <sudeep.holla@arm.com>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Jeremy Linton <jeremy.linton@arm.com>, rjw@rjwysocki.net,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        vkilari@codeaurora.org
+References: <1536694334-5811-1-git-send-email-jhugo@codeaurora.org>
+ <f62f22a6-2dd8-f254-dbaf-b9e224099afd@arm.com>
+ <e74f2208-ac0d-6c45-8ddb-5b77d6a42fef@codeaurora.org>
+ <f8dc2958-a7c7-a633-3a06-97fed7c3510b@arm.com>
+ <4f253bf4-ef2d-849f-b793-9b0530e72aab@gmail.com>
+From:   James Morse <james.morse@arm.com>
+Message-ID: <c7e74980-eb5d-1b2a-8ebb-7210b4f507a2@arm.com>
+Date:   Thu, 13 Sep 2018 10:39:10 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <4f253bf4-ef2d-849f-b793-9b0530e72aab@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Like the omap back-end, we get a link error with CONFIG_EXTCON=m
-when building the qcom back-end into the kernel:
+Hi Brice,
 
-drivers/usb/dwc3/dwc3-qcom.o: In function `dwc3_qcom_probe':
-dwc3-qcom.c:(.text+0x13dc): undefined reference to `extcon_get_edev_by_phandle'
-dwc3-qcom.c:(.text+0x1b18): undefined reference to `devm_extcon_register_notifier'
-dwc3-qcom.c:(.text+0x1b9c): undefined reference to `extcon_get_state'
+On 13/09/18 06:51, Brice Goglin wrote:
+> Le 12/09/2018 à 11:49, Sudeep Holla a écrit :
+>>> Yes.  Without this change, we hit the lscpu error in the commit message,
+>>> and get zero output about the system.  We don't even get information
+>>> about the caches which are architecturally specified or how many cpus
+>>> are present.  With this change, we get what we expect out of lscpu (and
+>>> also lstopo) including the cache(s) which are not architecturally
+>>> specified.
+>>>
+>> lscpu and lstopo are so broken. They just assume everything on CPU0.
+>> If you hotplug them out, you start seeing issues. So reading and file
+>> that doesn't exist and then bail out on other essential info though they
+>> are present, hmmm ...
+> 
+> Can you elaborate?
+> 
+> I am not sure cpu0 is supposed to be offlineable on Linux. There's no
+> "online" file in /sys/devices/system/cpu/cpu0. That's why former lstopo
+> doesn't like CPU0 being hotplugged out. We are actually making that case
+> work for another non-standard corner case. But offlining "cpu0" this is
+> considered "normal", somebody must add that missing "online" sysfs
+> attribute for "cpu0" (change
+> https://elixir.bootlin.com/linux/latest/source/drivers/base/cpu.c#L375).
 
-Do the same thing as OMAP and add an explicit dependency on
-EXTCON.
+On x86 you can't normally offline CPU0, its something to do with certain
+interrupts always being routed to CPU0, (oh, and hibernate).
+You should be able to enable this behaviour with 'cpu0_hotplug' on the kernel
+command line.
 
-Fixes: a4333c3a6ba9 ("usb: dwc3: Add Qualcomm DWC3 glue driver")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/usb/dwc3/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+(Kconfig's CONFIG_BOOTPARAM_HOTPLUG_CPU0 and CONFIG_DEBUG_HOTPLUG_CPU0 are also
+worth a look)
 
-diff --git a/drivers/usb/dwc3/Kconfig b/drivers/usb/dwc3/Kconfig
-index 518ead12458d..1a0404fda596 100644
---- a/drivers/usb/dwc3/Kconfig
-+++ b/drivers/usb/dwc3/Kconfig
-@@ -113,7 +113,7 @@ config USB_DWC3_ST
- 
- config USB_DWC3_QCOM
- 	tristate "Qualcomm Platform"
--	depends on ARCH_QCOM || COMPILE_TEST
-+	depends on EXTCON && (ARCH_QCOM || COMPILE_TEST)
- 	depends on OF
- 	default USB_DWC3
- 	help
--- 
-2.18.0
 
+On arm64 at least, cpu0 is just like the others, and can be offlined.
+
+
+Thanks,
+
+James
+
+
+> By the way, did anybody actually see an error with lstopo when there's
+> no "type" attribute for L3? I can't reproduce any issue, we just skip
+> that specific cache entirely, but everything else appears. If you guys
+> want to make that "no_cache" cache appear, I'll make it a Unified cache
+> unless you tell me what to show :)
