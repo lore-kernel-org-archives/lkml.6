@@ -2,185 +2,129 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60D5AC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 05:48:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A295C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 05:49:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 271F120861
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 05:48:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 271F120861
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id B752220882
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 05:49:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wovoEIIQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B752220882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726913AbeIMKzu (ORCPT
+        id S1727004AbeIMK5P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 06:55:50 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:42706 "EHLO mx1.redhat.com"
+        Thu, 13 Sep 2018 06:57:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39096 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726786AbeIMKzu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 06:55:50 -0400
-Received: from smtp.corp.redhat.com (int-mx11.intmail.prod.int.phx2.redhat.com [10.5.11.26])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726570AbeIMK5P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 06:57:15 -0400
+Received: from localhost (unknown [193.47.165.251])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5119E3086266;
-        Thu, 13 Sep 2018 05:47:54 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-56.phx2.redhat.com [10.3.116.56])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4C84130912F4;
-        Thu, 13 Sep 2018 05:47:47 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id CBD8B2049F; Thu, 13 Sep 2018 07:47:45 +0200 (CEST)
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     Kirti Wankhede <kwankhede@nvidia.com>,
-        intel-gvt-dev@lists.freedesktop.org,
-        Alex Williamson <alex.williamson@redhat.com>
-Cc:     kvm@vger.kernel.org, Gerd Hoffmann <kraxel@redhat.com>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 2/2] vfio: add edid support to mbochs sample driver
-Date:   Thu, 13 Sep 2018 07:47:45 +0200
-Message-Id: <20180913054745.6353-3-kraxel@redhat.com>
-In-Reply-To: <20180913054745.6353-1-kraxel@redhat.com>
-References: <20180913054745.6353-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.26
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Thu, 13 Sep 2018 05:47:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D70E720861;
+        Thu, 13 Sep 2018 05:49:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1536817758;
+        bh=KbtETZ11+nmo0wPC+IU9DvqxUaflT9wzKN34GPWH7ic=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=wovoEIIQj751BM5xxGV0SauLOkWqlEJCRo7sJ+34oVT2gTEi1g1yDdc9lPxq7q2sM
+         nA0lVA1It78z5y3RqVveLncXZ5P7fsBDtDQIGkcsFAbSSYJXuI8NKbFKTf0neLjD7y
+         loc/tti3GOyd/Haro3VIXEyO+eVHpmEjvE/lhQKw=
+Date:   Thu, 13 Sep 2018 08:49:15 +0300
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Cong Wang <xiyou.wangcong@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>
+Subject: Re: [PATCH] ucma: fix a use-after-free in ucma_resolve_ip()
+Message-ID: <20180913054915.GF5257@mtr-leonro.mtl.com>
+References: <20180912232744.12693-1-xiyou.wangcong@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="XWOWbaMNXpFDWE00"
+Content-Disposition: inline
+In-Reply-To: <20180912232744.12693-1-xiyou.wangcong@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
----
- samples/vfio-mdev/mbochs.c | 54 ++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 52 insertions(+), 2 deletions(-)
 
-diff --git a/samples/vfio-mdev/mbochs.c b/samples/vfio-mdev/mbochs.c
-index 2535c3677c..6331871ff5 100644
---- a/samples/vfio-mdev/mbochs.c
-+++ b/samples/vfio-mdev/mbochs.c
-@@ -95,16 +95,24 @@ MODULE_PARM_DESC(mem, "megabytes available to " MBOCHS_NAME " devices");
- static const struct mbochs_type {
- 	const char *name;
- 	u32 mbytes;
-+	u32 max_x;
-+	u32 max_y;
- } mbochs_types[] = {
- 	{
- 		.name	= MBOCHS_CLASS_NAME "-" MBOCHS_TYPE_1,
- 		.mbytes = 4,
-+		.max_x  = 800,
-+		.max_y  = 600,
- 	}, {
- 		.name	= MBOCHS_CLASS_NAME "-" MBOCHS_TYPE_2,
- 		.mbytes = 16,
-+		.max_x  = 1920,
-+		.max_y  = 1440,
- 	}, {
- 		.name	= MBOCHS_CLASS_NAME "-" MBOCHS_TYPE_3,
- 		.mbytes = 64,
-+		.max_x  = 0,
-+		.max_y  = 0,
- 	},
- };
- 
-@@ -151,6 +159,7 @@ struct mdev_state {
- 	u64 memsize;
- 	struct page **pages;
- 	pgoff_t pagecount;
-+	u8 edid[512];
- 
- 	struct list_head dmabufs;
- 	u32 active_id;
-@@ -346,6 +355,11 @@ static void handle_mmio_read(struct mdev_state *mdev_state, u16 offset,
- 	int index;
- 
- 	switch (offset) {
-+	case 0x000 ... 0x3ff: /* edid block */
-+		if (offset + count > sizeof(mdev_state->edid))
-+			goto unhandled;
-+		memcpy(buf, mdev_state->edid + offset, count);
-+		break;
- 	case 0x500 ... 0x515: /* bochs dispi interface */
- 		if (count != 2)
- 			goto unhandled;
-@@ -983,9 +997,13 @@ static int mbochs_get_irq_info(struct mdev_device *mdev,
- static int mbochs_get_device_info(struct mdev_device *mdev,
- 				  struct vfio_device_info *dev_info)
- {
-+	struct mdev_state *mdev_state = mdev_get_drvdata(mdev);
-+
- 	dev_info->flags = VFIO_DEVICE_FLAGS_PCI;
- 	dev_info->num_regions = VFIO_PCI_NUM_REGIONS;
- 	dev_info->num_irqs = VFIO_PCI_NUM_IRQS;
-+	dev_info->edid_max_x = mdev_state->type->max_x;
-+	dev_info->edid_max_y = mdev_state->type->max_y;
- 	return 0;
- }
- 
-@@ -1084,7 +1102,7 @@ static long mbochs_ioctl(struct mdev_device *mdev, unsigned int cmd,
- 			unsigned long arg)
- {
- 	int ret = 0;
--	unsigned long minsz;
-+	unsigned long minsz, outsz;
- 	struct mdev_state *mdev_state;
- 
- 	mdev_state = mdev_get_drvdata(mdev);
-@@ -1095,6 +1113,7 @@ static long mbochs_ioctl(struct mdev_device *mdev, unsigned int cmd,
- 		struct vfio_device_info info;
- 
- 		minsz = offsetofend(struct vfio_device_info, num_irqs);
-+		outsz = offsetofend(struct vfio_device_info, edid_max_y);
- 
- 		if (copy_from_user(&info, (void __user *)arg, minsz))
- 			return -EFAULT;
-@@ -1108,7 +1127,9 @@ static long mbochs_ioctl(struct mdev_device *mdev, unsigned int cmd,
- 
- 		memcpy(&mdev_state->dev_info, &info, sizeof(info));
- 
--		if (copy_to_user((void __user *)arg, &info, minsz))
-+		if (outsz > info.argsz)
-+			outsz = info.argsz;
-+		if (copy_to_user((void __user *)arg, &info, outsz))
- 			return -EFAULT;
- 
- 		return 0;
-@@ -1194,6 +1215,35 @@ static long mbochs_ioctl(struct mdev_device *mdev, unsigned int cmd,
- 		return mbochs_get_gfx_dmabuf(mdev, dmabuf_id);
- 	}
- 
-+	case VFIO_DEVICE_SET_GFX_EDID:
-+	{
-+		struct vfio_device_set_gfx_edid *edid;
-+
-+		edid = kmalloc(sizeof(*edid), GFP_KERNEL);
-+
-+		minsz = offsetofend(struct vfio_device_set_gfx_edid,
-+				    edid_blob);
-+
-+		if (copy_from_user(edid, (void __user *)arg, minsz)) {
-+			kfree(edid);
-+			return -EFAULT;
-+		}
-+
-+		if (edid->argsz < minsz ||
-+		    edid->edid_size > sizeof(mdev_state->edid)) {
-+			kfree(edid);
-+			return -EINVAL;
-+		}
-+
-+		memset(mdev_state->edid, 0, sizeof(mdev_state->edid));
-+		if (edid->link_state == VFIO_DEVICE_GFX_LINK_STATE_UP) {
-+			memcpy(mdev_state->edid, edid->edid_blob, edid->edid_size);
-+		}
-+		kfree(edid);
-+
-+		return 0;
-+	}
-+
- 	case VFIO_DEVICE_SET_IRQS:
- 		return -EINVAL;
- 
--- 
-2.9.3
+--XWOWbaMNXpFDWE00
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+On Wed, Sep 12, 2018 at 04:27:44PM -0700, Cong Wang wrote:
+> There is a race condition between ucma_close() and ucma_resolve_ip():
+>
+> CPU0				CPU1
+> ucma_resolve_ip():		ucma_close():
+>
+> ctx = ucma_get_ctx(file, cmd.id);
+>
+>         list_for_each_entry_safe(ctx, tmp, &file->ctx_list, list) {
+>                 mutex_lock(&mut);
+>                 idr_remove(&ctx_idr, ctx->id);
+>                 mutex_unlock(&mut);
+> 		...
+>                 mutex_lock(&mut);
+>                 if (!ctx->closing) {
+>                         mutex_unlock(&mut);
+>                         rdma_destroy_id(ctx->cm_id);
+> 		...
+>                 ucma_free_ctx(ctx);
+>
+> ret = rdma_resolve_addr();
+> ucma_put_ctx(ctx);
+>
+> Before idr_remove(), ucma_get_ctx() could still find the ctx
+> and after rdma_destroy_id(), rdma_resolve_addr() may still
+> access id_priv pointer. Also, ucma_put_ctx() may use ctx after
+> ucma_free_ctx() too.
+>
+> ucma_close() should call ucma_put_ctx() too which tests the
+> refcnt and waits for the last one releasing it. The similar
+> pattern is already used by ucma_destroy_id().
+>
+> Reported-and-tested-by: syzbot+da2591e115d57a9cbb8b@syzkaller.appspotmail.com
+> Reported-by: syzbot+cfe3c1e8ef634ba8964b@syzkaller.appspotmail.com
+> Cc: Jason Gunthorpe <jgg@mellanox.com>
+> Cc: Doug Ledford <dledford@redhat.com>
+> Cc: Leon Romanovsky <leon@kernel.org>
+> Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+> ---
+>  drivers/infiniband/core/ucma.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+
+Thanks,
+Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+
+--XWOWbaMNXpFDWE00
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJbmfpbAAoJEORje4g2clinQaUP/0d6dV3SRWyPjtGDleFGTWZG
+xSFbQte4gMTtF2PODzDPFz8TsNinHYzq/8x7Vxpabx0h9eOPkJiIqp9Wo6oEaysm
+XB63Pw6+3FPRJWpDJyy365N80cNb0TMSQGs1gtbduU+Gpa4x7UapF4swstpSxsrd
+9+2pGr+OcrQhq6kVwVxxrUF9dEiHFXbaA1aUZvcA400ISTjfZYCpoprB39g3DtwQ
+tmBKo6kaKjZaHSEE6Du18FwqTSYB2DU+MlsU5w3AJzEIGfj422dSMBwgeHz9KCJL
+vSfdXXoj3Se02NuVD3ccaxkI+mabscOx/jPUkqRnd29Uc0Y8oJW9xvu63yy4NlX3
+uCeoSmdpA2gmukIFSj0VUyxBIYlaLPjhpuzIg4H1YWl//OlFNHEle4b5JVeL7ley
+lZzmLHY6aYHaat8lUtTZtoaIyam9o6tjgRheA4jK4QhLqdjtDptvJalI0QZWwY7c
+tp0cMEnyNNNNGBV98fg/eXznXdozi/v77XML+i9YjvPWRsfuZECFwXKKt1YC9O2e
+Fpsa5XBlYEc1/upWffiGhORLY5tbjYXDDlD8E6nWHRBG8wkBZUkBbNqLKtdISB+J
+VccJI+9/O7TxW8XSXqLvBzq1VEH1f7K6po0X0wTK5qqdcKXFTs+YWxPl8XidgcXc
+zgp5ff7BE5wDRapJJbYe
+=iuSW
+-----END PGP SIGNATURE-----
+
+--XWOWbaMNXpFDWE00--
