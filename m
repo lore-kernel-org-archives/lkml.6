@@ -3,121 +3,144 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F69C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 05:52:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 421DBC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 05:52:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 316AC20882
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 05:52:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 316AC20882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id EF5CF20861
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 05:52:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF5CF20861
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726835AbeIMLAn convert rfc822-to-8bit (ORCPT
+        id S1727409AbeIMLAw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 07:00:43 -0400
-Received: from mga02.intel.com ([134.134.136.20]:12510 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726675AbeIMLAn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 07:00:43 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Sep 2018 22:52:45 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,367,1531810800"; 
-   d="scan'208";a="85570604"
-Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
-  by fmsmga002.fm.intel.com with ESMTP; 12 Sep 2018 22:52:38 -0700
-Received: from fmsmsx118.amr.corp.intel.com (10.18.116.18) by
- FMSMSX108.amr.corp.intel.com (10.18.124.206) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Wed, 12 Sep 2018 22:52:38 -0700
-Received: from shsmsx151.ccr.corp.intel.com (10.239.6.50) by
- fmsmsx118.amr.corp.intel.com (10.18.116.18) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Wed, 12 Sep 2018 22:52:37 -0700
-Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.205]) by
- SHSMSX151.ccr.corp.intel.com ([169.254.3.16]) with mapi id 14.03.0319.002;
- Thu, 13 Sep 2018 13:52:33 +0800
-From:   "Tian, Kevin" <kevin.tian@intel.com>
-To:     "Raj, Ashok" <ashok.raj@intel.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>
-CC:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Sun, Yi Y" <yi.y.sun@intel.com>,
-        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: RE: [PATCH v2 06/12] iommu/vt-d: Add second level page table
- interface
-Thread-Topic: [PATCH v2 06/12] iommu/vt-d: Add second level page table
- interface
-Thread-Index: AQHUQAHwDWc2LNkyDUSjEMfaICr4mqTimnUAgAEJkYCAAPprAIAJKacQ
-Date:   Thu, 13 Sep 2018 05:52:32 +0000
-Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D191301901@SHSMSX101.ccr.corp.intel.com>
-References: <20180830013524.28743-1-baolu.lu@linux.intel.com>
-        <20180830013524.28743-7-baolu.lu@linux.intel.com>
-        <AADFC41AFE54684AB9EE6CBC0274A5D1912F2C24@SHSMSX101.ccr.corp.intel.com>
-        <331eef29-ae41-2d36-9487-265d773aae5b@linux.intel.com>
- <20180907174328.GA95061@otc-nc-03>
-In-Reply-To: <20180907174328.GA95061@otc-nc-03>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMGJiMGU3MjMtMjVhYS00MmVjLThhYWEtZDJlMDI4M2M2ODk2IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiODVjXC9OUnRkQXBaVUYxOFdyak5TN2R3cWs0OFJ3TnBkRzhPd01Sb3pVRWtLZXoxakRPMHZoNktGOEtIT29cL3NYIn0=
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Thu, 13 Sep 2018 07:00:52 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60114 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726675AbeIMLAv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 07:00:51 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 34D39AE5E;
+        Thu, 13 Sep 2018 05:52:52 +0000 (UTC)
+Subject: Re: [PATCHv3 2/2] btrfs: change remove_extent_mapping to be void
+ function
+To:     zhong jiang <zhongjiang@huawei.com>, dsterba@suse.com
+Cc:     jbacik@fb.com, clm@fb.com, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1536807675-25086-1-git-send-email-zhongjiang@huawei.com>
+ <1536807675-25086-3-git-send-email-zhongjiang@huawei.com>
+From:   Nikolay Borisov <nborisov@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
+ xsFNBFiKBz4BEADNHZmqwhuN6EAzXj9SpPpH/nSSP8YgfwoOqwrP+JR4pIqRK0AWWeWCSwmZ
+ T7g+RbfPFlmQp+EwFWOtABXlKC54zgSf+uulGwx5JAUFVUIRBmnHOYi/lUiE0yhpnb1KCA7f
+ u/W+DkwGerXqhhe9TvQoGwgCKNfzFPZoM+gZrm+kWv03QLUCr210n4cwaCPJ0Nr9Z3c582xc
+ bCUVbsjt7BN0CFa2BByulrx5xD9sDAYIqfLCcZetAqsTRGxM7LD0kh5WlKzOeAXj5r8DOrU2
+ GdZS33uKZI/kZJZVytSmZpswDsKhnGzRN1BANGP8sC+WD4eRXajOmNh2HL4P+meO1TlM3GLl
+ EQd2shHFY0qjEo7wxKZI1RyZZ5AgJnSmehrPCyuIyVY210CbMaIKHUIsTqRgY5GaNME24w7h
+ TyyVCy2qAM8fLJ4Vw5bycM/u5xfWm7gyTb9V1TkZ3o1MTrEsrcqFiRrBY94Rs0oQkZvunqia
+ c+NprYSaOG1Cta14o94eMH271Kka/reEwSZkC7T+o9hZ4zi2CcLcY0DXj0qdId7vUKSJjEep
+ c++s8ncFekh1MPhkOgNj8pk17OAESanmDwksmzh1j12lgA5lTFPrJeRNu6/isC2zyZhTwMWs
+ k3LkcTa8ZXxh0RfWAqgx/ogKPk4ZxOXQEZetkEyTFghbRH2BIwARAQABzSJOaWtvbGF5IEJv
+ cmlzb3YgPG5ib3Jpc292QHN1c2UuZGU+wsF4BBMBAgAiBQJYijkSAhsDBgsJCAcDAgYVCAIJ
+ CgsEFgIDAQIeAQIXgAAKCRBxvoJG5T8oV/B6D/9a8EcRPdHg8uLEPywuJR8URwXzkofT5bZE
+ IfGF0Z+Lt2ADe+nLOXrwKsamhweUFAvwEUxxnndovRLPOpWerTOAl47lxad08080jXnGfYFS
+ Dc+ew7C3SFI4tFFHln8Y22Q9075saZ2yQS1ywJy+TFPADIprAZXnPbbbNbGtJLoq0LTiESnD
+ w/SUC6sfikYwGRS94Dc9qO4nWyEvBK3Ql8NkoY0Sjky3B0vL572Gq0ytILDDGYuZVo4alUs8
+ LeXS5ukoZIw1QYXVstDJQnYjFxYgoQ5uGVi4t7FsFM/6ykYDzbIPNOx49Rbh9W4uKsLVhTzG
+ BDTzdvX4ARl9La2kCQIjjWRg+XGuBM5rxT/NaTS78PXjhqWNYlGc5OhO0l8e5DIS2tXwYMDY
+ LuHYNkkpMFksBslldvNttSNei7xr5VwjVqW4vASk2Aak5AleXZS+xIq2FADPS/XSgIaepyTV
+ tkfnyreep1pk09cjfXY4A7qpEFwazCRZg9LLvYVc2M2eFQHDMtXsH59nOMstXx2OtNMcx5p8
+ 0a5FHXE/HoXz3p9bD0uIUq6p04VYOHsMasHqHPbsMAq9V2OCytJQPWwe46bBjYZCOwG0+x58
+ fBFreP/NiJNeTQPOa6FoxLOLXMuVtpbcXIqKQDoEte9aMpoj9L24f60G4q+pL/54ql2VRscK
+ d87BTQRYigc+ARAAyJSq9EFk28++SLfg791xOh28tLI6Yr8wwEOvM3wKeTfTZd+caVb9gBBy
+ wxYhIopKlK1zq2YP7ZjTP1aPJGoWvcQZ8fVFdK/1nW+Z8/NTjaOx1mfrrtTGtFxVBdSCgqBB
+ jHTnlDYV1R5plJqK+ggEP1a0mr/rpQ9dFGvgf/5jkVpRnH6BY0aYFPprRL8ZCcdv2DeeicOO
+ YMobD5g7g/poQzHLLeT0+y1qiLIFefNABLN06Lf0GBZC5l8hCM3Rpb4ObyQ4B9PmL/KTn2FV
+ Xq/c0scGMdXD2QeWLePC+yLMhf1fZby1vVJ59pXGq+o7XXfYA7xX0JsTUNxVPx/MgK8aLjYW
+ hX+TRA4bCr4uYt/S3ThDRywSX6Hr1lyp4FJBwgyb8iv42it8KvoeOsHqVbuCIGRCXqGGiaeX
+ Wa0M/oxN1vJjMSIEVzBAPi16tztL/wQtFHJtZAdCnuzFAz8ue6GzvsyBj97pzkBVacwp3/Mw
+ qbiu7sDz7yB0d7J2tFBJYNpVt/Lce6nQhrvon0VqiWeMHxgtQ4k92Eja9u80JDaKnHDdjdwq
+ FUikZirB28UiLPQV6PvCckgIiukmz/5ctAfKpyYRGfez+JbAGl6iCvHYt/wAZ7Oqe/3Cirs5
+ KhaXBcMmJR1qo8QH8eYZ+qhFE3bSPH446+5oEw8A9v5oonKV7zMAEQEAAcLBXwQYAQIACQUC
+ WIoHPgIbDAAKCRBxvoJG5T8oV1pyD/4zdXdOL0lhkSIjJWGqz7Idvo0wjVHSSQCbOwZDWNTN
+ JBTP0BUxHpPu/Z8gRNNP9/k6i63T4eL1xjy4umTwJaej1X15H8Hsh+zakADyWHadbjcUXCkg
+ OJK4NsfqhMuaIYIHbToi9K5pAKnV953xTrK6oYVyd/Rmkmb+wgsbYQJ0Ur1Ficwhp6qU1CaJ
+ mJwFjaWaVgUERoxcejL4ruds66LM9Z1Qqgoer62ZneID6ovmzpCWbi2sfbz98+kW46aA/w8r
+ 7sulgs1KXWhBSv5aWqKU8C4twKjlV2XsztUUsyrjHFj91j31pnHRklBgXHTD/pSRsN0UvM26
+ lPs0g3ryVlG5wiZ9+JbI3sKMfbdfdOeLxtL25ujs443rw1s/PVghphoeadVAKMPINeRCgoJH
+ zZV/2Z/myWPRWWl/79amy/9MfxffZqO9rfugRBORY0ywPHLDdo9Kmzoxoxp9w3uTrTLZaT9M
+ KIuxEcV8wcVjr+Wr9zRl06waOCkgrQbTPp631hToxo+4rA1jiQF2M80HAet65ytBVR2pFGZF
+ zGYYLqiG+mpUZ+FPjxk9kpkRYz61mTLSY7tuFljExfJWMGfgSg1OxfLV631jV1TcdUnx+h3l
+ Sqs2vMhAVt14zT8mpIuu2VNxcontxgVr1kzYA/tQg32fVRbGr449j1gw57BV9i0vww==
+Message-ID: <42551abf-3ca1-7df6-0383-a1d8aa83ec89@suse.com>
+Date:   Thu, 13 Sep 2018 08:52:50 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <1536807675-25086-3-git-send-email-zhongjiang@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: Raj, Ashok
-> Sent: Saturday, September 8, 2018 1:43 AM
-> 
-> On Fri, Sep 07, 2018 at 10:47:11AM +0800, Lu Baolu wrote:
-> >
-> > >>+
-> > >>+	intel_pasid_clear_entry(dev, pasid);
-> > >>+
-> > >>+	if (!ecap_coherent(iommu->ecap)) {
-> > >>+		pte = intel_pasid_get_entry(dev, pasid);
-> > >>+		clflush_cache_range(pte, sizeof(*pte));
-> > >>+	}
-> > >>+
-> > >>+	pasid_based_pasid_cache_invalidation(iommu, did, pasid);
-> > >>+	pasid_based_iotlb_cache_invalidation(iommu, did, pasid);
-> > >>+
-> > >>+	/* Device IOTLB doesn't need to be flushed in caching mode. */
-> > >>+	if (!cap_caching_mode(iommu->cap))
-> > >>+		pasid_based_dev_iotlb_cache_invalidation(iommu, dev,
-> > >>pasid);
-> > >
-> > >can you elaborate, or point to any spec reference?
-> > >
-> >
-> > In the driver, device iotlb doesn't get flushed in caching mode. I just
-> > follow what have been done there.
-> >
-> > It also makes sense to me since only the bare metal host needs to
-> > consider whether and how to flush the device iotlb.
-> >
-> 
-> DavidW might remember, i think the idea was to help with cost
-> of virtualization, we can avoid taking 2 exits vs handling
-> it directly when we do iotlb flushing instead.
-> 
 
-OK, performance-wise it makes sense. though strictly speaking it
-doesn't follow spec...
 
-Thanks
-Kevin
+On 13.09.2018 06:01, zhong jiang wrote:
+> remove_extent_mapping use the variable "ret" for return value,
+> but it is not modified after initialzation. Further, I find that
+> any of the callers do not handle the return value, so it is safe
+> to drop the unneeded "ret" and make it to be void function.
+> 
+> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+
+Reviewed-by: Nikolay Borisov <nborisov@suse.com
+
+> ---
+>  fs/btrfs/extent_map.c | 5 +----
+>  fs/btrfs/extent_map.h | 2 +-
+>  2 files changed, 2 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/btrfs/extent_map.c b/fs/btrfs/extent_map.c
+> index c4e2347..81b6a08 100644
+> --- a/fs/btrfs/extent_map.c
+> +++ b/fs/btrfs/extent_map.c
+> @@ -428,16 +428,13 @@ struct extent_map *search_extent_mapping(struct extent_map_tree *tree,
+>   * Removes @em from @tree.  No reference counts are dropped, and no checks
+>   * are done to see if the range is in use
+>   */
+> -int remove_extent_mapping(struct extent_map_tree *tree, struct extent_map *em)
+> +void remove_extent_mapping(struct extent_map_tree *tree, struct extent_map *em)
+>  {
+> -	int ret = 0;
+> -
+>  	WARN_ON(test_bit(EXTENT_FLAG_PINNED, &em->flags));
+>  	rb_erase_cached(&em->rb_node, &tree->map);
+>  	if (!test_bit(EXTENT_FLAG_LOGGING, &em->flags))
+>  		list_del_init(&em->list);
+>  	RB_CLEAR_NODE(&em->rb_node);
+> -	return ret;
+>  }
+>  
+>  void replace_extent_mapping(struct extent_map_tree *tree,
+> diff --git a/fs/btrfs/extent_map.h b/fs/btrfs/extent_map.h
+> index df4e1a5..8798745 100644
+> --- a/fs/btrfs/extent_map.h
+> +++ b/fs/btrfs/extent_map.h
+> @@ -78,7 +78,7 @@ struct extent_map *lookup_extent_mapping(struct extent_map_tree *tree,
+>  					 u64 start, u64 len);
+>  int add_extent_mapping(struct extent_map_tree *tree,
+>  		       struct extent_map *em, int modified);
+> -int remove_extent_mapping(struct extent_map_tree *tree, struct extent_map *em);
+> +void remove_extent_mapping(struct extent_map_tree *tree, struct extent_map *em);
+>  void replace_extent_mapping(struct extent_map_tree *tree,
+>  			    struct extent_map *cur,
+>  			    struct extent_map *new,
+> 
