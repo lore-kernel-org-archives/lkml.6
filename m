@@ -2,294 +2,106 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=5.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90E31C63684
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 18:23:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75A14C43143
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 18:26:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A68620866
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 18:23:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1749020866
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 18:26:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cRtzoRK9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A68620866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="kw4MXALF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1749020866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727834AbeIMXeK (ORCPT
+        id S1727728AbeIMXh2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 19:34:10 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:44302 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727152AbeIMXeK (ORCPT
+        Thu, 13 Sep 2018 19:37:28 -0400
+Received: from mail-lj1-f170.google.com ([209.85.208.170]:45882 "EHLO
+        mail-lj1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726950AbeIMXh1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 19:34:10 -0400
-Received: by mail-pf1-f194.google.com with SMTP id k21-v6so3039237pff.11
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 11:23:31 -0700 (PDT)
+        Thu, 13 Sep 2018 19:37:27 -0400
+Received: by mail-lj1-f170.google.com with SMTP id u83-v6so5410290lje.12
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 11:26:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=KXp0QpKCsRKEVKktOJ1EZRM4MRqtDkPgK7TrpTCo/ag=;
-        b=cRtzoRK9of/CwVrjbxf+1pVKtq6l77323gx0P1lpF7jfZ7X1+6s/6pqgNi2oCiDZ+n
-         XPnyYCX9KMwk3+rjz4enPHHava7ArjuRAc+SuqET1daKFIerW25hC1Fg2QwDNJza3VUO
-         hdZE6UOMMnvkTj29wdvGZ30z3JReM/Fhs/d+Y=
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:organization:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ArycV61wuv8i8vc183kpw4b57jor0XvztZzg6f+adR0=;
+        b=kw4MXALF3h+CUbnqkmKKRciFsGQTBuEXvr6wenBec12aTbdObyLneufAyAU/Q7a18O
+         qq7QLXU5aNCggZqADRua7oo9TQFz2MGPM1mEzLcISLxaEdslyFFjOkmVCdim0w0XQb2H
+         2le8nzoFh46GRwJA+jZe54ut5KBa1x/QREg3STDcJPZXOaS+FSSKp6sdtsVntakfl4fD
+         tF3oF7QirCuNxTqUv4UV0lzeoXhs2N1Aig3cTfMqc84rAxOjVdFWE+XHxsjVrXBGqSEP
+         0kK7y9hzLOBYjQqW5rus+BMFz2Q6PT/endIrIuigaZH7G7/xS0u6XpdLwG6AUrTHeYFe
+         W38w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=KXp0QpKCsRKEVKktOJ1EZRM4MRqtDkPgK7TrpTCo/ag=;
-        b=H1whTNFqVmhIHIQq970u3B3KN3ahv+o64ev4PBrLbOs5gr0nHHrXpO+/B54/VnHPnT
-         w+cWA/htUrCt313R7o4dymtmdo335HH1zjeQTlt41BssGiPJ384QotmAAMDXrKGRTYo7
-         97FqV3mV8JY24wpg8eK5ZJTNU9vCLPnTwPS7QMN1kCud176GIS38vZu5LpUOxEObyhLb
-         YpABCMfqpJQbdFCGBj3Ds6FIrNpsxNmU2HrhyxvETJ7aNjrY6eL/Ngx+MJpSVlUP7teu
-         PPgU3RvylzjRzM1VfwGcz3yVoFHA13K70rmCRPRBwlN8yBX141x2pwrj49JnTS0J8/cq
-         1Pjw==
-X-Gm-Message-State: APzg51BCBnSSoLZZHcw+iGt+uZ8cV6YXTLGHUHZS0h5Xw0lbku0sBx+N
-        /TcWJdB8uYh4qO1/ZgR5P2An/g==
-X-Google-Smtp-Source: ANB0VdYBr78AgCj/YhdVCIzQXCXFdos24nNULYHgjgCZ6QWge9lHzdIoA1Qy5LLCXPaqsoJt/XMkPg==
-X-Received: by 2002:a63:f244:: with SMTP id d4-v6mr8114565pgk.2.1536863010701;
-        Thu, 13 Sep 2018 11:23:30 -0700 (PDT)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id k4-v6sm7283688pfj.30.2018.09.13.11.23.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 13 Sep 2018 11:23:29 -0700 (PDT)
-Date:   Thu, 13 Sep 2018 11:23:28 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Eric Biggers <ebiggers@google.com>,
-        Gilad Ben-Yossef <gilad@benyossef.com>,
-        Alexander Stein <alexander.stein@systec-electronic.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Arnaud Ebalard <arno@natisbad.org>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Christian Lamparter <chunkeey@gmail.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        linux-crypto@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH][RFC] crypto: skcipher: Remove VLA usage
-Message-ID: <20180913182328.GA9812@beast>
+        h=x-gm-message-state:subject:to:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=ArycV61wuv8i8vc183kpw4b57jor0XvztZzg6f+adR0=;
+        b=sgzQvmSXqGfO+zSEHrYxOgwUdW8nq5J8rCkWbhuYUQhGe1wolNt8SXDS7yTTmoif5G
+         jI71MGUCscLjn3b/QVk2R5NlWJnAL53ueB9aJ0jsAyulz08k+YzUftHh6SGlT0+WWnLX
+         bmPdD99mC3AcdBQxnW5igBL98S9wqWhm2ilQK3p1BS0xkVrrLIus28ggvIW0X23pGAQp
+         X3wUn0obV9bKsJZFbSuGv/Jne6FlZCLRiaJ3U7bHtIv7K1vXKwsHoR5rpKbm6fWF+Zxy
+         XuqxGqEv2r6fC87hdwosPz5dl5YjC1uZA6m8N6XyqeaOB8KsLxao0Vf66bN3+cpzq0tn
+         uskA==
+X-Gm-Message-State: APzg51D0DmQwCLHSeGExSobA/paun9rggP2HMmPWtXmAiHNPqh8gfgAo
+        ndyTTetArUcmz8yry5F6tVUiBDthjPU=
+X-Google-Smtp-Source: ANB0VdadIMr8yo1XsLv3ebRd5HgrD0FmYL4HMkxND4S3UUZrw9hp5b42kEFJgtLF3JbQxR2GU14FYw==
+X-Received: by 2002:a2e:947:: with SMTP id 68-v6mr5205979ljj.1.1536863205486;
+        Thu, 13 Sep 2018 11:26:45 -0700 (PDT)
+Received: from wasted.cogentembedded.com ([31.173.84.148])
+        by smtp.gmail.com with ESMTPSA id n26-v6sm823487ljc.7.2018.09.13.11.26.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Sep 2018 11:26:44 -0700 (PDT)
+Subject: Re: [PATCH v3] neighbour: confirm neigh entries when ARP packet is
+ received
+To:     Vasily Khoruzhick <vasilykh@arista.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Roopa Prabhu <roopa@cumulusnetworks.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Jim Westfall <jwestfall@surrealistic.net>,
+        Wolfgang Bumiller <w.bumiller@proxmox.com>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ihar Hrachyshka <ihrachys@redhat.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180913181203.4207-1-vasilykh@arista.com>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <16ad730b-ef79-62b0-4b11-9473c0b033e1@cogentembedded.com>
+Date:   Thu, 13 Sep 2018 21:26:42 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In-Reply-To: <20180913181203.4207-1-vasilykh@arista.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RFC follow-up to https://lkml.kernel.org/r/CAGXu5j+bpLK=EQ9LHkO8V=sdaQwt==6fbGhgn2Vi1E9_WxSGRQ@mail.gmail.com
+Hello!
 
-The core API changes:
+On 09/13/2018 09:12 PM, Vasily Khoruzhick wrote:
 
-	struct crypto_sync_skcipher
-	crypto_alloc_sync_skcipher()
-	crypto_free_sync_skcipher()
-	crypto_sync_skcipher_setkey()
-	skcipher_request_set_sync_tfm()
-	SKCIPHER_REQUEST_ON_STACK type check
+> Update 'confirmed' timestamp when ARP packet is received. It shouldn't
+> affect locktime logic and anyway entry can be confirmed by any higher-layer
+> protocol. Thus it makes sense to confirm it when ARP packet is received.
+> 
+> Fixes: 77d7123342 ("neighbour: update neigh timestamps iff update is effective")
 
-and a single user's refactoring as an example:
+   Need at least 12 hex digits... Perhaps could be fixed when applying?
 
-	drivers/crypto/ccp/ccp-crypto.h
-	drivers/crypto/ccp/ccp-crypto-aes-xts.c
-
-Does this look correct? If so, I can continue and do the other 60
-instances of SKCIPHER_REQUEST_ON_STACK().
-
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- crypto/skcipher.c                       | 24 +++++++++++++++++
- drivers/crypto/ccp/ccp-crypto-aes-xts.c | 10 ++++----
- drivers/crypto/ccp/ccp-crypto.h         |  2 +-
- include/crypto/skcipher.h               | 34 ++++++++++++++++++++++++-
- 4 files changed, 63 insertions(+), 7 deletions(-)
-
-diff --git a/crypto/skcipher.c b/crypto/skcipher.c
-index 0bd8c6caa498..4caab81d2d02 100644
---- a/crypto/skcipher.c
-+++ b/crypto/skcipher.c
-@@ -949,6 +949,30 @@ struct crypto_skcipher *crypto_alloc_skcipher(const char *alg_name,
- }
- EXPORT_SYMBOL_GPL(crypto_alloc_skcipher);
- 
-+struct crypto_sync_skcipher *crypto_alloc_sync_skcipher(
-+				const char *alg_name, u32 type, u32 mask)
-+{
-+	struct crypto_skcipher *tfm;
-+
-+	/* Only sync algorithms allowed. */
-+	mask |= CRYPTO_ALG_ASYNC;
-+
-+	tfm = crypto_alloc_tfm(alg_name, &crypto_skcipher_type2, type, mask);
-+
-+	/*
-+	 * Make sure we do not allocate something that might get used with
-+	 * an on-stack request: check the request size.
-+	 */
-+	if (!IS_ERR(tfm) && WARN_ON(crypto_skcipher_reqsize(tfm) >
-+				    MAX_SYNC_SKCIPHER_REQSIZE)) {
-+		crypto_free_skcipher(tfm);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	return (struct crypto_sync_skcipher *)tfm;
-+}
-+EXPORT_SYMBOL_GPL(crypto_alloc_sync_skcipher);
-+
- int crypto_has_skcipher2(const char *alg_name, u32 type, u32 mask)
- {
- 	return crypto_type_has_alg(alg_name, &crypto_skcipher_type2,
-diff --git a/drivers/crypto/ccp/ccp-crypto-aes-xts.c b/drivers/crypto/ccp/ccp-crypto-aes-xts.c
-index 94b5bcf5b628..983c921736b4 100644
---- a/drivers/crypto/ccp/ccp-crypto-aes-xts.c
-+++ b/drivers/crypto/ccp/ccp-crypto-aes-xts.c
-@@ -102,7 +102,7 @@ static int ccp_aes_xts_setkey(struct crypto_ablkcipher *tfm, const u8 *key,
- 	ctx->u.aes.key_len = key_len / 2;
- 	sg_init_one(&ctx->u.aes.key_sg, ctx->u.aes.key, key_len);
- 
--	return crypto_skcipher_setkey(ctx->u.aes.tfm_skcipher, key, key_len);
-+	return crypto_sync_skcipher_setkey(ctx->u.aes.tfm_skcipher, key, key_len);
- }
- 
- static int ccp_aes_xts_crypt(struct ablkcipher_request *req,
-@@ -156,7 +156,7 @@ static int ccp_aes_xts_crypt(struct ablkcipher_request *req,
- 		/* Use the fallback to process the request for any
- 		 * unsupported unit sizes or key sizes
- 		 */
--		skcipher_request_set_tfm(subreq, ctx->u.aes.tfm_skcipher);
-+		skcipher_request_set_sync_tfm(subreq, ctx->u.aes.tfm_skcipher);
- 		skcipher_request_set_callback(subreq, req->base.flags,
- 					      NULL, NULL);
- 		skcipher_request_set_crypt(subreq, req->src, req->dst,
-@@ -203,12 +203,12 @@ static int ccp_aes_xts_decrypt(struct ablkcipher_request *req)
- static int ccp_aes_xts_cra_init(struct crypto_tfm *tfm)
- {
- 	struct ccp_ctx *ctx = crypto_tfm_ctx(tfm);
--	struct crypto_skcipher *fallback_tfm;
-+	struct crypto_sync_skcipher *fallback_tfm;
- 
- 	ctx->complete = ccp_aes_xts_complete;
- 	ctx->u.aes.key_len = 0;
- 
--	fallback_tfm = crypto_alloc_skcipher("xts(aes)", 0,
-+	fallback_tfm = crypto_alloc_sync_skcipher("xts(aes)", 0,
- 					     CRYPTO_ALG_ASYNC |
- 					     CRYPTO_ALG_NEED_FALLBACK);
- 	if (IS_ERR(fallback_tfm)) {
-@@ -226,7 +226,7 @@ static void ccp_aes_xts_cra_exit(struct crypto_tfm *tfm)
- {
- 	struct ccp_ctx *ctx = crypto_tfm_ctx(tfm);
- 
--	crypto_free_skcipher(ctx->u.aes.tfm_skcipher);
-+	crypto_free_sync_skcipher(ctx->u.aes.tfm_skcipher);
- }
- 
- static int ccp_register_aes_xts_alg(struct list_head *head,
-diff --git a/drivers/crypto/ccp/ccp-crypto.h b/drivers/crypto/ccp/ccp-crypto.h
-index b9fd090c46c2..28819e11db96 100644
---- a/drivers/crypto/ccp/ccp-crypto.h
-+++ b/drivers/crypto/ccp/ccp-crypto.h
-@@ -88,7 +88,7 @@ static inline struct ccp_crypto_ahash_alg *
- /***** AES related defines *****/
- struct ccp_aes_ctx {
- 	/* Fallback cipher for XTS with unsupported unit sizes */
--	struct crypto_skcipher *tfm_skcipher;
-+	struct crypto_sync_skcipher *tfm_skcipher;
- 
- 	/* Cipher used to generate CMAC K1/K2 keys */
- 	struct crypto_cipher *tfm_cipher;
-diff --git a/include/crypto/skcipher.h b/include/crypto/skcipher.h
-index 2f327f090c3e..4435f3a3d621 100644
---- a/include/crypto/skcipher.h
-+++ b/include/crypto/skcipher.h
-@@ -65,6 +65,10 @@ struct crypto_skcipher {
- 	struct crypto_tfm base;
- };
- 
-+struct crypto_sync_skcipher {
-+	struct crypto_skcipher base;
-+};
-+
- /**
-  * struct skcipher_alg - symmetric key cipher definition
-  * @min_keysize: Minimum key size supported by the transformation. This is the
-@@ -139,9 +143,17 @@ struct skcipher_alg {
- 	struct crypto_alg base;
- };
- 
-+#define MAX_SYNC_SKCIPHER_REQSIZE      384
-+/*
-+ * This performs a type-check against the "tfm" argument to make sure
-+ * all users have the correct skcipher tfm for doing on-stack requests.
-+ */
- #define SKCIPHER_REQUEST_ON_STACK(name, tfm) \
- 	char __##name##_desc[sizeof(struct skcipher_request) + \
--		crypto_skcipher_reqsize(tfm)] CRYPTO_MINALIGN_ATTR; \
-+			     MAX_SYNC_SKCIPHER_REQSIZE + \
-+			     (!(sizeof((struct crypto_sync_skcipher *)1 == \
-+				       (typeof(tfm))1))) \
-+			    ] CRYPTO_MINALIGN_ATTR; \
- 	struct skcipher_request *name = (void *)__##name##_desc
- 
- /**
-@@ -197,6 +209,9 @@ static inline struct crypto_skcipher *__crypto_skcipher_cast(
- struct crypto_skcipher *crypto_alloc_skcipher(const char *alg_name,
- 					      u32 type, u32 mask);
- 
-+struct crypto_sync_skcipher *crypto_alloc_sync_skcipher(const char *alg_name,
-+					      u32 type, u32 mask);
-+
- static inline struct crypto_tfm *crypto_skcipher_tfm(
- 	struct crypto_skcipher *tfm)
- {
-@@ -212,6 +227,11 @@ static inline void crypto_free_skcipher(struct crypto_skcipher *tfm)
- 	crypto_destroy_tfm(tfm, crypto_skcipher_tfm(tfm));
- }
- 
-+static inline void crypto_free_sync_skcipher(struct crypto_sync_skcipher *tfm)
-+{
-+	crypto_free_skcipher(&tfm->base);
-+}
-+
- /**
-  * crypto_has_skcipher() - Search for the availability of an skcipher.
-  * @alg_name: is the cra_name / name or cra_driver_name / driver name of the
-@@ -401,6 +421,12 @@ static inline int crypto_skcipher_setkey(struct crypto_skcipher *tfm,
- 	return tfm->setkey(tfm, key, keylen);
- }
- 
-+static inline int crypto_sync_skcipher_setkey(struct crypto_sync_skcipher *tfm,
-+					 const u8 *key, unsigned int keylen)
-+{
-+	return crypto_skcipher_setkey(&tfm->base, key, keylen);
-+}
-+
- static inline unsigned int crypto_skcipher_default_keysize(
- 	struct crypto_skcipher *tfm)
- {
-@@ -500,6 +526,12 @@ static inline void skcipher_request_set_tfm(struct skcipher_request *req,
- 	req->base.tfm = crypto_skcipher_tfm(tfm);
- }
- 
-+static inline void skcipher_request_set_sync_tfm(struct skcipher_request *req,
-+					    struct crypto_sync_skcipher *tfm)
-+{
-+	skcipher_request_set_tfm(req, &tfm->base);
-+}
-+
- static inline struct skcipher_request *skcipher_request_cast(
- 	struct crypto_async_request *req)
- {
--- 
-2.17.1
-
-
--- 
-Kees Cook
-Pixel Security
+> Signed-off-by: Vasily Khoruzhick <vasilykh@arista.com>
+[...]
+MBR, Sergei
