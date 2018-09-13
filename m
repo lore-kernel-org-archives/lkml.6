@@ -2,90 +2,119 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F125FC070C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 00:45:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02D0CC070C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 00:48:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90FA8213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 00:45:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fsiLeg5d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90FA8213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id A2697213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 00:48:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2697213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=au1.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726866AbeIMFwR (ORCPT
+        id S1727231AbeIMFz3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 01:52:17 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:46004 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726261AbeIMFwQ (ORCPT
+        Thu, 13 Sep 2018 01:55:29 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58162 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726409AbeIMFz3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 01:52:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
-        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=0BkCWpIgtkFuM4EvF1uPeuLWdsm7XDeYZX1g5czCAnE=; b=fsiLeg5dbAp7fkvuJaDjpQBfp
-        DYaww2SLWlK6V1B1DtCp8NCfC5aL24WlsqwVaVkP5FVTgwoI/wTzrCrhHaRuLWUJSs+EJ+6BUWmq0
-        6AGsH4+AH07BLoXOJjXS8Uk6mfMyiOT0vMQUsXdDfJqc4YwbMxD57FsiOb2ZNAsiabiUlN5HjmQ8i
-        t2B98DlIjNm3wP7C3Cp6zCm34RvdKm+8nktWsB+TFW58MzBTWIuutcZpVdi+6vCryDfWKBx28LCj/
-        1AJ4Qlmjg7/GNn7uxX2J99ooUjAvKtPZnd2sZuXadSltZ5o2VknRyzDm/l+tL43IJUtlKD5RRxnJT
-        pp6kMwZVg==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g0Fku-0005Wb-2p; Thu, 13 Sep 2018 00:45:12 +0000
-Subject: Re: mmotm 2018-09-12-16-40 uploaded (psi)
-To:     akpm@linux-foundation.org, broonie@kernel.org, mhocko@suse.cz,
-        sfr@canb.auug.org.au, linux-next@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org,
-        Johannes Weiner <hannes@cmpxchg.org>
-References: <20180912234039.Xa5RS%akpm@linux-foundation.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <a9bef471-ac93-2983-618b-ffee65f01e0b@infradead.org>
-Date:   Wed, 12 Sep 2018 17:45:08 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Thu, 13 Sep 2018 01:55:29 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8D0dW6q062711
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 20:48:26 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2mfbrxkrcc-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 20:48:26 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <andrew.donnellan@au1.ibm.com>;
+        Thu, 13 Sep 2018 01:48:24 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 13 Sep 2018 01:48:20 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8D0mJC914221356
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 13 Sep 2018 00:48:19 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 210BF4C044;
+        Thu, 13 Sep 2018 03:48:10 +0100 (BST)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C0DCE4C040;
+        Thu, 13 Sep 2018 03:48:09 +0100 (BST)
+Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 13 Sep 2018 03:48:09 +0100 (BST)
+Received: from [9.102.33.156] (unknown [9.102.33.156])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 7611BA00FF;
+        Thu, 13 Sep 2018 10:48:15 +1000 (AEST)
+Subject: Re: [PATCH v2 03/17] compat_ioctl: use correct compat_ptr()
+ translation in drivers
+To:     Arnd Bergmann <arnd@arndb.de>, viro@zeniv.linux.org.uk
+Cc:     linux-fsdevel@vger.kernel.org,
+        Frederic Barrat <fbarrat@linux.vnet.ibm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Frank Haverkamp <haver@linux.vnet.ibm.com>,
+        "Guilherme G. Piccoli" <gpiccoli@linux.vnet.ibm.com>,
+        Kashyap Desai <kashyap.desai@broadcom.com>,
+        Sumit Saxena <sumit.saxena@broadcom.com>,
+        Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Felipe Balbi <balbi@kernel.org>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, megaraidlinux.pdl@broadcom.com,
+        linux-scsi@vger.kernel.org, linux-usb@vger.kernel.org
+References: <20180912150142.157913-1-arnd@arndb.de>
+ <20180912150142.157913-3-arnd@arndb.de>
+From:   Andrew Donnellan <andrew.donnellan@au1.ibm.com>
+Date:   Thu, 13 Sep 2018 10:48:15 +1000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180912234039.Xa5RS%akpm@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180912150142.157913-3-arnd@arndb.de>
+Content-Language: en-AU
+X-TM-AS-GCONF: 00
+x-cbid: 18091300-4275-0000-0000-000002B991B0
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18091300-4276-0000-0000-000037C2C812
+Message-Id: <11132252-c6ba-8b53-9314-f91e77574eba@au1.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-12_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=474 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809130006
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/12/18 4:40 PM, akpm@linux-foundation.org wrote:
-> The mm-of-the-moment snapshot 2018-09-12-16-40 has been uploaded to
+On 13/09/18 01:01, Arnd Bergmann wrote:
+> A handful of drivers all have a trivial wrapper around their ioctl
+> handler, but don't call the compat_ptr() conversion function at the
+> moment. In practice this does not matter, since none of them are used
+> on the s390 architecture and for all other architectures, compat_ptr()
+> does not do anything, but using the new generic_compat_ioctl_ptrarg
+> helper makes it more correct in theory, and simplifies the code.
 > 
->    http://www.ozlabs.org/~akpm/mmotm/
-> 
-> mmotm-readme.txt says
-> 
-> README for mm-of-the-moment:
-> 
-> http://www.ozlabs.org/~akpm/mmotm/
-> 
-> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> more than once a week.
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Multiple build errors when CONFIG_SMP is not set: (this is on i386 fwiw)
+For cxl:
 
-in the psi (pressure) patches, I guess:
-
-In file included from ../kernel/sched/sched.h:1367:0,
-                 from ../kernel/sched/core.c:8:
-../kernel/sched/stats.h: In function 'psi_task_tick':
-../kernel/sched/stats.h:135:33: error: 'struct rq' has no member named 'cpu'
-   psi_memstall_tick(rq->curr, rq->cpu);
-
+Acked-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
 
 -- 
-~Randy
+Andrew Donnellan              OzLabs, ADL Canberra
+andrew.donnellan@au1.ibm.com  IBM Australia Limited
+
