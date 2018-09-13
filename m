@@ -6,38 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3349EC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:38:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBA50C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:38:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAFCF20854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:38:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAFCF20854
+	by mail.kernel.org (Postfix) with ESMTP id 8136C20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:38:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8136C20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729498AbeIMSsP (ORCPT
+        id S1729499AbeIMSsU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:48:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59736 "EHLO
+        Thu, 13 Sep 2018 14:48:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59752 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727623AbeIMSsP (ORCPT
+        with ESMTP id S1727623AbeIMSsT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:48:15 -0400
+        Thu, 13 Sep 2018 14:48:19 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4AE63D10;
-        Thu, 13 Sep 2018 13:38:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5EFD2CF3;
+        Thu, 13 Sep 2018 13:38:48 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        stable@vger.kernel.org, Juergen Gross <jgross@suse.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Waiman Long <longman@redhat.com>,
-        Yang Shi <yang.shi@linux.alibaba.com>, kernel-team@android.com,
-        Arnd Bergmann <arnd@arndb.de>, astrachan@google.com
-Subject: [PATCH 4.9 60/78] debugobjects: Make stack check warning more informative
-Date:   Thu, 13 Sep 2018 15:31:47 +0200
-Message-Id: <20180913131811.731536920@linuxfoundation.org>
+        Jan Beulich <jbeulich@suse.com>,
+        Jason Andryuk <jandryuk@gmail.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Subject: [PATCH 4.9 61/78] x86/pae: use 64 bit atomic xchg function in native_ptep_get_and_clear
+Date:   Thu, 13 Sep 2018 15:31:48 +0200
+Message-Id: <20180913131811.825920310@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131805.732342940@linuxfoundation.org>
 References: <20180913131805.732342940@linuxfoundation.org>
@@ -55,54 +54,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Joel Fernandes (Google) <joel@joelfernandes.org>
+From: Juergen Gross <jgross@suse.com>
 
-commit fc91a3c4c27acdca0bc13af6fbb68c35cfd519f2 upstream.
+commit b2d7a075a1ccef2fb321d595802190c8e9b39004 upstream.
 
-While debugging an issue debugobject tracking warned about an annotation
-issue of an object on stack. It turned out that the issue was due to the
-object in concern being on a different stack which was due to another
-issue.
+Using only 32-bit writes for the pte will result in an intermediate
+L1TF vulnerable PTE. When running as a Xen PV guest this will at once
+switch the guest to shadow mode resulting in a loss of performance.
 
-Thomas suggested to print the pointers and the location of the stack for
-the currently running task. This helped to figure out that the object was
-on the wrong stack.
+Use arch_atomic64_xchg() instead which will perform the requested
+operation atomically with all 64 bits.
 
-As this is general useful information for debugging similar issues, make
-the error message more informative by printing the pointers.
+Some performance considerations according to:
 
-[ tglx: Massaged changelog ]
+https://software.intel.com/sites/default/files/managed/ad/dc/Intel-Xeon-Scalable-Processor-throughput-latency.pdf
 
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Waiman Long <longman@redhat.com>
-Acked-by: Yang Shi <yang.shi@linux.alibaba.com>
-Cc: kernel-team@android.com
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: astrachan@google.com
-Link: https://lkml.kernel.org/r/20180723212531.202328-1-joel@joelfernandes.org
+The main number should be the latency, as there is no tight loop around
+native_ptep_get_and_clear().
+
+"lock cmpxchg8b" has a latency of 20 cycles, while "lock xchg" (with a
+memory operand) isn't mentioned in that document. "lock xadd" (with xadd
+having 3 cycles less latency than xchg) has a latency of 11, so we can
+assume a latency of 14 for "lock xchg".
+
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Jan Beulich <jbeulich@suse.com>
+Tested-by: Jason Andryuk <jandryuk@gmail.com>
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- lib/debugobjects.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/pgtable-3level.h |    7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
---- a/lib/debugobjects.c
-+++ b/lib/debugobjects.c
-@@ -294,9 +294,12 @@ static void debug_object_is_on_stack(voi
+--- a/arch/x86/include/asm/pgtable-3level.h
++++ b/arch/x86/include/asm/pgtable-3level.h
+@@ -1,6 +1,8 @@
+ #ifndef _ASM_X86_PGTABLE_3LEVEL_H
+ #define _ASM_X86_PGTABLE_3LEVEL_H
  
- 	limit++;
- 	if (is_on_stack)
--		pr_warn("object is on stack, but not annotated\n");
-+		pr_warn("object %p is on stack %p, but NOT annotated.\n", addr,
-+			 task_stack_page(current));
- 	else
--		pr_warn("object is not on stack, but annotated\n");
-+		pr_warn("object %p is NOT on stack %p, but annotated.\n", addr,
-+			 task_stack_page(current));
++#include <asm/atomic64_32.h>
 +
- 	WARN_ON(1);
- }
+ /*
+  * Intel Physical Address Extension (PAE) Mode - three-level page
+  * tables on PPro+ CPUs.
+@@ -142,10 +144,7 @@ static inline pte_t native_ptep_get_and_
+ {
+ 	pte_t res;
  
+-	/* xchg acts as a barrier before the setting of the high bits */
+-	res.pte_low = xchg(&ptep->pte_low, 0);
+-	res.pte_high = ptep->pte_high;
+-	ptep->pte_high = 0;
++	res.pte = (pteval_t)arch_atomic64_xchg((atomic64_t *)ptep, 0);
+ 
+ 	return res;
+ }
 
 
