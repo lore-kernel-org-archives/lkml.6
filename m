@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 261FDC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:38:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06E8DC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:38:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB1D320854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:38:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB1D320854
+	by mail.kernel.org (Postfix) with ESMTP id BFD4F20C0A
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:38:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFD4F20C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729427AbeIMSrc (ORCPT
+        id S1729434AbeIMSrh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:47:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59626 "EHLO
+        Thu, 13 Sep 2018 14:47:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59638 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729416AbeIMSrb (ORCPT
+        with ESMTP id S1728239AbeIMSrh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:47:31 -0400
+        Thu, 13 Sep 2018 14:47:37 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A5FDBD10;
-        Thu, 13 Sep 2018 13:38:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DCD7ECF3;
+        Thu, 13 Sep 2018 13:38:06 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Levin Du <djw@t-chip.com.cn>,
-        Heiko Stuebner <heiko@sntech.de>,
+        stable@vger.kernel.org,
+        Misono Tomohiro <misono.tomohiro@jp.fujitsu.com>,
+        David Sterba <dsterba@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 52/78] clk: rockchip: Add pclk_rkpwm_pmu to PMU critical clocks in rk3399
-Date:   Thu, 13 Sep 2018 15:31:39 +0200
-Message-Id: <20180913131811.020858905@linuxfoundation.org>
+Subject: [PATCH 4.9 53/78] btrfs: replace: Reset on-disk dev stats value after replace
+Date:   Thu, 13 Sep 2018 15:31:40 +0200
+Message-Id: <20180913131811.101682399@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131805.732342940@linuxfoundation.org>
 References: <20180913131805.732342940@linuxfoundation.org>
@@ -52,42 +53,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Levin Du <djw@t-chip.com.cn>
+From: Misono Tomohiro <misono.tomohiro@jp.fujitsu.com>
 
-[ Upstream commit 640332d1a089909df08bc9f3e42888a2019c66e2 ]
+[ Upstream commit 1e7e1f9e3aba00c9b9c323bfeeddafe69ff21ff6 ]
 
-PWM2 is commonly used to control voltage of PWM regulator of VDD_LOG in
-RK3399. On the Firefly-RK3399 board, PWM2 outputs 40 KHz square wave
-from power on and the VDD_LOG is about 0.9V. When the kernel boots
-normally into the system, the PWM2 keeps outputing PWM signal.
+on-disk devs stats value is updated in btrfs_run_dev_stats(),
+which is called during commit transaction, if device->dev_stats_ccnt
+is not zero.
 
-But the kernel hangs randomly after "Starting kernel ..." line on that
-board. When it happens, PWM2 outputs high level which causes VDD_LOG
-drops to 0.4V below the normal operating voltage.
+Since current replace operation does not touch dev_stats_ccnt,
+on-disk dev stats value is not updated. Therefore "btrfs device stats"
+may return old device's value after umount/mount
+(Example: See "btrfs ins dump-t -t DEV $DEV" after btrfs/100 finish).
 
-By adding "pclk_rkpwm_pmu" to the rk3399_pmucru_critical_clocks array,
-PWM clock is ensured to be prepared at startup and the PWM2 output is
-normal. After repeated tests, the early boot hang is gone.
+Fix this by just incrementing dev_stats_ccnt in
+btrfs_dev_replace_finishing() when replace is succeeded and this will
+update the values.
 
-This patch works on both Firefly-RK3399 and ROC-RK3399-PC boards.
-
-Signed-off-by: Levin Du <djw@t-chip.com.cn>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Misono Tomohiro <misono.tomohiro@jp.fujitsu.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/rockchip/clk-rk3399.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/btrfs/dev-replace.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -1521,6 +1521,7 @@ static const char *const rk3399_pmucru_c
- 	"pclk_pmu_src",
- 	"fclk_cm0s_src_pmu",
- 	"clk_timer_src_pmu",
-+	"pclk_rkpwm_pmu",
- };
+--- a/fs/btrfs/dev-replace.c
++++ b/fs/btrfs/dev-replace.c
+@@ -586,6 +586,12 @@ static int btrfs_dev_replace_finishing(s
+ 	btrfs_rm_dev_replace_unblocked(fs_info);
  
- static void __init rk3399_clk_init(struct device_node *np)
+ 	/*
++	 * Increment dev_stats_ccnt so that btrfs_run_dev_stats() will
++	 * update on-disk dev stats value during commit transaction
++	 */
++	atomic_inc(&tgt_device->dev_stats_ccnt);
++
++	/*
+ 	 * this is again a consistent state where no dev_replace procedure
+ 	 * is running, the target device is part of the filesystem, the
+ 	 * source device is not part of the filesystem anymore and its 1st
 
 
