@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F7AAC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:00:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE5E0C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:00:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7B7020652
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:00:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7B7020652
+	by mail.kernel.org (Postfix) with ESMTP id B056C20652
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:00:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B056C20652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731776AbeIMTJo (ORCPT
+        id S1731787AbeIMTJv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:09:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34904 "EHLO
+        Thu, 13 Sep 2018 15:09:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34914 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729831AbeIMTJn (ORCPT
+        with ESMTP id S1729047AbeIMTJu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:09:43 -0400
+        Thu, 13 Sep 2018 15:09:50 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AD067D15;
-        Thu, 13 Sep 2018 14:00:05 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0E521D15;
+        Thu, 13 Sep 2018 14:00:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Francis <David.Francis@amd.com>,
-        Harry Wentland <Harry.Wentland@amd.com>,
-        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 129/197] drm/amd/display: Read back max backlight value at boot
-Date:   Thu, 13 Sep 2018 15:31:18 +0200
-Message-Id: <20180913131846.711053417@linuxfoundation.org>
+Subject: [PATCH 4.18 130/197] KVM: vmx: track host_state.loaded using a loaded_vmcs pointer
+Date:   Thu, 13 Sep 2018 15:31:19 +0200
+Message-Id: <20180913131846.757756409@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -54,39 +53,102 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Francis <David.Francis@amd.com>
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-[ Upstream commit 53a53f8687faf492df2644d8c18ff0217fc18730 ]
+[ Upstream commit bd9966de4e14fb559e89a06f7f5c9aab2cc028b9 ]
 
-[Why]
-If there is no program explicitly setting the backlight
-brightness (for example, during a minimal install of linux), the
-hardware defaults to maximum brightness but the backlight_device
-defaults to 0 value.  Thus, settings displays the wrong brightness
-value.
+Using 'struct loaded_vmcs*' to track whether the CPU registers
+contain host or guest state kills two birds with one stone.
 
-[How]
-When creating the backlight device, set brightness to max
+  1. The (effective) boolean host_state.loaded is poorly named.
+     It does not track whether or not host state is loaded into
+     the CPU registers (which most readers would expect), but
+     rather tracks if host state has been saved AND guest state
+     is loaded.
 
-Signed-off-by: David Francis <David.Francis@amd.com>
-Reviewed-by: Harry Wentland <Harry.Wentland@amd.com>
-Acked-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+  2. Using a loaded_vmcs pointer provides a more robust framework
+     for the optimized guest/host state switching, especially when
+     consideration per-VMCS enhancements.  To that end, WARN_ONCE
+     if we try to switch to host state with a different VMCS than
+     was last used to save host state.
+
+Resolve an occurrence of the new WARN by setting loaded_vmcs after
+the call to vmx_vcpu_put() in vmx_switch_vmcs().
+
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/kvm/vmx.c |   22 +++++++++++++++-------
+ 1 file changed, 15 insertions(+), 7 deletions(-)
 
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-@@ -1334,6 +1334,7 @@ amdgpu_dm_register_backlight_device(stru
- 	struct backlight_properties props = { 0 };
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -939,17 +939,21 @@ struct vcpu_vmx {
+ 	/*
+ 	 * loaded_vmcs points to the VMCS currently used in this vcpu. For a
+ 	 * non-nested (L1) guest, it always points to vmcs01. For a nested
+-	 * guest (L2), it points to a different VMCS.
++	 * guest (L2), it points to a different VMCS.  loaded_cpu_state points
++	 * to the VMCS whose state is loaded into the CPU registers that only
++	 * need to be switched when transitioning to/from the kernel; a NULL
++	 * value indicates that host state is loaded.
+ 	 */
+ 	struct loaded_vmcs    vmcs01;
+ 	struct loaded_vmcs   *loaded_vmcs;
++	struct loaded_vmcs   *loaded_cpu_state;
+ 	bool                  __launched; /* temporary, used in vmx_vcpu_run */
+ 	struct msr_autoload {
+ 		struct vmx_msrs guest;
+ 		struct vmx_msrs host;
+ 	} msr_autoload;
++
+ 	struct {
+-		int           loaded;
+ 		u16           fs_sel, gs_sel, ldt_sel;
+ #ifdef CONFIG_X86_64
+ 		u16           ds_sel, es_sel;
+@@ -2750,10 +2754,11 @@ static void vmx_save_host_state(struct k
+ #endif
+ 	int i;
  
- 	props.max_brightness = AMDGPU_MAX_BL_LEVEL;
-+	props.brightness = AMDGPU_MAX_BL_LEVEL;
- 	props.type = BACKLIGHT_RAW;
+-	if (vmx->host_state.loaded)
++	if (vmx->loaded_cpu_state)
+ 		return;
  
- 	snprintf(bl_name, sizeof(bl_name), "amdgpu_bl%d",
+-	vmx->host_state.loaded = 1;
++	vmx->loaded_cpu_state = vmx->loaded_vmcs;
++
+ 	/*
+ 	 * Set host fs and gs selectors.  Unfortunately, 22.2.3 does not
+ 	 * allow segment selectors with cpl > 0 or ti == 1.
+@@ -2815,11 +2820,14 @@ static void vmx_save_host_state(struct k
+ 
+ static void __vmx_load_host_state(struct vcpu_vmx *vmx)
+ {
+-	if (!vmx->host_state.loaded)
++	if (!vmx->loaded_cpu_state)
+ 		return;
+ 
++	WARN_ON_ONCE(vmx->loaded_cpu_state != vmx->loaded_vmcs);
++
+ 	++vmx->vcpu.stat.host_state_reload;
+-	vmx->host_state.loaded = 0;
++	vmx->loaded_cpu_state = NULL;
++
+ #ifdef CONFIG_X86_64
+ 	if (is_long_mode(&vmx->vcpu))
+ 		rdmsrl(MSR_KERNEL_GS_BASE, vmx->msr_guest_kernel_gs_base);
+@@ -10517,8 +10525,8 @@ static void vmx_switch_vmcs(struct kvm_v
+ 		return;
+ 
+ 	cpu = get_cpu();
+-	vmx->loaded_vmcs = vmcs;
+ 	vmx_vcpu_put(vcpu);
++	vmx->loaded_vmcs = vmcs;
+ 	vmx_vcpu_load(vcpu, cpu);
+ 	put_cpu();
+ }
 
 
