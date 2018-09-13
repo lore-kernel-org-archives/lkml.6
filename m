@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A9D5C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:32:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92E3BC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:32:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0CB520854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:32:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0CB520854
+	by mail.kernel.org (Postfix) with ESMTP id 4F93B20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:32:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F93B20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728356AbeIMSl7 (ORCPT
+        id S1728374AbeIMSmC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:41:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58562 "EHLO
+        Thu, 13 Sep 2018 14:42:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58570 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727152AbeIMSl6 (ORCPT
+        with ESMTP id S1727152AbeIMSmB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:41:58 -0400
+        Thu, 13 Sep 2018 14:42:01 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B777FCF3;
-        Thu, 13 Sep 2018 13:32:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E1E6ACF3;
+        Thu, 13 Sep 2018 13:32:31 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steve French <stfrench@microsoft.com>,
-        Aurelien Aptel <aaptel@suse.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 29/60] smb3: fix reset of bytes read and written stats
-Date:   Thu, 13 Sep 2018 15:30:36 +0200
-Message-Id: <20180913131746.777663644@linuxfoundation.org>
+        stable@vger.kernel.org, Doug Berger <opendmb@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 03/60] net: bcmgenet: use MAC link status for fixed phy
+Date:   Thu, 13 Sep 2018 15:30:10 +0200
+Message-Id: <20180913131745.439674818@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131745.261413581@linuxfoundation.org>
 References: <20180913131745.261413581@linuxfoundation.org>
@@ -52,60 +52,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steve French <stfrench@microsoft.com>
+From: Doug Berger <opendmb@gmail.com>
 
-[ Upstream commit c281bc0c7412308c7ec0888904f7c99353da4796 ]
+[ Upstream commit c3c397c1f16c51601a3fac4fe0c63ad8aa85a904 ]
 
-echo 0 > /proc/fs/cifs/Stats is supposed to reset the stats
-but there were four (see example below) that were not reset
-(bytes read and witten, total vfs ops and max ops
-at one time).
+When using the fixed PHY with GENET (e.g. MOCA) the PHY link
+status can be determined from the internal link status captured
+by the MAC. This allows the PHY state machine to use the correct
+link state with the fixed PHY even if MAC link event interrupts
+are missed when the net device is opened.
 
-...
-0 session 0 share reconnects
-Total vfs operations: 100 maximum at one time: 2
-
-1) \\localhost\test
-SMBs: 0
-Bytes read: 502092  Bytes written: 31457286
-TreeConnects: 0 total 0 failed
-TreeDisconnects: 0 total 0 failed
-...
-
-This patch fixes cifs_stats_proc_write to properly reset
-those four.
-
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Reviewed-by: Aurelien Aptel <aaptel@suse.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Fixes: 8d88c6ebb34c ("net: bcmgenet: enable MoCA link state change detection")
+Signed-off-by: Doug Berger <opendmb@gmail.com>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/cifs/cifs_debug.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/net/ethernet/broadcom/genet/bcmgenet.h |    3 +++
+ drivers/net/ethernet/broadcom/genet/bcmmii.c   |   10 ++++++++--
+ 2 files changed, 11 insertions(+), 2 deletions(-)
 
---- a/fs/cifs/cifs_debug.c
-+++ b/fs/cifs/cifs_debug.c
-@@ -285,6 +285,10 @@ static ssize_t cifs_stats_proc_write(str
- 		atomic_set(&totBufAllocCount, 0);
- 		atomic_set(&totSmBufAllocCount, 0);
- #endif /* CONFIG_CIFS_STATS2 */
-+		spin_lock(&GlobalMid_Lock);
-+		GlobalMaxActiveXid = 0;
-+		GlobalCurrentXid = 0;
-+		spin_unlock(&GlobalMid_Lock);
- 		spin_lock(&cifs_tcp_ses_lock);
- 		list_for_each(tmp1, &cifs_tcp_ses_list) {
- 			server = list_entry(tmp1, struct TCP_Server_Info,
-@@ -297,6 +301,10 @@ static ssize_t cifs_stats_proc_write(str
- 							  struct cifs_tcon,
- 							  tcon_list);
- 					atomic_set(&tcon->num_smbs_sent, 0);
-+					spin_lock(&tcon->stat_lock);
-+					tcon->bytes_read = 0;
-+					tcon->bytes_written = 0;
-+					spin_unlock(&tcon->stat_lock);
- 					if (server->ops->clear_stats)
- 						server->ops->clear_stats(tcon);
- 				}
+--- a/drivers/net/ethernet/broadcom/genet/bcmgenet.h
++++ b/drivers/net/ethernet/broadcom/genet/bcmgenet.h
+@@ -185,6 +185,9 @@ struct bcmgenet_mib_counters {
+ #define UMAC_MAC1			0x010
+ #define UMAC_MAX_FRAME_LEN		0x014
+ 
++#define UMAC_MODE			0x44
++#define  MODE_LINK_STATUS		(1 << 5)
++
+ #define UMAC_EEE_CTRL			0x064
+ #define  EN_LPI_RX_PAUSE		(1 << 0)
+ #define  EN_LPI_TX_PFC			(1 << 1)
+--- a/drivers/net/ethernet/broadcom/genet/bcmmii.c
++++ b/drivers/net/ethernet/broadcom/genet/bcmmii.c
+@@ -167,8 +167,14 @@ void bcmgenet_mii_setup(struct net_devic
+ static int bcmgenet_fixed_phy_link_update(struct net_device *dev,
+ 					  struct fixed_phy_status *status)
+ {
+-	if (dev && dev->phydev && status)
+-		status->link = dev->phydev->link;
++	struct bcmgenet_priv *priv;
++	u32 reg;
++
++	if (dev && dev->phydev && status) {
++		priv = netdev_priv(dev);
++		reg = bcmgenet_umac_readl(priv, UMAC_MODE);
++		status->link = !!(reg & MODE_LINK_STATUS);
++	}
+ 
+ 	return 0;
+ }
 
 
