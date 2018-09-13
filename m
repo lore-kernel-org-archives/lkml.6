@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AD08C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:35:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D120BC07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:35:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D44E420854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:35:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D44E420854
+	by mail.kernel.org (Postfix) with ESMTP id 95DEF20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:35:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95DEF20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728962AbeIMSob (ORCPT
+        id S1728975AbeIMSof (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:44:31 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58996 "EHLO
+        Thu, 13 Sep 2018 14:44:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59008 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727716AbeIMSoa (ORCPT
+        with ESMTP id S1727716AbeIMSoe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:44:30 -0400
+        Thu, 13 Sep 2018 14:44:34 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 71433D10;
-        Thu, 13 Sep 2018 13:35:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 79179D18;
+        Thu, 13 Sep 2018 13:35:04 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+fe62a0c9aa6a85c6de16@syzkaller.appspotmail.com,
-        Xin Long <lucien.xin@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        stable@vger.kernel.org, Peter Xu <peterx@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 10/78] sctp: hold transport before accessing its asoc in sctp_transport_get_next
-Date:   Thu, 13 Sep 2018 15:30:57 +0200
-Message-Id: <20180913131806.402048634@linuxfoundation.org>
+Subject: [PATCH 4.9 11/78] vhost: correctly check the iova range when waking virtqueue
+Date:   Thu, 13 Sep 2018 15:30:58 +0200
+Message-Id: <20180913131806.484511732@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131805.732342940@linuxfoundation.org>
 References: <20180913131805.732342940@linuxfoundation.org>
@@ -55,99 +53,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Jason Wang <jasowang@redhat.com>
 
-[ Upstream commit bab1be79a5169ac748d8292b20c86d874022d7ba ]
+[ Upstream commit 2d66f997f0545c8f7fc5cf0b49af1decb35170e7 ]
 
-As Marcelo noticed, in sctp_transport_get_next, it is iterating over
-transports but then also accessing the association directly, without
-checking any refcnts before that, which can cause an use-after-free
-Read.
+We don't wakeup the virtqueue if the first byte of pending iova range
+is the last byte of the range we just got updated. This will lead a
+virtqueue to wait for IOTLB updating forever. Fixing by correct the
+check and wake up the virtqueue in this case.
 
-So fix it by holding transport before accessing the association. With
-that, sctp_transport_hold calls can be removed in the later places.
-
-Fixes: 626d16f50f39 ("sctp: export some apis or variables for sctp_diag and reuse some for proc")
-Reported-by: syzbot+fe62a0c9aa6a85c6de16@syzkaller.appspotmail.com
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: Neil Horman <nhorman@tuxdriver.com>
-Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Fixes: 6b1e6cc7855b ("vhost: new device IOTLB API")
+Reported-by: Peter Xu <peterx@redhat.com>
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+Reviewed-by: Peter Xu <peterx@redhat.com>
+Tested-by: Peter Xu <peterx@redhat.com>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sctp/proc.c   |    4 ----
- net/sctp/socket.c |   22 +++++++++++++++-------
- 2 files changed, 15 insertions(+), 11 deletions(-)
+ drivers/vhost/vhost.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/sctp/proc.c
-+++ b/net/sctp/proc.c
-@@ -337,8 +337,6 @@ static int sctp_assocs_seq_show(struct s
- 	}
- 
- 	transport = (struct sctp_transport *)v;
--	if (!sctp_transport_hold(transport))
--		return 0;
- 	assoc = transport->asoc;
- 	epb = &assoc->base;
- 	sk = epb->sk;
-@@ -428,8 +426,6 @@ static int sctp_remaddr_seq_show(struct
- 	}
- 
- 	transport = (struct sctp_transport *)v;
--	if (!sctp_transport_hold(transport))
--		return 0;
- 	assoc = transport->asoc;
- 
- 	list_for_each_entry_rcu(tsp, &assoc->peer.transport_addr_list,
---- a/net/sctp/socket.c
-+++ b/net/sctp/socket.c
-@@ -4476,9 +4476,14 @@ struct sctp_transport *sctp_transport_ge
- 			break;
- 		}
- 
-+		if (!sctp_transport_hold(t))
-+			continue;
-+
- 		if (net_eq(sock_net(t->asoc->base.sk), net) &&
- 		    t->asoc->peer.primary_path == t)
- 			break;
-+
-+		sctp_transport_put(t);
- 	}
- 
- 	return t;
-@@ -4488,13 +4493,18 @@ struct sctp_transport *sctp_transport_ge
- 					      struct rhashtable_iter *iter,
- 					      int pos)
- {
--	void *obj = SEQ_START_TOKEN;
-+	struct sctp_transport *t;
-+
-+	if (!pos)
-+		return SEQ_START_TOKEN;
- 
--	while (pos && (obj = sctp_transport_get_next(net, iter)) &&
--	       !IS_ERR(obj))
--		pos--;
-+	while ((t = sctp_transport_get_next(net, iter)) && !IS_ERR(t)) {
-+		if (!--pos)
-+			break;
-+		sctp_transport_put(t);
-+	}
- 
--	return obj;
-+	return t;
- }
- 
- int sctp_for_each_endpoint(int (*cb)(struct sctp_endpoint *, void *),
-@@ -4556,8 +4566,6 @@ int sctp_for_each_transport(int (*cb)(st
- 	for (; !IS_ERR_OR_NULL(obj); obj = sctp_transport_get_next(net, &hti)) {
- 		struct sctp_transport *transport = obj;
- 
--		if (!sctp_transport_hold(transport))
--			continue;
- 		err = cb(transport, p);
- 		sctp_transport_put(transport);
- 		if (err)
+--- a/drivers/vhost/vhost.c
++++ b/drivers/vhost/vhost.c
+@@ -905,7 +905,7 @@ static void vhost_iotlb_notify_vq(struct
+ 	list_for_each_entry_safe(node, n, &d->pending_list, node) {
+ 		struct vhost_iotlb_msg *vq_msg = &node->msg.iotlb;
+ 		if (msg->iova <= vq_msg->iova &&
+-		    msg->iova + msg->size - 1 > vq_msg->iova &&
++		    msg->iova + msg->size - 1 >= vq_msg->iova &&
+ 		    vq_msg->type == VHOST_IOTLB_MISS) {
+ 			vhost_poll_queue(&node->vq->poll);
+ 			list_del(&node->node);
 
 
