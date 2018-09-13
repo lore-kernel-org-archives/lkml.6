@@ -6,40 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BCB1C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:54:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C85CC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:54:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD30420854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:54:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD30420854
+	by mail.kernel.org (Postfix) with ESMTP id 2056F20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:54:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2056F20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730966AbeIMTDy (ORCPT
+        id S1730985AbeIMTEE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:03:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33796 "EHLO
+        Thu, 13 Sep 2018 15:04:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33824 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727644AbeIMTDx (ORCPT
+        with ESMTP id S1727644AbeIMTED (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:03:53 -0400
+        Thu, 13 Sep 2018 15:04:03 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D4A01CE7;
-        Thu, 13 Sep 2018 13:54:16 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 98EFED1A;
+        Thu, 13 Sep 2018 13:54:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Pasha Tatashin <Pavel.Tatashin@microsoft.com>,
+        stable@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Vegard Nossum <vegard.nossum@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 060/197] mm: make DEFERRED_STRUCT_PAGE_INIT explicitly depend on SPARSEMEM
-Date:   Thu, 13 Sep 2018 15:30:09 +0200
-Message-Id: <20180913131843.922934107@linuxfoundation.org>
+Subject: [PATCH 4.18 061/197] fs/dcache.c: fix kmemcheck splat at take_dentry_name_snapshot()
+Date:   Thu, 13 Sep 2018 15:30:10 +0200
+Message-Id: <20180913131843.962998773@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -57,115 +56,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mike Rapoport <rppt@linux.vnet.ibm.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-[ Upstream commit d39f8fb4b7776dcb09ec3bf7a321547083078ee3 ]
+[ Upstream commit 6cd00a01f0c1ae6a852b09c59b8dd55cc6c35d1d ]
 
-The deferred memory initialization relies on section definitions, e.g
-PAGES_PER_SECTION, that are only available when CONFIG_SPARSEMEM=y on
-most architectures.
+Since only dentry->d_name.len + 1 bytes out of DNAME_INLINE_LEN bytes
+are initialized at __d_alloc(), we can't copy the whole size
+unconditionally.
 
-Initially DEFERRED_STRUCT_PAGE_INIT depended on explicit
-ARCH_SUPPORTS_DEFERRED_STRUCT_PAGE_INIT configuration option, but since
-the commit 2e3ca40f03bb13709df4 ("mm: relax deferred struct page
-requirements") this requirement was relaxed and now it is possible to
-enable DEFERRED_STRUCT_PAGE_INIT on architectures that support
-DISCONTINGMEM and NO_BOOTMEM which causes build failures.
+ WARNING: kmemcheck: Caught 32-bit read from uninitialized memory (ffff8fa27465ac50)
+ 636f6e66696766732e746d70000000000010000000000000020000000188ffff
+  i i i i i i i i i i i i i u u u u u u u u u u i i i i i u u u u
+                                  ^
+ RIP: 0010:take_dentry_name_snapshot+0x28/0x50
+ RSP: 0018:ffffa83000f5bdf8 EFLAGS: 00010246
+ RAX: 0000000000000020 RBX: ffff8fa274b20550 RCX: 0000000000000002
+ RDX: ffffa83000f5be40 RSI: ffff8fa27465ac50 RDI: ffffa83000f5be60
+ RBP: ffffa83000f5bdf8 R08: ffffa83000f5be48 R09: 0000000000000001
+ R10: ffff8fa27465ac00 R11: ffff8fa27465acc0 R12: ffff8fa27465ac00
+ R13: ffff8fa27465acc0 R14: 0000000000000000 R15: 0000000000000000
+ FS:  00007f79737ac8c0(0000) GS:ffffffff8fc30000(0000) knlGS:0000000000000000
+ CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ CR2: ffff8fa274c0b000 CR3: 0000000134aa7002 CR4: 00000000000606f0
+  take_dentry_name_snapshot+0x28/0x50
+  vfs_rename+0x128/0x870
+  SyS_rename+0x3b2/0x3d0
+  entry_SYSCALL_64_fastpath+0x1a/0xa4
+  0xffffffffffffffff
 
-For instance, setting SMP=y and DEFERRED_STRUCT_PAGE_INIT=y on arc
-causes the following build failure:
-
-    CC      mm/page_alloc.o
-  mm/page_alloc.c: In function 'update_defer_init':
-  mm/page_alloc.c:321:14: error: 'PAGES_PER_SECTION'
-  undeclared (first use in this function); did you mean 'USEC_PER_SEC'?
-        (pfn & (PAGES_PER_SECTION - 1)) == 0) {
-                ^~~~~~~~~~~~~~~~~
-                USEC_PER_SEC
-  mm/page_alloc.c:321:14: note: each undeclared identifier is reported only once for each function it appears in
-  In file included from include/linux/cache.h:5:0,
-                   from include/linux/printk.h:9,
-                   from include/linux/kernel.h:14,
-                   from include/asm-generic/bug.h:18,
-                   from arch/arc/include/asm/bug.h:32,
-                   from include/linux/bug.h:5,
-                   from include/linux/mmdebug.h:5,
-                   from include/linux/mm.h:9,
-                   from mm/page_alloc.c:18:
-  mm/page_alloc.c: In function 'deferred_grow_zone':
-  mm/page_alloc.c:1624:52: error: 'PAGES_PER_SECTION' undeclared (first use in this function); did you mean 'USEC_PER_SEC'?
-    unsigned long nr_pages_needed = ALIGN(1 << order, PAGES_PER_SECTION);
-                                                      ^
-  include/uapi/linux/kernel.h:11:47: note: in definition of macro '__ALIGN_KERNEL_MASK'
-   #define __ALIGN_KERNEL_MASK(x, mask) (((x) + (mask)) & ~(mask))
-                                                 ^~~~
-  include/linux/kernel.h:58:22: note: in expansion of macro '__ALIGN_KERNEL'
-   #define ALIGN(x, a)  __ALIGN_KERNEL((x), (a))
-                        ^~~~~~~~~~~~~~
-  mm/page_alloc.c:1624:34: note: in expansion of macro 'ALIGN'
-    unsigned long nr_pages_needed = ALIGN(1 << order, PAGES_PER_SECTION);
-                                    ^~~~~
-  In file included from include/asm-generic/bug.h:18:0,
-                   from arch/arc/include/asm/bug.h:32,
-                   from include/linux/bug.h:5,
-                   from include/linux/mmdebug.h:5,
-                   from include/linux/mm.h:9,
-                   from mm/page_alloc.c:18:
-  mm/page_alloc.c: In function 'free_area_init_node':
-  mm/page_alloc.c:6379:50: error: 'PAGES_PER_SECTION' undeclared (first use in this function); did you mean 'USEC_PER_SEC'?
-    pgdat->static_init_pgcnt = min_t(unsigned long, PAGES_PER_SECTION,
-                                                    ^
-  include/linux/kernel.h:812:22: note: in definition of macro '__typecheck'
-     (!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
-                        ^
-  include/linux/kernel.h:836:24: note: in expansion of macro '__safe_cmp'
-    __builtin_choose_expr(__safe_cmp(x, y), \
-                          ^~~~~~~~~~
-  include/linux/kernel.h:904:27: note: in expansion of macro '__careful_cmp'
-   #define min_t(type, x, y) __careful_cmp((type)(x), (type)(y), <)
-                             ^~~~~~~~~~~~~
-  mm/page_alloc.c:6379:29: note: in expansion of macro 'min_t'
-    pgdat->static_init_pgcnt = min_t(unsigned long, PAGES_PER_SECTION,
-                               ^~~~~
-  include/linux/kernel.h:836:2: error: first argument to '__builtin_choose_expr' not a constant
-    __builtin_choose_expr(__safe_cmp(x, y), \
-    ^
-  include/linux/kernel.h:904:27: note: in expansion of macro '__careful_cmp'
-   #define min_t(type, x, y) __careful_cmp((type)(x), (type)(y), <)
-                             ^~~~~~~~~~~~~
-  mm/page_alloc.c:6379:29: note: in expansion of macro 'min_t'
-    pgdat->static_init_pgcnt = min_t(unsigned long, PAGES_PER_SECTION,
-                               ^~~~~
-  scripts/Makefile.build:317: recipe for target 'mm/page_alloc.o' failed
-
-Let's make the DEFERRED_STRUCT_PAGE_INIT explicitly depend on SPARSEMEM
-as the systems that support DISCONTIGMEM do not seem to have that huge
-amounts of memory that would make DEFERRED_STRUCT_PAGE_INIT relevant.
-
-Link: http://lkml.kernel.org/r/1530279308-24988-1-git-send-email-rppt@linux.vnet.ibm.com
-Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Reviewed-by: Pavel Tatashin <pasha.tatashin@oracle.com>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Pasha Tatashin <Pavel.Tatashin@microsoft.com>
+Link: http://lkml.kernel.org/r/201709131912.GBG39012.QMJLOVFSFFOOtH@I-love.SAKURA.ne.jp
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: Vegard Nossum <vegard.nossum@gmail.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/dcache.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -635,7 +635,7 @@ config DEFERRED_STRUCT_PAGE_INIT
- 	bool "Defer initialisation of struct pages to kthreads"
- 	default n
- 	depends on NO_BOOTMEM
--	depends on !FLATMEM
-+	depends on SPARSEMEM
- 	depends on !NEED_PER_CPU_KM
- 	help
- 	  Ordinarily all struct pages are initialised during early boot in a
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -292,7 +292,8 @@ void take_dentry_name_snapshot(struct na
+ 		spin_unlock(&dentry->d_lock);
+ 		name->name = p->name;
+ 	} else {
+-		memcpy(name->inline_name, dentry->d_iname, DNAME_INLINE_LEN);
++		memcpy(name->inline_name, dentry->d_iname,
++		       dentry->d_name.len + 1);
+ 		spin_unlock(&dentry->d_lock);
+ 		name->name = name->inline_name;
+ 	}
 
 
