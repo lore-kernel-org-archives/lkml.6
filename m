@@ -3,38 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69B51C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:37:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E2E8C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:37:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 240C420854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:37:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 240C420854
+	by mail.kernel.org (Postfix) with ESMTP id 5023B20C0A
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:37:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5023B20C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729256AbeIMSqb (ORCPT
+        id S1729262AbeIMSqg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:46:31 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59356 "EHLO
+        Thu, 13 Sep 2018 14:46:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59366 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728540AbeIMSqa (ORCPT
+        with ESMTP id S1728540AbeIMSqf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:46:30 -0400
+        Thu, 13 Sep 2018 14:46:35 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 535EECF3;
-        Thu, 13 Sep 2018 13:37:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 163F7CF3;
+        Thu, 13 Sep 2018 13:37:04 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Greg Edwards <gedwards@ddn.com>,
-        Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org, Jan Hoeppner <hoeppner@linux.ibm.com>,
+        Stefan Haberland <sth@linux.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 39/78] block: bvec_nr_vecs() returns value for wrong slab
-Date:   Thu, 13 Sep 2018 15:31:26 +0200
-Message-Id: <20180913131809.811762369@linuxfoundation.org>
+Subject: [PATCH 4.9 40/78] s390/dasd: fix hanging offline processing due to canceled worker
+Date:   Thu, 13 Sep 2018 15:31:27 +0200
+Message-Id: <20180913131809.877280912@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131805.732342940@linuxfoundation.org>
 References: <20180913131805.732342940@linuxfoundation.org>
@@ -52,37 +53,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Greg Edwards <gedwards@ddn.com>
+From: Stefan Haberland <sth@linux.ibm.com>
 
-[ Upstream commit d6c02a9beb67f13d5f14f23e72fa9981e8b84477 ]
+[ Upstream commit 669f3765b755fd8739ab46ce3a9c6292ce8b3d2a ]
 
-In commit ed996a52c868 ("block: simplify and cleanup bvec pool
-handling"), the value of the slab index is incremented by one in
-bvec_alloc() after the allocation is done to indicate an index value of
-0 does not need to be later freed.
+During offline processing two worker threads are canceled without
+freeing the device reference which leads to a hanging offline process.
 
-bvec_nr_vecs() was not updated accordingly, and thus returns the wrong
-value.  Decrement idx before performing the lookup.
-
-Fixes: ed996a52c868 ("block: simplify and cleanup bvec pool handling")
-Signed-off-by: Greg Edwards <gedwards@ddn.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Reviewed-by: Jan Hoeppner <hoeppner@linux.ibm.com>
+Signed-off-by: Stefan Haberland <sth@linux.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- block/bio.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/s390/block/dasd_eckd.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -155,7 +155,7 @@ out:
+--- a/drivers/s390/block/dasd_eckd.c
++++ b/drivers/s390/block/dasd_eckd.c
+@@ -2085,8 +2085,11 @@ static int dasd_eckd_basic_to_ready(stru
  
- unsigned int bvec_nr_vecs(unsigned short idx)
+ static int dasd_eckd_online_to_ready(struct dasd_device *device)
  {
--	return bvec_slabs[idx].nr_vecs;
-+	return bvec_slabs[--idx].nr_vecs;
- }
+-	cancel_work_sync(&device->reload_device);
+-	cancel_work_sync(&device->kick_validate);
++	if (cancel_work_sync(&device->reload_device))
++		dasd_put_device(device);
++	if (cancel_work_sync(&device->kick_validate))
++		dasd_put_device(device);
++
+ 	return 0;
+ };
  
- void bvec_free(mempool_t *pool, struct bio_vec *bv, unsigned int idx)
 
 
