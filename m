@@ -4,43 +4,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDFBBC07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 00:40:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6072EC61CF0
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 00:40:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A71462133F
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 00:40:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 102262133F
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 00:40:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="Z3XrOsD3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A71462133F
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="B06DEJ85"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 102262133F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727566AbeIMFrB (ORCPT
+        id S1727670AbeIMFrC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 01:47:01 -0400
-Received: from vern.gendns.com ([206.190.152.46]:46148 "EHLO vern.gendns.com"
+        Thu, 13 Sep 2018 01:47:02 -0400
+Received: from vern.gendns.com ([206.190.152.46]:46153 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726258AbeIMFrA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 01:47:00 -0400
+        id S1727152AbeIMFrB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 01:47:01 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=lechnology.com; s=default; h=References:In-Reply-To:Message-Id:Date:Subject
         :Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=eXHkYVbfJ/7IzoGAj2IYdyJDsqwaXzDNLq7xn+GmZzU=; b=Z3XrOsD3VifUxYNiYdPE+fRvu
-        quXlTCVcarz1OXQf+wEGp3AF5pCZnU9xmUbjCCXq86k4MVC3Xwn8G6/2bHLJ1bakXlgggKAUBgDU5
-        uO28p8cCRLQHp4uN+35JD9fXfAz61o4bjmZGki6147XZ9h9AvhBE+lIVmyaGnUEdS9cw6NrbeJtW5
-        EdMG7wHAphy2kIradQAijTqQhCD/M3H5FvZ7Nt/E6suxTdsFORqjKYt0FP/5sYFpAbadV6tQ3DIgl
-        AxlQGK0NHmOzEJR4xNqD1y0F+fdA5e69fCHdhFawTyit0nc4E2Yl3T+b1Qlx7tlf5d+PV8QI1t5Yc
-        KVaj727qA==;
+         bh=HGhbgAqHWtAOSQXGQmSRWuXfZcabuZIwSzqWuXebhNI=; b=B06DEJ85p9daS09m9fm+Qbs9X
+        dKX+/7Zfp/2WYRPensoZ34z7P35ZkMWqXBeq9YwusUBQaOeIxkU+HpjI44OwGVKNWE6WbWCSX4Htq
+        r2rBg5jnpH516vYSthwvJYJFTYhygRB0KL2gYoCKwcDcd6t65AwLdIPgNhy1G+aOC27bE5PDz1sAa
+        w7F0PVrKGMvN9CxINSAnkWbu3+wg2JTdDqs2k509/4axjWCzOYvg0L36M6zao2qdBoVA0TaZbVZPx
+        nJMBvOakUu+GZsKHmFfpXVOezSIXTZK3TDYRH2VeLlQQwqrGYtFYhhHwG2B5ka/NFjdFhvUerHmcG
+        189ahfNTA==;
 Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:33924 helo=freyr.lechnology.com)
         by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
         (Exim 4.91)
         (envelope-from <david@lechnology.com>)
-        id 1g0Ffp-00AGoe-Ea; Wed, 12 Sep 2018 20:39:57 -0400
+        id 1g0Ffq-00AGoe-JV; Wed, 12 Sep 2018 20:39:58 -0400
 From:   David Lechner <david@lechnology.com>
 To:     linux-spi@vger.kernel.org, linux-iio@vger.kernel.org
 Cc:     David Lechner <david@lechnology.com>,
@@ -49,9 +49,9 @@ Cc:     David Lechner <david@lechnology.com>,
         Lars-Peter Clausen <lars@metafoo.de>,
         Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
         Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/4] spi: add new SPI_CS_WORD flag
-Date:   Wed, 12 Sep 2018 19:39:17 -0500
-Message-Id: <20180913003920.30600-2-david@lechnology.com>
+Subject: [PATCH v2 2/4] spi: add software implementation for SPI_CS_WORD
+Date:   Wed, 12 Sep 2018 19:39:18 -0500
+Message-Id: <20180913003920.30600-3-david@lechnology.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180913003920.30600-1-david@lechnology.com>
 References: <20180913003920.30600-1-david@lechnology.com>
@@ -70,35 +70,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds a new SPI mode flag, SPI_CS_WORD, that is used to indicate
-that a SPI device requires the chip select to be toggled after each
-word that is transferred.
+This adds a default software implementation for the SPI_CS_WORD flag for
+controllers that don't have such a feature.
+
+The SPI_CS_WORD flag indicates that the CS line should be toggled
+between each word sent, not just between each transfer. The
+implementation works by using existing functions to split transfers into
+one-word-sized transfers and sets the cs_change bit for each of the
+new transfers.
 
 Signed-off-by: David Lechner <david@lechnology.com>
 ---
- include/linux/spi/spi.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/spi/spi.c | 31 +++++++++++++++++++++++++++++++-
+ 1 file changed, 30 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
-index d698f9db3484..7bb36145e2ba 100644
---- a/include/linux/spi/spi.h
-+++ b/include/linux/spi/spi.h
-@@ -163,6 +163,7 @@ struct spi_device {
- #define	SPI_TX_QUAD	0x200			/* transmit with 4 wires */
- #define	SPI_RX_DUAL	0x400			/* receive with 2 wires */
- #define	SPI_RX_QUAD	0x800			/* receive with 4 wires */
-+#define SPI_CS_WORD	0x1000			/* toggle cs after each word */
- 	int			irq;
- 	void			*controller_state;
- 	void			*controller_data;
-@@ -177,7 +178,6 @@ struct spi_device {
- 	 * the controller talks to each chip, like:
- 	 *  - memory packing (12 bit samples into low bits, others zeroed)
- 	 *  - priority
--	 *  - drop chipselect after each word
- 	 *  - chipselect delays
- 	 *  - ...
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index 9da0bc5a036c..84518ed58872 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -2783,8 +2783,10 @@ int spi_setup(struct spi_device *spi)
+ 		return -EINVAL;
+ 	/* help drivers fail *cleanly* when they need options
+ 	 * that aren't supported with their current controller
++	 * SPI_CS_WORD has a fallback software implementation,
++	 * so it is ignored here.
  	 */
+-	bad_bits = spi->mode & ~spi->controller->mode_bits;
++	bad_bits = spi->mode & ~(spi->controller->mode_bits | SPI_CS_WORD);
+ 	ugly_bits = bad_bits &
+ 		    (SPI_TX_DUAL | SPI_TX_QUAD | SPI_RX_DUAL | SPI_RX_QUAD);
+ 	if (ugly_bits) {
+@@ -2838,6 +2840,33 @@ static int __spi_validate(struct spi_device *spi, struct spi_message *message)
+ 	if (list_empty(&message->transfers))
+ 		return -EINVAL;
+ 
++	/* If an SPI controller does not support toggling the CS line on each
++	 * transfer (indicated by the SPI_CS_WORD flag), we can emulate it by
++	 * splitting transfers into one-word transfers and ensuring that
++	 * cs_change is set for each transfer.
++	 */
++	if ((spi->mode & SPI_CS_WORD) && !(ctlr->mode_bits & SPI_CS_WORD)) {
++		size_t maxsize;
++		int ret;
++
++		maxsize = (spi->bits_per_word + 7) / 8;
++
++		/* spi_split_transfers_maxsize() requires message->spi */
++		message->spi = spi;
++
++		ret = spi_split_transfers_maxsize(ctlr, message, maxsize,
++						  GFP_KERNEL);
++		if (ret)
++			return ret;
++
++		list_for_each_entry(xfer, &message->transfers, transfer_list) {
++			/* don't change cs_change on the last entry in the list */
++			if (list_is_last(&xfer->transfer_list, &message->transfers))
++				break;
++			xfer->cs_change = 1;
++		}
++	}
++
+ 	/* Half-duplex links include original MicroWire, and ones with
+ 	 * only one data pin like SPI_3WIRE (switches direction) or where
+ 	 * either MOSI or MISO is missing.  They can also be caused by
 -- 
 2.17.1
 
