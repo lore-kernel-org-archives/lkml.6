@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60A18C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:32:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8D7BC07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:32:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F6C620854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:32:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F6C620854
+	by mail.kernel.org (Postfix) with ESMTP id 7CC972146E
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:32:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CC972146E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728324AbeIMSlv (ORCPT
+        id S1728340AbeIMSlz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:41:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58544 "EHLO
+        Thu, 13 Sep 2018 14:41:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58552 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727611AbeIMSlv (ORCPT
+        with ESMTP id S1728310AbeIMSlz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:41:51 -0400
+        Thu, 13 Sep 2018 14:41:55 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E4007CF3;
-        Thu, 13 Sep 2018 13:32:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4EB70D0B;
+        Thu, 13 Sep 2018 13:32:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ian Abbott <abbotti@mev.co.uk>,
+        stable@vger.kernel.org, Breno Leitao <leitao@debian.org>,
+        Gustavo Romero <gromero@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 27/60] staging: comedi: ni_mio_common: fix subdevice flags for PFI subdevice
-Date:   Thu, 13 Sep 2018 15:30:34 +0200
-Message-Id: <20180913131746.678693930@linuxfoundation.org>
+Subject: [PATCH 4.4 28/60] selftests/powerpc: Kill child processes on SIGINT
+Date:   Thu, 13 Sep 2018 15:30:35 +0200
+Message-Id: <20180913131746.731167372@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131745.261413581@linuxfoundation.org>
 References: <20180913131745.261413581@linuxfoundation.org>
@@ -51,46 +53,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ian Abbott <abbotti@mev.co.uk>
+From: Breno Leitao <leitao@debian.org>
 
-[ Upstream commit e083926b3e269d4064825dcf2ad50c636fddf8cf ]
+[ Upstream commit 7c27a26e1ed5a7dd709aa19685d2c98f64e1cf0c ]
 
-The PFI subdevice flags indicate that the subdevice is readable and
-writeable, but that is only true for the supported "M-series" boards,
-not the older "E-series" boards.  Only set the SDF_READABLE and
-SDF_WRITABLE subdevice flags for the M-series boards.  These two flags
-are mainly for informational purposes.
+There are some powerpc selftests, as tm/tm-unavailable, that run for a long
+period (>120 seconds), and if it is interrupted, as pressing CRTL-C
+(SIGINT), the foreground process (harness) dies but the child process and
+threads continue to execute (with PPID = 1 now) in background.
 
-Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+In this case, you'd think the whole test exited, but there are remaining
+threads and processes being executed in background. Sometimes these
+zombies processes are doing annoying things, as consuming the whole CPU or
+dumping things to STDOUT.
+
+This patch fixes this problem by attaching an empty signal handler to
+SIGINT in the harness process. This handler will interrupt (EINTR) the
+parent process waitpid() call, letting the code to follow through the
+normal flow, which will kill all the processes in the child process group.
+
+This patch also fixes a typo.
+
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Signed-off-by: Gustavo Romero <gromero@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/staging/comedi/drivers/ni_mio_common.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ tools/testing/selftests/powerpc/harness.c |   18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
---- a/drivers/staging/comedi/drivers/ni_mio_common.c
-+++ b/drivers/staging/comedi/drivers/ni_mio_common.c
-@@ -5275,11 +5275,11 @@ static int ni_E_init(struct comedi_devic
- 	/* Digital I/O (PFI) subdevice */
- 	s = &dev->subdevices[NI_PFI_DIO_SUBDEV];
- 	s->type		= COMEDI_SUBD_DIO;
--	s->subdev_flags	= SDF_READABLE | SDF_WRITABLE | SDF_INTERNAL;
- 	s->maxdata	= 1;
- 	if (devpriv->is_m_series) {
- 		s->n_chan	= 16;
- 		s->insn_bits	= ni_pfi_insn_bits;
-+		s->subdev_flags	= SDF_READABLE | SDF_WRITABLE | SDF_INTERNAL;
+--- a/tools/testing/selftests/powerpc/harness.c
++++ b/tools/testing/selftests/powerpc/harness.c
+@@ -85,13 +85,13 @@ wait:
+ 	return status;
+ }
  
- 		ni_writew(dev, s->state, NI_M_PFI_DO_REG);
- 		for (i = 0; i < NUM_PFI_OUTPUT_SELECT_REGS; ++i) {
-@@ -5288,6 +5288,7 @@ static int ni_E_init(struct comedi_devic
- 		}
- 	} else {
- 		s->n_chan	= 10;
-+		s->subdev_flags	= SDF_INTERNAL;
+-static void alarm_handler(int signum)
++static void sig_handler(int signum)
+ {
+-	/* Jut wake us up from waitpid */
++	/* Just wake us up from waitpid */
+ }
+ 
+-static struct sigaction alarm_action = {
+-	.sa_handler = alarm_handler,
++static struct sigaction sig_action = {
++	.sa_handler = sig_handler,
+ };
+ 
+ int test_harness(int (test_function)(void), char *name)
+@@ -101,8 +101,14 @@ int test_harness(int (test_function)(voi
+ 	test_start(name);
+ 	test_set_git_version(GIT_VERSION);
+ 
+-	if (sigaction(SIGALRM, &alarm_action, NULL)) {
+-		perror("sigaction");
++	if (sigaction(SIGINT, &sig_action, NULL)) {
++		perror("sigaction (sigint)");
++		test_error(name);
++		return 1;
++	}
++
++	if (sigaction(SIGALRM, &sig_action, NULL)) {
++		perror("sigaction (sigalrm)");
+ 		test_error(name);
+ 		return 1;
  	}
- 	s->insn_config	= ni_pfi_insn_config;
- 
 
 
