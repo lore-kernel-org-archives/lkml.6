@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FF4DC07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:03:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F1E4C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:03:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55A0D20652
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:03:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55A0D20652
+	by mail.kernel.org (Postfix) with ESMTP id E597820652
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:03:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E597820652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731887AbeIMTNW (ORCPT
+        id S1732048AbeIMTNZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:13:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35324 "EHLO
+        Thu, 13 Sep 2018 15:13:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35330 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728556AbeIMTNV (ORCPT
+        with ESMTP id S1728556AbeIMTNY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:13:21 -0400
+        Thu, 13 Sep 2018 15:13:24 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 12E2CD32;
-        Thu, 13 Sep 2018 14:03:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3536CD32;
+        Thu, 13 Sep 2018 14:03:45 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Mikita Lipski <mikita.lipski@amd.com>,
-        Hersen Wu <hersenxs.wu@amd.com>,
+        Charlene Liu <Charlene.Liu@amd.com>,
         Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
         Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.18 165/197] drm/amd/display: Dont share clk source between DP and HDMI
-Date:   Thu, 13 Sep 2018 15:31:54 +0200
-Message-Id: <20180913131848.158712671@linuxfoundation.org>
+Subject: [PATCH 4.18 166/197] drm/amd/display: update clk for various HDMI color depths
+Date:   Thu, 13 Sep 2018 15:31:55 +0200
+Message-Id: <20180913131848.199588449@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -55,122 +55,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Mikita Lipski <mikita.lipski@amd.com>
 
-commit 3e27e10e2ecee0d3a0083f8ae76354ac9c6ad15c upstream.
+commit 81aca8e75c1b046865fb2badef95a0dcff6f73de upstream.
 
 [why]
-Prevent clock source sharing between HDMI and DP connectors.
-DP shouldn't be sharing its ref clock with phy clock,
-which caused an issue of older ASICS booting up with multiple
-diplays plugged in.
+When programming tonga's connector's backend we didn't take
+in account that HDMI's colour depth might be more than 8bpc
+therefore we need to add a switch statement that would adjust
+the pixel clock accordingly.
 
 [how]
-Add an extra check that would prevent HDMI and DP sharing clk.
+Add a switch statement updating clock by its appropriate
+coefficient.
 
 Signed-off-by: Mikita Lipski <mikita.lipski@amd.com>
-Reviewed-by: Hersen Wu <hersenxs.wu@amd.com>
+Reviewed-by: Charlene Liu <Charlene.Liu@amd.com>
 Acked-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/display/dc/core/dc_resource.c       |   22 +++++++++++++++-
- drivers/gpu/drm/amd/display/dc/dc.h                     |    1 
- drivers/gpu/drm/amd/display/dc/dce100/dce100_resource.c |    2 -
- drivers/gpu/drm/amd/display/dc/dce80/dce80_resource.c   |    3 ++
- 4 files changed, 26 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/amd/display/dc/bios/command_table.c |   18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
---- a/drivers/gpu/drm/amd/display/dc/core/dc_resource.c
-+++ b/drivers/gpu/drm/amd/display/dc/core/dc_resource.c
-@@ -330,6 +330,9 @@ bool resource_are_streams_timing_synchro
- 				!= stream2->timing.pix_clk_khz)
- 		return false;
+--- a/drivers/gpu/drm/amd/display/dc/bios/command_table.c
++++ b/drivers/gpu/drm/amd/display/dc/bios/command_table.c
+@@ -808,6 +808,24 @@ static enum bp_result transmitter_contro
+ 	 * (=1: 8bpp, =1.25: 10bpp, =1.5:12bpp, =2: 16bpp)
+ 	 * LVDS mode: usPixelClock = pixel clock
+ 	 */
++	if  (cntl->signal == SIGNAL_TYPE_HDMI_TYPE_A) {
++		switch (cntl->color_depth) {
++		case COLOR_DEPTH_101010:
++			params.usSymClock =
++				cpu_to_le16((le16_to_cpu(params.usSymClock) * 30) / 24);
++			break;
++		case COLOR_DEPTH_121212:
++			params.usSymClock =
++				cpu_to_le16((le16_to_cpu(params.usSymClock) * 36) / 24);
++			break;
++		case COLOR_DEPTH_161616:
++			params.usSymClock =
++				cpu_to_le16((le16_to_cpu(params.usSymClock) * 48) / 24);
++			break;
++		default:
++			break;
++		}
++	}
  
-+	if (stream1->clamping.c_depth != stream2->clamping.c_depth)
-+		return false;
-+
- 	if (stream1->phy_pix_clk != stream2->phy_pix_clk
- 			&& (!dc_is_dp_signal(stream1->signal)
- 			|| !dc_is_dp_signal(stream2->signal)))
-@@ -337,6 +340,20 @@ bool resource_are_streams_timing_synchro
- 
- 	return true;
- }
-+static bool is_dp_and_hdmi_sharable(
-+		struct dc_stream_state *stream1,
-+		struct dc_stream_state *stream2)
-+{
-+	if (stream1->ctx->dc->caps.disable_dp_clk_share)
-+		return false;
-+
-+	if (stream1->clamping.c_depth != COLOR_DEPTH_888 ||
-+	    stream2->clamping.c_depth != COLOR_DEPTH_888)
-+	return false;
-+
-+	return true;
-+
-+}
- 
- static bool is_sharable_clk_src(
- 	const struct pipe_ctx *pipe_with_clk_src,
-@@ -348,7 +365,10 @@ static bool is_sharable_clk_src(
- 	if (pipe_with_clk_src->stream->signal == SIGNAL_TYPE_VIRTUAL)
- 		return false;
- 
--	if (dc_is_dp_signal(pipe_with_clk_src->stream->signal))
-+	if (dc_is_dp_signal(pipe_with_clk_src->stream->signal) ||
-+		(dc_is_dp_signal(pipe->stream->signal) &&
-+		!is_dp_and_hdmi_sharable(pipe_with_clk_src->stream,
-+				     pipe->stream)))
- 		return false;
- 
- 	if (dc_is_hdmi_signal(pipe_with_clk_src->stream->signal)
---- a/drivers/gpu/drm/amd/display/dc/dc.h
-+++ b/drivers/gpu/drm/amd/display/dc/dc.h
-@@ -77,6 +77,7 @@ struct dc_caps {
- 	bool dual_link_dvi;
- 	bool post_blend_color_processing;
- 	bool force_dp_tps4_for_cp2520;
-+	bool disable_dp_clk_share;
- };
- 
- struct dc_dcc_surface_param {
---- a/drivers/gpu/drm/amd/display/dc/dce100/dce100_resource.c
-+++ b/drivers/gpu/drm/amd/display/dc/dce100/dce100_resource.c
-@@ -884,7 +884,7 @@ static bool construct(
- 	dc->caps.i2c_speed_in_khz = 40;
- 	dc->caps.max_cursor_size = 128;
- 	dc->caps.dual_link_dvi = true;
--
-+	dc->caps.disable_dp_clk_share = true;
- 	for (i = 0; i < pool->base.pipe_count; i++) {
- 		pool->base.timing_generators[i] =
- 			dce100_timing_generator_create(
---- a/drivers/gpu/drm/amd/display/dc/dce80/dce80_resource.c
-+++ b/drivers/gpu/drm/amd/display/dc/dce80/dce80_resource.c
-@@ -902,6 +902,7 @@ static bool dce80_construct(
- 	}
- 
- 	dc->caps.max_planes =  pool->base.pipe_count;
-+	dc->caps.disable_dp_clk_share = true;
- 
- 	if (!resource_construct(num_virtual_links, dc, &pool->base,
- 			&res_create_funcs))
-@@ -1087,6 +1088,7 @@ static bool dce81_construct(
- 	}
- 
- 	dc->caps.max_planes =  pool->base.pipe_count;
-+	dc->caps.disable_dp_clk_share = true;
- 
- 	if (!resource_construct(num_virtual_links, dc, &pool->base,
- 			&res_create_funcs))
-@@ -1268,6 +1270,7 @@ static bool dce83_construct(
- 	}
- 
- 	dc->caps.max_planes =  pool->base.pipe_count;
-+	dc->caps.disable_dp_clk_share = true;
- 
- 	if (!resource_construct(num_virtual_links, dc, &pool->base,
- 			&res_create_funcs))
+ 	if (EXEC_BIOS_CMD_TABLE(UNIPHYTransmitterControl, params))
+ 		result = BP_RESULT_OK;
 
 
