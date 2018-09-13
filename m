@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75676C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:41:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64D36C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:41:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37B252133F
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:41:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37B252133F
+	by mail.kernel.org (Postfix) with ESMTP id 273F520C0A
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:41:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 273F520C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728415AbeIMSvU (ORCPT
+        id S1729693AbeIMSvZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:51:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60072 "EHLO
+        Thu, 13 Sep 2018 14:51:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60082 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728471AbeIMSvT (ORCPT
+        with ESMTP id S1727534AbeIMSvY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:51:19 -0400
+        Thu, 13 Sep 2018 14:51:24 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 36E6BD19;
-        Thu, 13 Sep 2018 13:41:47 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6B0EAD19;
+        Thu, 13 Sep 2018 13:41:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ido Schimmel <idosch@mellanox.com>,
-        Petr Machata <petrm@mellanox.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Geoff Alexander <alexandg@cs.unm.edu>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 014/115] mlxsw: spectrum_switchdev: Do not leak RIFs when removing bridge
-Date:   Thu, 13 Sep 2018 15:30:34 +0200
-Message-Id: <20180913131824.358865632@linuxfoundation.org>
+Subject: [PATCH 4.14 002/115] ipv4: tcp: send zero IPID for RST and ACK sent in SYN-RECV and TIME-WAIT state
+Date:   Thu, 13 Sep 2018 15:30:22 +0200
+Message-Id: <20180913131823.486289563@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -52,108 +52,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ido Schimmel <idosch@mellanox.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 602b74eda81311dbdb5dbab08c30f789f648ebdc ]
+[ Upstream commit 431280eebed9f5079553daf003011097763e71fd ]
 
-When a bridge device is removed, the VLANs are flushed from each
-configured port. This causes the ports to decrement the reference count
-on the associated FIDs (filtering identifier). If the reference count of
-a FID is 1 and it has a RIF (router interface), then this RIF is
-destroyed.
+tcp uses per-cpu (and per namespace) sockets (net->ipv4.tcp_sk) internally
+to send some control packets.
 
-However, if no port is member in the VLAN for which a RIF exists, then
-the RIF will continue to exist after the removal of the bridge. To
-reproduce:
+1) RST packets, through tcp_v4_send_reset()
+2) ACK packets in SYN-RECV and TIME-WAIT state, through tcp_v4_send_ack()
 
-# ip link add name br0 type bridge vlan_filtering 1
-# ip link set dev swp1 master br0
-# ip link add link br0 name br0.10 type vlan id 10
-# ip address add 192.0.2.0/24 dev br0.10
-# ip link del dev br0
+These packets assert IP_DF, and also use the hashed IP ident generator
+to provide an IPv4 ID number.
 
-The RIF associated with br0.10 continues to exist.
+Geoff Alexander reported this could be used to build off-path attacks.
 
-Fix this by iterating over all the bridge device uppers when it is
-destroyed and take care of destroying their RIFs.
+These packets should not be fragmented, since their size is smaller than
+IPV4_MIN_MTU. Only some tunneled paths could eventually have to fragment,
+regardless of inner IPID.
 
-Fixes: 99f44bb3527b ("mlxsw: spectrum: Enable L3 interfaces on top of bridge devices")
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
-Reviewed-by: Petr Machata <petrm@mellanox.com>
+We really can use zero IPID, to address the flaw, and as a bonus,
+avoid a couple of atomic operations in ip_idents_reserve()
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: Geoff Alexander <alexandg@cs.unm.edu>
+Tested-by: Geoff Alexander <alexandg@cs.unm.edu>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlxsw/spectrum.h           |    2 +
- drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c    |   11 ++++++++
- drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c |   20 +++++++++++++++
- 3 files changed, 33 insertions(+)
+ net/ipv4/tcp_ipv4.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum.h
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum.h
-@@ -395,6 +395,8 @@ int mlxsw_sp_netdevice_vrf_event(struct
- void
- mlxsw_sp_port_vlan_router_leave(struct mlxsw_sp_port_vlan *mlxsw_sp_port_vlan);
- void mlxsw_sp_rif_destroy(struct mlxsw_sp_rif *rif);
-+void mlxsw_sp_rif_destroy_by_dev(struct mlxsw_sp *mlxsw_sp,
-+				 struct net_device *dev);
+--- a/net/ipv4/tcp_ipv4.c
++++ b/net/ipv4/tcp_ipv4.c
+@@ -2468,6 +2468,12 @@ static int __net_init tcp_sk_init(struct
+ 		if (res)
+ 			goto fail;
+ 		sock_set_flag(sk, SOCK_USE_WRITE_QUEUE);
++
++		/* Please enforce IP_DF and IPID==0 for RST and
++		 * ACK sent in SYN-RECV and TIME-WAIT state.
++		 */
++		inet_sk(sk)->pmtudisc = IP_PMTUDISC_DO;
++
+ 		*per_cpu_ptr(net->ipv4.tcp_sk, cpu) = sk;
+ 	}
  
- /* spectrum_kvdl.c */
- int mlxsw_sp_kvdl_alloc(struct mlxsw_sp *mlxsw_sp, unsigned int entry_count,
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c
-@@ -5131,6 +5131,17 @@ void mlxsw_sp_rif_destroy(struct mlxsw_s
- 	mlxsw_sp_vr_put(vr);
- }
- 
-+void mlxsw_sp_rif_destroy_by_dev(struct mlxsw_sp *mlxsw_sp,
-+				 struct net_device *dev)
-+{
-+	struct mlxsw_sp_rif *rif;
-+
-+	rif = mlxsw_sp_rif_find_by_dev(mlxsw_sp, dev);
-+	if (!rif)
-+		return;
-+	mlxsw_sp_rif_destroy(rif);
-+}
-+
- static void
- mlxsw_sp_rif_subport_params_init(struct mlxsw_sp_rif_params *params,
- 				 struct mlxsw_sp_port_vlan *mlxsw_sp_port_vlan)
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
-@@ -140,6 +140,24 @@ bool mlxsw_sp_bridge_device_is_offloaded
- 	return !!mlxsw_sp_bridge_device_find(mlxsw_sp->bridge, br_dev);
- }
- 
-+static int mlxsw_sp_bridge_device_upper_rif_destroy(struct net_device *dev,
-+						    void *data)
-+{
-+	struct mlxsw_sp *mlxsw_sp = data;
-+
-+	mlxsw_sp_rif_destroy_by_dev(mlxsw_sp, dev);
-+	return 0;
-+}
-+
-+static void mlxsw_sp_bridge_device_rifs_destroy(struct mlxsw_sp *mlxsw_sp,
-+						struct net_device *dev)
-+{
-+	mlxsw_sp_rif_destroy_by_dev(mlxsw_sp, dev);
-+	netdev_walk_all_upper_dev_rcu(dev,
-+				      mlxsw_sp_bridge_device_upper_rif_destroy,
-+				      mlxsw_sp);
-+}
-+
- static struct mlxsw_sp_bridge_device *
- mlxsw_sp_bridge_device_create(struct mlxsw_sp_bridge *bridge,
- 			      struct net_device *br_dev)
-@@ -176,6 +194,8 @@ static void
- mlxsw_sp_bridge_device_destroy(struct mlxsw_sp_bridge *bridge,
- 			       struct mlxsw_sp_bridge_device *bridge_device)
- {
-+	mlxsw_sp_bridge_device_rifs_destroy(bridge->mlxsw_sp,
-+					    bridge_device->dev);
- 	list_del(&bridge_device->list);
- 	if (bridge_device->vlan_enabled)
- 		bridge->vlan_enabled_exists = false;
 
 
