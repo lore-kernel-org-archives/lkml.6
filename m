@@ -6,40 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B058C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:43:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA3ECC07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:43:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3090320854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:43:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3090320854
+	by mail.kernel.org (Postfix) with ESMTP id 9DE6C20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:43:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DE6C20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729818AbeIMSwl (ORCPT
+        id S1729829AbeIMSwo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:52:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60292 "EHLO
+        Thu, 13 Sep 2018 14:52:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60310 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728860AbeIMSwk (ORCPT
+        with ESMTP id S1728860AbeIMSwn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:52:40 -0400
+        Thu, 13 Sep 2018 14:52:43 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F2A10CF3;
-        Thu, 13 Sep 2018 13:43:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 63C6ECF3;
+        Thu, 13 Sep 2018 13:43:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Christoffer Dall <cdall@kernel.org>,
-        Peter Maydel <peter.maydell@linaro.org>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Nicolai Stange <nstange@suse.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@suse.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 031/115] virtio: pci-legacy: Validate queue pfn
-Date:   Thu, 13 Sep 2018 15:30:51 +0200
-Message-Id: <20180913131825.577708462@linuxfoundation.org>
+Subject: [PATCH 4.14 032/115] x86/mce: Add notifier_block forward declaration
+Date:   Thu, 13 Sep 2018 15:30:52 +0200
+Message-Id: <20180913131825.641023887@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -57,70 +54,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 69599206ea9a3f8f2e94d46580579cbf9d08ad6c ]
+[ Upstream commit 704ae091b061082b37a9968621af4c290c641d50 ]
 
-Legacy PCI over virtio uses a 32bit PFN for the queue. If the
-queue pfn is too large to fit in 32bits, which we could hit on
-arm64 systems with 52bit physical addresses (even with 64K page
-size), we simply miss out a proper link to the other side of
-the queue.
+Without linux/irq.h, there is no declaration of notifier_block, leading to
+a build warning:
 
-Add a check to validate the PFN, rather than silently breaking
-the devices.
+In file included from arch/x86/kernel/cpu/mcheck/threshold.c:10:
+arch/x86/include/asm/mce.h:151:46: error: 'struct notifier_block' declared inside parameter list will not be visible outside of this definition or declaration [-Werror]
 
-Cc: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Jason Wang <jasowang@redhat.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Christoffer Dall <cdall@kernel.org>
-Cc: Peter Maydel <peter.maydell@linaro.org>
-Cc: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+It's sufficient to declare the struct tag here, which avoids pulling in
+more header files.
+
+Fixes: 447ae3166702 ("x86: Don't include linux/irq.h from asm/hardirq.h")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Nicolai Stange <nstange@suse.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Borislav Petkov <bp@suse.de>
+Link: https://lkml.kernel.org/r/20180817100156.3009043-1-arnd@arndb.de
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/virtio/virtio_pci_legacy.c |   14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/mce.h |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/virtio/virtio_pci_legacy.c
-+++ b/drivers/virtio/virtio_pci_legacy.c
-@@ -122,6 +122,7 @@ static struct virtqueue *setup_vq(struct
- 	struct virtqueue *vq;
- 	u16 num;
- 	int err;
-+	u64 q_pfn;
+--- a/arch/x86/include/asm/mce.h
++++ b/arch/x86/include/asm/mce.h
+@@ -200,6 +200,7 @@ enum mce_notifier_prios {
+ 	MCE_PRIO_LOWEST		= 0,
+ };
  
- 	/* Select the queue we're interested in */
- 	iowrite16(index, vp_dev->ioaddr + VIRTIO_PCI_QUEUE_SEL);
-@@ -141,9 +142,17 @@ static struct virtqueue *setup_vq(struct
- 	if (!vq)
- 		return ERR_PTR(-ENOMEM);
++struct notifier_block;
+ extern void mce_register_decode_chain(struct notifier_block *nb);
+ extern void mce_unregister_decode_chain(struct notifier_block *nb);
  
-+	q_pfn = virtqueue_get_desc_addr(vq) >> VIRTIO_PCI_QUEUE_ADDR_SHIFT;
-+	if (q_pfn >> 32) {
-+		dev_err(&vp_dev->pci_dev->dev,
-+			"platform bug: legacy virtio-mmio must not be used with RAM above 0x%llxGB\n",
-+			0x1ULL << (32 + PAGE_SHIFT - 30));
-+		err = -E2BIG;
-+		goto out_del_vq;
-+	}
-+
- 	/* activate the queue */
--	iowrite32(virtqueue_get_desc_addr(vq) >> VIRTIO_PCI_QUEUE_ADDR_SHIFT,
--		  vp_dev->ioaddr + VIRTIO_PCI_QUEUE_PFN);
-+	iowrite32(q_pfn, vp_dev->ioaddr + VIRTIO_PCI_QUEUE_PFN);
- 
- 	vq->priv = (void __force *)vp_dev->ioaddr + VIRTIO_PCI_QUEUE_NOTIFY;
- 
-@@ -160,6 +169,7 @@ static struct virtqueue *setup_vq(struct
- 
- out_deactivate:
- 	iowrite32(0, vp_dev->ioaddr + VIRTIO_PCI_QUEUE_PFN);
-+out_del_vq:
- 	vring_del_virtqueue(vq);
- 	return ERR_PTR(err);
- }
 
 
