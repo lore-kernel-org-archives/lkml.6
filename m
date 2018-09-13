@@ -2,92 +2,100 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEC1FC07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:52:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9019C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:52:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FC7420854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:52:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FC7420854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 64EF120854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:52:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="xAgadjPE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64EF120854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730996AbeIMTCG (ORCPT
+        id S1731012AbeIMTCM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:02:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33508 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729764AbeIMTCF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:02:05 -0400
-Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DF95FCE7;
-        Thu, 13 Sep 2018 13:52:29 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anthony Wong <anthony.wong@ubuntu.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 008/197] r8169: add support for NCube 8168 network card
-Date:   Thu, 13 Sep 2018 15:29:17 +0200
-Message-Id: <20180913131841.902681748@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
-References: <20180913131841.568116777@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Thu, 13 Sep 2018 15:02:12 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:44283 "EHLO frisell.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730619AbeIMTCL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 15:02:11 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 83f960ba;
+        Thu, 13 Sep 2018 13:35:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to:cc
+        :content-type; s=mail; bh=HVtgmTjepFQpsbnrlNn210uyvC4=; b=xAgadj
+        PEP6dkcRLdtamfJdIG+EB80RZhYGweC1qtxkl0zhMX6mfuheTkGBdAtUZlX/l4jF
+        DBO+XponjWms25gDNOlCDA1HZ1bvt2n6WQggLE2abaGrLLMzAQAtkfMwI9u+27Tm
+        OfiuTjG3ds9IxrLhVbZuOxt7YBP8jsuZEMos3yeH8eI9mM83yMkR0AhHAvinfFxH
+        TpohsiWncx3bgpNbkv7WoGk8gOdr/RimpzclItAzWpaazVIReYY1k3e0CxupS6Ls
+        Rb7m/99huGlMUZ60hrImv3NNo6ifbdGzx0IgqXgGgUTlR2NxFFSQ3ZCLISMyW/4G
+        AMTXTL894omaJDDw==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id e75e1bbc (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
+        Thu, 13 Sep 2018 13:35:39 +0000 (UTC)
+Received: by mail-oi0-f44.google.com with SMTP id x197-v6so9473428oix.5;
+        Thu, 13 Sep 2018 06:52:34 -0700 (PDT)
+X-Gm-Message-State: APzg51D0Xy3aN1b7QgY9zb7tTmXFt8SL8laUuvyxsaTNLnELUSydRkNf
+        +g8b0og3bRO0+B0yXjTbzuGBcdtnL65mP5KtwXY=
+X-Google-Smtp-Source: ANB0VdYb/Eff09pnZ9EP0hQ9vzDJWKr/rfcFStefrJRVFMjL9LDF4VgZ8Ug9sVbRMGzZwIqaqVmRh6oE0iKeeQfv/8o=
+X-Received: by 2002:aca:310b:: with SMTP id x11-v6mr6581223oix.74.1536846753360;
+ Thu, 13 Sep 2018 06:52:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20180911010838.8818-1-Jason@zx2c4.com> <20180911010838.8818-2-Jason@zx2c4.com>
+ <20180912061433.GA8484@ip-172-31-15-78> <CAHmME9pmgu_xWJ0rvdS4RhzwjKPiNdkQ9nc6mqTNeb6A8xT8Eg@mail.gmail.com>
+ <20180913050301.GA26367@ip-172-31-15-78>
+In-Reply-To: <20180913050301.GA26367@ip-172-31-15-78>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Thu, 13 Sep 2018 15:52:21 +0200
+X-Gmail-Original-Message-ID: <CAHmME9rMg_2eHBnfP6j9Y3O7-At90HF=ToTWeFL_Qc4nGURORg@mail.gmail.com>
+Message-ID: <CAHmME9rMg_2eHBnfP6j9Y3O7-At90HF=ToTWeFL_Qc4nGURORg@mail.gmail.com>
+Subject: Re: [PATCH net-next v3 01/17] asm: simd context helper API
+To:     kevin@guarana.org, Andrew Lutomirski <luto@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Samuel Neves <sneves@dei.uc.pt>, linux-arch@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.18-stable review patch.  If anyone has any objections, please let me know.
+On Thu, Sep 13, 2018 at 7:03 AM Kevin Easton <kevin@guarana.org> wrote:
+> Yes.  It's also how most get/put APIs already work in the kernel, eg
+> kref_get/put (mostly because they tend to be 'getting/putting' an
+> already-initialized object, though).
 
-------------------
+Right; in this case the object wouldn't be initialized yet, which
+might defeat the purpose, since one advantage of the & way you
+mentioned is _put modifies the context.
 
-From: Anthony Wong <anthony.wong@ubuntu.com>
+Andy - any opinions on this? The tl;dr is:
 
-[ Upstream commit 9fd0e09a4e86499639653243edfcb417a05c5c46 ]
+1) what we have now:
 
-This card identifies itself as:
-  Ethernet controller [0200]: NCube Device [10ff:8168] (rev 06)
-  Subsystem: TP-LINK Technologies Co., Ltd. Device [7470:3468]
+simd_context_t simd_context = simd_get();
+for (item in items) {
+    do_something(item);
+    simd_context = simd_relax(simd_context);
+}
+simd_put();
 
-Adding a new entry to rtl8169_pci_tbl makes the card work.
+2) what kevin is proposing:
 
-Link: http://launchpad.net/bugs/1788730
-Signed-off-by: Anthony Wong <anthony.wong@ubuntu.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/realtek/r8169.c |    1 +
- include/linux/pci_ids.h              |    2 ++
- 2 files changed, 3 insertions(+)
+simd_context_t simd_context;
 
---- a/drivers/net/ethernet/realtek/r8169.c
-+++ b/drivers/net/ethernet/realtek/r8169.c
-@@ -303,6 +303,7 @@ static const struct pci_device_id rtl816
- 	{ PCI_DEVICE(PCI_VENDOR_ID_REALTEK,	0x8161), 0, 0, RTL_CFG_1 },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_REALTEK,	0x8167), 0, 0, RTL_CFG_0 },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_REALTEK,	0x8168), 0, 0, RTL_CFG_1 },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_NCUBE,	0x8168), 0, 0, RTL_CFG_1 },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_REALTEK,	0x8169), 0, 0, RTL_CFG_0 },
- 	{ PCI_VENDOR_ID_DLINK,			0x4300,
- 		PCI_VENDOR_ID_DLINK, 0x4b10,		 0, 0, RTL_CFG_1 },
---- a/include/linux/pci_ids.h
-+++ b/include/linux/pci_ids.h
-@@ -3082,4 +3082,6 @@
- 
- #define PCI_VENDOR_ID_OCZ		0x1b85
- 
-+#define PCI_VENDOR_ID_NCUBE		0x10ff
-+
- #endif /* _LINUX_PCI_IDS_H */
+simd_get(&simd_context);
+for (item in items) {
+    do_something(item);
+    simd_relax(&simd_context);
+}
+simd_put(&simd_context);
 
-
+I can see pros and cons of each approach.
