@@ -3,65 +3,102 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F17CC04AB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 23:27:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75D5AC04AB8
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 23:31:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0984A20853
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 23:27:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0984A20853
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2507720853
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 23:31:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2507720853
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727005AbeINEja (ORCPT
+        id S1726918AbeINEms (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 00:39:30 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:39740 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725757AbeINEja (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 00:39:30 -0400
-Received: from smtp.corp.redhat.com (int-mx11.intmail.prod.int.phx2.redhat.com [10.5.11.26])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A630683F4C;
-        Thu, 13 Sep 2018 23:27:51 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8E06B30912F4;
-        Thu, 13 Sep 2018 23:27:50 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20180913221546.GV19965@ZenIV.linux.org.uk>
-References: <20180913221546.GV19965@ZenIV.linux.org.uk> <20180905185922.GA25461@avx2> <20180905192636.GA13608@kroah.com> <20180905193111.GA27217@avx2> <20180905222247.GT19965@ZenIV.linux.org.uk> <20180913220124.GA12570@avx2>
-To:     Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     dhowells@redhat.com, Alexey Dobriyan <adobriyan@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC] UAPI: Check headers by compiling all together as C++
+        Fri, 14 Sep 2018 00:42:48 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:46635 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725878AbeINEmr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 00:42:47 -0400
+Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1g0b4j-0003Ix-IM; Fri, 14 Sep 2018 01:31:05 +0200
+Date:   Fri, 14 Sep 2018 01:31:05 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Brijesh Singh <brijesh.singh@amd.com>
+cc:     x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        =?ISO-8859-2?Q?Radim_Kr=E8m=E1=F8?= <rkrcmar@redhat.com>
+Subject: Re: [PATCH v8 2/2] x86/kvm: use __bss_decrypted attribute in shared
+ variables
+In-Reply-To: <1536875471-17391-3-git-send-email-brijesh.singh@amd.com>
+Message-ID: <alpine.DEB.2.21.1809140126050.1473@nanos.tec.linutronix.de>
+References: <1536875471-17391-1-git-send-email-brijesh.singh@amd.com> <1536875471-17391-3-git-send-email-brijesh.singh@amd.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <26411.1536881269.1@warthog.procyon.org.uk>
-Date:   Fri, 14 Sep 2018 00:27:49 +0100
-Message-ID: <26412.1536881269@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.26
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Thu, 13 Sep 2018 23:27:51 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Al Viro <viro@ZenIV.linux.org.uk> wrote:
+On Thu, 13 Sep 2018, Brijesh Singh wrote:
+>  
+> +static void __init kvmclock_init_mem(void)
+> +{
+> +	unsigned int ncpus = num_possible_cpus() - HVC_BOOT_ARRAY_SIZE;
+> +	unsigned int order = get_order(ncpus * sizeof(*hvclock_mem));
+> +	struct page *p;
+> +	int r;
+> +
+> +	p = alloc_pages(GFP_KERNEL, order);
+> +	if (p) {
 
-> 	It's too early for AFD postings.  And you *are* tempting
-> me to throw into the tree as many anti-C++ devices as can be
-> done tastefully, just to stop somebody attempting that insanity
-> in the earnest.
+If you make this:
 
-You would deliberately break the UAPI header files to make sure that they
-couldn't be used with C++?
+	if (!p) {
+		pr_warn();
+		return;
+	}
 
-David
+then you spare one indentation level and give useful information.
+
+> +		hvclock_mem = page_address(p);
+> +
+> +		/*
+> +		 * hvclock is shared between the guest and the hypervisor, must
+> +		 * be mapped decrypted.
+> +		 */
+> +		if (sev_active()) {
+> +			r = set_memory_decrypted((unsigned long) hvclock_mem,
+> +						 1UL << order);
+> +			if (r) {
+> +				__free_pages(p, order);
+> +				hvclock_mem = NULL;
+
+This wants a pr_warn() as well, please.
+  
+> +				return;
+> +			}
+> +		}
+> +
+> +		memset(hvclock_mem, 0, PAGE_SIZE << order);
+> +	}
+> +}
+
+Other than that, this looks really reasonable and way more palatable in the
+rc stage.
+
+Thanks,
+
+	tglx
