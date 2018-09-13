@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A32BFC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:03:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A63C0C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:03:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66B1320652
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:03:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66B1320652
+	by mail.kernel.org (Postfix) with ESMTP id 5E0A220652
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:03:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E0A220652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732059AbeIMTN2 (ORCPT
+        id S1732071AbeIMTNb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:13:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35334 "EHLO
+        Thu, 13 Sep 2018 15:13:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35346 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728556AbeIMTN1 (ORCPT
+        with ESMTP id S1728556AbeIMTNa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:13:27 -0400
+        Thu, 13 Sep 2018 15:13:30 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6DDD2D2E;
-        Thu, 13 Sep 2018 14:03:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8AB47D32;
+        Thu, 13 Sep 2018 14:03:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anand Jain <anand.jain@oracle.com>,
-        David Sterba <dsterba@suse.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 149/197] btrfs: lift uuid_mutex to callers of btrfs_parse_early_options
-Date:   Thu, 13 Sep 2018 15:31:38 +0200
-Message-Id: <20180913131847.511999376@linuxfoundation.org>
+        stable@vger.kernel.org, "Leo (Sunpeng) Li" <sunpeng.li@amd.com>,
+        Mikita Lipski <Mikita.Lipski@amd.com>,
+        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.18 167/197] drm/amd/display: Use requested HDMI aspect ratio
+Date:   Thu, 13 Sep 2018 15:31:56 +0200
+Message-Id: <20180913131848.237358083@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -52,55 +53,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Sterba <dsterba@suse.com>
+From: Leo (Sunpeng) Li <sunpeng.li@amd.com>
 
-[ Upstream commit 5139cff598d42b1e531f40c84691a7e945f04553 ]
+commit e11d41472a50742c16d53c968e143fb498fa482f upstream.
 
-Prepartory work to fix race between mount and device scan.
+[Why]
+The DRM mode's HDMI picture aspect ratio field was never saved in
+dc_stream's timing struct. This causes us to mistake a new stream to
+have the same timings as the old, even though the user has requested a
+different aspect ratio.
 
-btrfs_parse_early_options calls the device scan from mount and we'll
-need to let mount completely manage the critical section.
+[How]
+Save DRM's aspect ratio field within dc_stream's timing struct.
 
-Reviewed-by: Anand Jain <anand.jain@oracle.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Bug: https://bugs.freedesktop.org/show_bug.cgi?id=107153
+Signed-off-by: Leo (Sunpeng) Li <sunpeng.li@amd.com>
+Reviewed-by: Mikita Lipski <Mikita.Lipski@amd.com>
+Acked-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/btrfs/super.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/fs/btrfs/super.c
-+++ b/fs/btrfs/super.c
-@@ -892,6 +892,8 @@ static int btrfs_parse_early_options(con
- 	char *device_name, *opts, *orig, *p;
- 	int error = 0;
+---
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c |    9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
+
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -2124,13 +2124,8 @@ convert_color_depth_from_display_info(co
+ static enum dc_aspect_ratio
+ get_aspect_ratio(const struct drm_display_mode *mode_in)
+ {
+-	int32_t width = mode_in->crtc_hdisplay * 9;
+-	int32_t height = mode_in->crtc_vdisplay * 16;
+-
+-	if ((width - height) < 10 && (width - height) > -10)
+-		return ASPECT_RATIO_16_9;
+-	else
+-		return ASPECT_RATIO_4_3;
++	/* 1-1 mapping, since both enums follow the HDMI spec. */
++	return (enum dc_aspect_ratio) mode_in->picture_aspect_ratio;
+ }
  
-+	lockdep_assert_held(&uuid_mutex);
-+
- 	if (!options)
- 		return 0;
- 
-@@ -917,10 +919,8 @@ static int btrfs_parse_early_options(con
- 				error = -ENOMEM;
- 				goto out;
- 			}
--			mutex_lock(&uuid_mutex);
- 			error = btrfs_scan_one_device(device_name,
- 					flags, holder, fs_devices);
--			mutex_unlock(&uuid_mutex);
- 			kfree(device_name);
- 			if (error)
- 				goto out;
-@@ -1528,8 +1528,10 @@ static struct dentry *btrfs_mount_root(s
- 	if (!(flags & SB_RDONLY))
- 		mode |= FMODE_WRITE;
- 
-+	mutex_lock(&uuid_mutex);
- 	error = btrfs_parse_early_options(data, mode, fs_type,
- 					  &fs_devices);
-+	mutex_unlock(&uuid_mutex);
- 	if (error) {
- 		return ERR_PTR(error);
- 	}
+ static enum dc_color_space
 
 
