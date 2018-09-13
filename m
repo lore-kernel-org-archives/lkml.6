@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D18AC07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:44:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE6B8C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:44:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1220920C0A
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:44:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1220920C0A
+	by mail.kernel.org (Postfix) with ESMTP id B2E0720854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:44:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2E0720854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729964AbeIMSxh (ORCPT
+        id S1729972AbeIMSxk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:53:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60456 "EHLO
+        Thu, 13 Sep 2018 14:53:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60476 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728132AbeIMSxg (ORCPT
+        with ESMTP id S1728132AbeIMSxk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:53:36 -0400
+        Thu, 13 Sep 2018 14:53:40 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6D2BCD10;
-        Thu, 13 Sep 2018 13:44:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CA0B7D19;
+        Thu, 13 Sep 2018 13:44:06 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Song Liu <songliubraving@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 044/115] tcp, ulp: add alias for all ulp modules
-Date:   Thu, 13 Sep 2018 15:31:04 +0200
-Message-Id: <20180913131826.395398578@linuxfoundation.org>
+        stable@vger.kernel.org, Vlad Buslov <vladbu@mellanox.com>,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 018/115] act_ife: move tcfa_lock down to where necessary
+Date:   Thu, 13 Sep 2018 15:30:38 +0200
+Message-Id: <20180913131824.643440344@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -54,93 +53,157 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Daniel Borkmann <daniel@iogearbox.net>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-[ Upstream commit 037b0b86ecf5646f8eae777d8b52ff8b401692ec ]
+[ Upstream commit 4e407ff5cd67ec76eeeea1deec227b7982dc7f66 ]
 
-Lets not turn the TCP ULP lookup into an arbitrary module loader as
-we only intend to load ULP modules through this mechanism, not other
-unrelated kernel modules:
+The only time we need to take tcfa_lock is when adding
+a new metainfo to an existing ife->metalist. We don't need
+to take tcfa_lock so early and so broadly in tcf_ife_init().
 
-  [root@bar]# cat foo.c
-  #include <sys/types.h>
-  #include <sys/socket.h>
-  #include <linux/tcp.h>
-  #include <linux/in.h>
+This means we can always take ife_mod_lock first, avoid the
+reverse locking ordering warning as reported by Vlad.
 
-  int main(void)
-  {
-      int sock = socket(PF_INET, SOCK_STREAM, 0);
-      setsockopt(sock, IPPROTO_TCP, TCP_ULP, "sctp", sizeof("sctp"));
-      return 0;
-  }
-
-  [root@bar]# gcc foo.c -O2 -Wall
-  [root@bar]# lsmod | grep sctp
-  [root@bar]# ./a.out
-  [root@bar]# lsmod | grep sctp
-  sctp                 1077248  4
-  libcrc32c              16384  3 nf_conntrack,nf_nat,sctp
-  [root@bar]#
-
-Fix it by adding module alias to TCP ULP modules, so probing module
-via request_module() will be limited to tcp-ulp-[name]. The existing
-modules like kTLS will load fine given tcp-ulp-tls alias, but others
-will fail to load:
-
-  [root@bar]# lsmod | grep sctp
-  [root@bar]# ./a.out
-  [root@bar]# lsmod | grep sctp
-  [root@bar]#
-
-Sockmap is not affected from this since it's either built-in or not.
-
-Fixes: 734942cc4ea6 ("tcp: ULP infrastructure")
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Acked-by: John Fastabend <john.fastabend@gmail.com>
-Acked-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Reported-by: Vlad Buslov <vladbu@mellanox.com>
+Tested-by: Vlad Buslov <vladbu@mellanox.com>
+Cc: Vlad Buslov <vladbu@mellanox.com>
+Cc: Jamal Hadi Salim <jhs@mojatatu.com>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/net/tcp.h  |    4 ++++
- net/ipv4/tcp_ulp.c |    2 +-
- net/tls/tls_main.c |    1 +
- 3 files changed, 6 insertions(+), 1 deletion(-)
+ net/sched/act_ife.c |   37 +++++++++++++------------------------
+ 1 file changed, 13 insertions(+), 24 deletions(-)
 
---- a/include/net/tcp.h
-+++ b/include/net/tcp.h
-@@ -2063,6 +2063,10 @@ int tcp_set_ulp(struct sock *sk, const c
- void tcp_get_available_ulp(char *buf, size_t len);
- void tcp_cleanup_ulp(struct sock *sk);
+--- a/net/sched/act_ife.c
++++ b/net/sched/act_ife.c
+@@ -249,10 +249,8 @@ static int ife_validate_metatype(struct
+ }
  
-+#define MODULE_ALIAS_TCP_ULP(name)				\
-+	__MODULE_INFO(alias, alias_userspace, name);		\
-+	__MODULE_INFO(alias, alias_tcp_ulp, "tcp-ulp-" name)
-+
- /* Call BPF_SOCK_OPS program that returns an int. If the return value
-  * is < 0, then the BPF op failed (for example if the loaded BPF
-  * program does not support the chosen operation or there is no BPF
---- a/net/ipv4/tcp_ulp.c
-+++ b/net/ipv4/tcp_ulp.c
-@@ -39,7 +39,7 @@ static const struct tcp_ulp_ops *__tcp_u
+ /* called when adding new meta information
+- * under ife->tcf_lock for existing action
+ */
+-static int load_metaops_and_vet(struct tcf_ife_info *ife, u32 metaid,
+-				void *val, int len, bool exists)
++static int load_metaops_and_vet(u32 metaid, void *val, int len)
+ {
+ 	struct tcf_meta_ops *ops = find_ife_oplist(metaid);
+ 	int ret = 0;
+@@ -260,13 +258,9 @@ static int load_metaops_and_vet(struct t
+ 	if (!ops) {
+ 		ret = -ENOENT;
  #ifdef CONFIG_MODULES
- 	if (!ulp && capable(CAP_NET_ADMIN)) {
- 		rcu_read_unlock();
--		request_module("%s", name);
-+		request_module("tcp-ulp-%s", name);
- 		rcu_read_lock();
- 		ulp = tcp_ulp_find(name);
+-		if (exists)
+-			spin_unlock_bh(&ife->tcf_lock);
+ 		rtnl_unlock();
+ 		request_module("ifemeta%u", metaid);
+ 		rtnl_lock();
+-		if (exists)
+-			spin_lock_bh(&ife->tcf_lock);
+ 		ops = find_ife_oplist(metaid);
+ #endif
  	}
---- a/net/tls/tls_main.c
-+++ b/net/tls/tls_main.c
-@@ -44,6 +44,7 @@
- MODULE_AUTHOR("Mellanox Technologies");
- MODULE_DESCRIPTION("Transport Layer Security Support");
- MODULE_LICENSE("Dual BSD/GPL");
-+MODULE_ALIAS_TCP_ULP("tls");
+@@ -283,10 +277,9 @@ static int load_metaops_and_vet(struct t
+ }
  
- static struct proto tls_base_prot;
- static struct proto tls_sw_prot;
+ /* called when adding new meta information
+- * under ife->tcf_lock for existing action
+ */
+ static int add_metainfo(struct tcf_ife_info *ife, u32 metaid, void *metaval,
+-			int len, bool atomic)
++			int len, bool atomic, bool exists)
+ {
+ 	struct tcf_meta_info *mi = NULL;
+ 	struct tcf_meta_ops *ops = find_ife_oplist(metaid);
+@@ -313,12 +306,16 @@ static int add_metainfo(struct tcf_ife_i
+ 		}
+ 	}
+ 
++	if (exists)
++		spin_lock_bh(&ife->tcf_lock);
+ 	list_add_tail(&mi->metalist, &ife->metalist);
++	if (exists)
++		spin_unlock_bh(&ife->tcf_lock);
+ 
+ 	return ret;
+ }
+ 
+-static int use_all_metadata(struct tcf_ife_info *ife)
++static int use_all_metadata(struct tcf_ife_info *ife, bool exists)
+ {
+ 	struct tcf_meta_ops *o;
+ 	int rc = 0;
+@@ -326,7 +323,7 @@ static int use_all_metadata(struct tcf_i
+ 
+ 	read_lock(&ife_mod_lock);
+ 	list_for_each_entry(o, &ifeoplist, list) {
+-		rc = add_metainfo(ife, o->metaid, NULL, 0, true);
++		rc = add_metainfo(ife, o->metaid, NULL, 0, true, exists);
+ 		if (rc == 0)
+ 			installed += 1;
+ 	}
+@@ -398,7 +395,6 @@ static void tcf_ife_cleanup(struct tc_ac
+ 	spin_unlock_bh(&ife->tcf_lock);
+ }
+ 
+-/* under ife->tcf_lock for existing action */
+ static int populate_metalist(struct tcf_ife_info *ife, struct nlattr **tb,
+ 			     bool exists)
+ {
+@@ -412,11 +408,11 @@ static int populate_metalist(struct tcf_
+ 			val = nla_data(tb[i]);
+ 			len = nla_len(tb[i]);
+ 
+-			rc = load_metaops_and_vet(ife, i, val, len, exists);
++			rc = load_metaops_and_vet(i, val, len);
+ 			if (rc != 0)
+ 				return rc;
+ 
+-			rc = add_metainfo(ife, i, val, len, exists);
++			rc = add_metainfo(ife, i, val, len, false, exists);
+ 			if (rc)
+ 				return rc;
+ 		}
+@@ -481,6 +477,8 @@ static int tcf_ife_init(struct net *net,
+ 	if (exists)
+ 		spin_lock_bh(&ife->tcf_lock);
+ 	ife->tcf_action = parm->action;
++	if (exists)
++		spin_unlock_bh(&ife->tcf_lock);
+ 
+ 	if (parm->flags & IFE_ENCODE) {
+ 		if (daddr)
+@@ -508,9 +506,6 @@ metadata_parse_err:
+ 				tcf_idr_release(*a, bind);
+ 			if (ret == ACT_P_CREATED)
+ 				_tcf_ife_cleanup(*a, bind);
+-
+-			if (exists)
+-				spin_unlock_bh(&ife->tcf_lock);
+ 			return err;
+ 		}
+ 
+@@ -524,20 +519,14 @@ metadata_parse_err:
+ 		 * as we can. You better have at least one else we are
+ 		 * going to bail out
+ 		 */
+-		err = use_all_metadata(ife);
++		err = use_all_metadata(ife, exists);
+ 		if (err) {
+ 			if (ret == ACT_P_CREATED)
+ 				_tcf_ife_cleanup(*a, bind);
+-
+-			if (exists)
+-				spin_unlock_bh(&ife->tcf_lock);
+ 			return err;
+ 		}
+ 	}
+ 
+-	if (exists)
+-		spin_unlock_bh(&ife->tcf_lock);
+-
+ 	if (ret == ACT_P_CREATED)
+ 		tcf_idr_insert(tn, *a);
+ 
 
 
