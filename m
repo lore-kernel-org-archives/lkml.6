@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80D3CC07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:57:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37CAAC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:57:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46C83204FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:57:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46C83204FD
+	by mail.kernel.org (Postfix) with ESMTP id E5B2620652
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:57:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5B2620652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731530AbeIMTH1 (ORCPT
+        id S1731544AbeIMTHb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:07:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34434 "EHLO
+        Thu, 13 Sep 2018 15:07:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34444 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728566AbeIMTH1 (ORCPT
+        with ESMTP id S1728566AbeIMTHa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:07:27 -0400
+        Thu, 13 Sep 2018 15:07:30 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 650C7D0E;
-        Thu, 13 Sep 2018 13:57:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8D28AD19;
+        Thu, 13 Sep 2018 13:57:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -33,9 +33,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Stefan Haberland <sth@linux.ibm.com>,
         Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 103/197] s390/dasd: fix hanging offline processing due to canceled worker
-Date:   Thu, 13 Sep 2018 15:30:52 +0200
-Message-Id: <20180913131845.666179939@linuxfoundation.org>
+Subject: [PATCH 4.18 104/197] s390/dasd: fix panic for failed online processing
+Date:   Thu, 13 Sep 2018 15:30:53 +0200
+Message-Id: <20180913131845.707504089@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -55,10 +55,19 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Stefan Haberland <sth@linux.ibm.com>
 
-[ Upstream commit 669f3765b755fd8739ab46ce3a9c6292ce8b3d2a ]
+[ Upstream commit 7c6553d4db03350dad0110c3224194c19df76a8f ]
 
-During offline processing two worker threads are canceled without
-freeing the device reference which leads to a hanging offline process.
+Fix a panic that occurs for a device that got an error in
+dasd_eckd_check_characteristics() during online processing.
+For example the read configuration data command may have failed.
+
+If this error occurs the device is not being set online and the earlier
+invoked steps during online processing are rolled back. Therefore
+dasd_eckd_uncheck_device() is called which needs a valid private
+structure. But this pointer is not valid if
+dasd_eckd_check_characteristics() has failed.
+
+Check for a valid device->private pointer to prevent a panic.
 
 Reviewed-by: Jan Hoeppner <hoeppner@linux.ibm.com>
 Signed-off-by: Stefan Haberland <sth@linux.ibm.com>
@@ -66,24 +75,20 @@ Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/s390/block/dasd_eckd.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/s390/block/dasd_eckd.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
 --- a/drivers/s390/block/dasd_eckd.c
 +++ b/drivers/s390/block/dasd_eckd.c
-@@ -2035,8 +2035,11 @@ static int dasd_eckd_basic_to_ready(stru
+@@ -1780,6 +1780,9 @@ static void dasd_eckd_uncheck_device(str
+ 	struct dasd_eckd_private *private = device->private;
+ 	int i;
  
- static int dasd_eckd_online_to_ready(struct dasd_device *device)
- {
--	cancel_work_sync(&device->reload_device);
--	cancel_work_sync(&device->kick_validate);
-+	if (cancel_work_sync(&device->reload_device))
-+		dasd_put_device(device);
-+	if (cancel_work_sync(&device->kick_validate))
-+		dasd_put_device(device);
++	if (!private)
++		return;
 +
- 	return 0;
- };
- 
+ 	dasd_alias_disconnect_device_from_lcu(device);
+ 	private->ned = NULL;
+ 	private->sneq = NULL;
 
 
