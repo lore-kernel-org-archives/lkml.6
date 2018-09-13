@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DF40C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:48:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82149C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:48:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDE9420881
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:48:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDE9420881
+	by mail.kernel.org (Postfix) with ESMTP id 473DF20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:48:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 473DF20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730534AbeIMS6W (ORCPT
+        id S1730548AbeIMS61 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:58:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32956 "EHLO
+        Thu, 13 Sep 2018 14:58:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:32962 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730414AbeIMS6V (ORCPT
+        with ESMTP id S1730413AbeIMS60 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:58:21 -0400
+        Thu, 13 Sep 2018 14:58:26 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 066F8D1A;
-        Thu, 13 Sep 2018 13:48:47 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 30E92D1A;
+        Thu, 13 Sep 2018 13:48:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Tyler Hicks <tyhicks@canonical.com>,
         Seth Arnold <seth.arnold@canonical.com>,
         Stefan Bader <stefan.bader@canonical.com>
-Subject: [PATCH 4.14 107/115] irda: Fix memory leak caused by repeated binds of irda socket
-Date:   Thu, 13 Sep 2018 15:32:07 +0200
-Message-Id: <20180913131829.906753548@linuxfoundation.org>
+Subject: [PATCH 4.14 108/115] irda: Only insert new objects into the global database via setsockopt
+Date:   Thu, 13 Sep 2018 15:32:08 +0200
+Message-Id: <20180913131829.954526389@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -54,14 +54,16 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tyler Hicks <tyhicks@canonical.com>
 
-The irda_bind() function allocates memory for self->ias_obj without
-checking to see if the socket is already bound. A userspace process
-could repeatedly bind the socket, have each new object added into the
-LM-IAS database, and lose the reference to the old object assigned to
-the socket to exhaust memory resources. This patch errors out of the
-bind operation when self->ias_obj is already assigned.
+The irda_setsockopt() function conditionally allocates memory for a new
+self->ias_object or, in some cases, reuses the existing
+self->ias_object. Existing objects were incorrectly reinserted into the
+LM_IAS database which corrupted the doubly linked list used for the
+hashbin implementation of the LM_IAS database. When combined with a
+memory leak in irda_bind(), this issue could be leveraged to create a
+use-after-free vulnerability in the hashbin list. This patch fixes the
+issue by only inserting newly allocated objects into the database.
 
-CVE-2018-6554
+CVE-2018-6555
 
 Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
 Signed-off-by: Tyler Hicks <tyhicks@canonical.com>
@@ -69,24 +71,23 @@ Reviewed-by: Seth Arnold <seth.arnold@canonical.com>
 Reviewed-by: Stefan Bader <stefan.bader@canonical.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/staging/irda/net/af_irda.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/staging/irda/net/af_irda.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
 --- a/drivers/staging/irda/net/af_irda.c
 +++ b/drivers/staging/irda/net/af_irda.c
-@@ -775,6 +775,13 @@ static int irda_bind(struct socket *sock
- 		return -EINVAL;
- 
- 	lock_sock(sk);
+@@ -2019,7 +2019,11 @@ static int irda_setsockopt(struct socket
+ 			err = -EINVAL;
+ 			goto out;
+ 		}
+-		irias_insert_object(ias_obj);
 +
-+	/* Ensure that the socket is not already bound */
-+	if (self->ias_obj) {
-+		err = -EINVAL;
-+		goto out;
-+	}
++		/* Only insert newly allocated objects */
++		if (free_ias)
++			irias_insert_object(ias_obj);
 +
- #ifdef CONFIG_IRDA_ULTRA
- 	/* Special care for Ultra sockets */
- 	if ((sk->sk_type == SOCK_DGRAM) &&
+ 		kfree(ias_opt);
+ 		break;
+ 	case IRLMP_IAS_DEL:
 
 
