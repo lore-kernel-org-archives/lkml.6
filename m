@@ -6,126 +6,110 @@ X-Spam-Status: No, score=-0.8 required=5.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B39D0C43143
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 19:23:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A803C43143
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 19:27:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 794952146E
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 19:23:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 794952146E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 10BE22086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 19:27:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10BE22086C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728328AbeINAeb (ORCPT
+        id S1728303AbeINAiS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 20:34:31 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36889 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727383AbeINAeb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 20:34:31 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1g0XDD-0005u2-Km; Thu, 13 Sep 2018 20:23:35 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1g0XDD-0004rx-6s; Thu, 13 Sep 2018 20:23:35 +0100
-Message-ID: <455ac03b7e23c8361b197a62a8f4dcbfde2d1452.camel@decadent.org.uk>
-Subject: Re: 4.19-rc3: bindeb-pkg target is failing on ppc64
-From:   Ben Hutchings <ben@decadent.org.uk>
-To:     Rui Salvaterra <rsalvaterra@gmail.com>
-Cc:     yamada.masahiro@socionext.com, michal.lkml@markovi.net,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 13 Sep 2018 20:23:26 +0100
-In-Reply-To: <CALjTZvZFT5Ku+e8CD6mQv5Pbo5TU9cWQfmEnxJ_atRrfaoM94g@mail.gmail.com>
-References: <CALjTZvb4hOY_Hew-jEUtpyhkGbmh4Tgb0doPC6EaGtz_rMGt7A@mail.gmail.com>
-         <eb1fe15c9ced6950d6a38c901278b8196ae4938d.camel@decadent.org.uk>
-         <CALjTZvYcKOycB=XeF-Eqtmq3ADh2be+gfWGiw0jbSgEUo6q8Dw@mail.gmail.com>
-         <0dbcdd4d81ed965915ccf2471dd4d5a3d025c93b.camel@decadent.org.uk>
-         <CALjTZvZFT5Ku+e8CD6mQv5Pbo5TU9cWQfmEnxJ_atRrfaoM94g@mail.gmail.com>
-Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="=-DMIUeLyXeFMGsNn3e7S5"
-User-Agent: Evolution 3.29.92-1 
-Mime-Version: 1.0
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        Thu, 13 Sep 2018 20:38:18 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:52976 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726950AbeINAiS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 20:38:18 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 4EE9720877; Thu, 13 Sep 2018 21:27:23 +0200 (CEST)
+Received: from localhost (unknown [88.191.26.124])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 06E882075C;
+        Thu, 13 Sep 2018 21:27:13 +0200 (CEST)
+Date:   Thu, 13 Sep 2018 21:27:13 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     Alessandro Zummo <a.zummo@towertech.it>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
+        =?iso-8859-1?Q?S=F8ren?= Andersen <san@skov.dk>
+Subject: Re: [PATCH v1 4/5] rtc: pcf8523: external capacitor configuration
+Message-ID: <20180913192713.GJ14988@piout.net>
+References: <20180822183555.GA24084@ravnborg.org>
+ <20180907193508.24974-5-sam@ravnborg.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180907193508.24974-5-sam@ravnborg.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 07/09/2018 21:35:07+0200, Sam Ravnborg wrote:
+> From: Søren Andersen <san@skov.dk>
+> 
+> Add support for specifying the quartz load in the DT node.
+> The pcf8523 may use either a 7 pF or an 12.5 pF xtal.
+> If the rtc has the wrong configuration the time will
+> drift several hours/week.
+> 
+> If nothing is specified in DT then the factory default of 7 pF is used.
+> This is a change compared to before where the driver assumed 12.5 pF.
+> 
+> Note: all kernel dts trees are updated with the new property.
+> 
+> Signed-off-by: Søren Andersen <san@skov.dk>
+> Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
+> Cc: Alessandro Zummo <a.zummo@towertech.it>
+> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> ---
+>  drivers/rtc/rtc-pcf8523.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/rtc/rtc-pcf8523.c b/drivers/rtc/rtc-pcf8523.c
+> index 453615f8ac9a..3c19b4d21a2d 100644
+> --- a/drivers/rtc/rtc-pcf8523.c
+> +++ b/drivers/rtc/rtc-pcf8523.c
+> @@ -85,7 +85,7 @@ static int pcf8523_write(struct i2c_client *client, u8 reg, u8 value)
+>  	return 0;
+>  }
+>  
+> -static int pcf8523_select_capacitance(struct i2c_client *client, bool high)
+> +static int pcf8523_select_capacitance(struct i2c_client *client)
+>  {
+>  	u8 value;
+>  	int err;
+> @@ -94,7 +94,7 @@ static int pcf8523_select_capacitance(struct i2c_client *client, bool high)
+>  	if (err < 0)
+>  		return err;
+>  
+> -	if (!high)
+> +	if (!device_property_present(&client->dev, "nxp,quartz_load_12.5pf"))
 
---=-DMIUeLyXeFMGsNn3e7S5
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+OK, this is super annoying we unfortunately can't change what was done
+previously without breaking the DT ABI. Honestly, I suspect the 12.5pF
+value is wrong for most boards anyway.
 
-On Thu, 2018-09-13 at 19:32 +0100, Rui Salvaterra wrote:
-> On Thu, 13 Sep 2018 at 16:49, Ben Hutchings <ben@decadent.org.uk> wrote:
-> >=20
-> > Like I said, please send the error messages; we're not going to guess.
-> >=20
-> > Ben.
-> >=20
-> > --
-> > Ben Hutchings
-> > Computers are not intelligent.  They only think they are.
->=20
-> I'm an idiot. Turns out it's something completely unrelated. Here's
-> the relevant part of the build failure:
->=20
-> [snip]
->=20
-> In file included from arch/powerpc/boot/../../../lib/decompress_unxz.c:23=
-3,
->                  from arch/powerpc/boot/decompress.c:42:
-> arch/powerpc/boot/../../../lib/xz/xz_crc32.c:18:10: fatal error:
-> linux/crc32poly.h: No such file or directory
->  #include <linux/crc32poly.h>
->           ^~~~~~~~~~~~~~~~~~~
-> compilation terminated.
-> make[4]: *** [arch/powerpc/boot/Makefile:217:
-> arch/powerpc/boot/decompress.o] Error 1
-> make[3]: *** [arch/powerpc/Makefile:288: zImage] Error 2
->=20
-> [snip]
->=20
-> It's the xz kernel compression option which is failing, gzip builds
-> fine (but it's still pointless, powerpc kernels seem to be always
-> installed uncompressed). Broken .config attached, if relevant.
->=20
-> Sorry for the misdirection.
+What I would do is use the value from DT (so either 7000fF or 12500fF)
+and set it if present.
+If not present, set 12.5pF and print a warning that this differs from
+the RTC default.
 
-Oh right, I totally forgot about that breakage.  This is fixed by <
-https://patchwork.ozlabs.org/patch/963258/>.
+Hopefully, at some point, we could leave it as it is as the value should
+persist across reboot.
 
-Ben.
-
---=20
-Ben Hutchings
-Computers are not intelligent.	They only think they are.
-
-
---=-DMIUeLyXeFMGsNn3e7S5
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAluauS4ACgkQ57/I7JWG
-EQlnSA//edXE/okED4iMMMhvZ5fLBd5USlSZE5s9QXYTswfyIp4WyzD62F+78cAv
-M9IlP4tlPmO4ZUlXf+oAFLpidU+Q39heF6egkdYJ1dAQqPdkm6T3tPshXeqPWQBS
-Psvp1t4jLp16JoHeQFBRZAVvbZFCAVVZ5VbmMItQ+pozAZ4hZMM+d5Czn6CZcwML
-opXcvbeo0y8NaCdLb7DBjbEMOy0B3NbhxBgxKoiRCeQKkLdHtRsnUkHVzrjiIV2k
-vwYVDOxfoG6yXhQmaGASWPtWVgZU60foBmjBXEerpdo4HicjuOzN9EWNCwrKMPeI
-m7z38yYJZDNd5NxMNi3ik1awnZROPmfWKOLL1XbGQztt+kALL1upwJrKNdOgh7+G
-dFk0Vjq+6FuYEADuLO79SPHLu+KVSXynvpAYKIO2WVQvFoh9ufURRhXCz4xhlLol
-nLuHaUrMrkY1Y8NsLkpC2W3fXwO1u3o+HbDD7++I+jdeezWRgxzuOHHpZ6sGEqBV
-Y4LQt8FA3VFcGQiGj2va+n3tntunJL2bT+1smgFbthFUDJ5ht5M8DKoUkQZofUX6
-E1uO4Bey85gpaAUgLXqm7TeBJ9pnFPdRzYbir+dx1v35Cm0M3LZHHFnSBZ/M370T
-pYmsdJVNgn5hPYxbwAT4hLeqWLIexaPqGK7TcTtBy+QFfrquNoo=
-=FaQL
------END PGP SIGNATURE-----
-
---=-DMIUeLyXeFMGsNn3e7S5--
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
