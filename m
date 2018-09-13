@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D120BC07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:35:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE65FC07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:35:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95DEF20854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:35:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95DEF20854
+	by mail.kernel.org (Postfix) with ESMTP id 8C71720854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:35:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C71720854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728975AbeIMSof (ORCPT
+        id S1728986AbeIMSoi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:44:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59008 "EHLO
+        Thu, 13 Sep 2018 14:44:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59020 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727716AbeIMSoe (ORCPT
+        with ESMTP id S1727716AbeIMSoi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:44:34 -0400
+        Thu, 13 Sep 2018 14:44:38 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 79179D18;
-        Thu, 13 Sep 2018 13:35:04 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3F2CAD18;
+        Thu, 13 Sep 2018 13:35:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Xu <peterx@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
+        stable@vger.kernel.org, Stephen Hemminger <sthemmin@microsoft.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 11/78] vhost: correctly check the iova range when waking virtqueue
-Date:   Thu, 13 Sep 2018 15:30:58 +0200
-Message-Id: <20180913131806.484511732@linuxfoundation.org>
+Subject: [PATCH 4.9 12/78] hv_netvsc: ignore devices that are not PCI
+Date:   Thu, 13 Sep 2018 15:30:59 +0200
+Message-Id: <20180913131806.563117036@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131805.732342940@linuxfoundation.org>
 References: <20180913131805.732342940@linuxfoundation.org>
@@ -53,37 +51,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jason Wang <jasowang@redhat.com>
+From: Stephen Hemminger <stephen@networkplumber.org>
 
-[ Upstream commit 2d66f997f0545c8f7fc5cf0b49af1decb35170e7 ]
+[ Upstream commit b93c1b5ac8643cc08bb74fa8ae21d6c63dfcb23d ]
 
-We don't wakeup the virtqueue if the first byte of pending iova range
-is the last byte of the range we just got updated. This will lead a
-virtqueue to wait for IOTLB updating forever. Fixing by correct the
-check and wake up the virtqueue in this case.
+Registering another device with same MAC address (such as TAP, VPN or
+DPDK KNI) will confuse the VF autobinding logic.  Restrict the search
+to only run if the device is known to be a PCI attached VF.
 
-Fixes: 6b1e6cc7855b ("vhost: new device IOTLB API")
-Reported-by: Peter Xu <peterx@redhat.com>
-Signed-off-by: Jason Wang <jasowang@redhat.com>
-Reviewed-by: Peter Xu <peterx@redhat.com>
-Tested-by: Peter Xu <peterx@redhat.com>
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Fixes: e8ff40d4bff1 ("hv_netvsc: improve VF device matching")
+Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/vhost/vhost.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/hyperv/netvsc_drv.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -905,7 +905,7 @@ static void vhost_iotlb_notify_vq(struct
- 	list_for_each_entry_safe(node, n, &d->pending_list, node) {
- 		struct vhost_iotlb_msg *vq_msg = &node->msg.iotlb;
- 		if (msg->iova <= vq_msg->iova &&
--		    msg->iova + msg->size - 1 > vq_msg->iova &&
-+		    msg->iova + msg->size - 1 >= vq_msg->iova &&
- 		    vq_msg->type == VHOST_IOTLB_MISS) {
- 			vhost_poll_queue(&node->vq->poll);
- 			list_del(&node->node);
+--- a/drivers/net/hyperv/netvsc_drv.c
++++ b/drivers/net/hyperv/netvsc_drv.c
+@@ -29,6 +29,7 @@
+ #include <linux/netdevice.h>
+ #include <linux/inetdevice.h>
+ #include <linux/etherdevice.h>
++#include <linux/pci.h>
+ #include <linux/skbuff.h>
+ #include <linux/if_vlan.h>
+ #include <linux/in.h>
+@@ -1228,11 +1229,15 @@ static int netvsc_register_vf(struct net
+ {
+ 	struct net_device *ndev;
+ 	struct net_device_context *net_device_ctx;
++	struct device *pdev = vf_netdev->dev.parent;
+ 	struct netvsc_device *netvsc_dev;
+ 
+ 	if (vf_netdev->addr_len != ETH_ALEN)
+ 		return NOTIFY_DONE;
+ 
++	if (!pdev || !dev_is_pci(pdev) || dev_is_pf(pdev))
++		return NOTIFY_DONE;
++
+ 	/*
+ 	 * We will use the MAC address to locate the synthetic interface to
+ 	 * associate with the VF interface. If we don't find a matching
 
 
