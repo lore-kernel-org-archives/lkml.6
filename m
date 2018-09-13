@@ -2,149 +2,112 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25CCCC07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 09:22:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29570C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 09:22:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D169220854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 09:22:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D601A20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 09:22:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gTzTTB6+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D169220854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fzJpRGx4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D601A20854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727885AbeIMOaq (ORCPT
+        id S1728059AbeIMOa6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 10:30:46 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:33208 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726509AbeIMOap (ORCPT
+        Thu, 13 Sep 2018 10:30:58 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:33270 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726751AbeIMOa5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 10:30:45 -0400
-Received: by mail-lj1-f196.google.com with SMTP id s12-v6so4032000ljj.0;
-        Thu, 13 Sep 2018 02:22:07 -0700 (PDT)
+        Thu, 13 Sep 2018 10:30:57 -0400
+Received: by mail-it0-f66.google.com with SMTP id j198-v6so1267326ita.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 02:22:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=WrpPmSf/Ir/AP2WGlMpgLdi04RIUiS4FuIpJJIM8Qcw=;
-        b=gTzTTB6+HtkgjgS5YAIxcP8oN3ofdc6yeHk+Xw853yXm+lzLPy4MYo6ULvP5wmnBem
-         Txof5CPTsntbGU5zbLiK2giLmukv2Wcfw9bnh8g2MNPHqL0YfS0gJhR101UknijzzMr6
-         jr6gEWSURWLH/Fao1uataEnv8jDEyuKqZSUxs4GZZ5QvLTFKSquBQkq5qqJ8PagFWzQ5
-         7vr+R9jiqfZKcCPJJ0WSu1WAoAJ98XwSLUbu7bbjkOfFgYTqWQBK6cqjhsiQhGEViiXr
-         bPGq9FkjqsM29VIqBt3ciapr9EMNzHuRkbkK4Q5lDFuDfL680VxjZHZyWvk8vCD4KJYY
-         Cb6A==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NHB8ORIjoIhutvy9NcRm9NF71dAzGyNycr99x/StYXs=;
+        b=fzJpRGx4J216C4i4vGoBRLn4/7Sssdg/m2I+1Z8I0rC820/UR6sZc9n/aRqliX4SS1
+         QUt4S+tymsE5pI7p5b0frS9g4LT06SjnI/CqQXgr2MIT99IBCaKxPo3JI0cD+fXIUvEF
+         R27BSIkztMnxF2RCLl5Ay9y6VtG3OBQ3voKQ4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=WrpPmSf/Ir/AP2WGlMpgLdi04RIUiS4FuIpJJIM8Qcw=;
-        b=VNILyuaulMtynot+QJjOJ0ZQTQHz7RIuIU6Fv6yqazs4WlxUF7yQcyfubl+MCmALSo
-         e2Qx4XbnOxnpHqjUINTCIHfhHOKsECl/5hQQuOgJTfcb4yEdFEfsHl4hKJuhekndpcjd
-         H897pS2/tT8eK59AL4NVNqAlSy90q8CP3lFvZ7MMZNaBtetSHL1mOTQf5fndu411Oyu4
-         2EoiaQVBEyheGg3hwIeDVrhxlachZhLwaisnzcbFpDFZESMifWmF0tELh43qZwrZ9n9Z
-         qfcu1jkjzz8/og4cyxxHeGGuRwRiN5TpfH2D55hjiBGgOqslOJDEKgu5OA64UJgf7Axi
-         qQNA==
-X-Gm-Message-State: APzg51AuFh4ngS+qKU4Yz4dxzKhGqRhPHr7xQBA3pWnNrkqyHYcaqRGF
-        u4zz1nLGmb+wgCWt7yGYN3SUiPHs
-X-Google-Smtp-Source: ANB0VdapW6g5V2tGTcLU4RJ6qXrOKkBwm/aHmMeYzzu5GQ5bs03YhYKOaXuiZjSp/rdIxD5CFhF3XQ==
-X-Received: by 2002:a2e:291c:: with SMTP id u28-v6mr3834798lje.70.1536830525308;
-        Thu, 13 Sep 2018 02:22:05 -0700 (PDT)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id q85-v6sm628461lfg.20.2018.09.13.02.22.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Sep 2018 02:22:04 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@xi.terra>)
-        id 1g0Np7-0000DH-Ej; Thu, 13 Sep 2018 11:22:05 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Kristian Evensen <kristian.evensen@gmail.com>
-Cc:     linux-usb@vger.kernel.org,
-        =?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>,
-        Dan Williams <dcbw@redhat.com>, Lars Melin <larsm17@gmail.com>,
-        linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-        stable <stable@vger.kernel.org>
-Subject: [PATCH 2/2] USB: serial: option: add two-endpoints device-id flag
-Date:   Thu, 13 Sep 2018 11:21:50 +0200
-Message-Id: <20180913092152.770-2-johan@kernel.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20180913092152.770-1-johan@kernel.org>
-References: <20180913091753.GA3443@localhost>
- <20180913092152.770-1-johan@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NHB8ORIjoIhutvy9NcRm9NF71dAzGyNycr99x/StYXs=;
+        b=L7owlPiiAsXhQKIreGg6iiqjt/gL4YsWbV1iWgqq7OzYJpPUfHQ6s3SNTS1iUtmKkE
+         nVrasVnAKaa7OahHR1txg+fkUTUznn8CsdDMNe3WzGIeZeVAfjRmmvNwq92TcnQ/QoW+
+         hFn4dHcgophvf8It64FhNaDwsH2ww7Nn7RoLcg3tXpsE+s848V9MJ3QhU0Vz/BEFaoCF
+         vQcoLHTHL9AAe0rZB4oF8+LzcUZvbIth0Fva7/sf3bt9r+WPaC//M/ov/0fJZw6eWL+1
+         C+B+WcGHAYNYmUJ15yiPZYDo8MIJEL/eNFaVDZcfoe1U2TmdNaRc+3ggZOTrl85um6Bn
+         Z7vQ==
+X-Gm-Message-State: APzg51DS0qHWnwayJLvynAKHPRbLjlk5Utvdwpt0+yrQIsFR/pFPKQGX
+        FeukFq7LkXfnHV57+aMdkHZfmI/G/sIiI1qyAC29/w==
+X-Google-Smtp-Source: ANB0VdbR8RYtlqbDOZYb1OgeV4HxNnebgKxzGrmW9Z6ev4nDKpj73Duk+kF6F/3rVU9HMZid6AxqyD5sPtjzcxFeFpw=
+X-Received: by 2002:a24:9d84:: with SMTP id f126-v6mr5594349itd.130.1536830539719;
+ Thu, 13 Sep 2018 02:22:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20180902120144.6855-1-jmkrzyszt@gmail.com> <20180905215008.1649-1-jmkrzyszt@gmail.com>
+In-Reply-To: <20180905215008.1649-1-jmkrzyszt@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 13 Sep 2018 11:22:06 +0200
+Message-ID: <CACRpkdbAG1N0v-BrXruf5088L0x3XwSHbFTWOFxjHQWx0LKz5g@mail.gmail.com>
+Subject: Re: [PATCH v8 0/4] gpiolib: speed up GPIO array processing
+To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>,
+        Peter Korsgaard <peter.korsgaard@barco.com>,
+        Peter Rosin <peda@axentia.se>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Greg KH <gregkh@linuxfoundation.org>, kishon@ti.com,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald <pmeerw@pmeerw.net>,
+        Jiri Slaby <jslaby@suse.com>, Willy Tarreau <w@1wt.eu>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Sebastien Bourdelin <sebastien.bourdelin@savoirfairelinux.com>,
+        Lukas Wunner <lukas@wunner.de>,
+        Rojhalat Ibrahim <imr@rtschenk.de>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        ext Tony Lindgren <tony@atomide.com>,
+        Yegor Yefremov <yegorslists@googlemail.com>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, linux-doc@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-mmc <linux-mmc@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>, linux-iio@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-serial@vger.kernel.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow matching on interfaces having two endpoints by adding a new
-device-id flag.
+On Wed, Sep 5, 2018 at 11:49 PM Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
 
-This allows for the handling of devices whose interface numbers can
-change (e.g. Quectel EP06) to be contained in the device-id table.
+> The goal is to boost performance of get/set array functions while
+> processing GPIO arrays which represent pins of a signle chip in
+> hardware order.  If resulting performance is close to PIO, GPIO API
+> can be used for data I/O without much loss of speed.
 
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
----
- drivers/usb/serial/option.c | 17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
+I applied the v8 to an immutable branch and pushed to kernelorg
+so the build servers can churn it a bit, and if it works fine
+then we can merge this into the devel branch and also set up
+that as something other subsystems can pull in if they need it.
 
-diff --git a/drivers/usb/serial/option.c b/drivers/usb/serial/option.c
-index 382feafbd127..241a73e172a1 100644
---- a/drivers/usb/serial/option.c
-+++ b/drivers/usb/serial/option.c
-@@ -561,6 +561,9 @@ static void option_instat_callback(struct urb *urb);
- /* Interface is reserved */
- #define RSVD(ifnum)	((BIT(ifnum) & 0xff) << 0)
- 
-+/* Interface must have two endpoints */
-+#define NUMEP2		BIT(16)
-+
- 
- static const struct usb_device_id option_ids[] = {
- 	{ USB_DEVICE(OPTION_VENDOR_ID, OPTION_PRODUCT_COLT) },
-@@ -1082,7 +1085,7 @@ static const struct usb_device_id option_ids[] = {
- 	{ USB_DEVICE(QUECTEL_VENDOR_ID, QUECTEL_PRODUCT_BG96),
- 	  .driver_info = RSVD(4) },
- 	{ USB_DEVICE_AND_INTERFACE_INFO(QUECTEL_VENDOR_ID, QUECTEL_PRODUCT_EP06, 0xff, 0xff, 0xff),
--	  .driver_info = RSVD(1) | RSVD(2) | RSVD(3) | RSVD(4) },
-+	  .driver_info = RSVD(1) | RSVD(2) | RSVD(3) | RSVD(4) | NUMEP2 },
- 	{ USB_DEVICE_AND_INTERFACE_INFO(QUECTEL_VENDOR_ID, QUECTEL_PRODUCT_EP06, 0xff, 0, 0) },
- 	{ USB_DEVICE(CMOTECH_VENDOR_ID, CMOTECH_PRODUCT_6001) },
- 	{ USB_DEVICE(CMOTECH_VENDOR_ID, CMOTECH_PRODUCT_CMU_300) },
-@@ -1986,7 +1989,6 @@ static int option_probe(struct usb_serial *serial,
- {
- 	struct usb_interface_descriptor *iface_desc =
- 				&serial->interface->cur_altsetting->desc;
--	struct usb_device_descriptor *dev_desc = &serial->dev->descriptor;
- 	unsigned long device_flags = id->driver_info;
- 
- 	/* Never bind to the CD-Rom emulation interface	*/
-@@ -2002,16 +2004,11 @@ static int option_probe(struct usb_serial *serial,
- 		return -ENODEV;
- 
- 	/*
--	 * Don't bind to the QMI device of the Quectel EP06/EG06/EM06. Class,
--	 * subclass and protocol is 0xff for both the diagnostic port and the
--	 * QMI interface, but the diagnostic port only has two endpoints (QMI
--	 * has three).
-+	 * Allow matching on bNumEndpoints for devices whose interface numbers
-+	 * change (e.g. Quectel EP06).
- 	 */
--	if (dev_desc->idVendor == cpu_to_le16(QUECTEL_VENDOR_ID) &&
--	    dev_desc->idProduct == cpu_to_le16(QUECTEL_PRODUCT_EP06) &&
--	    iface_desc->bInterfaceSubClass && iface_desc->bNumEndpoints == 3) {
-+	if (device_flags & NUMEP2 && iface_desc->bNumEndpoints != 2)
- 		return -ENODEV;
--	}
- 
- 	/* Store the device flags so we can use them during attach. */
- 	usb_set_serial_data(serial, (void *)device_flags);
--- 
-2.19.0
+I'm really excited to merge this!
 
+Yours,
+Linus Walleij
