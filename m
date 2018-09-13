@@ -2,103 +2,148 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F331FC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 15:27:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 644C1C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 15:35:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9D5020854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 15:27:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9D5020854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0877421476
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 15:35:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VZxvatSD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0877421476
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728325AbeIMUhc (ORCPT
+        id S1728322AbeIMUpg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 16:37:32 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:35134 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727686AbeIMUhc (ORCPT
+        Thu, 13 Sep 2018 16:45:36 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:34023 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727803AbeIMUpg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 16:37:32 -0400
-Received: by mail-ot1-f68.google.com with SMTP id j9-v6so1613865otl.2;
-        Thu, 13 Sep 2018 08:27:32 -0700 (PDT)
+        Thu, 13 Sep 2018 16:45:36 -0400
+Received: by mail-ed1-f68.google.com with SMTP id u1-v6so5008103eds.1;
+        Thu, 13 Sep 2018 08:35:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=lUGuwyJBK+eOBIJ+Csd74OxRQFY8pSLNTRdiFxzxFDg=;
+        b=VZxvatSDU4XFyONhokO3sHKwyYRKC6IyhfGK2+V39I2snSsFzr7bfTc9d5oxyxaq+Q
+         G7/SJjA8y9CsHnmeqO2YdP53gE6fdvZu0G3lbiM+5fPvaxNYnbIOxogkAfVUWgwyBLQD
+         czQQv2T2wcw84OMSVCDbqZCIWnWooaX0KvZhpvjYjtEv0KABVrCX0RzL3P6GKTtrQJfQ
+         3dcouLBZTBrDmRg7YfIgDHUhYNrqaMr4UMp7bHgKhFr5IynPhr0C7CDezGoNcQKaulu9
+         rrfApDcUMhJ65NXC+hC976JEgPCt8JpDAsRbuRNkU9zkka+Ai1DxOs8W9O9sRUXTS7Qm
+         sFgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oWBACdNhndPRe1m110y8zIJ9k2GWWuP+ZcQAq6Js6pQ=;
-        b=CWKGddL4si6teowg2h2ej6Vn8H2WYhUx+9I+2WfHAopnFJMs01Y3TnSp8Rn/l8itdD
-         JrpLgPk8abXpGxUH9cDkUowAqdAN1IZQ+ozQofUfg+dp1gmxuoPupwxPCjAsb9ynfKZZ
-         3jYzEwNvl0HfavG6hWa62R3Fq4gJUOfRuAjgHf8QDNjR29hpR+/q8aYBH0+FWCAzq2+Y
-         cB+94yJi6fcs5v33nbkvDDL0NMMhWwjA7aJXWT3I5TTEPiQwOxPWF3owx8RIcstrMvU6
-         0RJ1LQWK8PwDSCB1O4Z8urNaAKjFXdgE+ewcyU15DrwP4uFjambM10kuDAGMckL8Cm+C
-         YTyg==
-X-Gm-Message-State: APzg51DevXSA9fvM+OYSZ0VEYLokSGSDLvCydvKphcQKdCPpRDY31Bbd
-        udVp6wOTNOc4CbYruJzpliSX2sW8/FALAPSZojE=
-X-Google-Smtp-Source: ANB0VdbP40Grqav5hJYZceYuBbbau4tH/xzArA4JrGLwDYWOyBir2TVFOWO+C5BLB9QPVx6CNKbczCyvg9hXB0HfJEk=
-X-Received: by 2002:a9d:4287:: with SMTP id r7-v6mr1617669ote.282.1536852451669;
- Thu, 13 Sep 2018 08:27:31 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180912161119.2692-1-vkuznets@redhat.com> <CAJZ5v0jeq=PoF10OZgO9ST_nuRW3Z8emPmX=nTrOSsLKYzZuww@mail.gmail.com>
- <20180913152307.GA31894@redhat.com>
-In-Reply-To: <20180913152307.GA31894@redhat.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 13 Sep 2018 17:27:20 +0200
-Message-ID: <CAJZ5v0gmwvVa_YT8JQvDsW58xmubtKT58bH77zz8c5FdA8Py8Q@mail.gmail.com>
-Subject: Re: [PATCH RFC] kernel/hung_task.c: disable on suspend
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=lUGuwyJBK+eOBIJ+Csd74OxRQFY8pSLNTRdiFxzxFDg=;
+        b=t5JHv1FNmEZzt73LZr8AJ9OmBnOiMPHvNrFV7hUqj5BJC/YtKAIWl0gMwTnz6LesXd
+         jEh8RFto5KWrI1NxLqyppYCko4tw8FhUZhvEVOv3Ko3cJieDTess5zHGog11l2NKKgS/
+         LcikR1+yUVZfSws9q9u3DHivrqREr8rRFOryWK19KCZBIk7hl5knqYYlCbWJnBcruuTa
+         qFFWWVopYdFZSq1JZdjQZ+8KyjoWbx8skSyR2cWbNDev7J7EDgu4Q0dO5ZSL9YaXjFqx
+         o5PWPy7RbnzC0PG9n5PCUA3UT1t+PoAhDdOc9jd70Ur3wNeGbxpFP/FRtznHuPcAoRr1
+         NniQ==
+X-Gm-Message-State: APzg51DiMQ/of0mQ9c9X4VWq2yeThIcOmDpRwKIoOoD8SlynEgNp0T/p
+        hrhfvd/uu59XUJKuPJxscVk=
+X-Google-Smtp-Source: ANB0VdYJ+PPixEilNZxl83rOyU7wlgmEE48/zHBHIiX22rl8yGvjyYZyRne2grncziO8Z8Z3EwURQA==
+X-Received: by 2002:a50:ad0f:: with SMTP id y15-v6mr11909028edc.78.1536852933039;
+        Thu, 13 Sep 2018 08:35:33 -0700 (PDT)
+Received: from jinpu-GA-870A-USB3.pb.local ([2001:1438:4010:254c:1e6f:65ff:fed4:d10])
+        by smtp.googlemail.com with ESMTPSA id d3-v6sm2171210edi.80.2018.09.13.08.35.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 13 Sep 2018 08:35:32 -0700 (PDT)
+From:   Jack Wang <xjtuwjp@gmail.com>
+X-Google-Original-From: Jack Wang <jinpuwang@gmail.com>
+To:     shli@kernel.org, neilb@suse.com, linux-raid@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Jack Wang <jinpu.wang@profitbricks.com>
+Subject: [PATCH] md: bitmap: use mddev_suspend/resume instead of ->quiesce()
+Date:   Thu, 13 Sep 2018 17:35:30 +0200
+Message-Id: <1536852930-18926-1-git-send-email-jinpuwang@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 13, 2018 at 5:23 PM Oleg Nesterov <oleg@redhat.com> wrote:
->
-> On 09/13, Rafael J. Wysocki wrote:
-> >
-> > On Wed, Sep 12, 2018 at 6:11 PM Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
-> > >
-> > > It is possible to observe hung_task complaints when system goes to
-> > > suspend-to-idle state:
-> > >
-> > >  PM: Syncing filesystems ... done.
-> > >  Freezing user space processes ... (elapsed 0.001 seconds) done.
-> > >  OOM killer disabled.
-> > >  Freezing remaining freezable tasks ... (elapsed 0.002 seconds) done.
-> > >  sd 0:0:0:0: [sda] Synchronizing SCSI cache
-> > >  INFO: task bash:1569 blocked for more than 120 seconds.
-> > >        Not tainted 4.19.0-rc3_+ #687
-> > >  "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> > >  bash            D    0  1569    604 0x00000000
-> > >  Call Trace:
-> > >   ? __schedule+0x1fe/0x7e0
-> > >   schedule+0x28/0x80
-> > >   suspend_devices_and_enter+0x4ac/0x750
-> > >   pm_suspend+0x2c0/0x310
-> >
-> > This actually is a good catch, but the problem is related to what
-> > happens to the monotonic clock during suspend to idle.
-> >
-> > The clock issue needs to be addressed anyway IMO and then this problem
-> > will go away automatically.
->
-> I don't understand your discussion with Vitaly, but shouldn't we make
-> khungtaskd thread freezable anyway?
+From: Jack Wang <jinpu.wang@profitbricks.com>
 
-Well, if the Vitaly's patch is applied, that shouldn't be necessary
-and I wouldn't like to add more freezable kernel threads if that's
-avoidable TBH.
+After 9e1cc0a54556 ("md: use mddev_suspend/resume instead of ->quiesce()")
+We still have similar left in bitmap functions.
 
-Cheers,
-Rafael
+Replace quiesce() with mddev_suspend/resume.
+
+Also move md_bitmap_create out of mddev_suspend. and move mddev_resume
+after md_bitmap_destroy. as we did in set_bitmap_file.
+
+Signed-off-by: Jack Wang <jinpu.wang@profitbricks.com>
+---
+ drivers/md/md-bitmap.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/md/md-bitmap.c b/drivers/md/md-bitmap.c
+index 2fc8c113977f..c369f1753ea6 100644
+--- a/drivers/md/md-bitmap.c
++++ b/drivers/md/md-bitmap.c
+@@ -2123,7 +2123,7 @@ int md_bitmap_resize(struct bitmap *bitmap, sector_t blocks,
+ 	}
+ 
+ 	if (!init)
+-		bitmap->mddev->pers->quiesce(bitmap->mddev, 1);
++		mddev_suspend(bitmap->mddev);
+ 
+ 	store.file = bitmap->storage.file;
+ 	bitmap->storage.file = NULL;
+@@ -2239,7 +2239,7 @@ int md_bitmap_resize(struct bitmap *bitmap, sector_t blocks,
+ 
+ 	if (!init) {
+ 		md_bitmap_unplug(bitmap);
+-		bitmap->mddev->pers->quiesce(bitmap->mddev, 0);
++		mddev_resume(bitmap->mddev);
+ 	}
+ 	ret = 0;
+ err:
+@@ -2288,9 +2288,9 @@ location_store(struct mddev *mddev, const char *buf, size_t len)
+ 			goto out;
+ 		}
+ 		if (mddev->pers) {
+-			mddev->pers->quiesce(mddev, 1);
++			mddev_suspend(mddev);
+ 			md_bitmap_destroy(mddev);
+-			mddev->pers->quiesce(mddev, 0);
++			mddev_resume(mddev);
+ 		}
+ 		mddev->bitmap_info.offset = 0;
+ 		if (mddev->bitmap_info.file) {
+@@ -2327,8 +2327,8 @@ location_store(struct mddev *mddev, const char *buf, size_t len)
+ 			mddev->bitmap_info.offset = offset;
+ 			if (mddev->pers) {
+ 				struct bitmap *bitmap;
+-				mddev->pers->quiesce(mddev, 1);
+ 				bitmap = md_bitmap_create(mddev, -1);
++				mddev_suspend(mddev);
+ 				if (IS_ERR(bitmap))
+ 					rv = PTR_ERR(bitmap);
+ 				else {
+@@ -2337,11 +2337,12 @@ location_store(struct mddev *mddev, const char *buf, size_t len)
+ 					if (rv)
+ 						mddev->bitmap_info.offset = 0;
+ 				}
+-				mddev->pers->quiesce(mddev, 0);
+ 				if (rv) {
+ 					md_bitmap_destroy(mddev);
++					mddev_resume(mddev);
+ 					goto out;
+ 				}
++				mddev_resume(mddev);
+ 			}
+ 		}
+ 	}
+-- 
+2.7.4
+
