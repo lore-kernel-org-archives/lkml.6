@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C794BC07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:52:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C34DC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:52:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8184B20881
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:52:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8184B20881
+	by mail.kernel.org (Postfix) with ESMTP id 00FFF20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:52:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00FFF20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730975AbeIMTB7 (ORCPT
+        id S1730990AbeIMTCC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:01:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33488 "EHLO
+        Thu, 13 Sep 2018 15:02:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33500 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730119AbeIMTB6 (ORCPT
+        with ESMTP id S1730977AbeIMTCC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:01:58 -0400
+        Thu, 13 Sep 2018 15:02:02 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AEBF2CE7;
-        Thu, 13 Sep 2018 13:52:22 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C9B74CE7;
+        Thu, 13 Sep 2018 13:52:26 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Manish <manish.chopra@cavium.com>,
-        Benjamin Poirier <bpoirier@suse.com>,
+        stable@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 006/197] qlge: Fix netdev features configuration.
-Date:   Thu, 13 Sep 2018 15:29:15 +0200
-Message-Id: <20180913131841.821808217@linuxfoundation.org>
+Subject: [PATCH 4.18 007/197] r8152: disable RX aggregation on new Dell TB16 dock
+Date:   Thu, 13 Sep 2018 15:29:16 +0200
+Message-Id: <20180913131841.864197567@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -52,77 +52,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Manish Chopra <manish.chopra@cavium.com>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-[ Upstream commit 6750c87074c5b534d82fdaabb1deb45b8f1f57de ]
+[ Upstream commit 176eb614b118c96e7797f5ddefd10708c316f621 ]
 
-qlge_fix_features() is not supposed to modify hardware or
-driver state, rather it is supposed to only fix requested
-fetures bits. Currently qlge_fix_features() also goes for
-interface down and up unnecessarily if there is not even
-any change in features set.
+There's a new Dell TB16 dock with a different iSerialNumber.
 
-This patch changes/fixes following -
+Apply the same fix from commit 0b1655143df0 ("r8152: disable RX
+aggregation on Dell TB16 dock") to this model.
 
-1) Move reload of interface or device re-config from
-   qlge_fix_features() to qlge_set_features().
-2) Reload of interface in qlge_set_features() only if
-   relevant feature bit (NETIF_F_HW_VLAN_CTAG_RX) is changed.
-3) Get rid of qlge_fix_features() since driver is not really
-   required to fix any features bit.
-
-Signed-off-by: Manish <manish.chopra@cavium.com>
-Reviewed-by: Benjamin Poirier <bpoirier@suse.com>
+BugLink: https://bugs.launchpad.net/bugs/1785780
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/qlogic/qlge/qlge_main.c |   23 ++++++++---------------
- 1 file changed, 8 insertions(+), 15 deletions(-)
+ drivers/net/usb/r8152.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/qlogic/qlge/qlge_main.c
-+++ b/drivers/net/ethernet/qlogic/qlge/qlge_main.c
-@@ -2384,26 +2384,20 @@ static int qlge_update_hw_vlan_features(
- 	return status;
- }
+--- a/drivers/net/usb/r8152.c
++++ b/drivers/net/usb/r8152.c
+@@ -5214,8 +5214,8 @@ static int rtl8152_probe(struct usb_inte
+ 		netdev->hw_features &= ~NETIF_F_RXCSUM;
+ 	}
  
--static netdev_features_t qlge_fix_features(struct net_device *ndev,
--	netdev_features_t features)
--{
--	int err;
--
--	/* Update the behavior of vlan accel in the adapter */
--	err = qlge_update_hw_vlan_features(ndev, features);
--	if (err)
--		return err;
--
--	return features;
--}
--
- static int qlge_set_features(struct net_device *ndev,
- 	netdev_features_t features)
- {
- 	netdev_features_t changed = ndev->features ^ features;
-+	int err;
-+
-+	if (changed & NETIF_F_HW_VLAN_CTAG_RX) {
-+		/* Update the behavior of vlan accel in the adapter */
-+		err = qlge_update_hw_vlan_features(ndev, features);
-+		if (err)
-+			return err;
- 
--	if (changed & NETIF_F_HW_VLAN_CTAG_RX)
- 		qlge_vlan_mode(ndev, features);
-+	}
- 
- 	return 0;
- }
-@@ -4719,7 +4713,6 @@ static const struct net_device_ops qlge_
- 	.ndo_set_mac_address	= qlge_set_mac_address,
- 	.ndo_validate_addr	= eth_validate_addr,
- 	.ndo_tx_timeout		= qlge_tx_timeout,
--	.ndo_fix_features	= qlge_fix_features,
- 	.ndo_set_features	= qlge_set_features,
- 	.ndo_vlan_rx_add_vid	= qlge_vlan_rx_add_vid,
- 	.ndo_vlan_rx_kill_vid	= qlge_vlan_rx_kill_vid,
+-	if (le16_to_cpu(udev->descriptor.bcdDevice) == 0x3011 &&
+-	    udev->serial && !strcmp(udev->serial, "000001000000")) {
++	if (le16_to_cpu(udev->descriptor.bcdDevice) == 0x3011 && udev->serial &&
++	    (!strcmp(udev->serial, "000001000000") || !strcmp(udev->serial, "000002000000"))) {
+ 		dev_info(&udev->dev, "Dell TB16 Dock, disable RX aggregation");
+ 		set_bit(DELL_TB_RX_AGG_BUG, &tp->flags);
+ 	}
 
 
