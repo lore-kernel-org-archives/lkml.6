@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64D36C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:41:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CA4FC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:42:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 273F520C0A
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:41:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 273F520C0A
+	by mail.kernel.org (Postfix) with ESMTP id 5FE3420854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:42:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FE3420854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729693AbeIMSvZ (ORCPT
+        id S1729695AbeIMSv3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:51:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60082 "EHLO
+        Thu, 13 Sep 2018 14:51:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60088 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727534AbeIMSvY (ORCPT
+        with ESMTP id S1727534AbeIMSv2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:51:24 -0400
+        Thu, 13 Sep 2018 14:51:28 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6B0EAD19;
-        Thu, 13 Sep 2018 13:41:52 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AA3BDD19;
+        Thu, 13 Sep 2018 13:41:56 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Geoff Alexander <alexandg@cs.unm.edu>,
+        stable@vger.kernel.org, Doug Berger <opendmb@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 002/115] ipv4: tcp: send zero IPID for RST and ACK sent in SYN-RECV and TIME-WAIT state
-Date:   Thu, 13 Sep 2018 15:30:22 +0200
-Message-Id: <20180913131823.486289563@linuxfoundation.org>
+Subject: [PATCH 4.14 003/115] net: bcmgenet: use MAC link status for fixed phy
+Date:   Thu, 13 Sep 2018 15:30:23 +0200
+Message-Id: <20180913131823.547307327@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -52,51 +52,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Doug Berger <opendmb@gmail.com>
 
-[ Upstream commit 431280eebed9f5079553daf003011097763e71fd ]
+[ Upstream commit c3c397c1f16c51601a3fac4fe0c63ad8aa85a904 ]
 
-tcp uses per-cpu (and per namespace) sockets (net->ipv4.tcp_sk) internally
-to send some control packets.
+When using the fixed PHY with GENET (e.g. MOCA) the PHY link
+status can be determined from the internal link status captured
+by the MAC. This allows the PHY state machine to use the correct
+link state with the fixed PHY even if MAC link event interrupts
+are missed when the net device is opened.
 
-1) RST packets, through tcp_v4_send_reset()
-2) ACK packets in SYN-RECV and TIME-WAIT state, through tcp_v4_send_ack()
-
-These packets assert IP_DF, and also use the hashed IP ident generator
-to provide an IPv4 ID number.
-
-Geoff Alexander reported this could be used to build off-path attacks.
-
-These packets should not be fragmented, since their size is smaller than
-IPV4_MIN_MTU. Only some tunneled paths could eventually have to fragment,
-regardless of inner IPID.
-
-We really can use zero IPID, to address the flaw, and as a bonus,
-avoid a couple of atomic operations in ip_idents_reserve()
-
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: Geoff Alexander <alexandg@cs.unm.edu>
-Tested-by: Geoff Alexander <alexandg@cs.unm.edu>
+Fixes: 8d88c6ebb34c ("net: bcmgenet: enable MoCA link state change detection")
+Signed-off-by: Doug Berger <opendmb@gmail.com>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/tcp_ipv4.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/net/ethernet/broadcom/genet/bcmgenet.h |    3 +++
+ drivers/net/ethernet/broadcom/genet/bcmmii.c   |   10 ++++++++--
+ 2 files changed, 11 insertions(+), 2 deletions(-)
 
---- a/net/ipv4/tcp_ipv4.c
-+++ b/net/ipv4/tcp_ipv4.c
-@@ -2468,6 +2468,12 @@ static int __net_init tcp_sk_init(struct
- 		if (res)
- 			goto fail;
- 		sock_set_flag(sk, SOCK_USE_WRITE_QUEUE);
-+
-+		/* Please enforce IP_DF and IPID==0 for RST and
-+		 * ACK sent in SYN-RECV and TIME-WAIT state.
-+		 */
-+		inet_sk(sk)->pmtudisc = IP_PMTUDISC_DO;
-+
- 		*per_cpu_ptr(net->ipv4.tcp_sk, cpu) = sk;
- 	}
+--- a/drivers/net/ethernet/broadcom/genet/bcmgenet.h
++++ b/drivers/net/ethernet/broadcom/genet/bcmgenet.h
+@@ -185,6 +185,9 @@ struct bcmgenet_mib_counters {
+ #define UMAC_MAC1			0x010
+ #define UMAC_MAX_FRAME_LEN		0x014
  
++#define UMAC_MODE			0x44
++#define  MODE_LINK_STATUS		(1 << 5)
++
+ #define UMAC_EEE_CTRL			0x064
+ #define  EN_LPI_RX_PAUSE		(1 << 0)
+ #define  EN_LPI_TX_PFC			(1 << 1)
+--- a/drivers/net/ethernet/broadcom/genet/bcmmii.c
++++ b/drivers/net/ethernet/broadcom/genet/bcmmii.c
+@@ -115,8 +115,14 @@ void bcmgenet_mii_setup(struct net_devic
+ static int bcmgenet_fixed_phy_link_update(struct net_device *dev,
+ 					  struct fixed_phy_status *status)
+ {
+-	if (dev && dev->phydev && status)
+-		status->link = dev->phydev->link;
++	struct bcmgenet_priv *priv;
++	u32 reg;
++
++	if (dev && dev->phydev && status) {
++		priv = netdev_priv(dev);
++		reg = bcmgenet_umac_readl(priv, UMAC_MODE);
++		status->link = !!(reg & MODE_LINK_STATUS);
++	}
+ 
+ 	return 0;
+ }
 
 
