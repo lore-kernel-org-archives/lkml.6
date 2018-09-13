@@ -6,23 +6,23 @@ X-Spam-Status: No, score=-0.6 required=5.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58638C63685
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 18:37:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACFD3C67863
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 18:37:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DE5020881
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 18:37:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68EAA204FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 18:37:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="jKIV9AYr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DE5020881
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="ESIKiVdM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68EAA204FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728090AbeIMXrs (ORCPT
+        id S1728138AbeIMXrt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 19:47:48 -0400
+        Thu, 13 Sep 2018 19:47:49 -0400
 Received: from esa4.hgst.iphmx.com ([216.71.154.42]:26981 "EHLO
         esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727992AbeIMXrs (ORCPT
+        with ESMTP id S1728031AbeIMXrs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 13 Sep 2018 19:47:48 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
@@ -30,22 +30,22 @@ DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   t=1536863827; x=1568399827;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references;
-  bh=gjnlUPagI1vf6/WNqKxc8KY88DkfwDRZzZi6iXSpG08=;
-  b=jKIV9AYrrMwltgj04CwUEHQEcTXuDs+jXONmXZI1ERePmd7FX87WQft3
-   Ufw61deTJBnx5zwk4alHmtccfSbRZvrGGrLX771qqpYqDZS55g7bYYw50
-   IgTP9il6OEwnqusgY1aQoj5U/Nz+DlDN7TQN24/8dz00hnMi1gsrqqRy+
-   hpW27eMlL2jS0us72NlrK7QQWVnJIP1NhqatnX56J86loc6nZs7FuU4iw
-   nuB8Ams86Z4gasNNQfmeUNfnsJYroKzhg67DjFix+RvQ+mZlShE2Yn8xD
-   /9OnX4RMoF+4sgN5Qcv3cyCc0avuI/lbRkAm/MPX5FK59IruOAbdxKOK1
-   A==;
+  bh=UL8JbRBIj8Dgmic5yuT7Oytfq+yluzZfU5sZRa27+/M=;
+  b=ESIKiVdMiOKK/1pQE9c4tH+7pAh2Chz5Xe68dmioOvtVakQxpXNsyel7
+   Wn9pU+g4hLZFth9f9PZwF1jra3pKwUP3pX2V6ln/0dwkUAnQ/MGRn8GVV
+   CIcFx/o7KV3ZVtUDJzMD8MAkeXwje1isloy0c5v62jToNnHSweNnfUCTr
+   za14ZH+F9PrZqyQd4PBC3QyUa3QUxsvWUnit8U+Spp98h+HXgAHJKQB5B
+   nHEV28eut7sMiLLFNFSFqtQplLRr8nPgVg3JtjnsJ0y7meemVO6cHw3Qd
+   mG/Gq37xAc4FP/KltKWJlONliAqg/It5y7NffLAcHSBs2Esl5nhm28TS5
+   w==;
 X-IronPort-AV: E=Sophos;i="5.53,370,1531756800"; 
-   d="scan'208";a="89712007"
+   d="scan'208";a="89712010"
 Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
   by ob1.hgst.iphmx.com with ESMTP; 14 Sep 2018 02:37:07 +0800
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
   by uls-op-cesaep01.wdc.com with ESMTP; 13 Sep 2018 11:23:37 -0700
 Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
-  by uls-op-cesaip02.wdc.com with ESMTP; 13 Sep 2018 11:37:06 -0700
+  by uls-op-cesaip02.wdc.com with ESMTP; 13 Sep 2018 11:37:07 -0700
 From:   Atish Patra <atish.patra@wdc.com>
 To:     palmer@sifive.com, linux-riscv@lists.infradead.org,
         hch@infradead.org, anup@brainfault.org
@@ -55,9 +55,9 @@ Cc:     mark.rutland@arm.com, atish.patra@wdc.com, tglx@linutronix.de,
         gregkh@linuxfoundation.org, jason@lakedaemon.net,
         catalin.marinas@arm.com, dmitriy@oss-tech.org,
         ard.biesheuvel@linaro.org, schwab@linux-m68k.org
-Subject: [PATCH v5 01/12] RISC-V: No need to pass scause as arg to do_IRQ()
-Date:   Thu, 13 Sep 2018 11:36:54 -0700
-Message-Id: <1536863825-66808-2-git-send-email-atish.patra@wdc.com>
+Subject: [PATCH v5 02/12] RISC-V: Don't set cacheinfo.{physical_line_partition,attributes}
+Date:   Thu, 13 Sep 2018 11:36:55 -0700
+Message-Id: <1536863825-66808-3-git-send-email-atish.patra@wdc.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1536863825-66808-1-git-send-email-atish.patra@wdc.com>
 References: <1536863825-66808-1-git-send-email-atish.patra@wdc.com>
@@ -66,49 +66,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anup Patel <anup@brainfault.org>
+From: Palmer Dabbelt <palmer@sifive.com>
 
-The scause is already part of pt_regs so no need to pass
-scause as separate arg to do_IRQ().
+These are just hard coded in the RISC-V port, which doesn't make any
+sense.  We should probably be setting these from device tree entries
+when they exist, but for now I think it's saner to just leave them all
+as their default values.
 
+Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Anup Patel <anup@brainfault.org>
+Reviewed-by: Jeremy Linton <jeremy.linton@arm.com>
 ---
- arch/riscv/kernel/entry.S | 1 -
- arch/riscv/kernel/irq.c   | 4 ++--
- 2 files changed, 2 insertions(+), 3 deletions(-)
+ arch/riscv/kernel/cacheinfo.c | 7 -------
+ 1 file changed, 7 deletions(-)
 
-diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
-index fa2c08e3..6eaacfa5 100644
---- a/arch/riscv/kernel/entry.S
-+++ b/arch/riscv/kernel/entry.S
-@@ -168,7 +168,6 @@ ENTRY(handle_exception)
- 
- 	/* Handle interrupts */
- 	move a0, sp /* pt_regs */
--	move a1, s4 /* scause */
- 	tail do_IRQ
- 1:
- 	/* Exceptions run with interrupts enabled */
-diff --git a/arch/riscv/kernel/irq.c b/arch/riscv/kernel/irq.c
-index 0cfac48a..ca459331 100644
---- a/arch/riscv/kernel/irq.c
-+++ b/arch/riscv/kernel/irq.c
-@@ -24,12 +24,12 @@
-  */
- #define INTERRUPT_CAUSE_FLAG	(1UL << (__riscv_xlen - 1))
- 
--asmlinkage void __irq_entry do_IRQ(struct pt_regs *regs, unsigned long cause)
-+asmlinkage void __irq_entry do_IRQ(struct pt_regs *regs)
+diff --git a/arch/riscv/kernel/cacheinfo.c b/arch/riscv/kernel/cacheinfo.c
+index 0bc86e5f..cb35ffd8 100644
+--- a/arch/riscv/kernel/cacheinfo.c
++++ b/arch/riscv/kernel/cacheinfo.c
+@@ -22,13 +22,6 @@ static void ci_leaf_init(struct cacheinfo *this_leaf,
  {
- 	struct pt_regs *old_regs = set_irq_regs(regs);
+ 	this_leaf->level = level;
+ 	this_leaf->type = type;
+-	/* not a sector cache */
+-	this_leaf->physical_line_partition = 1;
+-	/* TODO: Add to DTS */
+-	this_leaf->attributes =
+-		CACHE_WRITE_BACK
+-		| CACHE_READ_ALLOCATE
+-		| CACHE_WRITE_ALLOCATE;
+ }
  
- 	irq_enter();
--	switch (cause & ~INTERRUPT_CAUSE_FLAG) {
-+	switch (regs->scause & ~INTERRUPT_CAUSE_FLAG) {
- 	case INTERRUPT_CAUSE_TIMER:
- 		riscv_timer_interrupt();
- 		break;
+ static int __init_cache_level(unsigned int cpu)
 -- 
 2.7.4
 
