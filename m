@@ -6,35 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B6BBC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:05:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8A35C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:05:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E7CD20652
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:05:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E7CD20652
+	by mail.kernel.org (Postfix) with ESMTP id 7049120652
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:05:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7049120652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732002AbeIMTPO (ORCPT
+        id S1732192AbeIMTPS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:15:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35502 "EHLO
+        Thu, 13 Sep 2018 15:15:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35514 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731329AbeIMTPN (ORCPT
+        with ESMTP id S1731789AbeIMTPR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:15:13 -0400
+        Thu, 13 Sep 2018 15:15:17 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CF96FD39;
-        Thu, 13 Sep 2018 14:05:33 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 03CF2D39;
+        Thu, 13 Sep 2018 14:05:36 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anand Jain <anand.jain@oracle.com>,
-        David Sterba <dsterba@suse.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 151/197] btrfs: fix mount and ioctl device scan ioctl race
-Date:   Thu, 13 Sep 2018 15:31:40 +0200
-Message-Id: <20180913131847.596642460@linuxfoundation.org>
+        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
+        Takashi Iwai <tiwai@suse.de>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>
+Subject: [PATCH 4.18 152/197] drm/i915/lpe: Mark LPE audio runtime pm as "no callbacks"
+Date:   Thu, 13 Sep 2018 15:31:41 +0200
+Message-Id: <20180913131847.632486242@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -52,81 +56,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Sterba <dsterba@suse.com>
+From: Chris Wilson <chris@chris-wilson.co.uk>
 
-[ Upstream commit 81ffd56b5745355b70d54ca4e1bdd0d64a66ff9f ]
+commit 75eef0f1ed478284911b8723a5bdb659499a7aac upstream.
 
-Technically this extends the critical section covered by uuid_mutex to:
+The LPE audio is a child device of i915, it is powered up and down
+alongside the igfx and presents no independent runtime interface. This
+aptly fulfils the description of a "No-Callback" Device, so mark it
+thus.
 
-- parse early mount options -- here we can call device scan on paths
-  that can be passed as 'device=/dev/...'
-
-- scan the device passed to mount
-
-- open the devices related to the fs_devices -- this increases
-  fs_devices::opened
-
-The race can happen when mount calls one of the scans and there's
-another one called eg. by mkfs or 'btrfs dev scan':
-
-Mount                                  Scan
------                                  ----
-scan_one_device (dev1, fsid1)
-                                       scan_one_device (dev2, fsid1)
-				           add the device
-					   free stale devices
-					       fsid1 fs_devices::opened == 0
-					           find fsid1:dev1
-					           free fsid1:dev1
-					           if it's the last one,
-					            free fs_devices of fsid1
-						    too
-
-open_devices (dev1, fsid1)
-   dev1 not found
-
-When fixed, the uuid mutex will make sure that mount will increase
-fs_devices::opened and this will not be touched by the racing scan
-ioctl.
-
-Reported-and-tested-by: syzbot+909a5177749d7990ffa4@syzkaller.appspotmail.com
-Reported-and-tested-by: syzbot+ceb2606025ec1cc3479c@syzkaller.appspotmail.com
-Reviewed-by: Anand Jain <anand.jain@oracle.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Fixes: 183c00350ccd ("drm/i915: Fix runtime PM for LPE audio")
+Testcase: igt/pm_rpm/basic-pci-d3-state
+Testcase: igt/pm_rpm/basic-rte
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Takashi Iwai <tiwai@suse.de>
+Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Cc: stable@vger.kernel.org
+Reviewed-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180802140416.6062-1-chris@chris-wilson.co.uk
+(cherry picked from commit 46e831abe864a6b59fa3de253a681c0f2ee1bf2f)
+Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/btrfs/super.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
 
---- a/fs/btrfs/super.c
-+++ b/fs/btrfs/super.c
-@@ -1557,19 +1557,19 @@ static struct dentry *btrfs_mount_root(s
+---
+ drivers/gpu/drm/i915/intel_lpe_audio.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+--- a/drivers/gpu/drm/i915/intel_lpe_audio.c
++++ b/drivers/gpu/drm/i915/intel_lpe_audio.c
+@@ -127,9 +127,7 @@ lpe_audio_platdev_create(struct drm_i915
+ 		return platdev;
+ 	}
  
- 	mutex_lock(&uuid_mutex);
- 	error = btrfs_parse_early_options(data, mode, fs_type, &fs_devices);
--	mutex_unlock(&uuid_mutex);
--	if (error)
-+	if (error) {
-+		mutex_unlock(&uuid_mutex);
- 		goto error_fs_info;
-+	}
+-	pm_runtime_forbid(&platdev->dev);
+-	pm_runtime_set_active(&platdev->dev);
+-	pm_runtime_enable(&platdev->dev);
++	pm_runtime_no_callbacks(&platdev->dev);
  
--	mutex_lock(&uuid_mutex);
- 	error = btrfs_scan_one_device(device_name, mode, fs_type, &fs_devices);
--	mutex_unlock(&uuid_mutex);
--	if (error)
-+	if (error) {
-+		mutex_unlock(&uuid_mutex);
- 		goto error_fs_info;
-+	}
- 
- 	fs_info->fs_devices = fs_devices;
- 
--	mutex_lock(&uuid_mutex);
- 	error = btrfs_open_devices(fs_devices, mode, fs_type);
- 	mutex_unlock(&uuid_mutex);
- 	if (error)
+ 	return platdev;
+ }
 
 
