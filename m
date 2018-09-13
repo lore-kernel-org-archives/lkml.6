@@ -2,68 +2,84 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FROM_EXCESS_BASE64,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7D76C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 08:19:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E744C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 08:20:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D23CE20C0A
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 08:19:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B08A20866
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 08:20:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alibaba-inc.com header.i=@alibaba-inc.com header.b="e4FPW85t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D23CE20C0A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alibaba-inc.com
+	dkim=pass (1024-bit key) header.d=cesnet.cz header.i=@cesnet.cz header.b="GQUlokh9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B08A20866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cesnet.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727834AbeIMN1i (ORCPT
+        id S1727736AbeIMN3M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 09:27:38 -0400
-Received: from out0-151.mail.aliyun.com ([140.205.0.151]:55015 "EHLO
-        out0-151.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726308AbeIMN1i (ORCPT
+        Thu, 13 Sep 2018 09:29:12 -0400
+Received: from office2.cesnet.cz ([195.113.144.244]:49776 "EHLO
+        office2.cesnet.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726308AbeIMN3M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 09:27:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=alibaba-inc.com; s=default;
-        t=1536826731; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-        bh=WaOpUu45Fmkn78F70Avqzug5HiAk/6J2WufiS7ScWdE=;
-        b=e4FPW85tldEzwUyKYoBfyuEm32tBADZwVJ6VrLITuNqEnp7MTqWukjW1+FOuMTtnm9xFz+XQrAJAqJBK3AhclapXj2hXyk28V4IGqvyCFXavbsCdad/NEo17xGY7185Mi1y8H/TabYP3Dy2+qMhUn/zn9bURnlDTTmoUZ5ZItm0=
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e02c03308;MF=xiongwei.jiang@alibaba-inc.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---.CqBVRvx_1536826728;
-Received: from ali55502n(mailfrom:xiongwei.jiang@alibaba-inc.com fp:SMTPD_---.CqBVRvx_1536826728)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 13 Sep 2018 16:18:48 +0800
-Reply-To: "=?UTF-8?B?6JKL6ZuE5LyfKOiSi+WGsik=?=" 
-          <xiongwei.jiang@alibaba-inc.com>
-From:   "=?UTF-8?B?6JKL6ZuE5LyfKOiSi+WGsik=?=" 
-        <xiongwei.jiang@alibaba-inc.com>
-To:     <linux-kernel@vger.kernel.org>
-Cc:     <shli@kernel.org>, <neilb@suse.de>
-Subject: raid5: how to bind worker threads to specified cpus
-Date:   Thu, 13 Sep 2018 16:18:48 +0800
-Message-ID: <003401d44b3a$65afbf70$310f3e50$@alibaba-inc.com>
+        Thu, 13 Sep 2018 09:29:12 -0400
+Received: from localhost (unknown [IPv6:2001:718:1:2c:7d03:949b:de91:81b])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by office2.cesnet.cz (Postfix) with ESMTPSA id 43CDD400065;
+        Thu, 13 Sep 2018 10:20:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cesnet.cz;
+        s=office2; t=1536826847;
+        bh=k6Qp03K7G+7I01MC1SelgnPubMHoEdSNa0sDF/mtRHw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=GQUlokh92+2/KiB9/3czgZtL9eHAvNa0nh6/mqKhSBewxROXUVstV0tJvwc8pg/ot
+         M82OwnlgagnZnWIU+AeFsc17AJ49ko356qkajLDm/K+nfraY+qkIssM9ZASNQU2DJE
+         as1sC0nhCLQcPX+9zjn5GtqTzTeF7rHPq9KLKKPI=
+From:   =?iso-8859-1?Q?Jan_Kundr=E1t?= <jan.kundrat@cesnet.cz>
+To:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Baruch Siach <baruch@tkos.co.il>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [BISECTED] Regression: Solidrun Clearfog Base won't boot since =?iso-8859-1?Q?"PCI:_mvebu:_Only_remap_I/O_space_if_configured"?=
+Date:   Thu, 13 Sep 2018 10:20:45 +0200
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="gb2312"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AdRLNAWj0BVeFBSXQj6IUHm89jT3Ig==
-Content-Language: zh-cn
+Message-ID: <5ad46fec-a71a-477a-b23f-d20aacfb481d@cesnet.cz>
+In-Reply-To: <20180913094515.351967bb@windsurf>
+References: <61fdfd69-2bb6-478c-b0d5-69d8744adae3@cesnet.cz>
+ <87zhwm4kl6.fsf@tkos.co.il> <20180912231050.GX30658@n2100.armlinux.org.uk>
+ <20180913094515.351967bb@windsurf>
+Organization: CESNET
+User-Agent: Trojita/v0.7-361-gfee56b6f-dirty; Qt/5.11.0; xcb; Linux; Gentoo Base System release 2.4.1
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit b721420e8719131896b009b11edbbd27d9b85e98, raid5 has been
-enabled to support workqueue offload handling of stripes. However, if I hope
-to bind worker threads to specified cpus, for example 0-3, is it possible?
-The reason for doing this is that I hope applications will not be disturbed
-by raid5's jobs. My naive idea is to add a field named "affinity_hint" to
-struct r5conf, and then add a sysfs entry to input cpu list, and then take
-stripe_head's sector as the hash key to evenly distribute stripe_head across
-the cpus.
-Anyone has suggestion about my idea or any alternative solutions to bind
-worker threads to specified cpus ? thanks a lot .
+On =C4=8Dtvrtek 13. z=C3=A1=C5=99=C3=AD 2018 9:45:15 CEST, Thomas Petazzoni w=
+rote:
+> What about something like the below. I tested it, including the error
+> case by forcing an -EPROBE_DEFER. The new pci_unmap_io() is modeled
+> after pci_unmap_iospace(). Actually, I would prefer to use
+> pci_remap_iospace() and pci_unmap_iospace() but for now this API
+> doesn't allow overloading the memory type used for the mapping.
 
+Thanks for providing this fix so quickly, Thomas. I can confirm that this=20
+patch -- tested on top of 54eda9df17f3215b9ed16629ee71ea07413efdaf ("Merge=20=
+
+tag 'pci-v4.19-fixes-1' of=20
+git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci"). Disclaimer: I=20=
+
+have zero familiarity with Linux' PCI code.
+
+Tested-by: Jan Kundr=C3=A1t <jan.kundrat@cesnet.cz>
+
+With kind regards,
+Jan
