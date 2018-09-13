@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A432EC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:36:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F107C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:36:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BCBD20854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:36:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BCBD20854
+	by mail.kernel.org (Postfix) with ESMTP id 512E420854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:36:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 512E420854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729153AbeIMSpr (ORCPT
+        id S1729165AbeIMSpv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:45:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59224 "EHLO
+        Thu, 13 Sep 2018 14:45:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59232 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727009AbeIMSpr (ORCPT
+        with ESMTP id S1728423AbeIMSpv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:45:47 -0400
+        Thu, 13 Sep 2018 14:45:51 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BE915D18;
-        Thu, 13 Sep 2018 13:36:16 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 026B0D10;
+        Thu, 13 Sep 2018 13:36:20 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Manish <manish.chopra@cavium.com>,
-        Benjamin Poirier <bpoirier@suse.com>,
+        stable@vger.kernel.org, Anthony Wong <anthony.wong@ubuntu.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 06/78] qlge: Fix netdev features configuration.
-Date:   Thu, 13 Sep 2018 15:30:53 +0200
-Message-Id: <20180913131806.135791540@linuxfoundation.org>
+Subject: [PATCH 4.9 07/78] r8169: add support for NCube 8168 network card
+Date:   Thu, 13 Sep 2018 15:30:54 +0200
+Message-Id: <20180913131806.207451591@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131805.732342940@linuxfoundation.org>
 References: <20180913131805.732342940@linuxfoundation.org>
@@ -52,77 +51,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Manish Chopra <manish.chopra@cavium.com>
+From: Anthony Wong <anthony.wong@ubuntu.com>
 
-[ Upstream commit 6750c87074c5b534d82fdaabb1deb45b8f1f57de ]
+[ Upstream commit 9fd0e09a4e86499639653243edfcb417a05c5c46 ]
 
-qlge_fix_features() is not supposed to modify hardware or
-driver state, rather it is supposed to only fix requested
-fetures bits. Currently qlge_fix_features() also goes for
-interface down and up unnecessarily if there is not even
-any change in features set.
+This card identifies itself as:
+  Ethernet controller [0200]: NCube Device [10ff:8168] (rev 06)
+  Subsystem: TP-LINK Technologies Co., Ltd. Device [7470:3468]
 
-This patch changes/fixes following -
+Adding a new entry to rtl8169_pci_tbl makes the card work.
 
-1) Move reload of interface or device re-config from
-   qlge_fix_features() to qlge_set_features().
-2) Reload of interface in qlge_set_features() only if
-   relevant feature bit (NETIF_F_HW_VLAN_CTAG_RX) is changed.
-3) Get rid of qlge_fix_features() since driver is not really
-   required to fix any features bit.
-
-Signed-off-by: Manish <manish.chopra@cavium.com>
-Reviewed-by: Benjamin Poirier <bpoirier@suse.com>
+Link: http://launchpad.net/bugs/1788730
+Signed-off-by: Anthony Wong <anthony.wong@ubuntu.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/qlogic/qlge/qlge_main.c |   23 ++++++++---------------
- 1 file changed, 8 insertions(+), 15 deletions(-)
+ drivers/net/ethernet/realtek/r8169.c |    1 +
+ include/linux/pci_ids.h              |    2 ++
+ 2 files changed, 3 insertions(+)
 
---- a/drivers/net/ethernet/qlogic/qlge/qlge_main.c
-+++ b/drivers/net/ethernet/qlogic/qlge/qlge_main.c
-@@ -2387,26 +2387,20 @@ static int qlge_update_hw_vlan_features(
- 	return status;
- }
+--- a/drivers/net/ethernet/realtek/r8169.c
++++ b/drivers/net/ethernet/realtek/r8169.c
+@@ -329,6 +329,7 @@ static const struct pci_device_id rtl816
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_REALTEK,	0x8161), 0, 0, RTL_CFG_1 },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_REALTEK,	0x8167), 0, 0, RTL_CFG_0 },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_REALTEK,	0x8168), 0, 0, RTL_CFG_1 },
++	{ PCI_DEVICE(PCI_VENDOR_ID_NCUBE,	0x8168), 0, 0, RTL_CFG_1 },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_REALTEK,	0x8169), 0, 0, RTL_CFG_0 },
+ 	{ PCI_VENDOR_ID_DLINK,			0x4300,
+ 		PCI_VENDOR_ID_DLINK, 0x4b10,		 0, 0, RTL_CFG_1 },
+--- a/include/linux/pci_ids.h
++++ b/include/linux/pci_ids.h
+@@ -3054,4 +3054,6 @@
  
--static netdev_features_t qlge_fix_features(struct net_device *ndev,
--	netdev_features_t features)
--{
--	int err;
--
--	/* Update the behavior of vlan accel in the adapter */
--	err = qlge_update_hw_vlan_features(ndev, features);
--	if (err)
--		return err;
--
--	return features;
--}
--
- static int qlge_set_features(struct net_device *ndev,
- 	netdev_features_t features)
- {
- 	netdev_features_t changed = ndev->features ^ features;
-+	int err;
+ #define PCI_VENDOR_ID_OCZ		0x1b85
+ 
++#define PCI_VENDOR_ID_NCUBE		0x10ff
 +
-+	if (changed & NETIF_F_HW_VLAN_CTAG_RX) {
-+		/* Update the behavior of vlan accel in the adapter */
-+		err = qlge_update_hw_vlan_features(ndev, features);
-+		if (err)
-+			return err;
- 
--	if (changed & NETIF_F_HW_VLAN_CTAG_RX)
- 		qlge_vlan_mode(ndev, features);
-+	}
- 
- 	return 0;
- }
-@@ -4719,7 +4713,6 @@ static const struct net_device_ops qlge_
- 	.ndo_set_mac_address	= qlge_set_mac_address,
- 	.ndo_validate_addr	= eth_validate_addr,
- 	.ndo_tx_timeout		= qlge_tx_timeout,
--	.ndo_fix_features	= qlge_fix_features,
- 	.ndo_set_features	= qlge_set_features,
- 	.ndo_vlan_rx_add_vid	= qlge_vlan_rx_add_vid,
- 	.ndo_vlan_rx_kill_vid	= qlge_vlan_rx_kill_vid,
+ #endif /* _LINUX_PCI_IDS_H */
 
 
