@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8D7BC07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:32:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A9D5C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:32:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CC972146E
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:32:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CC972146E
+	by mail.kernel.org (Postfix) with ESMTP id E0CB520854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:32:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0CB520854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728340AbeIMSlz (ORCPT
+        id S1728356AbeIMSl7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:41:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58552 "EHLO
+        Thu, 13 Sep 2018 14:41:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58562 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728310AbeIMSlz (ORCPT
+        with ESMTP id S1727152AbeIMSl6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:41:55 -0400
+        Thu, 13 Sep 2018 14:41:58 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4EB70D0B;
-        Thu, 13 Sep 2018 13:32:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B777FCF3;
+        Thu, 13 Sep 2018 13:32:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Breno Leitao <leitao@debian.org>,
-        Gustavo Romero <gromero@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Steve French <stfrench@microsoft.com>,
+        Aurelien Aptel <aaptel@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 28/60] selftests/powerpc: Kill child processes on SIGINT
-Date:   Thu, 13 Sep 2018 15:30:35 +0200
-Message-Id: <20180913131746.731167372@linuxfoundation.org>
+Subject: [PATCH 4.4 29/60] smb3: fix reset of bytes read and written stats
+Date:   Thu, 13 Sep 2018 15:30:36 +0200
+Message-Id: <20180913131746.777663644@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131745.261413581@linuxfoundation.org>
 References: <20180913131745.261413581@linuxfoundation.org>
@@ -53,72 +52,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Breno Leitao <leitao@debian.org>
+From: Steve French <stfrench@microsoft.com>
 
-[ Upstream commit 7c27a26e1ed5a7dd709aa19685d2c98f64e1cf0c ]
+[ Upstream commit c281bc0c7412308c7ec0888904f7c99353da4796 ]
 
-There are some powerpc selftests, as tm/tm-unavailable, that run for a long
-period (>120 seconds), and if it is interrupted, as pressing CRTL-C
-(SIGINT), the foreground process (harness) dies but the child process and
-threads continue to execute (with PPID = 1 now) in background.
+echo 0 > /proc/fs/cifs/Stats is supposed to reset the stats
+but there were four (see example below) that were not reset
+(bytes read and witten, total vfs ops and max ops
+at one time).
 
-In this case, you'd think the whole test exited, but there are remaining
-threads and processes being executed in background. Sometimes these
-zombies processes are doing annoying things, as consuming the whole CPU or
-dumping things to STDOUT.
+...
+0 session 0 share reconnects
+Total vfs operations: 100 maximum at one time: 2
 
-This patch fixes this problem by attaching an empty signal handler to
-SIGINT in the harness process. This handler will interrupt (EINTR) the
-parent process waitpid() call, letting the code to follow through the
-normal flow, which will kill all the processes in the child process group.
+1) \\localhost\test
+SMBs: 0
+Bytes read: 502092  Bytes written: 31457286
+TreeConnects: 0 total 0 failed
+TreeDisconnects: 0 total 0 failed
+...
 
-This patch also fixes a typo.
+This patch fixes cifs_stats_proc_write to properly reset
+those four.
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Signed-off-by: Gustavo Romero <gromero@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Aurelien Aptel <aaptel@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/powerpc/harness.c |   18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+ fs/cifs/cifs_debug.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/tools/testing/selftests/powerpc/harness.c
-+++ b/tools/testing/selftests/powerpc/harness.c
-@@ -85,13 +85,13 @@ wait:
- 	return status;
- }
- 
--static void alarm_handler(int signum)
-+static void sig_handler(int signum)
- {
--	/* Jut wake us up from waitpid */
-+	/* Just wake us up from waitpid */
- }
- 
--static struct sigaction alarm_action = {
--	.sa_handler = alarm_handler,
-+static struct sigaction sig_action = {
-+	.sa_handler = sig_handler,
- };
- 
- int test_harness(int (test_function)(void), char *name)
-@@ -101,8 +101,14 @@ int test_harness(int (test_function)(voi
- 	test_start(name);
- 	test_set_git_version(GIT_VERSION);
- 
--	if (sigaction(SIGALRM, &alarm_action, NULL)) {
--		perror("sigaction");
-+	if (sigaction(SIGINT, &sig_action, NULL)) {
-+		perror("sigaction (sigint)");
-+		test_error(name);
-+		return 1;
-+	}
-+
-+	if (sigaction(SIGALRM, &sig_action, NULL)) {
-+		perror("sigaction (sigalrm)");
- 		test_error(name);
- 		return 1;
- 	}
+--- a/fs/cifs/cifs_debug.c
++++ b/fs/cifs/cifs_debug.c
+@@ -285,6 +285,10 @@ static ssize_t cifs_stats_proc_write(str
+ 		atomic_set(&totBufAllocCount, 0);
+ 		atomic_set(&totSmBufAllocCount, 0);
+ #endif /* CONFIG_CIFS_STATS2 */
++		spin_lock(&GlobalMid_Lock);
++		GlobalMaxActiveXid = 0;
++		GlobalCurrentXid = 0;
++		spin_unlock(&GlobalMid_Lock);
+ 		spin_lock(&cifs_tcp_ses_lock);
+ 		list_for_each(tmp1, &cifs_tcp_ses_list) {
+ 			server = list_entry(tmp1, struct TCP_Server_Info,
+@@ -297,6 +301,10 @@ static ssize_t cifs_stats_proc_write(str
+ 							  struct cifs_tcon,
+ 							  tcon_list);
+ 					atomic_set(&tcon->num_smbs_sent, 0);
++					spin_lock(&tcon->stat_lock);
++					tcon->bytes_read = 0;
++					tcon->bytes_written = 0;
++					spin_unlock(&tcon->stat_lock);
+ 					if (server->ops->clear_stats)
+ 						server->ops->clear_stats(tcon);
+ 				}
 
 
