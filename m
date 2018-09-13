@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0986CC07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:04:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 279EAC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:04:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C432B20652
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:04:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C432B20652
+	by mail.kernel.org (Postfix) with ESMTP id D9C3C20652
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:04:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9C3C20652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732117AbeIMTOV (ORCPT
+        id S1732128AbeIMTOY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:14:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35410 "EHLO
+        Thu, 13 Sep 2018 15:14:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35418 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731179AbeIMTOV (ORCPT
+        with ESMTP id S1727566AbeIMTOY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:14:21 -0400
+        Thu, 13 Sep 2018 15:14:24 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B8DD3D35;
-        Thu, 13 Sep 2018 14:04:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DB90BD35;
+        Thu, 13 Sep 2018 14:04:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, James Zhu <James.Zhu@amd.com>,
         Alex Deucher <alexander.deucher@amd.com>,
-        Huang Rui <ray.huang@amd.com>, Likun Gao <likun.gao@amd.com>,
-        Likun Gao <Likun.Gao@amd.com>
-Subject: [PATCH 4.18 175/197] drm/amdgpu:add tmr mc address into amdgpu_firmware_info
-Date:   Thu, 13 Sep 2018 15:32:04 +0200
-Message-Id: <20180913131848.562433266@linuxfoundation.org>
+        Huang Rui <ray.huang@amd.com>, Likun Gao <Likun.Gao@amd.com>
+Subject: [PATCH 4.18 176/197] drm/amdgpu:add new firmware id for VCN
+Date:   Thu, 13 Sep 2018 15:32:05 +0200
+Message-Id: <20180913131848.600541927@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -53,37 +52,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: James Zhu <jzhums@gmail.com>
+From: Likun Gao <Likun.Gao@amd.com>
 
-commit abf412b3efb2f943d9b98a489e9aca836be21333 upstream.
+commit c9ca989696ff28ffb015cc2b7c5577938ef2626c upstream.
 
-amdgpu IP blocks booting need Trust Memory Region(tmr) mc address
-of its firmware which is loaded by PSP
+Add the new firmware id for VCN into the enum
 
 Signed-off-by: James Zhu <James.Zhu@amd.com>
 Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
 Acked-by: Huang Rui <ray.huang@amd.com>
-Reviewed-by: Likun Gao <likun.gao@amd.com>
+Reviewed-by: Likun Gao <Likun.Gao@amd.com>
 Signed-off-by: Likun Gao <Likun.Gao@amd.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.h |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.h |    1 +
+ 1 file changed, 1 insertion(+)
 
 --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.h
 +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.h
-@@ -226,6 +226,9 @@ struct amdgpu_firmware_info {
- 	void *kaddr;
- 	/* ucode_size_bytes */
- 	uint32_t ucode_size;
-+	/* starting tmr mc address */
-+	uint32_t tmr_mc_addr_lo;
-+	uint32_t tmr_mc_addr_hi;
+@@ -194,6 +194,7 @@ enum AMDGPU_UCODE_ID {
+ 	AMDGPU_UCODE_ID_SMC,
+ 	AMDGPU_UCODE_ID_UVD,
+ 	AMDGPU_UCODE_ID_VCE,
++	AMDGPU_UCODE_ID_VCN,
+ 	AMDGPU_UCODE_ID_MAXIMUM,
  };
  
- void amdgpu_ucode_print_mc_hdr(const struct common_firmware_header *hdr);
 
 
