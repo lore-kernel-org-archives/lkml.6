@@ -5,30 +5,30 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97B90C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:55:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB26FC07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:55:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AB0120854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:55:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AB0120854
+	by mail.kernel.org (Postfix) with ESMTP id 7405D20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:55:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7405D20854
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728292AbeIMSFF (ORCPT
+        id S1728307AbeIMSFH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:05:05 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:12786 "EHLO mx1.redhat.com"
+        Thu, 13 Sep 2018 14:05:07 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:53540 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727009AbeIMSFE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:05:04 -0400
+        id S1727009AbeIMSFG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 14:05:06 -0400
 Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 79F062C971E;
-        Thu, 13 Sep 2018 12:55:43 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id C718A3086257;
+        Thu, 13 Sep 2018 12:55:45 +0000 (UTC)
 Received: from krava.brq.redhat.com (unknown [10.43.17.10])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 71273600C8;
-        Thu, 13 Sep 2018 12:55:41 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C365B600D1;
+        Thu, 13 Sep 2018 12:55:43 +0000 (UTC)
 From:   Jiri Olsa <jolsa@kernel.org>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     Frederic Weisbecker <fweisbec@gmail.com>,
@@ -39,13 +39,13 @@ Cc:     Frederic Weisbecker <fweisbec@gmail.com>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>,
         Andi Kleen <andi@firstfloor.org>,
         Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: [PATCH 22/48] perf tools: Introduce thread__find_symbol_by_time() and friends
-Date:   Thu, 13 Sep 2018 14:54:24 +0200
-Message-Id: <20180913125450.21342-23-jolsa@kernel.org>
+Subject: [PATCH 23/48] perf callchain: Use thread__find_addr_location_by_time() and friends
+Date:   Thu, 13 Sep 2018 14:54:25 +0200
+Message-Id: <20180913125450.21342-24-jolsa@kernel.org>
 In-Reply-To: <20180913125450.21342-1-jolsa@kernel.org>
 References: <20180913125450.21342-1-jolsa@kernel.org>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 13 Sep 2018 12:55:43 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Thu, 13 Sep 2018 12:55:46 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -53,241 +53,159 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Namhyung Kim <namhyung@kernel.org>
 
-These new functions are for find appropriate map (and symbol) at the
-given time when used with an indexed data file.  This is based on the
-fact that map_groups list is sorted by time in the previous patch.
+Find correct thread/map/symbol using proper functions.
 
 Cc: Frederic Weisbecker <fweisbec@gmail.com>
-Link: http://lkml.kernel.org/n/tip-dg807z4umbjfq0yk2e3vixaj@git.kernel.org
+Link: http://lkml.kernel.org/n/tip-k02mlrexo1h3bsezgrr7ydn8@git.kernel.org
 Signed-off-by: Namhyung Kim <namhyung@kernel.org>
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- tools/perf/util/event.c   | 52 ++++++++++++++++++++++++++++++++++-----
- tools/perf/util/machine.c | 20 +++++++++------
- tools/perf/util/thread.c  | 25 +++++++++++++++++++
- tools/perf/util/thread.h  |  9 +++++++
- 4 files changed, 92 insertions(+), 14 deletions(-)
+ tools/perf/util/machine.c                | 18 +++++++++++-------
+ tools/perf/util/unwind-libdw.c           |  6 ++++--
+ tools/perf/util/unwind-libunwind-local.c | 11 +++++++----
+ 3 files changed, 22 insertions(+), 13 deletions(-)
 
-diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
-index 29438cda8aa2..74d20056b860 100644
---- a/tools/perf/util/event.c
-+++ b/tools/perf/util/event.c
-@@ -1516,15 +1516,14 @@ int perf_event__process(struct perf_tool *tool __maybe_unused,
- 	return machine__process_event(machine, event, sample);
- }
- 
--struct map *thread__find_map(struct thread *thread, u8 cpumode, u64 addr,
--			     struct addr_location *al)
-+static
-+struct map *map_groups__find_map(struct map_groups *mg, u8 cpumode,
-+				 u64 addr, struct addr_location *al)
- {
--	struct map_groups *mg = thread->mg;
- 	struct machine *machine = mg->machine;
- 	bool load_map = false;
- 
- 	al->machine = machine;
--	al->thread = thread;
- 	al->addr = addr;
- 	al->cpumode = cpumode;
- 	al->filtered = 0;
-@@ -1595,6 +1594,28 @@ struct map *thread__find_map(struct thread *thread, u8 cpumode, u64 addr,
- 	return al->map;
- }
- 
-+struct map *thread__find_map(struct thread *thread, u8 cpumode,
-+			     u64 addr, struct addr_location *al)
-+{
-+	al->thread = thread;
-+	return map_groups__find_map(thread->mg, cpumode, addr, al);
-+}
-+
-+struct map *thread__find_map_by_time(struct thread *thread, u8 cpumode,
-+				     u64 addr, struct addr_location *al,
-+				     u64 timestamp)
-+{
-+	struct map_groups *mg;
-+
-+	if (perf_has_index)
-+		mg = thread__get_map_groups(thread, timestamp);
-+	else
-+		mg = thread->mg;
-+
-+	al->thread = thread;
-+	return map_groups__find_map(mg, cpumode, addr, al);
-+}
-+
- struct symbol *thread__find_symbol(struct thread *thread, u8 cpumode,
- 				   u64 addr, struct addr_location *al)
- {
-@@ -1604,6 +1625,22 @@ struct symbol *thread__find_symbol(struct thread *thread, u8 cpumode,
- 	return al->sym;
- }
- 
-+struct symbol *thread__find_symbol_by_time(struct thread *thread, u8 cpumode,
-+					   u64 addr, struct addr_location *al,
-+					   u64 timestamp)
-+{
-+	if (perf_has_index)
-+		thread__find_map_by_time(thread, cpumode, addr, al, timestamp);
-+	else
-+		thread__find_map(thread, cpumode, addr, al);
-+
-+	if (al->map != NULL)
-+		al->sym = map__find_symbol(al->map, al->addr);
-+	else
-+		al->sym = NULL;
-+	return al->sym;
-+}
-+
- /*
-  * Callers need to drop the reference to al->thread, obtained in
-  * machine__findnew_thread()
-@@ -1619,7 +1656,9 @@ int machine__resolve(struct machine *machine, struct addr_location *al,
- 		return -1;
- 
- 	dump_printf(" ... thread: %s:%d\n", thread__comm_str(thread), thread->tid);
--	thread__find_map(thread, sample->cpumode, sample->ip, al);
-+	thread__find_map_by_time(thread, sample->cpumode,
-+				 sample->ip, al, sample->time);
-+
- 	dump_printf(" ...... dso: %s\n",
- 		    al->map ? al->map->dso->long_name :
- 			al->level == 'H' ? "[hypervisor]" : "<not found>");
-@@ -1698,7 +1737,8 @@ bool sample_addr_correlates_sym(struct perf_event_attr *attr)
- void thread__resolve(struct thread *thread, struct addr_location *al,
- 		     struct perf_sample *sample)
- {
--	thread__find_map(thread, sample->cpumode, sample->addr, al);
-+	thread__find_map_by_time(thread, sample->cpumode, sample->addr,
-+				 al, sample->time);
- 
- 	al->cpu = sample->cpu;
- 	al->sym = NULL;
 diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index e2ebe471cdbc..0c576a01697e 100644
+index 0c576a01697e..dc46a7967e10 100644
 --- a/tools/perf/util/machine.c
 +++ b/tools/perf/util/machine.c
-@@ -2011,7 +2011,7 @@ static bool symbol__match_regex(struct symbol *sym, regex_t *regex)
- 
- static void ip__resolve_ams(struct thread *thread,
- 			    struct addr_map_symbol *ams,
--			    u64 ip)
-+			    u64 ip, u64 timestamp)
+@@ -2101,7 +2101,8 @@ static int add_callchain_ip(struct thread *thread,
+ 			    bool branch,
+ 			    struct branch_flags *flags,
+ 			    struct iterations *iter,
+-			    u64 branch_from)
++			    u64 branch_from,
++			    u64 timestamp)
  {
  	struct addr_location al;
- 
-@@ -2023,7 +2023,8 @@ static void ip__resolve_ams(struct thread *thread,
- 	 * Thus, we have to try consecutively until we find a match
- 	 * or else, the symbol is unknown
- 	 */
--	thread__find_cpumode_addr_location(thread, ip, &al);
-+	thread__find_cpumode_addr_location_by_time(thread, ip,
-+						   &al, timestamp);
- 
- 	ams->addr = ip;
- 	ams->al_addr = al.addr;
-@@ -2034,13 +2035,14 @@ static void ip__resolve_ams(struct thread *thread,
- 
- static void ip__resolve_data(struct thread *thread,
- 			     u8 m, struct addr_map_symbol *ams,
--			     u64 addr, u64 phys_addr)
-+			     u64 addr, u64 phys_addr, u64 timestamp)
- {
- 	struct addr_location al;
- 
- 	memset(&al, 0, sizeof(al));
- 
--	thread__find_symbol(thread, m, addr, &al);
-+	thread__find_symbol_by_time(thread, m, addr,
-+				    &al, timestamp);
- 
- 	ams->addr = addr;
- 	ams->al_addr = al.addr;
-@@ -2057,9 +2059,9 @@ struct mem_info *sample__resolve_mem(struct perf_sample *sample,
- 	if (!mi)
- 		return NULL;
- 
--	ip__resolve_ams(al->thread, &mi->iaddr, sample->ip);
-+	ip__resolve_ams(al->thread, &mi->iaddr, sample->ip, sample->time);
- 	ip__resolve_data(al->thread, al->cpumode, &mi->daddr,
--			 sample->addr, sample->phys_addr);
-+			 sample->addr, sample->phys_addr, sample->time);
- 	mi->data_src.val = sample->data_src;
- 
- 	return mi;
-@@ -2175,8 +2177,10 @@ struct branch_info *sample__resolve_bstack(struct perf_sample *sample,
- 		return NULL;
- 
- 	for (i = 0; i < bs->nr; i++) {
--		ip__resolve_ams(al->thread, &bi[i].to, bs->entries[i].to);
--		ip__resolve_ams(al->thread, &bi[i].from, bs->entries[i].from);
-+		ip__resolve_ams(al->thread, &bi[i].to,
-+				bs->entries[i].to, sample->time);
-+		ip__resolve_ams(al->thread, &bi[i].from,
-+				bs->entries[i].from, sample->time);
- 		bi[i].flags = bs->entries[i].flags;
+ 	int nr_loop_iter = 0;
+@@ -2111,7 +2112,8 @@ static int add_callchain_ip(struct thread *thread,
+ 	al.filtered = 0;
+ 	al.sym = NULL;
+ 	if (!cpumode) {
+-		thread__find_cpumode_addr_location(thread, ip, &al);
++		thread__find_cpumode_addr_location_by_time(thread, ip,
++							   &al, timestamp);
+ 	} else {
+ 		if (ip >= PERF_CONTEXT_MAX) {
+ 			switch (ip) {
+@@ -2136,7 +2138,8 @@ static int add_callchain_ip(struct thread *thread,
+ 			}
+ 			return 0;
+ 		}
+-		thread__find_symbol(thread, *cpumode, ip, &al);
++		thread__find_symbol_by_time(thread, *cpumode, ip, &al,
++					    timestamp);
  	}
- 	return bi;
-diff --git a/tools/perf/util/thread.c b/tools/perf/util/thread.c
-index fbda4b6d2ec5..8a0b27202ab7 100644
---- a/tools/perf/util/thread.c
-+++ b/tools/perf/util/thread.c
-@@ -550,3 +550,28 @@ struct thread *thread__main_thread(struct machine *machine, struct thread *threa
  
- 	return machine__find_thread(machine, thread->pid_, thread->pid_);
- }
-+
-+void thread__find_cpumode_addr_location_by_time(struct thread *thread,
-+						u64 addr, struct addr_location *al,
-+						u64 timestamp)
-+{
-+	size_t i;
-+	const u8 cpumodes[] = {
-+		PERF_RECORD_MISC_USER,
-+		PERF_RECORD_MISC_KERNEL,
-+		PERF_RECORD_MISC_GUEST_USER,
-+		PERF_RECORD_MISC_GUEST_KERNEL
-+	};
-+
-+	if (!perf_has_index) {
-+		thread__find_cpumode_addr_location(thread, addr, al);
-+		return;
-+	}
-+
-+	for (i = 0; i < ARRAY_SIZE(cpumodes); i++) {
-+		thread__find_symbol_by_time(thread, cpumodes[i],
-+					    addr, al, timestamp);
-+		if (al->map)
-+			break;
-+	}
-+}
-diff --git a/tools/perf/util/thread.h b/tools/perf/util/thread.h
-index e7eaf32a0cf1..86186a0773a0 100644
---- a/tools/perf/util/thread.h
-+++ b/tools/perf/util/thread.h
-@@ -99,12 +99,21 @@ struct thread *thread__main_thread(struct machine *machine, struct thread *threa
+ 	if (al.sym != NULL) {
+@@ -2333,7 +2336,7 @@ static int resolve_lbr_callchain_sample(struct thread *thread,
+ 			err = add_callchain_ip(thread, cursor, parent,
+ 					       root_al, &cpumode, ip,
+ 					       branch, flags, NULL,
+-					       branch_from);
++					       branch_from, sample->time);
+ 			if (err)
+ 				return (err < 0) ? err : 0;
+ 		}
+@@ -2356,6 +2359,7 @@ static int thread__resolve_callchain_sample(struct thread *thread,
+ 	int chain_nr = 0;
+ 	u8 cpumode = PERF_RECORD_MISC_USER;
+ 	int i, j, err, nr_entries;
++	u64 timestamp = sample->time;
+ 	int skip_idx = -1;
+ 	int first_call = 0;
  
- struct map *thread__find_map(struct thread *thread, u8 cpumode, u64 addr,
- 			     struct addr_location *al);
-+struct map *thread__find_map_by_time(struct thread *thread, u8 cpumode,
-+				     u64 addr, struct addr_location *al,
-+				     u64 timestamp);
+@@ -2429,13 +2433,13 @@ static int thread__resolve_callchain_sample(struct thread *thread,
+ 					       root_al,
+ 					       NULL, be[i].to,
+ 					       true, &be[i].flags,
+-					       NULL, be[i].from);
++					       NULL, be[i].from, timestamp);
  
- struct symbol *thread__find_symbol(struct thread *thread, u8 cpumode,
- 				   u64 addr, struct addr_location *al);
-+struct symbol *thread__find_symbol_by_time(struct thread *thread, u8 cpumode,
-+					   u64 addr, struct addr_location *al,
-+					   u64 timestamp);
+ 			if (!err)
+ 				err = add_callchain_ip(thread, cursor, parent, root_al,
+ 						       NULL, be[i].from,
+ 						       true, &be[i].flags,
+-						       &iter[i], 0);
++						       &iter[i], 0, timestamp);
+ 			if (err == -EINVAL)
+ 				break;
+ 			if (err)
+@@ -2469,7 +2473,7 @@ static int thread__resolve_callchain_sample(struct thread *thread,
  
- void thread__find_cpumode_addr_location(struct thread *thread, u64 addr,
- 					struct addr_location *al);
-+void thread__find_cpumode_addr_location_by_time(struct thread *thread,
-+						u64 addr, struct addr_location *al,
-+						u64 timestamp);
+ 		err = add_callchain_ip(thread, cursor, parent,
+ 				       root_al, &cpumode, ip,
+-				       false, NULL, NULL, 0);
++				       false, NULL, NULL, 0, timestamp);
  
- static inline void *thread__priv(struct thread *thread)
+ 		if (err)
+ 			return (err < 0) ? err : 0;
+diff --git a/tools/perf/util/unwind-libdw.c b/tools/perf/util/unwind-libdw.c
+index 6f318b15950e..c22c1030a8ad 100644
+--- a/tools/perf/util/unwind-libdw.c
++++ b/tools/perf/util/unwind-libdw.c
+@@ -32,7 +32,8 @@ static int __report_module(struct addr_location *al, u64 ip,
+ 	 * Some callers will use al->sym, so we can't just use the
+ 	 * cheaper thread__find_map() here.
+ 	 */
+-	thread__find_symbol(ui->thread, PERF_RECORD_MISC_USER, ip, al);
++	thread__find_symbol_by_time(ui->thread, PERF_RECORD_MISC_USER, ip,
++				    al, ui->sample->time);
+ 
+ 	if (al->map)
+ 		dso = al->map->dso;
+@@ -104,7 +105,8 @@ static int access_dso_mem(struct unwind_info *ui, Dwarf_Addr addr,
+ 	struct addr_location al;
+ 	ssize_t size;
+ 
+-	if (!thread__find_map(ui->thread, PERF_RECORD_MISC_USER, addr, &al)) {
++	if (!thread__find_map_by_time(ui->thread, PERF_RECORD_MISC_USER,
++				      addr, &al, ui->sample->time)) {
+ 		pr_debug("unwind: no map for %lx\n", (unsigned long)addr);
+ 		return -1;
+ 	}
+diff --git a/tools/perf/util/unwind-libunwind-local.c b/tools/perf/util/unwind-libunwind-local.c
+index 79f521a552cf..da6f39315b47 100644
+--- a/tools/perf/util/unwind-libunwind-local.c
++++ b/tools/perf/util/unwind-libunwind-local.c
+@@ -366,7 +366,9 @@ static int read_unwind_spec_debug_frame(struct dso *dso,
+ static struct map *find_map(unw_word_t ip, struct unwind_info *ui)
  {
+ 	struct addr_location al;
+-	return thread__find_map(ui->thread, PERF_RECORD_MISC_USER, ip, &al);
++
++	return thread__find_map_by_time(ui->thread, PERF_RECORD_MISC_USER, ip,
++					&al, ui->sample->time);
+ }
+ 
+ static int
+@@ -568,13 +570,14 @@ static void put_unwind_info(unw_addr_space_t __maybe_unused as,
+ 	pr_debug("unwind: put_unwind_info called\n");
+ }
+ 
+-static int entry(u64 ip, struct thread *thread,
++static int entry(u64 ip, struct thread *thread, u64 timestamp,
+ 		 unwind_entry_cb_t cb, void *arg)
+ {
+ 	struct unwind_entry e;
+ 	struct addr_location al;
+ 
+-	e.sym = thread__find_symbol(thread, PERF_RECORD_MISC_USER, ip, &al);
++	e.sym = thread__find_symbol_by_time(thread, PERF_RECORD_MISC_USER, ip,
++					    &al, timestamp);
+ 	e.ip  = ip;
+ 	e.map = al.map;
+ 
+@@ -700,7 +703,7 @@ static int get_entries(struct unwind_info *ui, unwind_entry_cb_t cb,
+ 
+ 		if (callchain_param.order == ORDER_CALLER)
+ 			j = max_stack - i - 1;
+-		ret = ips[j] ? entry(ips[j], ui->thread, cb, arg) : 0;
++		ret = ips[j] ? entry(ips[j], ui->thread, ui->sample->time, cb, arg) : 0;
+ 	}
+ 
+ 	return ret;
 -- 
 2.17.1
 
