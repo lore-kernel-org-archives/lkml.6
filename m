@@ -6,117 +6,191 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52A5AFA3752
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66DE4FC6170
 	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 17:35:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60C6921756
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 16:51:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60C6921756
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kaod.org
+	by mail.kernel.org (Postfix) with ESMTP id D98252178D
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 17:07:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D98252178D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728031AbeIMWBz (ORCPT
+        id S1728302AbeIMWSD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 18:01:55 -0400
-Received: from 10.mo179.mail-out.ovh.net ([46.105.79.46]:59204 "EHLO
-        10.mo179.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726835AbeIMWBz (ORCPT
+        Thu, 13 Sep 2018 18:18:03 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:50342 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1727391AbeIMWSD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 18:01:55 -0400
-X-Greylist: delayed 943 seconds by postgrey-1.27 at vger.kernel.org; Thu, 13 Sep 2018 18:01:54 EDT
-Received: from player714.ha.ovh.net (unknown [10.109.160.153])
-        by mo179.mail-out.ovh.net (Postfix) with ESMTP id 9064DFA166
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 18:35:55 +0200 (CEST)
-Received: from zorba.kaod.org (LFbn-1-10605-110.w90-89.abo.wanadoo.fr [90.89.196.110])
-        (Authenticated sender: postmaster@kaod.org)
-        by player714.ha.ovh.net (Postfix) with ESMTPSA id E79843C00AA;
-        Thu, 13 Sep 2018 18:35:38 +0200 (CEST)
-Subject: Re: [PATCH i2c-next v6] i2c: aspeed: Handle master/slave combined irq
- events properly
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
-        Joel Stanley <joel@jms.id.au>, linux-aspeed@lists.ozlabs.org,
-        Vernon Mauery <vernon.mauery@linux.intel.com>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-i2c@vger.kernel.org, jarkko.nikula@linux.intel.com,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        James Feist <james.feist@linux.intel.com>
-References: <20180911233302.GA18799@roeck-us.net>
- <5698ca34-14c9-8d05-c4e6-5acf85ff9d14@linux.intel.com>
- <20180912013449.GA12612@roeck-us.net>
- <7fd98646-fb5a-be4d-ce37-84b74e0fa8b3@linux.intel.com>
- <20180912195844.GA6893@roeck-us.net>
- <da7f4691-7428-3114-32bb-e0171f6c7228@linux.intel.com>
- <20180912203059.GA18201@roeck-us.net>
- <fb185839-3ae0-01dc-09e8-f22db55ecb04@kaod.org>
- <3f86e75f-1502-eae8-0633-d087937111c8@roeck-us.net>
- <f47b3050-3abd-caa4-cc71-4b13ef60e2c0@kaod.org>
- <20180913155703.GA22605@roeck-us.net>
-From:   =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>
-Message-ID: <2c481986-7ee0-4887-5c9b-64e2cd9d8c04@kaod.org>
-Date:   Thu, 13 Sep 2018 18:35:38 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 13 Sep 2018 18:18:03 -0400
+Received: (qmail 1799 invoked by uid 2102); 13 Sep 2018 13:07:39 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 13 Sep 2018 13:07:39 -0400
+Date:   Thu, 13 Sep 2018 13:07:39 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+cc:     Daniel Lustig <dlustig@nvidia.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        <linux-arch@vger.kernel.org>, <mingo@kernel.org>,
+        <peterz@infradead.org>, <boqun.feng@gmail.com>,
+        <npiggin@gmail.com>, <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>, <akiyks@gmail.com>,
+        Palmer Dabbelt <palmer@sifive.com>
+Subject: Re: [PATCH RFC LKMM 1/7] tools/memory-model: Add extra ordering for
+ locks and remove it for ordinary release/acquire
+In-Reply-To: <20180911200328.GA4225@linux.vnet.ibm.com>
+Message-ID: <Pine.LNX.4.44L0.1809131300370.1382-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-In-Reply-To: <20180913155703.GA22605@roeck-us.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 10514497755225951104
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtjedrjeeigddutddtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddm
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/13/2018 05:57 PM, Guenter Roeck wrote:
-> On Thu, Sep 13, 2018 at 05:48:59PM +0200, Cédric Le Goater wrote:
->> On 09/13/2018 03:33 PM, Guenter Roeck wrote:
-> [ ... ]
->>>>>   /*
->>>>>    * The state machine needs some refinement. It is only used to track
->>>>>    * invalid STOP commands for the moment.
->>>>> @@ -188,7 +215,7 @@ static void aspeed_i2c_bus_handle_cmd(AspeedI2CBus *bus, uint64_t value)
->>>>>   {
->>>>>       bus->cmd &= ~0xFFFF;
->>>>>       bus->cmd |= value & 0xFFFF;
->>>>> -    bus->intr_status = 0;> +    bus->intr_status &= I2CD_INTR_RX_DONE;
->>>>
->>>> it deserves a comment to understand which scenario we are trying to handle.
->>>>    
->>>
->>> Ok. FWIW, I wonder if intr_status should be touched here in the first place,
->>> but I neither have the hardware nor a datasheet, so I don't know if any bits
->>> are auto-cleared.
->>
->> I just pushed a patch on my branch with some more explanation : 
->>
->> 	https://github.com/legoater/qemu/commits/aspeed-3.1
->>
-> That seems to suggest that none of the status bits auto-clears, and that
-> the above code clearing intr_status should be removed entirely.
-> Am I missing something ?
+Not having received any responses to the question about usages of RCtso
+locks, I have decided to post the newly updated version of the patch
+description for commit c8c5779c854f ("tools/memory-model: Add extra
+ordering for locks and remove it for ordinary release/acquire") in
+Paul's LKMM branch.  There are no changes to the patch itself.
 
-You are right. I just pushed another version of the previous patch with this 
-new hunk :
+Hopefully this includes all the important issues that people have 
+raised.  (Admittedly, some parts of the discussion have seemed less 
+consequential than others, and some parts I didn't understand at all.)
 
-@@ -188,7 +200,6 @@ static void aspeed_i2c_bus_handle_cmd(As
- {
-     bus->cmd &= ~0xFFFF;
-     bus->cmd |= value & 0xFFFF;
--    bus->intr_status = 0;
- 
-     if (bus->cmd & I2CD_M_START_CMD) {
-         uint8_t state = aspeed_i2c_get_state(bus) & I2CD_MACTIVE ?
+Alan
 
+-----------------------------------------------------------------------------
+More than one kernel developer has expressed the opinion that the LKMM
+should enforce ordering of writes by locking.  In other words, given
+the following code:
 
-The QEMU palmetto and witherspoon machines seem to behave fine. Can you give 
-it a try ?
+	WRITE_ONCE(x, 1);
+	spin_unlock(&s):
+	spin_lock(&s);
+	WRITE_ONCE(y, 1);
 
-Thanks,
+the stores to x and y should be propagated in order to all other CPUs,
+even though those other CPUs might not access the lock s.  In terms of
+the memory model, this means expanding the cumul-fence relation.
 
-C.
+Locks should also provide read-read (and read-write) ordering in a
+similar way.  Given:
+
+	READ_ONCE(x);
+	spin_unlock(&s);
+	spin_lock(&s);
+	READ_ONCE(y);		// or WRITE_ONCE(y, 1);
+
+the load of x should be executed before the load of (or store to) y.
+The LKMM already provides this ordering, but it provides it even in
+the case where the two accesses are separated by a release/acquire
+pair of fences rather than unlock/lock.  This would prevent
+architectures from using weakly ordered implementations of release and
+acquire, which seems like an unnecessary restriction.  The patch
+therefore removes the ordering requirement from the LKMM for that
+case.
+
+There are several arguments both for and against this change.  Let us
+refer to these enhanced ordering properties by saying that the LKMM
+would require locks to be RCtso (a bit of a misnomer, but analogous to
+RCpc and RCsc) and it would require ordinary acquire/release only to
+be RCpc.  (Note: In the following, the phrase "all supported
+architectures" does not include RISC-V, which is still somewhat in
+a state of flux.)
+
+Pros:
+
+	The kernel already provides RCtso ordering for locks on all
+	supported architectures, even though this is not stated
+	explicitly anywhere.  Therefore the LKMM should formalize it.
+
+	In theory, guaranteeing RCtso ordering would reduce the need
+	for additional barrier-like constructs meant to increase the
+	ordering strength of locks.
+
+	Will Deacon and Peter Zijlstra are strongly in favor of
+	formalizing the RCtso requirement.  Linus Torvalds and Will
+	would like to go even further, requiring locks to have RCsc
+	behavior (ordering preceding writes against later reads), but
+	they recognize that this would incur a noticeable performance
+	degradation on the POWER architecture.  Linus also points out
+	that people have made the mistake, in the past, of assuming
+	that locking has stronger ordering properties than is
+	currently guaranteed, and this change would reduce the
+	likelihood of such mistakes.
+
+Cons:
+
+	Andrea Parri and Luc Maranget feel that locks should have the
+	same ordering properties as ordinary acquire/release (indeed,
+	Luc points out that the names "acquire" and "release" derive
+	from the usage of locks) and that having different ordering
+	properties for different forms of acquires and releases would
+	be confusing and unmaintainable.  Will and Linus, on the other
+	hand, feel that architectures should be free to implement
+	ordinary acquire/release using relatively weak RCpc machine
+	instructions.  Linus points out that locks should be easy for
+	people to use without worrying about memory consistency
+	issues, since they are so pervasive in the kernel, whereas
+	acquire/release is much more of an "expertss only" tool.
+
+	Locks are constructed from lower-level primitives, typically
+	RMW-acquire (for locking) and ordinary release (for unlock).
+	It is illogical to require stronger ordering properties from
+	the high-level operations than from the low-level operations
+	they comprise.  Thus, this change would make
+
+		while (cmpxchg_acquire(&s, 0, 1) != 0)
+			cpu_relax();
+
+	an incorrect implementation of spin_lock(&s).  In theory this
+	weakness can be ameliorated by changing the LKMM even further,
+	requiring RMW-acquire/release also to be RCtso (which it
+	already is on all supported architectures).
+
+	As far as I know, nobody has singled out any examples of code
+	in the kernel that actually relies on locks being RCtso.
+	(People mumble about RCU and the scheduler, but nobody has
+	pointed to any actual code.  If there are any real cases,
+	their number is likely quite small.)  If RCtso ordering is not
+	needed, why require it?
+
+	A handful of locking constructs (qspinlocks, qrwlocks, and
+	mcs_spinlocks) are built on top of smp_cond_load_acquire()
+	instead of an RMW-acquire instruction.  It currently provides
+	only the ordinary acquire semantics, not the stronger ordering
+	this patch would require of locks.  In theory this could be
+	ameliorated by requiring smp_cond_load_acquire() in
+	combination with ordinary release also to be RCtso (which is
+	currently true in all supported architectures).
+
+	On future weakly ordered architectures, people may be able to
+	implement locks in a non-RCtso fashion with significant
+	performance improvement.  Meeting the RCtso requirement would
+	necessarily add run-time overhead.
+
+Overall, the technical aspects of these arguments seem relatively
+minor, and it appears mostly to boil down to a matter of opinion.
+Since the opinions of long-time kernel developers such as Linus,
+Peter, and Will carry more weight than those of Luc and Andrea, this
+patch changes the model in accordance with the developers' wishes.
+
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+
+---
+
+v.4: Added pros and cons discussion to the Changelog.
+
+v.3: Rebased against the dev branch of Paul's linux-rcu tree.
+Changed unlock-rf-lock-po to po-unlock-rf-lock-po, making it more
+symmetrical and more in accordance with the use of fence.tso for
+the release on RISC-V.
+
+v.2: Restrict the ordering to lock operations, not general release
+and acquire fences.
+
