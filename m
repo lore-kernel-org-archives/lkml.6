@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABF76C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:51:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C95EC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:51:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FA0220854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:51:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FA0220854
+	by mail.kernel.org (Postfix) with ESMTP id 612C320881
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:51:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 612C320881
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730830AbeIMTBD (ORCPT
+        id S1730842AbeIMTBH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:01:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33298 "EHLO
+        Thu, 13 Sep 2018 15:01:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33306 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726967AbeIMTBD (ORCPT
+        with ESMTP id S1730173AbeIMTBG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:01:03 -0400
+        Thu, 13 Sep 2018 15:01:06 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5CDA1D10;
-        Thu, 13 Sep 2018 13:51:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 83274D10;
+        Thu, 13 Sep 2018 13:51:31 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hangbin Liu <liuhangbin@gmail.com>,
+        stable@vger.kernel.org, Jan Janssen <medhefgo@web.de>,
         David Ahern <dsahern@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 024/197] net/ipv6: init ip6 anycast rt->dst.input as ip6_input
-Date:   Thu, 13 Sep 2018 15:29:33 +0200
-Message-Id: <20180913131842.526821574@linuxfoundation.org>
+Subject: [PATCH 4.18 025/197] net/ipv6: Only update MTU metric if it set
+Date:   Thu, 13 Sep 2018 15:29:34 +0200
+Message-Id: <20180913131842.570694303@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -52,33 +52,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hangbin Liu <liuhangbin@gmail.com>
+From: David Ahern <dsahern@gmail.com>
 
-[ Upstream commit d23c4b6336ef30898dcdff351f21e633e7a64930 ]
+[ Upstream commit 15a81b418e22a9aa4a0504471fdcb0f4ebf69b96 ]
 
-Commit 6edb3c96a5f02 ("net/ipv6: Defer initialization of dst to data path")
-forgot to handle anycast route and init anycast rt->dst.input to ip6_forward.
-Fix it by setting anycast rt->dst.input back to ip6_input.
+Jan reported a regression after an update to 4.18.5. In this case ipv6
+default route is setup by systemd-networkd based on data from an RA. The
+RA contains an MTU of 1492 which is used when the route is first inserted
+but then systemd-networkd pushes down updates to the default route
+without the mtu set.
 
-Fixes: 6edb3c96a5f02 ("net/ipv6: Defer initialization of dst to data path")
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
-Reviewed-by: David Ahern <dsahern@gmail.com>
+Prior to the change to fib6_info, metrics such as MTU were held in the
+dst_entry and rt6i_pmtu in rt6_info contained an update to the mtu if
+any. ip6_mtu would look at rt6i_pmtu first and use it if set. If not,
+the value from the metrics is used if it is set and finally falling
+back to the idev value.
+
+After the fib6_info change metrics are contained in the fib6_info struct
+and there is no equivalent to rt6i_pmtu. To maintain consistency with
+the old behavior the new code should only reset the MTU in the metrics
+if the route update has it set.
+
+Fixes: d4ead6b34b67 ("net/ipv6: move metrics from dst to rt6_info")
+Reported-by: Jan Janssen <medhefgo@web.de>
+Signed-off-by: David Ahern <dsahern@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/route.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv6/ip6_fib.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/net/ipv6/route.c
-+++ b/net/ipv6/route.c
-@@ -956,7 +956,7 @@ static void ip6_rt_init_dst(struct rt6_i
- 	rt->dst.error = 0;
- 	rt->dst.output = ip6_output;
- 
--	if (ort->fib6_type == RTN_LOCAL) {
-+	if (ort->fib6_type == RTN_LOCAL || ort->fib6_type == RTN_ANYCAST) {
- 		rt->dst.input = ip6_input;
- 	} else if (ipv6_addr_type(&ort->fib6_dst.addr) & IPV6_ADDR_MULTICAST) {
- 		rt->dst.input = ip6_mc_input;
+--- a/net/ipv6/ip6_fib.c
++++ b/net/ipv6/ip6_fib.c
+@@ -987,7 +987,10 @@ static int fib6_add_rt2node(struct fib6_
+ 					fib6_clean_expires(iter);
+ 				else
+ 					fib6_set_expires(iter, rt->expires);
+-				fib6_metric_set(iter, RTAX_MTU, rt->fib6_pmtu);
++
++				if (rt->fib6_pmtu)
++					fib6_metric_set(iter, RTAX_MTU,
++							rt->fib6_pmtu);
+ 				return -EEXIST;
+ 			}
+ 			/* If we have the same destination and the same metric,
 
 
