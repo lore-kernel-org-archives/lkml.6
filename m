@@ -2,33 +2,34 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UPPERCASE_50_75 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B331FA374B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53F93FA3753
 	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 17:35:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 214C621784
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 17:05:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 214C621784
+	by mail.kernel.org (Postfix) with ESMTP id 6F69821774
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 17:05:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F69821774
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728534AbeIMWQN (ORCPT
+        id S1728245AbeIMWPz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 18:16:13 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58938 "EHLO mx1.redhat.com"
+        Thu, 13 Sep 2018 18:15:55 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:58784 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727082AbeIMWQM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 18:16:12 -0400
+        id S1728185AbeIMWPy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 18:15:54 -0400
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D45EF3002C72;
-        Thu, 13 Sep 2018 17:05:50 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 10F8E308FB85;
+        Thu, 13 Sep 2018 17:05:32 +0000 (UTC)
 Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7A7FC608E0;
-        Thu, 13 Sep 2018 17:05:48 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A445A608E0;
+        Thu, 13 Sep 2018 17:05:29 +0000 (UTC)
 From:   Vitaly Kuznetsov <vkuznets@redhat.com>
 To:     kvm@vger.kernel.org
 Cc:     Paolo Bonzini <pbonzini@redhat.com>,
@@ -41,59 +42,154 @@ Cc:     Paolo Bonzini <pbonzini@redhat.com>,
         Jim Mattson <jmattson@google.com>,
         Liran Alon <liran.alon@oracle.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v5 09/12] x86/kvm/nVMX: allow bare VMXON state migration
-Date:   Thu, 13 Sep 2018 19:05:19 +0200
-Message-Id: <20180913170522.24876-10-vkuznets@redhat.com>
+Subject: [PATCH v5 02/12] KVM: VMX: refactor evmcs_sanitize_exec_ctrls()
+Date:   Thu, 13 Sep 2018 19:05:12 +0200
+Message-Id: <20180913170522.24876-3-vkuznets@redhat.com>
 In-Reply-To: <20180913170522.24876-1-vkuznets@redhat.com>
 References: <20180913170522.24876-1-vkuznets@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Thu, 13 Sep 2018 17:05:51 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Thu, 13 Sep 2018 17:05:32 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is perfectly valid for a guest to do VMXON and not do VMPTRLD. This
-state needs to be preserved on migration.
+Split off EVMCS1_UNSUPPORTED_* macros so we can re-use them when
+enabling Enlightened VMCS for Hyper-V on KVM.
 
 Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 ---
- arch/x86/kvm/vmx.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ arch/x86/kvm/vmx.c | 108 +++++++++++++++++++++++------------------------------
+ 1 file changed, 47 insertions(+), 61 deletions(-)
 
 diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index d3297fadf7ed..25a25fff8dd9 100644
+index 533a327372c8..3847bf6a8c35 100644
 --- a/arch/x86/kvm/vmx.c
 +++ b/arch/x86/kvm/vmx.c
-@@ -14482,13 +14482,6 @@ static int vmx_set_nested_state(struct kvm_vcpu *vcpu,
- 	if (!page_address_valid(vcpu, kvm_state->vmx.vmxon_pa))
- 		return -EINVAL;
+@@ -1378,6 +1378,49 @@ DEFINE_STATIC_KEY_FALSE(enable_evmcs);
  
--	if (kvm_state->size < sizeof(kvm_state) + sizeof(*vmcs12))
--		return -EINVAL;
--
--	if (kvm_state->vmx.vmcs_pa == kvm_state->vmx.vmxon_pa ||
--	    !page_address_valid(vcpu, kvm_state->vmx.vmcs_pa))
--		return -EINVAL;
--
- 	if ((kvm_state->vmx.smm.flags & KVM_STATE_NESTED_SMM_GUEST_MODE) &&
- 	    (kvm_state->flags & KVM_STATE_NESTED_GUEST_MODE))
- 		return -EINVAL;
-@@ -14510,6 +14503,14 @@ static int vmx_set_nested_state(struct kvm_vcpu *vcpu,
- 	if (ret)
- 		return ret;
+ #define KVM_EVMCS_VERSION 1
  
-+	/* Empty 'VMXON' state is permitted */
-+	if (kvm_state->size < sizeof(kvm_state) + sizeof(*vmcs12))
-+		return 0;
++/*
++ * Enlightened VMCSv1 doesn't support these:
++ *
++ *	POSTED_INTR_NV                  = 0x00000002,
++ *	GUEST_INTR_STATUS               = 0x00000810,
++ *	APIC_ACCESS_ADDR		= 0x00002014,
++ *	POSTED_INTR_DESC_ADDR           = 0x00002016,
++ *	EOI_EXIT_BITMAP0                = 0x0000201c,
++ *	EOI_EXIT_BITMAP1                = 0x0000201e,
++ *	EOI_EXIT_BITMAP2                = 0x00002020,
++ *	EOI_EXIT_BITMAP3                = 0x00002022,
++ *	GUEST_PML_INDEX			= 0x00000812,
++ *	PML_ADDRESS			= 0x0000200e,
++ *	VM_FUNCTION_CONTROL             = 0x00002018,
++ *	EPTP_LIST_ADDRESS               = 0x00002024,
++ *	VMREAD_BITMAP                   = 0x00002026,
++ *	VMWRITE_BITMAP                  = 0x00002028,
++ *
++ *	TSC_MULTIPLIER                  = 0x00002032,
++ *	PLE_GAP                         = 0x00004020,
++ *	PLE_WINDOW                      = 0x00004022,
++ *	VMX_PREEMPTION_TIMER_VALUE      = 0x0000482E,
++ *      GUEST_IA32_PERF_GLOBAL_CTRL     = 0x00002808,
++ *      HOST_IA32_PERF_GLOBAL_CTRL      = 0x00002c04,
++ *
++ * Currently unsupported in KVM:
++ *	GUEST_IA32_RTIT_CTL		= 0x00002814,
++ */
++#define EVMCS1_UNSUPPORTED_PINCTRL (PIN_BASED_POSTED_INTR | \
++				    PIN_BASED_VMX_PREEMPTION_TIMER)
++#define EVMCS1_UNSUPPORTED_2NDEXEC					\
++	(SECONDARY_EXEC_VIRTUAL_INTR_DELIVERY |				\
++	 SECONDARY_EXEC_VIRTUALIZE_APIC_ACCESSES |			\
++	 SECONDARY_EXEC_APIC_REGISTER_VIRT |				\
++	 SECONDARY_EXEC_ENABLE_PML |					\
++	 SECONDARY_EXEC_ENABLE_VMFUNC |					\
++	 SECONDARY_EXEC_SHADOW_VMCS |					\
++	 SECONDARY_EXEC_TSC_SCALING |					\
++	 SECONDARY_EXEC_PAUSE_LOOP_EXITING)
++#define EVMCS1_UNSUPPORTED_VMEXIT_CTRL (VM_EXIT_LOAD_IA32_PERF_GLOBAL_CTRL)
++#define EVMCS1_UNSUPPORTED_VMENTRY_CTRL (VM_ENTRY_LOAD_IA32_PERF_GLOBAL_CTRL)
++#define EVMCS1_UNSUPPORTED_VMFUNC (VMX_VMFUNC_EPTP_SWITCHING)
 +
-+	if (kvm_state->vmx.vmcs_pa == kvm_state->vmx.vmxon_pa ||
-+	    !page_address_valid(vcpu, kvm_state->vmx.vmcs_pa))
-+		return -EINVAL;
-+
- 	set_current_vmptr(vmx, kvm_state->vmx.vmcs_pa);
+ #if IS_ENABLED(CONFIG_HYPERV)
+ static bool __read_mostly enlightened_vmcs = true;
+ module_param(enlightened_vmcs, bool, 0444);
+@@ -1470,69 +1513,12 @@ static void evmcs_load(u64 phys_addr)
  
- 	if (kvm_state->vmx.smm.flags & KVM_STATE_NESTED_SMM_VMXON) {
+ static void evmcs_sanitize_exec_ctrls(struct vmcs_config *vmcs_conf)
+ {
+-	/*
+-	 * Enlightened VMCSv1 doesn't support these:
+-	 *
+-	 *	POSTED_INTR_NV                  = 0x00000002,
+-	 *	GUEST_INTR_STATUS               = 0x00000810,
+-	 *	APIC_ACCESS_ADDR		= 0x00002014,
+-	 *	POSTED_INTR_DESC_ADDR           = 0x00002016,
+-	 *	EOI_EXIT_BITMAP0                = 0x0000201c,
+-	 *	EOI_EXIT_BITMAP1                = 0x0000201e,
+-	 *	EOI_EXIT_BITMAP2                = 0x00002020,
+-	 *	EOI_EXIT_BITMAP3                = 0x00002022,
+-	 */
+-	vmcs_conf->pin_based_exec_ctrl &= ~PIN_BASED_POSTED_INTR;
+-	vmcs_conf->cpu_based_2nd_exec_ctrl &=
+-		~SECONDARY_EXEC_VIRTUAL_INTR_DELIVERY;
+-	vmcs_conf->cpu_based_2nd_exec_ctrl &=
+-		~SECONDARY_EXEC_VIRTUALIZE_APIC_ACCESSES;
+-	vmcs_conf->cpu_based_2nd_exec_ctrl &=
+-		~SECONDARY_EXEC_APIC_REGISTER_VIRT;
+-
+-	/*
+-	 *	GUEST_PML_INDEX			= 0x00000812,
+-	 *	PML_ADDRESS			= 0x0000200e,
+-	 */
+-	vmcs_conf->cpu_based_2nd_exec_ctrl &= ~SECONDARY_EXEC_ENABLE_PML;
+-
+-	/*	VM_FUNCTION_CONTROL             = 0x00002018, */
+-	vmcs_conf->cpu_based_2nd_exec_ctrl &= ~SECONDARY_EXEC_ENABLE_VMFUNC;
+-
+-	/*
+-	 *	EPTP_LIST_ADDRESS               = 0x00002024,
+-	 *	VMREAD_BITMAP                   = 0x00002026,
+-	 *	VMWRITE_BITMAP                  = 0x00002028,
+-	 */
+-	vmcs_conf->cpu_based_2nd_exec_ctrl &= ~SECONDARY_EXEC_SHADOW_VMCS;
+-
+-	/*
+-	 *	TSC_MULTIPLIER                  = 0x00002032,
+-	 */
+-	vmcs_conf->cpu_based_2nd_exec_ctrl &= ~SECONDARY_EXEC_TSC_SCALING;
+-
+-	/*
+-	 *	PLE_GAP                         = 0x00004020,
+-	 *	PLE_WINDOW                      = 0x00004022,
+-	 */
+-	vmcs_conf->cpu_based_2nd_exec_ctrl &= ~SECONDARY_EXEC_PAUSE_LOOP_EXITING;
++	vmcs_conf->pin_based_exec_ctrl &= ~EVMCS1_UNSUPPORTED_PINCTRL;
++	vmcs_conf->cpu_based_2nd_exec_ctrl &= ~EVMCS1_UNSUPPORTED_2NDEXEC;
+ 
+-	/*
+-	 *	VMX_PREEMPTION_TIMER_VALUE      = 0x0000482E,
+-	 */
+-	vmcs_conf->pin_based_exec_ctrl &= ~PIN_BASED_VMX_PREEMPTION_TIMER;
++	vmcs_conf->vmexit_ctrl &= ~EVMCS1_UNSUPPORTED_VMEXIT_CTRL;
++	vmcs_conf->vmentry_ctrl &= ~EVMCS1_UNSUPPORTED_VMENTRY_CTRL;
+ 
+-	/*
+-	 *      GUEST_IA32_PERF_GLOBAL_CTRL     = 0x00002808,
+-	 *      HOST_IA32_PERF_GLOBAL_CTRL      = 0x00002c04,
+-	 */
+-	vmcs_conf->vmexit_ctrl &= ~VM_EXIT_LOAD_IA32_PERF_GLOBAL_CTRL;
+-	vmcs_conf->vmentry_ctrl &= ~VM_ENTRY_LOAD_IA32_PERF_GLOBAL_CTRL;
+-
+-	/*
+-	 * Currently unsupported in KVM:
+-	 *	GUEST_IA32_RTIT_CTL		= 0x00002814,
+-	 */
+ }
+ 
+ /* check_ept_pointer() should be under protection of ept_pointer_lock. */
 -- 
 2.14.4
 
