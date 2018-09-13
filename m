@@ -5,30 +5,30 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75BA9C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:56:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAB5EC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:56:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B86420854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:56:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B86420854
+	by mail.kernel.org (Postfix) with ESMTP id 7C62320854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:56:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C62320854
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728499AbeIMSFe (ORCPT
+        id S1728511AbeIMSFh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:05:34 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58352 "EHLO mx1.redhat.com"
+        Thu, 13 Sep 2018 14:05:37 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42122 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727051AbeIMSFd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:05:33 -0400
+        id S1726741AbeIMSFf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 14:05:35 -0400
 Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id F2FD2811A4;
-        Thu, 13 Sep 2018 12:56:12 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 237433082120;
+        Thu, 13 Sep 2018 12:56:15 +0000 (UTC)
 Received: from krava.brq.redhat.com (unknown [10.43.17.10])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 22BBC600C8;
-        Thu, 13 Sep 2018 12:56:10 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 490E3600C8;
+        Thu, 13 Sep 2018 12:56:13 +0000 (UTC)
 From:   Jiri Olsa <jolsa@kernel.org>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     lkml <linux-kernel@vger.kernel.org>,
@@ -38,77 +38,44 @@ Cc:     lkml <linux-kernel@vger.kernel.org>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>,
         Andi Kleen <andi@firstfloor.org>,
         Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: [PATCH 35/48] perf tools: Add threads debug variable
-Date:   Thu, 13 Sep 2018 14:54:37 +0200
-Message-Id: <20180913125450.21342-36-jolsa@kernel.org>
+Subject: [PATCH 36/48] perf tools: Add perf_mmap__read_tail function
+Date:   Thu, 13 Sep 2018 14:54:38 +0200
+Message-Id: <20180913125450.21342-37-jolsa@kernel.org>
 In-Reply-To: <20180913125450.21342-1-jolsa@kernel.org>
 References: <20180913125450.21342-1-jolsa@kernel.org>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Thu, 13 Sep 2018 12:56:13 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Thu, 13 Sep 2018 12:56:15 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To separate thread debug messages from global verbose,
-to enable type:
+It will be used in following patches.
 
-  $ perf --debug threads=X record ...
-
-where X is the debug level.
-
-Link: http://lkml.kernel.org/n/tip-tgpv7s1pjnxgfw7c90mg5tpl@git.kernel.org
+Link: http://lkml.kernel.org/n/tip-4id1fjlu5ypfqnu9kvpo7l3z@git.kernel.org
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- tools/perf/Documentation/perf.txt | 1 +
- tools/perf/util/debug.c           | 2 ++
- tools/perf/util/debug.h           | 1 +
- 3 files changed, 4 insertions(+)
+ tools/perf/util/mmap.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/tools/perf/Documentation/perf.txt b/tools/perf/Documentation/perf.txt
-index 864e37597252..5ae38692af64 100644
---- a/tools/perf/Documentation/perf.txt
-+++ b/tools/perf/Documentation/perf.txt
-@@ -22,6 +22,7 @@ OPTIONS
- 	  verbose          - general debug messages
- 	  ordered-events   - ordered events object debug messages
- 	  data-convert     - data convert command debug messages
-+	  threads          - threads debug/stats messages
+diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
+index bad05b12b9df..eb39d3f85b93 100644
+--- a/tools/perf/util/mmap.h
++++ b/tools/perf/util/mmap.h
+@@ -79,6 +79,13 @@ static inline u64 perf_mmap__read_head(struct perf_mmap *mm)
+ 	return head;
+ }
  
- --buildid-dir::
- 	Setup buildid cache directory. It has higher priority than
-diff --git a/tools/perf/util/debug.c b/tools/perf/util/debug.c
-index 3d6459626c2a..10425630cb71 100644
---- a/tools/perf/util/debug.c
-+++ b/tools/perf/util/debug.c
-@@ -28,6 +28,7 @@ bool dump_trace = false, quiet = false;
- int debug_ordered_events;
- static int redirect_to_stderr;
- int debug_data_convert;
-+int debug_threads;
- 
- int veprintf(int level, int var, const char *fmt, va_list args)
++static inline u64 perf_mmap__read_tail(struct perf_mmap *md)
++{
++	struct perf_event_mmap_page *pc = md->base;
++
++	return pc->data_tail;
++}
++
+ static inline void perf_mmap__write_tail(struct perf_mmap *md, u64 tail)
  {
-@@ -180,6 +181,7 @@ static struct debug_variable {
- 	{ .name = "ordered-events",	.ptr = &debug_ordered_events},
- 	{ .name = "stderr",		.ptr = &redirect_to_stderr},
- 	{ .name = "data-convert",	.ptr = &debug_data_convert },
-+	{ .name = "threads",		.ptr = &debug_threads },
- 	{ .name = NULL, }
- };
- 
-diff --git a/tools/perf/util/debug.h b/tools/perf/util/debug.h
-index 77445dfc5c7d..96665c66057b 100644
---- a/tools/perf/util/debug.h
-+++ b/tools/perf/util/debug.h
-@@ -15,6 +15,7 @@ extern int verbose;
- extern bool quiet, dump_trace;
- extern int debug_ordered_events;
- extern int debug_data_convert;
-+extern int debug_threads;
- 
- #ifndef pr_fmt
- #define pr_fmt(fmt) fmt
+ 	struct perf_event_mmap_page *pc = md->base;
 -- 
 2.17.1
 
