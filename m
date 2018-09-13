@@ -6,38 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C066C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:59:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5324C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:59:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50423204FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:59:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50423204FD
+	by mail.kernel.org (Postfix) with ESMTP id 7A8DB204FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:59:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A8DB204FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731658AbeIMTIg (ORCPT
+        id S1731665AbeIMTIj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:08:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34752 "EHLO
+        Thu, 13 Sep 2018 15:08:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34762 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731373AbeIMTIf (ORCPT
+        with ESMTP id S1729011AbeIMTIi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:08:35 -0400
+        Thu, 13 Sep 2018 15:08:38 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CB4C8D19;
-        Thu, 13 Sep 2018 13:58:57 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E7A39D15;
+        Thu, 13 Sep 2018 13:59:00 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tan Hu <tan.hu@zte.com.cn>,
-        Jiang Biao <jiang.biao2@zte.com.cn>,
-        Julian Anastasov <ja@ssi.bg>,
-        Simon Horman <horms@verge.net.au>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org, Gabriel Bercarug <bercarug@amazon.com>,
+        =?UTF-8?q?Roger=20Pau=20Monn=C3=A9?= <roger.pau@citrix.com>,
+        Juergen Gross <jgross@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 071/197] ipvs: fix race between ip_vs_conn_new() and ip_vs_del_dest()
-Date:   Thu, 13 Sep 2018 15:30:20 +0200
-Message-Id: <20180913131844.364786660@linuxfoundation.org>
+Subject: [PATCH 4.18 110/197] xen/balloon: fix balloon initialization for PVH Dom0
+Date:   Thu, 13 Sep 2018 15:30:59 +0200
+Message-Id: <20180913131845.947930771@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -55,82 +54,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tan Hu <tan.hu@zte.com.cn>
+From: Roger Pau Monne <roger.pau@citrix.com>
 
-[ Upstream commit a53b42c11815d2357e31a9403ae3950517525894 ]
+[ Upstream commit 3596924a233e45aa918c961a902170fc4916461b ]
 
-We came across infinite loop in ipvs when using ipvs in docker
-env.
+The current balloon code tries to calculate a delta factor for the
+balloon target when running in HVM mode in order to account for memory
+used by the firmware.
 
-When ipvs receives new packets and cannot find an ipvs connection,
-it will create a new connection, then if the dest is unavailable
-(i.e. IP_VS_DEST_F_AVAILABLE), the packet will be dropped sliently.
+This workaround for memory accounting doesn't work properly on a PVH
+Dom0, that has a static-max value different from the target value even
+at startup. Note that this is not a problem for DomUs because guests are
+started with a static-max value that matches the amount of RAM in the
+memory map.
 
-But if the dropped packet is the first packet of this connection,
-the connection control timer never has a chance to start and the
-ipvs connection cannot be released. This will lead to memory leak, or
-infinite loop in cleanup_net() when net namespace is released like
-this:
+Fix this by forcefully setting target_diff for Dom0, regardless of
+it's mode.
 
-    ip_vs_conn_net_cleanup at ffffffffa0a9f31a [ip_vs]
-    __ip_vs_cleanup at ffffffffa0a9f60a [ip_vs]
-    ops_exit_list at ffffffff81567a49
-    cleanup_net at ffffffff81568b40
-    process_one_work at ffffffff810a851b
-    worker_thread at ffffffff810a9356
-    kthread at ffffffff810b0b6f
-    ret_from_fork at ffffffff81697a18
-
-race condition:
-    CPU1                           CPU2
-    ip_vs_in()
-      ip_vs_conn_new()
-                                   ip_vs_del_dest()
-                                     __ip_vs_unlink_dest()
-                                       ~IP_VS_DEST_F_AVAILABLE
-      cp->dest && !IP_VS_DEST_F_AVAILABLE
-      __ip_vs_conn_put
-    ...
-    cleanup_net  ---> infinite looping
-
-Fix this by checking whether the timer already started.
-
-Signed-off-by: Tan Hu <tan.hu@zte.com.cn>
-Reviewed-by: Jiang Biao <jiang.biao2@zte.com.cn>
-Acked-by: Julian Anastasov <ja@ssi.bg>
-Acked-by: Simon Horman <horms@verge.net.au>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Reported-by: Gabriel Bercarug <bercarug@amazon.com>
+Signed-off-by: Roger Pau Monné <roger.pau@citrix.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/netfilter/ipvs/ip_vs_core.c |   15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ drivers/xen/xen-balloon.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/netfilter/ipvs/ip_vs_core.c
-+++ b/net/netfilter/ipvs/ip_vs_core.c
-@@ -1972,13 +1972,20 @@ ip_vs_in(struct netns_ipvs *ipvs, unsign
- 	if (cp->dest && !(cp->dest->flags & IP_VS_DEST_F_AVAILABLE)) {
- 		/* the destination server is not available */
- 
--		if (sysctl_expire_nodest_conn(ipvs)) {
-+		__u32 flags = cp->flags;
-+
-+		/* when timer already started, silently drop the packet.*/
-+		if (timer_pending(&cp->timer))
-+			__ip_vs_conn_put(cp);
-+		else
-+			ip_vs_conn_put(cp);
-+
-+		if (sysctl_expire_nodest_conn(ipvs) &&
-+		    !(flags & IP_VS_CONN_F_ONE_PACKET)) {
- 			/* try to expire the connection immediately */
- 			ip_vs_conn_expire_now(cp);
- 		}
--		/* don't restart its timer, and silently
--		   drop the packet. */
--		__ip_vs_conn_put(cp);
-+
- 		return NF_DROP;
+--- a/drivers/xen/xen-balloon.c
++++ b/drivers/xen/xen-balloon.c
+@@ -81,7 +81,7 @@ static void watch_target(struct xenbus_w
+ 			static_max = new_target;
+ 		else
+ 			static_max >>= PAGE_SHIFT - 10;
+-		target_diff = xen_pv_domain() ? 0
++		target_diff = (xen_pv_domain() || xen_initial_domain()) ? 0
+ 				: static_max - balloon_stats.target_pages;
  	}
  
 
