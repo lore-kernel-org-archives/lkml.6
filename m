@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C324FC07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 02:44:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1B43C070C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 02:44:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 832222146E
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 02:44:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 832222146E
+	by mail.kernel.org (Postfix) with ESMTP id 8926B2133F
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 02:44:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8926B2133F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728295AbeIMHwB (ORCPT
+        id S1728215AbeIMHwB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 13 Sep 2018 03:52:01 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:43572 "EHLO
+Received: from zeniv.linux.org.uk ([195.92.253.2]:43594 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726427AbeIMHsN (ORCPT
+        with ESMTP id S1726675AbeIMHsN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 13 Sep 2018 03:48:13 -0400
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1g0HYn-0006Ot-Hc; Thu, 13 Sep 2018 02:40:49 +0000
+        id 1g0HYo-0006PZ-8K; Thu, 13 Sep 2018 02:40:50 +0000
 From:   Al Viro <viro@ZenIV.linux.org.uk>
 To:     Arnd Bergmann <arnd@arndb.de>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 02/50] move compat handling of tty ioctls to tty_compat_ioctl()
-Date:   Thu, 13 Sep 2018 03:40:01 +0100
-Message-Id: <20180913024049.24567-2-viro@ZenIV.linux.org.uk>
+Subject: [PATCH 09/50] amiserial: switch to ->[sg]et_serial()
+Date:   Thu, 13 Sep 2018 03:40:08 +0100
+Message-Id: <20180913024049.24567-9-viro@ZenIV.linux.org.uk>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20180913024049.24567-1-viro@ZenIV.linux.org.uk>
 References: <20180913023119.GQ19965@ZenIV.linux.org.uk>
@@ -43,234 +43,170 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-ioctls that are
-	* callable only via tty_ioctl()
-	* not driver-specific
-	* not demand data structure conversions
-	* either always need passing arg as is or always demand compat_ptr()
-get intercepted in tty_compat_ioctl() from the very beginning and
-redirecter to tty_ioctl().  As the result, their entries in fs/compat_ioctl.c
-(some of those had been missing, BTW) got removed, as well as
-n_tty_compat_ioctl_helper() (now it's never called with any cmd it would accept).
-
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- drivers/tty/tty_io.c    | 77 +++++++++++++++++++++++++++++++++++++++++++++++--
- drivers/tty/tty_ioctl.c | 16 ----------
- fs/compat_ioctl.c       | 51 --------------------------------
- include/linux/tty.h     |  2 --
- 4 files changed, 75 insertions(+), 71 deletions(-)
+ drivers/tty/amiserial.c | 83 ++++++++++++++++++++++---------------------------
+ 1 file changed, 38 insertions(+), 45 deletions(-)
 
-diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
-index 32bc3e3fe4d3..c2168b43df0f 100644
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -2668,6 +2668,81 @@ static long tty_compat_ioctl(struct file *file, unsigned int cmd,
- 	struct tty_ldisc *ld;
- 	int retval = -ENOIOCTLCMD;
+diff --git a/drivers/tty/amiserial.c b/drivers/tty/amiserial.c
+index 34dead614149..17fc8bb6c6b8 100644
+--- a/drivers/tty/amiserial.c
++++ b/drivers/tty/amiserial.c
+@@ -996,63 +996,60 @@ static void rs_unthrottle(struct tty_struct * tty)
+  * ------------------------------------------------------------
+  */
  
-+	switch (cmd) {
-+	case TIOCSTI:
-+	case TIOCGWINSZ:
-+	case TIOCSWINSZ:
-+	case TIOCGEXCL:
-+	case TIOCGETD:
-+	case TIOCSETD:
-+	case TIOCGDEV:
-+	case TIOCMGET:
-+	case TIOCMSET:
-+	case TIOCMBIC:
-+	case TIOCMBIS:
-+	case TIOCGICOUNT:
-+	case TIOCGPGRP:
-+	case TIOCSPGRP:
-+	case TIOCGSID:
-+	case TIOCSERGETLSR:
-+	case TIOCGRS485:
-+	case TIOCSRS485:
-+#ifdef TIOCGETP
-+	case TIOCGETP:
-+	case TIOCSETP:
-+	case TIOCSETN:
-+#endif
-+#ifdef TIOCGETC
-+	case TIOCGETC:
-+	case TIOCSETC:
-+#endif
-+#ifdef TIOCGLTC
-+	case TIOCGLTC:
-+	case TIOCSLTC:
-+#endif
-+	case TCSETSF:
-+	case TCSETSW:
-+	case TCSETS:
-+	case TCGETS:
-+#ifdef TCGETS2
-+	case TCGETS2:
-+	case TCSETSF2:
-+	case TCSETSW2:
-+	case TCSETS2:
-+#endif
-+	case TCGETA:
-+	case TCSETAF:
-+	case TCSETAW:
-+	case TCSETA:
-+	case TIOCGLCKTRMIOS:
-+	case TIOCSLCKTRMIOS:
-+#ifdef TCGETX
-+	case TCGETX:
-+	case TCSETX:
-+	case TCSETXW:
-+	case TCSETXF:
-+#endif
-+	case TIOCGSOFTCAR:
-+	case TIOCSSOFTCAR:
-+		return tty_ioctl(file, cmd, (unsigned long)compat_ptr(arg));
-+	case TIOCCONS:
-+	case TIOCEXCL:
-+	case TIOCNXCL:
-+	case TIOCVHANGUP:
-+	case TIOCSBRK:
-+	case TIOCCBRK:
-+	case TCSBRK:
-+	case TCSBRKP:
-+	case TCFLSH:
-+	case TIOCGPTPEER:
-+	case TIOCNOTTY:
-+	case TIOCSCTTY:
-+	case TCXONC:
-+	case TIOCMIWAIT:
-+	case TIOCSERCONFIG:
-+		return tty_ioctl(file, cmd, arg);
-+	}
+-static int get_serial_info(struct tty_struct *tty, struct serial_state *state,
+-			   struct serial_struct __user * retinfo)
++static int get_serial_info(struct tty_struct *tty, struct serial_struct *ss)
+ {
+-	struct serial_struct tmp;
+-   
+-	memset(&tmp, 0, sizeof(tmp));
++	struct serial_state *state = tty->driver_data;
 +
- 	if (tty_paranoia_check(tty, file_inode(file), "tty_ioctl"))
- 		return -EINVAL;
- 
-@@ -2682,8 +2757,6 @@ static long tty_compat_ioctl(struct file *file, unsigned int cmd,
- 		return hung_up_tty_compat_ioctl(file, cmd, arg);
- 	if (ld->ops->compat_ioctl)
- 		retval = ld->ops->compat_ioctl(tty, file, cmd, arg);
--	else
--		retval = n_tty_compat_ioctl_helper(tty, file, cmd, arg);
- 	tty_ldisc_deref(ld);
- 
- 	return retval;
-diff --git a/drivers/tty/tty_ioctl.c b/drivers/tty/tty_ioctl.c
-index d99fec44036c..9245fffdbceb 100644
---- a/drivers/tty/tty_ioctl.c
-+++ b/drivers/tty/tty_ioctl.c
-@@ -941,19 +941,3 @@ int n_tty_ioctl_helper(struct tty_struct *tty, struct file *file,
- 	}
++	if (serial_paranoia_check(state, tty->name, "rs_ioctl"))
++		return -ENODEV;
++
+ 	tty_lock(tty);
+-	tmp.line = tty->index;
+-	tmp.port = state->port;
+-	tmp.flags = state->tport.flags;
+-	tmp.xmit_fifo_size = state->xmit_fifo_size;
+-	tmp.baud_base = state->baud_base;
+-	tmp.close_delay = state->tport.close_delay;
+-	tmp.closing_wait = state->tport.closing_wait;
+-	tmp.custom_divisor = state->custom_divisor;
++	ss->line = tty->index;
++	ss->port = state->port;
++	ss->flags = state->tport.flags;
++	ss->xmit_fifo_size = state->xmit_fifo_size;
++	ss->baud_base = state->baud_base;
++	ss->close_delay = state->tport.close_delay;
++	ss->closing_wait = state->tport.closing_wait;
++	ss->custom_divisor = state->custom_divisor;
+ 	tty_unlock(tty);
+-	if (copy_to_user(retinfo,&tmp,sizeof(*retinfo)))
+-		return -EFAULT;
+ 	return 0;
  }
- EXPORT_SYMBOL(n_tty_ioctl_helper);
--
--#ifdef CONFIG_COMPAT
--long n_tty_compat_ioctl_helper(struct tty_struct *tty, struct file *file,
--					unsigned int cmd, unsigned long arg)
--{
--	switch (cmd) {
--	case TIOCGLCKTRMIOS:
--	case TIOCSLCKTRMIOS:
--		return tty_mode_ioctl(tty, file, cmd, (unsigned long) compat_ptr(arg));
--	default:
--		return -ENOIOCTLCMD;
--	}
--}
--EXPORT_SYMBOL(n_tty_compat_ioctl_helper);
--#endif
--
-diff --git a/fs/compat_ioctl.c b/fs/compat_ioctl.c
-index 53bc3659dcef..670b8cbd0896 100644
---- a/fs/compat_ioctl.c
-+++ b/fs/compat_ioctl.c
-@@ -711,52 +711,9 @@ COMPATIBLE_IOCTL(0x4B50)   /* KDGHWCLK - not in the kernel, but don't complain *
- COMPATIBLE_IOCTL(0x4B51)   /* KDSHWCLK - not in the kernel, but don't complain */
  
- /* Big T */
--COMPATIBLE_IOCTL(TCGETA)
--COMPATIBLE_IOCTL(TCSETA)
--COMPATIBLE_IOCTL(TCSETAW)
--COMPATIBLE_IOCTL(TCSETAF)
--COMPATIBLE_IOCTL(TCSBRK)
--COMPATIBLE_IOCTL(TCXONC)
--COMPATIBLE_IOCTL(TCFLSH)
--COMPATIBLE_IOCTL(TCGETS)
--COMPATIBLE_IOCTL(TCSETS)
--COMPATIBLE_IOCTL(TCSETSW)
--COMPATIBLE_IOCTL(TCSETSF)
- COMPATIBLE_IOCTL(TIOCLINUX)
--COMPATIBLE_IOCTL(TIOCSBRK)
--COMPATIBLE_IOCTL(TIOCGDEV)
--COMPATIBLE_IOCTL(TIOCCBRK)
--COMPATIBLE_IOCTL(TIOCGSID)
--COMPATIBLE_IOCTL(TIOCGICOUNT)
--COMPATIBLE_IOCTL(TIOCGEXCL)
- /* Little t */
--COMPATIBLE_IOCTL(TIOCGETD)
--COMPATIBLE_IOCTL(TIOCSETD)
--COMPATIBLE_IOCTL(TIOCEXCL)
--COMPATIBLE_IOCTL(TIOCNXCL)
--COMPATIBLE_IOCTL(TIOCCONS)
--COMPATIBLE_IOCTL(TIOCGSOFTCAR)
--COMPATIBLE_IOCTL(TIOCSSOFTCAR)
--COMPATIBLE_IOCTL(TIOCSWINSZ)
--COMPATIBLE_IOCTL(TIOCGWINSZ)
--COMPATIBLE_IOCTL(TIOCMGET)
--COMPATIBLE_IOCTL(TIOCMBIC)
--COMPATIBLE_IOCTL(TIOCMBIS)
--COMPATIBLE_IOCTL(TIOCMSET)
--COMPATIBLE_IOCTL(TIOCNOTTY)
--COMPATIBLE_IOCTL(TIOCSTI)
- COMPATIBLE_IOCTL(TIOCOUTQ)
--COMPATIBLE_IOCTL(TIOCSPGRP)
--COMPATIBLE_IOCTL(TIOCGPGRP)
--COMPATIBLE_IOCTL(TIOCSERGETLSR)
--COMPATIBLE_IOCTL(TIOCSRS485)
--COMPATIBLE_IOCTL(TIOCGRS485)
--#ifdef TCGETS2
--COMPATIBLE_IOCTL(TCGETS2)
--COMPATIBLE_IOCTL(TCSETS2)
--COMPATIBLE_IOCTL(TCSETSW2)
--COMPATIBLE_IOCTL(TCSETSF2)
--#endif
- /* Little f */
- COMPATIBLE_IOCTL(FIOCLEX)
- COMPATIBLE_IOCTL(FIONCLEX)
-@@ -1219,10 +1176,6 @@ COMPATIBLE_IOCTL(JSIOCGAXES)
- COMPATIBLE_IOCTL(JSIOCGBUTTONS)
- COMPATIBLE_IOCTL(JSIOCGNAME(0))
+-static int set_serial_info(struct tty_struct *tty, struct serial_state *state,
+-			   struct serial_struct __user * new_info)
++static int set_serial_info(struct tty_struct *tty, struct serial_struct *ss)
+ {
++	struct serial_state *state = tty->driver_data;
+ 	struct tty_port *port = &state->tport;
+-	struct serial_struct new_serial;
+ 	bool change_spd;
+-	int 			retval = 0;
  
--#ifdef TIOCGLTC
--COMPATIBLE_IOCTL(TIOCGLTC)
--COMPATIBLE_IOCTL(TIOCSLTC)
--#endif
- #ifdef TIOCSTART
- /*
-  * For these two we have definitions in ioctls.h and/or termios.h on
-@@ -1312,10 +1265,6 @@ static long do_ioctl_trans(unsigned int cmd,
- 	 * so we must not do a compat_ptr() translation.
+-	if (copy_from_user(&new_serial,new_info,sizeof(new_serial)))
+-		return -EFAULT;
++	if (serial_paranoia_check(state, tty->name, "rs_ioctl"))
++		return -ENODEV;
+ 
+ 	tty_lock(tty);
+-	change_spd = ((new_serial.flags ^ port->flags) & ASYNC_SPD_MASK) ||
+-		new_serial.custom_divisor != state->custom_divisor;
+-	if (new_serial.irq || new_serial.port != state->port ||
+-			new_serial.xmit_fifo_size != state->xmit_fifo_size) {
++	change_spd = ((ss->flags ^ port->flags) & ASYNC_SPD_MASK) ||
++		ss->custom_divisor != state->custom_divisor;
++	if (ss->irq || ss->port != state->port ||
++			ss->xmit_fifo_size != state->xmit_fifo_size) {
+ 		tty_unlock(tty);
+ 		return -EINVAL;
+ 	}
+   
+ 	if (!serial_isroot()) {
+-		if ((new_serial.baud_base != state->baud_base) ||
+-		    (new_serial.close_delay != port->close_delay) ||
+-		    (new_serial.xmit_fifo_size != state->xmit_fifo_size) ||
+-		    ((new_serial.flags & ~ASYNC_USR_MASK) !=
++		if ((ss->baud_base != state->baud_base) ||
++		    (ss->close_delay != port->close_delay) ||
++		    (ss->xmit_fifo_size != state->xmit_fifo_size) ||
++		    ((ss->flags & ~ASYNC_USR_MASK) !=
+ 		     (port->flags & ~ASYNC_USR_MASK))) {
+ 			tty_unlock(tty);
+ 			return -EPERM;
+ 		}
+ 		port->flags = ((port->flags & ~ASYNC_USR_MASK) |
+-			       (new_serial.flags & ASYNC_USR_MASK));
+-		state->custom_divisor = new_serial.custom_divisor;
++			       (ss->flags & ASYNC_USR_MASK));
++		state->custom_divisor = ss->custom_divisor;
+ 		goto check_and_exit;
+ 	}
+ 
+-	if (new_serial.baud_base < 9600) {
++	if (ss->baud_base < 9600) {
+ 		tty_unlock(tty);
+ 		return -EINVAL;
+ 	}
+@@ -1062,19 +1059,19 @@ static int set_serial_info(struct tty_struct *tty, struct serial_state *state,
+ 	 * At this point, we start making changes.....
  	 */
- 	switch (cmd) {
--	/* Big T */
--	case TCSBRKP:
--	case TIOCMIWAIT:
--	case TIOCSCTTY:
- 	/* RAID */
- 	case HOT_REMOVE_DISK:
- 	case HOT_ADD_DISK:
-diff --git a/include/linux/tty.h b/include/linux/tty.h
-index c56e3978b00f..414db2bce715 100644
---- a/include/linux/tty.h
-+++ b/include/linux/tty.h
-@@ -746,8 +746,6 @@ static inline int tty_audit_push(void)
- /* tty_ioctl.c */
- extern int n_tty_ioctl_helper(struct tty_struct *tty, struct file *file,
- 		       unsigned int cmd, unsigned long arg);
--extern long n_tty_compat_ioctl_helper(struct tty_struct *tty, struct file *file,
--		       unsigned int cmd, unsigned long arg);
  
- /* vt.c */
+-	state->baud_base = new_serial.baud_base;
++	state->baud_base = ss->baud_base;
+ 	port->flags = ((port->flags & ~ASYNC_FLAGS) |
+-			(new_serial.flags & ASYNC_FLAGS));
+-	state->custom_divisor = new_serial.custom_divisor;
+-	port->close_delay = new_serial.close_delay * HZ/100;
+-	port->closing_wait = new_serial.closing_wait * HZ/100;
++			(ss->flags & ASYNC_FLAGS));
++	state->custom_divisor = ss->custom_divisor;
++	port->close_delay = ss->close_delay * HZ/100;
++	port->closing_wait = ss->closing_wait * HZ/100;
+ 	port->low_latency = (port->flags & ASYNC_LOW_LATENCY) ? 1 : 0;
+ 
+ check_and_exit:
+ 	if (tty_port_initialized(port)) {
+ 		if (change_spd) {
+ 			/* warn about deprecation unless clearing */
+-			if (new_serial.flags & ASYNC_SPD_MASK)
++			if (ss->flags & ASYNC_SPD_MASK)
+ 				dev_warn_ratelimited(tty->dev, "use of SPD flags is deprecated\n");
+ 			change_speed(tty, state, NULL);
+ 		}
+@@ -1084,7 +1081,6 @@ static int set_serial_info(struct tty_struct *tty, struct serial_state *state,
+ 	return retval;
+ }
+ 
+-
+ /*
+  * get_lsr_info - get line status register info
+  *
+@@ -1224,18 +1220,13 @@ static int rs_ioctl(struct tty_struct *tty,
+ 	if (serial_paranoia_check(info, tty->name, "rs_ioctl"))
+ 		return -ENODEV;
+ 
+-	if ((cmd != TIOCGSERIAL) && (cmd != TIOCSSERIAL) &&
+-	    (cmd != TIOCSERCONFIG) && (cmd != TIOCSERGSTRUCT) &&
++	if ((cmd != TIOCSERCONFIG) && (cmd != TIOCSERGSTRUCT) &&
+ 	    (cmd != TIOCMIWAIT) && (cmd != TIOCGICOUNT)) {
+ 		if (tty_io_error(tty))
+ 		    return -EIO;
+ 	}
+ 
+ 	switch (cmd) {
+-		case TIOCGSERIAL:
+-			return get_serial_info(tty, info, argp);
+-		case TIOCSSERIAL:
+-			return set_serial_info(tty, info, argp);
+ 		case TIOCSERCONFIG:
+ 			return 0;
+ 
+@@ -1607,6 +1598,8 @@ static const struct tty_operations serial_ops = {
+ 	.tiocmget = rs_tiocmget,
+ 	.tiocmset = rs_tiocmset,
+ 	.get_icount = rs_get_icount,
++	.set_serial = set_serial_info,
++	.get_serial = get_serial_info,
+ 	.proc_show = rs_proc_show,
+ };
  
 -- 
 2.11.0
