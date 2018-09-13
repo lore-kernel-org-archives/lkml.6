@@ -2,125 +2,142 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=5.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=5.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53954C04AB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 20:44:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4067C04AB8
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 20:44:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD7C721480
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 20:44:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MhfNn+3g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD7C721480
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 98EE620881
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 20:44:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98EE620881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ravnborg.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728168AbeINBzX (ORCPT
+        id S1728200AbeINBzb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 21:55:23 -0400
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:43181 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727781AbeINBzX (ORCPT
+        Thu, 13 Sep 2018 21:55:31 -0400
+Received: from asavdk3.altibox.net ([109.247.116.14]:59301 "EHLO
+        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726914AbeINBza (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 21:55:23 -0400
-Received: by mail-yw1-f65.google.com with SMTP id l189-v6so1752149ywb.10
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 13:44:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=vJ+4d2XlhX+nuksOGHbpQLsBxitlOkXzw9aDti48oMc=;
-        b=MhfNn+3gPFR+OIH6pZ+Yib0HJcSfSVCYQipa+Hg+vJbNAMoTRY6kHDKAdP3XB4RRci
-         483tr8zaJQ3IT9qNPQlwYZXfoP3UO/ZsOqAtHTBTMlV+V5iOE3DaAX/IhDils4gOFFTe
-         XNGV8m3l6jkRYt2vRFFRAC79QTmByjAF923JeBUvnS+gsThuL69LINaSz2mQsxIUti+R
-         DJisKIcq+XKDOx/cESTNFW8Q1tC0NV6iulvU4Haxjmm3K0ocu/qfszacuccTKQ3cMyw0
-         D7n9syc10/3npfp9SNnX/DmA0ouW7e7/lIv5K3eW/wU6rDBopTUzSo0vlxwmbME0kZRS
-         /8+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=vJ+4d2XlhX+nuksOGHbpQLsBxitlOkXzw9aDti48oMc=;
-        b=B+Kf4MpXf2uKZAV+mUXCxr/AQRM0PE+rU9Q+erPerHUPQkvdr8A4MwJaYw1ELHvpYd
-         HHz6mO/ANXqIxbMqckMFm15KWLecNzIRv1/heSS7igFhBnz+ry08XK9NAt4k1kQTfSbh
-         Z66pg4lnyEcibRtzhvy0oPQDkjj6Hmq3YhxW5LD5ZDXhayPvKadO7oF8+do72k9y9Mue
-         0xT8LzqQ8EO+lGgw1Z138r/hLd7SE1nOTHjAdDkcQshubZZyVbi4B1WHsVLTRw/ZKGPi
-         nL/7nDkOhd2P9w2q3U0NiDhXRtAc1rHaZFMSeeu9zzI0VAnrTFc1QZOF/xZW6NiraAPA
-         6vGA==
-X-Gm-Message-State: APzg51DtYotutdXgcKjULFdLsRrCKybz5BSHTz3QvKXfBxhOu9AvMKjo
-        vD5FxIQocJjlxteNaG8rZso=
-X-Google-Smtp-Source: ANB0VdbX4e3CHYmkyiEFBA7Pz2mqI/LmiMsthb63nMlGRYi+TL1YPM7mO/gH5E7qIZu/SyXl02cFAw==
-X-Received: by 2002:a81:3d12:: with SMTP id k18-v6mr4254293ywa.452.1536871454562;
-        Thu, 13 Sep 2018 13:44:14 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:200::2:3a97])
-        by smtp.gmail.com with ESMTPSA id f5-v6sm2377354ywa.39.2018.09.13.13.44.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Sep 2018 13:44:13 -0700 (PDT)
-Date:   Thu, 13 Sep 2018 13:44:11 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Dennis Zhou <dennis@kernel.org>,
-        Christoph Lameter <cl@linux.com>
-Subject: [GIT PULL] percpu MAINTAINERS update
-Message-ID: <20180913204411.GG2966370@devbig004.ftw2.facebook.com>
+        Thu, 13 Sep 2018 21:55:30 -0400
+Received: from ravnborg.org (unknown [158.248.194.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by asavdk3.altibox.net (Postfix) with ESMTPS id C624C2001F;
+        Thu, 13 Sep 2018 22:44:13 +0200 (CEST)
+Date:   Thu, 13 Sep 2018 22:44:12 +0200
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     Alessandro Zummo <a.zummo@towertech.it>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
+        =?iso-8859-1?Q?S=F8ren?= Andersen <san@skov.dk>
+Subject: Re: [PATCH v1 1/5] dt-binding: rtci-pcf8523: add quartz_load property
+Message-ID: <20180913204412.GA30987@ravnborg.org>
+References: <20180822183555.GA24084@ravnborg.org>
+ <20180907193508.24974-2-sam@ravnborg.org>
+ <20180913190516.GG14988@piout.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180913190516.GG14988@piout.net>
 User-Agent: Mutt/1.5.21 (2010-09-15)
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=dqr19Wo4 c=1 sm=1 tr=0
+        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
+        a=8nJEP1OIZ-IA:10 a=7gkXJVJtAAAA:8 a=P-IC7800AAAA:8 a=VwQbUJbxAAAA:8
+        a=7CQSdrXTAAAA:8 a=CQ2M3AanYSmxaPcD9a4A:9 a=wPNLvfGTeEIA:10
+        a=E9Po1WZjFZOl8hwRPBS3:22 a=d3PnA9EDa4IxuAV0gXij:22
+        a=AjGcO6oz07-iQ99wixmX:22 a=a-qgeE7W1pNrGK8U0ZQC:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Linus.
+Hi Alexandre.
 
-This pull request transfers the percpu tree maintainership to Dennis
-Zhou.  Dennis rewrote a good portion of the percpu allocator, knows
-most of percpu related code, is already listed as a co-maintainer, has
-been reliable, and now sits right behind me.  I'll keep reviewing and
-involved with percpu stuff and am sure that Dennis will soon make a
-better maintainer than I ever was.
+On Thu, Sep 13, 2018 at 09:05:16PM +0200, Alexandre Belloni wrote:
+> Hi,
+> 
+> You can remove 'rtci-' from the subject.
 
-Thanks!
+The 'i' part was me fooling around in vi.
+After submitting this serie I read the proper subject would be:
+(from bindings/submitting-patches.txt)
 
-The following changes since commit 54eda9df17f3215b9ed16629ee71ea07413efdaf:
+dt-bindings: rtc: <short description>
 
-  Merge tag 'pci-v4.19-fixes-1' of git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci (2018-09-12 19:39:56 -1000)
+I will use this in next submission so it is clear this is rtc related.
 
-are available in the Git repository at:
+> 
+> On 07/09/2018 21:35:04+0200, Sam Ravnborg wrote:
+> > From: Søren Andersen <san@skov.dk>
+> > 
+> > The NXP pcf8523 supports two different quartz loads.
+> > - 7 pF (default)
+> > - 12.5 pF (minimum power consumption)
+> > 
+> > The pcf8523 needs to know the size of the quartz load,
+> > otherwise the the RTC will have a bad precision.
+> > 
+> > The default for the rtc (after power-on) is 7 pF.
+> > Add a property that tells if the external capacitor is 12.5 pF.
+> > 
+> > Signed-off-by: Søren Andersen <san@skov.dk>
+> > Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
+> > Cc: Alessandro Zummo <a.zummo@towertech.it>
+> > Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> > Cc: Rob Herring <robh+dt@kernel.org>
+> > Cc: Mark Rutland <mark.rutland@arm.com>
+> > ---
+> >  Documentation/devicetree/bindings/rtc/nxp,pcf8523.txt | 19 +++++++++++++++++++
+> >  Documentation/devicetree/bindings/trivial-devices.txt |  1 -
+> >  2 files changed, 19 insertions(+), 1 deletion(-)
+> >  create mode 100644 Documentation/devicetree/bindings/rtc/nxp,pcf8523.txt
+> > 
+> > diff --git a/Documentation/devicetree/bindings/rtc/nxp,pcf8523.txt b/Documentation/devicetree/bindings/rtc/nxp,pcf8523.txt
+> > new file mode 100644
+> > index 000000000000..7c5e93f5077c
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/rtc/nxp,pcf8523.txt
+> > @@ -0,0 +1,19 @@
+> > +* NXP PCF8523 Real Time Clock
+> > +
+> > +NXP PCF8523 Real Time Clock
+> > +
+> > +Required properties:
+> > +- compatible: Should contain "nxp,pcf8523".
+> > +- reg: I2C address for chip.
+> > +
+> > +Optional property:
+> > +- nxp,quartz_load_12.5pF: The capacitive load on the quartz is 12.5 pF,
+> > +  which differ from the default value of 7 pF
+> > +
+> 
+> The boolean properties usually don't work well for RTCs because people
+> usually want to keep any previous configuration that may have been done
+> at the factory or in the bootloader so I would use:
+> 
+> nxp,quartz_load_fF and this would be either 7000 or 12500.
+We had is implmented like this (using pF) in the beginning but
+then went for the simpler property.
+Will add a fF property as you suggest and avoid breaking the existing drivers.
+We will check a few of the boards to see if the current configuration
+of the pcf8523 driver looks wrong, and if so we will print
+the warnings as suggested.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tj/percpu.git for-4.19-fixes
+I think the above covers feedback on all patches.
+And thanks for the feedback!
 
-for you to fetch changes up to 1194c4154662ac60312c164e9eaab0f8dd0dd36f:
-
-  MAINTAINERS: Make Dennis the percpu tree maintainer (2018-09-13 12:16:36 -0700)
-
-----------------------------------------------------------------
-Tejun Heo (1):
-      MAINTAINERS: Make Dennis the percpu tree maintainer
-
- MAINTAINERS | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 4130acc2e152..bb65f0c1861c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11360,10 +11360,10 @@ S:	Maintained
- F:	drivers/platform/x86/peaq-wmi.c
- 
- PER-CPU MEMORY ALLOCATOR
-+M:	Dennis Zhou <dennis@kernel.org>
- M:	Tejun Heo <tj@kernel.org>
- M:	Christoph Lameter <cl@linux.com>
--M:	Dennis Zhou <dennisszhou@gmail.com>
--T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tj/percpu.git
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/dennis/percpu.git
- S:	Maintained
- F:	include/linux/percpu*.h
- F:	mm/percpu*.c
-
--- 
-tejun
+	Sam
