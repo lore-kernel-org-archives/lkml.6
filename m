@@ -2,45 +2,46 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 506CDC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:34:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE6D0C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:35:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 123A920854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:34:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 123A920854
+	by mail.kernel.org (Postfix) with ESMTP id 6950A20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:35:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6950A20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728936AbeIMSoY (ORCPT
+        id S1728950AbeIMSo2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:44:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58970 "EHLO
+        Thu, 13 Sep 2018 14:44:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58986 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727666AbeIMSoX (ORCPT
+        with ESMTP id S1727666AbeIMSo1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:44:23 -0400
+        Thu, 13 Sep 2018 14:44:27 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AAC45CF3;
-        Thu, 13 Sep 2018 13:34:53 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4DEE2CF3;
+        Thu, 13 Sep 2018 13:34:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xu Wen <wen.xu@gatech.edu>,
-        Qu Wenruo <wqu@suse.com>, Gu Jinxiang <gujx@cn.fujitsu.com>,
-        David Sterba <dsterba@suse.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 33/60] btrfs: relocation: Only remove reloc rb_trees if reloc control has been initialized
-Date:   Thu, 13 Sep 2018 15:30:40 +0200
-Message-Id: <20180913131746.978526298@linuxfoundation.org>
+        stable@vger.kernel.org, Jan Beulich <JBeulich@suse.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.9 01/78] x86/speculation/l1tf: Fix up pte->pfn conversion for PAE
+Date:   Thu, 13 Sep 2018 15:30:48 +0200
+Message-Id: <20180913131805.799497514@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20180913131745.261413581@linuxfoundation.org>
-References: <20180913131745.261413581@linuxfoundation.org>
+In-Reply-To: <20180913131805.732342940@linuxfoundation.org>
+References: <20180913131805.732342940@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -49,67 +50,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Qu Wenruo <wqu@suse.com>
+From: Michal Hocko <mhocko@suse.cz>
 
-[ Upstream commit 389305b2aa68723c754f88d9dbd268a400e10664 ]
+commit e14d7dfb41f5807a0c1c26a13f2b8ef16af24935 upstream.
 
-Invalid reloc tree can cause kernel NULL pointer dereference when btrfs
-does some cleanup of the reloc roots.
+Jan has noticed that pte_pfn and co. resp. pfn_pte are incorrect for
+CONFIG_PAE because phys_addr_t is wider than unsigned long and so the
+pte_val reps. shift left would get truncated. Fix this up by using proper
+types.
 
-It turns out that fs_info::reloc_ctl can be NULL in
-btrfs_recover_relocation() as we allocate relocation control after all
-reloc roots have been verified.
-So when we hit: note, we haven't called set_reloc_control() thus
-fs_info::reloc_ctl is still NULL.
+[Just one chunk, again, needed here.  Thanks to Ben and Guenter for
+finding and fixing this. - gregkh]
 
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=199833
-Reported-by: Xu Wen <wen.xu@gatech.edu>
-Signed-off-by: Qu Wenruo <wqu@suse.com>
-Tested-by: Gu Jinxiang <gujx@cn.fujitsu.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Fixes: 6b28baca9b1f ("x86/speculation/l1tf: Protect PROT_NONE PTEs against speculation")
+Reported-by: Jan Beulich <JBeulich@suse.com>
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Cc: Guenter Roeck <linux@roeck-us.net>
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/btrfs/relocation.c |   23 ++++++++++++-----------
- 1 file changed, 12 insertions(+), 11 deletions(-)
 
---- a/fs/btrfs/relocation.c
-+++ b/fs/btrfs/relocation.c
-@@ -1318,18 +1318,19 @@ static void __del_reloc_root(struct btrf
- 	struct mapping_node *node = NULL;
- 	struct reloc_control *rc = root->fs_info->reloc_ctl;
+---
+ arch/x86/include/asm/pgtable.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -420,7 +420,7 @@ static inline pmd_t pfn_pmd(unsigned lon
  
--	spin_lock(&rc->reloc_root_tree.lock);
--	rb_node = tree_search(&rc->reloc_root_tree.rb_root,
--			      root->node->start);
--	if (rb_node) {
--		node = rb_entry(rb_node, struct mapping_node, rb_node);
--		rb_erase(&node->rb_node, &rc->reloc_root_tree.rb_root);
-+	if (rc) {
-+		spin_lock(&rc->reloc_root_tree.lock);
-+		rb_node = tree_search(&rc->reloc_root_tree.rb_root,
-+				      root->node->start);
-+		if (rb_node) {
-+			node = rb_entry(rb_node, struct mapping_node, rb_node);
-+			rb_erase(&node->rb_node, &rc->reloc_root_tree.rb_root);
-+		}
-+		spin_unlock(&rc->reloc_root_tree.lock);
-+		if (!node)
-+			return;
-+		BUG_ON((struct btrfs_root *)node->data != root);
- 	}
--	spin_unlock(&rc->reloc_root_tree.lock);
--
--	if (!node)
--		return;
--	BUG_ON((struct btrfs_root *)node->data != root);
- 
- 	spin_lock(&root->fs_info->trans_lock);
- 	list_del_init(&root->root_list);
+ static inline pud_t pfn_pud(unsigned long page_nr, pgprot_t pgprot)
+ {
+-	phys_addr_t pfn = page_nr << PAGE_SHIFT;
++	phys_addr_t pfn = (phys_addr_t)page_nr << PAGE_SHIFT;
+ 	pfn ^= protnone_mask(pgprot_val(pgprot));
+ 	pfn &= PHYSICAL_PUD_PAGE_MASK;
+ 	return __pud(pfn | massage_pgprot(pgprot));
 
 
