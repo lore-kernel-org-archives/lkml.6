@@ -2,90 +2,118 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D96AC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 04:21:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 259ACC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 04:25:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A20F20866
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 04:21:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B707020866
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 04:25:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="qyomV8dm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A20F20866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Dmm8w90a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B707020866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727419AbeIMJ2r (ORCPT
+        id S1727246AbeIMJcv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 05:28:47 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:36987 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726604AbeIMJ2r (ORCPT
+        Thu, 13 Sep 2018 05:32:51 -0400
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:34175 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726604AbeIMJcv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 05:28:47 -0400
-Received: by mail-oi0-f67.google.com with SMTP id p84-v6so8103297oic.4
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 21:21:05 -0700 (PDT)
+        Thu, 13 Sep 2018 05:32:51 -0400
+Received: by mail-yb1-f194.google.com with SMTP id t10-v6so2768868ybb.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 21:25:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=BbXXBZtus1WB5IMXP79PnyprVjPPB/aRzRwMwo7ziN4=;
-        b=qyomV8dmDNwm1bQfMCwtLWEBAx1UOwmt+V9dJHuq5PqsKSEdR/Hs88GTGuqfDvGc3b
-         nxgKBoB5iK1FiOnGYZnlYDNy6Lm5nGwbgRyumQ89+mD9o5cVVgfVzyiuszap3gc+abLR
-         KBxAlQBxyouqD4bgJqEKExBamOf9W+5Yn/TIcm/XA7RLrPtVxlWRONQZD+Vc+KGFuExz
-         +oxAZEN/4hu3CdMzb+TtCKnwrfCsiTfdkRb3y+ls3QRKyMANe2WjdQad+N/U1893B5cW
-         7BO1oNf8ARonVXKP0ViirAzum++qonGfaffsJGUrxssW2LFgUzVKsD29b4aEKlEEstKF
-         EYAA==
+        bh=7oaRrgCH8FMgYqgf5wQKl/zFZfk1zkIZLePlt6j1oKI=;
+        b=Dmm8w90aXdR9ZS4WLQHZx8Lfpacik8uNqAU9HuAcV2AxAY9QlPRbZi0xM7sKaUuDmV
+         bPy0ZzlFcMULnN6d8SH/0/zwtpO0ICxJiiu8e0PPzqBH3On5YPddngIo976ZuJBBNXoa
+         J4HcDOD0+Cgh2JT/vZxO9+/BEgOCKd8f+M3uk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=BbXXBZtus1WB5IMXP79PnyprVjPPB/aRzRwMwo7ziN4=;
-        b=DNv4iLguJFofPlhdm/Tz08LkabfqhE3XQoOouLIUOQb3lt68NhpQmJzJCJGGfxYxdx
-         u7z5XtByaCO2aaUn6U7AN+7PxZHavy2aNMy7zTSnm7IEdkCXW4uJwmzGoyAMObzR0q8N
-         DiKLii9VkwHm7AD1Gkn/fF9MLGrMF0yNfe0O3J8haigZfp5FAeh0Pnr8WllQmZLqm+cD
-         9zXA7rRYyHn/qGZS/dLelpbLKExsn6lYO26TnNt6/2IfzRZLUPPsi/Fw8oJ8XSFI2HZj
-         g9IGj1myGNiM3kqTnO48B7oHgdCBOWGkchJESmJzVV0s/H6nnPojFfsx9DRQhdvD/ueb
-         n/Yw==
-X-Gm-Message-State: APzg51CxXcltHGVOKdNLjm6aVWVp3IP33609ItFR6sp8EfQ6ToRmu6ba
-        QEShBk1mexw5rR71aLImB+rCiFSWA1hmONVYHw9JFA==
-X-Google-Smtp-Source: ANB0VdbYqZRoxcnWWJHb2Iv/wL7zu94P7Y3ujUnpVgG3ImkRkBcssHWM/NxFC0YCTLa7/LwY65YL8O4QiVbASgwLo34=
-X-Received: by 2002:aca:91a:: with SMTP id 26-v6mr4993945oij.33.1536812465175;
- Wed, 12 Sep 2018 21:21:05 -0700 (PDT)
+        bh=7oaRrgCH8FMgYqgf5wQKl/zFZfk1zkIZLePlt6j1oKI=;
+        b=AF4xb6kF4r0R7Mx2U0kWxPsaTVs5dXx8ngDpmG4QwCGEMOiPdiCmOYRNuUOJlS5JR5
+         Q338IJNYXRedSxmUIkg0RyEGajPsHum3C0SmlcvpydtxquE+Uvczi3JLgxDffHIaw30o
+         Z0edUFbD2iwEeHz4FBJe1aQNEkk53DGQlxAU3ra2tAbQUKHGBTW24BTiHH7fYCgLRUpW
+         aB9iQwavox6KRD184HNSl9G5vAY+CPUUL5PsD7yiLgImKZ4KL7n5sV7xJdNVZJi/gVeN
+         aarLhJqwRkfev7TMEsa/sfiDET8vKQHyi4t27ydaGaNzX/Ny5nW6KjeOBcLjHZqUmuMd
+         5viQ==
+X-Gm-Message-State: APzg51AsdGU3UPgG2mm6lAS9v8LlNBWCZ9NrobpEzn6F3BZnieB0ZeMF
+        3KRjsnKGynj29mcx1tiWrkSyjFQMv34=
+X-Google-Smtp-Source: ANB0VdZEPQmidF7Fu3hdc69EeP3tXdG13EQXnr3BGrAeYIyp/C14tGuDkR2oMiKwwQrSOY8yMeycUg==
+X-Received: by 2002:a25:1543:: with SMTP id 64-v6mr2656984ybv.468.1536812708283;
+        Wed, 12 Sep 2018 21:25:08 -0700 (PDT)
+Received: from mail-yw1-f53.google.com (mail-yw1-f53.google.com. [209.85.161.53])
+        by smtp.gmail.com with ESMTPSA id u191-v6sm978139ywc.0.2018.09.12.21.25.06
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Sep 2018 21:25:07 -0700 (PDT)
+Received: by mail-yw1-f53.google.com with SMTP id i144-v6so646272ywc.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Sep 2018 21:25:06 -0700 (PDT)
+X-Received: by 2002:a81:9fd6:: with SMTP id w205-v6mr2623549ywg.288.1536812706455;
+ Wed, 12 Sep 2018 21:25:06 -0700 (PDT)
 MIME-Version: 1.0
-References: <1532614438-7207-1-git-send-email-narmstrong@baylibre.com> <7hh8iuxd1y.fsf@baylibre.com>
-In-Reply-To: <7hh8iuxd1y.fsf@baylibre.com>
-From:   Kevin Hilman <khilman@baylibre.com>
-Date:   Wed, 12 Sep 2018 21:20:53 -0700
-Message-ID: <CAOi56cVESykxXg4zcdLh89Rpyiyg587XCkvFG55FnMSro4vH2w@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: meson: Switch simple-mfd and syscon order
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     linux-amlogic <linux-amlogic@lists.infradead.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>
+Received: by 2002:a25:5f04:0:0:0:0:0 with HTTP; Wed, 12 Sep 2018 21:25:05
+ -0700 (PDT)
+In-Reply-To: <41ab11ba9fa03940d129f478109d048b197d9a59.camel@intel.com>
+References: <1536723394-14616-1-git-send-email-bin.yang@intel.com>
+ <CAGXu5j+C9pApyP4ab6usOudFFFBqX5WpZQYaH6m2BpmABB2W6w@mail.gmail.com> <41ab11ba9fa03940d129f478109d048b197d9a59.camel@intel.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 12 Sep 2018 21:25:05 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jJigfeAgzoHRR-sny651kcB5fQEGF_X5n+Wi02EfwP9iA@mail.gmail.com>
+Message-ID: <CAGXu5jJigfeAgzoHRR-sny651kcB5fQEGF_X5n+Wi02EfwP9iA@mail.gmail.com>
+Subject: Re: [PATCH] pstore: fix incorrect persistent ram buffer mapping
+To:     "Yang, Bin" <bin.yang@intel.com>
+Cc:     "ccross@android.com" <ccross@android.com>,
+        "Luck, Tony" <tony.luck@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "anton@enomsg.org" <anton@enomsg.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 8:59 PM Kevin Hilman <khilman@baylibre.com> wrote:
+On Wed, Sep 12, 2018 at 6:21 PM, Yang, Bin <bin.yang@intel.com> wrote:
+> On Wed, 2018-09-12 at 10:44 -0700, Kees Cook wrote:
+>> On Tue, Sep 11, 2018 at 8:36 PM, Bin Yang <bin.yang@intel.com> wrote:
+>> > persistent_ram_vmap() returns the page start vaddr.
+>> > persistent_ram_iomap() supports non-page-aligned mapping.
+>>
+>> Oh, yes, good catch. This should probably be explicitly mentioned in
+>> comments for these functions.
+>>
+>> > persistent_ram_buffer_map() always adds offset-in-page to the vaddr
+>> > returned from these two functions, which causes incorrect mapping of
+>> > non-page-aligned persistent ram buffer.
+>>
+>> How did you find this problem, and/or how was the problem manifesting?
 >
-> Neil Armstrong <narmstrong@baylibre.com> writes:
+> By default, ftrace_size is 4096 and max_ftrace_cnt is nr_cpu_ids. The
+> zone_sz in ramoops_init_przs() is 4096/nr_cpu_ids which might not be
+> page aligned. If the offset-in-page > 2048, the vaddr will be in next
+> page. If the next page is not mapped, it will cause kernel panic.
 >
-> > The order between "syscon" and "simple-mfd" is important because in these
-> > particular cases, the node needs to be first a "simple-mfd" to expose
-> > it's sub-nodes, and later on a "syscon" to permit other nodes to access
-> > this register space through the "syscon" mechanism.
-> >
-> > Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> I just wanted to enable this driver on my board and did not change the
+> default value of ftrace_size. It resulted kernel panic as below:
 >
-> Applied to v4.20/dt64,
 >
+> [    0.074231] BUG: unable to handle kernel paging request at
+> ffffa19e0081b000
 
-I spoke too soon, this doesn't apply cleanly on top of Jeromes
-reorder/cleanup.  Please respin/resend.
+Perfect, thanks! I've updated your commit log to include these details
+now. Should be in linux-next shortly.
 
-Kevin
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
