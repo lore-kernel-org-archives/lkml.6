@@ -6,41 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02A8EC07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:58:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C066C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:59:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F338204FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:58:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F338204FD
+	by mail.kernel.org (Postfix) with ESMTP id 50423204FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:59:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50423204FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731644AbeIMTId (ORCPT
+        id S1731658AbeIMTIg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:08:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34736 "EHLO
+        Thu, 13 Sep 2018 15:08:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34752 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731265AbeIMTIc (ORCPT
+        with ESMTP id S1731373AbeIMTIf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:08:32 -0400
+        Thu, 13 Sep 2018 15:08:35 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8433FD0E;
-        Thu, 13 Sep 2018 13:58:54 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CB4C8D19;
+        Thu, 13 Sep 2018 13:58:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kim Phillips <kim.phillips@arm.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Dongjiu Geng <gengdongjiu@huawei.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, Tan Hu <tan.hu@zte.com.cn>,
+        Jiang Biao <jiang.biao2@zte.com.cn>,
+        Julian Anastasov <ja@ssi.bg>,
+        Simon Horman <horms@verge.net.au>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 080/197] perf arm spe: Fix uninitialized record error variable
-Date:   Thu, 13 Sep 2018 15:30:29 +0200
-Message-Id: <20180913131844.723541993@linuxfoundation.org>
+Subject: [PATCH 4.18 071/197] ipvs: fix race between ip_vs_conn_new() and ip_vs_del_dest()
+Date:   Thu, 13 Sep 2018 15:30:20 +0200
+Message-Id: <20180913131844.364786660@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -58,41 +55,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kim Phillips <kim.phillips@arm.com>
+From: Tan Hu <tan.hu@zte.com.cn>
 
-[ Upstream commit 344353366591acf659a0d0dea498611da78d67e2 ]
+[ Upstream commit a53b42c11815d2357e31a9403ae3950517525894 ]
 
-The auxtrace init variable 'err' was not being initialized, leading perf
-to abort early in an SPE record command when there was no explicit
-error, rather only based whatever memory contents were on the stack.
-Initialize it explicitly on getting an SPE successfully, the same way
-cs-etm does.
+We came across infinite loop in ipvs when using ipvs in docker
+env.
 
-Signed-off-by: Kim Phillips <kim.phillips@arm.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Dongjiu Geng <gengdongjiu@huawei.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Fixes: ffd3d18c20b8 ("perf tools: Add ARM Statistical Profiling Extensions (SPE) support")
-Link: http://lkml.kernel.org/r/20180810174512.52900813e57cbccf18ce99a2@arm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+When ipvs receives new packets and cannot find an ipvs connection,
+it will create a new connection, then if the dest is unavailable
+(i.e. IP_VS_DEST_F_AVAILABLE), the packet will be dropped sliently.
+
+But if the dropped packet is the first packet of this connection,
+the connection control timer never has a chance to start and the
+ipvs connection cannot be released. This will lead to memory leak, or
+infinite loop in cleanup_net() when net namespace is released like
+this:
+
+    ip_vs_conn_net_cleanup at ffffffffa0a9f31a [ip_vs]
+    __ip_vs_cleanup at ffffffffa0a9f60a [ip_vs]
+    ops_exit_list at ffffffff81567a49
+    cleanup_net at ffffffff81568b40
+    process_one_work at ffffffff810a851b
+    worker_thread at ffffffff810a9356
+    kthread at ffffffff810b0b6f
+    ret_from_fork at ffffffff81697a18
+
+race condition:
+    CPU1                           CPU2
+    ip_vs_in()
+      ip_vs_conn_new()
+                                   ip_vs_del_dest()
+                                     __ip_vs_unlink_dest()
+                                       ~IP_VS_DEST_F_AVAILABLE
+      cp->dest && !IP_VS_DEST_F_AVAILABLE
+      __ip_vs_conn_put
+    ...
+    cleanup_net  ---> infinite looping
+
+Fix this by checking whether the timer already started.
+
+Signed-off-by: Tan Hu <tan.hu@zte.com.cn>
+Reviewed-by: Jiang Biao <jiang.biao2@zte.com.cn>
+Acked-by: Julian Anastasov <ja@ssi.bg>
+Acked-by: Simon Horman <horms@verge.net.au>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/arch/arm64/util/arm-spe.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/netfilter/ipvs/ip_vs_core.c |   15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
---- a/tools/perf/arch/arm64/util/arm-spe.c
-+++ b/tools/perf/arch/arm64/util/arm-spe.c
-@@ -194,6 +194,7 @@ struct auxtrace_record *arm_spe_recordin
- 	sper->itr.read_finish = arm_spe_read_finish;
- 	sper->itr.alignment = 0;
+--- a/net/netfilter/ipvs/ip_vs_core.c
++++ b/net/netfilter/ipvs/ip_vs_core.c
+@@ -1972,13 +1972,20 @@ ip_vs_in(struct netns_ipvs *ipvs, unsign
+ 	if (cp->dest && !(cp->dest->flags & IP_VS_DEST_F_AVAILABLE)) {
+ 		/* the destination server is not available */
  
-+	*err = 0;
- 	return &sper->itr;
- }
+-		if (sysctl_expire_nodest_conn(ipvs)) {
++		__u32 flags = cp->flags;
++
++		/* when timer already started, silently drop the packet.*/
++		if (timer_pending(&cp->timer))
++			__ip_vs_conn_put(cp);
++		else
++			ip_vs_conn_put(cp);
++
++		if (sysctl_expire_nodest_conn(ipvs) &&
++		    !(flags & IP_VS_CONN_F_ONE_PACKET)) {
+ 			/* try to expire the connection immediately */
+ 			ip_vs_conn_expire_now(cp);
+ 		}
+-		/* don't restart its timer, and silently
+-		   drop the packet. */
+-		__ip_vs_conn_put(cp);
++
+ 		return NF_DROP;
+ 	}
  
 
 
