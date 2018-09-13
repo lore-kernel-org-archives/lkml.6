@@ -5,117 +5,82 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=5.0 tests=MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9210FC43143
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 20:28:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D386EC63685
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 20:28:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3AE702086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 20:28:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AE702086C
+	by mail.kernel.org (Postfix) with ESMTP id 966962086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 20:28:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 966962086C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727804AbeINBjg (ORCPT
+        id S1728292AbeINBjj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 21:39:36 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:35899 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726445AbeINBjf (ORCPT
+        Thu, 13 Sep 2018 21:39:39 -0400
+Received: from mail-oi0-f54.google.com ([209.85.218.54]:44189 "EHLO
+        mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726445AbeINBji (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 21:39:35 -0400
-Received: by mail-oi0-f65.google.com with SMTP id r69-v6so10750135oie.3;
-        Thu, 13 Sep 2018 13:28:31 -0700 (PDT)
+        Thu, 13 Sep 2018 21:39:38 -0400
+Received: by mail-oi0-f54.google.com with SMTP id l82-v6so10688775oih.11;
+        Thu, 13 Sep 2018 13:28:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Ine3I2LJVb7aK1NudtLxCUAku4mC991Izt/kipSue3A=;
-        b=hMSigNknvbB1iR9XLhAVVP9VGu7pztdVHwUC8Lsd9i0GQtP5kvzBVlSxFVaFG2TxSA
-         GXBAOML4Kxqr3TnGgG7PhL5KMHc60ELeLG6FFOtxcwTENqn79OgE55l864jcOqKuvcic
-         XkTMAW/p9DiD/52s/2MuGhjoAugOTHaAl4UkUT6AIhdTflppLyIdD5IwFi94ScIHzEYJ
-         R8kj4LM35dymrBNts0/WaYLlBw3eCQBw65mh4Tk1A95YJid6qTUtW2JcGGF0DfTVoEbk
-         NYjDYaoFDUTVu6uOVekUNYjmoQTAdjx3scoNS7OoEbU+GEl5cE/GgEIADJsENnYU31qw
-         mP8Q==
-X-Gm-Message-State: APzg51BtH95pv9rH3SgZF2u3OkSmH2F2HevwS1hNM+A9YtCDKHNcPRIV
-        QQp4xBVIlcbA+y1NdTxjQYAJ1zQ=
-X-Google-Smtp-Source: ANB0VdbiVQ8tjfx43inyxqCDv7OPT84D3XcijC//KHFZ953VXzBHgQskJO7oga2wV/y0kzEIkUT4qw==
-X-Received: by 2002:aca:34d6:: with SMTP id b205-v6mr7234040oia.77.1536870510427;
-        Thu, 13 Sep 2018 13:28:30 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=CIGZC6tKjvF57c8/im+HJDPdF2dQ6tBvjTQvWqmnb8A=;
+        b=POcI0YhK1WKSeey40XKUWrT6w3xIIUJEViyWKVXHkUJMAsNtjKXArbo/+1qfUV7Orm
+         JiyK3e0s61UkcBXbPFLZKBTufhZG/s8kBJ0lcN9OmDprqIm0od5jFZrvbq3CdEcnbjIR
+         MYkvE5OaSZl2iCaRTPzO0bdOgzaNP5vkqt6qg3Y76MvKs+onifU5D3viE/jS83IWWG4Y
+         GxaU5V8NpnhOG/pG6hfNH6SLgTVB/+LwKAdt6mUfOzm3udx7rjxyBuQxn3nQTJHjEQhg
+         xn597pE1Z2HlicJojXBHEh6hKxkU/9bj141Sy8e8RPDELsJDDub3oS9wRvWJbABvZX1v
+         +9mA==
+X-Gm-Message-State: APzg51CCmCo0rxU+8cgxjRn8jMsczTBoel4hEYbYLbdgIa+YfAQYhG05
+        CJZLJ0m6C+0fl+CDD7SWtZ5N5xY=
+X-Google-Smtp-Source: ANB0VdZcf9sIokw42XfsvwlMACIqKWZQjSLq3d/wjWZnKTd7UCbwl5YtH7qGSj4NSbEgQnsQEaWCNg==
+X-Received: by 2002:a54:4f94:: with SMTP id g20-v6mr7155799oiy.130.1536870512396;
+        Thu, 13 Sep 2018 13:28:32 -0700 (PDT)
 Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id h34-v6sm756745otb.71.2018.09.13.13.28.29
+        by smtp.googlemail.com with ESMTPSA id h34-v6sm756745otb.71.2018.09.13.13.28.30
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Sep 2018 13:28:29 -0700 (PDT)
+        Thu, 13 Sep 2018 13:28:30 -0700 (PDT)
 From:   Rob Herring <robh@kernel.org>
 To:     devicetree@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linuxppc-dev@lists.ozlabs.org,
-        Frank Rowand <frowand.list@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 1/3] libfdt: Ensure INT_MAX is defined in libfdt_env.h
-Date:   Thu, 13 Sep 2018 15:28:26 -0500
-Message-Id: <20180913202828.15372-1-robh@kernel.org>
+        Frank Rowand <frowand.list@gmail.com>
+Subject: [PATCH 2/3] scripts/dtc: Add yamltree.c to dtc sources
+Date:   Thu, 13 Sep 2018 15:28:27 -0500
+Message-Id: <20180913202828.15372-2-robh@kernel.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180913202828.15372-1-robh@kernel.org>
+References: <20180913202828.15372-1-robh@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The next update of libfdt has a new dependency on INT_MAX. Update the
-instances of libfdt_env.h in the kernel to either include the necessary
-header with the definition or define it locally.
+dtc has a new source file, yamltree.c, that needs to be copied when
+syncing dtc sources.
 
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linuxppc-dev@lists.ozlabs.org
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- arch/arm/boot/compressed/libfdt_env.h | 2 ++
- arch/powerpc/boot/libfdt_env.h        | 2 ++
- include/linux/libfdt_env.h            | 1 +
- 3 files changed, 5 insertions(+)
+ scripts/dtc/update-dtc-source.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/compressed/libfdt_env.h b/arch/arm/boot/compressed/libfdt_env.h
-index 07437816e098..b36c0289a308 100644
---- a/arch/arm/boot/compressed/libfdt_env.h
-+++ b/arch/arm/boot/compressed/libfdt_env.h
-@@ -6,6 +6,8 @@
- #include <linux/string.h>
- #include <asm/byteorder.h>
+diff --git a/scripts/dtc/update-dtc-source.sh b/scripts/dtc/update-dtc-source.sh
+index 1a009fd195d0..7dd29a0362b8 100755
+--- a/scripts/dtc/update-dtc-source.sh
++++ b/scripts/dtc/update-dtc-source.sh
+@@ -32,7 +32,7 @@ DTC_UPSTREAM_PATH=`pwd`/../dtc
+ DTC_LINUX_PATH=`pwd`/scripts/dtc
  
-+#define INT_MAX			((int)(~0U>>1))
-+
- typedef __be16 fdt16_t;
- typedef __be32 fdt32_t;
- typedef __be64 fdt64_t;
-diff --git a/arch/powerpc/boot/libfdt_env.h b/arch/powerpc/boot/libfdt_env.h
-index 2a0c8b1bf147..2abc8e83b95e 100644
---- a/arch/powerpc/boot/libfdt_env.h
-+++ b/arch/powerpc/boot/libfdt_env.h
-@@ -5,6 +5,8 @@
- #include <types.h>
- #include <string.h>
- 
-+#define INT_MAX			((int)(~0U>>1))
-+
- #include "of.h"
- 
- typedef unsigned long uintptr_t;
-diff --git a/include/linux/libfdt_env.h b/include/linux/libfdt_env.h
-index c6ac1fe7ec68..edb0f0c30904 100644
---- a/include/linux/libfdt_env.h
-+++ b/include/linux/libfdt_env.h
-@@ -2,6 +2,7 @@
- #ifndef LIBFDT_ENV_H
- #define LIBFDT_ENV_H
- 
-+#include <linux/kernel.h>	/* For INT_MAX */
- #include <linux/string.h>
- 
- #include <asm/byteorder.h>
+ DTC_SOURCE="checks.c data.c dtc.c dtc.h flattree.c fstree.c livetree.c srcpos.c \
+-		srcpos.h treesource.c util.c util.h version_gen.h Makefile.dtc \
++		srcpos.h treesource.c util.c util.h version_gen.h yamltree.c Makefile.dtc \
+ 		dtc-lexer.l dtc-parser.y"
+ LIBFDT_SOURCE="Makefile.libfdt fdt.c fdt.h fdt_addresses.c fdt_empty_tree.c \
+ 		fdt_overlay.c fdt_ro.c fdt_rw.c fdt_strerror.c fdt_sw.c \
 -- 
 2.17.1
 
