@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C62ECC61CF0
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 11:30:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D88DAC07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 11:30:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8106820861
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 11:30:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8106820861
+	by mail.kernel.org (Postfix) with ESMTP id 9D43620861
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 11:30:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D43620861
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728049AbeIMQjo (ORCPT
+        id S1728100AbeIMQjr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 12:39:44 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:37496 "EHLO mail.bootlin.com"
+        Thu, 13 Sep 2018 12:39:47 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:37502 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726818AbeIMQjm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 12:39:42 -0400
+        id S1726818AbeIMQjq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 12:39:46 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id F3F57208D9; Thu, 13 Sep 2018 13:30:37 +0200 (CEST)
+        id DCFE620901; Thu, 13 Sep 2018 13:30:41 +0200 (CEST)
 Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 8C817208DC;
-        Thu, 13 Sep 2018 13:30:27 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 94303208ED;
+        Thu, 13 Sep 2018 13:30:28 +0200 (CEST)
 From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
 To:     Daniel Lezcano <daniel.lezcano@linaro.org>
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
@@ -35,9 +35,9 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH v7 3/7] clocksource/drivers: timer-atmel-tcb: add clockevent device on separate channel
-Date:   Thu, 13 Sep 2018 13:30:20 +0200
-Message-Id: <20180913113024.3571-4-alexandre.belloni@bootlin.com>
+Subject: [PATCH v7 4/7] clocksource/drivers: atmel-pit: make option silent
+Date:   Thu, 13 Sep 2018 13:30:21 +0200
+Message-Id: <20180913113024.3571-5-alexandre.belloni@bootlin.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913113024.3571-1-alexandre.belloni@bootlin.com>
 References: <20180913113024.3571-1-alexandre.belloni@bootlin.com>
@@ -48,266 +48,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add an other clockevent device that uses a separate TCB channel when
-available.
+To conform with the other option, make the ATMEL_PIT option silent so it
+can be selected from the platform
 
+Tested-by: Alexander Dahl <ada@thorsis.com>
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- drivers/clocksource/timer-atmel-tcb.c | 217 +++++++++++++++++++++++++-
- 1 file changed, 212 insertions(+), 5 deletions(-)
+ drivers/clocksource/Kconfig | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clocksource/timer-atmel-tcb.c b/drivers/clocksource/timer-atmel-tcb.c
-index 21fbe430f91b..63ce3b69338a 100644
---- a/drivers/clocksource/timer-atmel-tcb.c
-+++ b/drivers/clocksource/timer-atmel-tcb.c
-@@ -32,7 +32,7 @@ struct atmel_tcb_clksrc {
- 	bool clk_enabled;
- };
+diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+index 8c7324e409f6..2388fee46e99 100644
+--- a/drivers/clocksource/Kconfig
++++ b/drivers/clocksource/Kconfig
+@@ -392,8 +392,11 @@ config ARMV7M_SYSTICK
+ 	  This options enables support for the ARMv7M system timer unit
  
--static struct atmel_tcb_clksrc tc;
-+static struct atmel_tcb_clksrc tc, tce;
+ config ATMEL_PIT
++	bool "Microchip ARM Periodic Interval Timer (PIT)" if COMPILE_TEST
+ 	select TIMER_OF if OF
+-	def_bool SOC_AT91SAM9 || SOC_SAMA5
++	help
++	  This enables build of clocksource and clockevent driver for
++	  the integrated PIT in Microchip ARM SoCs.
  
- static struct clk *tcb_clk_get(struct device_node *node, int channel)
- {
-@@ -47,6 +47,203 @@ static struct clk *tcb_clk_get(struct device_node *node, int channel)
- 	return of_clk_get_by_name(node->parent, "t0_clk");
- }
- 
-+/*
-+ * Clockevent device using its own channel
-+ */
-+
-+static void tc_clkevt2_clk_disable(struct clock_event_device *d)
-+{
-+	clk_disable(tce.clk[0]);
-+	tce.clk_enabled = false;
-+}
-+
-+static void tc_clkevt2_clk_enable(struct clock_event_device *d)
-+{
-+	if (tce.clk_enabled)
-+		return;
-+	clk_enable(tce.clk[0]);
-+	tce.clk_enabled = true;
-+}
-+
-+static int tc_clkevt2_stop(struct clock_event_device *d)
-+{
-+	writel(0xff, tce.base + ATMEL_TC_IDR(tce.channels[0]));
-+	writel(ATMEL_TC_CCR_CLKDIS, tce.base + ATMEL_TC_CCR(tce.channels[0]));
-+
-+	return 0;
-+}
-+
-+static int tc_clkevt2_shutdown(struct clock_event_device *d)
-+{
-+	tc_clkevt2_stop(d);
-+	if (!clockevent_state_detached(d))
-+		tc_clkevt2_clk_disable(d);
-+
-+	return 0;
-+}
-+
-+/* For now, we always use the 32K clock ... this optimizes for NO_HZ,
-+ * because using one of the divided clocks would usually mean the
-+ * tick rate can never be less than several dozen Hz (vs 0.5 Hz).
-+ *
-+ * A divided clock could be good for high resolution timers, since
-+ * 30.5 usec resolution can seem "low".
-+ */
-+static int tc_clkevt2_set_oneshot(struct clock_event_device *d)
-+{
-+	if (clockevent_state_oneshot(d) || clockevent_state_periodic(d))
-+		tc_clkevt2_stop(d);
-+
-+	tc_clkevt2_clk_enable(d);
-+
-+	/* slow clock, count up to RC, then irq and stop */
-+	writel(ATMEL_TC_CMR_TCLK(4) | ATMEL_TC_CMR_CPCSTOP |
-+	       ATMEL_TC_CMR_WAVE | ATMEL_TC_CMR_WAVESEL_UPRC,
-+	       tce.base + ATMEL_TC_CMR(tce.channels[0]));
-+	writel(ATMEL_TC_CPCS, tce.base + ATMEL_TC_IER(tce.channels[0]));
-+
-+	return 0;
-+}
-+
-+static int tc_clkevt2_set_periodic(struct clock_event_device *d)
-+{
-+	if (clockevent_state_oneshot(d) || clockevent_state_periodic(d))
-+		tc_clkevt2_stop(d);
-+
-+	/* By not making the gentime core emulate periodic mode on top
-+	 * of oneshot, we get lower overhead and improved accuracy.
-+	 */
-+	tc_clkevt2_clk_enable(d);
-+
-+	/* slow clock, count up to RC, then irq and restart */
-+	writel(ATMEL_TC_CMR_TCLK(4) | ATMEL_TC_CMR_WAVE |
-+	       ATMEL_TC_CMR_WAVESEL_UPRC,
-+	       tce.base + ATMEL_TC_CMR(tce.channels[0]));
-+	writel((32768 + HZ / 2) / HZ, tce.base + ATMEL_TC_RC(tce.channels[0]));
-+
-+	/* Enable clock and interrupts on RC compare */
-+	writel(ATMEL_TC_CPCS, tce.base + ATMEL_TC_IER(tce.channels[0]));
-+	writel(ATMEL_TC_CCR_CLKEN | ATMEL_TC_CCR_SWTRG,
-+	       tce.base + ATMEL_TC_CCR(tce.channels[0]));
-+
-+	return 0;
-+}
-+
-+static int tc_clkevt2_next_event(unsigned long delta,
-+				 struct clock_event_device *d)
-+{
-+	writel(delta, tce.base + ATMEL_TC_RC(tce.channels[0]));
-+	writel(ATMEL_TC_CCR_CLKEN | ATMEL_TC_CCR_SWTRG,
-+	       tce.base + ATMEL_TC_CCR(tce.channels[0]));
-+
-+	return 0;
-+}
-+
-+static irqreturn_t tc_clkevt2_irq(int irq, void *handle)
-+{
-+	unsigned int sr;
-+
-+	sr = readl(tce.base + ATMEL_TC_SR(tce.channels[0]));
-+	if (sr & ATMEL_TC_CPCS) {
-+		tce.clkevt.event_handler(&tce.clkevt);
-+		return IRQ_HANDLED;
-+	}
-+
-+	return IRQ_NONE;
-+}
-+
-+static void tc_clkevt2_suspend(struct clock_event_device *d)
-+{
-+	tce.cache[0].cmr = readl(tce.base + ATMEL_TC_CMR(tce.channels[0]));
-+	tce.cache[0].imr = readl(tce.base + ATMEL_TC_IMR(tce.channels[0]));
-+	tce.cache[0].rc = readl(tce.base + ATMEL_TC_RC(tce.channels[0]));
-+	tce.cache[0].clken = !!(readl(tce.base + ATMEL_TC_SR(tce.channels[0])) &
-+				ATMEL_TC_CLKSTA);
-+}
-+
-+static void tc_clkevt2_resume(struct clock_event_device *d)
-+{
-+	/* Restore registers for the channel, RA and RB are not used  */
-+	writel(tce.cache[0].cmr, tc.base + ATMEL_TC_CMR(tce.channels[0]));
-+	writel(tce.cache[0].rc, tc.base + ATMEL_TC_RC(tce.channels[0]));
-+	writel(0, tc.base + ATMEL_TC_RA(tce.channels[0]));
-+	writel(0, tc.base + ATMEL_TC_RB(tce.channels[0]));
-+	/* Disable all the interrupts */
-+	writel(0xff, tc.base + ATMEL_TC_IDR(tce.channels[0]));
-+	/* Reenable interrupts that were enabled before suspending */
-+	writel(tce.cache[0].imr, tc.base + ATMEL_TC_IER(tce.channels[0]));
-+
-+	/* Start the clock if it was used */
-+	if (tce.cache[0].clken)
-+		writel(ATMEL_TC_CCR_CLKEN | ATMEL_TC_CCR_SWTRG,
-+		       tc.base + ATMEL_TC_CCR(tce.channels[0]));
-+}
-+
-+static int __init tc_clkevt_register(struct device_node *node,
-+				     struct regmap *regmap, void __iomem *base,
-+				     int channel, int irq, int bits)
-+{
-+	int ret;
-+	struct clk *slow_clk;
-+
-+	tce.regmap = regmap;
-+	tce.base = base;
-+	tce.channels[0] = channel;
-+	tce.irq = irq;
-+
-+	slow_clk = of_clk_get_by_name(node->parent, "slow_clk");
-+	if (IS_ERR(slow_clk))
-+		return PTR_ERR(slow_clk);
-+
-+	ret = clk_prepare_enable(slow_clk);
-+	if (ret)
-+		return ret;
-+
-+	tce.clk[0] = tcb_clk_get(node, tce.channels[0]);
-+	if (IS_ERR(tce.clk[0])) {
-+		ret = PTR_ERR(tce.clk[0]);
-+		goto err_slow;
-+	}
-+
-+	snprintf(tce.name, sizeof(tce.name), "%s:%d",
-+		 kbasename(node->parent->full_name), channel);
-+	tce.clkevt.cpumask = cpumask_of(0);
-+	tce.clkevt.name = tce.name;
-+	tce.clkevt.set_next_event = tc_clkevt2_next_event,
-+	tce.clkevt.set_state_shutdown = tc_clkevt2_shutdown,
-+	tce.clkevt.set_state_periodic = tc_clkevt2_set_periodic,
-+	tce.clkevt.set_state_oneshot = tc_clkevt2_set_oneshot,
-+	tce.clkevt.suspend = tc_clkevt2_suspend,
-+	tce.clkevt.resume = tc_clkevt2_resume,
-+	tce.clkevt.features = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT;
-+	tce.clkevt.rating = 140;
-+
-+	/* try to enable clk to avoid future errors in mode change */
-+	ret = clk_prepare_enable(tce.clk[0]);
-+	if (ret)
-+		goto err_slow;
-+	clk_disable(tce.clk[0]);
-+
-+	clockevents_config_and_register(&tce.clkevt, 32768, 1,
-+					CLOCKSOURCE_MASK(bits));
-+
-+	ret = request_irq(tce.irq, tc_clkevt2_irq, IRQF_TIMER | IRQF_SHARED,
-+			  tce.clkevt.name, &tce);
-+	if (ret)
-+		goto err_clk;
-+
-+	tce.registered = true;
-+
-+	return 0;
-+
-+err_clk:
-+	clk_unprepare(tce.clk[0]);
-+err_slow:
-+	clk_disable_unprepare(slow_clk);
-+
-+	return ret;
-+}
-+
- /*
-  * Clocksource and clockevent using the same channel(s)
-  */
-@@ -363,7 +560,7 @@ static int __init tcb_clksrc_init(struct device_node *node)
- 	int irq, err, chan1 = -1;
- 	unsigned bits;
- 
--	if (tc.registered)
-+	if (tc.registered && tce.registered)
- 		return -ENODEV;
- 
- 	/*
-@@ -395,12 +592,22 @@ static int __init tcb_clksrc_init(struct device_node *node)
- 			return irq;
- 	}
- 
-+	if (tc.registered)
-+		return tc_clkevt_register(node, regmap, tcb_base, channel, irq,
-+					  bits);
-+
- 	if (bits == 16) {
- 		of_property_read_u32_index(node, "reg", 1, &chan1);
- 		if (chan1 == -1) {
--			pr_err("%s: clocksource needs two channels\n",
--			       node->parent->full_name);
--			return -EINVAL;
-+			if (tce.registered) {
-+				pr_err("%s: clocksource needs two channels\n",
-+				       node->parent->full_name);
-+				return -EINVAL;
-+			} else {
-+				return tc_clkevt_register(node, regmap,
-+							  tcb_base, channel,
-+							  irq, bits);
-+			}
- 		}
- 	}
- 
+ config ATMEL_ST
+ 	bool "Atmel ST timer support" if COMPILE_TEST
 -- 
 2.19.0
 
