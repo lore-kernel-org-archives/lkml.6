@@ -2,96 +2,113 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=5.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAA96C43143
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 18:36:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58638C63685
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 18:37:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BA4C204FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 18:36:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DE5020881
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 18:37:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gxstKwfp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BA4C204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="jKIV9AYr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DE5020881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727988AbeIMXrT (ORCPT
+        id S1728090AbeIMXrs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 19:47:19 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:37063 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726839AbeIMXrS (ORCPT
+        Thu, 13 Sep 2018 19:47:48 -0400
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:26981 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727992AbeIMXrs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 19:47:18 -0400
-Received: by mail-pl1-f194.google.com with SMTP id f1-v6so2989864plt.4;
-        Thu, 13 Sep 2018 11:36:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=oL2xG4bF8qgEbvy8dMAtzs2DoDvkKu0u4l0w+2sJW+A=;
-        b=gxstKwfpU7PHsXm9/aY0mC8GAWLG86yP0KA2OrdBj6M9Uoy9vZ6lH9+fzm4JnIlshI
-         VWr42+Zt6oUs7IlA1pPfVJxU85RTSNSbuFeiIBSkKejytuaD0DNaH9bOjU+FMo677c8f
-         aay7Qjc9uC4SXtwW4czmgf+0WcW+e/0mO3mSWVel0kaeNXSs927k3/tpBJwLzjQ3vOUw
-         e86F0iqzmNZ8hXda/2S+fjgz91EpCYrenPQtrxNdL72Ly5zxuaJ/qpUyN4JdLFpwJEyH
-         29jmm9l0WLwYxm7CEg0j425znjnVwehONLJUjAltPZHyjjy9U78fDK1/VGhpZ/wZRUkR
-         y/3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=oL2xG4bF8qgEbvy8dMAtzs2DoDvkKu0u4l0w+2sJW+A=;
-        b=b10Wch1adv2QcYKiofnlX8fWClw1vfntGeMPMALKkO0GRdQFoVZO1wqZ48orFMolmM
-         KZ7z5w3K/FGaVjnJDIcabdosJOHPZyG5n2xE+C4Z2wTQw+UJJ3asecQM0ZywH2jm9Sla
-         8NGUE45QpcH6qj57hTu8/o75VHGT15u0dNmukWfsnDD178xyljdLQwO+uWyQBMbdB84R
-         AIGezX1P3ro+4i9A5ICDwFml7fz92kYiFW0fZhKyM0j9gj18vIG9gr8Vr/2y9WOoQBHO
-         WBArHTpxdSBiqTDFC5W+/JFMv6mrjQ/VQXgkuHlKtRxflyBiTZxDi/32eY7kjLKOVrkn
-         l5oA==
-X-Gm-Message-State: APzg51C90498A5ilmQjOk+PnTfXn0jeCx6g1kJYWpWdiAU+AnOgfp5OA
-        2AqEWva6fPnXEqIbvrlWdpW2C6Aa
-X-Google-Smtp-Source: ANB0VdYxLwjeP54DckkF/6UAoLTjQVWn39To+4DXykBK08HdBQs9shQ2mJNo6LeQSEOj9tTG7GkHsw==
-X-Received: by 2002:a17:902:6bc5:: with SMTP id m5-v6mr8308874plt.274.1536863796616;
-        Thu, 13 Sep 2018 11:36:36 -0700 (PDT)
-Received: from cox.net ([192.19.218.250])
-        by smtp.gmail.com with ESMTPSA id a192-v6sm10366490pfa.124.2018.09.13.11.36.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Sep 2018 11:36:35 -0700 (PDT)
-From:   Florian Fainelli <f.fainelli@gmail.com>
-To:     netdev@vger.kernel.org
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net-next] net: phy: et011c: Remove incorrect PHY_POLL flags
-Date:   Thu, 13 Sep 2018 11:36:30 -0700
-Message-Id: <20180913183630.32584-1-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 13 Sep 2018 19:47:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1536863827; x=1568399827;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references;
+  bh=gjnlUPagI1vf6/WNqKxc8KY88DkfwDRZzZi6iXSpG08=;
+  b=jKIV9AYrrMwltgj04CwUEHQEcTXuDs+jXONmXZI1ERePmd7FX87WQft3
+   Ufw61deTJBnx5zwk4alHmtccfSbRZvrGGrLX771qqpYqDZS55g7bYYw50
+   IgTP9il6OEwnqusgY1aQoj5U/Nz+DlDN7TQN24/8dz00hnMi1gsrqqRy+
+   hpW27eMlL2jS0us72NlrK7QQWVnJIP1NhqatnX56J86loc6nZs7FuU4iw
+   nuB8Ams86Z4gasNNQfmeUNfnsJYroKzhg67DjFix+RvQ+mZlShE2Yn8xD
+   /9OnX4RMoF+4sgN5Qcv3cyCc0avuI/lbRkAm/MPX5FK59IruOAbdxKOK1
+   A==;
+X-IronPort-AV: E=Sophos;i="5.53,370,1531756800"; 
+   d="scan'208";a="89712007"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 14 Sep 2018 02:37:07 +0800
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP; 13 Sep 2018 11:23:37 -0700
+Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
+  by uls-op-cesaip02.wdc.com with ESMTP; 13 Sep 2018 11:37:06 -0700
+From:   Atish Patra <atish.patra@wdc.com>
+To:     palmer@sifive.com, linux-riscv@lists.infradead.org,
+        hch@infradead.org, anup@brainfault.org
+Cc:     mark.rutland@arm.com, atish.patra@wdc.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, Damien.LeMoal@wdc.com,
+        marc.zyngier@arm.com, jeremy.linton@arm.com,
+        gregkh@linuxfoundation.org, jason@lakedaemon.net,
+        catalin.marinas@arm.com, dmitriy@oss-tech.org,
+        ard.biesheuvel@linaro.org, schwab@linux-m68k.org
+Subject: [PATCH v5 01/12] RISC-V: No need to pass scause as arg to do_IRQ()
+Date:   Thu, 13 Sep 2018 11:36:54 -0700
+Message-Id: <1536863825-66808-2-git-send-email-atish.patra@wdc.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1536863825-66808-1-git-send-email-atish.patra@wdc.com>
+References: <1536863825-66808-1-git-send-email-atish.patra@wdc.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PHY_POLL is defined as -1 which means that we would be setting all flags of the
-PHY driver, this is also not a valid flag to tell PHYLIB about, just remove it.
+From: Anup Patel <anup@brainfault.org>
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+The scause is already part of pt_regs so no need to pass
+scause as separate arg to do_IRQ().
+
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Anup Patel <anup@brainfault.org>
 ---
- drivers/net/phy/et1011c.c | 1 -
- 1 file changed, 1 deletion(-)
+ arch/riscv/kernel/entry.S | 1 -
+ arch/riscv/kernel/irq.c   | 4 ++--
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/phy/et1011c.c b/drivers/net/phy/et1011c.c
-index ab541c9c56fb..565e49e7f76f 100644
---- a/drivers/net/phy/et1011c.c
-+++ b/drivers/net/phy/et1011c.c
-@@ -92,7 +92,6 @@ static struct phy_driver et1011c_driver[] = { {
- 	.name		= "ET1011C",
- 	.phy_id_mask	= 0xfffffff0,
- 	.features	= PHY_GBIT_FEATURES,
--	.flags		= PHY_POLL,
- 	.config_aneg	= et1011c_config_aneg,
- 	.read_status	= et1011c_read_status,
- } };
+diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
+index fa2c08e3..6eaacfa5 100644
+--- a/arch/riscv/kernel/entry.S
++++ b/arch/riscv/kernel/entry.S
+@@ -168,7 +168,6 @@ ENTRY(handle_exception)
+ 
+ 	/* Handle interrupts */
+ 	move a0, sp /* pt_regs */
+-	move a1, s4 /* scause */
+ 	tail do_IRQ
+ 1:
+ 	/* Exceptions run with interrupts enabled */
+diff --git a/arch/riscv/kernel/irq.c b/arch/riscv/kernel/irq.c
+index 0cfac48a..ca459331 100644
+--- a/arch/riscv/kernel/irq.c
++++ b/arch/riscv/kernel/irq.c
+@@ -24,12 +24,12 @@
+  */
+ #define INTERRUPT_CAUSE_FLAG	(1UL << (__riscv_xlen - 1))
+ 
+-asmlinkage void __irq_entry do_IRQ(struct pt_regs *regs, unsigned long cause)
++asmlinkage void __irq_entry do_IRQ(struct pt_regs *regs)
+ {
+ 	struct pt_regs *old_regs = set_irq_regs(regs);
+ 
+ 	irq_enter();
+-	switch (cause & ~INTERRUPT_CAUSE_FLAG) {
++	switch (regs->scause & ~INTERRUPT_CAUSE_FLAG) {
+ 	case INTERRUPT_CAUSE_TIMER:
+ 		riscv_timer_interrupt();
+ 		break;
 -- 
-2.17.1
+2.7.4
 
