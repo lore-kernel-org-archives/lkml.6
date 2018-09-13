@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F37C7C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:34:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2211BC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:34:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE9D920854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:34:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE9D920854
+	by mail.kernel.org (Postfix) with ESMTP id DB36B20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:34:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB36B20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728787AbeIMSnq (ORCPT
+        id S1728801AbeIMSns (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:43:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58852 "EHLO
+        Thu, 13 Sep 2018 14:43:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58862 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727943AbeIMSnp (ORCPT
+        with ESMTP id S1727332AbeIMSns (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:43:45 -0400
+        Thu, 13 Sep 2018 14:43:48 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 14B0ACF3;
-        Thu, 13 Sep 2018 13:34:14 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 474DBCF3;
+        Thu, 13 Sep 2018 13:34:18 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Amit Pundir <amit.pundir@linaro.org>
-Subject: [PATCH 4.4 56/60] sch_tbf: fix two null pointer dereferences on init failure
-Date:   Thu, 13 Sep 2018 15:31:03 +0200
-Message-Id: <20180913131748.142104539@linuxfoundation.org>
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Alexander Usyskin <alexander.usyskin@intel.com>
+Subject: [PATCH 4.4 57/60] mei: me: allow runtime pm for platform with D0i3
+Date:   Thu, 13 Sep 2018 15:31:04 +0200
+Message-Id: <20180913131748.210662112@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131745.261413581@linuxfoundation.org>
 References: <20180913131745.261413581@linuxfoundation.org>
@@ -53,120 +53,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+From: Tomas Winkler <tomas.winkler@intel.com>
 
-commit c2d6511e6a4f1f3673d711569c00c3849549e9b0 upstream.
+commit cc365dcf0e56271bedf3de95f88922abe248e951 upstream.
 
-sch_tbf calls qdisc_watchdog_cancel() in both its ->reset and ->destroy
-callbacks but it may fail before the timer is initialized due to missing
-options (either not supplied by user-space or set as a default qdisc),
-also q->qdisc is used by ->reset and ->destroy so we need it initialized.
+>From the pci power documentation:
+"The driver itself should not call pm_runtime_allow(), though. Instead,
+it should let user space or some platform-specific code do that (user space
+can do it via sysfs as stated above)..."
 
-Reproduce:
-$ sysctl net.core.default_qdisc=tbf
-$ ip l set ethX up
+However, the S0ix residency cannot be reached without MEI device getting
+into low power state. Hence, for mei devices that support D0i3, it's better
+to make runtime power management mandatory and not rely on the system
+integration such as udev rules.
+This policy cannot be applied globally as some older platforms
+were found to have broken power management.
 
-Crash log:
-[  959.160172] BUG: unable to handle kernel NULL pointer dereference at 0000000000000018
-[  959.160323] IP: qdisc_reset+0xa/0x5c
-[  959.160400] PGD 59cdb067
-[  959.160401] P4D 59cdb067
-[  959.160466] PUD 59ccb067
-[  959.160532] PMD 0
-[  959.160597]
-[  959.160706] Oops: 0000 [#1] SMP
-[  959.160778] Modules linked in: sch_tbf sch_sfb sch_prio sch_netem
-[  959.160891] CPU: 2 PID: 1562 Comm: ip Not tainted 4.13.0-rc6+ #62
-[  959.160998] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.7.5-20140531_083030-gandalf 04/01/2014
-[  959.161157] task: ffff880059c9a700 task.stack: ffff8800376d0000
-[  959.161263] RIP: 0010:qdisc_reset+0xa/0x5c
-[  959.161347] RSP: 0018:ffff8800376d3610 EFLAGS: 00010286
-[  959.161531] RAX: ffffffffa001b1dd RBX: ffff8800373a2800 RCX: 0000000000000000
-[  959.161733] RDX: ffffffff8215f160 RSI: ffffffff8215f160 RDI: 0000000000000000
-[  959.161939] RBP: ffff8800376d3618 R08: 00000000014080c0 R09: 00000000ffffffff
-[  959.162141] R10: ffff8800376d3578 R11: 0000000000000020 R12: ffffffffa001d2c0
-[  959.162343] R13: ffff880037538000 R14: 00000000ffffffff R15: 0000000000000001
-[  959.162546] FS:  00007fcc5126b740(0000) GS:ffff88005d900000(0000) knlGS:0000000000000000
-[  959.162844] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  959.163030] CR2: 0000000000000018 CR3: 000000005abc4000 CR4: 00000000000406e0
-[  959.163233] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[  959.163436] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[  959.163638] Call Trace:
-[  959.163788]  tbf_reset+0x19/0x64 [sch_tbf]
-[  959.163957]  qdisc_destroy+0x8b/0xe5
-[  959.164119]  qdisc_create_dflt+0x86/0x94
-[  959.164284]  ? dev_activate+0x129/0x129
-[  959.164449]  attach_one_default_qdisc+0x36/0x63
-[  959.164623]  netdev_for_each_tx_queue+0x3d/0x48
-[  959.164795]  dev_activate+0x4b/0x129
-[  959.164957]  __dev_open+0xe7/0x104
-[  959.165118]  __dev_change_flags+0xc6/0x15c
-[  959.165287]  dev_change_flags+0x25/0x59
-[  959.165451]  do_setlink+0x30c/0xb3f
-[  959.165613]  ? check_chain_key+0xb0/0xfd
-[  959.165782]  rtnl_newlink+0x3a4/0x729
-[  959.165947]  ? rtnl_newlink+0x117/0x729
-[  959.166121]  ? ns_capable_common+0xd/0xb1
-[  959.166288]  ? ns_capable+0x13/0x15
-[  959.166450]  rtnetlink_rcv_msg+0x188/0x197
-[  959.166617]  ? rcu_read_unlock+0x3e/0x5f
-[  959.166783]  ? rtnl_newlink+0x729/0x729
-[  959.166948]  netlink_rcv_skb+0x6c/0xce
-[  959.167113]  rtnetlink_rcv+0x23/0x2a
-[  959.167273]  netlink_unicast+0x103/0x181
-[  959.167439]  netlink_sendmsg+0x326/0x337
-[  959.167607]  sock_sendmsg_nosec+0x14/0x3f
-[  959.167772]  sock_sendmsg+0x29/0x2e
-[  959.167932]  ___sys_sendmsg+0x209/0x28b
-[  959.168098]  ? do_raw_spin_unlock+0xcd/0xf8
-[  959.168267]  ? _raw_spin_unlock+0x27/0x31
-[  959.168432]  ? __handle_mm_fault+0x651/0xdb1
-[  959.168602]  ? check_chain_key+0xb0/0xfd
-[  959.168773]  __sys_sendmsg+0x45/0x63
-[  959.168934]  ? __sys_sendmsg+0x45/0x63
-[  959.169100]  SyS_sendmsg+0x19/0x1b
-[  959.169260]  entry_SYSCALL_64_fastpath+0x23/0xc2
-[  959.169432] RIP: 0033:0x7fcc5097e690
-[  959.169592] RSP: 002b:00007ffd0d5c7b48 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-[  959.169887] RAX: ffffffffffffffda RBX: ffffffff810d278c RCX: 00007fcc5097e690
-[  959.170089] RDX: 0000000000000000 RSI: 00007ffd0d5c7b90 RDI: 0000000000000003
-[  959.170292] RBP: ffff8800376d3f98 R08: 0000000000000001 R09: 0000000000000003
-[  959.170494] R10: 00007ffd0d5c7910 R11: 0000000000000246 R12: 0000000000000006
-[  959.170697] R13: 000000000066f1a0 R14: 00007ffd0d5cfc40 R15: 0000000000000000
-[  959.170900]  ? trace_hardirqs_off_caller+0xa7/0xcf
-[  959.171076] Code: 00 41 c7 84 24 14 01 00 00 00 00 00 00 41 c7 84 24
-98 00 00 00 00 00 00 00 41 5c 41 5d 41 5e 5d c3 66 66 66 66 90 55 48 89
-e5 53 <48> 8b 47 18 48 89 fb 48 8b 40 48 48 85 c0 74 02 ff d0 48 8b bb
-[  959.171637] RIP: qdisc_reset+0xa/0x5c RSP: ffff8800376d3610
-[  959.171821] CR2: 0000000000000018
-
-Fixes: 87b60cfacf9f ("net_sched: fix error recovery at qdisc creation")
-Fixes: 0fbbeb1ba43b ("[PKT_SCHED]: Fix missing qdisc_destroy() in qdisc_create_dflt()")
-Signed-off-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
+Cc: <stable@vger.kernel.org> v4.13+
+Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+Reviewed-by: Alexander Usyskin <alexander.usyskin@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/sched/sch_tbf.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/net/sched/sch_tbf.c
-+++ b/net/sched/sch_tbf.c
-@@ -432,12 +432,13 @@ static int tbf_init(struct Qdisc *sch, s
- {
- 	struct tbf_sched_data *q = qdisc_priv(sch);
+---
+ drivers/misc/mei/pci-me.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+--- a/drivers/misc/mei/pci-me.c
++++ b/drivers/misc/mei/pci-me.c
+@@ -230,8 +230,11 @@ static int mei_me_probe(struct pci_dev *
+ 	if (!pci_dev_run_wake(pdev))
+ 		mei_me_set_pm_domain(dev);
  
-+	qdisc_watchdog_init(&q->watchdog, sch);
-+	q->qdisc = &noop_qdisc;
-+
- 	if (opt == NULL)
- 		return -EINVAL;
+-	if (mei_pg_is_enabled(dev))
++	if (mei_pg_is_enabled(dev)) {
+ 		pm_runtime_put_noidle(&pdev->dev);
++		if (hw->d0i3_supported)
++			pm_runtime_allow(&pdev->dev);
++	}
  
- 	q->t_c = ktime_get_ns();
--	qdisc_watchdog_init(&q->watchdog, sch);
--	q->qdisc = &noop_qdisc;
+ 	dev_dbg(&pdev->dev, "initialization successful.\n");
  
- 	return tbf_change(sch, opt);
- }
 
 
