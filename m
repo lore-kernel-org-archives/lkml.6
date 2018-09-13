@@ -6,36 +6,40 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D02B4C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:46:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49F53C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:46:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9503420854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:46:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9503420854
+	by mail.kernel.org (Postfix) with ESMTP id 0E77420881
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:46:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E77420881
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730229AbeIMSzi (ORCPT
+        id S1730243AbeIMSzk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:55:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60792 "EHLO
+        Thu, 13 Sep 2018 14:55:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60806 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729449AbeIMSzh (ORCPT
+        with ESMTP id S1729449AbeIMSzk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:55:37 -0400
+        Thu, 13 Sep 2018 14:55:40 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 76608D10;
-        Thu, 13 Sep 2018 13:46:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 68596D10;
+        Thu, 13 Sep 2018 13:46:06 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steve French <stfrench@microsoft.com>,
-        Aurelien Aptel <aaptel@suse.com>,
-        Pavel Shilovsky <pshilov@microsoft.com>,
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Scott Wood <oss@buserror.net>,
+        Kumar Gala <galak@kernel.crashing.org>,
+        linuxppc-dev@lists.ozlabs.org,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 073/115] SMB3: Number of requests sent should be displayed for SMB3 not just CIFS
-Date:   Thu, 13 Sep 2018 15:31:33 +0200
-Message-Id: <20180913131828.167549249@linuxfoundation.org>
+Subject: [PATCH 4.14 074/115] powerpc/platforms/85xx: fix t1042rdb_diu.c build errors & warning
+Date:   Thu, 13 Sep 2018 15:31:34 +0200
+Message-Id: <20180913131828.220709249@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -53,65 +57,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steve French <stfrench@microsoft.com>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-[ Upstream commit 289131e1f1e6ad8c661ec05e176b8f0915672059 ]
+[ Upstream commit f5daf77a55ef0e695cc90c440ed6503073ac5e07 ]
 
-For SMB2/SMB3 the number of requests sent was not displayed
-in /proc/fs/cifs/Stats unless CONFIG_CIFS_STATS2 was
-enabled (only number of failed requests displayed). As
-with earlier dialects, we should be displaying these
-counters if CONFIG_CIFS_STATS is enabled. They
-are important for debugging.
+Fix build errors and warnings in t1042rdb_diu.c by adding header files
+and MODULE_LICENSE().
 
-e.g. when you cat /proc/fs/cifs/Stats (before the patch)
-Resources in use
-CIFS Session: 1
-Share (unique mount targets): 2
-SMB Request/Response Buffer: 1 Pool size: 5
-SMB Small Req/Resp Buffer: 1 Pool size: 30
-Operations (MIDs): 0
+../arch/powerpc/platforms/85xx/t1042rdb_diu.c:152:1: warning: data definition has no type or storage class
+ early_initcall(t1042rdb_diu_init);
+../arch/powerpc/platforms/85xx/t1042rdb_diu.c:152:1: error: type defaults to 'int' in declaration of 'early_initcall' [-Werror=implicit-int]
+../arch/powerpc/platforms/85xx/t1042rdb_diu.c:152:1: warning: parameter names (without types) in function declaration
 
-0 session 0 share reconnects
-Total vfs operations: 690 maximum at one time: 2
+and
+WARNING: modpost: missing MODULE_LICENSE() in arch/powerpc/platforms/85xx/t1042rdb_diu.o
 
-1) \\localhost\test
-SMBs: 975
-Negotiates: 0 sent 0 failed
-SessionSetups: 0 sent 0 failed
-Logoffs: 0 sent 0 failed
-TreeConnects: 0 sent 0 failed
-TreeDisconnects: 0 sent 0 failed
-Creates: 0 sent 2 failed
-Closes: 0 sent 0 failed
-Flushes: 0 sent 0 failed
-Reads: 0 sent 0 failed
-Writes: 0 sent 0 failed
-Locks: 0 sent 0 failed
-IOCTLs: 0 sent 1 failed
-Cancels: 0 sent 0 failed
-Echos: 0 sent 0 failed
-QueryDirectories: 0 sent 63 failed
-
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Reviewed-by: Aurelien Aptel <aaptel@suse.com>
-Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Scott Wood <oss@buserror.net>
+Cc: Kumar Gala <galak@kernel.crashing.org>
+Cc: linuxppc-dev@lists.ozlabs.org
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/cifs/smb2pdu.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/platforms/85xx/t1042rdb_diu.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -393,7 +393,7 @@ small_smb2_init(__le16 smb2_command, str
- 	pdu->hdr.smb2_buf_length = cpu_to_be32(total_len);
+--- a/arch/powerpc/platforms/85xx/t1042rdb_diu.c
++++ b/arch/powerpc/platforms/85xx/t1042rdb_diu.c
+@@ -9,8 +9,10 @@
+  * option) any later version.
+  */
  
- 	if (tcon != NULL) {
--#ifdef CONFIG_CIFS_STATS2
-+#ifdef CONFIG_CIFS_STATS
- 		uint16_t com_code = le16_to_cpu(smb2_command);
- 		cifs_stats_inc(&tcon->stats.smb2_stats.smb2_com_sent[com_code]);
- #endif
++#include <linux/init.h>
+ #include <linux/io.h>
+ #include <linux/kernel.h>
++#include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ 
+@@ -150,3 +152,5 @@ static int __init t1042rdb_diu_init(void
+ }
+ 
+ early_initcall(t1042rdb_diu_init);
++
++MODULE_LICENSE("GPL");
 
 
