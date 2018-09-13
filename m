@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA30BC07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:45:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 292F9C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:46:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD5F32146E
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:45:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD5F32146E
+	by mail.kernel.org (Postfix) with ESMTP id D65B520881
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:45:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D65B520881
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730198AbeIMSzZ (ORCPT
+        id S1730211AbeIMSz3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:55:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60760 "EHLO
+        Thu, 13 Sep 2018 14:55:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60774 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726839AbeIMSzZ (ORCPT
+        with ESMTP id S1730202AbeIMSz3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:55:25 -0400
+        Thu, 13 Sep 2018 14:55:29 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 95E71D1A;
-        Thu, 13 Sep 2018 13:45:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EC669D19;
+        Thu, 13 Sep 2018 13:45:55 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
-        Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 071/115] cfq: Suppress compiler warnings about comparisons
-Date:   Thu, 13 Sep 2018 15:31:31 +0200
-Message-Id: <20180913131828.067353730@linuxfoundation.org>
+Subject: [PATCH 4.14 054/115] powerpc: Fix size calculation using resource_size()
+Date:   Thu, 13 Sep 2018 15:31:14 +0200
+Message-Id: <20180913131827.010981802@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -52,103 +53,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bart Van Assche <bart.vanassche@wdc.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit f7ecb1b109da1006a08d5675debe60990e824432 ]
+[ Upstream commit c42d3be0c06f0c1c416054022aa535c08a1f9b39 ]
 
-This patch does not change any functionality but avoids that gcc
-reports the following warnings when building with W=1:
+The problem is the the calculation should be "end - start + 1" but the
+plus one is missing in this calculation.
 
-block/cfq-iosched.c: In function ?cfq_back_seek_max_store?:
-block/cfq-iosched.c:4741:13: warning: comparison of unsigned expression < 0 is always false [-Wtype-limits]
-  if (__data < (MIN))      \
-             ^
-block/cfq-iosched.c:4756:1: note: in expansion of macro ?STORE_FUNCTION?
- STORE_FUNCTION(cfq_back_seek_max_store, &cfqd->cfq_back_max, 0, UINT_MAX, 0);
- ^~~~~~~~~~~~~~
-block/cfq-iosched.c: In function ?cfq_slice_idle_store?:
-block/cfq-iosched.c:4741:13: warning: comparison of unsigned expression < 0 is always false [-Wtype-limits]
-  if (__data < (MIN))      \
-             ^
-block/cfq-iosched.c:4759:1: note: in expansion of macro ?STORE_FUNCTION?
- STORE_FUNCTION(cfq_slice_idle_store, &cfqd->cfq_slice_idle, 0, UINT_MAX, 1);
- ^~~~~~~~~~~~~~
-block/cfq-iosched.c: In function ?cfq_group_idle_store?:
-block/cfq-iosched.c:4741:13: warning: comparison of unsigned expression < 0 is always false [-Wtype-limits]
-  if (__data < (MIN))      \
-             ^
-block/cfq-iosched.c:4760:1: note: in expansion of macro ?STORE_FUNCTION?
- STORE_FUNCTION(cfq_group_idle_store, &cfqd->cfq_group_idle, 0, UINT_MAX, 1);
- ^~~~~~~~~~~~~~
-block/cfq-iosched.c: In function ?cfq_low_latency_store?:
-block/cfq-iosched.c:4741:13: warning: comparison of unsigned expression < 0 is always false [-Wtype-limits]
-  if (__data < (MIN))      \
-             ^
-block/cfq-iosched.c:4765:1: note: in expansion of macro ?STORE_FUNCTION?
- STORE_FUNCTION(cfq_low_latency_store, &cfqd->cfq_latency, 0, 1, 0);
- ^~~~~~~~~~~~~~
-block/cfq-iosched.c: In function ?cfq_slice_idle_us_store?:
-block/cfq-iosched.c:4775:13: warning: comparison of unsigned expression < 0 is always false [-Wtype-limits]
-  if (__data < (MIN))      \
-             ^
-block/cfq-iosched.c:4782:1: note: in expansion of macro ?USEC_STORE_FUNCTION?
- USEC_STORE_FUNCTION(cfq_slice_idle_us_store, &cfqd->cfq_slice_idle, 0, UINT_MAX);
- ^~~~~~~~~~~~~~~~~~~
-block/cfq-iosched.c: In function ?cfq_group_idle_us_store?:
-block/cfq-iosched.c:4775:13: warning: comparison of unsigned expression < 0 is always false [-Wtype-limits]
-  if (__data < (MIN))      \
-             ^
-block/cfq-iosched.c:4783:1: note: in expansion of macro ?USEC_STORE_FUNCTION?
- USEC_STORE_FUNCTION(cfq_group_idle_us_store, &cfqd->cfq_group_idle, 0, UINT_MAX);
- ^~~~~~~~~~~~~~~~~~~
-
-Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: 8626816e905e ("powerpc: add support for MPIC message register API")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- block/cfq-iosched.c |   22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+ arch/powerpc/sysdev/mpic_msgr.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/block/cfq-iosched.c
-+++ b/block/cfq-iosched.c
-@@ -4741,12 +4741,13 @@ USEC_SHOW_FUNCTION(cfq_target_latency_us
- static ssize_t __FUNC(struct elevator_queue *e, const char *page, size_t count)	\
- {									\
- 	struct cfq_data *cfqd = e->elevator_data;			\
--	unsigned int __data;						\
-+	unsigned int __data, __min = (MIN), __max = (MAX);		\
-+									\
- 	cfq_var_store(&__data, (page));					\
--	if (__data < (MIN))						\
--		__data = (MIN);						\
--	else if (__data > (MAX))					\
--		__data = (MAX);						\
-+	if (__data < __min)						\
-+		__data = __min;						\
-+	else if (__data > __max)					\
-+		__data = __max;						\
- 	if (__CONV)							\
- 		*(__PTR) = (u64)__data * NSEC_PER_MSEC;			\
- 	else								\
-@@ -4775,12 +4776,13 @@ STORE_FUNCTION(cfq_target_latency_store,
- static ssize_t __FUNC(struct elevator_queue *e, const char *page, size_t count)	\
- {									\
- 	struct cfq_data *cfqd = e->elevator_data;			\
--	unsigned int __data;						\
-+	unsigned int __data, __min = (MIN), __max = (MAX);		\
-+									\
- 	cfq_var_store(&__data, (page));					\
--	if (__data < (MIN))						\
--		__data = (MIN);						\
--	else if (__data > (MAX))					\
--		__data = (MAX);						\
-+	if (__data < __min)						\
-+		__data = __min;						\
-+	else if (__data > __max)					\
-+		__data = __max;						\
- 	*(__PTR) = (u64)__data * NSEC_PER_USEC;				\
- 	return count;							\
- }
+--- a/arch/powerpc/sysdev/mpic_msgr.c
++++ b/arch/powerpc/sysdev/mpic_msgr.c
+@@ -196,7 +196,7 @@ static int mpic_msgr_probe(struct platfo
+ 
+ 	/* IO map the message register block. */
+ 	of_address_to_resource(np, 0, &rsrc);
+-	msgr_block_addr = ioremap(rsrc.start, rsrc.end - rsrc.start);
++	msgr_block_addr = ioremap(rsrc.start, resource_size(&rsrc));
+ 	if (!msgr_block_addr) {
+ 		dev_err(&dev->dev, "Failed to iomap MPIC message registers");
+ 		return -EFAULT;
 
 
