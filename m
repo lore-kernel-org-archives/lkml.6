@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27DFBC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:37:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 866ADC07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:37:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC70E2147C
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:37:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC70E2147C
+	by mail.kernel.org (Postfix) with ESMTP id 46C6520854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:37:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46C6520854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729378AbeIMSrI (ORCPT
+        id S1729384AbeIMSrO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:47:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59560 "EHLO
+        Thu, 13 Sep 2018 14:47:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59572 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728666AbeIMSrI (ORCPT
+        with ESMTP id S1728218AbeIMSrO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:47:08 -0400
+        Thu, 13 Sep 2018 14:47:14 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 30B52D10;
-        Thu, 13 Sep 2018 13:37:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 87FA6D10;
+        Thu, 13 Sep 2018 13:37:43 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Breno Leitao <leitao@debian.org>,
-        Gustavo Romero <gromero@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 47/78] selftests/powerpc: Kill child processes on SIGINT
-Date:   Thu, 13 Sep 2018 15:31:34 +0200
-Message-Id: <20180913131810.521964454@linuxfoundation.org>
+Subject: [PATCH 4.9 48/78] RDS: IB: fix passing zero to ERR_PTR() warning
+Date:   Thu, 13 Sep 2018 15:31:35 +0200
+Message-Id: <20180913131810.597863820@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131805.732342940@linuxfoundation.org>
 References: <20180913131805.732342940@linuxfoundation.org>
@@ -53,72 +53,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Breno Leitao <leitao@debian.org>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit 7c27a26e1ed5a7dd709aa19685d2c98f64e1cf0c ]
+[ Upstream commit 5941923da29e84bc9e2a1abb2c14fffaf8d71e2f ]
 
-There are some powerpc selftests, as tm/tm-unavailable, that run for a long
-period (>120 seconds), and if it is interrupted, as pressing CRTL-C
-(SIGINT), the foreground process (harness) dies but the child process and
-threads continue to execute (with PPID = 1 now) in background.
+Fix a static code checker warning:
+ net/rds/ib_frmr.c:82 rds_ib_alloc_frmr() warn: passing zero to 'ERR_PTR'
 
-In this case, you'd think the whole test exited, but there are remaining
-threads and processes being executed in background. Sometimes these
-zombies processes are doing annoying things, as consuming the whole CPU or
-dumping things to STDOUT.
+The error path for ib_alloc_mr failure should set err to PTR_ERR.
 
-This patch fixes this problem by attaching an empty signal handler to
-SIGINT in the harness process. This handler will interrupt (EINTR) the
-parent process waitpid() call, letting the code to follow through the
-normal flow, which will kill all the processes in the child process group.
-
-This patch also fixes a typo.
-
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Signed-off-by: Gustavo Romero <gromero@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fixes: 1659185fb4d0 ("RDS: IB: Support Fastreg MR (FRMR) memory registration mode")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/powerpc/harness.c |   18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+ net/rds/ib_frmr.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/tools/testing/selftests/powerpc/harness.c
-+++ b/tools/testing/selftests/powerpc/harness.c
-@@ -85,13 +85,13 @@ wait:
- 	return status;
- }
- 
--static void alarm_handler(int signum)
-+static void sig_handler(int signum)
- {
--	/* Jut wake us up from waitpid */
-+	/* Just wake us up from waitpid */
- }
- 
--static struct sigaction alarm_action = {
--	.sa_handler = alarm_handler,
-+static struct sigaction sig_action = {
-+	.sa_handler = sig_handler,
- };
- 
- void test_harness_set_timeout(uint64_t time)
-@@ -106,8 +106,14 @@ int test_harness(int (test_function)(voi
- 	test_start(name);
- 	test_set_git_version(GIT_VERSION);
- 
--	if (sigaction(SIGALRM, &alarm_action, NULL)) {
--		perror("sigaction");
-+	if (sigaction(SIGINT, &sig_action, NULL)) {
-+		perror("sigaction (sigint)");
-+		test_error(name);
-+		return 1;
-+	}
-+
-+	if (sigaction(SIGALRM, &sig_action, NULL)) {
-+		perror("sigaction (sigalrm)");
- 		test_error(name);
- 		return 1;
+--- a/net/rds/ib_frmr.c
++++ b/net/rds/ib_frmr.c
+@@ -61,6 +61,7 @@ static struct rds_ib_mr *rds_ib_alloc_fr
+ 			 pool->fmr_attr.max_pages);
+ 	if (IS_ERR(frmr->mr)) {
+ 		pr_warn("RDS/IB: %s failed to allocate MR", __func__);
++		err = PTR_ERR(frmr->mr);
+ 		goto out_no_cigar;
  	}
+ 
 
 
