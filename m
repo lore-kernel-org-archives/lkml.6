@@ -2,98 +2,184 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2FC4C43143
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 18:06:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 632C7C43143
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 18:09:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A18EC204EC
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 18:06:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F422320880
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 18:09:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XYoqmiXu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A18EC204EC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KUeV38Lk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F422320880
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728319AbeIMXRO (ORCPT
+        id S1728147AbeIMXU3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 19:17:14 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:43239 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727842AbeIMXRN (ORCPT
+        Thu, 13 Sep 2018 19:20:29 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:40681 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727786AbeIMXU2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 19:17:13 -0400
-Received: by mail-pg1-f195.google.com with SMTP id v66-v6so3098094pgb.10
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 11:06:38 -0700 (PDT)
+        Thu, 13 Sep 2018 19:20:28 -0400
+Received: by mail-pf1-f193.google.com with SMTP id s13-v6so3028365pfi.7
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 11:09:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=8GR756oMPzkgi0jaNNzmFs58kYiZa/AVR98KWjBKvlE=;
-        b=XYoqmiXu03cT6iyfSLsIMUKfM8cZ2rZtwRGnI+M6bm0ytEbjrZf9owv0FTNxC3tNr2
-         ksjIaBL/E8NI5PbJos5Ebtam9KQfn4RVq8Hvc24Weyu9zQMNmcbySc+j6WfjMhYpGpOM
-         WQoM17rBNVj9JjeNTZzz4E0GbfJC/gvY87AkE=
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UgCd5KWNArSaahfEACcUksSlQesS/ri13zV231U9jh8=;
+        b=KUeV38Lk7h/W/yeGS0gEvNKJfB2g2X3YSV+YfZ0ND7tzhFJYdha4at0RkOgei6BPI2
+         4/D9P7W/yno4StkeGHe9JElnT/7+rO1Bmp6ysNMjIVSik+ziZ33ICqjilfYJWe7poqNn
+         0ypPQzK9phiQp0113bkmaRbJ5I13UJC3QglTkSuG2OTax71w8HmvaXfsmE6xbIjbGNEW
+         W7sAK2G9RGv+3t84N/uvvHxw//YhfKZYG6c3oCIadylUqOgI/W/jmpFJzmyiAwcTfgQz
+         T6m0rBHM0blkyrI30WqVUGctf5ah0ls/eUfoycI25vI6MGmIKSrmQAlYTI+k/xLgXUDW
+         +tuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=8GR756oMPzkgi0jaNNzmFs58kYiZa/AVR98KWjBKvlE=;
-        b=pkdKEl//TFwGSOqfHehkG0V94nU/eU+fN00vzBIeaQrrcunYVs61cdaBA0U3GuxFiO
-         meXsEVsV99ePc0DJHO30+Ag+mZ0IdN39kF2DPrQtTDvRo7xjypfLsEoTGNhcrop38rSh
-         J62sWB/n/OltbxVcaiOGEYoBu88qfThjcqKx9P22AbE7RwCn8PRC8pUVpziSrIv25zYz
-         v7xocrsQfFelS36JavrbI80MUvYXlWOP9cMGd2QZ+I7aEeFdRWyZszaknz6kx1NraDtL
-         O1KH0hZXXLACzOcKp1PdH+dhzdPQMR8a0PAJJz6egtgnd1cdg8FAYC344b++ONH4EMrn
-         OyhQ==
-X-Gm-Message-State: APzg51CIFe8jL1AKew9X18HxbiB/bQ8r8lk3jEK63FwkRUDsAyFxvxns
-        FuDuLGrQB45gu1eFnK1R+QHT
-X-Google-Smtp-Source: ANB0VdYUyO9ESGPdXUgr4960v/e0DkQvswTxph0vSKhP2eR3IvyMaebd28O50x/K0zdwQ5fW+SMx/g==
-X-Received: by 2002:a62:90d4:: with SMTP id q81-v6mr8558264pfk.37.1536861998084;
-        Thu, 13 Sep 2018 11:06:38 -0700 (PDT)
-Received: from localhost.localdomain ([2409:4072:6115:a36e:955b:f94d:4607:e9b9])
-        by smtp.gmail.com with ESMTPSA id u184-v6sm8856802pgd.46.2018.09.13.11.06.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Sep 2018 11:06:37 -0700 (PDT)
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     heiko@sntech.de, robh+dt@kernel.org
-Cc:     vicencb@gmail.com, shawn.lin@rock-chips.com,
-        ezequiel@collabora.com, enric.balletbo@collabora.com,
-        pbrobinson@gmail.com, tom@vamrs.com, dev@vamrs.com,
-        stephen@vamrs.com, amit.kucheria@linaro.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v3 4/4] arm64: dts: rockchip: Enable SD card detection for Rock960 boards
-Date:   Thu, 13 Sep 2018 23:35:45 +0530
-Message-Id: <20180913180545.29756-5-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180913180545.29756-1-manivannan.sadhasivam@linaro.org>
-References: <20180913180545.29756-1-manivannan.sadhasivam@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UgCd5KWNArSaahfEACcUksSlQesS/ri13zV231U9jh8=;
+        b=fF66McHWyqKHojDp2gxuq4e07z0jvc97Hf0AEFbh5ocxa8f+E63GsmJ1jaDeYYspE3
+         9Xl41u6+SmT+dKBthk+LixWG00C/EmJqYp7tDqdkZQI2rWTqZC9/HmdgB25b77CqPZHF
+         HQXGY1MgBNQR2ZoShVzhMy1Qgk9am0xZGDHyJMaUo4WbQrJq5NGh0f9rvzYwCxqfjEi7
+         vzoWC7a+VvMww/iQxzUwzbk77xLGGIjJ8SNCMWLt1rDKFGXWf7pxxBK2mFwQbhjx9SBb
+         m3VQPntblSs28suvAiGgJErprOzQgm4NnzehpO1E6ElE5fDeZuzmy1A/7WbQT0jGh4Ny
+         Jmow==
+X-Gm-Message-State: APzg51AWiX+FbpODRvkjj+y8LiMeSxSqXLhjTw5xFtOefF1lvBf/ByON
+        E2IJ4BT1KxjGhLWgQUM/rI/RtdARY3sBDm+htMaz6Q==
+X-Google-Smtp-Source: ANB0VdZVYOfoEqn4b+0RE3qYMSOLw0f4YUxskDFOkw818B2PU48bFUJ0jHS3C1tQNzJZWPjOfMtXir5WPrxIQ4W1vm0=
+X-Received: by 2002:a62:8559:: with SMTP id u86-v6mr8623315pfd.32.1536862191311;
+ Thu, 13 Sep 2018 11:09:51 -0700 (PDT)
+MIME-Version: 1.0
+References: <cover.1535462971.git.andreyknvl@google.com> <f5e73b5ead3355932ad8b5fc96b141c3f5b8c16c.1535462971.git.andreyknvl@google.com>
+ <CACT4Y+aEwYiaVN--RH_0VBh0wbCcrf-Ndz+_eOaBNi6nKxrfQA@mail.gmail.com>
+ <CAG48ez2oT1dtDcH8SfPLnoX5F8d6Pd=M-eOKHhYJ83EuL_j6wQ@mail.gmail.com> <CACT4Y+avu_68GoQcc32zpcOpAu-Pw7m71VmuKtEkOw=vKgxi7w@mail.gmail.com>
+In-Reply-To: <CACT4Y+avu_68GoQcc32zpcOpAu-Pw7m71VmuKtEkOw=vKgxi7w@mail.gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Thu, 13 Sep 2018 11:09:39 -0700
+Message-ID: <CAKwvOdns=3bktpXLEpo6o0J8OQPym6YE+x6Dvs_kYSBsuJKtSw@mail.gmail.com>
+Subject: Re: [PATCH v6 15/18] khwasan, arm64: add brk handler for inline instrumentation
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Jann Horn <jannh@google.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Christoph Lameter <cl@linux.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Dave Martin <dave.martin@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-sparse@vger.kernel.org,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Kostya Serebryany <kcc@google.com>,
+        Evgenii Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Mark Brand <markbrand@google.com>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Vishwath Mohan <vishwath@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For proper working of SD cards, let's add the Card Detect GPIO property
-to the common devicetree for Rock960 family boards.
+On Thu, Sep 13, 2018 at 1:37 AM Dmitry Vyukov <dvyukov@google.com> wrote:
+>
+> On Wed, Sep 12, 2018 at 7:39 PM, Jann Horn <jannh@google.com> wrote:
+> > On Wed, Sep 12, 2018 at 7:16 PM Dmitry Vyukov <dvyukov@google.com> wrote:
+> >> On Wed, Aug 29, 2018 at 1:35 PM, Andrey Konovalov <andreyknvl@google.com> wrote:
+> > [...]
+> >> > +static int khwasan_handler(struct pt_regs *regs, unsigned int esr)
+> >> > +{
+> >> > +       bool recover = esr & KHWASAN_ESR_RECOVER;
+> >> > +       bool write = esr & KHWASAN_ESR_WRITE;
+> >> > +       size_t size = KHWASAN_ESR_SIZE(esr);
+> >> > +       u64 addr = regs->regs[0];
+> >> > +       u64 pc = regs->pc;
+> >> > +
+> >> > +       if (user_mode(regs))
+> >> > +               return DBG_HOOK_ERROR;
+> >> > +
+> >> > +       kasan_report(addr, size, write, pc);
+> >> > +
+> >> > +       /*
+> >> > +        * The instrumentation allows to control whether we can proceed after
+> >> > +        * a crash was detected. This is done by passing the -recover flag to
+> >> > +        * the compiler. Disabling recovery allows to generate more compact
+> >> > +        * code.
+> >> > +        *
+> >> > +        * Unfortunately disabling recovery doesn't work for the kernel right
+> >> > +        * now. KHWASAN reporting is disabled in some contexts (for example when
+> >> > +        * the allocator accesses slab object metadata; same is true for KASAN;
+> >> > +        * this is controlled by current->kasan_depth). All these accesses are
+> >> > +        * detected by the tool, even though the reports for them are not
+> >> > +        * printed.
+> >> > +        *
+> >> > +        * This is something that might be fixed at some point in the future.
+> >> > +        */
+> >> > +       if (!recover)
+> >> > +               die("Oops - KHWASAN", regs, 0);
+> >>
+> >> Why die and not panic? Die seems to be much less used function, and it
+> >> calls panic anyway, and we call panic in kasan_report if panic_on_warn
+> >> is set.
+> >
+> > die() is vaguely equivalent to BUG(); die() and BUG() normally only
+> > terminate the current process, which may or may not leave the system
+> > somewhat usable, while panic() always brings down the whole system.
+> > AFAIK panic() shouldn't be used unless you're in some very low-level
+> > code where you know that trying to just kill the current process can't
+> > work and the entire system is broken beyond repair.
+> >
+> > If KASAN traps on some random memory access, there's a good chance
+> > that just killing the current process will allow at least parts of the
+> > system to continue. I'm not sure whether BUG() or die() is more
+> > appropriate here, but I think it definitely should not be a panic().
+>
+>
+> Nick, do you know if die() will be enough to catch problems on Android
+> phones? panic_on_warn would turn this into panic, but I guess one does
+> not want panic_on_warn on a canary phone.
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+die() has arch specific implementations, so looking at:
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi
-index cc9c373f3a37..6c8c4ab044aa 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi
-@@ -439,6 +439,7 @@
- 	cap-sd-highspeed;
- 	clock-frequency = <100000000>;
- 	clock-freq-min-max = <100000 100000000>;
-+	cd-gpios = <&gpio0 7 GPIO_ACTIVE_LOW>;
- 	disable-wp;
- 	sd-uhs-sdr104;
- 	vqmmc-supply = <&vcc_sd>;
+arch/arm64/kernel/traps.c:196#die
+
+it looks like panic is invoked if in_interrupt() or panic_on_oops(),
+which is a configure option.  So maybe the config for KHWASAN should
+also enable that? Otherwise seems easy to forget.  But maybe that
+should remain configurable separately?
+
+Looking at the kernel configs for the Pixel 2, it does seem like
+CONFIG_PANIC_ON_OOPS=y is already enabled.
+https://android.googlesource.com/kernel/msm/+/android-msm-wahoo-4.4-pie/arch/arm64/configs/wahoo_defconfig#746
+
+Specifically to catch problems on Android, our internal debug builds
+can report on panics, but not oops, IIUC.
 -- 
-2.17.1
-
+Thanks,
+~Nick Desaulniers
