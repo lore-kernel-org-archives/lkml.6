@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 292F9C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:46:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 673D5C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:46:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D65B520881
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:45:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D65B520881
+	by mail.kernel.org (Postfix) with ESMTP id 1D13320881
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:46:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D13320881
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730211AbeIMSz3 (ORCPT
+        id S1730220AbeIMSze (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:55:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60774 "EHLO
+        Thu, 13 Sep 2018 14:55:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60786 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730202AbeIMSz3 (ORCPT
+        with ESMTP id S1729449AbeIMSzd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:55:29 -0400
+        Thu, 13 Sep 2018 14:55:33 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EC669D19;
-        Thu, 13 Sep 2018 13:45:55 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 38741D10;
+        Thu, 13 Sep 2018 13:46:00 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Steve French <stfrench@microsoft.com>,
+        Aurelien Aptel <aaptel@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 054/115] powerpc: Fix size calculation using resource_size()
-Date:   Thu, 13 Sep 2018 15:31:14 +0200
-Message-Id: <20180913131827.010981802@linuxfoundation.org>
+Subject: [PATCH 4.14 072/115] smb3: fix reset of bytes read and written stats
+Date:   Thu, 13 Sep 2018 15:31:32 +0200
+Message-Id: <20180913131828.114602175@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -53,33 +52,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Steve French <stfrench@microsoft.com>
 
-[ Upstream commit c42d3be0c06f0c1c416054022aa535c08a1f9b39 ]
+[ Upstream commit c281bc0c7412308c7ec0888904f7c99353da4796 ]
 
-The problem is the the calculation should be "end - start + 1" but the
-plus one is missing in this calculation.
+echo 0 > /proc/fs/cifs/Stats is supposed to reset the stats
+but there were four (see example below) that were not reset
+(bytes read and witten, total vfs ops and max ops
+at one time).
 
-Fixes: 8626816e905e ("powerpc: add support for MPIC message register API")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+...
+0 session 0 share reconnects
+Total vfs operations: 100 maximum at one time: 2
+
+1) \\localhost\test
+SMBs: 0
+Bytes read: 502092  Bytes written: 31457286
+TreeConnects: 0 total 0 failed
+TreeDisconnects: 0 total 0 failed
+...
+
+This patch fixes cifs_stats_proc_write to properly reset
+those four.
+
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Aurelien Aptel <aaptel@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/sysdev/mpic_msgr.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/cifs/cifs_debug.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/arch/powerpc/sysdev/mpic_msgr.c
-+++ b/arch/powerpc/sysdev/mpic_msgr.c
-@@ -196,7 +196,7 @@ static int mpic_msgr_probe(struct platfo
- 
- 	/* IO map the message register block. */
- 	of_address_to_resource(np, 0, &rsrc);
--	msgr_block_addr = ioremap(rsrc.start, rsrc.end - rsrc.start);
-+	msgr_block_addr = ioremap(rsrc.start, resource_size(&rsrc));
- 	if (!msgr_block_addr) {
- 		dev_err(&dev->dev, "Failed to iomap MPIC message registers");
- 		return -EFAULT;
+--- a/fs/cifs/cifs_debug.c
++++ b/fs/cifs/cifs_debug.c
+@@ -289,6 +289,10 @@ static ssize_t cifs_stats_proc_write(str
+ 		atomic_set(&totBufAllocCount, 0);
+ 		atomic_set(&totSmBufAllocCount, 0);
+ #endif /* CONFIG_CIFS_STATS2 */
++		spin_lock(&GlobalMid_Lock);
++		GlobalMaxActiveXid = 0;
++		GlobalCurrentXid = 0;
++		spin_unlock(&GlobalMid_Lock);
+ 		spin_lock(&cifs_tcp_ses_lock);
+ 		list_for_each(tmp1, &cifs_tcp_ses_list) {
+ 			server = list_entry(tmp1, struct TCP_Server_Info,
+@@ -301,6 +305,10 @@ static ssize_t cifs_stats_proc_write(str
+ 							  struct cifs_tcon,
+ 							  tcon_list);
+ 					atomic_set(&tcon->num_smbs_sent, 0);
++					spin_lock(&tcon->stat_lock);
++					tcon->bytes_read = 0;
++					tcon->bytes_written = 0;
++					spin_unlock(&tcon->stat_lock);
+ 					if (server->ops->clear_stats)
+ 						server->ops->clear_stats(tcon);
+ 				}
 
 
