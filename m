@@ -6,39 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 811F9C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:31:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0856BC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:31:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 349DD20854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:31:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 349DD20854
+	by mail.kernel.org (Postfix) with ESMTP id B6A2420C0A
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:31:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6A2420C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728073AbeIMSlL (ORCPT
+        id S1728098AbeIMSlP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:41:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58396 "EHLO
+        Thu, 13 Sep 2018 14:41:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58412 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726637AbeIMSlL (ORCPT
+        with ESMTP id S1726637AbeIMSlO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:41:11 -0400
+        Thu, 13 Sep 2018 14:41:14 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E71DED1B;
-        Thu, 13 Sep 2018 13:31:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0C6B0D1A;
+        Thu, 13 Sep 2018 13:31:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Vegard Nossum <vegard.nossum@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Tan Hu <tan.hu@zte.com.cn>,
+        Jiang Biao <jiang.biao2@zte.com.cn>,
+        Julian Anastasov <ja@ssi.bg>,
+        Simon Horman <horms@verge.net.au>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 16/60] fs/dcache.c: fix kmemcheck splat at take_dentry_name_snapshot()
-Date:   Thu, 13 Sep 2018 15:30:23 +0200
-Message-Id: <20180913131746.127262201@linuxfoundation.org>
+Subject: [PATCH 4.4 17/60] ipvs: fix race between ip_vs_conn_new() and ip_vs_del_dest()
+Date:   Thu, 13 Sep 2018 15:30:24 +0200
+Message-Id: <20180913131746.176139405@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131745.261413581@linuxfoundation.org>
 References: <20180913131745.261413581@linuxfoundation.org>
@@ -56,57 +55,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Tan Hu <tan.hu@zte.com.cn>
 
-[ Upstream commit 6cd00a01f0c1ae6a852b09c59b8dd55cc6c35d1d ]
+[ Upstream commit a53b42c11815d2357e31a9403ae3950517525894 ]
 
-Since only dentry->d_name.len + 1 bytes out of DNAME_INLINE_LEN bytes
-are initialized at __d_alloc(), we can't copy the whole size
-unconditionally.
+We came across infinite loop in ipvs when using ipvs in docker
+env.
 
- WARNING: kmemcheck: Caught 32-bit read from uninitialized memory (ffff8fa27465ac50)
- 636f6e66696766732e746d70000000000010000000000000020000000188ffff
-  i i i i i i i i i i i i i u u u u u u u u u u i i i i i u u u u
-                                  ^
- RIP: 0010:take_dentry_name_snapshot+0x28/0x50
- RSP: 0018:ffffa83000f5bdf8 EFLAGS: 00010246
- RAX: 0000000000000020 RBX: ffff8fa274b20550 RCX: 0000000000000002
- RDX: ffffa83000f5be40 RSI: ffff8fa27465ac50 RDI: ffffa83000f5be60
- RBP: ffffa83000f5bdf8 R08: ffffa83000f5be48 R09: 0000000000000001
- R10: ffff8fa27465ac00 R11: ffff8fa27465acc0 R12: ffff8fa27465ac00
- R13: ffff8fa27465acc0 R14: 0000000000000000 R15: 0000000000000000
- FS:  00007f79737ac8c0(0000) GS:ffffffff8fc30000(0000) knlGS:0000000000000000
- CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: ffff8fa274c0b000 CR3: 0000000134aa7002 CR4: 00000000000606f0
-  take_dentry_name_snapshot+0x28/0x50
-  vfs_rename+0x128/0x870
-  SyS_rename+0x3b2/0x3d0
-  entry_SYSCALL_64_fastpath+0x1a/0xa4
-  0xffffffffffffffff
+When ipvs receives new packets and cannot find an ipvs connection,
+it will create a new connection, then if the dest is unavailable
+(i.e. IP_VS_DEST_F_AVAILABLE), the packet will be dropped sliently.
 
-Link: http://lkml.kernel.org/r/201709131912.GBG39012.QMJLOVFSFFOOtH@I-love.SAKURA.ne.jp
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: Vegard Nossum <vegard.nossum@gmail.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+But if the dropped packet is the first packet of this connection,
+the connection control timer never has a chance to start and the
+ipvs connection cannot be released. This will lead to memory leak, or
+infinite loop in cleanup_net() when net namespace is released like
+this:
+
+    ip_vs_conn_net_cleanup at ffffffffa0a9f31a [ip_vs]
+    __ip_vs_cleanup at ffffffffa0a9f60a [ip_vs]
+    ops_exit_list at ffffffff81567a49
+    cleanup_net at ffffffff81568b40
+    process_one_work at ffffffff810a851b
+    worker_thread at ffffffff810a9356
+    kthread at ffffffff810b0b6f
+    ret_from_fork at ffffffff81697a18
+
+race condition:
+    CPU1                           CPU2
+    ip_vs_in()
+      ip_vs_conn_new()
+                                   ip_vs_del_dest()
+                                     __ip_vs_unlink_dest()
+                                       ~IP_VS_DEST_F_AVAILABLE
+      cp->dest && !IP_VS_DEST_F_AVAILABLE
+      __ip_vs_conn_put
+    ...
+    cleanup_net  ---> infinite looping
+
+Fix this by checking whether the timer already started.
+
+Signed-off-by: Tan Hu <tan.hu@zte.com.cn>
+Reviewed-by: Jiang Biao <jiang.biao2@zte.com.cn>
+Acked-by: Julian Anastasov <ja@ssi.bg>
+Acked-by: Simon Horman <horms@verge.net.au>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/dcache.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/netfilter/ipvs/ip_vs_core.c |   15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -278,7 +278,8 @@ void take_dentry_name_snapshot(struct na
- 		spin_unlock(&dentry->d_lock);
- 		name->name = p->name;
- 	} else {
--		memcpy(name->inline_name, dentry->d_iname, DNAME_INLINE_LEN);
-+		memcpy(name->inline_name, dentry->d_iname,
-+		       dentry->d_name.len + 1);
- 		spin_unlock(&dentry->d_lock);
- 		name->name = name->inline_name;
+--- a/net/netfilter/ipvs/ip_vs_core.c
++++ b/net/netfilter/ipvs/ip_vs_core.c
+@@ -1809,13 +1809,20 @@ ip_vs_in(struct netns_ipvs *ipvs, unsign
+ 	if (cp->dest && !(cp->dest->flags & IP_VS_DEST_F_AVAILABLE)) {
+ 		/* the destination server is not available */
+ 
+-		if (sysctl_expire_nodest_conn(ipvs)) {
++		__u32 flags = cp->flags;
++
++		/* when timer already started, silently drop the packet.*/
++		if (timer_pending(&cp->timer))
++			__ip_vs_conn_put(cp);
++		else
++			ip_vs_conn_put(cp);
++
++		if (sysctl_expire_nodest_conn(ipvs) &&
++		    !(flags & IP_VS_CONN_F_ONE_PACKET)) {
+ 			/* try to expire the connection immediately */
+ 			ip_vs_conn_expire_now(cp);
+ 		}
+-		/* don't restart its timer, and silently
+-		   drop the packet. */
+-		__ip_vs_conn_put(cp);
++
+ 		return NF_DROP;
  	}
+ 
 
 
