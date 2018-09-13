@@ -2,141 +2,97 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBCAAC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 10:21:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E51F8C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 10:23:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7856820881
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 10:21:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4836F20881
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 10:23:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DJ/YWFtn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7856820881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="j0MC+NzA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4836F20881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727150AbeIMPaH (ORCPT
+        id S1727409AbeIMPcK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 11:30:07 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:38389 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726818AbeIMPaG (ORCPT
+        Thu, 13 Sep 2018 11:32:10 -0400
+Received: from conuserg-09.nifty.com ([210.131.2.76]:27327 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726797AbeIMPcK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 11:30:06 -0400
-Received: by mail-lj1-f194.google.com with SMTP id p6-v6so4154161ljc.5
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 03:21:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=+hrBtGdAXBLZd2TXIddL4V+8X3o8MCs1FECk1jP34YY=;
-        b=DJ/YWFtn40j1r3ycfkVRrbj8ItKp+eHiMiF6Hnrp8rkt+GyHaPm/d6H1N8CwQh+1Cp
-         goE8pbbZmquyadlLR74QrVaDbvwUnU60IPjw9ya6JJVLA3i18RB1sjmBGTZ9qkZ9CDTz
-         ye6Q+cxO/pMmneMXNkKiugFhb2tizlejgchT0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+hrBtGdAXBLZd2TXIddL4V+8X3o8MCs1FECk1jP34YY=;
-        b=MVBkwzanhjxoZsw3PwptHwAkzzSaYePtmi4+KoFqBNtfnv2/l0VMmqL4vNlhSJYa9w
-         WHRh1mFwdLjC+o2KJFQzFDn8BVxOVoVQrHejojGQv7x2ofRwU4N6KjFZat66uxRvo9x/
-         DpqA32fJRF+AhFf/p6DZwX94toFsXcjN5cFEZBLVc+wcjjyivcxPJWO5DcEcYhmvneod
-         fpXd7MNIxEmYSB4w/AlGBX7SAEmtrCVnsrt4uCA+AeybtfRiuys19BPGBAdoNMAEt790
-         aYtzhdFH/FnCAF4R8sfc0zgxwHq82mWkWNwyqHTzwXWjiCD3znIJ42NSHNWHpm/dNPI6
-         hipQ==
-X-Gm-Message-State: APzg51A8Z/XeyZmZSwunoCxOoyMMV70Sh8ptjt9rBDVrZcDX/J/lX5lO
-        DEJao4u+BLXmQJFh78swE4NRRA==
-X-Google-Smtp-Source: ANB0VdYnvAJViGOQK5e3UD/OGkV+qEZmtSsBJbGu5SyNOsyFPnRmqIjwjdNkJVB4u55xPxPHKTnttw==
-X-Received: by 2002:a2e:9f4d:: with SMTP id v13-v6mr3976734ljk.42.1536834076295;
-        Thu, 13 Sep 2018 03:21:16 -0700 (PDT)
-Received: from centauri.lan (h-229-118.A785.priv.bahnhof.se. [5.150.229.118])
-        by smtp.gmail.com with ESMTPSA id n3-v6sm613062lji.96.2018.09.13.03.21.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 13 Sep 2018 03:21:15 -0700 (PDT)
-Date:   Thu, 13 Sep 2018 12:21:13 +0200
-From:   Niklas Cassel <niklas.cassel@linaro.org>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Nishanth Menon <nm@ti.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        "4.18" <stable@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 00/11] OPP: Don't create multiple OPP tables for devices
- sharing OPP table
-Message-ID: <20180913102113.GA25222@centauri.lan>
-References: <cover.1536736872.git.viresh.kumar@linaro.org>
- <20180912135537.GA9985@centauri.ideon.se>
- <CAKohpomVR_U9cA2yFLWjQ0pLdjp_d8=s2C7cvbauacha0Uv8xw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKohpomVR_U9cA2yFLWjQ0pLdjp_d8=s2C7cvbauacha0Uv8xw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 13 Sep 2018 11:32:10 -0400
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-09.nifty.com with ESMTP id w8DAMuJx018403;
+        Thu, 13 Sep 2018 19:22:56 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com w8DAMuJx018403
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1536834176;
+        bh=QI2N3IFuRCZED84BU1g8XaN0yVydGAH6pDRgc4iDc+8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=j0MC+NzAgYR4ZL4sG3k5W1HvecFez9B8p+Dj4/OxusKQYbrbRT1K2dvJ3DUMP7Ei2
+         Q1hVZHnZRPql7RaUl2uXi40edG3Hg5cUrms65LCiKh69aXonU69Gm05igW68LQdDD/
+         LBttBvkFDuitWxC1w9OrbvzP3ZYa432+oMAu6fQqj80s8NdtXN5gM2+ZKtpNIP4W0n
+         hyj8QrKzHNBB2XXzTtCNKyePS5fYQjRC4227yExjn0DzUl+yaAN9mvgKY6iEzkXfrB
+         QIpkdOPmcjlfsMICt4QDQFt3jab778qGeBEhKfUHbFC3Pth4TX9WShBzop17/HLImy
+         Ky7EMXt4UEIPg==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] kbuild: add --include-dir flag only for out-of-tree build
+Date:   Thu, 13 Sep 2018 19:22:54 +0900
+Message-Id: <1536834174-31857-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 13, 2018 at 01:18:34PM +0530, Viresh Kumar wrote:
-> On 12 September 2018 at 19:25, Niklas Cassel <niklas.cassel@linaro.org> wrote:
-> > On Wed, Sep 12, 2018 at 01:58:39PM +0530, Viresh Kumar wrote:
-> >> Hello,
-> >>
-> >> Niklas Cassle recently reported some regressions with his Qcom cpufreq
-> >> driver where he was getting some errors while creating the OPPs tables.
-> >>
-> >> After looking into it I realized that the OPP core incorrectly creates
-> >> multiple OPP tables for the devices even if they are sharing the OPP
-> >> table in DT. This happens when the request comes using different CPU
-> >> devices. For example, dev_pm_opp_set_supported_hw() getting called using
-> >> CPU0 and dev_pm_opp_of_add_table() getting called using CPU1.
-> >>
-> >> This series redesigns the internals of the OPP core to fix that. The
-> >> redesign has simplified the core itself though.
-> >>
-> >> @Niklas: Can you please confirm that this series fixes the issues you
-> >> have reported ? I have already tested it on Hikey960.
-> >
-> > Hello Viresh,
-> >
-> > This fixes the OPP error messages that I previously reported.
-> >
-> > However, I also tested to add a duplicate OPP to the opp-table.
-> >
-> > Before this series, I got the first two error prints.
-> > After this series, I get the first two error prints + the use after free splat.
-> 
-> This looks to be an old bug. Can you please try this branch:
+The --include-dir flag is used to include check-in Makefiles from
+$(objtree) without prefixing $(srctree)/ the paths.  Obviously, this
+is unnecessary for in-tree build.  Add the flag just before changing
+the working directory.
 
-Hello Viresh,
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-You confused me here, since you did hide the fix for this old bug in the
-middle of your new patch series :)
+ Makefile | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-I think that it would have been more obvious to simply paste the fix/diff
-in your reply directly, since that is the most common way to post a
-potential fix. Or, if you are really confident in your fix, post a V2
-directly.
+diff --git a/Makefile b/Makefile
+index f8c8e12..8f563a6 100644
+--- a/Makefile
++++ b/Makefile
+@@ -15,10 +15,9 @@ NAME = Merciless Moray
+ PHONY := _all
+ _all:
+ 
+-# o Do not use make's built-in rules and variables
+-#   (this increases performance and avoids hard-to-debug behaviour);
+-# o Look for make include files relative to root of kernel src
+-MAKEFLAGS += -rR --include-dir=$(CURDIR)
++# Do not use make's built-in rules and variables
++# (this increases performance and avoids hard-to-debug behaviour);
++MAKEFLAGS += -rR
+ 
+ # Avoid funny character set dependencies
+ unexport LC_ALL
+@@ -136,6 +135,9 @@ KBUILD_OUTPUT := $(shell mkdir -p $(KBUILD_OUTPUT) && cd $(KBUILD_OUTPUT) \
+ $(if $(KBUILD_OUTPUT),, \
+      $(error failed to create output directory "$(saved-output)"))
+ 
++# Look for make include files relative to root of kernel src
++MAKEFLAGS += --include-dir=$(CURDIR)
++
+ PHONY += $(MAKECMDGOALS) sub-make
+ 
+ $(filter-out _all sub-make $(CURDIR)/Makefile, $(MAKECMDGOALS)) _all: sub-make
+-- 
+2.7.4
 
-However, your branch works like a charm, so feel free to add:
-Tested-by: Niklas Cassel <niklas.cassel@linaro.org>
-when sending out your branch as a V2.
-
-Kind regards,
-Niklas
-
-> 
-> git://git.kernel.org/pub/scm/linux/kernel/git/vireshk/pm.git opp/qcom-fix
-> 
-> ?
