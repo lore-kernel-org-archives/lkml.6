@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06E2DC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:40:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0A8FC07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:40:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9E9A20C0A
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:40:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9E9A20C0A
+	by mail.kernel.org (Postfix) with ESMTP id 9B1E020C0A
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:40:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B1E020C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729251AbeIMSuD (ORCPT
+        id S1729424AbeIMSuK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:50:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59886 "EHLO
+        Thu, 13 Sep 2018 14:50:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59892 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727082AbeIMSuC (ORCPT
+        with ESMTP id S1727082AbeIMSuJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:50:02 -0400
+        Thu, 13 Sep 2018 14:50:09 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0297FCF3;
-        Thu, 13 Sep 2018 13:40:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 66E74CF3;
+        Thu, 13 Sep 2018 13:40:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ethan Lien <ethanlien@synology.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.9 76/78] btrfs: use correct compare function of dirty_metadata_bytes
-Date:   Thu, 13 Sep 2018 15:32:03 +0200
-Message-Id: <20180913131813.257981508@linuxfoundation.org>
+        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH 4.9 77/78] arm64: Fix mismatched cache line size detection
+Date:   Thu, 13 Sep 2018 15:32:04 +0200
+Message-Id: <20180913131813.350744435@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131805.732342940@linuxfoundation.org>
 References: <20180913131805.732342940@linuxfoundation.org>
@@ -52,52 +53,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ethan Lien <ethanlien@synology.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-commit d814a49198eafa6163698bdd93961302f3a877a4 upstream.
+commit 4c4a39dd5fe2d13e2d2fa5fceb8ef95d19fc389a upstream.
 
-We use customized, nodesize batch value to update dirty_metadata_bytes.
-We should also use batch version of compare function or we will easily
-goto fast path and get false result from percpu_counter_compare().
+If there is a mismatch in the I/D min line size, we must
+always use the system wide safe value both in applications
+and in the kernel, while performing cache operations. However,
+we have been checking more bits than just the min line sizes,
+which triggers false negatives. We may need to trap the user
+accesses in such cases, but not necessarily patch the kernel.
 
-Fixes: e2d845211eda ("Btrfs: use percpu counter for dirty metadata count")
-CC: stable@vger.kernel.org # 4.4+
-Signed-off-by: Ethan Lien <ethanlien@synology.com>
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-nb: Rebased on 4.4.y ]
-Signed-off-by: Nikolay Borisov <nborisov@suse.com>
+This patch fixes the check to do the right thing as advertised.
+A new capability will be added to check mismatches in other
+fields and ensure we trap the CTR accesses.
+
+Fixes: be68a8aaf925 ("arm64: cpufeature: Fix CTR_EL0 field definitions")
+Cc: <stable@vger.kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Reported-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- fs/btrfs/disk-io.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
 
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -1096,8 +1096,9 @@ static int btree_writepages(struct addre
+---
+ arch/arm64/include/asm/cachetype.h |    5 +++++
+ arch/arm64/kernel/cpu_errata.c     |    7 +++++--
+ arch/arm64/kernel/cpufeature.c     |    4 ++--
+ 3 files changed, 12 insertions(+), 4 deletions(-)
+
+--- a/arch/arm64/include/asm/cachetype.h
++++ b/arch/arm64/include/asm/cachetype.h
+@@ -22,6 +22,11 @@
+ #define CTR_L1IP_MASK		3
+ #define CTR_CWG_SHIFT		24
+ #define CTR_CWG_MASK		15
++#define CTR_DMINLINE_SHIFT	16
++#define CTR_IMINLINE_SHIFT	0
++
++#define CTR_CACHE_MINLINE_MASK	\
++	((0xf << CTR_DMINLINE_SHIFT) | (0xf << CTR_IMINLINE_SHIFT))
  
- 		fs_info = BTRFS_I(mapping->host)->root->fs_info;
- 		/* this is a bit racy, but that's ok */
--		ret = percpu_counter_compare(&fs_info->dirty_metadata_bytes,
--					     BTRFS_DIRTY_METADATA_THRESH);
-+		ret = __percpu_counter_compare(&fs_info->dirty_metadata_bytes,
-+					     BTRFS_DIRTY_METADATA_THRESH,
-+					     fs_info->dirty_metadata_batch);
- 		if (ret < 0)
- 			return 0;
- 	}
-@@ -4107,8 +4108,9 @@ static void __btrfs_btree_balance_dirty(
- 	if (flush_delayed)
- 		btrfs_balance_delayed_items(root);
+ #define ICACHE_POLICY_RESERVED	0
+ #define ICACHE_POLICY_AIVIVT	1
+--- a/arch/arm64/kernel/cpu_errata.c
++++ b/arch/arm64/kernel/cpu_errata.c
+@@ -17,6 +17,7 @@
+  */
  
--	ret = percpu_counter_compare(&root->fs_info->dirty_metadata_bytes,
--				     BTRFS_DIRTY_METADATA_THRESH);
-+	ret = __percpu_counter_compare(&root->fs_info->dirty_metadata_bytes,
-+				     BTRFS_DIRTY_METADATA_THRESH,
-+				     root->fs_info->dirty_metadata_batch);
- 	if (ret > 0) {
- 		balance_dirty_pages_ratelimited(
- 				   root->fs_info->btree_inode->i_mapping);
+ #include <linux/types.h>
++#include <asm/cachetype.h>
+ #include <asm/cpu.h>
+ #include <asm/cputype.h>
+ #include <asm/cpufeature.h>
+@@ -34,9 +35,11 @@ static bool
+ has_mismatched_cache_line_size(const struct arm64_cpu_capabilities *entry,
+ 				int scope)
+ {
++	u64 mask = CTR_CACHE_MINLINE_MASK;
++
+ 	WARN_ON(scope != SCOPE_LOCAL_CPU || preemptible());
+-	return (read_cpuid_cachetype() & arm64_ftr_reg_ctrel0.strict_mask) !=
+-		(arm64_ftr_reg_ctrel0.sys_val & arm64_ftr_reg_ctrel0.strict_mask);
++	return (read_cpuid_cachetype() & mask) !=
++	       (arm64_ftr_reg_ctrel0.sys_val & mask);
+ }
+ 
+ static int cpu_enable_trap_ctr_access(void *__unused)
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -152,7 +152,7 @@ static const struct arm64_ftr_bits ftr_c
+ 	ARM64_FTR_BITS(FTR_STRICT, FTR_EXACT, 28, 3, 0),
+ 	ARM64_FTR_BITS(FTR_STRICT, FTR_HIGHER_SAFE, 24, 4, 0),	/* CWG */
+ 	ARM64_FTR_BITS(FTR_STRICT, FTR_LOWER_SAFE, 20, 4, 0),	/* ERG */
+-	ARM64_FTR_BITS(FTR_STRICT, FTR_LOWER_SAFE, 16, 4, 1),	/* DminLine */
++	ARM64_FTR_BITS(FTR_STRICT, FTR_LOWER_SAFE, CTR_DMINLINE_SHIFT, 4, 1),
+ 	/*
+ 	 * Linux can handle differing I-cache policies. Userspace JITs will
+ 	 * make use of *minLine.
+@@ -160,7 +160,7 @@ static const struct arm64_ftr_bits ftr_c
+ 	 */
+ 	ARM64_FTR_BITS(FTR_NONSTRICT, FTR_EXACT, 14, 2, ICACHE_POLICY_AIVIVT),	/* L1Ip */
+ 	ARM64_FTR_BITS(FTR_STRICT, FTR_EXACT, 4, 10, 0),	/* RAZ */
+-	ARM64_FTR_BITS(FTR_STRICT, FTR_LOWER_SAFE, 0, 4, 0),	/* IminLine */
++	ARM64_FTR_BITS(FTR_STRICT, FTR_LOWER_SAFE, CTR_IMINLINE_SHIFT, 4, 0),
+ 	ARM64_FTR_END,
+ };
+ 
 
 
