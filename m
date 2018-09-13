@@ -2,118 +2,168 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=0.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,GAPPY_SUBJECT,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E543C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:10:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51136C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:16:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28B9820881
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:10:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE58820861
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:16:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HECPvkEQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28B9820881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="IUE6kX1x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE58820861
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727640AbeIMSTj (ORCPT
+        id S1727669AbeIMS0T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:19:39 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:37971 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727002AbeIMSTj (ORCPT
+        Thu, 13 Sep 2018 14:26:19 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:45944 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727403AbeIMS0T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:19:39 -0400
-Received: by mail-ot1-f66.google.com with SMTP id n5-v6so1147977otl.5
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 06:10:14 -0700 (PDT)
+        Thu, 13 Sep 2018 14:26:19 -0400
+Received: by mail-lj1-f195.google.com with SMTP id u83-v6so4544951lje.12
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 06:16:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=NMsz4N+Joz7F76aAEf5Ham3AqYrnEj7vXQ7piB57CJs=;
-        b=HECPvkEQHHwpw87qUrNjq6mfn/ZGebcCSgm+0PZ3uah+gDQQY5a7bcw0lr2jlMFTyi
-         vKgW/W22JHGvZAvCD+I7ecv7yy/UspryQjreBtfbsSJq4qByqegRGZV17/MVebLSqKt4
-         grFeyMKe2x7ohe7tVwafGSrY/4clMAbRSQnZzyOF+zOMc8qxS5NvsIf0C98waRpuRLzz
-         2cJy77msIsPiX88e0Nzc+xovYM/btpgCskfZk3TePse45Jm/KZ1uggGUwZOQo/xiCJlv
-         t+9JVKJ6gRhnIvviMwkJxthdif5LrI37e8uwlKsm8/Ye3XfdOlwOmJSsB0A7fuQCVyeK
-         NttA==
+        bh=9AiYgXrIawJIgvYrQKzVn6hFt7fxHpMJ7RkWi2T3eow=;
+        b=IUE6kX1xirh+LJxA0cT2FIzessZBKhxrfpfJ11cFlHltEoP+pyaB9tgTOuQIkKwemz
+         aiVrzm+KdhTP6ajh+2TDqTHZXpyrCkM66EPbC0Zho5DcSlNZa68fIkxqloAi9G2G3O7o
+         aQA0HHMqvLoSzGsK6HYVMAZE4swh4qcRpVbrMAtH3zFssP8mo1fYb3OtilsIaliM2ZYO
+         /PeTVckPzB9Nav73seu1mL7YCCMoqf6HUWjHNDWyfdYtFQaL0tVqulSjjKbbH1pqwfdl
+         lXLTKc3SoMvyslb24u1bmduNY5dzMm94OG814Uyj1joWK02KmrNg6JhoVpGK2W+Eeuua
+         H6Fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=NMsz4N+Joz7F76aAEf5Ham3AqYrnEj7vXQ7piB57CJs=;
-        b=izXT4MGoQFW09eFH+012axtg3HCSXmIgyyxZKXLBn3sHgitv+GjWKAOQ+TCx6we/BA
-         FG2SQvFnI8pXDrXvZodiXN01DBIdxKviEfnl1Az1vKWynGAhST0HjDyZTuHIiap11s6s
-         F0YXvLNpNh8LgMQ6Etoca/EvzCnXn9FSf7Ypaa65mh3aF3wEsOjo3AiKFvdOiqbKH/vP
-         J6ZxKxY1KEdDj2UWVwEITQi/MhpYkPG1lB9ylXa8k+TKMAmw9VKwkOdY2SP5yk9M4yf3
-         LDvdVknCXlU6WZbT7R01/BtQwfl+i3eC5hbzignfOewZBo5ki2Yp+MRHLfs3BLR0bWX9
-         JWnw==
-X-Gm-Message-State: APzg51DodwGTq1UXy7sggeqHwDtosOIZgpItqGrjKZ/1/ngKxJIqw4Lq
-        U23QD+0BDiBPdUnfAHK7/Afa5KxOHT0nv7qEmxsmng==
-X-Google-Smtp-Source: ANB0Vda/Rk6AH+r1qX+zURb5DBzockCK8M+DU+VSANymwOuJU/w1tAaZ25e1OKBNdzmhLYIwsKXmsMNnQLWEjlusu+4=
-X-Received: by 2002:a9d:3224:: with SMTP id t36-v6mr1078443otc.284.1536844213571;
- Thu, 13 Sep 2018 06:10:13 -0700 (PDT)
+        bh=9AiYgXrIawJIgvYrQKzVn6hFt7fxHpMJ7RkWi2T3eow=;
+        b=Ry0B5Pskf57t7cqC6+N2RQt37+N7TV3lDLQ8oD2TGH6Ss7S25IDOoSGemwgm5bPy4y
+         Roc8dTQZEK3x4BKjZliUcBVgKZg3tfBh9crzSYEGDkA7ifRCrn5zHtA/JHjqPf1XGoG5
+         woPmHgNoEbnRgzL9pzAOx5oxP4pzb+3FcSr4t7FgJX/uxg8DXXZWoJ271vouyCy7KoKM
+         VlngY3+P5+TagBDELB8P5TJRw/XxFHJSgo0yScJVr7YxzNJoPMsC4WI5zVE8CbUutzHY
+         1+vjeG0jzlZpCBu2jq1gqzuz79N3uF4uW65Mrp7Wx+Sl20iPBrGdGs7E36wHXTOZic6T
+         geDA==
+X-Gm-Message-State: APzg51BofVA/sS2MutWIURPnGOeaEBo20ttEGKuHOZTXguJh4cH6v2SB
+        zBlN5jm1YtGeU7d36r+uSHmIewQp41rmIrP9EhIV
+X-Google-Smtp-Source: ANB0VdafVv6ytbFjcNYWWPFejEHIziv7f8fOSVmdwC4qfm9YfDTvk3y4+kPshghyObBRyriZ9BG4WW1vwEoZ0S+FoNc=
+X-Received: by 2002:a2e:811:: with SMTP id 17-v6mr4795832lji.140.1536844610768;
+ Thu, 13 Sep 2018 06:16:50 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180913092110.817204997@infradead.org> <20180913092812.132208484@infradead.org>
-In-Reply-To: <20180913092812.132208484@infradead.org>
-From:   Jann Horn <jannh@google.com>
-Date:   Thu, 13 Sep 2018 15:09:47 +0200
-Message-ID: <CAG48ez01-iQ5fyZjOJxQyOk9xRkra6bYyUAvUbVLheuABOQi8Q@mail.gmail.com>
-Subject: Re: [RFC][PATCH 05/11] asm-generic/tlb: Provide generic tlb_flush
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Will Deacon <will.deacon@arm.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>, npiggin@gmail.com,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>
+References: <cbf848ae-a1ac-c5ab-f23b-bc9217fceebe@schaufler-ca.com>
+ <99cb1ae7-8881-eb9a-a8cb-a787abe454e1@schaufler-ca.com> <CAGXu5jLONSfPHYYYTLSma-+arVHSQKaEWb9JxpOn6TNKtyLNhw@mail.gmail.com>
+In-Reply-To: <CAGXu5jLONSfPHYYYTLSma-+arVHSQKaEWb9JxpOn6TNKtyLNhw@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 13 Sep 2018 09:16:39 -0400
+Message-ID: <CAHC9VhQN0wq0zZS5BYU9jBomaWvCaJ_BqJjHF3AT7FG8Z0nLDQ@mail.gmail.com>
+Subject: Re: [PATCH 10/10] LSM: Blob sharing support for S.A.R.A and LandLock
+To:     keescook@chromium.org
+Cc:     casey@schaufler-ca.com, linux-security-module@vger.kernel.org,
+        James Morris <jmorris@namei.org>, linux-kernel@vger.kernel.org,
+        selinux@tycho.nsa.gov, john.johansen@canonical.com,
+        penguin-kernel@i-love.sakura.ne.jp,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-fsdevel@vger.kernel.org, adobriyan@gmail.com,
+        casey.schaufler@intel.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 13, 2018 at 3:01 PM Peter Zijlstra <peterz@infradead.org> wrote:
-> Provide a generic tlb_flush() implementation that relies on
-> flush_tlb_range(). This is a little awkward because flush_tlb_range()
-> assumes a VMA for range invalidation, but we no longer have one.
+On Thu, Sep 13, 2018 at 12:19 AM Kees Cook <keescook@chromium.org> wrote:
+> On Tue, Sep 11, 2018 at 9:42 AM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+> > Two proposed security modules require the ability to
+> > share security blobs with existing "major" security modules.
+> > These modules, S.A.R.A and LandLock, provide significantly
+> > different services than SELinux, Smack or AppArmor. Using
+> > either in conjunction with the existing modules is quite
+> > reasonable. S.A.R.A requires access to the cred blob, while
+> > LandLock uses the cred, file and inode blobs.
+> >
+> > The use of the cred, file and inode blobs has been
+> > abstracted in preceding patches in the series. This
+> > patch teaches the affected security modules how to access
+> > the part of the blob set aside for their use in the case
+> > where blobs are shared. The configuration option
+> > CONFIG_SECURITY_STACKING identifies systems where the
+> > blobs may be shared.
+> >
+> > The mechanism for selecting which security modules are
+> > active has been changed to allow non-conflicting "major"
+> > security modules to be used together. At this time the
+> > TOMOYO module can safely be used with any of the others.
+> > The two new modules would be non-conflicting as well.
+> >
+> > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> > ---
+> >  Documentation/admin-guide/LSM/index.rst | 14 +++--
+> >  include/linux/lsm_hooks.h               |  2 +-
+> >  security/Kconfig                        | 81 +++++++++++++++++++++++++
+> >  security/apparmor/include/cred.h        |  8 +++
+> >  security/apparmor/include/file.h        |  9 ++-
+> >  security/apparmor/include/lib.h         |  4 ++
+> >  security/apparmor/lsm.c                 |  8 ++-
+> >  security/security.c                     | 30 ++++++++-
+> >  security/selinux/hooks.c                |  3 +-
+> >  security/selinux/include/objsec.h       | 18 +++++-
+> >  security/smack/smack.h                  | 19 +++++-
+> >  security/smack/smack_lsm.c              | 17 +++---
+> >  security/tomoyo/common.h                | 12 +++-
+> >  security/tomoyo/tomoyo.c                |  3 +-
+> >  14 files changed, 200 insertions(+), 28 deletions(-)
+
+...
+
+> > diff --git a/security/Kconfig b/security/Kconfig
+> > index 22f7664c4977..ed48025ae9e0 100644
+> > --- a/security/Kconfig
+> > +++ b/security/Kconfig
+> > @@ -36,6 +36,28 @@ config SECURITY_WRITABLE_HOOKS
+> >         bool
+> >         default n
+> >
+> > +config SECURITY_STACKING
+> > +       bool "Security module stacking"
+> > +       depends on SECURITY
+> > +       help
+> > +         Allows multiple major security modules to be stacked.
+> > +         Modules are invoked in the order registered with a
+> > +         "bail on fail" policy, in which the infrastructure
+> > +         will stop processing once a denial is detected. Not
+> > +         all modules can be stacked. SELinux, Smack and AppArmor are
+> > +         known to be incompatible. User space components may
+> > +         have trouble identifying the security module providing
+> > +         data in some cases.
+> > +
+> > +         If you select this option you will have to select which
+> > +         of the stackable modules you wish to be active. The
+> > +         "Default security module" will be ignored. The boot line
+> > +         "security=" option can be used to specify that one of
+> > +         the modules identifed for stacking should be used instead
+> > +         of the entire stack.
+> > +
+> > +         If you are unsure how to answer this question, answer N.
 >
-> Audit of all flush_tlb_range() implementations shows only vma->vm_mm
-> and vma->vm_flags are used, and of the latter only VM_EXEC (I-TLB
-> invalidates) and VM_HUGETLB (large TLB invalidate) are used.
->
-> Therefore, track VM_EXEC and VM_HUGETLB in two more bits, and create a
-> 'fake' VMA.
->
-> This allows architectures that have a reasonably efficient
-> flush_tlb_range() to not require any additional effort.
-[...]
-> +#define tlb_flush tlb_flush
-> +static inline void tlb_flush(struct mmu_gather *tlb)
-> +{
-> +       if (tlb->fullmm || tlb->need_flush_all) {
-> +               flush_tlb_mm(tlb->mm);
-> +       } else {
-> +               struct vm_area_struct vma = {
-> +                       .vm_mm = tlb->mm,
-> +                       .vm_flags = tlb->vma_exec ? VM_EXEC    : 0 |
-> +                                   tlb->vma_huge ? VM_HUGETLB : 0,
+> I don't see a good reason to make this a config. Why shouldn't this
+> always be enabled?
 
-This looks wrong to me. Bitwise OR has higher precedence than the
-ternary operator, so I think this code is equivalent to:
+I do.  From a user perspective it is sometimes difficult to determine
+the reason behind a failed operation; its is a DAC based denial, the
+LSM, or some other failure?  Stacking additional LSMs has the
+potential to make this worse.  The boot time configuration adds to the
+complexity.
 
-.vm_flags = tlb->vma_exec ? VM_EXEC    : (0 | tlb->vma_huge) ? VM_HUGETLB : 0
+I think we should leave this decision to the individual distros so
+that they can make their own decision on LSM stacking based on the
+savviness of their user base and the quality of their support
+infrastructure.
 
-meaning that executable+huge mappings would only get VM_EXEC, but not
-VM_HUGETLB.
-
-> +               };
-> +
-> +               flush_tlb_range(&vma, tlb->start, tlb->end);
-> +       }
->  }
-> +#endif
+-- 
+paul moore
+www.paul-moore.com
