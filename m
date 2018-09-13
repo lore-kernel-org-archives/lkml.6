@@ -5,30 +5,30 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB26FC07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:55:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF2ECC07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:55:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7405D20854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:55:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7405D20854
+	by mail.kernel.org (Postfix) with ESMTP id 77F262133F
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:55:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77F262133F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728307AbeIMSFH (ORCPT
+        id S1728319AbeIMSFK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:05:07 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53540 "EHLO mx1.redhat.com"
+        Thu, 13 Sep 2018 14:05:10 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:34854 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727009AbeIMSFG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:05:06 -0400
+        id S1727009AbeIMSFJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 14:05:09 -0400
 Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C718A3086257;
-        Thu, 13 Sep 2018 12:55:45 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 25BFDC050006;
+        Thu, 13 Sep 2018 12:55:48 +0000 (UTC)
 Received: from krava.brq.redhat.com (unknown [10.43.17.10])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C365B600D1;
-        Thu, 13 Sep 2018 12:55:43 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1C358600C8;
+        Thu, 13 Sep 2018 12:55:45 +0000 (UTC)
 From:   Jiri Olsa <jolsa@kernel.org>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     Frederic Weisbecker <fweisbec@gmail.com>,
@@ -39,13 +39,13 @@ Cc:     Frederic Weisbecker <fweisbec@gmail.com>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>,
         Andi Kleen <andi@firstfloor.org>,
         Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: [PATCH 23/48] perf callchain: Use thread__find_addr_location_by_time() and friends
-Date:   Thu, 13 Sep 2018 14:54:25 +0200
-Message-Id: <20180913125450.21342-24-jolsa@kernel.org>
+Subject: [PATCH 24/48] perf tools: Add a test case for timed map groups handling
+Date:   Thu, 13 Sep 2018 14:54:26 +0200
+Message-Id: <20180913125450.21342-25-jolsa@kernel.org>
 In-Reply-To: <20180913125450.21342-1-jolsa@kernel.org>
 References: <20180913125450.21342-1-jolsa@kernel.org>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Thu, 13 Sep 2018 12:55:46 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 13 Sep 2018 12:55:48 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -53,159 +53,160 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Namhyung Kim <namhyung@kernel.org>
 
-Find correct thread/map/symbol using proper functions.
+A test case for verifying thread->mg and ->mg_list handling during
+time change and new thread__find_addr_map_by_time() and friends.
 
 Cc: Frederic Weisbecker <fweisbec@gmail.com>
-Link: http://lkml.kernel.org/n/tip-k02mlrexo1h3bsezgrr7ydn8@git.kernel.org
+Link: http://lkml.kernel.org/n/tip-20jkz8hzs9njsvmrseo2o3s8@git.kernel.org
 Signed-off-by: Namhyung Kim <namhyung@kernel.org>
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- tools/perf/util/machine.c                | 18 +++++++++++-------
- tools/perf/util/unwind-libdw.c           |  6 ++++--
- tools/perf/util/unwind-libunwind-local.c | 11 +++++++----
- 3 files changed, 22 insertions(+), 13 deletions(-)
+ tools/perf/tests/Build            |  1 +
+ tools/perf/tests/builtin-test.c   |  4 ++
+ tools/perf/tests/tests.h          |  1 +
+ tools/perf/tests/thread-mg-time.c | 94 +++++++++++++++++++++++++++++++
+ 4 files changed, 100 insertions(+)
+ create mode 100644 tools/perf/tests/thread-mg-time.c
 
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index 0c576a01697e..dc46a7967e10 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -2101,7 +2101,8 @@ static int add_callchain_ip(struct thread *thread,
- 			    bool branch,
- 			    struct branch_flags *flags,
- 			    struct iterations *iter,
--			    u64 branch_from)
-+			    u64 branch_from,
-+			    u64 timestamp)
- {
- 	struct addr_location al;
- 	int nr_loop_iter = 0;
-@@ -2111,7 +2112,8 @@ static int add_callchain_ip(struct thread *thread,
- 	al.filtered = 0;
- 	al.sym = NULL;
- 	if (!cpumode) {
--		thread__find_cpumode_addr_location(thread, ip, &al);
-+		thread__find_cpumode_addr_location_by_time(thread, ip,
-+							   &al, timestamp);
- 	} else {
- 		if (ip >= PERF_CONTEXT_MAX) {
- 			switch (ip) {
-@@ -2136,7 +2138,8 @@ static int add_callchain_ip(struct thread *thread,
- 			}
- 			return 0;
- 		}
--		thread__find_symbol(thread, *cpumode, ip, &al);
-+		thread__find_symbol_by_time(thread, *cpumode, ip, &al,
-+					    timestamp);
- 	}
+diff --git a/tools/perf/tests/Build b/tools/perf/tests/Build
+index 715eb17d8047..d14a532f87f1 100644
+--- a/tools/perf/tests/Build
++++ b/tools/perf/tests/Build
+@@ -27,6 +27,7 @@ perf-y += mmap-thread-lookup.o
+ perf-y += thread-comm.o
+ perf-y += thread-mg-share.o
+ perf-y += thread-lookup-time.o
++perf-y += thread-mg-time.o
+ perf-y += switch-tracking.o
+ perf-y += keep-tracking.o
+ perf-y += code-reading.o
+diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
+index c985ece3fab8..ee58cb40ebc2 100644
+--- a/tools/perf/tests/builtin-test.c
++++ b/tools/perf/tests/builtin-test.c
+@@ -287,6 +287,10 @@ static struct test generic_tests[] = {
+ 		.desc = "Test thread lookup with time",
+ 		.func = test__thread_lookup_time,
+ 	},
++	{
++		.desc = "Test thread map group handling with time",
++		.func = test__thread_mg_time,
++	},
+ 	{
+ 		.func = NULL,
+ 	},
+diff --git a/tools/perf/tests/tests.h b/tools/perf/tests/tests.h
+index 60fdc7bea1d8..cd7cca258398 100644
+--- a/tools/perf/tests/tests.h
++++ b/tools/perf/tests/tests.h
+@@ -106,6 +106,7 @@ int test__unit_number__scnprint(struct test *test, int subtest);
+ int test__mem2node(struct test *t, int subtest);
+ int test__thread_comm(struct test *test, int subtest);
+ int test__thread_lookup_time(struct test *test, int subtest);
++int test__thread_mg_time(struct test *test, int subtest);
  
- 	if (al.sym != NULL) {
-@@ -2333,7 +2336,7 @@ static int resolve_lbr_callchain_sample(struct thread *thread,
- 			err = add_callchain_ip(thread, cursor, parent,
- 					       root_al, &cpumode, ip,
- 					       branch, flags, NULL,
--					       branch_from);
-+					       branch_from, sample->time);
- 			if (err)
- 				return (err < 0) ? err : 0;
- 		}
-@@ -2356,6 +2359,7 @@ static int thread__resolve_callchain_sample(struct thread *thread,
- 	int chain_nr = 0;
- 	u8 cpumode = PERF_RECORD_MISC_USER;
- 	int i, j, err, nr_entries;
-+	u64 timestamp = sample->time;
- 	int skip_idx = -1;
- 	int first_call = 0;
+ bool test__bp_signal_is_supported(void);
  
-@@ -2429,13 +2433,13 @@ static int thread__resolve_callchain_sample(struct thread *thread,
- 					       root_al,
- 					       NULL, be[i].to,
- 					       true, &be[i].flags,
--					       NULL, be[i].from);
-+					       NULL, be[i].from, timestamp);
- 
- 			if (!err)
- 				err = add_callchain_ip(thread, cursor, parent, root_al,
- 						       NULL, be[i].from,
- 						       true, &be[i].flags,
--						       &iter[i], 0);
-+						       &iter[i], 0, timestamp);
- 			if (err == -EINVAL)
- 				break;
- 			if (err)
-@@ -2469,7 +2473,7 @@ static int thread__resolve_callchain_sample(struct thread *thread,
- 
- 		err = add_callchain_ip(thread, cursor, parent,
- 				       root_al, &cpumode, ip,
--				       false, NULL, NULL, 0);
-+				       false, NULL, NULL, 0, timestamp);
- 
- 		if (err)
- 			return (err < 0) ? err : 0;
-diff --git a/tools/perf/util/unwind-libdw.c b/tools/perf/util/unwind-libdw.c
-index 6f318b15950e..c22c1030a8ad 100644
---- a/tools/perf/util/unwind-libdw.c
-+++ b/tools/perf/util/unwind-libdw.c
-@@ -32,7 +32,8 @@ static int __report_module(struct addr_location *al, u64 ip,
- 	 * Some callers will use al->sym, so we can't just use the
- 	 * cheaper thread__find_map() here.
- 	 */
--	thread__find_symbol(ui->thread, PERF_RECORD_MISC_USER, ip, al);
-+	thread__find_symbol_by_time(ui->thread, PERF_RECORD_MISC_USER, ip,
-+				    al, ui->sample->time);
- 
- 	if (al->map)
- 		dso = al->map->dso;
-@@ -104,7 +105,8 @@ static int access_dso_mem(struct unwind_info *ui, Dwarf_Addr addr,
- 	struct addr_location al;
- 	ssize_t size;
- 
--	if (!thread__find_map(ui->thread, PERF_RECORD_MISC_USER, addr, &al)) {
-+	if (!thread__find_map_by_time(ui->thread, PERF_RECORD_MISC_USER,
-+				      addr, &al, ui->sample->time)) {
- 		pr_debug("unwind: no map for %lx\n", (unsigned long)addr);
- 		return -1;
- 	}
-diff --git a/tools/perf/util/unwind-libunwind-local.c b/tools/perf/util/unwind-libunwind-local.c
-index 79f521a552cf..da6f39315b47 100644
---- a/tools/perf/util/unwind-libunwind-local.c
-+++ b/tools/perf/util/unwind-libunwind-local.c
-@@ -366,7 +366,9 @@ static int read_unwind_spec_debug_frame(struct dso *dso,
- static struct map *find_map(unw_word_t ip, struct unwind_info *ui)
- {
- 	struct addr_location al;
--	return thread__find_map(ui->thread, PERF_RECORD_MISC_USER, ip, &al);
+diff --git a/tools/perf/tests/thread-mg-time.c b/tools/perf/tests/thread-mg-time.c
+new file mode 100644
+index 000000000000..6a735f59c097
+--- /dev/null
++++ b/tools/perf/tests/thread-mg-time.c
+@@ -0,0 +1,94 @@
++#include <linux/compiler.h>
++#include "tests.h"
++#include "machine.h"
++#include "thread.h"
++#include "map.h"
++#include "debug.h"
 +
-+	return thread__find_map_by_time(ui->thread, PERF_RECORD_MISC_USER, ip,
-+					&al, ui->sample->time);
- }
- 
- static int
-@@ -568,13 +570,14 @@ static void put_unwind_info(unw_addr_space_t __maybe_unused as,
- 	pr_debug("unwind: put_unwind_info called\n");
- }
- 
--static int entry(u64 ip, struct thread *thread,
-+static int entry(u64 ip, struct thread *thread, u64 timestamp,
- 		 unwind_entry_cb_t cb, void *arg)
- {
- 	struct unwind_entry e;
- 	struct addr_location al;
- 
--	e.sym = thread__find_symbol(thread, PERF_RECORD_MISC_USER, ip, &al);
-+	e.sym = thread__find_symbol_by_time(thread, PERF_RECORD_MISC_USER, ip,
-+					    &al, timestamp);
- 	e.ip  = ip;
- 	e.map = al.map;
- 
-@@ -700,7 +703,7 @@ static int get_entries(struct unwind_info *ui, unwind_entry_cb_t cb,
- 
- 		if (callchain_param.order == ORDER_CALLER)
- 			j = max_stack - i - 1;
--		ret = ips[j] ? entry(ips[j], ui->thread, cb, arg) : 0;
-+		ret = ips[j] ? entry(ips[j], ui->thread, ui->sample->time, cb, arg) : 0;
- 	}
- 
- 	return ret;
++#define PERF_MAP_START  0x40000
++
++int test__thread_mg_time(struct test *test __maybe_unused, int subtest __maybe_unused)
++{
++	struct machines machines;
++	struct machine *machine;
++	struct thread *t;
++	struct map_groups *mg;
++	struct map *map, *old_map;
++	struct addr_location al = { .map = NULL, };
++
++	/*
++	 * This test is to check whether it can retrieve a correct map
++	 * for a given time.  When multi-file data storage is enabled,
++	 * those task/comm/mmap events are processed first so the
++	 * later sample should find a matching comm properly.
++	 */
++	machines__init(&machines);
++	machine = &machines.host;
++
++	/* this is needed to add/find map by time */
++	perf_has_index = true;
++
++	t = machine__findnew_thread(machine, 0, 0);
++	mg = t->mg;
++
++	map = dso__new_map("/usr/bin/perf");
++	map->start = PERF_MAP_START;
++	map->end = PERF_MAP_START + 0x1000;
++
++	thread__insert_map(t, map);
++
++	if (verbose > 1)
++		map_groups__fprintf(t->mg, stderr);
++
++	thread__find_addr_map(t, PERF_RECORD_MISC_USER, MAP__FUNCTION,
++			      PERF_MAP_START, &al);
++
++	TEST_ASSERT_VAL("cannot find mapping for perf", al.map != NULL);
++	TEST_ASSERT_VAL("non matched mapping found", al.map == map);
++	TEST_ASSERT_VAL("incorrect map groups", al.map->groups == mg);
++	TEST_ASSERT_VAL("incorrect map groups", al.map->groups == t->mg);
++
++	thread__find_addr_map_by_time(t, PERF_RECORD_MISC_USER, MAP__FUNCTION,
++				      PERF_MAP_START, &al, -1ULL);
++
++	TEST_ASSERT_VAL("cannot find timed mapping for perf", al.map != NULL);
++	TEST_ASSERT_VAL("non matched timed mapping", al.map == map);
++	TEST_ASSERT_VAL("incorrect timed map groups", al.map->groups == mg);
++	TEST_ASSERT_VAL("incorrect map groups", al.map->groups == t->mg);
++
++
++	pr_debug("simulate EXEC event (generate new mg)\n");
++	__thread__set_comm(t, "perf-test", 10000, true);
++
++	old_map = map;
++
++	map = dso__new_map("/usr/bin/perf-test");
++	map->start = PERF_MAP_START;
++	map->end = PERF_MAP_START + 0x2000;
++
++	thread__insert_map(t, map);
++
++	if (verbose > 1)
++		map_groups__fprintf(t->mg, stderr);
++
++	thread__find_addr_map(t, PERF_RECORD_MISC_USER, MAP__FUNCTION,
++			      PERF_MAP_START + 4, &al);
++
++	TEST_ASSERT_VAL("cannot find mapping for perf-test", al.map != NULL);
++	TEST_ASSERT_VAL("invalid mapping found", al.map == map);
++	TEST_ASSERT_VAL("incorrect map groups", al.map->groups != mg);
++	TEST_ASSERT_VAL("incorrect map groups", al.map->groups == t->mg);
++
++	pr_debug("searching map in the old mag groups\n");
++	thread__find_addr_map_by_time(t, PERF_RECORD_MISC_USER, MAP__FUNCTION,
++				      PERF_MAP_START, &al, 5000);
++
++	TEST_ASSERT_VAL("cannot find timed mapping for perf-test", al.map != NULL);
++	TEST_ASSERT_VAL("non matched timed mapping", al.map == old_map);
++	TEST_ASSERT_VAL("incorrect timed map groups", al.map->groups == mg);
++	TEST_ASSERT_VAL("incorrect map groups", al.map->groups != t->mg);
++
++	machine__delete_threads(machine);
++	machines__exit(&machines);
++	return 0;
++}
 -- 
 2.17.1
 
