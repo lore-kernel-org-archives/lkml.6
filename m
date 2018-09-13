@@ -6,38 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E836C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:41:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75676C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:41:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E50F220854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:41:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E50F220854
+	by mail.kernel.org (Postfix) with ESMTP id 37B252133F
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:41:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37B252133F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729671AbeIMSvR (ORCPT
+        id S1728415AbeIMSvU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:51:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60060 "EHLO
+        Thu, 13 Sep 2018 14:51:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60072 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728471AbeIMSvQ (ORCPT
+        with ESMTP id S1728471AbeIMSvT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:51:16 -0400
+        Thu, 13 Sep 2018 14:51:19 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0F0B6CF3;
-        Thu, 13 Sep 2018 13:41:43 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 36E6BD19;
+        Thu, 13 Sep 2018 13:41:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+fe62a0c9aa6a85c6de16@syzkaller.appspotmail.com,
-        Xin Long <lucien.xin@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        stable@vger.kernel.org, Ido Schimmel <idosch@mellanox.com>,
+        Petr Machata <petrm@mellanox.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 013/115] sctp: hold transport before accessing its asoc in sctp_transport_get_next
-Date:   Thu, 13 Sep 2018 15:30:33 +0200
-Message-Id: <20180913131824.298539904@linuxfoundation.org>
+Subject: [PATCH 4.14 014/115] mlxsw: spectrum_switchdev: Do not leak RIFs when removing bridge
+Date:   Thu, 13 Sep 2018 15:30:34 +0200
+Message-Id: <20180913131824.358865632@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -55,99 +52,108 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Ido Schimmel <idosch@mellanox.com>
 
-[ Upstream commit bab1be79a5169ac748d8292b20c86d874022d7ba ]
+[ Upstream commit 602b74eda81311dbdb5dbab08c30f789f648ebdc ]
 
-As Marcelo noticed, in sctp_transport_get_next, it is iterating over
-transports but then also accessing the association directly, without
-checking any refcnts before that, which can cause an use-after-free
-Read.
+When a bridge device is removed, the VLANs are flushed from each
+configured port. This causes the ports to decrement the reference count
+on the associated FIDs (filtering identifier). If the reference count of
+a FID is 1 and it has a RIF (router interface), then this RIF is
+destroyed.
 
-So fix it by holding transport before accessing the association. With
-that, sctp_transport_hold calls can be removed in the later places.
+However, if no port is member in the VLAN for which a RIF exists, then
+the RIF will continue to exist after the removal of the bridge. To
+reproduce:
 
-Fixes: 626d16f50f39 ("sctp: export some apis or variables for sctp_diag and reuse some for proc")
-Reported-by: syzbot+fe62a0c9aa6a85c6de16@syzkaller.appspotmail.com
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: Neil Horman <nhorman@tuxdriver.com>
-Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+# ip link add name br0 type bridge vlan_filtering 1
+# ip link set dev swp1 master br0
+# ip link add link br0 name br0.10 type vlan id 10
+# ip address add 192.0.2.0/24 dev br0.10
+# ip link del dev br0
+
+The RIF associated with br0.10 continues to exist.
+
+Fix this by iterating over all the bridge device uppers when it is
+destroyed and take care of destroying their RIFs.
+
+Fixes: 99f44bb3527b ("mlxsw: spectrum: Enable L3 interfaces on top of bridge devices")
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Reviewed-by: Petr Machata <petrm@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sctp/proc.c   |    4 ----
- net/sctp/socket.c |   22 +++++++++++++++-------
- 2 files changed, 15 insertions(+), 11 deletions(-)
+ drivers/net/ethernet/mellanox/mlxsw/spectrum.h           |    2 +
+ drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c    |   11 ++++++++
+ drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c |   20 +++++++++++++++
+ 3 files changed, 33 insertions(+)
 
---- a/net/sctp/proc.c
-+++ b/net/sctp/proc.c
-@@ -335,8 +335,6 @@ static int sctp_assocs_seq_show(struct s
- 	}
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum.h
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum.h
+@@ -395,6 +395,8 @@ int mlxsw_sp_netdevice_vrf_event(struct
+ void
+ mlxsw_sp_port_vlan_router_leave(struct mlxsw_sp_port_vlan *mlxsw_sp_port_vlan);
+ void mlxsw_sp_rif_destroy(struct mlxsw_sp_rif *rif);
++void mlxsw_sp_rif_destroy_by_dev(struct mlxsw_sp *mlxsw_sp,
++				 struct net_device *dev);
  
- 	transport = (struct sctp_transport *)v;
--	if (!sctp_transport_hold(transport))
--		return 0;
- 	assoc = transport->asoc;
- 	epb = &assoc->base;
- 	sk = epb->sk;
-@@ -426,8 +424,6 @@ static int sctp_remaddr_seq_show(struct
- 	}
- 
- 	transport = (struct sctp_transport *)v;
--	if (!sctp_transport_hold(transport))
--		return 0;
- 	assoc = transport->asoc;
- 
- 	list_for_each_entry_rcu(tsp, &assoc->peer.transport_addr_list,
---- a/net/sctp/socket.c
-+++ b/net/sctp/socket.c
-@@ -4660,9 +4660,14 @@ struct sctp_transport *sctp_transport_ge
- 			break;
- 		}
- 
-+		if (!sctp_transport_hold(t))
-+			continue;
-+
- 		if (net_eq(sock_net(t->asoc->base.sk), net) &&
- 		    t->asoc->peer.primary_path == t)
- 			break;
-+
-+		sctp_transport_put(t);
- 	}
- 
- 	return t;
-@@ -4672,13 +4677,18 @@ struct sctp_transport *sctp_transport_ge
- 					      struct rhashtable_iter *iter,
- 					      int pos)
- {
--	void *obj = SEQ_START_TOKEN;
-+	struct sctp_transport *t;
-+
-+	if (!pos)
-+		return SEQ_START_TOKEN;
- 
--	while (pos && (obj = sctp_transport_get_next(net, iter)) &&
--	       !IS_ERR(obj))
--		pos--;
-+	while ((t = sctp_transport_get_next(net, iter)) && !IS_ERR(t)) {
-+		if (!--pos)
-+			break;
-+		sctp_transport_put(t);
-+	}
- 
--	return obj;
-+	return t;
+ /* spectrum_kvdl.c */
+ int mlxsw_sp_kvdl_alloc(struct mlxsw_sp *mlxsw_sp, unsigned int entry_count,
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c
+@@ -5131,6 +5131,17 @@ void mlxsw_sp_rif_destroy(struct mlxsw_s
+ 	mlxsw_sp_vr_put(vr);
  }
  
- int sctp_for_each_endpoint(int (*cb)(struct sctp_endpoint *, void *),
-@@ -4738,8 +4748,6 @@ again:
++void mlxsw_sp_rif_destroy_by_dev(struct mlxsw_sp *mlxsw_sp,
++				 struct net_device *dev)
++{
++	struct mlxsw_sp_rif *rif;
++
++	rif = mlxsw_sp_rif_find_by_dev(mlxsw_sp, dev);
++	if (!rif)
++		return;
++	mlxsw_sp_rif_destroy(rif);
++}
++
+ static void
+ mlxsw_sp_rif_subport_params_init(struct mlxsw_sp_rif_params *params,
+ 				 struct mlxsw_sp_port_vlan *mlxsw_sp_port_vlan)
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
+@@ -140,6 +140,24 @@ bool mlxsw_sp_bridge_device_is_offloaded
+ 	return !!mlxsw_sp_bridge_device_find(mlxsw_sp->bridge, br_dev);
+ }
  
- 	tsp = sctp_transport_get_idx(net, &hti, *pos + 1);
- 	for (; !IS_ERR_OR_NULL(tsp); tsp = sctp_transport_get_next(net, &hti)) {
--		if (!sctp_transport_hold(tsp))
--			continue;
- 		ret = cb(tsp, p);
- 		if (ret)
- 			break;
++static int mlxsw_sp_bridge_device_upper_rif_destroy(struct net_device *dev,
++						    void *data)
++{
++	struct mlxsw_sp *mlxsw_sp = data;
++
++	mlxsw_sp_rif_destroy_by_dev(mlxsw_sp, dev);
++	return 0;
++}
++
++static void mlxsw_sp_bridge_device_rifs_destroy(struct mlxsw_sp *mlxsw_sp,
++						struct net_device *dev)
++{
++	mlxsw_sp_rif_destroy_by_dev(mlxsw_sp, dev);
++	netdev_walk_all_upper_dev_rcu(dev,
++				      mlxsw_sp_bridge_device_upper_rif_destroy,
++				      mlxsw_sp);
++}
++
+ static struct mlxsw_sp_bridge_device *
+ mlxsw_sp_bridge_device_create(struct mlxsw_sp_bridge *bridge,
+ 			      struct net_device *br_dev)
+@@ -176,6 +194,8 @@ static void
+ mlxsw_sp_bridge_device_destroy(struct mlxsw_sp_bridge *bridge,
+ 			       struct mlxsw_sp_bridge_device *bridge_device)
+ {
++	mlxsw_sp_bridge_device_rifs_destroy(bridge->mlxsw_sp,
++					    bridge_device->dev);
+ 	list_del(&bridge_device->list);
+ 	if (bridge_device->vlan_enabled)
+ 		bridge->vlan_enabled_exists = false;
 
 
