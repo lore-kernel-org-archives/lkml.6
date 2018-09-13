@@ -6,37 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA3ECC07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:43:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17F04C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:43:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DE6C20854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:43:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DE6C20854
+	by mail.kernel.org (Postfix) with ESMTP id C8AF120854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:43:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8AF120854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729829AbeIMSwo (ORCPT
+        id S1729835AbeIMSwv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:52:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60310 "EHLO
+        Thu, 13 Sep 2018 14:52:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60320 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728860AbeIMSwn (ORCPT
+        with ESMTP id S1728887AbeIMSwv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:52:43 -0400
+        Thu, 13 Sep 2018 14:52:51 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 63C6ECF3;
-        Thu, 13 Sep 2018 13:43:11 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F0E42D19;
+        Thu, 13 Sep 2018 13:43:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Nicolai Stange <nstange@suse.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@suse.de>,
+        stable@vger.kernel.org, Gary Leshner <gary.s.leshner@intel.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 032/115] x86/mce: Add notifier_block forward declaration
-Date:   Thu, 13 Sep 2018 15:30:52 +0200
-Message-Id: <20180913131825.641023887@linuxfoundation.org>
+Subject: [PATCH 4.14 033/115] IB/hfi1: Invalid NUMA node information can cause a divide by zero
+Date:   Thu, 13 Sep 2018 15:30:53 +0200
+Message-Id: <20180913131825.716364548@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -54,42 +55,117 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: "Michael J. Ruhl" <michael.j.ruhl@intel.com>
 
-[ Upstream commit 704ae091b061082b37a9968621af4c290c641d50 ]
+[ Upstream commit c513de490f808d8480346f9a58e6a4a5f3de12e7 ]
 
-Without linux/irq.h, there is no declaration of notifier_block, leading to
-a build warning:
+If the system BIOS does not supply NUMA node information to the
+PCI devices, the NUMA node is selected by choosing the current
+node.
 
-In file included from arch/x86/kernel/cpu/mcheck/threshold.c:10:
-arch/x86/include/asm/mce.h:151:46: error: 'struct notifier_block' declared inside parameter list will not be visible outside of this definition or declaration [-Werror]
+This can lead to the following crash:
 
-It's sufficient to declare the struct tag here, which avoids pulling in
-more header files.
+divide error: 0000 SMP
+CPU: 0 PID: 4 Comm: kworker/0:0 Tainted: G          IOE
+------------   3.10.0-693.21.1.el7.x86_64 #1
+Hardware name: Intel Corporation S2600KP/S2600KP, BIOS
+SE5C610.86B.01.01.0005.101720141054 10/17/2014
+Workqueue: events work_for_cpu_fn
+task: ffff880174480fd0 ti: ffff880174488000 task.ti: ffff880174488000
+RIP: 0010: [<ffffffffc020ac69>] hfi1_dev_affinity_init+0x129/0x6a0 [hfi1]
+RSP: 0018:ffff88017448bbf8  EFLAGS: 00010246
+RAX: 0000000000000011 RBX: ffff88107ffba6c0 RCX: ffff88085c22e130
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff880824ad0000
+RBP: ffff88017448bc48 R08: 0000000000000011 R09: 0000000000000002
+R10: ffff8808582b6ca0 R11: 0000000000003151 R12: ffff8808582b6ca0
+R13: ffff8808582b6518 R14: ffff8808582b6010 R15: 0000000000000012
+FS:  0000000000000000(0000) GS:ffff88085ec00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007efc707404f0 CR3: 0000000001a02000 CR4: 00000000001607f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
+Call Trace:
+ hfi1_init_dd+0x14b3/0x27a0 [hfi1]
+ ? pcie_capability_write_word+0x46/0x70
+ ? hfi1_pcie_init+0xc0/0x200 [hfi1]
+ do_init_one+0x153/0x4c0 [hfi1]
+ ? sched_clock_cpu+0x85/0xc0
+ init_one+0x1b5/0x260 [hfi1]
+ local_pci_probe+0x4a/0xb0
+ work_for_cpu_fn+0x1a/0x30
+ process_one_work+0x17f/0x440
+ worker_thread+0x278/0x3c0
+ ? manage_workers.isra.24+0x2a0/0x2a0
+ kthread+0xd1/0xe0
+ ? insert_kthread_work+0x40/0x40
+ ret_from_fork+0x77/0xb0
+ ? insert_kthread_work+0x40/0x40
 
-Fixes: 447ae3166702 ("x86: Don't include linux/irq.h from asm/hardirq.h")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Nicolai Stange <nstange@suse.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Borislav Petkov <bp@suse.de>
-Link: https://lkml.kernel.org/r/20180817100156.3009043-1-arnd@arndb.de
+If the BIOS is not supplying NUMA information:
+  - set the default table count to 1 for all possible nodes
+  - select node 0 (instead of current NUMA) node to get consistent
+    performance
+  - generate an error indicating that the BIOS should be upgraded
+
+Reviewed-by: Gary Leshner <gary.s.leshner@intel.com>
+Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Signed-off-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/mce.h |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/infiniband/hw/hfi1/affinity.c |   24 +++++++++++++++++++++---
+ 1 file changed, 21 insertions(+), 3 deletions(-)
 
---- a/arch/x86/include/asm/mce.h
-+++ b/arch/x86/include/asm/mce.h
-@@ -200,6 +200,7 @@ enum mce_notifier_prios {
- 	MCE_PRIO_LOWEST		= 0,
- };
+--- a/drivers/infiniband/hw/hfi1/affinity.c
++++ b/drivers/infiniband/hw/hfi1/affinity.c
+@@ -146,7 +146,7 @@ int node_affinity_init(void)
+ 		while ((dev = pci_get_device(ids->vendor, ids->device, dev))) {
+ 			node = pcibus_to_node(dev->bus);
+ 			if (node < 0)
+-				node = numa_node_id();
++				goto out;
  
-+struct notifier_block;
- extern void mce_register_decode_chain(struct notifier_block *nb);
- extern void mce_unregister_decode_chain(struct notifier_block *nb);
+ 			hfi1_per_node_cntr[node]++;
+ 		}
+@@ -154,6 +154,18 @@ int node_affinity_init(void)
+ 	}
  
+ 	return 0;
++
++out:
++	/*
++	 * Invalid PCI NUMA node information found, note it, and populate
++	 * our database 1:1.
++	 */
++	pr_err("HFI: Invalid PCI NUMA node. Performance may be affected\n");
++	pr_err("HFI: System BIOS may need to be upgraded\n");
++	for (node = 0; node < node_affinity.num_possible_nodes; node++)
++		hfi1_per_node_cntr[node] = 1;
++
++	return 0;
+ }
+ 
+ void node_affinity_destroy(void)
+@@ -227,8 +239,14 @@ int hfi1_dev_affinity_init(struct hfi1_d
+ 	const struct cpumask *local_mask;
+ 	int curr_cpu, possible, i;
+ 
+-	if (node < 0)
+-		node = numa_node_id();
++	/*
++	 * If the BIOS does not have the NUMA node information set, select
++	 * NUMA 0 so we get consistent performance.
++	 */
++	if (node < 0) {
++		dd_dev_err(dd, "Invalid PCI NUMA node. Performance may be affected\n");
++		node = 0;
++	}
+ 	dd->node = node;
+ 
+ 	local_mask = cpumask_of_node(dd->node);
 
 
