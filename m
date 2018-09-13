@@ -5,30 +5,30 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08352C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:56:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38D5BC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:56:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC25620854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:56:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC25620854
+	by mail.kernel.org (Postfix) with ESMTP id F0C1620C0A
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 12:56:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0C1620C0A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728467AbeIMSFa (ORCPT
+        id S1728482AbeIMSFc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:05:30 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:30772 "EHLO mx1.redhat.com"
+        Thu, 13 Sep 2018 14:05:32 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:47458 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727051AbeIMSF3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:05:29 -0400
+        id S1727051AbeIMSFb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 14:05:31 -0400
 Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9FDEA3DE;
-        Thu, 13 Sep 2018 12:56:08 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id CA2BC3082DD0;
+        Thu, 13 Sep 2018 12:56:10 +0000 (UTC)
 Received: from krava.brq.redhat.com (unknown [10.43.17.10])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C5070600CD;
-        Thu, 13 Sep 2018 12:56:06 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EDCE9600C8;
+        Thu, 13 Sep 2018 12:56:08 +0000 (UTC)
 From:   Jiri Olsa <jolsa@kernel.org>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     lkml <linux-kernel@vger.kernel.org>,
@@ -38,131 +38,106 @@ Cc:     lkml <linux-kernel@vger.kernel.org>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>,
         Andi Kleen <andi@firstfloor.org>,
         Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: [PATCH 33/48] perf tools: Move __perf_session__process_events args into struct
-Date:   Thu, 13 Sep 2018 14:54:35 +0200
-Message-Id: <20180913125450.21342-34-jolsa@kernel.org>
+Subject: [PATCH 34/48] perf ui progress: Fix index progress display
+Date:   Thu, 13 Sep 2018 14:54:36 +0200
+Message-Id: <20180913125450.21342-35-jolsa@kernel.org>
 In-Reply-To: <20180913125450.21342-1-jolsa@kernel.org>
 References: <20180913125450.21342-1-jolsa@kernel.org>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 13 Sep 2018 12:56:08 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Thu, 13 Sep 2018 12:56:11 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We will add yet another argument in here, so put all
-of them to struct to make it easy to read.
+Display overall index files progress size instead of having
+multiple (per index) progress bars.
 
-Link: http://lkml.kernel.org/n/tip-lt92qp4bs3igrh6patio0euy@git.kernel.org
+Link: http://lkml.kernel.org/n/tip-b1alb4i6urd623bcbdqni8xp@git.kernel.org
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- tools/perf/util/session.c | 40 ++++++++++++++++++++++++---------------
- 1 file changed, 25 insertions(+), 15 deletions(-)
+ tools/perf/util/session.c | 27 +++++++++++++++++++++++----
+ 1 file changed, 23 insertions(+), 4 deletions(-)
 
 diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index 15314052084d..f21c209aeef1 100644
+index f21c209aeef1..e00a5d7e521e 100644
 --- a/tools/perf/util/session.c
 +++ b/tools/perf/util/session.c
-@@ -1796,6 +1796,12 @@ fetch_mmaped_event(struct perf_session *session,
- 	return event;
+@@ -1797,6 +1797,8 @@ fetch_mmaped_event(struct perf_session *session,
  }
  
-+struct process_args {
-+	u64	data_offset;
-+	u64	data_size;
-+	u64	file_size;
-+};
+ struct process_args {
++	struct ui_progress	prog;
 +
- /*
-  * On 64bit we can mmap the data file in one go. No need for tiny mmap
-  * slices. On 32bit we use 32MB.
-@@ -1809,13 +1815,13 @@ fetch_mmaped_event(struct perf_session *session,
- #endif
- 
- static int __perf_session__process_events(struct perf_session *session,
--					  u64 data_offset, u64 data_size,
--					  u64 file_size)
-+					  struct process_args *args)
- {
- 	struct ordered_events *oe = &session->ordered_events;
- 	struct perf_tool *tool = session->tool;
- 	int fd = perf_data__fd(session->data);
- 	u64 head, page_offset, file_offset, file_pos, size;
-+	u64 file_size = args->file_size;
- 	int err, mmap_prot, mmap_flags, map_idx = 0;
+ 	u64	data_offset;
+ 	u64	data_size;
+ 	u64	file_size;
+@@ -1826,7 +1828,6 @@ static int __perf_session__process_events(struct perf_session *session,
  	size_t	mmap_size;
  	char *buf, *mmaps[NUM_MMAPS];
-@@ -1825,15 +1831,15 @@ static int __perf_session__process_events(struct perf_session *session,
+ 	union perf_event *event;
+-	struct ui_progress prog;
+ 	s64 skip;
  
  	perf_tool__fill_defaults(tool);
+@@ -1841,8 +1842,6 @@ static int __perf_session__process_events(struct perf_session *session,
+ 	if (args->data_offset + args->data_size < file_size)
+ 		file_size = args->data_offset + args->data_size;
  
--	page_offset = page_size * (data_offset / page_size);
-+	page_offset = page_size * (args->data_offset / page_size);
- 	file_offset = page_offset;
--	head = data_offset - page_offset;
-+	head = args->data_offset - page_offset;
+-	ui_progress__init_size(&prog, file_size, "Processing events...");
+-
+ 	mmap_size = MMAP_SIZE;
+ 	if (mmap_size > file_size) {
+ 		mmap_size = file_size;
+@@ -1907,7 +1906,7 @@ static int __perf_session__process_events(struct perf_session *session,
+ 	head += size;
+ 	file_pos += size;
  
--	if (data_size == 0)
-+	if (args->data_size == 0)
+-	ui_progress__update(&prog, size);
++	ui_progress__update(&args->prog, size);
+ 
+ 	if (session_done())
  		goto out;
+@@ -1936,12 +1935,29 @@ static int __perf_session__process_events(struct perf_session *session,
+ 	return err;
+ }
  
--	if (data_offset + data_size < file_size)
--		file_size = data_offset + data_size;
-+	if (args->data_offset + args->data_size < file_size)
-+		file_size = args->data_offset + args->data_size;
- 
- 	ui_progress__init_size(&prog, file_size, "Processing events...");
- 
-@@ -1932,6 +1938,7 @@ static int __perf_session__process_events(struct perf_session *session,
- 
++static u64 get_index_size(struct perf_session *session)
++{
++	u64 size = 0;
++	int i;
++
++	for (i = 0; i < (int)session->header.nr_index; i++) {
++		struct perf_file_section *idx = &session->header.index[i];
++
++		size += idx->size;
++	}
++
++	return size;
++}
++
  static int __perf_session__process_indexed_events(struct perf_session *session)
  {
-+	struct process_args args;
+ 	struct process_args args;
  	struct perf_tool *tool = session->tool;
  	int err = 0, i;
  
-@@ -1941,9 +1948,11 @@ static int __perf_session__process_indexed_events(struct perf_session *session)
- 		if (!idx->size)
- 			continue;
- 
--		err = __perf_session__process_events(session, idx->offset,
--						     idx->size,
--						     idx->offset + idx->size);
-+		args.data_offset = idx->offset;
-+		args.data_size   = idx->size;
-+		args.file_size   = idx->offset + idx->size;
++	ui_progress__init_size(&args.prog, get_index_size(session),
++			       "Processing events");
 +
-+		err = __perf_session__process_events(session, &args);
- 		if (err < 0)
- 			break;
- 	}
-@@ -1956,9 +1965,9 @@ static int __perf_session__process_indexed_events(struct perf_session *session)
+ 	for (i = 0; i < (int)session->header.nr_index; i++) {
+ 		struct perf_file_section *idx = &session->header.index[i];
  
- int perf_session__process_events(struct perf_session *session)
- {
-+	struct process_args args;
- 	struct perf_tool *tool = session->tool;
- 	struct perf_data *data = session->data;
--	u64 size = perf_data__size(data);
- 	int err;
+@@ -1982,6 +1998,9 @@ int perf_session__process_events(struct perf_session *session)
+ 	args.data_size   = session->header.data_size;
+ 	args.file_size   = perf_data__size(data);
  
- 	if (perf_session__register_idle_thread(session) < 0)
-@@ -1969,10 +1978,11 @@ int perf_session__process_events(struct perf_session *session)
- 	if (perf_has_index)
- 		return __perf_session__process_indexed_events(session);
- 
--	err = __perf_session__process_events(session,
--					     session->header.data_offset,
--					     session->header.data_size,
--					     size);
-+	args.data_offset = session->header.data_offset;
-+	args.data_size   = session->header.data_size;
-+	args.file_size   = perf_data__size(data);
++	ui_progress__init_size(&args.prog, args.file_size,
++			       "Processing events");
 +
-+	err = __perf_session__process_events(session, &args);
+ 	err = __perf_session__process_events(session, &args);
  
  	if (!tool->no_warn)
- 		perf_session__warn_about_errors(session);
 -- 
 2.17.1
 
