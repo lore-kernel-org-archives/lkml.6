@@ -2,43 +2,42 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAD_ENC_HEADER,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AA6AC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:42:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5766CC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:42:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03C1F20854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:42:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03C1F20854
+	by mail.kernel.org (Postfix) with ESMTP id 1581020854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:42:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1581020854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729798AbeIMSwR (ORCPT
+        id S1729800AbeIMSwY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:52:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60236 "EHLO
+        Thu, 13 Sep 2018 14:52:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60248 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727658AbeIMSwR (ORCPT
+        with ESMTP id S1727231AbeIMSwY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:52:17 -0400
+        Thu, 13 Sep 2018 14:52:24 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 70001D10;
-        Thu, 13 Sep 2018 13:42:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7053FD10;
+        Thu, 13 Sep 2018 13:42:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "=?UTF-8?q?Ernesto=20A . =20Fern=C3=A1ndez?=" 
-        <ernesto.mnd.fernandez@gmail.com>, Wen Xu <wen.xu@gatech.edu>,
-        Viacheslav Dubeyko <slava@dubeyko.com>,
+        stable@vger.kernel.org, James Morse <james.morse@arm.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Omar Sandoval <osandov@fb.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 027/115] hfsplus: fix NULL dereference in hfsplus_lookup()
-Date:   Thu, 13 Sep 2018 15:30:47 +0200
-Message-Id: <20180913131825.309067703@linuxfoundation.org>
+Subject: [PATCH 4.14 028/115] fs/proc/kcore.c: use __pa_symbol() for KCORE_TEXT list entries
+Date:   Thu, 13 Sep 2018 15:30:48 +0200
+Message-Id: <20180913131825.374866287@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -56,53 +55,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Ernesto A. Fern·ndez" <ernesto.mnd.fernandez@gmail.com>
+From: James Morse <james.morse@arm.com>
 
-[ Upstream commit a7ec7a4193a2eb3b5341243fc0b621c1ac9e4ec4 ]
+[ Upstream commit df865e8337c397471b95f51017fea559bc8abb4a ]
 
-An HFS+ filesystem can be mounted read-only without having a metadata
-directory, which is needed to support hardlinks.  But if the catalog
-data is corrupted, a directory lookup may still find dentries claiming
-to be hardlinks.
+elf_kcore_store_hdr() uses __pa() to find the physical address of
+KCORE_RAM or KCORE_TEXT entries exported as program headers.
 
-hfsplus_lookup() does check that ->hidden_dir is not NULL in such a
-situation, but mistakenly does so after dereferencing it for the first
-time.  Reorder this check to prevent a crash.
+This trips CONFIG_DEBUG_VIRTUAL's checks, as the KCORE_TEXT entries are
+not in the linear map.
 
-This happens when looking up corrupted catalog data (dentry) on a
-filesystem with no metadata directory (this could only ever happen on a
-read-only mount).  Wen Xu sent the replication steps in detail to the
-fsdevel list: https://bugzilla.kernel.org/show_bug.cgi?id=200297
+Handle these two cases separately, using __pa_symbol() for the KCORE_TEXT
+entries.
 
-Link: http://lkml.kernel.org/r/20180712215344.q44dyrhymm4ajkao@eaf
-Signed-off-by: Ernesto A. Fern√°ndez <ernesto.mnd.fernandez@gmail.com>
-Reported-by: Wen Xu <wen.xu@gatech.edu>
-Cc: Viacheslav Dubeyko <slava@dubeyko.com>
+Link: http://lkml.kernel.org/r/20180711131944.15252-1-james.morse@arm.com
+Signed-off-by: James Morse <james.morse@arm.com>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Omar Sandoval <osandov@fb.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/hfsplus/dir.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/proc/kcore.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/fs/hfsplus/dir.c
-+++ b/fs/hfsplus/dir.c
-@@ -78,13 +78,13 @@ again:
- 				cpu_to_be32(HFSP_HARDLINK_TYPE) &&
- 				entry.file.user_info.fdCreator ==
- 				cpu_to_be32(HFSP_HFSPLUS_CREATOR) &&
-+				HFSPLUS_SB(sb)->hidden_dir &&
- 				(entry.file.create_date ==
- 					HFSPLUS_I(HFSPLUS_SB(sb)->hidden_dir)->
- 						create_date ||
- 				entry.file.create_date ==
- 					HFSPLUS_I(d_inode(sb->s_root))->
--						create_date) &&
--				HFSPLUS_SB(sb)->hidden_dir) {
-+						create_date)) {
- 			struct qstr str;
- 			char name[32];
- 
+--- a/fs/proc/kcore.c
++++ b/fs/proc/kcore.c
+@@ -384,8 +384,10 @@ static void elf_kcore_store_hdr(char *bu
+ 		phdr->p_flags	= PF_R|PF_W|PF_X;
+ 		phdr->p_offset	= kc_vaddr_to_offset(m->addr) + dataoff;
+ 		phdr->p_vaddr	= (size_t)m->addr;
+-		if (m->type == KCORE_RAM || m->type == KCORE_TEXT)
++		if (m->type == KCORE_RAM)
+ 			phdr->p_paddr	= __pa(m->addr);
++		else if (m->type == KCORE_TEXT)
++			phdr->p_paddr	= __pa_symbol(m->addr);
+ 		else
+ 			phdr->p_paddr	= (elf_addr_t)-1;
+ 		phdr->p_filesz	= phdr->p_memsz	= m->size;
 
 
