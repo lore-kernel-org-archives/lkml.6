@@ -2,39 +2,41 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35C80C04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:55:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58EA2C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:56:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE24820652
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:55:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE24820652
+	by mail.kernel.org (Postfix) with ESMTP id 19B4B204FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:56:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19B4B204FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731309AbeIMTFc (ORCPT
+        id S1731323AbeIMTFe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:05:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34070 "EHLO
+        Thu, 13 Sep 2018 15:05:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34080 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730731AbeIMTFb (ORCPT
+        with ESMTP id S1730731AbeIMTFe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:05:31 -0400
+        Thu, 13 Sep 2018 15:05:34 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 978DDCE7;
-        Thu, 13 Sep 2018 13:55:54 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BEC99D10;
+        Thu, 13 Sep 2018 13:55:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-        Lee Jones <lee.jones@linaro.org>,
+        stable@vger.kernel.org, Xi Wang <wangxi11@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 072/197] mfd: sm501: Set coherent_dma_mask when creating subdevices
-Date:   Thu, 13 Sep 2018 15:30:21 +0200
-Message-Id: <20180913131844.407160054@linuxfoundation.org>
+Subject: [PATCH 4.18 081/197] net: hns3: Fix for command format parsing error in hclge_is_all_function_id_zero
+Date:   Thu, 13 Sep 2018 15:30:30 +0200
+Message-Id: <20180913131844.765806146@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -52,59 +54,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Guenter Roeck <linux@roeck-us.net>
+From: Xi Wang <wangxi11@huawei.com>
 
-[ Upstream commit 2f606da78230f09cf1a71fde6ee91d0c710fa2b2 ]
+[ Upstream commit 6c39d5278e62956238a681e4cfc69fae5507fc57 ]
 
-Instantiating the sm501 OHCI subdevice results in a kernel warning.
+According to the functional specification of hardware, the first
+descriptor of response from command 'lookup vlan talbe' is not valid.
+Currently, the first descriptor is parsed as normal value, which will
+cause an expected error.
 
-sm501-usb sm501-usb: SM501 OHCI
-sm501-usb sm501-usb: new USB bus registered, assigned bus number 1
-WARNING: CPU: 0 PID: 1 at ./include/linux/dma-mapping.h:516
-ohci_init+0x194/0x2d8
-Modules linked in:
+This patch fixes this problem by skipping the first descriptor.
 
-CPU: 0 PID: 1 Comm: swapper Tainted: G        W
-4.18.0-rc7-00178-g0b5b1f9a78b5 #1
-PC is at ohci_init+0x194/0x2d8
-PR is at ohci_init+0x168/0x2d8
-PC  : 8c27844c SP  : 8f81dd94 SR  : 40008001
-TEA : 29613060
-R0  : 00000000 R1  : 00000000 R2  : 00000000 R3  : 00000202
-R4  : 8fa98b88 R5  : 8c277e68 R6  : 00000000 R7  : 00000000
-R8  : 8f965814 R9  : 8c388100 R10 : 8fa98800 R11 : 8fa98928
-R12 : 8c48302c R13 : 8fa98920 R14 : 8c48302c
-MACH: 00000096 MACL: 0000017c GBR : 00000000 PR  : 8c278420
-
-Call trace:
- [<(ptrval)>] usb_add_hcd+0x1e8/0x6ec
- [<(ptrval)>] _dev_info+0x0/0x54
- [<(ptrval)>] arch_local_save_flags+0x0/0x8
- [<(ptrval)>] arch_local_irq_restore+0x0/0x24
- [<(ptrval)>] ohci_hcd_sm501_drv_probe+0x114/0x2d8
-...
-
-Initialize coherent_dma_mask when creating SM501 subdevices to fix
-the problem.
-
-Fixes: b6d6454fdb66f ("mfd: SM501 core driver")
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Fixes: 46a3df9f9718 ("net: hns3: Add HNS3 Acceleration Engine & Compatibility Layer Support")
+Signed-off-by: Xi Wang <wangxi11@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mfd/sm501.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/mfd/sm501.c
-+++ b/drivers/mfd/sm501.c
-@@ -715,6 +715,7 @@ sm501_create_subdev(struct sm501_devdata
- 	smdev->pdev.name = name;
- 	smdev->pdev.id = sm->pdev_id;
- 	smdev->pdev.dev.parent = sm->dev;
-+	smdev->pdev.dev.coherent_dma_mask = 0xffffffff;
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -3911,7 +3911,7 @@ static bool hclge_is_all_function_id_zer
+ #define HCLGE_FUNC_NUMBER_PER_DESC 6
+ 	int i, j;
  
- 	if (res_count) {
- 		smdev->pdev.resource = (struct resource *)(smdev+1);
+-	for (i = 0; i < HCLGE_DESC_NUMBER; i++)
++	for (i = 1; i < HCLGE_DESC_NUMBER; i++)
+ 		for (j = 0; j < HCLGE_FUNC_NUMBER_PER_DESC; j++)
+ 			if (desc[i].data[j])
+ 				return false;
 
 
