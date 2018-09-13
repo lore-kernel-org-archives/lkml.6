@@ -2,84 +2,117 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=5.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=5.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A09FCC43143
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 18:46:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ED3BC43143
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 18:47:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 406F72086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 18:46:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="u54gcW00"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 406F72086C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 3832220853
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 18:47:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3832220853
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728177AbeIMX52 (ORCPT
+        id S1728246AbeIMX6Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 19:57:28 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59926 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728020AbeIMX52 (ORCPT
+        Thu, 13 Sep 2018 19:58:25 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:46321 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728020AbeIMX6Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 19:57:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=C5IBmOO/xAVR4u11QumE2sF66e9te7PYf8NQW7hO4ic=; b=u54gcW00thlt4CUMhBh7qfUth
-        nmJpehVdyAyNjppaZbnW/K/u34DQrdruW7ELcGCnn021/DzNAYevONXAQTQCyJwbcp1aQJm4W3GM/
-        4uGMkfY6Yq7ABep/fe7Z4UojFNc9jh3Ly1lPL0Kk8hCakc9YV6dL+H2s0sfQdDSpk9EmbdwMp4B7M
-        K9oE3e9BT6Eq6/NTlTZTU4/Hc8roY5Ufda/uARair4C/G3NHcSsKYiwqURSv+8DcMVBQy0zYmIpHx
-        ZNLMv5pj4XiB5I7SFpm8KfvLVFSJX7r7QlqDNpV/uP+8rhpcUqIHNO+wer2A69OU+7fNgAESsYn/f
-        tScMNjILg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g0WdO-0007sw-PA; Thu, 13 Sep 2018 18:46:35 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 82079202C1A2E; Thu, 13 Sep 2018 20:46:32 +0200 (CEST)
-Date:   Thu, 13 Sep 2018 20:46:32 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Dave Hansen <dave.hansen@linux.intel.com>
-Cc:     will.deacon@arm.com, aneesh.kumar@linux.vnet.ibm.com,
-        akpm@linux-foundation.org, npiggin@gmail.com,
-        linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux@armlinux.org.uk,
-        heiko.carstens@de.ibm.com
-Subject: Re: [RFC][PATCH 03/11] x86/mm: Page size aware flush_tlb_mm_range()
-Message-ID: <20180913184632.GM24142@hirez.programming.kicks-ass.net>
-References: <20180913092110.817204997@infradead.org>
- <20180913092812.012757318@infradead.org>
- <f89e61a3-0eb0-3d00-fbaa-f30c2cf60be3@linux.intel.com>
- <20180913184230.GD24124@hirez.programming.kicks-ass.net>
+        Thu, 13 Sep 2018 19:58:25 -0400
+Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1g0WeM-0000Gc-BM; Thu, 13 Sep 2018 20:47:34 +0200
+Date:   Thu, 13 Sep 2018 20:47:33 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Brijesh Singh <brijesh.singh@amd.com>
+cc:     x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Borislav Petkov <bp@suse.de>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        =?ISO-8859-2?Q?Radim_Kr=E8m=E1=F8?= <rkrcmar@redhat.com>
+Subject: Re: [PATCH v7 0/5] x86: Fix SEV guest regression
+In-Reply-To: <43c95311-dd8b-77c7-0949-28fc3f961bef@amd.com>
+Message-ID: <alpine.DEB.2.21.1809132042100.1473@nanos.tec.linutronix.de>
+References: <1536616151-16738-1-git-send-email-brijesh.singh@amd.com> <alpine.DEB.2.21.1809131622180.1473@nanos.tec.linutronix.de> <43c95311-dd8b-77c7-0949-28fc3f961bef@amd.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180913184230.GD24124@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 13, 2018 at 08:42:30PM +0200, Peter Zijlstra wrote:
-> > > +#define flush_tlb_range(vma, start, end)			\
-> > > +		flush_tlb_mm_range((vma)->vm_mm, start, end,	\
-> > > +				(vma)->vm_flags & VM_HUGETLB ? PMD_SHIFT : PAGE_SHIFT)
-> > 
-> > This is safe.  But, Couldn't this PMD_SHIFT also be PUD_SHIFT for a 1G
-> > hugetlb page?
+On Thu, 13 Sep 2018, Brijesh Singh wrote:
+> On 09/13/2018 11:22 AM, Thomas Gleixner wrote:
+> > I really have to ask why this whole change to sme_encrypt_kernel() is
+> > required at all.
 > 
-> It could be, but can we tell at that point?
+> The main reason behind making the changes in sme_encrypt_kernel() was
+> to perverse the initialized values (if any). Since we are adding
+>  __decrypted attribute hence I thought it would make sense to support
+> the usecase where in future someone may use this attribute on initialized
+> variables.
+> 
+> Now the question is, do we really need this to fix the regression? the
+> answer is NO. Since there is only one user of this new attribute and
+> lucky it does not initialize the variables hence it is safe to move the
+> variable in .bss..decrypted section and memset(0).
 
-I had me a look in higetlb.h, would something like so work?
+And even if it would it usually trivial enought to make it run time
+initialized.
 
-#define flush_tlb_range(vma, start, end)			\
-	flush_tlb_mm_range((vma)->vm_mm, start, end,		\
-			   huge_page_shift(hstate_vma(vma)))
+> > 1) Add a .bss..decrypted section which is PMD aligned and mark the
+> >     kvmclock hv_clock_boot and wallclock struct with __bss_decrypted.
+> >  > 2) Fixup the .bss..decrypted section PMD in the SEV case at the end of
+> >     sme_encrypt_kernel() and do a memset(0) on that. That does not require
+> >     any of the restructuring, really.
+> > 
+> 
+> Somewhere during the discussion, I was asked to make sure that
+>  __decrypted attribute can be used by others in future and don't tie it
+> with just the kvmclock.
 
+Well, .bss..decrypted can be used by other things and we really only want
+to do the .data..decrypted thing when there is a fundamental reason to do
+so.
 
+> To fix the regression we don't need to have this complexity. I am okay
+> to implement your proposal. I would like to fix this regression sooner
+> than later ;)
+> 
+> 
+> > 3) Have a function which is called after the page allocator is up which
+> >     does:
+> > 
+> 
+> I am glad you are pointing this one. In my initial patch I was doing a
+> kmalloc() of page-size, during review we did discussed to do allocation
+> once using num_possible_cpus()[like what you have proposed]. But then
+> discussion moved towards saving memory and that when the secondary array
+> concept came into the picture. Since .data..decrypted has some unused memory
+> hence we were getting creative in reusing it.
+
+Sorry I didn't pay attention to that, was busy with other urgent stuff.
+
+> > That should be a halfways slim sized and non instrusive changeset.
+> > 
+> 
+> I am okay to implement and test your recommendation, if anyone
+> disagree then please let me know. thanks
+
+It results in simpler code and if the whole thing ends up allocating a few
+KB too much due to the page allocations then so be it. It's not going to
+waste 256K in one go.
+
+Thanks,
+
+	tglx
