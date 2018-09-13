@@ -6,38 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2E4CC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:06:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC775C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:06:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A05120854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:06:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A05120854
+	by mail.kernel.org (Postfix) with ESMTP id 8FABC20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:06:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FABC20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729542AbeIMTPm (ORCPT
+        id S1731726AbeIMTPp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:15:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35552 "EHLO
+        Thu, 13 Sep 2018 15:15:45 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35560 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727995AbeIMTPl (ORCPT
+        with ESMTP id S1727995AbeIMTPo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:15:41 -0400
+        Thu, 13 Sep 2018 15:15:44 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E9E39D36;
-        Thu, 13 Sep 2018 14:06:01 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1495ED36;
+        Thu, 13 Sep 2018 14:06:04 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brian J Wood <brian.j.wood@intel.com>,
-        Ramalingam C <ramalingam.c@intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>
-Subject: [PATCH 4.18 155/197] drm/i915: Free write_buf that we allocated with kzalloc.
-Date:   Thu, 13 Sep 2018 15:31:44 +0200
-Message-Id: <20180913131847.751857757@linuxfoundation.org>
+        stable@vger.kernel.org, Leo Liu <leo.liu@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.18 156/197] drm/amdgpu: update uvd_v6_0_ring_vm_funcs to use new nop packet
+Date:   Thu, 13 Sep 2018 15:31:45 +0200
+Message-Id: <20180913131847.796884988@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -55,49 +51,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Rodrigo Vivi <rodrigo.vivi@intel.com>
+From: Alex Deucher <alexander.deucher@amd.com>
 
-commit 1b1b1162745e5f9e5c6c095afc8081df3edabc50 upstream.
+commit afb1436c7b44ab928e6369a4d48e3abb8215241e upstream.
 
-We use kzalloc to allocate the write_buf that we use for
-i2c transfer on hdcp write. But it seems that we are forgetting
-to free the memory that is not needed after i2c transfer is
-completed.
+Was missed when updating the uvd 6 module.
 
-Reported-by: Brian J Wood <brian.j.wood@intel.com>
-Fixes: 2320175feb74 ("drm/i915: Implement HDCP for HDMI")
-Cc: Ramalingam C <ramalingam.c@intel.com>
-Cc: Sean Paul <seanpaul@chromium.org>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: <stable@vger.kernel.org> # v4.17+
-Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180823205136.31310-1-rodrigo.vivi@intel.com
-(cherry picked from commit 62d3a8deaa10b8346d979d0dabde56c33b742afa)
-Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Fixes: 1aac3c9180 (drm/amdgpu: fix insert nop for UVD6 ring)
+Reviewed-by: Leo Liu <leo.liu@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/intel_hdmi.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/uvd_v6_0.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/i915/intel_hdmi.c
-+++ b/drivers/gpu/drm/i915/intel_hdmi.c
-@@ -933,8 +933,12 @@ static int intel_hdmi_hdcp_write(struct
- 
- 	ret = i2c_transfer(adapter, &msg, 1);
- 	if (ret == 1)
--		return 0;
--	return ret >= 0 ? -EIO : ret;
-+		ret = 0;
-+	else if (ret >= 0)
-+		ret = -EIO;
-+
-+	kfree(write_buf);
-+	return ret;
- }
- 
- static
+--- a/drivers/gpu/drm/amd/amdgpu/uvd_v6_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/uvd_v6_0.c
+@@ -1569,7 +1569,6 @@ static const struct amdgpu_ring_funcs uv
+ static const struct amdgpu_ring_funcs uvd_v6_0_ring_vm_funcs = {
+ 	.type = AMDGPU_RING_TYPE_UVD,
+ 	.align_mask = 0xf,
+-	.nop = PACKET0(mmUVD_NO_OP, 0),
+ 	.support_64bit_ptrs = false,
+ 	.get_rptr = uvd_v6_0_ring_get_rptr,
+ 	.get_wptr = uvd_v6_0_ring_get_wptr,
+@@ -1587,7 +1586,7 @@ static const struct amdgpu_ring_funcs uv
+ 	.emit_hdp_flush = uvd_v6_0_ring_emit_hdp_flush,
+ 	.test_ring = uvd_v6_0_ring_test_ring,
+ 	.test_ib = amdgpu_uvd_ring_test_ib,
+-	.insert_nop = amdgpu_ring_insert_nop,
++	.insert_nop = uvd_v6_0_ring_insert_nop,
+ 	.pad_ib = amdgpu_ring_generic_pad_ib,
+ 	.begin_use = amdgpu_uvd_ring_begin_use,
+ 	.end_use = amdgpu_uvd_ring_end_use,
 
 
