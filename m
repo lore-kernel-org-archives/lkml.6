@@ -6,34 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBCECC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:53:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE392C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:53:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A067120854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:53:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A067120854
+	by mail.kernel.org (Postfix) with ESMTP id A40F420854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:53:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A40F420854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731124AbeIMTDO (ORCPT
+        id S1731134AbeIMTDS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:03:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33700 "EHLO
+        Thu, 13 Sep 2018 15:03:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33718 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728810AbeIMTDO (ORCPT
+        with ESMTP id S1728810AbeIMTDR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:03:14 -0400
+        Thu, 13 Sep 2018 15:03:17 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 51257CE7;
-        Thu, 13 Sep 2018 13:53:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8155BD10;
+        Thu, 13 Sep 2018 13:53:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stephen Hemminger <sthemmin@microsoft.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 036/197] hv_netvsc: ignore devices that are not PCI
-Date:   Thu, 13 Sep 2018 15:29:45 +0200
-Message-Id: <20180913131842.997840806@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Nicolai Stange <nstange@suse.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@suse.de>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.18 054/197] x86/mce: Add notifier_block forward declaration
+Date:   Thu, 13 Sep 2018 15:30:03 +0200
+Message-Id: <20180913131843.691768804@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -51,48 +54,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stephen Hemminger <stephen@networkplumber.org>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit b93c1b5ac8643cc08bb74fa8ae21d6c63dfcb23d ]
+[ Upstream commit 704ae091b061082b37a9968621af4c290c641d50 ]
 
-Registering another device with same MAC address (such as TAP, VPN or
-DPDK KNI) will confuse the VF autobinding logic.  Restrict the search
-to only run if the device is known to be a PCI attached VF.
+Without linux/irq.h, there is no declaration of notifier_block, leading to
+a build warning:
 
-Fixes: e8ff40d4bff1 ("hv_netvsc: improve VF device matching")
-Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+In file included from arch/x86/kernel/cpu/mcheck/threshold.c:10:
+arch/x86/include/asm/mce.h:151:46: error: 'struct notifier_block' declared inside parameter list will not be visible outside of this definition or declaration [-Werror]
+
+It's sufficient to declare the struct tag here, which avoids pulling in
+more header files.
+
+Fixes: 447ae3166702 ("x86: Don't include linux/irq.h from asm/hardirq.h")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Nicolai Stange <nstange@suse.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Borislav Petkov <bp@suse.de>
+Link: https://lkml.kernel.org/r/20180817100156.3009043-1-arnd@arndb.de
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/hyperv/netvsc_drv.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ arch/x86/include/asm/mce.h |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/hyperv/netvsc_drv.c
-+++ b/drivers/net/hyperv/netvsc_drv.c
-@@ -29,6 +29,7 @@
- #include <linux/netdevice.h>
- #include <linux/inetdevice.h>
- #include <linux/etherdevice.h>
-+#include <linux/pci.h>
- #include <linux/skbuff.h>
- #include <linux/if_vlan.h>
- #include <linux/in.h>
-@@ -1939,12 +1940,16 @@ static int netvsc_register_vf(struct net
- {
- 	struct net_device *ndev;
- 	struct net_device_context *net_device_ctx;
-+	struct device *pdev = vf_netdev->dev.parent;
- 	struct netvsc_device *netvsc_dev;
- 	int ret;
+--- a/arch/x86/include/asm/mce.h
++++ b/arch/x86/include/asm/mce.h
+@@ -148,6 +148,7 @@ enum mce_notifier_prios {
+ 	MCE_PRIO_LOWEST		= 0,
+ };
  
- 	if (vf_netdev->addr_len != ETH_ALEN)
- 		return NOTIFY_DONE;
++struct notifier_block;
+ extern void mce_register_decode_chain(struct notifier_block *nb);
+ extern void mce_unregister_decode_chain(struct notifier_block *nb);
  
-+	if (!pdev || !dev_is_pci(pdev) || dev_is_pf(pdev))
-+		return NOTIFY_DONE;
-+
- 	/*
- 	 * We will use the MAC address to locate the synthetic interface to
- 	 * associate with the VF interface. If we don't find a matching
 
 
