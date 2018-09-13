@@ -2,207 +2,1515 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9D28F8183B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DF7BF8182D
 	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 17:35:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED843217B7
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 17:23:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED843217B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alphalink.fr
+	by mail.kernel.org (Postfix) with ESMTP id AD0612178B
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 17:06:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD0612178B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726914AbeIMWeQ (ORCPT
+        id S1728666AbeIMWQX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 18:34:16 -0400
-Received: from zimbra.alphalink.fr ([217.15.80.77]:49559 "EHLO
-        zimbra.alphalink.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726835AbeIMWeQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 18:34:16 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail-2-cbv2.admin.alphalink.fr (Postfix) with ESMTP id 5C9CE2B52068;
-        Thu, 13 Sep 2018 19:23:47 +0200 (CEST)
-Received: from zimbra.alphalink.fr ([127.0.0.1])
-        by localhost (mail-2-cbv2.admin.alphalink.fr [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id H0tzQJ6NF_dC; Thu, 13 Sep 2018 19:23:45 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by mail-2-cbv2.admin.alphalink.fr (Postfix) with ESMTP id 4BE362B52072;
-        Thu, 13 Sep 2018 19:23:45 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mail-2-cbv2.admin.alphalink.fr
-Received: from zimbra.alphalink.fr ([127.0.0.1])
-        by localhost (mail-2-cbv2.admin.alphalink.fr [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id xLPafC65zXRn; Thu, 13 Sep 2018 19:23:45 +0200 (CEST)
-Received: from c-dev-0.admin.alphalink.fr (94-84-15-217.reverse.alphalink.fr [217.15.84.94])
-        by mail-2-cbv2.admin.alphalink.fr (Postfix) with ESMTP id 16D812B52068;
-        Thu, 13 Sep 2018 19:23:45 +0200 (CEST)
-Received: by c-dev-0.admin.alphalink.fr (Postfix, from userid 1000)
-        id DF8926014D; Thu, 13 Sep 2018 19:23:44 +0200 (CEST)
-Date:   Thu, 13 Sep 2018 19:23:44 +0200
-From:   Guillaume Nault <g.nault@alphalink.fr>
-To:     Alexander Potapenko <glider@google.com>
-Cc:     Eric Dumazet <eric.dumazet@gmail.com>,
-        syzbot+f5f6080811c849739212@syzkaller.appspotmail.com,
-        LKML <linux-kernel@vger.kernel.org>, mostrows@earthlink.net,
-        Networking <netdev@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: KMSAN: uninit-value in pppoe_rcv
-Message-ID: <20180913172344.GB1507@alphalink.fr>
-References: <0000000000004624c30575a9fd40@google.com>
- <CAG_fn=Vk2HMPCLJV3aj1dt0KkDmksasBRRfKGnCTRHjvQ6OnQg@mail.gmail.com>
- <7424e094-afda-084a-ad80-299f219ced92@gmail.com>
- <CAG_fn=WXPsQBWR1GDsprY3aL4oW0v6EGhNB5wrvPJCOMh_U7wQ@mail.gmail.com>
- <20180913161929.GA1507@alphalink.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180913161929.GA1507@alphalink.fr>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 13 Sep 2018 18:16:23 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:43626 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728623AbeIMWQX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 18:16:23 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 014F988313;
+        Thu, 13 Sep 2018 17:05:59 +0000 (UTC)
+Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 76681608E6;
+        Thu, 13 Sep 2018 17:05:56 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Jim Mattson <jmattson@google.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v5 12/12] KVM: selftests: add Enlightened VMCS test
+Date:   Thu, 13 Sep 2018 19:05:22 +0200
+Message-Id: <20180913170522.24876-13-vkuznets@redhat.com>
+In-Reply-To: <20180913170522.24876-1-vkuznets@redhat.com>
+References: <20180913170522.24876-1-vkuznets@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 13 Sep 2018 17:05:59 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 13, 2018 at 06:19:29PM +0200, Guillaume Nault wrote:
-> On Thu, Sep 13, 2018 at 04:12:38PM +0200, Alexander Potapenko wrote:
-> > On Thu, Sep 13, 2018 at 3:57 PM Eric Dumazet <eric.dumazet@gmail.com> wrote:
-> > >
-> > >
-> > >
-> > > On 09/12/2018 03:38 AM, Alexander Potapenko wrote:
-> > > > On Wed, Sep 12, 2018 at 12:24 PM syzbot
-> > > > <syzbot+f5f6080811c849739212@syzkaller.appspotmail.com> wrote:
-> > > >>
-> > > >> Hello,
-> > > >>
-> > > >> syzbot found the following crash on:
-> > > >>
-> > > >> HEAD commit:    d2d741e5d189 kmsan: add initialization for shmem pages
-> > > >> git tree:       https://github.com/google/kmsan.git/master
-> > > >> console output: https://syzkaller.appspot.com/x/log.txt?x=1465fc37800000
-> > > >> kernel config:  https://syzkaller.appspot.com/x/.config?x=48f9de3384bcd0f
-> > > >> dashboard link: https://syzkaller.appspot.com/bug?extid=f5f6080811c849739212
-> > > >> compiler:       clang version 7.0.0 (trunk 329391)
-> > > >> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14d6e607800000
-> > > >> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10a15b5b800000
-> > > >>
-> > > >> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > > >> Reported-by: syzbot+f5f6080811c849739212@syzkaller.appspotmail.com
-> > > >>
-> > > >> IPVS: ftp: loaded support on port[0] = 21
-> > > >> ==================================================================
-> > > >> BUG: KMSAN: uninit-value in __get_item drivers/net/ppp/pppoe.c:172 [inline]
-> > > >> BUG: KMSAN: uninit-value in get_item drivers/net/ppp/pppoe.c:236 [inline]
-> > > >> BUG: KMSAN: uninit-value in pppoe_rcv+0xcef/0x10e0
-> > > >> drivers/net/ppp/pppoe.c:450
-> > > >> CPU: 0 PID: 4543 Comm: syz-executor355 Not tainted 4.16.0+ #87
-> > > >> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> > > >> Google 01/01/2011
-> > > >> Call Trace:
-> > > >>   __dump_stack lib/dump_stack.c:17 [inline]
-> > > >>   dump_stack+0x185/0x1d0 lib/dump_stack.c:53
-> > > >>   kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
-> > > >>   __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:683
-> > > >>   __get_item drivers/net/ppp/pppoe.c:172 [inline]
-> > > >>   get_item drivers/net/ppp/pppoe.c:236 [inline]
-> > > >>   pppoe_rcv+0xcef/0x10e0 drivers/net/ppp/pppoe.c:450
-> > > >>   __netif_receive_skb_core+0x47df/0x4a90 net/core/dev.c:4562
-> > > >>   __netif_receive_skb net/core/dev.c:4627 [inline]
-> > > >>   netif_receive_skb_internal+0x49d/0x630 net/core/dev.c:4701
-> > > >>   netif_receive_skb+0x230/0x240 net/core/dev.c:4725
-> > > >>   tun_rx_batched drivers/net/tun.c:1555 [inline]
-> > > >>   tun_get_user+0x740f/0x7c60 drivers/net/tun.c:1962
-> > > >>   tun_chr_write_iter+0x1d4/0x330 drivers/net/tun.c:1990
-> > > >>   call_write_iter include/linux/fs.h:1782 [inline]
-> > > >>   new_sync_write fs/read_write.c:469 [inline]
-> > > >>   __vfs_write+0x7fb/0x9f0 fs/read_write.c:482
-> > > >>   vfs_write+0x463/0x8d0 fs/read_write.c:544
-> > > >>   SYSC_write+0x172/0x360 fs/read_write.c:589
-> > > >>   SyS_write+0x55/0x80 fs/read_write.c:581
-> > > >>   do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
-> > > >>   entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-> > > >> RIP: 0033:0x4447c9
-> > > >> RSP: 002b:00007fff64c8fc28 EFLAGS: 00000297 ORIG_RAX: 0000000000000001
-> > > >> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00000000004447c9
-> > > >> RDX: 000000000000fd87 RSI: 0000000020000600 RDI: 0000000000000004
-> > > >> RBP: 00000000006cf018 R08: 00007fff64c8fda8 R09: 00007fff00006bda
-> > > >> R10: 0000000000005fe7 R11: 0000000000000297 R12: 00000000004020d0
-> > > >> R13: 0000000000402160 R14: 0000000000000000 R15: 0000000000000000
-> > > >>
-> > > >> Uninit was created at:
-> > > >>   kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
-> > > >>   kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:188
-> > > >>   kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:314
-> > > >>   kmsan_slab_alloc+0x11/0x20 mm/kmsan/kmsan.c:321
-> > > >>   slab_post_alloc_hook mm/slab.h:445 [inline]
-> > > >>   slab_alloc_node mm/slub.c:2737 [inline]
-> > > >>   __kmalloc_node_track_caller+0xaed/0x11c0 mm/slub.c:4369
-> > > >>   __kmalloc_reserve net/core/skbuff.c:138 [inline]
-> > > >>   __alloc_skb+0x2cf/0x9f0 net/core/skbuff.c:206
-> > > >>   alloc_skb include/linux/skbuff.h:984 [inline]
-> > > >>   alloc_skb_with_frags+0x1d4/0xb20 net/core/skbuff.c:5234
-> > > >>   sock_alloc_send_pskb+0xb56/0x1190 net/core/sock.c:2085
-> > > >>   tun_alloc_skb drivers/net/tun.c:1532 [inline]
-> > > >>   tun_get_user+0x2242/0x7c60 drivers/net/tun.c:1829
-> > > >>   tun_chr_write_iter+0x1d4/0x330 drivers/net/tun.c:1990
-> > > >>   call_write_iter include/linux/fs.h:1782 [inline]
-> > > >>   new_sync_write fs/read_write.c:469 [inline]
-> > > >>   __vfs_write+0x7fb/0x9f0 fs/read_write.c:482
-> > > >>   vfs_write+0x463/0x8d0 fs/read_write.c:544
-> > > >>   SYSC_write+0x172/0x360 fs/read_write.c:589
-> > > >>   SyS_write+0x55/0x80 fs/read_write.c:581
-> > > >>   do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
-> > > >>   entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-> > > >> ==================================================================
-> > > > I did a little digging before sending the bug upstream.
-> > > > If I add memset(obj, 0xfe, size) to __kmalloc_reserve(), these 0xfe
-> > > > bytes are visible in __get_item() at the place where KMSAN reports an
-> > > > error.
-> > > >
-> > > > The problem is somehow related to tun_get_user() creating a fragmented
-> > > > sk_buff - when I change the call to tun_alloc_skb() so that it
-> > > > allocates a single buffer the bug goes away.
-> > > >
-> > >
-> > > I guess the following patch would fix the issue
-> > >
-> > > (I will submit it more formally)
-> > No, as far as I can see it doesn't.
-> > Saving sid before __skb_pull() is still a good idea, but in this
-> > particular case |ph| doesn't change.
-> 
-> Yes, we probably need to save sid.
-> 
-> But I think the problem found by syzbot is related to
-> eth_hdr(skb)->h_source. PPPoE expects that Ethernet header has already
-> been parsed and is accessible at skb_mac_header(skb).
-> But here skb_mac_header(skb) == skb->data, and we may pull only 6 bytes
-> (sizeof(truct pppoe_hdr)). Therefore eth_hdr(skb)->h_source points past
-> skb's head length.
-> 
-> Not sure if something needs to be changed in tun.c for properly setting
-> skb_mac_header. But PPPoE has no reason to consider packets from
-> non-Ethernet devices anyway.
+Modify test library and add eVMCS test. This includes mVMX save/restore
+testing.
 
-Nothing to change in tun.c. Just some more tests in pppoe.
-Can you try this patch? It only addresses this particular report, not
-the problems spotted by Eric.
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+---
+ tools/testing/selftests/kvm/Makefile        |    1 +
+ tools/testing/selftests/kvm/evmcs_test.c    |  160 ++++
+ tools/testing/selftests/kvm/include/evmcs.h | 1099 +++++++++++++++++++++++++++
+ tools/testing/selftests/kvm/include/vmx.h   |   28 +
+ tools/testing/selftests/kvm/lib/vmx.c       |   48 +-
+ 5 files changed, 1324 insertions(+), 12 deletions(-)
+ create mode 100644 tools/testing/selftests/kvm/evmcs_test.c
+ create mode 100644 tools/testing/selftests/kvm/include/evmcs.h
 
--------- 8< --------
-diff --git a/drivers/net/ppp/pppoe.c b/drivers/net/ppp/pppoe.c
-index 5aa59f41bf8c..77241b584dff 100644
---- a/drivers/net/ppp/pppoe.c
-+++ b/drivers/net/ppp/pppoe.c
-@@ -429,6 +429,9 @@ static int pppoe_rcv(struct sk_buff *skb, struct net_device *dev,
- 	if (!skb)
- 		goto out;
+diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
+index 03b0f551bedf..0a4b1f42b66b 100644
+--- a/tools/testing/selftests/kvm/Makefile
++++ b/tools/testing/selftests/kvm/Makefile
+@@ -12,6 +12,7 @@ TEST_GEN_PROGS_x86_64 += vmx_tsc_adjust_test
+ TEST_GEN_PROGS_x86_64 += cr4_cpuid_sync_test
+ TEST_GEN_PROGS_x86_64 += state_test
+ TEST_GEN_PROGS_x86_64 += dirty_log_test
++TEST_GEN_PROGS_x86_64 += evmcs_test
  
-+	if (skb_mac_header_len(skb) < ETH_HLEN)
-+		goto drop;
+ TEST_GEN_PROGS += $(TEST_GEN_PROGS_$(UNAME_M))
+ LIBKVM += $(LIBKVM_$(UNAME_M))
+diff --git a/tools/testing/selftests/kvm/evmcs_test.c b/tools/testing/selftests/kvm/evmcs_test.c
+new file mode 100644
+index 000000000000..8e8d3b6b3ef5
+--- /dev/null
++++ b/tools/testing/selftests/kvm/evmcs_test.c
+@@ -0,0 +1,160 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2018, Red Hat, Inc.
++ *
++ * Tests for Enlightened VMCS, including nested guest state.
++ */
++#define _GNU_SOURCE /* for program_invocation_short_name */
++#include <fcntl.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <sys/ioctl.h>
 +
- 	if (!pskb_may_pull(skb, sizeof(struct pppoe_hdr)))
- 		goto drop;
++#include "test_util.h"
++
++#include "kvm_util.h"
++#include "x86.h"
++
++#include "vmx.h"
++
++#define VCPU_ID		5
++
++static bool have_nested_state;
++
++void l2_guest_code(void)
++{
++	GUEST_SYNC(5);
++
++	GUEST_SYNC(6);
++
++	/* Done, exit to L1 and never come back.  */
++	vmcall();
++}
++
++void l1_guest_code(struct vmx_pages *vmx_pages)
++{
++#define L2_GUEST_STACK_SIZE 64
++	unsigned long l2_guest_stack[L2_GUEST_STACK_SIZE];
++
++	enable_vp_assist(vmx_pages->vp_assist_gpa, vmx_pages->vp_assist);
++
++	GUEST_ASSERT(vmx_pages->vmcs_gpa);
++	GUEST_ASSERT(prepare_for_vmx_operation(vmx_pages));
++	GUEST_ASSERT(vmptrstz() == vmx_pages->enlightened_vmcs_gpa);
++
++	GUEST_SYNC(3);
++	GUEST_ASSERT(vmptrstz() == vmx_pages->enlightened_vmcs_gpa);
++
++	prepare_vmcs(vmx_pages, l2_guest_code,
++		     &l2_guest_stack[L2_GUEST_STACK_SIZE]);
++
++	GUEST_SYNC(4);
++	GUEST_ASSERT(vmptrstz() == vmx_pages->enlightened_vmcs_gpa);
++	GUEST_ASSERT(!vmlaunch());
++	GUEST_ASSERT(vmptrstz() == vmx_pages->enlightened_vmcs_gpa);
++	GUEST_SYNC(7);
++	GUEST_ASSERT(!vmresume());
++	GUEST_ASSERT(vmreadz(VM_EXIT_REASON) == EXIT_REASON_VMCALL);
++	GUEST_SYNC(8);
++}
++
++void guest_code(struct vmx_pages *vmx_pages)
++{
++	GUEST_SYNC(1);
++	GUEST_SYNC(2);
++
++	if (vmx_pages)
++		l1_guest_code(vmx_pages);
++
++	GUEST_DONE();
++}
++
++int main(int argc, char *argv[])
++{
++	struct vmx_pages *vmx_pages = NULL;
++	vm_vaddr_t vmx_pages_gva = 0;
++
++	struct kvm_regs regs1, regs2;
++	struct kvm_vm *vm;
++	struct kvm_run *run;
++	struct kvm_x86_state *state;
++	int stage;
++	uint16_t evmcs_ver;
++	struct kvm_enable_cap enable_evmcs_cap = {
++		.cap = KVM_CAP_HYPERV_ENLIGHTENED_VMCS,
++		 .args[0] = (unsigned long)&evmcs_ver
++	};
++
++	struct kvm_cpuid_entry2 *entry = kvm_get_supported_cpuid_entry(1);
++
++	/* Create VM */
++	vm = vm_create_default(VCPU_ID, 0, guest_code);
++
++	vcpu_set_cpuid(vm, VCPU_ID, kvm_get_supported_cpuid());
++
++	vcpu_ioctl(vm, VCPU_ID, KVM_ENABLE_CAP, &enable_evmcs_cap);
++
++	run = vcpu_state(vm, VCPU_ID);
++
++	vcpu_regs_get(vm, VCPU_ID, &regs1);
++
++	if (kvm_check_cap(KVM_CAP_NESTED_STATE)) {
++		vmx_pages = vcpu_alloc_vmx(vm, &vmx_pages_gva);
++		vcpu_args_set(vm, VCPU_ID, 1, vmx_pages_gva);
++	} else {
++		printf("will skip nested state checks\n");
++		vcpu_args_set(vm, VCPU_ID, 1, 0);
++	}
++
++	for (stage = 1;; stage++) {
++		_vcpu_run(vm, VCPU_ID);
++		TEST_ASSERT(run->exit_reason == KVM_EXIT_IO,
++			    "Unexpected exit reason: %u (%s),\n",
++			    run->exit_reason,
++			    exit_reason_str(run->exit_reason));
++
++		memset(&regs1, 0, sizeof(regs1));
++		vcpu_regs_get(vm, VCPU_ID, &regs1);
++		switch (run->io.port) {
++		case GUEST_PORT_ABORT:
++			TEST_ASSERT(false, "%s at %s:%d",
++				    (const char *)regs1.rdi,
++				    __FILE__, regs1.rsi);
++			/* NOT REACHED */
++		case GUEST_PORT_SYNC:
++			break;
++		case GUEST_PORT_DONE:
++			goto done;
++		default:
++			TEST_ASSERT(false, "Unknown port 0x%x.", run->io.port);
++		}
++
++		/* PORT_SYNC is handled here.  */
++		TEST_ASSERT(!strcmp((const char *)regs1.rdi, "hello") &&
++			    regs1.rsi == stage,
++			    "Unexpected register values vmexit #%lx, got %lx",
++			    stage, (ulong) regs1.rsi);
++
++		state = vcpu_save_state(vm, VCPU_ID);
++		kvm_vm_release(vm);
++
++		/* Restore state in a new VM.  */
++		kvm_vm_restart(vm, O_RDWR);
++		vm_vcpu_add(vm, VCPU_ID, 0, 0);
++		vcpu_set_cpuid(vm, VCPU_ID, kvm_get_supported_cpuid());
++		vcpu_load_state(vm, VCPU_ID, state);
++		run = vcpu_state(vm, VCPU_ID);
++		free(state);
++
++		memset(&regs2, 0, sizeof(regs2));
++		vcpu_regs_get(vm, VCPU_ID, &regs2);
++		TEST_ASSERT(!memcmp(&regs1, &regs2, sizeof(regs2)),
++			    "Unexpected register values after vcpu_load_state"
++			    " rdi: %lx rsi: %lx", (ulong) regs2.rdi,
++			    (ulong) regs2.rsi);
++	}
++
++done:
++	kvm_vm_free(vm);
++}
+diff --git a/tools/testing/selftests/kvm/include/evmcs.h b/tools/testing/selftests/kvm/include/evmcs.h
+new file mode 100644
+index 000000000000..8392fbb33a43
+--- /dev/null
++++ b/tools/testing/selftests/kvm/include/evmcs.h
+@@ -0,0 +1,1099 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * tools/testing/selftests/kvm/include/vmx.h
++ *
++ * Copyright (C) 2018, Red Hat, Inc.
++ *
++ */
++
++#ifndef SELFTEST_KVM_EVMCS_H
++#define SELFTEST_KVM_EVMCS_H
++
++#include <stdint.h>
++#include "x86.h"
++#include "vmx.h"
++
++#define u16 uint16_t
++#define u32 uint32_t
++#define u64 uint64_t
++
++extern bool enable_evmcs;
++
++struct hv_vp_assist_page {
++	__u32 apic_assist;
++	__u32 reserved;
++	__u64 vtl_control[2];
++	__u64 nested_enlightenments_control[2];
++	__u32 enlighten_vmentry;
++	__u64 current_nested_vmcs;
++};
++
++struct hv_enlightened_vmcs {
++	u32 revision_id;
++	u32 abort;
++
++	u16 host_es_selector;
++	u16 host_cs_selector;
++	u16 host_ss_selector;
++	u16 host_ds_selector;
++	u16 host_fs_selector;
++	u16 host_gs_selector;
++	u16 host_tr_selector;
++
++	u64 host_ia32_pat;
++	u64 host_ia32_efer;
++
++	u64 host_cr0;
++	u64 host_cr3;
++	u64 host_cr4;
++
++	u64 host_ia32_sysenter_esp;
++	u64 host_ia32_sysenter_eip;
++	u64 host_rip;
++	u32 host_ia32_sysenter_cs;
++
++	u32 pin_based_vm_exec_control;
++	u32 vm_exit_controls;
++	u32 secondary_vm_exec_control;
++
++	u64 io_bitmap_a;
++	u64 io_bitmap_b;
++	u64 msr_bitmap;
++
++	u16 guest_es_selector;
++	u16 guest_cs_selector;
++	u16 guest_ss_selector;
++	u16 guest_ds_selector;
++	u16 guest_fs_selector;
++	u16 guest_gs_selector;
++	u16 guest_ldtr_selector;
++	u16 guest_tr_selector;
++
++	u32 guest_es_limit;
++	u32 guest_cs_limit;
++	u32 guest_ss_limit;
++	u32 guest_ds_limit;
++	u32 guest_fs_limit;
++	u32 guest_gs_limit;
++	u32 guest_ldtr_limit;
++	u32 guest_tr_limit;
++	u32 guest_gdtr_limit;
++	u32 guest_idtr_limit;
++
++	u32 guest_es_ar_bytes;
++	u32 guest_cs_ar_bytes;
++	u32 guest_ss_ar_bytes;
++	u32 guest_ds_ar_bytes;
++	u32 guest_fs_ar_bytes;
++	u32 guest_gs_ar_bytes;
++	u32 guest_ldtr_ar_bytes;
++	u32 guest_tr_ar_bytes;
++
++	u64 guest_es_base;
++	u64 guest_cs_base;
++	u64 guest_ss_base;
++	u64 guest_ds_base;
++	u64 guest_fs_base;
++	u64 guest_gs_base;
++	u64 guest_ldtr_base;
++	u64 guest_tr_base;
++	u64 guest_gdtr_base;
++	u64 guest_idtr_base;
++
++	u64 padding64_1[3];
++
++	u64 vm_exit_msr_store_addr;
++	u64 vm_exit_msr_load_addr;
++	u64 vm_entry_msr_load_addr;
++
++	u64 cr3_target_value0;
++	u64 cr3_target_value1;
++	u64 cr3_target_value2;
++	u64 cr3_target_value3;
++
++	u32 page_fault_error_code_mask;
++	u32 page_fault_error_code_match;
++
++	u32 cr3_target_count;
++	u32 vm_exit_msr_store_count;
++	u32 vm_exit_msr_load_count;
++	u32 vm_entry_msr_load_count;
++
++	u64 tsc_offset;
++	u64 virtual_apic_page_addr;
++	u64 vmcs_link_pointer;
++
++	u64 guest_ia32_debugctl;
++	u64 guest_ia32_pat;
++	u64 guest_ia32_efer;
++
++	u64 guest_pdptr0;
++	u64 guest_pdptr1;
++	u64 guest_pdptr2;
++	u64 guest_pdptr3;
++
++	u64 guest_pending_dbg_exceptions;
++	u64 guest_sysenter_esp;
++	u64 guest_sysenter_eip;
++
++	u32 guest_activity_state;
++	u32 guest_sysenter_cs;
++
++	u64 cr0_guest_host_mask;
++	u64 cr4_guest_host_mask;
++	u64 cr0_read_shadow;
++	u64 cr4_read_shadow;
++	u64 guest_cr0;
++	u64 guest_cr3;
++	u64 guest_cr4;
++	u64 guest_dr7;
++
++	u64 host_fs_base;
++	u64 host_gs_base;
++	u64 host_tr_base;
++	u64 host_gdtr_base;
++	u64 host_idtr_base;
++	u64 host_rsp;
++
++	u64 ept_pointer;
++
++	u16 virtual_processor_id;
++	u16 padding16[3];
++
++	u64 padding64_2[5];
++	u64 guest_physical_address;
++
++	u32 vm_instruction_error;
++	u32 vm_exit_reason;
++	u32 vm_exit_intr_info;
++	u32 vm_exit_intr_error_code;
++	u32 idt_vectoring_info_field;
++	u32 idt_vectoring_error_code;
++	u32 vm_exit_instruction_len;
++	u32 vmx_instruction_info;
++
++	u64 exit_qualification;
++	u64 exit_io_instruction_ecx;
++	u64 exit_io_instruction_esi;
++	u64 exit_io_instruction_edi;
++	u64 exit_io_instruction_eip;
++
++	u64 guest_linear_address;
++	u64 guest_rsp;
++	u64 guest_rflags;
++
++	u32 guest_interruptibility_info;
++	u32 cpu_based_vm_exec_control;
++	u32 exception_bitmap;
++	u32 vm_entry_controls;
++	u32 vm_entry_intr_info_field;
++	u32 vm_entry_exception_error_code;
++	u32 vm_entry_instruction_len;
++	u32 tpr_threshold;
++
++	u64 guest_rip;
++
++	u32 hv_clean_fields;
++	u32 hv_padding_32;
++	u32 hv_synthetic_controls;
++	struct {
++		u32 nested_flush_hypercall:1;
++		u32 msr_bitmap:1;
++		u32 reserved:30;
++	} hv_enlightenments_control;
++	u32 hv_vp_id;
++
++	u64 hv_vm_id;
++	u64 partition_assist_page;
++	u64 padding64_4[4];
++	u64 guest_bndcfgs;
++	u64 padding64_5[7];
++	u64 xss_exit_bitmap;
++	u64 padding64_6[7];
++};
++
++#define HV_X64_MSR_VP_ASSIST_PAGE		0x40000073
++#define HV_X64_MSR_VP_ASSIST_PAGE_ENABLE	0x00000001
++#define HV_X64_MSR_VP_ASSIST_PAGE_ADDRESS_SHIFT	12
++#define HV_X64_MSR_VP_ASSIST_PAGE_ADDRESS_MASK	\
++		(~((1ull << HV_X64_MSR_VP_ASSIST_PAGE_ADDRESS_SHIFT) - 1))
++
++struct hv_enlightened_vmcs *current_evmcs;
++struct hv_vp_assist_page *current_vp_assist;
++
++static inline int enable_vp_assist(uint64_t vp_assist_pa, void *vp_assist)
++{
++	u64 val = (vp_assist_pa & HV_X64_MSR_VP_ASSIST_PAGE_ADDRESS_MASK) |
++		HV_X64_MSR_VP_ASSIST_PAGE_ENABLE;
++
++	wrmsr(HV_X64_MSR_VP_ASSIST_PAGE, val);
++
++	current_vp_assist = vp_assist;
++
++	enable_evmcs = true;
++
++	return 0;
++}
++
++static inline int evmcs_vmptrld(uint64_t vmcs_pa, void *vmcs)
++{
++	current_vp_assist->current_nested_vmcs = vmcs_pa;
++	current_vp_assist->enlighten_vmentry = 1;
++
++	current_evmcs = vmcs;
++
++	return 0;
++}
++
++static inline int evmcs_vmptrst(uint64_t *value)
++{
++	*value = current_vp_assist->current_nested_vmcs &
++		~HV_X64_MSR_VP_ASSIST_PAGE_ENABLE;
++
++	return 0;
++}
++
++static inline int evmcs_vmread(uint64_t encoding, uint64_t *value)
++{
++	switch (encoding) {
++	case GUEST_RIP:
++		*value = current_evmcs->guest_rip;
++		break;
++	case GUEST_RSP:
++		*value = current_evmcs->guest_rsp;
++		break;
++	case GUEST_RFLAGS:
++		*value = current_evmcs->guest_rflags;
++		break;
++	case HOST_IA32_PAT:
++		*value = current_evmcs->host_ia32_pat;
++		break;
++	case HOST_IA32_EFER:
++		*value = current_evmcs->host_ia32_efer;
++		break;
++	case HOST_CR0:
++		*value = current_evmcs->host_cr0;
++		break;
++	case HOST_CR3:
++		*value = current_evmcs->host_cr3;
++		break;
++	case HOST_CR4:
++		*value = current_evmcs->host_cr4;
++		break;
++	case HOST_IA32_SYSENTER_ESP:
++		*value = current_evmcs->host_ia32_sysenter_esp;
++		break;
++	case HOST_IA32_SYSENTER_EIP:
++		*value = current_evmcs->host_ia32_sysenter_eip;
++		break;
++	case HOST_RIP:
++		*value = current_evmcs->host_rip;
++		break;
++	case IO_BITMAP_A:
++		*value = current_evmcs->io_bitmap_a;
++		break;
++	case IO_BITMAP_B:
++		*value = current_evmcs->io_bitmap_b;
++		break;
++	case MSR_BITMAP:
++		*value = current_evmcs->msr_bitmap;
++		break;
++	case GUEST_ES_BASE:
++		*value = current_evmcs->guest_es_base;
++		break;
++	case GUEST_CS_BASE:
++		*value = current_evmcs->guest_cs_base;
++		break;
++	case GUEST_SS_BASE:
++		*value = current_evmcs->guest_ss_base;
++		break;
++	case GUEST_DS_BASE:
++		*value = current_evmcs->guest_ds_base;
++		break;
++	case GUEST_FS_BASE:
++		*value = current_evmcs->guest_fs_base;
++		break;
++	case GUEST_GS_BASE:
++		*value = current_evmcs->guest_gs_base;
++		break;
++	case GUEST_LDTR_BASE:
++		*value = current_evmcs->guest_ldtr_base;
++		break;
++	case GUEST_TR_BASE:
++		*value = current_evmcs->guest_tr_base;
++		break;
++	case GUEST_GDTR_BASE:
++		*value = current_evmcs->guest_gdtr_base;
++		break;
++	case GUEST_IDTR_BASE:
++		*value = current_evmcs->guest_idtr_base;
++		break;
++	case TSC_OFFSET:
++		*value = current_evmcs->tsc_offset;
++		break;
++	case VIRTUAL_APIC_PAGE_ADDR:
++		*value = current_evmcs->virtual_apic_page_addr;
++		break;
++	case VMCS_LINK_POINTER:
++		*value = current_evmcs->vmcs_link_pointer;
++		break;
++	case GUEST_IA32_DEBUGCTL:
++		*value = current_evmcs->guest_ia32_debugctl;
++		break;
++	case GUEST_IA32_PAT:
++		*value = current_evmcs->guest_ia32_pat;
++		break;
++	case GUEST_IA32_EFER:
++		*value = current_evmcs->guest_ia32_efer;
++		break;
++	case GUEST_PDPTR0:
++		*value = current_evmcs->guest_pdptr0;
++		break;
++	case GUEST_PDPTR1:
++		*value = current_evmcs->guest_pdptr1;
++		break;
++	case GUEST_PDPTR2:
++		*value = current_evmcs->guest_pdptr2;
++		break;
++	case GUEST_PDPTR3:
++		*value = current_evmcs->guest_pdptr3;
++		break;
++	case GUEST_PENDING_DBG_EXCEPTIONS:
++		*value = current_evmcs->guest_pending_dbg_exceptions;
++		break;
++	case GUEST_SYSENTER_ESP:
++		*value = current_evmcs->guest_sysenter_esp;
++		break;
++	case GUEST_SYSENTER_EIP:
++		*value = current_evmcs->guest_sysenter_eip;
++		break;
++	case CR0_GUEST_HOST_MASK:
++		*value = current_evmcs->cr0_guest_host_mask;
++		break;
++	case CR4_GUEST_HOST_MASK:
++		*value = current_evmcs->cr4_guest_host_mask;
++		break;
++	case CR0_READ_SHADOW:
++		*value = current_evmcs->cr0_read_shadow;
++		break;
++	case CR4_READ_SHADOW:
++		*value = current_evmcs->cr4_read_shadow;
++		break;
++	case GUEST_CR0:
++		*value = current_evmcs->guest_cr0;
++		break;
++	case GUEST_CR3:
++		*value = current_evmcs->guest_cr3;
++		break;
++	case GUEST_CR4:
++		*value = current_evmcs->guest_cr4;
++		break;
++	case GUEST_DR7:
++		*value = current_evmcs->guest_dr7;
++		break;
++	case HOST_FS_BASE:
++		*value = current_evmcs->host_fs_base;
++		break;
++	case HOST_GS_BASE:
++		*value = current_evmcs->host_gs_base;
++		break;
++	case HOST_TR_BASE:
++		*value = current_evmcs->host_tr_base;
++		break;
++	case HOST_GDTR_BASE:
++		*value = current_evmcs->host_gdtr_base;
++		break;
++	case HOST_IDTR_BASE:
++		*value = current_evmcs->host_idtr_base;
++		break;
++	case HOST_RSP:
++		*value = current_evmcs->host_rsp;
++		break;
++	case EPT_POINTER:
++		*value = current_evmcs->ept_pointer;
++		break;
++	case GUEST_BNDCFGS:
++		*value = current_evmcs->guest_bndcfgs;
++		break;
++	case XSS_EXIT_BITMAP:
++		*value = current_evmcs->xss_exit_bitmap;
++		break;
++	case GUEST_PHYSICAL_ADDRESS:
++		*value = current_evmcs->guest_physical_address;
++		break;
++	case EXIT_QUALIFICATION:
++		*value = current_evmcs->exit_qualification;
++		break;
++	case GUEST_LINEAR_ADDRESS:
++		*value = current_evmcs->guest_linear_address;
++		break;
++	case VM_EXIT_MSR_STORE_ADDR:
++		*value = current_evmcs->vm_exit_msr_store_addr;
++		break;
++	case VM_EXIT_MSR_LOAD_ADDR:
++		*value = current_evmcs->vm_exit_msr_load_addr;
++		break;
++	case VM_ENTRY_MSR_LOAD_ADDR:
++		*value = current_evmcs->vm_entry_msr_load_addr;
++		break;
++	case CR3_TARGET_VALUE0:
++		*value = current_evmcs->cr3_target_value0;
++		break;
++	case CR3_TARGET_VALUE1:
++		*value = current_evmcs->cr3_target_value1;
++		break;
++	case CR3_TARGET_VALUE2:
++		*value = current_evmcs->cr3_target_value2;
++		break;
++	case CR3_TARGET_VALUE3:
++		*value = current_evmcs->cr3_target_value3;
++		break;
++	case TPR_THRESHOLD:
++		*value = current_evmcs->tpr_threshold;
++		break;
++	case GUEST_INTERRUPTIBILITY_INFO:
++		*value = current_evmcs->guest_interruptibility_info;
++		break;
++	case CPU_BASED_VM_EXEC_CONTROL:
++		*value = current_evmcs->cpu_based_vm_exec_control;
++		break;
++	case EXCEPTION_BITMAP:
++		*value = current_evmcs->exception_bitmap;
++		break;
++	case VM_ENTRY_CONTROLS:
++		*value = current_evmcs->vm_entry_controls;
++		break;
++	case VM_ENTRY_INTR_INFO_FIELD:
++		*value = current_evmcs->vm_entry_intr_info_field;
++		break;
++	case VM_ENTRY_EXCEPTION_ERROR_CODE:
++		*value = current_evmcs->vm_entry_exception_error_code;
++		break;
++	case VM_ENTRY_INSTRUCTION_LEN:
++		*value = current_evmcs->vm_entry_instruction_len;
++		break;
++	case HOST_IA32_SYSENTER_CS:
++		*value = current_evmcs->host_ia32_sysenter_cs;
++		break;
++	case PIN_BASED_VM_EXEC_CONTROL:
++		*value = current_evmcs->pin_based_vm_exec_control;
++		break;
++	case VM_EXIT_CONTROLS:
++		*value = current_evmcs->vm_exit_controls;
++		break;
++	case SECONDARY_VM_EXEC_CONTROL:
++		*value = current_evmcs->secondary_vm_exec_control;
++		break;
++	case GUEST_ES_LIMIT:
++		*value = current_evmcs->guest_es_limit;
++		break;
++	case GUEST_CS_LIMIT:
++		*value = current_evmcs->guest_cs_limit;
++		break;
++	case GUEST_SS_LIMIT:
++		*value = current_evmcs->guest_ss_limit;
++		break;
++	case GUEST_DS_LIMIT:
++		*value = current_evmcs->guest_ds_limit;
++		break;
++	case GUEST_FS_LIMIT:
++		*value = current_evmcs->guest_fs_limit;
++		break;
++	case GUEST_GS_LIMIT:
++		*value = current_evmcs->guest_gs_limit;
++		break;
++	case GUEST_LDTR_LIMIT:
++		*value = current_evmcs->guest_ldtr_limit;
++		break;
++	case GUEST_TR_LIMIT:
++		*value = current_evmcs->guest_tr_limit;
++		break;
++	case GUEST_GDTR_LIMIT:
++		*value = current_evmcs->guest_gdtr_limit;
++		break;
++	case GUEST_IDTR_LIMIT:
++		*value = current_evmcs->guest_idtr_limit;
++		break;
++	case GUEST_ES_AR_BYTES:
++		*value = current_evmcs->guest_es_ar_bytes;
++		break;
++	case GUEST_CS_AR_BYTES:
++		*value = current_evmcs->guest_cs_ar_bytes;
++		break;
++	case GUEST_SS_AR_BYTES:
++		*value = current_evmcs->guest_ss_ar_bytes;
++		break;
++	case GUEST_DS_AR_BYTES:
++		*value = current_evmcs->guest_ds_ar_bytes;
++		break;
++	case GUEST_FS_AR_BYTES:
++		*value = current_evmcs->guest_fs_ar_bytes;
++		break;
++	case GUEST_GS_AR_BYTES:
++		*value = current_evmcs->guest_gs_ar_bytes;
++		break;
++	case GUEST_LDTR_AR_BYTES:
++		*value = current_evmcs->guest_ldtr_ar_bytes;
++		break;
++	case GUEST_TR_AR_BYTES:
++		*value = current_evmcs->guest_tr_ar_bytes;
++		break;
++	case GUEST_ACTIVITY_STATE:
++		*value = current_evmcs->guest_activity_state;
++		break;
++	case GUEST_SYSENTER_CS:
++		*value = current_evmcs->guest_sysenter_cs;
++		break;
++	case VM_INSTRUCTION_ERROR:
++		*value = current_evmcs->vm_instruction_error;
++		break;
++	case VM_EXIT_REASON:
++		*value = current_evmcs->vm_exit_reason;
++		break;
++	case VM_EXIT_INTR_INFO:
++		*value = current_evmcs->vm_exit_intr_info;
++		break;
++	case VM_EXIT_INTR_ERROR_CODE:
++		*value = current_evmcs->vm_exit_intr_error_code;
++		break;
++	case IDT_VECTORING_INFO_FIELD:
++		*value = current_evmcs->idt_vectoring_info_field;
++		break;
++	case IDT_VECTORING_ERROR_CODE:
++		*value = current_evmcs->idt_vectoring_error_code;
++		break;
++	case VM_EXIT_INSTRUCTION_LEN:
++		*value = current_evmcs->vm_exit_instruction_len;
++		break;
++	case VMX_INSTRUCTION_INFO:
++		*value = current_evmcs->vmx_instruction_info;
++		break;
++	case PAGE_FAULT_ERROR_CODE_MASK:
++		*value = current_evmcs->page_fault_error_code_mask;
++		break;
++	case PAGE_FAULT_ERROR_CODE_MATCH:
++		*value = current_evmcs->page_fault_error_code_match;
++		break;
++	case CR3_TARGET_COUNT:
++		*value = current_evmcs->cr3_target_count;
++		break;
++	case VM_EXIT_MSR_STORE_COUNT:
++		*value = current_evmcs->vm_exit_msr_store_count;
++		break;
++	case VM_EXIT_MSR_LOAD_COUNT:
++		*value = current_evmcs->vm_exit_msr_load_count;
++		break;
++	case VM_ENTRY_MSR_LOAD_COUNT:
++		*value = current_evmcs->vm_entry_msr_load_count;
++		break;
++	case HOST_ES_SELECTOR:
++		*value = current_evmcs->host_es_selector;
++		break;
++	case HOST_CS_SELECTOR:
++		*value = current_evmcs->host_cs_selector;
++		break;
++	case HOST_SS_SELECTOR:
++		*value = current_evmcs->host_ss_selector;
++		break;
++	case HOST_DS_SELECTOR:
++		*value = current_evmcs->host_ds_selector;
++		break;
++	case HOST_FS_SELECTOR:
++		*value = current_evmcs->host_fs_selector;
++		break;
++	case HOST_GS_SELECTOR:
++		*value = current_evmcs->host_gs_selector;
++		break;
++	case HOST_TR_SELECTOR:
++		*value = current_evmcs->host_tr_selector;
++		break;
++	case GUEST_ES_SELECTOR:
++		*value = current_evmcs->guest_es_selector;
++		break;
++	case GUEST_CS_SELECTOR:
++		*value = current_evmcs->guest_cs_selector;
++		break;
++	case GUEST_SS_SELECTOR:
++		*value = current_evmcs->guest_ss_selector;
++		break;
++	case GUEST_DS_SELECTOR:
++		*value = current_evmcs->guest_ds_selector;
++		break;
++	case GUEST_FS_SELECTOR:
++		*value = current_evmcs->guest_fs_selector;
++		break;
++	case GUEST_GS_SELECTOR:
++		*value = current_evmcs->guest_gs_selector;
++		break;
++	case GUEST_LDTR_SELECTOR:
++		*value = current_evmcs->guest_ldtr_selector;
++		break;
++	case GUEST_TR_SELECTOR:
++		*value = current_evmcs->guest_tr_selector;
++		break;
++	case VIRTUAL_PROCESSOR_ID:
++		*value = current_evmcs->virtual_processor_id;
++		break;
++	default: return 1;
++	}
++
++	return 0;
++}
++
++static inline int evmcs_vmwrite(uint64_t encoding, uint64_t value)
++{
++	switch (encoding) {
++	case GUEST_RIP:
++		current_evmcs->guest_rip = value;
++		break;
++	case GUEST_RSP:
++		current_evmcs->guest_rsp = value;
++		break;
++	case GUEST_RFLAGS:
++		current_evmcs->guest_rflags = value;
++		break;
++	case HOST_IA32_PAT:
++		current_evmcs->host_ia32_pat = value;
++		break;
++	case HOST_IA32_EFER:
++		current_evmcs->host_ia32_efer = value;
++		break;
++	case HOST_CR0:
++		current_evmcs->host_cr0 = value;
++		break;
++	case HOST_CR3:
++		current_evmcs->host_cr3 = value;
++		break;
++	case HOST_CR4:
++		current_evmcs->host_cr4 = value;
++		break;
++	case HOST_IA32_SYSENTER_ESP:
++		current_evmcs->host_ia32_sysenter_esp = value;
++		break;
++	case HOST_IA32_SYSENTER_EIP:
++		current_evmcs->host_ia32_sysenter_eip = value;
++		break;
++	case HOST_RIP:
++		current_evmcs->host_rip = value;
++		break;
++	case IO_BITMAP_A:
++		current_evmcs->io_bitmap_a = value;
++		break;
++	case IO_BITMAP_B:
++		current_evmcs->io_bitmap_b = value;
++		break;
++	case MSR_BITMAP:
++		current_evmcs->msr_bitmap = value;
++		break;
++	case GUEST_ES_BASE:
++		current_evmcs->guest_es_base = value;
++		break;
++	case GUEST_CS_BASE:
++		current_evmcs->guest_cs_base = value;
++		break;
++	case GUEST_SS_BASE:
++		current_evmcs->guest_ss_base = value;
++		break;
++	case GUEST_DS_BASE:
++		current_evmcs->guest_ds_base = value;
++		break;
++	case GUEST_FS_BASE:
++		current_evmcs->guest_fs_base = value;
++		break;
++	case GUEST_GS_BASE:
++		current_evmcs->guest_gs_base = value;
++		break;
++	case GUEST_LDTR_BASE:
++		current_evmcs->guest_ldtr_base = value;
++		break;
++	case GUEST_TR_BASE:
++		current_evmcs->guest_tr_base = value;
++		break;
++	case GUEST_GDTR_BASE:
++		current_evmcs->guest_gdtr_base = value;
++		break;
++	case GUEST_IDTR_BASE:
++		current_evmcs->guest_idtr_base = value;
++		break;
++	case TSC_OFFSET:
++		current_evmcs->tsc_offset = value;
++		break;
++	case VIRTUAL_APIC_PAGE_ADDR:
++		current_evmcs->virtual_apic_page_addr = value;
++		break;
++	case VMCS_LINK_POINTER:
++		current_evmcs->vmcs_link_pointer = value;
++		break;
++	case GUEST_IA32_DEBUGCTL:
++		current_evmcs->guest_ia32_debugctl = value;
++		break;
++	case GUEST_IA32_PAT:
++		current_evmcs->guest_ia32_pat = value;
++		break;
++	case GUEST_IA32_EFER:
++		current_evmcs->guest_ia32_efer = value;
++		break;
++	case GUEST_PDPTR0:
++		current_evmcs->guest_pdptr0 = value;
++		break;
++	case GUEST_PDPTR1:
++		current_evmcs->guest_pdptr1 = value;
++		break;
++	case GUEST_PDPTR2:
++		current_evmcs->guest_pdptr2 = value;
++		break;
++	case GUEST_PDPTR3:
++		current_evmcs->guest_pdptr3 = value;
++		break;
++	case GUEST_PENDING_DBG_EXCEPTIONS:
++		current_evmcs->guest_pending_dbg_exceptions = value;
++		break;
++	case GUEST_SYSENTER_ESP:
++		current_evmcs->guest_sysenter_esp = value;
++		break;
++	case GUEST_SYSENTER_EIP:
++		current_evmcs->guest_sysenter_eip = value;
++		break;
++	case CR0_GUEST_HOST_MASK:
++		current_evmcs->cr0_guest_host_mask = value;
++		break;
++	case CR4_GUEST_HOST_MASK:
++		current_evmcs->cr4_guest_host_mask = value;
++		break;
++	case CR0_READ_SHADOW:
++		current_evmcs->cr0_read_shadow = value;
++		break;
++	case CR4_READ_SHADOW:
++		current_evmcs->cr4_read_shadow = value;
++		break;
++	case GUEST_CR0:
++		current_evmcs->guest_cr0 = value;
++		break;
++	case GUEST_CR3:
++		current_evmcs->guest_cr3 = value;
++		break;
++	case GUEST_CR4:
++		current_evmcs->guest_cr4 = value;
++		break;
++	case GUEST_DR7:
++		current_evmcs->guest_dr7 = value;
++		break;
++	case HOST_FS_BASE:
++		current_evmcs->host_fs_base = value;
++		break;
++	case HOST_GS_BASE:
++		current_evmcs->host_gs_base = value;
++		break;
++	case HOST_TR_BASE:
++		current_evmcs->host_tr_base = value;
++		break;
++	case HOST_GDTR_BASE:
++		current_evmcs->host_gdtr_base = value;
++		break;
++	case HOST_IDTR_BASE:
++		current_evmcs->host_idtr_base = value;
++		break;
++	case HOST_RSP:
++		current_evmcs->host_rsp = value;
++		break;
++	case EPT_POINTER:
++		current_evmcs->ept_pointer = value;
++		break;
++	case GUEST_BNDCFGS:
++		current_evmcs->guest_bndcfgs = value;
++		break;
++	case XSS_EXIT_BITMAP:
++		current_evmcs->xss_exit_bitmap = value;
++		break;
++	case GUEST_PHYSICAL_ADDRESS:
++		current_evmcs->guest_physical_address = value;
++		break;
++	case EXIT_QUALIFICATION:
++		current_evmcs->exit_qualification = value;
++		break;
++	case GUEST_LINEAR_ADDRESS:
++		current_evmcs->guest_linear_address = value;
++		break;
++	case VM_EXIT_MSR_STORE_ADDR:
++		current_evmcs->vm_exit_msr_store_addr = value;
++		break;
++	case VM_EXIT_MSR_LOAD_ADDR:
++		current_evmcs->vm_exit_msr_load_addr = value;
++		break;
++	case VM_ENTRY_MSR_LOAD_ADDR:
++		current_evmcs->vm_entry_msr_load_addr = value;
++		break;
++	case CR3_TARGET_VALUE0:
++		current_evmcs->cr3_target_value0 = value;
++		break;
++	case CR3_TARGET_VALUE1:
++		current_evmcs->cr3_target_value1 = value;
++		break;
++	case CR3_TARGET_VALUE2:
++		current_evmcs->cr3_target_value2 = value;
++		break;
++	case CR3_TARGET_VALUE3:
++		current_evmcs->cr3_target_value3 = value;
++		break;
++	case TPR_THRESHOLD:
++		current_evmcs->tpr_threshold = value;
++		break;
++	case GUEST_INTERRUPTIBILITY_INFO:
++		current_evmcs->guest_interruptibility_info = value;
++		break;
++	case CPU_BASED_VM_EXEC_CONTROL:
++		current_evmcs->cpu_based_vm_exec_control = value;
++		break;
++	case EXCEPTION_BITMAP:
++		current_evmcs->exception_bitmap = value;
++		break;
++	case VM_ENTRY_CONTROLS:
++		current_evmcs->vm_entry_controls = value;
++		break;
++	case VM_ENTRY_INTR_INFO_FIELD:
++		current_evmcs->vm_entry_intr_info_field = value;
++		break;
++	case VM_ENTRY_EXCEPTION_ERROR_CODE:
++		current_evmcs->vm_entry_exception_error_code = value;
++		break;
++	case VM_ENTRY_INSTRUCTION_LEN:
++		current_evmcs->vm_entry_instruction_len = value;
++		break;
++	case HOST_IA32_SYSENTER_CS:
++		current_evmcs->host_ia32_sysenter_cs = value;
++		break;
++	case PIN_BASED_VM_EXEC_CONTROL:
++		current_evmcs->pin_based_vm_exec_control = value;
++		break;
++	case VM_EXIT_CONTROLS:
++		current_evmcs->vm_exit_controls = value;
++		break;
++	case SECONDARY_VM_EXEC_CONTROL:
++		current_evmcs->secondary_vm_exec_control = value;
++		break;
++	case GUEST_ES_LIMIT:
++		current_evmcs->guest_es_limit = value;
++		break;
++	case GUEST_CS_LIMIT:
++		current_evmcs->guest_cs_limit = value;
++		break;
++	case GUEST_SS_LIMIT:
++		current_evmcs->guest_ss_limit = value;
++		break;
++	case GUEST_DS_LIMIT:
++		current_evmcs->guest_ds_limit = value;
++		break;
++	case GUEST_FS_LIMIT:
++		current_evmcs->guest_fs_limit = value;
++		break;
++	case GUEST_GS_LIMIT:
++		current_evmcs->guest_gs_limit = value;
++		break;
++	case GUEST_LDTR_LIMIT:
++		current_evmcs->guest_ldtr_limit = value;
++		break;
++	case GUEST_TR_LIMIT:
++		current_evmcs->guest_tr_limit = value;
++		break;
++	case GUEST_GDTR_LIMIT:
++		current_evmcs->guest_gdtr_limit = value;
++		break;
++	case GUEST_IDTR_LIMIT:
++		current_evmcs->guest_idtr_limit = value;
++		break;
++	case GUEST_ES_AR_BYTES:
++		current_evmcs->guest_es_ar_bytes = value;
++		break;
++	case GUEST_CS_AR_BYTES:
++		current_evmcs->guest_cs_ar_bytes = value;
++		break;
++	case GUEST_SS_AR_BYTES:
++		current_evmcs->guest_ss_ar_bytes = value;
++		break;
++	case GUEST_DS_AR_BYTES:
++		current_evmcs->guest_ds_ar_bytes = value;
++		break;
++	case GUEST_FS_AR_BYTES:
++		current_evmcs->guest_fs_ar_bytes = value;
++		break;
++	case GUEST_GS_AR_BYTES:
++		current_evmcs->guest_gs_ar_bytes = value;
++		break;
++	case GUEST_LDTR_AR_BYTES:
++		current_evmcs->guest_ldtr_ar_bytes = value;
++		break;
++	case GUEST_TR_AR_BYTES:
++		current_evmcs->guest_tr_ar_bytes = value;
++		break;
++	case GUEST_ACTIVITY_STATE:
++		current_evmcs->guest_activity_state = value;
++		break;
++	case GUEST_SYSENTER_CS:
++		current_evmcs->guest_sysenter_cs = value;
++		break;
++	case VM_INSTRUCTION_ERROR:
++		current_evmcs->vm_instruction_error = value;
++		break;
++	case VM_EXIT_REASON:
++		current_evmcs->vm_exit_reason = value;
++		break;
++	case VM_EXIT_INTR_INFO:
++		current_evmcs->vm_exit_intr_info = value;
++		break;
++	case VM_EXIT_INTR_ERROR_CODE:
++		current_evmcs->vm_exit_intr_error_code = value;
++		break;
++	case IDT_VECTORING_INFO_FIELD:
++		current_evmcs->idt_vectoring_info_field = value;
++		break;
++	case IDT_VECTORING_ERROR_CODE:
++		current_evmcs->idt_vectoring_error_code = value;
++		break;
++	case VM_EXIT_INSTRUCTION_LEN:
++		current_evmcs->vm_exit_instruction_len = value;
++		break;
++	case VMX_INSTRUCTION_INFO:
++		current_evmcs->vmx_instruction_info = value;
++		break;
++	case PAGE_FAULT_ERROR_CODE_MASK:
++		current_evmcs->page_fault_error_code_mask = value;
++		break;
++	case PAGE_FAULT_ERROR_CODE_MATCH:
++		current_evmcs->page_fault_error_code_match = value;
++		break;
++	case CR3_TARGET_COUNT:
++		current_evmcs->cr3_target_count = value;
++		break;
++	case VM_EXIT_MSR_STORE_COUNT:
++		current_evmcs->vm_exit_msr_store_count = value;
++		break;
++	case VM_EXIT_MSR_LOAD_COUNT:
++		current_evmcs->vm_exit_msr_load_count = value;
++		break;
++	case VM_ENTRY_MSR_LOAD_COUNT:
++		current_evmcs->vm_entry_msr_load_count = value;
++		break;
++	case HOST_ES_SELECTOR:
++		current_evmcs->host_es_selector = value;
++		break;
++	case HOST_CS_SELECTOR:
++		current_evmcs->host_cs_selector = value;
++		break;
++	case HOST_SS_SELECTOR:
++		current_evmcs->host_ss_selector = value;
++		break;
++	case HOST_DS_SELECTOR:
++		current_evmcs->host_ds_selector = value;
++		break;
++	case HOST_FS_SELECTOR:
++		current_evmcs->host_fs_selector = value;
++		break;
++	case HOST_GS_SELECTOR:
++		current_evmcs->host_gs_selector = value;
++		break;
++	case HOST_TR_SELECTOR:
++		current_evmcs->host_tr_selector = value;
++		break;
++	case GUEST_ES_SELECTOR:
++		current_evmcs->guest_es_selector = value;
++		break;
++	case GUEST_CS_SELECTOR:
++		current_evmcs->guest_cs_selector = value;
++		break;
++	case GUEST_SS_SELECTOR:
++		current_evmcs->guest_ss_selector = value;
++		break;
++	case GUEST_DS_SELECTOR:
++		current_evmcs->guest_ds_selector = value;
++		break;
++	case GUEST_FS_SELECTOR:
++		current_evmcs->guest_fs_selector = value;
++		break;
++	case GUEST_GS_SELECTOR:
++		current_evmcs->guest_gs_selector = value;
++		break;
++	case GUEST_LDTR_SELECTOR:
++		current_evmcs->guest_ldtr_selector = value;
++		break;
++	case GUEST_TR_SELECTOR:
++		current_evmcs->guest_tr_selector = value;
++		break;
++	case VIRTUAL_PROCESSOR_ID:
++		current_evmcs->virtual_processor_id = value;
++		break;
++	default: return 1;
++	}
++
++	return 0;
++}
++
++static inline int evmcs_vmlaunch(void)
++{
++	int ret;
++
++	current_evmcs->hv_clean_fields = 0;
++
++	__asm__ __volatile__("push %%rbp;"
++			     "push %%rcx;"
++			     "push %%rdx;"
++			     "push %%rsi;"
++			     "push %%rdi;"
++			     "push $0;"
++			     "mov %%rsp, (%[host_rsp]);"
++			     "lea 1f(%%rip), %%rax;"
++			     "mov %%rax, (%[host_rip]);"
++			     "vmlaunch;"
++			     "incq (%%rsp);"
++			     "1: pop %%rax;"
++			     "pop %%rdi;"
++			     "pop %%rsi;"
++			     "pop %%rdx;"
++			     "pop %%rcx;"
++			     "pop %%rbp;"
++			     : [ret]"=&a"(ret)
++			     : [host_rsp]"r"
++			       ((uint64_t)&current_evmcs->host_rsp),
++			       [host_rip]"r"
++			       ((uint64_t)&current_evmcs->host_rip)
++			     : "memory", "cc", "rbx", "r8", "r9", "r10",
++			       "r11", "r12", "r13", "r14", "r15");
++	return ret;
++}
++
++/*
++ * No guest state (e.g. GPRs) is established by this vmresume.
++ */
++static inline int evmcs_vmresume(void)
++{
++	int ret;
++
++	current_evmcs->hv_clean_fields = 0;
++
++	__asm__ __volatile__("push %%rbp;"
++			     "push %%rcx;"
++			     "push %%rdx;"
++			     "push %%rsi;"
++			     "push %%rdi;"
++			     "push $0;"
++			     "mov %%rsp, (%[host_rsp]);"
++			     "lea 1f(%%rip), %%rax;"
++			     "mov %%rax, (%[host_rip]);"
++			     "vmresume;"
++			     "incq (%%rsp);"
++			     "1: pop %%rax;"
++			     "pop %%rdi;"
++			     "pop %%rsi;"
++			     "pop %%rdx;"
++			     "pop %%rcx;"
++			     "pop %%rbp;"
++			     : [ret]"=&a"(ret)
++			     : [host_rsp]"r"
++			       ((uint64_t)&current_evmcs->host_rsp),
++			       [host_rip]"r"
++			       ((uint64_t)&current_evmcs->host_rip)
++			     : "memory", "cc", "rbx", "r8", "r9", "r10",
++			       "r11", "r12", "r13", "r14", "r15");
++	return ret;
++}
++
++#endif /* !SELFTEST_KVM_EVMCS_H */
+diff --git a/tools/testing/selftests/kvm/include/vmx.h b/tools/testing/selftests/kvm/include/vmx.h
+index b9ffe1024d3a..2a7ec2ca5c77 100644
+--- a/tools/testing/selftests/kvm/include/vmx.h
++++ b/tools/testing/selftests/kvm/include/vmx.h
+@@ -339,6 +339,8 @@ struct vmx_msr_entry {
+ 	uint64_t value;
+ } __attribute__ ((aligned(16)));
  
++#include "evmcs.h"
++
+ static inline int vmxon(uint64_t phys)
+ {
+ 	uint8_t ret;
+@@ -372,6 +374,9 @@ static inline int vmptrld(uint64_t vmcs_pa)
+ {
+ 	uint8_t ret;
+ 
++	if (enable_evmcs)
++		return -1;
++
+ 	__asm__ __volatile__ ("vmptrld %[pa]; setna %[ret]"
+ 		: [ret]"=rm"(ret)
+ 		: [pa]"m"(vmcs_pa)
+@@ -385,6 +390,9 @@ static inline int vmptrst(uint64_t *value)
+ 	uint64_t tmp;
+ 	uint8_t ret;
+ 
++	if (enable_evmcs)
++		return evmcs_vmptrst(value);
++
+ 	__asm__ __volatile__("vmptrst %[value]; setna %[ret]"
+ 		: [value]"=m"(tmp), [ret]"=rm"(ret)
+ 		: : "cc", "memory");
+@@ -411,6 +419,9 @@ static inline int vmlaunch(void)
+ {
+ 	int ret;
+ 
++	if (enable_evmcs)
++		return evmcs_vmlaunch();
++
+ 	__asm__ __volatile__("push %%rbp;"
+ 			     "push %%rcx;"
+ 			     "push %%rdx;"
+@@ -443,6 +454,9 @@ static inline int vmresume(void)
+ {
+ 	int ret;
+ 
++	if (enable_evmcs)
++		return evmcs_vmresume();
++
+ 	__asm__ __volatile__("push %%rbp;"
+ 			     "push %%rcx;"
+ 			     "push %%rdx;"
+@@ -482,6 +496,9 @@ static inline int vmread(uint64_t encoding, uint64_t *value)
+ 	uint64_t tmp;
+ 	uint8_t ret;
+ 
++	if (enable_evmcs)
++		return evmcs_vmread(encoding, value);
++
+ 	__asm__ __volatile__("vmread %[encoding], %[value]; setna %[ret]"
+ 		: [value]"=rm"(tmp), [ret]"=rm"(ret)
+ 		: [encoding]"r"(encoding)
+@@ -506,6 +523,9 @@ static inline int vmwrite(uint64_t encoding, uint64_t value)
+ {
+ 	uint8_t ret;
+ 
++	if (enable_evmcs)
++		return evmcs_vmwrite(encoding, value);
++
+ 	__asm__ __volatile__ ("vmwrite %[value], %[encoding]; setna %[ret]"
+ 		: [ret]"=rm"(ret)
+ 		: [value]"rm"(value), [encoding]"r"(encoding)
+@@ -543,6 +563,14 @@ struct vmx_pages {
+ 	void *vmwrite_hva;
+ 	uint64_t vmwrite_gpa;
+ 	void *vmwrite;
++
++	void *vp_assist_hva;
++	uint64_t vp_assist_gpa;
++	void *vp_assist;
++
++	void *enlightened_vmcs_hva;
++	uint64_t enlightened_vmcs_gpa;
++	void *enlightened_vmcs;
+ };
+ 
+ struct vmx_pages *vcpu_alloc_vmx(struct kvm_vm *vm, vm_vaddr_t *p_vmx_gva);
+diff --git a/tools/testing/selftests/kvm/lib/vmx.c b/tools/testing/selftests/kvm/lib/vmx.c
+index b987c3c970eb..bc4986a70e1e 100644
+--- a/tools/testing/selftests/kvm/lib/vmx.c
++++ b/tools/testing/selftests/kvm/lib/vmx.c
+@@ -13,6 +13,8 @@
+ #include "x86.h"
+ #include "vmx.h"
+ 
++bool enable_evmcs;
++
+ /* Allocate memory regions for nested VMX tests.
+  *
+  * Input Args:
+@@ -62,6 +64,20 @@ vcpu_alloc_vmx(struct kvm_vm *vm, vm_vaddr_t *p_vmx_gva)
+ 	vmx->vmwrite_gpa = addr_gva2gpa(vm, (uintptr_t)vmx->vmwrite);
+ 	memset(vmx->vmwrite_hva, 0, getpagesize());
+ 
++	/* Setup of a region of guest memory for the VP Assist page. */
++	vmx->vp_assist = (void *)vm_vaddr_alloc(vm, getpagesize(),
++						0x10000, 0, 0);
++	vmx->vp_assist_hva = addr_gva2hva(vm, (uintptr_t)vmx->vp_assist);
++	vmx->vp_assist_gpa = addr_gva2gpa(vm, (uintptr_t)vmx->vp_assist);
++
++	/* Setup of a region of guest memory for the enlightened VMCS. */
++	vmx->enlightened_vmcs = (void *)vm_vaddr_alloc(vm, getpagesize(),
++						       0x10000, 0, 0);
++	vmx->enlightened_vmcs_hva =
++		addr_gva2hva(vm, (uintptr_t)vmx->enlightened_vmcs);
++	vmx->enlightened_vmcs_gpa =
++		addr_gva2gpa(vm, (uintptr_t)vmx->enlightened_vmcs);
++
+ 	*p_vmx_gva = vmx_gva;
+ 	return vmx;
+ }
+@@ -107,18 +123,26 @@ bool prepare_for_vmx_operation(struct vmx_pages *vmx)
+ 	if (vmxon(vmx->vmxon_gpa))
+ 		return false;
+ 
+-	/* Load a VMCS. */
+-	*(uint32_t *)(vmx->vmcs) = vmcs_revision();
+-	if (vmclear(vmx->vmcs_gpa))
+-		return false;
+-
+-	if (vmptrld(vmx->vmcs_gpa))
+-		return false;
+-
+-	/* Setup shadow VMCS, do not load it yet. */
+-	*(uint32_t *)(vmx->shadow_vmcs) = vmcs_revision() | 0x80000000ul;
+-	if (vmclear(vmx->shadow_vmcs_gpa))
+-		return false;
++	if (!enable_evmcs) {
++		/* Load a VMCS. */
++		*(uint32_t *)(vmx->vmcs) = vmcs_revision();
++		if (vmclear(vmx->vmcs_gpa))
++			return false;
++
++		if (vmptrld(vmx->vmcs_gpa))
++			return false;
++
++		/* Setup shadow VMCS, do not load it yet. */
++		*(uint32_t *)(vmx->shadow_vmcs) =
++			vmcs_revision() | 0x80000000ul;
++		if (vmclear(vmx->shadow_vmcs_gpa))
++			return false;
++	} else {
++		if (evmcs_vmptrld(vmx->enlightened_vmcs_gpa,
++				  vmx->enlightened_vmcs))
++			return false;
++		current_evmcs->revision_id = vmcs_revision();
++	}
+ 
+ 	return true;
+ }
+-- 
+2.14.4
+
