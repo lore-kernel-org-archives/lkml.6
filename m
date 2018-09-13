@@ -5,189 +5,54 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F00BFA3747
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67DB2FC6175
 	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 17:35:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C213121765
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 17:01:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C213121765
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 751FD2159F
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 16:28:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 751FD2159F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727946AbeIMWLn (ORCPT
+        id S1727847AbeIMVie (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 18:11:43 -0400
-Received: from mga06.intel.com ([134.134.136.31]:24353 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726821AbeIMWLn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 18:11:43 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Sep 2018 10:01:16 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,369,1531810800"; 
-   d="scan'208";a="262345315"
-Received: from yoojae-mobl1.amr.corp.intel.com (HELO [10.7.153.143]) ([10.7.153.143])
-  by fmsmga005.fm.intel.com with ESMTP; 13 Sep 2018 10:01:00 -0700
-Subject: Re: [PATCH i2c-next v6] i2c: aspeed: Handle master/slave combined irq
- events properly
-To:     =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc:     Joel Stanley <joel@jms.id.au>, linux-aspeed@lists.ozlabs.org,
-        Vernon Mauery <vernon.mauery@linux.intel.com>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-i2c@vger.kernel.org, jarkko.nikula@linux.intel.com,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        James Feist <james.feist@linux.intel.com>
-References: <20180823225731.19063-1-jae.hyun.yoo@linux.intel.com>
- <20180911183734.GA21976@roeck-us.net>
- <1f34fe8c-69ef-5f2d-25dc-d5f6037cc558@linux.intel.com>
- <20180911204107.GA26017@roeck-us.net>
- <e5135af4-9105-214f-5de2-65cc03804222@linux.intel.com>
- <CACPK8Xdv3aP_zOHAL0WMgwvkpBHAUesU7OdhW==jgvXjRmt-Zw@mail.gmail.com>
- <20180911233302.GA18799@roeck-us.net>
- <5698ca34-14c9-8d05-c4e6-5acf85ff9d14@linux.intel.com>
- <20180912013449.GA12612@roeck-us.net>
- <7fd98646-fb5a-be4d-ce37-84b74e0fa8b3@linux.intel.com>
- <285ea914-5407-7fde-036d-95978f95a430@kaod.org>
- <7a1706b1-7787-eeff-2295-f6180fe84c6e@linux.intel.com>
- <798fd5fe-475f-f633-c830-62a3e4f1692d@kaod.org>
-From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Message-ID: <4d5fbe0c-0844-767e-22ce-346e60ed45cd@linux.intel.com>
-Date:   Thu, 13 Sep 2018 10:01:00 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <798fd5fe-475f-f633-c830-62a3e4f1692d@kaod.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Thu, 13 Sep 2018 17:38:34 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:50696 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726452AbeIMVie (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 17:38:34 -0400
+Received: from localhost (74-93-104-98-Washington.hfc.comcastbusiness.net [74.93.104.98])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 07B4C13FE3C9D;
+        Thu, 13 Sep 2018 09:28:19 -0700 (PDT)
+Date:   Thu, 13 Sep 2018 09:28:19 -0700 (PDT)
+Message-Id: <20180913.092819.2099750169529223026.davem@davemloft.net>
+To:     jasowang@redhat.com
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        mst@redhat.com
+Subject: Re: [PATCH net-next V2 00/11] vhost_net TX batching
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20180912031709.14112-1-jasowang@redhat.com>
+References: <20180912031709.14112-1-jasowang@redhat.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 13 Sep 2018 09:28:20 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/13/2018 9:51 AM, Cédric Le Goater wrote:
-> Hello !
-> 
-> On 09/13/2018 06:31 PM, Jae Hyun Yoo wrote:
->> Hi Cédric,
->>
->> On 9/12/2018 10:47 PM, Cédric Le Goater wrote:
->>> On 09/12/2018 06:54 PM, Jae Hyun Yoo wrote:
->>>> On 9/11/2018 6:34 PM, Guenter Roeck wrote:
->>>>> On Tue, Sep 11, 2018 at 04:58:44PM -0700, Jae Hyun Yoo wrote:
->>>>>> On 9/11/2018 4:33 PM, Guenter Roeck wrote:
->>>>>>> Looking into the patch, clearing the interrupt status at the end of an
->>>>>>> interrupt handler is always suspicious and tends to result in race
->>>>>>> conditions (because additional interrupts may have arrived while handling
->>>>>>> the existing interrupts, or because interrupt handling itself may trigger
->>>>>>> another interrupt). With that in mind, the following patch fixes the
->>>>>>> problem for me.
->>>>>>>
->>>>>>> Guenter
->>>>>>>
->>>>>>> ---
->>>>>>>
->>>>>>> diff --git a/drivers/i2c/busses/i2c-aspeed.c b/drivers/i2c/busses/i2c-aspeed.c
->>>>>>> index c258c4d9a4c0..c488e6950b7c 100644
->>>>>>> --- a/drivers/i2c/busses/i2c-aspeed.c
->>>>>>> +++ b/drivers/i2c/busses/i2c-aspeed.c
->>>>>>> @@ -552,6 +552,8 @@ static irqreturn_t aspeed_i2c_bus_irq(int irq, void *dev_id)
->>>>>>>         spin_lock(&bus->lock);
->>>>>>>         irq_received = readl(bus->base + ASPEED_I2C_INTR_STS_REG);
->>>>>>> +    /* Ack all interrupt bits. */
->>>>>>> +    writel(irq_received, bus->base + ASPEED_I2C_INTR_STS_REG);
->>>>>>>         irq_remaining = irq_received;
->>>>>>>     #if IS_ENABLED(CONFIG_I2C_SLAVE)
->>>>>>> @@ -584,8 +586,6 @@ static irqreturn_t aspeed_i2c_bus_irq(int irq, void *dev_id)
->>>>>>>                 "irq handled != irq. expected 0x%08x, but was 0x%08x\n",
->>>>>>>                 irq_received, irq_handled);
->>>>>>> -    /* Ack all interrupt bits. */
->>>>>>> -    writel(irq_received, bus->base + ASPEED_I2C_INTR_STS_REG);
->>>>>>>         spin_unlock(&bus->lock);
->>>>>>>         return irq_remaining ? IRQ_NONE : IRQ_HANDLED;
->>>>>>>     }
->>>>>>>
->>>>>>
->>>>>> My intention of putting the code at the end of interrupt handler was,
->>>>>> to reduce possibility of combined irq calls which is explained in this
->>>>>> patch. But YES, I agree with you. It could make a potential race
->>>>>
->>>>> Hmm, yes, but that doesn't explain why it would make sense to acknowledge
->>>>> the interrupt late. The interrupt ack only means "I am going to handle these
->>>>> interrupts". If additional interrupts arrive while the interrupt handler
->>>>> is active, those will have to be acknowledged separately.
->>>>>
->>>>> Sure, there is a risk that an interrupt arrives while the handler is
->>>>> running, and that it is handled but not acknowledged. That can happen
->>>>> with pretty much all interrupt handlers, and there are mitigations to
->>>>> limit the impact (for example, read the interrupt status register in
->>>>> a loop until no more interrupts are pending). But acknowledging
->>>>> an interrupt that was possibly not handled is always bad idea.
->>>>
->>>> Well, that's generally right but not always. Sometimes that depends on
->>>> hardware and Aspeed I2C is the case.
->>>>
->>>> This is a description from Aspeed AST2500 datasheet:
->>>>     I2CD10 Interrupt Status Register
->>>>     bit 2 Receive Done Interrupt status
->>>>           S/W needs to clear this status bit to allow next data receiving.
->>>>
->>>> It means, driver should hold this bit to prevent transition of hardware
->>>> state machine until the driver handles received data, so the bit should
->>>> be cleared at the end of interrupt handler.
->>>>
->>>> Let me share my test result. Your code change works on 100KHz bus speed
->>>> but doesn't work well on 1MHz bus speed. Investigated that interrupt
->>>> handling is fast enough in 100KHz test but in 1MHz, most of data is
->>>> corrupted because the bit is cleared at the beginning of interrupt
->>>> handler so it allows receiving of the next data but the interrupt
->>>> handler isn't fast enough to read the data buffer on time. I checked
->>>> this problem on BMC-ME channel which ME sends lots of IPMB packets to
->>>> BMC at 1MHz speed. You could simply check the data corruption problem on
->>>> the BMC-ME channel.
->>>
->>> OK.
->>>   
->>>> My thought is, the current code is right for real Aspeed I2C hardware.
->>>> It seems that QEMU 3.0 model for witherspoon-bmc doesn't simulate the
->>>> actual Aspeed I2C hardware correctly.
->>>
->>> That might be very well possible yes. it also misses support for the slave
->>> mode and the DMA registers.
->>>
->>
->> Yes, it would be good if qemu's Aspeed I2C model supports slave mode.
->> Since the current linux Aspeed I2C driver supports byte transfer mode
->> only, so DMA transfer mode support in qemu could be considered later.
-> 
-> The Aspeed SDK already does, so yes, we will need to consider it.
-> 
+From: Jason Wang <jasowang@redhat.com>
+Date: Wed, 12 Sep 2018 11:16:58 +0800
 
-Yes, Aspeed SDK does but the driver in upstream doesn't at this time.
-So we will need to consider it because byte mode makes too many
-interrupt calls which is not good for performance.
+> This series tries to batch submitting packets to underlayer socket
+> through msg_control during sendmsg(). This is done by:
+ ...
 
->> Implementing pool mode and DMA mode for linux Aspeed I2C are in my
->> backlog at this moment.
-> 
-> Is there a QEMU model for an I2C/IPMB device ?
-> 
-
-Not sure because I'm not familiar with QEMU. Need to check.
-
-Thanks,
-Jae
-
-> There is already a large IPMI framework in QEMU, that would be interesting.
-> to extend.
-> 
-> Thanks,
-> 
-> C.
-> 
-> 
+Series applied, thanks Jason.
