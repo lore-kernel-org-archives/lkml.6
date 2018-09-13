@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA34CC07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:43:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64988C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:44:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C28C20854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:43:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C28C20854
+	by mail.kernel.org (Postfix) with ESMTP id 2917120854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:44:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2917120854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729938AbeIMSx2 (ORCPT
+        id S1729946AbeIMSxd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:53:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60436 "EHLO
+        Thu, 13 Sep 2018 14:53:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60446 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728932AbeIMSx1 (ORCPT
+        with ESMTP id S1727365AbeIMSxc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:53:27 -0400
+        Thu, 13 Sep 2018 14:53:32 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C4C93D19;
-        Thu, 13 Sep 2018 13:43:54 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DA2A7D10;
+        Thu, 13 Sep 2018 13:43:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aleh Filipovich <aleh@appnexus.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        stable@vger.kernel.org, shaochun chen <cscnull@gmail.com>,
+        Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 042/115] platform/x86: asus-nb-wmi: Add keymap entry for lid flip action on UX360
-Date:   Thu, 13 Sep 2018 15:31:02 +0200
-Message-Id: <20180913131826.296841213@linuxfoundation.org>
+Subject: [PATCH 4.14 043/115] netfilter: fix memory leaks on netlink_dump_start error
+Date:   Thu, 13 Sep 2018 15:31:03 +0200
+Message-Id: <20180913131826.341718803@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
 References: <20180913131823.327472833@linuxfoundation.org>
@@ -52,33 +53,138 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Aleh Filipovich <aleh@vaolix.com>
+From: Florian Westphal <fw@strlen.de>
 
-[ Upstream commit 880b29ac107d15644bf4da228376ba3cd6af6d71 ]
+[ Upstream commit 3e673b23b541b8e7f773b2d378d6eb99831741cd ]
 
-Add entry to WMI keymap for lid flip event on Asus UX360.
+Shaochun Chen points out we leak dumper filter state allocations
+stored in dump_control->data in case there is an error before netlink sets
+cb_running (after which ->done will be called at some point).
 
-On Asus Zenbook ux360 flipping lid from/to tablet mode triggers
-keyscan code 0xfa which cannot be handled and results in kernel
-log message "Unknown key fa pressed".
+In order to fix this, add .start functions and move allocations there.
 
-Signed-off-by: Aleh Filipovich<aleh@appnexus.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Same pattern as used in commit 90fd131afc565159c9e0ea742f082b337e10f8c6
+("netfilter: nf_tables: move dumper state allocation into ->start").
+
+Reported-by: shaochun chen <cscnull@gmail.com>
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/platform/x86/asus-nb-wmi.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/netfilter/nf_conntrack_netlink.c |   26 +++++++++++++++++---------
+ net/netfilter/nfnetlink_acct.c       |   29 +++++++++++++----------------
+ 2 files changed, 30 insertions(+), 25 deletions(-)
 
---- a/drivers/platform/x86/asus-nb-wmi.c
-+++ b/drivers/platform/x86/asus-nb-wmi.c
-@@ -487,6 +487,7 @@ static const struct key_entry asus_nb_wm
- 	{ KE_KEY, 0xC4, { KEY_KBDILLUMUP } },
- 	{ KE_KEY, 0xC5, { KEY_KBDILLUMDOWN } },
- 	{ KE_IGNORE, 0xC6, },  /* Ambient Light Sensor notification */
-+	{ KE_KEY, 0xFA, { KEY_PROG2 } },           /* Lid flip action */
- 	{ KE_END, 0},
+--- a/net/netfilter/nf_conntrack_netlink.c
++++ b/net/netfilter/nf_conntrack_netlink.c
+@@ -788,6 +788,21 @@ ctnetlink_alloc_filter(const struct nlat
+ #endif
+ }
+ 
++static int ctnetlink_start(struct netlink_callback *cb)
++{
++	const struct nlattr * const *cda = cb->data;
++	struct ctnetlink_filter *filter = NULL;
++
++	if (cda[CTA_MARK] && cda[CTA_MARK_MASK]) {
++		filter = ctnetlink_alloc_filter(cda);
++		if (IS_ERR(filter))
++			return PTR_ERR(filter);
++	}
++
++	cb->data = filter;
++	return 0;
++}
++
+ static int ctnetlink_filter_match(struct nf_conn *ct, void *data)
+ {
+ 	struct ctnetlink_filter *filter = data;
+@@ -1194,19 +1209,12 @@ static int ctnetlink_get_conntrack(struc
+ 
+ 	if (nlh->nlmsg_flags & NLM_F_DUMP) {
+ 		struct netlink_dump_control c = {
++			.start = ctnetlink_start,
+ 			.dump = ctnetlink_dump_table,
+ 			.done = ctnetlink_done,
++			.data = (void *)cda,
+ 		};
+ 
+-		if (cda[CTA_MARK] && cda[CTA_MARK_MASK]) {
+-			struct ctnetlink_filter *filter;
+-
+-			filter = ctnetlink_alloc_filter(cda);
+-			if (IS_ERR(filter))
+-				return PTR_ERR(filter);
+-
+-			c.data = filter;
+-		}
+ 		return netlink_dump_start(ctnl, skb, nlh, &c);
+ 	}
+ 
+--- a/net/netfilter/nfnetlink_acct.c
++++ b/net/netfilter/nfnetlink_acct.c
+@@ -238,29 +238,33 @@ static const struct nla_policy filter_po
+ 	[NFACCT_FILTER_VALUE]	= { .type = NLA_U32 },
  };
+ 
+-static struct nfacct_filter *
+-nfacct_filter_alloc(const struct nlattr * const attr)
++static int nfnl_acct_start(struct netlink_callback *cb)
+ {
+-	struct nfacct_filter *filter;
++	const struct nlattr *const attr = cb->data;
+ 	struct nlattr *tb[NFACCT_FILTER_MAX + 1];
++	struct nfacct_filter *filter;
+ 	int err;
+ 
++	if (!attr)
++		return 0;
++
+ 	err = nla_parse_nested(tb, NFACCT_FILTER_MAX, attr, filter_policy,
+ 			       NULL);
+ 	if (err < 0)
+-		return ERR_PTR(err);
++		return err;
+ 
+ 	if (!tb[NFACCT_FILTER_MASK] || !tb[NFACCT_FILTER_VALUE])
+-		return ERR_PTR(-EINVAL);
++		return -EINVAL;
+ 
+ 	filter = kzalloc(sizeof(struct nfacct_filter), GFP_KERNEL);
+ 	if (!filter)
+-		return ERR_PTR(-ENOMEM);
++		return -ENOMEM;
+ 
+ 	filter->mask = ntohl(nla_get_be32(tb[NFACCT_FILTER_MASK]));
+ 	filter->value = ntohl(nla_get_be32(tb[NFACCT_FILTER_VALUE]));
++	cb->data = filter;
+ 
+-	return filter;
++	return 0;
+ }
+ 
+ static int nfnl_acct_get(struct net *net, struct sock *nfnl,
+@@ -275,18 +279,11 @@ static int nfnl_acct_get(struct net *net
+ 	if (nlh->nlmsg_flags & NLM_F_DUMP) {
+ 		struct netlink_dump_control c = {
+ 			.dump = nfnl_acct_dump,
++			.start = nfnl_acct_start,
+ 			.done = nfnl_acct_done,
++			.data = (void *)tb[NFACCT_FILTER],
+ 		};
+ 
+-		if (tb[NFACCT_FILTER]) {
+-			struct nfacct_filter *filter;
+-
+-			filter = nfacct_filter_alloc(tb[NFACCT_FILTER]);
+-			if (IS_ERR(filter))
+-				return PTR_ERR(filter);
+-
+-			c.data = filter;
+-		}
+ 		return netlink_dump_start(nfnl, skb, nlh, &c);
+ 	}
  
 
 
