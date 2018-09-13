@@ -2,85 +2,93 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E94CCC04ABB
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 05:03:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF19EC04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 05:13:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DF2120866
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 05:03:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DF2120866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=guarana.org
+	by mail.kernel.org (Postfix) with ESMTP id 68EFE20882
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 05:13:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68EFE20882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727628AbeIMKKy (ORCPT
+        id S1726930AbeIMKVl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 06:10:54 -0400
-Received: from aws.guarana.org ([13.237.110.252]:49608 "EHLO aws.guarana.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727194AbeIMKKy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 06:10:54 -0400
-Received: by aws.guarana.org (Postfix, from userid 1006)
-        id BFD2BA146F; Thu, 13 Sep 2018 05:03:01 +0000 (UTC)
-Date:   Thu, 13 Sep 2018 05:03:01 +0000
-From:   Kevin Easton <kevin@guarana.org>
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Samuel Neves <sneves@dei.uc.pt>, linux-arch@vger.kernel.org
-Subject: Re: [PATCH net-next v3 01/17] asm: simd context helper API
-Message-ID: <20180913050301.GA26367@ip-172-31-15-78>
-References: <20180911010838.8818-1-Jason@zx2c4.com>
- <20180911010838.8818-2-Jason@zx2c4.com>
- <20180912061433.GA8484@ip-172-31-15-78>
- <CAHmME9pmgu_xWJ0rvdS4RhzwjKPiNdkQ9nc6mqTNeb6A8xT8Eg@mail.gmail.com>
+        Thu, 13 Sep 2018 06:21:41 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57756 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726317AbeIMKVk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Sep 2018 06:21:40 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 09A2FAD05;
+        Thu, 13 Sep 2018 05:13:48 +0000 (UTC)
+Subject: Re: [PATCH] xen: fix GCC warning and remove duplicate
+ EVTCHN_ROW/EVTCHN_COL usage
+To:     Josh Abraham <j.abraham1776@gmail.com>, boris.ostrovsky@oracle.com
+Cc:     aams@amazon.com, roger.pau@citrix.com,
+        xen-devel@lists.xenproject.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180913011354.GA19226@josh-ThinkPad-T460s>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
+ ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
+ dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
+ NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
+ XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
+ AAHNHkp1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmRlPsLAeQQTAQIAIwUCU4xw6wIbAwcL
+ CQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJELDendYovxMvi4UH/Ri+OXlObzqMANruTd4N
+ zmVBAZgx1VW6jLc8JZjQuJPSsd/a+bNr3BZeLV6lu4Pf1Yl2Log129EX1KWYiFFvPbIiq5M5
+ kOXTO8Eas4CaScCvAZ9jCMQCgK3pFqYgirwTgfwnPtxFxO/F3ZcS8jovza5khkSKL9JGq8Nk
+ czDTruQ/oy0WUHdUr9uwEfiD9yPFOGqp4S6cISuzBMvaAiC5YGdUGXuPZKXLpnGSjkZswUzY
+ d9BVSitRL5ldsQCg6GhDoEAeIhUC4SQnT9SOWkoDOSFRXZ+7+WIBGLiWMd+yKDdRG5RyP/8f
+ 3tgGiB6cyuYfPDRGsELGjUaTUq3H2xZgIPfOwE0EU4xwFgEIAMsx+gDjgzAY4H1hPVXgoLK8
+ B93sTQFN9oC6tsb46VpxyLPfJ3T1A6Z6MVkLoCejKTJ3K9MUsBZhxIJ0hIyvzwI6aYJsnOew
+ cCiCN7FeKJ/oA1RSUemPGUcIJwQuZlTOiY0OcQ5PFkV5YxMUX1F/aTYXROXgTmSaw0aC1Jpo
+ w7Ss1mg4SIP/tR88/d1+HwkJDVW1RSxC1PWzGizwRv8eauImGdpNnseneO2BNWRXTJumAWDD
+ pYxpGSsGHXuZXTPZqOOZpsHtInFyi5KRHSFyk2Xigzvh3b9WqhbgHHHE4PUVw0I5sIQt8hJq
+ 5nH5dPqz4ITtCL9zjiJsExHuHKN3NZsAEQEAAcLAXwQYAQIACQUCU4xwFgIbDAAKCRCw3p3W
+ KL8TL0P4B/9YWver5uD/y/m0KScK2f3Z3mXJhME23vGBbMNlfwbr+meDMrJZ950CuWWnQ+d+
+ Ahe0w1X7e3wuLVODzjcReQ/v7b4JD3wwHxe+88tgB9byc0NXzlPJWBaWV01yB2/uefVKryAf
+ AHYEd0gCRhx7eESgNBe3+YqWAQawunMlycsqKa09dBDL1PFRosF708ic9346GLHRc6Vj5SRA
+ UTHnQqLetIOXZm3a2eQ1gpQK9MmruO86Vo93p39bS1mqnLLspVrL4rhoyhsOyh0Hd28QCzpJ
+ wKeHTd0MAWAirmewHXWPco8p1Wg+V+5xfZzuQY0f4tQxvOpXpt4gQ1817GQ5/Ed/wsDtBBgB
+ CAAgFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAlrd8NACGwIAgQkQsN6d1ii/Ey92IAQZFggA
+ HRYhBFMtsHpB9jjzHji4HoBcYbtP2GO+BQJa3fDQAAoJEIBcYbtP2GO+TYsA/30H/0V6cr/W
+ V+J/FCayg6uNtm3MJLo4rE+o4sdpjjsGAQCooqffpgA+luTT13YZNV62hAnCLKXH9n3+ZAgJ
+ RtAyDWk1B/0SMDVs1wxufMkKC3Q/1D3BYIvBlrTVKdBYXPxngcRoqV2J77lscEvkLNUGsu/z
+ W2pf7+P3mWWlrPMJdlbax00vevyBeqtqNKjHstHatgMZ2W0CFC4hJ3YEetuRBURYPiGzuJXU
+ pAd7a7BdsqWC4o+GTm5tnGrCyD+4gfDSpkOT53S/GNO07YkPkm/8J4OBoFfgSaCnQ1izwgJQ
+ jIpcG2fPCI2/hxf2oqXPYbKr1v4Z1wthmoyUgGN0LPTIm+B5vdY82wI5qe9uN6UOGyTH2B3p
+ hRQUWqCwu2sqkI3LLbTdrnyDZaixT2T0f4tyF5Lfs+Ha8xVMhIyzNb1byDI5FKCb
+Message-ID: <37107f15-119b-118e-cbd3-1bb87356e442@suse.com>
+Date:   Thu, 13 Sep 2018 07:13:46 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHmME9pmgu_xWJ0rvdS4RhzwjKPiNdkQ9nc6mqTNeb6A8xT8Eg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180913011354.GA19226@josh-ThinkPad-T460s>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 08:10:41PM +0200, Jason A. Donenfeld wrote:
-> On Wed, Sep 12, 2018 at 8:14 AM Kevin Easton <kevin@guarana.org> wrote:
-> > Given that it's always supposed to be used like that, mightn't it be
-> > better if simd_relax() took a pointer to the context, so the call is
-> > just
-> >
-> >     simd_relax(&simd_context);
-> >
-> > ?
-> >
-> > The inlining means that there won't actually be a pointer dereference in
-> > the emitted code.
-> >
-> > If simd_put() also took a pointer then it could set the context back to
-> > HAVE_NO_SIMD as well?
+On 13/09/18 03:13, Josh Abraham wrote:
+> This patch removes duplicate macro useage in events_base.c.
 > 
-> That's sort of a neat idea. I guess in this scheme, you'd envision:
+> It also fixes gcc warning:
+> variable ‘col’ set but not used [-Wunused-but-set-variable]
 > 
->    simd_context_t simd_context;
-> 
->    simd_get(&simd_context);
->    simd_relax(&simd_context);
->    simd_put(&simd_context);
-> 
-> And this way, if simd_context ever becomes a heavier struct, it can be
-> modified in place rather than returned by value from the function. On
-> the other hand, it's a little bit more annoying to type and makes it
-> harder to do declaration and initialization on the same line.
+> Signed-off-by: Joshua Abraham <j.abraham1776@gmail.com>
 
-Yes.  It's also how most get/put APIs already work in the kernel, eg
-kref_get/put (mostly because they tend to be 'getting/putting' an
-already-initialized object, though).
+Reviewed-by: Juergen Gross <jgross@suse.com>
 
-    - Kevin
+
+Juergen
