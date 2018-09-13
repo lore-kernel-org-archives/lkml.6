@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 335D4C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:04:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E0D9C04ABB
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:04:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEDB320652
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:04:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEDB320652
+	by mail.kernel.org (Postfix) with ESMTP id E689620652
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 14:04:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E689620652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731686AbeIMTOI (ORCPT
+        id S1731960AbeIMTOL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:14:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35382 "EHLO
+        Thu, 13 Sep 2018 15:14:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35392 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727566AbeIMTOH (ORCPT
+        with ESMTP id S1727566AbeIMTOK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:14:07 -0400
+        Thu, 13 Sep 2018 15:14:10 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8A782D35;
-        Thu, 13 Sep 2018 14:04:27 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4E19CD36;
+        Thu, 13 Sep 2018 14:04:31 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sandy Huang <hjc@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH 4.18 171/197] drm/rockchip: vop: fix irq disabled after vop driver probed
-Date:   Thu, 13 Sep 2018 15:32:00 +0200
-Message-Id: <20180913131848.403800354@linuxfoundation.org>
+        stable@vger.kernel.org, Mikita Lipski <mikita.lipski@amd.com>,
+        Hersen Wu <hersenxs.wu@amd.com>, Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.18 172/197] drm/amd/display: Pass connector id when executing VBIOS CT
+Date:   Thu, 13 Sep 2018 15:32:01 +0200
+Message-Id: <20180913131848.445068290@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -54,113 +52,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sandy Huang <hjc@rock-chips.com>
+From: Mikita Lipski <mikita.lipski@amd.com>
 
-commit 6456314ff1de246414a43e3132075b70b3e050ac upstream.
+commit 433149130c31de3f63b17b4ce08b45dab208f7e8 upstream.
 
-The vop irq is shared between vop and iommu and irq probing in the
-iommu driver moved to the probe function recently. This can in some
-cases lead to a stall if the irq is triggered while the vop driver
-still has it disabled, but the vop irq handler gets called.
+[why]
+Older ASICs require both phys_id and connector_id
+to execute bios command table. If we are not passing the
+right connector_id - it can lead to a black screen.
 
-But there is no real need to disable the irq, as the vop can simply
-also track its enabled state and ignore irqs in that case.
-For this we can simply check the power-domain state of the vop,
-similar to how the iommu driver does it.
+[how]
+Set connector_obj_id when executing vbios command table
 
-So remove the enable/disable handling and add appropriate condition
-to the irq handler.
-
-changes in v2:
-- move to just check the power-domain state
-- add clock handling
-changes in v3:
-- clarify comment to speak of runtime-pm not power-domain
-changes in v4:
-- address Marc's comments (clk-enable WARN_ON and style improvement)
-
-Fixes: d0b912bd4c23 ("iommu/rockchip: Request irqs in rk_iommu_probe()")
+Signed-off-by: Mikita Lipski <mikita.lipski@amd.com>
+Reviewed-by: Hersen Wu <hersenxs.wu@amd.com>
+Acked-by: Leo Li <sunpeng.li@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Sandy Huang <hjc@rock-chips.com>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Tested-by: Ezequiel Garcia <ezequiel@collabora.com>
-Reviewed-by: Tomasz Figa <tfiga@chromium.org>
-Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180612132028.27490-3-heiko@sntech.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/rockchip/rockchip_drm_vop.c |   25 +++++++++++++++++--------
- 1 file changed, 17 insertions(+), 8 deletions(-)
+ drivers/gpu/drm/amd/display/dc/dce/dce_link_encoder.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-@@ -573,8 +573,6 @@ static int vop_enable(struct drm_crtc *c
+--- a/drivers/gpu/drm/amd/display/dc/dce/dce_link_encoder.c
++++ b/drivers/gpu/drm/amd/display/dc/dce/dce_link_encoder.c
+@@ -919,7 +919,7 @@ void dce110_link_encoder_enable_tmds_out
+ 	enum bp_result result;
  
- 	spin_unlock(&vop->reg_lock);
- 
--	enable_irq(vop->irq);
+ 	/* Enable the PHY */
 -
- 	drm_crtc_vblank_on(crtc);
- 
- 	return 0;
-@@ -618,8 +616,6 @@ static void vop_crtc_atomic_disable(stru
- 
- 	vop_dsp_hold_valid_irq_disable(vop);
- 
--	disable_irq(vop->irq);
++	cntl.connector_obj_id = enc110->base.connector;
+ 	cntl.action = TRANSMITTER_CONTROL_ENABLE;
+ 	cntl.engine_id = enc->preferred_engine;
+ 	cntl.transmitter = enc110->base.transmitter;
+@@ -961,7 +961,7 @@ void dce110_link_encoder_enable_dp_outpu
+ 	 * We need to set number of lanes manually.
+ 	 */
+ 	configure_encoder(enc110, link_settings);
 -
- 	vop->is_enabled = false;
- 
- 	/*
-@@ -1196,6 +1192,18 @@ static irqreturn_t vop_isr(int irq, void
- 	int ret = IRQ_NONE;
- 
- 	/*
-+	 * The irq is shared with the iommu. If the runtime-pm state of the
-+	 * vop-device is disabled the irq has to be targeted at the iommu.
-+	 */
-+	if (!pm_runtime_get_if_in_use(vop->dev))
-+		return IRQ_NONE;
-+
-+	if (vop_core_clks_enable(vop)) {
-+		DRM_DEV_ERROR_RATELIMITED(vop->dev, "couldn't enable clocks\n");
-+		goto out;
-+	}
-+
-+	/*
- 	 * interrupt register has interrupt status, enable and clear bits, we
- 	 * must hold irq_lock to avoid a race with enable/disable_vblank().
- 	*/
-@@ -1210,7 +1218,7 @@ static irqreturn_t vop_isr(int irq, void
- 
- 	/* This is expected for vop iommu irqs, since the irq is shared */
- 	if (!active_irqs)
--		return IRQ_NONE;
-+		goto out_disable;
- 
- 	if (active_irqs & DSP_HOLD_VALID_INTR) {
- 		complete(&vop->dsp_hold_completion);
-@@ -1236,6 +1244,10 @@ static irqreturn_t vop_isr(int irq, void
- 		DRM_DEV_ERROR(vop->dev, "Unknown VOP IRQs: %#02x\n",
- 			      active_irqs);
- 
-+out_disable:
-+	vop_core_clks_disable(vop);
-+out:
-+	pm_runtime_put(vop->dev);
- 	return ret;
- }
- 
-@@ -1614,9 +1626,6 @@ static int vop_bind(struct device *dev,
- 	if (ret)
- 		goto err_disable_pm_runtime;
- 
--	/* IRQ is initially disabled; it gets enabled in power_on */
--	disable_irq(vop->irq);
--
- 	return 0;
- 
- err_disable_pm_runtime:
++	cntl.connector_obj_id = enc110->base.connector;
+ 	cntl.action = TRANSMITTER_CONTROL_ENABLE;
+ 	cntl.engine_id = enc->preferred_engine;
+ 	cntl.transmitter = enc110->base.transmitter;
 
 
