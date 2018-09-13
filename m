@@ -6,36 +6,40 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 143FEC07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:51:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49FC5C07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:51:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4BCB20854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:51:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4BCB20854
+	by mail.kernel.org (Postfix) with ESMTP id 1075A20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:51:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1075A20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730880AbeIMTBV (ORCPT
+        id S1730887AbeIMTBY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 15:01:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33334 "EHLO
+        Thu, 13 Sep 2018 15:01:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33344 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730372AbeIMTBV (ORCPT
+        with ESMTP id S1730158AbeIMTBY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 15:01:21 -0400
+        Thu, 13 Sep 2018 15:01:24 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E5EC0D10;
-        Thu, 13 Sep 2018 13:51:45 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E8C63D1A;
+        Thu, 13 Sep 2018 13:51:48 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        Realtek linux nic maintainers <nic_swsd@realtek.com>,
-        Azat Khuzhin <a3at.mail@gmail.com>
-Subject: [PATCH 4.18 028/197] r8169: set RxConfig after tx/rx is enabled for RTL8169sb/8110sb devices
-Date:   Thu, 13 Sep 2018 15:29:37 +0200
-Message-Id: <20180913131842.688567279@linuxfoundation.org>
+        stable@vger.kernel.org, Jose Abreu <joabreu@synopsys.com>,
+        Joao Pinto <jpinto@synopsys.com>,
+        Vitor Soares <soares@synopsys.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Corentin Labbe <clabbe@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.18 029/197] Revert "net: stmmac: Do not keep rearming the coalesce timer in stmmac_xmit"
+Date:   Thu, 13 Sep 2018 15:29:38 +0200
+Message-Id: <20180913131842.734828401@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
 References: <20180913131841.568116777@linuxfoundation.org>
@@ -53,72 +57,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Azat Khuzhin <a3at.mail@gmail.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
 
-[ Upstream commit 05212ba8132b42047ab5d63d759c6f9c28e7eab5 ]
+[ Upstream commit e5133f2f1261f8ab412e7fc5e3694c9f84328f89 ]
 
-I have two Ethernet adapters:
-  r8169 0000:03:01.0 eth0: RTL8169sb/8110sb, 00:14:d1:14:2d:49, XID 10000000, IRQ 18
-  r8169 0000:01:00.0 eth0: RTL8168e/8111e, 64:66:b3:11:14:5d, XID 2c200000, IRQ 30
-And after upgrading from linux 4.15 [1] to linux 4.18+ [2] RTL8169sb failed to
-receive any packets. tcpdump shows a lot of checksum mismatch.
+This reverts commit 4ae0169fd1b3c792b66be58995b7e6b629919ecf.
 
-  [1]: a0f79386a4968b4925da6db2d1daffd0605a4402
-  [2]: 0519359784328bfa92bf0931bf0cff3b58c16932 (4.19 merge window opened)
+This change in the handling of the coalesce timer is causing regression on
+(at least) amlogic platforms.
 
-I started bisecting and the found that [3] breaks it. According to [4]:
-  "For 8110S, 8110SB, and 8110SC series, the initial value of RxConfig
-  needs to be set after the tx/rx is enabled."
-So I moved rtl_init_rxcfg() after enabling tx/rs and now my adapter works
-(RTL8168e works too).
+Network will break down very quickly (a few seconds) after starting
+a download. This can easily be reproduced using iperf3 for example.
 
-  [3]: 3559d81e76bfe3803e89f2e04cf6ef7ab4f3aace
-  [4]: e542a2269f232d61270ceddd42b73a4348dee2bb ("r8169: adjust the RxConfig
-settings.")
+The problem has been reported on the S805, S905, S912 and A113 SoCs
+(Realtek and Micrel PHYs) and it is likely impacting all Amlogics
+platforms using Gbit ethernet
 
-Also drop "rx" from rtl_set_rx_tx_config_registers(), since it does nothing
-with it already.
+No problem was seen with the platform using 10/100 only PHYs (GXL internal)
 
-Fixes: 3559d81e76bfe3803e89f2e04cf6ef7ab4f3aace ("r8169: simplify
-rtl_hw_start_8169")
+Reverting change brings things back to normal and allows to use network
+again until we better understand the problem with the coalesce timer.
 
-Cc: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: netdev@vger.kernel.org
-Cc: Realtek linux nic maintainers <nic_swsd@realtek.com>
-Signed-off-by: Azat Khuzhin <a3at.mail@gmail.com>
+Cc: Jose Abreu <joabreu@synopsys.com>
+Cc: Joao Pinto <jpinto@synopsys.com>
+Cc: Vitor Soares <soares@synopsys.com>
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Corentin Labbe <clabbe@baylibre.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/realtek/r8169.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h      |    1 -
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |    5 +----
+ 2 files changed, 1 insertion(+), 5 deletions(-)
 
---- a/drivers/net/ethernet/realtek/r8169.c
-+++ b/drivers/net/ethernet/realtek/r8169.c
-@@ -5039,7 +5039,7 @@ static void rtl8169_hw_reset(struct rtl8
- 	rtl_hw_reset(tp);
- }
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac.h
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
+@@ -112,7 +112,6 @@ struct stmmac_priv {
+ 	u32 tx_count_frames;
+ 	u32 tx_coal_frames;
+ 	u32 tx_coal_timer;
+-	bool tx_timer_armed;
  
--static void rtl_set_rx_tx_config_registers(struct rtl8169_private *tp)
-+static void rtl_set_tx_config_registers(struct rtl8169_private *tp)
- {
- 	/* Set DMA burst size and Interframe Gap Time */
- 	RTL_W32(tp, TxConfig, (TX_DMA_BURST << TxDMAShift) |
-@@ -5150,12 +5150,14 @@ static void rtl_hw_start(struct  rtl8169
+ 	int tx_coalesce;
+ 	int hwts_tx_en;
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -3126,16 +3126,13 @@ static netdev_tx_t stmmac_xmit(struct sk
+ 	 * element in case of no SG.
+ 	 */
+ 	priv->tx_count_frames += nfrags + 1;
+-	if (likely(priv->tx_coal_frames > priv->tx_count_frames) &&
+-	    !priv->tx_timer_armed) {
++	if (likely(priv->tx_coal_frames > priv->tx_count_frames)) {
+ 		mod_timer(&priv->txtimer,
+ 			  STMMAC_COAL_TIMER(priv->tx_coal_timer));
+-		priv->tx_timer_armed = true;
+ 	} else {
+ 		priv->tx_count_frames = 0;
+ 		stmmac_set_tx_ic(priv, desc);
+ 		priv->xstats.tx_set_ic_bit++;
+-		priv->tx_timer_armed = false;
+ 	}
  
- 	rtl_set_rx_max_size(tp);
- 	rtl_set_rx_tx_desc_registers(tp);
--	rtl_set_rx_tx_config_registers(tp);
-+	rtl_set_tx_config_registers(tp);
- 	RTL_W8(tp, Cfg9346, Cfg9346_Lock);
- 
- 	/* Initially a 10 us delay. Turned it into a PCI commit. - FR */
- 	RTL_R8(tp, IntrMask);
- 	RTL_W8(tp, ChipCmd, CmdTxEnb | CmdRxEnb);
-+	rtl_init_rxcfg(tp);
-+
- 	rtl_set_rx_mode(tp->dev);
- 	/* no early-rx interrupts */
- 	RTL_W16(tp, MultiIntr, RTL_R16(tp, MultiIntr) & 0xf000);
+ 	skb_tx_timestamp(skb);
 
 
