@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF758C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:34:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74A3CC07520
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:34:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6927520854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:34:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6927520854
+	by mail.kernel.org (Postfix) with ESMTP id 38B0520854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:34:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38B0520854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728752AbeIMSnf (ORCPT
+        id S1728762AbeIMSnj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Sep 2018 14:43:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58826 "EHLO
+        Thu, 13 Sep 2018 14:43:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58834 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728185AbeIMSnf (ORCPT
+        with ESMTP id S1728082AbeIMSni (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:43:35 -0400
+        Thu, 13 Sep 2018 14:43:38 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C7E7DD10;
-        Thu, 13 Sep 2018 13:34:04 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 67241D10;
+        Thu, 13 Sep 2018 13:34:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -33,9 +33,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
         "David S. Miller" <davem@davemloft.net>,
         Amit Pundir <amit.pundir@linaro.org>
-Subject: [PATCH 4.4 53/60] sch_multiq: fix double free on init failure
-Date:   Thu, 13 Sep 2018 15:31:00 +0200
-Message-Id: <20180913131747.945243459@linuxfoundation.org>
+Subject: [PATCH 4.4 54/60] sch_hhf: fix null pointer dereference on init failure
+Date:   Thu, 13 Sep 2018 15:31:01 +0200
+Message-Id: <20180913131748.012400980@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180913131745.261413581@linuxfoundation.org>
 References: <20180913131745.261413581@linuxfoundation.org>
@@ -55,116 +55,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
 
-commit e89d469e3be3ed3d7124a803211a463ff83d0964 upstream.
+commit 32db864d33c21fd70a217ba53cb7224889354ffb upstream.
 
-The below commit added a call to ->destroy() on init failure, but multiq
-still frees ->queues on error in init, but ->queues is also freed by
-->destroy() thus we get double free and corrupted memory.
+If sch_hhf fails in its ->init() function (either due to wrong
+user-space arguments as below or memory alloc failure of hh_flows) it
+will do a null pointer deref of q->hh_flows in its ->destroy() function.
 
-Very easy to reproduce (eth0 not multiqueue):
-$ tc qdisc add dev eth0 root multiq
-RTNETLINK answers: Operation not supported
-$ ip l add dumdum type dummy
-(crash)
+To reproduce the crash:
+$ tc qdisc add dev eth0 root hhf quantum 2000000 non_hh_weight 10000000
 
-Trace log:
-[ 3929.467747] general protection fault: 0000 [#1] SMP
-[ 3929.468083] Modules linked in:
-[ 3929.468302] CPU: 3 PID: 967 Comm: ip Not tainted 4.13.0-rc6+ #56
-[ 3929.468625] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.7.5-20140531_083030-gandalf 04/01/2014
-[ 3929.469124] task: ffff88003716a700 task.stack: ffff88005872c000
-[ 3929.469449] RIP: 0010:__kmalloc_track_caller+0x117/0x1be
-[ 3929.469746] RSP: 0018:ffff88005872f6a0 EFLAGS: 00010246
-[ 3929.470042] RAX: 00000000000002de RBX: 0000000058a59000 RCX: 00000000000002df
-[ 3929.470406] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffffff821f7020
-[ 3929.470770] RBP: ffff88005872f6e8 R08: 000000000001f010 R09: 0000000000000000
-[ 3929.471133] R10: ffff88005872f730 R11: 0000000000008cdd R12: ff006d75646d7564
-[ 3929.471496] R13: 00000000014000c0 R14: ffff88005b403c00 R15: ffff88005b403c00
-[ 3929.471869] FS:  00007f0b70480740(0000) GS:ffff88005d980000(0000) knlGS:0000000000000000
-[ 3929.472286] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 3929.472677] CR2: 00007ffcee4f3000 CR3: 0000000059d45000 CR4: 00000000000406e0
-[ 3929.473209] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[ 3929.474109] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[ 3929.474873] Call Trace:
-[ 3929.475337]  ? kstrdup_const+0x23/0x25
-[ 3929.475863]  kstrdup+0x2e/0x4b
-[ 3929.476338]  kstrdup_const+0x23/0x25
-[ 3929.478084]  __kernfs_new_node+0x28/0xbc
-[ 3929.478478]  kernfs_new_node+0x35/0x55
-[ 3929.478929]  kernfs_create_link+0x23/0x76
-[ 3929.479478]  sysfs_do_create_link_sd.isra.2+0x85/0xd7
-[ 3929.480096]  sysfs_create_link+0x33/0x35
-[ 3929.480649]  device_add+0x200/0x589
-[ 3929.481184]  netdev_register_kobject+0x7c/0x12f
-[ 3929.481711]  register_netdevice+0x373/0x471
-[ 3929.482174]  rtnl_newlink+0x614/0x729
-[ 3929.482610]  ? rtnl_newlink+0x17f/0x729
-[ 3929.483080]  rtnetlink_rcv_msg+0x188/0x197
-[ 3929.483533]  ? rcu_read_unlock+0x3e/0x5f
-[ 3929.483984]  ? rtnl_newlink+0x729/0x729
-[ 3929.484420]  netlink_rcv_skb+0x6c/0xce
-[ 3929.484858]  rtnetlink_rcv+0x23/0x2a
-[ 3929.485291]  netlink_unicast+0x103/0x181
-[ 3929.485735]  netlink_sendmsg+0x326/0x337
-[ 3929.486181]  sock_sendmsg_nosec+0x14/0x3f
-[ 3929.486614]  sock_sendmsg+0x29/0x2e
-[ 3929.486973]  ___sys_sendmsg+0x209/0x28b
-[ 3929.487340]  ? do_raw_spin_unlock+0xcd/0xf8
-[ 3929.487719]  ? _raw_spin_unlock+0x27/0x31
-[ 3929.488092]  ? __handle_mm_fault+0x651/0xdb1
-[ 3929.488471]  ? check_chain_key+0xb0/0xfd
-[ 3929.488847]  __sys_sendmsg+0x45/0x63
-[ 3929.489206]  ? __sys_sendmsg+0x45/0x63
-[ 3929.489576]  SyS_sendmsg+0x19/0x1b
-[ 3929.489901]  entry_SYSCALL_64_fastpath+0x23/0xc2
-[ 3929.490172] RIP: 0033:0x7f0b6fb93690
-[ 3929.490423] RSP: 002b:00007ffcee4ed588 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-[ 3929.490881] RAX: ffffffffffffffda RBX: ffffffff810d278c RCX: 00007f0b6fb93690
-[ 3929.491198] RDX: 0000000000000000 RSI: 00007ffcee4ed5d0 RDI: 0000000000000003
-[ 3929.491521] RBP: ffff88005872ff98 R08: 0000000000000001 R09: 0000000000000000
-[ 3929.491801] R10: 00007ffcee4ed350 R11: 0000000000000246 R12: 0000000000000002
-[ 3929.492075] R13: 000000000066f1a0 R14: 00007ffcee4f5680 R15: 0000000000000000
-[ 3929.492352]  ? trace_hardirqs_off_caller+0xa7/0xcf
-[ 3929.492590] Code: 8b 45 c0 48 8b 45 b8 74 17 48 8b 4d c8 83 ca ff 44
-89 ee 4c 89 f7 e8 83 ca ff ff 49 89 c4 eb 49 49 63 56 20 48 8d 48 01 4d
-8b 06 <49> 8b 1c 14 48 89 c2 4c 89 e0 65 49 0f c7 08 0f 94 c0 83 f0 01
-[ 3929.493335] RIP: __kmalloc_track_caller+0x117/0x1be RSP: ffff88005872f6a0
+Crash log:
+[  690.654882] BUG: unable to handle kernel NULL pointer dereference at (null)
+[  690.655565] IP: hhf_destroy+0x48/0xbc
+[  690.655944] PGD 37345067
+[  690.655948] P4D 37345067
+[  690.656252] PUD 58402067
+[  690.656554] PMD 0
+[  690.656857]
+[  690.657362] Oops: 0000 [#1] SMP
+[  690.657696] Modules linked in:
+[  690.658032] CPU: 3 PID: 920 Comm: tc Not tainted 4.13.0-rc6+ #57
+[  690.658525] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.7.5-20140531_083030-gandalf 04/01/2014
+[  690.659255] task: ffff880058578000 task.stack: ffff88005acbc000
+[  690.659747] RIP: 0010:hhf_destroy+0x48/0xbc
+[  690.660146] RSP: 0018:ffff88005acbf9e0 EFLAGS: 00010246
+[  690.660601] RAX: 0000000000000000 RBX: 0000000000000020 RCX: 0000000000000000
+[  690.661155] RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffffffff821f63f0
+[  690.661710] RBP: ffff88005acbfa08 R08: ffffffff81b10a90 R09: 0000000000000000
+[  690.662267] R10: 00000000f42b7019 R11: ffff880058578000 R12: 00000000ffffffea
+[  690.662820] R13: ffff8800372f6400 R14: 0000000000000000 R15: 0000000000000000
+[  690.663769] FS:  00007f8ae5e8b740(0000) GS:ffff88005d980000(0000) knlGS:0000000000000000
+[  690.667069] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  690.667965] CR2: 0000000000000000 CR3: 0000000058523000 CR4: 00000000000406e0
+[  690.668918] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[  690.669945] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[  690.671003] Call Trace:
+[  690.671743]  qdisc_create+0x377/0x3fd
+[  690.672534]  tc_modify_qdisc+0x4d2/0x4fd
+[  690.673324]  rtnetlink_rcv_msg+0x188/0x197
+[  690.674204]  ? rcu_read_unlock+0x3e/0x5f
+[  690.675091]  ? rtnl_newlink+0x729/0x729
+[  690.675877]  netlink_rcv_skb+0x6c/0xce
+[  690.676648]  rtnetlink_rcv+0x23/0x2a
+[  690.677405]  netlink_unicast+0x103/0x181
+[  690.678179]  netlink_sendmsg+0x326/0x337
+[  690.678958]  sock_sendmsg_nosec+0x14/0x3f
+[  690.679743]  sock_sendmsg+0x29/0x2e
+[  690.680506]  ___sys_sendmsg+0x209/0x28b
+[  690.681283]  ? __handle_mm_fault+0xc7d/0xdb1
+[  690.681915]  ? check_chain_key+0xb0/0xfd
+[  690.682449]  __sys_sendmsg+0x45/0x63
+[  690.682954]  ? __sys_sendmsg+0x45/0x63
+[  690.683471]  SyS_sendmsg+0x19/0x1b
+[  690.683974]  entry_SYSCALL_64_fastpath+0x23/0xc2
+[  690.684516] RIP: 0033:0x7f8ae529d690
+[  690.685016] RSP: 002b:00007fff26d2d6b8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+[  690.685931] RAX: ffffffffffffffda RBX: ffffffff810d278c RCX: 00007f8ae529d690
+[  690.686573] RDX: 0000000000000000 RSI: 00007fff26d2d700 RDI: 0000000000000003
+[  690.687047] RBP: ffff88005acbff98 R08: 0000000000000001 R09: 0000000000000000
+[  690.687519] R10: 00007fff26d2d480 R11: 0000000000000246 R12: 0000000000000002
+[  690.687996] R13: 0000000001258070 R14: 0000000000000001 R15: 0000000000000000
+[  690.688475]  ? trace_hardirqs_off_caller+0xa7/0xcf
+[  690.688887] Code: 00 00 e8 2a 02 ae ff 49 8b bc 1d 60 02 00 00 48 83
+c3 08 e8 19 02 ae ff 48 83 fb 20 75 dc 45 31 f6 4d 89 f7 4d 03 bd 20 02
+00 00 <49> 8b 07 49 39 c7 75 24 49 83 c6 10 49 81 fe 00 40 00 00 75 e1
+[  690.690200] RIP: hhf_destroy+0x48/0xbc RSP: ffff88005acbf9e0
+[  690.690636] CR2: 0000000000000000
 
 Fixes: 87b60cfacf9f ("net_sched: fix error recovery at qdisc creation")
-Fixes: f07d1501292b ("multiq: Further multiqueue cleanup")
+Fixes: 10239edf86f1 ("net-qdisc-hhf: Heavy-Hitter Filter (HHF) qdisc")
 Signed-off-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-[AmitP: Removed unused variable 'err' in multiq_init()]
 Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/sch_multiq.c |    9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+ net/sched/sch_hhf.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/net/sched/sch_multiq.c
-+++ b/net/sched/sch_multiq.c
-@@ -254,7 +254,7 @@ static int multiq_tune(struct Qdisc *sch
- static int multiq_init(struct Qdisc *sch, struct nlattr *opt)
- {
- 	struct multiq_sched_data *q = qdisc_priv(sch);
--	int i, err;
-+	int i;
+--- a/net/sched/sch_hhf.c
++++ b/net/sched/sch_hhf.c
+@@ -501,6 +501,9 @@ static void hhf_destroy(struct Qdisc *sc
+ 		hhf_free(q->hhf_valid_bits[i]);
+ 	}
  
- 	q->queues = NULL;
- 
-@@ -269,12 +269,7 @@ static int multiq_init(struct Qdisc *sch
- 	for (i = 0; i < q->max_bands; i++)
- 		q->queues[i] = &noop_qdisc;
- 
--	err = multiq_tune(sch, opt);
--
--	if (err)
--		kfree(q->queues);
--
--	return err;
-+	return multiq_tune(sch, opt);
- }
- 
- static int multiq_dump(struct Qdisc *sch, struct sk_buff *skb)
++	if (!q->hh_flows)
++		return;
++
+ 	for (i = 0; i < HH_FLOWS_CNT; i++) {
+ 		struct hh_flow_state *flow, *next;
+ 		struct list_head *head = &q->hh_flows[i];
 
 
