@@ -2,189 +2,112 @@ Return-Path: <SRS0=SXUR=L3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64988C07520
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:44:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8151C61CF0
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:44:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2917120854
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:44:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2917120854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 3922F20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Sep 2018 13:44:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3922F20854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729946AbeIMSxd (ORCPT
+        id S1729956AbeIMSxd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 13 Sep 2018 14:53:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60446 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727365AbeIMSxc (ORCPT
+Received: from www262.sakura.ne.jp ([202.181.97.72]:21689 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728132AbeIMSxd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:53:32 -0400
-Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DA2A7D10;
-        Thu, 13 Sep 2018 13:43:58 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, shaochun chen <cscnull@gmail.com>,
-        Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 043/115] netfilter: fix memory leaks on netlink_dump_start error
-Date:   Thu, 13 Sep 2018 15:31:03 +0200
-Message-Id: <20180913131826.341718803@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
-References: <20180913131823.327472833@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Thu, 13 Sep 2018 14:53:33 -0400
+Received: from fsav404.sakura.ne.jp (fsav404.sakura.ne.jp [133.242.250.103])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w8DDhi8f036138;
+        Thu, 13 Sep 2018 22:43:44 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav404.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav404.sakura.ne.jp);
+ Thu, 13 Sep 2018 22:43:44 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav404.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w8DDhcid036077
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Thu, 13 Sep 2018 22:43:43 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: possible deadlock in blkdev_reread_part
+To:     Dmitry Vyukov <dvyukov@google.com>, Jens Axboe <axboe@kernel.dk>
+Cc:     Eric Biggers <ebiggers3@gmail.com>,
+        syzbot+4684a000d5abdade83fac55b1e7d1f935ef1936e@syzkaller.appspotmail.com,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <CACT4Y+bGjnajib6P4a0SxYkNUJpg_x8abEkec8AR+oBmC=-QUQ@mail.gmail.com>
+ <20171105201834.GA8126@zzz.localdomain>
+ <201804162302.GBI43737.OLFSOFQHVJMFtO@I-love.SAKURA.ne.jp>
+ <201804202306.FGC05220.OOJFMFOSFHtLQV@I-love.SAKURA.ne.jp>
+ <CACT4Y+Y3M2kB0YWhwD04NkL1-iNHPuDfDDf9BLoPD3GZ6Gg-Yw@mail.gmail.com>
+ <201805021930.CBE82399.QFHtOOJFMVFOSL@I-love.SAKURA.ne.jp>
+ <CACT4Y+ZaYFt70NrPaib7KFmLe1xQciMnEzWpUDzP6vQJmyctoA@mail.gmail.com>
+ <CACT4Y+YVf_68vmx8f570NS3SQiKDeJTuEgEOGjQzwVT4hMDbUw@mail.gmail.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <c6b184f4-5487-b7ba-a332-1437180e7705@i-love.sakura.ne.jp>
+Date:   Thu, 13 Sep 2018 22:43:34 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACT4Y+YVf_68vmx8f570NS3SQiKDeJTuEgEOGjQzwVT4hMDbUw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+On 2018/09/13 21:58, Dmitry Vyukov wrote:
+> On Wed, May 2, 2018 at 1:23 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
+>> On Wed, May 2, 2018 at 12:30 PM, Tetsuo Handa
+>> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+>>> Dmitry Vyukov wrote:
+>>>>> syzbot is reporting various bugs which involve /dev/loopX.
+>>>>> Two of them
+>>>>>
+>>>>>   INFO: rcu detected stall in lo_ioctl
+>>>>>   https://syzkaller.appspot.com/bug?id=7b49fb610af9cca78c24e9f796f2e8b0d5573997
+>>>>>
+>>>>>   general protection fault in lo_ioctl (2)
+>>>>>   https://syzkaller.appspot.com/bug?id=f3cfe26e785d85f9ee259f385515291d21bd80a3
+>>>>
+>>>> /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+>>>>
+>>>> Now there is a repro for this one. I've pushed it to kernel mailing lists:
+>>>>
+>>>> https://groups.google.com/d/msg/syzkaller-bugs/c8KUcTAzTvA/3o_7g6-tAwAJ
+>>>
+>>> OK, thanks. But among loop related reports, this will be a dup of
+>>> "INFO: rcu detected stall in blkdev_ioctl" which already has C reproducer.
+>>> Should we merge them?
+>>
+>> Yes, sure, I will take care of it.
+> 
+> 1. I forgot to take care of it.
+> 
+> 2. "INFO: rcu detected stall in blkdev_ioctl" was fixed 3 months ago:
+> https://syzkaller.appspot.com/bug?id=1f7b710f4110f225aed1f4263ec2b98b8dbd472e
+> 
+> but this bug still happens up until now:
+> https://syzkaller.appspot.com/bug?id=bf154052f0eea4bc7712499e4569505907d15889
+> 
+> So this is a different bug.
 
-------------------
+I'm not sure what you are talking about.
+RCU stall and lockdep warning are obviously different bugs.
 
-From: Florian Westphal <fw@strlen.de>
-
-[ Upstream commit 3e673b23b541b8e7f773b2d378d6eb99831741cd ]
-
-Shaochun Chen points out we leak dumper filter state allocations
-stored in dump_control->data in case there is an error before netlink sets
-cb_running (after which ->done will be called at some point).
-
-In order to fix this, add .start functions and move allocations there.
-
-Same pattern as used in commit 90fd131afc565159c9e0ea742f082b337e10f8c6
-("netfilter: nf_tables: move dumper state allocation into ->start").
-
-Reported-by: shaochun chen <cscnull@gmail.com>
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/netfilter/nf_conntrack_netlink.c |   26 +++++++++++++++++---------
- net/netfilter/nfnetlink_acct.c       |   29 +++++++++++++----------------
- 2 files changed, 30 insertions(+), 25 deletions(-)
-
---- a/net/netfilter/nf_conntrack_netlink.c
-+++ b/net/netfilter/nf_conntrack_netlink.c
-@@ -788,6 +788,21 @@ ctnetlink_alloc_filter(const struct nlat
- #endif
- }
- 
-+static int ctnetlink_start(struct netlink_callback *cb)
-+{
-+	const struct nlattr * const *cda = cb->data;
-+	struct ctnetlink_filter *filter = NULL;
-+
-+	if (cda[CTA_MARK] && cda[CTA_MARK_MASK]) {
-+		filter = ctnetlink_alloc_filter(cda);
-+		if (IS_ERR(filter))
-+			return PTR_ERR(filter);
-+	}
-+
-+	cb->data = filter;
-+	return 0;
-+}
-+
- static int ctnetlink_filter_match(struct nf_conn *ct, void *data)
- {
- 	struct ctnetlink_filter *filter = data;
-@@ -1194,19 +1209,12 @@ static int ctnetlink_get_conntrack(struc
- 
- 	if (nlh->nlmsg_flags & NLM_F_DUMP) {
- 		struct netlink_dump_control c = {
-+			.start = ctnetlink_start,
- 			.dump = ctnetlink_dump_table,
- 			.done = ctnetlink_done,
-+			.data = (void *)cda,
- 		};
- 
--		if (cda[CTA_MARK] && cda[CTA_MARK_MASK]) {
--			struct ctnetlink_filter *filter;
--
--			filter = ctnetlink_alloc_filter(cda);
--			if (IS_ERR(filter))
--				return PTR_ERR(filter);
--
--			c.data = filter;
--		}
- 		return netlink_dump_start(ctnl, skb, nlh, &c);
- 	}
- 
---- a/net/netfilter/nfnetlink_acct.c
-+++ b/net/netfilter/nfnetlink_acct.c
-@@ -238,29 +238,33 @@ static const struct nla_policy filter_po
- 	[NFACCT_FILTER_VALUE]	= { .type = NLA_U32 },
- };
- 
--static struct nfacct_filter *
--nfacct_filter_alloc(const struct nlattr * const attr)
-+static int nfnl_acct_start(struct netlink_callback *cb)
- {
--	struct nfacct_filter *filter;
-+	const struct nlattr *const attr = cb->data;
- 	struct nlattr *tb[NFACCT_FILTER_MAX + 1];
-+	struct nfacct_filter *filter;
- 	int err;
- 
-+	if (!attr)
-+		return 0;
-+
- 	err = nla_parse_nested(tb, NFACCT_FILTER_MAX, attr, filter_policy,
- 			       NULL);
- 	if (err < 0)
--		return ERR_PTR(err);
-+		return err;
- 
- 	if (!tb[NFACCT_FILTER_MASK] || !tb[NFACCT_FILTER_VALUE])
--		return ERR_PTR(-EINVAL);
-+		return -EINVAL;
- 
- 	filter = kzalloc(sizeof(struct nfacct_filter), GFP_KERNEL);
- 	if (!filter)
--		return ERR_PTR(-ENOMEM);
-+		return -ENOMEM;
- 
- 	filter->mask = ntohl(nla_get_be32(tb[NFACCT_FILTER_MASK]));
- 	filter->value = ntohl(nla_get_be32(tb[NFACCT_FILTER_VALUE]));
-+	cb->data = filter;
- 
--	return filter;
-+	return 0;
- }
- 
- static int nfnl_acct_get(struct net *net, struct sock *nfnl,
-@@ -275,18 +279,11 @@ static int nfnl_acct_get(struct net *net
- 	if (nlh->nlmsg_flags & NLM_F_DUMP) {
- 		struct netlink_dump_control c = {
- 			.dump = nfnl_acct_dump,
-+			.start = nfnl_acct_start,
- 			.done = nfnl_acct_done,
-+			.data = (void *)tb[NFACCT_FILTER],
- 		};
- 
--		if (tb[NFACCT_FILTER]) {
--			struct nfacct_filter *filter;
--
--			filter = nfacct_filter_alloc(tb[NFACCT_FILTER]);
--			if (IS_ERR(filter))
--				return PTR_ERR(filter);
--
--			c.data = filter;
--		}
- 		return netlink_dump_start(nfnl, skb, nlh, &c);
- 	}
- 
-
+Regarding lockdep warning on loop module, we are still waiting for Jens to
+come up a better alternative than
+http://lkml.kernel.org/r/1527297408-4428-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp .
+Since no alternative was proposed, I think we should start testing my patch.
 
