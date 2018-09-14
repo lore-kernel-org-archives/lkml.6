@@ -2,532 +2,193 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A63DC070C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 07:16:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B831BC070C3
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 07:19:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E612120861
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 07:16:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E612120861
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1E58B20861
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 07:19:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="j+jviXF8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E58B20861
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727885AbeINM31 (ORCPT
+        id S1727645AbeINMcc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 08:29:27 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59000 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726527AbeINM31 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 08:29:27 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E4DD530917AF;
-        Fri, 14 Sep 2018 07:16:18 +0000 (UTC)
-Received: from xz-x1 (dhcp-14-128.nay.redhat.com [10.66.14.128])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A79CC18531;
-        Fri, 14 Sep 2018 07:16:13 +0000 (UTC)
-Date:   Fri, 14 Sep 2018 15:16:11 +0800
-From:   Peter Xu <peterx@redhat.com>
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Henry Willard <henry.willard@oracle.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Zi Yan <zi.yan@cs.rutgers.edu>, linux-mm@kvack.org
-Subject: Re: [PATCH v2] mm: mprotect: check page dirty when change ptes
-Message-ID: <20180914071610.GL10763@xz-x1>
-References: <20180912064921.31015-1-peterx@redhat.com>
- <20180912130355.GA4009@redhat.com>
- <20180912132438.GB4009@redhat.com>
- <20180913073722.GF10763@xz-x1>
- <20180913142328.GA3576@redhat.com>
- <20180914004239.GA31077@redhat.com>
+        Fri, 14 Sep 2018 08:32:32 -0400
+Received: from mail-eopbgr680086.outbound.protection.outlook.com ([40.107.68.86]:22336
+        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726527AbeINMcc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 08:32:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lKmn0/c9S0i15xhavgwtBx/xsywKe3sBmzi3K1biGnY=;
+ b=j+jviXF8GDMRyhAGY7Gk+hcFLjeWFRaxx7CJfqzR+IdXAiSvTmPDE24gB6cXd+Kv20PkbKwHOefgtU0u43vv5Ds+Yy0pQgp9Qsg5ZgOn+gtdhyl29YJQlJZiiAm8rrGdqiRqnEofMWaaItTuvLMKHHEcqTG83BtEpnk5ioUuWB8=
+Received: from SN4PR0201CA0027.namprd02.prod.outlook.com
+ (2603:10b6:803:2e::13) by BL0PR02MB4466.namprd02.prod.outlook.com
+ (2603:10b6:208:4a::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1122.18; Fri, 14 Sep
+ 2018 07:19:13 +0000
+Received: from BL2NAM02FT051.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e46::203) by SN4PR0201CA0027.outlook.office365.com
+ (2603:10b6:803:2e::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1122.18 via Frontend
+ Transport; Fri, 14 Sep 2018 07:19:13 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; wunner.de; dkim=none (message not signed)
+ header.d=none;wunner.de; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ BL2NAM02FT051.mail.protection.outlook.com (10.152.76.181) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1143.14
+ via Frontend Transport; Fri, 14 Sep 2018 07:19:12 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+        (envelope-from <manish.narani@xilinx.com>)
+        id 1g0iNj-0007WI-Dc; Fri, 14 Sep 2018 00:19:11 -0700
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <manish.narani@xilinx.com>)
+        id 1g0iNe-0008Ix-AF; Fri, 14 Sep 2018 00:19:06 -0700
+Received: from xsj-pvapsmtp01 (xsj-pvapsmtp01.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id w8E7J17h005096;
+        Fri, 14 Sep 2018 00:19:01 -0700
+Received: from [172.23.64.106] (helo=xhdvnc125.xilinx.com)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <mnarani@xilinx.com>)
+        id 1g0iNZ-0008I4-Dz; Fri, 14 Sep 2018 00:19:01 -0700
+Received: by xhdvnc125.xilinx.com (Postfix, from userid 16987)
+        id 80D7712159B; Fri, 14 Sep 2018 12:49:00 +0530 (IST)
+From:   Manish Narani <manish.narani@xilinx.com>
+To:     <jic23@kernel.org>, <knaack.h@gmx.de>, <lars@metafoo.de>,
+        <pmeerw@pmeerw.net>, <michal.simek@xilinx.com>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <manish.narani@xilinx.com>, <sudeep.holla@arm.com>,
+        <amit.kucheria@linaro.org>, <leoyang.li@nxp.com>,
+        <broonie@kernel.org>, <arnaud.pouliquen@st.com>,
+        <eugen.hristev@microchip.com>, <rdunlap@infradead.org>,
+        <geert@linux-m68k.org>, <ak@it-klinger.de>,
+        <freeman.liu@spreadtrum.com>, <lukas@wunner.de>,
+        <vilhelm.gray@gmail.com>, <gregkh@linuxfoundation.org>,
+        <kstewart@linuxfoundation.org>
+CC:     <sgoud@xilinx.com>, <anirudh@xilinx.com>,
+        <linux-iio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v2 0/4] Add Xilinx AMS Driver
+Date:   Fri, 14 Sep 2018 12:48:26 +0530
+Message-ID: <1536909510-7166-1-git-send-email-manish.narani@xilinx.com>
+X-Mailer: git-send-email 2.1.1
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(1496009)(376002)(39860400002)(136003)(396003)(346002)(2980300002)(438002)(199004)(189003)(316002)(2906002)(8936002)(47776003)(51416003)(4326008)(39060400002)(50466002)(478600001)(81166006)(81156014)(48376002)(8676002)(6266002)(110136005)(5660300001)(72206003)(26005)(14444005)(106002)(16586007)(186003)(426003)(356003)(2201001)(6666003)(42186006)(7416002)(52956003)(36386004)(54906003)(44832011)(336012)(476003)(36756003)(2616005)(486006)(50226002)(305945005)(63266004)(126002)(103686004)(90966002)(106466001)(107986001)(921003)(83996005)(2101003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:BL0PR02MB4466;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;BL2NAM02FT051;1:srQcyfesTBf2PL2vUuo7Dg5ssQBjPX8hPkUyTVBcXP0e4C9+8ONQF1Q2L4rW3bekQxP4VDOewqp9ULNjkH4NBKxuxMnFgb8GRKj4egbr2GnQrMZe/CoV8IypGAs31goh
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180914004239.GA31077@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Fri, 14 Sep 2018 07:16:19 +0000 (UTC)
+Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 9f6b3dd5-86f2-403c-8e6d-08d61a125ee9
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4608076)(2017052603328)(7153060);SRVR:BL0PR02MB4466;
+X-Microsoft-Exchange-Diagnostics: 1;BL0PR02MB4466;3:zRyg1ipSds/kwZxljUHFUE1Wp57523XvzQWqxt0Nuf9pG2tSX+JUQaw4lHwgaxrIarKKmel+XVgYNrrTYK1Oa3DWodZkZo499D/GmJseGTryewwqnjC5ILJoxiGfQH+EiAMEI38Zi5MVAy/eBUYgPfn+AhTCGmtEJl81FlnS/Z7OksOxLRC19prLDoLy/cZoN0vuKrEdAeur6dE/a2Q6/UwwQpg9ieR2W2+LIXIa88sCNXyM0oNlEmWd8Kv4zLe1jgnzmHZo+r1CAHBXxmxoI0crfOG/6mB/RklnubLEeUR7MnNajkc2Z99o8s6VGV9ct41DQ2UpInNMWCvr4JZSMvEePBL3ix6QdQNs3Wlxng0=;25:eN987GSUdSt33MC4dnv1SmYeHxCKhZPNKeKELuROm7lrzFLN9eV95Gd9maNfw2Ico7K3USbMME687qluKrcp7qCWGZfXbQa5FOgeMsFZCHuHumb+HWyDAkBb4wpPOEPfhepUagCM8ht0U8+GV2rRN3spNH6j2Zuh+KQ4GGU02JtKVOhrrIVyb6FaiUqzmLaGS01jMV0KuANiPqHbWSvWVAR7YGklGtMp3sZH3Xo3CRnAHKToJsp3F7VQHWKLDt84iHycAVvkJiwkeUqmTVj+uhxHUMfsraykSGsIJn8H4vXVRQUkndmkg7e8rKzDDnX2IGoPoKCWcFw7XEtgKqF69Q==
+X-MS-TrafficTypeDiagnostic: BL0PR02MB4466:
+X-Microsoft-Exchange-Diagnostics: 1;BL0PR02MB4466;31:CXOqDj757lzkCG2gAwbNynOGDsmpsmXpSZs6u/9l/lezjX1nAkTnDfzxvlwiOmbMwumXxKmb7gi/QOp2p5WwSLXWa1rk3GrbLNwHQaWUgyrku0uZxk5BsxuRp39hafrfRCjHcS3wS21Y9AEOgloYbtHkCKLBUF8u9lxv2DL8TBVssM5W2mhFYxxept/nnqCVC8WYEBJumMyPt6f00CprMJH1f8EcjgGnGsjWjLkku4s=;20:C9zjPG/XLZotHnRlfyXBns0l6S1G2KaWPyy/u3IlHWZDwYi8KedAN0NDWWYQYucCey/e7ba8fG0vBSZQPCwxJSaBVaN8dN8Rbgnc6Xlw4pOmISyXGpMwxwaR+f0/Fd7JVvZQy/1cjmlCTHj/4bq8VNO0xYu/TG2P0CF5ZLcZtlNrjuLCOkRG3ypJVCYomG5yfuip9ZbD43wIs0pY56iqQBU2ot9w0LvDnsCygWarhONgd6bdqOJ6EKhZxeQ0MT2axTGYt2O0/kt7q2qG+mNrrHbBL4+ywBb5lG7B4kKuUVZmd2vsx6uKzdCIwbM1XEe3vfDGX4hT03atNKqeHcrM8+beFb+fsLM7z2v2T/i+i+CIELnve7PvcxIuHi9vdoB/z8KDuJnrXdpZPDP923ZKFAu3lb4tzJxXxrnGZaQG542x1x+dGgcFNA19gbt1rSX82XSB+KTLEXNUnrXzjHmKV/JFAiP0zdE0xIAZxl3KwJ2sr+KTwlGAcRB2ASXgq1IJ
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-Microsoft-Antispam-PRVS: <BL0PR02MB4466BDE1CB7B783177667CA1C1190@BL0PR02MB4466.namprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93004095)(3231311)(944501410)(52105095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699050);SRVR:BL0PR02MB4466;BCL:0;PCL:0;RULEID:;SRVR:BL0PR02MB4466;
+X-Microsoft-Exchange-Diagnostics: 1;BL0PR02MB4466;4:EzQBfqZY4nIQ+XqlUA6ohN/Co35PAbTUA3eYXaw2x/5LSYntbcnfn1Q8q/BEZQ/1HwRQw3nqN6nWZJVsTCk2O00UFwTUN6Rto7yloAkCIo88hzn82lN/AHiQ0LlMjzr9A6OCpszAJhL83ANj78x8vJvVO8k6y8cxpBLHLosiO20Q8pyx1mKR4TdGX+g6oOrLr+elwIQi4thpUttZwjjwvQ85r/5afkRg5KRXjysgGFskIswK5rgkP1dRFio/b9kGoFwclL0VmBmCDZ64iRYfvQ==
+X-Forefront-PRVS: 07954CC105
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BL0PR02MB4466;23:XFzStfDrUZZ7xBpzS4ESnsdxhGF/vCQxD9HM2vm8I?=
+ =?us-ascii?Q?k4ENAEJaqC1SW6iB42lwESqWPOCYLvIHnTqwImkkt4PJsZt0jAvdwZpZg39y?=
+ =?us-ascii?Q?amlPHAoBTezVYDgakgT6IDGBu34wXHB0MZoQdu9GSwNQp/VkQ2YI+iBtvzDv?=
+ =?us-ascii?Q?O2YL4+WMx42Us63fHHQRRYclIAy3knyc4qZ+f0dR3mkahIe1jS4o38MnFN5C?=
+ =?us-ascii?Q?W9iYUOCxRzlIDaHw6jwRNSx4ROxa1AH6yzTkmo32SfYiZ9XbdNxwUkc5qcBg?=
+ =?us-ascii?Q?nHmy9AEnlO2sbyRw0AUZyUTSfTcwR0031510K1Dm6BNxunqdAbECThzBao7D?=
+ =?us-ascii?Q?nwoq5rjdcinK4l3vfLNhQRw4YgpOBM7Kdv/oLhhncS5isjZRkRVX3xhIs/l9?=
+ =?us-ascii?Q?boEYZcRgq0onKCK+bhydNU7lrdXSeohM0sdmWt2GAXiRUte9RUB9qe/wiVMD?=
+ =?us-ascii?Q?EsD7AxMs+DJCEgIpCIcvchSRfiLFM0zWyRms0aaaXXY3LLamh7RIj9CbT8QS?=
+ =?us-ascii?Q?I93J8ZX/WTETsPP8tZZBehkxfN0ke16uvKAUYQCmZLN4106FjWAJOegtgJe7?=
+ =?us-ascii?Q?ZORl5iiLlfyr1h+FdZu0D6zcKN6zaWMiaNWxlTV5E7z7h8xhJdVkYIVer+Ar?=
+ =?us-ascii?Q?l6XJ/bKGc4vEWZoUcRYhwHvmKIhPuGo05YYfbG3eQOBMSraT/jgtcNqNJ04Q?=
+ =?us-ascii?Q?AsDc0PrQrPSkiEYDz1LbiusvOi2H5sdS3ce80nB/YaL6jSKgLJTc1D585h/d?=
+ =?us-ascii?Q?T553+k6Wi0KzngNj4zxIsmhZCRWcsHd0tnu/W/uk9hgwMM3vdFL+K0SirFB/?=
+ =?us-ascii?Q?Ifr3MueO4Rhk2W2vFAE5XagyEJ7gj7e5igT9bXkSIROrB6JpECBskPaeL2mC?=
+ =?us-ascii?Q?NFgPahx4bij3K5h3RssXuMawuFRY7OkVsyXsF4qwJ2zBEssA8lzoWG0h4xAF?=
+ =?us-ascii?Q?t60QJOgjlQQWa3uiLfH+JREbHjyfNgm/NVZrv7Daa9eELc1MM0q2RH520Znk?=
+ =?us-ascii?Q?lsXivBUGqXIrAVVBaXsR+1UqpHVF29MaTZhCobxJYvTNKHg4mhqhfhIFhBZD?=
+ =?us-ascii?Q?bgPK6qXbnru9kNpCnTY2ESiqLUxlwoaqpBM5F/BdxFIGmKnBRRQuJu1fiFCD?=
+ =?us-ascii?Q?zEkcMEDInQVIkC6jqfACSQyS7KSnwPlhjhBWzVYCjTUnRx6yalRXOsVi6u94?=
+ =?us-ascii?Q?nXruuHbYzgiWpy5nP3DehFunV5Hpy68HtJTHXfdgMbW8NM9m0DLV5cxO7+U6?=
+ =?us-ascii?Q?9mJZwcAfn0kCCutsdpyTCKtXsY+L/5jewf4Qf5xHSg0LCdO8W12onwwOf5St?=
+ =?us-ascii?B?QT09?=
+X-Microsoft-Antispam-Message-Info: /mL0g8TofeySqoYb1IPrP0+Nea8ApaaR/YoXEEM6J065Rd8PphxY6DqG1pXX4kEpkbrp1R4t22Peh4UVIc6FWEQ/OkvIlzNdFV61vwDpAyxRxrAC8rey+t3MU5QmBztxnXxbvVtnnXo0JtV9CfmE0TGgom5ZU9kzUIV4wwPrnxE3FKjHjwefrWFNjOmaItZ50kZrDRcXKALMXgbyMck6WYgo1HDviRFVVQlN5+WMg1vKkGoC558iKFLa1vnJnntHEgWbulMJyfg3XCc1h3zE3wcAWO8+ixrDaMuvlEk1QqKUT7zbqNCVkxFhpR2y8VyqOnZRQCPW2mEqLVyE5QAFMOE1Vw09rbJ4xIlx2Hdc17M=
+X-Microsoft-Exchange-Diagnostics: 1;BL0PR02MB4466;6:8oY7X1vOE12jMXmQPVtCEBIRD8SAPfPqUoewrEhLusQx2+qASb/qdmRYZ5PmEc0pN0cBNqAR4x2yBDMLpvdJP6YpougfwPrJu6a86QP9v/LP1cjtrFWLMGlpLTduZ3Ovs0sg8hxxamGSKAZ3tPU4PgqbwsvLKlbOVMCYCwGHLFGCdq5yKFTeWOyGF1AN2G5TyqiU1d67CeUzf7vqjfOdjvf28fXCRi3+eVk6aVXtI0T+EmnyxtyH/sQJhLc3tuoydm0MjFsJgrGeBuj7rSt9QBJVZsg32ITlsDuLxt4LaY92wn9nbzUrMyyMowk/ttuojNfRbiVmoTf6T5fokX1hgUSdSln3QfoX/75BLrkE+2BYqcFjBBFttenDgiiDfuTQoVt3g4GuIMVgu9HQm/VrrbdTCV9TpbqdG5+rRGA8e8A0EekphpYbRI32QfXMms+eP71B17Q996oZz2ogxWnS/Q==;5:D7nOiZGbOashGtoDlOZxuOLmksM4n/rhpr/epmbZfER/6IIgh55JjCErOyZpCRdu7cpHBOTl53KX6o+RfrHzRuXqrByrGb+r0qUawdtsb3a/dFyglvtFZxe7rnAKetBGKuUhqbUG2OCiMV1BflPmZCGewHOmzXc1tZLJutwbi00=;7:E/xJMYp/riaDKwyGFvr/RKUd582WfdNL5+X3frBc9hKCciJOhEveUKNPMXXbTGAyCyRLMCYshHyktXAoS59aJRVMO1R9xE83jMEUSq3Fa8XYW82EI8fjOlK+coZ2KA24MQDcxTPe73Hk7peIhuj0VEIxBvG0oo3L+QLQ4kx8V2zNRNogg25RIUvDp+Fem5Yk6vMPtoLHvv08YXpXpPuRN78s4uDat3gw85+3pFQVWS9ruQrevm0pk6TvJ5mgslnV
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Sep 2018 07:19:12.1726
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9f6b3dd5-86f2-403c-8e6d-08d61a125ee9
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR02MB4466
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 13, 2018 at 08:42:39PM -0400, Jerome Glisse wrote:
-> On Thu, Sep 13, 2018 at 10:23:28AM -0400, Jerome Glisse wrote:
-> > On Thu, Sep 13, 2018 at 03:37:22PM +0800, Peter Xu wrote:
-> > > On Wed, Sep 12, 2018 at 09:24:39AM -0400, Jerome Glisse wrote:
-> > > > On Wed, Sep 12, 2018 at 09:03:55AM -0400, Jerome Glisse wrote:
-> > > > > On Wed, Sep 12, 2018 at 02:49:21PM +0800, Peter Xu wrote:
-> > > > > > Add an extra check on page dirty bit in change_pte_range() since there
-> > > > > > might be case where PTE dirty bit is unset but it's actually dirtied.
-> > > > > > One example is when a huge PMD is splitted after written: the dirty bit
-> > > > > > will be set on the compound page however we won't have the dirty bit set
-> > > > > > on each of the small page PTEs.
-> > > > > > 
-> > > > > > I noticed this when debugging with a customized kernel that implemented
-> > > > > > userfaultfd write-protect.  In that case, the dirty bit will be critical
-> > > > > > since that's required for userspace to handle the write protect page
-> > > > > > fault (otherwise it'll get a SIGBUS with a loop of page faults).
-> > > > > > However it should still be good even for upstream Linux to cover more
-> > > > > > scenarios where we shouldn't need to do extra page faults on the small
-> > > > > > pages if the previous huge page is already written, so the dirty bit
-> > > > > > optimization path underneath can cover more.
-> > > > > > 
-> > > > > 
-> > > > > So as said by Kirill NAK you are not looking at the right place for
-> > > > > your bug please first apply the below patch and read my analysis in
-> > > > > my last reply.
-> > > > 
-> > > > Just to be clear you are trying to fix a userspace bug that is hidden
-> > > > for non THP pages by a kernel space bug inside userfaultfd by making
-> > > > the kernel space bug of userfaultfd buggy for THP too.
-> > > > 
-> > > > 
-> > > > > 
-> > > > > Below patch fix userfaultfd bug. I am not posting it as it is on a
-> > > > > branch and i am not sure when Andrea plan to post. Andrea feel free
-> > > > > to squash that fix.
-> > > > > 
-> > > > > 
-> > > > > From 35cdb30afa86424c2b9f23c0982afa6731be961c Mon Sep 17 00:00:00 2001
-> > > > > From: =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>
-> > > > > Date: Wed, 12 Sep 2018 08:58:33 -0400
-> > > > > Subject: [PATCH] userfaultfd: do not set dirty accountable when changing
-> > > > >  protection
-> > > > > MIME-Version: 1.0
-> > > > > Content-Type: text/plain; charset=UTF-8
-> > > > > Content-Transfer-Encoding: 8bit
-> > > > > 
-> > > > > mwriteprotect_range() has nothing to do with the dirty accountable
-> > > > > optimization so do not set it as it opens a door for userspace to
-> > > > > unwrite protect pages in a range that is write protected ie the vma
-> > > > > !(vm_flags & VM_WRITE).
-> > > > > 
-> > > > > Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
-> > > > > ---
-> > > > >  mm/userfaultfd.c | 2 +-
-> > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > > 
-> > > > > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-> > > > > index a0379c5ffa7c..59db1ce48fa0 100644
-> > > > > --- a/mm/userfaultfd.c
-> > > > > +++ b/mm/userfaultfd.c
-> > > > > @@ -632,7 +632,7 @@ int mwriteprotect_range(struct mm_struct *dst_mm, unsigned long start,
-> > > > >  		newprot = vm_get_page_prot(dst_vma->vm_flags);
-> > > > >  
-> > > > >  	change_protection(dst_vma, start, start + len, newprot,
-> > > > > -				!enable_wp, 0);
-> > > > > +				false, 0);
-> > > > >  
-> > > > >  	err = 0;
-> > > > >  out_unlock:
-> > > 
-> > > Hi, Jerome,
-> > > 
-> > > I tried your patch, unluckily it didn't work just like when not
-> > > applied:
-> > > 
-> > > Sep 13 15:16:52 px-ws kernel: FAULT_FLAG_ALLOW_RETRY missing 71
-> > > Sep 13 15:16:52 px-ws kernel: CPU: 5 PID: 1625 Comm: qemu-system-x86 Not tainted 4.19.0-rc2+ #31                                                                            
-> > > Sep 13 15:16:52 px-ws kernel: Hardware name: LENOVO ThinkCentre M8500t-N000/SHARKBAY, BIOS FBKTC6AUS 06/22/2016                                                             
-> > > Sep 13 15:16:52 px-ws kernel: Call Trace:
-> > > Sep 13 15:16:52 px-ws kernel:  dump_stack+0x5c/0x7b
-> > > Sep 13 15:16:52 px-ws kernel:  handle_userfault+0x4b5/0x780
-> > > Sep 13 15:16:52 px-ws kernel:  ? userfaultfd_ctx_put+0xb0/0xb0
-> > > Sep 13 15:16:52 px-ws kernel:  do_wp_page+0x1bd/0x5a0
-> > > Sep 13 15:16:52 px-ws kernel:  __handle_mm_fault+0x7f9/0x1250
-> > > Sep 13 15:16:52 px-ws kernel:  handle_mm_fault+0xfc/0x1f0
-> > > Sep 13 15:16:52 px-ws kernel:  __do_page_fault+0x255/0x520
-> > > Sep 13 15:16:52 px-ws kernel:  do_page_fault+0x32/0x110
-> > > Sep 13 15:16:52 px-ws kernel:  ? page_fault+0x8/0x30
-> > > Sep 13 15:16:52 px-ws kernel:  page_fault+0x1e/0x30
-> > > Sep 13 15:16:52 px-ws kernel: RIP: 0033:0x7f2a9d3254e0
-> > > Sep 13 15:16:52 px-ws kernel: Code: 73 01 c1 ef 07 48 81 e6 00 f0 ff ff 81 e7 e0 1f 00 00 49 8d bc 3e 40 57 00 00 48 3b 37 48 8b f3 0f 85 a4 01 00 00 48 03 77 10 <66> 89 06f
-> > > Sep 13 15:16:52 px-ws kernel: RSP: 002b:00007f2ab1aae390 EFLAGS: 00010202
-> > > Sep 13 15:16:52 px-ws kernel: RAX: 0000000000000246 RBX: 0000000000001ff2 RCX: 0000000000000031                                                                             
-> > > Sep 13 15:16:52 px-ws kernel: RDX: ffffffffffac9604 RSI: 00007f2a53e01ff2 RDI: 000055a98fa049c0                                                                             
-> > > Sep 13 15:16:52 px-ws kernel: RBP: 0000000000001ff4 R08: 0000000000000000 R09: 0000000000000002                                                                             
-> > > Sep 13 15:16:52 px-ws kernel: R10: 0000000000000000 R11: 00007f2a98201030 R12: 0000000000001ff2                                                                             
-> > > Sep 13 15:16:52 px-ws kernel: R13: 0000000000000000 R14: 000055a98f9ff260 R15: 00007f2ab1aaf700                                                                             
-> > > 
-> > > In case you'd like to try, here's the QEMU binary I'm testing:
-> > > 
-> > > https://github.com/xzpeter/qemu/tree/peter-userfault-wp-test
-> > > 
-> > > It write protects the whole system when received HMP command "info
-> > > status" (I hacked that command for simplicity; it's of course not used
-> > > for that...).
-> > > 
-> > > Would you please help me understand how your patch could resolve the
-> > > wp page fault from userspace if not with dirty_accountable set in the
-> > > uffd-wp world (sorry for asking a question that is related to a custom
-> > > tree, but finally it'll be targeted at upstream after all)? I asked
-> > > this question in my previous reply to you in v1 but you didn't
-> > > respond.  I'd be glad to test any of your further patches if you can
-> > > help solve the problem, but I'd also appreciate if you could explain
-> > > it a bit on how it work since again I didn't see why it could work:
-> > > again, if without that dirty_accountable set then IMO we will never
-> > > setup _PAGE_WRITE for page entries and IMHO that's needed for
-> > > resolving the page fault for uffd-wp tree.
-> > 
-> > I missed that reply and forgot about PAGE_COPY ... So below is
-> > what i believe a proper fix for your issue:
-> > 
-> 
-> Below is a slightly better one to avoid mkwrite on COW page but it is
-> still kind of ugly to do that in those function maybe adding a new helper
-> would be a better way dunno. Anyway untested but it is better than trying
-> to set pte dirty.
-> 
-> 
-> From 8333ac9de1c54fe858f6f22dd21a2e14eebccd0e Mon Sep 17 00:00:00 2001
-> From: =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>
-> Date: Thu, 13 Sep 2018 10:16:30 -0400
-> Subject: [PATCH] mm/mprotect: add a mkwrite paramater to change_protection()
-> MIME-Version: 1.0
-> Content-Type: text/plain; charset=UTF-8
-> Content-Transfer-Encoding: 8bit
-> 
-> The mkwrite parameter allow to change read only pte to write one which
-> is needed by userfaultfd to un-write-protect after a fault have been
-> handled.
-> 
-> Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
-> ---
->  include/linux/huge_mm.h |  2 +-
->  include/linux/mm.h      |  3 +-
->  mm/huge_memory.c        | 32 +++++++++++++++++++--
->  mm/mempolicy.c          |  2 +-
->  mm/mprotect.c           | 61 +++++++++++++++++++++++++++++------------
->  mm/userfaultfd.c        |  2 +-
->  6 files changed, 79 insertions(+), 23 deletions(-)
-> 
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index a8a126259bc4..b51ff7f8e65c 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -45,7 +45,7 @@ extern bool move_huge_pmd(struct vm_area_struct *vma, unsigned long old_addr,
->  			 pmd_t *old_pmd, pmd_t *new_pmd, bool *need_flush);
->  extern int change_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
->  			unsigned long addr, pgprot_t newprot,
-> -			int prot_numa);
-> +			int prot_numa, bool mkwrite);
->  int vmf_insert_pfn_pmd(struct vm_area_struct *vma, unsigned long addr,
->  			pmd_t *pmd, pfn_t pfn, bool write);
->  int vmf_insert_pfn_pud(struct vm_area_struct *vma, unsigned long addr,
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 5d5c7fd07dc0..2bbf3e33bf9e 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -1492,7 +1492,8 @@ extern unsigned long move_page_tables(struct vm_area_struct *vma,
->  		bool need_rmap_locks);
->  extern unsigned long change_protection(struct vm_area_struct *vma, unsigned long start,
->  			      unsigned long end, pgprot_t newprot,
-> -			      int dirty_accountable, int prot_numa);
-> +			      int dirty_accountable, int prot_numa,
-> +			      bool mkwrite);
->  extern int mprotect_fixup(struct vm_area_struct *vma,
->  			  struct vm_area_struct **pprev, unsigned long start,
->  			  unsigned long end, unsigned long newflags);
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index abf621aba672..3038f4bd9cce 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -1842,12 +1842,13 @@ bool move_huge_pmd(struct vm_area_struct *vma, unsigned long old_addr,
->   *  - HPAGE_PMD_NR is protections changed and TLB flush necessary
->   */
->  int change_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
-> -		unsigned long addr, pgprot_t newprot, int prot_numa)
-> +		unsigned long addr, pgprot_t newprot, int prot_numa,
-> +		bool mkwrite)
->  {
->  	struct mm_struct *mm = vma->vm_mm;
->  	spinlock_t *ptl;
->  	pmd_t entry;
-> -	bool preserve_write;
-> +	bool preserve_write, do_mkwrite = false;
->  	int ret;
->  
->  	ptl = __pmd_trans_huge_lock(pmd, vma);
-> @@ -1857,6 +1858,31 @@ int change_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
->  	preserve_write = prot_numa && pmd_write(*pmd);
->  	ret = 1;
->  
-> +	if (mkwrite && pmd_present(*pmd) && !pmd_write(*pmd)) {
-> +		struct page *page = pmd_page(pmd);
-> +		pmd_t orig_pmd = READ_ONCE(pmd);
-> +
-> +		VM_BUG_ON_PAGE(!PageCompound(page) || !PageHead(page), page);
-> +		/*
-> +		 * We can only allow mkwrite if nobody else maps the huge page
-> +		 * or it's part.
-> +		 */
-> +		if (!trylock_page(page)) {
-> +			get_page(page);
-> +			spin_unlock(ptl);
-> +			lock_page(page);
-> +
-> +			ptl = __pmd_trans_huge_lock(pmd, vma);
-> +			if (!ptl)
-> +				return 0;
-> +		}
-> +		if (pmd_same(*pmd, orig_pmd) && reuse_swap_page(page, NULL)) {
-> +			do_mkwrite = true;
-> +		}
-> +		unlock_page(page);
-> +		put_page(page);
-> +	}
-> +
->  #ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
->  	if (is_swap_pmd(*pmd)) {
->  		swp_entry_t entry = pmd_to_swp_entry(*pmd);
-> @@ -1925,6 +1951,8 @@ int change_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
->  	entry = pmd_modify(entry, newprot);
->  	if (preserve_write)
->  		entry = pmd_mk_savedwrite(entry);
-> +	if (do_mkwrite)
-> +		entry = pmd_mkwrite(entry);
->  	ret = HPAGE_PMD_NR;
->  	set_pmd_at(mm, addr, pmd, entry);
->  	BUG_ON(vma_is_anonymous(vma) && !preserve_write && pmd_write(entry));
-> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-> index 4ce44d3ff03d..2d0ee09e6b26 100644
-> --- a/mm/mempolicy.c
-> +++ b/mm/mempolicy.c
-> @@ -579,7 +579,7 @@ unsigned long change_prot_numa(struct vm_area_struct *vma,
->  {
->  	int nr_updated;
->  
-> -	nr_updated = change_protection(vma, addr, end, PAGE_NONE, 0, 1);
-> +	nr_updated = change_protection(vma, addr, end, PAGE_NONE, 0, 1, false);
->  	if (nr_updated)
->  		count_vm_numa_events(NUMA_PTE_UPDATES, nr_updated);
->  
-> diff --git a/mm/mprotect.c b/mm/mprotect.c
-> index 58b629bb70de..c43a29eebdaf 100644
-> --- a/mm/mprotect.c
-> +++ b/mm/mprotect.c
-> @@ -36,7 +36,7 @@
->  
->  static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
->  		unsigned long addr, unsigned long end, pgprot_t newprot,
-> -		int dirty_accountable, int prot_numa)
-> +		int dirty_accountable, int prot_numa, bool mkwrite)
->  {
->  	struct mm_struct *mm = vma->vm_mm;
->  	pte_t *pte, oldpte;
-> @@ -72,13 +72,15 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
->  		if (pte_present(oldpte)) {
->  			pte_t ptent;
->  			bool preserve_write = prot_numa && pte_write(oldpte);
-> +			bool do_mkwrite = false;
->  
->  			/*
->  			 * Avoid trapping faults against the zero or KSM
->  			 * pages. See similar comment in change_huge_pmd.
->  			 */
-> -			if (prot_numa) {
-> +			if (prot_numa || mkwrite) {
->  				struct page *page;
-> +				int tmp;
->  
->  				page = vm_normal_page(vma, addr, oldpte);
->  				if (!page || PageKsm(page))
-> @@ -94,6 +96,26 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
->  				 */
->  				if (target_node == page_to_nid(page))
->  					continue;
-> +
-> +				if (mkwrite) {
-> +					if (!trylock_page(page)) {
-> +						pte_t orig_pte = READ_ONCE(pte);
-> +						get_page(page);
-> +						pte_unmap_unlock(pte, ptl);
-> +						lock_page(page);
-> +						pte = pte_offset_map_lock(vma->vm_mm, pmd,
-> +									  addr, &ptl);
-> +						if (!pte_same(*pte, orig_pte)) {
-> +							unlock_page(page);
-> +							put_page(page);
-> +							continue;
-> +						}
-> +					}
-> +					if (reuse_swap_page(vmf->page, &tmp))
-> +						do_mkwrite = true;
-> +					unlock_page(page);
-> +					put_page(page);
-> +				}
->  			}
->  
->  			ptent = ptep_modify_prot_start(mm, addr, pte);
-> @@ -102,9 +124,9 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
->  				ptent = pte_mk_savedwrite(ptent);
->  
->  			/* Avoid taking write faults for known dirty pages */
-> -			if (dirty_accountable && pte_dirty(ptent) &&
-> -					(pte_soft_dirty(ptent) ||
-> -					 !(vma->vm_flags & VM_SOFTDIRTY))) {
-> +			if (do_mkwrite || (dirty_accountable &&
-> +			    pte_dirty(ptent) && (pte_soft_dirty(ptent) ||
-> +			    !(vma->vm_flags & VM_SOFTDIRTY)))) {
->  				ptent = pte_mkwrite(ptent);
->  			}
->  			ptep_modify_prot_commit(mm, addr, pte, ptent);
-> @@ -150,7 +172,8 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
->  
->  static inline unsigned long change_pmd_range(struct vm_area_struct *vma,
->  		pud_t *pud, unsigned long addr, unsigned long end,
-> -		pgprot_t newprot, int dirty_accountable, int prot_numa)
-> +		pgprot_t newprot, int dirty_accountable, int prot_numa,
-> +		bool mkwrite)
->  {
->  	pmd_t *pmd;
->  	struct mm_struct *mm = vma->vm_mm;
-> @@ -179,7 +202,7 @@ static inline unsigned long change_pmd_range(struct vm_area_struct *vma,
->  				__split_huge_pmd(vma, pmd, addr, false, NULL);
->  			} else {
->  				int nr_ptes = change_huge_pmd(vma, pmd, addr,
-> -						newprot, prot_numa);
-> +						newprot, prot_numa, mkwrite);
->  
->  				if (nr_ptes) {
->  					if (nr_ptes == HPAGE_PMD_NR) {
-> @@ -194,7 +217,7 @@ static inline unsigned long change_pmd_range(struct vm_area_struct *vma,
->  			/* fall through, the trans huge pmd just split */
->  		}
->  		this_pages = change_pte_range(vma, pmd, addr, next, newprot,
-> -				 dirty_accountable, prot_numa);
-> +				 dirty_accountable, prot_numa, mkwrite);
->  		pages += this_pages;
->  next:
->  		cond_resched();
-> @@ -210,7 +233,8 @@ static inline unsigned long change_pmd_range(struct vm_area_struct *vma,
->  
->  static inline unsigned long change_pud_range(struct vm_area_struct *vma,
->  		p4d_t *p4d, unsigned long addr, unsigned long end,
-> -		pgprot_t newprot, int dirty_accountable, int prot_numa)
-> +		pgprot_t newprot, int dirty_accountable, int prot_numa,
-> +		bool mkwrite)
->  {
->  	pud_t *pud;
->  	unsigned long next;
-> @@ -222,7 +246,7 @@ static inline unsigned long change_pud_range(struct vm_area_struct *vma,
->  		if (pud_none_or_clear_bad(pud))
->  			continue;
->  		pages += change_pmd_range(vma, pud, addr, next, newprot,
-> -				 dirty_accountable, prot_numa);
-> +				 dirty_accountable, prot_numa, mkwrite);
->  	} while (pud++, addr = next, addr != end);
->  
->  	return pages;
-> @@ -230,7 +254,8 @@ static inline unsigned long change_pud_range(struct vm_area_struct *vma,
->  
->  static inline unsigned long change_p4d_range(struct vm_area_struct *vma,
->  		pgd_t *pgd, unsigned long addr, unsigned long end,
-> -		pgprot_t newprot, int dirty_accountable, int prot_numa)
-> +		pgprot_t newprot, int dirty_accountable, int prot_numa,
-> +		bool mkwrite)
->  {
->  	p4d_t *p4d;
->  	unsigned long next;
-> @@ -242,7 +267,7 @@ static inline unsigned long change_p4d_range(struct vm_area_struct *vma,
->  		if (p4d_none_or_clear_bad(p4d))
->  			continue;
->  		pages += change_pud_range(vma, p4d, addr, next, newprot,
-> -				 dirty_accountable, prot_numa);
-> +				 dirty_accountable, prot_numa, mkwrite);
->  	} while (p4d++, addr = next, addr != end);
->  
->  	return pages;
-> @@ -250,7 +275,7 @@ static inline unsigned long change_p4d_range(struct vm_area_struct *vma,
->  
->  static unsigned long change_protection_range(struct vm_area_struct *vma,
->  		unsigned long addr, unsigned long end, pgprot_t newprot,
-> -		int dirty_accountable, int prot_numa)
-> +		int dirty_accountable, int prot_numa, mkwrite)
->  {
->  	struct mm_struct *mm = vma->vm_mm;
->  	pgd_t *pgd;
-> @@ -267,7 +292,7 @@ static unsigned long change_protection_range(struct vm_area_struct *vma,
->  		if (pgd_none_or_clear_bad(pgd))
->  			continue;
->  		pages += change_p4d_range(vma, pgd, addr, next, newprot,
-> -				 dirty_accountable, prot_numa);
-> +				 dirty_accountable, prot_numa, mkwrite);
->  	} while (pgd++, addr = next, addr != end);
->  
->  	/* Only flush the TLB if we actually modified any entries: */
-> @@ -280,14 +305,16 @@ static unsigned long change_protection_range(struct vm_area_struct *vma,
->  
->  unsigned long change_protection(struct vm_area_struct *vma, unsigned long start,
->  		       unsigned long end, pgprot_t newprot,
-> -		       int dirty_accountable, int prot_numa)
-> +		       int dirty_accountable, int prot_numa, bool mkwrite)
->  {
->  	unsigned long pages;
->  
->  	if (is_vm_hugetlb_page(vma))
->  		pages = hugetlb_change_protection(vma, start, end, newprot);
->  	else
-> -		pages = change_protection_range(vma, start, end, newprot, dirty_accountable, prot_numa);
-> +		pages = change_protection_range(vma, start, end, newprot,
-> +						dirty_accountable,
-> +						prot_numa, mkwrite);
->  
->  	return pages;
->  }
-> @@ -366,7 +393,7 @@ mprotect_fixup(struct vm_area_struct *vma, struct vm_area_struct **pprev,
->  	vma_set_page_prot(vma);
->  
->  	change_protection(vma, start, end, vma->vm_page_prot,
-> -			  dirty_accountable, 0);
-> +			  dirty_accountable, 0, false);
->  
->  	/*
->  	 * Private VM_LOCKED VMA becoming writable: trigger COW to avoid major
-> diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-> index a0379c5ffa7c..c745c5d87523 100644
-> --- a/mm/userfaultfd.c
-> +++ b/mm/userfaultfd.c
-> @@ -632,7 +632,7 @@ int mwriteprotect_range(struct mm_struct *dst_mm, unsigned long start,
->  		newprot = vm_get_page_prot(dst_vma->vm_flags);
->  
->  	change_protection(dst_vma, start, start + len, newprot,
-> -				!enable_wp, 0);
-> +			  0, 0, !enable_wp);
->  
->  	err = 0;
->  out_unlock:
+Add Xilinx AMS driver which is used for Xilinx's ZynqMP AMS controller.
+This AMS driver is used to report various interface voltages and temperatures
+across the system.
+This driver handles AMS module including PS-Sysmon & PL-Sysmon. The binding
+documentation is added for understanding of AMS, PS, PL Sysmon Channels.
 
-Hi, Jerome,
+Changes in v2:
+	- Added documentation for sysfs (Patch-2)
+	- Addressed code style review comments
+	- Patch-2 (Now it is Patch-3)
+		- Arranged the includes in alphabetical order
+		- Removed the wrapper 'ams_pl_write_reg()' and used writel
+		  instead
+		- Removed the unnecessary delay of 1ms and used polling of EOC
+		  instead
+		- Removed spin_lock and used mutex only.
+		- Used request_irq() instead of devm_request_irq() and handled
+		  respective error conditions
+		- Moved contents of xilinx-ams.h to inline with xilinx-ams.c
+	- Patch-1
+		- Addressed Documentation style comments
 
-The first version worked for me but the 2nd didn't.  Both will need to
-be fixed up by myself to at least pass the compilation so I'm not sure
-whether the 2nd patch didn't work because of my changes or your patch
-is broken.  Didn't spend more time to dig.
+Manish Narani (4):
+  dt-bindings: iio: adc: Add Xilinx AMS binding documentation
+  iio: Documentation: Add Xilinx AMS sysfs documentation
+  iio: adc: Add Xilinx AMS driver
+  arm64: zynqmp: DT: Add Xilinx AMS node
 
-Anyway, thanks for these attempts and your help.  Let me know if you
-want me to test a 3rd version, or I'll just keep the 1st patch here in
-my local tree together with the rest of the work (I'd say that's far
-easier to understand than the previous oneliner) since it at least
-fixes the thing up.
-
-Regards,
+ .../ABI/testing/sysfs-bus-iio-adc-xilinx-ams       |  246 ++++
+ .../devicetree/bindings/iio/adc/xilinx-ams.txt     |  180 +++
+ arch/arm64/boot/dts/xilinx/zynqmp.dtsi             |   26 +
+ drivers/iio/adc/Kconfig                            |   10 +
+ drivers/iio/adc/Makefile                           |    1 +
+ drivers/iio/adc/xilinx-ams.c                       | 1337 ++++++++++++++++++++
+ 6 files changed, 1800 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-xilinx-ams
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/xilinx-ams.txt
+ create mode 100644 drivers/iio/adc/xilinx-ams.c
 
 -- 
-Peter Xu
+2.1.1
+
