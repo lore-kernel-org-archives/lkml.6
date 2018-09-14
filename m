@@ -2,465 +2,127 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D9E0ECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:43:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F72AECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:45:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C7F120853
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:43:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="AIppkEIc";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GPU1Ypv4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C7F120853
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 1064420853
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:45:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1064420853
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728250AbeINO5N (ORCPT
+        id S1728301AbeINO6k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 10:57:13 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:53362 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726872AbeINO5N (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 10:57:13 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 14C9160997; Fri, 14 Sep 2018 09:43:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536918211;
-        bh=gtY2qGY5pZM6RKsTB32DWDs8Gsd2akNQMA2F2sZHQSs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AIppkEIccH8PCVaBC1Jgs/Fh0p8mvegEIbhZr1Iu26txxnw1eUvG5yxisuKdoxH+g
-         H+ZOS1hR4kzwuFp1V+OWI5NwWhCsxuKWyJxBOnaPTB3OgR7j9uANbtJ6leOJG50qMy
-         KhA5tnWfEIWqsncIegwQ4460FalkrpCrAsD4DRYM=
-Received: from sayalil-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sayalil@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 488B56031A;
-        Fri, 14 Sep 2018 09:43:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536918209;
-        bh=gtY2qGY5pZM6RKsTB32DWDs8Gsd2akNQMA2F2sZHQSs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GPU1Ypv4pwFxVF++3CGyhWQZYObGy97iAKDth8ichXVUDgwZJ+VcwiWQ6UI7Bqn6u
-         AomAzHU6D2YKnFYKohrWh1P4eZyxI/n2bjtiSs29ozUPwkQFXh4Ab+2UJYQ1w2l3+J
-         7NWKjA+e8a99sDEg+DnSgLD7JNU29NYO6EfgKwOM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 488B56031A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sayalil@codeaurora.org
-From:   Sayali Lokhande <sayalil@codeaurora.org>
-To:     subhashj@codeaurora.org, cang@codeaurora.org,
-        vivek.gautam@codeaurora.org, rnayak@codeaurora.org,
-        vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, asutoshd@codeaurora.org,
-        evgreen@chromium.org, riteshh@codeaurora.org
-Cc:     stummala@codeaurora.org, adrian.hunter@intel.com,
-        jlbec@evilplan.org, linux-scsi@vger.kernel.org,
-        Sayali Lokhande <sayalil@codeaurora.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH V13 2/2] scsi: ufs: Add configfs support for UFS provisioning
-Date:   Fri, 14 Sep 2018 15:12:38 +0530
-Message-Id: <1536918159-311-3-git-send-email-sayalil@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1536918159-311-1-git-send-email-sayalil@codeaurora.org>
-References: <1536918159-311-1-git-send-email-sayalil@codeaurora.org>
+        Fri, 14 Sep 2018 10:58:40 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:36766 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726872AbeINO6k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 10:58:40 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 760492080A; Fri, 14 Sep 2018 11:44:56 +0200 (CEST)
+Received: from localhost.localdomain (AAubervilliers-681-1-99-10.w90-88.abo.wanadoo.fr [90.88.4.10])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 1E74020618;
+        Fri, 14 Sep 2018 11:44:56 +0200 (CEST)
+From:   Quentin Schulz <quentin.schulz@bootlin.com>
+To:     alexandre.belloni@bootlin.com, ralf@linux-mips.org,
+        paul.burton@mips.com, jhogan@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, davem@davemloft.net, andrew@lunn.ch,
+        f.fainelli@gmail.com
+Cc:     allan.nielsen@microchip.com, linux-mips@linux-mips.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, thomas.petazzoni@bootlin.com,
+        antoine.tenart@bootlin.com,
+        Quentin Schulz <quentin.schulz@bootlin.com>
+Subject: [PATCH net-next 0/7] add support for VSC8584 and VSC8574 Microsemi quad-port PHYs
+Date:   Fri, 14 Sep 2018 11:44:21 +0200
+Message-Id: <cover.b921b010b6d6bde1c11e69551ae38f3b2818645b.1536916714.git-series.quentin.schulz@bootlin.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds configfs support to provision UFS device at
-runtime. This feature can be primarily useful in factory or
-assembly line as some devices may be required to be configured
-multiple times during initial system development phase.
-Configuration Descriptors can be written multiple times until
-bConfigDescrLock attribute is zero.
+Both PHYs are 4-port PHY that are 10/100/1000BASE-T, 100BASE-FX, 1000BASE-X
+and triple-speed copper SFP capable, can communicate with the MAC via
+SGMII, QSGMII or 1000BASE-X, supports downshifting and can set the blinking
+pattern of each of its 4 LEDs, supports SyncE as well as HP Auto-MDIX
+detection.
 
-Configuration descriptor buffer consists of Device and Unit
-descriptor configurable parameters which are parsed from vendor
-specific provisioning file and then passed via configfs node at
-runtime to provision ufs device.
-CONFIG_CONFIGFS_FS and CONFIG_UFS_PROVISION needs to be enabled
-for using this feature.
+VSC8574 supports WOL and VSC8584 supports hardware offloading of MACsec.
 
-Usage:
-1) To read current configuration descriptor with index X
-   (where index X can be 0/1/2/3) :
-   cat /config/<device_name>/ufs_config_desc_X
+This patch series add support for 10/100/1000BASE-T, SGMII/QSGMII link with
+the MAC, downshifting, HP Auto-MDIX detection and blinking pattern for
+their 4 LEDs.
 
-2) To write configuration descriptor with index X :
-   echo <config_desc_buf> > /config/<device_name>/ufs_config_desc_X
+They have also an internal Intel 8051 microcontroller whose firmware needs
+to be patched when the PHY is reset. If the 8051's firmware has the
+expected CRC, its patching can be skipped. The microcontroller can be
+accessed from any port of the PHY, though the CRC function can only be done
+through the PHY that is the base PHY of the package (internal address 0)
+due to a limitation of the firmware.
 
-Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
----
- Documentation/ABI/testing/configfs-driver-ufs |  12 ++
- drivers/scsi/ufs/Kconfig                      |  10 ++
- drivers/scsi/ufs/Makefile                     |   1 +
- drivers/scsi/ufs/ufs-configfs.c               | 237 ++++++++++++++++++++++++++
- drivers/scsi/ufs/ufshcd.c                     |   3 +-
- drivers/scsi/ufs/ufshcd.h                     |  18 ++
- 6 files changed, 280 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/ABI/testing/configfs-driver-ufs
- create mode 100644 drivers/scsi/ufs/ufs-configfs.c
+The GPIO register bank is a set of registers that are common to all PHYs in
+the package. So any modification in any register of this bank affects all
+PHYs of the package.
 
-diff --git a/Documentation/ABI/testing/configfs-driver-ufs b/Documentation/ABI/testing/configfs-driver-ufs
-new file mode 100644
-index 0000000..6743ea9
---- /dev/null
-+++ b/Documentation/ABI/testing/configfs-driver-ufs
-@@ -0,0 +1,12 @@
-+What:		/config/*/ufs_config_desc_X
-+Date:		Jun 2018
-+KernelVersion:	4.20
-+Description:
-+		This file shows bytes of the current ufs configuration descriptor
-+		with index X (where X = 0/1/2/3) set in device. This can be used to
-+		provision ufs device if bConfigDescrLock is 0.
-+		For more details, refer 14.1.6.3 Configuration Descriptor and
-+		table 14-12 - Unit Descriptor configurable parameters from specs for
-+		description and format of each configuration descriptor parameter.
-+		Parameters of Configuration descriptor buffer for respective index
-+		needs to be passed as bytes in space separated format.
-diff --git a/drivers/scsi/ufs/Kconfig b/drivers/scsi/ufs/Kconfig
-index e27b4d4..6e7ff35 100644
---- a/drivers/scsi/ufs/Kconfig
-+++ b/drivers/scsi/ufs/Kconfig
-@@ -100,3 +100,13 @@ config SCSI_UFS_QCOM
- 
- 	  Select this if you have UFS controller on QCOM chipset.
- 	  If unsure, say N.
-+
-+config SCSI_UFS_PROVISION
-+	bool "Runtime UFS Provisioning support"
-+	depends on SCSI_UFSHCD && CONFIGFS_FS
-+	help
-+	  This enables runtime UFS provisioning support. This can be used
-+	  primarily during assembly line as some devices may be required to
-+	  be configured multiple times during initial development phase.
-+
-+	  If unsure, say N.
-diff --git a/drivers/scsi/ufs/Makefile b/drivers/scsi/ufs/Makefile
-index 918f579..09880b9 100644
---- a/drivers/scsi/ufs/Makefile
-+++ b/drivers/scsi/ufs/Makefile
-@@ -5,5 +5,6 @@ obj-$(CONFIG_SCSI_UFS_DWC_TC_PLATFORM) += tc-dwc-g210-pltfrm.o ufshcd-dwc.o tc-d
- obj-$(CONFIG_SCSI_UFS_QCOM) += ufs-qcom.o
- obj-$(CONFIG_SCSI_UFSHCD) += ufshcd-core.o
- ufshcd-core-objs := ufshcd.o ufs-sysfs.o
-+obj-$(CONFIG_SCSI_UFS_PROVISION) += ufs-configfs.o
- obj-$(CONFIG_SCSI_UFSHCD_PCI) += ufshcd-pci.o
- obj-$(CONFIG_SCSI_UFSHCD_PLATFORM) += ufshcd-pltfrm.o
-diff --git a/drivers/scsi/ufs/ufs-configfs.c b/drivers/scsi/ufs/ufs-configfs.c
-new file mode 100644
-index 0000000..84ccb1a
---- /dev/null
-+++ b/drivers/scsi/ufs/ufs-configfs.c
-@@ -0,0 +1,237 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+// Copyright (c) 2018, Linux Foundation.
-+
-+#include <linux/configfs.h>
-+#include <linux/err.h>
-+#include <linux/string.h>
-+
-+#include "ufs.h"
-+#include "ufshcd.h"
-+
-+static inline struct ufs_hba *config_item_to_hba(struct config_item *item)
-+{
-+	struct config_group *group = to_config_group(item);
-+	struct configfs_subsystem *subsys = to_configfs_subsystem(group);
-+	struct ufs_hba *hba = container_of(subsys, struct ufs_hba, subsys);
-+
-+	return hba;
-+}
-+
-+static ssize_t ufs_config_desc_show(struct config_item *item, char *buf,
-+				    u8 index)
-+{
-+	struct ufs_hba *hba = config_item_to_hba(item);
-+	u8 *desc_buf = NULL;
-+	int desc_buf_len = hba->desc_size.conf_desc;
-+	int i, ret, curr_len = 0;
-+
-+	desc_buf = kzalloc(desc_buf_len, GFP_KERNEL);
-+	if (!desc_buf)
-+		return -ENOMEM;
-+
-+	ret = ufshcd_query_descriptor_retry(hba, UPIU_QUERY_OPCODE_READ_DESC,
-+					    QUERY_DESC_IDN_CONFIGURATION, index,
-+					    0, desc_buf, &desc_buf_len);
-+	if (ret)
-+		goto out;
-+
-+	for (i = 0; i < desc_buf_len; i++)
-+		curr_len += snprintf((buf + curr_len), (PAGE_SIZE - curr_len),
-+				"0x%x ", desc_buf[i]);
-+
-+out:
-+	kfree(desc_buf);
-+	return ret ? ret : curr_len;
-+}
-+
-+ssize_t ufshcd_desc_configfs_store(struct config_item *item, const char *buf,
-+				   size_t count, u8 index)
-+{
-+	char *strbuf;
-+	char *strbuf_copy;
-+	struct ufs_hba *hba = config_item_to_hba(item);
-+	u8 *desc_buf = NULL;
-+	int desc_buf_len = hba->desc_size.conf_desc;
-+	char *token;
-+	int i, ret;
-+	u8 value;
-+	u32 config_desc_lock = 0;
-+
-+	desc_buf = kzalloc(desc_buf_len, GFP_KERNEL);
-+	if (!desc_buf)
-+		return -ENOMEM;
-+
-+	strbuf = kstrdup(buf, GFP_KERNEL);
-+	if (!strbuf) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	strbuf_copy = strbuf;
-+
-+	/* Just return if bConfigDescrLock is already set */
-+	ret = ufshcd_query_attr(hba, UPIU_QUERY_OPCODE_READ_ATTR,
-+				QUERY_ATTR_IDN_CONF_DESC_LOCK, 0, 0,
-+				&config_desc_lock);
-+	if (ret)
-+		goto out;
-+
-+	if (config_desc_lock) {
-+		dev_err(hba->dev, "%s: bConfigDescrLock already set to %u, cannot re-provision device!\n",
-+			__func__, config_desc_lock);
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	/*
-+	 * First read the current configuration descriptor
-+	 * and then update with user provided parameters
-+	 */
-+	ret = ufshcd_query_descriptor_retry(hba, UPIU_QUERY_OPCODE_READ_DESC,
-+					    QUERY_DESC_IDN_CONFIGURATION, index,
-+					    0, desc_buf, &desc_buf_len);
-+	if (ret)
-+		goto out;
-+
-+	for (i = 0; i < desc_buf_len; i++) {
-+		token = strsep(&strbuf_copy, " ");
-+		if (!token)
-+			break;
-+
-+		ret = kstrtou8(token, 0, &value);
-+		if (ret) {
-+			dev_err(hba->dev, "%s: Invalid value %s writing UFS configuration descriptor %u\n",
-+				__func__, token, index);
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+		desc_buf[i] = value;
-+	}
-+
-+	/* Write configuration descriptor to provision ufs */
-+	ret = ufshcd_query_descriptor_retry(hba, UPIU_QUERY_OPCODE_WRITE_DESC,
-+					    QUERY_DESC_IDN_CONFIGURATION, index,
-+					    0, desc_buf, &desc_buf_len);
-+	if (!ret)
-+		dev_info(hba->dev, "%s: UFS Configuration Descriptor %u written\n",
-+			 __func__, index);
-+
-+out:
-+	kfree(strbuf);
-+	kfree(desc_buf);
-+	return ret ? ret : count;
-+}
-+
-+static ssize_t ufs_config_desc_0_show(struct config_item *item, char *buf)
-+{
-+	return ufs_config_desc_show(item, buf, 0);
-+}
-+
-+static ssize_t ufs_config_desc_0_store(struct config_item *item,
-+				       const char *buf, size_t count)
-+{
-+	return ufshcd_desc_configfs_store(item, buf, count, 0);
-+}
-+
-+static ssize_t ufs_config_desc_1_show(struct config_item *item, char *buf)
-+{
-+	return ufs_config_desc_show(item, buf, 1);
-+}
-+
-+static ssize_t ufs_config_desc_1_store(struct config_item *item,
-+				       const char *buf, size_t count)
-+{
-+	return ufshcd_desc_configfs_store(item, buf, count, 1);
-+}
-+
-+static ssize_t ufs_config_desc_2_show(struct config_item *item, char *buf)
-+{
-+	return ufs_config_desc_show(item, buf, 2);
-+}
-+
-+static ssize_t ufs_config_desc_2_store(struct config_item *item,
-+				       const char *buf, size_t count)
-+{
-+	return ufshcd_desc_configfs_store(item, buf, count, 2);
-+}
-+
-+static ssize_t ufs_config_desc_3_show(struct config_item *item, char *buf)
-+{
-+	return ufs_config_desc_show(item, buf, 3);
-+}
-+
-+static ssize_t ufs_config_desc_3_store(struct config_item *item,
-+				       const char *buf, size_t count)
-+{
-+	return ufshcd_desc_configfs_store(item, buf, count, 3);
-+}
-+
-+static struct configfs_attribute ufshcd_attr_provision_0 = {
-+	.ca_name	= "ufs_config_desc_0",
-+	.ca_mode	= 0644,
-+	.ca_owner	= THIS_MODULE,
-+	.show		= ufs_config_desc_0_show,
-+	.store		= ufs_config_desc_0_store,
-+};
-+
-+static struct configfs_attribute ufshcd_attr_provision_1 = {
-+	.ca_name	= "ufs_config_desc_1",
-+	.ca_mode	= 0644,
-+	.ca_owner	= THIS_MODULE,
-+	.show		= ufs_config_desc_1_show,
-+	.store		= ufs_config_desc_1_store,
-+};
-+
-+static struct configfs_attribute ufshcd_attr_provision_2 = {
-+	.ca_name	= "ufs_config_desc_2",
-+	.ca_mode	= 0644,
-+	.ca_owner	= THIS_MODULE,
-+	.show		= ufs_config_desc_2_show,
-+	.store		= ufs_config_desc_2_store,
-+};
-+
-+static struct configfs_attribute ufshcd_attr_provision_3 = {
-+	.ca_name	= "ufs_config_desc_3",
-+	.ca_mode	= 0644,
-+	.ca_owner	= THIS_MODULE,
-+	.show		= ufs_config_desc_3_show,
-+	.store		= ufs_config_desc_3_store,
-+};
-+
-+static struct configfs_attribute *ufshcd_attrs[] = {
-+	&ufshcd_attr_provision_0,
-+	&ufshcd_attr_provision_1,
-+	&ufshcd_attr_provision_2,
-+	&ufshcd_attr_provision_3,
-+	NULL,
-+};
-+
-+static struct config_item_type ufscfg_type = {
-+	.ct_attrs	= ufshcd_attrs,
-+	.ct_owner	= THIS_MODULE,
-+};
-+
-+void ufshcd_configfs_init(struct ufs_hba *hba, const char *name)
-+{
-+	int ret;
-+	struct config_item *cg_item;
-+	struct configfs_subsystem *subsys;
-+
-+	cg_item = &hba->subsys.su_group.cg_item;
-+	sprintf(cg_item->ci_namebuf, "%s", name);
-+	cg_item->ci_type = &ufscfg_type;
-+
-+	subsys = &hba->subsys;
-+	config_group_init(&subsys->su_group);
-+	mutex_init(&subsys->su_mutex);
-+	ret = configfs_register_subsystem(subsys);
-+	if (ret)
-+		pr_err("Error %d while registering subsystem %s\n",
-+		       ret,
-+		       subsys->su_group.cg_item.ci_namebuf);
-+}
-+
-+void ufshcd_configfs_exit(struct ufs_hba *hba)
-+{
-+	configfs_unregister_subsystem(&hba->subsys);
-+}
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index e01cdc0..608e23e 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -7711,6 +7711,7 @@ int ufshcd_shutdown(struct ufs_hba *hba)
- void ufshcd_remove(struct ufs_hba *hba)
- {
- 	ufs_sysfs_remove_nodes(hba->dev);
-+	ufshcd_configfs_exit(hba);
- 	scsi_remove_host(hba->host);
- 	/* disable interrupts */
- 	ufshcd_disable_intr(hba, hba->intr_mask);
-@@ -7965,7 +7966,7 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
- 
- 	async_schedule(ufshcd_async_scan, hba);
- 	ufs_sysfs_add_nodes(hba->dev);
--
-+	ufshcd_configfs_init(hba, dev_name(hba->dev));
- 	return 0;
- 
- out_remove_scsi_host:
-diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-index 45013b6..f348b4b 100644
---- a/drivers/scsi/ufs/ufshcd.h
-+++ b/drivers/scsi/ufs/ufshcd.h
-@@ -37,6 +37,7 @@
- #ifndef _UFSHCD_H
- #define _UFSHCD_H
- 
-+#include <linux/configfs.h>
- #include <linux/module.h>
- #include <linux/kernel.h>
- #include <linux/init.h>
-@@ -515,6 +516,9 @@ struct ufs_hba {
- 
- 	struct Scsi_Host *host;
- 	struct device *dev;
-+#ifdef CONFIG_SCSI_UFS_PROVISION
-+	struct configfs_subsystem subsys;
-+#endif
- 	/*
- 	 * This field is to keep a reference to "scsi_device" corresponding to
- 	 * "UFS device" W-LU.
-@@ -868,6 +872,20 @@ int ufshcd_read_string_desc(struct ufs_hba *hba, int desc_index,
- int ufshcd_hold(struct ufs_hba *hba, bool async);
- void ufshcd_release(struct ufs_hba *hba);
- 
-+/* Expose UFS configfs API's */
-+#ifndef CONFIG_SCSI_UFS_PROVISION
-+static inline void ufshcd_configfs_init(struct ufs_hba *hba, const char *name)
-+{
-+}
-+
-+static inline void ufshcd_configfs_exit(struct ufs_hba *hba)
-+{
-+}
-+#else
-+void ufshcd_configfs_init(struct ufs_hba *hba, const char *name);
-+void ufshcd_configfs_exit(struct ufs_hba *hba);
-+#endif
-+
- int ufshcd_map_desc_id_to_length(struct ufs_hba *hba, enum desc_idn desc_id,
- 	int *desc_length);
- 
+If the PHYs haven't been reset before booting the Linux kernel and were
+configured to use interrupts for e.g. link status updates, it is required
+to clear the interrupts mask register of all PHYs before being able to use
+interrupts with any PHY. The first PHY of the package that will be init
+will take care of clearing all PHYs interrupts mask registers. Thus, we
+need to keep track of the init sequence in the package, if it's already
+been done or if it's to be done.
+
+Most of the init sequence of a PHY of the package is common to all PHYs in
+the package, thus we use the SMI broadcast feature which enables us to
+propagate a write in one register of one PHY to all PHYs in the package.
+
+We also introduce a new development board called PCB120 which exists in
+variants for VSC8584 and VSC8574 (and that's the only difference to the
+best of my knowledge).
+
+I suggest patches 1 to 4 go through net tree and patches 5 to 7 go through
+MIPS tree. Patches going through net tree and those going through MIPS tree
+do not depend on one another.
+
+This patch series depends on two patch series though:
+"mscc: ocelot: add support for SerDes muxing configuration"
+(https://lore.kernel.org/lkml/cover.ff40d591b548a6da31716e6e600f11a303e0e643.1536912834.git-series.quentin.schulz@bootlin.com/)
+"Various improvements to Microsemi PHY driver"
+(https://lore.kernel.org/lkml/cover.616d15610d44a0e3d463acd8119859f243163ad2.1536913944.git-series.quentin.schulz@bootlin.com/)
+specifically patch 2/5 which defines constants that are used in this patch
+series.
+
+Thanks,
+Quentin
+
+Quentin Schulz (7):
+  dt-bindings: net: vsc8531: add two additional LED modes for VSC8584
+  net: phy: mscc: add support for VSC8584 PHY
+  net: phy: mscc: split config_init in two functions for VSC8584
+  net: phy: mscc: add support for VSC8574 PHY
+  MIPS: mscc: ocelot: add GPIO4 pinmuxing DT node
+  MIPS: mscc: add DT for Ocelot PCB120
+  MIPS: mscc: add PCB120 to the ocelot fitImage
+
+ arch/mips/boot/dts/mscc/Makefile            |    2 +-
+ arch/mips/boot/dts/mscc/ocelot.dtsi         |    5 +-
+ arch/mips/boot/dts/mscc/ocelot_pcb120.dts   |  100 ++-
+ arch/mips/generic/Kconfig                   |    6 +-
+ arch/mips/generic/Platform                  |    2 +-
+ arch/mips/generic/board-ocelot.its.S        |   40 +-
+ arch/mips/generic/board-ocelot_pcb123.its.S |   23 +-
+ drivers/net/phy/mscc.c                      | 1019 ++++++++++++++++++++-
+ include/dt-bindings/net/mscc-phy-vsc8531.h  |    2 +-
+ 9 files changed, 1171 insertions(+), 28 deletions(-)
+ create mode 100644 arch/mips/boot/dts/mscc/ocelot_pcb120.dts
+ create mode 100644 arch/mips/generic/board-ocelot.its.S
+ delete mode 100644 arch/mips/generic/board-ocelot_pcb123.its.S
+
+base-commit: d9cca8eef36bb8918c9ed28574b79b7674fd36f6
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+git-series 0.9.1
