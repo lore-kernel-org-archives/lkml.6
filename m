@@ -2,79 +2,105 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0EC0ECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:47:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB3A3ECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:51:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8128420853
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:47:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CE3D20853
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:51:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="dunFdfIN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8128420853
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bc3Sy6+/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CE3D20853
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728215AbeINXDF (ORCPT
+        id S1728084AbeINXHT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 19:03:05 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:46891 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727805AbeINXDF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 19:03:05 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 1f32816e;
-        Fri, 14 Sep 2018 17:30:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=04fgp+gPZBsNUpJrtAbEPPMJ1nw=; b=dunFdf
-        INIQhbm/18K7YMPRidybeYxS1ksrU2owOI9omCpBF61FKUw4ENObF4qHy3t8lJo0
-        zTT0JEitQGQBmEqoEh9cnR84cG4zyHvKp11jZipYopvSMktXBEYw/n5H5EjOyv+r
-        oCH2he1+KYuodFNbGjU1e5r4wAvAsn2z+fJKFyeJ0FcCOueUKutWNdUKXbQGDV1/
-        ZBuDJ3PFXJJ5plN9F7ea17AtHdeZ6pDU+1lh8/q5sqT1mGZRfNFd3ZhChJj0RZuu
-        rCscIugBdk51NIV3NrkHum/N9RR6zHL2Iosun1RPs0Wz/+roQJic5hcwhjBCO0pc
-        Wv8n4Vp6wUiiPS1g==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id ec96dc3d (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
-        Fri, 14 Sep 2018 17:30:27 +0000 (UTC)
-Received: by mail-ot1-f42.google.com with SMTP id n5-v6so5377746otl.5;
-        Fri, 14 Sep 2018 10:47:31 -0700 (PDT)
-X-Gm-Message-State: APzg51CBrJYKx0lPJjEtmc4ClRYA5FZxl8TfuxwmxOYHj+RmEn+1c3Uf
-        7yTFkOXrI4ra5KCn/E+S3Fy90JVkui+PhQCIfZk=
-X-Google-Smtp-Source: ANB0VdYE98DyiXKrwPoEogC/yxPdRscGEbjvWzUedLUSHQI/fudEo+bFLYTRyoWJJuNgC9hx3wP3hvzFkCek8bgCCKE=
-X-Received: by 2002:a9d:2dc8:: with SMTP id g66-v6mr4958654otb.311.1536947250977;
- Fri, 14 Sep 2018 10:47:30 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180914161954.7325-1-Jason@zx2c4.com> <CAKv+Gu_LYsNs88uF4+G1xfOtWvNPOjiiYZKqZf7qSBkvn6iEoA@mail.gmail.com>
-In-Reply-To: <CAKv+Gu_LYsNs88uF4+G1xfOtWvNPOjiiYZKqZf7qSBkvn6iEoA@mail.gmail.com>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Fri, 14 Sep 2018 19:47:18 +0200
-X-Gmail-Original-Message-ID: <CAHmME9phjkOuODQEUXp=ZZLGDg3ypUPRr6YYPsMDgfvAdNcznA@mail.gmail.com>
-Message-ID: <CAHmME9phjkOuODQEUXp=ZZLGDg3ypUPRr6YYPsMDgfvAdNcznA@mail.gmail.com>
-Subject: Re: [PATCH net-next v4 00/20] WireGuard: Secure Network Tunnel
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+        Fri, 14 Sep 2018 19:07:19 -0400
+Received: from mail-qt0-f201.google.com ([209.85.216.201]:55761 "EHLO
+        mail-qt0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727716AbeINXHS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 19:07:18 -0400
+Received: by mail-qt0-f201.google.com with SMTP id j9-v6so7715481qtn.22
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 10:51:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=r52LMrvjvvrzNrVQzmvddGzHGTx7N/uO//CKf89crIc=;
+        b=bc3Sy6+/l49UZRMN4G1KHbVhFBA8LLZAnTHOtYNagYTvWqBcDLzJvLBB1tYmzM9FFa
+         lynPmO1/N0aTi9Q2z4uiipXi1GxnQp88j+WY9WJxShpXpk1wYVB4d0hg2VeuNGkxmRxh
+         SAOdK/Xnayh50YWwFqc74eXj2ONySlIX8E8IEV4DsuATCakBTBxB1Ok6GmsOkWM+pxAD
+         F4sZjAvrjD3HYT0VuF/s/Rztaxp3+6UVBzakp3+Et97ZoPHsGOvwksT6InvLcW6ty9mB
+         t1LWZGC2Pu4mAGLRCJLBmgiSMyEUK/bKjGPzRvVPMz+MRTxppGD8WaqyYPFogQXhsJlj
+         P1pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=r52LMrvjvvrzNrVQzmvddGzHGTx7N/uO//CKf89crIc=;
+        b=GzqO9Aw7/MUrV14L04tEiZH7O2oPn09l11H3qbdPkYb1lqxjfheXiIysYUOPOa7KPu
+         Ko0+WkbzK7PXEFjj41lK8y+mWeEfq8oHnTRU/rVGqsrccasvmbBc0r/njDFQsUe8qOnt
+         um+1W0eYyyq2DyDl7EwB8Kuqaj+gA3gEScPvMVi4Ciya58sLLnVzSXnpT37N1eDEfEdG
+         8IEkHfnQJ482nR0YqNgWeuUVT8knwd63RbIPuplyao3HG0wV6QPidyxmtJoKBhqReJby
+         Fd93hGtvM+pUZ1MgwKY+IplalMjawkQaBXDbFCIQfRmKe5DYL2ycLOj3RFjAYHVmQ7vd
+         UV1Q==
+X-Gm-Message-State: APzg51DFQ4gsjyHiWYpD1scTPGf6pDrKbZ8J95zLxUxrsZVEecFuo+gc
+        BDaJ/+l4hbXirXaVd098v7PjRSnX
+X-Google-Smtp-Source: ANB0VdbQZbz3z/wd2ra0BVu8U8+TZf7dszkhjFUWnGEd7AU4Zt3QBKmsQCrv19EW0uT4oC1vHavVOxOj
+X-Received: by 2002:ac8:3ff4:: with SMTP id v49-v6mr4070156qtk.21.1536947505377;
+ Fri, 14 Sep 2018 10:51:45 -0700 (PDT)
+Date:   Fri, 14 Sep 2018 10:51:02 -0700
+Message-Id: <20180914175122.21036-1-rkir@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.19.0.397.gdd90340f6a-goog
+Subject: [PATCH 01/21] platform: goldfish: pipe: Remove license boilerplate
+From:   rkir@google.com
+To:     gregkh@linuxfoundation.org
+Cc:     tkjos@google.com, linux-kernel@vger.kernel.org,
+        Roman Kiryanov <rkir@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 14, 2018 at 7:40 PM Ard Biesheuvel
-<ard.biesheuvel@linaro.org> wrote:
-> >   - Move away from makefile ifdef maze and instead prefer kconfig values,
-> >     which also makes the design a bit more modular too, which could help
-> >     in the future.
->
-> Could you elaborate on this? From the patches, it is not clear to me
-> how this has improved.
+From: Roman Kiryanov <rkir@google.com>
 
-Feature detection was prior done as a confusing set of ifeq and
-ifdefs. Instead, I've now put the logic for this into the kconfig,
-which makes the makefiles and header files a bit simpler. This also
-makes it easier to later on modularize Zinc itself if deemed
-necessary.
+The boilerplate license is not necessary when the SPDX line is
+present.
+
+Signed-off-by: Roman Kiryanov <rkir@google.com>
+---
+ drivers/platform/goldfish/goldfish_pipe_qemu.h | 14 --------------
+ 1 file changed, 14 deletions(-)
+
+diff --git a/drivers/platform/goldfish/goldfish_pipe_qemu.h b/drivers/platform/goldfish/goldfish_pipe_qemu.h
+index c272e11c5433..b4d78c108afd 100644
+--- a/drivers/platform/goldfish/goldfish_pipe_qemu.h
++++ b/drivers/platform/goldfish/goldfish_pipe_qemu.h
+@@ -1,18 +1,4 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+-/*
+- * Copyright (C) 2018 Google, Inc.
+- *
+- * This software is licensed under the terms of the GNU General Public
+- * License version 2, as published by the Free Software Foundation, and
+- * may be copied, distributed, and modified under those terms.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- */
+-
+ /*
+  * IMPORTANT: The following constants must match the ones used and defined in
+  * external/qemu/include/hw/misc/goldfish_pipe.h
+-- 
+2.19.0.397.gdd90340f6a-goog
+
