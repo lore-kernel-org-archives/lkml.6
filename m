@@ -2,117 +2,133 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A15DFC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 16:31:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B410ECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 16:37:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EFB920861
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 16:31:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EFB920861
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id BB00720861
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 16:37:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB00720861
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728241AbeINVrC (ORCPT
+        id S1728168AbeINVwO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 17:47:02 -0400
-Received: from mga06.intel.com ([134.134.136.31]:45349 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726845AbeINVrC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 17:47:02 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Sep 2018 09:31:47 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,374,1531810800"; 
-   d="scan'208";a="80489367"
-Received: from yoojae-mobl1.amr.corp.intel.com (HELO [10.7.153.151]) ([10.7.153.151])
-  by FMSMGA003.fm.intel.com with ESMTP; 14 Sep 2018 09:28:43 -0700
-Subject: Re: [PATCH] i2c: aspeed: Acknowledge most interrupts early in
- interrupt handler
-To:     Guenter Roeck <linux@roeck-us.net>,
-        Brendan Higgins <brendanhiggins@google.com>
-Cc:     linux-aspeed@lists.ozlabs.org, Andrew Jeffery <andrew@aj.id.au>,
-        openbmc@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>,
-        linux-i2c@vger.kernel.org
-References: <1536895810-28903-1-git-send-email-linux@roeck-us.net>
-From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Message-ID: <fbf54ca6-16b3-5e35-eac8-b3dab8118543@linux.intel.com>
-Date:   Fri, 14 Sep 2018 09:28:43 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 14 Sep 2018 17:52:14 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42688 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727866AbeINVwO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 17:52:14 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8EGYY8Z083326
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 12:36:57 -0400
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mgghcrb7j-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 12:36:57 -0400
+Received: from localhost
+        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Fri, 14 Sep 2018 12:36:56 -0400
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 14 Sep 2018 12:36:50 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8EGanQw19791998
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 14 Sep 2018 16:36:49 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C7B14B2066;
+        Fri, 14 Sep 2018 12:35:24 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A9186B2065;
+        Fri, 14 Sep 2018 12:35:24 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri, 14 Sep 2018 12:35:24 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 2E48316C3727; Fri, 14 Sep 2018 09:36:49 -0700 (PDT)
+Date:   Fri, 14 Sep 2018 09:36:49 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        mingo@kernel.org, stern@rowland.harvard.edu,
+        parri.andrea@gmail.com, will.deacon@arm.com, peterz@infradead.org,
+        boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
+        j.alglave@ucl.ac.uk, luc.maranget@inria.fr, akiyks@gmail.com
+Subject: Re: [PATCH RFC memory-model 0/7] Memory-model changes
+Reply-To: paulmck@linux.ibm.com
+References: <20180829211018.GA19646@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <1536895810-28903-1-git-send-email-linux@roeck-us.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180829211018.GA19646@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18091416-2213-0000-0000-000002EEB2F2
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009720; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01088265; UDB=6.00562026; IPR=6.00868277;
+ MB=3.00023293; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-14 16:36:54
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18091416-2214-0000-0000-00005B8DFD3F
+Message-Id: <20180914163649.GA13942@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-14_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809140169
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/13/2018 8:30 PM, Guenter Roeck wrote:
-> Commit 3e9efc3299dd ("i2c: aspeed: Handle master/slave combined irq events
-> properly") moved interrupt acknowledgment to the end of the interrupt
-> handler. In part this was done because the AST2500 datasheet says:
+On Wed, Aug 29, 2018 at 02:10:18PM -0700, Paul E. McKenney wrote:
+> Hello!
 > 
->   I2CD10 Interrupt Status Register
->     bit 2 Receive Done Interrupt status
->           S/W needs to clear this status bit to allow next data receiving.
-> 
-> Acknowledging Receive Done before receive data was handled resulted in
-> receive errors on high speed I2C busses.
-> 
-> However, interrupt acknowledgment was not only moved to the end of the
-> interrupt handler for Receive Done Interrupt status, but for all interrupt
-> status bits. This could result in race conditions if a second interrupt was
-> received during interrupt handling and not handled but still acknowledged
-> at the end of the interrupt handler.
-> 
-> Acknowledge only "Receive Done Interrupt status" late in the interrupt
-> handler to solve the problem.
-> 
-> Fixes: 3e9efc3299dd ("i2c: aspeed: Handle master/slave combined irq events properly")
-> Cc: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-> Cc: Joel Stanley <joel@jms.id.au>
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> ---
->   drivers/i2c/busses/i2c-aspeed.c | 9 +++++++--
->   1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-aspeed.c b/drivers/i2c/busses/i2c-aspeed.c
-> index c258c4d9a4c0..3d518e09369f 100644
-> --- a/drivers/i2c/busses/i2c-aspeed.c
-> +++ b/drivers/i2c/busses/i2c-aspeed.c
-> @@ -552,6 +552,9 @@ static irqreturn_t aspeed_i2c_bus_irq(int irq, void *dev_id)
->   
->   	spin_lock(&bus->lock);
->   	irq_received = readl(bus->base + ASPEED_I2C_INTR_STS_REG);
-> +	/* Ack all interrupts except for Rx done */
-> +	writel(irq_received & ~ASPEED_I2CD_INTR_RX_DONE,
-> +	       bus->base + ASPEED_I2C_INTR_STS_REG);
->   	irq_remaining = irq_received;
->   
->   #if IS_ENABLED(CONFIG_I2C_SLAVE)
-> @@ -584,8 +587,10 @@ static irqreturn_t aspeed_i2c_bus_irq(int irq, void *dev_id)
->   			"irq handled != irq. expected 0x%08x, but was 0x%08x\n",
->   			irq_received, irq_handled);
->   
-> -	/* Ack all interrupt bits. */
-> -	writel(irq_received, bus->base + ASPEED_I2C_INTR_STS_REG);
-> +	/* Ack Rx done */
-> +	if (irq_received & ASPEED_I2CD_INTR_RX_DONE)
-> +		writel(ASPEED_I2CD_INTR_RX_DONE,
-> +		       bus->base + ASPEED_I2C_INTR_STS_REG);
->   	spin_unlock(&bus->lock);
->   	return irq_remaining ? IRQ_NONE : IRQ_HANDLED;
->   }
-> 
+> This series contains memory-model updates, not yet ready for inclusion:
 
-Looks good to me. Thanks! :)
+Summarizing my current state for the week after next's planned
+for-inclusion series:
 
-Acked-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+	ccc8b5139f65 tools/memory-model: Add litmus-test naming scheme
+	c8c5779c854f tools/memory-model: Add extra ordering for locks and remove it for ordinary release/acquire
+	a5109023cf9e tools/memory-model: Fix a README typo
+	abdb4ce79ba3 tools/memory-model: Add more LKMM limitations
+
+		I have these queued for the next merge window.	There has
+		been some discussion of c8c5779c854f, and it would be
+		good to resolve issues.  However, the patch is supported
+		by Peter Zijlstra (x86) and Will Deacon (ARM), so I
+		am OK sending it as-is if needed.  We always have the
+		opportunity of adding other patches as needed.
+
+		The latest email from Andrea indicated some concerns about
+		the commit log, which cannot be changed after acceptance,
+		so resolving those concerns is the highest priority.
+
+	bf36a3124d04 doc: Replace smp_cond_acquire() with smp_cond_load_acquire()
+
+		Small change, needs an ack.  Looks to me like is is
+		just aligning the documentation with the code, so
+		should not be controversial (famous last words).
+
+		Please take a look and consider giving feedback
+		and/or a review/ack.
+
+	f3625642c96d EXP tools/memory-model: Add scripts to check github litmus tests
+	eaaac2854b75 EXP tools/memory-model: Make scripts take "-j" abbreviation for "--jobs"
+
+		These add regression-test capability and need a review
+		and/or ack before they can be submitted.  I do not
+		consider them to be particularly urgent.
+
+							Thanx, Paul
+
