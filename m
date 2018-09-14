@@ -2,71 +2,65 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,GAPPY_SUBJECT,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=0.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,GAPPY_SUBJECT,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E570C04AB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 00:06:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12276C04AB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 00:08:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7F5F20853
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 00:06:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5FBC20853
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 00:08:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WOlCcC7e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7F5F20853
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="PPSl+Aty"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5FBC20853
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728288AbeINFSI (ORCPT
+        id S1728036AbeINFUc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 01:18:08 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:34158 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727029AbeINFSH (ORCPT
+        Fri, 14 Sep 2018 01:20:32 -0400
+Received: from sonic304-28.consmr.mail.ne1.yahoo.com ([66.163.191.154]:38885
+        "EHLO sonic304-28.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726911AbeINFUc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 01:18:07 -0400
-Received: by mail-yb1-f194.google.com with SMTP id t10-v6so4088388ybb.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 17:06:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=c3GaHnmBJ6JA2RMDhGVHjKj61kys18PP5wtYMzCf4/U=;
-        b=WOlCcC7eGw08PM/fFLMCs8gTbgosnd+QBO34WeanTSn1Q1oYxmjfgwvBjjbqZRFmW6
-         YRjwoI7FKJ1eyA7B/x4KsRByTJgnOy+38vN69Z3if1dDXA+S/5g7Hjv8Y363R0I+VT56
-         fNXM/q19+xuYPA9idS4JVN2s+xdhc3b2dxRTg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=c3GaHnmBJ6JA2RMDhGVHjKj61kys18PP5wtYMzCf4/U=;
-        b=MFr4fvqrSwrJmlFXwWXVDlJE65lKf6qU4cH3seZiq2IFLz8avVRm03cRooYovwUcoV
-         sLtB4xcLo5+0RA+uzzY9shVR7zyHvTfxr2EE/4hbAsUUQH9DmfzyMxBZTQ0EQ2LeRCsd
-         ToepcSRIcwjHjlrX2qw0MauawNOSdfBVRmlSFob3UIM+GyLjZiIkPw5XOwQvJMlAN2Od
-         RP4f3Juy+UdsDRbFDP3muZCs9hxCizkSRsmTTPN3L+LjAjWzzsmc0YieQKNtBk4YMf/0
-         DX9DykOQZOLMXQ2oxrAyvyi/NIDOyZOAF6wpiw9zcNc4SlF2bfFGDfUOWLJjTcnMAb/i
-         0mFQ==
-X-Gm-Message-State: APzg51A3yTX14MByqRBwmx2MQ0E9KDPHXFMZAKcab1rpDgSrInrZ5bOU
-        oVnayR7P1IoTW9LF/ixfrV8N2yDDBXs=
-X-Google-Smtp-Source: ANB0VdbrsP6pxw/buqVThKMugdbzCgPbQ4Oj873C8qtjLG1GCPLd6BY6lWh7KazfHAs6t6SomngklQ==
-X-Received: by 2002:a25:b05:: with SMTP id 5-v6mr4734091ybl.94.1536883580157;
-        Thu, 13 Sep 2018 17:06:20 -0700 (PDT)
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
-        by smtp.gmail.com with ESMTPSA id f82-v6sm2184227ywf.58.2018.09.13.17.06.17
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Sep 2018 17:06:17 -0700 (PDT)
-Received: by mail-yb1-f177.google.com with SMTP id o17-v6so4077817yba.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 17:06:17 -0700 (PDT)
-X-Received: by 2002:a25:2c3:: with SMTP id 186-v6mr124647ybc.421.1536883576941;
- Thu, 13 Sep 2018 17:06:16 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a25:5f04:0:0:0:0:0 with HTTP; Thu, 13 Sep 2018 17:06:16
- -0700 (PDT)
-In-Reply-To: <a2ffa6b7-5d05-39a1-11c3-d715566e4d51@schaufler-ca.com>
+        Fri, 14 Sep 2018 01:20:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1536883724; bh=66ahGOta3Ly9LRZ07VeRJfs7LhhBO7MxXqiHMG05RXg=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=PPSl+AtyqVKNxtfteyt5wt4uOozLzz0EofVQbNFxzzCoToHU959oD/gWjPMr2bVmv//ARYlnoYFuUk5x1PhsvE/TMdku30LzQcS5y6Z5hp6i8PlnFTdPQ3nhTj6h/xq3uiTy9q4BjW8emsdLg3PVrFKgSfTtNtiKRMXc4MuyIVAVuK6qR1Oe98gF3E7/tJxapfOZ4kNYLFINCPDIWtjjMwIUvyRGXhUW/JrEw2nu8Tx2BuDroZdv3PHlCb9uqK8I7iiKWseLFt9WbXxZvz6pTfr6d6SkJKEhGqMiEdwfCVJ7nNco34SVuKbrvn1OU1f8Yop8eEW+bsf+t6tBkCUY6Q==
+X-YMail-OSG: BvRM1jsVM1kc2IR_Q76p8iYOrG_Ojn6RNsJhGv6yde6jmQ2VGgQX5Aw8ga2a8Bn
+ AT4mI5jBpjDckxP0LLe8LF6Qd26VR9rApWvbQN4LucLHmG4lGegnpn5s.H9pHBcGaYyWRSaVDIUz
+ Ku11JVTq5EkkE_0yv_eIeM0s8RxESCZdNl9_Sj3YvORCbGm0msPUVisa1ei53zeyO7dCQpXX9._d
+ pf7beaNGphjkQa8b.8dp.n_4YsBbKNuLf8aKlh9OgSPt364GYiupWtumkJNdqef.P2L4MbXmysqh
+ 71zc5VEKlZsb7YDa9oNVi7ULTZRxu.RswxCcxb6ZqpBby9mmiAoBkLAinpgKkkuFbHi8Ib7Wyhfu
+ lTv_1lnzn3bzOSW.6GQl8xdv0SltACFqqfs.IcArTrvkx95rD6nv_HIGBqfaFsJeszQTL8Ga7dH_
+ FxTZ7eKG0JsF6jwJH323172KUgej2dBL1oXa68QpS03HR9wKzyiT1gWHCAjnhBSzFs7.F.D3Nbg_
+ AZVnlJLlVws7WuBiY0u9hLAQXEpAAA22nuHMPzODNte4vZJwGjsVA6k2d0T3U3mPSnWzAjRtYbLS
+ 2BlrzmG7Dd5dEUW0zH62Z5KaOyvam7gHVYkme9lqy1JC7j.TI1TDxFoUmSuIt4z71FUHFh2nZzO5
+ voakZeFwD49NtIphkja2Pd2TZQctaBqdCxV34zDbgb7qR7zPLVJmMqGMLsCG4DAQhkfjjBQjCZIw
+ t576feV9I6QlakgEk7U9sUahStWXoLFC2K.N8bj4SkuxiedvkJBZadEZnZUKCxY7L4ZWqkN8kbiu
+ 5tlc12As8arWWHAVOety7tUVEQAoDk80qdafhlg_Bp8eVMj5cE8mZxk8QZJsaNDF9Fdp6YVnl0ZB
+ hxSgL5y9fidgFvtvfKfNhfqXb6TCMMUuVygeghEEGe2X3fcG7Z8MPORbuJ.u7gnh6SITYVMrT5KC
+ JGoqFbWaYqwkeLpPIRgLE62LBz9N50L0NVxP2b7nCIgxb8qsgTK6LsVCeMLhZHkFHgezvc8ZVvSm
+ YBH.bnvZCYRpuq760sEUjXnlkSra2
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ne1.yahoo.com with HTTP; Fri, 14 Sep 2018 00:08:44 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.102]) ([67.169.65.224])
+          by smtp403.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 2d3f7c4a149abb53dce8b7ea864472ca;
+          Fri, 14 Sep 2018 00:08:44 +0000 (UTC)
+Subject: Re: [PATCH 10/10] LSM: Blob sharing support for S.A.R.A and LandLock
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        SE Linux <selinux@tycho.nsa.gov>,
+        John Johansen <john.johansen@canonical.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>
 References: <cbf848ae-a1ac-c5ab-f23b-bc9217fceebe@schaufler-ca.com>
- <99cb1ae7-8881-eb9a-a8cb-a787abe454e1@schaufler-ca.com> <CAGXu5jLONSfPHYYYTLSma-+arVHSQKaEWb9JxpOn6TNKtyLNhw@mail.gmail.com>
+ <99cb1ae7-8881-eb9a-a8cb-a787abe454e1@schaufler-ca.com>
+ <CAGXu5jLONSfPHYYYTLSma-+arVHSQKaEWb9JxpOn6TNKtyLNhw@mail.gmail.com>
  <CAHC9VhQN0wq0zZS5BYU9jBomaWvCaJ_BqJjHF3AT7FG8Z0nLDQ@mail.gmail.com>
  <CAGXu5jJs6kmd6Tjgwqb2Zx7e-jNbHqfJ57poZuyz4Qj=AKVfmQ@mail.gmail.com>
  <CAHC9VhQ20tBAMwOJ9mg0tBHYUoxjh0Szr3d62HuPw2SyT4XDLw@mail.gmail.com>
@@ -74,49 +68,41 @@ References: <cbf848ae-a1ac-c5ab-f23b-bc9217fceebe@schaufler-ca.com>
  <CAHC9VhQwT4d3wC37cVrrX-hZq1L3e6=TEAse4m-YH9SiFnkieA@mail.gmail.com>
  <CAGXu5jLapViSK-j08Tq8cCZodiZXFsXze71xFPg6MQhDWDHDAA@mail.gmail.com>
  <CAGXu5j+j47FH5RF2vrJh95=YFX76oSBFo8O6GZqa0utcfE1AVA@mail.gmail.com>
- <0eb75e66-ed50-4013-6440-38bc2f814c6f@canonical.com> <CAGXu5jKZ7rquTux5fS+5tQ==0w_9rDTRaJWS_mS7C+Fy2dXRRQ@mail.gmail.com>
- <a2ffa6b7-5d05-39a1-11c3-d715566e4d51@schaufler-ca.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Thu, 13 Sep 2018 17:06:16 -0700
-X-Gmail-Original-Message-ID: <CAGXu5j+PhwfRCg5PycrE-JReVxKMduGsoXStWZN6PfYB-NB1og@mail.gmail.com>
-Message-ID: <CAGXu5j+PhwfRCg5PycrE-JReVxKMduGsoXStWZN6PfYB-NB1og@mail.gmail.com>
-Subject: Re: [PATCH 10/10] LSM: Blob sharing support for S.A.R.A and LandLock
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     John Johansen <john.johansen@canonical.com>,
-        Paul Moore <paul@paul-moore.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        SE Linux <selinux@tycho.nsa.gov>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+ <d1d12866-d557-8c15-6506-a54b9d927952@schaufler-ca.com>
+ <CAGXu5jJG=wk6e_RU=KYDY48kOc=RmL3OB79T+rHqCyzaDSn=zg@mail.gmail.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <5b983bba-049c-795a-3354-a2e8ab33cecf@schaufler-ca.com>
+Date:   Thu, 13 Sep 2018 17:08:41 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <CAGXu5jJG=wk6e_RU=KYDY48kOc=RmL3OB79T+rHqCyzaDSn=zg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 13, 2018 at 5:03 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
-> On 9/13/2018 4:51 PM, Kees Cook wrote:
->> So, before we can really make a decision, I think we have to decide:
->> should ordering be arbitrary for even this level of stacking?
+On 9/13/2018 4:57 PM, Kees Cook wrote:
+> On Thu, Sep 13, 2018 at 4:51 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 9/13/2018 4:06 PM, Kees Cook wrote:
+>>> - what order should any stacking happen? Makefile? security=?
+>> Makefile by default.
+> Okay, if ordering is by Makefile and everyone dislikes my
+> $lsm.enabled=0/1 thing, then these mean the same thing:
 >
-> Do we have a case where it matters? I know that I could write a
-> module that would have issues if one hook got called and another
-> didn't because because a precursor module hook failed. I don't
-> think that any of the existing modules have this problem.
+> security=selinux,tomoyo
+> security=tomoyo,selinux
+>
+> i.e. order of security= is _ignored_ in favor of the Makefile ordering.
 
-FWIW, I prefer having explicit ordering that cannot be changed at
-runtime. I'm just concerned about painting ourselves (further) into a
-corner with security= suddenly gaining ordering semantics, but maybe I
-can just ignore this and we can point and laugh at anyone who gets
-burned by some future change to making it order-sensitive. :)
+No, I think that the two lines above should have a different
+execution order. If we really need to specify multiple modules
+at boot time that is what makes the most sense.
 
--Kees
+It's a matter of mechanics and probably another pass during the
+init process, but it's doable. If we determine it's necessary for
+this stage it is just work.
 
--- 
-Kees Cook
-Pixel Security
