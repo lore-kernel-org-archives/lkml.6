@@ -2,163 +2,511 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=0.6 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0842FFC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:32:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AAB8C070C3
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:32:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9C3620866
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:32:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9C3620866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id AD03D20882
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:32:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD03D20882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728126AbeINNqB (ORCPT
+        id S1728171AbeINNqF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 09:46:01 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57464 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726883AbeINNqB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 09:46:01 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E2EEAAFA1;
-        Fri, 14 Sep 2018 08:32:35 +0000 (UTC)
-Subject: Re: [PATCH 1/6] xenbus: prepare data structures and parameter for
- xenwatch multithreading
-To:     Dongli Zhang <dongli.zhang@oracle.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-Cc:     boris.ostrovsky@oracle.com, paul.durrant@citrix.com,
-        wei.liu2@citrix.com, konrad.wilk@oracle.com, roger.pau@citrix.com,
-        srinivas.eeda@oracle.com
-References: <1536910456-13337-1-git-send-email-dongli.zhang@oracle.com>
- <1536910456-13337-2-git-send-email-dongli.zhang@oracle.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <23dc17b9-dc76-776b-74ef-d11f4b77552d@suse.com>
-Date:   Fri, 14 Sep 2018 10:32:35 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 14 Sep 2018 09:46:05 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:36816 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726883AbeINNqF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 09:46:05 -0400
+Received: by mail-lf1-f66.google.com with SMTP id x207-v6so7165996lff.3;
+        Fri, 14 Sep 2018 01:32:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=X5SxWrccmm1Hq+aX7X9m/Xk3IsyoPFtn9KdEMCWQfhM=;
+        b=ns6k8DBpr7W+AlknORslrb3z9m0xNIwz0s9v2pgXO/2xj6Ma1iHC/1c9o0nWFLMqVD
+         VSDAKhsFpjrBmi8HBzNMwFE6wyvXTD4YGWP3vdzi15oMd5Rh4TpIPjGZBk2IVp3Iwk/b
+         zU4kzspB9bUNIoctRSDH4mpRVzIKiD+C/Hqj/xPpPI4rb6vbAmjh6L03IRriaClBxLMK
+         qJ+B3jY120sgJnLuVT3E+Lr9irtP6MjSxvgS4byhVpWo74W3ToAsrWyNXR7oZ2zg/rNJ
+         pMmrM93z+dZjYuYtMVbK3aDLn1aNwmKa0/wkAGFOz4WzTeQT/gljnZJlPaNO/n6KB3SZ
+         YemQ==
+X-Gm-Message-State: APzg51AIItzfZyyInw5y+H+4XitXjlDrASB9r24tfcTP9vmx9EHMPVY6
+        uU8WbVRpqhXrW7jZyegStic=
+X-Google-Smtp-Source: ANB0VdYNLZwtGscD8oMuAoKboddyjlbfMm6r4pHGHJo7socXIcS+OXRyNpiEirfm48PhPSU6HqPOEg==
+X-Received: by 2002:a19:5911:: with SMTP id n17-v6mr7945000lfb.102.1536913958268;
+        Fri, 14 Sep 2018 01:32:38 -0700 (PDT)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id g16-v6sm1101075lje.1.2018.09.14.01.32.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 14 Sep 2018 01:32:37 -0700 (PDT)
+Date:   Fri, 14 Sep 2018 11:32:26 +0300
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        lgirdwood@gmail.com, broonie@kernel.org, sboyd@kernel.org,
+        mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com,
+        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH v3 5/7] regulator/mfd: bd718xx: rename bd71837/bd71847 common
+ instances
+Message-ID: <4e890fe931bdf8100de86452c0f6f512c8553b1a.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-In-Reply-To: <1536910456-13337-2-git-send-email-dongli.zhang@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/09/18 09:34, Dongli Zhang wrote:
-> This is the 1st patch of a (6-patch) patch set.
-> 
-> This patch set of six patches introduces xenwatch multithreading (or
-> multithreaded xenwatch, abbreviated as 'mtwatch') to dom0 kernel. In
-> addition to the existing single xenwatch thread, each domU has its own
-> kernel thread ([xen-mtwatch-<domid>]) to process its xenwatch event.
-> 
-> A kernel parameter 'xen_mtwatch' is introduced to control whether the
-> feature is enabled or not during dom0 kernel boot. The feature is disabled
-> by default if 'xen_mtwatch' is not set in grub. In addition, this patch
-> also introduces the data structures to maintain the status of each per-domU
-> xenwatch thread. The status of each xenwatch thread (except the default
-> one) is maintained by a mtwatch domain.
-> 
-> The feature is available only on dom0.
-> 
-> Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
-> ---
->  Documentation/admin-guide/kernel-parameters.txt |  3 ++
->  drivers/xen/xenbus/xenbus_xs.c                  | 31 ++++++++++++
->  include/xen/xenbus.h                            | 65 +++++++++++++++++++++++++
->  3 files changed, 99 insertions(+)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index 64a3bf5..fc295ef 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -4992,6 +4992,9 @@
->  				the unplug protocol
->  			never -- do not unplug even if version check succeeds
->  
-> +	xen_mtwatch     [KNL,XEN]
-> +			Enables the multithreaded xenwatch (mtwatch).
-> +
->  	xen_nopvspin	[X86,XEN]
->  			Disables the ticketlock slowpath using Xen PV
->  			optimizations.
-> diff --git a/drivers/xen/xenbus/xenbus_xs.c b/drivers/xen/xenbus/xenbus_xs.c
-> index 49a3874..3f137d2 100644
-> --- a/drivers/xen/xenbus/xenbus_xs.c
-> +++ b/drivers/xen/xenbus/xenbus_xs.c
-> @@ -95,6 +95,19 @@ static pid_t xenwatch_pid;
->  static DEFINE_MUTEX(xenwatch_mutex);
->  static DECLARE_WAIT_QUEUE_HEAD(watch_events_waitq);
->  
-> +bool xen_mtwatch;
-> +EXPORT_SYMBOL_GPL(xen_mtwatch);
-> +
-> +struct mtwatch_info *mtwatch_info;
-> +
-> +static bool param_xen_mtwatch;
-> +static __init int xen_parse_mtwatch(char *arg)
-> +{
-> +	param_xen_mtwatch = true;
-> +	return 0;
-> +}
-> +early_param("xen_mtwatch", xen_parse_mtwatch);
+Rename parts of code that support both BD71837 and BD71847 to BD718XX.
 
-Add a Kconfig item to set the default when building the kernel? We can
-start with default "off", but later we might want to enable this feature
-as the default.
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+---
+ drivers/mfd/rohm-bd718x7.c            | 98 +++++++++++++++++------------------
+ drivers/regulator/bd71837-regulator.c | 26 +++++-----
+ include/linux/mfd/rohm-bd718x7.h      | 64 +++++++++++------------
+ 3 files changed, 94 insertions(+), 94 deletions(-)
 
-> +
->  static void xs_suspend_enter(void)
->  {
->  	spin_lock(&xs_state_lock);
-> @@ -929,6 +942,24 @@ int xs_init(void)
->  	if (err)
->  		return err;
->  
-> +	if (xen_initial_domain() && param_xen_mtwatch) {
+diff --git a/drivers/mfd/rohm-bd718x7.c b/drivers/mfd/rohm-bd718x7.c
+index ce5aa5cd3545..161c8aac6d86 100644
+--- a/drivers/mfd/rohm-bd718x7.c
++++ b/drivers/mfd/rohm-bd718x7.c
+@@ -2,9 +2,9 @@
+ //
+ // Copyright (C) 2018 ROHM Semiconductors
+ //
+-// ROHM BD71837MWV PMIC driver
++// ROHM BD71837MWV and BD71847MWV PMIC driver
+ //
+-// Datasheet available from
++// Datasheet for BD71837MWV available from
+ // https://www.rohm.com/datasheet/BD71837MWV/bd71837mwv-e
+ 
+ #include <linux/gpio_keys.h>
+@@ -30,7 +30,7 @@ static struct gpio_keys_platform_data bd718xx_powerkey_data = {
+ 	.name = "bd718xx-pwrkey",
+ };
+ 
+-static struct mfd_cell bd71837_mfd_cells[] = {
++static struct mfd_cell bd718xx_mfd_cells[] = {
+ 	{
+ 		.name = "gpio-keys",
+ 		.platform_data = &bd718xx_powerkey_data,
+@@ -40,20 +40,20 @@ static struct mfd_cell bd71837_mfd_cells[] = {
+ 	{ .name = "bd718xx-pmic", },
+ };
+ 
+-static const struct regmap_irq bd71837_irqs[] = {
+-	REGMAP_IRQ_REG(BD71837_INT_SWRST, 0, BD71837_INT_SWRST_MASK),
+-	REGMAP_IRQ_REG(BD71837_INT_PWRBTN_S, 0, BD71837_INT_PWRBTN_S_MASK),
+-	REGMAP_IRQ_REG(BD71837_INT_PWRBTN_L, 0, BD71837_INT_PWRBTN_L_MASK),
+-	REGMAP_IRQ_REG(BD71837_INT_PWRBTN, 0, BD71837_INT_PWRBTN_MASK),
+-	REGMAP_IRQ_REG(BD71837_INT_WDOG, 0, BD71837_INT_WDOG_MASK),
+-	REGMAP_IRQ_REG(BD71837_INT_ON_REQ, 0, BD71837_INT_ON_REQ_MASK),
+-	REGMAP_IRQ_REG(BD71837_INT_STBY_REQ, 0, BD71837_INT_STBY_REQ_MASK),
++static const struct regmap_irq bd718xx_irqs[] = {
++	REGMAP_IRQ_REG(BD718XX_INT_SWRST, 0, BD718XX_INT_SWRST_MASK),
++	REGMAP_IRQ_REG(BD718XX_INT_PWRBTN_S, 0, BD718XX_INT_PWRBTN_S_MASK),
++	REGMAP_IRQ_REG(BD718XX_INT_PWRBTN_L, 0, BD718XX_INT_PWRBTN_L_MASK),
++	REGMAP_IRQ_REG(BD718XX_INT_PWRBTN, 0, BD718XX_INT_PWRBTN_MASK),
++	REGMAP_IRQ_REG(BD718XX_INT_WDOG, 0, BD718XX_INT_WDOG_MASK),
++	REGMAP_IRQ_REG(BD718XX_INT_ON_REQ, 0, BD718XX_INT_ON_REQ_MASK),
++	REGMAP_IRQ_REG(BD718XX_INT_STBY_REQ, 0, BD718XX_INT_STBY_REQ_MASK),
+ };
+ 
+-static struct regmap_irq_chip bd71837_irq_chip = {
+-	.name = "bd71837-irq",
+-	.irqs = bd71837_irqs,
+-	.num_irqs = ARRAY_SIZE(bd71837_irqs),
++static struct regmap_irq_chip bd718xx_irq_chip = {
++	.name = "bd718xx-irq",
++	.irqs = bd718xx_irqs,
++	.num_irqs = ARRAY_SIZE(bd718xx_irqs),
+ 	.num_regs = 1,
+ 	.irq_reg_stride = 1,
+ 	.status_base = BD718XX_REG_IRQ,
+@@ -73,7 +73,7 @@ static const struct regmap_access_table volatile_regs = {
+ 	.n_yes_ranges = 1,
+ };
+ 
+-static const struct regmap_config bd71837_regmap_config = {
++static const struct regmap_config bd718xx_regmap_config = {
+ 	.reg_bits = 8,
+ 	.val_bits = 8,
+ 	.volatile_table = &volatile_regs,
+@@ -81,10 +81,10 @@ static const struct regmap_config bd71837_regmap_config = {
+ 	.cache_type = REGCACHE_RBTREE,
+ };
+ 
+-static int bd71837_i2c_probe(struct i2c_client *i2c,
++static int bd718xx_i2c_probe(struct i2c_client *i2c,
+ 			    const struct i2c_device_id *id)
+ {
+-	struct bd71837 *bd71837;
++	struct bd718xx *bd718xx;
+ 	int ret;
+ 
+ 	if (!i2c->irq) {
+@@ -92,33 +92,33 @@ static int bd71837_i2c_probe(struct i2c_client *i2c,
+ 		return -EINVAL;
+ 	}
+ 
+-	bd71837 = devm_kzalloc(&i2c->dev, sizeof(struct bd71837), GFP_KERNEL);
++	bd718xx = devm_kzalloc(&i2c->dev, sizeof(struct bd718xx), GFP_KERNEL);
+ 
+-	if (!bd71837)
++	if (!bd718xx)
+ 		return -ENOMEM;
+ 
+-	bd71837->chip_irq = i2c->irq;
+-	bd71837->chip_type = (unsigned int)(uintptr_t)
++	bd718xx->chip_irq = i2c->irq;
++	bd718xx->chip_type = (unsigned int)
+ 				of_device_get_match_data(&i2c->dev);
+-	bd71837->dev = &i2c->dev;
+-	dev_set_drvdata(&i2c->dev, bd71837);
++	bd718xx->dev = &i2c->dev;
++	dev_set_drvdata(&i2c->dev, bd718xx);
+ 
+-	bd71837->regmap = devm_regmap_init_i2c(i2c, &bd71837_regmap_config);
+-	if (IS_ERR(bd71837->regmap)) {
++	bd718xx->regmap = devm_regmap_init_i2c(i2c, &bd718xx_regmap_config);
++	if (IS_ERR(bd718xx->regmap)) {
+ 		dev_err(&i2c->dev, "regmap initialization failed\n");
+-		return PTR_ERR(bd71837->regmap);
++		return PTR_ERR(bd718xx->regmap);
+ 	}
+ 
+-	ret = devm_regmap_add_irq_chip(&i2c->dev, bd71837->regmap,
+-				       bd71837->chip_irq, IRQF_ONESHOT, 0,
+-				       &bd71837_irq_chip, &bd71837->irq_data);
++	ret = devm_regmap_add_irq_chip(&i2c->dev, bd718xx->regmap,
++				       bd718xx->chip_irq, IRQF_ONESHOT, 0,
++				       &bd718xx_irq_chip, &bd718xx->irq_data);
+ 	if (ret) {
+ 		dev_err(&i2c->dev, "Failed to add irq_chip\n");
+ 		return ret;
+ 	}
+ 
+ 	/* Configure short press to 10 milliseconds */
+-	ret = regmap_update_bits(bd71837->regmap,
++	ret = regmap_update_bits(bd718xx->regmap,
+ 				 BD718XX_REG_PWRONCONFIG0,
+ 				 BD718XX_PWRBTN_PRESS_DURATION_MASK,
+ 				 BD718XX_PWRBTN_SHORT_PRESS_10MS);
+@@ -129,7 +129,7 @@ static int bd71837_i2c_probe(struct i2c_client *i2c,
+ 	}
+ 
+ 	/* Configure long press to 10 seconds */
+-	ret = regmap_update_bits(bd71837->regmap,
++	ret = regmap_update_bits(bd718xx->regmap,
+ 				 BD718XX_REG_PWRONCONFIG1,
+ 				 BD718XX_PWRBTN_PRESS_DURATION_MASK,
+ 				 BD718XX_PWRBTN_LONG_PRESS_10S);
+@@ -140,7 +140,7 @@ static int bd71837_i2c_probe(struct i2c_client *i2c,
+ 		return ret;
+ 	}
+ 
+-	ret = regmap_irq_get_virq(bd71837->irq_data, BD71837_INT_PWRBTN_S);
++	ret = regmap_irq_get_virq(bd718xx->irq_data, BD718XX_INT_PWRBTN_S);
+ 
+ 	if (ret < 0) {
+ 		dev_err(&i2c->dev, "Failed to get the IRQ\n");
+@@ -149,17 +149,17 @@ static int bd71837_i2c_probe(struct i2c_client *i2c,
+ 
+ 	button.irq = ret;
+ 
+-	ret = devm_mfd_add_devices(bd71837->dev, PLATFORM_DEVID_AUTO,
+-				   bd71837_mfd_cells,
+-				   ARRAY_SIZE(bd71837_mfd_cells), NULL, 0,
+-				   regmap_irq_get_domain(bd71837->irq_data));
++	ret = devm_mfd_add_devices(bd718xx->dev, PLATFORM_DEVID_AUTO,
++				   bd718xx_mfd_cells,
++				   ARRAY_SIZE(bd718xx_mfd_cells), NULL, 0,
++				   regmap_irq_get_domain(bd718xx->irq_data));
+ 	if (ret)
+ 		dev_err(&i2c->dev, "Failed to create subdevices\n");
+ 
+ 	return ret;
+ }
+ 
+-static const struct of_device_id bd71837_of_match[] = {
++static const struct of_device_id bd718xx_of_match[] = {
+ 	{
+ 		.compatible = "rohm,bd71837",
+ 		.data = (void *)BD718XX_TYPE_BD71837,
+@@ -170,30 +170,30 @@ static const struct of_device_id bd71837_of_match[] = {
+ 	},
+ 	{ }
+ };
+-MODULE_DEVICE_TABLE(of, bd71837_of_match);
++MODULE_DEVICE_TABLE(of, bd718xx_of_match);
+ 
+-static struct i2c_driver bd71837_i2c_driver = {
++static struct i2c_driver bd718xx_i2c_driver = {
+ 	.driver = {
+ 		.name = "rohm-bd718x7",
+-		.of_match_table = bd71837_of_match,
++		.of_match_table = bd718xx_of_match,
+ 	},
+-	.probe = bd71837_i2c_probe,
++	.probe = bd718xx_i2c_probe,
+ };
+ 
+-static int __init bd71837_i2c_init(void)
++static int __init bd718xx_i2c_init(void)
+ {
+-	return i2c_add_driver(&bd71837_i2c_driver);
++	return i2c_add_driver(&bd718xx_i2c_driver);
+ }
+ 
+ /* Initialise early so consumer devices can complete system boot */
+-subsys_initcall(bd71837_i2c_init);
++subsys_initcall(bd718xx_i2c_init);
+ 
+-static void __exit bd71837_i2c_exit(void)
++static void __exit bd718xx_i2c_exit(void)
+ {
+-	i2c_del_driver(&bd71837_i2c_driver);
++	i2c_del_driver(&bd718xx_i2c_driver);
+ }
+-module_exit(bd71837_i2c_exit);
++module_exit(bd718xx_i2c_exit);
+ 
+ MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
+-MODULE_DESCRIPTION("ROHM BD71837 Power Management IC driver");
++MODULE_DESCRIPTION("ROHM BD71837/BD71847 Power Management IC driver");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/regulator/bd71837-regulator.c b/drivers/regulator/bd71837-regulator.c
+index 1dbba20ede3e..8e89334f94d1 100644
+--- a/drivers/regulator/bd71837-regulator.c
++++ b/drivers/regulator/bd71837-regulator.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ // Copyright (C) 2018 ROHM Semiconductors
+-// bd71837-regulator.c ROHM BD71837MWV regulator driver
++// bd71837-regulator.c ROHM BD71837MWV/BD71847MWV regulator driver
+ 
+ #include <linux/delay.h>
+ #include <linux/err.h>
+@@ -17,7 +17,7 @@
+ 
+ struct bd718xx_pmic {
+ 	struct bd718xx_regulator_data *rdata;
+-	struct bd71837 *mfd;
++	struct bd718xx *mfd;
+ 	struct platform_device *pdev;
+ 	struct regulator_dev *rdev[BD718XX_REGULATOR_AMOUNT];
+ };
+@@ -30,11 +30,11 @@ struct bd718xx_pmic {
+  * 10: 2.50mV/usec	10mV 4uS
+  * 11: 1.25mV/usec	10mV 8uS
+  */
+-static int bd71837_buck1234_set_ramp_delay(struct regulator_dev *rdev,
++static int bd718xx_buck1234_set_ramp_delay(struct regulator_dev *rdev,
+ 					   int ramp_delay)
+ {
+ 	struct bd718xx_pmic *pmic = rdev_get_drvdata(rdev);
+-	struct bd71837 *mfd = pmic->mfd;
++	struct bd718xx *mfd = pmic->mfd;
+ 	int id = rdev->desc->id;
+ 	unsigned int ramp_value = BUCK_RAMPRATE_10P00MV;
+ 
+@@ -124,7 +124,7 @@ static struct regulator_ops bd718xx_dvs_buck_regulator_ops = {
+ 	.set_voltage_sel = regulator_set_voltage_sel_regmap,
+ 	.get_voltage_sel = regulator_get_voltage_sel_regmap,
+ 	.set_voltage_time_sel = regulator_set_voltage_time_sel,
+-	.set_ramp_delay = bd71837_buck1234_set_ramp_delay,
++	.set_ramp_delay = bd718xx_buck1234_set_ramp_delay,
+ };
+ 
+ /*
+@@ -378,7 +378,7 @@ static const struct bd718xx_regulator_data bd71847_regulators[] = {
+ 		.desc = {
+ 			.name = "buck5",
+ 			.of_match = of_match_ptr("BUCK5"),
+-				.regulators_node = of_match_ptr("regulators"),
++			.regulators_node = of_match_ptr("regulators"),
+ 			.id = BD718XX_BUCK5,
+ 			.ops = &bd718xx_buck_regulator_nolinear_ops,
+ 			.type = REGULATOR_VOLTAGE,
+@@ -404,7 +404,7 @@ static const struct bd718xx_regulator_data bd71847_regulators[] = {
+ 			.id = BD718XX_BUCK6,
+ 			.ops = &bd718xx_buck_regulator_ops,
+ 			.type = REGULATOR_VOLTAGE,
+-			.n_voltages = BD71837_4TH_NODVS_BUCK_VOLTAGE_NUM,
++			.n_voltages = BD718XX_4TH_NODVS_BUCK_VOLTAGE_NUM,
+ 			.linear_ranges = bd718xx_4th_nodvs_buck_volts,
+ 			.n_linear_ranges =
+ 				ARRAY_SIZE(bd718xx_4th_nodvs_buck_volts),
+@@ -732,7 +732,7 @@ static const struct bd718xx_regulator_data bd71837_regulators[] = {
+ 			.id = BD718XX_BUCK8,
+ 			.ops = &bd718xx_buck_regulator_ops,
+ 			.type = REGULATOR_VOLTAGE,
+-			.n_voltages = BD71837_4TH_NODVS_BUCK_VOLTAGE_NUM,
++			.n_voltages = BD718XX_4TH_NODVS_BUCK_VOLTAGE_NUM,
+ 			.linear_ranges = bd718xx_4th_nodvs_buck_volts,
+ 			.n_linear_ranges =
+ 				ARRAY_SIZE(bd718xx_4th_nodvs_buck_volts),
+@@ -923,7 +923,7 @@ struct bd718xx_pmic_inits {
+ 	unsigned int r_amount;
+ };
+ 
+-static int bd71837_probe(struct platform_device *pdev)
++static int bd718xx_probe(struct platform_device *pdev)
+ {
+ 	struct bd718xx_pmic *pmic;
+ 	struct regulator_config config = { 0 };
+@@ -1027,15 +1027,15 @@ static int bd71837_probe(struct platform_device *pdev)
+ 	return err;
+ }
+ 
+-static struct platform_driver bd71837_regulator = {
++static struct platform_driver bd718xx_regulator = {
+ 	.driver = {
+ 		.name = "bd718xx-pmic",
+ 	},
+-	.probe = bd71837_probe,
++	.probe = bd718xx_probe,
+ };
+ 
+-module_platform_driver(bd71837_regulator);
++module_platform_driver(bd718xx_regulator);
+ 
+ MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
+-MODULE_DESCRIPTION("BD71837 voltage regulator driver");
++MODULE_DESCRIPTION("BD71837/BD71847 voltage regulator driver");
+ MODULE_LICENSE("GPL");
+diff --git a/include/linux/mfd/rohm-bd718x7.h b/include/linux/mfd/rohm-bd718x7.h
+index 625e3607e069..fed5fed75732 100644
+--- a/include/linux/mfd/rohm-bd718x7.h
++++ b/include/linux/mfd/rohm-bd718x7.h
+@@ -1,8 +1,8 @@
+ /* SPDX-License-Identifier: GPL-2.0-or-later */
+ /* Copyright (C) 2018 ROHM Semiconductors */
+ 
+-#ifndef __LINUX_MFD_BD71837_H__
+-#define __LINUX_MFD_BD71837_H__
++#ifndef __LINUX_MFD_BD718XX_H__
++#define __LINUX_MFD_BD718XX_H__
+ 
+ #include <linux/regmap.h>
+ 
+@@ -40,7 +40,7 @@ enum {
+ 
+ #define BD718XX_DVS_BUCK_VOLTAGE_NUM		0x3D
+ #define BD718XX_1ST_NODVS_BUCK_VOLTAGE_NUM	0x08
+-#define BD71837_4TH_NODVS_BUCK_VOLTAGE_NUM	0x3D
++#define BD718XX_4TH_NODVS_BUCK_VOLTAGE_NUM	0x3D
+ 
+ #define BD718XX_LDO1_VOLTAGE_NUM	0x04
+ #define BD718XX_LDO2_VOLTAGE_NUM	0x02
+@@ -183,7 +183,7 @@ enum {
+ #define BD71837_BUCK4_VRMON130          0x80
+ #define BD71837_LDO7_VRMON80            0x40
+ 
+-/* BD71837_REG_IRQ bits */
++/* BD718XX_REG_IRQ bits */
+ #define IRQ_SWRST		0x40
+ #define IRQ_PWRON_S		0x20
+ #define IRQ_PWRON_L		0x10
+@@ -192,31 +192,31 @@ enum {
+ #define IRQ_ON_REQ		0x02
+ #define IRQ_STBY_REQ		0x01
+ 
+-/* BD71837_REG_OUT32K bits */
+-#define BD71837_OUT32K_EN	0x01
++/* BD718XX_REG_OUT32K bits */
++#define BD718XX_OUT32K_EN	0x01
+ 
+-/* BD71837 gated clock rate */
+-#define BD71837_CLK_RATE 32768
++/* BD7183XX gated clock rate */
++#define BD718XX_CLK_RATE 32768
+ 
+-/* ROHM BD71837 irqs */
++/* ROHM BD718XX irqs */
+ enum {
+-	BD71837_INT_STBY_REQ,
+-	BD71837_INT_ON_REQ,
+-	BD71837_INT_WDOG,
+-	BD71837_INT_PWRBTN,
+-	BD71837_INT_PWRBTN_L,
+-	BD71837_INT_PWRBTN_S,
+-	BD71837_INT_SWRST
++	BD718XX_INT_STBY_REQ,
++	BD718XX_INT_ON_REQ,
++	BD718XX_INT_WDOG,
++	BD718XX_INT_PWRBTN,
++	BD718XX_INT_PWRBTN_L,
++	BD718XX_INT_PWRBTN_S,
++	BD718XX_INT_SWRST
+ };
+ 
+-/* ROHM BD71837 interrupt masks */
+-#define BD71837_INT_SWRST_MASK		0x40
+-#define BD71837_INT_PWRBTN_S_MASK	0x20
+-#define BD71837_INT_PWRBTN_L_MASK	0x10
+-#define BD71837_INT_PWRBTN_MASK		0x8
+-#define BD71837_INT_WDOG_MASK		0x4
+-#define BD71837_INT_ON_REQ_MASK		0x2
+-#define BD71837_INT_STBY_REQ_MASK	0x1
++/* ROHM BD718XX interrupt masks */
++#define BD718XX_INT_SWRST_MASK		0x40
++#define BD718XX_INT_PWRBTN_S_MASK	0x20
++#define BD718XX_INT_PWRBTN_L_MASK	0x10
++#define BD718XX_INT_PWRBTN_MASK		0x8
++#define BD718XX_INT_WDOG_MASK		0x4
++#define BD718XX_INT_ON_REQ_MASK		0x2
++#define BD718XX_INT_STBY_REQ_MASK	0x1
+ 
+ /* Register write induced reset settings */
+ 
+@@ -226,13 +226,13 @@ enum {
+  * write 1 to it we will trigger the action. So always write 0 to it when
+  * changning SWRESET action - no matter what we read from it.
+  */
+-#define BD71837_SWRESET_TYPE_MASK	7
+-#define BD71837_SWRESET_TYPE_DISABLED	0
+-#define BD71837_SWRESET_TYPE_COLD	4
+-#define BD71837_SWRESET_TYPE_WARM	6
++#define BD718XX_SWRESET_TYPE_MASK	7
++#define BD718XX_SWRESET_TYPE_DISABLED	0
++#define BD718XX_SWRESET_TYPE_COLD	4
++#define BD718XX_SWRESET_TYPE_WARM	6
+ 
+-#define BD71837_SWRESET_RESET_MASK	1
+-#define BD71837_SWRESET_RESET		1
++#define BD718XX_SWRESET_RESET_MASK	1
++#define BD718XX_SWRESET_RESET		1
+ 
+ /* Poweroff state transition conditions */
+ 
+@@ -320,7 +320,7 @@ enum {
+ struct bd718xx_pmic;
+ struct bd718xx_clk;
+ 
+-struct bd71837 {
++struct bd718xx {
+ 	unsigned int chip_type;
+ 	struct device *dev;
+ 	struct regmap *regmap;
+@@ -333,4 +333,4 @@ struct bd71837 {
+ 	struct bd718xx_clk *clk;
+ };
+ 
+-#endif /* __LINUX_MFD_BD71837_H__ */
++#endif /* __LINUX_MFD_BD718XX_H__ */
+-- 
+2.14.3
 
-Wouldn't it be better to drop the test for xen_initial_domain() and do
-this initialization only when a caller (backend) is requesting the
-multithread mode? This would avoid wasting memory in case it isn't going
-top be used and - more important - would support driver domains.
-
-
-Juergen
