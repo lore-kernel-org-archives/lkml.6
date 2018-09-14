@@ -2,105 +2,85 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AFF4ECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:29:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 273D6FC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:30:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D48C20671
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:29:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D48C20671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id D137C20671
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:30:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ZOfwqaBF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D137C20671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728201AbeINSoQ (ORCPT
+        id S1728257AbeINSof (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 14:44:16 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:43124 "EHLO mail.bootlin.com"
+        Fri, 14 Sep 2018 14:44:35 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:34635 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727611AbeINSoP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 14:44:15 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id C2B5F206FF; Fri, 14 Sep 2018 15:29:41 +0200 (CEST)
-Received: from qschulz (AAubervilliers-681-1-99-10.w90-88.abo.wanadoo.fr [90.88.4.10])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 7215B206EE;
-        Fri, 14 Sep 2018 15:29:31 +0200 (CEST)
-Date:   Fri, 14 Sep 2018 15:29:30 +0200
-From:   Quentin Schulz <quentin.schulz@bootlin.com>
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     alexandre.belloni@bootlin.com, ralf@linux-mips.org,
-        paul.burton@mips.com, jhogan@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, davem@davemloft.net, f.fainelli@gmail.com,
-        allan.nielsen@microchip.com, linux-mips@linux-mips.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        id S1727611AbeINSof (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 14:44:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=1l9ugV6Aa6CqRnG98Lun2VDfwNOh2p50okizB/MSpnA=;
+        b=ZOfwqaBFSkRK4/puWDptzIRwt3cFPRpHsp5H5PsYfQxOeDjEM45DfPe8MENCgLqD+jCNdtLh6xiw5LkzhyP9j8zHR7jUff1EW64a3nEPcj2eidNmIuTNbNi4IMlpnn6b/TOFPGE8mkrDxz/onkyWPZbsHerqQSRkUhE9sNI2vpc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1g0oAZ-0004V0-Oi; Fri, 14 Sep 2018 15:29:59 +0200
+Date:   Fri, 14 Sep 2018 15:29:59 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Quentin Schulz <quentin.schulz@bootlin.com>
+Cc:     davem@davemloft.net, f.fainelli@gmail.com,
+        allan.nielsen@microchip.com, linux-kernel@vger.kernel.org,
         netdev@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        antoine.tenart@bootlin.com
-Subject: Re: [PATCH net-next 2/7] net: phy: mscc: add support for VSC8584 PHY
-Message-ID: <20180914132930.fphdm3dm2incetbq@qschulz>
-References: <cover.b921b010b6d6bde1c11e69551ae38f3b2818645b.1536916714.git-series.quentin.schulz@bootlin.com>
- <a61d9affd3f1ec9deb60c882cce1daf37fbe2427.1536916714.git-series.quentin.schulz@bootlin.com>
- <20180914131846.GG14865@lunn.ch>
+        Raju Lakkaraju <Raju.Lakkaraju@microsemi.com>
+Subject: Re: [PATCH net-next 1/5] net: phy: mscc: add ethtool statistics
+ counters
+Message-ID: <20180914132959.GH14865@lunn.ch>
+References: <cover.616d15610d44a0e3d463acd8119859f243163ad2.1536913944.git-series.quentin.schulz@bootlin.com>
+ <e220fe75053e200f91554b752905d84b14b76eb6.1536913944.git-series.quentin.schulz@bootlin.com>
+ <20180914130156.GB14865@lunn.ch>
+ <20180914131645.64k4w4h7ir3u5yuk@qschulz>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="w2cfxpmyvzbuyq6t"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180914131846.GG14865@lunn.ch>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20180914131645.64k4w4h7ir3u5yuk@qschulz>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+> When you change a page, you basically can access only the registers in
+> this page so if there are two functions requesting different pages at
+> the same time or registers of different pages, it won't work well
+> indeed.
+> 
+> > phy_read_page() and phy_write_page() will do the needed locking if
+> > this is an issue.
+> > 
+> 
+> That's awesome! Didn't know it existed. Thanks a ton!
+> 
+> Well, that means I should migrate the whole driver to use
+> phy_read/write_paged instead of the phy_read/write that is currently in
+> use.
+> 
+> That's impacting performance though as per phy_read/write_paged we read
+> the current page, set the desired page, read/write the register, set the
+> old page back. That's 4 times more operations.
 
---w2cfxpmyvzbuyq6t
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+You can use the lower level locking primatives. See m88e1318_set_wol()
+for example.
 
-Hi Andrew,
+> Couldn't we use the
+> phy_device mutex instead (as it's currently done in the whole driver)?
+> Or is it worse/comparable in performance to the suggested solution?
 
-On Fri, Sep 14, 2018 at 03:18:46PM +0200, Andrew Lunn wrote:
-> > Most of the init sequence of a PHY of the package is common to all PHYs
-> > in the package, thus we use the SMI broadcast feature which enables us
-> > to propagate a write in one register of one PHY to all PHYs in the
-> > package.
->=20
-> Hi Quinten
->=20
-> Could you say a bit more about the broadcast. Does the SMI broadcast
-> go to all PHY everywhere on an MDIO bus, or only all PHYs within one
-> package? I'm just thinking about the case you need two of these
-> packages to cover 8 switch ports.
->=20
+Russell King found a race condition where this breaks. You cannot hold
+the phy_device mutex everywhere.
 
-Ah sorry, that wasn't very explicit. That's a feature on the PHY side so
-my wildest guess is that it wouldn't impact any other PHY outside of
-this package. Affecting any other PHY on the bus is counter-intuitive to
-me but I'll ask the HW engineers for confirmation.
-
-Thanks,
-Quentin
-
---w2cfxpmyvzbuyq6t
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEXeEYjDsJh38OoyMzhLiadT7g8aMFAlubt7oACgkQhLiadT7g
-8aMP+g/+L2iC+PhfMSiTn/swWLrAkWxgR7/1NH4N7Kb5wIBJPN659JJnEUHtnQQd
-HRu4vqlMEu9c6T6B6fo23w8xHvKSTtQdcPtKgX2AbtwvuNelfPTUtOVQYbdAzqKB
-ZG0TKTL5BIFn49N9vwf9SpvVKFJ4e3+XU2/OMAO/PiG3hTwlcqH3JX5TXzDlBSUM
-1w+MS/UMzqTRVNnXfCvyGk6/xtAcOIu/GCxCGQviP6iZWtewVrnowqY94FURE8h4
-eF4Mc8udp3OLVUOh5Ki3DtWY42oRTG9KPqwDXzxKIgZ4V91n1USVOE8kPIZrvbW8
-6N61KHuJTlwZfdcpl5VdUqkOfVfpclnCkJOQkmySZcn9OEGHNxAa/IHN+1eX6wOX
-zbD0i7IccvHdjIfoAmQwpO5kO72x3XFaJhcZEq87LBpdcY6QodUJddqjlUdyeSae
-BmJN4RhgNi+l3IFFYbOTAQY0o6dTdvSO1W2RzA0//IDeUSXBSirf+dow6vockwf6
-cPOjUaq82xJlFzyucsGH1G4Xp6G/sZN1ML3ETnRKLRBIy34dREcfgOE2k5FAtcN4
-hzv322g8YR+tuQ7EIXWwxQwM/osiCniaz8Zi7IzJ/aksFJBITLP24rLHEb/xEknL
-nIOZfQaVOkE02pxyW/qPU7nUe66hnJUAwdcgr/TIk/hoIeKRVUs=
-=Rb1D
------END PGP SIGNATURE-----
-
---w2cfxpmyvzbuyq6t--
+    Andrew
