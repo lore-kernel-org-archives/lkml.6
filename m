@@ -2,92 +2,129 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F59DFC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 11:42:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CF58FC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 11:43:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1410820853
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 11:42:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1410820853
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 2324D20882
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 11:43:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PSdkfFYd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2324D20882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727994AbeINQ4H (ORCPT
+        id S1728064AbeINQ5V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 12:56:07 -0400
-Received: from smtprelay0018.hostedemail.com ([216.40.44.18]:45252 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726872AbeINQ4H (ORCPT
+        Fri, 14 Sep 2018 12:57:21 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:38548 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727771AbeINQ5V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 12:56:07 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 425CC180A8147;
-        Fri, 14 Sep 2018 11:42:00 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: tub67_2cec44f70ab1c
-X-Filterd-Recvd-Size: 2575
-Received: from XPS-9350 (unknown [172.56.6.71])
-        (Authenticated sender: joe@perches.com)
-        by omf07.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 14 Sep 2018 11:41:48 +0000 (UTC)
-Message-ID: <a838a627dd3308908c54f8d84d7fa9c56953b954.camel@perches.com>
-Subject: Re: [PATCH v2] staging: Convert to using %pOFn instead of
- device_node.name
-From:   Joe Perches <joe@perches.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Ian Arkver <ian.arkver.dev@gmail.com>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Fri, 14 Sep 2018 12:57:21 -0400
+Received: by mail-it0-f65.google.com with SMTP id p129-v6so2114878ite.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 04:43:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=syh85p44PLh5sAxF+A7jwfOlvfCFjJ1xtF6lIhTmvrI=;
+        b=PSdkfFYdtcwZ9kH+zdgpeUr5Vb+s+qx0TpoE4+1Uo4Ur+TiKrBQVUQ78JO+FLhRNlv
+         T/Nplc8kwiHIMPlRNDkkiVV5mvJjd9XpKvA61iP9J2mq3XBble66sILihGUyFqmr5mfc
+         uo4IXcJ/shqS4MRY3sQ/1Ldkmod5av8xplhH4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=syh85p44PLh5sAxF+A7jwfOlvfCFjJ1xtF6lIhTmvrI=;
+        b=eZ4fu5jPVtS4YQd1xhA1OU5TrhPXEZPEWm5GpC5LdLZwsP759uE6o+gdHLNoR5F11h
+         w/8PVhp3Dcd/+owesfNKaruOKguplv2HLsFCgFplC6HJuTA75Fu57fvpWBnIwtDFVJES
+         9v7xA+ZteUVepoAJt86hNYZisrgA58rBuFlw3E9YY8W/VaHB2RPj6yQUlC2zHTN04FZH
+         HrbgWB8zL/b88eIDsJK6845n7vqgizqkLJnkBik0LqC6jBm9yE/vCDSc2T9krZ1HMoBY
+         0i/cflcviSDp4lbZlFake8hTrgiucZpqDePSDHX6xxDLaMT2QRLb/2RI55NkZ8s9Xt3s
+         5mwQ==
+X-Gm-Message-State: APzg51AKhl806ko6lvd6vrWzf7+2MKTk73Gq28WavLKUswG/gtqgj3mN
+        r39KyPHMuBBgirVK1s6KpiT2RbVd0Fo=
+X-Google-Smtp-Source: ANB0Vdag68dFyXinc19ZlYOMDjh4bjce3em47IH+eUx7kZAyEcmJK1AVs4DK1rDhy/+nc5teaiM+vg==
+X-Received: by 2002:a24:46cd:: with SMTP id j196-v6mr1943435itb.0.1536925393327;
+        Fri, 14 Sep 2018 04:43:13 -0700 (PDT)
+Received: from [172.22.22.26] (c-71-195-29-92.hsd1.mn.comcast.net. [71.195.29.92])
+        by smtp.googlemail.com with ESMTPSA id y9-v6sm2174775iop.57.2018.09.14.04.43.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Sep 2018 04:43:12 -0700 (PDT)
+Subject: Re: [greybus-dev] [PATCH] staging: greybus: fix spelling mistake
+ "entires" -> "entries"
+To:     Colin King <colin.king@canonical.com>,
+        Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        devel@driverdev.osuosl.org
-Date:   Fri, 14 Sep 2018 04:41:47 -0700
-In-Reply-To: <CAL_JsqL=+O=G-0uVdKGcq4T8pSzkdGV1sd_p682-6SFXuNt2mA@mail.gmail.com>
-References: <20180828154433.5693-1-robh@kernel.org>
-         <20180828154433.5693-7-robh@kernel.org> <20180912121705.010a999d@coco.lan>
-         <CAL_JsqK8B46x8bm_aYggJSPAWrMGZ1rZ58uWCmyiSqA2KZpiFg@mail.gmail.com>
-         <c7a3263ac94a6c31bd58c06683d55015be2e8be4.camel@perches.com>
-         <CAL_JsqL=+O=G-0uVdKGcq4T8pSzkdGV1sd_p682-6SFXuNt2mA@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
+        greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180914112451.4127-1-colin.king@canonical.com>
+From:   Alex Elder <elder@linaro.org>
+Message-ID: <eea53471-2998-5bad-7187-44430a9bde8c@linaro.org>
+Date:   Fri, 14 Sep 2018 06:43:11 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180914112451.4127-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-09-13 at 16:26 -0500, Rob Herring wrote:
-> On Thu, Sep 13, 2018 at 3:45 PM Joe Perches <joe@perches.com> wrote:
-> > 
-> > On Wed, 2018-09-12 at 15:26 -0500, Rob Herring wrote:
-> > > A problem with MAINTAINERS is there is no way to tell who applies
-> > > patches for a given path vs. anyone else listed.
-> > 
-> > try the --scm option
+On 09/14/2018 06:24 AM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> That kind of helps if the maintainer has listed a tree, but gives
-> wrong results if not.
+> Trivial fix to spelling mistake
 
-If there isn't a tree listed, it's not really maintained.
+I hate to have two-character fixes to documentation like this.  I.e.,
+as long as you're touching the README file it might have been nice to
+review it and look for other things.  I suspect you found this in the
+program output though, and also noticed it in the README file.
 
-> And you still have to figure out who owns which
-> tree. That's not hard, but it's not scriptable.
+So...  Looks good to me.
 
-a get_maintainer scripted loop using
-  --maxdepth=<incrementing_from_1> --scm --m --nor --nol
-until a result could work.
+Reviewed-by: Alex Elder <elder@linaro.org>
 
-> IMO, we should reserve 'M:' for maintainers with trees and use 'R:'
-> driver maintainers. That's redefining M as "maintainer" rather than
-> "mail patches to". You could still have both for a entry so you can
-> know who to go bug when your patch hasn't been applied.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/staging/greybus/tools/README.loopback | 2 +-
+>  drivers/staging/greybus/tools/loopback_test.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/greybus/tools/README.loopback b/drivers/staging/greybus/tools/README.loopback
+> index 845b08dc4696..070a510cbe7c 100644
+> --- a/drivers/staging/greybus/tools/README.loopback
+> +++ b/drivers/staging/greybus/tools/README.loopback
+> @@ -79,7 +79,7 @@ Here is the summary of the available options:
+>     -t     must be one of the test names - sink, transfer or ping
+>     -i     iteration count - the number of iterations to run the test over
+>   Optional arguments
+> -   -S     sysfs location - location for greybus 'endo' entires default /sys/bus/greybus/devices/
+> +   -S     sysfs location - location for greybus 'endo' entries default /sys/bus/greybus/devices/
+>     -D     debugfs location - location for loopback debugfs entries default /sys/kernel/debug/gb_loopback/
+>     -s     size of data packet to send during test - defaults to zero
+>     -m     mask - a bit mask of connections to include example: -m 8 = 4th connection -m 9 = 1st and 4th connection etc
+> diff --git a/drivers/staging/greybus/tools/loopback_test.c b/drivers/staging/greybus/tools/loopback_test.c
+> index b82e2befe935..2fa88092514d 100644
+> --- a/drivers/staging/greybus/tools/loopback_test.c
+> +++ b/drivers/staging/greybus/tools/loopback_test.c
+> @@ -192,7 +192,7 @@ void usage(void)
+>  	"   -t     must be one of the test names - sink, transfer or ping\n"
+>  	"   -i     iteration count - the number of iterations to run the test over\n"
+>  	" Optional arguments\n"
+> -	"   -S     sysfs location - location for greybus 'endo' entires default /sys/bus/greybus/devices/\n"
+> +	"   -S     sysfs location - location for greybus 'endo' entries default /sys/bus/greybus/devices/\n"
+>  	"   -D     debugfs location - location for loopback debugfs entries default /sys/kernel/debug/gb_loopback/\n"
+>  	"   -s     size of data packet to send during test - defaults to zero\n"
+>  	"   -m     mask - a bit mask of connections to include example: -m 8 = 4th connection -m 9 = 1st and 4th connection etc\n"
+> 
 
-IMO, most M: entries in MAINTAINERS are either reviewers or
-used-once when created and longer active or just vanity.
