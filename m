@@ -2,140 +2,105 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,GAPPY_SUBJECT,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A17A9C04AB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 00:19:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A724AC04AB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 00:22:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 472DD20853
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 00:19:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FE0720861
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 00:22:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JknTXEwG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 472DD20853
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="H+bq3zjb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FE0720861
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728169AbeINFa7 (ORCPT
+        id S1728171AbeINFea (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 01:30:59 -0400
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:36051 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726868AbeINFa6 (ORCPT
+        Fri, 14 Sep 2018 01:34:30 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:44654 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726826AbeINFe3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 01:30:58 -0400
-Received: by mail-yb1-f195.google.com with SMTP id d34-v6so4085833yba.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 17:19:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=6wMlK1y3LiN3aZ3bTuEJV8QEavcDQjHdwWOtDq+XGy8=;
-        b=JknTXEwGLXgm+pEEceglu7LvExbBDFF+hh4kWx/RywJPcCe5axe6DbyxnhMF53x3zl
-         4pOXwyOGHLBATO1QydW/Np/o1JFZb4w0CAU7F7gnlqFDWSjZ30pQMF/f76kZjgTgY/+N
-         4yLVWKPXkF97gTI7taiRYXRohQqr4VmRvNbvc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=6wMlK1y3LiN3aZ3bTuEJV8QEavcDQjHdwWOtDq+XGy8=;
-        b=JsaC814GbJPsZ9VoHSDyd3djQzIxhMRZeOtXAUxTSaBGSbE6VocLwjuwBHKU0eztxm
-         12argSMfN6vldODcLgs30SsNPl+mpCy8PP9g3NAYiMIspGMP1aRhjCJoloii5BHN2iX8
-         do/io1TPFR1Pr6v3ikuT4sNfdZ2CkazFt3Q8MlBgKZYBoz/7J0x85k0gwdy4eb3csfiz
-         hY0hYgWN7cWJ1h+8QE24BHFIM/nifrTtQMAWQ7NCC3FFVZYnMqQwZL/rwIW1qLo6FBJt
-         Q0k7/GVg4svo02QFflFAgQthTpPayCKA51g9d5sbKfTUlHjDqwYCjdHeq2g6ztC/Qc9n
-         UqmQ==
-X-Gm-Message-State: APzg51ClA7/wciCao2Yr2oNIxu44OInmgMRjugQKgpaSGgQBo5QIprqW
-        xrkfDAmAnKecGE7bZ/TkO7w+cw1+bog=
-X-Google-Smtp-Source: ANB0VdZFLRc1LxRGkHkU6qYpEC9WWYsPz8SkraFLmxZHlnlxkFqxCDRcNUEBe2hguL52xg/yWXXmng==
-X-Received: by 2002:a25:acdb:: with SMTP id x27-v6mr4660927ybd.297.1536884348978;
-        Thu, 13 Sep 2018 17:19:08 -0700 (PDT)
-Received: from mail-yw1-f52.google.com (mail-yw1-f52.google.com. [209.85.161.52])
-        by smtp.gmail.com with ESMTPSA id m39-v6sm2101263ywh.65.2018.09.13.17.19.05
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Sep 2018 17:19:06 -0700 (PDT)
-Received: by mail-yw1-f52.google.com with SMTP id x67-v6so1953170ywg.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 17:19:05 -0700 (PDT)
-X-Received: by 2002:a0d:db10:: with SMTP id d16-v6mr4787313ywe.124.1536884345238;
- Thu, 13 Sep 2018 17:19:05 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a25:5f04:0:0:0:0:0 with HTTP; Thu, 13 Sep 2018 17:19:04
- -0700 (PDT)
-In-Reply-To: <5b983bba-049c-795a-3354-a2e8ab33cecf@schaufler-ca.com>
-References: <cbf848ae-a1ac-c5ab-f23b-bc9217fceebe@schaufler-ca.com>
- <99cb1ae7-8881-eb9a-a8cb-a787abe454e1@schaufler-ca.com> <CAGXu5jLONSfPHYYYTLSma-+arVHSQKaEWb9JxpOn6TNKtyLNhw@mail.gmail.com>
- <CAHC9VhQN0wq0zZS5BYU9jBomaWvCaJ_BqJjHF3AT7FG8Z0nLDQ@mail.gmail.com>
- <CAGXu5jJs6kmd6Tjgwqb2Zx7e-jNbHqfJ57poZuyz4Qj=AKVfmQ@mail.gmail.com>
- <CAHC9VhQ20tBAMwOJ9mg0tBHYUoxjh0Szr3d62HuPw2SyT4XDLw@mail.gmail.com>
- <CAGXu5jKec1JTsoqwKGThcJoamdL618AHu4jfFbqqQiauz1kjyg@mail.gmail.com>
- <CAHC9VhQwT4d3wC37cVrrX-hZq1L3e6=TEAse4m-YH9SiFnkieA@mail.gmail.com>
- <CAGXu5jLapViSK-j08Tq8cCZodiZXFsXze71xFPg6MQhDWDHDAA@mail.gmail.com>
- <CAGXu5j+j47FH5RF2vrJh95=YFX76oSBFo8O6GZqa0utcfE1AVA@mail.gmail.com>
- <d1d12866-d557-8c15-6506-a54b9d927952@schaufler-ca.com> <CAGXu5jJG=wk6e_RU=KYDY48kOc=RmL3OB79T+rHqCyzaDSn=zg@mail.gmail.com>
- <5b983bba-049c-795a-3354-a2e8ab33cecf@schaufler-ca.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Thu, 13 Sep 2018 17:19:04 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jJ5__jdBM5X0vVyEU1TKnN4dpkXbj=10iak9RvD1DZk9g@mail.gmail.com>
-Message-ID: <CAGXu5jJ5__jdBM5X0vVyEU1TKnN4dpkXbj=10iak9RvD1DZk9g@mail.gmail.com>
-Subject: Re: [PATCH 10/10] LSM: Blob sharing support for S.A.R.A and LandLock
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        SE Linux <selinux@tycho.nsa.gov>,
-        John Johansen <john.johansen@canonical.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 14 Sep 2018 01:34:29 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8E0IuTt005403;
+        Fri, 14 Sep 2018 00:22:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2018-07-02;
+ bh=V8Pb4DlbESbQPYx1hzmXs3hD4/IFmwqn+jYFLhiC9RM=;
+ b=H+bq3zjbC0V/ZC5VyPyOMm6ZQTE3j4P4QWOz2kl83nj3d7ZVtKlDVCYzfP5TNty/w2UK
+ 5Bv+ufus61A2yun3s2JhY4Nbbk0Up8xPiLrhhkdQvNWRQwWqUw7rhJbjkTV1e8EYCcm4
+ r++rN5zZp0OEw+EGd21CjePQyqp4YgZbyWUCCJirveTYaNk5mZK3uzfmUNCpUjeLHrS8
+ sTdtNkAY8UfuBM1yE2pLPtyXOPSTpRaTU8R3h3zlDhiVkknnp5cyB435kvT9y7rrVpZP
+ qlren5ACqWY8n1kZ4DAMVbBrGzYJwJUrPEbo/dDp29ONYrMFPCYmjYNRXkci6yMvP1Lb Lg== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2130.oracle.com with ESMTP id 2mc5utvajp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 14 Sep 2018 00:22:35 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w8E0MYgX016101
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 14 Sep 2018 00:22:34 GMT
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w8E0MXUG018529;
+        Fri, 14 Sep 2018 00:22:33 GMT
+Received: from qing-ol6-work.us.oracle.com (/10.132.91.103)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 13 Sep 2018 17:22:33 -0700
+From:   Qing Huang <qing.huang@oracle.com>
+To:     netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     tariqt@mellanox.com, davem@davemloft.net
+Subject: [PATCH] net/mlx4_core: print firmware version during driver loading
+Date:   Thu, 13 Sep 2018 17:25:14 -0700
+Message-Id: <20180914002514.27571-1-qing.huang@oracle.com>
+X-Mailer: git-send-email 2.9.3
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9015 signatures=668708
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=979
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1809140002
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 13, 2018 at 5:08 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
-> On 9/13/2018 4:57 PM, Kees Cook wrote:
->> On Thu, Sep 13, 2018 at 4:51 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
->>> On 9/13/2018 4:06 PM, Kees Cook wrote:
->>>> - what order should any stacking happen? Makefile? security=?
->>> Makefile by default.
->> Okay, if ordering is by Makefile and everyone dislikes my
->> $lsm.enabled=0/1 thing, then these mean the same thing:
->>
->> security=selinux,tomoyo
->> security=tomoyo,selinux
->>
->> i.e. order of security= is _ignored_ in favor of the Makefile ordering.
->
-> No, I think that the two lines above should have a different
-> execution order. If we really need to specify multiple modules
-> at boot time that is what makes the most sense.
->
-> It's a matter of mechanics and probably another pass during the
-> init process, but it's doable. If we determine it's necessary for
-> this stage it is just work.
+When debugging firmware related issues, it's very helpful to have
+the installed FW version info in the kernel log when the driver is
+loaded. It's easier to match error/warning messages with different
+FW versions in the log other than running a separate tool to get
+the information back and forth.
 
-We already have the minor LSMs that cannot change order. They aren't
-part of security= parsing either. To enable/disable LoadPin, you do
-"loadpin.enabled=1/0" separate from "security=".
+Signed-off-by: Qing Huang <qing.huang@oracle.com>
+---
+ drivers/net/ethernet/mellanox/mlx4/fw.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Should "blob-sharing" LSMs be like major LSMs or minor LSMs?
-
-If someone is booting with "security=selinux,tomoyo" and then SARA
-lands upstream, does that person have to explicitly add "sara" to
-their boot args, since they're doing a non-default list of LSMs?
-
-(I actually prefer the answer being "yes" here, FWIW, I just want to
-nail down the expectations.)
-
--Kees
-
+diff --git a/drivers/net/ethernet/mellanox/mlx4/fw.c b/drivers/net/ethernet/mellanox/mlx4/fw.c
+index babcfd9..e1c5218 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/fw.c
++++ b/drivers/net/ethernet/mellanox/mlx4/fw.c
+@@ -1686,11 +1686,11 @@ int mlx4_QUERY_FW(struct mlx4_dev *dev)
+ 	MLX4_GET(lg, outbox, QUERY_FW_MAX_CMD_OFFSET);
+ 	cmd->max_cmds = 1 << lg;
+ 
+-	mlx4_dbg(dev, "FW version %d.%d.%03d (cmd intf rev %d), max commands %d\n",
+-		 (int) (dev->caps.fw_ver >> 32),
+-		 (int) (dev->caps.fw_ver >> 16) & 0xffff,
+-		 (int) dev->caps.fw_ver & 0xffff,
+-		 cmd_if_rev, cmd->max_cmds);
++	mlx4_info(dev, "FW version %d.%d.%03d (cmd intf rev %d), max commands %d\n",
++		  (int)(dev->caps.fw_ver >> 32),
++		  (int)(dev->caps.fw_ver >> 16) & 0xffff,
++		  (int)dev->caps.fw_ver & 0xffff,
++		  cmd_if_rev, cmd->max_cmds);
+ 
+ 	MLX4_GET(fw->catas_offset, outbox, QUERY_FW_ERR_START_OFFSET);
+ 	MLX4_GET(fw->catas_size,   outbox, QUERY_FW_ERR_SIZE_OFFSET);
 -- 
-Kees Cook
-Pixel Security
+2.9.3
+
