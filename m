@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A024ECE562
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 22:32:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BC18ECE562
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 22:32:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EAEE20853
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 22:32:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D49E2148D
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 22:32:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="ttpY+eSj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EAEE20853
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="ZKNWEeEc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D49E2148D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728082AbeIODtA (ORCPT
+        id S1728152AbeIODtE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 23:49:00 -0400
-Received: from mail-sn1nam01on0049.outbound.protection.outlook.com ([104.47.32.49]:37216
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        Fri, 14 Sep 2018 23:49:04 -0400
+Received: from mail-eopbgr720049.outbound.protection.outlook.com ([40.107.72.49]:55776
+        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728031AbeIODs7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 23:48:59 -0400
+        id S1728031AbeIODtD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 23:49:03 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qjV3sLGrDIyXaqqrrV8lczttNGVu1pnLm5C4sO5VBa8=;
- b=ttpY+eSjFzAki2PmLE19G7JisVfjHLgxGS9R4efGzD5CYE6dFUWVjjY8exLfaPjOXDCzJlxD045yxs66jiWHhNAwoqABKykYno9jCmAIfADX+KPrF01C/H3PojEwkt+p/GlEyKpq1MBFSaEXELNhzUoBDMl+MeThOAsKrzqYjfs=
+ bh=Mm/JoSrI6nPbroLMDxElnk2UU/BlZE/WWzYcY+90tXU=;
+ b=ZKNWEeEcVfDGtyICJ6GPoUMXJNEDJP76nOs1ptxQoOUulzX74uLlAGu2ia+aNyxZRT0Rc56ROuKm3EjlTkMQMI7aJnkNe21MAhI0A2ACj1vSA9s3CnyYAldW4xUbsZwu86Zt4sC8jWw6YIFI6XIuG3i2xLGF3BzJtiNJFYhKLoQ=
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=Janakarajan.Natarajan@amd.com; 
 Received: from gi-joe.amd.com (165.204.77.1) by
  BYAPR12MB2725.namprd12.prod.outlook.com (2603:10b6:a03:61::22) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1101.18; Fri, 14 Sep 2018 22:32:29 +0000
+ 15.20.1101.18; Fri, 14 Sep 2018 22:32:32 +0000
 From:   Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>
 To:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Tom Lendacky <thomas.lendacky@amd.com>,
@@ -44,11 +44,10 @@ Cc:     Tom Lendacky <thomas.lendacky@amd.com>,
         Herbert Xu <herbert@gondor.apana.org.au>,
         "David S . Miller" <davem@davemloft.net>,
         Brijesh Singh <brijesh.singh@amd.com>,
-        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
-        Dan Carpenter <Dan.Carpenter@oracle.com>
-Subject: [PATCH 1/2] Fix static checker warning
-Date:   Fri, 14 Sep 2018 17:32:03 -0500
-Message-Id: <31c49295223e51f5c1c4e36e7a09fe100dab1711.1536959537.git.Janakarajan.Natarajan@amd.com>
+        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>
+Subject: [PATCH 2/2] Allow SEV firmware to be chosen based on Family and Model
+Date:   Fri, 14 Sep 2018 17:32:04 -0500
+Message-Id: <5c58c32c0ce89c35a95e151734f5d43a3ed0dca0.1536959537.git.Janakarajan.Natarajan@amd.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1536959537.git.Janakarajan.Natarajan@amd.com>
 References: <cover.1536959537.git.Janakarajan.Natarajan@amd.com>
@@ -59,50 +58,50 @@ X-ClientProxiedBy: CY4PR0101CA0021.prod.exchangelabs.com
  (2603:10b6:910:3c::34) To BYAPR12MB2725.namprd12.prod.outlook.com
  (2603:10b6:a03:61::22)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 001af795-8b6d-4d8b-65f5-08d61a91f4fa
+X-MS-Office365-Filtering-Correlation-Id: bf3545bd-1cc4-432b-6260-08d61a91f6c5
 X-MS-Office365-Filtering-HT: Tenant
 X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:BYAPR12MB2725;
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR12MB2725;3:biu2+Q+PdOuMMthHIwR9rgO0/g4JolzGwI0Hng7Ctd+hfBm0hbshY14gSFker/XwfWiRohGVM6XBpTmqXmiUa1znx6dNleexyg1dtiwJWv64i5xmOGatPB5+4DRUIE6I3zJ2T2zxufIkndbnXb1oEZjRP9RPkzAHItxcuiqzhgJTNMzM2dbQUBi0qpFe8mQodpkpFUQ+78ovgkXGNXklHB1H4UI5DBuF2b131Q3daEkpJNFi/bK1M3qVKvl10GLs;25:M60zr4J6E8jjqNtW16W6nGLmagpckQB1kRKVyBew++jxTUeoSZjJHaxkTSUJGQMRH13PrWjSBuMIlabHm2QSTVuMXGXiAwsFgNaYkpq22WLXTYZc3zTXHxbQ0ztC0wwLn4hZsWtL0CfK7WGBHHDjWFNHDy0aL615E5lpd8P/9tDvU2BkkpIlQ1HxVme1b6s1g/sWqCS3QTTYjETevgiL+3bUalb+naB9vfvlzmE+sWQKl7VNRZXSiTy6Ur3oz5h4qCOhkU/2KjydJOqeDJ91rFJqp5lWcp7h/qL9oXtD2iK4QnfdaDUklUeBBFH19up31qR2QxzHBcNCD3VCUWRNOQ==;31:FOC13+LKmJ/1JuABnGzHcdAdZhAe/Nh/lC5bfnmLUaUJYXU5DUXspG5dGrMUuenkcV/AH5Xcvps+nVPa3OtxCwITxeGaqjuHccv26XkrWNHyGJUCa9gQ3rNOcijP+R7vuQeFkqpSdgXBPpmkUzxmvUryQZxAfeZ6exStnnXUaXwTJkoonNjcuvzk0Q/xw48PXeCL4Ez/YBaBWEXQg987bLvcBIlc9t1oXlKI3Kf4izM=
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR12MB2725;3:iR/nDEkEaVRuTnp9+jLdGSKoJn6FXQlxRJEup4ZM0WCwRWyAEIxyDsa1v9uU2rIa3KX2384FzOdwmt8ckJcLYDF2q0NLTwbR5X0pi3L5AiaSzTIDyE+9fwpFGKlXX8QkQpYGAawsB7rKjDnZZrE6GAhJVZKAKdcrYghMEo30Nrdc6AbEKj2aXyPWyZLREfFrhZAYpX69xCgkYOGYq4Xo53SfxqgcygmSzOFPyc38i+fS70w4PH0MCQ1rK8XeNPFn;25:jEIhRU/e95OvOxyCv3dtYoNYBTUeqX/02xGzmWRqGkLfccusNxjgOO8syuqTCzSyTsSJE73s+I60KMO3O7uML4dLdYnrtCDK41OmVbPWhtsuhfW3YuwJAI8O67LvTceurjpwOdlzSz/8YepRRPfWMen5VPnEGOmBTJLh24CuZNtzgHUi/839oYmehFNSbfXyVgw+2HP+MGS3cgJXIgqcnH5QLLoHhJfWVCzFx78hC2aRy8AVmU07/liYI5mZHABxXlxtjkngx3C1PXvCHMCG90byspM/pWYjADkivVs3S4E5iezalJ/FX4GRqT8XSF8uA8TFHU5pLD0hzr3wWveuoQ==;31:yQZJyS5Ypcf2T0GCY6T3LHt3+LfPcSupIcjNoSZT5awGq3ZUtpKPOwWBvOA2DGyvjT5aHvXbasQuJmwPk5acF0YMWtAIy9M/xozM/ydnB3ftrsbPC0o1cBkiKhscVdOQxjm+2UMaxp8B8+HRGhAGOqIBLbGx55jwfI+RFv+mMZjXO+0kM+G1ehlsB1DlkeuXQmUlSkogdc0oGiDa+ZTKTgDz9QbEPR64wJKgbzu5cUs=
 X-MS-TrafficTypeDiagnostic: BYAPR12MB2725:
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR12MB2725;20:aUY8TUBvo8Qsy51+pKIUCf9oiAwOgji9HsoHxIbLxLViW2seIYY0StZ7vGmkSn81y/PwPCr5PmsDtRDjFgQasYBF8wVvGjCFmXBZewDln4slEiLsiXo0dEHYY66qjjIfOPzozIJ1TPRXWgeep2dK7eT+l/cs/jCuxsmGRWSQ9atd6p9bNMiqdLrCWM9xbxl+F3LTEBMldi/KHycOeL2AnSdUJziu1MbpRkYU86HSBsGd2AflSY37QyaGTUk6Y5XxYLvGVN0Au/sjJDCSZMNfXsLUlGKcvb3Puu7vGiiijNNrP40hLf9lpWtYiVXmUTXQ2gCEvZlYAxT4FzdPV9zYhLmvLZfTLktpLO3XgSB37oUmkQNtDsgAuTnDEWgv/IKgLM8xLZ33b/f2sq8Z6e0CtcF3fxe067ZaHBQUOMfIX8HaLSeBCaqNxx7rG+n7deiwlsPRTCb3TFBvFKxzvfXLD/HxL4ZTchOVa8mM4Zx8LrLT0d2Yit68YFhApvBe9vnD;4:nC+FlL4O1+6H5nLAKDC3pFI96dQKEdScQfGpd/hGyczXfM/KmN6noVXbpvggsmzMn8FxJVv8EsscRL8/RpZV3MEtFMDSYKhUpZ4G24Y66tNlCwTz2o/MERM+axktWTrOchbRNJlcecFuxPrpzrLC7Wp2r7XqH99Gz3waQoBv9xZB+q9w+ENEwL7geJ2nRUjeQC37aoUdnujIKx2IY4mgpb8rw4owZvf9MBXvtW6kYlF9qsF+3FKJKLXcTzpoWSTOw9PjCRBgeRoCvuYnrm6dgapsYPF2IxaZgPMzqoYMooJZ6hJJDJphdKcaql0yIhxHNw4xxey13fI3pIgZSzp2KiA5JYzMh88EojcOW2/t2wU=
-X-Microsoft-Antispam-PRVS: <BYAPR12MB2725F46D5D60B72542FE330CE7190@BYAPR12MB2725.namprd12.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(767451399110)(146099531331640);
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR12MB2725;20:Gf3ZYgynFMnGdYqLzOVkYck5Vuma9M9N56rQfxMOLP3HLi3BiRVS/h1ma1moPjRB0vJKvEW0dEvDx4ogVvds5UOzza1mu4/DkHmbDpw8zgnWmjS3VygCez4uTfbtshmhhq0IgTezj7qmcs/xyB0mFJY1ZI/uygxpk8Yzpk0KG6HmgJkNzqLhQgXiHvLaRYnmMdTCiCU6BN48mmregRfgJiHIowNSx+DQAGuLuSyx7clawvJVPCQO+NOT8Zyvq4MYWSumhixsfYcoTgz8Mz0WYyjI1EymQ3UF1aiA3aImetyC+KIdH76qvj6VGaL+OGivICN4mBL/HTO4II3m8eeIMNCFhqhvU0Dfa4FUiEKvu0bP+1W9fuJrVif88WQ//AlBpCV8OFQ//T6ONKSOW0T3+5J4Bg+BbSOqhRcEX+5icArlzccYhgoZam/cP7P8QZqhEHLGnkMi9ujqvSIP4Pao1Gfzeb1nZTONotmPyzO4+o7qz18VhWgySEwbhPWs53yj;4:6Z7in7v0pTYXux+lXodPU/e5XcTd7vNnvD+SJ7OIt/olv6zVVdTD0W/c4LvIEg6DBdOFsOLSjLCEtT7OT7rC955qudGoq3OFSgu29QsboyU6LgfBjEiauDzCyMgAqfpF9WFg7SDdi6WjhEM/B3n6DCw55KPa/Ke40izu1x/JYHesLqt7F6gCT761FWp9WHdOLpKeMY8CKnbFzeTJUWIZUse14z/J1bMrzZPxA79+F0GHj8A9oZNz7B2CTzXA7/1Hrw8bNovxCbtUSshSjwVtoJ/9GSIGCMzOP7yD7Tyz2+bkRG6eTfP2cpUfVPrFbNow
+X-Microsoft-Antispam-PRVS: <BYAPR12MB2725845446C418BCB45D13B4E7190@BYAPR12MB2725.namprd12.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(767451399110);
 X-MS-Exchange-SenderADCheck: 1
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(823301075)(93006095)(93001095)(3002001)(10201501046)(3231348)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699050);SRVR:BYAPR12MB2725;BCL:0;PCL:0;RULEID:;SRVR:BYAPR12MB2725;
 X-Forefront-PRVS: 07954CC105
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(346002)(376002)(39860400002)(366004)(136003)(199004)(189003)(6116002)(11346002)(6666003)(3846002)(305945005)(14444005)(72206003)(52116002)(26005)(7696005)(316002)(16586007)(7736002)(54906003)(5660300001)(105586002)(486006)(446003)(53416004)(106356001)(476003)(2616005)(118296001)(956004)(6486002)(4326008)(50466002)(48376002)(47776003)(66066001)(81156014)(81166006)(76176011)(386003)(97736004)(186003)(2906002)(86362001)(16526019)(25786009)(53936002)(51416003)(68736007)(8936002)(50226002)(478600001)(8676002)(36756003);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR12MB2725;H:gi-joe.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(346002)(376002)(39860400002)(366004)(136003)(199004)(189003)(6116002)(11346002)(6666003)(3846002)(305945005)(14444005)(72206003)(52116002)(26005)(7696005)(316002)(16586007)(7736002)(54906003)(5660300001)(105586002)(486006)(446003)(53416004)(106356001)(476003)(2616005)(118296001)(956004)(6486002)(4326008)(50466002)(48376002)(47776003)(66066001)(81156014)(81166006)(76176011)(386003)(97736004)(186003)(2906002)(86362001)(575784001)(16526019)(25786009)(53936002)(51416003)(68736007)(8936002)(50226002)(478600001)(8676002)(36756003);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR12MB2725;H:gi-joe.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 Received-SPF: None (protection.outlook.com: amd.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BYAPR12MB2725;23:w2n6m8Cy0X2WQXP43cZGVdPF6Frj88NNTZXZ/fvu8?=
- =?us-ascii?Q?D4eiEY/8+piBlOAsleZjkIrRKOCFo9gfP9ElxwlNOxu82/pFRm9WeTLwAusz?=
- =?us-ascii?Q?fK9kBG3QrOdodhOLE06tUJjTy2txhJS5AihY48WPam/xj0wNmqOEexxPbgyz?=
- =?us-ascii?Q?W4sDGmP14KRmdniIuEdQrxF9zstp6NfXTuy9ijx3KHk6SsihWki/LzySrHF8?=
- =?us-ascii?Q?0HtYPiDjL2DMTIKl6kz6wAe01rDP8OwxnJFCady/kkAr4/c3c4WrKJdyr4H1?=
- =?us-ascii?Q?8gVJkPwjNNNReS95P/LdOIRVVwPr7HwZSe+Pv9uGaSi0mwzvke74sBYclusX?=
- =?us-ascii?Q?yYA4e8wI7llNz+PCA8tZX7L4/1cWf6IjMEcPNtztby8wqqt+X/D7XHT+ohgJ?=
- =?us-ascii?Q?Hi+Y7Sq1NC9IyddTqE0iyPwCZt1235y1fCz4UWGxmbYb6p9wiY3nIAMnpk6w?=
- =?us-ascii?Q?xUAGCcrYf+BZVsSdWBV3D0MlMthDhd5FOWheAS2EkStsxCiwNsPexT4ohE68?=
- =?us-ascii?Q?nUXrHByPMyTPzMBu8p8KBbG9/TVJQb6P0ngNV1PZ3cziSYJkFqXIhR8Fo/tv?=
- =?us-ascii?Q?BSWEbMIu62PiXzk8wQDsIcuoCObSWEg6s7N1qFVL0b32cY73/1xeCCcWZs5w?=
- =?us-ascii?Q?XmaMZu03F5FYOedsc8f/Ohkz956nAk8HH5YIfZF0zA0Y8UqkLFyQnAJM2Yz6?=
- =?us-ascii?Q?n4Yk8q6S6CHBvhJ27b7zleMUsRgWe50a0cYy8Fv47bh6Row/bb1ClzHtLH27?=
- =?us-ascii?Q?yRg+Bu5xzCK2f2BTGqLM/h+3Yb2WwFUNKAglycwHz2dFgPAxYDBFHCuutYYs?=
- =?us-ascii?Q?TuVtnDPTF/jn05DJNuqRTXVpKWrB2B9PHHY4WMkIjmnY1sN7f0qmEfA/j8/S?=
- =?us-ascii?Q?f6QhRuKINp1JRdQqlyTJBjPb7jZ+LjvntdTarx20vkylJjuZhfObY91mJikA?=
- =?us-ascii?Q?9yfaI+/lN6KiAqjOzlevQByb0Uy9fjwFwYDuFVWATz5b+lrvBkce5SPVL33y?=
- =?us-ascii?Q?U677zY6eghh5tHmgv6TU2c1SpWt4a2GcqvMx8gvJyl9vbTCEdWqCvUUGrAS9?=
- =?us-ascii?Q?dwRwSTHVQPb7Y19xmNHdwmZzNpAyduWzTPzd4wqzkfUf7mZK07O2hZOoudVS?=
- =?us-ascii?Q?c42usfpGAuWv/QSQiS/G8NtQkhnXT/TX6aNOdl9cFOe1+DAEXKf8n3tRRub5?=
- =?us-ascii?Q?vX0qb1M3F8a0n6xcOfDK95c2cw6TguSN5gh1vTWyF0YIQFcvSJ3yUa5UQ=3D?=
- =?us-ascii?Q?=3D?=
-X-Microsoft-Antispam-Message-Info: WQd709ZmucXfJg5fWWI0doBrapsIR/ilnWhm5hPQf4KGNg7SBtYbq5nZhoEawiEkC8yMC6dlmKGv3Hp6pUP2evUcBwgq0oxw28RwmuzQ1GfkL7KzEMtzD/3vAKTeUOcBk06RoA1xCeeXPK6tPDZpdutwRJ8t3H9+VAHf1b5o5Ag1KQgMERaH9tbdvpHQ7TenqeMg5F8PzVC31MIL0Gi1RHFlibSiHhLlRs8DG30Ohe5G2a54F5ZOhZCDQfdfWJl4UFV444/ovYPbd8kWfytc44nJ5MMI4BT9SmgX43/zcRR1ytKpz0ZZLFucddUGqGvfpMjfO4hW8QuK7R3q3NOql2OcEmW11v7gGh2wWJl5ChE=
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR12MB2725;6:9ME9GXwTZGgFS9Ef2K6YDndiVL5SangjsxdtHdB5xnj+bj6WBQ3jEazHABJWwuZjJNyNHHttOvIPsZ5GAkU+5RqTDnFVOlmYHmL4sYG04tzdJg/2uHDpppXKbkkZg5tR0dmxh+nD7VT9ZvyeQGfw65UMgrVI0ljxQAEypC8dUwBRyyVE+4CsSkagEVwtzWd6BQ1UMk/GBXeOFZw2SCgSf/r2guJIL+pJh4vgKIxYPZUW3d9RtM09PzoBeDBMU7rFY2QZ7O4IjQ8EkC8fuD0FYne8GQs0sS52U7sf7puZIAoCfe58KrRE3VMa5rvIFMGbGh9WO0ENgu+MsteatGnvdc0/1+ne0pRA+pmu341uvX/C8sN641V40upjn/ecmZpNgAkG9ZYBizCeUFmuN2w5J2bpCwzi/KJ/vpvMJowRStrLTvSQWqCpReL0F+HOgeVd19CB48e88ywk1fTHEh0iXw==;5:CmSVz6lYbX8CT0XZxzw1bzyfouembC3Y30yg9M+YDiHiL0Plesc6R/iB1uSkFQh3kxI5ZB8bSUPsqw9+3K87kn1eFS1Il5YfVGMLumioK8nB2UQ+lYw2bKZrUPovTfcEjZoRahMiyr4k8JFvPIPnzasX2Y/kckORvQpjgMU/hPU=;7:vsgjbeJqOrTUb/rj8qFbBLzUg3oik2pJhk5XWd+xuz/d8x894xtKuDXX6evOprG/jvik4BcEcU4u3AzJ1z+IHjui9QkDXtuYukvrQIrPXtbAJ8+fywhlm7iedM4M2tw85NtUhyY5G1eEL0OuxggcBdABK7PFg5NMFPLKTX2pJrGs9XI2P61CMYKKa3rvezEtLim2gYnyKxsqiAXPWhrTFcmhUHt5S7K6ggNcb1H83hd3Fqu6TY1UeGxRzsl4MRTs
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BYAPR12MB2725;23:p6pskwGgLKVedAsDiMyTleY+90QLP560WIm3im9eJ?=
+ =?us-ascii?Q?ww2Y/OFFMgNvToowKjuszIE96CHMN1il12MqmTJIsHZffMOz6ow9nUm42MlZ?=
+ =?us-ascii?Q?93gj3UA2VM0TxFl2HCg61duKF2RUpe4yOcFQ1s9zMDLyayxDva7MltPVKI9d?=
+ =?us-ascii?Q?pRQt+Wb/EYWpvNUL6RqbxOZDmAQEqwulisuIFUUqwlh6aUOZ7c86Tinsr3KM?=
+ =?us-ascii?Q?Bs6IMbNgNl2g29KF1W5qKt7OvOqxTT/HsBNAVcCKnNG9OKXi5WOdKhbawR2N?=
+ =?us-ascii?Q?Aj4RKC/654Bl0N0S06yY9YYAtjDIiulzxqxOHTfzVNVMMPU66hQ+ocJceSsk?=
+ =?us-ascii?Q?JD+/EIcbJSeRIrHbcQ5Eue3HMrAbecHzrkKW+jr6rEwTev3syfisZbliTUEJ?=
+ =?us-ascii?Q?2lUlosHf+t3wwZA6j66UgqaH495ns0yP3L8Nf3cuK7w5BlnM8iKMJTwIMqtI?=
+ =?us-ascii?Q?1gngAFNPDarJrR01TG/CSLRJr7sXEykJn1jLt2ZE94LJWX2HSwxssgXhM3WC?=
+ =?us-ascii?Q?7XajfVSeYTykIyosKEhxGDT/ToetU+SEyHS8s8lAjFY2oUNI+bX5Kq51cXSG?=
+ =?us-ascii?Q?QLYwQUE3RRGN5zf6JCDcDLdjrqT6X3HzuQQyH7irV9JV6RwJicIZU3aYIB0t?=
+ =?us-ascii?Q?Q7myj1546cgHehaZM4ciqrkSPwkoj+bLzInfnuKR1Jqk01jLDmwgUoQT4ZCg?=
+ =?us-ascii?Q?m0yvxPu77XuOYK15Bnk28mnK29wCjifFxHZXJORO7HPJ4JKY7bjEBAdyPTPv?=
+ =?us-ascii?Q?A7pBTvm1dA4p9mBrd0lfogB+Z/a5S2qAatorG+Lc2fB001hB6OFRhzSF42bm?=
+ =?us-ascii?Q?kUGsPV0KRlVVYa44aB+O2uLjTFQC7qp/GdunGwhWDX+Z/FQWyBsAMzTxqE4p?=
+ =?us-ascii?Q?9hmPGoas89LmUPYW8Q/CLnWJZ7IB6XEK4+9l72meThI0IOANsTZg9s8y0aRv?=
+ =?us-ascii?Q?3QhaRDAv15JluWqO8tZ2yVTyGzSstkDwV6474WxPxFMpxhZyM+NSdHxv+NRR?=
+ =?us-ascii?Q?4bUKqs6K8TFfzJGdSO+wurlmyidFXtQelgLGgv8rQnSEDk11FoBseml3LklG?=
+ =?us-ascii?Q?/37+N5/2LFWcNFusxbCC9yPoTfQimWpBz9MIW0crzdxo6D7adUwvQYsn4kXQ?=
+ =?us-ascii?Q?xArDlsBRlMJAmoDhbn226AEfLBntwFeQ1cnkkzfaseiHj+IYvHON16CtGQ4z?=
+ =?us-ascii?Q?Ub7OOfK26B8qpBT+ZvORqBs3VtnQr71u4u0wQryrRnVkCAh4a2+BU58M/ykF?=
+ =?us-ascii?Q?ylcGXikARjxPhkjdnA=3D?=
+X-Microsoft-Antispam-Message-Info: u4faN3c7nHI7Mtim8TMreVu6rsLWLszd5ShwEn5PQpF/ja7+OpKObRnb0db6yMV8XWoX0rp00JsNq6dV17xWBvyZBt+0gJpWddEnPqkdJpO1vNkCpgXVUTkbeB1LRcXkIYmHPwRLp+SaTan1OiJR9oZHTPb0HmWaJCQ9G18F/LfyeKic8rrIeHWVpYUC33us85OlQHhHw4K65RBRYvFA4dHGJIWrmAOVL5iAC7PF1zOf9T9av893wQAA4NoUhkOUIJsQpM2zhyIFbINCzccQHz9Xa6JpMeiOLAFG8Hai/Rt9siZ+6yWcLrUWuXcbGGdL43b0QNwamAlR4ttPcO4NPppNZwgeU6N8fYmd58BO7dw=
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR12MB2725;6:I1d0u0rrDFUghGlx6GITZuERVtBw/sM+VkeqSor5kUVzzReZJPc4452k1pL1U8lBJ9yK6zb8oPYcoF4RjIgilb0ES4KlhuzloLPNZsYRTdXb/d7pitc8zVNfyEn+fseBgJwUnbm/dqwJJv95INMXr5pvD0d41h0wcbV8To0Kv1Vy6sdQqaMkfTtodkBZfmnznf5gi05aJj2LaNyk349G73g+BGs6owDI1cINEE2NBfOKC9kQq1zvMBEKuXZPJ6sHjU+cYnCA6SG4jWlkija4CiReWQy+o0NAZDkcA/sYnH/JQR8+bytda2FObvB7d9FAfpGLbldEmRxdg2BV24He/211pja7PwsErgffMn7KRoTO1oRB3aBlDG+6ynVPJb2I5CpOFe7FItb/drnz+X5fJgAIdUtatA9iG0kDGTxcBpVC3putemv2MZ0soItbq8fjUPyWqAhClSA5qZcmP067KQ==;5:8KZjDNe66J0JrkgeZ1EPu76gePy40cjmrz+PbTOGSfmXfNnUw+/kw/1ny3/8WIOOxEs+XKuLWgGEgEAYpThPY+1JV/oclYQSBRh+g1YbxPJLSc4yLJl7K3q8lyEX7EHsfe012Hpf6WircGCNobKiSQEBWb4lZVnz2midu+CicrM=;7:TLUWjdGt/tZ3gbwLxFDFC1sBrssp9Mo4QhUJJGhaYjIIHyJMsigOMecgiqffSfUyY8Uw/W+2yZR8ms6fMMsCJMpAl2mhuKkXOscc0aVtrmqaM2O+r+QGpBmAL3N8Gq2KUFpk5V7uWM0I+vytFKvnRa4Cqz8Y9iS5fm731ReOd+FheNdT/3pFbcmJ/d+CBb0bQp20AC9FxFduB4uhvcDpaqzPg7t77+uOOvf4i9Rf93du74Oqrmqpw8ed+o9FovJU
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR12MB2725;20:r2OAWR3cqRT/45OCtcr3JJ32wGks0JXPIGjJxBq1Yjcj6n+HUtGo9rj/aCH62xYFW5Yn75cLrDfYoS+axN+ljk6ga3WzY9lmXahMFl6McJyV5YdUp2gjL9aM2Rde7y3xj6TwDnMh+lPgBbsx4AlluAUM2o9P8gbthhX4j5DWAI1aDU17UXC8+bIjRn7sWNFlw8Edsx/ReAlPPMtqXIOPbuy/4RMcOT09ck84IzLClPcqGnXfI+VLHOW8VL8NJ79T
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR12MB2725;20:Bte9AMSipEiSQ7lA7/Bl3vsNgT3BJNzWJyriyZfEtpCf5jkjKxxakMY8tUKXsYccjGvy9ytejWwi6ZjRCi1agaZGgXOwER4D120/uEWOR3as2vigo63LQARj7xI6dqxMOJJRYCDfp9A/aBfqdhC3o/QIP5R2hlIAiulSthKWk43/2663GB8sNKUPx9zXrWrKpMYGNdzVHqq+6qQvDYKAlKP+H+wjGtNbI776R0/i5oyRLyqZzJFFnsnxeqa3h6FZ
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Sep 2018 22:32:29.4299 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 001af795-8b6d-4d8b-65f5-08d61a91f4fa
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Sep 2018 22:32:32.5030 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: bf3545bd-1cc4-432b-6260-08d61a91f6c5
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB2725
@@ -111,31 +110,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Under certain configuration SEV functions can be defined as no-op.
-In such a case error can be uninitialized.
+During PSP initialization, there is an attempt to update the SEV firmware
+by looking in /lib/firmware/amd/. Currently, sev.fw is the expected name
+of the firmware blob.
 
-Initialize the variable to 0.
+This patch will allow for firmware filenames based on the family and
+model of the processor.
 
-Cc: Dan Carpenter <Dan.Carpenter@oracle.com>
-Reported-by: Dan Carpenter <Dan.Carpenter@oracle.com>
+Model specific firmware files are given highest priority. Followed by
+firmware for a subset of models. Lastly, failing the previous two options,
+fallback to looking for sev.fw.
+
 Signed-off-by: Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>
 ---
- drivers/crypto/ccp/psp-dev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/crypto/ccp/psp-dev.c | 44 ++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 40 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/crypto/ccp/psp-dev.c b/drivers/crypto/ccp/psp-dev.c
-index 72790d8..f541e60 100644
+index f541e60..3b33863 100644
 --- a/drivers/crypto/ccp/psp-dev.c
 +++ b/drivers/crypto/ccp/psp-dev.c
-@@ -423,7 +423,7 @@ EXPORT_SYMBOL_GPL(psp_copy_user_blob);
- static int sev_get_api_version(void)
- {
- 	struct sev_user_data_status *status;
--	int error, ret;
-+	int error = 0, ret;
+@@ -31,8 +31,9 @@
+ 		((psp_master->api_major) >= _maj &&	\
+ 		 (psp_master->api_minor) >= _min)
  
- 	status = &psp_master->status_cmd_buf;
- 	ret = sev_platform_status(status, &error);
+-#define DEVICE_NAME	"sev"
+-#define SEV_FW_FILE	"amd/sev.fw"
++#define DEVICE_NAME		"sev"
++#define SEV_FW_FILE		"amd/sev.fw"
++#define SEV_FW_NAME_SIZE	64
+ 
+ static DEFINE_MUTEX(sev_cmd_mutex);
+ static struct sev_misc_dev *misc_dev;
+@@ -440,6 +441,40 @@ static int sev_get_api_version(void)
+ 	return 0;
+ }
+ 
++int sev_get_firmware(struct device *dev, const struct firmware **firmware)
++{
++	char fw_name_specific[SEV_FW_NAME_SIZE];
++	char fw_name_subset[SEV_FW_NAME_SIZE];
++
++	snprintf(fw_name_specific, sizeof(fw_name_specific),
++		 "amd/amd_sev_fam%.2xh_model%.2xh.sbin",
++		 boot_cpu_data.x86, boot_cpu_data.x86_model);
++
++	snprintf(fw_name_subset, sizeof(fw_name_subset),
++		 "amd/amd_sev_fam%.2xh_model%.1xxh.sbin",
++		 boot_cpu_data.x86, (boot_cpu_data.x86_model & 0xf0) >> 4);
++
++	/* Check for SEV FW for a particular model.
++	 * Ex. amd_sev_fam17h_model00h.sbin for Family 17h Model 00h
++	 *
++	 * or
++	 *
++	 * Check for SEV FW common to a subset of models.
++	 * Ex. amd_sev_fam17h_model0xh.sbin for
++	 *     Family 17h Model 00h -- Family 17h Model 0Fh
++	 *
++	 * or
++	 *
++	 * Fall-back to using generic name: sev.fw
++	 */
++	if ((firmware_request_nowarn(firmware, fw_name_specific, dev) >= 0) ||
++	    (firmware_request_nowarn(firmware, fw_name_subset, dev) >= 0) ||
++	    (firmware_request_nowarn(firmware, SEV_FW_FILE, dev) >= 0))
++		return 0;
++
++	return -ENOENT;
++}
++
+ /* Don't fail if SEV FW couldn't be updated. Continue with existing SEV FW */
+ static int sev_update_firmware(struct device *dev)
+ {
+@@ -449,9 +484,10 @@ static int sev_update_firmware(struct device *dev)
+ 	struct page *p;
+ 	u64 data_size;
+ 
+-	ret = request_firmware(&firmware, SEV_FW_FILE, dev);
+-	if (ret < 0)
++	if (sev_get_firmware(dev, &firmware) == -ENOENT) {
++		dev_dbg(dev, "No SEV firmware file present\n");
+ 		return -1;
++	}
+ 
+ 	/*
+ 	 * SEV FW expects the physical address given to it to be 32
 -- 
 2.7.4
 
