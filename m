@@ -2,61 +2,62 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=0.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09A02FC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:42:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 357D4FC6183
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:42:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6FDB2083A
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:42:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D684E2083A
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:42:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="o0XNS9YS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6FDB2083A
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="x6jtNJmK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D684E2083A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728316AbeINTzV (ORCPT
+        id S1728531AbeINT51 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 15:55:21 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:35777 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728266AbeINTzU (ORCPT
+        Fri, 14 Sep 2018 15:57:27 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:32927 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728294AbeINTzV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 15:55:20 -0400
-Received: by mail-wr1-f67.google.com with SMTP id j26-v6so10892795wre.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 07:40:30 -0700 (PDT)
+        Fri, 14 Sep 2018 15:55:21 -0400
+Received: by mail-wr1-f66.google.com with SMTP id v90-v6so10899146wrc.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 07:40:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=5hy1cImwFLaoJYAZMstJrgaN4xDvjcz+dii9EY6OQ8c=;
-        b=o0XNS9YSB3E+o5w9WuKdMh6H+ShF1Ispq2AgrjESnp0laXJjmFH4P+biT9tNq51vGf
-         1vKcEPm5C22/lPn5wyIZyOI8MoTSW6BASGR4E/rolX2DW5RS30NCEurmZ0QZ7tOb+L3o
-         33Q8ghK9hbaLP8ts2Rf85sF5zrv+5nnY0ZxoCQ0SMXPnS4BX9+88L9W6mPGi+Vhj1+Og
-         WNz49MqJyZ02TctMIO6WUnyY/id50Zd1N9Syc1f6dkXLyft1U8M2jjOU5emImD0ragQH
-         ZkiUJ8sAk9pdtbV4Wi3gosezr/8VgiUOZW+zzuGXhPBTuJJs3r6pru4gClvJyZ0Q3rXe
-         /+SA==
+        bh=ItU0oQ7oWgVAhdtVOsH1jZ2YSN2mvMhQOChLXBHLTVc=;
+        b=x6jtNJmKVqd0wEpnwBYoZV8FBftk3EGFrPNFcDlF1XqWp/Ki77ks9xkLw4wPj1RBY8
+         0oPEswhGGAPv5BSYYJ67w8jl1f+eSQ/Nke/3cP2cLq2RUYUo7gKz3X26EB8OXUL1l39R
+         R95dn0z/Zq7K8cWMU1h/IDWRl0i2k9F0da4mRjJx8Yp0tjflrAYjRZ27TOw6LIYSacZP
+         nYh31cL/uy88pPKQB/pdkRx/OJPOKrPnUeGGxv0CZmZNc1MQE79X2e10WgfLGlL4lgGF
+         RlDaxATYb8ETHkRvmQ9j7AxMos0OgG70z9SznH3cZsveMO7Mr+YeKSa4Z//jEZt9aOMn
+         4v9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=5hy1cImwFLaoJYAZMstJrgaN4xDvjcz+dii9EY6OQ8c=;
-        b=rj3eRy6Sgr6JC4c+kSCzRKgcyUSnUWj2V2kb6Y8rJUBUEk8cRhCCJ92/LwxXx0fb2t
-         WBD4YW5vKJSRPxAqfBQlVGgoGWBzeEN2MPX+Cfp3j3n8WXLV7PQwuEVDkvyaN6YD/Gnu
-         RxhoTkjSURuA2GI5nPkOQwu9MWb/LnGN31AK+A0XIjqPuXe4nUve67fsR84qXfctJ4XM
-         hC4rmDcXQopBAhr5n/DD1yxfdKQqOVKrO+YaHW54+sJWn0gwJMwA70Lfy5/FFlfCr/yG
-         KUAMXWcMEHPBeh3oVYa+b7p1z1xanzD/Roor9e8daWK8wVkET0Skpnk+ylRFQcI9agfS
-         HQfA==
-X-Gm-Message-State: APzg51CGlcBblD/IyduKlG7TmI0DZAaypCXPNDrd0U01W41PzBxA6roo
-        iR2GZ1eKZN/szUafcMAt7+awww==
-X-Google-Smtp-Source: ANB0VdZhDkcM2z7bM3oRujFanuSA4xLtl50xZNt7TIdAgbgPyQbpDPu3slIPOgPa541xQJ+mQXRZVg==
-X-Received: by 2002:adf:9f13:: with SMTP id l19-v6mr10382180wrf.206.1536936030348;
-        Fri, 14 Sep 2018 07:40:30 -0700 (PDT)
+        bh=ItU0oQ7oWgVAhdtVOsH1jZ2YSN2mvMhQOChLXBHLTVc=;
+        b=ASGvaeZ4E7wdy71XUVFDq6iD9RYlbqaeOm24chA59LEP1/C/z2UDF28mbRje8Osm7K
+         tCZrroxCyH9uMm3DUKCH9w0ffIWmQQ7GMR+f1n+FCkh6G7DpwF3Hm/Bd+wjr4URPWD5f
+         cW1OGBejt/ywTrH2F4otaThOZzBV1+CPVLe7ndqxfv54ZRZ3eEh+hjiMhw4bJOFq7ze6
+         J+J40ogDuWFkDTIYO4g5OXbkPo6Nyhq82ni5jLGjd/NsZbGCw5IW5lbHQEnuqJKxIOGp
+         NUyVYGHm49xCxaep+UwF2Xv2kXK+nd0OLwyPH0Nrli31DYnNtqPED94+NVq6C8Z/3Odd
+         8L3g==
+X-Gm-Message-State: APzg51D21tstoH5315L+jcMvjrf270DM6awFtqsI6VuaORRfK+I/n73a
+        XTthqekI2it9vpGPX73c48M+9Q==
+X-Google-Smtp-Source: ANB0VdblATkKapARBX1WtsqhnW6GY0ysrGw8SesGgUpQeDdRDQTQMV4ViGuxsSz/4WGZQVyR03xqeA==
+X-Received: by 2002:adf:fc83:: with SMTP id g3-v6mr9627462wrr.216.1536936031633;
+        Fri, 14 Sep 2018 07:40:31 -0700 (PDT)
 Received: from brgl-bgdev.home ([2a01:cb1d:af:5b00:e837:b8d5:48c1:571b])
-        by smtp.gmail.com with ESMTPSA id v46-v6sm10313526wrc.63.2018.09.14.07.40.29
+        by smtp.gmail.com with ESMTPSA id v46-v6sm10313526wrc.63.2018.09.14.07.40.30
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Sep 2018 07:40:29 -0700 (PDT)
+        Fri, 14 Sep 2018 07:40:31 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
         "David S . Miller" <davem@davemloft.net>,
@@ -74,9 +75,9 @@ To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
 Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v4 05/22] nvmem: check the return value of nvmem_add_cells()
-Date:   Fri, 14 Sep 2018 16:39:54 +0200
-Message-Id: <20180914144011.27614-6-brgl@bgdev.pl>
+Subject: [PATCH v4 06/22] nvmem: use kref
+Date:   Fri, 14 Sep 2018 16:39:55 +0200
+Message-Id: <20180914144011.27614-7-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180914144011.27614-1-brgl@bgdev.pl>
 References: <20180914144011.27614-1-brgl@bgdev.pl>
@@ -87,38 +88,122 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-This function can fail so check its return value in nvmem_register()
-and act accordingly.
+Use kref for reference counting. Use an approach similar to the one
+seen in the common clock subsystem: don't actually destroy the nvmem
+device until the last user puts it. This way we can get rid of the
+users check from nvmem_unregister().
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/nvmem/core.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/nvmem/core.c | 44 ++++++++++++++++++++++----------------------
+ 1 file changed, 22 insertions(+), 22 deletions(-)
 
 diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index b469f700c699..ffed8fa16936 100644
+index ffed8fa16936..552ffedce38e 100644
 --- a/drivers/nvmem/core.c
 +++ b/drivers/nvmem/core.c
-@@ -512,11 +512,17 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
- 			goto err_device_del;
+@@ -19,6 +19,7 @@
+ #include <linux/fs.h>
+ #include <linux/idr.h>
+ #include <linux/init.h>
++#include <linux/kref.h>
+ #include <linux/module.h>
+ #include <linux/nvmem-consumer.h>
+ #include <linux/nvmem-provider.h>
+@@ -31,7 +32,7 @@ struct nvmem_device {
+ 	int			stride;
+ 	int			word_size;
+ 	int			id;
+-	int			users;
++	struct kref		refcnt;
+ 	size_t			size;
+ 	bool			read_only;
+ 	int			flags;
+@@ -463,6 +464,8 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
+ 		return ERR_PTR(rval);
  	}
  
--	if (config->cells)
--		nvmem_add_cells(nvmem, config->cells, config->ncells);
-+	if (config->cells) {
-+		rval = nvmem_add_cells(nvmem, config->cells, config->ncells);
-+		if (rval)
-+			goto err_teardown_compat;
-+	}
++	kref_init(&nvmem->refcnt);
++
+ 	nvmem->id = rval;
+ 	nvmem->owner = config->owner;
+ 	if (!nvmem->owner && config->dev->driver)
+@@ -532,6 +535,20 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
+ }
+ EXPORT_SYMBOL_GPL(nvmem_register);
  
- 	return nvmem;
- 
-+err_teardown_compat:
-+	if (config->compat)
++static void nvmem_device_release(struct kref *kref)
++{
++	struct nvmem_device *nvmem;
++
++	nvmem = container_of(kref, struct nvmem_device, refcnt);
++
++	if (nvmem->flags & FLAG_COMPAT)
 +		device_remove_bin_file(nvmem->base_dev, &nvmem->eeprom);
- err_device_del:
- 	device_del(&nvmem->dev);
- err_put_device:
++
++	nvmem_device_remove_all_cells(nvmem);
++	device_del(&nvmem->dev);
++	put_device(&nvmem->dev);
++}
++
+ /**
+  * nvmem_unregister() - Unregister previously registered nvmem device
+  *
+@@ -541,19 +558,7 @@ EXPORT_SYMBOL_GPL(nvmem_register);
+  */
+ int nvmem_unregister(struct nvmem_device *nvmem)
+ {
+-	mutex_lock(&nvmem_mutex);
+-	if (nvmem->users) {
+-		mutex_unlock(&nvmem_mutex);
+-		return -EBUSY;
+-	}
+-	mutex_unlock(&nvmem_mutex);
+-
+-	if (nvmem->flags & FLAG_COMPAT)
+-		device_remove_bin_file(nvmem->base_dev, &nvmem->eeprom);
+-
+-	nvmem_device_remove_all_cells(nvmem);
+-	device_del(&nvmem->dev);
+-	put_device(&nvmem->dev);
++	kref_put(&nvmem->refcnt, nvmem_device_release);
+ 
+ 	return 0;
+ }
+@@ -647,7 +652,6 @@ static struct nvmem_device *__nvmem_device_get(struct device_node *np,
+ 		}
+ 	}
+ 
+-	nvmem->users++;
+ 	mutex_unlock(&nvmem_mutex);
+ 
+ 	if (!try_module_get(nvmem->owner)) {
+@@ -655,22 +659,18 @@ static struct nvmem_device *__nvmem_device_get(struct device_node *np,
+ 			"could not increase module refcount for cell %s\n",
+ 			nvmem_dev_name(nvmem));
+ 
+-		mutex_lock(&nvmem_mutex);
+-		nvmem->users--;
+-		mutex_unlock(&nvmem_mutex);
+-
+ 		return ERR_PTR(-EINVAL);
+ 	}
+ 
++	kref_get(&nvmem->refcnt);
++
+ 	return nvmem;
+ }
+ 
+ static void __nvmem_device_put(struct nvmem_device *nvmem)
+ {
+ 	module_put(nvmem->owner);
+-	mutex_lock(&nvmem_mutex);
+-	nvmem->users--;
+-	mutex_unlock(&nvmem_mutex);
++	kref_put(&nvmem->refcnt, nvmem_device_release);
+ }
+ 
+ static struct nvmem_device *nvmem_find(const char *name)
 -- 
 2.18.0
 
