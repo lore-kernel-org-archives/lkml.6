@@ -2,167 +2,94 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E84A8ECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 12:39:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03AC9FC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 12:41:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 960B120881
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 12:39:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="O6Os6zl9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 960B120881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id A646E20881
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 12:41:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A646E20881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728193AbeINRyP (ORCPT
+        id S1728095AbeINR4E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 13:54:15 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:39663 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728034AbeINRyP (ORCPT
+        Fri, 14 Sep 2018 13:56:04 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:49545 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727841AbeINR4D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 13:54:15 -0400
-Received: by mail-lj1-f194.google.com with SMTP id l15-v6so7396466lji.6
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 05:39:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=0vCHEFgyRLvG5+hlyShw62WnZT9sQmSKSYw6LV/ciBU=;
-        b=O6Os6zl9l37w9W1oFAC1YXgJSaJ5fh5gO70pzoKr+Nnp2MNOCNd8x+icT3KLDGookF
-         vr0my2Meiz5Y61Kmz7IVgI7aSBKaJcpsGjykrZu4HDGgPcBcwTpF56/YQcD8gIpOuWgB
-         2+IXap7G96E6IeCB4ggwi2A8bMX7+LMlcqTuY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=0vCHEFgyRLvG5+hlyShw62WnZT9sQmSKSYw6LV/ciBU=;
-        b=T9SDsznDIKsb0vs1aYoSsHQSYpT7I54AS6RemmE94T79/6eIBSqJcK/+hJrhuAjF/3
-         vgRMbT2BNZX61my/TwOBx2TqKigmNJAMgMdEkn6QOhpoEybxeU3FXHwZqnb+Ye41SUdu
-         ZCHG9jelZvteq8F90JT657NI81LhJflYNAAOizNR/dlSng1QQc1JFNb6iWKhvl7GYp03
-         BZyfCW3zQ03OxX+YBEHzePs22f8eQ1EmlthBreXGcmbYt3SmBA+xJnhHBLSOWwJ+Vz96
-         ESZmnqqAMiU8yoPRxW03Dq+Cp91PpiiypV/NdeSqv1ejcFtUnJGhYQhIhGmiewYROc4t
-         IQdA==
-X-Gm-Message-State: APzg51DrTOggGE2sM0VCEd8+I5C8vzQ2tzFRw7zaKM683eQGltxHc5a2
-        4u7WHCkvh3gvuX4gp+l9CjeA00H9gP/QXZG9G65eSQ==
-X-Google-Smtp-Source: ANB0VdaIKUAZmG9gvRBMFEpCrU/ao/OLEcJkActP7isSmlqMGSJmityYQ/qRZEuepoxU0FdM7Oj+UEy1/Gdyru/nRnA=
-X-Received: by 2002:a2e:650e:: with SMTP id z14-v6mr7453950ljb.62.1536928795543;
- Fri, 14 Sep 2018 05:39:55 -0700 (PDT)
+        Fri, 14 Sep 2018 13:56:03 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1g0nPo-0005lb-DC; Fri, 14 Sep 2018 14:41:40 +0200
+Date:   Fri, 14 Sep 2018 14:41:40 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+cc:     mika.penttila@nextfour.com,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
+Subject: Re: [PATCH] PM / suspend: Count suspend-to-idle loop as sleep time
+In-Reply-To: <CAJZ5v0gRjfGDSyZXRwGgF9dOBR9OJbfYE8Dbpqdx6oCMN1XUVA@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1809141438560.10480@nanos.tec.linutronix.de>
+References: <9611469.2z7W9akjOQ@aspire.rjw.lan> <767e9ec4-cc35-9255-360a-4d12736aa4de@nextfour.com> <1831106.CYv9dyYV15@aspire.rjw.lan> <e028742e-cd42-24a7-0da1-4fa12d8c9d7c@nextfour.com> <CAJZ5v0gRjfGDSyZXRwGgF9dOBR9OJbfYE8Dbpqdx6oCMN1XUVA@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Received: by 2002:a19:a20c:0:0:0:0:0 with HTTP; Fri, 14 Sep 2018 05:39:54
- -0700 (PDT)
-In-Reply-To: <20180913131823.327472833@linuxfoundation.org>
-References: <20180913131823.327472833@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Fri, 14 Sep 2018 18:09:54 +0530
-Message-ID: <CA+G9fYvaake1T4uacZpg8Urk00CSvhBC8pr-N9PyBQnzpN-Mxw@mail.gmail.com>
-Subject: Re: [PATCH 4.14 000/115] 4.14.70-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/mixed; boundary="8323329-1763824608-1536928900=:10480"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13 September 2018 at 19:00, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
-> This is the start of the stable review cycle for the 4.14.70 release.
-> There are 115 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat Sep 15 13:17:48 UTC 2018.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.14.70-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.14.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64 and i386.
+--8323329-1763824608-1536928900=:10480
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-This report is on 4.14.70-rc2
+On Fri, 14 Sep 2018, Rafael J. Wysocki wrote:
+> On Fri, Sep 14, 2018 at 11:53 AM Mika Penttilä
 
-Summary
-------------------------------------------------------------------------
+> > >> But doesn't injecting sleep time here make monotonic clock too large
+> > >> by the amount of sleeptime?  tick_freeze() / tick_unfreeze() already
+> > >> injects the sleeptime (otherwise delta would be 0).  > > >
+> > >
+> > > No, it doesn't.
+> > >
+> > > The delta here is the extra time taken by the loop which hasn't been counted
+> > > as sleep time yet.
+> >
 
-kernel: 4.14.70-rc2
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.14.y
-git commit: 6b9eeb5455e913022106a6aa057eb9947d934a36
-git describe: v4.14.69-116-g6b9eeb5455e9
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.14-oe/bu=
-ild/v4.14.69-116-g6b9eeb5455e9
+> > I said incorrectly monotonic clock, but
+> > timekeeping_inject_sleeptime64() forwards the wall time, by the amount
+> > of delta.  Why wouldn't some other cpu update xtime when one cpu is in
+> > the loop? And if all cpus enter s2idle, tick_unfreeze() injects
+> > sleeptime. My point is that this extra injection makes wall time wrong,
+> > no?
+>  
+> OK, you're right.  I got that the other way around.
+> 
+> So, the patch is withdrawn.
 
-No regressions (compared to build v4.14.69)
+I just tried to wrap my brain around that whole thing and utterly
+failed, so I can't give any recommendations right now.
 
+Rafael, could you please enable some lightweight instrumentation which lets
+me see the longer sequence of events which are leading to this or tell me
+what I need to do to reproduce that myself?
 
+Thanks,
 
-Ran 21266 total tests in the following environments and test suites.
-
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* boot
-* kselftest
-* libhugetlbfs
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* ltp-cap_bounds-tests
-* ltp-filecaps-tests
-* ltp-[
-* ltp-open-posix-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
+	tglx
+--8323329-1763824608-1536928900=:10480--
