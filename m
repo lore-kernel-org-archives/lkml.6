@@ -2,124 +2,112 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9559CC070C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 05:56:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD734C070C3
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 06:01:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41B6A20853
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 05:56:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41B6A20853
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3295B20853
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 06:01:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3295B20853
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727680AbeINLJd (ORCPT
+        id S1727278AbeINLOa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 07:09:33 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39734 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726831AbeINLJd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 07:09:33 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 50B61AD14;
-        Fri, 14 Sep 2018 05:56:39 +0000 (UTC)
-Date:   Fri, 14 Sep 2018 07:56:37 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     "prakash.sangappa" <prakash.sangappa@oracle.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        dave.hansen@intel.com, nao.horiguchi@gmail.com,
-        akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
-        khandual@linux.vnet.ibm.com, steven.sistare@oracle.com
-Subject: Re: [PATCH V2 0/6] VA to numa node information
-Message-ID: <20180914055637.GH20287@dhcp22.suse.cz>
-References: <1536783844-4145-1-git-send-email-prakash.sangappa@oracle.com>
- <20180913084011.GC20287@dhcp22.suse.cz>
- <375951d0-f103-dec3-34d8-bbeb2f45f666@oracle.com>
+        Fri, 14 Sep 2018 07:14:30 -0400
+Received: from a.mx.secunet.com ([62.96.220.36]:48716 "EHLO a.mx.secunet.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726845AbeINLOa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 07:14:30 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by a.mx.secunet.com (Postfix) with ESMTP id BF4E1201C4;
+        Fri, 14 Sep 2018 10:01:17 +0200 (CEST)
+X-Virus-Scanned: by secunet
+Received: from a.mx.secunet.com ([127.0.0.1])
+        by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 8ct8xp0azJkv; Fri, 14 Sep 2018 10:01:16 +0200 (CEST)
+Received: from mail-essen-02.secunet.de (mail-essen-02.secunet.de [10.53.40.205])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by a.mx.secunet.com (Postfix) with ESMTPS id 3A819201A1;
+        Fri, 14 Sep 2018 10:01:16 +0200 (CEST)
+Received: from gauss2.secunet.de (10.182.7.193) by mail-essen-02.secunet.de
+ (10.53.40.205) with Microsoft SMTP Server id 14.3.408.0; Fri, 14 Sep 2018
+ 08:01:33 +0200
+Received: by gauss2.secunet.de (Postfix, from userid 1000)      id 078D1318060A;
+ Fri, 14 Sep 2018 08:01:33 +0200 (CEST)
+Date:   Fri, 14 Sep 2018 08:01:33 +0200
+From:   Steffen Klassert <steffen.klassert@secunet.com>
+To:     Florian Westphal <fw@strlen.de>
+CC:     David Miller <davem@davemloft.net>, <linux@stwm.de>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <torvalds@linux-foundation.org>, <christophe.gouault@6wind.com>
+Subject: Re: Regression: kernel 4.14 an later very slow with many ipsec
+ tunnels
+Message-ID: <20180914060132.GE23674@gauss3.secunet.de>
+References: <20180913135844.3ut6fxgx67t6ndtu@breakpoint.cc>
+ <3448099.9yk84El3Sa@stwm.de>
+ <20180913163848.ni5xc4gc4d6uusdn@breakpoint.cc>
+ <20180913.102305.939671149040995911.davem@davemloft.net>
+ <20180913210325.5usfj2rorvuvtyc7@breakpoint.cc>
+ <20180914050651.GD23674@gauss3.secunet.de>
+ <20180914055437.77pffp2jrbfnykbp@breakpoint.cc>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <375951d0-f103-dec3-34d8-bbeb2f45f666@oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180914055437.77pffp2jrbfnykbp@breakpoint.cc>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-G-Data-MailSecurity-for-Exchange-State: 0
+X-G-Data-MailSecurity-for-Exchange-Error: 0
+X-G-Data-MailSecurity-for-Exchange-Sender: 23
+X-G-Data-MailSecurity-for-Exchange-Server: cbe3d3f7-b9e3-4256-b890-f24c4306a01c
+X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
+X-G-Data-MailSecurity-for-Exchange-Guid: B8F2F20E-E369-4064-AC56-310A4E511044
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 13-09-18 15:32:25, prakash.sangappa wrote:
-> 
-> 
-> On 09/13/2018 01:40 AM, Michal Hocko wrote:
-> > On Wed 12-09-18 13:23:58, Prakash Sangappa wrote:
-> > > For analysis purpose it is useful to have numa node information
-> > > corresponding mapped virtual address ranges of a process. Currently,
-> > > the file /proc/<pid>/numa_maps provides list of numa nodes from where pages
-> > > are allocated per VMA of a process. This is not useful if an user needs to
-> > > determine which numa node the mapped pages are allocated from for a
-> > > particular address range. It would have helped if the numa node information
-> > > presented in /proc/<pid>/numa_maps was broken down by VA ranges showing the
-> > > exact numa node from where the pages have been allocated.
+On Fri, Sep 14, 2018 at 07:54:37AM +0200, Florian Westphal wrote:
+> Steffen Klassert <steffen.klassert@secunet.com> wrote:
+> > On Thu, Sep 13, 2018 at 11:03:25PM +0200, Florian Westphal wrote:
+> > > David Miller <davem@davemloft.net> wrote:
+> > > > From: Florian Westphal <fw@strlen.de>
+> > > > Date: Thu, 13 Sep 2018 18:38:48 +0200
+> > > > 
+> > > > > Wolfgang Walter <linux@stwm.de> wrote:
+> > > > >> What I can say is that it depends mainly on number of policy rules and SA.
+> > > > > 
+> > > > > Thats already a good hint, I guess we're hitting long hash chains in
+> > > > > xfrm_policy_lookup_bytype().
+> > > > 
+> > > > I don't really see how recent changes can influence that.
 > > > 
-> > > The format of /proc/<pid>/numa_maps file content is dependent on
-> > > /proc/<pid>/maps file content as mentioned in the manpage. i.e one line
-> > > entry for every VMA corresponding to entries in /proc/<pids>/maps file.
-> > > Therefore changing the output of /proc/<pid>/numa_maps may not be possible.
+> > > I don't think there is a recent change that did this.
 > > > 
-> > > This patch set introduces the file /proc/<pid>/numa_vamaps which
-> > > will provide proper break down of VA ranges by numa node id from where the
-> > > mapped pages are allocated. For Address ranges not having any pages mapped,
-> > > a '-' is printed instead of numa node id.
+> > > Walter says < 4.14 is ok, so this is likely related to flow cache removal.
 > > > 
-> > > Includes support to lseek, allowing seeking to a specific process Virtual
-> > > address(VA) starting from where the address range to numa node information
-> > > can to be read from this file.
+> > > F.e. it looks like all prefixed policies end up in a linked list
+> > > (net->xfrm.policy_inexact) and are not even in a hash table.
 > > > 
-> > > The new file /proc/<pid>/numa_vamaps will be governed by ptrace access
-> > > mode PTRACE_MODE_READ_REALCREDS.
-> > > 
-> > > See following for previous discussion about this proposal
-> > > 
-> > > https://marc.info/?t=152524073400001&r=1&w=2
-> > It would be really great to give a short summary of the previous
-> > discussion. E.g. why do we need a proc interface in the first place when
-> > we already have an API to query for the information you are proposing to
-> > export [1]
+> > > I am staring at b58555f1767c9f4e330fcf168e4e753d2d9196e0
+> > > but can't figure out how to configure that away from the
+> > > 'no hashing for prefixed policies' default or why we even have
+> > > policy_inexact in first place :/
 > > 
-> > [1] http://lkml.kernel.org/r/20180503085741.GD4535@dhcp22.suse.cz
+> > The hash threshold can be configured like this:
+> > 
+> > ip x p set hthresh4 0 0
+> > 
+> > This sets the hash threshold to local /0 and remote /0 netmasks.
+> > With this configuration, all policies should go to the hashtable.
 > 
-> The proc interface provides an efficient way to export address range
-> to numa node id mapping information compared to using the API.
+> Yes, but won't they all be hashed to same bucket?
+> 
+> [ jhash(addr & 0, addr & 0) ] ?
 
-Do you have any numbers?
+Hm, yes. Maybe something between /0 and /32 makes more sense.
 
-> For example, for sparsely populated mappings, if a VMA has large portions
-> not have any physical pages mapped, the page walk done thru the /proc file
-> interface can skip over non existent PMDs / ptes. Whereas using the
-> API the application would have to scan the entire VMA in page size units.
-
-What prevents you from pre-filtering by reading /proc/$pid/maps to get
-ranges of interest?
-
-> Also, VMAs having THP pages can have a mix of 4k pages and hugepages.
-> The page walks would be efficient in scanning and determining if it is
-> a THP huge page and step over it. Whereas using the API, the application
-> would not know what page size mapping is used for a given VA and so would
-> have to again scan the VMA in units of 4k page size.
-
-Why does this matter for something that is for analysis purposes.
-Reading the file for the whole address space is far from a free
-operation. Is the page walk optimization really essential for usability?
-Moreover what prevents move_pages implementation to be clever for the
-page walk itself? In other words why would we want to add a new API
-rather than make the existing one faster for everybody.
- 
-> If this sounds reasonable, I can add it to the commit / patch description.
-
-This all is absolutely _essential_ for any new API proposed. Remember that
-once we add a new user interface, we have to maintain it for ever. We
-used to be too relaxed when adding new proc files in the past and it
-backfired many times already.
--- 
-Michal Hocko
-SUSE Labs
