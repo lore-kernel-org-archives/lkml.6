@@ -3,86 +3,172 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AC3FECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:48:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA9E5ECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:49:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C92AA2146E
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:48:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F6392146E
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:49:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="slZCi4wJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C92AA2146E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="qBtin8CX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F6392146E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728245AbeINPBx (ORCPT
+        id S1728193AbeINPDN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 11:01:53 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:45479 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727670AbeINPBx (ORCPT
+        Fri, 14 Sep 2018 11:03:13 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:32946 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727730AbeINPDN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 11:01:53 -0400
-Received: by mail-wr1-f66.google.com with SMTP id 20-v6so9777852wrb.12
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 02:48:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=mzDtYNZ1NR2pqdWOT197eVDTZ65IUpVm7AAGTD7eHO4=;
-        b=slZCi4wJfX5MB3ZMobku32dhdkapMMFRgMIXVG3L/berb/awn5jKpU380Y2W8XXebe
-         nF0gA4145xW6ZMBl8dVhKKTZKJeqBKT1wl+XNZsP2yGei+pJj0Ul0Lm2v2K3/V44XIW5
-         JflFfUCYte7WdC9UE0fzwBm1vbXbKR070/MyyzY44rkGiTLpRq/NeRudJC8b28V+ffEl
-         c2eY58QKmHeuuvZV9lUjRXjN73fq3htcLAoYiXa+xF+I0GRbO2SB2zA8WMY6ep+vk79h
-         9SUx9wdHxpaFPI/gHEaL/Y9Wqf+huj6/w/onDyqZETXNt8N0KKmgCU00b2rdG6zPRfiy
-         V3eA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=mzDtYNZ1NR2pqdWOT197eVDTZ65IUpVm7AAGTD7eHO4=;
-        b=N2zNhHu9XYqVxvAZCoj4w5t/RkplL5QRb0BmJR2R2xquw11gwSm3OFCAIBSLqJfU7S
-         UO5Xn74Zks1eN49mDrGuZkjVw9YnAbdnnxoqXp7njlcB/xfmc4VCsmagwCP509C1bYWr
-         paywO/ASnaCkTenEQHiz99mV5hm7cFKC4Qnj5ynHLaJcN7XxmnTblXKod/nLx0M2sXdV
-         HWHUGUvqMF5qVZZR+gPEExelTLFRm2kkBPyrJ/9EdDBhfiZdOBHeKskKSR6TPZIaXEGj
-         ON9gvoXVQ6FjrI7JVqnKD4Lb3yoDmdfwU5/2j+4In3rwd25UZIaoGwhcHM3Iaxgkq9mS
-         3MgA==
-X-Gm-Message-State: APzg51CViGJjqoEAURy+50uioT0HpYinpRcqMWllkBVn9DerYEuStpJS
-        SYknSrc5y7sQLSSj2t34Dz8Y9Q2qlWsDNFnsPaJi8A==
-X-Google-Smtp-Source: ANB0VdY/cl384QZFnt6jHwC1S+vYWKxZbiqxLaOKdKbzTZ4RYSOZwynSiLKxVG7m+i+8fRaXSA+F3/4sIYx6xiEKvC4=
-X-Received: by 2002:a5d:528f:: with SMTP id c15-v6mr9162012wrv.102.1536918489267;
- Fri, 14 Sep 2018 02:48:09 -0700 (PDT)
+        Fri, 14 Sep 2018 11:03:13 -0400
+Received: from avalon.localnet (unknown [IPv6:2a02:a03f:44f6:3500:d929:375b:d608:66c7])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8EC52CE;
+        Fri, 14 Sep 2018 11:49:27 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1536918568;
+        bh=scpBvkzq0DQHJDNSVM2/GkCp30rE90qcPvnOqt13UVs=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=qBtin8CXtptIpUZHzswFJEpo+w8Cvt2EQU0cvGYGmQFsA9dLqcQKj3P/tqD1X5Yu9
+         2Jmg7EFLw6n6naJ9ojhxFxU7t3FR1PlDnyIzGCIHRVq7HPYP9eZHFvnbpF1fbHu6ZK
+         FLpaQIZHOx238i7ro59NtWSHQrB03PUPG2+SQeBI=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Stefan Agner <stefan@agner.ch>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Dave Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        sean@poorly.run, Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        max.krummenacher@toradex.com,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/6] drm/bridge: use bus flags in bridge timings
+Date:   Fri, 14 Sep 2018 12:49:40 +0300
+Message-ID: <2015108.bT6A7b8iLH@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <b1cb586397a4cd444c33dd83d72fa544@agner.ch>
+References: <20180905052113.21262-1-stefan@agner.ch> <CACRpkdbw0VjkHYcUpox+DorRG0oRdPARL4ShgPfV2eFaUF_w0g@mail.gmail.com> <b1cb586397a4cd444c33dd83d72fa544@agner.ch>
 MIME-Version: 1.0
-Received: by 2002:a1c:686:0:0:0:0:0 with HTTP; Fri, 14 Sep 2018 02:48:08 -0700 (PDT)
-In-Reply-To: <20180911150938.3844-1-mjourdan@baylibre.com>
-References: <20180911150938.3844-1-mjourdan@baylibre.com>
-From:   Maxime Jourdan <mjourdan@baylibre.com>
-Date:   Fri, 14 Sep 2018 11:48:08 +0200
-Message-ID: <CAMO6naz46zu5qiN=9LCixMKOHbXLW6qYGqarHf9ciNUsMRQ6sQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] Add Amlogic video decoder driver
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Maxime Jourdan <mjourdan@baylibre.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Please note: the canvas patches required for this series (and causing
-the kbuild fail) were merged by Kevin Hilman with a tag.
+Hi Stefan,
 
-Repo: https://git.kernel.org/pub/scm/linux/kernel/git/khilman/linux-amlogic.git
-Tag: amlogic-drivers-canvas
+On Thursday, 6 September 2018 23:25:56 EEST Stefan Agner wrote:
+> On 06.09.2018 04:07, Linus Walleij wrote:
+> > On Wed, Sep 5, 2018 at 8:32 PM Stefan Agner <stefan@agner.ch> wrote:
+> >> On 05.09.2018 00:44, Laurent Pinchart wrote:
+> >> 
+> >> Good point! I actually really don't like that we use the same flags here
+> >> but from a different perspective. Especially since the flags defines
+> >> document things differently:
+> >> 
+> >> /* drive data on pos. edge */
+> >> #define DRM_BUS_FLAG_PIXDATA_POSEDGE    (1<<2)
+> >> /* drive data on neg. edge */
+> >> #define DRM_BUS_FLAG_PIXDATA_NEGEDGE    (1<<3)
+> > 
+> > Maybe a stupid comment from my side, but can't we just change the
+> > documentation to match the usecases?
+> > 
+> > /* Trigger pixel data latch on positive edge */
+> > #define DRM_BUS_FLAG_PIXDATA_POSEDGE    (1<<2)
+> > 
+> >> Using the opposite perspective would also need translation in crtc
+> >> drivers... So far no driver uses sampling_edge.
+> >> 
+> >> I would prefer if we always use the meaning as documented by the flags.
+> >> 
+> >> I guess we would need to convert DRM_BUS_FLAG_PIXDATA_POSEDGE ->
+> >> DRM_BUS_FLAG_PIXDATA_NEGEDGE.
+> >> 
+> >> Linus Walleij, you added sampling edge, any thoughts?
+> > 
+> > I just thought it was generally useful to have triggering edge encoded
+> > into the bridge as it makes it clear that this edge is something
+> > that is a delayed version of the driving edge which is subject to
+> > clock skew caused by the speed of electrons in silicon and
+> > copper and slew rate caused by parasitic capacitance.
+> 
+> Ok, I read a bit up on the history of bridge timing, especially:
+> https://www.spinics.net/lists/dri-devel/msg155618.html
+> 
+> IMHO, this got overengineered. For displays we do not need all that
+> setup/sample delay timing information, and much longer cables are in
+> use. So why is all that needed for bridges?
+> 
+> For Linus case, the THS8134(A/B) data sheet I found (revised March 2010)
+> clearly states:
+> Clock input. A rising edge on CLK latches RPr0-7, GY0-7, BPb0-7.
+> 
+> So we need to drive on negative edge, hence DRM_BUS_FLAG_PIXDATA_NEGEDGE
+> should be used, which makes the pl111 driver setting TIM2_IPC:
+> http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.ddi0121d/index.h
+> tml
+> 
+> > DRM_BUS_FLAG_PIXDATA_POSEDGE is the right value for my use cases, but it
+> > doesn't match how the ADV7123 operates. Using DRM_BUS_FLAG_PIXDATA_NEGEDGE
+> > would match the hardware, but would break display for some modes,
+> > depending on the display clock frequency as the internal 8.5ns output
+> > delay applied to a falling clock edge would fall right into the 1.7ns
+> > setup + hold time window of the ADV7123 around the rising edge. I can't
+> > test this right now as I don't have local access to boards using the
+> > ADV7123, but from a quick calculation that ignores the PCB transmission
+> > delay modes with frequencies between 57MHz and 71MHz could break if the
+> > data was output on the falling edge of the clock.
+> 
+> If clocks vs. data signal are really that much off on R-Car DU, then
+> parallel displays must have the very same issue...
+> 
+> Are you sure that only the clock signal has an output delay? And that
+> this output delay is a fixed value, clock independent?
+> 
+> Typically, delays apply to all signals equally, and often are clock
+> frequency dependent...
+> 
+> Without really looking at the signals, I would not jump to conclusions
+> here! I am pretty sure that driving on negative edge works just as well.
 
+I've tested Linus' original patch and it broke display on R-Car, so, no, it 
+doesn't work :-)
+
+The R-Car display engine delays the clock internally (in some cases that delay 
+is even configurable, and that's not uncommon in display controllers). We 
+really need all this information, and I believe we need it for panels too, not 
+just for bridges. The fact that we managed to get away without adding it to 
+panels is likely due to the large number of panels out there, which makes it 
+less likely that the same panel gets used by different systems in mainline 
+with different clock delays. I expect that some panel drivers report the wrong 
+clock edge to make things work on the board they were tested with, and I 
+expect we'll eventually need to add the same information for panels too.
+
+So please don't remove this useful API, otherwise you'll break my board, and I 
+won't be happy.
+
+-- 
 Regards,
-Maxime
+
+Laurent Pinchart
+
+
+
