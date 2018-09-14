@@ -6,57 +6,57 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C50CFC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:40:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A74FCECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:40:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 082662147A
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:40:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51CEB2148E
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:40:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="kVueZXqz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 082662147A
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="S7jbs5pP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51CEB2148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728361AbeINTzY (ORCPT
+        id S1728399AbeINTz1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 15:55:24 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:44551 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728319AbeINTzW (ORCPT
+        Fri, 14 Sep 2018 15:55:27 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:39603 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728342AbeINTzZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 15:55:22 -0400
-Received: by mail-wr1-f67.google.com with SMTP id v16-v6so10866034wro.11
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 07:40:33 -0700 (PDT)
+        Fri, 14 Sep 2018 15:55:25 -0400
+Received: by mail-wm1-f66.google.com with SMTP id q8-v6so2197812wmq.4
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 07:40:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=7pNB/YkN9hno7KdXunbmQOYsXKCGrUI9TMuetzklSpo=;
-        b=kVueZXqzj43Ei3Z1+1lFMocjfG/ooMES8MIemzLkdHBxyGqT+VEsAkbbdYoilTq/VM
-         xhxqidCZTA2zjXLS7a/ITVZnZAc+rnxXNjotPFDbXFyDMY6AWSje1CxxdRiSshj44BHK
-         jRhqz/35mpC/P4YeFVwqvq//8J4u8Cms6EUdrRzo2ilGg3EM3vHCKvte5yDN1Bv9xqPB
-         Uxrmf1IZPmMcOn6sKdYwsdB3UXDEE00yk3Wcso/mf9cNHx4c/7jpiZgt4urzrOqYkDZ3
-         otm10MoZyqiJWEs5D1eo3o0Oy2XfyxcJJbCqW2SgKPiob5gaP5e+c71rqqFDoIcRHkMP
-         RmeA==
+        bh=1PFkzde7HIbembuPSuldz/+wF0MJkUfGiNxQy31YmBk=;
+        b=S7jbs5pPQ2x3wKmhl12WP8g1zp9JDwpVIt1QT49EXeR5DLKo2hy3aYJPrmap8/bue3
+         w9ldGm6jkuCKD47VfAVUwdnRu4tw+QAo/0nYhqtnUfgsutWPjzs5RpF/M8aSSXiXeA9n
+         3nY/g4LSs5XIOgYrvpKap6ONXJuzGMs/aGXx42ZBOXU57gMPeEk3UL7dcFw9arEwS6r0
+         Uv3AncCtRfQCoKdt8aiWQZbAylcyKZqRNddTD02zT0HoxMsZGVastn6agIKjmVlKsszX
+         tRGR5fg6X4gO1KjhVbUr9Yz9nSiWpRnI329lmZBmxE/XoCfaLvZ5wu8hnqABHuDPdi9S
+         aN7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=7pNB/YkN9hno7KdXunbmQOYsXKCGrUI9TMuetzklSpo=;
-        b=PsEWn77rkQ4aRnlUb1NRqBOpw5uIFbjhw/RUo31z+AMmgYCm95OHF35zDZMnph2jds
-         P2mOudPyRlSFVlccQR5urmSR10Opv19g/9kASnncCQuHc2tCHpjdGWXGAA5eQ7w/aRCm
-         J9csOOEMzb9qKtYGEYlhX9mLmkk6fdIDnniF6Wt6yrfBvENTBICF8S11D5H5MvguA/En
-         SpfAAf7TYRhFO/GQs2Fs3r5ZPgPxyoOMc4iJuPe5WRABXzW49cFwj+zL+SRF/Tah8Gaf
-         zFk8T//GeUmR5AixUjqsTF9SoGk1SNcn6NvZiQPG/ClMcnpmGIRjVmlRnAYfQdTav8J3
-         lS3w==
-X-Gm-Message-State: APzg51CgRK4GkScyOAqhN/kmuWthRNAaOHFgpqzU+60RgQ5gQmyEhZGO
-        G/cbJsXaKOi8RQHK9Clr+oi8Mw==
-X-Google-Smtp-Source: ANB0VdZGHNWzAEllVRroGFkQVUm1NLL3cKkbyxRGezizukVkvSVhVANUJu6udaTUcIlVq2qbG/SbDA==
-X-Received: by 2002:adf:de85:: with SMTP id w5-v6mr10818141wrl.270.1536936032885;
-        Fri, 14 Sep 2018 07:40:32 -0700 (PDT)
+        bh=1PFkzde7HIbembuPSuldz/+wF0MJkUfGiNxQy31YmBk=;
+        b=J4mTRYvyX0C1fJusVgCvRs/gymyNsU+b9aaKDGF+GGit550PlU3adhG+BrR18N+lnn
+         rQHRWU5zgEQpVMOBK3xfzqmwQXfZpOPMrhrVjkwH6cW9RhaRlnKVYNyPXCzCLhE9346H
+         YDDsSvyMaGcUBzjBxN+NpPkoTcW79ZzmIwxFAU/+PwgHE90Cw66Qj3mE5usEZyPk+nK0
+         NcJezqd0zId6LZLYxDJD47HgCCmMymU1AnkHBDrwPPEaFsJPkmsOmPwXjYRgA6Jg/G82
+         j90TMa22xQJi6QAMmnqNTMXIfKu/wFSt2iuxqt7eULUpHImGUxScpn/D8r0CEIZcswoq
+         RKlg==
+X-Gm-Message-State: APzg51DbfeItPMI8zNc3WgtnrUm3xJIxNW/2+ddjZJJ5x64ylnCAb/q7
+        SSsaDhXnZKOXwMVftdwdoJh+6Q==
+X-Google-Smtp-Source: ANB0VdbiWxIsIrJKeRP4iH0O3gtnMPpYpzuvzvv/gKbNvuLJuiqaPtjl/n/DkJoHAUaZS7WkLor/xg==
+X-Received: by 2002:a1c:b709:: with SMTP id h9-v6mr2482752wmf.130.1536936035500;
+        Fri, 14 Sep 2018 07:40:35 -0700 (PDT)
 Received: from brgl-bgdev.home ([2a01:cb1d:af:5b00:e837:b8d5:48c1:571b])
-        by smtp.gmail.com with ESMTPSA id v46-v6sm10313526wrc.63.2018.09.14.07.40.31
+        by smtp.gmail.com with ESMTPSA id v46-v6sm10313526wrc.63.2018.09.14.07.40.34
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Sep 2018 07:40:32 -0700 (PDT)
+        Fri, 14 Sep 2018 07:40:35 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
         "David S . Miller" <davem@davemloft.net>,
@@ -74,9 +74,9 @@ To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
 Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v4 07/22] nvmem: sunxi_sid: return -ENOMEM if kzalloc() fails
-Date:   Fri, 14 Sep 2018 16:39:56 +0200
-Message-Id: <20180914144011.27614-8-brgl@bgdev.pl>
+Subject: [PATCH v4 09/22] nvmem: lpc18xx_eeprom: use devm_nvmem_register()
+Date:   Fri, 14 Sep 2018 16:39:58 +0200
+Message-Id: <20180914144011.27614-10-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180914144011.27614-1-brgl@bgdev.pl>
 References: <20180914144011.27614-1-brgl@bgdev.pl>
@@ -87,27 +87,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-The driver currently returns -EINVAL if kzalloc() fails in probe().
-Change it to -ENOMEM as it should be.
+Use the managed version of nvmem_register().
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/nvmem/sunxi_sid.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/nvmem/lpc18xx_eeprom.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/drivers/nvmem/sunxi_sid.c b/drivers/nvmem/sunxi_sid.c
-index d020f89248fd..4d0b7e72aa2e 100644
---- a/drivers/nvmem/sunxi_sid.c
-+++ b/drivers/nvmem/sunxi_sid.c
-@@ -187,7 +187,7 @@ static int sunxi_sid_probe(struct platform_device *pdev)
+diff --git a/drivers/nvmem/lpc18xx_eeprom.c b/drivers/nvmem/lpc18xx_eeprom.c
+index a9534a6e8636..b42dbaddb419 100644
+--- a/drivers/nvmem/lpc18xx_eeprom.c
++++ b/drivers/nvmem/lpc18xx_eeprom.c
+@@ -236,7 +236,7 @@ static int lpc18xx_eeprom_probe(struct platform_device *pdev)
+ 	lpc18xx_nvmem_config.dev = dev;
+ 	lpc18xx_nvmem_config.priv = eeprom;
  
- 	randomness = kzalloc(size, GFP_KERNEL);
- 	if (!randomness) {
--		ret = -EINVAL;
-+		ret = -ENOMEM;
- 		goto err_unreg_nvmem;
- 	}
+-	eeprom->nvmem = nvmem_register(&lpc18xx_nvmem_config);
++	eeprom->nvmem = devm_nvmem_register(dev, &lpc18xx_nvmem_config);
+ 	if (IS_ERR(eeprom->nvmem)) {
+ 		ret = PTR_ERR(eeprom->nvmem);
+ 		goto err_clk;
+@@ -257,10 +257,6 @@ static int lpc18xx_eeprom_remove(struct platform_device *pdev)
+ 	struct lpc18xx_eeprom_dev *eeprom = platform_get_drvdata(pdev);
+ 	int ret;
  
+-	ret = nvmem_unregister(eeprom->nvmem);
+-	if (ret < 0)
+-		return ret;
+-
+ 	clk_disable_unprepare(eeprom->clk);
+ 
+ 	return 0;
 -- 
 2.18.0
 
