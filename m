@@ -2,126 +2,89 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35650ECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:07:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D0ECECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:08:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E067E20671
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:07:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E067E20671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id C91B820671
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:08:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZZFDCEAt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C91B820671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728186AbeINTWT (ORCPT
+        id S1728211AbeINTWz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 15:22:19 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33976 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727623AbeINTWS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 15:22:18 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3F21B18A;
-        Fri, 14 Sep 2018 07:07:38 -0700 (PDT)
-Received: from e110439-lin (e110439-lin.emea.arm.com [10.4.12.126])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 710C03F575;
-        Fri, 14 Sep 2018 07:07:35 -0700 (PDT)
-Date:   Fri, 14 Sep 2018 15:07:32 +0100
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Juri Lelli <juri.lelli@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v4 14/16] sched/core: uclamp: request CAP_SYS_ADMIN by
- default
-Message-ID: <20180914140732.GR1413@e110439-lin>
-References: <20180828135324.21976-1-patrick.bellasi@arm.com>
- <20180828135324.21976-15-patrick.bellasi@arm.com>
- <20180904134748.GA4974@localhost.localdomain>
- <20180906144053.GD25636@e110439-lin>
- <20180914111003.GC24082@hirez.programming.kicks-ass.net>
+        Fri, 14 Sep 2018 15:22:55 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:35591 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726925AbeINTWz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 15:22:55 -0400
+Received: by mail-lf1-f68.google.com with SMTP id q13-v6so8014617lfc.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 07:08:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=enSzX/26Llro1MOWOfuQdbjXUtvOckNAPL3iccnpiKg=;
+        b=ZZFDCEAt1JGYHKoZMar5IRu8rOqCComLFNGgqSLjm/CtZHG5zuIX2+AU+o/MQDvmbK
+         HvS3vk5iczyTl/zDu7O/i7qoIbcNP5wef5Wr46DjQMKEgpuKz41NyeDuIikbeXMMnT5I
+         hgpnPRAH928Y8y9+ghWAzXr9sXunaetxQPTRztYll1jdq4gTA7Eo+r9Gu2hH8awk3qMp
+         XfQrPyza+3bik5LnDYne49NpsejXt/0IuH73OhrG4OqM+VtYBL16mEplC7EOWtwdKLib
+         HapIV/XnrKy4RjBaZWTum7R+/IYR5tisFDXlZ6eKHyK4smf1KENewDNTdqFUqCEEK+db
+         G5TA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=enSzX/26Llro1MOWOfuQdbjXUtvOckNAPL3iccnpiKg=;
+        b=j20E5PyYjbjMrRsowjVvD0aRPxCDSGsaotwEJZQDQJVdvJdEahLhOJ7fyHEMMhF85c
+         K023kqxvtj3hM6FWFV4sIZmM+3BGFadS9sCaUzMYkspWhwk9314lvHTgSwEubo5qGNs+
+         viM9sMmufs6nol24UjxDghM5icl4To5/K87DCJ/lstHJi8QJxz9qWk+QaJo4gyyaSo3W
+         EkMJRBJ1hXFzAwzwhUqWAUhOqrY67qIbZe/mlXJ79eS6LQ28qI1kJ7ZxUuUyS8R0XJuM
+         OAp8nqZICRluGgsVtPl9M+Zudn7S1d6+LjPJ3k0NGX0lT0GtJvPdIXxKVjwmeMzAzteQ
+         ZJfA==
+X-Gm-Message-State: APzg51DQSUFyJV9DafEKPiZWk57xM7KF3B0FB6ECk4JNNL+PdVhwy9Sq
+        27WPQIiVVjNTg4tWf1BXrZU=
+X-Google-Smtp-Source: ANB0VdbXT5ec6PiO1vr4l5lhB1tFetn8PMS6vj1uJXMSApCl6ZIjHI0X+sES3m8MZfFnm3N6mdxuvw==
+X-Received: by 2002:a19:fc07:: with SMTP id a7-v6mr3304209lfi.21.1536934093562;
+        Fri, 14 Sep 2018 07:08:13 -0700 (PDT)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id i16-v6sm370252lfj.73.2018.09.14.07.08.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Sep 2018 07:08:12 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1g0olb-0005q7-BQ; Fri, 14 Sep 2018 16:08:15 +0200
+Date:   Fri, 14 Sep 2018 16:08:15 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Al Viro <viro@ZenIV.linux.org.uk>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 27/50] opticon: switch to ->get_serial()
+Message-ID: <20180914140815.GO1362@localhost>
+References: <20180913023119.GQ19965@ZenIV.linux.org.uk>
+ <20180913024049.24567-1-viro@ZenIV.linux.org.uk>
+ <20180913024049.24567-27-viro@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180914111003.GC24082@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180913024049.24567-27-viro@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14-Sep 13:10, Peter Zijlstra wrote:
-> On Thu, Sep 06, 2018 at 03:40:53PM +0100, Patrick Bellasi wrote:
-> > 1) _I think_ we don't want to depend on capable(CAP_SYS_NICE) but
-> >    instead on capable(CAP_SYS_ADMIN)
-> > 
-> >    Does that make sense ?
+On Thu, Sep 13, 2018 at 03:40:26AM +0100, Al Viro wrote:
+> From: Al Viro <viro@zeniv.linux.org.uk>
 > 
-> Neither of them really makes sense to me.
-> 
-> The max clamp makes a task 'consume' less and you should always be able
-> to reduce yourself.
-> 
-> The min clamp doesn't avoid while(1); and is therefore also not a
-> problem.
-> 
-> So I think setting clamps on a task should not be subject to additional
-> capabilities.
-> 
-> Now, of course, there is a problem of clamp resources, which are
-> limited. Consuming those _is_ a problem.
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
-Right, that problem could be solved if we convince ourself that the
-quantization approach proposed in:
-
-   [PATCH v4 15/16] sched/core: uclamp: add clamp group discretization support
-   https://lore.kernel.org/lkml/20180828135324.21976-16-patrick.bellasi@arm.com/
-
-could make sense and specifically, the other limitation it imposes
-(i.e. the quantizaiton) is within reasonable rounding control errors/
-
-> I think the problem here is that the two are conflated in the very same
-> interface.
-> 
-> Would it make sense to move the available clamp values out to some sysfs
-> interface like thing and guard that with a capability, while keeping the
-> task interface unprivilidged?
-
-You mean something like:
-
-   $ cat /proc/sys/kernel/sched_uclamp_min_utils
-   0 10 20 ... 100
-
-to notify users about the set of clamp values which are available ?
-
-> Another thing that has me 'worried' about this interface is the direct
-> tie to CPU capacity (not that I have a better suggestion). But it does
-> raise the point of how userspace is going to discover the relevant
-> values of the platform.
-
-This point worries me too, and that's what I think is addressed in a
-sane way in:
-
-   [PATCH v4 13/16] sched/core: uclamp: use percentage clamp values
-   https://lore.kernel.org/lkml/20180828135324.21976-14-patrick.bellasi@arm.com/
-
-IMHO percentages are a reasonably safe and generic API to expose to
-user-space. Don't you think this should address your concern above ?
-
--- 
-#include <best/regards.h>
-
-Patrick Bellasi
+Reviewed-by: Johan Hovold <johan@kernel.org>
