@@ -2,150 +2,139 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=5.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA9F7ECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 18:42:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3383EC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 18:43:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74FC520882
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 18:42:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E128E20881
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 18:43:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="YZyGwjgz";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="kJz7nJaD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74FC520882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lwDmVLbu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E128E20881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727944AbeINX6a (ORCPT
+        id S1728049AbeINX7S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 19:58:30 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:51346 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726748AbeINX63 (ORCPT
+        Fri, 14 Sep 2018 19:59:18 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:34063 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726748AbeINX7R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 19:58:29 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 8D74160BF7; Fri, 14 Sep 2018 18:42:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536950565;
-        bh=+vYJ+BNdbhbGL2E8fwhABXon5Y2/19HIHSTL4804ZAM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YZyGwjgzNlF6PBZfdI1c9PBwOwBZvGuscryKoQlQ/FqRf8KNQoIjZ0S+gwUlLXDTs
-         BbgXMdBNxLonNRFr0jq+cu+KgTbomfceI1fF/IvB1XjBuc6hoQPkO4AcwQ42cNfhiM
-         +IoHdsC9PcMRlXrLe2peFcY+2s2lVO06axgMz9Bo=
-Received: from jackp-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jackp@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 731D7609A1;
-        Fri, 14 Sep 2018 18:42:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536950564;
-        bh=+vYJ+BNdbhbGL2E8fwhABXon5Y2/19HIHSTL4804ZAM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kJz7nJaDo2NaFeq3siakmzuj2ppa23WZUL6zGc2SfZpMPIU+ogeJkn4U10FOisXgB
-         hEmsPaFwFk6MUgxPViPZx4IyAzmKOshxONPPxb2WAn0jNkgZGedW0JaNtd1qxFIwVz
-         x5jRQAH1txN6jUhzd06ZttWyCWsLziMEV9TBCirI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 731D7609A1
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jackp@codeaurora.org
-Date:   Fri, 14 Sep 2018 11:42:42 -0700
-From:   Jack Pham <jackp@codeaurora.org>
-To:     Badhri Jagan Sridharan <badhri@google.com>
-Cc:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        USB <linux-usb@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH 2/2] typec: tcpm: Add option to maintain current limit at
- Vsafe5V
-Message-ID: <20180914184242.GC13306@jackp-linux.qualcomm.com>
-References: <20180913021113.18150-1-badhri@google.com>
- <20180913021113.18150-2-badhri@google.com>
- <20180913063943.GA13306@jackp-linux.qualcomm.com>
- <CAPTae5JLnbHnFUXv4W0GY6a=kAmGCx7XfOUKrWo0q__enbvvQA@mail.gmail.com>
- <CAPTae5KXAeCKerHh4PMFJ=7JhmwFwbc7-CQB-3JYamYbHtV+2A@mail.gmail.com>
- <20180913170746.GB13306@jackp-linux.qualcomm.com>
- <CAPTae5+WyxADQfDJivzmCBpFbA8RqpCGKDys6tUpHwF8+vt8iQ@mail.gmail.com>
+        Fri, 14 Sep 2018 19:59:17 -0400
+Received: by mail-pg1-f194.google.com with SMTP id d19-v6so4804409pgv.1;
+        Fri, 14 Sep 2018 11:43:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=0zYx7tQE/lAU+PvvfjewRMWL9lA+OZfure6E93SwTOs=;
+        b=lwDmVLbu5rtHfA3BkWxL1yzhzvlxNnQ2Q5Z3x/3i7eCIRLn4msPX/+AouxRLf2V98G
+         Q5JfgHGR4DnLUw+CoOtcjcG8y2YMbe9ySJTbmAm9LgC3iyH/j07EKXDSh2o7qpxsZ+xp
+         bq2T5SqeIa9k9me7d1yyAIpIBSu2k0qTs6O1t9S7LEIFKviwEf9FKkv+AQ5B44BIle7U
+         Q+jXbf4DaSoiLjWI1d5Kk3KXJMfXyujTJS3kjsUdvov46IbDazfR3MWv1ZAoZAjQPu8Y
+         qUb8laiNxB9LNJnU7vq/tdTkxxd/7hmPNBTOfsv8yxLbWtLw5kYNMXbJywSpEOl2ySJ+
+         l8sQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=0zYx7tQE/lAU+PvvfjewRMWL9lA+OZfure6E93SwTOs=;
+        b=PoC9zmjhYfkQzDagyqS6v7mR1dth/ynB/nLarpYORY3w6kd3JATG3DFO6+87k74Dq8
+         G3KmiGDzI/InaqXa66aZupXudn8lRVYNuMcH5YZtYksTnBDLaNHaUdEBgJpnQZcv49JK
+         NypH4dVIlZAtbSwm+sjpnb+bqeW+eplFf7sqw+HwGYFKrsR5dH3Z1nXatIQfR6TblbQd
+         iDGiSYaIonne7wKmvfmOMIFJwOS7S1HFN/Yduu1szNY81Ev6DMHkXfFb96xhPthure2Y
+         CpgMTbnY0KfWs4VipNREg/7xNB/PNs3PWabw+HWuWpNu6TiObMqgJwO4Nx95NMM76M9I
+         A02g==
+X-Gm-Message-State: APzg51AVcE7u9Idy1d6zwpnf4uO7U+TXHAv/fqenSVNmOUjAiueirECG
+        JVEdZZMTsBmLE7K9QQR5ZTE=
+X-Google-Smtp-Source: ANB0VdbVDKRGGN8Siw++RhKcVkpYq4jRd1sTGuBX+hRS5GWs90R7cltUabzIm7/uZrj3K+djsryS/g==
+X-Received: by 2002:a62:45d2:: with SMTP id n79-v6mr13874182pfi.137.1536950613215;
+        Fri, 14 Sep 2018 11:43:33 -0700 (PDT)
+Received: from himanshu-Vostro-3559 ([103.233.116.134])
+        by smtp.gmail.com with ESMTPSA id 187-v6sm10659379pfu.184.2018.09.14.11.43.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 14 Sep 2018 11:43:32 -0700 (PDT)
+Date:   Sat, 15 Sep 2018 00:13:22 +0530
+From:   Himanshu Jha <himanshujha199640@gmail.com>
+To:     Song Qiang <songqiang1304521@gmail.com>
+Cc:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net, robh+dt@kernel.org, mark.rutland@arm.com,
+        andriy.shevchenko@linux.intel.com, matt.ranostay@konsulko.com,
+        tglx@linutronix.de, ak@it-klinger.de, linux-iio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Song Qiang <songqiang.1304521@gmail.com>
+Subject: Re: [PATCH] iio: proximity: Add driver support for ST's VL53L0X ToF
+ ranging sensor.
+Message-ID: <20180914184322.GA9481@himanshu-Vostro-3559>
+References: <20180913022229.21563-1-songqiang.1304521@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CAPTae5+WyxADQfDJivzmCBpFbA8RqpCGKDys6tUpHwF8+vt8iQ@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180913022229.21563-1-songqiang.1304521@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Badhri,
+Hi Song,
 
-On Thu, Sep 13, 2018 at 04:38:10PM -0700, Badhri Jagan Sridharan wrote:
-> On Thu, Sep 13, 2018 at 10:07 AM Jack Pham <jackp@codeaurora.org> wrote:
-> > On Thu, Sep 13, 2018 at 6:43 AM Badhri Jagan Sridharan
-> > > Yeah thats for the source. But for sink, Say if the source isnt PD, then,
-> > > sink initiated hard resets happen during the connection. Sink would hard reset
-> > > couple of times before deeming that the partner is non PD. When connected
-> > > to Type-A ports/non-pd partner, vbus is not going to likely drop so there isnt
-> > > a reason to setcharge to false or drop the input current limit. Do you agree ?
-> >
-> > Sure that makes sense. In this case I wonder if TCPM even needs to call
-> > set_charge(false) considering it does not yet know if the partner is PD
-> > capable or not. For sure, if the partner is PD capable and contract had
-> > been previously established, we'd definitely need to set_current_limit()
-> > to default levels and/or turn off charging.
-> >
-> > But in the case of hard reset attempts to try to determine if the source
-> > will send its capabilities (thereby being PD capable), wouldn't the
-> > initial default current limits still be in place? I think this is the
-> > point you're trying to make, that there is no need to disrupt charging
-> > if a hard reset is not going to cause VBUS to reset.
+On Thu, Sep 13, 2018 at 10:22:29AM +0800, Song Qiang wrote:
+> This driver was originally written by ST in 2016 as a misc input device
+> driver, and hasn't been maintained for a long time. I grabbed some code
+> from it's API and reformed it into a iio proximity device driver.
+> This version of driver uses i2c bus to talk to the sensor and
+> polling for measuring completes, so no irq line is needed.
+> This version of driver supports only one-shot mode, and it can be
+> tested with reading from
+> /sys/bus/iio/devices/iio:deviceX/in_distance_raw
 > 
-> Yes that's right ! I wasnt sure how to put that in words. Thanks for
-> doing that !
-> You do concur right ?
+> Signed-off-by: Song Qiang <songqiang.1304521@gmail.com>
 
-Yes.
+I'm sorry but you probably need another revision.
 
-> > To me it sounds like what you're trying to do makes sense only if you
-> > can make a run-time determination of a partner's PD capability, and not
-> > based on a config option.
-> 
-> Yes this should be possible. port->pd_capable already has that info.
-> 
-> To sum it up:
-> if the partner is pd capable, set charge to false in SNK_HARD_RESET_SINK_OFF and
-> readjust current limits to default in SNK_HARD_RESET_SINK_ON and turn
-> on charging.
-> 
-> If partner is not pd capable, do not turn off charging nor adjust
-> current limit as host port is
-> not going to respond to hard reset.
-> 
-> Does it make sense ?
+And don't feel embarrassed, I mean this is your first patch
+in the kernel and that's an IIO driver!!
 
-Right, although the "not pd capable" path could also mean the partner is
-PD capable but it is not determined yet. For example: if a sink is
-connected to a PD source, established a contract, and the sink reboots
-and has to initialize TCPM again. Assuming the sink never disconnected
-from CC when rebooting, the source won't automatically re-send its
-Source Capabilities as it will still be in its previous state(*). The
-sink TCPM however would send a hard reset in order to try to
-(re)establish a contract, so here is where this path overlaps with the
-not-pd-capable case. In this case I think it might be proper to readjust
-current limits to default also unless it was already done earlier--I see
-it is done in tcpm_reset_port() and in SNK_DISCOVERY, so you might be
-covered here.
+I used to fix spelling mistakes, align parameters, ... an year ago
+and even those got rejected several times ;)
 
-The question I have is whether you still need to consider calling
-set_charge(false) for this example.
+> ---
 
-(*) Just thought of one more thing, what if the previous contract was
-negotiated at greater than 5V VBUS? How does the sink TCPM handle
-setting charging parameters after a reboot but prior to hard reset?
+> +ST VL53L0X ToF RANGER(I2C) IIO DRIVER
+> +M:	Song Qiang <songqiang.1304521@gmail.com>
+> +L:	linux-iio@vger.kernel.org
+> +S:	Maintained
+> +F:	drivers/iio/proximity/vl53l0x-i2c.c
+> +F:	Documentation/devicetree/bindings/iio/proximity/vl53l0x.txt
 
-Jack
+Obligations!
+
+Just don't go "Keyser Söze" once you're done with your major
+at University. You would need to test/review patches in future.
+
+Not a big deal though..
+
+> +
+> +static const struct of_device_id st_vl53l0x_dt_match[] = {
+> +	{ .compatible = "st,vl53l0x-i2c", },
+> +	{ }
+> +};
+
+MODULE_DEVICE_TABLE(of, st_vl53l0x_dt_match); ?
+
+
+Thanks
 -- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Himanshu Jha
+Undergraduate Student
+Department of Electronics & Communication
+Guru Tegh Bahadur Institute of Technology
