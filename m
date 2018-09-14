@@ -2,117 +2,154 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C81E6ECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 16:49:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E43BFC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 16:51:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8261F2146E
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 16:49:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gs5NS74X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8261F2146E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B6675206B5
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 16:51:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6675206B5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728181AbeINWEg (ORCPT
+        id S1728121AbeINWGQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 18:04:36 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:46125 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726900AbeINWEg (ORCPT
+        Fri, 14 Sep 2018 18:06:16 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:45469 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726902AbeINWGQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 18:04:36 -0400
-Received: by mail-qt0-f195.google.com with SMTP id l42-v6so9290192qtf.13
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 09:49:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=2U/zRIYXi8MDOSKWcmEh9f8oUGxKPlT+23ncFeK4eJU=;
-        b=Gs5NS74X7WM7GwpPtvLZ97up92D8fHBcpVH2zCMkToxORbBXWN2kJGZClpHrCf5IId
-         Tck9kJ1zfK9KDYTAC9MH0bbDly/3h4RWUcOPiilKIqLlqzZR6XcloAlJEbCjEFDy3nUL
-         LaLwE4ta+aWXCj0yDzosYnY9+M2b8Nw/A9jmsdCSYplcx5rL5EXEAxtCInM3IXHF3UCF
-         t5j6CO79ulewyvvSrePxmZl0lbY21ejAoEcOI3MApQzLA+FrziB4gzMMide5DC+VrTkQ
-         0gFVkizT/Bmq+7sBre5gkmQZGMs0evu4+6w1RR1FdVnUhWa39Ahelbyqm2na82Co3IXw
-         F7JA==
+        Fri, 14 Sep 2018 18:06:16 -0400
+Received: by mail-oi0-f68.google.com with SMTP id t68-v6so13365581oie.12
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 09:50:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=2U/zRIYXi8MDOSKWcmEh9f8oUGxKPlT+23ncFeK4eJU=;
-        b=cFxuIpHBMrorCvle0CxcrfJeI9fkn/0uRMcrX9whw9kQ5J0sC+W+mVRFx/X3WxdojW
-         kkeg7BswjB2twYmUPG1DyBI1eUI6D38PLHaeuNVBwU/XgnmonUrU8LdOHYXJeiXem++y
-         EWbE5Ic03yGmpD2M7OPzlVzkwZ+RhhN4yJF0q+fuEuLYoYOiShUaKvAZY96jm7O4rhPZ
-         qaxEXSKCnEE9w+0jsCeC86MqrttkLQ91RdSK2ATu3kLCgixuU9qfgFvPmvCo7PQ1h3Vm
-         OLY2r6qLf6E/g4PxamXJgGXaYm68DS46YEM+UobwxIn7ZEwDyVh1qtveVTMEdFdV652a
-         YflA==
-X-Gm-Message-State: APzg51AQvbB4ra81fcedw7jDfWsLEgUh6qTRF397kkbge2Zfxd0p8Fc+
-        +mwP90wYfB5K59N1zlL1VZCGIqv5BcwvidVkx9g=
-X-Google-Smtp-Source: ANB0VdapTFzKVWtr4k4uoZULRuvAOSinf7KfkkZdGjhEYIgfrqV7VUbbKIxIQPAgEzwxbo9yB+jy/xkNOXsLfOKlDJA=
-X-Received: by 2002:a0c:aac9:: with SMTP id g9-v6mr9781350qvb.78.1536943757659;
- Fri, 14 Sep 2018 09:49:17 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=jXGu4V3s/JyJu6rfd4hhV0nbXvwLNDwruaMOGk2Sbf4=;
+        b=Nnv0RWiHhOlNHghzYOupawSw7m94nUdKGKNTdvUPd27OajqiwYrgHcKzYnh0N1a9p3
+         8cbEnLy1Oh4YUxB0PBtcldR3VcMnSei0zpEUKgvUSdv77scldZ4Vu4zgUh+rpXddEjQB
+         HXdBfO50I9kpeSj6VXIJmBVm2mthw7j33J9E3A8MbyGqevjGJJebCkzlYfaUstdrQLW+
+         tDDOJxnQa7Gz0e+EfOR3fj3cem6fi/cLAlE4swFUs7nTitjLRt1bX/10dNqoIKCfWZts
+         7EYIGnxCkfpLJ4lcB5kXHushmY1x7SEQ0awu0aWn69ouAZRtcMV580SW3DIAjGO55rLB
+         9Rig==
+X-Gm-Message-State: APzg51DamApqL+ekk5Exk6wm4XaHCuBO0h3fZr3h4j5tAThIS/XOQ13y
+        CqvCOFUvL2vvQca78IZoE1SvPm2PPj4MDXZ3tagPFw==
+X-Google-Smtp-Source: ANB0VdbPw1kFdlPIcZkgNudeDYw+hunM8+adPdzBUetKgcIO8US7Atj2HNutCik/5O65sAqn3K3jN960OGSsfK1uhWo=
+X-Received: by 2002:aca:cf44:: with SMTP id f65-v6mr10622327oig.356.1536943857442;
+ Fri, 14 Sep 2018 09:50:57 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:ac8:7494:0:0:0:0:0 with HTTP; Fri, 14 Sep 2018 09:48:57
+Received: by 2002:a4a:554b:0:0:0:0:0 with HTTP; Fri, 14 Sep 2018 09:50:56
  -0700 (PDT)
-In-Reply-To: <2278505d-94ce-ab68-dbe3-5e4e1c9094ef@163.com>
-References: <20180810023523.23923-1-douly.fnst@cn.fujitsu.com> <2278505d-94ce-ab68-dbe3-5e4e1c9094ef@163.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Fri, 14 Sep 2018 18:48:57 +0200
-Message-ID: <CANiq72=jvRaq6gfTYcfSXmKj-vjpydZ2arZ2Yt4qz9pYZg6ZMA@mail.gmail.com>
-Subject: Re: [PATCH] sched/core: Fix compiling warring in smp=n case
-To:     Dou Liyang <dou_liyang@163.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dou Liyang <douly.fnst@cn.fujitsu.com>
+In-Reply-To: <CAE4VaGAD0NuO+bhQ=BXB-TC71CeyYJ+3WbY30r_vo7NKBQR2Mg@mail.gmail.com>
+References: <CAE4VaGA9KzX05rdfw2PhEATLisV-NVMc9rOyjzSg-rX1rug9Dw@mail.gmail.com>
+ <CABuKy6MUNX85PBVchz_hqXy+FxXU2x0U9ZEZB13rVSLGpWOWvQ@mail.gmail.com>
+ <CAE4VaGD12BLS_kk=pRwgTKL8YOU63Nowwa42cEdZObQ=P1MFnA@mail.gmail.com>
+ <CAE4VaGArxDYHzg8G203yKjgkuw3mULFSw8yCYbCcqvAUSUxy+A@mail.gmail.com>
+ <20180717100329.yfy7igdsrpk5ujf4@techsingularity.net> <CAE4VaGA_L1AEj+Un0oQEEqZp_jgaFLk+Z=vNoad08oXnU2T1nw@mail.gmail.com>
+ <CAE4VaGDTNgu=JX=N7=uZu0Bz_vUdHszZQ9_SQuwrbjRvFjCwZw@mail.gmail.com>
+ <20180904090053.GB1719@techsingularity.net> <CAE4VaGB-mFfAR_rKUbGx01HLDQtyjHQLNOrm3fc+aSq2D2O2Dg@mail.gmail.com>
+ <CAE4VaGATB4M7-osmi0wqovGbZb7os+ukMHi+Lbum3tegpHxGNw@mail.gmail.com>
+ <20180906125843.GC1719@techsingularity.net> <CAE4VaGAD0NuO+bhQ=BXB-TC71CeyYJ+3WbY30r_vo7NKBQR2Mg@mail.gmail.com>
+From:   Jirka Hladky <jhladky@redhat.com>
+Date:   Fri, 14 Sep 2018 18:50:56 +0200
+Message-ID: <CAE4VaGB9trwCcpNFEMLgJmvvZHgNxtAJF89-6naheKLjFca72w@mail.gmail.com>
+Subject: Re: [4.17 regression] Performance drop on kernel-4.17 visible on
+ Stream, Linpack and NAS parallel benchmarks
+To:     Mel Gorman <mgorman@techsingularity.net>
+Cc:     Kamil Kolakowski <kkolakow@redhat.com>,
+        Jakub Racek <jracek@redhat.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Mel,
 
-On Thu, Sep 13, 2018 at 11:55 AM, Dou Liyang <dou_liyang@163.com> wrote:
+we have tried to revert following 2 commits:
+
+305c1fac3225
+2d4056fafa196e1ab
+
+We had to revert 10864a9e222048a862da2c21efa28929a4dfed15 as well.
+
+The performance of the kernel was better than when only
+2d4056fafa196e1ab was reverted but still worse than the performance of
+4.18 kernel.
+
+Since the patch series from Srikar shows very good results we would
+wait till it's merged to mainline kernel and stop the bisecting
+efforts for now. Your patch series sched-numa-fast-crossnode-v1r12 (on
+top of 4.18) is giving in some cases slightly better results than
+Srikar's series so it would be really great if both series could be
+merged together. Removing NUMA migration rate limit helps performance.
+
+Thanks a lot for your help on this!
+Jirka
+
+
+On Fri, Sep 7, 2018 at 10:09 AM, Jirka Hladky <jhladky@redhat.com> wrote:
+>> Maybe 305c1fac3225dfa7eeb89bfe91b7335a6edd5172. That introduces a weird
+>> condition in terms of idle CPU handling that has been problematic.
 >
 >
-> At 08/10/2018 10:35 AM, Dou Liyang wrote:
->>
->> When compiling kernel with SMP disabled, the build warns with:
->>
->> kernel/sched/core.c: In function =E2=80=98update_rq_clock_task=E2=80=99:
->> kernel/sched/core.c:139:17: warning: unused variable =E2=80=98irq_delta=
-=E2=80=99
->> [-Wunused-variable]
->>    s64 steal =3D 0, irq_delta =3D 0;
->>
->> Fix this by revert the HAVE_SCHED_AVG_IRQ to
->>
->>    defined(CONFIG_IRQ_TIME_ACCOUNTING) ||
->> defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
->>
->> Fixes: 2e62c4743adc ("sched/fair: Remove #ifdefs from
->> scale_rt_capacity()")
+> We will try that, thanks!
+>
+>>  I would suggest contacting Srikar directly.
 >
 >
-> Hi,
+> I will do that right away. Whom should I put on Cc? Just you and
+> linux-kernel@vger.kernel.org ? Should I put Ingo and Peter on Cc as
+> well?
 >
->  Miguel also found this warning. Can we pick it up now? ;-)
-
-Also Zhong has just sent another patch for this.
-
-Whenever this is picked up, feel free to add:
-
-  Acked-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-
-Cheers,
-Miguel
+> $scripts/get_maintainer.pl -f kernel/sched
+> Ingo Molnar <mingo@redhat.com> (maintainer:SCHEDULER)
+> Peter Zijlstra <peterz@infradead.org> (maintainer:SCHEDULER)
+> linux-kernel@vger.kernel.org (open list:SCHEDULER)
+>
+> Jirka
+>
+> On Thu, Sep 6, 2018 at 2:58 PM, Mel Gorman <mgorman@techsingularity.net> wrote:
+>> On Thu, Sep 06, 2018 at 10:16:28AM +0200, Jirka Hladky wrote:
+>>> Hi Mel,
+>>>
+>>> we have results with 2d4056fafa196e1ab4e7161bae4df76f9602d56d reverted.
+>>>
+>>>   * Compared to 4.18, there is still performance regression -
+>>> especially with NAS (sp_C_x subtest) and SPECjvm2008. On 4 NUMA
+>>> systems, regression is around 10-15%
+>>>   * Compared to 4.19rc1 there is a clear gain across all benchmarks around 20%
+>>>
+>>
+>> Ok.
+>>
+>>> While reverting 2d4056fafa196e1ab4e7161bae4df76f9602d56d has helped a
+>>> lot there is another issue as well. Could you please recommend some
+>>> commit prior to 2d4056fafa196e1ab4e7161bae4df76f9602d56d to try?
+>>>
+>>
+>> Maybe 305c1fac3225dfa7eeb89bfe91b7335a6edd5172. That introduces a weird
+>> condition in terms of idle CPU handling that has been problematic.
+>>
+>>> Regarding the current results, how do we proceed? Could you please
+>>> contact Srikar and ask for the advice or should we contact him
+>>> directly?
+>>>
+>>
+>> I would suggest contacting Srikar directly. While I'm working on a
+>> series that touches off some similar areas, there is no guarantee it'll
+>> be a success as I'm not primarily upstream focused at the moment.
+>>
+>> Restarting the thread would also end up with a much more sensible cc
+>> list.
+>>
+>> --
+>> Mel Gorman
+>> SUSE Labs
