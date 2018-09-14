@@ -2,135 +2,96 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C738FFC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:12:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46554ECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:14:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8143A20882
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:12:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nhx1sfE2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8143A20882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id E9C6120861
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:14:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9C6120861
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728020AbeINW2P (ORCPT
+        id S1727803AbeINW3g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 18:28:15 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:38254 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726891AbeINW2O (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 18:28:14 -0400
-Received: by mail-qt0-f196.google.com with SMTP id x7-v6so9380317qtk.5;
-        Fri, 14 Sep 2018 10:12:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=R3g2k36CVr9nMcrr8XW96ahHO5waeqenQFbG9f0CjCs=;
-        b=Nhx1sfE2lZdglIcdHNx7A05PybrQ6w/DCbK8LEuokQihQExagKCWvS7xiEGf7XR+qv
-         qBZISpXcgnr99yxqVVtPq1kqjAuBVt7Mw58yJ7EoMx6u09HaVE1ZMKnuaJkgoolpc/hJ
-         AjSii9KOc4xG0Oo7XiyzDW419uc4TR4dgZd6Xe6V1SHuEIc1D4p3SKuf2SFMU7cC+bGy
-         RuAXEHJtub+MKKLM7fpQouMf6JwVbFJ9YLViQgFsFEKmUuj6sk4e1n8famkti7HoMk6F
-         zW7TOvn/jLukniMuRY+GJ/ydWZp1zkHKXTa3E4Rq3jhLj/ZbRhaOZ4UQMR05uaN3SSXN
-         6+Wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=R3g2k36CVr9nMcrr8XW96ahHO5waeqenQFbG9f0CjCs=;
-        b=Lp5Yk+lvu3YTtHRE+5kCgBhb233M04i3kkLnd3ZlNR3ELHg11tDKUvNf2oSW8spWM8
-         2k9mvAsL2zRZZfizQdOW5up8+XkymHI8H3YTmn9Kh3Klgz7HiyISDMCy5eky45awU5+P
-         +I+83zqY+hmyGD/gIeQoUNrezwsQJehUP6inbzW7hbRN1c5h1zShNjDHr6mq40UNJ+0A
-         gHb4S6tts8qqZDwj2avwi30OuYArGHCaKNTYxCnVJySspvNCdBM3i3RF59lz/+jG2zcR
-         nmqn1eN1SilM7QlFTLNa5ICSYeYzPezUjkty8wZUbGWnR8cCMcmUSkKk9E2/sENF86ID
-         ZE9w==
-X-Gm-Message-State: APzg51A45s1z+I08q9D79Jh8tSlBYSzJbS10GHY215Nu/QhLpvqlFVDR
-        0H42HE7PuWlCO5NxP7LaCZl/YZ2S9/6oLU3r3Y/E2HsSqBM=
-X-Google-Smtp-Source: ANB0VdbxXRyZ3F8U8gixUOhzon3AnDZ5YBLDDXYfjI1x+8rR7M39xTfy+VwKdyKaMkd/JuILCAMhYbj0PoVYevYzmzY=
-X-Received: by 2002:a0c:aed9:: with SMTP id n25-v6mr9669084qvd.10.1536945170621;
- Fri, 14 Sep 2018 10:12:50 -0700 (PDT)
+        Fri, 14 Sep 2018 18:29:36 -0400
+Received: from foss.arm.com ([217.140.101.70]:36922 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726891AbeINW3g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 18:29:36 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8B93A80D;
+        Fri, 14 Sep 2018 10:14:12 -0700 (PDT)
+Received: from [192.168.100.242] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1BFE83F575;
+        Fri, 14 Sep 2018 10:14:12 -0700 (PDT)
+Subject: Re: [PATCH v2 1/2] drivers: base: cacheinfo: Do not populate sysfs
+ for unknown cache types
+To:     Jeffrey Hugo <jhugo@codeaurora.org>, sudeep.holla@arm.com,
+        gregkh@linuxfoundation.org, rjw@rjwysocki.net,
+        linux-acpi@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, vkilari@codeaurora.org
+References: <1536942489-4018-1-git-send-email-jhugo@codeaurora.org>
+ <1536942489-4018-2-git-send-email-jhugo@codeaurora.org>
+From:   Jeremy Linton <jeremy.linton@arm.com>
+Message-ID: <3e842dd3-9b92-c56b-c45a-72d99b37f946@arm.com>
+Date:   Fri, 14 Sep 2018 12:14:11 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Received: by 2002:ac8:7494:0:0:0:0:0 with HTTP; Fri, 14 Sep 2018 10:12:29
- -0700 (PDT)
-In-Reply-To: <20180914104427.3900-1-harshitjain6751@gmail.com>
-References: <20180914104427.3900-1-harshitjain6751@gmail.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Fri, 14 Sep 2018 19:12:29 +0200
-Message-ID: <CANiq72=xNMKJv3tT9+-jxEOx9033ytRrbUV+TQ6kVL7QY06jDA@mail.gmail.com>
-Subject: Re: [PATCH] scripts: unifdef: fix stringop-truncation warning
-To:     Harshit Jain <harshitjain6751@gmail.com>
-Cc:     stable@vger.kernel.org, Harshit Jain <dev-harsh1998@hotmail.com>,
-        Tony Finch <dot@dotat.at>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1536942489-4018-2-git-send-email-jhugo@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Harshit,
+Hi,
 
-On Fri, Sep 14, 2018 at 12:44 PM, Harshit Jain
-<harshitjain6751@gmail.com> wrote:
-> From: Harshit Jain <dev-harsh1998@hotmail.com>
->
-> * This commit resolves the following warning when the mainline kernel is build with the android environment.
-
-Typo: built
-
->
-> -> warning :-> https://gist.github.com/dev-harsh1998/757427b16a58f5498db3d87212a9651b
-
-Try to avoid links to external pages (specially if they are only 2 lines :-).
-
->
-> * This warning is persistant in all the currently maintained android kernel i.e 3.18, 4.4, 4.9, 4.14.
-
-Typos: persistent, kernels, i.e.
-
->
-> Signed-off-by: Harshit Jain <dev-harsh1998@hotmail.com>
+On 09/14/2018 11:28 AM, Jeffrey Hugo wrote:
+> If a cache has an unknown type because neither the hardware nor the
+> firmware told us, an entry in the sysfs tree will be made, but the type
+> file will not be present.  lscpu depends on the type file being present
+> for every entry, and will error out without printing system information
+> if lscpu cannot open the type file.
+> 
+> Presenting information about a cache without indicating its type is not
+> useful, therefore if we hit a cache with an unknown type, stop populating
+> sysfs so that userspace has the maximum amount of useful information.
+> 
+> This addresses the following lscpu error, which prevents any output.
+> lscpu: cannot open /sys/devices/system/cpu/cpu0/cache/index3/type: No such
+> file or directory
+> 
+> Suggested-by: Sudeep Holla <sudeep.holla@arm.com>
+> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
 > ---
->  scripts/unifdef.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/scripts/unifdef.c b/scripts/unifdef.c
-> index 7493c0ee51cc..4ce008eda362 100644
-> --- a/scripts/unifdef.c
-> +++ b/scripts/unifdef.c
-> @@ -395,8 +395,8 @@ usage(void)
->   * When we have processed a group that starts off with a known-false
->   * #if/#elif sequence (which has therefore been deleted) followed by a
->   * #elif that we don't understand and therefore must keep, we edit the
-> - * latter into a #if to keep the nesting correct. We use strncpy() to
-> - * overwrite the 4 byte token "elif" with "if  " without a '\0' byte.
-> + * latter into a #if to keep the nesting correct. We use the memcpy()
-> + * from the string header overwrite the 4 byte token "elif" with "if  ".
->   *
->   * When we find a true #elif in a group, the following block will
->   * always be kept and the rest of the sequence after the next #elif or
-> @@ -450,7 +450,7 @@ static void Idrop (void) { Fdrop();  ignoreon(); }
->  static void Itrue (void) { Ftrue();  ignoreon(); }
->  static void Ifalse(void) { Ffalse(); ignoreon(); }
->  /* modify this line */
-> -static void Mpass (void) { strncpy(keyword, "if  ", 4); Pelif(); }
-> +static void Mpass (void) { memcpy(keyword, "if  ", 4); Pelif(); }
+>   drivers/base/cacheinfo.c | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/base/cacheinfo.c b/drivers/base/cacheinfo.c
+> index 5d5b598..cf78fa6 100644
+> --- a/drivers/base/cacheinfo.c
+> +++ b/drivers/base/cacheinfo.c
+> @@ -615,6 +615,8 @@ static int cache_add_dev(unsigned int cpu)
+>   		this_leaf = this_cpu_ci->info_list + i;
+>   		if (this_leaf->disable_sysfs)
+>   			continue;
+> +		if (this_leaf->type == CACHE_TYPE_NOCACHE)
+> +			break;
+>   		cache_groups = cache_get_attribute_groups(this_leaf);
+>   		ci_dev = cpu_device_create(parent, this_leaf, cache_groups,
+>   					   "index%1u", i);
+> 
 
-Seems like keyword shouldn't use __attribute__((nonstring)), so this
-looks right.
+Looks fine to me:
 
-Cheers,
-Miguel
+Reviewed-by: Jeremy Linton <jeremy.linton@arm.com>
 
->  static void Mtrue (void) { keywordedit("else");  state(IS_TRUE_MIDDLE); }
->  static void Melif (void) { keywordedit("endif"); state(IS_FALSE_TRAILER); }
->  static void Melse (void) { keywordedit("endif"); state(IS_FALSE_ELSE); }
-> --
-> 2.18.0
->
+
+Thanks,
