@@ -2,101 +2,93 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7163BFC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 16:02:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD666ECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 16:07:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12BDC20833
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 16:02:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12BDC20833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id 896FB20833
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 16:07:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 896FB20833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728149AbeINVRz (ORCPT
+        id S1728046AbeINVWI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 17:17:55 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:60483 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726845AbeINVRz (ORCPT
+        Fri, 14 Sep 2018 17:22:08 -0400
+Received: from mail-qt0-f171.google.com ([209.85.216.171]:41171 "EHLO
+        mail-qt0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726845AbeINVWI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 17:17:55 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07501926|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01l01425;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=15;RT=15;SR=0;TI=SMTPD_---.CquBs8l_1536940953;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CquBs8l_1536940953)
-          by smtp.aliyun-inc.com(10.147.41.199);
-          Sat, 15 Sep 2018 00:02:33 +0800
-Date:   Sat, 15 Sep 2018 00:02:32 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        DTML <devicetree@vger.kernel.org>,
-        andrea.parri@amarulasolutions.com,
-        Peter Zijlstra <peterz@infradead.org>,
-        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        wbx@uclibc-ng.org, Greentime Hu <green.hu@gmail.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH V4 00/27] C-SKY(csky) Linux Kernel Port
-Message-ID: <20180914160231.GA32161@guoren-Inspiron-7460>
-References: <cover.1536757532.git.ren_guo@c-sky.com>
- <CAK8P3a0CUYyMR9hDG97Zf2Oyj+D9vwQRnPZrEs0rrOLwHqxYfw@mail.gmail.com>
- <20180914143719.GA27689@guoren-Inspiron-7460>
- <CAK8P3a0fZYbd4a2nBnExPVXKs-898R9vaCSa4kXyz0qA=rCzZQ@mail.gmail.com>
+        Fri, 14 Sep 2018 17:22:08 -0400
+Received: by mail-qt0-f171.google.com with SMTP id t39-v6so9181549qtc.8;
+        Fri, 14 Sep 2018 09:06:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oIcik8OaY5BrTlyxVs1L1Rk8EuOQ9e9cx6sDq5X6jgs=;
+        b=iUzlxx+hhmHxMAq85ps1BvyRpwop650WFDozJ2PpD+TVYPCeA+jtSfAFRkS5yR5ZwC
+         eGuS3AE5gBI+xu6hr82hl4cLDZVC9MWNF7NDKsc9ehd7JKkt4SH4BMExIsDbT5CFSE8G
+         O6xvqn7xTDibRbrTRHX79lieMEdyKi2PjUKeuf8KEoQRtV+ADA7cmXoAKV1J+rr1yJiR
+         im+Udv1Wae4YvMQ5uXNq8Vcuf8OA4va6UnrMt2dMIPte/VV8RtVDqw8e60PRLOdOoPTg
+         H4FR0aM5O5oAejnzNdki6FXWi7OtYSmLYdt1v5eYnM2wA1nRi6hGqWmpOktbmS2Dktxe
+         FZWQ==
+X-Gm-Message-State: APzg51CYCbVRzXUpNnaJJgtPYm55iT+s6nGAd31XOGhNQXjTkWK89WO0
+        X+KVHNSXFKDOah4EJkr8YsnYv9SebWbm566griw=
+X-Google-Smtp-Source: ANB0VdasYCOjmANSn6220UL6huENIXhamFunEOG8Zh5d4tUD7PIqTOK1WSZEZ3DzIciHzz/7Au6L8El1Jno/4wMwNH0=
+X-Received: by 2002:a0c:c171:: with SMTP id i46-v6mr9444344qvh.40.1536941218856;
+ Fri, 14 Sep 2018 09:06:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a0fZYbd4a2nBnExPVXKs-898R9vaCSa4kXyz0qA=rCzZQ@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20180901204721.13117-1-deepa.kernel@gmail.com>
+In-Reply-To: <20180901204721.13117-1-deepa.kernel@gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 14 Sep 2018 18:06:42 +0200
+Message-ID: <CAK8P3a3KLVEcCpPXWdEoOWgmP8zcDvLyj2LUn0Nw0+0yGO_MmA@mail.gmail.com>
+Subject: Re: [PATCH 0/5] y2038: Make ppoll, io_pgetevents and pselect y2038 safe
+To:     Deepa Dinamani <deepa.kernel@gmail.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-aio <linux-aio@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 14, 2018 at 04:46:56PM +0200, Arnd Bergmann wrote:
-> On Fri, Sep 14, 2018 at 4:37 PM Guo Ren <ren_guo@c-sky.com> wrote:
-> > On Wed, Sep 12, 2018 at 04:30:36PM +0200, Arnd Bergmann wrote:
-> > > On Wed, Sep 12, 2018 at 3:25 PM Guo Ren <ren_guo@c-sky.com> wrote:
-> > >
-> > > One big question for me is what to do about time_t. Deepa and I are
-> > > in the process of finalizing the system call ABI for 32-bit architectures
-> > > with 64-bit time_t, but we are not done yet and it won't be complete
-> > > for 4.20. If you target 4.21, that could be a chance to make csky the
-> > > first architecture to only need the 64-bit time_t interface, with the
-> > > corresponding user space changes.
-> > y2038 is very important and csky32 has the issue. But 4.21 is too late for
-> > us, we really want to get into kernel.org as soon as possible.
-> > We could remove 32-bit time_t in future.
-> 
-> Not really: the way we deal with user-visible APIs in the kernel, it's
-> practically impossible to remove something that was working before,
-> since there may always be users relying on it. This is why it is so
-> important that we get the ABI right at the first try.
-> 
-> We can always add new ABIs later, and that's what we're doing with
-> all the other 32-bit architectures as well: each system call that takes a
-> 32-bit time_t argument also needs to get the corresponding 64-bit
-> replacement, and then we have to keep them both around.
-> 
-> However, once the 64-bit syscalls are there, you don't need to
-> use them, so if you merge the glibc port after both csky and
-> the time64 syscalls are merged upstream, you can choose
-> to only support the time64 syscalls rather than making it a compile
-> time decision in each application. If you merge the glibc port
-> before migrating to 64-bit syscalls, glibc will also have to support
-> both indefinitely for compatibility with existing binaries.
-> 
-> One level below that, you can of course choose to build
-> a distro with only 64-bit time_t regardless of whether there
-> is still support for 32-bit time_t in kernel and glibc or not.
-Do you mean I could merge kernel port into linux-4.19 or linux-4.20.
-But let glibc merged after linux-4.21 and csky glibc only support
-time64 syscalls ?
+On Sat, Sep 1, 2018 at 10:48 PM Deepa Dinamani <deepa.kernel@gmail.com> wrote:
+>
+> The series transitions the ppoll, io_getevents, and pselect syscalls
+> to be y2038 safe.
+>
+> This is part of the work proceeding for syscalls for y2038.
+> It is based on the series [1] from Arnd Bergmann.
+>
+> The overview of the series is as below:
+> 1. Refactor sigmask handling logic for the above syscalls.
+> 2. Provide y2038 safe versions of syscalls for all ABIs.
+>
+> [1] https://lkml.org/lkml/2018/8/27/651
 
-Best Regards
- Guo Ren
+Hi Deepa,
+
+This is a very nice series, sorry for taking way too long before
+I had a good look at it.
+
+The first two patches in particular are great. The third patch
+looks like it has a small bug that I commented on, but given
+how much more thought you have put into this than I did, it's
+just as possible that I misunderstood it.
+
+I've applied you series locally now, but have not pushed it out
+yet for linux-next because of that one issue. I'll send a pull
+request to Thomas for my other patches for now, and a
+follow-up with these once we have clarified it.
+
+        Arnd
