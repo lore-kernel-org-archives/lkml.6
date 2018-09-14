@@ -7,55 +7,57 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D21CECE562
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 22:50:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7941BECE561
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 22:50:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13EE721476
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 22:50:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31A0F21476
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 22:50:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="YyQwKvlm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13EE721476
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="ka2kn52d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31A0F21476
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726903AbeIOEGv (ORCPT
+        id S1727039AbeIOEHB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 00:06:51 -0400
-Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:52472 "EHLO
+        Sat, 15 Sep 2018 00:07:01 -0400
+Received: from smtprelay4.synopsys.com ([198.182.47.9]:45648 "EHLO
         smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725198AbeIOEGv (ORCPT
+        with ESMTP id S1725198AbeIOEHB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 00:06:51 -0400
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id C053E10C0726;
-        Fri, 14 Sep 2018 15:50:19 -0700 (PDT)
+        Sat, 15 Sep 2018 00:07:01 -0400
+Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id BE2CE24E11FF;
+        Fri, 14 Sep 2018 15:50:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1536965421; bh=7Evyt2YeSVBlfLSLBrRyNWzGIm1a+npy5JD28JKwB7w=;
+        t=1536965430; bh=TSc6Ioj6MOlby6CYs2YBizZDSmz9iH7i9w30EgWG7IY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YyQwKvlmXzEm9hbcULGIKORe7aBzfK3ALVogpGY2CZ5KPl4bRmSYdW+KzsY1iWEne
-         01d94N2CZxFD8oD5KKySM18bsOEm3SOcAxqYGoeRZaz8muq6VrXzH8Zy2yGG6rqaoJ
-         633HuIc0o6mSrodOIEpzsIGP7HUhABE2ieiZPKYiggMTEFCbnbI5cEqrhGPmlD7FlB
-         ULCOiLuy1ry3H/Y0/72ZeTG4BHTkRMrikjuGq7HXpDSVtNFwxPLOWjBbQrptl6uJ4L
-         anGaaLG1Rf7LiNddHhLgP4IVxjTpEs67XygKIbJM3MEJ7DwsVckBcJu1WleFWkn0I0
-         nn2RpBZCLR6kg==
-Received: from de02.synopsys.com (de02.internal.synopsys.com [10.225.17.21])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 567E63DA3;
-        Fri, 14 Sep 2018 15:50:19 -0700 (PDT)
+        b=ka2kn52dyYZE+pfUsZgN4j1M7J/4K2vibBGDoyCFeup3xjvislvyjI5KkFsvDSBvN
+         iHDPUXPYfUMZqqmujRlHniN07g6/69mx+dPDpjOx4O2dnYz9TpfjPQkSuRcs2eaGib
+         S28oineBDbYm8sSInDtZlNsz4qgtcj2sjMK5Yvyp/5DKVYpXBV/TolOByBVr6XpZPd
+         RVyfXp8+EOpuhneYE98yhFz0QPmLiqVA9eAFi1gZyUp8BauIXyzqSa9wxaMZYgCmqi
+         4iti5IN1HjNvxKXHG+9OgUIjbBTCq/AyguKG5CV7eh3A07CuFGZ5HuuCS5E/ai4WHw
+         tY+8aWx8D8FFw==
+Received: from de02.synopsys.com (germany.internal.synopsys.com [10.225.17.21])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 35F155755;
+        Fri, 14 Sep 2018 15:50:30 -0700 (PDT)
 Received: from de02dwemt291.internal.synopsys.com (de02dwemt291.internal.synopsys.com [10.225.18.65])
-        by de02.synopsys.com (Postfix) with ESMTP id 879463EF4C;
-        Sat, 15 Sep 2018 00:50:18 +0200 (CEST)
+        by de02.synopsys.com (Postfix) with ESMTP id 678C03EF55;
+        Sat, 15 Sep 2018 00:50:29 +0200 (CEST)
 Received: from de02dwemt291.internal.synopsys.com (localhost [127.0.0.1])
-        by de02dwemt291.internal.synopsys.com (8.14.4/8.12.3) with ESMTP id w8EMoI0K027348;
-        Sat, 15 Sep 2018 00:50:18 +0200
+        by de02dwemt291.internal.synopsys.com (8.14.4/8.12.3) with ESMTP id w8EMoTYF027361;
+        Sat, 15 Sep 2018 00:50:29 +0200
 Received: (from lolivei@localhost)
-        by de02dwemt291.internal.synopsys.com (8.14.4/8.14.4/Submit) id w8EMoHC3027347;
-        Sat, 15 Sep 2018 00:50:17 +0200
+        by de02dwemt291.internal.synopsys.com (8.14.4/8.14.4/Submit) id w8EMoR0I027360;
+        Sat, 15 Sep 2018 00:50:27 +0200
 From:   Luis Oliveira <Luis.Oliveira@synopsys.com>
 To:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     all-jpinto-org-pt02@synopsys.com,
         Luis Oliveira <Luis.Oliveira@synopsys.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
         Luis Oliveira <luis.oliveira@synopsys.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
         Hans Verkuil <hans.verkuil@cisco.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
@@ -65,10 +67,11 @@ Cc:     all-jpinto-org-pt02@synopsys.com,
         Keiichi Watanabe <keiichiw@chromium.org>,
         Kate Stewart <kstewart@linuxfoundation.org>,
         Philipp Zabel <p.zabel@pengutronix.de>,
-        Todor Tomov <todor.tomov@linaro.org>
-Subject: [PATCH 1/5] media: platform: Add DesignWare MIPI CSI2 Host placeholder
-Date:   Sat, 15 Sep 2018 00:48:37 +0200
-Message-Id: <20180914224849.27173-2-lolivei@synopsys.com>
+        Todor Tomov <todor.tomov@linaro.org>,
+        devicetree@vger.kernel.org
+Subject: [PATCH 2/5] Documentation: dt-bindings: Document the Synopsys MIPI DPHY Rx bindings
+Date:   Sat, 15 Sep 2018 00:48:38 +0200
+Message-Id: <20180914224849.27173-3-lolivei@synopsys.com>
 X-Mailer: git-send-email 2.9.3
 In-Reply-To: <20180914224849.27173-1-lolivei@synopsys.com>
 References: <20180914224849.27173-1-lolivei@synopsys.com>
@@ -77,64 +80,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch has the intention of make the patchseries more clear by creating
-a dwc folder and a Kconfig variable that sets dependencies.
+Add device-tree bindings documentation for SNPS DesignWare MIPI D-PHY in
+RX mode.
 
 Signed-off-by: Luis Oliveira <lolivei@synopsys.com>
 ---
- drivers/media/platform/Kconfig     |  1 +
- drivers/media/platform/Makefile    |  3 +++
- drivers/media/platform/dwc/Kconfig | 19 +++++++++++++++++++
- 3 files changed, 23 insertions(+)
- create mode 100644 drivers/media/platform/dwc/Kconfig
+ .../devicetree/bindings/phy/snps,dphy-rx.txt       | 36 ++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/phy/snps,dphy-rx.txt
 
-diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
-index f627587..f627a27 100644
---- a/drivers/media/platform/Kconfig
-+++ b/drivers/media/platform/Kconfig
-@@ -137,6 +137,7 @@ source "drivers/media/platform/am437x/Kconfig"
- source "drivers/media/platform/xilinx/Kconfig"
- source "drivers/media/platform/rcar-vin/Kconfig"
- source "drivers/media/platform/atmel/Kconfig"
-+source "drivers/media/platform/dwc/Kconfig"
- 
- config VIDEO_TI_CAL
- 	tristate "TI CAL (Camera Adaptation Layer) driver"
-diff --git a/drivers/media/platform/Makefile b/drivers/media/platform/Makefile
-index 6ab6200..def2f33 100644
---- a/drivers/media/platform/Makefile
-+++ b/drivers/media/platform/Makefile
-@@ -98,3 +98,6 @@ obj-$(CONFIG_VIDEO_QCOM_VENUS)		+= qcom/venus/
- obj-y					+= meson/
- 
- obj-y					+= cros-ec-cec/
-+
-+obj-y					+= dwc/
-+
-diff --git a/drivers/media/platform/dwc/Kconfig b/drivers/media/platform/dwc/Kconfig
+diff --git a/Documentation/devicetree/bindings/phy/snps,dphy-rx.txt b/Documentation/devicetree/bindings/phy/snps,dphy-rx.txt
 new file mode 100644
-index 0000000..6b1e985
+index 0000000..4f22a43
 --- /dev/null
-+++ b/drivers/media/platform/dwc/Kconfig
-@@ -0,0 +1,19 @@
-+#
-+#  Synopsys DWC Platform drivers
-+#	Most drivers here are currently for MIPI CSI-2 and MIPI DPHY support
++++ b/Documentation/devicetree/bindings/phy/snps,dphy-rx.txt
+@@ -0,0 +1,36 @@
++Synopsys DesignWare MIPI Rx D-PHY block details
 +
-+config DWC_MIPI_CSI2_HOST
-+	bool "Synopsys Designware CSI-2 Host Controller and DPHY-RX support"
-+	select VIDEO_DEV
-+	select VIDEO_V4L2
-+	select VIDEO_V4L2_SUBDEV_API
-+	select VIDEOBUF2_VMALLOC
-+	select VIDEOBUF2_DMA_CONTIG
-+	select GENERIC_PHY
-+	select VIDEO_OV5647
-+	help
-+   	 This selects the CSI-2 host controller support.
-+	 If you have a controller with this interface, say Y
++Description
++-----------
 +
-+	  If unsure, say N.
++The Synopsys MIPI D-PHY controller supports MIPI-DPHY in receiver mode.
++Please refer to phy-bindings.txt for more information.
++
++Required properties:
++- compatible		: Shall be "snps,dphy-rx".
++- #phy-cells		: Must be 1.
++- snps,dphy-frequency	: Output frequency of the D-PHY.
++- snps,dphy-te-len	: Size of the communication interface (8 bits->8 or 12bits->12).
++- reg			: Physical base address and size of the device memory mapped
++		 	  registers;
++
++Optional properties:
++- snps,compat-mode	: Compatibility mode control
++
++The per-board settings:
++- gpios 		: Synopsys testchip used as reference uses this to change setup
++  		  	  configurations.
++
++Example:
++
++	mipi_dphy_rx1: dphy@3040 {
++		compatible = "snps,dphy-rx";
++		#phy-cells = <1>;
++		snps,dphy-frequency = <300000>;
++		snps,dphy-te-len = <12>;
++		snps,compat-mode = <1>;
++		reg = < 0x03040 0x20
++			0x08000 0x100
++			0x09000 0x100>;
++	};
 +
 -- 
 2.9.3
