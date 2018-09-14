@@ -5,31 +5,31 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C185FC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:32:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D70EECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:33:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3546720882
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:32:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3546720882
+	by mail.kernel.org (Postfix) with ESMTP id 3F6C320882
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:33:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F6C320882
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728329AbeINWsI (ORCPT
+        id S1728304AbeINWtH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 18:48:08 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:43340 "EHLO mx1.redhat.com"
+        Fri, 14 Sep 2018 18:49:07 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:38758 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727118AbeINWsI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 18:48:08 -0400
+        id S1727790AbeINWtH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 18:49:07 -0400
 Received: from smtp.corp.redhat.com (int-mx11.intmail.prod.int.phx2.redhat.com [10.5.11.26])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 22C78C0467C0;
-        Fri, 14 Sep 2018 17:32:40 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 14FE080469;
+        Fri, 14 Sep 2018 17:33:39 +0000 (UTC)
 Received: from [10.36.116.58] (ovpn-116-58.ams2.redhat.com [10.36.116.58])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id DAEB73091342;
-        Fri, 14 Sep 2018 17:32:37 +0000 (UTC)
-Subject: Re: [PATCH v4 RESEND 2/5] KVM: x86: hyperv: optimize 'all cpus' case
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id E132A30912F4;
+        Fri, 14 Sep 2018 17:33:35 +0000 (UTC)
+Subject: Re: [PATCH v4 RESEND 3/5] KVM: x86: hyperv: use get_vcpu_by_vpidx()
  in kvm_hv_flush_tlb()
 To:     Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org
 Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
@@ -41,7 +41,7 @@ Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
         Wanpeng Li <wanpeng.li@hotmail.com>,
         linux-kernel@vger.kernel.org
 References: <20180822101832.31763-1-vkuznets@redhat.com>
- <20180822101832.31763-3-vkuznets@redhat.com>
+ <20180822101832.31763-4-vkuznets@redhat.com>
 From:   Paolo Bonzini <pbonzini@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
@@ -79,34 +79,26 @@ Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
  1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
  /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
  53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <e8e97259-cef7-48a5-cf0d-c75b2fd1c515@redhat.com>
-Date:   Fri, 14 Sep 2018 19:32:36 +0200
+Message-ID: <8da03d2a-5405-f363-f081-e4bc46b106e3@redhat.com>
+Date:   Fri, 14 Sep 2018 19:33:34 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180822101832.31763-3-vkuznets@redhat.com>
+In-Reply-To: <20180822101832.31763-4-vkuznets@redhat.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.26
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Fri, 14 Sep 2018 17:32:40 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Fri, 14 Sep 2018 17:33:39 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 22/08/2018 12:18, Vitaly Kuznetsov wrote:
->  	cpumask_clear(&hv_current->tlb_lush);
->  
-> +	if (all_cpus) {
-> +		kvm_make_vcpus_request_mask(kvm,
-> +				    KVM_REQ_TLB_FLUSH | KVM_REQUEST_NO_WAKEUP,
-> +				    NULL, &hv_current->tlb_lush);
-> +		goto ret_success;
-> +	}
-> +
+> VP_INDEX almost always matches VCPU id and get_vcpu_by_vpidx() is fast,
+> use it instead of traversing full vCPU list every time.
 
-
-The cpumask_clear can be pushed below the if.  Queued with that change.
+... but if it doesn't, the algorithm is now quadratic, isn't i?
 
 Paolo
