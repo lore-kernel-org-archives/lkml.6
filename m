@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90520ECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:53:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62B0BECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:53:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B63820853
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:53:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 210E520853
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:53:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fVf1b9fP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B63820853
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p5udt4Yc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 210E520853
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728531AbeINXIs (ORCPT
+        id S1728544AbeINXIv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 19:08:48 -0400
-Received: from mail-qt0-f202.google.com ([209.85.216.202]:50469 "EHLO
-        mail-qt0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726891AbeINXIr (ORCPT
+        Fri, 14 Sep 2018 19:08:51 -0400
+Received: from mail-io1-f74.google.com ([209.85.166.74]:41292 "EHLO
+        mail-io1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726891AbeINXIv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 19:08:47 -0400
-Received: by mail-qt0-f202.google.com with SMTP id e14-v6so7731661qtp.17
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 10:53:14 -0700 (PDT)
+        Fri, 14 Sep 2018 19:08:51 -0400
+Received: by mail-io1-f74.google.com with SMTP id q24-v6so9292887iog.8
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 10:53:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=G25UCWm4mMz33+eKUPKhs6JGwqVkqzCk8I3cSuz0GoE=;
-        b=fVf1b9fPITq9RTWj+mSp2sGeigS4UK1ThbKRs8va5jR4CRz4YbtJ8z5fy8iGjQKwjc
-         OgYFfPsOVmksQQ+DXT/QUH6evzTz9pZbcGbnKLhwkyw7IIQHBzRsu0Fgum+o4g2Di8wC
-         f4oRxhcjkgTnp01Cs+IumsNgPJJfMLdVTVnk/2vYuAmyeWk7TcOkRgGNKm2CEbutUie3
-         czNYczfP9Ni6TUSCDnjsT13M5DmLMg2C2wTzal3XUXyIvmHHeA2wNpwoSJgphTzvcFBk
-         JszKCqDiklix30RY1zWCdqwCEelVQ3e1nQ7sjuisffB3npHpa0YrSks78EhqT98TbZNZ
-         gNbw==
+        bh=D9eQ2tItZegBigcLUTC2Q80PXYCFSB1C4Fwb6yw5AEU=;
+        b=p5udt4YcsnlF1iMhqGeuy7GHMkYxALcbphbOTnhKFi3Qe6PjbxnQgHsNUMkYx9UP+q
+         WwcQAUe75JyHosFxBnGHEQTYC8iVepu046k0HZZmxZDLAciK8a2vPRpQnishKhh8VscU
+         f7/jSJTj0E81M+Gjrxu7RhosEz/wy7/KZ3BF4+GYKY7qcJmstbkR9RnNbv9mFwG6/zyj
+         asaY4q8c8lWEVk/9/UU1WcOmc8MtmmvM53SKRuiMbAzfziiF3lN0Z02C4K8gpcLSpWtF
+         I1GUukVPPrdyux0PLoLy2cKd3uq4Svx780UhEkyCGHBR+a/Kagj54aIY3B9cXlSTknnr
+         0+Mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=G25UCWm4mMz33+eKUPKhs6JGwqVkqzCk8I3cSuz0GoE=;
-        b=Vj2NlGFTqec4tUdKCykn09U43ZeG1EcZCx/VPNYqYKAzWYCO0ud9z7Pz6ajS+qgAh+
-         2WUTok9H7veBjhT8/P3fzoRQU083/76YW5mp8RvyEAInDsT55r6ZJZb7Cg6EVy3+zARb
-         p+659i0Mg6UuGSc4r3Rm5hpboprbsVHVGOdAr5D9/OueN0jjL5P6t5dIXmjzebr45WOA
-         ddi/igv1n32+66q+OZMld4tuhDvN9YnbQk8o27vCbgMNoAklLSn4/NLi5bIP5pq406bK
-         2Mfi8TUDRynnuJ3pBkTquvYixJQFIWUDSgFex4s3Ik4PSZOQqmDNrj4iFUDbu5AxYLVD
-         KHGg==
-X-Gm-Message-State: APzg51C+vYlN8XQKhaFFtO1XT6hGU2CKsoNWodmwBdO/FEl2dgaWJKUA
-        4fwtlvmFjhgFXUw/LJZ1qyZzVZ+y
-X-Google-Smtp-Source: ANB0VdYIuTk+KbMWa2lZycuknSCL5PxQThWMF4jRUqtF9tKiT+kQl83EX81sXzq3fS+KSiX0ZgPAFGzd
-X-Received: by 2002:aed:2452:: with SMTP id s18-v6mr4261542qtc.20.1536947593614;
- Fri, 14 Sep 2018 10:53:13 -0700 (PDT)
-Date:   Fri, 14 Sep 2018 10:51:21 -0700
+        bh=D9eQ2tItZegBigcLUTC2Q80PXYCFSB1C4Fwb6yw5AEU=;
+        b=gUo78OweXZgMJCrdRM0ZRbCGJ7GHfN1XuijVkijWvcX6EBaLIB9LrKGbuQj4bel4IL
+         SpjYtIAqumxOsIbL8m3osKv4r99UBQ8KxIO5JlMThH4ZXJUd+v/MDiMSC3RnGObTJ+/4
+         xF9a9wQks1VWabK42jigaW1SyJVZpMRIfrzfAA+Ga3C8xJvjFG1apZgDQ3MP+EWT/6p6
+         ThgdLztBfpibdeq0hI5k8O229ZEiURtiWkFupnL0HKmNRI/bwQPpgUm6Ujbcgjl4wFGV
+         VvkYY4oEgBj97A7ZDllFopCs48JSpu0goECvoq8qfVUiOxUFBPCebFssGNQ8CGIqR7Bm
+         3XSg==
+X-Gm-Message-State: APzg51AaliljRtx4zFNtEWC1/9xsxW69qzvKVf8iz5srg3lqjXDUFklz
+        fa4PcU0T2mDl07NUigiOH6isE2Lp
+X-Google-Smtp-Source: ANB0VdadqVuB/cgwE0fu1wwvX/968GcuMX0Hv9rs/whGY5cyToDtTcE18CvENGfufyuXnn3nTPIyfxCe
+X-Received: by 2002:a6b:1504:: with SMTP id 4-v6mr10542159iov.79.1536947597164;
+ Fri, 14 Sep 2018 10:53:17 -0700 (PDT)
+Date:   Fri, 14 Sep 2018 10:51:22 -0700
 In-Reply-To: <20180914175122.21036-1-rkir@google.com>
-Message-Id: <20180914175122.21036-20-rkir@google.com>
+Message-Id: <20180914175122.21036-21-rkir@google.com>
 Mime-Version: 1.0
 References: <20180914175122.21036-1-rkir@google.com>
 X-Mailer: git-send-email 2.19.0.397.gdd90340f6a-goog
-Subject: [PATCH 20/21] platform: goldfish: pipe: Remove redundant casting
+Subject: [PATCH 21/21] platform: goldfish: pipe: Fix allmodconfig build
 From:   rkir@google.com
 To:     gregkh@linuxfoundation.org
 Cc:     tkjos@google.com, linux-kernel@vger.kernel.org,
@@ -74,26 +74,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Roman Kiryanov <rkir@google.com>
 
-This casting is not required.
+The changes fixes these errors:
+
+WARNING: modpost: missing MODULE_LICENSE() in drivers/platform/goldfish/goldfish_pipe_v1.o
+see include/linux/module.h for more information
+WARNING: modpost: missing MODULE_LICENSE() in drivers/platform/goldfish/goldfish_pipe_v2.o
+see include/linux/module.h for more information
+ERROR: "goldfish_pipe_device_v2_init" [drivers/platform/goldfish/goldfish_pipe.ko] undefined!
+ERROR: "goldfish_pipe_device_v1_init" [drivers/platform/goldfish/goldfish_pipe.ko] undefined!
+scripts/Makefile.modpost:92: recipe for target '__modpost' failed
+make[1]: *** [__modpost] Error 1
+Makefile:1206: recipe for target 'modules' failed
+make: *** [modules] Error 2
 
 Signed-off-by: Roman Kiryanov <rkir@google.com>
 ---
- drivers/platform/goldfish/goldfish_pipe.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/platform/goldfish/Makefile | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/platform/goldfish/goldfish_pipe.c b/drivers/platform/goldfish/goldfish_pipe.c
-index e45e262517a0..f6c144e71c30 100644
---- a/drivers/platform/goldfish/goldfish_pipe.c
-+++ b/drivers/platform/goldfish/goldfish_pipe.c
-@@ -103,7 +103,7 @@ static int goldfish_pipe_probe(struct platform_device *pdev)
- 	 *  reading device version back: this allows the host implementation to
- 	 *  detect the old driver (if there was no version write before read).
- 	 */
--	writel((u32)PIPE_DRIVER_VERSION, base + PIPE_V2_REG_VERSION);
-+	writel(PIPE_DRIVER_VERSION, base + PIPE_V2_REG_VERSION);
- 	version = readl(base + PIPE_V2_REG_VERSION);
- 
- 	if (version < PIPE_CURRENT_DEVICE_VERSION)
+diff --git a/drivers/platform/goldfish/Makefile b/drivers/platform/goldfish/Makefile
+index acb105dbd9fd..354b4a7d18bb 100644
+--- a/drivers/platform/goldfish/Makefile
++++ b/drivers/platform/goldfish/Makefile
+@@ -1,5 +1,5 @@
+ #
+ # Makefile for Goldfish platform specific drivers
+ #
+-obj-$(CONFIG_GOLDFISH_PIPE)	+= goldfish_pipe.o \
+-	goldfish_pipe_v1.o goldfish_pipe_v2.o
++obj-$(CONFIG_GOLDFISH_PIPE)	+= goldfish_pipe_all.o
++goldfish_pipe_all-objs := goldfish_pipe.o goldfish_pipe_v1.o goldfish_pipe_v2.o
 -- 
 2.19.0.397.gdd90340f6a-goog
 
