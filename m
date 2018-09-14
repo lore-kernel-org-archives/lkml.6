@@ -2,96 +2,84 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B042ECE561
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 23:27:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DFE8ECE561
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 23:29:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D050F20866
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 23:27:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D050F20866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 3FC8D20882
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 23:29:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FC8D20882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726994AbeIOEnh convert rfc822-to-8bit (ORCPT
+        id S1726998AbeIOEpm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 00:43:37 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:36945 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725724AbeIOEnh (ORCPT
+        Sat, 15 Sep 2018 00:45:42 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:42560 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725198AbeIOEpm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 00:43:37 -0400
-Received: by mail-ot1-f68.google.com with SMTP id o13-v6so6154977otl.4;
-        Fri, 14 Sep 2018 16:27:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=be6sJRAw/raldX1ntUCubT6RXwut+96tO3F1H38UATU=;
-        b=WpHSs6xgmELYApfvbMqFPPffS4u9nnGFFG/jI4R+CM8zuBGkV1LhQYzb1maGqC1lqY
-         /8q/Df781dKO7eNnC6lpWXm4GNekDbQMypkPR8YzZm1P8BNgTh/j0kRNicNxxSmDanSw
-         29bKx6n3OSwJzxmAPMgamcg2MjSIB8o7C6yZkTW4Plc5Fyh/NjezU6J4WajAMVLNvIT2
-         jZnByD18tyTcFmsKcLW8cqnWyg+rf3WtSJCghy17vhr/GnB3MpgYv3sCXKfZ0YwdAUv7
-         k22/boD49xaKnl8mvtPY1FDrdrk2dC1EryVjRZR0bfsmG1RDdxFGZN+5IKeeNAC9fGVb
-         DbWw==
-X-Gm-Message-State: APzg51BPL234X8RDjGoy3Onar21akZK6mGAv1ayuXUv8wGCzptSwCHqf
-        4ajdzKOfT5HVFxGo/6AStmjIP5lzePz39w==
-X-Google-Smtp-Source: ANB0VdamoeyjrtPeQzhPBR5aA+ovb/aunimlnocnExhDEhRBoB+kSZzqx8CtYj39qtPerr/GMS1rKQ==
-X-Received: by 2002:a9d:422b:: with SMTP id q43-v6mr6180842ote.289.1536967620179;
-        Fri, 14 Sep 2018 16:27:00 -0700 (PDT)
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com. [209.85.210.45])
-        by smtp.gmail.com with ESMTPSA id j49-v6sm1998412otc.60.2018.09.14.16.26.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Sep 2018 16:26:59 -0700 (PDT)
-Received: by mail-ot1-f45.google.com with SMTP id v10-v6so6151728otk.7;
-        Fri, 14 Sep 2018 16:26:59 -0700 (PDT)
-X-Received: by 2002:a9d:615e:: with SMTP id c30-v6mr6003123otk.178.1536967619270;
- Fri, 14 Sep 2018 16:26:59 -0700 (PDT)
+        Sat, 15 Sep 2018 00:45:42 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07906491|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01e01454;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=15;RT=15;SR=0;TI=SMTPD_---.Cr.AkNN_1536967707;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.Cr.AkNN_1536967707)
+          by smtp.aliyun-inc.com(10.147.40.44);
+          Sat, 15 Sep 2018 07:28:28 +0800
+Date:   Sat, 15 Sep 2018 07:28:26 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        DTML <devicetree@vger.kernel.org>,
+        andrea.parri@amarulasolutions.com,
+        Peter Zijlstra <peterz@infradead.org>,
+        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        wbx@uclibc-ng.org, Greentime Hu <green.hu@gmail.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH V4 00/27] C-SKY(csky) Linux Kernel Port
+Message-ID: <20180914232826.GA1497@guoren-Inspiron-7460>
+References: <cover.1536757532.git.ren_guo@c-sky.com>
+ <CAK8P3a0CUYyMR9hDG97Zf2Oyj+D9vwQRnPZrEs0rrOLwHqxYfw@mail.gmail.com>
+ <20180914143719.GA27689@guoren-Inspiron-7460>
+ <CAK8P3a0fZYbd4a2nBnExPVXKs-898R9vaCSa4kXyz0qA=rCzZQ@mail.gmail.com>
+ <20180914160231.GA32161@guoren-Inspiron-7460>
+ <CAK8P3a0ZBBL8LHoV=tDr3Ner6wRK=QcrepciZqCPNEHk=B2n7A@mail.gmail.com>
 MIME-Version: 1.0
-References: <20180912085937.22489-1-horia.geanta@nxp.com> <20180912085937.22489-4-horia.geanta@nxp.com>
-In-Reply-To: <20180912085937.22489-4-horia.geanta@nxp.com>
-From:   Li Yang <leoyang.li@nxp.com>
-Date:   Fri, 14 Sep 2018 18:26:48 -0500
-X-Gmail-Original-Message-ID: <CADRPPNQYPZGPo0y7pv3CFFJH6Kn4rL42w8YgH-d3pMrU=Q0FFQ@mail.gmail.com>
-Message-ID: <CADRPPNQYPZGPo0y7pv3CFFJH6Kn4rL42w8YgH-d3pMrU=Q0FFQ@mail.gmail.com>
-Subject: Re: [PATCH v2 03/12] soc: fsl: dpio: add frame list format support
-To:     Horia Geanta <horia.geanta@nxp.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Stuart Yoder <stuyoder@gmail.com>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Roy Pledge <roy.pledge@nxp.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Miller <davem@davemloft.net>, aymen.sghaier@nxp.com,
-        linux-crypto@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a0ZBBL8LHoV=tDr3Ner6wRK=QcrepciZqCPNEHk=B2n7A@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 4:02 AM Horia Geantă <horia.geanta@nxp.com> wrote:
->
-> Add support for dpaa2_fd_list format, i.e. dpaa2_fl_entry structure
-> and accessors.
->
-> Frame list entries (FLEs) are similar, but not identical to FDs:
-> + "F" (final) bit
-> - FMT[b'01] is reserved
-> - DD, SC, DROPP bits (covered by "FD compatibility" field in FLE case)
-> - FLC[5:0] not used for stashing
->
-> Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
+On Fri, Sep 14, 2018 at 06:09:35PM +0200, Arnd Bergmann wrote:
+> On Fri, Sep 14, 2018 at 6:02 PM Guo Ren <ren_guo@c-sky.com> wrote:
+> >
+> > On Fri, Sep 14, 2018 at 04:46:56PM +0200, Arnd Bergmann wrote:
+> > > On Fri, Sep 14, 2018 at 4:37 PM Guo Ren <ren_guo@c-sky.com> wrote:
+> >
+> > > One level below that, you can of course choose to build
+> > > a distro with only 64-bit time_t regardless of whether there
+> > > is still support for 32-bit time_t in kernel and glibc or not.
+> > Do you mean I could merge kernel port into linux-4.19 or linux-4.20.
+> > But let glibc merged after linux-4.21 and csky glibc only support
+> > time64 syscalls ?
+> 
+> Yes, that's what I meant. Note that it won't get merged into 4.19:
+> the merge window for that was after the 4.18 release and no
+> new features are getting merged for 4.19 that have not made it
+> into 4.19-rc1 already.
+> 
+> Getting your code into linux-next now is the prerequisite for you
+> sending a pull request during the 4.20 window.
+Got it, thank you very much.
 
-Acked-by: Li Yang <leoyang.li@nxp.com>
-
-> ---
->  include/soc/fsl/dpaa2-fd.h | 242 +++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 242 insertions(+)
->
+ Guo Ren
