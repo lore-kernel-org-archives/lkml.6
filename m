@@ -2,94 +2,101 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4019DFC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 12:01:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E46E8ECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 12:03:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA19720881
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 12:01:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IxTw6N2b"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA19720881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 68FEE20881
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 12:03:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68FEE20881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728132AbeINRPp (ORCPT
+        id S1727844AbeINRRh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 13:15:45 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39784 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727134AbeINRPp (ORCPT
+        Fri, 14 Sep 2018 13:17:37 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:56387 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726872AbeINRRg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 13:15:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=JasgV8QD5xXOe86E0sCadXzIoKd4fLwFxGn3HK5uZbo=; b=IxTw6N2bBV7sV0pNDxeE/MwRe
-        ENj6hA6k6cykmRmRwKNk3A8BIy43lPaFCR2zfcIOnHo/z6xhVqXEBXuXBbzCj2taeyfIf7lMqP2aw
-        qVHZWv2HPaWW3Yn+3K7OaE/2exUoDfexAc1cJnnZDJkMpUFaSGz2sPXDZe4Jr6c7H9tVuA0Rzdt0V
-        YdDQXZSP1nTBxeJFMiDrm8a0cD8Ky6+k716+KLEG44QYUKx3VeeaygJJrNYXEAy7C7xb3w7sxFMmO
-        6z76kYNk89svX7K2+fxgMZYsly7AJN9KdIfEPOXd84q6ZtIX/ULHbGzLhU52YpW01zXPHBdZ/3NXp
-        GcM1Bijfg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g0mmx-0000P5-BK; Fri, 14 Sep 2018 12:01:31 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id B537F202B2E3B; Fri, 14 Sep 2018 14:01:29 +0200 (CEST)
-Date:   Fri, 14 Sep 2018 14:01:29 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Ingo Molnar <mingo@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <andi@firstfloor.org>, kernel-team@lge.com
-Subject: Re: [RFCv2 00/48] perf tools: Add threads to record command
-Message-ID: <20180914120129.GJ24124@hirez.programming.kicks-ass.net>
-References: <20180913125450.21342-1-jolsa@kernel.org>
- <cba27d6a-a97b-cbb7-4be8-d1c14fb7dea5@linux.intel.com>
- <20180914022910.GA15146@sejong>
- <20180914082307.GF24224@krava>
- <20180914094022.GB96351@gmail.com>
- <20180914111528.GH24124@hirez.programming.kicks-ass.net>
- <20180914114725.GB17042@krava>
+        Fri, 14 Sep 2018 13:17:36 -0400
+Received: from fsav401.sakura.ne.jp (fsav401.sakura.ne.jp [133.242.250.100])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w8EC3OHF059439;
+        Fri, 14 Sep 2018 21:03:24 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav401.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav401.sakura.ne.jp);
+ Fri, 14 Sep 2018 21:03:24 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav401.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w8EC3OS6059434
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Fri, 14 Sep 2018 21:03:24 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] printk: inject caller information into the body of
+ message
+To:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitriy Vyukov <dvyukov@google.com>,
+        kbuild test robot <fengguang.wu@intel.com>,
+        syzkaller <syzkaller@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <CACT4Y+aER3O2x2ApM=MVFoFXhp_T_rUeyG9CBx031qyH0voSRg@mail.gmail.com>
+ <20180620130628.GA1000@tigerII.localdomain>
+ <CAG_fn=XuZo5yrZzVizP26iV6eFfJtAHUs4NsDFXFyvnaJkdSQw@mail.gmail.com>
+ <20180912065307.GA606@jagdpanzerIV>
+ <20180912120548.4280f04a@vmware.local.home>
+ <20180913071204.GA604@jagdpanzerIV>
+ <20180913122625.6ieyexpcmlc5z2it@pathway.suse.cz>
+ <20180913142802.GB517@tigerII.localdomain>
+ <20180914065728.GA515@jagdpanzerIV>
+ <49d22738-17ad-410a-be0a-d27d76ba9f37@i-love.sakura.ne.jp>
+ <20180914115028.GB20572@tigerII.localdomain>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <e855cbef-03ff-b4ac-3e06-d2f2f48cfb1f@i-love.sakura.ne.jp>
+Date:   Fri, 14 Sep 2018 21:03:20 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180914114725.GB17042@krava>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180914115028.GB20572@tigerII.localdomain>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 14, 2018 at 01:47:25PM +0200, Jiri Olsa wrote:
-> On Fri, Sep 14, 2018 at 01:15:28PM +0200, Peter Zijlstra wrote:
-> > On Fri, Sep 14, 2018 at 11:40:22AM +0200, Ingo Molnar wrote:
-> > > In fact keeping the files separate has scalability advantages for 'perf report' and similar 
-> > > parsing tools: they could read all the streams in a per-CPU fashion already, from the very 
-> > > beginning.
-> > 
-> > Also writing to different files from different CPUs is good for record,
-> > less contention on the inode state (which include pagecache).
+On 2018/09/14 20:50, Sergey Senozhatsky wrote:
+>>> +#define DEFINE_PR_LINE_BUF(lev, name, buf, sz)			\
+>>> +	struct pr_line	name = {				\
+>>> +		.sb	= __SEQ_BUF_INITIALIZER(buf, (sz)),	\
+>>> +		.level	= lev,					\
+>>> +	}
+>>> +
+>>
+>> I would use this one for the OOM killer. 80 bytes is too short.
 > 
-> maybe I should explain a little bit more on this
+> 80 bytes is quite short for OOM, agreed.
 > 
-> we write to different (per-cpu) files during the record,
-> and at the end of the session, we take them and store
-> them inside perf.data
+>>   static char oom_print_buf[1024];
+>>   DEFINE_PR_LINE_BUF(level, oom_print_buf);
+> 
+> Do I get it right that you suggest to drop the "size" param?
 
-How long does it take to combine that? If we generated a lot of data,
-that could take a fair amount of time, no?
+No. I just forgot to add params. ;-)
 
-I feel that record should not mysteriously 'hang' when it is done. It
-used to do that at some point because of that stupid .debug crap, but
-acme fixed that I think.
+> Do OOM people agree on 1024 bytes stack usage?
+
+I won't allocate oom_print_buf on the stack. Since its usage is serialized
+by oom_lock mutex, we don't need to allocate from stack. Since memory
+allocation request might happen when stack is already tight, we should not
+try to allocate much from stack.
