@@ -2,127 +2,163 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 293F8FC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 07:41:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B7AAC070C3
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 07:47:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D505E20866
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 07:41:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uBl4iv5S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D505E20866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A20E920866
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 07:47:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A20E920866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728020AbeINMyf (ORCPT
+        id S1727828AbeINNAy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 08:54:35 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:46820 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726822AbeINMye (ORCPT
+        Fri, 14 Sep 2018 09:00:54 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:33039 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727194AbeINNAy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 08:54:34 -0400
-Received: by mail-qt0-f196.google.com with SMTP id l42-v6so7866703qtf.13;
-        Fri, 14 Sep 2018 00:41:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3efAQs9RgsvufH+fx5koIKFbVTz2vAavkVGrNZFIPnU=;
-        b=uBl4iv5SpTalF7QA9Fj99feQEzVAti+6AUcYn327vE/55o3Jyvu6pDWSF+aoSbQOR5
-         6ssEc3tybJ3a32+W0RE7DAV5sN9DuTDLhQPzh8iyVbjM8xi7iulCVQWtOPekYITVDs44
-         3Jh6iM7k6EytzSXtNG+LbKWDJuX1MW12DEzJ5BMORyMYtw0WgIj9NZz1fWPK+hF1ezdb
-         7RakWMPJ/F/LUAqjpauv/PgE7dlaLHFZLURl+75kB/mneLSM+vmqnRBbRo5rS1g+TSUL
-         fX19tqE6dilsZ4tdpxJ+JmQw2w07R/MGOaaPutlEV9/Zx4+8WPaVExiw8jFea8oLFOSl
-         quRg==
+        Fri, 14 Sep 2018 09:00:54 -0400
+Received: by mail-ot1-f67.google.com with SMTP id i10-v6so3718986oth.0;
+        Fri, 14 Sep 2018 00:47:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=3efAQs9RgsvufH+fx5koIKFbVTz2vAavkVGrNZFIPnU=;
-        b=SJuAZZZxk6f5Y2lF5/1iklyKjrg6/bpjkDItfyJCJeC0ybebUxZNxCdjIpQGlOjMme
-         /e/hququlkNqjI8jcCW4QOR5fJSDgampK3lXGZhKKYz8DFWy/JeyuTq15//cmT6JJKba
-         uXb9OtH7lCcJ75fYaiuG5dZKm/Y8VwKhcrbpMPJ5ybUUFRMiTO8SWtGJWN0q6XATxKvS
-         WHjGaKlkrAgty71gcRyZ1TP3zmKvsab+ts6pRfvXoeY3sX5Y08Ri5Wbo5yCvr+2n1Mn4
-         V8bunfNyElKDl/hR5qZrwTOEyzjNJWlSQVjNjRnx8PIrw7N7YQXz7c7unNr0XormnAoC
-         1ybw==
-X-Gm-Message-State: APzg51AKxS4rpI4QV7Tg49ScvjHvdOSXehNdOYr82QDvA6uPty+GRNje
-        +5o+4ndhJJRYZ/48tSEjppzZ8dj707rYAXxp28A=
-X-Google-Smtp-Source: ANB0VdZVScsXqAYFPw+BMFY5+E/mu6qmDWuDCORYboUD4deVe55jJqWhFk5/sBKmlcyoCLIG2EHx47DH3QrdqEqQ+M4=
-X-Received: by 2002:a0c:c13c:: with SMTP id f57-v6mr8161409qvh.7.1536910881253;
- Fri, 14 Sep 2018 00:41:21 -0700 (PDT)
+        bh=FrKyp6qZRzwBDgDKF/oz/lNGiw1P+ewjt4SNqsBGbQA=;
+        b=QmmAAJRDx4qw1K+Jo9hmbT5kaYiGi9pZXFye+uxdGOmvuCFHYyz2ZbX9p7zHACo4Vm
+         WfxH/W84CdPGxgV78yHhj/q2cBS5F6NwwkNa9L9Kr3DAQgNksGlr/DoAuVsmWmTvKELY
+         ZA6Kt96VJnSbua+BMqtkEVgxIahAo2rUzcDQmvigb4+hkheRYQkO7CxHHpMhxIJ2a2jV
+         OXW3hRt9Z2UHawMmwPGHIHPJbyFxhV5tdW8NlwHjvuMSIO3cMI6Zi0JtRQ3Gqzdl5AW0
+         D5aRmyJJS1wQVcT4NpETR5WrQhMWjmrB/rtNihMY9YPnl86i+9zQ9p/gZpXVDNHrNHS6
+         HNAg==
+X-Gm-Message-State: APzg51Ac6q5eQr/SaU0mYqzCQLhME5BWdoSCqgs3bRkKAgdJrjuukPLe
+        eqNXEf8ToPhvZqTppr6GBE1nYVS10jtfEWD7xDEKJQ==
+X-Google-Smtp-Source: ANB0VdaKNdJ0G2TZfEKbezhCVfULdzNJy0rVX3pMcGw96wumTd14zpmCjvc50swOIEVLZCkOfg/2afxstAELZyV2D8M=
+X-Received: by 2002:a9d:19e8:: with SMTP id k95-v6mr3848225otk.248.1536911259768;
+ Fri, 14 Sep 2018 00:47:39 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180913223143.12664-1-rajatja@google.com>
-In-Reply-To: <20180913223143.12664-1-rajatja@google.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 14 Sep 2018 10:33:18 +0300
-Message-ID: <CAHp75VcVkp6i_4oNVJvzde13MwaRQge91mvZF2aXgneZC9nzWg@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: icelake: Fix the resource number for community-4/5
-To:     Rajat Jain <rajatja@google.com>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+References: <9611469.2z7W9akjOQ@aspire.rjw.lan> <20180914074052.GF24124@hirez.programming.kicks-ass.net>
+In-Reply-To: <20180914074052.GF24124@hirez.programming.kicks-ass.net>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 14 Sep 2018 09:47:28 +0200
+Message-ID: <CAJZ5v0hnchptNz8sHxtuTDbE-f3axgfMgKMgRiasoUv2G7Z0+Q@mail.gmail.com>
+Subject: Re: [PATCH] PM / suspend: Count suspend-to-idle loop as sleep time
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        rajatxjain@gmail.com, subrata.banik@intel.com,
-        aamir.bohra@intel.com
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 14, 2018 at 1:54 AM Rajat Jain <rajatja@google.com> wrote:
+On Fri, Sep 14, 2018 at 9:41 AM Peter Zijlstra <peterz@infradead.org> wrote:
 >
-> The Icelake does not have a community-3, and the memory resources are
-> laid out in the following order in the ACPI:
+> On Fri, Sep 14, 2018 at 08:59:03AM +0200, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > There is a difference in behavior between suspend-to-idle and
+> > suspend-to-RAM in the timekeeping handling that leads to functional
+> > issues.  Namely, every iteration of the loop in s2idle_loop()
+> > increases the monotinic clock somewhat, even if timekeeping_suspend()
+> > and timekeeping_resume() are invoked from s2idle_enter(), and if
+> > many of them are carried out in a row, the monotonic clock can grow
+> > significantly while the system is regarded as suspended, which
+> > doesn't happen during suspend-to-RAM and so it is unexpected and
+> > leads to confusion and misbehavior in user space (similar to what
+> > ensued when we tried to combine the boottime and monotonic clocks).
+> >
+> > To avoid that, count all iterations of the loop in s2idle_loop()
+> > as "sleep time" and adjust the clock for that on exit from
+> > suspend-to-idle.
+> >
+> > [That also covers systems on which timekeeping is not suspended
+> >  by by s2idle_enter().]
+> >
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 >
-> resource-0: community-0 registers
-> resource-1: community-1 registers
-> resource-2: community-2 registers
-> resource-3: community-4 registers
-> resource-4: community-5 registers
->
-> (EDS also describes the communities in the above order).
->
-> Since the pinctrl driver exposes communities 0, 1, 4, 5, it needs to get
-> the corresponding community registers by getting the resourse number right.
-> Currently the resourse number is not correct for community 4 and 5, thus
-> fix that.
->
+> Do we want a 'warning' of sorts when the delta becomes significant (for
+> whatever that is) ? That might be an indication that there are frequent
+> wakeups which we might not be expecting. Of keep the number of spurious
+> wakeups in a stat counter somewhere -- something to look at if the
+> battery drains faster than expected.
 
-Can you share link to the ACPI dump of the tables? (you may get one by
-running `acpidump -o tables.dat`)
+If you echo 1 to /sys/power/pm_debug_messages, dmesg will tell you
+that (with gory details). :-)
 
-> Signed-off-by: Rajat Jain <rajatja@google.com>
-> ---
->  drivers/pinctrl/intel/pinctrl-icelake.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> Otherwise:
 >
-> diff --git a/drivers/pinctrl/intel/pinctrl-icelake.c b/drivers/pinctrl/intel/pinctrl-icelake.c
-> index 630b966ce081..5b4eaf7c90df 100644
-> --- a/drivers/pinctrl/intel/pinctrl-icelake.c
-> +++ b/drivers/pinctrl/intel/pinctrl-icelake.c
-> @@ -331,8 +331,8 @@ static const struct intel_padgroup icllp_community5_gpps[] = {
->  static const struct intel_community icllp_communities[] = {
->         ICL_COMMUNITY(0, 0, 58, icllp_community0_gpps),
->         ICL_COMMUNITY(1, 59, 152, icllp_community1_gpps),
-> -       ICL_COMMUNITY(2, 153, 215, icllp_community4_gpps),
-> -       ICL_COMMUNITY(3, 216, 240, icllp_community5_gpps),
-> +       ICL_COMMUNITY(3, 153, 215, icllp_community4_gpps),
-> +       ICL_COMMUNITY(4, 216, 240, icllp_community5_gpps),
->  };
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 >
->  static const unsigned int icllp_spi0_pins[] = { 22, 23, 24, 25, 26 };
-> --
-> 2.19.0.397.gdd90340f6a-goog
+> One minor nit below:
 >
+> > ---
+> >  kernel/power/suspend.c |   18 ++++++++++++++++++
+> >  1 file changed, 18 insertions(+)
+> >
+> > Index: linux-pm/kernel/power/suspend.c
+> > ===================================================================
+> > --- linux-pm.orig/kernel/power/suspend.c
+> > +++ linux-pm/kernel/power/suspend.c
+> > @@ -109,8 +109,12 @@ static void s2idle_enter(void)
+> >
+> >  static void s2idle_loop(void)
+> >  {
+> > +     ktime_t start, delta;
+> > +
+> >       pm_pr_dbg("suspend-to-idle\n");
+> >
+> > +     start = ktime_get();
+> > +
+> >       for (;;) {
+> >               int error;
+> >
+> > @@ -150,6 +154,20 @@ static void s2idle_loop(void)
+> >               pm_wakeup_clear(false);
+> >       }
+> >
+> > +     /*
+> > +      * If the monotonic clock difference between the start of the loop and
+> > +      * this point is too large, user space may get confused about whether or
+> > +      * not the system has been suspended and tasks may get killed by
+> > +      * watchdogs etc., so count the loop as "sleep time" to compensate for
+> > +      * that.
+> > +      */
+> > +     delta = ktime_sub(ktime_get(), start);
+> > +     if (ktime_to_ns(delta) > 0) {
+> > +             struct timespec64 timespec64_delta = ktime_to_timespec64(delta);
+> > +
+> > +             timekeeping_inject_sleeptime64(&timespec64_delta);
+> > +     }
+> > +
+> >       pm_pr_dbg("resume from suspend-to-idle\n");
+> >  }
+>
+> Like I mentioned yesterday; I myself prefer the form:
+>
+>
+>         u64 stamp = ktimer_get_ns();
+>
+>         for (;;) {
+>                 /* ... */
+>         }
+>
+>         stamp = ktime_get_ns() - stamp;
+>         if (stamp)
+>                 timekeeping_inject_sleeptime64(ns_to_timespec64(ns));
+>
+>
+> Esp. since ktime_t _is_ s64 these days, there is no point in keep using
+> all the weird ktime helpers that make the code harder to read.
 
-
--- 
-With Best Regards,
-Andy Shevchenko
+Looks like a good idea, let me try that.
