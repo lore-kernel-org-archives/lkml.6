@@ -2,135 +2,152 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E4CFECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:29:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8687CECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:31:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1452120833
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:29:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BAC720833
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:31:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LomIHWLz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1452120833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cwp5zsoI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BAC720833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728283AbeINWpX (ORCPT
+        id S1728294AbeINWqf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 18:45:23 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:44851 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727944AbeINWpW (ORCPT
+        Fri, 14 Sep 2018 18:46:35 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:40578 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727118AbeINWqf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 18:45:22 -0400
-Received: by mail-pg1-f195.google.com with SMTP id r1-v6so4700032pgp.11;
-        Fri, 14 Sep 2018 10:29:54 -0700 (PDT)
+        Fri, 14 Sep 2018 18:46:35 -0400
+Received: by mail-pf1-f194.google.com with SMTP id s13-v6so4612575pfi.7;
+        Fri, 14 Sep 2018 10:31:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+        h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=LYy4U30W9CXaRMDIWIE+0IZC6vFUBA6J0Ce531OTL5I=;
-        b=LomIHWLzvMSKc0Xf3Ryv3F63sfn2uYmRoa8uD+N6gsGUSyEwPZJ+XmN0Tb3gL1Vggj
-         rFbLb5cuvnUrMICN5V8N2eqww7ARl1aA6ukZqh1kWOrNvShH+s/P/kfyVY9d4+CmvW1V
-         QNEpbm43ynAQIW7w7Gc8twYBp5EPSN23LFyuYA26sO+BZNIZQVrPb0Dv3iLcXY22TGQG
-         IbRMwG4HarvK19XjFV0WxAGAoGFn+55eYumbTd57Nsn4+WokXiUzeDTxe+kYVLiCNbi5
-         Ek5+lD1DeYerlW9aSVMZXqFp3Q5kZKFdNpmjobnxvNxZKN/M6w+LWsibTRvUWIVAepyW
-         6tFQ==
+        bh=Ee8eiz9klqk9Kkx3o9qE7t9GefInEOemujD8Z/WM++U=;
+        b=cwp5zsoIjwSFuzLlmut5qjV04NMYfgIHrdOu5bo5tGPJ/zxWKvLvBdS01P3s/3h2Sc
+         GFUB9caqAPpf+ROh0el661dleaKp0x029qWDgcyPXga+htcWvEpIUa1cXo/YiNo7puyF
+         ZL1T2n2jv8w+Pp5jSXT8oAOOJCtVcUeP/BG9fKVEeWnsEOt2/82Qp9oeAUnNOMVFovs1
+         GRyorOKOwjRYhv67hGMu8tBO/bmEuvNxUk8EAXQzetukaHTvoPmgjRQLzH2+P+xjugKP
+         bl7hDedX0zPOxGo0F/rdP5mz9N6+u9Ilmj0gLosInh0lUaELbFXdmNuJG6tpTF35tv1x
+         Fb5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LYy4U30W9CXaRMDIWIE+0IZC6vFUBA6J0Ce531OTL5I=;
-        b=iLV+ns5vhaNtKjv4kvf9iI3+jqLMkYOCcCq4+8yhJS/h0rJF3H3vtthEnUs9piPLY+
-         qwwrZVSHargVfH7lpQ2293lFpx1sMUSvuDf750SKsXPQvFefCJa7kLL0eGNf3c7QR242
-         HQ/3BZVYhE6iV+VJf1YP3By6Bi/AmAxuQ73SvPDK9XYGW1lLH17XUyMY7T6kBTgIlIor
-         vFHTSuALWzvGYKPHWNT+1JUOCvHJndJ2SrsZozIRmgLim7iaObfjiRARWoqKdb+Jz1C/
-         Cm+CH50fnjFOUDvgkfXJNa/auqajQHmw3lwttMll+iz5HPGL3oMeYs9UTMvD2jkdfcWF
-         Vg1g==
-X-Gm-Message-State: APzg51CNlDHyrfZHLs5vlT/bBkE/16BJyAc4nR1e50cqWRC1oa9K6Dsa
-        ivhQLpcC36ptbwF4xkK6kNU=
-X-Google-Smtp-Source: ANB0VdYMDc3had1DLpWlv70CQ9pYIY4MJ+oCUiDLKd1wXVrjHK+tXbqolIfZ/MGWv2Wv2MiCjx3p2Q==
-X-Received: by 2002:a63:e0e:: with SMTP id d14-v6mr11096274pgl.38.1536946194493;
-        Fri, 14 Sep 2018 10:29:54 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id x82-v6sm14926729pfe.129.2018.09.14.10.29.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Sep 2018 10:29:53 -0700 (PDT)
-Date:   Fri, 14 Sep 2018 10:29:53 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Radu Rendec <radu.rendec@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] dt-bindings: watchdog: add mpc8xxx-wdt support
-Message-ID: <20180914172953.GF26861@roeck-us.net>
-References: <5edda1a360cf7867b98a72a1dfa22db3bd5ed7b4.1536931725.git.christophe.leroy@c-s.fr>
- <e68ed01cdfba5b7610559607a3c706b294a216fc.1536931725.git.christophe.leroy@c-s.fr>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Ee8eiz9klqk9Kkx3o9qE7t9GefInEOemujD8Z/WM++U=;
+        b=kBh5fGGJs8BTxBdH9/EMZGXHpbpKuRhkLaDebTUPJNF8RVBU+VzSnlaXELa4yQIz9x
+         XBjkbsFffjeofW9+AWDK1k1DHSFk+tGis98dG9HSoWKfMF3SkiD/IivULizMBiRx5tUX
+         iBf1cr7tXhqAHOWXCSBxrvjHCQIP97hUr4xiAbi3sPvzffMKgu6XLAdVEipmgcB9VkFj
+         +PcCQxJH+XljZhhiP5ndC/vtBOspewVFOgzSkjuY4KuJ2q+Jg+9YM1CTBYPFz+EfLXgR
+         MZz11CZnql7c29lTpYfZokfK7x03qjVQkS963NFe/J7oz3TOP0vSV24aSnfFModT0xKB
+         jNEg==
+X-Gm-Message-State: APzg51Ae288BviIyJTBAzKUP28PSfYL5B/fd3ZG6yLdU03mTT+IMUM6a
+        EIsXk12ZhhLyIeCAgW+g70xKhKafw3A=
+X-Google-Smtp-Source: ANB0VdbYW1yikxkbp7woJQYMe+xWh31+5h6xSt4fOl15m8IeoCoPqrT8DJYAZgpJ0/B/naDR4jGgDQ==
+X-Received: by 2002:a63:6283:: with SMTP id w125-v6mr12455102pgb.83.1536946266585;
+        Fri, 14 Sep 2018 10:31:06 -0700 (PDT)
+Received: from himanshu-Vostro-3559 ([103.233.116.134])
+        by smtp.gmail.com with ESMTPSA id z20-v6sm13397828pfd.99.2018.09.14.10.31.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 14 Sep 2018 10:31:05 -0700 (PDT)
+Date:   Fri, 14 Sep 2018 23:00:58 +0530
+From:   Himanshu Jha <himanshujha199640@gmail.com>
+To:     Afonso Bordado <afonsobordado@az8.co>
+Cc:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 4/5] iio: fxas21002c: add ODR/Scale support
+Message-ID: <20180914173058.GA8405@himanshu-Vostro-3559>
+References: <20180911150011.31964-4-afonsobordado@az8.co>
+ <201809121715.5Babt1QC%fengguang.wu@intel.com>
+ <20180912182350.GA13032@himanshu-Vostro-3559>
+ <2cd9b1674ae88f153a5afe65c151cabf308e4fe7.camel@az8.co>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e68ed01cdfba5b7610559607a3c706b294a216fc.1536931725.git.christophe.leroy@c-s.fr>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <2cd9b1674ae88f153a5afe65c151cabf308e4fe7.camel@az8.co>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 14, 2018 at 01:32:03PM +0000, Christophe Leroy wrote:
-> Add description of DT bindings for mpc8xxx-wdt driver which
-> handles the CPU watchdog timer on the mpc83xx, mpc86xx and mpc8xx.
+On Fri, Sep 14, 2018 at 04:26:44PM +0100, Afonso Bordado wrote:
+> Hi,
 > 
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> ---
->  .../devicetree/bindings/watchdog/mpc8xxx-wdt.txt   | 25 ++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/watchdog/mpc8xxx-wdt.txt
+> Thanks for your help with this.
 > 
-> diff --git a/Documentation/devicetree/bindings/watchdog/mpc8xxx-wdt.txt b/Documentation/devicetree/bindings/watchdog/mpc8xxx-wdt.txt
-> new file mode 100644
-> index 000000000000..1d99e1e4d306
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/watchdog/mpc8xxx-wdt.txt
-> @@ -0,0 +1,25 @@
-> +* Freescale mpc8xxx watchdog driver (For 83xx, 86xx and 8xx)
-> +
-> +Required properties:
-> +- compatible: Shall contain one of the following:
-> +	"mpc83xx_wdt" for an mpc83xx
-> +	"fsl,mpc8610-wdt" for an mpc86xx
-> +	"fsl,mpc823-wdt" for an mpc8xx
-> +- reg: base physical address and length of the area hosting the
-> +       watchdog registers.
-> +		On the 83xx, "Watchdog Timer Registers" area:	<0x200 0x100>
-> +		On the 86xx, "Watchdog Timer Registers" area:	<0xe4000 0x100>
-> +		On the 8xx, "General System Interface Unit" area: <0x0 0x10>
-> +
-
-Note for Rob: The above has been implemented for several years.
-This is merely to document the current implementation.
-Maybe "mpc83xx_wdt" should be deprecated and replaced, but I think
-that should be a separate patch.
-
-> +Optional properties:
-> +- reg: additionnal physical address and length (4) of location of the
-
-s/additionnal/additional/
-
-> +       Reset Status Register (called RSTRSCR on the mpc86xx)
-> +       		On the 83xx, it is located at offset 0x910
-> +       		On the 86xx, it is located at offset 0xe0094
-> +       		On the 8xx, it is located at offset 0x288
-> +
-> +Example:
-> +		WDT: watchdog@0 {
-> +		    compatible = "fsl,mpc823-wdt";
-> +		    reg = <0x0 0x10 0x288 0x4>;
-> +		};
-> -- 
-> 2.13.3
+> > And I suspect it may be originating from your code snippet:
+> > 
+> > #define FXAS21002C_SCALE(scale) (IIO_DEGREE_TO_RAD(62500U >>
+> > (scale)))
+> > 
+> > and looking at the implementation:
+> > 
+> > include/linux/iio/iio.h
+> > /**
+> >  * IIO_DEGREE_TO_RAD() - Convert degree to rad
+> >  * @deg: A value in degree
+> >  *
+> >  * Returns the given value converted from degree to rad
+> >  */
+> > #define IIO_DEGREE_TO_RAD(deg) (((deg) * 314159ULL + 9000000ULL) /
+> > 18000000ULL)
+> > 
+> > This '/' operator might be the culprit!
+> > 
+> > Just for checking that the error, remove the macro declaration
+> > `FXAS21002C_SCALE`
+> > plus its usage and re-cross compile using `make ARCH=i386`.
+> > 
+> > In my case I used the `div64_s64` function handles builds for both
+> > 32/64
+> > arch accordingly.
 > 
+> Yes, this is indeed the culprit. If `div64_s64` works the same way, I
+> wonder if the best option is to change the macro definition.
+
+"....works the same way" ?
+
+Let us assume that the problem arises due to the 64 bit division, in
+which gcc places the __divdi3() runtime function to promote the
+"freestanding" environment implementation. And then linking fails
+due to unavailability of definitions/declarations of the aforementioned
+function.
+
+With `div64_s64` usgae the linker binds the definition present at lib/div64.c
+and the build completes successfully whether building for 32/64 bit
+environment.
+
+But then why didn't this error showed up in the past, in the rest 
+of the drivers ?
+
+I see its wide usage in IIO without bug reports:
+
+himanshu@himanshu-Vostro-3559:~/linux-next$ git grep -w "IIO_DEGREE_TO_RAD" drivers/iio/ | wc -l
+34
+
+And that concludes, that there is some problem within your code!
+
+In the meantime, you can try to look the disassembly of the function
+where this macro is actually used and search for __divdi3/__udivdi3
+function referenced in the plt.
+
+I might be wrong though...
+
+Wait a while for the experts to join in!
+
+-- 
+Himanshu Jha
+Undergraduate Student
+Department of Electronics & Communication
+Guru Tegh Bahadur Institute of Technology
