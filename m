@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A2FECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:30:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40CDAFC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:30:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE602206B5
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:30:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE602206B5
+	by mail.kernel.org (Postfix) with ESMTP id 02250206B5
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:30:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02250206B5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728296AbeINTpX (ORCPT
+        id S1728318AbeINTp0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 15:45:23 -0400
-Received: from foss.arm.com ([217.140.101.70]:34218 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726902AbeINTpW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 15:45:22 -0400
+        Fri, 14 Sep 2018 15:45:26 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34224 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726902AbeINTpZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 15:45:25 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0CA8315B2;
-        Fri, 14 Sep 2018 07:30:37 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 159B915BE;
+        Fri, 14 Sep 2018 07:30:39 -0700 (PDT)
 Received: from e110467-lin.cambridge.arm.com (e110467-lin.emea.arm.com [10.4.12.131])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 42C8B3F575;
-        Fri, 14 Sep 2018 07:30:35 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 4B94E3F575;
+        Fri, 14 Sep 2018 07:30:37 -0700 (PDT)
 From:   Robin Murphy <robin.murphy@arm.com>
 To:     joro@8bytes.org, will.deacon@arm.com, thunder.leizhen@huawei.com,
         iommu@lists.linux-foundation.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc:     linuxarm@huawei.com, guohanjun@huawei.com, huawei.libin@huawei.com,
         john.garry@huawei.com
-Subject: [PATCH v7 2/6] iommu/dma: Add support for non-strict mode
-Date:   Fri, 14 Sep 2018 15:30:20 +0100
-Message-Id: <0a891cec4bb164f8cf2f57c753791a7d1f5f1d81.1536935328.git.robin.murphy@arm.com>
+Subject: [PATCH v7 3/6] iommu/io-pgtable-arm: Add support for non-strict mode
+Date:   Fri, 14 Sep 2018 15:30:21 +0100
+Message-Id: <75c1c1f9e8bc2fb9f199be5d3aef041a92d30160.1536935328.git.robin.murphy@arm.com>
 X-Mailer: git-send-email 2.19.0.dirty
 In-Reply-To: <cover.1536935328.git.robin.murphy@arm.com>
 References: <cover.1536935328.git.robin.murphy@arm.com>
@@ -49,110 +49,88 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Zhen Lei <thunder.leizhen@huawei.com>
 
-1. Save the related domain pointer in struct iommu_dma_cookie, make iovad
-   capable call domain->ops->flush_iotlb_all to flush TLB.
-2. During the iommu domain initialization phase, base on domain->non_strict
-   field to check whether non-strict mode is supported or not. If so, call
-   init_iova_flush_queue to register iovad->flush_cb callback.
-3. All unmap(contains iova-free) APIs will finally invoke __iommu_dma_unmap
-   -->iommu_dma_free_iova. If the domain is non-strict, call queue_iova to
-   put off iova freeing, and omit iommu_tlb_sync operation.
+To support non-strict mode, now we only TLBI and sync for strict mode,
+except for non-leaf invalidations since page table updates themselves
+must always be synchronous.
+
+To save having to reason about it too much, make sure the invalidation
+in arm_lpae_split_blk_unmap() just performs its own unconditional sync
+to minimise the window in which we're technically violating the break-
+before-make requirement on a live mapping. This might work out redundant
+with an outer-level sync for strict unmaps, but we'll never be splitting
+blocks on a DMA fastpath anyway.
 
 Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
-[rm: convert raw boolean to domain attribute]
+[rm: tweak comment, commit message, and split_blk_unmap logic]
 Signed-off-by: Robin Murphy <robin.murphy@arm.com>
 ---
- drivers/iommu/dma-iommu.c | 29 ++++++++++++++++++++++++++++-
- include/linux/iommu.h     |  1 +
- 2 files changed, 29 insertions(+), 1 deletion(-)
+ drivers/iommu/io-pgtable-arm.c | 9 ++++++---
+ drivers/iommu/io-pgtable.h     | 5 +++++
+ 2 files changed, 11 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-index 511ff9a1d6d9..092e6926dc3c 100644
---- a/drivers/iommu/dma-iommu.c
-+++ b/drivers/iommu/dma-iommu.c
-@@ -55,6 +55,9 @@ struct iommu_dma_cookie {
- 	};
- 	struct list_head		msi_page_list;
- 	spinlock_t			msi_lock;
-+
-+	/* Only be assigned in non-strict mode, otherwise it's NULL */
-+	struct iommu_domain		*domain;
- };
- 
- static inline size_t cookie_msi_granule(struct iommu_dma_cookie *cookie)
-@@ -257,6 +260,17 @@ static int iova_reserve_iommu_regions(struct device *dev,
- 	return ret;
- }
- 
-+static void iommu_dma_flush_iotlb_all(struct iova_domain *iovad)
-+{
-+	struct iommu_dma_cookie *cookie;
-+	struct iommu_domain *domain;
-+
-+	cookie = container_of(iovad, struct iommu_dma_cookie, iovad);
-+	domain = cookie->domain;
-+
-+	domain->ops->flush_iotlb_all(domain);
-+}
-+
- /**
-  * iommu_dma_init_domain - Initialise a DMA mapping domain
-  * @domain: IOMMU domain previously prepared by iommu_get_dma_cookie()
-@@ -275,6 +289,7 @@ int iommu_dma_init_domain(struct iommu_domain *domain, dma_addr_t base,
- 	struct iommu_dma_cookie *cookie = domain->iova_cookie;
- 	struct iova_domain *iovad = &cookie->iovad;
- 	unsigned long order, base_pfn, end_pfn;
-+	int attr = 1;
- 
- 	if (!cookie || cookie->type != IOMMU_DMA_IOVA_COOKIE)
- 		return -EINVAL;
-@@ -308,6 +323,13 @@ int iommu_dma_init_domain(struct iommu_domain *domain, dma_addr_t base,
+diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
+index 2f79efd16a05..5b915aab7fd3 100644
+--- a/drivers/iommu/io-pgtable-arm.c
++++ b/drivers/iommu/io-pgtable-arm.c
+@@ -576,6 +576,7 @@ static size_t arm_lpae_split_blk_unmap(struct arm_lpae_io_pgtable *data,
+ 		tablep = iopte_deref(pte, data);
+ 	} else if (unmap_idx >= 0) {
+ 		io_pgtable_tlb_add_flush(&data->iop, iova, size, size, true);
++		io_pgtable_tlb_sync(&data->iop);
+ 		return size;
  	}
  
- 	init_iova_domain(iovad, 1UL << order, base_pfn);
-+
-+	if (!iommu_domain_get_attr(domain, DOMAIN_ATTR_DMA_USE_FLUSH_QUEUE,
-+			&attr) && attr) {
-+		cookie->domain = domain;
-+		init_iova_flush_queue(iovad, iommu_dma_flush_iotlb_all, NULL);
-+	}
-+
- 	if (!dev)
- 		return 0;
+@@ -609,7 +610,7 @@ static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
+ 			io_pgtable_tlb_sync(iop);
+ 			ptep = iopte_deref(pte, data);
+ 			__arm_lpae_free_pgtable(data, lvl + 1, ptep);
+-		} else {
++		} else if (!(iop->cfg.quirks & IO_PGTABLE_QUIRK_NON_STRICT)) {
+ 			io_pgtable_tlb_add_flush(iop, iova, size, size, true);
+ 		}
  
-@@ -393,6 +415,9 @@ static void iommu_dma_free_iova(struct iommu_dma_cookie *cookie,
- 	/* The MSI case is only ever cleaning up its most recent allocation */
- 	if (cookie->type == IOMMU_DMA_MSI_COOKIE)
- 		cookie->msi_iova -= size;
-+	else if (cookie->domain)	/* non-strict mode */
-+		queue_iova(iovad, iova_pfn(iovad, iova),
-+				size >> iova_shift(iovad), 0);
- 	else
- 		free_iova_fast(iovad, iova_pfn(iovad, iova),
- 				size >> iova_shift(iovad));
-@@ -408,7 +433,9 @@ static void __iommu_dma_unmap(struct iommu_domain *domain, dma_addr_t dma_addr,
- 	dma_addr -= iova_off;
- 	size = iova_align(iovad, size + iova_off);
+@@ -771,7 +772,8 @@ arm_64_lpae_alloc_pgtable_s1(struct io_pgtable_cfg *cfg, void *cookie)
+ 	u64 reg;
+ 	struct arm_lpae_io_pgtable *data;
  
--	WARN_ON(iommu_unmap(domain, dma_addr, size) != size);
-+	WARN_ON(iommu_unmap_fast(domain, dma_addr, size) != size);
-+	if (!cookie->domain)
-+		iommu_tlb_sync(domain);
- 	iommu_dma_free_iova(cookie, dma_addr, size);
- }
+-	if (cfg->quirks & ~(IO_PGTABLE_QUIRK_ARM_NS | IO_PGTABLE_QUIRK_NO_DMA))
++	if (cfg->quirks & ~(IO_PGTABLE_QUIRK_ARM_NS | IO_PGTABLE_QUIRK_NO_DMA |
++			    IO_PGTABLE_QUIRK_NON_STRICT))
+ 		return NULL;
  
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index 87994c265bf5..decabe8e8dbe 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -124,6 +124,7 @@ enum iommu_attr {
- 	DOMAIN_ATTR_FSL_PAMU_ENABLE,
- 	DOMAIN_ATTR_FSL_PAMUV1,
- 	DOMAIN_ATTR_NESTING,	/* two stages of translation */
-+	DOMAIN_ATTR_DMA_USE_FLUSH_QUEUE,
- 	DOMAIN_ATTR_MAX,
- };
+ 	data = arm_lpae_alloc_pgtable(cfg);
+@@ -863,7 +865,8 @@ arm_64_lpae_alloc_pgtable_s2(struct io_pgtable_cfg *cfg, void *cookie)
+ 	struct arm_lpae_io_pgtable *data;
  
+ 	/* The NS quirk doesn't apply at stage 2 */
+-	if (cfg->quirks & ~IO_PGTABLE_QUIRK_NO_DMA)
++	if (cfg->quirks & ~(IO_PGTABLE_QUIRK_NO_DMA |
++			    IO_PGTABLE_QUIRK_NON_STRICT))
+ 		return NULL;
+ 
+ 	data = arm_lpae_alloc_pgtable(cfg);
+diff --git a/drivers/iommu/io-pgtable.h b/drivers/iommu/io-pgtable.h
+index 2df79093cad9..47d5ae559329 100644
+--- a/drivers/iommu/io-pgtable.h
++++ b/drivers/iommu/io-pgtable.h
+@@ -71,12 +71,17 @@ struct io_pgtable_cfg {
+ 	 *	be accessed by a fully cache-coherent IOMMU or CPU (e.g. for a
+ 	 *	software-emulated IOMMU), such that pagetable updates need not
+ 	 *	be treated as explicit DMA data.
++	 *
++	 * IO_PGTABLE_QUIRK_NON_STRICT: Skip issuing synchronous leaf TLBIs
++	 *	on unmap, for DMA domains using the flush queue mechanism for
++	 *	delayed invalidation.
+ 	 */
+ 	#define IO_PGTABLE_QUIRK_ARM_NS		BIT(0)
+ 	#define IO_PGTABLE_QUIRK_NO_PERMS	BIT(1)
+ 	#define IO_PGTABLE_QUIRK_TLBI_ON_MAP	BIT(2)
+ 	#define IO_PGTABLE_QUIRK_ARM_MTK_4GB	BIT(3)
+ 	#define IO_PGTABLE_QUIRK_NO_DMA		BIT(4)
++	#define IO_PGTABLE_QUIRK_NON_STRICT	BIT(5)
+ 	unsigned long			quirks;
+ 	unsigned long			pgsize_bitmap;
+ 	unsigned int			ias;
 -- 
 2.19.0.dirty
 
