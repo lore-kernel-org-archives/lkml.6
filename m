@@ -2,121 +2,130 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E252CECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:37:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86D1FECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:39:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A750206B5
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:37:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2725A206B5
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:39:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SyVmsij7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A750206B5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="enpdeNSz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2725A206B5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728048AbeINSvk (ORCPT
+        id S1727953AbeINSyE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 14:51:40 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:36319 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727384AbeINSvk (ORCPT
+        Fri, 14 Sep 2018 14:54:04 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:40087 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727384AbeINSyE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 14:51:40 -0400
-Received: by mail-pf1-f194.google.com with SMTP id b11-v6so4338882pfo.3;
-        Fri, 14 Sep 2018 06:37:07 -0700 (PDT)
+        Fri, 14 Sep 2018 14:54:04 -0400
+Received: by mail-lj1-f196.google.com with SMTP id j19-v6so7543480ljc.7
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 06:39:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=YUlKWKvUP55wiDo2wPb9ZZSzdJXneXdtyM8E2LuyUfM=;
-        b=SyVmsij7k+pxgELGieyvXoPfadYjvq23MwkCzUvYs5Jyu2/VMXUZJRnxxxsyellUVO
-         R/rvabVMCK4+gfydLYWBxA6NId/c307YtnpIWs2KsEEkmzUrnMoTMCvLdoVnKN0QEpLq
-         53lfi4yjz/8z2K6+bSL7cDfpx0AWMyOEXNe9lZ8O8n7PynbMaxfykw5nPurQVgUnzJVX
-         vGfKH3N1CZkl6+mPXwm7uRk0OJAW0bKehySoMwhW/fevtqy9up/uDukBKGyrrGxEonTt
-         1bCWToaACS7CVjEJTX4SxOK9CH/2ZXQcAZJkAXQkWe70dXjFAfJhacYO9cF94Niv+xVL
-         aRqw==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=1fTlrG6/4Wpb9FJk1NByzJfT8aYDMPk6DE/LX8JGj0c=;
+        b=enpdeNSzjLJA5aod65aL2BZ31/5qjo3WSaAZMY7lZ8xbyqrLp5W1qlKIUO+A26Kghn
+         dgz9skTg3snkclCNZocvLvfrszqKO/3fGDqeb/VY0EBTdZbPJdsdNO8UyLrOoa3zKp/u
+         rcNE+KAXJDPZOyN13YcUYb+arZggOUFIEMlHEvrzQz1uJOvGDLGcC+k3+6QzvJfYZM/n
+         G33FZeKUtZw92d/8onYs0DtlsNDubjjA+PtmIuvStlu48qo4ZA0ZOvO8y249NptSX81r
+         6AUKr9Te98KrGNKcuegnSKyS1LcG8ctAZadMhOK2L8cgvG7UdVxi+aUGmo0tjRHQqBT+
+         Nzdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=YUlKWKvUP55wiDo2wPb9ZZSzdJXneXdtyM8E2LuyUfM=;
-        b=aWA6C45N3WnRPJbnplo1gcXY4FcA3/zqCT/iTbOy9WaaIICbwYABFln2at2J7XuWYx
-         tSTxwLhrBmIdgHL+ZXgSOltu0O4Ezeabd5bPJEVJ9gFgOPs3NjDeUDOd/MMtM4R6//g7
-         nzC9Oxjkncm5rPKGFYpg2dqkYJBPVYmej3kyhjgP1iL43NBajD4U76X9fENRNN1z9cYI
-         qIQdSzkqBPf3BOwBwhEU2YIlUMM38Au/6a2ZGE9MasgBD3iFT6S0daM4NXpVN6NRnp8M
-         aG8XmeGEn3bJWRg9I9tIO9QFGRGhLm3PzKpjTdYP3eozQOyrWUtmRtTBVjUUGuJI/AGz
-         wKpw==
-X-Gm-Message-State: APzg51ASQsKWXfRMQPDeb2g1a0dD+cpTQp9c2ByLSmYW8UQNCwUbIklG
-        np6k0nAU2X+SWpxUzly9ouX8owC+
-X-Google-Smtp-Source: ANB0Vdbql8eE1ume6goocQFfZZXmyAhegWI/OC+zuPIEHUj7w7r0gChWvaLTiCjdIeyT7iidP9ntcA==
-X-Received: by 2002:a62:3241:: with SMTP id y62-v6mr12721320pfy.4.1536932226665;
-        Fri, 14 Sep 2018 06:37:06 -0700 (PDT)
-Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id k8-v6sm20886207pga.80.2018.09.14.06.37.05
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1fTlrG6/4Wpb9FJk1NByzJfT8aYDMPk6DE/LX8JGj0c=;
+        b=Ohm4nwpeILPXfEgZ4sK66ekydTzF9vqhJ/PRM2AgBBBIP6AsNED33m72qBv7X3kNCX
+         Yu8gIzJ4oQeKv4omWQib+OFu1fNJoFPw2KK+aEOLoyuEk6UicqN9NJW9fp8w7F6yWJsY
+         8jPNqcKif9jKSEViMK2V+Bd251qpRpIu+Il13tDe98PrlAtwSygst0b+huitTX60co4m
+         ZrUg7BkiIRgCRge9onCnv1s8Ez429VVngv/psCizFp2Hdf0zNAo0VymCdAgBF+QsAqj2
+         I5HHlmRwAajTHDjmlpeBsXkGmIPbFeqgPTzLToYg+mIfRxoXFFoMGZvLBgiSE71toaXu
+         kpyA==
+X-Gm-Message-State: APzg51CzXUeKfxIvHU8u5lMkUMV2Ojz3Jdteuiy5mu6jlDev9x6UJ/gp
+        mR9dsQaQvyMAVqVZBD96roo=
+X-Google-Smtp-Source: ANB0VdZJePyU2naq+1AsY4CZVdMc0ncPs6KU+OATtqLaEiZ5ncBdraxGaYk2ofewCt5538CU4sDEbg==
+X-Received: by 2002:a2e:8257:: with SMTP id j23-v6mr7717881ljh.49.1536932368906;
+        Fri, 14 Sep 2018 06:39:28 -0700 (PDT)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id u191-v6sm1233687lja.13.2018.09.14.06.39.28
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Sep 2018 06:37:06 -0700 (PDT)
-Subject: Re: [PATCH 1/2] watchdog: sama5d4: fix timeout-sec usage
-To:     Romain Izard <romain.izard.pro@gmail.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Marcus Folkesson <marcus.folkesson@gmail.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180914101339.7382-1-romain.izard.pro@gmail.com>
- <20180914101339.7382-2-romain.izard.pro@gmail.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <0953b2f9-83b1-b57b-2a26-fa0527c8a548@roeck-us.net>
-Date:   Fri, 14 Sep 2018 06:37:04 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 14 Sep 2018 06:39:28 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1g0oJm-0002fp-Jf; Fri, 14 Sep 2018 15:39:30 +0200
+Date:   Fri, 14 Sep 2018 15:39:30 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Al Viro <viro@ZenIV.linux.org.uk>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 17/50] usb-serial: begin switching to ->[sg]et_serial()
+Message-ID: <20180914133930.GF1362@localhost>
+References: <20180913023119.GQ19965@ZenIV.linux.org.uk>
+ <20180913024049.24567-1-viro@ZenIV.linux.org.uk>
+ <20180913024049.24567-17-viro@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20180914101339.7382-2-romain.izard.pro@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180913024049.24567-17-viro@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/14/2018 03:13 AM, Romain Izard wrote:
-> When using watchdog_init_timeout to update the default timeout value,
-> an error means that there is no "timeout-sec" in the relevant device
-> tree node.
+On Thu, Sep 13, 2018 at 03:40:16AM +0100, Al Viro wrote:
+> From: Al Viro <viro@zeniv.linux.org.uk>
 > 
-> This should not prevent binding of the driver to the device.
+> add such methods for usb_serial_driver, provide tty_operations
+> ->[sg]et_serial() calling those.  For now the lack of methods
+> in driver means ENOIOCTLCMD from usb-serial ->[sg]et_serial(),
+> making tty_ioctl() fall back to calling ->ioctl().  Once all
+> drivers are converted, we'll be returning -ENOTTY instead,
+> completing the switchover.
 > 
-> Fixes: 976932e40036 ("watchdog: sama5d4: make use of timeout-secs provided in devicetree")
-> Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
-
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 > ---
->   drivers/watchdog/sama5d4_wdt.c | 6 +-----
->   1 file changed, 1 insertion(+), 5 deletions(-)
+>  drivers/usb/serial/usb-serial.c | 18 ++++++++++++++++++
+>  include/linux/usb/serial.h      |  2 ++
+>  2 files changed, 20 insertions(+)
 > 
-> diff --git a/drivers/watchdog/sama5d4_wdt.c b/drivers/watchdog/sama5d4_wdt.c
-> index 255169916dbb..1e93c1b0e3cf 100644
-> --- a/drivers/watchdog/sama5d4_wdt.c
-> +++ b/drivers/watchdog/sama5d4_wdt.c
-> @@ -247,11 +247,7 @@ static int sama5d4_wdt_probe(struct platform_device *pdev)
->   		}
->   	}
->   
-> -	ret = watchdog_init_timeout(wdd, wdt_timeout, &pdev->dev);
-> -	if (ret) {
-> -		dev_err(&pdev->dev, "unable to set timeout value\n");
-> -		return ret;
-> -	}
-> +	watchdog_init_timeout(wdd, wdt_timeout, &pdev->dev);
->   
->   	timeout = WDT_SEC2TICKS(wdd->timeout);
->   
-> 
+> diff --git a/drivers/usb/serial/usb-serial.c b/drivers/usb/serial/usb-serial.c
+> index f7aaa7f079e1..8bdc48fa5a67 100644
+> --- a/drivers/usb/serial/usb-serial.c
+> +++ b/drivers/usb/serial/usb-serial.c
+> @@ -396,6 +396,22 @@ static void serial_unthrottle(struct tty_struct *tty)
+>  		port->serial->type->unthrottle(tty);
+>  }
+>  
+> +static int serial_get_serial(struct tty_struct *tty, struct serial_struct *ss)
+> +{
+> +	struct usb_serial_port *port = tty->driver_data;
 
+Pleas add a newline here.
+
+> +	if (port->serial->type->get_serial)
+> +		return port->serial->type->get_serial(tty, ss);
+> +	return -ENOIOCTLCMD;
+> +}
+> +
+> +static int serial_set_serial(struct tty_struct *tty, struct serial_struct *ss)
+> +{
+> +	struct usb_serial_port *port = tty->driver_data;
+
+And here.
+
+> +	if (port->serial->type->set_serial)
+> +		return port->serial->type->get_serial(tty, ss);
+> +	return -ENOIOCTLCMD;
+> +}
+
+Reviewed-by: Johan Hovold <johan@kernel.org>
